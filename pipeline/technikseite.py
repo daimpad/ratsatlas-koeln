@@ -21,6 +21,7 @@ PFAD = "technik/"
 REPO = "https://github.com/daimpad/ratsatlas-koeln"
 CODE = REPO + "/blob/main/"
 ACTIONS = REPO + "/actions"
+TREE = REPO + "/tree/main/"   # Verzeichnisse (blob/ gilt nur für Dateien)
 WORKFLOWS = config.ROOT / ".github" / "workflows"
 BREIT, HOCH = 760, 340   # Breite der Grafiken (Seite höchstens 760 px; Telefon)
 
@@ -462,7 +463,7 @@ def daten(root="../"):
             ("t-leaflet", f"Leaflet {v['leaflet']}".strip(), "Bibliothek für die Karte, mit Markercluster; lokal "
                                                              "eingebunden, ohne fremde Server.", "https://leafletjs.com/", "Leaflet"),
             ("t-kacheln", "Graue Kacheln", "Kartenhintergrund vom eigenen Server, erzeugt aus OpenStreetMap-Daten; "
-                                           "„Farbige Karte“ lädt Kacheln von OpenStreetMap.", CODE + "pipeline/kacheln/", "Code"),
+                                           "„Farbige Karte“ lädt Kacheln von OpenStreetMap.", TREE + "pipeline/kacheln/", "Code"),
         ]),
         ("Prüfung", [
             ("t-pytest", "pytest", f"{v['tests']} Dateien mit Tests für Abruf, Aufbereitung, Verortung und Export, gegen "
@@ -472,7 +473,7 @@ def daten(root="../"):
         ]),
         ("Aufbereitung", [
             ("t-python", "Python " + ", ".join(v["python"]), "Die Pipeline in python -m pipeline, ein Schritt je "
-                                                             "Aufgabe (Grafik „Datenfluss“).", CODE + "pipeline/", "Code"),
+                                                             "Aufgabe (Grafik „Datenfluss“).", TREE + "pipeline/", "Code"),
             ("t-sqlite", "SQLite", "Datenbank eines Laufs; sie wird nicht veröffentlicht, nur ihre Exporte.",
              CODE + "pipeline/build.py", "Code"),
             *[(f"t-{p}", p, f"Python-Paket aus requirements.txt: {PAKET_TEXT.get(p, '')}".rstrip(": "),

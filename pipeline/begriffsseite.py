@@ -63,9 +63,8 @@ def body(root):
         if einleitung:
             html.append(f"    <p>{escape(einleitung)}</p>")
         html.append(_dl(eintraege))
-    html.append(f'    <p class="meta">Quelle: Glossar des Ratsatlas (<a href="{root}data/export/glossar.json">glossar.json</a>), '
-                "das auch der Ratsassistent nutzt. <a href=\"" + root + "\">Zur Karte</a> · <a href=\"" + root
-                + "thema/\">Themenseiten</a></p>")
+    html.append(f'    <p class="meta">Quelle: Glossar des Ratsatlas (<a href="{root}data/export/glossar.json">glossar.json</a>). '
+                f'<a href="{root}">Zur Karte</a> · <a href="{root}gebiete/">Alle Gebiete</a></p>')
     return "\n".join(html)
 
 

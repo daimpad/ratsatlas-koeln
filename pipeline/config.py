@@ -87,8 +87,8 @@ SOURCES = {
         "license": "dl-de/zero 2.0 (Stadt Köln, Adressen Köln); " + NAMENSNENNUNG,
     },
     "osm": {
-        "url": "https://www.openstreetmap.org (Overpass API)",
-        "license": "ODbL 1.0, © OpenStreetMap-Mitwirkende",
+        "url": "https://www.openstreetmap.org/copyright",
+        "license": "ODbL 1.0, © OpenStreetMap-Mitwirkende (Kartenhintergrund über Protomaps)",
     },
 }
 # Bezugsquellen der Geodaten (Katalog offenedaten-koeln.de, geprüft am 04.11.2026, explore/ergebnisse)

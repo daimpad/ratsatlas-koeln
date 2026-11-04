@@ -92,6 +92,11 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL || 'https://koeln.ratsatlas.de/' }}
         run: python tools/seite_bauen.py _site
 
+      # Keine Veröffentlichung mit defekten inneren Links oder Sprungmarken (Phase 6)
+      - name: Linkprüfung (innere Links)
+        if: steps.daten.outputs.da == 'ja'
+        run: python tools/linkpruefung.py _site
+
       # Ohne Datenpaket (Zip, täglich vollständig neu), damit die Historie nur um die Änderungen wächst; auf dem eigenen
       # Server verweist der Link auf das Paket beim Spiegel (config.PAKET_URL)
       - name: Fertige Seite in den Branch deploy schreiben
