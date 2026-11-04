@@ -25,9 +25,9 @@ from shapely.ops import unary_union
 
 from . import config
 
-# Lokale Projektion in Metern (gleichabständig, ausreichend für Bonn)
+# Lokale Projektion in Metern (gleichabständig, ausreichend für das Kölner Stadtgebiet)
 KY = 111_320.0
-KX = KY * math.cos(math.radians(50.7))
+KX = KY * math.cos(math.radians(50.94))
 to_m = lambda geom: shapely.transform(geom, lambda c: c * (KX, KY))
 to_deg = lambda geom: shapely.transform(geom, lambda c: c / (KX, KY))
 
@@ -37,33 +37,30 @@ SKIP_HIGHWAY = {"platform", "bus_stop", "proposed", "construction", "elevator", 
 COMPONENT_GAP_M = 150   # Abstand, ab dem gleichnamige Abschnitte als getrennte Lagen gelten
 MIN_SHARE, MIN_LENGTH_M = 0.15, 150  # Ortsteil zählt ab diesem Längenanteil bzw. dieser Länge
 
-# Schreibvarianten der Ortsteilnamen in Titeln
-ORTSTEIL_ALIASES = {
-    "Lessenich/Meßdorf": ["Lessenich", "Meßdorf", "Messdorf"],
-    "Pützchen/Bechlinghoven": ["Pützchen", "Bechlinghoven"],
-    "Schwarzrheindorf / Vilich-Rheindorf": ["Schwarzrheindorf", "Vilich-Rheindorf"],
-    "Vilich- Müldorf": ["Vilich-Müldorf", "Müldorf"],
-    "Bonn-Castell": ["Bonn-Castell", "Castell"],
-    "Godesberg-Villenviertel": ["Godesberg-Villenviertel", "Villenviertel"],
-}
-BEZIRKE = {"Bad Godesberg": ["Bad Godesberg", "Godesberg"], "Beuel": ["Beuel"], "Hardtberg": ["Hardtberg"]}
-# R3 (verortung/PRUEFUNG.md): Schreibvarianten aus den Vorlagentiteln, von Hand aus den Kandidaten mit
-# Editierdistanz 1–2 zu einem Ortsteilnamen ausgewählt (20.10.2026); Methode „…_variante“, Konfidenz wie der Name.
-# Nicht aufgenommen: andere Orte (Medinghoven, Godesburg, Mondorf, Roisdorf) und Straßennamen (Pützchens Chaussee).
-ORTSTEIL_VARIANTEN = {
-    "Poppelsdorf": ["Poppeldorf"],
-    "Plittersdorf": ["Plitterdorf"],
-    "Pennenfeld": ["Pennefeld"],
-    "Holtorf": ["Holtdorf"],
-    "Schwarzrheindorf / Vilich-Rheindorf": ["Schwarz-Rheindorf"],
-}
-BEZIRK_VARIANTEN = {"Bad Godesberg": ["Bad-Godesberg", "Goesberg"], "Beuel": ["Beuler"]}
-# „Pützchens“ ist in Titeln Teil von Eigennamen („Pützchens Markt“, „Pützchens Chaussee“ durch vier Ortsteile), kein Genitiv
-GENITIV_AUSNAHMEN = {"Pützchen"}
-# Namen, die im Titel oft nicht die Straße meinen (oder mehrere Lagen haben): Konfidenz niedrig
+# Schreibvarianten der Stadtteilnamen in Titeln (Köln, vorläufig; Ausbau in Phase 3): Doppelnamen mit Schrägstrich
+# auch mit Bindestrich oder Leerzeichen („Altstadt/Nord“, „Altstadt-Nord“, „Altstadt Nord“)
+ORTSTEIL_ALIASES = {}
+
+
+def _doppelnamen(namen):
+    out = {}
+    for n in namen:
+        if "/" in n:
+            out[n] = [n, n.replace("/", "-"), n.replace("/", " ")]
+    return out
+
+
+# Stadtbezirke: In Köln tragen acht der neun Stadtbezirke den Namen eines Stadtteils (Porz, Kalk, Mülheim …), der
+# neunte heißt „Innenstadt“. Ein Bezirk aus dem Titel wäre deshalb mehrdeutig; bis Phase 3 keine Bezirkserkennung im
+# Titel – der Stadtbezirk folgt aus dem Stadtteil oder aus der beratenden Bezirksvertretung.
+BEZIRKE = {}
+ORTSTEIL_VARIANTEN = {}
+BEZIRK_VARIANTEN = {}
+GENITIV_AUSNAHMEN = set()
+# Namen, die im Titel oft nicht die Straße meinen (oder mehrere Lagen haben): Konfidenz niedrig (Köln: Phase 3)
 # Hausnummer direkt nach dem Straßennamen („Kennedyallee 25“, „Nr. 12a“, „12-14“); nicht „Str. 2. Bauabschnitt“
 HAUSNUMMER = re.compile(r"\s+(?:Nr\.\s*)?(\d{1,4})(?=[a-zA-Z]?(?:\s|$|[,;)\-–/]))")
-GENERIC_NAMES = {"Rheinufer", "Markt", "Kirchberg", "Wasserland"}
+GENERIC_NAMES = {"Rheinufer", "Markt"}
 # Bebauungsplan-Nummern (Methode B3): Stichwort (auch Tippfehler, Plural, Bauleitplan, Satzung), danach eine
 # oder mehrere Nummern NNNN-N(N) mit optionalem Zusatz (a, A, I, II, -A, „Teil A“); Präfix 6–8 wie im
 # Plandatensatz der Stadt (Phase 0, baustellen/phase0/BERICHT.md). Flurstücke (NNNN-N-NNN) zählen nicht.
@@ -105,6 +102,8 @@ def _alternation(names, pattern=re.escape, hyphen_before=False):
     (scheitert die Grenze dahinter, versucht die Regex den nächsten Namen), aber die Regex prüft die Namen
     nur an Wortanfängen; bei rund 6.000 Straßennamen etwa 40-mal schneller (Messung 26.10.2026)."""
     names = sorted(set(names), key=len, reverse=True)
+    if not names:   # leere Liste (z. B. keine Bezirksnamen in Köln): nie treffen statt Leerstring treffen
+        return re.compile(r"(?!x)x")
     return re.compile(_boundary("|".join(pattern(n) for n in names), hyphen_before))
 
 
@@ -122,6 +121,7 @@ class Gazetteer:
         self.bezirk_point = {f["properties"]["bezirk_bez"]: shape(f["geometry"]).representative_point()
                              for f in bezirke}
         self.ot_by_name = {p["ortsteil_bez"]: p for p in self.ortsteile}
+        aliases = {**_doppelnamen(self.ot_by_name), **ORTSTEIL_ALIASES}
         if ways is None and config.STRASSEN.exists():
             data = json.loads(config.STRASSEN.read_text())
             self.streets = data["streets"]
@@ -142,7 +142,7 @@ class Gazetteer:
         # Ortsteilnamen, Varianten, Genitiv („Rüngsdorfs“) und Adjektive („Endenicher“) → Ortsteil
         self.ot_alias = {}
         for name in self.ot_by_name:
-            forms = [(a, "ortsteil_name") for a in ORTSTEIL_ALIASES.get(name, [name])]
+            forms = [(a, "ortsteil_name") for a in aliases.get(name, [name])]
             forms += [(a, "ortsteil_variante") for a in ORTSTEIL_VARIANTEN.get(name, [])]
             for alias, method in forms:
                 self.ot_alias[alias] = (name, method)
@@ -250,7 +250,7 @@ class Gazetteer:
                 props = self.ortsteile[int(hits[0])]
                 self.streets[name] = [{"ortsteil": props["ortsteil_bez"], "ortsteil_nr": props["ortsteil"],
                                        "bezirk": props["bezirk_bez"], "lon": lon, "lat": lat,
-                                       "length_m": None, "component": 0, "source": "oparl-bonn"}]
+                                       "length_m": None, "component": 0, "source": config.QUELLE_OPARL}]
 
     # --- Erkennung im Titel ------------------------------------------------------------------
 
@@ -371,7 +371,10 @@ class Gazetteer:
 
 
 def plan_numbers(title):
-    """[(Plannummer, Fundstelle)] aus dem Titel, je Nummer einmal."""
+    """[(Plannummer, Fundstelle)] aus dem Titel, je Nummer einmal. Köln: erst, wenn Geltungsbereiche und Nummernschema
+    vorliegen (explore/BERICHT_phase1.md 2.5); bis dahin keine Erkennung, damit das Bonner Schema nichts falsch zuordnet."""
+    if not config.BPLAN.exists():
+        return []
     text = FLURSTUECK.sub(" ", title or "")
     found = {}
     for m in PLAN.finditer(text):

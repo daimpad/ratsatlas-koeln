@@ -12,6 +12,7 @@ Lücken werden als eigene Schritte ausgegeben, nicht weggelassen.
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+from . import config
 from .actors import EINWOHNER_TYPES, POLITIK_TYPES, VERWALTUNG_TYPES
 
 BERLIN = ZoneInfo("Europe/Berlin")
@@ -78,7 +79,7 @@ def steps(p):
     kind = initiation_kind(p["paper_type"])
     out = [{
         "typ": "initiierung", "label": p["paper_type"], "status": "belegt",
-        "date": None, "source": "oparl-bonn", "source_object": p["source_object"],
+        "date": None, "source": config.QUELLE_OPARL, "source_object": p["source_object"],
         "note": "sonderweg" if p["paper_type"] in SONDER_TYPES else None,
         "actors": [o["actor"] for o in p["originators"]],
         "actors_status": "abgeleitet" if p["originators"] else None,
@@ -87,7 +88,7 @@ def steps(p):
         out.append({"typ": "vorbereitung", "label": "Verwaltungsinterne Vorbereitung",
                     "status": "nicht_öffentlich", "date": None, "note": "vorbereitung"})
     out.append({"typ": "veroeffentlichung", "label": "Datum der Vorlage", "status": "belegt",
-                "date": p["date"], "source": "oparl-bonn", "source_object": p["source_object"],
+                "date": p["date"], "source": config.QUELLE_OPARL, "source_object": p["source_object"],
                 "note": "datum"})
     if kind == "nichtoeffentlich":
         out.append({"typ": "beratung", "label": "Nichtöffentliche Beratung", "status": "nicht_öffentlich",
@@ -99,11 +100,11 @@ def steps(p):
         step = {
             "typ": "entscheidung" if s["authoritative"] else "beratung",
             "label": s["gremium"] or "Gremium unbekannt", "role": s["role"],
-            "status": "belegt", "source": "oparl-bonn",
+            "status": "belegt", "source": config.QUELLE_OPARL,
             "date": day, "date_status": "abgeleitet" if day else "unklar",
-            "date_source": "oparl-lite" if day else None,
+            "date_source": config.QUELLE_SITZUNG if day else None,
             "number": s["number"], "result": s["result"], "stand": s["status"],
-            "result_source": "oparl-lite" if s["result"] or s["number"] else None,
+            "result_source": config.QUELLE_SITZUNG if s["result"] or s["number"] else None,
             "note": None if day or s["result"] else "ohne_sitzung",
         }
         if day and p["date"] and day < p["date"]:
@@ -117,7 +118,7 @@ def steps(p):
     for sub in p["subordinated"]:
         early = sub.get("date") and p["date"] and sub["date"] < p["date"]
         out.append({"typ": "folgevorlage", "label": sub["paper_type"], "status": "belegt",
-                    "date": sub.get("date"), "source": "oparl-bonn", "reference": sub["reference"],
+                    "date": sub.get("date"), "source": config.QUELLE_OPARL, "reference": sub["reference"],
                     "title": sub["name"], "note": "datum_vor_vorlage" if early else None})
     if decided:
         out.append({"typ": "vollzug", "label": "Umsetzung durch die Verwaltung", "status": "unklar",

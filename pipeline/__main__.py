@@ -1,22 +1,29 @@
-"""Aufruf: python -m pipeline {fetch|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fetch-texts|fetch-streets|gazetteer|build|export|check|verify|package|seo|baustellen|anliegen|anliegen-seite|kandidaten|baustellen-seite|kurzfassungen|stufe-c|soll|kontext-ausschnitte|wahlen-rohdaten|wahlen-ausschnitt|haushalt-ausschnitt|haushalt-pruefbogen|haushalt-ebenen|haushalt-pruefbogen-ebenen|haushalt-ist2024|haushalt-investitionen|haushalt-pruefbogen-erweiterung|haushalt-ist2024-investitionen|haushalt-pruefbogen-erweiterung-finanz|haushalt-ertragsarten|haushalt-pruefbogen-ertragsarten|fetch-haltestellen|kontext|kultur-stichprobe|verkehr-stichprobe|schule-stichprobe|wohnen-stichprobe|klima-stichprobe|kinder-stichprobe|soziales-stichprobe|sicherheit-stichprobe|wirtschaft-stichprobe|digital-stichprobe|all}"""
+"""Aufruf: python -m pipeline {fetch|geo-koeln|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fetch-texts|fetch-streets|gazetteer|build|export|check|verify|package|seo|baustellen|anliegen|anliegen-seite|kandidaten|baustellen-seite|kurzfassungen|stufe-c|soll|kontext-ausschnitte|wahlen-rohdaten|wahlen-ausschnitt|haushalt-ausschnitt|haushalt-pruefbogen|haushalt-ebenen|haushalt-pruefbogen-ebenen|haushalt-ist2024|haushalt-investitionen|haushalt-pruefbogen-erweiterung|haushalt-ist2024-investitionen|haushalt-pruefbogen-erweiterung-finanz|haushalt-ertragsarten|haushalt-pruefbogen-ertragsarten|fetch-haltestellen|kontext|kultur-stichprobe|verkehr-stichprobe|schule-stichprobe|wohnen-stichprobe|klima-stichprobe|kinder-stichprobe|soziales-stichprobe|sicherheit-stichprobe|wirtschaft-stichprobe|digital-stichprobe|all}"""
 import sys
 
-from . import anliegen, baustellen, besetzung, build, check, dossier, export, fetch, geocode, kandidaten, kontext, haushaltsplan, kurzfassung, seo, soll, stufe_c, verify, wahlen
+from . import anliegen, baustellen, besetzung, build, check, config, dossier, export, fetch, geodaten, kandidaten, kontext, haushaltsplan, kurzfassung, seo, sessionnet, soll, stufe_c, verify, wahlen
 from .themenseiten import digital, kinder, klima, kultur, schule, sicherheit, soziales, verkehr, wirtschaft, wohnen
 
+def _ersetzt(durch):
+    def schritt():
+        raise SystemExit(f"In Köln ersetzt durch `{durch}` (Bonner Quelle, Inventur Phase 0).")
+    return schritt
+
+
 STEPS = {
-    "fetch": fetch.fetch_all,
-    "fetch-papers": fetch.fetch_papers,
-    "fetch-organizations": fetch.fetch_organizations,
+    "fetch": sessionnet.fetch_all,  # SessionNet-Adapter Köln (Abrufpolitik, inkrementell, Abrufstatistik)
+    "geo-koeln": geodaten.write,  # Stadtteile, Stadtbezirke und Straßenverzeichnis aus den Kölner Geodaten
+    "fetch-papers": _ersetzt("fetch"),
+    "fetch-organizations": _ersetzt("fetch"),
     "fetch-besetzung": besetzung.fetch,  # laufende Mitgliedschaften (Auszug ohne Kontaktdaten), nach fetch-organizations
-    "fetch-lite": fetch.fetch_consultations_lite,
-    "fetch-meetings": fetch.fetch_meetings,
-    "fetch-plans": fetch.fetch_plans,
-    "fetch-housenumbers": fetch.fetch_housenumbers,
+    "fetch-lite": _ersetzt("fetch"),
+    "fetch-meetings": _ersetzt("fetch"),
+    "fetch-plans": _ersetzt("geo-koeln (Bebauungspläne: Bezugsquelle offen)"),
+    "fetch-housenumbers": _ersetzt("geo-koeln (Phase 3)"),
     "fetch-objects": fetch.fetch_objects,
-    "fetch-texts": fetch.fetch_texts,
-    "fetch-streets": fetch.fetch_streets,
-    "gazetteer": geocode.write_gazetteer,
+    "fetch-texts": _ersetzt("Volltexte aus PDFs (Phase 3)"),
+    "fetch-streets": _ersetzt("geo-koeln"),
+    "gazetteer": geodaten.write,
     "build": build.build,
     "export": export.export,
     "check": check.check,
@@ -60,10 +67,24 @@ STEPS = {
 }
 
 
+# Schritte der Bonner Zusatzthemen: nur, wenn das Thema in config.ZUSATZTHEMEN freigegeben ist (CLAUDE.md 5.4)
+THEMA_JE_SCHRITT = {
+    "baustellen": "baustellen", "kandidaten": "baustellen", "baustellen-seite": "baustellen",
+    "anliegen": "anliegen", "anliegen-seite": "anliegen", "kurzfassungen": "kurzfassungen",
+    "fetch-besetzung": "besetzung", "soll": "soll", "kontext": "kontext", "kontext-ausschnitte": "kontext",
+    "fetch-haltestellen": "kontext", "wahlen-rohdaten": "wahlen", "wahlen-ausschnitt": "wahlen",
+}
+THEMA_JE_SCHRITT.update({k: "haushalt" for k in STEPS if k.startswith("haushalt-")})
+THEMA_JE_SCHRITT.update({k: "themenseiten" for k in STEPS if k.endswith("-stichprobe")})
+
+
 def main(argv):
     if len(argv) != 1 or argv[0] not in (*STEPS, "all"):
         raise SystemExit(__doc__)
-    for step in (["fetch", "build", "export", "kontext", "check", "verify", "package"] if argv[0] == "all" else argv):
+    for step in (["fetch", "build"] if argv[0] == "all" else argv):  # export, check, verify folgen ab Phase 3/4
+        thema = THEMA_JE_SCHRITT.get(step)
+        if thema and not config.ZUSATZTHEMEN.get(thema):
+            raise SystemExit(f"Schritt „{step}“ gehört zum Zusatzthema „{thema}“ und ist deaktiviert (config.ZUSATZTHEMEN).")
         print(f"== {step}", flush=True)
         STEPS[step]()
 

@@ -100,23 +100,21 @@ def build():
     db = sqlite3.connect(config.DB)
     db.executescript(SCHEMA)
 
+    strassen_stand = (json.loads(config.STRASSEN.read_text())["meta"].get("retrieved_at")
+                      if config.STRASSEN.exists() else None)
     retrieved = {
-        "oparl-bonn": stand.get("papers"),
-        "oparl-lite": stand.get("consultations_lite"),
-        "osm": stand.get("osm_streets") or (json.loads(config.STRASSEN.read_text())["meta"].get("retrieved_at")
-                                            if config.STRASSEN.exists() else None),
-        "geo-bonn": stand.get("geo", "2026-10-17"),
-        "bplan-bonn": stand.get("bplan") or (json.loads(config.BPLAN.read_text())["meta"].get("retrieved_at")
-                                             if config.BPLAN.exists() else None),
-        "hnr-bonn": stand.get("hausnummern") or (json.loads(config.HAUSNUMMERN.read_text())["meta"].get("retrieved_at")
-                                                 if config.HAUSNUMMERN.exists() else None),
+        config.QUELLE_OPARL: stand.get("papers"),
+        config.QUELLE_GEO: stand.get("geo"),
+        config.QUELLE_STRASSEN: stand.get("geo") or strassen_stand,
+        config.QUELLE_BPLAN: stand.get("bplan"),
+        "osm": stand.get("objekte"),
     }
     db.executemany("INSERT INTO source VALUES (?,?,?,?)",
-                   [(k, v["url"], v["license"], retrieved[k]) for k, v in config.SOURCES.items()])
+                   [(k, v["url"], v["license"], retrieved.get(k)) for k, v in config.SOURCES.items()])
 
     orgs_by_id = {o["id"]: o for o in orgs}
     db.executemany(
-        "INSERT INTO organization VALUES (?,?,?,?,?,?,?,?,?,'oparl-bonn')",
+        f"INSERT INTO organization VALUES (?,?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}')",
         [(o["id"], o["name"], o.get("shortName"), o.get("organizationType"),
           o.get("classification"),
           actors.amt_label(o) if o.get("organizationType") == "Verwaltungsbereich" else o["name"],
@@ -155,7 +153,7 @@ def build():
             rows["cons"].append((c["id"], p["id"], pos, org, c.get("role"),
                                  int(bool(c.get("authoritative"))),
                                  m["uri"] if m else None, a["uri"] if a else None,
-                                 "oparl-lite" if (m or a) else None))
+                                 config.QUELLE_SITZUNG if (m or a) else None))
 
         for loc in p.get("location") or []:
             geom = (loc.get("geojson") or {}).get("geometry") or {}
@@ -167,7 +165,7 @@ def build():
                 loc["id"], ohne_hausnummer(loc.get("streetAddress")), loc.get("postalCode"),
                 loc.get("subLocality"), ohne_hausnummer(loc.get("description")), lon, lat,
                 ot["ortsteil_bez"] if ot else None, ot["ortsteil"] if ot else None,
-                ot["bezirk_bez"] if ot else None, "strasse", "oparl-bonn")
+                ot["bezirk_bez"] if ot else None, "strasse", config.QUELLE_OPARL)
             rows["ploc"].append((p["id"], loc["id"], "A", "oparl_location",
                                  "hoch" if lon is not None else "niedrig",
                                  ohne_hausnummer(loc.get("description")), loc["id"]))
@@ -182,7 +180,7 @@ def build():
             rows["resp"].append((p["id"], r["organization_id"], r["kind"], r["method"],
                                  r["evidence"], r["derived"]))
 
-    points = [(loc[1], loc[5], loc[6]) for loc in locations.values() if loc[-1] == "oparl-bonn"]
+    points = [(loc[1], loc[5], loc[6]) for loc in locations.values() if loc[-1] == config.QUELLE_OPARL]
     gaz = Gazetteer(street_points=points)
     rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz)
     plans = Plans()
@@ -202,11 +200,11 @@ def build():
     rows["ploc"] += _inherited(papers, papers_by_id, rows["ploc"])
 
     # OR REPLACE: ändert sich die Quelle während des seitenweisen Abrufs, kann eine Vorlage doppelt kommen
-    db.executemany("INSERT OR REPLACE INTO paper VALUES (?,?,?,?,?,?,?,?,?,'oparl-bonn')", rows["paper"])
-    db.executemany("INSERT OR IGNORE INTO paper_relation VALUES (?,?,'oparl-bonn')", rows["rel"])
-    db.executemany("INSERT INTO meeting VALUES (?,?,?,?,'oparl-lite')", meetings.values())
-    db.executemany("INSERT INTO agenda_item VALUES (?,?,?,?,?,?,'oparl-lite')", agenda.values())
-    db.executemany("INSERT OR REPLACE INTO consultation VALUES (?,?,?,?,?,?,?,?,'oparl-bonn',?)", rows["cons"])
+    db.executemany(f"INSERT OR REPLACE INTO paper VALUES (?,?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}')", rows["paper"])
+    db.executemany(f"INSERT OR IGNORE INTO paper_relation VALUES (?,?,'{config.QUELLE_OPARL}')", rows["rel"])
+    db.executemany(f"INSERT INTO meeting VALUES (?,?,?,?,'{config.QUELLE_SITZUNG}')", meetings.values())
+    db.executemany(f"INSERT INTO agenda_item VALUES (?,?,?,?,?,?,'{config.QUELLE_SITZUNG}')", agenda.values())
+    db.executemany(f"INSERT OR REPLACE INTO consultation VALUES (?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}',?)", rows["cons"])
     db.executemany("INSERT INTO location VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", locations.values())
     db.executemany("INSERT OR IGNORE INTO paper_plan VALUES (?,?,?,?)", rows["plan"])
     db.executemany("INSERT INTO plan_precedence VALUES (?,?,?,?)", precedence)
@@ -226,7 +224,7 @@ def _add_location(r, locations, gaz):
     elif r["level"] == "objekt":   # Gebäude oder Anlage aus OSM (Stufe C)
         loc_id, source = f"objekt:{r['name']}|{r['ortsteil']}", "osm"
     else:
-        loc_id, source = f"{r['level']}:{r['name']}", "geo-bonn"
+        loc_id, source = f"{r['level']}:{r['name']}", config.QUELLE_GEO
     nr = gaz.ot_by_name[r["ortsteil"]]["ortsteil"] if r["ortsteil"] else None
     locations[loc_id] = (loc_id, r["name"] if r["level"] in ("strasse", "objekt") else None, None, None,
                          r["name"], r["lon"], r["lat"], r["ortsteil"], nr, r["bezirk"],

@@ -264,7 +264,7 @@ def export_all():
         for pid in ids:
             home.setdefault(pid, key)
     sources = [dict(r) for r in db.execute("SELECT * FROM source")]
-    stand = next((s["retrieved_at"] for s in sources if s["name"] == "oparl-bonn"), None) or ""
+    stand = next((s["retrieved_at"] for s in sources if s["name"] == config.QUELLE_OPARL), None) or ""
     year = int((stand or datetime.now(timezone.utc).isoformat())[:4])
     publish.write_feeds(out / "feeds", areas, cache, names, home, slug, f"{year - 1}-01-01")
     meetings = _meetings(db)
@@ -596,21 +596,21 @@ def time_audit_rows(papers, meetings):
     held = {(m["gremium"], m["date"]) for m in meetings if not m["cancelled"]}
     rows = []
     for p in papers:
-        rows.append([p["reference"], "datum_vorlage", p["date"] or "", "oparl-bonn",
+        rows.append([p["reference"], "datum_vorlage", p["date"] or "", config.QUELLE_OPARL,
                      "belegt" if p["date"] else "unklar", "Bedeutung des Datums nicht dokumentiert"])
         for st in p["steps"]:
             if st["typ"] in ("beratung", "entscheidung") and st.get("role"):
                 dim = f"beratung: {st['label']} ({st['role']})"
                 if st.get("date"):
                     same = (st["label"], st["date"]) in held
-                    rows.append([p["reference"], dim, st["date"], "oparl-lite", "abgeleitet",
+                    rows.append([p["reference"], dim, st["date"], config.QUELLE_SITZUNG, "abgeleitet",
                                  "Sitzung des Gremiums an diesem Tag in der OParl-API der Stadt" if same
                                  else "keine Sitzung des Gremiums an diesem Tag in der OParl-API der Stadt"])
                 else:
                     rows.append([p["reference"], dim, "", "", "unklar", "Beratung ohne verknüpfte Sitzung"])
             elif st["typ"] == "folgevorlage":
                 rows.append([p["reference"], f"folgevorlage: {st['reference']}", st.get("date") or "",
-                             "oparl-bonn", "belegt" if st.get("date") else "unklar", st["label"]])
+                             config.QUELLE_OPARL, "belegt" if st.get("date") else "unklar", st["label"]])
     return rows
 
 

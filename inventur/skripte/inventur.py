@@ -20,7 +20,12 @@ REGELN = [
     ("pipeline/__main__.py", A, "Aufruf", "Schrittliste enthält Bonner Schritte (fetch-lite, Baustellen, Wahlen); Köln-Schritte und Abschaltung ergänzen"),
     ("pipeline/config.py", A, "Konfiguration", "zentrale Stelle für Bonner URLs, Geodateien, Lizenzen, SITE_URL, PAKET_URL, Pilot-Ortsteil; wird Köln-Konfiguration inkl. Schaltern für Zusatzthemen"),
     ("pipeline/net.py", G, "Abruf", "HTTP mit Wiederholung, ohne Stadtbezug; für Köln um Abrufpolitik 5.1 erweitern (Abstand, Backoff bis Stunden, User-Agent)"),
-    ("pipeline/fetch.py", A, "Abruf", "Bonner OParl-API und OParl-Lite (GraphQL); wird durch SessionNet-Adapter mit Paginierung über links.next ersetzt"),
+    ("pipeline/fetch.py", A, "Abruf", "Bonner Abruf; in Köln ersetzt durch sessionnet.py (Phase 2), Hilfsfunktionen und fetch_objects weiter genutzt"),
+    ("pipeline/abruf.py", G, "Abruf", "neu (Phase 2): Abrufpolitik Köln – eine Verbindung, Abstand, Zeitfenster, Backoff, Sperre bis zur Information der Stadt"),
+    ("pipeline/sessionnet.py", G, "Abruf", "neu (Phase 2): SessionNet-Adapter ins Bonner Rohdatenformat, inkrementell, Abrufstatistik"),
+    ("pipeline/geodaten.py", G, "Geodaten", "neu (Phase 2): Stadtteile, Stadtbezirke, Straßenverzeichnis aus den Kölner Geodaten"),
+    ("tests/*", G, "Tests", "neu (Phase 2): synthetische Testdaten, lokaler Testserver"),
+    ("data/*", G, "Daten", "neu (Phase 2): Kölner Geodaten (dl-de/zero 2.0) und Datenlizenz"),
     ("pipeline/build.py", A, "Datenmodell", "Normalisierung ins SQLite-Modell bleibt; Eingänge (Beratungen aus OParl-Lite, Bonner Nummernschema) auf Köln umstellen"),
     ("pipeline/actors.py", A, "Akteure", "Bonner Vorlagenarten, Titelmuster, „Co-Dezernat“; Köln: underDirectionOf bzw. PDF-Kopf „Dezernat, Dienststelle“, Ämtertabelle, § 3/§ 4-Muster"),
     ("pipeline/process.py", A, "Prozesslinie", "Schritte mit Evidenzstatus bleiben; Quelle in Köln consultation → meeting/agendaItem direkt"),
@@ -112,6 +117,14 @@ REGELN = [
 ]
 
 
+def _dateien():
+    """Versionierte und neue, nicht ignorierte Dateien (ohne Caches und lokale Rohdaten)."""
+    import subprocess
+    out = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=ROOT,
+                         capture_output=True, text=True, check=True).stdout.split("\n")
+    return [ROOT / n for n in sorted(set(out)) if n and (ROOT / n).exists()]
+
+
 def main():
     fund = Counter()
     with open(ROOT / "inventur" / "fundstellen_bonn.tsv", encoding="utf-8") as f:
@@ -120,7 +133,7 @@ def main():
     w = csv.writer(sys.stdout, delimiter="\t", lineterminator="\n")
     w.writerow(["datei", "zeilen", "kategorie", "funktion", "begruendung", "fundstellen"])
     offen = []
-    for p in sorted(ROOT.rglob("*")):
+    for p in _dateien():
         rel = p.relative_to(ROOT).as_posix()
         if not p.is_file() or rel.startswith((".git/", "inventur/", "explore/")):
             continue

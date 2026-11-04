@@ -256,7 +256,7 @@ def write_dcat(path, data_start, modified, kurzfassungen=False):
                                       "@value": "POLYGON((7.02 50.63, 7.22 50.63, 7.22 50.78, 7.02 50.78, 7.02 50.63))"}},
         "dct:publisher": {"@type": "foaf:Agent", "foaf:name": "allris-bonn (Hackathon „Hack den Stadtrat“)",
                           "foaf:homepage": {"@id": "https://github.com/daimpad/allris-test"}},
-        "dct:source": [{"@id": config.OPARL_BODY}, {"@id": config.LITE_GRAPHQL}],
+        "dct:source": [{"@id": config.OPARL_BODY}],
         "dcat:landingPage": {"@id": site},
         "dcat:distribution": [
             dist("Verortete Vorlagen (GeoJSON)", "bonn/vorlagen.geojson", "application/geo+json", "odbl",
