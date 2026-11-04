@@ -140,3 +140,4 @@ Zusätzlich schwache Evidenz `district_from_committee` (nur eine Bezirksvertretu
 | 04.11.2026 | Phase 5 freigegeben; `kacheln.yml` aktiv. Die Anfrage an die Stadt ist noch nicht versendet; der Abruf bleibt gesperrt. |
 | 04.11.2026 | Herkunft in README und NOTICE: `daimpad/ratsatlas-bonn` (umbenannt aus `daimpad/allris-test`; Commit `9eea7ea`). |
 | 04.11.2026 | Pull Request #4 zusammengeführt, `kacheln.yml` auf `main` gestartet. Freigegeben: eigener Skill `ratsatlas-koeln` (Bonner Skill entfernt) und Phase 6, soweit ohne Abruf möglich (Linkprüfung, Lizenz- und Datenschutzhinweise, Datenpaket). Ämtertabelle aus dem Dezernatsverteilungsplan erst nach Information der Stadt. |
+| 04.11.2026 | Plesk-Git auf koeln.ratsatlas.de lieferte Branch `main` (Quellcode öffentlich). Freigegeben: Branch `deploy` vorab mit Platzhalterseite („in Vorbereitung“, Datenschutzhinweis, `noindex`); der erste Lauf von `pages.yml` mit Daten ersetzt ihn. |
