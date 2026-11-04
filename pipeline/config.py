@@ -99,6 +99,11 @@ GEO_DOWNLOADS = {
     "adressen": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Adresse_0.zip",
 }
 
+# Stadt: Schlüssel für Exportpfade (data/export/koeln) und Bezeichnung auf der Seite
+STADT = "koeln"
+STADT_NAME = "Köln"
+SEITENNAME = "Ratsatlas Köln"
+
 # Kein Pilot-Stadtteil (CLAUDE.md 2); bleibt für Module, die den Bonner Pilot noch kennen
 PILOT_ORTSTEIL = None
 

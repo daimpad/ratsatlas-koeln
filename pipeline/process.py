@@ -2,7 +2,7 @@
 
 Evidenzstatus
 - belegt            Schritt ist als Datenobjekt in einer Quelle vorhanden (OParl-API der Stadt)
-- abgeleitet        aus Quelldaten erschlossen (Join mit OParl-Lite, Textmuster, Vererbung)
+- abgeleitet        aus Quelldaten erschlossen (Verknüpfung von Beratung und Sitzung, Textmuster, Vererbung)
 - soll              nach Regelwerk zu erwarten, nicht dokumentiert (Soll-Modell noch nicht formalisiert)
 - nicht_öffentlich  findet regelmäßig statt, ist extern nicht einsehbar
 - unklar            aus öffentlichen Quellen nicht bestimmbar
@@ -46,7 +46,7 @@ NOTES = {
 
 
 def local_day(ts):
-    """Kalendertag in Bonn; Sitzungszeiten aus OParl-Lite stehen in UTC (z. B. 22:30Z = 00:30 Uhr)."""
+    """Kalendertag in Köln (Europe/Berlin); Sitzungszeiten können in UTC stehen (z. B. 22:30Z = 00:30 Uhr)."""
     if not ts:
         return None
     if len(ts) == 10:

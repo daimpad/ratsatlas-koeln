@@ -6,7 +6,7 @@ __pycache__/
 # Rohdaten (Cache des Abrufs, nur lokal bzw. im Workflow-Zwischenspeicher) und Build
 data/raw/
 data/build/
-data/export/koeln/
+data/export/
 data/export/ratsatlas-koeln-export.zip
 dist/
 _site/

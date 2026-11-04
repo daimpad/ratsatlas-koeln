@@ -8,8 +8,8 @@
   für die Seite begriffe/; allgemeine Erklärungen, keine Rechtsberatung
 - arten, kuerzel: Vorlagenart bzw. Kürzel der Drucksachennummer → Sprungmarke des Begriffs (Erklärung im Vorgang)
 
-Ergänzt am 02.11.2026 (Phase 0 „Verständlichkeit“, Entscheidungen des Auftraggebers): alle Vorlagenarten der Daten,
-Kürzel, Haushalt und Bebauungsplan; einfachere Wörter für eigene Bezeichnungen der Seite („Anstoß“ statt
+Köln (04.11.2026): Begriffe und Fundstellen auf Köln umgestellt, Gruppe „Gebiete“ ergänzt; Bonner Vorlagenarten,
+Kürzel und Haushaltsbegriffe entfernt. Aus Bonn übernommen (02.11.2026): einfachere Wörter für eigene Bezeichnungen der Seite („Anstoß“ statt
 „Initiierung“, „Umsetzung“ statt „Vollzug“). Wo eine Vorlagenart in keinem Regelwerk beschrieben ist, ist die
 Erklärung aus Titeln und Beratungsfolge erschlossen und so gekennzeichnet."""
 import re
@@ -66,7 +66,7 @@ ROLLEN = ("Entscheidung", "Empfehlung", "Anhörung", "Kenntnisnahme", "Genehmigu
 
 EVIDENZ = {  # Wortlaut wie in der Legende der Seite
     "belegt": "Als Datenobjekt in der Quelle vorhanden.",
-    "abgeleitet": "Aus Quelldaten erschlossen (z. B. Verknüpfung mit OParl-Lite, Titelmuster).",
+    "abgeleitet": "Aus Quelldaten erschlossen (z. B. Verknüpfung von Beratung und Sitzung, Titelmuster).",
     "nicht_öffentlich": "Findet regelmäßig statt, ist von außen aber nicht einsehbar.",
     "unklar": "Ob und wann der Schritt stattfindet, lässt sich aus öffentlichen Quellen nicht bestimmen.",
     "soll": "Nach Regelwerk zu erwarten (vereinfachtes Modell aus Gemeindeordnung, Geschäftsordnung, Satzungen, "
@@ -82,46 +82,48 @@ STAENDE = {
     "ohne Beratungsfolge": "Für die Vorlage ist keine Beratung in einem Gremium erfasst.",
 }
 
-DATENFELD = "Ratsinformationssystem der Stadt Bonn (OParl-API)"
+DATENFELD = "Ratsinformationssystem der Stadt Köln (OParl-API)"
 ALLGEMEIN = "allgemeine Erklärung"
-ERSCHLOSSEN = "Vorlagenart im Ratsinformationssystem der Stadt Bonn; Erklärung aus Titeln und Beratungsfolge erschlossen"
-GESCHO = "Geschäftsordnung des Rates der Stadt Bonn"
-HAUSHALT = "Haushaltspläne der Stadt Bonn"
-# Gruppen der Seite begriffe/ in dieser Reihenfolge
+GESCHO = "Geschäftsordnung des Rates der Stadt Köln"
+HAUPTSATZUNG = "Hauptsatzung der Stadt Köln"
+GEBIETE = "Kommunale Gebietsgliederung der Stadt Köln (offenedaten-koeln.de)"
+# Gruppen der Seite begriffe/ in dieser Reihenfolge (Köln, 04.11.2026: ohne die Bonner Gruppe „Haushalt“ und ohne
+# Bonner Kürzel der Drucksachennummer; Vorlagenarten werden nach der Messung der Kölner API ergänzt)
 GRUPPEN = [("vorlagen", "Vorlagen und Vorlagenarten"), ("gremium", "Gremien und Beteiligung"),
-           ("verfahren", "Verfahren und Sitzungen"), ("kuerzel", "Kürzel"), ("haushalt", "Haushalt"),
+           ("verfahren", "Verfahren und Sitzungen"), ("gebiete", "Gebiete"), ("kuerzel", "Kürzel"),
            ("planung", "Planung")]
 BEGRIFFE = [
     ("Vorlage", "Schriftstück, über das Rat, Bezirksvertretungen oder Ausschüsse beraten, etwa ein Antrag, eine "
-                "Beschlussvorlage oder ein Bürgerantrag.", DATENFELD + ", Objekt „Paper“"),
-    ("Drucksachennummer", "Kennung einer Vorlage, z. B. 261798. Zusätze wie „-01“ kennzeichnen zugehörige "
-                          "Folgevorlagen.", DATENFELD + ", Feld „reference“"),
+                "Beschlussvorlage oder eine Mitteilung der Verwaltung.", DATENFELD + ", Objekt „Paper“"),
+    ("Vorlagennummer", "Kennung einer Vorlage, in Köln z. B. 2250/2025 für Vorlagen der Verwaltung und AN/1756/2026 "
+                       "für Anträge und Anfragen.", DATENFELD + ", Feld „reference“"),
     ("Beschlussvorlage", "Vorlage der Verwaltung mit einem Beschlussvorschlag, über den ein Gremium entscheidet.",
      ALLGEMEIN),
-    ("Mitteilungsvorlage", "Vorlage, mit der die Verwaltung ein Gremium informiert; ein Beschluss ist nicht vorgesehen.",
+    ("Mitteilung", "Vorlage, mit der die Verwaltung ein Gremium informiert; ein Beschluss ist nicht vorgesehen.",
      ALLGEMEIN),
     ("Antrag", "Vorlage einer Fraktion, Gruppe oder eines Mitglieds, mit der ein Gremium um einen Beschluss gebeten "
-               "wird.", ALLGEMEIN),
+               "wird. In Köln heißen solche Vorlagen „Antrag nach § 3“ der Geschäftsordnung.", GESCHO),
     ("Änderungsantrag", "Antrag, der eine andere Vorlage oder einen anderen Antrag ändern will.", ALLGEMEIN),
-    ("Stellungnahme der Verwaltung", "Schriftliche Antwort der Verwaltung, meist auf einen Antrag oder eine Anfrage.",
-     ALLGEMEIN),
-    ("Anfrage", "Fragen einer Fraktion oder eines Mitglieds an die Verwaltung (Kleine oder Große Anfrage); die "
-                "Verwaltung antwortet schriftlich oder in der Sitzung.", ALLGEMEIN),
-    ("Anregungen und Beschwerden (Bürgerantrag)", "Jede Person kann sich schriftlich mit Anregungen oder Beschwerden "
-     "in Angelegenheiten der Gemeinde an den Rat oder die Bezirksvertretung wenden, allein oder gemeinsam mit "
-     "anderen. Unterschriften weiterer Personen sind dafür nicht nötig. Nicht zu verwechseln mit dem "
-     "Einwohnerantrag.", "§ 24 GO NRW"),
+    ("Anfrage", "Fragen einer Fraktion, Gruppe oder eines Mitglieds an die Verwaltung; die Verwaltung antwortet "
+                "schriftlich oder in der Sitzung. In Köln heißen solche Vorlagen „Anfrage nach § 4“ der "
+                "Geschäftsordnung.", GESCHO),
+    ("Dringlichkeitsantrag", "Antrag, der ohne die übliche Frist auf die Tagesordnung kommen soll, weil die "
+     "Angelegenheit keinen Aufschub duldet; ob er behandelt wird, entscheidet das Gremium.", ALLGEMEIN),
+    ("Anregungen und Beschwerden", "Jede Person kann sich schriftlich mit Anregungen oder Beschwerden in "
+     "Angelegenheiten der Gemeinde an den Rat wenden, allein oder gemeinsam mit anderen. In Köln berät darüber der "
+     "Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden. Der Ratsatlas zeigt solche Eingaben höchstens auf "
+     "Straßen- oder Stadtteilebene. Nicht zu verwechseln mit dem Einwohnerantrag.", "§ 24 GO NRW; " + HAUPTSATZUNG),
     ("Einwohnerantrag", "Einwohnerinnen und Einwohner können beantragen, dass der Rat über eine bestimmte "
      "Angelegenheit berät und entscheidet. Der Antrag braucht die Unterschriften einer Mindestzahl von "
-     "Einwohnerinnen und Einwohnern; Einzelheiten regelt die Gemeindeordnung. Nicht zu verwechseln mit dem "
-     "Bürgerantrag (Anregungen und Beschwerden).", "§ 25 GO NRW"),
+     "Einwohnerinnen und Einwohnern; Einzelheiten regelt die Gemeindeordnung.", "§ 25 GO NRW"),
     ("Einwohnerfragestunde", "Zeit in einer Sitzung, in der Einwohnerinnen und Einwohner Fragen stellen können; "
-                             "Einzelheiten regelt die Geschäftsordnung.", "Geschäftsordnung des Rates der Stadt Bonn"),
+                             "Einzelheiten regelt die Geschäftsordnung.", GESCHO),
     ("Rat", "Gewählte Vertretung der Bürgerinnen und Bürger; er ist für alle Angelegenheiten der Gemeinde zuständig, "
             "soweit nichts anderes bestimmt ist.", "§ 41 GO NRW"),
-    ("Bezirksvertretung", "Gewählte Vertretung eines Stadtbezirks in kreisfreien Städten; Bonn hat vier "
-     "(Bonn, Bad Godesberg, Beuel, Hardtberg). Sie entscheidet über Angelegenheiten, deren Bedeutung nicht "
-     "wesentlich über den Stadtbezirk hinausgeht.", "§§ 36, 37 GO NRW"),
+    ("Bezirksvertretung", "Gewählte Vertretung eines Stadtbezirks in kreisfreien Städten. Köln hat neun Stadtbezirke "
+     "und damit neun Bezirksvertretungen (Innenstadt, Rodenkirchen, Lindenthal, Ehrenfeld, Nippes, Chorweiler, Porz, "
+     "Kalk, Mülheim). Sie entscheidet über Angelegenheiten, deren Bedeutung nicht wesentlich über den Stadtbezirk "
+     "hinausgeht.", "§§ 36, 37 GO NRW; " + HAUPTSATZUNG),
     ("Ausschuss", "Vom Rat gebildetes Gremium, das Beschlüsse vorbereitet oder in übertragenen Angelegenheiten "
                   "selbst entscheidet.", "§§ 41, 57 GO NRW"),
     ("Hauptausschuss", "Pflichtausschuss des Rates; er stimmt die Arbeit der Ausschüsse ab und kann in dringenden "
@@ -132,79 +134,58 @@ BEGRIFFE = [
     ("Öffentlichkeit von Sitzungen", "Sitzungen des Rates sind grundsätzlich öffentlich; für einzelne Angelegenheiten "
      "kann die Öffentlichkeit ausgeschlossen werden. Inhalte nichtöffentlicher Beratungen sind nicht einsehbar.",
      "§ 48 GO NRW"),
-    ("Federführendes Amt", "Amt der Verwaltung, das eine Vorlage verantwortet.", DATENFELD + ", Feld „underDirectionOf“"),
+    ("Federführende Dienststelle", "Dezernat und Amt der Verwaltung, die eine Vorlage verantworten; in Köln im Kopf der "
+     "Verwaltungsvorlage als „Dezernat, Dienststelle“ angegeben (z. B. „II/II/2“).",
+     DATENFELD + ", Feld „underDirectionOf“ bzw. Kopf der Vorlage"),
     ("Beratungsfolge", "Reihenfolge der Gremien, die eine Vorlage beraten, jeweils mit Rolle (Entscheidung, Empfehlung, "
                        "Anhörung, Kenntnisnahme).", DATENFELD + ", Objekt „Consultation“"),
     ("Tagesordnungspunkt", "Punkt der Tagesordnung einer Sitzung; über ihn wird beraten und gegebenenfalls "
-                           "abgestimmt. Das Ergebnis stammt aus OParl-Lite.", DATENFELD + ", Objekt „AgendaItem“"),
-    # ergänzt 02.11.2026: Vorlagenarten ohne eigenen Eintrag
-    ("Dringlichkeitsantrag", "Antrag, der ohne die übliche Frist auf die Tagesordnung kommen soll, weil die "
-     "Angelegenheit keinen Aufschub duldet; ob er behandelt wird, entscheidet das Gremium.", GESCHO),
-    ("Informationsbrief", "Schreiben der Verwaltung, mit dem sie Rat, Hauptausschuss oder Bezirksvertretungen über "
-     "ein Vorhaben informiert, etwa eine Baumaßnahme; die Gremien nehmen es zur Kenntnis.", ERSCHLOSSEN),
-    ("Bürgerbrief", "Schreiben der Verwaltung, das sich laut den Titeln an Anwohnerinnen und Anwohner richtet, etwa zu "
-     "einer Baumaßnahme oder einer Bürgerbeteiligung; die Gremien nehmen es zur Kenntnis.", ERSCHLOSSEN),
-    ("Einwohnerfrage", "Frage einer Einwohnerin oder eines Einwohners für die Einwohnerfragestunde; in den Daten meist "
-     "an eine Bezirksvertretung gerichtet.", GESCHO),
-    ("Tagesordnungspunkte in nichtöffentlicher Sitzung", "Sammelvorlage mit den Punkten einer Sitzung, die ohne "
-     "Öffentlichkeit beraten werden; ihr Inhalt ist nicht einsehbar.", "§ 48 GO NRW"),
-    ("Beschlussvorlage: Einleitung", "Beschlussvorlage, mit der die Verwaltung ein Verfahren einleiten will, laut den "
-     "Titeln meist ein Vergabeverfahren (Ausschreibung).", ERSCHLOSSEN),
-    ("Beschlussvorlage: Auftrag", "Beschlussvorlage, die laut den Titeln auf einen Antrag oder Auftrag eines Gremiums "
-     "zurückgeht.", ERSCHLOSSEN),
-    ("Eilentscheidung (Hauptausschuss)", "Entscheidung des Hauptausschusses anstelle des Rates in einer Angelegenheit, "
-     "die keinen Aufschub duldet; der Rat genehmigt sie nachträglich.", "§ 60 Abs. 1 GO NRW"),
+                           "abgestimmt. Das Ergebnis steht wörtlich wie im Ratsinformationssystem.",
+     DATENFELD + ", Objekt „AgendaItem“"),
     ("Stand eines Vorgangs", "Vom Ratsatlas aus der Beratungsfolge abgeleitet: entschieden, beraten ohne "
      "Entscheidung, in Beratung, offen oder ohne Beratungsfolge. Maßgeblich ist das Original.", "abgeleitet (Ratsatlas)"),
+    # Gebiete
+    ("Stadtteil", "Amtliche Gliederung der Stadt in 86 Stadtteile, z. B. Ehrenfeld oder Rath/Heumar. Im Alltag sagt man "
+                  "oft „Veedel“; Veedel und Stadtteil sind nicht immer dasselbe Gebiet.", GEBIETE),
+    ("Stadtbezirk", "Die 86 Stadtteile gehören zu neun Stadtbezirken; jeder hat eine Bezirksvertretung. Acht "
+                    "Stadtbezirke tragen den Namen eines Stadtteils, etwa Porz oder Kalk.", GEBIETE + "; " + HAUPTSATZUNG),
+    ("Verortung", "Zuordnung einer Vorlage zu einem Ort: aus der Ortsangabe der Stadt (Stufe A) oder aus Straßen-, "
+                  "Stadtteil- und Bezirksnamen im Titel (Stufe B). Jede Verortung nennt Methode, Konfidenz und "
+                  "Fundstelle. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische "
+                  "Anträge, nie Eingaben von Einwohnerinnen und Einwohnern.", "abgeleitet (Ratsatlas)"),
     # Kürzel
-    ("ST", "Kürzel an der Drucksachennummer: Stellungnahme der Verwaltung zu der Vorlage mit derselben Nummer davor, "
-     "z. B. 261088-01 ST zu 261088.", DATENFELD + ", Feld „reference“; Bedeutung aus der Vorlagenart erschlossen"),
-    ("AA", "Kürzel an der Drucksachennummer: Änderungsantrag zu der Vorlage mit derselben Nummer davor.",
-     DATENFELD + ", Feld „reference“; Bedeutung aus der Vorlagenart erschlossen"),
-    ("DA", "Kürzel an der Drucksachennummer: Dringlichkeitsantrag zu der Vorlage mit derselben Nummer davor.",
-     DATENFELD + ", Feld „reference“; Bedeutung aus der Vorlagenart erschlossen"),
     ("TOP", "Tagesordnungspunkt einer Sitzung.", ALLGEMEIN),
     ("GO NRW", "Gemeindeordnung für das Land Nordrhein-Westfalen; sie regelt Aufgaben und Arbeit von Rat, Ausschüssen "
                "und Bezirksvertretungen.", "Gemeindeordnung NRW"),
     ("OB", "Oberbürgermeisterin oder Oberbürgermeister; leitet die Verwaltung und führt den Vorsitz im Rat.",
      "§§ 40, 62 GO NRW"),
     ("BV", "Bezirksvertretung.", "§ 36 GO NRW"),
-    ("HA", "Hauptausschuss.", "§ 59 GO NRW"),
-    # Haushalt und Planung
-    ("Produktbereich", "Gliederung des Haushalts nach Aufgaben; Bonn hat 17 Produktbereiche, z. B. 06 Kinder-, "
-     "Jugend- und Familienhilfe. Darunter stehen Produktgruppen.", HAUSHALT),
-    ("Ansatz", "Betrag, den der Haushaltsplan für ein Jahr vorsieht (Plan). Was tatsächlich anfällt, heißt Ist.",
-     HAUSHALT),
-    ("Ordentliche Aufwendungen", "Laufende Aufwendungen eines Jahres ohne Investitionen, etwa für Personal, "
-     "Sachaufwand und Transferleistungen.", HAUSHALT + ", Teilergebnispläne Zeile 17"),
+    ("AN", "Vorsilbe der Vorlagennummer bei Anträgen und Anfragen, z. B. AN/1756/2026.",
+     DATENFELD + ", Feld „reference“; Bedeutung aus den Vorlagenarten erschlossen"),
+    # Planung
     ("Bebauungsplan", "Satzung der Gemeinde, die festlegt, wie Grundstücke in einem Gebiet bebaut und genutzt werden "
      "dürfen.", "§§ 8, 10 BauGB"),
 ]
 GRUPPE = {"Rat": "gremium", "Bezirksvertretung": "gremium", "Ausschuss": "gremium", "Hauptausschuss": "gremium",
-          "Fraktion": "gremium", "Anregungen und Beschwerden (Bürgerantrag)": "gremium", "Einwohnerantrag": "gremium",
-          "Einwohnerfragestunde": "gremium", "Einwohnerfrage": "gremium",
-          "Dringlichkeitsentscheidung": "verfahren", "Eilentscheidung (Hauptausschuss)": "verfahren",
-          "Öffentlichkeit von Sitzungen": "verfahren", "Federführendes Amt": "verfahren", "Beratungsfolge": "verfahren",
+          "Fraktion": "gremium", "Anregungen und Beschwerden": "gremium", "Einwohnerantrag": "gremium",
+          "Einwohnerfragestunde": "gremium",
+          "Dringlichkeitsentscheidung": "verfahren", "Öffentlichkeit von Sitzungen": "verfahren",
+          "Federführende Dienststelle": "verfahren", "Beratungsfolge": "verfahren",
           "Tagesordnungspunkt": "verfahren", "Stand eines Vorgangs": "verfahren",
-          "ST": "kuerzel", "AA": "kuerzel", "DA": "kuerzel", "TOP": "kuerzel", "GO NRW": "kuerzel", "OB": "kuerzel",
-          "BV": "kuerzel", "HA": "kuerzel",
-          "Produktbereich": "haushalt", "Ansatz": "haushalt", "Ordentliche Aufwendungen": "haushalt",
+          "Stadtteil": "gebiete", "Stadtbezirk": "gebiete", "Verortung": "gebiete",
+          "TOP": "kuerzel", "GO NRW": "kuerzel", "OB": "kuerzel", "BV": "kuerzel", "AN": "kuerzel",
           "Bebauungsplan": "planung"}  # übrige: vorlagen
-# Vorlagenart in den Daten → Begriff (alle Arten, Prüfung in tests/test_chat.py)
+# Vorlagenart in den Daten → Begriff. Köln: vorläufig nach den aus der Oberfläche belegten Arten (Recherche
+# 04.11.2026); vollständige Liste nach der Messung der API (explore/oparl_messung.py)
 ARTEN = {
-    "Stellungnahme der Verwaltung": "Stellungnahme der Verwaltung", "Beschlussvorlage": "Beschlussvorlage",
-    "Mitteilungsvorlage": "Mitteilungsvorlage", "Änderungsantrag": "Änderungsantrag", "Antrag": "Antrag",
-    "Große Anfrage": "Anfrage", "Kleine Anfrage": "Anfrage",
-    "Bürgerantrag § 24 GO - Öffentlich": "Anregungen und Beschwerden (Bürgerantrag)",
-    "Anregungen und Beschwerden": "Anregungen und Beschwerden (Bürgerantrag)",
-    "Tagesordnungspunkte in nichtöffentlicher Sitzung": "Tagesordnungspunkte in nichtöffentlicher Sitzung",
-    "Beschlussvorlage: Einleitung": "Beschlussvorlage: Einleitung", "Beschlussvorlage: Auftrag": "Beschlussvorlage: Auftrag",
-    "Dringlichkeitsantrag": "Dringlichkeitsantrag", "Informationsbrief": "Informationsbrief", "Bürgerbrief": "Bürgerbrief",
-    "Einwohnerfrage": "Einwohnerfrage", "Dringlichkeitsentscheidung OB": "Dringlichkeitsentscheidung",
-    "Dringlichkeitsentscheidung BV": "Dringlichkeitsentscheidung", "Eilentscheidung HA": "Eilentscheidung (Hauptausschuss)",
+    "Beschlussvorlage": "Beschlussvorlage", "Beschlussvorlage Rat": "Beschlussvorlage",
+    "Beschlussvorlage Ausschuss": "Beschlussvorlage", "Mitteilung": "Mitteilung", "Mitteilung Ausschuss": "Mitteilung",
+    "Antrag nach § 3 der Geschäftsordnung des Rates": "Antrag", "Antrag nach § 3": "Antrag",
+    "Anfrage nach § 4 der Geschäftsordnung des Rates": "Anfrage", "Anfrage nach § 4": "Anfrage",
+    "Änderungsantrag": "Änderungsantrag", "Dringlichkeitsantrag": "Dringlichkeitsantrag",
+    "Anregungen und Beschwerden": "Anregungen und Beschwerden",
 }
-KUERZEL = {"ST": "ST", "AA": "AA", "DA": "DA"}
-
+KUERZEL = {}
 
 def anker(begriff):
     """Sprungmarke auf begriffe/: „Stellungnahme der Verwaltung“ → „stellungnahme-der-verwaltung“."""

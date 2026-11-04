@@ -1,4 +1,4 @@
-"""Vereinfachte Flächen für die Webseite (data/export/bonn/flaechen/*.json).
+"""Vereinfachte Flächen für die Webseite (data/export/koeln/flaechen/*.json).
 
 Die Seite braucht für Navigation, Umrisse und Bebauungspläne keine Zentimetergenauigkeit. Vereinfacht wird mit
 etwa 2 m Toleranz (Douglas-Peucker, Topologie je Fläche erhalten), Koordinaten auf 5 Nachkommastellen (rund 1 m).
@@ -14,7 +14,7 @@ from . import config
 TOLERANZ = 0.00002  # Grad, etwa 1,4 m in Nord-Süd- und 2,2 m in Ost-West-Richtung
 NACHKOMMA = 5
 DATEIEN = {"ortsteile": config.ORTSTEILE, "bezirke": config.STADTBEZIRKE,
-           "bebauungsplaene": config.GEO / "bebauungsplaene_bonn.geojson"}
+           "bebauungsplaene": config.BPLAN}
 
 
 def _round(o):

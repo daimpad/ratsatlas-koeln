@@ -107,3 +107,20 @@ def test_build_liest_kölner_rohdaten(oparl):
                          "ON l.id = pl.location_id WHERE pl.method = 'district_from_committee'").fetchall()
     assert {p.rsplit("/", 1)[1] for p, _, _ in schwach} == {"2", "4", "5"}
     assert {(b, c) for _, b, c in schwach} == {("Ehrenfeld", "niedrig")}
+
+
+def test_export_koeln(oparl, monkeypatch):
+    from pipeline import export
+    sessionnet.fetch_all()
+    build.build()
+    export.export()
+    out = config.EXPORT / config.STADT
+    index = json.loads((out / "index.json").read_text())
+    assert len(index["ortsteile"]) == 86 and len(index["bezirke"]) == 9
+    assert index["meta"]["stadt"] == "Köln" and not any(index["meta"]["funktionen"].values())
+    for datei in ("suche.json", "zeit.json", "vorlagen.geojson", "termine.ics", "dcat.jsonld", "feeds/ganz-koeln.xml"):
+        text = (out / datei).read_text(encoding="utf-8")
+        assert "Bonn" not in text and "OParl-Lite" not in text, datei
+    # deaktivierte Zusatzthemen erzeugen keine Dateien
+    assert not (out / "soll.json").exists() and not (out / "chat").exists() and not (out / "dossiers").exists()
+    assert (config.EXPORT / "audit_geokodierung.tsv").exists() and (config.EXPORT / "stichprobe_geokodierung.tsv").exists()
