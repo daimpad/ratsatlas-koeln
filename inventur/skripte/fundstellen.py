@@ -35,7 +35,7 @@ def main():
     out.write("datei\tzeile\tkategorie\ttreffer\tauszug\n")
     for p in sorted(ROOT.rglob("*")):
         rel = p.relative_to(ROOT).as_posix()
-        if not p.is_file() or rel.startswith((".git/", "inventur/")):
+        if not p.is_file() or rel.startswith((".git/", "inventur/", "explore/")):
             continue
         try:
             text = p.read_text(encoding="utf-8")

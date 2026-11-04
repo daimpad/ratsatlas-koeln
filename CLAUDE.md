@@ -129,3 +129,5 @@ Zusätzlich schwache Evidenz `district_from_committee` (nur eine Bezirksvertretu
 | 04.11.2026 | Die Stadt Köln ist noch nicht informiert: bis auf Weiteres keine Abrufe der Kölner OParl-API aus der Arbeitsumgebung oder aus Workflows; Explorationsskripte werden vorbereitet, nicht ausgeführt. |
 | 04.11.2026 | Workflows sind nach `.github/workflows-inaktiv/` verschoben (nicht aktiv); `static.yml` (Pages-Vorlage für das ganze Repository) ist abgeschaltet. |
 | 04.11.2026 | Repository https://github.com/daimpad/ratsatlas-koeln, Hauptadresse koeln.ratsatlas.de. |
+| 04.11.2026 | Einfache Sprache, Kurzfassungen, „Mitmachen“, Gremienbesetzung und Kölner Vorschaubild folgen im zweiten Lauf; bis dahin deaktiviert. |
+| 04.11.2026 | Phase 1: Messskripte für die OParl-API werden geschrieben, nicht ausgeführt; Entwurf der Anfrage an die Stadt; Geodaten einmalig laden (freigegeben). |

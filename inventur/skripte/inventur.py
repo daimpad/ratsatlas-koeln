@@ -45,9 +45,9 @@ REGELN = [
     ("pipeline/technikseite.py", A, "Verlässlichkeit", "Seite technik/ mit Bonner Quellen und Zahlen"),
     ("pipeline/check.py", A, "Prüfung", "Kennzahlen gegen den Bonner Phase-0-Bericht; Datenschutzprüfung generisch"),
     ("pipeline/verify.py", A, "Verifikation", "Stichprobe gegen Bonner OParl-API, Haltestellen; auf Kölner RIS umstellen (Phase 6)"),
-    ("pipeline/besetzung.py", A, "Akteure (Gremien)", "Mitgliedschaften aus Bonner OParl; Köln: Abrufmenge gegen Abrufpolitik abwägen – Freigabe offen"),
-    ("pipeline/einfachseite.py", A, "Verstehen (Einfache Sprache)", "nicht ausdrücklich in 5.4; Texte stark Bonn-bezogen – Freigabe offen"),
-    ("pipeline/kurzfassung.py", A, "Kurzfassungen", "laut 2. zulässig mit Kennzeichnung, aber nicht in 5.4; braucht Volltexte – Freigabe offen"),
+    ("pipeline/besetzung.py", D, "Akteure (Gremien)", "Mitgliedschaften aus Bonner OParl; zweiter Lauf (Entscheidung 04.11.2026), zusätzliche Abrufe gegen Abrufpolitik abwägen"),
+    ("pipeline/einfachseite.py", D, "Verstehen (Einfache Sprache)", "nicht in 5.4; zweiter Lauf (Entscheidung 04.11.2026)"),
+    ("pipeline/kurzfassung.py", D, "Kurzfassungen", "laut 2. zulässig, nicht in 5.4; zweiter Lauf (Entscheidung 04.11.2026), braucht Volltexte"),
     ("pipeline/chat.py", D, "Ratsassistent", "Daten für den Chat (5.4: deaktivieren)"),
     ("pipeline/anliegen.py", D, "Mängelmelder Bonn", "Archiv des Bonner Anliegenmelders, ohne Kölner Pendant"),
     ("pipeline/baustellen.py", D, "Baustellen", "Bonner Baustellenfeeds (5.4: deaktivieren)"),
@@ -74,7 +74,7 @@ REGELN = [
     ("site/page.css", G, "Gestaltung", "Textseiten, ohne Stadtbezug"),
     ("site/rss.js", G, "Feeds", "Kopierknöpfe, ohne Stadtbezug"),
     ("site/technik.js", G, "Verlässlichkeit", "Interaktion der Technikseite, ohne Stadtbezug"),
-    ("site/beteiligung.js", A, "Mitmachen", "„Mitmachen in Bonn“; Kölner Instrumente (§ 24 GO, Einwohnerfragestunde, Meinung für Köln) – Freigabe offen"),
+    ("site/beteiligung.js", D, "Mitmachen", "„Mitmachen in Bonn“; zweiter Lauf (Entscheidung 04.11.2026) mit Kölner Instrumenten (§ 24 GO, Einwohnerfragestunde, Meinung für Köln)"),
     ("site/haushalt.js", D, "Haushalt", "Seite haushalt/"),
     ("site/thema.js", D, "Themenseiten", "Themenseiten"),
     ("site/mitwirken.js", D, "Soll-Modell", "Einflussregeln aus „Bonn entscheidet“"),
@@ -83,7 +83,7 @@ REGELN = [
     ("site/fonts/*", G, "Gestaltung", "Inter lokal mit Lizenz"),
     ("site/vendor/*", G, "Karte", "Leaflet und Markercluster mit Lizenzen"),
     ("site/favicon.svg", G, "Marke", "Ortsmarke ohne Stadtbezug; nur Kommentar nennt Bonn"),
-    ("site/og-image.jpg", A, "Marke", "Vorschaubild für soziale Netzwerke; Inhalt prüfen und für Köln neu erstellen"),
+    ("site/og-image.jpg", D, "Marke", "Bonner Vorschaubild; Kölner Bild im zweiten Lauf (Entscheidung 04.11.2026), bis dahin nicht ausliefern"),
     ("site/*.png", G, "Marke", "Symbole aus der Ortsmarke"),
     ("site/favicon.ico", G, "Marke", "Symbol aus der Ortsmarke"),
     # Betrieb
@@ -122,7 +122,7 @@ def main():
     offen = []
     for p in sorted(ROOT.rglob("*")):
         rel = p.relative_to(ROOT).as_posix()
-        if not p.is_file() or rel.startswith((".git/", "inventur/")):
+        if not p.is_file() or rel.startswith((".git/", "inventur/", "explore/")):
             continue
         regel = next((r for r in REGELN if fnmatch.fnmatch(rel, r[0])), None)
         if regel is None:
