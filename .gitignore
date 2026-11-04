@@ -22,3 +22,6 @@ _quellen/
 # Exploration Köln: Rohdaten und geladene Dateien nur lokal
 explore/_cache/
 .pytest_cache/
+_site/
+_kacheln/
+_kacheln_arbeit/

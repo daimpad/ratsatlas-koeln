@@ -1,17 +1,18 @@
 """Rahmen der grauen Kacheln je Zoomstufe (gleich in site/app.js, KACHEL_RAHMEN; geprüft in tests/test_kacheln.py).
 
-Zoom 10–12 zeigen die Region um Bonn, Zoom 13–14 Bonn mit etwa 7 km Rand, Zoom 15–16 Bonn mit etwa 2 km Rand.
+Zoom 10–12 zeigen die Region um Köln, Zoom 13–14 Köln mit etwa 7 km Rand, Zoom 15–16 Köln mit etwa 2 km Rand.
 Außerhalb fordert die Seite keine Kacheln an.
 """
 import math
 
-BONN = (7.0225, 50.6327, 7.2107, 50.7744)  # lon_min, lat_min, lon_max, lat_max (Grenzen der Stadtbezirke)
+# lon_min, lat_min, lon_max, lat_max: Grenzen der Kölner Stadtbezirke (data/geo/stadtbezirke_koeln.geojson, 24.09.2026)
+STADT = (6.7725, 50.8304, 7.1620, 51.0850)
 ZMIN, ZMAX = 10, 16
 VEKTOR_MAXZOOM = 15  # Protomaps-Builds enthalten Vektorkacheln bis Zoom 15; MapLibre zeichnet Zoom 16 daraus
 
 
 def rand(z):
-    """Rand in Grad (lon, lat) um Bonn je Zoomstufe der Rasterkacheln."""
+    """Rand in Grad (lon, lat) um die Stadt je Zoomstufe der Rasterkacheln."""
     if z <= 9:
         return 1.5, 1.0
     if z <= 12:
@@ -22,7 +23,7 @@ def rand(z):
 
 
 def rahmen(z):
-    lo1, la1, lo2, la2 = BONN
+    lo1, la1, lo2, la2 = STADT
     d = rand(z)
     return lo1 - d[0], la1 - d[1], lo2 + d[0], la2 + d[1]
 

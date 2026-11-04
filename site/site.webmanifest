@@ -1,7 +1,7 @@
 {
-  "name": "Ratsatlas Bonn",
+  "name": "Ratsatlas Köln",
   "short_name": "Ratsatlas",
-  "description": "Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ämtern und Quellen.",
+  "description": "Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen.",
   "lang": "de",
   "start_url": "./",
   "scope": "./",

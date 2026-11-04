@@ -1,5 +1,5 @@
 # Graue Kartenkacheln der Seite aus OSM-Daten erzeugen (Entscheidung 02.11.2026, verstaendlichkeit/kartenquellen/OSM_GRAU.md):
-# Ausschnitt Bonn aus dem neuesten Protomaps-Build (HTTP-Range, keine Kacheln von tile.openstreetmap.org), mit MapLibre
+# Ausschnitt Köln aus dem neuesten Protomaps-Build (HTTP-Range, keine Kacheln von tile.openstreetmap.org), mit MapLibre
 # in Chromium gezeichnet, in 16 Graustufen zerlegt (Zoom 10–16, rund 4.400 Dateien, 20 MB). Ablage im Branch `kacheln`
 # als einzelner Commit, der jeweils ersetzt wird; pages.yml übernimmt die Kacheln nach kacheln/ in die Seite und in den
 # Branch deploy. Vierteljährlich und auf Knopfdruck; danach startet er pages.yml. Bei Pull Requests, die die Skripte
@@ -47,14 +47,14 @@ jobs:
           npm ci --no-audit --no-fund
           npx playwright install --with-deps chromium
 
-      - name: Ausschnitt Bonn aus dem neuesten Protomaps-Build
+      - name: Ausschnitt Köln aus dem neuesten Protomaps-Build
         run: |
           mkdir -p _kacheln_arbeit
-          python -I pipeline/kacheln/ausschnitt.py _kacheln_arbeit/bonn.pmtiles _kacheln_arbeit/stand.json
+          python -I pipeline/kacheln/ausschnitt.py _kacheln_arbeit/stadt.pmtiles _kacheln_arbeit/stand.json
           python -I pipeline/kacheln/rahmen.py > _kacheln_arbeit/plan.json
 
       - name: Zeichnen
-        run: node pipeline/kacheln/rendern.mjs _kacheln_arbeit/bonn.pmtiles _kacheln_arbeit/plan.json _kacheln_arbeit/bloecke
+        run: node pipeline/kacheln/rendern.mjs _kacheln_arbeit/stadt.pmtiles _kacheln_arbeit/plan.json _kacheln_arbeit/bloecke
 
       - name: Zerlegen in Kacheln
         run: python -I pipeline/kacheln/zerlegen.py _kacheln_arbeit/bloecke _kacheln/kacheln _kacheln_arbeit/stand.json

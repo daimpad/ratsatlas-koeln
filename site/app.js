@@ -1,20 +1,21 @@
-// Ratsatlas Bonn – Karte vollflächig, darüber Liste, Zeitleiste, Detail (Prozesslinie mit Evidenzstatus)
-// und typische Wege. Liest die Exporte der Pipeline; ohne Gesamtexport Rückfall auf den Pilot Endenich.
+// Ratsatlas Köln – Karte vollflächig, darüber Liste, Zeitleiste, Detail (Prozesslinie mit Evidenzstatus)
+// und typische Wege. Liest die Exporte der Pipeline (data/export/koeln). Aus dem Ratsatlas Köln übernommen.
 (function () {
   "use strict";
-  const BONN = "data/export/bonn/";
-  const PILOT = "data/export/endenich/vorlagen.json";
+  const STADT = "koeln", STADT_NAME = "Köln";   // Gebietsart „ganze Stadt“ in Links (?gebiet=koeln:ganz) und Pfaden
+  const BONN = `data/export/${STADT}/`;          // Name aus Bonn übernommen: Basispfad der Exporte
+  const PILOT = null;                             // kein Pilot-Stadtteil (CLAUDE.md 2)
   // Flächen: vereinfacht aus dem Gesamtexport (pipeline/flaechen.py, rund 2 m), sonst die vollen Flächen
-  const GEO = { ortsteil: "data/geo/ortsteile_bonn.geojson", bezirk: "data/geo/stadtbezirke_bonn.geojson",
-    bplan: "data/geo/bebauungsplaene_bonn.geojson" };
+  const GEO = { ortsteil: "data/geo/stadtteile_koeln.geojson", bezirk: "data/geo/stadtbezirke_koeln.geojson",
+    bplan: "data/geo/bebauungsplaene_koeln.geojson" };
   const GEO_LIGHT = { ortsteil: `${BONN}flaechen/ortsteile.json`, bezirk: `${BONN}flaechen/bezirke.json`,
     bplan: `${BONN}flaechen/bebauungsplaene.json` };
   const loadGeo = (k) => fetch(GEO_LIGHT[k]).then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
     .catch(() => fetch(GEO[k]).then((r) => r.json()));
-  // Startzustand ohne Gebiet im Link: Übersicht über ganz Bonn (Stadtbezirke anklickbar, noch keine Vorlagen geladen)
-  const DEFAULT_AREA = "bonn:alle";
-  const OVERVIEW_HINT = "Ganz Bonn: auf der Karte einen Stadtbezirk und dann einen Ortsteil anklicken oder oben ein Gebiet wählen. Die Suche findet Vorlagen in ganz Bonn.";
-  const REPO = "https://github.com/daimpad/allris-test";
+  // Startzustand ohne Gebiet im Link: Übersicht über ganz Köln (Stadtbezirke anklickbar, noch keine Vorlagen geladen)
+  const DEFAULT_AREA = `${STADT}:alle`;
+  const OVERVIEW_HINT = "Ganz Köln: auf der Karte einen Stadtbezirk und dann einen Stadtteil anklicken oder oben ein Gebiet wählen. Die Suche findet Vorlagen in ganz Köln.";
+  const REPO = "https://github.com/daimpad/ratsatlas-koeln";
   const RANK = { hoch: 3, mittel: 2, niedrig: 1 };
   const LIST_STEP = 50;  // Liste in Schritten zu 50 mit „Weitere … anzeigen“ (Ladezeit Schritt 2, Entscheidung 02.11.2026)
   const MOBILE = matchMedia("(max-width: 900px)");
@@ -22,16 +23,20 @@
   const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const CONF = { hoch: "Ort gesichert", mittel: "Ort erschlossen", niedrig: "Ort unsicher" };
   const METHOD = {
-    oparl_location: "Koordinate der Stadt (OParl)", strasse: "Straßenname im Titel",
-    "strasse+ortsteil": "Straßen- und Ortsteilname im Titel", "strasse+bezirk": "Straßenname im Titel, Bezirk eingegrenzt",
-    "strasse+kreuzung": "Straßennamen im Titel, Ortsteil der Kreuzung",
-    "strasse+hausnummer": "Straßenname mit Hausnummer im Titel, Ortsteil laut Hausnummernverzeichnis der Stadt",
-    strasse_mehrdeutig: "Straßenname im Titel, mehrere Lagen", ortsteil_name: "Ortsteilname im Titel",
-    ortsteil_adjektiv: "Ortsteil im Titel (z. B. „Endenicher …“)",
-    ortsteil_variante: "Ortsteilname im Titel, abweichende Schreibung (z. B. „Poppeldorf“)", stadtbezirk_name: "Stadtbezirk im Titel",
+    oparl_location: "Ortsangabe der Stadt (OParl)", oparl_sublocality: "Stadtteil laut Ortsangabe der Stadt (OParl)",
+    strasse: "Straßenname im Titel",
+    "strasse+hausnummer_punkt": "Straßenname mit Hausnummer im Titel, Hauskoordinate laut „Adressen Köln“ (nur Vorlagen der Verwaltung und politische Anträge)",
+    ortsteil_teilname: "Teil eines Stadtteilnamens im Titel (z. B. „Heumar“ für Rath/Heumar)",
+    district_from_committee: "nur in einer Bezirksvertretung beraten, Ort sonst unbekannt",
+    "strasse+ortsteil": "Straßen- und Stadtteilname im Titel", "strasse+bezirk": "Straßenname im Titel, Bezirk eingegrenzt",
+    "strasse+kreuzung": "Straßennamen im Titel, Stadtteil der Kreuzung",
+    "strasse+hausnummer": "Straßenname mit Hausnummer im Titel, Stadtteil laut „Adressen Köln“",
+    strasse_mehrdeutig: "Straßenname im Titel, mehrere Lagen", ortsteil_name: "Stadtteilname im Titel",
+    ortsteil_adjektiv: "Stadtteil im Titel (z. B. „Ehrenfelder …“)",
+    ortsteil_variante: "Stadtteilname im Titel, abweichende Schreibung", stadtbezirk_name: "Stadtbezirk im Titel",
     stadtbezirk_variante: "Stadtbezirk im Titel, abweichende Schreibung",
     stadtbezirk_adjektiv: "Stadtbezirk im Titel (Adjektiv)", vererbt: "von der übergeordneten Vorlage übernommen",
-    bebauungsplan: "Bebauungsplan-Nummer im Titel, Geltungsbereich laut Stadt Bonn",
+    bebauungsplan: "Bebauungsplan-Nummer im Titel, Geltungsbereich laut Stadt Köln",
     objekt_name: "Name eines Gebäudes oder einer Anlage im Titel, Lage laut OpenStreetMap",
   };
   const STATUS = {
@@ -45,21 +50,21 @@
   const LIMITS = `<details class="acc"><summary>Was diese Darstellung nicht zeigen kann</summary><ul>
     <li>Verwaltungsinterne Abläufe vor dem Datum der Vorlage (Erarbeitung, Mitzeichnung, Freigaben).</li>
     <li>Die Umsetzung von Beschlüssen: Die Beschlusskontrolle hat keine öffentliche Schnittstelle.</li>
-    <li>Ob jeder Schritt nach Regelwerk eingehalten wurde: Das Soll ist ein vereinfachtes Modell; abgeglichen wird nur, welche Arten von Gremien beraten haben, nicht Reihenfolge, Fristen oder Rollen.</li>
-    <li>Inhalte nichtöffentlicher Beratungen und Vorlagen vor Oktober 2019.</li>
-    <li>Sitzungen und Ergebnisse, die OParl-Lite (noch) nicht verknüpft.</li></ul>
+    <li>Ob jeder Schritt nach Regelwerk eingehalten wurde: Ein Abgleich mit der Kölner Zuständigkeitsordnung ist noch nicht eingebaut.</li>
+    <li>Inhalte nichtöffentlicher Beratungen und Vorlagen, die das Ratsinformationssystem nicht über die OParl-Schnittstelle anbietet.</li>
+    <li>Beratungen, deren Sitzung oder Tagesordnungspunkt in den Daten fehlt.</li></ul>
     <p class="hint">Abweichungen zwischen Regel und Ablauf sind Befunde, keine Bewertung.</p></details>`;
   // Startfenster „Los geht's“ im Vorgang, solange keine Vorlage gewählt ist; die Tour steht in site/tour.js
   const INTRO = `<div class="intro">
-    <p class="intro-lead">Was Rat und Bezirksvertretungen der Stadt Bonn beraten – wo, wann, wer und mit welchem Geld.</p>
+    <p class="intro-lead">Was Rat, Ausschüsse und Bezirksvertretungen der Stadt Köln beraten – wo, wann und wer.</p>
     <button type="button" class="btn btn-cta tour-cta" data-tour><span class="tour-cta-dot" aria-hidden="true"></span>Tour durch alle Funktionen</button>
-    <p><a href="einfach/">Der Ratsatlas in Einfacher Sprache</a></p></div>${LIMITS}`;
+    </div>${LIMITS}`;
 
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   // nur http(s)-Adressen aus den Daten werden zu Links
   const safeUrl = (u) => (/^https?:\/\//i.test(String(u || "")) ? esc(u) : null);
-  // heutiges Datum in Bonn (nicht UTC: zwischen 0 und 2 Uhr wäre es sonst der Vortag), bei jedem Aufruf neu
+  // heutiges Datum in Köln (nicht UTC: zwischen 0 und 2 Uhr wäre es sonst der Vortag), bei jedem Aufruf neu
   const heute = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin" }).format(new Date());
   const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
   // Formatierer einmal anlegen: toLocaleDateString mit Optionen baut sie bei jedem Aufruf neu (Ladezeit Schritt 2:
@@ -72,7 +77,7 @@
   let map, cluster, outline, markers = new Map(), tl = null, range = null, loadSeq = 0, detailSeq = 0, shown = LIST_STEP, lastList = [], lastMarkers = [], colorBy = "sicherheit", legendEl = null, mapStack = null, mapSheet = null, mapToggles = [], setMapMenu = () => {}, mapMenuCount = null, planOn = false, allPlans = null, shownPlan = null;
   let bau = null, bauOn = false, bauLayer = null, shownSite = null, bauByRef = new Map();
   let kxOn = new Set(), kxData = {}, kxLayers = {}, brwBr = null;  // zuschaltbare Flächen (Überschwemmung, Bodenrichtwerte)
-  // Suche über ganz Bonn (suche.json, erst bei Bedarf geladen)
+  // Suche über ganz Köln (suche.json, erst bei Bedarf geladen)
   let search = null, searchLoading = null;
   const THEMES = {  // wie pipeline/topics.THEMES
     verkehr: "Verkehr und Mobilität", bauen: "Bauen und Stadtentwicklung", umwelt: "Umwelt, Grün und Klima",
@@ -302,7 +307,7 @@
   // --- Gebiet ----------------------------------------------------------------------------------------
   function parseArea(value) {
     const [kind, key] = (value || "").split(":");
-    if (!index) return { kind: "ortsteil", key: "endenich", name: "Endenich", file: PILOT };
+    if (!index) return { kind: STADT, key: "alle", name: `ganz ${STADT_NAME}`, file: null };  // ohne Gesamtexport kein Pilot
     if (kind === "ortsteil") {
       const o = index.ortsteile.find((x) => x.slug === key);
       if (o) return { kind, key, name: o.name, file: `${BONN}ortsteile/${key}.json` };
@@ -311,7 +316,7 @@
       const b = index.bezirke.find((x) => x.slug === key);
       if (b) return { kind, key, name: b.name, file: `${BONN}bezirke/${key}.json` };
     }
-    if (kind === "bonn") return { kind, key: "alle", name: "ganz Bonn", file: null };
+    if (kind === STADT) return { kind, key: "alle", name: "ganz Köln", file: null };
     if (kind === "ohne" && index.ohne_ortsbezug.some((x) => x.jahr === key)) {
       return { kind, key, name: `ohne Ortsbezug ${key}`, file: `${BONN}ohne-ortsbezug/${key}.json` };
     }
@@ -319,11 +324,11 @@
   }
   function fillAreaSelect() {
     const sel = $("#f-area");
-    if (!index) { sel.innerHTML = '<option value="ortsteil:endenich">Endenich (Pilot)</option>'; return; }
+    if (!index) { sel.innerHTML = `<option value="${STADT}:alle">Daten nicht verfügbar</option>`; return; }
     const groups = {};
     index.ortsteile.forEach((o) => (groups[o.stadtbezirk] ||= []).push(o));
-    // Ausgangszustand „Gebiet wählen“ (zeigt ganz Bonn); „Ganz Bonn“ als eigener Eintrag, wenn man dorthin zurückwechselt
-    let html = '<option value="bonn:alle" hidden>Gebiet wählen</option><option value="bonn:ganz">Ganz Bonn</option>';
+    // Ausgangszustand „Gebiet wählen“ (zeigt ganz Köln); „Ganz Köln“ als eigener Eintrag, wenn man dorthin zurückwechselt
+    let html = `<option value="${STADT}:alle" hidden>Gebiet wählen</option><option value="${STADT}:ganz">Ganz ${STADT_NAME}</option>`;
     for (const bz of Object.keys(groups).sort()) {
       html += `<optgroup label="Stadtbezirk ${esc(bz)}">` + groups[bz].sort((a, b) => a.name.localeCompare(b.name, "de"))
         .map((o) => `<option value="ortsteil:${o.slug}">${esc(o.name)} (${o.count})</option>`).join("");
@@ -351,7 +356,7 @@
   async function loadArea(value, keepState) {
     const seq = ++loadSeq;
     const next = parseArea(value);
-    $("#f-area").value = next.kind === "bonn" && value === "bonn:ganz" ? value : `${next.kind}:${next.key}`;
+    $("#f-area").value = next.kind === STADT && value === `${STADT}:ganz` ? value : `${next.kind}:${next.key}`;
     $("#count").textContent = `Lade Vorlagen für ${next.name} …`;
     setLoading(true);
     let data;
@@ -375,12 +380,12 @@
     area = next;
     meta = data.meta;
     if (index && index.meta) meta = { ...meta, generated_at: index.meta.generated_at, sources: index.meta.sources };
-    const oparl = meta.sources.find((s) => s.name === "oparl-bonn") || {};
+    const oparl = meta.sources.find((s) => s.name === "oparl-koeln") || {};
     dataStand = (oparl.retrieved_at || meta.generated_at || new Date().toISOString()).slice(0, 10);
     papers = data.papers;
-    document.title = area.kind === "bonn" ? "Ratsatlas Bonn – Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld"
-      : `Ratsatlas Bonn – Ratsvorlagen ${area.kind === "ohne" ? "ohne Ortsbezug " + area.key : "in " + area.name}`;
-    $("#f-conf").hidden = area.kind === "ohne" || area.kind === "bonn";
+    document.title = area.kind === STADT ? "Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer"
+      : `Ratsatlas Köln – Ratsvorlagen ${area.kind === "ohne" ? "ohne Ortsbezug " + area.key : "in " + area.name}`;
+    $("#f-conf").hidden = area.kind === "ohne" || area.kind === STADT;
     fillFilters();
     drawOutline();
     selected = null;
@@ -398,16 +403,18 @@
     if (!$("#panel-auswertung").hidden && !$("#stats").hidden) showStats();
     render();
     syncUrl();
-    const stand = meta.sources.map((s) => `${s.name}: ${String(s.retrieved_at || "–").slice(0, 10)}`).join(" · ");
-    $("#stand").textContent = `Datenstand: ${stand}${meta.generated_at ? ` · erzeugt ${meta.generated_at.slice(0, 10)}` : ""}`;
+    const stand = meta.sources.filter((s) => s.retrieved_at).map((s) => `${QUELLE_NAME[s.name] || s.name}: ${fmtDate(String(s.retrieved_at).slice(0, 10))}`).join(" · ");
+    const fehler = index && index.meta && index.meta.abruf_fehler;
+    $("#stand").textContent = `Datenstand: ${stand || "–"}${meta.generated_at ? ` · erzeugt ${fmtDate(meta.generated_at.slice(0, 10))}` : ""}`
+      + (fehler ? ` · Der letzte Abruf am ${fmtDate(String(fehler.zeit).slice(0, 10))} ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand.` : "");
   }
 
   // --- Karte -----------------------------------------------------------------------------------------
   const MARKER = { radius: 7, weight: 2, color: "#fff", fillOpacity: 0.95 };
   // Karte mit Kacheln vor den übrigen Startdaten anlegen: Die Kacheln sind das größte Element beim Start und warteten
   // bisher auf alle Daten (Phase 0 „Verständlichkeit“: ein Viertel der Ladezeit mobil). Erster Ausschnitt aus dem
-  // Umriss des Gebiets in index.json (bbox), sonst ganz Bonn (Grenzen der Stadtbezirke).
-  const BONN_BOUNDS = [[50.6327, 7.0225], [50.7744, 7.2107]];
+  // Umriss des Gebiets in index.json (bbox), sonst ganz Köln (Grenzen der Stadtbezirke).
+  const BONN_BOUNDS = [[50.8304, 6.7725], [51.085, 7.162]];   // Name aus Bonn; Grenzen der Kölner Stadtbezirke
   let kacheln = null;
   function startBounds(idx, value) {
     const [kind, key] = String(value || "").split(":");
@@ -418,7 +425,7 @@
   // Graue Standardansicht: eigene Rasterkacheln aus OSM-Daten vom Server dieser Seite (Workflow kacheln.yml, Ausschnitt
   // aus Protomaps, ODbL; Entscheidung 02.11.2026). Kachelbereich je Zoomstufe wie pipeline/kacheln/rahmen.py, außerhalb
   // fordert die Seite nichts an; über Zoom 16 werden die Kacheln vergrößert. „Farbige Karte“: Kacheln von OpenStreetMap.
-  const KACHEL_RAHMEN = { 10: [530, 342, 533, 346], 11: [1061, 684, 1067, 692], 12: [2122, 1368, 2135, 1384], 13: [4253, 2747, 4262, 2759], 14: [8507, 5494, 8524, 5518], 15: [17020, 10998, 17043, 11027], 16: [34040, 21996, 34086, 22054] };
+  const KACHEL_RAHMEN = { 10: [529, 340, 533, 345], 11: [1059, 681, 1067, 690], 12: [2119, 1363, 2135, 1380], 13: [4247, 2735, 4261, 2752], 14: [8495, 5471, 8522, 5504], 15: [16997, 10953, 17038, 10998], 16: [33995, 21906, 34077, 21997] };
   const OSM_LINK = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap-Mitwirkende</a> (ODbL)';
   const GrauKacheln = L.TileLayer.extend({
     _isValidTile(c) {
@@ -465,15 +472,15 @@
   function initMap() {
     createMap();
     L.control.zoom({ position: "bottomright" }).addTo(map);
-    // Ganz Bonn ansehen: nur die Ansicht, das Gebiet bleibt; herausgezoomt sind die Stadtbezirke anklickbar
+    // Ganz Köln ansehen: nur die Ansicht, das Gebiet bleibt; herausgezoomt sind die Stadtbezirke anklickbar
     const Whole = L.Control.extend({
       options: { position: "bottomright" },
       onAdd() {
         const b = L.DomUtil.create("button", "map-style map-whole");
         b.type = "button";
         // Telefon: nur das Symbol, der Name bleibt für Bildschirmleser (Entscheidung 02.11.2026)
-        b.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg><span class="map-whole-text">Ganz Bonn ansehen</span>';
-        b.title = "Karte auf ganz Bonn zoomen; Stadtbezirke und Ortsteile lassen sich anklicken";
+        b.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg><span class="map-whole-text">Ganz Köln ansehen</span>';
+        b.title = "Karte auf ganz Köln zoomen; Stadtbezirke und Stadtteile lassen sich anklicken";
         b.addEventListener("click", () => { navDeep = false; navFocus = null; map.fitBounds(bonnBounds || L.geoJSON(geo.bezirk).getBounds(), mapPadding()); });
         L.DomEvent.disableClickPropagation(b);
         return b;
@@ -550,7 +557,7 @@
       },
     });
     new BauToggle().addTo(map);
-    // Überschwemmungsgebiete und Bodenrichtwertzonen (Kontextdaten): erst beim Einschalten geladen, ab Ortsteil-Zoom gezeichnet
+    // Überschwemmungsgebiete und Bodenrichtwertzonen (Kontextdaten): erst beim Einschalten geladen, ab Stadtteil-Zoom gezeichnet
     // ohne kontext.json keine Ebenen aus der Adresse: die Schalter wären ausgeblendet und die Ebene nicht abschaltbar
     kxOn = new Set((new URLSearchParams(location.search).get("ebenen") || "").split(",").filter((k) => kontext && Object.hasOwn(KX, k)));
     for (const [k, d] of Object.entries(KX)) {
@@ -669,7 +676,7 @@
   function drawOutline() {
     if (outline) outline.remove();
     outline = null;
-    if (area.kind === "bonn") {
+    if (area.kind === STADT) {
       navDeep = false;
       navFocus = null;
       map.fitBounds(L.geoJSON(geo.bezirk).getBounds(), mapPadding());
@@ -683,7 +690,7 @@
     map.fitBounds(outline.getBounds(), mapPadding());
   }
   // Gebiete auf der Karte wählen: herausgezoomt die Stadtbezirke als Flächen mit Namen (Klick zoomt hinein und zeigt
-  // seine Ortsteile mit Namen), näher die Ortsteile (Klick lädt das Gebiet wie die Auswahl oben). Eigene Ebene unter
+  // seine Stadtteile mit Namen), näher die Stadtteile (Klick lädt das Gebiet wie die Auswahl oben). Eigene Ebene unter
   // Plänen, Baustellen und Punkten; die Namen liegen in der Ebene der Tooltips und fangen keine Klicks ab.
   // Farbstärke der Flächen: Vorlagen der letzten zwölf Monate (index.json, pipeline/gebietszahlen.py) in fünf Stufen,
   // als lila Verlauf (SVG-Verläufe in der Ebene „gebiete“). Beim Überfahren: heller Glaseffekt (weißer Verlauf, Rand, Schein).
@@ -710,7 +717,7 @@
         <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
     svg.insertBefore(defs, svg.firstChild);
   }
-  // Kontextdaten je Ortsteil (kontext.json, pipeline/kontext.py): Einordnung, kein Urteil; alle Werte abgeleitet.
+  // Kontextdaten je Stadtteil (kontext.json, pipeline/kontext.py): Einordnung, kein Urteil; alle Werte abgeleitet.
   // Gefärbt werden nur Anteile und Mittelwerte – Zahlen wie Kitas oder Haltestellen bilden vor allem die Größe ab.
   const KONTEXT_FARBE = { unter_18: "Anteil unter 18 Jahren", ab_65: "Anteil ab 65 Jahren", miete: "Nettokaltmiete (Zensus 2022)",
     bodenrichtwert: "Bodenrichtwert Wohnbauland", hitze: "Hitze: dringender Handlungsbedarf", ueberschwemmung: "Im Überschwemmungsgebiet",
@@ -724,14 +731,14 @@
     if (unit === "€/m²") return `${Number(v).toLocaleString("de-DE", { minimumFractionDigits: key === "miete" ? 2 : 0, maximumFractionDigits: 2 })} €/m²`;
     return de(v);
   }
-  // Wert eines Gebiets aus index.json (Ortsteile tragen stadtbezirk, Stadtbezirke nicht)
+  // Wert eines Gebiets aus index.json (Stadtteile tragen stadtbezirk, Stadtbezirke nicht)
   const kValue = (info, key) => ((info.stadtbezirk ? kontext.ortsteile : kontext.bezirke)[info.name] || {})[key] ?? null;
-  // Stufen nach Quintilen der Ortsteile, gerundet (Prozent ganz, Miete 0,1 €, Bodenrichtwert 10 €); gleich für Stadtbezirke
+  // Stufen nach Quintilen der Stadtteile, gerundet (Prozent ganz, Miete 0,1 €, Bodenrichtwert 10 €); gleich für Stadtbezirke
   function kBreaks(key) {
     const v = Object.values(kontext.ortsteile).map((o) => o[key]).filter((x) => x != null).sort((a, b) => a - b);
     const st = KONTEXT_STEP[key] || 1;
     const br = [0.2, 0.4, 0.6, 0.8].map((q) => Math.round(Math.ceil(v[Math.floor(q * (v.length - 1))] / st) * st * 10) / 10);
-    return [...new Set(br)].filter((b) => b > 0);   // keine Klasse „unter 0 %“ (viele Ortsteile ohne Überschwemmungsgebiet)
+    return [...new Set(br)].filter((b) => b > 0);   // keine Klasse „unter 0 %“ (viele Stadtteile ohne Überschwemmungsgebiet)
   }
   // Tabellenzelle; beim Bodenrichtwert der Anteil der Einwohner in einer Zone, wenn viele außerhalb wohnen
   // (Misch- und Kerngebiete ohne Zone für Wohnbauland; Schwelle aus kontext.json)
@@ -752,14 +759,14 @@
     const d = kontext.meta.kennzahlen[key], q = kontext.meta.quellen[d.quelle] || {};
     return { ...d, q, stand: q.stand ? (q.stand.length === 10 ? fmtDate(q.stand) : q.stand) : "" };
   }
-  // Steckbrief in der Liste: alle Kennzahlen des Gebiets neben dem Stadtbezirk (Ortsteil) bzw. ganz Bonn (Stadtbezirk)
+  // Steckbrief in der Liste: alle Kennzahlen des Gebiets neben dem Stadtbezirk (Stadtteil) bzw. ganz Köln (Stadtbezirk)
   function fillKontext() {
     const box = $("#kontext-box");
     if (!box) return;
     const own = kontext && area && (area.kind === "ortsteil" ? kontext.ortsteile[area.name] : area.kind === "bezirk" ? kontext.bezirke[area.name] : null);
     if (!own) { box.hidden = true; return; }
     const bez = area.kind === "ortsteil" ? areaBezirk() : null;
-    const cmp = bez ? kontext.bezirke[bez] : kontext.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Bonn";
+    const cmp = bez ? kontext.bezirke[bez] : kontext.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Köln";
     const klein = own.einwohner < kontext.meta.mindest_einwohner;
     const rows = (kontext.meta.reihenfolge || Object.keys(kontext.meta.kennzahlen)).map((k) => `<tr><th scope="row">${esc(kontext.meta.kennzahlen[k].titel)}</th>
       <td>${kCell(k, own)}</td><td>${kCell(k, cmp)}</td></tr>`).join("");
@@ -767,7 +774,7 @@
       – ${esc(q.lizenz)}${q.stand ? `, Stand ${esc(q.stand.length === 10 ? fmtDate(q.stand) : q.stand)}` : ""}${q.uebergang ? ` (${esc(q.uebergang)})` : ""}</li>`).join("");
     const methoden = (kontext.meta.reihenfolge || Object.keys(kontext.meta.kennzahlen)).map((k) => kontext.meta.kennzahlen[k]).map((d) => `<li><strong>${esc(d.titel)}:</strong> ${esc(d.methode)}</li>`).join("");
     box.innerHTML = `<summary>Zahlen zu ${esc(area.name)}<span class="derived">abgeleitet</span></summary>
-      <p class="hint">Zur Einordnung der Vorlagen, kein Urteil über das Gebiet. Alle Werte sind auf ${area.kind === "ortsteil" ? "Ortsteile" : "Stadtbezirke"} umgerechnet; Stichtage verschieden.${klein ? ` Unter ${de(kontext.meta.mindest_einwohner)} Einwohnern keine Anteile und Mittelwerte.` : ""}</p>
+      <p class="hint">Zur Einordnung der Vorlagen, kein Urteil über das Gebiet. Alle Werte sind auf ${area.kind === "ortsteil" ? "Stadtteile" : "Stadtbezirke"} umgerechnet; Stichtage verschieden.${klein ? ` Unter ${de(kontext.meta.mindest_einwohner)} Einwohnern keine Anteile und Mittelwerte.` : ""}</p>
       <table class="kontext-table"><thead><tr><th scope="col">Kennzahl</th><th scope="col">${esc(area.name)}</th><th scope="col">${esc(cmpName)}</th></tr></thead>
       <tbody>${rows}</tbody></table>
       ${anliegenSteckbrief(bez)}
@@ -779,7 +786,7 @@
   function anliegenSteckbrief(bez) {
     if (!anliegen) return "";
     const own = (area.kind === "ortsteil" ? anliegen.ortsteile : anliegen.bezirke)[area.name] || null;   // fehlt: keine Meldung
-    const cmp = bez ? anliegen.bezirke[bez] : anliegen.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Bonn";
+    const cmp = bez ? anliegen.bezirke[bez] : anliegen.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Köln";
     const m = anliegen.meta, num = (v) => (v == null ? "unter 3" : typeof v === "number" ? de(v) : esc(v));
     const rows = [...m.gruppen, "gesamt"].map((g) => `<tr><th scope="row">${g === "gesamt" ? "Zusammen" : esc(g)}</th>
       <td>${num((own || {})[g])}</td><td>${num((cmp || {})[g])}</td></tr>`).join("");
@@ -788,9 +795,9 @@
       <p class="hint">${esc(m.hinweis)} Gezählt: ${fmtDate(m.von)} bis ${fmtDate(m.bis)} (${m.tage} Tage).${teil}</p>
       <table class="kontext-table"><thead><tr><th scope="col">Gruppe der Stadt</th><th scope="col">${esc(area.name)}</th><th scope="col">${esc(cmpName)}</th></tr></thead>
       <tbody>${rows}</tbody></table>
-      <p class="hint">Quelle: <a href="${safeUrl(m.url)}">${esc(m.titel)}</a> – ${esc(m.lizenz.replace(/\s*\(.*\)$/, ""))}, Abruf ${fmtDate(m.abruf)}; nur Kategorie, Tag, Ortsteil und Status übernommen.</p></section>`;
+      <p class="hint">Quelle: <a href="${safeUrl(m.url)}">${esc(m.titel)}</a> – ${esc(m.lizenz.replace(/\s*\(.*\)$/, ""))}, Abruf ${fmtDate(m.abruf)}; nur Kategorie, Tag, Stadtteil und Status übernommen.</p></section>`;
   }
-  // Vorgang: zwei bis drei Kennzahlen passend zum (abgeleiteten) Thema, nur bei genau einem Ortsteil (eigene Ortsbezüge)
+  // Vorgang: zwei bis drei Kennzahlen passend zum (abgeleiteten) Thema, nur bei genau einem Stadtteil (eigene Ortsbezüge)
   const KONTEXT_THEMA = { bauen: ["bodenrichtwert", "miete"], soziales: ["miete", "ab_65", "unter_18"],
     bildung: ["unter_18", "kitas", "kita_plaetze_ue3"], kinder: ["unter_18", "kitas", "kita_plaetze_u3"],
     verkehr: ["haltestellen", "einwohner"], umwelt: ["hitze", "ueberschwemmung"] };
@@ -807,12 +814,12 @@
     const rows = keys.map((k) => `<tr><th scope="row">${esc(kontext.meta.kennzahlen[k].titel)}</th><td>${kCell(k, v)}</td><td>${kCell(k, b)}</td></tr>`).join("");
     const qs = [...new Set(keys.map((k) => kontext.meta.kennzahlen[k].quelle))].map((q) => kontext.meta.quellen[q]).filter(Boolean)
       .map((q) => `${esc(q.titel)} (${esc(q.lizenz)}${q.stand ? `, Stand ${esc(q.stand.length === 10 ? fmtDate(q.stand) : q.stand)}` : ""})`).join("; ");
-    return `<section class="kontext-vorgang" aria-labelledby="kontext-h"><h4 id="kontext-h">Zum Ortsteil ${esc(ot)} <span class="derived">abgeleitet</span></h4>
+    return `<section class="kontext-vorgang" aria-labelledby="kontext-h"><h4 id="kontext-h">Zum Stadtteil ${esc(ot)} <span class="derived">abgeleitet</span></h4>
       <table class="kontext-table"><thead><tr><th scope="col">Kennzahl</th><th scope="col">${esc(ot)}</th><th scope="col">Stadtbezirk ${esc(bez)}</th></tr></thead>
       <tbody>${rows}</tbody></table>
-      <p class="hint">Einordnung, kein Beleg für die Vorlage und kein Urteil über den Ortsteil. Auswahl nach dem abgeleiteten Thema; Werte auf Ortsteile umgerechnet.${v.einwohner < kontext.meta.mindest_einwohner ? ` Unter ${de(kontext.meta.mindest_einwohner)} Einwohnern keine Anteile und Mittelwerte.` : ""} Quellen: ${qs}.</p></section>`;
+      <p class="hint">Einordnung, kein Beleg für die Vorlage und kein Urteil über den Stadtteil. Auswahl nach dem abgeleiteten Thema; Werte auf Stadtteile umgerechnet.${v.einwohner < kontext.meta.mindest_einwohner ? ` Unter ${de(kontext.meta.mindest_einwohner)} Einwohnern keine Anteile und Mittelwerte.` : ""} Quellen: ${qs}.</p></section>`;
   }
-  // Stufengrenzen: Ortsteile nach Quintilen, Stadtbezirke in gleichen Abständen bis zum Höchstwert
+  // Stufengrenzen: Stadtteile nach Quintilen, Stadtbezirke in gleichen Abständen bis zum Höchstwert
   function quintiles(values) {
     const v = [...values].sort((a, b) => a - b);
     return [...new Set([0.2, 0.4, 0.6, 0.8].map((q) => v[Math.floor(q * (v.length - 1))] + 1))];
@@ -842,19 +849,19 @@
   // Zahl im Hinweis beim Überfahren und in der Beschriftung
   function navTip(info, scope) {
     if (!navMetric) return `<span class="nav-big">${de(info.jahr)}</span> Vorlagen in den letzten 12 Monaten
-      <br><span class="nav-dim">${de(scope === "bz" ? info.alle : info.count)} seit Oktober 2019</span>${fact(info.auffaellig)}`;
+      <br><span class="nav-dim">${de(scope === "bz" ? info.alle : info.count)} insgesamt</span>${fact(info.auffaellig)}`;
     const kk = kKey(navMetric);
     if (kk) {
       const v = kValue(info, kk), d = kQuelle(kk), b = scope === "ot" ? kontext.bezirke[info.stadtbezirk] : null;
       if (v == null) return `${esc(d.titel)}: <span class="nav-dim">${kOhne(kk)}</span>`;
       return `<span class="nav-big">${kFmt(kk, v)}</span> ${esc(d.titel)}
-        <br><span class="nav-dim">${b ? `Stadtbezirk ${esc(info.stadtbezirk)} ${kFmt(kk, b[kk])} · ` : ""}ganz Bonn ${kFmt(kk, kontext.bonn[kk])} · Stand ${esc(d.stand)} · abgeleitet</span>`;
+        <br><span class="nav-dim">${b ? `Stadtbezirk ${esc(info.stadtbezirk)} ${kFmt(kk, b[kk])} · ` : ""}ganz Köln ${kFmt(kk, kontext.bonn[kk])} · Stand ${esc(d.stand)} · abgeleitet</span>`;
     }
     const label = esc(THEMES[navMetric]), bonn = (index.zahlen?.themen_bonn || {})[navMetric] || 0;
     if (!info.themen) return `${label}: <span class="nav-dim">zu wenige Vorlagen für einen Anteil (unter ${de(index.zahlen?.themen_min || 20)})</span>`;
     const [n, share] = info.themen[navMetric] || [0, 0];
     return `<span class="nav-big">${pct(share)}</span> der Vorlagen: ${label}
-      <br><span class="nav-dim">${de(n)} von ${de(scope === "bz" ? info.alle : info.count)} seit Oktober 2019 · ganz Bonn ${pct(bonn)} · Themen abgeleitet</span>`;
+      <br><span class="nav-dim">${de(n)} von ${de(scope === "bz" ? info.alle : info.count)} · ganz Köln ${pct(bonn)} · Themen abgeleitet</span>`;
   }
   const navNumber = (info) => (kKey(navMetric) ? kFmt(kKey(navMetric), kValue(info, kKey(navMetric)))
     : !navMetric ? de(info.jahr) : info.themen ? pct((info.themen[navMetric] || [0, 0])[1]) : "–");
@@ -869,14 +876,14 @@
   const PROZENT = new Intl.NumberFormat("de-DE", { maximumFractionDigits: 0 });
   const pct = (v) => `${PROZENT.format(Number(v))} %`;
   const navFill = (info, br) => { const v = metricValue(info); return v == null ? NAV_NONE : step(klass(v, br)); };
-  const fact = (a) => (a ? `<br><span class="nav-dim">Auffällig häufig: ${esc(a.label)} (${a.anteil} % hier, ${a.anteil_bonn} % in ganz Bonn)</span>` : "");
+  const fact = (a) => (a ? `<br><span class="nav-dim">Auffällig häufig: ${esc(a.label)} (${a.anteil} % hier, ${a.anteil_bonn} % in ganz Köln)</span>` : "");
   const glassOn = (layer) => { layer.setStyle(GLASS); layer.bringToFront(); layer.getElement()?.setAttribute("filter", "url(#nav-glow)"); };
   const glassOff = (layer, style) => { layer.setStyle(style); layer.getElement()?.removeAttribute("filter"); };
   const bzStyle = (layer) => ({ ...BZ_LINE, fillColor: navFill(bzInfo(layer), bzBreaks) });
   let navBezirke = null, navOrtsteile = null, bonnBounds = null, navDeep = false, navFocus = null, navLabels = null, navMode = null, navLegend = null;
   const ZAHL = new Intl.NumberFormat("de-DE");
   const de = (n) => ZAHL.format(Number(n || 0));
-  // Zoomstufe, bei der ganz Bonn ins freie Kartenfeld passt; bis dahin sind die Stadtbezirke anklickbar
+  // Zoomstufe, bei der ganz Köln ins freie Kartenfeld passt; bis dahin sind die Stadtbezirke anklickbar
   function wholeZoom() {
     const p = mapPadding();
     return map.getBoundsZoom(bonnBounds, false, L.point(p.paddingTopLeft[0] + p.paddingBottomRight[0], p.paddingTopLeft[1] + p.paddingBottomRight[1]));
@@ -903,7 +910,7 @@
         const o = index.ortsteile.find((x) => x.name === f.properties.ortsteil_bez);
         const current = () => area && area.kind === "ortsteil" && area.key === o.slug;
         layer.bindTooltip(() => `<strong>${esc(o.name)}</strong><br>${navTip(o, "ot")}
-          <br><span class="nav-dim">${current() ? "gewählt" : "Klick zeigt den Ortsteil"}</span>`, { sticky: true, className: "nav-tip" });
+          <br><span class="nav-dim">${current() ? "gewählt" : "Klick zeigt den Stadtteil"}</span>`, { sticky: true, className: "nav-tip" });
         layer.on({ mouseover: () => glassOn(layer), mouseout: () => glassOff(layer, otStyle(layer)) });
         layer.on("click", () => { if (!current()) chooseArea(`ortsteil:${o.slug}`); });
       },
@@ -914,11 +921,11 @@
         const name = f.properties.bezirk_bez;
         const n = index.ortsteile.filter((o) => o.stadtbezirk === name).length;
         const b = bzInfo(layer);
-        layer.bindTooltip(() => `<strong>Stadtbezirk ${esc(name)}</strong> <span class="nav-dim">· ${n} Ortsteile</span><br>${navTip(b, "bz")}
-          <br><span class="nav-dim">Klick zeigt die Ortsteile</span>`, { sticky: true, className: "nav-tip" });
+        layer.bindTooltip(() => `<strong>Stadtbezirk ${esc(name)}</strong> <span class="nav-dim">· ${n} Stadtteile</span><br>${navTip(b, "bz")}
+          <br><span class="nav-dim">Klick zeigt die Stadtteile</span>`, { sticky: true, className: "nav-tip" });
         layer.on({ mouseover: () => glassOn(layer), mouseout: () => glassOff(layer, bzStyle(layer)) });
         layer.on("click", () => {
-          navDeep = true; // die Ortsteile anbieten, auch wenn der Bezirk ganz Bonn ausfüllt
+          navDeep = true; // die Stadtteile anbieten, auch wenn der Bezirk ganz Köln ausfüllt
           navFocus = name;
           map.fitBounds(layer.getBounds(), mapPadding());
           updateNav(true);
@@ -968,8 +975,8 @@
     }
     return best || layer.getCenter();
   }
-  // Namen als ruhende Beschriftung: Stadtbezirke in der Übersicht, Ortsteile des gewählten Bezirks
-  // Bezirksnamen in die Mitte seiner Ortsteile, gewichtet nach Zahl der Vorlagen (der Bezirk Bonn reicht bis Röttgen,
+  // Namen als ruhende Beschriftung: Stadtbezirke in der Übersicht, Stadtteile des gewählten Bezirks
+  // Bezirksnamen in die Mitte seiner Stadtteile, gewichtet nach Zahl der Vorlagen (der Bezirk Bonn reicht bis Röttgen,
   // sein geometrischer Schwerpunkt läge am Venusberg)
   function bezirkPoint(layer) {
     const name = layer.feature.properties.bezirk_bez;
@@ -1006,14 +1013,14 @@
       navLegend.querySelector(".nav-legend-body").innerHTML = kk
         ? `<ol class="nav-ramp">${kRanges(br, kk).map((r, k) => `<li><span class="nav-sw nav-sw${k}" aria-hidden="true"></span>${r}</li>`).join("")}
             <li><span class="nav-sw nav-sw-none" aria-hidden="true"></span>${kOhne(kk)}</li></ol>
-          <p>Je ${far ? "Stadtbezirk" : "Ortsteil"}, Stufen nach den Werten der Ortsteile; ganz Bonn ${kFmt(kk, kontext.bonn[kk])}. ${esc(kd.methode)}.
+          <p>Je ${far ? "Stadtbezirk" : "Stadtteil"}, Stufen nach den Werten der Stadtteile; ganz Köln ${kFmt(kk, kontext.bonn[kk])}. ${esc(kd.methode)}.
             Quelle: ${esc(kd.q.titel || "")} (${esc(kd.q.lizenz || "")}), Stand ${esc(kd.stand)}${kd.q.uebergang ? `; ${esc(kd.q.uebergang)}` : ""}. <span class="derived">abgeleitet</span> Zur Einordnung, kein Urteil über das Gebiet.</p>`
         : navMetric
         ? `<ol class="nav-ramp">${shareRanges(br).map((r, k) => `<li><span class="nav-sw nav-sw${k}" aria-hidden="true"></span>${r}</li>`).join("")}
             <li><span class="nav-sw nav-sw-none" aria-hidden="true"></span>zu wenige Vorlagen (unter ${de(z.themen_min || 20)})</li></ol>
-          <p>Anteil der Vorlagen mit diesem Thema an allen Vorlagen mit Ortsbezug je ${far ? "Stadtbezirk" : "Ortsteil"} seit Oktober 2019; in ganz Bonn ${pct((z.themen_bonn || {})[navMetric] || 0)}. <span class="derived">abgeleitet</span> Themen aus Amt, Ausschuss und Stichwort; eine Vorlage kann mehrere Themen haben.</p>`
+          <p>Anteil der Vorlagen mit diesem Thema an allen Vorlagen mit Ortsbezug je ${far ? "Stadtbezirk" : "Stadtteil"}; in ganz Köln ${pct((z.themen_bonn || {})[navMetric] || 0)}. <span class="derived">abgeleitet</span> Themen aus Amt, Ausschuss und Stichwort; eine Vorlage kann mehrere Themen haben.</p>`
         : `<ol class="nav-ramp">${ranges(br).map((r, k) => `<li><span class="nav-sw nav-sw${k}" aria-hidden="true"></span>${r}</li>`).join("")}</ol>
-          <p>Je ${far ? "Stadtbezirk" : "Ortsteil"}${z.seit ? `, ${fmtDate(z.seit)} bis ${fmtDate(z.bis)}` : ""}. Gezählt werden Vorlagen mit Ortsbezug im Gebiet (Verortung teils abgeleitet); mehr als die Hälfte aller Vorlagen hat keinen. „Auffällig häufig“ beim Überfahren: Thema, das im Gebiet deutlich häufiger vorkommt als in ganz Bonn (abgeleitet).</p>`;
+          <p>Je ${far ? "Stadtbezirk" : "Stadtteil"}${z.seit ? `, ${fmtDate(z.seit)} bis ${fmtDate(z.bis)}` : ""}. Gezählt werden Vorlagen mit Ortsbezug im Gebiet (Verortung teils abgeleitet); mehr als die Hälfte aller Vorlagen hat keinen. „Auffällig häufig“ beim Überfahren: Thema, das im Gebiet deutlich häufiger vorkommt als in ganz Köln (abgeleitet).</p>`;
     }
     if (far) labels(navBezirke.getLayers(), "nav-label-bz");
     else if (navFocus) labels(navOrtsteile.getLayers().filter((l) => l.feature.properties.bezirk_bez === navFocus), "nav-label-ot");
@@ -1037,7 +1044,7 @@
     legendEl.innerHTML = `<summary>Legende: ${colorBy === "thema" ? "Thema" : "Sicherheit des Orts"}</summary><ul>${rows
       .map(([c, t]) => `<li><span class="swatch" style="background:${c}" aria-hidden="true"></span>${esc(t)}</li>`).join("")}</ul>
       ${colorBy === "thema" ? '<p class="hint">Bei mehreren Themen zählt das erste. Themen sind abgeleitet.</p>' : ""}
-      ${planOn ? `<ul><li><span class="swatch swatch-plan" aria-hidden="true"></span>Geltungsbereich eines rechtskräftigen Bebauungsplans (Stadt Bonn)</li></ul>
+      ${planOn ? `<ul><li><span class="swatch swatch-plan" aria-hidden="true"></span>Geltungsbereich eines rechtskräftigen Bebauungsplans (Stadt Köln)</li></ul>
         ${planIndexUrl() ? '<button type="button" class="btn btn-soft" id="plan-list">Pläne im Gebiet als Liste</button>' : ""}` : ""}
       ${bauOn && bau ? `<ul><li><span class="site-icon site-aktuell" aria-hidden="true"></span>Baustelle der Stadt, laufend</li>
         <li><span class="site-icon site-geplant" aria-hidden="true"></span>Baustelle der Stadt, geplant</li>
@@ -1090,7 +1097,7 @@
   }
   function fillParties() {
     const sel = $("#f-party"), cur = sel.value;
-    const list = scope() === "bonn" && search ? search.parties : [...new Set(papers.flatMap((p) => p.parties || []))];
+    const list = scope() === STADT && search ? search.parties : [...new Set(papers.flatMap((p) => p.parties || []))];
     // Fraktionen und Gruppen zuerst, dann Koalition, interfraktionell, Einwohner:innen, Verwaltung
     const other = ["Koalition", "interfraktionell", "Einwohner:innen", "Verwaltung"];
     const sorted = [...list.filter((x) => !other.includes(x)).sort((a, b) => a.localeCompare(b, "de")), ...other.filter((x) => list.includes(x))];
@@ -1151,14 +1158,15 @@
   }
   const themeTags = (ts) => (ts || []).slice(0, 2).map((t) => `<span class="theme">${esc(THEMES[t.theme || t])}</span>`).join("");
 
-  // Suche über ganz Bonn: Treffer aus dem Index, Öffnen lädt das Gebiet der Vorlage
-  // Suche im Text der Dokumente: erst auf Klick, über die Volltextsuche von OParl-Lite (machdenstaat). Abgefragt werden
-  // nur die Drucksachen der Treffer, kein Textausschnitt (Rahmen laut Antwort der Stadt Bonn: keine Zitate, keine Auszüge)
-  const LITE = "https://oparl.bonn.machdenstaat.de/graphql";
+  // Suche über ganz Köln: Treffer aus dem Index, Öffnen lädt das Gebiet der Vorlage
+  // Suche im Text der Dokumente: in Bonn über die Volltextsuche von OParl-Lite (machdenstaat). Für Köln gibt es keinen
+  // solchen Dienst; die Funktion bleibt abgeschaltet (LITE = null), die Schaltfläche ist in index.html ausgeblendet.
+  const LITE = null;
   const DOC_QUERY = "query($q:String!,$o:Int){ fileFullTextSearch(query:$q, limit:100, offset:$o){ totalCount pageInfo { hasNextPage } items { file { papers { reference } } } } }";
   const DOC_PAGES = 3;
   let docHits = null;
   async function docSearch(q) {
+    if (!LITE) throw new Error("Suche im Text der Dokumente für Köln nicht verfügbar");
     const refs = new Set();
     let total = 0;
     for (let page = 0; page < DOC_PAGES; page++) {
@@ -1178,7 +1186,7 @@
     status.textContent = "Suche im Text der Dokumente …";
     try {
       docHits = await docSearch(q);
-      if (index && scope() !== "bonn") setScope("bonn");
+      if (index && scope() !== STADT) setScope(STADT);
       if (!search) await loadSearch();
       shown = LIST_STEP;
       render();
@@ -1200,13 +1208,13 @@
       (!text || inTitle(r) || (doc && doc.has(r[0]))));
     const span = range ? ` · ${fmtDate(range[0])}–${fmtDate(range[1])}` : "";
     const onlyDoc = doc ? rows.filter((r) => !inTitle(r)).length : 0;
-    $("#count").textContent = `${rows.length} Treffer in ganz Bonn${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`;
+    $("#count").textContent = `${rows.length} Treffer in ganz Köln${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`;
     let html = rows.slice(0, shown).map((r) => `<li><button type="button" data-gref="${esc(r[0])}" data-area="${esc(search.areas[r[5]].key)}" aria-current="${selected && selected.reference === r[0]}">
       <span class="title">${esc(r[1])}</span>
       <span class="meta"><span>${esc(r[0])}</span><span>${fmtDate(r[2])}</span><span>${esc(search.types[r[3]] || "")}</span>
       <span>${esc(search.stands[r[4]])}</span><span class="area-tag">${esc(search.areas[r[5]].name)}</span>${themeTags(r[6].slice(0, 2).map((i) => search.themes[i].id))}${doc && text && !inTitle(r) ? '<span class="doc-tag">im Dokument erwähnt</span>' : ""}</span></button></li>`).join("");
     if (rows.length > shown) html += `<li class="more"><button type="button" class="btn btn-secondary" id="more">Weitere ${Math.min(LIST_STEP, rows.length - shown)} von ${rows.length - shown} anzeigen</button></li>`;
-    if (!rows.length) html = `<li class="empty-list"><p>Keine Vorlage in ganz Bonn passt zu Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
+    if (!rows.length) html = `<li class="empty-list"><p>Keine Vorlage in ganz Köln passt zu Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     $("#papers").innerHTML = html;
     // auf der Karte: die Treffer, die im gerade geladenen Gebiet liegen
     const refs = new Set(rows.map((r) => r[0]));
@@ -1221,9 +1229,9 @@
 
   function render() {
     $("#f-related-wrap").hidden = !$("#f-party").value;
-    $("#more-filters").hidden = scope() === "bonn";
-    if (scope() === "bonn") {
-      if (!search) { $("#count").textContent = "Lade den Suchindex für ganz Bonn …"; loadSearch().then((d) => d && (fillParties(), render())); return; }
+    $("#more-filters").hidden = scope() === STADT;
+    if (scope() === STADT) {
+      if (!search) { $("#count").textContent = "Lade den Suchindex für ganz Köln …"; loadSearch().then((d) => d && (fillParties(), render())); return; }
       return renderGlobal();
     }
     if ($("#f-party").value && $("#f-related").checked && !search && index) { loadSearch().then((d) => d && render()); }
@@ -1232,13 +1240,13 @@
     lastList = list;
     const where = area.kind === "ohne" ? `ohne Ortsbezug, ${area.key}` : area.name;
     const span = range ? ` · ${fmtDate(range[0])}–${fmtDate(range[1])}` : "";
-    $("#count").textContent = area.kind === "bonn" ? OVERVIEW_HINT : `${list.length} von ${papers.length} Vorlagen · ${where}${span}`;
+    $("#count").textContent = area.kind === STADT ? OVERVIEW_HINT : `${list.length} von ${papers.length} Vorlagen · ${where}${span}`;
     const active = [$("#f-amt").value, $("#f-gremium").value].filter(Boolean).length +
       (area.kind === "ohne" ? 0 : document.querySelectorAll("#f-conf input:not(:checked)").length);
     $("#active-filters").textContent = active ? ` (${active} aktiv)` : "";
     let html = list.slice(0, shown).map(itemHtml).join("");
     if (list.length > shown) html += `<li class="more"><button type="button" class="btn btn-secondary" id="more">Weitere ${Math.min(LIST_STEP, list.length - shown)} von ${list.length - shown} anzeigen</button></li>`;
-    if (!list.length && area.kind === "bonn") html = `<li class="empty-list"><p>Noch kein Gebiet gewählt. Wählen Sie auf der Karte einen Stadtbezirk und einen Ortsteil oder oben ein Gebiet; „in ganz Bonn“ sucht über alle Vorlagen.</p></li>`;
+    if (!list.length && area.kind === STADT) html = `<li class="empty-list"><p>Noch kein Gebiet gewählt. Wählen Sie auf der Karte einen Stadtbezirk und einen Stadtteil oder oben ein Gebiet; „in ganz Köln“ sucht über alle Vorlagen.</p></li>`;
     else if (!list.length) html = `<li class="empty-list"><p>Keine Vorlage passt zu Gebiet, Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     $("#papers").innerHTML = html;
     drawMarkers(list);
@@ -1252,7 +1260,7 @@
   function stepHtml(s) {
     const status = s.status;
     const mark = status === "unklar" ? "?" : "";
-    const dateLine = s.date ? `${fmtDate(s.date)}${s.date_status === "abgeleitet" ? " · Datum abgeleitet (OParl-Lite)" : ""}` : "";
+    const dateLine = s.date ? `${fmtDate(s.date)}${s.date_status === "abgeleitet" ? " · Datum abgeleitet (über die Sitzung)" : ""}` : "";
     const body = [];
     if (s.typ === "initiierung" && s.actors && s.actors.length) body.push(`Eingereicht von ${esc(s.actors.join(", "))} <span class="derived">abgeleitet</span>`);
     if (s.role) body.push(`${esc(s.role)}${s.typ === "entscheidung" ? " (entscheidet)" : ""}${s.number ? ` · TOP ${esc(s.number)}` : ""}`);
@@ -1367,7 +1375,7 @@
     }
     if (legendEl) drawLegend();
   }
-  // Die Zonen liegen über den Ortsteilflächen; ein Klick wählt wie sonst den Ortsteil an dieser Stelle
+  // Die Zonen liegen über den Stadtteilflächen; ein Klick wählt wie sonst den Stadtteil an dieser Stelle
   function clickOrtsteil(ll) {
     if (!navOrtsteile || !map.hasLayer(navOrtsteile)) return;
     navOrtsteile.eachLayer((l) => { if (inGeom(ll.lng, ll.lat, l.feature.geometry)) l.fire("click"); });
@@ -1431,7 +1439,7 @@
       map.fitBounds(planLayer.getBounds(), { ...mapPadding(), maxZoom: 17 });
     }
     const facts = feats.map((f) => `<li><strong>${esc(f.properties.name)}</strong> – rechtskräftig seit ${fmtDate(f.properties.inkraft_seit)}
-      <span class="derived">belegt, Stadt Bonn</span><br>${link(f.properties.plan, "Plan (PDF)")}${f.properties.begruendung ? " · " + link(f.properties.begruendung, "Begründung (PDF)") : ""}</li>`).join("");
+      <span class="derived">belegt, Stadt Köln</span><br>${link(f.properties.plan, "Plan (PDF)")}${f.properties.begruendung ? " · " + link(f.properties.begruendung, "Begründung (PDF)") : ""}</li>`).join("");
     const ortsteile = [...new Set(entries.flatMap((e) => e.ortsteile))];
     const match = [...new Set(entries.map((e) => e.treffer))].map((t) => PLAN_MATCH[t] || t).join("; ");
     const item = (v) => `<li><button type="button" class="link-btn" data-open-ref="${esc(v.drucksache)}">${esc(v.drucksache)}</button> · ${fmtDate(v.datum)} · ${esc(v.art || "")}<br>${esc(v.titel)}</li>`;
@@ -1445,22 +1453,22 @@
     }).join("");
     const inkraft = feats.map((f) => f.properties.inkraft_seit).filter(Boolean).sort().pop();
     const final = `<li class="step" data-status="${inkraft ? "belegt" : "soll"}"><span class="mark mark-${inkraft ? "belegt" : "soll"}" aria-hidden="true"></span>
-      <div class="step-head">Inkrafttreten (Bekanntmachung)<span class="step-status">${inkraft ? "belegt, Stadt Bonn" : "soll, nicht unter den rechtskräftigen Plänen"}</span></div>
+      <div class="step-head">Inkrafttreten (Bekanntmachung)<span class="step-status">${inkraft ? "belegt, Stadt Köln" : "soll, nicht unter den rechtskräftigen Plänen"}</span></div>
       <div class="step-body">Fundstelle: § 10 Abs. 3 BauGB${inkraft ? `<br>${fmtDate(inkraft)}` : ""}</div></li>`;
     $("#detail-heading").textContent = "Bebauungsplan";
     $("#detail").innerHTML = `
       <h3 tabindex="-1">Bebauungsplan ${esc(key)}</h3>
       ${facts ? `<ul class="locs plans">${facts}</ul>` : '<p class="hint">Kein Geltungsbereich im Datensatz der rechtskräftigen Pläne (im Verfahren oder aufgehoben).</p>'}
-      <dl class="facts">${ortsteile.length ? `<dt>Ortsteile</dt><dd>${esc(ortsteile.join(", "))}</dd>` : ""}
+      <dl class="facts">${ortsteile.length ? `<dt>Stadtteile</dt><dd>${esc(ortsteile.join(", "))}</dd>` : ""}
         ${match ? `<dt>Zuordnung</dt><dd>${esc(match)} <span class="derived">abgeleitet, Plannummer im Titel</span></dd>` : ""}</dl>
       ${reg ? `<h4>Planchronik</h4>
         <p class="hint">Verfahrensschritte nach BauGB als Soll; eine Vorlage ist einem Schritt zugeordnet, wenn ihr Titel ihn nennt (abgeleitet). Vereinfachte Verfahren (§§ 13, 13a BauGB) kennen weniger Schritte. „soll“ heißt: keine Vorlage seit Oktober 2019 nennt den Schritt – nicht, dass er fehlt.</p>
         <ol class="steps">${steps}${final}</ol>
         <h4>Vorlagen mit dieser Plannummer (${vorlagen.length})</h4>
-        ${vorlagen.length ? `<ol class="related plan-papers">${vorlagen.map(item).join("")}</ol>` : "<p>Keine Vorlage seit Oktober 2019 nennt diese Plannummer im Titel.</p>"}` : ""}
+        ${vorlagen.length ? `<ol class="related plan-papers">${vorlagen.map(item).join("")}</ol>` : "<p>Keine Vorlage nennt diese Plannummer im Titel.</p>"}` : ""}
       <details class="acc"><summary>Quellen</summary><ul>
-        <li>Geltungsbereich, Inkrafttreten, Plan und Begründung: Stadt Bonn, Lage der Bebauungspläne (CC0)</li>
-        <li>Vorlagen: OParl-API der Stadt Bonn (CC0); Zuordnung über die Plannummer im Titel (abgeleitet)</li></ul></details>`;
+        <li>Geltungsbereich, Inkrafttreten, Plan und Begründung: Stadt Köln, Lage der Bebauungspläne (CC0)</li>
+        <li>Vorlagen: OParl-API der Stadt Köln (CC0); Zuordnung über die Plannummer im Titel (abgeleitet)</li></ul></details>`;
     $("#announce").textContent = `Bebauungsplan ${key} geöffnet`;
     if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
     $("#detail").scrollTop = 0;
@@ -1560,7 +1568,7 @@
         : `<p>${b.fremd ? "Für Baustellen anderer Träger werden keine Beschlüsse gesucht." : "Kein Beschluss erfüllt alle Kriterien (räumlich, zeitlich, gleiche Straße, Tiefbau oder Verkehr, Bau-Stichwort, Baubeschluss)."}</p>`}
       <details class="acc"><summary>Was diese Angaben nicht zeigen</summary><ul>${bau.meta.hinweise.map((h) => `<li>${esc(h)}</li>`).join("")}</ul></details>
       <details class="acc"><summary>Quellen</summary><ul>
-        <li>Baustellen: Stadt Bonn, ${bau.meta.quelle.map((u) => link(u, esc(u.replace("https://", "")))).join(", ")} – ${esc(bau.meta.lizenz)}</li>
+        <li>Baustellen: Stadt Köln, ${bau.meta.quelle.map((u) => link(u, esc(u.replace("https://", "")))).join(", ")} – ${esc(bau.meta.lizenz)}</li>
         <li>Abruf: ${esc(String(bau.meta.abruf || "–").slice(0, 10))} (${esc(bau.meta.herkunft)}); Baustellen-ID ${esc(b.id)}</li>
         <li>Mögliche Umsetzung: abgeleitet (pipeline/kandidaten.py), Audit ${link(REPO + "/blob/main/data/export/baustellen_kandidaten.tsv", "baustellen_kandidaten.tsv")}</li></ul></details>`;
     $("#announce").textContent = `Baustelle ${b.bezeichnung} geöffnet`;
@@ -1576,7 +1584,7 @@
     shownSite = null;
     highlight();
     $("#detail-heading").textContent = "Baustellen";
-    $("#detail").innerHTML = `<h3 tabindex="-1">Baustellen · ${esc(area.name || "ganz Bonn")}</h3>
+    $("#detail").innerHTML = `<h3 tabindex="-1">Baustellen · ${esc(area.name || "ganz Köln")}</h3>
       <p class="hint">Gemeldete Baustellen mit Einfluss auf den Verkehr; Termine unverbindlich.</p>
       ${list.length ? `<ul class="related plan-papers">${list.map((b) => `<li><button type="button" class="link-btn" data-open-site="${esc(b.id)}">${esc(b.bezeichnung)}</button> · ${esc(b.massnahme || "")} · ${fmtDate(b.von)} – ${fmtDate(b.bis)} · ${SITE_STATE[siteState(b)]}${b.fremd ? " · anderer Träger" : ""}${b.kandidaten.length ? ' · <span class="derived">mögliche Umsetzung</span>' : ""}</li>`).join("")}</ul>` : "<p>In diesem Gebiet ist derzeit keine Baustelle gemeldet.</p>"}`;
     if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
@@ -1650,19 +1658,20 @@
   }
 
   // Beteiligung: nächste Sitzung eines beteiligten Gremiums (laut Sitzungsliste der Stadt), Bürgerantrag
-  const BUERGERANTRAG = "https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php";
+  // Köln: Link zur Seite der Stadt über Anregungen und Beschwerden folgt nach Prüfung (Phase 6); bis dahin ohne Link
+  const BUERGERANTRAG = null;
   function participate(p) {
     const today = heute();
     const gremien = new Set(p.steps.filter((s) => s.typ === "beratung" || s.typ === "entscheidung").map((s) => s.label));
     const next = zeit && p.stand !== "entschieden"
       ? zeit.meetings.find((m) => m.date >= today && !m.cancelled && gremien.has(m.gremium)) : null;
     const onAgenda = next && p.steps.some((s) => s.label === next.gremium && s.date === next.date);
-    const meeting = next ? `<li data-generic="sitzung" data-key="${esc(next.gremium)}|${esc(next.date)}">Nächste Sitzung eines beteiligten Gremiums: <strong>${esc(next.gremium)}</strong>, ${fmtDay(next.date)}${next.time ? `, ${esc(next.time)} Uhr` : ""}${onAgenda ? " – die Vorlage steht dort auf der Tagesordnung <span class=\"derived\">abgeleitet, über OParl-Lite</span>" : ""}.
+    const meeting = next ? `<li data-generic="sitzung" data-key="${esc(next.gremium)}|${esc(next.date)}">Nächste Sitzung eines beteiligten Gremiums: <strong>${esc(next.gremium)}</strong>, ${fmtDay(next.date)}${next.time ? `, ${esc(next.time)} Uhr` : ""}${onAgenda ? " – die Vorlage steht dort auf der Tagesordnung <span class=\"derived\">abgeleitet, über die Sitzung verknüpft</span>" : ""}.
       ${link(next.web, "Tagesordnung") || "Die Tagesordnung erscheint etwa zwei Wochen vorher."} Die Sitzung ist in der Regel öffentlich; Sie können zuhören.</li>` : "";
-    const done = p.stand === "entschieden" ? "<li data-generic=\"done\">Das Verfahren ist entschieden. Neue Anliegen zum Thema lassen sich mit einem Bürgerantrag einbringen.</li>" : "";
+    const done = p.stand === "entschieden" ? "<li data-generic=\"done\">Das Verfahren ist entschieden. Neue Anliegen zum Thema lassen sich mit Anregungen und Beschwerden nach § 24 GO NRW einbringen.</li>" : "";
     return `<section class="participate" aria-labelledby="participate-h"><h4 id="participate-h">Selbst mitwirken</h4><ul>
       ${meeting}${done}
-      ${p.soll?.verfahren === "buergerantrag" ? "" : `<li data-generic="buergerantrag">Mit einem <a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Bürgerantrag nach § 24 GO NRW<span class="visually-hidden"> (Seite der Stadt Bonn, neuer Tab)</span></a> bringen Sie Anregungen und Beschwerden selbst ein.</li>`}
+      ${p.soll?.verfahren === "buergerantrag" ? "" : `<li data-generic="buergerantrag">Mit Anregungen und Beschwerden nach § 24 GO NRW können Sie sich selbst an den Rat wenden; in Köln berät darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden.${BUERGERANTRAG ? ` <a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Mehr dazu<span class="visually-hidden"> (Seite der Stadt Köln, neuer Tab)</span></a>` : ""}</li>`}
       ${hasPaperFeed(p) ? "<li data-generic=\"feed\">Mit dem Feed „Diesen Vorgang abonnieren“ (unten) erfahren Sie von neuen Beratungen und Ergebnissen.</li>" : ""}
     </ul><p class="hint mitwirken-hint" hidden></p></section>`;
   }
@@ -1683,7 +1692,7 @@
     if (ids.has("eigener-buergerantrag")) drop('[data-generic="buergerantrag"]');
     if (["entschieden", "abgelehnt", "erledigt"].some((x) => ids.has(x))) drop('[data-generic="done"]');
     const items = res.regeln.map((r) => `<li data-rule="${esc(r.id)}">${esc(r.text)}
-      ${r.id === "eigener-buergerantrag" ? `<a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Zum Bürgerantrag<span class="visually-hidden"> (Seite der Stadt Bonn, neuer Tab)</span></a>` : ""}
+      ${r.id === "eigener-buergerantrag" ? `<a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Zum Bürgerantrag<span class="visually-hidden"> (Seite der Stadt Köln, neuer Tab)</span></a>` : ""}
       ${r.sitzung?.web ? link(r.sitzung.web, "Tagesordnung") : ""}
       <br><span class="meta">Frist: ${esc(r.frist)}${r.verstrichen ? " – verstrichen" : ""}${r.links.length ? ` · ${lawLinks(r.links)}` : r.beleg ? ` · ${esc(r.beleg)}` : ""}</span></li>`).join("");
     const feed = ul.querySelector('[data-generic="feed"]');
@@ -1708,7 +1717,7 @@
     const locItem = (l) => `<li><strong>${esc(l.name || l.ortsteil || l.stadtbezirk)}</strong>
       ${l.ortsteil && (l.level === "strasse" || l.level === "objekt") ? `(${esc(l.ortsteil)})` : ""} – <span class="conf conf-${esc(l.confidence)}">${CONF[l.confidence] || esc(l.confidence)}</span>, ${esc(STUFE[l.stage] || `Stufe ${l.stage}`)}${outside(l) ? ' <span class="hint">außerhalb des gewählten Gebiets</span>' : ""}<br>
       <span class="meta">${methodText(l)}</span></li>`;
-    // Volltext: erkannter Ort und Teil des Dokuments, kein Zitat (Rahmen laut Antwort der Stadt Bonn)
+    // Volltext: erkannter Ort und Teil des Dokuments, kein Zitat (Rahmen laut Antwort der Stadt Köln)
     function methodText(l) {
       if (String(l.method).startsWith("llm_")) return `Mit einem Sprachmodell aus dem Text des Dokuments erkannt und mit dem Verzeichnis der Straßen, Orte, Gebäude und Anlagen abgeglichen <span class="derived">abgeleitet</span> · ${esc(l.evidence || "")}; kein Zitat`;
       if (!String(l.method).startsWith("volltext_")) return `${esc(METHOD[l.method] || l.method)}${l.evidence ? ` · Fundstelle: „${esc(l.evidence)}“` : ""}`;
@@ -1725,10 +1734,10 @@
     $("#detail").innerHTML = `
       <h3 tabindex="-1">${esc(p.name)}</h3>
       <dl class="facts">
-        <dt>Drucksache</dt><dd>${esc(p.reference)}${erklBegriff(KUERZEL[(String(p.reference).match(/ ([A-Z]{2})$/) || [])[1]], `Kürzel ${(String(p.reference).match(/ ([A-Z]{2})$/) || [])[1]}`)}</dd>
+        <dt>Vorlage</dt><dd>${esc(p.reference)}${erklBegriff(KUERZEL[(String(p.reference).match(/ ([A-Z]{2})$/) || [])[1]], `Kürzel ${(String(p.reference).match(/ ([A-Z]{2})$/) || [])[1]}`)}</dd>
         <dt>Art</dt><dd>${esc(p.paper_type)}${erklBegriff(ARTEN[p.paper_type], p.paper_type)}</dd>
         <dt>Datum</dt><dd>${fmtDate(p.date)}</dd>
-        <dt>Amt</dt><dd>${resp || esc(p.amt)}${erklBegriff("federfuehrendes-amt", "federführendes Amt")}</dd>
+        <dt>Dienststelle</dt><dd>${resp || esc(p.amt) || '<span class="hint">noch nicht ermittelt</span>'}${erklBegriff("federfuehrende-dienststelle", "federführende Dienststelle")}</dd>
         <dt>Stand</dt><dd>${esc(p.stand)}${erkl(`Stand ${p.stand}`, STAND_TEXT[p.stand], "stand-eines-vorgangs")}</dd>
         <dt>Themen</dt><dd>${(p.themes || []).length ? p.themes.map((t) => `${esc(THEMES[t.theme])} <span class="derived">abgeleitet, über ${esc(THEME_METHOD[t.method])} „${esc(t.evidence)}“</span>`).join("<br>") : "–"}</dd>
       </dl>
@@ -1807,7 +1816,7 @@
     box.dataset.loaded = "1";
     const types = data.types.filter((t) => t.count >= 20).length ? data.types.filter((t) => t.count >= 20) : data.types;
     box.innerHTML = `<label class="filters">Vorlagenart <select id="wege-type">${types.map((t) => `<option>${esc(t.paper_type)}</option>`).join("")}</select></label>
-      <p class="hint">Weg = Folge der Beratungen (Gremium und Rolle) laut OParl-API. Am Ende steht das Ergebnis der entscheidenden Beratung, wörtlich aus der Quelle (in Anführungszeichen), oder ersatzweise der Stand des Verfahrens. Ganz Bonn.</p>
+      <p class="hint">Weg = Folge der Beratungen (Gremium und Rolle) laut OParl-API. Am Ende steht das Ergebnis der entscheidenden Beratung, wörtlich aus der Quelle (in Anführungszeichen), oder ersatzweise der Stand des Verfahrens. Ganz Köln.</p>
       <div id="wege-list"></div>${LIMITS}`;
     const draw = () => {
       const t = types.find((x) => x.paper_type === $("#wege-type").value);
@@ -1831,10 +1840,10 @@
     ((p.date || "") >= `${Number(dataStand.slice(0, 4)) - 1}-01-01` || ["in Beratung", "offen"].includes(p.stand));
   function subscribeArea() {
     const box = $("#subscribe");
-    // nur den Verweis des vorigen Gebiets entfernen; der Feed über ganz Bonn steht fest im Kopf (index.html)
+    // nur den Verweis des vorigen Gebiets entfernen; der Feed über ganz Köln steht fest im Kopf (index.html)
     document.querySelectorAll('link[rel="alternate"][data-gebiet]').forEach((l) => l.remove());
-    if (!index || area.kind === "bonn") {
-      box.innerHTML = index ? `<a class="btn btn-soft" href="${BONN}feeds/ganz-bonn.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Neues aus ganz Bonn abonnieren</a>` : "";
+    if (!index || area.kind === STADT) {
+      box.innerHTML = index ? `<a class="btn btn-soft" href="${BONN}feeds/ganz-${STADT}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Neues aus ganz Köln abonnieren</a>` : "";
       box.hidden = !index;
       fillMitmachen(); fillKontext(); return;
     }
@@ -1845,7 +1854,7 @@
     fillMitmachen();
     fillKontext();
     const l = document.createElement("link");
-    Object.assign(l, { rel: "alternate", type: "application/atom+xml", href, title: `Ratsatlas Bonn – ${where}` });
+    Object.assign(l, { rel: "alternate", type: "application/atom+xml", href, title: `Ratsatlas Köln – ${where}` });
     l.dataset.gebiet = `${area.kind}:${area.key}`;
     document.head.appendChild(l);
   }
@@ -1870,7 +1879,7 @@
     const relevant = (m) => scope === "alle" || !isBV(m.gremium) || !bezirk || m.gremium === `Bezirksvertretung ${bezirk}`;
     const list = zeit.meetings.filter((m) => m.date >= today && relevant(m));
     const where = area.kind === "ohne" ? "Vorlagen ohne Ortsbezug" : area.name;
-    // Vorlagen des Gebiets, deren Beratung (über OParl-Lite verknüpft) auf dieser Sitzung liegt
+    // Vorlagen des Gebiets, deren Beratung (über die Sitzung verknüpft) auf dieser Sitzung liegt
     const onAgenda = (m) => papers.filter((p) => p.steps.some((s) => (s.typ === "beratung" || s.typ === "entscheidung") && s.date === m.date && s.label === m.gremium));
     let month = "";
     const items = list.map((m) => {
@@ -1904,8 +1913,8 @@
     if (!area) return;
     const where = area.kind === "ohne" ? `Vorlagen ohne Ortsbezug ${area.key}` : area.name;
     const acts = [];
-    if (index) acts.push(area.kind === "bonn"
-      ? `<a class="btn btn-cta" href="${BONN}feeds/ganz-bonn.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Neues aus ganz Bonn</a>`
+    if (index) acts.push(area.kind === STADT
+      ? `<a class="btn btn-cta" href="${BONN}feeds/ganz-${STADT}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Neues aus ganz Köln</a>`
       : `<a class="btn btn-cta" href="${BONN}feeds/${area.kind}-${area.key}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Neues aus ${esc(where)}</a>`);
     if (selected && hasPaperFeed(selected)) acts.push(`<a class="btn btn-soft" href="${BONN}feeds/vorlagen/${slug(selected.reference)}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Vorgang ${esc(selected.reference)}</a>`);
     acts.push('<a class="btn btn-soft" href="rss/">Alle Feeds und Anleitung</a>');
@@ -1950,7 +1959,7 @@
     q.addEventListener("input", debounce(() => {
       $("#f-text").value = q.value;
       $("#doc-status").textContent = "";
-      if (q.value && index && scope() !== "bonn") setScope("bonn");
+      if (q.value && index && scope() !== STADT) setScope(STADT);
       openMega("mega-suche");
       applyFromBar();
     }, 200));
@@ -1993,7 +2002,7 @@
   }
   function showStats() {
     const list = papers, where = area.kind === "ohne" ? `Vorlagen ohne Ortsbezug ${area.key}` : area.name;
-    if (area.kind === "bonn") { $("#stats").innerHTML = `<p class="hint">Die Kennzahlen beziehen sich auf ein Gebiet. Wählen Sie auf der Karte oder oben ein Gebiet; die Verfahrenswege im Reiter daneben gelten für ganz Bonn.</p>`; return; }
+    if (area.kind === STADT) { $("#stats").innerHTML = `<p class="hint">Die Kennzahlen beziehen sich auf ein Gebiet. Wählen Sie auf der Karte oder oben ein Gebiet; die Verfahrenswege im Reiter daneben gelten für ganz Köln.</p>`; return; }
     const count = (f) => { const c = new Map(); for (const p of list) for (const k of f(p)) c.set(k, (c.get(k) || 0) + 1); return c; };
     const th = count((p) => (p.themes || []).map((t) => t.theme));
     const pa = count((p) => p.parties || []);
@@ -2086,17 +2095,17 @@
       });
       return m;
     }).catch((e) => { mmReady = null; console.warn("Mitmachen nicht geladen", e); return null; });   // beim nächsten Öffnen erneut
-    return mmReady.then((m) => { if (m) m.show(s || { bezirk: mmState ? mmState.bezirk : areaBezirk() || "Bonn" }); return m; });
+    return mmReady.then((m) => { if (m) m.show(s || { bezirk: mmState ? mmState.bezirk : areaBezirk() || "Innenstadt" }); return m; });
   }
 
   // --- URL-Zustand -----------------------------------------------------------------------------------
   function syncUrl() {
     if (!area) return;
     const url = new URL(location.href);
-    if (area.kind === "bonn") url.searchParams.delete("gebiet"); else url.searchParams.set("gebiet", `${area.kind}:${area.key}`);
+    if (area.kind === STADT) url.searchParams.delete("gebiet"); else url.searchParams.set("gebiet", `${area.kind}:${area.key}`);
     if (tl && range) { const s = tl.getState(); for (const k of ["von", "bis", "zoom", "achse"]) url.searchParams.set(k, s[k]); }
     else for (const k of ["von", "bis", "zoom", "achse"]) url.searchParams.delete(k);
-    const state = { thema: $("#f-theme").value, partei: $("#f-party").value, suche: scope() === "bonn" ? "bonn" : "" };
+    const state = { thema: $("#f-theme").value, partei: $("#f-party").value, suche: scope() === STADT ? STADT : "" };
     state.farbe = colorBy === "thema" ? "thema" : "";
     state.flaechen = navMetric;
     state.plaene = planOn ? "1" : "";
@@ -2119,6 +2128,15 @@
   }
 
   // --- Start -----------------------------------------------------------------------------------------
+  // Elemente mit data-funktion (index.html) nur zeigen, wenn die Funktion freigegeben ist; Hinweis auf Testdaten
+  function applyFunktionen(fn, idx) {
+    document.querySelectorAll("[data-funktion]").forEach((el) => { el.hidden = !fn[el.dataset.funktion]; });
+    const hinweis = $("#testdaten-hinweis");
+    if (hinweis) hinweis.hidden = !(idx && idx.meta && idx.meta.testdaten);
+  }
+  const QUELLE_NAME = { "oparl-koeln": "Ratsinformationssystem", "geo-koeln": "Gebiete", "strassen-koeln": "Straßen",
+    "adressen-koeln": "Adressen", "bplan-koeln": "Bebauungspläne", osm: "OpenStreetMap" };
+
   async function start() {
     // Alle Startdaten gleichzeitig anfordern (index.html lädt sie zusätzlich vorab); ohne Glossar erscheinen
     // Schlüssel statt Erläuterungen; ohne index.json (Pilot) entfallen Zeitleiste und Baustellen
@@ -2137,10 +2155,14 @@
       vorab.set(datei, fetch(datei));
     }
     const shapes = Promise.all([loadGeo("ortsteil"), loadGeo("bezirk")]);
+    // Bonner Zusatzthemen nur, wenn index.json sie freigibt (config.ZUSATZTHEMEN); sonst keine Anfrage
+    const fn = (idx && idx.meta && idx.meta.funktionen) || {};
+    const opt = (an, url) => (an ? json(url, "low") : Promise.resolve(null));
     // Baustellen mit möglichen Umsetzungen (nur Konfidenz hoch); ohne Datei bleibt die Funktion ausgeblendet
     const [g, z, bs, kx, an] = await Promise.all([json(GLOSSAR_URL), json(BONN + "zeit.json", "low"),
-      json(BONN + "baustellen.json", "low"), json(BONN + "kontext.json", "low"), json(BONN + "anliegen.json", "low")]);
+      opt(fn.baustellen, BONN + "baustellen.json"), opt(fn.kontext, BONN + "kontext.json"), opt(fn.anliegen, BONN + "anliegen.json")]);
     index = idx;
+    applyFunktionen(fn, idx);
     kontext = index && kx && kx.ortsteile ? kx : null;
     anliegen = kontext && an && an.ortsteile ? an : null;
     zeit = index ? z : null;
@@ -2226,7 +2248,7 @@
     let ref = "";
     try { ref = decodeURIComponent(location.hash.slice(1)); } catch (e) { ref = ""; }
     if (Object.hasOwn(THEMES, params.get("thema") || "")) $("#f-theme").value = params.get("thema");
-    if (index && params.get("suche") === "bonn") document.querySelector('input[name="scope"][value="bonn"]').checked = true;
+    if (index && params.get("suche") === STADT) document.querySelector(`input[name="scope"][value="${STADT}"]`).checked = true;
     if (params.get("partei")) await loadSearch();
     await loadArea(params.get("gebiet") || DEFAULT_AREA, true);
     if (params.get("partei")) { fillParties(); $("#f-party").value = params.get("partei"); render(); }
@@ -2250,7 +2272,7 @@
     else showIntro();
     if (params.get("mitmachen") === "1") {
       setPanel("panel-mitmachen", true);
-      await openMitmachen({ bezirk: params.get("bezirk") || areaBezirk() || "Bonn" });
+      await openMitmachen({ bezirk: params.get("bezirk") || areaBezirk() || "Innenstadt" });
     }
     if (["verfahren", "gremien", "aemter"].includes(params.get("prozesse"))) {
       setPanel("panel-prozesse", true);
@@ -2279,11 +2301,11 @@
       menu(id) { if (id) openMega(id); else closeMega(); },
       nav(open) { if (MOBILE.matches || !open) setNav(open); },
       // Beispielgebiet der Tour vorab laden, solange die ersten Schritte laufen
-      prefetch() { if (area && area.kind === "bonn" && index) fetch(`${BONN}ortsteile/bonn-zentrum.json`).catch(() => {}); },
+      prefetch() { if (area && area.kind === STADT && index) fetch(`${BONN}ortsteile/altstadt-nord.json`).catch(() => {}); },
       async example() {
         if (selected) return true;
         // in der Übersicht ein Beispielgebiet laden
-        if (area.kind === "bonn") await loadArea("ortsteil:bonn-zentrum", true);
+        if (area.kind === STADT) await loadArea("ortsteil:altstadt-nord", true);
         const list = filtered();
         // jüngste entschiedene Vorlage mit Ort auf der Karte, Entscheidung und Folgevorlage (selbst keine Folgevorlage)
         const has = (x, typ) => x.steps.some((s) => s.typ === typ);

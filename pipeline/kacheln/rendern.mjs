@@ -1,6 +1,6 @@
 // Zeichnet die grauen Kacheln in Blöcken von 8 × 8 Kacheln (mit einer Kachel Rand gegen abgeschnittene Beschriftung)
 // mit MapLibre in Chromium. Stil: Protomaps „light“, Beschriftung deutsch; das Grau entsteht in zerlegen.py.
-// Aufruf: node pipeline/kacheln/rendern.mjs <bonn.pmtiles> <plan.json> <blockordner>
+// Aufruf: node pipeline/kacheln/rendern.mjs <stadt.pmtiles> <plan.json> <blockordner>
 // plan.json: Kachelbereich je Zoomstufe aus rahmen.py. Schrift und Symbole lädt MapLibre beim Zeichnen von
 // protomaps.github.io (basemaps-assets); die Seite selbst lädt davon nichts.
 import http from 'node:http';
@@ -12,7 +12,7 @@ import { layers, namedFlavor } from '@protomaps/basemaps';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const [PMTILES, PLAN, AUS] = process.argv.slice(2);
-if (!AUS) { console.error('Aufruf: node rendern.mjs <bonn.pmtiles> <plan.json> <blockordner>'); process.exit(2); }
+if (!AUS) { console.error('Aufruf: node rendern.mjs <stadt.pmtiles> <plan.json> <blockordner>'); process.exit(2); }
 const B = 8, M = 1, V = (B + 2 * M) * 256;
 const FLAVOR = 'light';
 
@@ -20,7 +20,7 @@ const stil = (base) => JSON.stringify({
   version: 8,
   glyphs: 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',
   sprite: `https://protomaps.github.io/basemaps-assets/sprites/v4/${FLAVOR}`,
-  sources: { protomaps: { type: 'vector', url: `pmtiles://${base}/bonn.pmtiles` } },
+  sources: { protomaps: { type: 'vector', url: `pmtiles://${base}/stadt.pmtiles` } },
   layers: layers('protomaps', namedFlavor(FLAVOR), { lang: 'de' }),
 });
 
@@ -31,8 +31,8 @@ function server() {
     const s = http.createServer((req, res) => {
       const p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
       if (p === '/stil.json') { res.writeHead(200, { 'content-type': 'application/json' }); return res.end(stil(`http://127.0.0.1:${s.address().port}`)); }
-      const f = p === '/bonn.pmtiles' ? path.resolve(PMTILES) : path.join(HIER, p);
-      if (p !== '/bonn.pmtiles' && !f.startsWith(HIER + path.sep)) { res.writeHead(403); return res.end(); }
+      const f = p === '/stadt.pmtiles' ? path.resolve(PMTILES) : path.join(HIER, p);
+      if (p !== '/stadt.pmtiles' && !f.startsWith(HIER + path.sep)) { res.writeHead(403); return res.end(); }
       let st; try { st = fs.statSync(f); } catch { res.writeHead(404); return res.end(); }
       const h = { 'content-type': TYPEN[path.extname(f)] || 'application/octet-stream', 'accept-ranges': 'bytes' };
       const r = req.headers.range && /^bytes=(\d+)-(\d*)$/.exec(req.headers.range);

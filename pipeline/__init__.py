@@ -1,1 +1,1 @@
-"""Datenpipeline allris-bonn (Phase 1)."""
+"""Datenpipeline Ratsatlas Köln (aus allris-bonn übernommen)."""

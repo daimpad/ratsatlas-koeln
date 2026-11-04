@@ -113,6 +113,8 @@ ZUSATZTHEMEN = {
     "kontext": False, "soll": False, "chat": False,
     # zweiter Lauf (Entscheidung 04.11.2026)
     "einfache_sprache": False, "kurzfassungen": False, "mitmachen": False, "besetzung": False,
+    # Seite technik/ beschreibt die Workflows; sie entsteht für Köln mit Phase 5
+    "technik": False,
 }
 
 # Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)
