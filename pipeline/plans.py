@@ -80,7 +80,7 @@ def plan_locations(plan_rows, ortsteile, plans=None):
                 loc_id = f"bplan:{name}|{ot['ortsteil_bez']}"
                 locations[loc_id] = (loc_id, None, None, None, f"Bebauungsplan {name}", round(pt.x, 6),
                                      round(pt.y, 6), ot["ortsteil_bez"], ot["ortsteil"], ot["bezirk_bez"],
-                                     "bebauungsplan", "bplan-bonn")
+                                     "bebauungsplan", config.QUELLE_BPLAN)
                 rows.append((pid, loc_id, "B", "bebauungsplan", CONFIDENCE[cls], evidence, pid))
     return locations, rows
 

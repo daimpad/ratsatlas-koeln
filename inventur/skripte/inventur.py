@@ -20,7 +20,12 @@ REGELN = [
     ("pipeline/__main__.py", A, "Aufruf", "Schrittliste enthält Bonner Schritte (fetch-lite, Baustellen, Wahlen); Köln-Schritte und Abschaltung ergänzen"),
     ("pipeline/config.py", A, "Konfiguration", "zentrale Stelle für Bonner URLs, Geodateien, Lizenzen, SITE_URL, PAKET_URL, Pilot-Ortsteil; wird Köln-Konfiguration inkl. Schaltern für Zusatzthemen"),
     ("pipeline/net.py", G, "Abruf", "HTTP mit Wiederholung, ohne Stadtbezug; für Köln um Abrufpolitik 5.1 erweitern (Abstand, Backoff bis Stunden, User-Agent)"),
-    ("pipeline/fetch.py", A, "Abruf", "Bonner OParl-API und OParl-Lite (GraphQL); wird durch SessionNet-Adapter mit Paginierung über links.next ersetzt"),
+    ("pipeline/fetch.py", A, "Abruf", "Bonner Abruf; in Köln ersetzt durch sessionnet.py (Phase 2), Hilfsfunktionen und fetch_objects weiter genutzt"),
+    ("pipeline/abruf.py", G, "Abruf", "neu (Phase 2): Abrufpolitik Köln – eine Verbindung, Abstand, Zeitfenster, Backoff, Sperre bis zur Information der Stadt"),
+    ("pipeline/sessionnet.py", G, "Abruf", "neu (Phase 2): SessionNet-Adapter ins Bonner Rohdatenformat, inkrementell, Abrufstatistik"),
+    ("pipeline/geodaten.py", G, "Geodaten", "neu (Phase 2): Stadtteile, Stadtbezirke, Straßenverzeichnis aus den Kölner Geodaten"),
+    ("tests/*", G, "Tests", "neu (Phase 2): synthetische Testdaten, lokaler Testserver"),
+    ("data/*", G, "Daten", "neu (Phase 2): Kölner Geodaten (dl-de/zero 2.0) und Datenlizenz"),
     ("pipeline/build.py", A, "Datenmodell", "Normalisierung ins SQLite-Modell bleibt; Eingänge (Beratungen aus OParl-Lite, Bonner Nummernschema) auf Köln umstellen"),
     ("pipeline/actors.py", A, "Akteure", "Bonner Vorlagenarten, Titelmuster, „Co-Dezernat“; Köln: underDirectionOf bzw. PDF-Kopf „Dezernat, Dienststelle“, Ämtertabelle, § 3/§ 4-Muster"),
     ("pipeline/process.py", A, "Prozesslinie", "Schritte mit Evidenzstatus bleiben; Quelle in Köln consultation → meeting/agendaItem direkt"),
@@ -45,9 +50,9 @@ REGELN = [
     ("pipeline/technikseite.py", A, "Verlässlichkeit", "Seite technik/ mit Bonner Quellen und Zahlen"),
     ("pipeline/check.py", A, "Prüfung", "Kennzahlen gegen den Bonner Phase-0-Bericht; Datenschutzprüfung generisch"),
     ("pipeline/verify.py", A, "Verifikation", "Stichprobe gegen Bonner OParl-API, Haltestellen; auf Kölner RIS umstellen (Phase 6)"),
-    ("pipeline/besetzung.py", A, "Akteure (Gremien)", "Mitgliedschaften aus Bonner OParl; Köln: Abrufmenge gegen Abrufpolitik abwägen – Freigabe offen"),
-    ("pipeline/einfachseite.py", A, "Verstehen (Einfache Sprache)", "nicht ausdrücklich in 5.4; Texte stark Bonn-bezogen – Freigabe offen"),
-    ("pipeline/kurzfassung.py", A, "Kurzfassungen", "laut 2. zulässig mit Kennzeichnung, aber nicht in 5.4; braucht Volltexte – Freigabe offen"),
+    ("pipeline/besetzung.py", D, "Akteure (Gremien)", "Mitgliedschaften aus Bonner OParl; zweiter Lauf (Entscheidung 04.11.2026), zusätzliche Abrufe gegen Abrufpolitik abwägen"),
+    ("pipeline/einfachseite.py", D, "Verstehen (Einfache Sprache)", "nicht in 5.4; zweiter Lauf (Entscheidung 04.11.2026)"),
+    ("pipeline/kurzfassung.py", D, "Kurzfassungen", "laut 2. zulässig, nicht in 5.4; zweiter Lauf (Entscheidung 04.11.2026), braucht Volltexte"),
     ("pipeline/chat.py", D, "Ratsassistent", "Daten für den Chat (5.4: deaktivieren)"),
     ("pipeline/anliegen.py", D, "Mängelmelder Bonn", "Archiv des Bonner Anliegenmelders, ohne Kölner Pendant"),
     ("pipeline/baustellen.py", D, "Baustellen", "Bonner Baustellenfeeds (5.4: deaktivieren)"),
@@ -74,7 +79,7 @@ REGELN = [
     ("site/page.css", G, "Gestaltung", "Textseiten, ohne Stadtbezug"),
     ("site/rss.js", G, "Feeds", "Kopierknöpfe, ohne Stadtbezug"),
     ("site/technik.js", G, "Verlässlichkeit", "Interaktion der Technikseite, ohne Stadtbezug"),
-    ("site/beteiligung.js", A, "Mitmachen", "„Mitmachen in Bonn“; Kölner Instrumente (§ 24 GO, Einwohnerfragestunde, Meinung für Köln) – Freigabe offen"),
+    ("site/beteiligung.js", D, "Mitmachen", "„Mitmachen in Bonn“; zweiter Lauf (Entscheidung 04.11.2026) mit Kölner Instrumenten (§ 24 GO, Einwohnerfragestunde, Meinung für Köln)"),
     ("site/haushalt.js", D, "Haushalt", "Seite haushalt/"),
     ("site/thema.js", D, "Themenseiten", "Themenseiten"),
     ("site/mitwirken.js", D, "Soll-Modell", "Einflussregeln aus „Bonn entscheidet“"),
@@ -83,14 +88,15 @@ REGELN = [
     ("site/fonts/*", G, "Gestaltung", "Inter lokal mit Lizenz"),
     ("site/vendor/*", G, "Karte", "Leaflet und Markercluster mit Lizenzen"),
     ("site/favicon.svg", G, "Marke", "Ortsmarke ohne Stadtbezug; nur Kommentar nennt Bonn"),
-    ("site/og-image.jpg", A, "Marke", "Vorschaubild für soziale Netzwerke; Inhalt prüfen und für Köln neu erstellen"),
+    ("site/og-image.jpg", D, "Marke", "Bonner Vorschaubild; Kölner Bild im zweiten Lauf (Entscheidung 04.11.2026), bis dahin nicht ausliefern"),
     ("site/*.png", G, "Marke", "Symbole aus der Ortsmarke"),
     ("site/favicon.ico", G, "Marke", "Symbol aus der Ortsmarke"),
     # Betrieb
     ("deploy/htaccess", A, "Deployment", "Apache-Regeln für Plesk; Pfade export/bonn"),
     (".github/workflows-inaktiv/pages.yml", A, "Deployment", "Hauptlauf (Abruf, Build, Branch deploy, Pages); auf Köln und Abrufpolitik umstellen, Phase 5"),
     (".github/workflows-inaktiv/live.yml", A, "Deployment", "Erreichbarkeit Hauptadresse/Pages; Adressen auf Köln"),
-    (".github/workflows-inaktiv/tests.yml", A, "Tests", "Tests nicht übernommen (Bonner Testdaten); für Köln neu aufbauen"),
+    (".github/workflows-inaktiv/tests_bonn.yml", A, "Tests", "Bonner Testlauf (Browser-Prüfung, Chat); ersetzt durch .github/workflows/tests.yml"),
+    (".github/workflows/tests.yml", G, "Tests", "neu (Phase 3, aktiv): Pipeline-Tests mit synthetischen Daten, Syntax der Seite"),
     (".github/workflows-inaktiv/kacheln.yml", A, "Kartenkacheln", "Kachelerzeugung; Ausschnitt Köln"),
     (".github/workflows-inaktiv/quellen.yml", A, "Abruf Quelldateien", "Bonner Quellen (wahlen.bonn.de, stadtplan.bonn.de); Muster ggf. für Kölner Geodaten"),
     (".github/workflows-inaktiv/release.yml", G, "Release", "Release auf Knopfdruck; docs/releases fehlt noch"),
@@ -112,6 +118,14 @@ REGELN = [
 ]
 
 
+def _dateien():
+    """Versionierte und neue, nicht ignorierte Dateien (ohne Caches und lokale Rohdaten)."""
+    import subprocess
+    out = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=ROOT,
+                         capture_output=True, text=True, check=True).stdout.split("\n")
+    return [ROOT / n for n in sorted(set(out)) if n and (ROOT / n).exists()]
+
+
 def main():
     fund = Counter()
     with open(ROOT / "inventur" / "fundstellen_bonn.tsv", encoding="utf-8") as f:
@@ -120,9 +134,9 @@ def main():
     w = csv.writer(sys.stdout, delimiter="\t", lineterminator="\n")
     w.writerow(["datei", "zeilen", "kategorie", "funktion", "begruendung", "fundstellen"])
     offen = []
-    for p in sorted(ROOT.rglob("*")):
+    for p in _dateien():
         rel = p.relative_to(ROOT).as_posix()
-        if not p.is_file() or rel.startswith((".git/", "inventur/")):
+        if not p.is_file() or rel.startswith((".git/", "inventur/", "explore/")):
             continue
         regel = next((r for r in REGELN if fnmatch.fnmatch(rel, r[0])), None)
         if regel is None:

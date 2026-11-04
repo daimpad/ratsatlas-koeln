@@ -8,7 +8,7 @@ from collections import Counter
 
 from . import actors, config
 from .geo import Ortsteile
-from .geocode import Gazetteer, plan_numbers
+from .geocode import Gazetteer, hausnummer_punkt_erlaubt, plan_numbers
 from .plans import Plans, plan_locations
 from . import volltext
 from .objekte import Objekte
@@ -38,7 +38,7 @@ CREATE TABLE consultation (
 CREATE TABLE location (
   id TEXT PRIMARY KEY, street TEXT, postal_code TEXT, sub_locality TEXT, description TEXT,
   lon REAL, lat REAL, ortsteil TEXT, ortsteil_nr INTEGER, stadtbezirk TEXT,
-  level TEXT /* strasse | ortsteil | stadtbezirk */, source TEXT);
+  level TEXT /* adresse | strasse | ortsteil | stadtbezirk | objekt | bebauungsplan */, source TEXT);
 CREATE TABLE paper_location (
   paper_id TEXT REFERENCES paper, location_id TEXT REFERENCES location, stage TEXT,
   method TEXT, confidence TEXT, evidence TEXT, source_object TEXT,
@@ -100,23 +100,21 @@ def build():
     db = sqlite3.connect(config.DB)
     db.executescript(SCHEMA)
 
+    strassen_stand = (json.loads(config.STRASSEN.read_text())["meta"].get("retrieved_at")
+                      if config.STRASSEN.exists() else None)
     retrieved = {
-        "oparl-bonn": stand.get("papers"),
-        "oparl-lite": stand.get("consultations_lite"),
-        "osm": stand.get("osm_streets") or (json.loads(config.STRASSEN.read_text())["meta"].get("retrieved_at")
-                                            if config.STRASSEN.exists() else None),
-        "geo-bonn": stand.get("geo", "2026-10-17"),
-        "bplan-bonn": stand.get("bplan") or (json.loads(config.BPLAN.read_text())["meta"].get("retrieved_at")
-                                             if config.BPLAN.exists() else None),
-        "hnr-bonn": stand.get("hausnummern") or (json.loads(config.HAUSNUMMERN.read_text())["meta"].get("retrieved_at")
-                                                 if config.HAUSNUMMERN.exists() else None),
+        config.QUELLE_OPARL: stand.get("papers"),
+        config.QUELLE_GEO: stand.get("geo"),
+        config.QUELLE_STRASSEN: stand.get("geo") or strassen_stand,
+        config.QUELLE_BPLAN: stand.get("bplan"),
+        "osm": stand.get("objekte"),
     }
     db.executemany("INSERT INTO source VALUES (?,?,?,?)",
-                   [(k, v["url"], v["license"], retrieved[k]) for k, v in config.SOURCES.items()])
+                   [(k, v["url"], v["license"], retrieved.get(k)) for k, v in config.SOURCES.items()])
 
     orgs_by_id = {o["id"]: o for o in orgs}
     db.executemany(
-        "INSERT INTO organization VALUES (?,?,?,?,?,?,?,?,?,'oparl-bonn')",
+        f"INSERT INTO organization VALUES (?,?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}')",
         [(o["id"], o["name"], o.get("shortName"), o.get("organizationType"),
           o.get("classification"),
           actors.amt_label(o) if o.get("organizationType") == "Verwaltungsbereich" else o["name"],
@@ -141,8 +139,9 @@ def build():
         for pos, c in enumerate(p.get("consultation") or []):
             org = (c.get("organization") or [None])[0]
             name = (orgs_by_id.get(org) or {}).get("name", "")
-            if name.startswith("Bezirksvertretung "):
-                bezirke.add(name.removeprefix("Bezirksvertretung "))
+            bz = bv_bezirk(name)
+            if bz:
+                bezirke.add(bz)
             lc = lite.get(c["id"]) or {}
             m, a = lc.get("meeting"), lc.get("agendaItem")
             if m:
@@ -155,7 +154,7 @@ def build():
             rows["cons"].append((c["id"], p["id"], pos, org, c.get("role"),
                                  int(bool(c.get("authoritative"))),
                                  m["uri"] if m else None, a["uri"] if a else None,
-                                 "oparl-lite" if (m or a) else None))
+                                 config.QUELLE_SITZUNG if (m or a) else None))
 
         for loc in p.get("location") or []:
             geom = (loc.get("geojson") or {}).get("geometry") or {}
@@ -163,14 +162,23 @@ def build():
             if geom.get("type") == "Point":
                 lon, lat = geom["coordinates"][:2]
                 ot = ortsteile.locate(lon, lat)
+                level, method, conf = "strasse", "oparl_location", "hoch"
+            else:
+                # Köln: Ort meist nur als subLocality (Stadtteil) ohne Geometrie → Stadtteilfläche (CLAUDE.md 5.2, Stufe A)
+                treffer = ortsteile.by_name(loc.get("subLocality"))
+                if treffer:
+                    ot, pt = treffer
+                    lon, lat = round(pt.x, 6), round(pt.y, 6)
+                    level, method, conf = "ortsteil", "oparl_sublocality", "mittel"
+                else:
+                    level, method, conf = "strasse", "oparl_location", "niedrig"
             locations[loc["id"]] = (
                 loc["id"], ohne_hausnummer(loc.get("streetAddress")), loc.get("postalCode"),
                 loc.get("subLocality"), ohne_hausnummer(loc.get("description")), lon, lat,
                 ot["ortsteil_bez"] if ot else None, ot["ortsteil"] if ot else None,
-                ot["bezirk_bez"] if ot else None, "strasse", "oparl-bonn")
-            rows["ploc"].append((p["id"], loc["id"], "A", "oparl_location",
-                                 "hoch" if lon is not None else "niedrig",
-                                 ohne_hausnummer(loc.get("description")), loc["id"]))
+                ot["bezirk_bez"] if ot else None, level, config.QUELLE_OPARL)
+            rows["ploc"].append((p["id"], loc["id"], "A", method, conf,
+                                 ohne_hausnummer(loc.get("description")) or loc.get("subLocality"), loc["id"]))
 
         bv_bezirke[p["id"]] = bezirke
         for nr, ev in plan_numbers(p.get("name")):
@@ -182,9 +190,11 @@ def build():
             rows["resp"].append((p["id"], r["organization_id"], r["kind"], r["method"],
                                  r["evidence"], r["derived"]))
 
-    points = [(loc[1], loc[5], loc[6]) for loc in locations.values() if loc[-1] == "oparl-bonn"]
+    points = [(loc[1], loc[5], loc[6]) for loc in locations.values() if loc[-1] == config.QUELLE_OPARL]
     gaz = Gazetteer(street_points=points)
-    rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz)
+    gremien = {p["id"]: [(orgs_by_id.get((c.get("organization") or [None])[0]) or {}).get("name", "")
+                         for c in p.get("consultation") or [] if isinstance(c, dict)] for p in papers}
+    rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien)
     plans = Plans()
     rows["plan"] = [(pid, nr, ev, plans.classify(nr)[0]) for pid, nr, ev in rows["plan"]]
     plan_locs, plan_rows = plan_locations([r[:3] for r in rows["plan"]], ortsteile, plans)
@@ -200,13 +210,14 @@ def build():
     rows["ploc"] += _objects_in_titles(papers, locations, gaz, {r[0] for r in rows["ploc"]})
     rows["ploc"] += _fulltext(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]})
     rows["ploc"] += _inherited(papers, papers_by_id, rows["ploc"])
+    rows["ploc"] += _from_committee(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]})
 
     # OR REPLACE: ändert sich die Quelle während des seitenweisen Abrufs, kann eine Vorlage doppelt kommen
-    db.executemany("INSERT OR REPLACE INTO paper VALUES (?,?,?,?,?,?,?,?,?,'oparl-bonn')", rows["paper"])
-    db.executemany("INSERT OR IGNORE INTO paper_relation VALUES (?,?,'oparl-bonn')", rows["rel"])
-    db.executemany("INSERT INTO meeting VALUES (?,?,?,?,'oparl-lite')", meetings.values())
-    db.executemany("INSERT INTO agenda_item VALUES (?,?,?,?,?,?,'oparl-lite')", agenda.values())
-    db.executemany("INSERT OR REPLACE INTO consultation VALUES (?,?,?,?,?,?,?,?,'oparl-bonn',?)", rows["cons"])
+    db.executemany(f"INSERT OR REPLACE INTO paper VALUES (?,?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}')", rows["paper"])
+    db.executemany(f"INSERT OR IGNORE INTO paper_relation VALUES (?,?,'{config.QUELLE_OPARL}')", rows["rel"])
+    db.executemany(f"INSERT INTO meeting VALUES (?,?,?,?,'{config.QUELLE_SITZUNG}')", meetings.values())
+    db.executemany(f"INSERT INTO agenda_item VALUES (?,?,?,?,?,?,'{config.QUELLE_SITZUNG}')", agenda.values())
+    db.executemany(f"INSERT OR REPLACE INTO consultation VALUES (?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}',?)", rows["cons"])
     db.executemany("INSERT INTO location VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", locations.values())
     db.executemany("INSERT OR IGNORE INTO paper_plan VALUES (?,?,?,?)", rows["plan"])
     db.executemany("INSERT INTO plan_precedence VALUES (?,?,?,?)", precedence)
@@ -221,12 +232,18 @@ def build():
 
 def _add_location(r, locations, gaz):
     """Ort einer Gazetteer-Zeile in die Ortstabelle; liefert die Orts-ID."""
+    if r["level"] == "adresse":   # Hauskoordinate (nur Verwaltungsvorlagen und politische Anträge)
+        loc_id, source = f"adresse:{r['name']} {r['hausnummer']}|{r['ortsteil']}", r["source"]
+        nr = gaz.ot_by_name[r["ortsteil"]]["ortsteil"]
+        locations[loc_id] = (loc_id, f"{r['name']} {r['hausnummer']}", None, None, f"{r['name']} {r['hausnummer']}",
+                             r["lon"], r["lat"], r["ortsteil"], nr, r["bezirk"], "adresse", source)
+        return loc_id
     if r["level"] == "strasse":
         loc_id, source = f"strasse:{r['name']}|{r['ortsteil']}", r["source"]
     elif r["level"] == "objekt":   # Gebäude oder Anlage aus OSM (Stufe C)
         loc_id, source = f"objekt:{r['name']}|{r['ortsteil']}", "osm"
     else:
-        loc_id, source = f"{r['level']}:{r['name']}", "geo-bonn"
+        loc_id, source = f"{r['level']}:{r['name']}", config.QUELLE_GEO
     nr = gaz.ot_by_name[r["ortsteil"]]["ortsteil"] if r["ortsteil"] else None
     locations[loc_id] = (loc_id, r["name"] if r["level"] in ("strasse", "objekt") else None, None, None,
                          r["name"], r["lon"], r["lat"], r["ortsteil"], nr, r["bezirk"],
@@ -327,13 +344,14 @@ def _write(path, header, rows):
         w.writerows(rows)
 
 
-def _stage_b(papers, bv_bezirke, locations, gaz):
-    """Stufe B: Ortsbezüge aus dem Titel (Straße, Ortsteil, Stadtbezirk)."""
+def _stage_b(papers, bv_bezirke, locations, gaz, gremien=None):
+    """Stufe B: Ortsbezüge aus dem Titel (Straße, Ortsteil, Stadtbezirk); Hauskoordinate nur, wo erlaubt."""
     if not gaz.streets:
-        print(f"Hinweis: {config.OSM_STREETS} fehlt oder ist leer – Stufe B ohne Straßen.")
+        print(f"Hinweis: {config.STRASSEN} fehlt oder ist leer – Stufe B ohne Straßen.")
     out, hnr = [], {}
     for p in papers:
-        for r in gaz.locate(p.get("name"), bv_bezirke.get(p["id"], ())):
+        punkt = hausnummer_punkt_erlaubt(p, (gremien or {}).get(p["id"], ()))
+        for r in gaz.locate(p.get("name"), bv_bezirke.get(p["id"], ()), punkt_erlaubt=punkt):
             if "hnr_vorher" in r:
                 hnr.setdefault((p["reference"], r["name"]), (r["hnr_vorher"], r.get("hnr_ohne_lage") or r["ortsteil"],
                                                               "hnr_ohne_lage" not in r, p))
@@ -383,6 +401,41 @@ def _hnr_audit(hnr):
             p = papers[(r[0], r[1])]
             w.writerow([i, r[0], p.get("name"), p.get("web") or "", *r[1:], "", ""])
     print(f"Stichprobe Hausnummern: {len(pick)} → {sample_file}")
+
+
+BV_NAME = re.compile(r"^Bezirksvertretung\s+(?:(\d+)\s*)?(?:\((.+)\)|(.+))?$")
+
+
+def bv_bezirk(name):
+    """Stadtbezirk einer Bezirksvertretung aus dem Gremiennamen: „Bezirksvertretung 3 (Lindenthal)“ → „Lindenthal“,
+    „Bezirksvertretung 3“ → „Lindenthal“ (Nummer der Hauptsatzung), „Bezirksvertretung Porz“ → „Porz“."""
+    from .geocode import BEZIRKE_KOELN
+    m = BV_NAME.match((name or "").strip())
+    if not m:
+        return None
+    nr, klammer, rest = m.groups()
+    if klammer or rest:
+        return (klammer or rest).strip()
+    return BEZIRKE_KOELN.get(int(nr)) if nr else None
+
+
+def _from_committee(papers, bv_bezirke, locations, gaz, placed):
+    """Schwache Evidenz `district_from_committee` (CLAUDE.md 5.2): Vorlagen ohne jeden anderen Ortsbezug, die in genau
+    einer Bezirksvertretung beraten wurden, erhalten deren Stadtbezirk (Konfidenz niedrig)."""
+    out = []
+    for p in papers:
+        bz = bv_bezirke.get(p["id"]) or set()
+        if p["id"] in placed or len(bz) != 1:
+            continue
+        name = next(iter(bz))
+        if name not in gaz.bezirk_point:
+            continue
+        pt = gaz.bezirk_point[name]
+        r = dict(level="stadtbezirk", name=name, ortsteil=None, bezirk=name, lon=round(pt.x, 6), lat=round(pt.y, 6))
+        out.append((p["id"], _add_location(r, locations, gaz), "B", "district_from_committee", "niedrig",
+                    f"nur in der Bezirksvertretung {name} beraten", p["id"]))
+    print(f"Stadtbezirk aus der beratenden Bezirksvertretung: {len(out)} Vorlagen")
+    return out
 
 
 def _inherited(papers, papers_by_id, own_rows):

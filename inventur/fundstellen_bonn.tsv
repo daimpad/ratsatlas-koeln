@@ -98,13 +98,9 @@ datei	zeile	kategorie	treffer	auszug
 .github/workflows-inaktiv/pages.yml	322	oparl_lite	consultations_lite	data/raw/consultations_lite.jsonl
 .github/workflows-inaktiv/quellen.yml	1	bonn	bonn	# Quelldateien, die aus der Arbeitsumgebung nicht erreichbar sind (wahlen.bonn.de, stadtplan.bonn.de), abrufen und
 .github/workflows-inaktiv/release.yml	13	bonn	Bonn	default: "Ratsatlas Bonn"
-.github/workflows-inaktiv/tests.yml	54	oparl_lite	consultations_lite	data/raw/consultations_lite.jsonl
-.github/workflows-inaktiv/tests.yml	67	oparl_lite	fetch-lite	python -m pipeline fetch-lite
-.github/workflows-inaktiv/tests.yml	82	site_url	SITE_URL	HAUSHALT_EBENEN=vorschau HAUSHALT_ERWEITERUNG=vorschau HAUSHALT_ERTRAGSARTEN=vorschau SITE_URL=http://localhost:8765/ python -m pipeline seo
-.gitignore	8	oparl_lite	consultations_lite	data/raw/consultations_lite.jsonl
-.gitignore	14	bonn	/bonn/	data/export/bonn/
-.gitignore	15	name_allris_bonn	allris-bonn	data/export/allris-bonn-export.zip
-.gitignore	15	bonn	bonn	data/export/allris-bonn-export.zip
+.github/workflows-inaktiv/tests_bonn.yml	54	oparl_lite	consultations_lite	data/raw/consultations_lite.jsonl
+.github/workflows-inaktiv/tests_bonn.yml	67	oparl_lite	fetch-lite	python -m pipeline fetch-lite
+.github/workflows-inaktiv/tests_bonn.yml	82	site_url	SITE_URL	HAUSHALT_EBENEN=vorschau HAUSHALT_ERWEITERUNG=vorschau HAUSHALT_ERTRAGSARTEN=vorschau SITE_URL=http://localhost:8765/ python -m pipeline seo
 CLAUDE.md	3	bonn	Bonn | bonn	> Entwurf v0.1 (04.11.2026) · Zur Ausführung in Claude Code · Vorlage: Ratsatlas Bonn (`daimpad/allris-test`, künftig `daimpad/ratsatlas-bonn`)
 CLAUDE.md	18	bonn	Bonn	| Gestaltung | wie Ratsatlas Bonn (Glass-Stil, Tokens aus `site/style.css`, Schrift Inter lokal, kontraststarke Violetttöne); Texte und Marke auf Köln umgestell
 CLAUDE.md	20	site_url	SITE_URL	| Veröffentlichung | Hauptadresse `https://koeln.ratsatlas.de/` (Netcup-Webhosting, Plesk-Git aus Branch `deploy` mit Webhook, `SITE_URL`); Spiegel auf GitHub P
@@ -233,12 +229,18 @@ TECHNIK.md	310	site_url	SITE_URL	- Eigener Server (Plesk): Subdomain mit Let's-E
 TECHNIK.md	310	bonn	bonn	- Eigener Server (Plesk): Subdomain mit Let's-Encrypt-Zertifikat; „Git“ mit `https://github.com/daimpad/allris-test.git`, Branch `deploy`, automatische Bereitst
 TECHNIK.md	313	bonn	/bonn/ | Bonn | _BONN | bonn	- Alle Feeds sind Atom 1.0 (`pipeline/publish.py`, `_atom`). Neu ist der Feed über ganz Bonn `data/export/bonn/feeds/ganz-bonn.xml` (`GANZ_BONN`): die letzten 1
 TECHNIK.md	315	bonn	Bonn	- Feed-Erkennung (`link rel="alternate"`): `index.html` und jede Seite aus `gebietsseiten._page` verweisen auf den Feed über ganz Bonn; Gebiets- und Themenseite
+data/geo/hausnummern_koeln.json	1	ortsteil_bonn	Auerberg | Hochkreuz | Röttgen	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Adresse_0.zip","license":"dl-de/zero 2.0 (Stadt Köln, Adressen Köln);
+data/geo/hausnummern_koeln.json	1	bonn	Bonner	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Adresse_0.zip","license":"dl-de/zero 2.0 (Stadt Köln, Adressen Köln);
+data/geo/strassen_koeln.json	1	ortsteil_bonn	Auerberg | Hochkreuz | Röttgen	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Strasse_1.zip","license":"dl-de/zero 2.0 (Stadt Köln, Straßen Köln); 
+data/geo/strassen_koeln.json	1	bonn	Bonner	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Strasse_1.zip","license":"dl-de/zero 2.0 (Stadt Köln, Straßen Köln); 
 deploy/htaccess	2	bonn	Bonn	# Branch deploy kopiert. Die Daten für ganz Bonn umfassen rund 85 MB JSON; Komprimierung
 pipeline/__init__.py	1	name_allris_bonn	allris-bonn	"""Datenpipeline allris-bonn (Phase 1)."""
 pipeline/__init__.py	1	bonn	bonn	"""Datenpipeline allris-bonn (Phase 1)."""
-pipeline/__main__.py	1	oparl_lite	fetch-lite	"""Aufruf: python -m pipeline {fetch|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fet
-pipeline/__main__.py	12	oparl_lite	consultations_lite | fetch-lite	"fetch-lite": fetch.fetch_consultations_lite,
-pipeline/__main__.py	46	bonn	Bonn	"kontext-ausschnitte": kontext.ausschnitte,  # einmalig: Ausschnitte für Bonn (Zensus, Bodenrichtwerte, Klima, ...)
+pipeline/__main__.py	1	oparl_lite	fetch-lite	"""Aufruf: python -m pipeline {fetch|geo-koeln|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-o
+pipeline/__main__.py	9	bonn	Bonner	raise SystemExit(f"In Köln ersetzt durch `{durch}` (Bonner Quelle, Inventur Phase 0).")
+pipeline/__main__.py	19	oparl_lite	fetch-lite	"fetch-lite": _ersetzt("fetch"),
+pipeline/__main__.py	53	bonn	Bonn	"kontext-ausschnitte": kontext.ausschnitte,  # einmalig: Ausschnitte für Bonn (Zensus, Bodenrichtwerte, Klima, ...)
+pipeline/__main__.py	70	bonn	Bonner	# Schritte der Bonner Zusatzthemen: nur, wenn das Thema in config.ZUSATZTHEMEN freigegeben ist (CLAUDE.md 5.4)
 pipeline/actors.py	48	bonn	Bonn	("Allianz für Bonn", r"(?<!\w)AfB(?!\w)|Allianz für Bonn", r"Allianz für Bonn"),
 pipeline/anliegen.py	1	bonn	Bonn	"""Archiv des Anliegen- und Mängelmelders der Stadt Bonn (Phase 1, noch ohne Anzeige auf der Seite).
 pipeline/anliegen.py	16	url_bonn	https://anliegen.bonn.de,	Quelle: Stadt Bonn, https://anliegen.bonn.de, Datensatz „Anliegen- und Mängelmelder Open311“ auf opendata.bonn.de,
@@ -267,79 +269,24 @@ pipeline/build.py	88	oparl_lite	CONSULTATIONS_LITE	if not config.CONSULTATIONS_L
 pipeline/build.py	89	oparl_lite	CONSULTATIONS_LITE	print(f"Hinweis: {config.CONSULTATIONS_LITE} fehlt – Beratungen ohne Sitzung/TOP.")
 pipeline/build.py	94	oparl_lite	CONSULTATIONS_LITE	lite = ({c["uri"]: c for c in _read_jsonl(config.CONSULTATIONS_LITE)}
 pipeline/build.py	95	oparl_lite	CONSULTATIONS_LITE	if config.CONSULTATIONS_LITE.exists() else {})
-pipeline/build.py	104	bonn	bonn	"oparl-bonn": stand.get("papers"),
-pipeline/build.py	105	oparl_lite	consultations_lite | oparl-lite	"oparl-lite": stand.get("consultations_lite"),
-pipeline/build.py	108	bonn	bonn	"geo-bonn": stand.get("geo", "2026-10-17"),
-pipeline/build.py	109	bonn	bonn	"bplan-bonn": stand.get("bplan") or (json.loads(config.BPLAN.read_text())["meta"].get("retrieved_at")
-pipeline/build.py	111	bonn	bonn	"hnr-bonn": stand.get("hausnummern") or (json.loads(config.HAUSNUMMERN.read_text())["meta"].get("retrieved_at")
-pipeline/build.py	119	bonn	bonn	"INSERT INTO organization VALUES (?,?,?,?,?,?,?,?,?,'oparl-bonn')",
-pipeline/build.py	158	oparl_lite	oparl-lite	"oparl-lite" if (m or a) else None))
-pipeline/build.py	170	bonn	bonn	ot["bezirk_bez"] if ot else None, "strasse", "oparl-bonn")
-pipeline/build.py	185	bonn	bonn	points = [(loc[1], loc[5], loc[6]) for loc in locations.values() if loc[-1] == "oparl-bonn"]
-pipeline/build.py	205	bonn	bonn	db.executemany("INSERT OR REPLACE INTO paper VALUES (?,?,?,?,?,?,?,?,?,'oparl-bonn')", rows["paper"])
-pipeline/build.py	206	bonn	bonn	db.executemany("INSERT OR IGNORE INTO paper_relation VALUES (?,?,'oparl-bonn')", rows["rel"])
-pipeline/build.py	207	oparl_lite	oparl-lite	db.executemany("INSERT INTO meeting VALUES (?,?,?,?,'oparl-lite')", meetings.values())
-pipeline/build.py	208	oparl_lite	oparl-lite	db.executemany("INSERT INTO agenda_item VALUES (?,?,?,?,?,?,'oparl-lite')", agenda.values())
-pipeline/build.py	209	bonn	bonn	db.executemany("INSERT OR REPLACE INTO consultation VALUES (?,?,?,?,?,?,?,?,'oparl-bonn',?)", rows["cons"])
-pipeline/build.py	229	bonn	bonn	loc_id, source = f"{r['level']}:{r['name']}", "geo-bonn"
 pipeline/chat.py	1	bonn	/bonn/	"""Daten für die Werkzeuge des Ratsassistenten (site/chat/tools.js), unter data/export/bonn/chat/.
 pipeline/chat.py	38	oparl_lite	OParl-Lite	"Ergebnisse und Sitzungstermine der Beratungen stammen aus OParl-Lite; nicht jede Beratung ist verknüpft.",
 pipeline/check.py	45	oparl_lite	OParl-Lite	print("\nVerknüpfung Beratung ↔ Sitzung (OParl-Lite)")
-pipeline/check.py	99	bonn	bonn	note = " – nicht unabhängig von Stufe A" if "oparl-bonn" in kind else ""
-pipeline/check.py	105	bonn	bonn	"SELECT street FROM location WHERE street IS NOT NULL AND source = 'oparl-bonn' UNION ALL "
-pipeline/check.py	106	bonn	bonn	"SELECT description FROM location WHERE description IS NOT NULL AND source = 'oparl-bonn'")]
-pipeline/check.py	127	bonn	bonn	pz = config.EXPORT / "bonn" / "prozessarten.json"
-pipeline/check.py	144	bonn	bonn	base = base or config.EXPORT / "bonn"
-pipeline/config.py	14	oparl_lite	CONSULTATIONS_LITE | consultations_lite	CONSULTATIONS_LITE = RAW / "consultations_lite.jsonl"
-pipeline/config.py	19	oparl_lite	OParl-Lite	# Volltexte der Hauptdokumente (aus OParl-Lite, dort aus den PDFs der Stadt extrahiert): nur zur Verarbeitung,
-pipeline/config.py	24	bonn	_bonn	ORTSTEILE = GEO / "ortsteile_bonn.geojson"
-pipeline/config.py	25	bonn	_bonn	STADTBEZIRKE = GEO / "stadtbezirke_bonn.geojson"
-pipeline/config.py	28	bonn	_bonn	STRASSEN = GEO / "strassen_bonn.json"
-pipeline/config.py	29	bonn	_bonn	BPLAN = GEO / "bebauungsplaene_bonn.geojson"
-pipeline/config.py	31	url_bonn	https://stadtplan.bonn.de/geojson?Thema=20074	BPLAN_URL = "https://stadtplan.bonn.de/geojson?Thema=20074"
-pipeline/config.py	31	bonn	bonn	BPLAN_URL = "https://stadtplan.bonn.de/geojson?Thema=20074"
-pipeline/config.py	34	bonn	_bonn	HAUSNUMMERN = GEO / "hausnummern_bonn.json"
-pipeline/config.py	35	url_bonn	https://stadtplan.bonn.de/geojson?OD=171	HAUSNUMMERN_URL = "https://stadtplan.bonn.de/geojson?OD=171"
-pipeline/config.py	35	bonn	bonn	HAUSNUMMERN_URL = "https://stadtplan.bonn.de/geojson?OD=171"
-pipeline/config.py	36	bonn	_bonn	OBJEKTE = GEO / "objekte_bonn.json"
-pipeline/config.py	39	url_bonn	https://www.bonn.sitzung-online.de/oparl/bodies/1	OPARL_BODY = "https://www.bonn.sitzung-online.de/oparl/bodies/1"
-pipeline/config.py	39	bonn	bonn	OPARL_BODY = "https://www.bonn.sitzung-online.de/oparl/bodies/1"
-pipeline/config.py	40	url_bonn	https://oparl.bonn.machdenstaat.de/graphql	LITE_GRAPHQL = "https://oparl.bonn.machdenstaat.de/graphql"
-pipeline/config.py	40	oparl_lite	LITE_GRAPHQL | machdenstaat	LITE_GRAPHQL = "https://oparl.bonn.machdenstaat.de/graphql"
-pipeline/config.py	40	bonn	bonn	LITE_GRAPHQL = "https://oparl.bonn.machdenstaat.de/graphql"
-pipeline/config.py	47	url_allris_test	github.com/daimpad/allris-test	USER_AGENT = "allris-bonn-pipeline (https://github.com/daimpad/allris-test)"
-pipeline/config.py	47	name_allris_bonn	allris-bonn	USER_AGENT = "allris-bonn-pipeline (https://github.com/daimpad/allris-test)"
-pipeline/config.py	47	bonn	bonn	USER_AGENT = "allris-bonn-pipeline (https://github.com/daimpad/allris-test)"
-pipeline/config.py	51	bonn	bonn	"oparl-bonn": {
-pipeline/config.py	53	bonn	Bonn	"license": "CC0 1.0 (Stadt Bonn, Datensatz „Ratsinformationssystem OParl-API“)",
-pipeline/config.py	55	oparl_lite	oparl-lite	"oparl-lite": {
-pipeline/config.py	56	oparl_lite	LITE_GRAPHQL	"url": LITE_GRAPHQL,
-pipeline/config.py	57	oparl_lite	OParl-Lite | machdenstaat	"license": "CC BY 4.0 (OParl-Lite Bonn, machdenstaat)",
-pipeline/config.py	57	bonn	Bonn	"license": "CC BY 4.0 (OParl-Lite Bonn, machdenstaat)",
-pipeline/config.py	63	bonn	bonn	"geo-bonn": {
-pipeline/config.py	64	url_bonn	https://opendata.bonn.de/dataset/flächen-der-ortsteile	"url": "https://opendata.bonn.de/dataset/flächen-der-ortsteile",
-pipeline/config.py	64	bonn	bonn	"url": "https://opendata.bonn.de/dataset/flächen-der-ortsteile",
-pipeline/config.py	65	bonn	Bonn	"license": "CC0 1.0 (Stadt Bonn)",
-pipeline/config.py	67	bonn	bonn	"bplan-bonn": {
-pipeline/config.py	68	url_bonn	https://opendata.bonn.de/dataset/lage-der-bebauungspläne	"url": "https://opendata.bonn.de/dataset/lage-der-bebauungspläne",
-pipeline/config.py	68	bonn	bonn	"url": "https://opendata.bonn.de/dataset/lage-der-bebauungspläne",
-pipeline/config.py	69	bonn	Bonn	"license": "CC0 1.0 (Stadt Bonn, Datensatz „Lage der Bebauungspläne“)",
-pipeline/config.py	71	bonn	bonn	"hnr-bonn": {
-pipeline/config.py	72	url_bonn	https://opendata.bonn.de/dataset/strassenliste-straßennamen-straßenverzeichnis-hausnummern-georeferenziert	"url": "https://opendata.bonn.de/dataset/strassenliste-straßennamen-straßenverzeichnis-hausnummern-georeferenziert",
-pipeline/config.py	72	bonn	bonn	"url": "https://opendata.bonn.de/dataset/strassenliste-straßennamen-straßenverzeichnis-hausnummern-georeferenziert",
-pipeline/config.py	73	bonn	Bonn	"license": "CC0 1.0 (Stadt Bonn, Datensatz „Hausnummern georeferenziert“)",
-pipeline/config.py	77	ortsteil_bonn	Endenich	PILOT_ORTSTEIL = "Endenich"
-pipeline/config.py	82	bonn	Bonn	BAUSTELLEN_LICENSE = ("CC0 1.0 (Stadt Bonn, Baustellen tagesaktuell und geplant; Lizenz laut Auftraggeber, die Datensätze "
-pipeline/config.py	83	bonn	bonn	"sind nicht mehr im Katalog von opendata.bonn.de)")
-pipeline/config.py	86	url_bonn	https://ris-bonn.datenatlas.de/	SITE_URL = os.environ.get("SITE_URL", "https://ris-bonn.datenatlas.de/")
-pipeline/config.py	86	url_allris_test	ris-bonn.datenatlas.de	SITE_URL = os.environ.get("SITE_URL", "https://ris-bonn.datenatlas.de/")
-pipeline/config.py	86	site_url	SITE_URL	SITE_URL = os.environ.get("SITE_URL", "https://ris-bonn.datenatlas.de/")
-pipeline/config.py	86	bonn	bonn	SITE_URL = os.environ.get("SITE_URL", "https://ris-bonn.datenatlas.de/")
-pipeline/config.py	89	url_bonn	https://daimpad.github.io/allris-test/data/export/allris-bonn-export.zip	PAKET_URL = os.environ.get("PAKET_URL", "https://daimpad.github.io/allris-test/data/export/allris-bonn-export.zip")
-pipeline/config.py	89	url_allris_test	daimpad.github.io/allris-test	PAKET_URL = os.environ.get("PAKET_URL", "https://daimpad.github.io/allris-test/data/export/allris-bonn-export.zip")
-pipeline/config.py	89	site_url	PAKET_URL	PAKET_URL = os.environ.get("PAKET_URL", "https://daimpad.github.io/allris-test/data/export/allris-bonn-export.zip")
-pipeline/config.py	89	name_allris_bonn	allris-bonn	PAKET_URL = os.environ.get("PAKET_URL", "https://daimpad.github.io/allris-test/data/export/allris-bonn-export.zip")
-pipeline/config.py	89	bonn	bonn	PAKET_URL = os.environ.get("PAKET_URL", "https://daimpad.github.io/allris-test/data/export/allris-bonn-export.zip")
+pipeline/check.py	128	bonn	bonn	pz = config.EXPORT / "bonn" / "prozessarten.json"
+pipeline/check.py	145	bonn	bonn	base = base or config.EXPORT / "bonn"
+pipeline/config.py	14	oparl_lite	OParl-Lite	# Beratungen mit Sitzung und TOP (in Bonn aus OParl-Lite; in Köln vom SessionNet-Adapter aus den Sitzungen abgeleitet,
+pipeline/config.py	14	bonn	Bonn	# Beratungen mit Sitzung und TOP (in Bonn aus OParl-Lite; in Köln vom SessionNet-Adapter aus den Sitzungen abgeleitet,
+pipeline/config.py	17	oparl_lite	CONSULTATIONS_LITE	CONSULTATIONS_LITE = BERATUNGEN
+pipeline/config.py	28	bonn	Bonn	# Flächen heißen wie in Bonn (ortsteil, ortsteil_bez, bezirk, bezirk_bez); angezeigt wird „Stadtteil“ (Phase-0-Bericht 3.3)
+pipeline/config.py	64	oparl_lite	OParl-Lite	QUELLE_SITZUNG = "oparl-koeln"    # Sitzungen und TOPs (in Bonn aus OParl-Lite, in Köln aus derselben API)
+pipeline/config.py	64	bonn	Bonn	QUELLE_SITZUNG = "oparl-koeln"    # Sitzungen und TOPs (in Bonn aus OParl-Lite, in Köln aus derselben API)
+pipeline/config.py	102	bonn	Bonner	# Kein Pilot-Stadtteil (CLAUDE.md 2); bleibt für Module, die den Bonner Pilot noch kennen
+pipeline/config.py	105	bonn	Bonn	# Zusatzthemen aus Bonn: deaktiviert, nicht gelöscht (CLAUDE.md 5.4, Inventur Phase 0); einzeln freizugeben
+pipeline/config.py	113	bonn	Bonn	# Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)
+pipeline/config.py	116	bonn	Bonn	BAUSTELLEN_LICENSE = ("CC0 1.0 (Stadt Bonn, Baustellen tagesaktuell und geplant; Lizenz laut Auftraggeber, die Datensätze "
+pipeline/config.py	117	bonn	bonn	"sind nicht mehr im Katalog von opendata.bonn.de)")
+pipeline/config.py	120	site_url	SITE_URL	SITE_URL = os.environ.get("SITE_URL", "https://koeln.ratsatlas.de/")
+pipeline/config.py	122	site_url	PAKET_URL	PAKET_URL = os.environ.get("PAKET_URL",
 pipeline/dossier.py	7	bonn	/bonn/	Ausgabe: export/bonn/dossiers/<key>.json (export_all) und die statische Seite (seo-Schritt)."""
 pipeline/dossier.py	488	bonn	Bonn	<p class="meta">Ausgelesen aus den Haushaltsplänen{" und dem Jahresabschluss 2024" if ja in h["ausgaben"] else ""} der Stadt Bonn (PDF: {quellen}; Abruf {_date(
 pipeline/dossier.py	529	bonn	Bonn	<p class="meta">Laufende Mitgliedschaften laut OParl-API der Stadt Bonn (CC0), Stand {_date(a["stichtag"])}. <a href="{root}?prozesse=gremien&amp;gremium={escap
@@ -387,7 +334,6 @@ pipeline/export.py	2	bonn	bonn	Stadtbezirk und Jahr (data/export/bonn, für die 
 pipeline/export.py	157	bonn	Bonn	"""Metadaten je Datei. stable=True (Gebietsdateien für ganz Bonn): ohne Erzeugungs- und
 pipeline/export.py	179	bonn	Bonn	"""Ganz Bonn: je Ortsteil, je Stadtbezirk (nur Bezüge auf Bezirksebene) und Vorlagen ohne
 pipeline/export.py	183	bonn	bonn	out = config.EXPORT / "bonn"
-pipeline/export.py	267	bonn	bonn	stand = next((s["retrieved_at"] for s in sources if s["name"] == "oparl-bonn"), None) or ""
 pipeline/export.py	284	bonn	Bonn	_dump(out / "plaene.json", {"meta": {**_meta(db, True), "note": "Pläne und Inkrafttreten belegt (Stadt Bonn, "
 pipeline/export.py	300	site_url	SITE_URL	prozessbild.schreibe_bild(t, thema, out / "dossiers", f"{config.SITE_URL}{t.pfad}")
 pipeline/export.py	304	site_url	SITE_URL	home, f"{config.SITE_URL}{t.pfad}")
@@ -398,9 +344,6 @@ pipeline/export.py	391	bonn	Bonn	"""Kompakter Index aller Vorlagen für die Such
 pipeline/export.py	447	oparl_lite	OParl-Lite	Sitzungsdatum der Beratungen (abgeleitet über OParl-Lite); dazu Sitzungen und Wahlperioden."""
 pipeline/export.py	472	oparl_lite	OParl-Lite	"der Beratungen (über OParl-Lite verknüpft, abgeleitet)"),
 pipeline/export.py	540	oparl_lite	OParl-Lite	"Ergebnis der entscheidenden Beratung (OParl-Lite) oder Stand"),
-pipeline/export.py	599	bonn	bonn	rows.append([p["reference"], "datum_vorlage", p["date"] or "", "oparl-bonn",
-pipeline/export.py	606	oparl_lite	oparl-lite	rows.append([p["reference"], dim, st["date"], "oparl-lite", "abgeleitet",
-pipeline/export.py	613	bonn	bonn	"oparl-bonn", "belegt" if st.get("date") else "unklar", st["label"]])
 pipeline/fetch.py	1	oparl_lite	OParl-Lite	"""Abruf der Rohdaten: städtische OParl-API (Primärquelle) und OParl-Lite (Sitzungen, TOPs)."""
 pipeline/fetch.py	113	oparl_lite	consultations_lite	def fetch_consultations_lite(page=100, workers=2):
 pipeline/fetch.py	116	oparl_lite	LITE_GRAPHQL	config.LITE_GRAPHQL, CONSULTATION_QUERY, {"limit": page, "offset": off}
@@ -454,29 +397,14 @@ pipeline/gebietszahlen.py	37	bonn	Bonn	`base`: Anteile in ganz Bonn aus shares()
 pipeline/gebietszahlen.py	50	bonn	_bonn	return {"thema": t, "label": label.get(t, t), "anteil": round(share * 100), "anteil_bonn": round(city * 100)}
 pipeline/gebietszahlen.py	82	bonn	_bonn	"themen_bonn": {t: round(share * 100, 1) for t, (_, share) in sorted(base.items())},
 pipeline/gebietszahlen.py	86	bonn	Bonn	f"mindestens {MIN_FAKTOR:g}-mal so häufig wie in ganz Bonn."}
-pipeline/geo.py	1	bonn	Bonner	"""Point-in-Polygon gegen die 51 Bonner Ortsteile (shapely)."""
-pipeline/geocode.py	28	bonn	Bonn	# Lokale Projektion in Metern (gleichabständig, ausreichend für Bonn)
-pipeline/geocode.py	42	ortsteil_bonn	Lessenich | Meßdorf	"Lessenich/Meßdorf": ["Lessenich", "Meßdorf", "Messdorf"],
-pipeline/geocode.py	43	ortsteil_bonn	Bechlinghoven | Pützchen	"Pützchen/Bechlinghoven": ["Pützchen", "Bechlinghoven"],
-pipeline/geocode.py	44	ortsteil_bonn	Schwarzrheindorf | Vilich-Rheindorf	"Schwarzrheindorf / Vilich-Rheindorf": ["Schwarzrheindorf", "Vilich-Rheindorf"],
-pipeline/geocode.py	45	ortsteil_bonn	Müldorf | Vilich	"Vilich- Müldorf": ["Vilich-Müldorf", "Müldorf"],
-pipeline/geocode.py	46	ortsteil_bonn	Bonn-Castell	"Bonn-Castell": ["Bonn-Castell", "Castell"],
-pipeline/geocode.py	46	bonn	Bonn	"Bonn-Castell": ["Bonn-Castell", "Castell"],
-pipeline/geocode.py	47	ortsteil_bonn	Godesberg-Villenviertel	"Godesberg-Villenviertel": ["Godesberg-Villenviertel", "Villenviertel"],
-pipeline/geocode.py	49	bezirk_bonn	Bad Godesberg | Beuel | Hardtberg	BEZIRKE = {"Bad Godesberg": ["Bad Godesberg", "Godesberg"], "Beuel": ["Beuel"], "Hardtberg": ["Hardtberg"]}
-pipeline/geocode.py	54	ortsteil_bonn	Poppelsdorf	"Poppelsdorf": ["Poppeldorf"],
-pipeline/geocode.py	55	ortsteil_bonn	Plittersdorf	"Plittersdorf": ["Plitterdorf"],
-pipeline/geocode.py	56	ortsteil_bonn	Pennenfeld	"Pennenfeld": ["Pennefeld"],
-pipeline/geocode.py	57	ortsteil_bonn	Holtorf	"Holtorf": ["Holtdorf"],
-pipeline/geocode.py	58	ortsteil_bonn	Schwarzrheindorf | Vilich-Rheindorf	"Schwarzrheindorf / Vilich-Rheindorf": ["Schwarz-Rheindorf"],
-pipeline/geocode.py	60	bezirk_bonn	Bad Godesberg | Beuel	BEZIRK_VARIANTEN = {"Bad Godesberg": ["Bad-Godesberg", "Goesberg"], "Beuel": ["Beuler"]}
-pipeline/geocode.py	62	ortsteil_bonn	Pützchen	GENITIV_AUSNAHMEN = {"Pützchen"}
-pipeline/geocode.py	79	ortsteil_bonn	Endenich	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
-pipeline/geocode.py	79	bonn	Bonn	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
-pipeline/geocode.py	253	bonn	bonn	"length_m": None, "component": 0, "source": "oparl-bonn"}]
-pipeline/geocode.py	297	ortsteil_bonn	Friesdorf | Godesberg-Nord	# Lagebezeichnung („Grundstück in Bonn-Friesdorf, Friesdorfer Straße 197“ liegt in Godesberg-Nord)
-pipeline/geocode.py	297	bonn	Bonn	# Lagebezeichnung („Grundstück in Bonn-Friesdorf, Friesdorfer Straße 197“ liegt in Godesberg-Nord)
-pipeline/geocode.py	392	bonn	Bonn	"note": "Ortsteile je Straße per Verschneidung mit den Ortsteilflächen der Stadt Bonn; "
+pipeline/geo.py	1	bonn	Bonner	"""Point-in-Polygon gegen die 86 Kölner Stadtteile (shapely); Eigenschaften im Bonner Format (ortsteil_bez …)."""
+pipeline/geocode.py	90	ortsteil_bonn	Endenich	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
+pipeline/geocode.py	90	bonn	Bonn	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
+pipeline/geocode.py	317	ortsteil_bonn	Friesdorf | Godesberg-Nord	# Lagebezeichnung („Grundstück in Bonn-Friesdorf, Friesdorfer Straße 197“ liegt in Godesberg-Nord)
+pipeline/geocode.py	317	bonn	Bonn	# Lagebezeichnung („Grundstück in Bonn-Friesdorf, Friesdorfer Straße 197“ liegt in Godesberg-Nord)
+pipeline/geocode.py	438	bonn	Bonner	vorliegen (explore/BERICHT_phase1.md 2.5); bis dahin keine Erkennung, damit das Bonner Schema nichts falsch zuordnet."""
+pipeline/geocode.py	458	bonn	Bonn	"note": "Ortsteile je Straße per Verschneidung mit den Ortsteilflächen der Stadt Bonn; "
+pipeline/geodaten.py	6	bonn	Bonner	OParl-Abruf). Ausgabe in WGS84 mit den Eigenschaftsnamen des Bonner Modells:
 pipeline/glossar.py	69	oparl_lite	OParl-Lite	"abgeleitet": "Aus Quelldaten erschlossen (z. B. Verknüpfung mit OParl-Lite, Titelmuster).",
 pipeline/glossar.py	85	bonn	Bonn	DATENFELD = "Ratsinformationssystem der Stadt Bonn (OParl-API)"
 pipeline/glossar.py	87	bonn	Bonn	ERSCHLOSSEN = "Vorlagenart im Ratsinformationssystem der Stadt Bonn; Erklärung aus Titeln und Beratungsfolge erschlossen"
@@ -587,17 +515,10 @@ pipeline/objekte.py	48	bonn	bonn | bonner	return " ".join(w for w in words if w 
 pipeline/objekte.py	59	bonn	Bonner	# Namen mit Ziffer am Anfang sind meist Tafeln oder Vereine („1967 1. Bonner Fußgängerzone …“)
 pipeline/objekte.py	100	bonn	Bonn	# kürzester passender Name je Ortsteil („LVR-Landesmuseum Bonn“ vor „…, Bibliothek“)
 pipeline/plans.py	2	bonn	Bonn	Pläne der Stadt Bonn (CC0) abgleichen. Der Datensatz enthält nur rechtskräftige Pläne; Pläne im
-pipeline/plans.py	83	bonn	bonn	"bebauungsplan", "bplan-bonn")
 pipeline/plans.py	107	bonn	Bonn	"""Je Plannummer aus den Titeln: zugeordnete Pläne (belegt, Stadt Bonn), berührte Ortsteile und die
 pipeline/process.py	5	oparl_lite	OParl-Lite	- abgeleitet        aus Quelldaten erschlossen (Join mit OParl-Lite, Textmuster, Vererbung)
-pipeline/process.py	48	oparl_lite	OParl-Lite	"""Kalendertag in Bonn; Sitzungszeiten aus OParl-Lite stehen in UTC (z. B. 22:30Z = 00:30 Uhr)."""
-pipeline/process.py	48	bonn	Bonn	"""Kalendertag in Bonn; Sitzungszeiten aus OParl-Lite stehen in UTC (z. B. 22:30Z = 00:30 Uhr)."""
-pipeline/process.py	81	bonn	bonn	"date": None, "source": "oparl-bonn", "source_object": p["source_object"],
-pipeline/process.py	90	bonn	bonn	"date": p["date"], "source": "oparl-bonn", "source_object": p["source_object"],
-pipeline/process.py	102	bonn	bonn	"status": "belegt", "source": "oparl-bonn",
-pipeline/process.py	104	oparl_lite	oparl-lite	"date_source": "oparl-lite" if day else None,
-pipeline/process.py	106	oparl_lite	oparl-lite	"result_source": "oparl-lite" if s["result"] or s["number"] else None,
-pipeline/process.py	120	bonn	bonn	"date": sub.get("date"), "source": "oparl-bonn", "reference": sub["reference"],
+pipeline/process.py	49	oparl_lite	OParl-Lite	"""Kalendertag in Bonn; Sitzungszeiten aus OParl-Lite stehen in UTC (z. B. 22:30Z = 00:30 Uhr)."""
+pipeline/process.py	49	bonn	Bonn	"""Kalendertag in Bonn; Sitzungszeiten aus OParl-Lite stehen in UTC (z. B. 22:30Z = 00:30 Uhr)."""
 pipeline/prozessarten.py	1	bonn	/bonn/ | Bonn	"""Reiter „Prozesse“: Verfahrensarten mit Zahlen aus Bonn und Gremien mit Zuständigkeit (data/export/bonn/prozessarten.json).
 pipeline/prozessarten.py	4	bonn	Bonn	diese Datei ergänzt je Verfahren die Zahl der Vorgänge in Bonn mit Beispielen (Zuordnung abgeleitet, pipeline/soll.py)
 pipeline/prozessarten.py	5	bonn	Bonn	und je Gremium Art, Beratungen, letzte und nächste Sitzung (OParl-API der Stadt Bonn, CC0); je Amt die
@@ -655,7 +576,6 @@ pipeline/publish.py	254	bonn	Bonn	"dct:spatial": {"@type": "dct:Location", "rdfs
 pipeline/publish.py	257	name_allris_bonn	allris-bonn	"dct:publisher": {"@type": "foaf:Agent", "foaf:name": "allris-bonn (Hackathon „Hack den Stadtrat“)",
 pipeline/publish.py	257	bonn	bonn	"dct:publisher": {"@type": "foaf:Agent", "foaf:name": "allris-bonn (Hackathon „Hack den Stadtrat“)",
 pipeline/publish.py	258	url_allris_test	github.com/daimpad/allris-test	"foaf:homepage": {"@id": "https://github.com/daimpad/allris-test"}},
-pipeline/publish.py	259	oparl_lite	LITE_GRAPHQL	"dct:source": [{"@id": config.OPARL_BODY}, {"@id": config.LITE_GRAPHQL}],
 pipeline/publish.py	262	bonn	bonn	dist("Verortete Vorlagen (GeoJSON)", "bonn/vorlagen.geojson", "application/geo+json", "odbl",
 pipeline/publish.py	264	site_url	PAKET_URL	dist("Datenpaket (Zip)", config.PAKET_URL, "application/zip", "odbl",
 pipeline/publish.py	266	bonn	bonn	dist("Zeitleiste: Monatsaggregate (JSON)", "bonn/zeit.json", "application/json", "cc-by",
@@ -693,6 +613,13 @@ pipeline/seo.py	13	url_allris_test	daimpad.github.io/allris-test	DEFAULT_URL = "
 pipeline/seo.py	13	site_url	SITE_URL	DEFAULT_URL = "https://daimpad.github.io/allris-test/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
 pipeline/seo.py	15	site_url	SITE_URL	SITEMAP = ("", "datenschutz.html")  # Pfade relativ zu SITE_URL
 pipeline/seo.py	31	site_url	SITE_URL	site_url = site_url or config.SITE_URL
+pipeline/sessionnet.py	1	bonn	Bonner	"""SessionNet-Adapter: Abruf der Kölner OParl-API ins Bonner Rohdatenformat (CLAUDE.md 5.1).
+pipeline/sessionnet.py	3	bonn	Bonner	Erzeugt dieselben Rohdateien wie der Bonner Abruf, damit build.py, Export und Seite unverändert bleiben:
+pipeline/sessionnet.py	6	bonn	Bonner	- `meetings.json`     Sitzungen im Bonner Kurzformat; vollständige Sitzungen mit TOPs in `meetings_roh.jsonl`
+pipeline/sessionnet.py	8	oparl_lite	OParl-Lite	- `beratungen.jsonl`  Beratung → Sitzung und TOP (in Bonn aus OParl-Lite; in Köln abgeleitet, weil `consultation`
+pipeline/sessionnet.py	8	bonn	Bonn	- `beratungen.jsonl`  Beratung → Sitzung und TOP (in Bonn aus OParl-Lite; in Köln abgeleitet, weil `consultation`
+pipeline/sessionnet.py	164	oparl_lite	OParl-Lite	"""Beratung → Sitzung und TOP im Format, das build.py aus OParl-Lite kennt. Fehlt in der Beratung die
+pipeline/sessionnet.py	198	oparl_lite	consultations_lite	_stamp("consultations_lite")
 pipeline/soll.py	3	bonn	Bonn | bonn	Übernommen aus „Bonn entscheidet“ (anster2025/bonn-entscheidet, Commit 26641f7, MIT): Verfahrensmodell
 pipeline/soll.py	24	bonn	bonn	# Rechtsgrundlagen als Links (nach recht.py in bonn-entscheidet, MIT): Kurzform → (Name, Adresse)
 pipeline/soll.py	25	url_bonn	https://www.bonn.de/service-bieten/stadtpolitik-ortsrecht/ortsrecht/	_ORTSRECHT = "https://www.bonn.de/service-bieten/stadtpolitik-ortsrecht/ortsrecht/"
@@ -1216,3 +1143,5 @@ site/tour.js	20	bonn	Bonn	text: "Ein Ortsteil, ein ganzer Stadtbezirk oder Vorla
 site/tour.js	43	bonn	Bonn	text: "Alle Verfahrensarten – vom Bürgerantrag bis zum Bebauungsplan – mit ihren Schritten, Fristen und Rechtsgrundlagen und der Zahl der Vorgänge in Bonn. Unte
 site/tour.js	46	bonn	Bonn	text: "Kennzahlen zum Gebiet nach Thema, Partei, Jahr und Stand; ein Klick auf einen Balken filtert die Liste. Die Verfahrenswege zeigen für ganz Bonn, welche G
 site/tour.js	58	bonn	Bonner	text: "Ein KI-System beantwortet Fragen zu Bonner Ratsvorgängen und stützt sich dabei nur auf die Daten dieser Seite. Er braucht einen eigenen API-Schlüssel, ne
+tests/conftest.py	104	oparl_lite	CONSULTATIONS_LITE	"CONSULTATIONS_LITE": raw / "beratungen.jsonl", "STAND": raw / "STAND.json",
+tests/test_sessionnet.py	2	bonn	Bonner	Abrufstatistik, Sperre und Anschluss an build.py (Bonner Datenmodell)."""

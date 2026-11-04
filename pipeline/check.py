@@ -96,14 +96,15 @@ def check():
         for pid, k, ok in pairs:
             if k == kind:
                 hits[pid] = hits.get(pid, False) or bool(ok)
-        note = " – nicht unabhängig von Stufe A" if "oparl-bonn" in kind else ""
+        note = " – nicht unabhängig von Stufe A" if config.QUELLE_OPARL in kind else ""
         print(f"  Vorlagen mit Ortsteil wie Stufe A, Ebene {kind}:",
               pct(sum(hits.values()), len(hits)) + note)
 
     # Straße und Beschreibung der Orte aus der OParl-API; Postleitzahlen sind keine Hausnummern
     texts = [r[0] for r in db.execute(
-        "SELECT street FROM location WHERE street IS NOT NULL AND source = 'oparl-bonn' UNION ALL "
-        "SELECT description FROM location WHERE description IS NOT NULL AND source = 'oparl-bonn'")]
+        "SELECT street FROM location WHERE street IS NOT NULL AND source = ? UNION ALL "
+        "SELECT description FROM location WHERE description IS NOT NULL AND source = ?",
+        (config.QUELLE_OPARL, config.QUELLE_OPARL))]
     with_number = [s for s in texts if re.search(r"\d", re.sub(r"\b5[0-9]{4}\b", "", s))]
     with_nr = one("SELECT COUNT(DISTINCT paper_id) FROM paper_plan")
     with_area = one("SELECT COUNT(DISTINCT paper_id) FROM paper_location WHERE method = 'bebauungsplan'")

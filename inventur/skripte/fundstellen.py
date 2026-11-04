@@ -30,12 +30,20 @@ MUSTER = [
 ]
 
 
+def _dateien():
+    """Versionierte und neue, nicht ignorierte Dateien (ohne Caches und lokale Rohdaten)."""
+    import subprocess
+    out = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=ROOT,
+                         capture_output=True, text=True, check=True).stdout.split("\n")
+    return [ROOT / n for n in sorted(set(out)) if n and (ROOT / n).exists()]
+
+
 def main():
     out = sys.stdout
     out.write("datei\tzeile\tkategorie\ttreffer\tauszug\n")
-    for p in sorted(ROOT.rglob("*")):
+    for p in _dateien():
         rel = p.relative_to(ROOT).as_posix()
-        if not p.is_file() or rel.startswith((".git/", "inventur/")):
+        if not p.is_file() or rel.startswith((".git/", "inventur/", "explore/")):
             continue
         try:
             text = p.read_text(encoding="utf-8")

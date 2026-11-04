@@ -182,7 +182,7 @@ def fetch_streets(step=0.05):
     """Benannte Straßen (OSM-Ways mit `highway` und `name`) im Stadtgebiet, in Kacheln.
     Nicht abrufbare Kacheln werden übersprungen und in der Ausgabe als `missing_tiles`
     vermerkt; ein erneuter Aufruf holt nur diese nach."""
-    south, west, north, east = config.BONN_BBOX
+    south, west, north, east = config.STADT_BBOX
     tiles = [(round(s, 2), round(w, 2), round(min(s + step, north), 2), round(min(w + step, east), 2))
              for s in _frange(south, north, step) for w in _frange(west, east, step)]
     ways, missing = {}, []
@@ -289,7 +289,7 @@ OBJEKT_ARTEN = {
 def fetch_objects():
     """Benannte Gebäude und Anlagen in Bonn aus OSM (ODbL): Name, Art, Ortsteil (Point-in-Polygon), Mittelpunkt."""
     from .geo import Ortsteile
-    s, w, n, e = config.BONN_BBOX
+    s, w, n, e = config.STADT_BBOX
     b = f"({s},{w},{n},{e})"
     parts = "".join(f'nwr["{k}"~"^({"|".join(v)})$"]["name"]{b};' for k, v in OBJEKT_ARTEN.items())
     # bekannte Bauwerke sind oft nur als Gebäude erfasst (Beethovenhalle, Post Tower): Gebäude mit Wikidata-Eintrag
