@@ -11,7 +11,7 @@ Stand 04.11.2026. Zugangsdaten zu Netcup und Plesk bleiben beim Auftraggeber und
    - `RATSATLAS_STADT_INFORMIERT` = `ja` – **erst, wenn die Stadt informiert ist** (Anfrage `explore/ANFRAGE_stadt_koeln.md`). Vorher endet der tägliche Lauf ohne Abruf und ohne Veröffentlichung.
 3. **Benachrichtigung** – Profil → Settings → Notifications → Actions: „Notify on failed workflows“.
 
-Der Branch `deploy` entsteht erst mit dem ersten erfolgreichen Lauf von `pages.yml` mit Daten; erst danach lässt sich Schritt B.3 abschließen.
+Bis zum ersten Lauf von `pages.yml` mit Daten enthält der Branch `deploy` nur eine Platzhalterseite („in Vorbereitung“, mit Datenschutzhinweis und `noindex`). Der erste Lauf mit Daten ersetzt sie; Schritt B.3 lässt sich deshalb schon jetzt abschließen. Plesk darf nie Branch `main` ausliefern, sonst ist der ganze Quellcode unter der Domain abrufbar.
 
 ## B. Netcup / Plesk
 
