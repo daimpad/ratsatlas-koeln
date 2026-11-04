@@ -99,6 +99,11 @@ GEO_DOWNLOADS = {
     "adressen": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Adresse_0.zip",
 }
 
+# Stadt: Schlüssel für Exportpfade (data/export/koeln) und Bezeichnung auf der Seite
+STADT = "koeln"
+STADT_NAME = "Köln"
+SEITENNAME = "Ratsatlas Köln"
+
 # Kein Pilot-Stadtteil (CLAUDE.md 2); bleibt für Module, die den Bonner Pilot noch kennen
 PILOT_ORTSTEIL = None
 
@@ -108,6 +113,8 @@ ZUSATZTHEMEN = {
     "kontext": False, "soll": False, "chat": False,
     # zweiter Lauf (Entscheidung 04.11.2026)
     "einfache_sprache": False, "kurzfassungen": False, "mitmachen": False, "besetzung": False,
+    # Seite technik/ beschreibt die Workflows; sie entsteht für Köln mit Phase 5
+    "technik": False,
 }
 
 # Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)

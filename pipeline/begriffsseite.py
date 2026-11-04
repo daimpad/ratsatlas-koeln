@@ -31,7 +31,7 @@ def abschnitte():
     ergebnisse = [(k, v, None, glossar.anker(k)) for k, v in glossar.ERGEBNISSE.items() if k not in glossar.ROLLEN]
     rollen = [(k, glossar.ERGEBNISSE[k], None, glossar.anker("rolle " + k)) for k in glossar.ROLLEN]
     out.append(("ergebnisse", "Ergebnisse der Beratung",
-                "Die Ergebnisse stehen in der Prozesslinie wörtlich wie im Ratsinformationssystem (über OParl-Lite); die "
+                "Die Ergebnisse stehen in der Prozesslinie wörtlich wie im Ratsinformationssystem; die "
                 "Erklärung daneben ist allgemein formuliert.", ergebnisse))
     out.append(("rollen", "Rollen in der Beratungsfolge", "Jedes Gremium der Beratungsfolge hat eine Rolle.", rollen))
     out.append(("stand", "Stand eines Vorgangs",
@@ -44,7 +44,7 @@ def abschnitte():
               ("soll", glossar.EVIDENZ["soll"]),
               ("Ort gesichert", "Die Stadt gibt den Ort mit einer Koordinate an."),
               ("Ort erschlossen", "Der Ort ist nach festen Regeln aus dem Titel oder dem Text eines Dokuments erschlossen, "
-                                  "etwa aus einem Straßen- oder Ortsteilnamen."),
+                                  "etwa aus einem Straßen- oder Stadtteilnamen."),
               ("Ort unsicher", "Der Ort ist erschlossen, aber nicht eindeutig, etwa bei Namen von Gebäuden oder Anlagen.")]
     out.append(("sicherheit", "Wie sicher eine Angabe ist", "",
                 [(k, v, None, glossar.anker("angabe " + k)) for k, v in sicher]))
@@ -110,8 +110,8 @@ def write(site, site_url, page):
     """Schreibt begriffe/index.html; gibt den Pfad für die Sitemap zurück."""
     out = site / PFAD / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(page(site_url, PFAD, "Begriffe – Ratsatlas Bonn",
+    out.write_text(page(site_url, PFAD, "Begriffe – Ratsatlas Köln",
                         "Was bedeuten Beschlussvorlage, Stellungnahme der Verwaltung, „zur Kenntnis genommen“ oder ST? "
-                        "Begriffe aus dem Ratsinformationssystem der Stadt Bonn in einfachen Worten, mit Fundstelle.",
+                        "Begriffe aus dem Ratsinformationssystem der Stadt Köln in einfachen Worten, mit Fundstelle.",
                         body("../"), "../"), encoding="utf-8")
     return [PFAD]

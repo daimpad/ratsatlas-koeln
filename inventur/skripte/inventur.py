@@ -25,6 +25,7 @@ REGELN = [
     ("pipeline/sessionnet.py", G, "Abruf", "neu (Phase 2): SessionNet-Adapter ins Bonner Rohdatenformat, inkrementell, Abrufstatistik"),
     ("pipeline/geodaten.py", G, "Geodaten", "neu (Phase 2): Stadtteile, Stadtbezirke, Straßenverzeichnis aus den Kölner Geodaten"),
     ("tests/*", G, "Tests", "neu (Phase 2): synthetische Testdaten, lokaler Testserver"),
+    ("tools/*", G, "Werkzeuge", "neu (Phase 4): Testdaten, Seite zusammenstellen, WCAG-Prüfung"),
     ("data/*", G, "Daten", "neu (Phase 2): Kölner Geodaten (dl-de/zero 2.0) und Datenlizenz"),
     ("pipeline/build.py", A, "Datenmodell", "Normalisierung ins SQLite-Modell bleibt; Eingänge (Beratungen aus OParl-Lite, Bonner Nummernschema) auf Köln umstellen"),
     ("pipeline/actors.py", A, "Akteure", "Bonner Vorlagenarten, Titelmuster, „Co-Dezernat“; Köln: underDirectionOf bzw. PDF-Kopf „Dezernat, Dienststelle“, Ämtertabelle, § 3/§ 4-Muster"),

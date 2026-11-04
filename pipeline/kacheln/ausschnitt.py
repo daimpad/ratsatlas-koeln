@@ -1,4 +1,4 @@
-"""Ausschnitt Bonn aus einem Protomaps-Build (PMTiles v3, OSM-Daten, ODbL) über HTTP-Range-Anfragen.
+"""Ausschnitt Köln aus einem Protomaps-Build (PMTiles v3, OSM-Daten, ODbL) über HTTP-Range-Anfragen.
 
 Aufruf: python -I pipeline/kacheln/ausschnitt.py <ausgabe.pmtiles> <stand.json> [build]
 build: Dateiname wie 20261101.pmtiles; ohne Angabe der neueste Build laut builds.json.
@@ -19,7 +19,7 @@ from rahmen import VEKTOR_MAXZOOM, kachelbereich, rahmen  # noqa: E402
 
 BUILDS = "https://build-metadata.protomaps.dev/builds.json"
 BASIS = "https://build.protomaps.com/"
-UA = "ratsatlas-bonn/1.0 (+https://ris-bonn.datenatlas.de/; Ausschnitt Bonn, vierteljaehrlich)"
+UA = "ratsatlas-koeln/0.1 (+https://github.com/daimpad/ratsatlas-koeln; Ausschnitt Koeln, vierteljaehrlich)"
 REQ = {"n": 0, "bytes": 0}
 
 

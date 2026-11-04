@@ -7,56 +7,53 @@
        Bibliotheken mit Integritätsprüfung), keine Inline-Skripte;
        Verbindungen nur zu den Daten der Seite, den unterstützten Anbietern des Ratsassistenten und lokalen Modellen.
        Inline-Stile bleiben erlaubt (Leaflet, Balken der Auswertung). -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://oparl.bonn.machdenstaat.de https://api.anthropic.com https://api.mistral.ai https://openrouter.ai http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'">
-  <title>Ratsatlas Bonn – Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld</title>
-  <meta name="description" content="Was berät der Bonner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ämtern und Quellen.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://api.anthropic.com https://api.mistral.ai https://openrouter.ai http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer</title>
+  <meta name="description" content="Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen.">
   <meta name="author" content="Damian Paderta">
   <meta name="robots" content="index, follow">
-  <!-- Adressen: pipeline/seo.py ersetzt https://daimpad.github.io/allris-test/ beim Veröffentlichen durch SITE_URL -->
+  <!-- Adressen: pipeline/seo.py ersetzt https://daimpad.github.io/ratsatlas-koeln/ beim Veröffentlichen durch SITE_URL -->
   <link rel="canonical" href="https://daimpad.github.io/allris-test/">
   <meta name="theme-color" content="#7c3aed">
   <link rel="icon" href="favicon.ico" sizes="32x32">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
-  <!-- Feed-Erkennung: Feed über ganz Bonn (Seite rss/); app.js ergänzt den Feed des gewählten Gebiets -->
-  <link rel="alternate" type="application/atom+xml" title="Ratsatlas Bonn – ganz Bonn" href="data/export/bonn/feeds/ganz-bonn.xml">
+  <!-- Feed-Erkennung: Feed über ganz Köln (Seite rss/); app.js ergänzt den Feed des gewählten Gebiets -->
+  <link rel="alternate" type="application/atom+xml" title="Ratsatlas Köln – ganz Köln" href="data/export/koeln/feeds/ganz-koeln.xml">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Ratsatlas Bonn">
+  <meta property="og:site_name" content="Ratsatlas Köln">
   <meta property="og:locale" content="de_DE">
-  <meta property="og:title" content="Ratsatlas Bonn – Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld">
-  <meta property="og:description" content="Was berät der Bonner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ämtern und Quellen.">
+  <meta property="og:title" content="Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer">
+  <meta property="og:description" content="Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen.">
   <meta property="og:url" content="https://daimpad.github.io/allris-test/">
-  <meta property="og:image" content="https://daimpad.github.io/allris-test/og-image.jpg">
-  <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Ratsatlas Bonn: Karte von Bonn-Zentrum mit gebündelten Ratsvorlagen">
-  <meta name="twitter:card" content="summary_large_image">
+  <!-- Vorschaubild für Köln folgt im zweiten Lauf (Entscheidung 04.11.2026); das Bonner Bild wird nicht ausgeliefert -->
+  <meta name="twitter:card" content="summary">
   <!-- strukturierte Daten (nur Daten, wird nicht ausgeführt; mit der CSP vereinbar) -->
   <script type="application/ld+json">
   {"@context": "https://schema.org", "@graph": [
-    {"@type": "WebSite", "@id": "https://daimpad.github.io/allris-test/#website", "url": "https://daimpad.github.io/allris-test/", "name": "Ratsatlas Bonn", "inLanguage": "de",
-     "description": "Was berät der Bonner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ämtern und Quellen."},
-    {"@type": "WebApplication", "@id": "https://daimpad.github.io/allris-test/#app", "url": "https://daimpad.github.io/allris-test/", "name": "Ratsatlas Bonn", "inLanguage": "de",
+    {"@type": "WebSite", "@id": "https://daimpad.github.io/ratsatlas-koeln/#website", "url": "https://daimpad.github.io/ratsatlas-koeln/", "name": "Ratsatlas Köln", "inLanguage": "de",
+     "description": "Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen."},
+    {"@type": "WebApplication", "@id": "https://daimpad.github.io/ratsatlas-koeln/#app", "url": "https://daimpad.github.io/ratsatlas-koeln/", "name": "Ratsatlas Köln", "inLanguage": "de",
      "applicationCategory": "ReferenceApplication", "operatingSystem": "Web-Browser", "isAccessibleForFree": true,
-     "image": "https://daimpad.github.io/allris-test/og-image.jpg", "license": "https://opensource.org/licenses/MIT",
+     "license": "https://opensource.org/licenses/MIT",
      "creator": {"@type": "Person", "name": "Damian Paderta"},
-     "spatialCoverage": {"@type": "City", "name": "Bonn"},
-     "isBasedOn": "https://www.bonn.sitzung-online.de/oparl/bodies/1",
-     "codeRepository": "https://github.com/daimpad/allris-test"}
+     "spatialCoverage": {"@type": "City", "name": "Köln"},
+     "isBasedOn": "https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln",
+     "codeRepository": "https://github.com/daimpad/ratsatlas-koeln"}
   ]}
   </script>
   <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Nur index.json vorab (erster Kartenausschnitt); alles Übrige lädt app.js nach den Kacheln (Schritt 1b) -->
-  <link rel="preload" href="data/export/bonn/index.json" as="fetch" crossorigin>
+  <link rel="preload" href="data/export/koeln/index.json" as="fetch" crossorigin>
   <!-- Leaflet- und MarkerCluster-Stile in einer Datei (Phase 0 „Verständlichkeit“); graue Kacheln vom eigenen Server -->
   <link rel="stylesheet" href="vendor/leaflet/karte.min.css" integrity="sha512-wwPsYmnrqEZ8LY0nw6kiMjMDYyLmsaGxUZnBvGjz1X147eRBi9XOCqkJUK2hubjKolvOUcN/w60Jgdgb+3jXCw==">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="list-closed detail-open">
-  <noscript><div class="noscript glass"><p><strong>Ratsatlas Bonn</strong> zeigt Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste. Für die Karte wird JavaScript benötigt.</p>
-    <p>Die Daten gibt es auch ohne Karte: <a href="data/export/allris-bonn-export.zip">Datenpaket (Zip)</a> · <a href="gebiete/">Vorlagen nach Gebiet</a> · <a href="data/export/bonn/vorlagen.geojson">GeoJSON</a> · <a href="https://github.com/daimpad/allris-test">Quellcode</a> · <a href="https://nozilla.de/impressum/">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></p></div></noscript>
+  <p id="testdaten-hinweis" class="testdaten" role="status" hidden><strong>Testdaten:</strong> Diese Fassung zeigt erfundene Vorlagen zur Prüfung der Seite, keine Daten der Stadt Köln.</p>
+  <noscript><div class="noscript glass"><p><strong>Ratsatlas Köln</strong> zeigt Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste. Für die Karte wird JavaScript benötigt.</p>
+    <p>Die Daten gibt es auch ohne Karte: <a href="data/export/ratsatlas-koeln-export.zip">Datenpaket (Zip)</a> · <a href="gebiete/">Vorlagen nach Gebiet</a> · <a href="data/export/koeln/vorlagen.geojson">GeoJSON</a> · <a href="https://github.com/daimpad/ratsatlas-koeln">Quellcode</a> · <a href="https://nozilla.de/impressum/">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></p></div></noscript>
   <!-- Symbole (eigene Strichzeichnungen, 24er-Raster) -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
@@ -91,13 +88,13 @@
   </svg>
 
   <header>
-    <h1 class="site-title">Ratsatlas <span>Bonn</span></h1>
+    <h1 class="site-title">Ratsatlas <span>Köln</span></h1>
     <nav class="nav glass" aria-label="Hauptmenü">
-      <div class="brand" aria-hidden="true">Ratsatlas <span>Bonn</span></div>
+      <div class="brand" aria-hidden="true">Ratsatlas <span>Köln</span></div>
       <form class="nav-search" id="nav-search" role="search">
-        <label class="visually-hidden" for="q">Vorlagen in ganz Bonn suchen</label>
+        <label class="visually-hidden" for="q">Vorlagen in ganz Köln suchen</label>
         <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
-        <input type="search" id="q" placeholder="Vorlagen in ganz Bonn suchen …" autocomplete="off" aria-controls="mega-suche">
+        <input type="search" id="q" placeholder="Vorlagen in ganz Köln suchen …" autocomplete="off" aria-controls="mega-suche">
       </form>
       <!-- Telefon: Gebiet, Flächen und Menüs hinter ☰ (Entscheidung 02.11.2026); auf breiten Bildschirmen ohne eigene Box -->
       <button type="button" class="nav-burger" id="nav-burger" aria-expanded="false" aria-controls="nav-more">
@@ -112,9 +109,9 @@
           <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span>Zeitleiste</span></button>
         <button type="button" class="toggle" data-panel="panel-detail" aria-controls="panel-detail" aria-pressed="true" title="Gewählter Vorgang">
           <svg class="icon" aria-hidden="true"><use href="#i-doc"/></svg><span>Vorgang</span></button>
-        <button type="button" class="toggle" data-panel="panel-prozesse" aria-controls="panel-prozesse" aria-pressed="false" title="Verfahren, Gremien und Ämter: wer entscheidet was?">
+        <button type="button" class="toggle" data-panel="panel-prozesse" aria-controls="panel-prozesse" aria-pressed="false" title="Verfahren, Gremien und Ämter: wer entscheidet was?" data-funktion="soll" hidden>
           <svg class="icon" aria-hidden="true"><use href="#i-route"/></svg><span>Prozesse</span></button>
-        <button type="button" class="toggle toggle-ai" data-panel="panel-assistent" aria-controls="panel-assistent" aria-pressed="false" title="Ratsassistent (KI)">
+        <button type="button" class="toggle toggle-ai" data-panel="panel-assistent" aria-controls="panel-assistent" aria-pressed="false" title="Ratsassistent (KI)" data-funktion="chat" hidden>
           <svg class="icon" aria-hidden="true"><use href="#i-assist"/></svg><span>Assistent</span></button>
       </div>
       <div class="nav-group" role="group" aria-label="Menü">
@@ -136,7 +133,7 @@
     <section class="mega glass" id="mega-suche" aria-label="Suche und Schnellfilter" hidden>
       <div class="mega-head">
         <div class="seg scope-switch" role="radiogroup" aria-label="Suchen in">
-          <button type="button" role="radio" data-scope="bonn" aria-checked="true">in ganz Bonn</button>
+          <button type="button" role="radio" data-scope="koeln" aria-checked="true">in ganz Köln</button>
           <button type="button" role="radio" data-scope="gebiet" aria-checked="false">im gewählten Gebiet</button>
         </div>
         <p class="mega-count" id="mega-count" aria-live="polite"></p>
@@ -145,10 +142,11 @@
       <div class="chips" id="chips-theme" role="group" aria-label="Thema wählen"></div>
       <h3 class="mega-label"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Partei / Fraktion</h3>
       <div class="chips" id="chips-party" role="group" aria-label="Partei oder Fraktion wählen"></div>
-      <div class="doc-search">
+      <!-- Suche im Text der Dokumente: in Bonn über OParl-Lite; für Köln kein solcher Dienst (ausgeblendet) -->
+      <div class="doc-search" data-funktion="volltextsuche" hidden>
         <button type="button" class="btn btn-soft" id="doc-search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>Auch im Text der Dokumente suchen</button>
         <p class="hint" id="doc-status" aria-live="polite"></p>
-        <p class="hint">Fragt die Volltextsuche von OParl-Lite (machdenstaat) ab, erst nach dem Klick. Gezeigt werden die Vorlagen, kein Textausschnitt; bisher hat nur ein Teil der Dokumente einen Text.</p>
+        <p class="hint">Für Köln derzeit nicht verfügbar.</p>
       </div>
       <div class="mega-foot">
         <button type="button" class="btn btn-ghost" id="mega-reset">Filter zurücksetzen</button>
@@ -166,13 +164,13 @@
         <button type="button" class="card" data-open-tab="wege">
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg></span>
           <span class="card-title">Verfahrenswege (Statistik)</span>
-          <span class="card-text">Welche Gremien beraten welche Vorlagenart, und wie endet das Verfahren meistens? Ganz Bonn.</span>
+          <span class="card-text">Welche Gremien beraten welche Vorlagenart, und wie endet das Verfahren meistens? Ganz Köln.</span>
         </button>
-        <a class="card" href="thema/">
+        <a class="card" href="thema/" data-funktion="themenseiten" hidden>
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>
           <span class="card-title">Themenseiten</span>
           <span class="card-text">Kultur, Verkehr, Schule, Wohnen, Klima, Kinder, Soziales, Sicherheit, Wirtschaft, Digitales: Vorlagen, Verfahren, nächste Sitzungen und Haushalt je Thema, mit Prozessbild.</span></a>
-        <a class="card" href="haushalt/">
+        <a class="card" href="haushalt/" data-funktion="haushalt" hidden>
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span>
           <span class="card-title">Haushalt auf einen Blick</span>
           <span class="card-text">Aufwendungen, Erträge nach Art, Ergebnis und Investitionen der 17 Produktbereiche: Plan und Ist aus Haushaltsplänen und Jahresabschluss der Stadt, mit Fundstelle und je Einwohner.</span></a>
@@ -187,7 +185,7 @@
           <span class="card-text">Rat, Ausschüsse und Bezirksvertretungen tagen in der Regel öffentlich.</span>
           <span class="card-actions">
             <button type="button" class="btn btn-cta" id="cta-termine"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Termine anzeigen</button>
-            <a class="btn btn-soft" href="data/export/bonn/termine.ics" download><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Kalender (.ics)</a>
+            <a class="btn btn-soft" href="data/export/koeln/termine.ics" download><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Kalender (.ics)</a>
           </span>
         </div>
         <div class="card static">
@@ -199,55 +197,54 @@
         <div class="card static">
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg></span>
           <span class="card-title">Selbst mitwirken</span>
-          <span class="card-text">Mit einem Bürgerantrag (§ 24 GO NRW) bringen Sie Anregungen und Beschwerden selbst ein.</span>
+          <span class="card-text">Mit Anregungen und Beschwerden nach § 24 GO NRW können Sie sich selbst an den Rat wenden. In Köln berät darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden.</span>
           <span class="card-actions">
-            <a class="btn btn-cta" href="https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-external"/></svg>Bürgerantrag stellen<span class="visually-hidden"> (Seite der Stadt Bonn, neuer Tab)</span></a>
-            <button type="button" class="btn btn-soft" id="cta-mitmachen"><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg>Alle Wege im Überblick</button>
+            <button type="button" class="btn btn-soft" id="cta-mitmachen" data-funktion="mitmachen" hidden><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg>Alle Wege im Überblick</button>
           </span>
         </div>
         <div class="card static">
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg></span>
           <span class="card-title">Fehler melden</span>
           <span class="card-text">Ort falsch zugeordnet oder etwas unklar? Ein Hinweis hilft, die Karte zu verbessern.</span>
-          <span class="card-actions"><a class="btn btn-soft" id="cta-report" href="https://github.com/daimpad/allris-test/issues/new/choose" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg>Hinweis geben</a></span>
+          <span class="card-actions"><a class="btn btn-soft" id="cta-report" href="https://github.com/daimpad/ratsatlas-koeln/issues/new/choose" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg>Hinweis geben</a></span>
         </div>
       </div>
     </section>
 
     <section class="mega glass" id="mega-daten" aria-label="Daten und Quellen" hidden>
       <div class="cards cards-3">
-        <a class="card" href="data/export/allris-bonn-export.zip" download>
+        <a class="card" href="data/export/ratsatlas-koeln-export.zip" download>
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg></span>
           <span class="card-title">Datenpaket (Zip)</span>
           <span class="card-text">Alle Exporte, Audit-Protokolle und Lizenzen.</span></a>
-        <a class="card" href="data/export/bonn/vorlagen.geojson" download>
+        <a class="card" href="data/export/koeln/vorlagen.geojson" download>
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-data"/></svg></span>
           <span class="card-title">Verortete Vorlagen (GeoJSON)</span>
-          <span class="card-text">Ein Punkt je Vorlage und Straße, mit Fundstelle.</span></a>
-        <a class="card" href="data/export/bonn/dcat.jsonld">
+          <span class="card-text">Ein Punkt je Vorlage und Ort, mit Methode, Konfidenz und Fundstelle.</span></a>
+        <a class="card" href="data/export/koeln/dcat.jsonld">
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>
           <span class="card-title">Datensatzbeschreibung (DCAT-AP)</span>
           <span class="card-text">Für Open-Data-Portale; mit Lizenzen je Datei.</span></a>
       </div>
-      <p class="mega-links"><button type="button" class="btn btn-soft" data-neu><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Version 1.0: Was ist neu?</button>
+      <p class="mega-links"><button type="button" class="btn btn-soft" data-neu><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Version 0.1: Was ist neu?</button>
         <a class="btn btn-soft" href="rss/"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Feeds abonnieren und einbinden</a></p>
     </section>
     <!-- Verstehen (Entscheidung 02.11.2026): Hilfen zum Lesen der Karte, bisher unter „Daten“ -->
     <section class="mega glass" id="mega-verstehen" aria-label="Verstehen: Hilfen zum Lesen der Karte" hidden>
       <div class="cards cards-3">
-        <a class="card" href="einfach/">
+        <a class="card" href="einfach/" data-funktion="einfache_sprache" hidden>
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span>
           <span class="card-title">Einfache Sprache</span>
-          <span class="card-text">Was die Karte zeigt, wer in Bonn entscheidet und wie Sie mitmachen können, in kurzen Sätzen.</span></a>
+          <span class="card-text">Was die Karte zeigt, wer in Köln entscheidet und wie Sie mitmachen können, in kurzen Sätzen.</span></a>
         <a class="card" href="begriffe/">
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>
           <span class="card-title">Begriffe erklärt</span>
-          <span class="card-text">Vorlagenarten, Kürzel, Beratung und Haushalt in einfachen Worten, mit Fundstelle.</span></a>
+          <span class="card-text">Vorlagenarten, Gremien, Gebiete und Beratung in einfachen Worten, mit Fundstelle.</span></a>
         <button type="button" class="card" data-about="pruefung">
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></span>
           <span class="card-title">Wie verlässlich sind die Angaben?</span>
           <span class="card-text">Woher Orte und Themen stammen und was die Prüfungen von Hand ergeben haben.</span></button>
-        <a class="card" href="technik/">
+        <a class="card" href="technik/" data-funktion="technik" hidden>
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>
           <span class="card-title">So funktioniert der Ratsatlas</span>
           <span class="card-text">Woher die Daten kommen, was jeden Morgen passiert und welche Technik dahintersteht, in vier Grafiken.</span></a>
@@ -268,10 +265,10 @@
           <fieldset class="scope" id="scope" hidden>
             <legend class="visually-hidden">Suchen in</legend>
             <label><input type="radio" name="scope" value="gebiet" checked> im gewählten Gebiet</label>
-            <label><input type="radio" name="scope" value="bonn"> in ganz Bonn</label>
+            <label><input type="radio" name="scope" value="koeln"> in ganz Köln</label>
           </fieldset>
           <label>Stichwort
-            <input type="search" id="f-text" placeholder="z. B. Radweg, Kita, 261856" autocomplete="off">
+            <input type="search" id="f-text" placeholder="z. B. Radweg, Kita, 2250/2025" autocomplete="off">
           </label>
           <div class="filter-row">
             <label>Vorlagenart
@@ -300,7 +297,7 @@
           <details class="acc" id="more-filters">
             <summary>Weitere Filter<span class="active-filters" id="active-filters"></span></summary>
             <div class="filters">
-              <label>Federführendes Amt
+              <label>Federführende Dienststelle
                 <select id="f-amt"><option value="">alle</option></select>
               </label>
               <label>Gremium
@@ -308,9 +305,9 @@
               </label>
               <fieldset id="f-conf">
                 <legend>Ortsangabe</legend>
-                <label class="check"><input type="checkbox" value="hoch" checked> gesichert <span class="hint">(Koordinate oder Bebauungsplan der Stadt)</span></label>
-                <label class="check"><input type="checkbox" value="mittel" checked> erschlossen <span class="hint">(Name im Titel)</span></label>
-                <label class="check"><input type="checkbox" value="niedrig" checked> unsicher <span class="hint">(mehrdeutig)</span></label>
+                <label class="check"><input type="checkbox" value="hoch" checked> gesichert <span class="hint">(Hauskoordinate oder Bebauungsplan)</span></label>
+                <label class="check"><input type="checkbox" value="mittel" checked> erschlossen <span class="hint">(Name im Titel oder Stadtteil laut Stadt)</span></label>
+                <label class="check"><input type="checkbox" value="niedrig" checked> unsicher <span class="hint">(mehrdeutig oder nur über das Gremium)</span></label>
               </fieldset>
             </div>
           </details>
@@ -441,8 +438,8 @@
 
     <section id="panel-mitmachen" class="glass overlay overlay-wide" aria-labelledby="mitmachen-heading" hidden>
       <div class="panel-head">
-        <h2 id="mitmachen-heading" tabindex="-1">Mitmachen in Bonn</h2>
-        <button type="button" class="icon-btn" data-close="panel-mitmachen" aria-label="Mitmachen in Bonn schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+        <h2 id="mitmachen-heading" tabindex="-1">Mitmachen in Köln</h2>
+        <button type="button" class="icon-btn" data-close="panel-mitmachen" aria-label="Mitmachen in Köln schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
       </div>
       <div class="panel-body" id="bt-body"><p class="hint" aria-live="polite">Wird geladen …</p></div>
     </section>
@@ -451,9 +448,9 @@
     <details class="map-legend map-sources" id="sources">
       <summary>Quellen, Lizenzen und Datenstand</summary>
       <div>
-        <p>OParl-API der Stadt Bonn (CC0 1.0) · OParl-Lite Bonn, machdenstaat (CC BY 4.0; Sitzungen, Tagesordnungspunkte, Ergebnisse) · Texte der Dokumente über OParl-Lite (nur zur Verortung verarbeitet, nicht wiedergegeben) · Ortsteil- und Bezirksflächen, Hausnummernverzeichnis (nur zur Bestimmung des Ortsteils), Geltungsbereiche der Bebauungspläne und Baustellen der Stadt Bonn (CC0 1.0; Baustellen: Termine unverbindlich, Archiv ab 19.10.2026, „mögliche Umsetzung“ ist ein Indiz, kein Beleg) · Straßen, Gebäude und Anlagen sowie Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0; graue Karte aus einem Ausschnitt von Protomaps, vierteljährlich erneuert) · Beträge je Produktbereich aus den Haushaltsplänen 2023/2024 und 2025/2026 und dem Jahresabschluss 2024 der Stadt Bonn (PDF, ausgelesen; keine Lizenzangabe der Stadt) · Zahl der Meldungen im Anliegen- und Mängelmelder der Stadt Bonn (CC0 1.0; nur Kategorie, Tag, Ortsteil und Status, eigenes Archiv ab Ende Oktober 2026) · Zahlen zum Gebiet (abgeleitet, auf Ortsteile umgerechnet): Zensus 2022 © Statistisches Bundesamt (Destatis), Kitas Land NRW (dl-de/by-2.0), Bodenrichtwerte BORIS NRW, Klimaanalyse und Überschwemmungsgebiete NRW, Haltestellen VRS (dl-de/zero-2.0), Wahlbeteiligung der Ratswahl 2025 nach Stimmbezirken (IT.NRW als Übergang, amtliches Ergebnis; Zuordnung über das Straßenverzeichnis 2020 der Stadt, CC0); die zuschaltbaren Flächen Überschwemmungsgebiete und Bodenrichtwerte sind vereinfacht, verbindlich sind die Karten des Landes. Abgeleitete Angaben sind gekennzeichnet.</p>
+        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung und politischen Anträgen, der Hauskoordinate) · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
         <p id="stand"></p>
-        <p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/bonn/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersicht nach Gebiet</a> · <a href="https://github.com/daimpad/allris-test">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a></p>
+        <p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/koeln/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersicht nach Gebiet</a> · <a href="https://github.com/daimpad/ratsatlas-koeln">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a></p>
       </div>
     </details>
     <div id="map" role="region" aria-label="Karte der Vorlagen im gewählten Gebiet. Alle Vorlagen stehen auch in der Liste; Gebiete lassen sich auf der Karte anklicken oder oben über die Auswahl „Gebiet“ wählen."></div>
@@ -462,23 +459,23 @@
 
   <dialog id="about" class="glass" aria-labelledby="about-heading">
     <div class="panel-head">
-      <h2 id="about-heading">Über den Ratsatlas Bonn</h2>
+      <h2 id="about-heading">Über den Ratsatlas Köln</h2>
       <button type="button" class="icon-btn" id="about-close" aria-label="Schließen">×</button>
     </div>
     <div class="about-body">
       <h3>Worum geht es?</h3>
-      <p>Der Ratsatlas zeigt, womit sich der Rat, die Bezirksvertretungen und die Ausschüsse der Stadt Bonn beschäftigen – auf einer Karte, auf einer Zeitleiste und als Liste. Grundlage ist das Ratsinformationssystem (RIS) der Stadt Bonn. Dort stehen alle öffentlichen Vorlagen seit Oktober 2019.</p>
+      <p>Der Ratsatlas zeigt, womit sich der Rat, die Ausschüsse und die neun Bezirksvertretungen der Stadt Köln beschäftigen – auf einer Karte, auf einer Zeitleiste und als Liste. Grundlage ist das Ratsinformationssystem der Stadt Köln, abgerufen über seine öffentliche Schnittstelle (OParl).</p>
 
       <h3>Was ist eine Vorlage?</h3>
-      <p>Ein Schriftstück, über das ein politisches Gremium berät: etwa ein Antrag einer Fraktion, eine Beschlussvorlage der Verwaltung, eine Anfrage, eine Stellungnahme oder ein Bürgerantrag. Jede Vorlage hat eine Drucksachennummer, zum Beispiel 261856.</p>
+      <p>Ein Schriftstück, über das ein politisches Gremium berät: etwa eine Beschlussvorlage oder Mitteilung der Verwaltung, ein Antrag oder eine Anfrage einer Fraktion oder eine Eingabe nach § 24 GO NRW. Jede Vorlage hat eine Nummer, zum Beispiel 2250/2025 oder AN/1756/2026.</p>
 
       <h3>So benutzen Sie die Karte</h3>
       <ol>
-        <li>Die Karte zeigt zuerst ganz Bonn. Klicken Sie einen Stadtbezirk und dann einen Ortsteil an, oder wählen Sie oben unter „Gebiet wählen“ einen Ortsteil, einen ganzen Stadtbezirk oder Vorlagen ohne Ortsbezug.</li>
+        <li>Die Karte zeigt zuerst ganz Köln. Klicken Sie einen Stadtbezirk und dann einen Stadtteil an, oder wählen Sie oben unter „Gebiet wählen“ einen Stadtteil, einen ganzen Stadtbezirk oder Vorlagen ohne Ortsbezug.</li>
         <li>Klicken Sie in der Liste oder auf der Karte eine Vorlage an.</li>
-        <li>Rechts sehen Sie den Vorgang: wer ihn eingebracht hat, welches Amt zuständig ist und welche Gremien wann darüber beraten haben.</li>
+        <li>Rechts sehen Sie den Vorgang: wer ihn eingebracht hat, welche Dienststelle zuständig ist und welche Gremien wann darüber beraten haben.</li>
         <li>Mit der Zeitleiste grenzen Sie den Zeitraum ein. Alle Flächen lassen sich über die Leiste oben ein- und ausklappen; Liste und Vorgang lassen sich am Rand breiter ziehen.</li>
-        <li>Über das Suchfeld oben finden Sie Vorlagen in ganz Bonn, auch nach Thema und Partei.</li>
+        <li>Über das Suchfeld oben finden Sie Vorlagen in ganz Köln, auch nach Thema und Partei.</li>
       </ol>
       <p><button type="button" class="btn btn-soft" data-tour>Tour durch alle Funktionen starten</button></p>
 
@@ -492,50 +489,29 @@
       </dl>
 
       <h3 id="about-pruefung" tabindex="-1">Wie sicher sind die Angaben?</h3>
-      <p>Die meisten Angaben stammen unverändert aus dem Ratsinformationssystem. Erschlossene Angaben – etwa der Ort aus dem Titel oder dem Text eines Dokuments, das Datum einer Sitzung oder das Thema – sind als „abgeleitet“ gekennzeichnet; aus Dokumenten zeigt die Karte nur den erkannten Ort, keinen Textauszug. Bei Orten unterscheiden wir: <strong>gesichert</strong> (Koordinate der Stadt oder eindeutig erkannter Bebauungsplan mit Geltungsbereich), <strong>erschlossen</strong> (Straßen- oder Ortsteilname im Titel) und <strong>unsicher</strong> (der Name passt zu mehreren Orten). Wohnadressen von Privatpersonen werden nicht gezeigt. Abgeleitete Angaben werden in Stichproben von Hand geprüft (richtig / teilweise / falsch):</p>
-      <ul>
-        <li>Ort aus dem Titel, Endenich (50 Vorlagen, 20.10.2026): 41 / 4 / 5; danach zwei Regeln verbessert</li>
-        <li>Gebäude und Anlagen im Titel (30 Vorlagen, 22.10.2026): 24 / 6 / 0</li>
-        <li>Ort aus dem Text der Dokumente (22 Vorlagen, 22.10.2026): 14 / 7 / 1</li>
-        <li>Themen (49 Vorlagen, 20.10.2026): 46 / 2 / 1</li>
-        <li>KI-Kurzfassungen (30 Vorlagen, 22.10.2026): 18 / 12 / 0</li>
-        <li>Verfahren nach Regelwerk (30 Vorgänge): 30 / 0 / 0</li>
-        <li>Themenseiten, Zuordnung zu den Strängen (passend / teilweise / unpassend), 25. und 26.10.2026: Kultur 15 / 7 / 0, Verkehr 16 / 3 / 5, Schule 18 / 3 / 3, Wohnen 19 / 5 / 1, Klima 17 / 6 / 2; 02.11.2026: Kinder 23 / 1 / 1, Soziales 24 / 0 / 1, Sicherheit 24 / 0 / 1, Wirtschaft 21 / 3 / 1, Digitales 24 / 1 / 0, Verkehr (Tempo und Verkehrsregeln) 24 / 1 / 0; danach jeweils Regeln ergänzt</li>
-      </ul>
-      <p>„Teilweise“ heißt: im Kern richtig, eine Einzelheit ungenau. Ein Teil der Urteile sind Vorschläge, denen der Auftraggeber im Gespräch nicht widersprochen hat. Die Prüfbögen stehen im Datenpaket und im <a href="https://github.com/daimpad/allris-test/blob/main/ABNAHME.md">Projekt auf GitHub</a>.</p>
+      <p>Die meisten Angaben stammen unverändert aus dem Ratsinformationssystem. Erschlossene Angaben – etwa der Ort aus dem Titel, die Verknüpfung einer Beratung mit ihrer Sitzung oder das Thema – sind als „abgeleitet“ gekennzeichnet. Bei Orten unterscheiden wir: <strong>gesichert</strong> (Hauskoordinate aus „Adressen Köln“ oder eindeutiger Bebauungsplan), <strong>erschlossen</strong> (Straßen- oder Stadtteilname im Titel, Stadtteil laut Ortsangabe der Stadt) und <strong>unsicher</strong> (der Name passt zu mehreren Orten, oder nur das beratende Gremium deutet auf einen Stadtbezirk). Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische Anträge, nie Eingaben von Einwohnerinnen und Einwohnern; Wohnadressen von Privatpersonen werden nicht gezeigt.</p>
+      <p>Die Prüfung von Hand an Kölner Vorlagen (50 je Methode, richtig / teilweise / falsch) steht noch aus; die Ergebnisse erscheinen hier und im Datenpaket.</p>
 
       <h3>Nach Themen und Parteien suchen</h3>
-      <p>In der Liste lassen sich Vorlagen nach Thema (zum Beispiel Verkehr, Bauen, Umwelt) und nach Partei oder Fraktion filtern – im gewählten Gebiet oder in ganz Bonn. Die Themen sind aus dem zuständigen Amt, dem beratenden Ausschuss und Stichworten im Titel abgeleitet; bei jeder Vorlage steht, worauf die Zuordnung beruht. Parteien stammen aus den Einreichenden eines Antrags; auf Wunsch erscheinen auch die Antworten der Verwaltung darauf. Die Suche kann auch im Text der Dokumente suchen (über OParl-Lite, erst nach einem Klick).</p>
+      <p>In der Liste lassen sich Vorlagen nach Thema (zum Beispiel Verkehr, Bauen, Umwelt) und nach Partei oder Fraktion filtern – im gewählten Gebiet oder in ganz Köln. Die Themen sind aus der zuständigen Dienststelle, dem beratenden Ausschuss und Stichworten im Titel abgeleitet; bei jeder Vorlage steht, worauf die Zuordnung beruht. Parteien stammen aus den Einreichenden eines Antrags.</p>
 
       <h3 id="about-seiten" tabindex="-1">Weitere Seiten</h3>
       <ul>
-        <li><a href="thema/">Themenseiten</a>: zehn Themen (Kunst und Kultur, Verkehr und Mobilität, Schule und Bildung, Wohnen und Bauen, Klima und Umwelt, Kinder, Jugend und Familie, Soziales, Gesundheit und Integration, Sicherheit und Ordnung, Wirtschaft und Wissenschaft, Digitale Verwaltung) mit Prozessbild, nächsten Sitzungen und meist mit Haushalt im Produktbereich; die Zuordnung folgt festen Regeln, bei jeder Vorlage steht der Grund.</li>
-        <li><a href="haushalt/">Haushalt auf einen Blick</a>: Aufwendungen der 17 Produktbereiche, Plan und Ist aus den Haushaltsplänen und dem Jahresabschluss 2024, nominal und ohne Bewertung; ein Klick zeigt die Produktgruppen und ihre Aufwandsarten; dazu Veränderung und Investitionen.</li>
-        <li>Reiter „Prozesse“: Verfahren mit Schritten und Fristen, Gremien mit Zuständigkeit und Besetzung, Ämter.</li>
-        <li>Zahlen zum Gebiet: in der Liste unter „Zahlen zu …“ und als Flächenfarbe auf der Karte (abgeleitet, zur Einordnung).</li>
-        <li><a href="gebiete/">Vorlagen nach Gebiet</a>: eine Übersichtsseite je Ortsteil und Stadtbezirk.</li>
-        <li><a href="begriffe/">Begriffe</a>: Vorlagenarten, Gremien, Ergebnisse und Kürzel in einfachen Worten, mit Fundstelle; im Vorgang erklärt ein „?“ neben dem Begriff.</li>
-        <li><a href="einfach/">Der Ratsatlas in Einfacher Sprache</a>: was die Karte zeigt, wer in Bonn entscheidet und wie man mitmachen kann.</li>
-        <li><a href="technik/">So funktioniert der Ratsatlas</a>: Datenquellen, Datenfluss, Zeitplan der automatischen Läufe und Technik, in vier anklickbaren Grafiken.</li>
+        <li><a href="gebiete/">Vorlagen nach Gebiet</a>: eine Übersichtsseite je Stadtteil und Stadtbezirk.</li>
+        <li><a href="begriffe/">Begriffe</a>: Vorlagenarten, Gremien, Gebiete und Ergebnisse in einfachen Worten, mit Fundstelle; im Vorgang erklärt ein „?“ neben dem Begriff.</li>
       </ul>
 
-      <h3>Ebenen und Legenden</h3>
-      <p>Unter „Ebenen“ auf der Karte lassen sich die Geltungsbereiche der Bebauungspläne, gemeldete Baustellen, Überschwemmungsgebiete und Bodenrichtwerte einblenden, die Punkte nach Thema färben und der Kartenhintergrund farbig zeigen. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick; in der obersten wählen Sie, wonach die Flächen gefärbt werden. Darunter stehen Quellen, Lizenzen und Datenstand. Links zu anderen Seiten, etwa den Dokumenten der Stadt, öffnen sich in einem neuen Tab. Der Ratsassistent beantwortet Fragen zu den Vorlagen; Sie brauchen dafür einen eigenen Schlüssel eines KI-Anbieters.</p>
-
       <h3>Informiert bleiben</h3>
-      <p>Unter „Mitmachen“ finden Sie einen <strong>Feed</strong> für das gewählte Gebiet, bei einer Vorlage einen Feed für genau diesen Vorgang. Ein Feed-Reader (zum Beispiel im Browser oder E-Mail-Programm) meldet dann neue Vorlagen und Beratungsergebnisse. Den Feed für ganz Bonn, alle weiteren Feeds und eine Anleitung zum Einbinden finden Sie unter <a href="rss/">Abonnieren und weiterverwenden</a>. Unter „Mitmachen“ → „Termine anzeigen“ stehen die kommenden Sitzungen; sie lassen sich als Kalenderdatei in den eigenen Kalender übernehmen.</p>
+      <p>Unter „Mitmachen“ finden Sie einen <strong>Feed</strong> für das gewählte Gebiet, bei einer Vorlage einen Feed für genau diesen Vorgang. Ein Feed-Reader (zum Beispiel im Browser oder E-Mail-Programm) meldet dann neue Vorlagen und Beratungsergebnisse. Den Feed für ganz Köln und eine Anleitung finden Sie unter <a href="rss/">Abonnieren und weiterverwenden</a>. Unter „Mitmachen“ → „Termine anzeigen“ stehen die kommenden Sitzungen, auch als Kalenderdatei.</p>
 
       <h3>Was die Karte nicht kann</h3>
-      <p>Sie ersetzt nicht das Original: Maßgeblich ist immer das Dokument im Ratsinformationssystem, zu dem jede Vorlage verlinkt. Nichtöffentliche Beratungen, die Arbeit innerhalb der Verwaltung und die Umsetzung von Beschlüssen sind von außen nicht einsehbar. Gemeldete Baustellen der Stadt können ein Hinweis auf die Umsetzung sein („Mögliche Umsetzung“), sind aber kein Beleg.</p>
-
-      <h3 id="about-mitwirken" tabindex="-1">Selbst mitwirken</h3>
-      <p>Welche Wege bei einem Vorgang offen sind, zeigt dort der Abschnitt „Selbst mitwirken“; alle Wege je Stadtbezirk stehen unter „Mitmachen“ → „Alle Wege im Überblick“.</p>
+      <p>Sie ersetzt nicht das Original: Maßgeblich ist immer das Dokument im Ratsinformationssystem, zu dem jede Vorlage verlinkt. Nichtöffentliche Beratungen, die Arbeit innerhalb der Verwaltung und die Umsetzung von Beschlüssen sind von außen nicht einsehbar. Fällt der tägliche Abruf aus, zeigt die Seite den letzten gültigen Datenstand und weist darauf hin.</p>
 
       <h3>Wer steckt dahinter?</h3>
-      <p>Den Ratsatlas hat <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span></a> im Rahmen des Hackathons „Hack den Stadtrat“ erstellt; Hintergründe stehen im Blogbeitrag <a href="https://paderta.com/ris-karte-bonn-ratsinformationsdaten-der-stadt-bonn-im-ueberblick/" target="_blank" rel="noopener">„Ratsatlas Bonn – Ratsinformationsdaten der Stadt Bonn im Überblick“<span class="visually-hidden"> (paderta.com, neuer Tab)</span></a>. Sie ist ein offenes Projekt; der Code steht unter MIT-Lizenz. Die Daten stammen von der Stadt Bonn (CC0), aus OParl-Lite von machdenstaat (CC BY 4.0) und aus OpenStreetMap (ODbL). Das Modell der Verfahren nach Regelwerk (Abschnitt „Nach Regelwerk (Soll)“ und Hinweise unter „Selbst mitwirken“) stammt aus dem Projekt <a href="https://github.com/anster2025/bonn-entscheidet" target="_blank" rel="noopener">„Bonn entscheidet“<span class="visually-hidden"> (GitHub, neuer Tab)</span></a> von <a href="https://github.com/anster2025" target="_blank" rel="noopener">Thomas (anster2025)<span class="visually-hidden"> (GitHub, neuer Tab)</span></a>, MIT-Lizenz; die Ratsatlas hat es um eigene, belegte Schritte ergänzt. Fehler können Sie über „Verortung falsch?“ bei einer Vorlage oder im <a href="https://github.com/daimpad/allris-test/issues">Projekt auf GitHub</a> melden.</p>
+      <p>Den Ratsatlas Köln entwickelt <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span></a>. Er beruht auf dem Code des <a href="https://github.com/daimpad/allris-test" target="_blank" rel="noopener">Ratsatlas Bonn<span class="visually-hidden"> (GitHub, neuer Tab)</span></a>. Es ist ein offenes Projekt; der Code steht unter MIT-Lizenz. Die Daten stammen von der Stadt Köln (Datenquelle: Stadt Köln – offenedaten-koeln.de) und für den Kartenhintergrund aus OpenStreetMap (ODbL). Fehler können Sie über „Verortung falsch?“ bei einer Vorlage oder im <a href="https://github.com/daimpad/ratsatlas-koeln/issues">Projekt auf GitHub</a> melden.</p>
 
       <h3 id="about-impressum" tabindex="-1">Kontakt, Impressum und Datenschutz</h3>
-      <p>Schrift, Programmbibliotheken und die graue Karte kommen vom Server dieser Seite. Nur bei „Farbige Karte“ lädt Ihr Browser die Kacheln von OpenStreetMap (tile.openstreetmap.org); die Suche im Text der Dokumente fragt erst nach einem Klick OParl-Lite (oparl.bonn.machdenstaat.de) ab. Der Ratsassistent sendet Fragen erst, wenn Sie ihn einrichten, und nur an den gewählten Anbieter.</p>
+      <p>Schrift, Programmbibliotheken und die graue Karte kommen vom Server dieser Seite. Nur bei „Farbige Karte“ lädt Ihr Browser die Kacheln von OpenStreetMap (tile.openstreetmap.org).</p>
       <p>Kontakt: <a href="mailto:contact@nozilla.de">contact@nozilla.de</a><br>
         <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum<span class="visually-hidden"> (nozilla.de, neuer Tab)</span></a> · <a href="datenschutz.html">Datenschutz</a></p>
       <p><button type="button" class="btn btn-soft" data-neu><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Was ist neu?</button></p>
@@ -548,42 +524,11 @@
       <button type="button" class="icon-btn" data-close-dialog aria-label="Schließen">×</button>
     </div>
     <div class="about-body" tabindex="0">   <!-- scrollt ohne Links: mit der Tastatur erreichbar -->
-      <h3>Version 1.0 (22.10.2026)</h3>
-      <p>Neu seit der ersten Fassung:</p>
+      <h3>Version 0.1 (Entwurf, November 2026)</h3>
       <ul>
-        <li>Kurzfassungen: Zu vielen Vorlagen steht eine kurze Zusammenfassung, mit einem Sprachmodell erstellt und als solche gekennzeichnet.</li>
-        <li>Übersicht über ganz Bonn: Stadtbezirke und Ortsteile lassen sich auf der Karte anklicken und nach Zahl der Vorlagen oder nach Thema einfärben.</li>
-        <li>Reiter „Prozesse“: Verfahren, Gremien und Ämter, wer entscheidet was.</li>
-        <li>„Mitmachen in Bonn“: nächste Sitzungen und Fristen je Stadtbezirk.</li>
-        <li>Mehr Orte: aus dem Text der Dokumente und aus Namen von Gebäuden und Anlagen im Titel.</li>
-      </ul>
-      <p>Seit Version 1.0 (Stand 03.11.2026):</p>
-      <ul>
-        <li>Die RIS-Karte heißt jetzt <strong>Ratsatlas Bonn</strong>: Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld. Links und Abos gelten weiter.</li>
-        <li>„Haushalt auf einen Blick“: je Produktbereich und Produktgruppe auch die Ertragsarten („Woher kommt das Geld?“), etwa Steuern, Zuwendungen und Gebühren.</li>
-        <li>Neue Seite <a href="technik/">So funktioniert der Ratsatlas</a> im Menü „Verstehen“: Überblick, Datenfluss, Zeitplan und Technik als anklickbare Grafiken, erzeugt aus dem Code.</li>
-        <li>„Haushalt auf einen Blick“ zeigt das Ist 2024 aus dem Jahresabschluss, die Veränderung je Produktbereich (nur gleichartige Werte) und die Investitionen; auch die Themenseiten nennen das Ist 2024.</li>
-        <li>Themenseite <a href="thema/verkehr-und-mobilitaet/">Verkehr und Mobilität</a> mit neuem Strang „Tempo, Verkehrsregeln und Sicherheit“, auch mit Vorlagen der Straßenverkehrsbehörde.</li>
-        <li>Auf dem Telefon liegen Ebenen, Legenden und Quellen der Karte zusammen hinter „Karte“; „Ganz Bonn ansehen“ ist ein Symbol, die Quellenzeile einzeilig.</li>
-        <li>Auf dem Telefon liegen Gebiet, Flächen und Menüs hinter ☰; die Leiste zeigt nur noch die Suche. Die Themenseite „Kultur und Haushalt“ heißt jetzt <a href="thema/kunst-und-kultur/">Kunst und Kultur</a>; die alte Adresse leitet weiter.</li>
-        <li>Themenseiten <a href="thema/wirtschaft-und-wissenschaft/">Wirtschaft und Wissenschaft</a> (Wirtschaftsförderung, Tourismus und Zentren, Liegenschaften, Wissenschaft und Internationales) und <a href="thema/digitale-verwaltung/">Digitale Verwaltung</a> (Strategie, Online-Dienste, IT und Software, Organisation der Verwaltung).</li>
-        <li>Themenseite <a href="thema/sicherheit-und-ordnung/">Sicherheit und Ordnung</a>: Feuerwehr und Rettungsdienst, Bevölkerungsschutz, Ordnung im öffentlichen Raum sowie Veranstaltungen, Märkte und Kirmes nach Stadtbezirk.</li>
-        <li>Themenseite <a href="thema/soziales-gesundheit-und-integration/">Soziales, Gesundheit und Integration</a>: Geflüchtete und Unterbringung, Armut und soziale Leistungen, Senioren und Pflege, Gesundheit und Integration, mit beiden Fachausschüssen.</li>
-        <li>Neues Menü „Verstehen“: Einfache Sprache, Begriffe, „Wie verlässlich sind die Angaben?“ und die Tour an einem Ort.</li>
-        <li>„Haushalt auf einen Blick“ zeigt auch Erträge und Ergebnis je Produktbereich, den Zuschussbedarf als Flächen und alle Beträge je Einwohner.</li>
-        <li>Die graue Karte kommt vom Server dieser Seite (aus OpenStreetMap-Daten erzeugt) und lädt schneller; nur „Farbige Karte“ lädt die Kacheln von OpenStreetMap.</li>
-        <li>Der Ratsatlas <a href="einfach/">in Einfacher Sprache</a> erklärt, verlinkt im Startfenster und am Fuß jeder Seite.</li>
-        <li><a href="begriffe/">Begriffe</a> in einfachen Worten; im Vorgang ein „?“ neben Art, Drucksache, Amt und Stand, Gremien der Prozesslinie führen in den Reiter „Prozesse“; „Anstoß“ und „Umsetzung“ statt „Initiierung“ und „Vollzug“.</li>
-        <li>Themenseite <a href="thema/kinder-jugend-und-familie/">Kinder, Jugend und Familie</a>: Kitas, Spielplätze, Jugendarbeit, Hilfen für Familien und Beteiligung, mit Prozessbild und Haushalt im Produktbereich.</li>
-        <li>„Haushalt auf einen Blick“: Aufwendungen der 17 Produktbereiche als Treemap (Plan und Ist), mit Tabelle und Fundstelle; ein Klick führt zu den Produktgruppen und Aufwandsarten.</li>
-        <li>„Inhalte abonnieren und weiterverwenden“ (<a href="rss/">rss/</a>): Feed für ganz Bonn mit Anleitung zum Abonnieren, Einbinden und Weiterverarbeiten.</li>
-        <li>Wahlbeteiligung der Ratswahl 2025 je Ortsteil (geschätzt) unter „Zahlen zu …“ und als Flächenfarbe; ganz Bonn amtlich.</li>
-        <li>Themenseiten mit Beträgen je Produktbereich aus den Haushaltsplänen der Stadt (Ist und Plan getrennt, mit Fundstelle).</li>
-        <li>Besetzung der Gremien im Reiter „Prozesse“ (Fraktion abgeleitet, ohne Kontaktdaten); auf den Themenseiten der zuständige Fachausschuss, im Ratsassistenten Vorsitz und Sitze.</li>
-        <li>Zahl der Meldungen im Mängelmelder je Ortsteil unter „Zahlen zu …“, aus einem eigenen täglichen Archiv.</li>
-        <li>Themenseiten zu Kultur und Haushalt, Verkehr und Mobilität, Schule und Bildung, Wohnen und Bauen sowie Klima und Umwelt, jeweils mit anklickbarem Prozessbild; Übersicht als Kacheln.</li>
-        <li>Zahlen zu den Ortsteilen (Einwohner, Altersgruppen, Bodenrichtwerte, Haltestellen, Kitas, Hitze, Überschwemmung) als Flächenfarbe und im Vorgang.</li>
-        <li>Datenschutz: Hausnummern auch in Titeln zu Bauanträgen und Fällgenehmigungen ausgelassen.</li>
+        <li>Erste Fassung für Köln auf Grundlage des Ratsatlas Bonn: ganz Köln mit 9 Stadtbezirken und 86 Stadtteilen, Liste, Vorgang mit Prozesslinie, Suche, Feeds und Kalender.</li>
+        <li>Orte aus dem Titel und aus den Ortsangaben der Stadt; Hauskoordinaten nur bei Vorlagen der Verwaltung und politischen Anträgen.</li>
+        <li>Bonner Zusatzthemen (Haushalt, Themenseiten, Ratsassistent und weitere) sind für Köln noch nicht freigegeben.</li>
       </ul>
     </div>
   </dialog>

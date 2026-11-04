@@ -1,0 +1,4 @@
+start: 0 Verstöße 
+?gebiet=ortsteil:ehrenfeld: 0 Verstöße 
+gebiete/: 0 Verstöße 
+begriffe/: 0 Verstöße 

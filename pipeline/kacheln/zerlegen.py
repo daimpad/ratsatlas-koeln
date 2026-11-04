@@ -42,7 +42,7 @@ def png(p):
 
 LIZENZ = """# Kartenkacheln der grauen Ansicht
 
-Graue Rasterkacheln des Ratsatlas Bonn, erzeugt aus OpenStreetMap-Daten über einen Ausschnitt aus dem
+Graue Rasterkacheln des Ratsatlas Köln, erzeugt aus OpenStreetMap-Daten über einen Ausschnitt aus dem
 Protomaps-Build {build} (OSM-Stand {osm_stand}).
 
 - Daten: © OpenStreetMap-Mitwirkende, Open Database License (ODbL) 1.0 – https://www.openstreetmap.org/copyright

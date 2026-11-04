@@ -77,3 +77,17 @@ def test_punktregel():
     ("Bezirksvertretung Mülheim", "Mülheim"), ("Rat", None), ("Ausschuss für Umwelt", None)])
 def test_bezirksvertretung(name, bezirk):
     assert bv_bezirk(name) == bezirk
+
+
+def test_einreichende_koeln():
+    from pipeline.actors import originators
+    titel = {"paperType": "Antrag nach § 3 der Geschäftsordnung des Rates", "date": "2026-01-01",
+             "name": "Antrag der CDU-Fraktion betreffend Radweg"}
+    assert [r["actor"] for r in originators(titel, [])] == ["CDU"]
+    art = {"paperType": "FDP Antrag nach § 3", "date": "2026-01-01", "name": "Radweg"}
+    assert [r["actor"] for r in originators(art, [])] == ["FDP"]
+    eingabe = {"paperType": "Anregungen und Beschwerden", "date": "2026-01-01", "name": "Anregung: Musterweg 3"}
+    assert [r["actor_type"] for r in originators(eingabe, [])] == ["Einwohner:in"]
+    belegt = {"paperType": "Antrag nach § 3", "date": "2026-01-01", "name": "x", "originatorOrganization": ["o1"]}
+    r = originators(belegt, [{"id": "o1", "name": "SPD-Fraktion im Rat"}])
+    assert (r[0]["actor"], r[0]["method"]) == ("SPD", "originatorOrganization")

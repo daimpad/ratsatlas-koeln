@@ -96,6 +96,7 @@ def build():
     stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
 
     config.BUILD.mkdir(parents=True, exist_ok=True)
+    config.EXPORT.mkdir(parents=True, exist_ok=True)   # Audits entstehen schon beim Aufbau
     config.DB.unlink(missing_ok=True)
     db = sqlite3.connect(config.DB)
     db.executescript(SCHEMA)

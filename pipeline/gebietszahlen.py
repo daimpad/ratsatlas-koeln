@@ -1,15 +1,15 @@
 """Kennzahlen je Gebiet für die Übersichtskarte (index.json): Vorlagen der letzten zwölf Monate und ein
-auffälliges Thema, das im Gebiet deutlich häufiger vorkommt als in ganz Bonn.
+auffälliges Thema, das im Gebiet deutlich häufiger vorkommt als in der ganzen Stadt.
 
 Gezählt werden Vorlagen mit Ortsbezug im Gebiet (Verortung teils abgeleitet, siehe geocode.py); Themen sind
-abgeleitet (topics.py). Vergleichsbasis für „auffällig“ sind alle Vorlagen mit Ortsbezug in Bonn."""
+abgeleitet (topics.py). Vergleichsbasis für „auffällig“ sind alle Vorlagen mit Ortsbezug in der Stadt."""
 import datetime
 
 from . import topics
 
 MIN_VORLAGEN = 5      # mindestens so viele Vorlagen des Themas im Gebiet
 MIN_ANTEIL = 0.10     # mindestens dieser Anteil an den Vorlagen des Gebiets
-MIN_FAKTOR = 1.25     # mindestens so viel häufiger als in ganz Bonn
+MIN_FAKTOR = 1.25     # mindestens so viel häufiger als in der ganzen Stadt
 MIN_THEMEN = 20       # Themenebene: Anteile erst ab so vielen Vorlagen im Gebiet (alle seit 2019)
 
 
@@ -33,8 +33,8 @@ def shares(ids, papers):
 
 
 def auffaellig(ids, papers, base):
-    """Thema mit dem größten Faktor gegenüber ganz Bonn, sofern es die Mindestwerte erfüllt; sonst None.
-    `base`: Anteile in ganz Bonn aus shares()."""
+    """Thema mit dem größten Faktor gegenüber der ganzen Stadt, sofern es die Mindestwerte erfüllt; sonst None.
+    `base`: Anteile in der ganzen Stadt aus shares()."""
     label = dict(topics.THEMES)
     best = None
     for t, (c, share) in shares(ids, papers).items():
@@ -83,5 +83,5 @@ def annotate(index, areas, papers, stand):
                        "themen_min": MIN_THEMEN,
                        "hinweis": "Vorlagen mit Ortsbezug im Gebiet (Verortung teils abgeleitet); Themen abgeleitet. "
                                   f"Auffällig: mindestens {MIN_VORLAGEN} Vorlagen und {round(MIN_ANTEIL * 100)} % im Gebiet, "
-                                  f"mindestens {MIN_FAKTOR:g}-mal so häufig wie in ganz Bonn."}
+                                  f"mindestens {MIN_FAKTOR:g}-mal so häufig wie in der ganzen Stadt."}
     return index

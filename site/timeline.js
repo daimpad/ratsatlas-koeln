@@ -24,10 +24,10 @@
     { name: "Woche", span: 35 * DAY, bin: "day", step: 7 * DAY },
     { name: "Tag", span: 10 * DAY, bin: "day", step: DAY },
   ];
-  const PILOT_GREMIEN = ["Bezirksvertretung Bonn", "Rat", "Ausschuss für Mobilität und Verkehr",
-    "Ausschuss für Wohnen, Planung und Bauen", "Hauptausschuss"];
-  const SHORT = { "Bezirksvertretung Bonn": "BV Bonn", "Ausschuss für Mobilität und Verkehr": "Mobilität",
-    "Ausschuss für Wohnen, Planung und Bauen": "Planung", "Hauptausschuss": "Hauptausschuss", "Rat": "Rat" };
+  // Bahnen für Sitzungen: Köln vorläufig Rat und Hauptausschuss (nach GO NRW sicher vorhanden); weitere Gremien nach der
+  // Messung der Kölner API (Gremiennamen laut OParl)
+  const PILOT_GREMIEN = ["Rat", "Hauptausschuss"];
+  const SHORT = { "Hauptausschuss": "Hauptausschuss", "Rat": "Rat" };
   const NS = "http://www.w3.org/2000/svg";
   const T_CACHE = new Map();  // Datumsangaben werden bei jedem Zeichnen mehrfach umgerechnet
   const t = (iso) => {

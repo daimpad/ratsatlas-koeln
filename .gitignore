@@ -6,7 +6,7 @@ __pycache__/
 # Rohdaten (Cache des Abrufs, nur lokal bzw. im Workflow-Zwischenspeicher) und Build
 data/raw/
 data/build/
-data/export/koeln/
+data/export/
 data/export/ratsatlas-koeln-export.zip
 dist/
 _site/
@@ -22,3 +22,6 @@ _quellen/
 # Exploration Köln: Rohdaten und geladene Dateien nur lokal
 explore/_cache/
 .pytest_cache/
+_site/
+_kacheln/
+_kacheln_arbeit/

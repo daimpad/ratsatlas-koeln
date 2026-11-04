@@ -1,7 +1,7 @@
 {
-  "name": "allris-bonn-kacheln",
+  "name": "ratsatlas-koeln-kacheln",
   "private": true,
-  "description": "Graue Rasterkacheln aus OSM-Daten (Protomaps) für den Ratsatlas Bonn; nur für den Workflow kacheln.yml",
+  "description": "Graue Rasterkacheln aus OSM-Daten (Protomaps) für den Ratsatlas Köln; nur für den Workflow kacheln.yml",
   "type": "module",
   "dependencies": {
     "@protomaps/basemaps": "5.7.2",

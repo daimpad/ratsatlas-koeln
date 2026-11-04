@@ -1,52 +1,55 @@
-"""Akteure: Einreichende aus Vorlagenart und Titel; Auflösung der Sammelklasse „Co-Dezernat“.
+"""Akteure: Einreichende aus `originatorOrganization` oder aus Vorlagenart und Titel; Federführung.
 
-Die OParl-API setzt `originatorPerson`/`originatorOrganization` nicht. Einreichende werden
-deshalb abgeleitet und als abgeleitet gekennzeichnet (method, evidence).
+Köln (CLAUDE.md 5.3): Ob die API `originatorOrganization` und `underDirectionOf` setzt, wird nach der Information der
+Stadt gemessen. Ist `originatorOrganization` gesetzt, gilt es (belegt); sonst werden Einreichende aus dem Titel
+abgeleitet („Antrag der …-Fraktion“) und als abgeleitet gekennzeichnet (method, evidence). Die Federführung aus dem
+Kopf der Verwaltungsvorlage („Dezernat, Dienststelle“) folgt mit dem Abruf der PDFs.
 """
 import re
 
 CO_DEZERNAT = "Co-Dezernat"
 
-VERWALTUNG_TYPES = {
-    "Beschlussvorlage",
-    "Beschlussvorlage: Einleitung",
-    "Beschlussvorlage: Auftrag",
-    "Mitteilungsvorlage",
-    "Stellungnahme der Verwaltung",
-    "Informationsbrief",
-    "Bürgerbrief",
-    "Dringlichkeitsentscheidung OB",
-}
-EINWOHNER_TYPES = {
-    "Bürgerantrag § 24 GO - Öffentlich",
-    "Anregungen und Beschwerden",
-    "Einwohnerfrage",
-}
-POLITIK_TYPES = {
-    "Antrag",
-    "Änderungsantrag",
-    "Dringlichkeitsantrag",
-    "Große Anfrage",
-    "Kleine Anfrage",
-}
+class _Arten(frozenset):
+    """Vorlagenarten: genaue Namen (Bonn und die für Köln belegten) und ein Muster für Kölner Varianten, solange die
+    vollständige paperType-Liste fehlt (Messung nach Information der Stadt). `in` prüft beides."""
+    def __new__(cls, namen, muster):
+        obj = super().__new__(cls, namen)
+        obj.muster = re.compile(muster)
+        return obj
 
-# (Anzeigename, Muster im Titel, Muster im Namen der Fraktion/Gruppe in organizations.json)
+    def __contains__(self, art):
+        return bool(art) and (frozenset.__contains__(self, art) or bool(self.muster.search(art)))
+
+
+# Reihenfolge der Prüfung: Einwohner vor Politik (eine „Anregung“ ist kein „Antrag“), dann Verwaltung
+EINWOHNER_TYPES = _Arten({
+    "Bürgerantrag § 24 GO - Öffentlich", "Anregungen und Beschwerden", "Einwohnerfrage",
+}, r"(?i)anregung|beschwerde|§\s*24\b|einwohner|bürgerantrag")
+POLITIK_TYPES = _Arten({
+    "Antrag", "Änderungsantrag", "Dringlichkeitsantrag", "Große Anfrage", "Kleine Anfrage",
+    "Antrag nach § 3", "Anfrage nach § 4",
+    "Antrag nach § 3 der Geschäftsordnung des Rates", "Anfrage nach § 4 der Geschäftsordnung des Rates",
+}, r"(?i)^(?!.*(?:anregung|beschwerde|einwohner|bürgerantrag)).*(?:antrag|anfrage)")
+VERWALTUNG_TYPES = _Arten({
+    "Beschlussvorlage", "Beschlussvorlage: Einleitung", "Beschlussvorlage: Auftrag", "Mitteilungsvorlage",
+    "Stellungnahme der Verwaltung", "Informationsbrief", "Bürgerbrief", "Dringlichkeitsentscheidung OB",
+    "Beschlussvorlage Rat", "Beschlussvorlage Ausschuss", "Mitteilung", "Mitteilung Ausschuss",
+}, r"(?i)beschlussvorlage|mitteilung|stellungnahme|dringlichkeitsentscheidung")
+
+# (Anzeigename, Muster im Titel, Muster im Namen der Fraktion/Gruppe in organizations.json). Köln: Bonner Wählergruppen
+# entfernt; die Liste der Fraktionen und Gruppen im Kölner Rat (Wahlperiode ab 2025) wird nach der Messung der API
+# aus den Organisationen ergänzt (CLAUDE.md 5.3).
 PARTIES = [
     ("CDU", r"CDU", r"^CDU"),
     ("SPD", r"SPD", r"^SPD"),
     ("Grüne", r"(?<![\w.])(?:Grüne|GRÜNE|Bündnis 90)", r"GRÜNE|Grüne"),
     ("FDP", r"FDP", r"^FDP"),
-    ("BBB", r"BBB", r"^BBB"),
     ("Die Linke", r"(?<!\w)(?:Linke|LINKE)", r"Linke"),
     ("Volt", r"(?<!\w)Volt(?!\w)", r"^Volt"),
     ("AfD", r"(?<!\w)AfD(?!\w)", r"^AfD|^Alternative für Deutschland"),
     ("BSW", r"(?<!\w)BSW(?!\w)", r"BSW"),
-    ("SBI", r"(?<!\w)SBI(?!\w)", r"SBI"),
-    ("BIG", r"(?<!\w)BIG(?!\w)", r"^BIG"),
     ("Die PARTEI", r"PARTEI", r"PARTEI"),
     ("Piraten", r"Piraten", r"Piraten"),
-    ("Allianz für Bonn", r"(?<!\w)AfB(?!\w)|Allianz für Bonn", r"Allianz für Bonn"),
-    ("Rhein.Grün", r"Rhein\.Grün", r"Rhein\.Grün"),
 ]
 GROUPS = [
     ("Koalition", r"[Kk]oalition"),
@@ -88,13 +91,16 @@ def originators(paper, orgs, bezirke=()):
     """Einreichende einer Vorlage als Liste von Zeilen (actor, actor_type, organization_id,
     method, evidence). `bezirke`: Stadtbezirke der befassten Bezirksvertretungen."""
     ptype, date = paper.get("paperType"), paper.get("date") or ""
-    if ptype in VERWALTUNG_TYPES:
+    if ptype in EINWOHNER_TYPES:
+        # Keine Namen natürlicher Personen (Datenschutz, CLAUDE.md 2).
+        return [dict(actor="Einwohner:innen", actor_type="Einwohner:in", organization_id=None,
+                     method="paper_type", evidence=ptype)]
+    belegt = _from_originator(paper, orgs)
+    if belegt:
+        return belegt
+    if ptype in VERWALTUNG_TYPES and ptype not in POLITIK_TYPES:
         org = (paper.get("underDirectionOf") or [None])[0]
         return [dict(actor="Verwaltung", actor_type="Verwaltung", organization_id=org,
-                     method="paper_type", evidence=ptype)]
-    if ptype in EINWOHNER_TYPES:
-        # Keine Namen natürlicher Personen (Datenschutz, CLAUDE.md 5.2).
-        return [dict(actor="Einwohner:innen", actor_type="Einwohner:in", organization_id=None,
                      method="paper_type", evidence=ptype)]
     if ptype not in POLITIK_TYPES:
         return []
@@ -102,7 +108,23 @@ def originators(paper, orgs, bezirke=()):
         rows = _from_segment(seg.strip(), orgs, date, bezirke)
         if rows:
             return rows
-    return []
+    # Köln: Partei oft in der Vorlagenart („FDP Antrag nach § 3“, Recherche 04.11.2026)
+    return _from_segment(ptype, orgs, date, bezirke)
+
+
+def _from_originator(paper, orgs):
+    """Einreichende laut OParl (`originatorOrganization`), falls die Stadt das Feld setzt. `originatorPerson` wird
+    nicht übernommen (keine Personennamen als Einreichende)."""
+    by_id = {o["id"]: o for o in orgs}
+    rows = []
+    for oid in paper.get("originatorOrganization") or []:
+        o = by_id.get(oid)
+        if not o:
+            continue
+        name = next((n for n, _, pat in PARTIES if re.search(pat, o["name"])), o["name"])
+        rows.append(dict(actor=name, actor_type="Fraktion/Gruppe", organization_id=oid,
+                         method="originatorOrganization", evidence=o["name"]))
+    return rows
 
 
 def _from_segment(seg, orgs, date, bezirke):

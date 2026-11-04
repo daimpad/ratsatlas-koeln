@@ -21,10 +21,6 @@ datei	zeile	kategorie	treffer	auszug
 .github/ISSUE_TEMPLATE/verortung.yml	26	ortsteil_bonn	Endenich	placeholder: z. B. Endenich
 .github/workflows-inaktiv/baustellen.yml	1	bonn	Bonn	# Archiv der Baustellen der Stadt Bonn (Phase 2): täglicher Abruf der drei Feeds, Momentaufnahmen bei Änderungen,
 .github/workflows-inaktiv/eval.yml	45	url_allris_test	daimpad.github.io/allris-test	set -- --anbieter "$ANBIETER" --modell "$MODELL" --daten https://daimpad.github.io/allris-test/data/export/ --aus _auswertung
-.github/workflows-inaktiv/kacheln.yml	2	bonn	Bonn	# Ausschnitt Bonn aus dem neuesten Protomaps-Build (HTTP-Range, keine Kacheln von tile.openstreetmap.org), mit MapLibre
-.github/workflows-inaktiv/kacheln.yml	50	bonn	Bonn	- name: Ausschnitt Bonn aus dem neuesten Protomaps-Build
-.github/workflows-inaktiv/kacheln.yml	53	bonn	bonn	python -I pipeline/kacheln/ausschnitt.py _kacheln_arbeit/bonn.pmtiles _kacheln_arbeit/stand.json
-.github/workflows-inaktiv/kacheln.yml	57	bonn	bonn	run: node pipeline/kacheln/rendern.mjs _kacheln_arbeit/bonn.pmtiles _kacheln_arbeit/plan.json _kacheln_arbeit/bloecke
 .github/workflows-inaktiv/live.yml	43	url_bonn	https://ris-bonn.datenatlas.de/	for base in https://ris-bonn.datenatlas.de/ https://daimpad.github.io/allris-test/; do
 .github/workflows-inaktiv/live.yml	43	url_allris_test	daimpad.github.io/allris-test | ris-bonn.datenatlas.de	for base in https://ris-bonn.datenatlas.de/ https://daimpad.github.io/allris-test/; do
 .github/workflows-inaktiv/live.yml	43	bonn	bonn	for base in https://ris-bonn.datenatlas.de/ https://daimpad.github.io/allris-test/; do
@@ -233,15 +229,16 @@ data/geo/hausnummern_koeln.json	1	ortsteil_bonn	Auerberg | Hochkreuz | Röttgen	
 data/geo/hausnummern_koeln.json	1	bonn	Bonner	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Adresse_0.zip","license":"dl-de/zero 2.0 (Stadt Köln, Adressen Köln);
 data/geo/strassen_koeln.json	1	ortsteil_bonn	Auerberg | Hochkreuz | Röttgen	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Strasse_1.zip","license":"dl-de/zero 2.0 (Stadt Köln, Straßen Köln); 
 data/geo/strassen_koeln.json	1	bonn	Bonner	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Strasse_1.zip","license":"dl-de/zero 2.0 (Stadt Köln, Straßen Köln); 
-deploy/htaccess	2	bonn	Bonn	# Branch deploy kopiert. Die Daten für ganz Bonn umfassen rund 85 MB JSON; Komprimierung
-pipeline/__init__.py	1	name_allris_bonn	allris-bonn	"""Datenpipeline allris-bonn (Phase 1)."""
-pipeline/__init__.py	1	bonn	bonn	"""Datenpipeline allris-bonn (Phase 1)."""
+deploy/htaccess	2	bonn	Bonn	# Branch deploy kopiert. Die Daten für ganz Bonn umfassten rund 85 MB JSON (Köln: nach dem ersten Abruf messen); Komprimierung
+pipeline/__init__.py	1	name_allris_bonn	allris-bonn	"""Datenpipeline Ratsatlas Köln (aus allris-bonn übernommen)."""
+pipeline/__init__.py	1	bonn	bonn	"""Datenpipeline Ratsatlas Köln (aus allris-bonn übernommen)."""
 pipeline/__main__.py	1	oparl_lite	fetch-lite	"""Aufruf: python -m pipeline {fetch|geo-koeln|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-o
 pipeline/__main__.py	9	bonn	Bonner	raise SystemExit(f"In Köln ersetzt durch `{durch}` (Bonner Quelle, Inventur Phase 0).")
 pipeline/__main__.py	19	oparl_lite	fetch-lite	"fetch-lite": _ersetzt("fetch"),
 pipeline/__main__.py	53	bonn	Bonn	"kontext-ausschnitte": kontext.ausschnitte,  # einmalig: Ausschnitte für Bonn (Zensus, Bodenrichtwerte, Klima, ...)
 pipeline/__main__.py	70	bonn	Bonner	# Schritte der Bonner Zusatzthemen: nur, wenn das Thema in config.ZUSATZTHEMEN freigegeben ist (CLAUDE.md 5.4)
-pipeline/actors.py	48	bonn	Bonn	("Allianz für Bonn", r"(?<!\w)AfB(?!\w)|Allianz für Bonn", r"Allianz für Bonn"),
+pipeline/actors.py	13	bonn	Bonn	"""Vorlagenarten: genaue Namen (Bonn und die für Köln belegten) und ein Muster für Kölner Varianten, solange die
+pipeline/actors.py	39	bonn	Bonner	# (Anzeigename, Muster im Titel, Muster im Namen der Fraktion/Gruppe in organizations.json). Köln: Bonner Wählergruppen
 pipeline/anliegen.py	1	bonn	Bonn	"""Archiv des Anliegen- und Mängelmelders der Stadt Bonn (Phase 1, noch ohne Anzeige auf der Seite).
 pipeline/anliegen.py	16	url_bonn	https://anliegen.bonn.de,	Quelle: Stadt Bonn, https://anliegen.bonn.de, Datensatz „Anliegen- und Mängelmelder Open311“ auf opendata.bonn.de,
 pipeline/anliegen.py	16	bonn	Bonn | bonn	Quelle: Stadt Bonn, https://anliegen.bonn.de, Datensatz „Anliegen- und Mängelmelder Open311“ auf opendata.bonn.de,
@@ -259,9 +256,6 @@ pipeline/baustellen.py	1	bonn	Bonn	"""Archiv der Baustellen der Stadt Bonn (Phas
 pipeline/baustellen.py	11	bonn	Bonn | bonn	Quelle: Stadt Bonn, stadtplan.bonn.de (Lizenz CC0 laut Auftraggeber, 19.10.2026). Termine sind laut Quelle
 pipeline/baustellen.py	24	url_bonn	https://stadtplan.bonn.de/geojson?Thema={}	URL = "https://stadtplan.bonn.de/geojson?Thema={}"
 pipeline/baustellen.py	24	bonn	bonn	URL = "https://stadtplan.bonn.de/geojson?Thema={}"
-pipeline/begriffsseite.py	34	oparl_lite	OParl-Lite	"Die Ergebnisse stehen in der Prozesslinie wörtlich wie im Ratsinformationssystem (über OParl-Lite); die "
-pipeline/begriffsseite.py	113	bonn	Bonn	out.write_text(page(site_url, PFAD, "Begriffe – Ratsatlas Bonn",
-pipeline/begriffsseite.py	115	bonn	Bonn	"Begriffe aus dem Ratsinformationssystem der Stadt Bonn in einfachen Worten, mit Fundstelle.",
 pipeline/besetzung.py	1	bonn	Bonn	"""Besetzung der Gremien aus der OParl-API der Stadt Bonn (Reiter „Prozesse“, Gremien).
 pipeline/besetzung.py	26	bonn	Bonn	LIZENZ = "CC0 1.0 (OParl-API der Stadt Bonn)"
 pipeline/besetzung.py	136	bonn	Bonn	return re.sub(r"\s+im Rat der Stadt Bonn$", "", name)
@@ -280,13 +274,13 @@ pipeline/config.py	17	oparl_lite	CONSULTATIONS_LITE	CONSULTATIONS_LITE = BERATUN
 pipeline/config.py	28	bonn	Bonn	# Flächen heißen wie in Bonn (ortsteil, ortsteil_bez, bezirk, bezirk_bez); angezeigt wird „Stadtteil“ (Phase-0-Bericht 3.3)
 pipeline/config.py	64	oparl_lite	OParl-Lite	QUELLE_SITZUNG = "oparl-koeln"    # Sitzungen und TOPs (in Bonn aus OParl-Lite, in Köln aus derselben API)
 pipeline/config.py	64	bonn	Bonn	QUELLE_SITZUNG = "oparl-koeln"    # Sitzungen und TOPs (in Bonn aus OParl-Lite, in Köln aus derselben API)
-pipeline/config.py	102	bonn	Bonner	# Kein Pilot-Stadtteil (CLAUDE.md 2); bleibt für Module, die den Bonner Pilot noch kennen
-pipeline/config.py	105	bonn	Bonn	# Zusatzthemen aus Bonn: deaktiviert, nicht gelöscht (CLAUDE.md 5.4, Inventur Phase 0); einzeln freizugeben
-pipeline/config.py	113	bonn	Bonn	# Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)
-pipeline/config.py	116	bonn	Bonn	BAUSTELLEN_LICENSE = ("CC0 1.0 (Stadt Bonn, Baustellen tagesaktuell und geplant; Lizenz laut Auftraggeber, die Datensätze "
-pipeline/config.py	117	bonn	bonn	"sind nicht mehr im Katalog von opendata.bonn.de)")
-pipeline/config.py	120	site_url	SITE_URL	SITE_URL = os.environ.get("SITE_URL", "https://koeln.ratsatlas.de/")
-pipeline/config.py	122	site_url	PAKET_URL	PAKET_URL = os.environ.get("PAKET_URL",
+pipeline/config.py	107	bonn	Bonner	# Kein Pilot-Stadtteil (CLAUDE.md 2); bleibt für Module, die den Bonner Pilot noch kennen
+pipeline/config.py	110	bonn	Bonn	# Zusatzthemen aus Bonn: deaktiviert, nicht gelöscht (CLAUDE.md 5.4, Inventur Phase 0); einzeln freizugeben
+pipeline/config.py	120	bonn	Bonn	# Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)
+pipeline/config.py	123	bonn	Bonn	BAUSTELLEN_LICENSE = ("CC0 1.0 (Stadt Bonn, Baustellen tagesaktuell und geplant; Lizenz laut Auftraggeber, die Datensätze "
+pipeline/config.py	124	bonn	bonn	"sind nicht mehr im Katalog von opendata.bonn.de)")
+pipeline/config.py	127	site_url	SITE_URL	SITE_URL = os.environ.get("SITE_URL", "https://koeln.ratsatlas.de/")
+pipeline/config.py	129	site_url	PAKET_URL	PAKET_URL = os.environ.get("PAKET_URL",
 pipeline/dossier.py	7	bonn	/bonn/	Ausgabe: export/bonn/dossiers/<key>.json (export_all) und die statische Seite (seo-Schritt)."""
 pipeline/dossier.py	488	bonn	Bonn	<p class="meta">Ausgelesen aus den Haushaltsplänen{" und dem Jahresabschluss 2024" if ja in h["ausgaben"] else ""} der Stadt Bonn (PDF: {quellen}; Abruf {_date(
 pipeline/dossier.py	529	bonn	Bonn	<p class="meta">Laufende Mitgliedschaften laut OParl-API der Stadt Bonn (CC0), Stand {_date(a["stichtag"])}. <a href="{root}?prozesse=gremien&amp;gremium={escap
@@ -329,21 +323,16 @@ pipeline/einfachseite.py	98	bonn	Bonn	<p>Wichtig: Der Ratsatlas ist keine Stelle
 pipeline/einfachseite.py	108	bonn	Bonn	<li>Maßgeblich ist immer das Original bei der Stadt Bonn.</li>
 pipeline/einfachseite.py	123	bonn	Bonn	out.write_text(page(site_url, PFAD, "Der Ratsatlas in Einfacher Sprache – Ratsatlas Bonn",
 pipeline/einfachseite.py	124	bonn	Bonn	"Was zeigt der Ratsatlas Bonn, wer entscheidet in Bonn und wie können Sie mitmachen? "
-pipeline/export.py	1	bonn	Bonn	"""Exporte: Pilot-Ortsteil (data/export/endenich, im Repository) und ganz Bonn je Ortsteil,
-pipeline/export.py	2	bonn	bonn	Stadtbezirk und Jahr (data/export/bonn, für die Webseite; wird bei der Veröffentlichung erzeugt).
-pipeline/export.py	157	bonn	Bonn	"""Metadaten je Datei. stable=True (Gebietsdateien für ganz Bonn): ohne Erzeugungs- und
-pipeline/export.py	179	bonn	Bonn	"""Ganz Bonn: je Ortsteil, je Stadtbezirk (nur Bezüge auf Bezirksebene) und Vorlagen ohne
-pipeline/export.py	183	bonn	bonn	out = config.EXPORT / "bonn"
-pipeline/export.py	284	bonn	Bonn	_dump(out / "plaene.json", {"meta": {**_meta(db, True), "note": "Pläne und Inkrafttreten belegt (Stadt Bonn, "
-pipeline/export.py	300	site_url	SITE_URL	prozessbild.schreibe_bild(t, thema, out / "dossiers", f"{config.SITE_URL}{t.pfad}")
-pipeline/export.py	304	site_url	SITE_URL	home, f"{config.SITE_URL}{t.pfad}")
-pipeline/export.py	312	bonn	Bonn	print(f"Bonn: {len(index['ortsteile'])} Ortsteile, {len(index['bezirke'])} Bezirke, "
-pipeline/export.py	351	bonn	_bonn	_write_tsv(config.EXPORT / "audit_geokodierung_bonn.tsv", AUDIT_COLUMNS, _audit_rows(db))
-pipeline/export.py	388	bonn	Bonn	# --- Suche über ganz Bonn: Themen und Parteien -------------------------------------------------------
-pipeline/export.py	391	bonn	Bonn	"""Kompakter Index aller Vorlagen für die Suche über ganz Bonn. Je Zeile: Drucksache, Titel, Datum,
-pipeline/export.py	447	oparl_lite	OParl-Lite	Sitzungsdatum der Beratungen (abgeleitet über OParl-Lite); dazu Sitzungen und Wahlperioden."""
-pipeline/export.py	472	oparl_lite	OParl-Lite	"der Beratungen (über OParl-Lite verknüpft, abgeleitet)"),
-pipeline/export.py	540	oparl_lite	OParl-Lite	"Ergebnis der entscheidenden Beratung (OParl-Lite) oder Stand"),
+pipeline/export.py	3	bonn	Bonner	Ortsbezügen samt Quelle. Bonner Zusatzthemen nur, wenn in config.ZUSATZTHEMEN freigegeben."""
+pipeline/export.py	104	bonn	Bonner	d["soll"] = soll.lookup(db, p["reference"]) if _an("soll") else None  # Zusatzthema (Bonner Regelwerk)
+pipeline/export.py	203	bonn	Bonn	"""Metadaten je Datei. stable=True (Gebietsdateien für ganz Bonn): ohne Erzeugungs- und
+pipeline/export.py	332	bonn	Bonner	# Bonner Zusatzthemen (deaktiviert, CLAUDE.md 5.4): Soll-Modell, Reiter „Prozesse“, Themenseiten
+pipeline/export.py	344	site_url	SITE_URL	prozessbild.schreibe_bild(t, thema, out / "dossiers", f"{config.SITE_URL}{t.pfad}")
+pipeline/export.py	348	site_url	SITE_URL	home, f"{config.SITE_URL}{t.pfad}")
+pipeline/export.py	368	bonn	Bonner	"""Bonner Pilot-Ortsteil (in Köln nicht verwendet, CLAUDE.md 2: kein Pilot-Stadtteil)."""
+pipeline/export.py	403	bonn	_bonn	_write_tsv(config.EXPORT / "audit_geokodierung_bonn.tsv", AUDIT_COLUMNS, _audit_rows(db))
+pipeline/export.py	440	bonn	Bonn	# --- Suche über ganz Bonn: Themen und Parteien -------------------------------------------------------
+pipeline/export.py	443	bonn	Bonn	"""Kompakter Index aller Vorlagen für die Suche über ganz Bonn. Je Zeile: Drucksache, Titel, Datum,
 pipeline/fetch.py	1	oparl_lite	OParl-Lite	"""Abruf der Rohdaten: städtische OParl-API (Primärquelle) und OParl-Lite (Sitzungen, TOPs)."""
 pipeline/fetch.py	113	oparl_lite	consultations_lite	def fetch_consultations_lite(page=100, workers=2):
 pipeline/fetch.py	116	oparl_lite	LITE_GRAPHQL	config.LITE_GRAPHQL, CONSULTATION_QUERY, {"limit": page, "offset": off}
@@ -367,36 +356,8 @@ pipeline/fetch.py	339	oparl_lite	LITE_GRAPHQL	page = post_graphql(config.LITE_GR
 pipeline/fetch.py	351	oparl_lite	LITE_GRAPHQL	return post_graphql(config.LITE_GRAPHQL, f"query({head}) {{ {body} }}",
 pipeline/fetch.py	387	oparl_lite	OParl-Lite	print(f"Volltexte: {len(listing)} Hauptdokumente mit Text in OParl-Lite, {neu} von {len(todo)} neuen oder "
 pipeline/fetch.py	420	oparl_lite	consultations_lite	fetch_consultations_lite()
-pipeline/flaechen.py	1	bonn	/bonn/	"""Vereinfachte Flächen für die Webseite (data/export/bonn/flaechen/*.json).
-pipeline/flaechen.py	17	bonn	_bonn	"bebauungsplaene": config.GEO / "bebauungsplaene_bonn.geojson"}
-pipeline/gebietsseiten.py	2	bonn	/bonn/	die Inhalte der Karte finden. Grundlage sind die Gebietsdateien in _site/data/export/bonn/.
-pipeline/gebietsseiten.py	24	url_allris_test	daimpad.github.io/allris-test | ris-bonn.datenatlas.de	EIGENE = ("ris-bonn.datenatlas.de", "daimpad.github.io/allris-test")
-pipeline/gebietsseiten.py	24	bonn	bonn	EIGENE = ("ris-bonn.datenatlas.de", "daimpad.github.io/allris-test")
-pipeline/gebietsseiten.py	34	bonn	Bonn	"""Verweis für die automatische Feed-Erkennung im Kopf (zusätzlich zum Feed über ganz Bonn, den _page setzt)."""
-pipeline/gebietsseiten.py	36	bonn	/bonn/	f'href="{root}data/export/bonn/{datei}">')
-pipeline/gebietsseiten.py	52	bonn	/bonn/ | Bonn | bonn	<link rel="alternate" type="application/atom+xml" title="Ratsatlas Bonn – ganz Bonn" href="{root}data/export/bonn/feeds/ganz-bonn.xml">
-pipeline/gebietsseiten.py	56	bonn	Bonn	<a class="page-brand" href="{root}"><img src="{root}favicon.svg" width="32" height="32" alt="">Ratsatlas <span>Bonn</span></a>
-pipeline/gebietsseiten.py	89	bonn	Bonn	<p class="lead">{escape(kind_label)} {escape(where)}: Vorlagen aus dem Ratsinformationssystem der Stadt Bonn mit Ortsbezug – auf der Karte, mit Verfahrensstand,
-pipeline/gebietsseiten.py	104	oparl_lite	OParl-Lite	{begriffe}    <p class="meta">Quelle: OParl-API der Stadt Bonn (CC0), Sitzungen und Ergebnisse aus OParl-Lite (CC BY 4.0). Der Ortsbezug ist teils aus dem Titel
-pipeline/gebietsseiten.py	104	bonn	Bonn	{begriffe}    <p class="meta">Quelle: OParl-API der Stadt Bonn (CC0), Sitzungen und Ergebnisse aus OParl-Lite (CC BY 4.0). Der Ortsbezug ist teils aus dem Titel
-pipeline/gebietsseiten.py	109	bonn	bonn	base = site / "data" / "export" / "bonn"
-pipeline/gebietsseiten.py	125	bonn	Bonn	out.write_text(_page(site_url, path, f"Ratsvorlagen in {o['name']} – Ratsatlas Bonn",
-pipeline/gebietsseiten.py	126	bonn	Bonn	f"Was berät die Politik in {o['name']} (Bonn)? {len(papers)} Vorlagen aus dem Ratsinformationssystem mit Ort, Stand und Gremien.",
-pipeline/gebietsseiten.py	127	bonn	Bonn	body, root, feed_head(f"feeds/ortsteil-{o['slug']}.xml", f"Ratsatlas Bonn – {o['name']}", root)),
-pipeline/gebietsseiten.py	140	bonn	Bonn	out.write_text(_page(site_url, path, f"Ratsvorlagen im Stadtbezirk {b['name']} – Ratsatlas Bonn",
-pipeline/gebietsseiten.py	141	bonn	Bonn	f"Vorlagen aus dem Ratsinformationssystem mit Bezug zum ganzen Stadtbezirk {b['name']} (Bonn), ohne genaueren Ort.",
-pipeline/gebietsseiten.py	143	bonn	Bonn	f"Ratsatlas Bonn – Stadtbezirk {b['name']}, ohne genaueren Ort", root)),
-pipeline/gebietsseiten.py	153	bonn	Bonn	<p class="lead">Alle Ortsteile und Stadtbezirke der Stadt Bonn mit den Vorlagen aus dem Ratsinformationssystem, die sich auf sie beziehen.</p>
-pipeline/gebietsseiten.py	157	bonn	Bonn	_page(site_url, "gebiete/", "Ratsvorlagen nach Gebiet – Ratsatlas Bonn",
-pipeline/gebietsseiten.py	158	bonn	Bonner	"Übersicht der Bonner Ortsteile und Stadtbezirke mit ihren Vorlagen aus dem Ratsinformationssystem.", hub, "../"),
-pipeline/gebietszahlen.py	2	bonn	Bonn	auffälliges Thema, das im Gebiet deutlich häufiger vorkommt als in ganz Bonn.
-pipeline/gebietszahlen.py	5	bonn	Bonn	abgeleitet (topics.py). Vergleichsbasis für „auffällig“ sind alle Vorlagen mit Ortsbezug in Bonn."""
-pipeline/gebietszahlen.py	12	bonn	Bonn	MIN_FAKTOR = 1.25     # mindestens so viel häufiger als in ganz Bonn
-pipeline/gebietszahlen.py	36	bonn	Bonn	"""Thema mit dem größten Faktor gegenüber ganz Bonn, sofern es die Mindestwerte erfüllt; sonst None.
-pipeline/gebietszahlen.py	37	bonn	Bonn	`base`: Anteile in ganz Bonn aus shares()."""
 pipeline/gebietszahlen.py	50	bonn	_bonn	return {"thema": t, "label": label.get(t, t), "anteil": round(share * 100), "anteil_bonn": round(city * 100)}
 pipeline/gebietszahlen.py	82	bonn	_bonn	"themen_bonn": {t: round(share * 100, 1) for t, (_, share) in sorted(base.items())},
-pipeline/gebietszahlen.py	86	bonn	Bonn	f"mindestens {MIN_FAKTOR:g}-mal so häufig wie in ganz Bonn."}
 pipeline/geo.py	1	bonn	Bonner	"""Point-in-Polygon gegen die 86 Kölner Stadtteile (shapely); Eigenschaften im Bonner Format (ortsteil_bez …)."""
 pipeline/geocode.py	90	ortsteil_bonn	Endenich	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
 pipeline/geocode.py	90	bonn	Bonn	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
@@ -405,17 +366,10 @@ pipeline/geocode.py	317	bonn	Bonn	# Lagebezeichnung („Grundstück in Bonn-Frie
 pipeline/geocode.py	438	bonn	Bonner	vorliegen (explore/BERICHT_phase1.md 2.5); bis dahin keine Erkennung, damit das Bonner Schema nichts falsch zuordnet."""
 pipeline/geocode.py	458	bonn	Bonn	"note": "Ortsteile je Straße per Verschneidung mit den Ortsteilflächen der Stadt Bonn; "
 pipeline/geodaten.py	6	bonn	Bonner	OParl-Abruf). Ausgabe in WGS84 mit den Eigenschaftsnamen des Bonner Modells:
-pipeline/glossar.py	69	oparl_lite	OParl-Lite	"abgeleitet": "Aus Quelldaten erschlossen (z. B. Verknüpfung mit OParl-Lite, Titelmuster).",
-pipeline/glossar.py	85	bonn	Bonn	DATENFELD = "Ratsinformationssystem der Stadt Bonn (OParl-API)"
-pipeline/glossar.py	87	bonn	Bonn	ERSCHLOSSEN = "Vorlagenart im Ratsinformationssystem der Stadt Bonn; Erklärung aus Titeln und Beratungsfolge erschlossen"
-pipeline/glossar.py	88	bonn	Bonn	GESCHO = "Geschäftsordnung des Rates der Stadt Bonn"
-pipeline/glossar.py	89	bonn	Bonn	HAUSHALT = "Haushaltspläne der Stadt Bonn"
-pipeline/glossar.py	119	bonn	Bonn	"Einzelheiten regelt die Geschäftsordnung.", "Geschäftsordnung des Rates der Stadt Bonn"),
-pipeline/glossar.py	122	bonn	Bonn	("Bezirksvertretung", "Gewählte Vertretung eines Stadtbezirks in kreisfreien Städten; Bonn hat vier "
-pipeline/glossar.py	123	bezirk_bonn	Bad Godesberg | Beuel | Hardtberg	"(Bonn, Bad Godesberg, Beuel, Hardtberg). Sie entscheidet über Angelegenheiten, deren Bedeutung nicht "
-pipeline/glossar.py	123	bonn	Bonn	"(Bonn, Bad Godesberg, Beuel, Hardtberg). Sie entscheidet über Angelegenheiten, deren Bedeutung nicht "
-pipeline/glossar.py	139	oparl_lite	OParl-Lite	"abgestimmt. Das Ergebnis stammt aus OParl-Lite.", DATENFELD + ", Objekt „AgendaItem“"),
-pipeline/glossar.py	174	bonn	Bonn	("Produktbereich", "Gliederung des Haushalts nach Aufgaben; Bonn hat 17 Produktbereiche, z. B. 06 Kinder-, "
+pipeline/glossar.py	11	bonn	Bonner	Köln (04.11.2026): Begriffe und Fundstellen auf Köln umgestellt, Gruppe „Gebiete“ ergänzt; Bonner Vorlagenarten,
+pipeline/glossar.py	12	bonn	Bonn	Kürzel und Haushaltsbegriffe entfernt. Aus Bonn übernommen (02.11.2026): einfachere Wörter für eigene Bezeichnungen der Seite („Anstoß“ statt
+pipeline/glossar.py	90	bonn	Bonner	# Gruppen der Seite begriffe/ in dieser Reihenfolge (Köln, 04.11.2026: ohne die Bonner Gruppe „Haushalt“ und ohne
+pipeline/glossar.py	91	bonn	Bonner	# Bonner Kürzel der Drucksachennummer; Vorlagenarten werden nach der Messung der Kölner API ergänzt)
 pipeline/haushaltsplan.py	1	bonn	Bonn	"""Beträge je Produktbereich aus den Haushaltsplänen der Stadt Bonn (PDF), für die Themenseiten.
 pipeline/haushaltsplan.py	4	bonn	bonn	2023/24 und 2025/26 liegen auf bonn.de als PDF je Produktbereich mit Textebene. Entscheidung 27.10.2026: Beträge aus
 pipeline/haushaltsplan.py	63	url_bonn	https://www.bonn.de/medien-global/amt-20-und-21/haushaltsdaten/	BASIS = "https://www.bonn.de/medien-global/amt-20-und-21/haushaltsdaten/"
@@ -437,27 +391,6 @@ pipeline/haushaltsseite.py	800	bonn	Bonn	<p class="lead">Wofür plant die Stadt 
 pipeline/haushaltsseite.py	849	bonn	Bonn	<p>Stadt Bonn, {dateien} (PDF, Teilergebnispläne{" und Teilfinanzpläne, im Jahresabschluss Teilergebnis- und Teilfinanzrechnungen" if d.get("erweiterung") else 
 pipeline/haushaltsseite.py	877	bonn	Bonn	out.write_text(page(site_url, PFAD, "Haushalt auf einen Blick – Ratsatlas Bonn",
 pipeline/haushaltsseite.py	878	bonn	Bonn	"Ordentliche Aufwendungen, Erträge und Ergebnis der Stadt Bonn je Produktbereich: Plan und Ist "
-pipeline/kacheln/ausschnitt.py	1	bonn	Bonn	"""Ausschnitt Bonn aus einem Protomaps-Build (PMTiles v3, OSM-Daten, ODbL) über HTTP-Range-Anfragen.
-pipeline/kacheln/ausschnitt.py	22	url_bonn	https://ris-bonn.datenatlas.de/;	UA = "ratsatlas-bonn/1.0 (+https://ris-bonn.datenatlas.de/; Ausschnitt Bonn, vierteljaehrlich)"
-pipeline/kacheln/ausschnitt.py	22	url_allris_test	ris-bonn.datenatlas.de	UA = "ratsatlas-bonn/1.0 (+https://ris-bonn.datenatlas.de/; Ausschnitt Bonn, vierteljaehrlich)"
-pipeline/kacheln/ausschnitt.py	22	bonn	Bonn | bonn	UA = "ratsatlas-bonn/1.0 (+https://ris-bonn.datenatlas.de/; Ausschnitt Bonn, vierteljaehrlich)"
-pipeline/kacheln/package-lock.json	2	name_allris_bonn	allris-bonn	"name": "allris-bonn-kacheln",
-pipeline/kacheln/package-lock.json	2	bonn	bonn	"name": "allris-bonn-kacheln",
-pipeline/kacheln/package-lock.json	7	name_allris_bonn	allris-bonn	"name": "allris-bonn-kacheln",
-pipeline/kacheln/package-lock.json	7	bonn	bonn	"name": "allris-bonn-kacheln",
-pipeline/kacheln/package.json	2	name_allris_bonn	allris-bonn	"name": "allris-bonn-kacheln",
-pipeline/kacheln/package.json	2	bonn	bonn	"name": "allris-bonn-kacheln",
-pipeline/kacheln/package.json	4	bonn	Bonn	"description": "Graue Rasterkacheln aus OSM-Daten (Protomaps) für den Ratsatlas Bonn; nur für den Workflow kacheln.yml",
-pipeline/kacheln/rahmen.py	3	bonn	Bonn	Zoom 10–12 zeigen die Region um Bonn, Zoom 13–14 Bonn mit etwa 7 km Rand, Zoom 15–16 Bonn mit etwa 2 km Rand.
-pipeline/kacheln/rahmen.py	8	bonn	BONN	BONN = (7.0225, 50.6327, 7.2107, 50.7744)  # lon_min, lat_min, lon_max, lat_max (Grenzen der Stadtbezirke)
-pipeline/kacheln/rahmen.py	14	bonn	Bonn	"""Rand in Grad (lon, lat) um Bonn je Zoomstufe der Rasterkacheln."""
-pipeline/kacheln/rahmen.py	25	bonn	BONN	lo1, la1, lo2, la2 = BONN
-pipeline/kacheln/rendern.mjs	3	bonn	bonn	// Aufruf: node pipeline/kacheln/rendern.mjs <bonn.pmtiles> <plan.json> <blockordner>
-pipeline/kacheln/rendern.mjs	15	bonn	bonn	if (!AUS) { console.error('Aufruf: node rendern.mjs <bonn.pmtiles> <plan.json> <blockordner>'); process.exit(2); }
-pipeline/kacheln/rendern.mjs	23	bonn	bonn	sources: { protomaps: { type: 'vector', url: `pmtiles://${base}/bonn.pmtiles` } },
-pipeline/kacheln/rendern.mjs	34	bonn	bonn	const f = p === '/bonn.pmtiles' ? path.resolve(PMTILES) : path.join(HIER, p);
-pipeline/kacheln/rendern.mjs	35	bonn	bonn	if (p !== '/bonn.pmtiles' && !f.startsWith(HIER + path.sep)) { res.writeHead(403); return res.end(); }
-pipeline/kacheln/zerlegen.py	45	bonn	Bonn	Graue Rasterkacheln des Ratsatlas Bonn, erzeugt aus OpenStreetMap-Daten über einen Ausschnitt aus dem
 pipeline/kandidaten.py	27	bonn	Bonn	OWN = re.compile(r"Bundesstadt Bonn|^Amt \d|Stadt Bonn", re.I)
 pipeline/kandidaten.py	81	bonn	bonn	base = Path(base or config.EXPORT / "bonn")
 pipeline/kandidaten.py	219	bonn	/bonn/	"""data/export/bonn/baustellen.json aus dem Archiv; fehlt es, aus den drei Feeds; scheitert auch das, eine leere
@@ -516,9 +449,6 @@ pipeline/objekte.py	59	bonn	Bonner	# Namen mit Ziffer am Anfang sind meist Tafel
 pipeline/objekte.py	100	bonn	Bonn	# kürzester passender Name je Ortsteil („LVR-Landesmuseum Bonn“ vor „…, Bibliothek“)
 pipeline/plans.py	2	bonn	Bonn	Pläne der Stadt Bonn (CC0) abgleichen. Der Datensatz enthält nur rechtskräftige Pläne; Pläne im
 pipeline/plans.py	107	bonn	Bonn	"""Je Plannummer aus den Titeln: zugeordnete Pläne (belegt, Stadt Bonn), berührte Ortsteile und die
-pipeline/process.py	5	oparl_lite	OParl-Lite	- abgeleitet        aus Quelldaten erschlossen (Join mit OParl-Lite, Textmuster, Vererbung)
-pipeline/process.py	49	oparl_lite	OParl-Lite	"""Kalendertag in Bonn; Sitzungszeiten aus OParl-Lite stehen in UTC (z. B. 22:30Z = 00:30 Uhr)."""
-pipeline/process.py	49	bonn	Bonn	"""Kalendertag in Bonn; Sitzungszeiten aus OParl-Lite stehen in UTC (z. B. 22:30Z = 00:30 Uhr)."""
 pipeline/prozessarten.py	1	bonn	/bonn/ | Bonn	"""Reiter „Prozesse“: Verfahrensarten mit Zahlen aus Bonn und Gremien mit Zuständigkeit (data/export/bonn/prozessarten.json).
 pipeline/prozessarten.py	4	bonn	Bonn	diese Datei ergänzt je Verfahren die Zahl der Vorgänge in Bonn mit Beispielen (Zuordnung abgeleitet, pipeline/soll.py)
 pipeline/prozessarten.py	5	bonn	Bonn	und je Gremium Art, Beratungen, letzte und nächste Sitzung (OParl-API der Stadt Bonn, CC0); je Amt die
@@ -536,83 +466,27 @@ pipeline/prozessbild.py	339	url_bonn	https://www.bonn.de/vv/produkte/buergerantr
 pipeline/prozessbild.py	339	bonn	bonn	'<a class="pb-knopf" href="https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-'
 pipeline/prozessbild.py	375	bonn	/bonn/	"kalender": f"{root}data/export/bonn/dossiers/{t.key}.ics",
 pipeline/prozessbild.py	404	bonn	/bonn/	<p class="meta">Bild zum Teilen (täglich aktualisiert): <a href="{root}data/export/bonn/dossiers/{name}.png">PNG</a> · <a href="{root}data/export/bonn/dossiers/
-pipeline/publish.py	15	bonn	_BONN | bonn	GANZ_BONN = "ganz-bonn"   # Feed über alle Gebiete (Seite rss/, Entscheidung des Auftraggebers 28.10.2026)
-pipeline/publish.py	16	oparl_lite	OParl-Lite	RIGHTS = ("Abgeleitet aus dem Ratsinformationssystem der Stadt Bonn (OParl-API, CC0 1.0) und OParl-Lite "
-pipeline/publish.py	16	bonn	Bonn	RIGHTS = ("Abgeleitet aus dem Ratsinformationssystem der Stadt Bonn (OParl-API, CC0 1.0) und OParl-Lite "
-pipeline/publish.py	17	oparl_lite	machdenstaat	"Bonn von machdenstaat (Sitzungen und Ergebnisse, CC BY 4.0). Maßgeblich ist das Original.")
-pipeline/publish.py	17	bonn	Bonn	"Bonn von machdenstaat (Sitzungen und Ergebnisse, CC BY 4.0). Maßgeblich ist das Original.")
-pipeline/publish.py	27	site_url	SITE_URL	url = f"{config.SITE_URL}?gebiet={quote(area, safe=':')}"
-pipeline/publish.py	48	oparl_lite	OParl-Lite	"summary": f"{s.get('role') or 'Beratung'} am {s['date']}; Ergebnis laut OParl-Lite. "
-pipeline/publish.py	66	site_url	SITE_URL	f"<author><name>Ratsatlas Bonn</name><uri>{escape(config.SITE_URL)}</uri></author>",
-pipeline/publish.py	66	bonn	Bonn	f"<author><name>Ratsatlas Bonn</name><uri>{escape(config.SITE_URL)}</uri></author>",
-pipeline/publish.py	89	site_url	SITE_URL	return f"{config.SITE_URL}data/export/bonn/feeds/{name}.xml"
-pipeline/publish.py	89	bonn	/bonn/	return f"{config.SITE_URL}data/export/bonn/feeds/{name}.xml"
-pipeline/publish.py	93	bonn	Bonn	"""Je Gebiet die letzten Ereignisse, dazu ein Feed über ganz Bonn (alle Vorlagen, jede einmal; die Einträge
-pipeline/publish.py	96	site_url	SITE_URL	base = f"{config.SITE_URL}data/export/bonn/feeds/"
-pipeline/publish.py	96	bonn	/bonn/	base = f"{config.SITE_URL}data/export/bonn/feeds/"
-pipeline/publish.py	107	bonn	_BONN	name = GANZ_BONN if ganz else key.replace(":", "-")
-pipeline/publish.py	108	bonn	Bonn	wo = "ganz Bonn" if ganz else names[key]
-pipeline/publish.py	110	name_allris_bonn	allris-bonn	f"tag:allris-bonn,2026:feed/{name}", f"Ratsatlas Bonn – {wo}",
-pipeline/publish.py	110	bonn	Bonn | bonn	f"tag:allris-bonn,2026:feed/{name}", f"Ratsatlas Bonn – {wo}",
-pipeline/publish.py	112	bonn	bonn	site_link("bonn:ganz" if ganz else key), entries))
-pipeline/publish.py	123	name_allris_bonn	allris-bonn	f"tag:allris-bonn,2026:feed/vorlage/{name}", f"Vorlage {p['reference']}: {p['name']}",
-pipeline/publish.py	123	bonn	bonn	f"tag:allris-bonn,2026:feed/vorlage/{name}", f"Vorlage {p['reference']}: {p['name']}",
-pipeline/publish.py	137	name_allris_bonn	allris-bonn	f"tag:allris-bonn,2026:feed/thema/{key}", f"Ratsatlas Bonn – {title}",
-pipeline/publish.py	137	bonn	Bonn | bonn	f"tag:allris-bonn,2026:feed/thema/{key}", f"Ratsatlas Bonn – {title}",
-pipeline/publish.py	139	site_url	SITE_URL	f"{config.SITE_URL}data/export/bonn/dossiers/{path.name}", page_url, entries))
-pipeline/publish.py	139	bonn	/bonn/	f"{config.SITE_URL}data/export/bonn/dossiers/{path.name}", page_url, entries))
-pipeline/publish.py	169	bonn	Bonn	lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Ratsatlas Bonn//Sitzungskalender//DE",
-pipeline/publish.py	171	bonn	Bonn	"Bezirksvertretungen Bonn", "X-WR-TIMEZONE:Europe/Berlin"]
-pipeline/publish.py	179	bonn	Bonn	desc.append("Quelle: OParl-API der Stadt Bonn (CC0 1.0)")
-pipeline/publish.py	217	oparl_lite	OParl-Lite	"Stand und Ergebnisse stützen sich auf OParl-Lite (CC BY 4.0); übrige Felder CC0 1.0."},
-pipeline/publish.py	223	site_url	SITE_URL	site, base = config.SITE_URL, f"{config.SITE_URL}data/export/"
-pipeline/publish.py	225	bonn	Bonn	rights = ("Gemischte Lizenz: Felder aus der OParl-API der Stadt Bonn CC0 1.0; Sitzungen, "
-pipeline/publish.py	226	oparl_lite	OParl-Lite | machdenstaat	"Tagesordnungspunkte und Ergebnisse aus OParl-Lite (machdenstaat) CC BY 4.0; Ortsbezüge aus "
-pipeline/publish.py	240	bonn	bonn	"@id": f"{base}bonn/dcat.jsonld#dataset", "@type": "dcat:Dataset",
-pipeline/publish.py	241	bonn	Bonn	"dct:title": {"@language": "de", "@value": "Ratsatlas Bonn – Ratsvorlagen räumlich, zeitlich und nach Akteuren"},
-pipeline/publish.py	243	bonn	Bonn	"Vorlagen aus dem Ratsinformationssystem der Stadt Bonn seit Oktober 2019 mit Ortsbezug "
-pipeline/publish.py	247	bonn	Bonn	"dcat:keyword": ["Ratsinformationssystem", "OParl", "Bonn", "Kommunalpolitik", "Vorlagen",
-pipeline/publish.py	254	bonn	Bonn	"dct:spatial": {"@type": "dct:Location", "rdfs:label": "Bonn",
-pipeline/publish.py	257	name_allris_bonn	allris-bonn	"dct:publisher": {"@type": "foaf:Agent", "foaf:name": "allris-bonn (Hackathon „Hack den Stadtrat“)",
-pipeline/publish.py	257	bonn	bonn	"dct:publisher": {"@type": "foaf:Agent", "foaf:name": "allris-bonn (Hackathon „Hack den Stadtrat“)",
-pipeline/publish.py	258	url_allris_test	github.com/daimpad/allris-test	"foaf:homepage": {"@id": "https://github.com/daimpad/allris-test"}},
-pipeline/publish.py	262	bonn	bonn	dist("Verortete Vorlagen (GeoJSON)", "bonn/vorlagen.geojson", "application/geo+json", "odbl",
-pipeline/publish.py	264	site_url	PAKET_URL	dist("Datenpaket (Zip)", config.PAKET_URL, "application/zip", "odbl",
-pipeline/publish.py	266	bonn	bonn	dist("Zeitleiste: Monatsaggregate (JSON)", "bonn/zeit.json", "application/json", "cc-by",
-pipeline/publish.py	268	bonn	bonn	dist("Typische Wege je Vorlagenart (JSON)", "bonn/prozesse.json", "application/json", "cc-by",
-pipeline/publish.py	270	bonn	bonn	dist("Verfahren, Gremien und Ämter (JSON)", "bonn/prozessarten.json", "application/json", "cc0",
-pipeline/publish.py	272	bonn	bonn	dist("Sitzungskalender (iCalendar)", "bonn/termine.ics", "text/calendar", "cc0",
-pipeline/publish.py	274	bonn	bonn	dist("Planregister Bebauungspläne (JSON)", "bonn/plaene.json", "application/json", "cc0",
-pipeline/publish.py	275	bonn	Bonn	"Je Plannummer aus Vorlagentiteln: rechtskräftige Pläne mit Inkrafttreten (Stadt Bonn), Ortsteile und "
-pipeline/publish.py	277	bonn	bonn	dist("Baustellen und mögliche Umsetzungen (JSON)", "bonn/baustellen.json", "application/json", "cc0",
-pipeline/publish.py	278	bonn	Bonn	"Gemeldete Baustellen der Stadt Bonn (Termine unverbindlich, Archiv ab 19.10.2026) mit möglichen "
-pipeline/publish.py	280	bonn	bonn	] + ([dist("KI-Kurzfassungen (TSV)", "bonn/kurzfassungen.tsv", "text/tab-separated-values", "cc-by",
-pipeline/publish.py	284	bonn	bonn	+ ([dist("Kontextdaten je Ortsteil (JSON)", "bonn/kontext.json", "application/json", "dl-de-by",
-pipeline/publish.py	285	bonn	Bonn	"Kennzahlen je Ortsteil, Stadtbezirk und ganz Bonn zur Einordnung von Vorlagen: Einwohner und Altersanteile "
-pipeline/rssseite.py	3	bonn	Bonn | _BONN	Hauptadresse ist der Feed über ganz Bonn (publish.GANZ_BONN); darunter drei Zugänge: einfach abonnieren (Feed-Reader),
-pipeline/rssseite.py	11	bonn	_BONN	from .publish import GANZ_BONN
-pipeline/rssseite.py	19	bonn	_BONN	def feed_url(site_url, name=GANZ_BONN):
-pipeline/rssseite.py	20	bonn	/bonn/	return f"{site_url}data/export/bonn/feeds/{name}.xml"
-pipeline/rssseite.py	23	bonn	Bonn	def head(site_url, titel="Ratsatlas Bonn – ganz Bonn", url=None):
-pipeline/rssseite.py	40	bonn	bonn	base = site / "data" / "export" / "bonn"
-pipeline/rssseite.py	45	bonn	/bonn/	themen = [(t.titel, f"{site_url}data/export/bonn/dossiers/{t.key}.xml") for t in THEMEN
-pipeline/rssseite.py	93	bonn	Bonn	f'      title="Ratsatlas Bonn – ganz Bonn"\n      href="{url}">')
-pipeline/rssseite.py	98	bonn	Bonn	<h2 id="rss-adresse-t">Feed für ganz Bonn</h2>
-pipeline/rssseite.py	136	url_allris_test	github.com/daimpad/allris-test	<p class="meta">Bitte nennen Sie die Quelle „Ratsatlas Bonn“. Ergebnisse der Beratungen stammen aus OParl-Lite Bonn (machdenstaat, CC BY 4.0), die übrigen Angab
-pipeline/rssseite.py	136	oparl_lite	OParl-Lite | machdenstaat	<p class="meta">Bitte nennen Sie die Quelle „Ratsatlas Bonn“. Ergebnisse der Beratungen stammen aus OParl-Lite Bonn (machdenstaat, CC BY 4.0), die übrigen Angab
-pipeline/rssseite.py	136	bonn	Bonn	<p class="meta">Bitte nennen Sie die Quelle „Ratsatlas Bonn“. Ergebnisse der Beratungen stammen aus OParl-Lite Bonn (machdenstaat, CC BY 4.0), die übrigen Angab
-pipeline/rssseite.py	149	bonn	/bonn/ | bonn	<dt>Adressen</dt><dd><code>data/export/bonn/feeds/ganz-bonn.xml</code>, <code>feeds/ortsteil-&lt;name&gt;.xml</code>, <code>feeds/bezirk-&lt;name&gt;.xml</code>
-pipeline/rssseite.py	150	url_allris_test	daimpad.github.io/allris-test	<dt>Abruf</dt><dd>Die Feeds ändern sich höchstens einmal am Tag ({LAUF}). Bitte höchstens einmal pro Stunde abrufen, besser einmal am Tag; der Server beantworte
-pipeline/rssseite.py	154	url_allris_test	github.com/daimpad/allris-test	<p class="rss-weiter"><button type="button" class="rss-knopf rss-zweit" data-kopieren="#rss-python" hidden>Beispiel kopieren</button> <a href="{escape(link)}" t
-pipeline/rssseite.py	164	bonn	Bonn	out.write_text(page(site_url, PFAD, "Inhalte abonnieren und weiterverwenden – Ratsatlas Bonn",
-pipeline/rssseite.py	165	bonn	Bonn	"Feeds des Ratsatlas Bonn abonnieren oder einbinden: neue Vorlagen und Beratungsergebnisse "
-pipeline/rssseite.py	166	bonn	Bonn	"aus ganz Bonn, je Gebiet und je Thema, offen und ohne Konto.",
+pipeline/publish.py	15	bonn	Bonn | _BONN	GANZ_BONN = f"ganz-{config.STADT}"   # Feed über alle Gebiete (Seite rss/); Name aus Bonn übernommen
+pipeline/publish.py	30	site_url	SITE_URL	url = f"{config.SITE_URL}?gebiet={quote(area, safe=':')}"
+pipeline/publish.py	69	site_url	SITE_URL	f"<author><name>{escape(config.SEITENNAME)}</name><uri>{escape(config.SITE_URL)}</uri></author>",
+pipeline/publish.py	92	site_url	SITE_URL	return f"{config.SITE_URL}{EXPORT_PFAD}/feeds/{name}.xml"
+pipeline/publish.py	99	site_url	SITE_URL	base = f"{config.SITE_URL}{EXPORT_PFAD}/feeds/"
+pipeline/publish.py	110	bonn	_BONN	name = GANZ_BONN if ganz else key.replace(":", "-")
+pipeline/publish.py	142	site_url	SITE_URL	f"{config.SITE_URL}{EXPORT_PFAD}/dossiers/{path.name}", page_url, entries))
+pipeline/publish.py	232	site_url	SITE_URL	site, base = config.SITE_URL, f"{config.SITE_URL}data/export/"
+pipeline/publish.py	272	site_url	PAKET_URL	dist("Datenpaket (Zip)", config.PAKET_URL, "application/zip", "dl-de-zero",
+pipeline/publish.py	288	bonn	Bonn	"Kennzahlen je Ortsteil, Stadtbezirk und ganz Bonn zur Einordnung von Vorlagen: Einwohner und Altersanteile "
+pipeline/rssseite.py	3	bonn	_BONN	Hauptadresse ist der Feed über ganz Köln (publish.GANZ_BONN); darunter drei Zugänge: einfach abonnieren (Feed-Reader),
+pipeline/rssseite.py	12	bonn	_BONN	from .publish import GANZ_BONN
+pipeline/rssseite.py	20	bonn	_BONN	def feed_url(site_url, name=GANZ_BONN):
+pipeline/rssseite.py	151	url_allris_test	daimpad.github.io/allris-test	<dt>Abruf</dt><dd>Die Feeds ändern sich höchstens einmal am Tag ({LAUF}). Bitte höchstens einmal pro Stunde abrufen, besser einmal am Tag; der Server beantworte
+pipeline/rssseite.py	155	url_allris_test	github.com/daimpad/allris-test	<p class="rss-weiter"><button type="button" class="rss-knopf rss-zweit" data-kopieren="#rss-python" hidden>Beispiel kopieren</button> <a href="{escape(link)}" t
 pipeline/seo.py	2	site_url	SITE_URL	strukturierte Daten, Fehlerseite) für die öffentliche Adresse SITE_URL.
 pipeline/seo.py	5	site_url	SITE_URL	zusammengestellten Seite (_site), damit ein Wechsel auf die eigene Domain nur SITE_URL braucht.
-pipeline/seo.py	13	url_allris_test	daimpad.github.io/allris-test	DEFAULT_URL = "https://daimpad.github.io/allris-test/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
-pipeline/seo.py	13	site_url	SITE_URL	DEFAULT_URL = "https://daimpad.github.io/allris-test/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
+pipeline/seo.py	13	site_url	SITE_URL	DEFAULT_URL = "https://daimpad.github.io/ratsatlas-koeln/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
 pipeline/seo.py	15	site_url	SITE_URL	SITEMAP = ("", "datenschutz.html")  # Pfade relativ zu SITE_URL
 pipeline/seo.py	31	site_url	SITE_URL	site_url = site_url or config.SITE_URL
+pipeline/seo.py	40	bonn	Bonner	an = lambda thema: config.ZUSATZTHEMEN.get(thema)   # Bonner Zusatzthemen nur bei Freigabe (CLAUDE.md 5.4)
 pipeline/sessionnet.py	1	bonn	Bonner	"""SessionNet-Adapter: Abruf der Kölner OParl-API ins Bonner Rohdatenformat (CLAUDE.md 5.1).
 pipeline/sessionnet.py	3	bonn	Bonner	Erzeugt dieselben Rohdateien wie der Bonner Abruf, damit build.py, Export und Seite unverändert bleiben:
 pipeline/sessionnet.py	6	bonn	Bonner	- `meetings.json`     Sitzungen im Bonner Kurzformat; vollständige Sitzungen mit TOPs in `meetings_roh.jsonl`
@@ -799,133 +673,55 @@ pipeline/wahlen.py	145	bonn	bonn	"uebergang": "Übergang, bis die Dateien der St
 pipeline/wahlen.py	199	bonn	Bonn	"""Zeilen der Ratswahl in Bonn: Stimmbezirk, Art (Urne/Brief), Wahlbezirk, Wahlberechtigte (A), davon mit
 pipeline/wahlen.py	206	bonn	_BONN	if len(r) <= ix["B"] or r[ix["GKZ_Gemeinde"]] != GKZ_BONN:
 pipeline/wahlen.py	221	bonn	Bonn	raise SystemExit(f"Wahlen 2025: nur {len(urne)} Urnenstimmbezirke für Bonn – Datei unvollständig")
-site/404.html	6	url_allris_test	daimpad.github.io/allris-test	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src https://daimpad.github.io/allris-test/; base-uri 'non
-site/404.html	7	bonn	Bonn	<title>Seite nicht gefunden – Ratsatlas Bonn</title>
 site/404.html	9	site_url	SITE_URL	<!-- Adressen absolut, weil die Seite unter beliebigen Pfaden ausgeliefert wird; pipeline/seo.py setzt SITE_URL ein -->
-site/404.html	10	url_allris_test	daimpad.github.io/allris-test	<link rel="icon" href="https://daimpad.github.io/allris-test/favicon.svg" type="image/svg+xml">
-site/404.html	25	url_allris_test	daimpad.github.io/allris-test	<img src="https://daimpad.github.io/allris-test/favicon.svg" width="48" height="48" alt="">
-site/404.html	28	url_allris_test	daimpad.github.io/allris-test	<a class="btn" href="https://daimpad.github.io/allris-test/">Zum Ratsatlas Bonn</a>
-site/404.html	28	bonn	Bonn	<a class="btn" href="https://daimpad.github.io/allris-test/">Zum Ratsatlas Bonn</a>
-site/404.html	29	url_allris_test	daimpad.github.io/allris-test	<p><small><a href="https://nozilla.de/impressum/">Impressum</a> · <a href="https://daimpad.github.io/allris-test/datenschutz.html">Datenschutz</a> · <a href="ma
-site/app.js	1	bonn	Bonn	// Ratsatlas Bonn – Karte vollflächig, darüber Liste, Zeitleiste, Detail (Prozesslinie mit Evidenzstatus)
-site/app.js	2	ortsteil_bonn	Endenich	// und typische Wege. Liest die Exporte der Pipeline; ohne Gesamtexport Rückfall auf den Pilot Endenich.
-site/app.js	5	bonn	/bonn/ | BONN	const BONN = "data/export/bonn/";
-site/app.js	8	bonn	_bonn	const GEO = { ortsteil: "data/geo/ortsteile_bonn.geojson", bezirk: "data/geo/stadtbezirke_bonn.geojson",
-site/app.js	9	bonn	_bonn	bplan: "data/geo/bebauungsplaene_bonn.geojson" };
-site/app.js	10	bonn	BONN	const GEO_LIGHT = { ortsteil: `${BONN}flaechen/ortsteile.json`, bezirk: `${BONN}flaechen/bezirke.json`,
-site/app.js	11	bonn	BONN	bplan: `${BONN}flaechen/bebauungsplaene.json` };
-site/app.js	14	bonn	Bonn	// Startzustand ohne Gebiet im Link: Übersicht über ganz Bonn (Stadtbezirke anklickbar, noch keine Vorlagen geladen)
-site/app.js	15	bonn	bonn	const DEFAULT_AREA = "bonn:alle";
-site/app.js	16	bonn	Bonn	const OVERVIEW_HINT = "Ganz Bonn: auf der Karte einen Stadtbezirk und dann einen Ortsteil anklicken oder oben ein Gebiet wählen. Die Suche findet Vorlagen in ga
-site/app.js	17	url_allris_test	github.com/daimpad/allris-test	const REPO = "https://github.com/daimpad/allris-test";
-site/app.js	34	bonn	Bonn	bebauungsplan: "Bebauungsplan-Nummer im Titel, Geltungsbereich laut Stadt Bonn",
-site/app.js	50	oparl_lite	OParl-Lite	<li>Sitzungen und Ergebnisse, die OParl-Lite (noch) nicht verknüpft.</li></ul>
-site/app.js	54	bonn	Bonn	<p class="intro-lead">Was Rat und Bezirksvertretungen der Stadt Bonn beraten – wo, wann, wer und mit welchem Geld.</p>
-site/app.js	62	bonn	Bonn	// heutiges Datum in Bonn (nicht UTC: zwischen 0 und 2 Uhr wäre es sonst der Vortag), bei jedem Aufruf neu
-site/app.js	75	bonn	Bonn	// Suche über ganz Bonn (suche.json, erst bei Bedarf geladen)
-site/app.js	305	ortsteil_bonn	Endenich	if (!index) return { kind: "ortsteil", key: "endenich", name: "Endenich", file: PILOT };
-site/app.js	308	bonn	BONN	if (o) return { kind, key, name: o.name, file: `${BONN}ortsteile/${key}.json` };
-site/app.js	312	bonn	BONN	if (b) return { kind, key, name: b.name, file: `${BONN}bezirke/${key}.json` };
-site/app.js	314	bonn	Bonn | bonn	if (kind === "bonn") return { kind, key: "alle", name: "ganz Bonn", file: null };
-site/app.js	316	bonn	BONN	return { kind, key, name: `ohne Ortsbezug ${key}`, file: `${BONN}ohne-ortsbezug/${key}.json` };
-site/app.js	322	ortsteil_bonn	Endenich	if (!index) { sel.innerHTML = '<option value="ortsteil:endenich">Endenich (Pilot)</option>'; return; }
-site/app.js	325	bonn	Bonn	// Ausgangszustand „Gebiet wählen“ (zeigt ganz Bonn); „Ganz Bonn“ als eigener Eintrag, wenn man dorthin zurückwechselt
-site/app.js	326	bonn	Bonn | bonn	let html = '<option value="bonn:alle" hidden>Gebiet wählen</option><option value="bonn:ganz">Ganz Bonn</option>';
-site/app.js	354	bonn	bonn	$("#f-area").value = next.kind === "bonn" && value === "bonn:ganz" ? value : `${next.kind}:${next.key}`;
-site/app.js	378	bonn	bonn	const oparl = meta.sources.find((s) => s.name === "oparl-bonn") || {};
-site/app.js	381	bonn	Bonn | bonn	document.title = area.kind === "bonn" ? "Ratsatlas Bonn – Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld"
-site/app.js	382	bonn	Bonn	: `Ratsatlas Bonn – Ratsvorlagen ${area.kind === "ohne" ? "ohne Ortsbezug " + area.key : "in " + area.name}`;
-site/app.js	383	bonn	bonn	$("#f-conf").hidden = area.kind === "ohne" || area.kind === "bonn";
-site/app.js	409	bonn	Bonn	// Umriss des Gebiets in index.json (bbox), sonst ganz Bonn (Grenzen der Stadtbezirke).
-site/app.js	468	bonn	Bonn	// Ganz Bonn ansehen: nur die Ansicht, das Gebiet bleibt; herausgezoomt sind die Stadtbezirke anklickbar
-site/app.js	475	bonn	Bonn	b.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-fit"/></svg><span class="map-whole-text">Ganz Bonn ansehen</span>';
-site/app.js	476	bonn	Bonn	b.title = "Karte auf ganz Bonn zoomen; Stadtbezirke und Ortsteile lassen sich anklicken";
-site/app.js	672	bonn	bonn	if (area.kind === "bonn") {
-site/app.js	755	bonn	Bonn	// Steckbrief in der Liste: alle Kennzahlen des Gebiets neben dem Stadtbezirk (Ortsteil) bzw. ganz Bonn (Stadtbezirk)
-site/app.js	762	bonn	Bonn | bonn	const cmp = bez ? kontext.bezirke[bez] : kontext.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Bonn";
-site/app.js	782	bonn	Bonn | bonn	const cmp = bez ? anliegen.bezirke[bez] : anliegen.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Bonn";
-site/app.js	851	bonn	Bonn | bonn	<br><span class="nav-dim">${b ? `Stadtbezirk ${esc(info.stadtbezirk)} ${kFmt(kk, b[kk])} · ` : ""}ganz Bonn ${kFmt(kk, kontext.bonn[kk])} · Stand ${esc(d.stand)
-site/app.js	853	bonn	_bonn | bonn	const label = esc(THEMES[navMetric]), bonn = (index.zahlen?.themen_bonn || {})[navMetric] || 0;
-site/app.js	857	bonn	Bonn | bonn	<br><span class="nav-dim">${de(n)} von ${de(scope === "bz" ? info.alle : info.count)} seit Oktober 2019 · ganz Bonn ${pct(bonn)} · Themen abgeleitet</span>`;
-site/app.js	872	bonn	Bonn | _bonn	const fact = (a) => (a ? `<br><span class="nav-dim">Auffällig häufig: ${esc(a.label)} (${a.anteil} % hier, ${a.anteil_bonn} % in ganz Bonn)</span>` : "");
-site/app.js	879	bonn	Bonn	// Zoomstufe, bei der ganz Bonn ins freie Kartenfeld passt; bis dahin sind die Stadtbezirke anklickbar
-site/app.js	921	bonn	Bonn	navDeep = true; // die Ortsteile anbieten, auch wenn der Bezirk ganz Bonn ausfüllt
-site/app.js	930	bonn	_bonn	if (Object.hasOwn(THEMES, f || "") && index.zahlen?.themen_bonn) navMetric = f;
-site/app.js	936	bonn	_bonn	const themes = index.zahlen?.themen_bonn ? Object.entries(THEMES) : [];
-site/app.js	972	ortsteil_bonn	Röttgen	// Bezirksnamen in die Mitte seiner Ortsteile, gewichtet nach Zahl der Vorlagen (der Bezirk Bonn reicht bis Röttgen,
-site/app.js	972	bonn	Bonn	// Bezirksnamen in die Mitte seiner Ortsteile, gewichtet nach Zahl der Vorlagen (der Bezirk Bonn reicht bis Röttgen,
-site/app.js	973	ortsteil_bonn	Venusberg	// sein geometrischer Schwerpunkt läge am Venusberg)
-site/app.js	1009	bonn	Bonn | bonn	<p>Je ${far ? "Stadtbezirk" : "Ortsteil"}, Stufen nach den Werten der Ortsteile; ganz Bonn ${kFmt(kk, kontext.bonn[kk])}. ${esc(kd.methode)}.
-site/app.js	1014	bonn	Bonn | _bonn	<p>Anteil der Vorlagen mit diesem Thema an allen Vorlagen mit Ortsbezug je ${far ? "Stadtbezirk" : "Ortsteil"} seit Oktober 2019; in ganz Bonn ${pct((z.themen_b
-site/app.js	1016	bonn	Bonn	<p>Je ${far ? "Stadtbezirk" : "Ortsteil"}${z.seit ? `, ${fmtDate(z.seit)} bis ${fmtDate(z.bis)}` : ""}. Gezählt werden Vorlagen mit Ortsbezug im Gebiet (Verortu
-site/app.js	1040	bonn	Bonn	${planOn ? `<ul><li><span class="swatch swatch-plan" aria-hidden="true"></span>Geltungsbereich eines rechtskräftigen Bebauungsplans (Stadt Bonn)</li></ul>
-site/app.js	1093	bonn	bonn	const list = scope() === "bonn" && search ? search.parties : [...new Set(papers.flatMap((p) => p.parties || []))];
-site/app.js	1103	bonn	BONN	return (searchLoading ||= fetch(BONN + "suche.json").then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-site/app.js	1154	bonn	Bonn	// Suche über ganz Bonn: Treffer aus dem Index, Öffnen lädt das Gebiet der Vorlage
-site/app.js	1155	oparl_lite	OParl-Lite | machdenstaat	// Suche im Text der Dokumente: erst auf Klick, über die Volltextsuche von OParl-Lite (machdenstaat). Abgefragt werden
-site/app.js	1156	bonn	Bonn	// nur die Drucksachen der Treffer, kein Textausschnitt (Rahmen laut Antwort der Stadt Bonn: keine Zitate, keine Auszüge)
-site/app.js	1157	url_bonn	https://oparl.bonn.machdenstaat.de/graphql	const LITE = "https://oparl.bonn.machdenstaat.de/graphql";
-site/app.js	1157	oparl_lite	machdenstaat	const LITE = "https://oparl.bonn.machdenstaat.de/graphql";
-site/app.js	1157	bonn	bonn	const LITE = "https://oparl.bonn.machdenstaat.de/graphql";
-site/app.js	1181	bonn	bonn	if (index && scope() !== "bonn") setScope("bonn");
-site/app.js	1203	bonn	Bonn	$("#count").textContent = `${rows.length} Treffer in ganz Bonn${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`;
-site/app.js	1209	bonn	Bonn	if (!rows.length) html = `<li class="empty-list"><p>Keine Vorlage in ganz Bonn passt zu Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary"
-site/app.js	1224	bonn	bonn	$("#more-filters").hidden = scope() === "bonn";
-site/app.js	1225	bonn	bonn	if (scope() === "bonn") {
-site/app.js	1226	bonn	Bonn	if (!search) { $("#count").textContent = "Lade den Suchindex für ganz Bonn …"; loadSearch().then((d) => d && (fillParties(), render())); return; }
-site/app.js	1235	bonn	bonn	$("#count").textContent = area.kind === "bonn" ? OVERVIEW_HINT : `${list.length} von ${papers.length} Vorlagen · ${where}${span}`;
-site/app.js	1241	bonn	Bonn | bonn	if (!list.length && area.kind === "bonn") html = `<li class="empty-list"><p>Noch kein Gebiet gewählt. Wählen Sie auf der Karte einen Stadtbezirk und einen Ortst
-site/app.js	1255	oparl_lite	OParl-Lite	const dateLine = s.date ? `${fmtDate(s.date)}${s.date_status === "abgeleitet" ? " · Datum abgeleitet (OParl-Lite)" : ""}` : "";
-site/app.js	1350	bonn	BONN	kxData[k] ||= fetch(`${BONN}flaechen/${KX[k].file}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-site/app.js	1405	bonn	/bonn/	// Register je Plannummer (data/export/bonn/plaene.json): Vorlagen chronologisch, Verfahrensschritte abgeleitet
-site/app.js	1407	bonn	BONN	const planIndexUrl = () => (index ? BONN + "plaene.json" : null);
-site/app.js	1434	bonn	Bonn	<span class="derived">belegt, Stadt Bonn</span><br>${link(f.properties.plan, "Plan (PDF)")}${f.properties.begruendung ? " · " + link(f.properties.begruendung, "
-site/app.js	1448	bonn	Bonn	<div class="step-head">Inkrafttreten (Bekanntmachung)<span class="step-status">${inkraft ? "belegt, Stadt Bonn" : "soll, nicht unter den rechtskräftigen Plänen"
-site/app.js	1462	bonn	Bonn	<li>Geltungsbereich, Inkrafttreten, Plan und Begründung: Stadt Bonn, Lage der Bebauungspläne (CC0)</li>
-site/app.js	1463	bonn	Bonn	<li>Vorlagen: OParl-API der Stadt Bonn (CC0); Zuordnung über die Plannummer im Titel (abgeleitet)</li></ul></details>`;
-site/app.js	1489	bonn	/bonn/	// --- Baustellen (data/export/bonn/baustellen.json, pipeline/kandidaten.py) -----------------------------
-site/app.js	1563	bonn	Bonn	<li>Baustellen: Stadt Bonn, ${bau.meta.quelle.map((u) => link(u, esc(u.replace("https://", "")))).join(", ")} – ${esc(bau.meta.lizenz)}</li>
-site/app.js	1579	bonn	Bonn	$("#detail").innerHTML = `<h3 tabindex="-1">Baustellen · ${esc(area.name || "ganz Bonn")}</h3>
-site/app.js	1585	bonn	/bonn/ | Bonn	// Soll-Modell (data/export/bonn/soll.json): Verfahren nach Regelwerk aus „Bonn entscheidet“ (MIT) mit Ergänzungen;
-site/app.js	1588	bonn	BONN	const loadSoll = () => (sollData ||= index ? fetch(BONN + "soll.json").then((r) => (r.ok ? r.json() : null)).catch(() => null) : Promise.resolve(null));
-site/app.js	1637	url_bonn	https://github.com/anster2025/bonn-entscheidet	<li>${esc(d.meta.quelle)} · ${link("https://github.com/anster2025/bonn-entscheidet", "Bonn entscheidet")}</li>
-site/app.js	1637	bonn	Bonn | bonn	<li>${esc(d.meta.quelle)} · ${link("https://github.com/anster2025/bonn-entscheidet", "Bonn entscheidet")}</li>
-site/app.js	1653	url_bonn	https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php	const BUERGERANTRAG = "https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php";
-site/app.js	1653	bonn	bonn	const BUERGERANTRAG = "https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php";
-site/app.js	1660	oparl_lite	OParl-Lite	const meeting = next ? `<li data-generic="sitzung" data-key="${esc(next.gremium)}|${esc(next.date)}">Nächste Sitzung eines beteiligten Gremiums: <strong>${esc(n
-site/app.js	1665	bonn	Bonn	${p.soll?.verfahren === "buergerantrag" ? "" : `<li data-generic="buergerantrag">Mit einem <a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Bürgerantra
-site/app.js	1686	bonn	Bonn	${r.id === "eigener-buergerantrag" ? `<a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Zum Bürgerantrag<span class="visually-hidden"> (Seite der Stadt 
-site/app.js	1692	bonn	Bonn	hint.textContent = "Hinweise nach dem Regelwerk: vereinfachtes Modell aus „Bonn entscheidet“, Anrede angepasst. Stand und Termin sind aus den Daten abgeleitet. 
-site/app.js	1711	bonn	Bonn	// Volltext: erkannter Ort und Teil des Dokuments, kein Zitat (Rahmen laut Antwort der Stadt Bonn)
-site/app.js	1751	bonn	BONN	${hasPaperFeed(p) ? `<a class="btn btn-soft" href="${BONN}feeds/vorlagen/${slug(p.reference)}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="tr
-site/app.js	1800	bonn	BONN	const r = await fetch(BONN + "prozesse.json");
-site/app.js	1810	bonn	Bonn	<p class="hint">Weg = Folge der Beratungen (Gremium und Rolle) laut OParl-API. Am Ende steht das Ergebnis der entscheidenden Beratung, wörtlich aus der Quelle (
-site/app.js	1834	bonn	Bonn	// nur den Verweis des vorigen Gebiets entfernen; der Feed über ganz Bonn steht fest im Kopf (index.html)
-site/app.js	1836	bonn	bonn	if (!index || area.kind === "bonn") {
-site/app.js	1837	bonn	BONN | Bonn | bonn	box.innerHTML = index ? `<a class="btn btn-soft" href="${BONN}feeds/ganz-bonn.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#
-site/app.js	1841	bonn	BONN	const href = `${BONN}feeds/${area.kind}-${area.key}.xml`;
-site/app.js	1848	bonn	Bonn	Object.assign(l, { rel: "alternate", type: "application/atom+xml", href, title: `Ratsatlas Bonn – ${where}` });
-site/app.js	1873	oparl_lite	OParl-Lite	// Vorlagen des Gebiets, deren Beratung (über OParl-Lite verknüpft) auf dieser Sitzung liegt
-site/app.js	1892	bonn	BONN	<a class="btn btn-cta" href="${BONN}termine.ics" download><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Alle Termine in den Kalender (.ics
-site/app.js	1907	bonn	bonn	if (index) acts.push(area.kind === "bonn"
-site/app.js	1908	bonn	BONN | Bonn | bonn	? `<a class="btn btn-cta" href="${BONN}feeds/ganz-bonn.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Neues aus
-site/app.js	1909	bonn	BONN	: `<a class="btn btn-cta" href="${BONN}feeds/${area.kind}-${area.key}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/>
-site/app.js	1910	bonn	BONN	if (selected && hasPaperFeed(selected)) acts.push(`<a class="btn btn-soft" href="${BONN}feeds/vorlagen/${slug(selected.reference)}.xml" type="application/atom+x
-site/app.js	1953	bonn	bonn	if (q.value && index && scope() !== "bonn") setScope("bonn");
-site/app.js	1996	bonn	Bonn | bonn	if (area.kind === "bonn") { $("#stats").innerHTML = `<p class="hint">Die Kennzahlen beziehen sich auf ein Gebiet. Wählen Sie auf der Karte oder oben ein Gebiet;
-site/app.js	2034	bonn	BONN	BONN, loadSoll,
-site/app.js	2067	bonn	Bonn	// --- Fläche „Mitmachen in Bonn“ (site/beteiligung.js, erst beim Öffnen geladen) --------------------------
-site/app.js	2089	bonn	Bonn	return mmReady.then((m) => { if (m) m.show(s || { bezirk: mmState ? mmState.bezirk : areaBezirk() || "Bonn" }); return m; });
-site/app.js	2096	bonn	bonn	if (area.kind === "bonn") url.searchParams.delete("gebiet"); else url.searchParams.set("gebiet", `${area.kind}:${area.key}`);
-site/app.js	2099	bonn	bonn	const state = { thema: $("#f-theme").value, partei: $("#f-party").value, suche: scope() === "bonn" ? "bonn" : "" };
-site/app.js	2131	bonn	BONN	const idx = await json(BONN + "index.json");
-site/app.js	2136	bonn	BONN	const datei = `${BONN}${gKind === "ortsteil" ? "ortsteile" : "bezirke"}/${gKey}.json`;
-site/app.js	2141	bonn	BONN	const [g, z, bs, kx, an] = await Promise.all([json(GLOSSAR_URL), json(BONN + "zeit.json", "low"),
-site/app.js	2142	bonn	BONN	json(BONN + "baustellen.json", "low"), json(BONN + "kontext.json", "low"), json(BONN + "anliegen.json", "low")]);
-site/app.js	2229	bonn	bonn	if (index && params.get("suche") === "bonn") document.querySelector('input[name="scope"][value="bonn"]').checked = true;
-site/app.js	2253	bonn	Bonn	await openMitmachen({ bezirk: params.get("bezirk") || areaBezirk() || "Bonn" });
-site/app.js	2282	bonn	BONN | bonn	prefetch() { if (area && area.kind === "bonn" && index) fetch(`${BONN}ortsteile/bonn-zentrum.json`).catch(() => {}); },
-site/app.js	2286	bonn	bonn	if (area.kind === "bonn") await loadArea("ortsteil:bonn-zentrum", true);
+site/app.js	6	bonn	BONN | Bonn	const BONN = `data/export/${STADT}/`;          // Name aus Bonn übernommen: Basispfad der Exporte
+site/app.js	11	bonn	BONN	const GEO_LIGHT = { ortsteil: `${BONN}flaechen/ortsteile.json`, bezirk: `${BONN}flaechen/bezirke.json`,
+site/app.js	12	bonn	BONN	bplan: `${BONN}flaechen/bebauungsplaene.json` };
+site/app.js	313	bonn	BONN	if (o) return { kind, key, name: o.name, file: `${BONN}ortsteile/${key}.json` };
+site/app.js	317	bonn	BONN	if (b) return { kind, key, name: b.name, file: `${BONN}bezirke/${key}.json` };
+site/app.js	321	bonn	BONN	return { kind, key, name: `ohne Ortsbezug ${key}`, file: `${BONN}ohne-ortsbezug/${key}.json` };
+site/app.js	417	bonn	Bonn	const BONN_BOUNDS = [[50.8304, 6.7725], [51.085, 7.162]];   // Name aus Bonn; Grenzen der Kölner Stadtbezirke
+site/app.js	769	bonn	bonn	const cmp = bez ? kontext.bezirke[bez] : kontext.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Köln";
+site/app.js	789	bonn	bonn	const cmp = bez ? anliegen.bezirke[bez] : anliegen.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Köln";
+site/app.js	858	bonn	bonn	<br><span class="nav-dim">${b ? `Stadtbezirk ${esc(info.stadtbezirk)} ${kFmt(kk, b[kk])} · ` : ""}ganz Köln ${kFmt(kk, kontext.bonn[kk])} · Stand ${esc(d.stand)
+site/app.js	860	bonn	_bonn | bonn	const label = esc(THEMES[navMetric]), bonn = (index.zahlen?.themen_bonn || {})[navMetric] || 0;
+site/app.js	864	bonn	bonn	<br><span class="nav-dim">${de(n)} von ${de(scope === "bz" ? info.alle : info.count)} · ganz Köln ${pct(bonn)} · Themen abgeleitet</span>`;
+site/app.js	879	bonn	_bonn	const fact = (a) => (a ? `<br><span class="nav-dim">Auffällig häufig: ${esc(a.label)} (${a.anteil} % hier, ${a.anteil_bonn} % in ganz Köln)</span>` : "");
+site/app.js	937	bonn	_bonn	if (Object.hasOwn(THEMES, f || "") && index.zahlen?.themen_bonn) navMetric = f;
+site/app.js	943	bonn	_bonn	const themes = index.zahlen?.themen_bonn ? Object.entries(THEMES) : [];
+site/app.js	979	ortsteil_bonn	Röttgen	// Bezirksnamen in die Mitte seiner Stadtteile, gewichtet nach Zahl der Vorlagen (der Bezirk Bonn reicht bis Röttgen,
+site/app.js	979	bonn	Bonn	// Bezirksnamen in die Mitte seiner Stadtteile, gewichtet nach Zahl der Vorlagen (der Bezirk Bonn reicht bis Röttgen,
+site/app.js	980	ortsteil_bonn	Venusberg	// sein geometrischer Schwerpunkt läge am Venusberg)
+site/app.js	1016	bonn	bonn	<p>Je ${far ? "Stadtbezirk" : "Stadtteil"}, Stufen nach den Werten der Stadtteile; ganz Köln ${kFmt(kk, kontext.bonn[kk])}. ${esc(kd.methode)}.
+site/app.js	1021	bonn	_bonn	<p>Anteil der Vorlagen mit diesem Thema an allen Vorlagen mit Ortsbezug je ${far ? "Stadtbezirk" : "Stadtteil"}; in ganz Köln ${pct((z.themen_bonn || {})[navMet
+site/app.js	1110	bonn	BONN	return (searchLoading ||= fetch(BONN + "suche.json").then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+site/app.js	1162	oparl_lite	OParl-Lite | machdenstaat	// Suche im Text der Dokumente: in Bonn über die Volltextsuche von OParl-Lite (machdenstaat). Für Köln gibt es keinen
+site/app.js	1162	bonn	Bonn	// Suche im Text der Dokumente: in Bonn über die Volltextsuche von OParl-Lite (machdenstaat). Für Köln gibt es keinen
+site/app.js	1358	bonn	BONN	kxData[k] ||= fetch(`${BONN}flaechen/${KX[k].file}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+site/app.js	1413	bonn	/bonn/	// Register je Plannummer (data/export/bonn/plaene.json): Vorlagen chronologisch, Verfahrensschritte abgeleitet
+site/app.js	1415	bonn	BONN	const planIndexUrl = () => (index ? BONN + "plaene.json" : null);
+site/app.js	1497	bonn	/bonn/	// --- Baustellen (data/export/bonn/baustellen.json, pipeline/kandidaten.py) -----------------------------
+site/app.js	1593	bonn	/bonn/ | Bonn	// Soll-Modell (data/export/bonn/soll.json): Verfahren nach Regelwerk aus „Bonn entscheidet“ (MIT) mit Ergänzungen;
+site/app.js	1596	bonn	BONN	const loadSoll = () => (sollData ||= index ? fetch(BONN + "soll.json").then((r) => (r.ok ? r.json() : null)).catch(() => null) : Promise.resolve(null));
+site/app.js	1645	url_bonn	https://github.com/anster2025/bonn-entscheidet	<li>${esc(d.meta.quelle)} · ${link("https://github.com/anster2025/bonn-entscheidet", "Bonn entscheidet")}</li>
+site/app.js	1645	bonn	Bonn | bonn	<li>${esc(d.meta.quelle)} · ${link("https://github.com/anster2025/bonn-entscheidet", "Bonn entscheidet")}</li>
+site/app.js	1701	bonn	Bonn	hint.textContent = "Hinweise nach dem Regelwerk: vereinfachtes Modell aus „Bonn entscheidet“, Anrede angepasst. Stand und Termin sind aus den Daten abgeleitet. 
+site/app.js	1760	bonn	BONN	${hasPaperFeed(p) ? `<a class="btn btn-soft" href="${BONN}feeds/vorlagen/${slug(p.reference)}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="tr
+site/app.js	1809	bonn	BONN	const r = await fetch(BONN + "prozesse.json");
+site/app.js	1846	bonn	BONN	box.innerHTML = index ? `<a class="btn btn-soft" href="${BONN}feeds/ganz-${STADT}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use hre
+site/app.js	1850	bonn	BONN	const href = `${BONN}feeds/${area.kind}-${area.key}.xml`;
+site/app.js	1901	bonn	BONN	<a class="btn btn-cta" href="${BONN}termine.ics" download><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Alle Termine in den Kalender (.ics
+site/app.js	1917	bonn	BONN	? `<a class="btn btn-cta" href="${BONN}feeds/ganz-${STADT}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Neues
+site/app.js	1918	bonn	BONN	: `<a class="btn btn-cta" href="${BONN}feeds/${area.kind}-${area.key}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/>
+site/app.js	1919	bonn	BONN	if (selected && hasPaperFeed(selected)) acts.push(`<a class="btn btn-soft" href="${BONN}feeds/vorlagen/${slug(selected.reference)}.xml" type="application/atom+x
+site/app.js	2043	bonn	BONN	BONN, loadSoll,
+site/app.js	2076	bonn	Bonn	// --- Fläche „Mitmachen in Bonn“ (site/beteiligung.js, erst beim Öffnen geladen) --------------------------
+site/app.js	2149	bonn	BONN	const idx = await json(BONN + "index.json");
+site/app.js	2154	bonn	BONN	const datei = `${BONN}${gKind === "ortsteil" ? "ortsteile" : "bezirke"}/${gKey}.json`;
+site/app.js	2158	bonn	Bonner	// Bonner Zusatzthemen nur, wenn index.json sie freigibt (config.ZUSATZTHEMEN); sonst keine Anfrage
+site/app.js	2162	bonn	BONN	const [g, z, bs, kx, an] = await Promise.all([json(GLOSSAR_URL), json(BONN + "zeit.json", "low"),
+site/app.js	2163	bonn	BONN	opt(fn.baustellen, BONN + "baustellen.json"), opt(fn.kontext, BONN + "kontext.json"), opt(fn.anliegen, BONN + "anliegen.json")]);
+site/app.js	2304	bonn	BONN	prefetch() { if (area && area.kind === STADT && index) fetch(`${BONN}ortsteile/altstadt-nord.json`).catch(() => {}); },
 site/beteiligung.js	1	bonn	Bonn	// Fläche „Mitmachen in Bonn“: Wege, sich einzubringen, für einen gewählten Stadtbezirk – mit den nächsten Gelegenheiten
 site/beteiligung.js	2	bonn	Bonn	// aus dem Sitzungskalender (zeit.json, OParl-API der Stadt Bonn) und Fristen nach dem Regelwerk (soll.json, Soll-Modell
 site/beteiligung.js	3	bonn	Bonn	// nach „Bonn entscheidet“ mit Ergänzungen des Ratsatlas). Fristdaten sind abgeleitet; maßgeblich sind Einladung,
@@ -1016,105 +812,23 @@ site/chat/ui.js	16	url_bonn	https://www.bonn.de/vv/produkte/buergerantrag-anregu
 site/chat/ui.js	16	bonn	bonn	const STATIC_URLS = ["https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php",
 site/chat/ui.js	17	url_allris_test	github.com/daimpad/allris-test	"https://github.com/daimpad/allris-test/blob/main/site/chat/systemprompt.md"];
 site/chat/ui.js	100	bonn	bonn	const status = await load("bonn/chat/datenstand.json");
-site/datenschutz.html	7	bonn	Bonn	<title>Datenschutz – Ratsatlas Bonn</title>
-site/datenschutz.html	8	bonn	Bonn	<meta name="description" content="Welche Daten beim Besuch des Ratsatlas Bonn anfallen, was damit geschieht und welche Rechte Sie haben.">
 site/datenschutz.html	9	url_allris_test	daimpad.github.io/allris-test	<!-- pipeline/seo.py ersetzt https://daimpad.github.io/allris-test/ beim Veröffentlichen durch SITE_URL -->
 site/datenschutz.html	9	site_url	SITE_URL	<!-- pipeline/seo.py ersetzt https://daimpad.github.io/allris-test/ beim Veröffentlichen durch SITE_URL -->
 site/datenschutz.html	10	url_allris_test	daimpad.github.io/allris-test	<link rel="canonical" href="https://daimpad.github.io/allris-test/datenschutz.html">
-site/datenschutz.html	17	bonn	Bonn	<a class="page-brand" href="./"><img src="favicon.svg" width="32" height="32" alt="">Ratsatlas <span>Bonn</span></a>
-site/datenschutz.html	22	bonn	Bonn	<p class="lead">Welche Daten beim Besuch des Ratsatlas Bonn anfallen, was damit geschieht und welche Rechte Sie haben.</p>
 site/datenschutz.html	26	bonn	Bonn	<p>NOZILLA · Damian Paderta<br>Kaiser-Karl-Ring 26<br>53111 Bonn<br>E-Mail: <a href="mailto:contact@nozilla.de">contact@nozilla.de</a></p>
-site/datenschutz.html	30	url_allris_test	daimpad.github.io/allris-test | ris-bonn.datenatlas.de	<p>Die Seite unter <strong>ris-bonn.datenatlas.de</strong> liegt beim Webhosting der netcup GmbH (Karlsruhe). Eine inhaltsgleiche Kopie unter <strong>daimpad.gi
-site/datenschutz.html	30	bonn	bonn	<p>Die Seite unter <strong>ris-bonn.datenatlas.de</strong> liegt beim Webhosting der netcup GmbH (Karlsruhe). Eine inhaltsgleiche Kopie unter <strong>daimpad.gi
-site/datenschutz.html	31	url_allris_test	ris-bonn.datenatlas.de	<p>Das geschieht, damit die Seite ausgeliefert werden kann und Störungen und Angriffe erkennbar bleiben. Rechtsgrundlage ist das berechtigte Interesse an einem 
-site/datenschutz.html	31	bonn	bonn	<p>Das geschieht, damit die Seite ausgeliefert werden kann und Störungen und Angriffe erkennbar bleiben. Rechtsgrundlage ist das berechtigte Interesse an einem 
-site/datenschutz.html	38	url_bonn	https://oparl.bonn.machdenstaat.de/	<p>Nur wenn Sie in der Suche auf „Auch im Text der Dokumente suchen“ klicken, sendet Ihr Browser den Suchbegriff an die Volltextsuche von <strong>OParl-Lite Bon
-site/datenschutz.html	38	oparl_lite	OParl-Lite | machdenstaat	<p>Nur wenn Sie in der Suche auf „Auch im Text der Dokumente suchen“ klicken, sendet Ihr Browser den Suchbegriff an die Volltextsuche von <strong>OParl-Lite Bon
-site/datenschutz.html	38	bonn	Bonn | bonn	<p>Nur wenn Sie in der Suche auf „Auch im Text der Dokumente suchen“ klicken, sendet Ihr Browser den Suchbegriff an die Volltextsuche von <strong>OParl-Lite Bon
-site/datenschutz.html	66	bonn	Bonn	<p>Die Karte gibt öffentlich zugängliche Angaben aus dem Ratsinformationssystem der Stadt Bonn wieder (Open Data, CC0), darunter Namen von Fraktionen, Gremien u
-site/datenschutz.html	72	bonn	Bonn	<p>Die Seite verlinkt auf das Ratsinformationssystem der Stadt Bonn, auf Dokumente, Feeds und andere Angebote. Ein Verweis überträgt erst Daten, wenn Sie ihn an
-site/datenschutz.html	92	bonn	Bonn	<a href="./">Ratsatlas Bonn</a> · <a href="https://nozilla.de/impressum/">Impressum</a> · <a href="datenschutz.html" aria-current="page">Datenschutz</a> · <a hr
-site/favicon.svg	2	bonn	Bonn	<!-- Ratsatlas Bonn: Ortsmarke auf violettem Grund (Akzentfarben der Seite) -->
-site/index.html	10	url_bonn	https://oparl.bonn.machdenstaat.de	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' dat
-site/index.html	10	oparl_lite	machdenstaat	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' dat
-site/index.html	10	bonn	bonn	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' dat
-site/index.html	11	bonn	Bonn	<title>Ratsatlas Bonn – Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld</title>
-site/index.html	12	bonn	Bonn | Bonner	<meta name="description" content="Was berät der Bonner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahren
-site/index.html	15	url_allris_test	daimpad.github.io/allris-test	<!-- Adressen: pipeline/seo.py ersetzt https://daimpad.github.io/allris-test/ beim Veröffentlichen durch SITE_URL -->
-site/index.html	15	site_url	SITE_URL	<!-- Adressen: pipeline/seo.py ersetzt https://daimpad.github.io/allris-test/ beim Veröffentlichen durch SITE_URL -->
+site/index.html	15	site_url	SITE_URL	<!-- Adressen: pipeline/seo.py ersetzt https://daimpad.github.io/ratsatlas-koeln/ beim Veröffentlichen durch SITE_URL -->
 site/index.html	16	url_allris_test	daimpad.github.io/allris-test	<link rel="canonical" href="https://daimpad.github.io/allris-test/">
-site/index.html	22	bonn	Bonn	<!-- Feed-Erkennung: Feed über ganz Bonn (Seite rss/); app.js ergänzt den Feed des gewählten Gebiets -->
-site/index.html	23	bonn	/bonn/ | Bonn | bonn	<link rel="alternate" type="application/atom+xml" title="Ratsatlas Bonn – ganz Bonn" href="data/export/bonn/feeds/ganz-bonn.xml">
-site/index.html	25	bonn	Bonn	<meta property="og:site_name" content="Ratsatlas Bonn">
-site/index.html	27	bonn	Bonn	<meta property="og:title" content="Ratsatlas Bonn – Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld">
-site/index.html	28	bonn	Bonn | Bonner	<meta property="og:description" content="Was berät der Bonner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Ve
 site/index.html	29	url_allris_test	daimpad.github.io/allris-test	<meta property="og:url" content="https://daimpad.github.io/allris-test/">
-site/index.html	30	url_allris_test	daimpad.github.io/allris-test	<meta property="og:image" content="https://daimpad.github.io/allris-test/og-image.jpg">
-site/index.html	34	ortsteil_bonn	Bonn-Zentrum	<meta property="og:image:alt" content="Ratsatlas Bonn: Karte von Bonn-Zentrum mit gebündelten Ratsvorlagen">
-site/index.html	34	bonn	Bonn	<meta property="og:image:alt" content="Ratsatlas Bonn: Karte von Bonn-Zentrum mit gebündelten Ratsvorlagen">
-site/index.html	39	url_allris_test	daimpad.github.io/allris-test	{"@type": "WebSite", "@id": "https://daimpad.github.io/allris-test/#website", "url": "https://daimpad.github.io/allris-test/", "name": "Ratsatlas Bonn", "inLang
-site/index.html	39	bonn	Bonn	{"@type": "WebSite", "@id": "https://daimpad.github.io/allris-test/#website", "url": "https://daimpad.github.io/allris-test/", "name": "Ratsatlas Bonn", "inLang
-site/index.html	40	bonn	Bonn | Bonner	"description": "Was berät der Bonner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ä
-site/index.html	41	url_allris_test	daimpad.github.io/allris-test	{"@type": "WebApplication", "@id": "https://daimpad.github.io/allris-test/#app", "url": "https://daimpad.github.io/allris-test/", "name": "Ratsatlas Bonn", "inL
-site/index.html	41	bonn	Bonn	{"@type": "WebApplication", "@id": "https://daimpad.github.io/allris-test/#app", "url": "https://daimpad.github.io/allris-test/", "name": "Ratsatlas Bonn", "inL
-site/index.html	43	url_allris_test	daimpad.github.io/allris-test	"image": "https://daimpad.github.io/allris-test/og-image.jpg", "license": "https://opensource.org/licenses/MIT",
-site/index.html	45	bonn	Bonn	"spatialCoverage": {"@type": "City", "name": "Bonn"},
-site/index.html	46	url_bonn	https://www.bonn.sitzung-online.de/oparl/bodies/1	"isBasedOn": "https://www.bonn.sitzung-online.de/oparl/bodies/1",
-site/index.html	46	bonn	bonn	"isBasedOn": "https://www.bonn.sitzung-online.de/oparl/bodies/1",
-site/index.html	47	url_allris_test	github.com/daimpad/allris-test	"codeRepository": "https://github.com/daimpad/allris-test"}
-site/index.html	52	bonn	/bonn/	<link rel="preload" href="data/export/bonn/index.json" as="fetch" crossorigin>
-site/index.html	58	bonn	Bonn	<noscript><div class="noscript glass"><p><strong>Ratsatlas Bonn</strong> zeigt Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste. 
-site/index.html	59	url_allris_test	github.com/daimpad/allris-test	<p>Die Daten gibt es auch ohne Karte: <a href="data/export/allris-bonn-export.zip">Datenpaket (Zip)</a> · <a href="gebiete/">Vorlagen nach Gebiet</a> · <a href=
-site/index.html	59	name_allris_bonn	allris-bonn	<p>Die Daten gibt es auch ohne Karte: <a href="data/export/allris-bonn-export.zip">Datenpaket (Zip)</a> · <a href="gebiete/">Vorlagen nach Gebiet</a> · <a href=
-site/index.html	59	bonn	/bonn/ | bonn	<p>Die Daten gibt es auch ohne Karte: <a href="data/export/allris-bonn-export.zip">Datenpaket (Zip)</a> · <a href="gebiete/">Vorlagen nach Gebiet</a> · <a href=
-site/index.html	94	bonn	Bonn	<h1 class="site-title">Ratsatlas <span>Bonn</span></h1>
-site/index.html	96	bonn	Bonn	<div class="brand" aria-hidden="true">Ratsatlas <span>Bonn</span></div>
-site/index.html	98	bonn	Bonn	<label class="visually-hidden" for="q">Vorlagen in ganz Bonn suchen</label>
-site/index.html	100	bonn	Bonn	<input type="search" id="q" placeholder="Vorlagen in ganz Bonn suchen …" autocomplete="off" aria-controls="mega-suche">
-site/index.html	139	bonn	Bonn | bonn	<button type="button" role="radio" data-scope="bonn" aria-checked="true">in ganz Bonn</button>
-site/index.html	151	oparl_lite	OParl-Lite | machdenstaat	<p class="hint">Fragt die Volltextsuche von OParl-Lite (machdenstaat) ab, erst nach dem Klick. Gezeigt werden die Vorlagen, kein Textausschnitt; bisher hat nur 
-site/index.html	169	bonn	Bonn	<span class="card-text">Welche Gremien beraten welche Vorlagenart, und wie endet das Verfahren meistens? Ganz Bonn.</span>
-site/index.html	190	bonn	/bonn/	<a class="btn btn-soft" href="data/export/bonn/termine.ics" download><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Kalender (.ics)</a>
-site/index.html	204	url_bonn	https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php	<a class="btn btn-cta" href="https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php" target="_blank" rel="n
-site/index.html	204	bonn	Bonn | bonn	<a class="btn btn-cta" href="https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php" target="_blank" rel="n
-site/index.html	212	url_allris_test	github.com/daimpad/allris-test	<span class="card-actions"><a class="btn btn-soft" id="cta-report" href="https://github.com/daimpad/allris-test/issues/new/choose" target="_blank" rel="noopener
-site/index.html	219	name_allris_bonn	allris-bonn	<a class="card" href="data/export/allris-bonn-export.zip" download>
-site/index.html	219	bonn	bonn	<a class="card" href="data/export/allris-bonn-export.zip" download>
-site/index.html	223	bonn	/bonn/	<a class="card" href="data/export/bonn/vorlagen.geojson" download>
-site/index.html	227	bonn	/bonn/	<a class="card" href="data/export/bonn/dcat.jsonld">
-site/index.html	241	bonn	Bonn	<span class="card-text">Was die Karte zeigt, wer in Bonn entscheidet und wie Sie mitmachen können, in kurzen Sätzen.</span></a>
-site/index.html	271	bonn	Bonn | bonn	<label><input type="radio" name="scope" value="bonn"> in ganz Bonn</label>
-site/index.html	337	bonn	Bonner	<p><strong>Dies ist ein KI-System.</strong> Ein Sprachmodell beantwortet Fragen zu Bonner Ratsvorgängen und nutzt dafür ausschließlich die Daten dieser Seite. A
-site/index.html	375	bonn	Bonn	<button type="button" class="chip">Wann tagt die Bezirksvertretung Bonn das nächste Mal?</button>
-site/index.html	384	bonn	Bonner	<textarea id="chat-input" rows="2" placeholder="Frage zu Bonner Ratsvorgängen …" disabled></textarea>
-site/index.html	444	bonn	Bonn	<h2 id="mitmachen-heading" tabindex="-1">Mitmachen in Bonn</h2>
-site/index.html	445	bonn	Bonn	<button type="button" class="icon-btn" data-close="panel-mitmachen" aria-label="Mitmachen in Bonn schließen"><svg class="icon" aria-hidden="true"><use href="#i-
-site/index.html	454	oparl_lite	OParl-Lite | machdenstaat	<p>OParl-API der Stadt Bonn (CC0 1.0) · OParl-Lite Bonn, machdenstaat (CC BY 4.0; Sitzungen, Tagesordnungspunkte, Ergebnisse) · Texte der Dokumente über OParl-L
-site/index.html	454	bonn	Bonn	<p>OParl-API der Stadt Bonn (CC0 1.0) · OParl-Lite Bonn, machdenstaat (CC BY 4.0; Sitzungen, Tagesordnungspunkte, Ergebnisse) · Texte der Dokumente über OParl-L
-site/index.html	456	url_allris_test	github.com/daimpad/allris-test	<p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/bonn/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersich
-site/index.html	456	bonn	/bonn/	<p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/bonn/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersich
-site/index.html	465	bonn	Bonn	<h2 id="about-heading">Über den Ratsatlas Bonn</h2>
-site/index.html	470	bonn	Bonn	<p>Der Ratsatlas zeigt, womit sich der Rat, die Bezirksvertretungen und die Ausschüsse der Stadt Bonn beschäftigen – auf einer Karte, auf einer Zeitleiste und a
-site/index.html	477	bonn	Bonn	<li>Die Karte zeigt zuerst ganz Bonn. Klicken Sie einen Stadtbezirk und dann einen Ortsteil an, oder wählen Sie oben unter „Gebiet wählen“ einen Ortsteil, einen
-site/index.html	481	bonn	Bonn	<li>Über das Suchfeld oben finden Sie Vorlagen in ganz Bonn, auch nach Thema und Partei.</li>
-site/index.html	497	ortsteil_bonn	Endenich	<li>Ort aus dem Titel, Endenich (50 Vorlagen, 20.10.2026): 41 / 4 / 5; danach zwei Regeln verbessert</li>
-site/index.html	505	url_allris_test	github.com/daimpad/allris-test	<p>„Teilweise“ heißt: im Kern richtig, eine Einzelheit ungenau. Ein Teil der Urteile sind Vorschläge, denen der Auftraggeber im Gespräch nicht widersprochen hat
-site/index.html	508	oparl_lite	OParl-Lite	<p>In der Liste lassen sich Vorlagen nach Thema (zum Beispiel Verkehr, Bauen, Umwelt) und nach Partei oder Fraktion filtern – im gewählten Gebiet oder in ganz B
-site/index.html	508	bonn	Bonn	<p>In der Liste lassen sich Vorlagen nach Thema (zum Beispiel Verkehr, Bauen, Umwelt) und nach Partei oder Fraktion filtern – im gewählten Gebiet oder in ganz B
-site/index.html	518	bonn	Bonn	<li><a href="einfach/">Der Ratsatlas in Einfacher Sprache</a>: was die Karte zeigt, wer in Bonn entscheidet und wie man mitmachen kann.</li>
-site/index.html	526	bonn	Bonn	<p>Unter „Mitmachen“ finden Sie einen <strong>Feed</strong> für das gewählte Gebiet, bei einer Vorlage einen Feed für genau diesen Vorgang. Ein Feed-Reader (zum
-site/index.html	535	url_bonn	https://github.com/anster2025/bonn-entscheidet | https://paderta.com/ris-karte-bonn-ratsinformationsdaten-der-stadt-bonn-im-ueberblick/	<p>Den Ratsatlas hat <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span><
-site/index.html	535	url_allris_test	github.com/daimpad/allris-test	<p>Den Ratsatlas hat <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span><
-site/index.html	535	oparl_lite	OParl-Lite | machdenstaat	<p>Den Ratsatlas hat <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span><
-site/index.html	535	bonn	Bonn | bonn	<p>Den Ratsatlas hat <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span><
-site/index.html	538	oparl_lite	OParl-Lite | machdenstaat	<p>Schrift, Programmbibliotheken und die graue Karte kommen vom Server dieser Seite. Nur bei „Farbige Karte“ lädt Ihr Browser die Kacheln von OpenStreetMap (til
-site/index.html	538	bonn	bonn	<p>Schrift, Programmbibliotheken und die graue Karte kommen vom Server dieser Seite. Nur bei „Farbige Karte“ lädt Ihr Browser die Kacheln von OpenStreetMap (til
-site/index.html	555	bonn	Bonn	<li>Übersicht über ganz Bonn: Stadtbezirke und Ortsteile lassen sich auf der Karte anklicken und nach Zahl der Vorlagen oder nach Thema einfärben.</li>
-site/index.html	557	bonn	Bonn	<li>„Mitmachen in Bonn“: nächste Sitzungen und Fristen je Stadtbezirk.</li>
-site/index.html	562	bonn	Bonn	<li>Die RIS-Karte heißt jetzt <strong>Ratsatlas Bonn</strong>: Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld. Links und Abos gelt
-site/index.html	567	bonn	Bonn	<li>Auf dem Telefon liegen Ebenen, Legenden und Quellen der Karte zusammen hinter „Karte“; „Ganz Bonn ansehen“ ist ein Symbol, die Quellenzeile einzeilig.</li>
-site/index.html	579	bonn	Bonn	<li>„Inhalte abonnieren und weiterverwenden“ (<a href="rss/">rss/</a>): Feed für ganz Bonn mit Anleitung zum Abonnieren, Einbinden und Weiterverarbeiten.</li>
-site/index.html	580	bonn	Bonn	<li>Wahlbeteiligung der Ratswahl 2025 je Ortsteil (geschätzt) unter „Zahlen zu …“ und als Flächenfarbe; ganz Bonn amtlich.</li>
+site/index.html	30	bonn	Bonner	<!-- Vorschaubild für Köln folgt im zweiten Lauf (Entscheidung 04.11.2026); das Bonner Bild wird nicht ausgeliefert -->
+site/index.html	145	oparl_lite	OParl-Lite	<!-- Suche im Text der Dokumente: in Bonn über OParl-Lite; für Köln kein solcher Dienst (ausgeblendet) -->
+site/index.html	145	bonn	Bonn	<!-- Suche im Text der Dokumente: in Bonn über OParl-Lite; für Köln kein solcher Dienst (ausgeblendet) -->
+site/index.html	334	bonn	Bonner	<p><strong>Dies ist ein KI-System.</strong> Ein Sprachmodell beantwortet Fragen zu Bonner Ratsvorgängen und nutzt dafür ausschließlich die Daten dieser Seite. A
+site/index.html	372	bonn	Bonn	<button type="button" class="chip">Wann tagt die Bezirksvertretung Bonn das nächste Mal?</button>
+site/index.html	381	bonn	Bonner	<textarea id="chat-input" rows="2" placeholder="Frage zu Bonner Ratsvorgängen …" disabled></textarea>
+site/index.html	511	url_allris_test	github.com/daimpad/allris-test	<p>Den Ratsatlas Köln entwickelt <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer 
+site/index.html	511	bonn	Bonn	<p>Den Ratsatlas Köln entwickelt <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer 
+site/index.html	529	bonn	Bonn	<li>Erste Fassung für Köln auf Grundlage des Ratsatlas Bonn: ganz Köln mit 9 Stadtbezirken und 86 Stadtteilen, Liste, Vorgang mit Prozesslinie, Suche, Feeds und
+site/index.html	531	bonn	Bonner	<li>Bonner Zusatzthemen (Haushalt, Themenseiten, Ratsassistent und weitere) sind für Köln noch nicht freigegeben.</li>
 site/mitwirken.js	1	bonn	Bonn	// Mitwirkung: Einflussregeln des Soll-Modells (einfluss_regeln aus „Bonn entscheidet“, MIT; Anrede „Sie“ laut
 site/mitwirken.js	10	oparl_lite	OParl-Lite	// - termin: nächste Beratung dieser Vorlage mit Datum ab heute ohne Ergebnis (Sitzung über OParl-Lite verknüpft)
 site/prozesse.js	2	bonn	Bonn	// Verfahren und Zuständigkeitsordnung stammen aus „Bonn entscheidet“ (anster2025, MIT) mit Ergänzungen des Ratsatlas;
@@ -1127,21 +841,15 @@ site/prozesse.js	235	bonn	Bonn	const intro = `<p class="hint">Ämter und Federf�
 site/prozesse.js	245	bonn	Bonn	return `${intro}<div class="org" role="group" aria-label="Ämter und Stellen der Stadtverwaltung Bonn">
 site/prozesse.js	276	bonn	BONN	[soll, data] = await Promise.all([ctx.loadSoll(), fetch(ctx.BONN + "prozessarten.json").then((r) => (r.ok ? r.json() : null)).catch(() => null)]);
 site/prozesse.js	334	bonn	Bonn	// Gremium per Name (aus „Mitmachen in Bonn“)
-site/site.webmanifest	2	bonn	Bonn	"name": "Ratsatlas Bonn",
-site/site.webmanifest	4	bonn	Bonn	"description": "Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ämtern und Quellen.",
-site/style.css	1	bonn	Bonn	/* Ratsatlas Bonn – Glass / Soft-Futurism (DESIGN.md „Arc Browser“).
+site/style.css	1	bonn	Bonn	/* Ratsatlas Köln (aus dem Ratsatlas Bonn) – Glass / Soft-Futurism (DESIGN.md „Arc Browser“).
 site/style.css	489	bonn	Bonn	/* „Ganz Bonn ansehen“: auf breiten Bildschirmen als Text, auf dem Telefon als Symbol (siehe unten) */
 site/style.css	764	bonn	Bonn	„Karte“, „Ganz Bonn“ als Symbol und Zoom; Quellenzeile einzeilig (Entscheidung 02.11.2026) */
 site/style.css	791	bonn	Bonn	/* Mitmachen in Bonn (site/beteiligung.js) */
-site/timeline.js	27	bonn	Bonn	const PILOT_GREMIEN = ["Bezirksvertretung Bonn", "Rat", "Ausschuss für Mobilität und Verkehr",
-site/timeline.js	29	bonn	Bonn	const SHORT = { "Bezirksvertretung Bonn": "BV Bonn", "Ausschuss für Mobilität und Verkehr": "Mobilität",
 site/timeline.js	110	oparl_lite	OParl-Lite	<li>Sitzungsdaten von Beratungen, die OParl-Lite (noch) nicht verknüpft; sie fehlen in der Achse „Sitzungsdatum“.</li>
-site/tour.js	1	bonn	Bonn	// Tour durch die Funktionen des Ratsatlas Bonn: hebt nacheinander Bedienelemente hervor (abgedunkelte Umgebung,
-site/tour.js	14	bonn	Bonn	text: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Bonn befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Ämt
-site/tour.js	16	bonn	Bonn	title: "Suche in ganz Bonn",
-site/tour.js	20	bonn	Bonn	text: "Ein Ortsteil, ein ganzer Stadtbezirk oder Vorlagen ohne Ortsbezug je Jahr. Zu Beginn zeigt die Karte ganz Bonn: erst einen Stadtbezirk anklicken, dann ei
-site/tour.js	43	bonn	Bonn	text: "Alle Verfahrensarten – vom Bürgerantrag bis zum Bebauungsplan – mit ihren Schritten, Fristen und Rechtsgrundlagen und der Zahl der Vorgänge in Bonn. Unte
-site/tour.js	46	bonn	Bonn	text: "Kennzahlen zum Gebiet nach Thema, Partei, Jahr und Stand; ein Klick auf einen Balken filtert die Liste. Die Verfahrenswege zeigen für ganz Bonn, welche G
-site/tour.js	58	bonn	Bonner	text: "Ein KI-System beantwortet Fragen zu Bonner Ratsvorgängen und stützt sich dabei nur auf die Daten dieser Seite. Er braucht einen eigenen API-Schlüssel, ne
+site/tour.js	1	bonn	Bonn	// Tour durch die Funktionen des Ratsatlas Köln (aus Bonn übernommen): hebt nacheinander Bedienelemente hervor (abgedunkelte Umgebung,
+site/tour.js	20	bonn	Bonn	text: "Ein Stadtteil, ein ganzer Stadtbezirk oder Vorlagen ohne Ortsbezug je Jahr. Zu Beginn zeigt die Karte ganz Köln: erst einen Stadtbezirk anklicken, dann e
 tests/conftest.py	104	oparl_lite	CONSULTATIONS_LITE	"CONSULTATIONS_LITE": raw / "beratungen.jsonl", "STAND": raw / "STAND.json",
 tests/test_sessionnet.py	2	bonn	Bonner	Abrufstatistik, Sperre und Anschluss an build.py (Bonner Datenmodell)."""
+tests/test_sessionnet.py	123	oparl_lite	OParl-Lite	assert "Bonn" not in text and "OParl-Lite" not in text, datei
+tests/test_sessionnet.py	123	bonn	Bonn	assert "Bonn" not in text and "OParl-Lite" not in text, datei
+tools/seite_bauen.py	19	bonn	Bonner	(ziel / "og-image.jpg").unlink(missing_ok=True)       # Bonner Vorschaubild nicht ausliefern (zweiter Lauf)

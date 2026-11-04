@@ -1,5 +1,5 @@
 # Für den Betrieb auf einem eigenen Apache-Server (z. B. Plesk); wird als .htaccess in den
-# Branch deploy kopiert. Die Daten für ganz Bonn umfassen rund 85 MB JSON; Komprimierung
+# Branch deploy kopiert. Die Daten für ganz Bonn umfassten rund 85 MB JSON (Köln: nach dem ersten Abruf messen); Komprimierung
 # verringert die Übertragung auf etwa ein Zehntel.
 AddDefaultCharset utf-8
 AddType application/json .json

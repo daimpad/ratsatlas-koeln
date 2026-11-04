@@ -10,7 +10,7 @@ from xml.sax.saxutils import escape
 from . import begriffsseite, config, dossier, einfachseite, gebietsseiten, haushaltsseite, rssseite, technikseite
 from .themenseiten import ALLE as THEMENSEITEN
 
-DEFAULT_URL = "https://daimpad.github.io/allris-test/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
+DEFAULT_URL = "https://daimpad.github.io/ratsatlas-koeln/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
 PAGES = ("index.html", "404.html", "datenschutz.html")
 SITEMAP = ("", "datenschutz.html")  # Pfade relativ zu SITE_URL
 
@@ -37,12 +37,18 @@ def write(site=Path("_site"), site_url=None):
             page.write_text(gebietsseiten.neuer_tab(page.read_text(encoding="utf-8").replace(DEFAULT_URL, site_url)), encoding="utf-8")
     (site / "robots.txt").write_text(robots(site_url), encoding="utf-8")
     areas = gebietsseiten.write(site, site_url)
-    themen = [pfad for t in THEMENSEITEN for pfad in dossier.write(t, site, site_url, gebietsseiten._page)]
-    themen = dossier.uebersicht(THEMENSEITEN, site, site_url, gebietsseiten._page) + themen
-    themen += haushaltsseite.write(site, site_url, gebietsseiten._page)
+    an = lambda thema: config.ZUSATZTHEMEN.get(thema)   # Bonner Zusatzthemen nur bei Freigabe (CLAUDE.md 5.4)
+    themen = []
+    if an("themenseiten"):
+        themen = [pfad for t in THEMENSEITEN for pfad in dossier.write(t, site, site_url, gebietsseiten._page)]
+        themen = dossier.uebersicht(THEMENSEITEN, site, site_url, gebietsseiten._page) + themen
+    if an("haushalt"):
+        themen += haushaltsseite.write(site, site_url, gebietsseiten._page)
     themen += rssseite.write(site, site_url, gebietsseiten._page)
     themen += begriffsseite.write(site, site_url, gebietsseiten._page)
-    themen += einfachseite.write(site, site_url, gebietsseiten._page)
-    themen += technikseite.write(site, site_url, gebietsseiten._page)
+    if an("einfache_sprache"):
+        themen += einfachseite.write(site, site_url, gebietsseiten._page)
+    if an("technik"):   # beschreibt die Workflows; für Köln nach Phase 5
+        themen += technikseite.write(site, site_url, gebietsseiten._page)
     (site / "sitemap.xml").write_text(sitemap(site_url, [*themen, *areas]), encoding="utf-8")
     print(f"robots.txt, sitemap.xml und Adressen für {site_url}")
