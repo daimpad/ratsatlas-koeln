@@ -1,0 +1,17 @@
+{
+ "build": "20261104.pmtiles",
+ "quelle": "https://build.protomaps.com/20261104.pmtiles",
+ "osm_stand": "2026-11-04T04:00:00Z",
+ "basemap_version": "4.15.2",
+ "vektorkacheln": 3652,
+ "rasterkacheln": {
+  "10": 30,
+  "11": 90,
+  "12": 306,
+  "13": 270,
+  "14": 952,
+  "15": 1932,
+  "16": 7636
+ },
+ "bytes": 47156300
+}
