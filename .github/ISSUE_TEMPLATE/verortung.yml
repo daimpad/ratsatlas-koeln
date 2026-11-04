@@ -11,8 +11,8 @@ body:
   - type: input
     id: drucksache
     attributes:
-      label: Drucksachennummer
-      placeholder: z. B. 261856
+      label: Vorlagennummer
+      placeholder: z. B. 2250/2025 oder AN/1756/2026
     validations:
       required: true
   - type: input
@@ -23,13 +23,13 @@ body:
     id: gebiet
     attributes:
       label: Gebiet im Ratsatlas
-      placeholder: z. B. Endenich
+      placeholder: z. B. Ehrenfeld
   - type: dropdown
     id: art
     attributes:
       label: Was stimmt nicht?
       options:
-        - Falscher Ortsteil
+        - Falscher Stadtteil
         - Falsche Straße
         - Ortsbezug fehlt
         - Vorlage hat keinen Ortsbezug
@@ -40,6 +40,6 @@ body:
     id: hinweis
     attributes:
       label: Richtiger Ort und Begründung
-      description: Möglichst mit Fundstelle im Original (Seite, Zitat).
+      description: Möglichst mit Fundstelle im Original (Seite oder Abschnitt; bitte keine längeren Zitate).
     validations:
       required: true

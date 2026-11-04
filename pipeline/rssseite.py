@@ -14,7 +14,7 @@ from .themenseiten import ALLE as THEMEN
 
 PFAD = "rss/"
 AKTUALISIERUNG = "einmal am Tag, frühmorgens"
-LAUF = "täglicher Lauf ab 4:17 Uhr UTC"   # Zeitplan in .github/workflows/pages.yml
+LAUF = "täglicher Lauf ab 1:37 Uhr UTC"   # Zeitplan in .github/workflows/pages.yml
 
 
 def feed_url(site_url, name=GANZ_BONN):
@@ -148,11 +148,11 @@ def body(site, site_url, root):
         <dt>Datum</dt><dd><code>updated</code> ist der Tag des Ereignisses (Datum der Vorlage oder der Sitzung), immer 00:00 UTC; ein eigenes Veröffentlichungsdatum gibt es nicht.</dd>
         <dt>Umfang</dt><dd>Die letzten 100 Einträge je Feed, neueste zuerst; Feeds je Vorgang enthalten alle Ereignisse.</dd>
         <dt>Adressen</dt><dd><code>data/export/koeln/feeds/ganz-koeln.xml</code>, <code>feeds/ortsteil-&lt;name&gt;.xml</code>, <code>feeds/bezirk-&lt;name&gt;.xml</code>, <code>feeds/ohne-&lt;jahr&gt;.xml</code>, <code>feeds/vorlagen/&lt;drucksache&gt;.xml</code>, <code>dossiers/&lt;thema&gt;.xml</code>.</dd>
-        <dt>Abruf</dt><dd>Die Feeds ändern sich höchstens einmal am Tag ({LAUF}). Bitte höchstens einmal pro Stunde abrufen, besser einmal am Tag; der Server beantwortet bedingte Abrufe (<code>If-Modified-Since</code>, <code>If-None-Match</code>). Ohne Schlüssel und ohne Anmeldung. Für den Abruf aus dem Browser anderer Websites (CORS) nutzen Sie derzeit den Spiegel <code>https://daimpad.github.io/allris-test/</code> mit denselben Pfaden; auf der Hauptadresse ist die Freigabe noch nicht eingerichtet.</dd>
+        <dt>Abruf</dt><dd>Die Feeds ändern sich höchstens einmal am Tag ({LAUF}). Bitte höchstens einmal pro Stunde abrufen, besser einmal am Tag; der Server beantwortet bedingte Abrufe (<code>If-Modified-Since</code>, <code>If-None-Match</code>). Ohne Schlüssel und ohne Anmeldung. Für den Abruf aus dem Browser anderer Websites (CORS) nutzen Sie derzeit den Spiegel <code>https://daimpad.github.io/ratsatlas-koeln/</code> mit denselben Pfaden; auf der Hauptadresse ist die Freigabe noch nicht eingerichtet.</dd>
       </dl>
       <p>Beispiel in Python, nur mit der Standardbibliothek:</p>
       <pre class="rss-code" id="rss-python" tabindex="0"><code>{escape(beispiel(url))}</code></pre>
-      <p class="rss-weiter"><button type="button" class="rss-knopf rss-zweit" data-kopieren="#rss-python" hidden>Beispiel kopieren</button> <a href="{escape(link)}" type="application/atom+xml">Feed direkt ansehen</a> · <a href="https://github.com/daimpad/allris-test/blob/main/pipeline/publish.py">Erzeugung der Feeds (Quelltext)</a></p>
+      <p class="rss-weiter"><button type="button" class="rss-knopf rss-zweit" data-kopieren="#rss-python" hidden>Beispiel kopieren</button> <a href="{escape(link)}" type="application/atom+xml">Feed direkt ansehen</a> · <a href="https://github.com/daimpad/ratsatlas-koeln/blob/main/pipeline/publish.py">Erzeugung der Feeds (Quelltext)</a></p>
     </section>
     <p><a href="{root}">Zur Karte</a> · <a href="{root}thema/">Themenseiten</a> · <a href="{root}gebiete/">Alle Gebiete</a></p>
     <script src="{root}rss.js" defer></script>"""

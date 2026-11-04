@@ -60,10 +60,19 @@ def test_sperre_ohne_information_der_stadt(oparl, monkeypatch):
     monkeypatch.setattr(config, "OPARL_BODY", "https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln")
     with pytest.raises(abruf.Abbruch, match="nicht informiert"):
         abruf.get_json(config.OPARL_BODY)
-    sessionnet.fetch_all()    # fängt den Abbruch ab und vermerkt ihn
+    sessionnet.fetch_all()    # überspringt den Abruf, ohne ihn als Fehler zu vermerken
     stand = json.loads(config.STAND.read_text())
-    assert "nicht informiert" in stand["abruf_fehler"]["meldung"]
+    assert "nicht informiert" in stand["abruf_uebersprungen"]["grund"] and "abruf_fehler" not in stand
     assert not config.PAPERS.exists() and oparl.anfragen == []
+
+
+def test_ausserhalb_des_zeitfensters_wird_uebersprungen(oparl, monkeypatch):
+    monkeypatch.setattr(config, "OPARL_BODY", "https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln")
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: False)
+    sessionnet.fetch_all()
+    stand = json.loads(config.STAND.read_text())
+    assert "Zeitfenster" in stand["abruf_uebersprungen"]["grund"] and "abruf_fehler" not in stand
 
 
 def test_abbruch_haelt_letzten_stand(oparl, monkeypatch):
@@ -117,7 +126,8 @@ def test_export_koeln(oparl, monkeypatch):
     out = config.EXPORT / config.STADT
     index = json.loads((out / "index.json").read_text())
     assert len(index["ortsteile"]) == 86 and len(index["bezirke"]) == 9
-    assert index["meta"]["stadt"] == "Köln" and not any(index["meta"]["funktionen"].values())
+    an = {k for k, v in index["meta"]["funktionen"].items() if v}
+    assert index["meta"]["stadt"] == "Köln" and an == {"technik"}   # nur die Technikseite (Phase 5)
     for datei in ("suche.json", "zeit.json", "vorlagen.geojson", "termine.ics", "dcat.jsonld", "feeds/ganz-koeln.xml"):
         text = (out / datei).read_text(encoding="utf-8")
         assert "Bonn" not in text and "OParl-Lite" not in text, datei

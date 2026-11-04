@@ -18,7 +18,7 @@ from html import escape
 from . import config
 
 PFAD = "technik/"
-REPO = "https://github.com/daimpad/allris-test"
+REPO = "https://github.com/daimpad/ratsatlas-koeln"
 CODE = REPO + "/blob/main/"
 ACTIONS = REPO + "/actions"
 WORKFLOWS = config.ROOT / ".github" / "workflows"
@@ -26,133 +26,75 @@ BREIT, HOCH = 760, 340   # Breite der Grafiken (Seite höchstens 760 px; Telefon
 
 # --- Erklärungen ----------------------------------------------------------------------------------------
 
-# Schritte der Pipeline (python -m pipeline <schritt>): Kurzname und Erklärung
+# Schritte der Pipeline (python -m pipeline <schritt>): Kurzname und Erklärung (Ratsatlas Köln)
 SCHRITTE = {
-    "fetch-papers": ("Vorlagen", "Holt die Vorlagen über die OParl-Schnittstelle der Stadt Bonn (CC0). Bricht ein Abruf "
-                                 "ab, bleibt der Stand des letzten Laufs."),
-    "fetch-organizations": ("Gremien und Ämter", "Holt Gremien, Ämter und Verwaltungsbereiche; daraus stammt das "
-                                                 "federführende Amt einer Vorlage."),
-    "fetch-besetzung": ("Besetzung", "Holt die laufenden Mitgliedschaften in den Gremien, als Auszug ohne Kontaktdaten."),
-    "fetch-meetings": ("Sitzungen", "Holt Sitzungen und Wahlperioden für Kalender, Fristen und Zeitleiste."),
-    "fetch-plans": ("Bebauungspläne", "Holt montags die Geltungsbereiche der rechtskräftigen Bebauungspläne der Stadt "
-                                      "(CC0)."),
-    "fetch-housenumbers": ("Hausnummern", "Holt montags das Hausnummernverzeichnis der Stadt. Es dient nur dazu, den "
-                                          "Ortsteil einer Straße zu bestimmen; Hausnummern erscheinen nicht auf der "
-                                          "Karte."),
-    "fetch-objects": ("Gebäude und Anlagen", "Holt montags Namen von Gebäuden und Anlagen aus OpenStreetMap (ODbL), um "
-                                             "Vorlagen über ihren Titel zu verorten."),
-    "fetch-haltestellen": ("Haltestellen", "Holt am 1. des Monats die Haltestellen des VRS für die Zahlen je Ortsteil."),
-    "fetch-texts": ("Texte der Dokumente", "Holt Texte von Hauptdokumenten über OParl-Lite, höchstens 3.000 je Lauf. Sie "
-                                           "dienen nur der Verortung und werden nicht veröffentlicht."),
-    "fetch-lite": ("Beratungen", "Holt Sitzungen, Tagesordnungspunkte und Ergebnisse aus OParl-Lite (CC BY 4.0); daraus "
-                                 "entsteht die Prozesslinie einer Vorlage."),
-    "build": ("Datenbank und Verortung", "Baut eine SQLite-Datenbank aus Vorlagen, Beratungen, Sitzungen, Gremien und "
-                                         "Ämtern, verortet Vorlagen nach festen Regeln und leitet den Stand jedes "
-                                         "Vorgangs ab."),
-    "stufe-c": ("Stufe C (angehalten)", "Verortung mit einem Sprachmodell. Sie ist nicht freigegeben und stellt derzeit "
-                                        "keine neuen Anfragen."),
-    "export": ("Export", "Schreibt je Gebiet eine Datei für die Karte, dazu Feeds, Kalender, GeoJSON, Prüfprotokolle "
-                         "und die Daten der Themenseiten."),
-    "kontext": ("Zahlen je Ortsteil", "Rechnet Kennzahlen je Ortsteil aus Zensus, Bodenrichtwerten, Haltestellen, "
-                                      "Kitas, Hitze, Überschwemmung und Wahlbeteiligung um (abgeleitet)."),
-    "check": ("Prüfung", "Prüft Kennzahlen und Datenschutz, etwa dass keine Hausnummern von Privatpersonen in "
-                         "Ortsangaben stehen. Schlägt eine Prüfung fehl, bricht der Lauf ab."),
-    "soll": ("Verfahren nach Regelwerk", "Ordnet jedem Vorgang ein Verfahren nach dem Soll-Modell zu und vergleicht es "
-                                         "mit den tatsächlichen Beratungen."),
-    "baustellen-seite": ("Baustellen", "Bereitet das eigene Archiv der Baustellen für die Karte auf."),
-    "kandidaten": ("Mögliche Umsetzungen", "Sucht Baustellen, die zu einem Baubeschluss passen könnten (Ort, Zeit, "
-                                           "Straße, Amt). Die Karte zeigt nur Treffer mit hoher Übereinstimmung, als "
-                                           "Hinweis, nicht als Beleg."),
-    "anliegen-seite": ("Mängelmelder", "Zählt die Meldungen der letzten 90 Tage je Ortsteil aus dem eigenen Archiv."),
-    "verify": ("Abgleich", "Vergleicht eine Stichprobe der aufbereiteten Daten mit der OParl-API der Stadt."),
+    "fetch": ("Abruf", "Holt Vorlagen, Gremien und Sitzungen mit ihren Tagesordnungspunkten über die OParl-Schnittstelle "
+                       "der Stadt Köln: nachts, mit einer Verbindung und Abstand zwischen den Anfragen, nach dem ersten "
+                       "Lauf nur Geänderte. Bricht ein Abruf ab, bleibt der Stand des letzten Laufs."),
+    "build": ("Datenbank und Verortung", "Baut eine SQLite-Datenbank aus Vorlagen, Beratungen, Sitzungen und Gremien, "
+                                         "verortet Vorlagen nach festen Regeln und leitet den Stand jedes Vorgangs ab."),
+    "export": ("Export", "Schreibt je Gebiet eine Datei für die Karte, dazu Feeds, Kalender, GeoJSON und "
+                         "Prüfprotokolle."),
     "package": ("Datenpaket", "Packt Daten, Prüfprotokolle und Lizenzen in ein Zip-Paket zum Herunterladen."),
-    "seo": ("Statische Seiten", "Schreibt Themen-, Gebiets- und Erklärseiten wie diese, dazu robots.txt und "
-                                "sitemap.xml."),
-    "kurzfassungen": ("Kurzfassungen", "Lässt nach dem Veröffentlichen neue Kurzfassungen mit Mistral schreiben "
-                                       "(gekennzeichnet, mit Prüfung auf wörtliche Übernahmen). Sie erscheinen mit dem "
-                                       "nächsten Lauf."),
 }
 
 # Workflows (.github/workflows/<datei>): Kurzname und Erklärung
 WORKFLOW_TEXT = {
-    "pages.yml": ("Hauptlauf", "Holt die Daten, bereitet sie auf, prüft sie und veröffentlicht die Seite: auf GitHub "
-                               "Pages und im Branch deploy, aus dem der Server der Hauptadresse liest. Danach schreibt "
-                               "er neue Kurzfassungen."),
-    "baustellen.yml": ("Archiv", "Speichert jeden Morgen den Stand der Baustellen und die Zahl der Meldungen im "
-                                 "Mängelmelder im Branch archiv. So entsteht eine Zeitreihe, die die Stadt selbst nicht "
-                                 "anbietet."),
-    "live.yml": ("Live-Prüfung", "Prüft nach jedem Hauptlauf und jeden Morgen, ob Hauptadresse und Spiegel den neuen "
-                                 "Stand zeigen und wichtige Seiten und Feeds antworten."),
-    "quellen.yml": ("Quellen", "Versucht montags, Dateien der Stadt zur Wahl 2025 abzurufen, und legt sie im Branch "
-                               "quellen ab."),
-    "kacheln.yml": ("Kartenkacheln", "Erzeugt vierteljährlich die grauen Kartenkacheln für Bonn aus OpenStreetMap-Daten "
+    "pages.yml": ("Hauptlauf", "Holt die Daten, bereitet sie auf und veröffentlicht die Seite: auf GitHub Pages und im "
+                               "Branch deploy, aus dem der Server der Hauptadresse liest. Ohne Daten der Stadt "
+                               "veröffentlicht er nichts."),
+    "live.yml": ("Live-Prüfung", "Prüft, ob Hauptadresse und Spiegel den neuen Stand zeigen und wichtige Seiten und "
+                                 "Feeds antworten."),
+    "kacheln.yml": ("Kartenkacheln", "Erzeugt vierteljährlich die grauen Kartenkacheln für Köln aus OpenStreetMap-Daten "
                                      "und legt sie im Branch kacheln ab."),
-    "tests.yml": ("Tests", "Prüft jede Änderung am Code: Python-Tests, Browser-Tests mit Playwright und "
-                           "Barrierefreiheit mit axe."),
-    "eval.yml": ("Auswertung Assistent", "Stellt dem Ratsassistenten einen Katalog von Fragen und wertet die Antworten "
-                                         "aus; nur auf Knopfdruck."),
-    "release.yml": ("Version", "Erstellt eine Version mit Datenpaket; nur auf Knopfdruck."),
+    "tests.yml": ("Tests", "Prüft jede Änderung am Code mit Tests gegen einen lokalen Testserver, ohne Anfragen an die "
+                           "Stadt."),
 }
 
 # Quellen aus config.SOURCES: Kurzname und Erklärung (Lizenz aus config.SOURCES)
 QUELLEN = {
-    "oparl-bonn": ("Ratsinformationssystem", "Die OParl-Schnittstelle der Stadt Bonn: Vorlagen, Gremien, Ämter, "
-                                             "Sitzungen und Orte. Hauptquelle der Karte."),
-    "oparl-lite": ("OParl-Lite", "Ein Spiegel des Ratsinformationssystems von machdenstaat mit Tagesordnungspunkten, "
-                                 "Ergebnissen und Texten der Dokumente."),
-    "osm": ("OpenStreetMap", "Straßen, Namen von Gebäuden und Anlagen und die Daten der grauen Karte."),
-    "geo-bonn": ("Ortsteile und Stadtbezirke", "Flächen der 51 Ortsteile und 4 Stadtbezirke aus dem Open-Data-Portal "
-                                               "der Stadt."),
-    "bplan-bonn": ("Bebauungspläne", "Geltungsbereiche der rechtskräftigen Bebauungspläne der Stadt."),
-    "hnr-bonn": ("Hausnummern", "Georeferenzierte Hausnummern der Stadt, nur zur Bestimmung des Ortsteils."),
+    "oparl-koeln": ("Ratsinformationssystem", "Die OParl-Schnittstelle der Stadt Köln: Vorlagen, Gremien, Sitzungen "
+                                              "und Tagesordnungspunkte. Hauptquelle der Karte."),
+    "geo-koeln": ("Stadtteile und Stadtbezirke", "Flächen der 86 Stadtteile und 9 Stadtbezirke aus dem "
+                                                 "Open-Data-Portal der Stadt."),
+    "strassen-koeln": ("Straßen", "Straßen der Stadt Köln; daraus entsteht das Straßenverzeichnis je Stadtteil."),
+    "adressen-koeln": ("Adressen", "Adressen der Stadt Köln: Stadtteil einer Hausnummer und, nur bei Vorlagen der "
+                                   "Verwaltung und politischen Anträgen, die Hauskoordinate."),
+    "osm": ("OpenStreetMap", "Daten der grauen Karte."),
 }
-WEITERE_QUELLEN = [
-    ("q-haushalt", "Haushalt", "Haushaltspläne und Jahresabschluss der Stadt (PDF), einmalig ausgelesen und von Hand "
-                               "geprüft. Keine Lizenzangabe der Stadt.", "haushalt/"),
-    ("q-kontext", "Zahlen zum Gebiet", "Zensus 2022, Kitas, Bodenrichtwerte, Klimaanalyse, Überschwemmungsgebiete, "
-                                       "Haltestellen und Wahlbeteiligung, je mit eigener Lizenz.", None),
-    ("q-archiv", "Baustellen und Mängelmelder", "Offene Daten der Stadt Bonn (CC0), täglich im eigenen Archiv "
-                                                "gespeichert.", None),
-]
+WEITERE_QUELLEN = []
 
 AUSGABEN = [
-    ("a-karte", "Karte und Liste", "Je Gebiet eine JSON-Datei, die die Karte im Browser lädt; die Suche über ganz Bonn "
+    ("a-karte", "Karte und Liste", "Je Gebiet eine JSON-Datei, die die Karte im Browser lädt; die Suche über ganz Köln "
                                    "hat eine eigene Datei.", ""),
-    ("a-seiten", "Statische Seiten", "Themenseiten, Gebietsseiten, Haushalt, Begriffe, Einfache Sprache und diese "
-                                     "Seite, ohne Skript lesbar.", "thema/"),
-    ("a-feeds", "Feeds und Kalender", "Atom-Feeds je Gebiet, je Vorlage und für ganz Bonn, dazu ein Sitzungskalender "
+    ("a-seiten", "Statische Seiten", "Gebietsseiten, Begriffe, Feeds und diese Seite, ohne Skript lesbar.", "gebiete/"),
+    ("a-feeds", "Feeds und Kalender", "Atom-Feeds je Gebiet, je Vorlage und für ganz Köln, dazu ein Sitzungskalender "
                                       "(ICS).", "rss/"),
     ("a-offen", "Offene Daten", "GeoJSON der verorteten Vorlagen, Beschreibung nach DCAT-AP und Prüfprotokolle als "
                                 "TSV.", None),
     ("a-paket", "Datenpaket", "Alle Daten, Prüfprotokolle und Lizenzen als Zip-Paket.", config.PAKET_URL),
-    ("a-pages", "GitHub Pages", "Der Spiegel der Seite unter daimpad.github.io.", "https://daimpad.github.io/allris-test/"),
-    ("a-server", "Hauptadresse", "Der Branch deploy enthält die fertige Seite; der Server von ris-bonn.datenatlas.de "
+    ("a-pages", "GitHub Pages", "Der Spiegel der Seite unter daimpad.github.io.", "https://daimpad.github.io/ratsatlas-koeln/"),
+    ("a-server", "Hauptadresse", "Der Branch deploy enthält die fertige Seite; der Server von koeln.ratsatlas.de "
                                  "übernimmt ihn über einen Webhook.", config.SITE_URL),
 ]
 
 UEBERBLICK = [
     ("Woher?", [
-        ("u-ris", "Ratsinformationssystem der Stadt", "Hier stehen alle Vorlagen, Sitzungen und Gremien. Die Stadt "
-                                                      "stellt sie als offene Daten bereit."),
-        ("u-lite", "Spiegel mit Ergebnissen", "OParl-Lite ergänzt Tagesordnungen, Ergebnisse und die Texte der "
-                                              "Dokumente."),
-        ("u-geo", "Karten und Flächen", "Ortsteile, Stadtbezirke und Bebauungspläne der Stadt, Straßen aus "
-                                        "OpenStreetMap."),
-        ("u-weitere", "Weitere offene Daten", "Haushalt, Zensus, Haltestellen, Baustellen, Mängelmelder und "
-                                              "Wahlbeteiligung."),
+        ("u-ris", "Ratsinformationssystem der Stadt", "Hier stehen alle öffentlichen Vorlagen, Sitzungen und Gremien. "
+                                                      "Die Stadt stellt sie über eine offene Schnittstelle bereit."),
+        ("u-geo", "Karten und Flächen", "Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt; der Kartenhintergrund "
+                                        "aus OpenStreetMap."),
     ]),
-    ("Jeden Morgen", [
-        ("u-holen", "Abholen", "Ein Programm holt die Daten jeden Morgen neu ab; bei einem Ausfall bleibt der Stand "
-                               "des Vortags."),
-        ("u-verorten", "Verorten", "Es sucht in Titeln und Texten nach Straßen, Ortsteilen und Bebauungsplänen und "
-                                   "markiert, wie sicher ein Ort ist."),
+    ("Jede Nacht", [
+        ("u-holen", "Abholen", "Ein Programm holt geänderte Daten jede Nacht schonend ab; bei einem Ausfall bleibt der "
+                               "letzte Stand."),
+        ("u-verorten", "Verorten", "Es sucht in Titeln nach Straßen, Stadtteilen und Stadtbezirken und markiert, wie "
+                                   "sicher ein Ort ist."),
         ("u-ordnen", "Ordnen", "Es ordnet Beratungen zu einer Prozesslinie, ermittelt den Stand und ordnet Themen zu."),
-        ("u-pruefen", "Prüfen", "Es prüft Datenschutz und Kennzahlen; erst dann wird veröffentlicht."),
     ]),
     ("Die Seite", [
         ("u-karte", "Karte und Liste", "Vorlagen auf der Karte und in einer Liste, mit Filtern und Zeitleiste."),
-        ("u-themen", "Themen- und Gebietsseiten", "Zusammenfassungen je Thema und je Ortsteil, mit Haushalt und "
-                                                  "Sitzungen."),
+        ("u-gebiete", "Gebietsseiten", "Eine Seite je Stadtteil und Stadtbezirk, auch ohne Skript lesbar."),
         ("u-abo", "Feeds und Kalender", "Neues abonnieren, Sitzungen im eigenen Kalender."),
         ("u-daten", "Offene Daten", "Alles zum Herunterladen und Weiterverwenden."),
     ]),
@@ -204,7 +146,8 @@ def versionen():
     python = sorted(set(re.findall(r'python-version:\s*"([0-9.]+)"', wf)))
     pakete = [re.split(r"[<>=~ ]", z.strip(), maxsplit=1)[0] for z in
               (config.ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines() if z.strip() and not z.startswith("#")]
-    browser = json.loads((config.ROOT / "tests" / "browser" / "package.json").read_text(encoding="utf-8"))["dependencies"]
+    pj = config.ROOT / "tests" / "browser" / "package.json"   # in Köln (noch) keine Browser-Tests mit eigener package.json
+    browser = json.loads(pj.read_text(encoding="utf-8"))["dependencies"] if pj.exists() else {}
     leaflet = re.search(r'version="([0-9.]+)"', (config.ROOT / "site" / "vendor" / "leaflet" / "leaflet.min.js")
                         .read_text(encoding="utf-8"))
     tests = len(list((config.ROOT / "tests").glob("test_*.py")))
@@ -228,9 +171,9 @@ def cron_text(c):
     return f"am {dom}. {monate} um {zeit}"
 
 
-def bonn(c):
+def ortszeit(c):
     m, h, *_ = c.split()
-    return f"in Bonn {_zeit(m, h, 1)} Uhr, im Sommer {_zeit(m, h, 2)} Uhr"
+    return f"in Köln {_zeit(m, h, 1)} Uhr, im Sommer {_zeit(m, h, 2)} Uhr"
 
 
 def ausloeser_text(w):
@@ -469,8 +412,9 @@ def daten(root="../"):
         kurz, text = SCHRITTE[s]
         return (f"s-{s}", kurz, text, CODE + mods.get(s, "pipeline/__main__.py"), f"Code ({mods.get(s, '')})")
 
-    abruf = [schritt(s) for s in pages["schritte"] if s.startswith("fetch-")]
-    rest = [schritt(s) for s in pages["schritte"] if not s.startswith("fetch-")]
+    ist_abruf = lambda s: s == "fetch" or s.startswith("fetch-")
+    abruf = [schritt(s) for s in pages["schritte"] if ist_abruf(s)]
+    rest = [schritt(s) for s in pages["schritte"] if not ist_abruf(s)]
     quellen = [(f"q-{k}", QUELLEN[k][0], f"{QUELLEN[k][1]} Lizenz: {config.SOURCES[k]['license']}.",
                 config.SOURCES[k]["url"] if config.SOURCES[k]["url"].startswith("http") else None, "Quelle")
                for k in config.SOURCES]
@@ -482,7 +426,7 @@ def daten(root="../"):
     for minuten, w, c in zeitplan(wfs):
         kurz, text = WORKFLOW_TEXT[w["datei"]]
         termine.append((f"z-{w['datei'][:-4]}-{minuten}", kurz,
-                        f"{cron_text(c)} ({bonn(c)}). Auslöser: {ausloeser_text(w)}. {text}",
+                        f"{cron_text(c)} ({ortszeit(c)}). Auslöser: {ausloeser_text(w)}. {text}",
                         CODE + ".github/workflows/" + w["datei"], f"Workflow {w['datei']}"))
     for w in wfs:
         for c in w["crons"]:
@@ -505,12 +449,11 @@ def daten(root="../"):
         ("Betrieb", [
             ("t-actions", "GitHub Actions", f"{len(wfs)} Workflows steuern Abruf, Prüfung und Veröffentlichung "
                                              f"(Grafik „Zeitplan“).", ACTIONS, "Läufe auf GitHub"),
-            ("t-pages", "GitHub Pages", "Hostet den Spiegel der Seite.", "https://daimpad.github.io/allris-test/", "Spiegel"),
+            ("t-pages", "GitHub Pages", "Hostet den Spiegel der Seite.", "https://daimpad.github.io/ratsatlas-koeln/", "Spiegel"),
             ("t-server", "Webhosting (Plesk)", "Der Server der Hauptadresse übernimmt den Branch deploy über einen "
                                                "Webhook; .htaccess setzt Sicherheitskopfzeilen.", config.SITE_URL, "Hauptadresse"),
-            ("t-branches", "Branches", "Neben main: " + ", ".join(branches) + ". Sie halten die fertige Seite, Archive, "
-                                       "Kurzfassungen, Quelldateien, Kacheln und Auswertungen getrennt vom Code.",
-             REPO + "/branches", "Branches"),
+            ("t-branches", "Branches", "Neben main: " + ", ".join(branches) + ". Sie halten die fertige Seite und die "
+                                       "Kartenkacheln getrennt vom Code.", REPO + "/branches", "Branches"),
         ]),
         ("Im Browser", [
             ("t-html", "HTML und CSS", "Statische Seiten ohne Server-Programm; Glas-Stil, WCAG 2.1 AA.", None, ""),
@@ -520,17 +463,12 @@ def daten(root="../"):
                                                              "eingebunden, ohne fremde Server.", "https://leafletjs.com/", "Leaflet"),
             ("t-kacheln", "Graue Kacheln", "Kartenhintergrund vom eigenen Server, erzeugt aus OpenStreetMap-Daten; "
                                            "„Farbige Karte“ lädt Kacheln von OpenStreetMap.", CODE + "pipeline/kacheln/", "Code"),
-            ("t-assistent", "Ratsassistent", "Fragen gehen direkt aus dem Browser an den gewählten Anbieter, mit eigenem "
-                                             "Schlüssel; die Seite speichert keine Fragen.", CODE + "site/chat/", "Code"),
         ]),
         ("Prüfung", [
-            ("t-unittest", "unittest", f"{v['tests']} Dateien mit Python-Tests für Pipeline und Seiten.",
-             REPO + "/tree/main/tests", "Tests"),
-            ("t-playwright", f"Playwright {v['browser'].get('playwright', '')}".strip(),
-             f"{v['browsertests']} Dateien mit Browser-Tests bei 1440 und 390 px.", CODE + "tests/browser/", "Tests"),
-            ("t-axe", f"axe-core {v['browser'].get('axe-core', '')}".strip(), "Prüft die Barrierefreiheit (WCAG 2 A "
-                                                                               "und AA) in den Browser-Tests.",
-             "https://github.com/dequelabs/axe-core", "axe-core"),
+            ("t-pytest", "pytest", f"{v['tests']} Dateien mit Tests für Abruf, Aufbereitung, Verortung und Export, gegen "
+                                   "einen lokalen Testserver.", REPO + "/tree/main/tests", "Tests"),
+            ("t-axe", "axe-core", "Prüft die Barrierefreiheit (WCAG 2.1 A und AA) der Seite.",
+             CODE + "tools/wcag_pruefen.js", "Prüfskript"),
         ]),
         ("Aufbereitung", [
             ("t-python", "Python " + ", ".join(v["python"]), "Die Pipeline in python -m pipeline, ein Schritt je "
@@ -541,12 +479,10 @@ def daten(root="../"):
                f"https://pypi.org/project/{p}/", "PyPI") for p in v["pakete"]],
         ]),
         ("Daten", [
-            ("t-oparl", "OParl (JSON)", "Offener Standard für Ratsinformationssysteme; die Stadt Bonn bietet ihn an.",
+            ("t-oparl", "OParl (JSON)", "Offener Standard für Ratsinformationssysteme; die Stadt Köln bietet ihn an.",
              "https://oparl.org/", "OParl"),
-            ("t-graphql", "GraphQL", "Abfragesprache von OParl-Lite für Beratungen und Texte.", None, ""),
-            ("t-geojson", "GeoJSON", "Flächen der Stadt und die verorteten Vorlagen.", None, ""),
-            ("t-pdf", "PDF", "Haushaltspläne und Jahresabschluss, einmalig ausgelesen.", None, ""),
-            ("t-overpass", "Overpass", "Abfragen an OpenStreetMap für Straßen, Gebäude und Anlagen.", None, ""),
+            ("t-shapefile", "Shapefile", "Format der Kölner Geodaten (Stadtteile, Straßen, Adressen).", None, ""),
+            ("t-geojson", "GeoJSON", "Flächen für die Seite und die verorteten Vorlagen.", None, ""),
         ]),
     ]
     return {"ueberblick": ueberblick, "fluss": [("Quellen", quellen), ("Abruf", abruf), ("Aufbereitung", rest),
@@ -554,9 +490,9 @@ def daten(root="../"):
             "termine": termine, "ohne": ohne, "wfs": wfs, "schichten": schichten}
 
 
-PAKET_TEXT = {"shapely": "Geometrie, etwa ob ein Punkt in einem Ortsteil liegt",
-              "pyproj": "Umrechnung zwischen Koordinatensystemen",
-              "pyshp": "Lesen von Shapefiles, etwa der Kontextdaten",
+PAKET_TEXT = {"shapely": "Geometrie, etwa ob ein Punkt in einem Stadtteil liegt",
+              "pyproj": "Umrechnung zwischen Koordinatensystemen (ETRS89/UTM 32N nach WGS84)",
+              "pyshp": "Lesen der Shapefiles der Stadt Köln",
               "cairosvg": "Bild der Themenseite als PNG zum Teilen"}
 
 
@@ -594,29 +530,29 @@ def body(d, root):
     return f"""    <h1>So funktioniert der Ratsatlas</h1>
     <p class="lead">Woher kommen die Daten des Ratsatlas, was passiert mit ihnen und wann wird die Seite neu erzeugt? Vier Grafiken zeigen es, vom Überblick bis zur Technik. Sie entstehen aus dem Code im Repository und zeigen den Aufbau, nicht den Verlauf einzelner Läufe.</p>
     <nav class="thema-sprung" aria-label="Auf dieser Seite"><span>Auf dieser Seite:</span> <a href="#ueberblick">Überblick</a> · <a href="#datenfluss">Datenfluss</a> · <a href="#zeitplan">Zeitplan</a> · <a href="#technik">Technik</a> · <a href="#grenzen">Grenzen</a></nav>
-{_grafik("ueberblick", "Überblick", "Die Karte erfindet nichts: Sie holt öffentliche Daten der Stadt Bonn und weiterer Stellen, ordnet sie jeden Morgen neu und zeigt sie so, dass man sie nach Ort, Zeit und Zuständigkeit finden kann. Was die Karte selbst erschließt, etwa den Ort einer Vorlage, ist als abgeleitet gekennzeichnet.", spalten_svg(d["ueberblick"], "breit", "ueber", "Überblick: Woher, jeden Morgen, die Seite, für wen") + spalten_svg(d["ueberblick"], "hoch", "ueber", "Überblick: Woher, jeden Morgen, die Seite, für wen"), ueber_alle, root)}
+{_grafik("ueberblick", "Überblick", "Die Karte erfindet nichts: Sie holt öffentliche Daten der Stadt Köln, ordnet sie jede Nacht neu und zeigt sie so, dass man sie nach Ort, Zeit und Zuständigkeit finden kann. Was die Karte selbst erschließt, etwa den Ort einer Vorlage, ist als abgeleitet gekennzeichnet.", spalten_svg(d["ueberblick"], "breit", "ueber", "Überblick: Woher, jeden Morgen, die Seite, für wen") + spalten_svg(d["ueberblick"], "hoch", "ueber", "Überblick: Woher, jeden Morgen, die Seite, für wen"), ueber_alle, root)}
 {_grafik("datenfluss", "Datenfluss", "Jeder Kasten in der Mitte ist ein Schritt der Pipeline, aufgerufen mit <code>python -m pipeline &lt;schritt&gt;</code>, in der Reihenfolge des Hauptlaufs. Links stehen die Quellen mit ihrer Lizenz, rechts die Ergebnisse. Die Liste der Schritte liest diese Seite aus dem Workflow; kommt ein Schritt hinzu, erscheint er hier.", spalten_svg(d["fluss"], "breit", "fluss", "Datenfluss: Quellen, Abruf, Aufbereitung, Ergebnis") + spalten_svg(d["fluss"], "hoch", "fluss", "Datenfluss: Quellen, Abruf, Aufbereitung, Ergebnis"), fluss_alle, root)}
-{_grafik("zeitplan", "Zeitplan", "Die Läufe starten von selbst zu festen Zeiten (Cron-Aufträge in GitHub Actions). Die Zeiten sind in UTC angegeben; in Bonn ist es eine Stunde später, im Sommer zwei. Manche Abrufe laufen nur montags oder am Monatsersten innerhalb des Hauptlaufs.", zeit_svg, d["termine"] + d["ohne"], root, extra=f'''
+{_grafik("zeitplan", "Zeitplan", "Die Läufe starten von selbst zu festen Zeiten (Cron-Aufträge in GitHub Actions). Die Zeiten sind in UTC angegeben; in Köln ist es eine Stunde später, im Sommer zwei. Abgerufen wird nur nachts zwischen 22 und 6 Uhr.", zeit_svg, d["termine"] + d["ohne"], root, extra=f'''
       <p class="tk-ohne-titel">Ohne festen Zeitpunkt:</p>
       <ul class="tk-ohne">
 {ohne}
       </ul>''')}
-{_grafik("technik", "Technik", "Die Karte braucht keinen eigenen Rechner, der ständig läuft: Ein Python-Programm erzeugt jeden Morgen fertige Dateien, die ein einfacher Webserver ausliefert. Im Browser zeichnet Leaflet die Karte. Tests prüfen jede Änderung, bevor sie veröffentlicht wird.", stapel_svg(d["schichten"], "breit") + stapel_svg(d["schichten"], "hoch"), stapel_alle, root)}
+{_grafik("technik", "Technik", "Die Karte braucht keinen eigenen Rechner, der ständig läuft: Ein Python-Programm erzeugt jede Nacht fertige Dateien, die ein einfacher Webserver ausliefert. Im Browser zeichnet Leaflet die Karte. Tests prüfen jede Änderung, bevor sie veröffentlicht wird.", stapel_svg(d["schichten"], "breit") + stapel_svg(d["schichten"], "hoch"), stapel_alle, root)}
     <h2 id="grenzen">Grenzen</h2>
     <ul>
       <li>Diese Seite zeigt den Aufbau. Ob ein Lauf gelungen ist, zeigt GitHub: <a href="{ACTIONS}">Läufe der Workflows</a>.</li>
-      <li>Einmalige Schritte, etwa das Auslesen der Haushaltspläne oder die Prüfbögen der Themenseiten, laufen nicht automatisch und fehlen im Zeitplan.</li>
+      <li>Einmalige Schritte, etwa das Ableiten der Geodaten (<code>python -m pipeline geo-koeln</code>), laufen nicht automatisch und fehlen im Zeitplan.</li>
       <li>Der Server der Hauptadresse übernimmt den Branch deploy von sich aus; sein Zeitpunkt steht nicht im Repository.</li>
     </ul>
-    <p class="meta">Quellcode unter MIT-Lizenz: <a href="{REPO}">github.com/daimpad/allris-test</a> · <a href="{root}einfach/">Einfache Sprache</a> · <a href="{root}begriffe/">Begriffe</a> · <a href="{root}">Zur Karte</a></p>"""
+    <p class="meta">Quellcode unter MIT-Lizenz: <a href="{REPO}">github.com/daimpad/ratsatlas-koeln</a> · <a href="{root}begriffe/">Begriffe</a> · <a href="{root}">Zur Karte</a></p>"""
 
 
 def write(site, site_url, page):
     """Schreibt technik/index.html; gibt den Pfad für die Sitemap zurück."""
     out = site / PFAD / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(page(site_url, PFAD, "So funktioniert der Ratsatlas – Ratsatlas Bonn",
-                        "Woher der Ratsatlas Bonn seine Daten nimmt, wie sie jeden Morgen aufbereitet werden, wann die "
+    out.write_text(page(site_url, PFAD, "So funktioniert der Ratsatlas – Ratsatlas Köln",
+                        "Woher der Ratsatlas Köln seine Daten nimmt, wie sie jede Nacht aufbereitet werden, wann die "
                         "automatischen Läufe starten und welche Technik dahintersteht, in vier Grafiken.",
                         body(daten("../"), "../"), "../", '\n  <script src="../technik.js" defer></script>'),
                    encoding="utf-8")

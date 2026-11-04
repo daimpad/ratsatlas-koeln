@@ -1,5 +1,5 @@
 name: Idee oder Aufgabe
-description: Vorschlag für eine Erweiterung, z. B. aus der Ideenliste in CLAUDE.md Abschnitt 6.
+description: Vorschlag für eine Erweiterung, z. B. zu den offenen Punkten in CLAUDE.md Abschnitt 8.
 labels: ["idee"]
 body:
   - type: textarea
@@ -13,12 +13,12 @@ body:
     id: daten
     attributes:
       label: Benötigte Daten und Quellen
-      description: Welche Felder aus OParl, OParl-Lite oder anderen offenen Daten? Lizenz?
+      description: Welche Felder aus der Kölner OParl-API oder anderen offenen Daten (z. B. offenedaten-koeln.de)? Lizenz?
   - type: dropdown
     id: umfang
     attributes:
       label: Geschätzter Umfang
       options:
         - klein (wenige Stunden)
-        - mittel (ein Hackathon-Tag)
+        - mittel (ein Tag)
         - groß (mehrere Tage)

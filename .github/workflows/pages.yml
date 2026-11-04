@@ -1,0 +1,146 @@
+# Ratsatlas Köln: Daten der Kölner OParl-API abrufen, aufbereiten und veröffentlichen (CLAUDE.md 5.1, 7.5).
+# Die fertige Seite geht in den Branch `deploy` (ohne Historie der Seite; Plesk-Git auf koeln.ratsatlas.de holt ihn per
+# Webhook) und auf den Spiegel bei GitHub Pages (Canonical auf die Hauptadresse).
+#
+# Sperre: Der Abruf läuft erst, wenn die Repository-Variable RATSATLAS_STADT_INFORMIERT den Wert „ja“ hat
+# (Einstellungen → Secrets and variables → Actions → Variables). Bis dahin endet der Lauf ohne Veröffentlichung.
+# Weitere Variablen: RATSATLAS_KONTAKT (Kontakt im User-Agent), SITE_URL (Vorgabe https://koeln.ratsatlas.de/).
+# Abrufpolitik: eine Verbindung, Abstand 2 s, nur 22–6 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (pipeline/abruf.py).
+# Fällt der Abruf aus, wird der letzte gültige Stand aus dem Zwischenspeicher veröffentlicht und als solcher angezeigt.
+name: Daten aktualisieren und Seite veröffentlichen
+
+on:
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: "37 1 * * *"   # 2:37 Uhr, im Sommer 3:37 Uhr Ortszeit (im Zeitfenster der Abrufpolitik)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300   # Pausen nach Fehlern können Stunden dauern (Backoff)
+    permissions:
+      contents: write   # Branch deploy
+      pages: read
+    outputs:
+      daten: ${{ steps.daten.outputs.da }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Abhängigkeiten
+        run: pip install -r requirements.txt
+
+      # Rohdaten-Cache: letzter gültiger Stand, Zustand des inkrementellen Abrufs, Abrufstatistik
+      - name: Rohdaten des letzten Laufs
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            data/raw/
+            data/export/abrufstatistik.tsv
+          key: raw-${{ github.run_id }}
+          restore-keys: raw-
+
+      - name: Abruf OParl-API Stadt Köln (gesperrt bis zur Information der Stadt)
+        env:
+          RATSATLAS_STADT_INFORMIERT: ${{ vars.RATSATLAS_STADT_INFORMIERT }}
+          RATSATLAS_KONTAKT: ${{ vars.RATSATLAS_KONTAKT }}
+        run: python -m pipeline fetch
+
+      # Nie mit Testdaten veröffentlichen (tools/testdaten.py setzt „testdaten“ in STAND.json)
+      - name: Gibt es Daten zum Veröffentlichen?
+        id: daten
+        run: |
+          if [ -s data/raw/papers.jsonl ] && ! python -c 'import json,sys; sys.exit(0 if json.load(open("data/raw/STAND.json")).get("testdaten") else 1)' 2>/dev/null; then
+            echo "da=ja" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Noch keine Daten der Stadt Köln (Abruf gesperrt oder noch nie erfolgreich) – nichts veröffentlicht."
+            echo "da=nein" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Aufbereiten, Geokodierung, Export, Datenpaket
+        if: steps.daten.outputs.da == 'ja'
+        run: |
+          python -m pipeline build
+          python -m pipeline export
+          python -m pipeline package
+
+      # Graue Kartenkacheln aus dem Branch kacheln (kacheln.yml); fehlt er, zeigt die Seite OSM-Kacheln grau gefiltert
+      - name: Graue Kartenkacheln holen
+        if: steps.daten.outputs.da == 'ja'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          ref: kacheln
+          path: _kacheln
+        continue-on-error: true
+
+      - name: Seite zusammenstellen (Frontend, Exporte, Flächen, Kacheln, Adressen für SITE_URL)
+        if: steps.daten.outputs.da == 'ja'
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://koeln.ratsatlas.de/' }}
+        run: python tools/seite_bauen.py _site
+
+      # Ohne Datenpaket (Zip, täglich vollständig neu), damit die Historie nur um die Änderungen wächst; auf dem eigenen
+      # Server verweist der Link auf das Paket beim Spiegel (config.PAKET_URL)
+      - name: Fertige Seite in den Branch deploy schreiben
+        if: steps.daten.outputs.da == 'ja'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          url="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          # Exit-Code 2: Branch fehlt; jeder andere Fehler (Netz) bricht ab, statt mit leerem Bestand weiterzumachen
+          rc=0; git ls-remote --exit-code --heads "$url" deploy > /dev/null || rc=$?
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then echo "Abfrage des Branches deploy gescheitert ($rc)"; exit 1; fi
+          if [ "$rc" -eq 0 ]; then
+            git clone -q --depth 1 --branch deploy "$url" _deploy
+          else
+            git init -q -b deploy _deploy
+          fi
+          find _deploy -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r _site/. _deploy/
+          rm -f _deploy/data/export/ratsatlas-koeln-export.zip
+          cp deploy/htaccess _deploy/.htaccess
+          paket=$(python -c 'from pipeline import config; print(config.PAKET_URL)')
+          sed -i "s|href=\"data/export/ratsatlas-koeln-export.zip\"|href=\"${paket}\"|" _deploy/index.html
+          cd _deploy
+          git add -A
+          if git diff --cached --quiet; then echo "Seite unverändert"; exit 0; fi
+          git commit -q -m "Seite aus ${GITHUB_SHA::7}, erzeugt $(date -u +%F)"
+          git push -q "$url" HEAD:deploy
+
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b  # v5.0.0
+        if: steps.daten.outputs.da == 'ja'
+
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa  # v3.0.1
+        if: steps.daten.outputs.da == 'ja'
+        with:
+          path: "_site"
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.daten == 'ja'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Auf GitHub Pages veröffentlichen (Spiegel)
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346  # v5.0.1

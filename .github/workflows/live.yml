@@ -1,0 +1,81 @@
+# Prüft, ob die Seite unter der Hauptadresse (koeln.ratsatlas.de) und auf dem Spiegel bei GitHub Pages erreichbar ist
+# und aktuelle Daten zeigt. Vorerst nur auf Knopfdruck: Die Hauptadresse ist erst nach der Einrichtung in Plesk erreichbar
+# (docs/PLESK.md). Danach die Auslöser einschalten: workflow_run nach „Daten aktualisieren und Seite veröffentlichen“
+# (types: completed) und schedule täglich 7:23 UTC.
+name: Live-Prüfung
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    env:
+      HAUPT: ${{ vars.SITE_URL || 'https://koeln.ratsatlas.de/' }}
+      SPIEGEL: https://daimpad.github.io/ratsatlas-koeln/
+    steps:
+      - name: Veröffentlichung abgeschlossen?
+        if: github.event_name == 'workflow_run' && !contains(fromJSON('["success", "cancelled"]'), github.event.workflow_run.conclusion)
+        run: |
+          echo "::error::Der Lauf „Daten aktualisieren und Seite veröffentlichen“ endete mit ${{ github.event.workflow_run.conclusion }}"
+          exit 1
+
+      - name: Warten auf die Bereitstellung (Plesk holt den Branch deploy per Webhook)
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
+        run: sleep 180
+
+      - name: Hauptadresse und Spiegel prüfen
+        if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+        run: |
+          set -u
+          fail=0
+          check() {  # Adresse, erwarteter Inhalt
+            body=$(curl -fsSL --retry 3 --retry-delay 10 "$1") || { echo "::error::$1 nicht erreichbar"; fail=1; return; }
+            echo "$body" | grep -q "$2" || { echo "::error::$1 enthält nicht „$2“"; fail=1; return; }
+            echo "ok  $1"
+          }
+          for base in "$HAUPT" "$SPIEGEL"; do
+            check "$base" "Ratsatlas"
+            check "${base}data/export/koeln/index.json" "generated_at"
+            check "${base}datenschutz.html" "Verantwortlich"
+            check "${base}rss/" "Inhalte abonnieren und weiterverwenden"
+            check "${base}gebiete/" "Ratsvorlagen nach Gebiet"
+            feed="${base}data/export/koeln/feeds/ganz-koeln.xml"
+            n=$(curl -fsSL --retry 3 --retry-delay 10 "$feed" | python3 -c 'import sys, xml.etree.ElementTree as ET
+          r = ET.parse(sys.stdin).getroot(); a = "{http://www.w3.org/2005/Atom}"
+          print(len(r.findall(a + "entry")) if r.tag == a + "feed" else 0)') || n=0
+            if [ "${n:-0}" -gt 0 ]; then echo "ok  $feed ($n Einträge)"; else echo "::error::$feed ist kein Atom-Feed mit Einträgen"; fail=1; fi
+            # Graue Kartenkacheln (kacheln.yml); fehlen sie, zeigt die Seite OSM grau gefiltert: nur Hinweis
+            if curl -fsSL --retry 3 "${base}kacheln/stand.json" | grep -q '"build"' && curl -fsSIL --retry 3 "${base}kacheln/12/2127/1372.png" > /dev/null; then
+              echo "ok  ${base}kacheln/"
+            else
+              echo "::warning::${base}kacheln/ fehlt oder ist unvollständig (Rückfall auf OSM-Kacheln)"
+            fi
+          done
+          # Der Spiegel verweist mit Canonical auf die Hauptadresse
+          check "$SPIEGEL" "rel=\"canonical\" href=\"$HAUPT\""
+          check "${HAUPT}robots.txt" "Sitemap: ${HAUPT}sitemap.xml"
+          # Holt der eigene Server den Branch deploy ab? Gleicher Stand wie im Branch
+          gen() { curl -fsSL "$1?pruefung=$(date +%s)" | python3 -c 'import json,sys;print(json.load(sys.stdin)["meta"]["generated_at"])'; }
+          soll=$(gen https://raw.githubusercontent.com/${{ github.repository }}/deploy/data/export/koeln/index.json) || soll=""
+          ist=$(gen "${HAUPT}data/export/koeln/index.json") || ist=""
+          if [ -n "$soll" ] && [ "$soll" != "$ist" ]; then
+            echo "::error::$HAUPT zeigt den Stand ${ist:-unbekannt}, der Branch deploy $soll – Plesk holt den Branch nicht ab (Git → Webhook)"; fail=1
+          else
+            echo "ok  Hauptadresse auf dem Stand des Branch deploy ($soll)"
+          fi
+          exit $fail
+
+      - name: Kopfzeilen der Hauptadresse (Hinweis)
+        if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+        run: |
+          kopf() {
+            if curl -fsS --retry 3 --retry-delay 10 -D - -o /dev/null "$1" | tr -d '\r' | grep -qi "^$2:"; then echo "ok  $1 $2"
+            else echo "::warning::$1 ohne Kopfzeile $2"; fi
+          }
+          kopf "$HAUPT" X-Content-Type-Options
+          kopf "$HAUPT" Strict-Transport-Security
+          kopf "${HAUPT}data/export/koeln/index.json" Access-Control-Allow-Origin

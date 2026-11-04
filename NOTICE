@@ -4,9 +4,10 @@ Copyright (c) 2026 Damian Paderta
 Herkunft des Codes
 ------------------
 Dieser Code ist eine unabhängige Kopie (kein Fork, eigene Historie) des
-Ratsatlas Bonn aus dem Repository https://github.com/daimpad/allris-test,
-Stand Commit 9eea7eaaba8d822ac6e4b7a96357e64cce406e47 (03.11.2026),
-übernommen per git archive am 04.11.2026.
+Ratsatlas Bonn aus dem Repository https://github.com/daimpad/ratsatlas-bonn
+(zum Zeitpunkt der Kopie: daimpad/allris-test), Stand Commit
+9eea7eaaba8d822ac6e4b7a96357e64cce406e47 (03.11.2026), übernommen per git archive
+am 04.11.2026.
 
 Übernommen wurden nur Code, Seitendateien, Workflows und Dokumentation.
 Nicht übernommen wurden das Datenverzeichnis data/ sowie die Bonner
