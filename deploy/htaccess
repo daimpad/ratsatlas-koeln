@@ -1,0 +1,48 @@
+# Für den Betrieb auf einem eigenen Apache-Server (z. B. Plesk); wird als .htaccess in den
+# Branch deploy kopiert. Die Daten für ganz Bonn umfassen rund 85 MB JSON; Komprimierung
+# verringert die Übertragung auf etwa ein Zehntel.
+AddDefaultCharset utf-8
+AddType application/json .json
+AddType application/geo+json .geojson
+AddType text/tab-separated-values .tsv
+AddType application/manifest+json .webmanifest
+AddType image/svg+xml .svg
+AddType application/xml .xml
+AddCharset utf-8 .json .geojson .tsv .md .js .css .xml .ics
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json application/geo+json text/tab-separated-values text/markdown application/xml text/calendar
+</IfModule>
+
+# Daten werden täglich neu erzeugt
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType application/json "access plus 1 hour"
+  ExpiresByType application/xml "access plus 1 hour"
+  ExpiresByType application/geo+json "access plus 1 day"
+  ExpiresByType image/png "access plus 1 week"
+  ExpiresByType image/svg+xml "access plus 1 week"
+  ExpiresByType image/x-icon "access plus 1 week"
+</IfModule>
+
+# HTML, Skripte und Stile ohne Versionsnummer im Namen: immer beim Server nachfragen (ETag, meist „304“),
+# damit nach einer Veröffentlichung kein altes app.js mit neuen Daten läuft (Code-Prüfung 23.10.2026)
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|mjs|css|webmanifest|md)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  # Sicherheit: kein Einbetten in fremde Seiten (die Seite enthält ein Feld für API-Schlüssel), kein Erraten von
+  # Dateitypen, Herkunft nur als Domain weitergeben, nur HTTPS
+  Header always set Content-Security-Policy "frame-ancestors 'self'"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Strict-Transport-Security "max-age=31536000"
+  # Offene Daten und Feeds: Abruf auch aus dem Browser anderer Websites (nur lesend, ohne Cookies; wie GitHub Pages;
+  # Entscheidung des Auftraggebers 28.10.2026, Seite rss/)
+  <FilesMatch "\.(xml|json|geojson|ics|tsv|jsonld)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
+
+RedirectMatch 404 /\.git
+ErrorDocument 404 /404.html

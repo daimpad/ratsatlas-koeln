@@ -1,0 +1,25 @@
+.DS_Store
+node_modules/
+__pycache__/
+.env
+
+# Lokale Rohdaten und Build (per `python -m pipeline fetch` bzw. `build`)
+data/raw/papers.jsonl
+data/raw/consultations_lite.jsonl
+data/raw/osm_streets.json
+data/raw/osm_tiles/
+data/raw/STAND.json
+data/raw/texte.jsonl
+data/build/
+data/export/bonn/
+data/export/allris-bonn-export.zip
+dist/
+_site/
+.venv/
+_archiv/
+_kurzfassungen/
+_kontext_dl/
+tests/browser/node_modules
+data/export/audit_stufe_c.tsv
+data/export/audit_stufe_c_objekte.tsv
+_quellen/

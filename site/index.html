@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Content-Security-Policy: Skripte, Stile und Schrift nur von hier (Leaflet und Schrift lokal in vendor/ und fonts/,
+       Bibliotheken mit Integritätsprüfung), keine Inline-Skripte;
+       Verbindungen nur zu den Daten der Seite, den unterstützten Anbietern des Ratsassistenten und lokalen Modellen.
+       Inline-Stile bleiben erlaubt (Leaflet, Balken der Auswertung). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://oparl.bonn.machdenstaat.de https://api.anthropic.com https://api.mistral.ai https://openrouter.ai http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Ratsatlas Bonn – Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld</title>
+  <meta name="description" content="Was berät der Bonner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ämtern und Quellen.">
+  <meta name="author" content="Damian Paderta">
+  <meta name="robots" content="index, follow">
+  <!-- Adressen: pipeline/seo.py ersetzt https://daimpad.github.io/allris-test/ beim Veröffentlichen durch SITE_URL -->
+  <link rel="canonical" href="https://daimpad.github.io/allris-test/">
+  <meta name="theme-color" content="#7c3aed">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <!-- Feed-Erkennung: Feed über ganz Bonn (Seite rss/); app.js ergänzt den Feed des gewählten Gebiets -->
+  <link rel="alternate" type="application/atom+xml" title="Ratsatlas Bonn – ganz Bonn" href="data/export/bonn/feeds/ganz-bonn.xml">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ratsatlas Bonn">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:title" content="Ratsatlas Bonn – Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld">
+  <meta property="og:description" content="Was berät der Bonner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ämtern und Quellen.">
+  <meta property="og:url" content="https://daimpad.github.io/allris-test/">
+  <meta property="og:image" content="https://daimpad.github.io/allris-test/og-image.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ratsatlas Bonn: Karte von Bonn-Zentrum mit gebündelten Ratsvorlagen">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- strukturierte Daten (nur Daten, wird nicht ausgeführt; mit der CSP vereinbar) -->
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@graph": [
+    {"@type": "WebSite", "@id": "https://daimpad.github.io/allris-test/#website", "url": "https://daimpad.github.io/allris-test/", "name": "Ratsatlas Bonn", "inLanguage": "de",
+     "description": "Was berät der Bonner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ämtern und Quellen."},
+    {"@type": "WebApplication", "@id": "https://daimpad.github.io/allris-test/#app", "url": "https://daimpad.github.io/allris-test/", "name": "Ratsatlas Bonn", "inLanguage": "de",
+     "applicationCategory": "ReferenceApplication", "operatingSystem": "Web-Browser", "isAccessibleForFree": true,
+     "image": "https://daimpad.github.io/allris-test/og-image.jpg", "license": "https://opensource.org/licenses/MIT",
+     "creator": {"@type": "Person", "name": "Damian Paderta"},
+     "spatialCoverage": {"@type": "City", "name": "Bonn"},
+     "isBasedOn": "https://www.bonn.sitzung-online.de/oparl/bodies/1",
+     "codeRepository": "https://github.com/daimpad/allris-test"}
+  ]}
+  </script>
+  <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Nur index.json vorab (erster Kartenausschnitt); alles Übrige lädt app.js nach den Kacheln (Schritt 1b) -->
+  <link rel="preload" href="data/export/bonn/index.json" as="fetch" crossorigin>
+  <!-- Leaflet- und MarkerCluster-Stile in einer Datei (Phase 0 „Verständlichkeit“); graue Kacheln vom eigenen Server -->
+  <link rel="stylesheet" href="vendor/leaflet/karte.min.css" integrity="sha512-wwPsYmnrqEZ8LY0nw6kiMjMDYyLmsaGxUZnBvGjz1X147eRBi9XOCqkJUK2hubjKolvOUcN/w60Jgdgb+3jXCw==">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="list-closed detail-open">
+  <noscript><div class="noscript glass"><p><strong>Ratsatlas Bonn</strong> zeigt Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste. Für die Karte wird JavaScript benötigt.</p>
+    <p>Die Daten gibt es auch ohne Karte: <a href="data/export/allris-bonn-export.zip">Datenpaket (Zip)</a> · <a href="gebiete/">Vorlagen nach Gebiet</a> · <a href="data/export/bonn/vorlagen.geojson">GeoJSON</a> · <a href="https://github.com/daimpad/allris-test">Quellcode</a> · <a href="https://nozilla.de/impressum/">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></p></div></noscript>
+  <!-- Symbole (eigene Strichzeichnungen, 24er-Raster) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.6-4.6"/></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+      <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H6.5A2.5 2.5 0 0 0 4 5.5v13A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M6 17v-5M11 17V6M16 17v-8M21 17v-3"/></symbol>
+      <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16"/></symbol>
+      <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.6 3.2-6 6.5-6s6 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.6c1.8.9 3 2.7 3.2 5.4"/></symbol>
+      <symbol id="i-data" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.5"/><path d="M4.5 5.5v13c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5v-13M4.5 12c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 4 4.5v13c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2v-13c-4 0-6.5.5-8 2z"/><path d="M12 6.5v13"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+      <symbol id="i-rss" viewBox="0 0 24 24"><path d="M5 11a8 8 0 0 1 8 8M5 4.5A14.5 14.5 0 0 1 19.5 19"/><circle cx="6" cy="18" r="1.4"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11.5l-2 4 2 4H5"/></symbol>
+      <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V12M14 11.5V6a1.5 1.5 0 0 1 3 0v8a7 7 0 0 1-7 7h-.6a6 6 0 0 1-4.5-2.1L2.6 16a1.5 1.5 0 0 1 2.2-2L8 16"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+      <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4.5A1.5 1.5 0 0 1 4.5 3H12l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.3"/></symbol>
+      <symbol id="i-code" viewBox="0 0 24 24"><path d="m9 8-5 4 5 4M15 8l5 4-5 4"/></symbol>
+      <symbol id="i-assist" viewBox="0 0 24 24"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.4A7.5 7.5 0 1 1 20 12.5z"/><path d="M12.5 8.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-6 16-3-7z"/><path d="m11 13 9-9"/></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+      <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 8.5-8.5M16 7l2.5 2.5M18.5 4.5 21 7"/></symbol>
+      <symbol id="i-new" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></symbol>
+    </defs>
+  </svg>
+
+  <header>
+    <h1 class="site-title">Ratsatlas <span>Bonn</span></h1>
+    <nav class="nav glass" aria-label="Hauptmenü">
+      <div class="brand" aria-hidden="true">Ratsatlas <span>Bonn</span></div>
+      <form class="nav-search" id="nav-search" role="search">
+        <label class="visually-hidden" for="q">Vorlagen in ganz Bonn suchen</label>
+        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <input type="search" id="q" placeholder="Vorlagen in ganz Bonn suchen …" autocomplete="off" aria-controls="mega-suche">
+      </form>
+      <!-- Telefon: Gebiet, Flächen und Menüs hinter ☰ (Entscheidung 02.11.2026); auf breiten Bildschirmen ohne eigene Box -->
+      <button type="button" class="nav-burger" id="nav-burger" aria-expanded="false" aria-controls="nav-more">
+        <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>Menü</span></button>
+      <div class="nav-more" id="nav-more">
+      <label class="visually-hidden" for="f-area">Gebiet</label>
+      <select id="f-area" class="nav-area"></select>
+      <div class="nav-group seg" role="group" aria-label="Flächen ein- und ausblenden">
+        <button type="button" class="toggle" data-panel="panel-list" aria-controls="panel-list" aria-pressed="false" title="Alle Vorlagen im Gebiet als Liste">
+          <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg><span>Vorlagen</span></button>
+        <button type="button" class="toggle" data-panel="timeline-wrap" aria-controls="timeline-wrap" aria-pressed="false" title="Zeitleiste">
+          <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span>Zeitleiste</span></button>
+        <button type="button" class="toggle" data-panel="panel-detail" aria-controls="panel-detail" aria-pressed="true" title="Gewählter Vorgang">
+          <svg class="icon" aria-hidden="true"><use href="#i-doc"/></svg><span>Vorgang</span></button>
+        <button type="button" class="toggle" data-panel="panel-prozesse" aria-controls="panel-prozesse" aria-pressed="false" title="Verfahren, Gremien und Ämter: wer entscheidet was?">
+          <svg class="icon" aria-hidden="true"><use href="#i-route"/></svg><span>Prozesse</span></button>
+        <button type="button" class="toggle toggle-ai" data-panel="panel-assistent" aria-controls="panel-assistent" aria-pressed="false" title="Ratsassistent (KI)">
+          <svg class="icon" aria-hidden="true"><use href="#i-assist"/></svg><span>Assistent</span></button>
+      </div>
+      <div class="nav-group" role="group" aria-label="Menü">
+        <button type="button" class="menu-btn" data-mega="mega-auswertung" aria-expanded="false" aria-controls="mega-auswertung">
+          <svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Auswertung</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        <button type="button" class="menu-btn" data-mega="mega-mitmachen" aria-expanded="false" aria-controls="mega-mitmachen">
+          <svg class="icon" aria-hidden="true"><use href="#i-people"/></svg><span>Mitmachen</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        <button type="button" class="menu-btn" data-mega="mega-daten" aria-expanded="false" aria-controls="mega-daten">
+          <svg class="icon" aria-hidden="true"><use href="#i-data"/></svg><span>Daten</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        <button type="button" class="menu-btn" data-mega="mega-verstehen" aria-expanded="false" aria-controls="mega-verstehen">
+          <svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span>Verstehen</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        <button type="button" class="menu-btn" id="about-open" aria-haspopup="dialog">
+          <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>Über</span></button>
+      </div>
+      </div>
+    </nav>
+
+    <!-- Mega-Menüs -->
+    <section class="mega glass" id="mega-suche" aria-label="Suche und Schnellfilter" hidden>
+      <div class="mega-head">
+        <div class="seg scope-switch" role="radiogroup" aria-label="Suchen in">
+          <button type="button" role="radio" data-scope="bonn" aria-checked="true">in ganz Bonn</button>
+          <button type="button" role="radio" data-scope="gebiet" aria-checked="false">im gewählten Gebiet</button>
+        </div>
+        <p class="mega-count" id="mega-count" aria-live="polite"></p>
+      </div>
+      <h3 class="mega-label"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>Themen</h3>
+      <div class="chips" id="chips-theme" role="group" aria-label="Thema wählen"></div>
+      <h3 class="mega-label"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Partei / Fraktion</h3>
+      <div class="chips" id="chips-party" role="group" aria-label="Partei oder Fraktion wählen"></div>
+      <div class="doc-search">
+        <button type="button" class="btn btn-soft" id="doc-search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>Auch im Text der Dokumente suchen</button>
+        <p class="hint" id="doc-status" aria-live="polite"></p>
+        <p class="hint">Fragt die Volltextsuche von OParl-Lite (machdenstaat) ab, erst nach dem Klick. Gezeigt werden die Vorlagen, kein Textausschnitt; bisher hat nur ein Teil der Dokumente einen Text.</p>
+      </div>
+      <div class="mega-foot">
+        <button type="button" class="btn btn-ghost" id="mega-reset">Filter zurücksetzen</button>
+        <button type="button" class="btn btn-cta" id="mega-show"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Treffer in der Liste zeigen</button>
+      </div>
+    </section>
+
+    <section class="mega glass" id="mega-auswertung" aria-label="Auswertung" hidden>
+      <div class="cards">
+        <button type="button" class="card" data-open-tab="stats">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span>
+          <span class="card-title">Kennzahlen zum Gebiet</span>
+          <span class="card-text">Vorlagen nach Thema, Partei, Jahr und Stand. Ein Klick auf einen Balken filtert die Liste.</span>
+        </button>
+        <button type="button" class="card" data-open-tab="wege">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg></span>
+          <span class="card-title">Verfahrenswege (Statistik)</span>
+          <span class="card-text">Welche Gremien beraten welche Vorlagenart, und wie endet das Verfahren meistens? Ganz Bonn.</span>
+        </button>
+        <a class="card" href="thema/">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>
+          <span class="card-title">Themenseiten</span>
+          <span class="card-text">Kultur, Verkehr, Schule, Wohnen, Klima, Kinder, Soziales, Sicherheit, Wirtschaft, Digitales: Vorlagen, Verfahren, nächste Sitzungen und Haushalt je Thema, mit Prozessbild.</span></a>
+        <a class="card" href="haushalt/">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span>
+          <span class="card-title">Haushalt auf einen Blick</span>
+          <span class="card-text">Aufwendungen, Erträge nach Art, Ergebnis und Investitionen der 17 Produktbereiche: Plan und Ist aus Haushaltsplänen und Jahresabschluss der Stadt, mit Fundstelle und je Einwohner.</span></a>
+      </div>
+    </section>
+
+    <section class="mega glass" id="mega-mitmachen" aria-label="Mitmachen und abonnieren" hidden>
+      <div class="cards">
+        <div class="card static">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg></span>
+          <span class="card-title">Kommende Sitzungen</span>
+          <span class="card-text">Rat, Ausschüsse und Bezirksvertretungen tagen in der Regel öffentlich.</span>
+          <span class="card-actions">
+            <button type="button" class="btn btn-cta" id="cta-termine"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Termine anzeigen</button>
+            <a class="btn btn-soft" href="data/export/bonn/termine.ics" download><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Kalender (.ics)</a>
+          </span>
+        </div>
+        <div class="card static">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg></span>
+          <span class="card-title">Informiert bleiben</span>
+          <span class="card-text" id="cta-feed-text">Neue Vorlagen und Beratungsergebnisse im gewählten Gebiet per Feed-Reader erhalten.</span>
+          <span class="card-actions" id="cta-feed"></span>
+        </div>
+        <div class="card static">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg></span>
+          <span class="card-title">Selbst mitwirken</span>
+          <span class="card-text">Mit einem Bürgerantrag (§ 24 GO NRW) bringen Sie Anregungen und Beschwerden selbst ein.</span>
+          <span class="card-actions">
+            <a class="btn btn-cta" href="https://www.bonn.de/vv/produkte/buergerantrag-anregungen-und-beschwerden-gemaess-24-gemeindeordnung-nrw.php" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-external"/></svg>Bürgerantrag stellen<span class="visually-hidden"> (Seite der Stadt Bonn, neuer Tab)</span></a>
+            <button type="button" class="btn btn-soft" id="cta-mitmachen"><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg>Alle Wege im Überblick</button>
+          </span>
+        </div>
+        <div class="card static">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg></span>
+          <span class="card-title">Fehler melden</span>
+          <span class="card-text">Ort falsch zugeordnet oder etwas unklar? Ein Hinweis hilft, die Karte zu verbessern.</span>
+          <span class="card-actions"><a class="btn btn-soft" id="cta-report" href="https://github.com/daimpad/allris-test/issues/new/choose" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg>Hinweis geben</a></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="mega glass" id="mega-daten" aria-label="Daten und Quellen" hidden>
+      <div class="cards cards-3">
+        <a class="card" href="data/export/allris-bonn-export.zip" download>
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg></span>
+          <span class="card-title">Datenpaket (Zip)</span>
+          <span class="card-text">Alle Exporte, Audit-Protokolle und Lizenzen.</span></a>
+        <a class="card" href="data/export/bonn/vorlagen.geojson" download>
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-data"/></svg></span>
+          <span class="card-title">Verortete Vorlagen (GeoJSON)</span>
+          <span class="card-text">Ein Punkt je Vorlage und Straße, mit Fundstelle.</span></a>
+        <a class="card" href="data/export/bonn/dcat.jsonld">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>
+          <span class="card-title">Datensatzbeschreibung (DCAT-AP)</span>
+          <span class="card-text">Für Open-Data-Portale; mit Lizenzen je Datei.</span></a>
+      </div>
+      <p class="mega-links"><button type="button" class="btn btn-soft" data-neu><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Version 1.0: Was ist neu?</button>
+        <a class="btn btn-soft" href="rss/"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Feeds abonnieren und einbinden</a></p>
+    </section>
+    <!-- Verstehen (Entscheidung 02.11.2026): Hilfen zum Lesen der Karte, bisher unter „Daten“ -->
+    <section class="mega glass" id="mega-verstehen" aria-label="Verstehen: Hilfen zum Lesen der Karte" hidden>
+      <div class="cards cards-3">
+        <a class="card" href="einfach/">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span>
+          <span class="card-title">Einfache Sprache</span>
+          <span class="card-text">Was die Karte zeigt, wer in Bonn entscheidet und wie Sie mitmachen können, in kurzen Sätzen.</span></a>
+        <a class="card" href="begriffe/">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>
+          <span class="card-title">Begriffe erklärt</span>
+          <span class="card-text">Vorlagenarten, Kürzel, Beratung und Haushalt in einfachen Worten, mit Fundstelle.</span></a>
+        <button type="button" class="card" data-about="pruefung">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></span>
+          <span class="card-title">Wie verlässlich sind die Angaben?</span>
+          <span class="card-text">Woher Orte und Themen stammen und was die Prüfungen von Hand ergeben haben.</span></button>
+        <a class="card" href="technik/">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>
+          <span class="card-title">So funktioniert der Ratsatlas</span>
+          <span class="card-text">Woher die Daten kommen, was jeden Morgen passiert und welche Technik dahintersteht, in vier Grafiken.</span></a>
+      </div>
+      <p class="mega-links"><button type="button" class="btn btn-soft" data-tour><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg>Tour durch alle Funktionen</button></p>
+    </section>
+  </header>
+
+  <main>
+    <section id="panel-list" class="panel glass" aria-labelledby="list-heading" hidden>
+      <div class="resizer" data-resize="list" role="separator" tabindex="0" aria-orientation="vertical" aria-controls="panel-list" aria-label="Breite der Liste ändern (Pfeiltasten)"></div>
+      <div class="panel-head">
+        <h2 id="list-heading" tabindex="-1">Vorlagen</h2>
+        <button type="button" class="icon-btn" data-close="panel-list" aria-label="Liste einklappen">‹</button>
+      </div>
+      <div class="panel-body">
+        <form class="filters" id="filters" role="search" aria-label="Vorlagen filtern">
+          <fieldset class="scope" id="scope" hidden>
+            <legend class="visually-hidden">Suchen in</legend>
+            <label><input type="radio" name="scope" value="gebiet" checked> im gewählten Gebiet</label>
+            <label><input type="radio" name="scope" value="bonn"> in ganz Bonn</label>
+          </fieldset>
+          <label>Stichwort
+            <input type="search" id="f-text" placeholder="z. B. Radweg, Kita, 261856" autocomplete="off">
+          </label>
+          <div class="filter-row">
+            <label>Vorlagenart
+              <select id="f-type"><option value="">alle</option></select>
+            </label>
+            <label>Stand
+              <select id="f-stand">
+                <option value="">alle</option>
+                <option>entschieden</option>
+                <option>beraten, ohne Entscheidung</option>
+                <option>in Beratung</option>
+                <option>offen</option>
+                <option>ohne Beratungsfolge</option>
+              </select>
+            </label>
+          </div>
+          <div class="filter-row">
+            <label>Thema
+              <select id="f-theme"><option value="">alle</option></select>
+            </label>
+            <label>Partei / Fraktion
+              <select id="f-party"><option value="">alle</option></select>
+            </label>
+          </div>
+          <label class="check" id="f-related-wrap" hidden><input type="checkbox" id="f-related" checked> auch Stellungnahmen und Folgevorlagen zu ihren Anträgen</label>
+          <details class="acc" id="more-filters">
+            <summary>Weitere Filter<span class="active-filters" id="active-filters"></span></summary>
+            <div class="filters">
+              <label>Federführendes Amt
+                <select id="f-amt"><option value="">alle</option></select>
+              </label>
+              <label>Gremium
+                <select id="f-gremium"><option value="">alle</option></select>
+              </label>
+              <fieldset id="f-conf">
+                <legend>Ortsangabe</legend>
+                <label class="check"><input type="checkbox" value="hoch" checked> gesichert <span class="hint">(Koordinate oder Bebauungsplan der Stadt)</span></label>
+                <label class="check"><input type="checkbox" value="mittel" checked> erschlossen <span class="hint">(Name im Titel)</span></label>
+                <label class="check"><input type="checkbox" value="niedrig" checked> unsicher <span class="hint">(mehrdeutig)</span></label>
+              </fieldset>
+            </div>
+          </details>
+        </form>
+        <p class="count" id="count" aria-live="polite"></p>
+        <p class="subscribe" id="subscribe" hidden></p>
+        <details class="acc kontext" id="kontext-box" hidden><summary>Zahlen zum Gebiet</summary></details>
+        <ol class="papers" id="papers" tabindex="-1"></ol>
+      </div>
+    </section>
+
+    <section id="timeline-wrap" class="glass" aria-label="Zeitleiste" hidden></section>
+
+    <section id="panel-assistent" class="panel glass chat" aria-labelledby="assistent-heading" hidden>
+      <div class="panel-head">
+        <h2 id="assistent-heading" tabindex="-1">Ratsassistent <span class="ai-badge">KI</span></h2>
+        <span class="chat-head-actions">
+          <button type="button" class="icon-btn" id="chat-new" aria-label="Neues Gespräch" title="Neues Gespräch"><svg class="icon" aria-hidden="true"><use href="#i-new"/></svg></button>
+          <button type="button" class="icon-btn" data-close="panel-assistent" aria-label="Assistent einklappen">‹</button>
+        </span>
+      </div>
+      <div class="panel-body chat-body" id="chat-body">
+        <div class="chat-intro" id="chat-intro">
+          <p><strong>Dies ist ein KI-System.</strong> Ein Sprachmodell beantwortet Fragen zu Bonner Ratsvorgängen und nutzt dafür ausschließlich die Daten dieser Seite. Antworten können Fehler enthalten; maßgeblich sind die verlinkten Originale.</p>
+          <p><strong>Datenschutz:</strong> Ihre Fragen gehen direkt von Ihrem Browser an den gewählten Anbieter und unterliegen dessen Bedingungen. Das Projekt speichert keine Gesprächsinhalte und wertet sie nicht aus. Bitte geben Sie keine persönlichen Daten ein.</p>
+          <details class="acc"><summary>Was der Assistent nicht kann</summary><ul>
+            <li>Keine Rechtsberatung und keine Bewertung von Parteien, Personen oder Beschlüssen.</li>
+            <li>Er durchsucht Titel und Angaben der Vorlagen, nicht die Texte der Dokumente.</li>
+            <li>Nichtöffentliche Beratungen, die Arbeit in der Verwaltung und die Umsetzung von Beschlüssen sind nicht einsehbar.</li>
+            <li>Vorlagen vor Oktober 2019 und Abstimmungsergebnisse einzelner Fraktionen sind nicht enthalten.</li>
+          </ul></details>
+          <button type="button" class="btn btn-cta" id="chat-consent">Verstanden</button>
+        </div>
+
+        <details class="acc chat-settings" id="chat-settings">
+          <summary><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span id="chat-settings-summary">Anbieter und Schlüssel</span></summary>
+          <div class="chat-settings-body">
+            <label for="chat-provider">Anbieter</label>
+            <select id="chat-provider"></select>
+            <label for="chat-model">Modell</label>
+            <input id="chat-model" list="chat-models" autocomplete="off" spellcheck="false">
+            <datalist id="chat-models"></datalist>
+            <div id="chat-base-wrap" hidden>
+              <label for="chat-base">Adresse des lokalen Servers</label>
+              <input id="chat-base" placeholder="http://localhost:11434" autocomplete="off" spellcheck="false">
+              <p class="hint">Nur <code>http://localhost</code> oder <code>http://127.0.0.1</code>. Der Server muss Anfragen von dieser Seite erlauben, bei Ollama etwa mit <code>OLLAMA_ORIGINS</code>.</p>
+            </div>
+            <div id="chat-key-wrap">
+              <label for="chat-key">API-Schlüssel</label>
+              <input id="chat-key" type="password" autocomplete="off" spellcheck="false" placeholder="Schlüssel einfügen">
+              <label class="check"><input type="checkbox" id="chat-remember"> Bis zum Schließen des Tabs merken</label>
+              <p class="hint">Der Schlüssel geht nur an den gewählten Anbieter, sonst nirgendwohin. Legen Sie einen eigenen Schlüssel mit Ausgabenlimit an; die Kosten tragen Sie. <a id="chat-key-link" href="#" target="_blank" rel="noopener">Schlüssel beim Anbieter anlegen</a></p>
+              <button type="button" class="btn btn-ghost" id="chat-key-clear">Schlüssel löschen</button>
+            </div>
+          </div>
+        </details>
+
+        <div class="chat-log" id="chat-log" role="log" aria-label="Gesprächsverlauf"></div>
+        <div class="chat-examples" id="chat-examples">
+          <p class="hint">Zum Beispiel:</p>
+          <button type="button" class="chip">Was wurde 2026 zur Endenicher Straße beraten?</button>
+          <button type="button" class="chip">Wann tagt die Bezirksvertretung Bonn das nächste Mal?</button>
+          <button type="button" class="chip">Wo steht Vorlage 261798?</button>
+          <button type="button" class="chip">Was bedeutet „zur Kenntnis genommen“?</button>
+        </div>
+      </div>
+      <form class="chat-form" id="chat-form">
+        <label class="check chat-context"><input type="checkbox" id="chat-context" checked> <span id="chat-context-text">Gebiet und Zeitraum der Karte mitschicken</span></label>
+        <label class="visually-hidden" for="chat-input">Frage an den Ratsassistenten</label>
+        <div class="chat-compose">
+          <textarea id="chat-input" rows="2" placeholder="Frage zu Bonner Ratsvorgängen …" disabled></textarea>
+          <button type="submit" class="btn btn-cta" id="chat-send" disabled><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg><span>Fragen</span></button>
+          <button type="button" class="btn btn-soft" id="chat-stop" hidden><svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg><span>Abbrechen</span></button>
+        </div>
+        <p class="hint chat-status" id="chat-status"></p>
+        <p class="visually-hidden" id="chat-announce" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section id="panel-detail" class="panel glass" aria-labelledby="detail-heading">
+      <div class="resizer" data-resize="detail" role="separator" tabindex="0" aria-orientation="vertical" aria-controls="panel-detail" aria-label="Breite des Vorgangs ändern (Pfeiltasten)"></div>
+      <div class="panel-head">
+        <h2 id="detail-heading" tabindex="-1">Los geht's</h2>
+        <button type="button" class="icon-btn" data-close="panel-detail" aria-label="Detail einklappen">›</button>
+      </div>
+      <div class="panel-body detail" id="detail"></div>
+    </section>
+
+    <section id="panel-auswertung" class="glass overlay" aria-labelledby="auswertung-heading" hidden>
+      <div class="panel-head">
+        <h2 id="auswertung-heading" tabindex="-1">Auswertung</h2>
+        <button type="button" class="icon-btn" data-close="panel-auswertung" aria-label="Auswertung schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Auswertung">
+        <button type="button" role="tab" id="tab-stats" aria-controls="stats" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Kennzahlen zum Gebiet</button>
+        <button type="button" role="tab" id="tab-wege" aria-controls="wege" aria-selected="false" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg>Verfahrenswege</button>
+      </div>
+      <div class="panel-body" id="stats" role="tabpanel" aria-labelledby="tab-stats"></div>
+      <div class="panel-body" id="wege" role="tabpanel" aria-labelledby="tab-wege" hidden></div>
+    </section>
+
+    <section id="panel-prozesse" class="glass overlay overlay-wide" aria-labelledby="prozesse-heading" hidden>
+      <div class="panel-head">
+        <h2 id="prozesse-heading" tabindex="-1">Prozesse: Wer entscheidet was?</h2>
+        <button type="button" class="icon-btn" data-close="panel-prozesse" aria-label="Prozesse schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="pz-bar">
+        <div class="tabs" role="tablist" aria-label="Prozesse">
+          <button type="button" role="tab" id="tab-pz-verfahren" data-tab="verfahren" aria-controls="pz-body" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg>Verfahren</button>
+          <button type="button" role="tab" id="tab-pz-gremien" data-tab="gremien" aria-controls="pz-body" aria-selected="false" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Gremien</button>
+          <button type="button" role="tab" id="tab-pz-aemter" data-tab="aemter" aria-controls="pz-body" aria-selected="false" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-data"/></svg>Ämter</button>
+        </div>
+        <div class="seg pz-view" role="radiogroup" aria-label="Darstellung">
+          <button type="button" role="radio" data-view="schaubild" aria-checked="true">Schaubild</button>
+          <button type="button" role="radio" data-view="liste" aria-checked="false">Liste</button>
+        </div>
+      </div>
+      <div class="panel-body" id="pz-body" role="tabpanel" aria-labelledby="tab-pz-verfahren"><p class="hint">Lädt …</p></div>
+    </section>
+
+    <section id="panel-termine" class="glass overlay" aria-labelledby="termine-heading" hidden>
+      <div class="panel-head">
+        <h2 id="termine-heading" tabindex="-1">Kommende Sitzungen</h2>
+        <button type="button" class="icon-btn" data-close="panel-termine" aria-label="Termine schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="panel-body" id="termine"></div>
+    </section>
+
+    <section id="panel-mitmachen" class="glass overlay overlay-wide" aria-labelledby="mitmachen-heading" hidden>
+      <div class="panel-head">
+        <h2 id="mitmachen-heading" tabindex="-1">Mitmachen in Bonn</h2>
+        <button type="button" class="icon-btn" data-close="panel-mitmachen" aria-label="Mitmachen in Bonn schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="panel-body" id="bt-body"><p class="hint" aria-live="polite">Wird geladen …</p></div>
+    </section>
+
+    <!-- Quellen, Lizenzen und Datenstand: auf der Karte unter den Legenden (app.js setzt das Element in den Stapel) -->
+    <details class="map-legend map-sources" id="sources">
+      <summary>Quellen, Lizenzen und Datenstand</summary>
+      <div>
+        <p>OParl-API der Stadt Bonn (CC0 1.0) · OParl-Lite Bonn, machdenstaat (CC BY 4.0; Sitzungen, Tagesordnungspunkte, Ergebnisse) · Texte der Dokumente über OParl-Lite (nur zur Verortung verarbeitet, nicht wiedergegeben) · Ortsteil- und Bezirksflächen, Hausnummernverzeichnis (nur zur Bestimmung des Ortsteils), Geltungsbereiche der Bebauungspläne und Baustellen der Stadt Bonn (CC0 1.0; Baustellen: Termine unverbindlich, Archiv ab 19.10.2026, „mögliche Umsetzung“ ist ein Indiz, kein Beleg) · Straßen, Gebäude und Anlagen sowie Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0; graue Karte aus einem Ausschnitt von Protomaps, vierteljährlich erneuert) · Beträge je Produktbereich aus den Haushaltsplänen 2023/2024 und 2025/2026 und dem Jahresabschluss 2024 der Stadt Bonn (PDF, ausgelesen; keine Lizenzangabe der Stadt) · Zahl der Meldungen im Anliegen- und Mängelmelder der Stadt Bonn (CC0 1.0; nur Kategorie, Tag, Ortsteil und Status, eigenes Archiv ab Ende Oktober 2026) · Zahlen zum Gebiet (abgeleitet, auf Ortsteile umgerechnet): Zensus 2022 © Statistisches Bundesamt (Destatis), Kitas Land NRW (dl-de/by-2.0), Bodenrichtwerte BORIS NRW, Klimaanalyse und Überschwemmungsgebiete NRW, Haltestellen VRS (dl-de/zero-2.0), Wahlbeteiligung der Ratswahl 2025 nach Stimmbezirken (IT.NRW als Übergang, amtliches Ergebnis; Zuordnung über das Straßenverzeichnis 2020 der Stadt, CC0); die zuschaltbaren Flächen Überschwemmungsgebiete und Bodenrichtwerte sind vereinfacht, verbindlich sind die Karten des Landes. Abgeleitete Angaben sind gekennzeichnet.</p>
+        <p id="stand"></p>
+        <p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/bonn/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersicht nach Gebiet</a> · <a href="https://github.com/daimpad/allris-test">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a></p>
+      </div>
+    </details>
+    <div id="map" role="region" aria-label="Karte der Vorlagen im gewählten Gebiet. Alle Vorlagen stehen auch in der Liste; Gebiete lassen sich auf der Karte anklicken oder oben über die Auswahl „Gebiet“ wählen."></div>
+  </main>
+
+
+  <dialog id="about" class="glass" aria-labelledby="about-heading">
+    <div class="panel-head">
+      <h2 id="about-heading">Über den Ratsatlas Bonn</h2>
+      <button type="button" class="icon-btn" id="about-close" aria-label="Schließen">×</button>
+    </div>
+    <div class="about-body">
+      <h3>Worum geht es?</h3>
+      <p>Der Ratsatlas zeigt, womit sich der Rat, die Bezirksvertretungen und die Ausschüsse der Stadt Bonn beschäftigen – auf einer Karte, auf einer Zeitleiste und als Liste. Grundlage ist das Ratsinformationssystem (RIS) der Stadt Bonn. Dort stehen alle öffentlichen Vorlagen seit Oktober 2019.</p>
+
+      <h3>Was ist eine Vorlage?</h3>
+      <p>Ein Schriftstück, über das ein politisches Gremium berät: etwa ein Antrag einer Fraktion, eine Beschlussvorlage der Verwaltung, eine Anfrage, eine Stellungnahme oder ein Bürgerantrag. Jede Vorlage hat eine Drucksachennummer, zum Beispiel 261856.</p>
+
+      <h3>So benutzen Sie die Karte</h3>
+      <ol>
+        <li>Die Karte zeigt zuerst ganz Bonn. Klicken Sie einen Stadtbezirk und dann einen Ortsteil an, oder wählen Sie oben unter „Gebiet wählen“ einen Ortsteil, einen ganzen Stadtbezirk oder Vorlagen ohne Ortsbezug.</li>
+        <li>Klicken Sie in der Liste oder auf der Karte eine Vorlage an.</li>
+        <li>Rechts sehen Sie den Vorgang: wer ihn eingebracht hat, welches Amt zuständig ist und welche Gremien wann darüber beraten haben.</li>
+        <li>Mit der Zeitleiste grenzen Sie den Zeitraum ein. Alle Flächen lassen sich über die Leiste oben ein- und ausklappen; Liste und Vorgang lassen sich am Rand breiter ziehen.</li>
+        <li>Über das Suchfeld oben finden Sie Vorlagen in ganz Bonn, auch nach Thema und Partei.</li>
+      </ol>
+      <p><button type="button" class="btn btn-soft" data-tour>Tour durch alle Funktionen starten</button></p>
+
+      <h3>Was bedeutet der Stand?</h3>
+      <dl>
+        <dt>entschieden</dt><dd>Das zuständige Gremium hat abschließend entschieden, zum Beispiel beschlossen oder abgelehnt.</dd>
+        <dt>beraten, ohne Entscheidung</dt><dd>Die Vorlage wurde beraten, eine Entscheidung war nicht vorgesehen – etwa bei Mitteilungen, die zur Kenntnis genommen werden.</dd>
+        <dt>in Beratung</dt><dd>Einige Beratungen haben stattgefunden, andere stehen noch aus oder wurden vertagt.</dd>
+        <dt>offen</dt><dd>Die Vorlage ist noch in keiner Sitzung behandelt worden.</dd>
+        <dt>ohne Beratungsfolge</dt><dd>Für die Vorlage ist keine Beratung in einem Gremium vorgesehen oder erfasst.</dd>
+      </dl>
+
+      <h3 id="about-pruefung" tabindex="-1">Wie sicher sind die Angaben?</h3>
+      <p>Die meisten Angaben stammen unverändert aus dem Ratsinformationssystem. Erschlossene Angaben – etwa der Ort aus dem Titel oder dem Text eines Dokuments, das Datum einer Sitzung oder das Thema – sind als „abgeleitet“ gekennzeichnet; aus Dokumenten zeigt die Karte nur den erkannten Ort, keinen Textauszug. Bei Orten unterscheiden wir: <strong>gesichert</strong> (Koordinate der Stadt oder eindeutig erkannter Bebauungsplan mit Geltungsbereich), <strong>erschlossen</strong> (Straßen- oder Ortsteilname im Titel) und <strong>unsicher</strong> (der Name passt zu mehreren Orten). Wohnadressen von Privatpersonen werden nicht gezeigt. Abgeleitete Angaben werden in Stichproben von Hand geprüft (richtig / teilweise / falsch):</p>
+      <ul>
+        <li>Ort aus dem Titel, Endenich (50 Vorlagen, 20.10.2026): 41 / 4 / 5; danach zwei Regeln verbessert</li>
+        <li>Gebäude und Anlagen im Titel (30 Vorlagen, 22.10.2026): 24 / 6 / 0</li>
+        <li>Ort aus dem Text der Dokumente (22 Vorlagen, 22.10.2026): 14 / 7 / 1</li>
+        <li>Themen (49 Vorlagen, 20.10.2026): 46 / 2 / 1</li>
+        <li>KI-Kurzfassungen (30 Vorlagen, 22.10.2026): 18 / 12 / 0</li>
+        <li>Verfahren nach Regelwerk (30 Vorgänge): 30 / 0 / 0</li>
+        <li>Themenseiten, Zuordnung zu den Strängen (passend / teilweise / unpassend), 25. und 26.10.2026: Kultur 15 / 7 / 0, Verkehr 16 / 3 / 5, Schule 18 / 3 / 3, Wohnen 19 / 5 / 1, Klima 17 / 6 / 2; 02.11.2026: Kinder 23 / 1 / 1, Soziales 24 / 0 / 1, Sicherheit 24 / 0 / 1, Wirtschaft 21 / 3 / 1, Digitales 24 / 1 / 0, Verkehr (Tempo und Verkehrsregeln) 24 / 1 / 0; danach jeweils Regeln ergänzt</li>
+      </ul>
+      <p>„Teilweise“ heißt: im Kern richtig, eine Einzelheit ungenau. Ein Teil der Urteile sind Vorschläge, denen der Auftraggeber im Gespräch nicht widersprochen hat. Die Prüfbögen stehen im Datenpaket und im <a href="https://github.com/daimpad/allris-test/blob/main/ABNAHME.md">Projekt auf GitHub</a>.</p>
+
+      <h3>Nach Themen und Parteien suchen</h3>
+      <p>In der Liste lassen sich Vorlagen nach Thema (zum Beispiel Verkehr, Bauen, Umwelt) und nach Partei oder Fraktion filtern – im gewählten Gebiet oder in ganz Bonn. Die Themen sind aus dem zuständigen Amt, dem beratenden Ausschuss und Stichworten im Titel abgeleitet; bei jeder Vorlage steht, worauf die Zuordnung beruht. Parteien stammen aus den Einreichenden eines Antrags; auf Wunsch erscheinen auch die Antworten der Verwaltung darauf. Die Suche kann auch im Text der Dokumente suchen (über OParl-Lite, erst nach einem Klick).</p>
+
+      <h3 id="about-seiten" tabindex="-1">Weitere Seiten</h3>
+      <ul>
+        <li><a href="thema/">Themenseiten</a>: zehn Themen (Kunst und Kultur, Verkehr und Mobilität, Schule und Bildung, Wohnen und Bauen, Klima und Umwelt, Kinder, Jugend und Familie, Soziales, Gesundheit und Integration, Sicherheit und Ordnung, Wirtschaft und Wissenschaft, Digitale Verwaltung) mit Prozessbild, nächsten Sitzungen und meist mit Haushalt im Produktbereich; die Zuordnung folgt festen Regeln, bei jeder Vorlage steht der Grund.</li>
+        <li><a href="haushalt/">Haushalt auf einen Blick</a>: Aufwendungen der 17 Produktbereiche, Plan und Ist aus den Haushaltsplänen und dem Jahresabschluss 2024, nominal und ohne Bewertung; ein Klick zeigt die Produktgruppen und ihre Aufwandsarten; dazu Veränderung und Investitionen.</li>
+        <li>Reiter „Prozesse“: Verfahren mit Schritten und Fristen, Gremien mit Zuständigkeit und Besetzung, Ämter.</li>
+        <li>Zahlen zum Gebiet: in der Liste unter „Zahlen zu …“ und als Flächenfarbe auf der Karte (abgeleitet, zur Einordnung).</li>
+        <li><a href="gebiete/">Vorlagen nach Gebiet</a>: eine Übersichtsseite je Ortsteil und Stadtbezirk.</li>
+        <li><a href="begriffe/">Begriffe</a>: Vorlagenarten, Gremien, Ergebnisse und Kürzel in einfachen Worten, mit Fundstelle; im Vorgang erklärt ein „?“ neben dem Begriff.</li>
+        <li><a href="einfach/">Der Ratsatlas in Einfacher Sprache</a>: was die Karte zeigt, wer in Bonn entscheidet und wie man mitmachen kann.</li>
+        <li><a href="technik/">So funktioniert der Ratsatlas</a>: Datenquellen, Datenfluss, Zeitplan der automatischen Läufe und Technik, in vier anklickbaren Grafiken.</li>
+      </ul>
+
+      <h3>Ebenen und Legenden</h3>
+      <p>Unter „Ebenen“ auf der Karte lassen sich die Geltungsbereiche der Bebauungspläne, gemeldete Baustellen, Überschwemmungsgebiete und Bodenrichtwerte einblenden, die Punkte nach Thema färben und der Kartenhintergrund farbig zeigen. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick; in der obersten wählen Sie, wonach die Flächen gefärbt werden. Darunter stehen Quellen, Lizenzen und Datenstand. Links zu anderen Seiten, etwa den Dokumenten der Stadt, öffnen sich in einem neuen Tab. Der Ratsassistent beantwortet Fragen zu den Vorlagen; Sie brauchen dafür einen eigenen Schlüssel eines KI-Anbieters.</p>
+
+      <h3>Informiert bleiben</h3>
+      <p>Unter „Mitmachen“ finden Sie einen <strong>Feed</strong> für das gewählte Gebiet, bei einer Vorlage einen Feed für genau diesen Vorgang. Ein Feed-Reader (zum Beispiel im Browser oder E-Mail-Programm) meldet dann neue Vorlagen und Beratungsergebnisse. Den Feed für ganz Bonn, alle weiteren Feeds und eine Anleitung zum Einbinden finden Sie unter <a href="rss/">Abonnieren und weiterverwenden</a>. Unter „Mitmachen“ → „Termine anzeigen“ stehen die kommenden Sitzungen; sie lassen sich als Kalenderdatei in den eigenen Kalender übernehmen.</p>
+
+      <h3>Was die Karte nicht kann</h3>
+      <p>Sie ersetzt nicht das Original: Maßgeblich ist immer das Dokument im Ratsinformationssystem, zu dem jede Vorlage verlinkt. Nichtöffentliche Beratungen, die Arbeit innerhalb der Verwaltung und die Umsetzung von Beschlüssen sind von außen nicht einsehbar. Gemeldete Baustellen der Stadt können ein Hinweis auf die Umsetzung sein („Mögliche Umsetzung“), sind aber kein Beleg.</p>
+
+      <h3 id="about-mitwirken" tabindex="-1">Selbst mitwirken</h3>
+      <p>Welche Wege bei einem Vorgang offen sind, zeigt dort der Abschnitt „Selbst mitwirken“; alle Wege je Stadtbezirk stehen unter „Mitmachen“ → „Alle Wege im Überblick“.</p>
+
+      <h3>Wer steckt dahinter?</h3>
+      <p>Den Ratsatlas hat <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span></a> im Rahmen des Hackathons „Hack den Stadtrat“ erstellt; Hintergründe stehen im Blogbeitrag <a href="https://paderta.com/ris-karte-bonn-ratsinformationsdaten-der-stadt-bonn-im-ueberblick/" target="_blank" rel="noopener">„Ratsatlas Bonn – Ratsinformationsdaten der Stadt Bonn im Überblick“<span class="visually-hidden"> (paderta.com, neuer Tab)</span></a>. Sie ist ein offenes Projekt; der Code steht unter MIT-Lizenz. Die Daten stammen von der Stadt Bonn (CC0), aus OParl-Lite von machdenstaat (CC BY 4.0) und aus OpenStreetMap (ODbL). Das Modell der Verfahren nach Regelwerk (Abschnitt „Nach Regelwerk (Soll)“ und Hinweise unter „Selbst mitwirken“) stammt aus dem Projekt <a href="https://github.com/anster2025/bonn-entscheidet" target="_blank" rel="noopener">„Bonn entscheidet“<span class="visually-hidden"> (GitHub, neuer Tab)</span></a> von <a href="https://github.com/anster2025" target="_blank" rel="noopener">Thomas (anster2025)<span class="visually-hidden"> (GitHub, neuer Tab)</span></a>, MIT-Lizenz; die Ratsatlas hat es um eigene, belegte Schritte ergänzt. Fehler können Sie über „Verortung falsch?“ bei einer Vorlage oder im <a href="https://github.com/daimpad/allris-test/issues">Projekt auf GitHub</a> melden.</p>
+
+      <h3 id="about-impressum" tabindex="-1">Kontakt, Impressum und Datenschutz</h3>
+      <p>Schrift, Programmbibliotheken und die graue Karte kommen vom Server dieser Seite. Nur bei „Farbige Karte“ lädt Ihr Browser die Kacheln von OpenStreetMap (tile.openstreetmap.org); die Suche im Text der Dokumente fragt erst nach einem Klick OParl-Lite (oparl.bonn.machdenstaat.de) ab. Der Ratsassistent sendet Fragen erst, wenn Sie ihn einrichten, und nur an den gewählten Anbieter.</p>
+      <p>Kontakt: <a href="mailto:contact@nozilla.de">contact@nozilla.de</a><br>
+        <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum<span class="visually-hidden"> (nozilla.de, neuer Tab)</span></a> · <a href="datenschutz.html">Datenschutz</a></p>
+      <p><button type="button" class="btn btn-soft" data-neu><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Was ist neu?</button></p>
+    </div>
+  </dialog>
+
+  <dialog id="neu" class="glass" aria-labelledby="neu-heading">
+    <div class="panel-head">
+      <h2 id="neu-heading">Was ist neu?</h2>
+      <button type="button" class="icon-btn" data-close-dialog aria-label="Schließen">×</button>
+    </div>
+    <div class="about-body" tabindex="0">   <!-- scrollt ohne Links: mit der Tastatur erreichbar -->
+      <h3>Version 1.0 (22.10.2026)</h3>
+      <p>Neu seit der ersten Fassung:</p>
+      <ul>
+        <li>Kurzfassungen: Zu vielen Vorlagen steht eine kurze Zusammenfassung, mit einem Sprachmodell erstellt und als solche gekennzeichnet.</li>
+        <li>Übersicht über ganz Bonn: Stadtbezirke und Ortsteile lassen sich auf der Karte anklicken und nach Zahl der Vorlagen oder nach Thema einfärben.</li>
+        <li>Reiter „Prozesse“: Verfahren, Gremien und Ämter, wer entscheidet was.</li>
+        <li>„Mitmachen in Bonn“: nächste Sitzungen und Fristen je Stadtbezirk.</li>
+        <li>Mehr Orte: aus dem Text der Dokumente und aus Namen von Gebäuden und Anlagen im Titel.</li>
+      </ul>
+      <p>Seit Version 1.0 (Stand 03.11.2026):</p>
+      <ul>
+        <li>Die RIS-Karte heißt jetzt <strong>Ratsatlas Bonn</strong>: Was Rat und Bezirksvertretungen beraten – wo, wann, wer und mit welchem Geld. Links und Abos gelten weiter.</li>
+        <li>„Haushalt auf einen Blick“: je Produktbereich und Produktgruppe auch die Ertragsarten („Woher kommt das Geld?“), etwa Steuern, Zuwendungen und Gebühren.</li>
+        <li>Neue Seite <a href="technik/">So funktioniert der Ratsatlas</a> im Menü „Verstehen“: Überblick, Datenfluss, Zeitplan und Technik als anklickbare Grafiken, erzeugt aus dem Code.</li>
+        <li>„Haushalt auf einen Blick“ zeigt das Ist 2024 aus dem Jahresabschluss, die Veränderung je Produktbereich (nur gleichartige Werte) und die Investitionen; auch die Themenseiten nennen das Ist 2024.</li>
+        <li>Themenseite <a href="thema/verkehr-und-mobilitaet/">Verkehr und Mobilität</a> mit neuem Strang „Tempo, Verkehrsregeln und Sicherheit“, auch mit Vorlagen der Straßenverkehrsbehörde.</li>
+        <li>Auf dem Telefon liegen Ebenen, Legenden und Quellen der Karte zusammen hinter „Karte“; „Ganz Bonn ansehen“ ist ein Symbol, die Quellenzeile einzeilig.</li>
+        <li>Auf dem Telefon liegen Gebiet, Flächen und Menüs hinter ☰; die Leiste zeigt nur noch die Suche. Die Themenseite „Kultur und Haushalt“ heißt jetzt <a href="thema/kunst-und-kultur/">Kunst und Kultur</a>; die alte Adresse leitet weiter.</li>
+        <li>Themenseiten <a href="thema/wirtschaft-und-wissenschaft/">Wirtschaft und Wissenschaft</a> (Wirtschaftsförderung, Tourismus und Zentren, Liegenschaften, Wissenschaft und Internationales) und <a href="thema/digitale-verwaltung/">Digitale Verwaltung</a> (Strategie, Online-Dienste, IT und Software, Organisation der Verwaltung).</li>
+        <li>Themenseite <a href="thema/sicherheit-und-ordnung/">Sicherheit und Ordnung</a>: Feuerwehr und Rettungsdienst, Bevölkerungsschutz, Ordnung im öffentlichen Raum sowie Veranstaltungen, Märkte und Kirmes nach Stadtbezirk.</li>
+        <li>Themenseite <a href="thema/soziales-gesundheit-und-integration/">Soziales, Gesundheit und Integration</a>: Geflüchtete und Unterbringung, Armut und soziale Leistungen, Senioren und Pflege, Gesundheit und Integration, mit beiden Fachausschüssen.</li>
+        <li>Neues Menü „Verstehen“: Einfache Sprache, Begriffe, „Wie verlässlich sind die Angaben?“ und die Tour an einem Ort.</li>
+        <li>„Haushalt auf einen Blick“ zeigt auch Erträge und Ergebnis je Produktbereich, den Zuschussbedarf als Flächen und alle Beträge je Einwohner.</li>
+        <li>Die graue Karte kommt vom Server dieser Seite (aus OpenStreetMap-Daten erzeugt) und lädt schneller; nur „Farbige Karte“ lädt die Kacheln von OpenStreetMap.</li>
+        <li>Der Ratsatlas <a href="einfach/">in Einfacher Sprache</a> erklärt, verlinkt im Startfenster und am Fuß jeder Seite.</li>
+        <li><a href="begriffe/">Begriffe</a> in einfachen Worten; im Vorgang ein „?“ neben Art, Drucksache, Amt und Stand, Gremien der Prozesslinie führen in den Reiter „Prozesse“; „Anstoß“ und „Umsetzung“ statt „Initiierung“ und „Vollzug“.</li>
+        <li>Themenseite <a href="thema/kinder-jugend-und-familie/">Kinder, Jugend und Familie</a>: Kitas, Spielplätze, Jugendarbeit, Hilfen für Familien und Beteiligung, mit Prozessbild und Haushalt im Produktbereich.</li>
+        <li>„Haushalt auf einen Blick“: Aufwendungen der 17 Produktbereiche als Treemap (Plan und Ist), mit Tabelle und Fundstelle; ein Klick führt zu den Produktgruppen und Aufwandsarten.</li>
+        <li>„Inhalte abonnieren und weiterverwenden“ (<a href="rss/">rss/</a>): Feed für ganz Bonn mit Anleitung zum Abonnieren, Einbinden und Weiterverarbeiten.</li>
+        <li>Wahlbeteiligung der Ratswahl 2025 je Ortsteil (geschätzt) unter „Zahlen zu …“ und als Flächenfarbe; ganz Bonn amtlich.</li>
+        <li>Themenseiten mit Beträgen je Produktbereich aus den Haushaltsplänen der Stadt (Ist und Plan getrennt, mit Fundstelle).</li>
+        <li>Besetzung der Gremien im Reiter „Prozesse“ (Fraktion abgeleitet, ohne Kontaktdaten); auf den Themenseiten der zuständige Fachausschuss, im Ratsassistenten Vorsitz und Sitze.</li>
+        <li>Zahl der Meldungen im Mängelmelder je Ortsteil unter „Zahlen zu …“, aus einem eigenen täglichen Archiv.</li>
+        <li>Themenseiten zu Kultur und Haushalt, Verkehr und Mobilität, Schule und Bildung, Wohnen und Bauen sowie Klima und Umwelt, jeweils mit anklickbarem Prozessbild; Übersicht als Kacheln.</li>
+        <li>Zahlen zu den Ortsteilen (Einwohner, Altersgruppen, Bodenrichtwerte, Haltestellen, Kitas, Hitze, Überschwemmung) als Flächenfarbe und im Vorgang.</li>
+        <li>Datenschutz: Hausnummern auch in Titeln zu Bauanträgen und Fällgenehmigungen ausgelassen.</li>
+      </ul>
+    </div>
+  </dialog>
+
+  <p class="visually-hidden" id="announce" aria-live="polite"></p>
+
+  <script src="vendor/leaflet/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=="></script>
+  <script src="vendor/markercluster/leaflet.markercluster.min.js" integrity="sha512-TiMWaqipFi2Vqt4ugRzsF8oRoGFlFFuqIi30FFxEPNw58Ov9mOy6LgC05ysfkxwLE0xVeZtmr92wVg9siAFRWA=="></script>
+  <script src="timeline.js"></script>
+  <script src="app.js"></script>
+  <script src="tour.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>Graue Kacheln zeichnen</title>
+<link rel="stylesheet" href="node_modules/maplibre-gl/dist/maplibre-gl.css">
+<style>html,body{margin:0;overflow:hidden} #map{position:absolute;inset:0}</style>
+</head><body><div id="map"></div>
+<!-- Nur für die Kachelerzeugung im Workflow (rendern.mjs), nicht Teil der Seite -->
+<script src="node_modules/pmtiles/dist/pmtiles.js"></script>
+<script type="module">
+import * as maplibregl from './node_modules/maplibre-gl/dist/maplibre-gl.mjs';
+const protocol = new pmtiles.Protocol();
+maplibregl.addProtocol('pmtiles', protocol.tile);
+const map = new maplibregl.Map({ container: 'map', style: 'stil.json', center: [7.1, 50.73], zoom: 10,
+  interactive: false, attributionControl: false, fadeDuration: 0, pixelRatio: window.devicePixelRatio,
+  canvasContextAttributes: { preserveDrawingBuffer: true } });
+window.__bereit = new Promise((r) => map.once('idle', r));
+// Mittelpunkt in Weltpixeln (256-px-Kacheln, Leaflet-Zoom z) -> MapLibre-Ansicht mit Zoom z-1 (512-px-Kacheln)
+window.zeichne = (z, cx, cy) => new Promise((resolve) => {
+  const n = 256 * 2 ** z;
+  const lon = cx / n * 360 - 180;
+  const lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * cy / n))) * 180 / Math.PI;
+  map.jumpTo({ center: [lon, lat], zoom: z - 1 });
+  map.once('idle', () => resolve(true));
+});
+</script></body></html>

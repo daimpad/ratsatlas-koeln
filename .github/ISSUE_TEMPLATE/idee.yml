@@ -1,0 +1,24 @@
+name: Idee oder Aufgabe
+description: Vorschlag für eine Erweiterung, z. B. aus der Ideenliste in CLAUDE.md Abschnitt 6.
+labels: ["idee"]
+body:
+  - type: textarea
+    id: idee
+    attributes:
+      label: Worum geht es?
+      description: Für wen wäre das nützlich, und welches Problem löst es?
+    validations:
+      required: true
+  - type: textarea
+    id: daten
+    attributes:
+      label: Benötigte Daten und Quellen
+      description: Welche Felder aus OParl, OParl-Lite oder anderen offenen Daten? Lizenz?
+  - type: dropdown
+    id: umfang
+    attributes:
+      label: Geschätzter Umfang
+      options:
+        - klein (wenige Stunden)
+        - mittel (ein Hackathon-Tag)
+        - groß (mehrere Tage)

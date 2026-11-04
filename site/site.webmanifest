@@ -1,0 +1,17 @@
+{
+  "name": "Ratsatlas Bonn",
+  "short_name": "Ratsatlas",
+  "description": "Vorlagen aus dem Ratsinformationssystem der Stadt Bonn auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Ämtern und Quellen.",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fafaff",
+  "theme_color": "#7c3aed",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

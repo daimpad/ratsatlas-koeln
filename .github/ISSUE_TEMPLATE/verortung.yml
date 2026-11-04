@@ -1,0 +1,45 @@
+name: Verortung prüfen
+description: Eine Vorlage liegt auf der Karte am falschen Ort, oder ein Ortsbezug fehlt.
+title: "Verortung prüfen: "
+labels: ["verortung"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke für den Hinweis. Ortsbezüge der Stufe B sind aus den Titeln abgeleitet und können irren.
+        Bitte keine Wohnadressen von Privatpersonen nennen.
+  - type: input
+    id: drucksache
+    attributes:
+      label: Drucksachennummer
+      placeholder: z. B. 261856
+    validations:
+      required: true
+  - type: input
+    id: titel
+    attributes:
+      label: Titel der Vorlage
+  - type: input
+    id: gebiet
+    attributes:
+      label: Gebiet im Ratsatlas
+      placeholder: z. B. Endenich
+  - type: dropdown
+    id: art
+    attributes:
+      label: Was stimmt nicht?
+      options:
+        - Falscher Ortsteil
+        - Falsche Straße
+        - Ortsbezug fehlt
+        - Vorlage hat keinen Ortsbezug
+        - Anderes
+    validations:
+      required: true
+  - type: textarea
+    id: hinweis
+    attributes:
+      label: Richtiger Ort und Begründung
+      description: Möglichst mit Fundstelle im Original (Seite, Zitat).
+    validations:
+      required: true

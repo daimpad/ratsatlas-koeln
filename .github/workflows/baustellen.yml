@@ -1,0 +1,78 @@
+# Archiv der Baustellen der Stadt Bonn (Phase 2): täglicher Abruf der drei Feeds, Momentaufnahmen bei Änderungen,
+# Zustand je Baustelle und Änderungsprotokoll im Branch `archiv`. Die Quelle hält keine früheren Stände vor;
+# das Archiv beginnt mit dem ersten Lauf.
+# Dazu der Mängelmelder (Ordner anliegen/): je Meldung nur Kategorie, Tag, Ortsteil und Status, weil ältere Meldungen
+# aus der öffentlichen Liste verschwinden (anliegen/phase0/BERICHT.md). Scheitert eine Quelle, wird die andere
+# trotzdem gesichert; der Lauf gilt dann als fehlgeschlagen.
+name: Archiv (Baustellen, Mängelmelder)
+
+on:
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # Branch archiv
+
+concurrency:
+  group: "baustellen"
+  cancel-in-progress: false
+
+jobs:
+  archiv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Abhängigkeiten
+        run: pip install -r requirements.txt
+
+      - name: Branch archiv holen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          # Exit-Code 2: Branch fehlt; jeder andere Fehler (Netz) bricht ab, statt mit leerem Bestand weiterzumachen
+          rc=0; git ls-remote --exit-code --heads "$url" archiv > /dev/null || rc=$?
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then echo "Abfrage des Branches archiv gescheitert ($rc)"; exit 1; fi
+          if [ "$rc" -eq 0 ]; then
+            git clone -q --depth 1 --branch archiv "$url" _archiv
+          else
+            git init -q -b archiv _archiv
+          fi
+          cp baustellen/ARCHIV_README.md _archiv/README.md
+          mkdir -p _archiv/anliegen
+          cp anliegen/ARCHIV_README.md _archiv/anliegen/README.md
+
+      - name: Baustellen abrufen und archivieren
+        id: baustellen
+        run: python -m pipeline baustellen
+        continue-on-error: true
+
+      - name: Mängelmelder abrufen und archivieren
+        id: anliegen
+        run: python -m pipeline anliegen
+        continue-on-error: true
+
+      - name: Archiv sichern
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd _archiv
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "Archiv unverändert"; exit 0; fi
+          git commit -q -m "Archiv $(date -u +%F)"
+          git push -q "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:archiv
+
+      - name: Ergebnis
+        if: steps.baustellen.outcome != 'success' || steps.anliegen.outcome != 'success'
+        run: |
+          echo "Baustellen: ${{ steps.baustellen.outcome }}, Mängelmelder: ${{ steps.anliegen.outcome }}"
+          exit 1

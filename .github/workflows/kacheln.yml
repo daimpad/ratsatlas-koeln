@@ -1,0 +1,79 @@
+# Graue Kartenkacheln der Seite aus OSM-Daten erzeugen (Entscheidung 02.11.2026, verstaendlichkeit/kartenquellen/OSM_GRAU.md):
+# Ausschnitt Bonn aus dem neuesten Protomaps-Build (HTTP-Range, keine Kacheln von tile.openstreetmap.org), mit MapLibre
+# in Chromium gezeichnet, in 16 Graustufen zerlegt (Zoom 10–16, rund 4.400 Dateien, 20 MB). Ablage im Branch `kacheln`
+# als einzelner Commit, der jeweils ersetzt wird; pages.yml übernimmt die Kacheln nach kacheln/ in die Seite und in den
+# Branch deploy. Vierteljährlich und auf Knopfdruck; danach startet er pages.yml. Bei Pull Requests, die die Skripte
+# ändern, läuft er zur Prüfung ohne Ablage.
+name: Kartenkacheln (vierteljährlich und auf Knopfdruck)
+
+on:
+  schedule:
+    - cron: "23 3 7 1,4,7,10 *"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "pipeline/kacheln/**"
+      - ".github/workflows/kacheln.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "kacheln"
+  cancel-in-progress: false
+
+jobs:
+  kacheln:
+    runs-on: ubuntu-24.04   # Playwright 1.56.1 unterstützt ubuntu-latest (26.04) nicht, wie der Job browser in tests.yml
+    timeout-minutes: 60
+    permissions:
+      contents: write   # Branch kacheln
+      actions: write    # pages.yml danach starten
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: "22"
+
+      - name: Abhängigkeiten
+        working-directory: pipeline/kacheln
+        run: |
+          pip install -r requirements.txt
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Ausschnitt Bonn aus dem neuesten Protomaps-Build
+        run: |
+          mkdir -p _kacheln_arbeit
+          python -I pipeline/kacheln/ausschnitt.py _kacheln_arbeit/bonn.pmtiles _kacheln_arbeit/stand.json
+          python -I pipeline/kacheln/rahmen.py > _kacheln_arbeit/plan.json
+
+      - name: Zeichnen
+        run: node pipeline/kacheln/rendern.mjs _kacheln_arbeit/bonn.pmtiles _kacheln_arbeit/plan.json _kacheln_arbeit/bloecke
+
+      - name: Zerlegen in Kacheln
+        run: python -I pipeline/kacheln/zerlegen.py _kacheln_arbeit/bloecke _kacheln/kacheln _kacheln_arbeit/stand.json
+
+      - name: Branch kacheln ersetzen (ein Commit, damit der Branch nicht wächst)
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd _kacheln
+          git init -q -b kacheln
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Graue Kartenkacheln $(python3 -c 'import json;print(json.load(open("kacheln/stand.json"))["build"])')"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:kacheln
+
+      - name: Seite mit den neuen Kacheln veröffentlichen
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run pages.yml --repo "${{ github.repository }}" --ref main

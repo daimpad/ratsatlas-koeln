@@ -1,0 +1,363 @@
+# Daten aus der OParl-API (Stadt Bonn) und OParl-Lite abrufen, aufbereiten, prüfen und die
+# Ratsatlas mit allen Exporten über GitHub Pages veröffentlichen. Die fertige Seite steht zusätzlich
+# im Branch `deploy`, aus dem eigene Server sie abrufen können (z. B. Plesk-Git). Läuft bei jedem Push auf main,
+# täglich früh am Morgen (die Quelle wird täglich aktualisiert) und auf Knopfdruck.
+name: Daten aktualisieren und Seite veröffentlichen
+
+on:
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+# Rechte je Job (Härtung 01.11.2026): Lesen als Vorgabe, Schreiben nur, wo ein Job es braucht
+permissions:
+  contents: read
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # Branches deploy und kurzfassungen
+      pages: read       # configure-pages liest die Einstellungen von GitHub Pages
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Abhängigkeiten
+        run: pip install -r requirements.txt
+
+      # Der letzte erfolgreiche Abruf dient als Rückfall, falls eine Quelle nicht antwortet.
+      - name: Rohdaten des letzten Laufs
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            data/raw/papers.jsonl
+            data/raw/consultations_lite.jsonl
+            data/raw/organizations.json
+            data/raw/verwaltungsbereiche.json
+            data/raw/STAND.json
+            data/raw/meetings.json
+            data/raw/legislative_terms.json
+            data/raw/besetzung.json
+          key: raw-${{ github.run_id }}
+          restore-keys: raw-
+
+      # Selten abgerufene Dateien, die auch im Repository liegen: eigener Zwischenspeicher, dessen Schlüssel den Stand
+      # im Repository enthält. Ein Commit an einer dieser Dateien beginnt so mit der Fassung im Repository, statt vom
+      # Zwischenspeicher überschrieben zu werden (Code-Prüfung 24.10.2026: bis zum nächsten Montag galt sonst der alte Stand).
+      - name: Geodaten und Haltestellen des letzten Abrufs
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            data/geo/bebauungsplaene_bonn.geojson
+            data/geo/bebauungsplaene_protokoll.tsv
+            data/geo/hausnummern_bonn.json
+            data/geo/objekte_bonn.json
+            data/kontext/haltestellen_bonn.tsv
+            data/kontext/haltestellen_stand.json
+          key: geo-${{ hashFiles('data/geo/bebauungsplaene_bonn.geojson', 'data/geo/hausnummern_bonn.json', 'data/geo/objekte_bonn.json', 'data/kontext/haltestellen_bonn.tsv', 'data/kontext/haltestellen_stand.json') }}-${{ github.run_id }}
+          restore-keys: geo-${{ hashFiles('data/geo/bebauungsplaene_bonn.geojson', 'data/geo/hausnummern_bonn.json', 'data/geo/objekte_bonn.json', 'data/kontext/haltestellen_bonn.tsv', 'data/kontext/haltestellen_stand.json') }}-
+
+      - name: Abruf OParl-API Stadt Bonn (Vorlagen)
+        run: python -m pipeline fetch-papers
+        continue-on-error: true
+
+      - name: Abruf OParl-API Stadt Bonn (Gremien, Ämter)
+        run: python -m pipeline fetch-organizations
+        continue-on-error: true
+
+      # Laufende Mitgliedschaften (Auszug ohne Kontaktdaten) für die Besetzung der Gremien; nach den Organisationen
+      - name: Abruf OParl-API Stadt Bonn (Besetzung der Gremien)
+        run: python -m pipeline fetch-besetzung
+        continue-on-error: true
+
+      - name: Abruf OParl-API Stadt Bonn (Sitzungen, Wahlperioden)
+        run: python -m pipeline fetch-meetings
+        continue-on-error: true
+
+      # Der Dienst braucht bis zu 15 Minuten; die Geltungsbereiche ändern sich selten. Abruf daher montags
+      # und auf Knopfdruck, sonst gilt der Stand aus dem Zwischenspeicher bzw. dem Repository.
+      - name: Abruf Bebauungspläne (Geltungsbereiche, Stadt Bonn; montags und auf Knopfdruck)
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%u)" = "1" ]; then
+            python -m pipeline fetch-plans
+          else
+            echo "Bebauungspläne: vorhandener Stand ($(python -c 'import json;print(json.load(open("data/geo/bebauungsplaene_bonn.geojson"))["meta"]["retrieved_at"])'))"
+          fi
+        timeout-minutes: 25
+        continue-on-error: true
+
+      # Hausnummern ändern sich selten; sonst gilt der Stand aus dem Zwischenspeicher bzw. dem Repository
+      - name: Abruf Hausnummern (Stadt Bonn) und Gebäude und Anlagen (OSM; montags und auf Knopfdruck)
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%u)" = "1" ]; then
+            python -m pipeline fetch-housenumbers
+            python -m pipeline fetch-objects
+          fi
+        continue-on-error: true
+
+      # Haltestellen (VRS-GTFS) monatlich; die übrigen Kontextdaten sind Ausschnitte im Repository (kontext/KONZEPT.md)
+      - name: Abruf Haltestellen (VRS; am 1. des Monats und auf Knopfdruck)
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%d)" = "01" ]; then
+            python -m pipeline fetch-haltestellen
+          fi
+        continue-on-error: true
+
+      # Texte der Hauptdokumente (OParl-Lite) nur zur Verarbeitung (Verortung): eigener Zwischenspeicher, nie veröffentlicht
+      - name: Volltexte des letzten Laufs
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: data/raw/texte.jsonl
+          key: texte-${{ github.run_id }}
+          restore-keys: texte-
+
+      - name: Abruf Volltexte (OParl-Lite; neue und geänderte, höchstens 3.000 je Lauf)
+        run: python -m pipeline fetch-texts
+        timeout-minutes: 25
+        continue-on-error: true
+
+      - name: Abruf OParl-Lite (Sitzungen, Tagesordnungspunkte)
+        run: python -m pipeline fetch-lite
+        continue-on-error: true
+
+      # Sprachmodell (Mistral, gekennzeichnet): Bestand im Branch kurzfassungen; auf der Seite erst nach Freigabe
+      # (kurzfassung.FREIGEGEBEN, stufe_c.FREIGEGEBEN). Neue Kurzfassungen entstehen seit 26.10.2026 erst nach dem
+      # Veröffentlichen (Job kurzfassungen); die Seite erscheint so etwa 20 Minuten früher, neue Kurzfassungen erst mit
+      # dem nächsten Lauf (Entscheidung des Auftraggebers).
+      - name: Bestand der Kurzfassungen (Branch kurzfassungen)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          # Exit-Code 2: Branch fehlt; jeder andere Fehler (Netz) bricht ab, statt mit leerem Bestand weiterzumachen
+          rc=0; git ls-remote --exit-code --heads "$url" kurzfassungen > /dev/null || rc=$?
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then echo "Abfrage des Branches kurzfassungen gescheitert ($rc)"; exit 1; fi
+          if [ "$rc" -eq 0 ]; then
+            git clone -q --depth 1 --branch kurzfassungen "$url" _kurzfassungen
+          else
+            git init -q -b kurzfassungen _kurzfassungen
+          fi
+        continue-on-error: true
+
+      - name: Aufbereiten, Geokodierung, Export
+        env:
+          KURZFASSUNGEN: _kurzfassungen
+          # Stufe C nicht freigegeben (Entscheidung des Auftraggebers 22.10.2026): keine neuen Anfragen und daher
+          # kein Schlüssel; vorhandene Antworten bleiben im Branch kurzfassungen, das Audit wird weiter geschrieben
+          STUFE_C_MAX: "0"
+        run: |
+          # Ohne den Bestand der Kurzfassungen (Branch nicht geladen) fehlten sie auf der Seite; dann lieber
+          # abbrechen, die veröffentlichte Seite bleibt auf dem letzten Stand (Code-Prüfung 24.10.2026)
+          if [ ! -d _kurzfassungen/.git ]; then echo "Branch kurzfassungen nicht geladen – Abbruch"; exit 1; fi
+          python -m pipeline build
+          python -m pipeline stufe-c
+          python -m pipeline export
+          python -m pipeline kontext
+          python -m pipeline check
+          python -m pipeline soll
+
+      - name: Ergebnisse der Stufe C sichern (Branch kurzfassungen)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          [ -d _kurzfassungen/.git ] || { echo "kein Bestand"; exit 0; }
+          url="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          cd _kurzfassungen
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "unverändert"; exit 0; fi
+          git commit -q -m "Orte der Stufe C (Audit) $(date -u +%F)"
+          git push -q "$url" HEAD:kurzfassungen
+        continue-on-error: true
+
+      # Baustellen für die Seite: aus dem Archiv (Branch archiv, täglich 05:23 UTC), sonst direkt aus den Feeds;
+      # mögliche Umsetzungen nur mit Konfidenz hoch (vorläufig). Scheitert beides, bleibt die Ebene ausgeblendet.
+      - name: Archiv der Baustellen
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          ref: archiv
+          path: _archiv
+        continue-on-error: true
+
+      # Audit aller Kandidaten täglich neu; die Stichprobe zur Prüfung von Hand bleibt unverändert
+      - name: Baustellen und mögliche Umsetzungen
+        run: |
+          python -m pipeline baustellen-seite
+          python -m pipeline kandidaten
+        env:
+          BAUSTELLEN_ARCHIV: _archiv
+        continue-on-error: true
+
+      # Mängelmelder: Zahlen der letzten 90 Tage je Ortsteil aus dem Archiv (Ordner anliegen/); ohne Archiv keine Datei,
+      # der Steckbrief zeigt dann keine Meldungen
+      - name: Mängelmelder je Ortsteil
+        run: python -m pipeline anliegen-seite
+        env:
+          BAUSTELLEN_ARCHIV: _archiv
+        continue-on-error: true
+
+      - name: Verifikation gegen die OParl-API
+        run: python -m pipeline verify
+        continue-on-error: true
+
+      - name: Datenpaket
+        run: python -m pipeline package
+        env:
+          BAUSTELLEN_ARCHIV: _archiv
+
+      - name: Seite zusammenstellen (Frontend, Exporte, Flächen)
+        run: |
+          mkdir -p _site/data/geo
+          cp -r site/. _site/
+          cp -r data/export _site/data/
+          cp data/LICENSE-DATA.md _site/data/
+          cp data/geo/*.geojson _site/data/geo/
+          # Abrufzeitpunkt der Bebauungspläne nicht in die Seite: sonst ändert sich der Branch deploy ohne neuen Inhalt
+          # (der Zeitpunkt steht in data/raw/STAND.json und im Datenpaket)
+          python -c "import json, pathlib; p = pathlib.Path('_site/data/geo/bebauungsplaene_bonn.geojson'); d = json.loads(p.read_text()); d.get('meta', {}).pop('retrieved_at', None); p.write_text(json.dumps(d, ensure_ascii=False, separators=(',', ':')) + '\n')"
+
+      # Graue Kartenkacheln aus dem Branch kacheln (kacheln.yml, vierteljährlich); fehlt er, zeigt die Seite ersatzweise
+      # die OSM-Kacheln grau gefiltert
+      - name: Graue Kartenkacheln holen
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          ref: kacheln
+          path: _kacheln
+        continue-on-error: true
+
+      - name: Graue Kartenkacheln in die Seite
+        run: |
+          if [ -f _kacheln/kacheln/stand.json ]; then cp -r _kacheln/kacheln _site/; else echo "keine Kacheln, Rückfall auf OSM"; fi
+
+      - name: Auffindbarkeit (robots.txt, sitemap.xml, Adressen für SITE_URL)
+        run: python -m pipeline seo
+
+      # Ohne Datenpaket (Zip, täglich vollständig neu), damit die Historie nur um die Änderungen
+      # wächst; auf dem eigenen Server verweist der Link auf das Paket bei GitHub Pages.
+      - name: Fertige Seite in den Branch deploy schreiben
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          url="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          # Exit-Code 2: Branch fehlt; jeder andere Fehler (Netz) bricht ab, statt mit leerem Bestand weiterzumachen
+          rc=0; git ls-remote --exit-code --heads "$url" deploy > /dev/null || rc=$?
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then echo "Abfrage des Branches deploy gescheitert ($rc)"; exit 1; fi
+          if [ "$rc" -eq 0 ]; then
+            git clone -q --depth 1 --branch deploy "$url" _deploy
+          else
+            git init -q -b deploy _deploy
+          fi
+          find _deploy -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r _site/. _deploy/
+          rm -f _deploy/data/export/allris-bonn-export.zip
+          cp deploy/htaccess _deploy/.htaccess
+          sed -i 's|href="data/export/allris-bonn-export.zip"|href="https://daimpad.github.io/allris-test/data/export/allris-bonn-export.zip"|' _deploy/index.html _deploy/datenschutz.html
+          cd _deploy
+          git add -A
+          if git diff --cached --quiet; then echo "Seite unverändert"; exit 0; fi
+          git commit -q -m "Seite aus ${GITHUB_SHA::7}, erzeugt $(date -u +%F)"
+          git push -q "$url" HEAD:deploy
+
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b  # v5.0.0
+
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa  # v3.0.1
+        with:
+          path: "_site"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write      # GitHub Pages
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Auf GitHub Pages veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346  # v5.0.1
+
+  # Neue Kurzfassungen (Mistral; täglich höchstens 500, nach einem Merge 50) nach dem Veröffentlichen, damit die Seite
+  # nicht auf das Sprachmodell wartet; sie erscheinen mit dem nächsten Lauf. Rohdaten und Volltexte aus dem Zwischen-
+  # speicher dieses Laufs. 500 je täglichem Lauf (Auftraggeber, 21.10.2026); nach einem Merge nur 50, damit mehrere
+  # Merges am Tag die Anfragen nicht vervielfachen.
+  kurzfassungen:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # Branch kurzfassungen
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Abhängigkeiten
+        run: pip install -r requirements.txt
+
+      - name: Rohdaten dieses Laufs
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            data/raw/papers.jsonl
+            data/raw/consultations_lite.jsonl
+            data/raw/organizations.json
+            data/raw/verwaltungsbereiche.json
+            data/raw/STAND.json
+            data/raw/meetings.json
+            data/raw/legislative_terms.json
+          key: raw-${{ github.run_id }}
+          restore-keys: raw-
+
+      - name: Volltexte dieses Laufs
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: data/raw/texte.jsonl
+          key: texte-${{ github.run_id }}
+          restore-keys: texte-
+
+      - name: Kurzfassungen erzeugen und sichern (Branch kurzfassungen)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          KURZFASSUNGEN: _kurzfassungen
+          KURZFASSUNG_MAX: ${{ github.event_name == 'push' && '50' || '500' }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          rc=0; git ls-remote --exit-code --heads "$url" kurzfassungen > /dev/null || rc=$?
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then echo "Abfrage des Branches kurzfassungen gescheitert ($rc)"; exit 1; fi
+          if [ "$rc" -eq 0 ]; then
+            git clone -q --depth 1 --branch kurzfassungen "$url" _kurzfassungen
+          else
+            git init -q -b kurzfassungen _kurzfassungen
+          fi
+          # Auch nach einem Fehler (Kontoausfall, Netz) sichern, was bis dahin entstanden ist
+          rc_k=0; python -m pipeline kurzfassungen || rc_k=$?
+          [ "$rc_k" -eq 0 ] || echo "::warning::Kurzfassungen mit Fehler beendet ($rc_k)"
+          cd _kurzfassungen
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "unverändert"; exit 0; fi
+          git commit -q -m "Kurzfassungen $(date -u +%F)"
+          git push -q "$url" HEAD:kurzfassungen
+        timeout-minutes: 120
