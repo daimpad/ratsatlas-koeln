@@ -202,6 +202,18 @@ def beratungen(papers, meetings):
 def fetch_all():
     """Vollständiger bzw. inkrementeller Lauf. Ein Abbruch hält den letzten gültigen Stand und vermerkt den Fehler."""
     config.RAW.mkdir(parents=True, exist_ok=True)
+    # Sperre und Zeitfenster sind kein Ausfall: der Lauf wird übersprungen, ohne den Stand als fehlgeschlagen zu markieren
+    lokal = config.OPARL_BODY.startswith(("http://127.0.0.1", "http://localhost"))
+    grund = ("Abruf gesperrt: Die Stadt Köln ist noch nicht informiert (RATSATLAS_STADT_INFORMIERT)"
+             if not abruf.freigegeben(config.OPARL_BODY) else
+             f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr" if not lokal and not abruf.im_zeitfenster()
+             else None)
+    if grund:
+        stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
+        stand["abruf_uebersprungen"] = {"zeit": _now(), "grund": grund}
+        _write(config.STAND, json.dumps(stand, ensure_ascii=False, indent=1) + "\n")
+        print(f"Abruf übersprungen ({grund}); letzter Stand bleibt.")
+        return
     try:
         body = abruf.get_json(config.OPARL_BODY)
         fetch_organizations(body)

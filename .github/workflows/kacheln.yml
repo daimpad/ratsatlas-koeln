@@ -1,6 +1,7 @@
-# Graue Kartenkacheln der Seite aus OSM-Daten erzeugen (Entscheidung 02.11.2026, verstaendlichkeit/kartenquellen/OSM_GRAU.md):
-# Ausschnitt Köln aus dem neuesten Protomaps-Build (HTTP-Range, keine Kacheln von tile.openstreetmap.org), mit MapLibre
-# in Chromium gezeichnet, in 16 Graustufen zerlegt (Zoom 10–16, rund 4.400 Dateien, 20 MB). Ablage im Branch `kacheln`
+# Graue Kartenkacheln der Seite aus OSM-Daten erzeugen (aus dem Ratsatlas Bonn; für Köln freigegeben am 04.11.2026):
+# Ausschnitt Köln aus dem neuesten Protomaps-Build (HTTP-Range, keine Kacheln von tile.openstreetmap.org und keine
+# Server der Stadt), mit MapLibre in Chromium gezeichnet, in 16 Graustufen zerlegt (Zoom 10–16, rund 11.200 Dateien,
+# 47 MB; lokaler Probelauf 04.11.2026). Ablage im Branch `kacheln`
 # als einzelner Commit, der jeweils ersetzt wird; pages.yml übernimmt die Kacheln nach kacheln/ in die Seite und in den
 # Branch deploy. Vierteljährlich und auf Knopfdruck; danach startet er pages.yml. Bei Pull Requests, die die Skripte
 # ändern, läuft er zur Prüfung ohne Ablage.

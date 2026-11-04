@@ -12,7 +12,7 @@ body:
     id: schritte
     attributes:
       label: Schritte zum Nachvollziehen
-      placeholder: Link zur Seite (mit Gebiet und Drucksache), Browser, Befehl der Pipeline …
+      placeholder: Link zur Seite (mit Gebiet und Vorlagennummer), Browser, Befehl der Pipeline …
   - type: textarea
     id: ausgabe
     attributes:

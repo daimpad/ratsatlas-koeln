@@ -1,7 +1,7 @@
 """Aufruf: python -m pipeline {fetch|geo-koeln|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fetch-texts|fetch-streets|gazetteer|build|export|check|verify|package|seo|baustellen|anliegen|anliegen-seite|kandidaten|baustellen-seite|kurzfassungen|stufe-c|soll|kontext-ausschnitte|wahlen-rohdaten|wahlen-ausschnitt|haushalt-ausschnitt|haushalt-pruefbogen|haushalt-ebenen|haushalt-pruefbogen-ebenen|haushalt-ist2024|haushalt-investitionen|haushalt-pruefbogen-erweiterung|haushalt-ist2024-investitionen|haushalt-pruefbogen-erweiterung-finanz|haushalt-ertragsarten|haushalt-pruefbogen-ertragsarten|fetch-haltestellen|kontext|kultur-stichprobe|verkehr-stichprobe|schule-stichprobe|wohnen-stichprobe|klima-stichprobe|kinder-stichprobe|soziales-stichprobe|sicherheit-stichprobe|wirtschaft-stichprobe|digital-stichprobe|all}"""
 import sys
 
-from . import anliegen, baustellen, besetzung, build, check, config, dossier, export, fetch, geodaten, kandidaten, kontext, haushaltsplan, kurzfassung, seo, sessionnet, soll, stufe_c, verify, wahlen
+from . import anliegen, baustellen, besetzung, build, check, config, dossier, export, fetch, geodaten, kandidaten, paket, kontext, haushaltsplan, kurzfassung, seo, sessionnet, soll, stufe_c, verify, wahlen
 from .themenseiten import digital, kinder, klima, kultur, schule, sicherheit, soziales, verkehr, wirtschaft, wohnen
 
 def _ersetzt(durch):
@@ -27,8 +27,9 @@ STEPS = {
     "build": build.build,
     "export": export.export,
     "check": check.check,
-    "verify": verify.verify,
-    "package": verify.package,
+    "verify": _ersetzt("Verifikation gegen das Kölner RIS (Phase 6)"),
+    "verify-bonn": verify.verify,
+    "package": paket.write,  # Datenpaket Köln (data/export/ratsatlas-koeln-export.zip)
     "seo": seo.write,  # nach dem Zusammenstellen der Seite in _site
     "baustellen": baustellen.archive,  # Archiv der Baustellen (eigener Workflow, Branch archiv)
     "anliegen": anliegen.archive,  # Archiv des Mängelmelders (Workflow baustellen.yml, Branch archiv, Ordner anliegen)
