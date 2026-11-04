@@ -51,7 +51,8 @@ function server() {
 const plan = JSON.parse(fs.readFileSync(PLAN, 'utf8'));
 fs.mkdirSync(AUS, { recursive: true });
 const s = await server();
-const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+// CHROMIUM_PFAD: vorhandenes Chromium statt des zu Playwright gehörenden (lokale Läufe)
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PFAD || undefined, args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const page = await (await browser.newContext({ viewport: { width: V, height: V }, deviceScaleFactor: 1 })).newPage();
 let fehler = 0;
 page.on('pageerror', (e) => { fehler++; console.error('Seitenfehler', String(e)); });

@@ -136,3 +136,4 @@ Zusätzlich schwache Evidenz `district_from_committee` (nur eine Bezirksvertretu
 | 04.11.2026 | Phase 2 wird ohne Abrufe vorbereitet: SessionNet-Adapter mit Tests gegen einen lokalen Testserver, Kölner Gebiets- und Straßendaten aus den Geodaten. |
 | 04.11.2026 | Workflow `tests.yml` aktiv (nur Tests mit synthetischen Daten, keine Anfragen an die Stadt); alle übrigen Workflows bleiben inaktiv. |
 | 04.11.2026 | Phase 3 (Geokodierung) wird ohne Abrufe begonnen: Stufe A über `subLocality`, Doppelnamen, eindeutige Bezirksformen, Hausnummern-Regel, `district_from_committee`, Tests mit erfundenen Titeln. |
+| 04.11.2026 | Pull Request #2 zusammengeführt; Phase 4 (Frontend) freigegeben, einmaliger OSM-Ausschnitt für die Kartenkacheln erlaubt. |

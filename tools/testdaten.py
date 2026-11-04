@@ -46,7 +46,7 @@ def main():
     orgs += [{"id": f"{B}/organizations/bv{nr}", "name": f"Bezirksvertretung {nr} ({name})", "organizationType": "Gremium"}
              for nr, name in BEZIRKE_KOELN.items()]
     heute = date(2026, 11, 4)
-    meetings, tops = {}, {}
+    meetings = {}
 
     def sitzung(org, tag):
         mid = f"{B}/meetings/{org['id'].rsplit('/', 1)[1]}-{tag.isoformat()}"
