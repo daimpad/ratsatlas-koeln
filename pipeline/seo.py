@@ -4,6 +4,7 @@ strukturierte Daten, Fehlerseite) für die öffentliche Adresse SITE_URL.
 Die Quelldateien in site/ enthalten die Adresse von GitHub Pages; dieser Schritt ersetzt sie in der
 zusammengestellten Seite (_site), damit ein Wechsel auf die eigene Domain nur SITE_URL braucht.
 Ohne Zeitstempel (kein lastmod), damit sich der Branch deploy nur bei Inhaltsänderungen ändert."""
+import re
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -27,6 +28,15 @@ def sitemap(site_url, extra=()):
             f"{urls}</urlset>\n")
 
 
+AUS_FUNKTION = re.compile(r'\s*<a class="card" href="[^"]*" data-funktion="(\w+)" hidden>.*?</a>', re.S)
+
+
+def ohne_abgeschaltete(html):
+    """Karten abgeschalteter Zusatzthemen (data-funktion, config.ZUSATZTHEMEN) aus der veröffentlichten Seite entfernen,
+    damit Suchmaschinen keinen Links auf nicht erzeugte Seiten folgen; die Quelle in site/ bleibt vollständig."""
+    return AUS_FUNKTION.sub(lambda m: m.group(0) if config.ZUSATZTHEMEN.get(m.group(1)) else "", html)
+
+
 def write(site=Path("_site"), site_url=None):
     site_url = site_url or config.SITE_URL
     if not site_url.endswith("/"):
@@ -34,7 +44,8 @@ def write(site=Path("_site"), site_url=None):
     for name in PAGES:
         page = site / name
         if page.exists():
-            page.write_text(gebietsseiten.neuer_tab(page.read_text(encoding="utf-8").replace(DEFAULT_URL, site_url)), encoding="utf-8")
+            html = page.read_text(encoding="utf-8").replace(DEFAULT_URL, site_url)
+            page.write_text(gebietsseiten.neuer_tab(ohne_abgeschaltete(html)), encoding="utf-8")
     (site / "robots.txt").write_text(robots(site_url), encoding="utf-8")
     areas = gebietsseiten.write(site, site_url)
     an = lambda thema: config.ZUSATZTHEMEN.get(thema)   # Bonner Zusatzthemen nur bei Freigabe (CLAUDE.md 5.4)

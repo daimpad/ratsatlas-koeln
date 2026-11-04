@@ -154,7 +154,7 @@ def body(site, site_url, root):
       <pre class="rss-code" id="rss-python" tabindex="0"><code>{escape(beispiel(url))}</code></pre>
       <p class="rss-weiter"><button type="button" class="rss-knopf rss-zweit" data-kopieren="#rss-python" hidden>Beispiel kopieren</button> <a href="{escape(link)}" type="application/atom+xml">Feed direkt ansehen</a> · <a href="https://github.com/daimpad/ratsatlas-koeln/blob/main/pipeline/publish.py">Erzeugung der Feeds (Quelltext)</a></p>
     </section>
-    <p><a href="{root}">Zur Karte</a> · <a href="{root}thema/">Themenseiten</a> · <a href="{root}gebiete/">Alle Gebiete</a></p>
+    <p><a href="{root}">Zur Karte</a> · <a href="{root}gebiete/">Alle Gebiete</a></p>
     <script src="{root}rss.js" defer></script>"""
 
 

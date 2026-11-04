@@ -9,7 +9,7 @@ from collections import Counter
 from html import escape
 from urllib.parse import quote
 
-from . import begriffsseite, topics
+from . import begriffsseite, config, topics
 
 LATEST = 20
 CSP = ("default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; "
@@ -61,6 +61,7 @@ def _page(site_url, path, title, description, body, root, head=""):
   </main>
   <footer class="page-foot">
     <a href="{root}gebiete/">Alle Gebiete</a> · <a href="{root}begriffe/">Begriffe</a> · <a href="{root}rss/">Abonnieren (RSS)</a> · <a href="https://nozilla.de/impressum/">Impressum</a> · <a href="{root}datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a>
+    <br>{escape(config.NAMENSNENNUNG)} · <a href="{root}data/LICENSE-DATA.md">Lizenzen der Daten</a>
   </footer>
 </body>
 </html>

@@ -1,18 +1,10 @@
 datei	zeile	kategorie	treffer	auszug
-.claude/skills/allris-bonn/SKILL.md	2	name_allris_bonn	allris-bonn	name: allris-bonn
-.claude/skills/allris-bonn/SKILL.md	2	bonn	bonn	name: allris-bonn
-.claude/skills/allris-bonn/SKILL.md	3	name_allris_bonn	allris-bonn	description: Arbeitsweise im Repository allris-bonn (RIS-Karte Bonn) – Pipeline ausführen, Daten und Seite prüfen, Konventionen zu Quellen, Lizenzen und Datensc
-.claude/skills/allris-bonn/SKILL.md	3	bonn	Bonn | bonn	description: Arbeitsweise im Repository allris-bonn (RIS-Karte Bonn) – Pipeline ausführen, Daten und Seite prüfen, Konventionen zu Quellen, Lizenzen und Datensc
-.claude/skills/allris-bonn/SKILL.md	6	name_allris_bonn	allris-bonn	# allris-bonn – Arbeitsweise
-.claude/skills/allris-bonn/SKILL.md	6	bonn	bonn	# allris-bonn – Arbeitsweise
-.claude/skills/allris-bonn/SKILL.md	14	oparl_lite	OParl-Lite	- **Lizenzen:** OParl-API Stadt Bonn und Geodaten der Stadt CC0; OParl-Lite (Sitzungen, TOPs, Ergebnisse) CC BY 4.0; OSM ODbL. Neue Quelle → `config.SOURCES`, `
-.claude/skills/allris-bonn/SKILL.md	14	bonn	Bonn	- **Lizenzen:** OParl-API Stadt Bonn und Geodaten der Stadt CC0; OParl-Lite (Sitzungen, TOPs, Ergebnisse) CC BY 4.0; OSM ODbL. Neue Quelle → `config.SOURCES`, `
-.claude/skills/allris-bonn/SKILL.md	24	oparl_lite	fetch-lite	.venv/bin/python -m pipeline <schritt>      # fetch-papers | fetch-organizations | fetch-meetings | fetch-plans | fetch-lite | fetch-streets | gazetteer | build
-.claude/skills/allris-bonn/SKILL.md	36	bonn	bonn	| `chat.py`, `glossar.py` | Daten des Ratsassistenten (`bonn/chat/`: gekürzte Vorlagen je Präfix der Drucksachennummer, Orte, Gremien, Datenstand); Glossar `dat
-.claude/skills/allris-bonn/SKILL.md	48	ortsteil_bonn	Endenich	Im Repository liegen: Gremien, Ämter, Sitzungen, Wahlperioden (`data/raw/*.json`), Flächen und Straßenverzeichnis (`data/geo/`), Pilot Endenich und Audits (`dat
-.claude/skills/allris-bonn/SKILL.md	48	bonn	/bonn/	Im Repository liegen: Gremien, Ämter, Sitzungen, Wahlperioden (`data/raw/*.json`), Flächen und Straßenverzeichnis (`data/geo/`), Pilot Endenich und Audits (`dat
-.claude/skills/allris-bonn/SKILL.md	63	bonn	bonn	Darüber hinaus mit Playwright (Chromium vorinstalliert) Desktop 1440 px, mittlere Breite 1024 px und Mobil 390 px prüfen; axe-core (`wcag2a`, `wcag2aa`) darf ke
-.claude/skills/allris-bonn/SKILL.md	69	site_url	SITE_URL	- `SITE_URL` (Umgebungsvariable) bestimmt absolute Links in Feeds, Kalender und DCAT sowie canonical, Open Graph, strukturierte Daten, `robots.txt` und `sitemap
+.claude/skills/ratsatlas-koeln/SKILL.md	8	bonn	Bonn | bonn	Auftrag, Entscheidungen und offene Punkte stehen in `CLAUDE.md` (Abschnitte 2, 8, 9). Technik: `TECHNIK.md`. Abgeleitet aus dem Skill des Ratsatlas Bonn (`daimp
+.claude/skills/ratsatlas-koeln/SKILL.md	18	bonn	Bonn	- **Zusatzthemen aus Bonn:** bleiben im Code, abgeschaltet über `config.ZUSATZTHEMEN` (Pipeline) und `data-funktion` (Seite). Freigabe einzeln durch den Auftrag
+.claude/skills/ratsatlas-koeln/SKILL.md	21	bonn	BONN | Bonn	- **Sprache:** Oberfläche, Kommentare und Commit-Nachrichten auf Deutsch, sachlich und ohne Superlative; „Stadtteil“ (nicht „Ortsteil“) in allem, was Leser:inne
+.claude/skills/ratsatlas-koeln/SKILL.md	34	bonn	Bonner	| `abruf.py`, `sessionnet.py` | Abrufpolitik; SessionNet-Adapter ins Bonner Rohdatenformat, inkrementell, Abrufstatistik; Sperre und Zeitfenster gelten als „übe
+.claude/skills/ratsatlas-koeln/SKILL.md	39	site_url	SITE_URL	| `seo.py` und Seitenmodule | Gebiets-, Begriffs-, Feed- und Technikseite, Adressen aus `SITE_URL` |
+.claude/skills/ratsatlas-koeln/SKILL.md	51	site_url	SITE_URL	- `.github/workflows/pages.yml`: Abruf (gesperrt bis zur Freigabe) → Build → Export → Paket → Seite → Branch `deploy` (ohne Zip, mit `.htaccess`) und Spiegel au
 .github/workflows-inaktiv/baustellen.yml	1	bonn	Bonn	# Archiv der Baustellen der Stadt Bonn (Phase 2): täglicher Abruf der drei Feeds, Momentaufnahmen bei Änderungen,
 .github/workflows-inaktiv/eval.yml	45	url_allris_test	daimpad.github.io/allris-test	set -- --anbieter "$ANBIETER" --modell "$MODELL" --daten https://daimpad.github.io/allris-test/data/export/ --aus _auswertung
 .github/workflows-inaktiv/pages_bonn.yml	1	oparl_lite	OParl-Lite	# Daten aus der OParl-API (Stadt Bonn) und OParl-Lite abrufen, aufbereiten, prüfen und die
@@ -54,8 +46,8 @@ datei	zeile	kategorie	treffer	auszug
 .github/workflows/pages.yml	7	site_url	SITE_URL	# Weitere Variablen: RATSATLAS_KONTAKT (Kontakt im User-Agent), SITE_URL (Vorgabe https://koeln.ratsatlas.de/).
 .github/workflows/pages.yml	89	site_url	SITE_URL	- name: Seite zusammenstellen (Frontend, Exporte, Flächen, Kacheln, Adressen für SITE_URL)
 .github/workflows/pages.yml	92	site_url	SITE_URL	SITE_URL: ${{ vars.SITE_URL || 'https://koeln.ratsatlas.de/' }}
-.github/workflows/pages.yml	96	site_url	PAKET_URL	# Server verweist der Link auf das Paket beim Spiegel (config.PAKET_URL)
-.github/workflows/pages.yml	117	site_url	PAKET_URL	paket=$(python -c 'from pipeline import config; print(config.PAKET_URL)')
+.github/workflows/pages.yml	101	site_url	PAKET_URL	# Server verweist der Link auf das Paket beim Spiegel (config.PAKET_URL)
+.github/workflows/pages.yml	122	site_url	PAKET_URL	paket=$(python -c 'from pipeline import config; print(config.PAKET_URL)')
 CLAUDE.md	3	bonn	Bonn | bonn	> Entwurf v0.1 (04.11.2026) · Zur Ausführung in Claude Code · Vorlage: Ratsatlas Bonn (`daimpad/allris-test`, künftig `daimpad/ratsatlas-bonn`)
 CLAUDE.md	18	bonn	Bonn	| Gestaltung | wie Ratsatlas Bonn (Glass-Stil, Tokens aus `site/style.css`, Schrift Inter lokal, kontraststarke Violetttöne); Texte und Marke auf Köln umgestell
 CLAUDE.md	20	site_url	SITE_URL	| Veröffentlichung | Hauptadresse `https://koeln.ratsatlas.de/` (Netcup-Webhosting, Plesk-Git aus Branch `deploy` mit Webhook, `SITE_URL`); Spiegel auf GitHub P
@@ -77,6 +69,7 @@ CLAUDE.md	108	bonn	Bonner	2. **Datenpipeline**: SessionNet-Adapter, inkrementell
 CLAUDE.md	121	bonn	Bonner	- welche Bonner Zusatzthemen für Köln später sinnvoll sind
 CLAUDE.md	128	bonn	Bonner	| 04.11.2026 | Bonner Berichts-, Phasen-, Test- und Evaluationsverzeichnisse werden nicht übernommen. |
 CLAUDE.md	141	bonn	bonn	| 04.11.2026 | Herkunft in README und NOTICE: `daimpad/ratsatlas-bonn` (umbenannt aus `daimpad/allris-test`; Commit `9eea7ea`). |
+CLAUDE.md	142	bonn	Bonner	| 04.11.2026 | Pull Request #4 zusammengeführt, `kacheln.yml` auf `main` gestartet. Freigegeben: eigener Skill `ratsatlas-koeln` (Bonner Skill entfernt) und Pha
 CONTRIBUTING.md	3	url_bonn	https://github.com/daimpad/ratsatlas-bonn	Beiträge sind willkommen. Der Ratsatlas Köln beruht auf dem Ratsatlas Bonn ([daimpad/ratsatlas-bonn](https://github.com/daimpad/ratsatlas-bonn)).
 CONTRIBUTING.md	3	bonn	Bonn | bonn	Beiträge sind willkommen. Der Ratsatlas Köln beruht auf dem Ratsatlas Bonn ([daimpad/ratsatlas-bonn](https://github.com/daimpad/ratsatlas-bonn)).
 NOTICE	7	url_bonn	https://github.com/daimpad/ratsatlas-bonn	Ratsatlas Bonn aus dem Repository https://github.com/daimpad/ratsatlas-bonn
@@ -351,10 +344,10 @@ pipeline/rssseite.py	12	bonn	_BONN	from .publish import GANZ_BONN
 pipeline/rssseite.py	20	bonn	_BONN	def feed_url(site_url, name=GANZ_BONN):
 pipeline/seo.py	2	site_url	SITE_URL	strukturierte Daten, Fehlerseite) für die öffentliche Adresse SITE_URL.
 pipeline/seo.py	5	site_url	SITE_URL	zusammengestellten Seite (_site), damit ein Wechsel auf die eigene Domain nur SITE_URL braucht.
-pipeline/seo.py	13	site_url	SITE_URL	DEFAULT_URL = "https://daimpad.github.io/ratsatlas-koeln/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
-pipeline/seo.py	15	site_url	SITE_URL	SITEMAP = ("", "datenschutz.html")  # Pfade relativ zu SITE_URL
-pipeline/seo.py	31	site_url	SITE_URL	site_url = site_url or config.SITE_URL
-pipeline/seo.py	40	bonn	Bonner	an = lambda thema: config.ZUSATZTHEMEN.get(thema)   # Bonner Zusatzthemen nur bei Freigabe (CLAUDE.md 5.4)
+pipeline/seo.py	14	site_url	SITE_URL	DEFAULT_URL = "https://daimpad.github.io/ratsatlas-koeln/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
+pipeline/seo.py	16	site_url	SITE_URL	SITEMAP = ("", "datenschutz.html")  # Pfade relativ zu SITE_URL
+pipeline/seo.py	41	site_url	SITE_URL	site_url = site_url or config.SITE_URL
+pipeline/seo.py	51	bonn	Bonner	an = lambda thema: config.ZUSATZTHEMEN.get(thema)   # Bonner Zusatzthemen nur bei Freigabe (CLAUDE.md 5.4)
 pipeline/sessionnet.py	1	bonn	Bonner	"""SessionNet-Adapter: Abruf der Kölner OParl-API ins Bonner Rohdatenformat (CLAUDE.md 5.1).
 pipeline/sessionnet.py	3	bonn	Bonner	Erzeugt dieselben Rohdateien wie der Bonner Abruf, damit build.py, Export und Seite unverändert bleiben:
 pipeline/sessionnet.py	6	bonn	Bonner	- `meetings.json`     Sitzungen im Bonner Kurzformat; vollständige Sitzungen mit TOPs in `meetings_roh.jsonl`
@@ -377,9 +370,9 @@ pipeline/stufe_c.py	7	bonn	Bonn	Antwort der Stadt Bonn vom 19.10.2026: keine Zit
 pipeline/stufe_c.py	51	bonn	Bonn	ANWEISUNG = """Du liest Vorlagen des Rates der Stadt Bonn und bestimmst die Orte in Bonn, die darin vorkommen.
 pipeline/stufe_c.py	61	bonn	Bonn	Nenne nicht die Stadt Bonn als Ganzes („Bonn“, „Bundesstadt Bonn“, „Stadtgebiet“) und keine Orte außerhalb
 pipeline/stufe_c.py	62	bonn	Bonns	Bonns. Nenne keine Personen und keine Hausnummern. Nenne nur Orte, die wörtlich im Text stehen. Gibt es keinen Ort,
-pipeline/technikseite.py	75	site_url	PAKET_URL	("a-paket", "Datenpaket", "Alle Daten, Prüfprotokolle und Lizenzen als Zip-Paket.", config.PAKET_URL),
-pipeline/technikseite.py	78	site_url	SITE_URL	"übernimmt ihn über einen Webhook.", config.SITE_URL),
-pipeline/technikseite.py	454	site_url	SITE_URL	"Webhook; .htaccess setzt Sicherheitskopfzeilen.", config.SITE_URL, "Hauptadresse"),
+pipeline/technikseite.py	76	site_url	PAKET_URL	("a-paket", "Datenpaket", "Alle Daten, Prüfprotokolle und Lizenzen als Zip-Paket.", config.PAKET_URL),
+pipeline/technikseite.py	79	site_url	SITE_URL	"übernimmt ihn über einen Webhook.", config.SITE_URL),
+pipeline/technikseite.py	455	site_url	SITE_URL	"Webhook; .htaccess setzt Sicherheitskopfzeilen.", config.SITE_URL, "Hauptadresse"),
 pipeline/themenseiten/digital.py	31	bonn	Bonn	r"Website|Webseite|Internetauftritt|Internetseite|Homepage|Bonn-App|Bürgerservice|Bürgerwabe|"
 pipeline/themenseiten/digital.py	62	bonn	Bonn	r"Vertretung der (?:Bundes)?[Ss]tadt Bonn i[nm]|Aufsichtsrat|\bAR der|Verbandsversammlung|Jahresabschluss|"
 pipeline/themenseiten/digital.py	80	bonn	Bonn	lead="Welche Vorlagen und Verfahren betreffen die Digitalisierung der Stadtverwaltung Bonn – die digitale Strategie, "
@@ -658,9 +651,6 @@ site/index.html	15	site_url	SITE_URL	<!-- Adressen: pipeline/seo.py ersetzt http
 site/index.html	30	bonn	Bonner	<!-- Vorschaubild für Köln folgt im zweiten Lauf (Entscheidung 04.11.2026); das Bonner Bild wird nicht ausgeliefert -->
 site/index.html	145	oparl_lite	OParl-Lite	<!-- Suche im Text der Dokumente: in Bonn über OParl-Lite; für Köln kein solcher Dienst (ausgeblendet) -->
 site/index.html	145	bonn	Bonn	<!-- Suche im Text der Dokumente: in Bonn über OParl-Lite; für Köln kein solcher Dienst (ausgeblendet) -->
-site/index.html	334	bonn	Bonner	<p><strong>Dies ist ein KI-System.</strong> Ein Sprachmodell beantwortet Fragen zu Bonner Ratsvorgängen und nutzt dafür ausschließlich die Daten dieser Seite. A
-site/index.html	372	bonn	Bonn	<button type="button" class="chip">Wann tagt die Bezirksvertretung Bonn das nächste Mal?</button>
-site/index.html	381	bonn	Bonner	<textarea id="chat-input" rows="2" placeholder="Frage zu Bonner Ratsvorgängen …" disabled></textarea>
 site/index.html	511	url_bonn	https://github.com/daimpad/ratsatlas-bonn	<p>Den Ratsatlas Köln entwickelt <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer 
 site/index.html	511	bonn	Bonn | bonn	<p>Den Ratsatlas Köln entwickelt <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer 
 site/index.html	529	bonn	Bonn	<li>Erste Fassung für Köln auf Grundlage des Ratsatlas Bonn: ganz Köln mit 9 Stadtbezirken und 86 Stadtteilen, Liste, Vorgang mit Prozesslinie, Suche, Feeds und
@@ -685,6 +675,9 @@ site/timeline.js	110	oparl_lite	OParl-Lite	<li>Sitzungsdaten von Beratungen, die
 site/tour.js	1	bonn	Bonn	// Tour durch die Funktionen des Ratsatlas Köln (aus Bonn übernommen): hebt nacheinander Bedienelemente hervor (abgedunkelte Umgebung,
 site/tour.js	20	bonn	Bonn	text: "Ein Stadtteil, ein ganzer Stadtbezirk oder Vorlagen ohne Ortsbezug je Jahr. Zu Beginn zeigt die Karte ganz Köln: erst einen Stadtbezirk anklicken, dann e
 tests/conftest.py	104	oparl_lite	CONSULTATIONS_LITE	"CONSULTATIONS_LITE": raw / "beratungen.jsonl", "STAND": raw / "STAND.json",
+tests/test_hinweise.py	43	bonn	Bonn | Bonner	# „Bonn“ nur als Herkunft des Codes (Ratsatlas Bonn, Bonner Zusatzthemen) oder in der Anschrift des Verantwortlichen
+tests/test_hinweise.py	44	bonn	Bonn | Bonner | bonn	rest = html.replace("ratsatlas-bonn", "").replace("Ratsatlas Bonn", "").replace("aus Bonn", "").replace("53111 Bonn", "").replace("Bonner Zusatzthemen", "")
+tests/test_hinweise.py	45	bonn	Bonn	assert "Bonn" not in rest, rel
 tests/test_sessionnet.py	2	bonn	Bonner	Abrufstatistik, Sperre und Anschluss an build.py (Bonner Datenmodell)."""
 tests/test_sessionnet.py	133	oparl_lite	OParl-Lite	assert "Bonn" not in text and "OParl-Lite" not in text, datei
 tests/test_sessionnet.py	133	bonn	Bonn	assert "Bonn" not in text and "OParl-Lite" not in text, datei

@@ -110,7 +110,7 @@ REGELN = [
     (".github/ISSUE_TEMPLATE/config.yml", A, "Mitwirkung", "Kontaktlink „Ratsatlas Bonn“"),
     (".github/ISSUE_TEMPLATE/idee.yml", A, "Mitwirkung", "verweist auf Bonner Ideenliste in CLAUDE.md"),
     (".github/ISSUE_TEMPLATE/*", G, "Mitwirkung", "Vorlagen ohne Stadtbezug"),
-    (".claude/skills/allris-bonn/SKILL.md", A, "Arbeitsweise", "wird zu .claude/skills/ratsatlas-koeln/SKILL.md (2.)"),
+    (".claude/skills/ratsatlas-koeln/SKILL.md", G, "Arbeitsweise", "neu (Phase 6): Skill Köln, abgeleitet aus dem Bonner Skill allris-bonn (entfernt)"),
     ("CLAUDE.md", E, "Arbeitsweise", "Bonner Auftrag entfernt; am 04.11.2026 ersetzt durch Prompt ratsatlas-koeln v0.1 mit Entscheidungen (Abschnitt 9); verbleibende Fundstellen sind Verweise auf die Bonner Vorlage"),
     ("README.md", G, "Dokumentation", "Phase 5 neu für Köln (Ziel, Herkunft aus ratsatlas-bonn, Quellen, Lizenzen, Grenzen, Datenstand)"),
     ("TECHNIK.md", G, "Dokumentation", "Phase 5 neu für Köln"),

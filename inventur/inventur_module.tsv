@@ -1,5 +1,5 @@
 datei	zeilen	kategorie	funktion	begruendung	fundstellen
-.claude/skills/allris-bonn/SKILL.md	70	Bonn-spezifisch, anpassen	Arbeitsweise	wird zu .claude/skills/ratsatlas-koeln/SKILL.md (2.)	14
+.claude/skills/ratsatlas-koeln/SKILL.md	53	generisch	Arbeitsweise	neu (Phase 6): Skill Köln, abgeleitet aus dem Bonner Skill allris-bonn (entfernt)	6
 .github/ISSUE_TEMPLATE/config.yml	5	Bonn-spezifisch, anpassen	Mitwirkung	Kontaktlink „Ratsatlas Bonn“	0
 .github/ISSUE_TEMPLATE/fehler.yml	20	generisch	Mitwirkung	Vorlagen ohne Stadtbezug	0
 .github/ISSUE_TEMPLATE/idee.yml	24	Bonn-spezifisch, anpassen	Mitwirkung	verweist auf Bonner Ideenliste in CLAUDE.md	0
@@ -13,10 +13,10 @@ datei	zeilen	kategorie	funktion	begruendung	fundstellen
 .github/workflows-inaktiv/tests_bonn.yml	94	Bonn-spezifisch, anpassen	Tests	Bonner Testlauf (Browser-Prüfung, Chat); ersetzt durch .github/workflows/tests.yml	3
 .github/workflows/kacheln.yml	80	generisch	Kartenkacheln	Phase 5 aktiv: graue Kacheln für Köln in den Branch kacheln	1
 .github/workflows/live.yml	81	generisch	Deployment	neu (Phase 5): Live-Prüfung Köln, vorerst nur auf Knopfdruck	1
-.github/workflows/pages.yml	146	generisch	Deployment	neu (Phase 5): Hauptlauf Köln, Abruf gesperrt bis vars.RATSATLAS_STADT_INFORMIERT, Branch deploy, Pages-Spiegel	5
+.github/workflows/pages.yml	151	generisch	Deployment	neu (Phase 5): Hauptlauf Köln, Abruf gesperrt bis vars.RATSATLAS_STADT_INFORMIERT, Branch deploy, Pages-Spiegel	5
 .github/workflows/tests.yml	34	generisch	Tests	neu (Phase 3, aktiv): Pipeline-Tests mit synthetischen Daten, Syntax der Seite	0
 .gitignore	27	Bonn-spezifisch, anpassen	Repository	Bonner Pfade (data/export/bonn, allris-bonn-export.zip)	0
-CLAUDE.md	141	entfernen	Arbeitsweise	Bonner Auftrag entfernt; am 04.11.2026 ersetzt durch Prompt ratsatlas-koeln v0.1 mit Entscheidungen (Abschnitt 9); verbleibende Fundstellen sind Verweise auf die Bonner Vorlage	21
+CLAUDE.md	142	entfernen	Arbeitsweise	Bonner Auftrag entfernt; am 04.11.2026 ersetzt durch Prompt ratsatlas-koeln v0.1 mit Entscheidungen (Abschnitt 9); verbleibende Fundstellen sind Verweise auf die Bonner Vorlage	22
 CONTRIBUTING.md	26	generisch	Dokumentation	Grundsätze generisch; Hackathon-Bezug prüfen	2
 LICENSE	21	generisch	Lizenz	MIT, Damian Paderta 2026	0
 NOTICE	20	generisch	Herkunft	neu: Herkunft aus allris-test @9eea7ea	3
@@ -35,7 +35,7 @@ pipeline/abruf.py	88	generisch	Abruf	neu (Phase 2): Abrufpolitik Köln – eine 
 pipeline/actors.py	184	Bonn-spezifisch, anpassen	Akteure	Bonner Vorlagenarten, Titelmuster, „Co-Dezernat“; Köln: underDirectionOf bzw. PDF-Kopf „Dezernat, Dienststelle“, Ämtertabelle, § 3/§ 4-Muster	1
 pipeline/anliegen.py	248	Bonn-Zusatzthema, deaktivieren	Mängelmelder Bonn	Archiv des Bonner Anliegenmelders, ohne Kölner Pendant	11
 pipeline/baustellen.py	143	Bonn-Zusatzthema, deaktivieren	Baustellen	Bonner Baustellenfeeds (5.4: deaktivieren)	2
-pipeline/begriffsseite.py	117	Bonn-spezifisch, anpassen	Verstehen	Seite begriffe/; Texte auf Köln	0
+pipeline/begriffsseite.py	116	Bonn-spezifisch, anpassen	Verstehen	Seite begriffe/; Texte auf Köln	0
 pipeline/besetzung.py	251	Bonn-Zusatzthema, deaktivieren	Akteure (Gremien)	Mitgliedschaften aus Bonner OParl; zweiter Lauf (Entscheidung 04.11.2026), zusätzliche Abrufe gegen Abrufpolitik abwägen	2
 pipeline/build.py	459	Bonn-spezifisch, anpassen	Datenmodell	Normalisierung ins SQLite-Modell bleibt; Eingänge (Beratungen aus OParl-Lite, Bonner Nummernschema) auf Köln umstellen	4
 pipeline/chat.py	190	Bonn-Zusatzthema, deaktivieren	Ratsassistent	Daten für den Chat (5.4: deaktivieren)	1
@@ -46,7 +46,7 @@ pipeline/einfachseite.py	126	Bonn-Zusatzthema, deaktivieren	Verstehen (Einfache 
 pipeline/export.py	678	Bonn-spezifisch, anpassen	Export	Pilot-Ortsteil Endenich, Pfad export/bonn, Ortsteil-Gliederung; Köln: ganze Stadt, Stadtteile/Stadtbezirke	8
 pipeline/fetch.py	425	Bonn-spezifisch, anpassen	Abruf	Bonner Abruf; in Köln ersetzt durch sessionnet.py (Phase 2), Hilfsfunktionen und fetch_objects weiter genutzt	19
 pipeline/flaechen.py	65	Bonn-spezifisch, anpassen	Gebiete	vereinfachte Flächen; Pfade und Gebietsebenen auf Köln	0
-pipeline/gebietsseiten.py	161	Bonn-spezifisch, anpassen	Gebiete	statische Seiten je Ortsteil/Bezirk; Köln: 86 Stadtteile, 9 Stadtbezirke	0
+pipeline/gebietsseiten.py	162	Bonn-spezifisch, anpassen	Gebiete	statische Seiten je Ortsteil/Bezirk; Köln: 86 Stadtteile, 9 Stadtbezirke	0
 pipeline/gebietszahlen.py	87	Bonn-spezifisch, anpassen	Startansicht	Kennzahlen je Gebiet für die Übersichtskarte	2
 pipeline/geo.py	39	Bonn-spezifisch, anpassen	Geokodierung	Point-in-Polygon generisch; Bezug auf 51 Bonner Ortsteile → 86 Kölner Stadtteile	1
 pipeline/geocode.py	463	Bonn-spezifisch, anpassen	Geokodierung Stufe B	Regeln und Gazetteer Bonn (OSM-Straßen); Köln: Straßenverzeichnis, Adressen, Straßenschlüssel, Bezirkszusatz	6
@@ -75,12 +75,12 @@ pipeline/prozessarten.py	238	Bonn-Zusatzthema, deaktivieren	Reiter Prozesse	Verf
 pipeline/prozessbild.py	409	Bonn-Zusatzthema, deaktivieren	Themenseiten	Prozessbild der Themenseiten	11
 pipeline/publish.py	295	Bonn-spezifisch, anpassen	Feeds, Datenpaket	Atom, iCalendar, GeoJSON, DCAT mit Bonner Adressen und Lizenztexten	10
 pipeline/rssseite.py	169	Bonn-spezifisch, anpassen	Feeds	Seite rss/ mit Bonner Beispielen	3
-pipeline/seo.py	54	Bonn-spezifisch, anpassen	Auffindbarkeit	robots, sitemap, canonical; Canonical des Pages-Spiegels auf koeln.ratsatlas.de	6
+pipeline/seo.py	65	Bonn-spezifisch, anpassen	Auffindbarkeit	robots, sitemap, canonical; Canonical des Pages-Spiegels auf koeln.ratsatlas.de	6
 pipeline/sessionnet.py	230	generisch	Abruf	neu (Phase 2): SessionNet-Adapter ins Bonner Rohdatenformat, inkrementell, Abrufstatistik	2
 pipeline/soll.py	276	Bonn-Zusatzthema, deaktivieren	Soll-Modell	Verfahren nach Bonner Zuständigkeitsordnung („Bonn entscheidet“); Daten nicht übernommen	11
 pipeline/sprachmodell.py	79	generisch	Sprachmodell	Aufruf Mistral/Anthropic ohne Stadtbezug	0
 pipeline/stufe_c.py	404	Bonn-spezifisch, anpassen	Geokodierung Stufe C	Verfahren übernehmbar; Verifikation gegen Kölner Gazetteer	4
-pipeline/technikseite.py	559	Bonn-spezifisch, anpassen	Verlässlichkeit	Seite technik/ mit Bonner Quellen und Zahlen	3
+pipeline/technikseite.py	560	Bonn-spezifisch, anpassen	Verlässlichkeit	Seite technik/ mit Bonner Quellen und Zahlen	3
 pipeline/themenseiten/__init__.py	9	Bonn-Zusatzthema, deaktivieren	Themenseiten	Regeln und Texte je Bonner Thema	0
 pipeline/themenseiten/digital.py	174	Bonn-Zusatzthema, deaktivieren	Themenseiten	Regeln und Texte je Bonner Thema	4
 pipeline/themenseiten/haushalt.py	44	Bonn-Zusatzthema, deaktivieren	Themenseiten	Regeln und Texte je Bonner Thema	1
@@ -111,7 +111,7 @@ site/chat/render.js	128	Bonn-Zusatzthema, deaktivieren	Ratsassistent	Chat (5.4: 
 site/chat/systemprompt.md	136	Bonn-Zusatzthema, deaktivieren	Ratsassistent	Chat (5.4: deaktivieren)	17
 site/chat/tools.js	652	Bonn-Zusatzthema, deaktivieren	Ratsassistent	Chat (5.4: deaktivieren)	51
 site/chat/ui.js	272	Bonn-Zusatzthema, deaktivieren	Ratsassistent	Chat (5.4: deaktivieren)	4
-site/datenschutz.html	91	Bonn-spezifisch, anpassen	Datenschutz	Bonner Quellen und Adressen; Impressum/Datenschutz für koeln.ratsatlas.de	2
+site/datenschutz.html	92	Bonn-spezifisch, anpassen	Datenschutz	Bonner Quellen und Adressen; Impressum/Datenschutz für koeln.ratsatlas.de	2
 site/favicon.ico		generisch	Marke	Symbol aus der Ortsmarke	0
 site/favicon.svg	13	generisch	Marke	Ortsmarke ohne Stadtbezug; nur Kommentar nennt Bonn	0
 site/fonts/LICENSE-Inter.txt	93	generisch	Gestaltung	Inter lokal mit Lizenz	0
@@ -120,7 +120,7 @@ site/haushalt.js	185	Bonn-Zusatzthema, deaktivieren	Haushalt	Seite haushalt/	0
 site/icon-192.png		generisch	Marke	Symbole aus der Ortsmarke	0
 site/icon-512.png		generisch	Marke	Symbole aus der Ortsmarke	0
 site/icon-maskable-512.png		generisch	Marke	Symbole aus der Ortsmarke	0
-site/index.html	544	Bonn-spezifisch, anpassen	Seite	Marke, Texte, Quellenhinweise, Bonner Adressen	11
+site/index.html	544	Bonn-spezifisch, anpassen	Seite	Marke, Texte, Quellenhinweise, Bonner Adressen	8
 site/mitwirken.js	118	Bonn-Zusatzthema, deaktivieren	Soll-Modell	Einflussregeln aus „Bonn entscheidet“	2
 site/og-image.jpg		Bonn-Zusatzthema, deaktivieren	Marke	Bonner Vorschaubild; Kölner Bild im zweiten Lauf (Entscheidung 04.11.2026), bis dahin nicht ausliefern	0
 site/page.css	333	generisch	Gestaltung	Textseiten, ohne Stadtbezug	0
@@ -148,9 +148,11 @@ site/vendor/markercluster/leaflet.markercluster.min.js	1	generisch	Karte	Leaflet
 tests/conftest.py	113	generisch	Tests	neu (Phase 2): synthetische Testdaten, lokaler Testserver	1
 tests/test_geodaten.py	34	generisch	Tests	neu (Phase 2): synthetische Testdaten, lokaler Testserver	0
 tests/test_geokodierung.py	93	generisch	Tests	neu (Phase 2): synthetische Testdaten, lokaler Testserver	0
+tests/test_hinweise.py	61	generisch	Tests	neu (Phase 2): synthetische Testdaten, lokaler Testserver	3
 tests/test_kacheln.py	27	generisch	Tests	neu (Phase 2): synthetische Testdaten, lokaler Testserver	0
 tests/test_sessionnet.py	136	generisch	Tests	neu (Phase 2): synthetische Testdaten, lokaler Testserver	3
 tests/test_workflows.py	24	generisch	Tests	neu (Phase 2): synthetische Testdaten, lokaler Testserver	2
+tools/linkpruefung.py	119	generisch	Werkzeuge	neu (Phase 4): Testdaten, Seite zusammenstellen, WCAG-Prüfung	0
 tools/seite_bauen.py	33	generisch	Werkzeuge	neu (Phase 4): Testdaten, Seite zusammenstellen, WCAG-Prüfung	1
 tools/testdaten.py	117	generisch	Werkzeuge	neu (Phase 4): Testdaten, Seite zusammenstellen, WCAG-Prüfung	0
 tools/wcag_pruefen.js	40	generisch	Werkzeuge	neu (Phase 4): Testdaten, Seite zusammenstellen, WCAG-Prüfung	0
