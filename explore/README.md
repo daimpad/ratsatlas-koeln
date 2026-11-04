@@ -7,6 +7,7 @@ Skripte ohne Produktionscode. Rohdaten, PDFs und geladene Geodaten liegen nur in
 | `abruf.py` | gedrosselter Abruf: eine Verbindung, ≥ 2 s Abstand, Backoff, User-Agent, Cache, Protokoll `_cache/abrufe.tsv` | genutzt |
 | `geodaten.py` | Katalog (DCAT-AP), Lizenzen, Felder und Koordinatensysteme der Kölner Geodaten → `ergebnisse/geodaten_*.tsv` | ausgeführt am 04.11.2026 |
 | `oparl_messung.py` | Kennzahlen, Organisationen, Stichprobe ≥ 500 Vorlagen, TOP-Ergebnisse, PDF-Köpfe | **nicht ausgeführt**; läuft erst mit `RATSATLAS_STADT_INFORMIERT=ja` |
+| `ergebnisse/fraktionen_*.tsv`, `gremien_koeln.tsv`, `bplan_quellen.tsv`, `sessionnet_befunde.tsv` | Recherche ohne Server der Stadt (Bericht Abschnitt 4) | 04.11.2026 |
 | `ANFRAGE_stadt_koeln.md` | Entwurf der Anfrage an die Stadt | zur Versendung durch den Auftraggeber |
 
 Umgebungsvariablen: `RATSATLAS_KONTAKT` (Kontakt im User-Agent), `RATSATLAS_ABSTAND` (Sekunden, Vorgabe 2), `RATSATLAS_CACHE`, `RATSATLAS_ERGEBNISSE`, `RATSATLAS_OPARL_SYSTEM`, `RATSATLAS_OPARL_BODY` (für Tests gegen einen lokalen Server).

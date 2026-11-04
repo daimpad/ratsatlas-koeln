@@ -33,3 +33,17 @@ Den Teil zur OParl-API (Kennzahlen, Stichprobe, PDF-Köpfe) habe ich vorbereitet
 - **Inventur:** Die Entscheidung „zweiter Lauf“ ist eingearbeitet. Neuer Stand: 35 generisch, 53 anpassen, 44 deaktivieren, 2 entfernen.
 - **Messskripte:** `oparl_messung.py` ist gegen einen lokalen Testserver geprüft (alle fünf Kommandos). Ohne `RATSATLAS_STADT_INFORMIERT=ja` bricht es vor der ersten Anfrage ab.
 - **Anschreiben:** Der Entwurf an die Stadt liegt in `explore/ANFRAGE_stadt_koeln.md`.
+
+## 4. Recherche ohne Server der Stadt (04.11.2026)
+
+Quellen sind Landesdienste (IT.NRW), Wahlergebnisse, Presse, Seiten der Fraktionen, Wikipedia, die OParl-Spezifikation und öffentlicher Code anderer Projekte. Server der Stadt habe ich nicht abgefragt. Was nur aus Suchausschnitten stammt, ist als „Hinweis“ gekennzeichnet. Nachgeprüft habe ich die Sitzzahlen des Rates 2025 und 2020, die Sitzzahlen der Bezirksvertretung Kalk und einen Bebauungsplan in der Landesschnittstelle.
+
+| Ergebnis | Inhalt | Wichtigster Befund |
+|---|---|---|
+| `ergebnisse/fraktionen_rat.tsv` | Rat 2025–2030 und 2020–2025 (je 90 Sitze) | 7 Fraktionen, 2 Gruppen, 1 Einzelmandat ab 2025; Wechsel 2020–2025 nur teilweise belegt; Schreibvarianten erst am RIS zu prüfen |
+| `ergebnisse/fraktionen_bv.tsv` | Sitze der 9 Bezirksvertretungen 2025 (je 19) | Fraktionsbildung in den Bezirksvertretungen offen |
+| `ergebnisse/gremien_koeln.tsv` | Ausschüsse 2025–2030 und 2020–2025, Bezirksvertretungen 1–9 | Umbenennungen 2025 (u. a. Mobilitätsausschuss, Wirtschaft und Digitalisierung, Integrationsrat → Ausschuss für Chancengerechtigkeit und Integration); amtliche Namen erst am RIS zu prüfen |
+| `ergebnisse/bplan_quellen.tsv` | Bezugswege für Bebauungspläne | OGC-API „Bauleitplanung in NRW“ von IT.NRW: 1 343 rechtsverbindliche Kölner Pläne mit Fläche, Plannummer `63429.06.000.00` ↔ Schreibweise „63429/06“ (an einem Fall belegt); keine Aufstellungsbeschlüsse; Lizenzangaben widersprüchlich |
+| `ergebnisse/sessionnet_befunde.tsv` | Sperre von mandari, Verhalten von SessionNet, Spiegel | Sperre als stiller Verbindungsabbruch ohne HTTP-Code; laut mandari Abrufe in Köln nur 23–1 Uhr und kein automatischer PDF-Abruf (beides ohne Quelle der Stadt); kein aktueller, lizenzklarer Spiegel |
+
+**Folgerungen (zur Freigabe):** Zeitfenster vorsorglich 23–1 Uhr; Zeitüberschreitung als mögliche Sperre werten (Pause über Stunden); Wiederholungen bei `links.next` erkennen; `links.next` unverändert übernehmen; Zeitfenster, PDF-Abruf und GitHub-Actions-Adressen in der Anfrage an die Stadt nennen; Bebauungspläne aus der Landesschnittstelle für Stufe B.
