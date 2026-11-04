@@ -98,3 +98,12 @@ def test_build_liest_kölner_rohdaten(oparl):
     orte = db.execute("SELECT l.ortsteil, pl.method FROM paper_location pl JOIN location l ON l.id = pl.location_id "
                       "WHERE pl.paper_id LIKE '%/papers/1'").fetchall()
     assert ("Ehrenfeld", ) in [(o,) for o, _ in orte]
+    # Stufe A: subLocality „Neuehrenfeld“ → Stadtteilfläche
+    a = db.execute("SELECT l.level, l.ortsteil, pl.method, pl.confidence FROM paper_location pl JOIN location l "
+                   "ON l.id = pl.location_id WHERE pl.paper_id LIKE '%/papers/3' AND pl.stage = 'A'").fetchall()
+    assert a == [("ortsteil", "Neuehrenfeld", "oparl_sublocality", "mittel")]
+    # schwache Evidenz: nur in der Bezirksvertretung 4 (Ehrenfeld) beraten, sonst kein Ortsbezug
+    schwach = db.execute("SELECT pl.paper_id, l.stadtbezirk, pl.confidence FROM paper_location pl JOIN location l "
+                         "ON l.id = pl.location_id WHERE pl.method = 'district_from_committee'").fetchall()
+    assert {p.rsplit("/", 1)[1] for p, _, _ in schwach} == {"2", "4", "5"}
+    assert {(b, c) for _, b, c in schwach} == {("Ehrenfeld", "niedrig")}

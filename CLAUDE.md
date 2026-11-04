@@ -134,3 +134,5 @@ Zusätzlich schwache Evidenz `district_from_committee` (nur eine Bezirksvertretu
 | 04.11.2026 | Hausnummern punktgenau nur bei Verwaltungsvorlagen und politischen Anträgen; Eingaben nach § 24 GO und Vorlagen natürlicher Personen nur auf Straßen- oder Stadtteilebene. |
 | 04.11.2026 | Entwurf der Anfrage an die Stadt (`explore/ANFRAGE_stadt_koeln.md`) freigegeben; Versand durch den Auftraggeber. |
 | 04.11.2026 | Phase 2 wird ohne Abrufe vorbereitet: SessionNet-Adapter mit Tests gegen einen lokalen Testserver, Kölner Gebiets- und Straßendaten aus den Geodaten. |
+| 04.11.2026 | Workflow `tests.yml` aktiv (nur Tests mit synthetischen Daten, keine Anfragen an die Stadt); alle übrigen Workflows bleiben inaktiv. |
+| 04.11.2026 | Phase 3 (Geokodierung) wird ohne Abrufe begonnen: Stufe A über `subLocality`, Doppelnamen, eindeutige Bezirksformen, Hausnummern-Regel, `district_from_committee`, Tests mit erfundenen Titeln. |

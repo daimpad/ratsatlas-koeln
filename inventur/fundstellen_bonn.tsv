@@ -98,9 +98,9 @@ datei	zeile	kategorie	treffer	auszug
 .github/workflows-inaktiv/pages.yml	322	oparl_lite	consultations_lite	data/raw/consultations_lite.jsonl
 .github/workflows-inaktiv/quellen.yml	1	bonn	bonn	# Quelldateien, die aus der Arbeitsumgebung nicht erreichbar sind (wahlen.bonn.de, stadtplan.bonn.de), abrufen und
 .github/workflows-inaktiv/release.yml	13	bonn	Bonn	default: "Ratsatlas Bonn"
-.github/workflows-inaktiv/tests.yml	54	oparl_lite	consultations_lite	data/raw/consultations_lite.jsonl
-.github/workflows-inaktiv/tests.yml	67	oparl_lite	fetch-lite	python -m pipeline fetch-lite
-.github/workflows-inaktiv/tests.yml	82	site_url	SITE_URL	HAUSHALT_EBENEN=vorschau HAUSHALT_ERWEITERUNG=vorschau HAUSHALT_ERTRAGSARTEN=vorschau SITE_URL=http://localhost:8765/ python -m pipeline seo
+.github/workflows-inaktiv/tests_bonn.yml	54	oparl_lite	consultations_lite	data/raw/consultations_lite.jsonl
+.github/workflows-inaktiv/tests_bonn.yml	67	oparl_lite	fetch-lite	python -m pipeline fetch-lite
+.github/workflows-inaktiv/tests_bonn.yml	82	site_url	SITE_URL	HAUSHALT_EBENEN=vorschau HAUSHALT_ERWEITERUNG=vorschau HAUSHALT_ERTRAGSARTEN=vorschau SITE_URL=http://localhost:8765/ python -m pipeline seo
 CLAUDE.md	3	bonn	Bonn | bonn	> Entwurf v0.1 (04.11.2026) · Zur Ausführung in Claude Code · Vorlage: Ratsatlas Bonn (`daimpad/allris-test`, künftig `daimpad/ratsatlas-bonn`)
 CLAUDE.md	18	bonn	Bonn	| Gestaltung | wie Ratsatlas Bonn (Glass-Stil, Tokens aus `site/style.css`, Schrift Inter lokal, kontraststarke Violetttöne); Texte und Marke auf Köln umgestell
 CLAUDE.md	20	site_url	SITE_URL	| Veröffentlichung | Hauptadresse `https://koeln.ratsatlas.de/` (Netcup-Webhosting, Plesk-Git aus Branch `deploy` mit Webhook, `SITE_URL`); Spiegel auf GitHub P
@@ -229,6 +229,8 @@ TECHNIK.md	310	site_url	SITE_URL	- Eigener Server (Plesk): Subdomain mit Let's-E
 TECHNIK.md	310	bonn	bonn	- Eigener Server (Plesk): Subdomain mit Let's-Encrypt-Zertifikat; „Git“ mit `https://github.com/daimpad/allris-test.git`, Branch `deploy`, automatische Bereitst
 TECHNIK.md	313	bonn	/bonn/ | Bonn | _BONN | bonn	- Alle Feeds sind Atom 1.0 (`pipeline/publish.py`, `_atom`). Neu ist der Feed über ganz Bonn `data/export/bonn/feeds/ganz-bonn.xml` (`GANZ_BONN`): die letzten 1
 TECHNIK.md	315	bonn	Bonn	- Feed-Erkennung (`link rel="alternate"`): `index.html` und jede Seite aus `gebietsseiten._page` verweisen auf den Feed über ganz Bonn; Gebiets- und Themenseite
+data/geo/hausnummern_koeln.json	1	ortsteil_bonn	Auerberg | Hochkreuz | Röttgen	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Adresse_0.zip","license":"dl-de/zero 2.0 (Stadt Köln, Adressen Köln);
+data/geo/hausnummern_koeln.json	1	bonn	Bonner	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Adresse_0.zip","license":"dl-de/zero 2.0 (Stadt Köln, Adressen Köln);
 data/geo/strassen_koeln.json	1	ortsteil_bonn	Auerberg | Hochkreuz | Röttgen	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Strasse_1.zip","license":"dl-de/zero 2.0 (Stadt Köln, Straßen Köln); 
 data/geo/strassen_koeln.json	1	bonn	Bonner	{"meta":{"source":"https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Strasse_1.zip","license":"dl-de/zero 2.0 (Stadt Köln, Straßen Köln); 
 deploy/htaccess	2	bonn	Bonn	# Branch deploy kopiert. Die Daten für ganz Bonn umfassen rund 85 MB JSON; Komprimierung
@@ -278,13 +280,13 @@ pipeline/config.py	17	oparl_lite	CONSULTATIONS_LITE	CONSULTATIONS_LITE = BERATUN
 pipeline/config.py	28	bonn	Bonn	# Flächen heißen wie in Bonn (ortsteil, ortsteil_bez, bezirk, bezirk_bez); angezeigt wird „Stadtteil“ (Phase-0-Bericht 3.3)
 pipeline/config.py	64	oparl_lite	OParl-Lite	QUELLE_SITZUNG = "oparl-koeln"    # Sitzungen und TOPs (in Bonn aus OParl-Lite, in Köln aus derselben API)
 pipeline/config.py	64	bonn	Bonn	QUELLE_SITZUNG = "oparl-koeln"    # Sitzungen und TOPs (in Bonn aus OParl-Lite, in Köln aus derselben API)
-pipeline/config.py	96	bonn	Bonner	# Kein Pilot-Stadtteil (CLAUDE.md 2); bleibt für Module, die den Bonner Pilot noch kennen
-pipeline/config.py	99	bonn	Bonn	# Zusatzthemen aus Bonn: deaktiviert, nicht gelöscht (CLAUDE.md 5.4, Inventur Phase 0); einzeln freizugeben
-pipeline/config.py	107	bonn	Bonn	# Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)
-pipeline/config.py	110	bonn	Bonn	BAUSTELLEN_LICENSE = ("CC0 1.0 (Stadt Bonn, Baustellen tagesaktuell und geplant; Lizenz laut Auftraggeber, die Datensätze "
-pipeline/config.py	111	bonn	bonn	"sind nicht mehr im Katalog von opendata.bonn.de)")
-pipeline/config.py	114	site_url	SITE_URL	SITE_URL = os.environ.get("SITE_URL", "https://koeln.ratsatlas.de/")
-pipeline/config.py	116	site_url	PAKET_URL	PAKET_URL = os.environ.get("PAKET_URL",
+pipeline/config.py	102	bonn	Bonner	# Kein Pilot-Stadtteil (CLAUDE.md 2); bleibt für Module, die den Bonner Pilot noch kennen
+pipeline/config.py	105	bonn	Bonn	# Zusatzthemen aus Bonn: deaktiviert, nicht gelöscht (CLAUDE.md 5.4, Inventur Phase 0); einzeln freizugeben
+pipeline/config.py	113	bonn	Bonn	# Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)
+pipeline/config.py	116	bonn	Bonn	BAUSTELLEN_LICENSE = ("CC0 1.0 (Stadt Bonn, Baustellen tagesaktuell und geplant; Lizenz laut Auftraggeber, die Datensätze "
+pipeline/config.py	117	bonn	bonn	"sind nicht mehr im Katalog von opendata.bonn.de)")
+pipeline/config.py	120	site_url	SITE_URL	SITE_URL = os.environ.get("SITE_URL", "https://koeln.ratsatlas.de/")
+pipeline/config.py	122	site_url	PAKET_URL	PAKET_URL = os.environ.get("PAKET_URL",
 pipeline/dossier.py	7	bonn	/bonn/	Ausgabe: export/bonn/dossiers/<key>.json (export_all) und die statische Seite (seo-Schritt)."""
 pipeline/dossier.py	488	bonn	Bonn	<p class="meta">Ausgelesen aus den Haushaltsplänen{" und dem Jahresabschluss 2024" if ja in h["ausgaben"] else ""} der Stadt Bonn (PDF: {quellen}; Abruf {_date(
 pipeline/dossier.py	529	bonn	Bonn	<p class="meta">Laufende Mitgliedschaften laut OParl-API der Stadt Bonn (CC0), Stand {_date(a["stichtag"])}. <a href="{root}?prozesse=gremien&amp;gremium={escap
@@ -395,13 +397,13 @@ pipeline/gebietszahlen.py	37	bonn	Bonn	`base`: Anteile in ganz Bonn aus shares()
 pipeline/gebietszahlen.py	50	bonn	_bonn	return {"thema": t, "label": label.get(t, t), "anteil": round(share * 100), "anteil_bonn": round(city * 100)}
 pipeline/gebietszahlen.py	82	bonn	_bonn	"themen_bonn": {t: round(share * 100, 1) for t, (_, share) in sorted(base.items())},
 pipeline/gebietszahlen.py	86	bonn	Bonn	f"mindestens {MIN_FAKTOR:g}-mal so häufig wie in ganz Bonn."}
-pipeline/geo.py	1	bonn	Bonner	"""Point-in-Polygon gegen die 51 Bonner Ortsteile (shapely)."""
-pipeline/geocode.py	76	ortsteil_bonn	Endenich	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
-pipeline/geocode.py	76	bonn	Bonn	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
-pipeline/geocode.py	297	ortsteil_bonn	Friesdorf | Godesberg-Nord	# Lagebezeichnung („Grundstück in Bonn-Friesdorf, Friesdorfer Straße 197“ liegt in Godesberg-Nord)
-pipeline/geocode.py	297	bonn	Bonn	# Lagebezeichnung („Grundstück in Bonn-Friesdorf, Friesdorfer Straße 197“ liegt in Godesberg-Nord)
-pipeline/geocode.py	375	bonn	Bonner	vorliegen (explore/BERICHT_phase1.md 2.5); bis dahin keine Erkennung, damit das Bonner Schema nichts falsch zuordnet."""
-pipeline/geocode.py	395	bonn	Bonn	"note": "Ortsteile je Straße per Verschneidung mit den Ortsteilflächen der Stadt Bonn; "
+pipeline/geo.py	1	bonn	Bonner	"""Point-in-Polygon gegen die 86 Kölner Stadtteile (shapely); Eigenschaften im Bonner Format (ortsteil_bez …)."""
+pipeline/geocode.py	90	ortsteil_bonn	Endenich	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
+pipeline/geocode.py	90	bonn	Bonn	"""Wortgrenzen; bei Ortsnamen darf ein Bindestrich vorangehen („Bonn-Endenich“)."""
+pipeline/geocode.py	317	ortsteil_bonn	Friesdorf | Godesberg-Nord	# Lagebezeichnung („Grundstück in Bonn-Friesdorf, Friesdorfer Straße 197“ liegt in Godesberg-Nord)
+pipeline/geocode.py	317	bonn	Bonn	# Lagebezeichnung („Grundstück in Bonn-Friesdorf, Friesdorfer Straße 197“ liegt in Godesberg-Nord)
+pipeline/geocode.py	438	bonn	Bonner	vorliegen (explore/BERICHT_phase1.md 2.5); bis dahin keine Erkennung, damit das Bonner Schema nichts falsch zuordnet."""
+pipeline/geocode.py	458	bonn	Bonn	"note": "Ortsteile je Straße per Verschneidung mit den Ortsteilflächen der Stadt Bonn; "
 pipeline/geodaten.py	6	bonn	Bonner	OParl-Abruf). Ausgabe in WGS84 mit den Eigenschaftsnamen des Bonner Modells:
 pipeline/glossar.py	69	oparl_lite	OParl-Lite	"abgeleitet": "Aus Quelldaten erschlossen (z. B. Verknüpfung mit OParl-Lite, Titelmuster).",
 pipeline/glossar.py	85	bonn	Bonn	DATENFELD = "Ratsinformationssystem der Stadt Bonn (OParl-API)"

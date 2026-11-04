@@ -32,7 +32,7 @@ STADTBEZIRKE = GEO / "stadtbezirke_koeln.geojson"
 STRASSEN = GEO / "strassen_koeln.json"
 BPLAN = GEO / "bebauungsplaene_koeln.geojson"          # Bezugsquelle offen (explore/BERICHT_phase1.md 2.5)
 PLAN_LOG = GEO / "bebauungsplaene_protokoll.tsv"
-HAUSNUMMERN = GEO / "hausnummern_koeln.json"           # folgt in Phase 3
+HAUSNUMMERN = GEO / "hausnummern_koeln.json"           # aus „Adressen Köln“ (geodaten.py)
 OBJEKTE = GEO / "objekte_koeln.json"                   # folgt in Phase 3 (OSM, ODbL)
 DB = BUILD / "allris.sqlite"
 
@@ -65,6 +65,7 @@ QUELLE_SITZUNG = "oparl-koeln"    # Sitzungen und TOPs (in Bonn aus OParl-Lite, 
 QUELLE_GEO = "geo-koeln"
 QUELLE_STRASSEN = "strassen-koeln"
 QUELLE_BPLAN = "bplan-koeln"
+QUELLE_ADRESSEN = "adressen-koeln"
 NAMENSNENNUNG = "Datenquelle: Stadt Köln – offenedaten-koeln.de"
 
 # Quelle je Datensatz; wird in die Datenbank und in jeden Export übernommen.
@@ -81,6 +82,10 @@ SOURCES = {
         "url": "https://www.offenedaten-koeln.de/dataset/strassen-koeln",
         "license": "dl-de/zero 2.0 (Stadt Köln, Straßen Köln); " + NAMENSNENNUNG,
     },
+    QUELLE_ADRESSEN: {
+        "url": "https://www.offenedaten-koeln.de/dataset/adressen-koeln",
+        "license": "dl-de/zero 2.0 (Stadt Köln, Adressen Köln); " + NAMENSNENNUNG,
+    },
     "osm": {
         "url": "https://www.openstreetmap.org (Overpass API)",
         "license": "ODbL 1.0, © OpenStreetMap-Mitwirkende",
@@ -91,6 +96,7 @@ GEO_DOWNLOADS = {
     "stadtteile": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Stadtteil_0.zip",
     "stadtbezirke": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Stadtbezirk_0.zip",
     "strassen": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Strasse_1.zip",
+    "adressen": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Adresse_0.zip",
 }
 
 # Kein Pilot-Stadtteil (CLAUDE.md 2); bleibt für Module, die den Bonner Pilot noch kennen

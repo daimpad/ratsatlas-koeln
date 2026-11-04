@@ -7,6 +7,10 @@ OParl-Abruf). Ausgabe in WGS84 mit den Eigenschaftsnamen des Bonner Modells:
 - stadtteile_koeln.geojson:   ortsteil (Nummer), ortsteil_bez, bezirk (Nummer), bezirk_bez
 - stadtbezirke_koeln.geojson: bezirk, bezirk_bez
 - strassen_koeln.json:        Name → Lagen je Stadtteil (Gazetteer aus geocode.py), dazu Kreuzungen
+- hausnummern_koeln.json:     Straße → Stadtteil → Hausnummern (bestimmt den Stadtteil einer Straße, die durch
+                              mehrere Stadtteile läuft) und Hauskoordinaten aus „Adressen Köln“ für die punktgenaue
+                              Verortung, die nur bei Verwaltungsvorlagen und politischen Anträgen genutzt wird
+                              (Entscheidung 04.11.2026; geocode.py, build.py)
 Straßennamen werden ausgeschrieben („Aachener Str.“ → „Aachener Straße“), damit Titel mit „Straße“, „Strasse“ und
 „Str.“ gleichermaßen gefunden werden. Gleichnamige Straßen nach Eingemeindungen bleiben als getrennte Lagen erhalten.
 """
@@ -84,6 +88,38 @@ def _schreibe_geojson(pfad, feats, quelle):
         "features": feats}, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 
 
+def _hausnummer_basis(nr):
+    m = re.match(r"\d+", nr or "")
+    return int(m.group(0)) if m else None
+
+
+def hausnummern():
+    """Hausnummernverzeichnis aus dem Datensatz „Adressen Köln“ (161 531 Adressen, Stand 24.09.2026)."""
+    r = _reader(_zip("adressen"), "Adresse")
+    nummern, punkte, n = {}, {}, 0
+    for sr in r.iterShapeRecords(fields=["str_amtl", "hausnr", "stteil"]):
+        a = sr.record.as_dict()
+        strasse, nr, teil = strassenname(a["str_amtl"]), (a["hausnr"] or "").strip().lower(), (a["stteil"] or "").strip()
+        basis = _hausnummer_basis(nr)
+        if not strasse or basis is None or not teil or not sr.shape.points:
+            continue
+        x, y = sr.shape.points[0]
+        lon, lat = NACH_WGS84.transform(x, y)
+        nummern.setdefault(strasse, {}).setdefault(teil, set()).add(basis)
+        punkte.setdefault(strasse, {}).setdefault(teil, {})[nr] = [round(lon, 5), round(lat, 5)]
+        n += 1
+    config.HAUSNUMMERN.write_text(json.dumps({
+        "meta": {"source": config.GEO_DOWNLOADS["adressen"], "license": config.SOURCES[config.QUELLE_ADRESSEN]["license"],
+                 "adressen": n,
+                 "note": "Straße (ausgeschrieben) → Stadtteil → Hausnummern ohne Zusatz; punkte: Straße → Stadtteil → "
+                         "Hausnummer mit Zusatz → [lon, lat] (WGS84, 5 Nachkommastellen). Punktgenau verortet werden nur "
+                         "Verwaltungsvorlagen und politische Anträge (Entscheidung 04.11.2026)."},
+        "strassen": {s: {t: sorted(v) for t, v in sorted(d.items())} for s, d in sorted(nummern.items())},
+        "punkte": {s: {t: dict(sorted(v.items())) for t, v in sorted(d.items())} for s, d in sorted(punkte.items())}},
+        ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    print(f"{n} Adressen in {len(nummern)} Straßen → {config.HAUSNUMMERN}")
+
+
 def write():
     teile = _flaechen(_zip("stadtteile"), "Stadtteil", lambda a: {
         "ortsteil": int(a["nummer"]), "ortsteil_bez": a["name"].strip(),
@@ -123,3 +159,4 @@ def write():
         "kreuzungen": kreuzungen}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     mehrfach = sum(1 for e in gaz.streets.values() if len({x["component"] for x in e}) > 1)
     print(f"{len(gaz.streets)} Straßennamen ({mehrfach} mit mehreren Lagen), {len(kreuzungen)} Kreuzungen → {config.STRASSEN}")
+    hausnummern()
