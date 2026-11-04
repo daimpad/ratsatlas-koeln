@@ -1,0 +1,626 @@
+"""Exporte: Pilot-Ortsteil (data/export/endenich, im Repository) und ganz Bonn je Ortsteil,
+Stadtbezirk und Jahr (data/export/bonn, für die Webseite; wird bei der Veröffentlichung erzeugt).
+Jede Vorlage mit Prozesslinie, Akteuren und Ortsbezügen samt Quelle."""
+import csv
+import json
+import random
+import re
+import shutil
+import sqlite3
+from datetime import date, datetime, timezone
+
+from . import chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, maske, plans, process as proc, prozessarten, publish, soll, topics
+from .themenseiten import ALLE as THEMENSEITEN
+
+DERIVED_NOTE = (
+    "Einreichende (originators), fachliche Zuständigkeit (responsibility.kind = 'fachlich') und "
+    "Ortsbezüge der Stufe B bzw. 'vererbt' (locations.stage, method, confidence, evidence) sind "
+    "abgeleitet; alle übrigen Felder stammen unverändert aus den Quellen. VORLÄUFIGE FASSUNG: "
+    "Stichprobenprüfung von Hand ausstehend."
+)
+AUDIT_COLUMNS = ["drucksache", "datum", "vorlagenart", "titel", "stufe", "methode", "ebene", "treffer",
+                 "ortsteil", "stadtbezirk", "konfidenz", "fundstelle", "quellobjekt", "pruefstatus"]
+
+
+def _status(row):
+    if row["cancelled"]:
+        return "abgesagt"
+    if row["result"]:
+        return "beraten"
+    return "terminiert" if row["meeting_id"] else "offen"
+
+
+_KURZ = None
+KURZ_COLUMNS = ["drucksache", "kurzfassung", "modell", "erzeugt", "kennzeichnung"]
+KURZ_HINWEIS = ("KI-Kurzfassung (abgeleitet): mit einem Sprachmodell aus dem Text des Dokuments formuliert, kein Zitat; "
+                "Einzelheiten können ungenau sein, maßgeblich ist das Original")
+
+
+def _kurzfassungen():
+    """Freigegebene Kurzfassungen (kurzfassung.py); leer, solange die Stichprobe nicht geprüft ist."""
+    global _KURZ
+    if _KURZ is None:
+        from . import kurzfassung
+        _KURZ = kurzfassung.fuer_seite()
+    return _KURZ
+
+
+_MASKE = [None, None]
+
+
+def _maske(db):
+    """Hausnummern in Titeln aus der Einwohnerschaft (maske.py), je Datenbankverbindung einmal aufgebaut."""
+    if _MASKE[0] is not db:
+        _MASKE[:] = [db, maske.aus_db(db)]
+    return _MASKE[1]
+
+
+def _paper_detail(db, pid):
+    p = db.execute(
+        "SELECT p.*, o.label AS amt, o.name AS vb_name FROM paper p "
+        "LEFT JOIN organization o ON o.id = p.under_direction_of WHERE p.id = ?", (pid,)).fetchone()
+    process = db.execute(
+        "SELECT c.position, c.role, c.authoritative, c.meeting_id, g.name AS gremium, "
+        "m.name AS meeting, m.start_date, m.cancelled, a.number, a.result, a.public "
+        "FROM consultation c LEFT JOIN organization g ON g.id = c.organization_id "
+        "LEFT JOIN meeting m ON m.id = c.meeting_id LEFT JOIN agenda_item a ON a.id = c.agenda_item_id "
+        "WHERE c.paper_id = ? ORDER BY c.position", (pid,)).fetchall()
+    resp = db.execute(
+        "SELECT r.kind, r.method, r.evidence, r.derived, o.label, o.name FROM paper_responsibility r "
+        "LEFT JOIN organization o ON o.id = r.organization_id WHERE r.paper_id = ?", (pid,)).fetchall()
+    orig = db.execute(
+        "SELECT actor, actor_type, organization_id, method, evidence, derived "
+        "FROM paper_originator WHERE paper_id = ?", (pid,)).fetchall()
+    locs = _locations(db, pid)
+    m = _maske(db)
+    rel = lambda sql: [{**dict(r), "name": m(r["name"], r["reference"])} for r in db.execute(sql, (pid,))]
+    d = {
+        "reference": p["reference"],
+        "name": m(p["name"], p["reference"]),
+        "paper_type": p["paper_type"],
+        "date": p["date"],
+        "amt": p["amt"],
+        "web": p["web"],
+        "main_file": p["main_file_url"],
+        "responsibility": [dict(r) for r in resp],
+        "originators": [dict(r) for r in orig],
+        "process": [{**dict(r), "status": _status(r)} for r in process],
+        "superordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
+                              "JOIN paper p ON p.id = r.parent_id WHERE r.child_id = ?"),
+        "subordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
+                            "JOIN paper p ON p.id = r.child_id WHERE r.parent_id = ? "
+                            "ORDER BY p.date"),
+        "locations": locs,
+        # Plannummern im Titel (Methode B3); match = Treffer im Datensatz der rechtskräftigen Pläne,
+        # names = zugeordnete Pläne (Teilpläne, Grundnummer), area = Geltungsbereich vorhanden
+        "plans": [_plan_entry(nr, ev, match) for nr, ev, match in
+                  db.execute("SELECT plan_nr, evidence, match FROM paper_plan WHERE paper_id = ?", (pid,))],
+        "source_object": pid,
+    }
+    d["stand"] = proc.stand(d)
+    d["themes"] = topics.themes(d)
+    d["parties"] = topics.parties(d)
+    d["steps"] = [{k: v for k, v in s.items() if v not in (None, [], False)} for s in proc.steps(d)]
+    d["soll"] = soll.lookup(db, p["reference"])
+    if p["reference"] in _kurzfassungen():
+        d["kurzfassung"] = _kurzfassungen()[p["reference"]]
+    return d
+
+
+def _locations(db, pid):
+    """Ortsbezüge einer Vorlage; Stufe-B-Bezüge entfallen, wo Stufe A denselben Ortsteil belegt."""
+    rows = [dict(r) for r in db.execute(
+        "SELECT l.level, COALESCE(l.street, l.description) AS name, l.ortsteil, l.stadtbezirk, "
+        "l.lon, l.lat, pl.stage, pl.method, pl.confidence, pl.evidence, pl.source_object, "
+        "l.source FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+        "WHERE pl.paper_id = ? ORDER BY pl.stage, l.level", (pid,))]
+    a_ortsteile = {r["ortsteil"] for r in rows if r["stage"] == "A"}
+    return [r for r in rows if r["stage"] == "A" or r["ortsteil"] not in a_ortsteile
+            or r["ortsteil"] is None or r["level"] == "bebauungsplan"]
+
+
+def _audit_rows(db, where="", params=()):
+    """Audit-Zeilen je Ortsbezug; Stufe-B-Treffer bei Vorlagen mit Stufe A gelten als geprüft."""
+    a = {}
+    for pid, ot in db.execute("SELECT pl.paper_id, l.ortsteil FROM paper_location pl JOIN location l "
+                              "ON l.id = pl.location_id WHERE pl.stage = 'A'"):
+        a.setdefault(pid, set()).add(ot)
+    out = []
+    for r in db.execute(
+            "SELECT p.id, p.reference, p.date, p.paper_type, p.name, pl.stage, pl.method, l.level, "
+            "COALESCE(l.street, l.description), l.ortsteil, l.stadtbezirk, pl.confidence, pl.evidence, "
+            "pl.source_object FROM paper_location pl JOIN paper p ON p.id = pl.paper_id "
+            f"JOIN location l ON l.id = pl.location_id {where} ORDER BY p.date DESC, p.reference", params):
+        pid, *vals = r
+        vals[3] = _maske(db)(vals[3], vals[0])
+        status = "Quelle (Stufe A)" if vals[4] == "A" else "ungeprüft"
+        if vals[4] != "A" and pid in a and vals[6] != "stadtbezirk":
+            status = "bestätigt durch Stufe A" if vals[8] in a[pid] else "abweichend von Stufe A"
+        out.append(vals + [status])
+    return out
+
+
+def _write_tsv(path, header, rows):
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f, delimiter="\t", lineterminator="\n")
+        w.writerow(header)
+        w.writerows(rows)
+
+
+def export():
+    (config.EXPORT / "glossar.json").write_text(json.dumps(glossar.glossar(), ensure_ascii=False, indent=1) + "\n")
+    export_pilot()
+    export_all()
+
+
+def _meta(db, stable=False, **extra):
+    """Metadaten je Datei. stable=True (Gebietsdateien für ganz Bonn): ohne Erzeugungs- und
+    Abrufzeitpunkte, damit sich eine Datei nur ändert, wenn sich ihr Inhalt ändert; die Zeitpunkte
+    stehen in index.json."""
+    sources = [dict(r) for r in db.execute("SELECT * FROM source")]
+    if stable:
+        return {**extra, "sources": [{k: v for k, v in s.items() if k != "retrieved_at"} for s in sources],
+                "note": DERIVED_NOTE}
+    return {**extra, "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "sources": sources, "note": DERIVED_NOTE}
+
+
+def slug(name):
+    name = name.lower().translate(str.maketrans({"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss"}))
+    return re.sub(r"[^a-z0-9]+", "-", name).strip("-")
+
+
+def _dump(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")))
+
+
+def export_all():
+    """Ganz Bonn: je Ortsteil, je Stadtbezirk (nur Bezüge auf Bezirksebene) und Vorlagen ohne
+    Ortsbezug je Jahr; dazu index.json mit Zählungen für die Auswahl auf der Webseite."""
+    db = sqlite3.connect(config.DB)
+    db.row_factory = sqlite3.Row
+    out = config.EXPORT / "bonn"
+    shutil.rmtree(out, ignore_errors=True)
+    cache = {}
+
+    def detail(pid):
+        if pid not in cache:
+            cache[pid] = _paper_detail(db, pid)
+        return cache[pid]
+
+    order = "ORDER BY p.date DESC, p.reference"
+    index = {"ortsteile": [], "bezirke": [], "ohne_ortsbezug": []}
+
+    def bbox(feature):
+        """Umriss als [Süd, West, Nord, Ost] für den ersten Kartenausschnitt (die Seite lädt die Flächen erst nach
+        den Kacheln; Phase 0 „Verständlichkeit“, Schritt 1b)."""
+        xs, ys = [], []
+
+        def walk(c):
+            if c and isinstance(c[0], (int, float)):
+                xs.append(c[0])
+                ys.append(c[1])
+            else:
+                for x in c:
+                    walk(x)
+        walk(feature["geometry"]["coordinates"])
+        return [round(min(ys), 4), round(min(xs), 4), round(max(ys), 4), round(max(xs), 4)]
+    areas, names = {}, {}
+
+    for ot in json.loads(config.ORTSTEILE.read_text())["features"]:
+        name, bezirk = ot["properties"]["ortsteil_bez"], ot["properties"]["bezirk_bez"]
+        ids = [r[0] for r in db.execute(
+            "SELECT DISTINCT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+            f"JOIN paper p ON p.id = pl.paper_id WHERE l.ortsteil = ? {order}", (name,))]
+        _dump(out / "ortsteile" / f"{slug(name)}.json",
+              {"meta": _meta(db, True, ortsteil=name, stadtbezirk=bezirk, count=len(ids)),
+               "papers": [detail(i) for i in ids]})
+        index["ortsteile"].append({"name": name, "slug": slug(name), "stadtbezirk": bezirk,
+                                   "count": len(ids), "bbox": bbox(ot)})
+        areas[f"ortsteil:{slug(name)}"] = ids
+        names[f"ortsteil:{slug(name)}"] = name
+
+    for bz in json.loads(config.STADTBEZIRKE.read_text())["features"]:
+        name = bz["properties"]["bezirk_bez"]
+        ids = [r[0] for r in db.execute(
+            "SELECT DISTINCT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+            "JOIN paper p ON p.id = pl.paper_id WHERE l.level = 'stadtbezirk' AND l.stadtbezirk = ? "
+            "AND pl.paper_id NOT IN (SELECT pl2.paper_id FROM paper_location pl2 JOIN location l2 "
+            f"ON l2.id = pl2.location_id WHERE l2.ortsteil IS NOT NULL AND l2.stadtbezirk = ?) {order}",
+            (name, name))]
+        _dump(out / "bezirke" / f"{slug(name)}.json",
+              {"meta": _meta(db, True, stadtbezirk=name, count=len(ids)), "papers": [detail(i) for i in ids]})
+        index["bezirke"].append({"name": name, "slug": slug(name), "count": len(ids), "bbox": bbox(bz)})
+        areas[f"bezirk:{slug(name)}"] = ids
+        names[f"bezirk:{slug(name)}"] = f"Stadtbezirk {name}, ohne genaueren Ort"
+
+    # ohne Ortsbezug: auch Vorlagen, deren Orte weder einem Ortsteil noch einem Stadtbezirk zugeordnet
+    # werden konnten (z. B. Straße ohne Koordinate), damit keine Vorlage verloren geht
+    placed = ("SELECT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+              "WHERE l.ortsteil IS NOT NULL OR l.level = 'stadtbezirk'")
+    years = [r[0] for r in db.execute(
+        f"SELECT DISTINCT substr(date, 1, 4) y FROM paper WHERE id NOT IN ({placed}) ORDER BY y DESC")]
+    for year in years:
+        ids = [r[0] for r in db.execute(
+            f"SELECT p.id FROM paper p WHERE substr(p.date, 1, 4) = ? AND p.id NOT IN ({placed}) {order}",
+            (year,))]
+        _dump(out / "ohne-ortsbezug" / f"{year}.json",
+              {"meta": _meta(db, True, jahr=year, count=len(ids)), "papers": [detail(i) for i in ids]})
+        index["ohne_ortsbezug"].append({"jahr": year, "count": len(ids)})
+        areas[f"ohne:{year}"] = ids
+        names[f"ohne:{year}"] = f"stadtweit / ohne Ortsbezug {year}"
+    areas["gesamt"] = [r[0] for r in db.execute("SELECT id FROM paper")]
+    for pid in areas["gesamt"]:
+        detail(pid)
+    _dump(out / "zeit.json", _time_index(db, areas, cache))
+    _dump(out / "prozesse.json", _paths(db, cache))
+
+    _dump(out / "suche.json", _search_index(cache, areas, names))
+
+    # Abonnieren und Nachnutzen (publish.py)
+    home = {}
+    for key, ids in areas.items():
+        for pid in ids:
+            home.setdefault(pid, key)
+    sources = [dict(r) for r in db.execute("SELECT * FROM source")]
+    stand = next((s["retrieved_at"] for s in sources if s["name"] == "oparl-bonn"), None) or ""
+    year = int((stand or datetime.now(timezone.utc).isoformat())[:4])
+    publish.write_feeds(out / "feeds", areas, cache, names, home, slug, f"{year - 1}-01-01")
+    meetings = _meetings(db)
+    publish.write_calendar(out / "termine.ics", meetings)
+    n_points = publish.write_geojson(out / "vorlagen.geojson", cache,
+                                     [{k: v for k, v in s.items() if k != "retrieved_at"} for s in sources])
+    # Kurzfassungen (nur freigegebene): eigene Datei für das Datenpaket, ohne Text der Quelle
+    kurz = _kurzfassungen()
+    if kurz:
+        _write_tsv(out / "kurzfassungen.tsv", KURZ_COLUMNS,
+                   [(ref, k["text"], k["modell"], k["erzeugt"], KURZ_HINWEIS) for ref, k in sorted(kurz.items())])
+    publish.write_dcat(out / "dcat.jsonld", min(p["date"] for p in cache.values() if p["date"]),
+                       stand[:10] or datetime.now(timezone.utc).date().isoformat(), kurzfassungen=bool(kurz))
+    n_shards = chat.write_chat(out / "chat", db, cache, meetings, sources, _meta(db, True))
+    # Bebauungspläne: Register je Plannummer (Grundlage der Planchronik)
+    reg = plans.register(cache.values(), _plans())
+    _dump(out / "plaene.json", {"meta": {**_meta(db, True), "note": "Pläne und Inkrafttreten belegt (Stadt Bonn, "
+                                         "Lage der Bebauungspläne); Verfahrensschritte aus dem Titel abgeleitet"}, **reg})
+    # Soll-Modell: Verfahren nach Regelwerk, Fristen, Zuständigkeit (Anzeige in der Prozesslinie)
+    _dump(out / "soll.json", soll.site_data())
+    # Reiter „Prozesse“: Vorgänge je Verfahren mit Beispielen, Gremien mit Sitzungen und Zuständigkeit
+    _dump(out / "prozessarten.json", prozessarten.site_data(db))
+
+    # Themenseiten (pipeline/themenseiten/): Vorlagen in Strängen, Sitzungen, Phasen laut Terminplan (dossier.py)
+    heute = proc.local_day(stand) if stand else datetime.now(timezone.utc).date().isoformat()
+    for t in THEMENSEITEN:
+        thema = dossier.daten(t, cache, home, meetings, heute, _meta(db, True))
+        _dump(out / "dossiers" / f"{t.key}.json", thema)
+        # Aufrufe: Kalender mit den Sitzungen der beteiligten Gremien, Feed mit den Vorlagen der Stränge, Bild
+        publish.write_calendar(out / "dossiers" / f"{t.key}.ics",
+                               [m for m in meetings if dossier.sitzung_im_thema(t, m["gremium"])],
+                               date.fromisoformat(heute))
+        prozessbild.schreibe_bild(t, thema, out / "dossiers", f"{config.SITE_URL}{t.pfad}")
+        refs = {r["reference"] for s in thema["straenge"] for r in s["vorlagen"]}
+        publish.write_topic_feed(out / "dossiers" / f"{t.key}.xml", t.key,
+                                 t.titel, [(pid, p) for pid, p in cache.items() if p["reference"] in refs],
+                                 home, f"{config.SITE_URL}{t.pfad}")
+
+    # Vereinfachte Flächen für die Seite (Navigation, Umrisse, Bebauungspläne), komprimierbar als .json
+    flaechen.write(out)
+    # Übersichtskarte: Vorlagen der letzten zwölf Monate und auffälliges Thema je Gebiet
+    gebietszahlen.annotate(index, areas, cache, stand or datetime.now(timezone.utc).isoformat())
+    _dump(out / "index.json", {"meta": _meta(db), **index})
+    db.close()
+    print(f"Bonn: {len(index['ortsteile'])} Ortsteile, {len(index['bezirke'])} Bezirke, "
+          f"{len(years)} Jahre ohne Ortsbezug, {len(cache)} Vorlagen, {n_points} Punkte im GeoJSON, {n_shards} Dateien für den Assistenten → {out}")
+
+
+def export_pilot(ortsteil=config.PILOT_ORTSTEIL):
+    db = sqlite3.connect(config.DB)
+    db.row_factory = sqlite3.Row
+    ids = [r[0] for r in db.execute(
+        "SELECT DISTINCT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+        "JOIN paper p ON p.id = pl.paper_id WHERE l.ortsteil = ? ORDER BY p.date DESC, p.reference",
+        (ortsteil,))]
+    papers = [_paper_detail(db, pid) for pid in ids]
+    # ohne Zeitpunkte wie die Gebietsdateien: sonst änderte sich der Branch deploy bei jedem Lauf (Code-Prüfung 24.10.2026)
+    meta = _meta(db, True, ortsteil=ortsteil, count=len(papers))
+    out = config.EXPORT / ortsteil.lower()
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "vorlagen.json").write_text(
+        json.dumps({"meta": meta, "papers": papers}, ensure_ascii=False, indent=1) + "\n")
+
+    features = [
+        {"type": "Feature",
+         "geometry": {"type": "Point", "coordinates": [loc["lon"], loc["lat"]]},
+         "properties": {"reference": p["reference"], "name": p["name"],
+                        "paper_type": p["paper_type"], "date": p["date"], "amt": p["amt"],
+                        "place": loc["name"], "level": loc["level"], "ortsteil": loc["ortsteil"],
+                        "stage": loc["stage"], "method": loc["method"],
+                        "confidence": loc["confidence"], "web": p["web"]}}
+        for p in papers for loc in p["locations"]
+        if loc["lon"] is not None and loc["ortsteil"] == ortsteil
+    ]
+    (out / "vorlagen.geojson").write_text(json.dumps(
+        {"type": "FeatureCollection", "meta": meta, "features": features},
+        ensure_ascii=False, indent=1) + "\n")
+    _write_tsv(out / "audit_prozess.tsv", PROCESS_AUDIT, process_audit_rows(papers))
+    _write_tsv(out / "audit_zeit.tsv", TIME_AUDIT, time_audit_rows(papers, _meetings(db)))
+    _write_tsv(out / "audit_themen.tsv", THEME_AUDIT, theme_audit_rows(papers))
+    _write_tsv(out / "audit_geokodierung.tsv", AUDIT_COLUMNS,
+               _audit_rows(db, "WHERE p.id IN (SELECT pl2.paper_id FROM paper_location pl2 JOIN location l2 "
+                               "ON l2.id = pl2.location_id WHERE l2.ortsteil = ?)", (ortsteil,)))
+    _write_tsv(config.EXPORT / "audit_geokodierung_bonn.tsv", AUDIT_COLUMNS, _audit_rows(db))
+    _write_tsv(config.EXPORT / "audit_bebauungsplaene.tsv", PLAN_AUDIT, plan_audit_rows(db))
+    # Pilot: Vorlagen mit Plannummer, die im Ortsteil liegen oder ihn im Titel nennen
+    _write_tsv(out / "audit_bebauungsplaene.tsv", PLAN_AUDIT, plan_audit_rows(
+        db, "WHERE p.id IN (SELECT pl2.paper_id FROM paper_location pl2 JOIN location l2 ON l2.id = pl2.location_id "
+            "WHERE l2.ortsteil = ?) OR p.name LIKE ?", (ortsteil, f"%{ortsteil}%")))
+    _sample(db, out, ortsteil)
+    db.close()
+    print(f"{len(papers)} Vorlagen, {len(features)} Punkte → {out}")
+
+
+def _sample(db, out, ortsteil, n=50, seed=2026):
+    """Stichprobe zur Prüfung von Hand: Vorlagen, die nur über Stufe B/vererbt im Ortsteil liegen.
+    Wird nur einmal gezogen; eine vorhandene Datei ist Prüfgrundlage und bleibt unverändert."""
+    if (out / "stichprobe_pruefung.tsv").exists():
+        return
+    ids = [r[0] for r in db.execute(
+        "SELECT DISTINCT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+        "WHERE l.ortsteil = ? AND pl.stage = 'B' AND pl.paper_id NOT IN "
+        "(SELECT paper_id FROM paper_location WHERE stage = 'A') ORDER BY pl.paper_id", (ortsteil,))]
+    pick = sorted(random.Random(seed).sample(ids, min(n, len(ids))))
+    rows = []
+    for i, pid in enumerate(pick, 1):
+        p = list(db.execute("SELECT reference, date, paper_type, name, web FROM paper WHERE id = ?", (pid,)).fetchone())
+        p[3] = _maske(db)(p[3], p[0])
+        locs = db.execute(
+            "SELECT COALESCE(l.street, l.description), pl.method, pl.confidence, pl.evidence "
+            "FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+            "WHERE pl.paper_id = ? AND l.ortsteil = ?", (pid, ortsteil)).fetchall()
+        rows.append([i, *p, "; ".join(l[0] for l in locs), "; ".join(sorted({l[1] for l in locs})),
+                     "; ".join(sorted({l[2] for l in locs})), "; ".join(sorted({l[3] for l in locs})),
+                     "", ""])
+    _write_tsv(out / "stichprobe_pruefung.tsv",
+               ["nr", "drucksache", "datum", "vorlagenart", "titel", "link", "zuordnung", "methode",
+                "konfidenz", "fundstelle", "urteil (richtig/falsch/unklar)", "anmerkung"], rows)
+
+
+# --- Suche über ganz Bonn: Themen und Parteien -------------------------------------------------------
+
+def _search_index(cache, areas, names):
+    """Kompakter Index aller Vorlagen für die Suche über ganz Bonn. Je Zeile: Drucksache, Titel, Datum,
+    Vorlagenart, Stand, Gebiet (zum Öffnen), Themen, eigene Parteien, Parteien der übergeordneten Vorlage
+    (z. B. Stellungnahme der Verwaltung zu einem Antrag)."""
+    home = {}
+    for key, ids in areas.items():
+        if key != "gesamt":
+            for pid in ids:
+                home.setdefault(pid, key)
+    by_ref = {p["reference"]: p for p in cache.values()}
+    party_list = sorted({x for p in cache.values() for x in p["parties"]})
+    area_list = sorted(set(home.values()))
+    types = sorted({p["paper_type"] for p in cache.values() if p["paper_type"]})
+    theme_ids = [k for k, _ in topics.THEMES]
+    aemter = sorted({p["amt"] for p in cache.values() if p["amt"]})
+    gremien = sorted({c["gremium"] for p in cache.values() for c in p["process"] if c["gremium"]})
+    rows = []
+    for pid, p in sorted(cache.items(), key=lambda x: (x[1]["date"] or "", x[1]["reference"]), reverse=True):
+        related = {x for s in p["superordinated"] for x in (by_ref.get(s["reference"]) or {}).get("parties", [])}
+        rows.append([p["reference"], p["name"], p["date"], types.index(p["paper_type"]) if p["paper_type"] else -1,
+                     proc.STAENDE.index(p["stand"]), area_list.index(home[pid]) if pid in home else -1,
+                     [theme_ids.index(t["theme"]) for t in p["themes"]],
+                     [party_list.index(x) for x in p["parties"]],
+                     [party_list.index(x) for x in sorted(related - set(p["parties"]))],
+                     aemter.index(p["amt"]) if p["amt"] else -1,
+                     sorted({gremien.index(c["gremium"]) for c in p["process"] if c["gremium"]})])
+    return {"meta": {"note": "Themen und Parteien sind abgeleitet (siehe pipeline/topics.py); Spalten: "
+                             "Drucksache, Titel, Datum, Vorlagenart, Stand, Gebiet, Themen, Parteien, "
+                             "Parteien der übergeordneten Vorlage, federführendes Amt, beratende Gremien"},
+            "themes": [{"id": k, "label": v} for k, v in topics.THEMES], "parties": party_list,
+            "areas": [{"key": k, "name": names[k]} for k in area_list], "types": types, "stands": list(proc.STAENDE),
+            "aemter": aemter, "gremien": gremien, "rows": rows}
+
+
+THEME_AUDIT = ["drucksache", "titel", "thema", "methode", "fundstelle", "konfidenz", "pruefstatus"]
+
+
+def theme_audit_rows(papers):
+    label = dict(topics.THEMES)
+    return [[p["reference"], p["name"], label[t["theme"]], t["method"], t["evidence"], t["confidence"], "ungeprüft"]
+            for p in papers for t in p["themes"]] + \
+           [[p["reference"], p["name"], "", "", "", "", "ohne Thema"] for p in papers if not p["themes"]]
+
+
+# --- Zeitleiste: Aggregate je Monat, Sitzungen, Wahlperioden --------------------------------------
+
+def _months(first, last):
+    y, m = int(first[:4]), int(first[5:7])
+    out = []
+    while f"{y:04d}-{m:02d}" <= last:
+        out.append(f"{y:04d}-{m:02d}")
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+    return out
+
+
+def _time_index(db, areas, cache):
+    """Monatszählungen je Gebiet für zwei Zeitdimensionen: Datum der Vorlage (belegt) und
+    Sitzungsdatum der Beratungen (abgeleitet über OParl-Lite); dazu Sitzungen und Wahlperioden."""
+    from collections import Counter
+    meetings = _meetings(db)
+    papers = list(cache.values())
+    dates = [p["date"] for p in papers if p["date"]] + [m["date"] for m in meetings]
+    months = _months(min(d for d in dates if d >= "2019")[:7], max(dates)[:7])
+    pos = {m: i for i, m in enumerate(months)}
+    types = [t for t, _ in Counter(p["paper_type"] for p in papers).most_common(6)]
+    by_ref = {p["source_object"]: p for p in papers}
+
+    def series(ids):
+        vorlage = {t: [0] * len(months) for t in types + ["Sonstige"]}
+        sitzung = [0] * len(months)
+        for pid in ids:
+            p = by_ref[pid]
+            if p["date"] and p["date"][:7] in pos:
+                vorlage[p["paper_type"] if p["paper_type"] in types else "Sonstige"][pos[p["date"][:7]]] += 1
+            for st in p["steps"]:
+                if st["typ"] in ("beratung", "entscheidung") and st.get("date") and st["date"][:7] in pos:
+                    sitzung[pos[st["date"][:7]]] += 1
+        return {"vorlage": {k: v for k, v in vorlage.items() if any(v)}, "sitzung": sitzung}
+
+    terms = json.loads(config.LEGISLATIVE_TERMS.read_text()) if config.LEGISLATIVE_TERMS.exists() else []
+    return {
+        "meta": _meta(db, True, note="vorlage = Datum der Vorlage (OParl-API, belegt); sitzung = Sitzungsdatum "
+                                "der Beratungen (über OParl-Lite verknüpft, abgeleitet)"),
+        "months": months, "categories": types + ["Sonstige"],
+        "data_start": min(p["date"] for p in papers if p["date"]),
+        "areas": {k: series(v) for k, v in areas.items()},
+        "meetings": [{k: v for k, v in m.items() if k not in ("start", "end")} for m in meetings],
+        "terms": [{"name": t["name"], "start": t.get("startDate"), "end": t.get("endDate"),
+                   "source_object": t["id"]} for t in terms if (t.get("endDate") or "9999") >= "2014"],
+    }
+
+
+def _nominativ(name):
+    """„Städtebau- und Gestaltungsbeirates“ → „…beirat“, „Ausschusses“ → „Ausschuss“ (Sitzungsnamen im Genitiv)."""
+    name = re.sub(r"(rat)es\b", r"\1", name, flags=re.I)
+    return re.sub(r"(schuss)es\b", r"\1", name, flags=re.I)
+
+
+def _schluessel(name):
+    """Vergleich von Gremiennamen ohne Satzzeichen: „Kinder-, Jugend“ wie „Kinder, Jugend“."""
+    return re.sub(r"[\s,\-–]+", " ", name or "").strip().lower()
+
+
+def gremium_der_sitzung(m, names, bekannt=None):
+    """Gremium einer Sitzung: aus der Organisation; fehlt sie (z. B. neue Wahlperiode, Sitzung am 25.11.2026), aus
+    dem Sitzungsnamen, bei gleichem Namen ohne Satzzeichen in der Schreibweise des bekannten Gremiums."""
+    org = (m.get("organization") or [None])[0]
+    if names.get(org):
+        return names[org]
+    name = _nominativ(re.sub(r"^(Gemeinsame )?Sitzung (des|der) ", "", m.get("name") or ""))
+    bekannt = bekannt if bekannt is not None else {_schluessel(n): n for n in sorted(names.values(), key=str)}
+    return bekannt.get(_schluessel(name), name) or "unbekannt"
+
+
+def _meetings(db):
+    """Sitzungen der städtischen OParl-API (auch künftige, als Termin belegt)."""
+    if not config.MEETINGS.exists():
+        return []
+    names = dict(db.execute("SELECT id, name FROM organization"))
+    bekannt = {_schluessel(n): n for n in sorted(names.values(), key=str)}
+    out = []
+    for m in json.loads(config.MEETINGS.read_text()):
+        if not m.get("start"):
+            continue
+        time = m["start"][11:16] if len(m["start"]) > 10 and m["start"][11:16] != "00:00" else None
+        gremium = gremium_der_sitzung(m, names, bekannt)
+        out.append({"date": proc.local_day(m["start"]), "time": time, "gremium": gremium,
+                    "name": m.get("name"), "cancelled": bool(m.get("cancelled")), "state": m.get("meetingState"),
+                    "web": m.get("web"), "invitation": m.get("invitation"),
+                    "agenda_items": m.get("agenda_items") or 0, "start": m["start"], "end": m.get("end"),
+                    "source_object": m["id"]})
+    return sorted(out, key=lambda x: x["date"])
+
+
+# --- Prozessebene: typische Wege je Vorlagenart ----------------------------------------------------
+
+def _paths(db, cache, top=12):
+    from collections import Counter, defaultdict
+    by_type = defaultdict(Counter)
+    totals = Counter()
+    for p in cache.values():
+        by_type[p["paper_type"]][proc.path_key(p)] += 1
+        totals[p["paper_type"]] += 1
+    out = []
+    for ptype, n in totals.most_common():
+        paths = [{"stations": list(st), "final": fin, "final_kind": kind, "count": c}
+                 for (st, fin, kind), c in by_type[ptype].most_common(top)]
+        out.append({"paper_type": ptype, "count": n, "distinct_paths": len(by_type[ptype]),
+                    "paths": paths})
+    return {"meta": _meta(db, True, note="Weg = Folge der Beratungen (Gremium, Rolle) laut OParl-API; Ende = "
+                                   "Ergebnis der entscheidenden Beratung (OParl-Lite) oder Stand"),
+            "types": out}
+
+
+PROCESS_AUDIT = ["drucksache", "schritt", "bezeichnung", "status", "datum", "datum_status", "quelle",
+                 "fundstelle", "pruefvermerk"]
+
+
+PLAN_AUDIT = ["drucksache", "titel", "plannummer", "fundstelle", "treffer", "geltungsbereich", "inkraft_seit",
+              "ortsteile", "konfidenz", "zurueckgestellt", "pruefstatus"]
+_PLANS = None
+
+
+def _plans():
+    global _PLANS
+    if _PLANS is None:
+        from .plans import Plans
+        _PLANS = Plans()
+    return _PLANS
+
+
+def _plan_entry(nr, evidence, match):
+    hits = _plans().classify(nr)[1]
+    return {"nr": nr, "evidence": evidence, "match": match or "nicht_im_datensatz",
+            "names": sorted({f["properties"]["name"] for f in hits}), "area": bool(hits)}
+
+
+def plan_audit_rows(db, where="", args=()):
+    """Je Plannummer im Titel (B3): Treffer im Datensatz der rechtskräftigen Pläne, berührte Ortsteile, Konfidenz
+    und die Ortsbezüge aus dem Titel, die dem eindeutigen Plan weichen."""
+    from .plans import CONFIDENCE
+    out = []
+    for ref, name, pid, nr, ev, match in db.execute(
+            "SELECT p.reference, p.name, p.id, pp.plan_nr, pp.evidence, pp.match FROM paper_plan pp "
+            f"JOIN paper p ON p.id = pp.paper_id {where} ORDER BY p.date DESC, p.reference", args):
+        hits = _plans().classify(nr)[1]
+        names = sorted({f["properties"]["name"] for f in hits})
+        ortsteile = sorted({r[0] for n in names for r in db.execute(
+            "SELECT l.ortsteil FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+            "WHERE pl.paper_id = ? AND pl.method = 'bebauungsplan' AND l.description = ?", (pid, f"Bebauungsplan {n}"))})
+        back = "; ".join(f"{e} ({m}, {ot or 'ohne Ortsteil'})" for e, m, ot in db.execute(
+            "SELECT DISTINCT pp.evidence, pp.method, l.ortsteil FROM plan_precedence pp JOIN location l ON l.id = pp.location_id "
+            "WHERE pp.paper_id = ? ORDER BY 1, 3", (pid,)))
+        out.append([ref, _maske(db)(name, ref), nr, ev, match, "; ".join(names) or "nicht im Datensatz",
+                    "; ".join(sorted({f["properties"]["inkraft_seit"] or "" for f in hits})), "; ".join(ortsteile),
+                    CONFIDENCE.get(match, "–"), back,
+                    "ungeprüft" if hits else "kein rechtskräftiger Plan (Verfahren oder aufgehoben)"])
+    return out
+
+
+TIME_AUDIT = ["drucksache", "zeitdimension", "wert", "quelle", "status", "bemerkung"]
+
+
+def time_audit_rows(papers, meetings):
+    """Datumsabdeckung der Zeitleiste: woher stammt jedes Datum, und gibt es zum abgeleiteten
+    Beratungsdatum eine Sitzung desselben Gremiums in der OParl-API der Stadt?"""
+    held = {(m["gremium"], m["date"]) for m in meetings if not m["cancelled"]}
+    rows = []
+    for p in papers:
+        rows.append([p["reference"], "datum_vorlage", p["date"] or "", "oparl-bonn",
+                     "belegt" if p["date"] else "unklar", "Bedeutung des Datums nicht dokumentiert"])
+        for st in p["steps"]:
+            if st["typ"] in ("beratung", "entscheidung") and st.get("role"):
+                dim = f"beratung: {st['label']} ({st['role']})"
+                if st.get("date"):
+                    same = (st["label"], st["date"]) in held
+                    rows.append([p["reference"], dim, st["date"], "oparl-lite", "abgeleitet",
+                                 "Sitzung des Gremiums an diesem Tag in der OParl-API der Stadt" if same
+                                 else "keine Sitzung des Gremiums an diesem Tag in der OParl-API der Stadt"])
+                else:
+                    rows.append([p["reference"], dim, "", "", "unklar", "Beratung ohne verknüpfte Sitzung"])
+            elif st["typ"] == "folgevorlage":
+                rows.append([p["reference"], f"folgevorlage: {st['reference']}", st.get("date") or "",
+                             "oparl-bonn", "belegt" if st.get("date") else "unklar", st["label"]])
+    return rows
+
+
+def process_audit_rows(papers):
+    rows = []
+    for p in papers:
+        for st in p["steps"]:
+            ref = st.get("reference") or st.get("source_object") or p["source_object"]
+            rows.append([p["reference"], st["typ"], st["label"] + (f" ({st['role']})" if st.get("role") else ""),
+                         st["status"], st.get("date") or "", st.get("date_status") or "",
+                         st.get("source") or "", ref if st["status"] in ("belegt", "abgeleitet") else
+                         proc.NOTES.get(st.get("note"), ""), "ungeprüft"])
+    return rows

@@ -1,0 +1,4 @@
+shapely>=2.0
+pyproj>=3.6
+pyshp>=2.3
+cairosvg>=2.7  # Bild der Themenseite als PNG (pipeline/prozessbild.py); ohne Cairo nur SVG

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Ratsatlas Bonn: Ortsmarke auf violettem Grund (Akzentfarben der Seite) -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset=".55" stop-color="#6d28d9"/>
+      <stop offset="1" stop-color="#5b21b6"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#g)"/>
+  <path d="M32 9.5c-9.7 0-17.5 7.6-17.5 17.1C14.5 39.4 32 55 32 55s17.5-15.6 17.5-28.4C49.5 17.1 41.7 9.5 32 9.5z" fill="#fff"/>
+  <circle cx="32" cy="26.5" r="7.2" fill="#6d28d9"/>
+</svg>

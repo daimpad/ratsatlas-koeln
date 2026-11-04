@@ -1,0 +1,56 @@
+# Quelldateien, die aus der Arbeitsumgebung nicht erreichbar sind (wahlen.bonn.de, stadtplan.bonn.de), abrufen und
+# unverändert mit Abrufstand im Branch `quellen` ablegen. Daraus entstehen nach Prüfung feste Ausschnitte im
+# Repository (z. B. data/kontext/). Kein Einfluss auf die veröffentlichte Seite. Seit 22.10.2026 antworten beide Dienste
+# nicht; der Lauf wiederholt sich deshalb montags (Entscheidung 27.10.2026), bis die Dateien vorliegen.
+name: Quellen abrufen (montags und auf Knopfdruck)
+
+on:
+  schedule:
+    - cron: "41 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # Branch quellen
+
+concurrency:
+  group: "quellen"
+  cancel-in-progress: false
+
+jobs:
+  abruf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Abhängigkeiten
+        run: pip install -r requirements.txt
+
+      - name: Branch quellen holen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          rc=0; git ls-remote --exit-code --heads "$url" quellen > /dev/null || rc=$?
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then echo "Abfrage des Branches quellen gescheitert ($rc)"; exit 1; fi
+          if [ "$rc" -eq 0 ]; then git clone -q --depth 1 --branch quellen "$url" _quellen; else git init -q -b quellen _quellen; fi
+
+      - name: Wahlen 2025 (Ergebnisse nach Stimmbezirk, Wahl- und Stimmbezirke)
+        run: python -m pipeline wahlen-rohdaten
+
+      - name: Sichern
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd _quellen
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "unverändert"; exit 0; fi
+          git commit -q -m "Quellen $(date -u +%F)"
+          git push -q "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:quellen

@@ -1,0 +1,30 @@
+# Release auf Knopfdruck: Tag auf main und Release mit dem Text aus docs/releases/<version>.md
+name: Release erstellen
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version, z. B. v1.0 (Text aus docs/releases/<version>.md)"
+        required: true
+      titel:
+        description: "Titel des Release"
+        required: true
+        default: "Ratsatlas Bonn"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+      - name: Release anlegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          TITEL: ${{ inputs.titel }}
+        run: |
+          test -f "docs/releases/${VERSION}.md" || { echo "docs/releases/${VERSION}.md fehlt"; exit 1; }
+          gh release create "$VERSION" --target "$GITHUB_SHA" --title "$TITEL ${VERSION#v}" --notes-file "docs/releases/${VERSION}.md"
