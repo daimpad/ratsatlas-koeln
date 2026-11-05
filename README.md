@@ -39,6 +39,7 @@ Der Ratsatlas Köln beruht auf dem Code des **Ratsatlas Bonn** ([daimpad/ratsatl
 |---|---|---|
 | Ratsinformationssystem der Stadt Köln (OParl-Schnittstelle) | Vorlagen, Beratungen, Sitzungen, Gremien | laut Katalog dl-de/zero 2.0; Klärung mit der Stadt offen |
 | Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (offenedaten-koeln.de) | Gebiete und Verortung | dl-de/zero 2.0 |
+| Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW) | Verortung über die Plannummer | dl-de/by 2.0 |
 | OpenStreetMap über Protomaps | grauer Kartenhintergrund | ODbL 1.0 |
 
 Die Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ steht auf jeder Seite und in jedem Export. Der Code steht unter der [MIT-Lizenz](LICENSE), die Daten unter den Lizenzen in [data/LICENSE-DATA.md](data/LICENSE-DATA.md).

@@ -7,6 +7,10 @@ Aufruf (Reihenfolge):
   ... python3 explore/oparl_messung.py sitzungen [--seiten 2]
   ... python3 explore/oparl_messung.py pdf-koepfe [--anzahl 100]
 Ohne RATSATLAS_STADT_INFORMIERT=ja bricht jedes Kommando vor der ersten Anfrage ab (Entscheidung 04.11.2026).
+Nur im Zeitfenster 23–1 Uhr Ortszeit (RATSATLAS_ZEITFENSTER, wie pipeline/abruf.py). `pdf-koepfe` lädt PDFs und
+läuft zusätzlich nur mit RATSATLAS_PDF_FREIGEGEBEN=ja (laut mandari ist der automatische PDF-Abruf mit Köln so nicht
+vereinbart; Frage in der Anfrage an die Stadt).
+Parameter werden ohne URL-Kodierung angehängt (SessionNet: 404 bei %3A/%2B); `kennzahlen` prüft beide Formen einmal.
 Abruf über explore/abruf.py (eine Verbindung, Abstand ≥ 2 s, Backoff, Cache, Protokoll).
 Paginierung nur über links.next, nie über konstruierte Seitennummern (HTTP 401 bei hohen Seitenzahlen).
 Ergebnisse als TSV unter explore/ergebnisse/; Rohdaten und PDFs bleiben im Cache (nicht im Repository).
@@ -23,6 +27,7 @@ import re
 import sys
 import urllib.parse
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from abruf import Abbruch, hole  # noqa: E402
@@ -39,8 +44,8 @@ RE_DEZ_LOSE = re.compile(r"Dezernat\s*,?\s*Dienststelle", re.I)
 
 
 def _json(url, **params):
-    if params:
-        url += ("&" if "?" in url else "?") + urllib.parse.urlencode(params)
+    if params:   # ohne URL-Kodierung, wie pipeline/sessionnet.py
+        url += ("&" if "?" in url else "?") + "&".join(f"{k}={v}" for k, v in params.items())
     return json.loads(hole(url, ".json"))
 
 
@@ -93,6 +98,12 @@ def kennzahlen(_):
         if name != "paper":
             continue
         # Verhalten von limit und den Zeitfiltern (OParl 1.1: created_since/_until, modified_since/_until)
+        # eine Anfrage mit URL-kodiertem Zeitstempel zum Vergleich (bei SessionNet anderswo HTTP 404)
+        try:
+            a = json.loads(hole(url + ("&" if "?" in url else "?") + urllib.parse.urlencode({"modified_since": vor7}), ".json"))
+            zeilen.append({"objekt": name, "feld": "test modified_since URL-kodiert", "wert": f"objekte={len(a.get('data', []))}"})
+        except Abbruch as e:
+            zeilen.append({"objekt": name, "feld": "test modified_since URL-kodiert", "wert": str(e)})
         for params in ({"limit": 100}, {"modified_since": vor7}, {"created_since": "2025-01-01T00:00:00+01:00",
                                                                   "created_until": "2025-12-31T23:59:59+01:00"}):
             try:
@@ -229,6 +240,14 @@ def main():
     if os.environ.get("RATSATLAS_STADT_INFORMIERT") != "ja":
         sys.exit("Abbruch: Die Stadt Köln ist noch nicht informiert (CLAUDE.md, Abschnitt 9). "
                  "Erst nach Freigabe mit RATSATLAS_STADT_INFORMIERT=ja ausführen.")
+    fenster = os.environ.get("RATSATLAS_ZEITFENSTER", "23-1").strip()
+    if fenster:
+        von, bis = (int(x) for x in fenster.split("-"))
+        h = dt.datetime.now(ZoneInfo("Europe/Berlin")).hour
+        if not (von <= h < bis if von < bis else (h >= von or h < bis)):
+            sys.exit(f"Abbruch: außerhalb des Zeitfensters {fenster} Uhr Ortszeit (RATSATLAS_ZEITFENSTER).")
+    if a.kommando == "pdf-koepfe" and os.environ.get("RATSATLAS_PDF_FREIGEGEBEN") != "ja":
+        sys.exit("Abbruch: PDF-Abruf erst nach Klärung mit der Stadt (RATSATLAS_PDF_FREIGEGEBEN=ja).")
     {"kennzahlen": kennzahlen, "organisationen": organisationen, "stichprobe": stichprobe,
      "sitzungen": sitzungen, "pdf-koepfe": pdf_koepfe}[a.kommando](a)
 

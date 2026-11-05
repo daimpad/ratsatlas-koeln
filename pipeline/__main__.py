@@ -1,7 +1,7 @@
-"""Aufruf: python -m pipeline {fetch|geo-koeln|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fetch-texts|fetch-streets|gazetteer|build|export|check|verify|package|seo|baustellen|anliegen|anliegen-seite|kandidaten|baustellen-seite|kurzfassungen|stufe-c|soll|kontext-ausschnitte|wahlen-rohdaten|wahlen-ausschnitt|haushalt-ausschnitt|haushalt-pruefbogen|haushalt-ebenen|haushalt-pruefbogen-ebenen|haushalt-ist2024|haushalt-investitionen|haushalt-pruefbogen-erweiterung|haushalt-ist2024-investitionen|haushalt-pruefbogen-erweiterung-finanz|haushalt-ertragsarten|haushalt-pruefbogen-ertragsarten|fetch-haltestellen|kontext|kultur-stichprobe|verkehr-stichprobe|schule-stichprobe|wohnen-stichprobe|klima-stichprobe|kinder-stichprobe|soziales-stichprobe|sicherheit-stichprobe|wirtschaft-stichprobe|digital-stichprobe|all}"""
+"""Aufruf: python -m pipeline {fetch|geo-koeln|bplan-koeln|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fetch-texts|fetch-streets|gazetteer|build|export|check|verify|package|seo|baustellen|anliegen|anliegen-seite|kandidaten|baustellen-seite|kurzfassungen|stufe-c|soll|kontext-ausschnitte|wahlen-rohdaten|wahlen-ausschnitt|haushalt-ausschnitt|haushalt-pruefbogen|haushalt-ebenen|haushalt-pruefbogen-ebenen|haushalt-ist2024|haushalt-investitionen|haushalt-pruefbogen-erweiterung|haushalt-ist2024-investitionen|haushalt-pruefbogen-erweiterung-finanz|haushalt-ertragsarten|haushalt-pruefbogen-ertragsarten|fetch-haltestellen|kontext|kultur-stichprobe|verkehr-stichprobe|schule-stichprobe|wohnen-stichprobe|klima-stichprobe|kinder-stichprobe|soziales-stichprobe|sicherheit-stichprobe|wirtschaft-stichprobe|digital-stichprobe|all}"""
 import sys
 
-from . import anliegen, baustellen, besetzung, build, check, config, dossier, export, fetch, geodaten, kandidaten, paket, kontext, haushaltsplan, kurzfassung, seo, sessionnet, soll, stufe_c, verify, wahlen
+from . import anliegen, baustellen, bplan, besetzung, build, check, config, dossier, export, fetch, geodaten, kandidaten, paket, kontext, haushaltsplan, kurzfassung, seo, sessionnet, soll, stufe_c, verify, wahlen
 from .themenseiten import digital, kinder, klima, kultur, schule, sicherheit, soziales, verkehr, wirtschaft, wohnen
 
 def _ersetzt(durch):
@@ -18,7 +18,8 @@ STEPS = {
     "fetch-besetzung": besetzung.fetch,  # laufende Mitgliedschaften (Auszug ohne Kontaktdaten), nach fetch-organizations
     "fetch-lite": _ersetzt("fetch"),
     "fetch-meetings": _ersetzt("fetch"),
-    "fetch-plans": _ersetzt("geo-koeln (Bebauungspläne: Bezugsquelle offen)"),
+    "bplan-koeln": bplan.write,  # Bebauungspläne Köln aus der OGC-API Bauleitplanung NRW (IT.NRW)
+    "fetch-plans": _ersetzt("bplan-koeln"),
     "fetch-housenumbers": _ersetzt("geo-koeln (Phase 3)"),
     "fetch-objects": fetch.fetch_objects,
     "fetch-texts": _ersetzt("Volltexte aus PDFs (Phase 3)"),

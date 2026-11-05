@@ -38,6 +38,10 @@ def main():
     hnr = json.loads(config.HAUSNUMMERN.read_text())["punkte"]
     teile = [f["properties"] for f in json.loads(config.ORTSTEILE.read_text())["features"]]
     mit_nr = [s for s in strassen if s in hnr]
+    # Plannummern aus data/geo (Landesschnittstelle); eigener Zufallsgenerator, damit die übrigen Titel gleich bleiben
+    rp = random.Random(a.seed + 1)
+    plaene = sorted({f["properties"]["name"].split(" ")[0] for f in json.loads(config.BPLAN.read_text())["features"]}
+                    if config.BPLAN.exists() else set())
 
     orgs = [{"id": f"{B}/organizations/rat", "name": "Rat", "organizationType": "Gremium"},
             {"id": f"{B}/organizations/avr", "name": "Ausschuss für Verkehr und Mobilität", "organizationType": "Gremium"},
@@ -67,6 +71,8 @@ def main():
         politisch = rnd.random() < 0.35
         eingabe = not politisch and rnd.random() < 0.08
         titel = vorlage.format(s=s, t=teil["ortsteil_bez"], b=teil["bezirk_bez"], nr=nr)
+        if plaene and not politisch and not eingabe and rp.random() < 0.06:
+            titel = f"Bebauungsplan {rp.choice(plaene)}: {rp.choice(['Satzungsbeschluss', 'Aufstellungsbeschluss zur Änderung', 'Teilaufhebung'])}"
         if eingabe:
             titel = f"Anregung nach § 24 GO NRW: {s} {nr}"
         if politisch:

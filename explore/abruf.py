@@ -2,7 +2,9 @@
 
 - genau eine Verbindung zur Zeit, mindestens ABSTAND Sekunden zwischen zwei Anfragen (prozessweit)
 - offener User-Agent mit Projektadresse; Kontakt über die Umgebungsvariable RATSATLAS_KONTAKT
-- Wiederholung nur bei Netzfehlern und 429/5xx, mit wachsender Pause; 401/403 brechen sofort ab
+- Wiederholung nur bei 429/5xx, mit wachsender Pause; 401/403/404 brechen sofort ab
+- Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
+  (wie pipeline/abruf.py; explore/ergebnisse/sessionnet_befunde.tsv)
 - Rohdaten-Cache: jede Antwort wird unter explore/_cache/ abgelegt und beim nächsten Lauf nicht erneut abgerufen
 - Protokoll jeder Anfrage (Zeit, URL, Status, Bytes, Dauer, Cache) in explore/_cache/abrufe.tsv
 Nur Standardbibliothek.
@@ -74,9 +76,9 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
                 fehler = e
             else:
                 raise Abbruch(f"HTTP {e.code}: {url}") from e
-        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
             _protokoll(url, type(e).__name__, 0, time.monotonic() - start, "netz")
-            fehler = e
+            raise Abbruch(f"Zeitüberschreitung oder Verbindungsabbruch, mögliche Sperre: {url} ({e})") from e
         if versuch < len(PAUSEN):
             time.sleep(PAUSEN[versuch])
     raise Abbruch(f"aufgegeben nach {len(PAUSEN) + 1} Versuchen: {url} ({fehler})")

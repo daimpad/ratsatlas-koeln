@@ -76,9 +76,10 @@ GENITIV_AUSNAHMEN = set()
 HAUSNUMMER = re.compile(r"\s+(?:Nr\.\s*)?(\d{1,4})(?=[a-zA-Z]?(?:\s|$|[,;)\-–/]))")
 GENERIC_NAMES = {"Rheinufer", "Markt"}
 # Bebauungsplan-Nummern (Methode B3): Stichwort (auch Tippfehler, Plural, Bauleitplan, Satzung), danach eine
-# oder mehrere Nummern NNNN-N(N) mit optionalem Zusatz (a, A, I, II, -A, „Teil A“); Präfix 6–8 wie im
-# Plandatensatz der Stadt (Phase 0, baustellen/phase0/BERICHT.md). Flurstücke (NNNN-N-NNN) zählen nicht.
-PLAN_NR = r"(?<![\d-])[6-8]\d{3}-\d{1,3}(?:\s?(?:[a-dA-D]|I{1,3}|-[A-D]|Teil [A-D])(?![\w-]))?"
+# oder mehrere Nummern in Kölner Schreibweise NNNNN/NN (auch vier- und sechsstellig), wie sie die Landesschnittstelle
+# als NNNNN.NN.000.00 führt (pipeline/bplan.py). Drucksachennummern (NNNN/JJJJ) haben vier Ziffern nach dem
+# Schrägstrich und zählen nicht.
+PLAN_NR = r"(?<![\d/.])\d{4,6}/\d{2}(?![\d/])"
 PLAN = re.compile(r"(?i)(?:beba?u\w*pl[aä]n\w*|b-pl[aä]n\w*|bauleitplan\w*|satzung|vorhaben- und erschließungsplan\w*)"
                   r"[^;]{0,50}?(" + PLAN_NR + r"(?:\s*(?:,|und|/|sowie|bzw\.)\s*(?:Nr\.\s*)?" + PLAN_NR + r")*)")
 PLAN_ONE = re.compile(r"(" + PLAN_NR + r")")
@@ -434,8 +435,8 @@ def hausnummer_punkt_erlaubt(paper, gremien=()):
 
 
 def plan_numbers(title):
-    """[(Plannummer, Fundstelle)] aus dem Titel, je Nummer einmal. Köln: erst, wenn Geltungsbereiche und Nummernschema
-    vorliegen (explore/BERICHT_phase1.md 2.5); bis dahin keine Erkennung, damit das Bonner Schema nichts falsch zuordnet."""
+    """[(Plannummer, Fundstelle)] aus dem Titel, je Nummer einmal; nur wenn die Geltungsbereiche vorliegen
+    (data/geo/bebauungsplaene_koeln.geojson aus pipeline/bplan.py)."""
     if not config.BPLAN.exists():
         return []
     text = FLURSTUECK.sub(" ", title or "")

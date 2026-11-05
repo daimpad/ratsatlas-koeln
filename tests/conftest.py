@@ -44,6 +44,10 @@ class Daten:
                               "agendaItem": f"{b}/agendaitems/{i}", "role": "Entscheidung", "authoritative": True}],
         }
 
+    def stoerung(self, pfad, q):
+        """Für Tests überschreibbar: True erzeugt HTTP 404 für diese Anfrage."""
+        return False
+
     def body(self):
         b = self.b
         return {"id": f"{b}/body", "name": "Testkörperschaft", "paper": f"{b}/papers", "meeting": f"{b}/meetings",
@@ -59,7 +63,8 @@ class Daten:
         links = {}
         if seite * groesse < len(objekte):
             nq = {**q, "page": seite + 1}
-            links["next"] = f"{self.b}{pfad}?" + urllib.parse.urlencode(nq)
+            # wie SessionNet: Folgeseiten ohne URL-Kodierung
+            links["next"] = f"{self.b}{pfad}?" + "&".join(f"{k}={v}" for k, v in nq.items())
         return {"data": teil, "pagination": {"totalElements": len(objekte)}, "links": links}
 
 
@@ -75,8 +80,13 @@ def oparl(tmp_path, monkeypatch):
         def do_GET(self):
             d = daten["d"]
             u = urllib.parse.urlparse(self.path)
-            q = dict(urllib.parse.parse_qsl(u.query))
+            # wie SessionNet: „+“ bleibt „+“; kodierte Zeitstempel (%3A, %2B) ergeben HTTP 404
+            q = dict((k, urllib.parse.unquote(v)) for k, _, v in (x.partition("=") for x in u.query.split("&") if x))
             d.anfragen.append((u.path, q, self.headers.get("User-Agent")))
+            if "%3A" in u.query.upper() or "%2B" in u.query.upper() or d.stoerung(u.path, q):
+                self.send_response(404)
+                self.end_headers()
+                return
             antwort = {"/body": d.body,
                        "/papers": lambda: d.liste(d.papers, "/papers", q),
                        "/meetings": lambda: d.liste(d.meetings, "/meetings", q),

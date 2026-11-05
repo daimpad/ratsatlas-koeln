@@ -103,11 +103,13 @@ def build():
 
     strassen_stand = (json.loads(config.STRASSEN.read_text())["meta"].get("retrieved_at")
                       if config.STRASSEN.exists() else None)
+    bplan_stand = (json.loads(config.BPLAN.read_text())["meta"].get("retrieved_at")
+                   if config.BPLAN.exists() else None)
     retrieved = {
         config.QUELLE_OPARL: stand.get("papers"),
         config.QUELLE_GEO: stand.get("geo"),
         config.QUELLE_STRASSEN: stand.get("geo") or strassen_stand,
-        config.QUELLE_BPLAN: stand.get("bplan"),
+        config.QUELLE_BPLAN: stand.get("bplan") or bplan_stand,
         "osm": stand.get("objekte"),
     }
     db.executemany("INSERT INTO source VALUES (?,?,?,?)",

@@ -30,7 +30,7 @@ ORTSTEILE = GEO / "stadtteile_koeln.geojson"
 STADTBEZIRKE = GEO / "stadtbezirke_koeln.geojson"
 # Straßenverzeichnis (Name → Lagen je Stadtteil), abgeleitet aus dem Datensatz „Straßen Köln“
 STRASSEN = GEO / "strassen_koeln.json"
-BPLAN = GEO / "bebauungsplaene_koeln.geojson"          # Bezugsquelle offen (explore/BERICHT_phase1.md 2.5)
+BPLAN = GEO / "bebauungsplaene_koeln.geojson"          # OGC-API Bauleitplanung NRW (pipeline/bplan.py)
 PLAN_LOG = GEO / "bebauungsplaene_protokoll.tsv"
 HAUSNUMMERN = GEO / "hausnummern_koeln.json"           # aus „Adressen Köln“ (geodaten.py)
 OBJEKTE = GEO / "objekte_koeln.json"                   # folgt in Phase 3 (OSM, ODbL)
@@ -46,7 +46,10 @@ ABRUFSTATISTIK = EXPORT / "abrufstatistik.tsv"
 # Abrufpolitik (CLAUDE.md 5.1): eine Verbindung, Abstand in Sekunden, nächtliches Zeitfenster (Ortszeit Köln),
 # wachsende Pausen nach Fehlern bis zu mehreren Stunden
 ABRUF_ABSTAND = float(os.environ.get("RATSATLAS_ABSTAND", "2.0"))
-ABRUF_ZEITFENSTER = os.environ.get("RATSATLAS_ZEITFENSTER", "22-6")   # Stunden von-bis; leer = ohne Zeitfenster
+# Zeitfenster 23–1 Uhr: laut mandari erlaubt die Stadt Abrufe nur dann (ohne Quelle der Stadt; Anfrage offen,
+# explore/ergebnisse/sessionnet_befunde.tsv)
+ABRUF_ZEITFENSTER = os.environ.get("RATSATLAS_ZEITFENSTER", "23-1")   # Stunden von-bis; leer = ohne Zeitfenster
+ABRUF_MAX_SEITEN = int(os.environ.get("RATSATLAS_MAX_SEITEN", "4000"))  # je Liste und Lauf (Schutz vor Schleifen)
 ABRUF_PAUSEN = [60, 300, 1800, 3600, 3 * 3600]
 ABRUF_SEITENGROESSE = os.environ.get("RATSATLAS_LIMIT", "")          # leer = Vorgabe des Servers (25)
 OVERPASS = [
@@ -85,6 +88,10 @@ SOURCES = {
     QUELLE_ADRESSEN: {
         "url": "https://www.offenedaten-koeln.de/dataset/adressen-koeln",
         "license": "dl-de/zero 2.0 (Stadt Köln, Adressen Köln); " + NAMENSNENNUNG,
+    },
+    QUELLE_BPLAN: {
+        "url": "https://ogc-api.nrw.de/inspire-lu-bplan/v1",
+        "license": "dl-de/by 2.0 (Bauleitplanung in NRW, INSPIRE: MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln)",
     },
     "osm": {
         "url": "https://www.openstreetmap.org/copyright",

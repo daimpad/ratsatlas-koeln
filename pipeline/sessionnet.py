@@ -8,20 +8,29 @@ Erzeugt dieselben Rohdateien wie der Bonner Abruf, damit build.py, Export und Se
 - `beratungen.jsonl`  Beratung → Sitzung und TOP (in Bonn aus OParl-Lite; in Köln abgeleitet, weil `consultation`
                       direkt auf `meeting` und `agendaItem` verweist und die Sitzungen ihre TOPs enthalten)
 
-Abruf: Listen nur über `links.next`, nach dem ersten Lauf inkrementell über `modified_since` (Zustand in
-`zustand_abruf.json`, mit einem Tag Überlappung). Ob der Server den Filter anwendet, wird je Lauf geprüft und in der
-Abrufstatistik vermerkt. Fällt der Abruf aus, bleibt der letzte gültige Stand; der Fehler steht in `STAND.json`.
+Abruf: Listen nur über `links.next` (unverändert übernommen), nach dem ersten Lauf inkrementell über
+`modified_since` (Zustand in `zustand_abruf.json`, mit einem Tag Überlappung). Parameter werden nicht URL-kodiert:
+SessionNet beantwortet kodierte Zeitstempel (%3A, %2B) mit HTTP 404 (explore/ergebnisse/sessionnet_befunde.tsv).
+Schutz gegen Endlosschleifen: Abbruch, wenn links.next auf eine gelesene Seite zeigt, eine Seite keine neuen
+Kennungen bringt oder mehr als `config.ABRUF_MAX_SEITEN` Seiten folgen. Ob der Server den Filter anwendet, wird je
+Lauf geprüft und in der Abrufstatistik vermerkt.
+
+Ein Vollabruf, der am Ende des Zeitfensters oder durch einen Fehler abbricht, wird in der nächsten Nacht an der
+gelesenen Stelle fortgesetzt (`<liste>_fortsetzung` im Zustand, Teilstand in `<datei>.teil.jsonl`). Nach drei
+Nächten in Folge mit Verbindungsabbruch (mögliche Sperre) pausiert der Abruf sieben Tage. Fällt der Abruf aus,
+bleibt der letzte gültige Stand; der Fehler steht in `STAND.json`.
 """
 import csv
 import json
 import os
-import urllib.parse
 from datetime import datetime, timedelta, timezone
 
 from . import abruf, config
 from .fetch import MIN_ANTEIL, _guard, _jsonl_count, _now, _stamp, _write
 
 UEBERLAPPUNG = timedelta(days=1)
+SPERRE_NAECHTE = 3                 # Nächte in Folge mit Verbindungsabbruch, danach Pause
+SPERRE_PAUSE = timedelta(days=7)
 STAT_SPALTEN = ["datum", "liste", "modus", "seiten", "objekte", "neu", "geaendert", "geloescht", "filter_wirksam",
                 "anfragen", "fehler", "wiederholungen", "bytes", "sekunden", "ergebnis"]
 
@@ -32,29 +41,54 @@ def _zustand():
 
 def _zustand_setzen(schluessel, wert):
     z = _zustand()
-    z[schluessel] = wert
+    if wert is None:
+        z.pop(schluessel, None)
+    else:
+        z[schluessel] = wert
     config.RAW.mkdir(parents=True, exist_ok=True)
     _write(config.ZUSTAND, json.dumps(z, ensure_ascii=False, indent=1) + "\n")
 
 
 def _mit_parametern(url, **params):
+    """Hängt Parameter ohne URL-Kodierung an (SessionNet, siehe oben); Werte enthalten nur Ziffern, -, :, + und T."""
     params = {k: v for k, v in params.items() if v}
     if not params:
         return url
-    return url + ("&" if "?" in url else "?") + urllib.parse.urlencode(params)
+    return url + ("&" if "?" in url else "?") + "&".join(f"{k}={v}" for k, v in params.items())
 
 
-def liste(url, seit=None):
-    """Alle Objekte einer OParl-Liste über links.next; `seit` setzt modified_since. Liefert (Objekte, Seiten)."""
-    naechste = _mit_parametern(url, modified_since=seit, limit=config.ABRUF_SEITENGROESSE)
-    objekte, seiten, gesehen = [], 0, set()
+class Teilabbruch(abruf.Abbruch):
+    """Abbruch mitten in einer Liste; trägt den gelesenen Teil für die Fortsetzung."""
+
+    def __init__(self, ursache, objekte, naechste, seiten):
+        super().__init__(str(ursache), getattr(ursache, "art", ""))
+        self.objekte, self.naechste, self.seiten = objekte, naechste, seiten
+
+
+def liste(url, seit=None, start=None, objekte=None, seiten=0):
+    """Alle Objekte einer OParl-Liste über links.next; `seit` setzt modified_since. `start`, `objekte` und `seiten`
+    setzen einen abgebrochenen Vollabruf fort. Liefert (Objekte, Seiten); ein Abbruch kommt als Teilabbruch."""
+    naechste = start or _mit_parametern(url, modified_since=seit, limit=config.ABRUF_SEITENGROESSE)
+    objekte = list(objekte or [])
+    ids, gesehen = {o.get("id") for o in objekte}, set()
     while naechste:
-        if naechste in gesehen:   # Schutz gegen zyklische Verweise
-            raise abruf.Abbruch(f"links.next zeigt auf eine bereits gelesene Seite: {naechste}")
-        gesehen.add(naechste)
-        seite = abruf.get_json(naechste)
+        try:
+            if naechste in gesehen:   # Schutz gegen zyklische Verweise
+                raise abruf.Abbruch(f"links.next zeigt auf eine bereits gelesene Seite: {naechste}", "liste")
+            if seiten >= config.ABRUF_MAX_SEITEN:
+                raise abruf.Abbruch(f"mehr als {config.ABRUF_MAX_SEITEN} Seiten (RATSATLAS_MAX_SEITEN)", "liste")
+            gesehen.add(naechste)
+            seite = abruf.get_json(naechste)
+        except abruf.Abbruch as e:
+            raise Teilabbruch(e, objekte, naechste, seiten) from e
         seiten += 1
-        objekte += seite.get("data") or []
+        daten = seite.get("data") or []
+        neu = [o for o in daten if o.get("id") not in ids]
+        if daten and not neu:   # dieselben Objekte mit neuem links.next (beobachtet bei SessionNet-Sammelservern)
+            raise Teilabbruch(abruf.Abbruch(f"Seite ohne neue Kennungen, links.next läuft im Kreis: {naechste}",
+                                            "liste"), objekte, None, seiten)
+        ids.update(o.get("id") for o in neu)
+        objekte += neu
         naechste = (seite.get("links") or {}).get("next")
     return objekte, seiten
 
@@ -103,20 +137,51 @@ def _statistik(zeile):
         w.writerow(zeile)
 
 
+def _teil(pfad):
+    return pfad.with_name(pfad.name.split(".")[0] + ".teil.jsonl")
+
+
 def _abruf_liste(name, url, pfad, schluessel):
-    """Inkrementeller Abruf einer Liste mit Statistik; schreibt die zusammengeführten Objekte als JSONL."""
+    """Inkrementeller Abruf einer Liste mit Statistik; schreibt die zusammengeführten Objekte als JSONL.
+    Ein abgebrochener Vollabruf wird beim nächsten Lauf an der gelesenen Stelle fortgesetzt."""
     vorher = abruf.statistik()
     start = datetime.now(timezone.utc)
-    seit = _seit(schluessel)
-    zeile = {"datum": _now(), "liste": name, "modus": "inkrementell" if seit else "voll"}
+    fort = _zustand().get(f"{schluessel}_fortsetzung")
+    seit = None if fort else _seit(schluessel)
+    zeile = {"datum": _now(), "liste": name, "modus": "voll, fortgesetzt" if fort else "inkrementell" if seit else "voll"}
     try:
-        objekte, seiten = liste(url, seit)
+        if fort:
+            start = datetime.fromisoformat(fort["start"])
+            teil = _teil(pfad)
+            bisher = [json.loads(z) for z in teil.read_text(encoding="utf-8").splitlines()] if teil.exists() else []
+            objekte, seiten = liste(url, start=fort["naechste"], objekte=bisher, seiten=fort.get("seiten", 0))
+        else:
+            objekte, seiten = liste(url, seit)
         alle, neu, geaendert, geloescht = _zusammenfuehren(pfad, objekte, voll=not seit)
         _write(pfad, "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in alle))
         _zustand_setzen(schluessel, start.isoformat(timespec="seconds"))
+        _zustand_setzen(f"{schluessel}_fortsetzung", None)
+        _teil(pfad).unlink(missing_ok=True)
         zeile.update(seiten=seiten, objekte=len(alle), neu=neu, geaendert=geaendert, geloescht=geloescht,
                      filter_wirksam=_filter_wirksam(objekte, seit), ergebnis="ok")
         return alle
+    except Teilabbruch as e:
+        # Vollabruf: gelesenen Teil sichern und morgen fortsetzen; eine veraltete Folgeseite (HTTP 4xx gleich zu
+        # Beginn der Fortsetzung) verwirft die Fortsetzung, dann beginnt der nächste Lauf von vorn
+        veraltet = fort and e.art == "http" and e.seiten == fort.get("seiten", 0)
+        if not seit and e.naechste and e.seiten and e.art != "liste" and not veraltet:
+            config.RAW.mkdir(parents=True, exist_ok=True)
+            _write(_teil(pfad), "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in e.objekte))
+            _zustand_setzen(f"{schluessel}_fortsetzung", {"naechste": e.naechste, "seiten": e.seiten,
+                                                         "start": start.isoformat(timespec="seconds")})
+            zeile["ergebnis"] = f"unterbrochen nach {e.seiten} Seiten, Fortsetzung im nächsten Lauf: {e}"[:300]
+        else:
+            if veraltet or e.art == "liste":
+                _zustand_setzen(f"{schluessel}_fortsetzung", None)
+                _teil(pfad).unlink(missing_ok=True)
+            zeile["ergebnis"] = f"abbruch: {e}"[:300]
+        zeile.update(seiten=e.seiten, objekte=len(e.objekte))
+        raise
     except (abruf.Abbruch, RuntimeError) as e:
         zeile["ergebnis"] = f"abbruch: {e}"[:300]
         raise
@@ -208,6 +273,12 @@ def fetch_all():
              if not abruf.freigegeben(config.OPARL_BODY) else
              f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr" if not lokal and not abruf.im_zeitfenster()
              else None)
+    verdacht = _zustand().get("sperre_verdacht") or {}
+    if not grund and verdacht.get("naechte", 0) >= SPERRE_NAECHTE:
+        bis = datetime.fromisoformat(verdacht["zuletzt"]) + SPERRE_PAUSE
+        if datetime.now(timezone.utc) < bis:
+            grund = (f"Abruf pausiert bis {bis.date().isoformat()}: {verdacht['naechte']} Nächte in Folge "
+                     "Verbindungsabbruch (mögliche Sperre); bitte Kontakt zur Stadt aufnehmen")
     if grund:
         stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
         stand["abruf_uebersprungen"] = {"zeit": _now(), "grund": grund}
@@ -221,7 +292,11 @@ def fetch_all():
         meetings = fetch_meetings(body)
         beratungen(papers, meetings)
         _stamp("abruf_ok")
+        _zustand_setzen("sperre_verdacht", None)
     except (abruf.Abbruch, RuntimeError) as e:
+        if getattr(e, "art", "") == "sperre":
+            _zustand_setzen("sperre_verdacht", {"naechte": verdacht.get("naechte", 0) + 1, "zuletzt":
+                                                datetime.now(timezone.utc).isoformat(timespec="seconds")})
         stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
         stand["abruf_fehler"] = {"zeit": _now(), "meldung": str(e)[:300]}
         _write(config.STAND, json.dumps(stand, ensure_ascii=False, indent=1) + "\n")
