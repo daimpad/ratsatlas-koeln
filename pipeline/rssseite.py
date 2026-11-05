@@ -14,7 +14,7 @@ from .themenseiten import ALLE as THEMEN
 
 PFAD = "rss/"
 AKTUALISIERUNG = "einmal am Tag, frühmorgens"
-LAUF = "täglicher Lauf ab 1:37 Uhr UTC"   # Zeitplan in .github/workflows/pages.yml
+LAUF = "täglicher Lauf ab 22:10 Uhr UTC"   # Zeitplan in .github/workflows/pages.yml
 
 
 def feed_url(site_url, name=GANZ_BONN):

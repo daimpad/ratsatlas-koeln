@@ -61,6 +61,9 @@ QUELLEN = {
     "strassen-koeln": ("Straßen", "Straßen der Stadt Köln; daraus entsteht das Straßenverzeichnis je Stadtteil."),
     "adressen-koeln": ("Adressen", "Adressen der Stadt Köln: Stadtteil einer Hausnummer und, nur bei Vorlagen der "
                                    "Verwaltung und politischen Anträgen, die Hauskoordinate."),
+    "bplan-koeln": ("Bebauungspläne", "Flächen der rechtsverbindlichen Bebauungspläne aus der Schnittstelle "
+                                      "„Bauleitplanung in NRW“ des Landes; Vorlagen mit Plannummer im Titel erscheinen "
+                                      "auf der Fläche des Plans."),
     "osm": ("OpenStreetMap", "Daten der grauen Karte."),
 }
 WEITERE_QUELLEN = []
@@ -533,7 +536,7 @@ def body(d, root):
     <nav class="thema-sprung" aria-label="Auf dieser Seite"><span>Auf dieser Seite:</span> <a href="#ueberblick">Überblick</a> · <a href="#datenfluss">Datenfluss</a> · <a href="#zeitplan">Zeitplan</a> · <a href="#technik">Technik</a> · <a href="#grenzen">Grenzen</a></nav>
 {_grafik("ueberblick", "Überblick", "Die Karte erfindet nichts: Sie holt öffentliche Daten der Stadt Köln, ordnet sie jede Nacht neu und zeigt sie so, dass man sie nach Ort, Zeit und Zuständigkeit finden kann. Was die Karte selbst erschließt, etwa den Ort einer Vorlage, ist als abgeleitet gekennzeichnet.", spalten_svg(d["ueberblick"], "breit", "ueber", "Überblick: Woher, jeden Morgen, die Seite, für wen") + spalten_svg(d["ueberblick"], "hoch", "ueber", "Überblick: Woher, jeden Morgen, die Seite, für wen"), ueber_alle, root)}
 {_grafik("datenfluss", "Datenfluss", "Jeder Kasten in der Mitte ist ein Schritt der Pipeline, aufgerufen mit <code>python -m pipeline &lt;schritt&gt;</code>, in der Reihenfolge des Hauptlaufs. Links stehen die Quellen mit ihrer Lizenz, rechts die Ergebnisse. Die Liste der Schritte liest diese Seite aus dem Workflow; kommt ein Schritt hinzu, erscheint er hier.", spalten_svg(d["fluss"], "breit", "fluss", "Datenfluss: Quellen, Abruf, Aufbereitung, Ergebnis") + spalten_svg(d["fluss"], "hoch", "fluss", "Datenfluss: Quellen, Abruf, Aufbereitung, Ergebnis"), fluss_alle, root)}
-{_grafik("zeitplan", "Zeitplan", "Die Läufe starten von selbst zu festen Zeiten (Cron-Aufträge in GitHub Actions). Die Zeiten sind in UTC angegeben; in Köln ist es eine Stunde später, im Sommer zwei. Abgerufen wird nur nachts zwischen 22 und 6 Uhr.", zeit_svg, d["termine"] + d["ohne"], root, extra=f'''
+{_grafik("zeitplan", "Zeitplan", "Die Läufe starten von selbst zu festen Zeiten (Cron-Aufträge in GitHub Actions). Die Zeiten sind in UTC angegeben; in Köln ist es eine Stunde später, im Sommer zwei. Abgerufen wird nur nachts zwischen 23 und 1 Uhr.", zeit_svg, d["termine"] + d["ohne"], root, extra=f'''
       <p class="tk-ohne-titel">Ohne festen Zeitpunkt:</p>
       <ul class="tk-ohne">
 {ohne}

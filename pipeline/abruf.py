@@ -2,8 +2,12 @@
 
 - genau eine Verbindung, mindestens `config.ABRUF_ABSTAND` Sekunden zwischen zwei Anfragen
 - nur im nächtlichen Zeitfenster (`config.ABRUF_ZEITFENSTER`, Ortszeit Köln), sofern gesetzt
-- nach Netzfehlern, HTTP 429 und 5xx wachsende Pausen (`config.ABRUF_PAUSEN`, bis zu mehreren Stunden); einen
-  `Retry-After`-Kopf hält der Abruf mindestens ein; 401, 403 und 404 brechen sofort ab
+- nach HTTP 429, 5xx und unlesbaren Antworten wachsende Pausen (`config.ABRUF_PAUSEN`, bis zu mehreren Stunden);
+  einen `Retry-After`-Kopf hält der Abruf mindestens ein; 401, 403 und 404 brechen sofort ab
+- Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
+  (so zeigte sich die Sperre von mandari 2026, explore/ergebnisse/sessionnet_befunde.tsv); der nächste Versuch
+  folgt im nächsten Zeitfenster, nach drei solchen Nächten in Folge pausiert der Abruf (sessionnet.py)
+- das Zeitfenster wird vor jedem Versuch geprüft, auch nach einer Pause
 - offener User-Agent mit Projektadresse und Kontakt (`RATSATLAS_KONTAKT`)
 - Zählwerk je Lauf für die Abrufstatistik (`statistik()`)
 - Sperre: ohne `RATSATLAS_STADT_INFORMIERT=ja` keine Anfrage an die Stadt (Entscheidung 04.11.2026)
@@ -23,7 +27,12 @@ _zaehler = {"anfragen": 0, "fehler": 0, "wiederholungen": 0, "bytes": 0, "sekund
 
 
 class Abbruch(RuntimeError):
-    """Der Abruf wird beendet; der letzte gültige Datenstand bleibt erhalten."""
+    """Der Abruf wird beendet; der letzte gültige Datenstand bleibt erhalten. `art`: sperre, zeitfenster, http,
+    aufgegeben, liste oder leer."""
+
+    def __init__(self, meldung, art=""):
+        super().__init__(meldung)
+        self.art = art
 
 
 def freigegeben(url):
@@ -50,12 +59,14 @@ def get_json(url, pausen=None):
     global _letzte
     if not freigegeben(url):
         raise Abbruch("Abruf gesperrt: Die Stadt Köln ist noch nicht informiert (CLAUDE.md 9). "
-                      "Freigabe mit RATSATLAS_STADT_INFORMIERT=ja.")
-    if not url.startswith(("http://127.0.0.1", "http://localhost")) and not im_zeitfenster():
-        raise Abbruch(f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr (RATSATLAS_ZEITFENSTER)")
+                      "Freigabe mit RATSATLAS_STADT_INFORMIERT=ja.", "gesperrt")
+    lokal = url.startswith(("http://127.0.0.1", "http://localhost"))
     pausen = config.ABRUF_PAUSEN if pausen is None else pausen
     letzter_fehler = None
     for versuch in range(len(pausen) + 1):
+        if not lokal and not im_zeitfenster():
+            raise Abbruch(f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr (RATSATLAS_ZEITFENSTER)",
+                          "zeitfenster")
         warte = config.ABRUF_ABSTAND - (time.monotonic() - _letzte)
         if warte > 0:
             time.sleep(warte)
@@ -72,17 +83,22 @@ def get_json(url, pausen=None):
         except urllib.error.HTTPError as e:
             _zaehler["fehler"] += 1
             if e.code != 429 and e.code < 500:
-                raise Abbruch(f"HTTP {e.code}: {url}") from e
+                raise Abbruch(f"HTTP {e.code}: {url}", "http") from e
             letzter_fehler = e
             try:
                 retry_after = int(e.headers.get("Retry-After") or 0)
             except ValueError:
                 retry_after = 0
-        except (urllib.error.URLError, TimeoutError, ConnectionError, json.JSONDecodeError) as e:
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
+            _zaehler["fehler"] += 1
+            _zaehler["sekunden"] += time.monotonic() - start
+            raise Abbruch(f"Zeitüberschreitung oder Verbindungsabbruch, mögliche Sperre: {url} ({e}); "
+                          "nächster Versuch im nächsten Zeitfenster", "sperre") from e
+        except json.JSONDecodeError as e:
             _zaehler["fehler"] += 1
             letzter_fehler = e
         _zaehler["sekunden"] += time.monotonic() - start
         if versuch < len(pausen):
             _zaehler["wiederholungen"] += 1
             time.sleep(max(pausen[versuch], retry_after))
-    raise Abbruch(f"aufgegeben nach {len(pausen) + 1} Versuchen: {url} ({letzter_fehler})")
+    raise Abbruch(f"aufgegeben nach {len(pausen) + 1} Versuchen: {url} ({letzter_fehler})", "aufgegeben")

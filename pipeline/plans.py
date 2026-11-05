@@ -1,6 +1,6 @@
-"""Bebauungspläne: Plannummern in Vorlagentiteln mit den Geltungsbereichen der rechtskräftigen
-Pläne der Stadt Bonn (CC0) abgleichen. Der Datensatz enthält nur rechtskräftige Pläne; Pläne im
-Verfahren bleiben ohne Fläche."""
+"""Bebauungspläne: Plannummern in Vorlagentiteln mit den Geltungsbereichen der rechtsverbindlichen Kölner Pläne
+abgleichen (OGC-API Bauleitplanung NRW, dl-de/by 2.0; pipeline/bplan.py). Der Datensatz enthält nur rechtsverbindliche
+Pläne; Pläne im Verfahren (Aufstellungsbeschlüsse) bleiben ohne Fläche."""
 import json
 import re
 
@@ -13,7 +13,7 @@ MIN_SHARE = 0.05  # Ortsteile mit weniger als 5 % der Planfläche bleiben unber�
 
 
 def plan_key(name):
-    """„6322-2 Teil A“ → „6322-2“ (Teilpläne gehören zur Plannummer im Titel)."""
+    """„63429/06 (63429.06.001.00)“ → „63429/06“ (Teilpläne und Änderungen gehören zur Plannummer im Titel)."""
     return (name or "").split(" ")[0]
 
 
@@ -24,7 +24,7 @@ def canonical(nr):
 
 
 def base_number(nr):
-    m = re.match(r"\d{4}-\d{1,3}", nr or "")
+    m = re.match(r"\d{4,6}/\d{2}", nr or "")
     return m.group(0) if m else None
 
 
@@ -104,7 +104,7 @@ def title_steps(title):
 
 
 def register(papers, plans=None):
-    """Je Plannummer aus den Titeln: zugeordnete Pläne (belegt, Stadt Bonn), berührte Ortsteile und die
+    """Je Plannummer aus den Titeln: zugeordnete Pläne (belegt, Landesschnittstelle NRW), berührte Ortsteile und die
     Vorlagen chronologisch mit den im Titel genannten Verfahrensschritten (abgeleitet). Grundlage für die
     Planchronik; vereinfachte Verfahren (§§ 13, 13a BauGB) haben weniger Schritte."""
     plans = plans or Plans()

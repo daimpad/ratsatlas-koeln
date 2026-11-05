@@ -16,7 +16,7 @@ Technische Beschreibung von Pipeline, Seite und Betrieb. Worum es inhaltlich geh
 
 ```bash
 pip install -r requirements.txt
-python -m pipeline fetch      # Abruf (gesperrt ohne RATSATLAS_STADT_INFORMIERT=ja; nur 22–6 Uhr)
+python -m pipeline fetch      # Abruf (gesperrt ohne RATSATLAS_STADT_INFORMIERT=ja; nur 23–1 Uhr)
 python -m pipeline build      # SQLite data/build/allris.sqlite, Geokodierung, Akteure
 python -m pipeline export     # data/export/koeln/, Audits, Stichprobe je Methode
 python -m pipeline package    # data/export/ratsatlas-koeln-export.zip
@@ -32,7 +32,7 @@ python -m pipeline geo-koeln  # Geodaten neu ableiten (lädt Zip-Dateien von off
 
 ### Abrufpolitik (CLAUDE.md 5.1)
 
-`pipeline/abruf.py`: eine Verbindung, mindestens 2 s Abstand (`RATSATLAS_ABSTAND`), nur im Zeitfenster 22–6 Uhr Ortszeit (`RATSATLAS_ZEITFENSTER`), nach Netzfehlern, 429 und 5xx Pausen von 1 min bis 3 h (`Retry-After` wird beachtet), sofortiger Abbruch bei 401/403/404. User-Agent `ratsatlas-koeln/0.1 (+https://github.com/daimpad/ratsatlas-koeln; <RATSATLAS_KONTAKT>)`. Listen nur über `links.next`; ab dem zweiten Lauf `modified_since` mit einem Tag Überlappung (`RATSATLAS_VOLLABRUF=ja` erzwingt einen Vollabruf). Ein Vollabruf ersetzt den Stand nur, wenn er mindestens 90 % der bisherigen Objekte enthält.
+`pipeline/abruf.py`: eine Verbindung, mindestens 2 s Abstand (`RATSATLAS_ABSTAND`), nur im Zeitfenster 23–1 Uhr Ortszeit (`RATSATLAS_ZEITFENSTER`; laut mandari die Vorgabe der Stadt, ohne Quelle der Stadt), nach 429 und 5xx Pausen von 1 min bis 3 h (`Retry-After` wird beachtet), sofortiger Abbruch bei 401/403/404. Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: Abbruch ohne Wiederholung, nach drei Nächten in Folge sieben Tage Pause. User-Agent `ratsatlas-koeln/0.1 (+https://github.com/daimpad/ratsatlas-koeln; <RATSATLAS_KONTAKT>)`. Listen nur über `links.next` (unverändert übernommen; Parameter ohne URL-Kodierung, weil SessionNet kodierte Zeitstempel mit 404 beantwortet; Abbruch bei Seiten ohne neue Kennungen oder mehr als `RATSATLAS_MAX_SEITEN`); ein abgebrochener Vollabruf wird in der nächsten Nacht fortgesetzt; ab dem zweiten vollständigen Lauf `modified_since` mit einem Tag Überlappung (`RATSATLAS_VOLLABRUF=ja` erzwingt einen Vollabruf). Ein Vollabruf ersetzt den Stand nur, wenn er mindestens 90 % der bisherigen Objekte enthält.
 
 ### Geokodierung (CLAUDE.md 5.2)
 
@@ -59,7 +59,7 @@ Testdaten werden nie veröffentlicht: `pages.yml` bricht ab, wenn `STAND.json` s
 
 | Datei | Zeit | Aufgabe |
 |---|---|---|
-| `pages.yml` | täglich 1:37 UTC, bei Push auf `main`, auf Knopfdruck | Abruf (gesperrt bis zur Repository-Variable `RATSATLAS_STADT_INFORMIERT=ja`), Aufbereitung, Export, Datenpaket; Branch `deploy` (Hauptadresse über Plesk) und Spiegel auf GitHub Pages mit Canonical auf `SITE_URL`. Ohne Daten endet der Lauf ohne Veröffentlichung. |
+| `pages.yml` | täglich 22:10 UTC, bei Push auf `main`, auf Knopfdruck | Abruf (gesperrt bis zur Repository-Variable `RATSATLAS_STADT_INFORMIERT=ja`), Aufbereitung, Export, Datenpaket; Branch `deploy` (Hauptadresse über Plesk) und Spiegel auf GitHub Pages mit Canonical auf `SITE_URL`. Ohne Daten endet der Lauf ohne Veröffentlichung. |
 | `kacheln.yml` | vierteljährlich, auf Knopfdruck, bei Pull Requests zu `pipeline/kacheln/` | graue Kartenkacheln aus OSM (Protomaps-Ausschnitt Köln) in den Branch `kacheln`, danach `pages.yml` |
 | `tests.yml` | Pull Requests, Push auf `main` | Tests, Syntax der Seite |
 | `live.yml` | auf Knopfdruck (nach der Einrichtung in Plesk täglich) | Hauptadresse und Spiegel erreichbar, aktueller Stand, Canonical, Kopfzeilen |

@@ -5,7 +5,9 @@
 # Sperre: Der Abruf läuft erst, wenn die Repository-Variable RATSATLAS_STADT_INFORMIERT den Wert „ja“ hat
 # (Einstellungen → Secrets and variables → Actions → Variables). Bis dahin endet der Lauf ohne Veröffentlichung.
 # Weitere Variablen: RATSATLAS_KONTAKT (Kontakt im User-Agent), SITE_URL (Vorgabe https://koeln.ratsatlas.de/).
-# Abrufpolitik: eine Verbindung, Abstand 2 s, nur 22–6 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (pipeline/abruf.py).
+# Abrufpolitik: eine Verbindung, Abstand 2 s, nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h, Verbindungsabbruch =
+# mögliche Sperre (Abbruch, nach drei Nächten sieben Tage Pause); ein abgebrochener Vollabruf wird in der nächsten Nacht
+# fortgesetzt (pipeline/abruf.py, pipeline/sessionnet.py).
 # Fällt der Abruf aus, wird der letzte gültige Stand aus dem Zwischenspeicher veröffentlicht und als solcher angezeigt.
 name: Daten aktualisieren und Seite veröffentlichen
 
@@ -13,7 +15,7 @@ on:
   push:
     branches: ["main"]
   schedule:
-    - cron: "37 1 * * *"   # 2:37 Uhr, im Sommer 3:37 Uhr Ortszeit (im Zeitfenster der Abrufpolitik)
+    - cron: "10 22 * * *"   # 23:10 Uhr, im Sommer 0:10 Uhr Ortszeit (beides im Zeitfenster 23–1 Uhr)
   workflow_dispatch:
 
 permissions:
@@ -63,7 +65,8 @@ jobs:
       - name: Gibt es Daten zum Veröffentlichen?
         id: daten
         run: |
-          if [ -s data/raw/papers.jsonl ] && ! python -c 'import json,sys; sys.exit(0 if json.load(open("data/raw/STAND.json")).get("testdaten") else 1)' 2>/dev/null; then
+          # erst nach einem vollständigen Abruf (abruf_ok); ein Vollabruf kann sich über mehrere Nächte erstrecken
+          if [ -s data/raw/papers.jsonl ] && python -c 'import json,sys; s=json.load(open("data/raw/STAND.json")); sys.exit(0 if s.get("abruf_ok") and not s.get("testdaten") else 1)' 2>/dev/null; then
             echo "da=ja" >> "$GITHUB_OUTPUT"
           else
             echo "::notice::Noch keine Daten der Stadt Köln (Abruf gesperrt oder noch nie erfolgreich) – nichts veröffentlicht."
