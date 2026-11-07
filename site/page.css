@@ -46,7 +46,7 @@ a { color: var(--accent-ink); }
   .page table.haushalt small { display: block; }
 }
 /* Kennzahlen der Gebietsseiten (pipeline/gebietsseiten.py): Vergleich Stadtteil – Stadtbezirk – ganz Köln, auch auf dem Telefon als Tabelle */
-.page h3 { font-size: 17px; margin: 20px 0 4px; }
+.page h3.gebiet-h3 { font-size: 17px; margin: 20px 0 4px; }   /* nur Gebietsseiten, nicht rss/ und Themenseiten */
 .page table.kennzahlen { table-layout: auto; margin: 8px 0 4px; }
 .page table.kennzahlen caption { text-align: left; color: var(--muted); font-size: 14px; padding-bottom: 4px; }
 .page table.kennzahlen th, .page table.kennzahlen td { width: auto; overflow-wrap: break-word; }

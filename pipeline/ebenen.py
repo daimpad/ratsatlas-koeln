@@ -11,8 +11,11 @@ Schutzgebiete (Land NRW und Bund).
   Ergebnis: data/ebenen/<schluessel>.geojson in WGS84, auf das Stadtgebiet zugeschnitten, mit ausgewählten Feldern
   (keine Kontaktdaten, keine Personen), und data/ebenen/STAND.json mit Quelle, Lizenz und Abrufdatum.
 - `ebenen` (täglich, nach export): vereinfachte Kopien → export/<stadt>/flaechen/ebene_<schluessel>.json und das
-  Verzeichnis export/<stadt>/ebenen.json (Titel, Gruppe, Darstellung, Quelle, Lizenz, Stand), aus dem die Karte das
-  Menü „Ebenen“ aufbaut.
+  Verzeichnis export/<stadt>/ebenen.json (Titel, Gruppe, Darstellung, Quelle, Lizenz, Stand, Mindestzoom), aus dem die
+  Karte das Menü „Ebenen“ aufbaut.
+
+Mindestzoom: Ebenen mit vielen Objekten zeichnet die Karte erst ab dieser Zoomstufe (`mindestzoom` in QUELLEN, nur dann
+in ebenen.json; ohne Angabe wie bisher 11, site/app.js). Die Gebietsseiten weisen bei diesen Ebenen auf das Hineinzoomen hin.
 """
 import io
 import json
@@ -73,7 +76,7 @@ QUELLEN = {
         "kurz": "Wohnbaupotenziale", "titel": "Wohnbaupotenziale (Baulücken, Aufstockung, Umstrukturierung)", "gruppe": "Bauen und Wohnen",
         "art": "flaeche", "farbe": "#7c3aed",
         "quelle": "Stadt Köln, Baupotenziale (automatisiert ermittelt, ohne Prüfung im Einzelfall)",
-        "url": "https://open.nrw/dataset/3646d09a-03c4-4079-8fad-d5a453bca22e", "lizenz": STADT_LIZENZ,
+        "url": "https://open.nrw/dataset/3646d09a-03c4-4079-8fad-d5a453bca22e", "lizenz": STADT_LIZENZ, "mindestzoom": 13,
         "abrufe": [("baupotenziale.geojson", _wfs("baupotenziale_extern_wfs", "ms:baupotenzial"), "geojson")]},
     "bplan_aufstellung": {
         "kurz": "B-Pläne im Verfahren", "titel": "Bebauungspläne im Verfahren (Aufstellungsbeschlüsse)", "gruppe": "Bauen und Wohnen",
@@ -89,7 +92,7 @@ QUELLEN = {
     "stimmbezirke": {
         "kurz": "Stimmbezirke", "titel": "Stimmbezirke", "gruppe": "Gebietsgliederungen", "art": "grenze", "farbe": "#334155",
         "quelle": "Stadt Köln, Stimmbezirke Köln", "url": "https://open.nrw/dataset/stimmbezirke-koln-k", "lizenz": STADT_LIZENZ,
-        "abrufe": [("stimmbezirk.zip", O + "Stimmbezirk_1.zip", "shapezip")]},
+        "mindestzoom": 12, "abrufe": [("stimmbezirk.zip", O + "Stimmbezirk_1.zip", "shapezip")]},
     "fahrradstrassen": {
         "kurz": "Fahrradstraßen", "titel": "Fahrradstraßen (eingerichtet und in Planung)", "gruppe": "Verkehr", "art": "linie", "farbe": "#047857",
         "quelle": "Stadt Köln, Fahrradstraßen", "url": "https://open.nrw/dataset/c639e607-a653-4fb1-bb5f-feafd92d4fb9",
@@ -113,7 +116,7 @@ QUELLEN = {
     "denkmaeler": {
         "kurz": "Denkmäler", "titel": "Baudenkmäler (Denkmalliste)", "gruppe": "Stadtbild", "art": "flaeche", "farbe": "#a16207",
         "quelle": "Stadt Köln, Denkmalliste", "url": "https://open.nrw/dataset/41a14703-ad40-4a12-b498-2ec92a6bf903",
-        "lizenz": STADT_LIZENZ,
+        "lizenz": STADT_LIZENZ, "mindestzoom": 14,
         "abrufe": [("denkmal_gebaeude.geojson", _wfs("denkmalliste_wfs", "ms:koeln_denkmal_gebaeude"), "geojson"),
                    ("denkmal_freiflaechen.geojson", _wfs("denkmalliste_wfs", "ms:koeln_denkmal_freiflaechen"), "geojson"),
                    ("denkmal_punkte.geojson", _wfs("denkmalliste_wfs", "ms:koeln_denkmal_punkte"), "geojson")]},
@@ -299,7 +302,8 @@ def write():
         verzeichnis.append({"key": key, "kurz": q.get("kurz", q["titel"]), "titel": q["titel"], "gruppe": q["gruppe"], "art": q["art"], "farbe": q["farbe"],
                             "datei": f"flaechen/ebene_{key}.json", "felder": FELDTITEL.get(key, {}),
                             "quelle": q["quelle"], "url": q["url"], "lizenz": q["lizenz"],
-                            "stand": s.get("abgerufen"), "objekte": len(gj["features"])})
+                            "stand": s.get("abgerufen"), "objekte": len(gj["features"]),
+                            **({"mindestzoom": q["mindestzoom"]} if q.get("mindestzoom") else {})})
     out = config.EXPORT / config.STADT / "ebenen.json"
     out.write_text(json.dumps({"ebenen": verzeichnis}, ensure_ascii=False, indent=1) + "\n")
     print(f"Ebenen: {len(verzeichnis)} → {out}")

@@ -6,8 +6,11 @@ Seiten entstehen für alle Stadtteile und Stadtbezirke, auch ohne Vorlagen (etwa
 - Kennzahlen aus kontext.json (pipeline/kontext.py) im Vergleich Stadtteil – Stadtbezirk – ganz Köln, mit Quellen,
   Lizenzen, Stand und Methode; unter der Mindestgröße keine Anteile und Mittelwerte;
 - Links auf die Kartenebenen aus ebenen.json (pipeline/ebenen.py) mit Quelle und Lizenz.
-Kennzahlen und Ebenen nur, wenn das Zusatzthema „kontext“ freigegeben ist (config.ZUSATZTHEMEN, wie die Karte).
-Keine Erzeugungszeitpunkte, damit sich der Branch deploy nur bei Inhaltsänderungen ändert."""
+Kennzahlen und Ebenen nur, wenn das Zusatzthema „kontext“ freigegeben ist (config.ZUSATZTHEMEN, wie die Karte); Titel,
+Einleitung und Beschreibung nennen nur, was die einzelne Seite tatsächlich enthält.
+Keine Erzeugungszeitpunkte und feste Reihenfolgen (auch bei gleich häufigen Themen), damit die Seiten bei gleichem Inhalt
+byte-gleich bleiben und sich der Branch deploy nur bei Inhaltsänderungen ändert (tests/test_gebietsseiten.py, zwei Läufe
+mit verschiedenem PYTHONHASHSEED)."""
 import json
 import re
 from collections import Counter
@@ -21,6 +24,7 @@ from .kontext import ANTEILE
 LATEST = 20
 CSP = ("default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; "
        "object-src 'none'; base-uri 'self'; form-action 'none'")
+ZOOM_HINWEIS = "Viele Objekte: erscheint erst bei näherer Ansicht, falls nötig hineinzoomen"
 VORSCHAU = (f"<p><strong>Vorschau:</strong> Die Ratsvorlagen der Stadt {config.STADT_NAME} folgen, sobald der Abruf "
             "aus dem Ratsinformationssystem eingerichtet ist.</p>")
 
@@ -104,8 +108,15 @@ def _map_url(root, key):
 
 
 
-def _area_body(kind_label, name, where, key, papers, root):
-    """Vorlagen eines Gebiets: Überblick, jüngste Vorlagen, Begriffe; where ist bereits HTML (Name, Stadtbezirk)."""
+def _haeufigste(zaehler, n=None):
+    """Einträge nach Häufigkeit, bei gleicher Zahl nach Schlüssel: feste Reihenfolge unabhängig von der Zählreihenfolge
+    (Counter.most_common ordnet Gleichstände nach dem Einfügen, und das hing an der Reihenfolge einer Menge)."""
+    return sorted(zaehler.items(), key=lambda kv: (-kv[1], kv[0]))[:n]
+
+
+def _area_body(bezirk, name, where, key, papers, root):
+    """Vorlagen eines Gebiets: Überblick, jüngste Vorlagen, Begriffe; where ist bereits HTML (Name, Stadtbezirk).
+    bezirk: Seite eines Stadtbezirks (Vorlagen zum ganzen Stadtbezirk, ohne genaueren Ort), sonst eines Stadtteils."""
     stand = Counter(p["stand"] for p in papers)
     # alle Themen einer Vorlage zählen, wie die Karte (gebietszahlen.shares); das erste Thema folgt nur der
     # Reihenfolge in topics.THEMES und bevorzugte Verkehr (Code-Prüfung 24.10.2026)
@@ -113,25 +124,37 @@ def _area_body(kind_label, name, where, key, papers, root):
     dates = sorted(p["date"] for p in papers if p.get("date"))
     latest = sorted(papers, key=lambda p: (p.get("date") or "", p["reference"]), reverse=True)[:LATEST]
     map_url = _map_url(root, key)
+    alle = "Die Vorlage" if len(papers) == 1 else f"Alle {len(papers)} Vorlagen"
+    if bezirk:
+        h1 = f"Ratsvorlagen im Stadtbezirk {escape(name)}"
+        lead = (f"Stadtbezirk {where}: Vorlagen aus dem Ratsinformationssystem der Stadt Köln zum ganzen Stadtbezirk, ohne "
+                "genaueren Ort – auf der Karte, mit Verfahrensstand, Gremien und Quellen. Vorlagen zu einzelnen Stadtteilen "
+                "stehen auf deren Seiten.")
+        karte = f"{alle} zum ganzen Stadtbezirk auf der Karte öffnen"
+    else:
+        h1 = f"Ratsvorlagen in {escape(name)}"
+        lead = (f"Stadtteil {where}: Vorlagen aus dem Ratsinformationssystem der Stadt Köln mit Ortsbezug – auf der Karte, "
+                "mit Verfahrensstand, Gremien und Quellen.")
+        karte = f"{alle} auf der Karte öffnen"
     rows = "\n".join(
         f'      <tr><td>{_date(p.get("date"))}</td><td><a href="{map_url}#{quote(p["reference"])}">{escape(p["reference"])}</a></td>'
         f'<td>{escape(p["name"])}<br><small>{escape(p["paper_type"])}'
         + (f' · <a href="{escape(p["web"])}">Original</a>' if p.get("web") else "")
         + f'</small></td><td>{escape(p["stand"])}</td></tr>'
         for p in latest)
-    theme_list = ", ".join(f"{escape(dict(topics.THEMES).get(k, k))} ({n})" for k, n in themes.most_common(5))
-    stand_list = ", ".join(f"{escape(k)}: {n}" for k, n in stand.most_common())
+    theme_list = ", ".join(f"{escape(dict(topics.THEMES).get(k, k))} ({n})" for k, n in _haeufigste(themes, 5))
+    stand_list = ", ".join(f"{escape(k)}: {n}" for k, n in _haeufigste(stand))
     begriffe = begriffsseite.akkordeon([*stand, *(p["paper_type"] for p in latest)], root)   # Entscheidung 02.11.2026
-    return f"""    <h1>Ratsvorlagen in {escape(name)}</h1>
-    <p class="lead">{escape(kind_label)} {where}: Vorlagen aus dem Ratsinformationssystem der Stadt Köln mit Ortsbezug – auf der Karte, mit Verfahrensstand, Gremien und Quellen.</p>
-    <p><a class="page-back" href="{map_url}">Alle {len(papers)} Vorlagen auf der Karte öffnen</a></p>
+    return f"""    <h1>{h1}</h1>
+    <p class="lead">{lead}</p>
+    <p><a class="page-back" href="{map_url}">{karte}</a></p>
     <h2>Überblick</h2>
     <ul>
-      <li>{len(papers)} Vorlagen{f" von {_date(dates[0])} bis {_date(dates[-1])}" if dates else ""}</li>
+      <li>{_vorlagen_zahl(len(papers))}{f" von {_date(dates[0])} bis {_date(dates[-1])}" if dates else ""}</li>
       <li>Stand: {stand_list or "–"}</li>
       <li>Häufigste Themen (abgeleitet; eine Vorlage kann mehrere haben): {theme_list or "–"}</li>
     </ul>
-    <h2>Die {len(latest)} jüngsten Vorlagen</h2>
+    <h2>{"Die jüngste Vorlage" if len(latest) == 1 else f"Die {len(latest)} jüngsten Vorlagen"}</h2>
     <table>
       <thead><tr><th scope="col">Datum</th><th scope="col">Drucksache</th><th scope="col">Titel</th><th scope="col">Stand</th></tr></thead>
       <tbody>
@@ -207,11 +230,8 @@ def _kennzahlen(kx, spalten):
     methoden = "\n".join(
         f'      <li><strong>{escape(kz[k]["titel"])}</strong> ({escape(kz[k].get("einheit") or "")}): '
         f'{escape(kz[k].get("methode") or "Methode nicht angegeben")}</li>' for k in keys)
+    # der Hinweis zum Bodenrichtwert (Anteil der Einwohner, für den der Wert gilt) steht in dessen Methode (kontext.KENNZAHLEN)
     regel = f"Für Gebiete unter {_de(mindest)} Einwohnern stehen keine Anteile und Mittelwerte." if mindest else ""
-    ab = meta.get("bodenrichtwert_hinweis_ohne_zone")
-    if "bodenrichtwert" in keys and ab is not None:
-        methoden += (f"\n      <li><strong>Hinweis zum Bodenrichtwert:</strong> Wohnen mindestens {_de(ab)} % der Einwohner "
-                     "außerhalb von Zonen für Wohnbauland, nennt die Tabelle den Anteil der Einwohner, für den der Wert gilt.</li>")
     return f"""    <h2>Kennzahlen zur Einordnung</h2>
     <p>Einordnung, kein Urteil über das Gebiet. Alle Werte sind auf Stadtteile und Stadtbezirke umgerechnet und damit abgeleitet; die Stichtage der Quellen sind verschieden.{" " + regel if klein and regel else ""}</p>
     <table class="kennzahlen">
@@ -221,18 +241,20 @@ def _kennzahlen(kx, spalten):
 {zeilen}
       </tbody>
     </table>
-    <h3>Quellen und Lizenzen</h3>
+    <h3 class="gebiet-h3">Quellen und Lizenzen</h3>
     <ul>
 {quellen}
     </ul>
-    <h3>Methode</h3>
+    <h3 class="gebiet-h3">Methode</h3>
     <ul>
 {methoden}{f"{chr(10)}      <li><strong>Mindestgröße:</strong> {regel}</li>" if regel else ""}
     </ul>"""
 
 
 def _ebenen(ebenen, map_url, fuer):
-    """Hinweis auf die Kartenebenen (ebenen.json) mit Links in die Karte für dieses Gebiet."""
+    """Hinweis auf die Kartenebenen (ebenen.json) mit Links in die Karte für dieses Gebiet. Ebenen mit Mindestzoom
+    (ebenen.json „mindestzoom“) zeichnet die Karte erst bei näherer Ansicht; je nach Gebiet und Bildschirm ist dafür
+    Hineinzoomen nötig (in der Ansicht eines Stadtbezirks immer)."""
     if not ebenen:
         return ""
     items = []
@@ -247,19 +269,23 @@ def _ebenen(ebenen, map_url, fuer):
         angaben = f"Quelle: {quelle}; Lizenz: {escape(e.get('lizenz') or 'nicht angegeben')}"
         if e.get("stand"):   # ebenen.json: Tag des Abrufs (data/ebenen/STAND.json)
             angaben += f"; abgerufen am {escape(_stand(e['stand']))}"
+        if e.get("mindestzoom"):
+            angaben = f"{ZOOM_HINWEIS}. {angaben}"
         items.append(f"      <li>{link}<br><small>{angaben}</small></li>")
+    zoom = (" Ebenen mit vielen Objekten erscheinen erst bei näherer Ansicht; sie sind vermerkt."
+            if any(e.get("mindestzoom") for e in ebenen) else "")
     return f"""    <h2>Kartenebenen</h2>
-    <p>Auf der Karte lassen sich {escape(fuer)} weitere Ebenen aus offenen Daten zuschalten. Jeder Link öffnet die Karte mit dieser Ebene. Die Ebenen dienen der Einordnung; maßgeblich sind die Quellen.</p>
+    <p>Auf der Karte lassen sich {escape(fuer)} weitere Ebenen aus offenen Daten zuschalten. Jeder Link öffnet die Karte und schaltet die Ebene ein.{zoom} Die Ebenen dienen der Einordnung; maßgeblich sind die Quellen.</p>
     <ul>
 {chr(10).join(items)}
     </ul>"""
 
 
-def _stadtteile(name, ortsteile, root, mit_zahl):
-    """Liste der Stadtteile eines Stadtbezirks mit Links auf ihre Seiten."""
+def _stadtteile(name, ortsteile, root, zahlen):
+    """Liste der Stadtteile eines Stadtbezirks mit Links auf ihre Seiten; zahlen: Vorlagen je slug (None: ohne Zahl)."""
     items = "\n".join(
         f'      <li><a href="{root}ortsteil/{o["slug"]}/">{escape(o["name"])}</a>'
-        + (f' ({_vorlagen_zahl(o["count"])})' if mit_zahl else "") + "</li>"
+        + (f' ({_vorlagen_zahl(zahlen[o["slug"]])})' if zahlen is not None else "") + "</li>"
         for o in sorted(ortsteile, key=lambda o: _sortname(o["name"])))
     return f"""    <h2>Stadtteile im Stadtbezirk {escape(name)}</h2>
     <ul>
@@ -269,6 +295,23 @@ def _stadtteile(name, ortsteile, root, mit_zahl):
 
 def _laden(path):
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+def _vorlagen(base, ordner, g):
+    """Vorlagen eines Gebiets aus seiner Datei. Fehlt sie trotz count, bleibt das Gebiet ohne Vorlagen (mit Meldung);
+    Übersicht, Stadtteilliste und Seite nennen dann übereinstimmend dieselbe Zahl."""
+    if not g["count"]:
+        return []
+    datei = base / ordner / f"{g['slug']}.json"
+    if not datei.exists():
+        print(f"Gebietsseiten: {ordner}/{datei.name} fehlt ({g['count']} Vorlagen laut index.json) – Seite ohne Vorlagen")
+        return []
+    return json.loads(datei.read_text(encoding="utf-8"))["papers"]
+
+
+def _zusatz(kennzahlen, ebenen):
+    """Was die Seite neben den Vorlagen enthält, für Titel und Einleitung, z. B. „Kennzahlen und Kartenebenen“."""
+    return " und ".join(t for t, da in (("Kennzahlen", kennzahlen), ("Kartenebenen", ebenen)) if da)
 
 
 def _schreiben(site, site_url, path, title, description, body, head):
@@ -285,52 +328,63 @@ def write(site, site_url):
         return []
     vorschau = bool((index.get("meta") or {}).get("vorschau"))
     kontext_an = config.ZUSATZTHEMEN.get("kontext")   # wie die Karte: Kennzahlen und Ebenen nur bei Freigabe
-    kx = _laden(base / "kontext.json") if kontext_an else None
+    kx = (_laden(base / "kontext.json") or {}) if kontext_an else {}
     ebenen = ((_laden(base / "ebenen.json") or {}).get("ebenen") or []) if kontext_an else []
     stadt = f"ganz {config.STADT_NAME}"
     root = "../../"
-    zusatz = [t for t, da in (("Kennzahlen", kx), ("Kartenebenen", ebenen)) if da]
-    zusatz_text = " und ".join(zusatz)
     bezirk_slug = {b["name"]: b["slug"] for b in index["bezirke"]}
     leer_satz = VORSCHAU if vorschau else ""
-    paths = []
+    # Vorlagen je Gebiet einmal laden: Seiten, Stadtteillisten und Übersicht nennen dieselbe Zahl
+    ot_vorlagen = {o["slug"]: _vorlagen(base, "ortsteile", o) for o in index["ortsteile"]}
+    bz_vorlagen = {b["slug"]: _vorlagen(base, "bezirke", b) for b in index["bezirke"]}
+    ot_zahl = {k: len(v) for k, v in ot_vorlagen.items()}
+    paths, mit_kennzahlen = [], []
 
     def head(datei, titel):
         return feed_head(datei, titel, root) if (base / datei).exists() else ""
 
+    def vergleich(spalten):
+        """Vergleichsspalten für die Beschreibung: „dem Stadtbezirk und ganz Köln“."""
+        return " und ".join("dem Stadtbezirk" if t.startswith("Stadtbezirk ") else t for t, _ in spalten[1:])
+
     for o in index["ortsteile"]:
         name, bz, key = o["name"], o["stadtbezirk"], f"ortsteil:{o['slug']}"
-        data_file = base / "ortsteile" / f"{o['slug']}.json"
-        papers = json.loads(data_file.read_text(encoding="utf-8"))["papers"] if o["count"] and data_file.exists() else []
+        papers = ot_vorlagen[o["slug"]]
         bz_html = (f'<a href="{root}stadtbezirk/{bezirk_slug[bz]}/">{escape(bz)}</a>' if bz in bezirk_slug else escape(bz))
         map_url = _map_url(root, key)
-        teile = []
-        if papers:
-            teile.append(_area_body("Stadtteil", name, f"{escape(name)} (Stadtbezirk {bz_html})", key, papers, root))
-        else:
-            leer = leer_satz or f"<p>Im Ratsatlas ist derzeit keine Vorlage mit Ortsbezug zu {escape(name)} verzeichnet.</p>"
-            teile.append(_ohne_vorlagen(
-                f"Stadtteil {escape(name)}",
-                f"Stadtteil im Stadtbezirk {bz_html} der Stadt {config.STADT_NAME}."
-                + (f" Auf dieser Seite: {zusatz_text} zur Einordnung, mit Quellen." if zusatz else ""),
-                map_url, f"{escape(name)} auf der Karte öffnen", leer))
-        if kx and name in (kx.get("ortsteile") or {}):
+        # Kennzahlen nur, wenn das Gebiet in kontext.json steht (sonst nennen Titel und Einleitung sie auch nicht)
+        spalten, kennzahlen = [], ""
+        if name in (kx.get("ortsteile") or {}):
             spalten = [(name, kx["ortsteile"][name])]
             if bz in (kx.get("bezirke") or {}):
                 spalten.append((f"Stadtbezirk {bz}", kx["bezirke"][bz]))
             if kx.get("stadt"):
                 spalten.append((stadt, kx["stadt"]))
-            teile.append(_kennzahlen(kx, spalten))
+            kennzahlen = _kennzahlen(kx, spalten)
+        mit_kennzahlen.append(bool(kennzahlen))
+        zusatz = _zusatz(kennzahlen, ebenen)
+        teile = []
+        if papers:
+            teile.append(_area_body(False, name, f"{escape(name)} (Stadtbezirk {bz_html})", key, papers, root))
+        else:
+            leer = leer_satz or f"<p>Im Ratsatlas ist derzeit keine Vorlage mit Ortsbezug zu {escape(name)} verzeichnet.</p>"
+            teile.append(_ohne_vorlagen(
+                f"Stadtteil {escape(name)}",
+                f"Stadtteil im Stadtbezirk {bz_html} der Stadt {config.STADT_NAME}."
+                + (f" Auf dieser Seite: {zusatz} zur Einordnung, mit Quellen." if zusatz else ""),
+                map_url, f"{escape(name)} auf der Karte öffnen", leer))
+        teile.append(kennzahlen)
         teile.append(_ebenen(ebenen, map_url, f"für {name}"))
         path = f"ortsteil/{o['slug']}/"
         if papers:
             title = f"Ratsvorlagen in {name} – Ratsatlas Köln"
-            description = (f"Was berät die Politik in {name} (Köln)? {len(papers)} Vorlagen aus dem "
+            description = (f"Was berät die Politik in {name} (Köln)? {_vorlagen_zahl(len(papers))} aus dem "
                            "Ratsinformationssystem mit Ort, Stand und Gremien.")
         else:
-            title = f"Stadtteil {name}" + (f": {zusatz_text}" if zusatz else "") + " – Ratsatlas Köln"
+            title = f"Stadtteil {name}" + (f": {zusatz}" if zusatz else "") + " – Ratsatlas Köln"
             description = (f"Stadtteil {name} im Stadtbezirk {bz} (Köln)"
-                           + (": Kennzahlen im Vergleich mit dem Stadtbezirk und ganz Köln, mit Quellen und Lizenzen" if kx else "")
+                           + (f": Kennzahlen im Vergleich mit {vergleich(spalten)}, mit Quellen und Lizenzen"
+                              if kennzahlen and len(spalten) > 1 else ": Kennzahlen mit Quellen und Lizenzen" if kennzahlen else "")
                            + ("; Kartenebenen aus offenen Daten" if ebenen else "") + "."
                            + (" Die Ratsvorlagen folgen." if vorschau else ""))
         _schreiben(site, site_url, path, title, description, "\n".join(t for t in teile if t),
@@ -339,25 +393,28 @@ def write(site, site_url):
 
     for b in index["bezirke"]:
         name, key = b["name"], f"bezirk:{b['slug']}"
-        data_file = base / "bezirke" / f"{b['slug']}.json"
-        papers = json.loads(data_file.read_text(encoding="utf-8"))["papers"] if b["count"] and data_file.exists() else []
+        papers = bz_vorlagen[b["slug"]]
         ortsteile = [o for o in index["ortsteile"] if o["stadtbezirk"] == name]
         map_url = _map_url(root, key)
+        spalten, kennzahlen = [], ""
+        if name in (kx.get("bezirke") or {}):
+            spalten = [(f"Stadtbezirk {name}", kx["bezirke"][name])] + ([(stadt, kx["stadt"])] if kx.get("stadt") else [])
+            kennzahlen = _kennzahlen(kx, spalten)
+        mit_kennzahlen.append(bool(kennzahlen))
+        zusatz = _zusatz(kennzahlen, ebenen)
         teile = []
         if papers:
-            teile.append(_area_body("Stadtbezirk", name, escape(name), key, papers, root))
+            teile.append(_area_body(True, name, escape(name), key, papers, root))
         else:
             leer = leer_satz or ("<p>Derzeit ist keine Vorlage verzeichnet, die sich auf den ganzen Stadtbezirk ohne "
                                  "genaueren Ort bezieht; Vorlagen zu einzelnen Stadtteilen stehen auf deren Seiten.</p>")
             teile.append(_ohne_vorlagen(
                 f"Stadtbezirk {escape(name)}",
                 f"Einer von {len(index['bezirke'])} Stadtbezirken der Stadt {config.STADT_NAME}; er umfasst "
-                f"{len(ortsteile)} Stadtteile." + (f" Auf dieser Seite: {zusatz_text} zur Einordnung, mit Quellen." if zusatz else ""),
+                f"{len(ortsteile)} Stadtteile." + (f" Auf dieser Seite: {zusatz} zur Einordnung, mit Quellen." if zusatz else ""),
                 map_url, f"Stadtbezirk {escape(name)} auf der Karte öffnen", leer))
-        teile.append(_stadtteile(name, ortsteile, root, not vorschau))
-        if kx and name in (kx.get("bezirke") or {}):
-            spalten = [(f"Stadtbezirk {name}", kx["bezirke"][name])] + ([(stadt, kx["stadt"])] if kx.get("stadt") else [])
-            teile.append(_kennzahlen(kx, spalten))
+        teile.append(_stadtteile(name, ortsteile, root, None if vorschau else ot_zahl))
+        teile.append(kennzahlen)
         teile.append(_ebenen(ebenen, map_url, f"für den Stadtbezirk {name}"))
         path = f"stadtbezirk/{b['slug']}/"
         if papers:
@@ -365,9 +422,10 @@ def write(site, site_url):
             description = (f"Vorlagen aus dem Ratsinformationssystem mit Bezug zum ganzen Stadtbezirk {name} (Köln), "
                            "ohne genaueren Ort.")
         else:
-            title = f"Stadtbezirk {name}" + (f": {zusatz_text}" if zusatz else "") + " – Ratsatlas Köln"
+            title = f"Stadtbezirk {name}" + (f": {zusatz}" if zusatz else "") + " – Ratsatlas Köln"
             description = (f"Stadtbezirk {name} (Köln) mit {len(ortsteile)} Stadtteilen"
-                           + (": Kennzahlen im Vergleich mit ganz Köln, mit Quellen und Lizenzen" if kx else "")
+                           + (f": Kennzahlen im Vergleich mit {vergleich(spalten)}, mit Quellen und Lizenzen"
+                              if kennzahlen and len(spalten) > 1 else ": Kennzahlen mit Quellen und Lizenzen" if kennzahlen else "")
                            + ("; Kartenebenen aus offenen Daten" if ebenen else "") + "."
                            + (" Die Ratsvorlagen folgen." if vorschau else ""))
         _schreiben(site, site_url, path, title, description, "\n".join(t for t in teile if t),
@@ -378,14 +436,18 @@ def write(site, site_url):
     for b in index["bezirke"]:
         ortsteile = sorted((o for o in index["ortsteile"] if o["stadtbezirk"] == b["name"]), key=lambda o: _sortname(o["name"]))
         items = "\n".join(f'      <li><a href="../ortsteil/{o["slug"]}/">{escape(o["name"])}</a>'
-                          + ("" if vorschau else f' ({_vorlagen_zahl(o["count"])})') + "</li>" for o in ortsteile)
+                          + ("" if vorschau else f' ({_vorlagen_zahl(ot_zahl[o["slug"]])})') + "</li>" for o in ortsteile)
         sections.append(
             f'    <h2>Stadtbezirk {escape(b["name"])}</h2>\n'
             f'    <p><a href="../stadtbezirk/{b["slug"]}/">Stadtbezirk {escape(b["name"])} im Überblick</a>'
-            + ("" if vorschau else f' ({_vorlagen_zahl(b["count"])} zum ganzen Stadtbezirk, ohne genaueren Ort)') + "</p>\n"
+            + ("" if vorschau else f' ({_vorlagen_zahl(len(bz_vorlagen[b["slug"]]))} zum ganzen Stadtbezirk, ohne genaueren Ort)')
+            + "</p>\n"
             f"    <ul>\n{items}\n    </ul>")
     anzahl = f"{len(index['bezirke'])} Stadtbezirke und {len(index['ortsteile'])} Stadtteile der Stadt {config.STADT_NAME}"
-    extra = f"{zusatz_text} zur Einordnung" if zusatz else ""
+    # „je mit Kennzahlen“ nur, wenn jede Gebietsseite sie enthält
+    hub_zusatz = [t for t, da in (("Kennzahlen", mit_kennzahlen and all(mit_kennzahlen)), ("Kartenebenen", ebenen)) if da]
+    zusatz = " und ".join(hub_zusatz)
+    extra = f"{zusatz} zur Einordnung" if zusatz else ""
     if vorschau:
         h1 = "Stadtteile und Stadtbezirke"
         lead = f"Alle {anzahl}" + (f", je mit {extra}" if extra else "") + "."
@@ -396,7 +458,7 @@ def write(site, site_url):
     hub = f"""    <h1>{h1}</h1>
     <p class="lead">{escape(lead)}</p>
 {("    " + VORSCHAU + chr(10)) if vorschau else ""}{chr(10).join(sections)}"""
-    inhalt = ([] if vorschau else ["ihren Vorlagen aus dem Ratsinformationssystem"]) + zusatz
+    inhalt = ([] if vorschau else ["ihren Vorlagen aus dem Ratsinformationssystem"]) + hub_zusatz
     (site / "gebiete").mkdir(parents=True, exist_ok=True)
     (site / "gebiete" / "index.html").write_text(
         _page(site_url, "gebiete/", f"{h1} – Ratsatlas Köln",

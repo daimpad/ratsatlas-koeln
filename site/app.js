@@ -353,10 +353,21 @@
   }
   // Gebietsdateien, die der Start schon angefordert hat (Gebiet im Link), je Adresse eine Antwort
   const vorab = new Map();
+  // Stadtbezirk ohne Vorlagen „ohne genaueren Ort“ führt fillAreaSelect nicht auf; öffnet ein Link ihn (Gebietsseite,
+  // Kartenvorschau), den Eintrag ergänzen, damit die Auswahl nicht leer bleibt
+  function areaOption(v, next) {
+    const sel = $("#f-area");
+    if (next.kind !== "bezirk" || [...sel.options].some((o) => o.value === v)) return;
+    const b = index.bezirke.find((x) => x.slug === next.key);
+    const grp = [...sel.querySelectorAll("optgroup")].find((g) => g.label === `Stadtbezirk ${next.name}`);
+    (grp || sel).append(new Option(`ganzer Stadtbezirk ${next.name}, ohne genaueren Ort (${b ? b.count : 0})`, v));
+  }
   async function loadArea(value, keepState) {
     const seq = ++loadSeq;
     const next = parseArea(value);
-    $("#f-area").value = next.kind === STADT && value === `${STADT}:ganz` ? value : `${next.kind}:${next.key}`;
+    const v = next.kind === STADT && value === `${STADT}:ganz` ? value : `${next.kind}:${next.key}`;
+    areaOption(v, next);
+    $("#f-area").value = v;
     $("#count").textContent = `Lade Vorlagen für ${next.name} …`;
     setLoading(true);
     let data;
@@ -1355,7 +1366,8 @@
       text: (p) => `${esc(p.name)}<br><span class="nav-dim">${esc(p.schulform || "")}${p.traeger ? `, ${esc(p.traeger)}` : ""}</span>` },
     haltestellen: { label: "Haltestellen", file: "punkte_haltestellen", quelle: "haltestellen", farbe: "#0f766e", text: (p) => esc(p.name) },
   };
-  // Weitere Ebenen aus ebenen.json (pipeline/ebenen.py): Stadt, Land, Bund; Mindestzoom für große Ebenen
+  // Weitere Ebenen aus ebenen.json (pipeline/ebenen.py): Stadt, Land, Bund; Mindestzoom für große Ebenen aus ebenen.json
+  // (mindestzoom), EX_ZOOM nur als Rückfall für ältere Dateien ohne diese Angabe
   const EX = {};
   const EX_ZOOM = { denkmaeler: 14, baupotenziale: 13, stimmbezirke: 12 };
   const exText = (e, p) => {
@@ -1363,7 +1375,7 @@
       .map(([k, t]) => { const v = String(p[k]);   // Tooltips sind nicht anklickbar: Adressen als Text
         return `${esc(t)}: ${esc(/^https?:/.test(v) ? v.replace(/^https?:\/\//, "").split("/")[0] : v)}`; });
     return `<strong>${esc(e.titel)}</strong>${p._teil ? ` · ${esc(p._teil)}` : ""}${rows.length ? `<br>${rows.join("<br>")}` : ""}
-      <br><span class="nav-dim">${esc(e.quelle)}${e.stand ? `, Stand ${esc(fmtDate(e.stand))}` : ""}</span>`;
+      <br><span class="nav-dim">${esc(e.quelle)}${e.stand ? `, abgerufen am ${esc(fmtDate(e.stand))}` : ""}</span>`;
   };
   // Ebenen mit mehreren Arten: Farbe je Teil (Legende und Fläche)
   const EX_TEILE = {
@@ -1388,7 +1400,7 @@
   const brwStufe = (v, br) => br.filter((b) => v >= b).length;
   const ERGAENZUNG = { EFH: "Ein- und Zweifamilienhäuser", MFH: "Mehrfamilienhäuser" };
   const kxQuelle = (k) => (kontext && kontext.meta.quellen[(KX[k] || PX[k]).quelle]) || {};
-  const minZoom = (k) => (EX[k] ? EX_ZOOM[k] || 11 : KX_ZOOM);
+  const minZoom = (k) => (EX[k] ? EX[k].mindestzoom || EX_ZOOM[k] || 11 : KX_ZOOM);
   async function drawKx() {
     if (legendEl) drawLegend();
     for (const k of [...Object.keys(KX), ...Object.keys(PX), ...Object.keys(EX)]) {
@@ -1454,7 +1466,7 @@
       const e = EX[k], u = safeUrl(e.url);
       const teile = EX_TEILE[k] || [[null, e.farbe, e.titel]];
       h += `<ul>${teile.map(([, c, label]) => `<li><span class="swatch${e.art === "flaeche" ? " swatch-area" : ""}" style="background:${c}" aria-hidden="true"></span>${esc(label)}</li>`).join("")}</ul>
-        <p class="hint">Quelle: ${u ? `<a href="${u}">${esc(e.quelle)}</a>` : esc(e.quelle)}, ${esc(e.lizenz)}${e.stand ? `, Stand ${esc(fmtDate(e.stand))}` : ""}.</p>`;
+        <p class="hint">Quelle: ${u ? `<a href="${u}">${esc(e.quelle)}</a>` : esc(e.quelle)}, ${esc(e.lizenz)}${e.stand ? `, abgerufen am ${esc(fmtDate(e.stand))}` : ""}.</p>`;
     }
     return h + zoom;
   }
