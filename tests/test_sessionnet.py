@@ -135,6 +135,7 @@ def test_export_koeln(oparl, monkeypatch):
     for datei in ("suche.json", "zeit.json", "vorlagen.geojson", "termine.ics", "dcat.jsonld", "feeds/ganz-koeln.xml"):
         text = (out / datei).read_text(encoding="utf-8")
         assert "Bonn" not in text and "OParl-Lite" not in text, datei
+    assert f"{config.STADT}/zeit.json" in (out / "dcat.jsonld").read_text()   # mit Vorlagen: Zeitleiste im DCAT-Katalog
     # deaktivierte Zusatzthemen erzeugen keine Dateien
     assert not (out / "soll.json").exists() and not (out / "chat").exists() and not (out / "dossiers").exists()
     assert (config.EXPORT / "audit_geokodierung.tsv").exists() and (config.EXPORT / "stichprobe_geokodierung.tsv").exists()

@@ -6,6 +6,7 @@ Branch deploy nicht täglich vollständig neu geschrieben wird."""
 import json
 import re
 from datetime import date, datetime, timedelta, timezone
+from pathlib import Path
 from urllib.parse import quote
 from xml.sax.saxutils import escape, quoteattr
 
@@ -230,6 +231,8 @@ def _bbox_wkt():
 
 def write_dcat(path, data_start, modified, kurzfassungen=False):
     site, base = config.SITE_URL, f"{config.SITE_URL}data/export/"
+    # zeit.json schreibt export.py nur mit Vorlagen (nicht in der Vorschau): nur aufführen, was daneben liegt
+    zeit = (Path(path).parent / "zeit.json").exists()
     mt = "https://www.iana.org/assignments/media-types/"
     rights = ("Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den "
               "Kölner Geodaten (dl-de/zero 2.0); " + config.NAMENSNENNUNG + ". Ortsbezüge aus OpenStreetMap, falls "
@@ -272,8 +275,8 @@ def write_dcat(path, data_start, modified, kurzfassungen=False):
                  "Ein Punkt je Vorlage und Ort mit Stufe, Methode, Konfidenz und Fundstelle der Verortung."),
             dist("Datenpaket (Zip)", config.PAKET_URL, "application/zip", "dl-de-zero",
                  "Alle Exporte, Audit-Protokolle (TSV), Verifikation und Lizenzübersicht."),
-            dist("Zeitleiste: Monatsaggregate (JSON)", f"{config.STADT}/zeit.json", "application/json", "dl-de-zero",
-                 "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden."),
+        ] + ([dist("Zeitleiste: Monatsaggregate (JSON)", f"{config.STADT}/zeit.json", "application/json", "dl-de-zero",
+                   "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden.")] if zeit else []) + [
             dist("Typische Wege je Vorlagenart (JSON)", f"{config.STADT}/prozesse.json", "application/json", "dl-de-zero",
                  "Häufigste Abfolgen von Beratungen und Ergebnissen je Vorlagenart."),
             dist("Sitzungskalender (iCalendar)", f"{config.STADT}/termine.ics", "text/calendar", "dl-de-zero",

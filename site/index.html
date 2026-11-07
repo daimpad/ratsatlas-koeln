@@ -116,7 +116,7 @@
           <svg class="icon" aria-hidden="true"><use href="#i-assist"/></svg><span>Assistent</span></button>
       </div>
       <div class="nav-group" role="group" aria-label="Menü">
-        <button type="button" class="menu-btn" data-mega="mega-auswertung" aria-expanded="false" aria-controls="mega-auswertung">
+        <button type="button" class="menu-btn" data-mega="mega-auswertung" aria-expanded="false" aria-controls="mega-auswertung" data-vorschau="aus">
           <svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Auswertung</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
         <button type="button" class="menu-btn" data-mega="mega-mitmachen" aria-expanded="false" aria-controls="mega-mitmachen">
           <svg class="icon" aria-hidden="true"><use href="#i-people"/></svg><span>Mitmachen</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
@@ -132,24 +132,26 @@
 
     <!-- Mega-Menüs -->
     <section class="mega glass" id="mega-suche" aria-label="Suche und Schnellfilter" hidden>
+      <!-- Vorschau ohne Ratsvorlagen (app.js applyFunktionen): data-vorschau="aus" ausgeblendet, "nur" an ihrer Stelle -->
       <div class="mega-head">
-        <div class="seg scope-switch" role="radiogroup" aria-label="Suchen in">
+        <div class="seg scope-switch" role="radiogroup" aria-label="Suchen in" data-vorschau="aus">
           <button type="button" role="radio" data-scope="koeln" aria-checked="true">in ganz Köln</button>
           <button type="button" role="radio" data-scope="gebiet" aria-checked="false">im gewählten Gebiet</button>
         </div>
         <p class="mega-count" id="mega-count" aria-live="polite"></p>
       </div>
-      <h3 class="mega-label"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>Themen</h3>
-      <div class="chips" id="chips-theme" role="group" aria-label="Thema wählen"></div>
-      <h3 class="mega-label"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Partei / Fraktion</h3>
-      <div class="chips" id="chips-party" role="group" aria-label="Partei oder Fraktion wählen"></div>
+      <p class="hint" data-vorschau="nur" hidden>Die Vorschau enthält noch keine Ratsvorlagen. Suche und Schnellfilter nach Thema und Partei folgen, sobald der Abruf der Stadt Köln eingerichtet ist.</p>
+      <h3 class="mega-label" data-vorschau="aus"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>Themen</h3>
+      <div class="chips" id="chips-theme" role="group" aria-label="Thema wählen" data-vorschau="aus"></div>
+      <h3 class="mega-label" data-vorschau="aus"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Partei / Fraktion</h3>
+      <div class="chips" id="chips-party" role="group" aria-label="Partei oder Fraktion wählen" data-vorschau="aus"></div>
       <!-- Suche im Text der Dokumente: in Bonn über OParl-Lite; für Köln kein solcher Dienst (ausgeblendet) -->
       <div class="doc-search" data-funktion="volltextsuche" hidden>
         <button type="button" class="btn btn-soft" id="doc-search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>Auch im Text der Dokumente suchen</button>
         <p class="hint" id="doc-status" aria-live="polite"></p>
         <p class="hint">Für Köln derzeit nicht verfügbar.</p>
       </div>
-      <div class="mega-foot">
+      <div class="mega-foot" data-vorschau="aus">
         <button type="button" class="btn btn-ghost" id="mega-reset">Filter zurücksetzen</button>
         <button type="button" class="btn btn-cta" id="mega-show"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Treffer in der Liste zeigen</button>
       </div>
@@ -186,7 +188,8 @@
           <span class="card-text">Rat, Ausschüsse und Bezirksvertretungen tagen in der Regel öffentlich.</span>
           <span class="card-actions">
             <button type="button" class="btn btn-cta" id="cta-termine"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Termine anzeigen</button>
-            <a class="btn btn-soft" href="data/export/koeln/termine.ics" download><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Kalender (.ics)</a>
+            <a class="btn btn-soft" href="data/export/koeln/termine.ics" download data-vorschau="aus"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Kalender (.ics)</a>
+            <span class="hint" data-vorschau="nur" hidden>Termine und Kalender folgen mit den Ratsvorlagen (Vorschau).</span>
           </span>
         </div>
         <div class="card static">

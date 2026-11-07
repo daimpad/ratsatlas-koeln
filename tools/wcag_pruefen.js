@@ -15,6 +15,9 @@ const run = async (p, name, rows) => {
   const b = await chromium.launch();
   const rows = [];
   const p = await b.newPage({ viewport: { width: 1400, height: 900 }, bypassCSP: true });
+  // nur die lokale Seite: Anfragen an andere Hosts abbrechen (etwa das absolut eingebundene Symbol in 404.html,
+  // OpenStreetMap-Kacheln ohne lokale Kacheln); die Prüfung stellt keine Anfragen nach außen
+  await p.route((u) => !u.href.startsWith(B), (r) => r.abort());
   await p.goto(B, { waitUntil: 'networkidle' }); await p.waitForTimeout(800); await run(p, 'start', rows);
   await p.goto(B + '?gebiet=ortsteil:ehrenfeld', { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
   await p.click('.toggle[data-panel="panel-list"]'); await p.waitForTimeout(300);

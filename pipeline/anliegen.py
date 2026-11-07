@@ -196,10 +196,11 @@ def _zaehlen(meldungen):
 
 
 def seite(base=None, out=None, heute=None):
-    """export/bonn/anliegen.json aus dem Archiv: Meldungen der letzten TAGE Tage je Ortsteil, Stadtbezirk und ganz Bonn,
-    nach Gruppe. Ohne Archiv wird nichts geschrieben (der Steckbrief zeigt dann keine Meldungen)."""
+    """export/<STADT>/anliegen.json aus dem Archiv: Meldungen der letzten TAGE Tage je Ortsteil, Stadtbezirk und für
+    die ganze Stadt (Schlüssel „stadt“, wie kontext.json; die Seite liest anliegen.stadt), nach Gruppe. Ohne Archiv
+    wird nichts geschrieben (der Steckbrief zeigt dann keine Meldungen)."""
     base = Path(base or config.BAUSTELLEN_ARCHIV) / "anliegen"
-    out = Path(out or config.EXPORT / "bonn" / SEITE_DATEI)
+    out = Path(out or config.EXPORT / config.STADT / SEITE_DATEI)
     state_file, stand_file = base / "meldungen.tsv", base / "STAND.json"
     if not state_file.exists() or not stand_file.exists():
         out.unlink(missing_ok=True)
@@ -220,7 +221,7 @@ def seite(base=None, out=None, heute=None):
                     "unvollstaendig_vor": beginn if beginn and beginn > von.isoformat() else None,
                     "hinweis": "Hinweise der Einwohnerschaft an die Verwaltung, keine Ratsvorlagen. Die Zahl hängt davon ab, "
                                "wer meldet und was veröffentlicht wird; sie ist kein Maß für den Zustand eines Gebiets."},
-           "bonn": _zaehlen(sel),
+           "stadt": _zaehlen(sel),
            "bezirke": {n: _zaehlen(v) for n, v in sorted(bez.items())},
            "ortsteile": {n: _zaehlen(v) for n, v in sorted(ots.items())}}
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -234,12 +235,12 @@ def seite(base=None, out=None, heute=None):
 
 def pruefen(path=None):
     """Prüfung (Teil von `check`): nur Zählungen je Gruppe, kleine Werte als „unter 3“, keine weiteren Felder."""
-    path = Path(path or config.EXPORT / "bonn" / SEITE_DATEI)
+    path = Path(path or config.EXPORT / config.STADT / SEITE_DATEI)
     if not path.exists():
         return []
     doc, befunde = json.loads(path.read_text(encoding="utf-8")), []
     erlaubt = set(GRUPPEN_FOLGE) | {"gesamt"}
-    gebiete = [("Bonn", doc["bonn"])] + list(doc["bezirke"].items()) + list(doc["ortsteile"].items())
+    gebiete = [(config.STADT_NAME, doc["stadt"])] + list(doc["bezirke"].items()) + list(doc["ortsteile"].items())
     for name, z in gebiete:
         if set(z) - erlaubt:
             befunde.append(f"Mängelmelder {name}: unerwartete Felder {sorted(set(z) - erlaubt)}")
