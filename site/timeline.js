@@ -29,7 +29,9 @@
   const PILOT_GREMIEN = ["Rat", "Hauptausschuss"];
   const SHORT = { "Hauptausschuss": "Hauptausschuss", "Rat": "Rat" };
   // Andere Schreibweisen derselben Gremien (explore/ergebnisse/gremien_koeln.tsv, Zeilen „belegt“; aus Sekundärquellen,
-  // Abgleich mit dem RIS offen)
+  // Abgleich mit dem RIS offen). Offen bis zur Messung der API: Die Zuordnung gilt nur für die Bahnen hier. Andere Stellen
+  // vergleichen fest mit „Rat“ (beteiligung.js next("Rat"), data-gremium="Rat"; mitwirken.js gremienart); liefert die
+  // API die Langform, wäre der Gremienname zentral in der Pipeline oder im Export zu vereinheitlichen.
   const GREMIUM_ALIAS = { "Rat der Stadt Köln": "Rat", "Stadtrat": "Rat" };
   const bahn = (gremium) => PILOT_GREMIEN.indexOf(GREMIUM_ALIAS[gremium] || gremium);
   const NS = "http://www.w3.org/2000/svg";

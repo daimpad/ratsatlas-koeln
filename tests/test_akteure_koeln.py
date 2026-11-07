@@ -77,9 +77,82 @@ def test_keine_fehltreffer(titel, erwartet):
         assert einreichende(titel, datum) == erwartet, datum
 
 
-def test_vorlagenart_nennt_fraktion():
-    assert einreichende("Sitzbänke", NEUE_WP, "FDP/KSG Antrag nach § 3") == ["FDP/KSG"]
-    assert einreichende("Sitzbänke", NEUE_WP, "FDP Antrag nach § 3") == ["FDP"]
+@pytest.mark.parametrize("titel, datum, erwartet", [
+    # „Die Linke“, „Grüne“ nach „Die“, „der“, „Fraktion“, „Gruppe“ auch vor einem anderen Wort (Titel ohne „betreffend“)
+    ("Antrag der Fraktion Die Linke Mieten am Musterweg", NEUE_WP, ["Die Linke"]),
+    ("Antrag der Fraktion Die Linke Ehrenfeld betreffend Sitzbänke", NEUE_WP, ["Die Linke"]),
+    ("Antrag der Grünen Sitzbänke am Musterweg", NEUE_WP, ["Grüne"]),
+    ("Antrag der Grünen Porz betreffend Sitzbänke", NEUE_WP, ["Grüne"]),
+    # Name in Anführungszeichen nach „Fraktion“ oder „…gruppe“
+    ("Antrag der Gruppe „Die PARTEI“ betreffend Sitzbänke", NEUE_WP, ["Die PARTEI"]),
+    ('Antrag der Fraktion "Die Linke" betreffend Sitzbänke', NEUE_WP, ["Die Linke"]),
+    ("Antrag der Wählergruppe „GUT & KLIMA FREUNDE“ betreffend Sitzbänke", NEUE_WP, ["GUT & KLIMA FREUNDE"]),
+    ("Antrag der Gruppe „Die PARTEI“ und der Fraktion „Die Linke“ betreffend Sitzbänke", NEUE_WP,
+     ["Die PARTEI", "Die Linke"]),
+    # Thema in Anführungszeichen beendet die Einreichenden weiterhin
+    ("Antrag der SPD-Fraktion „Sitzbänke wie bei der CDU“", NEUE_WP, ["SPD"]),
+    # Aufzählungen mit Schrägstrich
+    ("Antrag der Fraktionen CDU/FDP betreffend Sitzbänke", VOR_WAHL, ["CDU", "FDP"]),
+    ("Antrag der Fraktionen GRÜNE/CDU/FDP betreffend Sitzbänke", VOR_WAHL, ["Grüne", "CDU", "FDP"]),
+    # „Fraktion FDP“ wie „Fraktion der FDP“ (Regel 2)
+    ("Antrag der Fraktion FDP betreffend Sitzbänke", NEUE_WP, ["FDP/KSG"]),
+    ("Antrag der Fraktion FDP betreffend Sitzbänke", VOR_WAHL, ["FDP"]),
+    ("Antrag der Fraktion der FDP betreffend Sitzbänke", NEUE_WP, ["FDP/KSG"]),
+    # Kette der Einreichenden: Verbindungswörter zwischen zwei Fraktionen
+    ("Antrag der Kölner Stadtgesellschaft (KSG) und der SPD-Fraktion betreffend Sitzbänke", NEUE_WP,
+     ["Kölner Stadtgesellschaft", "SPD"]),
+    ("Antrag der SPD-Fraktion und der Fraktion Die Linke betreffend Sitzbänke", NEUE_WP, ["SPD", "Die Linke"]),
+    ("Antrag der CDU-Fraktion im Rat der Stadt Köln und der FDP/KSG-Fraktion betreffend Sitzbänke", NEUE_WP,
+     ["CDU", "FDP/KSG"]),
+    ("Antrag der SPD-Fraktion gemeinsam mit der CDU-Fraktion betreffend Sitzbänke", NEUE_WP, ["SPD", "CDU"]),
+    ("Antrag der Fraktionen SPD, GRÜNE, Die Linke sowie der Gruppe BSW betreffend Sitzbänke", NEUE_WP,
+     ["SPD", "Grüne", "Die Linke", "BSW"]),
+    ("Antrag der Ratsgruppe GUT und der Ratsgruppe Klima Freunde betreffend Sitzbänke", "2021-03-01",
+     ["GUT Köln", "Klima Freunde"]),
+    # Koalition und interfraktionell vor, in oder direkt nach der Kette
+    ("Antrag der Koalition aus GRÜNEN, CDU und Volt betreffend Sitzbänke", VOR_WAHL,
+     ["Grüne", "CDU", "Volt", "Koalition"]),
+    ("Antrag der Koalitionsfraktionen betreffend Sitzbänke", VOR_WAHL, ["Koalition"]),
+    ("Interfraktioneller Antrag der Fraktionen SPD und CDU betreffend Sitzbänke", NEUE_WP,
+     ["SPD", "CDU", "interfraktionell"]),
+])
+def test_einreichende_treffer(titel, datum, erwartet):
+    assert einreichende(titel, datum) == erwartet
+
+
+@pytest.mark.parametrize("titel, erwartet", [
+    # Parteien und Wörter im Thema zählen nicht als Einreichende (Titel ohne „betreffend“)
+    ("Antrag der SPD-Fraktion Umsetzung des Koalitionsvertrags im Bund prüfen", ["SPD"]),
+    ("Antrag der SPD-Fraktion Bruch der Koalition im Bund", ["SPD"]),
+    ("Anfrage der AfD-Fraktion Stellungnahme der Fraktion Die Linke zum Musterpark", ["AfD"]),
+    ("Anfrage der AfD-Fraktion Stellungnahme der Fraktion Die Linke betreffend Musterpark", ["AfD"]),
+    ("Antrag der SPD-Fraktion Neugestaltung Musterpark u.a. mit CDU", ["SPD"]),
+    # Grüne/Linke als Adjektiv
+    ("Antrag der CDU-Fraktion Grüne Infrastruktur im Veedel", ["CDU"]),
+    ("Antrag der CDU-Fraktion Erhalt der Grünen Lunge am Musterweg", ["CDU"]),
+    ("Antrag der CDU-Fraktion Grünen Pfeil für Radfahrende am Musterring", ["CDU"]),
+    ("Antrag der Grünen Jugend betreffend Sitzbänke", []),
+    ("Anfrage Linke Spur auf der Musterbrücke", []),
+])
+def test_keine_fehltreffer_im_thema(titel, erwartet):
+    for datum in (VOR_WAHL, NEUE_WP):
+        assert einreichende(titel, datum) == erwartet, datum
+
+
+@pytest.mark.parametrize("art, erwartet", [
+    ("FDP/KSG Antrag nach § 3", ["FDP/KSG"]), ("FDP Antrag nach § 3", ["FDP"]),
+    ("Die Linke Antrag nach § 3", ["Die Linke"]), ("DIE LINKE Antrag nach § 3", ["Die Linke"]),
+    ("Grüne Antrag nach § 3", ["Grüne"]), ("Grüne Anfrage nach § 4", ["Grüne"]),
+    ("Die Linke Anfrage nach § 4", ["Die Linke"]), ("Bündnis 90/Die Grünen Antrag nach § 3", ["Grüne"]),
+])
+def test_vorlagenart_nennt_fraktion(art, erwartet):
+    assert einreichende("Sitzbänke", NEUE_WP, art) == erwartet
+
+
+def test_stadtbezirke_wie_geocode():
+    from pipeline.actors import STADTBEZIRKE
+    from pipeline.geocode import BEZIRKE_KOELN
+    assert set(STADTBEZIRKE) == set(BEZIRKE_KOELN.values())
 
 
 def test_bezirksfraktion():
@@ -130,7 +203,8 @@ def test_originator_organization(org_name, anzeige):
     ("Ausschuss für Bauen und Wohnen", "bauen"), ("Bauausschuss", "bauen"),
     ("Mobilitätsausschuss", "verkehr"), ("Verkehrsausschuss", "verkehr"),
     ("Ausschuss für Soziales, Gesundheit, Seniorinnen und Senioren", "soziales"), ("Gesundheitsausschuss", "soziales"),
-    ("Ausschuss für Wirtschaft und Digitalisierung", "wirtschaft"), ("Finanzausschuss", "wirtschaft"),
+    ("Ausschuss für Wirtschaft und Digitalisierung", "wirtschaft"), ("Wirtschaftsausschuss", "wirtschaft"),
+    ("Digitalisierungsausschuss", "wirtschaft"), ("Finanzausschuss", "wirtschaft"),
     ("Liegenschaftsausschuss", "wirtschaft"), ("Rechnungsprüfungsausschuss", "wirtschaft"),
     ("Ausschuss für Chancengerechtigkeit und Integration", "beteiligung"), ("Integrationsrat", "beteiligung"),
     ("Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden", "beteiligung"),
@@ -138,6 +212,8 @@ def test_originator_organization(org_name, anzeige):
     ("Jugendhilfeausschuss", "kinder"), ("Ausschuss für Kunst und Kultur", "kultur"), ("Sportausschuss", "kultur"),
     ("Betriebsausschuss Gebäudewirtschaft", "bauen"),
     ("Rat der Stadt Köln", None), ("Hauptausschuss", None), ("Bezirksvertretung 1 (Innenstadt)", None),
+    # Bonner Sonderfälle entfernt (keine Kölner Gremien dieses Namens belegt)
+    ("Betriebsausschuss SGB", None), ("Bau- und Vergabeausschuss", None),
 ])
 def test_gremium_thema(gremium, thema):
     assert topics._gremium_theme(gremium) == thema
@@ -159,3 +235,16 @@ def test_beschwerdeausschuss_ohne_hauskoordinate():
 def test_glossar_gruppe():
     g = {b["begriff"]: b for b in glossar.glossar()["begriffe"]}
     assert g["Gruppe"]["gruppe"] == "gremium" and "§ 56 GO NRW" in g["Gruppe"]["fundstelle"]
+    # keine Liste Kölner Gruppen, solange der Abgleich mit dem Ratsinformationssystem fehlt
+    text = " ".join(str(v) for v in g["Gruppe"].values())
+    assert "BSW" not in text and "PARTEI" not in text
+
+
+def test_kurzfassung_parteien_wie_actors():
+    from pipeline import kurzfassung
+    from pipeline.actors import PARTIES
+    assert set(kurzfassung.PARTEIEN) == {p.name for p in PARTIES} and "BBB" not in kurzfassung.PARTEIEN
+    fremd = kurzfassung.fremder_akteur
+    assert fremd("Die Fraktion FDP/KSG beantragt neue Sitzbänke.", "Antrag der SPD-Fraktion") == "FDP/KSG"
+    assert fremd("Die Grünen beantragen neue Sitzbänke.", "Antrag der Fraktion Bündnis 90/Die Grünen") is None
+    assert fremd("Es geht um Bänke am Linken Rheinufer.", "Antrag der CDU-Fraktion") is None
