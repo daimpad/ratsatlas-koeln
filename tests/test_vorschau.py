@@ -23,7 +23,9 @@ def test_vorschau_ohne_vorlagen(oparl):
     index = json.loads((out / "index.json").read_text())
     assert index["meta"]["vorschau"] is True and not index["meta"]["testdaten"]
     assert len(index["ortsteile"]) == 86 and not (out / "zeit.json").exists()
-    assert "temporal" not in (out / "dcat.jsonld").read_text()
+    dcat = (out / "dcat.jsonld").read_text()
+    assert "temporal" not in dcat
+    assert "zeit.json" not in dcat   # keine Distribution auf eine Datei, die es in der Vorschau nicht gibt
 
 
 def test_vorschau_ueberschreibt_keine_daten_der_stadt(oparl):

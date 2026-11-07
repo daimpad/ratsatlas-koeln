@@ -338,6 +338,8 @@
         .map((o) => `<option value="ortsteil:${o.slug}">${esc(o.name)}${vorschau ? "" : ` (${o.count})`}</option>`).join("");   // Vorschau: keine Zahl 0
       const b = index.bezirke.find((x) => x.name === bz);
       if (b && b.count) html += `<option value="bezirk:${b.slug}">ganzer Stadtbezirk ${esc(bz)}, ohne genaueren Ort (${b.count})</option>`;
+      // Vorschau: Stadtbezirk mit seinen Kennzahlen wählbar (Feeds und Links führen auf ?gebiet=bezirk:…; ohne Eintrag blieb die Auswahl leer)
+      else if (b && vorschau) html += `<option value="bezirk:${b.slug}">ganzer Stadtbezirk ${esc(bz)}</option>`;
       html += "</optgroup>";
     }
     if (index.ohne_ortsbezug.length) html += '<optgroup label="Stadtweit / ohne Ortsbezug">' + index.ohne_ortsbezug
@@ -511,7 +513,8 @@
     });
     new MapStyle().addTo(map);
     // Farbe der Punkte: Sicherheit der Ortsangabe (Standard) oder Thema; Legende darunter
-    colorBy = new URLSearchParams(location.search).get("farbe") === "thema" ? "thema" : "sicherheit";
+    // (Vorschau: keine Punkte, also bleibt es bei der Sicherheit; „farbe“ fällt beim nächsten syncUrl aus der Adresse)
+    colorBy = !vorschau && new URLSearchParams(location.search).get("farbe") === "thema" ? "thema" : "sicherheit";
     const ColorBy = L.Control.extend({
       options: { position: "bottomright" },
       onAdd() {
@@ -1062,7 +1065,7 @@
       ${colorBy === "thema" ? '<p class="hint">Bei mehreren Themen zählt das erste. Themen sind abgeleitet.</p>' : ""}`;
     // Vorschau ohne Ratsvorlagen: keine Punkte, nur die Legenden der eingeschalteten Ebenen (keine eingeschaltet: keine Legende)
     const ebenen = `${planOn ? `<ul><li><span class="swatch swatch-plan" aria-hidden="true"></span>Geltungsbereich eines rechtsverbindlichen Bebauungsplans (Bauleitplanung NRW, IT.NRW)</li></ul>
-        ${planIndexUrl() ? '<button type="button" class="btn btn-soft" id="plan-list">Pläne im Gebiet als Liste</button>' : ""}` : ""}
+        ${planIndexUrl() && !vorschau ? '<button type="button" class="btn btn-soft" id="plan-list">Pläne im Gebiet als Liste</button>' : ""}` : ""}
       ${bauOn && bau ? `<ul><li><span class="site-icon site-aktuell" aria-hidden="true"></span>Baustelle der Stadt, laufend</li>
         <li><span class="site-icon site-geplant" aria-hidden="true"></span>Baustelle der Stadt, geplant</li>
         <li><span class="site-icon site-fremd" aria-hidden="true"></span>Baustelle anderer Träger (Versorger, Straßen NRW, Bahn)</li></ul>
@@ -1897,12 +1900,19 @@
       return;
     }
     box.dataset.loaded = "1";
-    const types = data.types.filter((t) => t.count >= 20).length ? data.types.filter((t) => t.count >= 20) : data.types;
+    // ohne Vorlagenarten (Vorschau ohne Vorlagen: types leer) Hinweis statt leerer Auswahl
+    const all = Array.isArray(data && data.types) ? data.types : [];
+    if (!all.length) {
+      box.innerHTML = `<p>${esc(vorschau ? VORSCHAU_LISTE : "Im Datenbestand gibt es noch keine Verfahrenswege.")}</p>`;
+      return;
+    }
+    const types = all.filter((t) => t.count >= 20).length ? all.filter((t) => t.count >= 20) : all;
     box.innerHTML = `<label class="filters">Vorlagenart <select id="wege-type">${types.map((t) => `<option>${esc(t.paper_type)}</option>`).join("")}</select></label>
       <p class="hint">Weg = Folge der Beratungen (Gremium und Rolle) laut OParl-API. Am Ende steht das Ergebnis der entscheidenden Beratung, wörtlich aus der Quelle (in Anführungszeichen), oder ersatzweise der Stand des Verfahrens. Ganz Köln.</p>
       <div id="wege-list"></div>${LIMITS}`;
     const draw = () => {
       const t = types.find((x) => x.paper_type === $("#wege-type").value);
+      if (!t || !Array.isArray(t.paths)) { $("#wege-list").innerHTML = ""; return; }
       const total = t.paths.reduce((s, p) => s + p.count, 0);
       const final = (p) => (p.final_kind === "stand" ? `<span class="final final-stand">Stand: ${esc(p.final)}</span>` : `<span class="final">„${esc(p.final)}“</span>`);
       $("#wege-list").innerHTML = `<p class="count">${t.count} Vorlagen, ${t.distinct_paths} verschiedene Wege; gezeigt die ${t.paths.length} häufigsten (${Math.round(100 * total / t.count)} %).</p>` +
@@ -2085,6 +2095,8 @@
   }
   function showStats() {
     const list = papers, where = area.kind === "ohne" ? `Vorlagen ohne Ortsbezug ${area.key}` : area.name;
+    // Vorschau ohne Vorlagen: Grund nennen statt „0 Vorlagen“ mit leeren Überschriften
+    if (vorschau) { $("#stats").innerHTML = `<p class="hint">${esc(VORSCHAU_LISTE)}</p>`; return; }
     if (area.kind === STADT) { $("#stats").innerHTML = `<p class="hint">Die Kennzahlen beziehen sich auf ein Gebiet. Wählen Sie auf der Karte oder oben ein Gebiet; die Verfahrenswege im Reiter daneben gelten für ganz Köln.</p>`; return; }
     const count = (f) => { const c = new Map(); for (const p of list) for (const k of f(p)) c.set(k, (c.get(k) || 0) + 1); return c; };
     const th = count((p) => (p.themes || []).map((t) => t.theme));
@@ -2211,13 +2223,17 @@
   }
 
   // --- Start -----------------------------------------------------------------------------------------
-  // Elemente mit data-funktion (index.html) nur zeigen, wenn die Funktion freigegeben ist; Hinweis auf Testdaten
+  // Elemente mit data-funktion (index.html) nur zeigen, wenn die Funktion freigegeben ist; Hinweis auf Testdaten.
+  // Vorschau ohne Ratsvorlagen (Kennzeichen vorschau): data-vorschau="aus" ausblenden (Auswertung, Schnellfilter der
+  // Suche, Kalender), data-vorschau="nur" zeigen (Hinweise an ihrer Stelle)
   function applyFunktionen(fn, idx) {
     document.querySelectorAll("[data-funktion]").forEach((el) => { el.hidden = !fn[el.dataset.funktion]; });
     const hinweis = $("#testdaten-hinweis");
     if (hinweis) hinweis.hidden = !(idx && idx.meta && idx.meta.testdaten);
-    const vorschau = $("#vorschau-hinweis");
-    if (vorschau) vorschau.hidden = !(idx && idx.meta && idx.meta.vorschau);
+    const vorschauHinweis = $("#vorschau-hinweis");
+    if (vorschauHinweis) vorschauHinweis.hidden = !vorschau;
+    if (vorschau) document.querySelectorAll('[data-vorschau="aus"]').forEach((el) => { el.hidden = true; });
+    document.querySelectorAll('[data-vorschau="nur"]').forEach((el) => { el.hidden = !vorschau; });
   }
   const QUELLE_NAME = { "oparl-koeln": "Ratsinformationssystem", "geo-koeln": "Gebiete", "strassen-koeln": "Straßen",
     "adressen-koeln": "Adressen", "bplan-koeln": "Bebauungspläne", osm: "OpenStreetMap" };
