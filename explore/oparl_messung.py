@@ -1,6 +1,7 @@
 """Messung der Kölner OParl-API (Phase 1) – NUR nach Information der Stadt ausführen.
 
 Aufruf (Reihenfolge):
+  ... python3 explore/oparl_messung.py test        (genau 3 Anfragen: System, Body, erste Seite der Vorlagen)
   RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT=<mail> python3 explore/oparl_messung.py kennzahlen
   ... python3 explore/oparl_messung.py organisationen
   ... python3 explore/oparl_messung.py stichprobe [--seiten 3] [--von 2019] [--bis 2026]
@@ -73,6 +74,27 @@ def _seiten(url, max_seiten=None, **params):
         if not nxt or (max_seiten and nr >= max_seiten):
             return
         seite, nr = json.loads(hole(nxt, ".json")), nr + 1
+
+
+def test(_):
+    """Erster Kontakt mit höchstens drei Anfragen: Erreichbarkeit, Antwortzeit, Seitengröße, Form von links.next."""
+    zeilen = []
+    for name, url in (("system", SYSTEM), ("body", BODY)):
+        d = _json(url)
+        zeilen.append({"objekt": name, "feld": "id", "wert": d.get("id")})
+        zeilen += [{"objekt": name, "feld": k, "wert": _wert(d.get(k))[:200]} for k in (
+            ("oparlVersion", "vendor", "product", "license") if name == "system" else ("name", "license", "paper", "modified"))]
+    paper = d.get("paper")
+    if paper:
+        s = _json(paper)
+        pag = s.get("pagination") or {}
+        zeilen += [{"objekt": "paper", "feld": f"pagination.{k}", "wert": pag.get(k)}
+                   for k in ("totalElements", "elementsPerPage", "currentPage", "totalPages")]
+        zeilen += [{"objekt": "paper", "feld": "objekte_erste_seite", "wert": len(s.get("data") or [])},
+                   {"objekt": "paper", "feld": "links", "wert": json.dumps(s.get("links"), ensure_ascii=False)[:300]},
+                   {"objekt": "paper", "feld": "felder_erstes_objekt",
+                    "wert": ",".join(sorted((s.get("data") or [{}])[0].keys()))}]
+    _schreibe("oparl_test.tsv", zeilen)
 
 
 def kennzahlen(_):
@@ -231,7 +253,7 @@ def pdf_koepfe(a):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("kommando", choices=["kennzahlen", "organisationen", "stichprobe", "sitzungen", "pdf-koepfe"])
+    ap.add_argument("kommando", choices=["test", "kennzahlen", "organisationen", "stichprobe", "sitzungen", "pdf-koepfe"])
     ap.add_argument("--seiten", type=int, default=3, help="Seiten je Jahr (stichprobe) bzw. insgesamt (sitzungen)")
     ap.add_argument("--von", type=int, default=2019)
     ap.add_argument("--bis", type=int, default=2026)
@@ -248,7 +270,7 @@ def main():
             sys.exit(f"Abbruch: außerhalb des Zeitfensters {fenster} Uhr Ortszeit (RATSATLAS_ZEITFENSTER).")
     if a.kommando == "pdf-koepfe" and os.environ.get("RATSATLAS_PDF_FREIGEGEBEN") != "ja":
         sys.exit("Abbruch: PDF-Abruf erst nach Klärung mit der Stadt (RATSATLAS_PDF_FREIGEGEBEN=ja).")
-    {"kennzahlen": kennzahlen, "organisationen": organisationen, "stichprobe": stichprobe,
+    {"test": test, "kennzahlen": kennzahlen, "organisationen": organisationen, "stichprobe": stichprobe,
      "sitzungen": sitzungen, "pdf-koepfe": pdf_koepfe}[a.kommando](a)
 
 

@@ -1,0 +1,733 @@
+id	name	lon	lat	plaetze_u3	plaetze_ue3
+2032	Kath. Kindertagesstätte St. Michael	6.92585	50.91066	10	20
+2166	Kath. Kindertagesstätte St. Aposteln	6.94458	50.9363	8	32
+2167	Kath. Kindertagesstätte St. Agnes	6.95904	50.95741	20	63
+2168	Kindertagesstätte Haus Adelheid	6.9367	50.9615	28	32
+2169	Glühwürmchen	6.93114	50.96121	30	0
+2170	Montessori Kinderhaus St. Alban	6.93667	50.94573	12	48
+2171	Kath. Kindertagesstätte Herz-Jesu	6.93681	50.9299	8	34
+2172	Inklusive Kindertagesstätte Maria Hilf	7.00397	50.94224	30	87
+2174	Kath. Kindertagesstätte St. Pantaleon	6.94873	50.92866	12	51
+2175	SKM-Familienzentrum Vingst	7.0182	50.93524	15	31
+2176	SKM-Familienzentrum Ostheim	7.03166	50.92037	14	18
+2177	SKM-Familienzentrum Klettenberg	6.92615	50.904	20	34
+2178	SKM-Familienzentrum Poll	6.99742	50.91703	18	37
+2180	SKM-Familienzentrum Bilderstöckchen	6.93822	50.96503	25	47
+2181	SKM-Familienzentrum Mülheim	7.02544	50.97581	14	23
+2182	SKM-Familienzentrum Buchforst	7.00072	50.95409	14	36
+2185	SKM-Familienzentrum Bocklemünd	6.869	50.97608	25	45
+2186	SKM-Familienzentrum Neubrück	7.05417	50.93117	24	35
+2187	SKM-Familienzentrum Bickendorf	6.89153	50.96914	30	52
+2189	SKM-Familienzentrum Dünnwald	7.02253	51.00641	14	31
+2190	Kindertagesstätte Sankt Georg	6.9567	50.91885	12	50
+2191	KITA St. Josefshaus e.V.	6.96029	50.92495	26	64
+2192	Kath. Kindertagesstätte St. Heribert	6.97551	50.93469	15	35
+2193	Kath. Kindertagesstätte St. Marien	6.95294	50.96387	12	50
+2194	Kath. Kindertagesstätte St. Christophorus	6.96432	50.97903	22	46
+2195	Kath. Kindertagesstätte St. Engelbert	6.97468	50.9662	12	70
+2196	Kath. Kindertagesstätte Heilig Kreuz	6.94505	50.98312	18	67
+2197	Kath. Kindertagesstätte St. Bernhard	6.91601	50.99243	10	30
+2198	Kath. Kindertagesstätte St. Dionysius	6.9064	50.99779	12	48
+2199	Kath. Kindertagesstätte St. Joseph	6.94495	50.95678	8	76
+2200	Kath. Kindertagesstätte St. Franziskus	6.92895	50.97193	16	62
+2201	Kath. Kindertagesstätte St. Quirinus und Salvator	6.94294	50.97284	5	35
+2202	Kath. Kindertagesstätte St. Martinus	6.85351	51.01102	20	50
+2203	Kath. Kindertagesstätte Taborplatz	6.90419	51.01029	12	48
+2204	Kita Marienberger Weg	6.89035	51.00387	18	48
+2205	KiTa Hartenfelsweg	6.88601	51.0051	10	50
+2206	Kath. Kindertagesstätte Riphahnstraße	6.90294	51.0188	20	60
+2207	Kath. Kindertagesstätte St. Marien	6.90176	51.03838	16	37
+2208	Kath. Kindertagesstätte St. Pankratius	6.85731	51.06273	16	36
+2209	Kath. Kindertagesstätte St. Joseph und Mechtern I	6.92064	50.94889	15	45
+2211	Kath. Kindertagesstätte St. Ansgar und St. Barbara 	6.91979	50.96213	15	75
+2212	Kath. Kindertagesstätte St. Anna 	6.9269	50.95419	22	48
+2213	Kita Casa Italia	6.94571	50.94363	20	81
+2214	Kath. Kindertagesstätte an St. Dreikönigen	6.88702	50.96719	18	52
+2215	Kath. Kindertagesstätte St. Rochus	6.90423	50.96234	20	50
+2216	Montessori Kinderhaus St. Johannes vor dem Lateinischen Tore	6.86238	50.97661	12	48
+2217	Kath. Kindertagesstätte St. Viktor	6.87236	50.96285	12	46
+2218	Kath. Kindertagesstätte Christi Geburt	6.87075	50.98385	12	45
+2219	Kath. Kindertagesstätte St. Marien	6.8338	50.93978	15	66
+2220	Kath. Kindertagesstätte St. Pankratius	6.85607	50.93012	8	82
+2221	Kath. Kindertagesstätte St. Jakobus	6.82977	50.96517	10	72
+2222	Kath. Kindertagesstätte St. Severin	6.83484	50.94603	5	59
+2223	Kath. Kindertagesstätte Christi Auferstehung	6.91686	50.93495	18	60
+2224	Kath. Kindertagesstätte St. Stephan	6.91398	50.92645	15	69
+2226	Kath. Kindertagesstätte St. Albertus Magnus	6.90683	50.91972	9	51
+2228	Kath. Kindertagesstätte St. Karl Borromäus	6.92861	50.92316	12	47
+2229	Kath. Kindertagesstätte St. Bruno	6.92408	50.91082	18	72
+2230	Kath. Kindertagesstätte St. Nikolaus	6.92472	50.91809	0	60
+2231	Kath. Kindertagesstätte St. Bruno am Beethovenpark	6.91716	50.9126	17	67
+2232	Kath. Kindertagesstätte St. Maria Königin	6.97157	50.89748	10	30
+2234	Kath. Kindertagesstätte St. Pius	6.94727	50.91227	12	72
+2235	Kath. Kindertagesstätte St. Joseph	7.00196	50.88581	12	48
+2236	Kath. Kindertagesstätte St. Maternus	6.99065	50.89356	14	37
+2237	Kath. Kindertagesstätte Heilige Drei Könige	6.95635	50.87695	13	48
+2238	Kath. Kindertagesstätte St. Blasius	6.93016	50.86048	17	37
+2239	Kath. Kindertagesstätte St. Georg	7.03351	50.87339	8	33
+2240	Kath. Kindertagesstätte St. Remigius	7.01223	50.8648	12	48
+2241	SKM-Familienzentrum Höhenhaus	7.02247	50.98353	14	49
+2242	Kath. Kindertagesstätte St. Johann Baptist	7.03218	50.98163	12	51
+2243	Kath. Kindertagesstätte St. Pius X	6.98946	50.99658	15	46
+2244	Kath. Kindertagesstätte St. Hubertus	6.97464	51.00211	15	46
+2246	Kath. Kindertagesstätte St. Mariä Geburt	6.99701	50.98628	6	54
+2247	Kath. Kindertagesstätte Herz Jesu	6.99882	50.95911	10	40
+2248	Kath. Kindertagesstätte Liebfrauen	7.00338	50.9639	10	50
+2249	Kath. Kindertagesstätte St. Antonius	7.01089	50.97528	0	40
+2250	Kath. Kindertagesstätte St. Petrus Canisius	7.01075	50.95127	12	47
+2251	Kath. Kindertagesstätte St. Mauritius	7.01626	50.95694	12	51
+2253	Kath. Kindertagesstätte St. Mariä Himmelfahrt	7.04574	50.96885	21	75
+2254	Kath. Kindertagesstätte St. Theresia	7.02319	50.96382	6	33
+2255	Kath. Kindertagesstätte St. Joseph	7.04469	50.99782	12	51
+2256	Kath. Kindertagesstätte St. Marien und St. Joseph	7.00882	50.94026	14	65
+2257	Kath. Kindertagesstätte St. Elisabeth	7.02852	50.94148	9	31
+2258	Kath. Kindertagesstätte St. Theodor	7.02407	50.93446	14	46
+2259	Kath. Kindertagesstätte St. Joseph	6.98959	50.91121	18	64
+2260	Kath. Kindertagesstätte St. Engelbert	6.99881	50.92855	16	64
+2261	Montessori Kinderhaus Köln-Rath	7.09489	50.92214	14	38
+2262	Kath. Kindertagesstätte St. Adelheid	7.05996	50.93445	14	37
+2263	Kath. Kindertagesstätte St. Gereon	7.04956	50.94761	10	50
+2264	Kath. Kindertagesstätte St. Hubertus	7.08023	50.94468	10	50
+2265	Kath. Kindertagesstätte Christus König	7.10127	50.86012	12	48
+2266	Kath. Kindertagesstätte St. Josef	7.05783	50.8878	12	48
+2267	Kath. Kindertagesstätte St. Martin	7.04977	50.86725	10	51
+2268	Kath. Kindertagesstätte St. Fronleichnam	7.06693	50.88774	8	32
+2269	Kath. Kindertagesstätte St. Bartholomäus	7.08683	50.87727	10	50
+2270	Montessori Kinderhaus St. Margaretha	7.08479	50.83516	4	16
+2271	Kath. Kindertagesstätte St. Mariä Himmelfahrt	7.10274	50.87584	8	32
+2272	Kath. Kindertagesstätte St. Laurentius	7.03511	50.89758	13	47
+2273	Kath. Kindertagesstätte St. Maximilian Kolbe	7.06356	50.8974	11	54
+2274	Inklusive Kindertagesstätte Porz	7.10178	50.86584	20	42
+2275	Kath. Kindertagesstätte St. Vitalis	6.8876	50.94795	12	48
+2276	Kath. Kindertagesstätte St. Norbert	7.06483	50.97523	10	76
+2277	Kath. Kindertagesstätte St. Joseph	7.07684	50.97464	16	69
+2279	Kita Alexianer Pänz im Haus Nikolaus	6.99076	50.91963	15	36
+2280	Kindertagesstätte St. Cornelius	7.09005	50.91768	16	38
+2281	Familienzentrum Südpunkt Köln-Rodenkirchen	6.99777	50.88712	12	30
+2282	Ev. Kindertagesstätte Sürth-Weiß	7.00653	50.86389	12	30
+2283	Ev. Kita Lentstraße	6.96329	50.95706	16	36
+2284	Ev. Kita Kartause	6.95579	50.92428	19	50
+2285	Tageseinrichtung für Kinder Burgenland - Familienzentrum Kalker Netzwerk	6.99365	50.93329	29	54
+2286	Tageseinrichtung für Kinder Buchholzstr.	7.00132	50.9836	18	51
+2287	Tageseinrichtung für Kinder Neue Kempener Str.  	6.94248	50.96992	15	30
+2288	Kleine Insel	7.01657	50.92814	15	20
+2289	Tageseinrichtung für Kinder Piccolomini - Familienzentrum Piccopänz	7.0355	50.97136	15	35
+2290	Tageseinrichtung für Kinder Am Bilderstöckchen - Familienzentrum Bilderstöckchen	6.92481	50.97348	25	95
+2291	Tageseinrichtung für Kinder Xantener Str. 72   	6.96546	50.96648	15	25
+2292	Tageseinrichtung für Kinder Fliegerhorst - Familienzentrum Fliegerhorst	7.1121	50.85626	26	37
+2293	Ev. Kindertagestätte Baumhaus	6.97351	50.93567	12	33
+2294	Ev. Kindertagestätte Gustav-Nachtigal-Str.	6.95527	50.96972	14	35
+2295	Ev. Kindertagestätte Werkstattstraße	6.94712	50.96053	10	32
+2299	Ev. Kinderwelt Immanuel	6.92124	50.99431	12	35
+2300	Ev. Kindertagesstätte Lebensbaumweg	6.89023	51.03251	12	32
+2302	Ev. Kindertagestätte Villa Maus	6.85997	51.06416	10	30
+2303	Ev. Kindertagestätte Fröbelstraße	6.917	50.94642	12	33
+2304	Ev. Kindertagestätte Kinderarche	6.92136	50.95348	14	36
+2305	Ev. Kindertagesstätte \\\'Die Emmäuse\\\'	6.87739	50.95903	13	40
+2306	Ev. Kindertagestätte Görlinger Zentrum	6.86893	50.98012	8	32
+2308	Ev. Integrative Kindertagesstätte Weiden	6.83584	50.93908	5	45
+2309	Ev. Kindertagesstätte Blumenallee	6.85622	50.93523	20	56
+2310	Kindertagesstätte Werderstraße	6.93894	50.9431	5	17
+2311	Ev. Kita Aachener Straße	6.8943	50.93755	12	48
+2312	Ev. Kindertagesstätte Matthäuskirche	6.92171	50.93317	11	28
+2313	Ev. Kindertagesstätte Dietrich-Bonhoeffer-Kirche	6.89634	50.91593	11	51
+2314	Ev. Kindertagesstätte Grafenwerthstr.	6.91774	50.90914	10	49
+2315	Ev. Kindertagesstätte Tersteegenhaus	6.92739	50.91761	4	36
+2316	Ev. Kindergarten Bayenthal/Marienburg	6.97138	50.90264	12	32
+2318	Ev. Kindertagesstätte Köln-Raderthal	6.95108	50.90343	5	17
+2319	Ev. Kindertagesstätte Höhenhaus	7.03282	50.98526	6	34
+2320	Kindertagesstätte 1, Internationale Strolche	7.00852	50.97415	16	31
+2321	Kindertagesstätte 4 Sonnenstrahlen	7.00889	50.97424	19	20
+2322	Kindertagesstätte 2 Villa Kunterbunt	7.00831	50.97347	14	47
+2323	Kindertagesstätte 3 Mülheimer Rasselbande	7.00607	50.97481	14	34
+2324	Evangelische Kindertagesstätte	7.02403	50.9611	4	36
+2325	Ev. Familienzentrum „Fair-eint“ 	7.03924	50.96997	12	48
+2326	Kita Mutzbach	7.0271	51.00082	4	36
+2327	Ev. Kindertagesstätte	7.09589	50.92126	6	34
+2328	Ev. Kindertagesstätte	7.02339	50.93653	12	30
+2329	Ev. Familienzenrtum Paul Gerhardt	7.01083	50.93984	14	36
+2330	Ev. Kindertagesstätte	7.05849	50.93569	4	36
+2331	Ev. Kindertagesstätte	7.06988	50.94584	18	36
+2332	Ev. Kindertagesstätte Lukaskirche	7.05646	50.88034	12	22
+2335	Ev. Kindertagesstätte Rondorf	6.96056	50.87137	6	36
+2336	Tageseinrichtung für Kinder FZ Kölnberg	6.92703	50.86178	24	52
+2337	städt. KiTa Am Hilgerskreuz	6.92466	50.85518	34	57
+2338	Kita Bickendorf -  Familienzentrum Bunte Welt	6.89129	50.96925	19	34
+2339	Kita Mülheim- Familienzentrum Buntes Kinderland	7.01197	50.96353	10	22
+2340	Kita Ehrenfeld - Familienzentrum Bunte Vielfalt	6.913	50.95224	11	21
+2341	Kita Nippes 	6.94815	50.96496	0	37
+2342	Haus der kleinen Forscher	7.00606	50.95642	15	49
+2343	Wirbelwind	7.01797	50.92803	16	54
+2344	Kinderhaus Winkelsprossen	7.00859	50.97964	10	20
+2345	Kinder- und Familienhaus Pfiffikus	6.89801	50.96825	22	48
+2346	Kinderhaus Regenbogen	6.88642	50.98215	15	49
+2347	AWO Villa Fantasia	6.96199	50.95215	11	14
+2348	Kinder- und Familienhaus Schatzinsel	6.88196	51.01692	22	47
+2350	Kita Longericher Str. 153    0068	6.93069	50.97443	20	40
+2352	Kindertagesstätte Märchenschloss	6.94085	50.91931	8	32
+2353	Kindertagesstätte Zauberwald	6.86276	50.95205	8	72
+2354	Kindertagesstätte Elfenland	7.00826	50.86832	12	68
+2355	Knusperhäuschen Kindertagesstätte an der Universität zu Köln e.V.	6.92505	50.92656	4	16
+2356	Südstadtkinder e.V.	6.96598	50.91621	12	20
+2357	Kita ZINT JAN im WDR AKTIV	6.95912	50.92918	9	32
+2358	Kita FILZSTIFTE im  WDR AKTIV	6.96094	50.93357	8	34
+2359	Kindertagesstätte SPATZENNEST im WDR AKTIV	6.95975	50.93099	11	0
+2360	Kindergarten Flora e.V.	6.9588	50.95309	0	20
+2361	Minijustiz e.V.	6.96274	50.95521	4	18
+2362	Patuljak e.V.	6.9459	50.94459	7	10
+2363	Stehaufmännchen e. V.	6.94826	50.98305	10	20
+2364	Kindertagesstätte im Quäker Nachbarschaftsheim e. V.	6.9283	50.94328	12	49
+2365	Vorschule am Stadtgarten e.V.	6.93875	50.94523	0	22
+2366	Caterpillar Kindertagesstätte	6.93575	50.93735	8	8
+2367	Räuberhöhle e.V.	6.93642	50.93636	3	19
+2368	Kindertagesstätte Orgelpfeifen e.V.	6.93437	50.93447	8	9
+2369	Tageseinrichtung für Kinder	6.94364	50.9267	9	9
+2370	Kinderladen Papperlapapp e.V.	6.94267	50.92273	12	22
+2371	Waldorfkindergarten Köln-Esch e.V.	6.85876	51.01341	5	35
+2372	Waldorfkindergarten Köln-Volksgarten	6.94667	50.91963	20	65
+2373	Kita Tausendfüßler e. V.	6.96527	50.92251	0	24
+2374	Kita Birkenbäumchen	6.96562	50.9162	14	27
+2375	Kindergarten Köln-Deutz e.V.	6.97201	50.93438	12	32
+2377	Kita Hüppedeercher Nippes	6.95169	50.96975	22	22
+2378	Rotznasen e.V	6.94289	50.96738	10	32
+2380	Kita Merkenicher Str	6.96516	50.98565	19	35
+2381	Kita Hamborner Straße   0057	6.96782	50.97123	8	36
+2383	Zipfelmützen e.V.  5068	6.9864	50.96534	10	31
+2384	KITA Regenbogen e.V.	6.91999	51.04791	20	68
+2385	Kindergarten Rappelkiste e.V.	6.92272	50.95242	0	22
+2387	Drachennest e.V. 	6.91341	50.95069	11	21
+2388	Brunnenkinder e.V.	6.89584	50.95905	18	35
+2389	Kindertagesstätte Schmierfinke	6.90224	50.9594	9	9
+2390	"Kita ""Die wilden Füchse"""	6.86724	50.98056	25	60
+2391	Kindertagesstätte Sonnenstrahlen e.V.	6.88193	50.95504	7	10
+2392	Rolf Lappe Kindergarten	6.85946	50.98449	6	57
+2393	Kindertagesstätte Sternschnuppen e.V.	6.92254	50.94252	15	17
+2394	Campus Pänz e.V.	6.91982	50.93368	0	21
+2395	Simsalabim e.V.	6.90784	50.91687	22	42
+2396	Ecole Maternelle Franco-Allemande Köln, Deutsch-Französiche Tagesstätte eV.	6.85848	50.94827	16	40
+2397	Gemeinschaft zur Förderung der Kindererziehung Pinocchio e.V.	6.90603	50.93685	0	26
+2398	Kindertagesstätte Butterblume e.V.	6.88471	50.93731	4	36
+2399	Bunterkunt e.V.	6.88027	50.9424	4	18
+2400	Kindertagesstätte Purzelbäume e.V.	6.91534	50.91852	10	9
+2401	Kinderladen ...und der Bär fällt um e.V.	6.90372	50.9213	4	17
+2402	Mimis Pänz e.V.	6.90434	50.92009	12	54
+2403	Elterninitiative Pänz e.V.	6.91097	50.92558	8	8
+2404	Die Ameisen e.V., Verein zur Förderung kindlicher Entwicklung	6.92297	50.92232	8	8
+2405	Kita Sülzbande	6.91653	50.91454	16	36
+2406	Universitätskindergarten e.V.	6.93368	50.92698	6	24
+2407	Kindergarten Hollerather Straße e.V.	6.91571	50.9163	0	20
+2408	Mary Poppins e.V.	6.91154	50.91801	11	21
+2409	Pädagogischer Arbeitskreis Köln e. V.	6.93105	50.91202	0	20
+2410	Kita Marienkäfer	6.9662	50.89869	4	9
+2411	Kölner Elternselbsthilfe e. V./Kindertagesstätte	6.9671	50.91185	0	22
+2412	Sommersprossen e.V.	6.99516	50.88326	0	31
+2413	Kleine Racker e. V.	6.89464	50.98732	12	22
+2414	miteinander leben e.V. - Inklusive Kindertagesstätte	7.00726	50.86151	8	38
+2415	Kindertreff Kunterbunt e.V.	7.0137	50.86581	11	20
+2416	Emilis Welt e.V. 	7.01137	50.95025	5	32
+2417	Schmetterlinge e.V.	7.06233	50.97469	12	32
+2418	Kindertagesstätte Kunterbunt e. V.	7.02222	50.93401	7	10
+2420	Elterninitiative Kinderparadies e.V.	6.98718	50.91087	12	22
+2421	Waldorfkindergarten an der Aue 	7.076	50.97794	20	51
+2422	Wichtelhaus e.V.	7.04665	50.86688	6	11
+2423	Kindertagesstätte Hüppekästchen e.V.	7.11929	50.85478	9	35
+2424	Kindergarten Huckepack e. V.	7.1034	50.87322	4	18
+2425	Kindertagesstätte Schmuddelkinder	7.01858	50.91156	12	18
+2426	Waldwichtel e.V.-Waldkindergarten Köln- Brück	7.06216	50.9351	0	25
+2427	Rio e.V.	6.91507	50.95377	17	24
+2430	Amaro Kher	6.93493	50.94583	2	18
+2432	kleine pänz am Ausbesserungswerk 40  az. 5077	6.94289	50.96738	14	31
+2434	Cologne Bumblebees e.V.	6.94231	50.92345	12	21
+2435	Campus Zwerge	6.96552	50.9217	10	0
+2436	Wibbelstetz e. V.	6.95176	50.95205	9	9
+2437	Feuersalamander e.V. Az. 5087	6.94998	50.95967	11	0
+2438	Kinderladen eins-zwei-drei e.V.	6.95003	50.92174	10	0
+2439	Die Mozartkugeln e.V.	6.93844	50.94532	22	0
+2440	Die Eichhörnchen e.V.	6.93638	50.94022	12	0
+2441	KITZ e.V.	6.91973	50.91465	11	22
+2442	Sülzer Minis gGmbH	6.92132	50.91954	10	0
+2443	Ehrenfelder Zipfelmützen e.V.	6.9115	50.94931	11	20
+2444	Stupsnasen e.V.	6.95726	50.96375	10	0
+2445	Florakinder   	6.97095	50.95813	50	22
+2447	FRÖBEL-Kindergarten Krähennest	6.95176	50.95205	18	38
+2448	FRÖBEL-Kindergarten St. Kunibert	6.96262	50.94693	12	22
+2449	FRÖBEL-Kindergarten Eifelstraße Köln	6.94242	50.92196	48	88
+2450	FRÖBEL-Kindergarten Schatzinsel	6.93244	50.93895	12	22
+2451	FRÖBEL-Kindergarten Maria Montessori	6.95478	50.94593	0	42
+2452	FRÖBEL-Kindergarten An St. Matthias	6.96822	50.90965	26	58
+2453	FRÖBEL-Kindergarten Kleine Könige	6.89681	50.96068	12	22
+2454	FRÖBEL-Kindergarten und Familienzentrum Tausendfüssler	6.99544	50.95196	6	38
+2455	FRÖBEL-Kindergarten Wirbelwind	7.03256	51.00008	24	44
+2456	FRÖBEL-Kindergarten An St. Peter	6.91745	50.95361	34	78
+2457	FRÖBEL-Kindergarten KUNTERBUNT	7.03679	50.99147	12	76
+2458	FRÖBEL-Kindergarten Sternschnuppe	6.95904	51.02679	24	54
+2459	FRÖBEL-Kindergarten An St. Bonifatius	6.9582	50.96464	18	38
+2460	FRÖBEL-Kindergarten Wibbelstätz	7.04106	50.93392	24	54
+2461	FRÖBEL-Kindergarten Wolke 7	6.88089	50.95449	15	25
+2462	FRÖBEL-Kindergarten und Familienzentrum Spurensucher	7.09004	50.85711	18	38
+2463	FRÖBEL-Kindergarten Regenbogen	6.90894	50.95832	39	73
+2465	FRÖBEL-Kindergarten Clemenskids	7.00498	50.84523	6	38
+2466	FRÖBEL-Kindergarten und Familienzentrum An St. Hildegard	6.96281	50.96315	33	57
+2467	FRÖBEL-Kindergarten Sonnenhut	6.97667	50.93158	20	58
+2468	FRÖBEL-Kindergarten Jecke Pänz	7.05714	50.93626	28	62
+2469	FRÖBEL-Kindergarten und Familienzentrum Regenbogen-Pänz	7.02951	50.9027	18	38
+2471	Franz-Herschtritt-Kindertagesstätte der Synagogen-Gemeinde Köln	6.92637	50.95662	5	55
+2472	städtische Kindertageseinrichtung	6.93434	50.91863	17	82
+2473	Städtische Kindertageseinrichtung	6.89033	51.02669	0	48
+2474	Städtische Kindertageseinrichtung	7.01312	50.9389	10	43
+2475	Städtische Kindertageseinrichtung	6.99975	50.93882	14	54
+2476	städtische Kindertageseinrichtung	7.04747	50.93984	6	67
+2477	städtische Kindertageseinrichtung	6.96266	50.91572	12	66
+2478	Städtische Kindertageseinrichtung	6.9067	50.99285	0	35
+2480	städtische Kindertageseinrichtung	6.84294	51.04404	0	65
+2481	städtische Kindertageseinrichtung	6.96052	50.93173	24	51
+2482	Städtische Kindertageseinrichtung	7.05174	50.97342	28	72
+2484	Städtische Kindertageseinrichtung	6.93353	50.96713	27	71
+2485	städtische Kindertageseinrichtung	6.96528	50.9083	35	79
+2486	Städtische Kindertageseinrichtung	7.00103	50.93003	10	60
+2488	Städtische Kindertageseinrichtung	7.00569	50.95077	13	60
+2489	Städtische Kindertageseinrichtung	7.01796	50.955	16	54
+2490	Städtische Kindertageseinrichtung	7.07729	50.97527	20	63
+2491	Städtische Kindertageseinrichtung	7.02253	50.93836	18	82
+2492	Städtische Kindertageseinrichtung	6.92817	50.95712	18	59
+2493	städtische Kindertageseinrichtung	6.92483	50.92653	28	62
+2494	Städtische Kindertageseinrichtung	7.00205	50.94581	25	45
+2496	Städtische Kindertageseinrichtung	6.86279	50.98129	16	57
+2497	Städtische Kindertageseinrichtung	6.94346	50.97518	23	80
+2498	Städtische Kindertageseinrichtung	7.04562	50.94768	22	51
+2499	städtische Kindertageseinrichtung	6.88088	50.94089	10	40
+2500	städtische Kindertageseinrichtung	6.87654	51.0009	11	64
+2501	Städtische Kindertageseinrichtung	7.00876	50.96989	16	36
+2502	Städtische Kindertageseinrichtung	7.00311	50.95731	24	77
+2503	Städtische Kindertageseinrichtung	7.00706	50.97291	20	65
+2504	Städtische Kindertageseinrichtung	7.02155	50.9825	0	40
+2505	Städtische Kindertageseinrichtung	6.95762	50.98814	9	53
+2506	Städtische Kindertageseinrichtung	6.95882	50.95975	0	40
+2507	Städtische Kindertageseinrichtung	6.90879	50.96594	13	47
+2508	Städtische Kindertageseinrichtung	6.99297	50.9123	0	40
+2509	Städtische Kindertageseinrichtung	7.02571	50.94156	6	52
+2510	Städtische Kindertageseinrichtung	6.97543	50.96558	0	40
+2511	Städtische Kindertageseinrichtung	7.0094	50.94682	16	59
+2513	städtische Kindertageseinrichtung	7.08043	50.92091	0	30
+2514	Städtische Kindertageseinrichtung	6.86501	51.06487	0	63
+2515	städtische Kindertageseinrichtung	7.06978	50.96474	17	88
+2516	Städtische Kindertageseinrichtung	6.97904	50.97156	14	64
+2517	Städtische Kindertageseinrichtung	6.8905	51.0272	16	69
+2518	städtische Kindertageseinrichtung	6.84495	50.93332	20	80
+2519	städtische Kindertageseinrichtung	6.95466	50.86869	15	102
+2520	städtische Kindertageseinrichtung	6.82444	50.94312	20	75
+2521	städtische Kindertageseinrichtung	6.95725	50.85973	0	40
+2522	städtische Kindertageseinrichtung	7.03378	50.88043	6	34
+2523	städtische Kindertageseinrichtung	6.82969	50.96854	30	64
+2524	Städtische Kindertageseinrichtung	6.93987	50.98238	10	55
+2525	Städtische Kindertageseinrichtung	6.96014	50.97521	0	85
+2527	Städtische Kindertageseinrichtung	7.04851	50.89424	11	66
+2528	Städtische Kindertageseinrichtung	6.92145	50.99878	16	59
+2529	städtische Kindertageseinrichtung	6.93409	50.94471	6	62
+2530	städtische Kindertageseinrichtung	6.9183	50.91713	17	60
+2531	Städtische Kindertageseinrichtung	7.07347	50.88574	8	66
+2532	Städtische Kindertageseinrichtung	6.88481	51.02247	6	59
+2534	städtische Kindertageseinrichtung	6.92667	50.90774	22	85
+2535	Städtische Kindertageseinrichtung	6.93608	50.96342	13	59
+2536	städtische Kindertageseinrichtung	7.05347	50.88926	0	53
+2537	städtische Kindertageseinrichtung	6.88438	50.94284	9	31
+2538	Städtische Kindertageseinrichtung	7.00238	50.94844	0	45
+2539	Städtische Kindertageseinrichtung	7.0612	50.90013	0	75
+2540	städtische Kindertageseinrichtung	6.93969	50.90626	18	65
+2542	Städtische Kindertageseinrichtung	7.02096	50.9626	11	99
+2543	Städtische Kindertageseinrichtung	7.02404	50.93083	9	91
+2544	Städtische Kindertageseinrichtung	6.98563	50.96538	25	68
+2546	Städtische Kindertageseinrichtung	6.89303	51.02918	13	60
+2547	Städtische Kindertageseinrichtung	6.88831	51.02928	12	58
+2548	städtische Kindertageseinrichtung	6.95505	50.9557	6	34
+2549	städtische Kindertageseinrichtung	6.94402	50.94131	0	40
+2550	Städtische Kindertageseinrichtung	6.99028	50.99675	22	93
+2551	Städtische Kindertageseinrichtung	6.90484	50.96321	10	65
+2552	Städt Kita An der Schanz	6.98195	50.96061	6	34
+2553	Städtische Kindertageseinrichtung	7.0416	50.86537	18	59
+2554	städtische Kindertageseinrichtung	6.96332	50.92395	13	40
+2555	städtische Kindertageseinrichtung	6.97154	50.85091	0	40
+2556	Städtische Kindertageseinrichtung	7.0562	50.93023	24	81
+2557	Städtische Kindertageseinrichtung	7.01922	50.93061	22	58
+2558	Städtische Kindertageseinrichtung	7.066	50.89557	10	95
+2559	Städtische Kindertageseinrichtung	6.91166	50.95433	17	60
+2560	Städtische Kindertageseinrichtung	6.9488	50.95787	0	85
+2562	Städtische Kindertageseinrichtung	6.95977	50.962	0	40
+2563	Städtische Kindertageseinrichtung	7.02123	50.96108	6	54
+2564	städtische Kindertageseinrichtung	7.00027	50.88725	0	40
+2565	Städtische Kindertageseinrichtung	7.00045	50.94232	11	47
+2566	Städtische Kindertageseinrichtung	7.09916	50.87385	22	68
+2567	Städtische Kindertageseinrichtung	7.10032	50.86213	12	58
+2568	städtische Kindertageseinrichtung	6.96557	50.91667	34	95
+2569	Städtische Kindertageseinrichtung	6.90857	51.02081	6	59
+2570	Städtische Kindertageseinrichtung	6.88725	51.00693	12	28
+2571	städtische Kindertageseinrichtung	6.84594	50.93845	6	34
+2572	Städtische Kindertageseinrichtung	7.05796	50.96812	29	76
+2573	städtische Kindertageseinrichtung	6.91106	50.9148	6	81
+2574	Städtische Kindertageseinrichtung	6.903	51.02037	16	59
+2575	Städtische Kindertageseinrichtung	6.91026	50.95664	35	78
+2576	Städtische Kindertageseinrichtung	6.87302	50.99912	22	93
+2578	städtische Kindertageseinrichtung	6.94734	50.9081	27	87
+2579	Städtische Kindertageseinrichtung	7.09909	50.85614	16	59
+2581	städtische Kindertageseinrichtung	6.91715	50.91205	24	53
+2582	Städtische Kindertageseinrichtung	6.9248	50.85935	17	63
+2583	städtische Kindertageseinrichtung	6.92475	50.91633	0	41
+2586	Städtische Kindertageseinrichtung	6.90343	51.02554	24	81
+2588	Städtische Kindertageseinrichtung	6.90529	51.02129	16	74
+2589	Städtische Kindertageseinrichtung	6.9676	50.96261	10	22
+2590	Städtische Kindertageseinrichtung	6.90711	51.0232	16	58
+2591	städtische Kindertageseinrichtung	6.9029	51.02327	8	60
+2593	Städtische Kindertageseinrichtung	6.9437	50.98296	22	93
+2594	Städtische Kindertageseinrichtung	7.05693	50.94471	0	65
+2595	städtische Kindertageseinrichtung	6.97676	50.93051	20	44
+2596	Städtische Kindertageseinrichtung	6.99365	50.93034	0	40
+2597	Städtische Kindertageseinrichtung	7.01589	50.90062	15	66
+2598	Städtische Kindertageseinrichtung	7.08849	50.87724	22	83
+2599	Städtische Kindertageseinrichtung	7.00296	50.96992	13	62
+2600	städtische Kindertageseinrichtung	6.94117	50.93276	26	63
+2601	städtische Kindertageseinrichtung	6.96376	50.90227	10	43
+2602	städtische Kindertageseinrichtung	7.00957	50.96449	0	70
+2603	Städtische Kindertageseinrichtung	7.05247	50.97316	0	40
+2604	Städtische Kindertageseinrichtung	6.91849	50.94624	20	57
+2605	Städtische Kindertageseinrichtung	6.98643	50.91948	0	40
+2606	städtische Kindertageseinrichtung	6.90885	50.91747	19	76
+2607	Städtische Kindertageseinrichtung	7.028	50.9843	11	67
+2608	städtische Kindertageseinrichtung	6.96278	50.92577	18	82
+2609	städtische Kindertageseinrichtung	6.92611	50.92131	10	77
+2610	Städtische Kindertageseinrichtung	6.92079	50.95048	0	40
+2614	Städtische Kindertageseinrichtung	6.92306	50.9463	30	88
+2615	Städtische Kindertageseinrichtung	7.02138	50.9418	6	69
+2617	Städtische Kindertageseinrichtung	6.91441	50.97148	12	93
+2618	Städtische Kindertageseinrichtung	7.01853	50.93772	19	51
+2619	Städtische Kindertageseinrichtung	6.85035	50.93646	20	47
+2620	Städtische Kindertageseinrichtung	7.0557	50.88932	20	80
+2621	städtische Kindertageseinrichtung	6.87268	51.06115	6	69
+2622	städtische Kindertageseinrichtung	6.93173	50.93564	0	42
+2623	Städtische Kindertageseinrichtung	7.0403	50.96367	20	84
+2624	Städtische Kindertageseinrichtung	6.88903	51.0367	16	59
+2625	städtische Kindertageseinrichtung	6.95125	50.90128	16	59
+2626	Städtische Kindertageseinrichtung	6.92699	50.95024	0	60
+2627	Städtische Kindertageseinrichtung	7.01075	50.85099	32	62
+2628	Städtische Kindertageseinrichtung	7.0717	50.92119	11	71
+2629	Städtische Kindertageseinrichtung	6.98847	50.91304	11	49
+2630	Städtische Kindertageseinrichtung	7.05627	50.90377	6	59
+2631	städtische Kindertageseinrichtung	6.88518	51.02049	6	59
+2632	städtische Kindertageseinrichtung	6.93382	50.9364	16	36
+2633	städtische Kindertageseinrichtung	7.02453	50.87268	12	49
+2634	städtische Kindertageseinrichtung	6.8414	50.96919	17	56
+2635	Städtische Kindertageseinrichtung	6.96025	50.97637	22	93
+2636	Städtische Kindertageseinrichtung	7.02658	50.9356	12	83
+2637	Städtische Kindertageseinrichtung	7.04921	50.9787	6	34
+2638	Städtische Kindertageseinrichtung	6.96065	50.9678	23	51
+2640	Städtische Kindertageseinrichtung	7.07937	50.94437	13	62
+2641	Städtische Kindertageseinrichtung	6.91463	50.96014	0	65
+2642	Städtische Kindertageseinrichtung	7.0016	50.94391	6	37
+2643	städtische Kindertageseinrichtung	6.9824	50.93105	18	60
+2644	städtische Kindertageseinrichtung	7.02802	50.87902	0	40
+2645	städtische Kindertageseinrichtung	6.9558	50.92118	6	99
+2646	Städtische Kindertageseinrichtung	7.08442	50.85385	22	73
+2647	städtische Kindertageseinrichtung	6.95197	50.97047	0	30
+2648	Städtische Kindertageseinrichtung	7.05587	50.87871	0	65
+2649	Städtische Kindertageseinrichtung	7.04901	50.92861	16	57
+2650	Städtische Kindertageseinrichtung	7.07478	50.97438	16	34
+2651	städtische Kindertageseinrichtung	7.00251	50.86773	20	58
+2652	städtische Kindertageseinrichtung	6.93093	50.85863	27	73
+2653	städtische Kindertageseinrichtung	7.04346	50.97485	0	62
+2654	städtische Kindertageseinrichtung	7.07967	50.87946	0	78
+2655	städtische Kindertageseinrichtung	6.95471	50.9477	18	62
+2656	städtische Kindertageseinrichtung	7.0016	50.9366	4	43
+2657	Städtische Kindertageseinrichtung	6.88575	51.03346	16	59
+2658	Städtische Kindertageseinrichtung	7.10128	50.84952	20	56
+2659	städtische Kindertageseinrichtung	7.08181	50.89067	14	53
+2660	Städtische Kindertageseinrichtung	7.00135	50.97625	10	45
+2661	Städtische Kindertageseinrichtung	6.96672	50.96697	22	98
+2662	Städtische Kindertageseinrichtung	7.02436	51.00531	26	79
+2664	Städtische Kindertageseinrichtung	7.07371	50.97707	10	45
+2665	städtische Kindertageseinrichtung	6.98425	50.93872	18	30
+2666	Städtische Kindertageseinrichtung	6.93998	50.96611	10	60
+2667	Städtische Kindertageseinrichtung	7.04613	50.86546	9	86
+2668	Städtische Kindertageseinrichtung	6.99328	50.95257	22	88
+2669	Städtische Kindertageseinrichtung	6.96037	50.96162	18	62
+2670	Städtische Kindertageseinrichtung	6.92409	50.95091	0	65
+2671	Städtische Kindertageseinrichtung	7.03699	50.99742	16	34
+2672	Städtische Kindertageseinrichtung	6.91814	50.95855	10	43
+2673	städtische Kindertageseinrichtung	6.8426	50.93208	32	84
+2674	städtische Kindertageseinrichtung	6.95506	50.91071	0	30
+2675	Städtische Kindertageseinrichtung	6.9131	50.96836	20	65
+2676	Städtische Kindertageseinrichtung	7.07453	50.88664	8	72
+2677	Städtische Kindertageseinrichtung	6.99946	50.92751	16	79
+2678	Städtische Kindertageseinrichtung	6.9997	50.9617	10	65
+2679	Städtische Kindertageseinrichtung	7.00559	50.97107	0	110
+2680	Städtische Kindertageseinrichtung	7.0726	50.97607	20	43
+2681	städtische Kindertageseinrichtung	7.03932	50.89967	12	82
+2682	städtische Kindertageseinrichtung	6.96564	50.91291	6	46
+2683	Städtische Kindertageseinrichtung	6.88621	51.0404	11	64
+2684	städtische Kindertageseinrichtung	6.89025	50.96961	12	48
+2685	städtische Kindertageseinrichtung	6.94051	50.90873	6	61
+2686	städtische Kindertageseinrichtung	6.87073	50.92416	13	42
+2687	Städtische Kindertageseinrichtung	7.01047	50.93621	13	72
+2688	städtische Kindertageseinrichtung	7.03739	50.99997	8	62
+2689	Städtische Kindertageseinrichtung	6.9103	50.94342	12	62
+2690	Städtische Kindertageseinrichtung	6.89024	51.01445	19	54
+2691	Städtische Kindertageseinrichtung	6.87224	50.96713	15	84
+2692	Städtische Kindertageseinrichtung	6.8591	51.01021	16	57
+2695	städtische Kindertageseinrichtung	6.83771	50.96384	17	76
+2696	Ev. Kindertagesstätte Himmelsstürmer 	7.06899	50.88382	19	68
+2697	MiniClub	6.92576	50.90265	9	32
+2698	Kita Alter Mühlenweg	6.97969	50.92701	8	48
+2699	Kita Hermülheimer Straße	6.94035	50.90386	14	35
+2700	Kita Hans-Schulten-Straße	7.06606	50.94147	20	39
+2702	Siedlungsstrolche	7.01123	50.98613	5	36
+2703	Kita Uckermarkstraße	7.04468	50.93591	10	35
+2704	Kita Clemens-Hastrich-Straße	6.88573	50.96838	14	53
+2705	Kita Kalkarer Str.	6.96247	50.96799	4	30
+2706	Kita Am Braunsacker	6.86193	51.01114	15	39
+2707	Kita  Adlerstraße	6.96307	50.8763	20	59
+2708	Kita Ossendorfer Weg	6.88983	50.96892	14	54
+2709	Kita Lohmarer Straße	7.00608	50.92929	6	53
+2710	Kita Christrosenweg	7.05889	50.87519	16	33
+2711	Kita Homarstraße	7.01781	50.93016	6	33
+2712	Kita Oranienstraße	7.02021	50.93626	12	44
+2713	Kita Schneebergstraße	6.88572	51.03768	8	52
+2714	Kita Sieversstraße	7.00442	50.93742	24	75
+2715	Kita Henriette-Ackermann-Straße	6.90644	50.96934	28	69
+2716	Kita Ludwig-Gies-Straße	6.89937	51.0192	8	49
+2717	Kita Hohenfriedbergstraße	6.94983	50.98145	18	48
+2718	Kita Heinz-Kühn-Straße	7.06063	50.96546	28	71
+2719	Kita Mönchsgasse	6.94246	50.98867	20	39
+2720	Kita Clevischer Ring	7.00715	50.97039	14	34
+2721	Kita Takustraße	6.91251	50.95808	18	52
+2722	Kita Liebigstraße	6.93182	50.95497	24	78
+2723	Deutsch-Französische Kindertagesstätte e.V. - Les Petits Malins -	6.93648	50.91286	12	44
+2724	Waldkindergarten Waldzwerge e.V.	6.98312	50.89901	4	37
+2725	Waldstrolche am Forstbotanischen Garten e.V.	6.98776	50.88311	0	44
+8955	Amares Naturkindergarten e.V.	6.89195	50.92859	12	22
+9057	Kita Flohkiste	6.93479	50.93559	20	0
+9059	Kita Dünnwald - Familienzentrum Menschenskinder	7.02986	50.99362	19	34
+9083	Goldfisch	7.05809	50.87405	10	22
+9087	Kita Bunte Pänz	7.05293	50.96507	20	40
+9101	Kita St.-Sebastianus-Straße	7.08305	50.85624	14	36
+9105	städtische Kindertageseinrichtung	6.87102	50.92684	30	66
+9106	städtische Kindertageseinrichtung	6.82976	50.95153	18	61
+9108	Kita Auf dem Flachsacker	7.04739	50.98479	15	35
+9115	Löwenzähnchen Nippes e.V.	6.94602	50.95865	10	0
+9116	KiTa Siebachwichtel Az. 5084	6.9501	50.96001	24	0
+9127	Städtische Kindertageseinrichtung	7.06113	50.94247	22	53
+9135	Dreckspatzen e.V.	6.91615	50.95499	9	8
+9138	LOGOS Verein für russische Kultur und Bildung e.V.	6.98645	50.91628	12	21
+9140	Universität zu Köln Kindertagesstätte Paramecium	6.92527	50.92604	56	32
+9142	Eltern-Kind-Initiative Schneckenhaus e.V.	6.97979	50.93096	11	0
+9164	Stadtwaldkinder	6.89555	50.92517	55	36
+9166	Weltkinder KiTa Corkstr	6.99743	50.94177	32	47
+9167	Städtische Kindertageseinrichtung	7.01926	50.94839	16	59
+9190	Windröschen e.V.	6.9055	50.95772	10	21
+9194	Stoppersöckchen	6.92527	50.92604	14	16
+9204	KiTa Lummerland	6.9442	50.96384	30	32
+9525	Kita Glashüttenstraße	7.06131	50.88648	28	67
+9529	Kindertageseinrichtung Märchenwald	7.01097	50.94969	28	42
+9533	städtische Kindertageseinrichtung	6.93415	50.94492	27	48
+9541	Kita SandkastenFeger	6.92989	50.96778	26	39
+9545	Kita Rehkids e.V. im Mediapark	6.94598	50.94929	35	0
+9549	Kita Sülz e.V.	6.90968	50.92556	5	12
+9553	FRÖBEL-Kindergarten Abenteuerland Köln	7.04017	50.93477	18	38
+9565	Kita Friesenriesen	6.94402	50.94092	9	11
+9573	Kita Mannsfelder Straße	6.95736	50.90928	34	54
+9577	Haus der Familie e.V.	6.94686	50.87372	11	0
+9581	Luftikus Nippes e.V.	6.95003	50.96095	11	0
+9585	Prima Familia Kita 50 Freunde	6.96318	50.91367	20	33
+9589	Pänz & friends 	6.95211	50.92245	8	8
+9593	Kita Charabia	6.94252	50.93176	8	9
+9597	Kita Froschkönig	6.95136	50.96504	11	0
+9653	Agnesspatzen e.V.	6.96438	50.95434	15	0
+11065	Integrative Spielgruppe	6.90844	50.96686	0	0
+11334	Betriebskindergarten Ströers Strolche bei Kinderhut (R)	6.99878	50.85951	0	0
+11603	Betriebskita der Uniklinik Köln	6.92309	50.92523	0	0
+11607	Kindergarten der St. George s School - The British International School	6.94692	50.87571	0	0
+11620	Kindercafe Lollypop e.V.	7.04091	51.00159	14	28
+11627	SiT in der Offenen Tür	6.90806	50.9951	0	0
+11631	Kita Die kleinen Hobbits e.V.	6.94514	50.93472	12	0
+11634	 Private Tageseinrichtung für Kinder Vincerola 	7.00639	50.97397	0	0
+11635	Spielstube Spatzennest	7.06263	50.93282	0	0
+11639	Spielgruppe Pauluskirche	7.08437	50.97385	0	0
+11642	Kinderbetreuung Nachtigall	6.90143	50.93834	0	0
+11646	KiTa im TechnologiePark	6.88554	50.94645	14	16
+11648	Vincerola International Montessori Day Nursery	6.83824	50.9633	0	0
+11652	rainbowtrekkers Lindenthal	6.89491	50.92505	14	16
+11654	Krabbelkäfer & Co	7.03134	50.98105	0	0
+11655	Kinderbetreuung Nachtigall	6.93294	50.93537	0	0
+12418	Kindertagesstätte STERNCHEN im WDR AKTIV	6.93847	50.94571	11	0
+12423	Lumiland	6.87506	50.92272	30	42
+12428	Rewelinos	7.06967	50.89761	15	20
+12433	Rewelinos II	6.89828	50.94293	21	39
+12443	rainbowtrekkers Junkersdorf	6.8725	50.92388	18	30
+12458	Kita Grüner Weg/Kitamare Sürth	7.01119	50.86686	34	76
+12478	Kita Tabula Rasa	6.91934	50.93103	19	12
+12483	Dillendöppcher	6.87693	50.96023	9	20
+12488	Chämpiänz	6.9324	50.93946	10	12
+12493	Niehlpferdchen	6.97341	50.97191	10	22
+12503	Die Roonis	6.93649	50.93207	10	0
+12508	KiTa Walnussweg 	7.05914	50.94319	48	72
+12563	De Müllemer Ströppcher e. V.	7.00204	50.96649	12	0
+12588	Remmidemmi e.V.	6.9476	50.94571	10	0
+12708	Kita Erdmännchen	6.87781	50.95022	24	50
+12728	Kita Feldhamsterstraße	7.01081	50.87874	30	59
+12788	Kita Geilenkircher Str. 39	6.896	50.94102	14	26
+12863	städtische Kindertageseinrichtung	6.83364	50.96169	30	64
+13058	KitaMare Zollstock, Fritz-Hecker-Str.	6.95368	50.90518	46	64
+13113	Liebevolle Kinderzeit	6.85206	50.93524	24	0
+13118	Spielgruppe St. Stephan	6.90068	50.92567	0	0
+13128	Kindertageseinrichtung BilinGO	6.89339	50.94195	0	0
+13143	Spielgruppen des Kolping-Mini-Clubs Pfarrheim	7.00228	50.88625	0	0
+13898	FRÖBEL-Kindergarten Taunuspänz	6.9985	50.93402	28	40
+13904	Mayersche Lochfabrik	7.07289	50.91824	24	44
+13910	FRÖBEL-Kindergarten Weidenwichtel	6.84045	50.92855	30	60
+13916	FRÖBEL-Kindergarten Lövenherz	6.83888	50.94674	36	76
+13922	FRÖBEL-Kindergarten Die Spürnasen	6.94534	50.98513	36	76
+13928	Düxer LVR Pänz II	6.99051	50.93607	25	15
+13940	Kiku Kinderland	6.85289	51.05883	32	76
+13946	Rabauken und Trompeten e.V.	6.95228	50.96175	17	16
+13958	Cheeky Bambini	6.91312	50.94931	10	10
+13964	Dellbrücker Waldkäuzchen e.V. Naturkindergarten Dellbrücker Waldkäuzchen	7.07106	50.98539	18	66
+14450	Kita Kölner Straße	7.03237	50.89909	28	51
+14456	Weltkinder Kita Reiterstaffel	6.96113	50.89875	40	73
+14480	Nippeser Zwergenburg e.V	6.95344	50.96732	17	8
+14486	Garten-Kinder e.V.	6.93238	50.93224	6	13
+14564	KiTa	6.90318	50.93858	20	0
+14690	Kita Grethenstr.	6.90379	50.99796	16	40
+14828	Kita i-pänz	6.94808	50.9236	10	14
+14930	Kita Amana	6.93598	50.95643	22	0
+15381	Tageseinrichtung für Kinder  	6.97148	50.85495	16	14
+15906	Kita Grüner Weg	6.91072	50.94632	14	36
+15913	Kita Longericher Straße	6.91267	50.99872	20	47
+15927	TÜVtel-Kids	6.99339	50.92233	16	34
+15934	Kita Hermann-Löns-Straße	7.08365	50.87179	4	35
+15941	Kita Zündorfer Straße	7.07428	50.8785	4	36
+15948	Kita Stüttgerhofweg	6.86145	50.92832	36	64
+15955	Kita Von-Ketteler-Straße	7.02329	50.98614	24	76
+15962	KiTa Unterm Berg	7.03121	50.8611	22	45
+15990	Kita Graseggerstr	6.92407	50.99164	28	40
+15997	AXA Pänz	7.05275	50.96159	15	35
+16207	NiKita e.V.	6.94778	50.98108	12	0
+16214	Familienzentrum Zebra Niehl (Zebra Kita)	6.95866	50.98501	10	20
+16221	Fröbel-Kindergarten und Familienzentrum Finkenberg	7.06427	50.8976	36	76
+16228	Kita Karlchen	6.9628	50.97411	12	0
+16375	PRI & PRI KITA Köln gGmbH 	6.96387	50.91104	26	34
+16396	Emilis Welt e.V. 	7.08096	50.94545	12	0
+16403	Tageseinrichtung für Kinder Villa Luna 	6.9509	50.9182	24	44
+16416	Amares Naturkindergarten e. V.	6.93055	51.00681	17	32
+16417	Kita Industriestr.	6.99916	50.87162	66	70
+16618	Kleinkram e.V.	6.97304	50.93009	12	0
+16626	KiTa Aachener Str. 239	6.91991	50.9365	17	36
+16634	Kita Hedwig-Wachenheim-Karree	7.0368	50.92641	18	51
+16642	Kita Flittarder Hauptstraße	6.97719	51.0023	25	54
+16650	KiTa Löwenherz	7.04864	50.9312	29	71
+16666	KiTa Üdesheimer Weg	6.85737	51.05963	20	46
+16674	Kita KlinikPänz Amsterdamer Str. (Kliniken Köln)	6.96323	50.96228	20	20
+16682	rainbowtrekkers Widdersdorf	6.83334	50.95955	24	55
+16690	Tree House Swans - International Bilingual Kindergarten	6.85928	50.93815	17	34
+16706	Kita Zum Alten Paulshof	7.08187	50.85698	15	53
+16714	Kita ZwergenReich Elsdorf	7.08175	50.87324	22	48
+16730	FRÖBEL Kindergarten und Familienzentrum Zwergenhütte	7.04733	50.94455	18	38
+16738	FRÖBEL-Kindergarten Forscher Pänz	6.8398	50.96126	30	60
+16746	Ev. Kindertagesstätte MorgenLand	7.00379	50.87561	25	45
+16762	Kita kleiner Bär	7.03566	50.93504	11	21
+16778	Zwergenreich Kindergarten Köln-Höhenhaus	7.03161	50.98531	32	48
+16786	Kleine Riesen - Köln - Steinrutschweg	7.04094	50.93218	20	40
+16794	Purzelbaum	6.87095	50.93733	0	0
+17074	KiTa Matschpiraten	6.84512	51.04834	33	70
+17122	KiTa Ostheim	7.05186	50.92951	30	38
+17298	Kleine Riesen - Köln - Hyazinthenweg	7.065	50.98541	30	60
+17370	Kleine Riesen - Köln - Auf dem Streitacker	7.05858	50.90237	20	45
+17474	Zwergenreich Kindergarten Köln Zündorf	7.04348	50.86763	22	29
+18020	Kita Wichtelstadt	6.95565	50.97332	43	98
+18029	Elternverein Nippeser Flohkiste e.V.	6.95046	50.96611	12	20
+18434	FRÖBEL-Kindergarten An den Clouthwerken	6.95987	50.96376	48	76
+18479	FRÖBEL Kindergaten Kreative Strolche	6.95695	50.90757	24	54
+18641	Familienzentrum ZEBRA VERDE	6.92854	50.93683	10	20
+18776	Kita Düstemichstr. 3	6.93422	50.91836	27	47
+18929	Domwichtel Martin-Luther Straße	7.0771	50.88733	32	68
+19765	Kita Zollstöckchen	6.94026	50.90694	28	35
+19775	Kita Erlenweg 	6.89307	50.96539	19	55
+19785	Kita Niehler Pänz	6.95582	50.99172	32	68
+19795	Kita Ahornweg	7.10226	50.87947	20	40
+19805	FRÖBEL-Kindergarten Vingst	7.02579	50.93527	34	61
+19825	Kita Klein Herl	7.03087	50.96212	20	38
+19835	Kita Kopischstraße	7.06567	50.97619	33	65
+19855	Kita Drachenflieger	7.07175	50.89483	35	65
+19975	Kita Andreas-Hermes-Str.	7.06264	50.93827	11	21
+19985	Kita Eiler Str. 65 - 67	7.08109	50.9158	20	40
+19995	Domwichtel Buchfinkenstraße	6.97393	50.84996	32	68
+20015	Kleine Riesen - Köln Bahnhofplatz	7.05373	50.90285	10	40
+20365	Kita Zitronenfalter	7.0102	50.87554	19	31
+20375	Kita Kleine Entchen	7.02055	50.9013	22	48
+21829	Kita Heidewitzka	7.0565	50.89993	32	68
+21831	Städtische Kita Mathilde-Herz-Weg	6.89991	50.96053	12	63
+23479	Fröbel-Kindergarten FröbelBANde	6.94846	50.94611	24	54
+23490	Kita Garten-Kinder	6.84831	50.93778	4	18
+23501	Kita Regina-Isecke-Str.	6.85093	50.94237	16	34
+23512	Kita Longericher Hauptstr	6.90582	50.99684	40	70
+23567	"Kita ""Hans im Brück"""	7.06768	50.94122	48	82
+23578	FRÖBEL Kindergarten und Familienzentrum Villa Charlier	6.98906	50.95213	36	76
+23600	FRÖBEL-Kindergarten Ecke Overbeck	6.92511	50.95296	18	38
+25657	städtische Kita Robertstr.	6.9996	50.93604	28	88
+25668	Kleine Riesen - Frankfurter Str. 77	7.09143	50.85007	10	40
+25679	Kalker Riesen	6.99564	50.93699	26	32
+25690	Mauspfadwichtel	7.09646	50.92316	18	38
+25712	FRÖBEL Kindergarten Zuckerhut	7.05015	50.94093	36	76
+25723	Tageseinrichtung für Kinder	7.0411	50.92894	20	40
+25734	KiTa Kapellenstr/Fröbel	7.01497	50.93412	12	76
+25756	Kita Kappelshof	6.85831	50.97955	52	44
+26492	PRI & PRI KITA Bayenthal gGmbH	6.9664	50.91115	20	20
+26504	FRÖBEL-Kindergarten Karlheinz	6.93478	50.91003	24	44
+26516	Zum Felde	6.83156	50.97009	32	76
+26564	Kita Leyendecker	6.90853	50.9526	24	44
+26576	Domwichtel Hadersleber Str.	6.91706	50.96371	32	68
+26588	Kita Edisonstr	7.04389	50.93021	25	53
+27380	Frau Conny Hensgen	6.94043	50.94487	0	0
+27860	Kleine Freunde	6.89685	50.95217	16	28
+27884	Doppeltes Lottchen	7.05123	50.86329	25	34
+27896	Kindertagesstätte Apfelbäumchen gUG 	6.83232	50.96013	28	0
+29516	KitaMare Weiden,  Aachener  Str. 1176	6.8391	50.9384	0	0
+29864	Tageseinrichtung	6.89142	50.98218	0	0
+29876	Kita Josefstr. 87	7.055	50.88942	32	48
+30248	Tageseinrichtung für Kinder	6.85216	51.00172	0	0
+30260	Kita KV Pänz	6.89348	50.98286	10	20
+30272	KiTa alte Post	6.83336	50.9347	12	53
+30296	Kindertageseinrichtung Baumwollquartier	7.05104	50.96713	0	0
+30920	pme Kids an Melaten 	6.91111	50.93716	24	36
+30933	Kita Anna-Lindh	6.89441	50.98342	26	44
+32207	FRÖBEL-Kindergarten Bahia	6.88708	50.94125	24	54
+32220	Kita Bunte Farben	7.03714	50.93334	22	48
+33442	Tageseinrichtung für Kinder	6.96944	50.95525	0	0
+33637	CariKids Kinderspielgruppe Brückenprojekt Wohnheim Porz	7.08732	50.88491	0	0
+33650	Tageseinrichtung für Kinder	7.04446	50.9418	0	0
+33819	Kita Mörikestr.	6.84884	50.93874	15	35
+33858	Zehnthofwichtel	7.04097	50.93089	20	58
+34349	Deutzer Wiese	6.98729	50.93872	15	54
+34363	Kita Derfflingerstr.	6.9503	50.98055	14	36
+35679	Villa Luna Brühler Str. 273-275	6.95212	50.89787	18	22
+35693	Kita Buchheimer Pänz	7.02461	50.95961	28	54
+36617	Fidelinis Spielgruppe	6.85744	50.91974	0	0
+36701	Kita Distelfalter	7.00888	50.87265	35	55
+37257	Zollhofpänz	6.94541	50.91404	22	28
+37272	Kita Mittendrin	6.99307	50.92885	32	28
+37287	städt. Kita Bergisch Gladbacher/Mülheimer Ring	7.00727	50.96319	26	74
+37662	Kita Kappelsweg 1a Gutshof	6.85831	50.97955	21	56
+37737	FRÖBEL Kindergarten Kiribaum	6.9865	50.89147	18	38
+41480	Kita Fünf Freunde	6.89961	50.95059	22	50
+41496	Laborzwerge	6.88571	50.97714	10	20
+41512	Quäker Pänz	6.88574	51.0249	18	52
+41528	Kleine Füchse	7.0809	50.87243	34	46
+41704	Kita Holweider Str.	7.01314	50.96394	20	60
+42504	Spielgruppe Holweide	7.04617	50.95984	0	0
+42520	Schulkindbetreuung	6.8529	50.93513	0	0
+42728	Veedel Kids	6.91141	50.99804	8	72
+43717	Kita St.-Rochus-Str	7.08149	50.89505	9	29
+43734	Kita Bunte Blume	7.01348	50.94021	27	37
+44686	städt. Kita	6.94512	50.98703	19	51
+44703	Kita Hohenlind	6.89377	50.92307	41	82
+44754	Spielgruppe Los Jon  c/o Alte Feuerwache Melchiorstraße 3	6.95501	50.95237	0	0
+47271	KiTa Riehler Str.	6.95892	50.95124	20	20
+47289	städt. Kita Wiesdorfer	6.99842	50.97974	48	42
+47307	Kita Teichstr.	6.90216	50.95817	20	40
+47541	Schulkindbetreuung	7.04404	50.92742	0	0

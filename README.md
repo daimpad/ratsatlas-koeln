@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/axe-WCAG%202.1%20AA%20gepr%C3%BCft-5b21b6" alt="Barrierefreiheit: mit axe auf WCAG 2.1 AA geprüft">
 </p>
 
-> **Stand:** in Vorbereitung. Die Seite ist fertig gebaut und mit erfundenen Testdaten geprüft. Daten der Stadt Köln werden erst abgerufen, wenn die Stadt informiert ist; bis dahin ist nichts veröffentlicht.
+> **Stand:** Kartenvorschau. Die Seite zeigt Stadtteile, Kennzahlen und Kartenebenen aus offenen Daten; die Ratsvorlagen der Stadt Köln folgen nach einem vorsichtig gestuften ersten Abruf.
 
 Der Ratsatlas Köln soll die öffentlichen Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf einer Karte, einer Zeitleiste und als Liste zeigen, täglich aktualisiert. Er richtet sich an Bürgerinnen und Bürger ohne Verwaltungswissen. Jede Angabe führt zum Original; was abgeleitet ist, ist gekennzeichnet.
 
@@ -40,6 +40,8 @@ Der Ratsatlas Köln beruht auf dem Code des **Ratsatlas Bonn** ([daimpad/ratsatl
 | Ratsinformationssystem der Stadt Köln (OParl-Schnittstelle) | Vorlagen, Beratungen, Sitzungen, Gremien | laut Katalog dl-de/zero 2.0; Klärung mit der Stadt offen |
 | Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (offenedaten-koeln.de) | Gebiete und Verortung | dl-de/zero 2.0 |
 | Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW) | Verortung über die Plannummer | dl-de/by 2.0 |
+| Zensus 2022, BORIS NRW, Klimaanalyse NRW, Überschwemmungs- und Hochwassergefahrenkarten, Kitas und Schulen NRW, VRS-Fahrplan, Schutzgebiete NRW | Kennzahlen je Stadtteil und Kartenebenen | dl-de/zero 2.0 bzw. dl-de/by 2.0 (je Ebene angegeben) |
+| Weitere offene Daten der Stadt Köln (Lebenswerte Veedel, Sozialräume, Stimmbezirke, Wohnbaupotenziale, Fahrradstraßen, Denkmalliste) | Kartenebenen | dl-de/zero 2.0 |
 | OpenStreetMap über Protomaps | grauer Kartenhintergrund | ODbL 1.0 |
 
 Die Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ steht auf jeder Seite und in jedem Export. Der Code steht unter der [MIT-Lizenz](LICENSE), die Daten unter den Lizenzen in [data/LICENSE-DATA.md](data/LICENSE-DATA.md).

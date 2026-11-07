@@ -19,7 +19,12 @@ pip install -r requirements.txt
 python -m pipeline fetch      # Abruf (gesperrt ohne RATSATLAS_STADT_INFORMIERT=ja; nur 23–1 Uhr)
 python -m pipeline build      # SQLite data/build/allris.sqlite, Geokodierung, Akteure
 python -m pipeline export     # data/export/koeln/, Audits, Stichprobe je Methode
+python -m pipeline kontext    # Kennzahlen je Stadtteil, Flächen und Punkte (aus data/kontext/)
+python -m pipeline ebenen     # Kartenebenen aus data/ebenen/ und export/koeln/ebenen.json
 python -m pipeline package    # data/export/ratsatlas-koeln-export.zip
+python -m pipeline kontext-ausschnitte   # einmalig: Zensus, BORIS, Klima, Überschwemmung, Kitas, Schulen, Haltestellen (Land, Bund)
+python -m pipeline ebenen-laden          # einmalig: weitere Ebenen (Stadt, Land); je Datensatz höchstens 3 Anfragen
+python -m pipeline bplan-koeln           # Bebauungspläne aus der OGC-API Bauleitplanung NRW
 python -m pipeline geo-koeln  # Geodaten neu ableiten (lädt Zip-Dateien von offenedaten-koeln.de, falls nicht in data/raw/geo)
 ```
 
@@ -50,6 +55,7 @@ python -m pipeline geo-koeln  # Geodaten neu ableiten (lädt Zip-Dateien von off
 ```bash
 python -m pytest tests
 python tools/testdaten.py && python -m pipeline build && python -m pipeline export   # synthetisch, „[Testdaten]“
+python tools/vorschau.py && python -m pipeline build && python -m pipeline export   # Kartenvorschau ohne Vorlagen (wie pages.yml ohne Daten der Stadt)
 python tools/seite_bauen.py && python -m http.server -d _site 8000
 ```
 

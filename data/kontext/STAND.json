@@ -1,0 +1,49 @@
+{
+ "bodenrichtwerte": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero-2.0",
+  "stand": "2026-01-01",
+  "titel": "BORIS NRW, Bodenrichtwerte (Gutachterausschuss für Grundstückswerte in der Stadt Köln)",
+  "url": "https://www.opengeodata.nrw.de/produkte/infrastruktur_bauen_wohnen/boris/BRW/",
+  "zonen": 384
+ },
+ "kitas": {
+  "abgerufen": "2026-11-07",
+  "einrichtungen": 732,
+  "lizenz": "dl-de/by-2.0, Land NRW",
+  "stand": "2025-06-02",
+  "titel": "Kindertageseinrichtungen in NRW",
+  "url": "https://www.opengeodata.nrw.de/produkte/bildung_wissenschaft/kitas/"
+ },
+ "klima": {
+  "abgerufen": "2026-11-07",
+  "flaechen": 7692,
+  "lizenz": "dl-de/zero-2.0",
+  "stand": "2026-04-08",
+  "titel": "Klimaanalyse NRW 2026, Planungshinweiskarte (Handlungspriorität)",
+  "url": "https://www.opengeodata.nrw.de/produkte/umwelt_klima/klima/klimaanalyse/planunghinweis/"
+ },
+ "schulen": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/by-2.0, Ministerium für Schule und Bildung NRW",
+  "schulen": 294,
+  "stand": "2026-11-07",
+  "titel": "Grunddaten der Schulen in NRW (Ministerium für Schule und Bildung NRW)",
+  "url": "https://www.schulministerium.nrw/open-data"
+ },
+ "ueberschwemmung": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero-2.0",
+  "stand": "laufend aktualisiert, Abruf 07.11.2026",
+  "titel": "Überschwemmungsgebiete NRW (festgesetzt und vorläufig gesichert)",
+  "url": "https://www.opengeodata.nrw.de/produkte/umwelt_klima/wasser/hochwasser/uesg/"
+ },
+ "zensus": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/by-2.0, © Statistisches Bundesamt (Destatis), Zensus 2022",
+  "stand": "2022-05-15",
+  "titel": "Zensus 2022, Gitterzellen 100 m",
+  "url": "https://www.zensus2022.de/DE/Ergebnisse-des-Zensus/gitterzellen.html",
+  "zellen": 12931
+ }
+}

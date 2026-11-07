@@ -76,7 +76,7 @@
   let index = null, zeit = null, geo = {}, meta = null, papers = [], area = null, selected = null, dataStand = null, kontext = null, anliegen = null;
   let map, cluster, outline, markers = new Map(), tl = null, range = null, loadSeq = 0, detailSeq = 0, shown = LIST_STEP, lastList = [], lastMarkers = [], colorBy = "sicherheit", legendEl = null, mapStack = null, mapSheet = null, mapToggles = [], setMapMenu = () => {}, mapMenuCount = null, planOn = false, allPlans = null, shownPlan = null;
   let bau = null, bauOn = false, bauLayer = null, shownSite = null, bauByRef = new Map();
-  let kxOn = new Set(), kxData = {}, kxLayers = {}, brwBr = null;  // zuschaltbare Flächen (Überschwemmung, Bodenrichtwerte)
+  let kxOn = new Set(), kxData = {}, kxLayers = {}, brwBr = null, ebenenIdx = null;  // zuschaltbare Flächen (Überschwemmung, Bodenrichtwerte)
   // Suche über ganz Köln (suche.json, erst bei Bedarf geladen)
   let search = null, searchLoading = null;
   const THEMES = {  // wie pipeline/topics.THEMES
@@ -559,16 +559,19 @@
     new BauToggle().addTo(map);
     // Überschwemmungsgebiete und Bodenrichtwertzonen (Kontextdaten): erst beim Einschalten geladen, ab Stadtteil-Zoom gezeichnet
     // ohne kontext.json keine Ebenen aus der Adresse: die Schalter wären ausgeblendet und die Ebene nicht abschaltbar
-    kxOn = new Set((new URLSearchParams(location.search).get("ebenen") || "").split(",").filter((k) => kontext && Object.hasOwn(KX, k)));
-    for (const [k, d] of Object.entries(KX)) {
+    kxOn = new Set((new URLSearchParams(location.search).get("ebenen") || "").split(",")
+      .filter((k) => (kontext && (Object.hasOwn(KX, k) || Object.hasOwn(PX, k))) || Object.hasOwn(EX, k)));
+    const schalter = [...Object.entries(KX), ...Object.entries(PX), ...Object.entries(EX).map(([k, e]) => [k, { label: e.kurz || e.titel, gruppe: `${e.gruppe}: ${e.titel}`, ex: true }])];
+    for (const [k, d] of schalter) {
       const Toggle = L.Control.extend({
         options: { position: "bottomright" },
         onAdd() {
           const b = L.DomUtil.create("button", `map-style map-kx map-kx-${k}`);
           b.type = "button";
           b.textContent = d.label;
+          if (d.gruppe) b.title = d.gruppe;
           b.setAttribute("aria-pressed", String(kxOn.has(k)));
-          b.hidden = !kontext;
+          b.hidden = d.ex ? false : !kontext;
           b.addEventListener("click", () => {
             if (kxOn.has(k)) kxOn.delete(k); else kxOn.add(k);
             b.setAttribute("aria-pressed", String(kxOn.has(k)));
@@ -581,6 +584,7 @@
       new Toggle().addTo(map);
     }
     map.on("zoomend", () => { if (kxOn.size) drawKx(); });
+    if (kxOn.size) drawKx();
     // „Ebenen“: alle zuschaltbaren Ebenen und Darstellungen hinter einer Schaltfläche, damit sie die Karte nicht
     // verdecken; die Zahl nennt die eingeschalteten (Entscheidung des Auftraggebers 28.10.2026)
     const MapMenu = L.Control.extend({
@@ -766,7 +770,7 @@
     const own = kontext && area && (area.kind === "ortsteil" ? kontext.ortsteile[area.name] : area.kind === "bezirk" ? kontext.bezirke[area.name] : null);
     if (!own) { box.hidden = true; return; }
     const bez = area.kind === "ortsteil" ? areaBezirk() : null;
-    const cmp = bez ? kontext.bezirke[bez] : kontext.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Köln";
+    const cmp = bez ? kontext.bezirke[bez] : kontext.stadt, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Köln";
     const klein = own.einwohner < kontext.meta.mindest_einwohner;
     const rows = (kontext.meta.reihenfolge || Object.keys(kontext.meta.kennzahlen)).map((k) => `<tr><th scope="row">${esc(kontext.meta.kennzahlen[k].titel)}</th>
       <td>${kCell(k, own)}</td><td>${kCell(k, cmp)}</td></tr>`).join("");
@@ -855,7 +859,7 @@
       const v = kValue(info, kk), d = kQuelle(kk), b = scope === "ot" ? kontext.bezirke[info.stadtbezirk] : null;
       if (v == null) return `${esc(d.titel)}: <span class="nav-dim">${kOhne(kk)}</span>`;
       return `<span class="nav-big">${kFmt(kk, v)}</span> ${esc(d.titel)}
-        <br><span class="nav-dim">${b ? `Stadtbezirk ${esc(info.stadtbezirk)} ${kFmt(kk, b[kk])} · ` : ""}ganz Köln ${kFmt(kk, kontext.bonn[kk])} · Stand ${esc(d.stand)} · abgeleitet</span>`;
+        <br><span class="nav-dim">${b ? `Stadtbezirk ${esc(info.stadtbezirk)} ${kFmt(kk, b[kk])} · ` : ""}ganz Köln ${kFmt(kk, kontext.stadt[kk])} · Stand ${esc(d.stand)} · abgeleitet</span>`;
     }
     const label = esc(THEMES[navMetric]), bonn = (index.zahlen?.themen_bonn || {})[navMetric] || 0;
     if (!info.themen) return `${label}: <span class="nav-dim">zu wenige Vorlagen für einen Anteil (unter ${de(index.zahlen?.themen_min || 20)})</span>`;
@@ -1013,7 +1017,7 @@
       navLegend.querySelector(".nav-legend-body").innerHTML = kk
         ? `<ol class="nav-ramp">${kRanges(br, kk).map((r, k) => `<li><span class="nav-sw nav-sw${k}" aria-hidden="true"></span>${r}</li>`).join("")}
             <li><span class="nav-sw nav-sw-none" aria-hidden="true"></span>${kOhne(kk)}</li></ol>
-          <p>Je ${far ? "Stadtbezirk" : "Stadtteil"}, Stufen nach den Werten der Stadtteile; ganz Köln ${kFmt(kk, kontext.bonn[kk])}. ${esc(kd.methode)}.
+          <p>Je ${far ? "Stadtbezirk" : "Stadtteil"}, Stufen nach den Werten der Stadtteile; ganz Köln ${kFmt(kk, kontext.stadt[kk])}. ${esc(kd.methode)}.
             Quelle: ${esc(kd.q.titel || "")} (${esc(kd.q.lizenz || "")}), Stand ${esc(kd.stand)}${kd.q.uebergang ? `; ${esc(kd.q.uebergang)}` : ""}. <span class="derived">abgeleitet</span> Zur Einordnung, kein Urteil über das Gebiet.</p>`
         : navMetric
         ? `<ol class="nav-ramp">${shareRanges(br).map((r, k) => `<li><span class="nav-sw nav-sw${k}" aria-hidden="true"></span>${r}</li>`).join("")}
@@ -1044,7 +1048,7 @@
     legendEl.innerHTML = `<summary>Legende: ${colorBy === "thema" ? "Thema" : "Sicherheit des Orts"}</summary><ul>${rows
       .map(([c, t]) => `<li><span class="swatch" style="background:${c}" aria-hidden="true"></span>${esc(t)}</li>`).join("")}</ul>
       ${colorBy === "thema" ? '<p class="hint">Bei mehreren Themen zählt das erste. Themen sind abgeleitet.</p>' : ""}
-      ${planOn ? `<ul><li><span class="swatch swatch-plan" aria-hidden="true"></span>Geltungsbereich eines rechtskräftigen Bebauungsplans (Stadt Köln)</li></ul>
+      ${planOn ? `<ul><li><span class="swatch swatch-plan" aria-hidden="true"></span>Geltungsbereich eines rechtsverbindlichen Bebauungsplans (Bauleitplanung NRW, IT.NRW)</li></ul>
         ${planIndexUrl() ? '<button type="button" class="btn btn-soft" id="plan-list">Pläne im Gebiet als Liste</button>' : ""}` : ""}
       ${bauOn && bau ? `<ul><li><span class="site-icon site-aktuell" aria-hidden="true"></span>Baustelle der Stadt, laufend</li>
         <li><span class="site-icon site-geplant" aria-hidden="true"></span>Baustelle der Stadt, geplant</li>
@@ -1339,7 +1343,43 @@
   const KX = {
     uesg: { label: "Überschwemmungsgebiete", file: "ueberschwemmung", quelle: "ueberschwemmung" },
     brw: { label: "Bodenrichtwerte", file: "bodenrichtwerte", quelle: "bodenrichtwerte" },
+    klima: { label: "Hitze (Klimaanalyse)", file: "klima", quelle: "klima" },
   };
+  const KLIMA_FARBE = { "Handlungspriorität 1": "#9f1239", "Handlungspriorität 2": "#e11d48", "Handlungspriorität 3": "#fb923c",
+    "Handlungspriorität 4": "#fcd34d", "Handlungspriorität 5": "#fef3c7" };
+  // Punkte aus den Kontextdaten (Land NRW, VRS): ab Stadtteil-Zoom
+  const PX = {
+    kitas: { label: "Kitas", file: "punkte_kitas", quelle: "kitas", farbe: "#be185d",
+      text: (p) => `${esc(p.name)}<br><span class="nav-dim">Plätze unter 3 Jahren ${esc(de(p.plaetze_u3))}, ab 3 Jahren ${esc(de(p.plaetze_ue3))}</span>` },
+    schulen: { label: "Schulen", file: "punkte_schulen", quelle: "schulen", farbe: "#1d4ed8",
+      text: (p) => `${esc(p.name)}<br><span class="nav-dim">${esc(p.schulform || "")}${p.traeger ? `, ${esc(p.traeger)}` : ""}</span>` },
+    haltestellen: { label: "Haltestellen", file: "punkte_haltestellen", quelle: "haltestellen", farbe: "#0f766e", text: (p) => esc(p.name) },
+  };
+  // Weitere Ebenen aus ebenen.json (pipeline/ebenen.py): Stadt, Land, Bund; Mindestzoom für große Ebenen
+  const EX = {};
+  const EX_ZOOM = { denkmaeler: 14, baupotenziale: 13, stimmbezirke: 12 };
+  const exText = (e, p) => {
+    const rows = Object.entries(e.felder || {}).filter(([k]) => p[k] != null && p[k] !== "")
+      .map(([k, t]) => { const v = String(p[k]);   // Tooltips sind nicht anklickbar: Adressen als Text
+        return `${esc(t)}: ${esc(/^https?:/.test(v) ? v.replace(/^https?:\/\//, "").split("/")[0] : v)}`; });
+    return `<strong>${esc(e.titel)}</strong>${p._teil ? ` · ${esc(p._teil)}` : ""}${rows.length ? `<br>${rows.join("<br>")}` : ""}
+      <br><span class="nav-dim">${esc(e.quelle)}${e.stand ? `, Stand ${esc(fmtDate(e.stand))}` : ""}</span>`;
+  };
+  // Ebenen mit mehreren Arten: Farbe je Teil (Legende und Fläche)
+  const EX_TEILE = {
+    hochwasser: [["HQextrem", "#7dd3fc", "HQextrem (seltenes Extremhochwasser)"], ["geschützt", "#fbbf24", "HQ100, durch Hochwasserschutz geschützt"],
+      ["HQ100", "#0369a1", "HQ100 (statistisch einmal in 100 Jahren)"]],
+    naturschutz: [["Naturschutz", "#166534", "Naturschutzgebiet"], ["Landschaftsschutz", "#86efac", "Landschaftsschutzgebiet"], ["FFH", "#0d9488", "FFH-Gebiet (Natura 2000)"]],
+  };
+  const exFarbe = (e, p) => {
+    const text = `${p._teil || ""} ${Object.values(p).join(" ")}`;
+    const hit = (EX_TEILE[e.key] || []).find(([s]) => text.includes(s));
+    return hit ? hit[1] : e.farbe;
+  };
+  const exStyle = (e, f) => EX_TEILE[e.key] ? { color: exFarbe(e, f.properties), weight: 1, fillColor: exFarbe(e, f.properties), fillOpacity: 0.35 }
+    : e.art === "grenze" ? { color: e.farbe, weight: 1.5, fill: false }
+    : e.art === "linie" ? { color: e.farbe, weight: 3, opacity: 0.9, dashArray: f.properties._teil === "in Planung" ? "6 5" : null }
+    : { color: e.farbe, weight: 1, fillColor: e.farbe, fillOpacity: 0.25 };
   // Stufen nach Quintilen der Zonenwerte, auf 10 €/m² gerundet
   function brwBreaks(feats) {
     const v = feats.map((f) => f.properties.brw).filter((x) => x != null).sort((a, b) => a - b);
@@ -1347,19 +1387,33 @@
   }
   const brwStufe = (v, br) => br.filter((b) => v >= b).length;
   const ERGAENZUNG = { EFH: "Ein- und Zweifamilienhäuser", MFH: "Mehrfamilienhäuser" };
-  const kxQuelle = (k) => (kontext && kontext.meta.quellen[KX[k].quelle]) || {};
+  const kxQuelle = (k) => (kontext && kontext.meta.quellen[(KX[k] || PX[k]).quelle]) || {};
+  const minZoom = (k) => (EX[k] ? EX_ZOOM[k] || 11 : KX_ZOOM);
   async function drawKx() {
     if (legendEl) drawLegend();
-    const visible = map.getZoom() >= KX_ZOOM;
-    for (const k of Object.keys(KX)) {
-      const want = kxOn.has(k) && visible;
+    for (const k of [...Object.keys(KX), ...Object.keys(PX), ...Object.keys(EX)]) {
+      const want = kxOn.has(k) && map.getZoom() >= minZoom(k);
       if (!want) { if (kxLayers[k]) { kxLayers[k].remove(); kxLayers[k] = null; } continue; }
       if (kxLayers[k]) continue;
-      kxData[k] ||= fetch(`${BONN}flaechen/${KX[k].file}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+      const datei = EX[k] ? EX[k].datei : `flaechen/${(KX[k] || PX[k]).file}.json`;
+      kxData[k] ||= fetch(BONN + datei).then((r) => (r.ok ? r.json() : null)).catch(() => null);
       const data = await kxData[k];
-      if (!data || kxLayers[k] || !kxOn.has(k) || map.getZoom() < KX_ZOOM) continue;
+      if (!data || kxLayers[k] || !kxOn.has(k) || map.getZoom() < minZoom(k)) continue;
       if (!map.getPane("kontextflaechen")) map.createPane("kontextflaechen").style.zIndex = 360;
-      if (k === "uesg") {
+      if (EX[k]) {
+        const e = EX[k];
+        kxLayers[k] = L.geoJSON(data, { pane: "kontextflaechen", style: (f) => exStyle(e, f),
+          pointToLayer: (f, ll) => L.circleMarker(ll, { pane: "kontextflaechen", radius: 4, color: "#fff", weight: 1, fillColor: e.farbe, fillOpacity: 0.9 }),
+          onEachFeature: (f, layer) => layer.bindTooltip(exText(e, f.properties), { sticky: true }).on("click", (ev) => clickOrtsteil(ev.latlng)) });
+      } else if (PX[k]) {
+        const d = PX[k];
+        kxLayers[k] = L.geoJSON(data, { pointToLayer: (f, ll) => L.circleMarker(ll, { pane: "kontextflaechen", radius: 5, color: "#fff", weight: 1.5, fillColor: d.farbe, fillOpacity: 0.95 }),
+          onEachFeature: (f, layer) => layer.bindTooltip(`${d.text(f.properties)}<br><span class="nav-dim">${esc(kxQuelle(k).titel || "")}</span>`) });
+      } else if (k === "klima") {
+        kxLayers[k] = L.geoJSON(data, { pane: "kontextflaechen", style: (f) => ({ stroke: false, fillColor: KLIMA_FARBE[f.properties.prioritaet] || "#e5e7eb", fillOpacity: 0.5 }),
+          onEachFeature: (f, layer) => layer.bindTooltip(`${esc(f.properties.prioritaet || "")}<br><span class="nav-dim">Klimaanalyse NRW, Planungshinweiskarte</span>`, { sticky: true })
+            .on("click", (e) => clickOrtsteil(e.latlng)) });
+      } else if (k === "uesg") {
         kxLayers[k] = L.geoJSON(data, { pane: "kontextflaechen", interactive: false, style: (f) => UESG_STYLE[f.properties.art] || UESG_STYLE.festgesetzt });
       } else {
         const br = brwBr = brwBreaks(data.features), stand = kxQuelle(k).stand;
@@ -1381,17 +1435,26 @@
     navOrtsteile.eachLayer((l) => { if (inGeom(ll.lng, ll.lat, l.feature.geometry)) l.fire("click"); });
   }
   function kxLegend() {
-    if (!kontext || !kxOn.size) return "";
+    if (!kxOn.size) return "";
     const q = (k) => { const x = kxQuelle(k); return `${safeUrl(x.url) ? `<a href="${safeUrl(x.url)}">${esc(x.titel)}</a>` : esc(x.titel || "")}, ${esc(x.lizenz || "")}${x.stand ? `, Stand ${esc(x.stand.length === 10 ? fmtDate(x.stand) : x.stand)}` : ""}`; };
-    const zoom = map.getZoom() < KX_ZOOM ? '<p class="hint">Zum Anzeigen der Flächen hineinzoomen.</p>' : "";
+    const zoom = [...kxOn].some((k) => map.getZoom() < minZoom(k)) ? '<p class="hint">Zum Anzeigen einiger Ebenen hineinzoomen.</p>' : "";
     let h = "";
     if (kxOn.has("uesg")) h += `<ul><li><span class="swatch swatch-area" style="background:${UESG_STYLE.festgesetzt.fillColor}" aria-hidden="true"></span>Überschwemmungsgebiet, festgesetzt</li>
       <li><span class="swatch swatch-area" style="background:${UESG_STYLE["vorläufig gesichert"].fillColor}" aria-hidden="true"></span>Überschwemmungsgebiet, vorläufig gesichert</li></ul>
       <p class="hint">Einordnung, keine Aussage zu Starkregen. Verbindlich sind die Karten des Landes. Quelle: ${q("uesg")}.</p>`;
+    if (kxOn.has("klima")) h += `<ul>${Object.entries(KLIMA_FARBE).map(([t, c]) => `<li><span class="swatch swatch-area" style="background:${c}" aria-hidden="true"></span>${esc(t)}</li>`).join("")}</ul>
+      <p class="hint">Hitze: Handlungspriorität der Planungshinweiskarte (1 = dringend). Einordnung; verbindlich ist die Quelle. Quelle: ${q("klima")}.</p>`;
+    for (const k of Object.keys(PX).filter((x) => kxOn.has(x))) h += `<ul><li><span class="swatch" style="background:${PX[k].farbe}" aria-hidden="true"></span>${esc(PX[k].label)}</li></ul><p class="hint">Quelle: ${q(k)}.</p>`;
     if (kxOn.has("brw")) {
       const br = brwBr;
       h += `${br ? `<ul>${[0, ...br].map((lo, i) => `<li><span class="swatch swatch-area" style="background:${BRW_FARBE[i]}" aria-hidden="true"></span>${i === 0 ? `unter ${de(br[0])}` : i === br.length ? `ab ${de(lo)}` : `${de(lo)} bis unter ${de(br[i])}`} €/m²</li>`).join("")}</ul>` : ""}
       <p class="hint">Bodenrichtwerte für Wohnbauland, andere Nutzungen fehlen. Einordnung, kein Urteil; verbindlich ist BORIS NRW. Quelle: ${q("brw")}.</p>`;
+    }
+    for (const k of Object.keys(EX).filter((x) => kxOn.has(x))) {
+      const e = EX[k], u = safeUrl(e.url);
+      const teile = EX_TEILE[k] || [[null, e.farbe, e.titel]];
+      h += `<ul>${teile.map(([, c, label]) => `<li><span class="swatch${e.art === "flaeche" ? " swatch-area" : ""}" style="background:${c}" aria-hidden="true"></span>${esc(label)}</li>`).join("")}</ul>
+        <p class="hint">Quelle: ${u ? `<a href="${u}">${esc(e.quelle)}</a>` : esc(e.quelle)}, ${esc(e.lizenz)}${e.stand ? `, Stand ${esc(fmtDate(e.stand))}` : ""}.</p>`;
     }
     return h + zoom;
   }
@@ -2112,7 +2175,7 @@
     state.plan = !selected && shownPlan ? shownPlan : "";
     state.baustellen = bauOn ? "1" : "";
     state.baustelle = !selected && shownSite ? shownSite : "";
-    state.ebenen = Object.keys(KX).filter((k) => kxOn.has(k)).join(",");
+    state.ebenen = [...Object.keys(KX), ...Object.keys(PX), ...Object.keys(EX)].filter((k) => kxOn.has(k)).join(",");
     const pz = !$("#panel-prozesse").hidden && pzState;
     state.prozesse = pz ? pz.tab : "";
     state.ansicht = pz && pz.view === "liste" ? "liste" : "";
@@ -2133,6 +2196,8 @@
     document.querySelectorAll("[data-funktion]").forEach((el) => { el.hidden = !fn[el.dataset.funktion]; });
     const hinweis = $("#testdaten-hinweis");
     if (hinweis) hinweis.hidden = !(idx && idx.meta && idx.meta.testdaten);
+    const vorschau = $("#vorschau-hinweis");
+    if (vorschau) vorschau.hidden = !(idx && idx.meta && idx.meta.vorschau);
   }
   const QUELLE_NAME = { "oparl-koeln": "Ratsinformationssystem", "geo-koeln": "Gebiete", "strassen-koeln": "Straßen",
     "adressen-koeln": "Adressen", "bplan-koeln": "Bebauungspläne", osm: "OpenStreetMap" };
@@ -2159,11 +2224,14 @@
     const fn = (idx && idx.meta && idx.meta.funktionen) || {};
     const opt = (an, url) => (an ? json(url, "low") : Promise.resolve(null));
     // Baustellen mit möglichen Umsetzungen (nur Konfidenz hoch); ohne Datei bleibt die Funktion ausgeblendet
-    const [g, z, bs, kx, an] = await Promise.all([json(GLOSSAR_URL), json(BONN + "zeit.json", "low"),
-      opt(fn.baustellen, BONN + "baustellen.json"), opt(fn.kontext, BONN + "kontext.json"), opt(fn.anliegen, BONN + "anliegen.json")]);
+    const [g, z, bs, kx, an, eb] = await Promise.all([json(GLOSSAR_URL), json(BONN + "zeit.json", "low"),
+      opt(fn.baustellen, BONN + "baustellen.json"), opt(fn.kontext, BONN + "kontext.json"), opt(fn.anliegen, BONN + "anliegen.json"),
+      opt(fn.kontext, BONN + "ebenen.json")]);
     index = idx;
     applyFunktionen(fn, idx);
     kontext = index && kx && kx.ortsteile ? kx : null;
+    for (const e of (eb && eb.ebenen) || []) EX[e.key] = e;
+    ebenenIdx = Object.keys(EX).length ? eb : null;
     anliegen = kontext && an && an.ortsteile ? an : null;
     zeit = index ? z : null;
     bau = index && bs && bs.baustellen.length ? bs : null;

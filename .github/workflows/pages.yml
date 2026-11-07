@@ -3,7 +3,8 @@
 # Webhook) und auf den Spiegel bei GitHub Pages (Canonical auf die Hauptadresse).
 #
 # Sperre: Der Abruf läuft erst, wenn die Repository-Variable RATSATLAS_STADT_INFORMIERT den Wert „ja“ hat
-# (Einstellungen → Secrets and variables → Actions → Variables). Bis dahin endet der Lauf ohne Veröffentlichung.
+# (Einstellungen → Secrets and variables → Actions → Variables). Bis dahin – und bis ein vollständiger Abruf vorliegt –
+# veröffentlicht der Lauf eine Kartenvorschau ohne Ratsvorlagen (Gebiete, Kennzahlen, Ebenen; Entscheidung 07.11.2026).
 # Weitere Variablen: RATSATLAS_KONTAKT (Kontakt im User-Agent), SITE_URL (Vorgabe https://koeln.ratsatlas.de/).
 # Abrufpolitik: eine Verbindung, Abstand 2 s, nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h, Verbindungsabbruch =
 # mögliche Sperre (Abbruch, nach drei Nächten sieben Tage Pause); ein abgebrochener Vollabruf wird in der nächsten Nacht
@@ -68,21 +69,31 @@ jobs:
           # erst nach einem vollständigen Abruf (abruf_ok); ein Vollabruf kann sich über mehrere Nächte erstrecken
           if [ -s data/raw/papers.jsonl ] && python -c 'import json,sys; s=json.load(open("data/raw/STAND.json")); sys.exit(0 if s.get("abruf_ok") and not s.get("testdaten") else 1)' 2>/dev/null; then
             echo "da=ja" >> "$GITHUB_OUTPUT"
+            echo "raw=data/raw" >> "$GITHUB_OUTPUT"
           else
-            echo "::notice::Noch keine Daten der Stadt Köln (Abruf gesperrt oder noch nie erfolgreich) – nichts veröffentlicht."
-            echo "da=nein" >> "$GITHUB_OUTPUT"
+            echo "::notice::Noch keine Daten der Stadt Köln – Kartenvorschau ohne Ratsvorlagen."
+            echo "da=vorschau" >> "$GITHUB_OUTPUT"
+            echo "raw=data/raw_vorschau" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Aufbereiten, Geokodierung, Export, Datenpaket
-        if: steps.daten.outputs.da == 'ja'
+      - name: Kartenvorschau (leere Rohdaten in eigenem Verzeichnis)
+        if: steps.daten.outputs.da == 'vorschau'
+        env:
+          RATSATLAS_RAW: ${{ steps.daten.outputs.raw }}
+        run: python tools/vorschau.py
+
+      - name: Aufbereiten, Geokodierung, Export, Kennzahlen, Ebenen, Datenpaket
+        env:
+          RATSATLAS_RAW: ${{ steps.daten.outputs.raw }}
         run: |
           python -m pipeline build
           python -m pipeline export
+          python -m pipeline kontext
+          python -m pipeline ebenen
           python -m pipeline package
 
       # Graue Kartenkacheln aus dem Branch kacheln (kacheln.yml); fehlt er, zeigt die Seite OSM-Kacheln grau gefiltert
       - name: Graue Kartenkacheln holen
-        if: steps.daten.outputs.da == 'ja'
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
         with:
           ref: kacheln
@@ -90,20 +101,17 @@ jobs:
         continue-on-error: true
 
       - name: Seite zusammenstellen (Frontend, Exporte, Flächen, Kacheln, Adressen für SITE_URL)
-        if: steps.daten.outputs.da == 'ja'
         env:
           SITE_URL: ${{ vars.SITE_URL || 'https://koeln.ratsatlas.de/' }}
         run: python tools/seite_bauen.py _site
 
       # Keine Veröffentlichung mit defekten inneren Links oder Sprungmarken (Phase 6)
       - name: Linkprüfung (innere Links)
-        if: steps.daten.outputs.da == 'ja'
         run: python tools/linkpruefung.py _site
 
       # Ohne Datenpaket (Zip, täglich vollständig neu), damit die Historie nur um die Änderungen wächst; auf dem eigenen
       # Server verweist der Link auf das Paket beim Spiegel (config.PAKET_URL)
       - name: Fertige Seite in den Branch deploy schreiben
-        if: steps.daten.outputs.da == 'ja'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -131,16 +139,14 @@ jobs:
           git push -q "$url" HEAD:deploy
 
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b  # v5.0.0
-        if: steps.daten.outputs.da == 'ja'
 
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa  # v3.0.1
-        if: steps.daten.outputs.da == 'ja'
         with:
           path: "_site"
 
   deploy:
     needs: build
-    if: needs.build.outputs.daten == 'ja'
+    if: needs.build.outputs.daten != ''
     runs-on: ubuntu-latest
     permissions:
       pages: write

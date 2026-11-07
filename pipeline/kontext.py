@@ -1,15 +1,16 @@
-"""Kontextdaten je Ortsteil (kontext/KONZEPT.md, Phase 1): Kennzahlen zur Einordnung von Vorlagen.
+"""Kontextdaten je Stadtteil (aus dem Ratsatlas Bonn übernommen, für Köln umgestellt): Kennzahlen zur Einordnung.
 
 Einordnung, kein Urteil: keine Rangfolge der Ortsteile. Alle Werte sind auf Ortsteile umgerechnet und damit abgeleitet;
 jede Kennzahl trägt Quelle, Lizenz, Stichtag und Methode (kontext/phase0/BERICHT.md).
 
 Schritte:
 - `kontext-ausschnitte` (einmalig, lokal; neu nur bei neuem Stand einer Quelle): lädt Zensus 2022, Bodenrichtwerte,
-  Klimaanalyse, Überschwemmungsgebiete und Kitas, schneidet Bonn aus und legt die Ausschnitte in data/kontext/ ab.
+  Klimaanalyse, Überschwemmungsgebiete, Kitas und Schulen (alles Land und Bund, kein Server der Stadt), schneidet
+  die Stadt aus und legt die Ausschnitte in data/kontext/ ab.
   Die Downloads (bis 2 GB) bleiben außerhalb des Repositorys (KONTEXT_DL, Vorgabe _kontext_dl/).
 - `fetch-haltestellen` (monatlich im Workflow): Haltestellen aus dem Fahrplan des VRS (GTFS).
-- `kontext` (täglich, nach export): Kennzahlen je Ortsteil, Stadtbezirk und für ganz Bonn → export/bonn/kontext.json,
-  Audit export/audit_kontext.tsv.
+- `kontext` (täglich, nach export): Kennzahlen je Stadtteil, Stadtbezirk und für die ganze Stadt →
+  export/<stadt>/kontext.json, zuschaltbare Flächen und Punkte → export/<stadt>/flaechen/, Audit export/audit_kontext.tsv.
 """
 import csv
 import io
@@ -34,9 +35,10 @@ KONTEXT = config.ROOT / "data" / "kontext"
 DL = Path(os.environ.get("KONTEXT_DL", config.ROOT / "_kontext_dl"))
 STAND = KONTEXT / "STAND.json"
 HALT_STAND = KONTEXT / "haltestellen_stand.json"   # eigene Datei: monatlich im Workflow erneuert (Zwischenspeicher)
-ZENSUS, BRW, KLIMA, UESG, KITAS, HALT = (KONTEXT / n for n in (
-    "zensus_bonn.tsv", "bodenrichtwerte_bonn.geojson", "klima_bonn.geojson", "ueberschwemmung_bonn.geojson",
-    "kitas_bonn.tsv", "haltestellen_bonn.tsv"))
+S = config.STADT
+ZENSUS, BRW, KLIMA, UESG, KITAS, HALT, SCHULEN = (KONTEXT / n for n in (
+    f"zensus_{S}.tsv", f"bodenrichtwerte_{S}.geojson", f"klima_{S}.geojson", f"ueberschwemmung_{S}.geojson",
+    f"kitas_{S}.tsv", f"haltestellen_{S}.tsv", f"schulen_{S}.tsv"))
 WAHL_SB, WAHL_ZU = KONTEXT / "wahl2025_stimmbezirke.tsv", KONTEXT / "wahl2025_zuordnung.tsv"   # pipeline/wahlen.py
 OUT = "kontext.json"
 AUDIT = "audit_kontext.tsv"
@@ -57,7 +59,7 @@ QUELLEN = {
                "dateien": {"bev.zip": Z + "Zensus2022_Bevoelkerungszahl.zip", "u18.zip": Z + "Anteil_unter_18-jaehrige_in_Gitterzellen.zip",
                            "a65.zip": Z + "Anteil_ab_65-jaehrige_in_Gitterzellen.zip",
                            "miete.zip": Z + "Durchschnittliche_Nettokaltmiete_und_Anzahl_der_Wohnungen.zip"}},
-    "bodenrichtwerte": {"titel": "BORIS NRW, Bodenrichtwerte (Gutachterausschuss für Grundstückswerte in der Stadt Bonn)",
+    "bodenrichtwerte": {"titel": f"BORIS NRW, Bodenrichtwerte (Gutachterausschuss für Grundstückswerte in der Stadt {config.STADT_NAME})",
                         "url": O + "infrastruktur_bauen_wohnen/boris/BRW/", "lizenz": "dl-de/zero-2.0",
                         "stand": "2026-01-01", "dateien": {"brw.zip": O + "infrastruktur_bauen_wohnen/boris/BRW/BRW_EPSG25832_Shape.zip"}},
     "klima": {"titel": "Klimaanalyse NRW 2026, Planungshinweiskarte (Handlungspriorität)",
@@ -69,6 +71,10 @@ QUELLEN = {
     "kitas": {"titel": "Kindertageseinrichtungen in NRW", "url": O + "bildung_wissenschaft/kitas/",
               "lizenz": "dl-de/by-2.0, Land NRW", "stand": None,
               "dateien": {"kitas.csv": O + "bildung_wissenschaft/kitas/KiTasNRW_EPSG4326_CSV.csv"}},
+    "schulen": {"titel": "Grunddaten der Schulen in NRW (Ministerium für Schule und Bildung NRW)",
+                "url": "https://www.schulministerium.nrw/open-data", "lizenz": "dl-de/by-2.0, Ministerium für Schule und Bildung NRW",
+                "stand": None, "dateien": {"schuldaten.csv": "https://www.schulministerium.nrw.de/BiPo/OpenData/Schuldaten/schuldaten.csv",
+                                           "schulformen.csv": "https://www.schulministerium.nrw.de/BiPo/OpenData/Schuldaten/key_schulformschluessel.csv"}},
     "haltestellen": {"titel": "VRS-Fahrplandaten (GTFS)", "url": "https://www.vrs.de/fuer-unternehmen/open-data-service",
                      "lizenz": "dl-de/zero-2.0", "stand": None,
                      "dateien": {"gtfs.zip": "https://download.vrsinfo.de/gtfs/GTFS_VRS_mit_SPNV.zip"}},
@@ -86,6 +92,7 @@ KENNZAHLEN = {
     "kitas": ("Kindertageseinrichtungen", "Anzahl", "kitas", "Einrichtungen im Gebiet"),
     "kita_plaetze_u3": ("Kita-Plätze unter 3 Jahren", "Anzahl", "kitas", "Summe der Einrichtungen im Gebiet"),
     "kita_plaetze_ue3": ("Kita-Plätze ab 3 Jahren", "Anzahl", "kitas", "Summe der Einrichtungen im Gebiet"),
+    "schulen": ("Schulen", "Anzahl", "schulen", "Schulen (öffentlich und privat) im Gebiet, je Schulnummer"),
     "hitze": ("Anteil der Einwohner in Flächen mit dringendem Handlungsbedarf (Hitze)", "%", "klima",
               "Einwohner laut Karte in Flächen der Handlungspriorität 1–2, anteilig nach Fläche"),
     "ueberschwemmung": ("Anteil der Einwohner im Überschwemmungsgebiet", "%", "ueberschwemmung",
@@ -93,8 +100,8 @@ KENNZAHLEN = {
     "wahlbeteiligung": ("Wahlbeteiligung Ratswahl 2025 (geschätzt)", "%", "wahl2025",
                         "Wähler je Stimmbezirk an der Urne, dazu die Briefwähler des Wahlbezirks im Verhältnis der "
                         "Wahlberechtigten mit Sperrvermerk „W“ (Briefwahlschein); Stimmbezirke anteilig nach Adressen "
-                        "auf Ortsteile verteilt (Straßenverzeichnis 2020); geschätzt, Abweichung bis etwa 3 Prozentpunkte; "
-                        "ganz Bonn amtlich; kein Wert für Ortsteile ohne eigenen Stimmbezirk"),
+                        "auf Ortsteile verteilt; geschätzt; ganze Stadt amtlich; kein Wert für Ortsteile ohne eigenen "
+                        "Stimmbezirk (in Köln noch ohne Quelle)"),
 }
 OHNE_WERT = {"wahlbeteiligung": "ohne eigenen Stimmbezirk"}   # Grund, wenn ein Ortsteil keinen Wert hat (sonst Mindestgröße)
 ANTEILE = {"unter_18", "ab_65", "miete", "bodenrichtwert", "bodenrichtwert_abdeckung", "hitze", "ueberschwemmung",
@@ -169,7 +176,7 @@ def _flaeche(g, nach_wgs):
 
 
 def ausschnitte(nur=None):
-    """Ausschnitte für Bonn erzeugen (pyproj und pyshp nötig). nur: Quellen, die neu geschnitten werden
+    """Ausschnitte für die Stadt erzeugen (pyproj und pyshp nötig). nur: Quellen, die neu geschnitten werden
     (Umgebungsvariable KONTEXT_NUR, z. B. „ueberschwemmung“); Standard alle."""
     nur = set(filter(None, (nur if nur is not None else os.environ.get("KONTEXT_NUR", "")).split(",")))
     teil = lambda k: not nur or k in nur
@@ -185,11 +192,11 @@ def ausschnitte(nur=None):
     von3035 = Transformer.from_crs(3035, 4326, always_xy=True)
     von25832 = Transformer.from_crs(25832, 4326, always_xy=True)
     nach25832 = Transformer.from_crs(4326, 25832, always_xy=True)
-    bonn = union_all([g for *_, g in ots])
-    w, s, e, n = bonn.bounds
+    stadt = union_all([g for *_, g in ots])
+    w, s, e, n = stadt.bounds
 
     if teil("zensus"):
-        # Zensus: Zellen mit Mittelpunkt in Bonn
+        # Zensus: Zellen mit Mittelpunkt in der Stadt
         dl = {k: _laden(k, u) for k, u in QUELLEN["zensus"]["dateien"].items()}
         zellen = {}
         def zelle(row):
@@ -238,7 +245,7 @@ def ausschnitte(nur=None):
         feats = []
         for sr in r.iterShapeRecords():
             d = dict(zip(names, sr.record))
-            if d["GENA"] == "Bonn" and d["NUTA"].startswith("W") and d["ENTW"] == "B" and d["ERGNUTA"] != "ASB":
+            if d["GENA"] == config.STADT_NAME and d["NUTA"].startswith("W") and d["ENTW"] == "B" and d["ERGNUTA"] != "ASB":
                 feats.append({"type": "Feature", "properties": {"zone": d["BRWZNR"], "brw": _num(d["BRW"]), "nutzung": d["NUTA"],
                                                                  "ergaenzung": d["ERGNUTA"], "ortsteil_boris": d["ORTST"], "stichtag": d["STAG"]},
                               "geometry": _flaeche(shape(sr.shape.__geo_interface__), von25832.transform)})
@@ -249,7 +256,7 @@ def ausschnitte(nur=None):
         print(f"Bodenrichtwerte: {len(feats)} Zonen → {BRW}")
 
     if teil("klima"):
-        # Klimaanalyse: Flächen mit Handlungspriorität in Bonn (GeoPackage)
+        # Klimaanalyse: Flächen mit Handlungspriorität in der Stadt (GeoPackage)
         path = _laden("phk.zip", QUELLEN["klima"]["dateien"]["phk.zip"])
         ziel = DL / "phk"
         if not any(ziel.glob("*.gpkg")):
@@ -258,7 +265,7 @@ def ausschnitte(nur=None):
         db = sqlite3.connect(next(ziel.glob("*.gpkg")))
         feats = []
         for fid, blob, hp, ew in db.execute("SELECT fid, geom, Handlungspriorität, Einwohnerzahl FROM PL_KY_PHK_HP "
-                                            "WHERE GN = 'Bonn' ORDER BY fid"):
+                                            "WHERE GN = ? ORDER BY fid", (config.STADT_NAME,)):
             env = {0: 0, 1: 32, 2: 48, 3: 48, 4: 64}[(blob[3] >> 1) & 7]
             g = from_wkb(bytes(blob[8 + env:])).buffer(0)
             feats.append({"type": "Feature", "properties": {"id": fid, "prioritaet": hp, "einwohner": round(ew or 0, 1)},
@@ -268,13 +275,13 @@ def ausschnitte(nur=None):
         print(f"Klimaanalyse: {len(feats)} Flächen → {KLIMA}")
 
     if teil("ueberschwemmung"):
-        # Überschwemmungsgebiete: festgesetzt und vorläufig gesichert, auf Bonn zugeschnitten
+        # Überschwemmungsgebiete: festgesetzt und vorläufig gesichert, auf die Stadt zugeschnitten
         path = _laden("uesg.zip", QUELLEN["ueberschwemmung"]["dateien"]["uesg.zip"])
         ziel = DL / "uesg"
         with zipfile.ZipFile(path) as z:
             z.extractall(ziel)
         from shapely import transform
-        bonn25832 = transform(bonn, nach25832.transform, interleaved=False).buffer(100)
+        stadt25832 = transform(stadt, nach25832.transform, interleaved=False).buffer(100)
         # Gesamtfläche (für die Kennzahl, ohne innere Grenzen) und die vorläufig gesicherten Teile, die nicht zugleich
         # festgesetzt sind (nur für die Karte; getrennt vereinfachte Teilflächen ließen an gemeinsamen Grenzen Spalten)
         arten = {}
@@ -283,8 +290,8 @@ def ausschnitte(nur=None):
             teile = []
             for sh in shapefile.Reader(str(ziel / name)).iterShapes():
                 g = shape(sh.__geo_interface__)
-                if g.intersects(bonn25832):
-                    teile.append(g.buffer(0).intersection(bonn25832))
+                if g.intersects(stadt25832):
+                    teile.append(g.buffer(0).intersection(stadt25832))
             arten[art] = teile
         gesamt = union_all(arten["festgesetzt"] + arten["vorläufig gesichert"])
         vorlaeufig = union_all(arten["vorläufig gesichert"]).difference(union_all(arten["festgesetzt"]))
@@ -298,7 +305,7 @@ def ausschnitte(nur=None):
         print(f"Überschwemmungsgebiete: {len(teile)} Flächen → {UESG}")
 
     if teil("kitas"):
-        # Kitas: Einrichtungen in Bonn
+        # Kitas: Einrichtungen in der Stadt
         path = _laden("kitas.csv", QUELLEN["kitas"]["dateien"]["kitas.csv"])
         rows = []
         with open(path, encoding="utf-8-sig") as f:
@@ -318,13 +325,39 @@ def ausschnitte(nur=None):
         vermerk("kitas", einrichtungen=len(rows), stand=_datum(QUELLEN["kitas"]["dateien"]["kitas.csv"]))
         print(f"Kitas: {len(rows)} → {KITAS}")
 
+    if teil("schulen"):
+        # Schulen: Grunddaten des Landes, Lage in UTM (EPSG 25832); ohne Kontaktdaten
+        q = QUELLEN["schulen"]
+        formen = {}
+        with open(_laden("schulformen.csv", q["dateien"]["schulformen.csv"]), encoding="utf-8-sig") as f:
+            for row in csv.DictReader((l for l in f if not l.startswith("sep=")), delimiter=";"):
+                formen[row["Schluessel"]] = row["Schulform"]
+        rows = []
+        with open(_laden("schuldaten.csv", q["dateien"]["schuldaten.csv"]), encoding="utf-8-sig") as f:
+            for k in csv.DictReader((l for l in f if not l.startswith("sep=")), delimiter=";"):
+                if k.get("EPSG") != "EPSG:25832" or not k.get("UTMRechtswert"):
+                    continue
+                lon, lat = von25832.transform(float(k["UTMRechtswert"]), float(k["UTMHochwert"]))
+                if finde(lon, lat):
+                    rows.append({"schulnummer": k["Schulnummer"], "name": " ".join(filter(None, (k["Schulbezeichnung_1"], k["Schulbezeichnung_2"]))),
+                                 "schulform": formen.get(k["Schulform"].zfill(2), k["Schulform"]),
+                                 "traeger": {"1": "öffentlich", "2": "privat"}.get(k["Rechtsform"], ""),
+                                 "lon": round(lon, 6), "lat": round(lat, 6)})
+        rows.sort(key=lambda r: r["schulnummer"])
+        with open(SCHULEN, "w", newline="", encoding="utf-8") as f:
+            wr = csv.DictWriter(f, fieldnames=list(rows[0]), delimiter="\t", lineterminator="\n")
+            wr.writeheader()
+            wr.writerows(rows)
+        vermerk("schulen", schulen=len(rows), stand=_datum(q["dateien"]["schuldaten.csv"]) or heute)
+        print(f"Schulen: {len(rows)} → {SCHULEN}")
+
     STAND.write_text(json.dumps(stand, ensure_ascii=False, indent=1, sort_keys=True) + "\n")
     if teil("haltestellen"):
         fetch_haltestellen()
 
 
 def fetch_haltestellen():
-    """Haltestellen in Bonn aus dem GTFS des VRS: Steige gleichen Namens zu einem Punkt zusammengefasst."""
+    """Haltestellen in der Stadt aus dem GTFS des VRS: Steige gleichen Namens zu einem Punkt zusammengefasst."""
     path = DL / "gtfs.zip"
     if path.exists():
         path.unlink()   # monatlich neu
@@ -339,7 +372,7 @@ def fetch_haltestellen():
             if (ot := finde(lon, lat)):
                 punkte[(s["stop_name"], ot)].append((lon, lat))
     if len(punkte) < 300:
-        raise RuntimeError(f"Haltestellen: nur {len(punkte)} in Bonn – Abruf unvollständig, Stand bleibt")
+        raise RuntimeError(f"Haltestellen: nur {len(punkte)} in {config.STADT_NAME} – Abruf unvollständig, Stand bleibt")
     q = QUELLEN["haltestellen"]
     # ohne Last-Modified gilt der Tag des Abrufs; ein leerer Stand hielte sonst die Prüfung in check bis zum
     # nächsten monatlichen Abruf an (Code-Prüfung 24.10.2026)
@@ -352,7 +385,7 @@ def fetch_haltestellen():
     HALT_STAND.write_text(json.dumps({"titel": q["titel"], "url": q["url"], "lizenz": q["lizenz"],
                                       "stand": stand, "haltestellen": len(punkte)},
                                      ensure_ascii=False, indent=1, sort_keys=True) + "\n")
-    print(f"Haltestellen: {len(punkte)} in Bonn → {HALT}")
+    print(f"Haltestellen: {len(punkte)} in {config.STADT_NAME} → {HALT}")
 
 
 # --- Kennzahlen (täglich) -------------------------------------------------------------------------------------------
@@ -375,7 +408,7 @@ def wahlbeteiligung():
     """Wahlbeteiligung der Ratswahl 2025 (wahlen/phase0/BERICHT.md): je Urnenstimmbezirk die Wähler an der Urne und die
     Briefwähler des Wahlbezirks im Verhältnis des Sperrvermerks „W“; je Gruppe des Straßenverzeichnisses anteilig nach
     Adressen auf Ortsteile verteilt. ({Ortsteil: [Wahlberechtigte, Wähler]}, Ortsteile mit eigenem Stimmbezirk
-    (Hauptanteil der Adressen), Bonn [Wahlberechtigte, Wähler] amtlich, Audit-Zeilen je Gruppe) oder None ohne Ausschnitt."""
+    (Hauptanteil der Adressen), Stadt [Wahlberechtigte, Wähler] amtlich, Audit-Zeilen je Gruppe) oder None ohne Ausschnitt."""
     if not (WAHL_SB.exists() and WAHL_ZU.exists()):
         return None
     with open(WAHL_SB, encoding="utf-8") as f:
@@ -410,15 +443,15 @@ def wahlbeteiligung():
                       "; ".join(f"{k} {v}" for k, v in sorted(d.items()) if k != haupt)])
     if set(sb) - gesehen:
         raise RuntimeError(f"Wahlbeteiligung: Stimmbezirke ohne Zuordnung {sorted(set(sb) - gesehen)}")
-    bonn = [sum(int(r["wahlberechtigte"]) for r in rows), sum(int(r["waehler"]) for r in rows)]
-    return ot, eigen, bonn, audit
+    gesamt = [sum(int(r["wahlberechtigte"]) for r in rows), sum(int(r["waehler"]) for r in rows)]
+    return ot, eigen, gesamt, audit
 
 
 def kennzahlen():
-    """Kennzahlen je Ortsteil, Stadtbezirk und ganz Bonn aus den Ausschnitten: ({Gebiet: Werte}, Audit-Zeilen)."""
+    """Kennzahlen je Ortsteil, Stadtbezirk und für die ganze Stadt aus den Ausschnitten: ({Gebiet: Werte}, Audit-Zeilen)."""
     ots, finde = _gebiete()
     bezirk = {n: b for n, b, _ in ots}
-    gebiete = lambda ot: (("ortsteil", ot), ("bezirk", bezirk[ot]), ("bonn", "Bonn"))
+    gebiete = lambda ot: (("ortsteil", ot), ("bezirk", bezirk[ot]), ("stadt", config.STADT_NAME))
     acc = defaultdict(lambda: defaultdict(float))
     brw = defaultdict(list)
     # gerundete Koordinaten der Ausschnitte können Flächen ungültig machen: beim Einlesen gültig machen
@@ -471,6 +504,12 @@ def kennzahlen():
                     acc[g]["kitas"] += 1
                     acc[g]["kita_plaetze_u3"] += int(k["plaetze_u3"])
                     acc[g]["kita_plaetze_ue3"] += int(k["plaetze_ue3"])
+    if SCHULEN.exists():
+        with open(SCHULEN, encoding="utf-8") as f:
+            for k in csv.DictReader(f, delimiter="\t"):
+                if (ot := finde(float(k["lon"]), float(k["lat"]))):
+                    for g in gebiete(ot):
+                        acc[g]["schulen"] += 1
     otgeo = {n: g for n, _, g in ots}
     otree = STRtree([g for *_, g in ots])
     for fl in json.loads(KLIMA.read_text())["features"]:
@@ -492,14 +531,15 @@ def kennzahlen():
     if wahl:
         for name, (a, w) in wahl[0].items():
             if name in bezirk:
-                for g in gebiete(name)[:2]:   # Ortsteil und Stadtbezirk; ganz Bonn amtlich (unten)
+                for g in gebiete(name)[:2]:   # Ortsteil und Stadtbezirk; ganze Stadt amtlich (unten)
                     acc[g]["wahl_a"] += a
                     acc[g]["wahl_w"] += w
     werte, audit = {}, []
     for g, a in sorted(acc.items()):
         e = int(a["einwohner"])
         v = {"einwohner": e, "haltestellen": len(halt[g]), "kitas": int(a["kitas"]),
-             "kita_plaetze_u3": int(a["kita_plaetze_u3"]), "kita_plaetze_ue3": int(a["kita_plaetze_ue3"])}
+             "kita_plaetze_u3": int(a["kita_plaetze_u3"]), "kita_plaetze_ue3": int(a["kita_plaetze_ue3"]),
+             "schulen": int(a["schulen"])}
         if e >= MIN_EINWOHNER:
             v["unter_18"] = round(a["unter_18"] / e, 1)
             v["ab_65"] = round(a["ab_65"] / e, 1)
@@ -508,7 +548,7 @@ def kennzahlen():
             v["bodenrichtwert_abdeckung"] = round(100 - 100 * a["brw_ohne_zone"] / e, 1)   # Anteil der Einwohner in einer Zone
             v["hitze"] = round(100 * a["klima_dringend"] / a["klima_ew"], 1) if a["klima_ew"] else None
             v["ueberschwemmung"] = round(100 * a["ueberschwemmung"] / e, 1)
-            if wahl and g[0] == "bonn":
+            if wahl and g[0] == "stadt":
                 v["wahlbeteiligung"] = round(100 * wahl[2][1] / wahl[2][0], 1)
             elif wahl and a["wahl_a"] and (g[0] == "bezirk" or g[1] in wahl[1]):
                 v["wahlbeteiligung"] = round(100 * a["wahl_w"] / a["wahl_a"])   # geschätzt: ganze Prozent
@@ -521,9 +561,15 @@ def kennzahlen():
     return werte, audit, (wahl[3] if wahl else None)
 
 
-# Zuschaltbare Flächen der Karte (nur beim Einschalten geladen): Überschwemmungsgebiete je Art, Bodenrichtwertzonen.
-# Gröber vereinfacht als die Gebietsflächen (etwa 5 m), weil sie nur zur Einordnung dienen; verbindlich sind die Quellen.
-FLAECHEN = {"ueberschwemmung": (UESG, ("art",)), "bodenrichtwerte": (BRW, ("zone", "brw", "ergaenzung", "stichtag"))}
+# Zuschaltbare Flächen der Karte (nur beim Einschalten geladen): Überschwemmungsgebiete je Art, Bodenrichtwertzonen,
+# Klimaanalyse (Handlungspriorität). Gröber vereinfacht als die Gebietsflächen (etwa 5 m), weil sie nur zur Einordnung
+# dienen; verbindlich sind die Quellen.
+FLAECHEN = {"ueberschwemmung": (UESG, ("art",)), "bodenrichtwerte": (BRW, ("zone", "brw", "ergaenzung", "stichtag")),
+            "klima": (KLIMA, ("prioritaet",))}
+# Zuschaltbare Punkte (GeoJSON, Eigenschaften ohne Kontaktdaten): Datei, Felder, Quelle
+PUNKTE = {"kitas": (KITAS, ("name", "plaetze_u3", "plaetze_ue3"), "kitas"),
+          "schulen": (SCHULEN, ("name", "schulform", "traeger"), "schulen"),
+          "haltestellen": (HALT, ("name", "steige"), "haltestellen")}
 FLAECHEN_TOLERANZ = 0.00005
 
 
@@ -544,10 +590,18 @@ def zuschaltbar(ziel):
         gj = {"features": [{**f, "properties": {k: f["properties"].get(k) for k in felder}} for f in gj["features"]]}
         data = flaechen.simplify(gj, FLAECHEN_TOLERANZ)
         (ziel / f"{name}.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n")
+    for name, (src, felder, _) in PUNKTE.items():
+        if not src.exists():
+            continue
+        with open(src, encoding="utf-8") as f:
+            feats = [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [float(r["lon"]), float(r["lat"])]},
+                      "properties": {k: r.get(k) for k in felder}} for r in csv.DictReader(f, delimiter="\t")]
+        (ziel / f"punkte_{name}.json").write_text(json.dumps({"type": "FeatureCollection", "features": feats},
+                                                              ensure_ascii=False, separators=(",", ":")) + "\n")
 
 
 def write():
-    """Pipeline-Schritt `kontext`: export/bonn/kontext.json und export/audit_kontext.tsv."""
+    """Pipeline-Schritt `kontext`: export/<stadt>/kontext.json, flaechen/ und export/audit_kontext.tsv."""
     if not all(p.exists() for p in (ZENSUS, BRW, KLIMA, UESG, KITAS, HALT, STAND, HALT_STAND)):
         print("Kontextdaten: Ausschnitte fehlen (python -m pipeline kontext-ausschnitte) – übersprungen.")
         return
@@ -563,13 +617,13 @@ def write():
             "kennzahlen": {k: {"titel": t, "einheit": u, "quelle": q, "methode": m, **({"ohne_wert": OHNE_WERT[k]} if k in OHNE_WERT else {})}
                            for k, (t, u, q, m) in KENNZAHLEN.items() if k != "wahlbeteiligung" or audit_wahl}}
     doc = {"meta": meta,
-           "bonn": werte[("bonn", "Bonn")],
+           "stadt": werte[("stadt", config.STADT_NAME)],
            "bezirke": {n: v for (art, n), v in werte.items() if art == "bezirk"},
            "ortsteile": {n: v for (art, n), v in werte.items() if art == "ortsteil"},
            "stadtbezirk_je_ortsteil": zuordnung}
-    out = config.EXPORT / "bonn" / OUT
+    out = config.EXPORT / config.STADT / OUT
     out.parent.mkdir(parents=True, exist_ok=True)
-    zuschaltbar(config.EXPORT / "bonn" / "flaechen")
+    zuschaltbar(config.EXPORT / config.STADT / "flaechen")
     out.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":"), sort_keys=True) + "\n")
     with open(config.EXPORT / AUDIT, "w", newline="", encoding="utf-8") as f:
         wr = csv.writer(f, delimiter="\t", lineterminator="\n")
@@ -583,39 +637,40 @@ def write():
                          "hauptortsteil", "anteil_adressen_hauptortsteil", "weitere_ortsteile_adressen"])
             wr.writerows(audit_wahl)
     print(f"Kontextdaten: {len(doc['ortsteile'])} Ortsteile, {len(doc['bezirke'])} Stadtbezirke, "
-          f"Bonn {doc['bonn']['einwohner']} Einwohner → {out}")
+          f"{config.STADT_NAME} {doc['stadt']['einwohner']} Einwohner → {out}")
 
 
-# Bevölkerung Bonn am 31.12.2022 auf Basis des Zensus 2022 (IT.NRW, Kommunalprofil Bonn, Stand 15.01.2026)
-AMTLICH_EINWOHNER = 322221
-# Wahlbeteiligung der Ratswahl 2025 in Bonn laut Heft 3 der Stadt (160.220 von 247.052 Wahlberechtigten)
-AMTLICH_WAHLBETEILIGUNG = 64.9
+# Bevölkerung Köln am 31.12.2022, Fortschreibung auf Basis des Zensus 2022 (IT.NRW, Kommunalprofil Köln, Stand
+# 15.01.2026, statistik.nrw/sites/default/files/municipalprofiles/l05315.pdf)
+AMTLICH_EINWOHNER = 1021253
+# Wahlbeteiligung: für Köln noch ohne Quelle (keine Kennzahl)
+AMTLICH_WAHLBETEILIGUNG = None
 
 
 def pruefen(path=None):
     """Prüfung (Teil von `check`): Einwohnersumme nahe am amtlichen Wert, jede Kennzahl mit Quelle, Lizenz und Stand,
     keine Anteile unter der Mindestgröße. Liefert eine Liste von Befunden (leer = in Ordnung)."""
-    path = Path(path or config.EXPORT / "bonn" / OUT)
+    path = Path(path or config.EXPORT / config.STADT / OUT)
     if not path.exists():
         print("Kontextdaten: nicht erzeugt – keine Prüfung.")
         return []
     doc = json.loads(path.read_text())
     befunde = []
-    ew = doc["bonn"]["einwohner"]
+    ew = doc["stadt"]["einwohner"]
     if abs(ew - AMTLICH_EINWOHNER) / AMTLICH_EINWOHNER > 0.03:
-        befunde.append(f"Einwohner Bonn {ew} weicht mehr als 3 % vom amtlichen Wert {AMTLICH_EINWOHNER} ab")
+        befunde.append(f"Einwohner {config.STADT_NAME} {ew} weicht mehr als 3 % vom amtlichen Wert {AMTLICH_EINWOHNER} ab")
     for k, d in doc["meta"]["kennzahlen"].items():
         q = doc["meta"]["quellen"].get(d["quelle"]) or {}
         if not q.get("lizenz") or not q.get("stand"):
             befunde.append(f"Kennzahl {k}: Quelle {d['quelle']} ohne Lizenz oder Stand")
-    wb = doc["bonn"].get("wahlbeteiligung")
-    if wb is not None and wb != AMTLICH_WAHLBETEILIGUNG:
-        befunde.append(f"Wahlbeteiligung Bonn {wb} % weicht vom amtlichen Wert {AMTLICH_WAHLBETEILIGUNG} % ab")
+    wb = doc["stadt"].get("wahlbeteiligung")
+    if wb is not None and AMTLICH_WAHLBETEILIGUNG is not None and wb != AMTLICH_WAHLBETEILIGUNG:
+        befunde.append(f"Wahlbeteiligung {config.STADT_NAME} {wb} % weicht vom amtlichen Wert {AMTLICH_WAHLBETEILIGUNG} % ab")
     for n, v in doc["ortsteile"].items():
         if v.get("wahlbeteiligung") is not None and not 20 <= v["wahlbeteiligung"] <= 95:
             befunde.append(f"{n}: Wahlbeteiligung {v['wahlbeteiligung']} % außerhalb des plausiblen Bereichs")
         if v["einwohner"] < doc["meta"]["mindest_einwohner"] and ANTEILE & set(v):
             befunde.append(f"{n}: Anteile trotz {v['einwohner']} Einwohnern")
-    print(f"Kontextdaten: Einwohner Bonn {ew} (amtlich 31.12.2022: {AMTLICH_EINWOHNER}), "
+    print(f"Kontextdaten: Einwohner {config.STADT_NAME} {ew} (amtlich 31.12.2022: {AMTLICH_EINWOHNER}), "
           f"{len(doc['ortsteile'])} Ortsteile; Befunde: {befunde or 'keine'}")
     return befunde
