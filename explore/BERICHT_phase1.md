@@ -47,3 +47,24 @@ Quellen sind Landesdienste (IT.NRW), Wahlergebnisse, Presse, Seiten der Fraktion
 | `ergebnisse/sessionnet_befunde.tsv` | Sperre von mandari, Verhalten von SessionNet, Spiegel | Sperre als stiller Verbindungsabbruch ohne HTTP-Code; laut mandari Abrufe in Köln nur 23–1 Uhr und kein automatischer PDF-Abruf (beides ohne Quelle der Stadt); kein aktueller, lizenzklarer Spiegel |
 
 **Folgerungen (freigegeben 05.11.2026, umgesetzt):** Zeitfenster vorsorglich 23–1 Uhr; Zeitüberschreitung als mögliche Sperre werten (Pause über Stunden); Wiederholungen bei `links.next` erkennen; `links.next` unverändert übernehmen; Zeitfenster, PDF-Abruf und GitHub-Actions-Adressen in der Anfrage an die Stadt nennen; Bebauungspläne aus der Landesschnittstelle für Stufe B.
+
+## 5. Messung Stufe 1 (07.11.2026, 23:07 Uhr, 3 Anfragen)
+
+Grundlage: mündliche Einwilligung der Stadt (CLAUDE.md 9). Der Befehl aus `STUFEN.md` lief einmal; Ergebnisse in `ergebnisse/oparl_test.tsv` und `ergebnisse/oparl_laeufe.tsv`.
+
+| Anfrage | Status | Antwortzeit | Größe |
+|---|---|---|---|
+| System | 200 | 1,21 s | 634 B |
+| Body | 200 | 0,67 s | 2 843 B |
+| Vorlagen, Seite 1 | 200 | 2,84 s | 48 431 B |
+
+1. **Erreichbar, ohne Auffälligkeiten:** keine Weiterleitung, kein 429 oder 5xx, keine Antwort über 5 s. SessionNet mit OParl 1.1 (Somacos, `oparl=v1.6.1`).
+2. **Lizenz:** `license` ist in System und Body `null`; der Body nennt nur `licenseValidSince` (31.01.2017). Die Frage aus CLAUDE.md 8 bleibt offen, die Namensnennung bleibt Pflicht.
+3. **Keine Gesamtzahlen:** `pagination` enthält nur `elementsPerPage` (25) und `currentPage`; `totalElements`, `totalPages` und `links.last` fehlen. Den Umfang eines Vollabrufs liefert die Schnittstelle also nicht. Die höchste Vorlagen-Kennung ist 135557; ob die Kennungen je Objektart fortlaufen, ist offen. Eine Suche über hohe Seitennummern scheidet aus, weil sie laut Stichprobe mit HTTP 401 endet und als mögliche Sperre zählen würde.
+4. **Folgeseiten:** `links` enthält `first`, `self` und `next`; `next` lautet `…/papers?page=2` (Parameter `page`, ohne URL-Kodierung).
+5. **Sortierung:** neueste zuerst (`created` absteigend; Kennungen 135557 bis 135481; Datum 03. bis 06.11.2026). Bei einem Vollabruf über mehrere Nächte verschieben neue Vorlagen die Seiten nach hinten: Doppelungen sind möglich, Lücken nur bei Löschungen.
+6. **Felder** (n = 25, nur die jüngsten Vorlagen): `auxiliaryFile` bei allen (1–3 PDF), `consultation` bei allen (je eine, mit `meeting`, `agendaItem`, `organization`, `role`). `mainFile`, `location`, `underDirectionOf`, `originatorPerson` und `originatorOrganization` fehlen bei allen 25. Referenzen: 18 × `AN/NNNN/JJJJ`, 7 × `NNNN/JJJJ`.
+7. **`paperType` trägt Gremium und Fraktion:** 15 verschiedene Typen auf einer Seite, etwa „Antrag nach § 3 BV2 (CDU)“ oder „Änderungsantrag BV1 (Grüne)“. Das ist eine strukturierte Quelle für Fraktionen (5.3) und für die Bezirksvertretung.
+8. **Body:** drei Wahlperioden (2014–2020, 2020–2025, 2025–2030 ab 01.11.2025), Kontaktangaben vorhanden, AGS 05315000.
+
+**Folgen (zur Entscheidung):** Stufe 2 kann die Gesamtzahlen je Liste nicht aus `pagination` ablesen; die übrigen Ziele (Wirkung von `limit`, `modified_since`, `created_since`/`created_until`, erste Seiten von `meeting`, `organization`, `person`) bleiben unverändert. Fehlt `mainFile` auch in der Stichprobe (Stufe 3), muss die Auswahl der PDF-Köpfe (Stufe 6) auf `auxiliaryFile` umgestellt werden.
