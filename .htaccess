@@ -46,8 +46,3 @@ AddCharset utf-8 .json .geojson .tsv .md .js .css .xml .ics
 
 RedirectMatch 404 /\.git
 ErrorDocument 404 /404.html
-
-# Nur Platzhalter (bis zum ersten Lauf mit Daten): nicht in Suchmaschinen aufnehmen
-<IfModule mod_headers.c>
-  Header always set X-Robots-Tag "noindex, nofollow"
-</IfModule>

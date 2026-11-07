@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>Inhalte abonnieren und weiterverwenden – Ratsatlas Köln</title>
+  <meta name="description" content="Feeds des Ratsatlas Köln abonnieren oder einbinden: neue Vorlagen und Beratungsergebnisse aus ganz Köln, je Gebiet und je Thema, offen und ohne Konto.">
+  <link rel="canonical" href="https://koeln.ratsatlas.de/rss/">
+  <link rel="icon" href="../favicon.ico" sizes="32x32">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../page.css">
+  <link rel="alternate" type="application/atom+xml" title="Ratsatlas Köln – ganz Köln" href="../data/export/koeln/feeds/ganz-koeln.xml">
+</head>
+<body>
+  <header class="page-head">
+    <a class="page-brand" href="../"><img src="../favicon.svg" width="32" height="32" alt="">Ratsatlas <span>Köln</span></a>
+    <a class="page-back" href="../">Zur Karte</a>
+  </header>
+  <main class="page">
+    <h1>Inhalte abonnieren und weiterverwenden</h1>
+    <p class="lead">Erhalten Sie neue Vorlagen und Beratungsergebnisse automatisch oder binden Sie sie in Ihre eigene Website ein. RSS ist offen, kostenlos und braucht kein Benutzerkonto.</p>
+
+    <section class="rss-cta" aria-labelledby="rss-adresse-t">
+      <h2 id="rss-adresse-t">Feed für ganz Köln</h2>
+      <label for="rss-url">Feed-Adresse</label>
+      <input id="rss-url" class="rss-url" type="text" readonly value="https://koeln.ratsatlas.de/data/export/koeln/feeds/ganz-koeln.xml" spellcheck="false" autocomplete="off">
+      <div class="rss-aktionen">
+        <button type="button" class="rss-knopf rss-haupt" data-kopieren="#rss-url" hidden>RSS-Adresse kopieren</button>
+        <a class="rss-knopf rss-zweit" href="../data/export/koeln/feeds/ganz-koeln.xml" type="application/atom+xml">Feed direkt ansehen</a>
+      </div>
+      <p class="rss-meldung" id="rss-meldung" role="status" aria-live="polite"></p>
+      <p class="meta">Neue Vorlagen und Beratungsergebnisse aus allen Gebieten, die letzten 100 Einträge, aktualisiert einmal am Tag, frühmorgens. Ohne Kopierknopf: Adresse im Feld markieren und kopieren (Strg+C, am Mac ⌘+C).</p>
+    </section>
+
+    <nav class="thema-sprung" aria-label="Auf dieser Seite"><span>Auf dieser Seite:</span> <a href="#abonnieren">Einfach abonnieren</a> · <a href="#einbinden">In eine Website einbinden</a> · <a href="#technik">Automatisiert weiterverarbeiten</a></nav>
+
+    <section class="rss-zugang" id="abonnieren" aria-labelledby="abonnieren-t">
+      <p class="rss-fuer">Für alle, ohne Vorkenntnisse</p>
+      <h2 id="abonnieren-t">Einfach abonnieren</h2>
+      <ol class="rss-schritte">
+        <li><strong>Feed-Reader wählen.</strong> Ein Feed-Reader sammelt Neuigkeiten von Websites. Kostenlos und ohne Konto zum Beispiel: <a href="https://www.thunderbird.net/de/" target="_blank" rel="noopener">Thunderbird</a> (E-Mail-Programm, Windows, macOS, Linux), <a href="https://netnewswire.com/" target="_blank" rel="noopener">NetNewsWire</a> (Mac, iPhone, iPad), <a href="https://f-droid.org/packages/com.nononsenseapps.feeder/" target="_blank" rel="noopener">Feeder</a> (Android).</li>
+        <li><strong>Adresse einfügen.</strong> Kopieren Sie die Feed-Adresse oben und fügen Sie sie im Reader bei „Feed hinzufügen“ oder „Abonnieren“ ein.</li>
+        <li><strong>Neues erhalten.</strong> Der Reader zeigt neue Einträge von selbst, sobald die Karte sie übernimmt (einmal am Tag, frühmorgens). Abbestellen geht jederzeit im Reader; der Ratsatlas erfährt davon nichts.</li>
+      </ol>
+      <p class="rss-weiter"><button type="button" class="rss-knopf rss-haupt" data-kopieren="#rss-url" hidden>RSS-Adresse kopieren</button> <a href="#weitere">Nur ein Gebiet oder Thema abonnieren</a></p>
+      <details class="hh-mehr" id="weitere">
+        <summary>Feeds für einzelne Gebiete und Themen</summary>
+        <p>Diese Feeds enthalten nur die Vorlagen eines Gebiets oder einer Themenseite. Für einen einzelnen Vorgang gibt es in der <a href="../">Karte</a> beim Vorgang unter „Mitmachen“ einen eigenen Feed.</p>
+        
+        
+        
+      </details>
+    </section>
+
+    <section class="rss-zugang" id="einbinden" aria-labelledby="einbinden-t">
+      <p class="rss-fuer">Für Redaktionen und Website-Verantwortliche</p>
+      <h2 id="einbinden-t">In eine Website einbinden</h2>
+      <p>Ihre Website braucht eine Funktion oder Erweiterung, die Feeds einliest, etwa ein „RSS-Block“, ein „Feed-Widget“ oder ein „Aggregator“. In WordPress gibt es dafür den Block „RSS“. Dort tragen Sie die Feed-Adresse ein; die Erweiterung holt neue Einträge selbst.</p>
+      <p>Damit Browser und Reader den Feed auf Ihrer Seite finden, genügt eine Zeile im Kopf (<code>&lt;head&gt;</code>) der Seite:</p>
+      <pre class="rss-code" id="rss-head" tabindex="0"><code>&lt;link rel=&quot;alternate&quot; type=&quot;application/atom+xml&quot;
+      title=&quot;Ratsatlas Köln – ganz Köln&quot;
+      href=&quot;https://koeln.ratsatlas.de/data/export/koeln/feeds/ganz-koeln.xml&quot;&gt;</code></pre>
+      <p class="rss-weiter"><button type="button" class="rss-knopf rss-zweit" data-kopieren="#rss-head" hidden>Zeile kopieren</button> <a href="#technik">Technische Angaben</a></p>
+      <p class="meta">Bitte nennen Sie die Quelle „Ratsatlas Köln“ und „Datenquelle: Stadt Köln – offenedaten-koeln.de“. Die Angaben stammen aus dem Ratsinformationssystem der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen); maßgeblich ist das Original. Einzelheiten in der <a href="https://github.com/daimpad/ratsatlas-koeln/blob/main/data/LICENSE-DATA.md" target="_blank" rel="noopener">Lizenz der Daten</a>.</p>
+    </section>
+
+    <section class="rss-zugang rss-technik" id="technik" aria-labelledby="technik-t">
+      <p class="rss-fuer">Für Entwicklerinnen und Entwickler</p>
+      <h2 id="technik-t">Automatisiert weiterverarbeiten</h2>
+      <dl class="rss-felder">
+        <dt>Format</dt><dd>Atom 1.0 (<a href="https://www.rfc-editor.org/rfc/rfc4287" target="_blank" rel="noopener">RFC 4287</a>), UTF-8. Atom erfüllt denselben Zweck wie RSS 2.0; jeder gängige Reader liest beides.</dd>
+        <dt>Feed</dt><dd><code>id</code>, <code>title</code>, <code>subtitle</code>, <code>updated</code> (jüngster Eintrag), <code>link rel="self"</code>, <code>link rel="alternate"</code> (Karte), <code>author</code>, <code>rights</code> (Lizenz).</dd>
+        <dt>Eintrag</dt><dd><code>id</code>, <code>title</code>, <code>updated</code>, <code>link rel="alternate"</code> (Vorgang in der Karte), <code>link rel="related"</code> (Original im Ratsinformationssystem der Stadt), <code>summary</code> (Art, federführendes Amt, Stand; gekennzeichnete KI-Kurzfassung, wo vorhanden).</dd>
+        <dt>Kennung</dt><dd><code>id</code> ist stabil und entspricht <code>guid</code> in RSS: OParl-Adresse der Vorlage und Art des Ereignisses, z. B. <code>…/oparl/papers/2022978#vorlage</code>, <code>…#beratung-2026-06-10-Rat</code>, <code>…#folge-…</code>. Dieselbe Vorlage hat in allen Feeds dieselbe Kennung.</dd>
+        <dt>Datum</dt><dd><code>updated</code> ist der Tag des Ereignisses (Datum der Vorlage oder der Sitzung), immer 00:00 UTC; ein eigenes Veröffentlichungsdatum gibt es nicht.</dd>
+        <dt>Umfang</dt><dd>Die letzten 100 Einträge je Feed, neueste zuerst; Feeds je Vorgang enthalten alle Ereignisse.</dd>
+        <dt>Adressen</dt><dd><code>data/export/koeln/feeds/ganz-koeln.xml</code>, <code>feeds/ortsteil-&lt;name&gt;.xml</code>, <code>feeds/bezirk-&lt;name&gt;.xml</code>, <code>feeds/ohne-&lt;jahr&gt;.xml</code>, <code>feeds/vorlagen/&lt;drucksache&gt;.xml</code>, <code>dossiers/&lt;thema&gt;.xml</code>.</dd>
+        <dt>Abruf</dt><dd>Die Feeds ändern sich höchstens einmal am Tag (täglicher Lauf ab 22:10 Uhr UTC). Bitte höchstens einmal pro Stunde abrufen, besser einmal am Tag; der Server beantwortet bedingte Abrufe (<code>If-Modified-Since</code>, <code>If-None-Match</code>). Ohne Schlüssel und ohne Anmeldung. Für den Abruf aus dem Browser anderer Websites (CORS) nutzen Sie derzeit den Spiegel <code>https://daimpad.github.io/ratsatlas-koeln/</code> mit denselben Pfaden; auf der Hauptadresse ist die Freigabe noch nicht eingerichtet.</dd>
+      </dl>
+      <p>Beispiel in Python, nur mit der Standardbibliothek:</p>
+      <pre class="rss-code" id="rss-python" tabindex="0"><code>import urllib.request
+import xml.etree.ElementTree as ET
+
+URL = &quot;https://koeln.ratsatlas.de/data/export/koeln/feeds/ganz-koeln.xml&quot;
+ATOM = {&quot;a&quot;: &quot;http://www.w3.org/2005/Atom&quot;}
+
+with urllib.request.urlopen(URL, timeout=30) as antwort:
+    feed = ET.parse(antwort).getroot()
+
+for eintrag in feed.findall(&quot;a:entry&quot;, ATOM):
+    kennung = eintrag.findtext(&quot;a:id&quot;, namespaces=ATOM)  # wie guid
+    datum = eintrag.findtext(&quot;a:updated&quot;, namespaces=ATOM)
+    titel = eintrag.findtext(&quot;a:title&quot;, namespaces=ATOM)
+    karte = eintrag.find(&quot;a:link[@rel=&#x27;alternate&#x27;]&quot;, ATOM).get(&quot;href&quot;)
+    print(datum[:10], titel, karte)
+</code></pre>
+      <p class="rss-weiter"><button type="button" class="rss-knopf rss-zweit" data-kopieren="#rss-python" hidden>Beispiel kopieren</button> <a href="../data/export/koeln/feeds/ganz-koeln.xml" type="application/atom+xml">Feed direkt ansehen</a> · <a href="https://github.com/daimpad/ratsatlas-koeln/blob/main/pipeline/publish.py" target="_blank" rel="noopener">Erzeugung der Feeds (Quelltext)</a></p>
+    </section>
+    <p><a href="../">Zur Karte</a> · <a href="../gebiete/">Alle Gebiete</a></p>
+    <script src="../rss.js" defer></script>
+  </main>
+  <footer class="page-foot">
+    <a href="../gebiete/">Alle Gebiete</a> · <a href="../begriffe/">Begriffe</a> · <a href="../rss/">Abonnieren (RSS)</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a>
+    <br>Datenquelle: Stadt Köln – offenedaten-koeln.de · <a href="../data/LICENSE-DATA.md">Lizenzen der Daten</a>
+  </footer>
+</body>
+</html>

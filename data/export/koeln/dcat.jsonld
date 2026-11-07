@@ -1,0 +1,292 @@
+{
+ "@context": {
+  "dcat": "http://www.w3.org/ns/dcat#",
+  "dct": "http://purl.org/dc/terms/",
+  "foaf": "http://xmlns.com/foaf/0.1/",
+  "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+  "xsd": "http://www.w3.org/2001/XMLSchema#",
+  "locn": "http://www.w3.org/ns/locn#"
+ },
+ "@id": "https://koeln.ratsatlas.de/data/export/koeln/dcat.jsonld#dataset",
+ "@type": "dcat:Dataset",
+ "dct:title": {
+  "@language": "de",
+  "@value": "Ratsatlas Köln – Ratsvorlagen räumlich, zeitlich und nach Akteuren"
+ },
+ "dct:description": {
+  "@language": "de",
+  "@value": "Vorlagen aus dem Ratsinformationssystem der Stadt Köln mit Ortsbezug (Stadtteil, Straße; Stufe A aus der OParl-API, Stufe B regelbasiert aus dem Titel), Prozessschritten mit Evidenzstatus, Beratungsfolge und Ergebnissen, federführendem Amt und abgeleiteten Einreichenden. Abgeleitete Angaben sind gekennzeichnet."
+ },
+ "dcat:keyword": [
+  "Ratsinformationssystem",
+  "OParl",
+  "Köln",
+  "Kommunalpolitik",
+  "Vorlagen",
+  "Bezirksvertretung",
+  "Stadtrat",
+  "Bürgerbeteiligung"
+ ],
+ "dcat:theme": {
+  "@id": "http://publications.europa.eu/resource/authority/data-theme/GOVE"
+ },
+ "dct:language": {
+  "@id": "http://publications.europa.eu/resource/authority/language/DEU"
+ },
+ "dct:accrualPeriodicity": {
+  "@id": "http://publications.europa.eu/resource/authority/frequency/DAILY"
+ },
+ "dct:modified": {
+  "@type": "xsd:date",
+  "@value": "2026-11-07"
+ },
+ "dct:spatial": {
+  "@type": "dct:Location",
+  "rdfs:label": "Köln",
+  "dcat:bbox": {
+   "@type": "http://www.opengis.net/ont/geosparql#wktLiteral",
+   "@value": "POLYGON((6.77 50.83, 7.17 50.83, 7.17 51.09, 6.77 51.09, 6.77 50.83))"
+  }
+ },
+ "dct:publisher": {
+  "@type": "foaf:Agent",
+  "foaf:name": "Ratsatlas Köln",
+  "foaf:homepage": {
+   "@id": "https://github.com/daimpad/ratsatlas-koeln"
+  }
+ },
+ "dct:source": [
+  {
+   "@id": "https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln"
+  }
+ ],
+ "dcat:landingPage": {
+  "@id": "https://koeln.ratsatlas.de/"
+ },
+ "dcat:distribution": [
+  {
+   "@id": "https://koeln.ratsatlas.de/data/export/koeln/vorlagen.geojson",
+   "@type": "dcat:Distribution",
+   "dct:title": {
+    "@language": "de",
+    "@value": "Verortete Vorlagen (GeoJSON)"
+   },
+   "dct:description": {
+    "@language": "de",
+    "@value": "Ein Punkt je Vorlage und Ort mit Stufe, Methode, Konfidenz und Fundstelle der Verortung."
+   },
+   "dcat:accessURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/vorlagen.geojson"
+   },
+   "dcat:downloadURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/vorlagen.geojson"
+   },
+   "dcat:mediaType": {
+    "@id": "https://www.iana.org/assignments/media-types/application/geo+json"
+   },
+   "dct:license": {
+    "@id": "http://dcat-ap.de/def/licenses/dl-zero-de/2.0"
+   },
+   "dct:rights": {
+    "@type": "dct:RightsStatement",
+    "rdfs:label": "Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den Kölner Geodaten (dl-de/zero 2.0); Datenquelle: Stadt Köln – offenedaten-koeln.de. Ortsbezüge aus OpenStreetMap, falls vorhanden, ODbL 1.0. Einzelheiten: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+   }
+  },
+  {
+   "@id": "https://daimpad.github.io/ratsatlas-koeln/data/export/ratsatlas-koeln-export.zip",
+   "@type": "dcat:Distribution",
+   "dct:title": {
+    "@language": "de",
+    "@value": "Datenpaket (Zip)"
+   },
+   "dct:description": {
+    "@language": "de",
+    "@value": "Alle Exporte, Audit-Protokolle (TSV), Verifikation und Lizenzübersicht."
+   },
+   "dcat:accessURL": {
+    "@id": "https://daimpad.github.io/ratsatlas-koeln/data/export/ratsatlas-koeln-export.zip"
+   },
+   "dcat:downloadURL": {
+    "@id": "https://daimpad.github.io/ratsatlas-koeln/data/export/ratsatlas-koeln-export.zip"
+   },
+   "dcat:mediaType": {
+    "@id": "https://www.iana.org/assignments/media-types/application/zip"
+   },
+   "dct:license": {
+    "@id": "http://dcat-ap.de/def/licenses/dl-zero-de/2.0"
+   },
+   "dct:rights": {
+    "@type": "dct:RightsStatement",
+    "rdfs:label": "Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den Kölner Geodaten (dl-de/zero 2.0); Datenquelle: Stadt Köln – offenedaten-koeln.de. Ortsbezüge aus OpenStreetMap, falls vorhanden, ODbL 1.0. Einzelheiten: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+   }
+  },
+  {
+   "@id": "https://koeln.ratsatlas.de/data/export/koeln/zeit.json",
+   "@type": "dcat:Distribution",
+   "dct:title": {
+    "@language": "de",
+    "@value": "Zeitleiste: Monatsaggregate (JSON)"
+   },
+   "dct:description": {
+    "@language": "de",
+    "@value": "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden."
+   },
+   "dcat:accessURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/zeit.json"
+   },
+   "dcat:downloadURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/zeit.json"
+   },
+   "dcat:mediaType": {
+    "@id": "https://www.iana.org/assignments/media-types/application/json"
+   },
+   "dct:license": {
+    "@id": "http://dcat-ap.de/def/licenses/dl-zero-de/2.0"
+   },
+   "dct:rights": {
+    "@type": "dct:RightsStatement",
+    "rdfs:label": "Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den Kölner Geodaten (dl-de/zero 2.0); Datenquelle: Stadt Köln – offenedaten-koeln.de. Ortsbezüge aus OpenStreetMap, falls vorhanden, ODbL 1.0. Einzelheiten: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+   }
+  },
+  {
+   "@id": "https://koeln.ratsatlas.de/data/export/koeln/prozesse.json",
+   "@type": "dcat:Distribution",
+   "dct:title": {
+    "@language": "de",
+    "@value": "Typische Wege je Vorlagenart (JSON)"
+   },
+   "dct:description": {
+    "@language": "de",
+    "@value": "Häufigste Abfolgen von Beratungen und Ergebnissen je Vorlagenart."
+   },
+   "dcat:accessURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/prozesse.json"
+   },
+   "dcat:downloadURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/prozesse.json"
+   },
+   "dcat:mediaType": {
+    "@id": "https://www.iana.org/assignments/media-types/application/json"
+   },
+   "dct:license": {
+    "@id": "http://dcat-ap.de/def/licenses/dl-zero-de/2.0"
+   },
+   "dct:rights": {
+    "@type": "dct:RightsStatement",
+    "rdfs:label": "Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den Kölner Geodaten (dl-de/zero 2.0); Datenquelle: Stadt Köln – offenedaten-koeln.de. Ortsbezüge aus OpenStreetMap, falls vorhanden, ODbL 1.0. Einzelheiten: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+   }
+  },
+  {
+   "@id": "https://koeln.ratsatlas.de/data/export/koeln/termine.ics",
+   "@type": "dcat:Distribution",
+   "dct:title": {
+    "@language": "de",
+    "@value": "Sitzungskalender (iCalendar)"
+   },
+   "dct:description": {
+    "@language": "de",
+    "@value": "Sitzungen von Rat, Ausschüssen und Bezirksvertretungen mit Links zur Tagesordnung."
+   },
+   "dcat:accessURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/termine.ics"
+   },
+   "dcat:downloadURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/termine.ics"
+   },
+   "dcat:mediaType": {
+    "@id": "https://www.iana.org/assignments/media-types/text/calendar"
+   },
+   "dct:license": {
+    "@id": "http://dcat-ap.de/def/licenses/dl-zero-de/2.0"
+   },
+   "dct:rights": {
+    "@type": "dct:RightsStatement",
+    "rdfs:label": "Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den Kölner Geodaten (dl-de/zero 2.0); Datenquelle: Stadt Köln – offenedaten-koeln.de. Ortsbezüge aus OpenStreetMap, falls vorhanden, ODbL 1.0. Einzelheiten: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+   }
+  },
+  {
+   "@id": "https://koeln.ratsatlas.de/data/export/koeln/plaene.json",
+   "@type": "dcat:Distribution",
+   "dct:title": {
+    "@language": "de",
+    "@value": "Planregister Bebauungspläne (JSON)"
+   },
+   "dct:description": {
+    "@language": "de",
+    "@value": "Je Plannummer aus Vorlagentiteln: Vorlagen mit den im Titel genannten Verfahrensschritten nach BauGB (abgeleitet); Geltungsbereiche folgen, sobald eine Bezugsquelle vorliegt."
+   },
+   "dcat:accessURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/plaene.json"
+   },
+   "dcat:downloadURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/plaene.json"
+   },
+   "dcat:mediaType": {
+    "@id": "https://www.iana.org/assignments/media-types/application/json"
+   },
+   "dct:license": {
+    "@id": "http://dcat-ap.de/def/licenses/dl-zero-de/2.0"
+   },
+   "dct:rights": {
+    "@type": "dct:RightsStatement",
+    "rdfs:label": "Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den Kölner Geodaten (dl-de/zero 2.0); Datenquelle: Stadt Köln – offenedaten-koeln.de. Ortsbezüge aus OpenStreetMap, falls vorhanden, ODbL 1.0. Einzelheiten: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+   }
+  },
+  {
+   "@id": "https://koeln.ratsatlas.de/data/export/koeln/kontext.json",
+   "@type": "dcat:Distribution",
+   "dct:title": {
+    "@language": "de",
+    "@value": "Kennzahlen je Stadtteil (JSON)"
+   },
+   "dct:description": {
+    "@language": "de",
+    "@value": "Kennzahlen je Stadtteil, Stadtbezirk und für ganz Köln zur Einordnung von Vorlagen: Einwohner und Altersanteile und Nettokaltmiete (Zensus 2022, © Destatis), Bodenrichtwert Wohnbauland (BORIS NRW), Haltestellen (VRS), Kitas und Schulen (Land NRW), Hitze (Klimaanalyse NRW), Überschwemmungsgebiete (Land NRW); auf Stadtteile umgerechnet (abgeleitet), je Kennzahl mit Quelle, Lizenz und Stand."
+   },
+   "dcat:accessURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/kontext.json"
+   },
+   "dcat:downloadURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/kontext.json"
+   },
+   "dcat:mediaType": {
+    "@id": "https://www.iana.org/assignments/media-types/application/json"
+   },
+   "dct:license": {
+    "@id": "http://dcat-ap.de/def/licenses/dl-by-de/2.0"
+   },
+   "dct:rights": {
+    "@type": "dct:RightsStatement",
+    "rdfs:label": "Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den Kölner Geodaten (dl-de/zero 2.0); Datenquelle: Stadt Köln – offenedaten-koeln.de. Ortsbezüge aus OpenStreetMap, falls vorhanden, ODbL 1.0. Einzelheiten: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+   }
+  },
+  {
+   "@id": "https://koeln.ratsatlas.de/data/export/koeln/ebenen.json",
+   "@type": "dcat:Distribution",
+   "dct:title": {
+    "@language": "de",
+    "@value": "Kartenebenen (JSON)"
+   },
+   "dct:description": {
+    "@language": "de",
+    "@value": "Verzeichnis der zuschaltbaren Kartenebenen aus offenen Daten der Stadt, des Landes und des Bundes mit Quelle, Lizenz und Stand je Ebene; die Flächen liegen unter flaechen/ebene_*.json."
+   },
+   "dcat:accessURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/ebenen.json"
+   },
+   "dcat:downloadURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/ebenen.json"
+   },
+   "dcat:mediaType": {
+    "@id": "https://www.iana.org/assignments/media-types/application/json"
+   },
+   "dct:license": {
+    "@id": "http://dcat-ap.de/def/licenses/dl-by-de/2.0"
+   },
+   "dct:rights": {
+    "@type": "dct:RightsStatement",
+    "rdfs:label": "Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den Kölner Geodaten (dl-de/zero 2.0); Datenquelle: Stadt Köln – offenedaten-koeln.de. Ortsbezüge aus OpenStreetMap, falls vorhanden, ODbL 1.0. Einzelheiten: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+   }
+  }
+ ]
+}

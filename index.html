@@ -1,36 +1,533 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Ratsatlas Köln – in Vorbereitung</title>
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<style>
-:root{--bg:#fafaff;--text:#0f0f14;--muted:#5a5a68;--accent-ink:#6d28d9;--border:rgba(15,15,20,.1)}
-@media (prefers-color-scheme:dark){:root{--bg:#121218;--text:#f2f2f7;--muted:#b4b4c2;--accent-ink:#c4b5fd;--border:rgba(255,255,255,.15)}}
-body{margin:0;background:var(--bg);color:var(--text);font:1rem/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:40rem;margin:0 auto;padding:3rem 1rem}
-h1{font-size:1.75rem;line-height:1.25;margin:0 0 1rem}
-h2{font-size:1.1rem;margin:2rem 0 .5rem}
-a{color:var(--accent-ink)}
-a:focus-visible{outline:3px solid var(--accent-ink);outline-offset:2px}
-.hinweis{color:var(--muted)}
-footer{border-top:1px solid var(--border);margin-top:2.5rem;padding-top:1rem;font-size:.9rem;color:var(--muted)}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Content-Security-Policy: Skripte, Stile und Schrift nur von hier (Leaflet und Schrift lokal in vendor/ und fonts/,
+       Bibliotheken mit Integritätsprüfung), keine Inline-Skripte;
+       Verbindungen nur zu den Daten der Seite, den unterstützten Anbietern des Ratsassistenten und lokalen Modellen.
+       Inline-Stile bleiben erlaubt (Leaflet, Balken der Auswertung). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://api.anthropic.com https://api.mistral.ai https://openrouter.ai http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer</title>
+  <meta name="description" content="Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen.">
+  <meta name="author" content="Damian Paderta">
+  <meta name="robots" content="index, follow">
+  <!-- Adressen: pipeline/seo.py ersetzt https://koeln.ratsatlas.de/ beim Veröffentlichen durch SITE_URL -->
+  <link rel="canonical" href="https://koeln.ratsatlas.de/">
+  <meta name="theme-color" content="#7c3aed">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <!-- Feed-Erkennung: Feed über ganz Köln (Seite rss/); app.js ergänzt den Feed des gewählten Gebiets -->
+  <link rel="alternate" type="application/atom+xml" title="Ratsatlas Köln – ganz Köln" href="data/export/koeln/feeds/ganz-koeln.xml">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ratsatlas Köln">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:title" content="Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer">
+  <meta property="og:description" content="Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen.">
+  <meta property="og:url" content="https://koeln.ratsatlas.de/">
+  <!-- Vorschaubild für Köln folgt im zweiten Lauf (Entscheidung 04.11.2026); das Bonner Bild wird nicht ausgeliefert -->
+  <meta name="twitter:card" content="summary">
+  <!-- strukturierte Daten (nur Daten, wird nicht ausgeführt; mit der CSP vereinbar) -->
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@graph": [
+    {"@type": "WebSite", "@id": "https://koeln.ratsatlas.de/#website", "url": "https://koeln.ratsatlas.de/", "name": "Ratsatlas Köln", "inLanguage": "de",
+     "description": "Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen."},
+    {"@type": "WebApplication", "@id": "https://koeln.ratsatlas.de/#app", "url": "https://koeln.ratsatlas.de/", "name": "Ratsatlas Köln", "inLanguage": "de",
+     "applicationCategory": "ReferenceApplication", "operatingSystem": "Web-Browser", "isAccessibleForFree": true,
+     "license": "https://opensource.org/licenses/MIT",
+     "creator": {"@type": "Person", "name": "Damian Paderta"},
+     "spatialCoverage": {"@type": "City", "name": "Köln"},
+     "isBasedOn": "https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln",
+     "codeRepository": "https://github.com/daimpad/ratsatlas-koeln"}
+  ]}
+  </script>
+  <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Nur index.json vorab (erster Kartenausschnitt); alles Übrige lädt app.js nach den Kacheln (Schritt 1b) -->
+  <link rel="preload" href="data/export/koeln/index.json" as="fetch" crossorigin>
+  <!-- Leaflet- und MarkerCluster-Stile in einer Datei (Phase 0 „Verständlichkeit“); graue Kacheln vom eigenen Server -->
+  <link rel="stylesheet" href="vendor/leaflet/karte.min.css" integrity="sha512-wwPsYmnrqEZ8LY0nw6kiMjMDYyLmsaGxUZnBvGjz1X147eRBi9XOCqkJUK2hubjKolvOUcN/w60Jgdgb+3jXCw==">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<main>
-<h1>Ratsatlas Köln – in Vorbereitung</h1>
-<p>Der Ratsatlas Köln soll die öffentlichen Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf einer Karte, einer Zeitleiste und als Liste zeigen, mit Verweis auf das Original.</p>
-<p>Die Seite ist gebaut, aber noch nicht mit Daten der Stadt veröffentlicht. Daten werden erst abgerufen, wenn die Stadt Köln über das Vorhaben informiert ist.</p>
-<p>Code, Stand der Arbeit und Kontakt: <a href="https://github.com/daimpad/ratsatlas-koeln">github.com/daimpad/ratsatlas-koeln</a></p>
-<h2 id="datenschutz">Datenschutz</h2>
-<p>Verantwortlich: NOZILLA · Damian Paderta, Kaiser-Karl-Ring 26, 53111 Bonn, <a href="mailto:contact@nozilla.de">contact@nozilla.de</a>. Weitere Angaben im <a href="https://nozilla.de/impressum/">Impressum</a>.</p>
-<p>Diese Seite liegt beim Webhosting der netcup GmbH (Karlsruhe). Wie jeder Webserver führt er ein Zugriffsprotokoll: abgerufene Adresse, Datum und Uhrzeit, übertragene Datenmenge, Meldung über den Erfolg des Abrufs, verweisende Seite, Browsertyp und Betriebssystem sowie die IP-Adresse. Das dient der Auslieferung der Seite und dem Erkennen von Störungen und Angriffen (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Die Protokolle werden nach der beim Anbieter eingestellten Frist gelöscht.</p>
-<p>Die Seite setzt keine Cookies, speichert nichts auf Ihrem Gerät und lädt keine Inhalte von anderen Servern.</p>
-<p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung und Widerspruch; eine Nachricht an <a href="mailto:contact@nozilla.de">contact@nozilla.de</a> genügt. Beschweren können Sie sich bei der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen (Art. 77 DSGVO).</p>
-<footer><a href="/">Ratsatlas Köln</a> · <a href="https://nozilla.de/impressum/">Impressum</a> · <a href="/#datenschutz">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a></footer>
-</main>
+<body class="list-closed detail-open">
+  <p id="vorschau-hinweis" class="testdaten vorschau" role="status" hidden><strong>Vorschau:</strong> Die Karte zeigt Stadtteile und offene Daten (Menü „Ebenen“). Die Ratsvorlagen der Stadt Köln folgen, sobald der Abruf eingerichtet ist.</p>
+  <p id="testdaten-hinweis" class="testdaten" role="status" hidden><strong>Testdaten:</strong> Diese Fassung zeigt erfundene Vorlagen zur Prüfung der Seite, keine Daten der Stadt Köln.</p>
+  <noscript><div class="noscript glass"><p><strong>Ratsatlas Köln</strong> zeigt Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste. Für die Karte wird JavaScript benötigt.</p>
+    <p>Die Daten gibt es auch ohne Karte: <a href="https://daimpad.github.io/ratsatlas-koeln/data/export/ratsatlas-koeln-export.zip">Datenpaket (Zip)</a> · <a href="gebiete/">Vorlagen nach Gebiet</a> · <a href="data/export/koeln/vorlagen.geojson">GeoJSON</a> · <a href="https://github.com/daimpad/ratsatlas-koeln" target="_blank" rel="noopener">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></p></div></noscript>
+  <!-- Symbole (eigene Strichzeichnungen, 24er-Raster) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.6-4.6"/></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+      <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H6.5A2.5 2.5 0 0 0 4 5.5v13A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M6 17v-5M11 17V6M16 17v-8M21 17v-3"/></symbol>
+      <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16"/></symbol>
+      <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.6 3.2-6 6.5-6s6 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.6c1.8.9 3 2.7 3.2 5.4"/></symbol>
+      <symbol id="i-data" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.5"/><path d="M4.5 5.5v13c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5v-13M4.5 12c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10.5 5 8 4.5 4 4.5v13c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2v-13c-4 0-6.5.5-8 2z"/><path d="M12 6.5v13"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+      <symbol id="i-rss" viewBox="0 0 24 24"><path d="M5 11a8 8 0 0 1 8 8M5 4.5A14.5 14.5 0 0 1 19.5 19"/><circle cx="6" cy="18" r="1.4"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11.5l-2 4 2 4H5"/></symbol>
+      <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V12M14 11.5V6a1.5 1.5 0 0 1 3 0v8a7 7 0 0 1-7 7h-.6a6 6 0 0 1-4.5-2.1L2.6 16a1.5 1.5 0 0 1 2.2-2L8 16"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+      <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4.5A1.5 1.5 0 0 1 4.5 3H12l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.3"/></symbol>
+      <symbol id="i-code" viewBox="0 0 24 24"><path d="m9 8-5 4 5 4M15 8l5 4-5 4"/></symbol>
+      <symbol id="i-assist" viewBox="0 0 24 24"><path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20.5l1.4-4.4A7.5 7.5 0 1 1 20 12.5z"/><path d="M12.5 8.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-6 16-3-7z"/><path d="m11 13 9-9"/></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+      <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 8.5-8.5M16 7l2.5 2.5M18.5 4.5 21 7"/></symbol>
+      <symbol id="i-new" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></symbol>
+    </defs>
+  </svg>
+
+  <header>
+    <h1 class="site-title"><img src="favicon.svg" width="24" height="24" alt="">Ratsatlas <span>Köln</span></h1>
+    <nav class="nav glass" aria-label="Hauptmenü">
+      <div class="brand" aria-hidden="true"><img src="favicon.svg" width="28" height="28" alt="">Ratsatlas <span>Köln</span></div>
+      <form class="nav-search" id="nav-search" role="search">
+        <label class="visually-hidden" for="q">Vorlagen in ganz Köln suchen</label>
+        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <input type="search" id="q" placeholder="Vorlagen in ganz Köln suchen …" autocomplete="off" aria-controls="mega-suche">
+      </form>
+      <!-- Telefon: Gebiet, Flächen und Menüs hinter ☰ (Entscheidung 02.11.2026); auf breiten Bildschirmen ohne eigene Box -->
+      <button type="button" class="nav-burger" id="nav-burger" aria-expanded="false" aria-controls="nav-more">
+        <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>Menü</span></button>
+      <div class="nav-more" id="nav-more">
+      <label class="visually-hidden" for="f-area">Gebiet</label>
+      <select id="f-area" class="nav-area"></select>
+      <div class="nav-group seg" role="group" aria-label="Flächen ein- und ausblenden">
+        <button type="button" class="toggle" data-panel="panel-list" aria-controls="panel-list" aria-pressed="false" title="Alle Vorlagen im Gebiet als Liste">
+          <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg><span>Vorlagen</span></button>
+        <button type="button" class="toggle" data-panel="timeline-wrap" aria-controls="timeline-wrap" aria-pressed="false" title="Zeitleiste">
+          <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span>Zeitleiste</span></button>
+        <button type="button" class="toggle" data-panel="panel-detail" aria-controls="panel-detail" aria-pressed="true" title="Gewählter Vorgang">
+          <svg class="icon" aria-hidden="true"><use href="#i-doc"/></svg><span>Vorgang</span></button>
+        <button type="button" class="toggle" data-panel="panel-prozesse" aria-controls="panel-prozesse" aria-pressed="false" title="Verfahren, Gremien und Ämter: wer entscheidet was?" data-funktion="soll" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-route"/></svg><span>Prozesse</span></button>
+        <button type="button" class="toggle toggle-ai" data-panel="panel-assistent" aria-controls="panel-assistent" aria-pressed="false" title="Ratsassistent (KI)" data-funktion="chat" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-assist"/></svg><span>Assistent</span></button>
+      </div>
+      <div class="nav-group" role="group" aria-label="Menü">
+        <button type="button" class="menu-btn" data-mega="mega-auswertung" aria-expanded="false" aria-controls="mega-auswertung">
+          <svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Auswertung</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        <button type="button" class="menu-btn" data-mega="mega-mitmachen" aria-expanded="false" aria-controls="mega-mitmachen">
+          <svg class="icon" aria-hidden="true"><use href="#i-people"/></svg><span>Mitmachen</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        <button type="button" class="menu-btn" data-mega="mega-daten" aria-expanded="false" aria-controls="mega-daten">
+          <svg class="icon" aria-hidden="true"><use href="#i-data"/></svg><span>Daten</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        <button type="button" class="menu-btn" data-mega="mega-verstehen" aria-expanded="false" aria-controls="mega-verstehen">
+          <svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span>Verstehen</span><svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        <button type="button" class="menu-btn" id="about-open" aria-haspopup="dialog">
+          <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>Über</span></button>
+      </div>
+      </div>
+    </nav>
+
+    <!-- Mega-Menüs -->
+    <section class="mega glass" id="mega-suche" aria-label="Suche und Schnellfilter" hidden>
+      <div class="mega-head">
+        <div class="seg scope-switch" role="radiogroup" aria-label="Suchen in">
+          <button type="button" role="radio" data-scope="koeln" aria-checked="true">in ganz Köln</button>
+          <button type="button" role="radio" data-scope="gebiet" aria-checked="false">im gewählten Gebiet</button>
+        </div>
+        <p class="mega-count" id="mega-count" aria-live="polite"></p>
+      </div>
+      <h3 class="mega-label"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>Themen</h3>
+      <div class="chips" id="chips-theme" role="group" aria-label="Thema wählen"></div>
+      <h3 class="mega-label"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Partei / Fraktion</h3>
+      <div class="chips" id="chips-party" role="group" aria-label="Partei oder Fraktion wählen"></div>
+      <!-- Suche im Text der Dokumente: in Bonn über OParl-Lite; für Köln kein solcher Dienst (ausgeblendet) -->
+      <div class="doc-search" data-funktion="volltextsuche" hidden>
+        <button type="button" class="btn btn-soft" id="doc-search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>Auch im Text der Dokumente suchen</button>
+        <p class="hint" id="doc-status" aria-live="polite"></p>
+        <p class="hint">Für Köln derzeit nicht verfügbar.</p>
+      </div>
+      <div class="mega-foot">
+        <button type="button" class="btn btn-ghost" id="mega-reset">Filter zurücksetzen</button>
+        <button type="button" class="btn btn-cta" id="mega-show"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Treffer in der Liste zeigen</button>
+      </div>
+    </section>
+
+    <section class="mega glass" id="mega-auswertung" aria-label="Auswertung" hidden>
+      <div class="cards">
+        <button type="button" class="card" data-open-tab="stats">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span>
+          <span class="card-title">Kennzahlen zum Gebiet</span>
+          <span class="card-text">Vorlagen nach Thema, Partei, Jahr und Stand. Ein Klick auf einen Balken filtert die Liste.</span>
+        </button>
+        <button type="button" class="card" data-open-tab="wege">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg></span>
+          <span class="card-title">Verfahrenswege (Statistik)</span>
+          <span class="card-text">Welche Gremien beraten welche Vorlagenart, und wie endet das Verfahren meistens? Ganz Köln.</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="mega glass" id="mega-mitmachen" aria-label="Mitmachen und abonnieren" hidden>
+      <div class="cards">
+        <div class="card static">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg></span>
+          <span class="card-title">Kommende Sitzungen</span>
+          <span class="card-text">Rat, Ausschüsse und Bezirksvertretungen tagen in der Regel öffentlich.</span>
+          <span class="card-actions">
+            <button type="button" class="btn btn-cta" id="cta-termine"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Termine anzeigen</button>
+            <a class="btn btn-soft" href="data/export/koeln/termine.ics" download><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Kalender (.ics)</a>
+          </span>
+        </div>
+        <div class="card static">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg></span>
+          <span class="card-title">Informiert bleiben</span>
+          <span class="card-text" id="cta-feed-text">Neue Vorlagen und Beratungsergebnisse im gewählten Gebiet per Feed-Reader erhalten.</span>
+          <span class="card-actions" id="cta-feed"></span>
+        </div>
+        <div class="card static">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg></span>
+          <span class="card-title">Selbst mitwirken</span>
+          <span class="card-text">Mit Anregungen und Beschwerden nach § 24 GO NRW können Sie sich selbst an den Rat wenden. In Köln berät darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden.</span>
+          <span class="card-actions">
+            <button type="button" class="btn btn-soft" id="cta-mitmachen" data-funktion="mitmachen" hidden><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg>Alle Wege im Überblick</button>
+          </span>
+        </div>
+        <div class="card static">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg></span>
+          <span class="card-title">Fehler melden</span>
+          <span class="card-text">Ort falsch zugeordnet oder etwas unklar? Ein Hinweis hilft, die Karte zu verbessern.</span>
+          <span class="card-actions"><a class="btn btn-soft" id="cta-report" href="https://github.com/daimpad/ratsatlas-koeln/issues/new/choose" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg>Hinweis geben</a></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="mega glass" id="mega-daten" aria-label="Daten und Quellen" hidden>
+      <div class="cards cards-3">
+        <a class="card" href="https://daimpad.github.io/ratsatlas-koeln/data/export/ratsatlas-koeln-export.zip" download>
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg></span>
+          <span class="card-title">Datenpaket (Zip)</span>
+          <span class="card-text">Alle Exporte, Audit-Protokolle und Lizenzen.</span></a>
+        <a class="card" href="data/export/koeln/vorlagen.geojson" download>
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-data"/></svg></span>
+          <span class="card-title">Verortete Vorlagen (GeoJSON)</span>
+          <span class="card-text">Ein Punkt je Vorlage und Ort, mit Methode, Konfidenz und Fundstelle.</span></a>
+        <a class="card" href="data/export/koeln/dcat.jsonld">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>
+          <span class="card-title">Datensatzbeschreibung (DCAT-AP)</span>
+          <span class="card-text">Für Open-Data-Portale; mit Lizenzen je Datei.</span></a>
+      </div>
+      <p class="mega-links"><button type="button" class="btn btn-soft" data-neu><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Version 0.1: Was ist neu?</button>
+        <a class="btn btn-soft" href="rss/"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Feeds abonnieren und einbinden</a></p>
+    </section>
+    <!-- Verstehen (Entscheidung 02.11.2026): Hilfen zum Lesen der Karte, bisher unter „Daten“ -->
+    <section class="mega glass" id="mega-verstehen" aria-label="Verstehen: Hilfen zum Lesen der Karte" hidden>
+      <div class="cards cards-3">
+        <a class="card" href="begriffe/">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>
+          <span class="card-title">Begriffe erklärt</span>
+          <span class="card-text">Vorlagenarten, Gremien, Gebiete und Beratung in einfachen Worten, mit Fundstelle.</span></a>
+        <button type="button" class="card" data-about="pruefung">
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></span>
+          <span class="card-title">Wie verlässlich sind die Angaben?</span>
+          <span class="card-text">Woher Orte und Themen stammen und was die Prüfungen von Hand ergeben haben.</span></button>
+        <a class="card" href="technik/" data-funktion="technik" hidden>
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>
+          <span class="card-title">So funktioniert der Ratsatlas</span>
+          <span class="card-text">Woher die Daten kommen, was jeden Morgen passiert und welche Technik dahintersteht, in vier Grafiken.</span></a>
+      </div>
+      <p class="mega-links"><button type="button" class="btn btn-soft" data-tour><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg>Tour durch alle Funktionen</button></p>
+    </section>
+  </header>
+
+  <main>
+    <section id="panel-list" class="panel glass" aria-labelledby="list-heading" hidden>
+      <div class="resizer" data-resize="list" role="separator" tabindex="0" aria-orientation="vertical" aria-controls="panel-list" aria-label="Breite der Liste ändern (Pfeiltasten)"></div>
+      <div class="panel-head">
+        <h2 id="list-heading" tabindex="-1">Vorlagen</h2>
+        <button type="button" class="icon-btn" data-close="panel-list" aria-label="Liste einklappen">‹</button>
+      </div>
+      <div class="panel-body">
+        <form class="filters" id="filters" role="search" aria-label="Vorlagen filtern">
+          <fieldset class="scope" id="scope" hidden>
+            <legend class="visually-hidden">Suchen in</legend>
+            <label><input type="radio" name="scope" value="gebiet" checked> im gewählten Gebiet</label>
+            <label><input type="radio" name="scope" value="koeln"> in ganz Köln</label>
+          </fieldset>
+          <label>Stichwort
+            <input type="search" id="f-text" placeholder="z. B. Radweg, Kita, 2250/2025" autocomplete="off">
+          </label>
+          <div class="filter-row">
+            <label>Vorlagenart
+              <select id="f-type"><option value="">alle</option></select>
+            </label>
+            <label>Stand
+              <select id="f-stand">
+                <option value="">alle</option>
+                <option>entschieden</option>
+                <option>beraten, ohne Entscheidung</option>
+                <option>in Beratung</option>
+                <option>offen</option>
+                <option>ohne Beratungsfolge</option>
+              </select>
+            </label>
+          </div>
+          <div class="filter-row">
+            <label>Thema
+              <select id="f-theme"><option value="">alle</option></select>
+            </label>
+            <label>Partei / Fraktion
+              <select id="f-party"><option value="">alle</option></select>
+            </label>
+          </div>
+          <label class="check" id="f-related-wrap" hidden><input type="checkbox" id="f-related" checked> auch Stellungnahmen und Folgevorlagen zu ihren Anträgen</label>
+          <details class="acc" id="more-filters">
+            <summary>Weitere Filter<span class="active-filters" id="active-filters"></span></summary>
+            <div class="filters">
+              <label>Federführende Dienststelle
+                <select id="f-amt"><option value="">alle</option></select>
+              </label>
+              <label>Gremium
+                <select id="f-gremium"><option value="">alle</option></select>
+              </label>
+              <fieldset id="f-conf">
+                <legend>Ortsangabe</legend>
+                <label class="check"><input type="checkbox" value="hoch" checked> gesichert <span class="hint">(Hauskoordinate oder Bebauungsplan)</span></label>
+                <label class="check"><input type="checkbox" value="mittel" checked> erschlossen <span class="hint">(Name im Titel oder Stadtteil laut Stadt)</span></label>
+                <label class="check"><input type="checkbox" value="niedrig" checked> unsicher <span class="hint">(mehrdeutig oder nur über das Gremium)</span></label>
+              </fieldset>
+            </div>
+          </details>
+        </form>
+        <p class="count" id="count" aria-live="polite"></p>
+        <p class="subscribe" id="subscribe" hidden></p>
+        <details class="acc kontext" id="kontext-box" hidden><summary>Zahlen zum Gebiet</summary></details>
+        <ol class="papers" id="papers" tabindex="-1"></ol>
+      </div>
+    </section>
+
+    <section id="timeline-wrap" class="glass" aria-label="Zeitleiste" hidden></section>
+
+    <section id="panel-assistent" class="panel glass chat" aria-labelledby="assistent-heading" hidden>
+      <div class="panel-head">
+        <h2 id="assistent-heading" tabindex="-1">Ratsassistent <span class="ai-badge">KI</span></h2>
+        <span class="chat-head-actions">
+          <button type="button" class="icon-btn" id="chat-new" aria-label="Neues Gespräch" title="Neues Gespräch"><svg class="icon" aria-hidden="true"><use href="#i-new"/></svg></button>
+          <button type="button" class="icon-btn" data-close="panel-assistent" aria-label="Assistent einklappen">‹</button>
+        </span>
+      </div>
+      <div class="panel-body chat-body" id="chat-body">
+        <div class="chat-intro" id="chat-intro">
+          <p><strong>Dies ist ein KI-System.</strong> Ein Sprachmodell beantwortet Fragen zu Kölner Ratsvorgängen und nutzt dafür ausschließlich die Daten dieser Seite. Antworten können Fehler enthalten; maßgeblich sind die verlinkten Originale.</p>
+          <p><strong>Datenschutz:</strong> Ihre Fragen gehen direkt von Ihrem Browser an den gewählten Anbieter und unterliegen dessen Bedingungen. Das Projekt speichert keine Gesprächsinhalte und wertet sie nicht aus. Bitte geben Sie keine persönlichen Daten ein.</p>
+          <details class="acc"><summary>Was der Assistent nicht kann</summary><ul>
+            <li>Keine Rechtsberatung und keine Bewertung von Parteien, Personen oder Beschlüssen.</li>
+            <li>Er durchsucht Titel und Angaben der Vorlagen, nicht die Texte der Dokumente.</li>
+            <li>Nichtöffentliche Beratungen, die Arbeit in der Verwaltung und die Umsetzung von Beschlüssen sind nicht einsehbar.</li>
+            <li>Vorlagen vor Oktober 2019 und Abstimmungsergebnisse einzelner Fraktionen sind nicht enthalten.</li>
+          </ul></details>
+          <button type="button" class="btn btn-cta" id="chat-consent">Verstanden</button>
+        </div>
+
+        <details class="acc chat-settings" id="chat-settings">
+          <summary><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span id="chat-settings-summary">Anbieter und Schlüssel</span></summary>
+          <div class="chat-settings-body">
+            <label for="chat-provider">Anbieter</label>
+            <select id="chat-provider"></select>
+            <label for="chat-model">Modell</label>
+            <input id="chat-model" list="chat-models" autocomplete="off" spellcheck="false">
+            <datalist id="chat-models"></datalist>
+            <div id="chat-base-wrap" hidden>
+              <label for="chat-base">Adresse des lokalen Servers</label>
+              <input id="chat-base" placeholder="http://localhost:11434" autocomplete="off" spellcheck="false">
+              <p class="hint">Nur <code>http://localhost</code> oder <code>http://127.0.0.1</code>. Der Server muss Anfragen von dieser Seite erlauben, bei Ollama etwa mit <code>OLLAMA_ORIGINS</code>.</p>
+            </div>
+            <div id="chat-key-wrap">
+              <label for="chat-key">API-Schlüssel</label>
+              <input id="chat-key" type="password" autocomplete="off" spellcheck="false" placeholder="Schlüssel einfügen">
+              <label class="check"><input type="checkbox" id="chat-remember"> Bis zum Schließen des Tabs merken</label>
+              <p class="hint">Der Schlüssel geht nur an den gewählten Anbieter, sonst nirgendwohin. Legen Sie einen eigenen Schlüssel mit Ausgabenlimit an; die Kosten tragen Sie. <a id="chat-key-link" href="#" target="_blank" rel="noopener">Schlüssel beim Anbieter anlegen</a></p>
+              <button type="button" class="btn btn-ghost" id="chat-key-clear">Schlüssel löschen</button>
+            </div>
+          </div>
+        </details>
+
+        <div class="chat-log" id="chat-log" role="log" aria-label="Gesprächsverlauf"></div>
+        <div class="chat-examples" id="chat-examples">
+          <p class="hint">Zum Beispiel:</p>
+          <button type="button" class="chip">Was wurde 2026 zur Endenicher Straße beraten?</button>
+          <button type="button" class="chip">Wann tagt die Bezirksvertretung Ehrenfeld das nächste Mal?</button>
+          <button type="button" class="chip">Wo steht Vorlage 261798?</button>
+          <button type="button" class="chip">Was bedeutet „zur Kenntnis genommen“?</button>
+        </div>
+      </div>
+      <form class="chat-form" id="chat-form">
+        <label class="check chat-context"><input type="checkbox" id="chat-context" checked> <span id="chat-context-text">Gebiet und Zeitraum der Karte mitschicken</span></label>
+        <label class="visually-hidden" for="chat-input">Frage an den Ratsassistenten</label>
+        <div class="chat-compose">
+          <textarea id="chat-input" rows="2" placeholder="Frage zu Kölner Ratsvorgängen …" disabled></textarea>
+          <button type="submit" class="btn btn-cta" id="chat-send" disabled><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg><span>Fragen</span></button>
+          <button type="button" class="btn btn-soft" id="chat-stop" hidden><svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg><span>Abbrechen</span></button>
+        </div>
+        <p class="hint chat-status" id="chat-status"></p>
+        <p class="visually-hidden" id="chat-announce" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section id="panel-detail" class="panel glass" aria-labelledby="detail-heading">
+      <div class="resizer" data-resize="detail" role="separator" tabindex="0" aria-orientation="vertical" aria-controls="panel-detail" aria-label="Breite des Vorgangs ändern (Pfeiltasten)"></div>
+      <div class="panel-head">
+        <h2 id="detail-heading" tabindex="-1">Los geht's</h2>
+        <button type="button" class="icon-btn" data-close="panel-detail" aria-label="Detail einklappen">›</button>
+      </div>
+      <div class="panel-body detail" id="detail"></div>
+    </section>
+
+    <section id="panel-auswertung" class="glass overlay" aria-labelledby="auswertung-heading" hidden>
+      <div class="panel-head">
+        <h2 id="auswertung-heading" tabindex="-1">Auswertung</h2>
+        <button type="button" class="icon-btn" data-close="panel-auswertung" aria-label="Auswertung schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Auswertung">
+        <button type="button" role="tab" id="tab-stats" aria-controls="stats" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Kennzahlen zum Gebiet</button>
+        <button type="button" role="tab" id="tab-wege" aria-controls="wege" aria-selected="false" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg>Verfahrenswege</button>
+      </div>
+      <div class="panel-body" id="stats" role="tabpanel" aria-labelledby="tab-stats"></div>
+      <div class="panel-body" id="wege" role="tabpanel" aria-labelledby="tab-wege" hidden></div>
+    </section>
+
+    <section id="panel-prozesse" class="glass overlay overlay-wide" aria-labelledby="prozesse-heading" hidden>
+      <div class="panel-head">
+        <h2 id="prozesse-heading" tabindex="-1">Prozesse: Wer entscheidet was?</h2>
+        <button type="button" class="icon-btn" data-close="panel-prozesse" aria-label="Prozesse schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="pz-bar">
+        <div class="tabs" role="tablist" aria-label="Prozesse">
+          <button type="button" role="tab" id="tab-pz-verfahren" data-tab="verfahren" aria-controls="pz-body" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg>Verfahren</button>
+          <button type="button" role="tab" id="tab-pz-gremien" data-tab="gremien" aria-controls="pz-body" aria-selected="false" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Gremien</button>
+          <button type="button" role="tab" id="tab-pz-aemter" data-tab="aemter" aria-controls="pz-body" aria-selected="false" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-data"/></svg>Ämter</button>
+        </div>
+        <div class="seg pz-view" role="radiogroup" aria-label="Darstellung">
+          <button type="button" role="radio" data-view="schaubild" aria-checked="true">Schaubild</button>
+          <button type="button" role="radio" data-view="liste" aria-checked="false">Liste</button>
+        </div>
+      </div>
+      <div class="panel-body" id="pz-body" role="tabpanel" aria-labelledby="tab-pz-verfahren"><p class="hint">Lädt …</p></div>
+    </section>
+
+    <section id="panel-termine" class="glass overlay" aria-labelledby="termine-heading" hidden>
+      <div class="panel-head">
+        <h2 id="termine-heading" tabindex="-1">Kommende Sitzungen</h2>
+        <button type="button" class="icon-btn" data-close="panel-termine" aria-label="Termine schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="panel-body" id="termine"></div>
+    </section>
+
+    <section id="panel-mitmachen" class="glass overlay overlay-wide" aria-labelledby="mitmachen-heading" hidden>
+      <div class="panel-head">
+        <h2 id="mitmachen-heading" tabindex="-1">Mitmachen in Köln</h2>
+        <button type="button" class="icon-btn" data-close="panel-mitmachen" aria-label="Mitmachen in Köln schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="panel-body" id="bt-body"><p class="hint" aria-live="polite">Wird geladen …</p></div>
+    </section>
+
+    <!-- Quellen, Lizenzen und Datenstand: auf der Karte unter den Legenden (app.js setzt das Element in den Stapel) -->
+    <details class="map-legend map-sources" id="sources">
+      <summary>Quellen, Lizenzen und Datenstand</summary>
+      <div>
+        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung und politischen Anträgen, der Hauskoordinate) · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
+        <p id="stand"></p>
+        <p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/koeln/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersicht nach Gebiet</a> · <a href="https://github.com/daimpad/ratsatlas-koeln" target="_blank" rel="noopener">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a></p>
+      </div>
+    </details>
+    <div id="map" role="region" aria-label="Karte der Vorlagen im gewählten Gebiet. Alle Vorlagen stehen auch in der Liste; Gebiete lassen sich auf der Karte anklicken oder oben über die Auswahl „Gebiet“ wählen."></div>
+  </main>
+
+
+  <dialog id="about" class="glass" aria-labelledby="about-heading">
+    <div class="panel-head">
+      <h2 id="about-heading">Über den Ratsatlas Köln</h2>
+      <button type="button" class="icon-btn" id="about-close" aria-label="Schließen">×</button>
+    </div>
+    <div class="about-body">
+      <h3>Worum geht es?</h3>
+      <p>Der Ratsatlas zeigt, womit sich der Rat, die Ausschüsse und die neun Bezirksvertretungen der Stadt Köln beschäftigen – auf einer Karte, auf einer Zeitleiste und als Liste. Grundlage ist das Ratsinformationssystem der Stadt Köln, abgerufen über seine öffentliche Schnittstelle (OParl).</p>
+
+      <h3>Was ist eine Vorlage?</h3>
+      <p>Ein Schriftstück, über das ein politisches Gremium berät: etwa eine Beschlussvorlage oder Mitteilung der Verwaltung, ein Antrag oder eine Anfrage einer Fraktion oder eine Eingabe nach § 24 GO NRW. Jede Vorlage hat eine Nummer, zum Beispiel 2250/2025 oder AN/1756/2026.</p>
+
+      <h3>So benutzen Sie die Karte</h3>
+      <ol>
+        <li>Die Karte zeigt zuerst ganz Köln. Klicken Sie einen Stadtbezirk und dann einen Stadtteil an, oder wählen Sie oben unter „Gebiet wählen“ einen Stadtteil, einen ganzen Stadtbezirk oder Vorlagen ohne Ortsbezug.</li>
+        <li>Klicken Sie in der Liste oder auf der Karte eine Vorlage an.</li>
+        <li>Rechts sehen Sie den Vorgang: wer ihn eingebracht hat, welche Dienststelle zuständig ist und welche Gremien wann darüber beraten haben.</li>
+        <li>Mit der Zeitleiste grenzen Sie den Zeitraum ein. Alle Flächen lassen sich über die Leiste oben ein- und ausklappen; Liste und Vorgang lassen sich am Rand breiter ziehen.</li>
+        <li>Über das Suchfeld oben finden Sie Vorlagen in ganz Köln, auch nach Thema und Partei.</li>
+      </ol>
+      <p><button type="button" class="btn btn-soft" data-tour>Tour durch alle Funktionen starten</button></p>
+
+      <h3>Was bedeutet der Stand?</h3>
+      <dl>
+        <dt>entschieden</dt><dd>Das zuständige Gremium hat abschließend entschieden, zum Beispiel beschlossen oder abgelehnt.</dd>
+        <dt>beraten, ohne Entscheidung</dt><dd>Die Vorlage wurde beraten, eine Entscheidung war nicht vorgesehen – etwa bei Mitteilungen, die zur Kenntnis genommen werden.</dd>
+        <dt>in Beratung</dt><dd>Einige Beratungen haben stattgefunden, andere stehen noch aus oder wurden vertagt.</dd>
+        <dt>offen</dt><dd>Die Vorlage ist noch in keiner Sitzung behandelt worden.</dd>
+        <dt>ohne Beratungsfolge</dt><dd>Für die Vorlage ist keine Beratung in einem Gremium vorgesehen oder erfasst.</dd>
+      </dl>
+
+      <h3 id="about-pruefung" tabindex="-1">Wie sicher sind die Angaben?</h3>
+      <p>Die meisten Angaben stammen unverändert aus dem Ratsinformationssystem. Erschlossene Angaben – etwa der Ort aus dem Titel, die Verknüpfung einer Beratung mit ihrer Sitzung oder das Thema – sind als „abgeleitet“ gekennzeichnet. Bei Orten unterscheiden wir: <strong>gesichert</strong> (Hauskoordinate aus „Adressen Köln“ oder eindeutiger Bebauungsplan), <strong>erschlossen</strong> (Straßen- oder Stadtteilname im Titel, Stadtteil laut Ortsangabe der Stadt) und <strong>unsicher</strong> (der Name passt zu mehreren Orten, oder nur das beratende Gremium deutet auf einen Stadtbezirk). Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische Anträge, nie Eingaben von Einwohnerinnen und Einwohnern; Wohnadressen von Privatpersonen werden nicht gezeigt.</p>
+      <p>Die Prüfung von Hand an Kölner Vorlagen (50 je Methode, richtig / teilweise / falsch) steht noch aus; die Ergebnisse erscheinen hier und im Datenpaket.</p>
+
+      <h3>Nach Themen und Parteien suchen</h3>
+      <p>In der Liste lassen sich Vorlagen nach Thema (zum Beispiel Verkehr, Bauen, Umwelt) und nach Partei oder Fraktion filtern – im gewählten Gebiet oder in ganz Köln. Die Themen sind aus der zuständigen Dienststelle, dem beratenden Ausschuss und Stichworten im Titel abgeleitet; bei jeder Vorlage steht, worauf die Zuordnung beruht. Parteien stammen aus den Einreichenden eines Antrags.</p>
+
+      <h3 id="about-seiten" tabindex="-1">Weitere Seiten</h3>
+      <ul>
+        <li><a href="gebiete/">Vorlagen nach Gebiet</a>: eine Übersichtsseite je Stadtteil und Stadtbezirk.</li>
+        <li><a href="begriffe/">Begriffe</a>: Vorlagenarten, Gremien, Gebiete und Ergebnisse in einfachen Worten, mit Fundstelle; im Vorgang erklärt ein „?“ neben dem Begriff.</li>
+      </ul>
+
+      <h3>Informiert bleiben</h3>
+      <p>Unter „Mitmachen“ finden Sie einen <strong>Feed</strong> für das gewählte Gebiet, bei einer Vorlage einen Feed für genau diesen Vorgang. Ein Feed-Reader (zum Beispiel im Browser oder E-Mail-Programm) meldet dann neue Vorlagen und Beratungsergebnisse. Den Feed für ganz Köln und eine Anleitung finden Sie unter <a href="rss/">Abonnieren und weiterverwenden</a>. Unter „Mitmachen“ → „Termine anzeigen“ stehen die kommenden Sitzungen, auch als Kalenderdatei.</p>
+
+      <h3>Was die Karte nicht kann</h3>
+      <p>Sie ersetzt nicht das Original: Maßgeblich ist immer das Dokument im Ratsinformationssystem, zu dem jede Vorlage verlinkt. Nichtöffentliche Beratungen, die Arbeit innerhalb der Verwaltung und die Umsetzung von Beschlüssen sind von außen nicht einsehbar. Fällt der tägliche Abruf aus, zeigt die Seite den letzten gültigen Datenstand und weist darauf hin.</p>
+
+      <h3>Wer steckt dahinter?</h3>
+      <p>Den Ratsatlas Köln entwickelt <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span></a>. Er beruht auf dem Code des <a href="https://github.com/daimpad/ratsatlas-bonn" target="_blank" rel="noopener">Ratsatlas Bonn<span class="visually-hidden"> (GitHub, neuer Tab)</span></a>. Es ist ein offenes Projekt; der Code steht unter MIT-Lizenz. Die Daten stammen von der Stadt Köln (Datenquelle: Stadt Köln – offenedaten-koeln.de) und für den Kartenhintergrund aus OpenStreetMap (ODbL). Fehler können Sie über „Verortung falsch?“ bei einer Vorlage oder im <a href="https://github.com/daimpad/ratsatlas-koeln/issues" target="_blank" rel="noopener">Projekt auf GitHub</a> melden.</p>
+
+      <h3 id="about-impressum" tabindex="-1">Kontakt, Impressum und Datenschutz</h3>
+      <p>Schrift, Programmbibliotheken und die graue Karte kommen vom Server dieser Seite. Nur bei „Farbige Karte“ lädt Ihr Browser die Kacheln von OpenStreetMap (tile.openstreetmap.org).</p>
+      <p>Kontakt: <a href="mailto:contact@nozilla.de">contact@nozilla.de</a><br>
+        <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum<span class="visually-hidden"> (nozilla.de, neuer Tab)</span></a> · <a href="datenschutz.html">Datenschutz</a></p>
+      <p><button type="button" class="btn btn-soft" data-neu><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Was ist neu?</button></p>
+    </div>
+  </dialog>
+
+  <dialog id="neu" class="glass" aria-labelledby="neu-heading">
+    <div class="panel-head">
+      <h2 id="neu-heading">Was ist neu?</h2>
+      <button type="button" class="icon-btn" data-close-dialog aria-label="Schließen">×</button>
+    </div>
+    <div class="about-body" tabindex="0">   <!-- scrollt ohne Links: mit der Tastatur erreichbar -->
+      <h3>Version 0.1 (Entwurf, November 2026)</h3>
+      <ul>
+        <li>Erste Fassung für Köln auf Grundlage des Ratsatlas Bonn: ganz Köln mit 9 Stadtbezirken und 86 Stadtteilen, Liste, Vorgang mit Prozesslinie, Suche, Feeds und Kalender.</li>
+        <li>Orte aus dem Titel und aus den Ortsangaben der Stadt; Hauskoordinaten nur bei Vorlagen der Verwaltung und politischen Anträgen.</li>
+        <li>Bonner Zusatzthemen (Haushalt, Themenseiten, Ratsassistent und weitere) sind für Köln noch nicht freigegeben.</li>
+      </ul>
+    </div>
+  </dialog>
+
+  <p class="visually-hidden" id="announce" aria-live="polite"></p>
+
+  <script src="vendor/leaflet/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=="></script>
+  <script src="vendor/markercluster/leaflet.markercluster.min.js" integrity="sha512-TiMWaqipFi2Vqt4ugRzsF8oRoGFlFFuqIi30FFxEPNw58Ov9mOy6LgC05ysfkxwLE0xVeZtmr92wVg9siAFRWA=="></script>
+  <script src="timeline.js"></script>
+  <script src="app.js"></script>
+  <script src="tour.js"></script>
 </body>
 </html>

@@ -1,0 +1,8 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Ratsatlas Köln//Sitzungskalender//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Sitzungen Rat\, Ausschüsse und Bezirksvertretungen Köln
+X-WR-TIMEZONE:Europe/Berlin
+END:VCALENDAR

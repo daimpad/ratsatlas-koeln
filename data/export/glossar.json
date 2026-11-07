@@ -1,0 +1,315 @@
+{
+ "meta": {
+  "note": "Allgemeine Erklärungen ohne Rechtsberatung; Fundstelle je Begriff. Ergebnistexte erscheinen wörtlich wie in den Quellen."
+ },
+ "ergebnisse": {
+  "ungeändert beschlossen": "Das Gremium hat dem Vorschlag in der vorgelegten Fassung zugestimmt.",
+  "geändert beschlossen": "Das Gremium hat zugestimmt, aber mit Änderungen, etwa aus Änderungsanträgen.",
+  "zur Kenntnis genommen": "Das Gremium wurde informiert; über einen Beschluss wurde nicht abgestimmt.",
+  "abgelehnt": "Die Mehrheit des Gremiums hat dagegen gestimmt.",
+  "vertagt": "Die Beratung wurde auf eine spätere Sitzung verschoben.",
+  "zurückgezogen": "Die Einreichenden haben die Vorlage zurückgenommen.",
+  "verwiesen": "Die Vorlage wurde zur Beratung an ein anderes Gremium weitergegeben.",
+  "nicht abgestimmt": "In dieser Sitzung fand keine Abstimmung statt.",
+  "ohne Votum": "Das Gremium hat keine Empfehlung abgegeben.",
+  "erledigt durch Stellungnahme der Verwaltung": "Der Antrag gilt als erledigt, weil die Verwaltung schriftlich Stellung genommen hat.",
+  "wg. Sitzungsabbruch nicht behandelt (vertagt)": "Die Sitzung wurde abgebrochen, bevor der Punkt beraten wurde; er gilt als vertagt.",
+  "weitere Lesung erforderlich": "Das Gremium hat beraten, aber noch nicht abschließend; der Punkt soll in einer weiteren Sitzung erneut beraten werden.",
+  "weitere Lesung": "Das Gremium hat beraten, aber noch nicht abschließend; der Punkt soll in einer weiteren Sitzung erneut beraten werden.",
+  "bei Anerkennung der Tagesordnung nicht aufgenommen oder vertagt": "Der Punkt wurde zu Beginn der Sitzung von der Tagesordnung genommen oder verschoben.",
+  "mit Protokollnotiz": "Zusätzlich wurde eine Anmerkung ins Protokoll aufgenommen.",
+  "mit Maßgabe": "Der Beschluss gilt mit einer zusätzlichen Bedingung oder Vorgabe.",
+  "Entscheidung": "Dieses Gremium entscheidet abschließend.",
+  "Empfehlung": "Das Gremium berät vor und gibt eine Empfehlung an das entscheidende Gremium.",
+  "Anhörung": "Das Gremium wird angehört; seine Stellungnahme ist nicht bindend.",
+  "Kenntnisnahme": "Das Gremium wird informiert.",
+  "Genehmigung": "Das Gremium genehmigt nachträglich eine Dringlichkeits- oder Eilentscheidung.",
+  "Eilentscheidung": "Der Hauptausschuss entscheidet anstelle des Rates, weil die Angelegenheit keinen Aufschub duldet."
+ },
+ "hinweise": {
+  "sonderweg": "Sonderweg: Entscheidung vor der Beratung, nachträgliche Genehmigung durch das Gremium.",
+  "vorbereitung": "Erarbeitung, Mitzeichnung und Freigabe der Vorlage in der Verwaltung sind von außen nicht einsehbar.",
+  "datum": "Datum der Vorlage laut Ratsinformationssystem; ob es Erstellung, Freigabe oder Veröffentlichung bezeichnet, ist nicht dokumentiert.",
+  "ohne_sitzung": "Beratung ist vorgesehen; Sitzung und Ergebnis sind (noch) nicht verknüpft.",
+  "vollzug": "Ob und wann der Beschluss umgesetzt ist, steht in der Beschlusskontrolle; dafür gibt es keine öffentliche Schnittstelle.",
+  "nichtoeffentlich": "Der Tagesordnungspunkt wurde nichtöffentlich beraten; Inhalte sind nicht einsehbar.",
+  "datum_vor_vorlage": "Dieser Schritt liegt vor dem angegebenen Datum der Vorlage; die Quelle erklärt die Abweichung nicht."
+ },
+ "schritte": {
+  "initiierung": "Anstoß",
+  "vorbereitung": "Vorbereitung",
+  "veroeffentlichung": "Datum der Vorlage",
+  "beratung": "Beratung",
+  "entscheidung": "Entscheidung",
+  "folgevorlage": "Folgevorlage",
+  "vollzug": "Umsetzung"
+ },
+ "evidenz": {
+  "belegt": "Als Datenobjekt in der Quelle vorhanden.",
+  "abgeleitet": "Aus Quelldaten erschlossen (z. B. Verknüpfung von Beratung und Sitzung, Titelmuster).",
+  "nicht_öffentlich": "Findet regelmäßig statt, ist von außen aber nicht einsehbar.",
+  "unklar": "Ob und wann der Schritt stattfindet, lässt sich aus öffentlichen Quellen nicht bestimmen.",
+  "soll": "Nach Regelwerk zu erwarten (vereinfachtes Modell aus Gemeindeordnung, Geschäftsordnung, Satzungen, Zuständigkeitsordnung und Baugesetzbuch), in den Daten nicht dokumentiert. Das heißt nicht, dass der Schritt fehlt."
+ },
+ "staende": {
+  "entschieden": "Eine entscheidende Beratung hat ein abschließendes Ergebnis.",
+  "beraten, ohne Entscheidung": "Alle Beratungen sind abgeschlossen, keine davon war entscheidend (z. B. Mitteilungen, die zur Kenntnis genommen wurden).",
+  "in Beratung": "Mindestens eine Beratung hat ein Ergebnis, andere stehen aus oder wurden vertagt.",
+  "offen": "Noch keine Beratung mit Ergebnis.",
+  "ohne Beratungsfolge": "Für die Vorlage ist keine Beratung in einem Gremium erfasst."
+ },
+ "themen": {
+  "verkehr": "Verkehr und Mobilität",
+  "bauen": "Bauen und Stadtentwicklung",
+  "umwelt": "Umwelt, Grün und Klima",
+  "bildung": "Schule und Bildung",
+  "kinder": "Kinder, Jugend und Familie",
+  "soziales": "Soziales, Wohnen und Gesundheit",
+  "kultur": "Kultur und Sport",
+  "wirtschaft": "Wirtschaft und Finanzen",
+  "sicherheit": "Sicherheit und Ordnung",
+  "beteiligung": "Beteiligung, Integration und Internationales"
+ },
+ "begriffe": [
+  {
+   "begriff": "Vorlage",
+   "erklaerung": "Schriftstück, über das Rat, Bezirksvertretungen oder Ausschüsse beraten, etwa ein Antrag, eine Beschlussvorlage oder eine Mitteilung der Verwaltung.",
+   "fundstelle": "Ratsinformationssystem der Stadt Köln (OParl-API), Objekt „Paper“",
+   "gruppe": "vorlagen",
+   "anker": "vorlage"
+  },
+  {
+   "begriff": "Vorlagennummer",
+   "erklaerung": "Kennung einer Vorlage, in Köln z. B. 2250/2025 für Vorlagen der Verwaltung und AN/1756/2026 für Anträge und Anfragen.",
+   "fundstelle": "Ratsinformationssystem der Stadt Köln (OParl-API), Feld „reference“",
+   "gruppe": "vorlagen",
+   "anker": "vorlagennummer"
+  },
+  {
+   "begriff": "Beschlussvorlage",
+   "erklaerung": "Vorlage der Verwaltung mit einem Beschlussvorschlag, über den ein Gremium entscheidet.",
+   "fundstelle": "allgemeine Erklärung",
+   "gruppe": "vorlagen",
+   "anker": "beschlussvorlage"
+  },
+  {
+   "begriff": "Mitteilung",
+   "erklaerung": "Vorlage, mit der die Verwaltung ein Gremium informiert; ein Beschluss ist nicht vorgesehen.",
+   "fundstelle": "allgemeine Erklärung",
+   "gruppe": "vorlagen",
+   "anker": "mitteilung"
+  },
+  {
+   "begriff": "Antrag",
+   "erklaerung": "Vorlage einer Fraktion, Gruppe oder eines Mitglieds, mit der ein Gremium um einen Beschluss gebeten wird. In Köln heißen solche Vorlagen „Antrag nach § 3“ der Geschäftsordnung.",
+   "fundstelle": "Geschäftsordnung des Rates der Stadt Köln",
+   "gruppe": "vorlagen",
+   "anker": "antrag"
+  },
+  {
+   "begriff": "Änderungsantrag",
+   "erklaerung": "Antrag, der eine andere Vorlage oder einen anderen Antrag ändern will.",
+   "fundstelle": "allgemeine Erklärung",
+   "gruppe": "vorlagen",
+   "anker": "aenderungsantrag"
+  },
+  {
+   "begriff": "Anfrage",
+   "erklaerung": "Fragen einer Fraktion, Gruppe oder eines Mitglieds an die Verwaltung; die Verwaltung antwortet schriftlich oder in der Sitzung. In Köln heißen solche Vorlagen „Anfrage nach § 4“ der Geschäftsordnung.",
+   "fundstelle": "Geschäftsordnung des Rates der Stadt Köln",
+   "gruppe": "vorlagen",
+   "anker": "anfrage"
+  },
+  {
+   "begriff": "Dringlichkeitsantrag",
+   "erklaerung": "Antrag, der ohne die übliche Frist auf die Tagesordnung kommen soll, weil die Angelegenheit keinen Aufschub duldet; ob er behandelt wird, entscheidet das Gremium.",
+   "fundstelle": "allgemeine Erklärung",
+   "gruppe": "vorlagen",
+   "anker": "dringlichkeitsantrag"
+  },
+  {
+   "begriff": "Anregungen und Beschwerden",
+   "erklaerung": "Jede Person kann sich schriftlich mit Anregungen oder Beschwerden in Angelegenheiten der Gemeinde an den Rat wenden, allein oder gemeinsam mit anderen. In Köln berät darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden. Der Ratsatlas zeigt solche Eingaben höchstens auf Straßen- oder Stadtteilebene. Nicht zu verwechseln mit dem Einwohnerantrag.",
+   "fundstelle": "§ 24 GO NRW; Hauptsatzung der Stadt Köln",
+   "gruppe": "gremium",
+   "anker": "anregungen-und-beschwerden"
+  },
+  {
+   "begriff": "Einwohnerantrag",
+   "erklaerung": "Einwohnerinnen und Einwohner können beantragen, dass der Rat über eine bestimmte Angelegenheit berät und entscheidet. Der Antrag braucht die Unterschriften einer Mindestzahl von Einwohnerinnen und Einwohnern; Einzelheiten regelt die Gemeindeordnung.",
+   "fundstelle": "§ 25 GO NRW",
+   "gruppe": "gremium",
+   "anker": "einwohnerantrag"
+  },
+  {
+   "begriff": "Einwohnerfragestunde",
+   "erklaerung": "Zeit in einer Sitzung, in der Einwohnerinnen und Einwohner Fragen stellen können; Einzelheiten regelt die Geschäftsordnung.",
+   "fundstelle": "Geschäftsordnung des Rates der Stadt Köln",
+   "gruppe": "gremium",
+   "anker": "einwohnerfragestunde"
+  },
+  {
+   "begriff": "Rat",
+   "erklaerung": "Gewählte Vertretung der Bürgerinnen und Bürger; er ist für alle Angelegenheiten der Gemeinde zuständig, soweit nichts anderes bestimmt ist.",
+   "fundstelle": "§ 41 GO NRW",
+   "gruppe": "gremium",
+   "anker": "rat"
+  },
+  {
+   "begriff": "Bezirksvertretung",
+   "erklaerung": "Gewählte Vertretung eines Stadtbezirks in kreisfreien Städten. Köln hat neun Stadtbezirke und damit neun Bezirksvertretungen (Innenstadt, Rodenkirchen, Lindenthal, Ehrenfeld, Nippes, Chorweiler, Porz, Kalk, Mülheim). Sie entscheidet über Angelegenheiten, deren Bedeutung nicht wesentlich über den Stadtbezirk hinausgeht.",
+   "fundstelle": "§§ 36, 37 GO NRW; Hauptsatzung der Stadt Köln",
+   "gruppe": "gremium",
+   "anker": "bezirksvertretung"
+  },
+  {
+   "begriff": "Ausschuss",
+   "erklaerung": "Vom Rat gebildetes Gremium, das Beschlüsse vorbereitet oder in übertragenen Angelegenheiten selbst entscheidet.",
+   "fundstelle": "§§ 41, 57 GO NRW",
+   "gruppe": "gremium",
+   "anker": "ausschuss"
+  },
+  {
+   "begriff": "Hauptausschuss",
+   "erklaerung": "Pflichtausschuss des Rates; er stimmt die Arbeit der Ausschüsse ab und kann in dringenden Fällen anstelle des Rates entscheiden.",
+   "fundstelle": "§§ 59, 60 GO NRW",
+   "gruppe": "gremium",
+   "anker": "hauptausschuss"
+  },
+  {
+   "begriff": "Dringlichkeitsentscheidung",
+   "erklaerung": "Entscheidung in dringenden Fällen ohne Sitzung des zuständigen Gremiums; sie wird dem Gremium nachträglich zur Genehmigung vorgelegt.",
+   "fundstelle": "§ 60 GO NRW (Rat), § 36 GO NRW (Bezirksvertretung)",
+   "gruppe": "verfahren",
+   "anker": "dringlichkeitsentscheidung"
+  },
+  {
+   "begriff": "Fraktion",
+   "erklaerung": "Zusammenschluss von Mitgliedern des Rates oder einer Bezirksvertretung.",
+   "fundstelle": "§ 56 GO NRW",
+   "gruppe": "gremium",
+   "anker": "fraktion"
+  },
+  {
+   "begriff": "Öffentlichkeit von Sitzungen",
+   "erklaerung": "Sitzungen des Rates sind grundsätzlich öffentlich; für einzelne Angelegenheiten kann die Öffentlichkeit ausgeschlossen werden. Inhalte nichtöffentlicher Beratungen sind nicht einsehbar.",
+   "fundstelle": "§ 48 GO NRW",
+   "gruppe": "verfahren",
+   "anker": "oeffentlichkeit-von-sitzungen"
+  },
+  {
+   "begriff": "Federführende Dienststelle",
+   "erklaerung": "Dezernat und Amt der Verwaltung, die eine Vorlage verantworten; in Köln im Kopf der Verwaltungsvorlage als „Dezernat, Dienststelle“ angegeben (z. B. „II/II/2“).",
+   "fundstelle": "Ratsinformationssystem der Stadt Köln (OParl-API), Feld „underDirectionOf“ bzw. Kopf der Vorlage",
+   "gruppe": "verfahren",
+   "anker": "federfuehrende-dienststelle"
+  },
+  {
+   "begriff": "Beratungsfolge",
+   "erklaerung": "Reihenfolge der Gremien, die eine Vorlage beraten, jeweils mit Rolle (Entscheidung, Empfehlung, Anhörung, Kenntnisnahme).",
+   "fundstelle": "Ratsinformationssystem der Stadt Köln (OParl-API), Objekt „Consultation“",
+   "gruppe": "verfahren",
+   "anker": "beratungsfolge"
+  },
+  {
+   "begriff": "Tagesordnungspunkt",
+   "erklaerung": "Punkt der Tagesordnung einer Sitzung; über ihn wird beraten und gegebenenfalls abgestimmt. Das Ergebnis steht wörtlich wie im Ratsinformationssystem.",
+   "fundstelle": "Ratsinformationssystem der Stadt Köln (OParl-API), Objekt „AgendaItem“",
+   "gruppe": "verfahren",
+   "anker": "tagesordnungspunkt"
+  },
+  {
+   "begriff": "Stand eines Vorgangs",
+   "erklaerung": "Vom Ratsatlas aus der Beratungsfolge abgeleitet: entschieden, beraten ohne Entscheidung, in Beratung, offen oder ohne Beratungsfolge. Maßgeblich ist das Original.",
+   "fundstelle": "abgeleitet (Ratsatlas)",
+   "gruppe": "verfahren",
+   "anker": "stand-eines-vorgangs"
+  },
+  {
+   "begriff": "Stadtteil",
+   "erklaerung": "Amtliche Gliederung der Stadt in 86 Stadtteile, z. B. Ehrenfeld oder Rath/Heumar. Im Alltag sagt man oft „Veedel“; Veedel und Stadtteil sind nicht immer dasselbe Gebiet.",
+   "fundstelle": "Kommunale Gebietsgliederung der Stadt Köln (offenedaten-koeln.de)",
+   "gruppe": "gebiete",
+   "anker": "stadtteil"
+  },
+  {
+   "begriff": "Stadtbezirk",
+   "erklaerung": "Die 86 Stadtteile gehören zu neun Stadtbezirken; jeder hat eine Bezirksvertretung. Acht Stadtbezirke tragen den Namen eines Stadtteils, etwa Porz oder Kalk.",
+   "fundstelle": "Kommunale Gebietsgliederung der Stadt Köln (offenedaten-koeln.de); Hauptsatzung der Stadt Köln",
+   "gruppe": "gebiete",
+   "anker": "stadtbezirk"
+  },
+  {
+   "begriff": "Verortung",
+   "erklaerung": "Zuordnung einer Vorlage zu einem Ort: aus der Ortsangabe der Stadt (Stufe A) oder aus Straßen-, Stadtteil- und Bezirksnamen im Titel (Stufe B). Jede Verortung nennt Methode, Konfidenz und Fundstelle. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische Anträge, nie Eingaben von Einwohnerinnen und Einwohnern.",
+   "fundstelle": "abgeleitet (Ratsatlas)",
+   "gruppe": "gebiete",
+   "anker": "verortung"
+  },
+  {
+   "begriff": "TOP",
+   "erklaerung": "Tagesordnungspunkt einer Sitzung.",
+   "fundstelle": "allgemeine Erklärung",
+   "gruppe": "kuerzel",
+   "anker": "top"
+  },
+  {
+   "begriff": "GO NRW",
+   "erklaerung": "Gemeindeordnung für das Land Nordrhein-Westfalen; sie regelt Aufgaben und Arbeit von Rat, Ausschüssen und Bezirksvertretungen.",
+   "fundstelle": "Gemeindeordnung NRW",
+   "gruppe": "kuerzel",
+   "anker": "go-nrw"
+  },
+  {
+   "begriff": "OB",
+   "erklaerung": "Oberbürgermeisterin oder Oberbürgermeister; leitet die Verwaltung und führt den Vorsitz im Rat.",
+   "fundstelle": "§§ 40, 62 GO NRW",
+   "gruppe": "kuerzel",
+   "anker": "ob"
+  },
+  {
+   "begriff": "BV",
+   "erklaerung": "Bezirksvertretung.",
+   "fundstelle": "§ 36 GO NRW",
+   "gruppe": "kuerzel",
+   "anker": "bv"
+  },
+  {
+   "begriff": "AN",
+   "erklaerung": "Vorsilbe der Vorlagennummer bei Anträgen und Anfragen, z. B. AN/1756/2026.",
+   "fundstelle": "Ratsinformationssystem der Stadt Köln (OParl-API), Feld „reference“; Bedeutung aus den Vorlagenarten erschlossen",
+   "gruppe": "kuerzel",
+   "anker": "an"
+  },
+  {
+   "begriff": "Bebauungsplan",
+   "erklaerung": "Satzung der Gemeinde, die festlegt, wie Grundstücke in einem Gebiet bebaut und genutzt werden dürfen.",
+   "fundstelle": "§§ 8, 10 BauGB",
+   "gruppe": "planung",
+   "anker": "bebauungsplan"
+  }
+ ],
+ "gruppen": {
+  "vorlagen": "Vorlagen und Vorlagenarten",
+  "gremium": "Gremien und Beteiligung",
+  "verfahren": "Verfahren und Sitzungen",
+  "gebiete": "Gebiete",
+  "kuerzel": "Kürzel",
+  "planung": "Planung"
+ },
+ "arten": {
+  "Beschlussvorlage": "beschlussvorlage",
+  "Beschlussvorlage Rat": "beschlussvorlage",
+  "Beschlussvorlage Ausschuss": "beschlussvorlage",
+  "Mitteilung": "mitteilung",
+  "Mitteilung Ausschuss": "mitteilung",
+  "Antrag nach § 3 der Geschäftsordnung des Rates": "antrag",
+  "Antrag nach § 3": "antrag",
+  "Anfrage nach § 4 der Geschäftsordnung des Rates": "anfrage",
+  "Anfrage nach § 4": "anfrage",
+  "Änderungsantrag": "aenderungsantrag",
+  "Dringlichkeitsantrag": "dringlichkeitsantrag",
+  "Anregungen und Beschwerden": "anregungen-und-beschwerden"
+ },
+ "kuerzel": {}
+}
