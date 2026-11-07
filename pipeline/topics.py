@@ -34,20 +34,28 @@ AMT_UNIT = {"61-3": "verkehr"}
 
 # Gremium (Name) → Thema; Reihenfolge zählt („Soziales, … Wohnen“ vor „Wohnen, Planung“).
 # Sonderfälle in GREMIUM_SPECIAL werden vorher geprüft.
+# Köln: Ausschüsse 2020–2025 und 2025–2030 nur aus Zeilen „belegt“ in explore/ergebnisse/gremien_koeln.tsv – aus
+# Sekundärquellen, Abgleich mit dem RIS offen. Ergänzt: „Gesundheit“ (Gesundheitsausschuss 2020–2025, 2025 aufgelöst),
+# „Bauausschuss“ (2020–2025; 2025–2030 Ausschuss für Bauen und Wohnen), „Stadtentwicklung“ (Stadtentwicklungsausschuss;
+# 2025–2030 Ausschuss für Stadtentwicklung und regionale Zusammenarbeit), „Finanz“ (Finanzausschuss), „Liegenschaft“
+# (Liegenschaftsausschuss). Schon vorher erfasst: Verkehrsausschuss → Mobilitätsausschuss, Wirtschafts- und
+# Digitalisierungsausschuss → Ausschuss für Wirtschaft und Digitalisierung, Integrationsrat → Ausschuss für
+# Chancengerechtigkeit und Integration.
 GREMIUM = [
-    (r"Soziales|Senioren", "soziales"),
+    (r"Soziales|Senioren|Gesundheit", "soziales"),
     (r"Mobilität|Verkehr", "verkehr"),
-    (r"Planung|Planen|Bauen|Wohnen", "bauen"),
+    (r"Planung|Planen|Bauen|Bauausschuss|Wohnen|Stadtentwicklung", "bauen"),
     (r"Umwelt|Klima|Baumkommission|Naturschutz", "umwelt"),
     (r"Schul", "bildung"),
     (r"Kinder|Jugend", "kinder"),
     (r"Sport|Kultur", "kultur"),
-    (r"Finanzen|Wirtschaft|Liegenschaften|Rechnungsprüfung", "wirtschaft"),
+    (r"Finanz|Wirtschaft|Liegenschaft|Rechnungsprüfung", "wirtschaft"),
     (r"Sicherheit|Ordnung|Katastrophenschutz", "sicherheit"),
     (r"Beteiligung der Bürger|Bürgerbeteiligung|Integration|Chancengerechtigkeit|Internationales|Europa", "beteiligung"),
 ]
 GREMIUM_SPECIAL = [  # Namen, die sonst falsch zugeordnet würden
     (r"Betriebsausschuss SGB|Bau- und Vergabe|Denkmal", "bauen"),  # SGB = Städtisches Gebäudemanagement Bonn
+    (r"Betriebsausschuss Gebäudewirtschaft", "bauen"),  # Köln, Gebäude der Stadt (wie SGB in Bonn)
     (r"Beethovenhalle", "kultur"),
 ]
 NO_THEME_GREMIEN = re.compile(r"^(Rat|Hauptausschuss|Bezirksvertretung)\b")

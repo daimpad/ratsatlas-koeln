@@ -28,6 +28,10 @@
   // Messung der Kölner API (Gremiennamen laut OParl)
   const PILOT_GREMIEN = ["Rat", "Hauptausschuss"];
   const SHORT = { "Hauptausschuss": "Hauptausschuss", "Rat": "Rat" };
+  // Andere Schreibweisen derselben Gremien (explore/ergebnisse/gremien_koeln.tsv, Zeilen „belegt“; aus Sekundärquellen,
+  // Abgleich mit dem RIS offen)
+  const GREMIUM_ALIAS = { "Rat der Stadt Köln": "Rat", "Stadtrat": "Rat" };
+  const bahn = (gremium) => PILOT_GREMIEN.indexOf(GREMIUM_ALIAS[gremium] || gremium);
   const NS = "http://www.w3.org/2000/svg";
   const T_CACHE = new Map();  // Datumsangaben werden bei jedem Zeichnen mehrfach umgerechnet
   const t = (iso) => {
@@ -227,7 +231,7 @@
       });
       const today = Date.now();
       for (const m of compact ? [] : data.meetings) {
-        const i = PILOT_GREMIEN.indexOf(m.gremium);
+        const i = bahn(m.gremium);
         if (i < 0) continue;
         const ms = t(m.date);
         if (ms < view[0] || ms > view[1]) continue;

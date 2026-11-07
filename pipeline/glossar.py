@@ -131,6 +131,11 @@ BEGRIFFE = [
     ("Dringlichkeitsentscheidung", "Entscheidung in dringenden Fällen ohne Sitzung des zuständigen Gremiums; sie wird "
      "dem Gremium nachträglich zur Genehmigung vorgelegt.", "§ 60 GO NRW (Rat), § 36 GO NRW (Bezirksvertretung)"),
     ("Fraktion", "Zusammenschluss von Mitgliedern des Rates oder einer Bezirksvertretung.", "§ 56 GO NRW"),
+    ("Gruppe", "Zusammenschluss von Ratsmitgliedern, die zusammen zu wenige Sitze für eine Fraktion haben. Im Kölner "
+               "Rat der Wahlperiode 2025–2030 sind das die Gruppen BSW und Die PARTEI. Als Einreichende zeigt der "
+               "Ratsatlas Fraktionen und Gruppen, meist aus dem Titel der Vorlage abgeleitet.",
+     "§ 56 GO NRW; Kölner Gruppen nach dem Wahlergebnis (IT.NRW) und Angaben der Gruppen, Abgleich mit dem "
+     "Ratsinformationssystem offen"),
     ("Öffentlichkeit von Sitzungen", "Sitzungen des Rates sind grundsätzlich öffentlich; für einzelne Angelegenheiten "
      "kann die Öffentlichkeit ausgeschlossen werden. Inhalte nichtöffentlicher Beratungen sind nicht einsehbar.",
      "§ 48 GO NRW"),
@@ -167,8 +172,8 @@ BEGRIFFE = [
      "dürfen.", "§§ 8, 10 BauGB"),
 ]
 GRUPPE = {"Rat": "gremium", "Bezirksvertretung": "gremium", "Ausschuss": "gremium", "Hauptausschuss": "gremium",
-          "Fraktion": "gremium", "Anregungen und Beschwerden": "gremium", "Einwohnerantrag": "gremium",
-          "Einwohnerfragestunde": "gremium",
+          "Fraktion": "gremium", "Gruppe": "gremium", "Anregungen und Beschwerden": "gremium",
+          "Einwohnerantrag": "gremium", "Einwohnerfragestunde": "gremium",
           "Dringlichkeitsentscheidung": "verfahren", "Öffentlichkeit von Sitzungen": "verfahren",
           "Federführende Dienststelle": "verfahren", "Beratungsfolge": "verfahren",
           "Tagesordnungspunkt": "verfahren", "Stand eines Vorgangs": "verfahren",
