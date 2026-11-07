@@ -34,21 +34,32 @@ AMT_UNIT = {"61-3": "verkehr"}
 
 # Gremium (Name) → Thema; Reihenfolge zählt („Soziales, … Wohnen“ vor „Wohnen, Planung“).
 # Sonderfälle in GREMIUM_SPECIAL werden vorher geprüft.
+# Köln: Ausschüsse 2020–2025 und 2025–2030 nur aus Zeilen „belegt“ in explore/ergebnisse/gremien_koeln.tsv – aus
+# Sekundärquellen, Abgleich mit dem RIS offen. Ergänzt: „Gesundheit“ (Gesundheitsausschuss 2020–2025, 2025 aufgelöst),
+# „Bauausschuss“ (2020–2025; 2025–2030 Ausschuss für Bauen und Wohnen), „Stadtentwicklung“ (Stadtentwicklungsausschuss;
+# 2025–2030 Ausschuss für Stadtentwicklung und regionale Zusammenarbeit), „Finanz“ (Finanzausschuss), „Liegenschaft“
+# (Liegenschaftsausschuss), „Digitalisierung“ (Digitalisierungsausschuss 2020–2025; 2025–2030 mit dem
+# Wirtschaftsausschuss zum Ausschuss für Wirtschaft und Digitalisierung zusammengelegt). Schon vorher erfasst:
+# Verkehrsausschuss → Mobilitätsausschuss, Wirtschaftsausschuss → Ausschuss für Wirtschaft und Digitalisierung,
+# Integrationsrat → Ausschuss für Chancengerechtigkeit und Integration.
 GREMIUM = [
-    (r"Soziales|Senioren", "soziales"),
+    (r"Soziales|Senioren|Gesundheit", "soziales"),
     (r"Mobilität|Verkehr", "verkehr"),
-    (r"Planung|Planen|Bauen|Wohnen", "bauen"),
+    (r"Planung|Planen|Bauen|Bauausschuss|Wohnen|Stadtentwicklung", "bauen"),
     (r"Umwelt|Klima|Baumkommission|Naturschutz", "umwelt"),
     (r"Schul", "bildung"),
     (r"Kinder|Jugend", "kinder"),
     (r"Sport|Kultur", "kultur"),
-    (r"Finanzen|Wirtschaft|Liegenschaften|Rechnungsprüfung", "wirtschaft"),
+    (r"Finanz|Wirtschaft|Digitalisierung|Liegenschaft|Rechnungsprüfung", "wirtschaft"),
     (r"Sicherheit|Ordnung|Katastrophenschutz", "sicherheit"),
     (r"Beteiligung der Bürger|Bürgerbeteiligung|Integration|Chancengerechtigkeit|Internationales|Europa", "beteiligung"),
 ]
-GREMIUM_SPECIAL = [  # Namen, die sonst falsch zugeordnet würden
-    (r"Betriebsausschuss SGB|Bau- und Vergabe|Denkmal", "bauen"),  # SGB = Städtisches Gebäudemanagement Bonn
-    (r"Beethovenhalle", "kultur"),
+# Namen, die sonst falsch oder gar nicht zugeordnet würden. Köln: nur der Betriebsausschuss Gebäudewirtschaft
+# (gremien_koeln.tsv: 2020–2025 „belegt“, 2025–2030 „Hinweis“; aus Sekundärquellen, Abgleich mit dem RIS offen) – Gebäude
+# der Stadt, nicht „Wirtschaft“. Die aus Bonn übernommenen Einträge (Betriebsausschuss SGB, Bau- und Vergabeausschuss,
+# Beethovenhalle, Denkmal) sind entfernt; Kölner Gremien mit diesen Namen sind in gremien_koeln.tsv nicht belegt.
+GREMIUM_SPECIAL = [
+    (r"Betriebsausschuss Gebäudewirtschaft", "bauen"),
 ]
 NO_THEME_GREMIEN = re.compile(r"^(Rat|Hauptausschuss|Bezirksvertretung)\b")
 

@@ -406,12 +406,15 @@ def _hnr_audit(hnr):
     print(f"Stichprobe Hausnummern: {len(pick)} → {sample_file}")
 
 
-BV_NAME = re.compile(r"^Bezirksvertretung\s+(?:(\d+)\s*)?(?:\((.+)\)|(.+))?$")
+# Kurzform „BV Innenstadt“: Schreibvariante in explore/ergebnisse/gremien_koeln.tsv (Zeilen „belegt“, aus
+# Sekundärquellen, Abgleich mit dem RIS offen)
+BV_NAME = re.compile(r"^(?:Bezirksvertretung|BV)\s+(?:(\d+)\s*)?(?:\((.+)\)|(.+))?$")
 
 
 def bv_bezirk(name):
     """Stadtbezirk einer Bezirksvertretung aus dem Gremiennamen: „Bezirksvertretung 3 (Lindenthal)“ → „Lindenthal“,
-    „Bezirksvertretung 3“ → „Lindenthal“ (Nummer der Hauptsatzung), „Bezirksvertretung Porz“ → „Porz“."""
+    „Bezirksvertretung 3“ → „Lindenthal“ (Nummer der Hauptsatzung), „Bezirksvertretung Porz“ → „Porz“,
+    „BV Innenstadt“ → „Innenstadt“."""
     from .geocode import BEZIRKE_KOELN
     m = BV_NAME.match((name or "").strip())
     if not m:
