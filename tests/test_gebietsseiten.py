@@ -172,7 +172,7 @@ def test_gebietsseiten_vorschau(oparl, tmp_path):
         for q in {meta["kennzahlen"][k]["quelle"] for k in keys}:
             assert escape(meta["quellen"][q]["titel"]) in html and f"Lizenz: {escape(meta['quellen'][q]['lizenz'])}" in html
         # Ebenen: Links in die Karte für dieses Gebiet, mit Quelle und Lizenz; Ebenen mit Mindestzoom mit dem Hinweis,
-        # dass sie erst bei näherer Ansicht erscheinen (in der Ansicht eines Stadtbezirks zeichnet die Karte sie nicht)
+        # dass sie erst bei näherer Ansicht erscheinen (ob Hineinzoomen nötig ist, hängt von Gebiet, Ebene und Bildschirm ab)
         assert "Ebenen mit vielen Objekten erscheinen erst bei näherer Ansicht" in html
         for e in eb:
             eintrag = _ebene_eintrag(html, art, g["slug"], e["key"])

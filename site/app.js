@@ -2244,6 +2244,9 @@
     if (hinweis) hinweis.hidden = !(idx && idx.meta && idx.meta.testdaten);
     const vorschauHinweis = $("#vorschau-hinweis");
     if (vorschauHinweis) vorschauHinweis.hidden = !vorschau;
+    // Kennzeichen für die Tour (site/tour.js): Texte der Vorschau statt Beschreibungen ausgeblendeter Funktionen
+    if (vorschau) document.documentElement.dataset.vorschau = "ja";
+    else delete document.documentElement.dataset.vorschau;
     if (vorschau) document.querySelectorAll('[data-vorschau="aus"]').forEach((el) => { el.hidden = true; });
     document.querySelectorAll('[data-vorschau="nur"]').forEach((el) => { el.hidden = !vorschau; });
   }
@@ -2261,6 +2264,12 @@
     // 1. index.json (klein, vorab angefordert) gibt den ersten Ausschnitt; die Kacheln laden sofort
     const idx = await json(BONN + "index.json");
     vorschau = Boolean(idx && idx.meta && idx.meta.vorschau);
+    // Bonner Zusatzthemen nur, wenn index.json sie freigibt (config.ZUSATZTHEMEN); sonst keine Anfrage
+    const fn = (idx && idx.meta && idx.meta.funktionen) || {};
+    // Freigaben und Vorschau-Kennzeichnung vor Karte und Kacheln anwenden, damit ausgeblendete Elemente (Auswertung,
+    // Schnellfilter, Kalender, Filter) nicht kurz sichtbar sind
+    applyFunktionen(fn, idx);
+    $("#filters").hidden = vorschau;   // Filter ohne Vorlagen hätten nur „alle“
     createMap(startBounds(idx, startGebiet));
     // 2. alles Übrige nach den sichtbaren Kacheln (höchstens 2,5 s warten)
     await kachelnGeladen(2500);
@@ -2269,8 +2278,6 @@
       vorab.set(datei, fetch(datei));
     }
     const shapes = Promise.all([loadGeo("ortsteil"), loadGeo("bezirk")]);
-    // Bonner Zusatzthemen nur, wenn index.json sie freigibt (config.ZUSATZTHEMEN); sonst keine Anfrage
-    const fn = (idx && idx.meta && idx.meta.funktionen) || {};
     const opt = (an, url) => (an ? json(url, "low") : Promise.resolve(null));
     // Baustellen mit möglichen Umsetzungen (nur Konfidenz hoch); ohne Datei bleibt die Funktion ausgeblendet
     // Vorschau: keine zeit.json (pipeline/export.py schreibt sie nur mit Vorlagen), daher keine Anfrage
@@ -2278,8 +2285,6 @@
       opt(fn.baustellen, BONN + "baustellen.json"), opt(fn.kontext, BONN + "kontext.json"), opt(fn.anliegen, BONN + "anliegen.json"),
       opt(fn.kontext, BONN + "ebenen.json")]);
     index = idx;
-    applyFunktionen(fn, idx);
-    $("#filters").hidden = vorschau;   // Filter ohne Vorlagen hätten nur „alle“
     kontext = index && kx && kx.ortsteile ? kx : null;
     for (const e of (eb && eb.ebenen) || []) EX[e.key] = e;
     ebenenIdx = Object.keys(EX).length ? eb : null;
