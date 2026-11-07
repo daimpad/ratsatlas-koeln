@@ -40,6 +40,8 @@ SCHRITTE = {
                               "und Haltestellen (Land und Bund) und legt zuschaltbare Flächen und Punkte für die Karte ab."),
     "ebenen": ("Ebenen", "Bereitet weitere offene Daten für die Karte auf, etwa Förderprogramme, Wohnbaupotenziale, "
                          "Schutzgebiete und Hochwassergefahr, mit Quelle und Lizenz je Ebene."),
+    "check": ("Prüfung", "Prüft vor jeder Veröffentlichung den Datenschutz (keine Hauskoordinaten bei Eingaben nach § 24 GO "
+                         "NRW und Vorlagen von Privatpersonen) und die Kennzahlen; ein Befund hält die Veröffentlichung an."),
     "package": ("Datenpaket", "Packt Daten, Prüfprotokolle und Lizenzen in ein Zip-Paket zum Herunterladen."),
 }
 

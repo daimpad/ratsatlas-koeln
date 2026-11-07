@@ -90,6 +90,7 @@ jobs:
           python -m pipeline export
           python -m pipeline kontext
           python -m pipeline ebenen
+          python -m pipeline check     # Datenschutz (keine Hauskoordinaten bei Eingaben), Kennzahlen; Befunde halten die Veröffentlichung an
           python -m pipeline package
 
       # Graue Kartenkacheln aus dem Branch kacheln (kacheln.yml); fehlt er, zeigt die Seite OSM-Kacheln grau gefiltert

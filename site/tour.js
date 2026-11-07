@@ -71,7 +71,8 @@
       vorschau: "Unter „Informiert bleiben“ stehen Feeds, die neue Vorlagen im gewählten Gebiet melden; sie füllen sich, sobald Ratsvorlagen vorliegen. Kommende Sitzungen und die Kalenderdatei folgen mit den Ratsvorlagen. Außerdem: der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden, und ein Hinweis, wenn etwas falsch zugeordnet oder unklar ist." },
     { menu: "mega-daten", target: "#mega-daten",
       title: "Offene Daten",
-      text: "Alle Daten zum Herunterladen: das Datenpaket mit Prüfprotokollen, die verorteten Vorlagen als GeoJSON und eine Datensatzbeschreibung nach DCAT-AP. Quellen, Lizenzen und Datenstand stehen auf der Karte unter den Legenden." },
+      text: "Alle Daten zum Herunterladen: das Datenpaket mit Prüfprotokollen, die verorteten Vorlagen als GeoJSON und eine Datensatzbeschreibung nach DCAT-AP. Quellen, Lizenzen und Datenstand stehen auf der Karte unter den Legenden.",
+      vorschau: "Alle Daten zum Herunterladen: das Datenpaket enthält schon Gebiete, Kennzahlen je Stadtteil und die Kartenebenen; die Vorlagen und ihre Prüfprotokolle folgen mit den Ratsvorlagen. Quellen, Lizenzen und Datenstand stehen auf der Karte unter den Legenden." },
     { menu: "mega-verstehen", target: "#mega-verstehen",
       title: "Verstehen",
       text: "Hilfen zum Lesen der Karte: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge oder Zuschussbedarf in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.",
@@ -140,7 +141,7 @@
     document.body.classList.add("touring");
     addEventListener("keydown", onKey, true);
     addEventListener("resize", layout);
-    if (ui.prefetch) ui.prefetch();
+    if (ui.prefetch && !VORSCHAU()) ui.prefetch();   // Beispiel-Vorgang nur mit Vorlagen
     go(0, 1);
   }
 
