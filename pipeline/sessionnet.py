@@ -12,8 +12,9 @@ Abruf: Listen nur über `links.next` (unverändert übernommen), nach dem ersten
 `modified_since` (Zustand in `zustand_abruf.json`, mit einem Tag Überlappung). Parameter werden nicht URL-kodiert:
 SessionNet beantwortet kodierte Zeitstempel (%3A, %2B) mit HTTP 404 (explore/ergebnisse/sessionnet_befunde.tsv).
 Schutz gegen Endlosschleifen: Abbruch, wenn links.next auf eine gelesene Seite zeigt, eine Seite keine neuen
-Kennungen bringt oder mehr als `config.ABRUF_MAX_SEITEN` Seiten folgen. Ob der Server den Filter anwendet, wird je
-Lauf geprüft und in der Abrufstatistik vermerkt.
+Kennungen bringt oder mehr als `config.ABRUF_MAX_SEITEN` Seiten in einem Lauf folgen (eine Fortsetzung zählt neu).
+Ende der Liste: `links` oder `links.next` fehlt oder ist leer (null, "", [], {}; SessionNet ist PHP). Ob der Server
+den Filter anwendet, wird je Lauf geprüft und in der Abrufstatistik vermerkt.
 
 Ein Vollabruf, der am Ende des Zeitfensters oder durch einen Fehler abbricht, wird in der nächsten Nacht an der
 gelesenen Stelle fortgesetzt (`<liste>_fortsetzung` im Zustand, Teilstand in `<datei>.teil.jsonl`). Keine Fortsetzung
@@ -26,24 +27,34 @@ Verbindungsabbruch, abgeschnittene oder unlesbare Antwort, Proxy erreicht die St
 403 oder 429 (Art `http`), `aufgegeben` nach 429, 5xx, unlesbarer Antwort oder CONNECT-Antwort 429/503 (auch sofort,
 wenn die Pause nicht mehr ins Zeitfenster passt oder Retry-After zu lang oder unlesbar ist, abruf.py), außerdem
 vorsichtshalber eine Weiterleitung (etwa auf die Sperrseite einer Firewall) und gültiges JSON in unerwarteter Form
-(Art `unlesbar`: kein Objekt, Body ohne Listen, Seite ohne Liste `data` oder mit unlesbarem `links`). Nicht: Ablehnung
-durch den Proxy der Ausführungsumgebung (`proxy`) und ungültige Adressen (`adresse`): Diese Anfragen haben die Stadt
-nie erreicht.
-- nach einem Sperrverdacht kein weiterer Lauf in derselben Nacht (12 Stunden, `SPERRE_GLEICHE_NACHT`), etwa nach einem
-  Push oder auf Knopfdruck
-- nach drei solchen Nächten ohne vollständigen Lauf dazwischen pausiert der Abruf sieben Tage; ein vollständiger Lauf
-  setzt den Zähler zurück
+(Art `unlesbar`: kein Objekt, Body ohne Listen, Seite ohne Liste `data` oder mit einem nicht leeren `links`, das kein
+Objekt ist). Nach drei solchen Nächten ohne vollständigen Lauf dazwischen pausiert der Abruf sieben Tage; ein
+vollständiger Lauf setzt den Zähler zurück. Nicht: Ablehnung durch den Proxy der Ausführungsumgebung (`proxy`) und
+ungültige Adressen (`adresse`), denn diese Anfragen haben die Stadt nie erreicht, sowie ein Vollabruf deutlich kleiner
+als der vorhandene Stand (Art `leer`, Regel aus Bonn: weniger als 90 %).
+Nach jedem Abbruch außer dem Ende des Zeitfensters (auch nach `proxy`, `adresse`, Programm- und Einstellungsfehlern)
+folgt in derselben Nacht (12 Stunden, `SPERRE_GLEICHE_NACHT`) kein weiterer Lauf, etwa nach einem Push oder auf
+Knopfdruck (`letzter_abbruch` im Zustand; nicht für lokale Testserver).
+Retry-After über die Nacht hinaus: Gibt abruf.py wegen eines Retry-After auf, steht `nicht_vor` im Zustand (höchstens
+30 Tage, unlesbarer Retry-After 7 Tage); bis dahin wird jeder Lauf übersprungen.
 Abbrüche der Art `liste` oder `adresse` (dauerhaft ungültiges links.next oder Schleife: jede Nacht ein Vollabruf bis
-zur selben Stelle) zählt `listenfehler` im Zustand: Hinweis in STAND.json (`abruf_hinweis`) und Warnung im Log des
-Workflows; nach drei solchen Nächten ohne vollständigen Lauf dazwischen sieben Tage Pause.
+zur selben Stelle) zählt `listenfehler` im Zustand (Nächte, nicht Läufe: ein weiterer Abbruch innerhalb von 12
+Stunden zählt nicht noch einmal): Hinweis in STAND.json (`abruf_hinweis`) und Warnung im Log des Workflows; nach drei
+solchen Nächten ohne vollständigen Lauf dazwischen sieben Tage Pause.
 Der Zustand wird vor der ersten Anfrage geprüft: Ist die Datei oder ein Zeitpunkt des letzten Abrufs einer Liste
-unlesbar, bricht der Lauf ohne Anfrage laut ab (`ZustandUnlesbar`). Ein unlesbarer, zonenloser oder künftiger
-Zeitpunkt des letzten Sperrverdachts gilt als „jetzt“ (in dieser Nacht kein Abruf), eine unlesbare Zahl der Nächte als
-drei; beides wird neu geschrieben und gemeldet. Eine unlesbare STAND.json wird als `STAND.json.defekt` beiseitegelegt.
-Programmfehler (etwa eine unerwartete Form tief in einem Objekt) zählen nicht als Sperrverdacht: Sie stehen in
-STAND.json und brechen den Lauf mit Traceback ab.
-Fällt der Abruf aus, bleibt der letzte gültige Stand; der Fehler steht in `STAND.json`. Den Zustand sichert
-pages.yml gleich nach dem Abrufschritt, auch wenn ein späterer Schritt scheitert.
+unlesbar, bricht der Lauf ohne Anfrage laut ab (`ZustandUnlesbar`; so jeder Lauf, bis die Datei geprüft ist). Ein
+unlesbarer, zonenloser oder künftiger Zeitpunkt des letzten Sperrverdachts, Listenfehlers oder Abbruchs gilt als
+„jetzt“ (in dieser Nacht kein Abruf), eine unlesbare Zahl der Nächte als drei, ein unlesbares `nicht_vor` als jetzt +
+7 Tage, eines mehr als 30 Tage voraus als jetzt + 30 Tage; alles wird neu geschrieben und gemeldet. Eine unlesbare
+STAND.json wird als `STAND.json.defekt` beiseitegelegt.
+Programm- und Einstellungsfehler (etwa eine unerwartete Form tief in einem Objekt, ein RuntimeError ohne Art, ein
+Zeilenumbruch im User-Agent) zählen nicht als Sperrverdacht: Sie stehen in STAND.json und brechen den Lauf mit
+Traceback ab.
+Fällt der Abruf aus, bleibt der letzte gültige Stand; der Fehler steht in `STAND.json` (`abruf_fehler`). Ein
+vollständiger Lauf entfernt `abruf_fehler`, `abruf_hinweis` und `abruf_uebersprungen`. Das Ende des Zeitfensters
+(etwa bei einem Vollabruf über mehrere Nächte) ist kein Fehler: neutraler Hinweis in `abruf_hinweis`, ein älteres
+`abruf_fehler` entfällt. Den Zustand sichert pages.yml gleich nach dem Abrufschritt, auch wenn ein späterer Schritt
+scheitert.
 
 Abrufstatistik (`abrufstatistik.tsv`, Spalten STAT_SPALTEN): je Liste eine Zeile und eine Zeile `body` für den Abruf
 des Bodys; Zähler aus abruf.statistik() als Differenz je Zeile, darunter `weiterleitungen` und `proxy`.
@@ -118,7 +129,7 @@ def _zustand():
         return {}
     try:
         z = json.loads(config.ZUSTAND.read_text(encoding="utf-8"))
-    except ValueError as e:   # auch UnicodeDecodeError
+    except (ValueError, RecursionError) as e:   # auch UnicodeDecodeError und zu tief verschachtelt
         raise ZustandUnlesbar(f"{config.ZUSTAND.name} unlesbar ({e}); keine Anfrage an die Stadt, bis die Datei geprüft "
                               "oder entfernt ist (ohne Datei: Vollabruf, Zähler der Nächte verloren)") from e
     if not isinstance(z, dict):
@@ -127,20 +138,27 @@ def _zustand():
     return z
 
 
-def _zustand_setzen(schluessel, wert):
+def _zustand_aendern(**werte):
+    """Setzt Werte im Zustand (ein Schreibvorgang); None entfernt den Schlüssel."""
     z = _zustand()
-    if wert is None:
-        z.pop(schluessel, None)
-    else:
-        z[schluessel] = wert
+    for schluessel, wert in werte.items():
+        if wert is None:
+            z.pop(schluessel, None)
+        else:
+            z[schluessel] = wert
     config.RAW.mkdir(parents=True, exist_ok=True)
     _write(config.ZUSTAND, json.dumps(z, ensure_ascii=False, indent=1) + "\n")
 
 
+def _zustand_setzen(schluessel, wert):
+    _zustand_aendern(**{schluessel: wert})
+
+
 def _zaehler_pruefen(z, schluessel, grenze, jetzt):
-    """Zähler der Nächte (`sperre_verdacht`, `listenfehler`) vorsichtig lesen: unlesbarer, zonenloser oder künftiger
-    Zeitpunkt `zuletzt` → jetzt (in dieser Nacht kein Abruf); unlesbare Zahl der Nächte → `grenze` (Pause). Liefert den
-    Zähler und die Meldungen zu ersetzten Werten."""
+    """Zähler der Nächte (`sperre_verdacht`, `listenfehler`) und den letzten Abbruch (`letzter_abbruch`, `grenze`
+    None: ohne Zahl der Nächte) vorsichtig lesen: unlesbarer, zonenloser oder künftiger Zeitpunkt `zuletzt` → jetzt (in
+    dieser Nacht kein Abruf); unlesbare Zahl der Nächte → `grenze` (Pause). Liefert den Eintrag und die Meldungen zu
+    ersetzten Werten."""
     v = z.get(schluessel)
     if not v:
         return {}, []
@@ -150,7 +168,7 @@ def _zaehler_pruefen(z, schluessel, grenze, jetzt):
         v = {}
     v = dict(v)
     n = v.get("naechte")
-    if isinstance(n, bool) or not isinstance(n, int) or n < 0:
+    if grenze is not None and (isinstance(n, bool) or not isinstance(n, int) or n < 0):
         meldungen.append(f"{schluessel}.naechte unlesbar ({n!r}), gilt als {grenze}")
         v["naechte"] = grenze
     zuletzt = _zeit(v.get("zuletzt"))
@@ -161,6 +179,22 @@ def _zaehler_pruefen(z, schluessel, grenze, jetzt):
     return v, meldungen
 
 
+def _nicht_vor_pruefen(wert, jetzt):
+    """Zeitpunkt aus einem Retry-After (`nicht_vor`) vorsichtig lesen: unlesbar, ohne Zone oder Zahl → jetzt + 7 Tage;
+    mehr als 30 Tage in der Zukunft → jetzt + 30 Tage (wie beim Speichern begrenzt). Liefert (Wert, Meldung)."""
+    if wert is None:
+        return None, ""
+    t = _zeit(wert)
+    if t is None:
+        neu = (jetzt + abruf.RETRY_AFTER_UNLESBAR).isoformat(timespec="seconds")
+        return neu, f"nicht_vor unlesbar oder ohne Zone ({wert!r}), gilt als {neu}"
+    if t > jetzt + abruf.RETRY_AFTER_HOECHSTENS:
+        neu = (jetzt + abruf.RETRY_AFTER_HOECHSTENS).isoformat(timespec="seconds")
+        return neu, (f"nicht_vor mehr als {abruf.RETRY_AFTER_HOECHSTENS.days} Tage in der Zukunft ({wert!r}), gilt "
+                     f"als {neu}")
+    return wert, ""
+
+
 def _zustand_pruefen():
     """Vor der ersten Anfrage: Zustand lesen und prüfen (siehe Moduldoku). Liefert den Zustand mit geprüften Zählern."""
     z = _zustand()
@@ -168,19 +202,29 @@ def _zustand_pruefen():
         if liste in z and _zeit(z[liste]) is None:
             raise ZustandUnlesbar(f"Zeitpunkt des letzten Abrufs von {liste} in {config.ZUSTAND.name} unlesbar oder "
                                   f"ohne Zone ({z[liste]!r}); keine Anfrage an die Stadt, bis der Wert geprüft ist")
-    jetzt = datetime.now(timezone.utc)
-    for schluessel, grenze in (("sperre_verdacht", SPERRE_NAECHTE), ("listenfehler", LISTENFEHLER_NAECHTE)):
-        v, meldungen = _zaehler_pruefen(z, schluessel, grenze, jetzt)
-        if meldungen:
-            z[schluessel] = v
-            _zustand_setzen(schluessel, v)
-            _warnung(f"{config.ZUSTAND.name}: " + "; ".join(meldungen) + " (neu geschrieben)")
+    jetzt = abruf.uhr()
+    neu, meldungen = {}, []
+    for schluessel, grenze in (("sperre_verdacht", SPERRE_NAECHTE), ("listenfehler", LISTENFEHLER_NAECHTE),
+                               ("letzter_abbruch", None)):
+        v, m = _zaehler_pruefen(z, schluessel, grenze, jetzt)
+        if m:
+            neu[schluessel] = v
+            meldungen += m
+    v, m = _nicht_vor_pruefen(z.get("nicht_vor"), jetzt)
+    if m:
+        neu["nicht_vor"] = v
+        meldungen.append(m)
+    if neu:
+        z.update(neu)
+        _zustand_aendern(**neu)
+        _warnung(f"{config.ZUSTAND.name}: " + "; ".join(meldungen) + " (neu geschrieben)")
     return z
 
 
 def _pause_grund(z, lokal):
-    """Grund, den Lauf ohne Anfrage zu überspringen (12-Stunden-Regel, Pausen nach drei Nächten), sonst None."""
-    jetzt = datetime.now(timezone.utc)
+    """Grund, den Lauf ohne Anfrage zu überspringen (12-Stunden-Regel nach jedem Abbruch, Retry-After über die Nacht
+    hinaus, Pausen nach drei Nächten), sonst None. 12-Stunden-Regel und Retry-After gelten nicht für lokale Testserver."""
+    jetzt = abruf.uhr()
     verdacht = z.get("sperre_verdacht") or {}
     if verdacht and not lokal:
         # nach einer Nacht mit möglicher Sperre in derselben Nacht kein weiterer Lauf (z. B. Push oder Knopfdruck)
@@ -188,6 +232,17 @@ def _pause_grund(z, lokal):
         if seit < SPERRE_GLEICHE_NACHT:
             return (f"möglicher Sperrverdacht vor {int(seit.total_seconds() // 60)} Minuten; in derselben Nacht kein "
                     "weiterer Abruf")
+    letzter = z.get("letzter_abbruch") or {}
+    if letzter and not lokal:
+        # nach jedem anderen Abbruch (außer dem Ende des Zeitfensters), auch nach einem Programmfehler, ebenso
+        seit = jetzt - _zeit(letzter["zuletzt"])
+        if seit < SPERRE_GLEICHE_NACHT:
+            return (f"Abbruch ({letzter.get('art') or 'unbekannt'}) vor {int(seit.total_seconds() // 60)} Minuten; in "
+                    "derselben Nacht kein weiterer Abruf")
+    nicht_vor = _zeit(z.get("nicht_vor"))
+    if nicht_vor is not None and not lokal and jetzt < nicht_vor:
+        return (f"Retry-After der Stadt: kein Abruf vor {nicht_vor.isoformat(timespec='minutes')} "
+                f"(höchstens {abruf.RETRY_AFTER_HOECHSTENS.days} Tage)")
     if verdacht.get("naechte", 0) >= SPERRE_NAECHTE:
         bis = _zeit(verdacht["zuletzt"]) + SPERRE_PAUSE
         if jetzt < bis:
@@ -213,7 +268,7 @@ def _stand():
         if isinstance(s, dict):
             return s
         grund = "kein JSON-Objekt"
-    except ValueError as e:
+    except (ValueError, RecursionError) as e:
         grund = str(e)
     defekt = config.STAND.with_name(config.STAND.name + ".defekt")
     os.replace(config.STAND, defekt)
@@ -226,6 +281,15 @@ def _stand_setzen(**werte):
     s.update(werte)
     config.RAW.mkdir(parents=True, exist_ok=True)
     _write(config.STAND, json.dumps(s, ensure_ascii=False, indent=1) + "\n")
+
+
+def _stand_entfernen(*schluessel):
+    """Entfernt Einträge aus STAND.json (etwa `abruf_fehler` nach einem vollständigen Lauf)."""
+    s = _stand()
+    if any(k in s for k in schluessel):
+        for k in schluessel:
+            s.pop(k, None)
+        _write(config.STAND, json.dumps(s, ensure_ascii=False, indent=1) + "\n")
 
 
 def _stamp(schluessel):
@@ -245,30 +309,42 @@ class Teilabbruch(abruf.Abbruch):
 
     def __init__(self, ursache, objekte, naechste, seiten):
         super().__init__(str(ursache), getattr(ursache, "art", ""), getattr(ursache, "ziel", ""),
-                         getattr(ursache, "code", None))
+                         getattr(ursache, "code", None), getattr(ursache, "nicht_vor", None))
         self.objekte, self.naechste, self.seiten = objekte, naechste, seiten
+
+
+def _leer(wert):
+    """Leerer Wert (null, "", [], {}): SessionNet ist in PHP geschrieben, ein leeres Objekt kann als [] ankommen."""
+    return wert is None or (isinstance(wert, (str, list, dict)) and not wert)
 
 
 def _seite_pruefen(seite, url):
     """Form einer Listenseite, geprüft dort, wo sie ankommt: `data` ist eine Liste von Objekten mit Kennung (Text),
-    `links` fehlt oder ist ein Objekt, `links.next` fehlt oder ist Text. Sonst Abbruch der Art `unlesbar` (gültiges JSON
-    in unerwarteter Form: keine Wiederholung, zählt als Nacht mit möglicher Sperre)."""
+    `links` fehlt, ist leer (wie fehlend) oder ein Objekt, `links.next` fehlt, ist leer (Ende der Liste) oder Text.
+    Liefert die Folgeadresse oder None (Ende). Sonst Abbruch der Art `unlesbar` (gültiges JSON in unerwarteter Form,
+    etwa ein nicht leeres links, das kein Objekt ist: keine Wiederholung, zählt als Nacht mit möglicher Sperre)."""
     daten, links = seite.get("data"), seite.get("links")
     if not isinstance(daten, list) or not all(isinstance(o, dict) and isinstance(o.get("id"), str) and o["id"]
                                               for o in daten):
         grund = "data ist keine Liste von Objekten mit Kennung"
-    elif links is not None and not isinstance(links, dict):
+    elif _leer(links):
+        return None
+    elif not isinstance(links, dict):
         grund = "links ist kein Objekt"
-    elif links and links.get("next") is not None and not isinstance(links["next"], str):
-        grund = "links.next ist kein Text"
+    elif _leer(links.get("next")):
+        return None
+    elif isinstance(links["next"], str):
+        return links["next"]
     else:
-        return
+        grund = "links.next ist kein Text"
     raise abruf.Abbruch(f"unerwartete Antwortform ({grund}): {url}", "unlesbar")
 
 
 def liste(url, seit=None, start=None, objekte=None, seiten=0):
     """Alle Objekte einer OParl-Liste über links.next; `seit` setzt modified_since. `start`, `objekte` und `seiten`
-    setzen einen abgebrochenen Vollabruf fort. Liefert (Objekte, Seiten); ein Abbruch kommt als Teilabbruch."""
+    setzen einen abgebrochenen Vollabruf fort. Liefert (Objekte, Seiten); ein Abbruch kommt als Teilabbruch. `seiten`
+    zählt die Seiten insgesamt (Statistik, Fortsetzung); die Grenze `config.ABRUF_MAX_SEITEN` gilt je Lauf, sonst
+    erreichte ein großer Vollabruf sie in einer späteren Nacht und begänne von vorn."""
     naechste = start or _mit_parametern(url, modified_since=seit, limit=config.ABRUF_SEITENGROESSE)
     objekte = list(objekte or [])
     ids, gesehen = {o.get("id") for o in objekte}, set()
@@ -276,11 +352,12 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0):
         try:
             if naechste in gesehen:   # Schutz gegen zyklische Verweise
                 raise abruf.Abbruch(f"links.next zeigt auf eine bereits gelesene Seite: {naechste}", "liste")
-            if seiten >= config.ABRUF_MAX_SEITEN:
-                raise abruf.Abbruch(f"mehr als {config.ABRUF_MAX_SEITEN} Seiten (RATSATLAS_MAX_SEITEN)", "liste")
+            if len(gesehen) >= config.ABRUF_MAX_SEITEN:   # Seiten dieses Laufs
+                raise abruf.Abbruch(f"mehr als {config.ABRUF_MAX_SEITEN} Seiten in einem Lauf (RATSATLAS_MAX_SEITEN)",
+                                    "liste")
             gesehen.add(naechste)
             seite = abruf.get_json(naechste)
-            _seite_pruefen(seite, naechste)
+            weiter = _seite_pruefen(seite, naechste)
         except abruf.Abbruch as e:
             raise Teilabbruch(e, objekte, naechste, seiten) from e
         seiten += 1
@@ -291,7 +368,7 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0):
                                             "liste"), objekte, None, seiten)
         ids.update(o.get("id") for o in neu)
         objekte += neu
-        naechste = (seite.get("links") or {}).get("next")
+        naechste = weiter
     return objekte, seiten
 
 
@@ -333,7 +410,10 @@ def _zusammenfuehren(pfad, neu_objekte, voll):
         with open(pfad, encoding="utf-8") as f:
             alt = {o["id"]: o for o in map(json.loads, f) if o.get("id")}
     if voll:
-        _guard(pfad.name, len(neu_objekte), len(alt))
+        try:
+            _guard(pfad.name, len(neu_objekte), len(alt))
+        except RuntimeError as e:   # Vollabruf deutlich kleiner als der vorhandene Stand: Abbruch, keine Sperre
+            raise abruf.Abbruch(str(e), "leer") from e
     neu = sum(1 for o in neu_objekte if o["id"] not in alt)
     geaendert = sum(1 for o in neu_objekte if o["id"] in alt and o != alt[o["id"]])
     geloescht = sum(1 for o in neu_objekte if o.get("deleted"))
@@ -404,7 +484,7 @@ def _fortsetzung(schluessel, pfad):
             bisher = [json.loads(z) for z in teil.read_text(encoding="utf-8").splitlines() if z.strip()]
             if not all(isinstance(o, dict) and isinstance(o.get("id"), str) for o in bisher):
                 grund = f"Teildatei {teil.name} enthält Zeilen ohne Kennung"
-        except ValueError as e:
+        except (ValueError, RecursionError) as e:
             grund = f"Teildatei {teil.name} unlesbar ({e})"
     if not grund:
         return fort, bisher, ""
@@ -457,7 +537,7 @@ def _abruf_liste(name, url, pfad, schluessel):
             zeile["ergebnis"] = f"abbruch: {e}"[:300]
         zeile.update(seiten=e.seiten, objekte=len(e.objekte))
         raise
-    except (abruf.Abbruch, RuntimeError) as e:
+    except abruf.Abbruch as e:
         zeile["ergebnis"] = f"abbruch: {e}"[:300]
         raise
     except Exception as e:
@@ -481,7 +561,7 @@ def _abruf_body():
                                 "unlesbar")
         zeile.update(objekte=1, ergebnis="ok")
         return body
-    except (abruf.Abbruch, RuntimeError) as e:
+    except abruf.Abbruch as e:
         zeile["ergebnis"] = f"abbruch: {e}"[:300]
         raise
     except Exception as e:
@@ -565,8 +645,8 @@ def beratungen(papers, meetings):
                 "agendaItem": {"uri": t["id"], "number": t.get("number"), "name": t.get("name"),
                                "result": t.get("result"), "public": t.get("public")} if t else None,
             })
-    if len(zeilen) < MIN_ANTEIL * _jsonl_count(config.BERATUNGEN):
-        raise RuntimeError(f"Beratungen: nur {len(zeilen)} statt bisher {_jsonl_count(config.BERATUNGEN)}")
+    if len(zeilen) < MIN_ANTEIL * _jsonl_count(config.BERATUNGEN):   # unvollständig: Abbruch, keine Sperre
+        raise abruf.Abbruch(f"Beratungen: nur {len(zeilen)} statt bisher {_jsonl_count(config.BERATUNGEN)}", "leer")
     _write(config.BERATUNGEN, "".join(json.dumps(z, ensure_ascii=False) + "\n" for z in zeilen))
     # Ergänzte Organisationen in papers.jsonl übernehmen, damit build.py sie liest
     _write(config.PAPERS, "".join(json.dumps(p, ensure_ascii=False) + "\n" for p in papers))
@@ -575,9 +655,11 @@ def beratungen(papers, meetings):
 
 
 def fetch_all():
-    """Vollständiger bzw. inkrementeller Lauf. Ein Abbruch hält den letzten gültigen Stand und vermerkt den Fehler;
-    Abbrüche nach `moegliche_sperre` zählen als Nacht mit möglicher Sperre, Abbrüche der Art `liste` oder `adresse` als
-    Nacht mit fehlerhafter Liste. Programmfehler werden vermerkt und brechen laut ab (kein Sperrverdacht)."""
+    """Vollständiger bzw. inkrementeller Lauf. Ein Abbruch (abruf.Abbruch) hält den letzten gültigen Stand und vermerkt
+    den Fehler; Abbrüche nach `moegliche_sperre` zählen als Nacht mit möglicher Sperre, Abbrüche der Art `liste` oder
+    `adresse` als Nacht mit fehlerhafter Liste, das Ende des Zeitfensters nur als Hinweis. Alles andere (auch ein
+    RuntimeError ohne Art) ist ein Programm- oder Einstellungsfehler: vermerkt, laut mit Traceback, kein Sperrverdacht.
+    Nach jedem Abbruch außer dem Ende des Zeitfensters folgt in derselben Nacht kein weiterer Lauf (`letzter_abbruch`)."""
     config.RAW.mkdir(parents=True, exist_ok=True)
     # Sperre und Zeitfenster sind kein Ausfall: der Lauf wird übersprungen, ohne den Stand als fehlgeschlagen zu markieren
     lokal = abruf.lokal(config.OPARL_BODY)
@@ -589,7 +671,7 @@ def fetch_all():
     if not grund:
         try:
             zustand = _zustand_pruefen()
-        except ZustandUnlesbar as e:   # keine Anfrage; laut, bis jemand die Datei prüft
+        except ZustandUnlesbar as e:   # keine Anfrage; laut, bis jemand die Datei prüft (jeder Lauf bricht so ab)
             _stand_setzen(abruf_fehler={"zeit": _now(), "meldung": str(e)[:300]})
             raise
         grund = _pause_grund(zustand, lokal)
@@ -604,35 +686,65 @@ def fetch_all():
         meetings = fetch_meetings(body)
         beratungen(papers, meetings)
         _stamp("abruf_ok")
-        _zustand_setzen("sperre_verdacht", None)
-        _zustand_setzen("listenfehler", None)
-    except (abruf.Abbruch, RuntimeError) as e:
+        _zustand_aendern(sperre_verdacht=None, listenfehler=None, letzter_abbruch=None, nicht_vor=None)
+        # Meldungen früherer Läufe gelten nicht mehr (die Seite zeigte sonst dauerhaft „fehlgeschlagen“)
+        _stand_entfernen("abruf_fehler", "abruf_hinweis", "abruf_uebersprungen")
+    except abruf.Abbruch as e:
         _abbruch_vermerken(e, zustand)
     except Exception as e:
-        # Programmfehler (auch eine unerwartete Form tief in einem Objekt): kein Sperrverdacht; vermerken und mit
-        # Traceback abbrechen, damit der Fehler im Workflow sichtbar wird
+        # Programm- oder Einstellungsfehler (auch eine unerwartete Form tief in einem Objekt, ein RuntimeError ohne Art
+        # wie RecursionError oder ZustandUnlesbar mitten im Lauf): kein Sperrverdacht; vermerken und mit Traceback
+        # abbrechen, damit der Fehler im Workflow sichtbar wird. In derselben Nacht kein weiterer Lauf.
+        try:
+            _zustand_setzen("letzter_abbruch", {"zuletzt": abruf.uhr().isoformat(timespec="seconds"),
+                                                "art": "programmfehler", "code": None,
+                                                "meldung": f"{type(e).__name__}: {e}"[:300]})
+        except Exception as f:   # z. B. Zustand unlesbar: den eigentlichen Fehler nicht verdrängen
+            _warnung(f"Abbruch nicht im Zustand vermerkt ({type(f).__name__}: {f})")
         _stand_setzen(abruf_fehler={"zeit": _now(), "meldung": f"Programmfehler ({type(e).__name__}: {e})"[:300]})
         raise
 
 
 def _abbruch_vermerken(e, zustand):
-    """Abbruch vermerken: zuerst die Zähler im Zustand (Nacht mit möglicher Sperre nach `moegliche_sperre`, Nacht mit
-    fehlerhafter Liste nach LISTENFEHLER), dann STAND.json."""
-    jetzt = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    """Abbruch vermerken: zuerst den Zustand (letzter Abbruch für die 12-Stunden-Regel, Nacht mit möglicher Sperre nach
+    `moegliche_sperre`, Retry-After über die Nacht hinaus, Nacht mit fehlerhafter Liste nach LISTENFEHLER), dann
+    STAND.json. Das Ende des Zeitfensters (etwa bei einem Vollabruf über mehrere Nächte) ist kein Fehler: nur ein
+    neutraler Hinweis, keine 12-Stunden-Regel."""
+    jetzt = abruf.uhr()
+    zeit = jetzt.isoformat(timespec="seconds")
     art = getattr(e, "art", "")
+    if art == "zeitfenster":
+        hinweis = f"Das Zeitfenster endete während des Abrufs; Fortsetzung in der nächsten Nacht. {e}"[:400]
+        _stand_entfernen("abruf_fehler")
+        _stand_setzen(abruf_hinweis={"zeit": _now(), "meldung": hinweis})
+        print(f"Abruf unterbrochen (Ende des Zeitfensters), Fortsetzung in der nächsten Nacht: {e}")
+        return
+    neu = {"letzter_abbruch": {"zuletzt": zeit, "art": art, "code": getattr(e, "code", None),
+                               "meldung": str(e)[:300]}}
     if moegliche_sperre(e):
         verdacht = zustand.get("sperre_verdacht") or {}
-        _zustand_setzen("sperre_verdacht", {
-            "naechte": verdacht.get("naechte", 0) + 1, "zuletzt": jetzt,
-            "art": art, "code": getattr(e, "code", None), "meldung": str(e)[:300]})
+        neu["sperre_verdacht"] = {"naechte": verdacht.get("naechte", 0) + 1, "zuletzt": zeit, "art": art,
+                                  "code": getattr(e, "code", None), "meldung": str(e)[:300]}
+    nicht_vor = getattr(e, "nicht_vor", None)
+    if nicht_vor is not None:   # Retry-After über die Nacht hinaus; ein späterer gespeicherter Zeitpunkt bleibt
+        alt = _zeit(zustand.get("nicht_vor"))
+        if alt is None or nicht_vor > alt:
+            neu["nicht_vor"] = nicht_vor.isoformat(timespec="seconds")
     hinweis = None
     if art in LISTENFEHLER:
-        naechte = (zustand.get("listenfehler") or {}).get("naechte", 0) + 1
-        _zustand_setzen("listenfehler", {"naechte": naechte, "zuletzt": jetzt, "art": art, "meldung": str(e)[:300]})
+        # Nächte zählen, nicht Läufe: ein weiterer Abbruch innerhalb von 12 Stunden zählt nicht noch einmal
+        fehler = zustand.get("listenfehler") or {}
+        zuletzt = _zeit(fehler.get("zuletzt"))
+        if zuletzt is not None and jetzt - zuletzt < SPERRE_GLEICHE_NACHT:
+            naechte = fehler.get("naechte", 1)
+        else:
+            naechte = fehler.get("naechte", 0) + 1
+            neu["listenfehler"] = {"naechte": naechte, "zuletzt": zeit, "art": art, "meldung": str(e)[:300]}
         hinweis = (f"Abbruch wegen einer fehlerhaften Liste ({art}), {naechte}. Nacht ohne vollständigen Lauf; keine "
                    f"Fortsetzung, jede Nacht beginnt der Vollabruf von vorn. Nach {LISTENFEHLER_NAECHTE} Nächten "
                    f"{LISTENFEHLER_PAUSE.days} Tage Pause. {e}")[:400]
         _warnung(hinweis)
+    _zustand_aendern(**neu)
     werte = {"abruf_fehler": {"zeit": _now(), "meldung": str(e)[:300]}}
     if hinweis:
         werte["abruf_hinweis"] = {"zeit": _now(), "meldung": hinweis}

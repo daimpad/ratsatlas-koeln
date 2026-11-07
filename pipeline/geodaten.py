@@ -13,6 +13,8 @@ OParl-Abruf). Ausgabe in WGS84 mit den Eigenschaftsnamen des Bonner Modells:
                               (Entscheidung 04.11.2026; geocode.py, build.py)
 Straßennamen werden ausgeschrieben („Aachener Str.“ → „Aachener Straße“), damit Titel mit „Straße“, „Strasse“ und
 „Str.“ gleichermaßen gefunden werden. Gleichnamige Straßen nach Eingemeindungen bleiben als getrennte Lagen erhalten.
+Abruf direkt über urllib, nicht über pipeline/net.py oder pipeline/abruf.py: deren Schutz vor Anfragen an die
+Stadt (abruf.stadt, Abrufpolitik) greift hier nicht.
 """
 import io
 import json

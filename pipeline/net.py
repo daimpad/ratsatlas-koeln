@@ -3,8 +3,10 @@
 Nicht für Server der Stadt Köln: Diese Funktionen halten die Abrufpolitik (CLAUDE.md 5.1) nicht ein (Wiederholungen
 ohne Pause nach Stunden, mehrere Verbindungen in fetch._oparl_list, kein Zeitfenster, keine Freigabe). Anfragen an
 Adressen der Stadt (`abruf.stadt`: stadt-koeln.de, offenedaten-koeln.de, Host der eingestellten OParl-API) werden vor
-dem Senden abgelehnt (`AbrufVerweigert`); solche Abrufe gehören auf pipeline/abruf.py umgestellt. Betroffen ist etwa
-`python -m pipeline fetch-besetzung` (Personen der OParl-API, Zusatzthema „besetzung“, abgeschaltet)."""
+dem Senden abgelehnt (`AbrufVerweigert`, ohne Wiederholung), auch als Ziel einer Weiterleitung (Öffner `_OEFFNER` mit
+`_PruefendeWeiterleitung`); solche Abrufe gehören auf pipeline/abruf.py umgestellt. Betroffen ist etwa
+`python -m pipeline fetch-besetzung` (Personen der OParl-API, Zusatzthema „besetzung“, abgeschaltet). Module, die
+direkt über urllib abrufen (geodaten.py, ebenen.py, kontext.py u. a.), erfasst dieser Schutz nicht."""
 import json
 import time
 import urllib.parse
@@ -26,11 +28,33 @@ def _pruefen(url):
                               "pipeline/abruf.py umstellen.")
 
 
+class _PruefendeWeiterleitung(urllib.request.HTTPRedirectHandler):
+    """Folgt einer Weiterleitung nur, wenn ihr Ziel keine Adresse der Stadt ist (`_pruefen` vor dem Senden)."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        try:
+            _pruefen(newurl)
+        except AbrufVerweigert:
+            fp.close()
+            raise
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def _oeffner(proxies=None):
+    """Öffner wie urllib.request.urlopen, aber mit `_PruefendeWeiterleitung`; `proxies` None = aus der Umgebung."""
+    return urllib.request.build_opener(_PruefendeWeiterleitung, urllib.request.ProxyHandler(proxies))
+
+
+_OEFFNER = _oeffner()
+
+
 def _open(req, tries):
     for i in range(tries):
         try:
-            with urllib.request.urlopen(req, timeout=90) as r:
+            with _OEFFNER.open(req, timeout=90) as r:
                 return json.load(r)
+        except AbrufVerweigert:   # Weiterleitung an die Stadt: nicht wiederholen
+            raise
         except Exception:
             if i == tries - 1:
                 raise

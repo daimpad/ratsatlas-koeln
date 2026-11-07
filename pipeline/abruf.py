@@ -9,12 +9,16 @@
   Mindestabstand
 - nur im nächtlichen Zeitfenster (`config.ABRUF_ZEITFENSTER`, Ortszeit Köln), sofern gesetzt; geprüft vor jedem
   Versuch, auch nach einer Pause
-- nach HTTP 429, 5xx und unlesbaren Antworten (kein JSON) wachsende Pausen (`config.ABRUF_PAUSEN`, bis zu mehreren
-  Stunden), danach Abbruch der Art `aufgegeben`. Einen `Retry-After`-Kopf (Sekunden oder HTTP-Datum) hält der Abruf
-  mindestens ein. Sofort `aufgegeben` (ohne Pause): wenn die nächste Pause nicht vor dem Ende des laufenden
-  Zeitfensters endet (`fenster_offen_nach`, gerechnet in UTC, also auch über eine Zeitumstellung), wenn `Retry-After`
-  länger ist als die längste Pause oder wenn `Retry-After` unlesbar ist. 401, 403 und 404 brechen sofort ab (Art
-  `http` mit `code`)
+- nach HTTP 429, 5xx und unlesbaren Antworten (kein JSON, auch zu tief verschachtelt) wachsende Pausen
+  (`config.ABRUF_PAUSEN`, bis zu mehreren Stunden), danach Abbruch der Art `aufgegeben`. Einen `Retry-After`-Kopf
+  (Sekunden oder HTTP-Datum) hält der Abruf mindestens ein. Sofort `aufgegeben` (ohne Pause): wenn die nächste Pause
+  nicht vor dem Ende des laufenden Zeitfensters endet (`fenster_offen_nach`, gerechnet in UTC, also auch über eine
+  Zeitumstellung), wenn `Retry-After` länger ist als die längste Pause oder wenn `Retry-After` unlesbar ist. 401, 403
+  und 404 brechen sofort ab (Art `http` mit `code`)
+- `Retry-After` gilt über die Nacht hinaus: Endet ein Abruf als `aufgegeben` mit einem `Retry-After`, trägt der Abbruch
+  `nicht_vor` (jetzt + Retry-After in UTC, höchstens `RETRY_AFTER_HOECHSTENS` = 30 Tage; unlesbar
+  `RETRY_AFTER_UNLESBAR` = 7 Tage); sessionnet.py speichert den Zeitpunkt im Zustand und ruft vorher nicht ab. Mehr als
+  12 Ziffern (ohne führende Nullen) gelten als unendlich lang (also 30 Tage)
 - gültiges JSON in unerwarteter Form (null, [], Zahl, Text statt eines Objekts) ist kein Überlastungssignal: Abbruch
   der Art `unlesbar` nach einer Anfrage, ohne Wiederholung
 - Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
@@ -25,15 +29,18 @@
   weniger Bytes als Content-Length oder chunked ohne Abschluss, BadStatusLine, LineTooLong, RemoteDisconnected …),
   auch als Antwort eines Proxys auf CONNECT: Art `sperre`, keine Wiederholung
 - eine ungültige Adresse wird nicht gesendet und nicht als Anfrage gezählt: Art `adresse`, keine Sperre. Dazu zählen
-  Zeichen außerhalb von ASCII (etwa Umlaute in links.next), ein unbekanntes oder fehlendes Schema und
-  http.client.InvalidURL (z. B. ein Leerzeichen). Scheitert das Kodieren einer Kopfzeile (UnicodeEncodeError, etwa
-  RATSATLAS_KONTAKT mit Zeichen außerhalb von Latin-1), geht ebenfalls nichts hinaus; das ist ein Einstellungs- oder
-  Programmfehler und bricht laut ab (kein Sperrverdacht)
-- Weiterleitungen (HTTP 3xx) werden nicht verfolgt (modulweiter Öffner `_OEFFNER` mit `_OhneWeiterleitung`; der
-  Standard von urllib bleibt für andere Module unverändert): Abbruch der Art `weiterleitung` mit der Ziel-URL in
-  Meldung und `Abbruch.ziel`, gezählt in `statistik()["weiterleitungen"]` und als Fehler (Abrufstatistik: Spalten
-  `weiterleitungen` und `fehler`, Ziel in `ergebnis`); sonst kämen ungezählte Anfragen an einen anderen Host oder Pfad
-  hinzu
+  Zeichen außerhalb von ASCII (etwa Umlaute in links.next), ein anderes Schema als http oder https (auch ftp:, file:,
+  data:), eine Adresse ohne Host (http:///…, https:papers), ein Port außerhalb 0–65535 und http.client.InvalidURL (z. B.
+  ein Leerzeichen). Der Öffner kennt nur http und https (keine Handler für FTP, Dateien und data:)
+- jeder andere ValueError vor dem Senden ist ein Einstellungs- oder Programmfehler: Kopfzeile nicht kodierbar
+  (UnicodeEncodeError, etwa RATSATLAS_KONTAKT mit Zeichen außerhalb von Latin-1) oder mit Zeilenumbruch, Host nicht als
+  IDNA kodierbar, unlesbare Proxy-Adresse. Nichts geht hinaus, nichts wird gezählt; der Fehler wird laut weitergereicht
+  (kein Sperrverdacht, keine Pause). Einen User-Agent mit Steuerzeichen lehnt `get_json` schon vor der Anfrage ab
+- Weiterleitungen (HTTP 3xx) werden nicht verfolgt (modulweiter Öffner `_OEFFNER` aus `oeffner()` mit
+  `_OhneWeiterleitung`; der Standard von urllib bleibt für andere Module unverändert): Abbruch der Art `weiterleitung`
+  mit der Ziel-URL in Meldung und `Abbruch.ziel`, gezählt in `statistik()["weiterleitungen"]` und als Fehler
+  (Abrufstatistik: Spalten `weiterleitungen` und `fehler`, Ziel in `ergebnis`); sonst kämen ungezählte Anfragen an
+  einen anderen Host oder Pfad hinzu
 - antwortet ein Proxy der Ausführungsumgebung auf CONNECT nicht mit 200 („Tunnel connection failed: <Code>“), zählt
   der Code:
   - 403, 405, 407 (Ablehnung durch eine Richtlinie oder fehlende Anmeldung): keine Antwort der Stadt; Abbruch der Art
@@ -47,7 +54,10 @@
 - Zählwerk je Lauf für die Abrufstatistik (`statistik()`)
 - Sperre: ohne `RATSATLAS_STADT_INFORMIERT=ja` keine Anfrage an die Stadt (Entscheidung 04.11.2026)
 - `stadt()` erkennt Adressen der Stadt (stadt-koeln.de, offenedaten-koeln.de, Host der eingestellten OParl-API);
-  pipeline/net.py verweigert damit Anfragen an die Stadt, die nicht über dieses Modul laufen
+  pipeline/net.py verweigert damit seine Anfragen an die Stadt, auch als Ziel einer Weiterleitung. Module, die
+  direkt über urllib abrufen (geodaten.py, ebenen.py, kontext.py u. a.), erfasst dieser Schutz nicht
+- eine Uhr für alle Zeitpunkte (`uhr()`, UTC): Zeitfenster, Retry-After und der Zustand in sessionnet.py; Tests
+  ersetzen sie durch eine Scheinuhr
 """
 import email.utils
 import http.client
@@ -84,19 +94,29 @@ LOKALE_HOSTS = ("127.0.0.1", "localhost", "::1")
 # Domains der Stadt Köln (auch Unterdomains), für `stadt()`
 STADT_DOMAINS = ("stadt-koeln.de", "offenedaten-koeln.de")
 ORTSZEIT = ZoneInfo("Europe/Berlin")
+# Retry-After über die Nacht hinaus (`Abbruch.nicht_vor`): höchstens 30 Tage; ein unlesbarer Wert gilt als 7 Tage
+RETRY_AFTER_HOECHSTENS = timedelta(days=30)
+RETRY_AFTER_UNLESBAR = timedelta(days=7)
+
+
+def uhr():
+    """Aktuelle Zeit (UTC) für Zeitfenster, Retry-After und den Zustand des Abrufs; Tests ersetzen sie (Scheinuhr)."""
+    return datetime.now(timezone.utc)
 
 
 class Abbruch(RuntimeError):
     """Der Abruf wird beendet; der letzte gültige Datenstand bleibt erhalten. `art`: sperre, proxy, weiterleitung,
     zeitfenster, gesperrt, http, aufgegeben, unlesbar, adresse, liste oder leer; `ziel`: Ziel einer Weiterleitung; `code`:
     HTTP-Status (bei http, bei aufgegeben nach HTTP 429/5xx oder CONNECT-Antwort 429/503, bei sperre nach einer
-    CONNECT-Antwort wie 502/504), sonst None."""
+    CONNECT-Antwort wie 502/504), sonst None; `nicht_vor`: Zeitpunkt (UTC) aus einem Retry-After, vor dem keine
+    Anfrage folgen soll, sonst None."""
 
-    def __init__(self, meldung, art="", ziel="", code=None):
+    def __init__(self, meldung, art="", ziel="", code=None, nicht_vor=None):
         super().__init__(meldung)
         self.art = art
         self.ziel = ziel
         self.code = code
+        self.nicht_vor = nicht_vor
 
 
 class _OhneWeiterleitung(urllib.request.HTTPRedirectHandler):
@@ -106,9 +126,19 @@ class _OhneWeiterleitung(urllib.request.HTTPRedirectHandler):
         return None
 
 
-# modulweiter Öffner ohne Weiterleitung (Proxy aus der Umgebung beim Import); urllib.request.urlopen und der
-# Standard-Öffner bleiben für andere Module (Geodaten, Kontextdaten) unverändert
-_OEFFNER = urllib.request.build_opener(_OhneWeiterleitung)
+def oeffner(proxies=None):
+    """Öffner für dieses Modul: nur http und https (ohne Handler für FTP, Dateien, data: und unbekannte Schemata), ohne
+    Weiterleitung. `proxies`: None = Proxy aus der Umgebung (beim Bau gelesen), {} = ohne Proxy."""
+    o = urllib.request.OpenerDirector()
+    for h in (urllib.request.ProxyHandler(proxies), urllib.request.HTTPHandler(), urllib.request.HTTPSHandler(),
+              urllib.request.HTTPDefaultErrorHandler(), _OhneWeiterleitung(), urllib.request.HTTPErrorProcessor()):
+        o.add_handler(h)
+    return o
+
+
+# modulweiter Öffner (Proxy aus der Umgebung beim Import); urllib.request.urlopen und der Standard-Öffner bleiben für
+# andere Module (Geodaten, Kontextdaten) unverändert
+_OEFFNER = oeffner()
 
 
 def lokal(url):
@@ -205,7 +235,7 @@ def freigegeben(url):
 def _ortszeit(jetzt=None):
     """`jetzt` als Ortszeit Köln: ohne Angabe die aktuelle Zeit, ohne Zone als Ortszeit gelesen, sonst umgerechnet."""
     if jetzt is None:
-        return datetime.now(ORTSZEIT)
+        return uhr().astimezone(ORTSZEIT)
     return jetzt.replace(tzinfo=ORTSZEIT) if jetzt.tzinfo is None else jetzt.astimezone(ORTSZEIT)
 
 
@@ -260,12 +290,15 @@ _SEKUNDEN = re.compile(r"[0-9]+")
 
 def retry_after_sekunden(wert, jetzt=None):
     """`Retry-After` in Sekunden (ab `jetzt`, UTC): Sekundenzahl oder HTTP-Datum (RFC 9110); fehlt der Kopf, 0; ein
-    Datum in der Vergangenheit ergibt 0. Unlesbar (auch negativ): None."""
+    Datum in der Vergangenheit ergibt 0. Mehr als 12 Ziffern (ohne führende Nullen): math.inf, länger als jede Pause
+    (int() lehnte über 4300 Ziffern ab; gespeichert wird höchstens RETRY_AFTER_HOECHSTENS). Unlesbar (auch negativ):
+    None."""
     wert = (wert or "").strip()
     if not wert:
         return 0
     if _SEKUNDEN.fullmatch(wert):
-        return int(wert)
+        ziffern = wert.lstrip("0") or "0"
+        return int(ziffern) if len(ziffern) <= 12 else math.inf
     try:
         datum = email.utils.parsedate_to_datetime(wert)
     except (TypeError, ValueError, IndexError, OverflowError):
@@ -274,14 +307,51 @@ def retry_after_sekunden(wert, jetzt=None):
         return None
     if datum.tzinfo is None:   # „-0000“: UTC ohne Angabe der Quelle
         datum = datum.replace(tzinfo=timezone.utc)
-    jetzt = jetzt or datetime.now(timezone.utc)
+    jetzt = jetzt or uhr()
     return max(0, math.ceil((datum - jetzt).total_seconds()))
 
 
-def _aufgegeben(url, letzter_fehler, versuche, grund=""):
+def nicht_vor(retry_after):
+    """Zeitpunkt (UTC), vor dem nach einem Retry-After keine Anfrage folgt: jetzt + Retry-After, höchstens
+    RETRY_AFTER_HOECHSTENS (auch für Werte, die als Zeitspanne nicht darstellbar wären); unlesbar (None):
+    RETRY_AFTER_UNLESBAR; ohne Retry-After (0): None."""
+    if retry_after is None:
+        return uhr() + RETRY_AFTER_UNLESBAR
+    if retry_after <= 0:
+        return None
+    return uhr() + timedelta(seconds=min(retry_after, RETRY_AFTER_HOECHSTENS.total_seconds()))
+
+
+def _aufgegeben(url, letzter_fehler, versuche, grund="", retry_after=0):
     code = getattr(letzter_fehler, "code", None) if isinstance(letzter_fehler, urllib.error.HTTPError) else \
         tunnel_status(letzter_fehler)
-    return Abbruch(f"aufgegeben nach {versuche} Versuch(en){grund}: {url} ({letzter_fehler})", "aufgegeben", code=code)
+    return Abbruch(f"aufgegeben nach {versuche} Versuch(en){grund}: {url} ({letzter_fehler})", "aufgegeben", code=code,
+                   nicht_vor=nicht_vor(retry_after))
+
+
+def adresse_pruefen(url):
+    """Grund, aus dem eine Adresse nicht gesendet wird, sonst None: Zeichen außerhalb von ASCII, anderes Schema als
+    http oder https, kein Host, unlesbarer Port."""
+    if not url.isascii():   # z. B. Umlaute in links.next: http.client scheiterte beim Kodieren
+        return "Zeichen außerhalb von ASCII"
+    try:
+        teile = urllib.parse.urlsplit(url)
+        teile.port   # Port außerhalb 0–65535 oder keine Zahl: ValueError
+    except ValueError as e:
+        return f"unlesbar ({e})"
+    if teile.scheme not in ("http", "https"):
+        return f"Schema {teile.scheme or '(fehlt)'} statt http oder https"
+    if not teile.hostname:
+        return "ohne Host"
+    return None
+
+
+def _kopf_pruefen():
+    """User-Agent ohne Steuerzeichen (etwa ein Zeilenumbruch in RATSATLAS_KONTAKT): sonst ValueError vor der Anfrage,
+    ein Einstellungsfehler (laut, kein Sperrverdacht)."""
+    if any(ord(z) < 32 or ord(z) == 127 for z in config.USER_AGENT):
+        raise ValueError(f"User-Agent enthält Steuerzeichen (RATSATLAS_KONTAKT prüfen): {config.USER_AGENT!r}; keine "
+                         "Anfrage gesendet")
 
 
 def statistik():
@@ -294,9 +364,11 @@ def get_json(url, pausen=None):
     if not freigegeben(url):
         raise Abbruch("Abruf gesperrt: Die Stadt Köln ist noch nicht informiert (CLAUDE.md 9). "
                       "Freigabe mit RATSATLAS_STADT_INFORMIERT=ja.", "gesperrt")
-    if not url.isascii():   # z. B. Umlaute in links.next: http.client scheiterte beim Kodieren, nichts ginge hinaus
+    _kopf_pruefen()   # Einstellungsfehler: laut, vor jeder Anfrage
+    grund = adresse_pruefen(url)
+    if grund:   # nichts ginge hinaus (oder an ein anderes Schema): nicht gesendet, nicht gezählt, keine Sperre
         _zaehler["fehler"] += 1
-        raise Abbruch(f"ungültige Adresse (Zeichen außerhalb von ASCII), nicht gesendet: {url}", "adresse")
+        raise Abbruch(f"ungültige Adresse ({grund}), nicht gesendet: {url}", "adresse")
     ist_lokal = lokal(url)
     pausen = config.ABRUF_PAUSEN if pausen is None else pausen
     mindestens = abstand(ist_lokal)
@@ -311,25 +383,19 @@ def get_json(url, pausen=None):
         if warte > 0:
             time.sleep(warte)
         start = time.monotonic()
-        _zaehler["anfragen"] += 1
         try:
             req = urllib.request.Request(url, headers={"User-Agent": config.USER_AGENT, "Accept": "application/json"})
-        except ValueError as e:   # unbekanntes Schema o. Ä. (z. B. links.next ohne Schema): nicht gesendet, keine Sperre
-            _zaehler["anfragen"] -= 1
+        except ValueError as e:   # von adresse_pruefen nicht erkannt: nicht gesendet, keine Sperre
             _zaehler["fehler"] += 1
             raise Abbruch(f"ungültige Adresse, nicht gesendet: {url} ({e})", "adresse") from e
+        _zaehler["anfragen"] += 1
         retry_after = 0
+        daten = None
+        gesendet = False
         try:
             with _OEFFNER.open(req, timeout=90) as r:
+                gesendet = True
                 daten = r.read()   # weniger Bytes als Content-Length oder chunked ohne Abschluss: IncompleteRead
-            _zaehler["bytes"] += len(daten)
-            _zaehler["sekunden"] += time.monotonic() - start
-            antwort = json.loads(daten)
-            if not isinstance(antwort, dict):   # gültiges JSON in unerwarteter Form: kein Überlastungssignal
-                _zaehler["fehler"] += 1
-                raise Abbruch(f"unerwartete Antwortform (JSON-Objekt erwartet, erhalten: {type(antwort).__name__}): "
-                              f"{url}", "unlesbar")
-            return antwort
         except urllib.error.HTTPError as e:
             _zaehler["fehler"] += 1
             if 300 <= e.code < 400:   # Weiterleitung: nicht folgen, Ziel nennen, abbrechen
@@ -351,10 +417,13 @@ def get_json(url, pausen=None):
             _zaehler["anfragen"] -= 1
             _zaehler["fehler"] += 1
             raise Abbruch(f"ungültige Adresse, nicht gesendet: {url} ({e})", "adresse") from e
-        except UnicodeEncodeError:
-            # Kopfzeile nicht kodierbar (z. B. RATSATLAS_KONTAKT außerhalb von Latin-1): nichts gesendet, kein
-            # Sperrsignal, sondern ein Einstellungs- oder Programmfehler – laut abbrechen, nicht als „unlesbar“ werten
-            _zaehler["anfragen"] -= 1
+        except ValueError:
+            # vor dem Senden: Kopfzeile nicht kodierbar (UnicodeEncodeError, etwa RATSATLAS_KONTAKT außerhalb von
+            # Latin-1) oder mit Zeilenumbruch, Host nicht als IDNA kodierbar, unlesbare Proxy-Adresse. Kein
+            # Sperrsignal, sondern ein Einstellungs- oder Programmfehler: laut weiterreichen, nicht als „unlesbar“
+            # werten (keine Pausen); nicht gesendet, also nicht gezählt
+            if not gesendet:
+                _zaehler["anfragen"] -= 1
             raise
         except (urllib.error.URLError, TimeoutError, ConnectionError, OSError, http.client.HTTPException) as e:
             # HTTPException (kein OSError): Antwort abgeschnitten (IncompleteRead) oder unlesbar (BadStatusLine,
@@ -372,22 +441,36 @@ def get_json(url, pausen=None):
                 raise Abbruch(f"{grund}, mögliche Sperre: {url} ({e}); nächster Versuch im nächsten Zeitfenster",
                               "sperre", code=code) from e
             letzter_fehler = e   # CONNECT-Antwort 429/503 (Begrenzung, Überlastung): wie HTTP 429/5xx
-        except ValueError as e:   # unlesbar: kein JSON (JSONDecodeError) oder keine gültige Kodierung
-            _zaehler["fehler"] += 1
-            letzter_fehler = e
         finally:   # der Abstand gilt ab dem Ende der Antwort, auch nach Fehlern
             _letzte = time.monotonic()
+        if daten is not None:
+            _zaehler["bytes"] += len(daten)
+            try:
+                antwort = json.loads(daten)
+            except (ValueError, RecursionError) as e:   # unlesbar: kein JSON, falsche Kodierung, zu tief verschachtelt
+                _zaehler["fehler"] += 1
+                letzter_fehler = e
+            else:
+                _zaehler["sekunden"] += time.monotonic() - start
+                if not isinstance(antwort, dict):   # gültiges JSON in unerwarteter Form: kein Überlastungssignal
+                    _zaehler["fehler"] += 1
+                    raise Abbruch(f"unerwartete Antwortform (JSON-Objekt erwartet, erhalten: "
+                                  f"{type(antwort).__name__}): {url}", "unlesbar")
+                return antwort
         _zaehler["sekunden"] += time.monotonic() - start
         if versuch < len(pausen):
-            # Sofort aufgeben (zählt als Nacht mit möglicher Sperre), statt eine Pause abzuwarten, die nicht passt
+            # Sofort aufgeben (zählt als Nacht mit möglicher Sperre), statt eine Pause abzuwarten, die nicht passt;
+            # ein Retry-After gilt dann über die Nacht hinaus (Abbruch.nicht_vor)
             if retry_after is None:
-                raise _aufgegeben(url, letzter_fehler, versuch + 1, ", Retry-After unlesbar")
+                raise _aufgegeben(url, letzter_fehler, versuch + 1, ", Retry-After unlesbar", retry_after)
             if retry_after > max(pausen):
+                dauer = f"{retry_after} s" if math.isfinite(retry_after) else "mit mehr als 12 Ziffern"
                 raise _aufgegeben(url, letzter_fehler, versuch + 1,
-                                  f", Retry-After {retry_after} s länger als die längste Pause ({max(pausen)} s)")
+                                  f", Retry-After {dauer} länger als die längste Pause ({max(pausen)} s)", retry_after)
             pause = max(pausen[versuch], retry_after)
             if not ist_lokal and not fenster_offen_nach(pause):
-                raise _aufgegeben(url, letzter_fehler, versuch + 1, ", nächste Pause reicht über das Zeitfenster")
+                raise _aufgegeben(url, letzter_fehler, versuch + 1, ", nächste Pause reicht über das Zeitfenster",
+                                  retry_after)
             _zaehler["wiederholungen"] += 1
             time.sleep(pause)
-    raise _aufgegeben(url, letzter_fehler, len(pausen) + 1)
+    raise _aufgegeben(url, letzter_fehler, len(pausen) + 1, retry_after=retry_after)

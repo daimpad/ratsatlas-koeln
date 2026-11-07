@@ -50,7 +50,9 @@ ABRUF_ABSTAND = float(os.environ.get("RATSATLAS_ABSTAND", "2.0"))
 # Zeitfenster 23–1 Uhr: laut mandari erlaubt die Stadt Abrufe nur dann (ohne Quelle der Stadt; Anfrage offen,
 # explore/ergebnisse/sessionnet_befunde.tsv)
 ABRUF_ZEITFENSTER = os.environ.get("RATSATLAS_ZEITFENSTER", "23-1")   # Stunden von-bis; leer = ohne Zeitfenster
-ABRUF_MAX_SEITEN = int(os.environ.get("RATSATLAS_MAX_SEITEN", "4000"))  # je Liste und Lauf (Schutz vor Schleifen)
+# Seiten je Liste und Lauf (Schutz vor Schleifen); eine Fortsetzung zählt in ihrem Lauf neu, die Seiten insgesamt
+# stehen nur in der Abrufstatistik
+ABRUF_MAX_SEITEN = int(os.environ.get("RATSATLAS_MAX_SEITEN", "4000"))
 ABRUF_PAUSEN = [60, 300, 1800, 3600, 3 * 3600]
 ABRUF_SEITENGROESSE = os.environ.get("RATSATLAS_LIMIT", "")          # leer = Vorgabe des Servers (25)
 OVERPASS = [
@@ -59,7 +61,9 @@ OVERPASS = [
 ]
 # Umgebendes Rechteck des Kölner Stadtgebiets (Süd, West, Nord, Ost), gerundet; aus Stadtbezirke Köln (24.09.2026)
 STADT_BBOX = (50.83, 6.77, 51.09, 7.17)
-KONTAKT = os.environ.get("RATSATLAS_KONTAKT", "")
+# Kontakt im User-Agent; Leerraum am Rand (etwa ein Zeilenumbruch aus der Repository-Variable) entfällt, Steuerzeichen
+# im Inneren lehnt abruf.get_json vor der ersten Anfrage ab
+KONTAKT = os.environ.get("RATSATLAS_KONTAKT", "").strip()
 USER_AGENT = ("ratsatlas-koeln/0.1 (+https://github.com/daimpad/ratsatlas-koeln" + (f"; {KONTAKT}" if KONTAKT else "")
               + ")")
 

@@ -77,6 +77,7 @@ RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_W
 - Anfragen: System, Body, erste Seite von `paper`, `meeting`, `organization`, `person` (6) und vier Parametertests an `paper`: `modified_since` URL-kodiert (bei SessionNet anderswo HTTP 404), `limit=100`, `modified_since` vor 7 Tagen, `created_since`/`created_until` für 2025. Mit dem Cache aus Stufe 1 kommen System, Body und erste Vorlagenseite aus dem Cache (7 ans Netz).
 - Ausgewertet (`oparl_kennzahlen.tsv`): Gesamtzahlen und Seitenzahl je Liste (Umfang eines Vollabrufs), ob `limit` wirkt, ob die Zeitfilter wirken (`filter_wirksam`), Body-Felder (`license`, `legislativeTerm`, Kontakt).
 - Für Stufe 3: `organization` `pagination.totalPages` (reichen 4 Seiten?) und `filter_wirksam` des Tests `created_since`/`created_until`.
+- Ende von `links.next` ausdrücklich im Bericht notieren, sobald eine Liste mit nur einer Seite oder die letzte Seite einer Liste vorliegt (Rohantwort in `_cache/`): fehlt `links`, ist es leer (`null`, `""`, `[]`, `{}`) oder fehlt bzw. ist leer nur `links.next`? `pipeline/sessionnet.py` wertet jeden leeren Wert als Ende der Liste und nur ein nicht leeres `links`, das kein Objekt ist, als unlesbar; die Angabe aus Köln bestätigt oder widerlegt das.
 
 ## Stufe 3 – Organisationen und kleine Stichprobe
 
@@ -90,6 +91,7 @@ RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_W
 - `stichprobe` nur, wenn Stufe 2 für `created_since`/`created_until` `filter_wirksam=ja` gemeldet hat. Lehnt Köln die Parameter ab oder wirken sie nicht, entfällt die Stichprobe dieser Stufe; eine Stichprobe über `links.next` ohne Jahresfilter (mit eigener Seitenzahl) gibt es nur nach neuer Freigabe.
 - `organisationen`: Body und 4 Seiten (Body und erste Seite aus dem Cache von Stufe 2: 3 ans Netz). Ohne `--seiten` gilt dieselbe Grenze von 4 Seiten.
 - `stichprobe`: Body und je Jahr 2019–2026 eine Seite (Body und Seite 2025 aus dem Cache von Stufe 2: 7 ans Netz), bei 25 je Seite 200 Vorlagen.
+- Ende von `links.next`: Erreicht `organisationen` das Listenende (`oparl_listen.tsv`, Spalte `ende` „Ende der Liste (kein links.next)“), die Form von `links` auf der letzten Seite aus der Rohantwort in `_cache/` ausdrücklich im Bericht notieren (wie bei Stufe 2); `oparl_messung.py` unterscheidet fehlendes und leeres `links` nicht.
 - Ausgewertet: `organizationType` und ob das Listenende erreicht ist (`oparl_listen.tsv`, Spalte `ende`); je Jahr totalElements, ob `created_since`/`created_until` wirken (`created außerhalb des Filterjahres`, doppelte Kennungen), erste Feldabdeckung, `paperType`, Referenzschema.
 - **Regel:** Weiter zur nächsten Stufe nur, wenn der Jahresfilter wirkt und keine Doppelungen auftreten: `created außerhalb des Filterjahres`, `doppelte Kennungen im selben Jahr` und `doppelte Kennungen aus anderen Jahren` sind alle 0 (die Auswertung meldet „Regel Stufe 3/5 … erfüllt“). Sonst Bericht; die Reihe geht erst nach neuer Freigabe weiter.
 
