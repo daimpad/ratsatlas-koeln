@@ -11,7 +11,8 @@ import time
 import types
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
@@ -274,7 +275,8 @@ def test_weiterleitung_wird_nicht_verfolgt(oparl, monkeypatch):
     assert z["ergebnis"].startswith("abbruch: Weiterleitung HTTP 301 nach") and ziel in z["ergebnis"]
     assert (z["anfragen"], z["fehler"], z["weiterleitungen"], z["proxy"]) == ("1", "1", "1", "0")
     assert ziel in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
-    assert "sperre_verdacht" not in json.loads(config.ZUSTAND.read_text())
+    # eine Weiterleitung (etwa auf die Sperrseite einer Firewall) zählt vorsichtshalber als Nacht mit möglicher Sperre
+    assert json.loads(config.ZUSTAND.read_text())["sperre_verdacht"]["art"] == "weiterleitung"
 
 
 def _schein_proxy(monkeypatch, connect, get=407):
@@ -335,6 +337,7 @@ def test_proxy_erreicht_die_stadt_nicht_ist_moegliche_sperre(oparl, monkeypatch,
         assert abruf.statistik()["proxy"] == vorher["proxy"]
         monkeypatch.setattr(config, "OPARL_BODY", "https://example.invalid/oparl/body")
         sessionnet.fetch_all()
+        _nacht_spaeter()                                                    # nächste Nacht (sonst: gleiche Nacht, kein Lauf)
         sessionnet.fetch_all()
     finally:
         proxy.shutdown()
@@ -526,9 +529,9 @@ def test_moegliche_sperre():
     def abbruch(art, code=None):
         return abruf.Abbruch("Test", art, code=code)
     for e in (abbruch("sperre"), abbruch("aufgegeben"), abbruch("aufgegeben", 503), abbruch("http", 401),
-              abbruch("http", 403), abbruch("http", 429)):
+              abbruch("http", 403), abbruch("http", 429), abbruch("weiterleitung", 301), abbruch("unlesbar")):
         assert sessionnet.moegliche_sperre(e), (e.art, e.code)
-    for e in (abbruch("http", 404), abbruch("http", 407), abbruch("proxy", 407), abbruch("weiterleitung", 301),
+    for e in (abbruch("http", 404), abbruch("http", 407), abbruch("proxy", 407),
               abbruch("liste"), abbruch("adresse"), abbruch("zeitfenster"), RuntimeError("Beratungen: nur 0")):
         assert not sessionnet.moegliche_sperre(e), (getattr(e, "art", ""), getattr(e, "code", None))
     # Teilabbruch übernimmt Art und Code
@@ -668,3 +671,83 @@ def test_erste_anfrage_eines_prozesses_folgt_frühestens_2_s_nach_dem_start():
     assert r.returncode == 0, r.stderr
     assert len(server.eingang) == 1 and server.eingang[0] - float(r.stdout.strip()) >= 2.0
     assert "RATSATLAS_ABSTAND=0 s liegt unter dem Mindestabstand" in r.stderr
+
+
+def _nacht_spaeter(stunden=13):
+    """Den letzten Sperrverdacht um `stunden` zurückdatieren (simuliert die nächste Nacht)."""
+    z = json.loads(config.ZUSTAND.read_text())
+    zuletzt = datetime.fromisoformat(z["sperre_verdacht"]["zuletzt"]) - timedelta(hours=stunden)
+    z["sperre_verdacht"]["zuletzt"] = zuletzt.isoformat(timespec="seconds")
+    config.ZUSTAND.write_text(json.dumps(z))
+
+
+def _nicht_lokal(monkeypatch):
+    """Lokalen Testserver wie einen Server der Stadt behandeln (Freigabe, Zeitfenster, Mindestabstand 0 für die Tests)."""
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(abruf, "lokal", lambda url: False)
+    monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
+    monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
+
+
+def test_kein_zweiter_lauf_in_derselben_nacht_nach_sperrverdacht(oparl, monkeypatch):
+    _nicht_lokal(monkeypatch)
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: True)
+    config.RAW.mkdir(parents=True, exist_ok=True)
+    jetzt = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    config.ZUSTAND.write_text(json.dumps({"sperre_verdacht": {"naechte": 1, "zuletzt": jetzt, "art": "sperre"}}))
+    monkeypatch.setattr(abruf, "get_json", lambda *a, **k: pytest.fail("darf in derselben Nacht nicht abrufen"))
+    sessionnet.fetch_all()
+    assert "derselben Nacht" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
+    assert oparl.anfragen == []
+
+
+def test_aufgeben_wenn_die_naechste_pause_ueber_das_zeitfenster_reicht(monkeypatch):
+    """429/503 kurz vor Ende des Zeitfensters: sofort „aufgegeben“ (zählt als Nacht mit möglicher Sperre), statt die
+    Pause abzuwarten und nur „Zeitfenster vorbei“ zu melden."""
+    server = _lokaler_server(lambda methode, pfad: (503, {}, b""))
+    try:
+        _nicht_lokal(monkeypatch)
+        monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: True)
+        monkeypatch.setattr(abruf, "fenster_offen_nach", lambda sekunden, jetzt=None: sekunden < 600)
+        monkeypatch.setattr(abruf.time, "sleep", lambda s: None)
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(f"{server.url}/body", pausen=[60, 300, 1800, 3600])
+        assert e.value.art == "aufgegeben" and e.value.code == 503 and "Zeitfenster" in str(e.value)
+        assert len(server.anfragen) == 3            # Versuche nach 60 s und 300 s, die 1800-s-Pause passt nicht mehr
+        assert sessionnet.moegliche_sperre(e.value)
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_fenster_offen_nach():
+    berlin = ZoneInfo("Europe/Berlin")
+    assert abruf.fenster_offen_nach(600, datetime(2026, 11, 7, 23, 10, tzinfo=berlin))
+    assert not abruf.fenster_offen_nach(3600, datetime(2026, 11, 8, 0, 30, tzinfo=berlin))
+    assert not abruf.fenster_offen_nach(60, datetime(2026, 11, 7, 12, 0, tzinfo=berlin))
+
+
+@pytest.mark.parametrize("inhalt, art", [(b"[]", "aufgegeben"), (b"null", "aufgegeben"), (b'{"a": 1}', "unlesbar")])
+def test_unerwartete_antwortform_ohne_traceback(oparl, monkeypatch, inhalt, art):
+    server = _lokaler_server(lambda methode, pfad: (200, {"Content-Type": "application/json"}, inhalt))
+    try:
+        monkeypatch.setattr(config, "ABRUF_PAUSEN", [0])
+        monkeypatch.setattr(config, "OPARL_BODY", f"{server.url}/body")
+        sessionnet.fetch_all()                                   # kein Traceback
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert json.loads(config.ZUSTAND.read_text())["sperre_verdacht"]["art"] == art
+    assert "abruf_fehler" in json.loads(config.STAND.read_text())
+
+
+def test_adresse_ohne_schema_wird_nicht_gesendet(monkeypatch):
+    """Ein links.next ohne gültiges Schema wird nicht gesendet (Art „adresse“, keine Sperre, kein Traceback)."""
+    _nicht_lokal(monkeypatch)
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: True)
+    monkeypatch.setattr(abruf._OEFFNER, "open", lambda *a, **k: pytest.fail("darf nicht senden"))
+    vorher = abruf.statistik()["anfragen"]
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json("buergerinfo.example.invalid/oparl/papers?page=2")
+    assert e.value.art == "adresse" and not sessionnet.moegliche_sperre(e.value)
+    assert abruf.statistik()["anfragen"] == vorher

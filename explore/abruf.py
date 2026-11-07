@@ -5,7 +5,7 @@
   frühestens ABSTAND Sekunden nach dem Import und frühestens ABSTAND Sekunden nach der letzten Netzanfrage laut
   _cache/abrufe.tsv (Zeit mit Zone, nach dem Ende der Antwort geschrieben; sekundengenau, daher 1 s Zuschlag)
 - gleichzeitige Prozesse: Vor der ersten Netzanfrage nimmt ein Prozess eine exklusive Sperre (fcntl.flock) auf
-  _cache/abruf.lock und hält sie bis zu seinem Ende; ein zweiter Prozess mit demselben Cache bricht dann vor seiner
+  ~/.cache/ratsatlas-koeln/abruf.lock (außerhalb des Checkouts) und hält sie bis zu seinem Ende; ein zweiter Prozess bricht dann vor seiner
   ersten Anfrage ab (Art `parallel`)
 - offener User-Agent mit Projektadresse; Kontakt über die Umgebungsvariable RATSATLAS_KONTAKT
 - Wiederholung nur bei 429/5xx, mit wachsender Pause; 401/403/404 brechen sofort ab;
@@ -69,7 +69,10 @@ MAX_DAUER = float(os.environ.get("RATSATLAS_MAX_DAUER", "0"))
 PROTOKOLL = CACHE / "abrufe.tsv"
 PROTOKOLL_SPALTEN = ("zeit", "url", "status", "bytes", "dauer_s", "quelle", "ziel")
 ZEITZONE = ZoneInfo("Europe/Berlin")
-SPERRDATEI = "abruf.lock"   # im Cache-Verzeichnis; exklusiv für die Laufzeit eines Prozesses
+SPERRDATEI = "abruf.lock"
+# Ort der Sperre: außerhalb des Checkouts, damit auch Läufe aus anderen Arbeitskopien oder mit anderem RATSATLAS_CACHE
+# sich gegenseitig ausschließen (RATSATLAS_SPERRE überschreibt, z. B. für Tests)
+SPERRORT = Path(os.environ.get("RATSATLAS_SPERRE", Path.home() / ".cache" / "ratsatlas-koeln"))
 _anfragen = 0
 _cache_treffer = 0
 _kopf_geprueft = False
@@ -143,20 +146,20 @@ def _proxy_abbruch(url, code, fehler, dauer):
 
 
 def sperre_halten():
-    """Exklusive Sperre (fcntl.flock) auf CACHE/abruf.lock bis zum Ende des Prozesses, genommen vor der ersten
-    Netzanfrage. Hält ein anderer Prozess sie (gleichzeitiger Lauf mit demselben Cache), Abbruch der Art `parallel`
-    ohne Anfrage."""
+    """Exklusive Sperre (fcntl.flock) auf SPERRORT/abruf.lock (Vorgabe ~/.cache/ratsatlas-koeln, außerhalb des
+    Checkouts) bis zum Ende des Prozesses, genommen vor der ersten Netzanfrage. Hält ein anderer Prozess sie
+    (gleichzeitiger Lauf, auch aus einer anderen Arbeitskopie), Abbruch der Art `parallel` ohne Anfrage."""
     global _sperre
     if _sperre is not None:
         return
-    CACHE.mkdir(parents=True, exist_ok=True)
-    pfad = CACHE / SPERRDATEI
+    SPERRORT.mkdir(parents=True, exist_ok=True)
+    pfad = SPERRORT / SPERRDATEI
     datei = open(pfad, "a+", encoding="utf-8")
     try:
         fcntl.flock(datei.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError as e:   # BlockingIOError: ein anderer Prozess hält die Sperre
         datei.close()
-        raise Abbruch(f"Ein anderer Abrufprozess mit demselben Cache läuft noch (Sperre {pfad}); keine Anfrage. "
+        raise Abbruch(f"Ein anderer Abrufprozess läuft noch (Sperre {pfad}); keine Anfrage. "
                       "Prozesse nur nacheinander starten (explore/STUFEN.md).", "parallel") from e
     _sperre = datei
 

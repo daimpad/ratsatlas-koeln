@@ -796,7 +796,8 @@ def test_502_504_als_antwort_ist_moegliche_sperre(server, tmp_path, monkeypatch,
 
 
 def test_zweiter_gleichzeitiger_prozess_bricht_vor_der_ersten_anfrage_ab(server, tmp_path):
-    """Sperre _cache/abruf.lock: Hält ein Prozess sie, bricht ein zweiter mit demselben Cache ohne Anfrage ab."""
+    """Sperre abruf.lock (Ort RATSATLAS_SPERRE): Hält ein Prozess sie, bricht ein zweiter ohne Anfrage ab, auch mit
+    anderem Cache (andere Arbeitskopie)."""
     env = probelauf.umgebung(server, tmp_path / "cache", tmp_path / "ergebnisse", 3)
     halter = ("import sys; sys.path.insert(0, sys.argv[1]); import abruf; abruf.sperre_halten(); "
               "print('bereit', flush=True); sys.stdin.read()")

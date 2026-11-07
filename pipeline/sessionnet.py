@@ -41,6 +41,7 @@ from .fetch import MIN_ANTEIL, _guard, _jsonl_count, _now, _stamp, _write
 UEBERLAPPUNG = timedelta(days=1)
 SPERRE_NAECHTE = 3                 # Nächte in Folge mit möglicher Sperre (moegliche_sperre), danach Pause
 SPERRE_PAUSE = timedelta(days=7)
+SPERRE_GLEICHE_NACHT = timedelta(hours=12)   # nach einem Verdacht kein weiterer Lauf in derselben Nacht
 # HTTP-Antworten, nach denen die Nacht als Nacht mit möglicher Sperre zählt (Art `http`; 429 endet sonst als
 # `aufgegeben`, das ebenfalls zählt)
 SPERRE_HTTP = (401, 403, 429)
@@ -56,9 +57,11 @@ def moegliche_sperre(fehler):
     """Zählt dieser Abbruch als Nacht mit möglicher Sperre? Art `sperre` (Zeitüberschreitung, Verbindungsabbruch,
     abgeschnittene oder unlesbare Antwort, Proxy erreicht die Stadt nicht), `aufgegeben` (nach 429, 5xx, unlesbarer
     Antwort oder CONNECT-Antwort 429/503) und `http` mit 401, 403 oder 429. Nicht: proxy (Ablehnung in der
-    Ausführungsumgebung), weiterleitung, liste, adresse, andere HTTP-Codes (z. B. 404)."""
+    Ausführungsumgebung), liste, adresse, andere HTTP-Codes (z. B. 404). Eine Weiterleitung (etwa auf die Sperrseite
+    einer vorgeschalteten Firewall) und eine unerwartete Antwortform (`unlesbar`) zählen vorsichtshalber mit."""
     art = getattr(fehler, "art", "")
-    return art in ("sperre", "aufgegeben") or (art == "http" and getattr(fehler, "code", None) in SPERRE_HTTP)
+    return art in ("sperre", "aufgegeben", "weiterleitung", "unlesbar") or (
+        art == "http" and getattr(fehler, "code", None) in SPERRE_HTTP)
 
 
 def _zustand():
@@ -334,6 +337,12 @@ def fetch_all():
              f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr" if not lokal and not abruf.im_zeitfenster()
              else None)
     verdacht = _zustand().get("sperre_verdacht") or {}
+    if not grund and verdacht.get("zuletzt") and not lokal:
+        # nach einer Nacht mit möglicher Sperre in derselben Nacht kein weiterer Lauf (z. B. Push oder Knopfdruck)
+        seit = datetime.now(timezone.utc) - datetime.fromisoformat(verdacht["zuletzt"])
+        if seit < SPERRE_GLEICHE_NACHT:
+            grund = (f"möglicher Sperrverdacht vor {int(seit.total_seconds() // 60)} Minuten; in derselben Nacht kein "
+                     "weiterer Abruf")
     if not grund and verdacht.get("naechte", 0) >= SPERRE_NAECHTE:
         bis = datetime.fromisoformat(verdacht["zuletzt"]) + SPERRE_PAUSE
         if datetime.now(timezone.utc) < bis:
@@ -354,15 +363,23 @@ def fetch_all():
         beratungen(papers, meetings)
         _stamp("abruf_ok")
         _zustand_setzen("sperre_verdacht", None)
+    except (KeyError, TypeError, AttributeError) as e:   # gültiges JSON in unerwarteter Form (z. B. Body ohne Listen)
+        e = abruf.Abbruch(f"unerwartete Antwortform ({type(e).__name__}: {e})", "unlesbar")
+        _abbruch_vermerken(e, verdacht)
     except (abruf.Abbruch, RuntimeError) as e:
-        if moegliche_sperre(e):
-            _zustand_setzen("sperre_verdacht", {
-                "naechte": verdacht.get("naechte", 0) + 1,
-                "zuletzt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                "art": getattr(e, "art", ""), "code": getattr(e, "code", None), "meldung": str(e)[:300]})
-        stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
-        stand["abruf_fehler"] = {"zeit": _now(), "meldung": str(e)[:300]}
-        _write(config.STAND, json.dumps(stand, ensure_ascii=False, indent=1) + "\n")
-        print(f"Abruf abgebrochen, letzter gültiger Stand bleibt: {e}")
-        if os.environ.get("RATSATLAS_STRENG") == "ja":
-            raise
+        _abbruch_vermerken(e, verdacht)
+
+
+def _abbruch_vermerken(e, verdacht):
+    """Abbruch in STAND.json vermerken und, falls `moegliche_sperre`, als Nacht mit möglicher Sperre zählen."""
+    if moegliche_sperre(e):
+        _zustand_setzen("sperre_verdacht", {
+            "naechte": verdacht.get("naechte", 0) + 1,
+            "zuletzt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "art": getattr(e, "art", ""), "code": getattr(e, "code", None), "meldung": str(e)[:300]})
+    stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
+    stand["abruf_fehler"] = {"zeit": _now(), "meldung": str(e)[:300]}
+    _write(config.STAND, json.dumps(stand, ensure_ascii=False, indent=1) + "\n")
+    print(f"Abruf abgebrochen, letzter gültiger Stand bleibt: {e}")
+    if os.environ.get("RATSATLAS_STRENG") == "ja":
+        raise e

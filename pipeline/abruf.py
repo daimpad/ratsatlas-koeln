@@ -48,7 +48,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from . import config
@@ -176,6 +176,18 @@ def im_zeitfenster(jetzt=None):
     return von <= h < bis if von < bis else (h >= von or h < bis)
 
 
+def fenster_offen_nach(sekunden, jetzt=None):
+    """Ist das Zeitfenster jetzt offen und nach `sekunden` noch offen (Ende einer Pause vor dem nächsten Versuch)?"""
+    jetzt = jetzt or datetime.now(ZoneInfo("Europe/Berlin"))
+    return im_zeitfenster(jetzt) and im_zeitfenster(jetzt + timedelta(seconds=sekunden))
+
+
+def _aufgegeben(url, letzter_fehler, versuche, grund=""):
+    code = getattr(letzter_fehler, "code", None) if isinstance(letzter_fehler, urllib.error.HTTPError) else \
+        tunnel_status(letzter_fehler)
+    return Abbruch(f"aufgegeben nach {versuche} Versuch(en){grund}: {url} ({letzter_fehler})", "aufgegeben", code=code)
+
+
 def statistik():
     return dict(_zaehler)
 
@@ -192,6 +204,8 @@ def get_json(url, pausen=None):
     letzter_fehler = None
     for versuch in range(len(pausen) + 1):
         if not ist_lokal and not im_zeitfenster():
+            if letzter_fehler is not None:   # nach 429/5xx/unlesbar: zählt als aufgegeben (mögliche Sperre)
+                raise _aufgegeben(url, letzter_fehler, versuch, ", Zeitfenster vorbei")
             raise Abbruch(f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr (RATSATLAS_ZEITFENSTER)",
                           "zeitfenster")
         warte = mindestens - (time.monotonic() - _letzte)
@@ -199,14 +213,22 @@ def get_json(url, pausen=None):
             time.sleep(warte)
         start = time.monotonic()
         _zaehler["anfragen"] += 1
-        req = urllib.request.Request(url, headers={"User-Agent": config.USER_AGENT, "Accept": "application/json"})
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": config.USER_AGENT, "Accept": "application/json"})
+        except ValueError as e:   # unbekanntes Schema o. Ä. (z. B. links.next ohne Schema): nicht gesendet, keine Sperre
+            _zaehler["anfragen"] -= 1
+            _zaehler["fehler"] += 1
+            raise Abbruch(f"ungültige Adresse, nicht gesendet: {url} ({e})", "adresse") from e
         retry_after = 0
         try:
             with _OEFFNER.open(req, timeout=90) as r:
                 daten = r.read()   # weniger Bytes als Content-Length oder chunked ohne Abschluss: IncompleteRead
             _zaehler["bytes"] += len(daten)
             _zaehler["sekunden"] += time.monotonic() - start
-            return json.loads(daten)
+            antwort = json.loads(daten)
+            if not isinstance(antwort, dict):   # gültiges JSON in unerwarteter Form (z. B. null, [], Fehlerseite)
+                raise ValueError(f"JSON-Objekt erwartet, erhalten: {type(antwort).__name__}")
+            return antwort
         except urllib.error.HTTPError as e:
             _zaehler["fehler"] += 1
             if 300 <= e.code < 400:   # Weiterleitung: nicht folgen, Ziel nennen, abbrechen
@@ -254,8 +276,11 @@ def get_json(url, pausen=None):
             _letzte = time.monotonic()
         _zaehler["sekunden"] += time.monotonic() - start
         if versuch < len(pausen):
+            pause = max(pausen[versuch], retry_after)
+            # Endet das Zeitfenster vor dem nächsten Versuch, jetzt aufgeben (zählt als Nacht mit möglicher Sperre),
+            # statt die Pause abzuwarten und dann nur „Zeitfenster vorbei“ zu melden
+            if not ist_lokal and not fenster_offen_nach(pause):
+                raise _aufgegeben(url, letzter_fehler, versuch + 1, ", nächste Pause reicht über das Zeitfenster")
             _zaehler["wiederholungen"] += 1
-            time.sleep(max(pausen[versuch], retry_after))
-    code = getattr(letzter_fehler, "code", None) if isinstance(letzter_fehler, urllib.error.HTTPError) else \
-        tunnel_status(letzter_fehler)
-    raise Abbruch(f"aufgegeben nach {len(pausen) + 1} Versuchen: {url} ({letzter_fehler})", "aufgegeben", code=code)
+            time.sleep(pause)
+    raise _aufgegeben(url, letzter_fehler, len(pausen) + 1)

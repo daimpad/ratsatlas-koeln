@@ -35,7 +35,7 @@ Nach einem Abbruch gilt: in dieser Nacht keine weitere Anfrage (STUFEN.md). Vor 
 lokale Adresse prüft main() deshalb oparl_laeufe.tsv: Endete der letzte Lauf vor weniger als 12 Stunden mit
 „abbruch (…)“ oder „fehler (…)“, bricht das Kommando ohne Anfrage ab (Rückgabewert 1). Weiter nur nach Rücksprache mit
 dem Auftraggeber: RATSATLAS_NACH_ABBRUCH=ja. Ein zweiter gleichzeitiger Prozess mit demselben Cache bricht vor seiner
-ersten Anfrage ab (Art `parallel`, Sperre _cache/abruf.lock in explore/abruf.py).
+ersten Anfrage ab (Art `parallel`, Sperre ~/.cache/ratsatlas-koeln/abruf.lock in explore/abruf.py).
 Ergebnisse als TSV unter explore/ergebnisse/; Rohdaten, PDFs und die Stichprobendatei für `pdf-koepfe`
 (_cache/stichprobe_vorlagen.jsonl: nur id, reference, paperType, date, Adresse der Hauptdatei) bleiben im Cache
 (nicht im Repository).
@@ -157,7 +157,12 @@ def _mit_parametern(url, **params):
 
 
 def _json(url, **params):
-    return json.loads(_hole(_mit_parametern(url, **params)))
+    adresse = _mit_parametern(url, **params)
+    try:
+        return json.loads(_hole(adresse))
+    except ValueError:   # unlesbare Antwort nicht im Cache lassen (ein späterer Lauf würde sie ohne Anfrage lesen)
+        abruf._cachepfad(adresse, ".json").unlink(missing_ok=True)
+        raise
 
 
 def _wert(v):

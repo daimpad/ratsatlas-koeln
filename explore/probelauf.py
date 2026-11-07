@@ -49,6 +49,7 @@ def umgebung(server, cache, ergebnisse, obergrenze, stufe=""):
                 "RATSATLAS_ZEITFENSTER": "", "RATSATLAS_ABSTAND": "0", "RATSATLAS_CACHE": str(cache),
                 "RATSATLAS_ERGEBNISSE": str(ergebnisse), "RATSATLAS_MAX_ANFRAGEN": str(obergrenze),
                 "RATSATLAS_WIEDERHOLUNGEN": "0", "RATSATLAS_MAX_DAUER": "5", "RATSATLAS_STUFE": stufe,
+                "RATSATLAS_SPERRE": str(Path(cache).parent / "sperre"),   # Sperrdatei je Probelauf, nicht in ~/.cache
                 "NO_PROXY": keine, "no_proxy": keine})
     return env
 

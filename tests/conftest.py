@@ -5,6 +5,11 @@ Referenzen „NNNN/JJJJ“ und „AN/NNNN/JJJJ“, `consultation` mit direktem V
 `location` nur mit `subLocality`, Paginierung über `links.next`.
 """
 import json
+import os
+import tempfile
+
+# Sperrdatei der Messskripte (explore/abruf.py) während der Tests nicht in ~/.cache, sondern in einem Temp-Ordner
+os.environ.setdefault("RATSATLAS_SPERRE", tempfile.mkdtemp(prefix="ratsatlas-sperre-"))
 import socket
 import socketserver
 import threading
