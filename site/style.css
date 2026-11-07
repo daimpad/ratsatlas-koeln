@@ -818,6 +818,9 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
 }
 .mega-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
 
+/* ausgeblendete Schaltflächen und Filter (z. B. Zeitleiste und Termine ohne zeit.json): display aus .toggle, .btn und
+   .filters überstimmte sonst das Attribut hidden */
+.toggle[hidden], .btn[hidden], .filters[hidden] { display: none; }
 /* Hinweis auf Testdaten (tools/testdaten.py): unten mittig über der Namensnennung der Karte, kontraststark */
 [data-funktion][hidden] { display: none !important; }   /* deaktivierte Zusatzthemen (config.ZUSATZTHEMEN) */
 .testdaten { position: fixed; left: 50%; bottom: 34px; transform: translateX(-50%); z-index: 3000; margin: 0;
