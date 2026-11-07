@@ -1499,17 +1499,21 @@ def test_net_prueft_das_ziel_einer_weiterleitung(monkeypatch):
 # --- Runde 8: unlesbares Ziel einer Weiterleitung, Prüfung von letzter_abbruch, Fehleranzeige im Export, zu tief
 # verschachtelter Zustand, Retry-After auf dem letzten Versuch, Gesamtgrenze der Seiten über Fortsetzungen -------------
 
+WEITERLEITUNGEN = [301, 302, 303, 307, 308]
+
+
+@pytest.mark.parametrize("code", WEITERLEITUNGEN)
 @pytest.mark.parametrize("ort", ["http://[::1", "http://[blocked]/"])
-def test_weiterleitung_mit_unlesbarem_ziel(oparl, monkeypatch, ort):
-    """302 mit unlesbarem Location-Kopf: Die Anfrage hat die Gegenseite erreicht und wird gezählt; Art
+def test_weiterleitung_mit_unlesbarem_ziel(oparl, monkeypatch, ort, code):
+    """3xx mit unlesbarem Location-Kopf: Die Anfrage hat die Gegenseite erreicht und wird gezählt; Art
     `weiterleitung` mit dem Ziel im Rohtext (kein ValueError als Programmfehler), Nacht mit möglicher Sperre."""
-    server = _lokaler_server(lambda methode, pfad: (302, {"Location": ort}, b""))
+    server = _lokaler_server(lambda methode, pfad: (code, {"Location": ort}, b""))
     try:
         monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
         vorher = abruf.statistik()
         with pytest.raises(abruf.Abbruch) as e:
             abruf.get_json(f"{server.url}/body", pausen=[0, 0])
-        assert (e.value.art, e.value.code, e.value.ziel) == ("weiterleitung", 302, ort) and ort in str(e.value)
+        assert (e.value.art, e.value.code, e.value.ziel) == ("weiterleitung", code, ort) and ort in str(e.value)
         assert sessionnet.moegliche_sperre(e.value) and server.anfragen == [("GET", "/body")]
         nachher = abruf.statistik()
         assert {k: nachher[k] - vorher[k] for k in ("anfragen", "fehler", "weiterleitungen")} == \
@@ -1525,12 +1529,13 @@ def test_weiterleitung_mit_unlesbarem_ziel(oparl, monkeypatch, ort):
     assert (z["anfragen"], z["weiterleitungen"]) == ("1", "1") and z["ergebnis"].startswith("abbruch: Weiterleitung")
 
 
+@pytest.mark.parametrize("code", WEITERLEITUNGEN)
 @pytest.mark.parametrize("ort", ["http://[::1", "http://[blocked]/"])
-def test_net_bricht_bei_unlesbarem_ziel_ohne_wiederholung_ab(monkeypatch, ort):
-    """pipeline/net.py: Ein unlesbares Ziel einer Weiterleitung gilt vorsichtshalber als Adresse der Stadt
-    (AbrufVerweigert); eine Anfrage, keine Wiederholung, kein ValueError."""
+def test_net_bricht_bei_unlesbarem_ziel_ohne_wiederholung_ab(monkeypatch, ort, code):
+    """pipeline/net.py: Ein unlesbares Ziel einer Weiterleitung (alle 3xx-Codes) gilt vorsichtshalber als Adresse
+    der Stadt (AbrufVerweigert); eine Anfrage, keine Wiederholung, kein ValueError."""
     from pipeline import net
-    server = _lokaler_server(lambda methode, pfad: (302, {"Location": ort}, b""))
+    server = _lokaler_server(lambda methode, pfad: (code, {"Location": ort}, b""))
     try:
         monkeypatch.setattr(net, "_OEFFNER", net._oeffner({}))
         monkeypatch.setattr(net, "time", types.SimpleNamespace(sleep=lambda s: pytest.fail("keine Wiederholung")))
