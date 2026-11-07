@@ -121,34 +121,6 @@
    }
   },
   {
-   "@id": "https://koeln.ratsatlas.de/data/export/koeln/zeit.json",
-   "@type": "dcat:Distribution",
-   "dct:title": {
-    "@language": "de",
-    "@value": "Zeitleiste: Monatsaggregate (JSON)"
-   },
-   "dct:description": {
-    "@language": "de",
-    "@value": "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden."
-   },
-   "dcat:accessURL": {
-    "@id": "https://koeln.ratsatlas.de/data/export/koeln/zeit.json"
-   },
-   "dcat:downloadURL": {
-    "@id": "https://koeln.ratsatlas.de/data/export/koeln/zeit.json"
-   },
-   "dcat:mediaType": {
-    "@id": "https://www.iana.org/assignments/media-types/application/json"
-   },
-   "dct:license": {
-    "@id": "http://dcat-ap.de/def/licenses/dl-zero-de/2.0"
-   },
-   "dct:rights": {
-    "@type": "dct:RightsStatement",
-    "rdfs:label": "Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den Kölner Geodaten (dl-de/zero 2.0); Datenquelle: Stadt Köln – offenedaten-koeln.de. Ortsbezüge aus OpenStreetMap, falls vorhanden, ODbL 1.0. Einzelheiten: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
-   }
-  },
-  {
    "@id": "https://koeln.ratsatlas.de/data/export/koeln/prozesse.json",
    "@type": "dcat:Distribution",
    "dct:title": {

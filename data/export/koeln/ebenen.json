@@ -38,7 +38,8 @@
    "url": "https://open.nrw/dataset/3646d09a-03c4-4079-8fad-d5a453bca22e",
    "lizenz": "dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de",
    "stand": "2026-11-07",
-   "objekte": 1026
+   "objekte": 1026,
+   "mindestzoom": 13
   },
   {
    "key": "sozialraeume",
@@ -75,7 +76,8 @@
    "url": "https://open.nrw/dataset/stimmbezirke-koln-k",
    "lizenz": "dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de",
    "stand": "2026-11-07",
-   "objekte": 503
+   "objekte": 503,
+   "mindestzoom": 12
   },
   {
    "key": "fahrradstrassen",
@@ -154,7 +156,8 @@
    "url": "https://open.nrw/dataset/41a14703-ad40-4a12-b498-2ec92a6bf903",
    "lizenz": "dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de",
    "stand": "2026-11-07",
-   "objekte": 8588
+   "objekte": 8588,
+   "mindestzoom": 14
   }
  ]
 }

@@ -77,6 +77,10 @@
   let map, cluster, outline, markers = new Map(), tl = null, range = null, loadSeq = 0, detailSeq = 0, shown = LIST_STEP, lastList = [], lastMarkers = [], colorBy = "sicherheit", legendEl = null, mapStack = null, mapSheet = null, mapToggles = [], setMapMenu = () => {}, mapMenuCount = null, planOn = false, allPlans = null, shownPlan = null;
   let bau = null, bauOn = false, bauLayer = null, shownSite = null, bauByRef = new Map();
   let kxOn = new Set(), kxData = {}, kxLayers = {}, brwBr = null, ebenenIdx = null;  // zuschaltbare Flächen (Überschwemmung, Bodenrichtwerte)
+  // Kartenvorschau ohne Ratsvorlagen (index.json meta.vorschau, tools/vorschau.py): keine Zeitleiste, keine Punkte,
+  // Flächen nach Kennzahlen statt nach Vorlagen; Liste und Suche nennen den Grund statt „keine Vorlage passt“
+  let vorschau = false;
+  const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist; bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
   // Suche über ganz Köln (suche.json, erst bei Bedarf geladen)
   let search = null, searchLoading = null;
   const THEMES = {  // wie pipeline/topics.THEMES
@@ -331,12 +335,14 @@
     let html = `<option value="${STADT}:alle" hidden>Gebiet wählen</option><option value="${STADT}:ganz">Ganz ${STADT_NAME}</option>`;
     for (const bz of Object.keys(groups).sort()) {
       html += `<optgroup label="Stadtbezirk ${esc(bz)}">` + groups[bz].sort((a, b) => a.name.localeCompare(b.name, "de"))
-        .map((o) => `<option value="ortsteil:${o.slug}">${esc(o.name)} (${o.count})</option>`).join("");
+        .map((o) => `<option value="ortsteil:${o.slug}">${esc(o.name)}${vorschau ? "" : ` (${o.count})`}</option>`).join("");   // Vorschau: keine Zahl 0
       const b = index.bezirke.find((x) => x.name === bz);
       if (b && b.count) html += `<option value="bezirk:${b.slug}">ganzer Stadtbezirk ${esc(bz)}, ohne genaueren Ort (${b.count})</option>`;
+      // Vorschau: Stadtbezirk mit seinen Kennzahlen wählbar (Feeds und Links führen auf ?gebiet=bezirk:…; ohne Eintrag blieb die Auswahl leer)
+      else if (b && vorschau) html += `<option value="bezirk:${b.slug}">ganzer Stadtbezirk ${esc(bz)}</option>`;
       html += "</optgroup>";
     }
-    html += '<optgroup label="Stadtweit / ohne Ortsbezug">' + index.ohne_ortsbezug
+    if (index.ohne_ortsbezug.length) html += '<optgroup label="Stadtweit / ohne Ortsbezug">' + index.ohne_ortsbezug
       .map((y) => `<option value="ohne:${y.jahr}">${y.jahr} (${y.count})</option>`).join("") + "</optgroup>";
     sel.innerHTML = html;
   }
@@ -353,10 +359,21 @@
   }
   // Gebietsdateien, die der Start schon angefordert hat (Gebiet im Link), je Adresse eine Antwort
   const vorab = new Map();
+  // Stadtbezirk ohne Vorlagen „ohne genaueren Ort“ führt fillAreaSelect nicht auf; öffnet ein Link ihn (Gebietsseite,
+  // Kartenvorschau), den Eintrag ergänzen, damit die Auswahl nicht leer bleibt
+  function areaOption(v, next) {
+    const sel = $("#f-area");
+    if (next.kind !== "bezirk" || [...sel.options].some((o) => o.value === v)) return;
+    const b = index.bezirke.find((x) => x.slug === next.key);
+    const grp = [...sel.querySelectorAll("optgroup")].find((g) => g.label === `Stadtbezirk ${next.name}`);
+    (grp || sel).append(new Option(`ganzer Stadtbezirk ${next.name}, ohne genaueren Ort (${b ? b.count : 0})`, v));
+  }
   async function loadArea(value, keepState) {
     const seq = ++loadSeq;
     const next = parseArea(value);
-    $("#f-area").value = next.kind === STADT && value === `${STADT}:ganz` ? value : `${next.kind}:${next.key}`;
+    const v = next.kind === STADT && value === `${STADT}:ganz` ? value : `${next.kind}:${next.key}`;
+    areaOption(v, next);
+    $("#f-area").value = v;
     $("#count").textContent = `Lade Vorlagen für ${next.name} …`;
     setLoading(true);
     let data;
@@ -507,7 +524,8 @@
     });
     new MapStyle().addTo(map);
     // Farbe der Punkte: Sicherheit der Ortsangabe (Standard) oder Thema; Legende darunter
-    colorBy = new URLSearchParams(location.search).get("farbe") === "thema" ? "thema" : "sicherheit";
+    // (Vorschau: keine Punkte, also bleibt es bei der Sicherheit; „farbe“ fällt beim nächsten syncUrl aus der Adresse)
+    colorBy = !vorschau && new URLSearchParams(location.search).get("farbe") === "thema" ? "thema" : "sicherheit";
     const ColorBy = L.Control.extend({
       options: { position: "bottomright" },
       onAdd() {
@@ -515,6 +533,7 @@
         b.type = "button";
         b.textContent = "Farbe nach Thema";
         b.setAttribute("aria-pressed", String(colorBy === "thema"));
+        b.hidden = vorschau;   // ohne Vorlagen keine Punkte zum Färben
         b.addEventListener("click", () => {
           colorBy = colorBy === "thema" ? "sicherheit" : "thema";
           b.setAttribute("aria-pressed", String(colorBy === "thema"));
@@ -790,7 +809,7 @@
   function anliegenSteckbrief(bez) {
     if (!anliegen) return "";
     const own = (area.kind === "ortsteil" ? anliegen.ortsteile : anliegen.bezirke)[area.name] || null;   // fehlt: keine Meldung
-    const cmp = bez ? anliegen.bezirke[bez] : anliegen.bonn, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Köln";
+    const cmp = bez ? anliegen.bezirke[bez] : anliegen.stadt, cmpName = bez ? `Stadtbezirk ${bez}` : "ganz Köln";
     const m = anliegen.meta, num = (v) => (v == null ? "unter 3" : typeof v === "number" ? de(v) : esc(v));
     const rows = [...m.gruppen, "gesamt"].map((g) => `<tr><th scope="row">${g === "gesamt" ? "Zusammen" : esc(g)}</th>
       <td>${num((own || {})[g])}</td><td>${num((cmp || {})[g])}</td></tr>`).join("");
@@ -852,6 +871,7 @@
   }
   // Zahl im Hinweis beim Überfahren und in der Beschriftung
   function navTip(info, scope) {
+    if (!navMetric && vorschau) return '<span class="nav-dim">noch keine Ratsvorlagen (Vorschau)</span>';
     if (!navMetric) return `<span class="nav-big">${de(info.jahr)}</span> Vorlagen in den letzten 12 Monaten
       <br><span class="nav-dim">${de(scope === "bz" ? info.alle : info.count)} insgesamt</span>${fact(info.auffaellig)}`;
     const kk = kKey(navMetric);
@@ -868,12 +888,13 @@
       <br><span class="nav-dim">${de(n)} von ${de(scope === "bz" ? info.alle : info.count)} · ganz Köln ${pct(bonn)} · Themen abgeleitet</span>`;
   }
   const navNumber = (info) => (kKey(navMetric) ? kFmt(kKey(navMetric), kValue(info, kKey(navMetric)))
-    : !navMetric ? de(info.jahr) : info.themen ? pct((info.themen[navMetric] || [0, 0])[1]) : "–");
+    : !navMetric ? (vorschau ? "" : de(info.jahr)) : info.themen ? pct((info.themen[navMetric] || [0, 0])[1]) : "–");
   const otInfo = (l) => index.ortsteile.find((o) => o.name === l.feature.properties.ortsteil_bez) || {};
   const bzInfo = (l) => index.bezirke.find((b) => b.name === l.feature.properties.bezirk_bez) || {};
   // Themenebene: statt der Zahl der Vorlagen der Anteil eines Themas an allen Vorlagen des Gebiets seit 2019
   // (index.json, gebietszahlen.theme_shares; Themen abgeleitet); unter der Mindestzahl grau
-  let navMetric = "";
+  // navDefault: Färbung ohne Angabe im Link (sonst Zahl der Vorlagen, in der Vorschau die erste angebotene Kennzahl)
+  let navMetric = "", navDefault = "";
   const NAV_NONE = "hsl(240, 6%, 82%)";
   const metricValue = (info) => (kKey(navMetric) ? kValue(info, kKey(navMetric))
     : !navMetric ? info.jahr || 0 : info.themen ? (info.themen[navMetric] || [0, 0])[1] : null);
@@ -937,18 +958,23 @@
       },
     });
     bonnBounds = navBezirke.getBounds();
+    // angeboten: Themenanteile (nicht in der Vorschau, dort alle ohne Vorlagen) und Kennzahlen, die kontext.json enthält
+    // (die Wahlbeteiligung fehlt ohne Wahldaten; ihre Wahl brach die Legende ab)
+    const themes = !vorschau && index.zahlen?.themen_bonn ? Object.entries(THEMES) : [];
+    const kx = kontext ? Object.entries(KONTEXT_FARBE).filter(([k]) => kontext.meta.kennzahlen[k]) : [];
+    // Vorschau: die Zahl der Vorlagen ist überall 0; Vorgabe ist die erste angebotene Kennzahl
+    navDefault = navMetric = vorschau && kx.length ? `kontext-${kx[0][0]}` : "";
     const f = new URLSearchParams(location.search).get("flaechen");
-    if (Object.hasOwn(THEMES, f || "") && index.zahlen?.themen_bonn) navMetric = f;
-    if (kontext && Object.hasOwn(KONTEXT_FARBE, kKey(f) || "")) navMetric = f;
+    if (themes.length && Object.hasOwn(THEMES, f || "")) navMetric = f;
+    if (kx.some(([k]) => `kontext-${k}` === f)) navMetric = f;
     navBreaks();
     navBezirke.eachLayer((l) => l.setStyle(bzStyle(l)));
     // Legende der Flächen: Stufen der jeweils sichtbaren Ebene; oben im Stapel der Legenden, eingeklappt
     navLegend = L.DomUtil.create("details", "nav-legend");
-    const themes = index.zahlen?.themen_bonn ? Object.entries(THEMES) : [];
-    const kx = kontext ? Object.entries(KONTEXT_FARBE) : [];
+    navLegend.hidden = vorschau && !navMetric;   // Vorschau ohne Kennzahlen: keine Färbung, also keine Legende
     const opt = (k, v) => `<option value="${k}"${k === navMetric ? " selected" : ""}>${esc(v)}</option>`;
     navLegend.innerHTML = `<summary></summary>${themes.length || kx.length ? `<label class="nav-metric">Flächen färben nach
-      <select id="nav-metric"><option value="">Zahl der Vorlagen (12 Monate)</option>
+      <select id="nav-metric">${vorschau ? "" : '<option value="">Zahl der Vorlagen (12 Monate)</option>'}
       ${themes.length ? `<optgroup label="Anteil eines Themas (seit 2019)">${themes.map(([k, v]) => opt(k, v)).join("")}</optgroup>` : ""}
       ${kx.length ? `<optgroup label="Zahlen zum Gebiet (abgeleitet)">${kx.map(([k, v]) => opt(`kontext-${k}`, v)).join("")}</optgroup>` : ""}</select></label>` : ""}
       <div class="nav-legend-body"></div>`;
@@ -1045,17 +1071,21 @@
     const rows = colorBy === "thema"
       ? [...Object.entries(THEMES).map(([k, v]) => [THEME_COLOR[k], v]), [NO_THEME, "ohne Thema"]]
       : [[color("hoch"), "Ort gesichert (Koordinate oder eindeutiger Bebauungsplan der Stadt)"], [color("mittel"), "Ort erschlossen (Name im Titel)"], [color("niedrig"), "Ort unsicher (mehrdeutig)"]];
-    legendEl.innerHTML = `<summary>Legende: ${colorBy === "thema" ? "Thema" : "Sicherheit des Orts"}</summary><ul>${rows
+    const punkte = `<summary>Legende: ${colorBy === "thema" ? "Thema" : "Sicherheit des Orts"}</summary><ul>${rows
       .map(([c, t]) => `<li><span class="swatch" style="background:${c}" aria-hidden="true"></span>${esc(t)}</li>`).join("")}</ul>
-      ${colorBy === "thema" ? '<p class="hint">Bei mehreren Themen zählt das erste. Themen sind abgeleitet.</p>' : ""}
-      ${planOn ? `<ul><li><span class="swatch swatch-plan" aria-hidden="true"></span>Geltungsbereich eines rechtsverbindlichen Bebauungsplans (Bauleitplanung NRW, IT.NRW)</li></ul>
-        ${planIndexUrl() ? '<button type="button" class="btn btn-soft" id="plan-list">Pläne im Gebiet als Liste</button>' : ""}` : ""}
+      ${colorBy === "thema" ? '<p class="hint">Bei mehreren Themen zählt das erste. Themen sind abgeleitet.</p>' : ""}`;
+    // Vorschau ohne Ratsvorlagen: keine Punkte, nur die Legenden der eingeschalteten Ebenen (keine eingeschaltet: keine Legende)
+    const ebenen = `${planOn ? `<ul><li><span class="swatch swatch-plan" aria-hidden="true"></span>Geltungsbereich eines rechtsverbindlichen Bebauungsplans (Bauleitplanung NRW, IT.NRW)</li></ul>
+        ${planIndexUrl() && !vorschau ? '<button type="button" class="btn btn-soft" id="plan-list">Pläne im Gebiet als Liste</button>' : ""}` : ""}
       ${bauOn && bau ? `<ul><li><span class="site-icon site-aktuell" aria-hidden="true"></span>Baustelle der Stadt, laufend</li>
         <li><span class="site-icon site-geplant" aria-hidden="true"></span>Baustelle der Stadt, geplant</li>
         <li><span class="site-icon site-fremd" aria-hidden="true"></span>Baustelle anderer Träger (Versorger, Straßen NRW, Bahn)</li></ul>
         <p class="hint">Termine unverbindlich; ${bau.meta.archiv_beginn ? `Archiv seit ${fmtDate(bau.meta.archiv_beginn)}` : "aktueller Stand, ohne Archiv"}.</p>
         <button type="button" class="btn btn-soft" id="bau-list">Baustellen im Gebiet als Liste</button>` : ""}
       ${kxLegend()}`;
+    legendEl.hidden = vorschau && !ebenen.trim();
+    legendEl.innerHTML = vorschau ? `<summary>Legende: Ebenen</summary>${ebenen}` : `${punkte}
+      ${ebenen}`;
     const b = legendEl.querySelector("#plan-list");
     if (b) b.addEventListener("click", showPlanList);
     const bl = legendEl.querySelector("#bau-list");
@@ -1212,13 +1242,15 @@
       (!text || inTitle(r) || (doc && doc.has(r[0]))));
     const span = range ? ` · ${fmtDate(range[0])}–${fmtDate(range[1])}` : "";
     const onlyDoc = doc ? rows.filter((r) => !inTitle(r)).length : 0;
-    $("#count").textContent = `${rows.length} Treffer in ganz Köln${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`;
+    $("#count").textContent = vorschau ? "Ganz Köln: noch keine Ratsvorlagen (Vorschau)"
+      : `${rows.length} Treffer in ganz Köln${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`;
     let html = rows.slice(0, shown).map((r) => `<li><button type="button" data-gref="${esc(r[0])}" data-area="${esc(search.areas[r[5]].key)}" aria-current="${selected && selected.reference === r[0]}">
       <span class="title">${esc(r[1])}</span>
       <span class="meta"><span>${esc(r[0])}</span><span>${fmtDate(r[2])}</span><span>${esc(search.types[r[3]] || "")}</span>
       <span>${esc(search.stands[r[4]])}</span><span class="area-tag">${esc(search.areas[r[5]].name)}</span>${themeTags(r[6].slice(0, 2).map((i) => search.themes[i].id))}${doc && text && !inTitle(r) ? '<span class="doc-tag">im Dokument erwähnt</span>' : ""}</span></button></li>`).join("");
     if (rows.length > shown) html += `<li class="more"><button type="button" class="btn btn-secondary" id="more">Weitere ${Math.min(LIST_STEP, rows.length - shown)} von ${rows.length - shown} anzeigen</button></li>`;
-    if (!rows.length) html = `<li class="empty-list"><p>Keine Vorlage in ganz Köln passt zu Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
+    if (!rows.length && vorschau) html = `<li class="empty-list"><p>${esc(VORSCHAU_LISTE)}</p></li>`;
+    else if (!rows.length) html = `<li class="empty-list"><p>Keine Vorlage in ganz Köln passt zu Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     $("#papers").innerHTML = html;
     // auf der Karte: die Treffer, die im gerade geladenen Gebiet liegen
     const refs = new Set(rows.map((r) => r[0]));
@@ -1244,13 +1276,15 @@
     lastList = list;
     const where = area.kind === "ohne" ? `ohne Ortsbezug, ${area.key}` : area.name;
     const span = range ? ` · ${fmtDate(range[0])}–${fmtDate(range[1])}` : "";
-    $("#count").textContent = area.kind === STADT ? OVERVIEW_HINT : `${list.length} von ${papers.length} Vorlagen · ${where}${span}`;
+    $("#count").textContent = vorschau ? `${area.kind === STADT ? "Ganz Köln" : where}: noch keine Ratsvorlagen (Vorschau)`
+      : area.kind === STADT ? OVERVIEW_HINT : `${list.length} von ${papers.length} Vorlagen · ${where}${span}`;
     const active = [$("#f-amt").value, $("#f-gremium").value].filter(Boolean).length +
       (area.kind === "ohne" ? 0 : document.querySelectorAll("#f-conf input:not(:checked)").length);
     $("#active-filters").textContent = active ? ` (${active} aktiv)` : "";
     let html = list.slice(0, shown).map(itemHtml).join("");
     if (list.length > shown) html += `<li class="more"><button type="button" class="btn btn-secondary" id="more">Weitere ${Math.min(LIST_STEP, list.length - shown)} von ${list.length - shown} anzeigen</button></li>`;
-    if (!list.length && area.kind === STADT) html = `<li class="empty-list"><p>Noch kein Gebiet gewählt. Wählen Sie auf der Karte einen Stadtbezirk und einen Stadtteil oder oben ein Gebiet; „in ganz Köln“ sucht über alle Vorlagen.</p></li>`;
+    if (!list.length && vorschau) html = `<li class="empty-list"><p>${esc(VORSCHAU_LISTE)}</p></li>`;
+    else if (!list.length && area.kind === STADT) html = `<li class="empty-list"><p>Noch kein Gebiet gewählt. Wählen Sie auf der Karte einen Stadtbezirk und einen Stadtteil oder oben ein Gebiet; „in ganz Köln“ sucht über alle Vorlagen.</p></li>`;
     else if (!list.length) html = `<li class="empty-list"><p>Keine Vorlage passt zu Gebiet, Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     $("#papers").innerHTML = html;
     drawMarkers(list);
@@ -1355,7 +1389,8 @@
       text: (p) => `${esc(p.name)}<br><span class="nav-dim">${esc(p.schulform || "")}${p.traeger ? `, ${esc(p.traeger)}` : ""}</span>` },
     haltestellen: { label: "Haltestellen", file: "punkte_haltestellen", quelle: "haltestellen", farbe: "#0f766e", text: (p) => esc(p.name) },
   };
-  // Weitere Ebenen aus ebenen.json (pipeline/ebenen.py): Stadt, Land, Bund; Mindestzoom für große Ebenen
+  // Weitere Ebenen aus ebenen.json (pipeline/ebenen.py): Stadt, Land, Bund; Mindestzoom für große Ebenen aus ebenen.json
+  // (mindestzoom), EX_ZOOM nur als Rückfall für ältere Dateien ohne diese Angabe
   const EX = {};
   const EX_ZOOM = { denkmaeler: 14, baupotenziale: 13, stimmbezirke: 12 };
   const exText = (e, p) => {
@@ -1363,7 +1398,7 @@
       .map(([k, t]) => { const v = String(p[k]);   // Tooltips sind nicht anklickbar: Adressen als Text
         return `${esc(t)}: ${esc(/^https?:/.test(v) ? v.replace(/^https?:\/\//, "").split("/")[0] : v)}`; });
     return `<strong>${esc(e.titel)}</strong>${p._teil ? ` · ${esc(p._teil)}` : ""}${rows.length ? `<br>${rows.join("<br>")}` : ""}
-      <br><span class="nav-dim">${esc(e.quelle)}${e.stand ? `, Stand ${esc(fmtDate(e.stand))}` : ""}</span>`;
+      <br><span class="nav-dim">${esc(e.quelle)}${e.stand ? `, abgerufen am ${esc(fmtDate(e.stand))}` : ""}</span>`;
   };
   // Ebenen mit mehreren Arten: Farbe je Teil (Legende und Fläche)
   const EX_TEILE = {
@@ -1388,7 +1423,7 @@
   const brwStufe = (v, br) => br.filter((b) => v >= b).length;
   const ERGAENZUNG = { EFH: "Ein- und Zweifamilienhäuser", MFH: "Mehrfamilienhäuser" };
   const kxQuelle = (k) => (kontext && kontext.meta.quellen[(KX[k] || PX[k]).quelle]) || {};
-  const minZoom = (k) => (EX[k] ? EX_ZOOM[k] || 11 : KX_ZOOM);
+  const minZoom = (k) => (EX[k] ? EX[k].mindestzoom || EX_ZOOM[k] || 11 : KX_ZOOM);
   async function drawKx() {
     if (legendEl) drawLegend();
     for (const k of [...Object.keys(KX), ...Object.keys(PX), ...Object.keys(EX)]) {
@@ -1454,7 +1489,7 @@
       const e = EX[k], u = safeUrl(e.url);
       const teile = EX_TEILE[k] || [[null, e.farbe, e.titel]];
       h += `<ul>${teile.map(([, c, label]) => `<li><span class="swatch${e.art === "flaeche" ? " swatch-area" : ""}" style="background:${c}" aria-hidden="true"></span>${esc(label)}</li>`).join("")}</ul>
-        <p class="hint">Quelle: ${u ? `<a href="${u}">${esc(e.quelle)}</a>` : esc(e.quelle)}, ${esc(e.lizenz)}${e.stand ? `, Stand ${esc(fmtDate(e.stand))}` : ""}.</p>`;
+        <p class="hint">Quelle: ${u ? `<a href="${u}">${esc(e.quelle)}</a>` : esc(e.quelle)}, ${esc(e.lizenz)}${e.stand ? `, abgerufen am ${esc(fmtDate(e.stand))}` : ""}.</p>`;
     }
     return h + zoom;
   }
@@ -1877,12 +1912,19 @@
       return;
     }
     box.dataset.loaded = "1";
-    const types = data.types.filter((t) => t.count >= 20).length ? data.types.filter((t) => t.count >= 20) : data.types;
+    // ohne Vorlagenarten (Vorschau ohne Vorlagen: types leer) Hinweis statt leerer Auswahl
+    const all = Array.isArray(data && data.types) ? data.types : [];
+    if (!all.length) {
+      box.innerHTML = `<p>${esc(vorschau ? VORSCHAU_LISTE : "Im Datenbestand gibt es noch keine Verfahrenswege.")}</p>`;
+      return;
+    }
+    const types = all.filter((t) => t.count >= 20).length ? all.filter((t) => t.count >= 20) : all;
     box.innerHTML = `<label class="filters">Vorlagenart <select id="wege-type">${types.map((t) => `<option>${esc(t.paper_type)}</option>`).join("")}</select></label>
       <p class="hint">Weg = Folge der Beratungen (Gremium und Rolle) laut OParl-API. Am Ende steht das Ergebnis der entscheidenden Beratung, wörtlich aus der Quelle (in Anführungszeichen), oder ersatzweise der Stand des Verfahrens. Ganz Köln.</p>
       <div id="wege-list"></div>${LIMITS}`;
     const draw = () => {
       const t = types.find((x) => x.paper_type === $("#wege-type").value);
+      if (!t || !Array.isArray(t.paths)) { $("#wege-list").innerHTML = ""; return; }
       const total = t.paths.reduce((s, p) => s + p.count, 0);
       const final = (p) => (p.final_kind === "stand" ? `<span class="final final-stand">Stand: ${esc(p.final)}</span>` : `<span class="final">„${esc(p.final)}“</span>`);
       $("#wege-list").innerHTML = `<p class="count">${t.count} Vorlagen, ${t.distinct_paths} verschiedene Wege; gezeigt die ${t.paths.length} häufigsten (${Math.round(100 * total / t.count)} %).</p>` +
@@ -2065,6 +2107,8 @@
   }
   function showStats() {
     const list = papers, where = area.kind === "ohne" ? `Vorlagen ohne Ortsbezug ${area.key}` : area.name;
+    // Vorschau ohne Vorlagen: Grund nennen statt „0 Vorlagen“ mit leeren Überschriften
+    if (vorschau) { $("#stats").innerHTML = `<p class="hint">${esc(VORSCHAU_LISTE)}</p>`; return; }
     if (area.kind === STADT) { $("#stats").innerHTML = `<p class="hint">Die Kennzahlen beziehen sich auf ein Gebiet. Wählen Sie auf der Karte oder oben ein Gebiet; die Verfahrenswege im Reiter daneben gelten für ganz Köln.</p>`; return; }
     const count = (f) => { const c = new Map(); for (const p of list) for (const k of f(p)) c.set(k, (c.get(k) || 0) + 1); return c; };
     const th = count((p) => (p.themes || []).map((t) => t.theme));
@@ -2170,7 +2214,7 @@
     else for (const k of ["von", "bis", "zoom", "achse"]) url.searchParams.delete(k);
     const state = { thema: $("#f-theme").value, partei: $("#f-party").value, suche: scope() === STADT ? STADT : "" };
     state.farbe = colorBy === "thema" ? "thema" : "";
-    state.flaechen = navMetric;
+    state.flaechen = navMetric !== navDefault ? navMetric : "";
     state.plaene = planOn ? "1" : "";
     state.plan = !selected && shownPlan ? shownPlan : "";
     state.baustellen = bauOn ? "1" : "";
@@ -2191,13 +2235,20 @@
   }
 
   // --- Start -----------------------------------------------------------------------------------------
-  // Elemente mit data-funktion (index.html) nur zeigen, wenn die Funktion freigegeben ist; Hinweis auf Testdaten
+  // Elemente mit data-funktion (index.html) nur zeigen, wenn die Funktion freigegeben ist; Hinweis auf Testdaten.
+  // Vorschau ohne Ratsvorlagen (Kennzeichen vorschau): data-vorschau="aus" ausblenden (Auswertung, Schnellfilter der
+  // Suche, Kalender), data-vorschau="nur" zeigen (Hinweise an ihrer Stelle)
   function applyFunktionen(fn, idx) {
     document.querySelectorAll("[data-funktion]").forEach((el) => { el.hidden = !fn[el.dataset.funktion]; });
     const hinweis = $("#testdaten-hinweis");
     if (hinweis) hinweis.hidden = !(idx && idx.meta && idx.meta.testdaten);
-    const vorschau = $("#vorschau-hinweis");
-    if (vorschau) vorschau.hidden = !(idx && idx.meta && idx.meta.vorschau);
+    const vorschauHinweis = $("#vorschau-hinweis");
+    if (vorschauHinweis) vorschauHinweis.hidden = !vorschau;
+    // Kennzeichen für die Tour (site/tour.js): Texte der Vorschau statt Beschreibungen ausgeblendeter Funktionen
+    if (vorschau) document.documentElement.dataset.vorschau = "ja";
+    else delete document.documentElement.dataset.vorschau;
+    if (vorschau) document.querySelectorAll('[data-vorschau="aus"]').forEach((el) => { el.hidden = true; });
+    document.querySelectorAll('[data-vorschau="nur"]').forEach((el) => { el.hidden = !vorschau; });
   }
   const QUELLE_NAME = { "oparl-koeln": "Ratsinformationssystem", "geo-koeln": "Gebiete", "strassen-koeln": "Straßen",
     "adressen-koeln": "Adressen", "bplan-koeln": "Bebauungspläne", osm: "OpenStreetMap" };
@@ -2212,6 +2263,13 @@
     const [gKind, gKey] = startGebiet.split(":");
     // 1. index.json (klein, vorab angefordert) gibt den ersten Ausschnitt; die Kacheln laden sofort
     const idx = await json(BONN + "index.json");
+    vorschau = Boolean(idx && idx.meta && idx.meta.vorschau);
+    // Bonner Zusatzthemen nur, wenn index.json sie freigibt (config.ZUSATZTHEMEN); sonst keine Anfrage
+    const fn = (idx && idx.meta && idx.meta.funktionen) || {};
+    // Freigaben und Vorschau-Kennzeichnung vor Karte und Kacheln anwenden, damit ausgeblendete Elemente (Auswertung,
+    // Schnellfilter, Kalender, Filter) nicht kurz sichtbar sind
+    applyFunktionen(fn, idx);
+    $("#filters").hidden = vorschau;   // Filter ohne Vorlagen hätten nur „alle“
     createMap(startBounds(idx, startGebiet));
     // 2. alles Übrige nach den sichtbaren Kacheln (höchstens 2,5 s warten)
     await kachelnGeladen(2500);
@@ -2220,15 +2278,13 @@
       vorab.set(datei, fetch(datei));
     }
     const shapes = Promise.all([loadGeo("ortsteil"), loadGeo("bezirk")]);
-    // Bonner Zusatzthemen nur, wenn index.json sie freigibt (config.ZUSATZTHEMEN); sonst keine Anfrage
-    const fn = (idx && idx.meta && idx.meta.funktionen) || {};
     const opt = (an, url) => (an ? json(url, "low") : Promise.resolve(null));
     // Baustellen mit möglichen Umsetzungen (nur Konfidenz hoch); ohne Datei bleibt die Funktion ausgeblendet
-    const [g, z, bs, kx, an, eb] = await Promise.all([json(GLOSSAR_URL), json(BONN + "zeit.json", "low"),
+    // Vorschau: keine zeit.json (pipeline/export.py schreibt sie nur mit Vorlagen), daher keine Anfrage
+    const [g, z, bs, kx, an, eb] = await Promise.all([json(GLOSSAR_URL), vorschau ? null : json(BONN + "zeit.json", "low"),
       opt(fn.baustellen, BONN + "baustellen.json"), opt(fn.kontext, BONN + "kontext.json"), opt(fn.anliegen, BONN + "anliegen.json"),
       opt(fn.kontext, BONN + "ebenen.json")]);
     index = idx;
-    applyFunktionen(fn, idx);
     kontext = index && kx && kx.ortsteile ? kx : null;
     for (const e of (eb && eb.ebenen) || []) EX[e.key] = e;
     ebenenIdx = Object.keys(EX).length ? eb : null;
