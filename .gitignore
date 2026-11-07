@@ -26,3 +26,4 @@ _site/
 _kacheln/
 _kacheln_arbeit/
 data/raw_vorschau/
+.claude/worktrees/
