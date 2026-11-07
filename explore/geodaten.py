@@ -6,6 +6,10 @@ Aufruf: python3 explore/geodaten.py
 2. Dateien (zip, csv, xlsx, json, geojson, gpkg) unter sites/default/files laden (Cache explore/_cache/, nicht im Repository)
 3. Inhalt beschreiben: Ebenen, Feldnamen, Koordinatensystem, Anzahl, Beispielwerte → explore/ergebnisse/geodaten_felder.tsv
 Die geladenen Dateien bleiben außerhalb der Versionskontrolle (siehe .gitignore).
+Abruf über explore/abruf.py: Weiterleitungen (HTTP 3xx) werden nicht verfolgt. Der betroffene Katalog bzw. die Datei
+wird mit der Meldung (Ziel der Weiterleitung) in geodaten_katalog.tsv bzw. geodaten_felder.tsv vermerkt, das Ziel steht
+in _cache/abrufe.tsv (Spalte ziel); die übrigen Datensätze laufen weiter. Der Lauf vom 04.11.2026 entstand noch mit
+urllib.request.urlopen, das Weiterleitungen folgt (Commit 1649598); seit 07.11.2026 (Commit 092446c) gilt die Regel.
 """
 import csv
 import html

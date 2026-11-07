@@ -3,7 +3,11 @@ Abrufstatistik, Sperre und Anschluss an build.py (Bonner Datenmodell)."""
 import csv
 import json
 import sqlite3
+import threading
+import urllib.parse
+import urllib.request
 from datetime import datetime
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
@@ -199,3 +203,90 @@ def test_seite_ohne_neue_kennungen_bricht_ab(monkeypatch):
     with pytest.raises(sessionnet.Teilabbruch) as e:
         sessionnet.liste("http://127.0.0.1/l")
     assert e.value.art == "liste" and len(e.value.objekte) == 2 and e.value.seiten == 2
+
+
+def _lokaler_server(antwort):
+    """Lokaler Hilfsserver: `antwort(methode, pfad)` liefert (Status, Kopfzeilen, Inhalt); Anfragen in `server.anfragen`."""
+    anfragen = []
+
+    class H(BaseHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+
+        def _antworten(self):
+            anfragen.append((self.command, self.path))
+            status, kopf, inhalt = antwort(self.command, self.path)
+            self.send_response(status)
+            for k, v in {**kopf, "Content-Length": str(len(inhalt))}.items():
+                self.send_header(k, v)
+            self.end_headers()
+            self.wfile.write(inhalt)
+
+        do_GET = do_CONNECT = _antworten
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), H)
+    server.anfragen, server.url = anfragen, f"http://127.0.0.1:{server.server_address[1]}"
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server
+
+
+def test_weiterleitung_wird_nicht_verfolgt(oparl, monkeypatch):
+    # jede Adresse außer /ziel leitet nach /ziel weiter; /ziel selbst antwortet mit JSON
+    server = _lokaler_server(lambda methode, pfad: (200, {"Content-Type": "application/json"}, b"{}")
+                             if pfad == "/ziel" else (301, {"Location": "/ziel"}, b""))
+    ziel = f"{server.url}/ziel"
+    try:
+        vorher = abruf.statistik()
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(f"{server.url}/papers", pausen=[0, 0])
+        assert e.value.art == "weiterleitung" and e.value.ziel == ziel and ziel in str(e.value)
+        assert server.anfragen == [("GET", "/papers")]                # Ziel nicht abgerufen, keine Wiederholung
+        nachher = abruf.statistik()
+        assert (nachher["weiterleitungen"] - vorher["weiterleitungen"], nachher["fehler"] - vorher["fehler"]) == (1, 1)
+        # andere Module folgen Weiterleitungen weiter nach dem Standard von urllib
+        with urllib.request.urlopen(f"{server.url}/anderes", timeout=10) as r:
+            assert r.status == 200 and r.geturl() == ziel
+        # im Lauf: Abbruch mit Ziel in Abrufstatistik und STAND.json, aber keine Nacht mit möglicher Sperre
+        body = oparl.body()
+        monkeypatch.setattr(oparl, "body", lambda: {**body, "paper": f"{server.url}/papers"})
+        server.anfragen.clear()
+        sessionnet.fetch_all()
+        assert [urllib.parse.urlsplit(z).path for _, z in server.anfragen] == ["/papers"]
+    finally:
+        server.shutdown()
+        server.server_close()
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert z["ergebnis"].startswith("abbruch: Weiterleitung HTTP 301 nach") and ziel in z["ergebnis"]
+    assert (z["anfragen"], z["fehler"]) == ("1", "1")
+    assert ziel in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    assert "sperre_verdacht" not in json.loads(config.ZUSTAND.read_text())
+
+
+def test_proxy_ablehnung_ist_keine_sperre(oparl, monkeypatch):
+    # Schein-Proxy: lehnt jeden Tunnel (CONNECT) mit 403 ab und unverschlüsselte Anfragen mit 407; leitet nichts weiter
+    proxy = _lokaler_server(lambda methode, pfad: (403, {}, b"") if methode == "CONNECT" else (407, {}, b""))
+    for name in ("HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"):
+        monkeypatch.setenv(name, proxy.url)
+    for name in ("NO_PROXY", "no_proxy"):
+        monkeypatch.setenv(name, "127.0.0.1,localhost")
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
+    try:
+        vorher = abruf.statistik()
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json("https://example.invalid/oparl/body", pausen=[0, 0])
+        assert e.value.art == "proxy" and "HTTP 403" in str(e.value) and "nicht erreicht" in str(e.value)
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json("http://example.invalid/oparl/body", pausen=[0, 0])
+        assert e.value.art == "proxy" and "HTTP 407" in str(e.value)
+        assert abruf.statistik()["proxy"] - vorher["proxy"] == 2
+        # genau ein Versuch je Anfrage, keine Wiederholung
+        assert proxy.anfragen == [("CONNECT", "example.invalid:443"), ("GET", "http://example.invalid/oparl/body")]
+        # im Lauf: Fehler vermerkt, aber keine Nacht mit möglicher Sperre
+        monkeypatch.setattr(config, "OPARL_BODY", "https://example.invalid/oparl/body")
+        sessionnet.fetch_all()
+    finally:
+        proxy.shutdown()
+        proxy.server_close()
+    assert "Proxy" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    assert not config.ZUSTAND.exists() or "sperre_verdacht" not in json.loads(config.ZUSTAND.read_text())

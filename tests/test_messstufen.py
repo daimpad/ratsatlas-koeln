@@ -1,13 +1,18 @@
 """Messstufen der Kölner OParl-API (explore/STUFEN.md) gegen den lokalen Testserver explore/testserver.py:
 Anzahl der Anfragen je Kommando, Obergrenze RATSATLAS_MAX_ANFRAGEN (Abbruch statt Überschreitung), Cache-Treffer
-zählen nicht, Folgeseiten ohne URL-Kodierung, Seitengrenzen, Abbruchkriterien, Probelauf und Auswertung.
-Läuft offline: Anfragen gehen nur an 127.0.0.1; Adressen der Stadt werden nie aufgerufen."""
+zählen nicht, Folgeseiten ohne URL-Kodierung, Seitengrenzen, Abbruchkriterien (auch Mindestabstand und Ablehnung durch
+einen lokalen Schein-Proxy), Probelauf und Auswertung.
+Läuft offline: Anfragen gehen nur an 127.0.0.1; Adressen der Stadt werden nie aufgerufen (fremde Adressen nur unter
+example.invalid, die der Schein-Proxy ablehnt)."""
 import csv
 import datetime as dt
 import importlib
 import json
 import re
 import sys
+import threading
+import urllib.error
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -201,7 +206,7 @@ def test_altes_protokoll_bekommt_neuen_kopf(server, tmp_path):
 def test_strenge_vorgaben_fuer_anfragen_an_die_stadt(server, tmp_path, monkeypatch):
     om = importlib.import_module("oparl_messung")
     werte, fehler = om.sichere_vorgaben({"RATSATLAS_MAX_ANFRAGEN": "3", "RATSATLAS_KONTAKT": "kontakt@example.invalid"})
-    assert fehler == [] and werte == {"wiederholungen": 0, "max_dauer": 5.0, "max_anfragen": 3}
+    assert fehler == [] and werte == {"wiederholungen": 0, "max_dauer": 5.0, "max_anfragen": 3, "abstand": 2.0}
     _, fehler = om.sichere_vorgaben({})
     assert any("RATSATLAS_MAX_ANFRAGEN" in f for f in fehler) and any("RATSATLAS_KONTAKT" in f for f in fehler)
     for zusatz, name in (({"RATSATLAS_WIEDERHOLUNGEN": "4"}, "WIEDERHOLUNGEN"), ({"RATSATLAS_MAX_DAUER": "0"}, "MAX_DAUER"),
@@ -351,3 +356,172 @@ def test_probelauf_entspricht_stufenplan_und_auswertung(tmp_path):
     assert "Regel Stufe 3/5 (Jahresfilter wirkt, keine Doppelungen): erfüllt" in aus
     if ("6", "pdf-koepfe") in gemessen:   # gleichmäßig über 2019–2026
         assert "je Jahr: 2019 12, 2020 12, 2021 12, 2022 12, 2023 13, 2024 13, 2025 13, 2026 13" in aus
+
+
+class ScheinProxy:
+    """Lokaler Schein-Proxy: lehnt jeden Tunnel (CONNECT) mit 403 ab und beantwortet unverschlüsselte Anfragen mit 407;
+    er leitet nichts weiter. `anfragen`: (Methode, Ziel)."""
+
+    def __init__(self):
+        self.anfragen = []
+        proxy = self
+
+        class H(BaseHTTPRequestHandler):
+            def log_message(self, *a):
+                pass
+
+            def _ablehnen(self, code):
+                proxy.anfragen.append((self.command, self.path))
+                self.send_response(code)
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+
+            def do_CONNECT(self):
+                self._ablehnen(403)
+
+            def do_GET(self):
+                self._ablehnen(407)
+
+        self.server = ThreadingHTTPServer(("127.0.0.1", 0), H)
+        self.url = f"http://127.0.0.1:{self.server.server_address[1]}"
+
+    def __enter__(self):
+        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+        return self
+
+    def __exit__(self, *a):
+        self.server.shutdown()
+        self.server.server_close()
+
+
+def test_mindestabstand_fuer_anfragen_an_die_stadt(server, tmp_path, monkeypatch):
+    om = importlib.import_module("oparl_messung")
+    basis = {"RATSATLAS_MAX_ANFRAGEN": "3", "RATSATLAS_KONTAKT": "kontakt@example.invalid"}
+    assert om.sichere_vorgaben({**basis, "RATSATLAS_ABSTAND": "3"}) == (
+        {"wiederholungen": 0, "max_dauer": 5.0, "max_anfragen": 3, "abstand": 3.0}, [])
+    for wert in ("1.9", "0", "-2", "nan", "inf"):
+        assert any("RATSATLAS_ABSTAND" in f for f in om.sichere_vorgaben({**basis, "RATSATLAS_ABSTAND": wert})[1]), wert
+    # als Prozess: alles übrige streng, aber RATSATLAS_ABSTAND=0 (aus probelauf.umgebung) → Abbruch vor der ersten Anfrage
+    fremd = {"RATSATLAS_OPARL_SYSTEM": "http://example.invalid/oparl/system",
+             "RATSATLAS_OPARL_BODY": "http://example.invalid/oparl/bodies/x", "RATSATLAS_STADT_INFORMIERT": "ja",
+             "RATSATLAS_KONTAKT": "kontakt@example.invalid"}
+    m = lauf(server, tmp_path, "test", obergrenze=3, **fremd)
+    assert m["rc"] == 1 and "Abbruch vor der ersten Anfrage" in m["stderr"] and "RATSATLAS_ABSTAND" in m["stderr"]
+    assert server.anfragen == [] and not (tmp_path / "cache" / "abrufe.tsv").exists()
+    # vor jeder Anfrage an die Stadt: Abstand unter 2 s → kein Abruf; 2 s → Abruf
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setenv("RATSATLAS_ZEITFENSTER", "")
+    for name, wert in (("WIEDERHOLUNGEN", 0), ("MAX_DAUER", 5.0), ("MAX_ANFRAGEN", 3),
+                       ("KONTAKT", "kontakt@example.invalid"), ("ABSTAND", 1.0)):
+        monkeypatch.setattr(om.abruf, name, wert)
+    monkeypatch.setattr(om, "hole", lambda *a, **k: b"geholt")   # kein Netz
+    with pytest.raises(om.Abbruch, match="Abstand mindestens 2 s"):
+        om._hole("https://example.invalid/oparl/system")
+    monkeypatch.setattr(om.abruf, "ABSTAND", 2.0)
+    assert om._hole("https://example.invalid/oparl/system") == b"geholt"
+
+
+def test_proxy_ablehnung_erkennen():
+    abruf = importlib.import_module("abruf")
+    tunnel = urllib.error.URLError(OSError("Tunnel connection failed: 403 Forbidden"))
+    assert abruf.proxy_ablehnung(tunnel) == 403
+    assert abruf.proxy_ablehnung(urllib.error.HTTPError("http://x/", 407, "Proxy Authentication Required", {}, None)) == 407
+    assert abruf.proxy_ablehnung(urllib.error.HTTPError("http://x/", 403, "Forbidden", {}, None)) is None
+    for fehler in (urllib.error.URLError(ConnectionResetError("reset")), TimeoutError("timed out")):
+        assert abruf.proxy_ablehnung(fehler) is None   # bleibt mögliche Sperre
+
+
+def test_proxy_ablehnung_ist_keine_sperre(server, tmp_path):
+    with ScheinProxy() as proxy:
+        env = {"RATSATLAS_OPARL_SYSTEM": "https://example.invalid/oparl/system",
+               "RATSATLAS_OPARL_BODY": "https://example.invalid/oparl/bodies/x", "RATSATLAS_STADT_INFORMIERT": "ja",
+               "RATSATLAS_KONTAKT": "kontakt@example.invalid", "RATSATLAS_ABSTAND": "2",
+               "HTTPS_PROXY": proxy.url, "https_proxy": proxy.url,
+               "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost"}
+        m = lauf(server, tmp_path, "test", obergrenze=3, **env)
+    assert m["rc"] == 2 and m["lauf"]["ergebnis"] == "abbruch (proxy)", m["stderr"]
+    assert proxy.anfragen == [("CONNECT", "example.invalid:443")]      # genau ein Versuch, keine Wiederholung
+    assert m["server"] == 0 and m["lauf"]["netz"] == "1"
+    assert "keine Anfrage hat die Stadt erreicht" in m["stderr"] and "example.invalid muss im Netz" in m["stderr"]
+    z = protokoll(tmp_path)[-1]
+    assert (z["status"], z["quelle"]) == ("proxy 403", "netz")
+    aus = importlib.import_module("auswertung").auswertung(tmp_path / "cache", tmp_path / "ergebnisse")
+    assert "## Ablehnungen durch den Proxy der Arbeitsumgebung" in aus
+    assert "Lauf 1 (test): 1 Anfrage(n) vom Proxy abgelehnt (Host example.invalid)" in aus
+    assert "Status proxy 403 × 1 (Ablehnung durch den Proxy der Arbeitsumgebung" in aus
+    assert "mögliche Sperre" not in aus
+    assert "| – | test | 1 | 0 | proxy 403×1 | – | – | 0 | abbruch (proxy) |" in aus   # keine Antwortzeit der Stadt
+
+
+def _laeufe(erg, *zeilen):
+    kopf = ("lauf", "stufe", "kommando", "parameter", "start", "ende", "dauer_s", "netz", "cache", "obergrenze",
+            "protokoll_von", "protokoll_bis", "ergebnis", "meldung")
+    erg.mkdir(parents=True, exist_ok=True)
+    (erg / "oparl_laeufe.tsv").write_text("\n".join("\t".join(map(str, z)) for z in (kopf, *zeilen)) + "\n",
+                                          encoding="utf-8")
+
+
+def test_auswertung_ordnet_protokollzeilen_nur_im_zeitraum_des_laufs_zu(tmp_path):
+    auswertung = importlib.import_module("auswertung")
+    cache, erg = tmp_path / "cache", tmp_path / "ergebnisse"
+    cache.mkdir()
+    zeilen = [("2026-11-07T23:05:01+01:00", "https://example.invalid/a"),   # Lauf 1
+              ("2026-11-07T23:05:03+01:00", "https://example.invalid/b"),   # Lauf 1
+              ("2026-11-08T23:05:01+01:00", "https://example.invalid/c"),   # vor dem Start von Lauf 2
+              ("2026-11-09T23:05:01", "https://example.invalid/d")]         # ohne Zone (Lauf 3)
+    (cache / "abrufe.tsv").write_text("zeit\turl\tstatus\tbytes\tdauer_s\tquelle\tziel\n" + "".join(
+        f"{t}\t{u}\t200\t10\t0.50\tnetz\t\n" for t, u in zeilen), encoding="utf-8")
+    _laeufe(erg, (1, 1, "test", "", "2026-11-07T23:05:00+01:00", "2026-11-07T23:05:09+01:00", 9, 2, 0, 3, 0, 2, "ok", ""),
+            (2, 2, "kennzahlen", "", "2026-11-08T23:10:00+01:00", "2026-11-08T23:10:09+01:00", 9, 1, 0, 10, 2, 3, "ok", ""),
+            (3, 3, "organisationen", "", "2026-11-09T23:05:00+01:00", "2026-11-09T23:05:09+01:00", 9, 1, 0, 5, 3, 4,
+             "ok", ""),
+            (4, 4, "sitzungen", "", "2026-11-10T23:05:00+01:00", "2026-11-10T23:05:09+01:00", 9, 2, 0, 3, 4, 6, "ok", ""))
+    aus = auswertung.auswertung(cache, erg)
+    assert "| 1 | test | 2 | 0 | 200×2 | 0.50 | 0.50 | 20 | ok |" in aus
+    for nr, kommando in ((2, "kennzahlen"), (3, "organisationen"), (4, "sitzungen")):
+        assert (f"Lauf {nr} ({kommando}): Statuscodes und Antwortzeiten nicht prüfbar (Protokollzeilen passen nicht "
+                "zum Lauf)") in aus
+    assert "| 2 | kennzahlen | 1 | 0 | nicht prüfbar (Protokollzeilen passen nicht zum Lauf) |" in aus
+    assert "Weitere Zeilen im Abrufprotokoll ohne Lauf (z. B. geodaten.py oder Zeit außerhalb eines Laufs): 2" in aus
+    # ohne Abrufprotokoll bleibt es bei „Protokoll fehlt“
+    assert "Statuscodes und Antwortzeiten nicht prüfbar (Protokoll fehlt)" in auswertung.auswertung(tmp_path / "x", erg)
+
+
+def test_regel_stufe_3_5_nur_nach_vollstaendigem_lauf(tmp_path):
+    auswertung = importlib.import_module("auswertung")
+    null = [{"feld": f, "vorhanden": "0", "von": "200"} for f in (
+        "created außerhalb des Filterjahres", "doppelte Kennungen im selben Jahr (Seiten verschoben)",
+        "doppelte Kennungen aus anderen Jahren (Jahresfilter wirkt nicht)")]
+    ok = {"lauf": "4", "kommando": "stichprobe", "ergebnis": "ok"}
+    abgebrochen = {"lauf": "5", "kommando": "stichprobe", "ergebnis": "abbruch (proxy)"}
+    andere = {"lauf": "6", "kommando": "sitzungen", "ergebnis": "abbruch (server)"}
+    assert auswertung.regel_stufe_3_5(null, [ok, andere]) == "erfüllt"
+    assert auswertung.regel_stufe_3_5(null, [ok, abgebrochen]).startswith("nicht prüfbar (Lauf abgebrochen)")
+    assert auswertung.regel_stufe_3_5(null, []).startswith("nicht prüfbar")
+    eins = [dict(null[0], vorhanden="1")] + null[1:]
+    assert auswertung.regel_stufe_3_5(eins, [ok]).startswith("nicht erfüllt")
+    # in der Auswertung: Zählungen 0, aber der letzte stichprobe-Lauf ist abgebrochen
+    erg = tmp_path / "ergebnisse"
+    _laeufe(erg, (4, 3, "stichprobe", "", "2026-11-09T23:05:00+01:00", "2026-11-09T23:05:30+01:00", 30, 9, 0, 9, 0, 0,
+                  "ok", ""),
+            (5, 5, "stichprobe", "", "2026-11-11T23:05:00+01:00", "2026-11-11T23:05:01+01:00", 1, 1, 0, 25, 0, 0,
+             "abbruch (proxy)", "Ablehnung durch den Proxy"))
+    (erg / "oparl_stichprobe_bedeckung.tsv").write_text("feld\tvorhanden\tvon\n" + "".join(
+        f"{z['feld']}\t0\t200\n" for z in null), encoding="utf-8")
+    aus = auswertung.auswertung(tmp_path / "cache", erg)
+    assert "Regel Stufe 3/5 (Jahresfilter wirkt, keine Doppelungen): nicht prüfbar (Lauf abgebrochen)" in aus
+    assert "Regel Stufe 3/5 (Jahresfilter wirkt, keine Doppelungen): erfüllt" not in aus
+
+
+def test_stufenbefehle_mit_kontakt_und_strengen_vorgaben():
+    om = importlib.import_module("oparl_messung")
+    text = (EXPLORE / "STUFEN.md").read_text(encoding="utf-8")
+    assert "<Kontaktadresse" not in text
+    befehle = [z for z in text.splitlines() if "oparl_messung.py" in z and z.startswith("RATSATLAS_")]
+    assert len(befehle) == 8
+    for b in befehle:
+        env = {k: v.strip('"') for k, v in re.findall(r'(RATSATLAS_[A-Z_]+)=("[^"]*"|\S+)', b)}
+        assert env["RATSATLAS_KONTAKT"] == "contact@nozilla.de", b
+        if env["RATSATLAS_MAX_ANFRAGEN"].isdigit():   # Stufe 4 optional: Obergrenze erst nach Stufe 2
+            werte, fehler = om.sichere_vorgaben(env)
+            assert fehler == [] and werte["abstand"] >= 2, (b, fehler)

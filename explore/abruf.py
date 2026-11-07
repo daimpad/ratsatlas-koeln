@@ -11,16 +11,21 @@
   protokolliert und bricht ab (sonst kämen ungezählte Anfragen an einen anderen Host oder Pfad hinzu)
 - Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
   (wie pipeline/abruf.py; explore/ergebnisse/sessionnet_befunde.tsv)
+- eine Ablehnung durch den Proxy der Arbeitsumgebung (Antwort ≠ 200 auf CONNECT, z. B. „Tunnel connection failed:
+  403 Forbidden“, oder HTTP 407) ist keine Antwort des Zielservers und kein Hinweis auf eine Sperre: eigene Art
+  `proxy`, Status `proxy <Code>` im Protokoll, Abbruch ohne Wiederholung (nicht wiederholen, berichten). Ein HTTP 403
+  auf eine http-Adresse (ohne Tunnel) ist nicht von einer Antwort des Zielservers zu unterscheiden und bleibt `http`.
 - Rohdaten-Cache: jede Antwort wird unter explore/_cache/ abgelegt und beim nächsten Lauf nicht erneut abgerufen
 - Protokoll jeder Anfrage (Zeit mit Zone, URL, Status, Bytes, Dauer, Netz oder Cache, Ziel einer Weiterleitung) in
   explore/_cache/abrufe.tsv
 Für Anfragen an die Stadt setzt explore/oparl_messung.py strengere Vorgaben (keine Wiederholung, höchstens 5 s je
-Antwort, Obergrenze und Kontakt Pflicht).
+Antwort, Abstand mindestens 2 s, Obergrenze und Kontakt Pflicht).
 Nur Standardbibliothek.
 """
 import datetime as dt
 import hashlib
 import os
+import re
 import time
 import urllib.error
 import urllib.parse
@@ -48,12 +53,14 @@ _cache_treffer = 0
 _kopf_geprueft = False
 
 _letzte = 0.0
+# Meldung von http.client, wenn der Proxy den Tunnel (CONNECT) ablehnt
+_TUNNEL = re.compile(r"Tunnel connection failed: (\d{3})")
 
 
 class Abbruch(Exception):
     """Antwort, auf die nicht erneut angefragt wird. `art`: http (4xx, `code` gesetzt), server (429/5xx nach allen
-    Wiederholungen), sperre (Zeitüberschreitung, Verbindungsabbruch), weiterleitung (3xx, `ziel` gesetzt),
-    obergrenze, langsam, groesse."""
+    Wiederholungen), sperre (Zeitüberschreitung, Verbindungsabbruch), proxy (Ablehnung durch den Proxy der
+    Arbeitsumgebung, `code` gesetzt), weiterleitung (3xx, `ziel` gesetzt), obergrenze, langsam, groesse."""
 
     def __init__(self, meldung, art="", code=None, ziel=""):
         super().__init__(meldung)
@@ -70,6 +77,23 @@ class _OhneWeiterleitung(urllib.request.HTTPRedirectHandler):
 
 
 _OEFFNER = urllib.request.build_opener(_OhneWeiterleitung)
+
+
+def proxy_ablehnung(fehler):
+    """Statuscode, mit dem ein Proxy die Verbindung abgelehnt hat, sonst None: Antwort ≠ 200 auf CONNECT (http.client
+    meldet „Tunnel connection failed: 403 Forbidden“) oder HTTP 407 (Proxy Authentication Required). Die Anfrage hat
+    den Zielserver dann nicht erreicht."""
+    if isinstance(fehler, urllib.error.HTTPError):
+        return fehler.code if fehler.code == 407 else None
+    m = _TUNNEL.search(str(fehler))
+    return int(m.group(1)) if m else None
+
+
+def _proxy_abbruch(url, code, fehler, dauer):
+    """Protokolliert die Ablehnung durch den Proxy (Status `proxy <Code>`) und liefert den Abbruch der Art `proxy`."""
+    _protokoll(url, f"proxy {code}", 0, dauer, "netz")
+    return Abbruch(f"Ablehnung durch den Proxy der Arbeitsumgebung (HTTP {code} beim Verbindungsaufbau); die Anfrage "
+                   f"hat den Zielserver nicht erreicht, kein Hinweis auf eine Sperre: {url} ({fehler})", "proxy", code)
 
 
 def zaehler() -> dict:
@@ -149,12 +173,17 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
                 _protokoll(url, e.code, 0, time.monotonic() - start, "netz", ziel)
                 raise Abbruch(f"Weiterleitung HTTP {e.code} nach {ziel or '(ohne Ziel)'} nicht verfolgt: {url}",
                               "weiterleitung", e.code, ziel) from e
+            if proxy_ablehnung(e):   # HTTP 407: Antwort des Proxys, nicht des Zielservers
+                raise _proxy_abbruch(url, e.code, e, time.monotonic() - start) from e
             _protokoll(url, e.code, 0, time.monotonic() - start, "netz")
             if e.code in (429,) or e.code >= 500:
                 fehler = e
             else:
                 raise Abbruch(f"HTTP {e.code}: {url}", "http", e.code) from e
         except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
+            code = proxy_ablehnung(e)
+            if code:   # Proxy lehnt den Tunnel ab: keine Antwort des Zielservers, keine Sperre
+                raise _proxy_abbruch(url, code, e, time.monotonic() - start) from e
             _protokoll(url, type(e).__name__, 0, time.monotonic() - start, "netz")
             raise Abbruch(f"Zeitüberschreitung oder Verbindungsabbruch, mögliche Sperre: {url} ({e})", "sperre") from e
         finally:   # der Abstand gilt ab dem Ende der Antwort, auch nach Fehlern
