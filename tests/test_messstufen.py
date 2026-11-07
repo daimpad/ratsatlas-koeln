@@ -1,7 +1,8 @@
 """Messstufen der Kölner OParl-API (explore/STUFEN.md) gegen den lokalen Testserver explore/testserver.py:
 Anzahl der Anfragen je Kommando, Obergrenze RATSATLAS_MAX_ANFRAGEN (Abbruch statt Überschreitung), Cache-Treffer
-zählen nicht, Folgeseiten ohne URL-Kodierung, Seitengrenzen, Abbruchkriterien (auch Mindestabstand und Ablehnung durch
-einen lokalen Schein-Proxy), Probelauf und Auswertung.
+zählen nicht, Folgeseiten ohne URL-Kodierung, Seitengrenzen, Abbruchkriterien (auch Mindestabstand innerhalb eines
+Prozesses und zwischen zwei Prozessen, Antworten eines lokalen Schein-Proxys auf CONNECT), Probelauf und Auswertung;
+explore/geodaten.py ohne Netz (Mindestwerte, Ende nach möglicher Sperre).
 Läuft offline: Anfragen gehen nur an 127.0.0.1; Adressen der Stadt werden nie aufgerufen (fremde Adressen nur unter
 example.invalid, die der Schein-Proxy ablehnt)."""
 import csv
@@ -9,9 +10,13 @@ import datetime as dt
 import importlib
 import json
 import re
+import subprocess
 import sys
 import threading
+import time
+import types
 import urllib.error
+import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -359,10 +364,10 @@ def test_probelauf_entspricht_stufenplan_und_auswertung(tmp_path):
 
 
 class ScheinProxy:
-    """Lokaler Schein-Proxy: lehnt jeden Tunnel (CONNECT) mit 403 ab und beantwortet unverschlüsselte Anfragen mit 407;
-    er leitet nichts weiter. `anfragen`: (Methode, Ziel)."""
+    """Lokaler Schein-Proxy: beantwortet jeden Tunnel (CONNECT) mit `connect` (Vorgabe 403) und unverschlüsselte
+    Anfragen mit `get` (Vorgabe 407); er leitet nichts weiter. `anfragen`: (Methode, Ziel)."""
 
-    def __init__(self):
+    def __init__(self, connect=403, get=407):
         self.anfragen = []
         proxy = self
 
@@ -377,10 +382,10 @@ class ScheinProxy:
                 self.end_headers()
 
             def do_CONNECT(self):
-                self._ablehnen(403)
+                self._ablehnen(connect)
 
             def do_GET(self):
-                self._ablehnen(407)
+                self._ablehnen(get)
 
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), H)
         self.url = f"http://127.0.0.1:{self.server.server_address[1]}"
@@ -423,34 +428,189 @@ def test_mindestabstand_fuer_anfragen_an_die_stadt(server, tmp_path, monkeypatch
 
 def test_proxy_ablehnung_erkennen():
     abruf = importlib.import_module("abruf")
-    tunnel = urllib.error.URLError(OSError("Tunnel connection failed: 403 Forbidden"))
-    assert abruf.proxy_ablehnung(tunnel) == 403
+
+    def tunnel(code, text):
+        return urllib.error.URLError(OSError(f"Tunnel connection failed: {code} {text}"))
+    for code, text in ((403, "Forbidden"), (405, "Method Not Allowed"), (407, "Proxy Authentication Required")):
+        assert abruf.proxy_ablehnung(tunnel(code, text)) == code == abruf.tunnel_status(tunnel(code, text))
     assert abruf.proxy_ablehnung(urllib.error.HTTPError("http://x/", 407, "Proxy Authentication Required", {}, None)) == 407
     assert abruf.proxy_ablehnung(urllib.error.HTTPError("http://x/", 403, "Forbidden", {}, None)) is None
+    # Proxy erreicht das Ziel nicht (502, 504) oder meldet Begrenzung/Überlastung (429, 503): keine Ablehnung
+    for code, text in ((502, "Bad Gateway"), (504, "Gateway Timeout"), (503, "Service Unavailable"),
+                       (429, "Too Many Requests")):
+        assert abruf.proxy_ablehnung(tunnel(code, text)) is None and abruf.tunnel_status(tunnel(code, text)) == code
     for fehler in (urllib.error.URLError(ConnectionResetError("reset")), TimeoutError("timed out")):
-        assert abruf.proxy_ablehnung(fehler) is None   # bleibt mögliche Sperre
+        assert abruf.proxy_ablehnung(fehler) is None and abruf.tunnel_status(fehler) is None   # mögliche Sperre
 
 
-def test_proxy_ablehnung_ist_keine_sperre(server, tmp_path):
-    with ScheinProxy() as proxy:
-        env = {"RATSATLAS_OPARL_SYSTEM": "https://example.invalid/oparl/system",
-               "RATSATLAS_OPARL_BODY": "https://example.invalid/oparl/bodies/x", "RATSATLAS_STADT_INFORMIERT": "ja",
-               "RATSATLAS_KONTAKT": "kontakt@example.invalid", "RATSATLAS_ABSTAND": "2",
-               "HTTPS_PROXY": proxy.url, "https_proxy": proxy.url,
-               "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost"}
-        m = lauf(server, tmp_path, "test", obergrenze=3, **env)
+def _fremd_ueber(proxy):
+    """Umgebung für oparl_messung.py: Adressen der Stadt durch example.invalid ersetzt, alles über den Schein-Proxy."""
+    return {"RATSATLAS_OPARL_SYSTEM": "https://example.invalid/oparl/system",
+            "RATSATLAS_OPARL_BODY": "https://example.invalid/oparl/bodies/x", "RATSATLAS_STADT_INFORMIERT": "ja",
+            "RATSATLAS_KONTAKT": "kontakt@example.invalid", "RATSATLAS_ABSTAND": "2",
+            "HTTPS_PROXY": proxy.url, "https_proxy": proxy.url, "HTTP_PROXY": proxy.url, "http_proxy": proxy.url,
+            "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost"}
+
+
+@pytest.mark.parametrize("code", [403, 407])
+def test_proxy_ablehnung_ist_keine_sperre(server, tmp_path, code):
+    with ScheinProxy(connect=code) as proxy:
+        m = lauf(server, tmp_path, "test", obergrenze=3, **_fremd_ueber(proxy))
     assert m["rc"] == 2 and m["lauf"]["ergebnis"] == "abbruch (proxy)", m["stderr"]
     assert proxy.anfragen == [("CONNECT", "example.invalid:443")]      # genau ein Versuch, keine Wiederholung
     assert m["server"] == 0 and m["lauf"]["netz"] == "1"
     assert "keine Anfrage hat die Stadt erreicht" in m["stderr"] and "example.invalid muss im Netz" in m["stderr"]
     z = protokoll(tmp_path)[-1]
-    assert (z["status"], z["quelle"]) == ("proxy 403", "netz")
+    assert (z["status"], z["quelle"]) == (f"proxy {code}", "netz")
     aus = importlib.import_module("auswertung").auswertung(tmp_path / "cache", tmp_path / "ergebnisse")
     assert "## Ablehnungen durch den Proxy der Arbeitsumgebung" in aus
     assert "Lauf 1 (test): 1 Anfrage(n) vom Proxy abgelehnt (Host example.invalid)" in aus
-    assert "Status proxy 403 × 1 (Ablehnung durch den Proxy der Arbeitsumgebung" in aus
+    assert f"Status proxy {code} × 1 (Ablehnung durch den Proxy der Arbeitsumgebung" in aus
     assert "mögliche Sperre" not in aus
-    assert "| – | test | 1 | 0 | proxy 403×1 | – | – | 0 | abbruch (proxy) |" in aus   # keine Antwortzeit der Stadt
+    assert f"| – | test | 1 | 0 | proxy {code}×1 | – | – | 0 | abbruch (proxy) |" in aus   # keine Antwortzeit der Stadt
+
+
+@pytest.mark.parametrize("code", [502, 504])
+def test_proxy_erreicht_das_ziel_nicht_ist_moegliche_sperre(server, tmp_path, code):
+    # 502/504 auf CONNECT: Der Proxy hat die Stadt angefragt, aber nicht erreicht – so zeigte sich die Sperre bei mandari
+    with ScheinProxy(connect=code) as proxy:
+        m = lauf(server, tmp_path, "test", obergrenze=3, **_fremd_ueber(proxy))
+    assert m["rc"] == 2 and m["lauf"]["ergebnis"] == "abbruch (sperre)", m["stderr"]
+    assert proxy.anfragen == [("CONNECT", "example.invalid:443")]      # genau ein Versuch, keine Wiederholung
+    assert "mögliche Sperre" in m["lauf"]["meldung"] and "kein Hinweis auf eine Sperre" not in m["stderr"]
+    z = protokoll(tmp_path)[-1]
+    assert (z["status"], z["quelle"]) == (f"tunnel {code}", "netz")
+    aus = importlib.import_module("auswertung").auswertung(tmp_path / "cache", tmp_path / "ergebnisse")
+    assert f"Status tunnel {code} × 1 (beim Verbindungsaufbau über den Proxy: der Proxy erreicht den Server nicht; " \
+           "mögliche Sperre: stoppen)" in aus
+    assert "## Ablehnungen durch den Proxy der Arbeitsumgebung" not in aus
+
+
+@pytest.mark.parametrize("code, art", [(403, "proxy"), (405, "proxy"), (407, "proxy"), (502, "sperre"),
+                                       (504, "sperre"), (500, "sperre"), (429, "server"), (503, "server")])
+def test_connect_antworten_des_proxys(tmp_path, monkeypatch, code, art):
+    """Jede Antwort ≠ 200 auf CONNECT bricht ohne Wiederholung ab, auch wenn Wiederholungen nach 429/5xx erlaubt
+    wären; nur 403/405/407 gelten als Ablehnung durch den Proxy (keine Sperre)."""
+    abruf = importlib.import_module("abruf")
+    with ScheinProxy(connect=code) as proxy:
+        for name in ("HTTPS_PROXY", "https_proxy"):
+            monkeypatch.setenv(name, proxy.url)
+        for name in ("NO_PROXY", "no_proxy"):
+            monkeypatch.setenv(name, "127.0.0.1,localhost")
+        # Öffner neu bauen: der Proxy aus der Umgebung gilt ab dem Bau (sonst der Proxy der Arbeitsumgebung)
+        monkeypatch.setattr(abruf, "_OEFFNER", urllib.request.build_opener(abruf._OhneWeiterleitung))
+        for name, wert in (("CACHE", tmp_path), ("PROTOKOLL", tmp_path / "abrufe.tsv"), ("ABSTAND", 0.0),
+                           ("WIEDERHOLUNGEN", 4), ("PAUSEN", [0.01] * 4), ("MAX_ANFRAGEN", 0),
+                           ("_erste_netzanfrage", True)):
+            monkeypatch.setattr(abruf, name, wert)
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.hole("https://example.invalid/oparl/system", ".json")
+    assert (e.value.art, e.value.code) == (art, code)
+    assert proxy.anfragen == [("CONNECT", "example.invalid:443")]
+    assert ("mögliche Sperre" in str(e.value)) == (art == "sperre")
+    assert ("kein Hinweis auf eine Sperre" in str(e.value)) == (art == "proxy")
+    z = tsv(tmp_path / "abrufe.tsv")[-1]
+    assert z["status"] == (f"proxy {code}" if art == "proxy" else f"tunnel {code}")
+
+
+def test_mindestabstand_auch_zwischen_zwei_prozessen(server, tmp_path):
+    """Zwei Prozesse nacheinander mit demselben Cache (wie Stufe 3): Auch die erste Anfrage des zweiten Prozesses folgt
+    frühestens 2 s nach dem Ende der letzten Antwort des ersten, die erste des ersten frühestens 2 s nach dem Start."""
+    env = probelauf.umgebung(server, tmp_path / "cache", tmp_path / "ergebnisse", 1)
+    env["RATSATLAS_ABSTAND"] = "2"
+    skript = "import sys; sys.path.insert(0, sys.argv[1]); import abruf; abruf.hole(sys.argv[2], '.json')"
+    starts = []
+    for url in (server.system_url, server.body_url):
+        starts.append(time.monotonic())
+        r = subprocess.run([sys.executable, "-c", skript, str(EXPLORE), url], env=env, capture_output=True, text=True,
+                           timeout=60)
+        assert r.returncode == 0, r.stderr
+    assert len(server.eingang) == 2 and len(server.ausgang) == 2
+    assert server.eingang[0] - starts[0] >= 2.0                       # erste Anfrage frühestens 2 s nach dem Start
+    assert server.eingang[1] - server.ausgang[0] >= 2.0               # Prozessgrenze: Abstand ab Ende der Antwort
+    assert [z["quelle"] for z in protokoll(tmp_path)] == ["netz", "netz"]
+
+
+def test_erste_anfrage_wartet_auf_letzte_netzanfrage_im_protokoll(tmp_path, monkeypatch):
+    abruf = importlib.import_module("abruf")
+    jetzt = dt.datetime.now(ZoneInfo("Europe/Berlin")).replace(microsecond=0)
+    kopf = "zeit\turl\tstatus\tbytes\tdauer_s\tquelle\tziel\n"
+    pfad = tmp_path / "abrufe.tsv"
+    pfad.write_text(kopf + f"{jetzt.isoformat()}\thttp://127.0.0.1:1/a\t200\t1\t0.10\tnetz\t\n"
+                    "2099-01-01T00:00:00+01:00\thttp://127.0.0.1:1/b\tcache\t1\t0.00\tcache\t\n", encoding="utf-8")
+    assert abruf.letzte_netzanfrage(pfad) == jetzt.timestamp()       # Zeilen aus dem Cache zählen nicht
+    gewartet = []
+    monkeypatch.setattr(abruf, "time", types.SimpleNamespace(monotonic=time.monotonic, time=time.time,
+                                                              sleep=gewartet.append))
+    for name, wert in (("PROTOKOLL", pfad), ("ABSTAND", 2.0), ("_letzte", time.monotonic() - 100),
+                       ("_erste_netzanfrage", True)):
+        monkeypatch.setattr(abruf, name, wert)
+    abruf._warten()                    # Import lange her, aber die letzte Netzanfrage laut Protokoll gerade eben
+    nach = time.time()
+    assert len(gewartet) == 1 and gewartet[0] <= 3.0
+    # Anfrage frühestens 2 s nach dem Ende der Antwort; das Ende liegt vor jetzt + 1 s (Zeit sekundengenau)
+    assert nach + gewartet[0] >= jetzt.timestamp() + 3.0 - 1e-6
+    abruf._warten()                    # danach gilt nur noch der Abstand innerhalb des Prozesses
+    assert len(gewartet) == 1
+    # ältere Netzanfrage (vor einer Stunde): kein Warten
+    pfad.write_text(kopf + f"{(jetzt - dt.timedelta(hours=1)).isoformat()}\thttp://127.0.0.1:1/a\t200\t1\t0.10\tnetz\t\n",
+                    encoding="utf-8")
+    monkeypatch.setattr(abruf, "_erste_netzanfrage", True)
+    abruf._warten()
+    assert len(gewartet) == 1
+
+
+def test_geodaten_mindestwerte_und_ende_nach_sperre(tmp_path, monkeypatch):
+    """explore/geodaten.py ohne Netz (hole ersetzt): Abstand ≥ 2 s und keine Wiederholung vor der ersten Anfrage
+    erzwungen; nach sperre/server/proxy endet der ganze Lauf, nach einer Weiterleitung nur dieser Katalog."""
+    geodaten = importlib.import_module("geodaten")
+    abruf = importlib.import_module("abruf")
+    assert geodaten.vorgaben({}) == ({"wiederholungen": 0, "abstand": 2.0}, [])
+    for env in ({"RATSATLAS_ABSTAND": "1.5"}, {"RATSATLAS_ABSTAND": "nan"}, {"RATSATLAS_WIEDERHOLUNGEN": "2"},
+                {"RATSATLAS_ABSTAND": "x"}):
+        assert geodaten.vorgaben(env)[1], env
+    for name in ("RATSATLAS_ABSTAND", "RATSATLAS_WIEDERHOLUNGEN"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setattr(abruf, "ABSTAND", 0.0)
+    monkeypatch.setattr(abruf, "WIEDERHOLUNGEN", 4)
+    erg = tmp_path / "ergebnisse"
+    monkeypatch.setattr(geodaten, "ERG", erg)
+    aufrufe = []
+
+    def schein(fehler_bei):
+        """hole ohne Netz: Katalogseite mit DCAT-Verweis, DCAT mit einer Datei; Abbruch bei der Endung `fehler_bei`."""
+        def hole(url, endung="", cache=True):
+            aufrufe.append(url)
+            if endung in fehler_bei:
+                raise fehler_bei[endung]
+            if endung == ".html":
+                return b'<a href="/node/1/dcatapde.json">DCAT</a>'
+            return json.dumps([{"@id": "d", "@type": [geodaten.DCAT + "Dataset"],
+                                geodaten.DCAT + "distribution": [{"@id": "v"}]},
+                               {"@id": "v", geodaten.DCAT + "downloadURL": [
+                                   {"@value": f"{geodaten.BASIS}/sites/default/files/x.zip"}]}]).encode()
+        return hole
+
+    monkeypatch.setenv("RATSATLAS_ABSTAND", "0.5")
+    monkeypatch.setattr(geodaten, "hole", schein({}))
+    assert geodaten.main() == 1 and aufrufe == []                     # Abbruch vor der ersten Anfrage
+    monkeypatch.delenv("RATSATLAS_ABSTAND")
+    for art in ("sperre", "server", "proxy"):
+        for endung in (".html", ".zip"):                             # Katalog oder Datei
+            aufrufe.clear()
+            monkeypatch.setattr(geodaten, "hole", schein({endung: abruf.Abbruch(f"Test {art}", art)}))
+            assert geodaten.main() == 2, (art, endung)
+            assert len(aufrufe) == (1 if endung == ".html" else 3)    # keine weitere Anfrage
+            assert not erg.exists()                                   # Ergebnisdateien unverändert
+    assert (abruf.ABSTAND, abruf.WIEDERHOLUNGEN) == (2.0, 0)
+    # Weiterleitung: nur dieser Katalog, die übrigen Datensätze laufen weiter
+    aufrufe.clear()
+    weiter = abruf.Abbruch("Weiterleitung HTTP 301 nach https://example.invalid/neu nicht verfolgt", "weiterleitung",
+                           301, "https://example.invalid/neu")
+    monkeypatch.setattr(geodaten, "hole", schein({".html": weiter}))
+    assert geodaten.main() == 0 and len(aufrufe) == len(geodaten.DATENSAETZE)
+    kat = tsv(erg / "geodaten_katalog.tsv")
+    assert len(kat) == len(geodaten.DATENSAETZE) and all("example.invalid/neu" in z["titel"] for z in kat)
 
 
 def _laeufe(erg, *zeilen):

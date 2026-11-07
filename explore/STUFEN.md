@@ -6,7 +6,7 @@ Stand 07.11.2026. Grundlage: mündliche Einwilligung der Stadt Köln (CLAUDE.md,
 
 - Jeder Befehl unten ist vollständig und wird als Ganzes in einer Zeile übernommen; es gibt keine Variablen „aus derselben Shell“ (jede Stufe läuft in einer anderen Nacht, meist in einer neuen Shell). Der Kontakt im User-Agent ist `contact@nozilla.de` (Projektkontakt des Auftraggebers, steht öffentlich in `README.md`); mit Platzhalter (Zeichen `<` oder `>`) oder ohne Kontakt bricht `oparl_messung.py` vor der ersten Anfrage ab.
 - Strenge Vorgaben für Anfragen an die Stadt erzwingt `oparl_messung.py` auch ohne die Angaben im Befehl: keine Wiederholung nach 429/5xx (`RATSATLAS_WIEDERHOLUNGEN`, Vorgabe 0), höchstens 5 s je Antwort (`RATSATLAS_MAX_DAUER`, Vorgabe 5), mindestens 2 s Abstand zwischen zwei Anfragen (`RATSATLAS_ABSTAND`, Vorgabe 2); `RATSATLAS_MAX_ANFRAGEN` und `RATSATLAS_KONTAKT` sind Pflicht. Lockerere Werte (Wiederholungen, mehr als 5 s, Abstand unter 2 s, keine Obergrenze) werden vor der ersten Anfrage abgelehnt und vor jeder Anfrage an die Stadt erneut geprüft. Lokale Testserver (`http://127.0.0.1`, `http://localhost`) sind ausgenommen.
-- Eine Verbindung, mindestens 2 s Abstand vom Ende einer Antwort bis zur nächsten Anfrage (`explore/abruf.py`), User-Agent mit Projektadresse und Kontakt.
+- Eine Verbindung, mindestens 2 s Abstand vom Ende einer Antwort bis zur nächsten Anfrage (`explore/abruf.py`), auch über Prozessgrenzen: Die erste Anfrage eines Prozesses folgt frühestens 2 s nach seinem Start und frühestens 2 s nach der letzten Netzanfrage laut `_cache/abrufe.tsv` (dort sekundengenau, daher bis zu 1 s mehr). Das gilt auch für die zwei Prozesse von Stufe 3. User-Agent mit Projektadresse und Kontakt.
 - Weiterleitungen (HTTP 3xx) werden nicht verfolgt: Die Weiterleitung zählt als eine Anfrage, wird mit Ziel-URL in `_cache/abrufe.tsv` (Spalte `ziel`) protokolliert, und der Lauf bricht ab. So bleibt die Obergrenze eine Obergrenze für HTTP-Anfragen, und kein anderer Host wird ungeprüft erreicht.
 - `RATSATLAS_MAX_ANFRAGEN` gilt je Prozess und zählt nur Anfragen ans Netz; Antworten aus `explore/_cache/` zählen nicht.
 - **Entscheidung zur Obergrenze: ohne Reserve.** Die Obergrenze ist genau die im Probelauf ermittelte Zahl ohne Cache (ungünstigster Fall, z. B. neue Arbeitsumgebung). Reicht sie nicht, bricht die Stufe ab und wird berichtet; eine höhere Grenze gibt es nur nach neuer Freigabe. Grundlage: „Abrufe nur sehr vorsichtig und gestuft“ (CLAUDE.md, Abschnitt 9, 07.11.2026).
@@ -24,7 +24,9 @@ Jeder Abbruch beendet den Lauf mit Rückgabewert 2 (Fehler: 1) und wird in `expl
 | Antwortzeit über 5 s | `RATSATLAS_MAX_DAUER` (Vorgabe 5): Antwort wird noch gespeichert, dann Abbruch |
 | HTTP 429 oder 5xx | `RATSATLAS_WIEDERHOLUNGEN` (Vorgabe 0): sofortiger Abbruch ohne Wiederholung |
 | Zeitüberschreitung (60 s) oder Verbindungsabbruch | immer sofortiger Abbruch (mögliche Sperre) |
-| Ablehnung durch den Proxy der Arbeitsumgebung (Antwort ≠ 200 auf CONNECT, z. B. „Tunnel connection failed: 403“, oder HTTP 407) | sofortiger Abbruch der Art `proxy`, Status `proxy <Code>` in `_cache/abrufe.tsv`; keine Antwort der Stadt und kein Hinweis auf eine Sperre; nichts wiederholen, berichten |
+| Proxy der Arbeitsumgebung erreicht die Stadt nicht (CONNECT-Antwort 502 oder 504, ebenso jede andere außer den unten genannten, z. B. „Tunnel connection failed: 502“) | wie Verbindungsabbruch: sofortiger Abbruch der Art `sperre` (mögliche Sperre), Status `tunnel <Code>` in `_cache/abrufe.tsv` |
+| Proxy meldet Begrenzung oder Überlastung (CONNECT-Antwort 429 oder 503) | wie HTTP 429/5xx: sofortiger Abbruch der Art `server` ohne Wiederholung, Status `tunnel <Code>` |
+| Ablehnung durch den Proxy der Arbeitsumgebung (CONNECT-Antwort 403, 405 oder 407, z. B. „Tunnel connection failed: 403“, oder HTTP 407: Richtlinie oder fehlende Anmeldung) | sofortiger Abbruch der Art `proxy`, Status `proxy <Code>` in `_cache/abrufe.tsv`; keine Antwort der Stadt und kein Hinweis auf eine Sperre; nichts wiederholen, berichten |
 | Weiterleitung (HTTP 3xx) | nicht verfolgt; Abbruch, Ziel-URL im Protokoll |
 | HTTP 401, 403, 404 | Abbruch; die Parametertests in `kennzahlen` vermerken 400, 401 und 404 als „Parameter abgelehnt“, `pdf-koepfe` vermerkt 404 und 410 einzelner Dateien |
 | Antwort ist kein JSON (z. B. HTML-Seite) | Abbruch |
@@ -32,23 +34,23 @@ Jeder Abbruch beendet den Lauf mit Rückgabewert 2 (Fehler: 1) und wird in `expl
 | Obergrenze erreicht | Abbruch vor der nächsten Anfrage |
 | außerhalb 23–1 Uhr | Prüfung vor jeder Anfrage |
 
-Bei Verbindungsabbruch, 403 oder 429 ruhen alle Abrufe bis zur Klärung mit der Stadt. Ein Abbruch der Art `proxy` betrifft nur die Arbeitsumgebung (die Anfrage hat die Stadt nicht erreicht): nichts wiederholen, sondern berichten; weiter erst, wenn der Host im Netz der Arbeitsumgebung erlaubt ist.
+Bei Verbindungsabbruch (auch CONNECT-Antwort 502/504 des Proxys, Art `sperre`), 403 oder 429 (auch als CONNECT-Antwort) ruhen alle Abrufe bis zur Klärung mit der Stadt. Ein Abbruch der Art `proxy` betrifft nur die Arbeitsumgebung (die Anfrage hat die Stadt nicht erreicht): nichts wiederholen, sondern berichten; weiter erst, wenn der Host im Netz der Arbeitsumgebung erlaubt ist.
 
 ## Übersicht
 
 | Stufe | Kommando | Anfragen mit Cache der Vorstufen | ohne Cache | `RATSATLAS_MAX_ANFRAGEN` | Dauer bei 1 s je Antwort |
 |---|---|---:|---:|---:|---|
-| 1 | `test` | 3 | 3 | 3 | etwa 7 s |
+| 1 | `test` | 3 | 3 | 3 | etwa 9 s |
 | 2 | `kennzahlen` | 7 | 10 | 10 | 20–30 s |
-| 3 | `organisationen` | 3 | 5 | 5 | 7–13 s |
-| 3 | `stichprobe --seiten 1` | 7 | 9 | 9 | 20–25 s |
+| 3 | `organisationen` | 3 | 5 | 5 | 9–15 s |
+| 3 | `stichprobe --seiten 1` | 7 | 9 | 9 | 20–30 s |
 | 4 | `sitzungen --seiten 2` | 1 | 3 | 3 | unter 10 s |
-| 5 | `stichprobe --seiten 3` | 16 | 25 | 25 | 45–75 s |
+| 5 | `stichprobe --seiten 3` | 16 | 25 | 25 | 50–75 s |
 | 6 | `pdf-koepfe --anzahl 100` | höchstens 100 | höchstens 100 | 100 | etwa 5 min |
 
 Zusammen höchstens 155 Anfragen, dazu die optionale Ergänzung in Stufe 4 (`organisationen` bis zum Ende der Liste, totalPages + 1 Anfragen; Zahl nach Stufe 2).
 
-Dauer: (Anfragen − 1) × 2 s Abstand plus Antwortzeiten; der Abstand zählt ab dem Ende der vorigen Antwort. Die Antwortzeiten misst Stufe 1.
+Dauer: Anfragen × 2 s Abstand (auch vor der ersten Anfrage eines Prozesses) plus Antwortzeiten; der Abstand zählt ab dem Ende der vorigen Antwort. Die Antwortzeiten misst Stufe 1.
 
 ## Stufe 1 – Erreichbarkeit (freigegeben am 07.11.2026, geplant 23:05 Uhr)
 
@@ -56,7 +58,7 @@ Dauer: (Anfragen − 1) × 2 s Abstand plus Antwortzeiten; der Abstand zählt ab
 RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_WIEDERHOLUNGEN=0 RATSATLAS_MAX_DAUER=5 RATSATLAS_STUFE=1 RATSATLAS_MAX_ANFRAGEN=3 python3 explore/oparl_messung.py test
 ```
 
-- Voraussetzung: Der Host `buergerinfo.stadt-koeln.de` muss im Netz der Arbeitsumgebung erlaubt sein. Lehnt der Proxy der Arbeitsumgebung die Verbindung ab (Lauf endet mit `abbruch (proxy)`, z. B. „Tunnel connection failed: 403“), hat keine Anfrage die Stadt erreicht: nichts wiederholen, sondern berichten.
+- Voraussetzung: Der Host `buergerinfo.stadt-koeln.de` muss im Netz der Arbeitsumgebung erlaubt sein. Lehnt der Proxy der Arbeitsumgebung die Verbindung ab (Lauf endet mit `abbruch (proxy)`, z. B. „Tunnel connection failed: 403“), hat keine Anfrage die Stadt erreicht: nichts wiederholen, sondern berichten. Endet der Lauf dagegen mit `abbruch (sperre)` und „Der Proxy erreicht den Zielserver nicht (HTTP 502 bzw. 504 …)“, hat der Proxy die Stadt angefragt, aber nicht erreicht: mögliche Sperre, alle Abrufe ruhen bis zur Klärung.
 - Anfragen: System, Body, erste Seite der Vorlagenliste (3).
 - Ausgewertet (`oparl_test.tsv`): Erreichbarkeit, Antwortzeit, `oparlVersion`, `vendor`, `product`, `license` (System und Body), Adresse der Vorlagenliste, `pagination` (totalElements, elementsPerPage, totalPages), Objekte der ersten Seite, Schlüssel von `links`, Form von `links.next` (Parameter, URL-Kodierung), Felder des ersten Objekts.
 

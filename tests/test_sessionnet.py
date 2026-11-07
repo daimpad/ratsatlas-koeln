@@ -4,6 +4,7 @@ import csv
 import json
 import sqlite3
 import threading
+import types
 import urllib.parse
 import urllib.request
 from datetime import datetime
@@ -39,6 +40,9 @@ def test_vollabruf_folgt_links_next_und_leitet_beratungen_ab(oparl):
     assert json.loads(config.LEGISLATIVE_TERMS.read_text())[0]["name"] == "2025–2030"
     stat = {z["liste"]: z for z in _statistik()}
     assert stat["papers"]["modus"] == "voll" and stat["papers"]["seiten"] == "3" and stat["papers"]["ergebnis"] == "ok"
+    # eigene Zeile für den Abruf des Bodys; Spalten für Weiterleitungen und Proxy-Ablehnungen
+    assert (stat["body"]["anfragen"], stat["body"]["objekte"], stat["body"]["ergebnis"]) == ("1", "1", "ok")
+    assert all((z["weiterleitungen"], z["proxy"]) == ("0", "0") for z in stat.values())
     assert all(ua.startswith("ratsatlas-koeln/") for _, _, ua in oparl.anfragen)
 
 
@@ -160,7 +164,7 @@ def test_zeitueberschreitung_gilt_als_moegliche_sperre(monkeypatch):
     def haengt(*a, **k):
         aufrufe.append(1)
         raise TimeoutError("timed out")
-    monkeypatch.setattr(abruf.urllib.request, "urlopen", haengt)
+    monkeypatch.setattr(abruf, "_OEFFNER", types.SimpleNamespace(open=haengt))   # die eine Stelle zum Netz
     monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
     with pytest.raises(abruf.Abbruch) as e:
         abruf.get_json("http://127.0.0.1:9/body", pausen=[3600, 3600])
@@ -243,7 +247,7 @@ def test_weiterleitung_wird_nicht_verfolgt(oparl, monkeypatch):
         assert server.anfragen == [("GET", "/papers")]                # Ziel nicht abgerufen, keine Wiederholung
         nachher = abruf.statistik()
         assert (nachher["weiterleitungen"] - vorher["weiterleitungen"], nachher["fehler"] - vorher["fehler"]) == (1, 1)
-        # andere Module folgen Weiterleitungen weiter nach dem Standard von urllib
+        # andere Module folgen Weiterleitungen weiter nach dem Standard von urllib (kein install_opener)
         with urllib.request.urlopen(f"{server.url}/anderes", timeout=10) as r:
             assert r.status == 200 and r.geturl() == ziel
         # im Lauf: Abbruch mit Ziel in Abrufstatistik und STAND.json, aber keine Nacht mit möglicher Sperre
@@ -257,25 +261,37 @@ def test_weiterleitung_wird_nicht_verfolgt(oparl, monkeypatch):
         server.server_close()
     z = [r for r in _statistik() if r["liste"] == "papers"][-1]
     assert z["ergebnis"].startswith("abbruch: Weiterleitung HTTP 301 nach") and ziel in z["ergebnis"]
-    assert (z["anfragen"], z["fehler"]) == ("1", "1")
+    assert (z["anfragen"], z["fehler"], z["weiterleitungen"], z["proxy"]) == ("1", "1", "1", "0")
     assert ziel in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
     assert "sperre_verdacht" not in json.loads(config.ZUSTAND.read_text())
 
 
-def test_proxy_ablehnung_ist_keine_sperre(oparl, monkeypatch):
-    # Schein-Proxy: lehnt jeden Tunnel (CONNECT) mit 403 ab und unverschlüsselte Anfragen mit 407; leitet nichts weiter
-    proxy = _lokaler_server(lambda methode, pfad: (403, {}, b"") if methode == "CONNECT" else (407, {}, b""))
+def _schein_proxy(monkeypatch, connect, get=407):
+    """Lokaler Schein-Proxy für alle fremden Adressen: CONNECT mit `connect`, unverschlüsselte Anfragen mit `get`; er
+    leitet nichts weiter. Der modulweite Öffner wird neu gebaut, weil er den Proxy beim Bau aus der Umgebung liest
+    (sonst gälte der Proxy der Arbeitsumgebung). Mindestabstand 0 nur hier, um die Tests kurz zu halten (eigener Test:
+    test_mindestabstand_fuer_fremde_adressen)."""
+    proxy = _lokaler_server(lambda methode, pfad: (connect, {}, b"") if methode == "CONNECT" else (get, {}, b""))
     for name in ("HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"):
         monkeypatch.setenv(name, proxy.url)
     for name in ("NO_PROXY", "no_proxy"):
         monkeypatch.setenv(name, "127.0.0.1,localhost")
+    monkeypatch.setattr(abruf, "_OEFFNER", urllib.request.build_opener(abruf._OhneWeiterleitung))
+    monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
     monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
     monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
+    return proxy
+
+
+@pytest.mark.parametrize("code", [403, 405, 407])
+def test_proxy_ablehnung_ist_keine_sperre(oparl, monkeypatch, code):
+    # Schein-Proxy: lehnt jeden Tunnel (CONNECT) ab und unverschlüsselte Anfragen mit 407
+    proxy = _schein_proxy(monkeypatch, code)
     try:
         vorher = abruf.statistik()
         with pytest.raises(abruf.Abbruch) as e:
             abruf.get_json("https://example.invalid/oparl/body", pausen=[0, 0])
-        assert e.value.art == "proxy" and "HTTP 403" in str(e.value) and "nicht erreicht" in str(e.value)
+        assert e.value.art == "proxy" and f"HTTP {code}" in str(e.value) and "nicht erreicht" in str(e.value)
         with pytest.raises(abruf.Abbruch) as e:
             abruf.get_json("http://example.invalid/oparl/body", pausen=[0, 0])
         assert e.value.art == "proxy" and "HTTP 407" in str(e.value)
@@ -290,3 +306,138 @@ def test_proxy_ablehnung_ist_keine_sperre(oparl, monkeypatch):
         proxy.server_close()
     assert "Proxy" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
     assert not config.ZUSTAND.exists() or "sperre_verdacht" not in json.loads(config.ZUSTAND.read_text())
+    z = [r for r in _statistik() if r["liste"] == "body"][-1]      # eigene Zeile für den Body
+    assert (z["anfragen"], z["fehler"], z["proxy"], z["weiterleitungen"]) == ("1", "1", "1", "0")
+    assert z["ergebnis"].startswith("abbruch: Ablehnung durch den Proxy")
+
+
+@pytest.mark.parametrize("code", [502, 504])
+def test_proxy_erreicht_die_stadt_nicht_ist_moegliche_sperre(oparl, monkeypatch, code):
+    # 502/504 auf CONNECT: Der Proxy hat die Stadt angefragt, aber nicht erreicht (wie die Sperre bei mandari)
+    proxy = _schein_proxy(monkeypatch, code)
+    try:
+        vorher = abruf.statistik()
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json("https://example.invalid/oparl/body", pausen=[0, 0])
+        assert e.value.art == "sperre" and "mögliche Sperre" in str(e.value) and f"HTTP {code}" in str(e.value)
+        assert proxy.anfragen == [("CONNECT", "example.invalid:443")]      # keine Wiederholung
+        assert abruf.statistik()["proxy"] == vorher["proxy"]
+        monkeypatch.setattr(config, "OPARL_BODY", "https://example.invalid/oparl/body")
+        sessionnet.fetch_all()
+        sessionnet.fetch_all()
+    finally:
+        proxy.shutdown()
+        proxy.server_close()
+    assert json.loads(config.ZUSTAND.read_text())["sperre_verdacht"]["naechte"] == 2    # Nächte mit möglicher Sperre
+    assert "mögliche Sperre" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    z = [r for r in _statistik() if r["liste"] == "body"][-1]
+    assert (z["anfragen"], z["fehler"], z["proxy"]) == ("1", "1", "0") and "mögliche Sperre" in z["ergebnis"]
+
+
+def test_proxy_ueberlastet_wie_429_5xx(oparl, monkeypatch):
+    # 503 auf CONNECT (Begrenzung, Überlastung): wie HTTP 429/5xx mit Pausen, danach „aufgegeben“; keine Sperre
+    proxy = _schein_proxy(monkeypatch, 503)
+    try:
+        vorher = abruf.statistik()
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json("https://example.invalid/oparl/body", pausen=[0, 0])
+        assert e.value.art == "aufgegeben" and len(proxy.anfragen) == 3
+        nachher = abruf.statistik()
+        assert (nachher["wiederholungen"] - vorher["wiederholungen"], nachher["proxy"] - vorher["proxy"]) == (2, 0)
+    finally:
+        proxy.shutdown()
+        proxy.server_close()
+
+
+def test_mindestabstand_fuer_fremde_adressen(monkeypatch, capsys):
+    """Abstand vom Ende der Antwort; für nicht lokale Adressen mindestens 2 s, auch wenn RATSATLAS_ABSTAND kleiner ist."""
+    uhr = {"t": 1000.0}
+    gewartet = []
+
+    def schlafen(s):
+        gewartet.append(round(s, 3))
+        uhr["t"] += s
+
+    class Antwort:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self):
+            uhr["t"] += 5.0              # Antwort dauert 5 s (länger als der Abstand)
+            return b"{}"
+
+    monkeypatch.setattr(abruf, "time", types.SimpleNamespace(monotonic=lambda: uhr["t"], sleep=schlafen))
+    monkeypatch.setattr(abruf, "_OEFFNER", types.SimpleNamespace(open=lambda req, timeout: Antwort()))
+    monkeypatch.setattr(abruf, "_letzte", 0.0)
+    monkeypatch.setattr(abruf, "_hinweis_abstand", False)
+    monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.5)
+    monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    assert abruf.abstand(lokal=False) == 2.0 and abruf.abstand(lokal=True) == 0.5
+    assert "RATSATLAS_ABSTAND=0.5 s liegt unter dem Mindestabstand" in capsys.readouterr().err
+    abruf.get_json("https://example.invalid/a")
+    abruf.get_json("https://example.invalid/b")
+    assert gewartet == [2.0]             # gemessen vom Ende der 5 s langen Antwort, auf 2 s angehoben
+    abruf.get_json("http://127.0.0.1:9/c")
+    assert gewartet == [2.0, 0.5]        # lokaler Testserver: eingestellter Wert
+    for wert in (float("nan"), float("inf"), -1.0):
+        monkeypatch.setattr(config, "ABRUF_ABSTAND", wert)
+        assert abruf.abstand(lokal=False) == 2.0
+    monkeypatch.setattr(config, "ABRUF_ABSTAND", 3.0)
+    assert abruf.abstand(lokal=False) == 3.0
+
+
+def test_teilabbruch_uebernimmt_ziel(monkeypatch):
+    def weiter(url, pausen=None):
+        raise abruf.Abbruch("Weiterleitung HTTP 301 nach https://example.invalid/neu nicht verfolgt", "weiterleitung",
+                            "https://example.invalid/neu")
+    monkeypatch.setattr(abruf, "get_json", weiter)
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l")
+    assert (e.value.art, e.value.ziel) == ("weiterleitung", "https://example.invalid/neu")
+
+
+@pytest.mark.parametrize("art", ["weiterleitung", "proxy"])
+def test_keine_fortsetzung_nach_weiterleitung_oder_proxy(oparl, monkeypatch, art):
+    echt = abruf.get_json
+    seite_3 = {"aktiv": False}
+
+    def get_json(url, pausen=None):
+        if seite_3["aktiv"] and "/papers" in url and "page=3" in url:
+            raise abruf.Abbruch(f"Test {art}", art, "https://example.invalid/neu" if art == "weiterleitung" else "")
+        return echt(url, pausen)
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    # erster Lauf: HTTP 404 auf Seite 3 → Fortsetzung gespeichert (wie test_abgebrochener_vollabruf_wird_fortgesetzt)
+    monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: pfad == "/papers" and q.get("page") == "3")
+    sessionnet.fetch_all()
+    assert "papers_fortsetzung" in json.loads(config.ZUSTAND.read_text())
+    # Fortsetzung bricht mit Weiterleitung bzw. Proxy ab → verworfen; der nächste Lauf beginnt von vorn
+    seite_3["aktiv"] = True
+    sessionnet.fetch_all()
+    assert "papers_fortsetzung" not in json.loads(config.ZUSTAND.read_text())
+    assert not (config.RAW / "papers.teil.jsonl").exists()
+    # Vollabruf von vorn: Abbruch nach zwei Seiten speichert keine Fortsetzung
+    sessionnet.fetch_all()
+    assert "papers_fortsetzung" not in json.loads(config.ZUSTAND.read_text())
+    assert not (config.RAW / "papers.teil.jsonl").exists()
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert (z["modus"], z["seiten"], z["objekte"]) == ("voll", "2", "4") and z["ergebnis"] == f"abbruch: Test {art}"
+
+
+def test_alte_abrufstatistik_bekommt_neue_spalten(oparl):
+    alt = ["datum", "liste", "modus", "seiten", "objekte", "neu", "geaendert", "geloescht", "filter_wirksam",
+           "anfragen", "fehler", "wiederholungen", "bytes", "sekunden", "ergebnis"]
+    config.EXPORT.mkdir(parents=True, exist_ok=True)
+    config.ABRUFSTATISTIK.write_text("\t".join(alt) + "\n" + "\t".join(
+        ["2026-11-01T22:30:00+00:00", "papers", "voll", "3", "5", "5", "0", "0", "", "3", "0", "0", "100", "1.0",
+         "ok"]) + "\n", encoding="utf-8")
+    sessionnet.fetch_all()
+    with open(config.ABRUFSTATISTIK, encoding="utf-8") as f:
+        assert f.readline().rstrip("\n").split("\t") == sessionnet.STAT_SPALTEN
+    zeilen = _statistik()
+    assert (zeilen[0]["datum"], zeilen[0]["ergebnis"], zeilen[0]["bytes"], zeilen[0]["weiterleitungen"]) == (
+        "2026-11-01T22:30:00+00:00", "ok", "100", "")
+    assert [z["liste"] for z in zeilen[1:]] == ["body", "organizations", "papers", "meetings"]

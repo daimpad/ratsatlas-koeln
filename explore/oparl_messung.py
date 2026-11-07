@@ -18,16 +18,18 @@ Für Anfragen an die Stadt gelten strenge Vorgaben (sichere_vorgaben): keine Wie
 zwischen zwei Anfragen (RATSATLAS_ABSTAND, Vorgabe 2); RATSATLAS_MAX_ANFRAGEN und RATSATLAS_KONTAKT (ohne Platzhalter)
 sind Pflicht. Lockerere Werte werden vor der ersten Anfrage abgelehnt.
 Parameter werden ohne URL-Kodierung angehängt (SessionNet: 404 bei %3A/%2B); `kennzahlen` prüft beide Formen einmal.
-Abruf über explore/abruf.py (eine Verbindung, Abstand ≥ 2 s nach Ende der Antwort, Cache, Protokoll, Obergrenze
-RATSATLAS_MAX_ANFRAGEN, Weiterleitungen werden nicht verfolgt).
+Abruf über explore/abruf.py (eine Verbindung, Abstand ≥ 2 s nach Ende der Antwort, auch vor der ersten Anfrage
+eines Prozesses, Cache, Protokoll, Obergrenze RATSATLAS_MAX_ANFRAGEN, Weiterleitungen werden nicht verfolgt).
 Paginierung nur über links.next, nie über konstruierte Seitennummern (HTTP 401 bei hohen Seitenzahlen); Schutz vor
 Schleifen: Abbruch bei wiederholter Folgeadresse und bei einer Seite ohne neue Kennungen.
 `stichprobe` bricht ab, sobald der Jahresfilter erkennbar nicht wirkt (created außerhalb des Jahres oder dieselbe
 Vorlage in einem anderen Jahr), damit keine weiteren Jahreslisten abgerufen werden.
 Jeder Lauf wird in ergebnisse/oparl_laeufe.tsv vermerkt (Stufe aus RATSATLAS_STUFE, Zeilen in _cache/abrufe.tsv),
 jede durchlaufene Liste in ergebnisse/oparl_listen.tsv. Bei einem Abbruch endet der Lauf mit Rückgabewert 2. Lehnt der
-Proxy der Arbeitsumgebung die Verbindung ab (Art `proxy`), hat keine Anfrage die Stadt erreicht: nicht wiederholen,
-sondern berichten; der Host muss im Netz der Arbeitsumgebung erlaubt sein (explore/STUFEN.md, Stufe 1).
+Proxy der Arbeitsumgebung die Verbindung ab (Art `proxy`: CONNECT-Antwort 403/405/407 oder HTTP 407), hat keine
+Anfrage die Stadt erreicht: nicht wiederholen, sondern berichten; der Host muss im Netz der Arbeitsumgebung erlaubt
+sein (explore/STUFEN.md, Stufe 1). Meldet der Proxy 502/504 (Stadt nicht erreicht), gilt das als mögliche Sperre
+(Art `sperre`), 429/503 als Art `server`.
 Ergebnisse als TSV unter explore/ergebnisse/; Rohdaten, PDFs und die Stichprobendatei für `pdf-koepfe`
 (_cache/stichprobe_vorlagen.jsonl: nur id, reference, paperType, date, Adresse der Hauptdatei) bleiben im Cache
 (nicht im Repository).
@@ -553,6 +555,9 @@ def main(argv=None):
                        f"erreicht, kein Hinweis auf eine Sperre. Nicht wiederholen, sondern berichten: Der Host "
                        f"{urllib.parse.urlsplit(SYSTEM).hostname} muss im Netz der Arbeitsumgebung erlaubt sein "
                        f"(explore/STUFEN.md, Stufe 1).")
+        elif e.art == "sperre":   # auch CONNECT-Antwort 502/504: der Proxy hat die Stadt angefragt, aber nicht erreicht
+            hinweis = ("Mögliche Sperre: in dieser Nacht keine weitere Anfrage, alle Abrufe ruhen bis zur Klärung mit "
+                       "der Stadt. Stoppen und berichten (explore/STUFEN.md).")
         else:
             hinweis = "Stoppen und berichten (explore/STUFEN.md)."
         print(f"Abbruch: {e}\n{hinweis}", file=sys.stderr)

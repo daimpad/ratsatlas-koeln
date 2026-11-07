@@ -172,7 +172,8 @@ class Daten:
 
 class Testserver:
     """Startet den Server in einem Hintergrund-Thread. `anfragen`: Liste (Pfad, Abfrage, User-Agent, Status);
-    `eingang`: Eingangszeit je Anfrage (time.monotonic).
+    `eingang`: Eingangszeit je Anfrage, `ausgang`: Zeit nach dem Senden der Antwort (beide time.monotonic, für alle
+    Prozesse derselben Maschine vergleichbar).
     `stoerung(pfad, abfrage)` darf einen Statuscode liefern (z. B. 429); `verzoegerung` in Sekunden je Antwort;
     `weiterleitungen`: Pfad → (Status, Ziel) für Antworten mit Location-Kopf (z. B. 301);
     `ohne_created_filter`: created_since/created_until werden ignoriert (Jahresfilter wirkt nicht)."""
@@ -180,6 +181,7 @@ class Testserver:
     def __init__(self, port=0, **kw):
         self.anfragen = []
         self.eingang = []
+        self.ausgang = []
         self.stoerung = lambda pfad, abfrage: None
         self.verzoegerung = 0.0
         self.weiterleitungen = {}
@@ -294,6 +296,8 @@ class Testserver:
                 self.send_header("Content-Length", str(len(inhalt)))
                 self.end_headers()
                 self.wfile.write(inhalt)
+                self.wfile.flush()
+                server.ausgang.append(time.monotonic())
 
         return H
 

@@ -6,21 +6,30 @@ Aufruf: python3 explore/geodaten.py
 2. Dateien (zip, csv, xlsx, json, geojson, gpkg) unter sites/default/files laden (Cache explore/_cache/, nicht im Repository)
 3. Inhalt beschreiben: Ebenen, Feldnamen, Koordinatensystem, Anzahl, Beispielwerte → explore/ergebnisse/geodaten_felder.tsv
 Die geladenen Dateien bleiben außerhalb der Versionskontrolle (siehe .gitignore).
-Abruf über explore/abruf.py: Weiterleitungen (HTTP 3xx) werden nicht verfolgt. Der betroffene Katalog bzw. die Datei
-wird mit der Meldung (Ziel der Weiterleitung) in geodaten_katalog.tsv bzw. geodaten_felder.tsv vermerkt, das Ziel steht
-in _cache/abrufe.tsv (Spalte ziel); die übrigen Datensätze laufen weiter. Der Lauf vom 04.11.2026 entstand noch mit
-urllib.request.urlopen, das Weiterleitungen folgt (Commit 1649598); seit 07.11.2026 (Commit 092446c) gilt die Regel.
+Abruf über explore/abruf.py mit denselben Mindestwerten wie die OParl-Messung (vorgaben(), vor der ersten Anfrage
+erzwungen): mindestens 2 s Abstand (RATSATLAS_ABSTAND, Vorgabe 2) und keine Wiederholung nach 429/5xx
+(RATSATLAS_WIEDERHOLUNGEN, Vorgabe 0); lockerere Werte brechen vor der ersten Anfrage ab (Rückgabewert 1).
+Weiterleitungen (HTTP 3xx) werden nicht verfolgt. Eine Weiterleitung oder ein HTTP-Fehler (z. B. 404) bricht nur den
+Abruf dieses Katalogs bzw. dieser Datei ab: Er wird mit der Meldung (bei einer Weiterleitung mit Ziel) in
+geodaten_katalog.tsv bzw. geodaten_felder.tsv vermerkt, das Ziel steht in _cache/abrufe.tsv (Spalte ziel); die übrigen
+Datensätze laufen weiter. Nach einem Abbruch der Art sperre (mögliche Sperre), server (429/5xx), proxy (Ablehnung
+durch den Proxy der Arbeitsumgebung) oder obergrenze endet der ganze Lauf sofort (Rückgabewert 2); die
+Ergebnisdateien bleiben dann unverändert. Der Lauf vom 04.11.2026 entstand noch mit urllib.request.urlopen, das
+Weiterleitungen folgt (Commit 1649598); seit 07.11.2026 (Commit 092446c) gilt die Regel.
 """
 import csv
 import html
 import io
 import json
+import math
+import os
 import re
 import sys
 import zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import abruf  # noqa: E402
 from abruf import Abbruch, hole  # noqa: E402
 
 BASIS = "https://www.offenedaten-koeln.de"
@@ -46,6 +55,38 @@ ENDUNGEN = (".zip", ".csv", ".xlsx", ".json", ".geojson", ".gpkg")
 
 DCAT = "http://www.w3.org/ns/dcat#"
 DCT = "http://purl.org/dc/terms/"
+
+# Mindestwerte wie für die OParl-Messung (explore/oparl_messung.py, STRENG_ABSTAND)
+STRENG_ABSTAND = 2.0
+# Abbruchsarten, nach denen der ganze Lauf endet (keine weitere Anfrage an die Stadt)
+ENDE = ("sperre", "server", "proxy", "obergrenze")
+
+
+class _Ende(Exception):
+    """Ein Abbruch aus ENDE: Der ganze Lauf endet."""
+
+
+def vorgaben(umgebung=None):
+    """Mindestwerte für den Abruf der Geodaten; liefert (werte, fehler). Fehlende Werte werden gesetzt (Abstand 2 s,
+    keine Wiederholung), lockerere abgelehnt."""
+    env = os.environ if umgebung is None else umgebung
+    fehler = []
+    try:
+        wiederholungen = int(env.get("RATSATLAS_WIEDERHOLUNGEN") or "0")
+        abstand = float(env.get("RATSATLAS_ABSTAND") or STRENG_ABSTAND)
+    except ValueError as e:
+        return {}, [f"unlesbarer Wert ({e})"]
+    if wiederholungen != 0:
+        fehler.append("RATSATLAS_WIEDERHOLUNGEN muss 0 sein (keine Wiederholung nach 429/5xx)")
+    if not (math.isfinite(abstand) and abstand >= STRENG_ABSTAND):
+        fehler.append(f"RATSATLAS_ABSTAND muss mindestens {STRENG_ABSTAND:g} s sein (Abstand zwischen zwei Anfragen)")
+    return {"wiederholungen": wiederholungen, "abstand": abstand}, fehler
+
+
+def _pruefe_ende(e):
+    """Ein Abbruch aus ENDE beendet den ganzen Lauf; alle übrigen betreffen nur den Katalog bzw. die Datei."""
+    if isinstance(e, Abbruch) and e.art in ENDE:
+        raise _Ende(e) from e
 
 
 def _werte(knoten, schluessel):
@@ -146,12 +187,38 @@ def beschreibe(url, daten):
 
 
 def main():
+    werte, fehler = vorgaben()
+    if fehler:
+        print("Abbruch vor der ersten Anfrage: " + "; ".join(fehler), file=sys.stderr)
+        return 1
+    abruf.ABSTAND, abruf.WIEDERHOLUNGEN = werte["abstand"], werte["wiederholungen"]
+    try:
+        kat, felder = _laden()
+    except _Ende as e:
+        ursache = e.__cause__
+        print(f"Abbruch ({ursache.art}): {ursache}\nDer ganze Lauf endet ohne weitere Anfrage; die Ergebnisdateien "
+              f"bleiben unverändert. Stoppen und berichten.", file=sys.stderr)
+        return 2
     ERG.mkdir(parents=True, exist_ok=True)
+    for datei, rows in (("geodaten_katalog.tsv", kat), ("geodaten_felder.tsv", felder)):
+        spalten = list(dict.fromkeys(k for r in rows for k in r))
+        with (ERG / datei).open("w", encoding="utf-8", newline="") as f:
+            w = csv.DictWriter(f, spalten, delimiter="\t", lineterminator="\n", extrasaction="ignore")
+            w.writeheader()
+            for r in rows:
+                w.writerow({k: str(v).replace("\t", " ").replace("\n", " ") for k, v in r.items()})
+    print(f"{len(kat)} Katalogzeilen, {len(felder)} beschriebene Ebenen → {ERG}")
+    return 0
+
+
+def _laden():
+    """Kataloge und Dateien; liefert (Katalogzeilen, Feldzeilen). Ein Abbruch aus ENDE kommt als _Ende."""
     kat, felder = [], []
     for slug in DATENSAETZE:
         try:
             zeilen, _ = katalog(slug)
         except Abbruch as e:
+            _pruefe_ende(e)
             print(f"Katalog {slug}: {e}")
             kat.append({"datensatz": slug, "titel": f"nicht gefunden ({e})"})
             continue
@@ -170,17 +237,11 @@ def main():
                     felder.append({"datensatz": slug, "url": url, "bytes": len(daten), "ebene": ebene, "crs": crs,
                                    "anzahl": n, "typ": typ, "felder": " | ".join(map(str, f)),
                                    "beispiel": json.dumps(beispiel, ensure_ascii=False, default=str)[:300]})
-            except Exception as e:  # Beschreibung soll für die übrigen Dateien weiterlaufen
+            except Exception as e:  # Beschreibung soll für die übrigen Dateien weiterlaufen (außer nach ENDE)
+                _pruefe_ende(e)
                 felder.append({"datensatz": slug, "url": url, "ebene": f"Fehler: {type(e).__name__}: {e}"[:200]})
-    for datei, rows in (("geodaten_katalog.tsv", kat), ("geodaten_felder.tsv", felder)):
-        spalten = list(dict.fromkeys(k for r in rows for k in r))
-        with (ERG / datei).open("w", encoding="utf-8", newline="") as f:
-            w = csv.DictWriter(f, spalten, delimiter="\t", lineterminator="\n", extrasaction="ignore")
-            w.writeheader()
-            for r in rows:
-                w.writerow({k: str(v).replace("\t", " ").replace("\n", " ") for k, v in r.items()})
-    print(f"{len(kat)} Katalogzeilen, {len(felder)} beschriebene Ebenen → {ERG}")
+    return kat, felder
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

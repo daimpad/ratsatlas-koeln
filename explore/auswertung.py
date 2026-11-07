@@ -9,8 +9,10 @@ nach den Abbruchkriterien in STUFEN.md. Fehlt das Abrufprotokoll für einen Lauf
 Statuscodes und Antwortzeiten als „nicht prüfbar (Protokoll fehlt)“. Protokollzeilen gehören nur dann zu einem Lauf,
 wenn sie im Bereich protokoll_von–protokoll_bis liegen und ihre Zeit (mit Zone) zwischen Start und Ende des Laufs
 liegt; sonst „nicht prüfbar (Protokollzeilen passen nicht zum Lauf)“.
-Ablehnungen durch den Proxy der Arbeitsumgebung (Status `proxy <Code>`) stehen getrennt: Sie haben die Stadt nicht
-erreicht, zählen nicht zu den Antwortzeiten und gelten nicht als mögliche Sperre.
+Ablehnungen durch den Proxy der Arbeitsumgebung (Status `proxy <Code>`: CONNECT-Antwort 403, 405, 407 oder HTTP 407)
+stehen getrennt: Sie haben die Stadt nicht erreicht, zählen nicht zu den Antwortzeiten und gelten nicht als mögliche
+Sperre. Andere CONNECT-Antworten (Status `tunnel <Code>`, z. B. 502/504: der Proxy erreicht die Stadt nicht, oder
+429/503) gelten wie Verbindungsabbrüche als mögliche Sperre.
 Die Regel Stufe 3/5 gilt nur als erfüllt, wenn der letzte `stichprobe`-Lauf in oparl_laeufe.tsv „ok“ ist.
 Aufruf: python3 explore/auswertung.py [--cache VERZ] [--ergebnisse VERZ] [--stufe S]
 """
@@ -138,6 +140,10 @@ def status_hinweise(zeilen, kommando):
             hinweis = f" (Weiterleitung nach {z.get('ziel') or '(ohne Ziel)'}, nicht verfolgt: stoppen)"
         elif ist_proxy(z):
             hinweis = f" ({PROXY_HINWEIS})"
+        elif code.startswith("tunnel"):   # CONNECT-Antwort außer 403/405/407 (explore/abruf.py)
+            grund = ("Begrenzung oder Überlastung" if code.split()[-1] in ("429", "503")
+                     else "der Proxy erreicht den Server nicht")
+            hinweis = f" (beim Verbindungsaufbau über den Proxy: {grund}; mögliche Sperre: stoppen)"
         elif not code.isdigit() or code in ("403", "429") or code.startswith("5"):
             hinweis = " (mögliche Sperre: stoppen)"
         else:
