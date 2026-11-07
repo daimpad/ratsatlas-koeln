@@ -3,7 +3,9 @@
 Phase 0: gremien/phase0/BERICHT.md; Entscheidung 27.10.2026: Besetzung je Gremium mit Name, Rolle, Fraktion,
 Beginn und Link zur Personenseite im Ratsinformationssystem, ohne Kontaktdaten.
 
-Abruf (`fetch-besetzung`): Die Liste `persons` enthält die Mitgliedschaften jeder Person (Rolle, Gremium, Beginn, Ende;
+Abruf (`fetch-besetzung`, Zusatzthema „besetzung“, in Köln abgeschaltet): läuft über pipeline/net.py, das Anfragen an
+die Stadt Köln verweigert (Abrufpolitik, CLAUDE.md 5.1); vor einer Freigabe auf pipeline/abruf.py umstellen (eine
+Verbindung, Zeitfenster, Sperrzähler). Die Liste `persons` enthält die Mitgliedschaften jeder Person (Rolle, Gremium, Beginn, Ende;
 gleich der Liste `memberships`, nur das Feld `votingRight` ist dort stets falsch und wird nicht genutzt). Gespeichert
 wird in data/raw/besetzung.json nur ein Auszug der am Abruftag laufenden Mitgliedschaften:
 - Name, akademischer Titel und Personenseite nur für Mitglieder und beratende Mitglieder von Rat, Ausschüssen,

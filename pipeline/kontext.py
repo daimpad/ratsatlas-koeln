@@ -11,6 +11,8 @@ Schritte:
 - `fetch-haltestellen` (monatlich im Workflow): Haltestellen aus dem Fahrplan des VRS (GTFS).
 - `kontext` (täglich, nach export): Kennzahlen je Stadtteil, Stadtbezirk und für die ganze Stadt →
   export/<stadt>/kontext.json, zuschaltbare Flächen und Punkte → export/<stadt>/flaechen/, Audit export/audit_kontext.tsv.
+Abruf direkt über urllib, nicht über pipeline/net.py oder pipeline/abruf.py: deren Schutz vor Anfragen an die
+Stadt (abruf.stadt, Abrufpolitik) greift hier nicht.
 """
 import csv
 import io

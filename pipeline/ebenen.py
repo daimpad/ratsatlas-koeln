@@ -16,6 +16,8 @@ Schutzgebiete (Land NRW und Bund).
 
 Mindestzoom: Ebenen mit vielen Objekten zeichnet die Karte erst ab dieser Zoomstufe (`mindestzoom` in QUELLEN, nur dann
 in ebenen.json; ohne Angabe wie bisher 11, site/app.js). Die Gebietsseiten weisen bei diesen Ebenen auf das Hineinzoomen hin.
+Abruf direkt über urllib, nicht über pipeline/net.py oder pipeline/abruf.py: deren Schutz vor Anfragen an die
+Stadt (abruf.stadt, Abrufpolitik) greift hier nicht.
 """
 import io
 import json
