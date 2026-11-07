@@ -2,7 +2,10 @@
 
 - genau eine Verbindung zur Zeit, mindestens ABSTAND Sekunden zwischen zwei Anfragen (prozessweit)
 - offener User-Agent mit Projektadresse; Kontakt über die Umgebungsvariable RATSATLAS_KONTAKT
-- Wiederholung nur bei 429/5xx, mit wachsender Pause; 401/403/404 brechen sofort ab
+- Wiederholung nur bei 429/5xx, mit wachsender Pause; 401/403/404 brechen sofort ab;
+  RATSATLAS_WIEDERHOLUNGEN=0 bricht auch bei 429/5xx sofort ab (Messstufen: stoppen und berichten)
+- RATSATLAS_MAX_DAUER (Sekunden): eine langsamere Antwort wird noch gespeichert, danach Abbruch
+- RATSATLAS_MAX_ANFRAGEN: harte Obergrenze für Anfragen ans Netz je Prozess (Cache-Treffer zählen nicht)
 - Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
   (wie pipeline/abruf.py; explore/ergebnisse/sessionnet_befunde.tsv)
 - Rohdaten-Cache: jede Antwort wird unter explore/_cache/ abgelegt und beim nächsten Lauf nicht erneut abgerufen
@@ -24,13 +27,38 @@ USER_AGENT = "ratsatlas-koeln-explore/0.1 (+https://github.com/daimpad/ratsatlas
 MAX_BYTES = 250 * 1024 * 1024
 # harte Obergrenze für Anfragen ans Netz je Prozess (Cache zählt nicht); 0 = ohne Grenze
 MAX_ANFRAGEN = int(os.environ.get("RATSATLAS_MAX_ANFRAGEN", "0"))
+# Wiederholungen nach 429/5xx (Vorgabe: alle Pausen); 0 = sofortiger Abbruch
+WIEDERHOLUNGEN = int(os.environ.get("RATSATLAS_WIEDERHOLUNGEN", str(len(PAUSEN))))
+# höchste zulässige Antwortzeit in Sekunden; 0 = ohne Grenze
+MAX_DAUER = float(os.environ.get("RATSATLAS_MAX_DAUER", "0"))
+PROTOKOLL = CACHE / "abrufe.tsv"
 _anfragen = 0
+_cache_treffer = 0
 
 _letzte = 0.0
 
 
 class Abbruch(Exception):
-    """Antwort, auf die nicht erneut angefragt wird (z. B. 401, 403, 404)."""
+    """Antwort, auf die nicht erneut angefragt wird. `art`: http (4xx, `code` gesetzt), server (429/5xx nach allen
+    Wiederholungen), sperre (Zeitüberschreitung, Verbindungsabbruch), obergrenze, langsam, groesse."""
+
+    def __init__(self, meldung, art="", code=None):
+        super().__init__(meldung)
+        self.art = art
+        self.code = code
+
+
+def zaehler() -> dict:
+    """Anfragen dieses Prozesses: ans Netz (einschließlich Wiederholungen) und aus dem Cache."""
+    return {"netz": _anfragen, "cache": _cache_treffer}
+
+
+def protokollzeilen() -> int:
+    """Anzahl der Datenzeilen in abrufe.tsv (für die Zuordnung eines Laufs zu seinen Protokollzeilen)."""
+    if not PROTOKOLL.exists():
+        return 0
+    with PROTOKOLL.open(encoding="utf-8") as f:
+        return max(sum(1 for _ in f) - 1, 0)
 
 
 def _cachepfad(url: str, endung: str) -> Path:
@@ -40,9 +68,8 @@ def _cachepfad(url: str, endung: str) -> Path:
 
 def _protokoll(url, status, n, dauer, quelle):
     CACHE.mkdir(parents=True, exist_ok=True)
-    datei = CACHE / "abrufe.tsv"
-    neu = not datei.exists()
-    with datei.open("a", encoding="utf-8") as f:
+    neu = not PROTOKOLL.exists()
+    with PROTOKOLL.open("a", encoding="utf-8") as f:
         if neu:
             f.write("zeit\turl\tstatus\tbytes\tdauer_s\tquelle\n")
         f.write(f"{time.strftime('%Y-%m-%dT%H:%M:%S')}\t{url}\t{status}\t{n}\t{dauer:.2f}\t{quelle}\n")
@@ -50,15 +77,19 @@ def _protokoll(url, status, n, dauer, quelle):
 
 def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
     """Gibt den Inhalt zurück; nutzt den Cache, hält Abstand und wiederholt behutsam."""
-    global _letzte, _anfragen
+    global _letzte, _anfragen, _cache_treffer
     pfad = _cachepfad(url, endung)
     if cache and pfad.exists():
         daten = pfad.read_bytes()
+        _cache_treffer += 1
         _protokoll(url, "cache", len(daten), 0, "cache")
         return daten
-    for versuch in range(len(PAUSEN) + 1):
+    pausen = PAUSEN[:max(WIEDERHOLUNGEN, 0)]
+    fehler = None
+    for versuch in range(len(pausen) + 1):
         if MAX_ANFRAGEN and _anfragen >= MAX_ANFRAGEN:
-            raise Abbruch(f"Obergrenze von {MAX_ANFRAGEN} Anfragen erreicht (RATSATLAS_MAX_ANFRAGEN): {url}")
+            raise Abbruch(f"Obergrenze von {MAX_ANFRAGEN} Anfragen erreicht (RATSATLAS_MAX_ANFRAGEN): {url}",
+                          "obergrenze")
         _anfragen += 1
         warte = ABSTAND - (time.monotonic() - _letzte)
         if warte > 0:
@@ -70,21 +101,26 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
             with urllib.request.urlopen(req, timeout=60) as r:
                 daten = r.read(MAX_BYTES + 1)
                 if len(daten) > MAX_BYTES:
-                    raise Abbruch(f"größer als {MAX_BYTES} Bytes: {url}")
-                _protokoll(url, r.status, len(daten), time.monotonic() - start, "netz")
+                    raise Abbruch(f"größer als {MAX_BYTES} Bytes: {url}", "groesse")
+                dauer = time.monotonic() - start
+                _protokoll(url, r.status, len(daten), dauer, "netz")
                 if cache:
                     pfad.parent.mkdir(parents=True, exist_ok=True)
                     pfad.write_bytes(daten)
+                if MAX_DAUER and dauer > MAX_DAUER:
+                    raise Abbruch(f"Antwortzeit {dauer:.1f} s über {MAX_DAUER:g} s (RATSATLAS_MAX_DAUER): {url}",
+                                  "langsam")
                 return daten
         except urllib.error.HTTPError as e:
             _protokoll(url, e.code, 0, time.monotonic() - start, "netz")
             if e.code in (429,) or e.code >= 500:
                 fehler = e
             else:
-                raise Abbruch(f"HTTP {e.code}: {url}") from e
+                raise Abbruch(f"HTTP {e.code}: {url}", "http", e.code) from e
         except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
             _protokoll(url, type(e).__name__, 0, time.monotonic() - start, "netz")
-            raise Abbruch(f"Zeitüberschreitung oder Verbindungsabbruch, mögliche Sperre: {url} ({e})") from e
-        if versuch < len(PAUSEN):
-            time.sleep(PAUSEN[versuch])
-    raise Abbruch(f"aufgegeben nach {len(PAUSEN) + 1} Versuchen: {url} ({fehler})")
+            raise Abbruch(f"Zeitüberschreitung oder Verbindungsabbruch, mögliche Sperre: {url} ({e})", "sperre") from e
+        if versuch < len(pausen):
+            time.sleep(pausen[versuch])
+    raise Abbruch(f"aufgegeben nach {len(pausen) + 1} Versuchen: {url} ({fehler})", "server",
+                  getattr(fehler, "code", None))
