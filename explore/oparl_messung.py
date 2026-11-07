@@ -13,13 +13,21 @@ Ohne RATSATLAS_STADT_INFORMIERT=ja bricht jedes Kommando vor der ersten Anfrage 
 Anfragen an die Stadt nur im Zeitfenster 23–1 Uhr Ortszeit (RATSATLAS_ZEITFENSTER, wie pipeline/abruf.py), geprüft vor
 jeder Anfrage. `pdf-koepfe` lädt PDFs und läuft zusätzlich nur mit RATSATLAS_PDF_FREIGEGEBEN=ja (laut mandari ist der
 automatische PDF-Abruf mit Köln so nicht vereinbart; Frage in der Anfrage an die Stadt).
+Für Anfragen an die Stadt gelten strenge Vorgaben (sichere_vorgaben): keine Wiederholung nach 429/5xx
+(RATSATLAS_WIEDERHOLUNGEN, Vorgabe 0), höchstens 5 s je Antwort (RATSATLAS_MAX_DAUER, Vorgabe 5); RATSATLAS_MAX_ANFRAGEN
+und RATSATLAS_KONTAKT (ohne Platzhalter) sind Pflicht. Lockerere Werte werden abgelehnt.
 Parameter werden ohne URL-Kodierung angehängt (SessionNet: 404 bei %3A/%2B); `kennzahlen` prüft beide Formen einmal.
-Abruf über explore/abruf.py (eine Verbindung, Abstand ≥ 2 s, Cache, Protokoll, Obergrenze RATSATLAS_MAX_ANFRAGEN).
+Abruf über explore/abruf.py (eine Verbindung, Abstand ≥ 2 s nach Ende der Antwort, Cache, Protokoll, Obergrenze
+RATSATLAS_MAX_ANFRAGEN, Weiterleitungen werden nicht verfolgt).
 Paginierung nur über links.next, nie über konstruierte Seitennummern (HTTP 401 bei hohen Seitenzahlen); Schutz vor
 Schleifen: Abbruch bei wiederholter Folgeadresse und bei einer Seite ohne neue Kennungen.
+`stichprobe` bricht ab, sobald der Jahresfilter erkennbar nicht wirkt (created außerhalb des Jahres oder dieselbe
+Vorlage in einem anderen Jahr), damit keine weiteren Jahreslisten abgerufen werden.
 Jeder Lauf wird in ergebnisse/oparl_laeufe.tsv vermerkt (Stufe aus RATSATLAS_STUFE, Zeilen in _cache/abrufe.tsv),
 jede durchlaufene Liste in ergebnisse/oparl_listen.tsv. Bei einem Abbruch endet der Lauf mit Rückgabewert 2.
-Ergebnisse als TSV unter explore/ergebnisse/; Rohdaten und PDFs bleiben im Cache (nicht im Repository).
+Ergebnisse als TSV unter explore/ergebnisse/; Rohdaten, PDFs und die Stichprobendatei für `pdf-koepfe`
+(_cache/stichprobe_vorlagen.jsonl: nur id, reference, paperType, date, Adresse der Hauptdatei) bleiben im Cache
+(nicht im Repository).
 Aus PDFs werden nur abgeleitete Kennungen (Dezernat/Dienststelle) und Trefferarten gespeichert, keine Textauszüge.
 """
 import argparse
@@ -46,6 +54,10 @@ ERG = Path(os.environ.get("RATSATLAS_ERGEBNISSE", Path(__file__).resolve().paren
 SEITEN_VORGABE = {"stichprobe": 3, "organisationen": 4, "sitzungen": 2}
 # Antworten, die in den Parametertests von `kennzahlen` als „Parameter abgelehnt“ gelten (kein Abbruch)
 ABGELEHNT = (400, 401, 404)
+# strenge Vorgaben für Anfragen an die Stadt (explore/STUFEN.md, Abbruchkriterien)
+STRENG_DAUER = 5.0
+# Stichprobe für pdf-koepfe: nur im Cache (nicht im Repository), ohne File-Objekte
+STICHPROBE = abruf.CACHE / "stichprobe_vorlagen.jsonl"
 
 RE_AN = re.compile(r"^AN/\d{1,4}/\d{4}$")
 RE_VV = re.compile(r"^\d{1,4}/\d{4}$")
@@ -70,13 +82,46 @@ def im_zeitfenster(jetzt=None):
     return von <= h < bis if von < bis else (h >= von or h < bis)
 
 
+def sichere_vorgaben(umgebung=None):
+    """Strenge Vorgaben für Anfragen an die Stadt; liefert (werte, fehler). Fehlende Werte werden gesetzt
+    (Wiederholungen 0, höchstens 5 s je Antwort), lockerere abgelehnt; Obergrenze und Kontakt sind Pflicht."""
+    env = os.environ if umgebung is None else umgebung
+    fehler = []
+    try:
+        wiederholungen = int(env.get("RATSATLAS_WIEDERHOLUNGEN") or "0")
+        max_dauer = float(env.get("RATSATLAS_MAX_DAUER") or STRENG_DAUER)
+        max_anfragen = int(env.get("RATSATLAS_MAX_ANFRAGEN") or "0")
+    except ValueError as e:
+        return {}, [f"unlesbarer Wert ({e})"]
+    if wiederholungen != 0:
+        fehler.append("RATSATLAS_WIEDERHOLUNGEN muss 0 sein (keine Wiederholung nach 429/5xx)")
+    if not 0 < max_dauer <= STRENG_DAUER:
+        fehler.append(f"RATSATLAS_MAX_DAUER muss größer als 0 und höchstens {STRENG_DAUER:g} s sein")
+    if max_anfragen <= 0:
+        fehler.append("RATSATLAS_MAX_ANFRAGEN fehlt (Obergrenze der Stufe laut explore/STUFEN.md)")
+    kontakt = (env.get("RATSATLAS_KONTAKT") or "").strip()
+    if not kontakt or "<" in kontakt or ">" in kontakt:
+        fehler.append("RATSATLAS_KONTAKT fehlt oder enthält noch den Platzhalter „<…>“")
+    return {"wiederholungen": wiederholungen, "max_dauer": max_dauer, "max_anfragen": max_anfragen}, fehler
+
+
+def _streng_aktiv():
+    """Gelten in explore/abruf.py die strengen Vorgaben? (Prüfung vor jeder Anfrage an die Stadt)"""
+    return (abruf.WIEDERHOLUNGEN == 0 and 0 < abruf.MAX_DAUER <= STRENG_DAUER and abruf.MAX_ANFRAGEN > 0
+            and bool(abruf.KONTAKT.strip()) and "<" not in abruf.KONTAKT and ">" not in abruf.KONTAKT)
+
+
 def _hole(url, endung=".json"):
-    """Sperre, Zeitfenster und PDF-Freigabe vor jeder Anfrage an die Stadt; lokale Testserver ausgenommen."""
+    """Sperre, Zeitfenster, strenge Vorgaben und PDF-Freigabe vor jeder Anfrage an die Stadt; lokale Testserver
+    ausgenommen."""
     if not lokal(url):
         if os.environ.get("RATSATLAS_STADT_INFORMIERT") != "ja":
             raise Abbruch(f"Die Stadt Köln ist nicht informiert (RATSATLAS_STADT_INFORMIERT): {url}", "gesperrt")
         if not im_zeitfenster():
             raise Abbruch(f"außerhalb des Zeitfensters (RATSATLAS_ZEITFENSTER): {url}", "zeitfenster")
+        if not _streng_aktiv():
+            raise Abbruch(f"strenge Vorgaben nicht aktiv (Wiederholungen 0, höchstens {STRENG_DAUER:g} s, Obergrenze, "
+                          f"Kontakt): {url}", "gesperrt")
         if endung == ".pdf" and os.environ.get("RATSATLAS_PDF_FREIGEGEBEN") != "ja":
             raise Abbruch(f"PDF-Abruf nicht freigegeben (RATSATLAS_PDF_FREIGEGEBEN): {url}", "gesperrt")
     return hole(url, endung)
@@ -294,44 +339,74 @@ def _bedeckung(papers):
     return zeilen
 
 
+def _hauptdatei(p):
+    """Adresse der Hauptdatei (downloadUrl, sonst accessUrl) oder None; weitere Angaben der Datei werden nicht
+    übernommen (Dateiname, Volltext)."""
+    f = p.get("mainFile")
+    return (f.get("downloadUrl") or f.get("accessUrl")) if isinstance(f, dict) else None
+
+
 def stichprobe(a):
+    """Je Jahr die ersten Seiten der Vorlagenliste mit created_since/created_until. Doppelungen werden getrennt
+    gezählt: im selben Jahr (Seiten verschoben, z. B. erste Seite aus dem Cache einer früheren Nacht) und aus einem
+    anderen Jahr (Jahresfilter wirkt nicht). Wirkt der Filter erkennbar nicht, bricht der Lauf nach diesem Jahr ab."""
     body = _json(BODY)
-    papers, gesehen, doppelt, jahre = [], set(), 0, []
-    for jahr in range(a.von, a.bis + 1):
-        params = {"created_since": f"{jahr}-01-01T00:00:00+01:00", "created_until": f"{jahr}-12-31T23:59:59+01:00"}
-        tot = ""
-        for nr, seite in _seiten(body["paper"], a.seiten, name=f"paper {jahr}", **params):
-            tot = (seite.get("pagination") or {}).get("totalElements") if nr == 1 else tot
-            for p in seite.get("data", []):
-                if p.get("id") in gesehen:     # derselbe Gegenstand in mehreren Jahren: Filter wirkt nicht
-                    doppelt += 1
-                    continue
-                gesehen.add(p.get("id"))
-                p["_jahr_filter"] = jahr
-                papers.append(p)
-        e = _LISTEN[-1]
-        jahre.append({"jahr": jahr, "objekte": sum(1 for p in papers if p["_jahr_filter"] == jahr),
-                      "totalElements": tot, "seiten": e["seiten"], "ende": e["ende"]})
-    # Prüfen, ob der Zeitfilter wirkt: Erstellungsdaten außerhalb des Jahres?
-    ausser = sum(1 for p in papers if str(p.get("created") or "")[:4].isdigit()
-                 and int(p["created"][:4]) != p["_jahr_filter"])
+    papers, gesehen, jahre = [], {}, []
+    zaehl = collections.Counter()   # ausser, doppelt_jahr, doppelt_jahre
+    vollstaendig = False
+    try:
+        for jahr in range(a.von, a.bis + 1):
+            von, bis = f"{jahr}-01-01T00:00:00+01:00", f"{jahr}-12-31T23:59:59+01:00"
+            grenzen = (dt.datetime.fromisoformat(von), dt.datetime.fromisoformat(bis))
+            tot, vorher = "", zaehl.copy()
+            for nr, seite in _seiten(body["paper"], a.seiten, name=f"paper {jahr}", created_since=von,
+                                     created_until=bis):
+                tot = (seite.get("pagination") or {}).get("totalElements") if nr == 1 else tot
+                for p in seite.get("data", []):
+                    if p.get("id") in gesehen:
+                        zaehl["doppelt_jahr" if gesehen[p.get("id")] == jahr else "doppelt_jahre"] += 1
+                        continue
+                    gesehen[p.get("id")] = jahr
+                    t = _zeitpunkt(p["created"]) if p.get("created") else None
+                    if t and not grenzen[0] <= t <= grenzen[1]:
+                        zaehl["ausser"] += 1
+                    p["_jahr_filter"] = jahr
+                    papers.append(p)
+            e = _LISTEN[-1]
+            jahre.append({"jahr": jahr, "objekte": sum(1 for p in papers if p["_jahr_filter"] == jahr),
+                          "totalElements": tot, "seiten": e["seiten"], "ende": e["ende"]})
+            ausser, fremd = zaehl["ausser"] - vorher["ausser"], zaehl["doppelt_jahre"] - vorher["doppelt_jahre"]
+            if ausser or fremd:
+                raise Abbruch(f"Jahresfilter wirkt nicht ({jahr}: {ausser} mit created außerhalb des Jahres, {fremd} "
+                              f"schon in einem anderen Jahr geliefert); weitere Jahre nicht abgerufen", "filter")
+        vollstaendig = True
+    finally:
+        if papers:   # Teilergebnis bei Abbruch; ohne Vorlagen bleiben frühere Ergebnisse unverändert
+            _stichprobe_schreiben(papers, jahre, zaehl, vollstaendig)
+    print(f"{len(papers)} verschiedene Vorlagen aus {a.von}–{a.bis}")
+
+
+def _stichprobe_schreiben(papers, jahre, zaehl, vollstaendig):
     typen = collections.Counter(p.get("paperType") or "(leer)" for p in papers)
     ref = collections.Counter("AN/NNNN/JJJJ" if RE_AN.match(p.get("reference") or "") else
                               "NNNN/JJJJ" if RE_VV.match(p.get("reference") or "") else "anderes"
                               for p in papers)
-    ERG.mkdir(parents=True, exist_ok=True)
-    with (ERG / "_stichprobe_papers.jsonl").open("w", encoding="utf-8") as f:  # nur Metadaten, für pdf-koepfe
-        for p in papers:
-            f.write(json.dumps({k: p.get(k) for k in ("id", "reference", "paperType", "date", "mainFile",
-                                                      "auxiliaryFile")}, ensure_ascii=False) + "\n")
+    if vollstaendig:   # nur eine vollständige Stichprobe dient pdf-koepfe als Grundlage
+        STICHPROBE.parent.mkdir(parents=True, exist_ok=True)
+        with STICHPROBE.open("w", encoding="utf-8") as f:
+            for p in papers:
+                f.write(json.dumps({"id": p.get("id"), "reference": p.get("reference"),
+                                    "paperType": p.get("paperType"), "date": p.get("date"),
+                                    "datei": _hauptdatei(p)}, ensure_ascii=False) + "\n")
     _schreibe("oparl_stichprobe_bedeckung.tsv", _bedeckung(papers) + [
-        {"feld": "created außerhalb des Filterjahres", "vorhanden": ausser, "von": len(papers)},
-        {"feld": "doppelte Kennungen (in mehreren Jahren geliefert)", "vorhanden": doppelt,
-         "von": len(papers) + doppelt}])
+        {"feld": "created außerhalb des Filterjahres", "vorhanden": zaehl["ausser"], "von": len(papers)},
+        {"feld": "doppelte Kennungen im selben Jahr (Seiten verschoben)", "vorhanden": zaehl["doppelt_jahr"],
+         "von": len(papers) + zaehl["doppelt_jahr"] + zaehl["doppelt_jahre"]},
+        {"feld": "doppelte Kennungen aus anderen Jahren (Jahresfilter wirkt nicht)", "vorhanden": zaehl["doppelt_jahre"],
+         "von": len(papers) + zaehl["doppelt_jahr"] + zaehl["doppelt_jahre"]}])
     _schreibe("oparl_papertypen.tsv", [{"paperType": k, "anzahl": v} for k, v in typen.most_common()])
     _schreibe("oparl_referenzschema.tsv", [{"schema": k, "anzahl": v} for k, v in ref.most_common()])
     _schreibe("oparl_stichprobe_jahre.tsv", jahre)
-    print(f"{len(papers)} verschiedene Vorlagen aus {a.von}–{a.bis}")
 
 
 def sitzungen(a):
@@ -351,29 +426,36 @@ def sitzungen(a):
               + [{"result": "TOPs insgesamt", "anzahl": n_top}, {"result": "Sitzungen insgesamt", "anzahl": n_sitz}])
 
 
-def _datei_url(p):
-    for f in [p.get("mainFile")] + list(p.get("auxiliaryFile") or []):
-        if isinstance(f, dict) and (f.get("accessUrl") or f.get("downloadUrl")):
-            return f.get("downloadUrl") or f.get("accessUrl"), "mainFile" if f is p.get("mainFile") else "auxiliaryFile"
-    return None, None
+def auswahl_je_jahr(vorlagen, anzahl):
+    """Gleichmäßig über die Jahre (Jahr aus der Referenz NNNN/JJJJ): reihum je Jahr, neuere Jahre zuerst, damit ein
+    Rest bei ungleicher Teilung den aktuellen Vorlagenköpfen zugutekommt."""
+    je_jahr = collections.defaultdict(list)
+    for p in vorlagen:
+        je_jahr[p["reference"][-4:]].append(p)
+    gruppen = [je_jahr[j] for j in sorted(je_jahr, reverse=True)]
+    aus = [g[i] for i in range(max(map(len, gruppen), default=0)) for g in gruppen if i < len(g)]
+    return aus[:anzahl]
 
 
 def pdf_koepfe(a):
     from pypdf import PdfReader
 
-    quelle = ERG / "_stichprobe_papers.jsonl"
-    if not quelle.exists():
-        raise Abbruch(f"zuerst: stichprobe ({quelle} fehlt)", "voraussetzung")
-    papers = [json.loads(z) for z in quelle.open(encoding="utf-8")]
-    vv = [p for p in papers if RE_VV.match(p.get("reference") or "")][: a.anzahl]
+    if not STICHPROBE.exists():
+        raise Abbruch(f"zuerst: stichprobe ({STICHPROBE} fehlt; die Datei entsteht nur bei einer vollständigen "
+                      "Stichprobe in derselben Arbeitsumgebung)", "voraussetzung")
+    papers = [json.loads(z) for z in STICHPROBE.open(encoding="utf-8")]
+    vv_alle = [p for p in papers if RE_VV.match(p.get("reference") or "")]
+    vv = auswahl_je_jahr([p for p in vv_alle if p.get("datei")], a.anzahl)
+    print(f"{len(vv_alle)} Verwaltungsvorlagen in der Stichprobe, {sum(1 for p in vv_alle if p.get('datei'))} mit "
+          f"Hauptdatei; Auswahl {len(vv)}: "
+          + ", ".join(f"{j} {n}" for j, n in sorted(collections.Counter(p["reference"][-4:] for p in vv).items())))
     zeilen = []
     try:
         for p in vv:
-            url, art = _datei_url(p)
-            z = {"id": p["id"], "reference": p["reference"], "paperType": p.get("paperType"), "datei": art or "keine"}
+            url = p["datei"]
+            z = {"id": p["id"], "reference": p["reference"], "jahr": p["reference"][-4:],
+                 "paperType": p.get("paperType"), "datei": "mainFile", "treffer": "nicht abgerufen"}
             zeilen.append(z)
-            if not url:
-                continue
             try:
                 inhalt = _hole(url, ".pdf")
             except Abbruch as e:
@@ -392,8 +474,7 @@ def pdf_koepfe(a):
                 z["treffer"] = f"fehler: {type(e).__name__}"
     finally:
         _schreibe("pdf_koepfe.tsv", zeilen)
-    quote = collections.Counter(z.get("treffer", "keine_datei") for z in zeilen)
-    print(dict(quote))
+    print(dict(collections.Counter(z["treffer"] for z in zeilen)))
 
 
 KOMMANDOS = {"test": test, "kennzahlen": kennzahlen, "organisationen": organisationen, "stichprobe": stichprobe,
@@ -440,6 +521,10 @@ def main(argv=None):
                      "Ortszeit (RATSATLAS_ZEITFENSTER).")
         if a.kommando == "pdf-koepfe" and os.environ.get("RATSATLAS_PDF_FREIGEGEBEN") != "ja":
             sys.exit("Abbruch: PDF-Abruf erst nach Klärung mit der Stadt (RATSATLAS_PDF_FREIGEGEBEN=ja).")
+        werte, fehler = sichere_vorgaben()
+        if fehler:
+            sys.exit("Abbruch vor der ersten Anfrage: " + "; ".join(fehler) + " (Befehle: explore/STUFEN.md).")
+        abruf.WIEDERHOLUNGEN, abruf.MAX_DAUER = werte["wiederholungen"], werte["max_dauer"]
 
     zeitzone = ZoneInfo("Europe/Berlin")
     lauf = {"lauf": _laufnummer(), "stufe": os.environ.get("RATSATLAS_STUFE", ""), "kommando": a.kommando,

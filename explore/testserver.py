@@ -171,13 +171,19 @@ class Daten:
 
 
 class Testserver:
-    """Startet den Server in einem Hintergrund-Thread. `anfragen`: Liste (Pfad, Abfrage, User-Agent, Status).
-    `stoerung(pfad, abfrage)` darf einen Statuscode liefern (z. B. 429); `verzoegerung` in Sekunden je Antwort."""
+    """Startet den Server in einem Hintergrund-Thread. `anfragen`: Liste (Pfad, Abfrage, User-Agent, Status);
+    `eingang`: Eingangszeit je Anfrage (time.monotonic).
+    `stoerung(pfad, abfrage)` darf einen Statuscode liefern (z. B. 429); `verzoegerung` in Sekunden je Antwort;
+    `weiterleitungen`: Pfad → (Status, Ziel) für Antworten mit Location-Kopf (z. B. 301);
+    `ohne_created_filter`: created_since/created_until werden ignoriert (Jahresfilter wirkt nicht)."""
 
     def __init__(self, port=0, **kw):
         self.anfragen = []
+        self.eingang = []
         self.stoerung = lambda pfad, abfrage: None
         self.verzoegerung = 0.0
+        self.weiterleitungen = {}
+        self.ohne_created_filter = False
         self.server = ThreadingHTTPServer(("127.0.0.1", port), self._handler())
         self.basis = f"http://127.0.0.1:{self.server.server_address[1]}"
         self.daten = Daten(self.basis, **kw)
@@ -221,7 +227,8 @@ class Testserver:
         if objekte is None:
             return 404, "text/html", b"<html><body>Not Found</body></html>"
         try:
-            objekte = self._filtern(objekte, q)
+            filter_q = {k: v for k, v in q.items() if not (self.ohne_created_filter and k.startswith("created_"))}
+            objekte = self._filtern(objekte, filter_q)
             return 200, "application/json", json.dumps(self._seite(objekte, url, q)).encode()
         except ValueError:
             return 400, "text/html", b"<html><body>Bad Request</body></html>"
@@ -268,15 +275,21 @@ class Testserver:
 
             def do_GET(self):
                 teile = urlsplit(self.path)
-                status = server.stoerung(teile.path, teile.query)
-                if status:
+                status, ziel = server.stoerung(teile.path, teile.query), None
+                if teile.path in server.weiterleitungen:
+                    status, ziel = server.weiterleitungen[teile.path]
+                    typ, inhalt = "text/html", b"<html><body>Moved</body></html>"
+                elif status:
                     typ, inhalt = "text/html", b"<html><body>Fehler (Testserver)</body></html>"
                 else:
                     status, typ, inhalt = server.antwort(teile.path, teile.query)
                 server.anfragen.append((teile.path, teile.query, self.headers.get("User-Agent"), status))
+                server.eingang.append(time.monotonic())
                 if server.verzoegerung:
                     time.sleep(server.verzoegerung)
                 self.send_response(status)
+                if ziel:
+                    self.send_header("Location", ziel)
                 self.send_header("Content-Type", typ)
                 self.send_header("Content-Length", str(len(inhalt)))
                 self.end_headers()

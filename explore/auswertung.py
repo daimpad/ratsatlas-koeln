@@ -4,8 +4,9 @@ Liest das Abrufprotokoll _cache/abrufe.tsv und die TSVs in ergebnisse/ (oparl_la
 oparl_test.tsv, oparl_kennzahlen.tsv, oparl_organisationstypen.tsv, oparl_stichprobe_*.tsv, oparl_papertypen.tsv,
 oparl_referenzschema.tsv, oparl_top_ergebnisse.tsv, pdf_koepfe.tsv). Fehlende Dateien werden übersprungen.
 Je Stufe: Anfragen (Netz, Cache), Statuscodes, mittlere und höchste Antwortzeit, Bytes, Ergebnis; dazu Kennwerte
-(totalElements, Seitengröße, Form von links.next, Parametertests, Feldabdeckung) und Auffälligkeiten nach den
-Abbruchkriterien in STUFEN.md.
+(totalElements, Seitengröße, Form von links.next, Parametertests, Feldabdeckung, Regel Stufe 3/5) und Auffälligkeiten
+nach den Abbruchkriterien in STUFEN.md. Fehlt das Abrufprotokoll für einen Lauf (z. B. andere Arbeitsumgebung), gelten
+Statuscodes und Antwortzeiten als „nicht prüfbar (Protokoll fehlt)“.
 Aufruf: python3 explore/auswertung.py [--cache VERZ] [--ergebnisse VERZ] [--stufe S]
 """
 import argparse
@@ -18,6 +19,7 @@ from urllib.parse import urlsplit
 
 HIER = Path(__file__).resolve().parent
 GRENZE_DAUER = 5.0     # Sekunden, Abbruchkriterium aus STUFEN.md
+NICHT_PRUEFBAR = "nicht prüfbar (Protokoll fehlt)"
 
 
 def lies(datei):
@@ -79,6 +81,26 @@ def tabelle(kopf, zeilen):
     return aus
 
 
+def status_hinweise(zeilen, kommando):
+    """Antworten ans Netz außer 200, gezählt je (Status, Hinweis). Der Hinweis „erwartet“ gilt nur für eine 404 auf
+    eine URL mit URL-Kodierung (%) im Kommando kennzahlen; Weiterleitungen nennen ihr Ziel."""
+    aus = collections.Counter()
+    for z in zeilen:
+        code = z.get("status") or ""
+        if z.get("quelle") != "netz" or code == "200":
+            continue
+        if code == "404" and kommando == "kennzahlen" and "%" in (z.get("url") or ""):
+            hinweis = " (erwartet: Test mit URL-kodiertem Parameter)"
+        elif code.startswith("3"):
+            hinweis = f" (Weiterleitung nach {z.get('ziel') or '(ohne Ziel)'}, nicht verfolgt: stoppen)"
+        elif not code.isdigit() or code in ("403", "429") or code.startswith("5"):
+            hinweis = " (mögliche Sperre: stoppen)"
+        else:
+            hinweis = ""
+        aus[(code, hinweis)] += 1
+    return aus
+
+
 def laeufe_abschnitt(laeufe, protokoll, stufe=None):
     aus, zugeordnet, auffaellig = [], set(), []
     vollstaendig = bool(protokoll)
@@ -88,28 +110,28 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
         zugeordnet.update(range(von, bis))
         if stufe and l.get("stufe") != stufe:
             continue
-        if vollstaendig and bis <= len(protokoll):
-            s = statistik(protokoll[von:bis])
+        zz = protokoll[von:bis] if vollstaendig and bis <= len(protokoll) else None
+        if zz is not None:
+            s = statistik(zz)
         else:   # Protokoll fehlt (z. B. andere Arbeitsumgebung): nur die Zähler aus dem Lauf
-            s = {"netz": l.get("netz"), "cache": l.get("cache"), "status": "Protokoll fehlt",
+            s = {"netz": l.get("netz"), "cache": l.get("cache"), "status": NICHT_PRUEFBAR,
                  "status_roh": {}, "mittel": None, "max": None, "bytes": "–"}
         je_lauf.append((l, s))
         g = je_stufe.setdefault(l.get("stufe") or "–", {"kommandos": [], "zeilen": [], "laeufe": [], "ergebnisse": []})
         g["kommandos"].append(l.get("kommando"))
         g["laeufe"].append(l)
         g["ergebnisse"].append(l.get("ergebnis"))
-        if vollstaendig and bis <= len(protokoll):
-            g["zeilen"] += protokoll[von:bis]
+        if zz is not None:
+            g["zeilen"] += zz
         # Auffälligkeiten nach den Abbruchkriterien
         if l.get("ergebnis") != "ok":
             auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): {l.get('ergebnis')} – {l.get('meldung', '')[:200]}")
-        for code, n in sorted(s["status_roh"].items()):
-            if code == "200":
-                continue
-            hinweis = (" (erwartet: Test mit URL-kodiertem Parameter)" if code == "404" and n == 1
-                       and l.get("kommando") == "kennzahlen" else
-                       " (mögliche Sperre: stoppen)" if not code.isdigit() or code in ("403", "429")
-                       or code.startswith("5") else "")
+        if zz is None:
+            if str(l.get("netz")) != "0":
+                auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): Statuscodes und Antwortzeiten "
+                                  f"{NICHT_PRUEFBAR}")
+            continue
+        for (code, hinweis), n in sorted(status_hinweise(zz, l.get("kommando")).items()):
             auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): Status {code} × {n}{hinweis}")
         if s["max"] is not None and s["max"] > GRENZE_DAUER:
             auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): Antwortzeit bis {s['max']:.1f} s "
@@ -122,7 +144,7 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
             s = statistik(g["zeilen"])
         else:
             s = {"netz": sum(int(zahl(l.get("netz"))) for l in g["laeufe"]),
-                 "cache": sum(int(zahl(l.get("cache"))) for l in g["laeufe"]), "status": "Protokoll fehlt",
+                 "cache": sum(int(zahl(l.get("cache"))) for l in g["laeufe"]), "status": NICHT_PRUEFBAR,
                  "mittel": None, "max": None, "bytes": "–"}
         ergebnis = "ok" if all(e == "ok" for e in g["ergebnisse"]) else "; ".join(sorted(set(g["ergebnisse"])))
         zeilen.append([st, ", ".join(dict.fromkeys(g["kommandos"])), s["netz"], s["cache"], s["status"],
@@ -142,8 +164,8 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
         aus.append(f"\nWeitere Zeilen im Abrufprotokoll ohne Lauf (z. B. geodaten.py): {len(rest)} "
                    f"({', '.join(f'{h} × {n}' for h, n in hosts.most_common())})")
     aus.append("\n## Auffälligkeiten\n")
-    aus += [f"- {a}" for a in auffaellig] or ["- keine (Ergebnis ok, kein 429/5xx, keine Antwort über "
-                                              f"{GRENZE_DAUER:g} s, kein Verbindungsabbruch)"]
+    aus += [f"- {a}" for a in auffaellig] or ["- keine (Ergebnis ok, kein 429/5xx, keine Weiterleitung, keine "
+                                              f"Antwort über {GRENZE_DAUER:g} s, kein Verbindungsabbruch)"]
     return aus
 
 
@@ -207,6 +229,11 @@ def kennwerte(erg):
         aus.append("\nStichprobe – Feldabdeckung:\n")
         aus += tabelle(["Feld", "vorhanden", "von", "Anteil"],
                        [[z["feld"], z["vorhanden"], z["von"], anteil(z["vorhanden"], z["von"])] for z in bed])
+        regel = [z for z in bed if z["feld"].startswith(("created außerhalb", "doppelte Kennungen"))]
+        if regel:   # Regel in STUFEN.md, Stufe 3 und 5
+            erfuellt = all(int(zahl(z["vorhanden"])) == 0 for z in regel)
+            aus.append("\nRegel Stufe 3/5 (Jahresfilter wirkt, keine Doppelungen): "
+                       + ("erfüllt" if erfuellt else "nicht erfüllt – nicht weiter, berichten"))
     jahre = lies(erg / "oparl_stichprobe_jahre.tsv")
     if jahre:
         aus.append("\nStichprobe – Jahre: " + "; ".join(
@@ -221,9 +248,11 @@ def kennwerte(erg):
     pdf = lies(erg / "pdf_koepfe.tsv")
     if pdf:
         treffer = collections.Counter(z.get("treffer") or "keine_datei" for z in pdf)
-        mit = sum(v for k, v in treffer.items() if k != "keine_datei")
-        aus.append(f"\nPDF-Köpfe: {len(pdf)} Verwaltungsvorlagen, {mit} mit Datei; "
+        mit = sum(v for k, v in treffer.items() if k not in ("keine_datei", "nicht abgerufen"))
+        jahre_pdf = collections.Counter(z.get("jahr") or "?" for z in pdf)
+        aus.append(f"\nPDF-Köpfe: {len(pdf)} Verwaltungsvorlagen, {mit} Dateien ausgewertet; "
                    + ", ".join(f"{k} {v}" for k, v in treffer.most_common())
+                   + "; je Jahr: " + ", ".join(f"{j} {n}" for j, n in sorted(jahre_pdf.items()))
                    + (f"; Erkennungsquote „Dezernat, Dienststelle“ mit Kennung: {100 * treffer['kennung'] / mit:.0f} %"
                       if mit else ""))
     return aus

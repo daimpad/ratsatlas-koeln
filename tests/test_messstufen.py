@@ -161,6 +161,170 @@ def test_schleifenschutz_in_links_next(monkeypatch):
     assert om._LISTEN[-1]["ende"] == "links.next wiederholt"
 
 
+def test_weiterleitung_wird_nicht_verfolgt(server, tmp_path):
+    fremd = "http://example.invalid/oparl/bodies/x"
+    server.weiterleitungen["/oparl/bodies/testkoerperschaft"] = (301, fremd)
+    m = lauf(server, tmp_path, "test", obergrenze=3)
+    assert m["rc"] == 2 and m["lauf"]["ergebnis"] == "abbruch (weiterleitung)" and fremd in m["lauf"]["meldung"]
+    assert m["server"] == 2 and m["lauf"]["netz"] == "2"               # die Weiterleitung zählt als eine Anfrage
+    z = protokoll(tmp_path)[-1]
+    assert (z["status"], z["ziel"], z["quelle"]) == ("301", fremd, "netz")
+    # auch ein Ziel auf demselben Server wird nicht abgerufen
+    server.weiterleitungen = {"/oparl/system": (302, "/oparl/bodies/testkoerperschaft")}
+    m = lauf(server, tmp_path, "test", obergrenze=3, cache="cache2")
+    assert m["rc"] == 2 and m["server"] == 1
+    assert [p for p, *_ in server.anfragen][-1] == "/oparl/system"
+    assert protokoll(tmp_path, "cache2")[-1]["ziel"].endswith("/oparl/bodies/testkoerperschaft")
+    aus = importlib.import_module("auswertung").auswertung(tmp_path / "cache2", tmp_path / "ergebnisse")
+    assert "Status 302 × 1 (Weiterleitung nach http://127.0.0.1:" in aus
+
+
+def test_abstand_nach_ende_der_antwort_und_zeit_mit_zone(server, tmp_path):
+    server.verzoegerung = 0.25
+    m = lauf(server, tmp_path, "test", obergrenze=3, RATSATLAS_ABSTAND="0.3")
+    assert m["rc"] == 0, m["stderr"]
+    abstaende = [b - a for a, b in zip(server.eingang, server.eingang[1:])]
+    assert len(abstaende) == 2 and min(abstaende) >= 0.5               # Antwortzeit 0,25 s + Abstand 0,3 s
+    assert all(re.search(r"T\d\d:\d\d:\d\d[+-]\d\d:\d\d$", z["zeit"]) for z in protokoll(tmp_path))
+
+
+def test_altes_protokoll_bekommt_neuen_kopf(server, tmp_path):
+    (tmp_path / "cache").mkdir()
+    alt = "zeit\turl\tstatus\tbytes\tdauer_s\tquelle\n2026-11-04T10:46:34\thttps://example.invalid/a\t200\t1\t0.10\tnetz\n"
+    (tmp_path / "cache" / "abrufe.tsv").write_text(alt, encoding="utf-8")
+    assert lauf(server, tmp_path, "test", obergrenze=3)["rc"] == 0
+    zeilen = protokoll(tmp_path)
+    assert list(zeilen[0]) == ["zeit", "url", "status", "bytes", "dauer_s", "quelle", "ziel"]
+    assert zeilen[0]["url"] == "https://example.invalid/a" and len(zeilen) == 4
+
+
+def test_strenge_vorgaben_fuer_anfragen_an_die_stadt(server, tmp_path, monkeypatch):
+    om = importlib.import_module("oparl_messung")
+    werte, fehler = om.sichere_vorgaben({"RATSATLAS_MAX_ANFRAGEN": "3", "RATSATLAS_KONTAKT": "kontakt@example.invalid"})
+    assert fehler == [] and werte == {"wiederholungen": 0, "max_dauer": 5.0, "max_anfragen": 3}
+    _, fehler = om.sichere_vorgaben({})
+    assert any("RATSATLAS_MAX_ANFRAGEN" in f for f in fehler) and any("RATSATLAS_KONTAKT" in f for f in fehler)
+    for zusatz, name in (({"RATSATLAS_WIEDERHOLUNGEN": "4"}, "WIEDERHOLUNGEN"), ({"RATSATLAS_MAX_DAUER": "0"}, "MAX_DAUER"),
+                         ({"RATSATLAS_MAX_DAUER": "30"}, "MAX_DAUER"),
+                         ({"RATSATLAS_KONTAKT": "<Kontaktadresse des Auftraggebers>"}, "KONTAKT")):
+        env = {"RATSATLAS_MAX_ANFRAGEN": "3", "RATSATLAS_KONTAKT": "kontakt@example.invalid", **zusatz}
+        assert any(name in f for f in om.sichere_vorgaben(env)[1]), zusatz
+    # als Prozess: informiert und im Zeitfenster, aber Platzhalter im Kontakt und Wiederholungen → keine Anfrage
+    fremd = {"RATSATLAS_OPARL_SYSTEM": "http://example.invalid/oparl/system",
+             "RATSATLAS_OPARL_BODY": "http://example.invalid/oparl/bodies/x", "RATSATLAS_STADT_INFORMIERT": "ja",
+             "RATSATLAS_KONTAKT": "<Kontaktadresse des Auftraggebers>", "RATSATLAS_WIEDERHOLUNGEN": "4"}
+    m = lauf(server, tmp_path, "test", obergrenze=3, **fremd)
+    assert m["rc"] == 1 and "RATSATLAS_KONTAKT" in m["stderr"] and "RATSATLAS_WIEDERHOLUNGEN" in m["stderr"]
+    assert server.anfragen == [] and not (tmp_path / "cache" / "abrufe.tsv").exists()
+    # vor jeder Anfrage an die Stadt: ohne strenge Werte kein Abruf
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setenv("RATSATLAS_ZEITFENSTER", "")
+    monkeypatch.setattr(om.abruf, "WIEDERHOLUNGEN", 4)
+    monkeypatch.setattr(om, "hole", lambda *a, **k: pytest.fail("darf nicht abrufen"))
+    with pytest.raises(om.Abbruch, match="strenge Vorgaben"):
+        om._hole("https://buergerinfo.stadt-koeln.de/oparl/system")
+
+
+def test_jahresfilter_wirkt_nicht_bricht_ab(server, tmp_path):
+    server.ohne_created_filter = True
+    m = lauf(server, tmp_path, "stichprobe", "--seiten", "1", "--von", "2025", "--bis", "2026", obergrenze=3)
+    assert m["rc"] == 2 and m["lauf"]["ergebnis"] == "abbruch (filter)" and m["server"] == 2
+    jahre = tsv(tmp_path / "ergebnisse" / "oparl_stichprobe_jahre.tsv")
+    assert [z["jahr"] for z in jahre] == ["2025"]
+    bedeckung = {z["feld"]: z for z in tsv(tmp_path / "ergebnisse" / "oparl_stichprobe_bedeckung.tsv")}
+    assert bedeckung["created außerhalb des Filterjahres"]["vorhanden"] == "25"
+    assert not (tmp_path / "cache" / "stichprobe_vorlagen.jsonl").exists()   # unvollständig: keine Grundlage für PDFs
+    aus = importlib.import_module("auswertung").auswertung(tmp_path / "cache", tmp_path / "ergebnisse")
+    assert "Regel Stufe 3/5 (Jahresfilter wirkt, keine Doppelungen): nicht erfüllt" in aus
+
+
+def _seitenfolge(monkeypatch, tmp_path, jahre_seiten):
+    """oparl_messung im Prozess mit erfundenen Seiten je Jahr (ohne Netz); liefert das Modul."""
+    om = importlib.import_module("oparl_messung")
+    monkeypatch.setattr(om, "_LISTEN", [])
+    monkeypatch.setattr(om, "ERG", tmp_path / "erg")
+    monkeypatch.setattr(om, "STICHPROBE", tmp_path / "cache" / "stichprobe_vorlagen.jsonl")
+    monkeypatch.setattr(om, "BODY", "http://127.0.0.1/body")
+    liste, seiten = "http://127.0.0.1/papers", {}
+    for jahr, folge in jahre_seiten.items():
+        start = om._mit_parametern(liste, created_since=f"{jahr}-01-01T00:00:00+01:00",
+                                   created_until=f"{jahr}-12-31T23:59:59+01:00")
+        for i, daten in enumerate(folge):
+            url = start if i == 0 else f"{start}&page={i + 1}"
+            seiten[url] = {"data": daten, "links": {"next": f"{start}&page={i + 2}"} if i + 1 < len(folge) else {}}
+    seiten[om.BODY] = {"paper": liste}
+    monkeypatch.setattr(om, "_hole", lambda url, endung=".json": json.dumps(seiten[url]).encode())
+    return om
+
+
+def _vorlage(nr, jahr):
+    return {"id": f"p{nr}", "reference": f"{nr:04d}/{jahr}", "paperType": "Beschlussvorlage", "date": f"{jahr}-03-01",
+            "created": f"{jahr}-03-01T10:00:00+01:00",
+            "mainFile": {"downloadUrl": f"http://127.0.0.1/f/{nr}.pdf", "name": "[Testdaten] Name", "text": "Volltext"},
+            "auxiliaryFile": [{"downloadUrl": f"http://127.0.0.1/f/a{nr}.pdf", "fileName": "[Testdaten] Datei"}]}
+
+
+def test_doppelungen_getrennt_und_stichprobe_ohne_dateiobjekte(monkeypatch, tmp_path):
+    import argparse
+    a = argparse.Namespace(seiten=3, von=2025, bis=2026)
+    # Seite 2 von 2025 wiederholt p2 (Seiten verschoben), 2026 ist sauber
+    om = _seitenfolge(monkeypatch, tmp_path, {2025: [[_vorlage(1, 2025), _vorlage(2, 2025)],
+                                                     [_vorlage(2, 2025), _vorlage(3, 2025)]],
+                                              2026: [[_vorlage(4, 2026)]]})
+    om.stichprobe(a)
+    bedeckung = {z["feld"]: z["vorhanden"] for z in tsv(tmp_path / "erg" / "oparl_stichprobe_bedeckung.tsv")}
+    assert bedeckung["doppelte Kennungen im selben Jahr (Seiten verschoben)"] == "1"
+    assert bedeckung["doppelte Kennungen aus anderen Jahren (Jahresfilter wirkt nicht)"] == "0"
+    zeilen = [json.loads(z) for z in (tmp_path / "cache" / "stichprobe_vorlagen.jsonl").open(encoding="utf-8")]
+    assert len(zeilen) == 4 and all(set(z) == {"id", "reference", "paperType", "date", "datei"} for z in zeilen)
+    assert zeilen[0]["datei"] == "http://127.0.0.1/f/1.pdf" and "Volltext" not in json.dumps(zeilen)
+    assert not list((tmp_path / "erg").glob("*.jsonl"))
+    # dieselbe Vorlage in einem anderen Jahr: Jahresfilter wirkt nicht → Abbruch nach diesem Jahr
+    om = _seitenfolge(monkeypatch, tmp_path / "b", {2025: [[_vorlage(1, 2025)]], 2026: [[_vorlage(1, 2025)]]})
+    with pytest.raises(om.Abbruch) as e:
+        om.stichprobe(a)
+    assert e.value.art == "filter"
+    bedeckung = {z["feld"]: z["vorhanden"] for z in tsv(tmp_path / "b" / "erg" / "oparl_stichprobe_bedeckung.tsv")}
+    assert bedeckung["doppelte Kennungen aus anderen Jahren (Jahresfilter wirkt nicht)"] == "1"
+
+
+def test_pdf_auswahl_gleichmaessig_ueber_die_jahre():
+    om = importlib.import_module("oparl_messung")
+    vorlagen = ([{"reference": f"{i:04d}/2024"} for i in range(10)] + [{"reference": f"{i:04d}/2025"} for i in range(2)]
+                + [{"reference": f"{i:04d}/2026"} for i in range(10)])
+    auswahl = om.auswahl_je_jahr(vorlagen, 9)
+    zaehl = {j: sum(1 for p in auswahl if p["reference"].endswith(j)) for j in ("2024", "2025", "2026")}
+    assert zaehl == {"2024": 3, "2025": 2, "2026": 4}
+
+
+def test_auswertung_ohne_protokoll_und_404_hinweis(tmp_path):
+    auswertung = importlib.import_module("auswertung")
+    zeilen = [{"quelle": "netz", "status": "404", "url": "http://x/papers?limit=100"},
+              {"quelle": "netz", "status": "404", "url": "http://x/papers?modified_since=2026-11-01T00%3A00%3A00"},
+              {"quelle": "netz", "status": "200", "url": "http://x/papers"}]
+    assert auswertung.status_hinweise(zeilen, "kennzahlen") == {
+        ("404", ""): 1, ("404", " (erwartet: Test mit URL-kodiertem Parameter)"): 1}
+    erg = tmp_path / "ergebnisse"
+    erg.mkdir()
+    (erg / "oparl_laeufe.tsv").write_text(
+        "lauf\tstufe\tkommando\tparameter\tstart\tende\tdauer_s\tnetz\tcache\tobergrenze\tprotokoll_von\t"
+        "protokoll_bis\tergebnis\tmeldung\n1\t1\ttest\t\t2026-11-07T23:05:00+01:00\t2026-11-07T23:05:09+01:00\t9\t3\t0"
+        "\t3\t0\t3\tok\t\n", encoding="utf-8")
+    aus = auswertung.auswertung(tmp_path / "leer", erg)
+    assert "Statuscodes und Antwortzeiten nicht prüfbar (Protokoll fehlt)" in aus and "- keine (" not in aus
+
+
+def test_stufenplan_befehle_sind_vollstaendig():
+    text = (EXPLORE / "STUFEN.md").read_text(encoding="utf-8")
+    befehle = [z for z in text.splitlines() if "oparl_messung.py" in z and z.startswith("RATSATLAS_")]
+    assert len(befehle) == 8
+    for b in befehle:
+        for teil in ("RATSATLAS_STADT_INFORMIERT=ja ", "RATSATLAS_KONTAKT=", "RATSATLAS_WIEDERHOLUNGEN=0 ",
+                     "RATSATLAS_MAX_DAUER=5 ", "RATSATLAS_STUFE=", "RATSATLAS_MAX_ANFRAGEN="):
+            assert teil in b, (teil, b)
+    assert "export " not in text
+
+
 def test_probelauf_entspricht_stufenplan_und_auswertung(tmp_path):
     zeilen = probelauf.probelauf(tmp_path)
     assert all(z["ergebnis"] in ("ok", "übersprungen (pypdf fehlt)") for z in zeilen), zeilen
@@ -168,6 +332,8 @@ def test_probelauf_entspricht_stufenplan_und_auswertung(tmp_path):
                 if z["ergebnis"] == "ok"}
     erwartet = {("1", "test"): (3, 3), ("2", "kennzahlen"): (7, 10), ("3", "organisationen"): (3, 5),
                 ("3", "stichprobe"): (7, 9), ("4", "sitzungen"): (1, 3), ("5", "stichprobe"): (16, 25)}
+    if ("6", "pdf-koepfe") in gemessen:
+        erwartet[("6", "pdf-koepfe")] = (100, 100)
     assert {k: v for k, v in gemessen.items() if k in erwartet} == erwartet
     # STUFEN.md nennt dieselben Befehle und Obergrenzen wie probelauf.STUFEN
     text = (EXPLORE / "STUFEN.md").read_text(encoding="utf-8")
@@ -182,3 +348,6 @@ def test_probelauf_entspricht_stufenplan_und_auswertung(tmp_path):
     assert "erwartet: Test mit URL-kodiertem Parameter" in aus
     assert "Parameter created_since, created_until, page; URL-kodiert nein" in aus
     assert "| underDirectionOf | 0 | 600 | 0 % |" in aus
+    assert "Regel Stufe 3/5 (Jahresfilter wirkt, keine Doppelungen): erfüllt" in aus
+    if ("6", "pdf-koepfe") in gemessen:   # gleichmäßig über 2019–2026
+        assert "je Jahr: 2019 12, 2020 12, 2021 12, 2022 12, 2023 13, 2024 13, 2025 13, 2026 13" in aus

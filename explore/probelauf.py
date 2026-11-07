@@ -2,7 +2,8 @@
 
 Startet explore/testserver.py auf 127.0.0.1 und führt die Kommandos aus STUFEN zweimal aus:
 - „Folge“: in der Reihenfolge der Stufen mit gemeinsamem Cache, wie die echten Nächte in derselben Arbeitsumgebung
-- „leerer Cache“: jedes Kommando mit eigenem, leerem Cache (ungünstigster Fall, z. B. neue Arbeitsumgebung)
+- „leerer Cache“: jedes Kommando mit eigenem, leerem Cache (ungünstigster Fall, z. B. neue Arbeitsumgebung);
+  `pdf-koepfe` bekommt dabei nur die Stichprobendatei aus Stufe 5, ohne die Rohdaten
 Zählt je Schritt die Anfragen ans Netz und aus dem Cache (laut oparl_laeufe.tsv und laut Testserver) und prüft sie
 gegen die Obergrenze, die in STUFEN.md für die echte Messung steht. Ausgabe als Markdown.
 
@@ -14,6 +15,7 @@ import argparse
 import csv
 import importlib.util
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -22,6 +24,9 @@ from pathlib import Path
 HIER = Path(__file__).resolve().parent
 sys.path.insert(0, str(HIER))
 from testserver import Testserver  # noqa: E402
+
+# Stichprobendatei im Cache, Grundlage für pdf-koepfe (oparl_messung.STICHPROBE)
+STICHPROBE = "stichprobe_vorlagen.jsonl"
 
 # (Stufe, Kommando, Parameter, Obergrenze RATSATLAS_MAX_ANFRAGEN) – gleiche Werte wie in STUFEN.md
 STUFEN = [
@@ -67,7 +72,7 @@ def messung(server, cache, ergebnisse, kommando, parameter=(), obergrenze=0, stu
 def probelauf(ziel):
     ziel = Path(ziel)
     mit_pdf = importlib.util.find_spec("pypdf") is not None
-    zeilen = []
+    zeilen, stichprobe = [], None
     with Testserver() as server:
         for nr, (stufe, kommando, parameter, obergrenze) in enumerate(STUFEN, 1):
             if kommando == "pdf-koepfe" and not mit_pdf:
@@ -76,8 +81,13 @@ def probelauf(ziel):
                 continue
             folge = messung(server, ziel / "folge" / "cache", ziel / "folge" / "ergebnisse", kommando, parameter,
                             obergrenze, stufe)
-            leer = messung(server, ziel / "leer" / f"cache_{nr}", ziel / "leer" / "ergebnisse", kommando,
-                           parameter, obergrenze, stufe)
+            cache = ziel / "leer" / f"cache_{nr}"
+            if kommando == "pdf-koepfe" and stichprobe:   # Rohdaten-Cache leer, nur die Stichprobendatei aus Stufe 5
+                cache.mkdir(parents=True, exist_ok=True)
+                shutil.copy(stichprobe, cache / STICHPROBE)
+            leer = messung(server, cache, ziel / "leer" / "ergebnisse", kommando, parameter, obergrenze, stufe)
+            if (cache / STICHPROBE).exists():
+                stichprobe = cache / STICHPROBE
             ok = all(m["rc"] == 0 and int(m["lauf"].get("netz") or -1) == m["server"] <= obergrenze
                      for m in (folge, leer))
             zeilen.append({"stufe": stufe, "kommando": kommando, "parameter": " ".join(parameter),
