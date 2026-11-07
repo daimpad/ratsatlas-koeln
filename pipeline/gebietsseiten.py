@@ -253,8 +253,8 @@ def _kennzahlen(kx, spalten):
 
 def _ebenen(ebenen, map_url, fuer):
     """Hinweis auf die Kartenebenen (ebenen.json) mit Links in die Karte für dieses Gebiet. Ebenen mit Mindestzoom
-    (ebenen.json „mindestzoom“) zeichnet die Karte erst bei näherer Ansicht; je nach Gebiet und Bildschirm ist dafür
-    Hineinzoomen nötig (in der Ansicht eines Stadtbezirks immer)."""
+    (ebenen.json „mindestzoom“) zeichnet die Karte erst bei näherer Ansicht; ob dafür Hineinzoomen nötig ist, hängt
+    von Gebiet, Ebene und Bildschirm ab."""
     if not ebenen:
         return ""
     items = []

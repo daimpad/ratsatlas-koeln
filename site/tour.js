@@ -6,36 +6,52 @@
   "use strict";
   const MOBILE = matchMedia("(max-width: 900px)");
   const $ = (s) => document.querySelector(s);
+  // Kartenvorschau ohne Ratsvorlagen (index.json meta.vorschau; Kennzeichen setzt app.js applyFunktionen): dort fehlen
+  // Punkte, Zeitleiste, Termine, Schnellfilter und Auswertung, Suche und Liste bleiben leer; die Tour nennt, was folgt
+  const VORSCHAU = () => document.documentElement.dataset.vorschau === "ja";
+  const TELEFON_LEGENDEN = MOBILE.matches ? " Auf dem Telefon stehen die Legenden hinter „Karte“; „Ganz Köln ansehen“ ist das Symbol mit den vier Ecken." : "";
+  const TELEFON_KARTE = MOBILE.matches ? " Auf dem Telefon liegen Ebenen, Legenden und Quellen zusammen hinter „Karte“." : "";
 
   // Schritte: target (Selektor) oder rect (Fläche aus app.js), before (Flächen öffnen), menu (Mega-Menü),
-  // beacons (Selektoren für pulsierende Punkte), clip (sichtbarer Ausschnitt), when (Schritt nur, wenn verfügbar)
+  // beacons (Selektoren für pulsierende Punkte), clip (sichtbarer Ausschnitt), when (Schritt nur, wenn verfügbar),
+  // vorschau (Text in der Kartenvorschau statt text; ohne Angabe gilt text)
   const STEPS = [
     { title: "Willkommen zur Tour",
-      text: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Tour stellt die Funktionen der Reihe nach vor. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc." },
+      text: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Tour stellt die Funktionen der Reihe nach vor. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc.",
+      vorschau: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Vorschau enthält noch keine Ratsvorlagen; sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist. Bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten. Die Tour stellt vor, was schon verfügbar ist. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc." },
     { menu: "mega-suche", target: "#mega-suche", fallback: "#nav-search", beacons: ["#q"],
       title: "Suche in ganz Köln",
-      text: "Ein Stichwort oder eine Vorlagennummer eingeben, etwa „Radweg“ oder „2250/2025“. Darunter stehen Schnellfilter nach Thema und Partei; die Treffer lassen sich in der Liste anzeigen." },
+      text: "Ein Stichwort oder eine Vorlagennummer eingeben, etwa „Radweg“ oder „2250/2025“. Darunter stehen Schnellfilter nach Thema und Partei; die Treffer lassen sich in der Liste anzeigen.",
+      vorschau: "Das Suchfeld ist für Vorlagen in ganz Köln gedacht: nach Stichwort oder Vorlagennummer, dazu Schnellfilter nach Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; Suche und Schnellfilter folgen, sobald der Abruf der Stadt Köln eingerichtet ist." },
     { target: "#f-area",
       title: "Gebiet wählen",
-      text: "Ein Stadtteil, ein ganzer Stadtbezirk oder Vorlagen ohne Ortsbezug je Jahr. Zu Beginn zeigt die Karte ganz Köln: erst einen Stadtbezirk anklicken, dann einen Stadtteil. Herangezoomt lassen sich Stadtteile direkt anklicken; „Ganz Köln ansehen“ führt zurück. In der obersten Legende unten links lassen sich die Flächen statt nach der Zahl der Vorlagen nach dem Anteil eines Themas färben, etwa Verkehr, oder nach Zahlen zum Gebiet wie Miete, Altersanteilen oder Hitze (abgeleitet, zur Einordnung). Ist ein Stadtteil gewählt, stehen diese Zahlen auch in der Liste neben denen des Stadtbezirks. Karte, Liste und Zeitleiste zeigen jeweils das gewählte Gebiet." + (MOBILE.matches ? " Auf dem Telefon stehen die Legenden hinter „Karte“; „Ganz Köln ansehen“ ist das Symbol mit den vier Ecken." : "") },
+      text: "Ein Stadtteil, ein ganzer Stadtbezirk oder Vorlagen ohne Ortsbezug je Jahr. Zu Beginn zeigt die Karte ganz Köln: erst einen Stadtbezirk anklicken, dann einen Stadtteil. Herangezoomt lassen sich Stadtteile direkt anklicken; „Ganz Köln ansehen“ führt zurück. In der obersten Legende unten links lassen sich die Flächen statt nach der Zahl der Vorlagen nach dem Anteil eines Themas färben, etwa Verkehr, oder nach Zahlen zum Gebiet wie Miete, Altersanteilen oder Hitze (abgeleitet, zur Einordnung). Ist ein Stadtteil gewählt, stehen diese Zahlen auch in der Liste neben denen des Stadtbezirks. Karte, Liste und Zeitleiste zeigen jeweils das gewählte Gebiet." + TELEFON_LEGENDEN,
+      vorschau: "Ein Stadtteil oder ein ganzer Stadtbezirk. Zu Beginn zeigt die Karte ganz Köln: erst einen Stadtbezirk anklicken, dann einen Stadtteil. Herangezoomt lassen sich Stadtteile direkt anklicken; „Ganz Köln ansehen“ führt zurück. In der obersten Legende unten links lassen sich die Flächen nach Zahlen zum Gebiet färben, etwa Miete, Altersanteilen oder Hitze (abgeleitet, zur Einordnung). Ist ein Stadtteil gewählt, stehen diese Zahlen auch in der Liste neben denen des Stadtbezirks. Karte und Liste zeigen jeweils das gewählte Gebiet." + TELEFON_LEGENDEN },
     // Telefon: Blatt „Karte“ geschlossen lassen, sonst verdeckt die Karte der Tour es; dort pulsiert der Knopf „Karte“
     { before: (ui) => { if (MOBILE.matches) ui.panel("panel-detail", false); ui.mapMenu(!MOBILE.matches); }, rect: (ui) => ui.areaRect(), fallback: "#map",
       beacons: [".marker-cluster, path.leaflet-interactive", ".map-menu", ".map-color", ".map-plans", ".map-legend"],
       title: "Die Karte",
-      text: "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt hinein. Die Farbe zeigt, wie sicher der Ort ist: grün gesichert (Koordinate oder Bebauungsplan der Stadt), braun erschlossen (Name im Titel), violett unsicher. „Farbe nach Thema“ färbt die Punkte stattdessen nach Thema; die Legende erklärt die Farben. „Bebauungspläne“ blendet die Geltungsbereiche der rechtskräftigen Pläne ein; ein Klick auf eine Fläche öffnet die Planchronik. „Baustellen“ zeigt gemeldete Baustellen mit unverbindlichen Terminen. „Überschwemmungsgebiete“ und „Bodenrichtwerte“ zeigen beim Hineinzoomen Flächen des Landes zur Einordnung (abgeleitet aufbereitet, verbindlich sind die Quellen). „Farbige Karte“ schaltet den Hintergrund um. Alle diese Schaltflächen liegen unter „Ebenen“; die Zahl daneben nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + (MOBILE.matches ? " Auf dem Telefon liegen Ebenen, Legenden und Quellen zusammen hinter „Karte“." : "") },
+      text: "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt hinein. Die Farbe zeigt, wie sicher der Ort ist: grün gesichert (Koordinate oder Bebauungsplan der Stadt), braun erschlossen (Name im Titel), violett unsicher. „Farbe nach Thema“ färbt die Punkte stattdessen nach Thema; die Legende erklärt die Farben. „Bebauungspläne“ blendet die Geltungsbereiche der rechtskräftigen Pläne ein; ein Klick auf eine Fläche öffnet die Planchronik. „Baustellen“ zeigt gemeldete Baustellen mit unverbindlichen Terminen. „Überschwemmungsgebiete“ und „Bodenrichtwerte“ zeigen beim Hineinzoomen Flächen des Landes zur Einordnung (abgeleitet aufbereitet, verbindlich sind die Quellen). „Farbige Karte“ schaltet den Hintergrund um. Alle diese Schaltflächen liegen unter „Ebenen“; die Zahl daneben nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE,
+      vorschau: "Die Flächen zeigen Stadtbezirke und Stadtteile, gefärbt nach der Kennzahl in der obersten Legende. Punkte für Vorlagen mit Ortsbezug folgen mit den Ratsvorlagen. Unter „Ebenen“ lassen sich offene Daten zuschalten, etwa Bebauungspläne, Überschwemmungsgebiete, Bodenrichtwerte, Schutzgebiete, Schulen, Kitas oder Haltestellen – zur Einordnung abgeleitet aufbereitet, verbindlich sind die Quellen. Ebenen mit vielen Objekten erscheinen erst beim Hineinzoomen. „Farbige Karte“ schaltet den Hintergrund um. Die Zahl neben „Ebenen“ nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE },
     { before: (ui) => { ui.mapMenu(false); ui.panel("panel-list", true); }, target: "#panel-list", beacons: ["#f-text", "#more-filters > summary"],
       title: "Die Vorlagen",
       text: () => "Alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte und mit der Tastatur bedienbar. Filter nach Stichwort, Vorlagenart, Stand, Thema und Partei; unter „Weitere Filter“ nach Amt, Gremium und Sicherheit der Ortsangabe."
+        + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen."),
+      vorschau: () => "Hier stehen künftig alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte, mit der Tastatur bedienbar und mit Filtern nach Stichwort, Vorlagenart, Stand, Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist. Ist ein Stadtteil oder Stadtbezirk gewählt, stehen hier schon jetzt die Zahlen zum Gebiet."
         + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen.") },
     { when: () => !document.querySelector('.toggle[data-panel="timeline-wrap"]').hidden,
       before: (ui) => ui.panel("timeline-wrap", true), target: "#timeline-wrap", beacons: [".tl-presets"],
       title: "Die Zeitleiste",
       text: "Die Balken zeigen, wie viele Vorlagen je Monat erschienen sind; dazu Sitzungen und Wahlperioden. Mit den Griffen oder einer Voreinstellung wählen Sie einen Zeitraum – Liste und Karte folgen." },
-    { before: async (ui) => { await ui.example(); ui.panel("panel-detail", true); }, target: "#panel-detail", requires: "#detail .steps",
+    // Vorschau ohne Ratsvorlagen: kein Beispiel; ohne diese Bedingung lüde ui.example() das Beispielgebiet und
+    // wechselte das gewählte Gebiet, ohne einen Vorgang zu zeigen (Vorgang und Prozesslinie entfallen)
+    { when: () => !VORSCHAU(),
+      before: async (ui) => { await ui.example(); ui.panel("panel-detail", true); }, target: "#panel-detail", requires: "#detail .steps",
       beacons: ["#detail .links .btn-primary"],
       title: "Der Vorgang",
       text: "Ein Beispiel aus dem Gebiet: Vorlagennummer, Art, Datum, federführende Dienststelle, Stand und Themen – und der Link zum Original im Ratsinformationssystem. Maßgeblich ist immer das Original." },
-    { before: (ui) => ui.panel("panel-prozesse", false), target: "#detail .steps", clip: "#detail", scroll: true,
+    { when: () => !VORSCHAU(),
+      before: (ui) => ui.panel("panel-prozesse", false), target: "#detail .steps", clip: "#detail", scroll: true,
       title: "Die Prozesslinie",
       text: "Die Stationen des Verfahrens: Einreichung, Beratungen in den Gremien mit Datum und Ergebnis, Folgevorlagen. Ergebnisse stehen wörtlich wie in der Quelle. Jede Station trägt ihren Evidenzstatus: belegt, abgeleitet, nicht öffentlich oder unklar." },
     // abgeschaltete Zusatzthemen (data-funktion, config.ZUSATZTHEMEN): Schritt entfällt; die Elemente stehen im Dokument,
@@ -51,20 +67,23 @@
       text: "Kennzahlen zum Gebiet nach Thema, Partei, Jahr und Stand; ein Klick auf einen Balken filtert die Liste. Die Verfahrenswege zeigen für ganz Köln, welche Gremien welche Vorlagenart beraten und wie Verfahren meist enden." },
     { menu: "mega-mitmachen", target: "#mega-mitmachen", beacons: ["#cta-termine", "#cta-mitmachen", "#cta-feed .btn"],
       title: "Mitmachen",
-      text: "Kommende Sitzungen, auch als Kalenderdatei; unter „Informiert bleiben“ Feeds, die neue Vorlagen im Gebiet oder Änderungen an einem Vorgang melden; der Weg zum Bürgerantrag nach § 24 GO NRW; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen, die Fristen und alle Wege, sich einzubringen; und ein Hinweis, wenn etwas falsch zugeordnet ist." },
+      text: "Kommende Sitzungen, auch als Kalenderdatei; unter „Informiert bleiben“ Feeds, die neue Vorlagen im Gebiet oder Änderungen an einem Vorgang melden; der Weg zum Bürgerantrag nach § 24 GO NRW; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen, die Fristen und alle Wege, sich einzubringen; und ein Hinweis, wenn etwas falsch zugeordnet ist.",
+      vorschau: "Unter „Informiert bleiben“ stehen Feeds, die neue Vorlagen im gewählten Gebiet melden; sie füllen sich, sobald Ratsvorlagen vorliegen. Kommende Sitzungen und die Kalenderdatei folgen mit den Ratsvorlagen. Außerdem: der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden, und ein Hinweis, wenn etwas falsch zugeordnet oder unklar ist." },
     { menu: "mega-daten", target: "#mega-daten",
       title: "Offene Daten",
       text: "Alle Daten zum Herunterladen: das Datenpaket mit Prüfprotokollen, die verorteten Vorlagen als GeoJSON und eine Datensatzbeschreibung nach DCAT-AP. Quellen, Lizenzen und Datenstand stehen auf der Karte unter den Legenden." },
     { menu: "mega-verstehen", target: "#mega-verstehen",
       title: "Verstehen",
-      text: "Hilfen zum Lesen der Karte: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge oder Zuschussbedarf in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder." },
+      text: "Hilfen zum Lesen der Karte: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge oder Zuschussbedarf in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.",
+      vorschau: "Hilfen zum Lesen der Karte: Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder." },
     { when: () => document.querySelector(".toggle-ai")?.hidden === false,
       target: ".toggle-ai",
       title: "Der Ratsassistent",
       text: "Ein KI-System beantwortet Fragen zu Kölner Ratsvorgängen und stützt sich dabei nur auf die Daten dieser Seite. Er braucht einen eigenen API-Schlüssel, nennt seine Quellen und verlinkt die Originale. Antworten können Fehler enthalten." },
     { target: ".nav-group.seg",
       title: "Flächen ein- und ausklappen",
-      text: "Vorlagen (die Liste aller Vorlagen im Gebiet), Zeitleiste, Vorgang (die Einzelheiten einer Vorlage), Prozesse und Assistent lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Esc schließt die Fläche, in der Sie gerade sind." },
+      text: "Vorlagen (die Liste aller Vorlagen im Gebiet), Zeitleiste, Vorgang (die Einzelheiten einer Vorlage), Prozesse und Assistent lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Esc schließt die Fläche, in der Sie gerade sind.",
+      vorschau: "Die Flächen „Vorlagen“ und „Vorgang“ lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Mit den Ratsvorlagen kommt die Zeitleiste hinzu. Esc schließt die Fläche, in der Sie gerade sind." },
     { target: "#about-open",
       title: "Über die Karte",
       text: "Hier steht, woher die Daten stammen, was Stand und Sicherheit der Angaben bedeuten und was die Karte nicht zeigen kann. Viel Freude beim Erkunden." },
@@ -171,7 +190,8 @@
     root.querySelector("#tour-count").textContent = `Schritt ${n + 1} von ${steps.length}`;
     root.querySelector(".tour-bar span").style.width = `${((n + 1) / steps.length) * 100}%`;
     root.querySelector("#tour-title").textContent = s.title;
-    const text = typeof s.text === "function" ? s.text() : s.text;
+    const t = VORSCHAU() && s.vorschau ? s.vorschau : s.text;
+    const text = typeof t === "function" ? t() : t;
     root.querySelector("#tour-text").textContent = text;
     const prev = root.querySelector('[data-tour-act="prev"]'), next = root.querySelector('[data-tour-act="next"]');
     prev.hidden = n === 0;
