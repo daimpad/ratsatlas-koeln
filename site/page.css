@@ -45,6 +45,21 @@ a { color: var(--accent-ink); }
   .page table.haushalt td, .page table.haushalt th { display: table-cell; padding: 6px 4px; border-bottom: 1px solid var(--line); }
   .page table.haushalt small { display: block; }
 }
+/* Kennzahlen der Gebietsseiten (pipeline/gebietsseiten.py): Vergleich Stadtteil – Stadtbezirk – ganz Köln, auch auf dem Telefon als Tabelle */
+.page h3 { font-size: 17px; margin: 20px 0 4px; }
+.page table.kennzahlen { table-layout: auto; margin: 8px 0 4px; }
+.page table.kennzahlen caption { text-align: left; color: var(--muted); font-size: 14px; padding-bottom: 4px; }
+.page table.kennzahlen th, .page table.kennzahlen td { width: auto; overflow-wrap: break-word; }
+.page table.kennzahlen tr > :first-child { width: 38%; }
+.page table.kennzahlen th[scope="row"] { font-weight: 500; }
+.page table.kennzahlen td { font-variant-numeric: tabular-nums; }
+.page table.kennzahlen small { display: block; color: var(--muted); }
+@media (max-width: 600px) {
+  .page table.kennzahlen { display: table; width: 100%; table-layout: fixed; font-size: 13px; } .page table.kennzahlen thead { display: table-header-group; }
+  .page table.kennzahlen tbody { display: table-row-group; } .page table.kennzahlen tr { display: table-row; }
+  .page table.kennzahlen td, .page table.kennzahlen th { display: table-cell; padding: 6px 3px; border-bottom: 1px solid var(--line); }
+  .page table.kennzahlen tr > :first-child { width: 28%; } .page table.kennzahlen td { overflow-wrap: normal; }
+}
 /* Prozessbild der Themenseiten (pipeline/prozessbild.py) */
 .pb-rahmen { overflow-x: auto; margin: 8px 0; border-radius: 12px; }
 .pb-svg { display: block; width: 100%; min-width: 860px; height: auto; }
