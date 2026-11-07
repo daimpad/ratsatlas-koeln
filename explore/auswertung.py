@@ -6,12 +6,21 @@ oparl_referenzschema.tsv, oparl_top_ergebnisse.tsv, pdf_koepfe.tsv). Fehlende Da
 Je Stufe: Anfragen (Netz, Cache), Statuscodes, mittlere und höchste Antwortzeit, Bytes, Ergebnis; dazu Kennwerte
 (totalElements, Seitengröße, Form von links.next, Parametertests, Feldabdeckung, Regel Stufe 3/5) und Auffälligkeiten
 nach den Abbruchkriterien in STUFEN.md. Fehlt das Abrufprotokoll für einen Lauf (z. B. andere Arbeitsumgebung), gelten
-Statuscodes und Antwortzeiten als „nicht prüfbar (Protokoll fehlt)“.
+Statuscodes und Antwortzeiten als „nicht prüfbar (Protokoll fehlt)“. Protokollzeilen gehören nur dann zu einem Lauf,
+wenn sie im Bereich protokoll_von–protokoll_bis liegen und ihre Zeit (mit Zone) zwischen Start und Ende des Laufs
+liegt; sonst „nicht prüfbar (Protokollzeilen passen nicht zum Lauf)“.
+Ablehnungen durch den Proxy der Arbeitsumgebung (Status `proxy <Code>`: CONNECT-Antwort 403, 405, 407 oder HTTP 407)
+stehen getrennt: Sie haben die Stadt nicht erreicht, zählen nicht zu den Antwortzeiten und gelten nicht als mögliche
+Sperre. Andere CONNECT-Antworten (Status `tunnel <Code>`, z. B. 502/504: der Proxy erreicht die Stadt nicht, oder
+429/503) gelten wie Verbindungsabbrüche als mögliche Sperre, ebenso 403, 429, 5xx und Status ohne Code (Name der
+Ausnahme, z. B. TimeoutError oder IncompleteRead bei einer abgeschnittenen Antwort).
+Die Regel Stufe 3/5 gilt nur als erfüllt, wenn der letzte `stichprobe`-Lauf in oparl_laeufe.tsv „ok“ ist.
 Aufruf: python3 explore/auswertung.py [--cache VERZ] [--ergebnisse VERZ] [--stufe S]
 """
 import argparse
 import collections
 import csv
+import datetime as dt
 import os
 import sys
 from pathlib import Path
@@ -20,6 +29,9 @@ from urllib.parse import urlsplit
 HIER = Path(__file__).resolve().parent
 GRENZE_DAUER = 5.0     # Sekunden, Abbruchkriterium aus STUFEN.md
 NICHT_PRUEFBAR = "nicht prüfbar (Protokoll fehlt)"
+NICHT_ZUGEORDNET = "nicht prüfbar (Protokollzeilen passen nicht zum Lauf)"
+PROXY_HINWEIS = ("Ablehnung durch den Proxy der Arbeitsumgebung, die Stadt wurde nicht erreicht, keine Sperre: nicht "
+                 "wiederholen, berichten; Host im Netz der Arbeitsumgebung erlauben")
 
 
 def lies(datei):
@@ -36,15 +48,49 @@ def zahl(x, standard=0.0):
         return standard
 
 
+def ist_proxy(zeile):
+    """Protokollzeile einer Ablehnung durch den Proxy der Arbeitsumgebung (explore/abruf.py, Status `proxy <Code>`)."""
+    return str(zeile.get("status") or "").startswith("proxy")
+
+
 def statistik(zeilen):
-    """Kennzahlen über Protokollzeilen: Netz, Cache, Statuscodes, Antwortzeit Ø und max, Bytes."""
+    """Kennzahlen über Protokollzeilen: Netz, Cache, Statuscodes, Antwortzeit Ø und max, Bytes. Ablehnungen durch den
+    Proxy zählen zu Netz (Versuche, wie bei der Obergrenze) und werden als `proxy` getrennt gezählt; die Antwortzeiten
+    gelten nur für Antworten des Servers."""
     netz = [z for z in zeilen if z.get("quelle") == "netz"]
-    dauer = [zahl(z.get("dauer_s")) for z in netz]
+    dauer = [zahl(z.get("dauer_s")) for z in netz if not ist_proxy(z)]
     status = collections.Counter(z.get("status") for z in netz)
     return {"netz": len(netz), "cache": sum(1 for z in zeilen if z.get("quelle") == "cache"),
+            "proxy": sum(1 for z in netz if ist_proxy(z)),
             "status": ", ".join(f"{k}×{v}" for k, v in sorted(status.items())) or "–",
             "status_roh": status, "mittel": sum(dauer) / len(dauer) if dauer else None,
             "max": max(dauer) if dauer else None, "bytes": sum(int(zahl(z.get("bytes"))) for z in netz)}
+
+
+def zeitpunkt(wert):
+    """Zeitpunkt mit Zone; ohne Zone oder unlesbar → None (nicht vergleichbar)."""
+    try:
+        t = dt.datetime.fromisoformat(str(wert or ""))
+    except ValueError:
+        return None
+    return t if t.tzinfo else None
+
+
+def zeilen_des_laufs(lauf, protokoll):
+    """(Protokollzeilen des Laufs, Grund). Zugeordnet wird nur, wenn der Bereich protokoll_von–protokoll_bis im
+    Protokoll liegt und jede Zeile eine Zeit mit Zone zwischen Start und Ende des Laufs hat; sonst (None, Grund)."""
+    if not protokoll:
+        return None, NICHT_PRUEFBAR
+    von, bis = int(zahl(lauf.get("protokoll_von"), -1)), int(zahl(lauf.get("protokoll_bis"), -1))
+    start, ende = zeitpunkt(lauf.get("start")), zeitpunkt(lauf.get("ende"))
+    if not (0 <= von <= bis <= len(protokoll)) or start is None or ende is None:
+        return None, NICHT_ZUGEORDNET
+    zz = protokoll[von:bis]
+    for z in zz:
+        t = zeitpunkt(z.get("zeit"))
+        if t is None or not start <= t <= ende:
+            return None, NICHT_ZUGEORDNET
+    return zz, ""
 
 
 def anteil(teil, ganz):
@@ -93,6 +139,12 @@ def status_hinweise(zeilen, kommando):
             hinweis = " (erwartet: Test mit URL-kodiertem Parameter)"
         elif code.startswith("3"):
             hinweis = f" (Weiterleitung nach {z.get('ziel') or '(ohne Ziel)'}, nicht verfolgt: stoppen)"
+        elif ist_proxy(z):
+            hinweis = f" ({PROXY_HINWEIS})"
+        elif code.startswith("tunnel"):   # CONNECT-Antwort außer 403/405/407 (explore/abruf.py)
+            grund = ("Begrenzung oder Überlastung" if code.split()[-1] in ("429", "503")
+                     else "der Proxy erreicht den Server nicht")
+            hinweis = f" (beim Verbindungsaufbau über den Proxy: {grund}; mögliche Sperre: stoppen)"
         elif not code.isdigit() or code in ("403", "429") or code.startswith("5"):
             hinweis = " (mögliche Sperre: stoppen)"
         else:
@@ -102,34 +154,42 @@ def status_hinweise(zeilen, kommando):
 
 
 def laeufe_abschnitt(laeufe, protokoll, stufe=None):
-    aus, zugeordnet, auffaellig = [], set(), []
-    vollstaendig = bool(protokoll)
+    aus, zugeordnet, auffaellig, proxy = [], set(), [], []
     je_lauf, je_stufe = [], collections.OrderedDict()
     for l in laeufe:
-        von, bis = int(zahl(l.get("protokoll_von"))), int(zahl(l.get("protokoll_bis")))
-        zugeordnet.update(range(von, bis))
+        zz, grund = zeilen_des_laufs(l, protokoll)
+        if zz is not None:
+            von = int(zahl(l.get("protokoll_von")))
+            zugeordnet.update(range(von, von + len(zz)))
         if stufe and l.get("stufe") != stufe:
             continue
-        zz = protokoll[von:bis] if vollstaendig and bis <= len(protokoll) else None
         if zz is not None:
             s = statistik(zz)
-        else:   # Protokoll fehlt (z. B. andere Arbeitsumgebung): nur die Zähler aus dem Lauf
-            s = {"netz": l.get("netz"), "cache": l.get("cache"), "status": NICHT_PRUEFBAR,
+        else:   # Protokoll fehlt oder passt nicht (z. B. andere Arbeitsumgebung): nur die Zähler aus dem Lauf
+            s = {"netz": l.get("netz"), "cache": l.get("cache"), "proxy": 0, "status": grund,
                  "status_roh": {}, "mittel": None, "max": None, "bytes": "–"}
         je_lauf.append((l, s))
-        g = je_stufe.setdefault(l.get("stufe") or "–", {"kommandos": [], "zeilen": [], "laeufe": [], "ergebnisse": []})
+        g = je_stufe.setdefault(l.get("stufe") or "–", {"kommandos": [], "zeilen": [], "laeufe": [], "ergebnisse": [],
+                                                        "gruende": []})
         g["kommandos"].append(l.get("kommando"))
         g["laeufe"].append(l)
         g["ergebnisse"].append(l.get("ergebnis"))
         if zz is not None:
             g["zeilen"] += zz
+        else:
+            g["gruende"].append(grund)
+        if s["proxy"]:
+            hosts = ", ".join(sorted({urlsplit(z.get("url") or "").hostname or "?" for z in zz if ist_proxy(z)}))
+            proxy.append(f"Lauf {l['lauf']} ({l['kommando']}): {s['proxy']} Anfrage(n) vom Proxy abgelehnt "
+                         f"(Host {hosts})")
+        elif l.get("ergebnis") == "abbruch (proxy)":
+            proxy.append(f"Lauf {l['lauf']} ({l['kommando']}): Abbruch durch den Proxy; Protokoll {grund}")
         # Auffälligkeiten nach den Abbruchkriterien
         if l.get("ergebnis") != "ok":
             auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): {l.get('ergebnis')} – {l.get('meldung', '')[:200]}")
         if zz is None:
             if str(l.get("netz")) != "0":
-                auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): Statuscodes und Antwortzeiten "
-                                  f"{NICHT_PRUEFBAR}")
+                auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): Statuscodes und Antwortzeiten {grund}")
             continue
         for (code, hinweis), n in sorted(status_hinweise(zz, l.get("kommando")).items()):
             auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): Status {code} × {n}{hinweis}")
@@ -140,12 +200,12 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
     aus.append("## Je Stufe\n")
     zeilen = []
     for st, g in je_stufe.items():
-        if g["zeilen"]:
+        if not g["gruende"]:
             s = statistik(g["zeilen"])
-        else:
+        else:   # mindestens ein Lauf ohne zugeordnete Protokollzeilen: keine Teilstatistik, nur die Zähler der Läufe
             s = {"netz": sum(int(zahl(l.get("netz"))) for l in g["laeufe"]),
-                 "cache": sum(int(zahl(l.get("cache"))) for l in g["laeufe"]), "status": NICHT_PRUEFBAR,
-                 "mittel": None, "max": None, "bytes": "–"}
+                 "cache": sum(int(zahl(l.get("cache"))) for l in g["laeufe"]),
+                 "status": "; ".join(dict.fromkeys(g["gruende"])), "mittel": None, "max": None, "bytes": "–"}
         ergebnis = "ok" if all(e == "ok" for e in g["ergebnisse"]) else "; ".join(sorted(set(g["ergebnisse"])))
         zeilen.append([st, ", ".join(dict.fromkeys(g["kommandos"])), s["netz"], s["cache"], s["status"],
                        sekunden(s["mittel"]), sekunden(s["max"]), s["bytes"], ergebnis])
@@ -161,16 +221,40 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
     rest = [z for i, z in enumerate(protokoll) if i not in zugeordnet]
     if rest and not stufe:
         hosts = collections.Counter(urlsplit(z.get("url", "")).hostname for z in rest)
-        aus.append(f"\nWeitere Zeilen im Abrufprotokoll ohne Lauf (z. B. geodaten.py): {len(rest)} "
-                   f"({', '.join(f'{h} × {n}' for h, n in hosts.most_common())})")
+        aus.append(f"\nWeitere Zeilen im Abrufprotokoll ohne Lauf (z. B. geodaten.py oder Zeit außerhalb eines Laufs): "
+                   f"{len(rest)} ({', '.join(f'{h} × {n}' for h, n in hosts.most_common())})")
+    if proxy:
+        aus.append("\n## Ablehnungen durch den Proxy der Arbeitsumgebung\n")
+        aus.append("Diese Anfragen haben die Stadt nicht erreicht; sie sind keine Antwort der Stadt und kein Hinweis auf "
+                   "eine Sperre. Nicht wiederholen, sondern berichten: Der genannte Host muss im Netz der "
+                   "Arbeitsumgebung erlaubt sein (für die OParl-API buergerinfo.stadt-koeln.de, STUFEN.md, Stufe 1).\n")
+        aus += [f"- {p}" for p in proxy]
     aus.append("\n## Auffälligkeiten\n")
     aus += [f"- {a}" for a in auffaellig] or ["- keine (Ergebnis ok, kein 429/5xx, keine Weiterleitung, keine "
                                               f"Antwort über {GRENZE_DAUER:g} s, kein Verbindungsabbruch)"]
     return aus
 
 
-def kennwerte(erg):
+def regel_stufe_3_5(bedeckung, laeufe):
+    """Urteil zur Regel aus STUFEN.md (Stufe 3 und 5) oder None ohne Zählungen. „erfüllt“ nur, wenn alle Zählungen 0
+    sind und der letzte stichprobe-Lauf in oparl_laeufe.tsv „ok“ ist."""
+    regel = [z for z in bedeckung if z["feld"].startswith(("created außerhalb", "doppelte Kennungen"))]
+    if not regel:
+        return None
+    if any(int(zahl(z["vorhanden"])) != 0 for z in regel):
+        return "nicht erfüllt – nicht weiter, berichten"
+    letzte = [l for l in laeufe if l.get("kommando") == "stichprobe"]
+    if not letzte:
+        return "nicht prüfbar (kein stichprobe-Lauf in oparl_laeufe.tsv) – nicht weiter, berichten"
+    if letzte[-1].get("ergebnis") != "ok":
+        return (f"nicht prüfbar (Lauf abgebrochen) – letzter stichprobe-Lauf {letzte[-1].get('lauf')}: "
+                f"{letzte[-1].get('ergebnis')}; nicht weiter, berichten")
+    return "erfüllt"
+
+
+def kennwerte(erg, laeufe=None):
     aus = ["\n## Kennwerte\n"]
+    laeufe = lies(erg / "oparl_laeufe.tsv") if laeufe is None else laeufe
     test, kz = lies(erg / "oparl_test.tsv"), lies(erg / "oparl_kennzahlen.tsv")
     werte = collections.defaultdict(dict)
     for z in test + kz:            # Kennzahlen überschreiben den Test (neuerer Stand)
@@ -229,11 +313,9 @@ def kennwerte(erg):
         aus.append("\nStichprobe – Feldabdeckung:\n")
         aus += tabelle(["Feld", "vorhanden", "von", "Anteil"],
                        [[z["feld"], z["vorhanden"], z["von"], anteil(z["vorhanden"], z["von"])] for z in bed])
-        regel = [z for z in bed if z["feld"].startswith(("created außerhalb", "doppelte Kennungen"))]
-        if regel:   # Regel in STUFEN.md, Stufe 3 und 5
-            erfuellt = all(int(zahl(z["vorhanden"])) == 0 for z in regel)
-            aus.append("\nRegel Stufe 3/5 (Jahresfilter wirkt, keine Doppelungen): "
-                       + ("erfüllt" if erfuellt else "nicht erfüllt – nicht weiter, berichten"))
+        urteil = regel_stufe_3_5(bed, laeufe)
+        if urteil:   # Regel in STUFEN.md, Stufe 3 und 5
+            aus.append(f"\nRegel Stufe 3/5 (Jahresfilter wirkt, keine Doppelungen): {urteil}")
     jahre = lies(erg / "oparl_stichprobe_jahre.tsv")
     if jahre:
         aus.append("\nStichprobe – Jahre: " + "; ".join(
@@ -274,7 +356,7 @@ def auswertung(cache, erg, stufe=None):
                 f"max {sekunden(s['max'])} s, {s['bytes']} Bytes"]
     else:
         aus.append("Noch keine Läufe.")
-    return "\n".join(aus + kennwerte(erg)) + "\n"
+    return "\n".join(aus + kennwerte(erg, laeufe)) + "\n"
 
 
 def main():

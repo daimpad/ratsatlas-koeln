@@ -1,6 +1,7 @@
 """Lokaler OParl-Testserver mit erfundenen Daten für Probeläufe der Messstufen (explore/STUFEN.md).
 
-Keine Daten der Stadt Köln: Namen tragen „[Testdaten]“, alle Adressen zeigen auf 127.0.0.1. Die Struktur folgt der
+Keine Daten der Stadt Köln: Namen tragen „[Testdaten]“, alle Adressen zeigen auf 127.0.0.1 (in Tests auch eine andere
+Loopback-Adresse wie 127.0.0.2, Parameter `host`). Die Struktur folgt der
 OParl-Spezifikation 1.1 und dem, was über die Kölner API bekannt ist (CLAUDE.md 3.1,
 explore/ergebnisse/sessionnet_befunde.tsv):
 - System → Body mit den Listen paper, meeting, organization, person; 25 Objekte je Seite
@@ -172,20 +173,27 @@ class Daten:
 
 class Testserver:
     """Startet den Server in einem Hintergrund-Thread. `anfragen`: Liste (Pfad, Abfrage, User-Agent, Status);
-    `eingang`: Eingangszeit je Anfrage (time.monotonic).
+    `eingang`: Eingangszeit je Anfrage, `ausgang`: Zeit nach dem Senden der Antwort (beide time.monotonic, für alle
+    Prozesse derselben Maschine vergleichbar).
     `stoerung(pfad, abfrage)` darf einen Statuscode liefern (z. B. 429); `verzoegerung` in Sekunden je Antwort;
     `weiterleitungen`: Pfad → (Status, Ziel) für Antworten mit Location-Kopf (z. B. 301);
-    `ohne_created_filter`: created_since/created_until werden ignoriert (Jahresfilter wirkt nicht)."""
+    `ohne_created_filter`: created_since/created_until werden ignoriert (Jahresfilter wirkt nicht);
+    `abschneiden(pfad)`: True sendet nur die Hälfte des Inhalts bei vollem Content-Length und schließt die Verbindung
+    (abgeschnittene Antwort). `host`: 127.0.0.1 (Vorgabe) oder eine andere Loopback-Adresse wie 127.0.0.2, die
+    oparl_messung.lokal() nicht als lokal ansieht (Tests der Regeln für Anfragen an die Stadt ohne Netz)."""
 
-    def __init__(self, port=0, **kw):
+    def __init__(self, port=0, host="127.0.0.1", **kw):
+        assert host.startswith("127."), "nur Loopback-Adressen"
         self.anfragen = []
         self.eingang = []
+        self.ausgang = []
         self.stoerung = lambda pfad, abfrage: None
+        self.abschneiden = lambda pfad: False
         self.verzoegerung = 0.0
         self.weiterleitungen = {}
         self.ohne_created_filter = False
-        self.server = ThreadingHTTPServer(("127.0.0.1", port), self._handler())
-        self.basis = f"http://127.0.0.1:{self.server.server_address[1]}"
+        self.server = ThreadingHTTPServer((host, port), self._handler())
+        self.basis = f"http://{host}:{self.server.server_address[1]}"
         self.daten = Daten(self.basis, **kw)
         self.system_url, self.body_url = self.daten.system_url, self.daten.body_url
         self._thread = None
@@ -293,7 +301,12 @@ class Testserver:
                 self.send_header("Content-Type", typ)
                 self.send_header("Content-Length", str(len(inhalt)))
                 self.end_headers()
+                if server.abschneiden(teile.path):   # Verbindung mitten im Inhalt schließen
+                    inhalt = inhalt[:len(inhalt) // 2]
+                    self.close_connection = True
                 self.wfile.write(inhalt)
+                self.wfile.flush()
+                server.ausgang.append(time.monotonic())
 
         return H
 

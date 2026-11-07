@@ -6,10 +6,13 @@
 # (Einstellungen → Secrets and variables → Actions → Variables). Bis dahin – und bis ein vollständiger Abruf vorliegt –
 # veröffentlicht der Lauf eine Kartenvorschau ohne Ratsvorlagen (Gebiete, Kennzahlen, Ebenen; Entscheidung 07.11.2026).
 # Weitere Variablen: RATSATLAS_KONTAKT (Kontakt im User-Agent), SITE_URL (Vorgabe https://koeln.ratsatlas.de/).
-# Abrufpolitik: eine Verbindung, Abstand 2 s, nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h, Verbindungsabbruch =
-# mögliche Sperre (Abbruch, nach drei Nächten sieben Tage Pause); ein abgebrochener Vollabruf wird in der nächsten Nacht
+# Abrufpolitik: eine Verbindung, Abstand 2 s, nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h; Verbindungsabbruch,
+# abgeschnittene oder unlesbare Antwort, HTTP 401/403/429 und „aufgegeben“ nach 429/5xx = Nacht mit möglicher Sperre
+# (Abbruch, nach drei Nächten in Folge sieben Tage Pause); ein abgebrochener Vollabruf wird in der nächsten Nacht
 # fortgesetzt (pipeline/abruf.py, pipeline/sessionnet.py).
 # Fällt der Abruf aus, wird der letzte gültige Stand aus dem Zwischenspeicher veröffentlicht und als solcher angezeigt.
+# Der Zwischenspeicher (Rohdaten, Zustand des Abrufs mit der Zählung der Nächte, STAND.json, Abrufstatistik) wird gleich
+# nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert.
 name: Daten aktualisieren und Seite veröffentlichen
 
 on:
@@ -46,21 +49,36 @@ jobs:
       - name: Abhängigkeiten
         run: pip install -r requirements.txt
 
-      # Rohdaten-Cache: letzter gültiger Stand, Zustand des inkrementellen Abrufs, Abrufstatistik
+      # Rohdaten-Cache: letzter gültiger Stand, Zustand des inkrementellen Abrufs, Abrufstatistik. Hier nur
+      # Wiederherstellen; gesichert wird im Schritt direkt nach dem Abruf, nicht erst am Ende eines erfolgreichen Laufs
+      # (data/raw/ ändert nach dem Abruf kein Schritt mehr)
       - name: Rohdaten des letzten Laufs
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
         with:
           path: |
             data/raw/
             data/export/abrufstatistik.tsv
-          key: raw-${{ github.run_id }}
+          key: raw-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: raw-
 
       - name: Abruf OParl-API Stadt Köln (gesperrt bis zur Information der Stadt)
+        id: abruf
         env:
           RATSATLAS_STADT_INFORMIERT: ${{ vars.RATSATLAS_STADT_INFORMIERT }}
           RATSATLAS_KONTAKT: ${{ vars.RATSATLAS_KONTAKT }}
         run: python -m pipeline fetch
+
+      # Sofort sichern, auch wenn der Abruf oder ein späterer Schritt scheitert: Sonst ginge die Zählung der Nächte mit
+      # möglicher Sperre (sperre_verdacht in zustand_abruf.json) verloren, und die Pause nach drei Nächten bliebe aus.
+      # Schlüssel je Versuch, damit auch ein wiederholter Lauf speichert; der nächste Lauf nimmt den jüngsten (raw-).
+      - name: Abrufzustand sichern (Rohdaten, zustand_abruf.json, STAND.json, Abrufstatistik)
+        if: always() && steps.abruf.outcome != 'skipped'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            data/raw/
+            data/export/abrufstatistik.tsv
+          key: raw-${{ github.run_id }}-${{ github.run_attempt }}
 
       # Nie mit Testdaten veröffentlichen (tools/testdaten.py setzt „testdaten“ in STAND.json)
       - name: Gibt es Daten zum Veröffentlichen?

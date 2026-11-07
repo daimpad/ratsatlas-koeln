@@ -1,5 +1,7 @@
 """Workflows und Technikseite: jede Datei, jeder Schritt und jede Quelle hat eine Erklärung; der Hauptlauf ist bis zur
-Information der Stadt gesperrt und veröffentlicht nie Testdaten."""
+Information der Stadt gesperrt, veröffentlicht nie Testdaten und sichert den Abrufzustand gleich nach dem Abruf."""
+import re
+
 from pipeline import config, technikseite
 
 
@@ -15,6 +17,29 @@ def test_hauptlauf_gesperrt_und_ohne_testdaten():
     text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     assert "RATSATLAS_STADT_INFORMIERT: ${{ vars.RATSATLAS_STADT_INFORMIERT }}" in text
     assert ".get(\"testdaten\")" in text and "python tools/testdaten.py" not in text
+
+
+def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
+    """Der Zustand mit der Zählung der Nächte mit möglicher Sperre (zustand_abruf.json), STAND.json und die
+    Abrufstatistik werden direkt nach dem Abrufschritt mit actions/cache/save und `if: always()` gesichert, nicht erst
+    im Post-Schritt von actions/cache, der nur nach einem erfolgreichen Lauf speichert."""
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    schritte = text.split("\n      - ")
+    i = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
+    assert "id: abruf" in schritte[i]
+    sichern = schritte[i + 1]
+    assert re.search(r"^\s+if: always\(\)", sichern, re.M) and "steps.abruf.outcome" in sichern
+    save = re.search(r"uses: actions/cache/save@([0-9a-f]{40})", sichern)
+    assert save, sichern
+    # dieselbe festgenagelte Version wie die Wiederherstellung; kein actions/cache mit Speichern im Post-Schritt
+    assert set(re.findall(r"uses: actions/cache(?:/restore|/save)?@([0-9a-f]{40})", text)) == {save.group(1)}
+    assert "uses: actions/cache@" not in text and "uses: actions/cache/restore@" in text
+    wiederherstellen = next(s for s in schritte if "actions/cache/restore@" in s)
+    for pfad in ("data/raw/", "data/export/abrufstatistik.tsv"):         # data/raw/: zustand_abruf.json, STAND.json
+        assert pfad in sichern and pfad in wiederherstellen
+    assert "key: raw-${{ github.run_id }}-${{ github.run_attempt }}" in sichern
+    assert "restore-keys: raw-" in wiederherstellen
+    assert config.ZUSTAND.parent == config.STAND.parent == config.RAW
 
 
 def test_technikseite_ohne_bonn(tmp_path):
