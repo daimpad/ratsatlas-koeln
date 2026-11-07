@@ -22,6 +22,9 @@ PAUSEN = [30, 120, 600, 1800]  # Sekunden; danach Abbruch. Für den Produktivbet
 KONTAKT = os.environ.get("RATSATLAS_KONTAKT", "")
 USER_AGENT = "ratsatlas-koeln-explore/0.1 (+https://github.com/daimpad/ratsatlas-koeln" + (f"; {KONTAKT}" if KONTAKT else "") + ")"
 MAX_BYTES = 250 * 1024 * 1024
+# harte Obergrenze für Anfragen ans Netz je Prozess (Cache zählt nicht); 0 = ohne Grenze
+MAX_ANFRAGEN = int(os.environ.get("RATSATLAS_MAX_ANFRAGEN", "0"))
+_anfragen = 0
 
 _letzte = 0.0
 
@@ -47,13 +50,16 @@ def _protokoll(url, status, n, dauer, quelle):
 
 def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
     """Gibt den Inhalt zurück; nutzt den Cache, hält Abstand und wiederholt behutsam."""
-    global _letzte
+    global _letzte, _anfragen
     pfad = _cachepfad(url, endung)
     if cache and pfad.exists():
         daten = pfad.read_bytes()
         _protokoll(url, "cache", len(daten), 0, "cache")
         return daten
     for versuch in range(len(PAUSEN) + 1):
+        if MAX_ANFRAGEN and _anfragen >= MAX_ANFRAGEN:
+            raise Abbruch(f"Obergrenze von {MAX_ANFRAGEN} Anfragen erreicht (RATSATLAS_MAX_ANFRAGEN): {url}")
+        _anfragen += 1
         warte = ABSTAND - (time.monotonic() - _letzte)
         if warte > 0:
             time.sleep(warte)
