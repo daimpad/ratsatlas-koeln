@@ -21,8 +21,11 @@ _quellen/
 
 # Exploration Köln: Rohdaten und geladene Dateien nur lokal
 explore/_cache/
+# frühere Stichprobendatei mit File-Objekten (jetzt explore/_cache/stichprobe_vorlagen.jsonl)
+explore/ergebnisse/_*.jsonl
 .pytest_cache/
 _site/
 _kacheln/
 _kacheln_arbeit/
 data/raw_vorschau/
+.claude/worktrees/

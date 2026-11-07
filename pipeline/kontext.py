@@ -86,8 +86,12 @@ KENNZAHLEN = {
     "unter_18": ("Anteil unter 18 Jahren", "%", "zensus", "Anteil je Zelle, gewichtet nach Einwohnern; geheim gehaltene Zellen zählen mit 0"),
     "ab_65": ("Anteil ab 65 Jahren", "%", "zensus", "wie „unter 18“"),
     "miete": ("durchschnittliche Nettokaltmiete", "€/m²", "zensus", "Mittel der Zellen, gewichtet nach Wohnungen (Bestandsmieten, kein Mietspiegel)"),
+    # Methodentexte sind für Leser:innen (Karte, Gebietsseiten): keine internen Feldnamen, „Stadtteile“ statt „Ortsteile“
     "bodenrichtwert": ("Bodenrichtwert Wohnbauland (Median)", "€/m²", "bodenrichtwerte",
-                       "Zone, in der eine Zelle liegt (bei überlagerten Zonen zu gleichen Teilen); Median nach Einwohnern; nur baureifes Wohnbauland, ohne bebaute Flächen im Außenbereich; bodenrichtwert_abdeckung: Anteil der Einwohner in einer solchen Zone"),
+                       "Wert der Zone, in der der Mittelpunkt einer 100-m-Zelle liegt (bei überlagerten Zonen zu gleichen "
+                       "Teilen); Median nach Einwohnern; nur baureifes Wohnbauland, ohne bebaute Flächen im Außenbereich; "
+                       f"wohnen mindestens {BRW_HINWEIS_OHNE_ZONE} % der Einwohner außerhalb solcher Zonen, steht beim Wert "
+                       "der Anteil der Einwohner, für den er gilt"),
     "haltestellen": ("Haltestellen", "Anzahl", "haltestellen", "Haltestellen (Steige zusammengefasst) im Gebiet"),
     "kitas": ("Kindertageseinrichtungen", "Anzahl", "kitas", "Einrichtungen im Gebiet"),
     "kita_plaetze_u3": ("Kita-Plätze unter 3 Jahren", "Anzahl", "kitas", "Summe der Einrichtungen im Gebiet"),
@@ -100,7 +104,7 @@ KENNZAHLEN = {
     "wahlbeteiligung": ("Wahlbeteiligung Ratswahl 2025 (geschätzt)", "%", "wahl2025",
                         "Wähler je Stimmbezirk an der Urne, dazu die Briefwähler des Wahlbezirks im Verhältnis der "
                         "Wahlberechtigten mit Sperrvermerk „W“ (Briefwahlschein); Stimmbezirke anteilig nach Adressen "
-                        "auf Ortsteile verteilt; geschätzt; ganze Stadt amtlich; kein Wert für Ortsteile ohne eigenen "
+                        "auf Stadtteile verteilt; geschätzt; ganze Stadt amtlich; kein Wert für Stadtteile ohne eigenen "
                         "Stimmbezirk (in Köln noch ohne Quelle)"),
 }
 OHNE_WERT = {"wahlbeteiligung": "ohne eigenen Stimmbezirk"}   # Grund, wenn ein Ortsteil keinen Wert hat (sonst Mindestgröße)
@@ -608,7 +612,7 @@ def write():
     werte, audit, audit_wahl = kennzahlen()
     zuordnung = {n: b for n, b, _ in _gebiete()[0]}
     stand = {**json.loads(STAND.read_text()), "haltestellen": json.loads(HALT_STAND.read_text())}
-    meta = {"hinweis": "Einordnung, kein Urteil. Alle Werte sind auf Ortsteile umgerechnet (abgeleitet).",
+    meta = {"hinweis": "Einordnung, kein Urteil. Alle Werte sind auf Stadtteile und Stadtbezirke umgerechnet (abgeleitet).",
             "mindest_einwohner": MIN_EINWOHNER,
             "bodenrichtwert_hinweis_ohne_zone": BRW_HINWEIS_OHNE_ZONE,
             "reihenfolge": [k for k in KENNZAHLEN if k != "wahlbeteiligung" or audit_wahl],   # Reihenfolge für Steckbrief und Assistent (die Schlüssel werden sortiert)

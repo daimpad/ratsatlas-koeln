@@ -16,9 +16,19 @@ Kennungen bringt oder mehr als `config.ABRUF_MAX_SEITEN` Seiten folgen. Ob der S
 Lauf geprüft und in der Abrufstatistik vermerkt.
 
 Ein Vollabruf, der am Ende des Zeitfensters oder durch einen Fehler abbricht, wird in der nächsten Nacht an der
-gelesenen Stelle fortgesetzt (`<liste>_fortsetzung` im Zustand, Teilstand in `<datei>.teil.jsonl`). Nach drei
-Nächten in Folge mit Verbindungsabbruch (mögliche Sperre) pausiert der Abruf sieben Tage. Fällt der Abruf aus,
-bleibt der letzte gültige Stand; der Fehler steht in `STAND.json`.
+gelesenen Stelle fortgesetzt (`<liste>_fortsetzung` im Zustand, Teilstand in `<datei>.teil.jsonl`). Keine Fortsetzung
+nach einem Abbruch der Art `liste` (Schleife in links.next), `weiterleitung`, `proxy` oder `adresse` (ungültige
+Adresse): Der nächste Lauf beginnt von vorn.
+
+Nacht mit möglicher Sperre (`moegliche_sperre`, Zähler `sperre_verdacht` im Zustand): Zeitüberschreitung,
+Verbindungsabbruch, abgeschnittene oder unlesbare Antwort, Proxy erreicht die Stadt nicht (Art `sperre`), HTTP 401,
+403 oder 429 (Art `http`) und `aufgegeben` nach 429, 5xx, unlesbarer Antwort oder CONNECT-Antwort 429/503 (abruf.py).
+Nach drei solchen Nächten in Folge pausiert der Abruf sieben Tage; ein vollständiger Lauf setzt den Zähler zurück.
+Fällt der Abruf aus, bleibt der letzte gültige Stand; der Fehler steht in `STAND.json`. Den Zustand sichert
+pages.yml gleich nach dem Abrufschritt, auch wenn ein späterer Schritt scheitert.
+
+Abrufstatistik (`abrufstatistik.tsv`, Spalten STAT_SPALTEN): je Liste eine Zeile und eine Zeile `body` für den Abruf
+des Bodys; Zähler aus abruf.statistik() als Differenz je Zeile, darunter `weiterleitungen` und `proxy`.
 """
 import csv
 import json
@@ -29,10 +39,29 @@ from . import abruf, config
 from .fetch import MIN_ANTEIL, _guard, _jsonl_count, _now, _stamp, _write
 
 UEBERLAPPUNG = timedelta(days=1)
-SPERRE_NAECHTE = 3                 # Nächte in Folge mit Verbindungsabbruch, danach Pause
+SPERRE_NAECHTE = 3                 # Nächte in Folge mit möglicher Sperre (moegliche_sperre), danach Pause
 SPERRE_PAUSE = timedelta(days=7)
+SPERRE_GLEICHE_NACHT = timedelta(hours=12)   # nach einem Verdacht kein weiterer Lauf in derselben Nacht
+# HTTP-Antworten, nach denen die Nacht als Nacht mit möglicher Sperre zählt (Art `http`; 429 endet sonst als
+# `aufgegeben`, das ebenfalls zählt)
+SPERRE_HTTP = (401, 403, 429)
 STAT_SPALTEN = ["datum", "liste", "modus", "seiten", "objekte", "neu", "geaendert", "geloescht", "filter_wirksam",
-                "anfragen", "fehler", "wiederholungen", "bytes", "sekunden", "ergebnis"]
+                "anfragen", "fehler", "wiederholungen", "weiterleitungen", "proxy", "bytes", "sekunden", "ergebnis"]
+# Zähler aus abruf.statistik(), je Zeile der Abrufstatistik als Differenz
+STAT_ZAEHLER = ("anfragen", "fehler", "wiederholungen", "weiterleitungen", "proxy", "bytes", "sekunden")
+# Abbruchsarten, nach denen ein Vollabruf nicht fortgesetzt wird (der nächste Lauf beginnt von vorn)
+OHNE_FORTSETZUNG = ("liste", "weiterleitung", "proxy", "adresse")
+
+
+def moegliche_sperre(fehler):
+    """Zählt dieser Abbruch als Nacht mit möglicher Sperre? Art `sperre` (Zeitüberschreitung, Verbindungsabbruch,
+    abgeschnittene oder unlesbare Antwort, Proxy erreicht die Stadt nicht), `aufgegeben` (nach 429, 5xx, unlesbarer
+    Antwort oder CONNECT-Antwort 429/503) und `http` mit 401, 403 oder 429. Nicht: proxy (Ablehnung in der
+    Ausführungsumgebung), liste, adresse, andere HTTP-Codes (z. B. 404). Eine Weiterleitung (etwa auf die Sperrseite
+    einer vorgeschalteten Firewall) und eine unerwartete Antwortform (`unlesbar`) zählen vorsichtshalber mit."""
+    art = getattr(fehler, "art", "")
+    return art in ("sperre", "aufgegeben", "weiterleitung", "unlesbar") or (
+        art == "http" and getattr(fehler, "code", None) in SPERRE_HTTP)
 
 
 def _zustand():
@@ -61,7 +90,8 @@ class Teilabbruch(abruf.Abbruch):
     """Abbruch mitten in einer Liste; trägt den gelesenen Teil für die Fortsetzung."""
 
     def __init__(self, ursache, objekte, naechste, seiten):
-        super().__init__(str(ursache), getattr(ursache, "art", ""))
+        super().__init__(str(ursache), getattr(ursache, "art", ""), getattr(ursache, "ziel", ""),
+                         getattr(ursache, "code", None))
         self.objekte, self.naechste, self.seiten = objekte, naechste, seiten
 
 
@@ -128,13 +158,29 @@ def _zusammenfuehren(pfad, neu_objekte, voll):
 
 
 def _statistik(zeile):
+    """Hängt eine Zeile an die Abrufstatistik an. Eine ältere Datei mit anderem Kopf (z. B. ohne `weiterleitungen` und
+    `proxy`) wird zuvor auf STAT_SPALTEN umgestellt; fehlende Werte bleiben leer."""
     config.EXPORT.mkdir(parents=True, exist_ok=True)
-    neu = not config.ABRUFSTATISTIK.exists()
-    with open(config.ABRUFSTATISTIK, "a", encoding="utf-8", newline="") as f:
+    zeilen, modus = [zeile], "a"
+    if not config.ABRUFSTATISTIK.exists():
+        modus = "w"
+    else:
+        with open(config.ABRUFSTATISTIK, encoding="utf-8", newline="") as f:
+            r = csv.DictReader(f, delimiter="\t")
+            if r.fieldnames != STAT_SPALTEN:   # ältere Datei: neu schreiben, Werte nach Spaltennamen übernehmen
+                zeilen, modus = [*r, zeile], "w"
+    with open(config.ABRUFSTATISTIK, modus, encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, STAT_SPALTEN, delimiter="\t", lineterminator="\n", extrasaction="ignore")
-        if neu:
+        if modus == "w":
             w.writeheader()
-        w.writerow(zeile)
+        w.writerows(zeilen)
+
+
+def _differenz(zeile, vorher):
+    """Trägt die Zähler aus abruf.statistik() seit `vorher` in die Zeile ein."""
+    nachher = abruf.statistik()
+    zeile.update({k: (round(nachher[k] - vorher[k], 1) if k == "sekunden" else nachher[k] - vorher[k])
+                  for k in STAT_ZAEHLER})
 
 
 def _teil(pfad):
@@ -167,16 +213,18 @@ def _abruf_liste(name, url, pfad, schluessel):
         return alle
     except Teilabbruch as e:
         # Vollabruf: gelesenen Teil sichern und morgen fortsetzen; eine veraltete Folgeseite (HTTP 4xx gleich zu
-        # Beginn der Fortsetzung) verwirft die Fortsetzung, dann beginnt der nächste Lauf von vorn
+        # Beginn der Fortsetzung) oder ein Abbruch aus OHNE_FORTSETZUNG (Schleife, Weiterleitung, Proxy, Adresse)
+        # verwirft die Fortsetzung, dann beginnt der nächste Lauf von vorn
         veraltet = fort and e.art == "http" and e.seiten == fort.get("seiten", 0)
-        if not seit and e.naechste and e.seiten and e.art != "liste" and not veraltet:
+        verwerfen = veraltet or e.art in OHNE_FORTSETZUNG
+        if not seit and e.naechste and e.seiten and not verwerfen:
             config.RAW.mkdir(parents=True, exist_ok=True)
             _write(_teil(pfad), "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in e.objekte))
             _zustand_setzen(f"{schluessel}_fortsetzung", {"naechste": e.naechste, "seiten": e.seiten,
                                                          "start": start.isoformat(timespec="seconds")})
             zeile["ergebnis"] = f"unterbrochen nach {e.seiten} Seiten, Fortsetzung im nächsten Lauf: {e}"[:300]
         else:
-            if veraltet or e.art == "liste":
+            if verwerfen:
                 _zustand_setzen(f"{schluessel}_fortsetzung", None)
                 _teil(pfad).unlink(missing_ok=True)
             zeile["ergebnis"] = f"abbruch: {e}"[:300]
@@ -186,9 +234,23 @@ def _abruf_liste(name, url, pfad, schluessel):
         zeile["ergebnis"] = f"abbruch: {e}"[:300]
         raise
     finally:
-        nachher = abruf.statistik()
-        zeile.update({k: (round(nachher[k] - vorher[k], 1) if k == "sekunden" else nachher[k] - vorher[k])
-                      for k in ("anfragen", "fehler", "wiederholungen", "bytes", "sekunden")})
+        _differenz(zeile, vorher)
+        _statistik(zeile)
+
+
+def _abruf_body():
+    """Abruf des Bodys mit eigener Zeile `body` in der Abrufstatistik."""
+    vorher = abruf.statistik()
+    zeile = {"datum": _now(), "liste": "body"}
+    try:
+        body = abruf.get_json(config.OPARL_BODY)
+        zeile.update(objekte=1, ergebnis="ok")
+        return body
+    except (abruf.Abbruch, RuntimeError) as e:
+        zeile["ergebnis"] = f"abbruch: {e}"[:300]
+        raise
+    finally:
+        _differenz(zeile, vorher)
         _statistik(zeile)
 
 
@@ -265,20 +327,28 @@ def beratungen(papers, meetings):
 
 
 def fetch_all():
-    """Vollständiger bzw. inkrementeller Lauf. Ein Abbruch hält den letzten gültigen Stand und vermerkt den Fehler."""
+    """Vollständiger bzw. inkrementeller Lauf. Ein Abbruch hält den letzten gültigen Stand und vermerkt den Fehler;
+    Abbrüche nach `moegliche_sperre` zählen als Nacht mit möglicher Sperre."""
     config.RAW.mkdir(parents=True, exist_ok=True)
     # Sperre und Zeitfenster sind kein Ausfall: der Lauf wird übersprungen, ohne den Stand als fehlgeschlagen zu markieren
-    lokal = config.OPARL_BODY.startswith(("http://127.0.0.1", "http://localhost"))
+    lokal = abruf.lokal(config.OPARL_BODY)
     grund = ("Abruf gesperrt: Die Stadt Köln ist noch nicht informiert (RATSATLAS_STADT_INFORMIERT)"
              if not abruf.freigegeben(config.OPARL_BODY) else
              f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr" if not lokal and not abruf.im_zeitfenster()
              else None)
     verdacht = _zustand().get("sperre_verdacht") or {}
+    if not grund and verdacht.get("zuletzt") and not lokal:
+        # nach einer Nacht mit möglicher Sperre in derselben Nacht kein weiterer Lauf (z. B. Push oder Knopfdruck)
+        seit = datetime.now(timezone.utc) - datetime.fromisoformat(verdacht["zuletzt"])
+        if seit < SPERRE_GLEICHE_NACHT:
+            grund = (f"möglicher Sperrverdacht vor {int(seit.total_seconds() // 60)} Minuten; in derselben Nacht kein "
+                     "weiterer Abruf")
     if not grund and verdacht.get("naechte", 0) >= SPERRE_NAECHTE:
         bis = datetime.fromisoformat(verdacht["zuletzt"]) + SPERRE_PAUSE
         if datetime.now(timezone.utc) < bis:
-            grund = (f"Abruf pausiert bis {bis.date().isoformat()}: {verdacht['naechte']} Nächte in Folge "
-                     "Verbindungsabbruch (mögliche Sperre); bitte Kontakt zur Stadt aufnehmen")
+            grund = (f"Abruf pausiert bis {bis.date().isoformat()}: {verdacht['naechte']} Nächte in Folge mit "
+                     "möglicher Sperre (Verbindungsabbruch, abgeschnittene oder unlesbare Antwort, HTTP 401/403/429 "
+                     "oder aufgegeben nach 429/5xx); bitte Kontakt zur Stadt aufnehmen")
     if grund:
         stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
         stand["abruf_uebersprungen"] = {"zeit": _now(), "grund": grund}
@@ -286,20 +356,30 @@ def fetch_all():
         print(f"Abruf übersprungen ({grund}); letzter Stand bleibt.")
         return
     try:
-        body = abruf.get_json(config.OPARL_BODY)
+        body = _abruf_body()
         fetch_organizations(body)
         papers = fetch_papers(body)
         meetings = fetch_meetings(body)
         beratungen(papers, meetings)
         _stamp("abruf_ok")
         _zustand_setzen("sperre_verdacht", None)
+    except (KeyError, TypeError, AttributeError) as e:   # gültiges JSON in unerwarteter Form (z. B. Body ohne Listen)
+        e = abruf.Abbruch(f"unerwartete Antwortform ({type(e).__name__}: {e})", "unlesbar")
+        _abbruch_vermerken(e, verdacht)
     except (abruf.Abbruch, RuntimeError) as e:
-        if getattr(e, "art", "") == "sperre":
-            _zustand_setzen("sperre_verdacht", {"naechte": verdacht.get("naechte", 0) + 1, "zuletzt":
-                                                datetime.now(timezone.utc).isoformat(timespec="seconds")})
-        stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
-        stand["abruf_fehler"] = {"zeit": _now(), "meldung": str(e)[:300]}
-        _write(config.STAND, json.dumps(stand, ensure_ascii=False, indent=1) + "\n")
-        print(f"Abruf abgebrochen, letzter gültiger Stand bleibt: {e}")
-        if os.environ.get("RATSATLAS_STRENG") == "ja":
-            raise
+        _abbruch_vermerken(e, verdacht)
+
+
+def _abbruch_vermerken(e, verdacht):
+    """Abbruch in STAND.json vermerken und, falls `moegliche_sperre`, als Nacht mit möglicher Sperre zählen."""
+    if moegliche_sperre(e):
+        _zustand_setzen("sperre_verdacht", {
+            "naechte": verdacht.get("naechte", 0) + 1,
+            "zuletzt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "art": getattr(e, "art", ""), "code": getattr(e, "code", None), "meldung": str(e)[:300]})
+    stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
+    stand["abruf_fehler"] = {"zeit": _now(), "meldung": str(e)[:300]}
+    _write(config.STAND, json.dumps(stand, ensure_ascii=False, indent=1) + "\n")
+    print(f"Abruf abgebrochen, letzter gültiger Stand bleibt: {e}")
+    if os.environ.get("RATSATLAS_STRENG") == "ja":
+        raise e

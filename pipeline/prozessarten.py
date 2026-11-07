@@ -17,7 +17,9 @@ from . import actors, besetzung, config, maske, soll
 # Gremienarten der OParl-API, die Entscheidungen treffen oder beraten (ohne Fraktionen, Gruppen und interne Gremien)
 ARTEN = {"Rat": "rat", "Ratsgremien": "ausschuss", "Bezirksvertretungen": "bezirksvertretung",
          "Beiräte und Kommissionen": "beirat"}
-# Abschnitt der Zuständigkeitsordnung, dessen Titel vom Namen des Gremiums in der OParl-API abweicht
+# Abschnitt der Zuständigkeitsordnung, dessen Titel vom Namen des Gremiums in der OParl-API abweicht. Offen: Eintrag und
+# Zuständigkeitsordnung (soll.py) stammen aus Bonn; in Köln wirkt der Eintrag nicht (kein Gremium dieses Namens). Kölner
+# Abweichungen erst mit der Kölner Zuständigkeitsordnung und den gemessenen Gremiennamen.
 ZUSTO_ALIAS = {"Ausschuss für Soziales, Migration, Gesundheit, Wohnen und Senioren":
                "Ausschuss für Soziales, Migration, Gesundheit und Senioren"}
 BEISPIELE = 3

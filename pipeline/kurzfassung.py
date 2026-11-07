@@ -21,7 +21,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import config, sprachmodell, volltext
+from . import actors, config, sprachmodell, volltext
 
 API = "https://api.mistral.ai/v1/chat/completions"
 # Fassung 2 (21.10.2026): großes Modell und genauere Anweisung nach der KI-Vorprüfung der ersten Stichprobe
@@ -47,9 +47,11 @@ FREIGEGEBEN = True   # Prüfung von Hand der Stichprobe v7 (22.10.2026): 18 zutr
 #                       Freigabe durch den Auftraggeber mit geschärftem Hinweis
 VERZEICHNIS = Path(os.environ.get("KURZFASSUNGEN", config.ROOT / "_kurzfassungen"))
 # Absender und Gremien, die in einer Kurzfassung nur stehen dürfen, wenn Titel oder Text sie nennen (KI-Vorprüfung v4:
-# „Die Grünen beantragen“ und „dem Rat vorgelegt“ ohne Beleg)
-PARTEIEN = {"CDU": r"\bCDU\b", "SPD": r"\bSPD\b", "Grüne": r"\bGrüne|\bGRÜNE|Bündnis 90", "FDP": r"\bFDP\b",
-            "Linke": r"\bLinke|\bLINKE", "Volt": r"\bVolt\b", "BBB": r"\bBBB\b|Bürger Bund", "AfD": r"\bAfD\b"}
+# „Die Grünen beantragen“ und „dem Rat vorgelegt“ ohne Beleg). Köln: Fraktionen und Gruppen aus actors.PARTIES (ohne
+# Datumsregeln), damit beide Listen übereinstimmen; die Bonner Wählergruppe BBB ist damit entfernt. Kurzfassungen sind
+# für Köln abgeschaltet (config: „kurzfassungen“, zweiter Lauf); Rahmen (Antwort der Stadt Bonn), Anweisungen an das
+# Sprachmodell und Straßenliste in diesem Modul stammen noch aus Bonn (offen).
+PARTEIEN = actors.partei_muster()
 GREMIEN = {"Rat": r"\b(Rat|Rates|Rats\w*|Stadtrat\w*)\b", "Bezirksvertretung": r"Bezirksvertretung",
            "Ausschuss": r"[Aa]usschuss"}
 # Hausnummer hinter einer Straßen-Endung („Hauptstraße 12a“, „Bornheimer Str 5“, „Am Burggraben 3“) oder hinter einem

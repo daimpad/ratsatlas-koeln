@@ -5,6 +5,13 @@ Referenzen „NNNN/JJJJ“ und „AN/NNNN/JJJJ“, `consultation` mit direktem V
 `location` nur mit `subLocality`, Paginierung über `links.next`.
 """
 import json
+import os
+import tempfile
+
+# Sperrdatei der Messskripte (explore/abruf.py) während der Tests nicht in ~/.cache, sondern in einem Temp-Ordner
+os.environ.setdefault("RATSATLAS_SPERRE", tempfile.mkdtemp(prefix="ratsatlas-sperre-"))
+import socket
+import socketserver
 import threading
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -12,6 +19,41 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import pytest
 
 from pipeline import config
+
+
+@pytest.fixture
+def roher_server():
+    """Fabrik für lokale TCP-Server auf 127.0.0.1, die abgeschnittene oder unlesbare Antworten senden: `starten(antwort)`
+    liest den Kopf jeder Anfrage, sendet `antwort` (Bytes, unverändert) und schließt die Verbindung. Der Server hat
+    `anfragen` (erste Zeile jeder Anfrage) und `url`; am Ende des Tests wird er beendet."""
+    gestartet = []
+
+    def starten(antwort):
+        anfragen = []
+
+        class H(socketserver.BaseRequestHandler):
+            def handle(self):
+                daten = b""
+                while b"\r\n\r\n" not in daten:
+                    teil = self.request.recv(4096)
+                    if not teil:
+                        break
+                    daten += teil
+                anfragen.append(daten.split(b"\r\n", 1)[0].decode("latin-1"))
+                self.request.sendall(antwort)
+                self.request.shutdown(socket.SHUT_WR)
+
+        server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), H)
+        server.daemon_threads = True
+        server.anfragen, server.url = anfragen, f"http://127.0.0.1:{server.server_address[1]}"
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        gestartet.append(server)
+        return server
+
+    yield starten
+    for server in gestartet:
+        server.shutdown()
+        server.server_close()
 
 
 class Daten:
