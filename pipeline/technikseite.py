@@ -334,7 +334,7 @@ def zeitplan_svg(wfs, format_):
         for st in range(0, 25, 3):
             teile.append(f'<text class="tk-achse" x="{x0 - 8}" y="{py(st * 60) + 4:.0f}" text-anchor="end">{st:02d}:00</text>'
                          f'<line class="tk-raster" x1="{x0 - 4}" y1="{py(st * 60):.0f}" x2="{HOCH - 4}" y2="{py(st * 60):.0f}"/>')
-        teile.append(f'<text class="tk-kopf" x="4" y="16">Am Tag (UTC)</text>')
+        teile.append('<text class="tk-kopf" x="4" y="16">Am Tag (UTC)</text>')
         frei = oben
         for minuten, w, c in termine:
             kurz = WORKFLOW_TEXT[w["datei"]][0]
