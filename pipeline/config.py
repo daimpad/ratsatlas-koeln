@@ -3,7 +3,8 @@ import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-RAW = ROOT / "data" / "raw"
+# Rohdaten; die Kartenvorschau ohne Ratsvorlagen nutzt ein eigenes Verzeichnis (RATSATLAS_RAW, tools/vorschau.py)
+RAW = ROOT / os.environ.get("RATSATLAS_RAW", "data/raw")
 GEO = ROOT / "data" / "geo"
 BUILD = ROOT / "data" / "build"
 EXPORT = ROOT / "data" / "export"
@@ -117,7 +118,7 @@ PILOT_ORTSTEIL = None
 # Zusatzthemen aus Bonn: deaktiviert, nicht gelöscht (CLAUDE.md 5.4, Inventur Phase 0); einzeln freizugeben
 ZUSATZTHEMEN = {
     "haushalt": False, "baustellen": False, "anliegen": False, "wahlen": False, "themenseiten": False,
-    "kontext": False, "soll": False, "chat": False,
+    "kontext": True, "soll": False, "chat": False,
     # zweiter Lauf (Entscheidung 04.11.2026)
     "einfache_sprache": False, "kurzfassungen": False, "mitmachen": False, "besetzung": False,
     # Seite technik/ (aus den Workflows erzeugt; für Köln seit Phase 5)

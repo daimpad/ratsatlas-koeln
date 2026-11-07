@@ -36,6 +36,10 @@ SCHRITTE = {
                                          "verortet Vorlagen nach festen Regeln und leitet den Stand jedes Vorgangs ab."),
     "export": ("Export", "Schreibt je Gebiet eine Datei für die Karte, dazu Feeds, Kalender, GeoJSON und "
                          "Prüfprotokolle."),
+    "kontext": ("Kennzahlen", "Rechnet Kennzahlen je Stadtteil aus Zensus, Bodenrichtwerten, Klimaanalyse, Kitas, Schulen "
+                              "und Haltestellen (Land und Bund) und legt zuschaltbare Flächen und Punkte für die Karte ab."),
+    "ebenen": ("Ebenen", "Bereitet weitere offene Daten für die Karte auf, etwa Förderprogramme, Wohnbaupotenziale, "
+                         "Schutzgebiete und Hochwassergefahr, mit Quelle und Lizenz je Ebene."),
     "package": ("Datenpaket", "Packt Daten, Prüfprotokolle und Lizenzen in ein Zip-Paket zum Herunterladen."),
 }
 

@@ -259,7 +259,8 @@ def write_dcat(path, data_start, modified, kurzfassungen=False):
         "dct:language": {"@id": "http://publications.europa.eu/resource/authority/language/DEU"},
         "dct:accrualPeriodicity": {"@id": "http://publications.europa.eu/resource/authority/frequency/DAILY"},
         "dct:modified": {"@type": "xsd:date", "@value": modified},
-        "dct:temporal": {"@type": "dct:PeriodOfTime", "dcat:startDate": {"@type": "xsd:date", "@value": data_start}},
+        **({"dct:temporal": {"@type": "dct:PeriodOfTime", "dcat:startDate": {"@type": "xsd:date", "@value": data_start}}}
+           if data_start else {}),   # Vorschau ohne Vorlagen: kein Zeitraum
         "dct:spatial": {"@type": "dct:Location", "rdfs:label": config.STADT_NAME,
                         "dcat:bbox": {"@type": "http://www.opengis.net/ont/geosparql#wktLiteral", "@value": _bbox_wkt()}},
         "dct:publisher": {"@type": "foaf:Agent", "foaf:name": config.SEITENNAME,
@@ -284,12 +285,15 @@ def write_dcat(path, data_start, modified, kurzfassungen=False):
                    "Mit einem Sprachmodell aus dem Text der Hauptdokumente formulierte Kurzfassungen, abgeleitet und "
                    "gekennzeichnet; kein Zitat, Einzelheiten können ungenau sein. Maßgeblich ist das Original.")]
              if kurzfassungen else [])
-          + ([dist("Kontextdaten je Ortsteil (JSON)", f"{config.STADT}/kontext.json", "application/json", "dl-de-by",
-                   "Kennzahlen je Ortsteil, Stadtbezirk und ganz Bonn zur Einordnung von Vorlagen: Einwohner und Altersanteile "
-                   "und Nettokaltmiete (Zensus 2022, © Destatis), Bodenrichtwert Wohnbauland (BORIS NRW), Haltestellen (VRS), "
-                   "Kitas (Land NRW), Hitze (Klimaanalyse NRW), Überschwemmungsgebiete (Land NRW), Wahlbeteiligung der Ratswahl 2025 "
-                   "(geschätzt; IT.NRW, Zuordnung über das Straßenverzeichnis 2020 der Stadt); auf Ortsteile umgerechnet "
-                   "(abgeleitet), je Kennzahl mit Quelle, Lizenz und Stand.")]
+          + ([dist("Kennzahlen je Stadtteil (JSON)", f"{config.STADT}/kontext.json", "application/json", "dl-de-by",
+                   f"Kennzahlen je Stadtteil, Stadtbezirk und für ganz {config.STADT_NAME} zur Einordnung von Vorlagen: "
+                   "Einwohner und Altersanteile und Nettokaltmiete (Zensus 2022, © Destatis), Bodenrichtwert Wohnbauland "
+                   "(BORIS NRW), Haltestellen (VRS), Kitas und Schulen (Land NRW), Hitze (Klimaanalyse NRW), "
+                   "Überschwemmungsgebiete (Land NRW); auf Stadtteile umgerechnet (abgeleitet), je Kennzahl mit Quelle, "
+                   "Lizenz und Stand."),
+              dist("Kartenebenen (JSON)", f"{config.STADT}/ebenen.json", "application/json", "dl-de-by",
+                   "Verzeichnis der zuschaltbaren Kartenebenen aus offenen Daten der Stadt, des Landes und des Bundes mit "
+                   "Quelle, Lizenz und Stand je Ebene; die Flächen liegen unter flaechen/ebene_*.json.")]
              if config.ZUSATZTHEMEN.get("kontext") and (config.ROOT / "data" / "kontext" / "STAND.json").exists() else []),
     }
     path.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n")

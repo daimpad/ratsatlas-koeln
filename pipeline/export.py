@@ -299,7 +299,8 @@ def export_all():
     areas["gesamt"] = [r[0] for r in db.execute("SELECT id FROM paper")]
     for pid in areas["gesamt"]:
         detail(pid)
-    _dump(out / "zeit.json", _time_index(db, areas, cache))
+    if cache:   # Vorschau ohne Vorlagen: keine Zeitleiste (die Seite blendet sie ohne zeit.json aus)
+        _dump(out / "zeit.json", _time_index(db, areas, cache))
     _dump(out / "prozesse.json", _paths(db, cache))
 
     _dump(out / "suche.json", _search_index(cache, areas, names))
@@ -322,7 +323,7 @@ def export_all():
     if kurz:
         _write_tsv(out / "kurzfassungen.tsv", KURZ_COLUMNS,
                    [(ref, k["text"], k["modell"], k["erzeugt"], KURZ_HINWEIS) for ref, k in sorted(kurz.items())])
-    publish.write_dcat(out / "dcat.jsonld", min(p["date"] for p in cache.values() if p["date"]),
+    publish.write_dcat(out / "dcat.jsonld", min((p["date"] for p in cache.values() if p["date"]), default=None),
                        stand[:10] or datetime.now(timezone.utc).date().isoformat(), kurzfassungen=bool(kurz))
     n_shards = chat.write_chat(out / "chat", db, cache, meetings, sources, _meta(db, True)) if _an("chat") else 0
     # Bebauungspläne: Register je Plannummer (Grundlage der Planchronik); leer, bis Geltungsbereiche vorliegen
@@ -354,6 +355,7 @@ def export_all():
     _dump(out / "index.json", {"meta": _meta(db, stadt=config.STADT_NAME, seitenname=config.SEITENNAME,
                                              funktionen=dict(config.ZUSATZTHEMEN),
                                              testdaten=bool(_stand().get("testdaten")),
+                                             vorschau=bool(_stand().get("vorschau")),
                                              abruf_fehler=_stand().get("abruf_fehler")), **index})
     db.close()
     print(f"{config.STADT_NAME}: {len(index['ortsteile'])} Stadtteile, {len(index['bezirke'])} Bezirke, "

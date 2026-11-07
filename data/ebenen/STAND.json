@@ -1,0 +1,74 @@
+{
+ "baupotenziale": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de",
+  "objekte": 1026,
+  "quelle": "Stadt Köln, Baupotenziale (automatisiert ermittelt, ohne Prüfung im Einzelfall)",
+  "titel": "Wohnbaupotenziale (Baulücken, Aufstockung, Umstrukturierung)",
+  "url": "https://open.nrw/dataset/3646d09a-03c4-4079-8fad-d5a453bca22e"
+ },
+ "bplan_aufstellung": {
+  "fehler": "ArcGIS-Dienst der Stadt brach die Verbindung ab (07.11.2026); nicht wiederholt",
+  "versucht": "2026-11-07"
+ },
+ "denkmaeler": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de",
+  "objekte": 8588,
+  "quelle": "Stadt Köln, Denkmalliste",
+  "titel": "Baudenkmäler (Denkmalliste)",
+  "url": "https://open.nrw/dataset/41a14703-ad40-4a12-b498-2ec92a6bf903"
+ },
+ "fahrradstrassen": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de",
+  "objekte": 2280,
+  "quelle": "Stadt Köln, Fahrradstraßen",
+  "titel": "Fahrradstraßen (eingerichtet und in Planung)",
+  "url": "https://open.nrw/dataset/c639e607-a653-4fb1-bb5f-feafd92d4fb9"
+ },
+ "hochwasser": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero 2.0 (Land NRW; Angabe von opengeodata.nrw.de, nicht einzeln geprüft)",
+  "objekte": 3,
+  "quelle": "Land NRW, Hochwassergefahrenkarten nach HWRM-RL, Überschwemmungsgrenzen",
+  "titel": "Hochwassergefahr (HQ100 und HQextrem)",
+  "url": "https://www.opengeodata.nrw.de/produkte/umwelt_klima/wasser/hochwasser/hwrm/"
+ },
+ "lebenswerte_veedel": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de",
+  "objekte": 19,
+  "quelle": "Stadt Köln, Programm „Lebenswerte Veedel – Bürger*innen- und Sozialraumorientierung in Köln“",
+  "titel": "Programm „Lebenswerte Veedel“ (Sozialräume mit Förderung)",
+  "url": "https://open.nrw/dataset/bdfb64ad-dee9-473c-8fe0-fff8e78e3bf4"
+ },
+ "naturschutz": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero 2.0 (Land NRW)",
+  "objekte": 157,
+  "quelle": "LANUK NRW, INSPIRE Schutzgebiete in Nordrhein-Westfalen (OGC API)",
+  "titel": "Natur- und Landschaftsschutzgebiete",
+  "url": "https://ogc-api.nrw.de/inspire-ps-schutzgebiete/v1"
+ },
+ "sanierungsgebiete": {
+  "fehler": "ArcGIS-Dienst der Stadt liefert eine Webseite statt Daten (07.11.2026)",
+  "versucht": "2026-11-07"
+ },
+ "sozialraeume": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de",
+  "objekte": 20,
+  "quelle": "Stadt Köln, Sozialräume Köln",
+  "titel": "Sozialräume",
+  "url": "https://open.nrw/dataset/sozialraume-koln-k"
+ },
+ "stimmbezirke": {
+  "abgerufen": "2026-11-07",
+  "lizenz": "dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de",
+  "objekte": 503,
+  "quelle": "Stadt Köln, Stimmbezirke Köln",
+  "titel": "Stimmbezirke",
+  "url": "https://open.nrw/dataset/stimmbezirke-koln-k"
+ }
+}
