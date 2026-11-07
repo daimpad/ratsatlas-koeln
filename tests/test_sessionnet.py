@@ -1463,11 +1463,12 @@ def test_seitengrenze_gilt_je_lauf(oparl, monkeypatch):
     assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["2", "3"]
     z = [r for r in _statistik() if r["liste"] == "papers"][-1]
     assert (z["modus"], z["seiten"], z["ergebnis"]) == ("voll, fortgesetzt", "3", "ok")
-    # die Grenze gilt weiter je Lauf: ab der dritten Seite dieses Laufs Abbruch, Seiten insgesamt in der Meldung
+    # die Grenze gilt weiter je Lauf: ab der dritten Seite dieses Laufs Abbruch, Seiten insgesamt in der Meldung (unter
+    # der Gesamtgrenze von 3 × 2 Seiten, test_gesamtgrenze_der_seiten_ueber_fortsetzungen)
     monkeypatch.setattr(abruf, "get_json", lambda url, pausen=None: {"data": [{"id": url}], "links": {"next": url + "x"}})
     with pytest.raises(sessionnet.Teilabbruch) as e:
-        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?p", objekte=[{"id": "a"}], seiten=10)
-    assert e.value.art == "liste" and "in einem Lauf" in str(e.value) and e.value.seiten == 12
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?p", objekte=[{"id": "a"}], seiten=1)
+    assert e.value.art == "liste" and "in einem Lauf" in str(e.value) and e.value.seiten == 3
 
 
 def test_net_prueft_das_ziel_einer_weiterleitung(monkeypatch):
@@ -1493,3 +1494,142 @@ def test_net_prueft_das_ziel_einer_weiterleitung(monkeypatch):
         for server in (stadt, start):
             server.shutdown()
             server.server_close()
+
+
+# --- Runde 8: unlesbares Ziel einer Weiterleitung, Prüfung von letzter_abbruch, Fehleranzeige im Export, zu tief
+# verschachtelter Zustand, Retry-After auf dem letzten Versuch, Gesamtgrenze der Seiten über Fortsetzungen -------------
+
+@pytest.mark.parametrize("ort", ["http://[::1", "http://[blocked]/"])
+def test_weiterleitung_mit_unlesbarem_ziel(oparl, monkeypatch, ort):
+    """302 mit unlesbarem Location-Kopf: Die Anfrage hat die Gegenseite erreicht und wird gezählt; Art
+    `weiterleitung` mit dem Ziel im Rohtext (kein ValueError als Programmfehler), Nacht mit möglicher Sperre."""
+    server = _lokaler_server(lambda methode, pfad: (302, {"Location": ort}, b""))
+    try:
+        monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+        vorher = abruf.statistik()
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(f"{server.url}/body", pausen=[0, 0])
+        assert (e.value.art, e.value.code, e.value.ziel) == ("weiterleitung", 302, ort) and ort in str(e.value)
+        assert sessionnet.moegliche_sperre(e.value) and server.anfragen == [("GET", "/body")]
+        nachher = abruf.statistik()
+        assert {k: nachher[k] - vorher[k] for k in ("anfragen", "fehler", "weiterleitungen")} == \
+            {"anfragen": 1, "fehler": 1, "weiterleitungen": 1}
+        monkeypatch.setattr(config, "OPARL_BODY", f"{server.url}/body")
+        sessionnet.fetch_all()                                   # kein Traceback
+    finally:
+        server.shutdown()
+        server.server_close()
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert zustand["sperre_verdacht"]["art"] == zustand["letzter_abbruch"]["art"] == "weiterleitung"
+    z = [r for r in _statistik() if r["liste"] == "body"][-1]
+    assert (z["anfragen"], z["weiterleitungen"]) == ("1", "1") and z["ergebnis"].startswith("abbruch: Weiterleitung")
+
+
+@pytest.mark.parametrize("ort", ["http://[::1", "http://[blocked]/"])
+def test_net_bricht_bei_unlesbarem_ziel_ohne_wiederholung_ab(monkeypatch, ort):
+    """pipeline/net.py: Ein unlesbares Ziel einer Weiterleitung gilt vorsichtshalber als Adresse der Stadt
+    (AbrufVerweigert); eine Anfrage, keine Wiederholung, kein ValueError."""
+    from pipeline import net
+    server = _lokaler_server(lambda methode, pfad: (302, {"Location": ort}, b""))
+    try:
+        monkeypatch.setattr(net, "_OEFFNER", net._oeffner({}))
+        monkeypatch.setattr(net, "time", types.SimpleNamespace(sleep=lambda s: pytest.fail("keine Wiederholung")))
+        with pytest.raises(net.AbrufVerweigert, match="unlesbarem Ziel"):
+            net.get_json(f"{server.url}/x")
+        assert server.anfragen == [("GET", "/x")]
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+@pytest.mark.parametrize("eintrag", [
+    {"zuletzt": "2026-11-09T23:10:00", "art": "http"},           # ohne Zone
+    {"zuletzt": "kaputt", "art": "http"}, {"zuletzt": 1762726500}, {"zuletzt": None}, {"art": "proxy"},
+    {"zuletzt": "2999-01-01T00:00:00+00:00", "art": "http"},     # in der Zukunft
+    "kaputt", ["2026-11-09T22:00:00+00:00"], 5])                 # kein Objekt
+def test_unlesbarer_oder_kuenftiger_letzter_abbruch_gilt_als_jetzt(oparl, monkeypatch, capsys, eintrag):
+    """12-Stunden-Regel nach jedem Abbruch: ein unlesbarer, zonenloser, fehlender oder künftiger Zeitpunkt und ein
+    Eintrag, der kein Objekt ist, gelten als „jetzt“ (in dieser Nacht keine Anfrage), werden neu geschrieben und
+    gemeldet; kein Traceback, keine Dauersperre (in der nächsten Nacht wieder ein Abruf)."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch)
+    config.RAW.mkdir(parents=True, exist_ok=True)
+    config.ZUSTAND.write_text(json.dumps({"letzter_abbruch": eintrag}))
+    sessionnet.fetch_all()
+    assert oparl.anfragen == []
+    assert "derselben Nacht" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
+    neu = json.loads(config.ZUSTAND.read_text())["letzter_abbruch"]
+    assert neu["zuletzt"] == NACHT_0.isoformat(timespec="seconds")
+    assert "letzter_abbruch" in capsys.readouterr().err
+    uhr.t = _nacht(1)
+    sessionnet.fetch_all()
+    assert oparl.anfragen and "abruf_ok" in json.loads(config.STAND.read_text())
+
+
+def test_export_zeigt_im_index_nur_fehler_nach_dem_letzten_vollstaendigen_abruf(oparl):
+    """index.json (meta.abruf_fehler) aus STAND.json: ein Fehler vor dem letzten vollständigen Abruf entfällt, ein
+    späterer wird gezeigt."""
+    from pipeline import export
+    sessionnet.fetch_all()
+    build.build()
+    fehler = {"zeit": "2026-11-08T22:30:00+00:00", "meldung": "HTTP 404"}
+    for ok, erwartet in (("2026-11-09T22:40:00+00:00", None), ("2026-11-07T22:40:00+00:00", fehler)):
+        sessionnet._stand_setzen(abruf_fehler=fehler, abruf_ok=ok)
+        export.export()
+        assert json.loads((config.EXPORT / config.STADT / "index.json").read_text())["meta"]["abruf_fehler"] == erwartet
+
+
+def test_zu_tief_verschachtelter_zustand_bricht_ohne_anfrage_ab(oparl):
+    """zustand_abruf.json zu tief verschachtelt (json.loads: RecursionError): ZustandUnlesbar, keine Anfrage, Fehler in
+    STAND.json, Datei unverändert."""
+    inhalt = "[" * 100000 + "]" * 100000
+    config.RAW.mkdir(parents=True, exist_ok=True)
+    config.ZUSTAND.write_text(inhalt, encoding="utf-8")
+    with pytest.raises(sessionnet.ZustandUnlesbar):
+        sessionnet.fetch_all()
+    assert oparl.anfragen == [] and config.ZUSTAND.read_text(encoding="utf-8") == inhalt
+    assert "keine Anfrage" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+
+
+@pytest.mark.parametrize("pausen, antworten", [
+    ([], [(429, {"Retry-After": "bald"}, b"")]),
+    ([0], [(429, {}, b""), (429, {"Retry-After": "bald"}, b"")]),
+    ([0], [(503, {}, b""), (429, {"Retry-After": "Wed, 32 Oct 2026 07:28:00 GMT"}, b"")])])
+def test_unlesbarer_retry_after_auf_dem_letzten_versuch(monkeypatch, pausen, antworten):
+    """Unlesbarer Retry-After auf dem letzten Versuch (auch ganz ohne Pausen): aufgegeben mit `nicht_vor` = jetzt +
+    7 Tage, wie auf einem früheren Versuch."""
+    antworten = iter(antworten)
+    server = _lokaler_server(lambda methode, pfad: next(antworten))
+    try:
+        monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+        _nicht_lokal(monkeypatch)
+        _scheinuhr(monkeypatch)
+        gewartet = _scheinzeit(monkeypatch)
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(f"{server.url}/body", pausen=pausen)
+        assert (e.value.art, e.value.code) == ("aufgegeben", 429) and len(server.anfragen) == len(pausen) + 1
+        assert e.value.nicht_vor == NACHT_0 + abruf.RETRY_AFTER_UNLESBAR and gewartet == pausen
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_gesamtgrenze_der_seiten_ueber_fortsetzungen(oparl, monkeypatch):
+    """Ein Vollabruf über Fortsetzungen hinweg liest höchstens ABRUF_MAX_SEITEN_FAKTOR × ABRUF_MAX_SEITEN Seiten (Schutz
+    gegen eine Liste, die endlos neue Kennungen erzeugt): danach Art `liste`, Fortsetzung verworfen, Listenfehler."""
+    monkeypatch.setattr(config, "ABRUF_MAX_SEITEN", 2)
+    gesamt = config.ABRUF_MAX_SEITEN_FAKTOR * 2
+    config.RAW.mkdir(parents=True, exist_ok=True)
+    teil = config.RAW / "papers.teil.jsonl"
+    teil.write_text("".join(json.dumps(p) + "\n" for p in oparl.papers[:2]))
+    config.ZUSTAND.write_text(json.dumps({"papers_fortsetzung": {
+        "naechste": f"{oparl.b}/papers?page=2", "seiten": gesamt - 1, "start": "2026-11-08T22:10:00+00:00"}}))
+    sessionnet.fetch_all()
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["2"]   # Seite 3 nicht mehr gelesen
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert "papers_fortsetzung" not in zustand and not teil.exists()
+    assert zustand["listenfehler"]["naechte"] == 1 and zustand["letzter_abbruch"]["art"] == "liste"
+    assert "sperre_verdacht" not in zustand
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert z["seiten"] == str(gesamt) and f"mehr als {gesamt} Seiten insgesamt" in z["ergebnis"]
+    assert "fehlerhaften Liste" in json.loads(config.STAND.read_text())["abruf_hinweis"]["meldung"]

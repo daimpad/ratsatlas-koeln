@@ -12,7 +12,9 @@ Abruf: Listen nur über `links.next` (unverändert übernommen), nach dem ersten
 `modified_since` (Zustand in `zustand_abruf.json`, mit einem Tag Überlappung). Parameter werden nicht URL-kodiert:
 SessionNet beantwortet kodierte Zeitstempel (%3A, %2B) mit HTTP 404 (explore/ergebnisse/sessionnet_befunde.tsv).
 Schutz gegen Endlosschleifen: Abbruch, wenn links.next auf eine gelesene Seite zeigt, eine Seite keine neuen
-Kennungen bringt oder mehr als `config.ABRUF_MAX_SEITEN` Seiten in einem Lauf folgen (eine Fortsetzung zählt neu).
+Kennungen bringt, mehr als `config.ABRUF_MAX_SEITEN` Seiten in einem Lauf folgen (eine Fortsetzung zählt neu) oder ein
+Vollabruf über seine Fortsetzungen hinweg mehr als `config.ABRUF_MAX_SEITEN_FAKTOR` × `config.ABRUF_MAX_SEITEN` Seiten
+erreicht (Art `liste`).
 Ende der Liste: `links` oder `links.next` fehlt oder ist leer (null, "", [], {}; SessionNet ist PHP). Ob der Server
 den Filter anwendet, wird je Lauf geprüft und in der Abrufstatistik vermerkt.
 
@@ -344,10 +346,13 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0):
     """Alle Objekte einer OParl-Liste über links.next; `seit` setzt modified_since. `start`, `objekte` und `seiten`
     setzen einen abgebrochenen Vollabruf fort. Liefert (Objekte, Seiten); ein Abbruch kommt als Teilabbruch. `seiten`
     zählt die Seiten insgesamt (Statistik, Fortsetzung); die Grenze `config.ABRUF_MAX_SEITEN` gilt je Lauf, sonst
-    erreichte ein großer Vollabruf sie in einer späteren Nacht und begänne von vorn."""
+    erreichte ein großer Vollabruf sie in einer späteren Nacht und begänne von vorn. Über die Fortsetzungen hinweg gilt
+    die Gesamtgrenze `config.ABRUF_MAX_SEITEN_FAKTOR` × `config.ABRUF_MAX_SEITEN` (Liste, die endlos neue Kennungen
+    erzeugt)."""
     naechste = start or _mit_parametern(url, modified_since=seit, limit=config.ABRUF_SEITENGROESSE)
     objekte = list(objekte or [])
     ids, gesehen = {o.get("id") for o in objekte}, set()
+    gesamt = config.ABRUF_MAX_SEITEN_FAKTOR * config.ABRUF_MAX_SEITEN
     while naechste:
         try:
             if naechste in gesehen:   # Schutz gegen zyklische Verweise
@@ -355,6 +360,10 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0):
             if len(gesehen) >= config.ABRUF_MAX_SEITEN:   # Seiten dieses Laufs
                 raise abruf.Abbruch(f"mehr als {config.ABRUF_MAX_SEITEN} Seiten in einem Lauf (RATSATLAS_MAX_SEITEN)",
                                     "liste")
+            if seiten >= gesamt:   # Seiten insgesamt, auch aus früheren Läufen (Fortsetzung)
+                raise abruf.Abbruch(f"mehr als {gesamt} Seiten insgesamt über Fortsetzungen hinweg "
+                                    f"({config.ABRUF_MAX_SEITEN_FAKTOR} × RATSATLAS_MAX_SEITEN); die Liste erzeugt "
+                                    "womöglich endlos neue Kennungen", "liste")
             gesehen.add(naechste)
             seite = abruf.get_json(naechste)
             weiter = _seite_pruefen(seite, naechste)

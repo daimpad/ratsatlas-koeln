@@ -4,9 +4,10 @@ Nicht für Server der Stadt Köln: Diese Funktionen halten die Abrufpolitik (CLA
 ohne Pause nach Stunden, mehrere Verbindungen in fetch._oparl_list, kein Zeitfenster, keine Freigabe). Anfragen an
 Adressen der Stadt (`abruf.stadt`: stadt-koeln.de, offenedaten-koeln.de, Host der eingestellten OParl-API) werden vor
 dem Senden abgelehnt (`AbrufVerweigert`, ohne Wiederholung), auch als Ziel einer Weiterleitung (Öffner `_OEFFNER` mit
-`_PruefendeWeiterleitung`); solche Abrufe gehören auf pipeline/abruf.py umgestellt. Betroffen ist etwa
-`python -m pipeline fetch-besetzung` (Personen der OParl-API, Zusatzthema „besetzung“, abgeschaltet). Module, die
-direkt über urllib abrufen (geodaten.py, ebenen.py, kontext.py u. a.), erfasst dieser Schutz nicht."""
+`_PruefendeWeiterleitung`; ein unlesbares Ziel gilt vorsichtshalber als Adresse der Stadt); solche Abrufe gehören auf
+pipeline/abruf.py umgestellt. Betroffen ist etwa `python -m pipeline fetch-besetzung` (Personen der OParl-API,
+Zusatzthema „besetzung“, abgeschaltet). Module, die direkt über urllib abrufen (geodaten.py, ebenen.py, kontext.py
+u. a.), erfasst dieser Schutz nicht."""
 import json
 import time
 import urllib.parse
@@ -17,7 +18,8 @@ from .config import USER_AGENT
 
 
 class AbrufVerweigert(RuntimeError):
-    """Anfrage an einen Server der Stadt Köln über dieses Modul: nicht gesendet."""
+    """Anfrage an einen Server der Stadt Köln über dieses Modul (auch an ein unlesbares Ziel einer Weiterleitung, das
+    wie in `abruf.stadt` vorsichtshalber als Adresse der Stadt gilt): nicht gesendet."""
 
 
 def _pruefen(url):
@@ -29,7 +31,22 @@ def _pruefen(url):
 
 
 class _PruefendeWeiterleitung(urllib.request.HTTPRedirectHandler):
-    """Folgt einer Weiterleitung nur, wenn ihr Ziel keine Adresse der Stadt ist (`_pruefen` vor dem Senden)."""
+    """Folgt einer Weiterleitung nur, wenn ihr Ziel keine Adresse der Stadt ist (`_pruefen` vor dem Senden). Ein
+    unlesbares Ziel (etwa „http://[::1“) ließe die geerbte Methode mit ValueError scheitern, den `_open` wiederholte:
+    stattdessen AbrufVerweigert, ohne Wiederholung."""
+
+    def http_error_302(self, req, fp, code, msg, headers):
+        ort = headers.get("location", headers.get("uri"))   # wie die geerbte Methode: zuerst Location
+        if ort is not None:
+            try:
+                urllib.parse.urljoin(req.full_url, ort)   # zerlegt das Ziel wie die geerbte Methode
+            except ValueError:
+                fp.close()
+                raise AbrufVerweigert(f"Weiterleitung HTTP {code} mit unlesbarem Ziel {ort!r} nicht verfolgt: "
+                                      f"{req.full_url}; das Ziel könnte eine Adresse der Stadt sein") from None
+        return super().http_error_302(req, fp, code, msg, headers)
+
+    http_error_301 = http_error_303 = http_error_307 = http_error_308 = http_error_302
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         try:

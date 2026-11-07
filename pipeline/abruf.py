@@ -40,7 +40,8 @@
   `_OhneWeiterleitung`; der Standard von urllib bleibt für andere Module unverändert): Abbruch der Art `weiterleitung`
   mit der Ziel-URL in Meldung und `Abbruch.ziel`, gezählt in `statistik()["weiterleitungen"]` und als Fehler
   (Abrufstatistik: Spalten `weiterleitungen` und `fehler`, Ziel in `ergebnis`); sonst kämen ungezählte Anfragen an
-  einen anderen Host oder Pfad hinzu
+  einen anderen Host oder Pfad hinzu. Ebenso bei einem unlesbaren Ziel (etwa „http://[::1“, roh übernommen): Die
+  Anfrage hat die Stadt erreicht und wird gezählt, kein Programmfehler
 - antwortet ein Proxy der Ausführungsumgebung auf CONNECT nicht mit 200 („Tunnel connection failed: <Code>“), zählt
   der Code:
   - 403, 405, 407 (Ablehnung durch eine Richtlinie oder fehlende Anmeldung): keine Antwort der Stadt; Abbruch der Art
@@ -120,10 +121,15 @@ class Abbruch(RuntimeError):
 
 
 class _OhneWeiterleitung(urllib.request.HTTPRedirectHandler):
-    """Folgt keiner Weiterleitung: urllib meldet 3xx dann als HTTPError mit dem Location-Kopf (wie explore/abruf.py)."""
+    """Folgt keiner Weiterleitung: urllib meldet 3xx dann als HTTPError mit dem Location-Kopf (wie explore/abruf.py).
+    Die Methoden http_error_3xx selbst lesen den Kopf nicht: Die geerbten zerlegten ihn vorher (urlparse, urljoin)
+    und scheiterten an einem unlesbaren Ziel wie „http://[::1“ mit ValueError, nachdem die Anfrage die Stadt erreicht
+    hat."""
 
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        return None
+    def http_error_302(self, req, fp, code, msg, headers):
+        return None   # HTTPDefaultErrorHandler meldet HTTPError mit dem Kopf, ohne ihn zu zerlegen
+
+    http_error_301 = http_error_303 = http_error_307 = http_error_308 = http_error_302
 
 
 def oeffner(proxies=None):
@@ -402,7 +408,10 @@ def get_json(url, pausen=None):
                 _zaehler["weiterleitungen"] += 1
                 _zaehler["sekunden"] += time.monotonic() - start
                 ort = e.headers.get("Location") if e.headers else None
-                ziel = urllib.parse.urljoin(url, ort) if ort else ""
+                try:
+                    ziel = urllib.parse.urljoin(url, ort) if ort else ""
+                except ValueError:   # unlesbares Ziel (etwa „http://[::1“): roh übernehmen
+                    ziel = ort
                 raise Abbruch(f"Weiterleitung HTTP {e.code} nach {ziel or '(ohne Ziel)'} nicht verfolgt: {url}",
                               "weiterleitung", ziel, e.code) from e
             if proxy_ablehnung(e, url):   # HTTP 407, und für die Adresse ist ein Proxy gesetzt

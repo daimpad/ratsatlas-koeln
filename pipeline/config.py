@@ -50,9 +50,13 @@ ABRUF_ABSTAND = float(os.environ.get("RATSATLAS_ABSTAND", "2.0"))
 # Zeitfenster 23–1 Uhr: laut mandari erlaubt die Stadt Abrufe nur dann (ohne Quelle der Stadt; Anfrage offen,
 # explore/ergebnisse/sessionnet_befunde.tsv)
 ABRUF_ZEITFENSTER = os.environ.get("RATSATLAS_ZEITFENSTER", "23-1")   # Stunden von-bis; leer = ohne Zeitfenster
-# Seiten je Liste und Lauf (Schutz vor Schleifen); eine Fortsetzung zählt in ihrem Lauf neu, die Seiten insgesamt
-# stehen nur in der Abrufstatistik
+# Seiten je Liste und Lauf (Schutz vor Schleifen); eine Fortsetzung zählt in ihrem Lauf neu. Mit 2 s Abstand und dem
+# Zeitfenster 23–1 Uhr schafft ein Lauf höchstens rund 2600–3300 Seiten (je Seite 2 s Abstand plus Antwortzeit); die
+# Grenze von 4000 wirkt daher nur ohne Zeitfenster oder mit einem kleineren Wert
 ABRUF_MAX_SEITEN = int(os.environ.get("RATSATLAS_MAX_SEITEN", "4000"))
+# Gesamtgrenze eines Vollabrufs über seine Fortsetzungen hinweg: höchstens ABRUF_MAX_SEITEN_FAKTOR × ABRUF_MAX_SEITEN
+# Seiten (Schutz gegen eine Liste, die endlos neue Kennungen erzeugt); darüber Abbruch der Art `liste` (sessionnet.py)
+ABRUF_MAX_SEITEN_FAKTOR = 3
 ABRUF_PAUSEN = [60, 300, 1800, 3600, 3 * 3600]
 ABRUF_SEITENGROESSE = os.environ.get("RATSATLAS_LIMIT", "")          # leer = Vorgabe des Servers (25)
 OVERPASS = [
