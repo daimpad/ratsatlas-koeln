@@ -7,19 +7,28 @@
 - lokal sind nur Adressen mit Schema http und Host 127.0.0.1, localhost oder ::1 (`lokal()`, über urlsplit; nicht etwa
   http://localhost.example.org/ oder http://127.0.0.1.nip.io/): nur für sie entfallen Freigabe, Zeitfenster und
   Mindestabstand
-- nur im nächtlichen Zeitfenster (`config.ABRUF_ZEITFENSTER`, Ortszeit Köln), sofern gesetzt
+- nur im nächtlichen Zeitfenster (`config.ABRUF_ZEITFENSTER`, Ortszeit Köln), sofern gesetzt; geprüft vor jedem
+  Versuch, auch nach einer Pause
 - nach HTTP 429, 5xx und unlesbaren Antworten (kein JSON) wachsende Pausen (`config.ABRUF_PAUSEN`, bis zu mehreren
-  Stunden), danach Abbruch der Art `aufgegeben`; einen `Retry-After`-Kopf hält der Abruf mindestens ein; 401, 403 und
-  404 brechen sofort ab (Art `http` mit `code`)
+  Stunden), danach Abbruch der Art `aufgegeben`. Einen `Retry-After`-Kopf (Sekunden oder HTTP-Datum) hält der Abruf
+  mindestens ein. Sofort `aufgegeben` (ohne Pause): wenn die nächste Pause nicht vor dem Ende des laufenden
+  Zeitfensters endet (`fenster_offen_nach`, gerechnet in UTC, also auch über eine Zeitumstellung), wenn `Retry-After`
+  länger ist als die längste Pause oder wenn `Retry-After` unlesbar ist. 401, 403 und 404 brechen sofort ab (Art
+  `http` mit `code`)
+- gültiges JSON in unerwarteter Form (null, [], Zahl, Text statt eines Objekts) ist kein Überlastungssignal: Abbruch
+  der Art `unlesbar` nach einer Anfrage, ohne Wiederholung
 - Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
   (so zeigte sich die Sperre von mandari 2026, explore/ergebnisse/sessionnet_befunde.tsv); der nächste Versuch
   folgt im nächsten Zeitfenster. Welche Abbrüche als Nacht mit möglicher Sperre zählen (dann nach drei Nächten in
   Folge sieben Tage Pause), regelt sessionnet.py (`moegliche_sperre`)
 - ebenso eine abgeschnittene oder unlesbare Antwort (http.client.HTTPException, kein OSError: IncompleteRead bei
   weniger Bytes als Content-Length oder chunked ohne Abschluss, BadStatusLine, LineTooLong, RemoteDisconnected …),
-  auch als Antwort eines Proxys auf CONNECT: Art `sperre`, keine Wiederholung. Eine ungültige Adresse
-  (http.client.InvalidURL, z. B. ein Leerzeichen in links.next) wird nicht gesendet: Art `adresse`, keine Sperre
-- das Zeitfenster wird vor jedem Versuch geprüft, auch nach einer Pause
+  auch als Antwort eines Proxys auf CONNECT: Art `sperre`, keine Wiederholung
+- eine ungültige Adresse wird nicht gesendet und nicht als Anfrage gezählt: Art `adresse`, keine Sperre. Dazu zählen
+  Zeichen außerhalb von ASCII (etwa Umlaute in links.next), ein unbekanntes oder fehlendes Schema und
+  http.client.InvalidURL (z. B. ein Leerzeichen). Scheitert das Kodieren einer Kopfzeile (UnicodeEncodeError, etwa
+  RATSATLAS_KONTAKT mit Zeichen außerhalb von Latin-1), geht ebenfalls nichts hinaus; das ist ein Einstellungs- oder
+  Programmfehler und bricht laut ab (kein Sperrverdacht)
 - Weiterleitungen (HTTP 3xx) werden nicht verfolgt (modulweiter Öffner `_OEFFNER` mit `_OhneWeiterleitung`; der
   Standard von urllib bleibt für andere Module unverändert): Abbruch der Art `weiterleitung` mit der Ziel-URL in
   Meldung und `Abbruch.ziel`, gezählt in `statistik()["weiterleitungen"]` und als Fehler (Abrufstatistik: Spalten
@@ -37,7 +46,10 @@
 - offener User-Agent mit Projektadresse und Kontakt (`RATSATLAS_KONTAKT`)
 - Zählwerk je Lauf für die Abrufstatistik (`statistik()`)
 - Sperre: ohne `RATSATLAS_STADT_INFORMIERT=ja` keine Anfrage an die Stadt (Entscheidung 04.11.2026)
+- `stadt()` erkennt Adressen der Stadt (stadt-koeln.de, offenedaten-koeln.de, Host der eingestellten OParl-API);
+  pipeline/net.py verweigert damit Anfragen an die Stadt, die nicht über dieses Modul laufen
 """
+import email.utils
 import http.client
 import json
 import math
@@ -48,7 +60,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timedelta
+from datetime import datetime, time as uhrzeit, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 from . import config
@@ -69,11 +81,14 @@ PROXY_ABLEHNUNG = (403, 405, 407)
 TUNNEL_UEBERLAST = (429, 503)
 # Hosts lokaler Testserver (nur mit Schema http)
 LOKALE_HOSTS = ("127.0.0.1", "localhost", "::1")
+# Domains der Stadt Köln (auch Unterdomains), für `stadt()`
+STADT_DOMAINS = ("stadt-koeln.de", "offenedaten-koeln.de")
+ORTSZEIT = ZoneInfo("Europe/Berlin")
 
 
 class Abbruch(RuntimeError):
     """Der Abruf wird beendet; der letzte gültige Datenstand bleibt erhalten. `art`: sperre, proxy, weiterleitung,
-    zeitfenster, gesperrt, http, aufgegeben, adresse, liste oder leer; `ziel`: Ziel einer Weiterleitung; `code`:
+    zeitfenster, gesperrt, http, aufgegeben, unlesbar, adresse, liste oder leer; `ziel`: Ziel einer Weiterleitung; `code`:
     HTTP-Status (bei http, bei aufgegeben nach HTTP 429/5xx oder CONNECT-Antwort 429/503, bei sperre nach einer
     CONNECT-Antwort wie 502/504), sonst None."""
 
@@ -104,6 +119,26 @@ def lokal(url):
         return teile.scheme == "http" and teile.hostname in LOKALE_HOSTS
     except ValueError:   # z. B. unvollständige IPv6-Adresse
         return False
+
+
+def stadt(url):
+    """Adresse eines Servers der Stadt Köln? Host stadt-koeln.de oder offenedaten-koeln.de (auch Unterdomains) oder
+    der Host der eingestellten OParl-API (`config.OPARL_BODY`, `config.OPARL_SYSTEM`), sofern dieser nicht lokal ist.
+    Eine unlesbare Adresse gilt vorsichtshalber als Adresse der Stadt."""
+    try:
+        host = (urllib.parse.urlsplit(url).hostname or "").rstrip(".")
+    except (ValueError, TypeError, AttributeError):
+        return True
+    if any(host == d or host.endswith("." + d) for d in STADT_DOMAINS):
+        return True
+    eigene = set()
+    for adresse in (config.OPARL_BODY, config.OPARL_SYSTEM):
+        try:
+            if not lokal(adresse):
+                eigene.add((urllib.parse.urlsplit(adresse).hostname or "").rstrip("."))
+        except ValueError:
+            pass
+    return bool(host) and host in eigene
 
 
 def proxy_gesetzt(url):
@@ -167,19 +202,80 @@ def freigegeben(url):
     return lokal(url) or os.environ.get("RATSATLAS_STADT_INFORMIERT") == "ja"
 
 
-def im_zeitfenster(jetzt=None):
+def _ortszeit(jetzt=None):
+    """`jetzt` als Ortszeit Köln: ohne Angabe die aktuelle Zeit, ohne Zone als Ortszeit gelesen, sonst umgerechnet."""
+    if jetzt is None:
+        return datetime.now(ORTSZEIT)
+    return jetzt.replace(tzinfo=ORTSZEIT) if jetzt.tzinfo is None else jetzt.astimezone(ORTSZEIT)
+
+
+def _fenster():
+    """(von, bis) des Zeitfensters in vollen Stunden Ortszeit; None ohne Zeitfenster."""
     fenster = (config.ABRUF_ZEITFENSTER or "").strip()
     if not fenster:
-        return True
+        return None
     von, bis = (int(x) for x in fenster.split("-"))
-    h = (jetzt or datetime.now(ZoneInfo("Europe/Berlin"))).hour
+    return von, bis
+
+
+def im_zeitfenster(jetzt=None):
+    f = _fenster()
+    if f is None:
+        return True
+    von, bis = f
+    h = _ortszeit(jetzt).hour
     return von <= h < bis if von < bis else (h >= von or h < bis)
 
 
+def fenster_ende(jetzt=None):
+    """Ende des laufenden Zeitfensters als Zeitpunkt mit Zone (Ortszeit Köln); None ohne Zeitfenster oder bei einem
+    Fenster über den ganzen Tag (von = bis). Voraussetzung: `jetzt` liegt im Fenster."""
+    f = _fenster()
+    if f is None or f[0] == f[1]:
+        return None
+    von, bis = f
+    ort = _ortszeit(jetzt)
+    tag = ort.date()
+    if von > bis and ort.hour >= von:   # Fenster über Mitternacht, jetzt vor Mitternacht: Ende am nächsten Tag
+        tag += timedelta(days=1)
+    tag += timedelta(days=bis // 24)
+    return datetime.combine(tag, uhrzeit(bis % 24), tzinfo=ORTSZEIT)
+
+
 def fenster_offen_nach(sekunden, jetzt=None):
-    """Ist das Zeitfenster jetzt offen und nach `sekunden` noch offen (Ende einer Pause vor dem nächsten Versuch)?"""
-    jetzt = jetzt or datetime.now(ZoneInfo("Europe/Berlin"))
-    return im_zeitfenster(jetzt) and im_zeitfenster(jetzt + timedelta(seconds=sekunden))
+    """Ist das Zeitfenster jetzt offen und endet eine Pause von `sekunden` vor dem Ende des laufenden Fensters? Gerechnet
+    in UTC (Zeitumstellung); eine Pause, die erst im Fenster einer späteren Nacht endet, zählt nicht als offen."""
+    ort = _ortszeit(jetzt)
+    if not im_zeitfenster(ort):
+        return False
+    ende = fenster_ende(ort)
+    if ende is None:
+        return True
+    rest = (ende.astimezone(timezone.utc) - ort.astimezone(timezone.utc)).total_seconds()
+    return sekunden < rest
+
+
+_SEKUNDEN = re.compile(r"[0-9]+")
+
+
+def retry_after_sekunden(wert, jetzt=None):
+    """`Retry-After` in Sekunden (ab `jetzt`, UTC): Sekundenzahl oder HTTP-Datum (RFC 9110); fehlt der Kopf, 0; ein
+    Datum in der Vergangenheit ergibt 0. Unlesbar (auch negativ): None."""
+    wert = (wert or "").strip()
+    if not wert:
+        return 0
+    if _SEKUNDEN.fullmatch(wert):
+        return int(wert)
+    try:
+        datum = email.utils.parsedate_to_datetime(wert)
+    except (TypeError, ValueError, IndexError, OverflowError):
+        return None
+    if datum is None:
+        return None
+    if datum.tzinfo is None:   # „-0000“: UTC ohne Angabe der Quelle
+        datum = datum.replace(tzinfo=timezone.utc)
+    jetzt = jetzt or datetime.now(timezone.utc)
+    return max(0, math.ceil((datum - jetzt).total_seconds()))
 
 
 def _aufgegeben(url, letzter_fehler, versuche, grund=""):
@@ -198,6 +294,9 @@ def get_json(url, pausen=None):
     if not freigegeben(url):
         raise Abbruch("Abruf gesperrt: Die Stadt Köln ist noch nicht informiert (CLAUDE.md 9). "
                       "Freigabe mit RATSATLAS_STADT_INFORMIERT=ja.", "gesperrt")
+    if not url.isascii():   # z. B. Umlaute in links.next: http.client scheiterte beim Kodieren, nichts ginge hinaus
+        _zaehler["fehler"] += 1
+        raise Abbruch(f"ungültige Adresse (Zeichen außerhalb von ASCII), nicht gesendet: {url}", "adresse")
     ist_lokal = lokal(url)
     pausen = config.ABRUF_PAUSEN if pausen is None else pausen
     mindestens = abstand(ist_lokal)
@@ -226,8 +325,10 @@ def get_json(url, pausen=None):
             _zaehler["bytes"] += len(daten)
             _zaehler["sekunden"] += time.monotonic() - start
             antwort = json.loads(daten)
-            if not isinstance(antwort, dict):   # gültiges JSON in unerwarteter Form (z. B. null, [], Fehlerseite)
-                raise ValueError(f"JSON-Objekt erwartet, erhalten: {type(antwort).__name__}")
+            if not isinstance(antwort, dict):   # gültiges JSON in unerwarteter Form: kein Überlastungssignal
+                _zaehler["fehler"] += 1
+                raise Abbruch(f"unerwartete Antwortform (JSON-Objekt erwartet, erhalten: {type(antwort).__name__}): "
+                              f"{url}", "unlesbar")
             return antwort
         except urllib.error.HTTPError as e:
             _zaehler["fehler"] += 1
@@ -245,14 +346,16 @@ def get_json(url, pausen=None):
                 _zaehler["sekunden"] += time.monotonic() - start
                 raise Abbruch(f"HTTP {e.code}: {url}", "http", code=e.code) from e
             letzter_fehler = e
-            try:
-                retry_after = int(e.headers.get("Retry-After") or 0)
-            except ValueError:
-                retry_after = 0
+            retry_after = retry_after_sekunden(e.headers.get("Retry-After") if e.headers else None)
         except http.client.InvalidURL as e:   # vor dem Senden erkannt (z. B. Leerzeichen): keine Anfrage, keine Sperre
             _zaehler["anfragen"] -= 1
             _zaehler["fehler"] += 1
             raise Abbruch(f"ungültige Adresse, nicht gesendet: {url} ({e})", "adresse") from e
+        except UnicodeEncodeError:
+            # Kopfzeile nicht kodierbar (z. B. RATSATLAS_KONTAKT außerhalb von Latin-1): nichts gesendet, kein
+            # Sperrsignal, sondern ein Einstellungs- oder Programmfehler – laut abbrechen, nicht als „unlesbar“ werten
+            _zaehler["anfragen"] -= 1
+            raise
         except (urllib.error.URLError, TimeoutError, ConnectionError, OSError, http.client.HTTPException) as e:
             # HTTPException (kein OSError): Antwort abgeschnitten (IncompleteRead) oder unlesbar (BadStatusLine,
             # LineTooLong …), auch als Antwort des Proxys auf CONNECT – wie ein Verbindungsabbruch
@@ -276,9 +379,13 @@ def get_json(url, pausen=None):
             _letzte = time.monotonic()
         _zaehler["sekunden"] += time.monotonic() - start
         if versuch < len(pausen):
+            # Sofort aufgeben (zählt als Nacht mit möglicher Sperre), statt eine Pause abzuwarten, die nicht passt
+            if retry_after is None:
+                raise _aufgegeben(url, letzter_fehler, versuch + 1, ", Retry-After unlesbar")
+            if retry_after > max(pausen):
+                raise _aufgegeben(url, letzter_fehler, versuch + 1,
+                                  f", Retry-After {retry_after} s länger als die längste Pause ({max(pausen)} s)")
             pause = max(pausen[versuch], retry_after)
-            # Endet das Zeitfenster vor dem nächsten Versuch, jetzt aufgeben (zählt als Nacht mit möglicher Sperre),
-            # statt die Pause abzuwarten und dann nur „Zeitfenster vorbei“ zu melden
             if not ist_lokal and not fenster_offen_nach(pause):
                 raise _aufgegeben(url, letzter_fehler, versuch + 1, ", nächste Pause reicht über das Zeitfenster")
             _zaehler["wiederholungen"] += 1

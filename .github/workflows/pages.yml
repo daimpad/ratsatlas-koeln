@@ -6,9 +6,16 @@
 # (Einstellungen → Secrets and variables → Actions → Variables). Bis dahin – und bis ein vollständiger Abruf vorliegt –
 # veröffentlicht der Lauf eine Kartenvorschau ohne Ratsvorlagen (Gebiete, Kennzahlen, Ebenen; Entscheidung 07.11.2026).
 # Weitere Variablen: RATSATLAS_KONTAKT (Kontakt im User-Agent), SITE_URL (Vorgabe https://koeln.ratsatlas.de/).
-# Abrufpolitik: eine Verbindung, Abstand 2 s, nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h; Verbindungsabbruch,
-# abgeschnittene oder unlesbare Antwort, HTTP 401/403/429 und „aufgegeben“ nach 429/5xx = Nacht mit möglicher Sperre
-# (Abbruch, nach drei Nächten in Folge sieben Tage Pause); ein abgebrochener Vollabruf wird in der nächsten Nacht
+# Abrufpolitik: eine Verbindung, Abstand 2 s, nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (Retry-After als
+# Sekunden oder Datum eingehalten), aber nie über das Ende des Zeitfensters: Reicht die nächste Pause darüber hinaus
+# oder ist Retry-After länger als 3 h oder unlesbar, gibt der Abruf sofort auf („aufgegeben“).
+# Nacht mit möglicher Sperre: Verbindungsabbruch, abgeschnittene oder unlesbare Antwort, HTTP 401/403/429,
+# „aufgegeben“ nach 429/5xx, Weiterleitung und JSON in unerwarteter Form („unlesbar“). Danach Abbruch, in derselben
+# Nacht (12 h) kein weiterer Lauf, auch nicht nach einem Push oder auf Knopfdruck; nach drei solchen Nächten ohne
+# vollständigen Lauf sieben Tage Pause. Keine Sperrnacht: Ablehnung durch einen Proxy und ungültige Adressen (nie
+# gesendet). Ungültige Folgeadressen oder Schleifen in links.next: Hinweis in STAND.json und Warnung im Log, nach drei
+# Nächten sieben Tage Pause. Ein unlesbarer Abrufzustand oder ein Programmfehler bricht den Schritt mit Fehler ab (rot,
+# ohne Sperrnacht; der Zustand wird trotzdem gesichert). Ein abgebrochener Vollabruf wird in der nächsten Nacht
 # fortgesetzt (pipeline/abruf.py, pipeline/sessionnet.py).
 # Fällt der Abruf aus, wird der letzte gültige Stand aus dem Zwischenspeicher veröffentlicht und als solcher angezeigt.
 # Der Zwischenspeicher (Rohdaten, Zustand des Abrufs mit der Zählung der Nächte, STAND.json, Abrufstatistik) wird gleich
@@ -32,7 +39,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 300   # Pausen nach Fehlern können Stunden dauern (Backoff)
+    timeout-minutes: 300   # Pausen nach Fehlern (Backoff) enden spätestens mit dem Zeitfenster (höchstens knapp 2 h)
     permissions:
       contents: write   # Branch deploy
       pages: read
