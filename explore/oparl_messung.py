@@ -28,8 +28,14 @@ Jeder Lauf wird in ergebnisse/oparl_laeufe.tsv vermerkt (Stufe aus RATSATLAS_STU
 jede durchlaufene Liste in ergebnisse/oparl_listen.tsv. Bei einem Abbruch endet der Lauf mit Rückgabewert 2. Lehnt der
 Proxy der Arbeitsumgebung die Verbindung ab (Art `proxy`: CONNECT-Antwort 403/405/407 oder HTTP 407), hat keine
 Anfrage die Stadt erreicht: nicht wiederholen, sondern berichten; der Host muss im Netz der Arbeitsumgebung erlaubt
-sein (explore/STUFEN.md, Stufe 1). Meldet der Proxy 502/504 (Stadt nicht erreicht), gilt das als mögliche Sperre
-(Art `sperre`), 429/503 als Art `server`.
+sein (explore/STUFEN.md, Stufe 1). Meldet der Proxy 502/504 (Stadt nicht erreicht, beim Verbindungsaufbau oder als
+Antwort im Tunnel) oder ist eine Antwort abgeschnitten oder unlesbar, gilt das als mögliche Sperre (Art `sperre`),
+429/503 als Art `server`.
+Nach einem Abbruch gilt: in dieser Nacht keine weitere Anfrage (STUFEN.md). Vor der ersten Anfrage an eine nicht
+lokale Adresse prüft main() deshalb oparl_laeufe.tsv: Endete der letzte Lauf vor weniger als 12 Stunden mit
+„abbruch (…)“ oder „fehler (…)“, bricht das Kommando ohne Anfrage ab (Rückgabewert 1). Weiter nur nach Rücksprache mit
+dem Auftraggeber: RATSATLAS_NACH_ABBRUCH=ja. Ein zweiter gleichzeitiger Prozess mit demselben Cache bricht vor seiner
+ersten Anfrage ab (Art `parallel`, Sperre _cache/abruf.lock in explore/abruf.py).
 Ergebnisse als TSV unter explore/ergebnisse/; Rohdaten, PDFs und die Stichprobendatei für `pdf-koepfe`
 (_cache/stichprobe_vorlagen.jsonl: nur id, reference, paperType, date, Adresse der Hauptdatei) bleiben im Cache
 (nicht im Repository).
@@ -63,6 +69,10 @@ ABGELEHNT = (400, 401, 404)
 # strenge Vorgaben für Anfragen an die Stadt (explore/STUFEN.md, Abbruchkriterien)
 STRENG_DAUER = 5.0
 STRENG_ABSTAND = 2.0   # Sekunden vom Ende einer Antwort bis zur nächsten Anfrage (CLAUDE.md 5.1)
+# nach einem Abbruch oder Fehler keine weitere Anfrage an die Stadt in dieser Frist (STUFEN.md: „in dieser Nacht keine
+# weitere Anfrage und keine weitere Stufe“); Freigabe nur nach Rücksprache mit RATSATLAS_NACH_ABBRUCH=ja
+SPERRFRIST = dt.timedelta(hours=12)
+RE_ABBRUCH = re.compile(r"^(abbruch|fehler) \(")
 # Stichprobe für pdf-koepfe: nur im Cache (nicht im Repository), ohne File-Objekte
 STICHPROBE = abruf.CACHE / "stichprobe_vorlagen.jsonl"
 
@@ -513,6 +523,23 @@ def _laufnummer():
         return max(sum(1 for _ in f), 1)
 
 
+def letzter_abbruch(datei=None, jetzt=None):
+    """Der letzte Lauf aus oparl_laeufe.tsv (Zeile als dict), wenn er vor weniger als SPERRFRIST mit „abbruch (…)“
+    oder „fehler (…)“ endete, sonst None. Maßgeblich ist `ende` (ohne Zone: Ortszeit Köln); fehlt es oder ist es
+    unlesbar, gilt der Lauf vorsichtshalber als gerade beendet."""
+    datei = ERG / "oparl_laeufe.tsv" if datei is None else Path(datei)
+    if not datei.exists():
+        return None
+    with datei.open(encoding="utf-8", newline="") as f:
+        zeilen = list(csv.DictReader(f, delimiter="\t"))
+    if not zeilen or not RE_ABBRUCH.match(zeilen[-1].get("ergebnis") or ""):
+        return None
+    letzter = zeilen[-1]
+    ende = _zeitpunkt(letzter.get("ende") or "")
+    jetzt = jetzt or dt.datetime.now(ZoneInfo("Europe/Berlin"))
+    return letzter if ende is None or jetzt - ende < SPERRFRIST else None
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("kommando", choices=list(KOMMANDOS))
@@ -537,6 +564,13 @@ def main(argv=None):
         werte, fehler = sichere_vorgaben()
         if fehler:
             sys.exit("Abbruch vor der ersten Anfrage: " + "; ".join(fehler) + " (Befehle: explore/STUFEN.md).")
+        vorher = letzter_abbruch()
+        if vorher and os.environ.get("RATSATLAS_NACH_ABBRUCH") != "ja":
+            sys.exit(f"Abbruch vor der ersten Anfrage: Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) endete "
+                     f"{vorher.get('ende') or '(ohne Ende)'} mit „{vorher.get('ergebnis')}“, vor weniger als "
+                     f"{SPERRFRIST.total_seconds() / 3600:g} Stunden. Nach einem Abbruch gilt: in dieser Nacht keine "
+                     "weitere Anfrage und keine weitere Stufe, Bericht an den Auftraggeber (explore/STUFEN.md). "
+                     "Weiter nur nach Rücksprache mit RATSATLAS_NACH_ABBRUCH=ja.")
         abruf.WIEDERHOLUNGEN, abruf.MAX_DAUER = werte["wiederholungen"], werte["max_dauer"]
         abruf.ABSTAND = werte["abstand"]
 
@@ -555,9 +589,12 @@ def main(argv=None):
                        f"erreicht, kein Hinweis auf eine Sperre. Nicht wiederholen, sondern berichten: Der Host "
                        f"{urllib.parse.urlsplit(SYSTEM).hostname} muss im Netz der Arbeitsumgebung erlaubt sein "
                        f"(explore/STUFEN.md, Stufe 1).")
-        elif e.art == "sperre":   # auch CONNECT-Antwort 502/504: der Proxy hat die Stadt angefragt, aber nicht erreicht
+        elif e.art == "sperre":   # auch 502/504 des Proxys und abgeschnittene oder unlesbare Antworten
             hinweis = ("Mögliche Sperre: in dieser Nacht keine weitere Anfrage, alle Abrufe ruhen bis zur Klärung mit "
                        "der Stadt. Stoppen und berichten (explore/STUFEN.md).")
+        elif e.art == "parallel":   # ein anderer Prozess hält die Sperre auf den Cache
+            hinweis = ("Ein anderer Abrufprozess läuft noch; keine Anfrage gesendet. Prozesse nur nacheinander "
+                       "starten; stoppen und berichten (explore/STUFEN.md).")
         else:
             hinweis = "Stoppen und berichten (explore/STUFEN.md)."
         print(f"Abbruch: {e}\n{hinweis}", file=sys.stderr)

@@ -12,7 +12,8 @@ liegt; sonst „nicht prüfbar (Protokollzeilen passen nicht zum Lauf)“.
 Ablehnungen durch den Proxy der Arbeitsumgebung (Status `proxy <Code>`: CONNECT-Antwort 403, 405, 407 oder HTTP 407)
 stehen getrennt: Sie haben die Stadt nicht erreicht, zählen nicht zu den Antwortzeiten und gelten nicht als mögliche
 Sperre. Andere CONNECT-Antworten (Status `tunnel <Code>`, z. B. 502/504: der Proxy erreicht die Stadt nicht, oder
-429/503) gelten wie Verbindungsabbrüche als mögliche Sperre.
+429/503) gelten wie Verbindungsabbrüche als mögliche Sperre, ebenso 403, 429, 5xx und Status ohne Code (Name der
+Ausnahme, z. B. TimeoutError oder IncompleteRead bei einer abgeschnittenen Antwort).
 Die Regel Stufe 3/5 gilt nur als erfüllt, wenn der letzte `stichprobe`-Lauf in oparl_laeufe.tsv „ok“ ist.
 Aufruf: python3 explore/auswertung.py [--cache VERZ] [--ergebnisse VERZ] [--stufe S]
 """

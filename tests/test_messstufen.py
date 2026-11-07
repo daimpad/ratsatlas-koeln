@@ -1,14 +1,16 @@
 """Messstufen der Kölner OParl-API (explore/STUFEN.md) gegen den lokalen Testserver explore/testserver.py:
 Anzahl der Anfragen je Kommando, Obergrenze RATSATLAS_MAX_ANFRAGEN (Abbruch statt Überschreitung), Cache-Treffer
 zählen nicht, Folgeseiten ohne URL-Kodierung, Seitengrenzen, Abbruchkriterien (auch Mindestabstand innerhalb eines
-Prozesses und zwischen zwei Prozessen, Antworten eines lokalen Schein-Proxys auf CONNECT), Probelauf und Auswertung;
-explore/geodaten.py ohne Netz (Mindestwerte, Ende nach möglicher Sperre).
-Läuft offline: Anfragen gehen nur an 127.0.0.1; Adressen der Stadt werden nie aufgerufen (fremde Adressen nur unter
-example.invalid, die der Schein-Proxy ablehnt)."""
+Prozesses und zwischen zwei Prozessen, Antworten eines lokalen Schein-Proxys auf CONNECT, abgeschnittene oder
+unlesbare Antworten, Sperre gegen gleichzeitige Prozesse, keine Anfrage nach einem Abbruch), Probelauf und Auswertung;
+explore/geodaten.py ohne Netz (Mindestwerte, Obergrenze, Ende nach möglicher Sperre).
+Läuft offline: Anfragen gehen nur an 127.0.0.1 und 127.0.0.2 (gilt nicht als lokal und steht in Tests für die Stadt);
+Adressen der Stadt werden nie aufgerufen (fremde Adressen nur unter example.invalid, über einen lokalen Schein-Proxy)."""
 import csv
 import datetime as dt
 import importlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -335,6 +337,20 @@ def test_stufenplan_befehle_sind_vollstaendig():
     assert "export " not in text
 
 
+def test_mehrere_befehle_einer_stufe_nur_nach_rueckgabewert_0():
+    """Ein bash-Block mit mehreren Befehlen (Stufe 3) wird als Ganzes übernommen: Jeder Befehl außer dem letzten endet
+    mit `&& \\`, damit nach einem Abbruch (Rückgabewert 2) keiner mehr läuft."""
+    text = (EXPLORE / "STUFEN.md").read_text(encoding="utf-8")
+    bloecke = re.findall(r"```bash\n(.*?)```", text, re.S)
+    mehrere = [b for b in bloecke if b.count("oparl_messung.py") > 1]
+    assert mehrere, "Stufe 3 hat zwei Befehle"
+    for block in mehrere:
+        zeilen = [z for z in block.splitlines() if z.strip()]
+        assert all(z.endswith(" && \\") for z in zeilen[:-1]) and not zeilen[-1].endswith("\\"), block
+    # die Befehle bleiben einzeln vollständig (je Zeile alle Variablen, siehe oben)
+    assert all(b.count("oparl_messung.py") == len([z for z in b.splitlines() if z.strip()]) for b in bloecke)
+
+
 def test_probelauf_entspricht_stufenplan_und_auswertung(tmp_path):
     zeilen = probelauf.probelauf(tmp_path)
     assert all(z["ergebnis"] in ("ok", "übersprungen (pypdf fehlt)") for z in zeilen), zeilen
@@ -347,7 +363,7 @@ def test_probelauf_entspricht_stufenplan_und_auswertung(tmp_path):
     assert {k: v for k, v in gemessen.items() if k in erwartet} == erwartet
     # STUFEN.md nennt dieselben Befehle und Obergrenzen wie probelauf.STUFEN
     text = (EXPLORE / "STUFEN.md").read_text(encoding="utf-8")
-    befehle = re.findall(r"RATSATLAS_MAX_ANFRAGEN=(\d+)[^\n`]*?oparl_messung\.py ([a-z-]+)([^\n`]*)", text)
+    befehle = re.findall(r"RATSATLAS_MAX_ANFRAGEN=(\d+)[^\n`]*?oparl_messung\.py ([a-z-]+)([^\n`&\\]*)", text)
     im_plan = {(k, " ".join(p.split()), int(n)) for n, k, p in befehle}
     assert {(k, " ".join(p), n) for _, k, p, n in probelauf.STUFEN} <= im_plan
     # Auswertung der Folge
@@ -501,7 +517,7 @@ def test_connect_antworten_des_proxys(tmp_path, monkeypatch, code, art):
         monkeypatch.setattr(abruf, "_OEFFNER", urllib.request.build_opener(abruf._OhneWeiterleitung))
         for name, wert in (("CACHE", tmp_path), ("PROTOKOLL", tmp_path / "abrufe.tsv"), ("ABSTAND", 0.0),
                            ("WIEDERHOLUNGEN", 4), ("PAUSEN", [0.01] * 4), ("MAX_ANFRAGEN", 0),
-                           ("_erste_netzanfrage", True)):
+                           ("_erste_netzanfrage", True), ("_sperre", None)):
             monkeypatch.setattr(abruf, name, wert)
         with pytest.raises(abruf.Abbruch) as e:
             abruf.hole("https://example.invalid/oparl/system", ".json")
@@ -561,18 +577,22 @@ def test_erste_anfrage_wartet_auf_letzte_netzanfrage_im_protokoll(tmp_path, monk
 
 
 def test_geodaten_mindestwerte_und_ende_nach_sperre(tmp_path, monkeypatch):
-    """explore/geodaten.py ohne Netz (hole ersetzt): Abstand ≥ 2 s und keine Wiederholung vor der ersten Anfrage
-    erzwungen; nach sperre/server/proxy endet der ganze Lauf, nach einer Weiterleitung nur dieser Katalog."""
+    """explore/geodaten.py ohne Netz (hole ersetzt): Abstand ≥ 2 s, keine Wiederholung und eine Obergrenze vor der
+    ersten Anfrage erzwungen; nach sperre/server/proxy/obergrenze/langsam/parallel und HTTP 401/403/429 endet der ganze
+    Lauf, nach einer Weiterleitung oder HTTP 404 nur dieser Katalog."""
     geodaten = importlib.import_module("geodaten")
     abruf = importlib.import_module("abruf")
-    assert geodaten.vorgaben({}) == ({"wiederholungen": 0, "abstand": 2.0}, [])
+    grenze = {"RATSATLAS_MAX_ANFRAGEN": "40"}
+    assert geodaten.vorgaben(grenze) == ({"wiederholungen": 0, "abstand": 2.0, "max_anfragen": 40}, [])
+    assert any("RATSATLAS_MAX_ANFRAGEN" in f for f in geodaten.vorgaben({})[1])     # Obergrenze ist Pflicht
     for env in ({"RATSATLAS_ABSTAND": "1.5"}, {"RATSATLAS_ABSTAND": "nan"}, {"RATSATLAS_WIEDERHOLUNGEN": "2"},
-                {"RATSATLAS_ABSTAND": "x"}):
-        assert geodaten.vorgaben(env)[1], env
-    for name in ("RATSATLAS_ABSTAND", "RATSATLAS_WIEDERHOLUNGEN"):
+                {"RATSATLAS_ABSTAND": "x"}, {"RATSATLAS_MAX_ANFRAGEN": "0"}, {"RATSATLAS_MAX_ANFRAGEN": "x"}):
+        assert geodaten.vorgaben({**grenze, **env})[1], env
+    for name in ("RATSATLAS_ABSTAND", "RATSATLAS_WIEDERHOLUNGEN", "RATSATLAS_MAX_ANFRAGEN"):
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setattr(abruf, "ABSTAND", 0.0)
     monkeypatch.setattr(abruf, "WIEDERHOLUNGEN", 4)
+    monkeypatch.setattr(abruf, "MAX_ANFRAGEN", 0)
     erg = tmp_path / "ergebnisse"
     monkeypatch.setattr(geodaten, "ERG", erg)
     aufrufe = []
@@ -591,26 +611,30 @@ def test_geodaten_mindestwerte_und_ende_nach_sperre(tmp_path, monkeypatch):
                                    {"@value": f"{geodaten.BASIS}/sites/default/files/x.zip"}]}]).encode()
         return hole
 
-    monkeypatch.setenv("RATSATLAS_ABSTAND", "0.5")
     monkeypatch.setattr(geodaten, "hole", schein({}))
-    assert geodaten.main() == 1 and aufrufe == []                     # Abbruch vor der ersten Anfrage
+    assert geodaten.main() == 1 and aufrufe == []                     # ohne Obergrenze: Abbruch vor der ersten Anfrage
+    monkeypatch.setenv("RATSATLAS_MAX_ANFRAGEN", "40")
+    monkeypatch.setenv("RATSATLAS_ABSTAND", "0.5")
+    assert geodaten.main() == 1 and aufrufe == []                     # zu kleiner Abstand: ebenso
     monkeypatch.delenv("RATSATLAS_ABSTAND")
-    for art in ("sperre", "server", "proxy"):
+    for art, code in (("sperre", None), ("server", 429), ("proxy", 403), ("obergrenze", None), ("langsam", None),
+                      ("parallel", None), ("http", 401), ("http", 403), ("http", 429)):
         for endung in (".html", ".zip"):                             # Katalog oder Datei
             aufrufe.clear()
-            monkeypatch.setattr(geodaten, "hole", schein({endung: abruf.Abbruch(f"Test {art}", art)}))
-            assert geodaten.main() == 2, (art, endung)
+            monkeypatch.setattr(geodaten, "hole", schein({endung: abruf.Abbruch(f"Test {art}", art, code)}))
+            assert geodaten.main() == 2, (art, code, endung)
             assert len(aufrufe) == (1 if endung == ".html" else 3)    # keine weitere Anfrage
             assert not erg.exists()                                   # Ergebnisdateien unverändert
-    assert (abruf.ABSTAND, abruf.WIEDERHOLUNGEN) == (2.0, 0)
-    # Weiterleitung: nur dieser Katalog, die übrigen Datensätze laufen weiter
-    aufrufe.clear()
+    assert (abruf.ABSTAND, abruf.WIEDERHOLUNGEN, abruf.MAX_ANFRAGEN) == (2.0, 0, 40)
+    # Weiterleitung und HTTP 404: nur dieser Katalog, die übrigen Datensätze laufen weiter
     weiter = abruf.Abbruch("Weiterleitung HTTP 301 nach https://example.invalid/neu nicht verfolgt", "weiterleitung",
                            301, "https://example.invalid/neu")
-    monkeypatch.setattr(geodaten, "hole", schein({".html": weiter}))
-    assert geodaten.main() == 0 and len(aufrufe) == len(geodaten.DATENSAETZE)
-    kat = tsv(erg / "geodaten_katalog.tsv")
-    assert len(kat) == len(geodaten.DATENSAETZE) and all("example.invalid/neu" in z["titel"] for z in kat)
+    for fehler, text in ((weiter, "example.invalid/neu"), (abruf.Abbruch("HTTP 404: x", "http", 404), "HTTP 404")):
+        aufrufe.clear()
+        monkeypatch.setattr(geodaten, "hole", schein({".html": fehler}))
+        assert geodaten.main() == 0 and len(aufrufe) == len(geodaten.DATENSAETZE)
+        kat = tsv(erg / "geodaten_katalog.tsv")
+        assert len(kat) == len(geodaten.DATENSAETZE) and all(text in z["titel"] for z in kat)
 
 
 def _laeufe(erg, *zeilen):
@@ -685,3 +709,194 @@ def test_stufenbefehle_mit_kontakt_und_strengen_vorgaben():
         if env["RATSATLAS_MAX_ANFRAGEN"].isdigit():   # Stufe 4 optional: Obergrenze erst nach Stufe 2
             werte, fehler = om.sichere_vorgaben(env)
             assert fehler == [] and werte["abstand"] >= 2, (b, fehler)
+
+
+def _abruf_im_prozess(monkeypatch, cache, **zusatz):
+    """explore/abruf.py im Testprozess: eigener Cache, Abstand 0, Wiederholungen erlaubt (um zu zeigen, dass trotzdem
+    nicht wiederholt wird), Öffner ohne Proxy; die Sperrdatei des Prozesses wird nach dem Test freigegeben."""
+    abruf = importlib.import_module("abruf")
+    werte = {"CACHE": cache, "PROTOKOLL": cache / "abrufe.tsv", "ABSTAND": 0.0, "WIEDERHOLUNGEN": 4,
+             "PAUSEN": [0.01] * 4, "MAX_ANFRAGEN": 0, "_erste_netzanfrage": True, "_sperre": None,
+             "_OEFFNER": urllib.request.build_opener(abruf._OhneWeiterleitung, urllib.request.ProxyHandler({}))}
+    for name, wert in {**werte, **zusatz}.items():
+        monkeypatch.setattr(abruf, name, wert)
+    return abruf
+
+
+UNVOLLSTAENDIG = {   # (Antwort, Status im Protokoll, Bytes im Protokoll)
+    "content-length": (b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 1000\r\n\r\n"
+                       b"{\"data\": [", "IncompleteRead", 10),
+    "chunked": (b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nTransfer-Encoding: chunked\r\n\r\n"
+                b"5\r\n{\"a\":\r\n", "IncompleteRead", 5),
+    "statuszeile": (b"GARBAGE\r\n\r\n", "BadStatusLine", 0),
+}
+
+
+@pytest.mark.parametrize("fall", list(UNVOLLSTAENDIG))
+def test_abgeschnittene_oder_unlesbare_antwort_ist_moegliche_sperre(tmp_path, monkeypatch, roher_server, fall):
+    """Weniger Bytes als Content-Length (read(n) meldet das nicht), chunked ohne Abschluss, unlesbare Statuszeile:
+    Art `sperre`, eine Anfrage, Protokollzeile, nichts im Cache."""
+    antwort, status, n = UNVOLLSTAENDIG[fall]
+    server = roher_server(antwort)
+    abruf = _abruf_im_prozess(monkeypatch, tmp_path)
+    url = f"{server.url}/oparl/system"
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.hole(url, ".json")
+    assert e.value.art == "sperre" and "mögliche Sperre" in str(e.value)
+    assert server.anfragen == ["GET /oparl/system HTTP/1.1"]          # keine Wiederholung trotz WIEDERHOLUNGEN=4
+    z = tsv(tmp_path / "abrufe.tsv")[-1]
+    assert (z["status"], z["bytes"], z["quelle"]) == (status, str(n), "netz")
+    assert not abruf._cachepfad(url, ".json").exists()               # nichts im Cache
+
+
+def test_unlesbare_connect_antwort_ist_moegliche_sperre(tmp_path, monkeypatch, roher_server):
+    proxy = roher_server(b"GARBAGE\r\n\r\n")
+    for name in ("HTTPS_PROXY", "https_proxy"):
+        monkeypatch.setenv(name, proxy.url)
+    for name in ("NO_PROXY", "no_proxy"):
+        monkeypatch.setenv(name, "127.0.0.1,localhost")
+    abruf = importlib.import_module("abruf")
+    abruf = _abruf_im_prozess(monkeypatch, tmp_path, _OEFFNER=urllib.request.build_opener(abruf._OhneWeiterleitung))
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.hole("https://example.invalid/oparl/system", ".json")
+    assert e.value.art == "sperre" and "BadStatusLine" in str(e.value)
+    assert proxy.anfragen == ["CONNECT example.invalid:443 HTTP/1.1"]
+    assert tsv(tmp_path / "abrufe.tsv")[-1]["status"] == "BadStatusLine"
+
+
+def test_abgeschnittene_antwort_beendet_den_lauf_als_moegliche_sperre(server, tmp_path):
+    server.abschneiden = lambda pfad: pfad.endswith("/bodies/testkoerperschaft")
+    m = lauf(server, tmp_path, "test", obergrenze=3)
+    assert m["rc"] == 2 and m["lauf"]["ergebnis"] == "abbruch (sperre)", m["stderr"]
+    assert m["server"] == 2 and "Mögliche Sperre" in m["stderr"]
+    assert protokoll(tmp_path)[-1]["status"] == "IncompleteRead"
+    assert len(list((tmp_path / "cache" / "roh").glob("*.json"))) == 1   # nur das System, nicht der Body
+    aus = importlib.import_module("auswertung").auswertung(tmp_path / "cache", tmp_path / "ergebnisse")
+    assert "Status IncompleteRead × 1 (mögliche Sperre: stoppen)" in aus
+
+
+@pytest.mark.parametrize("code", [502, 504])
+def test_502_504_als_antwort_ist_moegliche_sperre(server, tmp_path, monkeypatch, code):
+    """HTTP 502/504 als Antwort (auch im Tunnel des Proxys der Arbeitsumgebung): mögliche Sperre, keine Wiederholung;
+    503 bleibt Art `server` (mit erlaubten Wiederholungen wiederholt)."""
+    server.stoerung = lambda pfad, abfrage: code if pfad.endswith("/oparl/system") else None
+    m = lauf(server, tmp_path, "test", obergrenze=3)
+    assert m["rc"] == 2 and m["lauf"]["ergebnis"] == "abbruch (sperre)", m["stderr"]
+    assert m["server"] == 1 and "Mögliche Sperre" in m["stderr"]
+    assert protokoll(tmp_path)[-1]["status"] == str(code)
+    abruf = _abruf_im_prozess(monkeypatch, tmp_path / "im_prozess")
+    vorher = len(server.anfragen)
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.hole(server.system_url, ".json")
+    assert (e.value.art, e.value.code) == ("sperre", code) and len(server.anfragen) - vorher == 1
+    server.stoerung = lambda pfad, abfrage: 503
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.hole(server.system_url, ".json")
+    assert (e.value.art, e.value.code) == ("server", 503) and len(server.anfragen) - vorher == 6
+
+
+def test_zweiter_gleichzeitiger_prozess_bricht_vor_der_ersten_anfrage_ab(server, tmp_path):
+    """Sperre _cache/abruf.lock: Hält ein Prozess sie, bricht ein zweiter mit demselben Cache ohne Anfrage ab."""
+    env = probelauf.umgebung(server, tmp_path / "cache", tmp_path / "ergebnisse", 3)
+    halter = ("import sys; sys.path.insert(0, sys.argv[1]); import abruf; abruf.sperre_halten(); "
+              "print('bereit', flush=True); sys.stdin.read()")
+    p = subprocess.Popen([sys.executable, "-c", halter, str(EXPLORE)], env=env, stdin=subprocess.PIPE,
+                         stdout=subprocess.PIPE, text=True)
+    try:
+        assert p.stdout.readline().strip() == "bereit"
+        m = lauf(server, tmp_path, "test", obergrenze=3)
+        assert m["rc"] == 2 and m["lauf"]["ergebnis"] == "abbruch (parallel)", m["stderr"]
+        assert server.anfragen == [] and m["lauf"]["netz"] == "0" and "anderer Abrufprozess" in m["stderr"]
+    finally:
+        p.stdin.close()
+        p.wait(timeout=30)
+    m = lauf(server, tmp_path, "test", obergrenze=3)                    # danach ist die Sperre frei
+    assert m["rc"] == 0 and m["server"] == 3, m["stderr"]
+
+
+def test_letzter_abbruch_innerhalb_von_12_stunden(tmp_path):
+    om = importlib.import_module("oparl_messung")
+    erg, jetzt = tmp_path / "erg", dt.datetime(2026, 11, 8, 0, 30, tzinfo=ZoneInfo("Europe/Berlin"))
+    datei = erg / "oparl_laeufe.tsv"
+    assert om.letzter_abbruch(datei, jetzt) is None                       # noch kein Lauf
+
+    def zeile(nr, ende, ergebnis):
+        return (nr, 3, "organisationen", "--seiten 4", ende, ende, 1, 2, 0, 5, 0, 2, ergebnis, "Test")
+    for ende, ergebnis, gesperrt in (
+            ("2026-11-07T23:10:00+01:00", "abbruch (server)", True),
+            ("2026-11-07T23:10:00+01:00", "abbruch (proxy)", True),
+            ("2026-11-07T23:10:00+01:00", "fehler (JSONDecodeError)", True),
+            ("2026-11-07T23:10:00", "abbruch (sperre)", True),            # ohne Zone: Ortszeit Köln
+            ("", "abbruch (sperre)", True),                               # ohne Ende: vorsichtshalber gesperrt
+            ("2026-11-07T23:10:00+01:00", "ok", False),
+            ("2026-11-07T23:10:00+01:00", "unterbrochen", False),
+            ("2026-11-07T12:29:00+01:00", "abbruch (server)", False)):    # vor mehr als 12 Stunden
+        _laeufe(erg, zeile(1, "2026-11-06T23:10:00+01:00", "abbruch (sperre)"), zeile(2, ende, ergebnis))
+        treffer = om.letzter_abbruch(datei, jetzt)
+        assert (treffer is not None) == gesperrt, (ende, ergebnis)
+        assert treffer is None or treffer["lauf"] == "2"                  # maßgeblich ist der letzte Lauf
+
+
+def _wie_die_stadt(stadt, tmp_path, **zusatz):
+    """Umgebung für oparl_messung.py gegen einen Testserver auf 127.0.0.2: gilt nicht als lokal, also gelten Freigabe,
+    Zeitfenster (hier offen), strenge Vorgaben, Abstand ≥ 2 s und die Prüfung des letzten Laufs."""
+    assert stadt.system_url.startswith("http://127.0.0.2:")
+    keine = ",".join(x for x in (os.environ.get("NO_PROXY", ""), "127.0.0.1,127.0.0.2,localhost") if x)
+    env = {k: v for k, v in os.environ.items() if not k.startswith("RATSATLAS_")}
+    env.update({"RATSATLAS_OPARL_SYSTEM": stadt.system_url, "RATSATLAS_OPARL_BODY": stadt.body_url,
+                "RATSATLAS_STADT_INFORMIERT": "ja", "RATSATLAS_ZEITFENSTER": "",
+                "RATSATLAS_KONTAKT": "kontakt@example.invalid", "RATSATLAS_WIEDERHOLUNGEN": "0",
+                "RATSATLAS_MAX_DAUER": "5", "RATSATLAS_CACHE": str(tmp_path / "cache"),
+                "RATSATLAS_ERGEBNISSE": str(tmp_path / "ergebnisse"), "NO_PROXY": keine, "no_proxy": keine, **zusatz})
+    return env
+
+
+def test_nach_abbruch_keine_weitere_anfrage_an_die_stadt(tmp_path):
+    """Stufe 3 ohne `&&` ausgeführt: Der erste Prozess bricht mit 503 ab, der zweite schickt keine Anfrage (letzter Lauf
+    in oparl_laeufe.tsv vor weniger als 12 Stunden abgebrochen)."""
+    with testserver.Testserver(host="127.0.0.2") as stadt:
+        stadt.stoerung = lambda pfad, abfrage: 503 if pfad.endswith("/organizations") else None
+        skript = str(EXPLORE / "oparl_messung.py")
+        erster = subprocess.run([sys.executable, skript, "organisationen", "--seiten", "4"], capture_output=True,
+                                text=True, timeout=120,
+                                env=_wie_die_stadt(stadt, tmp_path, RATSATLAS_STUFE="3", RATSATLAS_MAX_ANFRAGEN="5"))
+        assert erster.returncode == 2 and len(stadt.anfragen) == 2, erster.stderr     # Body, Liste mit 503
+        zweiter = subprocess.run([sys.executable, skript, "stichprobe", "--seiten", "1", "--von", "2019", "--bis",
+                                  "2026"], capture_output=True, text=True, timeout=120,
+                                 env=_wie_die_stadt(stadt, tmp_path, RATSATLAS_STUFE="3", RATSATLAS_MAX_ANFRAGEN="9"))
+    assert zweiter.returncode == 1 and "RATSATLAS_NACH_ABBRUCH" in zweiter.stderr, zweiter.stderr
+    assert "abbruch (server)" in zweiter.stderr
+    assert len(stadt.anfragen) == 2                                           # keine Anfrage des zweiten Prozesses
+    assert [z["ergebnis"] for z in tsv(tmp_path / "ergebnisse" / "oparl_laeufe.tsv")] == ["abbruch (server)"]
+
+
+def test_freigabe_nach_abbruch_nur_ausdruecklich(tmp_path, monkeypatch):
+    """Nach einem Abbruch vor weniger als 12 Stunden: ohne RATSATLAS_NACH_ABBRUCH keine Anfrage (Rückgabewert 1), mit
+    RATSATLAS_NACH_ABBRUCH=ja geht der Lauf weiter (hier ohne Netz: hole ersetzt)."""
+    om = importlib.import_module("oparl_messung")
+    erg = tmp_path / "erg"
+    jetzt = dt.datetime.now(ZoneInfo("Europe/Berlin")).replace(microsecond=0).isoformat()
+    _laeufe(erg, (1, 3, "organisationen", "--seiten 4", jetzt, jetzt, 1, 2, 0, 5, 0, 2, "abbruch (server)", "503"))
+    for name, wert in (("ERG", erg), ("SYSTEM", "https://example.invalid/oparl/system"),
+                       ("BODY", "https://example.invalid/oparl/bodies/x"), ("_LISTEN", [])):
+        monkeypatch.setattr(om, name, wert)
+    for name, wert in (("WIEDERHOLUNGEN", 4), ("MAX_DAUER", 0.0), ("ABSTAND", 0.0), ("MAX_ANFRAGEN", 3),
+                       ("KONTAKT", "kontakt@example.invalid")):
+        monkeypatch.setattr(om.abruf, name, wert)                          # main() setzt sie; danach zurück
+    for name in ("RATSATLAS_NACH_ABBRUCH", "RATSATLAS_ABSTAND", "RATSATLAS_WIEDERHOLUNGEN", "RATSATLAS_MAX_DAUER"):
+        monkeypatch.delenv(name, raising=False)
+    for name, wert in (("RATSATLAS_STADT_INFORMIERT", "ja"), ("RATSATLAS_ZEITFENSTER", ""),
+                       ("RATSATLAS_MAX_ANFRAGEN", "3"), ("RATSATLAS_KONTAKT", "kontakt@example.invalid")):
+        monkeypatch.setenv(name, wert)
+    geholt = []
+
+    def hole(url, endung=""):
+        geholt.append(url)
+        raise om.Abbruch("Test: Zeitüberschreitung, mögliche Sperre", "sperre")
+    monkeypatch.setattr(om, "hole", hole)
+    with pytest.raises(SystemExit) as e:
+        om.main(["test"])
+    assert "RATSATLAS_NACH_ABBRUCH" in str(e.value.code) and geholt == []
+    monkeypatch.setenv("RATSATLAS_NACH_ABBRUCH", "ja")
+    assert om.main(["test"]) == 2 and geholt == ["https://example.invalid/oparl/system"]
+    assert [z["ergebnis"] for z in tsv(erg / "oparl_laeufe.tsv")] == ["abbruch (server)", "abbruch (sperre)"]

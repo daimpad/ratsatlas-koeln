@@ -1,19 +1,24 @@
 """Geodaten Köln einmalig laden und beschreiben (Phase 1, freigegeben am 04.11.2026).
 
-Aufruf: python3 explore/geodaten.py
+Aufruf: RATSATLAS_MAX_ANFRAGEN=<N> python3 explore/geodaten.py   (N = freigegebene Obergrenze; ohne sie kein Abruf)
 1. Je Datensatz die Katalogseite auf offenedaten-koeln.de und deren DCAT-AP-Beschreibung (dcatapde.json) lesen:
    Titel, Stand, Lizenz und Distributionen → explore/ergebnisse/geodaten_katalog.tsv
 2. Dateien (zip, csv, xlsx, json, geojson, gpkg) unter sites/default/files laden (Cache explore/_cache/, nicht im Repository)
 3. Inhalt beschreiben: Ebenen, Feldnamen, Koordinatensystem, Anzahl, Beispielwerte → explore/ergebnisse/geodaten_felder.tsv
 Die geladenen Dateien bleiben außerhalb der Versionskontrolle (siehe .gitignore).
 Abruf über explore/abruf.py mit denselben Mindestwerten wie die OParl-Messung (vorgaben(), vor der ersten Anfrage
-erzwungen): mindestens 2 s Abstand (RATSATLAS_ABSTAND, Vorgabe 2) und keine Wiederholung nach 429/5xx
-(RATSATLAS_WIEDERHOLUNGEN, Vorgabe 0); lockerere Werte brechen vor der ersten Anfrage ab (Rückgabewert 1).
-Weiterleitungen (HTTP 3xx) werden nicht verfolgt. Eine Weiterleitung oder ein HTTP-Fehler (z. B. 404) bricht nur den
-Abruf dieses Katalogs bzw. dieser Datei ab: Er wird mit der Meldung (bei einer Weiterleitung mit Ziel) in
+erzwungen): mindestens 2 s Abstand (RATSATLAS_ABSTAND, Vorgabe 2), keine Wiederholung nach 429/5xx
+(RATSATLAS_WIEDERHOLUNGEN, Vorgabe 0) und eine Obergrenze der Anfragen ans Netz (RATSATLAS_MAX_ANFRAGEN, Pflicht; die
+Zahl wird vor dem Lauf festgelegt und freigegeben); fehlende oder lockerere Werte brechen vor der ersten Anfrage ab
+(Rückgabewert 1).
+Weiterleitungen (HTTP 3xx) werden nicht verfolgt. Eine Weiterleitung oder ein anderer HTTP-Fehler (z. B. 404) bricht
+nur den Abruf dieses Katalogs bzw. dieser Datei ab: Er wird mit der Meldung (bei einer Weiterleitung mit Ziel) in
 geodaten_katalog.tsv bzw. geodaten_felder.tsv vermerkt, das Ziel steht in _cache/abrufe.tsv (Spalte ziel); die übrigen
-Datensätze laufen weiter. Nach einem Abbruch der Art sperre (mögliche Sperre), server (429/5xx), proxy (Ablehnung
-durch den Proxy der Arbeitsumgebung) oder obergrenze endet der ganze Lauf sofort (Rückgabewert 2); die
+Datensätze laufen weiter. Nach einem Abbruch der Art sperre (mögliche Sperre, auch abgeschnittene oder unlesbare
+Antwort und HTTP 502/504), server (429/5xx), proxy (Ablehnung durch den Proxy der Arbeitsumgebung), obergrenze,
+langsam (RATSATLAS_MAX_DAUER), parallel (ein anderer Abrufprozess läuft) oder http mit 401, 403 oder 429 endet der ganze
+Lauf sofort (Rückgabewert 2): offenedaten-koeln.de liegt im selben Netz wie die OParl-API
+(ergebnisse/sessionnet_befunde.tsv), und nach diesen Signalen ruhen laut explore/STUFEN.md alle Abrufe. Die
 Ergebnisdateien bleiben dann unverändert. Der Lauf vom 04.11.2026 entstand noch mit urllib.request.urlopen, das
 Weiterleitungen folgt (Commit 1649598); seit 07.11.2026 (Commit 092446c) gilt die Regel.
 """
@@ -58,34 +63,41 @@ DCT = "http://purl.org/dc/terms/"
 
 # Mindestwerte wie für die OParl-Messung (explore/oparl_messung.py, STRENG_ABSTAND)
 STRENG_ABSTAND = 2.0
-# Abbruchsarten, nach denen der ganze Lauf endet (keine weitere Anfrage an die Stadt)
-ENDE = ("sperre", "server", "proxy", "obergrenze")
+# Abbruchsarten, nach denen der ganze Lauf endet (keine weitere Anfrage an die Stadt) …
+ENDE = ("sperre", "server", "proxy", "obergrenze", "langsam", "parallel")
+# … ebenso HTTP-Antworten der Art `http` mit diesen Codes (STUFEN.md: nach 403 oder 429 ruhen alle Abrufe)
+ENDE_HTTP = (401, 403, 429)
 
 
 class _Ende(Exception):
-    """Ein Abbruch aus ENDE: Der ganze Lauf endet."""
+    """Ein Abbruch aus ENDE oder ENDE_HTTP: Der ganze Lauf endet."""
 
 
 def vorgaben(umgebung=None):
     """Mindestwerte für den Abruf der Geodaten; liefert (werte, fehler). Fehlende Werte werden gesetzt (Abstand 2 s,
-    keine Wiederholung), lockerere abgelehnt."""
+    keine Wiederholung), lockerere abgelehnt; die Obergrenze RATSATLAS_MAX_ANFRAGEN ist Pflicht."""
     env = os.environ if umgebung is None else umgebung
     fehler = []
     try:
         wiederholungen = int(env.get("RATSATLAS_WIEDERHOLUNGEN") or "0")
         abstand = float(env.get("RATSATLAS_ABSTAND") or STRENG_ABSTAND)
+        max_anfragen = int(env.get("RATSATLAS_MAX_ANFRAGEN") or "0")
     except ValueError as e:
         return {}, [f"unlesbarer Wert ({e})"]
     if wiederholungen != 0:
         fehler.append("RATSATLAS_WIEDERHOLUNGEN muss 0 sein (keine Wiederholung nach 429/5xx)")
     if not (math.isfinite(abstand) and abstand >= STRENG_ABSTAND):
         fehler.append(f"RATSATLAS_ABSTAND muss mindestens {STRENG_ABSTAND:g} s sein (Abstand zwischen zwei Anfragen)")
-    return {"wiederholungen": wiederholungen, "abstand": abstand}, fehler
+    if max_anfragen <= 0:
+        fehler.append("RATSATLAS_MAX_ANFRAGEN fehlt (Obergrenze der Anfragen ans Netz für diesen Lauf, vor dem Lauf "
+                      "festlegen und freigeben lassen)")
+    return {"wiederholungen": wiederholungen, "abstand": abstand, "max_anfragen": max_anfragen}, fehler
 
 
 def _pruefe_ende(e):
-    """Ein Abbruch aus ENDE beendet den ganzen Lauf; alle übrigen betreffen nur den Katalog bzw. die Datei."""
-    if isinstance(e, Abbruch) and e.art in ENDE:
+    """Ein Abbruch aus ENDE oder der Art http mit einem Code aus ENDE_HTTP beendet den ganzen Lauf; alle übrigen
+    betreffen nur den Katalog bzw. die Datei."""
+    if isinstance(e, Abbruch) and (e.art in ENDE or (e.art == "http" and e.code in ENDE_HTTP)):
         raise _Ende(e) from e
 
 
@@ -192,6 +204,7 @@ def main():
         print("Abbruch vor der ersten Anfrage: " + "; ".join(fehler), file=sys.stderr)
         return 1
     abruf.ABSTAND, abruf.WIEDERHOLUNGEN = werte["abstand"], werte["wiederholungen"]
+    abruf.MAX_ANFRAGEN = werte["max_anfragen"]
     try:
         kat, felder = _laden()
     except _Ende as e:

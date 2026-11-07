@@ -2,8 +2,12 @@
 Abrufstatistik, Sperre und Anschluss an build.py (Bonner Datenmodell)."""
 import csv
 import json
+import os
 import sqlite3
+import subprocess
+import sys
 import threading
+import time
 import types
 import urllib.parse
 import urllib.request
@@ -13,6 +17,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import pytest
 
 from pipeline import abruf, build, config, sessionnet
+
+# Öffner ohne Proxy für Tests gegen lokale Server (unabhängig von den Proxy-Variablen der Umgebung)
+OHNE_PROXY = urllib.request.build_opener(abruf._OhneWeiterleitung, urllib.request.ProxyHandler({}))
 
 
 def _jsonl(path):
@@ -90,6 +97,7 @@ def test_abbruch_haelt_letzten_stand(oparl, monkeypatch):
     sessionnet.fetch_all()
     assert config.PAPERS.read_text() == vorher
     assert "HTTP 404" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    assert "sperre_verdacht" not in json.loads(config.ZUSTAND.read_text())   # 404 ist kein Sperrsignal
 
 
 def test_zeitfenster(monkeypatch):
@@ -209,15 +217,18 @@ def test_seite_ohne_neue_kennungen_bricht_ab(monkeypatch):
     assert e.value.art == "liste" and len(e.value.objekte) == 2 and e.value.seiten == 2
 
 
-def _lokaler_server(antwort):
-    """Lokaler Hilfsserver: `antwort(methode, pfad)` liefert (Status, Kopfzeilen, Inhalt); Anfragen in `server.anfragen`."""
-    anfragen = []
+def _lokaler_server(antwort, host="127.0.0.1"):
+    """Lokaler Hilfsserver: `antwort(methode, pfad)` liefert (Status, Kopfzeilen, Inhalt); Anfragen in `server.anfragen`,
+    Eingangszeiten (time.monotonic) in `server.eingang`. `host`: Loopback-Adresse (127.0.0.2 gilt nicht als lokal)."""
+    assert host.startswith("127.")
+    anfragen, eingang = [], []
 
     class H(BaseHTTPRequestHandler):
         def log_message(self, *a):
             pass
 
         def _antworten(self):
+            eingang.append(time.monotonic())
             anfragen.append((self.command, self.path))
             status, kopf, inhalt = antwort(self.command, self.path)
             self.send_response(status)
@@ -228,8 +239,8 @@ def _lokaler_server(antwort):
 
         do_GET = do_CONNECT = _antworten
 
-    server = ThreadingHTTPServer(("127.0.0.1", 0), H)
-    server.anfragen, server.url = anfragen, f"http://127.0.0.1:{server.server_address[1]}"
+    server = ThreadingHTTPServer((host, 0), H)
+    server.anfragen, server.eingang, server.url = anfragen, eingang, f"http://{host}:{server.server_address[1]}"
     threading.Thread(target=server.serve_forever, daemon=True).start()
     return server
 
@@ -335,18 +346,24 @@ def test_proxy_erreicht_die_stadt_nicht_ist_moegliche_sperre(oparl, monkeypatch,
 
 
 def test_proxy_ueberlastet_wie_429_5xx(oparl, monkeypatch):
-    # 503 auf CONNECT (Begrenzung, Überlastung): wie HTTP 429/5xx mit Pausen, danach „aufgegeben“; keine Sperre
+    # 503 auf CONNECT (Begrenzung, Überlastung): wie HTTP 429/5xx mit Pausen, danach „aufgegeben“; keine Ablehnung
+    # durch den Proxy, aber eine Nacht mit möglicher Sperre (Squid/Envoy melden so auch ein unerreichbares Ziel)
     proxy = _schein_proxy(monkeypatch, 503)
     try:
         vorher = abruf.statistik()
         with pytest.raises(abruf.Abbruch) as e:
             abruf.get_json("https://example.invalid/oparl/body", pausen=[0, 0])
-        assert e.value.art == "aufgegeben" and len(proxy.anfragen) == 3
+        assert (e.value.art, e.value.code) == ("aufgegeben", 503) and len(proxy.anfragen) == 3
         nachher = abruf.statistik()
         assert (nachher["wiederholungen"] - vorher["wiederholungen"], nachher["proxy"] - vorher["proxy"]) == (2, 0)
+        monkeypatch.setattr(config, "ABRUF_PAUSEN", [0, 0])
+        monkeypatch.setattr(config, "OPARL_BODY", "https://example.invalid/oparl/body")
+        sessionnet.fetch_all()
     finally:
         proxy.shutdown()
         proxy.server_close()
+    verdacht = json.loads(config.ZUSTAND.read_text())["sperre_verdacht"]
+    assert (verdacht["naechte"], verdacht["art"], verdacht["code"]) == (1, "aufgegeben", 503)
 
 
 def test_mindestabstand_fuer_fremde_adressen(monkeypatch, capsys):
@@ -400,7 +417,7 @@ def test_teilabbruch_uebernimmt_ziel(monkeypatch):
     assert (e.value.art, e.value.ziel) == ("weiterleitung", "https://example.invalid/neu")
 
 
-@pytest.mark.parametrize("art", ["weiterleitung", "proxy"])
+@pytest.mark.parametrize("art", ["weiterleitung", "proxy", "adresse"])
 def test_keine_fortsetzung_nach_weiterleitung_oder_proxy(oparl, monkeypatch, art):
     echt = abruf.get_json
     seite_3 = {"aktiv": False}
@@ -441,3 +458,213 @@ def test_alte_abrufstatistik_bekommt_neue_spalten(oparl):
     assert (zeilen[0]["datum"], zeilen[0]["ergebnis"], zeilen[0]["bytes"], zeilen[0]["weiterleitungen"]) == (
         "2026-11-01T22:30:00+00:00", "ok", "100", "")
     assert [z["liste"] for z in zeilen[1:]] == ["body", "organizations", "papers", "meetings"]
+
+
+# Antworten, die mitten im Inhalt oder schon in der Statuszeile scheitern (http.client.HTTPException, kein OSError)
+UNVOLLSTAENDIG = {
+    "content-length": (b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 1000\r\n\r\n"
+                       b"{\"data\": [", "IncompleteRead"),
+    "chunked": (b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nTransfer-Encoding: chunked\r\n\r\n"
+                b"5\r\n{\"a\":\r\n", "IncompleteRead"),
+    "statuszeile": (b"GARBAGE\r\n\r\n", "BadStatusLine"),
+}
+
+
+@pytest.mark.parametrize("fall", list(UNVOLLSTAENDIG))
+def test_abgeschnittene_oder_unlesbare_antwort_ist_moegliche_sperre(oparl, monkeypatch, roher_server, fall):
+    """Abgeschnittener Inhalt (Content-Length, chunked ohne Abschluss) und unlesbare Statuszeile: Art `sperre` ohne
+    Wiederholung; im Lauf kein Traceback, Fehler in STAND.json, Nacht mit möglicher Sperre gezählt."""
+    antwort, name = UNVOLLSTAENDIG[fall]
+    server = roher_server(antwort)
+    monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json(f"{server.url}/body", pausen=[0, 0])
+    assert e.value.art == "sperre" and "mögliche Sperre" in str(e.value) and name in str(e.value)
+    assert server.anfragen == ["GET /body HTTP/1.1"]                    # keine Wiederholung
+    monkeypatch.setattr(config, "OPARL_BODY", f"{server.url}/body")
+    sessionnet.fetch_all()                                              # kein Traceback
+    sessionnet.fetch_all()
+    assert len(server.anfragen) == 3
+    verdacht = json.loads(config.ZUSTAND.read_text())["sperre_verdacht"]
+    assert (verdacht["naechte"], verdacht["art"]) == (2, "sperre")
+    assert "mögliche Sperre" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    z = [r for r in _statistik() if r["liste"] == "body"][-1]
+    assert (z["anfragen"], z["fehler"], z["wiederholungen"]) == ("1", "1", "0") and "mögliche Sperre" in z["ergebnis"]
+
+
+def test_unlesbare_antwort_des_proxys_auf_connect_ist_moegliche_sperre(oparl, monkeypatch, roher_server):
+    # Schein-Proxy antwortet auf CONNECT mit einer unlesbaren Statuszeile (BadStatusLine beim Tunnelaufbau)
+    proxy = roher_server(b"GARBAGE\r\n\r\n")
+    for name in ("HTTPS_PROXY", "https_proxy"):
+        monkeypatch.setenv(name, proxy.url)
+    for name in ("NO_PROXY", "no_proxy"):
+        monkeypatch.setenv(name, "127.0.0.1,localhost")
+    monkeypatch.setattr(abruf, "_OEFFNER", urllib.request.build_opener(abruf._OhneWeiterleitung))
+    monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json("https://example.invalid/oparl/body", pausen=[0, 0])
+    assert e.value.art == "sperre" and "BadStatusLine" in str(e.value)
+    assert proxy.anfragen == ["CONNECT example.invalid:443 HTTP/1.1"]   # keine Wiederholung
+    monkeypatch.setattr(config, "OPARL_BODY", "https://example.invalid/oparl/body")
+    sessionnet.fetch_all()
+    assert json.loads(config.ZUSTAND.read_text())["sperre_verdacht"]["naechte"] == 1
+
+
+def test_ungueltige_adresse_wird_nicht_gesendet(monkeypatch):
+    monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+    monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
+    vorher = abruf.statistik()
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json("http://127.0.0.1:9/papers?page=2 x", pausen=[0, 0])
+    assert e.value.art == "adresse" and not sessionnet.moegliche_sperre(e.value)
+    assert abruf.statistik()["anfragen"] == vorher["anfragen"]
+
+
+def test_moegliche_sperre():
+    def abbruch(art, code=None):
+        return abruf.Abbruch("Test", art, code=code)
+    for e in (abbruch("sperre"), abbruch("aufgegeben"), abbruch("aufgegeben", 503), abbruch("http", 401),
+              abbruch("http", 403), abbruch("http", 429)):
+        assert sessionnet.moegliche_sperre(e), (e.art, e.code)
+    for e in (abbruch("http", 404), abbruch("http", 407), abbruch("proxy", 407), abbruch("weiterleitung", 301),
+              abbruch("liste"), abbruch("adresse"), abbruch("zeitfenster"), RuntimeError("Beratungen: nur 0")):
+        assert not sessionnet.moegliche_sperre(e), (getattr(e, "art", ""), getattr(e, "code", None))
+    # Teilabbruch übernimmt Art und Code
+    t = sessionnet.Teilabbruch(abbruch("http", 403), [], None, 0)
+    assert (t.art, t.code) == ("http", 403) and sessionnet.moegliche_sperre(t)
+
+
+@pytest.mark.parametrize("status, inhalt, art, anfragen_je_nacht", [
+    (401, b"", "http", 1), (403, b"", "http", 1), (429, b"", "aufgegeben", 3), (503, b"", "aufgegeben", 3),
+    (200, b"<html><body>Zugriff gesperrt</body></html>", "aufgegeben", 3)])
+def test_sperrsignale_zaehlen_als_nacht_mit_moeglicher_sperre(oparl, monkeypatch, status, inhalt, art,
+                                                              anfragen_je_nacht):
+    """HTTP 401/403 und „aufgegeben“ nach 429, 5xx oder unlesbarer Antwort (z. B. HTML-Sperrseite mit 200): nach drei
+    Nächten in Folge pausiert der Abruf sieben Tage."""
+    server = _lokaler_server(lambda methode, pfad: (status, {"Content-Type": "text/html"}, inhalt))
+    monkeypatch.setattr(config, "ABRUF_PAUSEN", [0, 0])
+    monkeypatch.setattr(config, "OPARL_BODY", f"{server.url}/body")
+    try:
+        for nacht in range(1, 4):
+            sessionnet.fetch_all()
+            verdacht = json.loads(config.ZUSTAND.read_text())["sperre_verdacht"]
+            assert (verdacht["naechte"], verdacht["art"]) == (nacht, art)
+        assert len(server.anfragen) == 3 * anfragen_je_nacht
+        sessionnet.fetch_all()                                   # vierte Nacht: pausiert, keine Anfrage
+        assert len(server.anfragen) == 3 * anfragen_je_nacht
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert "pausiert" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
+
+
+def test_407_ohne_proxy_kommt_von_der_gegenseite(oparl, monkeypatch):
+    """HTTP 407 gilt nur als Ablehnung durch den Proxy, wenn für das Schema ein Proxy gesetzt ist und der Host nicht
+    ausgenommen ist (GitHub Actions: kein Proxy, dann kommt 407 vom Server)."""
+    for name in ("HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy", "ALL_PROXY", "all_proxy"):
+        monkeypatch.delenv(name, raising=False)
+    server = _lokaler_server(lambda methode, pfad: (407, {}, b""))
+    url = f"{server.url}/body"
+    try:
+        monkeypatch.setattr(abruf, "_OEFFNER", urllib.request.build_opener(abruf._OhneWeiterleitung))
+        assert not abruf.proxy_gesetzt(url)
+        vorher = abruf.statistik()
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(url, pausen=[0, 0])
+        assert (e.value.art, e.value.code) == ("http", 407) and abruf.statistik()["proxy"] == vorher["proxy"]
+        # Proxy gesetzt, aber 127.0.0.1 ausgenommen: die Anfrage geht direkt, der 407 kommt vom Server
+        for name in ("HTTP_PROXY", "http_proxy"):
+            monkeypatch.setenv(name, "http://127.0.0.1:9")
+        for name in ("NO_PROXY", "no_proxy"):
+            monkeypatch.setenv(name, "127.0.0.1,localhost")
+        monkeypatch.setattr(abruf, "_OEFFNER", urllib.request.build_opener(abruf._OhneWeiterleitung))
+        assert not abruf.proxy_gesetzt(url) and abruf.proxy_gesetzt("http://example.invalid/body")
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(url, pausen=[0, 0])
+        assert (e.value.art, e.value.code) == ("http", 407)
+        assert len(server.anfragen) == 2
+        monkeypatch.setattr(config, "OPARL_BODY", url)
+        sessionnet.fetch_all()
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert not config.ZUSTAND.exists() or "sperre_verdacht" not in json.loads(config.ZUSTAND.read_text())
+    assert "HTTP 407" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+
+
+def test_lokal_nur_ueber_schema_und_host(oparl, monkeypatch):
+    """Nur http mit Host 127.0.0.1, localhost oder ::1 ist lokal; localhost.example.org oder 127.0.0.1.nip.io sind
+    fremde Adressen: Freigabe, Zeitfenster und Mindestabstand gelten. Keine echte Anfrage (Öffner ersetzt)."""
+    for url in ("http://127.0.0.1:8080/x", "http://localhost/", "http://LOCALHOST:1/", "http://[::1]:9/"):
+        assert abruf.lokal(url), url
+    fremd = ("http://localhost.example.org/oparl/body", "http://127.0.0.1.nip.io/oparl/body")
+    for url in (*fremd, "https://127.0.0.1/", "http://127.0.0.1@example.invalid/", "http://[::1/", "http://127.0.0.2/"):
+        assert not abruf.lokal(url), url
+    monkeypatch.setattr(abruf, "_OEFFNER", types.SimpleNamespace(open=lambda *a, **k: pytest.fail("keine Anfrage")))
+    # ohne Freigabe: gesperrt vor der Anfrage, im Lauf übersprungen
+    for url in fremd:
+        assert not abruf.freigegeben(url)
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(url)
+        assert e.value.art == "gesperrt"
+        monkeypatch.setattr(config, "OPARL_BODY", url)
+        sessionnet.fetch_all()
+        assert "nicht informiert" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
+    # mit Freigabe gilt das Zeitfenster
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: False)
+    for url in fremd:
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(url)
+        assert e.value.art == "zeitfenster"
+        monkeypatch.setattr(config, "OPARL_BODY", url)
+        sessionnet.fetch_all()
+        assert "Zeitfenster" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
+    # und der Mindestabstand (Scheinuhr, Scheinöffner): 2 s trotz RATSATLAS_ABSTAND=0, lokal 0
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: True)
+    uhr, gewartet = {"t": 500.0}, []
+
+    def schlafen(s):
+        gewartet.append(round(s, 3))
+        uhr["t"] += s
+
+    class Antwort:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self):
+            return b"{}"
+    monkeypatch.setattr(abruf, "time", types.SimpleNamespace(monotonic=lambda: uhr["t"], sleep=schlafen))
+    monkeypatch.setattr(abruf, "_OEFFNER", types.SimpleNamespace(open=lambda req, timeout: Antwort()))
+    monkeypatch.setattr(abruf, "_letzte", uhr["t"])                 # wie beim Import: gerade eben
+    monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
+    for url in fremd:
+        abruf.get_json(url)
+    abruf.get_json("http://127.0.0.1:9/lokal")
+    assert gewartet == [2.0, 2.0]
+
+
+def test_erste_anfrage_eines_prozesses_folgt_frühestens_2_s_nach_dem_start():
+    """Neuer Prozess (pipeline.abruf frisch importiert) gegen einen Server auf 127.0.0.2, der nicht als lokal gilt:
+    Die erste Anfrage kommt frühestens 2 s nach dem Import, auch mit RATSATLAS_ABSTAND=0."""
+    server = _lokaler_server(lambda methode, pfad: (200, {"Content-Type": "application/json"}, b"{}"), "127.0.0.2")
+    keine = ",".join(x for x in (os.environ.get("NO_PROXY", ""), "127.0.0.1,127.0.0.2,localhost") if x)
+    env = {**{k: v for k, v in os.environ.items() if not k.startswith("RATSATLAS_")},
+           "RATSATLAS_STADT_INFORMIERT": "ja", "RATSATLAS_ZEITFENSTER": "", "RATSATLAS_ABSTAND": "0",
+           "NO_PROXY": keine, "no_proxy": keine, "PYTHONPATH": str(config.ROOT)}
+    skript = ("import sys, time; t = time.monotonic(); from pipeline import abruf; abruf.get_json(sys.argv[1]); "
+              "print(t)")
+    try:
+        r = subprocess.run([sys.executable, "-c", skript, f"{server.url}/body"], env=env, cwd=config.ROOT,
+                           capture_output=True, text=True, timeout=60)
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert r.returncode == 0, r.stderr
+    assert len(server.eingang) == 1 and server.eingang[0] - float(r.stdout.strip()) >= 2.0
+    assert "RATSATLAS_ABSTAND=0 s liegt unter dem Mindestabstand" in r.stderr

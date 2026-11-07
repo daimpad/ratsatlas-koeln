@@ -4,15 +4,24 @@
   (Antworten aus dem Cache zählen nicht), auch über Prozessgrenzen: Die erste Netzanfrage eines Prozesses folgt
   frühestens ABSTAND Sekunden nach dem Import und frühestens ABSTAND Sekunden nach der letzten Netzanfrage laut
   _cache/abrufe.tsv (Zeit mit Zone, nach dem Ende der Antwort geschrieben; sekundengenau, daher 1 s Zuschlag)
+- gleichzeitige Prozesse: Vor der ersten Netzanfrage nimmt ein Prozess eine exklusive Sperre (fcntl.flock) auf
+  _cache/abruf.lock und hält sie bis zu seinem Ende; ein zweiter Prozess mit demselben Cache bricht dann vor seiner
+  ersten Anfrage ab (Art `parallel`)
 - offener User-Agent mit Projektadresse; Kontakt über die Umgebungsvariable RATSATLAS_KONTAKT
 - Wiederholung nur bei 429/5xx, mit wachsender Pause; 401/403/404 brechen sofort ab;
   RATSATLAS_WIEDERHOLUNGEN=0 bricht auch bei 429/5xx sofort ab (Messstufen: stoppen und berichten)
+- HTTP 502 und 504 (ein Gateway oder der Proxy der Arbeitsumgebung erreicht den Zielserver nicht, auch als Antwort im
+  Tunnel des Proxys): wie ein Verbindungsabbruch Art `sperre` (mögliche Sperre), ohne Wiederholung
 - RATSATLAS_MAX_DAUER (Sekunden): eine langsamere Antwort wird noch gespeichert, danach Abbruch
 - RATSATLAS_MAX_ANFRAGEN: harte Obergrenze für Anfragen ans Netz je Prozess (Cache-Treffer zählen nicht)
 - Weiterleitungen (3xx) werden nicht verfolgt: jede Weiterleitung ist genau eine Anfrage, wird mit Ziel-URL
   protokolliert und bricht ab (sonst kämen ungezählte Anfragen an einen anderen Host oder Pfad hinzu)
 - Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
   (wie pipeline/abruf.py; explore/ergebnisse/sessionnet_befunde.tsv)
+- ebenso eine abgeschnittene oder unlesbare Antwort: weniger Bytes als Content-Length (Status `IncompleteRead`),
+  chunked ohne Abschluss, unlesbare Statuszeile und andere http.client.HTTPException (BadStatusLine, LineTooLong,
+  RemoteDisconnected …; Status = Name der Ausnahme), auch als Antwort des Proxys auf CONNECT: Art `sperre`, keine
+  Wiederholung, nichts im Cache. Eine ungültige Adresse (http.client.InvalidURL) wird nicht gesendet: Art `adresse`
 - Antwortet der Proxy der Arbeitsumgebung auf CONNECT nicht mit 200 („Tunnel connection failed: <Code>“), zählt der
   Code (Abbruch jeweils ohne Wiederholung):
   - 403, 405, 407 (Ablehnung durch eine Richtlinie oder fehlende Anmeldung) und HTTP 407: Die Anfrage hat den
@@ -23,16 +32,19 @@
     Status `tunnel <Code>`
   - alle übrigen, vor allem 502 und 504 (der Proxy erreicht den Zielserver nicht): wie Zeitüberschreitung und
     Verbindungsabbruch Art `sperre` (mögliche Sperre), Status `tunnel <Code>`
-- Rohdaten-Cache: jede Antwort wird unter explore/_cache/ abgelegt und beim nächsten Lauf nicht erneut abgerufen
+- Rohdaten-Cache: jede vollständige Antwort wird unter explore/_cache/ abgelegt und beim nächsten Lauf nicht erneut
+  abgerufen
 - Protokoll jeder Anfrage (Zeit mit Zone, URL, Status, Bytes, Dauer, Netz oder Cache, Ziel einer Weiterleitung) in
   explore/_cache/abrufe.tsv
 Für Anfragen an die Stadt setzt explore/oparl_messung.py strengere Vorgaben (keine Wiederholung, höchstens 5 s je
-Antwort, Abstand mindestens 2 s, Obergrenze und Kontakt Pflicht); explore/geodaten.py erzwingt Abstand und
-Wiederholungen ebenso.
+Antwort, Abstand mindestens 2 s, Obergrenze und Kontakt Pflicht); explore/geodaten.py erzwingt Abstand, Wiederholungen
+und Obergrenze ebenso.
 Nur Standardbibliothek.
 """
 import datetime as dt
+import fcntl
 import hashlib
+import http.client
 import os
 import re
 import time
@@ -57,9 +69,11 @@ MAX_DAUER = float(os.environ.get("RATSATLAS_MAX_DAUER", "0"))
 PROTOKOLL = CACHE / "abrufe.tsv"
 PROTOKOLL_SPALTEN = ("zeit", "url", "status", "bytes", "dauer_s", "quelle", "ziel")
 ZEITZONE = ZoneInfo("Europe/Berlin")
+SPERRDATEI = "abruf.lock"   # im Cache-Verzeichnis; exklusiv für die Laufzeit eines Prozesses
 _anfragen = 0
 _cache_treffer = 0
 _kopf_geprueft = False
+_sperre = None   # offene Sperrdatei dieses Prozesses (fcntl.flock), ab der ersten Netzanfrage bis zum Prozessende
 
 # Ende der letzten Antwort (time.monotonic); beim Import gesetzt, damit auch die erste Anfrage eines Prozesses
 # frühestens ABSTAND Sekunden nach dem Start folgt
@@ -72,13 +86,17 @@ PROXY_ABLEHNUNG = (403, 405, 407)
 # … Begrenzung oder Überlastung (Art `server`, ohne Wiederholung); alle übrigen Codes, vor allem 502 und 504 (der
 # Proxy erreicht den Zielserver nicht), gelten wie Zeitüberschreitung und Verbindungsabbruch als mögliche Sperre
 TUNNEL_SERVER = (429, 503)
+# HTTP-Antworten eines Gateways oder Proxys, der den Zielserver nicht erreicht (auch im Tunnel): mögliche Sperre
+GATEWAY_SPERRE = (502, 504)
 
 
 class Abbruch(Exception):
     """Antwort, auf die nicht erneut angefragt wird. `art`: http (4xx, `code` gesetzt), server (429/5xx nach allen
-    Wiederholungen; CONNECT-Antwort 429/503 sofort), sperre (Zeitüberschreitung, Verbindungsabbruch, übrige
-    CONNECT-Antworten wie 502/504 mit `code`), proxy (Ablehnung durch den Proxy der Arbeitsumgebung: CONNECT-Antwort
-    403/405/407 oder HTTP 407, `code` gesetzt), weiterleitung (3xx, `ziel` gesetzt), obergrenze, langsam, groesse."""
+    Wiederholungen; CONNECT-Antwort 429/503 sofort), sperre (Zeitüberschreitung, Verbindungsabbruch, abgeschnittene
+    oder unlesbare Antwort, HTTP 502/504 und übrige CONNECT-Antworten wie 502/504 mit `code`), proxy (Ablehnung durch
+    den Proxy der Arbeitsumgebung: CONNECT-Antwort 403/405/407 oder HTTP 407, `code` gesetzt), weiterleitung (3xx,
+    `ziel` gesetzt), parallel (ein anderer Prozess hält die Sperre auf den Cache), adresse (ungültige Adresse, nicht
+    gesendet), obergrenze, langsam, groesse."""
 
     def __init__(self, meldung, art="", code=None, ziel=""):
         super().__init__(meldung)
@@ -122,6 +140,25 @@ def _proxy_abbruch(url, code, fehler, dauer):
     _protokoll(url, f"proxy {code}", 0, dauer, "netz")
     return Abbruch(f"Ablehnung durch den Proxy der Arbeitsumgebung (HTTP {code} beim Verbindungsaufbau); die Anfrage "
                    f"hat den Zielserver nicht erreicht, kein Hinweis auf eine Sperre: {url} ({fehler})", "proxy", code)
+
+
+def sperre_halten():
+    """Exklusive Sperre (fcntl.flock) auf CACHE/abruf.lock bis zum Ende des Prozesses, genommen vor der ersten
+    Netzanfrage. Hält ein anderer Prozess sie (gleichzeitiger Lauf mit demselben Cache), Abbruch der Art `parallel`
+    ohne Anfrage."""
+    global _sperre
+    if _sperre is not None:
+        return
+    CACHE.mkdir(parents=True, exist_ok=True)
+    pfad = CACHE / SPERRDATEI
+    datei = open(pfad, "a+", encoding="utf-8")
+    try:
+        fcntl.flock(datei.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError as e:   # BlockingIOError: ein anderer Prozess hält die Sperre
+        datei.close()
+        raise Abbruch(f"Ein anderer Abrufprozess mit demselben Cache läuft noch (Sperre {pfad}); keine Anfrage. "
+                      "Prozesse nur nacheinander starten (explore/STUFEN.md).", "parallel") from e
+    _sperre = datei
 
 
 def zaehler() -> dict:
@@ -195,6 +232,14 @@ def _protokoll(url, status, n, dauer, quelle, ziel=""):
         f.write(f"{zeit}\t{url}\t{status}\t{n}\t{dauer:.2f}\t{quelle}\t{ziel}\n")
 
 
+def _erwartete_laenge(r):
+    """Länge laut Content-Length (nicht bei chunked), sonst None."""
+    if getattr(r, "chunked", False):
+        return None
+    wert = (r.headers.get("Content-Length") or "").strip()
+    return int(wert) if wert.isdigit() else None
+
+
 def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
     """Gibt den Inhalt zurück; nutzt den Cache, hält Abstand und wiederholt behutsam."""
     global _letzte, _anfragen, _cache_treffer
@@ -204,6 +249,7 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
         _cache_treffer += 1
         _protokoll(url, "cache", len(daten), 0, "cache")
         return daten
+    sperre_halten()   # vor der ersten Netzanfrage: kein zweiter Prozess mit demselben Cache gleichzeitig
     pausen = PAUSEN[:max(WIEDERHOLUNGEN, 0)]
     fehler = None
     for versuch in range(len(pausen) + 1):
@@ -216,8 +262,13 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
         try:
             with _OEFFNER.open(req, timeout=60) as r:
-                daten = r.read(MAX_BYTES + 1)
+                daten = r.read(MAX_BYTES + 1)   # liefert bei zu früh geschlossener Verbindung weniger Bytes ohne Fehler
                 dauer = time.monotonic() - start
+                erwartet = _erwartete_laenge(r)
+                if erwartet is not None and len(daten) < min(erwartet, MAX_BYTES + 1):
+                    _protokoll(url, "IncompleteRead", len(daten), dauer, "netz")
+                    raise Abbruch(f"Antwort abgeschnitten ({len(daten)} von {erwartet} Bytes laut Content-Length), "
+                                  f"Verbindungsabbruch, mögliche Sperre; nicht im Cache gespeichert: {url}", "sperre")
                 _protokoll(url, r.status, len(daten), dauer, "netz")
                 if len(daten) > MAX_BYTES:
                     raise Abbruch(f"größer als {MAX_BYTES} Bytes: {url}", "groesse")
@@ -238,22 +289,34 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
             if proxy_ablehnung(e):   # HTTP 407: Antwort des Proxys, nicht des Zielservers
                 raise _proxy_abbruch(url, e.code, e, time.monotonic() - start) from e
             _protokoll(url, e.code, 0, time.monotonic() - start, "netz")
+            if e.code in GATEWAY_SPERRE:   # auch als Antwort im Tunnel des Proxys: Ziel nicht erreicht
+                raise Abbruch(f"HTTP {e.code}: Ein Gateway oder der Proxy erreicht den Zielserver nicht, mögliche "
+                              f"Sperre: {url}", "sperre", e.code) from e
             if e.code in (429,) or e.code >= 500:
                 fehler = e
             else:
                 raise Abbruch(f"HTTP {e.code}: {url}", "http", e.code) from e
-        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
+        except http.client.InvalidURL as e:   # vor dem Senden erkannt (z. B. Leerzeichen): keine Anfrage, keine Sperre
+            _anfragen -= 1
+            raise Abbruch(f"ungültige Adresse, nicht gesendet: {url} ({e})", "adresse") from e
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError, http.client.HTTPException) as e:
+            # HTTPException (kein OSError): Antwort abgeschnitten (IncompleteRead, z. B. chunked ohne Abschluss) oder
+            # unlesbar (BadStatusLine, LineTooLong …), auch als Antwort des Proxys auf CONNECT
             dauer = time.monotonic() - start
             code = tunnel_status(e)
             if code in PROXY_ABLEHNUNG:   # Ablehnung durch den Proxy: keine Antwort des Zielservers, keine Sperre
                 raise _proxy_abbruch(url, code, e, dauer) from e
-            _protokoll(url, f"tunnel {code}" if code else type(e).__name__, 0, dauer, "netz")
+            teil = len(getattr(e, "partial", b"") or b"") if isinstance(e, http.client.IncompleteRead) else 0
+            _protokoll(url, f"tunnel {code}" if code else type(e).__name__, teil, dauer, "netz")
             if code in TUNNEL_SERVER:   # Begrenzung oder Überlastung: wie 429/503, aber ohne Wiederholung
                 raise Abbruch(f"HTTP {code} des Proxys beim Verbindungsaufbau (Begrenzung oder Überlastung), keine "
                               f"Wiederholung: {url} ({e})", "server", code) from e
             if code:   # z. B. 502/504: Der Proxy erreicht den Zielserver nicht
                 raise Abbruch(f"Der Proxy erreicht den Zielserver nicht (HTTP {code} beim Verbindungsaufbau), "
                               f"mögliche Sperre: {url} ({e})", "sperre", code) from e
+            if isinstance(e, http.client.HTTPException):
+                raise Abbruch(f"Antwort abgeschnitten oder unlesbar ({type(e).__name__}), mögliche Sperre; nicht im "
+                              f"Cache gespeichert: {url} ({e!r})", "sperre") from e
             raise Abbruch(f"Zeitüberschreitung oder Verbindungsabbruch, mögliche Sperre: {url} ({e})", "sperre") from e
         finally:   # der Abstand gilt ab dem Ende der Antwort, auch nach Fehlern
             _letzte = time.monotonic()

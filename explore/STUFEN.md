@@ -4,9 +4,11 @@ Stand 07.11.2026. Grundlage: mündliche Einwilligung der Stadt Köln (CLAUDE.md,
 
 ## Für jede Stufe
 
-- Jeder Befehl unten ist vollständig und wird als Ganzes in einer Zeile übernommen; es gibt keine Variablen „aus derselben Shell“ (jede Stufe läuft in einer anderen Nacht, meist in einer neuen Shell). Der Kontakt im User-Agent ist `contact@nozilla.de` (Projektkontakt des Auftraggebers, steht öffentlich in `README.md`); mit Platzhalter (Zeichen `<` oder `>`) oder ohne Kontakt bricht `oparl_messung.py` vor der ersten Anfrage ab.
+- Jeder Befehl unten ist vollständig und wird als Ganzes übernommen (ein Block mit mehreren Befehlen als Ganzes, die Befehle sind mit `&& \` verbunden); es gibt keine Variablen „aus derselben Shell“ (jede Stufe läuft in einer anderen Nacht, meist in einer neuen Shell). Der Kontakt im User-Agent ist `contact@nozilla.de` (Projektkontakt des Auftraggebers, steht öffentlich in `README.md`); mit Platzhalter (Zeichen `<` oder `>`) oder ohne Kontakt bricht `oparl_messung.py` vor der ersten Anfrage ab.
 - Strenge Vorgaben für Anfragen an die Stadt erzwingt `oparl_messung.py` auch ohne die Angaben im Befehl: keine Wiederholung nach 429/5xx (`RATSATLAS_WIEDERHOLUNGEN`, Vorgabe 0), höchstens 5 s je Antwort (`RATSATLAS_MAX_DAUER`, Vorgabe 5), mindestens 2 s Abstand zwischen zwei Anfragen (`RATSATLAS_ABSTAND`, Vorgabe 2); `RATSATLAS_MAX_ANFRAGEN` und `RATSATLAS_KONTAKT` sind Pflicht. Lockerere Werte (Wiederholungen, mehr als 5 s, Abstand unter 2 s, keine Obergrenze) werden vor der ersten Anfrage abgelehnt und vor jeder Anfrage an die Stadt erneut geprüft. Lokale Testserver (`http://127.0.0.1`, `http://localhost`) sind ausgenommen.
 - Eine Verbindung, mindestens 2 s Abstand vom Ende einer Antwort bis zur nächsten Anfrage (`explore/abruf.py`), auch über Prozessgrenzen: Die erste Anfrage eines Prozesses folgt frühestens 2 s nach seinem Start und frühestens 2 s nach der letzten Netzanfrage laut `_cache/abrufe.tsv` (dort sekundengenau, daher bis zu 1 s mehr). Das gilt auch für die zwei Prozesse von Stufe 3. User-Agent mit Projektadresse und Kontakt.
+- Prozesse laufen nur nacheinander: Vor seiner ersten Anfrage nimmt ein Prozess eine exklusive Sperre auf `_cache/abruf.lock` (`fcntl.flock`) und hält sie bis zu seinem Ende. Ein zweiter Prozess mit demselben Cache, der gleichzeitig läuft, bricht vor seiner ersten Anfrage ab (`abbruch (parallel)`).
+- Mehrere Befehle einer Stufe sind mit `&&` verbunden: Der nächste läuft nur, wenn der vorige mit Rückgabewert 0 endet. Zusätzlich prüft `oparl_messung.py` vor der ersten Anfrage an die Stadt `ergebnisse/oparl_laeufe.tsv`: Endete der letzte Lauf vor weniger als 12 Stunden mit `abbruch (…)` oder `fehler (…)`, bricht das Kommando ohne Anfrage ab (Rückgabewert 1). Weiter nur nach Rücksprache mit dem Auftraggeber, dann mit `RATSATLAS_NACH_ABBRUCH=ja` vor dem Befehl.
 - Weiterleitungen (HTTP 3xx) werden nicht verfolgt: Die Weiterleitung zählt als eine Anfrage, wird mit Ziel-URL in `_cache/abrufe.tsv` (Spalte `ziel`) protokolliert, und der Lauf bricht ab. So bleibt die Obergrenze eine Obergrenze für HTTP-Anfragen, und kein anderer Host wird ungeprüft erreicht.
 - `RATSATLAS_MAX_ANFRAGEN` gilt je Prozess und zählt nur Anfragen ans Netz; Antworten aus `explore/_cache/` zählen nicht.
 - **Entscheidung zur Obergrenze: ohne Reserve.** Die Obergrenze ist genau die im Probelauf ermittelte Zahl ohne Cache (ungünstigster Fall, z. B. neue Arbeitsumgebung). Reicht sie nicht, bricht die Stufe ab und wird berichtet; eine höhere Grenze gibt es nur nach neuer Freigabe. Grundlage: „Abrufe nur sehr vorsichtig und gestuft“ (CLAUDE.md, Abschnitt 9, 07.11.2026).
@@ -17,13 +19,15 @@ Stand 07.11.2026. Grundlage: mündliche Einwilligung der Stadt Köln (CLAUDE.md,
 
 ### Abbruchkriterien
 
-Jeder Abbruch beendet den Lauf mit Rückgabewert 2 (Fehler: 1) und wird in `explore/ergebnisse/oparl_laeufe.tsv` vermerkt. Danach gilt: in dieser Nacht keine weitere Anfrage und keine weitere Stufe, Bericht an den Auftraggeber.
+Jeder Abbruch beendet den Lauf mit Rückgabewert 2 (Fehler: 1) und wird in `explore/ergebnisse/oparl_laeufe.tsv` vermerkt. Danach gilt: in dieser Nacht keine weitere Anfrage und keine weitere Stufe, Bericht an den Auftraggeber. `oparl_messung.py` erzwingt das für 12 Stunden (siehe oben, `RATSATLAS_NACH_ABBRUCH`).
 
 | Kriterium | Umsetzung |
 |---|---|
 | Antwortzeit über 5 s | `RATSATLAS_MAX_DAUER` (Vorgabe 5): Antwort wird noch gespeichert, dann Abbruch |
-| HTTP 429 oder 5xx | `RATSATLAS_WIEDERHOLUNGEN` (Vorgabe 0): sofortiger Abbruch ohne Wiederholung |
+| HTTP 429 oder 5xx (außer 502 und 504) | `RATSATLAS_WIEDERHOLUNGEN` (Vorgabe 0): sofortiger Abbruch ohne Wiederholung (Art `server`) |
+| HTTP 502 oder 504 (ein Gateway oder der Proxy erreicht die Stadt nicht, auch als Antwort im Tunnel des Proxys) | sofortiger Abbruch der Art `sperre` (mögliche Sperre), Status `502` bzw. `504` in `_cache/abrufe.tsv` |
 | Zeitüberschreitung (60 s) oder Verbindungsabbruch | immer sofortiger Abbruch (mögliche Sperre) |
+| Antwort abgeschnitten oder unlesbar (weniger Bytes als `Content-Length`, chunked ohne Abschluss, unlesbare Statuszeile, auch beim Verbindungsaufbau über den Proxy) | wie Verbindungsabbruch: sofortiger Abbruch der Art `sperre`, Status `IncompleteRead`, `BadStatusLine` o. Ä. in `_cache/abrufe.tsv`; nichts im Cache |
 | Proxy der Arbeitsumgebung erreicht die Stadt nicht (CONNECT-Antwort 502 oder 504, ebenso jede andere außer den unten genannten, z. B. „Tunnel connection failed: 502“) | wie Verbindungsabbruch: sofortiger Abbruch der Art `sperre` (mögliche Sperre), Status `tunnel <Code>` in `_cache/abrufe.tsv` |
 | Proxy meldet Begrenzung oder Überlastung (CONNECT-Antwort 429 oder 503) | wie HTTP 429/5xx: sofortiger Abbruch der Art `server` ohne Wiederholung, Status `tunnel <Code>` |
 | Ablehnung durch den Proxy der Arbeitsumgebung (CONNECT-Antwort 403, 405 oder 407, z. B. „Tunnel connection failed: 403“, oder HTTP 407: Richtlinie oder fehlende Anmeldung) | sofortiger Abbruch der Art `proxy`, Status `proxy <Code>` in `_cache/abrufe.tsv`; keine Antwort der Stadt und kein Hinweis auf eine Sperre; nichts wiederholen, berichten |
@@ -33,8 +37,10 @@ Jeder Abbruch beendet den Lauf mit Rückgabewert 2 (Fehler: 1) und wird in `expl
 | Jahresfilter wirkt nicht (`stichprobe`) | Abbruch nach dem Jahr, in dem eine Vorlage mit `created` außerhalb des Jahres oder eine schon in einem anderen Jahr gelieferte Vorlage auftaucht |
 | Obergrenze erreicht | Abbruch vor der nächsten Anfrage |
 | außerhalb 23–1 Uhr | Prüfung vor jeder Anfrage |
+| ein anderer Abrufprozess mit demselben Cache läuft | Abbruch vor der ersten Anfrage (Art `parallel`) |
+| letzter Lauf vor weniger als 12 Stunden mit `abbruch (…)` oder `fehler (…)` beendet | Abbruch vor der ersten Anfrage (Rückgabewert 1); weiter nur nach Rücksprache mit `RATSATLAS_NACH_ABBRUCH=ja` |
 
-Bei Verbindungsabbruch (auch CONNECT-Antwort 502/504 des Proxys, Art `sperre`), 403 oder 429 (auch als CONNECT-Antwort) ruhen alle Abrufe bis zur Klärung mit der Stadt. Ein Abbruch der Art `proxy` betrifft nur die Arbeitsumgebung (die Anfrage hat die Stadt nicht erreicht): nichts wiederholen, sondern berichten; weiter erst, wenn der Host im Netz der Arbeitsumgebung erlaubt ist.
+Bei Verbindungsabbruch, abgeschnittener oder unlesbarer Antwort (Art `sperre`, auch CONNECT-Antwort 502/504 des Proxys), 403, 429 oder 5xx (auch als CONNECT-Antwort oder als Antwort im Tunnel des Proxys) ruhen alle Abrufe bis zur Klärung mit der Stadt. Ein Abbruch der Art `proxy` betrifft nur die Arbeitsumgebung (die Anfrage hat die Stadt nicht erreicht): nichts wiederholen, sondern berichten; weiter erst, wenn der Host im Netz der Arbeitsumgebung erlaubt ist.
 
 ## Übersicht
 
@@ -58,7 +64,7 @@ Dauer: Anfragen × 2 s Abstand (auch vor der ersten Anfrage eines Prozesses) plu
 RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_WIEDERHOLUNGEN=0 RATSATLAS_MAX_DAUER=5 RATSATLAS_STUFE=1 RATSATLAS_MAX_ANFRAGEN=3 python3 explore/oparl_messung.py test
 ```
 
-- Voraussetzung: Der Host `buergerinfo.stadt-koeln.de` muss im Netz der Arbeitsumgebung erlaubt sein. Lehnt der Proxy der Arbeitsumgebung die Verbindung ab (Lauf endet mit `abbruch (proxy)`, z. B. „Tunnel connection failed: 403“), hat keine Anfrage die Stadt erreicht: nichts wiederholen, sondern berichten. Endet der Lauf dagegen mit `abbruch (sperre)` und „Der Proxy erreicht den Zielserver nicht (HTTP 502 bzw. 504 …)“, hat der Proxy die Stadt angefragt, aber nicht erreicht: mögliche Sperre, alle Abrufe ruhen bis zur Klärung.
+- Voraussetzung: Der Host `buergerinfo.stadt-koeln.de` muss im Netz der Arbeitsumgebung erlaubt sein. Lehnt der Proxy der Arbeitsumgebung die Verbindung ab (Lauf endet mit `abbruch (proxy)`, z. B. „Tunnel connection failed: 403“), hat keine Anfrage die Stadt erreicht: nichts wiederholen, sondern berichten. Endet der Lauf dagegen mit `abbruch (sperre)`, etwa mit „Der Proxy erreicht den Zielserver nicht (HTTP 502 bzw. 504 …)“ beim Verbindungsaufbau, mit HTTP 502/504 als Antwort im Tunnel oder mit einer abgeschnittenen oder unlesbaren Antwort, hat die Anfrage die Stadt nicht oder nicht vollständig erreicht: mögliche Sperre, alle Abrufe ruhen bis zur Klärung. Dasselbe gilt für `abbruch (server)` nach 429 oder 5xx und für `abbruch (http)` nach 403.
 - Anfragen: System, Body, erste Seite der Vorlagenliste (3).
 - Ausgewertet (`oparl_test.tsv`): Erreichbarkeit, Antwortzeit, `oparlVersion`, `vendor`, `product`, `license` (System und Body), Adresse der Vorlagenliste, `pagination` (totalElements, elementsPerPage, totalPages), Objekte der ersten Seite, Schlüssel von `links`, Form von `links.next` (Parameter, URL-Kodierung), Felder des ersten Objekts.
 
@@ -74,10 +80,10 @@ RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_W
 
 ## Stufe 3 – Organisationen und kleine Stichprobe
 
-Zwei Prozesse nacheinander in derselben Nacht, jeder mit eigener Obergrenze:
+Zwei Prozesse nacheinander in derselben Nacht, jeder mit eigener Obergrenze. Der zweite läuft nur, wenn der erste mit Rückgabewert 0 endet (`&&`); nach einem Abbruch des ersten lehnt `oparl_messung.py` den zweiten außerdem vor der ersten Anfrage ab (letzter Lauf in `oparl_laeufe.tsv`):
 
 ```bash
-RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_WIEDERHOLUNGEN=0 RATSATLAS_MAX_DAUER=5 RATSATLAS_STUFE=3 RATSATLAS_MAX_ANFRAGEN=5 python3 explore/oparl_messung.py organisationen --seiten 4
+RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_WIEDERHOLUNGEN=0 RATSATLAS_MAX_DAUER=5 RATSATLAS_STUFE=3 RATSATLAS_MAX_ANFRAGEN=5 python3 explore/oparl_messung.py organisationen --seiten 4 && \
 RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_WIEDERHOLUNGEN=0 RATSATLAS_MAX_DAUER=5 RATSATLAS_STUFE=3 RATSATLAS_MAX_ANFRAGEN=9 python3 explore/oparl_messung.py stichprobe --seiten 1 --von 2019 --bis 2026
 ```
 
