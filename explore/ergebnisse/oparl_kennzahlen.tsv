@@ -1,0 +1,58 @@
+objekt	feld	wert
+system	oparlVersion	https://schema.oparl.org/1.1/
+system	name	Stadt Köln - OParl 1.1
+system	vendor	https://www.somacos.de?oparl=v1.6.1
+system	product	Sitzungsmanagementsystem Session  Copyright SOMACOS GmbH & Co. KG
+system	license	null
+system	website	https://buergerinfo.stadt-koeln.de/
+system	contactEmail	12-session@stadt-koeln.de
+body	name	Stadt Köln, kreisfreie Stadt
+body	license	null
+body	licenseValidSince	2017-01-31T00:00:00+02:00
+body	oparlSince	2019-04-11T00:00:00+02:00
+body	contactEmail	12-session@stadt-koeln.de
+body	contactName	Fachanwendungsbetreuung Session, SessionNet und Mandatos
+body	legislativeTerm	"[{""id"": ""https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/legislativeterms/7"", ""type"": ""https://schema.oparl.org/1.1/LegislativeTerm"", ""body"": ""https://buergerinfo.stadt-koeln.de/"
+body	modified	2019-04-25T00:00:00+02:00
+paper	url	https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers
+paper	pagination.totalElements	fehlt
+paper	pagination.elementsPerPage	25
+paper	pagination.currentPage	1
+paper	pagination.totalPages	fehlt
+paper	objekte_erste_seite	25
+paper	pagination.schluessel	currentPage,elementsPerPage
+paper	links.schluessel	first,next,self
+paper	links.next	https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers?page=2
+meeting	url	https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/meetings
+meeting	pagination.totalElements	fehlt
+meeting	pagination.elementsPerPage	25
+meeting	pagination.currentPage	1
+meeting	pagination.totalPages	fehlt
+meeting	objekte_erste_seite	25
+meeting	pagination.schluessel	currentPage,elementsPerPage
+meeting	links.schluessel	first,next,self
+meeting	links.next	https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/meetings?page=2
+organization	url	https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/organizations
+organization	pagination.totalElements	fehlt
+organization	pagination.elementsPerPage	25
+organization	pagination.currentPage	1
+organization	pagination.totalPages	fehlt
+organization	objekte_erste_seite	25
+organization	pagination.schluessel	currentPage,elementsPerPage
+organization	links.schluessel	first,next,self
+organization	links.next	https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/organizations?page=2
+person	url	https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/people
+person	pagination.totalElements	fehlt
+person	pagination.elementsPerPage	25
+person	pagination.currentPage	1
+person	pagination.totalPages	fehlt
+person	objekte_erste_seite	25
+person	pagination.schluessel	currentPage,elementsPerPage
+person	links.schluessel	first,next,self
+person	links.next	https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/people?page=2
+paper	grenze modified_since	2026-11-05T11:29:44+00:00 (Median von modified der ersten 13 Vorlagen der ungefilterten ersten Seite)
+paper	test modified_since=2026-11-05T11:29:44+00:00	objekte=25; totalElements=fehlt; filter_wirksam=nein (17 von 25 vor der Grenze; frühestes modified 46 h 35 min vor der Grenze)
+paper	test created_since=2025-01-01T00:00:00+01:00&created_until=2025-12-31T23:59:59+01:00	objekte=25; totalElements=fehlt; created_until wirkt: nein (25 von 25 nach der Grenze; spätestes created 309,4 Tage nach der Grenze); created_since wirkt: nicht unterscheidbar (gleiche Kennungen wie ohne Filter; neueste zuerst: die erste Seite zeigt nur die jüngsten Vorlagen)
+paper	test modified_since URL-kodiert	objekte=25; totalElements=fehlt; filter_wirksam=ja
+paper	test limit=100	objekte=100; Antwortzeit 5.1 s über 5 s (RATSATLAS_MAX_DAUER): https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers?limit=100
+lauf	abbruch	Antwortzeit 5.1 s über 5 s (RATSATLAS_MAX_DAUER): https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers?limit=100

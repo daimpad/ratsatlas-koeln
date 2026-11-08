@@ -1,2 +1,3 @@
 lauf	stufe	kommando	parameter	start	ende	dauer_s	netz	cache	obergrenze	protokoll_von	protokoll_bis	ergebnis	meldung
 1	1	test		2026-11-07T23:07:23+01:00	2026-11-07T23:07:34+01:00	11	3	0	3	62	65	ok	
+2	2	kennzahlen		2026-11-08T23:08:11+01:00	2026-11-08T23:08:39+01:00	29	7	3	10	65	75	abbruch (langsam)	Antwortzeit 5.1 s über 5 s (RATSATLAS_MAX_DAUER): https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers?limit=100

@@ -68,3 +68,30 @@ Grundlage: mündliche Einwilligung der Stadt (CLAUDE.md 9). Der Befehl aus `STUF
 8. **Body:** drei Wahlperioden (2014–2020, 2020–2025, 2025–2030 ab 01.11.2025), Kontaktangaben vorhanden, AGS 05315000.
 
 **Folgen (zur Entscheidung):** Stufe 2 kann die Gesamtzahlen je Liste nicht aus `pagination` ablesen; die übrigen Ziele bleiben: Wirkung von `limit` (zuletzt geprüft) und `modified_since` (Grenze aus der ersten Vorlagenseite, so dass ein Server, der den Filter übergeht, ältere Vorlagen liefern müsste), erste Seiten von `meeting`, `organization`, `person`. Bei neueste zuerst zeigt die erste Seite, ob `created_until` wirkt; ob `created_since` wirkt, ist so nicht unterscheidbar (für die Jahresstichprobe in Stufe 3 genügt `created_until`). Fehlt `mainFile` auch in der Stichprobe (Stufe 3), muss die Auswahl der PDF-Köpfe (Stufe 6) auf `auxiliaryFile` umgestellt werden.
+
+## 6. Messung Stufe 2 (08.11.2026, 23:08 Uhr, 7 Anfragen)
+
+Grundlage: Freigabe vom 08.11.2026 (CLAUDE.md 9). Der Befehl aus `STUFEN.md` lief einmal (Code `explore/` auf Stand `f15ecc3`); System, Body und erste Vorlagenseite kamen aus dem Cache von Stufe 1. Ergebnisse in `ergebnisse/oparl_kennzahlen.tsv` und `ergebnisse/oparl_laeufe.tsv`.
+
+| Anfrage | Status | Antwortzeit | Größe |
+|---|---|---|---|
+| meetings, Seite 1 | 200 | 1,46 s | 19 636 B |
+| organizations, Seite 1 | 200 | 0,78 s | 26 144 B |
+| people, Seite 1 | 200 | 0,93 s | 31 066 B |
+| papers mit `modified_since` (unkodiert) | 200 | 2,50 s | 48 431 B |
+| papers mit `created_since`/`created_until` (unkodiert) | 200 | 2,30 s | 48 431 B |
+| papers mit `modified_since` (URL-kodiert) | 200 | 1,55 s | 47 635 B |
+| papers mit `limit=100` | 200 | 5,07 s | 196 733 B |
+
+Der Lauf endete wie vorgesehen mit `abbruch (langsam)` nach der letzten Anfrage (`limit=100`, 5,07 s über der Messgrenze von 5 s); alle übrigen Messungen lagen vor. Kein Neustart.
+
+1. **Alle vier Listen** (paper, meeting, organization, person): 25 Objekte je Seite, keine Gesamtzahlen, `links` mit `first`, `self`, `next`; `next` lautet `…?page=2`. Das Ende von `links.next` war nicht sichtbar (jede Liste hat mehr als eine Seite).
+2. **Zeitfilter wirken nur URL-kodiert.** Unkodiert (`+00:00` bzw. `+01:00` im Klartext) liefert Köln dieselbe Seite wie ohne Filter (gleiche 25 Kennungen in gleicher Reihenfolge) – der Filter wird übergangen; das gilt für `modified_since` und für `created_since`/`created_until`. URL-kodiert (`%3A`, `%2B`) wirkt `modified_since`: keine Vorlage unter der Grenze, 17 der 25 Vorlagen der ungefilterten Seite fehlen, dafür ältere, kürzlich geänderte Vorlagen. Das widerspricht der bisherigen Annahme aus anderen SessionNet-Installationen (dort HTTP 404 bei kodierten Werten).
+3. **`links.next` verliert die Kodierung:** Auf der gefilterten Seite lautet `next` `…?page=2&modified_since=2026-11-05T11:29:44+00:00`, also unkodiert. Wer `links.next` unverändert folgt, erhält ab Seite 2 vermutlich ungefilterte Seiten. Für den inkrementellen Abruf in `pipeline/sessionnet.py` folgt daraus: Zeitwerte kodieren und den Query-Teil von `links.next` vor dem Folgen kodiert neu aufbauen (zu entscheiden, zu testen).
+4. **`limit` wirkt:** `limit=100` liefert 100 Vorlagen (`elementsPerPage` 100, `next` mit `limit=100`), streng nach `created` absteigend über alle 100. Ein Vollabruf bräuchte damit ein Viertel der Anfragen, bei rund 5 s je Antwort.
+5. **Vorlagen (100 jüngste):** `location` bei 4 von 100, `subordinatedPaper` bei 2, `mainFile`, `underDirectionOf` und `originator*` bei keiner. Vorlagenarten u. a. „Antrag nach § 3 der GeschO des Rates“ (20), „Anfrage nach § 4 der GeschO des Rates“ (15), „Mitteilung BV“ (6), „Einwohneranfrage nach § 39 Abs. 6“ (3; Datenschutzregel für natürliche Personen beachten).
+6. **Sitzungen:** Die erste Seite enthält geplante Sitzungen von Januar bis Dezember 2027, nicht nach `start` sortiert; `meetingState` und `cancelled` fehlen.
+7. **Gremien:** `organizationType` fehlt; `classification` unterscheidet „Fachausschüsse und weitere Gremien“ und „Fraktionen und Gruppen“.
+8. **Personen:** Namensfelder vorhanden; sie werden nicht ausgewertet und nicht gespeichert (Gremienbesetzung erst im zweiten Lauf).
+
+**Folgen (zur Entscheidung):** Für Stufe 3 wirkt der Jahresfilter in der vorgesehenen (unkodierten) Form nicht; nach der Regel in `STUFEN.md` entfällt die Stichprobe dieser Stufe. Möglich wären eine Stichprobe mit kodierten Jahresfiltern (Wirkung von `created_*` kodiert noch ungemessen) oder über `links.next` mit `limit=100` ohne Jahresfilter – beides nur nach neuer Freigabe.
