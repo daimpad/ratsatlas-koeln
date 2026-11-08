@@ -1889,3 +1889,140 @@ def test_tls_naechte_pausieren_sieben_tage(oparl, monkeypatch):
     monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
     sessionnet.fetch_all()                                                 # nach der Pause: vollständig, Zähler weg
     assert "tlsfehler" not in json.loads(config.ZUSTAND.read_text()) and len(_jsonl(config.PAPERS)) == 5
+
+
+# --- Runde 11: `gespeichert` bleibt, solange eine Fortsetzung die verschobene Zone nicht verlassen hat ------------------
+
+def _vorlagenseite_stoert(monkeypatch, stoerungen):
+    """abruf.get_json, das für die Vorlagenseite mit genau dieser Nummer (Parameter `page`, ohne: 1) einmal
+    `stoerungen[nummer]()` auslöst."""
+    echt = abruf.get_json
+
+    def get_json(url, pausen=None):
+        teile = urllib.parse.urlsplit(url)
+        seite = dict(x.partition("=")[::2] for x in teile.query.split("&") if x).get("page", "1")
+        if teile.path.endswith("/papers") and seite in stoerungen:
+            raise stoerungen.pop(seite)()
+        return echt(url, pausen)
+    monkeypatch.setattr(abruf, "get_json", get_json)
+
+
+def _neue_vorlagen(oparl, anzahl):
+    """`anzahl` neue Vorlagen am Listenanfang (neueste zuerst), jetzt geändert."""
+    start = max(int(p["id"].rsplit("/", 1)[1]) for p in oparl.papers) + 1
+    jetzt = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    oparl.papers += [oparl.paper(i, modified=jetzt) for i in range(start, start + anzahl)]
+
+
+def _ende_fenster():
+    return abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster")
+
+
+def _zeitueberschreitung():
+    return abruf.Abbruch("Zeitüberschreitung oder Verbindungsabbruch, mögliche Sperre", "sperre")
+
+
+@pytest.mark.parametrize("abbruch_bei, bleibt", [("30", True), ("31", True), ("51", False)])
+def test_gespeichert_bleibt_in_der_verschobenen_zone(oparl, monkeypatch, abbruch_bei, bleibt):
+    """Neueste zuerst, 5 je Seite: Nacht 1 liest 30 Seiten (200 bis 51) und bricht ab; 12 Tage ohne Lauf mit 8 neuen
+    Vorlagen je Tag (96: die Seiten 30–49 bringen nur schon gelesene). Nacht 2 bricht vor der ersten Seite (Anfrage an
+    Seite 30), nach der ersten (Seite 31) oder erst nach der ersten Seite mit neuen Kennungen ab (Seite 51): In den
+    ersten beiden Fällen bleibt `gespeichert` bei Nacht 1, sonst gilt Nacht 2. Nacht 3 (8 weitere) ist vollständig, ohne
+    Listenfehler; mit `gespeichert` aus Nacht 2 erlaubte sie in den ersten Fällen nur 4 statt der nötigen 21 verschobenen
+    Seiten."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 5
+    oparl.papers = [oparl.paper(i) for i in range(1, 201)]
+    _vorlagenseite_stoert(monkeypatch, {"31": _ende_fenster})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–30
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    assert (fort["seiten"], fort["naechste"][-8:], fort["gespeichert"]) == (30, "?page=30", _nacht(0).isoformat())
+    _neue_vorlagen(oparl, 12 * 8)                                          # 12 Tage ohne Lauf, 8 neue je Tag
+    uhr.t = _nacht(12)
+    _vorlagenseite_stoert(monkeypatch, {abbruch_bei: _zeitueberschreitung})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Abbruch
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == [str(n) for n in range(30, int(abbruch_bei))]
+    zustand = json.loads(config.ZUSTAND.read_text())
+    fort = zustand["papers_fortsetzung"]
+    assert fort["gespeichert"] == (_nacht(0) if bleibt else _nacht(12)).isoformat()
+    assert fort["naechste"].endswith(f"?page={max(30, int(abbruch_bei) - 1)}")
+    assert zustand["sperre_verdacht"]["naechte"] == 1 and "listenfehler" not in zustand
+    _neue_vorlagen(oparl, 8)
+    uhr.t = _nacht(13)
+    sessionnet.fetch_all()                                                 # Nacht 3: vollständig
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"listenfehler", "letzter_abbruch", "sperre_verdacht", "papers_fortsetzung"} & set(zustand)
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert (z["modus"], z["ergebnis"]) == ("voll, fortgesetzt", "ok")
+    assert len(_jsonl(config.PAPERS)) == 200                               # die neuen holt der inkrementelle Lauf
+
+
+def test_gespeichert_bleibt_nach_retry_after_von_30_tagen(oparl, monkeypatch):
+    """Nacht 1 liest 40 Seiten (250 bis 51) und gibt nach 429 mit Retry-After von 30 Tagen auf (`nicht_vor`); bis dahin
+    keine Anfrage, 6 neue Vorlagen je Tag. Nacht 2 (Tag 30, 180 neue) bricht nach 3 Seiten in der verschobenen Zone ab:
+    `gespeichert` bleibt bei Nacht 1. Nacht 3 (186 neue) bringt 36 verschobene Seiten (erlaubt 40, mit `gespeichert` aus
+    Nacht 2 nur 4) und ist vollständig."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 5
+    oparl.papers = [oparl.paper(i) for i in range(1, 251)]
+    _vorlagenseite_stoert(monkeypatch, {"41": lambda: abruf.Abbruch(
+        "aufgegeben nach HTTP 429 (Retry-After 30 Tage)", "aufgegeben", code=429,
+        nicht_vor=_nacht(0) + timedelta(days=30))})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–40, dann aufgegeben
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert zustand["papers_fortsetzung"]["seiten"] == 40 and "nicht_vor" in zustand
+    for tag in range(1, 30):
+        _neue_vorlagen(oparl, 6)
+        uhr.t = _nacht(tag)
+        oparl.anfragen.clear()
+        sessionnet.fetch_all()                                             # Retry-After: übersprungen
+        assert oparl.anfragen == [], tag
+    _neue_vorlagen(oparl, 6)
+    uhr.t = _nacht(30)
+    _vorlagenseite_stoert(monkeypatch, {"43": _ende_fenster})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Seiten 40–42, Ende des Fensters
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["40", "41", "42"]
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    assert fort["gespeichert"] == _nacht(0).isoformat() and fort["naechste"].endswith("?page=42")
+    _neue_vorlagen(oparl, 6)
+    uhr.t = _nacht(31)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 3: vollständig
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"listenfehler", "papers_fortsetzung"} & set(zustand)
+    assert [r for r in _statistik() if r["liste"] == "papers"][-1]["ergebnis"] == "ok"
+    seiten = [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"]
+    assert seiten[0] == "42" and len(_jsonl(config.PAPERS)) == 250
+
+
+def test_gespeichert_bleibt_bei_neuen_vorlagen_vor_der_verschobenen_zone(oparl, monkeypatch):
+    """Mehr neue Vorlagen, als vor der Stelle der Fortsetzung lagen: Nacht 1 liest nur 15 Seiten (200 bis 126), dann 12
+    Tage mit 8 neuen je Tag (96). In Nacht 2 bringen die ersten Seiten der Fortsetzung (ab Seite 15) neue Vorlagen, erst
+    danach folgen 14 Seiten nur schon gelesener. Bricht Nacht 2 nach 3 Seiten mit neuen Vorlagen ab, hat sie die
+    verschobene Zone noch nicht erreicht: `gespeichert` bleibt bei Nacht 1, Nacht 3 ist vollständig (mit `gespeichert`
+    aus Nacht 2 erlaubte sie nur 4 verschobene Seiten)."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 5
+    oparl.papers = [oparl.paper(i) for i in range(1, 201)]
+    _vorlagenseite_stoert(monkeypatch, {"16": _ende_fenster})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–15
+    _neue_vorlagen(oparl, 12 * 8)
+    uhr.t = _nacht(12)
+    _vorlagenseite_stoert(monkeypatch, {"18": _ende_fenster})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Seiten 15–17, nur neue Vorlagen
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["15", "16", "17"]
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    assert fort["gespeichert"] == _nacht(0).isoformat() and fort["naechste"].endswith("?page=17")
+    assert len(_jsonl(config.RAW / "papers.teil.jsonl")) == 75 + 15            # 15 neue Vorlagen schon gelesen
+    _neue_vorlagen(oparl, 8)
+    uhr.t = _nacht(13)
+    sessionnet.fetch_all()                                                 # Nacht 3: vollständig
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"listenfehler", "papers_fortsetzung"} & set(zustand)
+    assert [r for r in _statistik() if r["liste"] == "papers"][-1]["ergebnis"] == "ok"

@@ -341,3 +341,22 @@ def test_bezirksfraktion_aus_dem_titel_mit_fundstelle():
     r = originators({"paperType": "Beantwortung einer Anfrage (BV)", "date": NEUE_WP, "name": "Sitzbänke",
                      "originatorOrganization": ["o-rat-spd"]}, orgs)
     assert [(x["actor"], x["method"]) for x in r] == [("Verwaltung", "paper_type")]
+
+
+# Runde 11: Antwortart nur am Anfang der Vorlagenart – ERFUNDENE Titel; „Beantwortung“ später in der Vorlagenart einer
+# Anfrage ist keine Antwort der Verwaltung
+@pytest.mark.parametrize("art, titel, erwartet", [
+    ("Anfrage nach § 4 zur schriftlichen Beantwortung", "Anfrage der SPD-Fraktion betreffend Sitzbänke",
+     [("SPD", "Fraktion/Gruppe", "title")]),
+    ("Anfrage nach § 4 BV2 (CDU) zur schriftlichen Beantwortung", "Sitzbänke am Musterweg",
+     [("CDU-Bezirksfraktion Rodenkirchen", "Bezirksfraktion", "paper_type")]),
+    ("Antrag nach § 3 auf Antwort der Verwaltung", "Antrag der Grünen-Fraktion betreffend Sitzbänke",
+     [("Grüne", "Fraktion/Gruppe", "title")]),
+    ("  Beantwortung einer Anfrage (BV)", "Anfrage der CDU-Fraktion betreffend Sitzbänke",
+     [("Verwaltung", "Verwaltung", "paper_type")]),
+    ("Antwort auf eine Anfrage", "Anfrage der SPD-Fraktion betreffend Sitzbänke",
+     [("Verwaltung", "Verwaltung", "paper_type")]),
+])
+def test_antwortart_nur_am_anfang_der_vorlagenart(art, titel, erwartet):
+    r = originators({"paperType": art, "date": NEUE_WP, "name": titel}, [], {"Kalk"})
+    assert [(x["actor"], x["actor_type"], x["method"]) for x in r] == erwartet

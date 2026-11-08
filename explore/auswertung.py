@@ -18,7 +18,8 @@ oder `unterbrochen`: Lauf während dieser Anfrage unterbrochen). HTTP 401 steht 
 gescheiterte Zertifikatsprüfung (Status `tls`) ist vermutlich eine Einstellung der Arbeitsumgebung (Zertifikat der
 Gegenseite oder Sperrseite nicht ausgeschlossen); sie zählt wie eine Ablehnung durch den Proxy nicht zu den
 Antwortzeiten. Zu den Zeitfiltern: „nicht unterscheidbar“ heißt, die erste Seite zeigt nicht, ob der Server die Grenze
-anwendet (bei neueste zuerst gilt das für created_since).
+anwendet (bei neueste zuerst gilt das für created_since; bei modified_since, wenn keine Vorlage fehlt, die laut Cache
+unter der Grenze lag).
 Fehlende Gesamtzahlen (Köln liefert in `pagination` nur elementsPerPage und currentPage) stehen als „fehlt“.
 Die Regel Stufe 3/5 gilt nur als erfüllt, wenn der letzte `stichprobe`-Lauf in oparl_laeufe.tsv „ok“ ist.
 Aufruf: python3 explore/auswertung.py [--cache VERZ] [--ergebnisse VERZ] [--stufe S]
@@ -43,7 +44,8 @@ TLS_HINWEIS = ("Zertifikatsprüfung fehlgeschlagen: vermutlich Einstellung der A
 UNTERBROCHEN_HINWEIS = ("Lauf während dieser Anfrage unterbrochen, etwa nach einem Zeitlimit des aufrufenden Werkzeugs: "
                         "mögliche Sperre, stoppen")
 FILTER_HINWEIS = ("„nicht unterscheidbar“: Die erste Seite zeigt nicht, ob der Server diese Grenze anwendet (bei "
-                  "neueste zuerst gilt das für created_since; für Stufe 3 zählt created_until).")
+                  "neueste zuerst gilt das für created_since; für Stufe 3 zählt created_until; bei modified_since, wenn "
+                  "keine Vorlage fehlt, die laut Cache unter der Grenze lag, etwa weil alle seither geändert wurden).")
 
 
 def lies(datei):

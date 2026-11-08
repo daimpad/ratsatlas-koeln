@@ -19,7 +19,10 @@
 - Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
   (wie pipeline/abruf.py; explore/ergebnisse/sessionnet_befunde.tsv); ebenso eine Antwort, die insgesamt länger als
   GESAMTFRIST (60 s) braucht (Tropf-Antwort: jeder Block kommt vor der Zeitüberschreitung von 60 s, das Ganze nie; der
-  Inhalt wird in Blöcken gelesen), Status `Gesamtfrist`, nichts im Cache
+  Inhalt wird in Blöcken gelesen), Status `Gesamtfrist`, nichts im Cache. Geprüft beim Lesen jedes Blocks, nach dem
+  Lesen (auch leerer Inhalt nach langsamem Kopf, später Abschluss einer chunked-Antwort) und durch einen Wächter
+  (SIGALRM nach GESAMTFRIST ab dem Senden, nur im Hauptthread), der auch einen hängenden Verbindungsaufbau, Handshake
+  oder Kopf beendet
 - Unterbrechung (Strg+C, SIGTERM, SIGHUP) während einer gesendeten Anfrage: Protokollzeile mit Status `unterbrochen`
   (die Anfrage zählt, mögliche Sperre: sie hing womöglich), dann weiter wie Strg+C (`unterbrochen` nennt die Adresse)
 - ebenso eine abgeschnittene oder unlesbare Antwort: weniger Bytes als Content-Length (Status `IncompleteRead`),
@@ -57,7 +60,9 @@ import hashlib
 import http.client
 import os
 import re
+import signal
 import ssl
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -272,6 +277,61 @@ def _erwartete_laenge(r):
     return int(wert) if wert.isdigit() else None
 
 
+class _Frist(BaseException):
+    """Der Wächter (SIGALRM) meldet: Die Gesamtfrist einer Anfrage ist abgelaufen. BaseException, damit kein
+    `except Exception` unterwegs sie verschluckt."""
+
+
+_frist_aktiv = False   # der Wächter darf auslösen (ein verspätet zugestelltes SIGALRM danach bleibt ohne Wirkung)
+
+
+def _frist_abgelaufen(_nummer, _rahmen):
+    if _frist_aktiv:
+        raise _Frist()
+
+
+def _waechter_an():
+    """Wächter für die Gesamtfrist ab dem Senden: SIGALRM nach GESAMTFRIST Sekunden beendet das Warten auf
+    Verbindungsaufbau, Handshake, Kopf oder Inhalt (_Frist). Nur im Hauptthread (Signale); sonst ohne Wächter (dann
+    gelten nur die Prüfungen beim und nach dem Lesen). Die Behandlung von SIGALRM bleibt danach gesetzt, ohne Wirkung
+    (sonst meldete Python ein verspätet zugestelltes Signal als „ignored due to race condition“); explore nutzt SIGALRM
+    sonst nicht. Liefert, ob der Wächter läuft."""
+    global _frist_aktiv
+    if GESAMTFRIST <= 0 or threading.current_thread() is not threading.main_thread():
+        return False
+    signal.signal(signal.SIGALRM, _frist_abgelaufen)
+    _frist_aktiv = True
+    signal.setitimer(signal.ITIMER_REAL, GESAMTFRIST)
+    return True
+
+
+def _waechter_aus(aktiv):
+    """Wächter abstellen (zuerst ohne Wirkung, dann den Zeitgeber)."""
+    global _frist_aktiv
+    if aktiv:
+        _frist_aktiv = False
+        signal.setitimer(signal.ITIMER_REAL, 0)
+
+
+def _gesamtfrist(url, n, dauer):
+    """Protokolliert die überschrittene Gesamtfrist (Status `Gesamtfrist`) und liefert den Abbruch der Art `sperre`."""
+    _protokoll(url, "Gesamtfrist", n, dauer, "netz")
+    return Abbruch(f"Antwort nach {dauer:.0f} s noch nicht vollständig (Gesamtfrist {GESAMTFRIST:g} s, Tropf-Antwort "
+                   f"oder hängender Verbindungsaufbau bzw. Kopf), mögliche Sperre; nicht im Cache gespeichert: {url}",
+                   "sperre")
+
+
+def _oeffnen_und_lesen(req, url, start):
+    """Senden und Antwort lesen unter dem Wächter (_waechter_an); er ist abgestellt, bevor die Antwort geprüft,
+    protokolliert oder gespeichert wird (kein Abbruch mitten im Schreiben). Liefert (Antwort, Inhalt)."""
+    waechter = _waechter_an()
+    try:
+        with _OEFFNER.open(req, timeout=60) as r:
+            return r, _lesen(r, url, start)
+    finally:
+        _waechter_aus(waechter)
+
+
 def _lesen(r, url, start):
     """Inhalt in Blöcken (read1: höchstens ein Lesevorgang je Block, auch bei tropfender Antwort); dauert die Antwort
     seit `start` länger als GESAMTFRIST, Abbruch der Art `sperre` (Tropf-Antwort; nichts im Cache)."""
@@ -282,10 +342,8 @@ def _lesen(r, url, start):
         except http.client.IncompleteRead as e:   # chunked ohne Abschluss: die bisher gelesenen Bytes mitzählen
             raise http.client.IncompleteRead(b"".join(teile) + (e.partial or b""), e.expected) from e
         dauer = time.monotonic() - start
-        if block and dauer > GESAMTFRIST:
-            _protokoll(url, "Gesamtfrist", n + len(block), dauer, "netz")
-            raise Abbruch(f"Antwort nach {dauer:.0f} s noch nicht vollständig (Gesamtfrist {GESAMTFRIST:g} s, "
-                          f"Tropf-Antwort), mögliche Sperre; nicht im Cache gespeichert: {url}", "sperre")
+        if dauer > GESAMTFRIST:   # auch der letzte, leere Lesevorgang (später Abschluss, leerer Inhalt)
+            raise _gesamtfrist(url, n + len(block), dauer)
         if not block:
             break
         teile.append(block)
@@ -314,28 +372,31 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
         try:
             _anfragen += 1   # erst nach dem Warten: ein Lauf, der dabei unterbrochen wird, hat diese Anfrage nicht gesendet
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
-            with _OEFFNER.open(req, timeout=60) as r:
-                daten = _lesen(r, url, start)   # bei zu früh geschlossener Verbindung weniger Bytes ohne Fehler
-                dauer = time.monotonic() - start
-                erwartet = _erwartete_laenge(r)
-                if erwartet is not None and len(daten) < min(erwartet, MAX_BYTES + 1):
-                    _protokoll(url, "IncompleteRead", len(daten), dauer, "netz")
-                    raise Abbruch(f"Antwort abgeschnitten ({len(daten)} von {erwartet} Bytes laut Content-Length), "
-                                  f"Verbindungsabbruch, mögliche Sperre; nicht im Cache gespeichert: {url}", "sperre")
-                _protokoll(url, r.status, len(daten), dauer, "netz")
-                if len(daten) > MAX_BYTES:
-                    raise Abbruch(f"größer als {MAX_BYTES} Bytes: {url}", "groesse")
-                if cache:
-                    pfad.parent.mkdir(parents=True, exist_ok=True)
-                    pfad.write_bytes(daten)
-                if MAX_DAUER and dauer > MAX_DAUER:
-                    raise Abbruch(f"Antwortzeit {dauer:.1f} s über {MAX_DAUER:g} s (RATSATLAS_MAX_DAUER): {url}",
-                                  "langsam")
-                return daten
+            r, daten = _oeffnen_und_lesen(req, url, start)   # bei zu früh geschlossener Verbindung weniger Bytes
+            dauer = time.monotonic() - start
+            if dauer > GESAMTFRIST:   # nach dem Lesen, vor dem Speichern (etwa ohne Wächter außerhalb des Hauptthreads)
+                raise _gesamtfrist(url, len(daten), dauer)
+            erwartet = _erwartete_laenge(r)
+            if erwartet is not None and len(daten) < min(erwartet, MAX_BYTES + 1):
+                _protokoll(url, "IncompleteRead", len(daten), dauer, "netz")
+                raise Abbruch(f"Antwort abgeschnitten ({len(daten)} von {erwartet} Bytes laut Content-Length), "
+                              f"Verbindungsabbruch, mögliche Sperre; nicht im Cache gespeichert: {url}", "sperre")
+            _protokoll(url, r.status, len(daten), dauer, "netz")
+            if len(daten) > MAX_BYTES:
+                raise Abbruch(f"größer als {MAX_BYTES} Bytes: {url}", "groesse")
+            if cache:
+                pfad.parent.mkdir(parents=True, exist_ok=True)
+                pfad.write_bytes(daten)
+            if MAX_DAUER and dauer > MAX_DAUER:
+                raise Abbruch(f"Antwortzeit {dauer:.1f} s über {MAX_DAUER:g} s (RATSATLAS_MAX_DAUER): {url}",
+                              "langsam")
+            return daten
         except KeyboardInterrupt:   # Strg+C oder Signal während der Anfrage: vermerken (mögliche Sperre), weiter wie Strg+C
             unterbrochen = url
             _protokoll(url, "unterbrochen", 0, time.monotonic() - start, "netz")
             raise
+        except _Frist:   # Wächter: Verbindungsaufbau, Kopf oder Inhalt nach GESAMTFRIST noch nicht vollständig
+            raise _gesamtfrist(url, 0, time.monotonic() - start) from None
         except urllib.error.HTTPError as e:
             if 300 <= e.code < 400:   # Weiterleitung: nicht folgen, Ziel protokollieren, abbrechen
                 ort = e.headers.get("Location") if e.headers else None

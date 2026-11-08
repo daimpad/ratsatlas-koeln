@@ -80,8 +80,9 @@ STADTBEZIRKE = ("Innenstadt", "Rodenkirchen", "Lindenthal", "Ehrenfeld", "Nippes
 # Kölner Vorlagenart einer Bezirksvertretung: „Antrag nach § 3 BV2 (CDU)“, „Änderungsantrag BV1 (Grüne)“, „… BV2 (CDU)
 # (geändert)“, „Gem. Änderungsantrag BV3“ (ohne Klammer); die erste Klammer direkt nach der Nummer nennt die Fraktion
 BV_ART = re.compile(r"(?<!\w)BV\s?(\d+)(?!\w)(?:\s*\(([^()]*)\))?")
-# Antworten der Verwaltung auf eine Anfrage („Beantwortung einer Anfrage (BV)“): keine Einreichung einer Fraktion
-ANTWORT_ART = re.compile(r"(?i)beantwortung|(?<!\w)antwort(?!\w)")
+# Antworten der Verwaltung auf eine Anfrage („Beantwortung einer Anfrage (BV)“, „Antwort auf …“): keine Einreichung
+# einer Fraktion. Nur am Anfang der Vorlagenart: „Anfrage nach § 4 zur schriftlichen Beantwortung“ stellt eine Fraktion
+ANTWORT_ART = re.compile(r"(?i)^\s*(?:beantwortung|antwort)(?!\w)")
 # „Grüne(n)“ und „Linke(n)“ in gemischter Schreibung sind auch Adjektive („Grüne Welle“, „Linke Rheinseite“, „am Linken
 # Rheinufer“, „Grüne Jugend“). Sie zählen
 # - nie vor einem Orts- oder Sachwort aus _SACHWORT;

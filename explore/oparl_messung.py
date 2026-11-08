@@ -20,7 +20,9 @@ sind Pflicht. Lockerere Werte werden vor der ersten Anfrage abgelehnt.
 Parameter werden ohne URL-Kodierung angehängt (SessionNet: 404 bei %3A/%2B); `kennzahlen` prüft beide Formen einmal.
 `kennzahlen` beurteilt die Zeitfilter ohne weitere Anfrage aus dem Vergleich mit der ungefilterten ersten Seite
 (_filter_urteil): Die Grenze für modified_since ist der Median von `modified` der ersten Hälfte dieser Seite, so dass
-ein Server, der den Filter überginge, ältere Vorlagen liefern müsste; bei neueste zuerst zeigt die erste Seite, ob
+ein Server, der den Filter überginge, ältere Vorlagen liefern müsste; „ja“ nur, wenn eine Vorlage, die dort unter der
+Grenze lag, in der gefilterten Antwort fehlt (sind alle seither geändert, „nicht unterscheidbar“); bei „nein“ steht
+dabei, wie weit die früheste Vorlage der Antwort vor der Grenze liegt. Bei neueste zuerst zeigt die erste Seite, ob
 created_until wirkt, nicht aber, ob created_since wirkt („nicht unterscheidbar“). limit=100 ist die letzte Anfrage
 (eine langsame Antwort bricht ab, wenn die übrigen Messungen vorliegen). Eine 401 auf einen Parametertest gilt als
 „Parameter abgelehnt“, zwei 401 in Folge brechen ab (abgelehnt oder Sperre?).
@@ -42,7 +44,10 @@ Nach einem Abbruch gilt: in dieser Nacht keine weitere Anfrage (STUFEN.md). Vor 
 lokale Adresse prüft main() deshalb oparl_laeufe.tsv: Endete der letzte Lauf vor weniger als 12 Stunden mit
 „abbruch (…)“, „fehler (…)“ oder „unterbrochen“ (Strg+C, SIGTERM etwa nach dem Zeitlimit des aufrufenden Werkzeugs,
 SIGHUP, wenn nicht ignoriert wie mit nohup; alle enden wie Strg+C, ein zweites Signal danach wird ignoriert; ein Lauf
-gilt als „unterbrochen“, bis er regulär endet), bricht das Kommando ohne Anfrage ab (Rückgabewert 1). Weiter nur nach
+gilt als „unterbrochen“, bis er regulär endet), bricht das Kommando ohne Anfrage ab (Rückgabewert 1). Ebenso nach
+einem hart beendeten Lauf (SIGKILL, Absturz): Vor der ersten Anfrage an die Stadt legt main() die Markerdatei
+_cache/lauf_offen.json an und entfernt sie erst nach dem Vermerk; liegt sie ohne Vermerk und ist der Lauf jünger als 12
+Stunden, gilt er als „nicht regulär beendet“ (ein älterer Marker wird gemeldet und entfernt). Weiter nur nach
 Rücksprache mit dem Auftraggeber: RATSATLAS_NACH_ABBRUCH=ja. Ein zweiter gleichzeitiger Prozess (auch mit anderem
 Cache oder aus einer anderen Arbeitskopie) bricht vor seiner ersten Anfrage ab (Art `parallel`, Sperre
 ~/.cache/ratsatlas-koeln/abruf.lock in explore/abruf.py, Ort über RATSATLAS_SPERRE). Eine Antwort, die kein JSON ist,
@@ -95,6 +100,11 @@ UNTERBROCHEN = "unterbrochen"
 SIGNALE = (signal.SIGTERM, signal.SIGHUP)
 # fehlende Gesamtzahlen (Köln, Stufe 1: pagination nur mit elementsPerPage und currentPage)
 FEHLT = "fehlt"
+# Markerdatei eines laufenden Laufs an die Stadt neben _cache/abrufe.tsv (gitignoriert): angelegt vor der ersten Anfrage,
+# entfernt am regulären Ende (auch nach einem Abbruch mit Vermerk). Bleibt sie nach einer harten Beendigung liegen
+# (SIGKILL, Absturz der Arbeitsumgebung: kein Vermerk in oparl_laeufe.tsv), gilt der Lauf als „nicht regulär beendet“.
+MARKER = "lauf_offen.json"
+NICHT_REGULAER = "nicht regulär beendet"
 # Stichprobe für pdf-koepfe: nur im Cache (nicht im Repository), ohne File-Objekte
 STICHPROBE = abruf.CACHE / "stichprobe_vorlagen.jsonl"
 
@@ -328,24 +338,44 @@ def _grenze_modified(basis):
                                             "ersten Seite")
 
 
+def _dauer_text(abstand):
+    """Zeitabstand lesbar: Sekunden, Minuten, Stunden (bis 2 Tage), sonst Tage mit einer Nachkommastelle."""
+    s = int(abs(abstand.total_seconds()))
+    if s < 60:
+        return f"{s} s"
+    if s < 3600:
+        return f"{s // 60} min"
+    if s < 2 * 86400:
+        h, m = divmod(s // 60, 60)
+        return f"{h} h" + (f" {m} min" if m else "")
+    return f"{s / 86400:.1f} Tage".replace(".", ",")
+
+
 def _filter_urteil(basis, antwort, feld, von=None, bis=None):
     """Urteil je Grenze eines Zeitfilters ({"von": …, "bis": …}) aus der gefilterten ersten Seite `antwort` und der
     ungefilterten ersten Seite `basis`, ohne weitere Anfrage:
-    - „nein“: Die Antwort enthält Objekte jenseits der Grenze.
-    - „ja“: Ein Server, der nur diese Grenze überginge, hätte Objekte jenseits der Grenze liefern müssen. Die ungefilterte
-      Seite enthält solche Objekte, die die übrige Grenze einhalten: bei „bis“ irgendwo (neue Vorlagen liegen ebenfalls
-      jenseits), bei „von“ und neueste zuerst auf den ersten Plätzen, die neue Vorlagen seit der ungefilterten Seite
-      (Kennungen dort nicht enthalten, created nicht älter als ihre jüngste Vorlage) nicht verdrängt haben können (ein
-      Server ohne Filter lieferte eine ebenso lange Seite).
-    - sonst „nicht unterscheidbar“ (z. B. alle modified gleich; bei neueste zuerst created_since), mit dem Vergleich der
-      Kennungen."""
+    - „nein“: Die Antwort enthält Objekte jenseits der Grenze; dazu, wie weit das äußerste davon jenseits liegt
+      („frühestes modified 1 h vor der Grenze“: um 1 h deutet auf einen Versatz, etwa „+“ als Leerzeichen und damit
+      Ortszeit, bis 24 h auf Tagesgenauigkeit, mehr auf einen übergangenen Filter).
+    - „ja“: Ein Server, der nur diese Grenze überginge, hätte Objekte jenseits der Grenze liefern müssen, und solche fehlen
+      in der Antwort. Die ungefilterte Seite enthält Objekte jenseits der Grenze, die die übrige Grenze einhalten und deren
+      Kennung in der Antwort fehlt (`modified` kann sich seit der ungefilterten Seite geändert haben: Sind alle Vorlagen
+      seither geändert, liefert auch ein Server ohne Filter nur Objekte diesseits der Grenze, aber mit denselben
+      Kennungen): bei „bis“ irgendwo (neue Vorlagen liegen ebenfalls jenseits), bei „von“ und neueste zuerst auf den
+      ersten Plätzen, die neue Vorlagen seit der ungefilterten Seite (Kennungen dort nicht enthalten, created nicht älter
+      als ihre jüngste Vorlage) nicht verdrängt haben können (ein Server ohne Filter lieferte eine ebenso lange Seite).
+    - sonst „nicht unterscheidbar“ (z. B. alle modified gleich oder seit der ungefilterten Seite geändert; bei neueste
+      zuerst created_since), mit dem Vergleich der Kennungen."""
+    def zeit(o):
+        return _zeitpunkt(o[feld]) if o.get(feld) else None
+
     def jenseits(o, seite):
-        t, g = (_zeitpunkt(o[feld]) if o.get(feld) else None), (von if seite == "von" else bis)
+        t, g = zeit(o), (von if seite == "von" else bis)
         return g is not None and t is not None and (t < g if seite == "von" else t > g)
 
     if not antwort:
         return {s: "keine Objekte" for s, g in (("von", von), ("bis", bis)) if g is not None}
-    ids = {o.get("id") for o in basis}
+    ids, antwort_ids = {o.get("id") for o in basis}, {o.get("id") for o in antwort}
     fremd = [o for o in antwort if o.get("id") not in ids]
     juengste = max((t for t in (_zeitpunkt(o["created"]) for o in basis if o.get("created")) if t), default=None)
     neu = sum(1 for o in fremd if juengste is None or not o.get("created")
@@ -354,11 +384,15 @@ def _filter_urteil(basis, antwort, feld, von=None, bis=None):
     for seite, andere in (("von", "bis"), ("bis", "von")):
         if (von if seite == "von" else bis) is None:
             continue
-        verletzt = sum(1 for o in antwort if jenseits(o, seite))
+        verletzt = [zeit(o) for o in antwort if jenseits(o, seite)]
         plaetze = basis[:max(len(basis) - neu, 0)] if seite == "von" and _neueste_zuerst(basis) else basis
         if verletzt:
-            urteil[seite] = f"nein ({verletzt} von {len(antwort)} {'vor' if seite == 'von' else 'nach'} der Grenze)"
-        elif any(jenseits(o, seite) and not jenseits(o, andere) for o in plaetze):
+            richtung = "vor" if seite == "von" else "nach"
+            aeusserst = min(verletzt) if seite == "von" else max(verletzt)
+            urteil[seite] = (f"nein ({len(verletzt)} von {len(antwort)} {richtung} der Grenze; "
+                             f"{'frühestes' if seite == 'von' else 'spätestes'} {feld} "
+                             f"{_dauer_text(aeusserst - (von if seite == 'von' else bis))} {richtung} der Grenze)")
+        elif any(jenseits(o, seite) and not jenseits(o, andere) and o.get("id") not in antwort_ids for o in plaetze):
             urteil[seite] = "ja"
         else:
             urteil[seite] = ("nicht unterscheidbar (" + ("gleiche Kennungen wie ohne Filter" if not fremd else
@@ -638,20 +672,76 @@ def _laufnummer():
         return max(sum(1 for _ in f), 1)
 
 
-def letzter_abbruch(datei=None, jetzt=None):
+def _markerpfad():
+    return abruf.PROTOKOLL.parent / MARKER
+
+
+def _marker_setzen(lauf):
+    """Legt die Markerdatei an (Lauf, Stufe, Kommando, Parameter, Start, Prozess); liefert ihren Inhalt."""
+    text = json.dumps({**{k: lauf[k] for k in ("lauf", "stufe", "kommando", "parameter", "start")}, "pid": os.getpid()},
+                      ensure_ascii=False)
+    pfad = _markerpfad()
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    pfad.write_text(text, encoding="utf-8")
+    return text
+
+
+def _marker_entfernen(text):
+    """Entfernt die Markerdatei, wenn sie noch die dieses Laufs ist."""
+    try:
+        if _markerpfad().read_text(encoding="utf-8") == text:
+            _markerpfad().unlink()
+    except OSError:
+        pass
+
+
+def _marker_pruefen(marker, zeilen, jetzt):
+    """Markerdatei eines Laufs ohne Vermerk in oparl_laeufe.tsv: jünger als SPERRFRIST (oder unlesbar) → Eintrag wie
+    eine Zeile mit „nicht regulär beendet“; älter → gemeldet und entfernt; ein Marker, dessen Lauf vermerkt ist (Ende
+    zwischen Vermerk und Entfernen), wird ebenfalls entfernt (der Vermerk gilt). Sonst None."""
+    if not marker.exists():
+        return None
+    try:
+        m = json.loads(marker.read_text(encoding="utf-8"))
+        m = m if isinstance(m, dict) else {}
+    except (OSError, ValueError):
+        m = {}
+    if m and any(z.get("lauf") == str(m.get("lauf")) and z.get("start") == m.get("start") for z in zeilen):
+        marker.unlink(missing_ok=True)
+        return None
+    start = _zeitpunkt(m.get("start") or "") if m else None
+    eintrag = {"lauf": m.get("lauf", "?"), "stufe": m.get("stufe", ""), "kommando": m.get("kommando", "?"),
+               "start": m.get("start", ""), "ende": "", "ergebnis": NICHT_REGULAER, "marker": str(marker),
+               "meldung": f"Markerdatei {marker} ohne Vermerk in oparl_laeufe.tsv"}
+    if start is None or jetzt - start < SPERRFRIST:
+        return eintrag
+    print(f"Hinweis: Lauf {eintrag['lauf']} ({eintrag['kommando']}, Stufe {eintrag['stufe'] or '?'}) vom "
+          f"{eintrag['start']} wurde {NICHT_REGULAER} (Markerdatei {marker} ohne Vermerk, älter als "
+          f"{SPERRFRIST.total_seconds() / 3600:g} Stunden); Marker entfernt. Im Bericht vermerken.", file=sys.stderr)
+    marker.unlink(missing_ok=True)
+    return None
+
+
+def letzter_abbruch(datei=None, jetzt=None, marker=None):
     """Der letzte Lauf aus oparl_laeufe.tsv (Zeile als dict), wenn er vor weniger als SPERRFRIST mit „abbruch (…)“,
     „fehler (…)“ oder „unterbrochen“ (Strg+C, SIGTERM, SIGHUP) endete, sonst None. Maßgeblich ist `ende` (ohne Zone:
-    Ortszeit Köln); fehlt es oder ist es unlesbar, gilt der Lauf vorsichtshalber als gerade beendet."""
-    datei = ERG / "oparl_laeufe.tsv" if datei is None else Path(datei)
-    if not datei.exists():
-        return None
-    with datei.open(encoding="utf-8", newline="") as f:
-        zeilen = list(csv.DictReader(f, delimiter="\t"))
+    Ortszeit Köln); fehlt es oder ist es unlesbar, gilt der Lauf vorsichtshalber als gerade beendet. Vorher die
+    Markerdatei (`marker`; Vorgabe neben _cache/abrufe.tsv, nur wenn auch `datei` die Vorgabe ist): Ein Lauf ohne
+    Vermerk, der vor weniger als SPERRFRIST begann (hart beendet), gilt als „nicht regulär beendet“ (_marker_pruefen)."""
+    if datei is None:
+        datei, marker = ERG / "oparl_laeufe.tsv", _markerpfad() if marker is None else marker
+    datei, zeilen = Path(datei), []
+    if datei.exists():
+        with datei.open(encoding="utf-8", newline="") as f:
+            zeilen = list(csv.DictReader(f, delimiter="\t"))
+    jetzt = jetzt or dt.datetime.now(ZoneInfo("Europe/Berlin"))
+    offen = _marker_pruefen(Path(marker), zeilen, jetzt) if marker is not None else None
+    if offen:
+        return offen
     if not zeilen or not RE_ABBRUCH.match(zeilen[-1].get("ergebnis") or ""):
         return None
     letzter = zeilen[-1]
     ende = _zeitpunkt(letzter.get("ende") or "")
-    jetzt = jetzt or dt.datetime.now(ZoneInfo("Europe/Berlin"))
     return letzter if ende is None or jetzt - ende < SPERRFRIST else None
 
 
@@ -711,8 +801,13 @@ def main(argv=None):
             sys.exit("Abbruch vor der ersten Anfrage: " + "; ".join(fehler) + " (Befehle: explore/STUFEN.md).")
         vorher = letzter_abbruch()
         if vorher and os.environ.get("RATSATLAS_NACH_ABBRUCH") != "ja":
-            sys.exit(f"Abbruch vor der ersten Anfrage: Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) endete "
-                     f"{vorher.get('ende') or '(ohne Ende)'} mit „{vorher.get('ergebnis')}“, vor weniger als "
+            grund = (f"Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) vom {vorher.get('start') or '?'} wurde "
+                     f"„{NICHT_REGULAER}“ oder läuft noch (Markerdatei {vorher['marker']} ohne Vermerk in "
+                     "oparl_laeufe.tsv, etwa nach SIGKILL oder einem Absturz der Arbeitsumgebung); begonnen"
+                     if vorher.get("marker") else
+                     f"Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) endete {vorher.get('ende') or '(ohne Ende)'}"
+                     f" mit „{vorher.get('ergebnis')}“")
+            sys.exit(f"Abbruch vor der ersten Anfrage: {grund}, vor weniger als "
                      f"{SPERRFRIST.total_seconds() / 3600:g} Stunden. Nach einem Abbruch gilt: in dieser Nacht keine "
                      "weitere Anfrage und keine weitere Stufe, Bericht an den Auftraggeber (explore/STUFEN.md). "
                      "Weiter nur nach Rücksprache mit RATSATLAS_NACH_ABBRUCH=ja.")
@@ -723,8 +818,10 @@ def main(argv=None):
     lauf = {"lauf": _laufnummer(), "stufe": os.environ.get("RATSATLAS_STUFE", ""), "kommando": a.kommando,
             "parameter": _parameter(a), "start": dt.datetime.now(zeitzone).isoformat(timespec="seconds"),
             "obergrenze": abruf.MAX_ANFRAGEN or "", "protokoll_von": abruf.protokollzeilen(),
-            "ergebnis": UNTERBROCHEN, "meldung": "nicht regulär beendet"}   # schlechter Fall zuerst
+            "ergebnis": UNTERBROCHEN, "meldung": NICHT_REGULAER}   # schlechter Fall zuerst
     rueckgabe, abruf.unterbrochen = 0, ""
+    # Marker vor der ersten Anfrage an die Stadt (ein hart beendeter Lauf ohne Vermerk sperrt so 12 Stunden)
+    marker = None if lokal(SYSTEM) and lokal(BODY) else _marker_setzen(lauf)
     vorher = _signale_abfangen()
     try:
         KOMMANDOS[a.kommando](a)
@@ -769,6 +866,8 @@ def main(argv=None):
                     protokoll_bis=abruf.protokollzeilen())
         _anhaengen("oparl_laeufe.tsv", LAEUFE_SPALTEN, [lauf])
         _anhaengen("oparl_listen.tsv", LISTEN_SPALTEN, [{**e, "lauf": lauf["lauf"]} for e in _LISTEN])
+        if marker:   # erst nach dem Vermerk (sonst bliebe ein hart beendeter Lauf ohne Spur)
+            _marker_entfernen(marker)
         print(f"Lauf {lauf['lauf']}: {lauf['netz']} Anfragen ans Netz, {lauf['cache']} aus dem Cache; "
               f"{lauf['ergebnis']}", file=sys.stderr)
         for s, behandlung in vorher.items():
