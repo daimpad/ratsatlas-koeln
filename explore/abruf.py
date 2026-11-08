@@ -32,6 +32,11 @@
     Status `tunnel <Code>`
   - alle übrigen, vor allem 502 und 504 (der Proxy erreicht den Zielserver nicht): wie Zeitüberschreitung und
     Verbindungsabbruch Art `sperre` (mögliche Sperre), Status `tunnel <Code>`
+- Zertifikatsprüfung fehlgeschlagen (ssl.SSLCertVerificationError, auch als Grund eines URLError,
+  „CERTIFICATE_VERIFY_FAILED“): Einstellung der Arbeitsumgebung (Zertifikatsspeicher, CA des Proxys), keine HTTP-Anfrage
+  gesendet, kein Hinweis auf eine Sperre. Eigene Art `tls`, Status `tls` im Protokoll, ohne Wiederholung; der Versuch
+  zählt wie eine Ablehnung durch den Proxy zur Obergrenze. Andere TLS-Fehler (unerwartetes Ende, Reset im Handshake)
+  können eine Sperre sein und bleiben Art `sperre`
 - Rohdaten-Cache: jede vollständige Antwort wird unter explore/_cache/ abgelegt und beim nächsten Lauf nicht erneut
   abgerufen
 - Protokoll jeder Anfrage (Zeit mit Zone, URL, Status, Bytes, Dauer, Netz oder Cache, Ziel einer Weiterleitung) in
@@ -47,6 +52,7 @@ import hashlib
 import http.client
 import os
 import re
+import ssl
 import time
 import urllib.error
 import urllib.parse
@@ -99,7 +105,8 @@ class Abbruch(Exception):
     oder unlesbare Antwort, HTTP 502/504 und übrige CONNECT-Antworten wie 502/504 mit `code`), proxy (Ablehnung durch
     den Proxy der Arbeitsumgebung: CONNECT-Antwort 403/405/407 oder HTTP 407, `code` gesetzt), weiterleitung (3xx,
     `ziel` gesetzt), parallel (ein anderer Prozess hält die Sperre auf den Cache), adresse (ungültige Adresse, nicht
-    gesendet), obergrenze, langsam, groesse."""
+    gesendet), tls (Zertifikatsprüfung fehlgeschlagen: Einstellung der Arbeitsumgebung, keine Sperre), obergrenze,
+    langsam, groesse."""
 
     def __init__(self, meldung, art="", code=None, ziel=""):
         super().__init__(meldung)
@@ -136,6 +143,18 @@ def proxy_ablehnung(fehler):
         return fehler.code if fehler.code == 407 else None
     code = tunnel_status(fehler)
     return code if code in PROXY_ABLEHNUNG else None
+
+
+def zertifikatsfehler(fehler):
+    """Ist der Fehler eine gescheiterte Zertifikatsprüfung (ssl.SSLCertVerificationError oder ein SSL-Fehler mit
+    „CERTIFICATE_VERIFY_FAILED“, auch als Grund eines URLError)? Das ist eine Einstellung der Arbeitsumgebung
+    (Zertifikatsspeicher, CA des Proxys), keine mögliche Sperre; die HTTP-Anfrage wurde nicht gesendet. Andere
+    SSL-Fehler (SSLEOFError, Reset im Handshake) zählen nicht dazu: Sie können eine Sperre sein."""
+    if isinstance(fehler, urllib.error.HTTPError):
+        return False
+    grund = fehler.reason if isinstance(fehler, urllib.error.URLError) else fehler
+    return isinstance(grund, ssl.SSLCertVerificationError) or (
+        isinstance(grund, ssl.SSLError) and "CERTIFICATE_VERIFY_FAILED" in str(grund))
 
 
 def _proxy_abbruch(url, code, fehler, dauer):
@@ -259,8 +278,8 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
         if MAX_ANFRAGEN and _anfragen >= MAX_ANFRAGEN:
             raise Abbruch(f"Obergrenze von {MAX_ANFRAGEN} Anfragen erreicht (RATSATLAS_MAX_ANFRAGEN): {url}",
                           "obergrenze")
-        _anfragen += 1
         _warten()
+        _anfragen += 1   # erst nach dem Warten: ein Lauf, der dabei unterbrochen wird, hat diese Anfrage nicht gesendet
         start = time.monotonic()
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
         try:
@@ -306,6 +325,11 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
             # HTTPException (kein OSError): Antwort abgeschnitten (IncompleteRead, z. B. chunked ohne Abschluss) oder
             # unlesbar (BadStatusLine, LineTooLong …), auch als Antwort des Proxys auf CONNECT
             dauer = time.monotonic() - start
+            if zertifikatsfehler(e):   # Einstellung der Arbeitsumgebung: keine HTTP-Anfrage gesendet, keine Sperre
+                _protokoll(url, "tls", 0, dauer, "netz")
+                raise Abbruch(f"Zertifikatsprüfung fehlgeschlagen (TLS): {url} ({e}); Einstellung der "
+                              "Arbeitsumgebung (Zertifikatsspeicher, CA des Proxys), keine HTTP-Anfrage gesendet, kein "
+                              "Hinweis auf eine Sperre. Nicht wiederholen, berichten", "tls") from e
             code = tunnel_status(e)
             if code in PROXY_ABLEHNUNG:   # Ablehnung durch den Proxy: keine Antwort des Zielservers, keine Sperre
                 raise _proxy_abbruch(url, code, e, dauer) from e

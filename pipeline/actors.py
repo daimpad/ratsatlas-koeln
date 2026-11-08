@@ -2,7 +2,10 @@
 
 Köln (CLAUDE.md 5.3): Ob die API `originatorOrganization` und `underDirectionOf` setzt, wird nach der Information der
 Stadt gemessen. Ist `originatorOrganization` gesetzt, gilt es (belegt); sonst werden Einreichende aus dem Titel
-abgeleitet („Antrag der …-Fraktion“) und als abgeleitet gekennzeichnet (method, evidence). Fraktionen, Gruppen und
+abgeleitet („Antrag der …-Fraktion“) und als abgeleitet gekennzeichnet (method, evidence). Vorher gilt die Kölner
+Vorlagenart „… BV<n> (<Fraktion>)“ (Stufe 1, 07.11.2026: „Antrag nach § 3 BV2 (CDU)“, „Änderungsantrag BV1 (Grüne)“)
+als strukturierte Quelle: Bezirksfraktion in der Bezirksvertretung n (Stadtbezirk n nach der Hauptsatzung), method
+„paper_type“, evidence = Vorlagenart. Fraktionen, Gruppen und
 Einzelmandate des Kölner Rates 2020–2025 und 2025–2030 stehen in PARTIES, Bezeichnungen einer Wahlperiode mit
 Datumsgrenzen (Regeln dort). Die Federführung aus dem Kopf der Verwaltungsvorlage („Dezernat, Dienststelle“) folgt mit
 dem Abruf der PDFs.
@@ -66,9 +69,12 @@ WAHLPERIODE_2020_ENDE = "2025-10-31"
 
 # Wortgrenze ohne Bindestrich-Zusätze: „KSG“, nicht „KSG-Gelände“; erlaubt „KSG-Fraktion“, „KSG-Bezirksfraktion“
 _FRAKTION_ZUSATZ = r"(?:-(?:Rats|Bezirks)?[Ff]raktion|-Gruppe)"
-# Stadtbezirke (wie geocode.BEZIRKE_KOELN; hier ohne Import, damit actors ohne Geobibliotheken läuft)
+# Stadtbezirke 1–9 in der Reihenfolge ihrer Nummern (wie geocode.BEZIRKE_KOELN; hier ohne Import, damit actors ohne
+# Geobibliotheken läuft)
 STADTBEZIRKE = ("Innenstadt", "Rodenkirchen", "Lindenthal", "Ehrenfeld", "Nippes", "Chorweiler", "Porz", "Kalk",
                 "Mülheim")
+# Kölner Vorlagenart einer Bezirksvertretung am Ende: „Antrag nach § 3 BV2 (CDU)“, „Änderungsantrag BV1 (Grüne)“
+BV_ART = re.compile(r"(?<!\w)BV\s?([1-9])\s*\(([^()]+)\)\s*$")
 # „Grüne(n)“ und „Linke(n)“ in gemischter Schreibung sind auch Adjektive („Grüne Welle“, „Linke Rheinseite“, „am Linken
 # Rheinufer“, „Grüne Jugend“). Sie zählen
 # - nie vor einem Orts- oder Sachwort aus _SACHWORT;
@@ -261,6 +267,28 @@ def _match_org(orgs, pattern, date, classes, bezirk=None):
     return None
 
 
+def bv_vorlagenart(ptype):
+    """(Nummer, Stadtbezirk, Text in Klammern) aus einer Vorlagenart „… BV<n> (<Fraktion>)“, sonst None."""
+    m = BV_ART.search(ptype or "")
+    if not m:
+        return None
+    nr = int(m.group(1))
+    return nr, STADTBEZIRKE[nr - 1], m.group(2).strip()
+
+
+def _aus_vorlagenart_bv(ptype, orgs, date):
+    """Bezirksfraktionen aus einer Vorlagenart „… BV<n> (<Fraktion>)“ (strukturiert, method „paper_type“); nur
+    erkannte Fraktionen und Gruppen aus PARTIES (keine Personennamen), sonst []."""
+    bv = bv_vorlagenart(ptype)
+    if not bv:
+        return []
+    _, bezirk, klammer = bv
+    namen, _ = _kette(klammer, _treffer(klammer, date), 0)
+    return [dict(actor=f"{name}-Bezirksfraktion {bezirk}", actor_type="Bezirksfraktion",
+                 organization_id=_match_org(orgs, org_pat, date, ("Bezirksfraktionen (intern)",), bezirk),
+                 method="paper_type", evidence=ptype) for name, org_pat in namen]
+
+
 def originators(paper, orgs, bezirke=()):
     """Einreichende einer Vorlage als Liste von Zeilen (actor, actor_type, organization_id,
     method, evidence). `bezirke`: Stadtbezirke der befassten Bezirksvertretungen."""
@@ -278,6 +306,9 @@ def originators(paper, orgs, bezirke=()):
                      method="paper_type", evidence=ptype)]
     if ptype not in POLITIK_TYPES:
         return []
+    rows = _aus_vorlagenart_bv(ptype, orgs, date)   # Köln: „Antrag nach § 3 BV2 (CDU)“
+    if rows:
+        return rows
     titel = paper.get("name") or ""
     for a, anker, b in _segments(titel):
         rows = _from_segment(titel, orgs, date, bezirke, a, b, anker)

@@ -12,6 +12,8 @@ import importlib
 import json
 import os
 import re
+import signal
+import ssl
 import subprocess
 import sys
 import threading
@@ -83,7 +85,7 @@ def test_kennzahlen_stellt_zehn_anfragen(server, tmp_path):
     assert status.count(404) == 1 and status.count(200) == 9          # nur der URL-kodierte Vergleich
     werte = {z["feld"]: z["wert"] for z in tsv(tmp_path / "ergebnisse" / "oparl_kennzahlen.tsv")
              if z["objekt"] == "paper"}
-    assert werte["test modified_since URL-kodiert"].startswith("HTTP 404")
+    assert werte["test modified_since URL-kodiert"] == "Parameter abgelehnt (HTTP 404)"
     seit = next(f for f in werte if f.startswith("test modified_since=") and "+00:00" in f)
     assert "filter_wirksam=ja" in werte[seit]
     assert "filter_wirksam=ja" in next(w for f, w in werte.items() if f.startswith("test created_since="))
@@ -849,7 +851,8 @@ def test_letzter_abbruch_innerhalb_von_12_stunden(tmp_path):
             ("2026-11-07T23:10:00", "abbruch (sperre)", True),            # ohne Zone: Ortszeit Köln
             ("", "abbruch (sperre)", True),                               # ohne Ende: vorsichtshalber gesperrt
             ("2026-11-07T23:10:00+01:00", "ok", False),
-            ("2026-11-07T23:10:00+01:00", "unterbrochen", False),
+            ("2026-11-07T23:10:00+01:00", "unterbrochen", True),          # Strg+C oder Signal (Runde 9)
+            ("2026-11-07T23:10:00+01:00", "abbruch (tls)", True),         # Einstellung, aber Sperrfrist
             ("2026-11-07T12:29:00+01:00", "abbruch (server)", False)):    # vor mehr als 12 Stunden
         _laeufe(erg, zeile(1, "2026-11-06T23:10:00+01:00", "abbruch (sperre)"), zeile(2, ende, ergebnis))
         treffer = om.letzter_abbruch(datei, jetzt)
@@ -921,3 +924,250 @@ def test_freigabe_nach_abbruch_nur_ausdruecklich(tmp_path, monkeypatch):
     monkeypatch.setenv("RATSATLAS_NACH_ABBRUCH", "ja")
     assert om.main(["test"]) == 2 and geholt == ["https://example.invalid/oparl/system"]
     assert [z["ergebnis"] for z in tsv(erg / "oparl_laeufe.tsv")] == ["abbruch (server)", "abbruch (sperre)"]
+
+
+# --- Runde 9: Unterbrechung (Strg+C, SIGTERM, SIGHUP), Zertifikatsprüfung (Art `tls`), Kölner Antwortform aus Stufe 1,
+# Probelauf Stufe 2 ------------------------------------------------------------------------------------------------------
+
+@pytest.mark.parametrize("sig, rueckgabe", [(None, 130), (signal.SIGTERM, 143), (signal.SIGHUP, 129)])
+def test_unterbrochener_lauf_wird_vermerkt_und_sperrt_12_stunden(tmp_path, monkeypatch, sig, rueckgabe):
+    """Strg+C (KeyboardInterrupt), SIGTERM (etwa Zeitlimit des aufrufenden Werkzeugs) und SIGHUP enden gleich: Vermerk
+    „unterbrochen“ in oparl_laeufe.tsv, danach gilt die 12-Stunden-Regel. Die Signalbehandlung gilt nur während des
+    Laufs (danach wieder die vorige). Eine Wache fängt das Signal, falls main() es nicht behandelt (sonst endete der
+    Testprozess)."""
+    om = importlib.import_module("oparl_messung")
+
+    class Wache(Exception):
+        pass
+
+    def wache(nummer, _rahmen):
+        raise Wache(nummer)
+    alt = {s: signal.signal(s, wache) for s in (signal.SIGTERM, signal.SIGHUP)}
+    try:
+        def kommando(_a):
+            if sig is None:
+                raise KeyboardInterrupt
+            os.kill(os.getpid(), sig)
+            time.sleep(5)
+        monkeypatch.setitem(om.KOMMANDOS, "test", kommando)
+        for name, wert in (("ERG", tmp_path / "erg"), ("SYSTEM", "http://127.0.0.1:9/oparl/system"),
+                           ("BODY", "http://127.0.0.1:9/oparl/bodies/x"), ("_LISTEN", [])):
+            monkeypatch.setattr(om, name, wert)
+        monkeypatch.setattr(om.abruf, "PROTOKOLL", tmp_path / "abrufe.tsv")
+        assert om.main(["test"]) == rueckgabe
+        assert all(signal.getsignal(s) is wache for s in alt)          # vorige Behandlung wiederhergestellt
+    finally:
+        for s, behandlung in alt.items():
+            signal.signal(s, behandlung)
+    datei = tmp_path / "erg" / "oparl_laeufe.tsv"
+    zeile = tsv(datei)[-1]
+    name = signal.Signals(sig).name if sig else "SIGINT"
+    assert (zeile["ergebnis"], zeile["meldung"]) == ("unterbrochen", f"unterbrochen ({name})")
+    assert om.letzter_abbruch(datei)["lauf"] == zeile["lauf"]           # Sperrfrist 12 Stunden
+
+
+def test_sigterm_beendet_den_lauf_mit_vermerk_und_ohne_weitere_anfrage(tmp_path):
+    """Als Prozess gegen einen Testserver, der wie die Stadt behandelt wird (127.0.0.2): SIGTERM nach der ersten Antwort
+    (während des Abstands von 2 s) → Rückgabewert 143, Vermerk „unterbrochen (SIGTERM)“; ein zweiter Lauf schickt keine
+    Anfrage (12-Stunden-Regel)."""
+    with testserver.Testserver(host="127.0.0.2") as stadt:
+        skript = str(EXPLORE / "oparl_messung.py")
+        env = _wie_die_stadt(stadt, tmp_path, RATSATLAS_STUFE="1", RATSATLAS_MAX_ANFRAGEN="3")
+        p = subprocess.Popen([sys.executable, skript, "test"], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                             text=True)
+        frist = time.monotonic() + 30
+        while not stadt.ausgang and time.monotonic() < frist and p.poll() is None:
+            time.sleep(0.02)
+        p.send_signal(signal.SIGTERM)
+        _, fehler = p.communicate(timeout=30)
+        n = len(stadt.anfragen)
+        assert p.returncode == 143 and "Unterbrochen (SIGTERM)" in fehler, fehler
+        zeile = tsv(tmp_path / "ergebnisse" / "oparl_laeufe.tsv")[-1]
+        assert (zeile["ergebnis"], zeile["meldung"], zeile["netz"]) == ("unterbrochen", "unterbrochen (SIGTERM)", str(n))
+        assert 1 <= n < 3
+        zweiter = subprocess.run([sys.executable, skript, "test"], env=env, capture_output=True, text=True, timeout=60)
+        assert zweiter.returncode == 1 and "RATSATLAS_NACH_ABBRUCH" in zweiter.stderr and "unterbrochen" in zweiter.stderr
+        assert len(stadt.anfragen) == n                                   # keine Anfrage des zweiten Laufs
+
+
+def test_zertifikatsfehler_erkennen():
+    abruf = importlib.import_module("abruf")
+    from pipeline import abruf as pabruf
+    pruefung = ssl.SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: "
+                                                "self-signed certificate (_ssl.c:1000)")
+    ende = ssl.SSLEOFError(8, "[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol")
+    for modul in (abruf, pabruf):
+        assert modul.zertifikatsfehler(pruefung) and modul.zertifikatsfehler(urllib.error.URLError(pruefung))
+        assert modul.zertifikatsfehler(urllib.error.URLError(ssl.SSLError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] x")))
+        for anderer in (ende, urllib.error.URLError(ende), urllib.error.URLError(ConnectionResetError(104, "reset")),
+                        urllib.error.URLError(OSError("Tunnel connection failed: 502 Bad Gateway")), TimeoutError(),
+                        urllib.error.HTTPError("https://x/", 403, "CERTIFICATE_VERIFY_FAILED", {}, None)):
+            assert not modul.zertifikatsfehler(anderer), anderer
+
+
+def test_zertifikatsfehler_ist_keine_moegliche_sperre(tmp_path, monkeypatch, tls_server):
+    """Lokaler TLS-Server mit selbst signiertem Zertifikat, dem der Client nicht vertraut: Art `tls`, keine HTTP-Anfrage
+    beim Server, Status `tls` im Protokoll, nichts im Cache, keine Wiederholung. Gegenversuch: Mit vertrautem
+    Zertifikat antwortet derselbe Server."""
+    abruf = _abruf_im_prozess(monkeypatch, tmp_path)
+    url = f"{tls_server.url}/oparl/system"
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.hole(url, ".json")
+    assert e.value.art == "tls" and "CERTIFICATE_VERIFY_FAILED" in str(e.value)
+    assert "mögliche Sperre" not in str(e.value) and "kein Hinweis auf eine Sperre" in str(e.value)
+    assert tls_server.anfragen == []                                     # keine HTTP-Anfrage gesendet
+    z = tsv(tmp_path / "abrufe.tsv")[-1]
+    assert (z["status"], z["quelle"]) == ("tls", "netz") and not abruf._cachepfad(url, ".json").exists()
+    kontext = ssl.create_default_context(cafile=str(tls_server.zertifikat))
+    oeffner = urllib.request.build_opener(urllib.request.ProxyHandler({}), urllib.request.HTTPSHandler(context=kontext))
+    assert oeffner.open(url, timeout=10).read() == b"{}" and tls_server.anfragen == ["/oparl/system"]
+
+
+@pytest.mark.parametrize("reset", [False, True])
+def test_andere_tls_fehler_bleiben_moegliche_sperre(tmp_path, monkeypatch, abbrechender_server, reset):
+    server = abbrechender_server(reset)
+    abruf = _abruf_im_prozess(monkeypatch, tmp_path)
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.hole(f"{server.url}/oparl/system", ".json")
+    assert e.value.art == "sperre" and "mögliche Sperre" in str(e.value)
+    assert len(server.verbindungen) == 1                                 # keine Wiederholung trotz WIEDERHOLUNGEN=4
+
+
+def test_zertifikatsfehler_im_lauf_mit_12_stunden_regel_und_auswertung(tmp_path, tls_server):
+    """Als Prozess (Adresse gilt nicht als lokal: strenge Vorgaben, Abstand 2 s): Abbruch der Art `tls`, Hinweis auf die
+    Einstellung der Arbeitsumgebung, keine mögliche Sperre; der nächste Lauf schickt keine Anfrage (12-Stunden-Regel).
+    Die Auswertung nennt den Status `tls` ohne „mögliche Sperre“ und ohne Antwortzeit."""
+    keine = ",".join(x for x in (os.environ.get("NO_PROXY", ""), "127.0.0.1,localhost") if x)
+    env = {k: v for k, v in os.environ.items() if not k.startswith("RATSATLAS_")}
+    env.update({"RATSATLAS_OPARL_SYSTEM": f"{tls_server.url}/oparl/system",
+                "RATSATLAS_OPARL_BODY": f"{tls_server.url}/oparl/bodies/x", "RATSATLAS_STADT_INFORMIERT": "ja",
+                "RATSATLAS_ZEITFENSTER": "", "RATSATLAS_KONTAKT": "kontakt@example.invalid",
+                "RATSATLAS_MAX_ANFRAGEN": "3", "RATSATLAS_STUFE": "1", "RATSATLAS_SPERRE": str(tmp_path / "sperre"),
+                "RATSATLAS_CACHE": str(tmp_path / "cache"), "RATSATLAS_ERGEBNISSE": str(tmp_path / "ergebnisse"),
+                "NO_PROXY": keine, "no_proxy": keine})
+    skript = str(EXPLORE / "oparl_messung.py")
+    r = subprocess.run([sys.executable, skript, "test"], env=env, capture_output=True, text=True, timeout=60)
+    assert r.returncode == 2 and "Zertifikatsprüfung ist gescheitert" in r.stderr, r.stderr
+    assert "Mögliche Sperre" not in r.stderr and tls_server.anfragen == []
+    zeile = tsv(tmp_path / "ergebnisse" / "oparl_laeufe.tsv")[-1]
+    assert (zeile["ergebnis"], zeile["netz"]) == ("abbruch (tls)", "1")
+    zweiter = subprocess.run([sys.executable, skript, "test"], env=env, capture_output=True, text=True, timeout=60)
+    assert zweiter.returncode == 1 and "RATSATLAS_NACH_ABBRUCH" in zweiter.stderr
+    assert len(tsv(tmp_path / "cache" / "abrufe.tsv")) == 1               # keine weitere Anfrage
+    aus = importlib.import_module("auswertung").auswertung(tmp_path / "cache", tmp_path / "ergebnisse")
+    assert "Status tls × 1 (Zertifikatsprüfung fehlgeschlagen: Einstellung der Arbeitsumgebung" in aus
+    assert "mögliche Sperre" not in aus and "| 1 | test | 1 | 0 | tls×1 | – | – | 0 | abbruch (tls) |" in aus
+
+
+@pytest.fixture
+def koeln_server():
+    """Testserver in der Kölner Antwortform aus Stufe 1 (explore/testserver.py, form „koeln“)."""
+    with testserver.Testserver(form="koeln") as s:
+        yield s
+
+
+def test_koelner_form_wie_stufe_1(koeln_server):
+    seite = json.loads(koeln_server.antwort("/oparl/bodies/testkoerperschaft/papers", "")[2])
+    assert seite["pagination"] == {"elementsPerPage": 25, "currentPage": 1}
+    assert sorted(seite["links"]) == ["first", "next", "self"] and seite["links"]["next"].endswith("/papers?page=2")
+    assert sorted(seite["data"][0]) == ["auxiliaryFile", "body", "consultation", "created", "date", "id", "modified",
+                                        "name", "paperType", "reference", "type"]
+    erstellt = [p["created"] for p in koeln_server.daten.vorlagen]
+    assert erstellt == sorted(erstellt, reverse=True)                     # neueste zuerst
+    assert all(len(p["consultation"]) == 1 and sorted(p["consultation"][0]) == [
+        "agendaItem", "id", "meeting", "organization", "role", "type"] for p in koeln_server.daten.vorlagen)
+    assert {"Antrag nach § 3 BV2 (Die Linke)", "Änderungsantrag BV1 (FDP)", "Beschlussvorlage Bezirksvertretung"} <= {
+        p["paperType"] for p in koeln_server.daten.vorlagen}
+    body = koeln_server.daten.body()
+    assert body["license"] is None and body["person"].endswith("/people") and len(body["legislativeTerm"]) == 3
+
+
+def test_kennzahlen_stichprobe_und_auswertung_in_koelner_form(koeln_server, tmp_path):
+    """kennzahlen und stichprobe ohne Gesamtzahlen: „fehlt“ statt None, keine Ausnahme; auswertung.py --stufe 2."""
+    m = lauf(koeln_server, tmp_path, "kennzahlen", obergrenze=10, stufe="2")
+    assert m["rc"] == 0 and m["server"] == 10, m["stderr"]
+    werte = {(z["objekt"], z["feld"]): z["wert"] for z in tsv(tmp_path / "ergebnisse" / "oparl_kennzahlen.tsv")}
+    for liste in ("paper", "meeting", "organization", "person"):
+        assert werte[(liste, "pagination.totalElements")] == werte[(liste, "pagination.totalPages")] == "fehlt"
+        assert werte[(liste, "links.schluessel")] == "first,next,self"
+    assert werte[("person", "url")].endswith("/people") and werte[("body", "license")] == "null"
+    assert werte[("paper", "test limit=100")] == "objekte=25; totalElements=fehlt"
+    assert not any("None" in w for w in werte.values())
+    m = lauf(koeln_server, tmp_path, "stichprobe", "--seiten", "1", "--von", "2025", "--bis", "2026", obergrenze=2,
+             stufe="3")
+    assert m["rc"] == 0 and m["server"] == 1, m["stderr"]                  # Body und Seite 2025 aus dem Cache
+    assert {z["totalElements"] for z in tsv(tmp_path / "ergebnisse" / "oparl_stichprobe_jahre.tsv")} == {"fehlt"}
+    aus = importlib.import_module("auswertung").auswertung(tmp_path / "cache", tmp_path / "ergebnisse", "2")
+    assert "| 2 | kennzahlen | 10 | 0 | 200×9, 404×1 |" in aus
+    assert "| paper | fehlt | 25 | fehlt | 25 | first,next,self | gleicher Pfad; Parameter page; URL-kodiert nein |" in aus
+    assert "| modified_since URL-kodiert | Parameter abgelehnt (HTTP 404) |" in aus
+    assert "2025: 25 (Gesamtzahl fehlt); 2026: 25 (Gesamtzahl fehlt)" in aus and "None" not in aus
+    assert "| mainFile | 0 | 50 | 0 % |" in aus and "| auxiliaryFile | 50 | 50 | 100 % |" in aus
+
+
+@pytest.mark.parametrize("code, ergebnis, anfragen", [
+    (400, "ok", 10), (401, "ok", 10), (404, "ok", 10),
+    (403, "abbruch (http)", 5), (429, "abbruch (server)", 5), (500, "abbruch (server)", 5),
+    (502, "abbruch (sperre)", 5)])
+def test_parametertests_abgelehnt_oder_abbruch(koeln_server, tmp_path, code, ergebnis, anfragen):
+    """Parametertest `limit=100` (5. Anfrage) mit Fehlantwort: 400, 401 und 404 gelten als „Parameter abgelehnt“, die
+    Messung geht weiter; jede andere Fehlantwort bricht nach dieser Anfrage ab (keine Wiederholung)."""
+    koeln_server.stoerung = lambda pfad, abfrage: code if abfrage == "limit=100" else None
+    m = lauf(koeln_server, tmp_path, "kennzahlen", obergrenze=10)
+    assert m["lauf"]["ergebnis"] == ergebnis and m["server"] == anfragen == int(m["lauf"]["netz"]), m["stderr"]
+    assert [s for _, q, _, s in koeln_server.anfragen if q == "limit=100"] == [code]
+    werte = {z["feld"]: z["wert"] for z in tsv(tmp_path / "ergebnisse" / "oparl_kennzahlen.tsv") if z["objekt"] == "paper"}
+    if ergebnis == "ok":
+        assert m["rc"] == 0 and werte["test limit=100"] == f"Parameter abgelehnt (HTTP {code})"
+    else:
+        assert m["rc"] == 2 and koeln_server.anfragen[-1][1] == "limit=100"
+
+
+def _stufe_2_befehl():
+    """Umgebung und Argumente des Befehls aus STUFEN.md, Stufe 2."""
+    text = (EXPLORE / "STUFEN.md").read_text(encoding="utf-8")
+    zeile = next(z for z in text.splitlines() if z.startswith("RATSATLAS_") and "RATSATLAS_STUFE=2 " in z)
+    werte = {k: v.strip('"') for k, v in re.findall(r'(RATSATLAS_[A-Z_]+)=("[^"]*"|\S+)', zeile)}
+    return werte, zeile.split("explore/oparl_messung.py", 1)[1].split()
+
+
+def test_probelauf_stufe_2_in_koelner_form_mit_und_ohne_cache(tmp_path, monkeypatch):
+    """Genau der Befehl aus STUFEN.md, Stufe 2, gegen den Testserver in Kölner Form (Adressen lokal wie in
+    probelauf.umgebung, Abstand wie im Befehl: Vorgabe 2 s): (i) mit einem Cache mit System, Body und erster
+    Vorlagenseite (wie nach Stufe 1) 7 Anfragen ans Netz, (ii) ohne Cache 10. Beide Läufe gleichzeitig (eigene Server,
+    Caches und Sperren); Abstände mindestens 2 s, keine Wiederholung, nur der URL-kodierte Test mit 404."""
+    werte, argumente = _stufe_2_befehl()
+    assert argumente == ["kennzahlen"] and werte["RATSATLAS_MAX_ANFRAGEN"] == "10" and "RATSATLAS_ABSTAND" not in werte
+    abruf = importlib.import_module("abruf")
+    laeufe = {}
+    with testserver.Testserver(form="koeln") as mit, testserver.Testserver(form="koeln") as ohne:
+        for name, server in (("mit", mit), ("ohne", ohne)):
+            cache = tmp_path / name / "cache"
+            if name == "mit":   # Cache wie nach Stufe 1: System, Body, erste Seite der Vorlagen
+                monkeypatch.setattr(abruf, "CACHE", cache)
+                for url in (server.system_url, server.body_url, f"{server.body_url}/papers"):
+                    pfad = abruf._cachepfad(url, ".json")
+                    pfad.parent.mkdir(parents=True, exist_ok=True)
+                    pfad.write_bytes(server.antwort(url[len(server.basis):], "")[2])
+            env = probelauf.umgebung(server, cache, tmp_path / name / "ergebnisse", 10, "2")
+            env.update(werte)
+            for k in ("RATSATLAS_ABSTAND", "RATSATLAS_ZEITFENSTER"):   # nicht im Befehl: Vorgaben gelten
+                env.pop(k)
+            laeufe[name] = (server, time.monotonic(), subprocess.Popen(
+                [sys.executable, str(EXPLORE / "oparl_messung.py"), *argumente], env=env, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, text=True))
+        for name, (server, start, p) in laeufe.items():
+            _, fehler = p.communicate(timeout=120)
+            assert p.returncode == 0, fehler
+            zeile = tsv(tmp_path / name / "ergebnisse" / "oparl_laeufe.tsv")[-1]
+            netz, cache = (7, 3) if name == "mit" else (10, 0)
+            assert (len(server.anfragen), zeile["netz"], zeile["cache"], zeile["stufe"]) == (netz, str(netz), str(cache),
+                                                                                         "2"), name
+            assert sorted(s for *_, s in server.anfragen) == [200] * (netz - 1) + [404]
+            assert len({(pf, q) for pf, q, *_ in server.anfragen}) == netz    # keine Wiederholung
+            assert server.eingang[0] - start >= 2.0
+            assert min(b - a for a, b in zip(server.ausgang, server.eingang[1:])) >= 2.0, name
+            werte_tsv = {(z["objekt"], z["feld"]): z["wert"]
+                         for z in tsv(tmp_path / name / "ergebnisse" / "oparl_kennzahlen.tsv")}
+            assert werte_tsv[("paper", "test modified_since URL-kodiert")] == "Parameter abgelehnt (HTTP 404)"
+            assert werte_tsv[("paper", "pagination.totalElements")] == "fehlt"

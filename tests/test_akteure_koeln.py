@@ -248,3 +248,50 @@ def test_kurzfassung_parteien_wie_actors():
     assert fremd("Die Fraktion FDP/KSG beantragt neue Sitzbänke.", "Antrag der SPD-Fraktion") == "FDP/KSG"
     assert fremd("Die Grünen beantragen neue Sitzbänke.", "Antrag der Fraktion Bündnis 90/Die Grünen") is None
     assert fremd("Es geht um Bänke am Linken Rheinufer.", "Antrag der CDU-Fraktion") is None
+
+
+# Kölner Vorlagenart „… BV<n> (<Fraktion>)“ (Stufe 1, 07.11.2026) als strukturierte Quelle – ERFUNDENE Titel in genau
+# diesen Mustern
+@pytest.mark.parametrize("art, erwartet", [
+    ("Antrag nach § 3 BV2 (CDU)", ["CDU-Bezirksfraktion Rodenkirchen"]),
+    ("Änderungsantrag BV1 (Grüne)", ["Grüne-Bezirksfraktion Innenstadt"]),
+    ("Anfrage nach § 4 BV9 (Die Linke)", ["Die Linke-Bezirksfraktion Mülheim"]),
+    ("Antrag nach § 3 BV7 (SPD, Volt)", ["SPD-Bezirksfraktion Porz", "Volt-Bezirksfraktion Porz"]),
+    ("Antrag nach § 3 BV4 (FDP/KSG)", ["FDP/KSG-Bezirksfraktion Ehrenfeld"]),
+])
+def test_bezirksfraktion_aus_der_vorlagenart(art, erwartet):
+    # der Titel nennt eine andere Fraktion: die strukturierte Vorlagenart gilt
+    r = originators({"paperType": art, "date": NEUE_WP, "name": "Antrag der SPD-Fraktion betreffend Sitzbänke"}, [],
+                    {"Kalk"})
+    assert [x["actor"] for x in r] == erwartet
+    assert all((x["actor_type"], x["method"], x["evidence"]) == ("Bezirksfraktion", "paper_type", art) for x in r)
+    assert topics.party(r[0]["actor"], r[0]["actor_type"]) == erwartet[0].split("-Bezirksfraktion")[0]
+
+
+@pytest.mark.parametrize("art, titel, datum, erwartet", [
+    # nicht erkannte Angabe in Klammern (etwa ein Name): keine Übernahme, sonst wie bisher (Titel, dann Vorlagenart)
+    ("Antrag nach § 3 BV3 (Testperson Musterfrau)", "Sitzbänke am Musterweg", NEUE_WP, []),
+    ("Antrag nach § 3 BV3 (Testperson Musterfrau)", "Antrag der CDU-Fraktion betreffend Sitzbänke", NEUE_WP, ["CDU"]),
+    # Datumsregel: „FDP/KSG“ gab es vor dem 17.09.2025 nicht
+    ("Antrag nach § 3 BV4 (FDP/KSG)", "Sitzbänke am Musterweg", VOR_WAHL, []),
+    # keine Bezirksvertretung 10; Verwaltungsvorlagen bleiben Verwaltung
+    ("Antrag nach § 3 BV10 (CDU)", "Sitzbänke am Musterweg", NEUE_WP, ["CDU"]),
+    ("Beschlussvorlage Bezirksvertretung", "Sitzbänke am Musterweg", NEUE_WP, ["Verwaltung"]),
+])
+def test_vorlagenart_ohne_erkannte_bezirksfraktion(art, titel, datum, erwartet):
+    r = originators({"paperType": art, "date": datum, "name": titel}, [])
+    assert [x["actor"] for x in r] == erwartet and all(x["actor_type"] != "Bezirksfraktion" for x in r)
+
+
+def test_vorlagenart_bezirksvertretung_nummern_wie_hauptsatzung():
+    from pipeline.actors import STADTBEZIRKE, bv_vorlagenart
+    from pipeline.geocode import BEZIRKE_KOELN
+    assert STADTBEZIRKE == tuple(BEZIRKE_KOELN[n] for n in range(1, 10))
+    assert bv_vorlagenart("Antrag nach § 3 BV2 (CDU)") == (2, "Rodenkirchen", "CDU")
+    assert bv_vorlagenart("Änderungsantrag BV 8 (Grüne)") == (8, "Kalk", "Grüne")
+    for art in ("Antrag nach § 3 BV10 (CDU)", "Antrag nach § 3 der Geschäftsordnung des Rates", "BVG (CDU)", None):
+        assert bv_vorlagenart(art) is None, art
+    orgs = [{"id": "o-bv2-cdu", "name": "CDU-Bezirksfraktion Rodenkirchen", "classification": "Bezirksfraktionen (intern)"},
+            {"id": "o-bv3-cdu", "name": "CDU-Bezirksfraktion Lindenthal", "classification": "Bezirksfraktionen (intern)"}]
+    r = originators({"paperType": "Antrag nach § 3 BV2 (CDU)", "date": NEUE_WP, "name": "Sitzbänke"}, orgs)
+    assert [x["organization_id"] for x in r] == ["o-bv2-cdu"]

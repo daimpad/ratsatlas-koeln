@@ -13,7 +13,10 @@ Ablehnungen durch den Proxy der Arbeitsumgebung (Status `proxy <Code>`: CONNECT-
 stehen getrennt: Sie haben die Stadt nicht erreicht, zählen nicht zu den Antwortzeiten und gelten nicht als mögliche
 Sperre. Andere CONNECT-Antworten (Status `tunnel <Code>`, z. B. 502/504: der Proxy erreicht die Stadt nicht, oder
 429/503) gelten wie Verbindungsabbrüche als mögliche Sperre, ebenso 403, 429, 5xx und Status ohne Code (Name der
-Ausnahme, z. B. TimeoutError oder IncompleteRead bei einer abgeschnittenen Antwort).
+Ausnahme, z. B. TimeoutError oder IncompleteRead bei einer abgeschnittenen Antwort). Eine gescheiterte
+Zertifikatsprüfung (Status `tls`) ist eine Einstellung der Arbeitsumgebung, keine mögliche Sperre; sie zählt wie eine
+Ablehnung durch den Proxy nicht zu den Antwortzeiten.
+Fehlende Gesamtzahlen (Köln liefert in `pagination` nur elementsPerPage und currentPage) stehen als „fehlt“.
 Die Regel Stufe 3/5 gilt nur als erfüllt, wenn der letzte `stichprobe`-Lauf in oparl_laeufe.tsv „ok“ ist.
 Aufruf: python3 explore/auswertung.py [--cache VERZ] [--ergebnisse VERZ] [--stufe S]
 """
@@ -32,6 +35,8 @@ NICHT_PRUEFBAR = "nicht prüfbar (Protokoll fehlt)"
 NICHT_ZUGEORDNET = "nicht prüfbar (Protokollzeilen passen nicht zum Lauf)"
 PROXY_HINWEIS = ("Ablehnung durch den Proxy der Arbeitsumgebung, die Stadt wurde nicht erreicht, keine Sperre: nicht "
                  "wiederholen, berichten; Host im Netz der Arbeitsumgebung erlauben")
+TLS_HINWEIS = ("Zertifikatsprüfung fehlgeschlagen: Einstellung der Arbeitsumgebung (Zertifikatsspeicher, CA des "
+               "Proxys), keine HTTP-Anfrage gesendet, keine Sperre: nicht wiederholen, berichten")
 
 
 def lies(datei):
@@ -53,12 +58,22 @@ def ist_proxy(zeile):
     return str(zeile.get("status") or "").startswith("proxy")
 
 
+def ist_tls(zeile):
+    """Protokollzeile einer gescheiterten Zertifikatsprüfung (explore/abruf.py, Status `tls`)."""
+    return str(zeile.get("status") or "") == "tls"
+
+
+def angabe(wert):
+    """Kennwert für die Anzeige: fehlend oder null („fehlt“, in Ergebnissen vor dem 08.11.2026 „None“) → „fehlt“."""
+    return "fehlt" if wert in ("None", "fehlt") else (wert or "–")
+
+
 def statistik(zeilen):
     """Kennzahlen über Protokollzeilen: Netz, Cache, Statuscodes, Antwortzeit Ø und max, Bytes. Ablehnungen durch den
     Proxy zählen zu Netz (Versuche, wie bei der Obergrenze) und werden als `proxy` getrennt gezählt; die Antwortzeiten
     gelten nur für Antworten des Servers."""
     netz = [z for z in zeilen if z.get("quelle") == "netz"]
-    dauer = [zahl(z.get("dauer_s")) for z in netz if not ist_proxy(z)]
+    dauer = [zahl(z.get("dauer_s")) for z in netz if not (ist_proxy(z) or ist_tls(z))]
     status = collections.Counter(z.get("status") for z in netz)
     return {"netz": len(netz), "cache": sum(1 for z in zeilen if z.get("quelle") == "cache"),
             "proxy": sum(1 for z in netz if ist_proxy(z)),
@@ -141,6 +156,8 @@ def status_hinweise(zeilen, kommando):
             hinweis = f" (Weiterleitung nach {z.get('ziel') or '(ohne Ziel)'}, nicht verfolgt: stoppen)"
         elif ist_proxy(z):
             hinweis = f" ({PROXY_HINWEIS})"
+        elif ist_tls(z):
+            hinweis = f" ({TLS_HINWEIS})"
         elif code.startswith("tunnel"):   # CONNECT-Antwort außer 403/405/407 (explore/abruf.py)
             grund = ("Begrenzung oder Überlastung" if code.split()[-1] in ("429", "503")
                      else "der Proxy erreicht den Server nicht")
@@ -272,8 +289,9 @@ def kennwerte(erg, laeufe=None):
             w = werte.get(liste)
             if not w:
                 continue
-            zeilen.append([liste, w.get("pagination.totalElements") or "–", w.get("pagination.elementsPerPage") or "–",
-                           w.get("pagination.totalPages") or "–", w.get("objekte_erste_seite") or "–",
+            zeilen.append([liste, angabe(w.get("pagination.totalElements")),
+                           angabe(w.get("pagination.elementsPerPage")), angabe(w.get("pagination.totalPages")),
+                           w.get("objekte_erste_seite") or "–",
                            w.get("links.schluessel") or "–", form_next(w.get("links.next"), w.get("url"))])
         if zeilen:
             aus.append("")
@@ -319,7 +337,8 @@ def kennwerte(erg, laeufe=None):
     jahre = lies(erg / "oparl_stichprobe_jahre.tsv")
     if jahre:
         aus.append("\nStichprobe – Jahre: " + "; ".join(
-            f"{z['jahr']}: {z['objekte']} von {z.get('totalElements') or '?'}" for z in jahre))
+            f"{z['jahr']}: {z['objekte']} " + ("(Gesamtzahl fehlt)" if angabe(z.get("totalElements")) == "fehlt" else
+                                               f"von {angabe(z.get('totalElements'))}") for z in jahre))
     for datei, schluessel, titel in (("oparl_papertypen.tsv", "paperType", "paperType"),
                                      ("oparl_referenzschema.tsv", "schema", "Referenzschema"),
                                      ("oparl_top_ergebnisse.tsv", "result", "TOP-Ergebnisse (agendaItem.result)")):

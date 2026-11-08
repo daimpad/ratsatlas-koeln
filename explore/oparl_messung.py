@@ -30,12 +30,14 @@ Proxy der Arbeitsumgebung die Verbindung ab (Art `proxy`: CONNECT-Antwort 403/40
 Anfrage die Stadt erreicht: nicht wiederholen, sondern berichten; der Host muss im Netz der Arbeitsumgebung erlaubt
 sein (explore/STUFEN.md, Stufe 1). Meldet der Proxy 502/504 (Stadt nicht erreicht, beim Verbindungsaufbau oder als
 Antwort im Tunnel) oder ist eine Antwort abgeschnitten oder unlesbar, gilt das als mögliche Sperre (Art `sperre`),
-429/503 als Art `server`.
+429/503 als Art `server`. Scheitert die Zertifikatsprüfung (Art `tls`), ist das eine Einstellung der Arbeitsumgebung
+und keine mögliche Sperre; der Lauf bricht trotzdem ab.
 Nach einem Abbruch gilt: in dieser Nacht keine weitere Anfrage (STUFEN.md). Vor der ersten Anfrage an eine nicht
 lokale Adresse prüft main() deshalb oparl_laeufe.tsv: Endete der letzte Lauf vor weniger als 12 Stunden mit
-„abbruch (…)“ oder „fehler (…)“, bricht das Kommando ohne Anfrage ab (Rückgabewert 1). Weiter nur nach Rücksprache mit
-dem Auftraggeber: RATSATLAS_NACH_ABBRUCH=ja. Ein zweiter gleichzeitiger Prozess (auch mit anderem Cache oder aus
-einer anderen Arbeitskopie) bricht vor seiner ersten Anfrage ab (Art `parallel`, Sperre
+„abbruch (…)“, „fehler (…)“ oder „unterbrochen“ (Strg+C, SIGTERM etwa nach dem Zeitlimit des aufrufenden Werkzeugs,
+SIGHUP; SIGTERM und SIGHUP enden wie Strg+C), bricht das Kommando ohne Anfrage ab (Rückgabewert 1). Weiter nur nach
+Rücksprache mit dem Auftraggeber: RATSATLAS_NACH_ABBRUCH=ja. Ein zweiter gleichzeitiger Prozess (auch mit anderem
+Cache oder aus einer anderen Arbeitskopie) bricht vor seiner ersten Anfrage ab (Art `parallel`, Sperre
 ~/.cache/ratsatlas-koeln/abruf.lock in explore/abruf.py, Ort über RATSATLAS_SPERRE). Eine Antwort, die kein JSON ist,
 wird aus dem Cache entfernt (ein späterer Lauf fragt erneut, statt sie ohne Anfrage zu lesen).
 Ergebnisse als TSV unter explore/ergebnisse/; Rohdaten, PDFs und die Stichprobendatei für `pdf-koepfe`
@@ -52,6 +54,7 @@ import json
 import math
 import os
 import re
+import signal
 import sys
 import urllib.parse
 from pathlib import Path
@@ -74,7 +77,13 @@ STRENG_ABSTAND = 2.0   # Sekunden vom Ende einer Antwort bis zur nächsten Anfra
 # nach einem Abbruch oder Fehler keine weitere Anfrage an die Stadt in dieser Frist (STUFEN.md: „in dieser Nacht keine
 # weitere Anfrage und keine weitere Stufe“); Freigabe nur nach Rücksprache mit RATSATLAS_NACH_ABBRUCH=ja
 SPERRFRIST = dt.timedelta(hours=12)
-RE_ABBRUCH = re.compile(r"^(abbruch|fehler) \(")
+# Ergebnisse, nach denen die Sperrfrist gilt: Abbruch, Fehler und ein unterbrochener Lauf (Strg+C oder Signal)
+RE_ABBRUCH = re.compile(r"^(?:(?:abbruch|fehler) \(|unterbrochen\b)")
+# Signale, die einen Lauf wie Strg+C beenden (Vermerk „unterbrochen“ statt eines Endes ohne Vermerk): SIGTERM etwa nach
+# dem Zeitlimit des aufrufenden Werkzeugs, SIGHUP beim Schließen des Terminals. SIGKILL lässt sich nicht abfangen.
+SIGNALE = (signal.SIGTERM, signal.SIGHUP)
+# fehlende Gesamtzahlen (Köln, Stufe 1: pagination nur mit elementsPerPage und currentPage)
+FEHLT = "fehlt"
 # Stichprobe für pdf-koepfe: nur im Cache (nicht im Repository), ohne File-Objekte
 STICHPROBE = abruf.CACHE / "stichprobe_vorlagen.jsonl"
 
@@ -228,9 +237,15 @@ def _seiten(url, max_seiten=None, name="", **params):
         seite, nr = json.loads(_hole(nxt)), nr + 1
 
 
+def _angabe(pag, schluessel):
+    """Wert aus `pagination`; fehlt er oder ist er null (Köln: keine Gesamtzahlen), „fehlt“ statt None."""
+    wert = (pag if isinstance(pag, dict) else {}).get(schluessel)
+    return FEHLT if wert is None else wert
+
+
 def _liste_kennwerte(objekt, antwort):
     pag, links = antwort.get("pagination") or {}, antwort.get("links") or {}
-    zeilen = [{"objekt": objekt, "feld": f"pagination.{k}", "wert": pag.get(k)}
+    zeilen = [{"objekt": objekt, "feld": f"pagination.{k}", "wert": _angabe(pag, k)}
               for k in ("totalElements", "elementsPerPage", "currentPage", "totalPages")]
     return zeilen + [
         {"objekt": objekt, "feld": "objekte_erste_seite", "wert": len(antwort.get("data") or [])},
@@ -323,11 +338,11 @@ def kennzahlen(_):
                     a = json.loads(_hole(adresse))
                 except Abbruch as e:
                     if e.art == "http" and e.code in ABGELEHNT:   # Parameter abgelehnt; Messung geht weiter
-                        zeilen.append({"objekt": name, "feld": feld, "wert": str(e)})
+                        zeilen.append({"objekt": name, "feld": feld, "wert": f"Parameter abgelehnt (HTTP {e.code})"})
                         continue
-                    raise
+                    raise   # jede andere Fehlantwort bricht nach dieser Anfrage ab
                 daten = a.get("data") or []
-                wert = f"objekte={len(daten)}; totalElements={(a.get('pagination') or {}).get('totalElements')}"
+                wert = f"objekte={len(daten)}; totalElements={_angabe(a.get('pagination'), 'totalElements')}"
                 if pruefung:
                     wert += f"; filter_wirksam={_filter_wirksam(daten, *pruefung)}"
                 zeilen.append({"objekt": name, "feld": feld, "wert": wert})
@@ -391,7 +406,7 @@ def stichprobe(a):
             tot, vorher = "", zaehl.copy()
             for nr, seite in _seiten(body["paper"], a.seiten, name=f"paper {jahr}", created_since=von,
                                      created_until=bis):
-                tot = (seite.get("pagination") or {}).get("totalElements") if nr == 1 else tot
+                tot = _angabe(seite.get("pagination"), "totalElements") if nr == 1 else tot
                 for p in seite.get("data", []):
                     if p.get("id") in gesehen:
                         zaehl["doppelt_jahr" if gesehen[p.get("id")] == jahr else "doppelt_jahre"] += 1
@@ -531,9 +546,9 @@ def _laufnummer():
 
 
 def letzter_abbruch(datei=None, jetzt=None):
-    """Der letzte Lauf aus oparl_laeufe.tsv (Zeile als dict), wenn er vor weniger als SPERRFRIST mit „abbruch (…)“
-    oder „fehler (…)“ endete, sonst None. Maßgeblich ist `ende` (ohne Zone: Ortszeit Köln); fehlt es oder ist es
-    unlesbar, gilt der Lauf vorsichtshalber als gerade beendet."""
+    """Der letzte Lauf aus oparl_laeufe.tsv (Zeile als dict), wenn er vor weniger als SPERRFRIST mit „abbruch (…)“,
+    „fehler (…)“ oder „unterbrochen“ (Strg+C, SIGTERM, SIGHUP) endete, sonst None. Maßgeblich ist `ende` (ohne Zone:
+    Ortszeit Köln); fehlt es oder ist es unlesbar, gilt der Lauf vorsichtshalber als gerade beendet."""
     datei = ERG / "oparl_laeufe.tsv" if datei is None else Path(datei)
     if not datei.exists():
         return None
@@ -545,6 +560,16 @@ def letzter_abbruch(datei=None, jetzt=None):
     ende = _zeitpunkt(letzter.get("ende") or "")
     jetzt = jetzt or dt.datetime.now(ZoneInfo("Europe/Berlin"))
     return letzter if ende is None or jetzt - ende < SPERRFRIST else None
+
+
+def _signal_beenden(nummer, _rahmen):
+    """SIGTERM oder SIGHUP: endet wie Strg+C, damit der Lauf als „unterbrochen“ vermerkt wird (12-Stunden-Regel)."""
+    raise KeyboardInterrupt(signal.Signals(nummer).name)
+
+
+def _signale(behandlung, signale=SIGNALE):
+    """Setzt die Behandlung der Signale; liefert die vorige je Signal."""
+    return {s: signal.signal(s, behandlung) for s in signale}
 
 
 def main(argv=None):
@@ -587,6 +612,7 @@ def main(argv=None):
             "obergrenze": abruf.MAX_ANFRAGEN or "", "protokoll_von": abruf.protokollzeilen(),
             "ergebnis": "ok", "meldung": ""}
     rueckgabe = 0
+    vorher = {signal.SIGINT: signal.getsignal(signal.SIGINT), **_signale(_signal_beenden)}
     try:
         KOMMANDOS[a.kommando](a)
     except Abbruch as e:
@@ -599,18 +625,28 @@ def main(argv=None):
         elif e.art == "sperre":   # auch 502/504 des Proxys und abgeschnittene oder unlesbare Antworten
             hinweis = ("Mögliche Sperre: in dieser Nacht keine weitere Anfrage, alle Abrufe ruhen bis zur Klärung mit "
                        "der Stadt. Stoppen und berichten (explore/STUFEN.md).")
+        elif e.art == "tls":   # Einstellung der Arbeitsumgebung, nicht der Stadt
+            hinweis = ("Die Zertifikatsprüfung ist gescheitert: eine Einstellung der Arbeitsumgebung "
+                       "(Zertifikatsspeicher, CA des Proxys), keine HTTP-Anfrage gesendet, kein Hinweis auf eine "
+                       "Sperre. Nicht wiederholen, sondern berichten; in dieser Nacht keine weitere Anfrage "
+                       "(12-Stunden-Regel).")
         elif e.art == "parallel":   # ein anderer Prozess hält die Sperre auf den Cache
             hinweis = ("Ein anderer Abrufprozess läuft noch; keine Anfrage gesendet. Prozesse nur nacheinander "
                        "starten; stoppen und berichten (explore/STUFEN.md).")
         else:
             hinweis = "Stoppen und berichten (explore/STUFEN.md)."
         print(f"Abbruch: {e}\n{hinweis}", file=sys.stderr)
-    except KeyboardInterrupt:
-        lauf["ergebnis"], rueckgabe = "unterbrochen", 130
+    except KeyboardInterrupt as e:   # Strg+C, SIGTERM oder SIGHUP (_signal_beenden)
+        grund = str(e) if str(e) in signal.Signals.__members__ else "SIGINT"
+        lauf["ergebnis"], lauf["meldung"] = "unterbrochen", f"unterbrochen ({grund})"
+        rueckgabe = 128 + signal.Signals[grund].value
+        print(f"Unterbrochen ({grund}). In dieser Nacht keine weitere Anfrage und keine weitere Stufe "
+              "(12-Stunden-Regel, RATSATLAS_NACH_ABBRUCH); stoppen und berichten (explore/STUFEN.md).", file=sys.stderr)
     except Exception as e:   # z. B. HTML statt JSON: ebenfalls stoppen und berichten
         lauf["ergebnis"], lauf["meldung"], rueckgabe = f"fehler ({type(e).__name__})", str(e)[:300], 1
         print(f"Fehler: {type(e).__name__}: {e}\nStoppen und berichten (explore/STUFEN.md).", file=sys.stderr)
     finally:
+        _signale(signal.SIG_IGN, (signal.SIGINT, *SIGNALE))   # den Vermerk nicht unterbrechen
         ende = dt.datetime.now(zeitzone)
         lauf.update(abruf.zaehler(), ende=ende.isoformat(timespec="seconds"),
                     dauer_s=f"{(ende - dt.datetime.fromisoformat(lauf['start'])).total_seconds():.0f}",
@@ -619,6 +655,8 @@ def main(argv=None):
         _anhaengen("oparl_listen.tsv", LISTEN_SPALTEN, [{**e, "lauf": lauf["lauf"]} for e in _LISTEN])
         print(f"Lauf {lauf['lauf']}: {lauf['netz']} Anfragen ans Netz, {lauf['cache']} aus dem Cache; "
               f"{lauf['ergebnis']}", file=sys.stderr)
+        for s, behandlung in vorher.items():
+            signal.signal(s, behandlung)
     return rueckgabe
 
 

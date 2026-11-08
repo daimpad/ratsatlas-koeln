@@ -6,6 +6,7 @@ import json
 import math
 import os
 import sqlite3
+import ssl
 import subprocess
 import sys
 import threading
@@ -1638,3 +1639,142 @@ def test_gesamtgrenze_der_seiten_ueber_fortsetzungen(oparl, monkeypatch):
     z = [r for r in _statistik() if r["liste"] == "papers"][-1]
     assert z["seiten"] == str(gesamt) and f"mehr als {gesamt} Seiten insgesamt" in z["ergebnis"]
     assert "fehlerhaften Liste" in json.loads(config.STAND.read_text())["abruf_hinweis"]["meldung"]
+
+
+# --- Runde 9: Zertifikatsprüfung (Art `tls`), Kölner Antwortform aus Stufe 1 (ohne Gesamtzahlen, neueste zuerst) ------
+
+def _tls_bereit(monkeypatch):
+    """Adressen mit https auf 127.0.0.1 gelten nicht als lokal: Freigabe, Zeitfenster offen, Mindestabstand 0 (nur hier,
+    um die Tests kurz zu halten), Öffner ohne Proxy."""
+    monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+    monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
+    monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
+    monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+
+
+def test_zertifikatsfehler_ist_keine_sperre_und_keine_anfrage(oparl, monkeypatch, capsys, tls_server):
+    """Selbst signiertes Zertifikat, dem der Client nicht vertraut: Art `tls` ohne Wiederholung, keine HTTP-Anfrage beim
+    Server, gezählt als Fehler und nicht als Anfrage. Im Lauf: Warnung (laut), Fehler in STAND.json, `letzter_abbruch`
+    mit Art `tls` (12-Stunden-Regel), keine Nacht mit möglicher Sperre."""
+    _tls_bereit(monkeypatch)
+    vorher = abruf.statistik()
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json(f"{tls_server.url}/body", pausen=[0, 0])
+    assert e.value.art == "tls" and "CERTIFICATE_VERIFY_FAILED" in str(e.value) and "mögliche Sperre" not in str(e.value)
+    assert not sessionnet.moegliche_sperre(e.value) and tls_server.anfragen == []
+    nachher = abruf.statistik()
+    assert (nachher["anfragen"] - vorher["anfragen"], nachher["fehler"] - vorher["fehler"],
+            nachher["wiederholungen"] - vorher["wiederholungen"]) == (0, 1, 0)
+    monkeypatch.setattr(config, "OPARL_BODY", f"{tls_server.url}/body")
+    sessionnet.fetch_all()
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert zustand["letzter_abbruch"]["art"] == "tls" and "sperre_verdacht" not in zustand
+    assert "listenfehler" not in zustand
+    assert "Zertifikatsprüfung" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    assert "Zertifikatsprüfung fehlgeschlagen; Einstellung der Ausführungsumgebung" in capsys.readouterr().err
+    z = [r for r in _statistik() if r["liste"] == "body"][-1]
+    assert (z["anfragen"], z["fehler"], z["wiederholungen"]) == ("0", "1", "0")
+    sessionnet.fetch_all()                                                # dieselbe Nacht: kein weiterer Lauf
+    assert "Abbruch (tls)" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
+    assert tls_server.anfragen == []
+
+
+def test_zertifikatsfehler_ohne_urlerror(monkeypatch):
+    """ssl.SSLCertVerificationError ist auch ein ValueError: auch ungekapselt Art `tls`, kein Einstellungsfehler mit
+    Traceback; nicht als Anfrage gezählt (Scheinöffner, kein Netz)."""
+    def oeffnen(req, timeout=None):
+        raise ssl.SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed")
+    monkeypatch.setattr(abruf, "_OEFFNER", types.SimpleNamespace(open=oeffnen))
+    monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
+    vorher = abruf.statistik()
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json("http://127.0.0.1:9/body", pausen=[0, 0])
+    assert e.value.art == "tls" and abruf.statistik()["anfragen"] == vorher["anfragen"]
+
+
+@pytest.mark.parametrize("reset", [False, True])
+def test_andere_tls_fehler_sind_moegliche_sperre(oparl, monkeypatch, abbrechender_server, reset):
+    """Handshake endet unerwartet (SSLEOFError) oder wird zurückgesetzt: mögliche Sperre, keine Wiederholung."""
+    server = abbrechender_server(reset)
+    _tls_bereit(monkeypatch)
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json(f"{server.url}/body", pausen=[0, 0])
+    assert e.value.art == "sperre" and sessionnet.moegliche_sperre(e.value) and len(server.verbindungen) == 1
+
+
+def _koeln_seite(oparl, pfad, abfrage=""):
+    """Eine Listenseite des Testservers in Kölner Form (direkt, ohne Abrufpolitik)."""
+    with OHNE_PROXY.open(f"{oparl.b}{pfad}" + (f"?{abfrage}" if abfrage else ""), timeout=10) as r:
+        return json.loads(r.read())
+
+
+def test_koelner_form_vollabruf_ohne_gesamtzahlen(oparl, monkeypatch):
+    """Ohne totalElements und totalPages, neueste zuerst: Vollabruf, Mengenprüfung beim zweiten Vollabruf und Statistik
+    ohne falsche Sperre und ohne falschen Abbruch."""
+    oparl.form = "koeln"
+    seite = _koeln_seite(oparl, "/papers")
+    assert seite["pagination"] == {"elementsPerPage": 2, "currentPage": 1} and sorted(seite["links"]) == [
+        "first", "next", "self"]
+    assert [p["id"].rsplit("/", 1)[1] for p in seite["data"]] == ["5", "4"]   # neueste zuerst
+    sessionnet.fetch_all()
+    assert sorted(p["id"] for p in _jsonl(config.PAPERS)) == sorted(p["id"] for p in oparl.papers)
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "ja")
+    sessionnet.fetch_all()                                                 # Mengenprüfung (90 %) ohne Gesamtzahlen
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"sperre_verdacht", "listenfehler", "letzter_abbruch"} & set(zustand)
+    assert "abruf_fehler" not in json.loads(config.STAND.read_text())
+    z = [r for r in _statistik() if r["liste"] == "papers"]
+    assert [(r["modus"], r["seiten"], r["objekte"], r["ergebnis"]) for r in z] == [("voll", "3", "5", "ok")] * 2
+
+
+def test_koelner_form_fortsetzung_mit_seitenverschiebung(oparl, monkeypatch):
+    """Neueste zuerst, Vollabruf über zwei Nächte: Zwischen den Nächten kommen vier Vorlagen hinzu und verschieben die
+    Seiten. Die ersten beiden Seiten der Fortsetzung bringen nur schon gelesene Vorlagen (keine Schleife, kein
+    Listenfehler), Doppelungen werden zusammengeführt; die neuen Vorlagen holt der nächste inkrementelle Lauf. Nichts
+    geht verloren."""
+    oparl.form = "koeln"
+    _nach_seite(monkeypatch, 3, lambda: abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster"))
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–2 (5, 4, 3, 2)
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    assert fort["seiten"] == 2 and fort["naechste"].endswith("/papers?page=3")
+    jetzt = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    oparl.papers += [oparl.paper(i, modified=jetzt) for i in range(6, 10)]   # neue Vorlagen am Listenanfang
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Fortsetzung ab Seite 3
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["3", "4", "5"]
+    ids = [p["id"] for p in _jsonl(config.PAPERS)]
+    assert len(ids) == len(set(ids)) == 5                                   # 5, 4, 3, 2 doppelt gelesen, einmal gespeichert
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"sperre_verdacht", "listenfehler", "letzter_abbruch", "papers_fortsetzung"} & set(zustand)
+    z = [r for r in _statistik() if r["liste"] == "papers"]
+    assert (z[-1]["modus"], z[-1]["seiten"], z[-1]["objekte"], z[-1]["ergebnis"]) == ("voll, fortgesetzt", "5", "5", "ok")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 3: inkrementell
+    assert all("modified_since" in q for p, q, _ in oparl.anfragen if p == "/papers")
+    assert sorted(p["id"] for p in _jsonl(config.PAPERS)) == sorted(p["id"] for p in oparl.papers)   # alle 9
+
+
+def test_seitenverschiebung_nur_am_anfang_einer_fortsetzung_und_begrenzt(monkeypatch):
+    """Am Anfang einer Fortsetzung gelten bis zu VERSCHIEBUNG_SEITEN Seiten ohne neue Kennungen als Seitenverschiebung,
+    danach Art `liste`; ohne Fortsetzung (und nach der ersten Seite mit neuen Kennungen) gilt der Schleifenschutz
+    sofort."""
+    seiten = iter(range(3, 100))
+    abrufe = []
+
+    def get_json(url, pausen=None):
+        abrufe.append(url)
+        return {"data": [{"id": "x/1"}, {"id": "x/2"}], "links": {"next": f"http://127.0.0.1/l?page={next(seiten)}"}}
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=[{"id": "x/1"}, {"id": "x/2"}],
+                         seiten=1)
+    assert e.value.art == "liste" and len(abrufe) == sessionnet.VERSCHIEBUNG_SEITEN + 1
+    # nach einer Seite mit neuen Kennungen gilt der Schutz wieder sofort
+    abrufe.clear()
+    antworten = iter([[{"id": "x/3"}]] + [[{"id": "x/3"}]] * 10)
+    monkeypatch.setattr(abruf, "get_json", lambda url, pausen=None: abrufe.append(url) or {
+        "data": next(antworten), "links": {"next": f"http://127.0.0.1/l?page={next(seiten)}"}})
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=[{"id": "x/1"}], seiten=1)
+    assert e.value.art == "liste" and len(abrufe) == 2

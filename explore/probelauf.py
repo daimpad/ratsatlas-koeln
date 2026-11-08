@@ -9,7 +9,9 @@ gegen die Obergrenze, die in STUFEN.md für die echte Messung steht. Ausgabe als
 
 Die Zahlen gelten für Köln, sofern jede Liste mindestens so viele Seiten hat wie die Seitengrenze (bei den
 Jahreslisten der Vorlagen zu erwarten, aber offen) und der Body die vier Listen nennt; sonst sind es weniger.
-Aufruf: python3 explore/probelauf.py [--ziel VERZEICHNIS]   (ohne --ziel: temporäres Verzeichnis)
+`--form koeln` nimmt die Kölner Antwortform aus Stufe 1 (ohne Gesamtzahlen, ohne mainFile; explore/testserver.py):
+Stufe 6 findet dann keine Hauptdateien und stellt keine Anfrage.
+Aufruf: python3 explore/probelauf.py [--ziel VERZEICHNIS] [--form koeln]   (ohne --ziel: temporäres Verzeichnis)
 """
 import argparse
 import csv
@@ -70,11 +72,11 @@ def messung(server, cache, ergebnisse, kommando, parameter=(), obergrenze=0, stu
             "lauf": zeile}
 
 
-def probelauf(ziel):
+def probelauf(ziel, form="bisher"):
     ziel = Path(ziel)
     mit_pdf = importlib.util.find_spec("pypdf") is not None
     zeilen, stichprobe = [], None
-    with Testserver() as server:
+    with Testserver(form=form) as server:
         for nr, (stufe, kommando, parameter, obergrenze) in enumerate(STUFEN, 1):
             if kommando == "pdf-koepfe" and not mit_pdf:
                 zeilen.append({"stufe": stufe, "kommando": kommando, "parameter": " ".join(parameter),
@@ -110,12 +112,14 @@ def markdown(zeilen):
 def main():
     ap = argparse.ArgumentParser(description="Probelauf der Messstufen gegen den lokalen Testserver")
     ap.add_argument("--ziel", help="Verzeichnis für Cache und Ergebnisse (Vorgabe: temporär)")
+    ap.add_argument("--form", choices=("bisher", "koeln"), default="bisher",
+                    help="Antwortform des Testservers (koeln: wie Stufe 1)")
     a = ap.parse_args()
     if a.ziel:
-        zeilen = probelauf(a.ziel)
+        zeilen = probelauf(a.ziel, a.form)
     else:
         with tempfile.TemporaryDirectory() as t:
-            zeilen = probelauf(t)
+            zeilen = probelauf(t, a.form)
     print(markdown(zeilen))
     return 0 if all(z["ergebnis"] in ("ok", "übersprungen (pypdf fehlt)") for z in zeilen) else 1
 
