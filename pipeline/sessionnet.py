@@ -30,9 +30,14 @@ schon gelesene Vorlagen (zusammengeführt über die Kennung; die wiederholte Sei
 bis zur erlaubten Seitenverschiebung nicht als Schleife: 4 Seiten je angefangenem Tag seit `gespeichert`, höchstens 40
 (`verschiebung_erlaubt`; nach ausgelassenen Nächten, sieben Tagen Pause oder einem Retry-After entsprechend mehr), bei
 25 je Seite also rund 100 (genauer 99: die wiederholte Seite zählt mit) neue Vorlagen je Tag. Bricht eine Fortsetzung
-ab, bevor sie die verschobene Zone verlassen hat (keine Seite gelesen oder noch keine Seite mit neuen Kennungen nach
-einer ohne), bleibt `gespeichert` (die Verschiebung seit dann besteht weiter), sonst gilt der neue Zeitpunkt. Die
-neuen Vorlagen am Listenanfang holt der nächste inkrementelle Lauf (modified_since ab dem Start des Vollabrufs).
+ab, bevor sie die verschobene Zone verlassen hat, bleibt `gespeichert` (die Verschiebung seit dann besteht weiter;
+ein künftiger Wert gilt als jetzt), sonst gilt der neue Zeitpunkt. Verlassen ist die Zone erst mit einer ungelesenen
+Vorlage, deren `created` älter ist als das der ältesten gelesenen (neueste zuerst heißt in Köln `created` absteigend:
+neue Vorlagen sind jünger, der ungelesene Rest ist älter). So zählen nach langer Pause auch zwei Strecken gelesener
+Seiten (aus der Vornacht und aus der ersten Nacht, dazwischen neue Vorlagen) zur Zone, und überwiegen Löschungen die
+neuen Vorlagen, ist sie gleich mit der ersten Seite verlassen. Ohne lesbares `created` (mit Zone) bleibt
+`gespeichert`. Die neuen Vorlagen am Listenanfang holt der nächste inkrementelle Lauf (modified_since ab dem Start des
+Vollabrufs).
 Zwischen den Nächten gelöschte, schon gelesene Vorlagen bleiben bis zum nächsten Vollabruf bzw. bis zu ihrem Eintrag
 mit `deleted` aus modified_since im Stand. Keine
 Fortsetzung nach einem Abbruch der Art `liste` (Schleife in links.next), `weiterleitung`, `proxy` oder `adresse`
@@ -340,8 +345,8 @@ def _mit_parametern(url, **params):
 
 class Teilabbruch(abruf.Abbruch):
     """Abbruch mitten in einer Liste; trägt den gelesenen Teil für die Fortsetzung (`zuletzt`: die zuletzt gelesene
-    Seite, dort beginnt die Fortsetzung; `verlassen`: eine Fortsetzung hat die verschobene Zone verlassen, also nach
-    einer Seite ohne neue Kennungen eine mit neuen gelesen)."""
+    Seite, dort beginnt die Fortsetzung; `verlassen`: eine Fortsetzung hat die verschobene Zone verlassen, also eine
+    ungelesene Vorlage gelesen, die älter ist als die älteste schon gelesene)."""
 
     def __init__(self, ursache, objekte, naechste, seiten, zuletzt=None, verlassen=False):
         super().__init__(str(ursache), getattr(ursache, "art", ""), getattr(ursache, "ziel", ""),
@@ -359,6 +364,11 @@ def verschiebung_erlaubt(gespeichert, jetzt=None):
         return VERSCHIEBUNG_JE_TAG
     tage = max(1, math.ceil((jetzt - t) / timedelta(days=1)))
     return min(VERSCHIEBUNG_JE_TAG * tage, VERSCHIEBUNG_HOECHSTENS)
+
+
+def _erstellt(objekt):
+    """`created` eines Objekts als Zeitpunkt mit Zone; None, wenn es fehlt, unlesbar oder ohne Zone ist."""
+    return _zeit(objekt.get("created"))
 
 
 def _leer(wert):
@@ -397,12 +407,15 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
     erzeugt). In einer Fortsetzung (`start`) gelten bis zu `verschiebung` Seiten ohne neue Kennungen als
     Seitenverschiebung (neue Vorlagen am Listenanfang, wiederholte erste Seite), nicht als Schleife; eine Seite, deren
     Kennungen alle schon in diesem Lauf kamen, und eine wiederholte Adresse bleiben eine Schleife. Ein Teilabbruch
-    vermerkt, ob die Fortsetzung die verschobene Zone verlassen hat (`verlassen`, für `gespeichert`)."""
+    vermerkt, ob die Fortsetzung die verschobene Zone verlassen hat (`verlassen`, für `gespeichert`): erst mit einer
+    ungelesenen Vorlage, deren `created` älter ist als das der ältesten gelesenen (ohne lesbares `created` nie)."""
     naechste = start or _mit_parametern(url, modified_since=seit, limit=config.ABRUF_SEITENGROESSE)
     objekte = list(objekte or [])
     ids, gesehen, dieser_lauf = {o.get("id") for o in objekte}, set(), set()
     verschoben, zuletzt = 0, None   # Seiten ohne neue Kennungen in einer Fortsetzung; zuletzt gelesene Seite
-    verlassen = False   # Fortsetzung: nach einer Seite ohne neue Kennungen eine mit neuen gelesen
+    # Fortsetzung: älteste gelesene Vorlage (created); eine ungelesene ältere liegt hinter der verschobenen Zone
+    grenze = min((t for t in map(_erstellt, objekte) if t is not None), default=None) if start else None
+    verlassen = False
     gesamt = config.ABRUF_MAX_SEITEN_FAKTOR * config.ABRUF_MAX_SEITEN
     while naechste:
         try:
@@ -435,7 +448,7 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
                 verschoben += 1   # Fortsetzung: die Seiten sind durch neue Vorlagen am Listenanfang verschoben
             if grund:
                 raise Teilabbruch(abruf.Abbruch(grund, "liste"), objekte, None, seiten, zuletzt, verlassen)
-        elif neu and verschoben:
+        elif grenze is not None and any((t := _erstellt(o)) is not None and t < grenze for o in neu):
             verlassen = True
         dieser_lauf |= kennungen
         ids.update(o.get("id") for o in neu)
@@ -601,9 +614,9 @@ def _abruf_liste(name, url, pfad, schluessel):
         if not seit and e.naechste and e.seiten and not verwerfen:
             config.RAW.mkdir(parents=True, exist_ok=True)
             _write(_teil(pfad), "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in e.objekte))
-            # `gespeichert` bleibt, solange eine Fortsetzung die verschobene Zone nicht verlassen hat (keine Seite
-            # gelesen, nur Seiten ohne neue Kennungen oder nur neue Vorlagen davor): Die Verschiebung seit der ersten
-            # Speicherung besteht weiter
+            # `gespeichert` bleibt, solange eine Fortsetzung die verschobene Zone nicht verlassen hat (keine ungelesene
+            # Vorlage, älter als die älteste gelesene): Die Verschiebung seit der ersten Speicherung besteht weiter;
+            # ein künftiger Wert gilt als jetzt
             jetzt = abruf.uhr()
             alt = _zeit(fort.get("gespeichert")) if fort else None
             gespeichert = fort["gespeichert"] if alt is not None and alt <= jetzt and not e.verlassen else (

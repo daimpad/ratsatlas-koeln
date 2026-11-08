@@ -4,7 +4,8 @@ Die Objekte sind erfunden und nur strukturell an der Kölner API orientiert (Sti
 Referenzen „NNNN/JJJJ“ und „AN/NNNN/JJJJ“, `consultation` mit direktem Verweis auf `meeting` und `agendaItem`,
 `location` nur mit `subLocality`, Paginierung über `links.next`. `Daten.form = "koeln"` liefert die Listen wie Köln in
 Stufe 1 (07.11.2026): neueste zuerst (zuletzt angefügt zuerst), `pagination` nur mit elementsPerPage und currentPage,
-`links` nur mit first, self und next.
+`links` nur mit first, self und next. `created` wächst mit der Nummer der Vorlage (neueste zuerst heißt also wie in
+Köln `created` absteigend).
 Dazu Fabriken für lokale TLS-Server: `tls_server` (selbst signiertes Zertifikat, dem der Client nicht vertraut) und
 `abbrechender_server` (Handshake endet unerwartet oder wird zurückgesetzt).
 """
@@ -27,6 +28,7 @@ import struct
 import subprocess
 import threading
 import urllib.parse
+from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
@@ -168,6 +170,7 @@ class Daten:
             "name": name or ("Umgestaltung der Venloer Straße in Ehrenfeld" if i == 1 else f"Synthetische Vorlage {i}"),
             "paperType": "Beschlussvorlage" if i % 2 else "Antrag nach § 3",
             "date": "2026-09-20", "modified": modified,
+            "created": (datetime(2026, 9, 1, tzinfo=timezone(timedelta(hours=2))) + timedelta(minutes=i)).isoformat(),
             "location": [{"id": f"{b}/locations/{i}", "subLocality": "Neuehrenfeld"}] if i == 3 else [],
             "consultation": [{"id": f"{b}/consultations/{i}", "meeting": f"{b}/meetings/1",
                               "agendaItem": f"{b}/agendaitems/{i}", "role": "Entscheidung", "authoritative": True}],
