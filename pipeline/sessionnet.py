@@ -32,12 +32,20 @@ bis zur erlaubten Seitenverschiebung nicht als Schleife: 4 Seiten je angefangene
 25 je Seite also rund 100 (genauer 99: die wiederholte Seite zählt mit) neue Vorlagen je Tag. Bricht eine Fortsetzung
 ab, bevor sie die verschobene Zone verlassen hat, bleibt `gespeichert` (die Verschiebung seit dann besteht weiter;
 ein künftiger Wert gilt als jetzt), sonst gilt der neue Zeitpunkt. Verlassen ist die Zone erst mit einer ungelesenen
-Vorlage, deren `created` älter ist als das der ältesten gelesenen (neueste zuerst heißt in Köln `created` absteigend:
-neue Vorlagen sind jünger, der ungelesene Rest ist älter). So zählen nach langer Pause auch zwei Strecken gelesener
-Seiten (aus der Vornacht und aus der ersten Nacht, dazwischen neue Vorlagen) zur Zone, und überwiegen Löschungen die
-neuen Vorlagen, ist sie gleich mit der ersten Seite verlassen. Ohne lesbares `created` (mit Zone) bleibt
-`gespeichert`. Die neuen Vorlagen am Listenanfang holt der nächste inkrementelle Lauf (modified_since ab dem Start des
-Vollabrufs).
+Vorlage, deren `created` nicht jünger ist als die Grenze: das `created` der 25.-ältesten gelesenen Vorlage
+(`GRENZE_RANG`, eine Seite; bei weniger gelesenen das der jüngsten). Gleich alt genügt (Massenimport mit gleichem
+`created`); bis zu 24 Ausreißer unter den gelesenen (etwa ein Platzhalterdatum, viel zu alt) verschieben die Grenze
+nicht, und eine ungelesene Vorlage an oder hinter der Grenze liegt höchstens eine Seite vor dem Ende der Zone. Annahme:
+Köln sortiert die Liste streng nach `created` absteigend (neue Vorlagen sind jünger, der ungelesene Rest ist älter,
+Platzhalterdaten stehen am Ende); belegt ist das nur für die erste Seite (Stufe 1), die Prüfung über mehrere Seiten
+ist für Stufe 3 vorgesehen. Trifft die Annahme nicht zu, gilt die Zone zu früh als verlassen (in der Folgenacht
+womöglich ein Listenfehler, der Vollabruf beginnt von vorn), etwa wenn eine neue Vorlage ein Platzhalterdatum trägt,
+oder nie (die erlaubte Verschiebung wächst bis 40, ein schwächerer Schutz gegen Schleifen), etwa wenn mehr als 24
+gelesene eines tragen. So zählen
+nach langer Pause auch zwei Strecken gelesener Seiten (aus der Vornacht und aus der ersten Nacht, dazwischen neue
+Vorlagen) zur Zone, und überwiegen Löschungen die neuen Vorlagen, ist sie gleich mit der ersten Seite verlassen. Ohne
+lesbares `created` (mit Zone) bleibt `gespeichert`. Die neuen Vorlagen am Listenanfang holt der nächste inkrementelle
+Lauf (modified_since ab dem Start des Vollabrufs).
 Zwischen den Nächten gelöschte, schon gelesene Vorlagen bleiben bis zum nächsten Vollabruf bzw. bis zu ihrem Eintrag
 mit `deleted` aus modified_since im Stand. Keine
 Fortsetzung nach einem Abbruch der Art `liste` (Schleife in links.next), `weiterleitung`, `proxy` oder `adresse`
@@ -85,6 +93,7 @@ Abrufstatistik (`abrufstatistik.tsv`, Spalten STAT_SPALTEN): je Liste eine Zeile
 des Bodys; Zähler aus abruf.statistik() als Differenz je Zeile, darunter `weiterleitungen` und `proxy`.
 """
 import csv
+import heapq
 import json
 import math
 import os
@@ -122,6 +131,9 @@ LISTEN = ("organizations", "papers", "meetings")
 # Seiten; ohne lesbaren Zeitpunkt 4. Danach gilt die Seite als Schleife.
 VERSCHIEBUNG_JE_TAG = 4
 VERSCHIEBUNG_HOECHSTENS = 40
+# Grenze der verschobenen Zone in einer Fortsetzung: `created` der GRENZE_RANG-ältesten gelesenen Vorlage (eine Seite
+# zu 25; bei weniger gelesenen der jüngsten), nicht der ältesten: Bis zu 24 Ausreißer verschieben sie nicht (siehe oben)
+GRENZE_RANG = 25
 
 
 class ZustandUnlesbar(RuntimeError):
@@ -346,7 +358,7 @@ def _mit_parametern(url, **params):
 class Teilabbruch(abruf.Abbruch):
     """Abbruch mitten in einer Liste; trägt den gelesenen Teil für die Fortsetzung (`zuletzt`: die zuletzt gelesene
     Seite, dort beginnt die Fortsetzung; `verlassen`: eine Fortsetzung hat die verschobene Zone verlassen, also eine
-    ungelesene Vorlage gelesen, die älter ist als die älteste schon gelesene)."""
+    ungelesene Vorlage gelesen, die nicht jünger ist als die Grenze, siehe GRENZE_RANG)."""
 
     def __init__(self, ursache, objekte, naechste, seiten, zuletzt=None, verlassen=False):
         super().__init__(str(ursache), getattr(ursache, "art", ""), getattr(ursache, "ziel", ""),
@@ -408,13 +420,16 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
     Seitenverschiebung (neue Vorlagen am Listenanfang, wiederholte erste Seite), nicht als Schleife; eine Seite, deren
     Kennungen alle schon in diesem Lauf kamen, und eine wiederholte Adresse bleiben eine Schleife. Ein Teilabbruch
     vermerkt, ob die Fortsetzung die verschobene Zone verlassen hat (`verlassen`, für `gespeichert`): erst mit einer
-    ungelesenen Vorlage, deren `created` älter ist als das der ältesten gelesenen (ohne lesbares `created` nie)."""
+    ungelesenen Vorlage, deren `created` nicht jünger ist als das der GRENZE_RANG-ältesten gelesenen (ohne lesbares
+    `created` nie)."""
     naechste = start or _mit_parametern(url, modified_since=seit, limit=config.ABRUF_SEITENGROESSE)
     objekte = list(objekte or [])
     ids, gesehen, dieser_lauf = {o.get("id") for o in objekte}, set(), set()
     verschoben, zuletzt = 0, None   # Seiten ohne neue Kennungen in einer Fortsetzung; zuletzt gelesene Seite
-    # Fortsetzung: älteste gelesene Vorlage (created); eine ungelesene ältere liegt hinter der verschobenen Zone
-    grenze = min((t for t in map(_erstellt, objekte) if t is not None), default=None) if start else None
+    # Fortsetzung: Grenze der verschobenen Zone (created der GRENZE_RANG-ältesten gelesenen Vorlage); eine ungelesene
+    # Vorlage, die nicht jünger ist, liegt an oder hinter ihr
+    aelteste = heapq.nsmallest(GRENZE_RANG, (t for t in map(_erstellt, objekte) if t is not None)) if start else []
+    grenze = aelteste[-1] if aelteste else None
     verlassen = False
     gesamt = config.ABRUF_MAX_SEITEN_FAKTOR * config.ABRUF_MAX_SEITEN
     while naechste:
@@ -448,7 +463,7 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
                 verschoben += 1   # Fortsetzung: die Seiten sind durch neue Vorlagen am Listenanfang verschoben
             if grund:
                 raise Teilabbruch(abruf.Abbruch(grund, "liste"), objekte, None, seiten, zuletzt, verlassen)
-        elif grenze is not None and any((t := _erstellt(o)) is not None and t < grenze for o in neu):
+        elif grenze is not None and any((t := _erstellt(o)) is not None and t <= grenze for o in neu):
             verlassen = True
         dieser_lauf |= kennungen
         ids.update(o.get("id") for o in neu)
@@ -615,8 +630,8 @@ def _abruf_liste(name, url, pfad, schluessel):
             config.RAW.mkdir(parents=True, exist_ok=True)
             _write(_teil(pfad), "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in e.objekte))
             # `gespeichert` bleibt, solange eine Fortsetzung die verschobene Zone nicht verlassen hat (keine ungelesene
-            # Vorlage, älter als die älteste gelesene): Die Verschiebung seit der ersten Speicherung besteht weiter;
-            # ein künftiger Wert gilt als jetzt
+            # Vorlage, nicht jünger als die Grenze, GRENZE_RANG): Die Verschiebung seit der ersten Speicherung besteht
+            # weiter; ein künftiger Wert gilt als jetzt
             jetzt = abruf.uhr()
             alt = _zeit(fort.get("gespeichert")) if fort else None
             gespeichert = fort["gespeichert"] if alt is not None and alt <= jetzt and not e.verlassen else (

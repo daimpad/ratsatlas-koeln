@@ -2153,27 +2153,90 @@ def test_gespeichert_in_der_zukunft_gilt_als_jetzt(oparl, monkeypatch):
     assert {p["id"] for p in oparl.papers[:400]} <= {p["id"] for p in _jsonl(config.PAPERS)}
 
 
-@pytest.mark.parametrize("gelesen_created, neu_created, verlassen", [
-    ("2026-09-01T10:00:00+02:00", None, False),                           # ungelesene ohne created
-    ("2026-09-01T10:00:00+02:00", "gestern", False),                      # unlesbar
-    ("2026-09-01T10:00:00+02:00", "2026-08-31T10:00:00", False),          # ohne Zone
-    ("2026-09-01T10:00:00+02:00", "2026-09-01T08:00:00+00:00", False),    # so alt wie die älteste gelesene
-    ("2026-09-01T10:00:00+02:00", "2026-11-09T22:00:00+00:00", False),    # neuer: neue Vorlage am Listenanfang
-    ("2026-09-01T10:00:00+02:00", "2026-09-01T07:59:59+00:00", True),     # älter als die älteste gelesene
-    (None, "2026-08-31T10:00:00+02:00", False)])                          # alle gelesenen ohne created
-def test_verlassen_nur_nach_einer_aelteren_ungelesenen_vorlage(monkeypatch, gelesen_created, neu_created, verlassen):
-    """Eine Fortsetzung verlässt die verschobene Zone erst mit einer ungelesenen Vorlage, die älter ist als die älteste
-    gelesene; ohne lesbares `created` (mit Zone) bleibt `gespeichert` (Teilabbruch.verlassen falsch)."""
-    alt = [{"id": "x/1", "created": "2026-09-02T10:00:00+02:00"}, {"id": "x/2", "created": gelesen_created}]
-    if gelesen_created is None:
-        alt = [{"id": "x/1"}, {"id": "x/2", "created": "gestern"}]
-    neu = {"id": "x/3", **({"created": neu_created} if neu_created else {})}
-
+def _verlassen(monkeypatch, gelesen, ungelesen):
+    """liste() als Fortsetzung mit `gelesen` aus früheren Nächten: Seite 2 bringt die letzte gelesene und `ungelesen`,
+    danach endet das Zeitfenster. Liefert Teilabbruch.verlassen."""
     def get_json(url, pausen=None):
         if url.endswith("page=2"):
-            return {"data": [alt[1], neu], "links": {"next": "http://127.0.0.1/l?page=3"}}
+            return {"data": [gelesen[-1], *ungelesen], "links": {"next": "http://127.0.0.1/l?page=3"}}
         raise abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster")
     monkeypatch.setattr(abruf, "get_json", get_json)
     with pytest.raises(sessionnet.Teilabbruch) as e:
-        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=alt, seiten=1)
-    assert e.value.verlassen is verlassen and e.value.seiten == 2
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=gelesen, seiten=1)
+    assert e.value.seiten == 2
+    return e.value.verlassen
+
+
+@pytest.mark.parametrize("gelesen_created, neu_created, verlassen", [
+    ("2026-09-01T10:00:00+02:00", [None], False),                           # ungelesene ohne created
+    ("2026-09-01T10:00:00+02:00", ["gestern"], False),                      # unlesbar
+    ("2026-09-01T10:00:00+02:00", ["2026-08-31T10:00:00"], False),          # ohne Zone
+    ("2026-09-01T10:00:00+02:00", ["2026-09-02T08:00:01+00:00"], False),    # eine Sekunde jünger als die Grenze
+    ("2026-09-01T10:00:00+02:00", ["2026-11-09T22:00:00+00:00"], False),    # neuer: neue Vorlage am Listenanfang
+    ("2026-09-01T10:00:00+02:00", ["2026-09-02T08:00:00+00:00"], True),     # so alt wie die Grenze (gleiches created)
+    ("2026-09-01T10:00:00+02:00", ["2026-08-31T10:00:00+02:00"], True),     # älter als alle gelesenen
+    ("2026-09-01T10:00:00+02:00", ["2026-11-09T22:00:00+00:00",             # gemischte Seite: eine jüngere und eine
+                                   "2026-08-31T10:00:00+02:00"], True),     # ältere ungelesene
+    ("1970-01-01T01:00:00+01:00", ["2026-08-31T10:00:00+02:00"], True),     # Platzhalterdatum unter den gelesenen
+    (None, ["2026-08-31T10:00:00+02:00"], False)])                          # alle gelesenen ohne created
+def test_verlassen_nur_nach_einer_aelteren_ungelesenen_vorlage(monkeypatch, gelesen_created, neu_created, verlassen):
+    """Eine Fortsetzung verlässt die verschobene Zone erst mit einer ungelesenen Vorlage, die nicht jünger ist als die
+    Grenze (created der 25.-ältesten gelesenen; hier nur zwei gelesene, also die jüngere: x/1, 02.09. 10 Uhr); ohne
+    lesbares `created` (mit Zone) bleibt `gespeichert` (Teilabbruch.verlassen falsch)."""
+    alt = [{"id": "x/1", "created": "2026-09-02T10:00:00+02:00"}, {"id": "x/2", "created": gelesen_created}]
+    if gelesen_created is None:
+        alt = [{"id": "x/1"}, {"id": "x/2", "created": "gestern"}]
+    neu = [{"id": f"x/{3 + i}", **({"created": c} if c else {})} for i, c in enumerate(neu_created)]
+    assert _verlassen(monkeypatch, alt, neu) is verlassen
+
+
+# --- Runde 13: Grenze ist die 25.-älteste gelesene Vorlage; gleich alt genügt (Massenimport), Ausreißer stören nicht --
+
+@pytest.mark.parametrize("platzhalter, stunden, verlassen", [
+    (0, 24, True), (0, 24 + 1 / 3600, False),   # Grenze: die 25.-älteste gelesene (24 Stunden nach der ältesten)
+    (24, 24, True),                             # 24 Platzhalterdaten verschieben die Grenze nicht
+    (25, 24, False)])                           # ab 25 ist die Grenze ein Platzhalterdatum (Moduldoku)
+def test_grenze_ist_die_25_aelteste_gelesene(monkeypatch, platzhalter, stunden, verlassen):
+    """30 gelesene Vorlagen im Abstand von einer Stunde, die ältesten `platzhalter` mit Platzhalterdatum (1970); eine
+    ungelesene Vorlage `stunden` nach der ältesten gelesenen."""
+    erste = datetime(2026, 9, 1, 10, tzinfo=timezone.utc)
+    gelesen = [{"id": f"x/{i}", "created": ("1970-01-01T00:00:00+00:00" if i < platzhalter else
+                                            (erste + timedelta(hours=i)).isoformat())} for i in range(30)][::-1]
+    neu = {"id": "x/neu", "created": (erste + timedelta(hours=stunden)).isoformat()}
+    assert _verlassen(monkeypatch, gelesen, [neu]) is verlassen
+
+
+@pytest.mark.parametrize("altbestand", ["gleiches created", "Ausreißer"])
+def test_zone_verlassen_bei_gleichem_created_und_ausreisser(oparl, monkeypatch, altbestand):
+    """Neueste zuerst, 25 je Seite: 400 Vorlagen im Altbestand, alle mit demselben `created` (Massenimport) oder eine
+    gelesene (Vorlage 300) mit Platzhalterdatum. Nacht 1 liest 10 Seiten (400 bis 151); 50 neue verschieben die Seiten
+    um zwei. Nacht 2 liest die Seiten 10–12 (nur gelesene) und 13 (ungelesene aus dem Altbestand) und bricht ab: Die
+    Zone ist verlassen, `gespeichert` gilt Nacht 2 (mit „älter als die älteste gelesene“ bliebe Nacht 1 und die
+    erlaubte Verschiebung wüchse weiter). Nacht 3 ist vollständig, ohne Listenfehler; Nacht 4 (inkrementell) holt die
+    neuen Vorlagen: keine fehlt, keine doppelt."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 25
+    oparl.papers = [oparl.paper(i) for i in range(1, 401)]
+    if altbestand == "gleiches created":
+        for p in oparl.papers:
+            p["created"] = "2026-08-01T10:00:00+02:00"
+    else:
+        oparl.papers[299]["created"] = "1970-01-01T01:00:00+01:00"
+    _vorlagenseite_stoert(monkeypatch, {"11": _ende_fenster})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–10
+    _neue_vorlagen(oparl, 50)
+    uhr.t = _nacht(1)
+    _vorlagenseite_stoert(monkeypatch, {"14": _ende_fenster})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Seiten 10–13
+    assert _seiten_papers(oparl) == ["10", "11", "12", "13"]
+    assert _fortsetzung_papers()["gespeichert"] == _nacht(1).isoformat()
+    uhr.t = _nacht(2)
+    sessionnet.fetch_all()                                                 # Nacht 3: vollständig
+    _vollstaendig_ohne_listenfehler()
+    assert {p["id"] for p in oparl.papers[:400]} <= {p["id"] for p in _jsonl(config.PAPERS)}
+    uhr.t = _nacht(3)
+    sessionnet.fetch_all()                                                 # Nacht 4: inkrementell
+    ids = [p["id"] for p in _jsonl(config.PAPERS)]
+    assert len(ids) == len(set(ids)) and set(ids) == {p["id"] for p in oparl.papers}
