@@ -796,23 +796,42 @@ def test_502_504_als_antwort_ist_moegliche_sperre(server, tmp_path, monkeypatch,
 
 
 def test_zweiter_gleichzeitiger_prozess_bricht_vor_der_ersten_anfrage_ab(server, tmp_path):
-    """Sperre abruf.lock (Ort RATSATLAS_SPERRE): Hält ein Prozess sie, bricht ein zweiter ohne Anfrage ab, auch mit
-    anderem Cache (andere Arbeitskopie)."""
+    """Sperre abruf.lock (Ort RATSATLAS_SPERRE, hier tmp_path/sperre): Hält ein Prozess sie, bricht ein zweiter ohne
+    Anfrage ab, auch mit anderem Cache (wie aus einer anderen Arbeitskopie)."""
     env = probelauf.umgebung(server, tmp_path / "cache", tmp_path / "ergebnisse", 3)
+    assert env["RATSATLAS_SPERRE"] == str(tmp_path / "sperre")
     halter = ("import sys; sys.path.insert(0, sys.argv[1]); import abruf; abruf.sperre_halten(); "
               "print('bereit', flush=True); sys.stdin.read()")
     p = subprocess.Popen([sys.executable, "-c", halter, str(EXPLORE)], env=env, stdin=subprocess.PIPE,
                          stdout=subprocess.PIPE, text=True)
     try:
         assert p.stdout.readline().strip() == "bereit"
-        m = lauf(server, tmp_path, "test", obergrenze=3)
+        m = lauf(server, tmp_path, "test", obergrenze=3, cache="anderer_cache")   # gleiche Sperre, anderer Cache
         assert m["rc"] == 2 and m["lauf"]["ergebnis"] == "abbruch (parallel)", m["stderr"]
         assert server.anfragen == [] and m["lauf"]["netz"] == "0" and "anderer Abrufprozess" in m["stderr"]
+        assert not (tmp_path / "cache" / "abrufe.tsv").exists() and (tmp_path / "sperre" / "abruf.lock").exists()
     finally:
         p.stdin.close()
         p.wait(timeout=30)
-    m = lauf(server, tmp_path, "test", obergrenze=3)                    # danach ist die Sperre frei
+    m = lauf(server, tmp_path, "test", obergrenze=3, cache="anderer_cache")   # danach ist die Sperre frei
     assert m["rc"] == 0 and m["server"] == 3, m["stderr"]
+    assert len(protokoll(tmp_path, "anderer_cache")) == 3
+
+
+def test_unlesbare_antwort_wird_aus_dem_cache_entfernt(server, tmp_path, monkeypatch):
+    """oparl_messung._json: Eine unlesbare Antwort (HTML mit Status 200) bleibt nicht im Cache; ein späterer Lauf liest
+    sie nicht ohne Anfrage als gültig, sondern fragt erneut."""
+    om = importlib.import_module("oparl_messung")
+    abruf = _abruf_im_prozess(monkeypatch, tmp_path / "cache")
+    server.stoerung = lambda pfad, abfrage: 200 if pfad.endswith("/bodies/testkoerperschaft") else None
+    pfad = abruf._cachepfad(server.body_url, ".json")
+    with pytest.raises(ValueError):
+        om._json(server.body_url)
+    assert not pfad.exists() and len(server.anfragen) == 1
+    server.stoerung = lambda pfad, abfrage: None
+    assert om._json(server.body_url)["id"] == server.body_url                    # erneut gefragt, jetzt gültig
+    assert len(server.anfragen) == 2 and pfad.exists()
+    assert om._json(server.body_url)["id"] == server.body_url and len(server.anfragen) == 2   # aus dem Cache
 
 
 def test_letzter_abbruch_innerhalb_von_12_stunden(tmp_path):
@@ -845,6 +864,7 @@ def _wie_die_stadt(stadt, tmp_path, **zusatz):
     keine = ",".join(x for x in (os.environ.get("NO_PROXY", ""), "127.0.0.1,127.0.0.2,localhost") if x)
     env = {k: v for k, v in os.environ.items() if not k.startswith("RATSATLAS_")}
     env.update({"RATSATLAS_OPARL_SYSTEM": stadt.system_url, "RATSATLAS_OPARL_BODY": stadt.body_url,
+                "RATSATLAS_SPERRE": str(tmp_path / "sperre"),   # Sperrdatei nie in ~/.cache (echte Messung parallel)
                 "RATSATLAS_STADT_INFORMIERT": "ja", "RATSATLAS_ZEITFENSTER": "",
                 "RATSATLAS_KONTAKT": "kontakt@example.invalid", "RATSATLAS_WIEDERHOLUNGEN": "0",
                 "RATSATLAS_MAX_DAUER": "5", "RATSATLAS_CACHE": str(tmp_path / "cache"),

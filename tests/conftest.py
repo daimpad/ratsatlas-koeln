@@ -6,10 +6,16 @@ Referenzen „NNNN/JJJJ“ und „AN/NNNN/JJJJ“, `consultation` mit direktem V
 """
 import json
 import os
+import shutil
 import tempfile
 
-# Sperrdatei der Messskripte (explore/abruf.py) während der Tests nicht in ~/.cache, sondern in einem Temp-Ordner
-os.environ.setdefault("RATSATLAS_SPERRE", tempfile.mkdtemp(prefix="ratsatlas-sperre-"))
+# Sperrdatei der Messskripte (explore/abruf.py) während der Tests nie in ~/.cache, sondern in einem Temp-Ordner, der am
+# Ende der Testsitzung entfernt wird (nur, wenn er hier angelegt wurde). Gesetzt vor dem Import der Messskripte, die den
+# Ort beim Import lesen; Teilprozesse der Tests reichen RATSATLAS_SPERRE weiter.
+_SPERRE_TEMP = None
+if not os.environ.get("RATSATLAS_SPERRE"):
+    _SPERRE_TEMP = tempfile.mkdtemp(prefix="ratsatlas-sperre-")
+    os.environ["RATSATLAS_SPERRE"] = _SPERRE_TEMP
 import socket
 import socketserver
 import threading
@@ -19,6 +25,11 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import pytest
 
 from pipeline import config
+
+
+def pytest_sessionfinish(session, exitstatus):
+    if _SPERRE_TEMP:
+        shutil.rmtree(_SPERRE_TEMP, ignore_errors=True)
 
 
 @pytest.fixture

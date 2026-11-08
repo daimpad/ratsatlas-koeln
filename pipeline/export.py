@@ -356,7 +356,7 @@ def export_all():
                                              funktionen=dict(config.ZUSATZTHEMEN),
                                              testdaten=bool(_stand().get("testdaten")),
                                              vorschau=bool(_stand().get("vorschau")),
-                                             abruf_fehler=_stand().get("abruf_fehler")), **index})
+                                             abruf_fehler=_abruf_fehler(_stand())), **index})
     db.close()
     print(f"{config.STADT_NAME}: {len(index['ortsteile'])} Stadtteile, {len(index['bezirke'])} Bezirke, "
           f"{len(years)} Jahre ohne Ortsbezug, {len(cache)} Vorlagen, {n_points} Punkte im GeoJSON, {n_shards} Dateien für den Assistenten → {out}")
@@ -364,6 +364,21 @@ def export_all():
 
 def _stand():
     return json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
+
+
+def _abruf_fehler(stand):
+    """Fehler des letzten Abrufs für die Seite („Der letzte Abruf … ist fehlgeschlagen“): nur, wenn er nach dem letzten
+    vollständigen Abruf (`abruf_ok`) liegt; ein älterer Eintrag gilt nicht mehr. Unlesbare Zeitpunkte: Fehler zeigen."""
+    fehler = stand.get("abruf_fehler")
+    ok = stand.get("abruf_ok")
+    if not fehler or not ok:
+        return fehler or None
+    try:
+        if datetime.fromisoformat(fehler["zeit"]) <= datetime.fromisoformat(ok):
+            return None
+    except (TypeError, ValueError, KeyError):
+        pass
+    return fehler
 
 
 def export_pilot(ortsteil=config.PILOT_ORTSTEIL):

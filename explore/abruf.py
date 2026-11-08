@@ -252,7 +252,7 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
         _cache_treffer += 1
         _protokoll(url, "cache", len(daten), 0, "cache")
         return daten
-    sperre_halten()   # vor der ersten Netzanfrage: kein zweiter Prozess mit demselben Cache gleichzeitig
+    sperre_halten()   # vor der ersten Netzanfrage: kein zweiter Abrufprozess gleichzeitig (auch mit anderem Cache)
     pausen = PAUSEN[:max(WIEDERHOLUNGEN, 0)]
     fehler = None
     for versuch in range(len(pausen) + 1):
