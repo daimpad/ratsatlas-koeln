@@ -145,6 +145,7 @@ class Daten:
     def __init__(self, basis):
         self.b = basis
         self.form = "bisher"   # „koeln“: Listen wie Köln in Stufe 1 (siehe oben)
+        self.groesse = 2       # Objekte je Seite
         self.anfragen = []
         self.papers = [self.paper(i) for i in range(1, 6)]
         self.meetings = [{
@@ -182,7 +183,8 @@ class Daten:
                 "organization": f"{b}/organizations",
                 "legislativeTerm": [{"id": f"{b}/terms/1", "name": "2025–2030", "startDate": "2025-11-01"}]}
 
-    def liste(self, objekte, pfad, q, groesse=2):
+    def liste(self, objekte, pfad, q, groesse=None):
+        groesse = groesse or self.groesse
         seit = q.get("modified_since")
         if seit:
             objekte = [o for o in objekte if o["modified"] >= seit]

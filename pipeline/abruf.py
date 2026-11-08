@@ -233,9 +233,9 @@ def _tls_abbruch(url, fehler):
     """Zertifikatsprüfung gescheitert: nicht gesendet, also keine Anfrage (der Zähler wird zurückgesetzt), aber ein
     Fehler; Art `tls`, keine mögliche Sperre."""
     _zaehler["anfragen"] -= 1
-    return Abbruch(f"Zertifikatsprüfung fehlgeschlagen (TLS): {url} ({fehler}); keine HTTP-Anfrage gesendet, kein "
-                   "Hinweis auf eine Sperre. Einstellung der Ausführungsumgebung prüfen (Zertifikatsspeicher, CA eines "
-                   "Proxys)", "tls")
+    return Abbruch(f"Zertifikatsprüfung fehlgeschlagen (TLS): {url} ({fehler}); keine HTTP-Anfrage gesendet. Vermutlich "
+                   "eine Einstellung der Ausführungsumgebung (Zertifikatsspeicher, CA eines Proxys); Zertifikat der "
+                   "Gegenseite oder Sperrseite nicht ausgeschlossen", "tls")
 
 
 def _proxy_abbruch(url, code):

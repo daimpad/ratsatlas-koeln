@@ -17,7 +17,11 @@
 - Weiterleitungen (3xx) werden nicht verfolgt: jede Weiterleitung ist genau eine Anfrage, wird mit Ziel-URL
   protokolliert und bricht ab (sonst kämen ungezählte Anfragen an einen anderen Host oder Pfad hinzu)
 - Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
-  (wie pipeline/abruf.py; explore/ergebnisse/sessionnet_befunde.tsv)
+  (wie pipeline/abruf.py; explore/ergebnisse/sessionnet_befunde.tsv); ebenso eine Antwort, die insgesamt länger als
+  GESAMTFRIST (60 s) braucht (Tropf-Antwort: jeder Block kommt vor der Zeitüberschreitung von 60 s, das Ganze nie; der
+  Inhalt wird in Blöcken gelesen), Status `Gesamtfrist`, nichts im Cache
+- Unterbrechung (Strg+C, SIGTERM, SIGHUP) während einer gesendeten Anfrage: Protokollzeile mit Status `unterbrochen`
+  (die Anfrage zählt, mögliche Sperre: sie hing womöglich), dann weiter wie Strg+C (`unterbrochen` nennt die Adresse)
 - ebenso eine abgeschnittene oder unlesbare Antwort: weniger Bytes als Content-Length (Status `IncompleteRead`),
   chunked ohne Abschluss, unlesbare Statuszeile und andere http.client.HTTPException (BadStatusLine, LineTooLong,
   RemoteDisconnected …; Status = Name der Ausnahme), auch als Antwort des Proxys auf CONNECT: Art `sperre`, keine
@@ -33,10 +37,11 @@
   - alle übrigen, vor allem 502 und 504 (der Proxy erreicht den Zielserver nicht): wie Zeitüberschreitung und
     Verbindungsabbruch Art `sperre` (mögliche Sperre), Status `tunnel <Code>`
 - Zertifikatsprüfung fehlgeschlagen (ssl.SSLCertVerificationError, auch als Grund eines URLError,
-  „CERTIFICATE_VERIFY_FAILED“): Einstellung der Arbeitsumgebung (Zertifikatsspeicher, CA des Proxys), keine HTTP-Anfrage
-  gesendet, kein Hinweis auf eine Sperre. Eigene Art `tls`, Status `tls` im Protokoll, ohne Wiederholung; der Versuch
-  zählt wie eine Ablehnung durch den Proxy zur Obergrenze. Andere TLS-Fehler (unerwartetes Ende, Reset im Handshake)
-  können eine Sperre sein und bleiben Art `sperre`
+  „CERTIFICATE_VERIFY_FAILED“): vermutlich eine Einstellung der Arbeitsumgebung (CA des Proxys); ein Zertifikat der
+  Gegenseite oder eine Sperrseite ist nicht ausgeschlossen. Keine HTTP-Anfrage gesendet. Eigene Art `tls`, Status `tls`
+  im Protokoll, ohne Wiederholung (berichten, nicht wiederholen); der Versuch zählt wie eine Ablehnung durch den Proxy
+  zur Obergrenze. Andere TLS-Fehler (unerwartetes Ende, Reset im Handshake) können eine Sperre sein und bleiben Art
+  `sperre`
 - Rohdaten-Cache: jede vollständige Antwort wird unter explore/_cache/ abgelegt und beim nächsten Lauf nicht erneut
   abgerufen
 - Protokoll jeder Anfrage (Zeit mit Zone, URL, Status, Bytes, Dauer, Netz oder Cache, Ziel einer Weiterleitung) in
@@ -66,6 +71,9 @@ PAUSEN = [30, 120, 600, 1800]  # Sekunden; danach Abbruch. Für den Produktivbet
 KONTAKT = os.environ.get("RATSATLAS_KONTAKT", "")
 USER_AGENT = "ratsatlas-koeln-explore/0.1 (+https://github.com/daimpad/ratsatlas-koeln" + (f"; {KONTAKT}" if KONTAKT else "") + ")"
 MAX_BYTES = 250 * 1024 * 1024
+# höchste Dauer einer ganzen Antwort in Sekunden (Kopf und Inhalt, gelesen in Blöcken); länger: Tropf-Antwort, Art `sperre`
+GESAMTFRIST = 60.0
+BLOCK = 64 * 1024
 # harte Obergrenze für Anfragen ans Netz je Prozess (Cache zählt nicht); 0 = ohne Grenze
 MAX_ANFRAGEN = int(os.environ.get("RATSATLAS_MAX_ANFRAGEN", "0"))
 # Wiederholungen nach 429/5xx (Vorgabe: alle Pausen); 0 = sofortiger Abbruch
@@ -83,6 +91,7 @@ _anfragen = 0
 _cache_treffer = 0
 _kopf_geprueft = False
 _sperre = None   # offene Sperrdatei dieses Prozesses (fcntl.flock), ab der ersten Netzanfrage bis zum Prozessende
+unterbrochen = ""   # Adresse einer gesendeten Anfrage, während der der Lauf unterbrochen wurde (Strg+C, Signal)
 
 # Ende der letzten Antwort (time.monotonic); beim Import gesetzt, damit auch die erste Anfrage eines Prozesses
 # frühestens ABSTAND Sekunden nach dem Start folgt
@@ -105,7 +114,7 @@ class Abbruch(Exception):
     oder unlesbare Antwort, HTTP 502/504 und übrige CONNECT-Antworten wie 502/504 mit `code`), proxy (Ablehnung durch
     den Proxy der Arbeitsumgebung: CONNECT-Antwort 403/405/407 oder HTTP 407, `code` gesetzt), weiterleitung (3xx,
     `ziel` gesetzt), parallel (ein anderer Prozess hält die Sperre auf den Cache), adresse (ungültige Adresse, nicht
-    gesendet), tls (Zertifikatsprüfung fehlgeschlagen: Einstellung der Arbeitsumgebung, keine Sperre), obergrenze,
+    gesendet), tls (Zertifikatsprüfung fehlgeschlagen: vermutlich Einstellung der Arbeitsumgebung), obergrenze,
     langsam, groesse."""
 
     def __init__(self, meldung, art="", code=None, ziel=""):
@@ -147,9 +156,10 @@ def proxy_ablehnung(fehler):
 
 def zertifikatsfehler(fehler):
     """Ist der Fehler eine gescheiterte Zertifikatsprüfung (ssl.SSLCertVerificationError oder ein SSL-Fehler mit
-    „CERTIFICATE_VERIFY_FAILED“, auch als Grund eines URLError)? Das ist eine Einstellung der Arbeitsumgebung
-    (Zertifikatsspeicher, CA des Proxys), keine mögliche Sperre; die HTTP-Anfrage wurde nicht gesendet. Andere
-    SSL-Fehler (SSLEOFError, Reset im Handshake) zählen nicht dazu: Sie können eine Sperre sein."""
+    „CERTIFICATE_VERIFY_FAILED“, auch als Grund eines URLError)? Vermutlich eine Einstellung der Arbeitsumgebung
+    (CA des Proxys); ein Zertifikat der Gegenseite oder eine Sperrseite ist nicht ausgeschlossen. Die HTTP-Anfrage
+    wurde nicht gesendet. Andere SSL-Fehler (SSLEOFError, Reset im Handshake) zählen nicht dazu: Sie können eine
+    Sperre sein."""
     if isinstance(fehler, urllib.error.HTTPError):
         return False
     grund = fehler.reason if isinstance(fehler, urllib.error.URLError) else fehler
@@ -262,9 +272,30 @@ def _erwartete_laenge(r):
     return int(wert) if wert.isdigit() else None
 
 
+def _lesen(r, url, start):
+    """Inhalt in Blöcken (read1: höchstens ein Lesevorgang je Block, auch bei tropfender Antwort); dauert die Antwort
+    seit `start` länger als GESAMTFRIST, Abbruch der Art `sperre` (Tropf-Antwort; nichts im Cache)."""
+    teile, n = [], 0
+    while n <= MAX_BYTES:
+        try:
+            block = r.read1(min(BLOCK, MAX_BYTES + 1 - n))
+        except http.client.IncompleteRead as e:   # chunked ohne Abschluss: die bisher gelesenen Bytes mitzählen
+            raise http.client.IncompleteRead(b"".join(teile) + (e.partial or b""), e.expected) from e
+        dauer = time.monotonic() - start
+        if block and dauer > GESAMTFRIST:
+            _protokoll(url, "Gesamtfrist", n + len(block), dauer, "netz")
+            raise Abbruch(f"Antwort nach {dauer:.0f} s noch nicht vollständig (Gesamtfrist {GESAMTFRIST:g} s, "
+                          f"Tropf-Antwort), mögliche Sperre; nicht im Cache gespeichert: {url}", "sperre")
+        if not block:
+            break
+        teile.append(block)
+        n += len(block)
+    return b"".join(teile)
+
+
 def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
     """Gibt den Inhalt zurück; nutzt den Cache, hält Abstand und wiederholt behutsam."""
-    global _letzte, _anfragen, _cache_treffer
+    global _letzte, _anfragen, _cache_treffer, unterbrochen
     pfad = _cachepfad(url, endung)
     if cache and pfad.exists():
         daten = pfad.read_bytes()
@@ -279,12 +310,12 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
             raise Abbruch(f"Obergrenze von {MAX_ANFRAGEN} Anfragen erreicht (RATSATLAS_MAX_ANFRAGEN): {url}",
                           "obergrenze")
         _warten()
-        _anfragen += 1   # erst nach dem Warten: ein Lauf, der dabei unterbrochen wird, hat diese Anfrage nicht gesendet
         start = time.monotonic()
-        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
         try:
+            _anfragen += 1   # erst nach dem Warten: ein Lauf, der dabei unterbrochen wird, hat diese Anfrage nicht gesendet
+            req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
             with _OEFFNER.open(req, timeout=60) as r:
-                daten = r.read(MAX_BYTES + 1)   # liefert bei zu früh geschlossener Verbindung weniger Bytes ohne Fehler
+                daten = _lesen(r, url, start)   # bei zu früh geschlossener Verbindung weniger Bytes ohne Fehler
                 dauer = time.monotonic() - start
                 erwartet = _erwartete_laenge(r)
                 if erwartet is not None and len(daten) < min(erwartet, MAX_BYTES + 1):
@@ -301,6 +332,10 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
                     raise Abbruch(f"Antwortzeit {dauer:.1f} s über {MAX_DAUER:g} s (RATSATLAS_MAX_DAUER): {url}",
                                   "langsam")
                 return daten
+        except KeyboardInterrupt:   # Strg+C oder Signal während der Anfrage: vermerken (mögliche Sperre), weiter wie Strg+C
+            unterbrochen = url
+            _protokoll(url, "unterbrochen", 0, time.monotonic() - start, "netz")
+            raise
         except urllib.error.HTTPError as e:
             if 300 <= e.code < 400:   # Weiterleitung: nicht folgen, Ziel protokollieren, abbrechen
                 ort = e.headers.get("Location") if e.headers else None
@@ -327,9 +362,9 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
             dauer = time.monotonic() - start
             if zertifikatsfehler(e):   # Einstellung der Arbeitsumgebung: keine HTTP-Anfrage gesendet, keine Sperre
                 _protokoll(url, "tls", 0, dauer, "netz")
-                raise Abbruch(f"Zertifikatsprüfung fehlgeschlagen (TLS): {url} ({e}); Einstellung der "
-                              "Arbeitsumgebung (Zertifikatsspeicher, CA des Proxys), keine HTTP-Anfrage gesendet, kein "
-                              "Hinweis auf eine Sperre. Nicht wiederholen, berichten", "tls") from e
+                raise Abbruch(f"Zertifikatsprüfung fehlgeschlagen (TLS): {url} ({e}); vermutlich eine Einstellung "
+                              "der Arbeitsumgebung (CA des Proxys); Zertifikat der Gegenseite oder Sperrseite nicht "
+                              "ausgeschlossen. Keine HTTP-Anfrage gesendet. Berichten, nicht wiederholen", "tls") from e
             code = tunnel_status(e)
             if code in PROXY_ABLEHNUNG:   # Ablehnung durch den Proxy: keine Antwort des Zielservers, keine Sperre
                 raise _proxy_abbruch(url, code, e, dauer) from e

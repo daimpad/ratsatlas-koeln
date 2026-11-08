@@ -15,9 +15,11 @@ explore/ergebnisse/sessionnet_befunde.tsv):
 Form „koeln“ (Parameter `form`): wie die Kölner Antwort in Stufe 1 (07.11.2026, explore/BERICHT_phase1.md Abschnitt 5):
 - `pagination` nur mit elementsPerPage und currentPage (ohne totalElements, totalPages), `links` nur mit first, self
   und next (ohne last, prev); `license` in System und Body null
-- Vorlagen neueste zuerst (created absteigend); je Vorlage nur auxiliaryFile (1–3 Dateien), body, consultation (genau
-  eine, eingebettet, mit meeting, agendaItem, organization, role), created, date, id, modified, name, paperType,
-  reference, type – ohne mainFile, location, underDirectionOf, originatorPerson und originatorOrganization
+- Vorlagen neueste zuerst (created absteigend), die 30 jüngsten in den letzten vier Tagen geändert (modified, je drei
+  Stunden auseinander; Stufe 1: erste Seite mit Vorlagen weniger Tage); je Vorlage nur auxiliaryFile (1–3 Dateien),
+  body, consultation (genau eine, eingebettet, mit meeting, agendaItem, organization, role), created, date, id,
+  modified, name, paperType, reference, type – ohne mainFile, location, underDirectionOf, originatorPerson und
+  originatorOrganization
 - paperType in Kölner Mustern („Antrag nach § 3 BV2 (CDU)“, „Änderungsantrag BV1 (Grüne)“, „Beschlussvorlage
   Bezirksvertretung“); Fraktionen und Nummern sind erfunden zugeordnet
 - Body wie in Köln mit den Listen paper, meeting, organization, person (Adresse …/people) und weiteren Adressen
@@ -167,6 +169,9 @@ class Daten:
                 o["_c"], o["_m"] = _zeit(o["created"]), _zeit(o["modified"])
         if form == "koeln":   # neueste zuerst (created absteigend, bei gleichem Zeitpunkt die höhere Nummer)
             self.vorlagen.sort(key=lambda o: (o["_c"], int(o["id"].rsplit("/", 1)[1])), reverse=True)
+            for i, o in enumerate(self.vorlagen[:30]):   # die jüngsten Vorlagen kürzlich geändert
+                o["modified"] = (jetzt - dt.timedelta(hours=3 * (i + 1))).isoformat()
+                o["_m"] = _zeit(o["modified"])
 
     def _koeln(self, p, k, i, antrag, sitzungen):
         """Vorlage in Kölner Form (Stufe 1): nur die dort gelieferten Felder, eine eingebettete Beratung mit Gremium,
@@ -229,9 +234,11 @@ class Testserver:
     """Startet den Server in einem Hintergrund-Thread. `anfragen`: Liste (Pfad, Abfrage, User-Agent, Status);
     `eingang`: Eingangszeit je Anfrage, `ausgang`: Zeit nach dem Senden der Antwort (beide time.monotonic, für alle
     Prozesse derselben Maschine vergleichbar).
-    `stoerung(pfad, abfrage)` darf einen Statuscode liefern (z. B. 429); `verzoegerung` in Sekunden je Antwort;
+    `stoerung(pfad, abfrage)` darf einen Statuscode liefern (z. B. 429); `verzoegerung` in Sekunden je Antwort (oder
+    eine Funktion (pfad, abfrage) → Sekunden);
     `weiterleitungen`: Pfad → (Status, Ziel) für Antworten mit Location-Kopf (z. B. 301);
     `ohne_created_filter`: created_since/created_until werden ignoriert (Jahresfilter wirkt nicht);
+    `ohne_modified_filter`: modified_since/modified_until werden ignoriert;
     `abschneiden(pfad)`: True sendet nur die Hälfte des Inhalts bei vollem Content-Length und schließt die Verbindung
     (abgeschnittene Antwort). `host`: 127.0.0.1 (Vorgabe) oder eine andere Loopback-Adresse wie 127.0.0.2, die
     oparl_messung.lokal() nicht als lokal ansieht (Tests der Regeln für Anfragen an die Stadt ohne Netz).
@@ -247,6 +254,7 @@ class Testserver:
         self.verzoegerung = 0.0
         self.weiterleitungen = {}
         self.ohne_created_filter = False
+        self.ohne_modified_filter = False
         self.server = ThreadingHTTPServer((host, port), self._handler())
         self.basis = f"http://{host}:{self.server.server_address[1]}"
         self.daten = Daten(self.basis, **kw)
@@ -290,7 +298,8 @@ class Testserver:
         if objekte is None:
             return 404, "text/html", b"<html><body>Not Found</body></html>"
         try:
-            filter_q = {k: v for k, v in q.items() if not (self.ohne_created_filter and k.startswith("created_"))}
+            filter_q = {k: v for k, v in q.items() if not (self.ohne_created_filter and k.startswith("created_"))
+                        and not (self.ohne_modified_filter and k.startswith("modified_"))}
             objekte = self._filtern(objekte, filter_q)
             return 200, "application/json", json.dumps(self._seite(objekte, url, q, d.form)).encode()
         except ValueError:
@@ -353,8 +362,10 @@ class Testserver:
                     status, typ, inhalt = server.antwort(teile.path, teile.query)
                 server.anfragen.append((teile.path, teile.query, self.headers.get("User-Agent"), status))
                 server.eingang.append(time.monotonic())
-                if server.verzoegerung:
-                    time.sleep(server.verzoegerung)
+                pause = (server.verzoegerung(teile.path, teile.query) if callable(server.verzoegerung)
+                         else server.verzoegerung)
+                if pause:
+                    time.sleep(pause)
                 self.send_response(status)
                 if ziel:
                     self.send_header("Location", ziel)

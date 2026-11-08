@@ -13,9 +13,12 @@ Ablehnungen durch den Proxy der Arbeitsumgebung (Status `proxy <Code>`: CONNECT-
 stehen getrennt: Sie haben die Stadt nicht erreicht, zählen nicht zu den Antwortzeiten und gelten nicht als mögliche
 Sperre. Andere CONNECT-Antworten (Status `tunnel <Code>`, z. B. 502/504: der Proxy erreicht die Stadt nicht, oder
 429/503) gelten wie Verbindungsabbrüche als mögliche Sperre, ebenso 403, 429, 5xx und Status ohne Code (Name der
-Ausnahme, z. B. TimeoutError oder IncompleteRead bei einer abgeschnittenen Antwort). Eine gescheiterte
-Zertifikatsprüfung (Status `tls`) ist eine Einstellung der Arbeitsumgebung, keine mögliche Sperre; sie zählt wie eine
-Ablehnung durch den Proxy nicht zu den Antwortzeiten.
+Ausnahme, z. B. TimeoutError, IncompleteRead bei einer abgeschnittenen Antwort, Gesamtfrist bei einer Tropf-Antwort
+oder `unterbrochen`: Lauf während dieser Anfrage unterbrochen). HTTP 401 steht als „abgelehnt oder Sperre?“. Eine
+gescheiterte Zertifikatsprüfung (Status `tls`) ist vermutlich eine Einstellung der Arbeitsumgebung (Zertifikat der
+Gegenseite oder Sperrseite nicht ausgeschlossen); sie zählt wie eine Ablehnung durch den Proxy nicht zu den
+Antwortzeiten. Zu den Zeitfiltern: „nicht unterscheidbar“ heißt, die erste Seite zeigt nicht, ob der Server die Grenze
+anwendet (bei neueste zuerst gilt das für created_since).
 Fehlende Gesamtzahlen (Köln liefert in `pagination` nur elementsPerPage und currentPage) stehen als „fehlt“.
 Die Regel Stufe 3/5 gilt nur als erfüllt, wenn der letzte `stichprobe`-Lauf in oparl_laeufe.tsv „ok“ ist.
 Aufruf: python3 explore/auswertung.py [--cache VERZ] [--ergebnisse VERZ] [--stufe S]
@@ -35,8 +38,12 @@ NICHT_PRUEFBAR = "nicht prüfbar (Protokoll fehlt)"
 NICHT_ZUGEORDNET = "nicht prüfbar (Protokollzeilen passen nicht zum Lauf)"
 PROXY_HINWEIS = ("Ablehnung durch den Proxy der Arbeitsumgebung, die Stadt wurde nicht erreicht, keine Sperre: nicht "
                  "wiederholen, berichten; Host im Netz der Arbeitsumgebung erlauben")
-TLS_HINWEIS = ("Zertifikatsprüfung fehlgeschlagen: Einstellung der Arbeitsumgebung (Zertifikatsspeicher, CA des "
-               "Proxys), keine HTTP-Anfrage gesendet, keine Sperre: nicht wiederholen, berichten")
+TLS_HINWEIS = ("Zertifikatsprüfung fehlgeschlagen: vermutlich Einstellung der Arbeitsumgebung (CA des Proxys); "
+               "Zertifikat der Gegenseite oder Sperrseite nicht ausgeschlossen – berichten, nicht wiederholen")
+UNTERBROCHEN_HINWEIS = ("Lauf während dieser Anfrage unterbrochen, etwa nach einem Zeitlimit des aufrufenden Werkzeugs: "
+                        "mögliche Sperre, stoppen")
+FILTER_HINWEIS = ("„nicht unterscheidbar“: Die erste Seite zeigt nicht, ob der Server diese Grenze anwendet (bei "
+                  "neueste zuerst gilt das für created_since; für Stufe 3 zählt created_until).")
 
 
 def lies(datei):
@@ -158,6 +165,10 @@ def status_hinweise(zeilen, kommando):
             hinweis = f" ({PROXY_HINWEIS})"
         elif ist_tls(z):
             hinweis = f" ({TLS_HINWEIS})"
+        elif code == "unterbrochen":
+            hinweis = f" ({UNTERBROCHEN_HINWEIS})"
+        elif code == "401":
+            hinweis = " (abgelehnt oder Sperre?)"
         elif code.startswith("tunnel"):   # CONNECT-Antwort außer 403/405/407 (explore/abruf.py)
             grund = ("Begrenzung oder Überlastung" if code.split()[-1] in ("429", "503")
                      else "der Proxy erreicht den Server nicht")
@@ -302,7 +313,12 @@ def kennwerte(erg, laeufe=None):
         tests = [(f, w) for f, w in werte.get("paper", {}).items() if f.startswith("test ")]
         if tests:
             aus.append("\nParametertests (Vorlagen):\n")
-            aus += tabelle(["Test", "Antwort"], [[f[5:], w] for f, w in tests])
+            aus += tabelle(["Test", "Antwort"], [[f[5:], w + (" – abgelehnt oder Sperre?" if "HTTP 401" in w else "")]
+                                                 for f, w in tests])
+            if werte["paper"].get("grenze modified_since"):
+                aus.append(f"\nGrenze modified_since: {werte['paper']['grenze modified_since']}")
+            if any("nicht unterscheidbar" in w for _, w in tests):
+                aus.append(f"\n{FILTER_HINWEIS}")
         if "abbruch" in werte.get("lauf", {}):
             aus.append(f"\nTest/Kennzahlen abgebrochen: {werte['lauf']['abbruch']}")
 
