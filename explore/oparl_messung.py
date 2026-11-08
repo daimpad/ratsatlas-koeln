@@ -18,6 +18,14 @@ Für Anfragen an die Stadt gelten strenge Vorgaben (sichere_vorgaben): keine Wie
 zwischen zwei Anfragen (RATSATLAS_ABSTAND, Vorgabe 2); RATSATLAS_MAX_ANFRAGEN und RATSATLAS_KONTAKT (ohne Platzhalter)
 sind Pflicht. Lockerere Werte werden vor der ersten Anfrage abgelehnt.
 Parameter werden ohne URL-Kodierung angehängt (SessionNet: 404 bei %3A/%2B); `kennzahlen` prüft beide Formen einmal.
+`kennzahlen` beurteilt die Zeitfilter ohne weitere Anfrage aus dem Vergleich mit der ungefilterten ersten Seite
+(_filter_urteil): Die Grenze für modified_since ist der Median von `modified` der ersten Hälfte dieser Seite, so dass
+ein Server, der den Filter überginge, ältere Vorlagen liefern müsste; „ja“ nur, wenn eine Vorlage, die dort unter der
+Grenze lag, in der gefilterten Antwort fehlt (sind alle seither geändert, „nicht unterscheidbar“); bei „nein“ steht
+dabei, wie weit die früheste Vorlage der Antwort vor der Grenze liegt. Bei neueste zuerst zeigt die erste Seite, ob
+created_until wirkt, nicht aber, ob created_since wirkt („nicht unterscheidbar“). limit=100 ist die letzte Anfrage
+(eine langsame Antwort bricht ab, wenn die übrigen Messungen vorliegen). Eine 401 auf einen Parametertest gilt als
+„Parameter abgelehnt“, zwei 401 in Folge brechen ab (abgelehnt oder Sperre?).
 Abruf über explore/abruf.py (eine Verbindung, Abstand ≥ 2 s nach Ende der Antwort, auch vor der ersten Anfrage
 eines Prozesses, Cache, Protokoll, Obergrenze RATSATLAS_MAX_ANFRAGEN, Weiterleitungen werden nicht verfolgt).
 Paginierung nur über links.next, nie über konstruierte Seitennummern (HTTP 401 bei hohen Seitenzahlen); Schutz vor
@@ -30,14 +38,21 @@ Proxy der Arbeitsumgebung die Verbindung ab (Art `proxy`: CONNECT-Antwort 403/40
 Anfrage die Stadt erreicht: nicht wiederholen, sondern berichten; der Host muss im Netz der Arbeitsumgebung erlaubt
 sein (explore/STUFEN.md, Stufe 1). Meldet der Proxy 502/504 (Stadt nicht erreicht, beim Verbindungsaufbau oder als
 Antwort im Tunnel) oder ist eine Antwort abgeschnitten oder unlesbar, gilt das als mögliche Sperre (Art `sperre`),
-429/503 als Art `server`.
+429/503 als Art `server`. Scheitert die Zertifikatsprüfung (Art `tls`), ist das vermutlich eine Einstellung der
+Arbeitsumgebung (CA des Proxys; Zertifikat der Gegenseite oder Sperrseite nicht ausgeschlossen); der Lauf bricht ab.
 Nach einem Abbruch gilt: in dieser Nacht keine weitere Anfrage (STUFEN.md). Vor der ersten Anfrage an eine nicht
 lokale Adresse prüft main() deshalb oparl_laeufe.tsv: Endete der letzte Lauf vor weniger als 12 Stunden mit
-„abbruch (…)“ oder „fehler (…)“, bricht das Kommando ohne Anfrage ab (Rückgabewert 1). Weiter nur nach Rücksprache mit
-dem Auftraggeber: RATSATLAS_NACH_ABBRUCH=ja. Ein zweiter gleichzeitiger Prozess (auch mit anderem Cache oder aus
-einer anderen Arbeitskopie) bricht vor seiner ersten Anfrage ab (Art `parallel`, Sperre
+„abbruch (…)“, „fehler (…)“ oder „unterbrochen“ (Strg+C, SIGTERM etwa nach dem Zeitlimit des aufrufenden Werkzeugs,
+SIGHUP, wenn nicht ignoriert wie mit nohup; alle enden wie Strg+C, ein zweites Signal danach wird ignoriert; ein Lauf
+gilt als „unterbrochen“, bis er regulär endet), bricht das Kommando ohne Anfrage ab (Rückgabewert 1). Ebenso nach
+einem hart beendeten Lauf (SIGKILL, Absturz): Vor der ersten Anfrage an die Stadt legt main() die Markerdatei
+_cache/lauf_offen.json an und entfernt sie erst nach dem Vermerk; liegt sie ohne Vermerk und ist der Lauf jünger als 12
+Stunden, gilt er als „nicht regulär beendet“ (ein älterer Marker wird gemeldet und entfernt). Weiter nur nach
+Rücksprache mit dem Auftraggeber: RATSATLAS_NACH_ABBRUCH=ja. Ein zweiter gleichzeitiger Prozess (auch mit anderem
+Cache oder aus einer anderen Arbeitskopie) bricht vor seiner ersten Anfrage ab (Art `parallel`, Sperre
 ~/.cache/ratsatlas-koeln/abruf.lock in explore/abruf.py, Ort über RATSATLAS_SPERRE). Eine Antwort, die kein JSON ist,
-wird aus dem Cache entfernt (ein späterer Lauf fragt erneut, statt sie ohne Anfrage zu lesen).
+wird aus dem Cache entfernt, auch in Listen und Parametertests (ein späterer Lauf fragt erneut, statt sie ohne Anfrage
+zu lesen).
 Ergebnisse als TSV unter explore/ergebnisse/; Rohdaten, PDFs und die Stichprobendatei für `pdf-koepfe`
 (_cache/stichprobe_vorlagen.jsonl: nur id, reference, paperType, date, Adresse der Hauptdatei) bleiben im Cache
 (nicht im Repository).
@@ -52,6 +67,7 @@ import json
 import math
 import os
 import re
+import signal
 import sys
 import urllib.parse
 from pathlib import Path
@@ -74,7 +90,21 @@ STRENG_ABSTAND = 2.0   # Sekunden vom Ende einer Antwort bis zur nächsten Anfra
 # nach einem Abbruch oder Fehler keine weitere Anfrage an die Stadt in dieser Frist (STUFEN.md: „in dieser Nacht keine
 # weitere Anfrage und keine weitere Stufe“); Freigabe nur nach Rücksprache mit RATSATLAS_NACH_ABBRUCH=ja
 SPERRFRIST = dt.timedelta(hours=12)
-RE_ABBRUCH = re.compile(r"^(abbruch|fehler) \(")
+# Ergebnisse, nach denen die Sperrfrist gilt: Abbruch, Fehler und ein unterbrochener Lauf (Strg+C, Signal oder ein Ende
+# ohne regulären Abschluss)
+RE_ABBRUCH = re.compile(r"^(?:(?:abbruch|fehler) \(|unterbrochen\b)")
+UNTERBROCHEN = "unterbrochen"
+# Signale, die einen Lauf wie Strg+C beenden (Vermerk „unterbrochen“ statt eines Endes ohne Vermerk): SIGTERM etwa nach
+# dem Zeitlimit des aufrufenden Werkzeugs, SIGHUP beim Schließen des Terminals (nur, wenn nicht ignoriert wie mit nohup).
+# SIGKILL lässt sich nicht abfangen.
+SIGNALE = (signal.SIGTERM, signal.SIGHUP)
+# fehlende Gesamtzahlen (Köln, Stufe 1: pagination nur mit elementsPerPage und currentPage)
+FEHLT = "fehlt"
+# Markerdatei eines laufenden Laufs an die Stadt neben _cache/abrufe.tsv (gitignoriert): angelegt vor der ersten Anfrage,
+# entfernt am regulären Ende (auch nach einem Abbruch mit Vermerk). Bleibt sie nach einer harten Beendigung liegen
+# (SIGKILL, Absturz der Arbeitsumgebung: kein Vermerk in oparl_laeufe.tsv), gilt der Lauf als „nicht regulär beendet“.
+MARKER = "lauf_offen.json"
+NICHT_REGULAER = "nicht regulär beendet"
 # Stichprobe für pdf-koepfe: nur im Cache (nicht im Repository), ohne File-Objekte
 STICHPROBE = abruf.CACHE / "stichprobe_vorlagen.jsonl"
 
@@ -158,13 +188,18 @@ def _mit_parametern(url, **params):
     return url
 
 
-def _json(url, **params):
-    adresse = _mit_parametern(url, **params)
+def _json_von(adresse, lesen=None):
+    """JSON der Antwort (`lesen`: Ersatz für den Abruf, z. B. aus dem Cache); eine unlesbare Antwort bleibt nicht im Cache
+    (ein späterer Lauf würde sie ohne Anfrage lesen)."""
     try:
-        return json.loads(_hole(adresse))
-    except ValueError:   # unlesbare Antwort nicht im Cache lassen (ein späterer Lauf würde sie ohne Anfrage lesen)
+        return json.loads(lesen() if lesen else _hole(adresse))
+    except ValueError:
         abruf._cachepfad(adresse, ".json").unlink(missing_ok=True)
         raise
+
+
+def _json(url, **params):
+    return _json_von(_mit_parametern(url, **params))
 
 
 def _wert(v):
@@ -203,7 +238,7 @@ def _seiten(url, max_seiten=None, name="", **params):
                "ende": "abgebrochen", "erstes_next": ""}
     _LISTEN.append(eintrag)
     besucht, kennungen = {start}, set()
-    seite, nr = json.loads(_hole(start)), 1
+    seite, nr = _json_von(start), 1
     while True:
         ids = {o.get("id") for o in seite.get("data") or [] if isinstance(o, dict)}
         if nr > 1 and not ids - kennungen:
@@ -225,12 +260,18 @@ def _seiten(url, max_seiten=None, name="", **params):
             eintrag["ende"] = "links.next wiederholt"
             return
         besucht.add(nxt)
-        seite, nr = json.loads(_hole(nxt)), nr + 1
+        seite, nr = _json_von(nxt), nr + 1
+
+
+def _angabe(pag, schluessel):
+    """Wert aus `pagination`; fehlt er oder ist er null (Köln: keine Gesamtzahlen), „fehlt“ statt None."""
+    wert = (pag if isinstance(pag, dict) else {}).get(schluessel)
+    return FEHLT if wert is None else wert
 
 
 def _liste_kennwerte(objekt, antwort):
     pag, links = antwort.get("pagination") or {}, antwort.get("links") or {}
-    zeilen = [{"objekt": objekt, "feld": f"pagination.{k}", "wert": pag.get(k)}
+    zeilen = [{"objekt": objekt, "feld": f"pagination.{k}", "wert": _angabe(pag, k)}
               for k in ("totalElements", "elementsPerPage", "currentPage", "totalPages")]
     return zeilen + [
         {"objekt": objekt, "feld": "objekte_erste_seite", "wert": len(antwort.get("data") or [])},
@@ -272,20 +313,145 @@ def _zeitpunkt(wert):
     return t if t.tzinfo else t.replace(tzinfo=ZoneInfo("Europe/Berlin"))
 
 
-def _filter_wirksam(objekte, feld, von=None, bis=None):
-    """Hält die Antwort den Zeitfilter ein? ja/nein/keine Objekte (ohne weitere Anfrage)."""
-    if not objekte:
-        return "keine Objekte"
-    zeiten = [_zeitpunkt(o[feld]) for o in objekte if o.get(feld)]
-    ausser = [t for t in zeiten if t and ((von and t < von) or (bis and t > bis))]
-    unlesbar = sum(1 for t in zeiten if t is None)
-    zusatz = f", {unlesbar} unlesbar" if unlesbar else ""
-    return (f"nein ({len(ausser)} von {len(zeiten)} außerhalb{zusatz})" if ausser else
-            f"ja{f' ({unlesbar} unlesbar)' if unlesbar else ''}")
+def _utc(t):
+    """Zeitpunkt in UTC, sekundengenau, mit „+00:00“ (wie pipeline/sessionnet.py, ohne URL-Kodierung angehängt)."""
+    return t.astimezone(dt.timezone.utc).replace(microsecond=0).isoformat()
+
+
+def _neueste_zuerst(objekte):
+    """Ist die Seite nach `created` absteigend sortiert (Köln, Stufe 1)? Dann stehen neue Vorlagen vorn."""
+    zeiten = [_zeitpunkt(o["created"]) if o.get("created") else None for o in objekte]
+    return (len(zeiten) >= 2 and None not in zeiten and zeiten[0] > zeiten[-1]
+            and all(a >= b for a, b in zip(zeiten, zeiten[1:])))
+
+
+def _grenze_modified(basis):
+    """(Grenze für modified_since, Herkunft) aus der ungefilterten ersten Seite: Median von `modified` ihrer ersten
+    Hälfte (bei neueste zuerst die Vorlagen, die auch nach einigen neuen Vorlagen seit Stufe 1 noch auf der ersten Seite
+    stehen). Ein Server, der den Filter überginge, müsste dann Vorlagen mit älterem `modified` liefern. Ohne lesbares
+    `modified`: vor 7 Tagen."""
+    kopf = basis[:max(1, (len(basis) + 1) // 2)]
+    zeiten = sorted(t for t in (_zeitpunkt(o["modified"]) for o in kopf if o.get("modified")) if t)
+    if not zeiten:
+        return _utc(dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)), "vor 7 Tagen (kein lesbares modified)"
+    return _utc(zeiten[len(zeiten) // 2]), (f"Median von modified der ersten {len(kopf)} Vorlagen der ungefilterten "
+                                            "ersten Seite")
+
+
+def _dauer_text(abstand):
+    """Zeitabstand lesbar: Sekunden, Minuten, Stunden (bis 2 Tage), sonst Tage mit einer Nachkommastelle."""
+    s = int(abs(abstand.total_seconds()))
+    if s < 60:
+        return f"{s} s"
+    if s < 3600:
+        return f"{s // 60} min"
+    if s < 2 * 86400:
+        h, m = divmod(s // 60, 60)
+        return f"{h} h" + (f" {m} min" if m else "")
+    return f"{s / 86400:.1f} Tage".replace(".", ",")
+
+
+def _filter_urteil(basis, antwort, feld, von=None, bis=None):
+    """Urteil je Grenze eines Zeitfilters ({"von": …, "bis": …}) aus der gefilterten ersten Seite `antwort` und der
+    ungefilterten ersten Seite `basis`, ohne weitere Anfrage:
+    - „nein“: Die Antwort enthält Objekte jenseits der Grenze; dazu, wie weit das äußerste davon jenseits liegt
+      („frühestes modified 1 h vor der Grenze“: um 1 h deutet auf einen Versatz, etwa „+“ als Leerzeichen und damit
+      Ortszeit, bis 24 h auf Tagesgenauigkeit, mehr auf einen übergangenen Filter).
+    - „ja“: Ein Server, der nur diese Grenze überginge, hätte Objekte jenseits der Grenze liefern müssen, und solche fehlen
+      in der Antwort. Die ungefilterte Seite enthält Objekte jenseits der Grenze, die die übrige Grenze einhalten und deren
+      Kennung in der Antwort fehlt (`modified` kann sich seit der ungefilterten Seite geändert haben: Sind alle Vorlagen
+      seither geändert, liefert auch ein Server ohne Filter nur Objekte diesseits der Grenze, aber mit denselben
+      Kennungen): bei „bis“ irgendwo (neue Vorlagen liegen ebenfalls jenseits), bei „von“ und neueste zuerst auf den
+      ersten Plätzen, die neue Vorlagen seit der ungefilterten Seite (Kennungen dort nicht enthalten, created nicht älter
+      als ihre jüngste Vorlage) nicht verdrängt haben können (ein Server ohne Filter lieferte eine ebenso lange Seite).
+    - sonst „nicht unterscheidbar“ (z. B. alle modified gleich oder seit der ungefilterten Seite geändert; bei neueste
+      zuerst created_since), mit dem Vergleich der Kennungen."""
+    def zeit(o):
+        return _zeitpunkt(o[feld]) if o.get(feld) else None
+
+    def jenseits(o, seite):
+        t, g = zeit(o), (von if seite == "von" else bis)
+        return g is not None and t is not None and (t < g if seite == "von" else t > g)
+
+    if not antwort:
+        return {s: "keine Objekte" for s, g in (("von", von), ("bis", bis)) if g is not None}
+    ids, antwort_ids = {o.get("id") for o in basis}, {o.get("id") for o in antwort}
+    fremd = [o for o in antwort if o.get("id") not in ids]
+    juengste = max((t for t in (_zeitpunkt(o["created"]) for o in basis if o.get("created")) if t), default=None)
+    neu = sum(1 for o in fremd if juengste is None or not o.get("created")
+              or (_zeitpunkt(o["created"]) or juengste) >= juengste)
+    urteil = {}
+    for seite, andere in (("von", "bis"), ("bis", "von")):
+        if (von if seite == "von" else bis) is None:
+            continue
+        verletzt = [zeit(o) for o in antwort if jenseits(o, seite)]
+        plaetze = basis[:max(len(basis) - neu, 0)] if seite == "von" and _neueste_zuerst(basis) else basis
+        if verletzt:
+            richtung = "vor" if seite == "von" else "nach"
+            aeusserst = min(verletzt) if seite == "von" else max(verletzt)
+            urteil[seite] = (f"nein ({len(verletzt)} von {len(antwort)} {richtung} der Grenze; "
+                             f"{'frühestes' if seite == 'von' else 'spätestes'} {feld} "
+                             f"{_dauer_text(aeusserst - (von if seite == 'von' else bis))} {richtung} der Grenze)")
+        elif any(jenseits(o, seite) and not jenseits(o, andere) and o.get("id") not in antwort_ids for o in plaetze):
+            urteil[seite] = "ja"
+        else:
+            urteil[seite] = ("nicht unterscheidbar (" + ("gleiche Kennungen wie ohne Filter" if not fremd else
+                                                         f"{len(fremd)} Kennungen nicht auf der ungefilterten Seite")
+                             + ("; neueste zuerst: die erste Seite zeigt nur die jüngsten Vorlagen"
+                                if seite == "von" and bis is not None and _neueste_zuerst(basis) else "") + ")")
+    return urteil
+
+
+def _parametertests(url, basis, zeilen):
+    """Parametertests an der Vorlagenliste, in dieser Reihenfolge: modified_since (Grenze aus der ungefilterten ersten
+    Seite), created_since/created_until für 2025, modified_since URL-kodiert (bei SessionNet anderswo HTTP 404), zuletzt
+    limit=100 (wirkt limit, dauert die Antwort womöglich über 5 s: Abbruch, wenn alles übrige vorliegt). HTTP 400, 401
+    und 404 gelten als „Parameter abgelehnt“ (Messung geht weiter), zwei 401 in Folge brechen ab (abgelehnt oder
+    Sperre?); jede andere Fehlantwort bricht nach dieser Anfrage ab."""
+    basis = [o for o in basis if isinstance(o, dict)]
+    seit, herkunft = _grenze_modified(basis)
+    zeilen.append({"objekt": "paper", "feld": "grenze modified_since", "wert": f"{seit} ({herkunft})"})
+    jahr = ("2025-01-01T00:00:00+01:00", "2025-12-31T23:59:59+01:00")
+    tests = [(f"test modified_since={seit}", _mit_parametern(url, modified_since=seit), {"von": _zeitpunkt(seit)}),
+             (f"test created_since={jahr[0]}&created_until={jahr[1]}",
+              _mit_parametern(url, created_since=jahr[0], created_until=jahr[1]),
+              {"von": _zeitpunkt(jahr[0]), "bis": _zeitpunkt(jahr[1])}),
+             ("test modified_since URL-kodiert",
+              url + ("&" if "?" in url else "?") + urllib.parse.urlencode({"modified_since": seit}),
+              {"von": _zeitpunkt(seit)}),
+             ("test limit=100", _mit_parametern(url, limit=100), None)]
+    zuvor_401 = False
+    for feld, adresse, grenzen in tests:
+        try:
+            a = _json_von(adresse)
+        except Abbruch as e:
+            if e.art == "http" and e.code == 401 and zuvor_401:
+                raise Abbruch(f"zweimal HTTP 401 in Folge (abgelehnt oder Sperre?): {e}", "http", 401) from e
+            if e.art == "http" and e.code in ABGELEHNT:   # Parameter abgelehnt; Messung geht weiter
+                zeilen.append({"objekt": "paper", "feld": feld, "wert": f"Parameter abgelehnt (HTTP {e.code})"})
+                zuvor_401 = e.code == 401
+                continue
+            if e.art == "langsam":   # vollständig und gespeichert, aber zu langsam: Messwert vermerken, dann Abbruch
+                try:
+                    n = len(_json_von(adresse, abruf._cachepfad(adresse, ".json").read_bytes).get("data") or [])
+                except (OSError, ValueError, AttributeError):
+                    n = "?"
+                zeilen.append({"objekt": "paper", "feld": feld, "wert": f"objekte={n}; {e}"})
+            raise   # jede andere Fehlantwort bricht nach dieser Anfrage ab
+        zuvor_401 = False
+        daten = [o for o in a.get("data") or [] if isinstance(o, dict)]
+        wert = f"objekte={len(daten)}; totalElements={_angabe(a.get('pagination'), 'totalElements')}"
+        if grenzen and "bis" in grenzen:
+            u = _filter_urteil(basis, daten, "created", **grenzen)
+            wert += f"; created_until wirkt: {u['bis']}; created_since wirkt: {u['von']}"
+        elif grenzen:
+            wert += f"; filter_wirksam={_filter_urteil(basis, daten, 'modified', **grenzen)['von']}"
+        zeilen.append({"objekt": "paper", "feld": feld, "wert": wert})
 
 
 def kennzahlen(_):
-    """10 Anfragen: System, Body, erste Seite von paper/meeting/organization/person, vier Parametertests."""
+    """10 Anfragen: System, Body, erste Seite von paper/meeting/organization/person, danach vier Parametertests an paper
+    (_parametertests, limit=100 zuletzt)."""
     zeilen = []
     try:
         system, body = _json(SYSTEM), _json(BODY)
@@ -294,10 +460,7 @@ def kennzahlen(_):
         zeilen += [{"objekt": "body", "feld": k, "wert": _wert(body.get(k))[:200]}
                    for k in ("name", "license", "licenseValidSince", "oparlSince", "contactEmail", "contactName",
                              "legislativeTerm", "modified")]
-        vor7 = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).replace(microsecond=0)
-        seit = vor7.isoformat()     # „+00:00“ wie pipeline/sessionnet.py
-        jahr_von = dt.datetime.fromisoformat("2025-01-01T00:00:00+01:00")
-        jahr_bis = dt.datetime.fromisoformat("2025-12-31T23:59:59+01:00")
+        vorlagen = None
         for name in ("paper", "meeting", "organization", "person"):
             url = body.get(name)
             if not url:
@@ -306,31 +469,10 @@ def kennzahlen(_):
             basis = _json(url)
             zeilen.append({"objekt": name, "feld": "url", "wert": url})
             zeilen += _liste_kennwerte(name, basis)
-            if name != "paper":
-                continue
-            # Verhalten von limit und den Zeitfiltern (OParl 1.1: created_since/_until, modified_since/_until);
-            # eine Anfrage mit URL-kodiertem Zeitstempel zum Vergleich (bei SessionNet anderswo HTTP 404)
-            tests = [("test modified_since URL-kodiert",
-                      url + ("&" if "?" in url else "?") + urllib.parse.urlencode({"modified_since": seit}),
-                      ("modified", vor7, None)),
-                     ("test limit=100", _mit_parametern(url, limit=100), None),
-                     (f"test modified_since={seit}", _mit_parametern(url, modified_since=seit), ("modified", vor7, None)),
-                     ("test created_since=2025-01-01T00:00:00+01:00&created_until=2025-12-31T23:59:59+01:00",
-                      _mit_parametern(url, created_since="2025-01-01T00:00:00+01:00",
-                                      created_until="2025-12-31T23:59:59+01:00"), ("created", jahr_von, jahr_bis))]
-            for feld, adresse, pruefung in tests:
-                try:
-                    a = json.loads(_hole(adresse))
-                except Abbruch as e:
-                    if e.art == "http" and e.code in ABGELEHNT:   # Parameter abgelehnt; Messung geht weiter
-                        zeilen.append({"objekt": name, "feld": feld, "wert": str(e)})
-                        continue
-                    raise
-                daten = a.get("data") or []
-                wert = f"objekte={len(daten)}; totalElements={(a.get('pagination') or {}).get('totalElements')}"
-                if pruefung:
-                    wert += f"; filter_wirksam={_filter_wirksam(daten, *pruefung)}"
-                zeilen.append({"objekt": name, "feld": feld, "wert": wert})
+            if name == "paper":
+                vorlagen = basis
+        if vorlagen is not None:
+            _parametertests(body["paper"], vorlagen.get("data") or [], zeilen)
     except Abbruch as e:
         zeilen.append({"objekt": "lauf", "feld": "abbruch", "wert": str(e)})
         raise
@@ -391,7 +533,7 @@ def stichprobe(a):
             tot, vorher = "", zaehl.copy()
             for nr, seite in _seiten(body["paper"], a.seiten, name=f"paper {jahr}", created_since=von,
                                      created_until=bis):
-                tot = (seite.get("pagination") or {}).get("totalElements") if nr == 1 else tot
+                tot = _angabe(seite.get("pagination"), "totalElements") if nr == 1 else tot
                 for p in seite.get("data", []):
                     if p.get("id") in gesehen:
                         zaehl["doppelt_jahr" if gesehen[p.get("id")] == jahr else "doppelt_jahre"] += 1
@@ -530,21 +672,107 @@ def _laufnummer():
         return max(sum(1 for _ in f), 1)
 
 
-def letzter_abbruch(datei=None, jetzt=None):
-    """Der letzte Lauf aus oparl_laeufe.tsv (Zeile als dict), wenn er vor weniger als SPERRFRIST mit „abbruch (…)“
-    oder „fehler (…)“ endete, sonst None. Maßgeblich ist `ende` (ohne Zone: Ortszeit Köln); fehlt es oder ist es
-    unlesbar, gilt der Lauf vorsichtshalber als gerade beendet."""
-    datei = ERG / "oparl_laeufe.tsv" if datei is None else Path(datei)
-    if not datei.exists():
+def _markerpfad():
+    return abruf.PROTOKOLL.parent / MARKER
+
+
+def _marker_setzen(lauf):
+    """Legt die Markerdatei an (Lauf, Stufe, Kommando, Parameter, Start, Prozess); liefert ihren Inhalt."""
+    text = json.dumps({**{k: lauf[k] for k in ("lauf", "stufe", "kommando", "parameter", "start")}, "pid": os.getpid()},
+                      ensure_ascii=False)
+    pfad = _markerpfad()
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    pfad.write_text(text, encoding="utf-8")
+    return text
+
+
+def _marker_entfernen(text):
+    """Entfernt die Markerdatei, wenn sie noch die dieses Laufs ist."""
+    try:
+        if _markerpfad().read_text(encoding="utf-8") == text:
+            _markerpfad().unlink()
+    except OSError:
+        pass
+
+
+def _marker_pruefen(marker, zeilen, jetzt):
+    """Markerdatei eines Laufs ohne Vermerk in oparl_laeufe.tsv: jünger als SPERRFRIST (oder unlesbar) → Eintrag wie
+    eine Zeile mit „nicht regulär beendet“; älter → gemeldet und entfernt; ein Marker, dessen Lauf vermerkt ist (Ende
+    zwischen Vermerk und Entfernen), wird ebenfalls entfernt (der Vermerk gilt). Sonst None."""
+    if not marker.exists():
         return None
-    with datei.open(encoding="utf-8", newline="") as f:
-        zeilen = list(csv.DictReader(f, delimiter="\t"))
+    try:
+        m = json.loads(marker.read_text(encoding="utf-8"))
+        m = m if isinstance(m, dict) else {}
+    except (OSError, ValueError):
+        m = {}
+    if m and any(z.get("lauf") == str(m.get("lauf")) and z.get("start") == m.get("start") for z in zeilen):
+        marker.unlink(missing_ok=True)
+        return None
+    start = _zeitpunkt(m.get("start") or "") if m else None
+    eintrag = {"lauf": m.get("lauf", "?"), "stufe": m.get("stufe", ""), "kommando": m.get("kommando", "?"),
+               "start": m.get("start", ""), "ende": "", "ergebnis": NICHT_REGULAER, "marker": str(marker),
+               "meldung": f"Markerdatei {marker} ohne Vermerk in oparl_laeufe.tsv"}
+    if start is None or jetzt - start < SPERRFRIST:
+        return eintrag
+    print(f"Hinweis: Lauf {eintrag['lauf']} ({eintrag['kommando']}, Stufe {eintrag['stufe'] or '?'}) vom "
+          f"{eintrag['start']} wurde {NICHT_REGULAER} (Markerdatei {marker} ohne Vermerk, älter als "
+          f"{SPERRFRIST.total_seconds() / 3600:g} Stunden); Marker entfernt. Im Bericht vermerken.", file=sys.stderr)
+    marker.unlink(missing_ok=True)
+    return None
+
+
+def letzter_abbruch(datei=None, jetzt=None, marker=None):
+    """Der letzte Lauf aus oparl_laeufe.tsv (Zeile als dict), wenn er vor weniger als SPERRFRIST mit „abbruch (…)“,
+    „fehler (…)“ oder „unterbrochen“ (Strg+C, SIGTERM, SIGHUP) endete, sonst None. Maßgeblich ist `ende` (ohne Zone:
+    Ortszeit Köln); fehlt es oder ist es unlesbar, gilt der Lauf vorsichtshalber als gerade beendet. Vorher die
+    Markerdatei (`marker`; Vorgabe neben _cache/abrufe.tsv, nur wenn auch `datei` die Vorgabe ist): Ein Lauf ohne
+    Vermerk, der vor weniger als SPERRFRIST begann (hart beendet), gilt als „nicht regulär beendet“ (_marker_pruefen)."""
+    if datei is None:
+        datei, marker = ERG / "oparl_laeufe.tsv", _markerpfad() if marker is None else marker
+    datei, zeilen = Path(datei), []
+    if datei.exists():
+        with datei.open(encoding="utf-8", newline="") as f:
+            zeilen = list(csv.DictReader(f, delimiter="\t"))
+    jetzt = jetzt or dt.datetime.now(ZoneInfo("Europe/Berlin"))
+    offen = _marker_pruefen(Path(marker), zeilen, jetzt) if marker is not None else None
+    if offen:
+        return offen
     if not zeilen or not RE_ABBRUCH.match(zeilen[-1].get("ergebnis") or ""):
         return None
     letzter = zeilen[-1]
     ende = _zeitpunkt(letzter.get("ende") or "")
-    jetzt = jetzt or dt.datetime.now(ZoneInfo("Europe/Berlin"))
     return letzter if ende is None or jetzt - ende < SPERRFRIST else None
+
+
+def _signal_beenden(nummer, _rahmen):
+    """Strg+C, SIGTERM oder SIGHUP: endet wie Strg+C, damit der Lauf als „unterbrochen“ vermerkt wird (12-Stunden-Regel).
+    Weitere Signale bleiben ab hier ohne Wirkung (_signal_ohne_wirkung; ein zweites kurz danach unterbräche sonst den
+    Vermerk)."""
+    _signale(_signal_ohne_wirkung)
+    raise KeyboardInterrupt(signal.Signals(nummer).name)
+
+
+def _signal_ohne_wirkung(_nummer, _rahmen):
+    """Ein weiteres Signal nach dem ersten: ohne Wirkung (statt SIG_IGN, damit ein schon zugestelltes Signal keine
+    Meldung „ignored due to race condition“ erzeugt)."""
+
+
+def _signale(behandlung, signale=(signal.SIGINT, *SIGNALE)):
+    """Setzt die Behandlung der Signale; liefert die vorige je Signal."""
+    return {s: signal.signal(s, behandlung) for s in signale}
+
+
+def _signale_abfangen():
+    """_signal_beenden für Strg+C (nur statt der Vorgabe von Python; im Hintergrund ignoriert bleibt ignoriert), SIGTERM
+    und SIGHUP (nur bei SIG_DFL: mit nohup bleibt SIGHUP ignoriert). Liefert die vorige Behandlung aller drei Signale."""
+    vorher = {s: signal.getsignal(s) for s in (signal.SIGINT, *SIGNALE)}
+    for s, alt in vorher.items():
+        if (s == signal.SIGINT and alt is not signal.default_int_handler) or (s == signal.SIGHUP
+                                                                             and alt != signal.SIG_DFL):
+            continue
+        signal.signal(s, _signal_beenden)
+    return vorher
 
 
 def main(argv=None):
@@ -573,8 +801,13 @@ def main(argv=None):
             sys.exit("Abbruch vor der ersten Anfrage: " + "; ".join(fehler) + " (Befehle: explore/STUFEN.md).")
         vorher = letzter_abbruch()
         if vorher and os.environ.get("RATSATLAS_NACH_ABBRUCH") != "ja":
-            sys.exit(f"Abbruch vor der ersten Anfrage: Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) endete "
-                     f"{vorher.get('ende') or '(ohne Ende)'} mit „{vorher.get('ergebnis')}“, vor weniger als "
+            grund = (f"Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) vom {vorher.get('start') or '?'} wurde "
+                     f"„{NICHT_REGULAER}“ oder läuft noch (Markerdatei {vorher['marker']} ohne Vermerk in "
+                     "oparl_laeufe.tsv, etwa nach SIGKILL oder einem Absturz der Arbeitsumgebung); begonnen"
+                     if vorher.get("marker") else
+                     f"Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) endete {vorher.get('ende') or '(ohne Ende)'}"
+                     f" mit „{vorher.get('ergebnis')}“")
+            sys.exit(f"Abbruch vor der ersten Anfrage: {grund}, vor weniger als "
                      f"{SPERRFRIST.total_seconds() / 3600:g} Stunden. Nach einem Abbruch gilt: in dieser Nacht keine "
                      "weitere Anfrage und keine weitere Stufe, Bericht an den Auftraggeber (explore/STUFEN.md). "
                      "Weiter nur nach Rücksprache mit RATSATLAS_NACH_ABBRUCH=ja.")
@@ -585,10 +818,14 @@ def main(argv=None):
     lauf = {"lauf": _laufnummer(), "stufe": os.environ.get("RATSATLAS_STUFE", ""), "kommando": a.kommando,
             "parameter": _parameter(a), "start": dt.datetime.now(zeitzone).isoformat(timespec="seconds"),
             "obergrenze": abruf.MAX_ANFRAGEN or "", "protokoll_von": abruf.protokollzeilen(),
-            "ergebnis": "ok", "meldung": ""}
-    rueckgabe = 0
+            "ergebnis": UNTERBROCHEN, "meldung": NICHT_REGULAER}   # schlechter Fall zuerst
+    rueckgabe, abruf.unterbrochen = 0, ""
+    # Marker vor der ersten Anfrage an die Stadt (ein hart beendeter Lauf ohne Vermerk sperrt so 12 Stunden)
+    marker = None if lokal(SYSTEM) and lokal(BODY) else _marker_setzen(lauf)
+    vorher = _signale_abfangen()
     try:
         KOMMANDOS[a.kommando](a)
+        lauf["ergebnis"], lauf["meldung"] = "ok", ""
     except Abbruch as e:
         lauf["ergebnis"], lauf["meldung"], rueckgabe = f"abbruch ({e.art or 'sonstiges'})", str(e), 2
         if e.art == "proxy":   # Ablehnung in der Arbeitsumgebung, nicht durch die Stadt
@@ -599,26 +836,43 @@ def main(argv=None):
         elif e.art == "sperre":   # auch 502/504 des Proxys und abgeschnittene oder unlesbare Antworten
             hinweis = ("Mögliche Sperre: in dieser Nacht keine weitere Anfrage, alle Abrufe ruhen bis zur Klärung mit "
                        "der Stadt. Stoppen und berichten (explore/STUFEN.md).")
+        elif e.art == "tls":   # vermutlich Einstellung der Arbeitsumgebung
+            hinweis = ("Die Zertifikatsprüfung ist gescheitert: vermutlich eine Einstellung der Arbeitsumgebung "
+                       "(CA des Proxys); ein Zertifikat der Gegenseite oder eine Sperrseite ist nicht ausgeschlossen. "
+                       "Keine HTTP-Anfrage gesendet. Berichten, nicht wiederholen; in dieser Nacht keine weitere "
+                       "Anfrage (12-Stunden-Regel).")
         elif e.art == "parallel":   # ein anderer Prozess hält die Sperre auf den Cache
             hinweis = ("Ein anderer Abrufprozess läuft noch; keine Anfrage gesendet. Prozesse nur nacheinander "
                        "starten; stoppen und berichten (explore/STUFEN.md).")
         else:
             hinweis = "Stoppen und berichten (explore/STUFEN.md)."
         print(f"Abbruch: {e}\n{hinweis}", file=sys.stderr)
-    except KeyboardInterrupt:
-        lauf["ergebnis"], rueckgabe = "unterbrochen", 130
+    except KeyboardInterrupt as e:   # Strg+C, SIGTERM oder SIGHUP (_signal_beenden)
+        grund = str(e) if str(e) in signal.Signals.__members__ else "SIGINT"
+        lauf["meldung"] = (f"unterbrochen während einer Anfrage ({grund}): mögliche Sperre, stoppen; "
+                           f"{abruf.unterbrochen}" if abruf.unterbrochen else f"unterbrochen ({grund})")
+        lauf["ergebnis"], rueckgabe = UNTERBROCHEN, 128 + signal.Signals[grund].value
+        print(f"Unterbrochen ({grund}){' während einer Anfrage: mögliche Sperre' if abruf.unterbrochen else ''}. In "
+              "dieser Nacht keine weitere Anfrage und keine weitere Stufe (12-Stunden-Regel, RATSATLAS_NACH_ABBRUCH); "
+              "stoppen und berichten (explore/STUFEN.md).", file=sys.stderr)
     except Exception as e:   # z. B. HTML statt JSON: ebenfalls stoppen und berichten
         lauf["ergebnis"], lauf["meldung"], rueckgabe = f"fehler ({type(e).__name__})", str(e)[:300], 1
         print(f"Fehler: {type(e).__name__}: {e}\nStoppen und berichten (explore/STUFEN.md).", file=sys.stderr)
     finally:
+        _signale(signal.SIG_IGN)   # den Vermerk nicht unterbrechen
         ende = dt.datetime.now(zeitzone)
         lauf.update(abruf.zaehler(), ende=ende.isoformat(timespec="seconds"),
                     dauer_s=f"{(ende - dt.datetime.fromisoformat(lauf['start'])).total_seconds():.0f}",
                     protokoll_bis=abruf.protokollzeilen())
         _anhaengen("oparl_laeufe.tsv", LAEUFE_SPALTEN, [lauf])
         _anhaengen("oparl_listen.tsv", LISTEN_SPALTEN, [{**e, "lauf": lauf["lauf"]} for e in _LISTEN])
+        if marker:   # erst nach dem Vermerk (sonst bliebe ein hart beendeter Lauf ohne Spur)
+            _marker_entfernen(marker)
         print(f"Lauf {lauf['lauf']}: {lauf['netz']} Anfragen ans Netz, {lauf['cache']} aus dem Cache; "
               f"{lauf['ergebnis']}", file=sys.stderr)
+        for s, behandlung in vorher.items():
+            if behandlung is not None:   # None: nicht aus Python gesetzt, bleibt ignoriert
+                signal.signal(s, behandlung)
     return rueckgabe
 
 

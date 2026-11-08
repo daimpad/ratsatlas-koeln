@@ -2,7 +2,14 @@
 
 Köln (CLAUDE.md 5.3): Ob die API `originatorOrganization` und `underDirectionOf` setzt, wird nach der Information der
 Stadt gemessen. Ist `originatorOrganization` gesetzt, gilt es (belegt); sonst werden Einreichende aus dem Titel
-abgeleitet („Antrag der …-Fraktion“) und als abgeleitet gekennzeichnet (method, evidence). Fraktionen, Gruppen und
+abgeleitet („Antrag der …-Fraktion“) und als abgeleitet gekennzeichnet (method, evidence). Vorher gilt die Kölner
+Vorlagenart „… BV<n> (<Fraktion>)“ (Stufe 1, 07.11.2026: „Antrag nach § 3 BV2 (CDU)“, „Änderungsantrag BV1 (Grüne)“,
+auch mit Zusatz wie „(geändert)“) als strukturierte Quelle: Bezirksfraktion in der Bezirksvertretung n (Stadtbezirk n
+nach der Hauptsatzung), method „paper_type“, evidence = Vorlagenart. Ohne erkannte Fraktion in Klammern („Gem.
+Änderungsantrag BV3“) gelten die Fraktionen aus dem Titel als Bezirksfraktionen des Bezirks n (method „title“), nie als
+Ratsfraktionen; eine Nummer außerhalb 1–9 ergibt Bezirksfraktionen ohne Bezirk. Antworten der Verwaltung („Beantwortung
+einer Anfrage (BV)“) sind keine Einreichung einer Fraktion: Einreichende ist die Verwaltung (Fragesteller nicht
+getrennt erfasst). Fraktionen, Gruppen und
 Einzelmandate des Kölner Rates 2020–2025 und 2025–2030 stehen in PARTIES, Bezeichnungen einer Wahlperiode mit
 Datumsgrenzen (Regeln dort). Die Federführung aus dem Kopf der Verwaltungsvorlage („Dezernat, Dienststelle“) folgt mit
 dem Abruf der PDFs.
@@ -66,9 +73,16 @@ WAHLPERIODE_2020_ENDE = "2025-10-31"
 
 # Wortgrenze ohne Bindestrich-Zusätze: „KSG“, nicht „KSG-Gelände“; erlaubt „KSG-Fraktion“, „KSG-Bezirksfraktion“
 _FRAKTION_ZUSATZ = r"(?:-(?:Rats|Bezirks)?[Ff]raktion|-Gruppe)"
-# Stadtbezirke (wie geocode.BEZIRKE_KOELN; hier ohne Import, damit actors ohne Geobibliotheken läuft)
+# Stadtbezirke 1–9 in der Reihenfolge ihrer Nummern (wie geocode.BEZIRKE_KOELN; hier ohne Import, damit actors ohne
+# Geobibliotheken läuft)
 STADTBEZIRKE = ("Innenstadt", "Rodenkirchen", "Lindenthal", "Ehrenfeld", "Nippes", "Chorweiler", "Porz", "Kalk",
                 "Mülheim")
+# Kölner Vorlagenart einer Bezirksvertretung: „Antrag nach § 3 BV2 (CDU)“, „Änderungsantrag BV1 (Grüne)“, „… BV2 (CDU)
+# (geändert)“, „Gem. Änderungsantrag BV3“ (ohne Klammer); die erste Klammer direkt nach der Nummer nennt die Fraktion
+BV_ART = re.compile(r"(?<!\w)BV\s?(\d+)(?!\w)(?:\s*\(([^()]*)\))?")
+# Antworten der Verwaltung auf eine Anfrage („Beantwortung einer Anfrage (BV)“, „Antwort auf …“): keine Einreichung
+# einer Fraktion. Nur am Anfang der Vorlagenart: „Anfrage nach § 4 zur schriftlichen Beantwortung“ stellt eine Fraktion
+ANTWORT_ART = re.compile(r"(?i)^\s*(?:beantwortung|antwort)(?!\w)")
 # „Grüne(n)“ und „Linke(n)“ in gemischter Schreibung sind auch Adjektive („Grüne Welle“, „Linke Rheinseite“, „am Linken
 # Rheinufer“, „Grüne Jugend“). Sie zählen
 # - nie vor einem Orts- oder Sachwort aus _SACHWORT;
@@ -261,30 +275,64 @@ def _match_org(orgs, pattern, date, classes, bezirk=None):
     return None
 
 
+def bv_vorlagenart(ptype):
+    """(Nummer, Stadtbezirk, Text der ersten Klammer nach der Nummer) aus einer Vorlagenart „… BV<n> (<Fraktion>)“,
+    auch ohne Klammer (Text "") oder mit Zusatz („(geändert)“), sonst None. Nummer außerhalb 1–9: Stadtbezirk None."""
+    m = BV_ART.search(ptype or "")
+    if not m:
+        return None
+    nr = int(m.group(1))
+    return nr, STADTBEZIRKE[nr - 1] if 1 <= nr <= 9 else None, (m.group(2) or "").strip()
+
+
+def _bezirksfraktion(name, org_pat, orgs, date, bezirk, method, evidence):
+    """Zeile einer Bezirksfraktion; ohne Bezirk ohne Organisation."""
+    return dict(actor=f"{name}-Bezirksfraktion" + (f" {bezirk}" if bezirk else ""), actor_type="Bezirksfraktion",
+                organization_id=_match_org(orgs, org_pat, date, ("Bezirksfraktionen (intern)",), bezirk)
+                if bezirk else None, method=method, evidence=evidence)
+
+
+def _aus_vorlagenart_bv(ptype, orgs, date):
+    """Bezirksfraktionen aus der Klammer einer Vorlagenart „… BV<n> (<Fraktion>)“ (strukturiert, method „paper_type“);
+    nur erkannte Fraktionen und Gruppen aus PARTIES (keine Personennamen), sonst []."""
+    bv = bv_vorlagenart(ptype)
+    if not bv or not bv[2]:
+        return []
+    _, bezirk, klammer = bv
+    namen, _ = _kette(klammer, _treffer(klammer, date), 0)
+    return [_bezirksfraktion(name, org_pat, orgs, date, bezirk, "paper_type", ptype) for name, org_pat in namen]
+
+
 def originators(paper, orgs, bezirke=()):
     """Einreichende einer Vorlage als Liste von Zeilen (actor, actor_type, organization_id,
     method, evidence). `bezirke`: Stadtbezirke der befassten Bezirksvertretungen."""
     ptype, date = paper.get("paperType"), paper.get("date") or ""
-    if ptype in EINWOHNER_TYPES:
+    antwort = bool(ptype) and bool(ANTWORT_ART.search(ptype))   # die Verwaltung antwortet (keine Fraktion)
+    if ptype in EINWOHNER_TYPES and not antwort:
         # Keine Namen natürlicher Personen (Datenschutz, CLAUDE.md 2).
         return [dict(actor="Einwohner:innen", actor_type="Einwohner:in", organization_id=None,
                      method="paper_type", evidence=ptype)]
-    belegt = _from_originator(paper, orgs)
+    belegt = [] if antwort else _from_originator(paper, orgs)
     if belegt:
         return belegt
-    if ptype in VERWALTUNG_TYPES and ptype not in POLITIK_TYPES:
+    if antwort or (ptype in VERWALTUNG_TYPES and ptype not in POLITIK_TYPES):
         org = (paper.get("underDirectionOf") or [None])[0]
         return [dict(actor="Verwaltung", actor_type="Verwaltung", organization_id=org,
                      method="paper_type", evidence=ptype)]
     if ptype not in POLITIK_TYPES:
         return []
+    rows = _aus_vorlagenart_bv(ptype, orgs, date)   # Köln: „Antrag nach § 3 BV2 (CDU)“
+    if rows:
+        return rows
+    bv = bv_vorlagenart(ptype)   # „Gem. Änderungsantrag BV3“: Fraktionen aus dem Titel als Bezirksfraktionen
+    bv_bezirk = None if bv is None else (bv[1] or "")
     titel = paper.get("name") or ""
     for a, anker, b in _segments(titel):
-        rows = _from_segment(titel, orgs, date, bezirke, a, b, anker)
+        rows = _from_segment(titel, orgs, date, bezirke, a, b, anker, bv_bezirk, ptype)
         if rows:
             return rows
     # Köln: Partei oft in der Vorlagenart („FDP Antrag nach § 3“, Recherche 04.11.2026)
-    return _from_segment(ptype, orgs, date, bezirke)
+    return _from_segment(ptype, orgs, date, bezirke, bv_bezirk=bv_bezirk)
 
 
 def _from_originator(paper, orgs):
@@ -302,21 +350,22 @@ def _from_originator(paper, orgs):
     return rows
 
 
-def _from_segment(text, orgs, date, bezirke, a=0, b=None, anker=None):
+def _from_segment(text, orgs, date, bezirke, a=0, b=None, anker=None, bv_bezirk=None, vorlagenart=None):
     """Einreichende aus dem Abschnitt text[a:b] (Fundstelle = dieser Abschnitt); ab dem Anker als Kette (_kette).
-    „Koalition“ und „interfraktionell“ zählen vor oder in der Kette oder direkt im Anschluss, nicht im Thema danach."""
+    „Koalition“ und „interfraktionell“ zählen vor oder in der Kette oder direkt im Anschluss, nicht im Thema danach.
+    `bv_bezirk`: Vorlage einer Bezirksvertretung laut Vorlagenart (Stadtbezirk, "" bei unbekannter Nummer): Fraktionen
+    gelten als Bezirksfraktionen dieses Bezirks, nie als Ratsfraktionen."""
     b = len(text) if b is None else b
     seg = text[a:b].strip()
     rows = []
-    bezirks_fraktion = "Bezirksfraktion" in seg
+    bezirks_fraktion = "Bezirksfraktion" in seg or bv_bezirk is not None
+    evidence = f"{seg} (Vorlagenart: {vorlagenart})" if bv_bezirk is not None and vorlagenart else seg
     namen, ende = _kette(text, _treffer(text, date, a, b), a if anker is None else anker)
     for name, org_pat in namen:
         if bezirks_fraktion:
-            bezirk = next(iter(bezirke)) if len(bezirke) == 1 else None
-            org = _match_org(orgs, org_pat, date, ("Bezirksfraktionen (intern)",), bezirk) if bezirk else None
-            actor = f"{name}-Bezirksfraktion" + (f" {bezirk}" if bezirk else "")
-            rows.append(dict(actor=actor, actor_type="Bezirksfraktion", organization_id=org,
-                             method="title", evidence=seg))
+            bezirk = (bv_bezirk or None) if bv_bezirk is not None else (
+                next(iter(bezirke)) if len(bezirke) == 1 else None)
+            rows.append(_bezirksfraktion(name, org_pat, orgs, date, bezirk, "title", evidence))
         else:
             org = _match_org(orgs, org_pat, date, RAT_CLASSES)
             rows.append(dict(actor=name, actor_type="Fraktion/Gruppe", organization_id=org,

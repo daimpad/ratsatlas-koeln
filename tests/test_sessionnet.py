@@ -6,6 +6,7 @@ import json
 import math
 import os
 import sqlite3
+import ssl
 import subprocess
 import sys
 import threading
@@ -199,12 +200,14 @@ def test_abgebrochener_vollabruf_wird_fortgesetzt(oparl, monkeypatch):
     monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: pfad == "/papers" and q.get("page") == "3")
     sessionnet.fetch_all()
     zustand = json.loads(config.ZUSTAND.read_text())
-    assert zustand["papers_fortsetzung"]["seiten"] == 2 and "page=3" in zustand["papers_fortsetzung"]["naechste"]
+    # Fortsetzung eine Seite zurück (Seite 2), damit Löschungen zwischen den Nächten nichts überspringen
+    assert zustand["papers_fortsetzung"]["seiten"] == 2 and "page=2" in zustand["papers_fortsetzung"]["naechste"]
+    assert sessionnet._zeit(zustand["papers_fortsetzung"]["gespeichert"]) is not None
     assert not config.PAPERS.exists() and len(_jsonl(config.RAW / "papers.teil.jsonl")) == 4
     monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: False)
     oparl.anfragen.clear()
     sessionnet.fetch_all()
-    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["3"]   # nur die fehlende Seite
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["2", "3"]   # die letzte und die fehlende
     assert len(_jsonl(config.PAPERS)) == 5 and not (config.RAW / "papers.teil.jsonl").exists()
     z = [r for r in _statistik() if r["liste"] == "papers"]
     assert z[0]["ergebnis"].startswith("unterbrochen") and (z[-1]["modus"], z[-1]["ergebnis"]) == ("voll, fortgesetzt", "ok")
@@ -881,7 +884,7 @@ def test_unerwartete_antwortform_ohne_traceback(oparl, monkeypatch, inhalt):
                                      {"data": [], "links": {"next": ["x"]}}])
 def test_unerwartete_listenseite_ist_unlesbar(oparl, monkeypatch, seite_2):
     """Form einer Listenseite dort geprüft, wo sie ankommt: Abbruch „unlesbar“ ohne Wiederholung und ohne Traceback;
-    der Vollabruf wird an dieser Seite fortgesetzt."""
+    der Vollabruf wird eine Seite davor fortgesetzt (Seite 1)."""
     echt = oparl.liste
 
     def liste(objekte, pfad, q, groesse=2):
@@ -891,7 +894,7 @@ def test_unerwartete_listenseite_ist_unlesbar(oparl, monkeypatch, seite_2):
     assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == [None, "2"]
     zustand = json.loads(config.ZUSTAND.read_text())
     assert (zustand["sperre_verdacht"]["art"], zustand["papers_fortsetzung"]["seiten"]) == ("unlesbar", 1)
-    assert "page=2" in zustand["papers_fortsetzung"]["naechste"]
+    assert zustand["papers_fortsetzung"]["naechste"] == f"{oparl.b}/papers"
 
 
 def test_unerwartete_form_tief_im_objekt_ist_kein_sperrverdacht(oparl, monkeypatch):
@@ -1266,10 +1269,10 @@ def test_ende_des_zeitfensters_ist_kein_fehler(oparl, monkeypatch):
     stand, zustand = json.loads(config.STAND.read_text()), json.loads(config.ZUSTAND.read_text())
     assert "abruf_fehler" not in stand and "nächsten Nacht" in stand["abruf_hinweis"]["meldung"]
     assert "letzter_abbruch" not in zustand and "sperre_verdacht" not in zustand and "papers_fortsetzung" in zustand
-    uhr.t += timedelta(minutes=30)                         # dieselbe Nacht: erlaubt, setzt fort
+    uhr.t += timedelta(minutes=30)                         # dieselbe Nacht: erlaubt, setzt eine Seite zurück fort
     oparl.anfragen.clear()
     sessionnet.fetch_all()
-    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["2", "3"]
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == [None, "2", "3"]
     assert "abruf_hinweis" not in json.loads(config.STAND.read_text())
 
 
@@ -1453,22 +1456,22 @@ def test_schreibfehler_der_statistik_in_der_liste_verdraengt_den_abbruch_nicht(o
 def test_seitengrenze_gilt_je_lauf(oparl, monkeypatch):
     """RATSATLAS_MAX_SEITEN zählt die Seiten eines Laufs, nicht die einer Fortsetzung insgesamt (sonst begänne ein großer
     Vollabruf in einer späteren Nacht von vorn und würde nie fertig)."""
-    monkeypatch.setattr(config, "ABRUF_MAX_SEITEN", 2)
+    monkeypatch.setattr(config, "ABRUF_MAX_SEITEN", 3)
     monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: pfad == "/papers" and q.get("page") == "2")
     sessionnet.fetch_all()                                   # Nacht 1: Seite 1, dann HTTP 404
     assert json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]["seiten"] == 1
     monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: False)
     oparl.anfragen.clear()
-    sessionnet.fetch_all()                                   # Nacht 2: Seiten 2 und 3 (zwei in diesem Lauf)
-    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["2", "3"]
+    sessionnet.fetch_all()                                   # Nacht 2: Seiten 1 (eine zurück), 2 und 3 in diesem Lauf
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == [None, "2", "3"]
     z = [r for r in _statistik() if r["liste"] == "papers"][-1]
-    assert (z["modus"], z["seiten"], z["ergebnis"]) == ("voll, fortgesetzt", "3", "ok")
-    # die Grenze gilt weiter je Lauf: ab der dritten Seite dieses Laufs Abbruch, Seiten insgesamt in der Meldung (unter
-    # der Gesamtgrenze von 3 × 2 Seiten, test_gesamtgrenze_der_seiten_ueber_fortsetzungen)
+    assert (z["modus"], z["seiten"], z["ergebnis"]) == ("voll, fortgesetzt", "4", "ok")
+    # die Grenze gilt weiter je Lauf: ab der vierten Seite dieses Laufs Abbruch, Seiten insgesamt in der Meldung (unter
+    # der Gesamtgrenze von 3 × 3 Seiten, test_gesamtgrenze_der_seiten_ueber_fortsetzungen)
     monkeypatch.setattr(abruf, "get_json", lambda url, pausen=None: {"data": [{"id": url}], "links": {"next": url + "x"}})
     with pytest.raises(sessionnet.Teilabbruch) as e:
         sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?p", objekte=[{"id": "a"}], seiten=1)
-    assert e.value.art == "liste" and "in einem Lauf" in str(e.value) and e.value.seiten == 3
+    assert e.value.art == "liste" and "in einem Lauf" in str(e.value) and e.value.seiten == 4
 
 
 def test_net_prueft_das_ziel_einer_weiterleitung(monkeypatch):
@@ -1638,3 +1641,539 @@ def test_gesamtgrenze_der_seiten_ueber_fortsetzungen(oparl, monkeypatch):
     z = [r for r in _statistik() if r["liste"] == "papers"][-1]
     assert z["seiten"] == str(gesamt) and f"mehr als {gesamt} Seiten insgesamt" in z["ergebnis"]
     assert "fehlerhaften Liste" in json.loads(config.STAND.read_text())["abruf_hinweis"]["meldung"]
+
+
+# --- Runde 9: Zertifikatsprüfung (Art `tls`), Kölner Antwortform aus Stufe 1 (ohne Gesamtzahlen, neueste zuerst) ------
+
+def _tls_bereit(monkeypatch):
+    """Adressen mit https auf 127.0.0.1 gelten nicht als lokal: Freigabe, Zeitfenster offen, Mindestabstand 0 (nur hier,
+    um die Tests kurz zu halten), Öffner ohne Proxy."""
+    monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+    monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
+    monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
+    monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+
+
+def test_zertifikatsfehler_ist_keine_sperre_und_keine_anfrage(oparl, monkeypatch, capsys, tls_server):
+    """Selbst signiertes Zertifikat, dem der Client nicht vertraut: Art `tls` ohne Wiederholung, keine HTTP-Anfrage beim
+    Server, gezählt als Fehler und nicht als Anfrage. Im Lauf: Warnung (laut), Fehler in STAND.json, `letzter_abbruch`
+    mit Art `tls` (12-Stunden-Regel), keine Nacht mit möglicher Sperre."""
+    _tls_bereit(monkeypatch)
+    vorher = abruf.statistik()
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json(f"{tls_server.url}/body", pausen=[0, 0])
+    assert e.value.art == "tls" and "CERTIFICATE_VERIFY_FAILED" in str(e.value) and "mögliche Sperre" not in str(e.value)
+    assert "Vermutlich eine Einstellung der Ausführungsumgebung" in str(e.value)
+    assert not sessionnet.moegliche_sperre(e.value) and tls_server.anfragen == []
+    nachher = abruf.statistik()
+    assert (nachher["anfragen"] - vorher["anfragen"], nachher["fehler"] - vorher["fehler"],
+            nachher["wiederholungen"] - vorher["wiederholungen"]) == (0, 1, 0)
+    monkeypatch.setattr(config, "OPARL_BODY", f"{tls_server.url}/body")
+    sessionnet.fetch_all()
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert zustand["letzter_abbruch"]["art"] == "tls" and "sperre_verdacht" not in zustand
+    assert "listenfehler" not in zustand
+    assert "Zertifikatsprüfung" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    err = capsys.readouterr().err
+    assert "Zertifikatsprüfung fehlgeschlagen (1. Nacht" in err and "vermutlich eine Einstellung" in err
+    assert "Sperrseite nicht ausgeschlossen" in err and zustand["tlsfehler"]["naechte"] == 1
+    z = [r for r in _statistik() if r["liste"] == "body"][-1]
+    assert (z["anfragen"], z["fehler"], z["wiederholungen"]) == ("0", "1", "0")
+    sessionnet.fetch_all()                                                # dieselbe Nacht: kein weiterer Lauf
+    assert "Abbruch (tls)" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
+    assert tls_server.anfragen == []
+
+
+def test_zertifikatsfehler_ohne_urlerror(monkeypatch):
+    """ssl.SSLCertVerificationError ist auch ein ValueError: auch ungekapselt Art `tls`, kein Einstellungsfehler mit
+    Traceback; nicht als Anfrage gezählt (Scheinöffner, kein Netz)."""
+    def oeffnen(req, timeout=None):
+        raise ssl.SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed")
+    monkeypatch.setattr(abruf, "_OEFFNER", types.SimpleNamespace(open=oeffnen))
+    monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
+    vorher = abruf.statistik()
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json("http://127.0.0.1:9/body", pausen=[0, 0])
+    assert e.value.art == "tls" and abruf.statistik()["anfragen"] == vorher["anfragen"]
+
+
+@pytest.mark.parametrize("reset", [False, True])
+def test_andere_tls_fehler_sind_moegliche_sperre(oparl, monkeypatch, abbrechender_server, reset):
+    """Handshake endet unerwartet (SSLEOFError) oder wird zurückgesetzt: mögliche Sperre, keine Wiederholung."""
+    server = abbrechender_server(reset)
+    _tls_bereit(monkeypatch)
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_json(f"{server.url}/body", pausen=[0, 0])
+    assert e.value.art == "sperre" and sessionnet.moegliche_sperre(e.value) and len(server.verbindungen) == 1
+
+
+def _koeln_seite(oparl, pfad, abfrage=""):
+    """Eine Listenseite des Testservers in Kölner Form (direkt, ohne Abrufpolitik)."""
+    with OHNE_PROXY.open(f"{oparl.b}{pfad}" + (f"?{abfrage}" if abfrage else ""), timeout=10) as r:
+        return json.loads(r.read())
+
+
+def test_koelner_form_vollabruf_ohne_gesamtzahlen(oparl, monkeypatch):
+    """Ohne totalElements und totalPages, neueste zuerst: Vollabruf, Mengenprüfung beim zweiten Vollabruf und Statistik
+    ohne falsche Sperre und ohne falschen Abbruch."""
+    oparl.form = "koeln"
+    seite = _koeln_seite(oparl, "/papers")
+    assert seite["pagination"] == {"elementsPerPage": 2, "currentPage": 1} and sorted(seite["links"]) == [
+        "first", "next", "self"]
+    assert [p["id"].rsplit("/", 1)[1] for p in seite["data"]] == ["5", "4"]   # neueste zuerst
+    sessionnet.fetch_all()
+    assert sorted(p["id"] for p in _jsonl(config.PAPERS)) == sorted(p["id"] for p in oparl.papers)
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "ja")
+    sessionnet.fetch_all()                                                 # Mengenprüfung (90 %) ohne Gesamtzahlen
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"sperre_verdacht", "listenfehler", "letzter_abbruch"} & set(zustand)
+    assert "abruf_fehler" not in json.loads(config.STAND.read_text())
+    z = [r for r in _statistik() if r["liste"] == "papers"]
+    assert [(r["modus"], r["seiten"], r["objekte"], r["ergebnis"]) for r in z] == [("voll", "3", "5", "ok")] * 2
+
+
+def test_koelner_form_fortsetzung_mit_seitenverschiebung(oparl, monkeypatch):
+    """Neueste zuerst, Vollabruf über zwei Nächte: Zwischen den Nächten kommen vier Vorlagen hinzu und verschieben die
+    Seiten. Die Fortsetzung beginnt eine Seite zurück (Seite 2, jetzt mit zwei neuen Vorlagen); die Seiten 3 und 4
+    bringen nur schon gelesene Vorlagen (keine Schleife, kein Listenfehler), Doppelungen werden zusammengeführt; die
+    übrigen neuen Vorlagen holt der nächste inkrementelle Lauf (ohne Löschungen geht so keine verloren)."""
+    oparl.form = "koeln"
+    _nach_seite(monkeypatch, 3, lambda: abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster"))
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–2 (5, 4, 3, 2)
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    assert fort["seiten"] == 2 and fort["naechste"].endswith("/papers?page=2")
+    jetzt = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    oparl.papers += [oparl.paper(i, modified=jetzt) for i in range(6, 10)]   # neue Vorlagen am Listenanfang
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Fortsetzung ab Seite 2
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["2", "3", "4", "5"]
+    ids = [p["id"] for p in _jsonl(config.PAPERS)]
+    assert len(ids) == len(set(ids)) == 7                                   # 5, 4, 3, 2 doppelt gelesen, einmal gespeichert
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"sperre_verdacht", "listenfehler", "letzter_abbruch", "papers_fortsetzung"} & set(zustand)
+    z = [r for r in _statistik() if r["liste"] == "papers"]
+    assert (z[-1]["modus"], z[-1]["seiten"], z[-1]["objekte"], z[-1]["ergebnis"]) == ("voll, fortgesetzt", "6", "7", "ok")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 3: inkrementell
+    assert all("modified_since" in q for p, q, _ in oparl.anfragen if p == "/papers")
+    assert sorted(p["id"] for p in _jsonl(config.PAPERS)) == sorted(p["id"] for p in oparl.papers)   # alle 9
+
+
+def test_fortsetzung_eine_seite_zurueck_faengt_loeschungen_ab(oparl, monkeypatch):
+    """Zwischen zwei Nächten werden zwei schon gelesene Vorlagen gelöscht (aus der Liste entfernt): Die folgenden rücken
+    eine Seite nach vorn. Weil die Fortsetzung eine Seite zurück beginnt, fehlt keine (bis zu einer Seite Löschungen)."""
+    oparl.form = "koeln"
+    oparl.papers = [oparl.paper(i) for i in range(1, 8)]                  # Seiten 7, 6 | 5, 4 | 3, 2 | 1
+    _nach_seite(monkeypatch, 3, lambda: abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster"))
+    sessionnet.fetch_all()                                                 # Nacht 1: 7, 6, 5, 4
+    oparl.papers = [p for p in oparl.papers if not p["id"].endswith(("/7", "/6"))]   # jetzt 5, 4 | 3, 2 | 1
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: ab Seite 2 (3, 2), dann 1
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["2", "3"]
+    gespeichert = {p["id"].rsplit("/", 1)[1] for p in _jsonl(config.PAPERS)}
+    assert {"1", "2", "3"} <= gespeichert                                  # ab Seite 3 wären 3 und 2 übersprungen
+
+
+@pytest.mark.parametrize("tage, ergebnis", [(9.5, "ok"), (3.5, "liste")])
+def test_seitenverschiebung_ueber_mehrere_tage(oparl, monkeypatch, tage, ergebnis):
+    """Neueste zuerst, 5 je Seite: Nacht 1 liest 20 Seiten (110 bis 11), dann ausgelassene Nächte mit 9 neuen Vorlagen je
+    Tag (90). Die Fortsetzung (ab Seite 20) bringt 19 Seiten nur schon gelesener Vorlagen. Erlaubt sind 4 Seiten je
+    angefangenem Tag seit `gespeichert`: nach 10 Tagen 40 (Lauf vollständig, die neuen Vorlagen holt der inkrementelle
+    Lauf), nach 4 Tagen 16 (Abbruch der Art `liste`); mit fest 4 Seiten bräche auch der erste Fall ab."""
+    oparl.form, oparl.groesse = "koeln", 5
+    oparl.papers = [oparl.paper(i) for i in range(1, 111)]
+    _nach_seite(monkeypatch, 21, lambda: abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster"))
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–20
+    z = json.loads(config.ZUSTAND.read_text())
+    assert (z["papers_fortsetzung"]["seiten"], z["papers_fortsetzung"]["naechste"][-8:]) == (20, "?page=20")
+    z["papers_fortsetzung"]["gespeichert"] = (datetime.now(timezone.utc) - timedelta(days=tage)).isoformat(
+        timespec="seconds")
+    config.ZUSTAND.write_text(json.dumps(z))
+    jetzt = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    oparl.papers += [oparl.paper(i, modified=jetzt) for i in range(111, 201)]   # 9 je Tag an 10 Tagen
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Fortsetzung ab Seite 20
+    seiten = [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"]
+    zustand = json.loads(config.ZUSTAND.read_text())
+    if ergebnis == "ok":
+        assert seiten == [str(n) for n in range(20, 41)]                    # 19 verschobene Seiten, dann 10 bis 1
+        assert not {"listenfehler", "letzter_abbruch", "papers_fortsetzung"} & set(zustand)
+        assert len(_jsonl(config.PAPERS)) == 110
+        sessionnet.fetch_all()                                             # Nacht 3: inkrementell, die 90 neuen
+        assert len(_jsonl(config.PAPERS)) == 200
+    else:
+        assert seiten == [str(n) for n in range(20, 37)]                    # 16 erlaubt, die 17. bricht ab
+        assert zustand["listenfehler"]["naechte"] == 1 and "papers_fortsetzung" not in zustand
+        z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+        assert "mehr als 16 Seiten ohne neue Kennungen in der Fortsetzung" in z["ergebnis"]
+
+
+def test_echte_schleife_auch_in_der_fortsetzung(monkeypatch):
+    """In einer Fortsetzung bleibt eine Schleife eine Schleife: eine Seite, deren Kennungen alle schon in diesem Lauf
+    kamen (auch mit neuem links.next), und eine wiederholte Adresse; die erlaubte Verschiebung (hier 40) gilt nur für
+    Seiten mit Vorlagen aus früheren Nächten und ist begrenzt."""
+    seiten = iter(range(3, 100))
+    abrufe = []
+
+    def get_json(url, pausen=None):
+        abrufe.append(url)
+        return {"data": [{"id": "x/1"}, {"id": "x/2"}], "links": {"next": f"http://127.0.0.1/l?page={next(seiten)}"}}
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    alt = [{"id": "x/1"}, {"id": "x/2"}]
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=alt, seiten=1, verschiebung=40)
+    assert e.value.art == "liste" and "im Kreis" in str(e.value) and len(abrufe) == 2
+    # wiederholte Adresse
+    abrufe.clear()
+    monkeypatch.setattr(abruf, "get_json", lambda url, pausen=None: abrufe.append(url) or {
+        "data": [{"id": f"y/{len(abrufe)}"}], "links": {"next": "http://127.0.0.1/l?page=2"}})
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=alt, seiten=1, verschiebung=40)
+    assert e.value.art == "liste" and "bereits gelesene Seite" in str(e.value) and len(abrufe) == 1
+    # nach einer Seite mit neuen Kennungen dieselbe Seite noch einmal: sofort Schleife
+    abrufe.clear()
+    monkeypatch.setattr(abruf, "get_json", lambda url, pausen=None: abrufe.append(url) or {
+        "data": [{"id": "x/3"}], "links": {"next": f"http://127.0.0.1/l?page={next(seiten)}"}})
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=alt, seiten=1, verschiebung=40)
+    assert e.value.art == "liste" and len(abrufe) == 2
+    # verschiedene Seiten aus früheren Nächten: bis zur erlaubten Verschiebung, dann Abbruch
+    abrufe.clear()
+    alt = [{"id": f"z/{n}"} for n in range(10)]
+    monkeypatch.setattr(abruf, "get_json", lambda url, pausen=None: abrufe.append(url) or {
+        "data": [{"id": f"z/{len(abrufe)}"}], "links": {"next": f"http://127.0.0.1/l?page={next(seiten)}"}})
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=alt, seiten=1, verschiebung=3)
+    assert e.value.art == "liste" and "mehr als 3 Seiten ohne neue Kennungen" in str(e.value) and len(abrufe) == 4
+    # ohne Fortsetzung gilt der Schutz sofort
+    abrufe.clear()
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l")
+    assert e.value.art == "liste" and len(abrufe) == 2
+
+
+def test_verschiebung_je_angefangenem_tag():
+    jetzt = datetime(2026, 11, 9, 22, 15, tzinfo=timezone.utc)
+    for gespeichert, seiten in ((None, 4), ("gestern", 4), ("2026-11-09T22:00:00", 4),     # fehlt, unlesbar, ohne Zone
+                                ((jetzt + timedelta(hours=1)).isoformat(), 4),                # in der Zukunft
+                                ((jetzt - timedelta(hours=12)).isoformat(), 4),
+                                ((jetzt - timedelta(hours=25)).isoformat(), 8),
+                                ((jetzt - timedelta(days=9, hours=12)).isoformat(), 40),
+                                ((jetzt - timedelta(days=30)).isoformat(), 40)):             # höchstens 40
+        assert sessionnet.verschiebung_erlaubt(gespeichert, jetzt) == seiten, gespeichert
+
+
+def test_tls_naechte_pausieren_sieben_tage(oparl, monkeypatch):
+    """Gescheiterte Zertifikatsprüfung: keine Sperrnacht, aber gezählt (`tlsfehler`, Nächte, nicht Läufe); nach drei
+    Nächten ohne vollständigen Lauf sieben Tage Pause ohne Anfrage; ein vollständiger Lauf setzt den Zähler zurück."""
+    versuche = []
+
+    def oeffnen(req, timeout=None):
+        versuche.append(req.full_url)
+        raise ssl.SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed")
+    monkeypatch.setattr(abruf, "_OEFFNER", types.SimpleNamespace(open=oeffnen))
+    uhr = _scheinuhr(monkeypatch)
+    for nacht in range(1, 4):
+        for _ in range(2 if nacht == 1 else 1):                            # zwei Läufe in einer Nacht (lokal erlaubt)
+            sessionnet.fetch_all()
+        zustand = json.loads(config.ZUSTAND.read_text())
+        assert zustand["tlsfehler"]["naechte"] == nacht and "sperre_verdacht" not in zustand
+        uhr.t += timedelta(days=1)
+    n = len(versuche)
+    sessionnet.fetch_all()                                                 # vierte Nacht: Pause, kein Versuch
+    assert len(versuche) == n and "Zertifikatsprüfung" in json.loads(config.STAND.read_text())["abruf_uebersprungen"][
+        "grund"]
+    uhr.t += timedelta(days=7)
+    monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+    sessionnet.fetch_all()                                                 # nach der Pause: vollständig, Zähler weg
+    assert "tlsfehler" not in json.loads(config.ZUSTAND.read_text()) and len(_jsonl(config.PAPERS)) == 5
+
+
+# --- Runde 11: `gespeichert` bleibt, solange eine Fortsetzung die verschobene Zone nicht verlassen hat ------------------
+
+def _vorlagenseite_stoert(monkeypatch, stoerungen):
+    """abruf.get_json, das für die Vorlagenseite mit genau dieser Nummer (Parameter `page`, ohne: 1) einmal
+    `stoerungen[nummer]()` auslöst."""
+    echt = abruf.get_json
+
+    def get_json(url, pausen=None):
+        teile = urllib.parse.urlsplit(url)
+        seite = dict(x.partition("=")[::2] for x in teile.query.split("&") if x).get("page", "1")
+        if teile.path.endswith("/papers") and seite in stoerungen:
+            raise stoerungen.pop(seite)()
+        return echt(url, pausen)
+    monkeypatch.setattr(abruf, "get_json", get_json)
+
+
+def _neue_vorlagen(oparl, anzahl):
+    """`anzahl` neue Vorlagen am Listenanfang (neueste zuerst), jetzt geändert."""
+    start = max(int(p["id"].rsplit("/", 1)[1]) for p in oparl.papers) + 1
+    jetzt = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    oparl.papers += [oparl.paper(i, modified=jetzt) for i in range(start, start + anzahl)]
+
+
+def _ende_fenster():
+    return abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster")
+
+
+def _zeitueberschreitung():
+    return abruf.Abbruch("Zeitüberschreitung oder Verbindungsabbruch, mögliche Sperre", "sperre")
+
+
+@pytest.mark.parametrize("abbruch_bei, bleibt", [("30", True), ("31", True), ("51", False)])
+def test_gespeichert_bleibt_in_der_verschobenen_zone(oparl, monkeypatch, abbruch_bei, bleibt):
+    """Neueste zuerst, 5 je Seite: Nacht 1 liest 30 Seiten (200 bis 51) und bricht ab; 12 Tage ohne Lauf mit 8 neuen
+    Vorlagen je Tag (96: die Seiten 30–49 bringen nur schon gelesene). Nacht 2 bricht vor der ersten Seite (Anfrage an
+    Seite 30), nach der ersten (Seite 31) oder erst nach der ersten Seite mit neuen Kennungen ab (Seite 51): In den
+    ersten beiden Fällen bleibt `gespeichert` bei Nacht 1, sonst gilt Nacht 2. Nacht 3 (8 weitere) ist vollständig, ohne
+    Listenfehler; mit `gespeichert` aus Nacht 2 erlaubte sie in den ersten Fällen nur 4 statt der nötigen 21 verschobenen
+    Seiten."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 5
+    oparl.papers = [oparl.paper(i) for i in range(1, 201)]
+    _vorlagenseite_stoert(monkeypatch, {"31": _ende_fenster})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–30
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    assert (fort["seiten"], fort["naechste"][-8:], fort["gespeichert"]) == (30, "?page=30", _nacht(0).isoformat())
+    _neue_vorlagen(oparl, 12 * 8)                                          # 12 Tage ohne Lauf, 8 neue je Tag
+    uhr.t = _nacht(12)
+    _vorlagenseite_stoert(monkeypatch, {abbruch_bei: _zeitueberschreitung})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Abbruch
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == [str(n) for n in range(30, int(abbruch_bei))]
+    zustand = json.loads(config.ZUSTAND.read_text())
+    fort = zustand["papers_fortsetzung"]
+    assert fort["gespeichert"] == (_nacht(0) if bleibt else _nacht(12)).isoformat()
+    assert fort["naechste"].endswith(f"?page={max(30, int(abbruch_bei) - 1)}")
+    assert zustand["sperre_verdacht"]["naechte"] == 1 and "listenfehler" not in zustand
+    _neue_vorlagen(oparl, 8)
+    uhr.t = _nacht(13)
+    sessionnet.fetch_all()                                                 # Nacht 3: vollständig
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"listenfehler", "letzter_abbruch", "sperre_verdacht", "papers_fortsetzung"} & set(zustand)
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert (z["modus"], z["ergebnis"]) == ("voll, fortgesetzt", "ok")
+    assert len(_jsonl(config.PAPERS)) == 200                               # die neuen holt der inkrementelle Lauf
+
+
+def test_gespeichert_bleibt_nach_retry_after_von_30_tagen(oparl, monkeypatch):
+    """Nacht 1 liest 40 Seiten (250 bis 51) und gibt nach 429 mit Retry-After von 30 Tagen auf (`nicht_vor`); bis dahin
+    keine Anfrage, 6 neue Vorlagen je Tag. Nacht 2 (Tag 30, 180 neue) bricht nach 3 Seiten in der verschobenen Zone ab:
+    `gespeichert` bleibt bei Nacht 1. Nacht 3 (186 neue) bringt 36 verschobene Seiten (erlaubt 40, mit `gespeichert` aus
+    Nacht 2 nur 4) und ist vollständig."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 5
+    oparl.papers = [oparl.paper(i) for i in range(1, 251)]
+    _vorlagenseite_stoert(monkeypatch, {"41": lambda: abruf.Abbruch(
+        "aufgegeben nach HTTP 429 (Retry-After 30 Tage)", "aufgegeben", code=429,
+        nicht_vor=_nacht(0) + timedelta(days=30))})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–40, dann aufgegeben
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert zustand["papers_fortsetzung"]["seiten"] == 40 and "nicht_vor" in zustand
+    for tag in range(1, 30):
+        _neue_vorlagen(oparl, 6)
+        uhr.t = _nacht(tag)
+        oparl.anfragen.clear()
+        sessionnet.fetch_all()                                             # Retry-After: übersprungen
+        assert oparl.anfragen == [], tag
+    _neue_vorlagen(oparl, 6)
+    uhr.t = _nacht(30)
+    _vorlagenseite_stoert(monkeypatch, {"43": _ende_fenster})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Seiten 40–42, Ende des Fensters
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["40", "41", "42"]
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    assert fort["gespeichert"] == _nacht(0).isoformat() and fort["naechste"].endswith("?page=42")
+    _neue_vorlagen(oparl, 6)
+    uhr.t = _nacht(31)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 3: vollständig
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"listenfehler", "papers_fortsetzung"} & set(zustand)
+    assert [r for r in _statistik() if r["liste"] == "papers"][-1]["ergebnis"] == "ok"
+    seiten = [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"]
+    assert seiten[0] == "42" and len(_jsonl(config.PAPERS)) == 250
+
+
+def test_gespeichert_bleibt_bei_neuen_vorlagen_vor_der_verschobenen_zone(oparl, monkeypatch):
+    """Mehr neue Vorlagen, als vor der Stelle der Fortsetzung lagen: Nacht 1 liest nur 15 Seiten (200 bis 126), dann 12
+    Tage mit 8 neuen je Tag (96). In Nacht 2 bringen die ersten Seiten der Fortsetzung (ab Seite 15) neue Vorlagen, erst
+    danach folgen 14 Seiten nur schon gelesener. Bricht Nacht 2 nach 3 Seiten mit neuen Vorlagen ab, hat sie die
+    verschobene Zone noch nicht erreicht: `gespeichert` bleibt bei Nacht 1, Nacht 3 ist vollständig (mit `gespeichert`
+    aus Nacht 2 erlaubte sie nur 4 verschobene Seiten)."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 5
+    oparl.papers = [oparl.paper(i) for i in range(1, 201)]
+    _vorlagenseite_stoert(monkeypatch, {"16": _ende_fenster})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–15
+    _neue_vorlagen(oparl, 12 * 8)
+    uhr.t = _nacht(12)
+    _vorlagenseite_stoert(monkeypatch, {"18": _ende_fenster})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Seiten 15–17, nur neue Vorlagen
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["15", "16", "17"]
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    assert fort["gespeichert"] == _nacht(0).isoformat() and fort["naechste"].endswith("?page=17")
+    assert len(_jsonl(config.RAW / "papers.teil.jsonl")) == 75 + 15            # 15 neue Vorlagen schon gelesen
+    _neue_vorlagen(oparl, 8)
+    uhr.t = _nacht(13)
+    sessionnet.fetch_all()                                                 # Nacht 3: vollständig
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"listenfehler", "papers_fortsetzung"} & set(zustand)
+    assert [r for r in _statistik() if r["liste"] == "papers"][-1]["ergebnis"] == "ok"
+
+
+# --- Runde 12: Die verschobene Zone ist erst mit einer ungelesenen Vorlage verlassen, die älter ist als die älteste
+# gelesene (`created`); `gespeichert` in der Zukunft ---------------------------------------------------------------------
+
+def _seiten_papers(oparl):
+    return [q.get("page", "1") for p, q, _ in oparl.anfragen if p == "/papers"]
+
+
+def _fortsetzung_papers():
+    return json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+
+
+def _vollstaendig_ohne_listenfehler():
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert not {"listenfehler", "letzter_abbruch", "sperre_verdacht", "papers_fortsetzung"} & set(zustand)
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert (z["modus"], z["ergebnis"]) == ("voll, fortgesetzt", "ok")
+
+
+@pytest.mark.parametrize("seiten_nacht_3", [2, 3])
+def test_lange_pause_zwei_strecken_gelesener_seiten(oparl, monkeypatch, seiten_nacht_3):
+    """Neueste zuerst, 25 je Seite: Nacht 1 liest 10 Seiten (400 bis 151) und bricht ab; 40 Tage ohne Lauf mit 8 neuen
+    Vorlagen je Tag (320, mehr als Nacht 1 las). Nacht 2 liest 2 Seiten nur neuer Vorlagen; Nacht 3 (8 weitere, 2 oder
+    3 Seiten) beginnt mit einer Seite aus Nacht 2 und liest dann wieder neue Vorlagen: Die Strecke aus Nacht 1 kommt
+    erst noch, `gespeichert` bleibt bei Nacht 1. Nacht 4 (8 weitere) bringt 10 Seiten nur gelesener Vorlagen (erlaubt
+    40, mit `gespeichert` aus Nacht 3 nur 4) und ist vollständig, ohne Listenfehler; Nacht 5 (inkrementell) holt die
+    neuen Vorlagen: keine fehlt, keine doppelt."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 25
+    oparl.papers = [oparl.paper(i) for i in range(1, 401)]
+    _vorlagenseite_stoert(monkeypatch, {"11": _ende_fenster})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–10
+    _neue_vorlagen(oparl, 40 * 8)
+    uhr.t = _nacht(40)
+    _vorlagenseite_stoert(monkeypatch, {"12": _ende_fenster})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Seiten 10–11, nur neue
+    assert _seiten_papers(oparl) == ["10", "11"]
+    fort = _fortsetzung_papers()
+    assert fort["gespeichert"] == _nacht(0).isoformat() and fort["naechste"].endswith("?page=11")
+    _neue_vorlagen(oparl, 8)
+    uhr.t = _nacht(41)
+    ende = 11 + seiten_nacht_3
+    _vorlagenseite_stoert(monkeypatch, {str(ende): _ende_fenster})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 3: Seite aus Nacht 2, dann neue
+    assert _seiten_papers(oparl) == [str(n) for n in range(11, ende)]
+    assert _fortsetzung_papers()["gespeichert"] == _nacht(0).isoformat()
+    _neue_vorlagen(oparl, 8)
+    uhr.t = _nacht(42)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 4: vollständig
+    _vollstaendig_ohne_listenfehler()
+    assert {p["id"] for p in oparl.papers[:400]} <= {p["id"] for p in _jsonl(config.PAPERS)}
+    uhr.t = _nacht(43)
+    sessionnet.fetch_all()                                                 # Nacht 5: inkrementell
+    ids = [p["id"] for p in _jsonl(config.PAPERS)]
+    assert len(ids) == len(set(ids)) and set(ids) == {p["id"] for p in oparl.papers}
+
+
+def test_loeschungen_ueberwiegen_gespeichert_wird_nachgezogen(oparl, monkeypatch):
+    """Neueste zuerst, 25 je Seite: Nacht 1 liest 10 Seiten (400 bis 151). Vor jeder weiteren Nacht werden 20 gelesene
+    Vorlagen gelöscht, 5 neue kommen hinzu: Die Seiten rücken nach vorn, die Fortsetzung (eine Seite zurück) liest gleich
+    ungelesene Vorlagen, älter als die älteste gelesene. `gespeichert` folgt so jeder Nacht (sonst wüchse die erlaubte
+    Verschiebung bis 40, ein schwächerer Schutz gegen Schleifen). Nächte 2 bis 4 mit je 2 Seiten, Nacht 5 vollständig,
+    Nacht 6 inkrementell: Es fehlt keine Vorlage, die gelöschten bleiben bis zum nächsten Vollabruf."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 25
+    oparl.papers = [oparl.paper(i) for i in range(1, 401)]
+    _vorlagenseite_stoert(monkeypatch, {"11": _ende_fenster})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–10
+    geloescht = set()
+    for nacht in (2, 3, 4):
+        gelesen = {p["id"] for p in _jsonl(config.RAW / "papers.teil.jsonl")}
+        weg = [p["id"] for p in oparl.papers[::-1] if p["id"] in gelesen][:20]
+        geloescht.update(weg)
+        oparl.papers = [p for p in oparl.papers if p["id"] not in weg]
+        _neue_vorlagen(oparl, 5)
+        uhr.t = _nacht(nacht)
+        ab = int(_fortsetzung_papers()["naechste"].rsplit("=", 1)[1])
+        _vorlagenseite_stoert(monkeypatch, {str(ab + 2): _ende_fenster})
+        sessionnet.fetch_all()                                             # 2 Seiten ab der Fortsetzung
+        assert _fortsetzung_papers()["gespeichert"] == _nacht(nacht).isoformat(), nacht
+    uhr.t = _nacht(5)
+    sessionnet.fetch_all()                                                 # Nacht 5: vollständig
+    _vollstaendig_ohne_listenfehler()
+    uhr.t = _nacht(6)
+    sessionnet.fetch_all()                                                 # Nacht 6: inkrementell
+    ids = [p["id"] for p in _jsonl(config.PAPERS)]
+    assert len(ids) == len(set(ids)) and set(ids) == {p["id"] for p in oparl.papers} | geloescht
+
+
+def test_gespeichert_in_der_zukunft_gilt_als_jetzt(oparl, monkeypatch):
+    """`gespeichert` in der Zukunft (etwa nach einer falsch gehenden Uhr): Nacht 2 (50 neue Vorlagen) erlaubt 4
+    verschobene Seiten und bricht nach 2 Seiten in der Zone ab; `gespeichert` gilt dann als jetzt, nicht als der künftige
+    Wert. Nacht 3 drei Tage später (240 weitere) bringt 9 Seiten nur gelesener Vorlagen: erlaubt 12 (4 je Tag ab Nacht
+    2), mit dem künftigen Wert nur 4 (Listenfehler)."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    oparl.form, oparl.groesse = "koeln", 25
+    oparl.papers = [oparl.paper(i) for i in range(1, 401)]
+    _vorlagenseite_stoert(monkeypatch, {"11": _ende_fenster})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–10
+    z = json.loads(config.ZUSTAND.read_text())
+    z["papers_fortsetzung"]["gespeichert"] = _nacht(30).isoformat()
+    config.ZUSTAND.write_text(json.dumps(z))
+    _neue_vorlagen(oparl, 50)
+    uhr.t = _nacht(1)
+    _vorlagenseite_stoert(monkeypatch, {"12": _ende_fenster})
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Seiten 10–11, nur gelesene
+    assert _seiten_papers(oparl) == ["10", "11"]
+    fort = _fortsetzung_papers()
+    assert fort["gespeichert"] == _nacht(1).isoformat() and fort["naechste"].endswith("?page=11")
+    assert sessionnet.verschiebung_erlaubt(fort["gespeichert"], _nacht(4)) == 12
+    _neue_vorlagen(oparl, 240)
+    uhr.t = _nacht(4)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 3: vollständig
+    _vollstaendig_ohne_listenfehler()
+    assert _seiten_papers(oparl) == [str(n) for n in range(11, 29)]         # 11, 12 neue; 13–21 nur gelesene; 22–28
+    assert {p["id"] for p in oparl.papers[:400]} <= {p["id"] for p in _jsonl(config.PAPERS)}
+
+
+@pytest.mark.parametrize("gelesen_created, neu_created, verlassen", [
+    ("2026-09-01T10:00:00+02:00", None, False),                           # ungelesene ohne created
+    ("2026-09-01T10:00:00+02:00", "gestern", False),                      # unlesbar
+    ("2026-09-01T10:00:00+02:00", "2026-08-31T10:00:00", False),          # ohne Zone
+    ("2026-09-01T10:00:00+02:00", "2026-09-01T08:00:00+00:00", False),    # so alt wie die älteste gelesene
+    ("2026-09-01T10:00:00+02:00", "2026-11-09T22:00:00+00:00", False),    # neuer: neue Vorlage am Listenanfang
+    ("2026-09-01T10:00:00+02:00", "2026-09-01T07:59:59+00:00", True),     # älter als die älteste gelesene
+    (None, "2026-08-31T10:00:00+02:00", False)])                          # alle gelesenen ohne created
+def test_verlassen_nur_nach_einer_aelteren_ungelesenen_vorlage(monkeypatch, gelesen_created, neu_created, verlassen):
+    """Eine Fortsetzung verlässt die verschobene Zone erst mit einer ungelesenen Vorlage, die älter ist als die älteste
+    gelesene; ohne lesbares `created` (mit Zone) bleibt `gespeichert` (Teilabbruch.verlassen falsch)."""
+    alt = [{"id": "x/1", "created": "2026-09-02T10:00:00+02:00"}, {"id": "x/2", "created": gelesen_created}]
+    if gelesen_created is None:
+        alt = [{"id": "x/1"}, {"id": "x/2", "created": "gestern"}]
+    neu = {"id": "x/3", **({"created": neu_created} if neu_created else {})}
+
+    def get_json(url, pausen=None):
+        if url.endswith("page=2"):
+            return {"data": [alt[1], neu], "links": {"next": "http://127.0.0.1/l?page=3"}}
+        raise abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster")
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=alt, seiten=1)
+    assert e.value.verlassen is verlassen and e.value.seiten == 2

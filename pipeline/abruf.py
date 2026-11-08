@@ -28,6 +28,11 @@
 - ebenso eine abgeschnittene oder unlesbare Antwort (http.client.HTTPException, kein OSError: IncompleteRead bei
   weniger Bytes als Content-Length oder chunked ohne Abschluss, BadStatusLine, LineTooLong, RemoteDisconnected …),
   auch als Antwort eines Proxys auf CONNECT: Art `sperre`, keine Wiederholung
+- scheitert die Zertifikatsprüfung (ssl.SSLCertVerificationError, auch als Grund eines URLError,
+  „CERTIFICATE_VERIFY_FAILED“), ist das eine Einstellung der Ausführungsumgebung (Zertifikatsspeicher, CA eines
+  Proxys), keine mögliche Sperre: Abbruch der Art `tls` ohne Wiederholung, laut (Warnung, sessionnet.py), gezählt als
+  Fehler, nicht als Anfrage (die HTTP-Anfrage wurde nicht gesendet); die 12-Stunden-Regel gilt über
+  `letzter_abbruch`. Andere TLS-Fehler (unerwartetes Ende, Reset im Handshake) können eine Sperre sein: Art `sperre`
 - eine ungültige Adresse wird nicht gesendet und nicht als Anfrage gezählt: Art `adresse`, keine Sperre. Dazu zählen
   Zeichen außerhalb von ASCII (etwa Umlaute in links.next), ein anderes Schema als http oder https (auch ftp:, file:,
   data:), eine Adresse ohne Host (http:///…, https:papers), ein Port außerhalb 0–65535 und http.client.InvalidURL (z. B.
@@ -66,6 +71,7 @@ import json
 import math
 import os
 import re
+import ssl
 import sys
 import time
 import urllib.error
@@ -106,7 +112,7 @@ def uhr():
 
 
 class Abbruch(RuntimeError):
-    """Der Abruf wird beendet; der letzte gültige Datenstand bleibt erhalten. `art`: sperre, proxy, weiterleitung,
+    """Der Abruf wird beendet; der letzte gültige Datenstand bleibt erhalten. `art`: sperre, proxy, tls, weiterleitung,
     zeitfenster, gesperrt, http, aufgegeben, unlesbar, adresse, liste oder leer; `ziel`: Ziel einer Weiterleitung; `code`:
     HTTP-Status (bei http, bei aufgegeben nach HTTP 429/5xx oder CONNECT-Antwort 429/503, bei sperre nach einer
     CONNECT-Antwort wie 502/504), sonst None; `nicht_vor`: Zeitpunkt (UTC) aus einem Retry-After, vor dem keine
@@ -210,6 +216,26 @@ def proxy_ablehnung(fehler, url=""):
         return 407 if fehler.code == 407 and proxy_gesetzt(url or fehler.filename or "") else None
     code = tunnel_status(fehler)
     return code if code in PROXY_ABLEHNUNG else None
+
+
+def zertifikatsfehler(fehler):
+    """Ist der Fehler eine gescheiterte Zertifikatsprüfung (ssl.SSLCertVerificationError oder ein SSL-Fehler mit
+    „CERTIFICATE_VERIFY_FAILED“, auch als Grund eines URLError)? Andere SSL-Fehler (SSLEOFError, Reset im Handshake)
+    zählen nicht dazu: Sie können eine Sperre sein."""
+    if isinstance(fehler, urllib.error.HTTPError):
+        return False
+    grund = fehler.reason if isinstance(fehler, urllib.error.URLError) else fehler
+    return isinstance(grund, ssl.SSLCertVerificationError) or (
+        isinstance(grund, ssl.SSLError) and "CERTIFICATE_VERIFY_FAILED" in str(grund))
+
+
+def _tls_abbruch(url, fehler):
+    """Zertifikatsprüfung gescheitert: nicht gesendet, also keine Anfrage (der Zähler wird zurückgesetzt), aber ein
+    Fehler; Art `tls`, keine mögliche Sperre."""
+    _zaehler["anfragen"] -= 1
+    return Abbruch(f"Zertifikatsprüfung fehlgeschlagen (TLS): {url} ({fehler}); keine HTTP-Anfrage gesendet. Vermutlich "
+                   "eine Einstellung der Ausführungsumgebung (Zertifikatsspeicher, CA eines Proxys); Zertifikat der "
+                   "Gegenseite oder Sperrseite nicht ausgeschlossen", "tls")
 
 
 def _proxy_abbruch(url, code):
@@ -426,7 +452,11 @@ def get_json(url, pausen=None):
             _zaehler["anfragen"] -= 1
             _zaehler["fehler"] += 1
             raise Abbruch(f"ungültige Adresse, nicht gesendet: {url} ({e})", "adresse") from e
-        except ValueError:
+        except ValueError as e:
+            if zertifikatsfehler(e):   # ssl.SSLCertVerificationError ist auch ein ValueError (sonst als URLError)
+                _zaehler["fehler"] += 1
+                _zaehler["sekunden"] += time.monotonic() - start
+                raise _tls_abbruch(url, e) from e
             # vor dem Senden: Kopfzeile nicht kodierbar (UnicodeEncodeError, etwa RATSATLAS_KONTAKT außerhalb von
             # Latin-1) oder mit Zeilenumbruch, Host nicht als IDNA kodierbar, unlesbare Proxy-Adresse. Kein
             # Sperrsignal, sondern ein Einstellungs- oder Programmfehler: laut weiterreichen, nicht als „unlesbar“
@@ -438,6 +468,9 @@ def get_json(url, pausen=None):
             # HTTPException (kein OSError): Antwort abgeschnitten (IncompleteRead) oder unlesbar (BadStatusLine,
             # LineTooLong …), auch als Antwort des Proxys auf CONNECT – wie ein Verbindungsabbruch
             _zaehler["fehler"] += 1
+            if zertifikatsfehler(e):   # Einstellung der Ausführungsumgebung: keine HTTP-Anfrage, keine Sperre
+                _zaehler["sekunden"] += time.monotonic() - start
+                raise _tls_abbruch(url, e) from e
             code = tunnel_status(e)
             if code not in TUNNEL_UEBERLAST:
                 _zaehler["sekunden"] += time.monotonic() - start
