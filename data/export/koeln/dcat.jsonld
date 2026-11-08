@@ -38,7 +38,7 @@
  },
  "dct:modified": {
   "@type": "xsd:date",
-  "@value": "2026-11-07"
+  "@value": "2026-11-08"
  },
  "dct:spatial": {
   "@type": "dct:Location",
