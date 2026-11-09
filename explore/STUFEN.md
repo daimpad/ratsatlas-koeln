@@ -113,6 +113,8 @@ RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_W
 
 ## Stufe 4 – Sitzungen
 
+> Entfällt (Entscheidung vom 09.11.2026, CLAUDE.md 9): Der erste Vollabruf aus GitHub Actions liefert die Sitzungen; ob `modified_since` bei Sitzungen wirkt, zeigt die erste Nacht nach dem Vollabruf (Filterprüfung der Pipeline).
+
 ```bash
 RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_WIEDERHOLUNGEN=0 RATSATLAS_MAX_DAUER=5 RATSATLAS_STUFE=4 RATSATLAS_MAX_ANFRAGEN=3 python3 explore/oparl_messung.py sitzungen --seiten 2
 ```
@@ -126,6 +128,8 @@ RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_W
 ```
 
 ## Stufe 5 – Stichprobe über mehrere Jahre (eigene Freigabe; CLAUDE.md 7.1)
+
+> Entfällt (Entscheidung vom 09.11.2026, CLAUDE.md 9): Die Auswertung nach CLAUDE.md 7.1 läuft auf den vollständigen Daten des ersten Vollabrufs.
 
 ```bash
 RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_WIEDERHOLUNGEN=0 RATSATLAS_MAX_DAUER=5 RATSATLAS_STUFE=5 RATSATLAS_MAX_ANFRAGEN=9 python3 explore/oparl_messung.py stichprobe --seiten 1 --von 2019 --bis 2026 --limit 100
