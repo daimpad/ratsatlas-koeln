@@ -95,3 +95,23 @@ Der Lauf endete wie vorgesehen mit `abbruch (langsam)` nach der letzten Anfrage 
 8. **Personen:** Namensfelder vorhanden; sie werden nicht ausgewertet und nicht gespeichert (Gremienbesetzung erst im zweiten Lauf).
 
 **Folgen (zur Entscheidung):** Für Stufe 3 wirkt der Jahresfilter in der vorgesehenen (unkodierten) Form nicht; nach der Regel in `STUFEN.md` entfällt die Stichprobe dieser Stufe. Möglich wären eine Stichprobe mit kodierten Jahresfiltern (Wirkung von `created_*` kodiert noch ungemessen) oder über `links.next` mit `limit=100` ohne Jahresfilter – beides nur nach neuer Freigabe.
+
+## 7. Messung Stufe 3 (09.11.2026, 23:08 Uhr, 4 Anfragen)
+
+Grundlage: Freigabe vom 09.11.2026 (CLAUDE.md 9). Der Befehl aus `STUFEN.md` lief einmal (Code `explore/` auf Stand `a65a458`); vorher `tests/test_messstufen.py` grün (113), Sperre frei, kein offener Lauf. Body und erste Gremienseite kamen aus dem Cache von Stufe 2. Ergebnisse in `ergebnisse/oparl_organisationen.tsv`, `ergebnisse/oparl_filtertest.tsv`, `ergebnisse/oparl_listen.tsv` und `ergebnisse/oparl_laeufe.tsv`. Im Cache kamen 4 Dateien hinzu, keine bestehende hat sich geändert.
+
+| Anfrage | Status | Antwortzeit | Größe |
+|---|---|---|---|
+| organizations, Seite 2 | 200 | 1,49 s | 64 784 B |
+| organizations, Seite 3 | 200 | 1,12 s | 97 305 B |
+| organizations, Seite 4 | 200 | 1,04 s | 160 665 B |
+| papers mit `created_since`/`created_until` (URL-kodiert) und `limit=100` | 200 | 3,07 s | 136 234 B |
+
+Beide Läufe endeten mit „ok“ (3 Anfragen ans Netz und 2 aus dem Cache bzw. 1 und 1); kein 429/5xx, keine Weiterleitung, keine Antwort über 5 s.
+
+1. **Gremienliste vollständig:** 96 Organisationen auf 4 Seiten (25, 25, 25, 21). Auf der letzten Seite fehlt `links.next`; `links` enthält dort `first`, `prev` und `self` (`prev` erscheint auf den Folgeseiten, auf Seite 1 nicht gesehen). Das Ende der Liste ist damit am fehlenden `next` erkennbar.
+2. **`classification`:** „Fachausschüsse und weitere Gremien“ 63, „Fraktionen und Gruppen“ 23, „Bezirksvertretungen“ 9, „Rat“ 1; `organizationType` fehlt bei allen. 34 Gremien haben ein `endDate` (darunter 15 zum 31.10.2025 und 10 zum 31.10.2020, also Ende der Wahlperiode), 62 sind ohne Enddatum.
+3. **Kodierter Zeitraumfilter wirkt:** Für zwei Werktage (3. und 4. Juni 2025) liefert Köln 42 Vorlagen, keine vor der Unter- und keine nach der Obergrenze (früheste 7 h 42 min nach der Untergrenze, späteste 4 h 14 min vor der Obergrenze). Die Seite ist nicht voll (42 von 100); `links` enthält nur `first` und `self`, `links.next` fehlt. Das Ende einer gefilterten Liste ist damit sichtbar. `first` und `self` geben die Filterwerte wie in Stufe 2 unkodiert zurück.
+4. **Umfang (grobe Schätzung):** 42 Vorlagen an zwei Werktagen entsprechen rund 20 je Werktag, also einigen tausend je Jahr. Das passt zur höchsten Kennung 135557 nur, wenn die Kennungen über mehrere Objektarten fortlaufen oder weit zurückreichen; der Vollabruf zeigt den tatsächlichen Umfang.
+
+**Folgen:** Der kodierte Jahresfilter wirkt (Regel für Stufe 5 erfüllt); Stufe 4 und 5 entfallen nach der Entscheidung vom 09.11.2026 als eigene Stufen. Für die Pipeline offen: Die Klassen der Fraktionen in `pipeline/actors.py` (`RAT_CLASSES`) stammen aus Bonn; in Köln heißt die Klasse „Fraktionen und Gruppen“ und umfasst vermutlich Rats- und Bezirksfraktionen. Ohne Anpassung bleibt die Zuordnung der Einreichenden zu einer Organisation leer (der Titel nennt die Fraktion weiterhin).
