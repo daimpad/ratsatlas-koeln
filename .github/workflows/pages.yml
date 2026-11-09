@@ -189,6 +189,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Wartezeit 20 statt 10 min: Am 09.11.2026 stand die Übergabe bei GitHub rund 10 min in Warteschlange und
+      # Dateiabgleich und brach ab, obwohl das Paket so groß war wie sonst (54 MB, sonst unter 1 min)
       - name: Auf GitHub Pages veröffentlichen (Spiegel)
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346  # v5.0.1
+        with:
+          timeout: 1200000   # Millisekunden
