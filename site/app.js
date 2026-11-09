@@ -71,16 +71,21 @@
   // rund 200 ms beim Öffnen eines Gebiets, mobil gedrosselt gemessen)
   const DATUM = new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", day: "2-digit", month: "2-digit", year: "numeric" });
   const fmtDate = (iso) => iso ? DATUM.format(new Date(iso.length === 10 ? iso + "T12:00:00Z" : iso)) : "";
-  // Datum eines Zeitpunkts (STAND.json, index.json; voller Zeitstempel, UTC) in Europe/Berlin: 23:30 UTC ist dort schon
-  // der nächste Tag; ist nur der Anfang lesbar, die ersten zehn Zeichen; ist auch der kein Datum (null, „kaputt“),
-  // „unbekannt“ statt eines RangeError
-  const zeitDatum = (wert) => {
-    const s = String(wert ?? "");
-    if (!ISO_DAY.test(s.slice(0, 10))) return "unbekannt";
-    const voll = new Date(s);
+  // Kalendertag (JJJJ-MM-TT) eines Zeitpunkts (STAND.json, index.json; voller Zeitstempel, UTC) in Europe/Berlin:
+  // 23:30 UTC ist dort schon der nächste Tag; ein Zeitstempel ohne Zone gilt als UTC (sonst hinge der Tag von der Zone
+  // des Rechners ab); ist nur der Anfang lesbar, die ersten zehn Zeichen; ist auch der kein Datum (null, Zahl, Objekt,
+  // „kaputt“, 2026-13-45), null statt eines RangeError
+  const BERLIN_TAG = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin" });
+  const zeitTag = (wert) => {
+    const s = typeof wert === "string" ? wert : "";
+    if (!ISO_DAY.test(s.slice(0, 10))) return null;
+    const voll = new Date(s.length > 10 && !/(Z|[+-]\d{2}(:?\d{2})?)$/i.test(s) ? s + "Z" : s);
     const d = Number.isNaN(voll.getTime()) ? new Date(s.slice(0, 10) + "T12:00:00Z") : voll;
-    return Number.isNaN(d.getTime()) ? "unbekannt" : DATUM.format(d);
+    const tag = Number.isNaN(d.getTime()) ? "" : BERLIN_TAG.format(d);
+    return ISO_DAY.test(tag) ? tag : null;
   };
+  // Datum eines Zeitpunkts nach derselben Regel, sonst „unbekannt“
+  const zeitDatum = (wert) => { const tag = zeitTag(wert); return tag ? fmtDate(tag) : "unbekannt"; };
   // Nebenlisten, die beim letzten Abruf nicht aktualisiert wurden (index.json meta.abruf_warnungen,
   // pipeline/export.py): ein Satz je Liste im Datenstand, ohne Fachbegriffe und nicht nur als Farbe
   const WARNUNG_SATZ = { meetings: "Sitzungstermine wurden", organizations: "Die Liste der Gremien wurde" };
@@ -94,6 +99,12 @@
       .map((s) => `${QUELLE_NAME[s.name] || s.name}: ${zeitDatum(s.retrieved_at)}`).join(" · ");
     return `Datenstand: ${quellen || "–"}${m && m.generated_at ? ` · erzeugt ${zeitDatum(m.generated_at)}` : ""}`
       + standFehler(im && im.abruf_fehler) + standWarnungen(im && im.abruf_warnungen);
+  };
+  // Datenstand als Berliner Kalendertag (Markierung in der Zeitleiste, Jahresgrenze in hasPaperFeed) nach derselben
+  // Regel (zeitTag): Abruf des Ratsinformationssystems, sonst Erzeugung, sonst heute; nur lesbare Werte
+  const standTag = (m) => {
+    const oparl = (Array.isArray(m && m.sources) ? m.sources : []).find((s) => s && s.name === "oparl-koeln") || {};
+    return zeitTag(oparl.retrieved_at) || zeitTag(m && m.generated_at) || heute();
   };
   const debounce = (fn, ms) => { let h; return (...a) => { clearTimeout(h); h = setTimeout(() => fn(...a), ms); }; };
 
@@ -421,8 +432,9 @@
     area = next;
     meta = data.meta;
     if (index && index.meta) meta = { ...meta, generated_at: index.meta.generated_at, sources: index.meta.sources };
-    const oparl = meta.sources.find((s) => s.name === "oparl-koeln") || {};
-    dataStand = (oparl.retrieved_at || meta.generated_at || new Date().toISOString()).slice(0, 10);
+    dataStand = standTag(meta);
+    // vor der Zeitleiste: Der Datenstand steht auch, wenn ein späterer Schritt scheitert
+    $("#stand").textContent = standText(meta, index && index.meta);
     papers = data.papers;
     document.title = area.kind === STADT ? "Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer"
       : `Ratsatlas Köln – Ratsvorlagen ${area.kind === "ohne" ? "ohne Ortsbezug " + area.key : "in " + area.name}`;
@@ -444,7 +456,6 @@
     if (!$("#panel-auswertung").hidden && !$("#stats").hidden) showStats();
     render();
     syncUrl();
-    $("#stand").textContent = standText(meta, index && index.meta);
   }
 
   // --- Karte -----------------------------------------------------------------------------------------

@@ -3424,9 +3424,14 @@ def test_angenommener_kuerzerer_stand_blockiert_die_beratungen_nicht(oparl, monk
             "beratungen_kuerzer_erlaubt eines früheren Laufs: papers)") in capsys.readouterr().err
 
 
-def test_vermerk_bleibt_bis_beratungen_geschrieben_sind(oparl, monkeypatch):
+@pytest.mark.parametrize("liste", ["papers", "meetings"])
+def test_vermerk_bleibt_bis_beratungen_geschrieben_sind(oparl, monkeypatch, liste):
     """Scheitert das Schreiben von beratungen.jsonl (hier OSError, Programmfehler), bleibt der Vermerk
-    beratungen_kuerzer_erlaubt stehen; der nächste Lauf ohne Einstellung leitet die Beratungen ab und entfernt ihn."""
+    beratungen_kuerzer_erlaubt stehen; der nächste Lauf ohne Einstellung leitet die Beratungen ab und entfernt ihn.
+    Ebenso für die Sitzungen (Runde 17d: RATSATLAS_VOLLABRUF=meetings und RATSATLAS_KUERZER_ANNEHMEN=meetings,
+    Sitzungen 8 von 10 angenommen, der Lauf endet vor dem Schreiben der Beratungen 3 von 5)."""
+    if liste == "meetings":
+        _sitzungen_je_vorlage(oparl)
     sessionnet.fetch_all()
     echt = sessionnet._write
 
@@ -3436,13 +3441,37 @@ def test_vermerk_bleibt_bis_beratungen_geschrieben_sind(oparl, monkeypatch):
         return echt(pfad, text)
     monkeypatch.setattr(sessionnet, "_write", schreiben)
     with pytest.raises(OSError):
-        _kuerzere_vorlagen_angenommen(oparl, monkeypatch, oparl.papers[:3])
-    assert _zustand()["beratungen_kuerzer_erlaubt"]["listen"] == ["papers"] and len(_jsonl(config.BERATUNGEN)) == 5
+        if liste == "papers":
+            _kuerzere_vorlagen_angenommen(oparl, monkeypatch, oparl.papers[:3])
+        else:
+            oparl.meetings = [m for m in oparl.meetings if not m["id"].endswith(("/meetings/4", "/meetings/5"))]
+            monkeypatch.setenv("RATSATLAS_VOLLABRUF", "meetings")
+            monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "meetings")
+            sessionnet.fetch_all()
+    if liste == "meetings":
+        assert len(json.loads(config.MEETINGS.read_text())) == 8
+    assert _zustand()["beratungen_kuerzer_erlaubt"]["listen"] == [liste] and len(_jsonl(config.BERATUNGEN)) == 5
     monkeypatch.delenv("RATSATLAS_VOLLABRUF")
     monkeypatch.delenv("RATSATLAS_KUERZER_ANNEHMEN")
     monkeypatch.setattr(sessionnet, "_write", echt)
     sessionnet.fetch_all()
     assert len(_jsonl(config.BERATUNGEN)) == 3 and "beratungen_kuerzer_erlaubt" not in _zustand()
+
+
+@pytest.mark.parametrize("wert", ["x", {"listen": "papers"}, {"listen": ["organizations"]}])
+def test_unpassender_vermerk_lockert_die_beratungen_nicht(oparl, monkeypatch, wert):
+    """Runde 17d: Ein von Hand gesetzter Vermerk beratungen_kuerzer_erlaubt ohne papers oder meetings in einer Liste
+    (kein Objekt, `listen` als Zeichenkette, nur organizations) lockert die 90-%-Prüfung der Beratungen nicht.
+    Inkrementeller Lauf, drei Vorlagen ohne Beratung (2 von 5): Abbruch `leer`, beratungen.jsonl und Vermerk bleiben."""
+    sessionnet.fetch_all()
+    beratungen, zeit = config.BERATUNGEN.read_bytes(), _zustand()["papers"]
+    for i in range(3):
+        oparl.papers[i] = dict(oparl.papers[i], consultation=[], modified=zeit)
+    sessionnet._zustand_setzen("beratungen_kuerzer_erlaubt", wert)
+    sessionnet.fetch_all()
+    assert config.BERATUNGEN.read_bytes() == beratungen
+    assert _stand()["abruf_fehler"]["meldung"] == "Beratungen: nur 2 statt bisher 5"
+    assert _zustand()["beratungen_kuerzer_erlaubt"] == wert
 
 
 def test_leerer_beratungsstand_wird_nie_angenommen(oparl, monkeypatch):
@@ -3537,3 +3566,79 @@ def test_datenstand_mit_einer_datumsregel():
         assert ohne == ("Datenstand: – · Der letzte Abruf am unbekannt ist fehlgeschlagen; gezeigt wird der letzte "
                         "gültige Datenstand."), zone
         assert werte == ["unbekannt"] * 6 + ["09.11.2026"], zone
+
+
+# --- Runde 17d: Datenstand (#stand, dataStand) nur aus lesbaren Werten, Zeitstempel ohne Zone als UTC --------------
+
+def _app_js_teil(muster):
+    js = (Path(__file__).resolve().parents[1] / "site" / "app.js").read_text(encoding="utf-8")
+    teile = [re.search(m, js, re.S | re.M) for m in muster]
+    assert all(teile), f"Abschnitt fehlt in site/app.js: {muster}"
+    return js, "".join(t.group(0) for t in teile)
+
+
+def _node_json(code, zone):
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("node fehlt")
+    r = subprocess.run([node, "-e", code], capture_output=True, text=True, timeout=60, env={**os.environ, "TZ": zone})
+    assert r.returncode == 0, r.stderr
+    return json.loads(r.stdout)
+
+
+def _mit_oparl(wert, erzeugt=None):
+    """meta mit einer Gebietsquelle und der OParl-Quelle (retrieved_at `wert`), generated_at nur, wenn angegeben."""
+    return {"sources": [{"name": "geo-koeln", "retrieved_at": "2026-11-01"}, {"name": "oparl-koeln", "retrieved_at": wert}],
+            **({"generated_at": erzeugt} if erzeugt is not None else {})}
+
+
+def test_datenstand_nur_aus_lesbarem_wert():
+    """site/app.js (standTag, zeitTag, loadArea): Der Datenstand (dataStand: Markierung in der Zeitleiste, Jahresgrenze
+    in hasPaperFeed) ist der Berliner Kalendertag nach derselben Regel wie zeitDatum, gebildet nur aus einem lesbaren
+    Wert: retrieved_at der OParl-Quelle, sonst generated_at, sonst heute. Ein unlesbares retrieved_at („kaputt“, Zahl,
+    Objekt) brachte bis Runde 17c loadArea zum Absturz (`.slice` auf Zahl oder Objekt) oder ergab einen ungültigen
+    Stand; #stand zeigt dann „unbekannt“ und wird vor tl.setData gesetzt. Zeitstempel ohne Zone gelten als UTC (das
+    Datum hängt nicht von der Zone des Rechners ab). Ausgeführt mit node (Rechnerzone UTC und Tokio)."""
+    js, teil = _app_js_teil([r"^  const QUELLE_NAME = .*?;\n", r"^  const heute = .*?\n  const standTag = .*?\n  };\n"])
+    lade = re.search(r"^  async function loadArea\(.*?\n  }\n", js, re.S | re.M).group(0)
+    stand = "    $(\"#stand\").textContent = standText(meta, index && index.meta);\n"
+    assert "    dataStand = standTag(meta);\n" in lade and lade.count(stand) == 1
+    assert lade.index("dataStand = standTag(meta);") < lade.index(stand) < lade.index("tl.setData(")
+    faelle = [_mit_oparl("kaputt", "2026-11-09T23:30:00+00:00"), _mit_oparl(7, "2026-11-08T10:00:00+00:00"),
+              _mit_oparl({"a": 1}, "2026-11-07"), _mit_oparl("kaputt"), _mit_oparl(20261109), _mit_oparl({}, "kaputt"),
+              {}, None, {"sources": "kaputt", "generated_at": 5},
+              _mit_oparl("2026-12-31T23:30:00+00:00", "kaputt"), _mit_oparl("2026-12-31T23:30:00"),
+              _mit_oparl("2026-11-09T00:30:00"), _mit_oparl("2026-11-09 23:30:00"), _mit_oparl("2026-11-09"),
+              _mit_oparl("2026-11-05T10:00:00+00:00", "2026-11-09T10:00:00+00:00")]
+    code = (teil + f"const faelle = {json.dumps(faelle)};\n"
+            + "console.log(JSON.stringify([heute(), faelle.map(standTag), "
+            + "['kaputt', 7, {}].map((w) => standText({sources: [{name: 'oparl-koeln', retrieved_at: w}]}, {})), "
+            + "['2026-11-09T23:30:00', '2026-11-09T00:30:00', '2026-11-09 23:30:00', '2026-11-09T23:30:00.123456', "
+            + "'2026-11-09T23:30:00+09:00', '2026-11-09T23:30:00Z', '2026-11-09'].map(zeitDatum)]));")
+    for zone in ("UTC", "Asia/Tokyo"):
+        heute, tage, texte, daten = _node_json(code, zone)
+        assert tage == ["2026-11-10", "2026-11-08", "2026-11-07", heute, heute, heute, heute, heute, heute,
+                        "2027-01-01", "2027-01-01", "2026-11-09", "2026-11-10", "2026-11-09", "2026-11-05"], zone
+        assert texte == ["Datenstand: Ratsinformationssystem: unbekannt"] * 3, zone
+        assert daten == ["10.11.2026", "09.11.2026", "10.11.2026", "10.11.2026", "09.11.2026", "10.11.2026",
+                         "09.11.2026"], zone
+
+
+def test_datenstand_mit_warnung_vollstaendig():
+    """site/app.js (standText mit index.json meta.abruf_warnungen und abruf_fehler): der vollständige Text des
+    Datenstands mit Warnsatz, Datum des vollen Zeitstempels in Europe/Berlin (23:30 UTC am 09.11. → 10.11.2026).
+    Ausgeführt mit node (Rechnerzone UTC und Tokio)."""
+    _, teil = _app_js_teil([r"^  const QUELLE_NAME = .*?;\n", r"^  const ISO_DAY = .*?\n  const standText = .*?\n  };\n"])
+    m = {"sources": [{"name": "oparl-koeln", "retrieved_at": "2026-11-09T22:10:00+00:00"}],
+         "generated_at": "2026-11-09T22:40:00+00:00"}
+    warnung = {"abruf_warnungen": {"meetings": {"stand": "2026-11-09T23:30:00+00:00", "zeit": "2026-11-09T23:35:00+00:00",
+                                                "meldung": "Zeitfilter bei Sitzungen nicht angewandt"}}}
+    beides = {**warnung, "abruf_fehler": {"zeit": "2026-11-09T23:50:00+00:00", "meldung": "x"}}
+    code = (teil + f"console.log(JSON.stringify([standText({json.dumps(m)}, {json.dumps(warnung)}), "
+            + f"standText({json.dumps(m)}, {json.dumps(beides)})]));")
+    satz = "Sitzungstermine wurden beim letzten Abruf nicht aktualisiert; gezeigt wird der Stand vom 10.11.2026."
+    for zone in ("UTC", "Asia/Tokyo"):
+        nur, mit_fehler = _node_json(code, zone)
+        assert nur == f"Datenstand: Ratsinformationssystem: 09.11.2026 · erzeugt 09.11.2026 · {satz}", zone
+        assert mit_fehler == ("Datenstand: Ratsinformationssystem: 09.11.2026 · erzeugt 09.11.2026 · Der letzte Abruf "
+                              f"am 10.11.2026 ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand. · {satz}"), zone
