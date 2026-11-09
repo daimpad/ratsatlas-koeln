@@ -6,11 +6,13 @@
 # (Einstellungen → Secrets and variables → Actions → Variables). Bis dahin – und bis ein vollständiger Abruf vorliegt –
 # veröffentlicht der Lauf eine Kartenvorschau ohne Ratsvorlagen (Gebiete, Kennzahlen, Ebenen; Entscheidung 07.11.2026).
 # Weitere Variablen: RATSATLAS_KONTAKT (Kontakt im User-Agent), SITE_URL (Vorgabe https://koeln.ratsatlas.de/).
-# Abhilfen, die der Abruf in STAND.json und im Log nennt (nur für die Nacht setzen, in der sie wirken sollen, danach
-# löschen; der Zustand liegt im Zwischenspeicher dieses Workflows, ein Lauf an anderer Stelle hilft nicht):
-# RATSATLAS_VOLLABRUF („ja“ oder Listen, etwa „meetings“: Vollabruf statt modified_since, über Nächte fortgesetzt) und
-# RATSATLAS_KUERZER_ANNEHMEN (Listen, etwa „organizations“: kürzeren Vollabruf annehmen). Abstand, Zeitfenster und
-# Grenzen je Nacht sind nicht über Variablen einstellbar.
+# Abhilfen, die der Abruf in STAND.json und im Log nennt (der Zustand liegt im Zwischenspeicher dieses Workflows, ein
+# Lauf an anderer Stelle hilft nicht): RATSATLAS_VOLLABRUF („ja“ oder Listen, etwa „meetings“: Vollabruf statt
+# modified_since, über Nächte fortgesetzt) und RATSATLAS_KUERZER_ANNEHMEN (Listen, etwa „organizations“: kürzeren
+# Vollabruf annehmen). Nur so lange setzen wie nötig: „ja“ und KUERZER_ANNEHMEN für eine Nacht (danach löschen, sonst
+# jede Nacht ein Vollabruf der Vorlagen, rund 900 Anfragen); „meetings“ darf bleiben, wenn die Stadt modified_since bei
+# den Sitzungen übergeht oder ablehnt (jede Nacht alle Sitzungen, 50–200 Seiten). Abstand, Zeitfenster und Grenzen je
+# Nacht sind nicht über Variablen einstellbar.
 # Abrufpolitik: eine Verbindung, Abstand 2 s, nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (Retry-After als
 # Sekunden oder Datum eingehalten), aber nie über das Ende des Zeitfensters: Reicht die nächste Pause darüber hinaus
 # oder ist Retry-After länger als 3 h oder unlesbar, gibt der Abruf sofort auf („aufgegeben“). Ein solcher Retry-After
