@@ -5,6 +5,7 @@ import io
 import json
 import math
 import os
+import re
 import sqlite3
 import ssl
 import subprocess
@@ -161,12 +162,16 @@ def test_export_koeln(oparl, monkeypatch):
     assert (config.EXPORT / "audit_geokodierung.tsv").exists() and (config.EXPORT / "stichprobe_geokodierung.tsv").exists()
 
 
-def test_parameter_ohne_url_kodierung(oparl):
+def test_zeitwerte_url_kodiert(oparl):
+    """modified_since geht URL-kodiert hinaus (%3A, %2B): Köln wendet ihn nur so an (Stufe 2; der Testserver liest die
+    Abfrage wie PHP: „+“ unkodiert wird Leerzeichen, der Filter übergangen)."""
     sessionnet.fetch_all()
-    oparl.anfragen.clear()
-    sessionnet.fetch_all()     # der Testserver antwortet auf %3A/%2B wie SessionNet mit 404
-    seit = [q["modified_since"] for p, q, _ in oparl.anfragen if p == "/papers"]
-    assert seit and all("+00:00" in s or s.endswith("Z") for s in seit)
+    oparl.roh.clear()
+    sessionnet.fetch_all()
+    roh = [q for p, q in oparl.roh if p == "/papers"]
+    assert roh and all(re.fullmatch(r"modified_since=\d{4}-\d\d-\d\dT\d\d%3A\d\d%3A\d\d%2B00%3A00", q) for q in roh)
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert (z["modus"], z["filter_wirksam"], z["ergebnis"]) == ("inkrementell", "ja", "ok")
     assert "abruf_fehler" not in json.loads(config.STAND.read_text())
 
 
@@ -1454,9 +1459,9 @@ def test_schreibfehler_der_statistik_in_der_liste_verdraengt_den_abbruch_nicht(o
 
 
 def test_seitengrenze_gilt_je_lauf(oparl, monkeypatch):
-    """RATSATLAS_MAX_SEITEN zählt die Seiten eines Laufs, nicht die einer Fortsetzung insgesamt (sonst begänne ein großer
-    Vollabruf in einer späteren Nacht von vorn und würde nie fertig)."""
-    monkeypatch.setattr(config, "ABRUF_MAX_SEITEN", 3)
+    """RATSATLAS_MAX_OBJEKTE (in Seiten der tatsächlichen Größe) zählt die Seiten eines Laufs, nicht die einer
+    Fortsetzung insgesamt (sonst begänne ein großer Vollabruf in einer späteren Nacht von vorn und würde nie fertig)."""
+    monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", 6)                     # 3 Seiten zu 2
     monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: pfad == "/papers" and q.get("page") == "2")
     sessionnet.fetch_all()                                   # Nacht 1: Seite 1, dann HTTP 404
     assert json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]["seiten"] == 1
@@ -1468,10 +1473,12 @@ def test_seitengrenze_gilt_je_lauf(oparl, monkeypatch):
     assert (z["modus"], z["seiten"], z["ergebnis"]) == ("voll, fortgesetzt", "4", "ok")
     # die Grenze gilt weiter je Lauf: ab der vierten Seite dieses Laufs Abbruch, Seiten insgesamt in der Meldung (unter
     # der Gesamtgrenze von 3 × 3 Seiten, test_gesamtgrenze_der_seiten_ueber_fortsetzungen)
-    monkeypatch.setattr(abruf, "get_json", lambda url, pausen=None: {"data": [{"id": url}], "links": {"next": url + "x"}})
+    monkeypatch.setattr(abruf, "get_json", lambda url, pausen=None: {"data": [{"id": url}, {"id": url + "b"}],
+                                                                     "links": {"next": url + "x"}})
     with pytest.raises(sessionnet.Teilabbruch) as e:
         sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?p", objekte=[{"id": "a"}], seiten=1)
-    assert e.value.art == "liste" and "in einem Lauf" in str(e.value) and e.value.seiten == 4
+    assert e.value.art == "liste" and "mehr als 3 Seiten in einem Lauf (6 Objekte bei 2 je Seite" in str(e.value)
+    assert e.value.seiten == 4
 
 
 def test_net_prueft_das_ziel_einer_weiterleitung(monkeypatch):
@@ -1623,9 +1630,10 @@ def test_unlesbarer_retry_after_auf_dem_letzten_versuch(monkeypatch, pausen, ant
 
 
 def test_gesamtgrenze_der_seiten_ueber_fortsetzungen(oparl, monkeypatch):
-    """Ein Vollabruf über Fortsetzungen hinweg liest höchstens ABRUF_MAX_SEITEN_FAKTOR × ABRUF_MAX_SEITEN Seiten (Schutz
-    gegen eine Liste, die endlos neue Kennungen erzeugt): danach Art `liste`, Fortsetzung verworfen, Listenfehler."""
-    monkeypatch.setattr(config, "ABRUF_MAX_SEITEN", 2)
+    """Ein Vollabruf über Fortsetzungen hinweg liest höchstens ABRUF_MAX_SEITEN_FAKTOR × so viele Seiten wie je Lauf
+    (Schutz gegen eine Liste, die endlos neue Kennungen erzeugt): danach Art `liste`, Fortsetzung verworfen,
+    Listenfehler. Geprüft ab der zweiten Anfrage eines Laufs (vorher ist die Seitengröße unbekannt)."""
+    monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", 4)                     # 2 Seiten zu 2
     gesamt = config.ABRUF_MAX_SEITEN_FAKTOR * 2
     config.RAW.mkdir(parents=True, exist_ok=True)
     teil = config.RAW / "papers.teil.jsonl"
@@ -1775,6 +1783,13 @@ def test_fortsetzung_eine_seite_zurueck_faengt_loeschungen_ab(oparl, monkeypatch
     assert {"1", "2", "3"} <= gespeichert                                  # ab Seite 3 wären 3 und 2 übersprungen
 
 
+def _verschiebung_in_seiten(monkeypatch, groesse):
+    """Seitenverschiebung wie vor Runde 14 in Seiten: 4 Seiten je Tag, höchstens 40 (in Vorlagen 4 bzw. 40 × `groesse`;
+    die Vorgabe von 100 bzw. 1000 Vorlagen ergibt bei 25 je Seite dasselbe)."""
+    monkeypatch.setattr(sessionnet, "VERSCHIEBUNG_JE_TAG", 4 * groesse)
+    monkeypatch.setattr(sessionnet, "VERSCHIEBUNG_HOECHSTENS", 40 * groesse)
+
+
 @pytest.mark.parametrize("tage, ergebnis", [(9.5, "ok"), (3.5, "liste")])
 def test_seitenverschiebung_ueber_mehrere_tage(oparl, monkeypatch, tage, ergebnis):
     """Neueste zuerst, 5 je Seite: Nacht 1 liest 20 Seiten (110 bis 11), dann ausgelassene Nächte mit 9 neuen Vorlagen je
@@ -1782,6 +1797,7 @@ def test_seitenverschiebung_ueber_mehrere_tage(oparl, monkeypatch, tage, ergebni
     angefangenem Tag seit `gespeichert`: nach 10 Tagen 40 (Lauf vollständig, die neuen Vorlagen holt der inkrementelle
     Lauf), nach 4 Tagen 16 (Abbruch der Art `liste`); mit fest 4 Seiten bräche auch der erste Fall ab."""
     oparl.form, oparl.groesse = "koeln", 5
+    _verschiebung_in_seiten(monkeypatch, 5)
     oparl.papers = [oparl.paper(i) for i in range(1, 111)]
     _nach_seite(monkeypatch, 21, lambda: abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster"))
     sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–20
@@ -1856,13 +1872,13 @@ def test_echte_schleife_auch_in_der_fortsetzung(monkeypatch):
 
 def test_verschiebung_je_angefangenem_tag():
     jetzt = datetime(2026, 11, 9, 22, 15, tzinfo=timezone.utc)
-    for gespeichert, seiten in ((None, 4), ("gestern", 4), ("2026-11-09T22:00:00", 4),     # fehlt, unlesbar, ohne Zone
-                                ((jetzt + timedelta(hours=1)).isoformat(), 4),                # in der Zukunft
-                                ((jetzt - timedelta(hours=12)).isoformat(), 4),
-                                ((jetzt - timedelta(hours=25)).isoformat(), 8),
-                                ((jetzt - timedelta(days=9, hours=12)).isoformat(), 40),
-                                ((jetzt - timedelta(days=30)).isoformat(), 40)):             # höchstens 40
-        assert sessionnet.verschiebung_erlaubt(gespeichert, jetzt) == seiten, gespeichert
+    for gespeichert, vorlagen in ((None, 100), ("gestern", 100), ("2026-11-09T22:00:00", 100),   # fehlt, unlesbar, ohne
+                                  ((jetzt + timedelta(hours=1)).isoformat(), 100),                # Zone; in der Zukunft
+                                  ((jetzt - timedelta(hours=12)).isoformat(), 100),
+                                  ((jetzt - timedelta(hours=25)).isoformat(), 200),
+                                  ((jetzt - timedelta(days=9, hours=12)).isoformat(), 1000),
+                                  ((jetzt - timedelta(days=30)).isoformat(), 1000)):             # höchstens 1000
+        assert sessionnet.verschiebung_erlaubt(gespeichert, jetzt) == vorlagen, gespeichert
 
 
 def test_tls_naechte_pausieren_sieben_tage(oparl, monkeypatch):
@@ -1933,6 +1949,7 @@ def test_gespeichert_bleibt_in_der_verschobenen_zone(oparl, monkeypatch, abbruch
     _nicht_lokal(monkeypatch)
     uhr = _scheinuhr(monkeypatch, _nacht(0))
     oparl.form, oparl.groesse = "koeln", 5
+    _verschiebung_in_seiten(monkeypatch, 5)
     oparl.papers = [oparl.paper(i) for i in range(1, 201)]
     _vorlagenseite_stoert(monkeypatch, {"31": _ende_fenster})
     sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–30
@@ -1967,6 +1984,7 @@ def test_gespeichert_bleibt_nach_retry_after_von_30_tagen(oparl, monkeypatch):
     _nicht_lokal(monkeypatch)
     uhr = _scheinuhr(monkeypatch, _nacht(0))
     oparl.form, oparl.groesse = "koeln", 5
+    _verschiebung_in_seiten(monkeypatch, 5)
     oparl.papers = [oparl.paper(i) for i in range(1, 251)]
     _vorlagenseite_stoert(monkeypatch, {"41": lambda: abruf.Abbruch(
         "aufgegeben nach HTTP 429 (Retry-After 30 Tage)", "aufgegeben", code=429,
@@ -2008,6 +2026,7 @@ def test_gespeichert_bleibt_bei_neuen_vorlagen_vor_der_verschobenen_zone(oparl, 
     _nicht_lokal(monkeypatch)
     uhr = _scheinuhr(monkeypatch, _nacht(0))
     oparl.form, oparl.groesse = "koeln", 5
+    _verschiebung_in_seiten(monkeypatch, 5)
     oparl.papers = [oparl.paper(i) for i in range(1, 201)]
     _vorlagenseite_stoert(monkeypatch, {"16": _ende_fenster})
     sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–15
@@ -2143,7 +2162,7 @@ def test_gespeichert_in_der_zukunft_gilt_als_jetzt(oparl, monkeypatch):
     assert _seiten_papers(oparl) == ["10", "11"]
     fort = _fortsetzung_papers()
     assert fort["gespeichert"] == _nacht(1).isoformat() and fort["naechste"].endswith("?page=11")
-    assert sessionnet.verschiebung_erlaubt(fort["gespeichert"], _nacht(4)) == 12
+    assert sessionnet.verschiebung_erlaubt(fort["gespeichert"], _nacht(4)) == 300           # 12 Seiten zu 25
     _neue_vorlagen(oparl, 240)
     uhr.t = _nacht(4)
     oparl.anfragen.clear()
@@ -2154,11 +2173,13 @@ def test_gespeichert_in_der_zukunft_gilt_als_jetzt(oparl, monkeypatch):
 
 
 def _verlassen(monkeypatch, gelesen, ungelesen):
-    """liste() als Fortsetzung mit `gelesen` aus früheren Nächten: Seite 2 bringt die letzte gelesene und `ungelesen`,
-    danach endet das Zeitfenster. Liefert Teilabbruch.verlassen."""
+    """liste() als Fortsetzung mit `gelesen` aus früheren Nächten: Seite 2 (25 Objekte, bei weniger gelesenen
+    entsprechend weniger) bringt die ältesten gelesenen und `ungelesen`, danach endet das Zeitfenster. Liefert
+    Teilabbruch.verlassen (Grenze: created der 25.-ältesten gelesenen, eine Seite)."""
     def get_json(url, pausen=None):
         if url.endswith("page=2"):
-            return {"data": [gelesen[-1], *ungelesen], "links": {"next": "http://127.0.0.1/l?page=3"}}
+            return {"data": [*gelesen[-(25 - len(ungelesen)):], *ungelesen],
+                    "links": {"next": "http://127.0.0.1/l?page=3"}}
         raise abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster")
     monkeypatch.setattr(abruf, "get_json", get_json)
     with pytest.raises(sessionnet.Teilabbruch) as e:
@@ -2240,3 +2261,179 @@ def test_zone_verlassen_bei_gleichem_created_und_ausreisser(oparl, monkeypatch, 
     sessionnet.fetch_all()                                                 # Nacht 4: inkrementell
     ids = [p["id"] for p in _jsonl(config.PAPERS)]
     assert len(ids) == len(set(ids)) and set(ids) == {p["id"] for p in oparl.papers}
+
+
+# --- Runde 14: Zeitwerte URL-kodiert, links.next vor dem Folgen normalisiert, limit=100, Grenzen in Objekten ---------
+
+def test_folgeadresse_normalisiert_den_query_teil():
+    """links.next: je Parameter `quote(unquote(v), safe="")`, Reihenfolge, page und limit unverändert, idempotent;
+    „+“ ist ein wörtliches Plus (unquote, nicht unquote_plus). Anderer Host oder anderes Schema als die Liste:
+    Abbruch der Art `adresse`. Außerhalb von ASCII unverändert (get_json lehnt ab). Ein fehlendes limit wird ergänzt,
+    wenn die erste Adresse des Laufs es trug."""
+    liste = "https://buergerinfo.example.invalid/oparl/bodies/k/papers"
+    roh = f"{liste}?page=2&modified_since=2026-11-05T11:29:44+00:00&limit=100"
+    kodiert = f"{liste}?page=2&modified_since=2026-11-05T11%3A29%3A44%2B00%3A00&limit=100"
+    assert sessionnet.folgeadresse(roh, liste) == kodiert
+    assert sessionnet.folgeadresse(kodiert, liste) == kodiert                       # idempotent
+    assert sessionnet.folgeadresse(f"{liste}?page=3", liste) == f"{liste}?page=3"
+    assert sessionnet.folgeadresse(f"{liste}?page=3", liste, "100") == f"{liste}?page=3&limit=100"
+    assert sessionnet.folgeadresse(f"{liste}?limit=50&page=3", liste, "100") == f"{liste}?limit=50&page=3"
+    assert sessionnet.folgeadresse(f"{liste}?a=x%20y&b", liste) == f"{liste}?a=x%20y&b"
+    assert sessionnet.folgeadresse(f"{liste}?straße=ü", liste) == f"{liste}?straße=ü"   # außerhalb von ASCII
+    for fremd in ("https://andere.example.invalid/oparl/bodies/k/papers?page=2",
+                  "http://buergerinfo.example.invalid/oparl/bodies/k/papers?page=2",
+                  "https://buergerinfo.example.invalid:8443/oparl/bodies/k/papers?page=2"):
+        with pytest.raises(abruf.Abbruch) as e:
+            sessionnet.folgeadresse(fremd, liste)
+        assert e.value.art == "adresse" and "anderen Host" in str(e.value) and not sessionnet.moegliche_sperre(e.value)
+    assert os.environ.get("RATSATLAS_LIMIT") or config.ABRUF_SEITENGROESSE == "100"      # Vorgabe für Köln
+    assert sessionnet._mit_parametern(liste, modified_since="2026-11-05T11:29:44+00:00", limit="100") == (
+        f"{liste}?modified_since=2026-11-05T11%3A29%3A44%2B00%3A00&limit=100")
+
+
+def test_schleifenschutz_auf_der_normalisierten_adresse(monkeypatch):
+    """links.next zeigt auf die gelesene erste Seite, nur unkodiert: nach dem Normalisieren dieselbe Adresse, also
+    sofort eine Schleife (ohne zweite Anfrage)."""
+    abrufe = []
+    erste = "http://127.0.0.1/l?modified_since=2026-11-05T11%3A29%3A44%2B00%3A00&limit=100"
+
+    def get_json(url, pausen=None):
+        abrufe.append(url)
+        return {"data": [{"id": "x/1"}], "links": {"next": "http://127.0.0.1/l?modified_since=2026-11-05T11:29:44+00:00"
+                                                           "&limit=100"}}
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    monkeypatch.setattr(config, "ABRUF_SEITENGROESSE", "100")
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l", seit="2026-11-05T11:29:44+00:00")
+    assert abrufe == [erste] and e.value.art == "liste" and "bereits gelesene Seite" in str(e.value)
+
+
+def test_fortsetzung_speichert_die_normalisierte_adresse(oparl, monkeypatch):
+    """Trägt links.next kein limit, speichert die Fortsetzung die normalisierte Adresse mit limit (sonst ginge es in
+    der nächsten Nacht mit Seiten zu 25 weiter)."""
+    _koeln_mit_limit(oparl, monkeypatch, 450)
+    echt = oparl.liste
+
+    def ohne_limit(objekte, pfad, q, groesse=None):
+        seite = echt(objekte, pfad, q, groesse)
+        if seite["links"].get("next"):
+            adresse, _, abfrage = seite["links"]["next"].partition("?")
+            seite["links"]["next"] = adresse + "?" + "&".join(x for x in abfrage.split("&")
+                                                               if not x.startswith("limit="))
+        return seite
+    monkeypatch.setattr(oparl, "liste", ohne_limit)
+    _nach_seite(monkeypatch, 4, lambda: abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster"))
+    sessionnet.fetch_all()                                                 # Seiten 1–3, dann Ende des Zeitfensters
+    assert _fortsetzung_papers()["naechste"] == f"{oparl.b}/papers?page=3&limit=100"
+    oparl.roh.clear()
+    sessionnet.fetch_all()                                                 # Fortsetzung ab Seite 3, Seiten zu 100
+    assert [q for p, q in oparl.roh if p == "/papers"] == ["page=3&limit=100", "page=4&limit=100", "page=5&limit=100"]
+    assert len(_jsonl(config.PAPERS)) == 450
+
+
+def _koeln_mit_limit(oparl, monkeypatch, anzahl, limit="100"):
+    """Testserver in Kölner Form mit `anzahl` Vorlagen; limit wirkt (Stufe 2), die Pipeline sendet `limit`."""
+    oparl.form, oparl.limit_wirkt = "koeln", True
+    oparl.papers = [oparl.paper(i) for i in range(1, anzahl + 1)]
+    monkeypatch.setattr(config, "ABRUF_SEITENGROESSE", limit)
+
+
+def test_inkrementell_filtert_ueber_alle_seiten(oparl, monkeypatch):
+    """Köln (Stufe 2): Zeitwerte wirken nur kodiert, links.next trägt sie unkodiert. Der inkrementelle Abruf
+    normalisiert links.next und bleibt so auf allen Seiten gefiltert (unverändert gefolgt wäre Seite 2 ungefiltert)."""
+    _koeln_mit_limit(oparl, monkeypatch, 250, limit="20")
+    sessionnet.fetch_all()                                                 # Vollabruf: 13 Seiten zu 20
+    zeit = json.loads(config.ZUSTAND.read_text())["papers"]
+    for i in range(0, 250, 5):                                             # 50 Vorlagen geändert
+        oparl.papers[i] = dict(oparl.papers[i], name="geändert", modified=zeit)
+    oparl.anfragen.clear()
+    oparl.roh.clear()
+    sessionnet.fetch_all()
+    roh = [q for p, q in oparl.roh if p == "/papers"]
+    assert len(roh) == 3 and roh[0].startswith("modified_since=") and "limit=20" in roh[0]
+    assert all("%2B00%3A00" in q and "+" not in q for q in roh)            # auch Seite 2 und 3 kodiert
+    assert [q.get("page", "1") for p, q, _ in oparl.anfragen if p == "/papers"] == ["1", "2", "3"]
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert (z["modus"], z["seiten"], z["neu"], z["geaendert"], z["filter_wirksam"], z["ergebnis"]) == (
+        "inkrementell", "3", "0", "50", "ja", "ok")
+    assert sum(p["name"] == "geändert" for p in _jsonl(config.PAPERS)) == 50
+
+
+def test_limit_100_und_fehlendes_limit_in_links_next(oparl, monkeypatch):
+    """limit=100 an der ersten Listenadresse; trägt links.next ihn nicht, wird er angehängt (sonst kämen ab Seite 2
+    Seiten zu 25 mit schon gelesenen Vorlagen: Schleife)."""
+    _koeln_mit_limit(oparl, monkeypatch, 250)
+    echt = oparl.liste
+
+    def ohne_limit(objekte, pfad, q, groesse=None):
+        seite = echt(objekte, pfad, q, groesse)
+        if seite["links"].get("next"):
+            adresse, _, abfrage = seite["links"]["next"].partition("?")
+            seite["links"]["next"] = adresse + "?" + "&".join(x for x in abfrage.split("&")
+                                                               if not x.startswith("limit="))
+        return seite
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "ja")
+    for liste, erwartet in ((echt, ["limit=100", "limit=100&page=2", "limit=100&page=3"]),
+                            (ohne_limit, ["limit=100", "page=2&limit=100", "page=3&limit=100"])):
+        monkeypatch.setattr(oparl, "liste", liste)
+        oparl.roh.clear()
+        sessionnet.fetch_all()
+        assert [q for p, q in oparl.roh if p == "/papers"] == erwartet
+        z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+        assert (z["seiten"], z["objekte"], z["ergebnis"]) == ("3", "250", "ok")
+
+
+@pytest.mark.parametrize("neu, tage, ergebnis", [(99, 1, "ok"), (101, 1, "liste"), (101, 2, "ok")])
+def test_fortsetzung_ueber_naechte_mit_100er_seiten(oparl, monkeypatch, neu, tage, ergebnis):
+    """Kölner Form, 100 je Seite (Scheinuhr): Nacht 1 liest die Seiten 1–4 (1000 bis 601) und bricht am Ende des
+    Zeitfensters ab; die Fortsetzung speichert die normalisierte Adresse mit limit. Bis Nacht 2 kommen `neu` Vorlagen
+    hinzu. Erlaubt sind 100 Vorlagen je angefangenem Tag, in Seiten zu 100 aufgerundet: 99 neue in einem Tag ergeben
+    eine Seite ohne neue Kennungen (die wiederholte), 101 zwei (Listenfehler), nach zwei Tagen sind zwei erlaubt.
+    Danach holt der inkrementelle Lauf die neuen Vorlagen: keine fehlt, keine doppelt."""
+    _nicht_lokal(monkeypatch)
+    uhr = _scheinuhr(monkeypatch, _nacht(0))
+    _koeln_mit_limit(oparl, monkeypatch, 1000)
+    _vorlagenseite_stoert(monkeypatch, {"5": _ende_fenster})
+    sessionnet.fetch_all()                                                 # Nacht 1: Seiten 1–4
+    fort = _fortsetzung_papers()
+    assert (fort["seiten"], fort["naechste"]) == (4, f"{oparl.b}/papers?limit=100&page=4")
+    _neue_vorlagen(oparl, neu)
+    uhr.t = _nacht(tage)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Fortsetzung ab Seite 4
+    zustand = json.loads(config.ZUSTAND.read_text())
+    if ergebnis == "liste":
+        assert _seiten_papers(oparl) == ["4", "5"] and zustand["listenfehler"]["naechte"] == 1
+        z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+        assert ("mehr als 1 Seiten ohne neue Kennungen in der Fortsetzung (erlaubte Seitenverschiebung 100 Vorlagen "
+                "bei 100 je Seite)") in z["ergebnis"]
+        return
+    _vollstaendig_ohne_listenfehler()
+    assert _seiten_papers(oparl) == [str(n) for n in range(4, math.ceil((1000 + neu) / 100) + 1)]
+    uhr.t = _nacht(tage + 1)
+    sessionnet.fetch_all()                                                 # Nacht 3: inkrementell
+    ids = [p["id"] for p in _jsonl(config.PAPERS)]
+    assert len(ids) == len(set(ids)) == 1000 + neu
+
+
+@pytest.mark.parametrize("platzhalter, sekunden, verlassen", [
+    (0, 0, True), (0, 1, False),     # Grenze: created der 100.-ältesten gelesenen (eine Seite zu 100)
+    (99, 0, True),                   # 99 Platzhalterdaten verschieben sie nicht
+    (100, 0, False)])                # ab 100 ist die Grenze ein Platzhalterdatum
+def test_grenze_ist_eine_seite_der_tatsaechlichen_groesse(monkeypatch, platzhalter, sekunden, verlassen):
+    """Grenze der verschobenen Zone bei 100 je Seite: created der 100.-ältesten gelesenen Vorlage (Seitengröße aus der
+    gelesenen Seite, nicht fest 25). 120 gelesene im Abstand von einer Stunde, die ältesten `platzhalter` mit
+    Platzhalterdatum; Seite 2 bringt 99 gelesene und eine ungelesene, `sekunden` nach der 100.-ältesten."""
+    erste = datetime(2026, 9, 1, 10, tzinfo=timezone.utc)
+    gelesen = [{"id": f"x/{i}", "created": ("1970-01-01T00:00:00+00:00" if i < platzhalter else
+                                            (erste + timedelta(hours=i)).isoformat())} for i in range(120)][::-1]
+    neu = {"id": "x/neu", "created": (erste + timedelta(hours=99, seconds=sekunden)).isoformat()}
+
+    def get_json(url, pausen=None):
+        if url.endswith("page=2"):
+            return {"data": [*gelesen[-99:], neu], "links": {"next": "http://127.0.0.1/l?page=3"}}
+        raise abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr", "zeitfenster")
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l", start="http://127.0.0.1/l?page=2", objekte=gelesen, seiten=1)
+    assert e.value.verlassen is verlassen

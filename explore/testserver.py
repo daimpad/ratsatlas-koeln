@@ -6,9 +6,14 @@ OParl-Spezifikation 1.1 und dem, was über die Kölner API bekannt ist (CLAUDE.m
 explore/ergebnisse/sessionnet_befunde.tsv):
 - System → Body mit den Listen paper, meeting, organization, person; 25 Objekte je Seite
 - Paginierung nur über links.next; Folgeseiten übernehmen alle Parameter ohne URL-Kodierung (wie SessionNet)
-- URL-kodierte Parameter (%3A, %2B …) → HTTP 404 (SessionNet in Wuppertal); Seite hinter der letzten → HTTP 401
-  (Köln: 401 bei sehr hoher Seitennummer; die genaue Schwelle ist offen)
-- Filter created_since/_until und modified_since/_until; `limit` wird ignoriert (die Spezifikation erlaubt das)
+- Kodierung „sessionnet“ (Vorgabe): URL-kodierte Parameter (%3A, %2B …) → HTTP 404 (SessionNet in Wuppertal; so bis
+  Stufe 2 auch für Köln angenommen); Kodierung „koeln“ (Parameter `kodierung`, wie Köln in Stufe 2, 08.11.2026): die
+  Abfrage wird wie in PHP gelesen („+“ wird Leerzeichen, %2B wird „+“), ein so unlesbarer Zeitwert (unkodiert mit
+  „+01:00“) wird übergangen (gleiche Seite wie ohne Filter), ein kodierter angewandt; links trägt die gelesenen Werte
+  unkodiert (`…?page=2&modified_since=2026-11-05T11:29:44+00:00`); `limit` wirkt
+- Seite hinter der letzten → HTTP 401 (Köln: 401 bei sehr hoher Seitennummer; die genaue Schwelle ist offen)
+- Filter created_since/_until und modified_since/_until; `limit` wird mit der Kodierung „sessionnet“ ignoriert (die
+  Spezifikation erlaubt das)
 - Vorlagen über mehrere Jahre mit Referenzen „NNNN/JJJJ“ und „AN/NNNN/JJJJ“; consultation verweist direkt auf
   meeting und agendaItem; location nur mit subLocality; kein underDirectionOf
 - Dateien unter …/downloadfiles/<Nummer>.pdf als kleine PDF-Datei mit erfundenem Kopf
@@ -36,7 +41,7 @@ import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlsplit
+from urllib.parse import unquote_plus, urlsplit
 
 SEITE = 25
 JAHRE = range(2015, 2027)
@@ -48,6 +53,7 @@ OPARL = "https://schema.oparl.org/1.1/"
 ERGEBNISSE = ("ungeändert beschlossen", "geändert beschlossen", "zur Kenntnis genommen", "vertagt", None)
 ORGTYPEN = ("Gremium", "Gremium", "Fraktion", "Verwaltungsbereich", "Sonstiges")
 FORMEN = ("bisher", "koeln")
+KODIERUNGEN = ("sessionnet", "koeln")
 # Kölner Muster der Vorlagenart (Stufe 1); {n} Bezirksvertretung, {f} Fraktion
 ARTEN_KOELN_POLITIK = ("Antrag nach § 3 BV{n} ({f})", "Änderungsantrag BV{n} ({f})", "Anfrage nach § 4 BV{n} ({f})",
                        "Antrag nach § 3 der Geschäftsordnung des Rates")
@@ -57,6 +63,15 @@ FRAKTIONEN_KOELN = ("CDU", "SPD", "Grüne", "FDP", "Die Linke", "Volt")
 
 def _zeit(wert):
     return dt.datetime.fromisoformat(wert.replace("Z", "+00:00"))
+
+
+def _zeit_oder_none(wert):
+    """Zeitwert mit Zone oder None (Köln übergeht einen Filter mit unlesbarem Wert, Kodierung „koeln“)."""
+    try:
+        t = _zeit(wert)
+    except ValueError:
+        return None
+    return t if t.tzinfo else None
 
 
 def pdf(text: str) -> bytes:
@@ -242,10 +257,13 @@ class Testserver:
     `abschneiden(pfad)`: True sendet nur die Hälfte des Inhalts bei vollem Content-Length und schließt die Verbindung
     (abgeschnittene Antwort). `host`: 127.0.0.1 (Vorgabe) oder eine andere Loopback-Adresse wie 127.0.0.2, die
     oparl_messung.lokal() nicht als lokal ansieht (Tests der Regeln für Anfragen an die Stadt ohne Netz).
-    `form`: „bisher“ (Vorgabe) oder „koeln“ (Antwortform aus Stufe 1, siehe oben)."""
+    `form`: „bisher“ (Vorgabe) oder „koeln“ (Antwortform aus Stufe 1, siehe oben); `kodierung`: „sessionnet“ (Vorgabe)
+    oder „koeln“ (Parameter wie Köln in Stufe 2, siehe oben)."""
 
-    def __init__(self, port=0, host="127.0.0.1", **kw):
+    def __init__(self, port=0, host="127.0.0.1", kodierung="sessionnet", **kw):
         assert host.startswith("127."), "nur Loopback-Adressen"
+        assert kodierung in KODIERUNGEN, kodierung
+        self.kodierung = kodierung
         self.anfragen = []
         self.eingang = []
         self.ausgang = []
@@ -279,9 +297,13 @@ class Testserver:
     def antwort(self, pfad, abfrage):
         """(Status, Inhaltstyp, Bytes) für eine Anfrage."""
         d = self.daten
-        if "%" in abfrage:      # wie SessionNet: kodierte Parameter ergeben 404 text/html
+        koeln = self.kodierung == "koeln"
+        if "%" in abfrage and not koeln:      # wie SessionNet: kodierte Parameter ergeben 404 text/html
             return 404, "text/html", b"<html><body>Not Found</body></html>"
-        q = dict(x.partition("=")[::2] for x in abfrage.split("&") if x)   # „+“ bleibt „+“
+        if koeln:   # wie PHP (Köln, Stufe 2): „+“ wird Leerzeichen, %2B wird „+“
+            q = {k: unquote_plus(v) for k, v in (x.partition("=")[::2] for x in abfrage.split("&") if x)}
+        else:
+            q = dict(x.partition("=")[::2] for x in abfrage.split("&") if x)   # „+“ bleibt „+“
         url = d.basis + pfad
         if url == d.system_url:
             return 200, "application/json", json.dumps(d.system()).encode()
@@ -299,9 +321,11 @@ class Testserver:
             return 404, "text/html", b"<html><body>Not Found</body></html>"
         try:
             filter_q = {k: v for k, v in q.items() if not (self.ohne_created_filter and k.startswith("created_"))
-                        and not (self.ohne_modified_filter and k.startswith("modified_"))}
+                        and not (self.ohne_modified_filter and k.startswith("modified_"))
+                        and not (koeln and k.endswith(("_since", "_until")) and _zeit_oder_none(v) is None)}
             objekte = self._filtern(objekte, filter_q)
-            return 200, "application/json", json.dumps(self._seite(objekte, url, q, d.form)).encode()
+            groesse = int(q["limit"]) if koeln and q.get("limit", "").isdigit() and int(q["limit"]) > 0 else SEITE
+            return 200, "application/json", json.dumps(self._seite(objekte, url, q, d.form, groesse)).encode()
         except ValueError:
             return 400, "text/html", b"<html><body>Bad Request</body></html>"
         except LookupError:
@@ -319,9 +343,9 @@ class Testserver:
         return objekte
 
     @staticmethod
-    def _seite(objekte, url, q, form="bisher"):
+    def _seite(objekte, url, q, form="bisher", groesse=SEITE):
         seite = int(q.get("page", "1"))
-        gesamt = max(1, -(-len(objekte) // SEITE))
+        gesamt = max(1, -(-len(objekte) // groesse))
         if not 1 <= seite <= gesamt:
             raise LookupError(seite)
         rest = {k: v for k, v in q.items() if k != "page"}
@@ -334,13 +358,13 @@ class Testserver:
         if seite < gesamt:
             links["next"] = link(seite + 1)
         teil = [{k: v for k, v in o.items() if not k.startswith("_")}
-                for o in objekte[(seite - 1) * SEITE: seite * SEITE]]
+                for o in objekte[(seite - 1) * groesse: seite * groesse]]
         if form == "koeln":   # ohne Gesamtzahlen; links nur first, self, next (Stufe 1)
             def adresse(werte):
                 return url + ("?" + "&".join(f"{k}={v}" for k, v in werte.items()) if werte else "")
             links = {"first": adresse(rest), "self": adresse(q), **({"next": links["next"]} if "next" in links else {})}
-            return {"data": teil, "pagination": {"elementsPerPage": SEITE, "currentPage": seite}, "links": links}
-        return {"data": teil, "pagination": {"totalElements": len(objekte), "elementsPerPage": SEITE,
+            return {"data": teil, "pagination": {"elementsPerPage": groesse, "currentPage": seite}, "links": links}
+        return {"data": teil, "pagination": {"totalElements": len(objekte), "elementsPerPage": groesse,
                                              "currentPage": seite, "totalPages": gesamt}, "links": links}
 
     def _handler(self):
@@ -386,8 +410,10 @@ def main():
     ap = argparse.ArgumentParser(description="Lokaler OParl-Testserver mit erfundenen Daten")
     ap.add_argument("--port", type=int, default=8765)
     ap.add_argument("--form", choices=FORMEN, default="bisher", help="Antwortform (koeln: wie Stufe 1)")
+    ap.add_argument("--kodierung", choices=KODIERUNGEN, default="sessionnet",
+                    help="Parameter (koeln: wie Stufe 2, nur kodierte Zeitwerte wirken, limit wirkt)")
     a = ap.parse_args()
-    s = Testserver(a.port, form=a.form).start()
+    s = Testserver(a.port, kodierung=a.kodierung, form=a.form).start()
     print(f"RATSATLAS_OPARL_SYSTEM={s.system_url}\nRATSATLAS_OPARL_BODY={s.body_url}\n(Ende mit Strg+C)",
           file=sys.stderr)
     try:

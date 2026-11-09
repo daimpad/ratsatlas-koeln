@@ -50,15 +50,17 @@ ABRUF_ABSTAND = float(os.environ.get("RATSATLAS_ABSTAND", "2.0"))
 # Zeitfenster 23–1 Uhr: laut mandari erlaubt die Stadt Abrufe nur dann (ohne Quelle der Stadt; Anfrage offen,
 # explore/ergebnisse/sessionnet_befunde.tsv)
 ABRUF_ZEITFENSTER = os.environ.get("RATSATLAS_ZEITFENSTER", "23-1")   # Stunden von-bis; leer = ohne Zeitfenster
-# Seiten je Liste und Lauf (Schutz vor Schleifen); eine Fortsetzung zählt in ihrem Lauf neu. Mit 2 s Abstand und dem
-# Zeitfenster 23–1 Uhr schafft ein Lauf höchstens rund 2600–3300 Seiten (je Seite 2 s Abstand plus Antwortzeit); die
-# Grenze von 4000 wirkt daher nur ohne Zeitfenster oder mit einem kleineren Wert
-ABRUF_MAX_SEITEN = int(os.environ.get("RATSATLAS_MAX_SEITEN", "4000"))
-# Gesamtgrenze eines Vollabrufs über seine Fortsetzungen hinweg: höchstens ABRUF_MAX_SEITEN_FAKTOR × ABRUF_MAX_SEITEN
-# Seiten (Schutz gegen eine Liste, die endlos neue Kennungen erzeugt); darüber Abbruch der Art `liste` (sessionnet.py)
+# Objekte je Liste und Lauf (Schutz vor Schleifen), umgerechnet in Seiten mit der tatsächlichen Seitengröße des Laufs
+# (sessionnet.py); eine Fortsetzung zählt in ihrem Lauf neu. 100 000 Objekte sind 1000 Seiten zu 100 (4000 zu 25). Im
+# Zeitfenster schafft ein Lauf mit 100 je Seite (rund 5 s Antwortzeit plus 2 s Abstand) ohnehin nur rund 900 Seiten
+# (TECHNIK.md); die Grenze wirkt daher vor allem ohne Zeitfenster
+ABRUF_MAX_OBJEKTE = int(os.environ.get("RATSATLAS_MAX_OBJEKTE", "100000"))
+# Gesamtgrenze eines Vollabrufs über seine Fortsetzungen hinweg: höchstens ABRUF_MAX_SEITEN_FAKTOR × so viele Seiten wie
+# je Lauf (300 000 Objekte; Schutz gegen eine Liste, die endlos neue Kennungen erzeugt); darüber Abbruch der Art `liste`
 ABRUF_MAX_SEITEN_FAKTOR = 3
 ABRUF_PAUSEN = [60, 300, 1800, 3600, 3 * 3600]
-ABRUF_SEITENGROESSE = os.environ.get("RATSATLAS_LIMIT", "")          # leer = Vorgabe des Servers (25)
+# Objekte je Seite (`limit`; Köln, Stufe 2: limit=100 wirkt, rund 5 s je Antwort); leer = Vorgabe des Servers (25)
+ABRUF_SEITENGROESSE = os.environ.get("RATSATLAS_LIMIT", "100")
 OVERPASS = [
     "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
     "https://overpass-api.de/api/interpreter",
