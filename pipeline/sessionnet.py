@@ -55,8 +55,11 @@ können ein altes `modified` tragen), wendet der Server den Filter nicht an. Je 
   gültiger Stand, Warnung wie bei den Sitzungen, die Vorlagen laufen weiter. Abhilfe, wenn die kürzere Liste stimmt:
   ein Lauf mit RATSATLAS_KUERZER_ANNEHMEN=organizations (Komma-Liste aus LISTEN; nimmt für die genannten Listen in
   diesem Lauf einen kürzeren Vollabruf an, vermerkt im Log und in der Abrufstatistik; ausdrücklich, nie Vorgabe; einen
-  Vollabruf ohne Objekte nie). Die 90-%-Prüfung der daraus abgeleiteten Beratungen entfällt nur, wenn dieser Lauf für
-  papers oder meetings tatsächlich einen kürzeren Stand angenommen hat, nicht schon, weil die Liste genannt ist.
+  Vollabruf ohne Objekte nie, auch keinen nur mit gelöschten Objekten). Die 90-%-Prüfung der daraus abgeleiteten
+  Beratungen entfällt nur, wenn für papers oder meetings tatsächlich ein kürzerer Stand angenommen wurde, nicht schon,
+  weil die Liste genannt ist: in diesem Lauf oder in einem früheren, der vor den Beratungen abbrach (Vermerk
+  `beratungen_kuerzer_erlaubt` im Zustand mit Zeit und Listen; entfernt erst, wenn beratungen.jsonl geschrieben ist).
+  Einen leeren Beratungsstand nimmt sie bei einem bisherigen Stand über 0 nie an.
 Warnungen der Nebenlisten stehen in STAND.json unter `abruf_warnungen` je Liste (`{"meetings": {"zeit", "meldung"},
 "organizations": {…}}`), nicht in `abruf_hinweis`: Ein Abbruch einer anderen Liste (_abbruch_vermerken) und ein
 vollständiger Lauf lassen sie stehen; entfernt wird die Warnung einer Liste erst, wenn diese Liste wieder regulär
@@ -188,6 +191,10 @@ VERSCHIEBUNG_JE_TAG = 100
 VERSCHIEBUNG_HOECHSTENS = 1000
 # Seitengröße für max_objekte_mindestens(), wenn RATSATLAS_LIMIT leer ist (Vorgabe des Servers, in Köln 25)
 SEITENGROESSE_OHNE_LIMIT = 100
+# Listen, aus denen beratungen() die Beratungen ableitet; ein angenommener kürzerer Stand einer dieser Listen lockert
+# die 90-%-Prüfung der Beratungen, bis sie geschrieben sind (Vermerk KUERZER_VERMERK im Zustand)
+BERATUNGEN_AUS = ("papers", "meetings")
+KUERZER_VERMERK = "beratungen_kuerzer_erlaubt"
 # Abhilfe je Art einer Warnung (_nur_warnung), `{liste}` wird ersetzt
 ABHILFE = {
     "leer": ("Abhilfe, wenn der kürzere Stand stimmt (nicht bei 0 Objekten): ein Lauf mit "
@@ -714,17 +721,20 @@ def _zusammenfuehren(pfad, neu_objekte, voll, kuerzer_annehmen=False):
     Ein Vollabruf unter 90 % des Stands bricht ab (Art `leer`), außer mit `kuerzer_annehmen`
     (RATSATLAS_KUERZER_ANNEHMEN): dann gilt er, Vermerk im Log und für die Abrufstatistik (ein Vermerk heißt, dieser
     Lauf hat einen kürzeren Stand angenommen). Ein Vollabruf ohne Objekte gilt nie, auch nicht mit `kuerzer_annehmen`
-    (Art `leer`)."""
+    (Art `leer`); dabei zählen nur nicht gelöschte Objekte (einer nur mit `deleted: true` gilt als leer)."""
     alt = _vorhanden(pfad)
     vermerk = ""
     if voll:
+        lebend = sum(1 for o in neu_objekte if not o.get("deleted"))
         try:
-            _guard(pfad.name, len(neu_objekte), len(alt))
+            _guard(pfad.name, len(neu_objekte) if lebend else 0, len(alt))
         except RuntimeError as e:   # Vollabruf deutlich kleiner als der vorhandene Stand: Abbruch, keine Sperre
+            text = str(e) + (f" Geliefert: nur gelöschte Objekte ({len(neu_objekte)})." if neu_objekte and not lebend
+                             else "")
             if not kuerzer_annehmen:
-                raise abruf.Abbruch(str(e), "leer") from e
-            if not neu_objekte:
-                raise abruf.Abbruch(f"{e} Ein leerer Vollabruf wird nie angenommen, auch nicht mit "
+                raise abruf.Abbruch(text, "leer") from e
+            if not lebend:
+                raise abruf.Abbruch(f"{text} Ein leerer Vollabruf wird nie angenommen, auch nicht mit "
                                     "RATSATLAS_KUERZER_ANNEHMEN.", "leer") from e
             vermerk = (f"kürzerer Stand angenommen: {len(neu_objekte)} statt bisher {len(alt)} "
                        "(RATSATLAS_KUERZER_ANNEHMEN)")
@@ -851,7 +861,9 @@ def _ohne_anfrage(text, vermerk, zeile, pfad, schluessel):
 def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, angenommen=None):
     """Inkrementeller Abruf einer Liste mit Statistik; schreibt die zusammengeführten Objekte als JSONL. Nimmt der Lauf
     für diese Liste einen kürzeren Stand an (RATSATLAS_KUERZER_ANNEHMEN, _zusammenfuehren), kommt `schluessel` in die
-    Menge `angenommen` (für beratungen()).
+    Menge `angenommen` (für beratungen(); None: ohne Beratungen in diesem Aufruf, nichts vermerkt), bei papers und
+    meetings (BERATUNGEN_AUS) auch in den Vermerk KUERZER_VERMERK im Zustand, damit ein Abbruch vor beratungen() die
+    Beratungen nicht dauerhaft blockiert.
     Ein abgebrochener Vollabruf wird beim nächsten Lauf an der gelesenen Stelle fortgesetzt. `zeitfilter=False`: immer
     vollständig, ohne modified_since (organizations). `warnungen` (Art → Text): Ein Abbruch dieser Art beendet nur diese
     Liste (_nur_warnung; meetings: `filter`, der Server wendet modified_since nicht an, nach der Seite mit dem Befund;
@@ -881,9 +893,12 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
         alle, neu, geaendert, geloescht, kuerzer = _zusammenfuehren(
             pfad, objekte, voll=not seit, kuerzer_annehmen=schluessel in _listen_aus("RATSATLAS_KUERZER_ANNEHMEN"))
         _write(pfad, "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in alle))
+        aenderung = {schluessel: start.isoformat(timespec="seconds"), f"{schluessel}_fortsetzung": None}
         if kuerzer and angenommen is not None:
             angenommen.add(schluessel)
-        aenderung = {schluessel: start.isoformat(timespec="seconds"), f"{schluessel}_fortsetzung": None}
+            if schluessel in BERATUNGEN_AUS:   # gilt über einen Abbruch vor beratungen() hinaus
+                aenderung[KUERZER_VERMERK] = {"zeit": abruf.uhr().isoformat(timespec="seconds"),
+                                              "listen": sorted(_kuerzer_vermerkt() | {schluessel})}
         if not seit:   # vollständig gelesen: ein Befund zum Zeitfilter gilt nicht mehr (der nächste Lauf prüft erneut)
             aenderung[f"{schluessel}_ohne_zeitfilter"] = None
         _zustand_aendern(**aenderung)
@@ -1027,12 +1042,22 @@ def fetch_papers(body, angenommen=None):
     return papers
 
 
+def _kuerzer_vermerkt():
+    """Listen aus dem Vermerk KUERZER_VERMERK im Zustand (nur papers und meetings; ein unlesbarer Vermerk lockert
+    nichts)."""
+    eintrag = _zustand().get(KUERZER_VERMERK)
+    listen = eintrag.get("listen") if isinstance(eintrag, dict) else None
+    return {x for x in listen if x in BERATUNGEN_AUS} if isinstance(listen, list) else set()
+
+
 def beratungen(papers, meetings, angenommen=()):
     """Beratung → Sitzung und TOP im Format, das build.py aus OParl-Lite kennt. Fehlt in der Beratung die
     Organisation, wird sie aus der Sitzung übernommen und als abgeleitet markiert (`_organization_quelle`). Weniger als
-    90 % der bisherigen Beratungen: Abbruch (Art `leer`), außer dieser Lauf hat für papers oder meetings tatsächlich
-    einen kürzeren Stand angenommen (`angenommen`, gesammelt von _abruf_liste); dass die Liste in
-    RATSATLAS_KUERZER_ANNEHMEN steht, genügt nicht."""
+    90 % der bisherigen Beratungen: Abbruch (Art `leer`), außer für papers oder meetings wurde tatsächlich ein kürzerer
+    Stand angenommen: in diesem Lauf (`angenommen`, gesammelt von _abruf_liste) oder in einem früheren, der vor den
+    Beratungen abbrach (Vermerk KUERZER_VERMERK im Zustand); dass die Liste in RATSATLAS_KUERZER_ANNEHMEN steht, genügt
+    nicht. Ein leerer Stand (0 Beratungen) gilt bei einem bisherigen Stand über 0 nie. Der Vermerk wird erst nach dem
+    Schreiben von beratungen.jsonl entfernt."""
     sitzung = {m["id"]: m for m in meetings}
     top = {}
     for m in meetings:
@@ -1062,13 +1087,20 @@ def beratungen(papers, meetings, angenommen=()):
             })
     bisher = _jsonl_count(config.BERATUNGEN)
     if len(zeilen) < MIN_ANTEIL * bisher:   # unvollständig: Abbruch, keine Sperre
-        if not {"papers", "meetings"} & set(angenommen):
-            raise abruf.Abbruch(f"Beratungen: nur {len(zeilen)} statt bisher {bisher}", "leer")
+        im_lauf = set(BERATUNGEN_AUS) & set(angenommen)
+        erlaubt = im_lauf | _kuerzer_vermerkt()
+        if not erlaubt or not zeilen:   # leer nie, auch nicht gelockert
+            raise abruf.Abbruch(f"Beratungen: nur {len(zeilen)} statt bisher {bisher}" + (
+                " (ein leerer Stand wird nie angenommen, auch nicht mit RATSATLAS_KUERZER_ANNEHMEN)" if erlaubt else ""),
+                "leer")
+        herkunft = "" if im_lauf else f"; Vermerk {KUERZER_VERMERK} eines früheren Laufs: {', '.join(sorted(erlaubt))}"
         _warnung(f"Beratungen: kürzerer Stand angenommen: {len(zeilen)} statt bisher {bisher} "
-                 "(RATSATLAS_KUERZER_ANNEHMEN)")
+                 f"(RATSATLAS_KUERZER_ANNEHMEN{herkunft})")
     _write(config.BERATUNGEN, "".join(json.dumps(z, ensure_ascii=False) + "\n" for z in zeilen))
     # Ergänzte Organisationen in papers.jsonl übernehmen, damit build.py sie liest
     _write(config.PAPERS, "".join(json.dumps(p, ensure_ascii=False) + "\n" for p in papers))
+    if KUERZER_VERMERK in _zustand():   # erst jetzt: die Beratungen sind auf dem angenommenen Stand
+        _zustand_setzen(KUERZER_VERMERK, None)
     _stamp("consultations_lite")
     print(f"{len(zeilen)} Beratungen mit Sitzung oder TOP, {ohne_sitzung} ohne, {ergaenzt} Gremien aus der Sitzung")
 
