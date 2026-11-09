@@ -48,7 +48,10 @@ UNTERBROCHEN_HINWEIS = ("Lauf während dieser Anfrage unterbrochen, etwa nach ei
 FILTER_HINWEIS = ("„nicht unterscheidbar“: Die erste Seite zeigt nicht, ob der Server diese Grenze anwendet (bei "
                   "neueste zuerst gilt das für created_since; bei modified_since, wenn keine Vorlage fehlt, die laut "
                   "Cache unter der Grenze lag, etwa weil alle seither geändert wurden, wenn nur ein Teil davon fehlt "
-                  "oder wenn nur eine darunter lag: ebenso durch eine Löschung erklärbar).")
+                  "oder wenn nur eine darunter lag: ebenso durch eine Löschung erklärbar; „Reihenfolge unbekannt“: "
+                  "die ungefilterte Seite ist nicht nachweislich nach created sortiert, seither geänderte Vorlagen "
+                  "könnten auch ohne Filter die älteren verdrängen). „ja“ setzt voraus, dass created der Zeitpunkt "
+                  "der Aufnahme ist: zurückdatiert eingefügte Vorlagen könnten „ja“ vortäuschen.")
 # Lauf, der hart beendet und erst beim Entfernen oder Überschreiben seines Markers nachgetragen wurde
 MARKER_ERGEBNIS = "nicht regulär beendet (Marker)"
 UNBEKANNT = "Anfragenzahl unbekannt (hart beendet, Markerdatei ohne Vermerk)"

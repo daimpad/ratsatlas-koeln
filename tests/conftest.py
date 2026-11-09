@@ -279,5 +279,6 @@ def oparl(tmp_path, monkeypatch):
         monkeypatch.setattr(config, name, wert)
     monkeypatch.delenv("RATSATLAS_STADT_INFORMIERT", raising=False)
     monkeypatch.delenv("RATSATLAS_VOLLABRUF", raising=False)
+    monkeypatch.delenv("RATSATLAS_KUERZER_ANNEHMEN", raising=False)
     yield daten["d"]
     server.shutdown()

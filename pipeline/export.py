@@ -211,6 +211,33 @@ def _meta(db, stable=False, **extra):
             "sources": sources, "note": DERIVED_NOTE}
 
 
+def berliner_tag(wert):
+    """Kalendertag (JJJJ-MM-TT) eines Zeitpunkts in Europe/Berlin, dieselbe Regel wie zeitTag in site/app.js: 23:30 UTC
+    am 31.12. ist dort schon der 01.01.; ein Zeitstempel ohne Zone gilt als UTC; ist nur der Anfang lesbar, die ersten
+    zehn Zeichen; sonst None (auch für Zahl, Objekt, „kaputt“, 2026-13-45)."""
+    s = wert if isinstance(wert, str) else ""
+    if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", s[:10]):
+        return None
+    try:
+        dt = datetime.fromisoformat(s) if len(s) > 10 else None
+    except ValueError:
+        dt = None
+    if dt is None:
+        try:
+            return date.fromisoformat(s[:10]).isoformat()
+        except ValueError:
+            return None
+    return (dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)).astimezone(proc.BERLIN).date().isoformat()
+
+
+def feed_grenze(stand):
+    """Jahresgrenze der Vorgangs-Feeds (publish.has_paper_feed): 1. Januar des Vorjahres des Datenstands als Berliner
+    Kalendertag, dieselbe Regel wie standTag und hasPaperFeed in site/app.js (Abruf des Ratsinformationssystems, sonst
+    Erzeugung, also heute; nur lesbare Werte)."""
+    tag = berliner_tag(stand) or datetime.now(proc.BERLIN).date().isoformat()
+    return f"{int(tag[:4]) - 1}-01-01"
+
+
 def slug(name):
     name = name.lower().translate(str.maketrans({"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss"}))
     return re.sub(r"[^a-z0-9]+", "-", name).strip("-")
@@ -312,8 +339,7 @@ def export_all():
             home.setdefault(pid, key)
     sources = [dict(r) for r in db.execute("SELECT * FROM source")]
     stand = next((s["retrieved_at"] for s in sources if s["name"] == config.QUELLE_OPARL), None) or ""
-    year = int((stand or datetime.now(timezone.utc).isoformat())[:4])
-    publish.write_feeds(out / "feeds", areas, cache, names, home, slug, f"{year - 1}-01-01")
+    publish.write_feeds(out / "feeds", areas, cache, names, home, slug, feed_grenze(stand))
     meetings = _meetings(db)
     publish.write_calendar(out / "termine.ics", meetings)
     n_points = publish.write_geojson(out / "vorlagen.geojson", cache,
@@ -356,7 +382,8 @@ def export_all():
                                              funktionen=dict(config.ZUSATZTHEMEN),
                                              testdaten=bool(_stand().get("testdaten")),
                                              vorschau=bool(_stand().get("vorschau")),
-                                             abruf_fehler=_abruf_fehler(_stand())), **index})
+                                             abruf_fehler=_abruf_fehler(_stand()),
+                                             abruf_warnungen=_abruf_warnungen(_stand())), **index})
     db.close()
     print(f"{config.STADT_NAME}: {len(index['ortsteile'])} Stadtteile, {len(index['bezirke'])} Bezirke, "
           f"{len(years)} Jahre ohne Ortsbezug, {len(cache)} Vorlagen, {n_points} Punkte im GeoJSON, {n_shards} Dateien für den Assistenten → {out}")
@@ -379,6 +406,32 @@ def _abruf_fehler(stand):
     except (TypeError, ValueError, KeyError):
         pass
     return fehler
+
+
+# Nebenlisten mit Warnung in STAND.json (`abruf_warnungen`, pipeline/sessionnet.py), die die Seite zeigt
+WARNUNG_LISTEN = ("meetings", "organizations")
+
+
+def _abruf_warnungen(stand):
+    """Warnungen der Nebenlisten für die Seite („Sitzungstermine wurden beim letzten Abruf nicht aktualisiert; gezeigt
+    wird der Stand vom …“): je Liste aus WARNUNG_LISTEN `zeit`, `meldung` und `stand` (letzte reguläre Aktualisierung
+    dieser Liste in STAND.json, sonst None). Nur gültige: ein Objekt mit Meldung, das nicht vor der letzten regulären
+    Aktualisierung dieser Liste liegt (wie _abruf_fehler; sessionnet entfernt die Warnung dabei ohnehin, dies ist die
+    Sicherung); unlesbare Zeitpunkte: Warnung zeigen."""
+    warnungen = stand.get("abruf_warnungen")
+    aus = {}
+    for liste, w in (warnungen.items() if isinstance(warnungen, dict) else ()):
+        if liste not in WARNUNG_LISTEN or not isinstance(w, dict) or not w.get("meldung"):
+            continue
+        letzter = stand.get(liste)
+        try:
+            if letzter and datetime.fromisoformat(w["zeit"]) < datetime.fromisoformat(letzter):
+                continue
+        except (TypeError, ValueError, KeyError):
+            pass
+        aus[liste] = {"zeit": w.get("zeit"), "meldung": w["meldung"],
+                      "stand": letzter if isinstance(letzter, str) else None}
+    return aus
 
 
 def export_pilot(ortsteil=config.PILOT_ORTSTEIL):

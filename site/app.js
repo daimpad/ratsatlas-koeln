@@ -71,6 +71,41 @@
   // rund 200 ms beim Öffnen eines Gebiets, mobil gedrosselt gemessen)
   const DATUM = new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", day: "2-digit", month: "2-digit", year: "numeric" });
   const fmtDate = (iso) => iso ? DATUM.format(new Date(iso.length === 10 ? iso + "T12:00:00Z" : iso)) : "";
+  // Kalendertag (JJJJ-MM-TT) eines Zeitpunkts (STAND.json, index.json; voller Zeitstempel, UTC) in Europe/Berlin:
+  // 23:30 UTC ist dort schon der nächste Tag; ein Zeitstempel ohne Zone gilt als UTC (sonst hinge der Tag von der Zone
+  // des Rechners ab); ist nur der Anfang lesbar, die ersten zehn Zeichen; ist auch der kein Datum (null, Zahl, Objekt,
+  // „kaputt“, 2026-13-45), null statt eines RangeError
+  const BERLIN_TAG = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin" });
+  const zeitTag = (wert) => {
+    const s = typeof wert === "string" ? wert : "";
+    if (!ISO_DAY.test(s.slice(0, 10))) return null;
+    const voll = new Date(s.length > 10 && !/(Z|[+-]\d{2}(:?\d{2})?)$/i.test(s) ? s + "Z" : s);
+    const d = Number.isNaN(voll.getTime()) ? new Date(s.slice(0, 10) + "T12:00:00Z") : voll;
+    const tag = Number.isNaN(d.getTime()) ? "" : BERLIN_TAG.format(d);
+    return ISO_DAY.test(tag) ? tag : null;
+  };
+  // Datum eines Zeitpunkts nach derselben Regel, sonst „unbekannt“
+  const zeitDatum = (wert) => { const tag = zeitTag(wert); return tag ? fmtDate(tag) : "unbekannt"; };
+  // Nebenlisten, die beim letzten Abruf nicht aktualisiert wurden (index.json meta.abruf_warnungen,
+  // pipeline/export.py): ein Satz je Liste im Datenstand, ohne Fachbegriffe und nicht nur als Farbe
+  const WARNUNG_SATZ = { meetings: "Sitzungstermine wurden", organizations: "Die Liste der Gremien wurde" };
+  const standWarnungen = (w) => Object.keys(WARNUNG_SATZ).filter((k) => w && w[k]).map((k) => ` · ${WARNUNG_SATZ[k]} beim letzten Abruf nicht aktualisiert; gezeigt wird ${w[k].stand ? `der Stand vom ${zeitDatum(w[k].stand)}` : "der letzte gültige Stand"}.`).join("");
+  // fehlgeschlagener Abruf (index.json meta.abruf_fehler) im Datenstand
+  const standFehler = (f) => f ? ` · Der letzte Abruf am ${zeitDatum(f.zeit)} ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand.` : "";
+  // Zeile im Datenstand (#stand) aus meta (Quellen, generated_at) und index.json meta (Fehler, Warnungen); alle Daten
+  // nach derselben Regel (zeitDatum)
+  const standText = (m, im) => {
+    const quellen = (Array.isArray(m && m.sources) ? m.sources : []).filter((s) => s && s.retrieved_at)
+      .map((s) => `${QUELLE_NAME[s.name] || s.name}: ${zeitDatum(s.retrieved_at)}`).join(" · ");
+    return `Datenstand: ${quellen || "–"}${m && m.generated_at ? ` · erzeugt ${zeitDatum(m.generated_at)}` : ""}`
+      + standFehler(im && im.abruf_fehler) + standWarnungen(im && im.abruf_warnungen);
+  };
+  // Datenstand als Berliner Kalendertag (Markierung in der Zeitleiste, Jahresgrenze in hasPaperFeed) nach derselben
+  // Regel (zeitTag): Abruf des Ratsinformationssystems, sonst Erzeugung, sonst heute; nur lesbare Werte
+  const standTag = (m) => {
+    const oparl = (Array.isArray(m && m.sources) ? m.sources : []).find((s) => s && s.name === "oparl-koeln") || {};
+    return zeitTag(oparl.retrieved_at) || zeitTag(m && m.generated_at) || heute();
+  };
   const debounce = (fn, ms) => { let h; return (...a) => { clearTimeout(h); h = setTimeout(() => fn(...a), ms); }; };
 
   let index = null, zeit = null, geo = {}, meta = null, papers = [], area = null, selected = null, dataStand = null, kontext = null, anliegen = null;
@@ -397,8 +432,9 @@
     area = next;
     meta = data.meta;
     if (index && index.meta) meta = { ...meta, generated_at: index.meta.generated_at, sources: index.meta.sources };
-    const oparl = meta.sources.find((s) => s.name === "oparl-koeln") || {};
-    dataStand = (oparl.retrieved_at || meta.generated_at || new Date().toISOString()).slice(0, 10);
+    dataStand = standTag(meta);
+    // vor der Zeitleiste: Der Datenstand steht auch, wenn ein späterer Schritt scheitert
+    $("#stand").textContent = standText(meta, index && index.meta);
     papers = data.papers;
     document.title = area.kind === STADT ? "Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer"
       : `Ratsatlas Köln – Ratsvorlagen ${area.kind === "ohne" ? "ohne Ortsbezug " + area.key : "in " + area.name}`;
@@ -420,10 +456,6 @@
     if (!$("#panel-auswertung").hidden && !$("#stats").hidden) showStats();
     render();
     syncUrl();
-    const stand = meta.sources.filter((s) => s.retrieved_at).map((s) => `${QUELLE_NAME[s.name] || s.name}: ${fmtDate(String(s.retrieved_at).slice(0, 10))}`).join(" · ");
-    const fehler = index && index.meta && index.meta.abruf_fehler;
-    $("#stand").textContent = `Datenstand: ${stand || "–"}${meta.generated_at ? ` · erzeugt ${fmtDate(meta.generated_at.slice(0, 10))}` : ""}`
-      + (fehler ? ` · Der letzte Abruf am ${fmtDate(String(fehler.zeit).slice(0, 10))} ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand.` : "");
   }
 
   // --- Karte -----------------------------------------------------------------------------------------
@@ -1827,7 +1859,9 @@
     const locs = (ownLocs.length ? ownLocs.map(locItem).join("") : takenLocs.length ? "" : "<li>stadtweit / ohne Ortsbezug</li>")
       + (takenLocs.length ? `<li class="taken-group">Diese Vorlage nennt selbst keinen Ort. Übernommen von der übergeordneten Vorlage:<ul>${takenLocs.map(locItem).join("")}</ul></li>` : "");
     const rel = (arr) => arr.map((r) => `<li>${esc(r.reference)} · ${esc(r.paper_type)} – ${esc(r.name)}</li>`).join("");
-    const sources = meta.sources.map((s) => `<li>${esc(s.name)}: ${esc(s.license)}${s.retrieved_at ? ` · Abruf ${esc(String(s.retrieved_at).slice(0, 10))}` : ""}</li>`).join("");
+    // Quellen nur aus einer Liste (sonst keine), ohne leere Einträge; Abrufdatum nach der Regel des Datenstands (zeitDatum)
+    const sources = (Array.isArray(meta && meta.sources) ? meta.sources.filter(Boolean) : [])
+      .map((s) => `<li>${esc(s.name)}: ${esc(s.license)}${s.retrieved_at ? ` · Abruf ${zeitDatum(s.retrieved_at)}` : ""}</li>`).join("");
     $("#detail-heading").textContent = "Vorgang";
     $("#detail").innerHTML = `
       <h3 tabindex="-1">${esc(p.name)}</h3>
@@ -1938,7 +1972,8 @@
   }
 
   // --- Abonnieren (Atom-Feeds) ------------------------------------------------------------------------
-  // gleiche Regeln wie pipeline/export.slug und publish.has_paper_feed
+  // gleiche Regeln wie pipeline/export.slug und publish.has_paper_feed (Jahresgrenze aus dem Berliner Kalendertag des
+  // Datenstands, dataStand nach standTag, wie export.feed_grenze)
   const slug = (s) => String(s).toLowerCase().replace(/[äöüß]/g, (c) => ({ ä: "ae", ö: "oe", ü: "ue", ß: "ss" }[c]))
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   const hasPaperFeed = (p) => Boolean(index && dataStand) &&

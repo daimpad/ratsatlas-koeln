@@ -40,13 +40,30 @@ können ein altes `modified` tragen), wendet der Server den Filter nicht an. Je 
   aus (Stufe 2: kodiert keine Vorlage unter der Grenze); Folgeseiten sind ungemessen.
 - meetings: nur diese Liste endet (keine weiteren Seiten), die Sitzungen bleiben auf dem letzten gültigen Stand
   (nicht zusammengeführt, Zeitpunkt nicht weitergesetzt); Warnung „Zeitfilter bei Sitzungen nicht angewandt, Sitzungen
-  nicht aktualisiert“ in STAND.json (`abruf_hinweis`) und Abrufstatistik (`warnung: …`, filter_wirksam „nein“); kein
-  Listenfehler, keine Pause, der Lauf gilt als vollständig. Ob Köln modified_since bei den Sitzungen anwendet, ist
-  ungemessen (vor Freigabe des nächtlichen Abrufs mit einer Anfrage messen).
+  nicht aktualisiert“ in STAND.json (`abruf_warnungen`, siehe unten) und Abrufstatistik (`warnung: …`, filter_wirksam
+  „nein“); kein Listenfehler, keine Pause, der Lauf gilt als vollständig. Der Befund steht im Zustand
+  (`meetings_ohne_zeitfilter`): In den Folgenächten wird die inkrementelle Sitzungsliste ohne Anfrage übersprungen
+  (letzter gültiger Stand, Warnung bleibt; sonst wüchse die Zahl der Seiten vor dem Befund jede Nacht, und das Gelesene
+  wird ohnehin verworfen), bis die Sitzungen einmal vollständig gelesen sind (Abhilfe: RATSATLAS_VOLLABRUF=meetings,
+  auch über eine Fortsetzung; =ja erreicht die Sitzungen erst nach dem fertigen Vollabruf der Vorlagen) oder der
+  Vermerk aus zustand_abruf.json entfernt ist (dann prüft der nächste Lauf den Zeitfilter erneut). Ob Köln
+  modified_since bei den Sitzungen anwendet, ist ungemessen (vor Freigabe des nächtlichen Abrufs mit einer Anfrage
+  messen).
 - organizations: immer ohne Zeitfilter, vollständig (kleine Liste; Münster lehnt modified_since bei organization mit
   HTTP 401 ab, explore/ergebnisse/sessionnet_befunde.tsv; Umfang in Köln misst Stufe 3), keine Filterprüfung. Weil sie
   vor den Vorlagen kommen, beendet ein Vollabruf unter 90 % des Stands (Art `leer`) dort nur diese Liste: letzter
-  gültiger Stand, Warnung wie bei den Sitzungen, die Vorlagen laufen weiter.
+  gültiger Stand, Warnung wie bei den Sitzungen, die Vorlagen laufen weiter. Abhilfe, wenn die kürzere Liste stimmt:
+  ein Lauf mit RATSATLAS_KUERZER_ANNEHMEN=organizations (Komma-Liste aus LISTEN; nimmt für die genannten Listen in
+  diesem Lauf einen kürzeren Vollabruf an, vermerkt im Log und in der Abrufstatistik; ausdrücklich, nie Vorgabe; einen
+  Vollabruf ohne Objekte nie, auch keinen nur mit gelöschten Objekten). Die 90-%-Prüfung der daraus abgeleiteten
+  Beratungen entfällt nur, wenn für papers oder meetings tatsächlich ein kürzerer Stand angenommen wurde, nicht schon,
+  weil die Liste genannt ist: in diesem Lauf oder in einem früheren, der vor den Beratungen abbrach (Vermerk
+  `beratungen_kuerzer_erlaubt` im Zustand mit Zeit und Listen; entfernt erst, wenn beratungen.jsonl geschrieben ist).
+  Einen leeren Beratungsstand nimmt sie bei einem bisherigen Stand über 0 nie an.
+Warnungen der Nebenlisten stehen in STAND.json unter `abruf_warnungen` je Liste (`{"meetings": {"zeit", "meldung"},
+"organizations": {…}}`), nicht in `abruf_hinweis`: Ein Abbruch einer anderen Liste (_abbruch_vermerken) und ein
+vollständiger Lauf lassen sie stehen; entfernt wird die Warnung einer Liste erst, wenn diese Liste wieder regulär
+aktualisiert wurde. export.py übernimmt sie in index.json (`meta.abruf_warnungen`), die Seite zeigt sie im Datenstand.
 Offen: Lehnt ein Server modified_since mit HTTP 401 ab (Münster bei organization und agendaitem), wertet die Pipeline
 das als Nacht mit möglicher Sperre (Art `http`, SPERRE_HTTP); bei den Sitzungen hieße das jede Nacht einen Abbruch auf
 ihrer ersten Seite (die Vorlagen sind dann schon gelesen, die Beratungen nicht abgeleitet) und nach drei Nächten sieben
@@ -118,7 +135,8 @@ unlesbarer, zonenloser oder künftiger Zeitpunkt des letzten Sperrverdachts, Lis
 7 Tage, eines mehr als 30 Tage voraus als jetzt + 30 Tage; alles wird neu geschrieben und gemeldet. Eine unlesbare
 STAND.json wird als `STAND.json.defekt` beiseitegelegt.
 Programm- und Einstellungsfehler (etwa eine unerwartete Form tief in einem Objekt, ein RuntimeError ohne Art, ein
-Zeilenumbruch im User-Agent, RATSATLAS_MAX_OBJEKTE unter MAX_OBJEKTE_MINDESTENS, vor der ersten Anfrage geprüft)
+Zeilenumbruch im User-Agent; vor der ersten Anfrage geprüft: RATSATLAS_MAX_OBJEKTE unter max_objekte_mindestens(),
+RATSATLAS_LIMIT keine positive ganze Zahl, unbekannte Listen in RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF)
 zählen nicht als Sperrverdacht: Sie stehen in STAND.json und brechen den Lauf mit Traceback ab.
 Fällt der Abruf aus, bleibt der letzte gültige Stand; der Fehler steht in `STAND.json` (`abruf_fehler`). Ein
 vollständiger Lauf entfernt `abruf_fehler`, `abruf_hinweis` und `abruf_uebersprungen`. Das Ende des Zeitfensters
@@ -171,9 +189,50 @@ LISTEN = ("organizations", "papers", "meetings")
 # Vorlagen je Tag (Vorlagen − 1).
 VERSCHIEBUNG_JE_TAG = 100
 VERSCHIEBUNG_HOECHSTENS = 1000
-# kleinste zulässige Grenze je Lauf (RATSATLAS_MAX_OBJEKTE): zwei Seiten zu 100 (die wiederholte Seite einer
-# Fortsetzung und eine neue) plus die größte Seitenverschiebung; darunter käme eine Fortsetzung nie voran
-MAX_OBJEKTE_MINDESTENS = 2 * 100 + VERSCHIEBUNG_HOECHSTENS
+# Seitengröße für max_objekte_mindestens(), wenn RATSATLAS_LIMIT leer ist (Vorgabe des Servers, in Köln 25)
+SEITENGROESSE_OHNE_LIMIT = 100
+# Listen, aus denen beratungen() die Beratungen ableitet; ein angenommener kürzerer Stand einer dieser Listen lockert
+# die 90-%-Prüfung der Beratungen, bis sie geschrieben sind (Vermerk KUERZER_VERMERK im Zustand)
+BERATUNGEN_AUS = ("papers", "meetings")
+KUERZER_VERMERK = "beratungen_kuerzer_erlaubt"
+# Abhilfe je Art einer Warnung (_nur_warnung), `{liste}` wird ersetzt
+ABHILFE = {
+    "leer": ("Abhilfe, wenn der kürzere Stand stimmt (nicht bei 0 Objekten): ein Lauf mit "
+             "RATSATLAS_KUERZER_ANNEHMEN={liste}"),
+    # nur die Sitzungen haben diese Warnung (fetch_meetings); =ja liest zuerst die Vorlagen vollständig, über Nächte
+    "filter": ("bis die Liste einmal vollständig gelesen ist (Abhilfe: ein Lauf mit RATSATLAS_VOLLABRUF={liste}; =ja "
+               "erreicht die Sitzungen erst nach dem fertigen Vollabruf der Vorlagen) oder der Vermerk "
+               "{liste}_ohne_zeitfilter in zustand_abruf.json entfernt ist, folgt keine Anfrage an diese Liste"),
+}
+
+
+def _seitengroesse():
+    """Eingestellte Seitengröße g (RATSATLAS_LIMIT) als Zahl; leer: SEITENGROESSE_OHNE_LIMIT. Keine positive ganze
+    Zahl: ValueError (Einstellungsfehler vor der ersten Anfrage)."""
+    g = config.ABRUF_SEITENGROESSE
+    if not g:
+        return SEITENGROESSE_OHNE_LIMIT
+    if not str(g).isdigit() or int(g) < 1:
+        raise ValueError(f"RATSATLAS_LIMIT={g!r} ist keine positive ganze Zahl; keine Anfrage gesendet")
+    return int(g)
+
+
+def max_objekte_mindestens():
+    """Kleinste zulässige Grenze je Lauf (RATSATLAS_MAX_OBJEKTE): (ceil(VERSCHIEBUNG_HOECHSTENS / g) + 2) · g mit der
+    eingestellten Seitengröße g (_seitengroesse), also die größte Seitenverschiebung in Seiten plus zwei Seiten (die
+    wiederholte Seite einer Fortsetzung und eine neue); darunter käme eine Fortsetzung nie voran. Bei 100 je Seite 1200,
+    bei 150 1350. Annahme: Der Server liefert g Objekte je Seite wie verlangt."""
+    g = _seitengroesse()
+    return (math.ceil(VERSCHIEBUNG_HOECHSTENS / g) + 2) * g
+
+
+def _listen_aus(variable, alle=False):
+    """Listen aus einer Komma-Liste in der Umgebung (RATSATLAS_KUERZER_ANNEHMEN, RATSATLAS_VOLLABRUF); `alle`: „ja“
+    steht für alle Listen."""
+    wert = os.environ.get(variable, "")
+    if alle and wert == "ja":
+        return set(LISTEN)
+    return {x.strip() for x in wert.split(",") if x.strip()}
 
 
 class ZustandUnlesbar(RuntimeError):
@@ -388,6 +447,25 @@ def _stamp(schluessel):
     _stand_setzen(**{schluessel: _now()})
 
 
+def _warnung_vermerken(liste, meldung):
+    """Warnung einer Nebenliste in STAND.json unter `abruf_warnungen` (je Liste `zeit` und `meldung`); `meldung` None
+    entfernt sie (nur, wenn diese Liste wieder regulär aktualisiert wurde, _abruf_liste). Ein Abbruch einer anderen
+    Liste und ein vollständiger Lauf lassen sie stehen."""
+    s = _stand()
+    warnungen = dict(s["abruf_warnungen"]) if isinstance(s.get("abruf_warnungen"), dict) else {}
+    if meldung is None and liste not in warnungen:
+        return
+    if meldung is None:
+        warnungen.pop(liste)
+    else:
+        warnungen[liste] = {"zeit": _now(), "meldung": meldung[:800]}
+    s["abruf_warnungen"] = warnungen
+    if not warnungen:
+        s.pop("abruf_warnungen")
+    config.RAW.mkdir(parents=True, exist_ok=True)
+    _write(config.STAND, json.dumps(s, ensure_ascii=False, indent=1) + "\n")
+
+
 def _mit_parametern(url, **params):
     """Hängt Parameter URL-kodiert an (`quote(wert, safe="")`, etwa „:“ → %3A, „+“ → %2B): Köln übergeht Zeitwerte
     unkodiert und wendet sie kodiert an (Stufe 2, 08.11.2026)."""
@@ -598,9 +676,10 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
 
 
 def _seit(schluessel):
-    """modified_since für den nächsten Lauf: letzter Stand minus Überlappung; None = vollständiger Abruf."""
+    """modified_since für den nächsten Lauf: letzter Stand minus Überlappung; None = vollständiger Abruf (auch mit
+    RATSATLAS_VOLLABRUF=ja für alle Listen oder einer Komma-Liste, etwa „meetings“, nur für diese)."""
     letzter = _zustand().get(schluessel)
-    if not letzter or os.environ.get("RATSATLAS_VOLLABRUF") == "ja":
+    if not letzter or schluessel in _listen_aus("RATSATLAS_VOLLABRUF", alle=True):
         return None
     t = _zeit(letzter)
     if t is None:   # vor der ersten Anfrage geprüft (_zustand_pruefen); hier nur zur Sicherheit
@@ -637,20 +716,35 @@ def _vorhanden(pfad):
         return {o["id"]: o for o in map(json.loads, f) if o.get("id")}
 
 
-def _zusammenfuehren(pfad, neu_objekte, voll):
-    """Führt Objekte über die ID mit dem vorhandenen Stand zusammen; liefert (alle, neu, geändert, gelöscht)."""
+def _zusammenfuehren(pfad, neu_objekte, voll, kuerzer_annehmen=False):
+    """Führt Objekte über die ID mit dem vorhandenen Stand zusammen; liefert (alle, neu, geändert, gelöscht, Vermerk).
+    Ein Vollabruf unter 90 % des Stands bricht ab (Art `leer`), außer mit `kuerzer_annehmen`
+    (RATSATLAS_KUERZER_ANNEHMEN): dann gilt er, Vermerk im Log und für die Abrufstatistik (ein Vermerk heißt, dieser
+    Lauf hat einen kürzeren Stand angenommen). Ein Vollabruf ohne Objekte gilt nie, auch nicht mit `kuerzer_annehmen`
+    (Art `leer`); dabei zählen nur nicht gelöschte Objekte (einer nur mit `deleted: true` gilt als leer)."""
     alt = _vorhanden(pfad)
+    vermerk = ""
     if voll:
+        lebend = sum(1 for o in neu_objekte if not o.get("deleted"))
         try:
-            _guard(pfad.name, len(neu_objekte), len(alt))
+            _guard(pfad.name, len(neu_objekte) if lebend else 0, len(alt))
         except RuntimeError as e:   # Vollabruf deutlich kleiner als der vorhandene Stand: Abbruch, keine Sperre
-            raise abruf.Abbruch(str(e), "leer") from e
+            text = str(e) + (f" Geliefert: nur gelöschte Objekte ({len(neu_objekte)})." if neu_objekte and not lebend
+                             else "")
+            if not kuerzer_annehmen:
+                raise abruf.Abbruch(text, "leer") from e
+            if not lebend:
+                raise abruf.Abbruch(f"{text} Ein leerer Vollabruf wird nie angenommen, auch nicht mit "
+                                    "RATSATLAS_KUERZER_ANNEHMEN.", "leer") from e
+            vermerk = (f"kürzerer Stand angenommen: {len(neu_objekte)} statt bisher {len(alt)} "
+                       "(RATSATLAS_KUERZER_ANNEHMEN)")
+            _warnung(f"{pfad.name}: {vermerk}")
     neu = sum(1 for o in neu_objekte if o["id"] not in alt)
     geaendert = sum(1 for o in neu_objekte if o["id"] in alt and o != alt[o["id"]])
     geloescht = sum(1 for o in neu_objekte if o.get("deleted"))
     stand = {} if voll else dict(alt)
     stand.update({o["id"]: o for o in neu_objekte if o.get("id")})
-    return list(stand.values()), neu, geaendert, geloescht
+    return list(stand.values()), neu, geaendert, geloescht, vermerk
 
 
 def _statistik_sicher(zeile):
@@ -728,46 +822,91 @@ def _fortsetzung(schluessel, pfad):
 
 def _nur_warnung(text, e, zeile, objekte, seiten, seit, pfad, schluessel):
     """Nur diese Liste endet, ohne Listenfehler und ohne Pause: Der letzte gültige Stand bleibt (nichts zusammengeführt,
-    Zeitpunkt nicht weitergesetzt, eine Fortsetzung verworfen), Warnung im Log und in der Abrufstatistik (`warnung: …`).
-    Liefert (letzter gültiger Stand, Meldung für STAND.json)."""
+    Zeitpunkt nicht weitergesetzt, eine Fortsetzung verworfen), Warnung mit Abhilfe (ABHILFE) im Log, in STAND.json
+    (`abruf_warnungen`, gleich hier: ein späterer Abbruch einer anderen Liste verdrängt sie nicht) und in der
+    Abrufstatistik (`warnung: …`). Nach einem nicht angewandten Zeitfilter (Art `filter`) steht der Befund im Zustand
+    (`<liste>_ohne_zeitfilter`): Folgenächte überspringen die inkrementelle Liste ohne Anfrage (_abruf_liste). Liefert
+    (letzter gültiger Stand, nicht die gelesenen Objekte; Meldung)."""
+    art = getattr(e, "art", "")
     meldung = f"{text} (letzter gültiger Stand bleibt, kein Listenfehler): {e}"
+    if art in ABHILFE:
+        meldung += " – " + ABHILFE[art].format(liste=schluessel)
     _warnung(meldung)
-    _zustand_setzen(f"{schluessel}_fortsetzung", None)
+    aenderung = {f"{schluessel}_fortsetzung": None}
+    if art == "filter":
+        aenderung[f"{schluessel}_ohne_zeitfilter"] = {"zeit": abruf.uhr().isoformat(timespec="seconds"),
+                                                     "meldung": str(e)[:300]}
+    _zustand_aendern(**aenderung)
     _teil(pfad).unlink(missing_ok=True)
+    _warnung_vermerken(schluessel, meldung)
     zeile.update(seiten=seiten, objekte=len(objekte), filter_wirksam=_filter_wirksam(objekte, seit),
                  ergebnis=f"warnung: {meldung}"[:300])
     return list(_vorhanden(pfad).values()), meldung
 
 
-def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None):
-    """Inkrementeller Abruf einer Liste mit Statistik; schreibt die zusammengeführten Objekte als JSONL.
+def _ohne_anfrage(text, vermerk, zeile, pfad, schluessel):
+    """Folgenacht nach einem nicht angewandten Zeitfilter (Vermerk `<liste>_ohne_zeitfilter` im Zustand): die
+    inkrementelle Liste ohne Anfrage überspringen; letzter gültiger Stand, Warnung bleibt (in STAND.json erneuert),
+    Zeile `übersprungen` in der Abrufstatistik. Liefert (letzter gültiger Stand, Meldung)."""
+    zeit = vermerk.get("zeit") if isinstance(vermerk, dict) else None
+    meldung = (f"{text} (Befund vom {str(zeit or 'unbekannt')[:10]}; ohne Anfrage übersprungen, letzter gültiger Stand "
+               f"bleibt) – " + ABHILFE["filter"].format(liste=schluessel))
+    _warnung(meldung)
+    _warnung_vermerken(schluessel, meldung)
+    alle = list(_vorhanden(pfad).values())
+    zeile.update(modus="übersprungen", seiten=0, objekte=len(alle), ergebnis=f"warnung: {meldung}"[:300])
+    return alle, meldung
+
+
+def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, angenommen=None):
+    """Inkrementeller Abruf einer Liste mit Statistik; schreibt die zusammengeführten Objekte als JSONL. Nimmt der Lauf
+    für diese Liste einen kürzeren Stand an (RATSATLAS_KUERZER_ANNEHMEN, _zusammenfuehren), kommt `schluessel` in die
+    Menge `angenommen` (für beratungen(); None: ohne Beratungen in diesem Aufruf, nichts vermerkt), bei papers und
+    meetings (BERATUNGEN_AUS) auch in den Vermerk KUERZER_VERMERK im Zustand, damit ein Abbruch vor beratungen() die
+    Beratungen nicht dauerhaft blockiert.
     Ein abgebrochener Vollabruf wird beim nächsten Lauf an der gelesenen Stelle fortgesetzt. `zeitfilter=False`: immer
     vollständig, ohne modified_since (organizations). `warnungen` (Art → Text): Ein Abbruch dieser Art beendet nur diese
     Liste (_nur_warnung; meetings: `filter`, der Server wendet modified_since nicht an, nach der Seite mit dem Befund;
-    organizations: `leer`); die übrigen Listen laufen weiter. Liefert (Objekte, Warnung): den zusammengeführten Stand
-    und "", nach einer Warnung den letzten gültigen Stand und ihren Text."""
+    organizations: `leer`); die übrigen Listen laufen weiter. Steht nach einem nicht angewandten Zeitfilter der Vermerk
+    `<liste>_ohne_zeitfilter` im Zustand, wird die inkrementelle Liste ohne Anfrage übersprungen (_ohne_anfrage); ein
+    erfolgreicher Vollabruf dieser Liste (auch eine Fortsetzung) entfernt den Vermerk, jede reguläre Aktualisierung
+    ihre Warnung in STAND.json. Liefert (Objekte, Warnung): den zusammengeführten Stand und "", nach einer Warnung den
+    letzten gültigen Stand und ihren Text."""
     warnungen = warnungen or {}
     objekte, seiten = [], 0
     vorher = abruf.statistik()
     start = datetime.now(timezone.utc)
     fort, bisher, verworfen = _fortsetzung(schluessel, pfad)
     seit = None if fort or not zeitfilter else _seit(schluessel)
+    vermerk = _zustand().get(f"{schluessel}_ohne_zeitfilter") if seit and "filter" in warnungen else None
     zeile = {"datum": _now(), "liste": name, "modus": "voll, fortgesetzt" if fort else "inkrementell" if seit else
              "voll, Fortsetzung verworfen" if verworfen else "voll"}
     try:
+        if vermerk:   # Zeitfilter bei dieser Liste nicht angewandt (Befund einer früheren Nacht): keine Anfrage
+            return _ohne_anfrage(warnungen["filter"], vermerk, zeile, pfad, schluessel)
         if fort:
             start = _zeit(fort["start"])
             objekte, seiten = liste(url, start=fort["naechste"], objekte=bisher, seiten=fort.get("seiten", 0),
                                     verschiebung=verschiebung_erlaubt(fort.get("gespeichert")))
         else:
             objekte, seiten = liste(url, seit)
-        alle, neu, geaendert, geloescht = _zusammenfuehren(pfad, objekte, voll=not seit)
+        alle, neu, geaendert, geloescht, kuerzer = _zusammenfuehren(
+            pfad, objekte, voll=not seit, kuerzer_annehmen=schluessel in _listen_aus("RATSATLAS_KUERZER_ANNEHMEN"))
         _write(pfad, "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in alle))
-        _zustand_setzen(schluessel, start.isoformat(timespec="seconds"))
-        _zustand_setzen(f"{schluessel}_fortsetzung", None)
+        aenderung = {schluessel: start.isoformat(timespec="seconds"), f"{schluessel}_fortsetzung": None}
+        if kuerzer and angenommen is not None:
+            angenommen.add(schluessel)
+            if schluessel in BERATUNGEN_AUS:   # gilt über einen Abbruch vor beratungen() hinaus
+                aenderung[KUERZER_VERMERK] = {"zeit": abruf.uhr().isoformat(timespec="seconds"),
+                                              "listen": sorted(_kuerzer_vermerkt() | {schluessel})}
+        if not seit:   # vollständig gelesen: ein Befund zum Zeitfilter gilt nicht mehr (der nächste Lauf prüft erneut)
+            aenderung[f"{schluessel}_ohne_zeitfilter"] = None
+        _zustand_aendern(**aenderung)
         _teil(pfad).unlink(missing_ok=True)
+        if warnungen:   # wieder regulär aktualisiert: Warnung dieser Liste entfällt
+            _warnung_vermerken(schluessel, None)
         zeile.update(seiten=seiten, objekte=len(alle), neu=neu, geaendert=geaendert, geloescht=geloescht,
-                     filter_wirksam=_filter_wirksam(objekte, seit), ergebnis="ok")
+                     filter_wirksam=_filter_wirksam(objekte, seit), ergebnis="ok" + (f"; {kuerzer}" if kuerzer else ""))
         return alle, ""
     except Teilabbruch as e:
         if e.art in warnungen:   # nur diese Liste beenden, die übrigen laufen weiter
@@ -837,16 +976,18 @@ def _abruf_body():
         _statistik_sicher(zeile)
 
 
-def fetch_organizations(body):
+def fetch_organizations(body, angenommen=None):
     """Organisationen immer vollständig, ohne modified_since (auch im inkrementellen Lauf): eine kleine Liste (den
     Umfang in Köln misst Stufe 3), und Münster lehnt modified_since bei organization mit HTTP 401 ab
     (explore/ergebnisse/sessionnet_befunde.tsv; mandari ruft sie dann ohne Filter ab). So kann ein übergangener oder
     abgelehnter Zeitfilter hier die Vorlagen nicht blockieren; keine Filterprüfung. Ein Vollabruf unter 90 % des Stands
-    (Art `leer`) beendet nur diese Liste (letzter gültiger Stand, Warnung), damit er die Vorlagen nicht jede Nacht
-    blockiert. Liefert (Organisationen, Warnung für STAND.json oder "")."""
+    (Art `leer`) beendet nur diese Liste (letzter gültiger Stand, Warnung in STAND.json `abruf_warnungen` mit der
+    Abhilfe RATSATLAS_KUERZER_ANNEHMEN=organizations), damit er die Vorlagen nicht jede Nacht blockiert. `angenommen`:
+    siehe _abruf_liste. Liefert (Organisationen, Warnung oder "")."""
     alle, warnung = _abruf_liste(
         "organizations", body["organization"], config.RAW / "organizations.jsonl", "organizations", zeitfilter=False,
-        warnungen={"leer": "Organisationen unvollständig (unter 90 % des Stands), nicht aktualisiert"})
+        warnungen={"leer": "Organisationen unvollständig (unter 90 % des Stands), nicht aktualisiert"},
+        angenommen=angenommen)
     orgs = [o for o in alle if not o.get("deleted")]
     vb = [o for o in orgs if o.get("organizationType") == "Verwaltungsbereich"]
     if not warnung:
@@ -868,14 +1009,16 @@ def _kennung(wert):
     return wert if isinstance(wert, str) else None
 
 
-def fetch_meetings(body):
+def fetch_meetings(body, angenommen=None):
     """Sitzungen; ob Köln modified_since hier anwendet, ist ungemessen. Wendet der Server ihn nicht an, endet nur diese
     Liste (_abruf_liste mit `warnungen`, _nur_warnung): Die Sitzungen bleiben auf dem letzten gültigen Stand
-    (meetings.json und ihr Zeitstempel unverändert), kein Listenfehler. Liefert (Sitzungen, Warnung für STAND.json oder
-    "")."""
+    (meetings.json und ihr Zeitstempel unverändert), kein Listenfehler; in den Folgenächten ohne Anfrage
+    (_ohne_anfrage), bis die Sitzungen einmal vollständig gelesen sind. `angenommen`: siehe _abruf_liste. Liefert
+    (Sitzungen, Warnung oder "")."""
     alle, warnung = _abruf_liste(
         "meetings", body["meeting"], config.RAW / "meetings_roh.jsonl", "meetings",
-        warnungen={"filter": "Zeitfilter bei Sitzungen nicht angewandt, Sitzungen nicht aktualisiert"})
+        warnungen={"filter": "Zeitfilter bei Sitzungen nicht angewandt, Sitzungen nicht aktualisiert"},
+        angenommen=angenommen)
     meetings = [m for m in alle if not m.get("deleted")]
     keep = ("id", "name", "meetingState", "cancelled", "start", "end", "organization", "web")
     if not warnung:
@@ -891,16 +1034,30 @@ def fetch_meetings(body):
     return meetings, warnung
 
 
-def fetch_papers(body):
-    papers = _abruf_liste("papers", body["paper"], config.PAPERS, "papers")[0]
+def fetch_papers(body, angenommen=None):
+    """Vorlagen; `angenommen`: siehe _abruf_liste."""
+    papers = _abruf_liste("papers", body["paper"], config.PAPERS, "papers", angenommen=angenommen)[0]
     _stamp("papers")
     print(f"{len(papers)} Vorlagen → {config.PAPERS}")
     return papers
 
 
-def beratungen(papers, meetings):
+def _kuerzer_vermerkt():
+    """Listen aus dem Vermerk KUERZER_VERMERK im Zustand (nur papers und meetings; ein unlesbarer Vermerk lockert
+    nichts)."""
+    eintrag = _zustand().get(KUERZER_VERMERK)
+    listen = eintrag.get("listen") if isinstance(eintrag, dict) else None
+    return {x for x in listen if x in BERATUNGEN_AUS} if isinstance(listen, list) else set()
+
+
+def beratungen(papers, meetings, angenommen=()):
     """Beratung → Sitzung und TOP im Format, das build.py aus OParl-Lite kennt. Fehlt in der Beratung die
-    Organisation, wird sie aus der Sitzung übernommen und als abgeleitet markiert (`_organization_quelle`)."""
+    Organisation, wird sie aus der Sitzung übernommen und als abgeleitet markiert (`_organization_quelle`). Weniger als
+    90 % der bisherigen Beratungen: Abbruch (Art `leer`), außer für papers oder meetings wurde tatsächlich ein kürzerer
+    Stand angenommen: in diesem Lauf (`angenommen`, gesammelt von _abruf_liste) oder in einem früheren, der vor den
+    Beratungen abbrach (Vermerk KUERZER_VERMERK im Zustand); dass die Liste in RATSATLAS_KUERZER_ANNEHMEN steht, genügt
+    nicht. Ein leerer Stand (0 Beratungen) gilt bei einem bisherigen Stand über 0 nie. Der Vermerk wird erst nach dem
+    Schreiben von beratungen.jsonl entfernt."""
     sitzung = {m["id"]: m for m in meetings}
     top = {}
     for m in meetings:
@@ -928,11 +1085,22 @@ def beratungen(papers, meetings):
                 "agendaItem": {"uri": t["id"], "number": t.get("number"), "name": t.get("name"),
                                "result": t.get("result"), "public": t.get("public")} if t else None,
             })
-    if len(zeilen) < MIN_ANTEIL * _jsonl_count(config.BERATUNGEN):   # unvollständig: Abbruch, keine Sperre
-        raise abruf.Abbruch(f"Beratungen: nur {len(zeilen)} statt bisher {_jsonl_count(config.BERATUNGEN)}", "leer")
+    bisher = _jsonl_count(config.BERATUNGEN)
+    if len(zeilen) < MIN_ANTEIL * bisher:   # unvollständig: Abbruch, keine Sperre
+        im_lauf = set(BERATUNGEN_AUS) & set(angenommen)
+        erlaubt = im_lauf | _kuerzer_vermerkt()
+        if not erlaubt or not zeilen:   # leer nie, auch nicht gelockert
+            raise abruf.Abbruch(f"Beratungen: nur {len(zeilen)} statt bisher {bisher}" + (
+                " (ein leerer Stand wird nie angenommen, auch nicht mit RATSATLAS_KUERZER_ANNEHMEN)" if erlaubt else ""),
+                "leer")
+        herkunft = "" if im_lauf else f"; Vermerk {KUERZER_VERMERK} eines früheren Laufs: {', '.join(sorted(erlaubt))}"
+        _warnung(f"Beratungen: kürzerer Stand angenommen: {len(zeilen)} statt bisher {bisher} "
+                 f"(RATSATLAS_KUERZER_ANNEHMEN{herkunft})")
     _write(config.BERATUNGEN, "".join(json.dumps(z, ensure_ascii=False) + "\n" for z in zeilen))
     # Ergänzte Organisationen in papers.jsonl übernehmen, damit build.py sie liest
     _write(config.PAPERS, "".join(json.dumps(p, ensure_ascii=False) + "\n" for p in papers))
+    if KUERZER_VERMERK in _zustand():   # erst jetzt: die Beratungen sind auf dem angenommenen Stand
+        _zustand_setzen(KUERZER_VERMERK, None)
     _stamp("consultations_lite")
     print(f"{len(zeilen)} Beratungen mit Sitzung oder TOP, {ohne_sitzung} ohne, {ergaenzt} Gremien aus der Sitzung")
 
@@ -945,7 +1113,9 @@ def fetch_all():
     RuntimeError ohne Art) ist ein Programm- oder Einstellungsfehler: vermerkt, laut mit Traceback, kein Sperrverdacht.
     Nach jedem Abbruch außer dem Ende des Zeitfensters folgt in derselben Nacht kein weiterer Lauf (`letzter_abbruch`).
     Endet nur eine Nebenliste mit Warnung (_nur_warnung: Sitzungen ohne angewandten Zeitfilter, unvollständige
-    Organisationen), gilt der Lauf als vollständig; die Warnung steht in `abruf_hinweis`."""
+    Organisationen) oder wird sie übersprungen (_ohne_anfrage), gilt der Lauf als vollständig; die Warnung steht in
+    STAND.json unter `abruf_warnungen` (dort schon bei ihrem Auftreten vermerkt, ein vollständiger Lauf entfernt sie
+    nicht)."""
     config.RAW.mkdir(parents=True, exist_ok=True)
     # Sperre und Zeitfenster sind kein Ausfall: der Lauf wird übersprungen, ohne den Stand als fehlgeschlagen zu markieren
     lokal = abruf.lokal(config.OPARL_BODY)
@@ -968,17 +1138,15 @@ def fetch_all():
     try:
         _einstellungen_pruefen()
         body = _abruf_body()
-        _, warnung_org = fetch_organizations(body)
-        papers = fetch_papers(body)
-        meetings, warnung = fetch_meetings(body)
-        warnung = "; ".join(w for w in (warnung_org, warnung) if w)
-        beratungen(papers, meetings)
+        angenommen = set()   # Listen mit in diesem Lauf angenommenem kürzerem Stand (RATSATLAS_KUERZER_ANNEHMEN)
+        fetch_organizations(body, angenommen)
+        papers = fetch_papers(body, angenommen)
+        meetings, _ = fetch_meetings(body, angenommen)
+        beratungen(papers, meetings, angenommen)
         _stamp("abruf_ok")
         _zustand_aendern(sperre_verdacht=None, listenfehler=None, tlsfehler=None, letzter_abbruch=None, nicht_vor=None)
         # Meldungen früherer Läufe gelten nicht mehr (die Seite zeigte sonst dauerhaft „fehlgeschlagen“)
         _stand_entfernen("abruf_fehler", "abruf_hinweis", "abruf_uebersprungen")
-        if warnung:   # eine Liste nicht aktualisiert (_nur_warnung), der Lauf ist sonst vollständig
-            _stand_setzen(abruf_hinweis={"zeit": _now(), "meldung": warnung[:400]})
     except abruf.Abbruch as e:
         _abbruch_vermerken(e, zustand)
     except Exception as e:
@@ -997,12 +1165,21 @@ def fetch_all():
 
 def _einstellungen_pruefen():
     """Einstellungsfehler vor der ersten Anfrage laut ablehnen (ValueError wie andere Einstellungsfehler, kein
-    Sperrverdacht): RATSATLAS_MAX_OBJEKTE unter MAX_OBJEKTE_MINDESTENS (0, negativ oder so klein, dass eine Fortsetzung
-    nicht über die wiederholte Seite und die Seitenverschiebung hinauskäme)."""
-    if config.ABRUF_MAX_OBJEKTE < MAX_OBJEKTE_MINDESTENS:
-        raise ValueError(f"RATSATLAS_MAX_OBJEKTE={config.ABRUF_MAX_OBJEKTE} liegt unter {MAX_OBJEKTE_MINDESTENS} (zwei "
-                         f"Seiten zu 100 plus die größte Seitenverschiebung von {VERSCHIEBUNG_HOECHSTENS} Objekten); "
-                         "keine Anfrage gesendet")
+    Sperrverdacht): RATSATLAS_LIMIT keine positive ganze Zahl, RATSATLAS_MAX_OBJEKTE unter max_objekte_mindestens() (0,
+    negativ oder so klein, dass eine Fortsetzung nicht über die wiederholte Seite und die Seitenverschiebung
+    hinauskäme), unbekannte Listen in RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF (außer „ja“)."""
+    mindestens, g = max_objekte_mindestens(), _seitengroesse()
+    if config.ABRUF_MAX_OBJEKTE < mindestens:
+        limit = "" if config.ABRUF_SEITENGROESSE else f" leer, gerechnet mit {g}"
+        raise ValueError(f"RATSATLAS_MAX_OBJEKTE={config.ABRUF_MAX_OBJEKTE} liegt unter {mindestens} (zwei Seiten zu "
+                         f"{g} plus die größte Seitenverschiebung von {VERSCHIEBUNG_HOECHSTENS} Objekten, aufgerundet "
+                         f"auf Seiten zu {g}; Annahme: der Server liefert {g} Objekte je Seite wie verlangt, "
+                         f"RATSATLAS_LIMIT{limit}); keine Anfrage gesendet")
+    for variable, alle in (("RATSATLAS_KUERZER_ANNEHMEN", False), ("RATSATLAS_VOLLABRUF", True)):
+        unbekannt = sorted(_listen_aus(variable, alle) - set(LISTEN))
+        if unbekannt:
+            raise ValueError(f"{variable}: unbekannte Liste {', '.join(unbekannt)} (erlaubt: {', '.join(LISTEN)}"
+                             f"{', oder ja' if alle else ''}); keine Anfrage gesendet")
 
 
 def _weiter(e):
