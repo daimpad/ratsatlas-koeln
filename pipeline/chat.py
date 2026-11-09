@@ -18,13 +18,15 @@ from collections import Counter, defaultdict
 from datetime import date
 
 from . import config, topics
+from .geocode import EINGABE
 
 PAPER_FIELDS = ("reference", "name", "paper_type", "date", "amt", "web", "main_file", "source_object", "stand",
                 "parties", "plans")
 LOC_FIELDS = ("level", "name", "ortsteil", "stadtbezirk", "stage", "method", "confidence", "evidence")
 REL_FIELDS = ("reference", "paper_type", "name", "date")
 
-# wie EINWOHNER und EINWOHNER_TITEL in site/chat/tools.js
+# wie EINWOHNER und EINWOHNER_TITEL in site/chat/tools.js (Assistent, in Köln abgeschaltet; die Kölner Ergänzung um
+# geocode.EINGABE in einwohner() fehlt dort noch und folgt mit der Freigabe des Assistenten)
 EINWOHNER = {"Bürgerantrag § 24 GO - Öffentlich", "Anregungen und Beschwerden", "Einwohnerfrage", "Bürgerbrief"}
 EINWOHNER_TITEL = re.compile(r"bürgerantrag|einwohner|anregung|beschwerde", re.I)
 
@@ -161,7 +163,12 @@ def einwohner(papers, auch=None):
             nachbarn[p["reference"]].add(r["reference"])
             nachbarn[r["reference"]].add(p["reference"])
     offen = [p["reference"] for p in papers
-             if p["paper_type"] in EINWOHNER or EINWOHNER_TITEL.search(p["name"] or "") or (auch and auch(p))]
+             if p["paper_type"] in EINWOHNER or EINWOHNER_TITEL.search(p["name"] or "")
+             # Köln: dieselben Eingaben und Vorlagen natürlicher Personen wie in der Punktregel (geocode.EINGABE auf Art
+             # und Titel: „Eingabe nach § 24 GO NRW“, „Einwohneranfrage nach § 39 Abs. 6“, „… – Bürgereingabe“), damit
+             # eine Vorlage ohne Hauskoordinate ihre Hausnummer auch nicht im Titel zeigt (Generalprobe 09.11.2026)
+             or EINGABE.search(p["paper_type"] or "") or EINGABE.search(p["name"] or "")
+             or (auch and auch(p))]
     gesehen = set(offen)
     while offen:
         for n in nachbarn[offen.pop()]:

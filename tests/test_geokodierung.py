@@ -72,6 +72,27 @@ def test_punktregel():
     assert not hausnummer_punkt_erlaubt({**vv, "reference": "AZ 191/21"})
 
 
+def test_punktregel_einwohneranfrage():
+    """Kölner Einwohneranfrage (natürliche Person, Stufe 2: „Einwohneranfrage nach § 39 Abs. 6“, Drucksache wie
+    Anträge): keine Hauskoordinate, auch ohne Hinweis im Titel; die Einwohnerbefragung der Verwaltung bleibt erlaubt."""
+    ew = {"reference": "AN/0012/2026", "name": "Zustand des Gehwegs vor Musterweg 3",
+          "paperType": "Einwohneranfrage nach § 39 Abs. 6"}
+    assert not hausnummer_punkt_erlaubt(ew)
+    assert not hausnummer_punkt_erlaubt({"reference": "1234/2026", "paperType": "Mitteilung",
+                                         "name": "Beantwortung einer Einwohnerfrage: Musterweg 3"})
+    assert hausnummer_punkt_erlaubt({"reference": "1234/2026", "paperType": "Beschlussvorlage",
+                                     "name": "Einwohnerbefragung zur Umgestaltung Musterweg 3"})
+
+
+def test_ohne_hauskoordinate_verbundene_vorlagen():
+    from pipeline.geocode import ohne_hauskoordinate
+    rel = [("anfrage", "antwort"), ("antwort", "nachtrag"), ("vorlage", "aenderung")]
+    assert ohne_hauskoordinate({"anfrage"}, rel) == {"anfrage", "antwort", "nachtrag"}
+    assert ohne_hauskoordinate({"nachtrag"}, rel) == {"anfrage", "antwort", "nachtrag"}
+    assert ohne_hauskoordinate({"einzeln"}, rel) == {"einzeln"}
+    assert ohne_hauskoordinate(set(), rel) == set()
+
+
 @pytest.mark.parametrize("name, bezirk", [
     ("Bezirksvertretung 3 (Lindenthal)", "Lindenthal"), ("Bezirksvertretung 7", "Porz"),
     ("Bezirksvertretung Mülheim", "Mülheim"), ("Rat", None), ("Ausschuss für Umwelt", None)])

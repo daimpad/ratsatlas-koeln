@@ -193,7 +193,8 @@ def _hauskoordinate(level=None, method=None, source=None):
 def erlaubnis(db):
     """Drucksache → darf ihr Ortsbezug auf einer Hauskoordinate liegen? Gleiche Regel und Eingaben wie im Aufbau
     (geocode.hausnummer_punkt_erlaubt in build._stage_b): Drucksache, Vorlagenart und Titel aus der Datenbank, Namen der
-    beratenden Gremien. Gibt es eine Drucksache mehrfach, muss jede die Erlaubnis haben. Liefert ({Vorlagen-ID: bool},
+    beratenden Gremien; dazu die verbundenen Vorlagen (geocode.ohne_hauskoordinate über paper_relation). Gibt es eine
+    Drucksache mehrfach, muss jede die Erlaubnis haben. Liefert ({Vorlagen-ID: bool},
     {Drucksache: bool}, {Vorlagen-ID: Drucksache})."""
     gremien = {}
     for pid, name in db.execute(
@@ -202,9 +203,16 @@ def erlaubnis(db):
         gremien.setdefault(pid, []).append(name or "")
     je_id, je_ref, ref_of = {}, {}, {}
     for pid, ref, typ, name in db.execute("SELECT id, reference, paper_type, name FROM paper"):
-        ok = geocode.hausnummer_punkt_erlaubt({"reference": ref, "paperType": typ, "name": name}, gremien.get(pid, ()))
-        je_id[pid], ref_of[pid] = ok, ref
-        je_ref[ref] = je_ref.get(ref, True) and ok
+        je_id[pid] = geocode.hausnummer_punkt_erlaubt({"reference": ref, "paperType": typ, "name": name},
+                                                      gremien.get(pid, ()))
+        ref_of[pid] = ref
+    # verbundene Vorlagen (über- und untergeordnet) einer Vorlage ohne Erlaubnis: ebenfalls ohne (wie im Aufbau)
+    for pid in geocode.ohne_hauskoordinate({pid for pid, ok in je_id.items() if not ok},
+                                           db.execute("SELECT parent_id, child_id FROM paper_relation")):
+        if pid in je_id:
+            je_id[pid] = False
+    for pid, ok in je_id.items():
+        je_ref[ref_of[pid]] = je_ref.get(ref_of[pid], True) and ok
     return je_id, je_ref, ref_of
 
 
