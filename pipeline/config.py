@@ -50,15 +50,23 @@ ABRUF_ABSTAND = float(os.environ.get("RATSATLAS_ABSTAND", "2.0"))
 # Zeitfenster 23–1 Uhr: laut mandari erlaubt die Stadt Abrufe nur dann (ohne Quelle der Stadt; Anfrage offen,
 # explore/ergebnisse/sessionnet_befunde.tsv)
 ABRUF_ZEITFENSTER = os.environ.get("RATSATLAS_ZEITFENSTER", "23-1")   # Stunden von-bis; leer = ohne Zeitfenster
-# Seiten je Liste und Lauf (Schutz vor Schleifen); eine Fortsetzung zählt in ihrem Lauf neu. Mit 2 s Abstand und dem
-# Zeitfenster 23–1 Uhr schafft ein Lauf höchstens rund 2600–3300 Seiten (je Seite 2 s Abstand plus Antwortzeit); die
-# Grenze von 4000 wirkt daher nur ohne Zeitfenster oder mit einem kleineren Wert
-ABRUF_MAX_SEITEN = int(os.environ.get("RATSATLAS_MAX_SEITEN", "4000"))
-# Gesamtgrenze eines Vollabrufs über seine Fortsetzungen hinweg: höchstens ABRUF_MAX_SEITEN_FAKTOR × ABRUF_MAX_SEITEN
-# Seiten (Schutz gegen eine Liste, die endlos neue Kennungen erzeugt); darüber Abbruch der Art `liste` (sessionnet.py)
-ABRUF_MAX_SEITEN_FAKTOR = 3
+# Objekte je Liste und Lauf (Höflichkeitsgrenze je Nacht), umgerechnet in Seiten mit der tatsächlichen Seitengröße des
+# Laufs (sessionnet.py); eine Fortsetzung zählt in ihrem Lauf neu. 100 000 Objekte sind 1000 Seiten zu 100 (4000 zu 25),
+# also höchstens rund 1000 Anfragen je Liste und Nacht. Kapazität des Zeitfensters (rund 108 Minuten nach der
+# Einrichtung des Laufs, TECHNIK.md) bei 100 je Seite und 2 s Abstand: bei 5 s Antwortzeit rund 900 Seiten, bei 3 s
+# rund 1300; bei schnellen Antworten greift also die Grenze vor dem Ende des Fensters. Erreicht ein Vollabruf sie, gilt
+# das wie das Ende des Zeitfensters (Art `obergrenze`: Fortsetzung in der nächsten Nacht, kein Listenfehler, in
+# derselben Nacht kein weiterer Lauf); ein inkrementeller Lauf bricht dort als Listenfehler ab (Art `liste`). Werte
+# unter 1200 (sessionnet.MAX_OBJEKTE_MINDESTENS) lehnt der Abruf vor der ersten Anfrage als Einstellungsfehler ab
+ABRUF_MAX_OBJEKTE = int(os.environ.get("RATSATLAS_MAX_OBJEKTE", "100000"))
+# Gesamtgrenze eines Vollabrufs über seine Fortsetzungen hinweg (Schutz gegen eine Liste, die endlos neue Kennungen
+# erzeugt), in Objekten, umgerechnet wie oben; darüber Abbruch der Art `liste`. 600 000: Ein Vollabruf mit bis zu
+# 500 000 Objekten je Liste wird sicher fertig (Kölner Gesamtzahl ungemessen; Stufe 1: höchste Kennung rund 135 000);
+# der Spielraum deckt die wiederholte Seite je Fortsetzung und die Seitenverschiebung durch neue Vorlagen
+ABRUF_MAX_OBJEKTE_GESAMT = 600_000
 ABRUF_PAUSEN = [60, 300, 1800, 3600, 3 * 3600]
-ABRUF_SEITENGROESSE = os.environ.get("RATSATLAS_LIMIT", "")          # leer = Vorgabe des Servers (25)
+# Objekte je Seite (`limit`; Köln, Stufe 2: limit=100 wirkt, rund 5 s je Antwort); leer = Vorgabe des Servers (25)
+ABRUF_SEITENGROESSE = os.environ.get("RATSATLAS_LIMIT", "100")
 OVERPASS = [
     "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
     "https://overpass-api.de/api/interpreter",

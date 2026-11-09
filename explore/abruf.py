@@ -16,6 +16,10 @@
 - RATSATLAS_MAX_ANFRAGEN: harte Obergrenze für Anfragen ans Netz je Prozess (Cache-Treffer zählen nicht)
 - Weiterleitungen (3xx) werden nicht verfolgt: jede Weiterleitung ist genau eine Anfrage, wird mit Ziel-URL
   protokolliert und bricht ab (sonst kämen ungezählte Anfragen an einen anderen Host oder Pfad hinzu)
+- eine Adresse mit Zeichen außerhalb von ASCII (etwa ein Umlaut im Host, den urllib per IDNA an einen anderen Host
+  sendete) wird nicht gesendet und nicht gezählt: Art `adresse`
+- `vor_dem_senden` (optional): Prüfung nach dem Warten auf den Abstand, unmittelbar vor dem Senden (oparl_messung.py
+  prüft dort das Zeitfenster noch einmal); löst sie einen Abbruch aus, ist nichts gesendet und nichts gezählt
 - Zeitüberschreitung und Verbindungsabbruch gelten als mögliche Sperre: sofortiger Abbruch ohne Wiederholung
   (wie pipeline/abruf.py; explore/ergebnisse/sessionnet_befunde.tsv); ebenso eine Antwort, die insgesamt länger als
   GESAMTFRIST (60 s) braucht (Tropf-Antwort: jeder Block kommt vor der Zeitüberschreitung von 60 s, das Ganze nie; der
@@ -351,8 +355,9 @@ def _lesen(r, url, start):
     return b"".join(teile)
 
 
-def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
-    """Gibt den Inhalt zurück; nutzt den Cache, hält Abstand und wiederholt behutsam."""
+def hole(url: str, endung: str = "", cache: bool = True, vor_dem_senden=None) -> bytes:
+    """Gibt den Inhalt zurück; nutzt den Cache, hält Abstand und wiederholt behutsam. `vor_dem_senden`: Prüfung nach
+    dem Warten auf den Abstand, unmittelbar vor jedem Senden (etwa das Zeitfenster)."""
     global _letzte, _anfragen, _cache_treffer, unterbrochen
     pfad = _cachepfad(url, endung)
     if cache and pfad.exists():
@@ -360,6 +365,8 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
         _cache_treffer += 1
         _protokoll(url, "cache", len(daten), 0, "cache")
         return daten
+    if not url.isascii():   # urllib sendete einen Umlaut im Host per IDNA an einen anderen Host: nicht senden
+        raise Abbruch(f"ungültige Adresse (Zeichen außerhalb von ASCII), nicht gesendet: {url}", "adresse")
     sperre_halten()   # vor der ersten Netzanfrage: kein zweiter Abrufprozess gleichzeitig (auch mit anderem Cache)
     pausen = PAUSEN[:max(WIEDERHOLUNGEN, 0)]
     fehler = None
@@ -368,6 +375,8 @@ def hole(url: str, endung: str = "", cache: bool = True) -> bytes:
             raise Abbruch(f"Obergrenze von {MAX_ANFRAGEN} Anfragen erreicht (RATSATLAS_MAX_ANFRAGEN): {url}",
                           "obergrenze")
         _warten()
+        if vor_dem_senden:   # etwa das Zeitfenster: kann während des Wartens enden
+            vor_dem_senden()
         start = time.monotonic()
         try:
             _anfragen += 1   # erst nach dem Warten: ein Lauf, der dabei unterbrochen wird, hat diese Anfrage nicht gesendet

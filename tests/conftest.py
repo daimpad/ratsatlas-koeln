@@ -5,7 +5,11 @@ Referenzen „NNNN/JJJJ“ und „AN/NNNN/JJJJ“, `consultation` mit direktem V
 `location` nur mit `subLocality`, Paginierung über `links.next`. `Daten.form = "koeln"` liefert die Listen wie Köln in
 Stufe 1 (07.11.2026): neueste zuerst (zuletzt angefügt zuerst), `pagination` nur mit elementsPerPage und currentPage,
 `links` nur mit first, self und next. `created` wächst mit der Nummer der Vorlage (neueste zuerst heißt also wie in
-Köln `created` absteigend).
+Köln `created` absteigend). Parameter wie Köln in Stufe 2 (08.11.2026): Der Server liest die Abfrage wie PHP („+“ wird
+Leerzeichen, %2B wird „+“); ein Zeitwert, der so nicht lesbar ist (unkodiert mit „+00:00“), wird übergangen (gleiche
+Seite wie ohne Filter), kodiert angewandt; links.next trägt die gelesenen Werte unkodiert. `limit` wirkt nur mit
+`Daten.limit_wirkt = True` (sonst gilt `groesse`, die Spezifikation erlaubt das); `Daten.roh` hält die Abfragen
+unverändert.
 Dazu Fabriken für lokale TLS-Server: `tls_server` (selbst signiertes Zertifikat, dem der Client nicht vertraut) und
 `abbrechender_server` (Handshake endet unerwartet oder wird zurückgesetzt).
 """
@@ -143,12 +147,23 @@ def abbrechender_server():
         server.server_close()
 
 
+def _zeitwert(wert):
+    """Zeitwert eines Filters wie Köln: lesbar mit Zone, sonst None (der Filter wird übergangen)."""
+    try:
+        t = datetime.fromisoformat(wert or "")
+    except ValueError:
+        return None
+    return t if t.tzinfo else None
+
+
 class Daten:
     def __init__(self, basis):
         self.b = basis
         self.form = "bisher"   # „koeln“: Listen wie Köln in Stufe 1 (siehe oben)
         self.groesse = 2       # Objekte je Seite
+        self.limit_wirkt = False   # `limit` anwenden (Köln, Stufe 2) statt `groesse`
         self.anfragen = []
+        self.roh = []          # Abfragen unverändert (Kodierung)
         self.papers = [self.paper(i) for i in range(1, 6)]
         self.meetings = [{
             "id": f"{basis}/meetings/1", "type": "https://schema.oparl.org/1.1/Meeting",
@@ -187,17 +202,18 @@ class Daten:
                 "legislativeTerm": [{"id": f"{b}/terms/1", "name": "2025–2030", "startDate": "2025-11-01"}]}
 
     def liste(self, objekte, pfad, q, groesse=None):
-        groesse = groesse or self.groesse
-        seit = q.get("modified_since")
+        groesse = groesse or (int(q["limit"]) if self.limit_wirkt and q.get("limit", "").isdigit() else self.groesse)
+        seit = _zeitwert(q.get("modified_since"))
         if seit:
-            objekte = [o for o in objekte if o["modified"] >= seit]
+            # unlesbares oder zonenloses modified: geliefert (die Pipeline zählt es, test_unlesbares_modified_…)
+            objekte = [o for o in objekte if (t := _zeitwert(o["modified"])) is None or t >= seit]
         if self.form == "koeln":   # neueste zuerst: zuletzt angefügte Objekte zuerst
             objekte = objekte[::-1]
         seite = int(q.get("page", 1))
         teil = objekte[(seite - 1) * groesse: seite * groesse]
         links = {}
 
-        def adresse(werte):   # wie SessionNet: ohne URL-Kodierung
+        def adresse(werte):   # wie Köln: gelesene Werte ohne URL-Kodierung
             return f"{self.b}{pfad}" + ("?" + "&".join(f"{k}={v}" for k, v in werte.items()) if werte else "")
         if seite * groesse < len(objekte):
             links["next"] = adresse({**q, "page": seite + 1})
@@ -220,10 +236,12 @@ def oparl(tmp_path, monkeypatch):
         def do_GET(self):
             d = daten["d"]
             u = urllib.parse.urlparse(self.path)
-            # wie SessionNet: „+“ bleibt „+“; kodierte Zeitstempel (%3A, %2B) ergeben HTTP 404
-            q = dict((k, urllib.parse.unquote(v)) for k, _, v in (x.partition("=") for x in u.query.split("&") if x))
+            # wie Köln (PHP): „+“ wird Leerzeichen, %2B wird „+“ (Stufe 2)
+            q = dict((k, urllib.parse.unquote_plus(v)) for k, _, v in (x.partition("=") for x in u.query.split("&")
+                                                                         if x))
             d.anfragen.append((u.path, q, self.headers.get("User-Agent")))
-            if "%3A" in u.query.upper() or "%2B" in u.query.upper() or d.stoerung(u.path, q):
+            d.roh.append((u.path, u.query))
+            if d.stoerung(u.path, q):
                 self.send_response(404)
                 self.end_headers()
                 return
@@ -255,7 +273,9 @@ def oparl(tmp_path, monkeypatch):
                        "ZUSTAND": raw / "zustand_abruf.json", "ABRUFSTATISTIK": export / "abrufstatistik.tsv",
                        "TEXTE": raw / "texte.jsonl", "OPARL_BODY": f"{basis}/body", "ABRUF_ABSTAND": 0.0,
                        "BPLAN": tmp_path / "fehlt.geojson", "OBJEKTE": tmp_path / "fehlt.json",
-                       "HAUSNUMMERN": tmp_path / "fehlt_hnr.json"}.items():
+                       "HAUSNUMMERN": tmp_path / "fehlt_hnr.json",
+                       # ohne `limit` wie vor Stufe 2; Tests zur Seitengröße setzen ihn (und Daten.limit_wirkt)
+                       "ABRUF_SEITENGROESSE": ""}.items():
         monkeypatch.setattr(config, name, wert)
     monkeypatch.delenv("RATSATLAS_STADT_INFORMIERT", raising=False)
     monkeypatch.delenv("RATSATLAS_VOLLABRUF", raising=False)

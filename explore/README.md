@@ -27,9 +27,9 @@ Die Messung der OParl-API läuft in sechs Stufen, jede erst nach Bericht und Fre
 |---|---|---|
 | 1 | `test` | 3 / 3 |
 | 2 | `kennzahlen` | 10 / 7 |
-| 3 | `organisationen --seiten 4`, `stichprobe --seiten 1` | 5 + 9 / 3 + 7 |
+| 3 | `organisationen --seiten 4`, `filtertest` (kodiertes Fenster created_since/created_until, zwei Werktage 2025, 1 Anfrage) | 5 + 1 / 3 + 1 |
 | 4 | `sitzungen --seiten 2` | 3 / 1 |
-| 5 | `stichprobe --seiten 3` (600 Vorlagen bei 25 je Seite) | 25 / 16 |
+| 5 | `stichprobe --seiten 1 --limit 100` (800 Vorlagen, eigene Freigabe) | 9 / 8 |
 | 6 | `pdf-koepfe --anzahl 100` (erst nach Klärung) | höchstens 100 |
 
-Zusammen höchstens 155 Anfragen über mindestens sechs Nächte, dazu die optionale Ergänzung in Stufe 4 (`organisationen` bis zum Ende der Liste, totalPages + 1 Anfragen). Obergrenzen ohne Reserve: Reicht eine nicht, bricht die Stufe ab und wird berichtet. Nach jeder Stufe: `python3 explore/auswertung.py --stufe <N>`. Die Stichprobendatei für Stufe 6 (`_cache/stichprobe_vorlagen.jsonl`, ohne File-Objekte) bleibt im Cache.
+Zusammen höchstens 131 Anfragen über mindestens sechs Nächte, dazu die optionale Ergänzung in Stufe 4 (`organisationen` bis zum Ende der Liste, totalPages + 1 Anfragen). Obergrenzen ohne Reserve: Reicht eine nicht, bricht die Stufe ab und wird berichtet. Nach jeder Stufe: `python3 explore/auswertung.py --stufe <N>`. Die Stichprobendatei für Stufe 6 (`_cache/stichprobe_vorlagen.jsonl`, ohne File-Objekte) bleibt im Cache.
