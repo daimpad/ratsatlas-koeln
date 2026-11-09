@@ -7,6 +7,7 @@ Die Bonner Vergleichswerte (Phase-0-Bericht Bonn, Pilot-Ortsteil) gelten für K�
 Vergleichswerte folgen mit der Messung der OParl-API (CLAUDE.md 7.1 und 9). Zusatzthemen werden nur geprüft, wenn sie in
 config.ZUSATZTHEMEN freigegeben sind; abgeschaltete weist die Ausgabe als solche aus.
 """
+import csv
 import json
 import re
 import sqlite3
@@ -35,6 +36,7 @@ ZAEHLUNG = {
     "geojson_hauskoordinaten": "davon auf einer Hauskoordinate",
     "gebietsdateien": "Vorlagen in den Gebietsdateien der Karte untersucht",
     "gebietsdateien_hauskoordinaten": "davon mit Hauskoordinate",
+    "stichprobe_hausnummern": "Titel in der Stichprobe Hausnummern untersucht",
 }
 
 
@@ -310,6 +312,14 @@ def datenschutz(db, base=None):
                 auf.add(p["reference"])
     zahl["gebietsdateien"] = len(refs)
     zahl["gebietsdateien_hauskoordinaten"] = len(auf)
+    # Stichprobe Hausnummern (build._hnr_audit, maskiert in export; liegt in data/export, also auf der Seite und im
+    # Datenpaket): Titel wie in der Suche; fehlt sie, gibt es nichts zu prüfen
+    stichprobe = base.parent / "hausnummern" / "stichprobe_hausnummern.tsv"
+    if stichprobe.exists():
+        with open(stichprobe, encoding="utf-8", newline="") as f:
+            zeilen = list(csv.reader(f, delimiter="\t"))[1:]
+        zahl["stichprobe_hausnummern"] = len(zeilen)
+        offen |= {z[1] for z in zeilen if len(z) > 2 and m.offen(z[2], z[1])}
     _verstoss(befunde, "Gebietsdateien der Karte", [r for r in auf if not je_ref.get(r)])
     if offen:
         befunde.append(f"Datenschutz: Hausnummern in Titeln aus Einwohnerschaft, Bauordnung oder Naturschutz "

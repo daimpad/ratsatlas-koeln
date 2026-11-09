@@ -21,8 +21,10 @@ OHNE_NR = "[Hausnummer ausgelassen]"
 # Bauordnungsamt und Untere Naturschutzbehörden: Titel nennen oft private Baugrundstücke mit Hausnummer
 AMT_PRIVAT = re.compile(r"^(?:63(?:\s|-)|56-3\b|67-6\b)")
 _L = r"[^\W\d_]"   # Buchstabe (wie \p{L})
-# wie NR und SUFFIX in site/chat/tools.js
-NR = (rf"\d{{1,3}}(?:\s?[a-zA-Z](?!{_L}))?(?:\s*(?:-|–|bis|und|u\.|/|,)\s*\d{{1,3}}(?:\s?[a-zA-Z](?!{_L}))?)*(?!\d)")
+# wie NR und SUFFIX in site/chat/tools.js, aber bis zu vier Ziffern: Kölner Straßen haben vierstellige Hausnummern
+# („Aachener Straße 1175“, „Militärringstraße 1000“; geocode.HAUSNUMMER liest sie ebenso; Generalprobe 09.11.2026).
+# Der Assistent (site/chat/tools.js, in Köln abgeschaltet) folgt mit seiner Freigabe
+NR = (rf"\d{{1,4}}(?:\s?[a-zA-Z](?!{_L}))?(?:\s*(?:-|–|bis|und|u\.|/|,)\s*\d{{1,4}}(?:\s?[a-zA-Z](?!{_L}))?)*(?!\d)")
 SUFFIX = (rf"(?:{_L}|[.-])*(?:straße|strasse|str\.|weg|platz|gasse|allee|ring|ufer|damm|pfad|chaussee|hof|markt|"
           r"graben|berg|feld)")
 

@@ -69,7 +69,7 @@ Laufen mehrere Testsuiten gleichzeitig (etwa in mehreren Arbeitskopien) mit gese
 
 | Datei | Zeit | Aufgabe |
 |---|---|---|
-| `pages.yml` | täglich 22:10 UTC, bei Push auf `main`, auf Knopfdruck | Abruf (gesperrt bis zur Repository-Variable `RATSATLAS_STADT_INFORMIERT=ja`), Aufbereitung, Export, Datenpaket; Branch `deploy` (Hauptadresse über Plesk) und Spiegel auf GitHub Pages mit Canonical auf `SITE_URL`. Ohne Daten endet der Lauf ohne Veröffentlichung. |
+| `pages.yml` | täglich 22:10 UTC, bei Push auf `main`, auf Knopfdruck | Abruf (gesperrt bis zur Repository-Variable `RATSATLAS_STADT_INFORMIERT=ja`), Aufbereitung, Export, Datenpaket; Branch `deploy` (Hauptadresse über Plesk) und Spiegel auf GitHub Pages mit Canonical auf `SITE_URL`. Bis zum ersten vollständigen Abruf (`abruf_ok` in `STAND.json`, ohne `testdaten`) veröffentlicht der Lauf die Kartenvorschau ohne Ratsvorlagen (`tools/vorschau.py`). |
 | `kacheln.yml` | vierteljährlich, auf Knopfdruck, bei Pull Requests zu `pipeline/kacheln/` | graue Kartenkacheln aus OSM (Protomaps-Ausschnitt Köln) in den Branch `kacheln`, danach `pages.yml` |
 | `tests.yml` | Pull Requests, Push auf `main` | Tests, Syntax der Seite |
 | `live.yml` | auf Knopfdruck (nach der Einrichtung in Plesk täglich) | Hauptadresse und Spiegel erreichbar, aktueller Stand, Canonical, Kopfzeilen |
