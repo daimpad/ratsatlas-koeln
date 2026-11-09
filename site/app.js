@@ -1859,7 +1859,9 @@
     const locs = (ownLocs.length ? ownLocs.map(locItem).join("") : takenLocs.length ? "" : "<li>stadtweit / ohne Ortsbezug</li>")
       + (takenLocs.length ? `<li class="taken-group">Diese Vorlage nennt selbst keinen Ort. Übernommen von der übergeordneten Vorlage:<ul>${takenLocs.map(locItem).join("")}</ul></li>` : "");
     const rel = (arr) => arr.map((r) => `<li>${esc(r.reference)} · ${esc(r.paper_type)} – ${esc(r.name)}</li>`).join("");
-    const sources = meta.sources.map((s) => `<li>${esc(s.name)}: ${esc(s.license)}${s.retrieved_at ? ` · Abruf ${esc(String(s.retrieved_at).slice(0, 10))}` : ""}</li>`).join("");
+    // Quellen nur aus einer Liste (sonst keine), ohne leere Einträge; Abrufdatum nach der Regel des Datenstands (zeitDatum)
+    const sources = (Array.isArray(meta && meta.sources) ? meta.sources.filter(Boolean) : [])
+      .map((s) => `<li>${esc(s.name)}: ${esc(s.license)}${s.retrieved_at ? ` · Abruf ${zeitDatum(s.retrieved_at)}` : ""}</li>`).join("");
     $("#detail-heading").textContent = "Vorgang";
     $("#detail").innerHTML = `
       <h3 tabindex="-1">${esc(p.name)}</h3>
@@ -1970,7 +1972,8 @@
   }
 
   // --- Abonnieren (Atom-Feeds) ------------------------------------------------------------------------
-  // gleiche Regeln wie pipeline/export.slug und publish.has_paper_feed
+  // gleiche Regeln wie pipeline/export.slug und publish.has_paper_feed (Jahresgrenze aus dem Berliner Kalendertag des
+  // Datenstands, dataStand nach standTag, wie export.feed_grenze)
   const slug = (s) => String(s).toLowerCase().replace(/[äöüß]/g, (c) => ({ ä: "ae", ö: "oe", ü: "ue", ß: "ss" }[c]))
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   const hasPaperFeed = (p) => Boolean(index && dataStand) &&

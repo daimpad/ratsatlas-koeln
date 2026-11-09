@@ -3642,3 +3642,70 @@ def test_datenstand_mit_warnung_vollstaendig():
         assert nur == f"Datenstand: Ratsinformationssystem: 09.11.2026 · erzeugt 09.11.2026 · {satz}", zone
         assert mit_fehler == ("Datenstand: Ratsinformationssystem: 09.11.2026 · erzeugt 09.11.2026 · Der letzte Abruf "
                               f"am 10.11.2026 ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand. · {satz}"), zone
+
+
+# --- Runde 17e: Jahresgrenze der Vorgangs-Feeds in Pipeline und Seite, Quellenliste im Vorgang -------------------------
+
+def test_jahresgrenze_der_vorgangs_feeds_wie_auf_der_seite():
+    """pipeline/export.py (feed_grenze, berliner_tag) und site/app.js (standTag, hasPaperFeed): Die Jahresgrenze der
+    Feeds je Vorlage ist der 1. Januar des Vorjahres des Berliner Kalendertags von retrieved_at (Zeitstempel ohne Zone
+    als UTC; unlesbar heute). Bis Runde 17d nahm die Pipeline das Jahr aus den ersten vier Zeichen (UTC): Ein Abruf am
+    31.12.2026 um 23:30 UTC ergab dort 2026, auf der Seite 2027. Mitten im Jahr bleibt die Grenze unverändert.
+    Ausgeführt mit node (Rechnerzone UTC und Tokio)."""
+    from pipeline import export, publish
+    quelle = (Path(__file__).resolve().parents[1] / "pipeline" / "export.py").read_text(encoding="utf-8")
+    assert "publish.write_feeds(out / \"feeds\", areas, cache, names, home, slug, feed_grenze(stand))\n" in quelle
+    _, teil = _app_js_teil([r"^  const heute = .*?\n  const standTag = .*?\n  };\n", r"^  const hasPaperFeed = .*?;\n"])
+    werte = ["2026-12-31T23:30:00+00:00", "2026-12-31T23:30:00", "2026-12-31T22:30:00+00:00",
+             "2026-06-15T10:00:00+00:00", "2026-06-15", "kaputt", "", 7, None]
+    vorlagen = [{"date": d, "stand": "beschlossen"} for d in ("2025-12-31", "2026-01-01")]
+    code = ("let index = {}, dataStand;\n" + teil + f"const werte = {json.dumps(werte)};\n"
+            + f"const vorlagen = {json.dumps(vorlagen)};\n"
+            + "console.log(JSON.stringify([heute(), werte.map((w) => { dataStand = standTag({sources: [{name: "
+            + "'oparl-koeln', retrieved_at: w}]}); return [dataStand.slice(0, 4), vorlagen.map(hasPaperFeed)]; })]));")
+    grenzen = [export.feed_grenze(w) for w in werte]
+    assert grenzen[:5] == ["2026-01-01", "2026-01-01", "2025-01-01", "2025-01-01", "2025-01-01"]
+    assert grenzen[3] == f"{int(werte[3][:4]) - 1}-01-01"   # mitten im Jahr wie bis Runde 17d
+    assert [export.berliner_tag(w) for w in werte] == ["2027-01-01", "2027-01-01", "2026-12-31", "2026-06-15",
+                                                       "2026-06-15", None, None, None, None]
+    for zone in ("UTC", "Asia/Tokyo"):
+        heute, seite = _node_json(code, zone)
+        pipeline = [[(export.berliner_tag(w) or heute)[:4], [publish.has_paper_feed(p, g) for p in vorlagen]]
+                    for w, g in zip(werte, grenzen)]
+        assert seite == pipeline, zone
+        # 31.12. 23:30 UTC: Grenze 01.01.2026 (Vorlage vom 31.12.2025 ohne Feed); eine Stunde früher und mitten im Jahr
+        # Grenze 01.01.2025 (beide mit Feed)
+        assert seite[0] == ["2027", [False, True]] and seite[2] == seite[3] == ["2026", [True, True]], zone
+
+
+def test_quellen_im_vorgang_aus_unlesbarem_meta():
+    """site/app.js (Vorgangsansicht, Quellenliste): Quellen nur aus einer Liste und ohne leere Einträge (sources
+    „kaputt“ oder [null] brachten bis Runde 17d die Vorgangsansicht zum Absturz); das Abrufdatum folgt der Regel des
+    Datenstands (zeitDatum, Berliner Kalendertag, unlesbar „unbekannt“), nicht mehr den ersten zehn Zeichen."""
+    js, teil = _app_js_teil([r"^  const esc = .*?;\n", r"^  const heute = .*?\n  const standTag = .*?\n  };\n",
+                             r"^    // Quellen nur aus einer Liste.*?\n    const sources = .*?\.join\(\"\"\);\n"])
+    assert "String(s.retrieved_at).slice(0, 10)" not in js
+    faelle = [{"sources": "kaputt"}, {"sources": [None]}, None, {},
+              {"sources": [None, {"name": "oparl-koeln", "license": "CC BY 3.0 DE", "retrieved_at": "kaputt"}]},
+              {"sources": [{"name": "oparl-koeln", "license": "L", "retrieved_at": "2026-11-09T23:30:00+00:00"},
+                           {"name": "osm", "license": "ODbL"}]}]
+    code = (teil.replace("    const sources = ", "    const quellen = (meta) => { const sources = ", 1)
+            .rstrip("\n") + " return sources; };\n"
+            + f"console.log(JSON.stringify({json.dumps(faelle)}.map(quellen)));")
+    for zone in ("UTC", "Asia/Tokyo"):
+        assert _node_json(code, zone) == [
+            "", "", "", "", "<li>oparl-koeln: CC BY 3.0 DE · Abruf unbekannt</li>",
+            "<li>oparl-koeln: L · Abruf 10.11.2026</li><li>osm: ODbL</li>"], zone
+
+
+def test_datenstand_mit_retrieved_at_als_liste():
+    """site/app.js (standText, standTag): retrieved_at als Liste (["2026-11-09"]) ist kein lesbarer Zeitpunkt; der
+    Datenstand zeigt „unbekannt“ (nicht das Datum aus String(["2026-11-09"])), und dataStand fällt auf generated_at
+    zurück."""
+    _, teil = _app_js_teil([r"^  const QUELLE_NAME = .*?;\n", r"^  const heute = .*?\n  const standTag = .*?\n  };\n"])
+    m = _mit_oparl(["2026-11-09"], "2026-11-07T10:00:00+00:00")
+    code = teil + f"const m = {json.dumps(m)};\nconsole.log(JSON.stringify([standText(m, {{}}), standTag(m)]));"
+    for zone in ("UTC", "Asia/Tokyo"):
+        text, tag = _node_json(code, zone)
+        assert text == "Datenstand: Gebiete: 01.11.2026 · Ratsinformationssystem: unbekannt · erzeugt 07.11.2026", zone
+        assert tag == "2026-11-07", zone

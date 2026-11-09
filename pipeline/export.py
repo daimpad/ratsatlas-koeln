@@ -211,6 +211,33 @@ def _meta(db, stable=False, **extra):
             "sources": sources, "note": DERIVED_NOTE}
 
 
+def berliner_tag(wert):
+    """Kalendertag (JJJJ-MM-TT) eines Zeitpunkts in Europe/Berlin, dieselbe Regel wie zeitTag in site/app.js: 23:30 UTC
+    am 31.12. ist dort schon der 01.01.; ein Zeitstempel ohne Zone gilt als UTC; ist nur der Anfang lesbar, die ersten
+    zehn Zeichen; sonst None (auch für Zahl, Objekt, „kaputt“, 2026-13-45)."""
+    s = wert if isinstance(wert, str) else ""
+    if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", s[:10]):
+        return None
+    try:
+        dt = datetime.fromisoformat(s) if len(s) > 10 else None
+    except ValueError:
+        dt = None
+    if dt is None:
+        try:
+            return date.fromisoformat(s[:10]).isoformat()
+        except ValueError:
+            return None
+    return (dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)).astimezone(proc.BERLIN).date().isoformat()
+
+
+def feed_grenze(stand):
+    """Jahresgrenze der Vorgangs-Feeds (publish.has_paper_feed): 1. Januar des Vorjahres des Datenstands als Berliner
+    Kalendertag, dieselbe Regel wie standTag und hasPaperFeed in site/app.js (Abruf des Ratsinformationssystems, sonst
+    Erzeugung, also heute; nur lesbare Werte)."""
+    tag = berliner_tag(stand) or datetime.now(proc.BERLIN).date().isoformat()
+    return f"{int(tag[:4]) - 1}-01-01"
+
+
 def slug(name):
     name = name.lower().translate(str.maketrans({"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss"}))
     return re.sub(r"[^a-z0-9]+", "-", name).strip("-")
@@ -312,8 +339,7 @@ def export_all():
             home.setdefault(pid, key)
     sources = [dict(r) for r in db.execute("SELECT * FROM source")]
     stand = next((s["retrieved_at"] for s in sources if s["name"] == config.QUELLE_OPARL), None) or ""
-    year = int((stand or datetime.now(timezone.utc).isoformat())[:4])
-    publish.write_feeds(out / "feeds", areas, cache, names, home, slug, f"{year - 1}-01-01")
+    publish.write_feeds(out / "feeds", areas, cache, names, home, slug, feed_grenze(stand))
     meetings = _meetings(db)
     publish.write_calendar(out / "termine.ics", meetings)
     n_points = publish.write_geojson(out / "vorlagen.geojson", cache,
