@@ -72,6 +72,10 @@ jobs:
           key: raw-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: raw-
 
+      # Dauer: höchstens bis zum Ende des Zeitfensters (1 Uhr) plus eine Anfrage (Zeitüberschreitung 90 s); mit 100
+      # Objekten je Seite (limit=100, rund 5 s je Antwort, 2 s Abstand) rund 900 Seiten je Nacht (TECHNIK.md). Das
+      # Zeitlimit des Jobs (300 min) reicht; kein eigenes Zeitlimit für den Schritt (ein Abbruch von außen schriebe
+      # keinen Zustand)
       - name: Abruf OParl-API Stadt Köln (gesperrt bis zur Information der Stadt)
         id: abruf
         env:

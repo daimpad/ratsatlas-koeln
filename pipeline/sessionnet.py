@@ -8,41 +8,59 @@ Erzeugt dieselben Rohdateien wie der Bonner Abruf, damit build.py, Export und Se
 - `beratungen.jsonl`  Beratung → Sitzung und TOP (in Bonn aus OParl-Lite; in Köln abgeleitet, weil `consultation`
                       direkt auf `meeting` und `agendaItem` verweist und die Sitzungen ihre TOPs enthalten)
 
-Abruf: Listen nur über `links.next` (unverändert übernommen), nach dem ersten Lauf inkrementell über
-`modified_since` (Zustand in `zustand_abruf.json`, mit einem Tag Überlappung). Parameter werden nicht URL-kodiert:
-SessionNet beantwortet kodierte Zeitstempel (%3A, %2B) mit HTTP 404 (explore/ergebnisse/sessionnet_befunde.tsv).
-Schutz gegen Endlosschleifen: Abbruch, wenn links.next auf eine in diesem Lauf gelesene Seite zeigt, eine Seite nur
-Kennungen bringt, die in diesem Lauf schon kamen, eine Seite keine neuen Kennungen bringt (in einer Fortsetzung bis zur
-erlaubten Seitenverschiebung, siehe unten), mehr als
-`config.ABRUF_MAX_SEITEN` Seiten in einem Lauf folgen (eine Fortsetzung zählt neu) oder ein Vollabruf über seine
-Fortsetzungen hinweg mehr als `config.ABRUF_MAX_SEITEN_FAKTOR` × `config.ABRUF_MAX_SEITEN` Seiten erreicht (Art
-`liste`).
+Abruf: Listen nur über `links.next`, nach dem ersten Lauf inkrementell über `modified_since` (Zustand in
+`zustand_abruf.json`, mit einem Tag Überlappung). Parameter werden URL-kodiert gesendet (`quote(wert, safe="")`): Köln
+übergeht Zeitwerte unkodiert („+“ wird dort zum Leerzeichen, gleiche Seite wie ohne Filter) und wendet sie kodiert an
+(Stufe 2, 08.11.2026, explore/BERICHT_phase1.md Abschnitt 6); das ersetzt für Köln die Annahme „Parameter ohne
+URL-Kodierung“ vom 05.11.2026 (aus anderen SessionNet-Installationen: HTTP 404 bei %3A/%2B). links.next gibt den
+Filterwert unkodiert zurück (`…?page=2&modified_since=2026-11-05T11:29:44+00:00`) und wird daher vor dem Folgen
+normalisiert (folgeadresse(): Query-Teil je Parameter kodiert neu aufgebaut, Schema, Host und Pfad unverändert, ein
+anderer Host als der der Liste wird nicht gesendet). Offen (ungemessen): ob Köln auf Seite 2 mit kodiertem Filter
+weiter filtert; die Abrufstatistik prüft je Lauf über alle Seiten, ob der Filter wirkt (`filter_wirksam`).
+Seitengröße: `limit=100` (`config.ABRUF_SEITENGROESSE`, RATSATLAS_LIMIT; Köln, Stufe 2: 100 Vorlagen in 5,07 s, `next`
+mit `limit=100`) an der ersten Listenadresse; trägt links.next ihn nicht, wird er angehängt. Alle seitenbezogenen
+Grenzen gelten in Objekten und werden mit der tatsächlichen Seitengröße g des Laufs (größte gelesene Seite) in Seiten
+umgerechnet; liefert der Server weniger als verlangt, gilt das.
+Schutz gegen Endlosschleifen: Abbruch, wenn links.next auf eine in diesem Lauf gelesene Seite zeigt (normalisierte
+Adresse), eine Seite nur Kennungen bringt, die in diesem Lauf schon kamen, eine Seite keine neuen Kennungen bringt (in
+einer Fortsetzung bis zur erlaubten Seitenverschiebung, siehe unten), mehr als `config.ABRUF_MAX_OBJEKTE` / g Seiten in
+einem Lauf folgen (eine Fortsetzung zählt neu) oder ein Vollabruf über seine Fortsetzungen hinweg mehr als
+`config.ABRUF_MAX_SEITEN_FAKTOR` × so viele Seiten erreicht (Art `liste`).
 Ende der Liste: `links` oder `links.next` fehlt oder ist leer (null, "", [], {}; SessionNet ist PHP). Ob der Server
 den Filter anwendet, wird je Lauf geprüft und in der Abrufstatistik vermerkt.
 
 Ein Vollabruf, der am Ende des Zeitfensters oder durch einen Fehler abbricht, wird in der nächsten Nacht fortgesetzt
-(`<liste>_fortsetzung` im Zustand mit dem Zeitpunkt `gespeichert`, Teilstand in `<datei>.teil.jsonl`), und zwar eine
-Seite vor der Stelle, an der er abbrach (eine Anfrage mehr): Wurden zwischen den Nächten bis zu einer Seite (25)
-gelesener Vorlagen gelöscht, rücken die folgenden nach vorn und gingen sonst verloren; bei mehr Löschungen können
-Vorlagen bis zum nächsten Vollabruf fehlen. Köln liefert die Vorlagen neueste zuerst und ohne Gesamtzahlen (Stufe 1,
-07.11.2026): Neue Vorlagen zwischen zwei Nächten verschieben die Seiten nach hinten, Seiten der Fortsetzung bringen dann
-schon gelesene Vorlagen (zusammengeführt über die Kennung; die wiederholte Seite zählt ebenso). Solche Seiten gelten
-bis zur erlaubten Seitenverschiebung nicht als Schleife: 4 Seiten je angefangenem Tag seit `gespeichert`, höchstens 40
-(`verschiebung_erlaubt`; nach ausgelassenen Nächten, sieben Tagen Pause oder einem Retry-After entsprechend mehr), bei
-25 je Seite also rund 100 (genauer 99: die wiederholte Seite zählt mit) neue Vorlagen je Tag. Bricht eine Fortsetzung
+(`<liste>_fortsetzung` im Zustand mit dem Zeitpunkt `gespeichert` und der normalisierten Folgeadresse, Teilstand in
+`<datei>.teil.jsonl`), und zwar eine Seite vor der Stelle, an der er abbrach (eine Anfrage mehr): Wurden zwischen den
+Nächten bis zu einer Seite (g, bei 100 je Seite 100) gelesener Vorlagen gelöscht, rücken die folgenden nach vorn und
+gingen sonst verloren; bei mehr Löschungen können Vorlagen bis zum nächsten Vollabruf fehlen. Köln liefert die Vorlagen
+neueste zuerst und ohne Gesamtzahlen (Stufe 1, 07.11.2026): Neue Vorlagen zwischen zwei Nächten verschieben die Seiten
+nach hinten, Seiten der Fortsetzung bringen dann schon gelesene Vorlagen (zusammengeführt über die Kennung; die
+wiederholte Seite zählt ebenso). Solche Seiten gelten bis zur erlaubten Seitenverschiebung nicht als Schleife: 100
+Vorlagen je angefangenem Tag seit `gespeichert`, höchstens 1000 (`verschiebung_erlaubt`; nach ausgelassenen Nächten,
+sieben Tagen Pause oder einem Retry-After entsprechend mehr), aufgerundet auf Seiten zu g (bei 25 je Seite 4 Seiten je
+Tag, bei 100 eine), also bis zu 99 neue Vorlagen je Tag (die wiederholte Seite zählt mit). Bricht eine Fortsetzung
 ab, bevor sie die verschobene Zone verlassen hat, bleibt `gespeichert` (die Verschiebung seit dann besteht weiter;
 ein künftiger Wert gilt als jetzt), sonst gilt der neue Zeitpunkt. Verlassen ist die Zone erst mit einer ungelesenen
-Vorlage, deren `created` älter ist als das der ältesten gelesenen (neueste zuerst heißt in Köln `created` absteigend:
-neue Vorlagen sind jünger, der ungelesene Rest ist älter). So zählen nach langer Pause auch zwei Strecken gelesener
-Seiten (aus der Vornacht und aus der ersten Nacht, dazwischen neue Vorlagen) zur Zone, und überwiegen Löschungen die
-neuen Vorlagen, ist sie gleich mit der ersten Seite verlassen. Ohne lesbares `created` (mit Zone) bleibt
-`gespeichert`. Die neuen Vorlagen am Listenanfang holt der nächste inkrementelle Lauf (modified_since ab dem Start des
-Vollabrufs).
+Vorlage, deren `created` nicht jünger ist als die Grenze: das `created` der g-ältesten gelesenen Vorlage (eine Seite;
+bei weniger gelesenen das der jüngsten). Gleich alt genügt (Massenimport mit gleichem `created`); bis zu g − 1
+Ausreißer unter den gelesenen (etwa ein Platzhalterdatum, viel zu alt) verschieben die Grenze nicht, und eine
+ungelesene Vorlage an oder hinter der Grenze liegt höchstens eine Seite vor dem Ende der Zone. Annahme: Köln sortiert
+die Liste streng nach `created` absteigend (neue Vorlagen sind jünger, der ungelesene Rest ist älter, Platzhalterdaten
+stehen am Ende); belegt ist das für die ersten 100 Vorlagen (Stufe 2), nicht über mehrere Seiten. Trifft die Annahme
+nicht zu, gilt die Zone zu früh als verlassen (in der Folgenacht womöglich ein Listenfehler, der Vollabruf beginnt von
+vorn), etwa wenn eine neue Vorlage ein Platzhalterdatum trägt, oder nie (die erlaubte Verschiebung wächst bis 1000
+Vorlagen, ein schwächerer Schutz gegen Schleifen), etwa wenn g oder mehr gelesene eines tragen. So zählen
+nach langer Pause auch zwei Strecken gelesener Seiten (aus der Vornacht und aus der ersten Nacht, dazwischen neue
+Vorlagen) zur Zone, und überwiegen Löschungen die neuen Vorlagen, ist sie gleich mit der ersten Seite verlassen. Ohne
+lesbares `created` (mit Zone) bleibt `gespeichert`. Die neuen Vorlagen am Listenanfang holt der nächste inkrementelle
+Lauf (modified_since ab dem Start des Vollabrufs).
 Zwischen den Nächten gelöschte, schon gelesene Vorlagen bleiben bis zum nächsten Vollabruf bzw. bis zu ihrem Eintrag
 mit `deleted` aus modified_since im Stand. Keine
 Fortsetzung nach einem Abbruch der Art `liste` (Schleife in links.next), `weiterleitung`, `proxy` oder `adresse`
-(ungültige Adresse): Der nächste Lauf beginnt von vorn. Eine unlesbare Fortsetzung (auch eine fehlende oder unlesbare
-Teildatei) wird verworfen und gemeldet; der Vollabruf beginnt dann von vorn.
+(ungültige Adresse, auch links.next auf einen anderen Host): Der nächste Lauf beginnt von vorn. Eine unlesbare
+Fortsetzung (auch eine fehlende oder unlesbare Teildatei) wird verworfen und gemeldet; der Vollabruf beginnt dann von
+vorn.
 
 Nacht mit möglicher Sperre (`moegliche_sperre`, Zähler `sperre_verdacht` im Zustand): Zeitüberschreitung,
 Verbindungsabbruch, abgeschnittene oder unlesbare Antwort, Proxy erreicht die Stadt nicht (Art `sperre`), HTTP 401,
@@ -89,6 +107,7 @@ import json
 import math
 import os
 import sys
+import urllib.parse
 from datetime import datetime, timedelta, timezone
 
 from . import abruf, config
@@ -116,12 +135,14 @@ TLS_NAECHTE = 3
 TLS_PAUSE = timedelta(days=7)
 # Listen mit Zeitpunkt des letzten Abrufs im Zustand
 LISTEN = ("organizations", "papers", "meetings")
-# Seiten ohne neue Kennungen in einer Fortsetzung, die als Seitenverschiebung gelten (neueste zuerst): je angefangenem
-# Tag seit dem Speichern der Fortsetzung 4 Seiten, bei 25 je Seite rund 100 (genauer 99, die wiederholte Seite zählt
-# mit) neue Vorlagen je Tag (Stufe 1: auf der ersten Seite 25 Vorlagen mit Datum 03. bis 06.11.2026), höchstens 40
-# Seiten; ohne lesbaren Zeitpunkt 4. Danach gilt die Seite als Schleife.
-VERSCHIEBUNG_JE_TAG = 4
-VERSCHIEBUNG_HOECHSTENS = 40
+# Seitenverschiebung in einer Fortsetzung (neueste zuerst), in Vorlagen: je angefangenem Tag seit dem Speichern der
+# Fortsetzung 100 neue Vorlagen (Stufe 1: auf der ersten Seite 25 Vorlagen mit Datum 03. bis 06.11.2026), höchstens
+# 1000; ohne lesbaren Zeitpunkt 100. In Seiten mit der tatsächlichen Seitengröße g des Laufs aufgerundet (Vorlagen / g:
+# bei 25 je Seite 4 Seiten je Tag und höchstens 40, bei 100 je Seite 1 und höchstens 10); so viele Seiten ohne neue
+# Kennungen gelten als Verschiebung, danach als Schleife. Die wiederholte Seite zählt mit, es sind also bis zu 99 neue
+# Vorlagen je Tag (Vorlagen − 1).
+VERSCHIEBUNG_JE_TAG = 100
+VERSCHIEBUNG_HOECHSTENS = 1000
 
 
 class ZustandUnlesbar(RuntimeError):
@@ -336,17 +357,56 @@ def _stamp(schluessel):
 
 
 def _mit_parametern(url, **params):
-    """Hängt Parameter ohne URL-Kodierung an (SessionNet, siehe oben); Werte enthalten nur Ziffern, -, :, + und T."""
+    """Hängt Parameter URL-kodiert an (`quote(wert, safe="")`, etwa „:“ → %3A, „+“ → %2B): Köln übergeht Zeitwerte
+    unkodiert und wendet sie kodiert an (Stufe 2, 08.11.2026)."""
     params = {k: v for k, v in params.items() if v}
     if not params:
         return url
-    return url + ("&" if "?" in url else "?") + "&".join(f"{k}={v}" for k, v in params.items())
+    return url + ("&" if "?" in url else "?") + "&".join(
+        f"{k}={urllib.parse.quote(str(v), safe='')}" for k, v in params.items())
+
+
+def _limit(url):
+    """Wert des Parameters `limit` in einer Adresse (roh), sonst None."""
+    for teil in urllib.parse.urlsplit(url).query.split("&"):
+        k, gleich, v = teil.partition("=")
+        if k == "limit" and gleich:
+            return v
+    return None
+
+
+def folgeadresse(naechste, liste_url, limit=None):
+    """links.next vor dem Folgen: Schema, Host und Pfad bleiben, der Query-Teil wird je Parameter `k=v` als
+    `k=quote(unquote(v), safe="")` neu aufgebaut (Reihenfolge, `page` und `limit` unverändert; idempotent: ein schon
+    kodierter Wert bleibt gleich). `unquote`, nicht `unquote_plus`: Köln liefert „+“ als wörtliches Plus (Stufe 2:
+    `…?page=2&modified_since=2026-11-05T11:29:44+00:00`), unverändert gesendet wäre es ein Leerzeichen und der Filter
+    übergangen. Trägt die erste Adresse des Laufs `limit`, links.next aber nicht, wird `limit` angehängt (sonst
+    wechselte die Seitengröße mitten in der Liste). Zeigt links.next auf ein anderes Schema oder einen anderen Host als
+    die Liste: Abbruch der Art `adresse` (nicht gesendet). Adressen außerhalb von ASCII oder unlesbare bleiben
+    unverändert (abruf.get_json lehnt sie ab, Art `adresse`)."""
+    if not naechste.isascii():
+        return naechste
+    try:
+        teile, liste = urllib.parse.urlsplit(naechste), urllib.parse.urlsplit(liste_url)
+        anders = (teile.scheme, teile.hostname, teile.port) != (liste.scheme, liste.hostname, liste.port)
+    except ValueError:
+        return naechste
+    if anders:
+        raise abruf.Abbruch(f"links.next zeigt auf einen anderen Host als die Liste, nicht gesendet: {naechste}",
+                            "adresse")
+    neu = []
+    for teil in teile.query.split("&") if teile.query else []:
+        k, gleich, v = teil.partition("=")
+        neu.append(f"{k}={urllib.parse.quote(urllib.parse.unquote(v), safe='')}" if gleich else teil)
+    if limit and not any(t.partition("=")[0] == "limit" for t in neu):
+        neu.append(f"limit={limit}")
+    return urllib.parse.urlunsplit(teile._replace(query="&".join(neu)))
 
 
 class Teilabbruch(abruf.Abbruch):
     """Abbruch mitten in einer Liste; trägt den gelesenen Teil für die Fortsetzung (`zuletzt`: die zuletzt gelesene
     Seite, dort beginnt die Fortsetzung; `verlassen`: eine Fortsetzung hat die verschobene Zone verlassen, also eine
-    ungelesene Vorlage gelesen, die älter ist als die älteste schon gelesene)."""
+    ungelesene Vorlage gelesen, die nicht jünger ist als die Grenze, siehe liste())."""
 
     def __init__(self, ursache, objekte, naechste, seiten, zuletzt=None, verlassen=False):
         super().__init__(str(ursache), getattr(ursache, "art", ""), getattr(ursache, "ziel", ""),
@@ -356,9 +416,9 @@ class Teilabbruch(abruf.Abbruch):
 
 
 def verschiebung_erlaubt(gespeichert, jetzt=None):
-    """Seiten ohne neue Kennungen, die in einer Fortsetzung als Seitenverschiebung gelten: VERSCHIEBUNG_JE_TAG je
-    angefangenem Tag seit `gespeichert` (Zeitpunkt der Fortsetzung), höchstens VERSCHIEBUNG_HOECHSTENS; fehlt der
-    Zeitpunkt, ist er unlesbar oder künftig: VERSCHIEBUNG_JE_TAG."""
+    """Seitenverschiebung in Vorlagen, die eine Fortsetzung hinnimmt (liste() rechnet sie mit der tatsächlichen
+    Seitengröße in Seiten um): VERSCHIEBUNG_JE_TAG je angefangenem Tag seit `gespeichert` (Zeitpunkt der Fortsetzung),
+    höchstens VERSCHIEBUNG_HOECHSTENS; fehlt der Zeitpunkt, ist er unlesbar oder künftig: VERSCHIEBUNG_JE_TAG."""
     t, jetzt = _zeit(gespeichert), jetzt or abruf.uhr()
     if t is None or t > jetzt:
         return VERSCHIEBUNG_JE_TAG
@@ -399,35 +459,44 @@ def _seite_pruefen(seite, url):
 
 
 def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSCHIEBUNG_JE_TAG):
-    """Alle Objekte einer OParl-Liste über links.next; `seit` setzt modified_since. `start`, `objekte` und `seiten`
-    setzen einen abgebrochenen Vollabruf fort. Liefert (Objekte, Seiten); ein Abbruch kommt als Teilabbruch. `seiten`
-    zählt die Seiten insgesamt (Statistik, Fortsetzung); die Grenze `config.ABRUF_MAX_SEITEN` gilt je Lauf, sonst
-    erreichte ein großer Vollabruf sie in einer späteren Nacht und begänne von vorn. Über die Fortsetzungen hinweg gilt
-    die Gesamtgrenze `config.ABRUF_MAX_SEITEN_FAKTOR` × `config.ABRUF_MAX_SEITEN` (Liste, die endlos neue Kennungen
-    erzeugt). In einer Fortsetzung (`start`) gelten bis zu `verschiebung` Seiten ohne neue Kennungen als
-    Seitenverschiebung (neue Vorlagen am Listenanfang, wiederholte erste Seite), nicht als Schleife; eine Seite, deren
-    Kennungen alle schon in diesem Lauf kamen, und eine wiederholte Adresse bleiben eine Schleife. Ein Teilabbruch
-    vermerkt, ob die Fortsetzung die verschobene Zone verlassen hat (`verlassen`, für `gespeichert`): erst mit einer
-    ungelesenen Vorlage, deren `created` älter ist als das der ältesten gelesenen (ohne lesbares `created` nie)."""
+    """Alle Objekte einer OParl-Liste über links.next (vor dem Folgen normalisiert, folgeadresse()); `seit` setzt
+    modified_since, `config.ABRUF_SEITENGROESSE` den Parameter limit. `start`, `objekte` und `seiten` setzen einen
+    abgebrochenen Vollabruf fort. Liefert (Objekte, Seiten); ein Abbruch kommt als Teilabbruch. Seitengröße g ist die
+    tatsächliche des Laufs (größte gelesene Seite). `seiten` zählt die Seiten insgesamt (Statistik, Fortsetzung); die
+    Grenze von `config.ABRUF_MAX_OBJEKTE` / g Seiten gilt je Lauf, sonst erreichte ein großer Vollabruf sie in einer
+    späteren Nacht und begänne von vorn. Über die Fortsetzungen hinweg gilt die Gesamtgrenze
+    `config.ABRUF_MAX_SEITEN_FAKTOR` × so viele Seiten (Liste, die endlos neue Kennungen erzeugt), geprüft ab der
+    zweiten Anfrage eines Laufs (vorher ist g unbekannt; eine gespeicherte Fortsetzung liegt stets unter der Grenze
+    ihrer Seitengröße). In einer Fortsetzung (`start`) gelten Seiten ohne neue Kennungen bis zur Seitenverschiebung von
+    `verschiebung` Vorlagen (aufgerundet auf Seiten zu g) als Verschiebung (neue Vorlagen am Listenanfang, wiederholte
+    erste Seite), nicht als Schleife; eine Seite, deren Kennungen alle schon in diesem Lauf kamen, und eine wiederholte
+    (normalisierte) Adresse bleiben eine Schleife. Ein Teilabbruch vermerkt, ob die Fortsetzung die verschobene Zone
+    verlassen hat (`verlassen`, für `gespeichert`): erst mit einer ungelesenen Vorlage, deren `created` nicht jünger
+    ist als das der g-ältesten gelesenen (eine Seite; ohne lesbares `created` nie)."""
     naechste = start or _mit_parametern(url, modified_since=seit, limit=config.ABRUF_SEITENGROESSE)
+    limit = _limit(naechste)
     objekte = list(objekte or [])
     ids, gesehen, dieser_lauf = {o.get("id") for o in objekte}, set(), set()
     verschoben, zuletzt = 0, None   # Seiten ohne neue Kennungen in einer Fortsetzung; zuletzt gelesene Seite
-    # Fortsetzung: älteste gelesene Vorlage (created); eine ungelesene ältere liegt hinter der verschobenen Zone
-    grenze = min((t for t in map(_erstellt, objekte) if t is not None), default=None) if start else None
-    verlassen = False
-    gesamt = config.ABRUF_MAX_SEITEN_FAKTOR * config.ABRUF_MAX_SEITEN
+    # Fortsetzung: Grenze der verschobenen Zone ist das created der g-ältesten gelesenen Vorlage (eine Seite); eine
+    # ungelesene Vorlage, die nicht jünger ist, liegt an oder hinter ihr
+    aelteste = sorted(t for t in map(_erstellt, objekte) if t is not None) if start else []
+    groesse, verlassen = 0, False   # tatsächliche Seitengröße dieses Laufs (größte gelesene Seite)
     while naechste:
         try:
+            naechste = folgeadresse(naechste, url, limit)
             if naechste in gesehen:   # Schutz gegen zyklische Verweise
                 raise abruf.Abbruch(f"links.next zeigt auf eine bereits gelesene Seite: {naechste}", "liste")
-            if len(gesehen) >= config.ABRUF_MAX_SEITEN:   # Seiten dieses Laufs
-                raise abruf.Abbruch(f"mehr als {config.ABRUF_MAX_SEITEN} Seiten in einem Lauf (RATSATLAS_MAX_SEITEN)",
-                                    "liste")
+            # vor der ersten Seite ist g unbekannt (als 1 gerechnet: die Grenzen greifen dann nicht)
+            je_lauf = math.ceil(config.ABRUF_MAX_OBJEKTE / max(groesse, 1))
+            if len(gesehen) >= je_lauf:   # Seiten dieses Laufs
+                raise abruf.Abbruch(f"mehr als {je_lauf} Seiten in einem Lauf ({config.ABRUF_MAX_OBJEKTE} Objekte bei "
+                                    f"{groesse} je Seite, RATSATLAS_MAX_OBJEKTE)", "liste")
+            gesamt = config.ABRUF_MAX_SEITEN_FAKTOR * je_lauf
             if seiten >= gesamt:   # Seiten insgesamt, auch aus früheren Läufen (Fortsetzung)
                 raise abruf.Abbruch(f"mehr als {gesamt} Seiten insgesamt über Fortsetzungen hinweg "
-                                    f"({config.ABRUF_MAX_SEITEN_FAKTOR} × RATSATLAS_MAX_SEITEN); die Liste erzeugt "
-                                    "womöglich endlos neue Kennungen", "liste")
+                                    f"({config.ABRUF_MAX_SEITEN_FAKTOR} × {config.ABRUF_MAX_OBJEKTE} Objekte bei "
+                                    f"{groesse} je Seite); die Liste erzeugt womöglich endlos neue Kennungen", "liste")
             gesehen.add(naechste)
             seite = abruf.get_json(naechste)
             weiter = _seite_pruefen(seite, naechste)
@@ -435,20 +504,23 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
             raise Teilabbruch(e, objekte, naechste, seiten, zuletzt, verlassen) from e
         seiten += 1
         daten = seite["data"]
+        groesse = max(groesse, len(daten))
         kennungen = {o["id"] for o in daten}
         neu = [o for o in daten if o["id"] not in ids]
+        grenze = aelteste[min(groesse, len(aelteste)) - 1] if aelteste and groesse else None
         if daten and not neu:
+            erlaubt = math.ceil(verschiebung / groesse)   # Seiten zu g
             if not start or kennungen <= dieser_lauf:   # dieselben Objekte mit neuem links.next (SessionNet-Sammelserver)
                 grund = f"Seite ohne neue Kennungen, links.next läuft im Kreis: {naechste}"
-            elif verschoben >= verschiebung:
-                grund = (f"mehr als {verschiebung} Seiten ohne neue Kennungen in der Fortsetzung (erlaubte "
-                         f"Seitenverschiebung): {naechste}")
+            elif verschoben >= erlaubt:
+                grund = (f"mehr als {erlaubt} Seiten ohne neue Kennungen in der Fortsetzung (erlaubte "
+                         f"Seitenverschiebung {verschiebung} Vorlagen bei {groesse} je Seite): {naechste}")
             else:
                 grund = None
                 verschoben += 1   # Fortsetzung: die Seiten sind durch neue Vorlagen am Listenanfang verschoben
             if grund:
                 raise Teilabbruch(abruf.Abbruch(grund, "liste"), objekte, None, seiten, zuletzt, verlassen)
-        elif grenze is not None and any((t := _erstellt(o)) is not None and t < grenze for o in neu):
+        elif grenze is not None and any((t := _erstellt(o)) is not None and t <= grenze for o in neu):
             verlassen = True
         dieser_lauf |= kennungen
         ids.update(o.get("id") for o in neu)
@@ -615,8 +687,8 @@ def _abruf_liste(name, url, pfad, schluessel):
             config.RAW.mkdir(parents=True, exist_ok=True)
             _write(_teil(pfad), "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in e.objekte))
             # `gespeichert` bleibt, solange eine Fortsetzung die verschobene Zone nicht verlassen hat (keine ungelesene
-            # Vorlage, älter als die älteste gelesene): Die Verschiebung seit der ersten Speicherung besteht weiter;
-            # ein künftiger Wert gilt als jetzt
+            # Vorlage, nicht jünger als die Grenze, liste()): Die Verschiebung seit der ersten Speicherung besteht
+            # weiter; ein künftiger Wert gilt als jetzt
             jetzt = abruf.uhr()
             alt = _zeit(fort.get("gespeichert")) if fort else None
             gespeichert = fort["gespeichert"] if alt is not None and alt <= jetzt and not e.verlassen else (

@@ -3,7 +3,11 @@
 Startet explore/testserver.py auf 127.0.0.1 und führt die Kommandos aus STUFEN zweimal aus:
 - „Folge“: in der Reihenfolge der Stufen mit gemeinsamem Cache, wie die echten Nächte in derselben Arbeitsumgebung
 - „leerer Cache“: jedes Kommando mit eigenem, leerem Cache (ungünstigster Fall, z. B. neue Arbeitsumgebung);
-  `pdf-koepfe` bekommt dabei nur die Stichprobendatei aus Stufe 5, ohne die Rohdaten
+  `pdf-koepfe` bekommt dabei nur die Stichprobendatei aus Stufe 5, ohne die Rohdaten, `filtertest` nur den Body aus dem
+  Cache des vorigen Kommandos (`organisationen` im selben Befehlsblock von Stufe 3; ohne Body stellt filtertest keine
+  Anfrage)
+Der Testserver antwortet bei Parametern wie Köln in Stufe 2 (`kodierung="koeln"`: nur kodierte Zeitwerte wirken,
+`limit` wirkt).
 Zählt je Schritt die Anfragen ans Netz und aus dem Cache (laut oparl_laeufe.tsv und laut Testserver) und prüft sie
 gegen die Obergrenze, die in STUFEN.md für die echte Messung steht. Ausgabe als Markdown.
 
@@ -26,6 +30,7 @@ from pathlib import Path
 HIER = Path(__file__).resolve().parent
 sys.path.insert(0, str(HIER))
 from testserver import Testserver  # noqa: E402
+import abruf  # noqa: E402
 
 # Stichprobendatei im Cache, Grundlage für pdf-koepfe (oparl_messung.STICHPROBE)
 STICHPROBE = "stichprobe_vorlagen.jsonl"
@@ -35,9 +40,9 @@ STUFEN = [
     ("1", "test", [], 3),
     ("2", "kennzahlen", [], 10),
     ("3", "organisationen", ["--seiten", "4"], 5),
-    ("3", "stichprobe", ["--seiten", "1", "--von", "2019", "--bis", "2026"], 9),
+    ("3", "filtertest", [], 1),
     ("4", "sitzungen", ["--seiten", "2"], 3),
-    ("5", "stichprobe", ["--seiten", "3", "--von", "2019", "--bis", "2026"], 25),
+    ("5", "stichprobe", ["--seiten", "1", "--von", "2019", "--bis", "2026", "--limit", "100"], 9),
     ("6", "pdf-koepfe", ["--anzahl", "100"], 100),
 ]
 
@@ -75,8 +80,8 @@ def messung(server, cache, ergebnisse, kommando, parameter=(), obergrenze=0, stu
 def probelauf(ziel, form="bisher"):
     ziel = Path(ziel)
     mit_pdf = importlib.util.find_spec("pypdf") is not None
-    zeilen, stichprobe = [], None
-    with Testserver(form=form) as server:
+    zeilen, stichprobe, vorher = [], None, None
+    with Testserver(form=form, kodierung="koeln") as server:
         for nr, (stufe, kommando, parameter, obergrenze) in enumerate(STUFEN, 1):
             if kommando == "pdf-koepfe" and not mit_pdf:
                 zeilen.append({"stufe": stufe, "kommando": kommando, "parameter": " ".join(parameter),
@@ -88,7 +93,12 @@ def probelauf(ziel, form="bisher"):
             if kommando == "pdf-koepfe" and stichprobe:   # Rohdaten-Cache leer, nur die Stichprobendatei aus Stufe 5
                 cache.mkdir(parents=True, exist_ok=True)
                 shutil.copy(stichprobe, cache / STICHPROBE)
+            if kommando == "filtertest" and vorher:   # nur der Body aus dem vorigen Kommando (gleicher Befehlsblock)
+                body = abruf._cachepfad(server.body_url, ".json").name
+                (cache / "roh").mkdir(parents=True, exist_ok=True)
+                shutil.copy(vorher / "roh" / body, cache / "roh" / body)
             leer = messung(server, cache, ziel / "leer" / "ergebnisse", kommando, parameter, obergrenze, stufe)
+            vorher = cache
             if (cache / STICHPROBE).exists():
                 stichprobe = cache / STICHPROBE
             ok = all(m["rc"] == 0 and int(m["lauf"].get("netz") or -1) == m["server"] <= obergrenze

@@ -1,12 +1,14 @@
 """Auswertung der Messstufen (explore/STUFEN.md) als Markdown auf stdout – ohne Netzzugriff.
 
 Liest das Abrufprotokoll _cache/abrufe.tsv und die TSVs in ergebnisse/ (oparl_laeufe.tsv, oparl_listen.tsv,
-oparl_test.tsv, oparl_kennzahlen.tsv, oparl_organisationstypen.tsv, oparl_stichprobe_*.tsv, oparl_papertypen.tsv,
-oparl_referenzschema.tsv, oparl_top_ergebnisse.tsv, pdf_koepfe.tsv). Fehlende Dateien werden übersprungen.
+oparl_test.tsv, oparl_kennzahlen.tsv, oparl_filtertest.tsv, oparl_organisationstypen.tsv, oparl_stichprobe_*.tsv,
+oparl_papertypen.tsv, oparl_referenzschema.tsv, oparl_top_ergebnisse.tsv, pdf_koepfe.tsv). Fehlende Dateien werden
+übersprungen. Ein hart beendeter Lauf, nachgetragen als „nicht regulär beendet (Marker)“, steht mit „Anfragenzahl
+unbekannt“.
 Je Stufe: Anfragen (Netz, Cache), Statuscodes, mittlere und höchste Antwortzeit, Bytes, Ergebnis; dazu Kennwerte
-(totalElements, Seitengröße, Form von links.next, Parametertests, Feldabdeckung, Regel Stufe 3/5) und Auffälligkeiten
-nach den Abbruchkriterien in STUFEN.md. Fehlt das Abrufprotokoll für einen Lauf (z. B. andere Arbeitsumgebung), gelten
-Statuscodes und Antwortzeiten als „nicht prüfbar (Protokoll fehlt)“. Protokollzeilen gehören nur dann zu einem Lauf,
+(totalElements, Seitengröße, Form von links.next, Parametertests, Filtertest, Feldabdeckung, Regel Stufe 5) und
+Auffälligkeiten nach den Abbruchkriterien in STUFEN.md. Fehlt das Abrufprotokoll für einen Lauf (z. B. andere
+Arbeitsumgebung), gelten Statuscodes und Antwortzeiten als „nicht prüfbar (Protokoll fehlt)“. Protokollzeilen gehören nur dann zu einem Lauf,
 wenn sie im Bereich protokoll_von–protokoll_bis liegen und ihre Zeit (mit Zone) zwischen Start und Ende des Laufs
 liegt; sonst „nicht prüfbar (Protokollzeilen passen nicht zum Lauf)“.
 Ablehnungen durch den Proxy der Arbeitsumgebung (Status `proxy <Code>`: CONNECT-Antwort 403, 405, 407 oder HTTP 407)
@@ -21,7 +23,7 @@ Antwortzeiten. Zu den Zeitfiltern: „nicht unterscheidbar“ heißt, die erste 
 anwendet (bei neueste zuerst gilt das für created_since; bei modified_since, wenn keine Vorlage fehlt, die laut Cache
 unter der Grenze lag).
 Fehlende Gesamtzahlen (Köln liefert in `pagination` nur elementsPerPage und currentPage) stehen als „fehlt“.
-Die Regel Stufe 3/5 gilt nur als erfüllt, wenn der letzte `stichprobe`-Lauf in oparl_laeufe.tsv „ok“ ist.
+Die Regel Stufe 5 gilt nur als erfüllt, wenn der letzte `stichprobe`-Lauf in oparl_laeufe.tsv „ok“ ist.
 Aufruf: python3 explore/auswertung.py [--cache VERZ] [--ergebnisse VERZ] [--stufe S]
 """
 import argparse
@@ -44,8 +46,12 @@ TLS_HINWEIS = ("Zertifikatsprüfung fehlgeschlagen: vermutlich Einstellung der A
 UNTERBROCHEN_HINWEIS = ("Lauf während dieser Anfrage unterbrochen, etwa nach einem Zeitlimit des aufrufenden Werkzeugs: "
                         "mögliche Sperre, stoppen")
 FILTER_HINWEIS = ("„nicht unterscheidbar“: Die erste Seite zeigt nicht, ob der Server diese Grenze anwendet (bei "
-                  "neueste zuerst gilt das für created_since; für Stufe 3 zählt created_until; bei modified_since, wenn "
-                  "keine Vorlage fehlt, die laut Cache unter der Grenze lag, etwa weil alle seither geändert wurden).")
+                  "neueste zuerst gilt das für created_since; bei modified_since, wenn keine Vorlage fehlt, die laut "
+                  "Cache unter der Grenze lag, etwa weil alle seither geändert wurden, oder wenn nicht mehr fehlen, "
+                  "als ältere fremde Vorlagen kamen: ebenso durch Löschungen erklärbar).")
+# Lauf, der hart beendet und erst beim Entfernen oder Überschreiben seines Markers nachgetragen wurde
+MARKER_ERGEBNIS = "nicht regulär beendet (Marker)"
+UNBEKANNT = "Anfragenzahl unbekannt (hart beendet, Markerdatei ohne Vermerk)"
 
 
 def lies(datei):
@@ -188,6 +194,8 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
     je_lauf, je_stufe = [], collections.OrderedDict()
     for l in laeufe:
         zz, grund = zeilen_des_laufs(l, protokoll)
+        if l.get("ergebnis") == MARKER_ERGEBNIS:   # Anfragen nicht gezählt: keine Zuordnung, keine Summe
+            zz, grund = None, UNBEKANNT
         if zz is not None:
             von = int(zahl(l.get("protokoll_von")))
             zugeordnet.update(range(von, von + len(zz)))
@@ -196,8 +204,8 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
         if zz is not None:
             s = statistik(zz)
         else:   # Protokoll fehlt oder passt nicht (z. B. andere Arbeitsumgebung): nur die Zähler aus dem Lauf
-            s = {"netz": l.get("netz"), "cache": l.get("cache"), "proxy": 0, "status": grund,
-                 "status_roh": {}, "mittel": None, "max": None, "bytes": "–"}
+            s = {"netz": l.get("netz") or "unbekannt", "cache": l.get("cache") or "unbekannt", "proxy": 0,
+                 "status": grund, "status_roh": {}, "mittel": None, "max": None, "bytes": "–"}
         je_lauf.append((l, s))
         g = je_stufe.setdefault(l.get("stufe") or "–", {"kommandos": [], "zeilen": [], "laeufe": [], "ergebnisse": [],
                                                         "gruende": []})
@@ -218,7 +226,10 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
         if l.get("ergebnis") != "ok":
             auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): {l.get('ergebnis')} – {l.get('meldung', '')[:200]}")
         if zz is None:
-            if str(l.get("netz")) != "0":
+            if grund == UNBEKANNT:
+                auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): {UNBEKANNT}; Protokollzeilen dieses Laufs "
+                                  "stehen unter „Weitere Zeilen im Abrufprotokoll ohne Lauf“")
+            elif str(l.get("netz")) != "0":
                 auffaellig.append(f"Lauf {l['lauf']} ({l['kommando']}): Statuscodes und Antwortzeiten {grund}")
             continue
         for (code, hinweis), n in sorted(status_hinweise(zz, l.get("kommando")).items()):
@@ -233,8 +244,9 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
         if not g["gruende"]:
             s = statistik(g["zeilen"])
         else:   # mindestens ein Lauf ohne zugeordnete Protokollzeilen: keine Teilstatistik, nur die Zähler der Läufe
-            s = {"netz": sum(int(zahl(l.get("netz"))) for l in g["laeufe"]),
-                 "cache": sum(int(zahl(l.get("cache"))) for l in g["laeufe"]),
+            unbekannt = " + unbekannt" if UNBEKANNT in g["gruende"] else ""
+            s = {"netz": f"{sum(int(zahl(l.get('netz'))) for l in g['laeufe'])}{unbekannt}",
+                 "cache": f"{sum(int(zahl(l.get('cache'))) for l in g['laeufe'])}{unbekannt}",
                  "status": "; ".join(dict.fromkeys(g["gruende"])), "mittel": None, "max": None, "bytes": "–"}
         ergebnis = "ok" if all(e == "ok" for e in g["ergebnisse"]) else "; ".join(sorted(set(g["ergebnisse"])))
         zeilen.append([st, ", ".join(dict.fromkeys(g["kommandos"])), s["netz"], s["cache"], s["status"],
@@ -266,8 +278,8 @@ def laeufe_abschnitt(laeufe, protokoll, stufe=None):
 
 
 def regel_stufe_3_5(bedeckung, laeufe):
-    """Urteil zur Regel aus STUFEN.md (Stufe 3 und 5) oder None ohne Zählungen. „erfüllt“ nur, wenn alle Zählungen 0
-    sind und der letzte stichprobe-Lauf in oparl_laeufe.tsv „ok“ ist."""
+    """Urteil zur Regel aus STUFEN.md (Stichprobe, Stufe 5; bis Runde 13 auch Stufe 3) oder None ohne Zählungen.
+    „erfüllt“ nur, wenn alle Zählungen 0 sind und der letzte stichprobe-Lauf in oparl_laeufe.tsv „ok“ ist."""
     regel = [z for z in bedeckung if z["feld"].startswith(("created außerhalb", "doppelte Kennungen"))]
     if not regel:
         return None
@@ -324,6 +336,12 @@ def kennwerte(erg, laeufe=None):
         if "abbruch" in werte.get("lauf", {}):
             aus.append(f"\nTest/Kennzahlen abgebrochen: {werte['lauf']['abbruch']}")
 
+    ft = lies(erg / "oparl_filtertest.tsv")
+    if ft:
+        aus.append("\nFiltertest (Stufe 3: created_since/created_until URL-kodiert, zwei Werktage in 2025, "
+                   "limit=100):\n")
+        aus += tabelle(["Feld", "Wert"], [[z["feld"], z["wert"]] for z in ft])
+
     listen = lies(erg / "oparl_listen.tsv")
     if listen:
         aus.append("\nDurchlaufene Listen (oparl_listen.tsv):\n")
@@ -350,8 +368,8 @@ def kennwerte(erg, laeufe=None):
         aus += tabelle(["Feld", "vorhanden", "von", "Anteil"],
                        [[z["feld"], z["vorhanden"], z["von"], anteil(z["vorhanden"], z["von"])] for z in bed])
         urteil = regel_stufe_3_5(bed, laeufe)
-        if urteil:   # Regel in STUFEN.md, Stufe 3 und 5
-            aus.append(f"\nRegel Stufe 3/5 (Jahresfilter wirkt, keine Doppelungen): {urteil}")
+        if urteil:   # Regel in STUFEN.md, Stufe 5
+            aus.append(f"\nRegel Stufe 5 (Jahresfilter wirkt, keine Doppelungen): {urteil}")
     jahre = lies(erg / "oparl_stichprobe_jahre.tsv")
     if jahre:
         aus.append("\nStichprobe – Jahre: " + "; ".join(
