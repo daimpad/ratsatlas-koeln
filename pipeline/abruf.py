@@ -8,7 +8,8 @@
   http://localhost.example.org/ oder http://127.0.0.1.nip.io/): nur für sie entfallen Freigabe, Zeitfenster und
   Mindestabstand
 - nur im nächtlichen Zeitfenster (`config.ABRUF_ZEITFENSTER`, Ortszeit Köln), sofern gesetzt; geprüft vor jedem
-  Versuch, auch nach einer Pause
+  Versuch, auch nach einer Pause, und nach dem Warten auf den Abstand noch einmal unmittelbar vor dem Senden (das
+  Fenster kann während des Wartens enden)
 - nach HTTP 429, 5xx und unlesbaren Antworten (kein JSON, auch zu tief verschachtelt) wachsende Pausen
   (`config.ABRUF_PAUSEN`, bis zu mehreren Stunden), danach Abbruch der Art `aufgegeben`. Einen `Retry-After`-Kopf
   (Sekunden oder HTTP-Datum) hält der Abruf mindestens ein. Sofort `aufgegeben` (ohne Pause): wenn die nächste Pause
@@ -113,7 +114,8 @@ def uhr():
 
 class Abbruch(RuntimeError):
     """Der Abruf wird beendet; der letzte gültige Datenstand bleibt erhalten. `art`: sperre, proxy, tls, weiterleitung,
-    zeitfenster, gesperrt, http, aufgegeben, unlesbar, adresse, liste oder leer; `ziel`: Ziel einer Weiterleitung; `code`:
+    zeitfenster, gesperrt, http, aufgegeben, unlesbar, adresse, liste, obergrenze, filter oder leer (die letzten vier
+    aus sessionnet.py); `ziel`: Ziel einer Weiterleitung; `code`:
     HTTP-Status (bei http, bei aufgegeben nach HTTP 429/5xx oder CONNECT-Antwort 429/503, bei sperre nach einer
     CONNECT-Antwort wie 502/504), sonst None; `nicht_vor`: Zeitpunkt (UTC) aus einem Retry-After, vor dem keine
     Anfrage folgen soll, sonst None."""
@@ -405,15 +407,19 @@ def get_json(url, pausen=None):
     pausen = config.ABRUF_PAUSEN if pausen is None else pausen
     mindestens = abstand(ist_lokal)
     letzter_fehler = None
-    for versuch in range(len(pausen) + 1):
+
+    def fenster_pruefen(versuch):
         if not ist_lokal and not im_zeitfenster():
             if letzter_fehler is not None:   # nach 429/5xx/unlesbar: zählt als aufgegeben (mögliche Sperre)
                 raise _aufgegeben(url, letzter_fehler, versuch, ", Zeitfenster vorbei")
             raise Abbruch(f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr (RATSATLAS_ZEITFENSTER)",
                           "zeitfenster")
+    for versuch in range(len(pausen) + 1):
+        fenster_pruefen(versuch)
         warte = mindestens - (time.monotonic() - _letzte)
         if warte > 0:
             time.sleep(warte)
+            fenster_pruefen(versuch)   # unmittelbar vor dem Senden: das Fenster kann während des Wartens enden
         start = time.monotonic()
         try:
             req = urllib.request.Request(url, headers={"User-Agent": config.USER_AGENT, "Accept": "application/json"})

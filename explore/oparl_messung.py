@@ -12,8 +12,9 @@ Jede Liste hat eine Seitengrenze (--seiten, Vorgabe je Kommando; 0 = ohne Grenze
 Ohne RATSATLAS_STADT_INFORMIERT=ja bricht jedes Kommando vor der ersten Anfrage an die Stadt ab (Entscheidung
 04.11.2026); lokale Testserver (http://127.0.0.1, http://localhost) sind ausgenommen (explore/testserver.py).
 Anfragen an die Stadt nur im Zeitfenster 23–1 Uhr Ortszeit (RATSATLAS_ZEITFENSTER, wie pipeline/abruf.py), geprüft vor
-jeder Anfrage. `pdf-koepfe` lädt PDFs und läuft zusätzlich nur mit RATSATLAS_PDF_FREIGEGEBEN=ja (laut mandari ist der
-automatische PDF-Abruf mit Köln so nicht vereinbart; Frage in der Anfrage an die Stadt).
+jeder Anfrage und nach dem Warten auf den Abstand noch einmal unmittelbar vor dem Senden. `pdf-koepfe` lädt PDFs und
+läuft zusätzlich nur mit RATSATLAS_PDF_FREIGEGEBEN=ja (laut mandari ist der automatische PDF-Abruf mit Köln so nicht
+vereinbart; Frage in der Anfrage an die Stadt).
 Für Anfragen an die Stadt gelten strenge Vorgaben (sichere_vorgaben): keine Wiederholung nach 429/5xx
 (RATSATLAS_WIEDERHOLUNGEN, Vorgabe 0), höchstens 5 s je Antwort (RATSATLAS_MAX_DAUER, Vorgabe 5), mindestens 2 s Abstand
 zwischen zwei Anfragen (RATSATLAS_ABSTAND, Vorgabe 2); RATSATLAS_MAX_ANFRAGEN und RATSATLAS_KONTAKT (ohne Platzhalter)
@@ -30,8 +31,9 @@ Werktage in 2025 und limit=100; den Body liest es nur aus dem Cache (fehlt er, A
 `voraussetzung`). Ergebnis in ergebnisse/oparl_filtertest.tsv.
 `kennzahlen` beurteilt die Zeitfilter ohne weitere Anfrage aus dem Vergleich mit der ungefilterten ersten Seite
 (_filter_urteil): Die Grenze für modified_since ist der Median von `modified` der ersten Hälfte dieser Seite, so dass
-ein Server, der den Filter überginge, ältere Vorlagen liefern müsste; „ja“ nur, wenn eine Vorlage, die dort unter der
-Grenze lag, in der gefilterten Antwort fehlt (sind alle seither geändert, „nicht unterscheidbar“); bei „nein“ steht
+ein Server, der den Filter überginge, ältere Vorlagen liefern müsste; „ja“ nur, wenn die gefilterte Antwort keine
+Vorlage unter der Grenze enthält und mindestens zwei Vorlagen, die dort unter der Grenze lagen, alle in ihr fehlen
+(sind sie seither geändert, „nicht unterscheidbar“); bei „nein“ steht
 dabei, wie weit die früheste Vorlage der Antwort vor der Grenze liegt. Bei neueste zuerst zeigt die erste Seite, ob
 created_until wirkt, nicht aber, ob created_since wirkt („nicht unterscheidbar“). limit=100 ist die letzte Anfrage
 (eine langsame Antwort bricht ab, wenn die übrigen Messungen vorliegen). Eine 401 auf einen Parametertest gilt als
@@ -192,18 +194,22 @@ def _streng_aktiv():
 
 def _hole(url, endung=".json"):
     """Sperre, Zeitfenster, strenge Vorgaben und PDF-Freigabe vor jeder Anfrage an die Stadt; lokale Testserver
-    ausgenommen."""
-    if not lokal(url):
-        if os.environ.get("RATSATLAS_STADT_INFORMIERT") != "ja":
-            raise Abbruch(f"Die Stadt Köln ist nicht informiert (RATSATLAS_STADT_INFORMIERT): {url}", "gesperrt")
+    ausgenommen. Das Zeitfenster prüft hole() nach dem Warten auf den Abstand unmittelbar vor dem Senden noch einmal
+    (`vor_dem_senden`)."""
+    def fenster():
         if not im_zeitfenster():
             raise Abbruch(f"außerhalb des Zeitfensters (RATSATLAS_ZEITFENSTER): {url}", "zeitfenster")
-        if not _streng_aktiv():
-            raise Abbruch(f"strenge Vorgaben nicht aktiv (Wiederholungen 0, höchstens {STRENG_DAUER:g} s, Abstand "
-                          f"mindestens {STRENG_ABSTAND:g} s, Obergrenze, Kontakt): {url}", "gesperrt")
-        if endung == ".pdf" and os.environ.get("RATSATLAS_PDF_FREIGEGEBEN") != "ja":
-            raise Abbruch(f"PDF-Abruf nicht freigegeben (RATSATLAS_PDF_FREIGEGEBEN): {url}", "gesperrt")
-    return hole(url, endung)
+    if lokal(url):
+        return hole(url, endung)
+    if os.environ.get("RATSATLAS_STADT_INFORMIERT") != "ja":
+        raise Abbruch(f"Die Stadt Köln ist nicht informiert (RATSATLAS_STADT_INFORMIERT): {url}", "gesperrt")
+    fenster()
+    if not _streng_aktiv():
+        raise Abbruch(f"strenge Vorgaben nicht aktiv (Wiederholungen 0, höchstens {STRENG_DAUER:g} s, Abstand "
+                      f"mindestens {STRENG_ABSTAND:g} s, Obergrenze, Kontakt): {url}", "gesperrt")
+    if endung == ".pdf" and os.environ.get("RATSATLAS_PDF_FREIGEGEBEN") != "ja":
+        raise Abbruch(f"PDF-Abruf nicht freigegeben (RATSATLAS_PDF_FREIGEGEBEN): {url}", "gesperrt")
+    return hole(url, endung, vor_dem_senden=fenster)
 
 
 def _mit_parametern(url, kodiert=True, **params):
@@ -220,15 +226,16 @@ def _folgeadresse(naechste, liste_url, limit=None):
     """links.next vor dem Folgen normalisieren (wie pipeline/sessionnet.folgeadresse): Schema, Host und Pfad bleiben,
     der Query-Teil wird je Parameter als quote(unquote(v), safe="") neu aufgebaut (unquote, nicht unquote_plus: Köln
     liefert „+“ als wörtliches Plus); idempotent, Reihenfolge, page und limit unverändert. Trägt die erste Adresse
-    `limit`, links.next aber nicht, wird er angehängt. Anderer Host oder anderes Schema als die Liste: Abbruch der Art
-    `adresse` (nicht gesendet). Außerhalb von ASCII oder unlesbar: unverändert."""
+    `limit`, links.next aber nicht, wird er angehängt. Anderer Host oder anderes Schema als die Liste, Zeichen außerhalb
+    von ASCII (ein Umlaut im Host ginge per IDNA an einen anderen Host) oder unlesbar (ValueError, etwa „http://[::1“
+    oder ein Port über 65535): Abbruch der Art `adresse` (nicht gesendet)."""
     if not naechste.isascii():
-        return naechste
+        raise Abbruch(f"links.next enthält Zeichen außerhalb von ASCII, nicht gesendet: {naechste}", "adresse")
     try:
         teile, liste = urllib.parse.urlsplit(naechste), urllib.parse.urlsplit(liste_url)
         anders = (teile.scheme, teile.hostname, teile.port) != (liste.scheme, liste.hostname, liste.port)
-    except ValueError:
-        return naechste
+    except ValueError as e:
+        raise Abbruch(f"links.next unlesbar ({e}), nicht gesendet: {naechste}", "adresse") from e
     if anders:
         raise Abbruch(f"links.next zeigt auf einen anderen Host als die Liste, nicht gesendet: {naechste}", "adresse")
     neu = []
@@ -408,22 +415,27 @@ def _dauer_text(abstand):
 def _filter_urteil(basis, antwort, feld, von=None, bis=None):
     """Urteil je Grenze eines Zeitfilters ({"von": …, "bis": …}) aus der gefilterten ersten Seite `antwort` und der
     ungefilterten ersten Seite `basis`, ohne weitere Anfrage:
-    - „nein“: Die Antwort enthält Objekte jenseits der Grenze; dazu, wie weit das äußerste davon jenseits liegt
-      („frühestes modified 1 h vor der Grenze“: um 1 h deutet auf einen Versatz, etwa „+“ als Leerzeichen und damit
-      Ortszeit, bis 24 h auf Tagesgenauigkeit, mehr auf einen übergangenen Filter).
-    - „ja“: Ein Server, der nur diese Grenze überginge, hätte Objekte jenseits der Grenze liefern müssen, und solche fehlen
-      in der Antwort. Die ungefilterte Seite enthält Objekte jenseits der Grenze, die die übrige Grenze einhalten und deren
-      Kennung in der Antwort fehlt (`modified` kann sich seit der ungefilterten Seite geändert haben: Sind alle Vorlagen
-      seither geändert, liefert auch ein Server ohne Filter nur Objekte diesseits der Grenze, aber mit denselben
-      Kennungen): bei „bis“ irgendwo (neue Vorlagen liegen ebenfalls jenseits), bei „von“ und neueste zuerst auf den
-      ersten Plätzen, die neue Vorlagen seit der ungefilterten Seite (Kennungen dort nicht enthalten, created nicht älter
-      als ihre jüngste Vorlage) nicht verdrängt haben können (ein Server ohne Filter lieferte eine ebenso lange Seite).
-      Bei „von“ „ja (k fehlen)“ nur, wenn k (fehlende Vorlagen jenseits der Grenze) größer ist als die Zahl fremder
-      Vorlagen, die älter sind als die ungefilterte Seite (created vor ihrer ältesten Vorlage oder unlesbar): So viele
-      Löschungen auf der ungefilterten Seite ließen auch einen Server ohne Filter ebenso viele ältere Vorlagen
-      nachrücken und ebenso viele fehlen; sonst „nicht unterscheidbar“.
-    - sonst „nicht unterscheidbar“ (z. B. alle modified gleich oder seit der ungefilterten Seite geändert; bei neueste
-      zuerst created_since), mit dem Vergleich der Kennungen."""
+    - „nein“: Die Antwort enthält Objekte jenseits der Grenze; dazu Anzahl und wie weit das äußerste davon jenseits
+      liegt („frühestes modified 1 h vor der Grenze“: um 1 h deutet auf einen Versatz, etwa „+“ als Leerzeichen und
+      damit Ortszeit, bis 24 h auf Tagesgenauigkeit, mehr auf einen übergangenen Filter).
+    - „ja“ bei „bis“: Die ungefilterte Seite enthält Objekte jenseits der Grenze (die die übrige Grenze einhalten),
+      deren Kennung in der Antwort fehlt (neue Vorlagen lägen ohne Filter ebenfalls jenseits).
+    - „ja (k fehlen)“ bei „von“ (etwa modified_since): Die Antwort enthält kein Objekt mit lesbarem Wert unter der
+      Grenze, und die ungefilterte Seite enthält mindestens zwei Objekte unter der Grenze, die alle in der Antwort
+      fehlen. Begründung: Ein Server ohne Filter lieferte dieselbe Liste wie die ungefilterte Seite, nur später. Dass
+      dort genau die Vorlagen unter der Grenze fehlen und keine Vorlage unter der Grenze nachrückt, verlangte ohne
+      Filter, dass genau diese Vorlagen gelöscht wurden und die Ersatzvorlagen aus Seite 2 durchweg nach der Grenze
+      geändert sind. Mit Filter ist das der Normalfall, auch bei voller gefilterter Seite: Ältere, kürzlich geänderte
+      Vorlagen füllen sie (Stufe 2: 25 ungefiltert, davon 17 unter der Grenze; gefiltert keine darunter, 17 fehlen,
+      17 ältere geänderte). Der Vergleich mit der Zahl älterer fremder Vorlagen (bis Runde 14) machte „ja“ dann
+      unerreichbar; eine einzelne fehlende Vorlage (Löschung und neue Vorlage) genügt dagegen nicht mehr. Bei neueste
+      zuerst zählen nur die ersten Plätze, die neue Vorlagen seit der ungefilterten Seite (Kennungen dort nicht
+      enthalten, created nicht älter als ihre jüngste Vorlage oder unlesbar) nicht verdrängt haben können (ein Server
+      ohne Filter lieferte eine ebenso lange Seite).
+    - sonst „nicht unterscheidbar“ mit Grund: keine bzw. nur eine Vorlage unter der Grenze auf der ungefilterten Seite,
+      nur ein Teil davon fehlt (die übrigen stehen seither geändert in der Antwort), oder es fehlt keine (etwa alle
+      modified gleich oder alle seither geändert: auch ein Server ohne Filter lieferte dieselben Kennungen; bei neueste
+      zuerst created_since), dann mit dem Vergleich der Kennungen."""
     def zeit(o):
         return _zeitpunkt(o[feld]) if o.get(feld) else None
 
@@ -436,10 +448,6 @@ def _filter_urteil(basis, antwort, feld, von=None, bis=None):
     ids, antwort_ids = {o.get("id") for o in basis}, {o.get("id") for o in antwort}
     fremd = [o for o in antwort if o.get("id") not in ids]
     juengste = max((t for t in (_zeitpunkt(o["created"]) for o in basis if o.get("created")) if t), default=None)
-    aelteste = min((t for t in (_zeitpunkt(o["created"]) for o in basis if o.get("created")) if t), default=None)
-    # fremde Vorlagen, älter als die ungefilterte Seite (oder created unlesbar): durch Löschungen dort erklärbar
-    fremd_aelter = sum(1 for o in fremd if aelteste is None or (t := _zeitpunkt(o.get("created") or "")) is None
-                       or t < aelteste)
     neu = sum(1 for o in fremd if juengste is None or not o.get("created")
               or (_zeitpunkt(o["created"]) or juengste) >= juengste)
     urteil = {}
@@ -448,8 +456,8 @@ def _filter_urteil(basis, antwort, feld, von=None, bis=None):
             continue
         verletzt = [zeit(o) for o in antwort if jenseits(o, seite)]
         plaetze = basis[:max(len(basis) - neu, 0)] if seite == "von" and _neueste_zuerst(basis) else basis
-        fehlen = sum(1 for o in plaetze
-                     if jenseits(o, seite) and not jenseits(o, andere) and o.get("id") not in antwort_ids)
+        dort = [o for o in plaetze if jenseits(o, seite) and not jenseits(o, andere)]
+        fehlen = sum(1 for o in dort if o.get("id") not in antwort_ids)
         if verletzt:
             richtung = "vor" if seite == "von" else "nach"
             aeusserst = min(verletzt) if seite == "von" else max(verletzt)
@@ -458,11 +466,14 @@ def _filter_urteil(basis, antwort, feld, von=None, bis=None):
                              f"{_dauer_text(aeusserst - (von if seite == 'von' else bis))} {richtung} der Grenze)")
         elif fehlen and seite == "bis":
             urteil[seite] = "ja"
-        elif fehlen and fehlen > fremd_aelter:
+        elif fehlen >= 2 and fehlen == len(dort):
             urteil[seite] = f"ja ({fehlen} fehlen)"
+        elif fehlen == 1 and len(dort) == 1:
+            urteil[seite] = ("nicht unterscheidbar (nur eine Vorlage unter der Grenze auf der ungefilterten Seite, sie "
+                             "fehlt: ebenso durch eine Löschung erklärbar)")
         elif fehlen:
-            urteil[seite] = (f"nicht unterscheidbar ({fehlen} fehlen, {fremd_aelter} fremde älter als die ungefilterte "
-                             "Seite: ebenso durch Löschungen erklärbar)")
+            urteil[seite] = (f"nicht unterscheidbar ({fehlen} von {len(dort)} Vorlagen unter der Grenze fehlen, die "
+                             f"übrigen stehen mit jüngerem {feld} in der Antwort)")
         else:
             urteil[seite] = ("nicht unterscheidbar (" + ("gleiche Kennungen wie ohne Filter" if not fremd else
                                                          f"{len(fremd)} Kennungen nicht auf der ungefilterten Seite")
@@ -567,6 +578,22 @@ def _form_links(seite):
     return "Objekt mit " + ",".join(sorted(links)), nxt
 
 
+def _ende(n, groesse, seite):
+    """Ende der Liste nach einer Seite mit `n` Objekten bei Seitengröße `groesse`, in Worten: Mit links.next geht die
+    Liste weiter (bei nicht voller Seite unerwartet); ohne links.next (fehlt oder leer) ist das Ende erreicht, auch bei
+    voller Seite; fehlt `links` ganz oder ist es leer, ebenso (die Pipeline liest es als Ende der Liste)."""
+    links, nxt = _form_links(seite)
+    voll = f"Seite voll ({n})" if n >= groesse else f"Seite nicht voll ({n} von {groesse})"
+    if nxt.startswith("vorhanden"):
+        weiter = "Ende nicht sichtbar" if n >= groesse else "Ende der Liste erwartet, links.next vorhanden"
+        return f"{voll}: {weiter}"
+    if links.startswith("kein Objekt"):
+        return f"{voll}: links ist kein Objekt, Ende unklar"
+    ohne = (("links fehlt ganz" if links == "fehlt" else f"links {links.split(' (')[0]}") if nxt == "–"
+            else f"links.next {nxt.split(' (')[0]}")
+    return f"{voll}, {ohne}: Ende erreicht" if n >= groesse else f"{voll}: Ende der Liste erwartet, {ohne}"
+
+
 def _fenster_urteil(objekte, von, bis, voll):
     """Wirken created_since und created_until (Grenzen `von`, `bis`) auf einer Seite mit `objekte`? Ohne weitere
     Anfrage, je Grenze mit Abstand der äußersten Vorlage zur Grenze. `voll`: die Seite ist voll (so viele Objekte wie
@@ -647,9 +674,7 @@ def filtertest(_):
                    {"feld": "created unlesbar", "wert": u["unlesbar"]},
                    {"feld": "pagination", "wert": json.dumps(seite.get("pagination"), ensure_ascii=False)},
                    {"feld": "links", "wert": links}, {"feld": "links.next", "wert": nxt},
-                   {"feld": "ende", "wert": (f"Seite nicht voll ({len(daten)} von {groesse}): Ende der Liste erwartet, "
-                                             f"links.next {nxt.split(':')[0]}") if len(daten) < groesse else
-                    f"Seite voll ({len(daten)}): Ende nicht sichtbar"},
+                   {"feld": "ende", "wert": _ende(len(daten), groesse, seite)},
                    {"feld": "antwortzeit", "wert": _antwortzeit(adresse)}]
         if langsam:
             zeilen.append({"feld": "abbruch", "wert": str(langsam)})
@@ -914,7 +939,8 @@ def _marker_pruefen(marker, zeilen, jetzt, datei=None):
     start = _zeitpunkt(m.get("start") or "") if m else None
     eintrag = {"lauf": m.get("lauf", "?"), "stufe": m.get("stufe", ""), "kommando": m.get("kommando", "?"),
                "parameter": m.get("parameter", ""), "start": m.get("start", ""), "ende": "", "ergebnis": NICHT_REGULAER,
-               "marker": str(marker), "meldung": f"Markerdatei {marker} ohne Vermerk in oparl_laeufe.tsv"}
+               "marker": str(marker), "meldung": f"Markerdatei {marker} ohne Vermerk in oparl_laeufe.tsv",
+               "unlesbar": start is None}   # Marker oder sein Start unlesbar: sperrt bis zur Rücksprache
     if start is None or jetzt - start < SPERRFRIST:
         return eintrag
     print(f"Hinweis: Lauf {eintrag['lauf']} ({eintrag['kommando']}, Stufe {eintrag['stufe'] or '?'}) vom "
@@ -1009,14 +1035,15 @@ def main(argv=None):
             sys.exit("Abbruch vor der ersten Anfrage: " + "; ".join(fehler) + " (Befehle: explore/STUFEN.md).")
         vorher = letzter_abbruch()
         if vorher and os.environ.get("RATSATLAS_NACH_ABBRUCH") != "ja":
-            grund = (f"Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) vom {vorher.get('start') or '?'} wurde "
+            grund = (f"Markerdatei {vorher['marker']} unlesbar (Marker unlesbar, sperrt bis zur Rücksprache; Lauf, "
+                     "Beginn und Ende unbekannt)" if vorher.get("unlesbar") else
+                     f"Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) vom {vorher.get('start') or '?'} wurde "
                      f"„{NICHT_REGULAER}“ oder läuft noch (Markerdatei {vorher['marker']} ohne Vermerk in "
-                     "oparl_laeufe.tsv, etwa nach SIGKILL oder einem Absturz der Arbeitsumgebung); begonnen"
-                     if vorher.get("marker") else
+                     "oparl_laeufe.tsv, etwa nach SIGKILL oder einem Absturz der Arbeitsumgebung); begonnen vor "
+                     f"weniger als {SPERRFRIST.total_seconds() / 3600:g} Stunden" if vorher.get("marker") else
                      f"Lauf {vorher.get('lauf')} ({vorher.get('kommando')}) endete {vorher.get('ende') or '(ohne Ende)'}"
-                     f" mit „{vorher.get('ergebnis')}“")
-            sys.exit(f"Abbruch vor der ersten Anfrage: {grund}, vor weniger als "
-                     f"{SPERRFRIST.total_seconds() / 3600:g} Stunden. Nach einem Abbruch gilt: in dieser Nacht keine "
+                     f" mit „{vorher.get('ergebnis')}“, vor weniger als {SPERRFRIST.total_seconds() / 3600:g} Stunden")
+            sys.exit(f"Abbruch vor der ersten Anfrage: {grund}. Nach einem Abbruch gilt: in dieser Nacht keine "
                      "weitere Anfrage und keine weitere Stufe, Bericht an den Auftraggeber (explore/STUFEN.md). "
                      "Weiter nur nach Rücksprache mit RATSATLAS_NACH_ABBRUCH=ja.")
         if vorher and vorher.get("marker"):   # nach Rücksprache: Marker wird überschrieben, den Lauf zuvor nachtragen

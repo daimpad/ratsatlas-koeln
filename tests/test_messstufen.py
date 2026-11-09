@@ -16,6 +16,7 @@ import os
 import re
 import shutil
 import signal
+import socket
 import socketserver
 import ssl
 import subprocess
@@ -934,7 +935,7 @@ def test_freigabe_nach_abbruch_nur_ausdruecklich(tmp_path, monkeypatch):
         monkeypatch.setenv(name, wert)
     geholt = []
 
-    def hole(url, endung=""):
+    def hole(url, endung="", vor_dem_senden=None):
         geholt.append(url)
         raise om.Abbruch("Test: Zeitüberschreitung, mögliche Sperre", "sperre")
     monkeypatch.setattr(om, "hole", hole)
@@ -1296,13 +1297,10 @@ def test_filter_urteil_ohne_weitere_anfrage():
     # acht neue Vorlagen seit der ungefilterten Seite: Ein Server ohne Filter zeigte sie und p0, p1 → nicht unterscheidbar
     neue = [vorlage(f"n{n}", t0 + dt.timedelta(hours=n + 1), t0 + dt.timedelta(hours=n + 1)) for n in range(8)]
     assert urteil(neue + basis[:2]).startswith("nicht unterscheidbar (8 Kennungen nicht auf der ungefilterten Seite")
-    # ältere, kürzlich geänderte Vorlagen verdrängen nichts von der ersten Seite; „ja“ aber nur, wenn mehr fehlen, als
-    # ältere fremde kamen (so viele Löschungen ließen auch einen Server ohne Filter ebenso viele nachrücken)
+    # ältere, kürzlich geänderte Vorlagen verdrängen nichts von der ersten Seite; seit Runde 15 „ja“ auch, wenn ebenso
+    # viele oder mehr ältere fremde kamen (volle gefilterte Seite wie in Stufe 2), solange alle unter der Grenze fehlen
     alt = [vorlage(f"a{n}", t0 - dt.timedelta(days=100 + n), t0) for n in range(8)]
-    assert urteil(basis[:3] + alt[:6]) == "ja (7 fehlen)"
-    assert urteil(basis[:3] + alt[:7]) == ("nicht unterscheidbar (7 fehlen, 7 fremde älter als die ungefilterte Seite: "
-                                           "ebenso durch Löschungen erklärbar)")
-    assert urteil(basis[:3] + alt).startswith("nicht unterscheidbar (7 fehlen, 8 fremde älter")
+    assert urteil(basis[:3] + alt[:6]) == urteil(basis[:3] + alt[:7]) == urteil(basis[:3] + alt) == "ja (7 fehlen)"
     ohne = [{"id": f"o{n}", "modified": t0.isoformat()} for n in range(7)]   # fremde ohne created: neu oder älter
     assert urteil(basis[:3] + ohne).startswith("nicht unterscheidbar")
     assert urteil([]) == "keine Objekte"
@@ -1594,7 +1592,10 @@ def test_filter_urteil_nach_aenderung_aller_vorlagen_und_abstand_bei_nein():
     urteil = lambda antwort: om._filter_urteil(basis, antwort, "modified", von=grenze)["von"]   # noqa: E731
     geaendert = [dict(o, modified=(t0 + dt.timedelta(hours=1)).isoformat()) for o in basis]
     assert urteil(geaendert) == "nicht unterscheidbar (gleiche Kennungen wie ohne Filter)"   # übergangen
-    assert urteil(geaendert[:3] + geaendert[5:]) == "ja (2 fehlen)"       # p3, p4 lagen unter der Grenze und fehlen
+    # p3, p4 lagen unter der Grenze und fehlen, p5–p9 stehen geändert in der Antwort: seit Runde 15 nicht „ja“
+    assert urteil(geaendert[:3] + geaendert[5:]) == (
+        "nicht unterscheidbar (2 von 7 Vorlagen unter der Grenze fehlen, die übrigen stehen mit jüngerem modified in "
+        "der Antwort)")
     assert urteil(basis[:3]) == "ja (7 fehlen)"                            # angewandt, nichts geändert
     # übergangen: frühestes modified 7 h vor der Grenze; Versatz von 1 h (etwa „+“ als Leerzeichen: Ortszeit)
     assert urteil(basis) == "nein (7 von 10 vor der Grenze; frühestes modified 7 h vor der Grenze)"
@@ -1823,9 +1824,12 @@ def test_folgeadresse_wie_in_der_pipeline():
     for nxt, limit in ((f"{liste}?page=2&modified_since=2026-11-05T11:29:44+00:00&limit=100", None),
                        (f"{liste}?page=2&created_since=2025-06-03T00%3A00%3A00%2B02%3A00", "100"),
                        (f"{liste}?page=3", "100"), (f"{liste}?limit=25&page=3", "100"), (f"{liste}?a=x%20y&b", None),
-                       (f"{liste}?straße=ü", None), (f"{liste}", None)):
+                       (f"{liste}", None)):
         assert om._folgeadresse(nxt, liste, limit) == sessionnet.folgeadresse(nxt, liste, limit), nxt
-    for fremd in ("https://andere.example.invalid/x?page=2", "http://buergerinfo.example.invalid/x?page=2"):
+    # anderer Host; außerhalb von ASCII oder unlesbar (Runde 15: explore sendet nichts; die Pipeline lässt solche
+    # Adressen unverändert, get_json lehnt sie ab)
+    for fremd in ("https://andere.example.invalid/x?page=2", "http://buergerinfo.example.invalid/x?page=2",
+                  f"{liste}?straße=ü", "https://[::1/x?page=2"):
         with pytest.raises(om.Abbruch) as e:
             om._folgeadresse(fremd, liste)
         assert e.value.art == "adresse"
@@ -2009,3 +2013,147 @@ def test_probelauf_stufe_3_wie_die_stadt_mit_scheinzeit(tmp_path, monkeypatch):
                 assert werte["created_since wirkt"].startswith("ja (") and werte["links.next"] == "fehlt"
             else:
                 assert "Body nicht im Cache" in fehler and not (tmp_path / name / "cache" / "abrufe.tsv").exists()
+
+
+# --- Runde 15: Zeitfenster unmittelbar vor dem Senden, Adressen außerhalb von ASCII, Texte im Filtertest, unlesbarer
+# Marker, Regel „ja“ für modified_since -----------------------------------------------------------------------------
+
+def _keine_verbindung(monkeypatch):
+    """socket.create_connection ersetzt: jeder Verbindungsaufbau wird vermerkt und scheitert (kein Netz)."""
+    verbindungen = []
+
+    def verbinden(adresse, *a, **k):
+        verbindungen.append(adresse)
+        raise ConnectionRefusedError(f"Test: keine Verbindung zu {adresse}")
+    monkeypatch.setattr(socket, "create_connection", verbinden)
+    return verbindungen
+
+
+@pytest.mark.parametrize("ende, gesendet", [("00:59:59", False), ("00:59:57", True)])
+def test_zeitfenster_vor_dem_senden_nach_dem_warten(tmp_path, monkeypatch, ende, gesendet):
+    """Ende der vorigen Antwort um `ende` Ortszeit, Abstand 2 s (strenge Vorgaben wie für die Stadt): _hole prüft das
+    Fenster vor dem Warten (offen), hole() nach dem Warten unmittelbar vor dem Senden noch einmal. Um 01:00:01: Abbruch
+    `zeitfenster`, keine Verbindung, nichts gezählt, nichts im Protokoll; um 00:59:59 wird gesendet."""
+    om = importlib.import_module("oparl_messung")
+    berlin = ZoneInfo("Europe/Berlin")
+    uhr = types.SimpleNamespace(t=dt.datetime.combine(dt.date(2026, 11, 10), dt.time.fromisoformat(ende), berlin))
+    schein = types.SimpleNamespace(monotonic=lambda: uhr.t.timestamp(), time=lambda: uhr.t.timestamp(),
+                                   sleep=lambda s: setattr(uhr, "t", uhr.t + dt.timedelta(seconds=s)))
+    abruf = _abruf_im_prozess(monkeypatch, tmp_path / "cache", ABSTAND=2.0, WIEDERHOLUNGEN=0, MAX_DAUER=5.0,
+                              MAX_ANFRAGEN=1, KONTAKT="kontakt@example.invalid", time=schein,
+                              _letzte=uhr.t.timestamp(), _anfragen=0)
+    echt = om.im_zeitfenster
+    monkeypatch.setattr(om, "im_zeitfenster", lambda jetzt=None: echt(jetzt or uhr.t))
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.delenv("RATSATLAS_ZEITFENSTER", raising=False)
+    verbindungen = _keine_verbindung(monkeypatch)
+    adresse = "http://127.0.0.2:9/oparl/system"                          # gilt nicht als lokal
+    with pytest.raises(om.Abbruch) as e:
+        om._hole(adresse)
+    assert uhr.t.strftime("%H:%M:%S") == ("00:59:59" if gesendet else "01:00:01")
+    if gesendet:                                                          # gesendet: Verbindung scheitert (Testnetz)
+        assert e.value.art == "sperre" and len(verbindungen) == 1 and abruf.zaehler()["netz"] == 1
+        return
+    assert e.value.art == "zeitfenster" and verbindungen == [] and abruf.zaehler()["netz"] == 0
+    assert not (tmp_path / "cache" / "abrufe.tsv").exists()
+
+
+def test_adresse_ausserhalb_von_ascii_oder_unlesbar_wird_nicht_gesendet(tmp_path, monkeypatch):
+    """links.next mit Umlaut im Host (per IDNA ginge die Anfrage an einen anderen Host), Umlaut im Pfad oder unlesbar
+    (unvollständige IPv6-Adresse, Port über 65535): _folgeadresse bricht ab (Art `adresse`), _seiten liest keine
+    weitere Seite; hole() lehnt Adressen außerhalb von ASCII ab, bevor es eine Verbindung aufbaut oder zählt."""
+    om = importlib.import_module("oparl_messung")
+    abruf = _abruf_im_prozess(monkeypatch, tmp_path / "cache", _anfragen=0)
+    verbindungen = _keine_verbindung(monkeypatch)
+    liste = "https://buergerinfo.example.invalid/oparl/bodies/k/organizations"
+    for nxt in ("https://bürgerinfo.example.invalid/oparl/bodies/k/organizations?page=2", f"{liste}/ä?page=2",
+                "https://[::1/oparl?page=2", "https://buergerinfo.example.invalid:99999/x?page=2"):
+        with pytest.raises(om.Abbruch) as e:
+            om._folgeadresse(nxt, liste)
+        assert e.value.art == "adresse" and "nicht gesendet" in str(e.value), nxt
+        monkeypatch.setattr(om, "_LISTEN", [])
+        gelesen = []
+        monkeypatch.setattr(om, "_json_von", lambda adresse, lesen=None: gelesen.append(adresse) or {
+            "data": [{"id": "o1"}], "links": {"next": nxt}})
+        with pytest.raises(om.Abbruch) as e:
+            list(om._seiten(liste, name="organization"))
+        assert e.value.art == "adresse" and gelesen == [liste] and om._LISTEN[-1]["ende"] == "abgebrochen"
+    for adresse in ("http://bürgerinfo.example.invalid/x", "http://127.0.0.1:9/pfad/ä"):
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.hole(adresse, ".json", cache=False)
+        assert e.value.art == "adresse", adresse
+    assert verbindungen == [] and abruf.zaehler()["netz"] == 0 and not (tmp_path / "cache" / "abrufe.tsv").exists()
+
+
+def test_filtertest_ende_und_fenstergrenzen():
+    """Texte zum Ende der Liste im Filtertest: volle Seite ohne links.next ist das Ende (nicht „Ende nicht sichtbar“),
+    ebenso ohne `links`; created genau auf einer Grenze liegt im Fenster (inklusiv)."""
+    om = importlib.import_module("oparl_messung")
+    ohne_next = {"links": {"first": "f", "self": "s"}}
+    assert om._ende(100, 100, ohne_next) == "Seite voll (100), links.next fehlt: Ende erreicht"
+    assert om._ende(100, 100, {}) == "Seite voll (100), links fehlt ganz: Ende erreicht"
+    assert om._ende(7, 100, {}) == "Seite nicht voll (7 von 100): Ende der Liste erwartet, links fehlt ganz"
+    assert om._ende(100, 100, {"links": {"next": None}}) == "Seite voll (100), links.next leer: Ende erreicht"
+    assert om._ende(100, 100, {"links": []}) == "Seite voll (100), links leer: Ende erreicht"
+    assert om._ende(100, 100, {"links": {"next": "n"}}) == "Seite voll (100): Ende nicht sichtbar"
+    assert om._ende(1, 100, ohne_next) == "Seite nicht voll (1 von 100): Ende der Liste erwartet, links.next fehlt"
+    assert om._ende(1, 100, {"links": "x"}) == "Seite nicht voll (1 von 100): links ist kein Objekt, Ende unklar"
+    von, bis = om._zeitpunkt(om.FENSTER[0]), om._zeitpunkt(om.FENSTER[1])
+    u = om._fenster_urteil([{"id": "a", "created": von.isoformat()}, {"id": "b", "created": bis.isoformat()}], von, bis,
+                           False)
+    assert u["since"] == "ja (keines vor der Grenze; frühestes created 0 s nach der Grenze)"
+    assert u["until"] == "ja (keines nach der Grenze; spätestes created 0 s vor der Grenze)"
+    u = om._fenster_urteil([{"id": "a", "created": (von - dt.timedelta(seconds=1)).isoformat()},
+                            {"id": "b", "created": (bis + dt.timedelta(seconds=1)).isoformat()}], von, bis, False)
+    assert u["since"].startswith("nein (1 von 2 vor der Grenze") and u["until"].startswith("nein (1 von 2 nach")
+
+
+def test_unlesbarer_marker_eigene_meldung(tmp_path):
+    """Unlesbare Markerdatei: eigene Meldung „Marker unlesbar, sperrt bis zur Rücksprache“ (nicht „Lauf ? … vor weniger
+    als 12 Stunden“), keine Anfrage, Rückgabewert 1."""
+    with testserver.Testserver(host="127.0.0.2") as stadt:
+        env = _wie_die_stadt(stadt, tmp_path, RATSATLAS_STUFE="1", RATSATLAS_MAX_ANFRAGEN="3")
+        (tmp_path / "cache").mkdir()
+        (tmp_path / "cache" / "lauf_offen.json").write_text("{kaputt", encoding="utf-8")
+        r = subprocess.run([sys.executable, str(EXPLORE / "oparl_messung.py"), "test"], env=env, capture_output=True,
+                           text=True, timeout=60)
+        assert r.returncode == 1 and "(Marker unlesbar, sperrt bis zur Rücksprache;" in r.stderr, r.stderr
+        assert "Lauf ?" not in r.stderr and "weniger als" not in r.stderr and "RATSATLAS_NACH_ABBRUCH" in r.stderr
+        assert stadt.anfragen == []
+
+
+def _vorlage_m(kennung, erstellt, geaendert):
+    return {"id": kennung, "created": erstellt.isoformat(), "modified": geaendert.isoformat()}
+
+
+def test_filter_urteil_ja_bei_voller_gefilterter_seite_wie_in_stufe_2():
+    """Form der Stufe-2-Daten (synthetisch): 25 ungefiltert (neueste zuerst), davon 17 unter der Grenze; gefiltert 25,
+    keine unter der Grenze, die 17 fehlen, dafür 17 ältere, kürzlich geänderte → „ja (17 fehlen)“ (bis Runde 14 „nicht
+    unterscheidbar“: 17 fehlen, 17 fremde älter). Ohne Filter: Löschung und neue Vorlage → nicht „ja“; Filter
+    übergangen → „nein“ mit Anzahl und Abstand."""
+    om = importlib.import_module("oparl_messung")
+    t0 = dt.datetime(2026, 11, 8, 12, tzinfo=dt.timezone.utc)
+    grenze = t0 - dt.timedelta(days=1)
+    basis = [_vorlage_m(f"p{n}", t0 - dt.timedelta(hours=n), t0 - dt.timedelta(hours=1 if n % 3 == 0 and n < 24
+                                                                             else 72)) for n in range(25)]
+    unter = [o for o in basis if om._zeitpunkt(o["modified"]) < grenze]
+    ueber = [o for o in basis if o not in unter]
+    assert (len(basis), len(unter), len(ueber)) == (25, 17, 8)
+    aeltere = [_vorlage_m(f"a{n}", t0 - dt.timedelta(days=30 + n), t0 - dt.timedelta(hours=2)) for n in range(17)]
+    gefiltert = ueber + aeltere                                            # volle Seite, keine unter der Grenze
+    assert len(gefiltert) == 25
+    urteil = lambda antwort: om._filter_urteil(basis, antwort, "modified", von=grenze)["von"]   # noqa: E731
+    assert urteil(gefiltert) == "ja (17 fehlen)"
+    assert urteil(basis).startswith("nein (17 von 25 vor der Grenze; frühestes modified 2,0 Tage vor der Grenze)")
+    # ohne Filter, nur eine Vorlage unter der Grenze: gelöscht, dazu eine neue → nicht „ja“ (bis Runde 14: „ja (1
+    # fehlen)“)
+    eine = [dict(o, modified=(t0 - dt.timedelta(hours=1)).isoformat()) for o in basis[:20]] + basis[20:21] + [
+        dict(o, modified=(t0 - dt.timedelta(hours=1)).isoformat()) for o in basis[21:]]
+    neu = _vorlage_m("n1", t0 + dt.timedelta(hours=1), t0 + dt.timedelta(hours=1))
+    ohne_filter = [neu] + eine[:20] + eine[21:]                            # p20 gelöscht, Rest rückt nach
+    u = om._filter_urteil(eine, ohne_filter, "modified", von=grenze)["von"]
+    assert u.startswith("nicht unterscheidbar (nur eine Vorlage unter der Grenze") and not u.startswith("ja")
+    # ohne Filter, zwei unter der Grenze, eine gelöscht: die andere steht in der Antwort → „nein“
+    zwei = eine[:5] + [dict(eine[5], modified=(t0 - dt.timedelta(hours=30)).isoformat())] + eine[6:]
+    assert om._filter_urteil(zwei, [neu] + zwei[:20] + zwei[21:], "modified", von=grenze)["von"] == (
+        "nein (1 von 25 vor der Grenze; frühestes modified 6 h vor der Grenze)")

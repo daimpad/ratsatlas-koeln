@@ -23,11 +23,18 @@ Grenzen gelten in Objekten und werden mit der tatsächlichen Seitengröße g des
 umgerechnet; liefert der Server weniger als verlangt, gilt das.
 Schutz gegen Endlosschleifen: Abbruch, wenn links.next auf eine in diesem Lauf gelesene Seite zeigt (normalisierte
 Adresse), eine Seite nur Kennungen bringt, die in diesem Lauf schon kamen, eine Seite keine neuen Kennungen bringt (in
-einer Fortsetzung bis zur erlaubten Seitenverschiebung, siehe unten), mehr als `config.ABRUF_MAX_OBJEKTE` / g Seiten in
-einem Lauf folgen (eine Fortsetzung zählt neu) oder ein Vollabruf über seine Fortsetzungen hinweg mehr als
-`config.ABRUF_MAX_SEITEN_FAKTOR` × so viele Seiten erreicht (Art `liste`).
+einer Fortsetzung bis zur erlaubten Seitenverschiebung, siehe unten), ein inkrementeller Lauf mehr als
+`config.ABRUF_MAX_OBJEKTE` / g Seiten liest oder ein Vollabruf über seine Fortsetzungen hinweg mehr als
+`config.ABRUF_MAX_OBJEKTE_GESAMT` / g Seiten erreicht (Art `liste`). Erreicht ein Vollabruf `config.ABRUF_MAX_OBJEKTE` /
+g Seiten in einem Lauf (Höflichkeitsgrenze je Nacht; eine Fortsetzung zählt neu), endet der Lauf wie am Ende des
+Zeitfensters mit Fortsetzung in der nächsten Nacht (Art `obergrenze`, kein Listenfehler, kein Sperrverdacht; in
+derselben Nacht kein weiterer Lauf).
 Ende der Liste: `links` oder `links.next` fehlt oder ist leer (null, "", [], {}; SessionNet ist PHP). Ob der Server
-den Filter anwendet, wird je Lauf geprüft und in der Abrufstatistik vermerkt.
+den Filter anwendet, wird je Lauf geprüft und in der Abrufstatistik vermerkt (auch bei einem Abbruch, aus den bis dahin
+gelesenen Seiten). Ein inkrementeller Lauf prüft jede Seite: Enthält sie Objekte mit lesbarem `modified` vor
+modified_since (die Überlappung von einem Tag ist dort schon abgezogen), bricht er nach dieser Seite ab (Art `filter`,
+„Zeitfilter auf Seite N nicht angewandt“; zählt wie ein Listenfehler), statt bis zum Fensterende die ganze Liste zu
+lesen. Seite 1 in Kölner Form löst das nicht aus (Stufe 2: kodiert keine Vorlage unter der Grenze).
 
 Ein Vollabruf, der am Ende des Zeitfensters oder durch einen Fehler abbricht, wird in der nächsten Nacht fortgesetzt
 (`<liste>_fortsetzung` im Zustand mit dem Zeitpunkt `gespeichert` und der normalisierten Folgeadresse, Teilstand in
@@ -75,15 +82,16 @@ Ausführungsumgebung; ein Zertifikat der Gegenseite oder eine Sperrseite ist nic
 haben die Stadt nicht als HTTP-Anfrage erreicht, sowie ein Vollabruf deutlich kleiner als der vorhandene Stand (Art
 `leer`, Regel aus Bonn: weniger als 90 %). Nächte mit `tls` zählt `tlsfehler` (wie `listenfehler`, Warnung im Log):
 nach drei solchen Nächten ohne vollständigen Lauf dazwischen sieben Tage Pause.
-Nach jedem Abbruch außer dem Ende des Zeitfensters (auch nach `proxy`, `adresse`, Programm- und Einstellungsfehlern)
+Nach jedem Abbruch außer dem Ende des Zeitfensters (auch nach `obergrenze`, `proxy`, `adresse`, Programm- und
+Einstellungsfehlern)
 folgt in derselben Nacht (12 Stunden, `SPERRE_GLEICHE_NACHT`) kein weiterer Lauf, etwa nach einem Push oder auf
 Knopfdruck (`letzter_abbruch` im Zustand; nicht für lokale Testserver).
 Retry-After über die Nacht hinaus: Gibt abruf.py wegen eines Retry-After auf, steht `nicht_vor` im Zustand (höchstens
 30 Tage, unlesbarer Retry-After 7 Tage); bis dahin wird jeder Lauf übersprungen.
 Abbrüche der Art `liste` oder `adresse` (dauerhaft ungültiges links.next oder Schleife: jede Nacht ein Vollabruf bis
-zur selben Stelle) zählt `listenfehler` im Zustand (Nächte, nicht Läufe: ein weiterer Abbruch innerhalb von 12
-Stunden zählt nicht noch einmal): Hinweis in STAND.json (`abruf_hinweis`) und Warnung im Log des Workflows; nach drei
-solchen Nächten ohne vollständigen Lauf dazwischen sieben Tage Pause.
+zur selben Stelle) und `filter` (Zeitfilter nicht angewandt) zählt `listenfehler` im Zustand (Nächte, nicht Läufe: ein
+weiterer Abbruch innerhalb von 12 Stunden zählt nicht noch einmal): Hinweis in STAND.json (`abruf_hinweis`) und
+Warnung im Log des Workflows; nach drei solchen Nächten ohne vollständigen Lauf dazwischen sieben Tage Pause.
 Der Zustand wird vor der ersten Anfrage geprüft: Ist die Datei oder ein Zeitpunkt des letzten Abrufs einer Liste
 unlesbar, bricht der Lauf ohne Anfrage laut ab (`ZustandUnlesbar`; so jeder Lauf, bis die Datei geprüft ist). Ein
 unlesbarer, zonenloser oder künftiger Zeitpunkt des letzten Sperrverdachts, Listenfehlers oder Abbruchs gilt als
@@ -95,9 +103,10 @@ Zeilenumbruch im User-Agent) zählen nicht als Sperrverdacht: Sie stehen in STAN
 Traceback ab.
 Fällt der Abruf aus, bleibt der letzte gültige Stand; der Fehler steht in `STAND.json` (`abruf_fehler`). Ein
 vollständiger Lauf entfernt `abruf_fehler`, `abruf_hinweis` und `abruf_uebersprungen`. Das Ende des Zeitfensters
-(etwa bei einem Vollabruf über mehrere Nächte) ist kein Fehler: neutraler Hinweis in `abruf_hinweis`, ein älteres
-`abruf_fehler` entfällt. Den Zustand sichert pages.yml gleich nach dem Abrufschritt, auch wenn ein späterer Schritt
-scheitert.
+und die Obergrenze je Nacht (etwa bei einem Vollabruf über mehrere Nächte) sind kein Fehler: neutraler Hinweis in
+`abruf_hinweis` (ein inkrementeller Lauf speichert keine Fortsetzung, er beginnt in der nächsten Nacht erneut), ein
+älteres `abruf_fehler` entfällt. Den Zustand sichert pages.yml gleich nach dem Abrufschritt, auch wenn ein späterer
+Schritt scheitert.
 
 Abrufstatistik (`abrufstatistik.tsv`, Spalten STAT_SPALTEN): je Liste eine Zeile und eine Zeile `body` für den Abruf
 des Bodys; Zähler aus abruf.statistik() als Differenz je Zeile, darunter `weiterleitungen` und `proxy`.
@@ -126,8 +135,9 @@ STAT_SPALTEN = ["datum", "liste", "modus", "seiten", "objekte", "neu", "geaender
 STAT_ZAEHLER = ("anfragen", "fehler", "wiederholungen", "weiterleitungen", "proxy", "bytes", "sekunden")
 # Abbruchsarten, nach denen ein Vollabruf nicht fortgesetzt wird (der nächste Lauf beginnt von vorn)
 OHNE_FORTSETZUNG = ("liste", "weiterleitung", "proxy", "adresse")
-# Abbruchsarten, die auf eine dauerhaft fehlerhafte Liste deuten (Zähler `listenfehler`), und deren Grenze
-LISTENFEHLER = ("liste", "adresse")
+# Abbruchsarten, die auf eine dauerhaft fehlerhafte Liste deuten (Zähler `listenfehler`), und deren Grenze; `filter`:
+# ein inkrementeller Lauf erhielt Objekte vor modified_since (der Server wendet den Zeitfilter nicht an)
+LISTENFEHLER = ("liste", "adresse", "filter")
 LISTENFEHLER_NAECHTE = 3
 LISTENFEHLER_PAUSE = timedelta(days=7)
 # Nächte mit gescheiterter Zertifikatsprüfung (Zähler `tlsfehler`), danach Pause
@@ -153,9 +163,9 @@ def moegliche_sperre(fehler):
     """Zählt dieser Abbruch als Nacht mit möglicher Sperre? Art `sperre` (Zeitüberschreitung, Verbindungsabbruch,
     abgeschnittene oder unlesbare Antwort, Proxy erreicht die Stadt nicht), `aufgegeben` (nach 429, 5xx, unlesbarer
     Antwort oder CONNECT-Antwort 429/503) und `http` mit 401, 403 oder 429. Nicht: proxy (Ablehnung in der
-    Ausführungsumgebung), tls (Zertifikatsprüfung gescheitert), liste, adresse, andere HTTP-Codes (z. B. 404). Eine
-    Weiterleitung (etwa auf die Sperrseite einer vorgeschalteten Firewall) und eine unerwartete Antwortform
-    (`unlesbar`) zählen vorsichtshalber mit."""
+    Ausführungsumgebung), tls (Zertifikatsprüfung gescheitert), liste, adresse, filter, obergrenze, andere HTTP-Codes
+    (z. B. 404). Eine Weiterleitung (etwa auf die Sperrseite einer vorgeschalteten Firewall) und eine unerwartete
+    Antwortform (`unlesbar`) zählen vorsichtshalber mit."""
     art = getattr(fehler, "art", "")
     return art in ("sperre", "aufgegeben", "weiterleitung", "unlesbar") or (
         art == "http" and getattr(fehler, "code", None) in SPERRE_HTTP)
@@ -308,7 +318,8 @@ def _pause_grund(z, lokal):
                     "oder aufgegeben nach 429/5xx); bitte Kontakt zur Stadt aufnehmen")
     for schluessel, grenze, pause, grund in (
             ("listenfehler", LISTENFEHLER_NAECHTE, LISTENFEHLER_PAUSE, "Abbruch wegen einer fehlerhaften Liste "
-             "(ungültige Folgeadresse in links.next oder Schleife); bitte die Liste prüfen"),
+             "(ungültige Folgeadresse in links.next, Schleife oder Zeitfilter nicht angewandt); bitte die Liste "
+             "prüfen"),
             ("tlsfehler", TLS_NAECHTE, TLS_PAUSE, "Zertifikatsprüfung fehlgeschlagen (vermutlich Einstellung der "
              "Ausführungsumgebung; Zertifikat der Gegenseite oder Sperrseite nicht ausgeschlossen); bitte prüfen")):
         fehler = z.get(schluessel) or {}
@@ -375,20 +386,28 @@ def _limit(url):
     return None
 
 
+def _port(teile):
+    """Port einer zerlegten Adresse; der ausdrückliche Standardport (http 80, https 443) gilt wie keine Angabe (None).
+    Ein unlesbarer Port: ValueError."""
+    port = teile.port
+    return None if (teile.scheme, port) in (("http", 80), ("https", 443)) else port
+
+
 def folgeadresse(naechste, liste_url, limit=None):
     """links.next vor dem Folgen: Schema, Host und Pfad bleiben, der Query-Teil wird je Parameter `k=v` als
     `k=quote(unquote(v), safe="")` neu aufgebaut (Reihenfolge, `page` und `limit` unverändert; idempotent: ein schon
     kodierter Wert bleibt gleich). `unquote`, nicht `unquote_plus`: Köln liefert „+“ als wörtliches Plus (Stufe 2:
     `…?page=2&modified_since=2026-11-05T11:29:44+00:00`), unverändert gesendet wäre es ein Leerzeichen und der Filter
     übergangen. Trägt die erste Adresse des Laufs `limit`, links.next aber nicht, wird `limit` angehängt (sonst
-    wechselte die Seitengröße mitten in der Liste). Zeigt links.next auf ein anderes Schema oder einen anderen Host als
-    die Liste: Abbruch der Art `adresse` (nicht gesendet). Adressen außerhalb von ASCII oder unlesbare bleiben
-    unverändert (abruf.get_json lehnt sie ab, Art `adresse`)."""
+    wechselte die Seitengröße mitten in der Liste). Zeigt links.next auf ein anderes Schema, einen anderen Host oder
+    einen anderen Port als die Liste: Abbruch der Art `adresse` (nicht gesendet); der ausdrückliche Standardport
+    (http …:80, https …:443) gilt wie keine Angabe. Adressen außerhalb von ASCII oder unlesbare bleiben unverändert
+    (abruf.get_json lehnt sie ab, Art `adresse`)."""
     if not naechste.isascii():
         return naechste
     try:
         teile, liste = urllib.parse.urlsplit(naechste), urllib.parse.urlsplit(liste_url)
-        anders = (teile.scheme, teile.hostname, teile.port) != (liste.scheme, liste.hostname, liste.port)
+        anders = (teile.scheme, teile.hostname, _port(teile)) != (liste.scheme, liste.hostname, _port(liste))
     except ValueError:
         return naechste
     if anders:
@@ -463,14 +482,17 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
     modified_since, `config.ABRUF_SEITENGROESSE` den Parameter limit. `start`, `objekte` und `seiten` setzen einen
     abgebrochenen Vollabruf fort. Liefert (Objekte, Seiten); ein Abbruch kommt als Teilabbruch. Seitengröße g ist die
     tatsächliche des Laufs (größte gelesene Seite). `seiten` zählt die Seiten insgesamt (Statistik, Fortsetzung); die
-    Grenze von `config.ABRUF_MAX_OBJEKTE` / g Seiten gilt je Lauf, sonst erreichte ein großer Vollabruf sie in einer
-    späteren Nacht und begänne von vorn. Über die Fortsetzungen hinweg gilt die Gesamtgrenze
-    `config.ABRUF_MAX_SEITEN_FAKTOR` × so viele Seiten (Liste, die endlos neue Kennungen erzeugt), geprüft ab der
-    zweiten Anfrage eines Laufs (vorher ist g unbekannt; eine gespeicherte Fortsetzung liegt stets unter der Grenze
-    ihrer Seitengröße). In einer Fortsetzung (`start`) gelten Seiten ohne neue Kennungen bis zur Seitenverschiebung von
-    `verschiebung` Vorlagen (aufgerundet auf Seiten zu g) als Verschiebung (neue Vorlagen am Listenanfang, wiederholte
-    erste Seite), nicht als Schleife; eine Seite, deren Kennungen alle schon in diesem Lauf kamen, und eine wiederholte
-    (normalisierte) Adresse bleiben eine Schleife. Ein Teilabbruch vermerkt, ob die Fortsetzung die verschobene Zone
+    Grenze von `config.ABRUF_MAX_OBJEKTE` / g Seiten gilt je Lauf (Höflichkeitsgrenze je Nacht): Ein Vollabruf endet
+    dort mit Art `obergrenze` (Fortsetzung in der nächsten Nacht, wie am Ende des Zeitfensters), ein inkrementeller
+    Lauf mit Art `liste`. Über die Fortsetzungen hinweg gilt die Gesamtgrenze `config.ABRUF_MAX_OBJEKTE_GESAMT` / g
+    Seiten (Liste, die endlos neue Kennungen erzeugt; Art `liste`), geprüft vor der Grenze je Lauf und ab der zweiten
+    Anfrage eines Laufs (vorher ist g unbekannt; eine gespeicherte Fortsetzung liegt stets unter der Grenze ihrer
+    Seitengröße). Mit `seit` wird jede Seite geprüft: Objekte mit lesbarem `modified` vor `seit` heißen, der Server
+    wendet den Zeitfilter nicht an; Abbruch nach dieser Seite (Art `filter`, ohne Fortsetzung). In einer Fortsetzung
+    (`start`) gelten Seiten ohne neue Kennungen bis zur Seitenverschiebung von `verschiebung` Vorlagen (aufgerundet auf
+    Seiten zu g) als Verschiebung (neue Vorlagen am Listenanfang, wiederholte erste Seite), nicht als Schleife; eine
+    Seite, deren Kennungen alle schon in diesem Lauf kamen, und eine wiederholte (normalisierte) Adresse bleiben eine
+    Schleife. Ein Teilabbruch vermerkt, ob die Fortsetzung die verschobene Zone
     verlassen hat (`verlassen`, für `gespeichert`): erst mit einer ungelesenen Vorlage, deren `created` nicht jünger
     ist als das der g-ältesten gelesenen (eine Seite; ohne lesbares `created` nie)."""
     naechste = start or _mit_parametern(url, modified_since=seit, limit=config.ABRUF_SEITENGROESSE)
@@ -482,21 +504,26 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
     # ungelesene Vorlage, die nicht jünger ist, liegt an oder hinter ihr
     aelteste = sorted(t for t in map(_erstellt, objekte) if t is not None) if start else []
     groesse, verlassen = 0, False   # tatsächliche Seitengröße dieses Laufs (größte gelesene Seite)
+    filtergrenze = datetime.fromisoformat(seit) if seit else None
     while naechste:
         try:
             naechste = folgeadresse(naechste, url, limit)
             if naechste in gesehen:   # Schutz gegen zyklische Verweise
                 raise abruf.Abbruch(f"links.next zeigt auf eine bereits gelesene Seite: {naechste}", "liste")
             # vor der ersten Seite ist g unbekannt (als 1 gerechnet: die Grenzen greifen dann nicht)
-            je_lauf = math.ceil(config.ABRUF_MAX_OBJEKTE / max(groesse, 1))
-            if len(gesehen) >= je_lauf:   # Seiten dieses Laufs
-                raise abruf.Abbruch(f"mehr als {je_lauf} Seiten in einem Lauf ({config.ABRUF_MAX_OBJEKTE} Objekte bei "
-                                    f"{groesse} je Seite, RATSATLAS_MAX_OBJEKTE)", "liste")
-            gesamt = config.ABRUF_MAX_SEITEN_FAKTOR * je_lauf
+            gesamt = math.ceil(config.ABRUF_MAX_OBJEKTE_GESAMT / max(groesse, 1))
             if seiten >= gesamt:   # Seiten insgesamt, auch aus früheren Läufen (Fortsetzung)
                 raise abruf.Abbruch(f"mehr als {gesamt} Seiten insgesamt über Fortsetzungen hinweg "
-                                    f"({config.ABRUF_MAX_SEITEN_FAKTOR} × {config.ABRUF_MAX_OBJEKTE} Objekte bei "
-                                    f"{groesse} je Seite); die Liste erzeugt womöglich endlos neue Kennungen", "liste")
+                                    f"({config.ABRUF_MAX_OBJEKTE_GESAMT} Objekte bei {groesse} je Seite); die Liste "
+                                    "erzeugt womöglich endlos neue Kennungen", "liste")
+            je_lauf = math.ceil(config.ABRUF_MAX_OBJEKTE / max(groesse, 1))
+            if len(gesehen) >= je_lauf:   # Seiten dieses Laufs
+                grenze_text = f"{config.ABRUF_MAX_OBJEKTE} Objekte bei {groesse} je Seite, RATSATLAS_MAX_OBJEKTE"
+                if seit:   # inkrementell: so viele Änderungen an einem Tag sind keine Höflichkeitsfrage
+                    raise abruf.Abbruch(f"mehr als {je_lauf} Seiten in einem inkrementellen Lauf ({grenze_text}); "
+                                        "wirkt der Zeitfilter?", "liste")
+                raise abruf.Abbruch(f"Obergrenze je Nacht erreicht: {je_lauf} Seiten in diesem Lauf ({grenze_text}); "
+                                    "Fortsetzung in der nächsten Nacht", "obergrenze")
             gesehen.add(naechste)
             seite = abruf.get_json(naechste)
             weiter = _seite_pruefen(seite, naechste)
@@ -525,6 +552,13 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
         dieser_lauf |= kennungen
         ids.update(o.get("id") for o in neu)
         objekte += neu
+        vor = sorted(t for o in daten if (t := _zeit(o.get("modified"))) is not None and t < filtergrenze) if (
+            filtergrenze) else []
+        if vor:   # der Server wendet modified_since auf dieser Seite nicht an: nicht bis zum Fensterende weiterlesen
+            raise Teilabbruch(abruf.Abbruch(
+                f"Zeitfilter auf Seite {seiten} nicht angewandt: {len(vor)} von {len(daten)} Objekten mit modified vor "
+                f"modified_since={seit} (frühestes {vor[0].isoformat()}); Abbruch nach dieser Seite: {naechste}",
+                "filter"), objekte, None, seiten, naechste, verlassen)
         zuletzt, naechste = naechste, weiter
     return objekte, seiten
 
@@ -683,6 +717,7 @@ def _abruf_liste(name, url, pfad, schluessel):
         # nächste Lauf von vorn
         veraltet = fort and e.art == "http" and e.seiten == fort.get("seiten", 0)
         verwerfen = veraltet or e.art in OHNE_FORTSETZUNG
+        e.inkrementell = bool(seit)   # für den Hinweis am Ende des Zeitfensters (_abbruch_vermerken)
         if not seit and e.naechste and e.seiten and not verwerfen:
             config.RAW.mkdir(parents=True, exist_ok=True)
             _write(_teil(pfad), "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in e.objekte))
@@ -702,7 +737,7 @@ def _abruf_liste(name, url, pfad, schluessel):
                 _zustand_setzen(f"{schluessel}_fortsetzung", None)
                 _teil(pfad).unlink(missing_ok=True)
             zeile["ergebnis"] = f"abbruch: {e}"[:300]
-        zeile.update(seiten=e.seiten, objekte=len(e.objekte))
+        zeile.update(seiten=e.seiten, objekte=len(e.objekte), filter_wirksam=_filter_wirksam(e.objekte, seit))
         raise
     except abruf.Abbruch as e:
         zeile["ergebnis"] = f"abbruch: {e}"[:300]
@@ -823,8 +858,9 @@ def beratungen(papers, meetings):
 
 def fetch_all():
     """Vollständiger bzw. inkrementeller Lauf. Ein Abbruch (abruf.Abbruch) hält den letzten gültigen Stand und vermerkt
-    den Fehler; Abbrüche nach `moegliche_sperre` zählen als Nacht mit möglicher Sperre, Abbrüche der Art `liste` oder
-    `adresse` als Nacht mit fehlerhafter Liste, das Ende des Zeitfensters nur als Hinweis. Alles andere (auch ein
+    den Fehler; Abbrüche nach `moegliche_sperre` zählen als Nacht mit möglicher Sperre, Abbrüche der Art `liste`,
+    `adresse` oder `filter` als Nacht mit fehlerhafter Liste, das Ende des Zeitfensters und die Obergrenze je Nacht
+    nur als Hinweis. Alles andere (auch ein
     RuntimeError ohne Art) ist ein Programm- oder Einstellungsfehler: vermerkt, laut mit Traceback, kein Sperrverdacht.
     Nach jedem Abbruch außer dem Ende des Zeitfensters folgt in derselben Nacht kein weiterer Lauf (`letzter_abbruch`)."""
     config.RAW.mkdir(parents=True, exist_ok=True)
@@ -886,16 +922,22 @@ def _naechte_zaehlen(zustand, schluessel, jetzt, eintrag, neu):
 def _abbruch_vermerken(e, zustand):
     """Abbruch vermerken: zuerst den Zustand (letzter Abbruch für die 12-Stunden-Regel, Nacht mit möglicher Sperre nach
     `moegliche_sperre`, Retry-After über die Nacht hinaus, Nacht mit fehlerhafter Liste nach LISTENFEHLER), dann
-    STAND.json. Das Ende des Zeitfensters (etwa bei einem Vollabruf über mehrere Nächte) ist kein Fehler: nur ein
-    neutraler Hinweis, keine 12-Stunden-Regel."""
+    STAND.json. Das Ende des Zeitfensters und die Obergrenze je Nacht (etwa bei einem Vollabruf über mehrere Nächte)
+    sind kein Fehler: nur ein neutraler Hinweis (ein inkrementeller Lauf speichert keine Fortsetzung, er beginnt in der
+    nächsten Nacht erneut); nach der Obergrenze gilt die 12-Stunden-Regel (höchstens einmal je Nacht bis zur Grenze),
+    nach dem Ende des Zeitfensters nicht."""
     jetzt = abruf.uhr()
     zeit = jetzt.isoformat(timespec="seconds")
     art = getattr(e, "art", "")
-    if art == "zeitfenster":
-        hinweis = f"Das Zeitfenster endete während des Abrufs; Fortsetzung in der nächsten Nacht. {e}"[:400]
+    if art in ("zeitfenster", "obergrenze"):
+        weiter = ("der inkrementelle Abruf beginnt in der nächsten Nacht erneut (ein inkrementeller Lauf speichert "
+                  "keine Fortsetzung)" if getattr(e, "inkrementell", False) else "Fortsetzung in der nächsten Nacht")
+        grund = "Das Zeitfenster endete während des Abrufs" if art == "zeitfenster" else "Obergrenze je Nacht erreicht"
+        if art == "obergrenze":
+            _zustand_setzen("letzter_abbruch", {"zuletzt": zeit, "art": art, "code": None, "meldung": str(e)[:300]})
         _stand_entfernen("abruf_fehler")
-        _stand_setzen(abruf_hinweis={"zeit": _now(), "meldung": hinweis})
-        print(f"Abruf unterbrochen (Ende des Zeitfensters), Fortsetzung in der nächsten Nacht: {e}")
+        _stand_setzen(abruf_hinweis={"zeit": _now(), "meldung": f"{grund}, {weiter}. {e}"[:400]})
+        print(f"Abruf unterbrochen ({grund}), {weiter}: {e}")
         return
     neu = {"letzter_abbruch": {"zuletzt": zeit, "art": art, "code": getattr(e, "code", None),
                                "meldung": str(e)[:300]}}
@@ -918,9 +960,10 @@ def _abbruch_vermerken(e, zustand):
     hinweis = None
     if art in LISTENFEHLER:
         naechte = _naechte_zaehlen(zustand, "listenfehler", jetzt, eintrag, neu)
-        hinweis = (f"Abbruch wegen einer fehlerhaften Liste ({art}), {naechte}. Nacht ohne vollständigen Lauf; keine "
-                   f"Fortsetzung, jede Nacht beginnt der Vollabruf von vorn. Nach {LISTENFEHLER_NAECHTE} Nächten "
-                   f"{LISTENFEHLER_PAUSE.days} Tage Pause. {e}")[:400]
+        folge = ("Zeitfilter nicht angewandt: Der inkrementelle Abruf bricht nach der ersten ungefilterten Seite ab"
+                 if art == "filter" else "keine Fortsetzung, jede Nacht beginnt der Vollabruf von vorn")
+        hinweis = (f"Abbruch wegen einer fehlerhaften Liste ({art}), {naechte}. Nacht ohne vollständigen Lauf; "
+                   f"{folge}. Nach {LISTENFEHLER_NAECHTE} Nächten {LISTENFEHLER_PAUSE.days} Tage Pause. {e}")[:400]
         _warnung(hinweis)
     _zustand_aendern(**neu)
     werte = {"abruf_fehler": {"zeit": _now(), "meldung": str(e)[:300]}}
