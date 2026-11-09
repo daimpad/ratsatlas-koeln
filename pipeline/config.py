@@ -57,7 +57,8 @@ ABRUF_ZEITFENSTER = os.environ.get("RATSATLAS_ZEITFENSTER", "23-1")   # Stunden 
 # rund 1300; bei schnellen Antworten greift also die Grenze vor dem Ende des Fensters. Erreicht ein Vollabruf sie, gilt
 # das wie das Ende des Zeitfensters (Art `obergrenze`: Fortsetzung in der nächsten Nacht, kein Listenfehler, in
 # derselben Nacht kein weiterer Lauf); ein inkrementeller Lauf bricht dort als Listenfehler ab (Art `liste`). Werte
-# unter 1200 (sessionnet.MAX_OBJEKTE_MINDESTENS) lehnt der Abruf vor der ersten Anfrage als Einstellungsfehler ab
+# unter (ceil(1000 / g) + 2) · g mit g = RATSATLAS_LIMIT (sessionnet.max_objekte_mindestens(); bei 100 je Seite 1200,
+# bei 150 1350) lehnt der Abruf vor der ersten Anfrage als Einstellungsfehler ab
 ABRUF_MAX_OBJEKTE = int(os.environ.get("RATSATLAS_MAX_OBJEKTE", "100000"))
 # Gesamtgrenze eines Vollabrufs über seine Fortsetzungen hinweg (Schutz gegen eine Liste, die endlos neue Kennungen
 # erzeugt), in Objekten, umgerechnet wie oben; darüber Abbruch der Art `liste`. 600 000: Ein Vollabruf mit bis zu

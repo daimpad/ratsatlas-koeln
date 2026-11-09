@@ -447,6 +447,10 @@ def _filter_urteil(basis, antwort, feld, von=None, bis=None):
       (Löschung und neue Vorlage) genügt dagegen nicht mehr. Bei neueste zuerst zählen nur die ersten Plätze, die neue
       Vorlagen seit der ungefilterten Seite (Kennungen dort nicht enthalten, created nicht älter als ihre jüngste
       Vorlage oder unlesbar) nicht verdrängt haben können (ein Server ohne Filter lieferte eine ebenso lange Seite).
+      Annahme: `created` ist der Zeitpunkt der Aufnahme (neue Vorlagen sind jünger als die jüngste der ungefilterten
+      Seite, bei älteste zuerst rücken sie nur hinten an). Zurückdatiert eingefügte Vorlagen (created älter, als ihre
+      Aufnahme ist) stünden mitten in der Seite, verdrängten auch ohne Filter Vorlagen unter der Grenze und könnten so
+      „ja“ vortäuschen.
     - sonst „nicht unterscheidbar“ mit Grund: keine bzw. nur eine Vorlage unter der Grenze auf der ungefilterten Seite,
       nur ein Teil davon fehlt (die übrigen stehen seither geändert in der Antwort), oder es fehlt keine (etwa alle
       modified gleich oder alle seither geändert: auch ein Server ohne Filter lieferte dieselben Kennungen; bei neueste

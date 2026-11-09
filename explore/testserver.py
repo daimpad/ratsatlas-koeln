@@ -247,7 +247,8 @@ class Daten:
 
 class Testserver:
     """Startet den Server in einem Hintergrund-Thread. `anfragen`: Liste (Pfad, Abfrage, User-Agent, Status);
-    `eingang`: Eingangszeit je Anfrage, `ausgang`: Zeit unmittelbar vor dem Schreiben der Antwort (nach einer
+    `eingang`: Eingangszeit je Anfrage (gleich zu Beginn von do_GET, vor Störung und Antwort), `ausgang`: Zeit
+    unmittelbar vor dem Schreiben der Antwort (nach einer
     Verzögerung; so liegt `ausgang` nie nach dem Ende des Lesens beim Client, und der Eingang der nächsten Anfrage minus
     `ausgang` ist nie kleiner als der Abstand, den der Client hielt: die Prüfung „≥ 2 s“ der Probeläufe kommt ohne
     Toleranz aus; beide time.monotonic, für alle Prozesse derselben Maschine vergleichbar).
@@ -377,6 +378,7 @@ class Testserver:
                 pass
 
             def do_GET(self):
+                eingang = time.monotonic()   # gleich zu Beginn, vor Störung und Antwort (sonst zu spät gemessen)
                 teile = urlsplit(self.path)
                 status, ziel = server.stoerung(teile.path, teile.query), None
                 if teile.path in server.weiterleitungen:
@@ -387,8 +389,8 @@ class Testserver:
                 else:
                     status, typ, inhalt = server.antwort(teile.path, teile.query)
                 server.anfragen.append((teile.path, teile.query, self.headers.get("User-Agent"), status))
-                server.eingang.append(time.monotonic())
-                pause = (server.verzoegerung(teile.path, teile.query) if callable(server.verzoegerung)
+                server.eingang.append(eingang)
+                pause =(server.verzoegerung(teile.path, teile.query) if callable(server.verzoegerung)
                          else server.verzoegerung)
                 if pause:
                     time.sleep(pause)
