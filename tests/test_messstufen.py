@@ -1492,15 +1492,32 @@ def test_zwei_signale_kurz_nacheinander(tmp_path, monkeypatch):
     """Zwei Signale gleichzeitig ausstehend (SIGINT und SIGTERM): Das erste beendet den Lauf wie Strg+C, das zweite wird
     ignoriert und unterbricht den Vermerk nicht."""
     om = importlib.import_module("oparl_messung")
+    # Die Signale gehen gezielt an den Hauptthread (pthread_kill), nicht an den Prozess (os.kill): Ein an den Prozess
+    # gerichtetes Signal stellt der Kernel einem anderen laufenden Thread zu, wenn der Hauptthread es blockiert; Python
+    # behandelt es dann schon vor dem zweiten Signal (in CI so aufgetreten, Rückgabewert 143). Der rechnende Nebenthread
+    # stellt genau diese Lage her; an den Hauptthread gerichtete Signale bleiben dort ausstehend und werden nach der
+    # Freigabe in aufsteigender Nummer behandelt (SIGINT vor SIGTERM).
+    halt = threading.Event()
+
+    def rechnen():
+        while not halt.is_set():
+            sum(range(1000))
+    neben = threading.Thread(target=rechnen, daemon=True)
+    neben.start()
 
     def kommando(_a):
         beide = {signal.SIGINT, signal.SIGTERM}
+        haupt = threading.get_ident()
         signal.pthread_sigmask(signal.SIG_BLOCK, beide)
-        os.kill(os.getpid(), signal.SIGTERM)
-        os.kill(os.getpid(), signal.SIGINT)
+        signal.pthread_kill(haupt, signal.SIGTERM)
+        signal.pthread_kill(haupt, signal.SIGINT)
         signal.pthread_sigmask(signal.SIG_UNBLOCK, beide)                 # beide zugleich zugestellt
         time.sleep(5)
-    assert _main_mit_wache(om, monkeypatch, tmp_path, kommando) == 130
+    try:
+        assert _main_mit_wache(om, monkeypatch, tmp_path, kommando) == 130
+    finally:
+        halt.set()
+        neben.join(5)
     zeilen = tsv(tmp_path / "erg" / "oparl_laeufe.tsv")
     assert len(zeilen) == 1 and (zeilen[0]["ergebnis"], zeilen[0]["meldung"]) == ("unterbrochen", "unterbrochen (SIGINT)")
 
