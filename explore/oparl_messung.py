@@ -32,9 +32,11 @@ Werktage in 2025 und limit=100; den Body liest es nur aus dem Cache (fehlt er, A
 `kennzahlen` beurteilt die Zeitfilter ohne weitere Anfrage aus dem Vergleich mit der ungefilterten ersten Seite
 (_filter_urteil): Die Grenze für modified_since ist der Median von `modified` der ersten Hälfte dieser Seite, so dass
 ein Server, der den Filter überginge, ältere Vorlagen liefern müsste; „ja“ nur, wenn die gefilterte Antwort keine
-Vorlage unter der Grenze enthält und mindestens zwei Vorlagen, die dort unter der Grenze lagen, alle in ihr fehlen
-(sind sie seither geändert, „nicht unterscheidbar“); bei „nein“ steht
-dabei, wie weit die früheste Vorlage der Antwort vor der Grenze liegt. Bei neueste zuerst zeigt die erste Seite, ob
+Vorlage unter der Grenze enthält, die ungefilterte Seite nachweislich nach created sortiert ist (neueste zuerst wie
+Köln oder älteste zuerst; sonst „nicht unterscheidbar (Reihenfolge unbekannt …)“) und mindestens zwei Vorlagen, die
+dort unter der Grenze lagen, alle in ihr fehlen (sind sie seither geändert, „nicht unterscheidbar“); bei „nein“ steht
+dabei, wie weit die früheste Vorlage der Antwort vor der Grenze liegt; Objekte der Antwort mit unlesbarem Wert stehen
+getrennt am Ende („; k mit unlesbarem modified“). Bei neueste zuerst zeigt die erste Seite, ob
 created_until wirkt, nicht aber, ob created_since wirkt („nicht unterscheidbar“). limit=100 ist die letzte Anfrage
 (eine langsame Antwort bricht ab, wenn die übrigen Messungen vorliegen). Eine 401 auf einen Parametertest gilt als
 „Parameter abgelehnt“, zwei 401 in Folge brechen ab (abgelehnt oder Sperre?).
@@ -222,18 +224,26 @@ def _mit_parametern(url, kodiert=True, **params):
     return url
 
 
+def _port(teile):
+    """Port einer zerlegten Adresse wie pipeline/sessionnet._port: der ausdrückliche Standardport (http 80, https 443)
+    gilt wie keine Angabe (None). Ein unlesbarer Port: ValueError."""
+    port = teile.port
+    return None if (teile.scheme, port) in (("http", 80), ("https", 443)) else port
+
+
 def _folgeadresse(naechste, liste_url, limit=None):
     """links.next vor dem Folgen normalisieren (wie pipeline/sessionnet.folgeadresse): Schema, Host und Pfad bleiben,
     der Query-Teil wird je Parameter als quote(unquote(v), safe="") neu aufgebaut (unquote, nicht unquote_plus: Köln
     liefert „+“ als wörtliches Plus); idempotent, Reihenfolge, page und limit unverändert. Trägt die erste Adresse
-    `limit`, links.next aber nicht, wird er angehängt. Anderer Host oder anderes Schema als die Liste, Zeichen außerhalb
-    von ASCII (ein Umlaut im Host ginge per IDNA an einen anderen Host) oder unlesbar (ValueError, etwa „http://[::1“
-    oder ein Port über 65535): Abbruch der Art `adresse` (nicht gesendet)."""
+    `limit`, links.next aber nicht, wird er angehängt. Anderer Host, anderer Port oder anderes Schema als die Liste
+    (der ausdrückliche Standardport, http …:80, https …:443, gilt wie keine Angabe), Zeichen außerhalb von ASCII (ein
+    Umlaut im Host ginge per IDNA an einen anderen Host) oder unlesbar (ValueError, etwa „http://[::1“ oder ein Port
+    über 65535): Abbruch der Art `adresse` (nicht gesendet)."""
     if not naechste.isascii():
         raise Abbruch(f"links.next enthält Zeichen außerhalb von ASCII, nicht gesendet: {naechste}", "adresse")
     try:
         teile, liste = urllib.parse.urlsplit(naechste), urllib.parse.urlsplit(liste_url)
-        anders = (teile.scheme, teile.hostname, teile.port) != (liste.scheme, liste.hostname, liste.port)
+        anders = (teile.scheme, teile.hostname, _port(teile)) != (liste.scheme, liste.hostname, _port(liste))
     except ValueError as e:
         raise Abbruch(f"links.next unlesbar ({e}), nicht gesendet: {naechste}", "adresse") from e
     if anders:
@@ -379,9 +389,12 @@ def _utc(t):
     return t.astimezone(dt.timezone.utc).replace(microsecond=0).isoformat()
 
 
-def _neueste_zuerst(objekte):
-    """Ist die Seite nach `created` absteigend sortiert (Köln, Stufe 1)? Dann stehen neue Vorlagen vorn."""
+def _neueste_zuerst(objekte, umgekehrt=False):
+    """Ist die Seite nach `created` absteigend sortiert (Köln, Stufe 1)? Dann stehen neue Vorlagen vorn. `umgekehrt`:
+    aufsteigend (älteste zuerst, Form „bisher“ des Testservers)."""
     zeiten = [_zeitpunkt(o["created"]) if o.get("created") else None for o in objekte]
+    if umgekehrt:
+        zeiten.reverse()
     return (len(zeiten) >= 2 and None not in zeiten and zeiten[0] > zeiten[-1]
             and all(a >= b for a, b in zip(zeiten, zeiten[1:])))
 
@@ -421,21 +434,25 @@ def _filter_urteil(basis, antwort, feld, von=None, bis=None):
     - „ja“ bei „bis“: Die ungefilterte Seite enthält Objekte jenseits der Grenze (die die übrige Grenze einhalten),
       deren Kennung in der Antwort fehlt (neue Vorlagen lägen ohne Filter ebenfalls jenseits).
     - „ja (k fehlen)“ bei „von“ (etwa modified_since): Die Antwort enthält kein Objekt mit lesbarem Wert unter der
-      Grenze, und die ungefilterte Seite enthält mindestens zwei Objekte unter der Grenze, die alle in der Antwort
-      fehlen. Begründung: Ein Server ohne Filter lieferte dieselbe Liste wie die ungefilterte Seite, nur später. Dass
-      dort genau die Vorlagen unter der Grenze fehlen und keine Vorlage unter der Grenze nachrückt, verlangte ohne
-      Filter, dass genau diese Vorlagen gelöscht wurden und die Ersatzvorlagen aus Seite 2 durchweg nach der Grenze
-      geändert sind. Mit Filter ist das der Normalfall, auch bei voller gefilterter Seite: Ältere, kürzlich geänderte
-      Vorlagen füllen sie (Stufe 2: 25 ungefiltert, davon 17 unter der Grenze; gefiltert keine darunter, 17 fehlen,
-      17 ältere geänderte). Der Vergleich mit der Zahl älterer fremder Vorlagen (bis Runde 14) machte „ja“ dann
-      unerreichbar; eine einzelne fehlende Vorlage (Löschung und neue Vorlage) genügt dagegen nicht mehr. Bei neueste
-      zuerst zählen nur die ersten Plätze, die neue Vorlagen seit der ungefilterten Seite (Kennungen dort nicht
-      enthalten, created nicht älter als ihre jüngste Vorlage oder unlesbar) nicht verdrängt haben können (ein Server
-      ohne Filter lieferte eine ebenso lange Seite).
+      Grenze, die ungefilterte Seite ist nachweislich nach `created` sortiert, neueste zuerst wie Köln (_neueste_zuerst)
+      oder älteste zuerst (dort rücken neue Vorlagen nur hinten an; sonst „nicht unterscheidbar (Reihenfolge unbekannt
+      …)“: Bei einer Seite etwa nach `modified` verdrängten seither geänderte Vorlagen auch ohne Filter die älteren),
+      und sie enthält mindestens zwei Objekte unter der Grenze, die alle in der Antwort fehlen. Begründung: Ein Server
+      ohne Filter lieferte dieselbe Liste wie die ungefilterte Seite, nur später. Dass dort genau die Vorlagen unter der
+      Grenze fehlen und keine Vorlage unter der Grenze nachrückt, verlangte ohne Filter, dass genau diese Vorlagen
+      gelöscht wurden und die Ersatzvorlagen aus Seite 2 durchweg nach der Grenze geändert sind. Mit Filter ist das der
+      Normalfall, auch bei voller gefilterter Seite: Ältere, kürzlich geänderte Vorlagen füllen sie (Stufe 2: 25
+      ungefiltert, davon 17 unter der Grenze; gefiltert keine darunter, 17 fehlen, 17 ältere geänderte). Der Vergleich
+      mit der Zahl älterer fremder Vorlagen (bis Runde 14) machte „ja“ dann unerreichbar; eine einzelne fehlende Vorlage
+      (Löschung und neue Vorlage) genügt dagegen nicht mehr. Bei neueste zuerst zählen nur die ersten Plätze, die neue
+      Vorlagen seit der ungefilterten Seite (Kennungen dort nicht enthalten, created nicht älter als ihre jüngste
+      Vorlage oder unlesbar) nicht verdrängt haben können (ein Server ohne Filter lieferte eine ebenso lange Seite).
     - sonst „nicht unterscheidbar“ mit Grund: keine bzw. nur eine Vorlage unter der Grenze auf der ungefilterten Seite,
       nur ein Teil davon fehlt (die übrigen stehen seither geändert in der Antwort), oder es fehlt keine (etwa alle
       modified gleich oder alle seither geändert: auch ein Server ohne Filter lieferte dieselben Kennungen; bei neueste
-      zuerst created_since), dann mit dem Vergleich der Kennungen."""
+      zuerst created_since), dann mit dem Vergleich der Kennungen.
+    Objekte der Antwort mit unlesbarem Wert (`feld` vorhanden, aber kein Zeitpunkt) zählen weder als jenseits noch
+    diesseits; ihre Zahl steht getrennt am Ende jedes Urteils („; k mit unlesbarem modified“)."""
     def zeit(o):
         return _zeitpunkt(o[feld]) if o.get(feld) else None
 
@@ -450,12 +467,15 @@ def _filter_urteil(basis, antwort, feld, von=None, bis=None):
     juengste = max((t for t in (_zeitpunkt(o["created"]) for o in basis if o.get("created")) if t), default=None)
     neu = sum(1 for o in fremd if juengste is None or not o.get("created")
               or (_zeitpunkt(o["created"]) or juengste) >= juengste)
+    neueste = _neueste_zuerst(basis)
+    sortiert = neueste or _neueste_zuerst(basis, umgekehrt=True)   # nachweislich nach created sortiert
+    unlesbar = sum(1 for o in antwort if o.get(feld) and zeit(o) is None)
     urteil = {}
     for seite, andere in (("von", "bis"), ("bis", "von")):
         if (von if seite == "von" else bis) is None:
             continue
         verletzt = [zeit(o) for o in antwort if jenseits(o, seite)]
-        plaetze = basis[:max(len(basis) - neu, 0)] if seite == "von" and _neueste_zuerst(basis) else basis
+        plaetze = basis[:max(len(basis) - neu, 0)] if seite == "von" and neueste else basis
         dort = [o for o in plaetze if jenseits(o, seite) and not jenseits(o, andere)]
         fehlen = sum(1 for o in dort if o.get("id") not in antwort_ids)
         if verletzt:
@@ -467,7 +487,9 @@ def _filter_urteil(basis, antwort, feld, von=None, bis=None):
         elif fehlen and seite == "bis":
             urteil[seite] = "ja"
         elif fehlen >= 2 and fehlen == len(dort):
-            urteil[seite] = f"ja ({fehlen} fehlen)"
+            urteil[seite] = f"ja ({fehlen} fehlen)" if sortiert else (
+                f"nicht unterscheidbar (Reihenfolge unbekannt: {fehlen} Vorlagen unter der Grenze fehlen, die "
+                "ungefilterte Seite ist nicht nachweislich nach created sortiert)")
         elif fehlen == 1 and len(dort) == 1:
             urteil[seite] = ("nicht unterscheidbar (nur eine Vorlage unter der Grenze auf der ungefilterten Seite, sie "
                              "fehlt: ebenso durch eine Löschung erklärbar)")
@@ -478,7 +500,9 @@ def _filter_urteil(basis, antwort, feld, von=None, bis=None):
             urteil[seite] = ("nicht unterscheidbar (" + ("gleiche Kennungen wie ohne Filter" if not fremd else
                                                          f"{len(fremd)} Kennungen nicht auf der ungefilterten Seite")
                              + ("; neueste zuerst: die erste Seite zeigt nur die jüngsten Vorlagen"
-                                if seite == "von" and bis is not None and _neueste_zuerst(basis) else "") + ")")
+                                if seite == "von" and bis is not None and neueste else "") + ")")
+    if unlesbar:
+        urteil = {s: f"{u}; {unlesbar} mit unlesbarem {feld}" for s, u in urteil.items()}
     return urteil
 
 

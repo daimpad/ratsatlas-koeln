@@ -247,8 +247,10 @@ class Daten:
 
 class Testserver:
     """Startet den Server in einem Hintergrund-Thread. `anfragen`: Liste (Pfad, Abfrage, User-Agent, Status);
-    `eingang`: Eingangszeit je Anfrage, `ausgang`: Zeit nach dem Senden der Antwort (beide time.monotonic, für alle
-    Prozesse derselben Maschine vergleichbar).
+    `eingang`: Eingangszeit je Anfrage, `ausgang`: Zeit unmittelbar vor dem Schreiben der Antwort (nach einer
+    Verzögerung; so liegt `ausgang` nie nach dem Ende des Lesens beim Client, und der Eingang der nächsten Anfrage minus
+    `ausgang` ist nie kleiner als der Abstand, den der Client hielt: die Prüfung „≥ 2 s“ der Probeläufe kommt ohne
+    Toleranz aus; beide time.monotonic, für alle Prozesse derselben Maschine vergleichbar).
     `stoerung(pfad, abfrage)` darf einen Statuscode liefern (z. B. 429); `verzoegerung` in Sekunden je Antwort (oder
     eine Funktion (pfad, abfrage) → Sekunden);
     `weiterleitungen`: Pfad → (Status, Ziel) für Antworten mit Location-Kopf (z. B. 301);
@@ -390,6 +392,7 @@ class Testserver:
                          else server.verzoegerung)
                 if pause:
                     time.sleep(pause)
+                server.ausgang.append(time.monotonic())   # vor dem Schreiben (nicht nach dem Lesen beim Client)
                 self.send_response(status)
                 if ziel:
                     self.send_header("Location", ziel)
@@ -401,7 +404,6 @@ class Testserver:
                     self.close_connection = True
                 self.wfile.write(inhalt)
                 self.wfile.flush()
-                server.ausgang.append(time.monotonic())
 
         return H
 

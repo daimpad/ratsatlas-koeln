@@ -988,26 +988,47 @@ def test_unterbrochener_lauf_wird_vermerkt_und_sperrt_12_stunden(tmp_path, monke
     assert om.letzter_abbruch(datei)["lauf"] == zeile["lauf"]           # Sperrfrist 12 Stunden
 
 
+# oparl_messung.main(["test"]) als Prozess; der Abstand nach der ersten Antwort (zweites _warten) wird auf 600 s
+# verlängert, und eine Datei meldet, dass der Prozess dort angekommen ist (argv: explore, Meldedatei)
+SIGTERM_IM_ABSTAND = """
+import sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+import oparl_messung as om
+echt, aufrufe = om.abruf._warten, []
+def warten():
+    aufrufe.append(1)
+    if len(aufrufe) == 2:
+        om.abruf.ABSTAND = 600.0
+        Path(sys.argv[2]).touch()
+    echt()
+om.abruf._warten = warten
+sys.exit(om.main(["test"]))
+"""
+
+
 def test_sigterm_beendet_den_lauf_mit_vermerk_und_ohne_weitere_anfrage(tmp_path):
     """Als Prozess gegen einen Testserver, der wie die Stadt behandelt wird (127.0.0.2): SIGTERM nach der ersten Antwort
-    (während des Abstands von 2 s) → Rückgabewert 143, Vermerk „unterbrochen (SIGTERM)“; ein zweiter Lauf schickt keine
-    Anfrage (12-Stunden-Regel)."""
+    (während des Abstands) → Rückgabewert 143, Vermerk „unterbrochen (SIGTERM)“ (nicht „während einer Anfrage“), genau
+    eine Anfrage; ein zweiter Lauf schickt keine Anfrage (12-Stunden-Regel). Unabhängig von der Last (Runde 16; vorher
+    2 s Spielraum zwischen Protokollzeile und Signal): Der Prozess meldet über eine Datei, dass er im Abstand nach der
+    ersten Antwort wartet (hier 600 s), erst dann kommt das Signal von außen."""
     with testserver.Testserver(host="127.0.0.2") as stadt:
-        skript = str(EXPLORE / "oparl_messung.py")
+        skript, bereit = str(EXPLORE / "oparl_messung.py"), tmp_path / "im_abstand"
         env = _wie_die_stadt(stadt, tmp_path, RATSATLAS_STUFE="1", RATSATLAS_MAX_ANFRAGEN="3")
-        p = subprocess.Popen([sys.executable, skript, "test"], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             text=True)
-        frist, protokoll_datei = time.monotonic() + 30, tmp_path / "cache" / "abrufe.tsv"
-        while time.monotonic() < frist and p.poll() is None and not (
-                protokoll_datei.exists() and len(protokoll_datei.read_text(encoding="utf-8").splitlines()) >= 2):
-            time.sleep(0.02)                                                # erste Antwort gelesen und vermerkt
+        p = subprocess.Popen([sys.executable, "-c", SIGTERM_IM_ABSTAND, str(EXPLORE), str(bereit)], env=env,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        frist = time.monotonic() + 60
+        while time.monotonic() < frist and p.poll() is None and not bereit.exists():
+            time.sleep(0.02)                                                # im Abstand nach der ersten Antwort
+        assert bereit.exists(), p.poll()
         p.send_signal(signal.SIGTERM)
-        _, fehler = p.communicate(timeout=30)
+        _, fehler = p.communicate(timeout=60)
         n = len(stadt.anfragen)
-        assert p.returncode == 143 and "Unterbrochen (SIGTERM)" in fehler, fehler
+        assert p.returncode == 143 and "Unterbrochen (SIGTERM). In dieser Nacht" in fehler, fehler
         zeile = tsv(tmp_path / "ergebnisse" / "oparl_laeufe.tsv")[-1]
-        assert (zeile["ergebnis"], zeile["meldung"], zeile["netz"]) == ("unterbrochen", "unterbrochen (SIGTERM)", str(n))
-        assert 1 <= n < 3
+        assert (zeile["ergebnis"], zeile["meldung"], zeile["netz"]) == ("unterbrochen", "unterbrochen (SIGTERM)", "1")
+        assert n == 1 and [z["status"] for z in protokoll(tmp_path)] == ["200"]
         zweiter = subprocess.run([sys.executable, skript, "test"], env=env, capture_output=True, text=True, timeout=60)
         assert zweiter.returncode == 1 and "RATSATLAS_NACH_ABBRUCH" in zweiter.stderr and "unterbrochen" in zweiter.stderr
         assert len(stadt.anfragen) == n                                   # keine Anfrage des zweiten Laufs
@@ -1372,11 +1393,13 @@ def test_limit_zuletzt_langsame_antwort_nach_allen_messungen(koeln_server, tmp_p
 @pytest.fixture
 def tropf_server():
     """Fabrik für lokale HTTP-Server auf 127.0.0.1: Kopf mit Content-Length, dann der Inhalt in `teile` mit `pause`
-    Sekunden vor jedem Teil (verzögerte oder tropfende Antwort)."""
+    Sekunden vor jedem Teil (verzögerte oder tropfende Antwort). `halt` (threading.Event): danach keine weiteren Teile;
+    `server.fertig` wird unmittelbar vor dem letzten Teil gesetzt (wer die Antwort vollständig gelesen hat, sieht es
+    also gesetzt; nicht erst danach, sonst ein Rennen mit dem lesenden Client)."""
     gestartet = []
 
-    def starten(teile, pause):
-        inhalt = b"".join(teile)
+    def starten(teile, pause, halt=None):
+        inhalt, fertig = b"".join(teile), threading.Event()
 
         class H(socketserver.BaseRequestHandler):
             def handle(self):
@@ -1388,8 +1411,12 @@ def tropf_server():
                     daten += teil
                 self.request.sendall(b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: %d\r\n"
                                      b"Connection: close\r\n\r\n" % len(inhalt))
-                for teil in teile:
+                for i, teil in enumerate(teile, 1):
                     time.sleep(pause)
+                    if halt is not None and halt.is_set():
+                        return
+                    if i == len(teile):
+                        fertig.set()
                     try:
                         self.request.sendall(teil)
                     except OSError:
@@ -1397,6 +1424,7 @@ def tropf_server():
 
         server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), H)
         server.daemon_threads, server.url = True, f"http://127.0.0.1:{server.server_address[1]}"
+        server.fertig = fertig
         threading.Thread(target=server.serve_forever, daemon=True).start()
         gestartet.append(server)
         return server
@@ -1407,39 +1435,64 @@ def tropf_server():
         server.server_close()
 
 
-@pytest.mark.parametrize("teile, art, status", [(3, "langsam", "200"), (12, "sperre", "Gesamtfrist")])
-def test_verzoegerte_und_tropfende_antwort(tmp_path, monkeypatch, tropf_server, teile, art, status):
-    """Inhalt in Blöcken gelesen: vollständig, aber über RATSATLAS_MAX_DAUER → „langsam“ (gespeichert); länger als die
+@pytest.mark.parametrize("art, status", [("langsam", "200"), ("sperre", "Gesamtfrist")])
+def test_verzoegerte_und_tropfende_antwort(tmp_path, monkeypatch, tropf_server, art, status):
+    """Inhalt in Blöcken gelesen: vollständig (3 Blöcke, je 0,2 s davor), aber über RATSATLAS_MAX_DAUER (0,3 s) →
+    „langsam“ (gespeichert); eine Tropf-Antwort (ein Leerzeichen je 0,2 s, ihr Ende erst nach 20 s), länger als die
     Gesamtfrist (hier 1 s statt 60 s) → Art `sperre`, Status `Gesamtfrist`, nichts im Cache, Abbruch ohne das Ende
-    abzuwarten."""
-    server = tropf_server([b'{"a": 1'] + [b" "] * (teile - 2) + [b"}"], 0.2)
-    abruf = _abruf_im_prozess(monkeypatch, tmp_path, GESAMTFRIST=1.0, MAX_DAUER=0.3)
+    abzuwarten. Unabhängig von der Last (Runde 16; vorher Ende der Tropf-Antwort nach 2,4 s und Abbruch in unter 2 s
+    gemessen, für „langsam“ die Gesamtfrist 1 s als Grenze nach oben): „langsam“ ohne enge Gesamtfrist, und dass das
+    Ende nicht abgewartet wurde, zeigt der Server (`fertig`), nicht die Uhr."""
+    halt = threading.Event()
+    teile = 3 if art == "langsam" else 100
+    server = tropf_server([b'{"a": 1'] + [b" "] * (teile - 2) + [b"}"], 0.2, halt)
+    abruf = _abruf_im_prozess(monkeypatch, tmp_path, GESAMTFRIST=1.0 if art == "sperre" else 60.0, MAX_DAUER=0.3)
     url = f"{server.url}/oparl/system"
-    start = time.monotonic()
-    with pytest.raises(abruf.Abbruch) as e:
-        abruf.hole(url, ".json")
+    try:
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.hole(url, ".json")
+        assert server.fertig.is_set() == (art == "langsam")               # nicht bis zum Ende der Tropf-Antwort
+    finally:
+        halt.set()
     assert e.value.art == art and ("Tropf-Antwort" in str(e.value)) == (art == "sperre")
-    assert time.monotonic() - start < 2.0                                # nicht bis zum Ende der Tropf-Antwort
     z = tsv(tmp_path / "abrufe.tsv")[-1]
     assert (z["status"], z["quelle"]) == (status, "netz")
     assert abruf._cachepfad(url, ".json").exists() == (art == "langsam")
 
 
+class _SignalBeiAnfrage:
+    """Der Testserver schickt dem Prozess bei der ersten Anfrage ein Signal, bevor er antwortet (danach 3 s
+    Verzögerung): Das Signal kommt sicher, während die Antwort aussteht, unabhängig von der Last (Runde 16; vorher
+    schickte der Test es 0,3 s nach dem Eingang, bei 3 s Verzögerung). `gesendet`: geschickte Signale."""
+
+    def __init__(self, server, sig):
+        self.server, self.sig, self.p, self.gesendet = server, sig, None, []
+        self.bereit = threading.Event()
+        server.verzoegerung = self.verzoegerung
+
+    def verzoegerung(self, pfad, abfrage):
+        if len(self.server.anfragen) == 1 and self.bereit.wait(30):
+            self.p.send_signal(self.sig)
+            self.gesendet.append(self.sig)
+        return 3.0
+
+    def starten(self, befehl, env):
+        self.p = subprocess.Popen(befehl, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        self.bereit.set()
+        return self.p
+
+
 def test_sigterm_waehrend_einer_anfrage_ist_moegliche_sperre(tmp_path):
     """SIGTERM, während die Antwort aussteht (etwa Zeitlimit des aufrufenden Werkzeugs bei hängender Anfrage): Die
     Anfrage steht mit Status `unterbrochen` im Protokoll (Auswertung: Netz 1, mögliche Sperre), der Lauf mit
-    „unterbrochen während einer Anfrage“."""
+    „unterbrochen während einer Anfrage“. Das Signal schickt der Testserver bei der ersten Anfrage vor der Antwort
+    (_SignalBeiAnfrage)."""
     with testserver.Testserver(host="127.0.0.2") as stadt:
-        stadt.verzoegerung = 3.0
         env = _wie_die_stadt(stadt, tmp_path, RATSATLAS_STUFE="1", RATSATLAS_MAX_ANFRAGEN="3")
-        p = subprocess.Popen([sys.executable, str(EXPLORE / "oparl_messung.py"), "test"], env=env,
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        frist = time.monotonic() + 30
-        while not stadt.eingang and time.monotonic() < frist and p.poll() is None:
-            time.sleep(0.02)
-        time.sleep(0.3)                                                    # die Antwort steht noch aus
-        p.send_signal(signal.SIGTERM)
-        _, fehler = p.communicate(timeout=30)
+        prozess = _SignalBeiAnfrage(stadt, signal.SIGTERM)
+        p = prozess.starten([sys.executable, str(EXPLORE / "oparl_messung.py"), "test"], env)
+        _, fehler = p.communicate(timeout=60)
+    assert prozess.gesendet == [signal.SIGTERM] and len(stadt.anfragen) == 1
     assert p.returncode == 143 and "Unterbrochen (SIGTERM) während einer Anfrage: mögliche Sperre" in fehler, fehler
     zeile = tsv(tmp_path / "ergebnisse" / "oparl_laeufe.tsv")[-1]
     assert (zeile["ergebnis"], zeile["netz"]) == ("unterbrochen", "1")
@@ -1661,7 +1714,10 @@ def kopf_server():
                         return
                     daten += teil
                 try:
-                    time.sleep(kopf)
+                    if isinstance(kopf, threading.Event):   # Kopf erst, wenn der Test es erlaubt
+                        kopf.wait(120)
+                    else:
+                        time.sleep(kopf)
                     if ende is None:
                         self.request.sendall(b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 0"
                                              b"\r\nConnection: close\r\n\r\n")
@@ -1701,16 +1757,22 @@ def test_gesamtfrist_nach_dem_lesen_ohne_waechter(tmp_path, monkeypatch, kopf_se
 
 
 def test_waechter_beendet_haengenden_kopf(tmp_path, monkeypatch, kopf_server):
-    """Wächter (SIGALRM, Hauptthread): Der Kopf kommt erst nach 3 s, die Gesamtfrist (hier 1 s) beendet das Warten nach
-    etwa 1 s → Art `sperre`, Status `Gesamtfrist`, nichts im Cache; danach ist kein Zeitgeber mehr gesetzt. Eine schnelle
-    Antwort danach bleibt unberührt."""
-    server = kopf_server(3.0)
+    """Wächter (SIGALRM, Hauptthread): Der Kopf kommt nicht, solange der Test läuft; die Gesamtfrist (hier 1 s) beendet
+    das Warten → Art `sperre`, Status `Gesamtfrist`, nichts im Cache; danach ist kein Zeitgeber mehr gesetzt. Ohne
+    Wächter endete das Warten erst mit der Zeitüberschreitung des Öffners (60 s, „Zeitüberschreitung oder
+    Verbindungsabbruch“); so hängt das Ergebnis nicht von der Last ab (Runde 16; vorher Kopf nach 3 s, gemessen
+    höchstens 2 s). Eine schnelle Antwort danach bleibt unberührt."""
+    halt = threading.Event()
+    server = kopf_server(halt)
     abruf = _abruf_im_prozess(monkeypatch, tmp_path, GESAMTFRIST=1.0)
     url = f"{server.url}/oparl/system"
     start = time.monotonic()
-    with pytest.raises(abruf.Abbruch) as e:
-        abruf.hole(url, ".json")
-    assert time.monotonic() - start < 2.0 and e.value.art == "sperre" and "hängender Verbindungsaufbau" in str(e.value)
+    try:
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.hole(url, ".json")
+    finally:
+        halt.set()
+    assert time.monotonic() - start < 30 and e.value.art == "sperre" and "hängender Verbindungsaufbau" in str(e.value)
     z = tsv(tmp_path / "abrufe.tsv")[-1]
     assert (z["status"], z["quelle"]) == ("Gesamtfrist", "netz") and not abruf._cachepfad(url, ".json").exists()
     assert signal.getitimer(signal.ITIMER_REAL) == (0.0, 0.0) and not abruf._frist_aktiv
@@ -1753,29 +1815,26 @@ def test_markerdatei_ohne_vermerk_sperrt_12_stunden(tmp_path, capsys):
 
 def test_hart_beendeter_lauf_sperrt_den_naechsten(tmp_path):
     """Als Prozess gegen einen Testserver, der wie die Stadt behandelt wird (127.0.0.2): SIGKILL während der ersten
-    Anfrage → kein Vermerk, die Markerdatei bleibt; der nächste Lauf schickt keine Anfrage (Rückgabewert 1, „nicht
-    regulär beendet“). Mit RATSATLAS_NACH_ABBRUCH=ja läuft er und entfernt den Marker am Ende."""
+    Anfrage (vom Testserver vor der Antwort geschickt, _SignalBeiAnfrage) → kein Vermerk, die Markerdatei bleibt; der
+    nächste Lauf schickt keine Anfrage (Rückgabewert 1, „nicht regulär beendet“). Mit RATSATLAS_NACH_ABBRUCH=ja läuft er
+    und entfernt den Marker am Ende."""
     with testserver.Testserver(host="127.0.0.2") as stadt:
-        stadt.verzoegerung = 3.0
         skript = str(EXPLORE / "oparl_messung.py")
         env = _wie_die_stadt(stadt, tmp_path, RATSATLAS_STUFE="1", RATSATLAS_MAX_ANFRAGEN="3")
         marker = tmp_path / "cache" / "lauf_offen.json"
-        p = subprocess.Popen([sys.executable, skript, "test"], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             text=True)
-        frist = time.monotonic() + 30
-        while not stadt.eingang and time.monotonic() < frist and p.poll() is None:
-            time.sleep(0.02)
+        prozess = _SignalBeiAnfrage(stadt, signal.SIGKILL)                 # SIGKILL: kein Vermerk möglich
+        p = prozess.starten([sys.executable, skript, "test"], env)
+        p.communicate(timeout=60)
+        assert prozess.gesendet == [signal.SIGKILL] and len(stadt.anfragen) == 1
+        assert p.returncode == -signal.SIGKILL and marker.exists()
         inhalt = json.loads(marker.read_text(encoding="utf-8"))
         assert (inhalt["kommando"], inhalt["stufe"], inhalt["pid"]) == ("test", "1", p.pid)
-        p.kill()                                                           # SIGKILL: kein Vermerk möglich
-        p.communicate(timeout=30)
-        assert p.returncode == -signal.SIGKILL and marker.exists()
         assert not (tmp_path / "ergebnisse" / "oparl_laeufe.tsv").exists()
         n = len(stadt.anfragen)
         zweiter = subprocess.run([sys.executable, skript, "test"], env=env, capture_output=True, text=True, timeout=60)
         assert zweiter.returncode == 1 and "nicht regulär beendet" in zweiter.stderr, zweiter.stderr
         assert "RATSATLAS_NACH_ABBRUCH" in zweiter.stderr and len(stadt.anfragen) == n and marker.exists()
-        stadt.verzoegerung = 0.0
+        stadt.verzoegerung = 0.0                                           # ohne Signal
         dritter = subprocess.run([sys.executable, skript, "test"], env={**env, "RATSATLAS_NACH_ABBRUCH": "ja"},
                                  capture_output=True, text=True, timeout=120)
         assert dritter.returncode == 0, dritter.stderr
@@ -2157,3 +2216,93 @@ def test_filter_urteil_ja_bei_voller_gefilterter_seite_wie_in_stufe_2():
     zwei = eine[:5] + [dict(eine[5], modified=(t0 - dt.timedelta(hours=30)).isoformat())] + eine[6:]
     assert om._filter_urteil(zwei, [neu] + zwei[:20] + zwei[21:], "modified", von=grenze)["von"] == (
         "nein (1 von 25 vor der Grenze; frühestes modified 6 h vor der Grenze)")
+
+
+# --- Runde 16: „ja“ bei modified_since nur bei nachweislich neueste zuerst, unlesbares modified getrennt, Standardport
+# in links.next wie in der Pipeline, Ausgang des Testservers vor dem Schreiben -----------------------------------------
+
+def test_filter_urteil_ja_nur_bei_nachweislich_nach_created_sortiert():
+    """„ja (k fehlen)“ bei modified_since nur, wenn die ungefilterte Seite nachweislich nach created sortiert ist
+    (neueste zuerst wie Köln oder älteste zuerst; dort rücken neue Vorlagen nur hinten an): Dieselbe Lage mit einer
+    Seite nach modified sortiert (jüngste Änderung zuerst, created durcheinander) ergibt „nicht unterscheidbar
+    (Reihenfolge unbekannt …)“ (ohne Filter verdrängten seither geänderte Vorlagen die älteren ebenso). Fehlen zwei von
+    drei Vorlagen unter der Grenze und steht die dritte geändert in der Antwort: „nicht unterscheidbar (2 von 3 …)“,
+    nicht „ja“. Unlesbares modified in der Antwort steht getrennt am Ende des Urteils (ohne Zone gilt Ortszeit,
+    lesbar)."""
+    om = importlib.import_module("oparl_messung")
+    t0 = dt.datetime(2026, 11, 8, 12, tzinfo=dt.timezone.utc)
+    grenze = t0 - dt.timedelta(days=1)
+    geaendert = [_vorlage_m(f"a{n}", t0 - dt.timedelta(days=30 + n), t0 - dt.timedelta(hours=2)) for n in range(5)]
+
+    def seite(erstellt):   # modified absteigend (10 h Abstand): m0–m2 über, m3–m7 unter der Grenze
+        return [_vorlage_m(f"m{n}", t0 - dt.timedelta(days=erstellt(n)), t0 - dt.timedelta(hours=10 * n))
+                for n in range(8)]
+    nach_created = seite(lambda n: n / 10)                                 # neueste zuerst nach created
+    aelteste_zuerst = nach_created[::-1]
+    nach_modified = seite(lambda n: (7 * n) % 10)                          # created durcheinander
+    assert om._neueste_zuerst(nach_created) and om._neueste_zuerst(aelteste_zuerst, umgekehrt=True)
+    assert not om._neueste_zuerst(nach_modified) and not om._neueste_zuerst(nach_modified, umgekehrt=True)
+    for basis, erwartet in ((nach_created, "ja (5 fehlen)"), (aelteste_zuerst, "ja (5 fehlen)"),
+                            (nach_modified, "nicht unterscheidbar (Reihenfolge unbekannt: 5 Vorlagen unter der Grenze "
+                                            "fehlen, die ungefilterte Seite ist nicht nachweislich nach created "
+                                            "sortiert)")):
+        antwort = [o for o in basis if o["id"] in ("m0", "m1", "m2")] + geaendert   # m3–m7 fehlen
+        assert om._filter_urteil(basis, antwort, "modified", von=grenze)["von"] == erwartet
+    # drei unter der Grenze (p2–p4), p2 seither geändert in der Antwort, p3 und p4 fehlen: nicht „ja“
+    basis = [_vorlage_m(f"p{n}", t0 - dt.timedelta(hours=n), t0 - dt.timedelta(hours=(0, 1, 30, 31, 32)[n]))
+             for n in range(5)]
+    antwort = basis[:2] + [dict(basis[2], modified=(t0 + dt.timedelta(hours=1)).isoformat())]
+    assert om._filter_urteil(basis, antwort, "modified", von=grenze)["von"] == (
+        "nicht unterscheidbar (2 von 3 Vorlagen unter der Grenze fehlen, die übrigen stehen mit jüngerem modified in "
+        "der Antwort)")
+    unlesbar = [{"id": "u1", "created": geaendert[0]["created"], "modified": "gestern"},
+                {"id": "u2", "created": geaendert[1]["created"], "modified": "2026-11-08T14:00:00"}]   # Ortszeit
+    assert om._filter_urteil(nach_created, nach_created[:3] + unlesbar, "modified", von=grenze)["von"] == (
+        "ja (5 fehlen); 1 mit unlesbarem modified")
+    assert om._filter_urteil(nach_created, nach_created + unlesbar[:1], "modified", von=grenze)["von"].endswith(
+        "vor der Grenze); 1 mit unlesbarem modified")
+
+
+def test_folgeadresse_standardport_wie_in_der_pipeline():
+    """explore._folgeadresse behandelt den ausdrücklichen Standardport (https …:443, http …:80) wie
+    pipeline/sessionnet.folgeadresse: gleicher Host wie ohne Port (und umgekehrt), gleiche Adresse; ein anderer Port
+    bleibt ein anderer Host (Art `adresse` in beiden)."""
+    om = importlib.import_module("oparl_messung")
+    from pipeline import sessionnet
+    h = "buergerinfo.example.invalid"
+    for liste, nxt in ((f"https://{h}/l", f"https://{h}:443/l?page=2"), (f"https://{h}:443/l", f"https://{h}/l?page=2"),
+                       (f"http://{h}/l", f"http://{h}:80/l?page=2"), (f"http://{h}:80/l", f"http://{h}/l?page=2"),
+                       (f"https://{h}:443/l", f"https://{h}:443/l?page=2&limit=100")):
+        assert om._folgeadresse(nxt, liste, "100") == sessionnet.folgeadresse(nxt, liste, "100"), (liste, nxt)
+    for liste, nxt in ((f"https://{h}/l", f"https://{h}:8443/l?page=2"), (f"https://{h}/l", f"https://{h}:80/l?page=2"),
+                       (f"http://{h}/l", f"http://{h}:443/l?page=2"),
+                       (f"https://{h}:443/l", f"http://{h}:443/l?page=2")):
+        with pytest.raises(om.Abbruch) as e:
+            om._folgeadresse(nxt, liste)
+        with pytest.raises(sessionnet.abruf.Abbruch) as f:
+            sessionnet.folgeadresse(nxt, liste)
+        assert e.value.art == f.value.art == "adresse", (liste, nxt)
+
+
+def test_testserver_ausgang_vor_dem_schreiben(monkeypatch):
+    """explore/testserver.py erfasst `ausgang` nach einer Verzögerung unmittelbar vor dem Schreiben der Antwort: Er
+    liegt nie nach dem Ende des Lesens beim Client (bis Runde 15 nach dem flush, dann mitunter danach: 1,99955 s
+    gemessen). Der Eingang der nächsten Anfrage minus `ausgang` ist also nie kleiner als der Abstand des Clients; die
+    Probeläufe Stufe 2 und 3 prüfen ≥ 2 s ohne Toleranz. Geprüft über die Reihenfolge: Wenn die Antwort beginnt, ist
+    `ausgang` dieser Anfrage schon erfasst."""
+    oeffner = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    beim_senden, echt = [], testserver.BaseHTTPRequestHandler.send_response
+
+    def send_response(self, *a, **k):   # (Eingänge, Ausgänge) beim Beginn der Antwort
+        beim_senden.append((len(s.eingang), len(s.ausgang)))
+        return echt(self, *a, **k)
+    monkeypatch.setattr(testserver.BaseHTTPRequestHandler, "send_response", send_response)
+    with testserver.Testserver() as s:
+        s.verzoegerung = 0.2
+        ende = []
+        for _ in range(3):
+            with oeffner.open(s.system_url, timeout=30) as r:
+                r.read()
+            ende.append(time.monotonic())
+    assert len(s.eingang) == len(s.ausgang) == 3 and beim_senden == [(1, 1), (2, 2), (3, 3)]
+    assert all(e + 0.2 <= a <= z for e, a, z in zip(s.eingang, s.ausgang, ende))
