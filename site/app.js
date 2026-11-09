@@ -71,10 +71,15 @@
   // rund 200 ms beim Öffnen eines Gebiets, mobil gedrosselt gemessen)
   const DATUM = new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", day: "2-digit", month: "2-digit", year: "numeric" });
   const fmtDate = (iso) => iso ? DATUM.format(new Date(iso.length === 10 ? iso + "T12:00:00Z" : iso)) : "";
+  // Datum eines Zeitpunkts aus STAND.json (voller Zeitstempel, UTC) in Europe/Berlin: 23:30 UTC ist dort schon der
+  // nächste Tag; ein unlesbarer Wert wie bisher (die ersten zehn Zeichen)
+  const zeitDatum = (wert) => { const s = String(wert); return fmtDate(Number.isNaN(Date.parse(s)) ? s.slice(0, 10) : s); };
   // Nebenlisten, die beim letzten Abruf nicht aktualisiert wurden (index.json meta.abruf_warnungen,
   // pipeline/export.py): ein Satz je Liste im Datenstand, ohne Fachbegriffe und nicht nur als Farbe
   const WARNUNG_SATZ = { meetings: "Sitzungstermine wurden", organizations: "Die Liste der Gremien wurde" };
-  const standWarnungen = (w) => Object.keys(WARNUNG_SATZ).filter((k) => w && w[k]).map((k) => ` · ${WARNUNG_SATZ[k]} beim letzten Abruf nicht aktualisiert; gezeigt wird ${w[k].stand ? `der Stand vom ${fmtDate(String(w[k].stand).slice(0, 10))}` : "der letzte gültige Stand"}.`).join("");
+  const standWarnungen = (w) => Object.keys(WARNUNG_SATZ).filter((k) => w && w[k]).map((k) => ` · ${WARNUNG_SATZ[k]} beim letzten Abruf nicht aktualisiert; gezeigt wird ${w[k].stand ? `der Stand vom ${zeitDatum(w[k].stand)}` : "der letzte gültige Stand"}.`).join("");
+  // fehlgeschlagener Abruf (index.json meta.abruf_fehler) im Datenstand
+  const standFehler = (f) => f ? ` · Der letzte Abruf am ${zeitDatum(f.zeit)} ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand.` : "";
   const debounce = (fn, ms) => { let h; return (...a) => { clearTimeout(h); h = setTimeout(() => fn(...a), ms); }; };
 
   let index = null, zeit = null, geo = {}, meta = null, papers = [], area = null, selected = null, dataStand = null, kontext = null, anliegen = null;
@@ -427,7 +432,7 @@
     const stand = meta.sources.filter((s) => s.retrieved_at).map((s) => `${QUELLE_NAME[s.name] || s.name}: ${fmtDate(String(s.retrieved_at).slice(0, 10))}`).join(" · ");
     const fehler = index && index.meta && index.meta.abruf_fehler;
     $("#stand").textContent = `Datenstand: ${stand || "–"}${meta.generated_at ? ` · erzeugt ${fmtDate(meta.generated_at.slice(0, 10))}` : ""}`
-      + (fehler ? ` · Der letzte Abruf am ${fmtDate(String(fehler.zeit).slice(0, 10))} ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand.` : "")
+      + standFehler(fehler)
       + standWarnungen(index && index.meta && index.meta.abruf_warnungen);
   }
 

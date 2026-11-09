@@ -44,17 +44,19 @@ können ein altes `modified` tragen), wendet der Server den Filter nicht an. Je 
   „nein“); kein Listenfehler, keine Pause, der Lauf gilt als vollständig. Der Befund steht im Zustand
   (`meetings_ohne_zeitfilter`): In den Folgenächten wird die inkrementelle Sitzungsliste ohne Anfrage übersprungen
   (letzter gültiger Stand, Warnung bleibt; sonst wüchse die Zahl der Seiten vor dem Befund jede Nacht, und das Gelesene
-  wird ohnehin verworfen), bis die Sitzungen einmal vollständig gelesen sind (RATSATLAS_VOLLABRUF=meetings oder =ja,
-  auch über eine Fortsetzung) oder der Vermerk aus zustand_abruf.json entfernt ist (dann prüft der nächste Lauf den
-  Zeitfilter erneut). Ob Köln modified_since bei den Sitzungen anwendet, ist ungemessen (vor Freigabe des nächtlichen
-  Abrufs mit einer Anfrage messen).
+  wird ohnehin verworfen), bis die Sitzungen einmal vollständig gelesen sind (Abhilfe: RATSATLAS_VOLLABRUF=meetings,
+  auch über eine Fortsetzung; =ja erreicht die Sitzungen erst nach dem fertigen Vollabruf der Vorlagen) oder der
+  Vermerk aus zustand_abruf.json entfernt ist (dann prüft der nächste Lauf den Zeitfilter erneut). Ob Köln
+  modified_since bei den Sitzungen anwendet, ist ungemessen (vor Freigabe des nächtlichen Abrufs mit einer Anfrage
+  messen).
 - organizations: immer ohne Zeitfilter, vollständig (kleine Liste; Münster lehnt modified_since bei organization mit
   HTTP 401 ab, explore/ergebnisse/sessionnet_befunde.tsv; Umfang in Köln misst Stufe 3), keine Filterprüfung. Weil sie
   vor den Vorlagen kommen, beendet ein Vollabruf unter 90 % des Stands (Art `leer`) dort nur diese Liste: letzter
   gültiger Stand, Warnung wie bei den Sitzungen, die Vorlagen laufen weiter. Abhilfe, wenn die kürzere Liste stimmt:
   ein Lauf mit RATSATLAS_KUERZER_ANNEHMEN=organizations (Komma-Liste aus LISTEN; nimmt für die genannten Listen in
-  diesem Lauf einen kürzeren Vollabruf an, vermerkt im Log und in der Abrufstatistik; ausdrücklich, nie Vorgabe; für
-  papers oder meetings gilt das auch für die daraus abgeleiteten Beratungen).
+  diesem Lauf einen kürzeren Vollabruf an, vermerkt im Log und in der Abrufstatistik; ausdrücklich, nie Vorgabe; einen
+  Vollabruf ohne Objekte nie). Die 90-%-Prüfung der daraus abgeleiteten Beratungen entfällt nur, wenn dieser Lauf für
+  papers oder meetings tatsächlich einen kürzeren Stand angenommen hat, nicht schon, weil die Liste genannt ist.
 Warnungen der Nebenlisten stehen in STAND.json unter `abruf_warnungen` je Liste (`{"meetings": {"zeit", "meldung"},
 "organizations": {…}}`), nicht in `abruf_hinweis`: Ein Abbruch einer anderen Liste (_abbruch_vermerken) und ein
 vollständiger Lauf lassen sie stehen; entfernt wird die Warnung einer Liste erst, wenn diese Liste wieder regulär
@@ -188,10 +190,12 @@ VERSCHIEBUNG_HOECHSTENS = 1000
 SEITENGROESSE_OHNE_LIMIT = 100
 # Abhilfe je Art einer Warnung (_nur_warnung), `{liste}` wird ersetzt
 ABHILFE = {
-    "leer": "Abhilfe, wenn der kürzere Stand stimmt: ein Lauf mit RATSATLAS_KUERZER_ANNEHMEN={liste}",
-    "filter": ("bis die Liste einmal vollständig gelesen ist (ein Lauf mit RATSATLAS_VOLLABRUF={liste} oder =ja) "
-               "oder der Vermerk {liste}_ohne_zeitfilter in zustand_abruf.json entfernt ist, folgt keine Anfrage an "
-               "diese Liste"),
+    "leer": ("Abhilfe, wenn der kürzere Stand stimmt (nicht bei 0 Objekten): ein Lauf mit "
+             "RATSATLAS_KUERZER_ANNEHMEN={liste}"),
+    # nur die Sitzungen haben diese Warnung (fetch_meetings); =ja liest zuerst die Vorlagen vollständig, über Nächte
+    "filter": ("bis die Liste einmal vollständig gelesen ist (Abhilfe: ein Lauf mit RATSATLAS_VOLLABRUF={liste}; =ja "
+               "erreicht die Sitzungen erst nach dem fertigen Vollabruf der Vorlagen) oder der Vermerk "
+               "{liste}_ohne_zeitfilter in zustand_abruf.json entfernt ist, folgt keine Anfrage an diese Liste"),
 }
 
 
@@ -708,7 +712,9 @@ def _vorhanden(pfad):
 def _zusammenfuehren(pfad, neu_objekte, voll, kuerzer_annehmen=False):
     """Führt Objekte über die ID mit dem vorhandenen Stand zusammen; liefert (alle, neu, geändert, gelöscht, Vermerk).
     Ein Vollabruf unter 90 % des Stands bricht ab (Art `leer`), außer mit `kuerzer_annehmen`
-    (RATSATLAS_KUERZER_ANNEHMEN): dann gilt er, Vermerk im Log und für die Abrufstatistik."""
+    (RATSATLAS_KUERZER_ANNEHMEN): dann gilt er, Vermerk im Log und für die Abrufstatistik (ein Vermerk heißt, dieser
+    Lauf hat einen kürzeren Stand angenommen). Ein Vollabruf ohne Objekte gilt nie, auch nicht mit `kuerzer_annehmen`
+    (Art `leer`)."""
     alt = _vorhanden(pfad)
     vermerk = ""
     if voll:
@@ -717,6 +723,9 @@ def _zusammenfuehren(pfad, neu_objekte, voll, kuerzer_annehmen=False):
         except RuntimeError as e:   # Vollabruf deutlich kleiner als der vorhandene Stand: Abbruch, keine Sperre
             if not kuerzer_annehmen:
                 raise abruf.Abbruch(str(e), "leer") from e
+            if not neu_objekte:
+                raise abruf.Abbruch(f"{e} Ein leerer Vollabruf wird nie angenommen, auch nicht mit "
+                                    "RATSATLAS_KUERZER_ANNEHMEN.", "leer") from e
             vermerk = (f"kürzerer Stand angenommen: {len(neu_objekte)} statt bisher {len(alt)} "
                        "(RATSATLAS_KUERZER_ANNEHMEN)")
             _warnung(f"{pfad.name}: {vermerk}")
@@ -839,8 +848,10 @@ def _ohne_anfrage(text, vermerk, zeile, pfad, schluessel):
     return alle, meldung
 
 
-def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None):
-    """Inkrementeller Abruf einer Liste mit Statistik; schreibt die zusammengeführten Objekte als JSONL.
+def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, angenommen=None):
+    """Inkrementeller Abruf einer Liste mit Statistik; schreibt die zusammengeführten Objekte als JSONL. Nimmt der Lauf
+    für diese Liste einen kürzeren Stand an (RATSATLAS_KUERZER_ANNEHMEN, _zusammenfuehren), kommt `schluessel` in die
+    Menge `angenommen` (für beratungen()).
     Ein abgebrochener Vollabruf wird beim nächsten Lauf an der gelesenen Stelle fortgesetzt. `zeitfilter=False`: immer
     vollständig, ohne modified_since (organizations). `warnungen` (Art → Text): Ein Abbruch dieser Art beendet nur diese
     Liste (_nur_warnung; meetings: `filter`, der Server wendet modified_since nicht an, nach der Seite mit dem Befund;
@@ -870,6 +881,8 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None):
         alle, neu, geaendert, geloescht, kuerzer = _zusammenfuehren(
             pfad, objekte, voll=not seit, kuerzer_annehmen=schluessel in _listen_aus("RATSATLAS_KUERZER_ANNEHMEN"))
         _write(pfad, "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in alle))
+        if kuerzer and angenommen is not None:
+            angenommen.add(schluessel)
         aenderung = {schluessel: start.isoformat(timespec="seconds"), f"{schluessel}_fortsetzung": None}
         if not seit:   # vollständig gelesen: ein Befund zum Zeitfilter gilt nicht mehr (der nächste Lauf prüft erneut)
             aenderung[f"{schluessel}_ohne_zeitfilter"] = None
@@ -948,17 +961,18 @@ def _abruf_body():
         _statistik_sicher(zeile)
 
 
-def fetch_organizations(body):
+def fetch_organizations(body, angenommen=None):
     """Organisationen immer vollständig, ohne modified_since (auch im inkrementellen Lauf): eine kleine Liste (den
     Umfang in Köln misst Stufe 3), und Münster lehnt modified_since bei organization mit HTTP 401 ab
     (explore/ergebnisse/sessionnet_befunde.tsv; mandari ruft sie dann ohne Filter ab). So kann ein übergangener oder
     abgelehnter Zeitfilter hier die Vorlagen nicht blockieren; keine Filterprüfung. Ein Vollabruf unter 90 % des Stands
     (Art `leer`) beendet nur diese Liste (letzter gültiger Stand, Warnung in STAND.json `abruf_warnungen` mit der
-    Abhilfe RATSATLAS_KUERZER_ANNEHMEN=organizations), damit er die Vorlagen nicht jede Nacht blockiert. Liefert
-    (Organisationen, Warnung oder "")."""
+    Abhilfe RATSATLAS_KUERZER_ANNEHMEN=organizations), damit er die Vorlagen nicht jede Nacht blockiert. `angenommen`:
+    siehe _abruf_liste. Liefert (Organisationen, Warnung oder "")."""
     alle, warnung = _abruf_liste(
         "organizations", body["organization"], config.RAW / "organizations.jsonl", "organizations", zeitfilter=False,
-        warnungen={"leer": "Organisationen unvollständig (unter 90 % des Stands), nicht aktualisiert"})
+        warnungen={"leer": "Organisationen unvollständig (unter 90 % des Stands), nicht aktualisiert"},
+        angenommen=angenommen)
     orgs = [o for o in alle if not o.get("deleted")]
     vb = [o for o in orgs if o.get("organizationType") == "Verwaltungsbereich"]
     if not warnung:
@@ -980,14 +994,16 @@ def _kennung(wert):
     return wert if isinstance(wert, str) else None
 
 
-def fetch_meetings(body):
+def fetch_meetings(body, angenommen=None):
     """Sitzungen; ob Köln modified_since hier anwendet, ist ungemessen. Wendet der Server ihn nicht an, endet nur diese
     Liste (_abruf_liste mit `warnungen`, _nur_warnung): Die Sitzungen bleiben auf dem letzten gültigen Stand
     (meetings.json und ihr Zeitstempel unverändert), kein Listenfehler; in den Folgenächten ohne Anfrage
-    (_ohne_anfrage), bis die Sitzungen einmal vollständig gelesen sind. Liefert (Sitzungen, Warnung oder "")."""
+    (_ohne_anfrage), bis die Sitzungen einmal vollständig gelesen sind. `angenommen`: siehe _abruf_liste. Liefert
+    (Sitzungen, Warnung oder "")."""
     alle, warnung = _abruf_liste(
         "meetings", body["meeting"], config.RAW / "meetings_roh.jsonl", "meetings",
-        warnungen={"filter": "Zeitfilter bei Sitzungen nicht angewandt, Sitzungen nicht aktualisiert"})
+        warnungen={"filter": "Zeitfilter bei Sitzungen nicht angewandt, Sitzungen nicht aktualisiert"},
+        angenommen=angenommen)
     meetings = [m for m in alle if not m.get("deleted")]
     keep = ("id", "name", "meetingState", "cancelled", "start", "end", "organization", "web")
     if not warnung:
@@ -1003,16 +1019,20 @@ def fetch_meetings(body):
     return meetings, warnung
 
 
-def fetch_papers(body):
-    papers = _abruf_liste("papers", body["paper"], config.PAPERS, "papers")[0]
+def fetch_papers(body, angenommen=None):
+    """Vorlagen; `angenommen`: siehe _abruf_liste."""
+    papers = _abruf_liste("papers", body["paper"], config.PAPERS, "papers", angenommen=angenommen)[0]
     _stamp("papers")
     print(f"{len(papers)} Vorlagen → {config.PAPERS}")
     return papers
 
 
-def beratungen(papers, meetings):
+def beratungen(papers, meetings, angenommen=()):
     """Beratung → Sitzung und TOP im Format, das build.py aus OParl-Lite kennt. Fehlt in der Beratung die
-    Organisation, wird sie aus der Sitzung übernommen und als abgeleitet markiert (`_organization_quelle`)."""
+    Organisation, wird sie aus der Sitzung übernommen und als abgeleitet markiert (`_organization_quelle`). Weniger als
+    90 % der bisherigen Beratungen: Abbruch (Art `leer`), außer dieser Lauf hat für papers oder meetings tatsächlich
+    einen kürzeren Stand angenommen (`angenommen`, gesammelt von _abruf_liste); dass die Liste in
+    RATSATLAS_KUERZER_ANNEHMEN steht, genügt nicht."""
     sitzung = {m["id"]: m for m in meetings}
     top = {}
     for m in meetings:
@@ -1042,7 +1062,7 @@ def beratungen(papers, meetings):
             })
     bisher = _jsonl_count(config.BERATUNGEN)
     if len(zeilen) < MIN_ANTEIL * bisher:   # unvollständig: Abbruch, keine Sperre
-        if not {"papers", "meetings"} & _listen_aus("RATSATLAS_KUERZER_ANNEHMEN"):
+        if not {"papers", "meetings"} & set(angenommen):
             raise abruf.Abbruch(f"Beratungen: nur {len(zeilen)} statt bisher {bisher}", "leer")
         _warnung(f"Beratungen: kürzerer Stand angenommen: {len(zeilen)} statt bisher {bisher} "
                  "(RATSATLAS_KUERZER_ANNEHMEN)")
@@ -1086,10 +1106,11 @@ def fetch_all():
     try:
         _einstellungen_pruefen()
         body = _abruf_body()
-        fetch_organizations(body)
-        papers = fetch_papers(body)
-        meetings, _ = fetch_meetings(body)
-        beratungen(papers, meetings)
+        angenommen = set()   # Listen mit in diesem Lauf angenommenem kürzerem Stand (RATSATLAS_KUERZER_ANNEHMEN)
+        fetch_organizations(body, angenommen)
+        papers = fetch_papers(body, angenommen)
+        meetings, _ = fetch_meetings(body, angenommen)
+        beratungen(papers, meetings, angenommen)
         _stamp("abruf_ok")
         _zustand_aendern(sperre_verdacht=None, listenfehler=None, tlsfehler=None, letzter_abbruch=None, nicht_vor=None)
         # Meldungen früherer Läufe gelten nicht mehr (die Seite zeigte sonst dauerhaft „fehlgeschlagen“)
