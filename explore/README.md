@@ -11,7 +11,7 @@ Skripte ohne Produktionscode. Rohdaten, PDFs und geladene Geodaten liegen nur in
 | `auswertung.py` | Zusammenfassung je Stufe aus `_cache/abrufe.tsv` und `ergebnisse/` als Markdown (ohne Netz) | – |
 | `testserver.py`, `probelauf.py` | lokaler OParl-Testserver mit erfundenen Daten; Probelauf aller Stufen ohne Anfrage an die Stadt (`tests/test_messstufen.py`) | – |
 | `ergebnisse/fraktionen_*.tsv`, `gremien_koeln.tsv`, `bplan_quellen.tsv`, `sessionnet_befunde.tsv` | Recherche ohne Server der Stadt (Bericht Abschnitt 4) | 04.11.2026 |
-| `ANFRAGE_stadt_koeln.md` | Entwurf der Anfrage an die Stadt | zur Versendung durch den Auftraggeber |
+| `ANFRAGE_stadt_koeln.md` | Entwurf der Anfrage an die Stadt | zur Versendung durch den Auftraggeber, erst nach Zusammenführung von Runde 20 (Sitzungen) |
 
 Weiterleitungen (HTTP 3xx) werden nicht verfolgt (`abruf.py`, damit auch `geodaten.py` und `oparl_messung.py`): Jede Weiterleitung zählt als eine Anfrage, steht mit Ziel in `_cache/abrufe.tsv` (Spalte `ziel`) und bricht den Abruf dieser Adresse ab: `oparl_messung.py` beendet damit den ganzen Lauf; `geodaten.py` vermerkt sie beim betroffenen Katalog bzw. bei der betroffenen Datei und setzt mit den übrigen Datensätzen fort (ebenso nach anderen HTTP-Fehlern wie 404, nicht aber nach 401, 403 oder 429: dann endet der ganze Lauf, weil `offenedaten-koeln.de` im selben Netz liegt wie die OParl-API).
 
