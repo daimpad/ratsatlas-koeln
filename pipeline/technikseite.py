@@ -68,7 +68,7 @@ QUELLEN = {
                                                  "Open-Data-Portal der Stadt."),
     "strassen-koeln": ("Straßen", "Straßen der Stadt Köln; daraus entsteht das Straßenverzeichnis je Stadtteil."),
     "adressen-koeln": ("Adressen", "Adressen der Stadt Köln: Stadtteil einer Hausnummer und, nur bei Vorlagen der "
-                                   "Verwaltung und politischen Anträgen mit erkennbarer Vorlagenart, die Hauskoordinate."),
+                                   "Verwaltung sowie politischen Anträgen und Anfragen mit erkennbarer Vorlagenart, die Hauskoordinate."),
     "bplan-koeln": ("Bebauungspläne", "Flächen der rechtsverbindlichen Bebauungspläne aus der Schnittstelle "
                                       "„Bauleitplanung in NRW“ des Landes; Vorlagen mit Plannummer im Titel erscheinen "
                                       "auf der Fläche des Plans."),

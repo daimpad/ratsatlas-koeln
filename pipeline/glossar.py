@@ -156,8 +156,8 @@ BEGRIFFE = [
                     "Stadtbezirke tragen den Namen eines Stadtteils, etwa Porz oder Kalk.", GEBIETE + "; " + HAUPTSATZUNG),
     ("Verortung", "Zuordnung einer Vorlage zu einem Ort: aus der Ortsangabe der Stadt (Stufe A) oder aus Straßen-, "
                   "Stadtteil- und Bezirksnamen im Titel (Stufe B). Jede Verortung nennt Methode, Konfidenz und "
-                  "Fundstelle. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische "
-                  "Anträge, nie Eingaben von Einwohnerinnen und Einwohnern; ist die Art einer Vorlage nicht erkennbar, "
+                  "Fundstelle. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung sowie politische "
+                  "Anträge und Anfragen, nie Eingaben von Einwohnerinnen und Einwohnern; ist die Art einer Vorlage nicht erkennbar, "
                   "zeigt die Karte höchstens die Straße.", "abgeleitet (Ratsatlas)"),
     # Kürzel
     ("TOP", "Tagesordnungspunkt einer Sitzung.", ALLGEMEIN),

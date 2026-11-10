@@ -216,7 +216,7 @@ def write_geojson(path, cache, sources):
     path.write_text(json.dumps({
         "type": "FeatureCollection",
         "meta": {"sources": sources, "note": "Ein Punkt je Vorlage und Ort: Straßenabschnitt, Stadtteil oder Stadtbezirk; "
-                 "eine Hauskoordinate (Ebene 'adresse') nur bei Verwaltungsvorlagen und politischen Anträgen, nie bei "
+                 "eine Hauskoordinate (Ebene 'adresse') nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen, nie bei "
                  "Anregungen und Beschwerden nach § 24 GO NRW oder bei leerer oder nicht erkennbarer Vorlagenart. In "
                  "Titeln von Vorlagen aus der Einwohnerschaft ist die Hausnummer ausgeblendet, das Original verlinkt "
                  "`web`. Ortsbezüge mit location_source 'osm' sind aus "

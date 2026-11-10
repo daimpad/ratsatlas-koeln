@@ -322,3 +322,13 @@ def test_erklaertexte_nennen_die_regel():
     g = {b["begriff"]: b for b in glossar.glossar()["begriffe"]}
     assert satz in g["Verortung"]["erklaerung"]
     assert satz in (ROOT / "site" / "index.html").read_text(encoding="utf-8")
+
+
+def test_texte_nennen_anfragen():
+    """Entscheidung 10.11.2026: politische Anfragen erhalten wie Anträge die Hauskoordinate; die Texte sagen das."""
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent
+    for datei in ("site/datenschutz.html", "site/index.html", "README.md", "pipeline/glossar.py", "site/app.js",
+                  "pipeline/publish.py", "pipeline/technikseite.py"):
+        text = (root / datei).read_text(encoding="utf-8").replace('"\n', "").replace('                  "', "")
+        assert "Anträge und Anfragen" in text or "Anträgen und Anfragen" in text, datei

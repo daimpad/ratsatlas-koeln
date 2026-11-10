@@ -472,3 +472,8 @@ def test_readme_namensnennung_genau():
     assert "steht auf jeder Seite und in jedem Export." not in text
     assert "mit Daten aus dem Ratsinformationssystem oder von offenedaten-koeln.de" in text
     assert 'alt="Daten: dl-de/zero 2.0 und dl-de/by 2.0"' in text
+
+
+def test_lizenzdatei_ohne_internen_verweis():
+    """LICENSE-DATA.md geht auf die Seite und ins Datenpaket: kein Verweis auf die Arbeitsdatei CLAUDE.md."""
+    assert "CLAUDE.md" not in (ROOT / "data" / "LICENSE-DATA.md").read_text(encoding="utf-8")

@@ -25,7 +25,7 @@
   const METHOD = {
     oparl_location: "Ortsangabe der Stadt (OParl)", oparl_sublocality: "Stadtteil laut Ortsangabe der Stadt (OParl)",
     strasse: "Straßenname im Titel",
-    "strasse+hausnummer_punkt": "Straßenname mit Hausnummer im Titel, Hauskoordinate laut „Adressen Köln“ (nur Vorlagen der Verwaltung und politische Anträge)",
+    "strasse+hausnummer_punkt": "Straßenname mit Hausnummer im Titel, Hauskoordinate laut „Adressen Köln“ (nur Vorlagen der Verwaltung sowie politische Anträge und Anfragen)",
     ortsteil_teilname: "Teil eines Stadtteilnamens im Titel (z. B. „Heumar“ für Rath/Heumar)",
     district_from_committee: "nur in einer Bezirksvertretung beraten, Ort sonst unbekannt",
     "strasse+ortsteil": "Straßen- und Stadtteilname im Titel", "strasse+bezirk": "Straßenname im Titel, Bezirk eingegrenzt",

@@ -299,7 +299,7 @@ def datenschutz(db, base=None):
     2. Titel aus Einwohnerschaft, Bauordnung und Naturschutz ohne Hausnummer in suche.json, vorlagen.geojson und den
        Gebietsdateien (maske.py; Entscheidung des Auftraggebers 24.10.2026: überall ausblenden), ebenso ihre Ortsnamen
        (`place` in vorlagen.geojson, `locations[].name` in den Gebietsdateien),
-    3. Hauskoordinaten nur bei Verwaltungsvorlagen und politischen Anträgen (Entscheidung 04.11.2026): nie bei Eingaben
+    3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
        Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
        erkannten und nicht erkannten Arten stehen mit Anzahl in der Ausgabe), nie neben einem Titel ohne Hausnummer und
