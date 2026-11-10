@@ -204,6 +204,55 @@ def test_nach_drei_naechten_mit_abbruch_pausiert_der_abruf(oparl, monkeypatch):
     assert "pausiert" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
 
 
+def test_abbruch_und_pause_als_warnung_im_workflow(oparl, monkeypatch, capsys):
+    """Generalprobe 09.11.2026: Ein Abbruch mit möglicher Sperre (etwa HTTP 401 auf die inkrementelle Sitzungsliste)
+    und die Pause nach drei Nächten („bitte Kontakt zur Stadt aufnehmen“) standen nur als einfache Zeile im grünen
+    Abrufschritt. Jetzt als Warnung (in GitHub Actions ::warning::), mit der Zahl der Nächte."""
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+
+    def abgelehnt(url, pausen=None):
+        raise abruf.Abbruch(f"HTTP 401: {url}", "http", code=401)
+    monkeypatch.setattr(abruf, "get_json", abgelehnt)
+    for nacht in range(1, 4):
+        sessionnet.fetch_all()
+        out, err = capsys.readouterr()
+        assert "::warning::Abruf abgebrochen, letzter gültiger Stand bleibt" in err
+        assert f"Nacht mit möglicher Sperre ({nacht}. ohne vollständigen Lauf; nach 3 Nächten 7 Tage Pause)" in err
+        assert "Abruf abgebrochen" not in out
+    monkeypatch.setattr(abruf, "get_json", lambda *a, **k: pytest.fail("darf nicht abrufen"))
+    sessionnet.fetch_all()
+    err = capsys.readouterr().err
+    assert "::warning::Abruf übersprungen (Abruf pausiert bis" in err and "Kontakt zur Stadt" in err
+
+
+def test_abbruch_ohne_sperre_als_warnung_ende_des_fensters_ohne(oparl, monkeypatch, capsys):
+    """Jeder andere Abbruch (hier HTTP 404, keine Sperrnacht) ebenfalls als Warnung, ohne Zusatz zur Sperre; das Ende
+    des Zeitfensters und ein Lauf außerhalb des Zeitfensters (Push tagsüber) bleiben ohne Warnung."""
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+
+    def nicht_gefunden(url, pausen=None):
+        raise abruf.Abbruch(f"HTTP 404: {url}", "http", code=404)
+
+    def fenster_zu(url, pausen=None):
+        raise abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr (RATSATLAS_ZEITFENSTER)", "zeitfenster")
+    monkeypatch.setattr(abruf, "get_json", nicht_gefunden)
+    sessionnet.fetch_all()
+    err = capsys.readouterr().err
+    assert "::warning::Abruf abgebrochen" in err and "möglicher Sperre" not in err
+    config.ZUSTAND.unlink()
+    monkeypatch.setattr(abruf, "get_json", fenster_zu)
+    sessionnet.fetch_all()
+    out, err = capsys.readouterr()
+    assert "::warning::" not in err and "Abruf unterbrochen (Das Zeitfenster endete" in out
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "OPARL_BODY", "https://oparl.example.invalid/body")   # nicht lokal, nie gesendet
+    monkeypatch.setattr(abruf, "get_json", lambda *a, **k: pytest.fail("darf nicht abrufen"))
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: False)
+    sessionnet.fetch_all()
+    out, err = capsys.readouterr()
+    assert "::warning::" not in err and "Abruf übersprungen (außerhalb des Zeitfensters" in out
+
+
 def test_abgebrochener_vollabruf_wird_fortgesetzt(oparl, monkeypatch):
     monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: pfad == "/papers" and q.get("page") == "3")
     sessionnet.fetch_all()

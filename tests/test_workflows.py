@@ -19,6 +19,31 @@ def test_hauptlauf_gesperrt_und_ohne_testdaten():
     assert ".get(\"testdaten\")" in text and "python tools/testdaten.py" not in text
 
 
+def test_abhilfen_als_variablen_sicherungen_nicht():
+    """Die Abhilfen, die der Abruf in STAND.json und im Log nennt (RATSATLAS_VOLLABRUF, RATSATLAS_KUERZER_ANNEHMEN),
+    lassen sich in GitHub Actions setzen (der Zustand liegt im Zwischenspeicher des Workflows, ein Lauf an anderer
+    Stelle wirkt nicht); Abstand, Zeitfenster, Seitengröße und Grenzen je Nacht dagegen nicht (Generalprobe
+    09.11.2026)."""
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    schritt = next(s for s in text.split("\n      - ") if "run: python -m pipeline fetch" in s)
+    variablen = set(re.findall(r"^\s+(RATSATLAS_\w+): \$\{\{ vars\.(\w+) \}\}$", schritt, re.M))
+    assert variablen == {(v, v) for v in ("RATSATLAS_STADT_INFORMIERT", "RATSATLAS_KONTAKT", "RATSATLAS_VOLLABRUF",
+                                          "RATSATLAS_KUERZER_ANNEHMEN")}
+    for gesperrt in ("RATSATLAS_ABSTAND", "RATSATLAS_ZEITFENSTER", "RATSATLAS_LIMIT", "RATSATLAS_MAX_OBJEKTE"):
+        assert gesperrt not in text
+
+
+def test_leere_abhilfe_variablen_ohne_wirkung(monkeypatch):
+    """Nicht gesetzte Repository-Variablen kommen als leere Umgebungsvariablen an: kein Vollabruf, kein kürzerer Stand,
+    kein Einstellungsfehler."""
+    from pipeline import sessionnet
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "")
+    monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "")
+    assert sessionnet._listen_aus("RATSATLAS_VOLLABRUF", alle=True) == set()
+    assert sessionnet._listen_aus("RATSATLAS_KUERZER_ANNEHMEN") == set()
+    sessionnet._einstellungen_pruefen()
+
+
 def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
     """Der Zustand mit der Zählung der Nächte mit möglicher Sperre (zustand_abruf.json), STAND.json und die
     Abrufstatistik werden direkt nach dem Abrufschritt mit actions/cache/save und `if: always()` gesichert, nicht erst

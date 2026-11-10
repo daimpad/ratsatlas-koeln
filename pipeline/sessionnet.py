@@ -1123,7 +1123,7 @@ def fetch_all():
              if not abruf.freigegeben(config.OPARL_BODY) else
              f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr" if not lokal and not abruf.im_zeitfenster()
              else None)
-    zustand = {}
+    zustand, pause = {}, False
     if not grund:
         try:
             zustand = _zustand_pruefen()
@@ -1131,9 +1131,13 @@ def fetch_all():
             _stand_setzen(abruf_fehler={"zeit": _now(), "meldung": str(e)[:300]})
             raise
         grund = _pause_grund(zustand, lokal)
+        pause = bool(grund)
     if grund:
         _stand_setzen(abruf_uebersprungen={"zeit": _now(), "grund": grund})
-        print(f"Abruf übersprungen ({grund}); letzter Stand bleibt.")
+        if pause:   # 12-Stunden-Regel, Retry-After, Pause nach drei Nächten: als Warnung im Workflow sichtbar
+            _warnung(f"Abruf übersprungen ({grund}); letzter Stand bleibt.")
+        else:       # gesperrt oder außerhalb des Zeitfensters (etwa ein Push tagsüber): kein Befund
+            print(f"Abruf übersprungen ({grund}); letzter Stand bleibt.")
         return
     try:
         _einstellungen_pruefen()
@@ -1209,7 +1213,9 @@ def _abbruch_vermerken(e, zustand):
     `moegliche_sperre`, Retry-After über die Nacht hinaus, Nacht mit fehlerhafter Liste nach LISTENFEHLER), dann
     STAND.json. Das Ende des Zeitfensters und die Obergrenze je Nacht (etwa bei einem Vollabruf über mehrere Nächte)
     sind kein Fehler: nur ein neutraler Hinweis, wie es weitergeht (_weiter, aus dem Zustand); nach der Obergrenze gilt
-    die 12-Stunden-Regel (höchstens einmal je Nacht bis zur Grenze), nach dem Ende des Zeitfensters nicht."""
+    die 12-Stunden-Regel (höchstens einmal je Nacht bis zur Grenze), nach dem Ende des Zeitfensters nicht. Jeder andere
+    Abbruch erscheint als Warnung (_warnung, in GitHub Actions ::warning::; der Abrufschritt bleibt grün), bei möglicher
+    Sperre mit der Zahl der Nächte."""
     jetzt = abruf.uhr()
     zeit = jetzt.isoformat(timespec="seconds")
     art = getattr(e, "art", "")
@@ -1257,6 +1263,13 @@ def _abbruch_vermerken(e, zustand):
     if hinweis:
         werte["abruf_hinweis"] = {"zeit": _now(), "meldung": hinweis}
     _stand_setzen(**werte)
-    print(f"Abruf abgebrochen, letzter gültiger Stand bleibt: {e}")
+    if hinweis or art == "tls":   # schon oben als Warnung gemeldet
+        print(f"Abruf abgebrochen, letzter gültiger Stand bleibt: {e}")
+    else:   # sonst bliebe der Abbruch im grünen Abrufschritt unbemerkt (Generalprobe 09.11.2026)
+        sperre = neu.get("sperre_verdacht")
+        zusatz = (f" Nacht mit möglicher Sperre ({sperre['naechte']}. ohne vollständigen Lauf; nach {SPERRE_NAECHTE} "
+                  f"Nächten {SPERRE_PAUSE.days} Tage Pause)." if sperre else "")
+        _warnung(f"Abruf abgebrochen, letzter gültiger Stand bleibt; in derselben Nacht kein weiterer Lauf.{zusatz} "
+                 f"{e}"[:600])
     if os.environ.get("RATSATLAS_STRENG") == "ja":
         raise e
