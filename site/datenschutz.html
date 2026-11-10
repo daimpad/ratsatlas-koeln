@@ -34,6 +34,9 @@
     <p>Schrift, Programmbibliotheken, Daten und die Bilder der grauen Karte (Kacheln, erzeugt aus OpenStreetMap-Daten) liegen auf dem Server dieser Seite. Nur wenn Sie „Farbige Karte“ wählen, lädt Ihr Browser die Kacheln von <strong>tile.openstreetmap.org</strong>, betrieben von der OpenStreetMap Foundation (Vereinigtes Königreich). Dabei werden Ihre IP-Adresse, Angaben zu Browser und Gerät und der angezeigte Kartenausschnitt übertragen. Es gilt die <a href="https://osmfoundation.org/wiki/Privacy_Policy">Datenschutzerklärung der OpenStreetMap Foundation</a>. Die Wahl merkt sich Ihr Browser; dafür speichert er nur den Eintrag „farbig“ oder „grau“ auf Ihrem Gerät.</p>
     <p>Das geschieht, damit die Vorlagen auf einer farbigen Karte erscheinen können, wenn Sie das wünschen. Rechtsgrundlage ist das berechtigte Interesse an einer verständlichen räumlichen Darstellung, Art. 6 Abs. 1 lit. f DSGVO. Für das Vereinigte Königreich besteht ein Angemessenheitsbeschluss der EU-Kommission (Art. 45 DSGVO). Sollten die grauen Kacheln einmal fehlen, zeigt die Seite ersatzweise die Kacheln von OpenStreetMap in Grau.</p>
 
+    <section data-funktion="chat">
+    <!-- nur mit Freigabe „chat“ (config.ZUSATZTHEMEN); sonst entfernt pipeline/seo.py diesen Abschnitt und die übrigen
+         Elemente mit data-funktion="chat" beim Bau -->
     <h2>Ratsassistent (KI)</h2>
     <p>Der Ratsassistent ist abgeschaltet, bis Sie ihn selbst einrichten: Sie bestätigen den Hinweis, wählen einen Anbieter und tragen einen eigenen API-Schlüssel ein. Erst dann sendet Ihr Browser Ihre Fragen, den bisherigen Gesprächsverlauf, auf Wunsch das gewählte Gebiet und den Zeitraum sowie die Ergebnisse der Datenabfragen <strong>direkt</strong> an den gewählten Anbieter:</p>
     <ul>
@@ -44,16 +47,17 @@
     </ul>
     <p>Der Server dieser Seite erhält davon nichts; Gesprächsinhalte werden hier weder gespeichert noch ausgewertet. Für die Verarbeitung beim Anbieter gelten dessen Bedingungen, die Sie mit Ihrem Schlüssel akzeptiert haben. Bei Anbietern in den USA werden Daten in ein Drittland übermittelt. Bitte geben Sie keine persönlichen Daten ein. Rechtsgrundlage für die Übermittlung ist Ihre Einwilligung, Art. 6 Abs. 1 lit. a DSGVO; Sie widerrufen sie, indem Sie den Schlüssel löschen oder den Assistenten nicht mehr nutzen.</p>
     <p>Der Schlüssel liegt nur im Arbeitsspeicher des Tabs. Nur wenn Sie „Bis zum Schließen des Tabs merken“ wählen, liegt er im Sitzungsspeicher des Browsers und wird beim Schließen des Tabs gelöscht. Er geht ausschließlich an den gewählten Anbieter.</p>
+    </section>
 
     <h2>Was im Browser gespeichert wird</h2>
     <p>Die Seite setzt keine Cookies. Im lokalen Speicher Ihres Browsers legt sie nur Bedienvorlieben ab:</p>
     <ul>
       <li><code>ris-breite-list</code>, <code>ris-breite-detail</code>: Breite von Liste und Vorgang</li>
       <li><code>ris-karte-farbig</code>: ob die Karte farbig oder grau erscheint</li>
-      <li><code>ris-assistent-hinweis</code>: dass Sie den Hinweis zum Ratsassistenten bestätigt haben</li>
-      <li><code>ris-assistent-einstellungen</code>: gewählter Anbieter, Modell und gegebenenfalls Adresse des lokalen Servers – nie der Schlüssel</li>
+      <li data-funktion="chat"><code>ris-assistent-hinweis</code>: dass Sie den Hinweis zum Ratsassistenten bestätigt haben</li>
+      <li data-funktion="chat"><code>ris-assistent-einstellungen</code>: gewählter Anbieter, Modell und gegebenenfalls Adresse des lokalen Servers – nie der Schlüssel</li>
     </ul>
-    <p>Im Sitzungsspeicher liegt nur auf Wunsch der Schlüssel des Ratsassistenten (<code>ris-assistent-schluessel:…</code>, siehe oben). Diese Angaben verlassen Ihr Gerät nicht; sie sind für die von Ihnen gewünschten Funktionen erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Sie können sie jederzeit über die Einstellungen Ihres Browsers löschen.</p>
+    <p><span data-funktion="chat">Im Sitzungsspeicher liegt nur auf Wunsch der Schlüssel des Ratsassistenten (<code>ris-assistent-schluessel:…</code>, siehe oben). </span>Diese Angaben verlassen Ihr Gerät nicht; sie sind für die von Ihnen gewünschten Funktionen erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Sie können sie jederzeit über die Einstellungen Ihres Browsers löschen.</p>
 
     <h2>Suche und Filter</h2>
     <p>Suche, Filter und Zeitleiste laufen vollständig in Ihrem Browser. Was Sie eingeben, wird nicht übertragen. Gewähltes Gebiet, Filter und Zeitraum stehen in der Adresszeile, damit Sie einen Link weitergeben können.</p>

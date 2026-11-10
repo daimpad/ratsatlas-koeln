@@ -21,6 +21,6 @@ Beiträge sind willkommen. Der Ratsatlas Köln beruht auf dem Ratsatlas Bonn ([d
 
 ## Einstiegsaufgaben
 
-- Stichprobe prüfen: `data/export/stichprobe_geokodierung.tsv` (entsteht beim Export) gegen das Original im Ratsinformationssystem, Spalte „urteil“ – sobald echte Kölner Daten vorliegen.
+- Stichprobe prüfen: `data/export/stichprobe_geokodierung.tsv` (entsteht beim Export; veröffentlicht nur im Datenpaket) gegen das Original im Ratsinformationssystem, Spalte „urteil“ – sobald echte Kölner Daten vorliegen.
 - Schreibvarianten Kölner Stadtteile und Straßen in `pipeline/geocode.py` ergänzen (mit Test in `tests/test_geokodierung.py`).
 - Offene Punkte aus `CLAUDE.md`, Abschnitt 8.

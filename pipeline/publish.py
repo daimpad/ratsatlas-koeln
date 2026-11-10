@@ -275,7 +275,9 @@ def write_dcat(path, data_start, modified, kurzfassungen=False):
             dist("Verortete Vorlagen (GeoJSON)", f"{config.STADT}/vorlagen.geojson", "application/geo+json", "dl-de-zero",
                  "Ein Punkt je Vorlage und Ort mit Stufe, Methode, Konfidenz und Fundstelle der Verortung."),
             dist("Datenpaket (Zip)", config.PAKET_URL, "application/zip", "dl-de-zero",
-                 "Alle Exporte, Audit-Protokolle (TSV), Verifikation und Lizenzübersicht."),
+                 "Exporte (ohne Feeds), Prüfprotokolle und Stichproben (TSV, nur in diesem Paket, nicht als einzelne "
+                 "Dateien auf der Seite), Abrufstatistik, abgeleitete Geodaten, Berichte der Projektphasen und "
+                 "Lizenzübersicht."),
         ] + ([dist("Zeitleiste: Monatsaggregate (JSON)", f"{config.STADT}/zeit.json", "application/json", "dl-de-zero",
                    "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden.")] if zeit else []) + [
             dist("Typische Wege je Vorlagenart (JSON)", f"{config.STADT}/prozesse.json", "application/json", "dl-de-zero",

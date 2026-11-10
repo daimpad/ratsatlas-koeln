@@ -2,7 +2,9 @@
 Audit-Protokolle als TSV). Liegt nur auf dem Pages-Spiegel; der Branch deploy verweist dorthin (config.PAKET_URL).
 
 Inhalt: Exporte (ohne Feeds), Audits und Stichproben, Abrufstatistik, Kölner Geodaten (abgeleitet, dl-de/zero 2.0),
-Lizenzen und die Berichte der Phasen. Keine Rohdaten der Schnittstelle, keine Volltexte, keine PDFs (CLAUDE.md 6)."""
+Lizenzen und die Berichte der Phasen. Keine Rohdaten der Schnittstelle, keine Volltexte, keine PDFs (CLAUDE.md 6).
+Audits, Stichproben und Abrufstatistik gibt es nur hier, nicht als lose Dateien auf der Seite (tools/seite_bauen.py,
+Entscheidung 10.11.2026); das Paket entsteht daher vor dem Zusammenstellen der Seite aus ganz data/export."""
 import zipfile
 from pathlib import Path
 
@@ -17,10 +19,12 @@ Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API) und den Ge
 Inhalt
 - koeln/: Exporte je Stadtteil, Stadtbezirk und ohne Ortsbezug, Suche, Zeitleiste, GeoJSON, DCAT, Kalender
 - audit_*.tsv: Prüfprotokolle (Geokodierung mit Methode, Konfidenz und Fundstelle; Prozess; Zeit; Themen)
-- stichprobe_geokodierung.tsv: Stichprobe je Methode zur Prüfung von Hand
+- stichprobe_*.tsv (auch in Unterordnern): Stichproben je Methode zur Prüfung von Hand
 - abrufstatistik.tsv: Anfragen, Fehler und Dauer je Abruf
 - geo/: Stadtteile, Stadtbezirke, Straßen- und Hausnummernverzeichnis (abgeleitet)
 - berichte/: Berichte der Projektphasen
+
+Prüfprotokolle, Stichproben und Abrufstatistik gibt es nur in diesem Paket, nicht als einzelne Dateien auf der Seite.
 
 Maßgeblich ist immer das Original im Ratsinformationssystem. Abgeleitete Angaben sind gekennzeichnet.
 Quellcode: https://github.com/daimpad/ratsatlas-koeln (MIT)
