@@ -1128,6 +1128,7 @@
     if (legendEl) drawLegend();
     cluster.clearLayers();
     markers.clear();
+    const alle = [];
     for (const p of list) {
       const ms = areaLocs(p).filter((l) => (l.level === "strasse" || l.level === "objekt" || l.level === "bebauungsplan") && l.lon != null).map((l) => {
         const m = L.circleMarker([l.lat, l.lon], { ...MARKER, fillColor: markerColor(p, l) })
@@ -1135,9 +1136,11 @@
         m.baseColor = markerColor(p, l);
         return m;
       });
-      ms.forEach((m) => cluster.addLayer(m));
+      for (const m of ms) alle.push(m);
       markers.set(p.reference, ms);
     }
+    // gesammelt: die Gruppen werden einmal berechnet statt nach jedem Punkt (Runde 18)
+    cluster.addLayers(alle);
     highlight();
   }
   // gewählte Vorlage auf der Karte hervorheben
@@ -1223,6 +1226,10 @@
       <span>${esc(p.stand)}</span>${conf}${taken}${themeTags(p.themes)}</span></button></li>`;
   }
   const themeTags = (ts) => (ts || []).slice(0, 2).map((t) => `<span class="theme">${esc(THEMES[t.theme || t])}</span>`).join("");
+  // aria-current der Einträge in der Liste (Gebiet: data-ref, ganz Köln: data-gref) immer als "true" oder "false";
+  // ohne gewählte Vorlage "false" (bis Runde 18 stand an Suchtreffern "null"; unbekannte Werte gelten in ARIA als „true“)
+  const markCurrent = (ref) => document.querySelectorAll(".papers button[data-ref], .papers button[data-gref]")
+    .forEach((b) => b.setAttribute("aria-current", String((b.dataset.ref ?? b.dataset.gref) === ref)));
 
   // Suche über ganz Köln: Treffer aus dem Index, Öffnen lädt das Gebiet der Vorlage
   // Suche im Text der Dokumente: in Bonn über die Volltextsuche von OParl-Lite (machdenstaat). Für Köln gibt es keinen
@@ -1263,7 +1270,9 @@
       status.textContent = "Die Suche im Text der Dokumente ist gerade nicht erreichbar.";
     }
   }
-  function renderGlobal() {
+  // nurListe: „Weitere … anzeigen“ erweitert nur die Liste; Treffer, Karte und Zeitleiste bleiben (Runde 18: bisher
+  // wurden alle Punkte bei jedem Klick neu gezeichnet)
+  function renderGlobal(nurListe) {
     const text = $("#f-text").value.trim().toLowerCase(), type = $("#f-type").value, standF = $("#f-stand").value;
     const doc = docHits && docHits.q === text ? docHits.refs : null;
     const inTitle = (r) => (r[1] + " " + r[0]).toLowerCase().includes(text);
@@ -1276,7 +1285,7 @@
     const onlyDoc = doc ? rows.filter((r) => !inTitle(r)).length : 0;
     $("#count").textContent = vorschau ? "Ganz Köln: noch keine Ratsvorlagen (Vorschau)"
       : `${rows.length} Treffer in ganz Köln${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`;
-    let html = rows.slice(0, shown).map((r) => `<li><button type="button" data-gref="${esc(r[0])}" data-area="${esc(search.areas[r[5]].key)}" aria-current="${selected && selected.reference === r[0]}">
+    let html = rows.slice(0, shown).map((r) => `<li><button type="button" data-gref="${esc(r[0])}" data-area="${esc(search.areas[r[5]].key)}" aria-current="${Boolean(selected && selected.reference === r[0])}">
       <span class="title">${esc(r[1])}</span>
       <span class="meta"><span>${esc(r[0])}</span><span>${fmtDate(r[2])}</span><span>${esc(search.types[r[3]] || "")}</span>
       <span>${esc(search.stands[r[4]])}</span><span class="area-tag">${esc(search.areas[r[5]].name)}</span>${themeTags(r[6].slice(0, 2).map((i) => search.themes[i].id))}${doc && text && !inTitle(r) ? '<span class="doc-tag">im Dokument erwähnt</span>' : ""}</span></button></li>`).join("");
@@ -1285,8 +1294,10 @@
     else if (!rows.length) html = `<li class="empty-list"><p>Keine Vorlage in ganz Köln passt zu Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     $("#papers").innerHTML = html;
     // auf der Karte: die Treffer, die im gerade geladenen Gebiet liegen
-    const refs = new Set(rows.map((r) => r[0]));
-    drawMarkers(papers.filter((p) => refs.has(p.reference)));
+    if (!nurListe) {
+      const refs = new Set(rows.map((r) => r[0]));
+      drawMarkers(papers.filter((p) => refs.has(p.reference)));
+    }
     if (openMegaId === "mega-suche") $("#mega-count").textContent = $("#count").textContent;
   }
   async function openGlobal(ref, areaKey) {
@@ -1295,12 +1306,12 @@
     if (p) select(p);
   }
 
-  function render() {
+  function render(nurListe) {
     $("#f-related-wrap").hidden = !$("#f-party").value;
     $("#more-filters").hidden = scope() === STADT;
     if (scope() === STADT) {
       if (!search) { $("#count").textContent = "Lade den Suchindex für ganz Köln …"; loadSearch().then((d) => d && (fillParties(), render())); return; }
-      return renderGlobal();
+      return renderGlobal(nurListe);
     }
     if ($("#f-party").value && $("#f-related").checked && !search && index) { loadSearch().then((d) => d && render()); }
     const base = filtered(false);
@@ -1319,8 +1330,10 @@
     else if (!list.length && area.kind === STADT) html = `<li class="empty-list"><p>Noch kein Gebiet gewählt. Wählen Sie auf der Karte einen Stadtbezirk und einen Stadtteil oder oben ein Gebiet; „in ganz Köln“ sucht über alle Vorlagen.</p></li>`;
     else if (!list.length) html = `<li class="empty-list"><p>Keine Vorlage passt zu Gebiet, Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     $("#papers").innerHTML = html;
-    drawMarkers(list);
-    if (tl) tl.setPapers(base);
+    if (!nurListe) {
+      drawMarkers(list);
+      if (tl) tl.setPapers(base);
+    }
     if (openMegaId === "mega-suche") $("#mega-count").textContent = $("#count").textContent;
   }
   const renderSoon = debounce(() => { shown = LIST_STEP; render(); }, 200);
@@ -1559,7 +1572,7 @@
       .sort((a, b) => String(a.datum).localeCompare(String(b.datum)) || a.drucksache.localeCompare(b.drucksache));
     selected = null;
     shownPlan = key;
-    document.querySelectorAll(".papers button[data-ref]").forEach((b) => b.setAttribute("aria-current", "false"));
+    markCurrent(null);
     if (tl) tl.select(null);
     highlight();
     if (planLayer) { planLayer.remove(); planLayer = null; }
@@ -1672,7 +1685,7 @@
     selected = null;
     shownPlan = null;
     shownSite = b.id;
-    document.querySelectorAll(".papers button[data-ref]").forEach((x) => x.setAttribute("aria-current", "false"));
+    markCurrent(null);
     if (tl) tl.select(null);
     highlight();
     if (planLayer) { planLayer.remove(); planLayer = null; }
@@ -1837,7 +1850,7 @@
     selected = p;
     shownPlan = null;
     shownSite = null;
-    document.querySelectorAll(".papers button[data-ref]").forEach((b) => b.setAttribute("aria-current", String(b.dataset.ref === p.reference)));
+    markCurrent(p.reference);
     syncUrl();
     if (tl) tl.select(p);
     highlight();
@@ -2010,6 +2023,21 @@
   const TAG = new Intl.DateTimeFormat("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" });
   const MONAT = new Intl.DateTimeFormat("de-DE", { month: "long", year: "numeric", timeZone: "Europe/Berlin" });
   const fmtDay = (iso) => TAG.format(new Date(iso + "T12:00:00Z"));
+  // Vorlagen je Sitzung („Datum|Gremium“ einer Beratung oder Entscheidung, über die Sitzung verknüpft), je Sitzung in
+  // der Reihenfolge der Liste; einmal je Aufruf von showTermine statt je Sitzung über alle Vorlagen (Runde 18,
+  // Generalprobe: Rodenkirchen am Telefon 4 s → 0,4 s)
+  function vorlagenJeSitzung(list) {
+    const je = new Map();
+    for (const p of list) {
+      for (const s of p.steps) {
+        if ((s.typ !== "beratung" && s.typ !== "entscheidung") || !s.date) continue;
+        const k = `${s.date}|${s.label}`;
+        if (!je.has(k)) je.set(k, new Set());
+        je.get(k).add(p);
+      }
+    }
+    return je;
+  }
   function showTermine() {
     if (!zeit) return;
     const box = $("#termine");
@@ -2020,7 +2048,8 @@
     const list = zeit.meetings.filter((m) => m.date >= today && relevant(m));
     const where = area.kind === "ohne" ? "Vorlagen ohne Ortsbezug" : area.name;
     // Vorlagen des Gebiets, deren Beratung (über die Sitzung verknüpft) auf dieser Sitzung liegt
-    const onAgenda = (m) => papers.filter((p) => p.steps.some((s) => (s.typ === "beratung" || s.typ === "entscheidung") && s.date === m.date && s.label === m.gremium));
+    const jeSitzung = vorlagenJeSitzung(papers);
+    const onAgenda = (m) => [...(jeSitzung.get(`${m.date}|${m.gremium}`) || [])];
     let month = "";
     const items = list.map((m) => {
       const head = m.date.slice(0, 7) !== month ? `<h3 class="month">${MONAT.format(new Date(m.date + "T12:00:00Z"))}</h3>` : "";
@@ -2078,7 +2107,9 @@
     const theme = $("#f-theme").value, party = $("#f-party").value;
     const counts = {};
     for (const p of papers) for (const t of p.themes || []) counts[t.theme] = (counts[t.theme] || 0) + 1;
-    const local = scope() === "gebiet";
+    // Zahlen nur mit geladenem Gebiet: bei „ganz Köln“ (noch kein Gebiet) gibt es keine Vorlagen zu zählen; bis Runde 18
+    // stand an jedem Thema „0“
+    const local = scope() === "gebiet" && Boolean(area) && area.kind !== STADT;
     $("#chips-theme").innerHTML = Object.entries(THEMES).map(([k, v]) => chip(v, theme === k, `data-theme="${k}"`, local ? counts[k] || 0 : null)).join("");
     const parties = [...$("#f-party").options].map((o) => o.value).filter(Boolean);
     $("#chips-party").innerHTML = parties.map((v) => chip(v === "Koalition" ? "Koalition (gemeinsam)" : v, party === v, `data-party="${esc(v)}"`)).join("")
@@ -2364,7 +2395,7 @@
       if (e.target.closest("#more")) {
         // Fokus auf den ersten neu gezeigten Eintrag, damit Tastatur und Vorleseprogramm an der Stelle weitermachen
         const vorher = shown;
-        shown += LIST_STEP; render();
+        shown += LIST_STEP; render(true);
         const neu = $("#papers").children[vorher];
         const ziel = neu && neu.querySelector("button, a[href]");
         if (ziel) ziel.focus();
