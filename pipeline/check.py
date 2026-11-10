@@ -11,6 +11,7 @@ import csv
 import json
 import re
 import sqlite3
+from collections import Counter
 from pathlib import Path
 
 from . import actors, besetzung, config, geocode, kontext, maske
@@ -27,11 +28,15 @@ GEBIETSDATEIEN_PFLICHT = ("ortsteile", "bezirke")
 ZAEHLUNG = {
     "ortsangaben": "Ortsangaben der OParl-API (Straße, Beschreibung) untersucht",
     "vorlagen": "Vorlagen in der Datenbank untersucht",
-    "ohne_hauskoordinate": "davon ohne Erlaubnis für Hauskoordinaten (§ 24 GO NRW, natürliche Personen, "
-                           "Ausschuss für Anregungen und Beschwerden)",
+    "ohne_hauskoordinate": "davon ohne Erlaubnis für Hauskoordinaten (§ 24 GO NRW, natürliche Personen, Ausschuss "
+                           "für Anregungen und Beschwerden, Vorlagenart nicht erkennbar, Titel ohne Hausnummer, "
+                           "verbundene Vorlagen auch über relatedPaper, dieselbe Drucksache)",
+    "vorlagenart_nicht_erkennbar": "davon mit leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026)",
     "hauskoordinaten": "Vorlagen mit Hauskoordinate in der Datenbank",
+    "oparl_punkte": "Vorlagen mit genauem Punkt aus der Ortsangabe der Stadt (OParl) in der Datenbank",
     "suche": "Titel in suche.json untersucht",
     "titel_geschuetzt": "davon aus Einwohnerschaft, Bauordnung oder Naturschutz (Hausnummer ausgeblendet)",
+    "ortsnamen": "Ortsnamen in vorlagen.geojson und den Gebietsdateien untersucht",
     "geojson": "Punkte in vorlagen.geojson untersucht",
     "geojson_hauskoordinaten": "davon auf einer Hauskoordinate",
     "gebietsdateien": "Vorlagen in den Gebietsdateien der Karte untersucht",
@@ -199,33 +204,72 @@ def _hauskoordinate(level=None, method=None, source=None):
     return level == "adresse" or method == PUNKT or source == config.QUELLE_ADRESSEN
 
 
+# genauer Punkt aus einer Ortsangabe der Stadt (Stufe A, geojson Point): Methode in den Exporten (ohne Erlaubnis führt
+# build ihn auf den Stadtteil zurück, Methode „oparl_sublocality“, oder lässt die Koordinate weg)
+OPARL_PUNKT = "oparl_location"
+OPARL_STADTTEIL = "oparl_sublocality"
+
+
+def _oparl_punkt(method=None, lon=None, source=None, level=None):
+    """Ortsbezug auf dem genauen Punkt einer Ortsangabe der Stadt (Exporte): Methode „oparl_location“ (Stufe A) oder
+    ein Ort mit Quelle der Stadt (location_source bzw. source „oparl-koeln“) auf Ebene „strasse“, etwa eine Straße, die
+    nur aus der Ortsangabe einer anderen Vorlage bekannt ist (Stufe B), oder ein vererbter Punkt. Ohne Ebene
+    (vorlagen.geojson) jede Methode außer dem Stadtteil („oparl_sublocality“) und vererbten Ortsbezügen, deren Ebene dort
+    fehlt; vererbte Punkte erkennen die Prüfung der Datenbank und der Gebietsdateien."""
+    if lon is None:
+        return False
+    if method == OPARL_PUNKT:
+        return True
+    if source != config.QUELLE_OPARL:
+        return False
+    return level == "strasse" if level is not None else method not in (OPARL_STADTTEIL, "vererbt")
+
+
+def _hat_tabelle(db, name):
+    return bool(db.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", (name,)).fetchone())
+
+
 def _hat_ausgelassene(db):
-    return bool(db.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'skipped_paper'").fetchone())
+    return _hat_tabelle(db, "skipped_paper")
 
 
-def erlaubnis(db):
-    """Drucksache → darf ihr Ortsbezug auf einer Hauskoordinate liegen? Gleiche Regel und Eingaben wie im Aufbau
-    (geocode.hausnummer_punkt_erlaubt in build._stage_b): Drucksache, Vorlagenart und Titel aus der Datenbank, Namen der
-    beratenden Gremien; dazu die verbundenen Vorlagen (geocode.ohne_hauskoordinate über paper_relation), auch die einer
-    beim Aufbau ausgelassenen Vorlage (skipped_paper, ohne Drucksachennummer also ohne Erlaubnis). Gibt es eine
-    Drucksache mehrfach, muss jede die Erlaubnis haben. Liefert ({Vorlagen-ID: bool},
-    {Drucksache: bool}, {Vorlagen-ID: Drucksache})."""
+def erlaubnis(db, nicht_erkannt=None, erkannt=None):
+    """Drucksache → darf ihr Ortsbezug auf einer Hauskoordinate liegen? Gleiche Regel, Eingaben und Funktion wie im
+    Aufbau (build._ohne_hauskoordinate): Startmenge nach geocode.punkt_ausschluss mit Drucksache, Vorlagenart und Titel
+    aus der Datenbank, Namen der beratenden Gremien, Name der federführenden Organisation (under_direction_of, wie
+    maske.aus_db) und Vorlagenart in anderer Form (paper_type_other_form, gilt als nicht erkennbar), dazu die beim Aufbau
+    ausgelassenen Vorlagen (skipped_paper, ohne Drucksachennummer also ohne Erlaubnis); daraus der Fixpunkt
+    geocode.sperrmenge über die Beziehungen (paper_relation und relatedPaper aus paper_related) und dieselbe Drucksache.
+    Gibt es eine Drucksache mehrfach, muss jede die Erlaubnis haben. `nicht_erkannt`, `erkannt`: Counter, die je nicht
+    erkannter bzw. erkannter Vorlagenart (geocode.vorlagenart_bezeichnung) die Vorlagen zählen (erkannt: Erlaubnis nach
+    eigener Angabe, geocode.erkannte_arten). Liefert ({Vorlagen-ID: bool}, {Drucksache: bool}, {Vorlagen-ID:
+    Drucksache})."""
     gremien = {}
     for pid, name in db.execute(
             "SELECT c.paper_id, o.name FROM consultation c LEFT JOIN organization o ON o.id = c.organization_id "
             "ORDER BY c.paper_id, c.position"):
         gremien.setdefault(pid, []).append(name or "")
-    je_id, je_ref, ref_of = {}, {}, {}
-    for pid, ref, typ, name in db.execute("SELECT id, reference, paper_type, name FROM paper"):
-        je_id[pid] = geocode.hausnummer_punkt_erlaubt({"reference": ref, "paperType": typ, "name": name},
-                                                      gremien.get(pid, ()))
+    andere_form = ({r[0] for r in db.execute("SELECT paper_id FROM paper_type_other_form")}
+                   if _hat_tabelle(db, "paper_type_other_form") else set())
+    amt = ("(SELECT name FROM organization o WHERE o.id = paper.under_direction_of)"
+           if "under_direction_of" in {r[1] for r in db.execute("PRAGMA table_info(paper)")} else "NULL")
+    je_id, je_ref, ref_of, start = {}, {}, {}, set()
+    for pid, ref, typ, name, amt_name in db.execute(f"SELECT id, reference, paper_type, name, {amt} FROM paper"):
+        p = {"reference": ref, "paperType": typ, "name": name, geocode.ANDERE_FORM: pid in andere_form}
+        grund = geocode.punkt_ausschluss(p, gremien.get(pid, ()), amt_name)
+        if grund:
+            start.add(pid)
+        if grund == "vorlagenart" and nicht_erkannt is not None:
+            nicht_erkannt[geocode.vorlagenart_bezeichnung(p)] += 1
+        if grund is None and erkannt is not None:
+            erkannt[geocode.vorlagenart_bezeichnung(p)] += 1
         ref_of[pid] = ref
-    # verbundene Vorlagen (über- und untergeordnet) einer Vorlage ohne Erlaubnis: ebenfalls ohne (wie im Aufbau)
-    ausgelassen = {r[0] for r in db.execute("SELECT id FROM skipped_paper")} if _hat_ausgelassene(db) else set()
-    for pid in geocode.ohne_hauskoordinate({pid for pid, ok in je_id.items() if not ok} | ausgelassen,
-                                           db.execute("SELECT parent_id, child_id FROM paper_relation")):
-        if pid in je_id:
-            je_id[pid] = False
+    start |= {r[0] for r in db.execute("SELECT id FROM skipped_paper")} if _hat_ausgelassene(db) else set()
+    beziehungen = db.execute("SELECT parent_id, child_id FROM paper_relation").fetchall()
+    if _hat_tabelle(db, "paper_related"):
+        beziehungen += db.execute("SELECT paper_id, related_id FROM paper_related").fetchall()
+    gesperrt = geocode.sperrmenge(start, beziehungen, ref_of)
+    je_id = {pid: pid not in gesperrt for pid in ref_of}
     for pid, ok in je_id.items():
         je_ref[ref_of[pid]] = je_ref.get(ref_of[pid], True) and ok
     return je_id, je_ref, ref_of
@@ -235,7 +279,16 @@ def _verstoss(befunde, wo, refs):
     refs = sorted({str(r) for r in refs})   # Drucksachen; ohne Drucksache die Vorlagen-ID
     if refs:
         befunde.append(f"Datenschutz: Hauskoordinate bei Vorlagen ohne Erlaubnis ({wo}; Eingaben nach § 24 GO NRW, "
-                       f"Vorlagen natürlicher Personen, Ausschuss für Anregungen und Beschwerden; CLAUDE.md 2 und 9): "
+                       f"Vorlagen natürlicher Personen, Ausschuss für Anregungen und Beschwerden, Vorlagenart nicht "
+                       f"erkennbar; CLAUDE.md 2 und 9): "
+                       f"{len(refs)}, z. B. {', '.join(refs[:5])}")
+
+
+def _verstoss_oparl(befunde, wo, refs):
+    refs = sorted({str(r) for r in refs})
+    if refs:
+        befunde.append(f"Datenschutz: genauer Punkt aus der Ortsangabe der Stadt (OParl) bei Vorlagen ohne Erlaubnis "
+                       f"für Hauskoordinaten ({wo}; höchstens Stadtteil, CLAUDE.md 2 und 9): "
                        f"{len(refs)}, z. B. {', '.join(refs[:5])}")
 
 
@@ -244,10 +297,16 @@ def datenschutz(db, base=None):
     config.EXPORT / config.STADT):
     1. Ortsangaben der OParl-API ohne Hausnummer (build.ohne_hausnummer; Postleitzahlen 5xxxx sind keine),
     2. Titel aus Einwohnerschaft, Bauordnung und Naturschutz ohne Hausnummer in suche.json, vorlagen.geojson und den
-       Gebietsdateien (maske.py; Entscheidung des Auftraggebers 24.10.2026: überall ausblenden),
-    3. Hauskoordinaten nur bei Verwaltungsvorlagen und politischen Anträgen (Entscheidung 04.11.2026): nie bei Eingaben
+       Gebietsdateien (maske.py; Entscheidung des Auftraggebers 24.10.2026: überall ausblenden), ebenso ihre Ortsnamen
+       (`place` in vorlagen.geojson, `locations[].name` in den Gebietsdateien),
+    3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
-       Anregungen und Beschwerden – in der Datenbank, in vorlagen.geojson und in den Gebietsdateien der Karte.
+       Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
+       erkannten und nicht erkannten Arten stehen mit Anzahl in der Ausgabe), nie neben einem Titel ohne Hausnummer und
+       nie bei damit verbundenen Vorlagen (check.erlaubnis) – in der Datenbank, in vorlagen.geojson und in den
+       Gebietsdateien der Karte; ebenso kein genauer Punkt aus einer Ortsangabe der Stadt (OParl: Stufe A, vererbt oder
+       als Straße, die nur aus der Ortsangabe einer anderen Vorlage bekannt ist) bei diesen Vorlagen und bei
+       Ortsangaben, die auch eine beim Aufbau ausgelassene Vorlage nennt.
     Ausgaben nennen nur Drucksachen und Orts-IDs, keine Titel oder Hausnummern (Protokolle der Workflows sind
     öffentlich). Liefert {"untersucht": {Schlüssel aus ZAEHLUNG: Anzahl}, "befunde": [...], "fehlend": [...]}."""
     base = Path(base) if base else config.EXPORT / config.STADT
@@ -272,14 +331,35 @@ def datenschutz(db, base=None):
                        f"z. B. {', '.join(mit_nummer[:5])}")
 
     # 3a. Hauskoordinaten in der Datenbank
-    je_id, je_ref, ref_of = erlaubnis(db)
+    nicht_erkannt, erkannt = Counter(), Counter()
+    je_id, je_ref, ref_of = erlaubnis(db, nicht_erkannt, erkannt)
     zahl["vorlagen"] = len(je_id)
     zahl["ohne_hauskoordinate"] = sum(not ok for ok in je_id.values())
+    zahl["vorlagenart_nicht_erkennbar"] = sum(nicht_erkannt.values())
     punkte = {r[0] for r in db.execute(
         "SELECT DISTINCT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
         "WHERE l.level = 'adresse' OR pl.method = ? OR l.source = ?", (PUNKT, config.QUELLE_ADRESSEN))}
     zahl["hauskoordinaten"] = len(punkte)
     _verstoss(befunde, "Datenbank", [ref_of.get(p) or p for p in punkte if not je_id.get(p)])
+    # 3c. genaue Punkte aus Ortsangaben der Stadt (Ort der Quelle oparl-koeln mit Koordinate auf Ebene „strasse“): aus
+    # der eigenen Ortsangabe (Stufe A), vererbt oder als Straße, die nur aus der Ortsangabe einer anderen Vorlage bekannt
+    # ist (Stufe B, Prüfung r19b): bei Vorlagen ohne Erlaubnis nie (build führt sie auf den Stadtteil zurück)
+    oparl = {r[0] for r in db.execute(
+        "SELECT DISTINCT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+        "WHERE l.source = ? AND l.level = 'strasse' AND l.lon IS NOT NULL", (config.QUELLE_OPARL,))}
+    zahl["oparl_punkte"] = len(oparl)
+    _verstoss_oparl(befunde, "Datenbank", [ref_of.get(p) or p for p in oparl if not je_id.get(p)])
+    # Ortsangaben ausgelassener Vorlagen (skipped_location): auch bei anderen Vorlagen mit derselben Ortsangabe kein
+    # genauer Punkt (build: grob; Prüfung r19b)
+    if _hat_tabelle(db, "skipped_location"):
+        geteilt = sorted({str(ref_of.get(r[0]) or r[0]) for r in db.execute(
+            "SELECT DISTINCT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+            "WHERE l.source = ? AND l.level = 'strasse' AND l.lon IS NOT NULL AND l.id IN "
+            "(SELECT location_id FROM skipped_location)", (config.QUELLE_OPARL,))})
+        if geteilt:
+            befunde.append(f"Datenschutz: genauer Punkt aus einer Ortsangabe der Stadt (OParl), die auch eine beim "
+                           f"Aufbau ausgelassene Vorlage nennt (Datenbank; höchstens Stadtteil, CLAUDE.md 2 und 9): "
+                           f"{len(geteilt)}, z. B. {', '.join(geteilt[:5])}")
     stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
     if not je_id:
         if stand.get("vorschau"):
@@ -305,24 +385,34 @@ def datenschutz(db, base=None):
     if geo is not None:
         props = [x["properties"] for x in geo["features"]]
         zahl["geojson"] = len(props)
-        offen |= {p["reference"] for p in props if m.offen(p.get("name"), p["reference"])}
+        zahl["ortsnamen"] = zahl.get("ortsnamen", 0) + sum(bool(p.get("place")) for p in props)
+        offen |= {p["reference"] for p in props
+                  if m.offen(p.get("name"), p["reference"]) or m.offen(p.get("place"), p["reference"])}
         auf = [p["reference"] for p in props
                if _hauskoordinate(method=p.get("method"), source=p.get("location_source"))]
         zahl["geojson_hauskoordinaten"] = len(auf)
         _verstoss(befunde, "vorlagen.geojson", [r for r in auf if not je_ref.get(r)])
+        _verstoss_oparl(befunde, "vorlagen.geojson",
+                        [p["reference"] for p, f in zip(props, geo["features"])
+                         if _oparl_punkt(p.get("method"), ((f.get("geometry") or {}).get("coordinates") or [None])[0],
+                                         p.get("location_source"))
+                         and not je_ref.get(p["reference"])])
     for d in GEBIETSDATEIEN_PFLICHT:
         if not (base / d).is_dir():
             fehlend.append(_fehlt("Datenschutz", base / d, "export"))
     dateien = [f for d in GEBIETSDATEIEN for f in sorted((base / d).glob("*.json"))]
-    refs, auf = set(), set()
+    refs, auf, auf_oparl = set(), set(), set()
     for f in dateien:
         for p in json.loads(f.read_text())["papers"]:
             refs.add(p["reference"])
-            if m.offen(p.get("name"), p["reference"]):
+            orte = p.get("locations") or ()
+            zahl["ortsnamen"] = zahl.get("ortsnamen", 0) + sum(bool(x.get("name")) for x in orte)
+            if m.offen(p.get("name"), p["reference"]) or any(m.offen(x.get("name"), p["reference"]) for x in orte):
                 offen.add(p["reference"])
-            if any(_hauskoordinate(x.get("level"), x.get("method"), x.get("source"))
-                   for x in p.get("locations") or ()):
+            if any(_hauskoordinate(x.get("level"), x.get("method"), x.get("source")) for x in orte):
                 auf.add(p["reference"])
+            if any(_oparl_punkt(x.get("method"), x.get("lon"), x.get("source"), x.get("level")) for x in orte):
+                auf_oparl.add(p["reference"])
     zahl["gebietsdateien"] = len(refs)
     zahl["gebietsdateien_hauskoordinaten"] = len(auf)
     # Stichprobe Hausnummern (build._hnr_audit, maskiert in export; liegt in data/export, also auf der Seite und im
@@ -334,13 +424,17 @@ def datenschutz(db, base=None):
         zahl["stichprobe_hausnummern"] = len(zeilen)
         offen |= {z[1] for z in zeilen if len(z) > 2 and m.offen(z[2], z[1])}
     _verstoss(befunde, "Gebietsdateien der Karte", [r for r in auf if not je_ref.get(r)])
+    _verstoss_oparl(befunde, "Gebietsdateien der Karte", [r for r in auf_oparl if not je_ref.get(r)])
     if offen:
-        befunde.append(f"Datenschutz: Hausnummern in Titeln aus Einwohnerschaft, Bauordnung oder Naturschutz "
-                       f"(maske.py): {len(offen)}, z. B. {', '.join(sorted(map(str, offen))[:5])}")
+        befunde.append(f"Datenschutz: Hausnummern in Titeln oder Ortsnamen aus Einwohnerschaft, Bauordnung oder "
+                       f"Naturschutz (maske.py): {len(offen)}, z. B. {', '.join(sorted(map(str, offen))[:5])}")
 
     for k, text in ZAEHLUNG.items():
         if k in zahl:
             print(f"{text}: {zahl[k]}")
+    # nicht erkannte und erkannte Vorlagenarten mit Anzahl (nur die Art), wie im Log von build
+    print(geocode.nicht_erkannte_arten(nicht_erkannt))
+    print(geocode.erkannte_arten(erkannt))
     return {"untersucht": zahl, "befunde": befunde, "fehlend": fehlend}
 
 

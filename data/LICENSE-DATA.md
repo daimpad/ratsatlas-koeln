@@ -1,6 +1,8 @@
 # Lizenzen der Daten
 
-Stand 07.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/` gilt:
+Stand 10.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/` gilt:
+
+Die Pfade beginnen unter `data/`: Auf der Seite liegt `export/koeln/vorlagen.geojson` also unter `data/export/koeln/vorlagen.geojson`, im Datenpaket (Zip) liegt der Inhalt von `export/` direkt im Ordner `ratsatlas-koeln/` (`ratsatlas-koeln/koeln/vorlagen.geojson`) und `geo/` unter `ratsatlas-koeln/geo/`; `kontext/` und `ebenen/` liegen nur im Repository, auf der Seite und im Paket stehen die daraus abgeleiteten Dateien unter `export/koeln/`.
 
 | Datei | Quelle | Lizenz | Namensnennung |
 |---|---|---|---|
@@ -19,8 +21,19 @@ Stand 07.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/
 | `ebenen/lebenswerte_veedel.geojson`, `sozialraeume.geojson`, `stimmbezirke.geojson`, `baupotenziale.geojson`, `fahrradstrassen.geojson`, `denkmaeler.geojson` | Stadt Köln (offenedaten-koeln.de, Geoportal); ohne Flurstücke und Eigentumsangaben | dl-de/zero 2.0 | Datenquelle: Stadt Köln – offenedaten-koeln.de |
 | `ebenen/naturschutz.geojson` | LANUK NRW, INSPIRE Schutzgebiete (Natur-, Landschaftsschutz, FFH) | dl-de/zero 2.0 | – |
 | `ebenen/hochwasser.geojson` | Land NRW, Hochwassergefahrenkarten (HQ100, HQextrem), je Szenario zusammengefasst, um 2 m vereinfacht | dl-de/zero 2.0 (Angabe von opengeodata.nrw.de) | – |
-| `export/abrufstatistik.tsv` (entsteht beim Abruf) | eigene Protokollierung | dl-de/zero 2.0 | – |
+| `export/koeln/` aus dem Ratsinformationssystem: Gebietsdateien (`ortsteile/`, `bezirke/`, `ohne-ortsbezug/`, `index.json`), `suche.json`, `vorlagen.geojson`, `zeit.json`, `prozesse.json`, `plaene.json`, `feeds/`, `termine.ics`, `dcat.jsonld`; Prüfprotokolle `audit_*.tsv` (außer `audit_kontext.tsv`) und Stichproben `stichprobe_*.tsv` unter `export/` (entstehen aus dem Abruf) | abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API, Katalog „OParl API Koeln“ auf offenedaten-koeln.de): Vorlagen, Beratungen, Sitzungen und Gremien; Verortung, Akteure, Prozessschritte und Themen eigene Ableitung mit Methode und Fundstelle, Ortsangaben nach den Geodaten oben; ohne Volltexte, Auszüge und PDFs. Angaben aus den Bebauungsplänen (Orte mit `location_source` „bplan-koeln“, in `plaene.json` und `audit_bebauungsplaene.tsv` Geltungsbereich, Inkrafttreten und Link zum Plan; das verlinkte Plandokument ist nicht Teil der Daten) stammen aus `geo/bebauungsplaene_koeln.geojson`, Orte mit `location_source` „osm“ (falls vorhanden) aus OpenStreetMap | laut Katalog dl-de/zero 2.0; Klärung mit der Stadt offen; Angaben aus den Bebauungsplänen dl-de/by 2.0, aus OpenStreetMap ODbL 1.0 | Datenquelle: Stadt Köln – offenedaten-koeln.de; Angaben aus den Bebauungsplänen: MHKBD NRW / IT.NRW, Bauleitplanung in NRW, Datengrundlage Stadt Köln; Orte aus OpenStreetMap: © OpenStreetMap-Mitwirkende |
+| `export/koeln/kontext.json`, `export/audit_kontext.tsv` | Kennzahlen je Stadtteil und Stadtbezirk, aus den Dateien unter `kontext/` auf die Gebiete aus `geo/` umgerechnet (abgeleitet); Quelle, Lizenz und Stand je Kennzahl in `meta.quellen` | je Quelle wie bei `kontext/…` oben: Zensus, Kitas und Schulen dl-de/by 2.0, übrige dl-de/zero 2.0; Gebiete dl-de/zero 2.0 | © Statistisches Bundesamt (Destatis), Zensus 2022; Land NRW (Kitas); Ministerium für Schule und Bildung NRW (Schulen); Gebiete: Datenquelle: Stadt Köln – offenedaten-koeln.de |
+| `export/koeln/flaechen/bodenrichtwerte.json`, `klima.json`, `ueberschwemmung.json`, `punkte_haltestellen.json` | vereinfachte Kopien der Dateien unter `kontext/` für die Karte; Quelle und Lizenz in `meta` | dl-de/zero 2.0 | – |
+| `export/koeln/flaechen/punkte_kitas.json` | Kitas aus `kontext/kitas_koeln.tsv` (Name und Plätze, ohne Kontaktdaten) | dl-de/by 2.0 | Land NRW |
+| `export/koeln/flaechen/punkte_schulen.json` | Schulen aus `kontext/schulen_koeln.tsv` (Name, Schulform, Träger, ohne Kontaktdaten) | dl-de/by 2.0 | Ministerium für Schule und Bildung NRW |
+| `export/koeln/ebenen.json`, `export/koeln/flaechen/ebene_*.json` | Verzeichnis der Kartenebenen (Quelle, Lizenz und Stand je Ebene) und vereinfachte Kopien der Dateien unter `ebenen/` (ausgewählte Felder) | wie die jeweilige Ebene oben: dl-de/zero 2.0 | Ebenen der Stadt Köln: Datenquelle: Stadt Köln – offenedaten-koeln.de |
+| `export/koeln/flaechen/ortsteile.json`, `bezirke.json` | vereinfachte Kopien von `geo/stadtteile_koeln.geojson` und `geo/stadtbezirke_koeln.geojson` | dl-de/zero 2.0 | Datenquelle: Stadt Köln – offenedaten-koeln.de |
+| `export/koeln/flaechen/bebauungsplaene.json` | vereinfachte Kopie von `geo/bebauungsplaene_koeln.geojson` | dl-de/by 2.0 | MHKBD NRW / IT.NRW, Bauleitplanung in NRW; Datengrundlage Stadt Köln |
+| `export/glossar.json` | Erklärungen und Bezeichnungen des Ratsatlas mit Fundstelle je Begriff; der Text steht im Code (`pipeline/glossar.py`, `process.py`, `topics.py`) | wie der Code: MIT | Hinweis wie in `LICENSE` |
+| `export/abrufstatistik.tsv` (entsteht beim Abruf; nur im Datenpaket) | eigene Protokollierung | dl-de/zero 2.0 | – |
 
-Die Namensnennung führt der Ratsatlas immer, auch wo die Lizenz sie nicht verlangt (CLAUDE.md 8).
+Die Namensnennung führt der Ratsatlas immer, auch wo die Lizenz sie nicht verlangt, solange die Lizenz der Ratsdaten mit der Stadt nicht abschließend geklärt ist.
 
-Noch nicht enthalten: Daten der OParl-API der Stadt Köln (Abruf erst nach Information der Stadt; Lizenz laut Katalog dl-de/zero 2.0, Klärung offen). Das Kölner Straßenverzeichnis (XLSX) steht unter dl-de/by 2.0 und wird bisher nicht verwendet. Volltexte, Auszüge und PDFs werden bis zur Lizenzklärung nicht veröffentlicht (CLAUDE.md 2 und 6).
+Prüfprotokolle (`audit_*.tsv`), Stichproben (`stichprobe_*.tsv`) und die Abrufstatistik stehen nur im Datenpaket (Zip), nicht als einzelne Dateien auf der Seite.
+
+Das Kölner Straßenverzeichnis (XLSX) steht unter dl-de/by 2.0 und wird bisher nicht verwendet. Volltexte, Auszüge und PDFs werden bis zur Lizenzklärung nicht veröffentlicht.

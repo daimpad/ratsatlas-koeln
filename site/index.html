@@ -145,7 +145,7 @@
       <div class="chips" id="chips-theme" role="group" aria-label="Thema wählen" data-vorschau="aus"></div>
       <h3 class="mega-label" data-vorschau="aus"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Partei / Fraktion</h3>
       <div class="chips" id="chips-party" role="group" aria-label="Partei oder Fraktion wählen" data-vorschau="aus"></div>
-      <!-- Suche im Text der Dokumente: in Bonn über OParl-Lite; für Köln kein solcher Dienst (ausgeblendet) -->
+      <!-- Suche im Text der Dokumente: für Köln kein Dienst (ausgeblendet) -->
       <div class="doc-search" data-funktion="volltextsuche" hidden>
         <button type="button" class="btn btn-soft" id="doc-search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>Auch im Text der Dokumente suchen</button>
         <p class="hint" id="doc-status" aria-live="polite"></p>
@@ -452,7 +452,7 @@
     <details class="map-legend map-sources" id="sources">
       <summary>Quellen, Lizenzen und Datenstand</summary>
       <div>
-        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung und politischen Anträgen, der Hauskoordinate) · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
+        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, der Hauskoordinate) · Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln; dl-de/by 2.0)<span data-funktion="kontext"> · Kennzahlen und Kartenebenen: Quelle, Lizenz und Stand je Ebene in der Legende</span> · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
         <p id="stand"></p>
         <p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/koeln/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersicht nach Gebiet</a> · <a href="https://github.com/daimpad/ratsatlas-koeln">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a></p>
       </div>
@@ -493,7 +493,7 @@
       </dl>
 
       <h3 id="about-pruefung" tabindex="-1">Wie sicher sind die Angaben?</h3>
-      <p>Die meisten Angaben stammen unverändert aus dem Ratsinformationssystem. Erschlossene Angaben – etwa der Ort aus dem Titel, die Verknüpfung einer Beratung mit ihrer Sitzung oder das Thema – sind als „abgeleitet“ gekennzeichnet. Bei Orten unterscheiden wir: <strong>gesichert</strong> (Hauskoordinate aus „Adressen Köln“ oder eindeutiger Bebauungsplan), <strong>erschlossen</strong> (Straßen- oder Stadtteilname im Titel, Stadtteil laut Ortsangabe der Stadt) und <strong>unsicher</strong> (der Name passt zu mehreren Orten, oder nur das beratende Gremium deutet auf einen Stadtbezirk). Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische Anträge, nie Eingaben von Einwohnerinnen und Einwohnern; Wohnadressen von Privatpersonen werden nicht gezeigt.</p>
+      <p>Die meisten Angaben stammen unverändert aus dem Ratsinformationssystem. Erschlossene Angaben – etwa der Ort aus dem Titel, die Verknüpfung einer Beratung mit ihrer Sitzung oder das Thema – sind als „abgeleitet“ gekennzeichnet. Bei Orten unterscheiden wir: <strong>gesichert</strong> (Hauskoordinate aus „Adressen Köln“ oder eindeutiger Bebauungsplan), <strong>erschlossen</strong> (Straßen- oder Stadtteilname im Titel, Stadtteil laut Ortsangabe der Stadt) und <strong>unsicher</strong> (der Name passt zu mehreren Orten, oder nur das beratende Gremium deutet auf einen Stadtbezirk). Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung sowie politische Anträge und Anfragen, nie Eingaben von Einwohnerinnen und Einwohnern; ist die Art einer Vorlage nicht erkennbar, zeigt die Karte höchstens die Straße. Wohnadressen von Privatpersonen werden nicht gezeigt.</p>
       <p>Die Prüfung von Hand an Kölner Vorlagen (50 je Methode, richtig / teilweise / falsch) steht noch aus; die Ergebnisse erscheinen hier und im Datenpaket.</p>
 
       <h3>Nach Themen und Parteien suchen</h3>
@@ -512,7 +512,7 @@
       <p>Sie ersetzt nicht das Original: Maßgeblich ist immer das Dokument im Ratsinformationssystem, zu dem jede Vorlage verlinkt. Nichtöffentliche Beratungen, die Arbeit innerhalb der Verwaltung und die Umsetzung von Beschlüssen sind von außen nicht einsehbar. Fällt der tägliche Abruf aus, zeigt die Seite den letzten gültigen Datenstand und weist darauf hin.</p>
 
       <h3>Wer steckt dahinter?</h3>
-      <p>Den Ratsatlas Köln entwickelt <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span></a>. Er beruht auf dem Code des <a href="https://github.com/daimpad/ratsatlas-bonn" target="_blank" rel="noopener">Ratsatlas Bonn<span class="visually-hidden"> (GitHub, neuer Tab)</span></a>. Es ist ein offenes Projekt; der Code steht unter MIT-Lizenz. Die Daten stammen von der Stadt Köln (Datenquelle: Stadt Köln – offenedaten-koeln.de) und für den Kartenhintergrund aus OpenStreetMap (ODbL). Fehler können Sie über „Verortung falsch?“ bei einer Vorlage oder im <a href="https://github.com/daimpad/ratsatlas-koeln/issues">Projekt auf GitHub</a> melden.</p>
+      <p>Den Ratsatlas Köln entwickelt <a href="https://paderta.com/" target="_blank" rel="noopener">Damian Paderta<span class="visually-hidden"> (paderta.com, neuer Tab)</span></a>. Er beruht auf dem Code des <a href="https://github.com/daimpad/ratsatlas-bonn" target="_blank" rel="noopener">Ratsatlas Bonn<span class="visually-hidden"> (GitHub, neuer Tab)</span></a>. Es ist ein offenes Projekt; der Code steht unter MIT-Lizenz. Die Daten stammen von der Stadt Köln (Datenquelle: Stadt Köln – offenedaten-koeln.de), die Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln) und der Kartenhintergrund aus OpenStreetMap (ODbL).<span data-funktion="kontext"> Kennzahlen und Kartenebenen nennen ihre Quellen einzeln.</span> Fehler können Sie über „Verortung falsch?“ bei einer Vorlage oder im <a href="https://github.com/daimpad/ratsatlas-koeln/issues">Projekt auf GitHub</a> melden.</p>
 
       <h3 id="about-impressum" tabindex="-1">Kontakt, Impressum und Datenschutz</h3>
       <p>Schrift, Programmbibliotheken und die graue Karte kommen vom Server dieser Seite. Nur bei „Farbige Karte“ lädt Ihr Browser die Kacheln von OpenStreetMap (tile.openstreetmap.org).</p>
@@ -531,7 +531,7 @@
       <h3>Version 0.1 (Entwurf, November 2026)</h3>
       <ul>
         <li>Erste Fassung für Köln auf Grundlage des Ratsatlas Bonn: ganz Köln mit 9 Stadtbezirken und 86 Stadtteilen, Liste, Vorgang mit Prozesslinie, Suche, Feeds und Kalender.</li>
-        <li>Orte aus dem Titel und aus den Ortsangaben der Stadt; Hauskoordinaten nur bei Vorlagen der Verwaltung und politischen Anträgen.</li>
+        <li>Orte aus dem Titel und aus den Ortsangaben der Stadt; Hauskoordinaten nur bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, deren Art erkennbar ist.</li>
         <li>Bonner Zusatzthemen (Haushalt, Themenseiten, Ratsassistent und weitere) sind für Köln noch nicht freigegeben.</li>
       </ul>
     </div>

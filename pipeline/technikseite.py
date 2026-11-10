@@ -35,14 +35,16 @@ SCHRITTE = {
     "build": ("Datenbank und Verortung", "Baut eine SQLite-Datenbank aus Vorlagen, Beratungen, Sitzungen und Gremien, "
                                          "verortet Vorlagen nach festen Regeln und leitet den Stand jedes Vorgangs ab."),
     "export": ("Export", "Schreibt je Gebiet eine Datei für die Karte, dazu Feeds, Kalender, GeoJSON und "
-                         "Prüfprotokolle."),
+                         "Prüfprotokolle für das Datenpaket."),
     "kontext": ("Kennzahlen", "Rechnet Kennzahlen je Stadtteil aus Zensus, Bodenrichtwerten, Klimaanalyse, Kitas, Schulen "
                               "und Haltestellen (Land und Bund) und legt zuschaltbare Flächen und Punkte für die Karte ab."),
     "ebenen": ("Ebenen", "Bereitet weitere offene Daten für die Karte auf, etwa Förderprogramme, Wohnbaupotenziale, "
                          "Schutzgebiete und Hochwassergefahr, mit Quelle und Lizenz je Ebene."),
     "check": ("Prüfung", "Prüft vor jeder Veröffentlichung den Datenschutz (keine Hauskoordinaten bei Eingaben nach § 24 GO "
-                         "NRW und Vorlagen von Privatpersonen) und die Kennzahlen; ein Befund hält die Veröffentlichung an."),
-    "package": ("Datenpaket", "Packt Daten, Prüfprotokolle und Lizenzen in ein Zip-Paket zum Herunterladen."),
+                         "NRW, Vorlagen von Privatpersonen und Vorlagen ohne erkennbare Vorlagenart) und die Kennzahlen; "
+                         "ein Befund hält die Veröffentlichung an."),
+    "package": ("Datenpaket", "Packt Daten, Prüfprotokolle und Lizenzen in ein Zip-Paket zum Herunterladen; die "
+                              "Prüfprotokolle gibt es nur dort."),
 }
 
 # Workflows (.github/workflows/<datei>): Kurzname und Erklärung
@@ -66,7 +68,7 @@ QUELLEN = {
                                                  "Open-Data-Portal der Stadt."),
     "strassen-koeln": ("Straßen", "Straßen der Stadt Köln; daraus entsteht das Straßenverzeichnis je Stadtteil."),
     "adressen-koeln": ("Adressen", "Adressen der Stadt Köln: Stadtteil einer Hausnummer und, nur bei Vorlagen der "
-                                   "Verwaltung und politischen Anträgen, die Hauskoordinate."),
+                                   "Verwaltung sowie politischen Anträgen und Anfragen mit erkennbarer Vorlagenart, die Hauskoordinate."),
     "bplan-koeln": ("Bebauungspläne", "Flächen der rechtsverbindlichen Bebauungspläne aus der Schnittstelle "
                                       "„Bauleitplanung in NRW“ des Landes; Vorlagen mit Plannummer im Titel erscheinen "
                                       "auf der Fläche des Plans."),
@@ -80,9 +82,10 @@ AUSGABEN = [
     ("a-seiten", "Statische Seiten", "Gebietsseiten, Begriffe, Feeds und diese Seite, ohne Skript lesbar.", "gebiete/"),
     ("a-feeds", "Feeds und Kalender", "Atom-Feeds je Gebiet, je Vorlage und für ganz Köln, dazu ein Sitzungskalender "
                                       "(ICS).", "rss/"),
-    ("a-offen", "Offene Daten", "GeoJSON der verorteten Vorlagen, Beschreibung nach DCAT-AP und Prüfprotokolle als "
-                                "TSV.", None),
-    ("a-paket", "Datenpaket", "Alle Daten, Prüfprotokolle und Lizenzen als Zip-Paket.", config.PAKET_URL),
+    ("a-offen", "Offene Daten", "GeoJSON der verorteten Vorlagen und Beschreibung nach DCAT-AP; Prüfprotokolle als "
+                                "TSV im Datenpaket.", None),
+    ("a-paket", "Datenpaket", "Alle Daten, Prüfprotokolle und Lizenzen als Zip-Paket; Prüfprotokolle und Stichproben "
+                              "liegen nur hier, nicht als einzelne Dateien auf der Seite.", config.PAKET_URL),
     ("a-pages", "GitHub Pages", "Der Spiegel der Seite unter daimpad.github.io.", "https://daimpad.github.io/ratsatlas-koeln/"),
     ("a-server", "Hauptadresse", "Der Branch deploy enthält die fertige Seite; der Server von koeln.ratsatlas.de "
                                  "übernimmt ihn über einen Webhook.", config.SITE_URL),
@@ -425,7 +428,7 @@ def daten(root="../"):
     ist_abruf = lambda s: s == "fetch" or s.startswith("fetch-")
     abruf = [schritt(s) for s in pages["schritte"] if ist_abruf(s)]
     rest = [schritt(s) for s in pages["schritte"] if not ist_abruf(s)]
-    quellen = [(f"q-{k}", QUELLEN[k][0], f"{QUELLEN[k][1]} Lizenz: {config.SOURCES[k]['license']}.",
+    quellen = [(f"q-{k}", QUELLEN[k][0], f"{QUELLEN[k][1]} Lizenz: {config.lizenz_oeffentlich(config.SOURCES[k]['license'])}.",
                 config.SOURCES[k]["url"] if config.SOURCES[k]["url"].startswith("http") else None, "Quelle")
                for k in config.SOURCES]
     quellen += [(k, t, e, z, "Seite") for k, t, e, z in WEITERE_QUELLEN]
@@ -485,7 +488,7 @@ def daten(root="../"):
                                                              "Aufgabe (Grafik „Datenfluss“).", TREE + "pipeline/", "Code"),
             ("t-sqlite", "SQLite", "Datenbank eines Laufs; sie wird nicht veröffentlicht, nur ihre Exporte.",
              CODE + "pipeline/build.py", "Code"),
-            *[(f"t-{p}", p, f"Python-Paket aus requirements.txt: {PAKET_TEXT.get(p, '')}".rstrip(": "),
+            *[(f"t-{p}", p, f"Python-Paket aus requirements.txt: {paket_text(p)}".rstrip(": "),
                f"https://pypi.org/project/{p}/", "PyPI") for p in v["pakete"]],
         ]),
         ("Daten", [
@@ -504,6 +507,16 @@ PAKET_TEXT = {"shapely": "Geometrie, etwa ob ein Punkt in einem Stadtteil liegt"
               "pyproj": "Umrechnung zwischen Koordinatensystemen (ETRS89/UTM 32N nach WGS84)",
               "pyshp": "Lesen der Shapefiles der Stadt Köln",
               "cairosvg": "Bild der Themenseite als PNG zum Teilen"}
+# Erklärungen, die zu einem Zusatzthema gehören (config.ZUSATZTHEMEN): ohne dessen Freigabe gilt der Ersatztext, damit die
+# Seite keine abgeschaltete Funktion nennt
+PAKET_FREIGABE = {"cairosvg": ("themenseiten", "Umwandlung von SVG-Bildern in PNG, derzeit ungenutzt")}
+
+
+def paket_text(paket):
+    freigabe, ersatz = PAKET_FREIGABE.get(paket, (None, ""))
+    if freigabe and not config.ZUSATZTHEMEN.get(freigabe):
+        return ersatz
+    return PAKET_TEXT.get(paket, "")
 
 
 def _liste(eintraege, root):

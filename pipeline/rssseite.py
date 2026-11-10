@@ -4,7 +4,9 @@ Hauptadresse ist der Feed über ganz Köln (publish.GANZ_BONN); darunter drei Zu
 in eine Website einbinden (Redaktionen), automatisiert weiterverarbeiten (Format, Felder, IDs, Abruf, Python-Beispiel
 nur mit der Standardbibliothek). Alle Feeds sind Atom 1.0; die Seite erklärt, dass Atom wie RSS funktioniert.
 Kopieren mit Rückmeldung über site/rss.js; ohne Skript ist die Adresse ein markierbares Feld. Feeds je Gebiet und
-Thema stehen in einer Liste, leere Feeds nicht.
+Thema stehen in einer Liste, leere Feeds nicht. Texte zu Themenseiten und KI-Kurzfassungen erscheinen nur mit deren
+Freigabe (config.ZUSATZTHEMEN „themenseiten“, „kurzfassungen“; Entscheidung 10.11.2026), sonst nennt die Seite keine
+abgeschaltete Funktion.
 """
 from html import escape
 
@@ -86,8 +88,13 @@ for eintrag in feed.findall("a:entry", ATOM):
 '''
 
 
+def _an(thema):
+    return bool(config.ZUSATZTHEMEN.get(thema))
+
+
 def body(site, site_url, root):
     url, link = feed_url(site_url), feed_url(root)   # angezeigt und kopiert absolut, verlinkt relativ
+    th = _an("themenseiten")   # Feeds je Themenseite (dossiers/) nur mit Freigabe
     themen, gebiete, ohne = _feeds(site, root)
     gruppen = "".join(_liste(escape(bezirk), eintraege, "h4") for bezirk, eintraege in sorted(gebiete.items()))
     einbinden = (f'<link rel="alternate" type="application/atom+xml"\n'
@@ -117,10 +124,10 @@ def body(site, site_url, root):
         <li><strong>Adresse einfügen.</strong> Kopieren Sie die Feed-Adresse oben und fügen Sie sie im Reader bei „Feed hinzufügen“ oder „Abonnieren“ ein.</li>
         <li><strong>Neues erhalten.</strong> Der Reader zeigt neue Einträge von selbst, sobald die Karte sie übernimmt ({AKTUALISIERUNG}). Abbestellen geht jederzeit im Reader; der Ratsatlas erfährt davon nichts.</li>
       </ol>
-      <p class="rss-weiter"><button type="button" class="rss-knopf rss-haupt" data-kopieren="#rss-url" hidden>RSS-Adresse kopieren</button> <a href="#weitere">Nur ein Gebiet oder Thema abonnieren</a></p>
+      <p class="rss-weiter"><button type="button" class="rss-knopf rss-haupt" data-kopieren="#rss-url" hidden>RSS-Adresse kopieren</button> <a href="#weitere">Nur ein Gebiet{" oder Thema" if th else ""} abonnieren</a></p>
       <details class="hh-mehr" id="weitere">
-        <summary>Feeds für einzelne Gebiete und Themen</summary>
-        <p>Diese Feeds enthalten nur die Vorlagen eines Gebiets oder einer Themenseite. Für einen einzelnen Vorgang gibt es in der <a href="{root}">Karte</a> beim Vorgang unter „Mitmachen“ einen eigenen Feed.</p>
+        <summary>Feeds für einzelne Gebiete{" und Themen" if th else ""}</summary>
+        <p>Diese Feeds enthalten nur die Vorlagen eines Gebiets{" oder einer Themenseite" if th else ""}. Für einen einzelnen Vorgang gibt es in der <a href="{root}">Karte</a> beim Vorgang unter „Mitmachen“ einen eigenen Feed.</p>
         {_liste("Themenseiten <small>(Zuordnung abgeleitet)</small>", themen)}
         {"<h3>Stadtteile nach Stadtbezirk</h3>" + gruppen if gruppen else ""}
         {_liste("Stadtweit, ohne Ortsbezug", ohne)}
@@ -143,11 +150,11 @@ def body(site, site_url, root):
       <dl class="rss-felder">
         <dt>Format</dt><dd>Atom 1.0 (<a href="https://www.rfc-editor.org/rfc/rfc4287">RFC 4287</a>), UTF-8. Atom erfüllt denselben Zweck wie RSS 2.0; jeder gängige Reader liest beides.</dd>
         <dt>Feed</dt><dd><code>id</code>, <code>title</code>, <code>subtitle</code>, <code>updated</code> (jüngster Eintrag), <code>link rel="self"</code>, <code>link rel="alternate"</code> (Karte), <code>author</code>, <code>rights</code> (Lizenz).</dd>
-        <dt>Eintrag</dt><dd><code>id</code>, <code>title</code>, <code>updated</code>, <code>link rel="alternate"</code> (Vorgang in der Karte), <code>link rel="related"</code> (Original im Ratsinformationssystem der Stadt), <code>summary</code> (Art, federführendes Amt, Stand; gekennzeichnete KI-Kurzfassung, wo vorhanden).</dd>
+        <dt>Eintrag</dt><dd><code>id</code>, <code>title</code>, <code>updated</code>, <code>link rel="alternate"</code> (Vorgang in der Karte), <code>link rel="related"</code> (Original im Ratsinformationssystem der Stadt), <code>summary</code> (Art, federführendes Amt, Stand{"; gekennzeichnete KI-Kurzfassung, wo vorhanden" if _an("kurzfassungen") else ""}).</dd>
         <dt>Kennung</dt><dd><code>id</code> ist stabil und entspricht <code>guid</code> in RSS: OParl-Adresse der Vorlage und Art des Ereignisses, z. B. <code>…/oparl/papers/2022978#vorlage</code>, <code>…#beratung-2026-06-10-Rat</code>, <code>…#folge-…</code>. Dieselbe Vorlage hat in allen Feeds dieselbe Kennung.</dd>
         <dt>Datum</dt><dd><code>updated</code> ist der Tag des Ereignisses (Datum der Vorlage oder der Sitzung), immer 00:00 UTC; ein eigenes Veröffentlichungsdatum gibt es nicht.</dd>
         <dt>Umfang</dt><dd>Die letzten 100 Einträge je Feed, neueste zuerst; Feeds je Vorgang enthalten alle Ereignisse.</dd>
-        <dt>Adressen</dt><dd><code>data/export/koeln/feeds/ganz-koeln.xml</code>, <code>feeds/ortsteil-&lt;name&gt;.xml</code>, <code>feeds/bezirk-&lt;name&gt;.xml</code>, <code>feeds/ohne-&lt;jahr&gt;.xml</code>, <code>feeds/vorlagen/&lt;drucksache&gt;.xml</code>, <code>dossiers/&lt;thema&gt;.xml</code>.</dd>
+        <dt>Adressen</dt><dd><code>data/export/koeln/feeds/ganz-koeln.xml</code>, <code>feeds/ortsteil-&lt;name&gt;.xml</code>, <code>feeds/bezirk-&lt;name&gt;.xml</code>, <code>feeds/ohne-&lt;jahr&gt;.xml</code>, <code>feeds/vorlagen/&lt;drucksache&gt;.xml</code>{", <code>dossiers/&lt;thema&gt;.xml</code>" if th else ""}.</dd>
         <dt>Abruf</dt><dd>Die Feeds ändern sich höchstens einmal am Tag ({LAUF}). Bitte höchstens einmal pro Stunde abrufen, besser einmal am Tag; der Server beantwortet bedingte Abrufe (<code>If-Modified-Since</code>, <code>If-None-Match</code>). Ohne Schlüssel und ohne Anmeldung. Für den Abruf aus dem Browser anderer Websites (CORS) nutzen Sie derzeit den Spiegel <code>https://daimpad.github.io/ratsatlas-koeln/</code> mit denselben Pfaden; auf der Hauptadresse ist die Freigabe noch nicht eingerichtet.</dd>
       </dl>
       <p>Beispiel in Python, nur mit der Standardbibliothek:</p>
@@ -164,6 +171,6 @@ def write(site, site_url, page):
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page(site_url, PFAD, "Inhalte abonnieren und weiterverwenden – Ratsatlas Köln",
                         "Feeds des Ratsatlas Köln abonnieren oder einbinden: neue Vorlagen und Beratungsergebnisse "
-                        "aus ganz Köln, je Gebiet und je Thema, offen und ohne Konto.",
+                        f"aus ganz Köln, je Gebiet{' und je Thema' if _an('themenseiten') else ''}, offen und ohne Konto.",
                         body(site, site_url, "../"), "../"), encoding="utf-8")   # Feed-Erkennung im Kopf: _page
     return [PFAD]

@@ -587,22 +587,40 @@ def _uesg_karte(gj):
     return {"features": [{"type": "Feature", "properties": {"art": a}, "geometry": mapping(g)} for a, g in teile]}
 
 
-def zuschaltbar(ziel):
+def quellen_stand():
+    """Quellen der Kennzahlen mit Titel, Adresse, Lizenz und Stand (data/kontext/STAND.json, Haltestellen aus der eigenen
+    Datei); Grundlage von kontext.json (meta.quellen), den zuschaltbaren Dateien und der DCAT-Beschreibung."""
+    return {**json.loads(STAND.read_text()), **({"haltestellen": json.loads(HALT_STAND.read_text())} if HALT_STAND.exists() else {})}
+
+
+def _quelle(stand, key, hinweis):
+    """meta einer zuschaltbaren Datei (Runde 19b): Quelle, Adresse, Lizenz mit Namensnennung und Stand wie in
+    kontext.json; die Seite liest nur `features`."""
+    q = stand.get(key) or {}
+    return {"quelle": q.get("titel"), "url": q.get("url"), "lizenz": q.get("lizenz"), "stand": q.get("stand"),
+            "hinweis": hinweis}
+
+
+def zuschaltbar(ziel, quellen=None):
+    """Zuschaltbare Flächen und Punkte nach ziel/; quellen (quellen_stand()) liefert je Datei Quelle und Lizenz für `meta`."""
+    quellen = quellen_stand() if quellen is None else quellen
     ziel.mkdir(parents=True, exist_ok=True)
     for name, (src, felder) in FLAECHEN.items():
         gj = json.loads(src.read_text())
         if name == "ueberschwemmung":
             gj = _uesg_karte(gj)
         gj = {"features": [{**f, "properties": {k: f["properties"].get(k) for k in felder}} for f in gj["features"]]}
-        data = flaechen.simplify(gj, FLAECHEN_TOLERANZ)
+        data = {**flaechen.simplify(gj, FLAECHEN_TOLERANZ),
+                "meta": _quelle(quellen, name, "Für die Karte vereinfacht (etwa 5 m); verbindlich ist die Quelle.")}
         (ziel / f"{name}.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n")
-    for name, (src, felder, _) in PUNKTE.items():
+    for name, (src, felder, quelle) in PUNKTE.items():
         if not src.exists():
             continue
         with open(src, encoding="utf-8") as f:
             feats = [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [float(r["lon"]), float(r["lat"])]},
                       "properties": {k: r.get(k) for k in felder}} for r in csv.DictReader(f, delimiter="\t")]
-        (ziel / f"punkte_{name}.json").write_text(json.dumps({"type": "FeatureCollection", "features": feats},
+        meta = _quelle(quellen, quelle, "Nur Name und die genannten Felder, ohne Kontaktdaten; verbindlich ist die Quelle.")
+        (ziel / f"punkte_{name}.json").write_text(json.dumps({"type": "FeatureCollection", "meta": meta, "features": feats},
                                                               ensure_ascii=False, separators=(",", ":")) + "\n")
 
 
@@ -613,13 +631,17 @@ def write():
         return
     werte, audit, audit_wahl = kennzahlen()
     zuordnung = {n: b for n, b, _ in _gebiete()[0]}
-    stand = {**json.loads(STAND.read_text()), "haltestellen": json.loads(HALT_STAND.read_text())}
+    staende = quellen_stand()
     meta = {"hinweis": "Einordnung, kein Urteil. Alle Werte sind auf Stadtteile und Stadtbezirke umgerechnet (abgeleitet).",
             "mindest_einwohner": MIN_EINWOHNER,
             "bodenrichtwert_hinweis_ohne_zone": BRW_HINWEIS_OHNE_ZONE,
             "reihenfolge": [k for k in KENNZAHLEN if k != "wahlbeteiligung" or audit_wahl],   # Reihenfolge für Steckbrief und Assistent (die Schlüssel werden sortiert)
-            "quellen": {k: {f: stand[k].get(f) for f in ("titel", "url", "lizenz", "stand", "uebergang") if f != "uebergang" or stand[k].get(f)}
-                        for k in sorted(stand)},
+            "quellen": {k: {f: staende[k].get(f) for f in ("titel", "url", "lizenz", "stand", "uebergang") if f != "uebergang" or staende[k].get(f)}
+                        for k in sorted(staende)},
+            # Gebiete, auf die umgerechnet wird (Namen und Flächen der Stadt Köln), mit Lizenz und Namensnennung
+            # (Runde 19b); nicht unter „quellen“, die die Seite als Quellen der Kennzahlen auflistet
+            "gebiete": {"titel": "Stadtteile und Stadtbezirke der Stadt Köln", "url": config.SOURCES[config.QUELLE_GEO]["url"],
+                        "lizenz": config.SOURCES[config.QUELLE_GEO]["license"]},
             "kennzahlen": {k: {"titel": t, "einheit": u, "quelle": q, "methode": m, **({"ohne_wert": OHNE_WERT[k]} if k in OHNE_WERT else {})}
                            for k, (t, u, q, m) in KENNZAHLEN.items() if k != "wahlbeteiligung" or audit_wahl}}
     doc = {"meta": meta,
@@ -629,7 +651,7 @@ def write():
            "stadtbezirk_je_ortsteil": zuordnung}
     out = config.EXPORT / config.STADT / OUT
     out.parent.mkdir(parents=True, exist_ok=True)
-    zuschaltbar(config.EXPORT / config.STADT / "flaechen")
+    zuschaltbar(config.EXPORT / config.STADT / "flaechen", staende)
     out.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":"), sort_keys=True) + "\n")
     with open(config.EXPORT / AUDIT, "w", newline="", encoding="utf-8") as f:
         wr = csv.writer(f, delimiter="\t", lineterminator="\n")

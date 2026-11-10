@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://github.com/daimpad/ratsatlas-koeln/actions/workflows/tests.yml"><img src="https://github.com/daimpad/ratsatlas-koeln/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Code-MIT-2563eb" alt="Code: MIT"></a>
-  <a href="data/LICENSE-DATA.md"><img src="https://img.shields.io/badge/Daten-dl--de%2Fzero%202.0-15803d" alt="Daten: dl-de/zero 2.0"></a>
+  <a href="data/LICENSE-DATA.md"><img src="https://img.shields.io/badge/Daten-dl--de%2Fzero%20und%20dl--de%2Fby%202.0-15803d" alt="Daten: dl-de/zero 2.0 und dl-de/by 2.0"></a>
   <img src="https://img.shields.io/badge/axe-WCAG%202.1%20AA%20gepr%C3%BCft-5b21b6" alt="Barrierefreiheit: mit axe auf WCAG 2.1 AA geprüft">
 </p>
 
@@ -27,7 +27,7 @@ Die Ratsinformationen werden in drei Richtungen erschlossen:
 | 🕒 | **Wann?** | Je Vorlage eine Prozesslinie: Veröffentlichung, Beratungen mit Gremium, Datum, Tagesordnungspunkt und wörtlichem Ergebnis, Folgevorlagen; kommende Sitzungen als offene Stationen. |
 | 👥 | **Wer?** | Befasste Gremien (Rat, Fachausschüsse, Bezirksvertretungen), einreichende Fraktionen und – sobald ermittelbar – die federführende Dienststelle. |
 
-Dazu gibt es eine Suche, Erklärungen der Begriffe, Feeds und einen Sitzungskalender zum Abonnieren sowie ein Datenpaket zum Weiterverwenden.
+Dazu gibt es eine Suche, Erklärungen der Begriffe, Feeds und einen Sitzungskalender zum Abonnieren sowie ein Datenpaket zum Weiterverwenden. Die Prüfprotokolle (Audits) und Stichproben zur Verortung stehen nur im Datenpaket, nicht als einzelne Dateien auf der Seite.
 
 ## Herkunft
 
@@ -44,12 +44,12 @@ Der Ratsatlas Köln beruht auf dem Code des **Ratsatlas Bonn** ([daimpad/ratsatl
 | Weitere offene Daten der Stadt Köln (Lebenswerte Veedel, Sozialräume, Stimmbezirke, Wohnbaupotenziale, Fahrradstraßen, Denkmalliste) | Kartenebenen | dl-de/zero 2.0 |
 | OpenStreetMap über Protomaps | grauer Kartenhintergrund | ODbL 1.0 |
 
-Die Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ steht auf jeder Seite und in jedem Export. Der Code steht unter der [MIT-Lizenz](LICENSE), die Daten unter den Lizenzen in [data/LICENSE-DATA.md](data/LICENSE-DATA.md).
+Die Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ steht auf jeder Seite und in jeder JSON-, GeoJSON-, Feed- und Kalenderdatei mit Daten aus dem Ratsinformationssystem oder von offenedaten-koeln.de; für die Tabellen (TSV) im Datenpaket gilt die Lizenzübersicht. Dateien mit Daten von Land und Bund nennen deren Quelle, Lizenz und Namensnennung in der Datei selbst (`meta`, in `ebenen.json` je Ebene). Der Code steht unter der [MIT-Lizenz](LICENSE), die Daten unter den Lizenzen in [data/LICENSE-DATA.md](data/LICENSE-DATA.md), dort mit der Lizenz jeder einzelnen Datei.
 
 ## Grenzen
 
 - **Ableitungen:** Orte aus dem Titel, Themen und Fraktionen sind abgeleitet und können falsch sein. Jede Verortung nennt Methode, Konfidenz und Fundstelle. Die Prüfung von Hand an Kölner Vorlagen steht noch aus.
-- **Datenschutz:** Wohnadressen von Privatpersonen werden nicht gezeigt. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische Anträge, nie Anregungen und Beschwerden nach § 24 GO NRW.
+- **Datenschutz:** Wohnadressen von Privatpersonen werden nicht gezeigt. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung sowie politische Anträge und Anfragen, nie Anregungen und Beschwerden nach § 24 GO NRW; ist die Art einer Vorlage nicht erkennbar, zeigt die Karte höchstens die Straße.
 - **Volltexte:** Bis die Lizenz geklärt ist, erscheinen keine Volltexte, Zitate oder Dokumente der Stadt; die Seite verlinkt nur auf das Original.
 - **Nicht einsehbar:** Nichtöffentliche Beratungen, Arbeit innerhalb der Verwaltung und die Umsetzung von Beschlüssen.
 - **Maßgeblich** ist immer das Original im Ratsinformationssystem.

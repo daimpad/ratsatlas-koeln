@@ -254,7 +254,8 @@ def test_pruefung_meldet_hauskoordinate_neben_ausgelassener_vorlage(testdaten, m
                _vorlage(102, id=f"{B}/papers/eingabe-b", reference="", paperType=EINGABE_ART, consultation=[]),
                _vorlage(32, reference="1332/2026", paperType="Mitteilung", name=titel,
                         superordinatedPaper=[f"{B}/papers/eingabe-b"]))
-    monkeypatch.setattr(build, "ohne_hauskoordinate", lambda ohne, beziehungen: set(ohne))   # Fehler: ohne Verbundene
+    # Fehler: ohne Verbundene (nur die Startmenge statt des Fixpunkts)
+    monkeypatch.setattr(build, "sperrmenge", lambda start, beziehungen, drucksachen: dict.fromkeys(start, "start"))
     build.build()
     export.export()
     capsys.readouterr()

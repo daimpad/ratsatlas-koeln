@@ -16,6 +16,7 @@ bestimmt nur den Ortsteil; angezeigt wird weiter der Straßenabschnitt, Fundstel
 import json
 import math
 import re
+import unicodedata
 from collections import defaultdict
 
 import shapely
@@ -425,36 +426,172 @@ REFERENZ_PUNKT = re.compile(r"^(?:AN/)?\d{1,4}/\d{4}$")
 # Einwohnerfragen; nicht „Einwohnerbefragung“ (Verwaltung)
 EINGABE = re.compile(r"(?i)§\s*24\b|anregung|beschwerde|eingabe|petition|bürgerantrag|einwohner(?:innen)?antrag"
                      r"|einwohner(?:innen)?(?:an)?frage")
+# Hauskoordinate nur bei erkennbarer Vorlagenart (Entscheidung 10.11.2026): leer, nur Leerraum, null, nicht als Text
+# geliefert oder ohne Treffer hier → keine Hauskoordinate, höchstens die Straße (wie bei Eingaben). Erkannt werden
+# Verwaltungsvorlagen und politische Anträge und Anfragen, Groß- und Kleinschreibung egal, auch als Wortteil
+# („Beschlussvorlage“, „Änderungsantrag“). Quellen: Köln, Stufe 1 und 2 (explore/BERICHT_phase1.md 5.7 und 6.5:
+# „Antrag nach § 3 der GeschO des Rates“, „Anfrage nach § 4 der GeschO des Rates“, „Mitteilung BV“, „Antrag nach § 3
+# BV2 (CDU)“, „Änderungsantrag BV1 (Grüne)“); Bonner bzw. übliche SessionNet-Arten wie in actors.POLITIK_TYPES und
+# actors.VERWALTUNG_TYPES (Beschlussvorlage, Mitteilungsvorlage, Stellungnahme der Verwaltung, Informationsbrief,
+# Dringlichkeitsentscheidung, Dringlichkeitsantrag, Große und Kleine Anfrage) und Antworten der Verwaltung
+# („Beantwortung einer Anfrage (BV)“). Nie mit „Bürger“ (außer „Bürgermeister“, „Oberbürgermeisterin“), „Einwohner“,
+# „Anwohner“, „privat“, „Bauantrag“ oder „Bauvoranfrage“ in der Art: Vorlagen aus der Einwohnerschaft oder von
+# Privatpersonen („Bürgerbrief“ steht in actors.VERWALTUNG_TYPES, ist aber eine Vorlage aus der Einwohnerschaft,
+# chat.EINWOHNER). EINGABE geht vor: „Einwohneranfrage nach § 39 Abs. 6“ enthält „anfrage“ und bleibt ohne
+# Hauskoordinate. Abgeglichen wird der Vergleichstext (_vergleichstexte), nicht die gelieferte Schreibung. Die
+# vollständige Kölner Liste fehlt bis zum Vollabruf: erkannte und nicht erkannte Arten stehen mit Anzahl im Log von
+# build und in der Ausgabe von check.
+VORLAGENART_PUNKT = re.compile(r"(?is)^(?!.*(?:bürger(?!meister)|einwohner|anwohner|privat"
+                               r"|bau(?:vor)?an(?:trag|frage)))"
+                               r".*(?:vorlage|mitteilung|stellungnahme|antwort|dringlichkeitsentscheidung"
+                               r"|informationsbrief|antrag|anfrage)")
+# Zeichen ohne Breite und weiche Trennzeichen: fallen im Vergleichstext weg („Bür\u00adgerantrag“ wie
+# „Bürgerantrag“)
+_UNSICHTBAR = re.compile(r"[\u00ad\u034f\u180e\u200b-\u200f\u2060-\u2064\ufeff]")
+# Kennzeichen an einer Vorlage, deren Vorlagenart nicht als Zeichenkette kam (Liste, Objekt; build.einlesen macht Text
+# daraus): gilt als nicht erkennbar, auch wenn der Text passt (vorsichtige Auslegung)
+ANDERE_FORM = "_vorlagenart_andere_form"
+# Gründe ohne Hauskoordinate (punkt_ausschluss) in der Reihenfolge der Prüfung, mit Bezeichnung im Log von build
+AUSSCHLUSS = {"drucksache": "Drucksache in anderem Schema", "eingabe": "Eingabe oder Einwohneranfrage",
+              "gremium": "Ausschuss für Anregungen und Beschwerden", "vorlagenart": "Vorlagenart nicht erkennbar",
+              "maske": "Titel ohne Hausnummer (Einwohnerschaft, Bauordnung, Naturschutz)"}
 
 
-def hausnummer_punkt_erlaubt(paper, gremien=()):
-    """Darf eine Straße mit Hausnummer im Titel auf die Hauskoordinate gesetzt werden? `gremien`: Namen der
-    beratenden Gremien. Ausgeschlossen: andere Referenzschemata, Vorlagentyp oder Titel mit Hinweis auf eine Eingabe,
-    jede Beratung im Ausschuss für Anregungen und Beschwerden bzw. Bürgerbeteiligung."""
+def _vergleichstexte(text):
+    """Vergleichstexte für die Regeln zur Hauskoordinate (EINGABE, Gremien, VORLAGENART_PUNKT), damit eine andere
+    Schreibung eine Eingabe nicht durchlässt: Unicode-Normalform NFKC (zerlegte Umlaute, Vollbreite), ohne weiche
+    Trennzeichen und Zeichen ohne Breite (_UNSICHTBAR), kleingeschrieben, „Paragraf 24“ wie „§ 24“; dazu derselbe Text
+    mit „ae“, „oe“, „ue“ als „ä“, „ö“, „ü“ („Buergerantrag“). Ein Ausschluss gilt, wenn einer der beiden Texte passt,
+    eine Erkennung nur, wenn beide passen (so verdeckt „ue“ kein folgendes Wort: „Neueingabe“). Nur für den Abgleich;
+    Datenbank, Export und Log behalten die gelieferte Schreibung."""
+    t = unicodedata.normalize("NFKC", _UNSICHTBAR.sub("", text or "")).lower()
+    t = re.sub(r"paragra(?:f|ph)(?:en)?\.?\s*(?=\d)", "§ ", t)
+    return t, t.replace("ae", "ä").replace("oe", "ö").replace("ue", "ü")
+
+
+def vorlagenart_erkannt(paper):
+    """Ist die Vorlagenart als Verwaltungsvorlage oder politischer Antrag bzw. Anfrage erkennbar (VORLAGENART_PUNKT,
+    in beiden Vergleichstexten)? Nein bei null, fehlend, keiner Zeichenkette oder dem Kennzeichen ANDERE_FORM; eine
+    leere oder nur aus Leerraum bestehende Vorlagenart trifft das Muster nicht (es verlangt ein Wort wie „vorlage“ oder
+    „antrag“)."""
+    art = paper.get("paperType")
+    return (isinstance(art, str) and not paper.get(ANDERE_FORM)
+            and all(VORLAGENART_PUNKT.search(t) for t in _vergleichstexte(art)))
+
+
+def punkt_ausschluss(paper, gremien=(), amt=None):
+    """Grund, aus dem eine Straße mit Hausnummer im Titel nicht auf die Hauskoordinate gesetzt wird (AUSSCHLUSS), oder
+    None, wenn es erlaubt ist. `gremien`: Namen der beratenden Gremien; `amt`: Name der federführenden Organisation
+    (`underDirectionOf`). Ausgeschlossen: andere Referenzschemata, Vorlagenart oder Titel mit Hinweis auf eine Eingabe,
+    jede Beratung im Ausschuss für Anregungen und Beschwerden bzw. Bürgerbeteiligung, eine leere oder nicht erkennbare
+    Vorlagenart (VORLAGENART_PUNKT) und jede Vorlage, deren Titel maske.py ohne Hausnummer zeigt (Einwohnerschaft nach
+    Art oder Titel, Bauordnungsamt oder Untere Naturschutzbehörde federführend; maske.titel_ohne_hausnummer, gleiche
+    Angaben wie maske.aus_db): Neben einem Titel ohne Hausnummer stünde sonst die Anschrift als Ortsname mit
+    Hauskoordinate (Prüfung r19). Abgleich über die Vergleichstexte (_vergleichstexte): andere Schreibungen wie
+    „Buergerantrag“ oder mit weichem Trennzeichen gelten wie die übliche."""
     if not REFERENZ_PUNKT.match(paper.get("reference") or ""):
-        return False
-    if EINGABE.search(paper.get("paperType") or "") or EINGABE.search(paper.get("name") or ""):
-        return False
-    return not any(re.search(r"(?i)anregungen und beschwerden|bürgerbeteiligung", g or "") for g in gremien)
+        return "drucksache"
+    art = paper.get("paperType")
+    art = art if isinstance(art, str) else "" if art is None else str(art)
+    if any(EINGABE.search(t) for t in _vergleichstexte(art) + _vergleichstexte(paper.get("name"))):
+        return "eingabe"
+    if any(re.search(r"(?i)anregungen und beschwerden|bürgerbeteiligung", t)
+           for g in gremien for t in _vergleichstexte(g)):
+        return "gremium"
+    if not vorlagenart_erkannt(paper):
+        return "vorlagenart"
+    from . import maske   # hier: maske → chat → geocode
+    return "maske" if maske.titel_ohne_hausnummer(paper.get("paperType"), paper.get("name"), amt) else None
 
 
-def ohne_hauskoordinate(ohne, beziehungen):
-    """Vorlagen ohne Erlaubnis für Hauskoordinaten (`ohne`, IDs), erweitert um alle Vorlagen, die mit ihnen über- oder
-    untergeordnet verbunden sind, auch über mehrere Stufen: Beantwortung oder Stellungnahme zu einer Eingabe oder
-    Einwohneranfrage nennen oft dieselbe Anschrift, tragen aber weder die Art noch das Wort im Titel (wie
-    chat.einwohner für die Hausnummer im Titel; Generalprobe 09.11.2026). `beziehungen`: Paare (übergeordnet,
-    untergeordnet). Gleiche Regel im Aufbau (build._stage_b) und in der Prüfung (check.erlaubnis)."""
-    nachbarn = defaultdict(set)
+def hausnummer_punkt_erlaubt(paper, gremien=(), amt=None):
+    """Darf eine Straße mit Hausnummer im Titel auf die Hauskoordinate gesetzt werden? (punkt_ausschluss)"""
+    return punkt_ausschluss(paper, gremien, amt) is None
+
+
+def vorlagenart_bezeichnung(paper):
+    """Vorlagenart für die Zählung der erkannten und nicht erkannten Arten (nur die Art, keine weiteren Angaben der
+    Vorlage)."""
+    art = paper.get("paperType")
+    art = art.strip() if isinstance(art, str) else "" if art is None else str(art)
+    if not art:
+        return "(leer)"
+    art = art if len(art) <= 80 else art[:79] + "…"
+    return f"„{art}“" + (" (als Liste oder Objekt geliefert)" if paper.get(ANDERE_FORM) else "")
+
+
+def _arten_zeile(kopf, zaehler, hoechstens):
+    teile = [f"{art} {n}" for art, n in sorted(zaehler.items(), key=lambda x: (-x[1], x[0]))]
+    if len(teile) > hoechstens:
+        teile = teile[:hoechstens] + [f"… und {len(teile) - hoechstens} weitere Arten"]
+    return f"{kopf}: {sum(zaehler.values())} Vorlagen" + (" – " + ", ".join(teile) if teile else "")
+
+
+def nicht_erkannte_arten(zaehler, hoechstens=40):
+    """Zeile für Log und Prüfung: Vorlagen ohne Hauskoordinate wegen nicht erkennbarer Vorlagenart, je Art mit Anzahl
+    (häufigste zuerst), damit VORLAGENART_PUNKT nach dem Vollabruf ergänzt werden kann."""
+    return _arten_zeile("Vorlagenart nicht erkennbar, daher keine Hauskoordinate (höchstens Straße; "
+                        "geocode.VORLAGENART_PUNKT)", zaehler, hoechstens)
+
+
+def erkannte_arten(zaehler, hoechstens=40):
+    """Zeile für Log und Prüfung: Vorlagen mit Erlaubnis für die Hauskoordinate nach ihrer eigenen Angabe (Vorlagenart
+    erkannt, keine Eingabe; punkt_ausschluss None), je Art mit Anzahl (häufigste zuerst), damit nach dem Vollabruf
+    auch geprüft werden kann, ob eine erkannte Art von Einwohnerinnen, Einwohnern oder Privatpersonen stammt. Ob die
+    Vorlage den Punkt bekommt, hängt zudem vom Titel (Straße mit Hausnummer), den verbundenen Vorlagen und den
+    Vorlagen mit derselben Drucksache ab."""
+    return _arten_zeile("Vorlagenart erkannt, Hauskoordinate möglich (geocode.VORLAGENART_PUNKT)", zaehler, hoechstens)
+
+
+# Weg, über den eine Vorlage in die Menge ohne Hauskoordinate kommt (sperrmenge), mit Bezeichnung im Log von build
+WEG = {"beziehung": "verbunden mit einer davon oder einer ausgelassenen Vorlage",
+       "drucksache": "mit derselben Drucksache wie eine davon"}
+
+
+def sperrmenge(start, beziehungen, drucksachen):
+    """Alle Vorlagen ohne Erlaubnis für Hauskoordinaten als Fixpunkt, eine Funktion für den Aufbau (build.build) und die
+    Prüfung (check.erlaubnis): Ausgehend von `start` (IDs mit Grund aus punkt_ausschluss und beim Aufbau ausgelassene
+    Vorlagen) kommen abwechselnd alle verbundenen Vorlagen hinzu (über `beziehungen`, auch über mehrere Stufen: über-
+    und untergeordnet und relatedPaper, Paare in beiden Richtungen; Beantwortung oder Stellungnahme zu einer Eingabe
+    nennen oft dieselbe Anschrift, tragen aber weder die Art noch das Wort im Titel) und alle Vorlagen mit derselben
+    Drucksache (`drucksachen`, {Vorlagen-ID: Drucksache}; vorlagen.geojson und die Gebietsdateien führen Vorlagen unter
+    ihrer Drucksache), bis nichts mehr hinzukommt. So sperrt eine Kopie mit derselben Drucksache wie eine Eingabe auch
+    ihre verbundenen Vorlagen, und eine Vorlage, die über eine Beziehung gesperrt ist, sperrt die Vorlagen mit ihrer
+    Drucksache (Prüfung r19: vorher nur ein Schritt).
+    Gerechnet als eine Breitensuche in Schichten, in linearer Zeit (Prüfung r19b: vorher je Wechsel zwischen Beziehung
+    und Drucksache ein Durchlauf über alle Vorlagen, bei langen Ketten quadratisch): Nachbarn und Vorlagen je Drucksache
+    werden einmal aufgestellt; eine Schicht nimmt zuerst alles hinzu, was über Beziehungen erreichbar ist, dann bilden
+    die noch fehlenden Vorlagen mit der Drucksache einer Vorlage der Schicht die nächste Schicht (jede Drucksache
+    einmal). Liefert {ID: Weg} mit Weg „start“, „beziehung“ oder „drucksache“ (wodurch die Vorlage hinzukam; WEG),
+    gleich dem früheren Ablauf in Runden."""
+    nachbarn = {}
     for a, b in beziehungen:
-        nachbarn[a].add(b)
-        nachbarn[b].add(a)
-    gesehen, offen = set(ohne), list(ohne)
-    while offen:
-        for n in nachbarn[offen.pop()]:
-            if n not in gesehen:
-                gesehen.add(n)
-                offen.append(n)
-    return gesehen
+        nachbarn.setdefault(a, []).append(b)
+        nachbarn.setdefault(b, []).append(a)
+    je_drucksache = {}
+    for i, ref in drucksachen.items():
+        je_drucksache.setdefault(ref, []).append(i)
+    weg = dict.fromkeys(start, "start")
+    schicht, erledigt = list(weg), set()
+    while schicht:
+        offen = list(schicht)
+        while offen:
+            for n in nachbarn.get(offen.pop(), ()):
+                if n not in weg:
+                    weg[n] = "beziehung"
+                    offen.append(n)
+                    schicht.append(n)
+        naechste = []
+        for i in schicht:
+            if i not in drucksachen or drucksachen[i] in erledigt:
+                continue
+            erledigt.add(drucksachen[i])
+            for n in je_drucksache[drucksachen[i]]:
+                if n not in weg:
+                    weg[n] = "drucksache"
+                    naechste.append(n)
+        schicht = naechste
+    return weg
 
 
 def plan_numbers(title):

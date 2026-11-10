@@ -52,8 +52,8 @@ SCHRITTE = {
 }
 
 SCHRITTE_TEXT = {
-    "initiierung": "Wie das Verfahren angestoßen wurde, etwa durch einen Antrag, eine Anfrage, einen Bürgerantrag oder eine "
-                   "Vorlage der Verwaltung.",
+    "initiierung": "Wie das Verfahren angestoßen wurde, etwa durch einen Antrag, eine Anfrage, eine Anregung oder Beschwerde "
+                   "nach § 24 GO NRW oder eine Vorlage der Verwaltung.",
     "vorbereitung": "Arbeit der Verwaltung, bevor eine Vorlage erscheint; von außen nicht einsehbar.",
     "veroeffentlichung": "Datum, unter dem die Vorlage im Ratsinformationssystem steht.",
     "beratung": "Ein Gremium berät die Vorlage; das Ergebnis steht wörtlich wie in der Quelle.",
@@ -156,8 +156,9 @@ BEGRIFFE = [
                     "Stadtbezirke tragen den Namen eines Stadtteils, etwa Porz oder Kalk.", GEBIETE + "; " + HAUPTSATZUNG),
     ("Verortung", "Zuordnung einer Vorlage zu einem Ort: aus der Ortsangabe der Stadt (Stufe A) oder aus Straßen-, "
                   "Stadtteil- und Bezirksnamen im Titel (Stufe B). Jede Verortung nennt Methode, Konfidenz und "
-                  "Fundstelle. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische "
-                  "Anträge, nie Eingaben von Einwohnerinnen und Einwohnern.", "abgeleitet (Ratsatlas)"),
+                  "Fundstelle. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung sowie politische "
+                  "Anträge und Anfragen, nie Eingaben von Einwohnerinnen und Einwohnern; ist die Art einer Vorlage nicht erkennbar, "
+                  "zeigt die Karte höchstens die Straße.", "abgeleitet (Ratsatlas)"),
     # Kürzel
     ("TOP", "Tagesordnungspunkt einer Sitzung.", ALLGEMEIN),
     ("GO NRW", "Gemeindeordnung für das Land Nordrhein-Westfalen; sie regelt Aufgaben und Arbeit von Rat, Ausschüssen "
