@@ -10,7 +10,7 @@ from . import topics
 MIN_VORLAGEN = 5      # mindestens so viele Vorlagen des Themas im Gebiet
 MIN_ANTEIL = 0.10     # mindestens dieser Anteil an den Vorlagen des Gebiets
 MIN_FAKTOR = 1.25     # mindestens so viel häufiger als in der ganzen Stadt
-MIN_THEMEN = 20       # Themenebene: Anteile erst ab so vielen Vorlagen im Gebiet (alle seit 2019)
+MIN_THEMEN = 20       # Themenebene: Anteile erst ab so vielen Vorlagen im Gebiet (alle seit Beginn der Daten)
 
 
 def window_start(stand):
