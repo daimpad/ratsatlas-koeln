@@ -736,7 +736,8 @@ async function info(id) {
 }
 
 // gleichwertige Tabelle (WCAG 2.1 AA): alle Flächen der Raumebene mit Wert, Status und Jahr; sortierbar über die
-// Spaltenköpfe (aria-sort), Vorgabe nach Name; keine Rangspalte
+// Spaltenköpfe (aria-sort), Vorgabe nach Name; keine Rangspalte. Wie der Vergleich der Städte in einem seitlich
+// verschiebbaren Bereich (bei 320 px Breite rollt nur die Tabelle, nicht der ganze Bereich „Vorgang“)
 let sortierung = { s: "name", r: "aufsteigend" };
 function tabelle(ev, still) {
   if (!aktuell) return;
@@ -753,10 +754,11 @@ function tabelle(ev, still) {
   const html = `<h3 tabindex="-1">${esc(ind.name)}</h3>
     <p class="hint">${esc(EBENE[lage.ebene].viele)}, ${esc(lage.jahr || "")}${einheitText(ind.einheit) ? `; Einheit: ${esc(ind.einheit)}` : ""}. Gleiche Angaben wie die Flächenfarben auf der Karte. Sortieren über die Spaltenköpfe; die Reihenfolge ist keine Rangfolge. ${telefon ? "Ein Tippen auf den Namen schließt die Tabelle und zeigt die Fläche mit ihrem Wert auf der Karte." : "Ein Klick auf den Namen zeigt die Fläche auf der Karte."}</p>
     <p class="hint">${esc(A.texte.einordnung)} ${esc(A.texte.fehlschluss)}</p>
+    <div class="sd-scroll" tabindex="0" role="region" aria-label="Tabelle der Flächenfarben (seitlich verschiebbar)">
     <table class="kontext-table sd-tabelle" id="sd-tabelle"><caption class="visually-hidden">${esc(ind.name)}, ${esc(EBENE[lage.ebene].je)}, ${esc(lage.jahr || "")}</caption>
       <thead><tr>${kopf("name", "Gebiet")}${kopf("wert", "Wert")}${kopf("status", "Status")}<th scope="col">Jahr</th></tr></thead>
       <tbody>${sortiert(zeilen, sortierung.s, sortierung.r).map((x) => `<tr><th scope="row"><button type="button" class="link-btn" data-raum="${esc(x.id)}">${esc(x.name)}</button></th>
-        <td>${hatWert(x.z) ? esc(zahl(x.z.wert, aktuell.st)) : "–"}</td><td>${esc(x.statusText)}</td><td>${esc(lage.jahr || "")}</td></tr>`).join("")}</tbody></table>
+        <td>${hatWert(x.z) ? esc(zahl(x.z.wert, aktuell.st)) : "–"}</td><td>${esc(x.statusText)}</td><td>${esc(lage.jahr || "")}</td></tr>`).join("")}</tbody></table></div>
     <p class="hint sd-quelle">${quelleZeile()}</p>`;
   const el = ctx.detail(`Tabelle: ${EBENE[lage.ebene].viele}`, html, still);
   const t = el.querySelector("#sd-tabelle");

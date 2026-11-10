@@ -176,8 +176,12 @@ EINWOHNER = "koeln_A0355A"   # Einwohnerzahl für die Anzeige: Hauptwohnsitz (En
 # Codes der geprüften Beziehung; nur im Lauf geprüft und gezählt, in keinem veröffentlichten Text und in keiner Ausgabe
 # genannt (Entscheidung 10.11.2026)
 GESAMT, HAUPT, NEBEN = "A0025A", "A0355A", "A0359A"
+# Bezugsgröße der Einwohnerzahl GESAMT als eigener Satz, ohne Beziehung zu anderen Einwohnerzahlen: ein Wortlaut für
+# die Metatexte der abgeleiteten Anteile und der Verhältnisse (indikatoren.tsv) und für kontext.json
+# (pipeline/kontext.py); die Prüfung „ohne Rechenweg“ in tests/test_strukturdaten.py nimmt genau diesen Satz aus
+BEZUGSGROESSE = "Bezugsgröße sind alle Einwohner*innen mit Haupt- und Nebenwohnsitz."
 # Abgeleitete Indikatoren (Entscheidung des Auftraggebers vom 10.11.2026, Option b): Anteile unter 18 und ab 65 Jahren
-# aus den veröffentlichten Altersgruppen derselben Zeile, Bezug A0025A; Formeln aus Phase 0
+# aus den veröffentlichten Altersgruppen derselben Zeile, Bezug A0025A (BEZUGSGROESSE); Formeln aus Phase 0
 # (explore/strukturdaten/vergleich_zensus_stadtstatistik.tsv, Spalte stadt_formel). Die Altersgrenzen der Gruppen liest
 # der Lauf aus den Spaltennamen und prüft, dass sie den Bereich lückenlos und ohne Überschneidung abdecken (`bereich`:
 # von, bis ausschließlich; None = offen). Kennungen mit dem Präfix koeln_abg_ (kein Code der Quelle).
@@ -1112,7 +1116,7 @@ def _abgeleitete(kat, spalte, name, codes, indikatoren, beleg, alle):
         teile = [f"Vom Ratsatlas abgeleitet ({ABGELEITET_ENTSCHEIDUNG}), kein Wert der Quelle: Summe der "
                  f"Einwohner*innen im Alter von {gruppen_text}, geteilt durch alle Einwohner*innen "
                  f"(koeln_{ABGELEITET_NENNER}), mal {ABGELEITET_FAKTOR}; Formel {formel}",
-                 "Bezugsgröße sind alle Einwohner*innen mit Haupt- und Nebenwohnsitz",
+                 BEZUGSGROESSE,
                  f"Dezimal gerechnet und kaufmännisch auf {ABGELEITET_STELLEN} Nachkommastellen gerundet",
                  "Kein Wert (status geheim), wenn eine der Altersgruppen oder die Bezugsgröße geheim gehalten ist; "
                  "kein Wert (status fehlt), wenn einer dieser Werte fehlt oder die Bezugsgröße 0 ist",
@@ -1213,7 +1217,7 @@ def _koeln(kat, klass, beleg):
                 meta.append(f"Entspricht {k['faktor']} × Zähler / Nenner (nachgerechnet in {geprueft} Zeilen): "
                             f"Zähler {z_id} „{name[z]}“, Nenner {n_id} „{name[d]}“.")
                 if d == GESAMT and gesamt_gilt:
-                    meta.append("Bezugsgröße sind alle Einwohner*innen mit Haupt- und Nebenwohnsitz.")
+                    meta.append(BEZUGSGROESSE)
             else:
                 hinweise.append(f"{iid}: Zähler/Nenner aus Phase 0 gelten in dieser Datei nicht "
                                 f"({geprueft} Zeilen geprüft); nicht übernommen")

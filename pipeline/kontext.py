@@ -40,7 +40,7 @@ from pathlib import Path
 from shapely import STRtree, from_wkb, make_valid, prepare, union_all
 from shapely.geometry import Point, mapping, shape
 
-from . import config, flaechen
+from . import config, flaechen, strukturdaten
 
 KONTEXT = config.ROOT / "data" / "kontext"
 DL = Path(os.environ.get("KONTEXT_DL", config.ROOT / "_kontext_dl"))
@@ -135,7 +135,6 @@ def strukturdaten_an():
 def strukturdaten_quelle(meta=None):
     """Quelle der Kennzahlen aus der Stadtstatistik wie in meta.quellen (Titel, Adresse, Lizenz mit Namensnennung,
     Stand = Datenstand der Datei laut meta.json des Datenvertrags)."""
-    from . import strukturdaten
     if meta is None:
         meta = json.loads((strukturdaten.ausgabe() / "meta.json").read_text(encoding="utf-8"))
     return {"titel": f"{strukturdaten.KOELN_TITEL} ({strukturdaten.KOELN_HERAUSGEBER})",
@@ -151,7 +150,7 @@ def stadtstatistik():
     jüngste Jahr mit Wert für ganz Köln (status ok oder abgeleitet); jede Einheit aus ihrer eigenen Zeile, ohne Wert
     (None) bei status geheim oder fehlt. Namen der Stadtteile und Stadtbezirke über ihre Nummern aus data/geo; fehlt
     eine Einheit oder Kennzahl im Datenvertrag, ValueError (lieber kein Lauf als falsche Angaben)."""
-    from . import strukturdaten, strukturdaten_web
+    from . import strukturdaten_web
     ordner = strukturdaten.ausgabe()
     meta = json.loads((ordner / "meta.json").read_text(encoding="utf-8"))
     strukturdaten_web.veroeffentlichen(meta, ordner / "meta.json")   # nur mit veroeffentlichen=true
@@ -187,15 +186,14 @@ def stadtstatistik():
     return {"werte": dict(werte), "jahre": jahre, "quelle": strukturdaten_quelle(meta), "status": status}
 
 
-# Bezugsgröße der Altersanteile als eigener Satz im Wortlaut der Metatexte (indikatoren.tsv); die Texte nennen keine
-# Beziehung zwischen den Einwohnerzahlen (Entscheidung 10.11.2026, „nur zählen, ohne Formel“)
-BEZUGSGROESSE = "Bezugsgröße sind alle Einwohner*innen mit Haupt- und Nebenwohnsitz."
+# Bezugsgröße der Altersanteile als eigener Satz, derselbe Wortlaut wie in den Metatexten (indikatoren.tsv); die
+# Texte nennen keine Beziehung zwischen den Einwohnerzahlen (Entscheidung 10.11.2026, „nur zählen, ohne Formel“)
+BEZUGSGROESSE = strukturdaten.BEZUGSGROESSE
 
 
 def kennzahlen_stadtstatistik(jahre):
     """meta.kennzahlen der Kennzahlen aus der Stadtstatistik (Option b): Titel, Einheit, Quelle, Methode mit Jahr,
     Indikator, Jahr; die Altersanteile als abgeleitet gekennzeichnet."""
-    from . import strukturdaten
     stellen = strukturdaten.ABGELEITET_STELLEN
     # ohne Klammern: Steckbrief und Gebietsseite setzen den Grund selbst in Klammern („keine Angabe (…)“)
     ohne = "statistische Geheimhaltung oder kein Wert in der Stadtstatistik"

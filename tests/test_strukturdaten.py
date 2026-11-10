@@ -867,25 +867,38 @@ _ERFUNDEN = _rollen(("X0001A", "X0002A", "X0003A"),
                     ("Testobjekte, Bestand", "Testobjekte, im Nordteil", "Testobjekte, im Ostteil"))
 _RECHENZEICHEN = r"[−–=+-]"
 _RECHENWORT = r"minus|abzüglich|weniger|plus"
+# „ohne“ nur nach der Gesamtzahl (vor einem der Teile); zwischen den beiden Teilen grenzt es nur ab
+_OHNE = r"ohne"
 # Wörter am Wortanfang („Stadtteilsummen“ für den Vergleich zwischen Raumebenen zählt nicht)
 _SUMME = r"\b(?:Summe\b|summiert)"
 _ABLEITUNG = (rf"{_SUMME}|\b(?:Differenz|Unterschied|minus\b|abzüglich|weniger\b|ableit|ergibt|ergäbe|folgt|errechn"
               r"|berechn|geheim)")
 
 
+def _bezug_muster(rollen=None):
+    """Muster des Satzes zur Bezugsgröße (strukturdaten.BEZUGSGROESSE) für die Rollen: Objekte beliebig, die beiden
+    Teile als Stichwort des ersten und Wort des zweiten Teils."""
+    (_, _, _), (_, sh, _), (_, _, wn) = rollen or _ROLLEN
+    return rf"\bBezugsgröße sind alle [\w*]+ mit {sh}- und {wn}\."
+
+
 def _nennt_rechenweg(text, rollen=None):
     """Nennt ein Text einen Rechenweg zu den geheim gehaltenen Werten der Summenprüfung (Entscheidung 10.11.2026)?
     Rollen sind die Gesamtzahl und die beiden Teile, je als Code (auch mit Präfix koeln_) oder als Wortstamm. Treffer:
     zwei Rollen mit Rechenzeichen (zwischen Wörtern mit Leerzeichen davor und danach) oder Rechenwort dazwischen oder
-    nach „Differenz“ bzw. „Unterschied“; der Code des zweiten Teils vor „=“; der zweite Teil (Code oder Stichwort) im
-    selben Text mit dem Code einer anderen Rolle oder mit Wörtern wie „Summe“, „ergibt“ oder „geheim“; Gesamtzahl und
-    erster Teil als Code in einem Satzteil mit solchen Wörtern; die Gesamtzahl als Code in einem Satzteil mit
-    „Summe“.
+    nach „Differenz“ bzw. „Unterschied“; die Gesamtzahl mit „ohne“ vor einem der Teile; der Code des zweiten Teils vor
+    „=“; der zweite Teil (Code oder Stichwort) im selben Text mit dem Code einer anderen Rolle oder mit Wörtern wie
+    „Summe“, „ergibt“ oder „geheim“; Gesamtzahl und erster Teil als Code in einem Satzteil mit solchen Wörtern; die
+    Gesamtzahl als Code in einem Satzteil mit „Summe“.
 
     Zwei feste Wendungen der Metatexte zählen dabei nicht (zulässig, Strukturdaten Phase 3): der Satz zur Bezugsgröße
-    („Bezugsgröße sind alle Einwohner*innen mit Haupt- und Nebenwohnsitz.“, wie in den Metatexten der Verhältnisse)
-    beim Stichwort des zweiten Teils und die Gesamtzahl als Nenner eines Anteils („geteilt durch alle Einwohner*innen
-    (koeln_A0025A)“) beim Satzteil mit „Summe“. Jeder andere Teil desselben Texts wird weiter geprüft."""
+    (strukturdaten.BEZUGSGROESSE, in den Metatexten der Verhältnisse und der abgeleiteten Anteile und in kontext.json;
+    Muster _bezug_muster) beim Stichwort des zweiten Teils und die Gesamtzahl als Nenner eines Anteils (Wendung
+    „geteilt durch alle Einwohner*innen“ mit dem Code der Gesamtzahl in Klammern) beim Satzteil mit „Summe“. Jeder
+    andere Teil desselben Texts wird weiter geprüft. Die Ausnahme für den Satz zur Bezugsgröße gilt nur, wenn der übrige
+    Text weder das Stichwort der Gesamtzahl noch den ersten Teil (Code oder Stichwort) zusammen mit „geheim“ oder
+    „veröffentlicht“ nennt: Sonst kann ein Fürwort im übrigen Text auf den zweiten Teil im Satz zur Bezugsgröße
+    verweisen (Gegenproben in test_rechenweg_erkennung)."""
     (g, sg, _), (h, sh, _), (n, sn, wn) = rollen or _ROLLEN
 
     def such(muster, t=text):
@@ -897,9 +910,12 @@ def _nennt_rechenweg(text, rollen=None):
         if (such(rf"{code[x]}\s*{_RECHENZEICHEN}\s*{code[y]}")
                 or such(rf"{rolle[x]}(?:\s+\S+){{0,2}}?\s+{_RECHENZEICHEN}\s+(?:\S+\s+){{0,2}}?{rolle[y]}")
                 or such(rf"{rolle[x]}[^;\n]{{0,60}}?\b(?:{_RECHENWORT})\b[^;\n]{{0,60}}?{rolle[y]}")
-                or such(rf"\b(?:Differenz|Unterschied)\w*[^;\n]{{0,60}}?{rolle[x]}[^;\n]{{0,60}}?{rolle[y]}")):
+                or such(rf"\b(?:Differenz|Unterschied)\w*[^;\n]{{0,60}}?{rolle[x]}[^;\n]{{0,60}}?{rolle[y]}")
+                or (x == "g" and such(rf"{rolle[x]}[^;\n]{{0,60}}?\b(?:{_OHNE})\b[^;\n]{{0,60}}?{rolle[y]}"))):
             return True
-    ohne_bezug = re.sub(rf"\bBezugsgröße sind alle [\w*]+ mit {sh}- und {wn}\.", " ", text)
+    ohne_bezug = re.sub(_bezug_muster(rollen), " ", text)
+    if such(rf"\b{sg}\w*|{rolle['h']}", ohne_bezug) and such(r"\bgeheim|veröffentlicht", ohne_bezug):
+        ohne_bezug = text   # Ausnahme gilt nicht (Verweis auf den Satz zur Bezugsgröße möglich)
     if (such(rf"{code['n']}\s*=") or (such(code["n"]) and (such(code["g"]) or such(code["h"])))
             or (such(rf"(?:{code['n']}|\b{wn}\w*)", ohne_bezug) and such(_ABLEITUNG, ohne_bezug))):
         return True
@@ -943,7 +959,16 @@ def test_rechenweg_erkennung():
                  f"Bezugsgröße sind alle Testobjekte mit {sh}- und {wn}. Der geheime Wert ist {sg} minus {sh}.",
                  f"koeln_{g} ist die Summe der Teile, geteilt durch alle Testobjekte (koeln_{g})",
                  f"Anteil, geteilt durch alle Testobjekte (koeln_{g}); koeln_{g} ist die Summe aus {wh} und {wn}",
-                 f"Summe, geteilt durch alle Testobjekte (koeln_{g}), und {wn} folgt daraus"):
+                 f"Summe, geteilt durch alle Testobjekte (koeln_{g}), und {wn} folgt daraus",
+                 # Verweis mit einem Fürwort auf den zweiten Teil im Satz zur Bezugsgröße (Prüfung 10.11.2026, Abend)
+                 f"Bezugsgröße sind alle Testobjekte mit {sh}- und {wn}. Für Testort 2013 ist er geheim, aber "
+                 f"{sg}szahl und {wh} sind veröffentlicht.",
+                 f"Bezugsgröße sind alle Testobjekte mit {sh}- und {wn}. Für Testort ist er geheim. Der {wh} ist "
+                 "veröffentlicht.",
+                 f"Bezugsgröße sind alle Testobjekte mit {sh}- und {wn}. In Testort ist er geheim, koeln_{h} nicht.",
+                 # „ohne“ nach der Gesamtzahl
+                 f"Testobjekte {sg} ohne {wh} sind die im {wn}", f"koeln_{g} ohne koeln_{h}",
+                 f"{sg}szahl ohne die Testobjekte im {wn}"):
         assert _nennt_rechenweg(text, rollen) and _nennt_summe("koeln_X9999P", text, rollen), text
     assert _nennt_summe(f"koeln_{g}", f"Testobjekte im {wh} (koeln_{h}) und im {wn} (koeln_{n}), nachgerechnet in 22 "
                                       "von 24 Zeilen.", rollen)
@@ -971,8 +996,30 @@ def test_rechenweg_erkennung():
                  # Methode der Altersanteile in kontext.json (pipeline/kontext.py, Option b)
                  f"Testobjekte von 0 bis unter 18 Jahren an allen Testobjekten (koeln_{g}), Jahr 2025. Bezugsgröße sind "
                  f"alle Testobjekte mit {sh}- und {wn}. Vom Ratsatlas aus den veröffentlichten Altersgruppen berechnet "
-                 "(abgeleitet, 2 Nachkommastellen); kein Wert, wenn eine Altersgruppe geheim gehalten ist"):
+                 "(abgeleitet, 2 Nachkommastellen); kein Wert, wenn eine Altersgruppe geheim gehalten ist",
+                 # Metatext eines Verhältnisses (Aufbau wie strukturdaten._koeln): Stichwort der Gesamtzahl im Namen
+                 # des Nenners, ohne „geheim“ oder „veröffentlicht“
+                 "Statistischer Datenkatalog Köln, Spalte X0002P; Werte unverändert übernommen. Entspricht 100 × "
+                 "Zähler / Nenner (nachgerechnet in 9321 Zeilen): Zähler koeln_X0002A „Anzahl Testobjekte, rund“, "
+                 f"Nenner koeln_{g} „Testobjekte, {sg}“. Bezugsgröße sind alle Testobjekte mit {sh}- und {wn}.",
+                 # „ohne“ zwischen den beiden Teilen grenzt ab und rechnet nicht
+                 f"Testobjekte im {wh}, ohne Testobjekte im {wn}"):
         assert not _nennt_rechenweg(text, rollen) and not _nennt_summe("koeln_X9999P", text, rollen), text
+
+
+def test_bezugsgroesse_ein_wortlaut():
+    """Der Satz zur Bezugsgröße steht einmal im Code (strukturdaten.BEZUGSGROESSE): Metatexte der Verhältnisse und der
+    abgeleiteten Anteile in indikatoren.tsv und kontext.BEZUGSGROESSE verwenden ihn, und die Ausnahme in
+    _nennt_rechenweg trifft genau diesen Satz (Prüfung 10.11.2026, Abend)."""
+    from pipeline import kontext
+    satz = strukturdaten.BEZUGSGROESSE
+    assert re.fullmatch(_bezug_muster(), satz) and kontext.BEZUGSGROESSE == satz
+    quellen = "".join(p.read_text(encoding="utf-8") for p in sorted((config.ROOT / "pipeline").glob("*.py")))
+    assert quellen.count(satz.rstrip(".")) == 1 and quellen.count("Bezugsgröße sind") == 1
+    ind = _lesen(config.ROOT / "data" / "strukturdaten" / "indikatoren.tsv")
+    mit = [i for i in ind if "Bezugsgröße sind" in i["metatext"]]
+    assert mit and all(re.findall(_bezug_muster(), i["metatext"]) == [satz] for i in mit)
+    assert {i["indikator_id"] for i in mit} >= set(strukturdaten.ABGELEITET)
 
 
 def test_metatext_nennt_summe_nicht(umgebung, capsys):
@@ -1040,7 +1087,7 @@ def test_veroeffentlichte_texte_ohne_rechenweg():
     """Entscheidung 10.11.2026 („nur zählen, ohne Formel“): Kein veröffentlichter Text nennt einen Rechenweg zu den
     geheim gehaltenen Werten der Summenprüfung: Felder von indikatoren.tsv und zurueckgestellt.tsv, alle Texte in
     meta.json und die Texte aus _veroeffentlichte_texte (Markdown und Seite je Zeile, TSV je Zelle). meta.json zählt nur
-    Zeilen je Raumebene."""
+    Zeilen je Raumebene. Dazu die Kommentarzeilen in pipeline/*.py."""
     root = config.ROOT
     daten = root / "data" / "strukturdaten"
     funde = []
@@ -1054,6 +1101,12 @@ def test_veroeffentlichte_texte_ohne_rechenweg():
     assert list(g["zeilen"]) == list(strukturdaten.EBENEN_REIHENFOLGE)
     assert g["zeilen_gesamt"] == sum(g["zeilen"].values()) > 0
     assert not re.search(r"[A-Z]\d{4}[APS]", json.dumps(g, ensure_ascii=False) + meta["geheimhaltung_hinweis"])
+    # Kommentarzeilen des Quellcodes der Pipeline (Prüfung 10.11.2026, Abend); der Code selbst braucht die Codes der
+    # geprüften Beziehung (strukturdaten.GESAMT, HAUPT, NEBEN)
+    for pfad in sorted((root / "pipeline").glob("*.py")):
+        for nr, zeile in enumerate(pfad.read_text(encoding="utf-8").splitlines(), 1):
+            if zeile.lstrip().startswith("#") and _nennt_rechenweg(zeile):
+                funde.append(f"{pfad.relative_to(root)}:{nr}")
     texte = _veroeffentlichte_texte(root)
     for pfad in ("TECHNIK.md", "README.md", "data/LICENSE-DATA.md", "explore/ANFRAGE_stadt_koeln.md",
                  "explore/strukturdaten/BERICHT_strukturdaten_phase0.md", "site/index.html", "site/app.js"):
