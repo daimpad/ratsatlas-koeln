@@ -57,10 +57,11 @@ STEPS = {
     "kontext": kontext.write,  # Kontextdaten je Ortsteil (nach export)
     "ebenen-laden": ebenen.laden,  # einmalig: zusätzliche Kartenebenen (Stadt, Land, Bund), höchstens 20 Anfragen
     "ebenen": ebenen.write,  # Kartenebenen für die Seite (nach export)
-    # Strukturdaten (Datenvertrag „Strukturdaten v1“): Abruf nur auf Freigabe (STRUKTURDATEN_ABRUF=ja, Stadt zusätzlich
-    # RATSATLAS_STADT_INFORMIERT=ja und Zeitfenster), höchstens 6 Anfragen ohne Wiederholung; Normalisierung ohne Netz
+    # Strukturdaten (Datenvertrag „Strukturdaten“ 1.1): Abruf nur auf Freigabe (STRUKTURDATEN_ABRUF=ja, Stadt zusätzlich
+    # RATSATLAS_STADT_INFORMIERT=ja und Zeitfenster), höchstens 7 Anfragen ohne Wiederholung; Normalisierung und
+    # Raumabgleich (pipeline/strukturdaten_raum.py) ohne Netz
     "strukturdaten-abruf": strukturdaten.abruf_schritt,
-    "strukturdaten": strukturdaten.write,  # Zwischenspeicher → data/strukturdaten/ (Statistik Köln, Wegweiser Kommune)
+    "strukturdaten": strukturdaten.write,  # Zwischenspeicher → data/strukturdaten/ (Statistik Köln, Quartiere, Wegweiser)
     "kultur-stichprobe": lambda: dossier.stichprobe(kultur.THEMA),  # einmalig: Prüfbogen zur Themenseite (nach export)
     "verkehr-stichprobe": lambda: dossier.stichprobe(verkehr.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
     "schule-stichprobe": lambda: dossier.stichprobe(schule.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)

@@ -1,34 +1,338 @@
 {
- "vertrag_version": "1",
+ "vertrag_version": "1.1",
+ "vertrag_aenderungen": {
+  "1.1": "10.11.2026 (Entscheidung des Auftraggebers): Werte der Raumebene quartier in werte_quartier.tsv.gz mit genau den Spalten von werte.tsv (raumebene quartier); gzip deterministisch (Stufe 9, mtime 0, ohne Dateinamen im Kopf). werte.tsv enthält weiter nur gesamtstadt, stadtbezirk und stadtteil. Dazu raum/quartier.geojson und die Liste dateien."
+ },
+ "dateien": [
+  {
+   "datei": "indikatoren.tsv",
+   "vertrag": true,
+   "inhalt": "ein Eintrag je Indikator"
+  },
+  {
+   "datei": "werte.tsv",
+   "vertrag": true,
+   "inhalt": "Werte der Raumebenen gesamtstadt, stadtbezirk und stadtteil, ein Wert je Zeile"
+  },
+  {
+   "datei": "werte_quartier.tsv.gz",
+   "vertrag": true,
+   "inhalt": "Werte der Raumebene quartier, Spalten wie werte.tsv, gzip-komprimiert (seit Version 1.1)"
+  },
+  {
+   "datei": "raum/stadtbezirk.geojson",
+   "vertrag": true,
+   "inhalt": "Geometrie der Stadtbezirke (WGS84)"
+  },
+  {
+   "datei": "raum/stadtteil.geojson",
+   "vertrag": true,
+   "inhalt": "Geometrie der Stadtteile (WGS84)"
+  },
+  {
+   "datei": "raum/quartier.geojson",
+   "vertrag": true,
+   "inhalt": "Geometrie der Statistischen Quartiere (WGS84)"
+  },
+  {
+   "datei": "zuordnung.tsv",
+   "vertrag": true,
+   "inhalt": "Lage der Raumeinheiten zueinander (Quartier → Stadtteil, Stadtteil → Stadtbezirk) mit Flächenanteil, Methode und Konfidenz"
+  },
+  {
+   "datei": "gesamtstadt.tsv",
+   "vertrag": true,
+   "inhalt": "gesamtstädtische Vergleichswerte aus dem Wegweiser Kommune"
+  },
+  {
+   "datei": "meta.json",
+   "vertrag": true,
+   "inhalt": "Datenstand, Freigabe, Quellen, Schreibweisen"
+  },
+  {
+   "datei": "zurueckgestellt.tsv",
+   "vertrag": false,
+   "inhalt": "nicht übernommene Indikatoren mit Grund"
+  },
+  {
+   "datei": "audit_abruf.tsv",
+   "vertrag": false,
+   "inhalt": "verwendete Abrufe (Adresse, Zeit, Status, Zeilen, Prüfsumme)"
+  },
+  {
+   "datei": "audit_raumabgleich.tsv",
+   "vertrag": false,
+   "inhalt": "Prüfung des Raumabgleichs je Raumeinheit (Spalten unter audit_raumabgleich_spalten)"
+  }
+ ],
  "datenstand": "2026-10-15",
- "datenstand_hinweis": "Datenstand des Statistischen Datenkatalogs laut Blatt Info („Auswertung erstellt am 15.10.2026“); maßgeblich ist die Angabe in der Datei, die Ressourcen auf open.nrw tragen den 06.07.2026 (Stand der Portalangabe). Wegweiser Kommune: Datenversion 2026-10-15T08:45:18.099083Z-ec57fa.",
+ "datenstand_hinweis": "Datenstand des Statistischen Datenkatalogs laut Blatt Info („Auswertung erstellt am 15.10.2026“); maßgeblich ist die Angabe in der Datei, die Ressourcen auf open.nrw tragen den 06.07.2026 (Stand der Portalangabe). Statistische Quartiere (Geometrie): Ressource laut open.nrw zuletzt aktualisiert am 24.09.2026 (Metadaten gelesen am 10.11.2026); Shapefile im Archiv vom 11.06.2026. Wegweiser Kommune: Datenversion 2026-10-15T08:45:18.099083Z-ec57fa.",
  "abrufdatum": "2026-11-10",
  "veroeffentlichen": true,
  "lizenzstatus": "geklärt",
- "lizenzstatus_hinweis": "Statistischer Datenkatalog Köln: Datenlizenz Deutschland – Namensnennung – Version 2.0 laut open.nrw; Nutzung und Veröffentlichung hat die Statistikstelle laut Auftraggeber am 10.11.2026 zugestimmt. Wegweiser Kommune: Creative Commons Zero 1.0 (CC0 1.0) laut Open-Data-Seite und Fußzeile des Exports; Indikatoren mit einem Unternehmen als Datenhalter sind zurückgestellt (zurueckgestellt.tsv).",
+ "lizenzstatus_hinweis": "Statistischer Datenkatalog Köln: Datenlizenz Deutschland – Namensnennung – Version 2.0 laut open.nrw; Nutzung und Veröffentlichung hat die Statistikstelle laut Auftraggeber am 10.11.2026 zugestimmt. Statistische Quartiere Köln, Stadtteile und Stadtbezirke (Geometrie): Datenlizenz Deutschland – Zero – Version 2.0 laut open.nrw bzw. offenedaten-koeln.de, Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ wird geführt. Wegweiser Kommune: Creative Commons Zero 1.0 (CC0 1.0) laut Open-Data-Seite und Fußzeile des Exports; Indikatoren mit einem Unternehmen als Datenhalter sind zurückgestellt (zurueckgestellt.tsv).",
  "raumebenen": [
   "gesamtstadt",
   "stadtbezirk",
-  "stadtteil"
+  "stadtteil",
+  "quartier"
  ],
+ "raumebenen_dateien": {
+  "gesamtstadt": "werte.tsv",
+  "stadtbezirk": "werte.tsv",
+  "stadtteil": "werte.tsv",
+  "quartier": "werte_quartier.tsv.gz"
+ },
  "raumebenen_nicht_uebernommen": {
-  "quartier": "folgt in Phase 2 mit der Quartiersgeometrie (Entscheidung 10.11.2026)",
-  "sozialraum": "nicht Teil des Datenvertrags Strukturdaten v1 (Entscheidung 10.11.2026)"
+  "sozialraum": "nicht Teil des Datenvertrags Strukturdaten (Entscheidung 10.11.2026)"
  },
  "einwohner_indikator": "koeln_A0355A",
- "quellobjekt": "werte.tsv: Zelle im Blatt Daten der XLSX-Datei mit der Prüfsumme unter quellen[] (Daten!<Spalte><Zeile>; Spalte = Indikator, Zeile = Jahr und Raum). gesamtstadt.tsv: Zelle des Wegweiser-Exports (Indikator, Jahr, Kommune).",
+ "quellobjekt": "werte.tsv und werte_quartier.tsv.gz: Zelle im Blatt Daten der XLSX-Datei mit der Prüfsumme unter quellen[] (Daten!<Spalte><Zeile>; Spalte = Indikator, Zeile = Jahr und Raum). gesamtstadt.tsv: Zelle des Wegweiser-Exports (Indikator, Jahr, Kommune). raum/quartier.geojson: Datensatz des Shapefiles mit derselben Nummer (Feld nummer); raum/stadtteil.geojson und raum/stadtbezirk.geojson: Feature der Datei unter data/geo (raum.<ebene>.abgeleitet_aus).",
  "gesamtstadt_ka": "Jahre mit „k.A.“ im Wegweiser-Export stehen nicht in gesamtstadt.tsv (der Vertrag sieht dort keinen Status vor); der Metatext des Indikators nennt sie.",
- "typ_einordnung": "typ und einheit stehen nicht in den Quellen; es sind eigene Einordnungen. Statistischer Datenkatalog Köln: typ und einheit aus Phase 0 nach der Formatspalte des Blatts Katalog (abs, %, andere) und dem Namen, Begründung je Indikator in pipeline/strukturdaten_koeln.tsv (Spalte typ_begruendung); zaehler_id und nenner_id nur, wo die Beziehung in jeder Zeile nachgerechnet ist. Wegweiser Kommune: typ nach Name, Einheit und Berechnung laut Indikatorliste des Wegweisers, einheit unverändert aus der Indikatorliste. Vorläufige Einordnungen stehen unter typ_vorlaeufig und im Metatext.",
+ "typ_einordnung": "typ und einheit stehen nicht in den Quellen; es sind eigene Einordnungen. Statistischer Datenkatalog Köln: typ und einheit aus Phase 0 nach der Formatspalte des Blatts Katalog (abs, %, andere) und dem Namen, Begründung je Indikator in pipeline/strukturdaten_koeln.tsv (Spalte typ_begruendung); zaehler_id und nenner_id nur, wo die Beziehung in jeder Zeile (alle Raumebenen einschließlich der Quartiere) nachgerechnet ist. Wegweiser Kommune: typ nach Name, Einheit und Berechnung laut Indikatorliste des Wegweisers, einheit unverändert aus der Indikatorliste. Vorläufige Einordnungen stehen unter typ_vorlaeufig und im Metatext.",
  "typ_vorlaeufig": {
   "ww_bevoelkerungsentwicklung-ueber-die-letzten-5-jahre": "Veränderungsrate über fünf Jahre, kein Bestandsverhältnis; der Datenvertrag v1 kennt keinen Typ für Veränderungsraten (die Kölner Veränderungsraten koeln_A0547S und koeln_A0548S sind aus diesem Grund zurückgestellt). Offen: Typ quote bestätigen oder einen Typ für Veränderungsraten in eine Vertragsversion 2 aufnehmen"
  },
  "formate": {
   "dateien": "TSV in UTF-8 ohne BOM, Tabulator als Trennzeichen, Zeilenende LF, erste Zeile mit den Spaltennamen, ohne Anführungszeichen; Felder ohne Tabulator und Zeilenumbruch.",
-  "wert": "Zahl mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und ohne Exponent, Ziffern wie in der Quelle; in werte.tsv leer bei status geheim und fehlt; gesamtstadt.tsv enthält nur Zeilen mit Wert.",
-  "jahre": "indikatoren.tsv: Jahre, für die werte.tsv mindestens eine Zeile mit status ok oder geheim hat (Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und aufsteigend, aufeinanderfolgende Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon ohne Leerzeichen getrennt, z. B. 2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile gibt.",
-  "raumebenen": "indikatoren.tsv: Raumebenen, für die werte.tsv mindestens eine Zeile mit status ok oder geheim hat (Wegweiser: gesamtstadt), durch Semikolon ohne Leerzeichen getrennt, in der Reihenfolge von raumebenen (gesamtstadt;stadtbezirk;stadtteil)."
+  "gzip": "werte_quartier.tsv.gz: TSV wie werte.tsv, gzip mit Stufe 9, Änderungszeit 0 und ohne Dateinamen im Kopf (gleiche Eingaben ergeben byte-gleiche Dateien).",
+  "wert": "Zahl mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und ohne Exponent, Ziffern wie in der Quelle; in werte.tsv und werte_quartier.tsv.gz leer bei status geheim und fehlt; gesamtstadt.tsv enthält nur Zeilen mit Wert.",
+  "jahre": "indikatoren.tsv: Jahre, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit status ok oder geheim hat (Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und aufsteigend, aufeinanderfolgende Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon ohne Leerzeichen getrennt, z. B. 2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile gibt.",
+  "raumebenen": "indikatoren.tsv: Raumebenen, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit status ok oder geheim hat (Wegweiser: gesamtstadt), durch Semikolon ohne Leerzeichen getrennt, in der Reihenfolge von raumebenen (gesamtstadt;stadtbezirk;stadtteil;quartier).",
+  "geojson": "raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit Quelle, Prüfsumme und Lizenz; Flächen mit Toleranz 2 m vereinfacht, Koordinaten auf 1e-6 Grad gerundet. Stadtbezirke und Stadtteile wie data/geo (jede Fläche für sich, Douglas-Peucker); Quartiere gemeinsam als lückenlose Abdeckung (Visvalingam-Whyatt, Nachbarn mit denselben Stützpunkten an der gemeinsamen Grenze; Verfahren unter raum.quartier.geometrie, Prüfung unter raum.quartier.abdeckung, gemessene Abweichung unter raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als Text), name, raumebene, eltern_id, quelle, lizenz. Nur zur Anzeige, nicht zum Rechnen.",
+  "flaechenanteil": "zuordnung.tsv und audit_raumabgleich.tsv: Anteil der Fläche der Einheit (von) im Ziel (nach), 0 bis 1 mit 4 Nachkommastellen und Punkt; berechnet in EPSG 25832. Die Schwellen splitter_anteil und anteil_hoch gelten für diesen gerundeten Wert."
  },
- "geheimhaltung_hinweis": "status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen oder Teilgrößen hinweg.",
+ "raum": {
+  "stadtbezirk": {
+   "datei": "raum/stadtbezirk.geojson",
+   "quelle": "Stadt Köln, Stadtbezirke Köln (offenedaten-koeln.de)",
+   "quelle_url": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Stadtbezirk_0.zip",
+   "abgeleitet_aus": "data/geo/stadtbezirke_koeln.geojson",
+   "sha256": "21c4447b13d00a7813c0401ff584cb0e26e446acd05d50832ae72ee6eb0bbcb8",
+   "abgerufen": "2026-11-04",
+   "abgerufen_beleg": "kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_phase1.md (Abschnitt 1) am 04.11.2026 geladen, Stand der Ressource laut Katalog 24.09.2026; data/geo/stadtbezirke_koeln.geojson in dieser Fassung (sha256) seit Commit 3964836 vom 04.11.2026",
+   "lizenz": "Datenlizenz Deutschland – Zero – Version 2.0",
+   "lizenz_url": "https://www.govdata.de/dl-de/zero-2-0",
+   "namensnennung": "Datenquelle: Stadt Köln – offenedaten-koeln.de",
+   "vereinfacht_m": 2.0,
+   "geometrie": "unverändert aus data/geo (pipeline/geodaten.py)",
+   "eltern_id": "leer: oberste Ebene mit Geometrie (Gesamtstadt in werte.tsv als raum_id 0, ohne Geometrie)"
+  },
+  "stadtteil": {
+   "datei": "raum/stadtteil.geojson",
+   "quelle": "Stadt Köln, Stadtteile Köln (offenedaten-koeln.de)",
+   "quelle_url": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Stadtteil_0.zip",
+   "abgeleitet_aus": "data/geo/stadtteile_koeln.geojson",
+   "sha256": "2bcc2349d2399734003ae2af4871a6534168b0f2d3d15d7eb5c83c6f29805e0c",
+   "abgerufen": "2026-11-04",
+   "abgerufen_beleg": "kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_phase1.md (Abschnitt 1) am 04.11.2026 geladen, Stand der Ressource laut Katalog 24.09.2026; data/geo/stadtteile_koeln.geojson in dieser Fassung (sha256) seit Commit 3964836 vom 04.11.2026",
+   "lizenz": "Datenlizenz Deutschland – Zero – Version 2.0",
+   "lizenz_url": "https://www.govdata.de/dl-de/zero-2-0",
+   "namensnennung": "Datenquelle: Stadt Köln – offenedaten-koeln.de",
+   "vereinfacht_m": 2.0,
+   "geometrie": "unverändert aus data/geo (pipeline/geodaten.py)",
+   "eltern_id": "Stadtbezirk, nur bei Prüfstatus ok in audit_raumabgleich.tsv, sonst leer"
+  },
+  "quartier": {
+   "datei": "raum/quartier.geojson",
+   "quelle": "Stadt Köln, Statistische Quartiere Köln (offenedaten-koeln.de)",
+   "quelle_url": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Statistisches_Quartier_0.zip",
+   "datensatz_url": "https://open.nrw/dataset/statistische-quartiere-koln-k",
+   "abgerufen": "2026-11-10T14:39:07+01:00",
+   "abgerufen_beleg": "audit_abruf.tsv (Zeile mit derselben Prüfsumme)",
+   "sha256": "311eb81527c6e9ba626de149634d8224536c48dc80e316c8344588e26b3f8195",
+   "lizenz": "Datenlizenz Deutschland – Zero – Version 2.0",
+   "lizenz_url": "https://www.govdata.de/dl-de/zero-2-0",
+   "namensnennung": "Datenquelle: Stadt Köln – offenedaten-koeln.de",
+   "vereinfacht_m": 2.0,
+   "geometrie": "alle Quartiere gemeinsam als lückenlose Abdeckung in EPSG 25832 vereinfacht (shapely.coverage_simplify, Visvalingam-Whyatt mit Toleranz vereinfacht_m: jede gemeinsame Grenze einmal, Punkte, an denen drei und mehr Quartiere zusammentreffen, bleiben), nach WGS84 umgerechnet und auf 1e-6 Grad gerundet, alle Grenzen zusammen (Snap-Rounding; daraus die Flächen neu gebildet). Benachbarte Quartiere haben an ihrer gemeinsamen Grenze dieselben Stützpunkte, ohne Lücken und Überlappungen (geprüft unter abdeckung, gemessen unter abweichung_von_der_quelle; eine Lücke oder Überlappung bricht den Schritt ab). vereinfacht_m ist hier etwa die Wurzel der Fläche der entfernten Dreiecke, kein Höchstabstand wie bei Stadtteilen und Stadtbezirken (Douglas-Peucker). Die Abweichung von der Quelle kann vereinfacht_m übersteigen: Die Vereinfachung entfernt kurze, schmale Ausbuchtungen, die Rundung auf 1e-6 Grad (Gitterzelle rund 7 × 11 cm) Sporne, die schmaler sind als eine Gitterzelle. Die Rundung kann auch Knoten zusammenlegen, die weniger als eine Gitterzelle auseinanderliegen: Quartiere mit einer gemeinsamen Grenze von wenigen Zentimetern berühren sich danach nur noch in einem Punkt oder gar nicht, andere grenzen neu aneinander (abdeckung, nachbarpaare_nur_quelle und nachbarpaare_nur_veroeffentlicht); Nachbarschaften nicht aus dieser Geometrie ableiten. Die Flächen dienen nur der Anzeige: zuordnung.tsv und audit_raumabgleich.tsv rechnen mit den unvereinfachten Flächen der Quelle, Werte werden nicht über Flächen verrechnet.",
+   "abweichung_von_der_quelle": {
+    "verfahren": "Hausdorff-Abstand je Einheit zwischen der Fläche der Quelle und der veröffentlichten Fläche, beide in EPSG 25832 (veröffentlichte Fläche zurückgerechnet), Segmente in Viertel geteilt; Überlappungen zwischen veröffentlichten Flächen; Lücken = alle Löcher in der Vereinigung der veröffentlichten Flächen (ohne Außenrand; Lücken der Quelle unter abdeckung). Meter mit 2 Stellen (Median aus den gerundeten Abständen), Flächen in ganzen Quadratmetern.",
+    "einheiten": 570,
+    "abstand_max_m": 12.61,
+    "abstand_max_raum_id": "402020007",
+    "abstand_median_m": 0.59,
+    "bis_toleranz": 563,
+    "ueber_toleranz": {
+     "402020007": 12.61,
+     "901060001": 3.83,
+     "906070001": 3.83,
+     "909010001": 3.31,
+     "909030002": 3.31,
+     "905010001": 2.16,
+     "905070001": 2.16
+    },
+    "ueberlappung_nachbarpaare": 0,
+    "ueberlappung_m2": 0,
+    "luecken_teile": 0,
+    "luecken_m2": 0
+   },
+   "abdeckung": {
+    "verfahren": "shapely.coverage_is_valid und coverage_invalid_edges (Überlappungen, an gemeinsamen Grenzen ungleiche Stützpunkte) an der Quelle in EPSG 25832 vor der Vereinfachung und an den veröffentlichten, gerundeten Flächen in WGS84; Lücken der Quelle = Löcher in der Vereinigung ihrer Flächen (ohne Außenrand); je Fläche shapely.is_valid und die Zahl der Teile im Vergleich zur Quelle; Netzflächen der gemeinsamen Rundung, die zu keinem Quartier gehören (Lücken). Überlappungen und Lücken der veröffentlichten Flächen, ungültige oder leere Flächen und eine andere Zahl von Teilen brechen den Schritt ab. nachbarpaare: Paare mit gemeinsamer Grenze als Linie (DE-9IM, Schnitt der Ränder mit Dimension 1) in der Quelle und veröffentlicht; Paare, die nur in einer der beiden eine gemeinsame Grenze haben, mit deren Länge (Meter mit 3 Stellen, in EPSG 25832, veröffentlicht zurückgerechnet); in der anderen berühren sie sich höchstens in einem Punkt. software: Versionen, mit denen gerechnet wurde (byte-gleiche Flächen nur mit denselben Versionen). Kantenlängen in Metern mit 2 Stellen, Flächen in ganzen Quadratmetern.",
+    "quelle_gueltig": true,
+    "quelle_ungueltige_kanten_m": {},
+    "quelle_luecken_teile": 0,
+    "quelle_luecken_m2": 0,
+    "veroeffentlicht_gueltig": true,
+    "flaechen_gueltig": 570,
+    "teile_wie_quelle": 570,
+    "netzflaechen": 571,
+    "netzflaechen_ohne_quartier": 0,
+    "nachbarpaare_quelle": 1618,
+    "nachbarpaare_veroeffentlicht": 1614,
+    "nachbarpaare_nur_quelle": {
+     "101040001/102010005": 0.03,
+     "301010005/302020003": 0.031,
+     "302040002/303030003": 0.015,
+     "502030001/505040002": 0.012,
+     "802010003/802040002": 0.026
+    },
+    "nachbarpaare_nur_veroeffentlicht": {
+     "101060003/102020001": 0.111
+    },
+    "software": {
+     "shapely": "2.2.0",
+     "geos": "3.14.1",
+     "pyproj": "3.8.0",
+     "proj": "9.8.1"
+    }
+   },
+   "eltern_id": "Stadtteil, nur bei Prüfstatus ok in audit_raumabgleich.tsv, sonst leer"
+  }
+ },
+ "raumabgleich": {
+  "verfahren": "Verschneidung in EPSG 25832 (ETRS89/UTM 32N): Quartiere unvereinfacht aus dem Shapefile, Stadtteile und Stadtbezirke aus data/geo nach EPSG 25832 zurückgerechnet. Je Einheit der Anteil ihrer Fläche in jedem Ziel; verglichen mit dem Ziel laut Nummer (Quartier: erste drei Ziffern = Stadtteil; Stadtteil: erste Ziffer = Stadtbezirk) und laut Attribut der Geometriequelle (Quartier: nr_stteil; Stadtteil: bezirk). Werte werden nicht zwischen Raumebenen verrechnet.",
+  "splitter_anteil": 0.01,
+  "anteil_hoch": 0.99,
+  "schwellen": "Teilflächen unter splitter_anteil (0.01) gelten als Randsplitter: in audit_raumabgleich.tsv gemeldet, nicht in zuordnung.tsv. Ein Hauptanteil ab anteil_hoch (0.99) gilt als vollständige Lage im Ziel. Verglichen wird der veröffentlichte, auf 4 Stellen gerundete Anteil.",
+  "methoden": {
+   "verschneidung_nummer": "Flächenanteil aus der Verschneidung; das Ziel stimmt mit der Nummer überein",
+   "verschneidung": "Flächenanteil aus der Verschneidung; die Nummer nennt ein anderes Ziel"
+  },
+  "konfidenz": {
+   "hoch": "verschneidung_nummer, Flächenanteil mindestens anteil_hoch, das Attribut der Quelle widerspricht nicht",
+   "mittel": "verschneidung_nummer, Flächenanteil unter anteil_hoch oder Attribut abweichend",
+   "niedrig": "verschneidung (Ziel nicht durch die Nummer belegt)"
+  },
+  "pruefstatus": {
+   "ok": "Verschneidung, Nummer und Attribut nennen dasselbe Ziel, Flächenanteil mindestens anteil_hoch, Werte im Blatt Daten vorhanden; nur dann steht eltern_id",
+   "abweichung": "zugeordnet, aber mindestens eine Prüfung weicht ab (Grund im Audit)",
+   "hinweise": "ein abweichender Name im Blatt Daten und eine reparierte Geometrie stehen als Hinweis in grund und ändern den Prüfstatus nicht (Namen: id_abgleich, namen_abweichend)",
+   "nicht_zugeordnet": "ohne Geometrie oder ohne Ziel mit mindestens splitter_anteil; keine Zeile in zuordnung.tsv"
+  },
+  "geometrie_hinweis": "data/geo ist mit 2 m vereinfacht (jede Fläche für sich) und auf 1e-6 Grad gerundet (beste verfügbare Geometrie der Stadtteile und Stadtbezirke im Repository). Die Grenzen weichen daher von der Quelle ab (für data/geo nicht gemessen, die unvereinfachten Flächen liegen nicht im Repository; dasselbe Verfahren ergab bei den Quartieren am 10.11.2026 bis 12,61 m, 37 von 570 Quartieren über 2 m; die Quartiere werden seitdem gemeinsam vereinfacht, raum.quartier.geometrie): Hauptanteile liegen knapp unter 1, an den Rändern entstehen Randsplitter (größter Splitter: stadtteil→stadtbezirk 0.0006; quartier→stadtteil 0.0040).",
+  "ergebnis": {
+   "stadtteil→stadtbezirk": {
+    "einheiten": 86,
+    "pruefstatus": {
+     "ok": 86,
+     "abweichung": 0,
+     "nicht_zugeordnet": 0
+    },
+    "zeilen_zuordnung": 86,
+    "groesster_anteil_verteilung": {
+     "1.0000": 61,
+     "0.9990-0.9999": 25,
+     "0.9900-0.9989": 0,
+     "unter 0.9900": 0
+    },
+    "kleinster_groesster_anteil": "0.9993",
+    "einheiten_mit_splitter": 45,
+    "groesster_splitter": "0.0006"
+   },
+   "quartier→stadtteil": {
+    "einheiten": 570,
+    "pruefstatus": {
+     "ok": 570,
+     "abweichung": 0,
+     "nicht_zugeordnet": 0
+    },
+    "zeilen_zuordnung": 570,
+    "groesster_anteil_verteilung": {
+     "1.0000": 175,
+     "0.9990-0.9999": 345,
+     "0.9900-0.9989": 50,
+     "unter 0.9900": 0
+    },
+    "kleinster_groesster_anteil": "0.9951",
+    "einheiten_mit_splitter": 449,
+    "groesster_splitter": "0.0040"
+   }
+  },
+  "id_abgleich": {
+   "quartier": {
+    "geometrie": 570,
+    "werte": 570,
+    "gemeinsam": 570,
+    "nur_geometrie": [],
+    "nur_werte": [],
+    "namen_abweichend": []
+   },
+   "stadtteil": {
+    "geometrie": 86,
+    "werte": 86,
+    "gemeinsam": 86,
+    "nur_geometrie": [],
+    "nur_werte": [],
+    "namen_abweichend": []
+   },
+   "stadtbezirk": {
+    "geometrie": 9,
+    "werte": 9,
+    "gemeinsam": 9,
+    "nur_geometrie": [],
+    "nur_werte": [],
+    "namen_abweichend": []
+   }
+  }
+ },
+ "audit_raumabgleich_spalten": {
+  "von_ebene": "Raumebene der geprüften Einheit (quartier, stadtteil)",
+  "von_id": "Nummer der Einheit aus der Quelle",
+  "name": "Name laut Geometriequelle, ohne Geometrie laut Blatt Daten",
+  "nach_ebene": "Zielebene (stadtteil, stadtbezirk)",
+  "nach_id": "Ziel mit dem größten Flächenanteil, falls dieser (auf 4 Stellen gerundet) mindestens splitter_anteil (meta.json) beträgt",
+  "flaechenanteil": "Anteil der Fläche der Einheit in nach_id, 4 Nachkommastellen",
+  "methode": "methode der Zeile in zuordnung.tsv für nach_id",
+  "konfidenz": "konfidenz der Zeile in zuordnung.tsv für nach_id",
+  "pruefstatus": "ok (Verschneidung, Nummer und Attribut nennen dasselbe Ziel, flaechenanteil mindestens anteil_hoch, Werte vorhanden), abweichung (zugeordnet, mindestens eine Prüfung weicht ab; Grund in grund) oder nicht_zugeordnet (ohne Geometrie oder ohne Ziel mit mindestens splitter_anteil)",
+  "nach_id_nummer": "Ziel laut Nummer (Quartier: erste drei Ziffern = Stadtteil; Stadtteil: erste Ziffer = Stadtbezirk)",
+  "nach_id_attribut": "Ziel laut Attribut der Geometriequelle (Quartiere: Feld nr_stteil des Shapefiles; Stadtteile: Eigenschaft bezirk in data/geo)",
+  "uebereinstimmung": "ja, wenn nach_id, nach_id_nummer und (falls vorhanden) nach_id_attribut gleich sind, sonst nein",
+  "weitere_ziele": "Anzahl weiterer Ziele mit mindestens splitter_anteil (je eine Zeile in zuordnung.tsv)",
+  "splitter": "Anzahl der Ziele mit einem Anteil über 0 und (auf 4 Stellen gerundet) unter splitter_anteil (nicht zugeordnet)",
+  "splitter_max_anteil": "größter dieser Anteile, 4 Nachkommastellen (0.0000 = unter 0.00005); leer ohne Splitter",
+  "ausserhalb_anteil": "Anteil der Fläche außerhalb aller Ziele, 4 Nachkommastellen; leer ohne Geometrie",
+  "in_geometrie": "ja, wenn die Einheit in der Geometriequelle steht",
+  "in_werten": "ja, wenn die Einheit im Blatt Daten des Statistischen Datenkatalogs steht",
+  "grund": "Begründung des Prüfstatus; dazu Hinweise ohne Einfluss auf den Prüfstatus (Geometrie repariert, Name im Blatt Daten abweichend vom Namen der Geometriequelle, mit Jahren)"
+ },
+ "geheimhaltung_hinweis": "status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen (Quartier, Stadtteil, Stadtbezirk) oder Teilgrößen hinweg; zuordnung.tsv dient nicht der Verrechnung von Werten. In 1291 Zeilen folgt ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile (koeln_A0359A aus koeln_A0025A und koeln_A0355A: stadtteil 3, quartier 1288; geheimhaltung_ableitbar): Die Quelle hält dort nur einen Wert der Beziehung geheim und veröffentlicht die übrigen (keine sekundäre Geheimhaltung in der Quelle). Die Werte bleiben unverändert (quellentreu); die Anzeige bildet auch dort keine Summen, Differenzen oder Verhältnisse, die den geheimen Wert ergeben.",
+ "geheimhaltung_ableitbar": {
+  "geprueft": "Zeilen aller Raumebenen (werte.tsv und werte_quartier.tsv.gz), in denen genau ein Wert einer geprüften Beziehung geheim ist und die übrigen veröffentlicht sind, sodass er durch sie bestimmt ist; geprüft: Summe koeln_A0025A = koeln_A0355A + koeln_A0359A; 34 Verhältnisse (zaehler_id und nenner_id in indikatoren.tsv). Nur gezählt; die Werte selbst werden nicht ermittelt.",
+  "zeilen": [
+   {
+    "beziehung": "koeln_A0025A = koeln_A0355A + koeln_A0359A",
+    "geheim": "koeln_A0359A",
+    "aus": [
+     "koeln_A0025A",
+     "koeln_A0355A"
+    ],
+    "raumebene": "stadtteil",
+    "zeilen": 3
+   },
+   {
+    "beziehung": "koeln_A0025A = koeln_A0355A + koeln_A0359A",
+    "geheim": "koeln_A0359A",
+    "aus": [
+     "koeln_A0025A",
+     "koeln_A0355A"
+    ],
+    "raumebene": "quartier",
+    "zeilen": 1288
+   }
+  ]
+ },
  "quellen": [
   {
    "kennung": "statistischer-datenkatalog-koeln",
@@ -42,6 +346,20 @@
    "lizenz_url": "https://www.govdata.de/dl-de/by-2-0",
    "namensnennung": "Stadt Köln, Amt für Stadtentwicklung und Statistik (Statistischer Datenkatalog Köln); in lange Tabellenform umgeformt, Werte unverändert",
    "datenstand": "2026-10-15"
+  },
+  {
+   "kennung": "statistische-quartiere-koeln",
+   "titel": "Statistische Quartiere Köln (Shapefile im ZIP-Archiv)",
+   "url": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Statistisches_Quartier_0.zip",
+   "abgerufen": "2026-11-10T14:39:07+01:00",
+   "sha256": "311eb81527c6e9ba626de149634d8224536c48dc80e316c8344588e26b3f8195",
+   "datensatz_url": "https://open.nrw/dataset/statistische-quartiere-koln-k",
+   "herausgeber": "Stadt Köln",
+   "lizenz": "Datenlizenz Deutschland – Zero – Version 2.0",
+   "lizenz_url": "https://www.govdata.de/dl-de/zero-2-0",
+   "namensnennung": "Datenquelle: Stadt Köln – offenedaten-koeln.de",
+   "datenstand_hinweis": "Ressource laut open.nrw zuletzt aktualisiert am 24.09.2026 (Metadaten gelesen am 10.11.2026); Shapefile im Archiv vom 11.06.2026",
+   "crs": "ETRS89 / UTM zone 32N"
   },
   {
    "kennung": "wegweiser-openapi",

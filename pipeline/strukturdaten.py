@@ -1,20 +1,24 @@
-"""Strukturdaten Köln im Datenvertrag „Strukturdaten v1“ (Phase 1, Adapter; Entscheidungen 10.11.2026).
+"""Strukturdaten Köln im Datenvertrag „Strukturdaten“ 1.1 (Phase 1 Adapter, Phase 2 Raumabgleich; Entscheidungen
+10.11.2026).
 
 Quellen:
 - Statistischer Datenkatalog Köln (Stadt Köln, Amt für Stadtentwicklung und Statistik): XLSX auf offenedaten-koeln.de,
   Datensatzseite auf open.nrw, Datenlizenz Deutschland – Namensnennung – Version 2.0. Übernommen werden die Raumebenen
-  Gesamtstadt, Stadtbezirke und Stadtteile; Statistische Quartiere folgen in Phase 2 mit ihrer Geometrie, Sozialräume
-  sind nicht Teil des Vertrags. Quelle der Werte ist die XLSX-Datei, nicht die CSV-Ressource (dort fallen „*“ und leere
-  Zellen zusammen).
+  Gesamtstadt, Stadtbezirke und Stadtteile (werte.tsv) und die Statistischen Quartiere (werte_quartier.tsv.gz, seit
+  Vertrag 1.1); Sozialräume sind nicht Teil des Vertrags. Quelle der Werte ist die XLSX-Datei, nicht die CSV-Ressource
+  (dort fallen „*“ und leere Zellen zusammen).
+- Statistische Quartiere Köln (Stadt Köln, dl-de/zero 2.0): Geometrie der Quartiere als Shapefile im ZIP-Archiv;
+  Raumabgleich mit den Stadtteilen und Stadtbezirken aus data/geo in pipeline/strukturdaten_raum.py.
 - Wegweiser Kommune (Bertelsmann Stiftung, CC0 1.0): gesamtstädtische Vergleichswerte für Bonn, Köln und Wuppertal,
   nur über friendlyUrls (numerische Kennungen wechseln mit dem Datenstand).
 
 Schritte:
 - `strukturdaten-abruf` (nur auf Freigabe, nicht im täglichen Lauf): lädt höchstens `MAX_ANFRAGEN` Dateien (je
-  Quelldatei eine Anfrage und eine für die OpenAPI-Beschreibung), ohne Wiederholung (auch nicht nach HTTP 429 oder 5xx),
-  ohne Weiterleitungen, mit dem User-Agent des Projekts und mindestens `abruf.MINDESTABSTAND` Sekunden zwischen den
-  Anfragen. Jede Anfrage an eine nicht lokale Adresse braucht `STRUKTURDATEN_ABRUF=ja` (Freigabe je Abruf durch den
-  Auftraggeber). Adressen der Stadt (`abruf.stadt`) gelten wie in pipeline/abruf.py: nur mit
+  Quelldatei eine Anfrage und eine für die OpenAPI-Beschreibung, zusammen 7), ohne Wiederholung (auch nicht nach HTTP
+  429 oder 5xx), ohne Weiterleitungen, mit dem User-Agent des Projekts und mindestens `abruf.MINDESTABSTAND` Sekunden
+  zwischen den Anfragen. Jede Anfrage an eine nicht lokale Adresse braucht `STRUKTURDATEN_ABRUF=ja` (Freigabe je Abruf
+  durch den Auftraggeber). Adressen der Stadt (`abruf.stadt`: XLSX und Quartiersgeometrie) gelten wie in
+  pipeline/abruf.py: nur mit
   `RATSATLAS_STADT_INFORMIERT=ja` und im Zeitfenster (`config.ABRUF_ZEITFENSTER`), sonst „nicht gesendet“. Ohne
   Kontakt im User-Agent (`RATSATLAS_KONTAKT`, CLAUDE.md 5.1) geht keine Anfrage an eine nicht lokale Adresse oder einen
   Server der Stadt: Einstellungsfehler (ValueError wie in pipeline/sessionnet.py), nichts gesendet, nicht gezählt, im
@@ -23,32 +27,41 @@ Schritte:
   bricht der Lauf vor jeder weiteren Anfrage ab (Fortsetzung nach Prüfung mit
   `STRUKTURDATEN_OPENAPI_BESTAETIGT=<neue Version>`). Rohdateien liegen im Zwischenspeicher außerhalb der versionierten
   Dateien (`STRUKTURDATEN_DL`, Vorgabe _kontext_dl/strukturdaten/), das Protokoll dort in audit_abruf.tsv (quelle, url,
-  zeitstempel, http_status, zeilen, pruefsumme, hinweis). Die XLSX ersetzt die vorige erst, wenn sie vollständig und
-  lesbar ist. Die fünf Wegweiser-Dateien eines Laufs liegen zunächst im Unterordner `STUFE` und ersetzen die vorigen
+  zeitstempel, http_status, zeilen, pruefsumme, hinweis). XLSX und Quartiersgeometrie ersetzen die vorige Datei erst,
+  wenn sie vollständig und lesbar sind (das ZIP-Archiv wird nur mit zipfile und pyshp gelesen, nie entpackt). Die fünf Wegweiser-Dateien eines Laufs liegen zunächst im Unterordner `STUFE` und ersetzen die vorigen
   gemeinsam, sobald alle fünf vollständig und lesbar sind; sonst werden sie verworfen (Protokoll „verworfen (Lauf
   unvollständig)“), und die vorigen bleiben. So stammen Datenversion, Listen und Export immer aus demselben Lauf.
 - `strukturdaten` (ohne Netz): normalisiert die Dateien des Zwischenspeichers (einzeln überschreibbar mit
-  STRUKTURDATEN_XLSX, STRUKTURDATEN_WW_EXPORT, STRUKTURDATEN_WW_INDIKATOREN, STRUKTURDATEN_WW_REGIONEN,
-  STRUKTURDATEN_WW_VERSION, STRUKTURDATEN_WW_OPENAPI, STRUKTURDATEN_PROTOKOLL) nach data/strukturdaten/
-  (`STRUKTURDATEN_AUS`): indikatoren.tsv, werte.tsv, gesamtstadt.tsv, meta.json, zurueckgestellt.tsv, audit_abruf.tsv.
-  Jede Eingabedatei muss mit ihrer Prüfsumme im Abrufprotokoll stehen (Herkunft und Abrufdatum).
+  STRUKTURDATEN_XLSX, STRUKTURDATEN_QUARTIERE, STRUKTURDATEN_WW_EXPORT, STRUKTURDATEN_WW_INDIKATOREN,
+  STRUKTURDATEN_WW_REGIONEN, STRUKTURDATEN_WW_VERSION, STRUKTURDATEN_WW_OPENAPI, STRUKTURDATEN_PROTOKOLL; Stadtteile und
+  Stadtbezirke aus data/geo, überschreibbar mit STRUKTURDATEN_GEO_STADTTEILE und STRUKTURDATEN_GEO_STADTBEZIRKE) nach
+  data/strukturdaten/ (`STRUKTURDATEN_AUS`): indikatoren.tsv, werte.tsv, werte_quartier.tsv.gz, raum/<ebene>.geojson,
+  zuordnung.tsv, gesamtstadt.tsv, meta.json, zurueckgestellt.tsv, audit_abruf.tsv, audit_raumabgleich.tsv. Jede
+  Eingabedatei des Zwischenspeichers muss mit ihrer Prüfsumme im Abrufprotokoll stehen (Herkunft und Abrufdatum).
+  werte_quartier.tsv.gz ist deterministisch komprimiert (gzip Stufe 9, mtime 0, ohne Dateinamen im Kopf), damit gleiche
+  Eingaben byte-gleiche Dateien ergeben.
 
 Regeln (Vertrag Abschnitt 3): Werte unverändert; „*“ → status geheim, leere Zelle → status fehlt, beide mit leerem
-Wert; keine eigenen Ableitungen in Phase 1. Zahlen mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen: aus
+Wert; keine eigenen Ableitungen und keine Verrechnung von Werten zwischen Raumebenen (zuordnung.tsv beschreibt nur die
+Lage der Einheiten zueinander). Zahlen mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen: aus
 der XLSX ganze Zahlen wie gespeichert, Gleitkommazahlen in der kürzesten Schreibweise, die denselben Wert ergibt (ohne
 Exponent); aus dem Wegweiser-Export die veröffentlichten Ziffern. „k.A.“ im Wegweiser-Export ergibt keine Zeile in
 gesamtstadt.tsv (der Vertrag sieht dort keinen Status vor); die betroffenen Jahre nennt der Metatext des Indikators.
-`quellobjekt` in werte.tsv ist die Zelle im Blatt Daten („Daten!D2“) der Datei mit der Prüfsumme aus meta.json.
+`quellobjekt` in werte.tsv und werte_quartier.tsv.gz ist die Zelle im Blatt Daten („Daten!D2“) der Datei mit der
+Prüfsumme aus meta.json. Zeilen, in denen ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile folgt
+(geprüfte Summe A0025A = A0355A + A0359A und geprüfte Verhältnisse; die Quelle hält dort nur einen Wert geheim), zählt
+meta.json unter `geheimhaltung_ableitbar`; die Werte bleiben unverändert und werden nicht ermittelt.
 
 Typ, Einheit sowie Zähler und Nenner der Kölner Indikatoren stammen aus Phase 0 (pipeline/strukturdaten_koeln.tsv,
 abgeleitet, nicht aus der Quelle). Zähler und Nenner stehen nur dort, wo Phase 0 sie numerisch geprüft hat, und nur,
-wenn die Beziehung in der aktuellen Datei weiter in jeder Zeile gilt (Abweichung höchstens eine Einheit der letzten
+wenn die Beziehung in der aktuellen Datei weiter in jeder übernommenen Zeile (auch der Quartiere) gilt (Abweichung höchstens eine Einheit der letzten
 veröffentlichten Stelle). In Phase 0 als unsicher eingestufte Typen, Spalten ohne Klassifikation und die
 Wegweiser-Indikatoren mit einem Unternehmen als Datenhalter werden zurückgestellt (zurueckgestellt.tsv). Den Typ der
 Wegweiser-Indikatoren ordnet dieses Modul selbst ein (`WW_AUSWAHL`); vorläufige Einordnungen (`WW_TYP_VORLAEUFIG`)
 nennen Metatext und meta.json. meta.json beschreibt außerdem die Schreibweise der Felder (`formate`).
 """
 import csv
+import gzip
 import hashlib
 import http.client
 import io
@@ -66,9 +79,9 @@ from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 
-from . import abruf, config
+from . import abruf, config, strukturdaten_raum
 
-VERTRAG_VERSION = "1"
+VERTRAG_VERSION = "1.1"   # 1.1 (10.11.2026): wie 1, dazu werte_quartier.tsv.gz mit der Raumebene quartier
 KLASSIFIKATION = Path(__file__).with_name("strukturdaten_koeln.tsv")
 
 XLSX_URL = ("https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/"
@@ -80,8 +93,12 @@ KOELN_HERAUSGEBER = "Stadt Köln, Amt für Stadtentwicklung und Statistik"
 KOELN_LIZENZ = "Datenlizenz Deutschland – Namensnennung – Version 2.0"
 KOELN_LIZENZ_URL = "https://www.govdata.de/dl-de/by-2-0"
 KOELN_NAMENSNENNUNG = (f"{KOELN_HERAUSGEBER} ({KOELN_TITEL}); in lange Tabellenform umgeformt, Werte unverändert")
-# Stand der Ressourcen laut open.nrw (Datensatzseite, gelesen am 10.11.2026); nur zur Begründung des Datenstands
-OPEN_NRW_RESSOURCEN = "06.07.2026"
+# Stand der Ressourcen laut open.nrw (Datensatzseite, gelesen am 10.11.2026); nur zur Begründung des Datenstands und nur
+# für die an diesem Tag geladene XLSX-Datei (Prüfsumme sha256 → (Stand, gelesen am)); für eine andere Datei gilt der
+# Portalstand als nicht geprüft (strukturdaten_raum.portalstand)
+OPEN_NRW_RESSOURCEN = {
+    "0645793fe92d248859bb979b80fe2c854e850789c485dbca2ae644e61e473382": ("06.07.2026", "10.11.2026"),
+}
 
 WW = "https://www.wegweiser-kommune.de"
 WW_TITEL = "Wegweiser Kommune (Bertelsmann Stiftung)"
@@ -123,20 +140,22 @@ WW_JAHRE = "2006-2023"
 WW_EXPORT_URL = (f"{WW}/data-api/rest/export/{'+'.join((*WW_AUSWAHL, *WW_KOMMUNEN))}+{WW_JAHRE}+tabelle.csv"
                  "?charset=UTF-8")
 
-RAUMEBENEN = {"Gesamtstadt": "gesamtstadt", "Stadtbezirke": "stadtbezirk", "Stadtteile": "stadtteil"}
+RAUMEBENEN = {"Gesamtstadt": "gesamtstadt", "Stadtbezirke": "stadtbezirk", "Stadtteile": "stadtteil",
+              "Statistische Quartiere": "quartier"}
 NICHT_UEBERNOMMEN = {
-    "Statistische Quartiere": ("quartier", "folgt in Phase 2 mit der Quartiersgeometrie (Entscheidung 10.11.2026)"),
-    "Sozialräume": ("sozialraum", "nicht Teil des Datenvertrags Strukturdaten v1 (Entscheidung 10.11.2026)"),
+    "Sozialräume": ("sozialraum", "nicht Teil des Datenvertrags Strukturdaten (Entscheidung 10.11.2026)"),
 }
-EBENEN_REIHENFOLGE = ("gesamtstadt", "stadtbezirk", "stadtteil")
+EBENEN_REIHENFOLGE = ("gesamtstadt", "stadtbezirk", "stadtteil", "quartier")
+EBENEN_WERTE = ("gesamtstadt", "stadtbezirk", "stadtteil")   # werte.tsv; quartier in werte_quartier.tsv.gz
 TYPEN = {"anzahl", "anteil", "quote", "dichte", "mittelwert", "kategorie"}
 EINWOHNER = "koeln_A0355A"   # Einwohnerzahl für die Anzeige: Hauptwohnsitz (Entscheidung 10.11.2026)
 # A0025A „Einwohner*innen, gesamt“ = A0355A (Hauptwohnsitz) + A0359A (Nebenwohnsitz); im Lauf nachgerechnet
 GESAMT, HAUPT, NEBEN = "A0025A", "A0355A", "A0359A"
 
-# Dateien im Zwischenspeicher: Schlüssel → (Dateiname, Umgebungsvariable, Quelle, Kennung in meta.json)
+# Dateien im Zwischenspeicher: Schlüssel → (Dateiname, Umgebungsvariable)
 DATEIEN = {
     "xlsx": ("statistischer_datenkatalog_koeln.xlsx", "STRUKTURDATEN_XLSX"),
+    "quartiere": ("statistische_quartiere_koeln.zip", "STRUKTURDATEN_QUARTIERE"),
     "ww_openapi": ("wegweiser_openapi.json", "STRUKTURDATEN_WW_OPENAPI"),
     "ww_version": ("wegweiser_version.txt", "STRUKTURDATEN_WW_VERSION"),
     "ww_indikatoren": ("wegweiser_indikatoren.json", "STRUKTURDATEN_WW_INDIKATOREN"),
@@ -144,11 +163,14 @@ DATEIEN = {
     "ww_export": ("wegweiser_export.csv", "STRUKTURDATEN_WW_EXPORT"),
 }
 PROTOKOLL = ("audit_abruf.tsv", "STRUKTURDATEN_PROTOKOLL")
+# Stadtteile und Stadtbezirke (data/geo aus pipeline/geodaten.py; versioniert, nicht im Abrufprotokoll)
+GEO = {"stadtteil": (config.ORTSTEILE, "STRUKTURDATEN_GEO_STADTTEILE"),
+       "stadtbezirk": (config.STADTBEZIRKE, "STRUKTURDATEN_GEO_STADTBEZIRKE")}
 # Wegweiser-Dateien: nur gemeinsam aus einem Lauf übernommen (Unterordner STUFE des Zwischenspeichers bis dahin)
 WW_DATEIEN = tuple(k for k in DATEIEN if k.startswith("ww_"))
 STUFE = "lauf_wegweiser"
 VERWORFEN = "verworfen (Lauf unvollständig)"
-# Reihenfolge des Abrufs: zuerst die OpenAPI-Beschreibung (Prüfung von info.version), die Datei der Stadt zuletzt
+# Reihenfolge des Abrufs: zuerst die OpenAPI-Beschreibung (Prüfung von info.version), die Dateien der Stadt zuletzt
 ABRUFE = [
     ("ww_openapi", WW + "/openapi?format=JSON", "wegweiser-kommune"),
     ("ww_version", WW + "/data-api/rest/statistics/version", "wegweiser-kommune"),
@@ -156,8 +178,10 @@ ABRUFE = [
     ("ww_regionen", WW + "/data-api/rest/region/list?types=KREISFREIE_STADT&max=500", "wegweiser-kommune"),
     ("ww_export", WW_EXPORT_URL, "wegweiser-kommune"),
     ("xlsx", XLSX_URL, "offenedaten-koeln"),
+    ("quartiere", strukturdaten_raum.QUARTIERE_URL, "offenedaten-koeln"),   # Phase 2, Freigabe 10.11.2026
 ]
-MAX_ANFRAGEN = len(ABRUFE)   # je Quelldatei eine Anfrage (5) und eine für die OpenAPI-Beschreibung
+# je Quelldatei eine Anfrage (6, davon 2 an die Stadt) und eine für die OpenAPI-Beschreibung; bis Phase 1 waren es 6
+MAX_ANFRAGEN = len(ABRUFE)
 MAX_BYTES = 100_000_000
 ZEITLIMIT = 300
 
@@ -193,6 +217,11 @@ def protokoll_pfad():
     return Path(os.environ.get(PROTOKOLL[1]) or zwischenspeicher() / PROTOKOLL[0])
 
 
+def geo_pfad(ebene):
+    vorgabe, variable = GEO[ebene]
+    return Path(os.environ.get(variable) or vorgabe)
+
+
 # --- gemeinsame Hilfen ------------------------------------------------------------------------------------------------
 
 def _text(wert):
@@ -206,6 +235,33 @@ def _tsv_schreiben(pfad, kopf, zeilen):
     with open(tmp, "w", encoding="utf-8", newline="") as fh:
         fh.write("\t".join(kopf) + "\n")
         fh.writelines("\t".join(_text(z.get(k, "")) for k in kopf) + "\n" for z in zeilen)
+    tmp.replace(pfad)
+
+
+def _tsv_gz_schreiben(pfad, kopf, zeilen):
+    """TSV wie _tsv_schreiben, gzip-komprimiert und deterministisch (Stufe 9, mtime 0, ohne Dateinamen im Kopf):
+    gleiche Zeilen ergeben mit derselben zlib-Version byte-gleiche Dateien. `zeilen`: Tupel in der Reihenfolge von
+    `kopf`, Felder bereits ohne Tabulator und Zeilenumbruch. Rückgabe: Anzahl der Zeilen ohne Kopf."""
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    tmp = pfad.with_name(pfad.name + ".tmp")
+    n = 0
+    with open(tmp, "wb") as roh, gzip.GzipFile(filename="", mode="wb", fileobj=roh, compresslevel=9, mtime=0) as gz, \
+            io.TextIOWrapper(gz, encoding="utf-8", newline="") as fh:
+        fh.write("\t".join(kopf) + "\n")
+        for z in zeilen:
+            if len(z) != len(kopf) or any("\t" in f or "\n" in f or "\r" in f for f in z):
+                raise ValueError(f"{pfad.name}: unerwartete Zeile {z!r}")
+            fh.write("\t".join(z) + "\n")
+            n += 1
+    tmp.replace(pfad)
+    return n
+
+
+def _text_schreiben(pfad, text):
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    tmp = pfad.with_name(pfad.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8", newline="") as fh:
+        fh.write(text)
     tmp.replace(pfad)
 
 
@@ -286,8 +342,10 @@ def arbeitsmappe(pfad):
 
 
 def zeilen_zaehlen(schluessel, pfad):
-    """Datensätze einer Eingabedatei für das Protokoll: Zeilen im Blatt Daten ohne Kopf (XLSX), Indikatorzeilen
-    (Wegweiser-Export), Einträge (Listen), sonst 1."""
+    """Datensätze einer Eingabedatei für das Protokoll: Zeilen im Blatt Daten ohne Kopf (XLSX), Quartiere
+    (Shapefile), Indikatorzeilen (Wegweiser-Export), Einträge (Listen), sonst 1."""
+    if schluessel == "quartiere":
+        return strukturdaten_raum.anzahl_quartiere(pfad)
     if schluessel == "xlsx":
         with arbeitsmappe(pfad) as mappe:
             return sum(1 for z in mappe["Daten"].iter_rows(min_row=2, max_col=1, values_only=True) if z and z[0])
@@ -541,6 +599,8 @@ def _pruefen_inhalt(schluessel, pfad):
         with zipfile.ZipFile(pfad) as z:
             if "xl/workbook.xml" not in z.namelist():
                 raise ValueError("keine XLSX-Datei (xl/workbook.xml fehlt)")
+    elif schluessel == "quartiere":
+        strukturdaten_raum.anzahl_quartiere(pfad)   # ZIP-Archiv mit genau einem lesbaren Shapefile aus Flächen
     elif schluessel == "ww_openapi":
         openapi_version(pfad)
     elif schluessel == "ww_version":
@@ -587,7 +647,9 @@ def klassifikation(pfad=None):
 
 
 class Datenkatalog:
-    """Inhalt der XLSX-Datei, soweit Phase 1 ihn braucht (Zeilen nur der übernommenen Raumebenen)."""
+    """Inhalt der XLSX-Datei (Zeilen nur der übernommenen Raumebenen): `zeilen` für werte.tsv (Gesamtstadt, Stadtbezirke,
+    Stadtteile), `zeilen_quartier` für werte_quartier.tsv.gz; je Zeile (Zeilennummer, Raumebene, raum_id, Raumname,
+    Jahr, Werte je Spalte)."""
 
     def __init__(self, pfad):
         from openpyxl.utils import get_column_letter
@@ -609,6 +671,7 @@ class Datenkatalog:
             if len({s[0] for s in self.spalten}) != len(self.spalten):
                 raise ValueError("Blatt Daten: Spaltencode doppelt")
             self.zeilen = []    # (Zeilennummer, Raumebene, raum_id, Raumname, Jahr, Werte je Spalte)
+            self.zeilen_quartier = []
             self.ebenen_alle = {}
             gesehen = set()
             self.n_zeilen = 0
@@ -632,7 +695,8 @@ class Datenkatalog:
                     raise ValueError(f"Blatt Daten, Zeile {nr}: {schluessel} doppelt")
                 gesehen.add(schluessel)
                 werte = tuple(z[i] if i < len(z) else None for _, _, _, i in self.spalten)
-                self.zeilen.append((nr, RAUMEBENEN[ebene], nummer, name.strip(), jahr, werte))
+                zeile = (nr, RAUMEBENEN[ebene], nummer, name.strip(), jahr, werte)
+                (self.zeilen_quartier if zeile[1] == "quartier" else self.zeilen).append(zeile)
 
     def _info(self, blatt):
         texte = [str(z[0]).strip() for z in blatt.iter_rows(values_only=True) if z and z[0] not in (None, "")]
@@ -831,8 +895,74 @@ def _zeilen(n):
     return f"{n} Zeile" if n == 1 else f"{n} Zeilen"
 
 
+def _ist_zahl(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def _ist_geheim(v):
+    return isinstance(v, str) and v.strip() == "*"
+
+
+def _ableitbar(spalte, zeilen, summen, verhaeltnisse):
+    """Zeilen, in denen ein geheim gehaltener Wert („*“) aus veröffentlichten Werten derselben Zeile folgt: genau ein
+    Wert einer geprüften Beziehung ist geheim, die übrigen sind Zahlen, und der geheime Wert ist durch sie bestimmt.
+    summen: [(gesamt, teile)] (gesamt = Summe der Teile; immer bestimmt); verhaeltnisse: [(wert, zaehler, nenner,
+    faktor)]
+    (wert = faktor × zaehler / nenner; wert oder zaehler geheim: bestimmt bei nenner ≠ 0; nenner geheim: bei wert ≠ 0
+    und zaehler ≠ 0). Rückgabe: [{beziehung, geheim, aus, raumebene, zeilen}] mit Anzahl > 0, Codes ohne Präfix.
+    Nur Prüfung, keine Rechnung: die Werte selbst werden nicht ermittelt und nirgends geschrieben."""
+    zaehlung = {}
+    beziehungen = [(f"{g} = {' + '.join(t)}", (g, *t), "summe") for g, t in summen]
+    beziehungen += [(f"{w} = {f} × {z} / {n}", (w, z, n), "verhaeltnis") for w, z, n, f in verhaeltnisse]
+    for text, codes, art in beziehungen:
+        if any(c not in spalte for c in codes):
+            continue
+        idx = [spalte[c] for c in codes]
+        for _, ebene, *_, werte in zeilen:
+            v = [werte[i] for i in idx]
+            geheim = [i for i, x in enumerate(v) if _ist_geheim(x)]
+            if len(geheim) != 1 or not all(_ist_zahl(x) for i, x in enumerate(v) if i != geheim[0]):
+                continue
+            k = geheim[0]
+            if art == "verhaeltnis" and (v[2] == 0 if k in (0, 1) else (v[0] == 0 or v[1] == 0)):
+                continue
+            schluessel = (text, codes[k], tuple(c for i, c in enumerate(codes) if i != k), ebene)
+            zaehlung[schluessel] = zaehlung.get(schluessel, 0) + 1
+    ordnung = {e: n for n, e in enumerate(EBENEN_REIHENFOLGE)}
+    return [{"beziehung": b, "geheim": g, "aus": list(a), "raumebene": e, "zeilen": n}
+            for (b, g, a, e), n in sorted(zaehlung.items(), key=lambda x: (x[0][0], x[0][1], ordnung[x[0][3]]))]
+
+
+def _eintrag(v, ref):
+    """(wert, status) einer Zelle im Blatt Daten: „*“ → geheim, leer → fehlt, Zahl → ok (unverändert)."""
+    if isinstance(v, str) and v.strip() == "*":
+        return "", "geheim"
+    if v is None or (isinstance(v, str) and not v.strip()):
+        return "", "fehlt"
+    if isinstance(v, (int, float)) and not isinstance(v, bool):
+        return zahl(v), "ok"
+    raise ValueError(f"unerwarteter Wert {v!r} in {ref}")
+
+
+def werte_quartier(kat, spalten):
+    """Zeilen von werte_quartier.tsv.gz als Tupel in der Reihenfolge von KOPF_WERTE, sortiert wie werte.tsv (Raum,
+    Indikator, Jahr); `spalten`: [(indikator_id, Spaltenindex, Spaltenbuchstabe)] nach indikator_id sortiert."""
+    je_raum = {}
+    for nr, _, raum_id, _, jahr, zellen in kat.zeilen_quartier:
+        je_raum.setdefault(raum_id, []).append((jahr, nr, zellen))
+    for raum_id in sorted(je_raum, key=int):
+        zeilen = sorted(je_raum[raum_id], key=lambda z: z[0])
+        for iid, i, buchstabe in spalten:
+            for jahr, nr, zellen in zeilen:
+                ref = f"Daten!{buchstabe}{nr}"
+                yield ("quartier", raum_id, iid, jahr, *_eintrag(zellen[i], ref), ref)
+
+
 def _koeln(kat, klass, beleg):
-    """(Indikatoren, Werte, Zurückgestellte, Hinweise) aus dem Statistischen Datenkatalog."""
+    """(Indikatoren, Werte für werte.tsv, Zurückgestellte, Hinweise, Quartiere, Ableitbare) aus dem Statistischen
+    Datenkatalog; Quartiere: {"spalten": für werte_quartier, "status": Zeilen je Status}; Ableitbare: {"zeilen":
+    geheime Werte, die aus veröffentlichten Werten derselben Zeile folgen (alle Raumebenen, _ableitbar), "summen":
+    geprüfte Summen, "verhaeltnisse": Anzahl geprüfter Verhältnisse}."""
     abrufdatum = beleg["zeitstempel"][:10]
     spalte = {code: i for i, (code, *_) in enumerate(kat.spalten)}
     name = {code: n for code, n, *_ in kat.spalten}
@@ -866,10 +996,13 @@ def _koeln(kat, klass, beleg):
         hinweise.append(f"{len(fehlen)} Indikatoren aus Phase 0 stehen nicht im Blatt Daten dieser Datei: "
                         f"{', '.join(fehlen[:10])}{' …' if len(fehlen) > 10 else ''}")
     codes = {c for c, *_ in aufnehmen}
-    gesamt_gilt, gesamt_n, gesamt_offen = _summe(spalte, kat.zeilen, GESAMT, (HAUPT, NEBEN))
+    alle = kat.zeilen + kat.zeilen_quartier   # alle übernommenen Zeilen (Prüfungen gelten für jede veröffentlichte Zeile)
+    gesamt_gilt, gesamt_n, gesamt_offen = _summe(spalte, alle, GESAMT, (HAUPT, NEBEN))
     hinweise.append(f"{GESAMT} = {HAUPT} + {NEBEN}: {'gilt' if gesamt_gilt else 'gilt nicht'} ({gesamt_n} Zeilen, "
                     f"nicht prüfbar {gesamt_offen or 'keine'})")
     indikatoren, werte = [], []
+    quartier = {"spalten": [], "status": {}}
+    verhaeltnisse = []   # geprüfte Beziehungen (Wert, Zähler, Nenner, Faktor) für _ableitbar
     for code, n, buchstabe, k in aufnehmen:
         iid = "koeln_" + code
         i = spalte[code]
@@ -878,11 +1011,12 @@ def _koeln(kat, klass, beleg):
         if k["zaehler_id"]:
             z, d = k["zaehler_id"].removeprefix("koeln_"), k["nenner_id"].removeprefix("koeln_")
             if z in codes and d in codes:
-                gilt, geprueft = _verhaeltnis(spalte, kat.zeilen, code, z, d, float(k["faktor"]))
+                gilt, geprueft = _verhaeltnis(spalte, alle, code, z, d, float(k["faktor"]))
             else:
                 gilt, geprueft = False, 0
             if gilt:
                 z_id, n_id = k["zaehler_id"], k["nenner_id"]
+                verhaeltnisse.append((code, z, d, k["faktor"]))
                 meta.append(f"Entspricht {k['faktor']} × Zähler / Nenner (nachgerechnet in {geprueft} Zeilen): "
                             f"Zähler {z_id} „{name[z]}“, Nenner {n_id} „{name[d]}“.")
                 if d == GESAMT and gesamt_gilt:
@@ -895,7 +1029,7 @@ def _koeln(kat, klass, beleg):
                 ("geheim", "geheim gehaltenem Wert"), ("fehlt", "fehlendem Wert"), ("andere", "anderem Zellinhalt"))
                 if gesamt_offen.get(g)]
             meta.append(f"Summe aus Einwohner*innen mit Hauptwohnsitz (koeln_{HAUPT}) und mit Nebenwohnsitz "
-                        f"(koeln_{NEBEN}), nachgerechnet in {gesamt_n} von {len(kat.zeilen)} Zeilen"
+                        f"(koeln_{NEBEN}), nachgerechnet in {gesamt_n} von {len(alle)} Zeilen"
                         + (f"; nicht prüfbar: {', '.join(offen)}." if offen else "."))
         quellenangabe, anmerkung = kat.quellen.get(code, ("", ""))
         if anmerkung:
@@ -904,21 +1038,21 @@ def _koeln(kat, klass, beleg):
             hinweise.append(f"{iid}: keine Quellenangabe im Blatt Quellen")
         jahre, ebenen = set(), set()
         for nr, ebene, raum_id, _, jahr, zellen in kat.zeilen:
-            v = zellen[i]
             ref = f"Daten!{buchstabe}{nr}"
-            if isinstance(v, str) and v.strip() == "*":
-                eintrag = ("", "geheim")
-            elif v is None or (isinstance(v, str) and not v.strip()):
-                eintrag = ("", "fehlt")
-            elif isinstance(v, (int, float)) and not isinstance(v, bool):
-                eintrag = (zahl(v), "ok")
-            else:
-                raise ValueError(f"unerwarteter Wert {v!r} in {ref}")
+            eintrag = _eintrag(zellen[i], ref)
             if eintrag[1] != "fehlt":
                 jahre.add(jahr)
                 ebenen.add(ebene)
             werte.append({"raumebene": ebene, "raum_id": raum_id, "indikator_id": iid, "jahr": jahr,
                           "wert": eintrag[0], "status": eintrag[1], "quellobjekt": ref})
+        # Quartiere: nur Status, Jahre und Ebenen; die Zeilen erzeugt werte_quartier() beim Schreiben (1,4 Mio. Zeilen)
+        for nr, ebene, raum_id, _, jahr, zellen in kat.zeilen_quartier:
+            status = _eintrag(zellen[i], f"Daten!{buchstabe}{nr}")[1]
+            quartier["status"][status] = quartier["status"].get(status, 0) + 1
+            if status != "fehlt":
+                jahre.add(jahr)
+                ebenen.add(ebene)
+        quartier["spalten"].append((iid, i, buchstabe))
         indikatoren.append({
             "indikator_id": iid, "name": n, "thema": kat.katalog.get(k["katalog_id"], {}).get("thema", ""),
             "einheit": k["einheit"], "typ": k["typ"], "zaehler_id": z_id, "nenner_id": n_id,
@@ -927,7 +1061,11 @@ def _koeln(kat, klass, beleg):
             "namensnennung": KOELN_NAMENSNENNUNG, "metatext": " ".join(_satz(m) for m in meta),
             "geheimhaltung": kat.geheimhaltung,
             "quell_url": DATENSATZ_URL, "abrufdatum": abrufdatum})
-    return indikatoren, werte, zurueck, hinweise
+    quartier["spalten"].sort()
+    summen = [(GESAMT, (HAUPT, NEBEN))] if gesamt_gilt else []
+    ableitbar = {"zeilen": _ableitbar(spalte, alle, summen, verhaeltnisse), "summen": summen,
+                 "verhaeltnisse": len(verhaeltnisse)}
+    return indikatoren, werte, zurueck, hinweise, quartier, ableitbar
 
 
 def _ka_text(ka, namen):
@@ -982,8 +1120,8 @@ def _wegweiser(ww, beleg):
 def _gebietsabgleich(kat):
     """Abgleich der Stadtteile und Stadtbezirke mit data/geo (Nummer und Name); nur Hinweise."""
     hinweise = []
-    for ebene, pfad, nummer, name in (("stadtteil", config.ORTSTEILE, "ortsteil", "ortsteil_bez"),
-                                      ("stadtbezirk", config.STADTBEZIRKE, "bezirk", "bezirk_bez")):
+    for ebene, pfad, nummer, name in (("stadtteil", geo_pfad("stadtteil"), "ortsteil", "ortsteil_bez"),
+                                      ("stadtbezirk", geo_pfad("stadtbezirk"), "bezirk", "bezirk_bez")):
         if not Path(pfad).exists():
             hinweise.append(f"Abgleich {ebene}: {pfad} fehlt")
             continue
@@ -1000,10 +1138,54 @@ def _gebietsabgleich(kat):
     return hinweise
 
 
-def _meta(kat, ww, belege, indikatoren):
+# Dateien des Datenvertrags (Version 1.1) und Ergänzungen: (Datei, Teil des Vertrags, Inhalt)
+DATEIEN_AUSGABE = (
+    ("indikatoren.tsv", True, "ein Eintrag je Indikator"),
+    ("werte.tsv", True, "Werte der Raumebenen gesamtstadt, stadtbezirk und stadtteil, ein Wert je Zeile"),
+    ("werte_quartier.tsv.gz", True, "Werte der Raumebene quartier, Spalten wie werte.tsv, gzip-komprimiert (seit "
+                                    "Version 1.1)"),
+    ("raum/stadtbezirk.geojson", True, "Geometrie der Stadtbezirke (WGS84)"),
+    ("raum/stadtteil.geojson", True, "Geometrie der Stadtteile (WGS84)"),
+    ("raum/quartier.geojson", True, "Geometrie der Statistischen Quartiere (WGS84)"),
+    ("zuordnung.tsv", True, "Lage der Raumeinheiten zueinander (Quartier → Stadtteil, Stadtteil → Stadtbezirk) mit "
+                            "Flächenanteil, Methode und Konfidenz"),
+    ("gesamtstadt.tsv", True, "gesamtstädtische Vergleichswerte aus dem Wegweiser Kommune"),
+    ("meta.json", True, "Datenstand, Freigabe, Quellen, Schreibweisen"),
+    ("zurueckgestellt.tsv", False, "nicht übernommene Indikatoren mit Grund"),
+    ("audit_abruf.tsv", False, "verwendete Abrufe (Adresse, Zeit, Status, Zeilen, Prüfsumme)"),
+    ("audit_raumabgleich.tsv", False, "Prüfung des Raumabgleichs je Raumeinheit (Spalten unter "
+                                      "audit_raumabgleich_spalten)"),
+)
+
+
+def _geheimhaltung_text(ableitbar):
+    """geheimhaltung_hinweis in meta.json: Regel der Anzeige; dazu die Zeilen, in denen die Quelle einen geheim
+    gehaltenen Wert selbst offenlegt (geheimhaltung_ableitbar)."""
+    text = ("status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von "
+            "indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die "
+            "einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen (Quartier, Stadtteil, Stadtbezirk) "
+            "oder Teilgrößen hinweg; zuordnung.tsv dient nicht der Verrechnung von Werten.")
+    zeilen = ableitbar["zeilen"]
+    if not zeilen:
+        return text
+    teile = {}
+    for z in zeilen:
+        teile.setdefault((z["geheim"], tuple(z["aus"])), []).append(f"{z['raumebene']} {z['zeilen']}")
+    return text + (
+        f" In {sum(z['zeilen'] for z in zeilen)} Zeilen folgt ein geheim gehaltener Wert aus veröffentlichten Werten "
+        "derselben Zeile (" + "; ".join(f"koeln_{g} aus " + " und ".join(f"koeln_{c}" for c in a) + ": " + ", ".join(e)
+                                        for (g, a), e in teile.items())
+        + "; geheimhaltung_ableitbar): Die Quelle hält dort nur einen Wert der Beziehung geheim und veröffentlicht "
+        "die übrigen (keine sekundäre Geheimhaltung in der Quelle). Die Werte bleiben unverändert (quellentreu); die "
+        "Anzeige bildet auch dort keine Summen, Differenzen oder Verhältnisse, die den geheimen Wert ergeben.")
+
+
+def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
+    rm = strukturdaten_raum
     q = []
     beschreibung = {
         "xlsx": ("statistischer-datenkatalog-koeln", KOELN_TITEL + " (XLSX, Blätter Info, Daten, Quellen, Katalog)"),
+        "quartiere": ("statistische-quartiere-koeln", rm.QUARTIERE_TITEL + " (Shapefile im ZIP-Archiv)"),
         "ww_export": ("wegweiser-export", "Wegweiser Kommune, Datenexport (CSV) der ausgewählten Indikatoren"),
         "ww_indikatoren": ("wegweiser-indikatoren", "Wegweiser Kommune, Indikatorliste (Name, Einheit, Erläuterung, "
                                                     "Datenhalter)"),
@@ -1011,6 +1193,13 @@ def _meta(kat, ww, belege, indikatoren):
         "ww_version": ("wegweiser-datenversion", "Wegweiser Kommune, Datenversion"),
         "ww_openapi": ("wegweiser-openapi", "Wegweiser Kommune, OpenAPI-Beschreibung (info.version)"),
     }
+    rmeta = raum["meta"]
+    quartiere_stand = (rm.portalstand(rm.QUARTIERE_STAND_PORTAL, belege["quartiere"]["pruefsumme"])
+                       + f"; Shapefile im Archiv vom {rmeta['quartiere_datum_archiv']}")
+    katalog_stand = belege["xlsx"]["pruefsumme"] in OPEN_NRW_RESSOURCEN
+    katalog_portal = (f"die Ressourcen auf open.nrw tragen den {OPEN_NRW_RESSOURCEN[belege['xlsx']['pruefsumme']][0]} "
+                      "(Stand der Portalangabe)" if katalog_stand else
+                      "Stand der Ressource auf open.nrw für diese Datei nicht geprüft")
     for schluessel in DATEIEN:
         b = belege[schluessel]
         kennung, titel = beschreibung[schluessel]
@@ -1020,6 +1209,11 @@ def _meta(kat, ww, belege, indikatoren):
             eintrag.update({"datensatz_url": DATENSATZ_URL, "herausgeber": KOELN_HERAUSGEBER, "lizenz": KOELN_LIZENZ,
                             "lizenz_url": KOELN_LIZENZ_URL, "namensnennung": KOELN_NAMENSNENNUNG,
                             "datenstand": kat.datenstand})
+        elif schluessel == "quartiere":
+            eintrag.update({"datensatz_url": rm.QUARTIERE_DATENSATZ_URL, "herausgeber": rm.GEO_HERAUSGEBER,
+                            "lizenz": rm.GEO_LIZENZ, "lizenz_url": rm.GEO_LIZENZ_URL,
+                            "namensnennung": rm.GEO_NAMENSNENNUNG, "datenstand_hinweis": quartiere_stand,
+                            "crs": rmeta["quartiere_crs"]})
         else:
             eintrag.update({"datensatz_url": WW_DATENSEITE, "herausgeber": "Bertelsmann Stiftung", "lizenz": WW_LIZENZ,
                             "lizenz_url": WW_LIZENZ_URL, "namensnennung": WW_QUELLENANGABE})
@@ -1029,57 +1223,166 @@ def _meta(kat, ww, belege, indikatoren):
                 eintrag["openapi_version"] = ww.openapi_version
         q.append(eintrag)
     abrufdatum = max(b["zeitstempel"][:10] for b in belege.values())
+    erg = rmeta["ergebnis"]
+    splitter = {k: v["groesster_splitter"] or "keiner" for k, v in erg.items()}
     return {
         "vertrag_version": VERTRAG_VERSION,
+        "vertrag_aenderungen": {
+            "1.1": ("10.11.2026 (Entscheidung des Auftraggebers): Werte der Raumebene quartier in "
+                    "werte_quartier.tsv.gz mit genau den Spalten von werte.tsv (raumebene quartier); gzip "
+                    "deterministisch (Stufe 9, mtime 0, ohne Dateinamen im Kopf). werte.tsv enthält weiter nur "
+                    "gesamtstadt, stadtbezirk und stadtteil. Dazu raum/quartier.geojson und die Liste dateien."),
+        },
+        "dateien": [{"datei": d, "vertrag": v, "inhalt": i} for d, v, i in DATEIEN_AUSGABE],
         "datenstand": kat.datenstand,
         "datenstand_hinweis": (f"Datenstand des Statistischen Datenkatalogs laut Blatt Info („Auswertung erstellt am "
-                               f"{kat.stand_text}“); maßgeblich ist die Angabe in der Datei, die Ressourcen auf "
-                               f"open.nrw tragen den {OPEN_NRW_RESSOURCEN} (Stand der Portalangabe). Wegweiser "
-                               f"Kommune: Datenversion {ww.version}."),
+                               f"{kat.stand_text}“); maßgeblich ist die Angabe in der Datei, {katalog_portal}. "
+                               "Statistische "
+                               f"Quartiere (Geometrie): {quartiere_stand}. Wegweiser Kommune: Datenversion "
+                               f"{ww.version}."),
         "abrufdatum": abrufdatum,
         "veroeffentlichen": True,
         "lizenzstatus": "geklärt",
         "lizenzstatus_hinweis": (f"{KOELN_TITEL}: {KOELN_LIZENZ} laut open.nrw; Nutzung und Veröffentlichung hat die "
-                                 "Statistikstelle laut Auftraggeber am 10.11.2026 zugestimmt. Wegweiser Kommune: "
-                                 f"{WW_LIZENZ} laut Open-Data-Seite und Fußzeile des Exports; Indikatoren mit einem "
-                                 "Unternehmen als Datenhalter sind zurückgestellt (zurueckgestellt.tsv)."),
+                                 "Statistikstelle laut Auftraggeber am 10.11.2026 zugestimmt. "
+                                 f"{rm.QUARTIERE_TITEL}, Stadtteile und Stadtbezirke (Geometrie): {rm.GEO_LIZENZ} laut "
+                                 f"open.nrw bzw. offenedaten-koeln.de, Namensnennung „{rm.GEO_NAMENSNENNUNG}“ wird "
+                                 f"geführt. Wegweiser Kommune: {WW_LIZENZ} laut Open-Data-Seite und Fußzeile des "
+                                 "Exports; Indikatoren mit einem Unternehmen als Datenhalter sind zurückgestellt "
+                                 "(zurueckgestellt.tsv)."),
         "raumebenen": list(EBENEN_REIHENFOLGE),
+        "raumebenen_dateien": {e: ("werte_quartier.tsv.gz" if e == "quartier" else "werte.tsv")
+                               for e in EBENEN_REIHENFOLGE},
         "raumebenen_nicht_uebernommen": {e: g for e, g in NICHT_UEBERNOMMEN.values()},
         "einwohner_indikator": EINWOHNER if any(i["indikator_id"] == EINWOHNER for i in indikatoren) else "",
-        "quellobjekt": ("werte.tsv: Zelle im Blatt Daten der XLSX-Datei mit der Prüfsumme unter quellen[] "
-                        "(Daten!<Spalte><Zeile>; Spalte = Indikator, Zeile = Jahr und Raum). gesamtstadt.tsv: Zelle "
-                        "des Wegweiser-Exports (Indikator, Jahr, Kommune)."),
+        "quellobjekt": ("werte.tsv und werte_quartier.tsv.gz: Zelle im Blatt Daten der XLSX-Datei mit der Prüfsumme "
+                        "unter quellen[] (Daten!<Spalte><Zeile>; Spalte = Indikator, Zeile = Jahr und Raum). "
+                        "gesamtstadt.tsv: Zelle des Wegweiser-Exports (Indikator, Jahr, Kommune). raum/quartier.geojson: "
+                        "Datensatz des Shapefiles mit derselben Nummer (Feld nummer); raum/stadtteil.geojson und "
+                        "raum/stadtbezirk.geojson: Feature der Datei unter data/geo (raum.<ebene>.abgeleitet_aus)."),
         "gesamtstadt_ka": ("Jahre mit „k.A.“ im Wegweiser-Export stehen nicht in gesamtstadt.tsv (der Vertrag sieht "
                            "dort keinen Status vor); der Metatext des Indikators nennt sie."),
         "typ_einordnung": ("typ und einheit stehen nicht in den Quellen; es sind eigene Einordnungen. Statistischer "
                            "Datenkatalog Köln: typ und einheit aus Phase 0 nach der Formatspalte des Blatts Katalog "
                            "(abs, %, andere) und dem Namen, Begründung je Indikator in pipeline/strukturdaten_koeln.tsv "
                            "(Spalte typ_begruendung); zaehler_id und nenner_id nur, wo die Beziehung in jeder Zeile "
-                           "nachgerechnet ist. Wegweiser Kommune: typ nach Name, Einheit und Berechnung laut "
-                           "Indikatorliste des Wegweisers, einheit unverändert aus der Indikatorliste. Vorläufige "
-                           "Einordnungen stehen unter typ_vorlaeufig und im Metatext."),
+                           "(alle Raumebenen einschließlich der Quartiere) nachgerechnet ist. Wegweiser Kommune: typ "
+                           "nach Name, Einheit und Berechnung laut Indikatorliste des Wegweisers, einheit unverändert "
+                           "aus der Indikatorliste. Vorläufige Einordnungen stehen unter typ_vorlaeufig und im "
+                           "Metatext."),
         "typ_vorlaeufig": {f"ww_{fu}": grund for fu, (grund, _) in WW_TYP_VORLAEUFIG.items()
                            if any(i["indikator_id"] == f"ww_{fu}" for i in indikatoren)},
         "formate": {
             "dateien": ("TSV in UTF-8 ohne BOM, Tabulator als Trennzeichen, Zeilenende LF, erste Zeile mit den "
                         "Spaltennamen, ohne Anführungszeichen; Felder ohne Tabulator und Zeilenumbruch."),
+            "gzip": ("werte_quartier.tsv.gz: TSV wie werte.tsv, gzip mit Stufe 9, Änderungszeit 0 und ohne Dateinamen "
+                     "im Kopf (gleiche Eingaben ergeben byte-gleiche Dateien)."),
             "wert": ("Zahl mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und ohne Exponent, Ziffern "
-                     "wie in der Quelle; in werte.tsv leer bei status geheim und fehlt; gesamtstadt.tsv enthält nur "
-                     "Zeilen mit Wert."),
-            "jahre": ("indikatoren.tsv: Jahre, für die werte.tsv mindestens eine Zeile mit status ok oder geheim hat "
-                      "(Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und aufsteigend, aufeinanderfolgende "
-                      "Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon ohne Leerzeichen getrennt, z. B. "
-                      "2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile gibt."),
-            "raumebenen": ("indikatoren.tsv: Raumebenen, für die werte.tsv mindestens eine Zeile mit status ok oder "
-                           "geheim hat (Wegweiser: gesamtstadt), durch Semikolon ohne Leerzeichen getrennt, in der "
-                           "Reihenfolge von raumebenen (gesamtstadt;stadtbezirk;stadtteil)."),
+                     "wie in der Quelle; in werte.tsv und werte_quartier.tsv.gz leer bei status geheim und fehlt; "
+                     "gesamtstadt.tsv enthält nur Zeilen mit Wert."),
+            "jahre": ("indikatoren.tsv: Jahre, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit "
+                      "status ok oder geheim hat (Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und "
+                      "aufsteigend, aufeinanderfolgende Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon "
+                      "ohne Leerzeichen getrennt, z. B. 2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile "
+                      "gibt."),
+            "raumebenen": ("indikatoren.tsv: Raumebenen, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine "
+                           "Zeile mit status ok oder geheim hat (Wegweiser: gesamtstadt), durch Semikolon ohne "
+                           "Leerzeichen getrennt, in der Reihenfolge von raumebenen "
+                           "(gesamtstadt;stadtbezirk;stadtteil;quartier)."),
+            "geojson": (f"raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit "
+                        f"Quelle, Prüfsumme und Lizenz; Flächen mit Toleranz {rm.TOLERANZ_M:g} m vereinfacht, "
+                        "Koordinaten auf 1e-6 Grad gerundet. Stadtbezirke und Stadtteile wie data/geo (jede Fläche für "
+                        "sich, Douglas-Peucker); Quartiere gemeinsam als lückenlose Abdeckung (Visvalingam-Whyatt, "
+                        "Nachbarn mit denselben Stützpunkten an der gemeinsamen Grenze; Verfahren unter "
+                        "raum.quartier.geometrie, Prüfung unter raum.quartier.abdeckung, gemessene Abweichung unter "
+                        "raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als Text), "
+                        "name, raumebene, eltern_id, quelle, lizenz. Nur zur Anzeige, nicht zum Rechnen."),
+            "flaechenanteil": ("zuordnung.tsv und audit_raumabgleich.tsv: Anteil der Fläche der Einheit (von) im Ziel "
+                               "(nach), 0 bis 1 mit 4 Nachkommastellen und Punkt; berechnet in EPSG 25832. Die "
+                               "Schwellen splitter_anteil und anteil_hoch gelten für diesen gerundeten Wert."),
         },
-        "geheimhaltung_hinweis": ("status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld "
-                                  "geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen "
-                                  "oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen "
-                                  "könnten, etwa über Raumebenen oder Teilgrößen hinweg."),
+        "raum": {e: {"datei": f"raum/{e}.geojson", **{k: v for k, v in raum["geojson_meta"][e].items()
+                                                      if k in ("quelle", "quelle_url", "datensatz_url",
+                                                               "abgeleitet_aus", "abgerufen", "abgerufen_beleg",
+                                                               "sha256", "lizenz", "lizenz_url", "namensnennung",
+                                                               "vereinfacht_m", "geometrie",
+                                                               "abweichung_von_der_quelle", "abdeckung",
+                                                               "eltern_id")}}
+                 for e in ("stadtbezirk", "stadtteil", "quartier")},
+        "raumabgleich": {
+            "verfahren": ("Verschneidung in EPSG 25832 (ETRS89/UTM 32N): Quartiere unvereinfacht aus dem Shapefile, "
+                          "Stadtteile und Stadtbezirke aus data/geo nach EPSG 25832 zurückgerechnet. Je Einheit der "
+                          "Anteil ihrer Fläche in jedem Ziel; verglichen mit dem Ziel laut Nummer (Quartier: erste drei "
+                          "Ziffern = Stadtteil; Stadtteil: erste Ziffer = Stadtbezirk) und laut Attribut der "
+                          "Geometriequelle (Quartier: nr_stteil; Stadtteil: bezirk). Werte werden nicht zwischen "
+                          "Raumebenen verrechnet."),
+            "splitter_anteil": rm.SPLITTER_ANTEIL,
+            "anteil_hoch": rm.ANTEIL_HOCH,
+            "schwellen": (f"Teilflächen unter splitter_anteil ({rm.SPLITTER_ANTEIL}) gelten als Randsplitter: in "
+                          "audit_raumabgleich.tsv gemeldet, nicht in zuordnung.tsv. Ein Hauptanteil ab anteil_hoch "
+                          f"({rm.ANTEIL_HOCH}) gilt als vollständige Lage im Ziel. Verglichen wird der "
+                          "veröffentlichte, auf 4 Stellen gerundete Anteil."),
+            "methoden": {"verschneidung_nummer": "Flächenanteil aus der Verschneidung; das Ziel stimmt mit der Nummer "
+                                                 "überein",
+                         "verschneidung": "Flächenanteil aus der Verschneidung; die Nummer nennt ein anderes Ziel"},
+            "konfidenz": {"hoch": "verschneidung_nummer, Flächenanteil mindestens anteil_hoch, das Attribut der Quelle "
+                                  "widerspricht nicht",
+                          "mittel": "verschneidung_nummer, Flächenanteil unter anteil_hoch oder Attribut abweichend",
+                          "niedrig": "verschneidung (Ziel nicht durch die Nummer belegt)"},
+            "pruefstatus": {"ok": "Verschneidung, Nummer und Attribut nennen dasselbe Ziel, Flächenanteil mindestens "
+                                  "anteil_hoch, Werte im Blatt Daten vorhanden; nur dann steht eltern_id",
+                            "abweichung": "zugeordnet, aber mindestens eine Prüfung weicht ab (Grund im Audit)",
+                            "hinweise": "ein abweichender Name im Blatt Daten und eine reparierte Geometrie stehen als "
+                                        "Hinweis in grund und ändern den Prüfstatus nicht (Namen: id_abgleich, "
+                                        "namen_abweichend)",
+                            "nicht_zugeordnet": "ohne Geometrie oder ohne Ziel mit mindestens splitter_anteil; keine "
+                                                "Zeile in zuordnung.tsv"},
+            "geometrie_hinweis": (f"data/geo ist mit {rm.TOLERANZ_M:g} m vereinfacht (jede Fläche für sich) und auf "
+                                  "1e-6 Grad gerundet (beste verfügbare Geometrie der Stadtteile und Stadtbezirke im "
+                                  "Repository). Die Grenzen weichen daher von der Quelle ab (für data/geo nicht "
+                                  "gemessen, die unvereinfachten Flächen liegen nicht im Repository; dasselbe "
+                                  "Verfahren ergab bei den Quartieren am 10.11.2026 bis 12,61 m, 37 von 570 Quartieren "
+                                  "über 2 m; die Quartiere werden seitdem gemeinsam vereinfacht, "
+                                  "raum.quartier.geometrie): Hauptanteile liegen knapp unter 1, an den Rändern "
+                                  "entstehen Randsplitter (größter Splitter: "
+                                  + "; ".join(f"{k} {v}" for k, v in splitter.items()) + ")."),
+            "ergebnis": erg,
+            "id_abgleich": rmeta["id_abgleich"],
+        },
+        "audit_raumabgleich_spalten": rm.AUDIT_SPALTEN,
+        "geheimhaltung_hinweis": _geheimhaltung_text(ableitbar),
+        "geheimhaltung_ableitbar": {
+            "geprueft": ("Zeilen aller Raumebenen (werte.tsv und werte_quartier.tsv.gz), in denen genau ein Wert einer "
+                         "geprüften Beziehung geheim ist und die übrigen veröffentlicht sind, sodass er durch sie "
+                         "bestimmt ist; geprüft: "
+                         + "; ".join([f"Summe koeln_{g} = " + " + ".join(f"koeln_{c}" for c in t)
+                                      for g, t in ableitbar["summen"]]
+                                     + [f"{ableitbar['verhaeltnisse']} Verhältnisse (zaehler_id und nenner_id in "
+                                        "indikatoren.tsv)"])
+                         + ". Nur gezählt; die Werte selbst werden nicht ermittelt."),
+            "zeilen": [{**z, "geheim": f"koeln_{z['geheim']}", "aus": [f"koeln_{c}" for c in z["aus"]],
+                        "beziehung": re.sub(r"\b([A-Z]\d{4}[APS])\b", r"koeln_\1", z["beziehung"])}
+                       for z in ableitbar["zeilen"]],
+        },
         "quellen": q,
     }
+
+
+def _werte_namen(kat):
+    """{Raumebene: {raum_id: Name aus dem jüngsten Jahr}} der Einheiten im Blatt Daten."""
+    namen = {}
+    for _, ebene, raum_id, name, jahr, _ in sorted(kat.zeilen + kat.zeilen_quartier, key=lambda z: (z[4], z[0])):
+        namen.setdefault(ebene, {})[raum_id] = name
+    return namen
+
+
+def _namen_jahre(kat):
+    """{Raumebene: {raum_id: {Name: [Jahre]}}} der Einheiten im Blatt Daten über alle Jahre (Abgleich der Namen mit der
+    Geometriequelle in audit_raumabgleich.tsv)."""
+    namen = {}
+    for _, ebene, raum_id, name, jahr, _ in sorted(kat.zeilen + kat.zeilen_quartier, key=lambda z: (z[4], z[0])):
+        namen.setdefault(ebene, {}).setdefault(raum_id, {}).setdefault(name, []).append(jahr)
+    return namen
 
 
 def write():
@@ -1089,6 +1392,10 @@ def write():
         if not p.exists():
             raise SystemExit(f"strukturdaten: Eingabe {k} fehlt ({p}); zuerst `strukturdaten-abruf` (mit Freigabe) "
                              f"oder {DATEIEN[k][1]} setzen")
+    for ebene in GEO:
+        if not geo_pfad(ebene).exists():
+            raise SystemExit(f"strukturdaten: Geometrie {ebene} fehlt ({geo_pfad(ebene)}); zuerst `geo-koeln` oder "
+                             f"{GEO[ebene][1]} setzen")
     protokoll = abrufprotokoll(protokoll_pfad())
     klass = klassifikation()
     kat = Datenkatalog(pfade["xlsx"])
@@ -1096,46 +1403,77 @@ def write():
                    pfade["ww_openapi"])
     gezaehlt = {"xlsx": kat.n_zeilen, "ww_export": ww.n_zeilen}
     belege = {k: herkunft(k, p, protokoll, gezaehlt.get(k)) for k, p in pfade.items()}
-    ind_k, werte, zur_k, hinweise = _koeln(kat, klass, belege["xlsx"])
+    ind_k, werte, zur_k, hinweise, quartier, ableitbar = _koeln(kat, klass, belege["xlsx"])
     ind_w, gesamt, zur_w = _wegweiser(ww, belege["ww_export"])
     hinweise += _gebietsabgleich(kat)
+    raum = strukturdaten_raum.raumabgleich(pfade["quartiere"], belege["quartiere"], geo_pfad("stadtteil"),
+                                           geo_pfad("stadtbezirk"), _werte_namen(kat), _namen_jahre(kat))
     indikatoren = sorted(ind_k + ind_w, key=lambda i: i["indikator_id"])
     for i in indikatoren:
         if i["typ"] not in TYPEN:
             raise ValueError(f"{i['indikator_id']}: Typ {i['typ']!r} nicht im Vertrag")
     ordnung = {e: n for n, e in enumerate(EBENEN_REIHENFOLGE)}
     werte.sort(key=lambda w: (ordnung[w["raumebene"]], int(w["raum_id"]), w["indikator_id"], w["jahr"]))
+    if any(w["raumebene"] not in EBENEN_WERTE for w in werte):
+        raise ValueError("werte.tsv: Raumebene außerhalb von gesamtstadt, stadtbezirk, stadtteil")
     gesamt.sort(key=lambda g: (g["kommune"], g["indikator_id"], g["jahr"]))
     zurueck = sorted(zur_k + zur_w, key=lambda z: z["indikator_id"])
     aus = ausgabe()
     aus.mkdir(parents=True, exist_ok=True)
     _tsv_schreiben(aus / "indikatoren.tsv", KOPF_INDIKATOREN, indikatoren)
     _tsv_schreiben(aus / "werte.tsv", KOPF_WERTE, werte)
+    n_quartier = _tsv_gz_schreiben(aus / "werte_quartier.tsv.gz", KOPF_WERTE, werte_quartier(kat, quartier["spalten"]))
+    for ebene, text in raum["geojson"].items():
+        _text_schreiben(aus / "raum" / f"{ebene}.geojson", text)
+    _tsv_schreiben(aus / "zuordnung.tsv", strukturdaten_raum.KOPF_ZUORDNUNG, raum["zuordnung"])
+    _tsv_schreiben(aus / "audit_raumabgleich.tsv", strukturdaten_raum.KOPF_AUDIT, raum["audit"])
     _tsv_schreiben(aus / "gesamtstadt.tsv", KOPF_GESAMTSTADT, gesamt)
     _tsv_schreiben(aus / "zurueckgestellt.tsv", KOPF_ZURUECK, zurueck)
     audit = sorted(({k: b[k] for k in KOPF_AUDIT} for b in belege.values()),
                    key=lambda b: (datetime.fromisoformat(b["zeitstempel"]), b["url"]))
     _tsv_schreiben(aus / "audit_abruf.tsv", KOPF_AUDIT, audit)
-    meta = _meta(kat, ww, belege, indikatoren)
-    tmp = aus / "meta.json.tmp"
-    tmp.write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    tmp.replace(aus / "meta.json")
+    meta = _meta(kat, ww, belege, indikatoren, raum, ableitbar)
+    _text_schreiben(aus / "meta.json", json.dumps(meta, ensure_ascii=False, indent=1) + "\n")
 
     status = {}
     for w in werte:
         status[(w["raumebene"], w["status"])] = status.get((w["raumebene"], w["status"]), 0) + 1
     print(f"Blatt Daten: {kat.n_zeilen} Zeilen, je Raumebene {dict(sorted(kat.ebenen_alle.items()))}; übernommen "
-          f"{len(kat.zeilen)} Zeilen")
+          f"{len(kat.zeilen)} Zeilen in werte.tsv, {len(kat.zeilen_quartier)} Zeilen der Quartiere")
     print(f"Indikatoren: {len(ind_k)} Köln, {len(ind_w)} Wegweiser; zurückgestellt {len(zur_k)} Köln, {len(zur_w)} "
           "Wegweiser")
-    for ebene in EBENEN_REIHENFOLGE:
+    for ebene in EBENEN_WERTE:
         teile = {s: status.get((ebene, s), 0) for s in ("ok", "geheim", "fehlt", "abgeleitet")}
         print(f"werte.tsv {ebene}: {sum(teile.values())} Zeilen, {teile}")
+    teile = {s: quartier["status"].get(s, 0) for s in ("ok", "geheim", "fehlt", "abgeleitet")}
+    print(f"werte_quartier.tsv.gz quartier: {n_quartier} Zeilen, {teile}")
     print(f"gesamtstadt.tsv: {len(gesamt)} Zeilen, „k.A.“ nicht übernommen: {len(ww.ka)}")
+    for paar, e in raum["meta"]["ergebnis"].items():
+        print(f"Raumabgleich {paar}: {e['einheiten']} Einheiten, Prüfstatus {e['pruefstatus']}, "
+              f"{e['zeilen_zuordnung']} Zeilen in zuordnung.tsv, größter Anteil {e['groesster_anteil_verteilung']} "
+              f"(kleinster {e['kleinster_groesster_anteil']}), Splitter bei {e['einheiten_mit_splitter']} Einheiten "
+              f"(größter {e['groesster_splitter'] or '–'})")
+    for ebene, a in raum["meta"]["id_abgleich"].items():
+        print(f"Nummern {ebene}: Geometrie {a['geometrie']}, Blatt Daten {a['werte']}, gemeinsam {a['gemeinsam']}, "
+              f"nur Geometrie {a['nur_geometrie'] or 'keine'}, nur Blatt Daten {a['nur_werte'] or 'keine'}")
+    for z in meta["geheimhaltung_ableitbar"]["zeilen"]:
+        print(f"Geheim, aber ableitbar ({z['beziehung']}): {z['geheim']} aus {', '.join(z['aus'])}, {z['raumebene']} "
+              f"{z['zeilen']} Zeilen")
+    a = meta["raum"]["quartier"]["abweichung_von_der_quelle"]
+    d = meta["raum"]["quartier"]["abdeckung"]
+    print(f"Quartiersflächen: Abweichung höchstens {a['abstand_max_m']} m ({a['abstand_max_raum_id']}), Median "
+          f"{a['abstand_median_m']} m, über {strukturdaten_raum.TOLERANZ_M:g} m: {len(a['ueber_toleranz'])}; "
+          f"Überlappungen {a['ueberlappung_nachbarpaare']} Paare, {a['ueberlappung_m2']} m²; Lücken "
+          f"{a['luecken_teile']} Teile, {a['luecken_m2']} m²; Abdeckung der Quelle gültig: "
+          f"{'ja' if d['quelle_gueltig'] else 'nein, ungültige Kanten ' + str(d['quelle_ungueltige_kanten_m'])}, "
+          f"Lücken der Quelle {d['quelle_luecken_teile']} ({d['quelle_luecken_m2']} m²), "
+          f"veröffentlicht gültig: {'ja' if d['veroeffentlicht_gueltig'] else 'nein'}, Netzflächen ohne Quartier: "
+          f"{d['netzflaechen_ohne_quartier']}; Nachbarpaare mit gemeinsamer Grenze: Quelle {d['nachbarpaare_quelle']}, "
+          f"veröffentlicht {d['nachbarpaare_veroeffentlicht']}, nur Quelle {d['nachbarpaare_nur_quelle'] or 'keine'}, "
+          f"nur veröffentlicht {d['nachbarpaare_nur_veroeffentlicht'] or 'keine'}")
     for h in hinweise:
         print(f"  {h}")
-    for name in ("indikatoren.tsv", "werte.tsv", "gesamtstadt.tsv", "zurueckgestellt.tsv", "audit_abruf.tsv",
-                 "meta.json"):
+    for name, *_ in DATEIEN_AUSGABE:
         print(f"  {name}: {(aus / name).stat().st_size} Bytes")
     return meta
 
