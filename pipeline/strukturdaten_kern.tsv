@@ -1,0 +1,19 @@
+indikator_id	thema_anzeige	reihenfolge	begruendung
+koeln_A0355A	Bevölkerung	1	Einwohnerzahl der Stadtstatistik (Hauptwohnsitz), dieselbe Zahl wie im Kontext-Panel (Option b, Entscheidung 10.11.2026); Grundgröße zum Einordnen jedes Gebiets; Gegenstück im Wegweiser: ww_bevoelkerung
+koeln_abg_unter18	Bevölkerung	2	Anteil der Kinder und Jugendlichen; vom Ratsatlas aus den veröffentlichten Altersgruppen abgeleitet (Entscheidung 10.11.2026); ordnet Vorlagen zu Kitas, Schulen und Spielplätzen ein
+koeln_abg_ab65	Bevölkerung	3	Anteil der Menschen ab 65 Jahren; abgeleitet wie unter 18; ordnet Vorlagen zu Barrierefreiheit, Angeboten für Ältere und Pflege ein
+koeln_A0022S	Bevölkerung	4	Durchschnittsalter als knappe Zusammenfassung der Altersstruktur; Gegenstück im Wegweiser: ww_durchschnittsalter
+koeln_A0002P	Bevölkerung	5	Anteil der Einwohner*innen ohne deutsche Staatsangehörigkeit (Name der Quelle: Nichtdeutsche); gewählt statt des Migrationshintergrunds, der laut Datensatzbeschreibung ein Schätzwert ist; Gegenstück im Wegweiser: ww_auslaenderanteil
+koeln_A0283S	Bevölkerung	6	Zuzüge je 100 Einwohner*innen (Binnen- und Außenwanderung laut Quelle): wie stark sich die Bewohnerschaft wandelt; ordnet Vorlagen zu Wohnungsbau und Infrastruktur ein
+koeln_A0267A	Haushalte	7	Zahl der Haushalte als Bezugsgröße für Wohnen und Familie; Haushaltsangaben sind laut Datensatzbeschreibung Verfahrenswerte (Haushaltegenerierung), die Datei selbst nennt das nicht
+koeln_A0273P	Haushalte	8	Anteil der Einpersonenhaushalte; Haushaltsstruktur für Vorlagen zu Wohnungsgrößen und Nachbarschaft (das Wegweiser-Gegenstück ist zurückgestellt, Datenhalter Nexiga)
+koeln_A0275P	Haushalte	9	Anteil der Haushalte mit Kindern; ordnet Vorlagen zu Familie, Kitas und Schulen ein
+koeln_A0269P	Haushalte	10	Anteil der Haushalte mit Kind(ern) und nur einem Elternteil, neutral benannt wie in der Quelle; ordnet Vorlagen zu Betreuung und Unterstützung von Familien ein
+koeln_B0025A	Wohnen	11	Zahl der Wohnungen (Gesamtwohnungsbestand) als Bezugsgröße für Vorlagen zum Wohnungsbau
+koeln_B0022S	Wohnen	12	Wohnfläche je Einwohner*in; Gegenstück im Wegweiser: ww_wohnflaeche-pro-person
+koeln_B0026P	Wohnen	13	Anteil geförderter Mietwohnungen am Wohnungsbestand; ordnet Vorlagen zum geförderten Wohnungsbau ein
+koeln_B0009A	Wohnen	14	Fertiggestellte Wohnungen im Jahr: Bautätigkeit im Gebiet; in einzelnen Stadtteilen und Jahren geheim gehalten
+koeln_C0007P	Arbeit und Grundsicherung	15	Anteil der SGB-II-Leistungsberechtigten im Alter von 0 bis unter die Altersgrenze zum Renteneintritt, Bezeichnung wie in der Quelle; soziale Lage ohne wertende Bezeichnung; Gegenstück im Wegweiser: ww_sgb-ii-quote (Nenner verschieden)
+koeln_D0001P	Arbeit und Grundsicherung	16	Arbeitslosenquote (SGB II und SGB III); der Wegweiser-Indikator arbeitslose-an-den-svb ist keine gleiche Quote und wird daher nicht als Gegenstück geführt
+koeln_D0011P	Arbeit und Grundsicherung	17	Anteil der sozialversicherungspflichtig Beschäftigten am Wohnort an den 15- bis 64-Jährigen; Gegenstück im Wegweiser: ww_beschaeftigungsquote
+koeln_H0003S	Mobilität	18	Privat zugelassene Pkw je 1000 Einwohner*innen; ordnet Vorlagen zu Parken, Verkehr und Mobilität ein

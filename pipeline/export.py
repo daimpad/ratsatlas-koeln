@@ -401,8 +401,11 @@ def export_all():
     flaechen.write(out)
     # Übersichtskarte: Vorlagen der letzten zwölf Monate und auffälliges Thema je Gebiet
     gebietszahlen.annotate(index, areas, cache, stand or datetime.now(timezone.utc).isoformat())
+    # Freigaben für site/app.js (idx.meta.funktionen; ein fehlender Schlüssel gilt als aus). Die Strukturdaten stehen
+    # erst mit Freigabe darin, damit index.json ohne sie unverändert bleibt (pipeline/strukturdaten_web.py)
+    funktionen = {k: v for k, v in config.ZUSATZTHEMEN.items() if k != "strukturdaten" or v}
     _dump(out / "index.json", {"meta": _meta(db, stadt=config.STADT_NAME, seitenname=config.SEITENNAME,
-                                             funktionen=dict(config.ZUSATZTHEMEN),
+                                             funktionen=funktionen,
                                              testdaten=bool(_stand().get("testdaten")),
                                              vorschau=bool(_stand().get("vorschau")),
                                              abruf_fehler=_abruf_fehler(_stand()),

@@ -232,8 +232,16 @@ def _kennzahlen(kx, spalten):
         f'{escape(kz[k].get("methode") or "Methode nicht angegeben")}</li>' for k in keys)
     # der Hinweis zum Bodenrichtwert (Anteil der Einwohner, für den der Wert gilt) steht in dessen Methode (kontext.KENNZAHLEN)
     regel = f"Für Gebiete unter {_de(mindest)} Einwohnern stehen keine Anteile und Mittelwerte." if mindest else ""
+    # Kennzahlen aus der Stadtstatistik (Freigabe „strukturdaten“, pipeline/kontext.py Option b) sind nicht umgerechnet
+    stadt = [kz[k]["titel"] for k in keys if kz[k].get("quelle") == "strukturdaten"]
+    abgeleitet = [kz[k]["titel"] for k in keys if kz[k].get("quelle") == "strukturdaten" and kz[k].get("abgeleitet")]
+    aufzaehlen = lambda t: ", ".join(t[:-1]) + " und " + t[-1] if len(t) > 1 else "".join(t)
+    umgerechnet = ("Alle Werte sind auf Stadtteile und Stadtbezirke umgerechnet und damit abgeleitet" if not stadt else
+                   f"{aufzaehlen(stadt)}: Werte der Kölner Stadtstatistik je Gebiet"
+                   + (f" ({aufzaehlen(abgeleitet)} vom Ratsatlas aus den Altersgruppen berechnet)" if abgeleitet else "")
+                   + "; die übrigen Werte sind auf Stadtteile und Stadtbezirke umgerechnet und damit abgeleitet")
     return f"""    <h2>Kennzahlen zur Einordnung</h2>
-    <p>Einordnung, kein Urteil über das Gebiet. Alle Werte sind auf Stadtteile und Stadtbezirke umgerechnet und damit abgeleitet; die Stichtage der Quellen sind verschieden.{" " + regel if klein and regel else ""}</p>
+    <p>Einordnung, kein Urteil über das Gebiet. {escape(umgerechnet)}; die Stichtage der Quellen sind verschieden.{" " + regel if klein and regel else ""}</p>
     <table class="kennzahlen">
       <caption>{escape(caption)}</caption>
       <thead><tr><th scope="col">Kennzahl</th>{kopf}</tr></thead>

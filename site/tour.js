@@ -22,6 +22,10 @@
     haushalt: () => sichtbar('[data-funktion="haushalt"]'),
     mitmachen: () => sichtbar('[data-funktion="mitmachen"]'),
   };
+  // Sätze von Zusatzmodulen, die nur mit Freigabe geladen werden: sichtbare Elemente mit data-tour-karte bzw.
+  // data-tour-liste ergänzen die Schritte „Die Karte“ und „Die Vorlagen“ (ohne solche Elemente bleibt der Text gleich)
+  const ZUSATZ = (art) => [...document.querySelectorAll(`[data-tour-${art}]`)].filter((el) => !el.hidden)
+    .map((el) => " " + el.getAttribute(`data-tour-${art}`)).join("");
   // Flächen der Leiste, die sichtbar sind (Prozesse und Assistent nur mit Freigabe, die Zeitleiste nur mit Daten)
   const FLAECHEN = { "panel-list": "Vorlagen (die Liste aller Vorlagen im Gebiet)", "timeline-wrap": "Zeitleiste",
     "panel-detail": "Vorgang (die Einzelheiten einer Vorlage)", "panel-prozesse": "Prozesse", "panel-assistent": "Assistent" };
@@ -48,14 +52,16 @@
       title: "Die Karte",
       text: () => "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt hinein. Die Farbe zeigt, wie sicher der Ort ist: grün gesichert (Koordinate oder Bebauungsplan der Stadt), braun erschlossen (Name im Titel), violett unsicher. „Farbe nach Thema“ färbt die Punkte stattdessen nach Thema; die Legende erklärt die Farben. „Bebauungspläne“ blendet die Geltungsbereiche der rechtskräftigen Pläne ein; ein Klick auf eine Fläche öffnet die Planchronik."
         + (AN.baustellen() ? " „Baustellen“ zeigt gemeldete Baustellen mit unverbindlichen Terminen." : "")
-        + " „Überschwemmungsgebiete“ und „Bodenrichtwerte“ zeigen beim Hineinzoomen Flächen des Landes zur Einordnung (abgeleitet aufbereitet, verbindlich sind die Quellen). „Farbige Karte“ schaltet den Hintergrund um. Alle diese Schaltflächen liegen unter „Ebenen“; die Zahl daneben nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE,
-      vorschau: "Die Flächen zeigen Stadtbezirke und Stadtteile, gefärbt nach der Kennzahl in der obersten Legende. Punkte für Vorlagen mit Ortsbezug folgen mit den Ratsvorlagen. Unter „Ebenen“ lassen sich offene Daten zuschalten, etwa Bebauungspläne, Überschwemmungsgebiete, Bodenrichtwerte, Schutzgebiete, Schulen, Kitas oder Haltestellen – zur Einordnung abgeleitet aufbereitet, verbindlich sind die Quellen. Ebenen mit vielen Objekten erscheinen erst beim Hineinzoomen. „Farbige Karte“ schaltet den Hintergrund um. Die Zahl neben „Ebenen“ nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE },
+        + " „Überschwemmungsgebiete“ und „Bodenrichtwerte“ zeigen beim Hineinzoomen Flächen des Landes zur Einordnung (abgeleitet aufbereitet, verbindlich sind die Quellen)."
+        + ZUSATZ("karte") + " „Farbige Karte“ schaltet den Hintergrund um. Alle diese Schaltflächen liegen unter „Ebenen“; die Zahl daneben nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE,
+      vorschau: () => "Die Flächen zeigen Stadtbezirke und Stadtteile, gefärbt nach der Kennzahl in der obersten Legende. Punkte für Vorlagen mit Ortsbezug folgen mit den Ratsvorlagen. Unter „Ebenen“ lassen sich offene Daten zuschalten, etwa Bebauungspläne, Überschwemmungsgebiete, Bodenrichtwerte, Schutzgebiete, Schulen, Kitas oder Haltestellen – zur Einordnung abgeleitet aufbereitet, verbindlich sind die Quellen."
+        + ZUSATZ("karte") + " Ebenen mit vielen Objekten erscheinen erst beim Hineinzoomen. „Farbige Karte“ schaltet den Hintergrund um. Die Zahl neben „Ebenen“ nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE },
     { before: (ui) => { ui.mapMenu(false); ui.panel("panel-list", true); }, target: "#panel-list", beacons: ["#f-text", "#more-filters > summary"],
       title: "Die Vorlagen",
       text: () => "Alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte und mit der Tastatur bedienbar. Filter nach Stichwort, Vorlagenart, Stand, Thema und Partei; unter „Weitere Filter“ nach Amt, Gremium und Sicherheit der Ortsangabe."
-        + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen."),
+        + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen."),
       vorschau: () => "Hier stehen künftig alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte, mit der Tastatur bedienbar und mit Filtern nach Stichwort, Vorlagenart, Stand, Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist. Ist ein Stadtteil oder Stadtbezirk gewählt, stehen hier schon jetzt die Zahlen zum Gebiet."
-        + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen.") },
+        + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen.") },
     { when: () => !document.querySelector('.toggle[data-panel="timeline-wrap"]').hidden,
       before: (ui) => ui.panel("timeline-wrap", true), target: "#timeline-wrap", beacons: [".tl-presets"],
       title: "Die Zeitleiste",

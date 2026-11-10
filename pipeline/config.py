@@ -154,6 +154,11 @@ ZUSATZTHEMEN = {
     "einfache_sprache": False, "kurzfassungen": False, "mitmachen": False, "besetzung": False,
     # Seite technik/ (aus den Workflows erzeugt; für Köln seit Phase 5)
     "technik": True,
+    # Strukturdaten (Datenvertrag „Strukturdaten“, data/strukturdaten/) auf Seite und im Datenpaket, Einwohnerzahl und
+    # Altersanteile der Kennzahlen aus der Stadtstatistik (Option b); der Auftraggeber schaltet sie nach einer Vorschau
+    # ein (Entscheidung 10.11.2026). Ohne Freigabe bleiben Seite, Datenpaket und kontext.json wie zuvor
+    # (pipeline/strukturdaten_web.py, pipeline/kontext.py)
+    "strukturdaten": False,
 }
 
 # Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)

@@ -423,6 +423,9 @@ def daten(root="../"):
 
     def schritt(s):
         kurz, text = SCHRITTE[s]
+        freigabe, mit = SCHRITTE_MIT_FREIGABE.get(s, (None, None))
+        if freigabe and config.ZUSATZTHEMEN.get(freigabe):
+            text = mit
         return (f"s-{s}", kurz, text, CODE + mods.get(s, "pipeline/__main__.py"), f"Code ({mods.get(s, '')})")
 
     ist_abruf = lambda s: s == "fetch" or s.startswith("fetch-")
@@ -507,6 +510,14 @@ PAKET_TEXT = {"shapely": "Geometrie, etwa ob ein Punkt in einem Stadtteil liegt"
               "pyproj": "Umrechnung zwischen Koordinatensystemen (ETRS89/UTM 32N nach WGS84)",
               "pyshp": "Lesen der Shapefiles der Stadt Köln",
               "cairosvg": "Bild der Themenseite als PNG zum Teilen"}
+# Schritte, deren Erklärung mit einer Freigabe anders lautet (config.ZUSATZTHEMEN): Schritt → (Freigabe, Text mit Freigabe);
+# ohne Freigabe gilt der Text aus SCHRITTE
+SCHRITTE_MIT_FREIGABE = {
+    "kontext": ("strukturdaten", "Rechnet Kennzahlen je Stadtteil: Einwohnerzahl und Altersanteile aus der Kölner "
+                                 "Stadtstatistik (die Altersanteile vom Ratsatlas aus den Altersgruppen berechnet), die "
+                                 "übrigen aus Zensus, Bodenrichtwerten, Klimaanalyse, Kitas, Schulen und Haltestellen (Land "
+                                 "und Bund); legt zuschaltbare Flächen und Punkte für die Karte ab."),
+}
 # Erklärungen, die zu einem Zusatzthema gehören (config.ZUSATZTHEMEN): ohne dessen Freigabe gilt der Ersatztext, damit die
 # Seite keine abgeschaltete Funktion nennt
 PAKET_FREIGABE = {"cairosvg": ("themenseiten", "Umwandlung von SVG-Bildern in PNG, derzeit ungenutzt")}

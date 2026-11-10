@@ -6,11 +6,15 @@ Hausnummern der Stadt Köln, dl-de/zero 2.0; Bebauungspläne aus „Bauleitplanu
 die Berichte der Phasen; Lizenz je Datei in data/LICENSE-DATA.md. Keine Rohdaten der Schnittstelle, keine Volltexte,
 keine PDFs (CLAUDE.md 6).
 Audits, Stichproben und Abrufstatistik gibt es nur hier, nicht als lose Dateien auf der Seite (tools/seite_bauen.py,
-Entscheidung 10.11.2026); das Paket entsteht daher vor dem Zusammenstellen der Seite aus ganz data/export."""
+Entscheidung 10.11.2026); das Paket entsteht daher vor dem Zusammenstellen der Seite aus ganz data/export.
+Mit Freigabe „strukturdaten“ (config.ZUSATZTHEMEN) liegen zusätzlich alle Dateien des Datenvertrags „Strukturdaten“
+unverändert unter strukturdaten/ (samt Prüfprotokollen, ohne die Aufteilung für die Seite), und LIESMICH.txt nennt sie
+(`liesmich`); LICENSE-DATA.md steht nach den Freigaben im Paket (pipeline/freigaben.py). Ohne Freigabe bleibt das
+Paket wie zuvor."""
 import zipfile
 from pathlib import Path
 
-from . import config
+from . import config, freigaben, strukturdaten_web
 
 ORDNER = "ratsatlas-koeln"
 LIESMICH = f"""Ratsatlas Köln – Datenpaket
@@ -37,12 +41,33 @@ Quellcode: https://github.com/daimpad/ratsatlas-koeln (MIT)
 """
 
 
+# Ergänzung von LIESMICH.txt mit Freigabe „strukturdaten“ (nach dem Eintrag zu geo/)
+LIESMICH_STRUKTURDATEN = """- strukturdaten/: Strukturdaten im Datenvertrag „Strukturdaten“ (Werte je Gesamtstadt, Stadtbezirk und Stadtteil in
+  werte.tsv, je Statistischem Quartier in werte_quartier.tsv.gz, Indikatoren, Flächen, Zuordnung der Raumeinheiten,
+  Vergleichswerte des Wegweisers Kommune, meta.json und Prüfprotokolle). Statistischer Datenkatalog Köln: dl-de/by 2.0,
+  Namensnennung „Stadt Köln, Amt für Stadtentwicklung und Statistik (Statistischer Datenkatalog Köln)“; Werte
+  unverändert, die Anteile unter 18 und ab 65 Jahren vom Ratsatlas aus den Altersgruppen berechnet (status
+  abgeleitet). Flächen der Statistischen Quartiere: dl-de/zero 2.0. Wegweiser Kommune (Bertelsmann Stiftung,
+  wegweiser-kommune.de): CC0 1.0, Datenhalter je Indikator in indikatoren.tsv
+"""
+
+
+def liesmich():
+    """LIESMICH.txt des Pakets: mit Freigabe „strukturdaten“ um deren Eintrag ergänzt, sonst unverändert."""
+    if not strukturdaten_web.an():
+        return LIESMICH
+    anker = "- berichte/: Berichte der Projektphasen\n"
+    if LIESMICH.count(anker) != 1:
+        raise ValueError("LIESMICH: Eintrag zu berichte/ nicht gefunden")
+    return LIESMICH.replace(anker, LIESMICH_STRUKTURDATEN + anker)
+
+
 def write(target=None):
     target = Path(target or config.EXPORT / "ratsatlas-koeln-export.zip")
     berichte = sorted(config.ROOT.glob("inventur/BERICHT_*.md")) + [config.ROOT / "explore" / "BERICHT_phase1.md"]
     with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as z:
-        z.writestr(f"{ORDNER}/LIESMICH.txt", LIESMICH)
-        z.write(config.ROOT / "data" / "LICENSE-DATA.md", f"{ORDNER}/LICENSE-DATA.md")
+        z.writestr(f"{ORDNER}/LIESMICH.txt", liesmich())
+        z.writestr(f"{ORDNER}/LICENSE-DATA.md", freigaben.datei(config.ROOT / "data" / "LICENSE-DATA.md"))
         for path in sorted(config.EXPORT.rglob("*")):
             if path.is_file() and path.suffix != ".zip" and not {"feeds", "chat"} & set(path.parts):
                 z.write(path, f"{ORDNER}/{path.relative_to(config.EXPORT)}")
@@ -52,5 +77,8 @@ def write(target=None):
         for path in berichte:
             if path.exists():
                 z.write(path, f"{ORDNER}/berichte/{path.name}")
+        if strukturdaten_web.an():   # Datenvertrag unverändert, mit Prüfprotokollen (Entscheidung 10.11.2026)
+            for path, name in strukturdaten_web.paketdateien():
+                z.write(path, f"{ORDNER}/{name}")
     print(f"Datenpaket → {target} ({target.stat().st_size // 1024} KB)")
     return target

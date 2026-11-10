@@ -87,18 +87,105 @@
   "sozialraum": "nicht Teil des Datenvertrags Strukturdaten (Entscheidung 10.11.2026)"
  },
  "einwohner_indikator": "koeln_A0355A",
- "quellobjekt": "werte.tsv und werte_quartier.tsv.gz: Zelle im Blatt Daten der XLSX-Datei mit der Prüfsumme unter quellen[] (Daten!<Spalte><Zeile>; Spalte = Indikator, Zeile = Jahr und Raum). gesamtstadt.tsv: Zelle des Wegweiser-Exports (Indikator, Jahr, Kommune). raum/quartier.geojson: Datensatz des Shapefiles mit derselben Nummer (Feld nummer); raum/stadtteil.geojson und raum/stadtbezirk.geojson: Feature der Datei unter data/geo (raum.<ebene>.abgeleitet_aus).",
+ "quellobjekt": "werte.tsv und werte_quartier.tsv.gz: Zelle im Blatt Daten der XLSX-Datei mit der Prüfsumme unter quellen[] (Daten!<Spalte><Zeile>; Spalte = Indikator, Zeile = Jahr und Raum). gesamtstadt.tsv: Zelle des Wegweiser-Exports (Indikator, Jahr, Kommune). raum/quartier.geojson: Datensatz des Shapefiles mit derselben Nummer (Feld nummer); raum/stadtteil.geojson und raum/stadtbezirk.geojson: Feature der Datei unter data/geo (raum.<ebene>.abgeleitet_aus). Abgeleitete Indikatoren (koeln_abg_…, unter abgeleitet): die Formel mit allen Zellen derselben Zeile, z. B. (Daten!N2+Daten!P2+Daten!R2+Daten!T2)/Daten!D2*100, auch bei status geheim und fehlt.",
  "gesamtstadt_ka": "Jahre mit „k.A.“ im Wegweiser-Export stehen nicht in gesamtstadt.tsv (der Vertrag sieht dort keinen Status vor); der Metatext des Indikators nennt sie.",
- "typ_einordnung": "typ und einheit stehen nicht in den Quellen; es sind eigene Einordnungen. Statistischer Datenkatalog Köln: typ und einheit aus Phase 0 nach der Formatspalte des Blatts Katalog (abs, %, andere) und dem Namen, Begründung je Indikator in pipeline/strukturdaten_koeln.tsv (Spalte typ_begruendung); zaehler_id und nenner_id nur, wo die Beziehung in jeder Zeile (alle Raumebenen einschließlich der Quartiere) nachgerechnet ist. Wegweiser Kommune: typ nach Name, Einheit und Berechnung laut Indikatorliste des Wegweisers, einheit unverändert aus der Indikatorliste. Vorläufige Einordnungen stehen unter typ_vorlaeufig und im Metatext.",
+ "typ_einordnung": "typ und einheit stehen nicht in den Quellen; es sind eigene Einordnungen. Statistischer Datenkatalog Köln: typ und einheit aus Phase 0 nach der Formatspalte des Blatts Katalog (abs, %, andere) und dem Namen, Begründung je Indikator in pipeline/strukturdaten_koeln.tsv (Spalte typ_begruendung); zaehler_id und nenner_id nur, wo die Beziehung in jeder Zeile (alle Raumebenen einschließlich der Quartiere) nachgerechnet ist. Wegweiser Kommune: typ nach Name, Einheit und Berechnung laut Indikatorliste des Wegweisers, einheit unverändert aus der Indikatorliste. Vorläufige Einordnungen stehen unter typ_vorlaeufig und im Metatext. Abgeleitete Indikatoren (koeln_abg_…): typ anteil, einheit %; Formel unter abgeleitet.",
  "typ_vorlaeufig": {
   "ww_bevoelkerungsentwicklung-ueber-die-letzten-5-jahre": "Veränderungsrate über fünf Jahre, kein Bestandsverhältnis; der Datenvertrag v1 kennt keinen Typ für Veränderungsraten (die Kölner Veränderungsraten koeln_A0547S und koeln_A0548S sind aus diesem Grund zurückgestellt). Offen: Typ quote bestätigen oder einen Typ für Veränderungsraten in eine Vertragsversion 2 aufnehmen"
+ },
+ "schaetz_verfahrenswerte": {
+  "hinweis": "Laut Datensatzbeschreibung des Statistischen Datenkatalogs sind Angaben zum Migrationshintergrund Schätzwerte und Angaben zu Haushalten Verfahrenswerte (Haushaltegenerierung); die XLSX-Datei kennzeichnet sie nicht. Zuordnung nach dem Namen der Spalte; der Metatext der Indikatoren nennt es. Werte unverändert.",
+  "indikatoren": {
+   "koeln_A0153A": "Schätzwert",
+   "koeln_A0153P": "Schätzwert",
+   "koeln_A0157A": "Schätzwert",
+   "koeln_A0157P": "Schätzwert",
+   "koeln_A0267A": "Verfahrenswert",
+   "koeln_A0269A": "Verfahrenswert",
+   "koeln_A0269P": "Verfahrenswert",
+   "koeln_A0273A": "Verfahrenswert",
+   "koeln_A0273P": "Verfahrenswert",
+   "koeln_A0275A": "Verfahrenswert",
+   "koeln_A0275P": "Verfahrenswert",
+   "koeln_A0289A": "Verfahrenswert",
+   "koeln_A0290A": "Verfahrenswert",
+   "koeln_A0290P": "Verfahrenswert",
+   "koeln_A0314A": "Verfahrenswert",
+   "koeln_A0314P": "Verfahrenswert",
+   "koeln_A0315A": "Verfahrenswert",
+   "koeln_A0315P": "Verfahrenswert",
+   "koeln_A0316A": "Verfahrenswert",
+   "koeln_A0316P": "Verfahrenswert",
+   "koeln_A0317A": "Verfahrenswert",
+   "koeln_A0317P": "Verfahrenswert"
+  }
+ },
+ "abgeleitet": {
+  "hinweis": "Eigene Ableitungen des Ratsatlas (Entscheidung des Auftraggebers vom 10.11.2026), keine Werte der Quelle: Anteile aus veröffentlichten Werten derselben Zeile (derselbe Raum, dasselbe Jahr), nie über Raumebenen hinweg. status abgeleitet mit Wert; geheim, wenn ein Eingangswert geheim ist; fehlt, wenn einer fehlt oder der Nenner 0 ist (beide ohne Wert). Dezimal gerechnet und kaufmännisch auf 2 Nachkommastellen gerundet. zaehler_id und nenner_id bleiben in indikatoren.tsv leer (der Zähler ist eine Summe mehrerer Indikatoren); Formel, Zähler und Nenner stehen hier und im Metatext, die Zellen in quellobjekt.",
+  "indikatoren": {
+   "koeln_abg_unter18": {
+    "formel": "(koeln_A0029A + koeln_A0035A + koeln_A0291A + koeln_A0043A) / koeln_A0025A × 100",
+    "zaehler": [
+     "koeln_A0029A",
+     "koeln_A0035A",
+     "koeln_A0291A",
+     "koeln_A0043A"
+    ],
+    "nenner": "koeln_A0025A",
+    "faktor": 100,
+    "stellen": 2,
+    "altersgruppen": {
+     "koeln_A0029A": "0 bis unter 3 Jahren",
+     "koeln_A0035A": "3 bis unter 6 Jahren",
+     "koeln_A0291A": "6 bis unter 15 Jahren",
+     "koeln_A0043A": "15 bis unter 18 Jahren"
+    }
+   },
+   "koeln_abg_ab65": {
+    "formel": "(koeln_A0295A + koeln_A0065A + koeln_A0027A) / koeln_A0025A × 100",
+    "zaehler": [
+     "koeln_A0295A",
+     "koeln_A0065A",
+     "koeln_A0027A"
+    ],
+    "nenner": "koeln_A0025A",
+    "faktor": 100,
+    "stellen": 2,
+    "altersgruppen": {
+     "koeln_A0295A": "65 bis unter 75 Jahren",
+     "koeln_A0065A": "75 bis unter 80 Jahren",
+     "koeln_A0027A": "80 Jahren und älter"
+    }
+   }
+  },
+  "beispiel_quellobjekt": "(Daten!N2+Daten!P2+Daten!R2+Daten!T2)/Daten!D2*100",
+  "altersgruppen_summe": {
+   "gilt": true,
+   "geprueft": 9283,
+   "nicht_pruefbar": {
+    "geheim": 41
+   },
+   "gruppen": [
+    "koeln_A0029A",
+    "koeln_A0035A",
+    "koeln_A0291A",
+    "koeln_A0043A",
+    "koeln_A0292A",
+    "koeln_A0293A",
+    "koeln_A0294A",
+    "koeln_A0060A",
+    "koeln_A0295A",
+    "koeln_A0065A",
+    "koeln_A0027A"
+   ]
+  }
  },
  "formate": {
   "dateien": "TSV in UTF-8 ohne BOM, Tabulator als Trennzeichen, Zeilenende LF, erste Zeile mit den Spaltennamen, ohne Anführungszeichen; Felder ohne Tabulator und Zeilenumbruch.",
   "gzip": "werte_quartier.tsv.gz: TSV wie werte.tsv, gzip mit Stufe 9, Änderungszeit 0 und ohne Dateinamen im Kopf (gleiche Eingaben ergeben byte-gleiche Dateien).",
-  "wert": "Zahl mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und ohne Exponent, Ziffern wie in der Quelle; in werte.tsv und werte_quartier.tsv.gz leer bei status geheim und fehlt; gesamtstadt.tsv enthält nur Zeilen mit Wert.",
-  "jahre": "indikatoren.tsv: Jahre, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit status ok oder geheim hat (Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und aufsteigend, aufeinanderfolgende Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon ohne Leerzeichen getrennt, z. B. 2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile gibt.",
-  "raumebenen": "indikatoren.tsv: Raumebenen, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit status ok oder geheim hat (Wegweiser: gesamtstadt), durch Semikolon ohne Leerzeichen getrennt, in der Reihenfolge von raumebenen (gesamtstadt;stadtbezirk;stadtteil;quartier).",
+  "wert": "Zahl mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und ohne Exponent, Ziffern wie in der Quelle; in werte.tsv und werte_quartier.tsv.gz leer bei status geheim und fehlt; gesamtstadt.tsv enthält nur Zeilen mit Wert. Abgeleitete Werte (status abgeleitet, Kennungen koeln_abg_…, unter abgeleitet) mit genau 2 Nachkommastellen, kaufmännisch gerundet.",
+  "jahre": "indikatoren.tsv: Jahre, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit status ok, geheim oder abgeleitet hat (Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und aufsteigend, aufeinanderfolgende Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon ohne Leerzeichen getrennt, z. B. 2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile gibt.",
+  "raumebenen": "indikatoren.tsv: Raumebenen, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit status ok, geheim oder abgeleitet hat (Wegweiser: gesamtstadt), durch Semikolon ohne Leerzeichen getrennt, in der Reihenfolge von raumebenen (gesamtstadt;stadtbezirk;stadtteil;quartier).",
   "geojson": "raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit Quelle, Prüfsumme und Lizenz; Flächen mit Toleranz 2 m vereinfacht, Koordinaten auf 1e-6 Grad gerundet. Stadtbezirke und Stadtteile wie data/geo (jede Fläche für sich, Douglas-Peucker); Quartiere gemeinsam als lückenlose Abdeckung (Visvalingam-Whyatt, Nachbarn mit denselben Stützpunkten an der gemeinsamen Grenze; Verfahren unter raum.quartier.geometrie, Prüfung unter raum.quartier.abdeckung, gemessene Abweichung unter raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als Text), name, raumebene, eltern_id, quelle, lizenz. Nur zur Anzeige, nicht zum Rechnen.",
   "flaechenanteil": "zuordnung.tsv und audit_raumabgleich.tsv: Anteil der Fläche der Einheit (von) im Ziel (nach), 0 bis 1 mit 4 Nachkommastellen und Punkt; berechnet in EPSG 25832. Die Schwellen splitter_anteil und anteil_hoch gelten für diesen gerundeten Wert."
  },
@@ -307,7 +394,7 @@
   "in_werten": "ja, wenn die Einheit im Blatt Daten des Statistischen Datenkatalogs steht",
   "grund": "Begründung des Prüfstatus; dazu Hinweise ohne Einfluss auf den Prüfstatus (Geometrie repariert, Name im Blatt Daten abweichend vom Namen der Geometriequelle, mit Jahren)"
  },
- "geheimhaltung_hinweis": "status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen (Quartier, Stadtteil, Stadtbezirk) oder Teilgrößen hinweg; zuordnung.tsv dient nicht der Verrechnung von Werten. In 1291 Zeilen ist ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar (stadtteil 3, quartier 1288; geheimhaltung_ableitbar); die Quelle wendet dort keine sekundäre Geheimhaltung an. Die Werte bleiben unverändert (quellentreu); die Anzeige bildet auch dort keine Summen, Differenzen oder Verhältnisse, die einen geheimen Wert ergeben.",
+ "geheimhaltung_hinweis": "status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen (Quartier, Stadtteil, Stadtbezirk) oder Teilgrößen hinweg; zuordnung.tsv dient nicht der Verrechnung von Werten. In 1291 Zeilen ist ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar (stadtteil 3, quartier 1288; geheimhaltung_ableitbar); die Quelle wendet dort keine sekundäre Geheimhaltung an. Die Werte bleiben unverändert (quellentreu); die Anzeige bildet auch dort keine Summen, Differenzen oder Verhältnisse, die einen geheimen Wert ergeben. Die abgeleiteten Altersanteile (koeln_abg_…) entstehen nur aus veröffentlichten Werten derselben Zeile; ist einer davon geheim, bleibt der Anteil leer (status geheim).",
  "geheimhaltung_ableitbar": {
   "geprueft": "Zahl der Zeilen je Raumebene (werte.tsv und werte_quartier.tsv.gz), in denen ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar ist; geprüft: eine Summe und 34 Verhältnisse (zaehler_id und nenner_id in indikatoren.tsv). Nur gezählt; die Werte werden nicht ermittelt, Beziehungen und beteiligte Indikatoren nicht genannt (Entscheidung 10.11.2026).",
   "zeilen": {

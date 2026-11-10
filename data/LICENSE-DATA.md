@@ -39,10 +39,27 @@ Die Pfade beginnen unter `data/`: Auf der Seite liegt `export/koeln/vorlagen.geo
 | `export/glossar.json` | Erklärungen und Bezeichnungen des Ratsatlas mit Fundstelle je Begriff; der Text steht im Code (`pipeline/glossar.py`, `process.py`, `topics.py`) | wie der Code: MIT | Hinweis wie in `LICENSE` |
 | `export/abrufstatistik.tsv` (entsteht beim Abruf; nur im Datenpaket) | eigene Protokollierung | dl-de/zero 2.0 | – |
 
+<!-- nur-mit: strukturdaten -->
+Strukturdaten auf der Seite und abgeleitete Werte:
+
+| Datei | Quelle | Lizenz | Namensnennung |
+|---|---|---|---|
+| `koeln_abg_unter18`, `koeln_abg_ab65` in `strukturdaten/werte.tsv`, `strukturdaten/werte_quartier.tsv.gz` und `strukturdaten/indikatoren.tsv` | eigene Ableitung (Entscheidung des Auftraggebers vom 10.11.2026): Anteile unter 18 und ab 65 Jahren aus den veröffentlichten Altersgruppen des „Statistischen Datenkatalogs Köln“ derselben Zeile, Bezug alle Einwohner*innen (A0025A „Einwohner*innen, gesamt“, Bezugsgröße wie im Metatext), kaufmännisch auf 2 Nachkommastellen gerundet, `status` `abgeleitet`; kein Wert, wenn eine Altersgruppe geheim gehalten ist; Formel mit den Zellen in `quellobjekt`, Beschreibung in `meta.json` (`abgeleitet`) | Datenlizenz Deutschland – Namensnennung – Version 2.0 (https://www.govdata.de/dl-de/by-2-0) | Stadt Köln, Amt für Stadtentwicklung und Statistik (Statistischer Datenkatalog Köln); Anteile vom Ratsatlas berechnet |
+| `strukturdaten/raumwerte/`, `strukturdaten/karte/` (nur auf der Seite) | Auszüge aus `strukturdaten/werte.tsv` und `strukturdaten/werte_quartier.tsv.gz` mit denselben Spalten und Zeilen, aufgeteilt je Gebiet (`raumwerte/<raumebene>/<raum_id>.tsv`) bzw. je Kennzahl und Raumebene (`karte/<raumebene>/<indikator_id>.tsv`) | wie `strukturdaten/werte.tsv`: Datenlizenz Deutschland – Namensnennung – Version 2.0 | Stadt Köln, Amt für Stadtentwicklung und Statistik (Statistischer Datenkatalog Köln) |
+| `strukturdaten/anzeige.json` (nur auf der Seite) | eigene Einstellungen der Anzeige ohne Werte (Auswahl, Reihenfolge, Gruppen, Texte) aus `pipeline/strukturdaten_kern.tsv` und `pipeline/strukturdaten_web.py` | wie der Code: MIT | Hinweis wie in `LICENSE` |
+
+Mit der Freigabe der Strukturdaten stammen in `export/koeln/kontext.json` die Einwohnerzahl (Hauptwohnsitz) und die Anteile unter 18 und ab 65 Jahren aus dem „Statistischen Datenkatalog Köln“ (Datenlizenz Deutschland – Namensnennung – Version 2.0; Namensnennung: Stadt Köln, Amt für Stadtentwicklung und Statistik; Altersanteile vom Ratsatlas berechnet), je Gebiet aus der eigenen Zeile und nicht umgerechnet; die Nettokaltmiete kommt weiter aus dem Zensus 2022.
+
+<!-- ende -->
 Die Namensnennung führt der Ratsatlas immer, auch wo die Lizenz sie nicht verlangt, solange die Lizenz der Ratsdaten mit der Stadt nicht abschließend geklärt ist.
 
 Prüfprotokolle (`audit_*.tsv`), Stichproben (`stichprobe_*.tsv`) und die Abrufstatistik stehen nur im Datenpaket (Zip), nicht als einzelne Dateien auf der Seite.
 
+<!-- nur-ohne: strukturdaten -->
 Die Dateien unter `strukturdaten/` liegen bisher nur im Repository; auf der Seite und im Datenpaket erscheinen sie erst mit ihrer Anzeige auf der Karte.
+<!-- ende -->
+<!-- nur-mit: strukturdaten -->
+Mit der Freigabe der Strukturdaten stehen die Dateien unter `strukturdaten/` auf der Seite unter `data/strukturdaten/` (ohne `werte.tsv` und `werte_quartier.tsv.gz`, deren Zeilen dort aufgeteilt in `raumwerte/` und `karte/` liegen, und ohne Prüfprotokolle und `zurueckgestellt.tsv`) und im Datenpaket vollständig und unverändert unter `ratsatlas-koeln/strukturdaten/`.
+<!-- ende -->
 
 Das Kölner Straßenverzeichnis (XLSX) steht unter dl-de/by 2.0 und wird bisher nicht verwendet. Volltexte, Auszüge und PDFs werden bis zur Lizenzklärung nicht veröffentlicht.

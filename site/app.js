@@ -119,6 +119,10 @@
   // Kartenvorschau ohne Ratsvorlagen (index.json meta.vorschau, tools/vorschau.py): keine Zeitleiste, keine Punkte,
   // Flächen nach Kennzahlen statt nach Vorlagen; Liste und Suche nennen den Grund statt „keine Vorlage passt“
   let vorschau = false;
+  // Freigaben aus index.json (meta.funktionen). Strukturdaten der Stadtstatistik (site/strukturdaten/, nur mit Freigabe
+  // „strukturdaten“): Modul erst bei Bedarf; solange dessen Flächenfarben an sind, färbt die Ebene „gebiete“ nicht
+  // (flaechenAus: nur eine Flächenfarbe zugleich)
+  let funktionen = {}, sdModul = null, sdLaden = null, flaechenAus = false;
   const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist; bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
   // Suche über ganz Köln (suche.json, erst bei Bedarf geladen)
   let search = null, searchLoading = null;
@@ -612,6 +616,20 @@
       },
     });
     new BauToggle().addTo(map);
+    // Platz für den Schalter des Zusatzmoduls (nur mit Freigabe): hier angelegt, damit er mit den übrigen Schaltern ins
+    // Blatt „Karte“ wandert; Beschriftung, Bedienung und Sichtbarkeit setzt das Modul (struktur()), bis dahin verborgen
+    const SdToggle = L.Control.extend({
+      options: { position: "bottomright" },
+      onAdd() {
+        const b = L.DomUtil.create("button", "map-style map-sd");
+        b.type = "button";
+        b.hidden = true;
+        b.setAttribute("aria-pressed", "false");
+        L.DomEvent.disableClickPropagation(b);
+        return b;
+      },
+    });
+    if (funktionen.strukturdaten) new SdToggle().addTo(map);
     // Überschwemmungsgebiete und Bodenrichtwertzonen (Kontextdaten): erst beim Einschalten geladen, ab Stadtteil-Zoom gezeichnet
     // ohne kontext.json keine Ebenen aus der Adresse: die Schalter wären ausgeblendet und die Ebene nicht abschaltbar
     kxOn = new Set((new URLSearchParams(location.search).get("ebenen") || "").split(",")
@@ -630,6 +648,8 @@
           b.addEventListener("click", () => {
             if (kxOn.has(k)) kxOn.delete(k); else kxOn.add(k);
             b.setAttribute("aria-pressed", String(kxOn.has(k)));
+            // nur eine Flächenfarbe zugleich: Bodenrichtwerte und Hitze schalten die Strukturdaten aus
+            if (kxOn.has(k) && (k === "brw" || k === "klima") && sdModul && sdModul.an()) sdModul.ebene(false);
             drawKx(); syncUrl();
           });
           L.DomEvent.disableClickPropagation(b);
@@ -745,7 +765,8 @@
     let feature = null;
     if (area.kind === "ortsteil") feature = geo.ortsteil.features.find((f) => f.properties.ortsteil_bez === area.name);
     if (area.kind === "bezirk") feature = geo.bezirk.features.find((f) => f.properties.bezirk_bez === area.name);
-    outline = L.geoJSON(feature || geo.bezirk, { style: { color: "#7c3aed", weight: 2, fillColor: "#c4b5fd", fillOpacity: 0.12 }, interactive: false }).addTo(map);
+    // mit den Flächenfarben der Strukturdaten nur der Umriss (die Tönung verfälschte die Farbe des Gebiets)
+    outline = L.geoJSON(feature || geo.bezirk, { style: { color: "#7c3aed", weight: 2, fillColor: "#c4b5fd", fillOpacity: flaechenAus ? 0 : 0.12 }, interactive: false }).addTo(map);
     map.fitBounds(outline.getBounds(), mapPadding());
   }
   // Gebiete auf der Karte wählen: herausgezoomt die Stadtbezirke als Flächen mit Namen (Klick zoomt hinein und zeigt
@@ -786,7 +807,9 @@
   function kFmt(key, v) {
     if (v == null) return "–";
     const unit = kontext.meta.kennzahlen[key].einheit;
-    if (unit === "%") return `${Number(v).toLocaleString("de-DE", { maximumFractionDigits: 1 })} %`;
+    // Stellen aus kontext.json (stellen, z. B. bei Werten, die anderswo mit fester Stelle stehen), sonst bis zu eine
+    const st = kontext.meta.kennzahlen[key].stellen;
+    if (unit === "%") return `${Number(v).toLocaleString("de-DE", { minimumFractionDigits: st ?? 0, maximumFractionDigits: st ?? 1 })} %`;
     if (unit === "€/m²") return `${Number(v).toLocaleString("de-DE", { minimumFractionDigits: key === "miete" ? 2 : 0, maximumFractionDigits: 2 })} €/m²`;
     return de(v);
   }
@@ -804,7 +827,7 @@
   function kCell(key, o) {
     const v = kFmt(key, o[key]), cov = o.bodenrichtwert_abdeckung, ab = kontext.meta.bodenrichtwert_hinweis_ohne_zone;
     const ohne = kontext.meta.kennzahlen[key]?.ohne_wert;
-    if (o[key] == null && ohne && o.einwohner >= kontext.meta.mindest_einwohner) return `${v}<br><span class="kontext-note">${esc(ohne)}</span>`;
+    if (o[key] == null && ohne && (o.einwohner >= kontext.meta.mindest_einwohner || key === "einwohner")) return `${v}<br><span class="kontext-note">${esc(ohne)}</span>`;
     if (key !== "bodenrichtwert" || o[key] == null || cov == null || ab == null || 100 - cov < ab) return v;
     return `${v}<br><span class="kontext-note">gilt für ${Math.round(cov)} % der Einwohner, die übrigen wohnen außerhalb von Zonen für Wohnbauland</span>`;
   }
@@ -817,6 +840,21 @@
   function kQuelle(key) {
     const d = kontext.meta.kennzahlen[key], q = kontext.meta.quellen[d.quelle] || {};
     return { ...d, q, stand: q.stand ? (q.stand.length === 10 ? fmtDate(q.stand) : q.stand) : "" };
+  }
+  // Kennzahlen, die kontext.json als nicht umgerechnet nennt (meta.nicht_umgerechnet: Schlüssel in der Reihenfolge der
+  // Tabelle und Wortlaut; nur mit eigener Quelle je Gebiet, pipeline/kontext.py): Werte für das Gebiet aus der eigenen
+  // Zeile; ohne solche Kennzahlen bleibt der bisherige Satz
+  const kStat = (keys) => (kontext.meta.nicht_umgerechnet?.kennzahlen || []).filter((k) => keys.includes(k) && kontext.meta.kennzahlen[k]).map((k) => kontext.meta.kennzahlen[k]);
+  const kStatTitel = (stat) => stat.map((d) => `${d.titel}${d.jahr ? ` (${d.jahr})` : ""}`).join(", ");
+  function kUmgerechnet(ebene) {
+    const stat = kStat(Object.keys(kontext.meta.kennzahlen)), n = kontext.meta.nicht_umgerechnet;
+    if (!stat.length) return `Alle Werte sind auf ${ebene} umgerechnet; Stichtage verschieden.`;
+    return `${kStatTitel(stat)}: ${n.liste}${stat.some((d) => d.abgeleitet) ? `; ${n.liste_abgeleitet}` : ""}. Alle übrigen Werte sind auf ${ebene} umgerechnet; Stichtage verschieden.`;
+  }
+  function kUmgerechnetVorgang(keys) {
+    const stat = kStat(keys), n = kontext.meta.nicht_umgerechnet;
+    if (!stat.length) return "Werte auf Stadtteile umgerechnet.";
+    return `${kStatTitel(stat)} ${n.vorgang}${stat.some((d) => d.abgeleitet) ? ` (${n.vorgang_abgeleitet})` : ""}${stat.length < keys.length ? "; übrige Werte auf Stadtteile umgerechnet" : ""}.`;
   }
   // Steckbrief in der Liste: alle Kennzahlen des Gebiets neben dem Stadtbezirk (Stadtteil) bzw. ganz Köln (Stadtbezirk)
   function fillKontext() {
@@ -833,7 +871,7 @@
       – ${esc(q.lizenz)}${q.stand ? `, Stand ${esc(q.stand.length === 10 ? fmtDate(q.stand) : q.stand)}` : ""}${q.uebergang ? ` (${esc(q.uebergang)})` : ""}</li>`).join("");
     const methoden = (kontext.meta.reihenfolge || Object.keys(kontext.meta.kennzahlen)).map((k) => kontext.meta.kennzahlen[k]).map((d) => `<li><strong>${esc(d.titel)}:</strong> ${esc(d.methode)}</li>`).join("");
     box.innerHTML = `<summary>Zahlen zu ${esc(area.name)}<span class="derived">abgeleitet</span></summary>
-      <p class="hint">Zur Einordnung der Vorlagen, kein Urteil über das Gebiet. Alle Werte sind auf ${area.kind === "ortsteil" ? "Stadtteile" : "Stadtbezirke"} umgerechnet; Stichtage verschieden.${klein ? ` Unter ${de(kontext.meta.mindest_einwohner)} Einwohnern keine Anteile und Mittelwerte.` : ""}</p>
+      <p class="hint">Zur Einordnung der Vorlagen, kein Urteil über das Gebiet. ${esc(kUmgerechnet(area.kind === "ortsteil" ? "Stadtteile" : "Stadtbezirke"))}${klein ? ` Unter ${de(kontext.meta.mindest_einwohner)} Einwohnern keine Anteile und Mittelwerte.` : ""}</p>
       <table class="kontext-table"><thead><tr><th scope="col">Kennzahl</th><th scope="col">${esc(area.name)}</th><th scope="col">${esc(cmpName)}</th></tr></thead>
       <tbody>${rows}</tbody></table>
       ${anliegenSteckbrief(bez)}
@@ -876,7 +914,7 @@
     return `<section class="kontext-vorgang" aria-labelledby="kontext-h"><h4 id="kontext-h">Zum Stadtteil ${esc(ot)} <span class="derived">abgeleitet</span></h4>
       <table class="kontext-table"><thead><tr><th scope="col">Kennzahl</th><th scope="col">${esc(ot)}</th><th scope="col">Stadtbezirk ${esc(bez)}</th></tr></thead>
       <tbody>${rows}</tbody></table>
-      <p class="hint">Einordnung, kein Beleg für die Vorlage und kein Urteil über den Stadtteil. Auswahl nach dem abgeleiteten Thema; Werte auf Stadtteile umgerechnet.${v.einwohner < kontext.meta.mindest_einwohner ? ` Unter ${de(kontext.meta.mindest_einwohner)} Einwohnern keine Anteile und Mittelwerte.` : ""} Quellen: ${qs}.</p></section>`;
+      <p class="hint">Einordnung, kein Beleg für die Vorlage und kein Urteil über den Stadtteil. Auswahl nach dem abgeleiteten Thema; ${esc(kUmgerechnetVorgang(keys))}${v.einwohner < kontext.meta.mindest_einwohner ? ` Unter ${de(kontext.meta.mindest_einwohner)} Einwohnern keine Anteile und Mittelwerte.` : ""} Quellen: ${qs}.</p></section>`;
   }
   // Stufengrenzen: Stadtteile nach Quintilen, Stadtbezirke in gleichen Abständen bis zum Höchstwert
   function quintiles(values) {
@@ -1062,6 +1100,15 @@
   }
   function updateNav(force) {
     if (!navOrtsteile) return;
+    // Flächenfarben der Strukturdaten an: Ebene „gebiete“, Namen und ihre Legende ausblenden (eine Flächenfarbe zugleich)
+    if (flaechenAus) {
+      navOrtsteile.remove(); navBezirke.remove();
+      if (navLabels) { navLabels.remove(); navLabels = null; }
+      if (navLegend) { navLegend.hidden = true; navLegend.dataset.aus = "1"; }
+      navMode = null;
+      return;
+    }
+    if (navLegend && navLegend.dataset.aus) { navLegend.hidden = vorschau && !navMetric; delete navLegend.dataset.aus; }
     const z = map.getZoom(), whole = wholeZoom();
     if (z < whole) { navDeep = false; navFocus = null; }
     const mode = !navDeep && z <= whole ? "bezirke" : navFocus ? "fokus:" + navFocus : "ortsteile";
@@ -1911,7 +1958,7 @@
       ${p.soll && index ? '<section class="soll" aria-labelledby="soll-h"><h4 id="soll-h">Nach Regelwerk (Soll)</h4><div class="soll-box"><p class="hint">Wird geladen …</p></div></section>' : ""}
       ${participate(p)}
       <h4>Ortsbezug</h4><ul class="locs">${locs}</ul>
-      ${kontextVorgang(p)}
+      ${kontextVorgang(p)}${sdStadtteil(p) ? '<div class="sd-platz"></div>' : ""}
       ${(p.plans || []).length ? `<h4>Bebauungspläne</h4><ul class="locs plans">${p.plans.map((x) => `<li data-plan="${esc(x.nr)}"><strong>Bebauungsplan ${esc(x.nr)}</strong>
         ${x.area ? '<span class="plan-meta">– Geltungsbereich auf der Karte</span>' : " – nicht im Datensatz der rechtskräftigen Pläne (im Verfahren oder aufgehoben); keine Fläche verfügbar"}
         <br><span class="meta">Fundstelle: „${esc(x.evidence)}“</span>
@@ -1925,6 +1972,8 @@
         ${sources}</ul></details>
       ${LIMITS}`;
     $("#announce").textContent = `Vorgang ${p.reference} geöffnet: ${p.name}`;
+    const sdOt = sdStadtteil(p);
+    if (sdOt) struktur().then((m) => { if (m && selected === p) m.vorgang(document.querySelector("#detail .sd-platz"), sdOt); });
     fillMitmachen();
     showPlans(p, !fromMap);
     if (p.soll && index) showSoll(p);
@@ -2013,7 +2062,7 @@
     if (!index || area.kind === STADT) {
       box.innerHTML = index ? `<a class="btn btn-soft" href="${BONN}feeds/ganz-${STADT}.xml" type="application/atom+xml"><svg class="icon" aria-hidden="true"><use href="#i-rss"/></svg>Neues aus ganz Köln abonnieren</a>` : "";
       box.hidden = !index;
-      fillMitmachen(); fillKontext(); return;
+      fillMitmachen(); fillKontext(); sdGebiet(); return;
     }
     const href = `${BONN}feeds/${area.kind}-${area.key}.xml`;
     const where = area.kind === "ohne" ? `Vorlagen ohne Ortsbezug ${area.key}` : area.name;
@@ -2021,6 +2070,7 @@
     box.hidden = false;
     fillMitmachen();
     fillKontext();
+    sdGebiet();
     const l = document.createElement("link");
     Object.assign(l, { rel: "alternate", type: "application/atom+xml", href, title: `Ratsatlas Köln – ${where}` });
     l.dataset.gebiet = `${area.kind}:${area.key}`;
@@ -2286,6 +2336,58 @@
     return mmReady.then((m) => { if (m) m.show(s || { bezirk: mmState ? mmState.bezirk : areaBezirk() || "Innenstadt" }); return m; });
   }
 
+  // --- Strukturdaten der Stadtstatistik (site/strukturdaten/strukturdaten.js) -----------------------------
+  // Kontext-Panel in der Liste und im Vorgang, Flächenfarben mit Tabelle (Datenvertrag „Strukturdaten“ unter
+  // data/strukturdaten/). Nur mit Freigabe „strukturdaten“ (index.json meta.funktionen, Entscheidung 10.11.2026); ohne
+  // sie stellt die Seite keine Anfrage, und der Ordner strukturdaten/ fehlt auf der Seite (tools/seite_bauen.py)
+  function struktur() {
+    if (!funktionen.strukturdaten) return Promise.resolve(null);
+    sdLaden ||= import("./strukturdaten/strukturdaten.js").then((m) => m.init({
+      L, karte: () => map, stadt: STADT, gebiet: () => area, stapel: () => mapStack, padding: mapPadding, syncUrl,
+      slug: (art, name) => (index ? ((art === "ortsteil" ? index.ortsteile : index.bezirke).find((x) => x.name === name) || {}).slug || null : null),
+      oeffnen(value) { if (MOBILE.matches) setMapMenu(false); chooseArea(value); },
+      vorschau: () => vorschau, telefon: () => MOBILE.matches,
+      // Telefon: Karte freilegen (Vorgang-Bereich und Blatt „Karte“ zu), z. B. nach einem Namen in einer Tabelle
+      zurKarte() { if (MOBILE.matches) { setPanel("panel-detail", false); setMapMenu(false); } },
+      flaechen(aus) { flaechenAus = aus; updateNav(true); if (outline) outline.setStyle({ fillOpacity: aus ? 0 : 0.12 }); },
+      kxAus() { for (const k of ["brw", "klima"]) if (kxOn.has(k)) document.querySelector(`.map-kx-${k}`)?.click(); },
+      begriffDa: (anker) => Boolean(BEGRIFF[anker]),
+      ansage(text) { $("#announce").textContent = text; },
+      detail: detailZeigen,
+    })).then((c) => { sdModul = c; return c; })
+      .catch((e) => { sdLaden = null; console.warn("Zusatzmodul nicht geladen", e); return null; });   // beim nächsten Mal erneut
+    return sdLaden;
+  }
+  const sdGebiet = () => { if (sdModul) sdModul.gebiet(); };
+  // Strukturdaten im Vorgang: nur bei genau einem Stadtteil in den eigenen Ortsbezügen (wie kontextVorgang)
+  function sdStadtteil(p) {
+    if (!funktionen.strukturdaten) return null;
+    const ots = [...new Set(p.locations.filter((l) => l.method !== "vererbt").map((l) => l.ortsteil).filter(Boolean))];
+    return ots.length === 1 ? ots[0] : null;
+  }
+  // Inhalt im Bereich „Vorgang“ ohne gewählte Vorlage (Tabelle der Flächenfarben); still: nur neu zeichnen (Sortierung,
+  // andere Kennzahl), ohne Fläche zu öffnen oder den Fokus zu setzen
+  function detailZeigen(titel, html, still) {
+    detailSeq++;
+    selected = null;
+    shownPlan = null;
+    shownSite = null;
+    highlight();
+    markCurrent(null);
+    if (tl) tl.select(null);
+    if (planLayer) { planLayer.remove(); planLayer = null; }
+    $("#detail-heading").textContent = titel;
+    $("#detail").innerHTML = html;
+    if (!still) {
+      if (MOBILE.matches) setMapMenu(false);
+      if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
+      $("#detail").scrollTop = 0;
+      $("#detail h3")?.focus();
+    }
+    syncUrl();
+    return $("#detail");
+  }
+
   // --- URL-Zustand -----------------------------------------------------------------------------------
   function syncUrl() {
     if (!area) return;
@@ -2310,6 +2412,7 @@
     const mm = !$("#panel-mitmachen").hidden && mmState;
     state.mitmachen = mm ? "1" : "";
     state.bezirk = mm ? mm.bezirk : "";
+    if (sdModul) Object.assign(state, sdModul.zustand());   // Flächenfarben der Strukturdaten (struktur, struktur_…)
     for (const [k, v] of Object.entries(state)) (v ? url.searchParams.set(k, v) : url.searchParams.delete(k));
     url.hash = selected ? encodeURIComponent(selected.reference) : "";
     history.replaceState(null, "", url);
@@ -2347,6 +2450,7 @@
     vorschau = Boolean(idx && idx.meta && idx.meta.vorschau);
     // Bonner Zusatzthemen nur, wenn index.json sie freigibt (config.ZUSATZTHEMEN); sonst keine Anfrage
     const fn = (idx && idx.meta && idx.meta.funktionen) || {};
+    funktionen = fn;
     // Freigaben und Vorschau-Kennzeichnung vor Karte und Kacheln anwenden, damit ausgeblendete Elemente (Auswertung,
     // Schnellfilter, Kalender, Filter) nicht kurz sichtbar sind
     applyFunktionen(fn, idx);
@@ -2484,6 +2588,8 @@
       await openProzesse({ tab: params.get("prozesse"), view: params.get("ansicht") === "liste" ? "liste" : "schaubild",
         verfahren: params.get("verfahren"), gremium: params.get("gremium"), amt: params.get("amt") });
     }
+    // Strukturdaten: Panel zum Gebiet, Fußzeile und Flächenfarben aus der Adresse (nur mit Freigabe)
+    if (funktionen.strukturdaten) struktur().then((m) => m && m.start(params));
     syncUrl();
   }
   // Schnittstelle für den Ratsassistenten (site/chat/ui.js): Vorlage öffnen, Kontext der Karte

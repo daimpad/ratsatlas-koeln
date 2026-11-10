@@ -880,7 +880,12 @@ def _nennt_rechenweg(text, rollen=None):
     nach „Differenz“ bzw. „Unterschied“; der Code des zweiten Teils vor „=“; der zweite Teil (Code oder Stichwort) im
     selben Text mit dem Code einer anderen Rolle oder mit Wörtern wie „Summe“, „ergibt“ oder „geheim“; Gesamtzahl und
     erster Teil als Code in einem Satzteil mit solchen Wörtern; die Gesamtzahl als Code in einem Satzteil mit
-    „Summe“."""
+    „Summe“.
+
+    Zwei feste Wendungen der Metatexte zählen dabei nicht (zulässig, Strukturdaten Phase 3): der Satz zur Bezugsgröße
+    („Bezugsgröße sind alle Einwohner*innen mit Haupt- und Nebenwohnsitz.“, wie in den Metatexten der Verhältnisse)
+    beim Stichwort des zweiten Teils und die Gesamtzahl als Nenner eines Anteils („geteilt durch alle Einwohner*innen
+    (koeln_A0025A)“) beim Satzteil mit „Summe“. Jeder andere Teil desselben Texts wird weiter geprüft."""
     (g, sg, _), (h, sh, _), (n, sn, wn) = rollen or _ROLLEN
 
     def such(muster, t=text):
@@ -894,10 +899,12 @@ def _nennt_rechenweg(text, rollen=None):
                 or such(rf"{rolle[x]}[^;\n]{{0,60}}?\b(?:{_RECHENWORT})\b[^;\n]{{0,60}}?{rolle[y]}")
                 or such(rf"\b(?:Differenz|Unterschied)\w*[^;\n]{{0,60}}?{rolle[x]}[^;\n]{{0,60}}?{rolle[y]}")):
             return True
+    ohne_bezug = re.sub(rf"\bBezugsgröße sind alle [\w*]+ mit {sh}- und {wn}\.", " ", text)
     if (such(rf"{code['n']}\s*=") or (such(code["n"]) and (such(code["g"]) or such(code["h"])))
-            or (such(rf"(?:{code['n']}|\b{wn}\w*)") and such(_ABLEITUNG))):
+            or (such(rf"(?:{code['n']}|\b{wn}\w*)", ohne_bezug) and such(_ABLEITUNG, ohne_bezug))):
         return True
     for satzteil in re.split(r"[;\n]|[.!?](?=\s|$)", text):
+        satzteil = re.sub(rf"\bgeteilt durch alle [\w*]+ \({code['g']}\)", " ", satzteil)
         if such(code["g"], satzteil) and (such(_SUMME, satzteil)
                                           or (such(code["h"], satzteil) and such(_ABLEITUNG, satzteil))):
             return True
@@ -930,7 +937,13 @@ def test_rechenweg_erkennung():
                  f"{wn} = {sg}szahl − {wh}", f"Testobjekte {sg} minus Testobjekte im {wh}",
                  f"Geheime Werte folgen aus {g} minus {h}", f"{sg}szahl abzüglich {wh} ergibt den {wn}",
                  f"Unterschied zwischen {sg} und {sh}teilen", f"{g} ist aus {h} ableitbar",
-                 f"Metatext von {g} ohne die Summe", f"Gleichung: {sg} – {wh} = {wn}"):
+                 f"Metatext von {g} ohne die Summe", f"Gleichung: {sg} – {wh} = {wn}",
+                 # die zulässigen Wendungen der Metatexte (Bezugsgröße, Nenner) heben andere Treffer nicht auf
+                 f"Bezugsgröße sind alle Testobjekte mit {sh}- und {wn}. In 1 291 Zeilen ist der {wn} geheim.",
+                 f"Bezugsgröße sind alle Testobjekte mit {sh}- und {wn}. Der geheime Wert ist {sg} minus {sh}.",
+                 f"koeln_{g} ist die Summe der Teile, geteilt durch alle Testobjekte (koeln_{g})",
+                 f"Anteil, geteilt durch alle Testobjekte (koeln_{g}); koeln_{g} ist die Summe aus {wh} und {wn}",
+                 f"Summe, geteilt durch alle Testobjekte (koeln_{g}), und {wn} folgt daraus"):
         assert _nennt_rechenweg(text, rollen) and _nennt_summe("koeln_X9999P", text, rollen), text
     assert _nennt_summe(f"koeln_{g}", f"Testobjekte im {wh} (koeln_{h}) und im {wn} (koeln_{n}), nachgerechnet in 22 "
                                       "von 24 Zeilen.", rollen)
@@ -944,7 +957,21 @@ def test_rechenweg_erkennung():
                  f"{wn}) 2023 = 1095520",
                  f"Einwohnerzahl ({wh}, {h}) und Altersanteile (Bezug {g}, im Metatext genannt) aus der Stadtstatistik",
                  "Statistikstelle auf die 1 291 ableitbaren Werte hinweisen; Werte wie bei der Stadt; kein Metatext "
-                 "nennt die geprüfte Summe; die Seite bildet keine Differenzen"):
+                 "nennt die geprüfte Summe; die Seite bildet keine Differenzen",
+                 # Metatext eines abgeleiteten Anteils (Aufbau wie strukturdaten._abgeleitete, Phase 3)
+                 "Vom Ratsatlas abgeleitet (Entscheidung des Auftraggebers vom 10.11.2026), kein Wert der Quelle: Summe "
+                 "der Testobjekte im Alter von 0 bis unter 3 Jahren (koeln_X0101A), 3 bis unter 6 Jahren "
+                 f"(koeln_X0102A), geteilt durch alle Testobjekte (koeln_{g}), mal 100; Formel (koeln_X0101A + "
+                 f"koeln_X0102A) / koeln_{g} × 100. Bezugsgröße sind alle Testobjekte mit {sh}- und {wn}. Dezimal "
+                 "gerechnet und kaufmännisch auf 2 Nachkommastellen gerundet. Kein Wert (status geheim), wenn eine der "
+                 "Altersgruppen oder die Bezugsgröße geheim gehalten ist; kein Wert (status fehlt), wenn einer dieser "
+                 "Werte fehlt oder die Bezugsgröße 0 ist. quellobjekt nennt die Formel mit den Zellen im Blatt Daten; "
+                 f"keine Verrechnung über Raumebenen. Die 11 Altersgruppen des Datenkatalogs ergeben zusammen koeln_{g} "
+                 "(nachgerechnet in 22 von 24 Zeilen; nicht prüfbar: 2 Zeilen mit geheim gehaltenem Wert).",
+                 # Methode der Altersanteile in kontext.json (pipeline/kontext.py, Option b)
+                 f"Testobjekte von 0 bis unter 18 Jahren an allen Testobjekten (koeln_{g}), Jahr 2025. Bezugsgröße sind "
+                 f"alle Testobjekte mit {sh}- und {wn}. Vom Ratsatlas aus den veröffentlichten Altersgruppen berechnet "
+                 "(abgeleitet, 2 Nachkommastellen); kein Wert, wenn eine Altersgruppe geheim gehalten ist"):
         assert not _nennt_rechenweg(text, rollen) and not _nennt_summe("koeln_X9999P", text, rollen), text
 
 
