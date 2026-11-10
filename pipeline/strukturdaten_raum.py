@@ -50,6 +50,7 @@ from datetime import date
 from pathlib import Path
 
 import numpy as np
+import pyproj
 import shapefile
 import shapely
 from pyproj import CRS, Transformer
@@ -86,8 +87,12 @@ GEO_BELEG = ("kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_p
 GEO_OHNE_BELEG = ("data/geo/{name} weicht von der Fassung vom 04.11.2026 ab (sha256); Abrufdatum und Stand der Quelle "
                   "nicht dokumentiert")
 
-TOLERANZ_M = geodaten.TOLERANZ_M   # Toleranz der Vereinfachung der Quartiersflächen in Metern, wie data/geo
+# Toleranz der Vereinfachung der Quartiersflächen: gleicher Zahlenwert wie data/geo, andere Bedeutung (Visvalingam-Whyatt:
+# etwa die Wurzel der Fläche der entfernten Dreiecke in Metern; data/geo: Douglas-Peucker, Höchstabstand in Metern)
+TOLERANZ_M = geodaten.TOLERANZ_M
 GITTER = 1e-6                       # Rundung der veröffentlichten Koordinaten in Grad, wie data/geo
+GITTERZELLE = "rund 7 × 11 cm"      # 1e-6 Grad Länge × Breite in Köln (50,83–51,09° N: 7,01–7,05 cm × 11,12 cm, GRS80)
+GEOS_MINDESTENS = (3, 12, 0)        # coverage_simplify, coverage_is_valid und coverage_invalid_edges (shapely >= 2.1)
 UTM = 25832                         # metrisches Bezugssystem der Verschneidung (ETRS89/UTM 32N)
 # Teilflächen unter diesem Anteil gelten als Randsplitter: gemeldet (audit_raumabgleich.tsv), nicht zugeordnet. Am
 # 10.11.2026 war der größte Splitter eines Quartiers 0,40 % seiner Fläche, der eines Stadtteils 0,06 %; mit den
@@ -264,7 +269,16 @@ class Quartiere:
             raise ValueError("Shapefile ohne Quartiere")
         for e in self.einheiten.values():
             if e["geom"] is not None and not e["geom"].is_valid:
-                e["geom"], e["repariert"] = shapely.make_valid(e["geom"]), True
+                e["geom"], e["repariert"] = _flaechenteile(shapely.make_valid(e["geom"])), True
+
+
+def _flaechenteile(geom):
+    """Nur die Flächenteile einer mit make_valid reparierten Geometrie. Aus einem Sporn ohne Breite (der Ring läuft auf
+    derselben Linie hin und zurück) macht make_valid eine GeometryCollection aus Fläche und Linie; Linien und Punkte
+    haben keine Fläche und entfallen (die Fläche bleibt gleich)."""
+    if geom.geom_type in ("Polygon", "MultiPolygon"):
+        return geom
+    return shapely.union_all([g for g in shapely.get_parts(geom) if g.geom_type in ("Polygon", "MultiPolygon")])
 
 
 def anzahl_quartiere(pfad):
@@ -418,6 +432,33 @@ def abdeckung_pruefen(flaechen):
                                                        if not k.is_empty}
 
 
+def shapely_pruefen():
+    """RuntimeError, wenn shapely oder GEOS die Funktionen für Abdeckungen nicht haben (shapely >= 2.1 mit GEOS >= 3.12,
+    requirements.txt); sonst bräche quartiersflaechen erst mitten im Lauf mit AttributeError oder
+    UnsupportedGEOSVersionError ab."""
+    fehlen = [f for f in ("coverage_simplify", "coverage_is_valid", "coverage_invalid_edges", "orient_polygons")
+              if not hasattr(shapely, f)]
+    if fehlen or tuple(shapely.geos_version) < GEOS_MINDESTENS:
+        raise RuntimeError(f"Quartiersflächen: shapely {shapely.__version__} mit GEOS {shapely.geos_version_string} "
+                           f"reicht nicht, gebraucht shapely >= 2.1 mit GEOS >= "
+                           f"{'.'.join(map(str, GEOS_MINDESTENS))} (requirements.txt)"
+                           + (f"; fehlt: {', '.join(fehlen)}" if fehlen else ""))
+
+
+def _linienkontakt(ids, geoms):
+    """Paare (a, b), a vor b in ids, deren Ränder sich in einer Linie schneiden (gemeinsame Grenze; DE-9IM: Dimension
+    des Schnitts der Ränder 1); Paare, die sich nur in Punkten berühren, zählen nicht."""
+    baum = shapely.STRtree(geoms)
+    return {(ids[i], ids[j]) for i, g in enumerate(geoms) for j in sorted(int(j) for j in baum.query(g))
+            if j > i and shapely.relate(g, geoms[j])[4] == "1"}
+
+
+def _grenzlaenge(a, b, nach_utm=None):
+    """Länge der gemeinsamen Grenze zweier Flächen in Metern mit 3 Stellen; nach_utm: Umrechnung nach EPSG 25832."""
+    linie = shapely.intersection(a.boundary, b.boundary)
+    return float(f"{(_umrechnen(linie, nach_utm) if nach_utm else linie).length:.3f}")
+
+
 def quartiersflaechen(quelle, toleranz=TOLERANZ_M):
     """({Nummer: Fläche in WGS84, auf GITTER gerundet}, Prüfung) aus {Nummer: Fläche in EPSG 25832}. Die Quartiere
     werden als Abdeckung gemeinsam behandelt, damit Nachbarn ohne Lücken und Überlappungen aneinandergrenzen:
@@ -431,8 +472,14 @@ def quartiersflaechen(quelle, toleranz=TOLERANZ_M):
        Snap-Rounding (eine Kante, die durch die Gitterzelle eines Stützpunkts läuft, wird über diesen geführt), daraus
        bildet shapely.polygonize die Netzflächen. Jede Netzfläche gehört zu dem Quartier, mit dem sie vor der Rundung
        die größte Fläche teilt (bei Gleichstand die kleinere Nummer); liegt sie zu weniger als der Hälfte in
-       Quartieren, gehört sie zu keinem (gezählt). Je Quartier setzt shapely.coverage_union_all seine Netzflächen ohne
-       neue Punkte zusammen; Außenringe im Uhrzeigersinn wie data/geo.
+       Quartieren, gehört sie zu keinem: Sie ist eine Lücke, der Schritt bricht ab. Je Quartier setzt
+       shapely.coverage_union_all seine Netzflächen ohne neue Punkte zusammen; Außenringe im Uhrzeigersinn wie data/geo.
+
+    Die Rundung kann Knoten zusammenlegen, die weniger als eine Gitterzelle (GITTERZELLE) auseinanderliegen: Zwei
+    Quartiere mit einer gemeinsamen Grenze von wenigen Zentimetern berühren sich danach nur noch in einem Punkt oder gar
+    nicht, zwei andere können neu aneinandergrenzen. Gezählt werden die Paare mit gemeinsamer Grenze (als Linie) in
+    Quelle und Ausgabe; die Paare, die nur in einer der beiden eine gemeinsame Grenze haben, stehen mit deren Länge in
+    der Prüfung.
 
     Warum nicht jedes Quartier für sich: shapely.set_precision (geodaten._wgs84) rundet mit Snap-Rounding je Fläche und
     führt eine gemeinsame Kante nur in der Fläche über einen nahen Stützpunkt, die ihn hat; der Nachbar behält die
@@ -441,9 +488,12 @@ def quartiersflaechen(quelle, toleranz=TOLERANZ_M):
     denen eine Kante wenige Millimeter bis Zentimeter an einem Stützpunkt vorbeiläuft (am 10.11.2026 zwei Quartiere mit
     Selbstüberschneidung).
 
-    Prüfung: die Quelle als Abdeckung (abdeckung_pruefen, gemeldet, die Vereinfachung läuft auch sonst); ValueError,
-    wenn eine veröffentlichte Fläche leer oder ungültig ist (shapely.is_valid), weniger oder mehr Teile hat als in der
-    Quelle oder die veröffentlichten Flächen keine gültige Abdeckung bilden."""
+    Prüfung: RuntimeError ohne shapely >= 2.1 mit GEOS >= 3.12 (shapely_pruefen); die Quelle als Abdeckung
+    (abdeckung_pruefen) und ihre Lücken (Löcher in der Vereinigung ihrer Flächen), gemeldet; ValueError, wenn eine
+    veröffentlichte Fläche leer oder ungültig ist (shapely.is_valid), weniger oder mehr Teile hat als in der Quelle, die
+    veröffentlichten Flächen keine gültige Abdeckung bilden (Überlappung) oder eine Netzfläche zu keinem Quartier
+    gehört (Lücke; auch eine Lücke der Quelle, denn eine Fläche ohne Beleg wird keinem Quartier zugeordnet)."""
+    shapely_pruefen()
     ids = _sortiert(quelle)
     geoms = np.array([quelle[r] for r in ids], dtype=object)
     flaechig = shapely.get_type_id(geoms)
@@ -451,16 +501,17 @@ def quartiersflaechen(quelle, toleranz=TOLERANZ_M):
         raise ValueError("Quartiersflächen: keine Fläche: " + ", ".join(r for r, t in zip(ids, flaechig)
                                                                      if t not in (3, 6)))
     quelle_gueltig, quelle_kanten = abdeckung_pruefen(geoms)
+    quelle_luecken = [p for p in shapely.get_parts(_loecher(geoms)) if p.area > 0]
     wgs = np.array([_umrechnen(g, geodaten.NACH_WGS84) for g in shapely.coverage_simplify(geoms, toleranz)],
                    dtype=object)
     kanten = shapely.union_all(shapely.boundary(wgs), grid_size=GITTER)
     netz = shapely.get_parts(shapely.polygonize(shapely.get_parts(kanten)))
     baum = shapely.STRtree(wgs)
-    teile, ohne = {}, 0
+    teile, ohne = {}, []
     for f in netz:
         anteile = [(shapely.intersection(f, wgs[j]).area, -j) for j in sorted(int(j) for j in baum.query(f))]
         if sum(a for a, _ in anteile) < f.area / 2:
-            ohne += 1
+            ohne.append(f)
             continue
         teile.setdefault(-max(anteile)[1], []).append(f)
     aus = {r: shapely.orient_polygons(shapely.coverage_union_all(teile[i]), exterior_cw=True) if i in teile
@@ -475,21 +526,46 @@ def quartiersflaechen(quelle, toleranz=TOLERANZ_M):
     veroeffentlicht_gueltig, kanten_aus = abdeckung_pruefen([aus[r] for r in ids])
     if not veroeffentlicht_gueltig:
         fehler.append("keine gültige Abdeckung, ungültige Kanten bei " + ", ".join(ids[i] for i in kanten_aus))
+    if ohne:
+        fehler.append(f"{len(ohne)} Netzfläche(n) ohne Quartier (Lücken, zusammen "
+                      f"{sum(_umrechnen(f, _NACH_UTM).area for f in ohne):.2f} m²; Lücken der Quelle: "
+                      f"{len(quelle_luecken)}, zusammen {sum(p.area for p in quelle_luecken):.2f} m²)")
     if fehler:
         raise ValueError("Quartiersflächen nach Vereinfachung und Rundung: " + "; ".join(fehler))
+    linie_quelle, linie_aus = _linienkontakt(ids, list(geoms)), _linienkontakt(ids, [aus[r] for r in ids])
+
+    def paare(menge):
+        return sorted(menge, key=lambda p: (int(p[0]), int(p[1])))
     return aus, {
         "verfahren": ("shapely.coverage_is_valid und coverage_invalid_edges (Überlappungen, an gemeinsamen Grenzen "
                       f"ungleiche Stützpunkte) an der Quelle in EPSG {UTM} vor der Vereinfachung und an den "
-                      "veröffentlichten, gerundeten Flächen in WGS84; je Fläche shapely.is_valid und die Zahl der "
-                      "Teile im Vergleich zur Quelle; Netzflächen der gemeinsamen Rundung, die zu keinem Quartier "
-                      "gehören. Kantenlängen in Metern mit 2 Stellen."),
+                      "veröffentlichten, gerundeten Flächen in WGS84; Lücken der Quelle = Löcher in der Vereinigung "
+                      "ihrer Flächen (ohne Außenrand); je Fläche shapely.is_valid und die Zahl der Teile im Vergleich "
+                      "zur Quelle; Netzflächen der gemeinsamen Rundung, die zu keinem Quartier gehören (Lücken). "
+                      "Überlappungen und Lücken der veröffentlichten Flächen, ungültige oder leere Flächen und eine "
+                      "andere Zahl von Teilen brechen den Schritt ab. nachbarpaare: Paare mit gemeinsamer Grenze als "
+                      "Linie (DE-9IM, Schnitt der Ränder mit Dimension 1) in der Quelle und veröffentlicht; Paare, die "
+                      "nur in einer der beiden eine gemeinsame Grenze haben, mit deren Länge (Meter mit 3 Stellen, in "
+                      f"EPSG {UTM}, veröffentlicht zurückgerechnet); in der anderen berühren sie sich höchstens in "
+                      "einem Punkt. software: Versionen, mit denen gerechnet wurde (byte-gleiche Flächen nur mit "
+                      "denselben Versionen). Kantenlängen in Metern mit 2 Stellen, Flächen in ganzen Quadratmetern."),
         "quelle_gueltig": quelle_gueltig,
         "quelle_ungueltige_kanten_m": {ids[i]: float(f"{laenge:.2f}") for i, laenge in quelle_kanten.items()},
+        "quelle_luecken_teile": len(quelle_luecken),
+        "quelle_luecken_m2": int(round(sum(p.area for p in quelle_luecken))),
         "veroeffentlicht_gueltig": veroeffentlicht_gueltig,
         "flaechen_gueltig": len(ids),
         "teile_wie_quelle": len(ids),
         "netzflaechen": len(netz),
-        "netzflaechen_ohne_quartier": ohne,
+        "netzflaechen_ohne_quartier": len(ohne),
+        "nachbarpaare_quelle": len(linie_quelle),
+        "nachbarpaare_veroeffentlicht": len(linie_aus),
+        "nachbarpaare_nur_quelle": {f"{a}/{b}": _grenzlaenge(quelle[a], quelle[b])
+                                    for a, b in paare(linie_quelle - linie_aus)},
+        "nachbarpaare_nur_veroeffentlicht": {f"{a}/{b}": _grenzlaenge(aus[a], aus[b], _NACH_UTM)
+                                             for a, b in paare(linie_aus - linie_quelle)},
+        "software": {"shapely": shapely.__version__, "geos": shapely.geos_version_string,
+                     "pyproj": pyproj.__version__, "proj": pyproj.proj_version_str},
     }
 
 
@@ -504,10 +580,11 @@ def _loecher(geoms):
 def abweichung(quelle, veroeffentlicht, toleranz=TOLERANZ_M):
     """Gemessene Abweichung der veröffentlichten Flächen (vereinfacht, gerundet) von der Quelle; beide {Nummer: Fläche}
     in EPSG 25832 (die veröffentlichte Fläche zurückgerechnet). Je Einheit der Hausdorff-Abstand (Segmente in Viertel
-    geteilt, DENSIFY), dazu Überlappungen zwischen veröffentlichten Flächen und Lücken: Löcher in der Vereinigung der
-    veröffentlichten Flächen, die die Vereinigung der Quellflächen nicht hat (der Außenrand der Stadt zählt nicht).
-    Abstände in Metern mit 2 Stellen (Median der gerundeten Abstände), Flächen in ganzen Quadratmetern; verglichen wird
-    der gerundete Wert."""
+    geteilt, DENSIFY), dazu Überlappungen zwischen veröffentlichten Flächen und Lücken: alle Löcher in der Vereinigung
+    der veröffentlichten Flächen (der Außenrand der Stadt zählt nicht; Lücken der Quelle selbst misst quartiersflaechen
+    unter quelle_luecken_*). Nicht abgezogen werden die Löcher der Quelle: Unterschiedlich vereinfachte Ränder derselben
+    Lücke ergäben sonst Splitter statt der Lücke. Abstände in Metern mit 2 Stellen (Median der gerundeten Abstände),
+    Flächen in ganzen Quadratmetern; verglichen wird der gerundete Wert."""
     ids = _sortiert(set(quelle) & set(veroeffentlicht))
     abstand = {r: float(f"{shapely.hausdorff_distance(quelle[r], veroeffentlicht[r], densify=DENSIFY):.2f}")
                for r in ids}
@@ -521,16 +598,15 @@ def abweichung(quelle, veroeffentlicht, toleranz=TOLERANZ_M):
             a = shapely.intersection(g, geoms[j]).area
             if a > 0:
                 paare, ueberlappung = paare + 1, ueberlappung + a
-    luecken = shapely.difference(_loecher(geoms), _loecher([quelle[r] for r in ids]))
-    luecken_teile = [p for p in shapely.get_parts(luecken) if p.area > 0]
+    luecken_teile = [p for p in shapely.get_parts(_loecher(geoms)) if p.area > 0]
     groesste = max(ids, key=lambda r: (abstand[r], -int(r))) if ids else ""
     ueber = sorted((r for r in ids if abstand[r] > toleranz), key=lambda r: (-abstand[r], int(r)))
     return {
         "verfahren": (f"Hausdorff-Abstand je Einheit zwischen der Fläche der Quelle und der veröffentlichten Fläche, "
                       f"beide in EPSG {UTM} (veröffentlichte Fläche zurückgerechnet), Segmente in Viertel geteilt; "
-                      "Überlappungen zwischen veröffentlichten Flächen; Lücken = Löcher in der Vereinigung der "
-                      "veröffentlichten Flächen, die die Quelle nicht hat (ohne Außenrand). Meter mit 2 Stellen "
-                      "(Median aus den gerundeten Abständen), Flächen in ganzen Quadratmetern."),
+                      "Überlappungen zwischen veröffentlichten Flächen; Lücken = alle Löcher in der Vereinigung der "
+                      "veröffentlichten Flächen (ohne Außenrand; Lücken der Quelle unter abdeckung). Meter mit 2 "
+                      "Stellen (Median aus den gerundeten Abständen), Flächen in ganzen Quadratmetern."),
         "einheiten": len(ids),
         "abstand_max_m": abstand[groesste] if ids else None,
         "abstand_max_raum_id": groesste,
@@ -639,10 +715,17 @@ def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad
                       "umgerechnet und auf 1e-6 Grad gerundet, alle Grenzen zusammen (Snap-Rounding; daraus die "
                       "Flächen neu gebildet). Benachbarte Quartiere haben an ihrer gemeinsamen Grenze dieselben "
                       "Stützpunkte, ohne Lücken und Überlappungen (geprüft unter abdeckung, gemessen unter "
-                      "abweichung_von_der_quelle). Die Abweichung von der Quelle kann vereinfacht_m übersteigen; "
-                      "Vereinfachung und Rundung entfernen Sporne ohne Breite. Die Flächen dienen nur der Anzeige: "
-                      "zuordnung.tsv und audit_raumabgleich.tsv rechnen mit den unvereinfachten Flächen der Quelle, "
-                      "Werte werden nicht über Flächen verrechnet."),
+                      "abweichung_von_der_quelle; eine Lücke oder Überlappung bricht den Schritt ab). vereinfacht_m "
+                      "ist hier etwa die Wurzel der Fläche der entfernten Dreiecke, kein Höchstabstand wie bei "
+                      "Stadtteilen und Stadtbezirken (Douglas-Peucker). Die Abweichung von der Quelle kann "
+                      "vereinfacht_m übersteigen: Die Vereinfachung entfernt kurze, schmale Ausbuchtungen, die Rundung "
+                      f"auf 1e-6 Grad (Gitterzelle {GITTERZELLE}) Sporne, die schmaler sind als eine Gitterzelle. Die "
+                      "Rundung kann auch Knoten zusammenlegen, die weniger als eine Gitterzelle auseinanderliegen: "
+                      "Quartiere mit einer gemeinsamen Grenze von wenigen Zentimetern berühren sich danach nur noch in "
+                      "einem Punkt oder gar nicht, andere grenzen neu aneinander (abdeckung, nachbarpaare_nur_quelle "
+                      "und nachbarpaare_nur_veroeffentlicht); Nachbarschaften nicht aus dieser Geometrie ableiten. Die "
+                      "Flächen dienen nur der Anzeige: zuordnung.tsv und audit_raumabgleich.tsv rechnen mit den "
+                      "unvereinfachten Flächen der Quelle, Werte werden nicht über Flächen verrechnet."),
         "abweichung_von_der_quelle": gemessen,
         "abdeckung": abdeckung,
         "eltern_id": "Stadtteil, nur bei Prüfstatus ok in audit_raumabgleich.tsv, sonst leer"}

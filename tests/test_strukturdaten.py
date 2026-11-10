@@ -23,6 +23,7 @@ openpyxl = pytest.importorskip("openpyxl")
 
 shapefile = pytest.importorskip("shapefile")
 import numpy as np  # noqa: E402
+import pyproj  # noqa: E402
 import shapely  # noqa: E402
 from pyproj import Transformer  # noqa: E402
 from shapely.geometry import shape  # noqa: E402
@@ -1202,8 +1203,9 @@ def test_verschneidung_mit_unvereinfachten_quartieren(tmp_path):
 
 
 def test_abweichung_misst_luecken_und_ueberlappungen():
-    """strukturdaten_raum.abweichung: Hausdorff-Abstand je Einheit, Überlappungen zwischen Nachbarn und Löcher in der
-    Vereinigung, die die Quelle nicht hat (der Außenrand zählt nicht)."""
+    """strukturdaten_raum.abweichung: Hausdorff-Abstand je Einheit, Überlappungen zwischen Nachbarn und alle Löcher in
+    der Vereinigung der veröffentlichten Flächen (der Außenrand zählt nicht), auch eine Lücke, die schon die Quelle hat
+    (vorher abgezogen: aus unterschiedlich vereinfachten Rändern derselben Lücke blieben Splitter mit 0 m²)."""
     quelle = {"1": _box(0, 0, 10, 10), "2": _box(10, 0, 20, 10), "3": _box(0, 10, 10, 20), "4": _box(10, 10, 20, 20)}
     aus = {"1": _box(0, 0, 10.5, 10), "2": _box(10, 0, 20, 10),
            "3": _box(0, 10, 10, 20).difference(_box(9, 10, 10, 11)),   # Kerbe an der Ecke: 1 m² Lücke im Inneren
@@ -1215,6 +1217,8 @@ def test_abweichung_misst_luecken_und_ueberlappungen():
     gleich = strukturdaten_raum.abweichung(quelle, quelle)
     assert (gleich["abstand_max_m"], gleich["abstand_median_m"], gleich["ueber_toleranz"], gleich["ueberlappung_m2"],
             gleich["luecken_m2"]) == (0.0, 0.0, {}, 0, 0)
+    mit_luecke = strukturdaten_raum.abweichung(LUECKE_QUELLE, LUECKE_QUELLE)
+    assert (mit_luecke["abstand_max_m"], mit_luecke["luecken_teile"], mit_luecke["luecken_m2"]) == (0.0, 1, 100)
 
 
 # --- Lückenlose Vereinfachung der Quartiere (Entscheidung 10.11.2026) -------------------------------------------------
@@ -1303,9 +1307,15 @@ def test_quartiere_lueckenlos_vereinfacht(tmp_path):
             gemessen["luecken_teile"], gemessen["luecken_m2"]) == (3, 0, 0, 0, 0)
     assert 0 < gemessen["abstand_median_m"] <= gemessen["abstand_max_m"]
     d = meta["abdeckung"]
-    assert (d["quelle_gueltig"], d["quelle_ungueltige_kanten_m"], d["veroeffentlicht_gueltig"],
-            d["netzflaechen_ohne_quartier"]) == (True, {}, True, 0)
+    assert (d["quelle_gueltig"], d["quelle_ungueltige_kanten_m"], d["quelle_luecken_teile"], d["quelle_luecken_m2"],
+            d["veroeffentlicht_gueltig"], d["netzflaechen_ohne_quartier"]) == (True, {}, 0, 0, True, 0)
+    assert (d["nachbarpaare_quelle"], d["nachbarpaare_veroeffentlicht"], d["nachbarpaare_nur_quelle"],
+            d["nachbarpaare_nur_veroeffentlicht"]) == (3, 3, {}, {})
+    assert d["software"] == {"shapely": shapely.__version__, "geos": shapely.geos_version_string,
+                             "pyproj": pyproj.__version__, "proj": pyproj.proj_version_str}
     assert "gemeinsam" in meta["geometrie"] and "für sich" not in meta["geometrie"]
+    assert "ohne Breite" not in meta["geometrie"] and "Gitterzelle rund 7 × 11 cm" in meta["geometrie"]
+    assert "kein Höchstabstand" in meta["geometrie"] and "Nachbarschaften nicht" in meta["geometrie"]
 
     alt = {rid: geodaten._wgs84(e["geom"], strukturdaten_raum.TOLERANZ_M) for rid, e in quelle.items()}
     befunde = _befunde(alt)
@@ -1325,14 +1335,15 @@ KEIL = {
 }
 
 
-def _keil_quartiere():
-    """KEIL in Metern relativ zu (X0, Y0) in EPSG 25832 (wie quartiere_zip sie erwartet)."""
+def _keil_quartiere(quartiere=None):
+    """Ringe in Einheiten von 1e-6 Grad um (LAENGE0, BREITE0) (ohne Angabe KEIL) in Metern relativ zu (X0, Y0) in
+    EPSG 25832 (wie quartiere_zip sie erwartet)."""
     nach = Transformer.from_crs(4326, 25832, always_xy=True)
 
     def utm(p):
         x, y = nach.transform(LAENGE0 + p[0] * 1e-6, BREITE0 + p[1] * 1e-6)
         return (x - X0, y - Y0)
-    return {n: (name, teil, [utm(p) for p in ring]) for n, (name, teil, ring) in KEIL.items()}
+    return {n: (name, teil, [utm(p) for p in ring]) for n, (name, teil, ring) in (quartiere or KEIL).items()}
 
 
 def test_rundung_gemeinsam_ohne_ueberlappung(tmp_path):
@@ -1376,6 +1387,129 @@ def test_quartiersflaechen_pruefungen():
     insel = shapely.MultiPolygon([links, _box(X0 + 300, Y0, X0 + 300.01, Y0 + 0.01)])
     with pytest.raises(ValueError, match="101010001 mit 1 statt 2 Teilen"):
         strukturdaten_raum.quartiersflaechen({"101010001": insel})
+
+
+def _umring(punkte):
+    return shapely.Polygon([(X0 + x, Y0 + y) for x, y in punkte])
+
+
+# Zwei Streifen und zwei Kästen mit einer eingeschlossenen Lücke von 1 × 100 m (x 100 bis 101) zwischen den Kästen;
+# an den gemeinsamen Grenzen dieselben Stützpunkte (gültige Abdeckung, aber mit Loch in der Vereinigung).
+LUECKE_QUELLE = {"101010001": _umring([(0, -50), (0, 0), (100, 0), (101, 0), (200, 0), (200, -50)]),
+                 "101010002": _umring([(0, 0), (0, 100), (100, 100), (100, 0)]),
+                 "101010003": _umring([(101, 0), (101, 100), (200, 100), (200, 0)]),
+                 "101010004": _umring([(0, 100), (0, 150), (200, 150), (200, 100), (101, 100), (100, 100)])}
+# Bucht von rund 21 × 22 m am Außenrand, ihr Zugang 0,3 Einheiten (rund 2 cm) breit, beide Ränder des Zugangs in
+# derselben Gitterzelle (Einheiten von 1e-6 Grad wie KEIL): Die Rundung schließt den Zugang, die Bucht wird zum Loch.
+BUCHT = {
+    "101010001": ("Testquartier Bucht", "101", [(-2000, -1000), (-2000, 1000), (-500.2, 1000), (-500.2, 800),
+                                                (-650, 800), (-650, 600), (-350, 600), (-350, 800), (-499.9, 800),
+                                                (-499.9, 1000), (0, 1000), (0, -1000)]),
+    "101010002": ("Testquartier Nachbar", "101", [(0, -1000), (0, 1000), (2000, 1000), (2000, -1000)]),
+}
+
+
+def test_luecken_brechen_ab(tmp_path):
+    """Lückenlos heißt auch: keine Lücke in der Ausgabe. Eine Netzfläche, die zu keinem Quartier gehört, bricht den
+    Schritt ab, gleich ob die Lücke aus der Quelle stammt (eingeschlossene Lücke von 100 m², gemessen unter Lücken der
+    Quelle) oder erst durch die Rundung entsteht (Bucht mit 2 cm breitem Zugang am Außenrand; der Hausdorff-Abstand
+    bliebe klein). Vorher liefen beide Fälle durch, gezählt nur unter netzflaechen_ohne_quartier."""
+    pruefung = strukturdaten_raum.abdeckung_pruefen([LUECKE_QUELLE[r] for r in sorted(LUECKE_QUELLE)])
+    assert pruefung == (True, {})   # an den Grenzen dieselben Stützpunkte; die Lücke erkennt coverage_is_valid nicht
+    with pytest.raises(ValueError, match=r"1 Netzfläche\(n\) ohne Quartier \(Lücken, zusammen 9\d\.\d\d m²; "
+                                         r"Lücken der Quelle: 1, zusammen 100\.00 m²\)"):
+        strukturdaten_raum.quartiersflaechen(LUECKE_QUELLE)
+    quartiere_zip(tmp_path / "q.zip", _keil_quartiere(BUCHT))
+    quelle = {rid: e["geom"] for rid, e in strukturdaten_raum.Quartiere(tmp_path / "q.zip").einheiten.items()}
+    assert all(g.is_valid and not g.interiors for g in quelle.values())
+    assert not shapely.union_all(list(quelle.values())).interiors   # in der Quelle keine Lücke
+    with pytest.raises(ValueError, match=r"1 Netzfläche\(n\) ohne Quartier \(Lücken, zusammen 4\d\d\.\d\d m²; "
+                                         r"Lücken der Quelle: 0, zusammen 0\.00 m²\)"):
+        strukturdaten_raum.quartiersflaechen(quelle)
+
+
+def test_quartiersflaechen_bricht_bei_fehlern_der_ausgabe_ab(monkeypatch):
+    """Die Prüfungen der Ausgabe greifen: Überlappen sich die zusammengesetzten Flächen (hier um 1e-5 Grad gepuffert),
+    bricht der Schritt mit „keine gültige Abdeckung“ ab; ist eine Fläche ungültig (Schleife, die sich selbst schneidet),
+    mit „ungültig“ und dem Grund."""
+    quelle = {"101010001": _box(X0, Y0, X0 + 100, Y0 + 100), "101010002": _box(X0 + 100, Y0, X0 + 200, Y0 + 100)}
+    flaechen, pruefung = strukturdaten_raum.quartiersflaechen(quelle)
+    assert _befunde(flaechen) == KEINE_BEFUNDE and pruefung["veroeffentlicht_gueltig"]
+    zusammen = shapely.coverage_union_all
+    monkeypatch.setattr(shapely, "coverage_union_all", lambda teile: zusammen(teile).buffer(1e-5))
+    with pytest.raises(ValueError, match="keine gültige Abdeckung, ungültige Kanten bei 101010001, 101010002"):
+        strukturdaten_raum.quartiersflaechen(quelle)
+    schleife = shapely.Polygon([(6.95, 50.92), (6.951, 50.921), (6.951, 50.92), (6.95, 50.921)])
+    assert not schleife.is_valid
+    monkeypatch.setattr(shapely, "coverage_union_all", lambda teile: schleife)
+    with pytest.raises(ValueError, match=r"101010001 ungültig \(Self-intersection"):
+        strukturdaten_raum.quartiersflaechen(quelle)
+    monkeypatch.undo()
+    # Gleichstand (zwei Quartiere mit derselben Fläche): Die Netzfläche gehört dem mit der kleineren Nummer, das andere
+    # bleibt leer, und der Schritt bricht ab.
+    with pytest.raises(ValueError, match="Rundung: 101010002 leer$"):
+        strukturdaten_raum.quartiersflaechen({"101010002": quelle["101010001"], "101010001": quelle["101010001"]})
+
+
+def test_reparierte_quelle_nur_mit_flaechenteilen(tmp_path):
+    """Ein Sporn ohne Breite (der Ring läuft auf derselben Linie 30 m hin und zurück) ist ungültig; make_valid macht
+    daraus Fläche und Linie (GeometryCollection). Quartiere behält nur die Fläche, der Hinweis „repariert“ bleibt im
+    Audit, und der Schritt läuft weiter (vorher: Abbruch mit „keine Fläche“)."""
+    sporn = [(0, 0), (0, 100), (50, 100), (50, 130), (50, 100), (100, 100), (100, 0)]
+    quartiere = {"101010001": ("Testquartier Sporn ohne Breite", "101", sporn),
+                 "101010002": ("Testquartier Nachbar", "101", (100, 0, 200, 100))}
+    quartiere_zip(tmp_path / "q.zip", quartiere)
+    roh = shape(shapefile.Reader(str(tmp_path / "q.zip_shp" / "Statistisches_Quartier")).shape(0).__geo_interface__)
+    assert not roh.is_valid and shapely.make_valid(roh).geom_type == "GeometryCollection"
+    e = strukturdaten_raum.Quartiere(tmp_path / "q.zip").einheiten["101010001"]
+    assert e["repariert"] and e["geom"].geom_type == "Polygon" and abs(e["geom"].area - 10000) < 1e-6
+    geo = geo_schreiben(tmp_path / "geo")
+    beleg = {"url": "https://example.invalid/q.zip", "zeitstempel": "2026-11-10T10:00:00+01:00", "pruefsumme": "0"}
+    r = strukturdaten_raum.raumabgleich(tmp_path / "q.zip", beleg, geo["stadtteil"], geo["stadtbezirk"],
+                                        {"quartier": {n: q[0] for n, q in quartiere.items()}})
+    a = next(a for a in r["audit"] if a["von_id"] == "101010001")
+    assert a["pruefstatus"] == "ok" and "mit make_valid repariert" in a["grund"]
+    assert _befunde(_veroeffentlicht(r)) == KEINE_BEFUNDE
+
+
+# Zwei Knoten 0,2 Einheiten (rund 2 cm) übereinander in derselben Gitterzelle (Einheiten von 1e-6 Grad wie KEIL):
+# links und rechts teilen die kurze Kante N1–N2, unten und oben berühren keinen der beiden Knoten gemeinsam.
+N1, N2 = (0.1, 0.1), (0.1, 0.3)
+KNOTENPAAR = {
+    "101010001": ("Testquartier links", "101", [(-1000, -1000), (-1000, 1000), N2, N1]),
+    "101010002": ("Testquartier rechts", "101", [(1000, -1000), N1, N2, (1000, 1000)]),
+    "101010003": ("Testquartier unten", "101", [(-1000, -1000), N1, (1000, -1000)]),
+    "101010004": ("Testquartier oben", "101", [(-1000, 1000), (1000, 1000), N2]),
+}
+
+
+def test_rundung_legt_knoten_zusammen(tmp_path):
+    """Die Rundung legt Knoten zusammen, die weniger als eine Gitterzelle auseinanderliegen: Links und rechts haben in
+    der Quelle eine 2 cm lange gemeinsame Grenze, veröffentlicht berühren sie sich nur in einem Punkt. Die Prüfung
+    zählt die Paare mit gemeinsamer Grenze in Quelle (5) und Ausgabe (4) und nennt das geänderte Paar mit der Länge."""
+    quartiere_zip(tmp_path / "q.zip", _keil_quartiere(KNOTENPAAR))
+    quelle = {rid: e["geom"] for rid, e in strukturdaten_raum.Quartiere(tmp_path / "q.zip").einheiten.items()}
+    flaechen, pruefung = strukturdaten_raum.quartiersflaechen(quelle)
+    assert _befunde(flaechen) == KEINE_BEFUNDE
+    assert shapely.intersection(flaechen["101010001"], flaechen["101010002"]).geom_type == "Point"
+    assert (pruefung["nachbarpaare_quelle"], pruefung["nachbarpaare_veroeffentlicht"]) == (5, 4)
+    assert list(pruefung["nachbarpaare_nur_quelle"]) == ["101010001/101010002"]
+    assert pruefung["nachbarpaare_nur_quelle"]["101010001/101010002"] == pytest.approx(0.022, abs=0.0015)
+    assert pruefung["nachbarpaare_nur_veroeffentlicht"] == {}
+
+
+def test_shapely_pruefen(monkeypatch):
+    """Ohne shapely >= 2.1 mit GEOS >= 3.12 bricht quartiersflaechen gleich zu Beginn mit einem Hinweis auf
+    requirements.txt ab (vorher erst mitten im Lauf mit AttributeError)."""
+    strukturdaten_raum.shapely_pruefen()   # die installierte Fassung reicht
+    quelle = {"101010001": _box(X0, Y0, X0 + 100, Y0 + 100)}
+    monkeypatch.setattr(shapely, "geos_version", (3, 11, 2))
+    with pytest.raises(RuntimeError, match=r"GEOS >= 3\.12\.0 \(requirements\.txt\)"):
+        strukturdaten_raum.quartiersflaechen(quelle)
+    monkeypatch.undo()
+    monkeypatch.delattr(shapely, "coverage_invalid_edges")
+    with pytest.raises(RuntimeError, match="fehlt: coverage_invalid_edges"):
+        strukturdaten_raum.quartiersflaechen(quelle)
 
 
 def test_abweichender_name_als_hinweis(umgebung):

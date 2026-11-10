@@ -1466,8 +1466,11 @@ def write():
           f"Überlappungen {a['ueberlappung_nachbarpaare']} Paare, {a['ueberlappung_m2']} m²; Lücken "
           f"{a['luecken_teile']} Teile, {a['luecken_m2']} m²; Abdeckung der Quelle gültig: "
           f"{'ja' if d['quelle_gueltig'] else 'nein, ungültige Kanten ' + str(d['quelle_ungueltige_kanten_m'])}, "
+          f"Lücken der Quelle {d['quelle_luecken_teile']} ({d['quelle_luecken_m2']} m²), "
           f"veröffentlicht gültig: {'ja' if d['veroeffentlicht_gueltig'] else 'nein'}, Netzflächen ohne Quartier: "
-          f"{d['netzflaechen_ohne_quartier']}")
+          f"{d['netzflaechen_ohne_quartier']}; Nachbarpaare mit gemeinsamer Grenze: Quelle {d['nachbarpaare_quelle']}, "
+          f"veröffentlicht {d['nachbarpaare_veroeffentlicht']}, nur Quelle {d['nachbarpaare_nur_quelle'] or 'keine'}, "
+          f"nur veröffentlicht {d['nachbarpaare_nur_veroeffentlicht'] or 'keine'}")
     for h in hinweise:
         print(f"  {h}")
     for name, *_ in DATEIEN_AUSGABE:
