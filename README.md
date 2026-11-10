@@ -49,7 +49,7 @@ Die Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ steht 
 ## Grenzen
 
 - **Ableitungen:** Orte aus dem Titel, Themen und Fraktionen sind abgeleitet und können falsch sein. Jede Verortung nennt Methode, Konfidenz und Fundstelle. Die Prüfung von Hand an Kölner Vorlagen steht noch aus.
-- **Datenschutz:** Wohnadressen von Privatpersonen werden nicht gezeigt. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische Anträge, nie Anregungen und Beschwerden nach § 24 GO NRW.
+- **Datenschutz:** Wohnadressen von Privatpersonen werden nicht gezeigt. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische Anträge, nie Anregungen und Beschwerden nach § 24 GO NRW; ist die Art einer Vorlage nicht erkennbar, zeigt die Karte höchstens die Straße.
 - **Volltexte:** Bis die Lizenz geklärt ist, erscheinen keine Volltexte, Zitate oder Dokumente der Stadt; die Seite verlinkt nur auf das Original.
 - **Nicht einsehbar:** Nichtöffentliche Beratungen, Arbeit innerhalb der Verwaltung und die Umsetzung von Beschlüssen.
 - **Maßgeblich** ist immer das Original im Ratsinformationssystem.

@@ -217,8 +217,9 @@ def write_geojson(path, cache, sources):
         "type": "FeatureCollection",
         "meta": {"sources": sources, "note": "Ein Punkt je Vorlage und Ort: Straßenabschnitt, Stadtteil oder Stadtbezirk; "
                  "eine Hauskoordinate (Ebene 'adresse') nur bei Verwaltungsvorlagen und politischen Anträgen, nie bei "
-                 "Anregungen und Beschwerden nach § 24 GO NRW. In Titeln von Vorlagen aus der Einwohnerschaft ist die "
-                 "Hausnummer ausgeblendet, das Original verlinkt `web`. Ortsbezüge mit location_source 'osm' sind aus "
+                 "Anregungen und Beschwerden nach § 24 GO NRW oder bei leerer oder nicht erkennbarer Vorlagenart. In "
+                 "Titeln von Vorlagen aus der Einwohnerschaft ist die Hausnummer ausgeblendet, das Original verlinkt "
+                 "`web`. Ortsbezüge mit location_source 'osm' sind aus "
                  "OpenStreetMap abgeleitet (ODbL 1.0); übrige Felder dl-de/zero 2.0. " + config.NAMENSNENNUNG + "."},
         "features": features}, ensure_ascii=False, separators=(",", ":")))
     return len(features)
