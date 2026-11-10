@@ -7,21 +7,24 @@ Eingaben (ohne Netz; aufgerufen aus pipeline/strukturdaten.py, Schritt `struktur
   Entpacken auf die Platte; das Koordinatenbezugssystem kommt aus der .prj-Datei (am 10.11.2026 ETRS89/UTM 32N,
   EPSG 25832).
 - Stadtteile und Stadtbezirke aus data/geo/ (pipeline/geodaten.py: Shapefiles der Stadt, WGS84, mit
-  geodaten.TOLERANZ_M vereinfacht, Koordinaten auf 1e-6 Grad gerundet). Eine unvereinfachte Fassung liegt nicht im
-  Repository; data/geo ist die beste verfügbare Geometrie. Wirkung: Die Grenzen weichen von der Quelle ab (für data/geo
-  nicht gemessen; bei den Quartieren mit demselben Verfahren gemessen, siehe `abweichung`), an den Rändern entstehen
-  kleine Splitter (Anteile unter SPLITTER_ANTEIL); sie werden gemeldet, nicht zugeordnet. data/geo hat kein
-  Abrufprotokoll; Abrufdatum und Stand stehen nur für die Fassung mit den Prüfsummen in GEO_HERKUNFT.
+  geodaten.TOLERANZ_M vereinfacht, jede Fläche für sich, Koordinaten auf 1e-6 Grad gerundet). Eine unvereinfachte
+  Fassung liegt nicht im Repository; data/geo ist die beste verfügbare Geometrie. Wirkung: Die Grenzen weichen von der
+  Quelle ab (für data/geo nicht gemessen; dasselbe Verfahren ergab bei den Quartieren am 10.11.2026 bis 12,61 m, 37 von
+  570 Quartieren über 2 m), an den Rändern entstehen kleine Splitter (Anteile unter SPLITTER_ANTEIL); sie werden
+  gemeldet, nicht zugeordnet. data/geo hat kein Abrufprotokoll; Abrufdatum und Stand stehen nur für die Fassung mit den
+  Prüfsummen in GEO_HERKUNFT.
 
 Ausgaben (Rückgabe an strukturdaten.write, das die Dateien schreibt):
 - raum/stadtbezirk.geojson, raum/stadtteil.geojson: Geometrie unverändert aus data/geo; raum/quartier.geojson: aus dem
-  Shapefile, in EPSG 25832 mit TOLERANZ_M vereinfacht und nach WGS84 umgerechnet wie geodaten._wgs84 (jedes Quartier
-  für sich: zwischen Nachbarn entstehen schmale Lücken und Überlappungen, die Rundung auf 1e-6 Grad entfernt Sporne
-  ohne Breite; `abweichung` misst beides, Ergebnis in meta unter abweichung_von_der_quelle). Die Flächen dienen nur
-  der Anzeige; die Verschneidung rechnet mit den unvereinfachten Quartieren. Properties laut Vertrag: raum_id (Nummer
-  der Quelle als Text), name, raumebene, eltern_id, quelle, lizenz. `eltern_id` steht nur, wenn Verschneidung, Nummer
-  und Attribut dasselbe Ziel nennen (Prüfstatus ok); bei Stadtbezirken leer (oberste Ebene mit Geometrie; die
-  Gesamtstadt steht in werte.tsv als raumebene gesamtstadt, raum_id 0, ohne Geometrie).
+  Shapefile, alle Quartiere gemeinsam als lückenlose Abdeckung vereinfacht und gerundet (`quartiersflaechen`,
+  Entscheidung 10.11.2026 „lückenlose Vereinfachung“): Nachbarn haben an ihrer gemeinsamen Grenze dieselben
+  Stützpunkte, ohne Lücken und Überlappungen. `abweichung` misst die Abweichung von der Quelle sowie Lücken und
+  Überlappungen an der veröffentlichten Geometrie, Ergebnis in meta unter abweichung_von_der_quelle, die Prüfung der
+  Abdeckung unter abdeckung. Die Flächen dienen nur der Anzeige; die Verschneidung rechnet mit den unvereinfachten
+  Quartieren. Properties laut Vertrag: raum_id (Nummer der Quelle als Text), name, raumebene, eltern_id, quelle,
+  lizenz. `eltern_id` steht nur, wenn Verschneidung, Nummer und Attribut dasselbe Ziel nennen (Prüfstatus ok); bei
+  Stadtbezirken leer (oberste Ebene mit Geometrie; die Gesamtstadt steht in werte.tsv als raumebene gesamtstadt,
+  raum_id 0, ohne Geometrie).
 - zuordnung.tsv: Quartier → Stadtteil und Stadtteil → Stadtbezirk durch Verschneidung in EPSG 25832 (Quartiere
   unvereinfacht aus dem Shapefile, Stadtteile und Stadtbezirke aus data/geo zurückgerechnet); eine Zeile je Paar mit
   Flächenanteil ≥ SPLITTER_ANTEIL. `flaechenanteil` = Anteil der Fläche der Einheit, der im Ziel liegt (4 Stellen).
@@ -83,7 +86,8 @@ GEO_BELEG = ("kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_p
 GEO_OHNE_BELEG = ("data/geo/{name} weicht von der Fassung vom 04.11.2026 ab (sha256); Abrufdatum und Stand der Quelle "
                   "nicht dokumentiert")
 
-TOLERANZ_M = geodaten.TOLERANZ_M   # Vereinfachung der Quartiersflächen wie data/geo (Meter)
+TOLERANZ_M = geodaten.TOLERANZ_M   # Toleranz der Vereinfachung der Quartiersflächen in Metern, wie data/geo
+GITTER = 1e-6                       # Rundung der veröffentlichten Koordinaten in Grad, wie data/geo
 UTM = 25832                         # metrisches Bezugssystem der Verschneidung (ETRS89/UTM 32N)
 # Teilflächen unter diesem Anteil gelten als Randsplitter: gemeldet (audit_raumabgleich.tsv), nicht zugeordnet. Am
 # 10.11.2026 war der größte Splitter eines Quartiers 0,40 % seiner Fläche, der eines Stadtteils 0,06 %; mit den
@@ -134,6 +138,10 @@ AUDIT_SPALTEN = {
 
 _NACH_UTM = Transformer.from_crs(4326, UTM, always_xy=True)
 DENSIFY = 0.25   # Hausdorff-Abstand: jedes Segment für die Messung in Viertel geteilt (shapely.hausdorff_distance)
+
+
+def _umrechnen(geom, transformer):
+    return shapely.transform(geom, lambda c: np.column_stack(transformer.transform(c[:, 0], c[:, 1])))
 
 
 def _anteil(wert):
@@ -398,6 +406,93 @@ def abgleich(von_ebene, nach_ebene, einheiten, ziele, werte_namen, namen_jahre=N
     return zuordnung, audit, eltern
 
 
+# --- Veröffentlichte Quartiersflächen: gemeinsam vereinfacht und gerundet --------------------------------------------
+
+def abdeckung_pruefen(flaechen):
+    """(gültig, {Index: Länge}) einer Liste von Flächen als Abdeckung (shapely.coverage_is_valid: keine Überlappungen,
+    an gemeinsamen Grenzen dieselben Stützpunkte); Länge der Kanten, die shapely.coverage_invalid_edges je Fläche
+    meldet, nur für Flächen mit solchen Kanten."""
+    flaechen = np.asarray(flaechen, dtype=object)
+    kanten = shapely.coverage_invalid_edges(flaechen)
+    return bool(shapely.coverage_is_valid(flaechen)), {i: float(k.length) for i, k in enumerate(kanten)
+                                                       if not k.is_empty}
+
+
+def quartiersflaechen(quelle, toleranz=TOLERANZ_M):
+    """({Nummer: Fläche in WGS84, auf GITTER gerundet}, Prüfung) aus {Nummer: Fläche in EPSG 25832}. Die Quartiere
+    werden als Abdeckung gemeinsam behandelt, damit Nachbarn ohne Lücken und Überlappungen aneinandergrenzen:
+
+    1. shapely.coverage_simplify über alle Quartiere zusammen in EPSG 25832 (Visvalingam-Whyatt mit `toleranz`, laut
+       shapely etwa die Wurzel der Fläche der entfernten Dreiecke): Jede gemeinsame Grenze wird einmal vereinfacht,
+       Punkte, an denen drei und mehr Flächen zusammentreffen, bleiben. Stützpunkte entfallen nur, keiner wird
+       verschoben.
+    2. Umrechnung nach WGS84: gleiche Punkte ergeben gleiche Koordinaten.
+    3. Rundung auf GITTER für alle Grenzen zusammen: shapely.union_all mit grid_size rundet und verknotet sie mit
+       Snap-Rounding (eine Kante, die durch die Gitterzelle eines Stützpunkts läuft, wird über diesen geführt), daraus
+       bildet shapely.polygonize die Netzflächen. Jede Netzfläche gehört zu dem Quartier, mit dem sie vor der Rundung
+       die größte Fläche teilt (bei Gleichstand die kleinere Nummer); liegt sie zu weniger als der Hälfte in
+       Quartieren, gehört sie zu keinem (gezählt). Je Quartier setzt shapely.coverage_union_all seine Netzflächen ohne
+       neue Punkte zusammen; Außenringe im Uhrzeigersinn wie data/geo.
+
+    Warum nicht jedes Quartier für sich: shapely.set_precision (geodaten._wgs84) rundet mit Snap-Rounding je Fläche und
+    führt eine gemeinsame Kante nur in der Fläche über einen nahen Stützpunkt, die ihn hat; der Nachbar behält die
+    gerade Kante (10.11.2026 nach coverage_simplify mit 2 m: 4 überlappende Nachbarpaare mit zusammen 1,26 m², 2 Lücken
+    mit 0,94 m²). Nur die Koordinaten zu runden hält die gemeinsamen Grenzen gleich, macht aber Flächen ungültig, in
+    denen eine Kante wenige Millimeter bis Zentimeter an einem Stützpunkt vorbeiläuft (am 10.11.2026 zwei Quartiere mit
+    Selbstüberschneidung).
+
+    Prüfung: die Quelle als Abdeckung (abdeckung_pruefen, gemeldet, die Vereinfachung läuft auch sonst); ValueError,
+    wenn eine veröffentlichte Fläche leer oder ungültig ist (shapely.is_valid), weniger oder mehr Teile hat als in der
+    Quelle oder die veröffentlichten Flächen keine gültige Abdeckung bilden."""
+    ids = _sortiert(quelle)
+    geoms = np.array([quelle[r] for r in ids], dtype=object)
+    flaechig = shapely.get_type_id(geoms)
+    if not np.isin(flaechig, (3, 6)).all():   # Polygon, MultiPolygon
+        raise ValueError("Quartiersflächen: keine Fläche: " + ", ".join(r for r, t in zip(ids, flaechig)
+                                                                     if t not in (3, 6)))
+    quelle_gueltig, quelle_kanten = abdeckung_pruefen(geoms)
+    wgs = np.array([_umrechnen(g, geodaten.NACH_WGS84) for g in shapely.coverage_simplify(geoms, toleranz)],
+                   dtype=object)
+    kanten = shapely.union_all(shapely.boundary(wgs), grid_size=GITTER)
+    netz = shapely.get_parts(shapely.polygonize(shapely.get_parts(kanten)))
+    baum = shapely.STRtree(wgs)
+    teile, ohne = {}, 0
+    for f in netz:
+        anteile = [(shapely.intersection(f, wgs[j]).area, -j) for j in sorted(int(j) for j in baum.query(f))]
+        if sum(a for a, _ in anteile) < f.area / 2:
+            ohne += 1
+            continue
+        teile.setdefault(-max(anteile)[1], []).append(f)
+    aus = {r: shapely.orient_polygons(shapely.coverage_union_all(teile[i]), exterior_cw=True) if i in teile
+           else shapely.Polygon() for i, r in enumerate(ids)}
+    fehler = []
+    for r in ids:
+        g, soll = aus[r], len(shapely.get_parts(quelle[r]))
+        if g.is_empty or not g.is_valid:
+            fehler.append(f"{r} " + ("leer" if g.is_empty else f"ungültig ({shapely.is_valid_reason(g)})"))
+        elif len(shapely.get_parts(g)) != soll:
+            fehler.append(f"{r} mit {len(shapely.get_parts(g))} statt {soll} Teilen")
+    veroeffentlicht_gueltig, kanten_aus = abdeckung_pruefen([aus[r] for r in ids])
+    if not veroeffentlicht_gueltig:
+        fehler.append("keine gültige Abdeckung, ungültige Kanten bei " + ", ".join(ids[i] for i in kanten_aus))
+    if fehler:
+        raise ValueError("Quartiersflächen nach Vereinfachung und Rundung: " + "; ".join(fehler))
+    return aus, {
+        "verfahren": ("shapely.coverage_is_valid und coverage_invalid_edges (Überlappungen, an gemeinsamen Grenzen "
+                      f"ungleiche Stützpunkte) an der Quelle in EPSG {UTM} vor der Vereinfachung und an den "
+                      "veröffentlichten, gerundeten Flächen in WGS84; je Fläche shapely.is_valid und die Zahl der "
+                      "Teile im Vergleich zur Quelle; Netzflächen der gemeinsamen Rundung, die zu keinem Quartier "
+                      "gehören. Kantenlängen in Metern mit 2 Stellen."),
+        "quelle_gueltig": quelle_gueltig,
+        "quelle_ungueltige_kanten_m": {ids[i]: float(f"{laenge:.2f}") for i, laenge in quelle_kanten.items()},
+        "veroeffentlicht_gueltig": veroeffentlicht_gueltig,
+        "flaechen_gueltig": len(ids),
+        "teile_wie_quelle": len(ids),
+        "netzflaechen": len(netz),
+        "netzflaechen_ohne_quartier": ohne,
+    }
+
+
 # --- Abweichung der veröffentlichten Flächen -------------------------------------------------------------------------
 
 def _loecher(geoms):
@@ -411,7 +506,8 @@ def abweichung(quelle, veroeffentlicht, toleranz=TOLERANZ_M):
     in EPSG 25832 (die veröffentlichte Fläche zurückgerechnet). Je Einheit der Hausdorff-Abstand (Segmente in Viertel
     geteilt, DENSIFY), dazu Überlappungen zwischen veröffentlichten Flächen und Lücken: Löcher in der Vereinigung der
     veröffentlichten Flächen, die die Vereinigung der Quellflächen nicht hat (der Außenrand der Stadt zählt nicht).
-    Abstände in Metern mit 2 Stellen, Flächen in ganzen Quadratmetern; verglichen wird der gerundete Wert."""
+    Abstände in Metern mit 2 Stellen (Median der gerundeten Abstände), Flächen in ganzen Quadratmetern; verglichen wird
+    der gerundete Wert."""
     ids = _sortiert(set(quelle) & set(veroeffentlicht))
     abstand = {r: float(f"{shapely.hausdorff_distance(quelle[r], veroeffentlicht[r], densify=DENSIFY):.2f}")
                for r in ids}
@@ -433,11 +529,12 @@ def abweichung(quelle, veroeffentlicht, toleranz=TOLERANZ_M):
         "verfahren": (f"Hausdorff-Abstand je Einheit zwischen der Fläche der Quelle und der veröffentlichten Fläche, "
                       f"beide in EPSG {UTM} (veröffentlichte Fläche zurückgerechnet), Segmente in Viertel geteilt; "
                       "Überlappungen zwischen veröffentlichten Flächen; Lücken = Löcher in der Vereinigung der "
-                      "veröffentlichten Flächen, die die Quelle nicht hat (ohne Außenrand). Meter mit 2 Stellen, "
-                      "Flächen in ganzen Quadratmetern."),
+                      "veröffentlichten Flächen, die die Quelle nicht hat (ohne Außenrand). Meter mit 2 Stellen "
+                      "(Median aus den gerundeten Abständen), Flächen in ganzen Quadratmetern."),
         "einheiten": len(ids),
         "abstand_max_m": abstand[groesste] if ids else None,
         "abstand_max_raum_id": groesste,
+        "abstand_median_m": float(f"{np.median([abstand[r] for r in ids]):.2f}") if ids else None,
         "bis_toleranz": sum(1 for r in ids if abstand[r] <= toleranz),
         "ueber_toleranz": {r: abstand[r] for r in ueber},
         "ueberlappung_nachbarpaare": paare,
@@ -522,16 +619,11 @@ def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad
                           "Stadtbezirk, nur bei Prüfstatus ok in audit_raumabgleich.tsv, sonst leer")}
         geojson[ebene] = geojson_text(features, geojson_meta[ebene])
     quelle = f"{GEO_HERAUSGEBER}, {QUARTIERE_TITEL} (offenedaten-koeln.de)"
-    features, veroeffentlicht = [], {}
-    for rid in _sortiert(quartiere.einheiten):
-        e = quartiere.einheiten[rid]
-        if e["geom"] is None:
-            continue
-        geom = geodaten._wgs84(e["geom"], TOLERANZ_M)
-        veroeffentlicht[rid] = shapely.transform(geom, lambda c: np.column_stack(_NACH_UTM.transform(c[:, 0], c[:, 1])))
-        features.append(_feature(rid, e["name"], "quartier", eltern["quartier"].get(rid, ""), mapping(geom), quelle))
-    gemessen = abweichung({r: e["geom"] for r, e in quartiere.einheiten.items() if e["geom"] is not None},
-                          veroeffentlicht)
+    mit_flaeche = {r: e["geom"] for r, e in quartiere.einheiten.items() if e["geom"] is not None}
+    flaechen, abdeckung = quartiersflaechen(mit_flaeche)
+    features = [_feature(rid, quartiere.einheiten[rid]["name"], "quartier", eltern["quartier"].get(rid, ""),
+                         mapping(flaechen[rid]), quelle) for rid in _sortiert(flaechen)]
+    gemessen = abweichung(mit_flaeche, {r: _umrechnen(g, _NACH_UTM) for r, g in flaechen.items()})
     geojson_meta["quartier"] = {
         "raumebene": "quartier", "quelle": quelle, "quelle_url": quartier_beleg["url"],
         "datensatz_url": QUARTIERE_DATENSATZ_URL, "abgerufen": quartier_beleg["zeitstempel"],
@@ -541,14 +633,18 @@ def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad
         "crs": f"WGS84 (EPSG 4326), umgerechnet aus {quartiere.crs_name} (laut .prj"
                + (f", EPSG {quartiere.crs_epsg})" if quartiere.crs_epsg else ")"),
         "vereinfacht_m": TOLERANZ_M, "koordinaten": "auf 1e-6 Grad gerundet",
-        "geometrie": (f"jedes Quartier für sich in EPSG {UTM} mit vereinfacht_m vereinfacht (Douglas-Peucker, "
-                      "Topologie des einzelnen Quartiers erhalten), nach WGS84 umgerechnet und auf 1e-6 Grad gerundet. "
-                      "Die Abweichung von der Quelle kann vereinfacht_m übersteigen; die Rundung entfernt Sporne ohne "
-                      "Breite; zwischen Nachbarn entstehen schmale Lücken und Überlappungen (gemessen unter "
-                      "abweichung_von_der_quelle). Die Flächen dienen nur der Anzeige: zuordnung.tsv und "
-                      "audit_raumabgleich.tsv rechnen mit den unvereinfachten Flächen der Quelle, Werte werden nicht "
-                      "über Flächen verrechnet."),
+        "geometrie": (f"alle Quartiere gemeinsam als lückenlose Abdeckung in EPSG {UTM} vereinfacht "
+                      "(shapely.coverage_simplify, Visvalingam-Whyatt mit Toleranz vereinfacht_m: jede gemeinsame "
+                      "Grenze einmal, Punkte, an denen drei und mehr Quartiere zusammentreffen, bleiben), nach WGS84 "
+                      "umgerechnet und auf 1e-6 Grad gerundet, alle Grenzen zusammen (Snap-Rounding; daraus die "
+                      "Flächen neu gebildet). Benachbarte Quartiere haben an ihrer gemeinsamen Grenze dieselben "
+                      "Stützpunkte, ohne Lücken und Überlappungen (geprüft unter abdeckung, gemessen unter "
+                      "abweichung_von_der_quelle). Die Abweichung von der Quelle kann vereinfacht_m übersteigen; "
+                      "Vereinfachung und Rundung entfernen Sporne ohne Breite. Die Flächen dienen nur der Anzeige: "
+                      "zuordnung.tsv und audit_raumabgleich.tsv rechnen mit den unvereinfachten Flächen der Quelle, "
+                      "Werte werden nicht über Flächen verrechnet."),
         "abweichung_von_der_quelle": gemessen,
+        "abdeckung": abdeckung,
         "eltern_id": "Stadtteil, nur bei Prüfstatus ok in audit_raumabgleich.tsv, sonst leer"}
     geojson["quartier"] = geojson_text(features, geojson_meta["quartier"])
     ids = {"quartier": (quartiere.einheiten, set(werte_namen.get("quartier", {}))),

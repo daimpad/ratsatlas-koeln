@@ -1290,10 +1290,13 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
                            "Leerzeichen getrennt, in der Reihenfolge von raumebenen "
                            "(gesamtstadt;stadtbezirk;stadtteil;quartier)."),
             "geojson": (f"raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit "
-                        f"Quelle, Prüfsumme und Lizenz; Flächen mit {rm.TOLERANZ_M:g} m vereinfacht, Koordinaten auf "
-                        "1e-6 Grad gerundet (wie data/geo; jede Fläche für sich, gemessene Abweichung der Quartiere "
-                        "unter raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als "
-                        "Text), name, raumebene, eltern_id, quelle, lizenz. Nur zur Anzeige, nicht zum Rechnen."),
+                        f"Quelle, Prüfsumme und Lizenz; Flächen mit Toleranz {rm.TOLERANZ_M:g} m vereinfacht, "
+                        "Koordinaten auf 1e-6 Grad gerundet. Stadtbezirke und Stadtteile wie data/geo (jede Fläche für "
+                        "sich, Douglas-Peucker); Quartiere gemeinsam als lückenlose Abdeckung (Visvalingam-Whyatt, "
+                        "Nachbarn mit denselben Stützpunkten an der gemeinsamen Grenze; Verfahren unter "
+                        "raum.quartier.geometrie, Prüfung unter raum.quartier.abdeckung, gemessene Abweichung unter "
+                        "raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als Text), "
+                        "name, raumebene, eltern_id, quelle, lizenz. Nur zur Anzeige, nicht zum Rechnen."),
             "flaechenanteil": ("zuordnung.tsv und audit_raumabgleich.tsv: Anteil der Fläche der Einheit (von) im Ziel "
                                "(nach), 0 bis 1 mit 4 Nachkommastellen und Punkt; berechnet in EPSG 25832. Die "
                                "Schwellen splitter_anteil und anteil_hoch gelten für diesen gerundeten Wert."),
@@ -1303,7 +1306,8 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
                                                                "abgeleitet_aus", "abgerufen", "abgerufen_beleg",
                                                                "sha256", "lizenz", "lizenz_url", "namensnennung",
                                                                "vereinfacht_m", "geometrie",
-                                                               "abweichung_von_der_quelle", "eltern_id")}}
+                                                               "abweichung_von_der_quelle", "abdeckung",
+                                                               "eltern_id")}}
                  for e in ("stadtbezirk", "stadtteil", "quartier")},
         "raumabgleich": {
             "verfahren": ("Verschneidung in EPSG 25832 (ETRS89/UTM 32N): Quartiere unvereinfacht aus dem Shapefile, "
@@ -1333,12 +1337,14 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
                                         "namen_abweichend)",
                             "nicht_zugeordnet": "ohne Geometrie oder ohne Ziel mit mindestens splitter_anteil; keine "
                                                 "Zeile in zuordnung.tsv"},
-            "geometrie_hinweis": (f"data/geo ist mit {rm.TOLERANZ_M:g} m vereinfacht und auf 1e-6 Grad gerundet (beste "
-                                  "verfügbare Geometrie der Stadtteile und Stadtbezirke im Repository). Die Grenzen "
-                                  "weichen daher von der Quelle ab (für data/geo nicht gemessen, die unvereinfachten "
-                                  "Flächen liegen nicht im Repository; bei den Quartieren ergibt dasselbe Verfahren "
-                                  "die Werte unter raum.quartier.abweichung_von_der_quelle): Hauptanteile liegen knapp "
-                                  "unter 1, an den Rändern entstehen Randsplitter (größter Splitter: "
+            "geometrie_hinweis": (f"data/geo ist mit {rm.TOLERANZ_M:g} m vereinfacht (jede Fläche für sich) und auf "
+                                  "1e-6 Grad gerundet (beste verfügbare Geometrie der Stadtteile und Stadtbezirke im "
+                                  "Repository). Die Grenzen weichen daher von der Quelle ab (für data/geo nicht "
+                                  "gemessen, die unvereinfachten Flächen liegen nicht im Repository; dasselbe "
+                                  "Verfahren ergab bei den Quartieren am 10.11.2026 bis 12,61 m, 37 von 570 Quartieren "
+                                  "über 2 m; die Quartiere werden seitdem gemeinsam vereinfacht, "
+                                  "raum.quartier.geometrie): Hauptanteile liegen knapp unter 1, an den Rändern "
+                                  "entstehen Randsplitter (größter Splitter: "
                                   + "; ".join(f"{k} {v}" for k, v in splitter.items()) + ")."),
             "ergebnis": erg,
             "id_abgleich": rmeta["id_abgleich"],
@@ -1454,10 +1460,14 @@ def write():
         print(f"Geheim, aber ableitbar ({z['beziehung']}): {z['geheim']} aus {', '.join(z['aus'])}, {z['raumebene']} "
               f"{z['zeilen']} Zeilen")
     a = meta["raum"]["quartier"]["abweichung_von_der_quelle"]
-    print(f"Quartiersflächen: Abweichung höchstens {a['abstand_max_m']} m ({a['abstand_max_raum_id']}), über "
-          f"{strukturdaten_raum.TOLERANZ_M:g} m: {len(a['ueber_toleranz'])}; Überlappungen "
-          f"{a['ueberlappung_nachbarpaare']} Paare, {a['ueberlappung_m2']} m²; Lücken {a['luecken_teile']} Teile, "
-          f"{a['luecken_m2']} m²")
+    d = meta["raum"]["quartier"]["abdeckung"]
+    print(f"Quartiersflächen: Abweichung höchstens {a['abstand_max_m']} m ({a['abstand_max_raum_id']}), Median "
+          f"{a['abstand_median_m']} m, über {strukturdaten_raum.TOLERANZ_M:g} m: {len(a['ueber_toleranz'])}; "
+          f"Überlappungen {a['ueberlappung_nachbarpaare']} Paare, {a['ueberlappung_m2']} m²; Lücken "
+          f"{a['luecken_teile']} Teile, {a['luecken_m2']} m²; Abdeckung der Quelle gültig: "
+          f"{'ja' if d['quelle_gueltig'] else 'nein, ungültige Kanten ' + str(d['quelle_ungueltige_kanten_m'])}, "
+          f"veröffentlicht gültig: {'ja' if d['veroeffentlicht_gueltig'] else 'nein'}, Netzflächen ohne Quartier: "
+          f"{d['netzflaechen_ohne_quartier']}")
     for h in hinweise:
         print(f"  {h}")
     for name, *_ in DATEIEN_AUSGABE:

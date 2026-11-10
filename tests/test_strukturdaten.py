@@ -10,6 +10,7 @@ import csv
 import gzip
 import hashlib
 import json
+import math
 import re
 import threading
 import zipfile
@@ -21,9 +22,12 @@ import pytest
 openpyxl = pytest.importorskip("openpyxl")
 
 shapefile = pytest.importorskip("shapefile")
+import numpy as np  # noqa: E402
+import shapely  # noqa: E402
 from pyproj import Transformer  # noqa: E402
+from shapely.geometry import shape  # noqa: E402
 
-from pipeline import abruf, config, strukturdaten, strukturdaten_raum  # noqa: E402
+from pipeline import abruf, config, geodaten, strukturdaten, strukturdaten_raum  # noqa: E402
 
 GEHEIM = "Werte zwischen 1 und 4 und zugehörige Anteilswerte werden nicht veröffentlicht (*). [Testdaten]"
 SPALTEN = ["A0025A - Einwohner*innen, gesamt", "A0355A - Einwohner*innen, mit Hauptwohnsitz",
@@ -1165,7 +1169,8 @@ def test_verschneidung_mit_unvereinfachten_quartieren(tmp_path):
     """Die Verschneidung rechnet mit den Flächen der Quelle: Ein 1 m breiter Fortsatz über die Stadtteilgrenze ergibt
     genau 300 m² von 90 400 m² in Stadtteil 102 (vereinfacht wären es weniger). Eine Nummer, die einen anderen
     Stadtteil nennt als Lage und Attribut, ergibt uebereinstimmung „nein“. Die veröffentlichte Fläche weicht dagegen
-    ab: Die Rundung auf 1e-6 Grad entfernt einen 30 m langen Sporn von 1 cm Breite; meta nennt die Abweichung."""
+    ab: Die Vereinfachung entfernt einen 30 m langen Sporn von 1 cm Breite (Dreiecksfläche 0,15 m²); meta nennt die
+    Abweichung."""
     geo = geo_schreiben(tmp_path / "geo")
     quartiere = {"101010001": ("Testquartier Fortsatz", "101", FINGER),
                  "101010002": ("Testquartier Sporn", "101", SPORN),
@@ -1204,12 +1209,173 @@ def test_abweichung_misst_luecken_und_ueberlappungen():
            "3": _box(0, 10, 10, 20).difference(_box(9, 10, 10, 11)),   # Kerbe an der Ecke: 1 m² Lücke im Inneren
            "4": _box(10, 10, 20, 19)}   # 4: am Außenrand gekürzt (keine Lücke im Inneren)
     a = strukturdaten_raum.abweichung(quelle, aus, toleranz=0.75)
-    assert (a["einheiten"], a["abstand_max_m"], a["abstand_max_raum_id"]) == (4, 1.0, "3")
+    assert (a["einheiten"], a["abstand_max_m"], a["abstand_max_raum_id"], a["abstand_median_m"]) == (4, 1.0, "3", 0.75)
     assert a["ueber_toleranz"] == {"3": 1.0, "4": 1.0} and a["bis_toleranz"] == 2
     assert (a["ueberlappung_nachbarpaare"], a["ueberlappung_m2"], a["luecken_teile"], a["luecken_m2"]) == (1, 5, 1, 1)
     gleich = strukturdaten_raum.abweichung(quelle, quelle)
-    assert (gleich["abstand_max_m"], gleich["ueber_toleranz"], gleich["ueberlappung_m2"], gleich["luecken_m2"]) == (
-        0.0, {}, 0, 0)
+    assert (gleich["abstand_max_m"], gleich["abstand_median_m"], gleich["ueber_toleranz"], gleich["ueberlappung_m2"],
+            gleich["luecken_m2"]) == (0.0, 0.0, {}, 0, 0)
+
+
+# --- Lückenlose Vereinfachung der Quartiere (Entscheidung 10.11.2026) -------------------------------------------------
+
+def _welle(k, n):
+    """Erfundene Auslenkung einer gewellten Grenze in Metern (bis etwa 3,7 m) am k-ten von n Abschnitten, an beiden
+    Enden 0."""
+    return 0.0 if k in (0, n) else round(2.5 * math.sin(1.3 * k) + 1.2 * math.sin(3.7 * k), 2)
+
+
+WAAG = [(100 + 10 * k, 500 + _welle(k, 80)) for k in range(81)]   # (100, 500) → (900, 500), Stützpunkte alle 10 m
+KNOTEN = WAAG[40]                                                  # (500, 502.06): hier treffen drei Quartiere zusammen
+SENK = [KNOTEN] + [(500 + _welle(k, 40), 500 + 10 * k) for k in range(1, 41)]   # KNOTEN → (500, 900)
+# Drei Quartiere mit gewellten gemeinsamen Grenzen (Ringe im Uhrzeigersinn wie im Shapefile): unten eines über die
+# ganze Breite, oben zwei, die sich in KNOTEN auf der unteren Grenze treffen. Jedes Quartier für sich vereinfacht,
+# behält das untere den Knoten nicht unbedingt (er liegt für es mitten auf der Grenze), die oberen schon.
+WELLEN = {
+    "101010001": ("Testquartier unten", "101", [(100, 100), *WAAG, (900, 100)]),
+    "101010002": ("Testquartier oben links", "101", [(100, 500), (100, 900), *SENK[::-1], *WAAG[39:0:-1]]),
+    "101010003": ("Testquartier oben rechts", "101", [*SENK, (900, 900), *WAAG[80:40:-1]]),
+}
+
+
+def _befunde(flaechen):
+    """Was einer lückenlosen Abdeckung widerspricht, für {Nummer: Fläche in WGS84}: ungültige oder leere Flächen,
+    Nachbarpaare, deren Verschneidung eine Fläche hat, Unterschied zwischen der Summe der Flächen und ihrer
+    Vereinigung, Löcher in der Vereinigung (Lücken; die Testflächen haben keine) und Nachbarpaare, bei denen die
+    Stützpunkte der einen Fläche auf der Grenze der anderen nicht dieselben sind wie umgekehrt. Gerechnet ohne Gitter
+    (shapely.set_precision hängt den Flächen eines an, mit dem die Verschneidung schmale Überlappungen wegrundet)."""
+    flaechen = {r: shapely.set_precision(f, 0) for r, f in flaechen.items()}
+    ids = sorted(flaechen)
+    befunde = {"ungueltig": [r for r in ids if flaechen[r].is_empty or not flaechen[r].is_valid],
+               "ueberlappungen": [], "stuetzpunkte_verschieden": []}
+    for i, a in enumerate(ids):
+        for b in ids[i + 1:]:
+            fa, fb = flaechen[a], flaechen[b]
+            if shapely.intersection(fa, fb).area > 0:
+                befunde["ueberlappungen"].append((a, b))
+            pa, pb = ({tuple(p) for p in shapely.get_coordinates(f)} for f in (fa, fb))
+            if ({p for p in pa if shapely.distance(shapely.Point(p), fb.boundary) == 0}
+                    != {p for p in pb if shapely.distance(shapely.Point(p), fa.boundary) == 0}):
+                befunde["stuetzpunkte_verschieden"].append((a, b))
+    vereinigt = shapely.union_all([flaechen[r] for r in ids])
+    summe = sum(flaechen[r].area for r in ids)
+    befunde["summe_minus_vereinigung"] = abs(summe - vereinigt.area) > 1e-9 * summe
+    befunde["loecher"] = sum(len(p.interiors) for p in shapely.get_parts(vereinigt))
+    return befunde
+
+
+KEINE_BEFUNDE = {"ungueltig": [], "ueberlappungen": [], "stuetzpunkte_verschieden": [],
+                 "summe_minus_vereinigung": False, "loecher": 0}
+
+
+def _veroeffentlicht(r):
+    return {f["properties"]["raum_id"]: shape(f["geometry"]) for f in json.loads(r["geojson"]["quartier"])["features"]}
+
+
+def test_quartiere_lueckenlos_vereinfacht(tmp_path):
+    """Entscheidung 10.11.2026 („lückenlose Vereinfachung“): Drei Quartiere mit gewellten gemeinsamen Grenzen werden
+    gemeinsam vereinfacht und gerundet. Veröffentlicht: alle Flächen gültig, keine Überlappung (Verschneidung je Paar
+    ohne Fläche, Summe der Flächen gleich der Vereinigung), keine Lücke (kein Loch in der Vereinigung), jede
+    gemeinsame Grenze als Linie in beiden Flächen mit denselben Stützpunkten, Koordinaten auf 1e-6 Grad; meta meldet
+    0/0 und eine gültige Abdeckung. Gegenprobe: Die bisherige Vereinfachung jedes Quartiers für sich
+    (geodaten._wgs84) erzeugt aus derselben Quelle Überlappungen und Lücken."""
+    geo = geo_schreiben(tmp_path / "geo")
+    quartiere_zip(tmp_path / "q.zip", WELLEN)
+    beleg = {"url": "https://example.invalid/q.zip", "zeitstempel": "2026-11-10T10:00:00+01:00", "pruefsumme": "0"}
+    r = strukturdaten_raum.raumabgleich(tmp_path / "q.zip", beleg, geo["stadtteil"], geo["stadtbezirk"],
+                                        {"quartier": {n: q[0] for n, q in WELLEN.items()}})
+    flaechen = _veroeffentlicht(r)
+    assert sorted(flaechen) == sorted(WELLEN)
+    assert _befunde(flaechen) == KEINE_BEFUNDE
+    assert all(f.geom_type == "Polygon" and not f.exterior.is_ccw for f in flaechen.values())   # wie data/geo
+    punkte = shapely.get_coordinates(list(flaechen.values()))
+    assert (np.round(punkte, 6) == punkte).all()
+    utm = {rid: strukturdaten_raum._umrechnen(f, strukturdaten_raum._NACH_UTM) for rid, f in flaechen.items()}
+    for a, b, laenge in (("101010001", "101010002", 400), ("101010001", "101010003", 400),
+                         ("101010002", "101010003", 398)):   # gemeinsame Grenze mindestens so lang wie ihre Sehne
+        assert shapely.intersection(utm[a].boundary, utm[b].boundary).length > laenge - 1, (a, b)
+    quelle = strukturdaten_raum.Quartiere(tmp_path / "q.zip").einheiten
+    for rid, f in flaechen.items():   # die gewellten Grenzen sind vereinfacht, aber nicht begradigt
+        assert 10 < shapely.get_num_coordinates(f) < shapely.get_num_coordinates(quelle[rid]["geom"])
+    meta = r["geojson_meta"]["quartier"]
+    gemessen = meta["abweichung_von_der_quelle"]
+    assert (gemessen["einheiten"], gemessen["ueberlappung_nachbarpaare"], gemessen["ueberlappung_m2"],
+            gemessen["luecken_teile"], gemessen["luecken_m2"]) == (3, 0, 0, 0, 0)
+    assert 0 < gemessen["abstand_median_m"] <= gemessen["abstand_max_m"]
+    d = meta["abdeckung"]
+    assert (d["quelle_gueltig"], d["quelle_ungueltige_kanten_m"], d["veroeffentlicht_gueltig"],
+            d["netzflaechen_ohne_quartier"]) == (True, {}, True, 0)
+    assert "gemeinsam" in meta["geometrie"] and "für sich" not in meta["geometrie"]
+
+    alt = {rid: geodaten._wgs84(e["geom"], strukturdaten_raum.TOLERANZ_M) for rid, e in quelle.items()}
+    befunde = _befunde(alt)
+    assert befunde["ueberlappungen"] and befunde["loecher"] and befunde["summe_minus_vereinigung"]
+
+
+# Drei Knoten und ein Keil, dessen Kante 2 cm an einem Stützpunkt vorbeiläuft (wie zwei Kölner Quartiere am
+# 10.11.2026): Punkte in Einheiten von 1e-6 Grad um (6,95; 50,92), Ringe im Uhrzeigersinn. P11 (0,45 | −0,55) liegt
+# 0,21 Einheiten über der Kante P12–P13; gerundet (0 | −1) liegt er 0,2 Einheiten darunter.
+LAENGE0, BREITE0 = 6.95, 50.92
+P10, P11, P12, P13 = (-1000, 600), (0.45, -0.55), (10, 0), (-1000, -80.8)
+KEIL = {
+    "101010001": ("Testquartier Keil", "101", [P10, P11, P12, P13]),
+    "101010002": ("Testquartier oben links", "101", [P10, (-1000, 1000), (0.45, 1000), P11]),
+    "101010003": ("Testquartier oben rechts", "101", [(0.45, 1000), (1000, 1000), (1000, 0), P12, P11]),
+    "101010004": ("Testquartier unten", "101", [P13, P12, (1000, 0), (1000, -1000), (-1000, -1000)]),
+}
+
+
+def _keil_quartiere():
+    """KEIL in Metern relativ zu (X0, Y0) in EPSG 25832 (wie quartiere_zip sie erwartet)."""
+    nach = Transformer.from_crs(4326, 25832, always_xy=True)
+
+    def utm(p):
+        x, y = nach.transform(LAENGE0 + p[0] * 1e-6, BREITE0 + p[1] * 1e-6)
+        return (x - X0, y - Y0)
+    return {n: (name, teil, [utm(p) for p in ring]) for n, (name, teil, ring) in KEIL.items()}
+
+
+def test_rundung_gemeinsam_ohne_ueberlappung(tmp_path):
+    """Die Rundung auf 1e-6 Grad läuft für alle Grenzen zusammen (Snap-Rounding): Die Kante P12–P13 wird über den
+    gerundeten Knoten P11 geführt, in beiden Quartieren an der Kante; der Keil verliert seine Spitze und bleibt gültig.
+    Gegenproben auf derselben gemeinsam vereinfachten Quelle: Nur die Koordinaten zu runden macht den Keil ungültig
+    (Selbstüberschneidung); shapely.set_precision je Quartier (wie geodaten._wgs84) führt die Kante nur im Keil über
+    P11 und erzeugt eine Überlappung mit dem Quartier darunter."""
+    quartiere = _keil_quartiere()
+    quartiere_zip(tmp_path / "q.zip", quartiere)
+    quelle = {rid: e["geom"] for rid, e in strukturdaten_raum.Quartiere(tmp_path / "q.zip").einheiten.items()}
+    assert strukturdaten_raum.abdeckung_pruefen([quelle[r] for r in sorted(quelle)]) == (True, {})
+    flaechen, pruefung = strukturdaten_raum.quartiersflaechen(quelle)
+    assert _befunde(flaechen) == KEINE_BEFUNDE
+    assert (pruefung["veroeffentlicht_gueltig"], pruefung["teile_wie_quelle"]) == (True, 4)
+    p11 = (round(LAENGE0, 6), round(BREITE0 - 1e-6, 6))   # P11 gerundet
+    for rid in ("101010001", "101010002", "101010003", "101010004"):
+        assert p11 in {tuple(p) for p in shapely.get_coordinates(flaechen[rid])}, rid
+
+    vereinfacht = shapely.coverage_simplify([quelle[r] for r in sorted(quelle)], strukturdaten_raum.TOLERANZ_M)
+    assert [shapely.get_num_coordinates(g) for g in vereinfacht] == [5, 5, 6, 6]   # nichts entfernt
+    wgs = {r: strukturdaten_raum._umrechnen(g, geodaten.NACH_WGS84) for r, g in zip(sorted(quelle), vereinfacht)}
+    nur_koordinaten = {r: shapely.transform(g, lambda c: np.round(c, 6)) for r, g in wgs.items()}
+    assert _befunde(nur_koordinaten)["ungueltig"] == ["101010001"]
+    je_flaeche = {r: shapely.set_precision(g, 1e-6) for r, g in wgs.items()}
+    assert ("101010001", "101010004") in _befunde(je_flaeche)["ueberlappungen"]
+
+
+def test_quartiersflaechen_pruefungen():
+    """quartiersflaechen meldet eine ungültige Abdeckung der Quelle (Überlappung) und löst sie auf: Die Netzfläche der
+    Überlappung gehört zu genau einem der beiden Quartiere. Verliert ein Quartier durch die Rundung einen Teil (Insel
+    von 1 cm), bricht der Schritt ab, statt die Fläche ohne den Teil zu veröffentlichen."""
+    links, rechts = _box(X0, Y0, X0 + 100, Y0 + 100), _box(X0 + 90, Y0, X0 + 200, Y0 + 100)
+    flaechen, pruefung = strukturdaten_raum.quartiersflaechen({"101010002": rechts, "101010001": links})
+    assert pruefung["quelle_gueltig"] is False and set(pruefung["quelle_ungueltige_kanten_m"]) == {"101010001",
+                                                                                                   "101010002"}
+    assert _befunde(flaechen) == KEINE_BEFUNDE and pruefung["veroeffentlicht_gueltig"]
+    flaeche = {r: strukturdaten_raum._umrechnen(f, strukturdaten_raum._NACH_UTM).area for r, f in flaechen.items()}
+    assert abs(flaeche["101010001"] + flaeche["101010002"] - 20000) < 20
+    assert min(abs(flaeche["101010001"] - 9000), abs(flaeche["101010001"] - 10000)) < 20   # Überlappung links/rechts
+    insel = shapely.MultiPolygon([links, _box(X0 + 300, Y0, X0 + 300.01, Y0 + 0.01)])
+    with pytest.raises(ValueError, match="101010001 mit 1 statt 2 Teilen"):
+        strukturdaten_raum.quartiersflaechen({"101010001": insel})
 
 
 def test_abweichender_name_als_hinweis(umgebung):
