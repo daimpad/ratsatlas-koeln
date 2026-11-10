@@ -249,8 +249,8 @@ RIS_TEILE = (config.QUELLE_OPARL, config.QUELLE_GEO, config.QUELLE_STRASSEN, con
 
 def _teil(name):
     """(Bezeichnung, Lizenz mit Namensnennung) einer Quelle aus config.SOURCES; bei OpenStreetMap ohne den Zusatz zum
-    Kartenhintergrund, denn hier geht es um Ortsbezüge."""
-    lizenz = config.SOURCES[name]["license"]
+    Kartenhintergrund, denn hier geht es um Ortsbezüge; ohne internen Verweis auf CLAUDE.md (config.lizenz_oeffentlich)."""
+    lizenz = config.lizenz_oeffentlich(config.SOURCES[name]["license"])
     return TEIL_NAME[name], (lizenz.split(" (Kartenhintergrund")[0] if name == "osm" else lizenz)
 
 
@@ -321,7 +321,8 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
         "vorlagen": ris + [_teil(n) for n in (config.QUELLE_BPLAN, "osm") if n in orte],
         "zeit": [_teil(config.QUELLE_OPARL), _teil(config.QUELLE_GEO)],
         "oparl": [_teil(config.QUELLE_OPARL)],
-        # plaene.json entsteht nach dcat.jsonld: Inkrafttreten und Plan stammen aus den Bebauungsplänen, sobald es sie gibt
+        # plaene.json entsteht nach dcat.jsonld: Inkrafttreten und Link zum Plan stammen aus den Bebauungsplänen, sobald
+        # es sie gibt
         "plaene": [_teil(config.QUELLE_OPARL)] + ([_teil(config.QUELLE_BPLAN)] if bplan else []),
         "kontext": ([_teil(config.QUELLE_GEO)] + _kontext_teile()) if kontext_an else [],
         "ebenen": _ebenen_teile(),

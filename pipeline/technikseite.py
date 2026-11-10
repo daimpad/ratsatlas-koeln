@@ -428,7 +428,7 @@ def daten(root="../"):
     ist_abruf = lambda s: s == "fetch" or s.startswith("fetch-")
     abruf = [schritt(s) for s in pages["schritte"] if ist_abruf(s)]
     rest = [schritt(s) for s in pages["schritte"] if not ist_abruf(s)]
-    quellen = [(f"q-{k}", QUELLEN[k][0], f"{QUELLEN[k][1]} Lizenz: {config.SOURCES[k]['license']}.",
+    quellen = [(f"q-{k}", QUELLEN[k][0], f"{QUELLEN[k][1]} Lizenz: {config.lizenz_oeffentlich(config.SOURCES[k]['license'])}.",
                 config.SOURCES[k]["url"] if config.SOURCES[k]["url"].startswith("http") else None, "Quelle")
                for k in config.SOURCES]
     quellen += [(k, t, e, z, "Seite") for k, t, e, z in WEITERE_QUELLEN]

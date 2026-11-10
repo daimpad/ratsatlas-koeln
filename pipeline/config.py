@@ -1,5 +1,6 @@
 """Pfade, Quellen, Lizenzen und Abrufpolitik der Pipeline (Ratsatlas Köln)."""
 import os
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -116,6 +117,19 @@ SOURCES = {
         "license": "ODbL 1.0, © OpenStreetMap-Mitwirkende (Kartenhintergrund über Protomaps)",
     },
 }
+# Verweise auf Abschnitte dieser Arbeitsdatei („CLAUDE.md 8“) in Lizenztexten: nur für das Repository. Wo Leser:innen den
+# Text sehen (DCAT, Technikseite; auf der Seite site/app.js lizenzOeffentlich), entfällt der Verweis (Runde 19b);
+# SOURCES bleibt die gemeinsame Quelle und wird unverändert exportiert.
+_INTERN = (re.compile(r"\s*\(CLAUDE\.md \d+(?:\.\d+)*\)"), re.compile(r",\s*CLAUDE\.md \d+(?:\.\d+)*"))
+
+
+def lizenz_oeffentlich(text):
+    """Lizenztext ohne Verweis auf CLAUDE.md: „(Klärung offen, CLAUDE.md 8)“ → „(Klärung offen)“."""
+    for muster in _INTERN:
+        text = muster.sub("", text)
+    return text
+
+
 # Bezugsquellen der Geodaten (Katalog offenedaten-koeln.de, geprüft am 04.11.2026, explore/ergebnisse)
 GEO_DOWNLOADS = {
     "stadtteile": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Stadtteil_0.zip",

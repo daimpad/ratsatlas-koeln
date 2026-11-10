@@ -372,10 +372,11 @@ def export_all():
                        stand[:10] or datetime.now(timezone.utc).date().isoformat(), kurzfassungen=bool(kurz),
                        orte=publish.ortsquellen(cache))
     n_shards = chat.write_chat(out / "chat", db, cache, meetings, sources, _meta(db, True)) if _an("chat") else 0
-    # Bebauungspläne: Register je Plannummer (Grundlage der Planchronik); Geltungsbereich, Inkrafttreten und Plan aus
-    # den Bebauungsplänen (config.QUELLE_BPLAN), sobald die Datei vorliegt
+    # Bebauungspläne: Register je Plannummer (Grundlage der Planchronik); Geltungsbereich, Inkrafttreten und Link zum
+    # Plan aus den Bebauungsplänen (config.QUELLE_BPLAN), sobald die Datei vorliegt; das verlinkte Plandokument ist nicht
+    # Teil der Daten (Runde 19b)
     reg = plans.register(cache.values(), _plans())
-    _dump(out / "plaene.json", {"meta": {**_meta(db, True), "note": "Geltungsbereich, Inkrafttreten und Plan belegt, "
+    _dump(out / "plaene.json", {"meta": {**_meta(db, True), "note": "Geltungsbereich, Inkrafttreten und Link zum Plan belegt, "
                                          "Lizenz der Bebauungspläne " + config.SOURCES[config.QUELLE_BPLAN]["license"]
                                          + "; Verfahrensschritte aus dem Titel abgeleitet"}, **reg})
     # Bonner Zusatzthemen (deaktiviert, CLAUDE.md 5.4): Soll-Modell, Reiter „Prozesse“, Themenseiten

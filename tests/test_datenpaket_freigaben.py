@@ -298,7 +298,9 @@ def test_seiten_ohne_bonner_dienste():
 def test_lizenz_der_oparl_exporte():
     """data/LICENSE-DATA.md (auf der Seite und im Datenpaket): eine Zeile für die Exporte aus der OParl-API mit
     Lizenzangabe, offener Klärung und Namensnennung; nicht mehr „noch nicht enthalten“. Seit Runde 19b nur für die
-    Dateien aus dem Ratsinformationssystem; Kennzahlen und Flächen haben eigene Zeilen (tests/test_lizenzen.py)."""
+    Dateien aus dem Ratsinformationssystem; Kennzahlen und Flächen haben eigene Zeilen (tests/test_lizenzen.py). Die
+    Namensnennung beginnt mit der Stadt und nennt dazu die Bebauungspläne und OpenStreetMap, deren Lizenzen die Zeile
+    führt (wie dct:rights im DCAT, Korrekturrunde 19b)."""
     text = (ROOT / "data" / "LICENSE-DATA.md").read_text(encoding="utf-8")
     assert "Noch nicht enthalten: Daten der OParl-API" not in text
     (zeile,) = [z for z in text.splitlines() if z.startswith("| `export/koeln/` aus dem Ratsinformationssystem")]
@@ -306,7 +308,7 @@ def test_lizenz_der_oparl_exporte():
     assert len(spalten) == 4, spalten
     assert "OParl-API" in spalten[1] and "ohne Volltexte" in spalten[1]
     assert "dl-de/zero 2.0" in spalten[2] and "Klärung" in spalten[2]
-    assert spalten[3] == config.NAMENSNENNUNG
+    assert spalten[3].startswith(config.NAMENSNENNUNG + "; ") and "IT.NRW" in spalten[3]
 
 
 @pytest.mark.parametrize("an", [{}, {"themenseiten": True}, {"kurzfassungen": True},

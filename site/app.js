@@ -1566,9 +1566,11 @@
   // Quellen der Planchronik aus den Daten (Runde 19b): plaene.json meta.sources, sonst index.json; Lizenz und
   // Namensnennung wie in config.SOURCES. Fehlt eine Quelle, nennt die Zeile keine Lizenz, sondern die Übersicht.
   const LIZENZEN_LINK = '<a href="data/LICENSE-DATA.md">Lizenzen der Daten</a>';
+  // Lizenztext ohne Verweis auf die Arbeitsdatei CLAUDE.md (wie config.lizenz_oeffentlich); die Daten bleiben unverändert
+  const lizenzOeffentlich = (t) => String(t ?? "").replace(/\s*\(CLAUDE\.md \d+(?:\.\d+)*\)/g, "").replace(/,\s*CLAUDE\.md \d+(?:\.\d+)*/g, "");
   const quelleAus = (reg, name) => [reg && reg.meta && reg.meta.sources, index && index.meta && index.meta.sources]
     .map((l) => (Array.isArray(l) ? l : []).find((s) => s && s.name === name && s.license)).find(Boolean) || null;
-  const quelleText = (reg, name) => { const q = quelleAus(reg, name); return `${esc(QUELLE_NAME[name] || name)}, ${q ? esc(q.license) : `Lizenz siehe ${LIZENZEN_LINK}`}`; };
+  const quelleText = (reg, name) => { const q = quelleAus(reg, name); return `${esc(QUELLE_NAME[name] || name)}, ${q ? esc(lizenzOeffentlich(q.license)) : `Lizenz siehe ${LIZENZEN_LINK}`}`; };
   // detailSeq: eine langsam geladene Planchronik überschreibt keine neuere Auswahl (Code-Prüfung 23.10.2026)
   async function showPlan(key) {
     const seq = ++detailSeq;
@@ -1620,7 +1622,7 @@
         <h4>Vorlagen mit dieser Plannummer (${vorlagen.length})</h4>
         ${vorlagen.length ? `<ol class="related plan-papers">${vorlagen.map(item).join("")}</ol>` : "<p>Keine Vorlage nennt diese Plannummer im Titel.</p>"}` : ""}
       <details class="acc"><summary>Quellen</summary><ul>
-        <li>Geltungsbereich, Inkrafttreten und Plan: ${quelleText(reg, "bplan-koeln")}</li>
+        <li>Geltungsbereich, Inkrafttreten und Link zum Plan: ${quelleText(reg, "bplan-koeln")}</li>
         <li>Vorlagen: ${quelleText(reg, "oparl-koeln")}; Zuordnung über die Plannummer im Titel (abgeleitet)</li>
         <li>${LIZENZEN_LINK}</li></ul></details>`;
     $("#announce").textContent = `Bebauungsplan ${key} geöffnet`;
@@ -1887,7 +1889,7 @@
     const rel = (arr) => arr.map((r) => `<li>${esc(r.reference)} · ${esc(r.paper_type)} – ${esc(r.name)}</li>`).join("");
     // Quellen nur aus einer Liste (sonst keine), ohne leere Einträge; Abrufdatum nach der Regel des Datenstands (zeitDatum)
     const sources = (Array.isArray(meta && meta.sources) ? meta.sources.filter(Boolean) : [])
-      .map((s) => `<li>${esc(s.name)}: ${esc(s.license)}${s.retrieved_at ? ` · Abruf ${zeitDatum(s.retrieved_at)}` : ""}</li>`).join("");
+      .map((s) => `<li>${esc(s.name)}: ${esc(lizenzOeffentlich(s.license))}${s.retrieved_at ? ` · Abruf ${zeitDatum(s.retrieved_at)}` : ""}</li>`).join("");
     $("#detail-heading").textContent = "Vorgang";
     $("#detail").innerHTML = `
       <h3 tabindex="-1">${esc(p.name)}</h3>
