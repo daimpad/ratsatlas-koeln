@@ -185,7 +185,8 @@ const DOM = {json.dumps(dom)}, FL = {json.dumps(flaechen)};
 const matchMedia = () => ({{ matches: {json.dumps(telefon)} }});
 const document = {{ documentElement: {{ dataset: {{}} }},
   querySelector: (sel) => DOM[sel] || null,
-  querySelectorAll: (sel) => {{ if (sel !== ".nav-group.seg .toggle[data-panel]") throw new Error(sel); return FL; }} }};
+  querySelectorAll: (sel) => {{ if (sel.startsWith("[data-tour-")) return [];   // Sätze von Zusatzmodulen (keine geladen)
+    if (sel !== ".nav-group.seg .toggle[data-panel]") throw new Error(sel); return FL; }} }};
 """ + teil + """
 const aus = STEPS.filter((s) => !s.when || s.when()).map((s) => [s.title, typeof s.text === "function" ? s.text() : s.text]);
 console.log(JSON.stringify(aus));

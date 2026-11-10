@@ -42,15 +42,21 @@ Schritte:
   Eingaben byte-gleiche Dateien ergeben.
 
 Regeln (Vertrag Abschnitt 3): Werte unverändert; „*“ → status geheim, leere Zelle → status fehlt, beide mit leerem
-Wert; keine eigenen Ableitungen und keine Verrechnung von Werten zwischen Raumebenen (zuordnung.tsv beschreibt nur die
-Lage der Einheiten zueinander). Zahlen mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen: aus
+Wert; keine Verrechnung von Werten zwischen Raumebenen (zuordnung.tsv beschreibt nur die Lage der Einheiten
+zueinander). Eigene Ableitungen nur in ABGELEITET (Entscheidung des Auftraggebers vom 10.11.2026): die Anteile unter 18
+und ab 65 Jahren (koeln_abg_unter18, koeln_abg_ab65) aus den veröffentlichten Altersgruppen derselben Zeile, Bezug
+A0025A, status abgeleitet mit 2 Nachkommastellen (kaufmännisch), geheim bzw. fehlt ohne Wert, wenn ein Eingangswert
+geheim ist bzw. fehlt (oder der Nenner 0 ist); quellobjekt ist dann die Formel mit allen Zellen
+(„(Daten!E2+Daten!G2)/Daten!D2*100“), meta.json beschreibt sie unter `abgeleitet`. Zahlen mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen: aus
 der XLSX ganze Zahlen wie gespeichert, Gleitkommazahlen in der kürzesten Schreibweise, die denselben Wert ergibt (ohne
 Exponent); aus dem Wegweiser-Export die veröffentlichten Ziffern. „k.A.“ im Wegweiser-Export ergibt keine Zeile in
 gesamtstadt.tsv (der Vertrag sieht dort keinen Status vor); die betroffenen Jahre nennt der Metatext des Indikators.
 `quellobjekt` in werte.tsv und werte_quartier.tsv.gz ist die Zelle im Blatt Daten („Daten!D2“) der Datei mit der
-Prüfsumme aus meta.json. Zeilen, in denen ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile folgt
-(geprüfte Summe A0025A = A0355A + A0359A und geprüfte Verhältnisse; die Quelle hält dort nur einen Wert geheim), zählt
-meta.json unter `geheimhaltung_ableitbar`; die Werte bleiben unverändert und werden nicht ermittelt.
+Prüfsumme aus meta.json. Zeilen, in denen ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile
+ableitbar ist (geprüft: eine Summe und die Verhältnisse aus Zähler und Nenner), zählt meta.json je Raumebene unter
+`geheimhaltung_ableitbar`, ohne Beziehung, Rechenweg oder beteiligte Indikatoren zu nennen; die Werte bleiben unverändert
+und werden nicht ermittelt. Die Summe wird nur geprüft; kein Metatext in indikatoren.tsv und kein veröffentlichter Text
+nennt sie, und die Ausgabe des Laufs nennt nur Zahlen (Entscheidung 10.11.2026).
 
 Typ, Einheit sowie Zähler und Nenner der Kölner Indikatoren stammen aus Phase 0 (pipeline/strukturdaten_koeln.tsv,
 abgeleitet, nicht aus der Quelle). Zähler und Nenner stehen nur dort, wo Phase 0 sie numerisch geprüft hat, und nur,
@@ -76,7 +82,7 @@ import urllib.request
 import zipfile
 from contextlib import contextmanager
 from datetime import datetime
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 from . import abruf, config, strukturdaten_raum
@@ -99,6 +105,24 @@ KOELN_NAMENSNENNUNG = (f"{KOELN_HERAUSGEBER} ({KOELN_TITEL}); in lange Tabellenf
 OPEN_NRW_RESSOURCEN = {
     "0645793fe92d248859bb979b80fe2c854e850789c485dbca2ae644e61e473382": ("06.07.2026", "10.11.2026"),
 }
+# Schätz- und Verfahrenswerte: Laut Datensatzbeschreibung des Statistischen Datenkatalogs sind Angaben zum
+# Migrationshintergrund Schätzwerte und Angaben zu Haushalten Verfahrenswerte (Haushaltegenerierung); Beleg: Prompt
+# „Strukturdaten“ v0.1, Abschnitt 2 (Hinweise aus der Datensatzbeschreibung, Stand 10.11.2026), dort „im Metatext so
+# kennzeichnen“. Die XLSX-Datei selbst kennzeichnet sie nicht (Bericht Phase 0, Abschnitt 3). Zuordnung nach dem Namen
+# der Spalte im Blatt Daten; der Satz steht im Metatext, meta.json nennt die Kennungen unter schaetz_verfahrenswerte.
+SCHAETZ_VERFAHREN = (
+    ("Schätzwert", re.compile(r"Migrationshintergrund"),
+     "Schätzwert: Angaben zum Migrationshintergrund sind laut Datensatzbeschreibung des Statistischen Datenkatalogs "
+     "Schätzwerte (in der Datei selbst nicht gekennzeichnet)"),
+    ("Verfahrenswert", re.compile(r"haushalt", re.I),
+     "Verfahrenswert: Angaben zu Haushalten sind laut Datensatzbeschreibung des Statistischen Datenkatalogs "
+     "Verfahrenswerte aus der Haushaltegenerierung (in der Datei selbst nicht gekennzeichnet)"),
+)
+
+
+def schaetz_verfahren(name):
+    """[(Art, Satz für den Metatext)] für eine Spalte des Datenkatalogs nach ihrem Namen (SCHAETZ_VERFAHREN)."""
+    return [(art, satz) for art, muster, satz in SCHAETZ_VERFAHREN if muster.search(name or "")]
 
 WW = "https://www.wegweiser-kommune.de"
 WW_TITEL = "Wegweiser Kommune (Bertelsmann Stiftung)"
@@ -149,8 +173,33 @@ EBENEN_REIHENFOLGE = ("gesamtstadt", "stadtbezirk", "stadtteil", "quartier")
 EBENEN_WERTE = ("gesamtstadt", "stadtbezirk", "stadtteil")   # werte.tsv; quartier in werte_quartier.tsv.gz
 TYPEN = {"anzahl", "anteil", "quote", "dichte", "mittelwert", "kategorie"}
 EINWOHNER = "koeln_A0355A"   # Einwohnerzahl für die Anzeige: Hauptwohnsitz (Entscheidung 10.11.2026)
-# A0025A „Einwohner*innen, gesamt“ = A0355A (Hauptwohnsitz) + A0359A (Nebenwohnsitz); im Lauf nachgerechnet
+# Codes der geprüften Beziehung; nur im Lauf geprüft und gezählt, in keinem veröffentlichten Text und in keiner Ausgabe
+# genannt (Entscheidung 10.11.2026)
 GESAMT, HAUPT, NEBEN = "A0025A", "A0355A", "A0359A"
+# Bezugsgröße der Einwohnerzahl GESAMT als eigener Satz, ohne Beziehung zu anderen Einwohnerzahlen: ein Wortlaut für
+# die Metatexte der abgeleiteten Anteile und der Verhältnisse (indikatoren.tsv) und für kontext.json
+# (pipeline/kontext.py); die Prüfung „ohne Rechenweg“ in tests/test_strukturdaten.py nimmt genau diesen Satz aus
+BEZUGSGROESSE = "Bezugsgröße sind alle Einwohner*innen mit Haupt- und Nebenwohnsitz."
+# Abgeleitete Indikatoren (Entscheidung des Auftraggebers vom 10.11.2026, Option b): Anteile unter 18 und ab 65 Jahren
+# aus den veröffentlichten Altersgruppen derselben Zeile, Bezug A0025A (BEZUGSGROESSE); Formeln aus Phase 0
+# (explore/strukturdaten/vergleich_zensus_stadtstatistik.tsv, Spalte stadt_formel). Die Altersgrenzen der Gruppen liest
+# der Lauf aus den Spaltennamen und prüft, dass sie den Bereich lückenlos und ohne Überschneidung abdecken (`bereich`:
+# von, bis ausschließlich; None = offen). Kennungen mit dem Präfix koeln_abg_ (kein Code der Quelle).
+ABGELEITET = {
+    "koeln_abg_unter18": {
+        "name": "Anteil Einwohner*innen im Alter von 0 bis unter 18 Jahre an allen Einwohner*innen (abgeleitet)",
+        "zaehler": ("A0029A", "A0035A", "A0291A", "A0043A"), "bereich": (0, 18)},
+    "koeln_abg_ab65": {
+        "name": "Anteil Einwohner*innen ab 65 Jahre an allen Einwohner*innen (abgeleitet)",
+        "zaehler": ("A0295A", "A0065A", "A0027A"), "bereich": (65, None)},
+}
+ABGELEITET_NENNER = GESAMT
+ABGELEITET_FAKTOR = 100
+ABGELEITET_STELLEN = 2       # kaufmännisch gerundet (ROUND_HALF_UP), dezimal gerechnet
+ABGELEITET_ENTSCHEIDUNG = "Entscheidung des Auftraggebers vom 10.11.2026"
+# Altersgruppen im Blatt Daten (alle Einwohner*innen, nicht nach Geschlecht): „Einwohner*innen, 00 < 03 Jahre“,
+# „Einwohner*innen, gesamt, 15 < 18 Jahre“, „Einwohner*innen, gesamt, 80 Jahre und älter“
+_ALTERSGRUPPE = re.compile(r"Einwohner\*innen, (?:gesamt, )?(\d{1,3}) (?:< (\d{1,3}) Jahre|Jahre und älter)")
 
 # Dateien im Zwischenspeicher: Schlüssel → (Dateiname, Umgebungsvariable)
 DATEIEN = {
@@ -904,21 +953,20 @@ def _ist_geheim(v):
 
 
 def _ableitbar(spalte, zeilen, summen, verhaeltnisse):
-    """Zeilen, in denen ein geheim gehaltener Wert („*“) aus veröffentlichten Werten derselben Zeile folgt: genau ein
-    Wert einer geprüften Beziehung ist geheim, die übrigen sind Zahlen, und der geheime Wert ist durch sie bestimmt.
-    summen: [(gesamt, teile)] (gesamt = Summe der Teile; immer bestimmt); verhaeltnisse: [(wert, zaehler, nenner,
-    faktor)]
-    (wert = faktor × zaehler / nenner; wert oder zaehler geheim: bestimmt bei nenner ≠ 0; nenner geheim: bei wert ≠ 0
-    und zaehler ≠ 0). Rückgabe: [{beziehung, geheim, aus, raumebene, zeilen}] mit Anzahl > 0, Codes ohne Präfix.
-    Nur Prüfung, keine Rechnung: die Werte selbst werden nicht ermittelt und nirgends geschrieben."""
-    zaehlung = {}
-    beziehungen = [(f"{g} = {' + '.join(t)}", (g, *t), "summe") for g, t in summen]
-    beziehungen += [(f"{w} = {f} × {z} / {n}", (w, z, n), "verhaeltnis") for w, z, n, f in verhaeltnisse]
-    for text, codes, art in beziehungen:
-        if any(c not in spalte for c in codes):
-            continue
-        idx = [spalte[c] for c in codes]
-        for _, ebene, *_, werte in zeilen:
+    """Zahl der Zeilen je Raumebene, in denen ein geheim gehaltener Wert („*“) aus veröffentlichten Werten derselben
+    Zeile ableitbar ist: genau ein Wert einer geprüften Beziehung ist geheim, die übrigen sind Zahlen, und der geheime
+    Wert ist durch sie bestimmt. summen: [(gesamt, teile)] (gesamt = Summe der Teile; immer bestimmt); verhaeltnisse:
+    [(wert, zaehler, nenner, faktor)] (wert = faktor × zaehler / nenner; wert oder zaehler geheim: bestimmt bei
+    nenner ≠ 0; nenner geheim: bei wert ≠ 0 und zaehler ≠ 0). Rückgabe: {raumebene: Zeilen} für alle Ebenen in
+    EBENEN_REIHENFOLGE; eine Zeile zählt einmal, auch wenn mehrere Beziehungen auf sie zutreffen. Nur Zählung, keine
+    Rechnung: die Werte werden nicht ermittelt, Beziehungen und Indikatoren nicht zurückgegeben (Entscheidung
+    10.11.2026)."""
+    beziehungen = [((g, *t), "summe") for g, t in summen]
+    beziehungen += [((w, z, n), "verhaeltnis") for w, z, n, _ in verhaeltnisse]
+    beziehungen = [([spalte[c] for c in codes], art) for codes, art in beziehungen if all(c in spalte for c in codes)]
+    zaehlung = {e: 0 for e in EBENEN_REIHENFOLGE}
+    for _, ebene, *_, werte in zeilen:
+        for idx, art in beziehungen:
             v = [werte[i] for i in idx]
             geheim = [i for i, x in enumerate(v) if _ist_geheim(x)]
             if len(geheim) != 1 or not all(_ist_zahl(x) for i, x in enumerate(v) if i != geheim[0]):
@@ -926,11 +974,9 @@ def _ableitbar(spalte, zeilen, summen, verhaeltnisse):
             k = geheim[0]
             if art == "verhaeltnis" and (v[2] == 0 if k in (0, 1) else (v[0] == 0 or v[1] == 0)):
                 continue
-            schluessel = (text, codes[k], tuple(c for i, c in enumerate(codes) if i != k), ebene)
-            zaehlung[schluessel] = zaehlung.get(schluessel, 0) + 1
-    ordnung = {e: n for n, e in enumerate(EBENEN_REIHENFOLGE)}
-    return [{"beziehung": b, "geheim": g, "aus": list(a), "raumebene": e, "zeilen": n}
-            for (b, g, a, e), n in sorted(zaehlung.items(), key=lambda x: (x[0][0], x[0][1], ordnung[x[0][3]]))]
+            zaehlung[ebene] += 1
+            break
+    return zaehlung
 
 
 def _eintrag(v, ref):
@@ -944,25 +990,175 @@ def _eintrag(v, ref):
     raise ValueError(f"unerwarteter Wert {v!r} in {ref}")
 
 
-def werte_quartier(kat, spalten):
+def werte_quartier(kat, spalten, abgeleitete=()):
     """Zeilen von werte_quartier.tsv.gz als Tupel in der Reihenfolge von KOPF_WERTE, sortiert wie werte.tsv (Raum,
-    Indikator, Jahr); `spalten`: [(indikator_id, Spaltenindex, Spaltenbuchstabe)] nach indikator_id sortiert."""
+    Indikator, Jahr); `spalten`: [(indikator_id, Spaltenindex, Spaltenbuchstabe)] nach indikator_id sortiert;
+    `abgeleitete`: [(indikator_id, Funktion(Zeilennummer, Zellen) → (wert, status, quellobjekt))]."""
     je_raum = {}
     for nr, _, raum_id, _, jahr, zellen in kat.zeilen_quartier:
         je_raum.setdefault(raum_id, []).append((jahr, nr, zellen))
+    reihe = sorted([(iid, i, buchstabe, None) for iid, i, buchstabe in spalten]
+                   + [(iid, None, None, f) for iid, f in abgeleitete], key=lambda s: s[0])
     for raum_id in sorted(je_raum, key=int):
         zeilen = sorted(je_raum[raum_id], key=lambda z: z[0])
-        for iid, i, buchstabe in spalten:
+        for iid, i, buchstabe, ableiten in reihe:
             for jahr, nr, zellen in zeilen:
+                if ableiten:
+                    yield ("quartier", raum_id, iid, jahr, *ableiten(nr, zellen))
+                    continue
                 ref = f"Daten!{buchstabe}{nr}"
                 yield ("quartier", raum_id, iid, jahr, *_eintrag(zellen[i], ref), ref)
 
 
+def altersgruppe(name):
+    """(von, bis ausschließlich oder None) einer Altersgruppe aller Einwohner*innen aus dem Spaltennamen, sonst None."""
+    m = _ALTERSGRUPPE.fullmatch(name)
+    return (int(m.group(1)), int(m.group(2)) if m.group(2) else None) if m else None
+
+
+def _baender_pruefen(iid, zaehler, name):
+    """Altersgruppen des Zählers aus den Spaltennamen: lückenlos und ohne Überschneidung über `bereich`; sonst
+    ValueError (die Quelle hat ihre Gruppen geändert, die Formel aus Phase 0 gilt nicht mehr)."""
+    von, bis = ABGELEITET[iid]["bereich"]
+    baender = []
+    for code in zaehler:
+        b = altersgruppe(name[code])
+        if b is None:
+            raise ValueError(f"{iid}: Spalte {code} „{name[code]}“ ist keine Altersgruppe aller Einwohner*innen")
+        baender.append(b)
+    baender.sort(key=lambda b: b[0])
+    stand = von
+    for a, e in baender:
+        if a != stand or stand is None:
+            raise ValueError(f"{iid}: Altersgruppen {baender} decken {von} bis {bis or 'offen'} nicht lückenlos und "
+                             "ohne Überschneidung ab")
+        stand = e
+    if stand != bis:
+        raise ValueError(f"{iid}: Altersgruppen {baender} enden bei {stand}, erwartet {bis}")
+    return baender
+
+
+def _alter_text(band):
+    von, bis = band
+    return f"{von} Jahren und älter" if bis is None else f"{von} bis unter {bis} Jahren"
+
+
+def ableitung(iid, spalte, buchstabe):
+    """Funktion(Zeilennummer, Zellen) → (wert, status, quellobjekt) des abgeleiteten Anteils `iid`: status geheim, wenn
+    ein Eingangswert geheim ist; fehlt, wenn einer fehlt oder der Nenner 0 ist; sonst abgeleitet mit
+    ABGELEITET_STELLEN Nachkommastellen (dezimal gerechnet, kaufmännisch gerundet). quellobjekt nennt die Formel mit
+    allen Zellen, z. B. „(Daten!E2+Daten!G2)/Daten!D2*100“."""
+    codes = (*ABGELEITET[iid]["zaehler"], ABGELEITET_NENNER)
+    idx = [spalte[c] for c in codes]
+    stelle = Decimal(1).scaleb(-ABGELEITET_STELLEN)
+
+    def ableiten(nr, zellen):
+        refs = [f"Daten!{buchstabe[c]}{nr}" for c in codes]
+        quellobjekt = f"({'+'.join(refs[:-1])})/{refs[-1]}*{ABGELEITET_FAKTOR}"
+        eintraege = [_eintrag(zellen[i], r) for i, r in zip(idx, refs)]
+        status = {s for _, s in eintraege}
+        if "geheim" in status:
+            return "", "geheim", quellobjekt
+        if "fehlt" in status:
+            return "", "fehlt", quellobjekt
+        nenner = Decimal(eintraege[-1][0])
+        if nenner == 0:
+            return "", "fehlt", quellobjekt
+        zaehler = sum(Decimal(w) for w, _ in eintraege[:-1])
+        wert = (zaehler * ABGELEITET_FAKTOR / nenner).quantize(stelle, rounding=ROUND_HALF_UP)
+        return f"{wert:f}", "abgeleitet", quellobjekt
+    return ableiten
+
+
+def _abgeleitete(kat, spalte, name, codes, indikatoren, beleg, alle):
+    """Abgeleitete Indikatoren (ABGELEITET) für indikatoren.tsv, werte.tsv und werte_quartier.tsv.gz:
+    ([Indikatoren], [Werte für werte.tsv], [(indikator_id, Funktion) für werte_quartier], {Status der Quartiere},
+    {meta.json „abgeleitet“} oder None, [Hinweise]). Nur, wenn alle Eingangsspalten übernommene Indikatoren sind (sonst
+    Hinweis); die Altersgrenzen werden vorher geprüft (_baender_pruefen)."""
+    hinweise = []
+    noetig = {c for d in ABGELEITET.values() for c in d["zaehler"]} | {ABGELEITET_NENNER}
+    if not noetig <= codes:
+        hinweise.append(f"Abgeleitete Indikatoren nicht erzeugt: Spalten {sorted(noetig - codes)} nicht übernommen")
+        return [], [], [], {}, None, hinweise
+    buchstabe = {code: b for code, _, b, _ in kat.spalten}
+    basis = next(i for i in indikatoren if i["indikator_id"] == f"koeln_{ABGELEITET_NENNER}")
+    # alle Altersgruppen des Blatts: ergeben sie zusammen A0025A? (Beleg im Metatext, nicht Bedingung)
+    gruppen = sorted(((altersgruppe(n), c) for c, n in name.items() if altersgruppe(n) and c in codes),
+                     key=lambda g: (g[0][0], math.inf if g[0][1] is None else g[0][1], g[1]))
+    luecken = [g for g, h in zip(gruppen, gruppen[1:]) if g[0][1] != h[0][0]]
+    summe = None
+    if gruppen and gruppen[0][0][0] == 0 and gruppen[-1][0][1] is None and not luecken:
+        summe = _summe(spalte, alle, ABGELEITET_NENNER, tuple(c for _, c in gruppen))
+    aus_ind, aus_werte, fns, status_q, meta, beispiel = [], [], [], {}, {}, None
+    for iid, d in ABGELEITET.items():
+        baender = _baender_pruefen(iid, d["zaehler"], name)
+        ableiten = ableitung(iid, spalte, buchstabe)
+        jahre, ebenen = set(), set()
+        for nr, ebene, raum_id, _, jahr, zellen in kat.zeilen:
+            wert, status, ref = ableiten(nr, zellen)
+            if status != "fehlt":
+                jahre.add(jahr)
+                ebenen.add(ebene)
+            aus_werte.append({"raumebene": ebene, "raum_id": raum_id, "indikator_id": iid, "jahr": jahr,
+                              "wert": wert, "status": status, "quellobjekt": ref})
+        for nr, ebene, raum_id, _, jahr, zellen in kat.zeilen_quartier:
+            status = ableiten(nr, zellen)[1]
+            status_q[status] = status_q.get(status, 0) + 1
+            if status != "fehlt":
+                jahre.add(jahr)
+                ebenen.add(ebene)
+        fns.append((iid, ableiten))
+        beispiel = beispiel or next((w["quellobjekt"] for w in aus_werte if w["indikator_id"] == iid), None)
+        gruppen_text = ", ".join(f"{_alter_text(b)} (koeln_{c})" for b, c in
+                                 sorted(zip(baender, d["zaehler"]), key=lambda x: x[0][0]))
+        formel = (f"({' + '.join(f'koeln_{c}' for c in d['zaehler'])}) / koeln_{ABGELEITET_NENNER} × "
+                  f"{ABGELEITET_FAKTOR}")
+        teile = [f"Vom Ratsatlas abgeleitet ({ABGELEITET_ENTSCHEIDUNG}), kein Wert der Quelle: Summe der "
+                 f"Einwohner*innen im Alter von {gruppen_text}, geteilt durch alle Einwohner*innen "
+                 f"(koeln_{ABGELEITET_NENNER}), mal {ABGELEITET_FAKTOR}; Formel {formel}",
+                 BEZUGSGROESSE,
+                 f"Dezimal gerechnet und kaufmännisch auf {ABGELEITET_STELLEN} Nachkommastellen gerundet",
+                 "Kein Wert (status geheim), wenn eine der Altersgruppen oder die Bezugsgröße geheim gehalten ist; "
+                 "kein Wert (status fehlt), wenn einer dieser Werte fehlt oder die Bezugsgröße 0 ist",
+                 "quellobjekt nennt die Formel mit den Zellen im Blatt Daten; keine Verrechnung über Raumebenen"]
+        if summe and summe[0]:
+            offen = [f"{_zeilen(summe[2][g])} mit {text}" for g, text in (
+                ("geheim", "geheim gehaltenem Wert"), ("fehlt", "fehlendem Wert"), ("andere", "anderem Zellinhalt"))
+                if summe[2].get(g)]
+            teile.append(f"Die {len(gruppen)} Altersgruppen des Datenkatalogs ergeben zusammen "
+                         f"koeln_{ABGELEITET_NENNER} (nachgerechnet in {summe[1]} von {len(alle)} Zeilen"
+                         + (f"; nicht prüfbar: {', '.join(offen)})" if offen else ")"))
+        quellenangaben = list(dict.fromkeys(kat.quellen.get(c, ("", ""))[0] for c in (*d["zaehler"],
+                                                                                        ABGELEITET_NENNER)))
+        aus_ind.append({
+            "indikator_id": iid, "name": d["name"], "thema": basis["thema"], "einheit": "%", "typ": "anteil",
+            "zaehler_id": "", "nenner_id": "",
+            "raumebenen": ";".join(e for e in EBENEN_REIHENFOLGE if e in ebenen), "jahre": jahre_text(jahre),
+            "quelle": KOELN_TITEL, "datenhalter": " / ".join(q for q in quellenangaben if q),
+            "lizenz": KOELN_LIZENZ, "lizenz_url": KOELN_LIZENZ_URL,
+            "namensnennung": (f"{KOELN_HERAUSGEBER} ({KOELN_TITEL}); Anteil vom Ratsatlas aus veröffentlichten "
+                              "Altersgruppen berechnet (abgeleitet)"),
+            "metatext": " ".join(_satz(t) for t in teile), "geheimhaltung": kat.geheimhaltung,
+            "quell_url": DATENSATZ_URL, "abrufdatum": beleg["zeitstempel"][:10]})
+        meta[iid] = {"formel": formel, "zaehler": [f"koeln_{c}" for c in d["zaehler"]],
+                     "nenner": f"koeln_{ABGELEITET_NENNER}", "faktor": ABGELEITET_FAKTOR,
+                     "stellen": ABGELEITET_STELLEN,
+                     "altersgruppen": {f"koeln_{c}": _alter_text(b) for b, c in zip(baender, d["zaehler"])}}
+    if not aus_ind:
+        return [], [], [], {}, None, hinweise
+    info = {"indikatoren": meta, "beispiel_quellobjekt": beispiel,
+            "altersgruppen_summe": (
+                {"gilt": summe[0], "geprueft": summe[1], "nicht_pruefbar": summe[2],
+                 "gruppen": [f"koeln_{c}" for _, c in gruppen]} if summe else None)}
+    return aus_ind, aus_werte, fns, status_q, info, hinweise
+
+
 def _koeln(kat, klass, beleg):
-    """(Indikatoren, Werte für werte.tsv, Zurückgestellte, Hinweise, Quartiere, Ableitbare) aus dem Statistischen
-    Datenkatalog; Quartiere: {"spalten": für werte_quartier, "status": Zeilen je Status}; Ableitbare: {"zeilen":
-    geheime Werte, die aus veröffentlichten Werten derselben Zeile folgen (alle Raumebenen, _ableitbar), "summen":
-    geprüfte Summen, "verhaeltnisse": Anzahl geprüfter Verhältnisse}."""
+    """(Indikatoren, Werte für werte.tsv, Zurückgestellte, Hinweise, Quartiere, Ableitbare, Abgeleitete) aus dem
+    Statistischen Datenkatalog; Quartiere: {"spalten": für werte_quartier, "abgeleitet": abgeleitete Indikatoren für
+    werte_quartier, "status": Zeilen je Status}; Ableitbare: {"zeilen": Zeilen je Raumebene mit ableitbarem geheimem
+    Wert (_ableitbar), "summen": Anzahl geprüfter Summen, "verhaeltnisse": Anzahl geprüfter Verhältnisse};
+    Abgeleitete: Angaben für meta.json (abgeleitet) oder None (_abgeleitete)."""
     abrufdatum = beleg["zeitstempel"][:10]
     spalte = {code: i for i, (code, *_) in enumerate(kat.spalten)}
     name = {code: n for code, n, *_ in kat.spalten}
@@ -998,8 +1194,8 @@ def _koeln(kat, klass, beleg):
     codes = {c for c, *_ in aufnehmen}
     alle = kat.zeilen + kat.zeilen_quartier   # alle übernommenen Zeilen (Prüfungen gelten für jede veröffentlichte Zeile)
     gesamt_gilt, gesamt_n, gesamt_offen = _summe(spalte, alle, GESAMT, (HAUPT, NEBEN))
-    hinweise.append(f"{GESAMT} = {HAUPT} + {NEBEN}: {'gilt' if gesamt_gilt else 'gilt nicht'} ({gesamt_n} Zeilen, "
-                    f"nicht prüfbar {gesamt_offen or 'keine'})")
+    hinweise.append(f"Summenprüfung: {'gilt' if gesamt_gilt else 'gilt nicht'} ({gesamt_n} Zeilen, "
+                    f"nicht prüfbar {gesamt_offen or 'keine'})")   # ohne Codes (Entscheidung 10.11.2026)
     indikatoren, werte = [], []
     quartier = {"spalten": [], "status": {}}
     verhaeltnisse = []   # geprüfte Beziehungen (Wert, Zähler, Nenner, Faktor) für _ableitbar
@@ -1008,6 +1204,7 @@ def _koeln(kat, klass, beleg):
         i = spalte[code]
         z_id = n_id = ""
         meta = [f"{KOELN_TITEL}, Spalte {code}; Werte unverändert übernommen."]
+        meta += [satz for _, satz in schaetz_verfahren(n)]
         if k["zaehler_id"]:
             z, d = k["zaehler_id"].removeprefix("koeln_"), k["nenner_id"].removeprefix("koeln_")
             if z in codes and d in codes:
@@ -1020,17 +1217,10 @@ def _koeln(kat, klass, beleg):
                 meta.append(f"Entspricht {k['faktor']} × Zähler / Nenner (nachgerechnet in {geprueft} Zeilen): "
                             f"Zähler {z_id} „{name[z]}“, Nenner {n_id} „{name[d]}“.")
                 if d == GESAMT and gesamt_gilt:
-                    meta.append("Bezugsgröße sind alle Einwohner*innen mit Haupt- und Nebenwohnsitz.")
+                    meta.append(BEZUGSGROESSE)
             else:
                 hinweise.append(f"{iid}: Zähler/Nenner aus Phase 0 gelten in dieser Datei nicht "
                                 f"({geprueft} Zeilen geprüft); nicht übernommen")
-        if code == GESAMT and gesamt_gilt:
-            offen = [f"{_zeilen(gesamt_offen[g])} mit {text}" for g, text in (
-                ("geheim", "geheim gehaltenem Wert"), ("fehlt", "fehlendem Wert"), ("andere", "anderem Zellinhalt"))
-                if gesamt_offen.get(g)]
-            meta.append(f"Summe aus Einwohner*innen mit Hauptwohnsitz (koeln_{HAUPT}) und mit Nebenwohnsitz "
-                        f"(koeln_{NEBEN}), nachgerechnet in {gesamt_n} von {len(alle)} Zeilen"
-                        + (f"; nicht prüfbar: {', '.join(offen)}." if offen else "."))
         quellenangabe, anmerkung = kat.quellen.get(code, ("", ""))
         if anmerkung:
             meta.append(f"Anmerkung der Quelle: {anmerkung}")
@@ -1062,10 +1252,18 @@ def _koeln(kat, klass, beleg):
             "geheimhaltung": kat.geheimhaltung,
             "quell_url": DATENSATZ_URL, "abrufdatum": abrufdatum})
     quartier["spalten"].sort()
+    # abgeleitete Altersanteile (ABGELEITET): nur aus übernommenen Spalten, Werte je Zeile wie die übrigen
+    a_ind, a_werte, quartier["abgeleitet"], a_status, abgeleitet, a_hinweise = _abgeleitete(
+        kat, spalte, name, codes, indikatoren, beleg, alle)
+    indikatoren += a_ind
+    werte += a_werte
+    for status, n in a_status.items():
+        quartier["status"][status] = quartier["status"].get(status, 0) + n
+    hinweise += a_hinweise
     summen = [(GESAMT, (HAUPT, NEBEN))] if gesamt_gilt else []
-    ableitbar = {"zeilen": _ableitbar(spalte, alle, summen, verhaeltnisse), "summen": summen,
+    ableitbar = {"zeilen": _ableitbar(spalte, alle, summen, verhaeltnisse), "summen": len(summen),
                  "verhaeltnisse": len(verhaeltnisse)}
-    return indikatoren, werte, zurueck, hinweise, quartier, ableitbar
+    return indikatoren, werte, zurueck, hinweise, quartier, ableitbar, abgeleitet
 
 
 def _ka_text(ka, namen):
@@ -1158,29 +1356,31 @@ DATEIEN_AUSGABE = (
 )
 
 
+def _ableitbar_text(zeilen):
+    """„stadtteil 3, quartier 1288“: Raumebenen mit ableitbaren Zeilen, ohne Beziehung und Indikatoren."""
+    return ", ".join(f"{e} {n}" for e, n in zeilen.items() if n)
+
+
 def _geheimhaltung_text(ableitbar):
-    """geheimhaltung_hinweis in meta.json: Regel der Anzeige; dazu die Zeilen, in denen die Quelle einen geheim
-    gehaltenen Wert selbst offenlegt (geheimhaltung_ableitbar)."""
+    """geheimhaltung_hinweis in meta.json: Regel der Anzeige; dazu die Zahl der Zeilen, in denen die Quelle einen geheim
+    gehaltenen Wert selbst offenlegt (geheimhaltung_ableitbar), ohne Beziehung, Rechenweg oder Indikatoren
+    (Entscheidung 10.11.2026)."""
     text = ("status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von "
             "indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die "
             "einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen (Quartier, Stadtteil, Stadtbezirk) "
             "oder Teilgrößen hinweg; zuordnung.tsv dient nicht der Verrechnung von Werten.")
     zeilen = ableitbar["zeilen"]
-    if not zeilen:
+    n = sum(zeilen.values())
+    if not n:
         return text
-    teile = {}
-    for z in zeilen:
-        teile.setdefault((z["geheim"], tuple(z["aus"])), []).append(f"{z['raumebene']} {z['zeilen']}")
     return text + (
-        f" In {sum(z['zeilen'] for z in zeilen)} Zeilen folgt ein geheim gehaltener Wert aus veröffentlichten Werten "
-        "derselben Zeile (" + "; ".join(f"koeln_{g} aus " + " und ".join(f"koeln_{c}" for c in a) + ": " + ", ".join(e)
-                                        for (g, a), e in teile.items())
-        + "; geheimhaltung_ableitbar): Die Quelle hält dort nur einen Wert der Beziehung geheim und veröffentlicht "
-        "die übrigen (keine sekundäre Geheimhaltung in der Quelle). Die Werte bleiben unverändert (quellentreu); die "
-        "Anzeige bildet auch dort keine Summen, Differenzen oder Verhältnisse, die den geheimen Wert ergeben.")
+        f" In {n} {'Zeile' if n == 1 else 'Zeilen'} ist ein geheim gehaltener Wert aus veröffentlichten Werten derselben "
+        f"Zeile ableitbar ({_ableitbar_text(zeilen)}; geheimhaltung_ableitbar); die Quelle wendet dort keine sekundäre "
+        "Geheimhaltung an. Die Werte bleiben unverändert (quellentreu); die Anzeige bildet auch dort keine Summen, "
+        "Differenzen oder Verhältnisse, die einen geheimen Wert ergeben.")
 
 
-def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
+def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
     rm = strukturdaten_raum
     q = []
     beschreibung = {
@@ -1224,6 +1424,8 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
         q.append(eintrag)
     abrufdatum = max(b["zeitstempel"][:10] for b in belege.values())
     erg = rmeta["ergebnis"]
+    abg = abgeleitet or None
+    status_mit = "status ok, geheim oder abgeleitet" if abg else "status ok oder geheim"
     splitter = {k: v["groesster_splitter"] or "keiner" for k, v in erg.items()}
     return {
         "vertrag_version": VERTRAG_VERSION,
@@ -1259,7 +1461,10 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
                         "unter quellen[] (Daten!<Spalte><Zeile>; Spalte = Indikator, Zeile = Jahr und Raum). "
                         "gesamtstadt.tsv: Zelle des Wegweiser-Exports (Indikator, Jahr, Kommune). raum/quartier.geojson: "
                         "Datensatz des Shapefiles mit derselben Nummer (Feld nummer); raum/stadtteil.geojson und "
-                        "raum/stadtbezirk.geojson: Feature der Datei unter data/geo (raum.<ebene>.abgeleitet_aus)."),
+                        "raum/stadtbezirk.geojson: Feature der Datei unter data/geo (raum.<ebene>.abgeleitet_aus)."
+                        + (" Abgeleitete Indikatoren (koeln_abg_…, unter abgeleitet): die Formel mit allen Zellen "
+                           f"derselben Zeile, z. B. {abg['beispiel_quellobjekt']}, auch bei status geheim und fehlt."
+                           if abg else "")),
         "gesamtstadt_ka": ("Jahre mit „k.A.“ im Wegweiser-Export stehen nicht in gesamtstadt.tsv (der Vertrag sieht "
                            "dort keinen Status vor); der Metatext des Indikators nennt sie."),
         "typ_einordnung": ("typ und einheit stehen nicht in den Quellen; es sind eigene Einordnungen. Statistischer "
@@ -1269,9 +1474,31 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
                            "(alle Raumebenen einschließlich der Quartiere) nachgerechnet ist. Wegweiser Kommune: typ "
                            "nach Name, Einheit und Berechnung laut Indikatorliste des Wegweisers, einheit unverändert "
                            "aus der Indikatorliste. Vorläufige Einordnungen stehen unter typ_vorlaeufig und im "
-                           "Metatext."),
+                           "Metatext."
+                           + (" Abgeleitete Indikatoren (koeln_abg_…): typ anteil, einheit %; Formel unter abgeleitet."
+                              if abg else "")),
         "typ_vorlaeufig": {f"ww_{fu}": grund for fu, (grund, _) in WW_TYP_VORLAEUFIG.items()
                            if any(i["indikator_id"] == f"ww_{fu}" for i in indikatoren)},
+        "schaetz_verfahrenswerte": {
+            "hinweis": ("Laut Datensatzbeschreibung des Statistischen Datenkatalogs sind Angaben zum "
+                        "Migrationshintergrund Schätzwerte und Angaben zu Haushalten Verfahrenswerte "
+                        "(Haushaltegenerierung); die XLSX-Datei kennzeichnet sie nicht. Zuordnung nach dem Namen der "
+                        "Spalte; der Metatext der Indikatoren nennt es. Werte unverändert."),
+            "indikatoren": {i["indikator_id"]: art for i in indikatoren for art, satz in schaetz_verfahren(i["name"])
+                            if i["indikator_id"].startswith("koeln_") and _satz(satz) in i["metatext"]},
+        },
+        **({"abgeleitet": {
+            "hinweis": (f"Eigene Ableitungen des Ratsatlas ({ABGELEITET_ENTSCHEIDUNG}), keine Werte der Quelle: "
+                        "Anteile aus veröffentlichten Werten derselben Zeile (derselbe Raum, dasselbe Jahr), nie über "
+                        "Raumebenen hinweg. status abgeleitet mit Wert; geheim, wenn ein Eingangswert geheim ist; "
+                        "fehlt, wenn einer fehlt oder der Nenner 0 ist (beide ohne Wert). Dezimal gerechnet und "
+                        f"kaufmännisch auf {ABGELEITET_STELLEN} Nachkommastellen gerundet. zaehler_id und nenner_id "
+                        "bleiben in indikatoren.tsv leer (der Zähler ist eine Summe mehrerer Indikatoren); Formel, "
+                        "Zähler und Nenner stehen hier und im Metatext, die Zellen in quellobjekt."),
+            "indikatoren": abg["indikatoren"],
+            "beispiel_quellobjekt": abg["beispiel_quellobjekt"],
+            "altersgruppen_summe": abg["altersgruppen_summe"],
+        }} if abg else {}),
         "formate": {
             "dateien": ("TSV in UTF-8 ohne BOM, Tabulator als Trennzeichen, Zeilenende LF, erste Zeile mit den "
                         "Spaltennamen, ohne Anführungszeichen; Felder ohne Tabulator und Zeilenumbruch."),
@@ -1279,14 +1506,16 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
                      "im Kopf (gleiche Eingaben ergeben byte-gleiche Dateien)."),
             "wert": ("Zahl mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und ohne Exponent, Ziffern "
                      "wie in der Quelle; in werte.tsv und werte_quartier.tsv.gz leer bei status geheim und fehlt; "
-                     "gesamtstadt.tsv enthält nur Zeilen mit Wert."),
+                     "gesamtstadt.tsv enthält nur Zeilen mit Wert."
+                     + (f" Abgeleitete Werte (status abgeleitet, Kennungen koeln_abg_…, unter abgeleitet) mit genau "
+                        f"{ABGELEITET_STELLEN} Nachkommastellen, kaufmännisch gerundet." if abg else "")),
             "jahre": ("indikatoren.tsv: Jahre, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit "
-                      "status ok oder geheim hat (Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und "
+                      f"{status_mit} hat (Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und "
                       "aufsteigend, aufeinanderfolgende Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon "
                       "ohne Leerzeichen getrennt, z. B. 2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile "
                       "gibt."),
             "raumebenen": ("indikatoren.tsv: Raumebenen, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine "
-                           "Zeile mit status ok oder geheim hat (Wegweiser: gesamtstadt), durch Semikolon ohne "
+                           f"Zeile mit {status_mit} hat (Wegweiser: gesamtstadt), durch Semikolon ohne "
                            "Leerzeichen getrennt, in der Reihenfolge von raumebenen "
                            "(gesamtstadt;stadtbezirk;stadtteil;quartier)."),
             "geojson": (f"raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit "
@@ -1350,19 +1579,21 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
             "id_abgleich": rmeta["id_abgleich"],
         },
         "audit_raumabgleich_spalten": rm.AUDIT_SPALTEN,
-        "geheimhaltung_hinweis": _geheimhaltung_text(ableitbar),
+        "geheimhaltung_hinweis": _geheimhaltung_text(ableitbar) + (
+            " Die abgeleiteten Altersanteile (koeln_abg_…) entstehen nur aus veröffentlichten Werten derselben Zeile; "
+            "ist einer davon geheim, bleibt der Anteil leer (status geheim)." if abg else ""),
         "geheimhaltung_ableitbar": {
-            "geprueft": ("Zeilen aller Raumebenen (werte.tsv und werte_quartier.tsv.gz), in denen genau ein Wert einer "
-                         "geprüften Beziehung geheim ist und die übrigen veröffentlicht sind, sodass er durch sie "
-                         "bestimmt ist; geprüft: "
-                         + "; ".join([f"Summe koeln_{g} = " + " + ".join(f"koeln_{c}" for c in t)
-                                      for g, t in ableitbar["summen"]]
-                                     + [f"{ableitbar['verhaeltnisse']} Verhältnisse (zaehler_id und nenner_id in "
-                                        "indikatoren.tsv)"])
-                         + ". Nur gezählt; die Werte selbst werden nicht ermittelt."),
-            "zeilen": [{**z, "geheim": f"koeln_{z['geheim']}", "aus": [f"koeln_{c}" for c in z["aus"]],
-                        "beziehung": re.sub(r"\b([A-Z]\d{4}[APS])\b", r"koeln_\1", z["beziehung"])}
-                       for z in ableitbar["zeilen"]],
+            "geprueft": ("Zahl der Zeilen je Raumebene (werte.tsv und werte_quartier.tsv.gz), in denen ein geheim "
+                         "gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar ist; geprüft: "
+                         + " und ".join(([{1: "eine Summe"}.get(ableitbar["summen"], f"{ableitbar['summen']} Summen")]
+                                         if ableitbar["summen"] else [])
+                                        + [f"{ableitbar['verhaeltnisse']} "
+                                           f"{'Verhältnis' if ableitbar['verhaeltnisse'] == 1 else 'Verhältnisse'} "
+                                           "(zaehler_id und nenner_id in indikatoren.tsv)"])
+                         + ". Nur gezählt; die Werte werden nicht ermittelt, Beziehungen und beteiligte Indikatoren "
+                         "nicht genannt (Entscheidung 10.11.2026)."),
+            "zeilen": dict(ableitbar["zeilen"]),
+            "zeilen_gesamt": sum(ableitbar["zeilen"].values()),
         },
         "quellen": q,
     }
@@ -1403,7 +1634,7 @@ def write():
                    pfade["ww_openapi"])
     gezaehlt = {"xlsx": kat.n_zeilen, "ww_export": ww.n_zeilen}
     belege = {k: herkunft(k, p, protokoll, gezaehlt.get(k)) for k, p in pfade.items()}
-    ind_k, werte, zur_k, hinweise, quartier, ableitbar = _koeln(kat, klass, belege["xlsx"])
+    ind_k, werte, zur_k, hinweise, quartier, ableitbar, abgeleitet = _koeln(kat, klass, belege["xlsx"])
     ind_w, gesamt, zur_w = _wegweiser(ww, belege["ww_export"])
     hinweise += _gebietsabgleich(kat)
     raum = strukturdaten_raum.raumabgleich(pfade["quartiere"], belege["quartiere"], geo_pfad("stadtteil"),
@@ -1422,7 +1653,8 @@ def write():
     aus.mkdir(parents=True, exist_ok=True)
     _tsv_schreiben(aus / "indikatoren.tsv", KOPF_INDIKATOREN, indikatoren)
     _tsv_schreiben(aus / "werte.tsv", KOPF_WERTE, werte)
-    n_quartier = _tsv_gz_schreiben(aus / "werte_quartier.tsv.gz", KOPF_WERTE, werte_quartier(kat, quartier["spalten"]))
+    n_quartier = _tsv_gz_schreiben(aus / "werte_quartier.tsv.gz", KOPF_WERTE,
+                                   werte_quartier(kat, quartier["spalten"], quartier["abgeleitet"]))
     for ebene, text in raum["geojson"].items():
         _text_schreiben(aus / "raum" / f"{ebene}.geojson", text)
     _tsv_schreiben(aus / "zuordnung.tsv", strukturdaten_raum.KOPF_ZUORDNUNG, raum["zuordnung"])
@@ -1432,7 +1664,7 @@ def write():
     audit = sorted(({k: b[k] for k in KOPF_AUDIT} for b in belege.values()),
                    key=lambda b: (datetime.fromisoformat(b["zeitstempel"]), b["url"]))
     _tsv_schreiben(aus / "audit_abruf.tsv", KOPF_AUDIT, audit)
-    meta = _meta(kat, ww, belege, indikatoren, raum, ableitbar)
+    meta = _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet)
     _text_schreiben(aus / "meta.json", json.dumps(meta, ensure_ascii=False, indent=1) + "\n")
 
     status = {}
@@ -1456,9 +1688,9 @@ def write():
     for ebene, a in raum["meta"]["id_abgleich"].items():
         print(f"Nummern {ebene}: Geometrie {a['geometrie']}, Blatt Daten {a['werte']}, gemeinsam {a['gemeinsam']}, "
               f"nur Geometrie {a['nur_geometrie'] or 'keine'}, nur Blatt Daten {a['nur_werte'] or 'keine'}")
-    for z in meta["geheimhaltung_ableitbar"]["zeilen"]:
-        print(f"Geheim, aber ableitbar ({z['beziehung']}): {z['geheim']} aus {', '.join(z['aus'])}, {z['raumebene']} "
-              f"{z['zeilen']} Zeilen")
+    g = meta["geheimhaltung_ableitbar"]
+    print(f"Geheim, aber ableitbar: {g['zeilen_gesamt']} {'Zeile' if g['zeilen_gesamt'] == 1 else 'Zeilen'} "
+          f"({_ableitbar_text(g['zeilen']) or 'keine'})")
     a = meta["raum"]["quartier"]["abweichung_von_der_quelle"]
     d = meta["raum"]["quartier"]["abdeckung"]
     print(f"Quartiersflächen: Abweichung höchstens {a['abstand_max_m']} m ({a['abstand_max_raum_id']}), Median "

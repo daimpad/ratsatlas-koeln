@@ -13,6 +13,15 @@ Schritte:
   export/<stadt>/kontext.json, zuschaltbare Flächen und Punkte → export/<stadt>/flaechen/, Audit export/audit_kontext.tsv.
 Abruf direkt über urllib, nicht über pipeline/net.py oder pipeline/abruf.py: deren Schutz vor Anfragen an die
 Stadt (abruf.stadt, Abrufpolitik) greift hier nicht.
+
+Option (b) (Entscheidung des Auftraggebers vom 10.11.2026), nur mit Freigabe „strukturdaten“ (config.ZUSATZTHEMEN):
+Einwohnerzahl und Altersanteile kommen aus dem Datenvertrag „Strukturdaten“ (data/strukturdaten/werte.tsv) statt aus
+dem Zensus: `einwohner` = koeln_A0355A (Hauptwohnsitz), `unter_18` und `ab_65` = koeln_abg_unter18 und koeln_abg_ab65
+(vom Ratsatlas aus den Altersgruppen abgeleitet, Bezug A0025A). Je Kennzahl gilt ein Jahr: das jüngste, für das ganz
+Köln einen Wert hat; Stadtteile, Stadtbezirke und Stadt jeweils aus ihrer eigenen Zeile (nichts umgerechnet, nichts
+summiert). Die Mindestgröße (MIN_EINWOHNER) gilt dann für diese Einwohnerzahl (Hauptwohnsitz), weil sie angezeigt
+wird; Anteile aus dem Zensus (Nettokaltmiete) und die übrigen Kennzahlen bleiben, wie sie sind. Ohne Freigabe bleibt
+kontext.json unverändert (Zensus).
 """
 import csv
 import io
@@ -31,7 +40,7 @@ from pathlib import Path
 from shapely import STRtree, from_wkb, make_valid, prepare, union_all
 from shapely.geometry import Point, mapping, shape
 
-from . import config, flaechen
+from . import config, flaechen, strukturdaten
 
 KONTEXT = config.ROOT / "data" / "kontext"
 DL = Path(os.environ.get("KONTEXT_DL", config.ROOT / "_kontext_dl"))
@@ -112,6 +121,119 @@ KENNZAHLEN = {
 OHNE_WERT = {"wahlbeteiligung": "ohne eigenen Stimmbezirk"}   # Grund, wenn ein Ortsteil keinen Wert hat (sonst Mindestgröße)
 ANTEILE = {"unter_18", "ab_65", "miete", "bodenrichtwert", "bodenrichtwert_abdeckung", "hitze", "ueberschwemmung",
            "wahlbeteiligung"}   # erst ab MIN_EINWOHNER
+
+# Option (b): Kennzahl → Indikator im Datenvertrag „Strukturdaten“ (nur mit Freigabe „strukturdaten“)
+STADTSTATISTIK = {"einwohner": "koeln_A0355A", "unter_18": "koeln_abg_unter18", "ab_65": "koeln_abg_ab65"}
+STRUKTURDATEN = "strukturdaten"   # Schlüssel der Quelle in meta.quellen
+
+
+def strukturdaten_an():
+    """Option (b) aktiv: Freigabe „strukturdaten“ (config.ZUSATZTHEMEN)."""
+    return bool(config.ZUSATZTHEMEN.get("strukturdaten"))
+
+
+def strukturdaten_quelle(meta=None):
+    """Quelle der Kennzahlen aus der Stadtstatistik wie in meta.quellen (Titel, Adresse, Lizenz mit Namensnennung,
+    Stand = Datenstand der Datei laut meta.json des Datenvertrags)."""
+    if meta is None:
+        meta = json.loads((strukturdaten.ausgabe() / "meta.json").read_text(encoding="utf-8"))
+    return {"titel": f"{strukturdaten.KOELN_TITEL} ({strukturdaten.KOELN_HERAUSGEBER})",
+            "url": strukturdaten.DATENSATZ_URL,
+            "lizenz": f"dl-de/by-2.0, {strukturdaten.KOELN_HERAUSGEBER} ({strukturdaten.KOELN_TITEL})",
+            "stand": meta["datenstand"]}
+
+
+def stadtstatistik():
+    """Option (b): Werte aus data/strukturdaten/werte.tsv für die Kennzahlen in STADTSTATISTIK. Rückgabe
+    {"werte": {(art, Name): {Kennzahl: Wert}}, "jahre": {Kennzahl: Jahr}, "quelle": meta.quellen-Eintrag,
+    "status": {Kennzahl: {status: Anzahl}}} mit art ortsteil, bezirk, stadt wie in kennzahlen(). Je Kennzahl das
+    jüngste Jahr mit Wert für ganz Köln (status ok oder abgeleitet); jede Einheit aus ihrer eigenen Zeile, ohne Wert
+    (None) bei status geheim oder fehlt. Namen der Stadtteile und Stadtbezirke über ihre Nummern aus data/geo; fehlt
+    eine Einheit oder Kennzahl im Datenvertrag, ValueError (lieber kein Lauf als falsche Angaben)."""
+    from . import strukturdaten_web
+    ordner = strukturdaten.ausgabe()
+    meta = json.loads((ordner / "meta.json").read_text(encoding="utf-8"))
+    strukturdaten_web.veroeffentlichen(meta, ordner / "meta.json")   # nur mit veroeffentlichen=true
+    ids = set(STADTSTATISTIK.values())
+    zeilen = {}
+    with open(ordner / "werte.tsv", encoding="utf-8", newline="") as fh:
+        for z in csv.DictReader(fh, delimiter="\t", quoting=csv.QUOTE_NONE):
+            if z["indikator_id"] in ids:
+                zeilen[(z["raumebene"], z["raum_id"], z["indikator_id"], z["jahr"])] = z
+    gj = json.loads(config.ORTSTEILE.read_text())
+    namen = {("stadtteil", str(f["properties"]["ortsteil"])): ("ortsteil", f["properties"]["ortsteil_bez"])
+             for f in gj["features"]}
+    namen.update({("stadtbezirk", str(f["properties"]["bezirk"])): ("bezirk", f["properties"]["bezirk_bez"])
+                  for f in gj["features"]})
+    namen[("gesamtstadt", "0")] = ("stadt", config.STADT_NAME)
+    werte, jahre, status = defaultdict(dict), {}, {}
+    for k, iid in STADTSTATISTIK.items():
+        mit_wert = [j for (e, r, i, j), z in zeilen.items()
+                    if (e, r, i) == ("gesamtstadt", "0", iid) and z["status"] in ("ok", "abgeleitet")]
+        if not mit_wert:
+            raise ValueError(f"Strukturdaten: kein Wert für ganz {config.STADT_NAME} ({iid}) in {ordner / 'werte.tsv'}")
+        jahr = jahre[k] = max(mit_wert)
+        status[k] = {}
+        for (ebene, raum_id), gebiet in sorted(namen.items()):
+            z = zeilen.get((ebene, raum_id, iid, jahr))
+            if z is None:
+                raise ValueError(f"Strukturdaten: {iid} {jahr} fehlt für {ebene} {raum_id} ({gebiet[1]})")
+            status[k][z["status"]] = status[k].get(z["status"], 0) + 1
+            if z["status"] in ("ok", "abgeleitet"):
+                werte[gebiet][k] = int(z["wert"]) if k == "einwohner" else float(z["wert"])
+            else:
+                werte[gebiet][k] = None
+    return {"werte": dict(werte), "jahre": jahre, "quelle": strukturdaten_quelle(meta), "status": status}
+
+
+# Bezugsgröße der Altersanteile als eigener Satz, derselbe Wortlaut wie in den Metatexten (indikatoren.tsv); die
+# Texte nennen keine Beziehung zwischen den Einwohnerzahlen (Entscheidung 10.11.2026, „nur zählen, ohne Formel“)
+BEZUGSGROESSE = strukturdaten.BEZUGSGROESSE
+
+
+def kennzahlen_stadtstatistik(jahre):
+    """meta.kennzahlen der Kennzahlen aus der Stadtstatistik (Option b): Titel, Einheit, Quelle, Methode mit Jahr,
+    Indikator, Jahr; die Altersanteile als abgeleitet gekennzeichnet."""
+    stellen = strukturdaten.ABGELEITET_STELLEN
+    # ohne Klammern: Steckbrief und Gebietsseite setzen den Grund selbst in Klammern („keine Angabe (…)“)
+    ohne = "statistische Geheimhaltung oder kein Wert in der Stadtstatistik"
+    return {
+        "einwohner": {"titel": "Einwohnerinnen und Einwohner mit Hauptwohnsitz", "einheit": "Personen",
+                      "quelle": STRUKTURDATEN,
+                      "methode": (f"Einwohner*innen mit Hauptwohnsitz laut Statistischem Datenkatalog Köln "
+                                  f"(koeln_A0355A), Jahr {jahre['einwohner']}; Wert der Stadt für das Gebiet, nicht "
+                                  "umgerechnet"),
+                      "indikator_id": STADTSTATISTIK["einwohner"], "jahr": jahre["einwohner"], "ohne_wert": ohne},
+        "unter_18": {"titel": "Anteil unter 18 Jahren", "einheit": "%", "quelle": STRUKTURDATEN,
+                     "methode": (f"Einwohner*innen von 0 bis unter 18 Jahren an allen Einwohner*innen (koeln_A0025A), "
+                                 f"Jahr {jahre['unter_18']}. {BEZUGSGROESSE} Vom Ratsatlas aus den veröffentlichten "
+                                 f"Altersgruppen der Stadtstatistik berechnet (abgeleitet, {stellen} "
+                                 "Nachkommastellen); kein Wert, wenn eine Altersgruppe geheim gehalten ist"),
+                     "indikator_id": STADTSTATISTIK["unter_18"], "jahr": jahre["unter_18"], "abgeleitet": True,
+                     "ohne_wert": ohne, "stellen": 1},
+        "ab_65": {"titel": "Anteil ab 65 Jahren", "einheit": "%", "quelle": STRUKTURDATEN,
+                  "methode": (f"Einwohner*innen ab 65 Jahren an allen Einwohner*innen (koeln_A0025A), Jahr "
+                              f"{jahre['ab_65']}. {BEZUGSGROESSE} Abgeleitet wie „unter 18“"),
+                  "indikator_id": STADTSTATISTIK["ab_65"], "jahr": jahre["ab_65"], "abgeleitet": True,
+                  "ohne_wert": ohne, "stellen": 1},
+    }
+
+
+# Wortlaut der Hinweise auf Werte, die nicht umgerechnet sind (Steckbrief „Zahlen zu …“ und Vorgang in site/app.js;
+# nur mit Freigabe in kontext.json, damit app.js ohne Freigabe keine Texte dazu enthält)
+NICHT_UMGERECHNET = {
+    "liste": "Werte der Kölner Stadtstatistik für das Gebiet, nicht umgerechnet",
+    "liste_abgeleitet": "Altersanteile vom Ratsatlas aus den Altersgruppen berechnet (abgeleitet)",
+    "vorgang": "aus der Kölner Stadtstatistik, nicht umgerechnet",
+    "vorgang_abgeleitet": "Altersanteile abgeleitet",
+}
+
+
+def nicht_umgerechnet(kennzahlen, reihenfolge):
+    """meta.nicht_umgerechnet (Option b): Kennzahlen aus der Stadtstatistik in der Reihenfolge der Tabelle und der
+    Wortlaut der Hinweise."""
+    return {"kennzahlen": [k for k in reihenfolge if kennzahlen.get(k, {}).get("quelle") == STRUKTURDATEN],
+            **NICHT_UMGERECHNET}
 
 
 def _num(s):
@@ -453,8 +575,10 @@ def wahlbeteiligung():
     return ot, eigen, gesamt, audit
 
 
-def kennzahlen():
-    """Kennzahlen je Ortsteil, Stadtbezirk und für die ganze Stadt aus den Ausschnitten: ({Gebiet: Werte}, Audit-Zeilen)."""
+def kennzahlen(stat=None):
+    """Kennzahlen je Ortsteil, Stadtbezirk und für die ganze Stadt aus den Ausschnitten: ({Gebiet: Werte}, Audit-Zeilen).
+    `stat` (stadtstatistik(), nur mit Freigabe „strukturdaten“): Einwohnerzahl und Altersanteile aus der Stadtstatistik
+    (Option b); die Mindestgröße gilt dann für diese Einwohnerzahl."""
     ots, finde = _gebiete()
     bezirk = {n: b for n, b, _ in ots}
     gebiete = lambda ot: (("ortsteil", ot), ("bezirk", bezirk[ot]), ("stadt", config.STADT_NAME))
@@ -542,18 +666,26 @@ def kennzahlen():
                     acc[g]["wahl_w"] += w
     werte, audit = {}, []
     for g, a in sorted(acc.items()):
-        e = int(a["einwohner"])
-        v = {"einwohner": e, "haltestellen": len(halt[g]), "kitas": int(a["kitas"]),
+        e = int(a["einwohner"])   # Einwohner laut Zensus (Gewicht der Zellen)
+        s = stat["werte"].get(g) if stat else None
+        if stat and s is None:
+            raise ValueError(f"Strukturdaten: kein Gebiet {g} in der Stadtstatistik")
+        ew = s["einwohner"] if stat else e   # angezeigt und Maß der Mindestgröße
+        v = {"einwohner": ew, "haltestellen": len(halt[g]), "kitas": int(a["kitas"]),
              "kita_plaetze_u3": int(a["kita_plaetze_u3"]), "kita_plaetze_ue3": int(a["kita_plaetze_ue3"]),
              "schulen": int(a["schulen"])}
-        if e >= MIN_EINWOHNER:
-            v["unter_18"] = round(a["unter_18"] / e, 1)
-            v["ab_65"] = round(a["ab_65"] / e, 1)
+        if (ew or 0) >= MIN_EINWOHNER:
+            if stat:   # Option (b): Werte der Stadt je Gebiet (abgeleitet), nicht aus dem Zensus
+                v["unter_18"], v["ab_65"] = s["unter_18"], s["ab_65"]
+            else:
+                v["unter_18"] = round(a["unter_18"] / e, 1)
+                v["ab_65"] = round(a["ab_65"] / e, 1)
             v["miete"] = round(a["miete_summe"] / a["wohnungen"], 2) if a["wohnungen"] else None
             v["bodenrichtwert"] = _wmedian(brw[g])
-            v["bodenrichtwert_abdeckung"] = round(100 - 100 * a["brw_ohne_zone"] / e, 1)   # Anteil der Einwohner in einer Zone
+            # Anteil der Einwohner in einer Zone (ohne Zensus-Einwohner, nur mit Option b möglich: keine Angabe)
+            v["bodenrichtwert_abdeckung"] = round(100 - 100 * a["brw_ohne_zone"] / e, 1) if e else None
             v["hitze"] = round(100 * a["klima_dringend"] / a["klima_ew"], 1) if a["klima_ew"] else None
-            v["ueberschwemmung"] = round(100 * a["ueberschwemmung"] / e, 1)
+            v["ueberschwemmung"] = round(100 * a["ueberschwemmung"] / e, 1) if e else None
             if wahl and g[0] == "stadt":
                 v["wahlbeteiligung"] = round(100 * wahl[2][1] / wahl[2][0], 1)
             elif wahl and a["wahl_a"] and (g[0] == "bezirk" or g[1] in wahl[1]):
@@ -563,7 +695,7 @@ def kennzahlen():
         audit.append([g[0], g[1], e, round(100 * geheim / e, 1) if e else "", int(a["wohnungen"]),
                       round(100 * a["brw_ohne_zone"] / e, 1) if e else "", round(100 * a["brw_ueberlagert"] / e, 1) if e else "",
                       round(a["klima_ew"]),
-                      "ja" if e < MIN_EINWOHNER else ""])
+                      "ja" if (ew or 0) < MIN_EINWOHNER else ""])
     return werte, audit, (wahl[3] if wahl else None)
 
 
@@ -629,10 +761,17 @@ def write():
     if not all(p.exists() for p in (ZENSUS, BRW, KLIMA, UESG, KITAS, HALT, STAND, HALT_STAND)):
         print("Kontextdaten: Ausschnitte fehlen (python -m pipeline kontext-ausschnitte) – übersprungen.")
         return
-    werte, audit, audit_wahl = kennzahlen()
+    stat = stadtstatistik() if strukturdaten_an() else None   # Option (b), nur mit Freigabe
+    werte, audit, audit_wahl = kennzahlen(stat)
     zuordnung = {n: b for n, b, _ in _gebiete()[0]}
     staende = quellen_stand()
-    meta = {"hinweis": "Einordnung, kein Urteil. Alle Werte sind auf Stadtteile und Stadtbezirke umgerechnet (abgeleitet).",
+    if stat:
+        staende = {**staende, STRUKTURDATEN: stat["quelle"]}
+    meta = {"hinweis": ("Einordnung, kein Urteil. Einwohnerzahl (Hauptwohnsitz) und Altersanteile stammen aus der Kölner "
+                        "Stadtstatistik, je Stadtteil, Stadtbezirk und für die Stadt aus der eigenen Zeile (Altersanteile "
+                        "vom Ratsatlas aus den Altersgruppen berechnet); alle übrigen Werte sind auf Stadtteile und "
+                        "Stadtbezirke umgerechnet (abgeleitet)." if stat else
+                        "Einordnung, kein Urteil. Alle Werte sind auf Stadtteile und Stadtbezirke umgerechnet (abgeleitet)."),
             "mindest_einwohner": MIN_EINWOHNER,
             "bodenrichtwert_hinweis_ohne_zone": BRW_HINWEIS_OHNE_ZONE,
             "reihenfolge": [k for k in KENNZAHLEN if k != "wahlbeteiligung" or audit_wahl],   # Reihenfolge für Steckbrief und Assistent (die Schlüssel werden sortiert)
@@ -644,6 +783,10 @@ def write():
                         "lizenz": config.SOURCES[config.QUELLE_GEO]["license"]},
             "kennzahlen": {k: {"titel": t, "einheit": u, "quelle": q, "methode": m, **({"ohne_wert": OHNE_WERT[k]} if k in OHNE_WERT else {})}
                            for k, (t, u, q, m) in KENNZAHLEN.items() if k != "wahlbeteiligung" or audit_wahl}}
+    if stat:   # Option (b): Quelle, Jahr, Indikator und Kennzeichnung „abgeleitet“ der Kennzahlen aus der Stadtstatistik
+        meta["kennzahlen"].update(kennzahlen_stadtstatistik(stat["jahre"]))
+        meta["mindest_einwohner_bezug"] = "einwohner (Hauptwohnsitz, Stadtstatistik)"
+        meta["nicht_umgerechnet"] = nicht_umgerechnet(meta["kennzahlen"], meta["reihenfolge"])
     doc = {"meta": meta,
            "stadt": werte[("stadt", config.STADT_NAME)],
            "bezirke": {n: v for (art, n), v in werte.items() if art == "bezirk"},
@@ -685,7 +828,27 @@ def pruefen(path=None):
     doc = json.loads(path.read_text())
     befunde = []
     ew = doc["stadt"]["einwohner"]
-    if abs(ew - AMTLICH_EINWOHNER) / AMTLICH_EINWOHNER > 0.03:
+    if doc["meta"]["kennzahlen"]["einwohner"].get("quelle") == STRUKTURDATEN:
+        # Option (b): Einwohner der Stadtstatistik (Hauptwohnsitz) weichen vom Zensus-basierten amtlichen
+        # Wert ab; geprüft wird, dass jede Zahl der eigenen Zeile des Datenvertrags entspricht
+        try:
+            stat = stadtstatistik()
+        except (OSError, ValueError) as e:
+            stat = None
+            befunde.append(f"Strukturdaten nicht lesbar: {e}")
+        if stat:
+            for k in STADTSTATISTIK:
+                jahr = doc["meta"]["kennzahlen"][k].get("jahr")
+                if jahr != stat["jahre"][k]:
+                    befunde.append(f"Kennzahl {k}: Jahr {jahr}, im Datenvertrag {stat['jahre'][k]}")
+            for art, teil in (("stadt", {config.STADT_NAME: doc["stadt"]}), ("bezirk", doc["bezirke"]),
+                              ("ortsteil", doc["ortsteile"])):
+                for n, v in teil.items():
+                    soll = stat["werte"].get((art, n), {})
+                    for k in STADTSTATISTIK:
+                        if k in v and v[k] != soll.get(k):
+                            befunde.append(f"{n}: {k} {v[k]} statt {soll.get(k)} laut Datenvertrag")
+    elif abs(ew - AMTLICH_EINWOHNER) / AMTLICH_EINWOHNER > 0.03:
         befunde.append(f"Einwohner {config.STADT_NAME} {ew} weicht mehr als 3 % vom amtlichen Wert {AMTLICH_EINWOHNER} ab")
     for k, d in doc["meta"]["kennzahlen"].items():
         q = doc["meta"]["quellen"].get(d["quelle"]) or {}
@@ -697,7 +860,7 @@ def pruefen(path=None):
     for n, v in doc["ortsteile"].items():
         if v.get("wahlbeteiligung") is not None and not 20 <= v["wahlbeteiligung"] <= 95:
             befunde.append(f"{n}: Wahlbeteiligung {v['wahlbeteiligung']} % außerhalb des plausiblen Bereichs")
-        if v["einwohner"] < doc["meta"]["mindest_einwohner"] and ANTEILE & set(v):
+        if (v["einwohner"] or 0) < doc["meta"]["mindest_einwohner"] and ANTEILE & set(v):
             befunde.append(f"{n}: Anteile trotz {v['einwohner']} Einwohnern")
     print(f"Kontextdaten: Einwohner {config.STADT_NAME} {ew} (amtlich 31.12.2022: {AMTLICH_EINWOHNER}), "
           f"{len(doc['ortsteile'])} Ortsteile; Befunde: {befunde or 'keine'}")

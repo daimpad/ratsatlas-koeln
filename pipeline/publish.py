@@ -10,7 +10,7 @@ from pathlib import Path
 from urllib.parse import quote
 from xml.sax.saxutils import escape, quoteattr
 
-from . import config
+from . import config, strukturdaten_web
 
 FEED_LIMIT = 100
 GANZ_BONN = f"ganz-{config.STADT}"   # Feed über alle Gebiete (Seite rss/); Name aus Bonn übernommen
@@ -236,10 +236,12 @@ def _bbox_wkt():
 # Verteilung eine Lizenz; enthält eine Datei Daten unter mehreren Lizenzen, steht dort die strengste (RANG). dl-de/zero
 # 2.0 erlaubt jede Nutzung ohne Bedingung, also auch die Weitergabe zusammen mit Daten unter dl-de/by 2.0; wer die
 # Datei als Ganze nach dl-de/by 2.0 nutzt (mit Namensnennung), hält die Bedingungen aller Teile ein. dct:rights nennt
-# Lizenz und Namensnennung jedes Teils: aus config.SOURCES, für Kennzahlen und Kartenebenen aus deren Ständen.
-RANG = ("odbl", "dl-de-by", "dl-de-zero")
+# Lizenz und Namensnennung jedes Teils: aus config.SOURCES, für Kennzahlen und Kartenebenen aus deren Ständen, für die
+# Strukturdaten (nur mit Freigabe) aus pipeline/strukturdaten_web.py. CC0 (Wegweiser Kommune) gilt wie dl-de/zero ohne
+# Bedingung und tritt hinter jede andere Lizenz zurück.
+RANG = ("odbl", "dl-de-by", "dl-de-zero", "cc0")
 LIZENZ_MUSTER = (("odbl", re.compile(r"ODbL")), ("dl-de-by", re.compile(r"dl-de/by")),
-                 ("dl-de-zero", re.compile(r"dl-de/zero")))
+                 ("dl-de-zero", re.compile(r"dl-de/zero")), ("cc0", re.compile(r"\bCC0\b")))
 TEIL_NAME = {config.QUELLE_OPARL: "Ratsinformationssystem der Stadt Köln (OParl-API)",
              config.QUELLE_GEO: "Stadtteile und Stadtbezirke", config.QUELLE_STRASSEN: "Straßen",
              config.QUELLE_ADRESSEN: "Adressen", config.QUELLE_BPLAN: "Bebauungspläne",
@@ -279,9 +281,14 @@ def _rechte(teile):
 
 
 def _kontext_teile():
-    """Quellen der Kennzahlen wie in kontext.json (meta.quellen): Titel und Lizenz aus den Ständen in data/kontext/."""
+    """Quellen der Kennzahlen wie in kontext.json (meta.quellen): Titel und Lizenz aus den Ständen in data/kontext/; mit
+    Freigabe „strukturdaten“ dazu der Statistische Datenkatalog Köln (Einwohnerzahl und Altersanteile, Option b)."""
     from . import kontext
-    return [(q.get("titel") or k, q.get("lizenz") or "") for k, q in sorted(kontext.quellen_stand().items())]
+    teile = [(q.get("titel") or k, q.get("lizenz") or "") for k, q in sorted(kontext.quellen_stand().items())]
+    if kontext.strukturdaten_an():
+        q = kontext.strukturdaten_quelle()
+        teile.append((q["titel"], q["lizenz"]))
+    return teile
 
 
 def _ebenen_teile():
@@ -327,10 +334,26 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
         "kontext": ([_teil(config.QUELLE_GEO)] + _kontext_teile()) if kontext_an else [],
         "ebenen": _ebenen_teile(),
     }
-    # Datenpaket: alle Exporte, Audits und data/geo (pipeline/paket.py), dazu Kennzahlen (wenn freigegeben) und Ebenen
+    # Datenpaket: alle Exporte, Audits und data/geo (pipeline/paket.py), dazu Kennzahlen (wenn freigegeben) und Ebenen;
+    # mit Freigabe „strukturdaten“ der Datenvertrag Strukturdaten (pipeline/strukturdaten_web.py)
+    struktur = strukturdaten_web.lizenzteile() if strukturdaten_web.an() else []
     teile["paket"] = list(dict.fromkeys(ris + [_teil(n) for n in ("osm",) if n in orte]
                                         + ([_teil(config.QUELLE_BPLAN)] if bplan or config.QUELLE_BPLAN in orte else [])
-                                        + teile["kontext"] + teile["ebenen"]))
+                                        + teile["kontext"] + teile["ebenen"] + struktur))
+
+    # Kennzahlen: mit Freigabe „strukturdaten“ Einwohnerzahl und Altersanteile aus der Stadtstatistik (Option b,
+    # pipeline/kontext.py), sonst wie bisher aus dem Zensus
+    kontext_text = (f"Kennzahlen je Stadtteil, Stadtbezirk und für ganz {config.STADT_NAME} zur Einordnung von Vorlagen: "
+                    + ("Einwohner (Hauptwohnsitz) und Anteile unter 18 und ab 65 Jahren aus dem Statistischen "
+                       "Datenkatalog Köln (Stadt Köln, Amt für Stadtentwicklung und Statistik; Werte der Stadt je Gebiet, "
+                       "Altersanteile abgeleitet), Nettokaltmiete (Zensus 2022, © Destatis), Bodenrichtwert Wohnbauland "
+                       "(BORIS NRW), Haltestellen (VRS), Kitas und Schulen (Land NRW), Hitze (Klimaanalyse NRW), "
+                       "Überschwemmungsgebiete (Land NRW); diese übrigen auf Stadtteile umgerechnet (abgeleitet), je "
+                       "Kennzahl mit Quelle, Lizenz und Stand." if strukturdaten_web.an() else
+                       "Einwohner und Altersanteile und Nettokaltmiete (Zensus 2022, © Destatis), Bodenrichtwert "
+                       "Wohnbauland (BORIS NRW), Haltestellen (VRS), Kitas und Schulen (Land NRW), Hitze (Klimaanalyse "
+                       "NRW), Überschwemmungsgebiete (Land NRW); auf Stadtteile umgerechnet (abgeleitet), je Kennzahl mit "
+                       "Quelle, Lizenz und Stand."))
 
     def dist(name, file, media, teil, desc, licence=None):
         url = file if file.startswith("https://") else f"{base}{file}"
@@ -371,7 +394,10 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
             dist("Datenpaket (Zip)", config.PAKET_URL, "application/zip", "paket",
                  "Exporte (ohne Feeds), Prüfprotokolle und Stichproben (TSV, nur in diesem Paket, nicht als einzelne "
                  "Dateien auf der Seite), Abrufstatistik, abgeleitete Geodaten, Berichte der Projektphasen und "
-                 "Lizenzübersicht."),
+                 "Lizenzübersicht."
+                 + (" Dazu die Strukturdaten im Datenvertrag „Strukturdaten“ (Statistischer Datenkatalog Köln, "
+                    "Statistische Quartiere, Vergleichswerte des Wegweisers Kommune) mit Prüfprotokollen; die Anteile "
+                    "unter 18 und ab 65 Jahren sind vom Ratsatlas berechnet (abgeleitet)." if struktur else "")),
         ] + ([dist("Zeitleiste: Monatsaggregate (JSON)", f"{config.STADT}/zeit.json", "application/json", "zeit",
                    "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden.")] if zeit else []) + [
             dist("Typische Wege je Vorlagenart (JSON)", f"{config.STADT}/prozesse.json", "application/json", "oparl",
@@ -390,11 +416,7 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
                    licence="cc-by")]
              if kurzfassungen else [])
           + ([dist("Kennzahlen je Stadtteil (JSON)", f"{config.STADT}/kontext.json", "application/json", "kontext",
-                   f"Kennzahlen je Stadtteil, Stadtbezirk und für ganz {config.STADT_NAME} zur Einordnung von Vorlagen: "
-                   "Einwohner und Altersanteile und Nettokaltmiete (Zensus 2022, © Destatis), Bodenrichtwert Wohnbauland "
-                   "(BORIS NRW), Haltestellen (VRS), Kitas und Schulen (Land NRW), Hitze (Klimaanalyse NRW), "
-                   "Überschwemmungsgebiete (Land NRW); auf Stadtteile umgerechnet (abgeleitet), je Kennzahl mit Quelle, "
-                   "Lizenz und Stand.")] if kontext_an else [])
+                   kontext_text)] if kontext_an else [])
           + ([dist("Kartenebenen (JSON)", f"{config.STADT}/ebenen.json", "application/json", "ebenen",
                    "Verzeichnis der zuschaltbaren Kartenebenen aus offenen Daten der Stadt und des Landes mit Quelle, "
                    "Lizenz und Stand je Ebene; die Flächen liegen unter flaechen/ebene_*.json.")]

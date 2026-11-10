@@ -14,7 +14,7 @@ Kürzel und Haushaltsbegriffe entfernt. Aus Bonn übernommen (02.11.2026): einfa
 Erklärung aus Titeln und Beratungsfolge erschlossen und so gekennzeichnet."""
 import re
 
-from . import process as proc, topics
+from . import config, process as proc, topics
 
 ERGEBNISSE = {
     "ungeändert beschlossen": "Das Gremium hat dem Vorschlag in der vorgelegten Fassung zugestimmt.",
@@ -172,6 +172,24 @@ BEGRIFFE = [
     ("Bebauungsplan", "Satzung der Gemeinde, die festlegt, wie Grundstücke in einem Gebiet bebaut und genutzt werden "
      "dürfen.", "§§ 8, 10 BauGB"),
 ]
+# Strukturdaten (nur mit Freigabe „strukturdaten“, config.ZUSATZTHEMEN; Entscheidung 10.11.2026): eigene Gruppe auf der
+# Seite begriffe/ und in glossar.json; ohne Freigabe erscheinen Gruppe und Begriffe nicht
+GRUPPE_STRUKTURDATEN = ("strukturdaten", "Strukturdaten")
+STATISTIK = "Statistischer Datenkatalog Köln (Stadt Köln, Amt für Stadtentwicklung und Statistik)"
+BEGRIFFE_STRUKTURDATEN = [
+    ("Statistisches Quartier", "Kleinste Raumeinheit der Kölner Stadtstatistik. Köln ist in 570 Statistische "
+     "Quartiere gegliedert; jedes liegt in einem Stadtteil. Quartiere dienen der Statistik und sind weder Veedel noch "
+     "Verwaltungsbezirke.", STATISTIK + "; Datensatz „Statistische Quartiere Köln“ (offenedaten-koeln.de)"),
+    ("Statistische Geheimhaltung", "Damit sich aus Zahlen keine Rückschlüsse auf einzelne Menschen ziehen lassen, "
+     "veröffentlicht die Stadt sehr kleine Werte nicht: Werte zwischen 1 und 4 und die zugehörigen Anteile sind mit "
+     "„*“ gekennzeichnet. Der Ratsatlas zeigt dort „nicht veröffentlicht (statistische Geheimhaltung)“ und rechnet "
+     "solche Werte nicht aus anderen Zahlen nach.", STATISTIK + ", Blatt Info („Geheimhaltung“)"),
+    ("Ökologischer Fehlschluss", "Schluss von Merkmalen eines Gebiets auf einzelne Menschen oder auf einen "
+     "Zusammenhang. Wenn in einem Stadtteil viele Vorlagen zu einem Thema und zugleich ein hoher Anteil einer "
+     "Bevölkerungsgruppe vorkommen, folgt daraus nicht, dass beides zusammenhängt oder dass es auf einzelne "
+     "Bewohnerinnen und Bewohner zutrifft.", ALLGEMEIN),
+]
+
 GRUPPE = {"Rat": "gremium", "Bezirksvertretung": "gremium", "Ausschuss": "gremium", "Hauptausschuss": "gremium",
           "Fraktion": "gremium", "Gruppe": "gremium", "Anregungen und Beschwerden": "gremium",
           "Einwohnerantrag": "gremium", "Einwohnerfragestunde": "gremium",
@@ -199,6 +217,21 @@ def anker(begriff):
     return re.sub(r"[^a-z0-9]+", "-", s).strip("-")
 
 
+def _strukturdaten():
+    return bool(config.ZUSATZTHEMEN.get("strukturdaten"))
+
+
+def gruppen():
+    """Gruppen der Seite begriffe/ in ihrer Reihenfolge; die Strukturdaten nur mit Freigabe."""
+    return GRUPPEN + ([GRUPPE_STRUKTURDATEN] if _strukturdaten() else [])
+
+
+def begriffe():
+    """(Begriff, Erklärung, Fundstelle, Gruppe) aller Begriffe; die Strukturdaten nur mit Freigabe."""
+    return ([(b, e, f, GRUPPE.get(b, "vorlagen")) for b, e, f in BEGRIFFE]
+            + ([(b, e, f, GRUPPE_STRUKTURDATEN[0]) for b, e, f in BEGRIFFE_STRUKTURDATEN] if _strukturdaten() else []))
+
+
 def glossar():
     return {
         "meta": {"note": "Allgemeine Erklärungen ohne Rechtsberatung; Fundstelle je Begriff. Ergebnistexte erscheinen "
@@ -209,9 +242,9 @@ def glossar():
         "evidenz": EVIDENZ,
         "staende": STAENDE,
         "themen": dict(topics.THEMES),
-        "begriffe": [{"begriff": b, "erklaerung": e, "fundstelle": f, "gruppe": GRUPPE.get(b, "vorlagen"), "anker": anker(b)}
-                     for b, e, f in BEGRIFFE],
-        "gruppen": dict(GRUPPEN),
+        "begriffe": [{"begriff": b, "erklaerung": e, "fundstelle": f, "gruppe": g, "anker": anker(b)}
+                     for b, e, f, g in begriffe()],
+        "gruppen": dict(gruppen()),
         "arten": {art: anker(b) for art, b in ARTEN.items()},
         "kuerzel": {k: anker(b) for k, b in KUERZEL.items()},
     }

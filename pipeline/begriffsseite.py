@@ -24,7 +24,7 @@ def abschnitte():
     """(Sprungmarke, Überschrift, Einleitung, Einträge) in der Reihenfolge der Seite."""
     g = glossar.glossar()
     out = []
-    for key, titel in glossar.GRUPPEN:
+    for key, titel in glossar.gruppen():   # mit Freigabe „strukturdaten“ auch deren Begriffe
         eintraege = [(b["begriff"], b["erklaerung"], b["fundstelle"], b["anker"]) for b in g["begriffe"] if b["gruppe"] == key]
         if eintraege:
             out.append((key, titel, "", eintraege))

@@ -1,0 +1,99 @@
+/* Strukturdaten (site/strukturdaten/strukturdaten.js): Kontext-Panel, Flächenfarben und Tabelle; nur mit Freigabe
+   „strukturdaten“ geladen. Farben und Abstände aus den Tokens in style.css. */
+
+/* Kontext-Panel in der Liste und im Vorgang */
+.sd-box .sd-inhalt > .hint { margin: 0 0 6px; }
+.sd-thema { margin-top: 10px; }
+.sd-thema h4 { margin: 0 0 2px; font-size: 13px; font-weight: 600; color: var(--accent-ink); }
+.sd-liste { list-style: none; margin: 0; padding: 0; }
+.sd-wert { padding: 7px 0 6px; border-bottom: 1px solid var(--border-alt); }
+.sd-wert:last-child { border-bottom: 0; }
+.sd-kopf { font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
+.sd-kopf .derived { white-space: nowrap; }
+.sd-zeile { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; margin-top: 2px; }
+.sd-zahl { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
+.sd-einheit { font-size: 12px; color: var(--text-muted); }
+.sd-jahr { font-size: 12px; color: var(--text-muted); }
+.sd-ohne { font-size: 13px; font-weight: 400; color: var(--text-muted); }
+.sd-linie { margin-left: auto; flex: none; fill: none; stroke: var(--accent-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sd-linie circle { fill: var(--accent-ink); stroke: none; }
+.sd-linie .sd-letzter { fill: var(--accent-fill); stroke: #fff; stroke-width: 1; }
+.sd-vgl { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); overflow-wrap: anywhere; }
+.sd-mehr { margin-top: 4px; font-size: 12.5px; }
+.sd-mehr > summary { cursor: pointer; color: var(--accent-ink); font-weight: 500; font-size: 12.5px; }
+.sd-mehr p { margin: 6px 0 0; overflow-wrap: anywhere; }
+.sd-mehr .sd-reihe { margin-top: 6px; }
+.sd-reihe th:first-child { width: 18%; }
+.sd-herkunft { margin: 2px 0 0; padding-left: 18px; font-size: 12px; color: var(--text-muted); overflow-wrap: anywhere; }
+.sd-weitere, .sd-vergleich { margin-top: 12px; }
+.sd-gruppe { margin: 6px 0; }
+.sd-erl { list-style: none; margin: 2px 0 0; padding: 0; }
+.sd-erl li { padding: 3px 0; border-bottom: 1px solid var(--border-alt); }
+.sd-erl li:last-child { border-bottom: 0; }
+.sd-scroll { overflow-x: auto; max-width: 100%; }
+.sd-scroll:focus-visible { outline-offset: -2px; }
+.sd-ww { table-layout: auto; font-size: 12px; }
+.sd-ww th:first-child { width: auto; min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+.sd-ww td, .sd-ww thead th:not(:first-child) { white-space: nowrap; padding-left: 3px; padding-right: 3px; }
+.sd-einheit-klein { display: block; font-size: 11px; color: var(--text-muted); }
+.sd-quelle { margin-top: 10px !important; }
+.sd-kompakt { table-layout: auto; }
+.sd-kompakt th:first-child { width: auto; }
+.sd-kompakt tbody th[scope="row"] { min-width: 7em; overflow-wrap: anywhere; }
+.sd-kompakt td { white-space: nowrap; padding-left: 3px; padding-right: 3px; }
+.sd-kompakt .derived, .sd-tabelle .derived { white-space: normal; }
+.sd-gruppenzeile th { padding-top: 10px; font-weight: 600 !important; color: var(--accent-ink); }
+.sd-vorgang { margin-top: 14px; }
+
+/* Flächenfarben: Steuerung und Legende im Stapel der Legenden */
+.sd-legende { font-size: 12px; }
+.sd-steuer { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 8px; align-items: center; margin: 8px 0 6px; }
+.sd-steuer label { color: var(--text-muted); font-size: 11.5px; }
+.sd-steuer select { font: inherit; font-size: 12px; color: var(--text); padding: 4px 6px; border-radius: 8px; border: 1px solid rgba(15, 15, 20, 0.35);
+  background: #fff; width: 100%; min-width: 0; min-height: 30px; }
+.sd-legende-titel { margin: 6px 0 2px; line-height: 1.35; overflow-wrap: anywhere; }
+.sd-legende p { margin: 6px 0 2px; color: var(--text-muted); font-size: 11px; }
+.sd-legende p.sd-legende-titel { color: var(--text); font-size: 12px; }
+.sd-ramp li { font-size: 12px; }
+/* Rand der Felder mindestens 3:1 gegen den Hintergrund (WCAG 1.4.11; die hellste Klasse und „keine Angabe“ heben sich
+   sonst kaum ab); „keine Angabe“ zusätzlich gepunktet wie auf der Karte */
+.sd-sw { border: 1px solid #6b6b76; flex: none; }
+.sd-sw-geheim { background: repeating-linear-gradient(45deg, #52525b 0 1.5px, #f4f4f5 1.5px 4.5px); }
+.sd-sw-fehlt { background: radial-gradient(circle, #52525b 0 0.9px, transparent 1.1px) 0 0 / 5px 5px, #d4d4d8; }
+.sd-n { color: var(--text-muted); }
+.sd-info:not(:empty) { margin-top: 8px; padding: 6px 8px; border-radius: 10px; background: rgba(124, 58, 237, 0.06); border: 1px solid var(--border-alt); }
+.sd-info p { margin: 0; color: var(--text); font-size: 12px; }
+.sd-legende .btn { font-size: 12.5px; padding: 7px 12px; }
+
+/* Tabelle im Vorgang-Bereich */
+.sd-tabelle { table-layout: auto; }
+.sd-tabelle th:first-child { width: auto; }
+.sd-tabelle thead th { text-align: left; }
+.sd-tabelle td { text-align: left; }
+.sd-tabelle td:nth-child(2) { text-align: right; }
+.sd-sort { white-space: nowrap; border: 0; background: none; padding: 2px 0; font: inherit; font-weight: 600; color: var(--accent-ink); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.sd-tabelle .link-btn { font-weight: 500; text-align: left; }
+.leaflet-tooltip.sd-tipp { white-space: normal; width: max-content; max-width: min(260px, 70vw); }
+@media (max-width: 900px) {
+  .sd-steuer select { min-height: 44px; font-size: 14px; }
+  .sd-sort { min-height: 44px; }
+  .sd-legende p, .sd-ramp li { font-size: 13px; }
+}
+
+/* Ebenen-Menü mit dem zusätzlichen Schalter „Strukturdaten“: auf niedrigen Bildschirmen enger, damit die Spalte nicht
+   unter die Leiste reicht (nur mit Freigabe geladen; ohne sie bleibt das Menü wie bisher) */
+@media (min-width: 901px) and (max-height: 1000px) {
+  .leaflet-container.map-menu-open .leaflet-right .map-style:not(.map-menu) { padding: 5px 10px; }
+  .leaflet-container.map-menu-open .leaflet-bottom.leaflet-right .leaflet-control { margin-bottom: 5px; }
+}
+@media (min-width: 901px) and (max-height: 800px) {
+  .leaflet-container.map-menu-open .leaflet-right .map-style:not(.map-menu) { padding: 3px 8px; font-size: 12px; }
+  .leaflet-container.map-menu-open .leaflet-bottom.leaflet-right .leaflet-control { margin-bottom: 3px; }
+}
+
+/* Telefon, Blatt „Karte“: Der Stapel der Legenden ist ein Leaflet-Steuerelement (z-index 800) und lag beim Rollen über
+   dem festen Kopf des Blatts mit „Schließen“; die Legende der Strukturdaten ist lang genug, dass man rollt. Hier nur mit
+   Freigabe; für alle Legenden gehört die Regel in einer eigenen, freizugebenden Änderung nach style.css */
+@media (max-width: 900px) {
+  .map-sheet .map-sheet-kopf { z-index: 801; }
+}
