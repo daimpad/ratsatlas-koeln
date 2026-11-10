@@ -52,8 +52,8 @@ SCHRITTE = {
 }
 
 SCHRITTE_TEXT = {
-    "initiierung": "Wie das Verfahren angestoßen wurde, etwa durch einen Antrag, eine Anfrage, einen Bürgerantrag oder eine "
-                   "Vorlage der Verwaltung.",
+    "initiierung": "Wie das Verfahren angestoßen wurde, etwa durch einen Antrag, eine Anfrage, eine Anregung oder Beschwerde "
+                   "nach § 24 GO NRW oder eine Vorlage der Verwaltung.",
     "vorbereitung": "Arbeit der Verwaltung, bevor eine Vorlage erscheint; von außen nicht einsehbar.",
     "veroeffentlichung": "Datum, unter dem die Vorlage im Ratsinformationssystem steht.",
     "beratung": "Ein Gremium berät die Vorlage; das Ergebnis steht wörtlich wie in der Quelle.",

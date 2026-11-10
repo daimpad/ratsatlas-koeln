@@ -41,7 +41,8 @@ SCHRITTE = {
     "ebenen": ("Ebenen", "Bereitet weitere offene Daten für die Karte auf, etwa Förderprogramme, Wohnbaupotenziale, "
                          "Schutzgebiete und Hochwassergefahr, mit Quelle und Lizenz je Ebene."),
     "check": ("Prüfung", "Prüft vor jeder Veröffentlichung den Datenschutz (keine Hauskoordinaten bei Eingaben nach § 24 GO "
-                         "NRW und Vorlagen von Privatpersonen) und die Kennzahlen; ein Befund hält die Veröffentlichung an."),
+                         "NRW, Vorlagen von Privatpersonen und Vorlagen ohne erkennbare Vorlagenart) und die Kennzahlen; "
+                         "ein Befund hält die Veröffentlichung an."),
     "package": ("Datenpaket", "Packt Daten, Prüfprotokolle und Lizenzen in ein Zip-Paket zum Herunterladen; die "
                               "Prüfprotokolle gibt es nur dort."),
 }
@@ -67,7 +68,7 @@ QUELLEN = {
                                                  "Open-Data-Portal der Stadt."),
     "strassen-koeln": ("Straßen", "Straßen der Stadt Köln; daraus entsteht das Straßenverzeichnis je Stadtteil."),
     "adressen-koeln": ("Adressen", "Adressen der Stadt Köln: Stadtteil einer Hausnummer und, nur bei Vorlagen der "
-                                   "Verwaltung und politischen Anträgen, die Hauskoordinate."),
+                                   "Verwaltung und politischen Anträgen mit erkennbarer Vorlagenart, die Hauskoordinate."),
     "bplan-koeln": ("Bebauungspläne", "Flächen der rechtsverbindlichen Bebauungspläne aus der Schnittstelle "
                                       "„Bauleitplanung in NRW“ des Landes; Vorlagen mit Plannummer im Titel erscheinen "
                                       "auf der Fläche des Plans."),
