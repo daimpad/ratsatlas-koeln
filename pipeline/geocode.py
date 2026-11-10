@@ -420,7 +420,11 @@ class Gazetteer:
 # Hausnummern punktgenau nur bei Verwaltungsvorlagen und politischen Anträgen (Entscheidung 04.11.2026); nie bei
 # Anregungen und Beschwerden nach § 24 GO NRW oder Vorlagen natürlicher Personen
 REFERENZ_PUNKT = re.compile(r"^(?:AN/)?\d{1,4}/\d{4}$")
-EINGABE = re.compile(r"(?i)§\s*24\b|anregung|beschwerde|eingabe|petition|bürgerantrag|einwohnerantrag|einwohner(?:innen)?antrag")
+# Eingaben und Vorlagen natürlicher Personen (Entscheidung 04.11.2026): auch Kölner Einwohneranfragen („Einwohneranfrage
+# nach § 39 Abs. 6“, Stufe 2, explore/BERICHT_phase1.md 6.5; Drucksache wie Anträge AN/NNNN/JJJJ möglich) und
+# Einwohnerfragen; nicht „Einwohnerbefragung“ (Verwaltung)
+EINGABE = re.compile(r"(?i)§\s*24\b|anregung|beschwerde|eingabe|petition|bürgerantrag|einwohner(?:innen)?antrag"
+                     r"|einwohner(?:innen)?(?:an)?frage")
 
 
 def hausnummer_punkt_erlaubt(paper, gremien=()):
@@ -432,6 +436,25 @@ def hausnummer_punkt_erlaubt(paper, gremien=()):
     if EINGABE.search(paper.get("paperType") or "") or EINGABE.search(paper.get("name") or ""):
         return False
     return not any(re.search(r"(?i)anregungen und beschwerden|bürgerbeteiligung", g or "") for g in gremien)
+
+
+def ohne_hauskoordinate(ohne, beziehungen):
+    """Vorlagen ohne Erlaubnis für Hauskoordinaten (`ohne`, IDs), erweitert um alle Vorlagen, die mit ihnen über- oder
+    untergeordnet verbunden sind, auch über mehrere Stufen: Beantwortung oder Stellungnahme zu einer Eingabe oder
+    Einwohneranfrage nennen oft dieselbe Anschrift, tragen aber weder die Art noch das Wort im Titel (wie
+    chat.einwohner für die Hausnummer im Titel; Generalprobe 09.11.2026). `beziehungen`: Paare (übergeordnet,
+    untergeordnet). Gleiche Regel im Aufbau (build._stage_b) und in der Prüfung (check.erlaubnis)."""
+    nachbarn = defaultdict(set)
+    for a, b in beziehungen:
+        nachbarn[a].add(b)
+        nachbarn[b].add(a)
+    gesehen, offen = set(ohne), list(ohne)
+    while offen:
+        for n in nachbarn[offen.pop()]:
+            if n not in gesehen:
+                gesehen.add(n)
+                offen.append(n)
+    return gesehen
 
 
 def plan_numbers(title):

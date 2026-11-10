@@ -8,7 +8,7 @@ from collections import Counter
 
 from . import actors, config
 from .geo import Ortsteile
-from .geocode import Gazetteer, hausnummer_punkt_erlaubt, plan_numbers
+from .geocode import Gazetteer, hausnummer_punkt_erlaubt, ohne_hauskoordinate, plan_numbers
 from .plans import Plans, plan_locations
 from . import volltext
 from .objekte import Objekte
@@ -197,7 +197,10 @@ def build():
     gaz = Gazetteer(street_points=points)
     gremien = {p["id"]: [(orgs_by_id.get((c.get("organization") or [None])[0]) or {}).get("name", "")
                          for c in p.get("consultation") or [] if isinstance(c, dict)] for p in papers}
-    rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien)
+    # ohne Hauskoordinate: Eingaben, Vorlagen natürlicher Personen und alle mit ihnen verbundenen Vorlagen
+    gesperrt = ohne_hauskoordinate({p["id"] for p in papers if not hausnummer_punkt_erlaubt(p, gremien.get(p["id"], ()))},
+                                   rows["rel"])
+    rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien, gesperrt)
     plans = Plans()
     rows["plan"] = [(pid, nr, ev, plans.classify(nr)[0]) for pid, nr, ev in rows["plan"]]
     plan_locs, plan_rows = plan_locations([r[:3] for r in rows["plan"]], ortsteile, plans)
@@ -347,13 +350,15 @@ def _write(path, header, rows):
         w.writerows(rows)
 
 
-def _stage_b(papers, bv_bezirke, locations, gaz, gremien=None):
-    """Stufe B: Ortsbezüge aus dem Titel (Straße, Ortsteil, Stadtbezirk); Hauskoordinate nur, wo erlaubt."""
+def _stage_b(papers, bv_bezirke, locations, gaz, gremien=None, gesperrt=None):
+    """Stufe B: Ortsbezüge aus dem Titel (Straße, Ortsteil, Stadtbezirk); Hauskoordinate nur, wo erlaubt. `gesperrt`:
+    IDs ohne Hauskoordinate (geocode.ohne_hauskoordinate, mit verbundenen Vorlagen); ohne Angabe die Regel je Vorlage."""
     if not gaz.streets:
         print(f"Hinweis: {config.STRASSEN} fehlt oder ist leer – Stufe B ohne Straßen.")
     out, hnr = [], {}
     for p in papers:
-        punkt = hausnummer_punkt_erlaubt(p, (gremien or {}).get(p["id"], ()))
+        punkt = (p["id"] not in gesperrt if gesperrt is not None
+                 else hausnummer_punkt_erlaubt(p, (gremien or {}).get(p["id"], ())))
         for r in gaz.locate(p.get("name"), bv_bezirke.get(p["id"], ()), punkt_erlaubt=punkt):
             if "hnr_vorher" in r:
                 hnr.setdefault((p["reference"], r["name"]), (r["hnr_vorher"], r.get("hnr_ohne_lage") or r["ortsteil"],

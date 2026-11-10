@@ -99,6 +99,71 @@ def test_eingeschleuster_punkt_auf_hausnummer(testdaten, monkeypatch, capsys):
     assert all(r in out for r in sorted(verstoss)[:5]) and not any(t in out for t in titel)
 
 
+def test_einwohneranfrage_und_beantwortung_ohne_hauskoordinate(testdaten):
+    """Kölner Einwohneranfrage (natürliche Person) mit Straße und Hausnummer im Titel und ihre Beantwortung, die weder
+    Art noch Wort einer Eingabe trägt (Generalprobe 09.11.2026: beide lagen auf der Hauskoordinate, die Prüfung bestand):
+    keine Hauskoordinate, Hausnummer in den Titeln der Suche ausgeblendet, die Prüfung besteht."""
+    hnr = json.loads(config.HAUSNUMMERN.read_text())["punkte"]
+    strasse = next(s for s in sorted(hnr) if s.endswith("straße") and len(hnr[s]) == 1)
+    lage = next(iter(hnr[strasse]))
+    nr = sorted(hnr[strasse][lage], key=lambda n: (len(n), n))[0]
+    b = "https://example.invalid/oparl/papers"
+    neu = [{"id": f"{b}/ew1", "reference": "AN/0901/2026", "paperType": "Einwohneranfrage nach § 39 Abs. 6",
+            "name": f"[Testdaten] Zustand des Gehwegs vor {strasse} {nr}", "date": "2026-10-01",
+            "subordinatedPaper": [f"{b}/ew2"], "consultation": []},
+           {"id": f"{b}/ew2", "reference": "0902/2026", "paperType": "Beantwortung einer Anfrage",
+            "name": f"[Testdaten] Gehweg vor {strasse} {nr}", "date": "2026-10-20",
+            "superordinatedPaper": [f"{b}/ew1"], "consultation": []}]
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.write("".join(json.dumps(p, ensure_ascii=False) + "\n" for p in neu))
+    db = _aufbauen()
+    refs = ("AN/0901/2026", "0902/2026")
+    ebenen = {r for r in db.execute(
+        "SELECT p.reference, l.level FROM paper p JOIN paper_location pl ON pl.paper_id = p.id JOIN location l "
+        "ON l.id = pl.location_id WHERE p.reference IN (?, ?)", refs)}
+    assert {r for r, _ in ebenen} == set(refs), ebenen   # beide verortet (Straße), keine auf der Hauskoordinate
+    assert all(lvl != "adresse" for _, lvl in ebenen), ebenen
+    erg = check.datenschutz(db)
+    db.close()
+    assert erg["befunde"] == [] and erg["fehlend"] == []
+    titel = {r[0]: r[1] for r in json.loads((config.EXPORT / config.STADT / "suche.json").read_text())["rows"]}
+    assert all(f"{strasse} {nr}" not in titel[r] and "[Hausnummer ausgelassen]" in titel[r] for r in refs), titel
+
+
+def test_maske_vierstellige_hausnummer():
+    """Kölner Straßen haben vierstellige Hausnummern; die Maske ließ sie stehen (Generalprobe 09.11.2026)."""
+    from pipeline import maske
+    m = maske.Maske({"0001/2026"}, strassen=["Aachener Straße"])
+    assert m("Lärm Aachener Straße 1175", "0001/2026") == "Lärm Aachener Straße [Hausnummer ausgelassen]"
+    assert m("Zufahrt Militärringstraße 1000a", "0001/2026") == "Zufahrt Militärringstraße [Hausnummer ausgelassen]"
+    assert m("Haus-Nr. 1234", "0001/2026") == "[Hausnummer ausgelassen]"
+    assert m("Aachener Straße 12-14", "0001/2026") == "Aachener Straße [Hausnummer ausgelassen]"
+    assert m("Lärm Aachener Straße 1175", "0002/2026") == "Lärm Aachener Straße 1175"   # nicht aus der Einwohnerschaft
+    assert m.offen("Lärm Aachener Straße 1175", "0001/2026")
+    assert not m.offen("Lärm Aachener Straße [Hausnummer ausgelassen]", "0001/2026")
+
+
+def test_stichprobe_hausnummern_ohne_hausnummer_aus_eingaben(testdaten):
+    """Die Stichprobe Hausnummern (data/export/hausnummern, also auf der Seite und im Datenpaket) trug den vollen Titel
+    (Generalprobe 09.11.2026: Eingaben nach § 24 GO NRW mit Hausnummer). Der Export blendet die Hausnummer aus wie in
+    der Suche; steht sie trotzdem dort, meldet die Prüfung es."""
+    db = _aufbauen()
+    ref, titel = next(r for r in db.execute("SELECT reference, name FROM paper WHERE paper_type = ? ORDER BY reference",
+                                            (EINGABE,)) if any(c.isdigit() for c in r[1].split(":")[-1]))
+    pfad = config.EXPORT / "hausnummern" / "stichprobe_hausnummern.tsv"
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    kopf = "nr\tdrucksache\ttitel\tlink\tstrasse\tortsteile_ohne_hausnummer\tortsteil_der_hausnummer\twirkung\turteil\tanmerkung\n"
+    pfad.write_text(kopf + f"1\t{ref}\t{titel}\t\tX\tA; B\tA\teindeutig\t\t\n", encoding="utf-8")
+    befunde = check.datenschutz(db)["befunde"]
+    assert len(befunde) == 1 and "Titeln aus Einwohnerschaft" in befunde[0] and befunde[0].endswith(f"z. B. {ref}")
+    export.export_audits()
+    zeile = pfad.read_text(encoding="utf-8").splitlines()[1].split("\t")
+    assert zeile[1] == ref and "[Hausnummer ausgelassen]" in zeile[2] and zeile[2] != titel
+    erg = check.datenschutz(db)
+    db.close()
+    assert erg["befunde"] == [] and erg["untersucht"]["stichprobe_hausnummern"] == 1
+
+
 def test_verstoss_nur_im_export(testdaten):
     """Exportdateien, die nach dem Aufbau verändert wurden: Punkt auf Hausnummer im GeoJSON, Titel mit Hausnummer in
     der Suche. Die Datenbank ist in Ordnung, gemeldet werden die Dateien."""
