@@ -37,16 +37,23 @@ def allowed(paper_type):
     return not (paper_type or "").startswith(OHNE_VOLLTEXT)
 
 
-def einwohner_kette(papers):
+def einwohner_kette(papers, ausgelassen=()):
     """Ids der Vorlagen aus der Einwohnerschaft und aller mit ihnen verbundenen Vorlagen (OParl-Rohdaten; wie
     chat.einwohner): Stellungnahmen und Mitteilungen zu einem Bürgerantrag nennen oft dieselbe Anschrift und werden
-    ebenfalls nicht aus dem Volltext verortet (Code-Prüfung 24.10.2026)."""
+    ebenfalls nicht aus dem Volltext verortet (Code-Prüfung 24.10.2026). `ausgelassen`: Vorlagen ohne Drucksachennummer
+    ({id, subordinatedPaper, superordinatedPaper}, build.einlesen); sie gelten wie Eingaben (Art und Titel unbekannt),
+    damit eine Eingabe ohne Nummer ihre verbundenen Vorlagen weiter sperrt."""
     from . import chat
     ref = {p["id"]: p.get("reference") for p in papers}
+    ref.update({a["id"]: a["id"] for a in ausgelassen})   # ohne Drucksachennummer: die Kennung als Schlüssel
     rel = lambda p, k: [{"reference": ref[x]} for x in (p.get(k) or []) if x in ref]
-    kette = set(chat.einwohner([{"reference": p.get("reference"), "paper_type": p.get("paperType"), "name": p.get("name"),
-                                 "superordinated": rel(p, "superordinatedPaper"), "subordinated": rel(p, "subordinatedPaper")}
-                                for p in papers]))
+    eintraege = [{"reference": p.get("reference"), "paper_type": p.get("paperType"), "name": p.get("name"),
+                  "superordinated": rel(p, "superordinatedPaper"), "subordinated": rel(p, "subordinatedPaper")}
+                 for p in papers]
+    eintraege += [{"reference": a["id"], "paper_type": None, "name": None, "ausgelassen": True,
+                   "superordinated": rel(a, "superordinatedPaper"), "subordinated": rel(a, "subordinatedPaper")}
+                  for a in ausgelassen]
+    kette = set(chat.einwohner(eintraege, auch=lambda p: p.get("ausgelassen")))
     return {p["id"] for p in papers if p.get("reference") in kette}
 
 

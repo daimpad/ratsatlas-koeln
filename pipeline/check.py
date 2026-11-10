@@ -84,11 +84,13 @@ def kennzahlen(db):
     print("Kennzahlen (Vergleichswerte: keine – Kölner OParl-API noch nicht gemessen; Bonner Werte gelten nicht)")
     print("Pilot-Stadtteil: keiner (ganz Köln, CLAUDE.md 2)")
     print("Vorlagen:", n)
-    # build lässt Vorlagen ohne `reference` aus (build.einlesen), statt eine Nummer zu erfinden
-    print("Vorlagen ohne Drucksachennummer (beim Aufbau ausgelassen):",
-          one("SELECT COUNT(*) FROM skipped_paper") if one(
-              "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'skipped_paper'")
-          else "nicht erfasst (Datenbank ohne Tabelle skipped_paper)")
+    # build lässt Vorlagen ohne `reference` oder mit einer, die keine Zeichenkette ist, aus (build.einlesen), statt eine
+    # Nummer zu erfinden; je Grund eine Zeile
+    from .build import AUSLASSUNG
+    for grund, text in AUSLASSUNG.items():
+        print(f"Vorlagen {text} (beim Aufbau ausgelassen):",
+              one("SELECT COUNT(*) FROM skipped_paper WHERE reason = ?", grund) if _hat_ausgelassene(db)
+              else "nicht erfasst (Datenbank ohne Tabelle skipped_paper)")
     print("Vorlagen mit Koordinate:", one(
         "SELECT COUNT(DISTINCT pl.paper_id) FROM paper_location pl "
         "JOIN location l ON l.id = pl.location_id WHERE l.lon IS NOT NULL"))
@@ -197,10 +199,15 @@ def _hauskoordinate(level=None, method=None, source=None):
     return level == "adresse" or method == PUNKT or source == config.QUELLE_ADRESSEN
 
 
+def _hat_ausgelassene(db):
+    return bool(db.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'skipped_paper'").fetchone())
+
+
 def erlaubnis(db):
     """Drucksache → darf ihr Ortsbezug auf einer Hauskoordinate liegen? Gleiche Regel und Eingaben wie im Aufbau
     (geocode.hausnummer_punkt_erlaubt in build._stage_b): Drucksache, Vorlagenart und Titel aus der Datenbank, Namen der
-    beratenden Gremien; dazu die verbundenen Vorlagen (geocode.ohne_hauskoordinate über paper_relation). Gibt es eine
+    beratenden Gremien; dazu die verbundenen Vorlagen (geocode.ohne_hauskoordinate über paper_relation), auch die einer
+    beim Aufbau ausgelassenen Vorlage (skipped_paper, ohne Drucksachennummer also ohne Erlaubnis). Gibt es eine
     Drucksache mehrfach, muss jede die Erlaubnis haben. Liefert ({Vorlagen-ID: bool},
     {Drucksache: bool}, {Vorlagen-ID: Drucksache})."""
     gremien = {}
@@ -214,7 +221,8 @@ def erlaubnis(db):
                                                       gremien.get(pid, ()))
         ref_of[pid] = ref
     # verbundene Vorlagen (über- und untergeordnet) einer Vorlage ohne Erlaubnis: ebenfalls ohne (wie im Aufbau)
-    for pid in geocode.ohne_hauskoordinate({pid for pid, ok in je_id.items() if not ok},
+    ausgelassen = {r[0] for r in db.execute("SELECT id FROM skipped_paper")} if _hat_ausgelassene(db) else set()
+    for pid in geocode.ohne_hauskoordinate({pid for pid, ok in je_id.items() if not ok} | ausgelassen,
                                            db.execute("SELECT parent_id, child_id FROM paper_relation")):
         if pid in je_id:
             je_id[pid] = False
