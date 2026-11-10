@@ -8,7 +8,8 @@ from collections import Counter
 
 from . import actors, config
 from .geo import Ortsteile
-from .geocode import Gazetteer, hausnummer_punkt_erlaubt, ohne_hauskoordinate, plan_numbers
+from .geocode import (ANDERE_FORM, AUSSCHLUSS, Gazetteer, hausnummer_punkt_erlaubt, nicht_erkannte_arten,
+                      ohne_hauskoordinate, plan_numbers, punkt_ausschluss, vorlagenart_bezeichnung)
 from .plans import Plans, plan_locations
 from . import volltext
 from .objekte import Objekte
@@ -58,6 +59,9 @@ CREATE TABLE paper_responsibility (
 -- Vorlagen, die der Aufbau auslässt (ohne Drucksachennummer, einlesen()); Zählung in der Ausgabe von check; für den
 -- Datenschutz Startmenge ohne Hauskoordinate (check.erlaubnis, maske.aus_db), ihre Beziehungen in paper_relation
 CREATE TABLE skipped_paper (id TEXT PRIMARY KEY, reason TEXT, source TEXT);
+-- Vorlagen, deren Vorlagenart nicht als Zeichenkette kam (Liste, Objekt; einlesen() macht Text daraus): Vorlagenart
+-- gilt als nicht erkennbar, keine Hauskoordinate (Entscheidung 10.11.2026); check.erlaubnis liest sie
+CREATE TABLE paper_type_other_form (paper_id TEXT PRIMARY KEY);
 CREATE INDEX consultation_paper ON consultation(paper_id);
 CREATE INDEX relation_child ON paper_relation(child_id);
 CREATE INDEX paper_location_loc ON paper_location(location_id);
@@ -129,7 +133,8 @@ def einlesen(papers):
     listenwertige Felder als Liste (LISTENFELDER, in Beratungen BERATUNG_LISTENFELDER), in OBJEKTLISTEN nur Objekte mit
     Kennung, in ADRESSLISTEN (in Beratungen BERATUNG_ADRESSLISTEN) nur Kennungen (eingebettetes Objekt → seine `id`),
     `mainFile` nur als Objekt, `paperType` null oder fehlend wie eine leere Vorlagenart (""), in anderer Form (Liste,
-    Objekt) als Text aus ihren Zeichenkettenteilen, damit die Regel für Eingaben greift (geocode.EINGABE).
+    Objekt) als Text aus ihren Zeichenkettenteilen, damit die Regel für Eingaben greift (geocode.EINGABE), und mit dem
+    Kennzeichen geocode.ANDERE_FORM (Vorlagenart nicht erkennbar, keine Hauskoordinate; Entscheidung 10.11.2026).
     Vorlagen ohne Drucksachennummer (`reference` fehlt, null oder leer) oder mit einer, die keine Zeichenkette ist,
     werden ausgelassen, nie mit erfundener Nummer; ihre Beziehungen (BEZIEHUNGEN) bleiben für den Datenschutz erhalten.
     Liefert (Vorlagen, ausgelassene Vorlagen als {id, grund, BEZIEHUNGEN}, Zähler der angeglichenen Felder)."""
@@ -164,6 +169,7 @@ def einlesen(papers):
         elif not isinstance(typ, str):
             angeglichen["paperType (keine Zeichenkette)"] += 1
             p["paperType"] = "; ".join(_text(typ))
+            p[ANDERE_FORM] = True   # Vorlagenart nicht erkennbar: keine Hauskoordinate (geocode.vorlagenart_erkannt)
         out.append(p)
     return out, ausgelassen, +angeglichen
 
@@ -308,11 +314,22 @@ def build():
     gaz = Gazetteer(street_points=points)
     gremien = {p["id"]: [(orgs_by_id.get((c.get("organization") or [None])[0]) or {}).get("name", "")
                          for c in p.get("consultation") or [] if isinstance(c, dict)] for p in papers}
-    # ohne Hauskoordinate: Eingaben, Vorlagen natürlicher Personen und alle mit ihnen verbundenen Vorlagen; ausgelassene
-    # Vorlagen gehören zur Startmenge (ohne Drucksachennummer keine Erlaubnis, geocode.REFERENZ_PUNKT): eine Eingabe
-    # ohne Nummer sperrt so weiter ihre Beantwortung oder Stellungnahme
-    gesperrt = ohne_hauskoordinate({p["id"] for p in papers if not hausnummer_punkt_erlaubt(p, gremien.get(p["id"], ()))}
-                                   | {a["id"] for a in ausgelassen}, rows["rel"])
+    # ohne Hauskoordinate: Eingaben, Vorlagen natürlicher Personen, Vorlagen mit leerer oder nicht erkennbarer
+    # Vorlagenart (Entscheidung 10.11.2026) und alle mit ihnen verbundenen Vorlagen (vorsichtige Auslegung: auch eine
+    # Vorlage unbekannter Art kann eine Eingabe sein und sperrt ihre Beantwortung); ausgelassene Vorlagen gehören zur
+    # Startmenge (ohne Drucksachennummer keine Erlaubnis, geocode.REFERENZ_PUNKT): eine Eingabe ohne Nummer sperrt so
+    # weiter ihre Beantwortung oder Stellungnahme
+    start = ({p["id"] for p in papers if not hausnummer_punkt_erlaubt(p, gremien.get(p["id"], ()))}
+             | {a["id"] for a in ausgelassen})
+    gesperrt = ohne_hauskoordinate(start, rows["rel"])
+    # Log: Gründe je Vorlage und die nicht erkannten Vorlagenarten mit Anzahl (nur die Art), damit das Muster
+    # geocode.VORLAGENART_PUNKT nach dem Vollabruf ergänzt werden kann
+    grund = {p["id"]: punkt_ausschluss(p, gremien.get(p["id"], ())) for p in papers}
+    je_grund = Counter(grund.values())
+    print(f"Ohne Erlaubnis für Hauskoordinaten: {len(gesperrt & grund.keys())} von {len(papers)} Vorlagen ("
+          + ", ".join(f"{text} {je_grund[g]}" for g, text in AUSSCHLUSS.items())
+          + f", verbunden mit einer davon oder einer ausgelassenen Vorlage {len((gesperrt - start) & grund.keys())})")
+    print(nicht_erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] == "vorlagenart")))
     rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien, gesperrt)
     plans = Plans()
     rows["plan"] = [(pid, nr, ev, plans.classify(nr)[0]) for pid, nr, ev in rows["plan"]]
@@ -345,6 +362,8 @@ def build():
     db.executemany("INSERT INTO paper_responsibility VALUES (?,?,?,?,?,?)", rows["resp"])
     db.executemany(f"INSERT OR IGNORE INTO skipped_paper VALUES (?, ?, '{config.QUELLE_OPARL}')",
                    [(a["id"], a["grund"]) for a in ausgelassen])
+    db.executemany("INSERT OR IGNORE INTO paper_type_other_form VALUES (?)",
+                   [(p["id"],) for p in papers if p.get(ANDERE_FORM)])
     db.commit()
     db.close()
     print(f"{len(papers)} Vorlagen, {len(rows['cons'])} Beratungen, {len(meetings)} Sitzungen, "
