@@ -211,6 +211,15 @@ def test_modul_liest_nur_den_datenvertrag():
     assert ".reduce(" not in text.replace("weitere.reduce((s, x) => s + x.ids.length, 0)", ""), "keine Summen über Werte"
 
 
+def test_flaechen_ohne_vereinfachung_durch_leaflet():
+    """Die Quartiere sind als lückenlose Abdeckung vereinfacht (raum/quartier.geojson, gemeinsame Grenzen); Leaflet
+    vereinfacht die Pfade der Flächenfarben nicht noch einmal je Fläche (smoothFactor 0), damit Nachbarn im SVG
+    dieselben Grenzstrecken haben und keine Fugen entstehen (Browserprüfung vom 10.11.2026)."""
+    text = MODUL.read_text(encoding="utf-8")
+    schicht = _teil(text, r"^  schicht = ctx\.L\.geoJSON\(R\.geo, \{\n.*?\n  \}\)\.addTo\(ctx\.karte\(\)\);\n")
+    assert 'pane: "strukturdaten", renderer, style: stil, smoothFactor: 0,' in schicht
+
+
 # --- Freigabe: ohne „strukturdaten“ keine Spuren -------------------------------------------------------------------
 
 def _seite_bauen():

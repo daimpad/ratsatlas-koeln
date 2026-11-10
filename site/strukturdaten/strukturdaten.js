@@ -637,8 +637,10 @@ async function zeichnen() {
   };
   if (schicht) schicht.remove();
   tippOffen = null;
+  // smoothFactor 0: Leaflet vereinfacht die Pfade nicht noch einmal je Fläche; sonst entfallen bei Nachbarn
+  // verschiedene Punkte derselben Grenze, und zwischen den lückenlosen Quartieren erscheinen Fugen bis 1 Bildpunkt
   schicht = ctx.L.geoJSON(R.geo, {
-    pane: "strukturdaten", renderer, style: stil,
+    pane: "strukturdaten", renderer, style: stil, smoothFactor: 0,
     onEachFeature(f, layer) {
       layer.bindTooltip(() => tipp(String(f.properties.raum_id)), { sticky: true, direction: "top", className: "nav-tip sd-tipp" });
       layer.on("tooltipopen", () => { if (tippOffen && tippOffen !== layer && Date.now() < festBis) layer.closeTooltip(); });
