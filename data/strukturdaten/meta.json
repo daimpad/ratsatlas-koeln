@@ -307,31 +307,16 @@
   "in_werten": "ja, wenn die Einheit im Blatt Daten des Statistischen Datenkatalogs steht",
   "grund": "Begründung des Prüfstatus; dazu Hinweise ohne Einfluss auf den Prüfstatus (Geometrie repariert, Name im Blatt Daten abweichend vom Namen der Geometriequelle, mit Jahren)"
  },
- "geheimhaltung_hinweis": "status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen (Quartier, Stadtteil, Stadtbezirk) oder Teilgrößen hinweg; zuordnung.tsv dient nicht der Verrechnung von Werten. In 1291 Zeilen folgt ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile (koeln_A0359A aus koeln_A0025A und koeln_A0355A: stadtteil 3, quartier 1288; geheimhaltung_ableitbar): Die Quelle hält dort nur einen Wert der Beziehung geheim und veröffentlicht die übrigen (keine sekundäre Geheimhaltung in der Quelle). Die Werte bleiben unverändert (quellentreu); die Anzeige bildet auch dort keine Summen, Differenzen oder Verhältnisse, die den geheimen Wert ergeben.",
+ "geheimhaltung_hinweis": "status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen (Quartier, Stadtteil, Stadtbezirk) oder Teilgrößen hinweg; zuordnung.tsv dient nicht der Verrechnung von Werten. In 1291 Zeilen ist ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar (stadtteil 3, quartier 1288; geheimhaltung_ableitbar); die Quelle wendet dort keine sekundäre Geheimhaltung an. Die Werte bleiben unverändert (quellentreu); die Anzeige bildet auch dort keine Summen, Differenzen oder Verhältnisse, die einen geheimen Wert ergeben.",
  "geheimhaltung_ableitbar": {
-  "geprueft": "Zeilen aller Raumebenen (werte.tsv und werte_quartier.tsv.gz), in denen genau ein Wert einer geprüften Beziehung geheim ist und die übrigen veröffentlicht sind, sodass er durch sie bestimmt ist; geprüft: Summe koeln_A0025A = koeln_A0355A + koeln_A0359A; 34 Verhältnisse (zaehler_id und nenner_id in indikatoren.tsv). Nur gezählt; die Werte selbst werden nicht ermittelt.",
-  "zeilen": [
-   {
-    "beziehung": "koeln_A0025A = koeln_A0355A + koeln_A0359A",
-    "geheim": "koeln_A0359A",
-    "aus": [
-     "koeln_A0025A",
-     "koeln_A0355A"
-    ],
-    "raumebene": "stadtteil",
-    "zeilen": 3
-   },
-   {
-    "beziehung": "koeln_A0025A = koeln_A0355A + koeln_A0359A",
-    "geheim": "koeln_A0359A",
-    "aus": [
-     "koeln_A0025A",
-     "koeln_A0355A"
-    ],
-    "raumebene": "quartier",
-    "zeilen": 1288
-   }
-  ]
+  "geprueft": "Zahl der Zeilen je Raumebene (werte.tsv und werte_quartier.tsv.gz), in denen ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar ist; geprüft: eine Summe und 34 Verhältnisse (zaehler_id und nenner_id in indikatoren.tsv). Nur gezählt; die Werte werden nicht ermittelt, Beziehungen und beteiligte Indikatoren nicht genannt (Entscheidung 10.11.2026).",
+  "zeilen": {
+   "gesamtstadt": 0,
+   "stadtbezirk": 0,
+   "stadtteil": 3,
+   "quartier": 1288
+  },
+  "zeilen_gesamt": 1291
  },
  "quellen": [
   {

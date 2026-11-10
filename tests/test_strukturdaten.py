@@ -9,6 +9,7 @@ dem Senden abgewiesen."""
 import csv
 import gzip
 import hashlib
+import itertools
 import json
 import math
 import re
@@ -131,12 +132,13 @@ WW_LISTE = [
 
 
 def _werte(raum, jahr):
-    """Erfundene Werte einer Zeile; Gesamt = Haupt + Neben, Anteil = 100 × Männer / Gesamt (6 Stellen)."""
+    """Erfundene Werte einer Zeile, die die geprüften Beziehungen erfüllen (Summenprüfung; Anteil aus Zähler und Nenner
+    mit 6 Stellen)."""
     nummer = int(raum.split(" / ")[0]) % 1000
-    haupt, neben = 1000 + 37 * nummer + jahr % 10, 11 + nummer % 7
-    gesamt = haupt + neben
-    maenner = gesamt // 2 + nummer % 5
-    return [gesamt, haupt, neben, maenner, round(100 * maenner / gesamt, 6), 40.5 + nummer / 1000, 3, 7]
+    teil_a, teil_b = 1000 + 37 * nummer + jahr % 10, 11 + nummer % 7
+    summe = teil_a + teil_b
+    maenner = summe // 2 + nummer % 5
+    return [summe, teil_a, teil_b, maenner, round(100 * maenner / summe, 6), 40.5 + nummer / 1000, 3, 7]
 
 
 def xlsx_bauen(pfad, aendern=None):
@@ -361,7 +363,8 @@ def test_indikatoren_und_zurueckgestellte(umgebung):
                                                                "2024-2025", "2026-11-10")
     assert a["geheimhaltung"] == GEHEIM and a["quell_url"] == strukturdaten.DATENSATZ_URL
     assert a["datenhalter"] == "Stadt Köln - Testamt (eigene Berechnung)"
-    assert "Nebenwohnsitz (koeln_A0359A)" in ind["koeln_A0025A"]["metatext"]
+    assert ind["koeln_A0025A"]["metatext"] == ("Statistischer Datenkatalog Köln, Spalte A0025A; Werte unverändert "
+                                               "übernommen.")   # ohne die Summe (Entscheidung 10.11.2026)
     assert "Anmerkung der Quelle: Testanmerkung zur Berechnung." in ind["koeln_A0022S"]["metatext"]
     assert "Schätz" not in " ".join(i["metatext"] for i in ind.values())   # die Quelle sagt dazu nichts
     for i in ind.values():
@@ -841,18 +844,209 @@ def test_eigene_einordnungen_und_formate_gekennzeichnet(umgebung):
     assert ind["koeln_A0109P"]["jahre"] == "2024-2025"
 
 
-def test_metatext_summe_nennt_nicht_pruefbare_zeilen(umgebung):
-    """A0025A = A0355A + A0359A: der Metatext nennt geprüfte und nicht prüfbare Zeilen (Testdaten: A0359A fehlt für
-    201/2024, für 102/2025 geheim)."""
+# Rollen der Summenprüfung (Gesamtzahl und zwei Teile): Codes aus dem Modul, Bezeichnungen aus den Testspalten (Wortlaut
+# der Quelle), damit der Test keinen Rechenweg ausschreibt (Entscheidung 10.11.2026)
+_G, _H, _N = strukturdaten.GESAMT, strukturdaten.HAUPT, strukturdaten.NEBEN
+_NAMEN = dict(s.split(" - ", 1) for s in SPALTEN)
+
+
+def _rollen(codes, namen):
+    """((Code, Wortstamm, Stichwort) je Rolle): Stichwort ist das letzte Wort der Bezeichnung, bei den beiden Teilen ist
+    der Wortstamm das Stichwort ohne die gemeinsame Endung (erkennt auch verkürzte und zusammengesetzte Formen)."""
+    worte = [re.findall(r"\w+", n)[-1] for n in namen]
+    ende = 0
+    while ende < min(len(w) for w in worte[1:]) and worte[1][-1 - ende] == worte[2][-1 - ende]:
+        ende += 1
+    staemme = [worte[0]] + [w[:len(w) - ende] if len(w) - ende >= 3 else w for w in worte[1:]]
+    return tuple(zip(codes, staemme, worte))
+
+
+_ROLLEN = _rollen((_G, _H, _N), [_NAMEN[c] for c in (_G, _H, _N)])
+# erfundene Rollen für die Gegenproben der Erkennung (weder echte Codes noch echte Bezeichnungen)
+_ERFUNDEN = _rollen(("X0001A", "X0002A", "X0003A"),
+                    ("Testobjekte, Bestand", "Testobjekte, im Nordteil", "Testobjekte, im Ostteil"))
+_RECHENZEICHEN = r"[−–=+-]"
+_RECHENWORT = r"minus|abzüglich|weniger|plus"
+# Wörter am Wortanfang („Stadtteilsummen“ für den Vergleich zwischen Raumebenen zählt nicht)
+_SUMME = r"\b(?:Summe\b|summiert)"
+_ABLEITUNG = (rf"{_SUMME}|\b(?:Differenz|Unterschied|minus\b|abzüglich|weniger\b|ableit|ergibt|ergäbe|folgt|errechn"
+              r"|berechn|geheim)")
+
+
+def _nennt_rechenweg(text, rollen=None):
+    """Nennt ein Text einen Rechenweg zu den geheim gehaltenen Werten der Summenprüfung (Entscheidung 10.11.2026)?
+    Rollen sind die Gesamtzahl und die beiden Teile, je als Code (auch mit Präfix koeln_) oder als Wortstamm. Treffer:
+    zwei Rollen mit Rechenzeichen (zwischen Wörtern mit Leerzeichen davor und danach) oder Rechenwort dazwischen oder
+    nach „Differenz“ bzw. „Unterschied“; der Code des zweiten Teils vor „=“; der zweite Teil (Code oder Stichwort) im
+    selben Text mit dem Code einer anderen Rolle oder mit Wörtern wie „Summe“, „ergibt“ oder „geheim“; Gesamtzahl und
+    erster Teil als Code in einem Satzteil mit solchen Wörtern; die Gesamtzahl als Code in einem Satzteil mit
+    „Summe“."""
+    (g, sg, _), (h, sh, _), (n, sn, wn) = rollen or _ROLLEN
+
+    def such(muster, t=text):
+        return re.search(muster, t, re.I)
+
+    code = {r: rf"\b(?:koeln_)?{c}\b" for r, c in (("g", g), ("h", h), ("n", n))}
+    rolle = {r: rf"(?:{code[r]}|\b{s}\w*)" for r, s in (("g", sg), ("h", sh), ("n", sn))}
+    for x, y in itertools.permutations("ghn", 2):
+        if (such(rf"{code[x]}\s*{_RECHENZEICHEN}\s*{code[y]}")
+                or such(rf"{rolle[x]}(?:\s+\S+){{0,2}}?\s+{_RECHENZEICHEN}\s+(?:\S+\s+){{0,2}}?{rolle[y]}")
+                or such(rf"{rolle[x]}[^;\n]{{0,60}}?\b(?:{_RECHENWORT})\b[^;\n]{{0,60}}?{rolle[y]}")
+                or such(rf"\b(?:Differenz|Unterschied)\w*[^;\n]{{0,60}}?{rolle[x]}[^;\n]{{0,60}}?{rolle[y]}")):
+            return True
+    if (such(rf"{code['n']}\s*=") or (such(code["n"]) and (such(code["g"]) or such(code["h"])))
+            or (such(rf"(?:{code['n']}|\b{wn}\w*)") and such(_ABLEITUNG))):
+        return True
+    for satzteil in re.split(r"[;\n]|[.!?](?=\s|$)", text):
+        if such(code["g"], satzteil) and (such(_SUMME, satzteil)
+                                          or (such(code["h"], satzteil) and such(_ABLEITUNG, satzteil))):
+            return True
+    return False
+
+
+def _nennt_summe(iid, text, rollen=None):
+    """Metatext: Rechenweg wie _nennt_rechenweg, bei der Gesamtzahl auch beide Teile oder die Zahl der nachgerechneten
+    Zeilen."""
+    (g, *_), (h, *_), (n, *_) = rollen or _ROLLEN
+    return _nennt_rechenweg(text, rollen) or (iid == f"koeln_{g}" and ("nachgerechnet" in text
+                                                                        or (h in text and n in text)))
+
+
+def test_rechenweg_erkennung():
+    """Die Erkennung arbeitet hier mit erfundenen Codes und Bezeichnungen (der Test schreibt keine echte Beziehung aus):
+    Formeln, Rechenwörter, Gleichungen, die Formen, die Metatext und meta.json bis zum 10.11.2026 enthielten, und die
+    Formen aus der Prüfung vom 10.11.2026 (Abend) werden erkannt; zulässige Sätze (Bezugsgröße, Zählung je Raumebene,
+    Vergleichszelle mit „=“, Entscheidungstabelle) nicht. Für die echten Rollen gilt dieselbe Ableitung der
+    Wortstämme."""
+    rollen = _ERFUNDEN
+    (g, sg, _), (h, sh, wh), (n, sn, wn) = rollen
+    assert (sg, sh, sn, wh, wn) == ("Bestand", "Nord", "Ost", "Nordteil", "Ostteil")
+    assert [c for c, _, _ in _ROLLEN] == [_G, _H, _N] and all(3 <= len(s) < len(w) for _, s, w in _ROLLEN[1:])
+    for text in (f"koeln_{g} = koeln_{h} + koeln_{n}", f"koeln_{h} + koeln_{n}", f"koeln_{g} − koeln_{h}", f"{g}-{h}",
+                 f"{wn} = {g} - {h}", f"koeln_{n} aus koeln_{g} und koeln_{h}: quartier 1",
+                 f"{sg} minus {wh} ergibt {wn}", f"{sg} minus {sh} ergibt {sn}",
+                 f"In 1 291 Zeilen ist der {wn} ({n}) geheim, {sg} und {wh} veröffentlicht",
+                 f"Der geheime Wert ist {g} minus {h}.", f"Die Differenz von {g} und {h} ist in 1 291 Zeilen geheim.",
+                 f"{wn} = {sg}szahl − {wh}", f"Testobjekte {sg} minus Testobjekte im {wh}",
+                 f"Geheime Werte folgen aus {g} minus {h}", f"{sg}szahl abzüglich {wh} ergibt den {wn}",
+                 f"Unterschied zwischen {sg} und {sh}teilen", f"{g} ist aus {h} ableitbar",
+                 f"Metatext von {g} ohne die Summe", f"Gleichung: {sg} – {wh} = {wn}"):
+        assert _nennt_rechenweg(text, rollen) and _nennt_summe("koeln_X9999P", text, rollen), text
+    assert _nennt_summe(f"koeln_{g}", f"Testobjekte im {wh} (koeln_{h}) und im {wn} (koeln_{n}), nachgerechnet in 22 "
+                                      "von 24 Zeilen.", rollen)
+    assert _nennt_summe(f"koeln_{g}", "nachgerechnet in 22 von 24 Zeilen", rollen)
+    assert not _nennt_summe("koeln_X9999P", "nachgerechnet in 22 von 24 Zeilen", rollen)
+    for text in (f"Bezugsgröße sind alle Testobjekte mit {sh}- und {wn}.",
+                 "In 1291 Zeilen ist ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar "
+                 "(stadtteil 3, quartier 1288; geheimhaltung_ableitbar)",
+                 "geprüft: eine Summe und 34 Verhältnisse (zaehler_id und nenner_id in indikatoren.tsv)",
+                 f"CSV-Spalte {h}, Zeile S_RAUMEBENE=0 (Gesamtstadt), S_JAHR=2023; zum Vergleich {g} (einschließlich "
+                 f"{wn}) 2023 = 1095520",
+                 f"Einwohnerzahl ({wh}, {h}) und Altersanteile (Bezug {g}, im Metatext genannt) aus der Stadtstatistik",
+                 "Statistikstelle auf die 1 291 ableitbaren Werte hinweisen; Werte wie bei der Stadt; kein Metatext "
+                 "nennt die geprüfte Summe; die Seite bildet keine Differenzen"):
+        assert not _nennt_rechenweg(text, rollen) and not _nennt_summe("koeln_X9999P", text, rollen), text
+
+
+def test_metatext_nennt_summe_nicht(umgebung, capsys):
+    """Entscheidung 10.11.2026: Kein Metatext nennt die Summe der Summenprüfung oder die Zahl der geprüften Zeilen.
+    Der Lauf prüft die Summe weiter, nennt in der Ausgabe nur Zahlen und zählt die Zeilen mit ableitbarem geheimem Wert
+    in meta.json je Raumebene (Testdaten: ein Teil der Summe fehlt für 201/2024 und ist für 102/2025 geheim)."""
     dl, aus = umgebung
     pfade = dateien_schreiben(dl)
     xlsx_bauen(pfade["xlsx"], lambda d: d.__setitem__("F7", "*"))
     protokoll_schreiben(dl, pfade)
     strukturdaten.write()
-    a = next(i for i in _lesen(aus / "indikatoren.tsv") if i["indikator_id"] == "koeln_A0025A")
-    # 24 Zeilen: 12 aus werte.tsv und 12 Quartierszeilen (die Prüfung gilt für jede veröffentlichte Zeile)
-    assert ("nachgerechnet in 22 von 24 Zeilen; nicht prüfbar: 1 Zeile mit geheim gehaltenem Wert, 1 Zeile mit "
-            "fehlendem Wert") in a["metatext"]
+    ind = _lesen(aus / "indikatoren.tsv")
+    assert not [i["indikator_id"] for i in ind if _nennt_summe(i["indikator_id"], i["metatext"])]
+    # die Prüfung läuft weiter: 24 Zeilen (12 aus werte.tsv, 12 Quartierszeilen), davon 22 nachgerechnet
+    ausgabe = capsys.readouterr().out
+    assert "Summenprüfung: gilt (22 Zeilen, nicht prüfbar {'geheim': 1, 'fehlt': 1})" in ausgabe
+    assert "Geheim, aber ableitbar: 2 Zeilen (stadtteil 1, quartier 1)" in ausgabe
+    assert not [z for z in ausgabe.splitlines() if _nennt_rechenweg(z)]   # die Ausgabe nennt nur Zahlen
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    g = meta["geheimhaltung_ableitbar"]
+    # 102 / 2025 (Summe) und 101010002 / 2025 (Verhältnis, G18 „*“ in den Testdaten)
+    assert g["zeilen"] == {"gesamtstadt": 0, "stadtbezirk": 0, "stadtteil": 1, "quartier": 1}
+    assert g["zeilen_gesamt"] == 2
+
+
+def test_metatext_nennt_summe_nicht_in_den_daten():
+    """Die veröffentlichte data/strukturdaten/indikatoren.tsv folgt derselben Regel (Entscheidung 10.11.2026); die
+    Bezeichnungen der Rollen in den Testspalten sind die der veröffentlichten Indikatoren."""
+    ind = _lesen(config.ROOT / "data" / "strukturdaten" / "indikatoren.tsv")
+    namen = {i["indikator_id"]: i["name"] for i in ind}
+    assert all(namen[f"koeln_{c}"] == _NAMEN[c] for c in (_G, _H, _N))
+    assert not [i["indikator_id"] for i in ind if _nennt_summe(i["indikator_id"], i["metatext"])]
+
+
+def _json_texte(o):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            yield k
+            yield from _json_texte(v)
+    elif isinstance(o, list):
+        for v in o:
+            yield from _json_texte(v)
+    elif isinstance(o, str):
+        yield o
+
+
+_SEITE_ENDUNGEN = {".html", ".js", ".json", ".md", ".txt", ".webmanifest"}
+
+
+def _veroeffentlichte_texte(root):
+    """Texte des Repositorys, die mit Quellcode, Seite oder Datenpaket veröffentlicht werden: Markdown im
+    Wurzelverzeichnis und in data/, docs/, explore/ und inventur/, Texte und Tabellen in explore/strukturdaten/
+    (Phase-0-Bericht und Anlagen) und die Texte der Seite in site/ ohne site/vendor. explore/ergebnisse und
+    Zwischenspeicher (explore/_cache) werden nicht gelesen."""
+    pfade = [p for d in ("", "data", "docs", "explore", "inventur") for p in sorted((root / d).glob("*.md"))]
+    explore = root / "explore" / "strukturdaten"
+    pfade += sorted(explore.glob("*.md")) + sorted(explore.glob("*.tsv"))
+    site = root / "site"
+    pfade += sorted(p for p in site.rglob("*") if p.is_file() and p.suffix in _SEITE_ENDUNGEN
+                    and p.relative_to(site).parts[0] != "vendor")
+    return pfade
+
+
+def test_veroeffentlichte_texte_ohne_rechenweg():
+    """Entscheidung 10.11.2026 („nur zählen, ohne Formel“): Kein veröffentlichter Text nennt einen Rechenweg zu den
+    geheim gehaltenen Werten der Summenprüfung: Felder von indikatoren.tsv und zurueckgestellt.tsv, alle Texte in
+    meta.json und die Texte aus _veroeffentlichte_texte (Markdown und Seite je Zeile, TSV je Zelle). meta.json zählt nur
+    Zeilen je Raumebene."""
+    root = config.ROOT
+    daten = root / "data" / "strukturdaten"
+    funde = []
+    for name in ("indikatoren.tsv", "zurueckgestellt.tsv"):
+        for z in _lesen(daten / name):
+            funde += [f"{name}: {z.get('indikator_id')} {k}" for k, v in z.items() if _nennt_rechenweg(v or "")]
+    meta = json.loads((daten / "meta.json").read_text(encoding="utf-8"))
+    funde += [f"meta.json: {s[:80]}" for s in _json_texte(meta) if _nennt_rechenweg(s)]
+    g = meta["geheimhaltung_ableitbar"]
+    assert set(g) == {"geprueft", "zeilen", "zeilen_gesamt"}
+    assert list(g["zeilen"]) == list(strukturdaten.EBENEN_REIHENFOLGE)
+    assert g["zeilen_gesamt"] == sum(g["zeilen"].values()) > 0
+    assert not re.search(r"[A-Z]\d{4}[APS]", json.dumps(g, ensure_ascii=False) + meta["geheimhaltung_hinweis"])
+    texte = _veroeffentlichte_texte(root)
+    for pfad in ("TECHNIK.md", "README.md", "data/LICENSE-DATA.md", "explore/ANFRAGE_stadt_koeln.md",
+                 "explore/strukturdaten/BERICHT_strukturdaten_phase0.md", "site/index.html", "site/app.js"):
+        assert root / pfad in texte, pfad
+    for pfad in texte:
+        for nr, zeile in enumerate(pfad.read_text(encoding="utf-8").splitlines(), 1):
+            for teil in (zeile.split("\t") if pfad.suffix == ".tsv" else [zeile]):
+                if _nennt_rechenweg(teil):
+                    funde.append(f"{pfad.relative_to(root)}:{nr}")
+    assert not funde, funde
+
+
+def test_hinweis_statistikstelle_nicht_im_repository():
+    """Entscheidung 10.11.2026: Die Zellliste für die Statistikstelle geht nur als Mail-Anhang, der Hinweis an die
+    Statistikstelle liegt außerhalb des Repositorys; LIESMICH nennt beide Dateien nicht."""
+    explore = config.ROOT / "explore" / "strukturdaten"
+    for name in ("geheimhaltung_ableitbar.tsv", "HINWEIS_statistikstelle_geheimhaltung.md"):
+        assert not (explore / name).exists(), name
+        assert name not in (explore / "LIESMICH.md").read_text(encoding="utf-8")
+    assert "außerhalb des Repositorys" in (explore / "LIESMICH.md").read_text(encoding="utf-8")
 
 
 # --- Raumabgleich (Phase 2, Vertrag 1.1) -------------------------------------------------------------------------------
@@ -1583,33 +1777,35 @@ def test_herkunft_der_gebiete_aus_data_geo(umgebung, monkeypatch):
 
 
 def test_geheim_aber_ableitbar_gemeldet(umgebung):
-    """Ist genau ein Wert einer geprüften Beziehung geheim und folgt er aus den veröffentlichten Werten derselben Zeile,
-    zählt meta.json die Zeilen (geheimhaltung_ableitbar) und nennt sie im Hinweis; die Werte bleiben unverändert und
+    """Ist genau ein Wert einer geprüften Beziehung geheim und durch die veröffentlichten Werte derselben Zeile bestimmt,
+    zählt meta.json die Zeilen je Raumebene (geheimhaltung_ableitbar) und nennt die Zahl im Hinweis, ohne Beziehung
+    und Indikatoren; eine Zeile zählt einmal, auch wenn mehrere Beziehungen zutreffen. Die Werte bleiben unverändert,
     nichts wird ausgerechnet."""
     dl, aus = umgebung
     pfade = dateien_schreiben(dl)
 
-    def nebenwohnsitz_geheim(daten):
-        daten["F19"] = "*"    # 101010003 / 2025: Nebenwohnsitz geheim, Gesamt und Hauptwohnsitz veröffentlicht
+    def teil_geheim(daten):
+        daten["F19"] = "*"    # 101010003 / 2025: ein Teil der Summe geheim, die übrigen veröffentlicht
+        daten["G19"] = "*"    # dieselbe Zeile: auch Männer geheim, Anteil und Gesamtzahl veröffentlicht (zählt einmal)
         daten["E7"], daten["F7"] = "*", "*"   # 102 / 2025: zwei Werte der Summe geheim, nicht ableitbar
-    xlsx_bauen(pfade["xlsx"], nebenwohnsitz_geheim)
+    xlsx_bauen(pfade["xlsx"], teil_geheim)
     protokoll_schreiben(dl, pfade)
     strukturdaten.write()
     meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
-    zeilen = meta["geheimhaltung_ableitbar"]["zeilen"]
-    assert zeilen == [
-        {"beziehung": "koeln_A0025A = koeln_A0355A + koeln_A0359A", "geheim": "koeln_A0359A",
-         "aus": ["koeln_A0025A", "koeln_A0355A"], "raumebene": "quartier", "zeilen": 1},
-        # G18 „*“ (Männer im Quartier 101010002, 2025), Anteil und Gesamtzahl veröffentlicht
-        {"beziehung": "koeln_A0109P = 100 × koeln_A0109A / koeln_A0025A", "geheim": "koeln_A0109A",
-         "aus": ["koeln_A0109P", "koeln_A0025A"], "raumebene": "quartier", "zeilen": 1}]
-    assert "Summe koeln_A0025A = koeln_A0355A + koeln_A0359A" in meta["geheimhaltung_ableitbar"]["geprueft"]
+    g = meta["geheimhaltung_ableitbar"]
+    # Zeile 19 (Summe und Verhältnis) und G18 „*“ (Männer im Quartier 101010002, 2025; Verhältnis)
+    assert g["zeilen"] == {"gesamtstadt": 0, "stadtbezirk": 0, "stadtteil": 0, "quartier": 2}
+    assert g["zeilen_gesamt"] == 2
+    assert "geprüft: eine Summe und 1 Verhältnis (zaehler_id und nenner_id in indikatoren.tsv)" in g["geprueft"]
     hinweis = meta["geheimhaltung_hinweis"]
-    assert "In 2 Zeilen folgt ein geheim gehaltener Wert" in hinweis and "keine sekundäre Geheimhaltung" in hinweis
-    assert "koeln_A0359A aus koeln_A0025A und koeln_A0355A: quartier 1" in hinweis
+    assert "In 2 Zeilen ist ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar " \
+           "(quartier 2; geheimhaltung_ableitbar)" in hinweis and "keine sekundäre Geheimhaltung" in hinweis
+    assert not re.search(r"[A-Z]\d{4}[APS]", json.dumps(g, ensure_ascii=False) + hinweis)
+    assert not [s for s in _json_texte(meta) if _nennt_rechenweg(s)]
     werte = {(w["raum_id"], w["indikator_id"], w["jahr"]): w for w in _werte_quartier(aus)}
-    assert (werte[("101010003", "koeln_A0359A", "2025")]["wert"], werte[("101010003", "koeln_A0359A", "2025")][
-        "status"]) == ("", "geheim")
+    for iid in (f"koeln_{_N}", "koeln_A0109A"):
+        assert (werte[("101010003", iid, "2025")]["wert"], werte[("101010003", iid, "2025")]["status"]) == (
+            "", "geheim")
     assert {w["status"] for w in _werte_quartier(aus)} <= {"ok", "geheim", "fehlt"}
 
 

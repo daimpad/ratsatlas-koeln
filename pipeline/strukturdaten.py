@@ -48,9 +48,11 @@ der XLSX ganze Zahlen wie gespeichert, Gleitkommazahlen in der kürzesten Schrei
 Exponent); aus dem Wegweiser-Export die veröffentlichten Ziffern. „k.A.“ im Wegweiser-Export ergibt keine Zeile in
 gesamtstadt.tsv (der Vertrag sieht dort keinen Status vor); die betroffenen Jahre nennt der Metatext des Indikators.
 `quellobjekt` in werte.tsv und werte_quartier.tsv.gz ist die Zelle im Blatt Daten („Daten!D2“) der Datei mit der
-Prüfsumme aus meta.json. Zeilen, in denen ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile folgt
-(geprüfte Summe A0025A = A0355A + A0359A und geprüfte Verhältnisse; die Quelle hält dort nur einen Wert geheim), zählt
-meta.json unter `geheimhaltung_ableitbar`; die Werte bleiben unverändert und werden nicht ermittelt.
+Prüfsumme aus meta.json. Zeilen, in denen ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile
+ableitbar ist (geprüft: eine Summe und die Verhältnisse aus Zähler und Nenner), zählt meta.json je Raumebene unter
+`geheimhaltung_ableitbar`, ohne Beziehung, Rechenweg oder beteiligte Indikatoren zu nennen; die Werte bleiben unverändert
+und werden nicht ermittelt. Die Summe wird nur geprüft; kein Metatext in indikatoren.tsv und kein veröffentlichter Text
+nennt sie, und die Ausgabe des Laufs nennt nur Zahlen (Entscheidung 10.11.2026).
 
 Typ, Einheit sowie Zähler und Nenner der Kölner Indikatoren stammen aus Phase 0 (pipeline/strukturdaten_koeln.tsv,
 abgeleitet, nicht aus der Quelle). Zähler und Nenner stehen nur dort, wo Phase 0 sie numerisch geprüft hat, und nur,
@@ -149,7 +151,8 @@ EBENEN_REIHENFOLGE = ("gesamtstadt", "stadtbezirk", "stadtteil", "quartier")
 EBENEN_WERTE = ("gesamtstadt", "stadtbezirk", "stadtteil")   # werte.tsv; quartier in werte_quartier.tsv.gz
 TYPEN = {"anzahl", "anteil", "quote", "dichte", "mittelwert", "kategorie"}
 EINWOHNER = "koeln_A0355A"   # Einwohnerzahl für die Anzeige: Hauptwohnsitz (Entscheidung 10.11.2026)
-# A0025A „Einwohner*innen, gesamt“ = A0355A (Hauptwohnsitz) + A0359A (Nebenwohnsitz); im Lauf nachgerechnet
+# Codes der geprüften Beziehung; nur im Lauf geprüft und gezählt, in keinem veröffentlichten Text und in keiner Ausgabe
+# genannt (Entscheidung 10.11.2026)
 GESAMT, HAUPT, NEBEN = "A0025A", "A0355A", "A0359A"
 
 # Dateien im Zwischenspeicher: Schlüssel → (Dateiname, Umgebungsvariable)
@@ -891,10 +894,6 @@ def _summe(spalte, zeilen, gesamt, teile):
     return n > 0, n, offen
 
 
-def _zeilen(n):
-    return f"{n} Zeile" if n == 1 else f"{n} Zeilen"
-
-
 def _ist_zahl(v):
     return isinstance(v, (int, float)) and not isinstance(v, bool)
 
@@ -904,21 +903,20 @@ def _ist_geheim(v):
 
 
 def _ableitbar(spalte, zeilen, summen, verhaeltnisse):
-    """Zeilen, in denen ein geheim gehaltener Wert („*“) aus veröffentlichten Werten derselben Zeile folgt: genau ein
-    Wert einer geprüften Beziehung ist geheim, die übrigen sind Zahlen, und der geheime Wert ist durch sie bestimmt.
-    summen: [(gesamt, teile)] (gesamt = Summe der Teile; immer bestimmt); verhaeltnisse: [(wert, zaehler, nenner,
-    faktor)]
-    (wert = faktor × zaehler / nenner; wert oder zaehler geheim: bestimmt bei nenner ≠ 0; nenner geheim: bei wert ≠ 0
-    und zaehler ≠ 0). Rückgabe: [{beziehung, geheim, aus, raumebene, zeilen}] mit Anzahl > 0, Codes ohne Präfix.
-    Nur Prüfung, keine Rechnung: die Werte selbst werden nicht ermittelt und nirgends geschrieben."""
-    zaehlung = {}
-    beziehungen = [(f"{g} = {' + '.join(t)}", (g, *t), "summe") for g, t in summen]
-    beziehungen += [(f"{w} = {f} × {z} / {n}", (w, z, n), "verhaeltnis") for w, z, n, f in verhaeltnisse]
-    for text, codes, art in beziehungen:
-        if any(c not in spalte for c in codes):
-            continue
-        idx = [spalte[c] for c in codes]
-        for _, ebene, *_, werte in zeilen:
+    """Zahl der Zeilen je Raumebene, in denen ein geheim gehaltener Wert („*“) aus veröffentlichten Werten derselben
+    Zeile ableitbar ist: genau ein Wert einer geprüften Beziehung ist geheim, die übrigen sind Zahlen, und der geheime
+    Wert ist durch sie bestimmt. summen: [(gesamt, teile)] (gesamt = Summe der Teile; immer bestimmt); verhaeltnisse:
+    [(wert, zaehler, nenner, faktor)] (wert = faktor × zaehler / nenner; wert oder zaehler geheim: bestimmt bei
+    nenner ≠ 0; nenner geheim: bei wert ≠ 0 und zaehler ≠ 0). Rückgabe: {raumebene: Zeilen} für alle Ebenen in
+    EBENEN_REIHENFOLGE; eine Zeile zählt einmal, auch wenn mehrere Beziehungen auf sie zutreffen. Nur Zählung, keine
+    Rechnung: die Werte werden nicht ermittelt, Beziehungen und Indikatoren nicht zurückgegeben (Entscheidung
+    10.11.2026)."""
+    beziehungen = [((g, *t), "summe") for g, t in summen]
+    beziehungen += [((w, z, n), "verhaeltnis") for w, z, n, _ in verhaeltnisse]
+    beziehungen = [([spalte[c] for c in codes], art) for codes, art in beziehungen if all(c in spalte for c in codes)]
+    zaehlung = {e: 0 for e in EBENEN_REIHENFOLGE}
+    for _, ebene, *_, werte in zeilen:
+        for idx, art in beziehungen:
             v = [werte[i] for i in idx]
             geheim = [i for i, x in enumerate(v) if _ist_geheim(x)]
             if len(geheim) != 1 or not all(_ist_zahl(x) for i, x in enumerate(v) if i != geheim[0]):
@@ -926,11 +924,9 @@ def _ableitbar(spalte, zeilen, summen, verhaeltnisse):
             k = geheim[0]
             if art == "verhaeltnis" and (v[2] == 0 if k in (0, 1) else (v[0] == 0 or v[1] == 0)):
                 continue
-            schluessel = (text, codes[k], tuple(c for i, c in enumerate(codes) if i != k), ebene)
-            zaehlung[schluessel] = zaehlung.get(schluessel, 0) + 1
-    ordnung = {e: n for n, e in enumerate(EBENEN_REIHENFOLGE)}
-    return [{"beziehung": b, "geheim": g, "aus": list(a), "raumebene": e, "zeilen": n}
-            for (b, g, a, e), n in sorted(zaehlung.items(), key=lambda x: (x[0][0], x[0][1], ordnung[x[0][3]]))]
+            zaehlung[ebene] += 1
+            break
+    return zaehlung
 
 
 def _eintrag(v, ref):
@@ -961,8 +957,8 @@ def werte_quartier(kat, spalten):
 def _koeln(kat, klass, beleg):
     """(Indikatoren, Werte für werte.tsv, Zurückgestellte, Hinweise, Quartiere, Ableitbare) aus dem Statistischen
     Datenkatalog; Quartiere: {"spalten": für werte_quartier, "status": Zeilen je Status}; Ableitbare: {"zeilen":
-    geheime Werte, die aus veröffentlichten Werten derselben Zeile folgen (alle Raumebenen, _ableitbar), "summen":
-    geprüfte Summen, "verhaeltnisse": Anzahl geprüfter Verhältnisse}."""
+    Zeilen je Raumebene mit ableitbarem geheimem Wert (_ableitbar), "summen": Anzahl geprüfter Summen,
+    "verhaeltnisse": Anzahl geprüfter Verhältnisse}."""
     abrufdatum = beleg["zeitstempel"][:10]
     spalte = {code: i for i, (code, *_) in enumerate(kat.spalten)}
     name = {code: n for code, n, *_ in kat.spalten}
@@ -998,8 +994,8 @@ def _koeln(kat, klass, beleg):
     codes = {c for c, *_ in aufnehmen}
     alle = kat.zeilen + kat.zeilen_quartier   # alle übernommenen Zeilen (Prüfungen gelten für jede veröffentlichte Zeile)
     gesamt_gilt, gesamt_n, gesamt_offen = _summe(spalte, alle, GESAMT, (HAUPT, NEBEN))
-    hinweise.append(f"{GESAMT} = {HAUPT} + {NEBEN}: {'gilt' if gesamt_gilt else 'gilt nicht'} ({gesamt_n} Zeilen, "
-                    f"nicht prüfbar {gesamt_offen or 'keine'})")
+    hinweise.append(f"Summenprüfung: {'gilt' if gesamt_gilt else 'gilt nicht'} ({gesamt_n} Zeilen, "
+                    f"nicht prüfbar {gesamt_offen or 'keine'})")   # ohne Codes (Entscheidung 10.11.2026)
     indikatoren, werte = [], []
     quartier = {"spalten": [], "status": {}}
     verhaeltnisse = []   # geprüfte Beziehungen (Wert, Zähler, Nenner, Faktor) für _ableitbar
@@ -1024,13 +1020,6 @@ def _koeln(kat, klass, beleg):
             else:
                 hinweise.append(f"{iid}: Zähler/Nenner aus Phase 0 gelten in dieser Datei nicht "
                                 f"({geprueft} Zeilen geprüft); nicht übernommen")
-        if code == GESAMT and gesamt_gilt:
-            offen = [f"{_zeilen(gesamt_offen[g])} mit {text}" for g, text in (
-                ("geheim", "geheim gehaltenem Wert"), ("fehlt", "fehlendem Wert"), ("andere", "anderem Zellinhalt"))
-                if gesamt_offen.get(g)]
-            meta.append(f"Summe aus Einwohner*innen mit Hauptwohnsitz (koeln_{HAUPT}) und mit Nebenwohnsitz "
-                        f"(koeln_{NEBEN}), nachgerechnet in {gesamt_n} von {len(alle)} Zeilen"
-                        + (f"; nicht prüfbar: {', '.join(offen)}." if offen else "."))
         quellenangabe, anmerkung = kat.quellen.get(code, ("", ""))
         if anmerkung:
             meta.append(f"Anmerkung der Quelle: {anmerkung}")
@@ -1063,7 +1052,7 @@ def _koeln(kat, klass, beleg):
             "quell_url": DATENSATZ_URL, "abrufdatum": abrufdatum})
     quartier["spalten"].sort()
     summen = [(GESAMT, (HAUPT, NEBEN))] if gesamt_gilt else []
-    ableitbar = {"zeilen": _ableitbar(spalte, alle, summen, verhaeltnisse), "summen": summen,
+    ableitbar = {"zeilen": _ableitbar(spalte, alle, summen, verhaeltnisse), "summen": len(summen),
                  "verhaeltnisse": len(verhaeltnisse)}
     return indikatoren, werte, zurueck, hinweise, quartier, ableitbar
 
@@ -1158,26 +1147,28 @@ DATEIEN_AUSGABE = (
 )
 
 
+def _ableitbar_text(zeilen):
+    """„stadtteil 3, quartier 1288“: Raumebenen mit ableitbaren Zeilen, ohne Beziehung und Indikatoren."""
+    return ", ".join(f"{e} {n}" for e, n in zeilen.items() if n)
+
+
 def _geheimhaltung_text(ableitbar):
-    """geheimhaltung_hinweis in meta.json: Regel der Anzeige; dazu die Zeilen, in denen die Quelle einen geheim
-    gehaltenen Wert selbst offenlegt (geheimhaltung_ableitbar)."""
+    """geheimhaltung_hinweis in meta.json: Regel der Anzeige; dazu die Zahl der Zeilen, in denen die Quelle einen geheim
+    gehaltenen Wert selbst offenlegt (geheimhaltung_ableitbar), ohne Beziehung, Rechenweg oder Indikatoren
+    (Entscheidung 10.11.2026)."""
     text = ("status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von "
             "indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die "
             "einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen (Quartier, Stadtteil, Stadtbezirk) "
             "oder Teilgrößen hinweg; zuordnung.tsv dient nicht der Verrechnung von Werten.")
     zeilen = ableitbar["zeilen"]
-    if not zeilen:
+    n = sum(zeilen.values())
+    if not n:
         return text
-    teile = {}
-    for z in zeilen:
-        teile.setdefault((z["geheim"], tuple(z["aus"])), []).append(f"{z['raumebene']} {z['zeilen']}")
     return text + (
-        f" In {sum(z['zeilen'] for z in zeilen)} Zeilen folgt ein geheim gehaltener Wert aus veröffentlichten Werten "
-        "derselben Zeile (" + "; ".join(f"koeln_{g} aus " + " und ".join(f"koeln_{c}" for c in a) + ": " + ", ".join(e)
-                                        for (g, a), e in teile.items())
-        + "; geheimhaltung_ableitbar): Die Quelle hält dort nur einen Wert der Beziehung geheim und veröffentlicht "
-        "die übrigen (keine sekundäre Geheimhaltung in der Quelle). Die Werte bleiben unverändert (quellentreu); die "
-        "Anzeige bildet auch dort keine Summen, Differenzen oder Verhältnisse, die den geheimen Wert ergeben.")
+        f" In {n} {'Zeile' if n == 1 else 'Zeilen'} ist ein geheim gehaltener Wert aus veröffentlichten Werten derselben "
+        f"Zeile ableitbar ({_ableitbar_text(zeilen)}; geheimhaltung_ableitbar); die Quelle wendet dort keine sekundäre "
+        "Geheimhaltung an. Die Werte bleiben unverändert (quellentreu); die Anzeige bildet auch dort keine Summen, "
+        "Differenzen oder Verhältnisse, die einen geheimen Wert ergeben.")
 
 
 def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
@@ -1352,17 +1343,17 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar):
         "audit_raumabgleich_spalten": rm.AUDIT_SPALTEN,
         "geheimhaltung_hinweis": _geheimhaltung_text(ableitbar),
         "geheimhaltung_ableitbar": {
-            "geprueft": ("Zeilen aller Raumebenen (werte.tsv und werte_quartier.tsv.gz), in denen genau ein Wert einer "
-                         "geprüften Beziehung geheim ist und die übrigen veröffentlicht sind, sodass er durch sie "
-                         "bestimmt ist; geprüft: "
-                         + "; ".join([f"Summe koeln_{g} = " + " + ".join(f"koeln_{c}" for c in t)
-                                      for g, t in ableitbar["summen"]]
-                                     + [f"{ableitbar['verhaeltnisse']} Verhältnisse (zaehler_id und nenner_id in "
-                                        "indikatoren.tsv)"])
-                         + ". Nur gezählt; die Werte selbst werden nicht ermittelt."),
-            "zeilen": [{**z, "geheim": f"koeln_{z['geheim']}", "aus": [f"koeln_{c}" for c in z["aus"]],
-                        "beziehung": re.sub(r"\b([A-Z]\d{4}[APS])\b", r"koeln_\1", z["beziehung"])}
-                       for z in ableitbar["zeilen"]],
+            "geprueft": ("Zahl der Zeilen je Raumebene (werte.tsv und werte_quartier.tsv.gz), in denen ein geheim "
+                         "gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar ist; geprüft: "
+                         + " und ".join(([{1: "eine Summe"}.get(ableitbar["summen"], f"{ableitbar['summen']} Summen")]
+                                         if ableitbar["summen"] else [])
+                                        + [f"{ableitbar['verhaeltnisse']} "
+                                           f"{'Verhältnis' if ableitbar['verhaeltnisse'] == 1 else 'Verhältnisse'} "
+                                           "(zaehler_id und nenner_id in indikatoren.tsv)"])
+                         + ". Nur gezählt; die Werte werden nicht ermittelt, Beziehungen und beteiligte Indikatoren "
+                         "nicht genannt (Entscheidung 10.11.2026)."),
+            "zeilen": dict(ableitbar["zeilen"]),
+            "zeilen_gesamt": sum(ableitbar["zeilen"].values()),
         },
         "quellen": q,
     }
@@ -1456,9 +1447,9 @@ def write():
     for ebene, a in raum["meta"]["id_abgleich"].items():
         print(f"Nummern {ebene}: Geometrie {a['geometrie']}, Blatt Daten {a['werte']}, gemeinsam {a['gemeinsam']}, "
               f"nur Geometrie {a['nur_geometrie'] or 'keine'}, nur Blatt Daten {a['nur_werte'] or 'keine'}")
-    for z in meta["geheimhaltung_ableitbar"]["zeilen"]:
-        print(f"Geheim, aber ableitbar ({z['beziehung']}): {z['geheim']} aus {', '.join(z['aus'])}, {z['raumebene']} "
-              f"{z['zeilen']} Zeilen")
+    g = meta["geheimhaltung_ableitbar"]
+    print(f"Geheim, aber ableitbar: {g['zeilen_gesamt']} {'Zeile' if g['zeilen_gesamt'] == 1 else 'Zeilen'} "
+          f"({_ableitbar_text(g['zeilen']) or 'keine'})")
     a = meta["raum"]["quartier"]["abweichung_von_der_quelle"]
     d = meta["raum"]["quartier"]["abdeckung"]
     print(f"Quartiersflächen: Abweichung höchstens {a['abstand_max_m']} m ({a['abstand_max_raum_id']}), Median "

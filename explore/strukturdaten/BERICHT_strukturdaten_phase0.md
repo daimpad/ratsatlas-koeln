@@ -43,7 +43,7 @@ Phase 0 prüft, ob Kölner Stadtstatistik und Wegweiser Kommune als Kontext- und
 - Verfügbarkeitscodes im Katalog (aus der bedingten Formatierung abgeleitet): 3 Quartier, 2 Stadtteil, 1 Bezirk, 0 Gesamtstadt; der Code nennt die feinste Ebene und stimmt für 171 von 172 Codes mit dem Blatt Daten überein. Der Katalog führt 2010–2025, die Daten beginnen 2012.
 - XLSX und CSV enthalten dieselben 1 513 536 Zahlen. In der CSV fehlt A0291P, und die 68 995 `*` erscheinen als leere Zellen; Geheimhaltung und Fehlen sind dort nicht unterscheidbar. CSV: UTF-8 mit BOM, CRLF, Semikolon, Dezimalkomma, Breitformat.
 - Geheimhaltung laut Blatt Info: „Werte zwischen 1 und 4“. Keine Anzahl von 1 bis 4 ist veröffentlicht; bei BA-Daten sind 132 Werte von 5 bis 9 veröffentlicht; das ist mit der Prompt-Angabe „1 bis < 10“ nicht vereinbar.
-- Weder Stichtag noch Kennzeichnung von Schätz- und Verfahrenswerten stehen in den Dateien. A0025A „Einwohner*innen, gesamt“ = A0355A (Hauptwohnsitz) + A0359A (Nebenwohnsitz); städtische Bevölkerungsanteile beziehen sich auf A0025A.
+- Weder Stichtag noch Kennzeichnung von Schätz- und Verfahrenswerten stehen in den Dateien. A0025A „Einwohner*innen, gesamt“ schließt Einwohner*innen mit Nebenwohnsitz ein (für alle Jahre geprüft); städtische Bevölkerungsanteile beziehen sich auf A0025A.
 
 ## 4. Raumebenen und Abgleich
 
