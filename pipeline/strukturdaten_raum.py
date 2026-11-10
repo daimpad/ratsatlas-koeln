@@ -8,26 +8,32 @@ Eingaben (ohne Netz; aufgerufen aus pipeline/strukturdaten.py, Schritt `struktur
   EPSG 25832).
 - Stadtteile und Stadtbezirke aus data/geo/ (pipeline/geodaten.py: Shapefiles der Stadt, WGS84, mit
   geodaten.TOLERANZ_M vereinfacht, Koordinaten auf 1e-6 Grad gerundet). Eine unvereinfachte Fassung liegt nicht im
-  Repository; data/geo ist die beste verfügbare Geometrie. Wirkung: Die Grenzen weichen bis etwa TOLERANZ_M von der
-  Quelle ab, an den Rändern entstehen kleine Splitter (Anteile unter SPLITTER_ANTEIL); sie werden gemeldet, nicht
-  zugeordnet.
+  Repository; data/geo ist die beste verfügbare Geometrie. Wirkung: Die Grenzen weichen von der Quelle ab (für data/geo
+  nicht gemessen; bei den Quartieren mit demselben Verfahren gemessen, siehe `abweichung`), an den Rändern entstehen
+  kleine Splitter (Anteile unter SPLITTER_ANTEIL); sie werden gemeldet, nicht zugeordnet. data/geo hat kein
+  Abrufprotokoll; Abrufdatum und Stand stehen nur für die Fassung mit den Prüfsummen in GEO_HERKUNFT.
 
 Ausgaben (Rückgabe an strukturdaten.write, das die Dateien schreibt):
 - raum/stadtbezirk.geojson, raum/stadtteil.geojson: Geometrie unverändert aus data/geo; raum/quartier.geojson: aus dem
-  Shapefile, in EPSG 25832 mit TOLERANZ_M vereinfacht und nach WGS84 umgerechnet wie geodaten._wgs84. Properties
-  laut Vertrag: raum_id (Nummer der Quelle als Text), name, raumebene, eltern_id, quelle, lizenz. `eltern_id` steht nur,
-  wenn Verschneidung, Nummer und Attribut dasselbe Ziel nennen (Prüfstatus ok); bei Stadtbezirken leer (oberste Ebene
-  mit Geometrie; die Gesamtstadt steht in werte.tsv als raumebene gesamtstadt, raum_id 0, ohne Geometrie).
+  Shapefile, in EPSG 25832 mit TOLERANZ_M vereinfacht und nach WGS84 umgerechnet wie geodaten._wgs84 (jedes Quartier
+  für sich: zwischen Nachbarn entstehen schmale Lücken und Überlappungen, die Rundung auf 1e-6 Grad entfernt Sporne
+  ohne Breite; `abweichung` misst beides, Ergebnis in meta unter abweichung_von_der_quelle). Die Flächen dienen nur
+  der Anzeige; die Verschneidung rechnet mit den unvereinfachten Quartieren. Properties laut Vertrag: raum_id (Nummer
+  der Quelle als Text), name, raumebene, eltern_id, quelle, lizenz. `eltern_id` steht nur, wenn Verschneidung, Nummer
+  und Attribut dasselbe Ziel nennen (Prüfstatus ok); bei Stadtbezirken leer (oberste Ebene mit Geometrie; die
+  Gesamtstadt steht in werte.tsv als raumebene gesamtstadt, raum_id 0, ohne Geometrie).
 - zuordnung.tsv: Quartier → Stadtteil und Stadtteil → Stadtbezirk durch Verschneidung in EPSG 25832 (Quartiere
   unvereinfacht aus dem Shapefile, Stadtteile und Stadtbezirke aus data/geo zurückgerechnet); eine Zeile je Paar mit
   Flächenanteil ≥ SPLITTER_ANTEIL. `flaechenanteil` = Anteil der Fläche der Einheit, der im Ziel liegt (4 Stellen).
   `methode`: verschneidung_nummer (Ziel stimmt mit der Nummer überein: Quartier = erste drei Ziffern, Stadtteil =
   erste Ziffer) oder verschneidung (nur geometrisch). `konfidenz`: hoch (verschneidung_nummer, Anteil ≥ ANTEIL_HOCH,
-  Attribut der Quelle widerspricht nicht), mittel (verschneidung_nummer sonst), niedrig (verschneidung).
+  Attribut der Quelle widerspricht nicht), mittel (verschneidung_nummer sonst), niedrig (verschneidung). Die Schwellen
+  gelten für den veröffentlichten, auf 4 Stellen gerundeten Anteil.
 - audit_raumabgleich.tsv: eine Zeile je Einheit aus Geometrie oder Blatt Daten mit Hauptziel, Ziel laut Nummer und
   laut Attribut, Übereinstimmung, weiteren Zielen, Splittern, Anteil außerhalb aller Ziele und Prüfstatus ok,
   abweichung oder nicht_zugeordnet mit Grund. Einheiten ohne Geometrie, ohne Werte oder ohne Ziel werden gemeldet, nie
-  stillschweigend zugeordnet.
+  stillschweigend zugeordnet. Weicht der Name im Blatt Daten (in einem Jahr) vom Namen der Geometriequelle ab, steht
+  das als Hinweis in `grund`; der Prüfstatus ändert sich dadurch nicht.
 
 Keine Werte werden zwischen Raumebenen verrechnet (keine Summen, keine Anteile aus Flächen): die Zuordnung beschreibt
 nur die Lage der Einheiten zueinander.
@@ -51,13 +57,31 @@ from . import config, geodaten
 QUARTIERE_URL = "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Statistisches_Quartier_0.zip"
 QUARTIERE_DATENSATZ_URL = "https://open.nrw/dataset/statistische-quartiere-koln-k"
 QUARTIERE_TITEL = "Statistische Quartiere Köln"
-# Stand der Ressource laut open.nrw (Metadaten gelesen am 10.11.2026); nur zur Begründung des Datenstands
-QUARTIERE_STAND_PORTAL = "24.09.2026"
+# Stand der Ressource laut open.nrw (Metadaten gelesen am 10.11.2026); nur zur Begründung des Datenstands und nur für
+# die an diesem Tag geladene Datei (Prüfsumme sha256 → (Stand, gelesen am)). Für eine andere Datei, etwa nach einem
+# späteren `strukturdaten-abruf`, gilt der Portalstand als nicht geprüft (portalstand()).
+QUARTIERE_STAND_PORTAL = {
+    "311eb81527c6e9ba626de149634d8224536c48dc80e316c8344588e26b3f8195": ("24.09.2026", "10.11.2026"),
+}
 GEO_HERAUSGEBER = "Stadt Köln"
 GEO_LIZENZ = "Datenlizenz Deutschland – Zero – Version 2.0"
 GEO_LIZENZ_URL = "https://www.govdata.de/dl-de/zero-2-0"
 GEO_NAMENSNENNUNG = config.NAMENSNENNUNG
 LIZENZ_TEXT = f"{GEO_LIZENZ} ({GEO_LIZENZ_URL}); {GEO_NAMENSNENNUNG}"
+# data/geo (pipeline/geodaten.py) hat kein Abrufprotokoll. Belegt ist nur die Fassung, die mit Commit 3964836 am
+# 04.11.2026 ins Repository kam (Prüfsumme der Datei unter data/geo → Dateiname): Die Geodaten wurden laut
+# explore/BERICHT_phase1.md (Abschnitt 1) am 04.11.2026 geladen, Stand der Ressourcen laut Katalog 24.09.2026. Für
+# eine andere Fassung gilt: nicht dokumentiert (kein geschätztes Datum).
+GEO_HERKUNFT = {
+    "2bcc2349d2399734003ae2af4871a6534168b0f2d3d15d7eb5c83c6f29805e0c": "stadtteile_koeln.geojson",
+    "21c4447b13d00a7813c0401ff584cb0e26e446acd05d50832ae72ee6eb0bbcb8": "stadtbezirke_koeln.geojson",
+}
+GEO_ABGERUFEN = "2026-11-04"
+GEO_BELEG = ("kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_phase1.md (Abschnitt 1) am 04.11.2026 "
+             "geladen, Stand der Ressource laut Katalog 24.09.2026; data/geo/{name} in dieser Fassung (sha256) seit "
+             "Commit 3964836 vom 04.11.2026")
+GEO_OHNE_BELEG = ("data/geo/{name} weicht von der Fassung vom 04.11.2026 ab (sha256); Abrufdatum und Stand der Quelle "
+                  "nicht dokumentiert")
 
 TOLERANZ_M = geodaten.TOLERANZ_M   # Vereinfachung der Quartiersflächen wie data/geo (Meter)
 UTM = 25832                         # metrisches Bezugssystem der Verschneidung (ETRS89/UTM 32N)
@@ -84,7 +108,8 @@ AUDIT_SPALTEN = {
     "von_id": "Nummer der Einheit aus der Quelle",
     "name": "Name laut Geometriequelle, ohne Geometrie laut Blatt Daten",
     "nach_ebene": "Zielebene (stadtteil, stadtbezirk)",
-    "nach_id": "Ziel mit dem größten Flächenanteil, falls dieser mindestens splitter_anteil (meta.json) beträgt",
+    "nach_id": "Ziel mit dem größten Flächenanteil, falls dieser (auf 4 Stellen gerundet) mindestens splitter_anteil "
+               "(meta.json) beträgt",
     "flaechenanteil": "Anteil der Fläche der Einheit in nach_id, 4 Nachkommastellen",
     "methode": "methode der Zeile in zuordnung.tsv für nach_id",
     "konfidenz": "konfidenz der Zeile in zuordnung.tsv für nach_id",
@@ -97,19 +122,58 @@ AUDIT_SPALTEN = {
                         "Eigenschaft bezirk in data/geo)",
     "uebereinstimmung": "ja, wenn nach_id, nach_id_nummer und (falls vorhanden) nach_id_attribut gleich sind, sonst nein",
     "weitere_ziele": "Anzahl weiterer Ziele mit mindestens splitter_anteil (je eine Zeile in zuordnung.tsv)",
-    "splitter": "Anzahl der Ziele mit einem Anteil über 0 und unter splitter_anteil (nicht zugeordnet)",
+    "splitter": "Anzahl der Ziele mit einem Anteil über 0 und (auf 4 Stellen gerundet) unter splitter_anteil (nicht "
+                "zugeordnet)",
     "splitter_max_anteil": "größter dieser Anteile, 4 Nachkommastellen (0.0000 = unter 0.00005); leer ohne Splitter",
     "ausserhalb_anteil": "Anteil der Fläche außerhalb aller Ziele, 4 Nachkommastellen; leer ohne Geometrie",
     "in_geometrie": "ja, wenn die Einheit in der Geometriequelle steht",
     "in_werten": "ja, wenn die Einheit im Blatt Daten des Statistischen Datenkatalogs steht",
-    "grund": "Begründung des Prüfstatus",
+    "grund": "Begründung des Prüfstatus; dazu Hinweise ohne Einfluss auf den Prüfstatus (Geometrie repariert, Name im "
+             "Blatt Daten abweichend vom Namen der Geometriequelle, mit Jahren)",
 }
 
 _NACH_UTM = Transformer.from_crs(4326, UTM, always_xy=True)
+DENSIFY = 0.25   # Hausdorff-Abstand: jedes Segment für die Messung in Viertel geteilt (shapely.hausdorff_distance)
 
 
 def _anteil(wert):
     return f"{wert:.4f}"
+
+
+def _gerundet(wert):
+    """Anteil so, wie er veröffentlicht wird (4 Stellen): Die Schwellen SPLITTER_ANTEIL und ANTEIL_HOCH gelten für
+    diesen Wert, damit veröffentlichte Zahl und Einstufung einander nicht widersprechen."""
+    return float(_anteil(wert))
+
+
+def _jahre(jahre):
+    """Jahre als Bereiche („2012–2014, 2016“) für Hinweise im Audit."""
+    jahre, teile = sorted({int(j) for j in jahre}), []
+    for j in jahre:
+        if teile and teile[-1][1] == j - 1:
+            teile[-1][1] = j
+        else:
+            teile.append([j, j])
+    return ", ".join(str(a) if a == b else f"{a}–{b}" for a, b in teile)
+
+
+def _name_vergleich(name):
+    return " ".join(str(name or "").split())
+
+
+def namen_abweichend(name, namen):
+    """{Name: Jahre} der Namen im Blatt Daten, die (ohne Unterschiede im Leerraum) vom Namen `name` der Geometriequelle
+    abweichen; namen: {Name: Jahre}."""
+    return {n: j for n, j in namen.items() if _name_vergleich(n) != _name_vergleich(name)}
+
+
+def portalstand(tabelle, summe, portal="open.nrw"):
+    """Stand der Ressource laut Portal für die Datei mit der Prüfsumme `summe` (tabelle: sha256 → (Stand, gelesen am)),
+    sonst der Hinweis, dass er für diese Datei nicht geprüft ist."""
+    if summe in tabelle:
+        stand, gelesen = tabelle[summe]
+        return f"Ressource laut {portal} zuletzt aktualisiert am {stand} (Metadaten gelesen am {gelesen})"
+    return f"Stand der Ressource auf {portal} für diese Datei nicht geprüft"
 
 
 def _sortiert(ids):
@@ -239,11 +303,14 @@ def nummer_ziel(von_ebene, rid):
     return rid[:3] if von_ebene == "quartier" else rid[:1]
 
 
-def abgleich(von_ebene, nach_ebene, einheiten, ziele, werte_namen):
+def abgleich(von_ebene, nach_ebene, einheiten, ziele, werte_namen, namen_jahre=None):
     """Zuordnungszeilen, Auditzeilen und Eltern (nur Prüfstatus ok) für alle Einheiten aus Geometrie oder Werten.
 
     einheiten: {Nummer: {name, attribut, geom}} (Geometriequelle); ziele: {Nummer: {geom}}; werte_namen: {Nummer: Name}
-    der Einheiten mit Zeilen im Blatt Daten."""
+    der Einheiten mit Zeilen im Blatt Daten (Name aus dem jüngsten Jahr); namen_jahre: {Nummer: {Name: [Jahre]}} aus
+    allen Jahren des Blatts Daten (ohne Angabe: nur werte_namen). Ein abweichender Name ist ein Hinweis in grund, keine
+    Abweichung im Prüfstatus. Die Schwellen gelten für den auf 4 Stellen gerundeten Anteil (_gerundet)."""
+    namen_jahre = namen_jahre if namen_jahre is not None else {r: {n: []} for r, n in werte_namen.items()}
     ids = _sortiert(ziele)
     baum = shapely.STRtree([ziele[i]["geom"] for i in ids])
     gesamt = shapely.union_all([ziele[i]["geom"] for i in ids])
@@ -258,18 +325,25 @@ def abgleich(von_ebene, nach_ebene, einheiten, ziele, werte_namen):
              "in_geometrie": "ja" if e and e["geom"] is not None else "nein",
              "in_werten": "ja" if rid in werte_namen else "nein", "uebereinstimmung": "nein"}
         gruende = []
+        hinweise = []   # ohne Einfluss auf den Prüfstatus
+        if e is not None and rid in namen_jahre:
+            anders = namen_abweichend(e["name"], namen_jahre[rid])
+            if anders:
+                hinweise.append("Name im Blatt Daten abweichend: " + ", ".join(
+                    f"„{n}“" + (f" ({_jahre(j)})" if j else "") for n, j in sorted(anders.items()))
+                    + f"; Geometriequelle: „{e['name']}“")
         if e is not None and e.get("repariert"):
             gruende.append("Geometrie der Quelle ungültig, mit make_valid repariert")
         if e is None or e["geom"] is None:
             z["pruefstatus"] = "nicht_zugeordnet"
             gruende.insert(0, "keine Geometrie in der Quelle" + ("" if e is None else " (leere Fläche)")
                            + ("; Werte im Blatt Daten vorhanden" if rid in werte_namen else ""))
-            z["grund"] = "; ".join(gruende)
+            z["grund"] = "; ".join(gruende + hinweise)
             audit.append(z)
             continue
         teile, aussen = verschneiden(e["geom"], ziele, baum, ids, gesamt)
-        zugeordnet = [(a, n) for a, n in teile if a >= SPLITTER_ANTEIL]
-        splitter = [(a, n) for a, n in teile if a < SPLITTER_ANTEIL]
+        zugeordnet = [(a, n) for a, n in teile if _gerundet(a) >= SPLITTER_ANTEIL]
+        splitter = [(a, n) for a, n in teile if _gerundet(a) < SPLITTER_ANTEIL]
         attribut = z["nach_id_attribut"]
         z.update({"weitere_ziele": str(max(0, len(zugeordnet) - 1)), "splitter": str(len(splitter)),
                   "splitter_max_anteil": _anteil(max(a for a, _ in splitter)) if splitter else "",
@@ -278,7 +352,7 @@ def abgleich(von_ebene, nach_ebene, einheiten, ziele, werte_namen):
         for a, n in zugeordnet:
             methode = "verschneidung_nummer" if n == nummer else "verschneidung"
             konfidenz = ("niedrig" if methode == "verschneidung" else
-                         "hoch" if a >= ANTEIL_HOCH and attribut in ("", n) else "mittel")
+                         "hoch" if _gerundet(a) >= ANTEIL_HOCH and attribut in ("", n) else "mittel")
             zeilen.append({"von_ebene": von_ebene, "von_id": rid, "nach_ebene": nach_ebene, "nach_id": n,
                            "flaechenanteil": _anteil(a), "methode": methode, "konfidenz": konfidenz})
         zuordnung += zeilen
@@ -286,7 +360,7 @@ def abgleich(von_ebene, nach_ebene, einheiten, ziele, werte_namen):
             z["pruefstatus"] = "nicht_zugeordnet"
             gruende.insert(0, f"kein {ziel_wort} mit Flächenanteil ≥ {SPLITTER_ANTEIL}; außerhalb aller "
                               f"{ziel_plural}: {_anteil(aussen)}; Nummer nennt {ziel_wort} {nummer}")
-            z["grund"] = "; ".join(gruende)
+            z["grund"] = "; ".join(gruende + hinweise)
             audit.append(z)
             continue
         haupt, ziel = zugeordnet[0]
@@ -298,12 +372,12 @@ def abgleich(von_ebene, nach_ebene, einheiten, ziele, werte_namen):
                            f"Anteil in {nummer}: " + (_anteil(anteil_je[nummer]) if nummer in anteil_je else "0"))
         if attribut and attribut != ziel:
             gruende.append(f"Attribut {attr_feld} nennt {ziel_wort} {attribut}")
-        if haupt < ANTEIL_HOCH:
+        if _gerundet(haupt) < ANTEIL_HOCH:
             gruende.append(f"größter Flächenanteil {_anteil(haupt)} unter {ANTEIL_HOCH}")
             if len(zugeordnet) > 1:
                 gruende.append("weitere Ziele: " + ", ".join(f"{ziel_wort} {n} ({_anteil(a)})"
                                                              for a, n in zugeordnet[1:]))
-            if aussen >= SPLITTER_ANTEIL:
+            if _gerundet(aussen) >= SPLITTER_ANTEIL:
                 gruende.append(f"außerhalb aller {ziel_plural}: {_anteil(aussen)}")
         if rid not in werte_namen:
             gruende.append("keine Zeile im Blatt Daten (Geometrie ohne Werte)")
@@ -319,9 +393,58 @@ def abgleich(von_ebene, nach_ebene, einheiten, ziele, werte_namen):
         if splitter:
             gruende.append(f"{len(splitter)} Randsplitter unter {SPLITTER_ANTEIL} nicht zugeordnet: "
                            + ", ".join(f"{ziel_wort} {n} ({_anteil(a)})" for a, n in splitter))
-        z["grund"] = "; ".join(gruende)
+        z["grund"] = "; ".join(gruende + hinweise)
         audit.append(z)
     return zuordnung, audit, eltern
+
+
+# --- Abweichung der veröffentlichten Flächen -------------------------------------------------------------------------
+
+def _loecher(geoms):
+    """Löcher in der Vereinigung der Flächen (innere Ringe), als eine Geometrie."""
+    teile = shapely.get_parts(shapely.union_all(geoms))
+    return shapely.union_all([shapely.Polygon(r) for p in teile if p.geom_type == "Polygon" for r in p.interiors])
+
+
+def abweichung(quelle, veroeffentlicht, toleranz=TOLERANZ_M):
+    """Gemessene Abweichung der veröffentlichten Flächen (vereinfacht, gerundet) von der Quelle; beide {Nummer: Fläche}
+    in EPSG 25832 (die veröffentlichte Fläche zurückgerechnet). Je Einheit der Hausdorff-Abstand (Segmente in Viertel
+    geteilt, DENSIFY), dazu Überlappungen zwischen veröffentlichten Flächen und Lücken: Löcher in der Vereinigung der
+    veröffentlichten Flächen, die die Vereinigung der Quellflächen nicht hat (der Außenrand der Stadt zählt nicht).
+    Abstände in Metern mit 2 Stellen, Flächen in ganzen Quadratmetern; verglichen wird der gerundete Wert."""
+    ids = _sortiert(set(quelle) & set(veroeffentlicht))
+    abstand = {r: float(f"{shapely.hausdorff_distance(quelle[r], veroeffentlicht[r], densify=DENSIFY):.2f}")
+               for r in ids}
+    geoms = [veroeffentlicht[r] for r in ids]
+    baum = shapely.STRtree(geoms)
+    paare, ueberlappung = 0, 0.0
+    for i, g in enumerate(geoms):
+        for j in sorted(int(j) for j in baum.query(g)):
+            if j <= i:
+                continue
+            a = shapely.intersection(g, geoms[j]).area
+            if a > 0:
+                paare, ueberlappung = paare + 1, ueberlappung + a
+    luecken = shapely.difference(_loecher(geoms), _loecher([quelle[r] for r in ids]))
+    luecken_teile = [p for p in shapely.get_parts(luecken) if p.area > 0]
+    groesste = max(ids, key=lambda r: (abstand[r], -int(r))) if ids else ""
+    ueber = sorted((r for r in ids if abstand[r] > toleranz), key=lambda r: (-abstand[r], int(r)))
+    return {
+        "verfahren": (f"Hausdorff-Abstand je Einheit zwischen der Fläche der Quelle und der veröffentlichten Fläche, "
+                      f"beide in EPSG {UTM} (veröffentlichte Fläche zurückgerechnet), Segmente in Viertel geteilt; "
+                      "Überlappungen zwischen veröffentlichten Flächen; Lücken = Löcher in der Vereinigung der "
+                      "veröffentlichten Flächen, die die Quelle nicht hat (ohne Außenrand). Meter mit 2 Stellen, "
+                      "Flächen in ganzen Quadratmetern."),
+        "einheiten": len(ids),
+        "abstand_max_m": abstand[groesste] if ids else None,
+        "abstand_max_raum_id": groesste,
+        "bis_toleranz": sum(1 for r in ids if abstand[r] <= toleranz),
+        "ueber_toleranz": {r: abstand[r] for r in ueber},
+        "ueberlappung_nachbarpaare": paare,
+        "ueberlappung_m2": int(round(ueberlappung)),
+        "luecken_teile": len(luecken_teile),
+        "luecken_m2": int(round(sum(p.area for p in luecken_teile))),
+    }
 
 
 # --- Ausgabe ----------------------------------------------------------------------------------------------------------
@@ -357,12 +480,15 @@ def statistik(audit, zuordnung, von_ebene):
             "groesster_splitter": _anteil(max(splitter)) if splitter else ""}
 
 
-def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad, werte_namen):
+def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad, werte_namen, namen_jahre=None):
     """Alles für Phase 2: {"geojson": {Ebene: Text}, "geojson_meta": {Ebene: meta}, "zuordnung": [...],
     "audit": [...], "meta": {...}}.
 
-    werte_namen: {Ebene: {Nummer: Name}} der Einheiten mit Zeilen im Blatt Daten; quartier_beleg: Protokollzeile des
-    Abrufs der Quartiersdatei (url, zeitstempel, pruefsumme)."""
+    werte_namen: {Ebene: {Nummer: Name}} der Einheiten mit Zeilen im Blatt Daten (Name aus dem jüngsten Jahr);
+    namen_jahre: {Ebene: {Nummer: {Name: [Jahre]}}} aus allen Jahren (ohne Angabe: nur werte_namen); quartier_beleg:
+    Protokollzeile des Abrufs der Quartiersdatei (url, zeitstempel, pruefsumme)."""
+    if namen_jahre is None:
+        namen_jahre = {e: {r: {n: []} for r, n in w.items()} for e, w in werte_namen.items()}
     quartiere = Quartiere(quartier_pfad)
     teile, teile_meta = gebiete(stadtteil_pfad, "stadtteil")
     bezirke, bezirke_meta = gebiete(stadtbezirk_pfad, "stadtbezirk")
@@ -370,7 +496,7 @@ def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad
     for von, nach in PAARE:
         quelle = quartiere.einheiten if von == "quartier" else teile
         ziele = teile if nach == "stadtteil" else bezirke
-        z, a, e = abgleich(von, nach, quelle, ziele, werte_namen.get(von, {}))
+        z, a, e = abgleich(von, nach, quelle, ziele, werte_namen.get(von, {}), namen_jahre.get(von, {}))
         zuordnung += z
         audit += a
         eltern[von] = e
@@ -379,11 +505,15 @@ def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad
                                          ("stadtteil", teile, teile_meta, stadtteil_pfad)):
         titel = "Stadtbezirke Köln" if ebene == "stadtbezirk" else "Stadtteile Köln"
         quelle = f"{GEO_HERAUSGEBER}, {titel} (offenedaten-koeln.de)"
+        summe, name = pruefsumme(pfad), Path(pfad).name
+        belegt = GEO_HERKUNFT.get(summe) == name
         features = [_feature(rid, einheiten[rid]["name"], ebene, eltern.get(ebene, {}).get(rid, ""),
                              einheiten[rid]["geometrie"], quelle) for rid in _sortiert(einheiten)]
         geojson_meta[ebene] = {
             "raumebene": ebene, "quelle": quelle, "quelle_url": meta.get("source", ""),
-            "abgeleitet_aus": f"data/geo/{Path(pfad).name}", "sha256": pruefsumme(pfad),
+            "abgeleitet_aus": f"data/geo/{name}", "sha256": summe,
+            "abgerufen": GEO_ABGERUFEN if belegt else "nicht dokumentiert",
+            "abgerufen_beleg": (GEO_BELEG if belegt else GEO_OHNE_BELEG).format(name=name),
             "lizenz": GEO_LIZENZ, "lizenz_url": GEO_LIZENZ_URL, "namensnennung": GEO_NAMENSNENNUNG,
             "crs": meta.get("crs", "WGS84 (EPSG 4326)"), "vereinfacht_m": meta.get("vereinfacht_m", ""),
             "geometrie": "unverändert aus data/geo (pipeline/geodaten.py)",
@@ -392,30 +522,44 @@ def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad
                           "Stadtbezirk, nur bei Prüfstatus ok in audit_raumabgleich.tsv, sonst leer")}
         geojson[ebene] = geojson_text(features, geojson_meta[ebene])
     quelle = f"{GEO_HERAUSGEBER}, {QUARTIERE_TITEL} (offenedaten-koeln.de)"
-    features = []
+    features, veroeffentlicht = [], {}
     for rid in _sortiert(quartiere.einheiten):
         e = quartiere.einheiten[rid]
         if e["geom"] is None:
             continue
-        features.append(_feature(rid, e["name"], "quartier", eltern["quartier"].get(rid, ""),
-                                 mapping(geodaten._wgs84(e["geom"], TOLERANZ_M)), quelle))
+        geom = geodaten._wgs84(e["geom"], TOLERANZ_M)
+        veroeffentlicht[rid] = shapely.transform(geom, lambda c: np.column_stack(_NACH_UTM.transform(c[:, 0], c[:, 1])))
+        features.append(_feature(rid, e["name"], "quartier", eltern["quartier"].get(rid, ""), mapping(geom), quelle))
+    gemessen = abweichung({r: e["geom"] for r, e in quartiere.einheiten.items() if e["geom"] is not None},
+                          veroeffentlicht)
     geojson_meta["quartier"] = {
         "raumebene": "quartier", "quelle": quelle, "quelle_url": quartier_beleg["url"],
         "datensatz_url": QUARTIERE_DATENSATZ_URL, "abgerufen": quartier_beleg["zeitstempel"],
+        "abgerufen_beleg": "audit_abruf.tsv (Zeile mit derselben Prüfsumme)",
         "sha256": quartier_beleg["pruefsumme"], "lizenz": GEO_LIZENZ, "lizenz_url": GEO_LIZENZ_URL,
         "namensnennung": GEO_NAMENSNENNUNG,
         "crs": f"WGS84 (EPSG 4326), umgerechnet aus {quartiere.crs_name} (laut .prj"
                + (f", EPSG {quartiere.crs_epsg})" if quartiere.crs_epsg else ")"),
         "vereinfacht_m": TOLERANZ_M, "koordinaten": "auf 1e-6 Grad gerundet",
+        "geometrie": (f"jedes Quartier für sich in EPSG {UTM} mit vereinfacht_m vereinfacht (Douglas-Peucker, "
+                      "Topologie des einzelnen Quartiers erhalten), nach WGS84 umgerechnet und auf 1e-6 Grad gerundet. "
+                      "Die Abweichung von der Quelle kann vereinfacht_m übersteigen; die Rundung entfernt Sporne ohne "
+                      "Breite; zwischen Nachbarn entstehen schmale Lücken und Überlappungen (gemessen unter "
+                      "abweichung_von_der_quelle). Die Flächen dienen nur der Anzeige: zuordnung.tsv und "
+                      "audit_raumabgleich.tsv rechnen mit den unvereinfachten Flächen der Quelle, Werte werden nicht "
+                      "über Flächen verrechnet."),
+        "abweichung_von_der_quelle": gemessen,
         "eltern_id": "Stadtteil, nur bei Prüfstatus ok in audit_raumabgleich.tsv, sonst leer"}
     geojson["quartier"] = geojson_text(features, geojson_meta["quartier"])
-    ids = {"quartier": (set(quartiere.einheiten), set(werte_namen.get("quartier", {}))),
-           "stadtteil": (set(teile), set(werte_namen.get("stadtteil", {}))),
-           "stadtbezirk": (set(bezirke), set(werte_namen.get("stadtbezirk", {})))}
+    ids = {"quartier": (quartiere.einheiten, set(werte_namen.get("quartier", {}))),
+           "stadtteil": (teile, set(werte_namen.get("stadtteil", {}))),
+           "stadtbezirk": (bezirke, set(werte_namen.get("stadtbezirk", {})))}
     meta = {
         "ergebnis": {f"{von}→{nach}": statistik(audit, zuordnung, von) for von, nach in PAARE},
-        "id_abgleich": {e: {"geometrie": len(g), "werte": len(w), "gemeinsam": len(g & w),
-                            "nur_geometrie": _sortiert(g - w), "nur_werte": _sortiert(w - g)}
+        "id_abgleich": {e: {"geometrie": len(g), "werte": len(w), "gemeinsam": len(set(g) & w),
+                            "nur_geometrie": _sortiert(set(g) - w), "nur_werte": _sortiert(w - set(g)),
+                            "namen_abweichend": _sortiert(r for r in set(g) & set(namen_jahre.get(e, {}))
+                                                          if namen_abweichend(g[r]["name"], namen_jahre[e][r]))}
                         for e, (g, w) in ids.items()},
         "quartiere_datum_archiv": quartiere.datum.strftime("%d.%m.%Y") if quartiere.datum else "unbekannt",
         "quartiere_crs": quartiere.crs_name,

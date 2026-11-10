@@ -60,7 +60,7 @@ Die Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ steht 
 
 ## Datenstand
 
-Abgerufen wird nachts, mit einer Verbindung und Abstand zwischen den Anfragen; nach dem ersten Lauf nur Geänderte. Fällt der Abruf aus, zeigt die Seite den letzten gültigen Stand und weist darauf hin. Der Datenstand steht auf der Karte unter „Quellen, Lizenzen und Datenstand“. Strukturdaten: Statistischer Datenkatalog Köln mit Stand 15.10.2026 (Angabe in der Datei) und Wegweiser Kommune mit Datenversion vom 15.10.2026, beide abgerufen am 10.11.2026. Neue Abrufe gibt es nur auf Freigabe, nicht im nächtlichen Lauf.
+Abgerufen wird nachts, mit einer Verbindung und Abstand zwischen den Anfragen; nach dem ersten Lauf nur Geänderte. Fällt der Abruf aus, zeigt die Seite den letzten gültigen Stand und weist darauf hin. Der Datenstand steht auf der Karte unter „Quellen, Lizenzen und Datenstand“. Strukturdaten: Statistischer Datenkatalog Köln mit Stand 15.10.2026 (Angabe in der Datei), Wegweiser Kommune mit Datenversion vom 15.10.2026 und Statistische Quartiere (Flächen) mit Stand 24.09.2026 (Angabe auf open.nrw), alle abgerufen am 10.11.2026. Neue Abrufe gibt es nur auf Freigabe, nicht im nächtlichen Lauf.
 
 ## Mitmachen
 

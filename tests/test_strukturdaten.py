@@ -60,9 +60,12 @@ PRJ_25832 = ('PROJCS["ETRS_1989_UTM_Zone_32N",GEOGCS["GCS_ETRS_1989",DATUM["D_ET
 
 
 def _ring(rechteck):
-    """Rechteck als Ring im Uhrzeigersinn (äußerer Ring im Shapefile), absolute Koordinaten in EPSG 25832."""
-    x0, y0, x1, y1 = rechteck
-    return [(X0 + x0, Y0 + y0), (X0 + x0, Y0 + y1), (X0 + x1, Y0 + y1), (X0 + x1, Y0 + y0), (X0 + x0, Y0 + y0)]
+    """Rechteck (x0, y0, x1, y1) oder Liste von Punkten im Uhrzeigersinn als geschlossener Ring im Uhrzeigersinn
+    (äußerer Ring im Shapefile), absolute Koordinaten in EPSG 25832."""
+    if len(rechteck) == 4 and not isinstance(rechteck[0], tuple):
+        x0, y0, x1, y1 = rechteck
+        rechteck = [(x0, y0), (x0, y1), (x1, y1), (x1, y0)]
+    return [(X0 + x, Y0 + y) for x, y in [*rechteck, rechteck[0]]]
 
 
 def quartiere_zip(pfad, quartiere=None, prj=PRJ_25832, umrechnen=None):
@@ -934,7 +937,8 @@ def test_zuordnung_flaechenanteile_und_audit(umgebung):
     assert erg["pruefstatus"] == {"ok": 3, "abweichung": 2, "nicht_zugeordnet": 1} and erg["zeilen_zuordnung"] == 6
     assert erg["groesster_splitter"] == "0.0074"
     assert meta["raumabgleich"]["id_abgleich"]["quartier"] == {"geometrie": 6, "werte": 6, "gemeinsam": 6,
-                                                             "nur_geometrie": [], "nur_werte": []}
+                                                             "nur_geometrie": [], "nur_werte": [],
+                                                             "namen_abweichend": []}
 
 
 def test_nummern_nur_auf_einer_seite_gemeldet(umgebung):
@@ -962,7 +966,7 @@ def test_nummern_nur_auf_einer_seite_gemeldet(umgebung):
     assert {w["raum_id"] for w in _werte_quartier(aus)} == set(QUARTIERE) | {"909990001"}
     ids = json.loads((aus / "meta.json").read_text(encoding="utf-8"))["raumabgleich"]["id_abgleich"]["quartier"]
     assert ids == {"geometrie": 7, "werte": 7, "gemeinsam": 6, "nur_geometrie": ["102030001"],
-                   "nur_werte": ["909990001"]}
+                   "nur_werte": ["909990001"], "namen_abweichend": []}
 
 
 def test_werte_quartier_unveraendert_aus_der_zelle(umgebung):
@@ -1001,6 +1005,7 @@ def test_gzip_deterministisch(umgebung, tmp_path, monkeypatch):
     _normalisieren(dl, aus)
     roh = (aus / "werte_quartier.tsv.gz").read_bytes()
     assert roh[:4] == b"\x1f\x8b\x08\x00" and roh[4:8] == b"\x00\x00\x00\x00"   # FLG 0 (kein FNAME), MTIME 0
+    assert roh[8:10] == b"\x02\xff"   # XFL 2: höchste Stufe (9, wie in meta.json zugesagt); OS 255 (unbekannt, fest)
     monkeypatch.setenv("STRUKTURDATEN_AUS", str(tmp_path / "anderer_ort"))
     strukturdaten.write()
     assert (tmp_path / "anderer_ort" / "werte_quartier.tsv.gz").read_bytes() == roh
@@ -1115,3 +1120,214 @@ def test_quartiere_vom_lokalen_server_als_stadt(server, umgebung, monkeypatch):
     zeile = _protokoll(dl)[-1]
     assert (zeile["http_status"], zeile["zeilen"]) == ("200", str(len(QUARTIERE)))
     assert (dl / strukturdaten.DATEIEN["quartiere"][0]).read_bytes() == server["inhalt"]["/quartiere.zip"]
+
+
+# --- Korrekturen nach der Prüfung von Phase 2 -------------------------------------------------------------------------
+
+def _box(x0, y0, x1, y1):
+    from shapely.geometry import box
+    return box(x0, y0, x1, y1)
+
+
+def test_schwellen_gelten_fuer_den_gerundeten_anteil():
+    """Die Schwellen 0,99 und 0,01 gelten für den veröffentlichten, auf 4 Stellen gerundeten Anteil: Ein Anteil von
+    0,98996 erscheint als „0.9900“ und gilt damit als vollständige Lage (konfidenz hoch, ok), ein Teil von 0,009996
+    erscheint als „0.0100“ und gilt nicht als Randsplitter."""
+    einheit = {"101010001": {"name": "Testquartier", "attribut": "101", "geom": _box(0, 0, 100000, 1)}}
+    namen = {"101010001": "Testquartier"}
+    ziele = {"101": {"geom": _box(0, 0, 98996, 10)}, "102": {"geom": _box(98996, 0, 200000, 10)}}
+    zuordnung, audit, eltern = strukturdaten_raum.abgleich("quartier", "stadtteil", einheit, ziele, namen)
+    assert [(z["nach_id"], z["flaechenanteil"], z["konfidenz"]) for z in zuordnung] == [
+        ("101", "0.9900", "hoch"), ("102", "0.0100", "niedrig")]
+    (a,) = audit
+    assert (a["pruefstatus"], a["weitere_ziele"], a["splitter"]) == ("ok", "1", "0") and eltern == {"101010001": "101"}
+    assert "unter 0.99" not in a["grund"]
+    ziele = {"101": {"geom": _box(0, 0, 99000.4, 10)}, "102": {"geom": _box(99000.4, 0, 200000, 10)}}
+    zuordnung, audit, _ = strukturdaten_raum.abgleich("quartier", "stadtteil", einheit, ziele, namen)
+    assert [(z["nach_id"], z["flaechenanteil"]) for z in zuordnung] == [("101", "0.9900"), ("102", "0.0100")]
+    assert (audit[0]["splitter"], audit[0]["splitter_max_anteil"], audit[0]["weitere_ziele"]) == ("0", "", "1")
+    assert "Randsplitter" not in audit[0]["grund"]
+    # knapp darunter bleibt es bei der Abweichung bzw. beim Randsplitter (gerundet 0.9899 und 0.0099)
+    ziele = {"101": {"geom": _box(0, 0, 98994, 10)}, "102": {"geom": _box(98994, 0, 99000, 10)}}
+    zuordnung, audit, eltern = strukturdaten_raum.abgleich("quartier", "stadtteil", einheit, ziele, namen)
+    assert [(z["nach_id"], z["flaechenanteil"], z["konfidenz"]) for z in zuordnung] == [("101", "0.9899", "mittel")]
+    assert audit[0]["pruefstatus"] == "abweichung" and eltern == {}
+    assert "größter Flächenanteil 0.9899 unter 0.99" in audit[0]["grund"]
+    assert "Randsplitter unter 0.01 nicht zugeordnet: Stadtteil 102 (0.0001)" in audit[0]["grund"]
+    assert "außerhalb aller Stadtteile: 0.0100" in audit[0]["grund"]
+
+
+FINGER = [(600, 500), (600, 800), (900, 800), (900, 651), (1300, 651), (1300, 650), (900, 650), (900, 500)]
+SPORN = [(100, 500), (100, 800), (400, 800), (400, 650.01), (430, 650.01), (430, 650), (400, 650), (400, 500)]
+
+
+def test_verschneidung_mit_unvereinfachten_quartieren(tmp_path):
+    """Die Verschneidung rechnet mit den Flächen der Quelle: Ein 1 m breiter Fortsatz über die Stadtteilgrenze ergibt
+    genau 300 m² von 90 400 m² in Stadtteil 102 (vereinfacht wären es weniger). Eine Nummer, die einen anderen
+    Stadtteil nennt als Lage und Attribut, ergibt uebereinstimmung „nein“. Die veröffentlichte Fläche weicht dagegen
+    ab: Die Rundung auf 1e-6 Grad entfernt einen 30 m langen Sporn von 1 cm Breite; meta nennt die Abweichung."""
+    geo = geo_schreiben(tmp_path / "geo")
+    quartiere = {"101010001": ("Testquartier Fortsatz", "101", FINGER),
+                 "101010002": ("Testquartier Sporn", "101", SPORN),
+                 "201010002": ("Testquartier Nummer", "102", (1300, 100, 1600, 400))}
+    quartiere_zip(tmp_path / "q.zip", quartiere)
+    beleg = {"url": "https://example.invalid/q.zip", "zeitstempel": "2026-11-10T10:00:00+01:00", "pruefsumme": "0"}
+    r = strukturdaten_raum.raumabgleich(tmp_path / "q.zip", beleg, geo["stadtteil"], geo["stadtbezirk"],
+                                        {"quartier": {n: q[0] for n, q in quartiere.items()}})
+    audit = {a["von_id"]: a for a in r["audit"] if a["von_ebene"] == "quartier"}
+    a = audit["101010001"]
+    assert (a["nach_id"], a["flaechenanteil"], a["splitter"], a["splitter_max_anteil"], a["pruefstatus"]) == (
+        "101", f"{90100 / 90400:.4f}", "1", f"{300 / 90400:.4f}", "ok")
+    assert f"Stadtteil 102 ({300 / 90400:.4f})" in a["grund"]
+    a = audit["201010002"]
+    assert (a["nach_id"], a["nach_id_nummer"], a["nach_id_attribut"], a["uebereinstimmung"], a["pruefstatus"],
+            a["methode"], a["konfidenz"]) == ("102", "201", "102", "nein", "abweichung", "verschneidung", "niedrig")
+    assert "Attribut" not in a["grund"] and "Nummer nennt Stadtteil 201" in a["grund"]
+    assert audit["101010002"]["flaechenanteil"] == "1.0000"
+    gemessen = r["geojson_meta"]["quartier"]["abweichung_von_der_quelle"]
+    assert gemessen["abstand_max_raum_id"] == "101010002" and 29.9 < gemessen["abstand_max_m"] < 30.1
+    assert list(gemessen["ueber_toleranz"]) == ["101010002"] and gemessen["bis_toleranz"] == 2
+    assert (gemessen["einheiten"], gemessen["ueberlappung_nachbarpaare"], gemessen["luecken_teile"]) == (3, 0, 0)
+    sporn = next(f for f in json.loads(r["geojson"]["quartier"])["features"]
+                 if f["properties"]["raum_id"] == "101010002")
+    nach_utm = Transformer.from_crs(4326, 25832, always_xy=True)
+    rechts = max(nach_utm.transform(x, y)[0] for x, y in sporn["geometry"]["coordinates"][0]) - X0
+    assert 399 < rechts < 401   # Sporn (bis x = 430) entfernt, das Quadrat (bis x = 400) bleibt
+    assert "Sporne" in r["geojson_meta"]["quartier"]["geometrie"]
+
+
+def test_abweichung_misst_luecken_und_ueberlappungen():
+    """strukturdaten_raum.abweichung: Hausdorff-Abstand je Einheit, Überlappungen zwischen Nachbarn und Löcher in der
+    Vereinigung, die die Quelle nicht hat (der Außenrand zählt nicht)."""
+    quelle = {"1": _box(0, 0, 10, 10), "2": _box(10, 0, 20, 10), "3": _box(0, 10, 10, 20), "4": _box(10, 10, 20, 20)}
+    aus = {"1": _box(0, 0, 10.5, 10), "2": _box(10, 0, 20, 10),
+           "3": _box(0, 10, 10, 20).difference(_box(9, 10, 10, 11)),   # Kerbe an der Ecke: 1 m² Lücke im Inneren
+           "4": _box(10, 10, 20, 19)}   # 4: am Außenrand gekürzt (keine Lücke im Inneren)
+    a = strukturdaten_raum.abweichung(quelle, aus, toleranz=0.75)
+    assert (a["einheiten"], a["abstand_max_m"], a["abstand_max_raum_id"]) == (4, 1.0, "3")
+    assert a["ueber_toleranz"] == {"3": 1.0, "4": 1.0} and a["bis_toleranz"] == 2
+    assert (a["ueberlappung_nachbarpaare"], a["ueberlappung_m2"], a["luecken_teile"], a["luecken_m2"]) == (1, 5, 1, 1)
+    gleich = strukturdaten_raum.abweichung(quelle, quelle)
+    assert (gleich["abstand_max_m"], gleich["ueber_toleranz"], gleich["ueberlappung_m2"], gleich["luecken_m2"]) == (
+        0.0, {}, 0, 0)
+
+
+def test_abweichender_name_als_hinweis(umgebung):
+    """Namen der Quartiere werden zwischen Shapefile und Blatt Daten in allen Jahren verglichen: ein abweichender Name
+    steht mit Jahr als Hinweis im Audit und in meta.json (id_abgleich), der Prüfstatus bleibt."""
+    dl, aus = umgebung
+    pfade = dateien_schreiben(dl)
+
+    def umbenennen(daten):
+        daten["B17"] = "101010001 / Testquartier (alter Name)"   # 2024; 2025 wie im Shapefile
+    xlsx_bauen(pfade["xlsx"], umbenennen)
+    protokoll_schreiben(dl, pfade)
+    strukturdaten.write()
+    audit = {a["von_id"]: a for a in _lesen(aus / "audit_raumabgleich.tsv")}
+    a = audit["101010001"]
+    assert (a["pruefstatus"], a["name"]) == ("ok", "Testquartier")
+    assert a["grund"].endswith("Name im Blatt Daten abweichend: „Testquartier (alter Name)“ (2024); Geometriequelle: "
+                               "„Testquartier“")
+    assert all("Name im Blatt Daten" not in b["grund"] for k, b in audit.items() if k != "101010001")
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    assert meta["raumabgleich"]["id_abgleich"]["quartier"]["namen_abweichend"] == ["101010001"]
+    assert meta["raumabgleich"]["id_abgleich"]["stadtteil"]["namen_abweichend"] == []
+    assert "Name" in meta["audit_raumabgleich_spalten"]["grund"]
+
+
+def test_portalstand_nur_fuer_die_gepruefte_datei(umgebung, monkeypatch):
+    """Der Stand laut open.nrw gilt nur für die Datei mit der am 10.11.2026 geprüften Prüfsumme; für eine andere Datei
+    (etwa nach einem späteren Abruf) steht „nicht geprüft“ statt eines veralteten Datums."""
+    dl, aus = umgebung
+    pfade, _ = _normalisieren(dl, aus)
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    q = {q["kennung"]: q for q in meta["quellen"]}["statistische-quartiere-koeln"]
+    assert q["datenstand_hinweis"].startswith("Stand der Ressource auf open.nrw für diese Datei nicht geprüft; ")
+    assert "24.09.2026" not in json.dumps(meta, ensure_ascii=False)
+    assert "06.07.2026" not in meta["datenstand_hinweis"] and "open.nrw für diese Datei nicht geprüft" in meta[
+        "datenstand_hinweis"]
+    summe = {k: hashlib.sha256(pfade[k].read_bytes()).hexdigest() for k in ("quartiere", "xlsx")}
+    monkeypatch.setattr(strukturdaten_raum, "QUARTIERE_STAND_PORTAL",
+                        {summe["quartiere"]: ("01.02.2026", "03.02.2026")})
+    monkeypatch.setattr(strukturdaten, "OPEN_NRW_RESSOURCEN", {summe["xlsx"]: ("04.05.2026", "03.02.2026")})
+    strukturdaten.write()
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    q = {q["kennung"]: q for q in meta["quellen"]}["statistische-quartiere-koeln"]
+    assert q["datenstand_hinweis"].startswith("Ressource laut open.nrw zuletzt aktualisiert am 01.02.2026 (Metadaten "
+                                              "gelesen am 03.02.2026); Shapefile im Archiv vom ")
+    assert "die Ressourcen auf open.nrw tragen den 04.05.2026" in meta["datenstand_hinweis"]
+
+
+def test_herkunft_der_gebiete_aus_data_geo(umgebung, monkeypatch):
+    """raum/stadtteil.geojson und raum/stadtbezirk.geojson: Abrufdatum nur für die belegte Fassung von data/geo
+    (Prüfsumme), sonst „nicht dokumentiert“; kein geschätztes Datum."""
+    dl, aus = umgebung
+    _normalisieren(dl, aus)
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    for ebene in ("stadtteil", "stadtbezirk"):
+        r = meta["raum"][ebene]
+        assert r["abgerufen"] == "nicht dokumentiert" and "Abrufdatum und Stand der Quelle nicht dokumentiert" in r[
+            "abgerufen_beleg"]
+        assert _geojson(aus, ebene)["meta"]["abgerufen"] == "nicht dokumentiert"
+    assert meta["raum"]["quartier"]["abgerufen"] == "2026-11-10T10:45:58+01:00"
+    monkeypatch.setattr(strukturdaten_raum, "GEO_HERKUNFT", {
+        hashlib.sha256(strukturdaten.geo_pfad(e).read_bytes()).hexdigest(): strukturdaten.geo_pfad(e).name
+        for e in ("stadtteil", "stadtbezirk")})
+    strukturdaten.write()
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    r = meta["raum"]["stadtteil"]
+    assert r["abgerufen"] == "2026-11-04" and "explore/BERICHT_phase1.md" in r["abgerufen_beleg"]
+    assert "data/geo/stadtteile_koeln.geojson in dieser Fassung" in r["abgerufen_beleg"]
+    # die Prüfsummen in GEO_HERKUNFT sind die der Dateien unter data/geo, die mit Commit 3964836 kamen
+    assert set(strukturdaten_raum.GEO_HERKUNFT.values()) == {"stadtteile_koeln.geojson", "stadtbezirke_koeln.geojson"}
+
+
+def test_geheim_aber_ableitbar_gemeldet(umgebung):
+    """Ist genau ein Wert einer geprüften Beziehung geheim und folgt er aus den veröffentlichten Werten derselben Zeile,
+    zählt meta.json die Zeilen (geheimhaltung_ableitbar) und nennt sie im Hinweis; die Werte bleiben unverändert und
+    nichts wird ausgerechnet."""
+    dl, aus = umgebung
+    pfade = dateien_schreiben(dl)
+
+    def nebenwohnsitz_geheim(daten):
+        daten["F19"] = "*"    # 101010003 / 2025: Nebenwohnsitz geheim, Gesamt und Hauptwohnsitz veröffentlicht
+        daten["E7"], daten["F7"] = "*", "*"   # 102 / 2025: zwei Werte der Summe geheim, nicht ableitbar
+    xlsx_bauen(pfade["xlsx"], nebenwohnsitz_geheim)
+    protokoll_schreiben(dl, pfade)
+    strukturdaten.write()
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    zeilen = meta["geheimhaltung_ableitbar"]["zeilen"]
+    assert zeilen == [
+        {"beziehung": "koeln_A0025A = koeln_A0355A + koeln_A0359A", "geheim": "koeln_A0359A",
+         "aus": ["koeln_A0025A", "koeln_A0355A"], "raumebene": "quartier", "zeilen": 1},
+        # G18 „*“ (Männer im Quartier 101010002, 2025), Anteil und Gesamtzahl veröffentlicht
+        {"beziehung": "koeln_A0109P = 100 × koeln_A0109A / koeln_A0025A", "geheim": "koeln_A0109A",
+         "aus": ["koeln_A0109P", "koeln_A0025A"], "raumebene": "quartier", "zeilen": 1}]
+    assert "Summe koeln_A0025A = koeln_A0355A + koeln_A0359A" in meta["geheimhaltung_ableitbar"]["geprueft"]
+    hinweis = meta["geheimhaltung_hinweis"]
+    assert "In 2 Zeilen folgt ein geheim gehaltener Wert" in hinweis and "keine sekundäre Geheimhaltung" in hinweis
+    assert "koeln_A0359A aus koeln_A0025A und koeln_A0355A: quartier 1" in hinweis
+    werte = {(w["raum_id"], w["indikator_id"], w["jahr"]): w for w in _werte_quartier(aus)}
+    assert (werte[("101010003", "koeln_A0359A", "2025")]["wert"], werte[("101010003", "koeln_A0359A", "2025")][
+        "status"]) == ("", "geheim")
+    assert {w["status"] for w in _werte_quartier(aus)} <= {"ok", "geheim", "fehlt"}
+
+
+def test_dokumentation_vertrag_1_1():
+    """TECHNIK.md, README und data/LICENSE-DATA.md passen zu Vertrag 1.1: Reihenfolge der Raumebenen mit quartier,
+    quellobjekt auch für werte_quartier.tsv.gz, Datenstand der Quartiersgeometrie, Namensnennung des Datenkatalogs für
+    audit_raumabgleich.tsv (Spalten in_werten und Namen aus dem Blatt Daten)."""
+    root = config.ROOT
+    technik = (root / "TECHNIK.md").read_text(encoding="utf-8")
+    abschnitt = technik.split("### Strukturdaten", 1)[1].split("\n## ", 1)[0]
+    schreibweise = next(z for z in abschnitt.splitlines() if z.startswith("- **Schreibweise**"))
+    assert f"`{';'.join(strukturdaten.EBENEN_REIHENFOLGE)}`" in schreibweise
+    assert "werte_quartier.tsv.gz" in schreibweise.split("`quellobjekt`", 1)[1]
+    readme = (root / "README.md").read_text(encoding="utf-8").split("## Datenstand", 1)[1].split("\n## ", 1)[0]
+    assert "Statistische Quartiere" in readme
+    lizenz = (root / "data" / "LICENSE-DATA.md").read_text(encoding="utf-8").splitlines()
+    (zeile,) = [z for z in lizenz if z.startswith("| `strukturdaten/audit_raumabgleich.tsv`")]
+    assert strukturdaten.KOELN_LIZENZ in zeile and "Statistischer Datenkatalog Köln" in zeile
+    assert config.NAMENSNENNUNG in zeile
+    (zeile,) = [z for z in lizenz if z.startswith("| `strukturdaten/zuordnung.tsv`")]
+    assert "Datenlizenz Deutschland – Namensnennung" not in zeile
