@@ -114,7 +114,7 @@
           <li>Verwaltungsinterne Vorlaufzeiten vor dem Datum der Vorlage.</li>
           <li>Die Umsetzung von Beschlüssen (Beschlusskontrolle ohne Schnittstelle).</li>
           <li>Sitzungsdaten von Beratungen, die OParl-Lite (noch) nicht verknüpft; sie fehlen in der Achse „Sitzungsdatum“.</li>
-          <li>Baustellen vor Beginn des Archivs; ihre Termine sind laut Quelle unverbindlich (Balken mit unscharfen Enden).</li>
+          <li class="tl-bau-grenze" hidden>Baustellen vor Beginn des Archivs; ihre Termine sind laut Quelle unverbindlich (Balken mit unscharfen Enden).</li>
         </ul>
       </details>`;
     const svg = root.querySelector(".tl-svg"), stage = root.querySelector(".tl-stage");
@@ -471,7 +471,8 @@
         setRange(range[0], range[1], true);
       },
       setPapers(p) { papers = p || []; if (data) setRange(range[0], range[1], true); },
-      setSites(list) { sites = list || []; draw(); },
+      // Hinweis zu den Baustellen nur mit Baustellenspur (Baustellen in Köln abgeschaltet, Runde 18)
+      setSites(list) { sites = list || []; root.querySelector(".tl-bau-grenze").hidden = !sites.length; draw(); },
       // preview: nur angedeutet (Zeiger über einem Listeneintrag), nicht ausgewählt
       select(p, isPreview) { selected = p; preview = Boolean(p && isPreview); draw(); },
       reset() { if (data) setRange(extent[0], fullEnd(), true); },

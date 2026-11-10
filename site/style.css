@@ -697,6 +697,9 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
     background: rgba(255, 255, 255, 0.97); border: 1px solid var(--border); box-shadow: var(--shadow-lift), var(--highlight);
   }
   body.nav-open .nav-more { display: flex; animation: mega-in .2s var(--ease); }
+  /* offenes Menü über Auswertung, Termine, Prozesse und Mitmachen (.overlay, z-index 1100) und den Mega-Menüs (1150);
+     bis Runde 18 lag es dahinter. Die Überlagerung bleibt offen: Esc schließt erst das Menü, dann sie */
+  body.nav-open .nav { z-index: 1160; }
   .nav-more .nav-group:not(.seg) { flex-direction: column; align-items: stretch; gap: 2px; }
   .nav-more .nav-group:not(.seg) .menu-btn { flex-direction: row; justify-content: flex-start; gap: 10px; height: 48px; padding: 0 12px; font-size: 16px; border-radius: 14px; }
   .nav-more .menu-btn .chev { display: inline; margin-left: auto; transform: rotate(-90deg); }
