@@ -11,6 +11,21 @@
   const VORSCHAU = () => document.documentElement.dataset.vorschau === "ja";
   const TELEFON_LEGENDEN = MOBILE.matches ? " Auf dem Telefon stehen die Legenden hinter „Karte“; „Ganz Köln ansehen“ ist das Symbol mit den vier Ecken." : "";
   const TELEFON_KARTE = MOBILE.matches ? " Auf dem Telefon liegen Ebenen, Legenden und Quellen zusammen hinter „Karte“." : "";
+  // Freigaben (index.json meta.funktionen, config.ZUSATZTHEMEN): app.js blendet Elemente mit data-funktion aus und zeigt
+  // den Schalter „Baustellen“ nur mit Baustellen. Sätze über abgeschaltete Funktionen entfallen, die Texte für Bonn
+  // bleiben für die spätere Freigabe stehen (Runde 18; in Köln abgeschaltet: Baustellen, Einfache Sprache, Haushalt,
+  // „Alle Wege im Überblick“, Prozesse, Ratsassistent)
+  const sichtbar = (sel) => { const el = document.querySelector(sel); return Boolean(el) && !el.hidden; };
+  const AN = {
+    baustellen: () => sichtbar(".map-bau"),
+    einfache_sprache: () => sichtbar('[data-funktion="einfache_sprache"]'),
+    haushalt: () => sichtbar('[data-funktion="haushalt"]'),
+    mitmachen: () => sichtbar('[data-funktion="mitmachen"]'),
+  };
+  // Flächen der Leiste, die sichtbar sind (Prozesse und Assistent nur mit Freigabe, die Zeitleiste nur mit Daten)
+  const FLAECHEN = { "panel-list": "Vorlagen (die Liste aller Vorlagen im Gebiet)", "timeline-wrap": "Zeitleiste",
+    "panel-detail": "Vorgang (die Einzelheiten einer Vorlage)", "panel-prozesse": "Prozesse", "panel-assistent": "Assistent" };
+  const aufzaehlung = (a) => (a.length < 2 ? a.join("") : `${a.slice(0, -1).join(", ")} und ${a[a.length - 1]}`);
 
   // Schritte: target (Selektor) oder rect (Fläche aus app.js), before (Flächen öffnen), menu (Mega-Menü),
   // beacons (Selektoren für pulsierende Punkte), clip (sichtbarer Ausschnitt), when (Schritt nur, wenn verfügbar),
@@ -31,7 +46,9 @@
     { before: (ui) => { if (MOBILE.matches) ui.panel("panel-detail", false); ui.mapMenu(!MOBILE.matches); }, rect: (ui) => ui.areaRect(), fallback: "#map",
       beacons: [".marker-cluster, path.leaflet-interactive", ".map-menu", ".map-color", ".map-plans", ".map-legend"],
       title: "Die Karte",
-      text: "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt hinein. Die Farbe zeigt, wie sicher der Ort ist: grün gesichert (Koordinate oder Bebauungsplan der Stadt), braun erschlossen (Name im Titel), violett unsicher. „Farbe nach Thema“ färbt die Punkte stattdessen nach Thema; die Legende erklärt die Farben. „Bebauungspläne“ blendet die Geltungsbereiche der rechtskräftigen Pläne ein; ein Klick auf eine Fläche öffnet die Planchronik. „Baustellen“ zeigt gemeldete Baustellen mit unverbindlichen Terminen. „Überschwemmungsgebiete“ und „Bodenrichtwerte“ zeigen beim Hineinzoomen Flächen des Landes zur Einordnung (abgeleitet aufbereitet, verbindlich sind die Quellen). „Farbige Karte“ schaltet den Hintergrund um. Alle diese Schaltflächen liegen unter „Ebenen“; die Zahl daneben nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE,
+      text: () => "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt hinein. Die Farbe zeigt, wie sicher der Ort ist: grün gesichert (Koordinate oder Bebauungsplan der Stadt), braun erschlossen (Name im Titel), violett unsicher. „Farbe nach Thema“ färbt die Punkte stattdessen nach Thema; die Legende erklärt die Farben. „Bebauungspläne“ blendet die Geltungsbereiche der rechtskräftigen Pläne ein; ein Klick auf eine Fläche öffnet die Planchronik."
+        + (AN.baustellen() ? " „Baustellen“ zeigt gemeldete Baustellen mit unverbindlichen Terminen." : "")
+        + " „Überschwemmungsgebiete“ und „Bodenrichtwerte“ zeigen beim Hineinzoomen Flächen des Landes zur Einordnung (abgeleitet aufbereitet, verbindlich sind die Quellen). „Farbige Karte“ schaltet den Hintergrund um. Alle diese Schaltflächen liegen unter „Ebenen“; die Zahl daneben nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE,
       vorschau: "Die Flächen zeigen Stadtbezirke und Stadtteile, gefärbt nach der Kennzahl in der obersten Legende. Punkte für Vorlagen mit Ortsbezug folgen mit den Ratsvorlagen. Unter „Ebenen“ lassen sich offene Daten zuschalten, etwa Bebauungspläne, Überschwemmungsgebiete, Bodenrichtwerte, Schutzgebiete, Schulen, Kitas oder Haltestellen – zur Einordnung abgeleitet aufbereitet, verbindlich sind die Quellen. Ebenen mit vielen Objekten erscheinen erst beim Hineinzoomen. „Farbige Karte“ schaltet den Hintergrund um. Die Zahl neben „Ebenen“ nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE },
     { before: (ui) => { ui.mapMenu(false); ui.panel("panel-list", true); }, target: "#panel-list", beacons: ["#f-text", "#more-filters > summary"],
       title: "Die Vorlagen",
@@ -67,7 +84,10 @@
       text: "Kennzahlen zum Gebiet nach Thema, Partei, Jahr und Stand; ein Klick auf einen Balken filtert die Liste. Die Verfahrenswege zeigen für ganz Köln, welche Gremien welche Vorlagenart beraten und wie Verfahren meist enden." },
     { menu: "mega-mitmachen", target: "#mega-mitmachen", beacons: ["#cta-termine", "#cta-mitmachen", "#cta-feed .btn"],
       title: "Mitmachen",
-      text: "Kommende Sitzungen, auch als Kalenderdatei; unter „Informiert bleiben“ Feeds, die neue Vorlagen im Gebiet oder Änderungen an einem Vorgang melden; der Weg zum Bürgerantrag nach § 24 GO NRW; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen, die Fristen und alle Wege, sich einzubringen; und ein Hinweis, wenn etwas falsch zugeordnet ist.",
+      text: () => "Kommende Sitzungen, auch als Kalenderdatei; unter „Informiert bleiben“ Feeds, die neue Vorlagen im Gebiet oder Änderungen an einem Vorgang melden; "
+        + (AN.mitmachen() ? "der Weg zum Bürgerantrag nach § 24 GO NRW; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen, die Fristen und alle Wege, sich einzubringen; "
+          : "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden; ")
+        + "und ein Hinweis, wenn etwas falsch zugeordnet ist.",
       vorschau: "Unter „Informiert bleiben“ stehen Feeds, die neue Vorlagen im gewählten Gebiet melden; sie füllen sich, sobald Ratsvorlagen vorliegen. Kommende Sitzungen und die Kalenderdatei folgen mit den Ratsvorlagen. Außerdem: der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden, und ein Hinweis, wenn etwas falsch zugeordnet oder unklar ist." },
     { menu: "mega-daten", target: "#mega-daten",
       title: "Offene Daten",
@@ -75,7 +95,7 @@
       vorschau: "Alle Daten zum Herunterladen: das Datenpaket enthält schon Gebiete, Kennzahlen je Stadtteil und die Kartenebenen; die Vorlagen und ihre Prüfprotokolle folgen mit den Ratsvorlagen. Quellen, Lizenzen und Datenstand stehen auf der Karte unter den Legenden." },
     { menu: "mega-verstehen", target: "#mega-verstehen",
       title: "Verstehen",
-      text: "Hilfen zum Lesen der Karte: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge oder Zuschussbedarf in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.",
+      text: () => `Hilfen zum Lesen der Karte: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder ${AN.haushalt() ? "Zuschussbedarf" : "Stadtbezirk"} in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.`,
       vorschau: "Hilfen zum Lesen der Karte: Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder." },
     { when: () => document.querySelector(".toggle-ai")?.hidden === false,
       target: ".toggle-ai",
@@ -83,7 +103,7 @@
       text: "Ein KI-System beantwortet Fragen zu Kölner Ratsvorgängen und stützt sich dabei nur auf die Daten dieser Seite. Er braucht einen eigenen API-Schlüssel, nennt seine Quellen und verlinkt die Originale. Antworten können Fehler enthalten." },
     { target: ".nav-group.seg",
       title: "Flächen ein- und ausklappen",
-      text: "Vorlagen (die Liste aller Vorlagen im Gebiet), Zeitleiste, Vorgang (die Einzelheiten einer Vorlage), Prozesse und Assistent lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Esc schließt die Fläche, in der Sie gerade sind.",
+      text: () => `${aufzaehlung([...document.querySelectorAll(".nav-group.seg .toggle[data-panel]")].filter((b) => !b.hidden && FLAECHEN[b.dataset.panel]).map((b) => FLAECHEN[b.dataset.panel]))} lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Esc schließt die Fläche, in der Sie gerade sind.`,
       vorschau: "Die Flächen „Vorlagen“ und „Vorgang“ lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Mit den Ratsvorlagen kommt die Zeitleiste hinzu. Esc schließt die Fläche, in der Sie gerade sind." },
     { target: "#about-open",
       title: "Über die Karte",
