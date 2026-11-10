@@ -1,0 +1,49 @@
+indikator	name_datenblatt	zaehler_code	zaehler_name	nenner_code	nenner_name	faktor	n_werte_indikator	n_zeilen_geprueft	max_abs_abweichung	n_passend_gerundet	n_passend_nur_abgeschnitten	n_sonst	ergebnis
+A0109P	Anteil männlicher Einwohner an allen Einwohnern	A0109A	Einwohner, männlich	A0025A	Einwohner*innen, gesamt	100	9576	9559	5e-07	9559	0	0	Treffer
+A0213P	Anteil weiblicher Einwohnerinnen an allen Einwohnerinnen	A0213A	Einwohnerinnen, weiblich	A0025A	Einwohner*innen, gesamt	100	9576	9559	5e-07	9559	0	0	Treffer
+A0022S	Durchschnittsalter der Gesamtbevölkerung						9576						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+A0296S	Durchschnittsalter, Männer						9576						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+A0297S	Durchschnittsalter, Frauen						9576						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+A0298S	Durchschnittsalter, Deutsche						9576						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+A0299S	Durchschnittsalter, Nichtdeutsche						9576						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+A0029P	Anteil Einwohner*innen im Alter von 0 bis unter 3 Jahre an allen Einwohner*innen	A0029A	Einwohner*innen, 00 < 03 Jahre	A0025A	Einwohner*innen, gesamt	100	9573	9556	5e-07	9556	0	0	Treffer
+A0035P	Anteil Einwohner*innen im Alter von 3 bis unter 6 Jahre an allen Einwohner*innen	A0035A	Einwohner*innen, 03 < 06 Jahre	A0025A	Einwohner*innen, gesamt	100	9574	9557	5e-07	9557	0	0	Treffer
+A0291P	Anteil Einwohner*innen im Alter von 6 bis unter 15 Jahre an allen Einwohner*innen	A0291A	Einwohner*innen, 06 < 15 Jahre	A0025A	Einwohner*innen, gesamt	100	9576	9559	5e-07	9559	0	0	Treffer
+A0043P	Anteil Einwohner*innen im Alter von 15 bis unter 18 Jahre an allen Einwohner*innen	A0043A	Einwohner*innen, gesamt, 15 < 18 Jahre	A0025A	Einwohner*innen, gesamt	100	9561	9544	5e-07	9544	0	0	Treffer
+A0060P	Anteil Einwohner*innen im Alter von 60 bis unter 65 Jahre an allen Einwohner*innen	A0060A	Einwohner*innen, gesamt, 60 < 65 Jahre	A0025A	Einwohner*innen, gesamt	100	9573	9556	5e-07	9556	0	0	Treffer
+A0065P	Anteil Einwohner*innen im Alter von 75 bis unter 80 Jahre an allen Einwohner*innen	A0065A	Einwohner*innen, gesamt, 75 < 80 Jahre	A0025A	Einwohner*innen, gesamt	100	9567	9550	5e-07	9550	0	0	Treffer
+A0027P	Anteil Einwohner*innen ab 80 Jahre an allen Einwohner*innen	A0027A	Einwohner*innen, gesamt, 80 Jahre und älter	A0025A	Einwohner*innen, gesamt	100	9551	9534	5e-07	9534	0	0	Treffer
+A0114P	Anteil männlicher Einwohner im Alter von 0 bis unter 3 Jahren an allen Einwohner*innen im gleichen Alter	A0114A	Einwohner, männlich, 00 < 03 Jahre	A0029A	Einwohner*innen, 00 < 03 Jahre	100	9567	9550	4.98e-07	9550	0	0	Treffer
+A0117P	Anteil männlicher Einwohner im Alter von 3 bis unter 6 Jahren an allen Einwohner*innen im gleichen Alter	A0117A	Einwohner, männlich, 03 < 06 Jahre	A0035A	Einwohner*innen, 03 < 06 Jahre	100	9545	9528	5e-07	9528	0	0	Treffer
+A0123P	Anteil männlicher Einwohner im Alter von 15 bis unter 18 Jahren an allen Einwohnern im gleichen Alter	A0123A	Einwohner, männlich, 15 < 18 Jahre	A0043A	Einwohner*innen, gesamt, 15 < 18 Jahre	100	9452	9430	5e-07	9430	0	0	Treffer
+A0136P	Anteil männlicher Einwohner im Alter von 60 bis unter 65 Jahren an allen Einwohner*innen im gleichen Alter	A0136A	Einwohner, männlich, 60 < 65 Jahre	A0060A	Einwohner*innen, gesamt, 60 < 65 Jahre	100	9572	9554	5e-07	9554	0	0	Treffer
+A0140P	Anteil männlicher Einwohner im Alter von 75 bis unter 80 Jahre an allen Einwohnern im gleichen Alter	A0140A	Einwohner, männlich, 75 < 80 Jahre	A0065A	Einwohner*innen, gesamt, 75 < 80 Jahre	100	9509	9489	4.98e-07	9489	0	0	Treffer
+A0218P	Anteil weiblicher Einwohnerinnen im Alter von 0 bis unter 3 Jahren an allen Einwohner*innen im gleichen Alter	A0218A	Einwohnerinnen, weiblich, 00 < 03 Jahre	A0029A	Einwohner*innen, 00 < 03 Jahre	100	9561	9544	4.98e-07	9544	0	0	Treffer
+A0221P	Anteil weiblicher Einwohnerinnen im Alter von 3 bis unter 6 Jahren an allen Einwohner*innen im gleichen Alter	A0221A	Einwohnerinnen, weiblich, 03 < 06 Jahre	A0035A	Einwohner*innen, 03 < 06 Jahre	100	9537	9519	5e-07	9519	0	0	Treffer
+A0227P	Anteil weiblicher Einwohnerinnen im Alter von 15 bis unter 18 Jahren an allen Einwohnerinnen im gleichen Alter	A0227A	Einwohnerinnen, weiblich, 15 < 18 Jahre	A0043A	Einwohner*innen, gesamt, 15 < 18 Jahre	100	9451	9434	5e-07	9434	0	0	Treffer
+A0240P	Anteil weiblicher Einwohnerinnen im Alter von 60 bis unter 65 Jahren an allen Einwohner*innen im gleichen Alter	A0240A	Einwohnerinnen, weiblich, 60 < 65 Jahre	A0060A	Einwohner*innen, gesamt, 60 < 65 Jahre	100	9572	9554	5e-07	9554	0	0	Treffer
+A0244P	Anteil weiblicher Einwohnerinnen im Alter von 75 bis unter 80 Jahre an allen Einwohnerinnen im gleichen Alter	A0244A	Einwohnerinnen, weiblich, 75 < 80 Jahre	A0065A	Einwohner*innen, gesamt, 75 < 80 Jahre	100	9527	9508	4.98e-07	9508	0	0	Treffer
+A0153P	Anteil Einwohner*innen mit Migrationshintergrund an allen Einwohner*innen	A0153A	Einwohner*innen, mit Migrationshintergrund	A0025A	Einwohner*innen, gesamt	100	9576	9559	5e-07	9559	0	0	Treffer
+A0157P	Anteil Einwohner*innen mit Migrationshintergrund im Alter unter 18 Jahre an allen Einwohner*innen im gleichen Alter						9574						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+A0002P	Anteil Nichtdeutsche an allen Einwohner*innen	A0002A	Anzahl Nichtdeutsche	A0025A	Einwohner*innen, gesamt	100	9576	9559	5e-07	9559	0	0	Treffer
+A0282S	Binnen- und Außenwanderung: Fortzüge je 100 Einwohner*innen	A0282A	Binnen- und Außenwanderung: Fortzüge	A0025A	Einwohner*innen, gesamt	100	9575	9558	9.99e-05	5284	4274	0	Treffer
+A0283S	Binnen- und Außenwanderung: Zuzüge je 100 Einwohner*innen	A0283A	Binnen- und Außenwanderung: Zuzüge	A0025A	Einwohner*innen, gesamt	100	9574	9558	9.99e-05	5234	4324	0	Treffer
+A0273P	Anteil Einpersonenhaushalte an allen Haushalten	A0273A	Haushalte, mit einer Person	A0267A	Haushalte	100	9576	9559	5e-07	9559	0	0	Treffer
+A0314P	Anteil Zweipersonenhaushalte an allen Haushalten	A0314A	Haushalte, mit zwei Personen	A0267A	Haushalte	100	9576	9559	5e-07	9559	0	0	Treffer
+A0315P	Anteil Dreipersonenhaushalte an allen Haushalten	A0315A	Haushalte, mit drei Personen	A0267A	Haushalte	100	9574	9557	5e-07	9557	0	0	Treffer
+A0316P	Anteil Vierpersonenhaushalte an allen Haushalten	A0316A	Haushalte, mit vier Personen	A0267A	Haushalte	100	9573	9556	5e-07	9556	0	0	Treffer
+A0317P	Anteil Fünf- und Mehrpersonenhaushalte an allen Haushalten	A0317A	Haushalte, ab fünf Personen	A0267A	Haushalte	100	9494	9477	5e-07	9477	0	0	Treffer
+A0275P	Anteil Haushalte mit Kindern an allen Haushalten	A0275A	Haushalte, mit Kindern	A0267A	Haushalte	100	9576	9559	5e-07	9559	0	0	Treffer
+A0290P	Anteil Haushalte, mit zwei und mehr Kindern an allen Haushalten	A0290A	Haushalte, mit zwei und mehr Kindern	A0267A	Haushalte	100	9575	9558	5e-07	9558	0	0	Treffer
+A0269P	Anteil Haushalte mit Kind(ern) und nur einem Elternteil an allen Haushalten	A0269A	Haushalte, alleinerziehend	A0267A	Haushalte	100	9551	9534	5e-07	9534	0	0	Treffer
+B0022S	Wohnfläche im Wohnungsbestand je Einwohner*in in Quadratmeter						3696						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+B0023S	Durchschnittliche Wohnfläche je Wohnung in Quadratmeter (Wohnungen in Wohn- und Nichtwohngebäuden)						3696						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+B0026P	Anteil geförderte Mietwohnungen (Typ A/1. Förderweg) am Wohnungsbestand	B0026A	Geförderte Mietwohnungen Typ A/1. Förderweg	B0025A	Wohnungsstruktur: Wohnungen in Gebäuden mit Wohnraum (Gesamtwohnungsbestand)	100	3684	3680	1e-06	2522	1158	0	Treffer
+C0007P	Anteil SGB II- Leistungsberechtigte im Alter 0 bis unter die Altersgrenze zum Renteneintritt an allen Einwohner*innen mit Hauptwohnsitz im gleichen Alter						9537						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+D0011P	Anteil sozialversicherungspflichtig Beschäftigte (räumliche Verortung nach Wohnort) an den Einwohner*innen mit Hauptwohnsitz im Alter von 15 bis 64 Jahren						9559						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+D0001P	Arbeitslosenquote insgesamt (SGB II & SGB III)						9554						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+H0003S	Privat zugelassene PKW je 1000 Einwohner*innen	H0029A	Anzahl zugelassener PKW, Private Nutzungsart	A0025A	Einwohner*innen, gesamt	1000	9576	9559	0.001	5302	4257	0	Treffer
+H0052S	Zugelassene KFZ je 1000 Einwohner*innen	H0037A	Anzahl zugelassener KFZ	A0025A	Einwohner*innen, gesamt	1000	9576	9559	0.000999	5366	4193	0	Treffer
+H0049S	Zugelassene PKW, Durchschnitt Hubraum (ccm)						9576						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+H0050S	Zugelassene PKW, Durchschnitt Höchstgeschwindigkeit (km/h)						9576						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)
+H0051S	Zugelassene PKW, Durchschnitt Leistung (kw)						9576						kein Treffer innerhalb einer Einheit der letzten Stelle (Zähler oder Nenner nicht im Datenblatt bzw. kein Verhältnis)

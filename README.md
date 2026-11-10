@@ -42,6 +42,8 @@ Der Ratsatlas Köln beruht auf dem Code des **Ratsatlas Bonn** ([daimpad/ratsatl
 | Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW) | Verortung über die Plannummer | dl-de/by 2.0 |
 | Zensus 2022, BORIS NRW, Klimaanalyse NRW, Überschwemmungs- und Hochwassergefahrenkarten, Kitas und Schulen NRW, VRS-Fahrplan, Schutzgebiete NRW | Kennzahlen je Stadtteil und Kartenebenen | dl-de/zero 2.0 bzw. dl-de/by 2.0 (je Ebene angegeben) |
 | Weitere offene Daten der Stadt Köln (Lebenswerte Veedel, Sozialräume, Stimmbezirke, Wohnbaupotenziale, Fahrradstraßen, Denkmalliste) | Kartenebenen | dl-de/zero 2.0 |
+| Statistischer Datenkatalog Köln (Stadt Köln, Amt für Stadtentwicklung und Statistik) | Strukturdaten je Stadtteil, Stadtbezirk und für die Gesamtstadt (`data/strukturdaten/`; die Anzeige auf der Seite folgt) | dl-de/by 2.0 |
+| Wegweiser Kommune (Bertelsmann Stiftung) | gesamtstädtische Vergleichswerte für Bonn, Köln und Wuppertal | CC0 1.0 (Quellenangabe wird geführt) |
 | OpenStreetMap über Protomaps | grauer Kartenhintergrund | ODbL 1.0 |
 
 Die Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ steht auf jeder Seite und in jeder JSON-, GeoJSON-, Feed- und Kalenderdatei mit Daten aus dem Ratsinformationssystem oder von offenedaten-koeln.de; für die Tabellen (TSV) im Datenpaket gilt die Lizenzübersicht. Dateien mit Daten von Land und Bund nennen deren Quelle, Lizenz und Namensnennung in der Datei selbst (`meta`, in `ebenen.json` je Ebene). Der Code steht unter der [MIT-Lizenz](LICENSE), die Daten unter den Lizenzen in [data/LICENSE-DATA.md](data/LICENSE-DATA.md), dort mit der Lizenz jeder einzelnen Datei.
@@ -52,11 +54,12 @@ Die Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ steht 
 - **Datenschutz:** Wohnadressen von Privatpersonen werden nicht gezeigt. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung sowie politische Anträge und Anfragen, nie Anregungen und Beschwerden nach § 24 GO NRW; ist die Art einer Vorlage nicht erkennbar, zeigt die Karte höchstens die Straße.
 - **Volltexte:** Bis die Lizenz geklärt ist, erscheinen keine Volltexte, Zitate oder Dokumente der Stadt; die Seite verlinkt nur auf das Original.
 - **Nicht einsehbar:** Nichtöffentliche Beratungen, Arbeit innerhalb der Verwaltung und die Umsetzung von Beschlüssen.
+- **Strukturdaten:** Die Werte stehen unverändert wie in der Quelle. Werte, die die Stadt wegen der Geheimhaltung nicht veröffentlicht, bleiben leer. Typ und Einheit der Kennzahlen sind eigene Einordnungen. Vergleichswerte des Wegweisers Kommune und Werte der Kölner Stadtstatistik unterscheiden sich in Definition und Stichtag; sie werden nicht miteinander verrechnet. Dass Vorlagen und Strukturmerkmale im selben Gebiet vorkommen, belegt keinen Zusammenhang.
 - **Maßgeblich** ist immer das Original im Ratsinformationssystem.
 
 ## Datenstand
 
-Abgerufen wird nachts, mit einer Verbindung und Abstand zwischen den Anfragen; nach dem ersten Lauf nur Geänderte. Fällt der Abruf aus, zeigt die Seite den letzten gültigen Stand und weist darauf hin. Der Datenstand steht auf der Karte unter „Quellen, Lizenzen und Datenstand“.
+Abgerufen wird nachts, mit einer Verbindung und Abstand zwischen den Anfragen; nach dem ersten Lauf nur Geänderte. Fällt der Abruf aus, zeigt die Seite den letzten gültigen Stand und weist darauf hin. Der Datenstand steht auf der Karte unter „Quellen, Lizenzen und Datenstand“. Strukturdaten: Statistischer Datenkatalog Köln mit Stand 15.10.2026 (Angabe in der Datei) und Wegweiser Kommune mit Datenversion vom 15.10.2026, beide abgerufen am 10.11.2026. Neue Abrufe gibt es nur auf Freigabe, nicht im nächtlichen Lauf.
 
 ## Mitmachen
 

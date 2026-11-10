@@ -1,0 +1,51 @@
+bereich	kennzahl	wert	datei	fundstelle_bzw_berechnung
+Info	Titel	Statistischer Datenkatalog Köln	d07b78e5b0a5ee8c4326.xlsx	Blatt Info, Zelle A2
+Info	Zeitscheiben	2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025	d07b78e5b0a5ee8c4326.xlsx	Blatt Info, Zelle A8
+Info	Auswertung erstellt am	15.10.2026	d07b78e5b0a5ee8c4326.xlsx	Blatt Info, Zelle A11
+Info	Raumbezüge (Wortlaut)	Die Raumbezüge der kommunalen Gebietsgliederung (9 Stadtbezirke, 86 Stadtteile) sowie weiterer räumlicher Verwaltungsstrukturen (570 Statistische Quartiere, 15 Sozialräume) werden in folgender Veröffentlichung im Detail beschrieben:	d07b78e5b0a5ee8c4326.xlsx	Blatt Info, Zelle A15
+Info	Geheimhaltung (Wortlaut)	Werte zwischen 1 und 4 und zugehörige Anteilswerte werden zur Wahrung des Datenschutz und der statistischen Geheimhaltung nicht veröffentlicht (*).	d07b78e5b0a5ee8c4326.xlsx	Blatt Info, Zelle A22
+Info	Katalog (Wortlaut)	Das Verzeichnis im Tabellenblatt Katalog umfasst alle bei der Kommunalen Statistikstelle vorliegenden Indikatoren.	d07b78e5b0a5ee8c4326.xlsx	Blatt Info, Zelle A25
+Info	Kontakt	Stadt Köln - Der Oberbürgermeister / Amt für Stadtentwicklung und Statistik / Willy-Brandt-Platz 2 / 50679 Köln / statistik-dwh@stadt-koeln.de / http://www.stadt-koeln.de/politik-und-verwaltung/statistik/	d07b78e5b0a5ee8c4326.xlsx	Blatt Info, Zellen A28–A33
+Info	Zelle A1	'#VALUE!'	d07b78e5b0a5ee8c4326.xlsx	eingebettetes Bild in der Zelle (xl/richData, xl/media/image1.jpeg); openpyxl liest den Ersatzwert
+Info	Verweis rId3	https://www.offenedaten-koeln.de/dataset/geopackage-raumbezugssystem-koeln	d07b78e5b0a5ee8c4326.xlsx	xl/worksheets/_rels/sheet1.xml.rels; Ziel nicht abgerufen (ungeprüft)
+Info	Verweis rId2	https://www.stadt-koeln.de/mediaasset/content/pdf15/statistiksonstige/die_kommunale_gebietsgliederung.pdf	d07b78e5b0a5ee8c4326.xlsx	xl/worksheets/_rels/sheet1.xml.rels; Ziel nicht abgerufen (ungeprüft)
+Info	Verweis rId1	http://www.stadt-koeln.de/politik-und-verwaltung/statistik/	d07b78e5b0a5ee8c4326.xlsx	xl/worksheets/_rels/sheet1.xml.rels; Ziel nicht abgerufen (ungeprüft)
+Info	Verweis rId4	mailto:statistik-dwh@stadt-koeln.de	d07b78e5b0a5ee8c4326.xlsx	xl/worksheets/_rels/sheet1.xml.rels; Ziel nicht abgerufen (ungeprüft)
+Datei	dcterms:modified	2026-10-15T14:22:41Z	d07b78e5b0a5ee8c4326.xlsx	docProps/core.xml
+Datei	Lizenz- oder Namensnennungstext in der Arbeitsmappe	keiner	d07b78e5b0a5ee8c4326.xlsx	Suche (Lizenz|dl-de|Namensnennung|CC BY) in allen 2924 Zeichenketten von xl/sharedStrings.xml
+Datei	Hinweis auf Schätz- oder Verfahrenswerte (Migrationshintergrund, Haushalte)	keiner	d07b78e5b0a5ee8c4326.xlsx	Suche (schätz|generier|verfahren) in xl/sharedStrings.xml
+Datei	Tabellenblätter	Info, Daten, Quellen, Katalog	d07b78e5b0a5ee8c4326.xlsx	xl/workbook.xml
+Quellen	Spalten	Indikator, Quellenangabe, Anmerkung	d07b78e5b0a5ee8c4326.xlsx	Blatt Quellen, Zeile 1
+Quellen	Einträge	172	d07b78e5b0a5ee8c4326.xlsx	Blatt Quellen, Zeilen 2–173
+Quellen	verschiedene Quellenangaben	7	d07b78e5b0a5ee8c4326.xlsx	155× Stadt Köln - Bürgerdienste; Amt für Stadtentwicklung und Statistik (Kommunale Statistikstelle; eigene Berechnung); 7× Statistik der Bundesagentur für Arbeit; Stadt Köln - Amt für Stadtentwicklung und Statistik (Kommunale Statistikstelle; eigene Berechnung); 3× Stadt Köln - Bauaufsichtsamt; Amt für Stadtentwicklung und Statistik (Kommunale Statistikstelle; eigene Berechnung); 3× Stadt Köln - Amt für Stadtentwicklung und Statistik (Kommunale Statistikstelle; eigene Berechnung); 2× Stadt Köln - Amt für Wohnungswesen; Amt für Stadtentwicklung und Statistik (Kommunale Statistikstelle; eigene Berechnung); 1× Stadt Köln - Amt für Schulentwicklung; Amt für Stadtentwicklung und Statistik (Kommunale Statistikstelle; eigene Berechnung); 1× Stadt Köln - Amt für Kinder, Jugend und Familie; Amt für Stadtentwicklung und Statistik (Kommunale Statistikstelle; eigene Berechnung)
+Quellen	Einträge mit Anmerkung	12	d07b78e5b0a5ee8c4326.xlsx	B0004A, B0003A, B0009A, B0022S, B0023S, B0026A, B0026P, B0025A, D0011A, D0011P, D0001P, H0010A
+Katalog	Kopfzeile 1 (Wortlaut, zusammengeführte Zellen A1:D1, E1:G1, H1:W1)	Indikator | Formate | Verfügbarkeit nach Jahr und Raumebene  ■ Statistische Quartiere / ■ Stadtteile / ■ Stadtbezirke / ■ Gesamtstadt	d07b78e5b0a5ee8c4326.xlsx	Blatt Katalog, Zeile 1
+Katalog	Kopfzeile 2 (Spaltennamen)	THEMA | UNTERTHEMA | ID | Name | abs | % | andere | 2010 | 2011 | 2012 | 2013 | 2014 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025	d07b78e5b0a5ee8c4326.xlsx	Blatt Katalog, Zeile 2
+Katalog	Indikatorzeilen (IDs)	973	d07b78e5b0a5ee8c4326.xlsx	Blatt Katalog, Zeilen 3–975 (Zeilen 976–1594 nur formatiert, ohne Werte)
+Katalog	Themen	10	d07b78e5b0a5ee8c4326.xlsx	Bevölkerung und Haushalte: 544; Gesundheit und Soziales: 111; Bildung und Ausbildung: 83; Bauen und Wohnen: 73; Verkehr: 57; Wirtschaft und Arbeitsmarkt: 51; Politische Verhältnisse: 26; Stadtgebiet und Flächennutzung: 12; Kultur und Freizeit: 9; Umwelt und Klima: 7
+Katalog	Unterthemen	38	d07b78e5b0a5ee8c4326.xlsx	verschiedene Paare THEMA/UNTERTHEMA
+Katalog	Formatflags abs / % / andere	886 / 514 / 85	d07b78e5b0a5ee8c4326.xlsx	Anzahl X in Spalten E, F, G; Summe = Zeilen in indikatoren_katalog.tsv
+Katalog	Verfügbarkeitscodes in Jahresspalten 2010–2025	0: 637; 1: 30; 2: 632; 3: 12760; leer: 1509	d07b78e5b0a5ee8c4326.xlsx	973 Zeilen × 16 Jahre = 15568 Zellen
+Katalog	Bedeutung der Codes	3 = Statistische Quartiere, 2 = Stadtteile, 1 = Stadtbezirke, 0 = Gesamtstadt, leer = nicht verfügbar	d07b78e5b0a5ee8c4326.xlsx	bedingte Formatierung H3:W975 (Code 3 → FF00B050, 2 → FF92D050, 1 → FFFFD998, 0 → FFF4B084) gleich den Farben der Legende in H1 (FF00B050, FF92D050, FFFFD966, FFF4B084; Stadtbezirke weicht im Farbwert leicht ab); Code = feinste Ebene, gröbere eingeschlossen (geprüft am Datenblatt, siehe unten)
+Katalog	höchster Code je Indikatorzeile	3: 893; 2: 35; 1: 2; 0: 43	d07b78e5b0a5ee8c4326.xlsx	Maximum über 2010–2025 je Zeile
+Daten	Kopf Schlüsselspalten (XLSX)	Jahr, Raum, Raumebene	d07b78e5b0a5ee8c4326.xlsx	Blatt Daten, Zeile 1, Spalten A–C
+Daten	Indikatorspalten (XLSX)	172	d07b78e5b0a5ee8c4326.xlsx	Blatt Daten, Spalten D–FS; Spaltenkopf „Code - Name“
+Daten	Datenzeilen (XLSX)	9576	d07b78e5b0a5ee8c4326.xlsx	Blatt Daten, Zeilen 2–9577; Jahre absteigend (2025 zuerst)
+CSV	Kodierung	UTF-8 mit BOM, Zeilenende CRLF, Trennzeichen Semikolon, Dezimalkomma, keine Tausendertrennung	a88665ce3b0eb344bce1.csv	BOM=True, CRLF=9577, LF=9577
+CSV	Kopf Schlüsselspalten	S_JAHR, S_RAUM, RAUM, S_RAUMEBENE, RAUMEBENE	a88665ce3b0eb344bce1.csv	Zeile 1, Spalten 1–5
+CSV	Indikatorspalten	171	a88665ce3b0eb344bce1.csv	Spaltenkopf nur Code; fehlt gegenüber XLSX: A0291P
+CSV	Datenzeilen	9576	a88665ce3b0eb344bce1.csv	Jahre aufsteigend (2012 zuerst)
+CSV	S_RAUMEBENE / RAUMEBENE / Zeilen	0 = Gesamtstadt: 14; 1 = Stadtbezirke: 126; 2 = Stadtteile: 1204; 3 = Statistische Quartiere: 7980; 4 = Sozialräume: 252	a88665ce3b0eb344bce1.csv	Zählung über alle Datenzeilen
+CSV	Zellen leer / * / Zahl	123960 / 0 / 1513536	a88665ce3b0eb344bce1.csv	Indikatorspalten aller Datenzeilen
+Daten	Zellen * / leer / Zahl (XLSX)	68995 / 54965 / 1523112	d07b78e5b0a5ee8c4326.xlsx	Indikatorspalten aller Datenzeilen; * und leer als gemeinsame Zeichenkette (sharedStrings-Index 54 bzw. 53)
+Geheimhaltung	Anteil * an allen Zellen, Gesamtstadt	1.16 % (28 von 2408)	geheimhaltung.tsv	Zeile ALLE; ohne ganz leere Jahre 1.17 %; Indikatoren mit *: 3; Stern-Anteil BA 0.00 %, übrige 1.21 %
+Geheimhaltung	Anteil * an allen Zellen, Stadtbezirke	0.81 % (175 von 21672)	geheimhaltung.tsv	Zeile ALLE; ohne ganz leere Jahre 0.81 %; Indikatoren mit *: 10; Stern-Anteil BA 0.00 %, übrige 0.84 %
+Geheimhaltung	Anteil * an allen Zellen, Sozialräume	2.23 % (965 von 43344)	geheimhaltung.tsv	Zeile ALLE; ohne ganz leere Jahre 2.30 %; Indikatoren mit *: 25; Stern-Anteil BA 0.00 %, übrige 2.32 %
+Geheimhaltung	Anteil * an allen Zellen, Stadtteile	2.53 % (5232 von 207088)	geheimhaltung.tsv	Zeile ALLE; ohne ganz leere Jahre 2.54 %; Indikatoren mit *: 32; Stern-Anteil BA 0.00 %, übrige 2.63 %
+Geheimhaltung	Anteil * an allen Zellen, Statistische Quartiere	4.56 % (62595 von 1372560)	geheimhaltung.tsv	Zeile ALLE; ohne ganz leere Jahre 4.71 %; Indikatoren mit *: 118; Stern-Anteil BA 0.07 %, übrige 4.75 %
+Verschachtelung	Summenprobe quartier→stadtteil (124 Anzahl-Indikatoren × 14 Jahre)	139660 Vergleiche: 122982 exakt, 3 abweichend ohne * (1 Indikatoren), 15577 mit * (15575 Rest im Intervall, 2 außerhalb), 1098 mit leeren Kindern	verschachtelung.tsv	Summe der Zeilen je Ebenenpaar
+Verschachtelung	Summenprobe stadtteil→stadtbezirk (124 Anzahl-Indikatoren × 14 Jahre)	15368 Vergleiche: 13912 exakt, 0 abweichend ohne * (0 Indikatoren), 1414 mit * (1414 Rest im Intervall, 0 außerhalb), 42 mit leeren Kindern	verschachtelung.tsv	Summe der Zeilen je Ebenenpaar
+Verschachtelung	Summenprobe stadtbezirk→gesamtstadt (124 Anzahl-Indikatoren × 14 Jahre)	1699 Vergleiche: 1042 exakt, 612 abweichend ohne * (48 Indikatoren), 45 mit * (35 Rest im Intervall, 10 außerhalb), 0 mit leeren Kindern	verschachtelung.tsv	Summe der Zeilen je Ebenenpaar
+Verschachtelung	Summenprobe sozialraum→gesamtstadt (124 Anzahl-Indikatoren × 14 Jahre)	1661 Vergleiche: 1470 exakt, 0 abweichend ohne * (0 Indikatoren), 177 mit * (177 Rest im Intervall, 0 außerhalb), 14 mit leeren Kindern	verschachtelung.tsv	Summe der Zeilen je Ebenenpaar
+Verhältnisse	numerisch bestätigte Zähler/Nenner	34 von 48 Nicht-Anzahl-Indikatoren	verhaeltnis_pruefung.tsv	Wert = Faktor × Zähler / Nenner in allen Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle
+Verhältnisse	Indikatoren mit abgeschnittenen statt gerundeten Werten	A0282S, A0283S, B0026P, H0003S, H0052S	verhaeltnis_pruefung.tsv	Spalte n_passend_nur_abgeschnitten > 0; alle übrigen Treffer passen zur Rundung auf die veröffentlichte Stellenzahl

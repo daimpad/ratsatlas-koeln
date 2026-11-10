@@ -1,0 +1,31 @@
+datei	spalte	bedeutung
+indikatoren_katalog.tsv	(Zeile)	Eine Zeile je Indikator im Sinn des Datenvertrags = Katalogzeile × gesetztem Formatflag (abs, %, andere); 973 Katalogzeilen ergeben 1485 Zeilen
+indikatoren_katalog.tsv	katalog_zeile	Zeilennummer im Blatt Katalog der XLSX-Datei
+indikatoren_katalog.tsv	THEMA … 2025	Felder des Blatts Katalog unverändert (Spaltennamen aus Zeile 2); Jahresspalten enthalten den Verfügbarkeitscode (3 Quartier, 2 Stadtteil, 1 Stadtbezirk, 0 Gesamtstadt, leer nicht verfügbar)
+indikatoren_katalog.tsv	format	Formatflag, aus dem die Zeile entsteht (abs, %, andere)
+indikatoren_katalog.tsv	code_datenblatt	Spaltencode im Blatt Daten (ID + A/P/S), nur wenn veröffentlicht; Suffix A = abs, P = %, S = andere (an allen 172 Codes bestätigt)
+indikatoren_katalog.tsv	name_datenblatt	Name aus dem Spaltenkopf des Blatts Daten („Code - Name“)
+indikatoren_katalog.tsv	quellenangabe_blatt_quellen, anmerkung_blatt_quellen	Spalten Quellenangabe und Anmerkung aus dem Blatt Quellen, unverändert
+indikatoren_katalog.tsv	in_csv	ja, wenn der Code auch in der CSV-Ressource steht
+indikatoren_katalog.tsv	vorschlag_*	Vorschläge für die Pflichtfelder von indikatoren.tsv (Datenvertrag Strukturdaten v1); nicht aus der Quelle, sondern abgeleitet; Begründung und Sicherheit (eindeutig, plausibel, unsicher) je Zeile
+indikatoren_katalog.tsv	vorschlag_zaehler_nenner_beleg	numerisch geprüft (siehe verhaeltnis_pruefung.tsv) oder vermutet bzw. nicht ableitbar
+indikatoren_katalog.tsv	vorschlag_raumebenen, vorschlag_jahre	aus den Katalogcodes; Code = feinste Ebene, gröbere Ebenen eingeschlossen
+indikatoren_katalog.tsv	verfuegbarkeit_kompakt	Jahresgruppen mit gleicher feinster Ebene laut Katalog
+indikatoren_katalog.tsv	jahre_datenblatt, raumebenen_datenblatt	Jahre und Ebenen mit mindestens einer Zahl im Blatt Daten (einschließlich Sozialräume)
+indikatoren_katalog.tsv	abgleich_katalogcode_daten	Vergleich Katalogcode mit feinster Ebene, die im Blatt Daten Zahlen enthält (2012–2025)
+indikatoren_katalog.tsv	hinweis_schaetzwert	Hinweis für Indikatoren zu Migrationshintergrund und Haushalten; die Kennzeichnung als Schätz- bzw. Verfahrenswert steht nicht in der Excel-Datei (ungeprüft)
+geheimhaltung.tsv	(Zeile)	je Indikator des Blatts Daten (172) und Raumebene (5); Zeilen ALLE = Summe je Ebene
+geheimhaltung.tsv	n_stern, n_leer	Zellen mit * bzw. leerer Zeichenkette im Blatt Daten (XLSX); csv_n_leer = leere Zellen in der CSV (dort sind * und leer zusammengefallen)
+geheimhaltung.tsv	jahre_ganz_leer, n_leer_ausserhalb_leerer_jahre	Jahre, in denen die Ebene für den Indikator vollständig leer ist; übrige Leerzellen
+geheimhaltung.tsv	n_null, kleinster_positiver_wert, n_werte_1_bis_unter_5, n_werte_5_bis_unter_10	nur für Anzahlen (Suffix A): Prüfung der Geheimhaltungsschwelle an den veröffentlichten Werten
+raum_abgleich.tsv	(Zeile)	je Raumeinheit des Datenblatts (Gesamtstadt, 9 Stadtbezirke, 18 Sozialräume, 86 Stadtteile, 570 Quartiere) mit Abgleich gegen data/geo/stadtteile_koeln.geojson und stadtbezirke_koeln.geojson
+raum_abgleich.tsv	eltern_id_aus_nummer	Stadtteil: erste Ziffer = Stadtbezirk; Quartier: erste drei Ziffern = Stadtteil (aus der Nummer abgeleitet, durch Summenprobe bestätigt)
+raum_abgleich.tsv	name_gleich, name_gleich_normalisiert	zeichengenau bzw. nach Kleinschreibung und Vereinheitlichung von Leerzeichen, Bindestrich und Schrägstrich
+verschachtelung.tsv	(Zeile)	je Anzahl-Indikator (124) und Ebenenpaar: Summe der Kinder gegen Wert der Elternebene, je Jahr
+verschachtelung.tsv	n_rest_im_intervall	Fälle mit *: Rest (Eltern minus Summe der Zahlen) liegt zwischen 1 und obergrenze × Anzahl der *
+verschachtelung.tsv	obergrenze_geheimer_wert	4 (Blatt Info); 9 für Indikatoren der Bundesagentur für Arbeit (Prompt); die Daten zeigen auch dort höchstens 4 je *
+verschachtelung_detail.tsv	(Zeile)	alle Vergleiche für A0025A, A0267A, C0007A
+verhaeltnis_pruefung.tsv	(Zeile)	je Nicht-Anzahl-Indikator des Datenblatts (48): gefundener Zähler, Nenner und Faktor; Abweichung höchstens eine Einheit der letzten veröffentlichten Stelle
+verhaeltnis_pruefung.tsv	n_passend_gerundet, n_passend_nur_abgeschnitten	Zeilen, deren Wert zur Rundung bzw. nur zum Abschneiden auf die veröffentlichte Stellenzahl passt
+datenblatt_struktur.tsv	(Zeile)	je Raumebene: Code S_RAUMEBENE in der CSV, Einheiten, Jahre, Nummernschema, Zeilenzahlen in XLSX und CSV
+kennzahlen_katalog.tsv	(Zeile)	Kennzahlen mit Datei und Fundstelle bzw. Berechnung
