@@ -1,0 +1,685 @@
+raumebene	raum_id_katalog	name_katalog	raum_feld_katalog	eltern_id_aus_nummer	eltern_im_katalog	geo_datei	geo_id	geo_name	geo_bezirk	id_treffer	name_gleich	name_gleich_normalisiert	eltern_gleich_bzw_in_geojson	bemerkung
+Gesamtstadt	0	Stadt Köln	0 / Stadt Köln											Gesamtstadt
+Stadtbezirke	1	Innenstadt	1 / Innenstadt	0	ja	stadtbezirke_koeln.geojson	1	Innenstadt		ja	ja	ja		
+Stadtbezirke	2	Rodenkirchen	2 / Rodenkirchen	0	ja	stadtbezirke_koeln.geojson	2	Rodenkirchen		ja	ja	ja		
+Stadtbezirke	3	Lindenthal	3 / Lindenthal	0	ja	stadtbezirke_koeln.geojson	3	Lindenthal		ja	ja	ja		
+Stadtbezirke	4	Ehrenfeld	4 / Ehrenfeld	0	ja	stadtbezirke_koeln.geojson	4	Ehrenfeld		ja	ja	ja		
+Stadtbezirke	5	Nippes	5 / Nippes	0	ja	stadtbezirke_koeln.geojson	5	Nippes		ja	ja	ja		
+Stadtbezirke	6	Chorweiler	6 / Chorweiler	0	ja	stadtbezirke_koeln.geojson	6	Chorweiler		ja	ja	ja		
+Stadtbezirke	7	Porz	7 / Porz	0	ja	stadtbezirke_koeln.geojson	7	Porz		ja	ja	ja		
+Stadtbezirke	8	Kalk	8 / Kalk	0	ja	stadtbezirke_koeln.geojson	8	Kalk		ja	ja	ja		
+Stadtbezirke	9	Mülheim	9 / Mülheim	0	ja	stadtbezirke_koeln.geojson	9	Mülheim		ja	ja	ja		
+Sozialräume	10001	Meschenich und Rondorf	10001 / Meschenich und Rondorf											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10002	Bocklemünd/Mengenich	10002 / Bocklemünd/Mengenich											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10003	Bickendorf und Ossendorf	10003 / Bickendorf und Ossendorf											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10004	Bilderstöckchen	10004 / Bilderstöckchen											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10005	Blumenberg, Chorweiler und Seeberg-Nord	10005 / Blumenberg, Chorweiler und Seeberg-Nord											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10006	Porz-Ost, Finkenberg, Gremberghoven und Eil	10006 / Porz-Ost, Finkenberg, Gremberghoven und Eil											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10007	Porz-Mitte und Urbach	10007 / Porz-Mitte und Urbach											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10008	Höhenberg und Vingst	10008 / Höhenberg und Vingst											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10009	Ostheim und Neubrück	10009 / Ostheim und Neubrück											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10010	Humboldt/Gremberg	10010 / Humboldt/Gremberg											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10011	Kalk	10011 / Kalk											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10012	Mülheim-Nord und Keupstraße	10012 / Mülheim-Nord und Keupstraße											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10013	Buchforst und Mülheim	10013 / Buchforst und Mülheim											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10014	Buchheim und Holweide	10014 / Buchheim und Holweide											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10015	Höhenhaus und Dünnwald	10015 / Höhenhaus und Dünnwald											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer
+Sozialräume	10080	Sozialräume zusammen	10080 / Sozialräume zusammen											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer; Sammel- oder Restposition
+Sozialräume	10090	kein Sozialraum	10090 / kein Sozialraum											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer; Sammel- oder Restposition
+Sozialräume	10099	keine räumliche Zuordnung	10099 / keine räumliche Zuordnung											keine Geometrie im Repository; Nummer ohne Bezug zur Stadtteilnummer; Sammel- oder Restposition
+Stadtteile	101	Altstadt/Süd	101 / Altstadt/Süd	1	ja	stadtteile_koeln.geojson	101	Altstadt/Süd	1	ja	ja	ja	ja	
+Stadtteile	102	Neustadt/Süd	102 / Neustadt/Süd	1	ja	stadtteile_koeln.geojson	102	Neustadt/Süd	1	ja	ja	ja	ja	
+Stadtteile	103	Altstadt/Nord	103 / Altstadt/Nord	1	ja	stadtteile_koeln.geojson	103	Altstadt/Nord	1	ja	ja	ja	ja	
+Stadtteile	104	Neustadt/Nord	104 / Neustadt/Nord	1	ja	stadtteile_koeln.geojson	104	Neustadt/Nord	1	ja	ja	ja	ja	
+Stadtteile	105	Deutz	105 / Deutz	1	ja	stadtteile_koeln.geojson	105	Deutz	1	ja	ja	ja	ja	
+Stadtteile	201	Bayenthal	201 / Bayenthal	2	ja	stadtteile_koeln.geojson	201	Bayenthal	2	ja	ja	ja	ja	
+Stadtteile	202	Marienburg	202 / Marienburg	2	ja	stadtteile_koeln.geojson	202	Marienburg	2	ja	ja	ja	ja	
+Stadtteile	203	Raderberg	203 / Raderberg	2	ja	stadtteile_koeln.geojson	203	Raderberg	2	ja	ja	ja	ja	
+Stadtteile	204	Raderthal	204 / Raderthal	2	ja	stadtteile_koeln.geojson	204	Raderthal	2	ja	ja	ja	ja	
+Stadtteile	205	Zollstock	205 / Zollstock	2	ja	stadtteile_koeln.geojson	205	Zollstock	2	ja	ja	ja	ja	
+Stadtteile	206	Rondorf	206 / Rondorf	2	ja	stadtteile_koeln.geojson	206	Rondorf	2	ja	ja	ja	ja	
+Stadtteile	207	Hahnwald	207 / Hahnwald	2	ja	stadtteile_koeln.geojson	207	Hahnwald	2	ja	ja	ja	ja	
+Stadtteile	208	Rodenkirchen	208 / Rodenkirchen	2	ja	stadtteile_koeln.geojson	208	Rodenkirchen	2	ja	ja	ja	ja	
+Stadtteile	209	Weiß	209 / Weiß	2	ja	stadtteile_koeln.geojson	209	Weiß	2	ja	ja	ja	ja	
+Stadtteile	210	Sürth	210 / Sürth	2	ja	stadtteile_koeln.geojson	210	Sürth	2	ja	ja	ja	ja	
+Stadtteile	211	Godorf	211 / Godorf	2	ja	stadtteile_koeln.geojson	211	Godorf	2	ja	ja	ja	ja	
+Stadtteile	212	Immendorf	212 / Immendorf	2	ja	stadtteile_koeln.geojson	212	Immendorf	2	ja	ja	ja	ja	
+Stadtteile	213	Meschenich	213 / Meschenich	2	ja	stadtteile_koeln.geojson	213	Meschenich	2	ja	ja	ja	ja	
+Stadtteile	301	Klettenberg	301 / Klettenberg	3	ja	stadtteile_koeln.geojson	301	Klettenberg	3	ja	ja	ja	ja	
+Stadtteile	302	Sülz	302 / Sülz	3	ja	stadtteile_koeln.geojson	302	Sülz	3	ja	ja	ja	ja	
+Stadtteile	303	Lindenthal	303 / Lindenthal	3	ja	stadtteile_koeln.geojson	303	Lindenthal	3	ja	ja	ja	ja	
+Stadtteile	304	Braunsfeld	304 / Braunsfeld	3	ja	stadtteile_koeln.geojson	304	Braunsfeld	3	ja	ja	ja	ja	
+Stadtteile	305	Müngersdorf	305 / Müngersdorf	3	ja	stadtteile_koeln.geojson	305	Müngersdorf	3	ja	ja	ja	ja	
+Stadtteile	306	Junkersdorf	306 / Junkersdorf	3	ja	stadtteile_koeln.geojson	306	Junkersdorf	3	ja	ja	ja	ja	
+Stadtteile	307	Weiden	307 / Weiden	3	ja	stadtteile_koeln.geojson	307	Weiden	3	ja	ja	ja	ja	
+Stadtteile	308	Lövenich	308 / Lövenich	3	ja	stadtteile_koeln.geojson	308	Lövenich	3	ja	ja	ja	ja	
+Stadtteile	309	Widdersdorf	309 / Widdersdorf	3	ja	stadtteile_koeln.geojson	309	Widdersdorf	3	ja	ja	ja	ja	
+Stadtteile	401	Ehrenfeld	401 / Ehrenfeld	4	ja	stadtteile_koeln.geojson	401	Ehrenfeld	4	ja	ja	ja	ja	
+Stadtteile	402	Neuehrenfeld	402 / Neuehrenfeld	4	ja	stadtteile_koeln.geojson	402	Neuehrenfeld	4	ja	ja	ja	ja	
+Stadtteile	403	Bickendorf	403 / Bickendorf	4	ja	stadtteile_koeln.geojson	403	Bickendorf	4	ja	ja	ja	ja	
+Stadtteile	404	Vogelsang	404 / Vogelsang	4	ja	stadtteile_koeln.geojson	404	Vogelsang	4	ja	ja	ja	ja	
+Stadtteile	405	Bocklemünd/Mengenich	405 / Bocklemünd/Mengenich	4	ja	stadtteile_koeln.geojson	405	Bocklemünd/Mengenich	4	ja	ja	ja	ja	
+Stadtteile	406	Ossendorf	406 / Ossendorf	4	ja	stadtteile_koeln.geojson	406	Ossendorf	4	ja	ja	ja	ja	
+Stadtteile	501	Nippes	501 / Nippes	5	ja	stadtteile_koeln.geojson	501	Nippes	5	ja	ja	ja	ja	
+Stadtteile	502	Mauenheim	502 / Mauenheim	5	ja	stadtteile_koeln.geojson	502	Mauenheim	5	ja	ja	ja	ja	
+Stadtteile	503	Riehl	503 / Riehl	5	ja	stadtteile_koeln.geojson	503	Riehl	5	ja	ja	ja	ja	
+Stadtteile	504	Niehl	504 / Niehl	5	ja	stadtteile_koeln.geojson	504	Niehl	5	ja	ja	ja	ja	
+Stadtteile	505	Weidenpesch	505 / Weidenpesch	5	ja	stadtteile_koeln.geojson	505	Weidenpesch	5	ja	ja	ja	ja	
+Stadtteile	506	Longerich	506 / Longerich	5	ja	stadtteile_koeln.geojson	506	Longerich	5	ja	ja	ja	ja	
+Stadtteile	507	Bilderstöckchen	507 / Bilderstöckchen	5	ja	stadtteile_koeln.geojson	507	Bilderstöckchen	5	ja	ja	ja	ja	
+Stadtteile	601	Merkenich	601 / Merkenich	6	ja	stadtteile_koeln.geojson	601	Merkenich	6	ja	ja	ja	ja	
+Stadtteile	602	Fühlingen	602 / Fühlingen	6	ja	stadtteile_koeln.geojson	602	Fühlingen	6	ja	ja	ja	ja	
+Stadtteile	603	Seeberg	603 / Seeberg	6	ja	stadtteile_koeln.geojson	603	Seeberg	6	ja	ja	ja	ja	
+Stadtteile	604	Heimersdorf	604 / Heimersdorf	6	ja	stadtteile_koeln.geojson	604	Heimersdorf	6	ja	ja	ja	ja	
+Stadtteile	605	Lindweiler	605 / Lindweiler	6	ja	stadtteile_koeln.geojson	605	Lindweiler	6	ja	ja	ja	ja	
+Stadtteile	606	Pesch	606 / Pesch	6	ja	stadtteile_koeln.geojson	606	Pesch	6	ja	ja	ja	ja	
+Stadtteile	607	Esch/Auweiler	607 / Esch/Auweiler	6	ja	stadtteile_koeln.geojson	607	Esch/Auweiler	6	ja	ja	ja	ja	
+Stadtteile	608	Volkhoven/Weiler	608 / Volkhoven/Weiler	6	ja	stadtteile_koeln.geojson	608	Volkhoven/Weiler	6	ja	ja	ja	ja	
+Stadtteile	609	Chorweiler	609 / Chorweiler	6	ja	stadtteile_koeln.geojson	609	Chorweiler	6	ja	ja	ja	ja	
+Stadtteile	610	Blumenberg	610 / Blumenberg	6	ja	stadtteile_koeln.geojson	610	Blumenberg	6	ja	ja	ja	ja	
+Stadtteile	611	Roggendorf/Thenhoven	611 / Roggendorf/Thenhoven	6	ja	stadtteile_koeln.geojson	611	Roggendorf/Thenhoven	6	ja	ja	ja	ja	
+Stadtteile	612	Worringen	612 / Worringen	6	ja	stadtteile_koeln.geojson	612	Worringen	6	ja	ja	ja	ja	
+Stadtteile	701	Poll	701 / Poll	7	ja	stadtteile_koeln.geojson	701	Poll	7	ja	ja	ja	ja	
+Stadtteile	702	Westhoven	702 / Westhoven	7	ja	stadtteile_koeln.geojson	702	Westhoven	7	ja	ja	ja	ja	
+Stadtteile	703	Ensen	703 / Ensen	7	ja	stadtteile_koeln.geojson	703	Ensen	7	ja	ja	ja	ja	
+Stadtteile	704	Gremberghoven	704 / Gremberghoven	7	ja	stadtteile_koeln.geojson	704	Gremberghoven	7	ja	ja	ja	ja	
+Stadtteile	705	Eil	705 / Eil	7	ja	stadtteile_koeln.geojson	705	Eil	7	ja	ja	ja	ja	
+Stadtteile	706	Porz	706 / Porz	7	ja	stadtteile_koeln.geojson	706	Porz	7	ja	ja	ja	ja	
+Stadtteile	707	Urbach	707 / Urbach	7	ja	stadtteile_koeln.geojson	707	Urbach	7	ja	ja	ja	ja	
+Stadtteile	708	Elsdorf	708 / Elsdorf	7	ja	stadtteile_koeln.geojson	708	Elsdorf	7	ja	ja	ja	ja	
+Stadtteile	709	Grengel	709 / Grengel	7	ja	stadtteile_koeln.geojson	709	Grengel	7	ja	ja	ja	ja	
+Stadtteile	710	Wahnheide	710 / Wahnheide	7	ja	stadtteile_koeln.geojson	710	Wahnheide	7	ja	ja	ja	ja	
+Stadtteile	711	Wahn	711 / Wahn	7	ja	stadtteile_koeln.geojson	711	Wahn	7	ja	ja	ja	ja	
+Stadtteile	712	Lind	712 / Lind	7	ja	stadtteile_koeln.geojson	712	Lind	7	ja	ja	ja	ja	
+Stadtteile	713	Libur	713 / Libur	7	ja	stadtteile_koeln.geojson	713	Libur	7	ja	ja	ja	ja	
+Stadtteile	714	Zündorf	714 / Zündorf	7	ja	stadtteile_koeln.geojson	714	Zündorf	7	ja	ja	ja	ja	
+Stadtteile	715	Langel	715 / Langel	7	ja	stadtteile_koeln.geojson	715	Langel	7	ja	ja	ja	ja	
+Stadtteile	716	Finkenberg	716 / Finkenberg	7	ja	stadtteile_koeln.geojson	716	Finkenberg	7	ja	ja	ja	ja	
+Stadtteile	801	Humboldt/Gremberg	801 / Humboldt/Gremberg	8	ja	stadtteile_koeln.geojson	801	Humboldt/Gremberg	8	ja	ja	ja	ja	
+Stadtteile	802	Kalk	802 / Kalk	8	ja	stadtteile_koeln.geojson	802	Kalk	8	ja	ja	ja	ja	
+Stadtteile	803	Vingst	803 / Vingst	8	ja	stadtteile_koeln.geojson	803	Vingst	8	ja	ja	ja	ja	
+Stadtteile	804	Höhenberg	804 / Höhenberg	8	ja	stadtteile_koeln.geojson	804	Höhenberg	8	ja	ja	ja	ja	
+Stadtteile	805	Ostheim	805 / Ostheim	8	ja	stadtteile_koeln.geojson	805	Ostheim	8	ja	ja	ja	ja	
+Stadtteile	806	Merheim	806 / Merheim	8	ja	stadtteile_koeln.geojson	806	Merheim	8	ja	ja	ja	ja	
+Stadtteile	807	Brück	807 / Brück	8	ja	stadtteile_koeln.geojson	807	Brück	8	ja	ja	ja	ja	
+Stadtteile	808	Rath/Heumar	808 / Rath/Heumar	8	ja	stadtteile_koeln.geojson	808	Rath/Heumar	8	ja	ja	ja	ja	
+Stadtteile	809	Neubrück	809 / Neubrück	8	ja	stadtteile_koeln.geojson	809	Neubrück	8	ja	ja	ja	ja	
+Stadtteile	901	Mülheim	901 / Mülheim	9	ja	stadtteile_koeln.geojson	901	Mülheim	9	ja	ja	ja	ja	
+Stadtteile	902	Buchforst	902 / Buchforst	9	ja	stadtteile_koeln.geojson	902	Buchforst	9	ja	ja	ja	ja	
+Stadtteile	903	Buchheim	903 / Buchheim	9	ja	stadtteile_koeln.geojson	903	Buchheim	9	ja	ja	ja	ja	
+Stadtteile	904	Holweide	904 / Holweide	9	ja	stadtteile_koeln.geojson	904	Holweide	9	ja	ja	ja	ja	
+Stadtteile	905	Dellbrück	905 / Dellbrück	9	ja	stadtteile_koeln.geojson	905	Dellbrück	9	ja	ja	ja	ja	
+Stadtteile	906	Höhenhaus	906 / Höhenhaus	9	ja	stadtteile_koeln.geojson	906	Höhenhaus	9	ja	ja	ja	ja	
+Stadtteile	907	Dünnwald	907 / Dünnwald	9	ja	stadtteile_koeln.geojson	907	Dünnwald	9	ja	ja	ja	ja	
+Stadtteile	908	Stammheim	908 / Stammheim	9	ja	stadtteile_koeln.geojson	908	Stammheim	9	ja	ja	ja	ja	
+Stadtteile	909	Flittard	909 / Flittard	9	ja	stadtteile_koeln.geojson	909	Flittard	9	ja	ja	ja	ja	
+Statistische Quartiere	101010001	Kapitol-Viertel	101010001 / Kapitol-Viertel	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101020001	Mauritius-Viertel - Mauritiuskirchplatz	101020001 / Mauritius-Viertel - Mauritiuskirchplatz	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101020002	Mauritius-Viertel - Weyerstr.	101020002 / Mauritius-Viertel - Weyerstr.	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101030001	Cäcilien-Viertel - Josef-Haubrich-Hof	101030001 / Cäcilien-Viertel - Josef-Haubrich-Hof	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101030002	Cäcilien-Viertel - Großer Griechenmarkt	101030002 / Cäcilien-Viertel - Großer Griechenmarkt	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101040001	Pantaleons-Viertel - Humboldt Gymnasium	101040001 / Pantaleons-Viertel - Humboldt Gymnasium	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101040002	Pantaleons-Viertel - St. Pantaleon	101040002 / Pantaleons-Viertel - St. Pantaleon	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101050001	Georgs-Viertel	101050001 / Georgs-Viertel	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101060001	Severins-Viertel - An der Eiche	101060001 / Severins-Viertel - An der Eiche	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101060002	Severins-Viertel - Stollwerck - Rheinauhafen	101060002 / Severins-Viertel - Stollwerck - Rheinauhafen	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101060003	Severins-Viertel - Krankenhaus	101060003 / Severins-Viertel - Krankenhaus	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101060004	Severins-Viertel - An St. Katharinen	101060004 / Severins-Viertel - An St. Katharinen	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101060005	Severins-Viertel - St. Severin	101060005 / Severins-Viertel - St. Severin	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	101060006	Severins-Viertel - Karl-Berbuer-Platz	101060006 / Severins-Viertel - Karl-Berbuer-Platz	101	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102010001	Südstadt - Elsaßstr.	102010001 / Südstadt - Elsaßstr.	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102010002	Südstadt - Campus Südstadt	102010002 / Südstadt - Campus Südstadt	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102010003	Südstadt - St. Maternus	102010003 / Südstadt - St. Maternus	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102010004	Südstadt - Kurfürstenstr.	102010004 / Südstadt - Kurfürstenstr.	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102010005	Südstadt - Metzer Str.	102010005 / Südstadt - Metzer Str.	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102010006	Südstadt - Alte Feuerwache	102010006 / Südstadt - Alte Feuerwache	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102010007	Südstadt - Eburonenstr.	102010007 / Südstadt - Eburonenstr.	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102020001	Volksgarten-Viertel - Pauluskirche	102020001 / Volksgarten-Viertel - Pauluskirche	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102020002	Volksgarten-Viertel - Burgunderstr.	102020002 / Volksgarten-Viertel - Burgunderstr.	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102020003	Volksgarten-Viertel - Pfälzer Str.	102020003 / Volksgarten-Viertel - Pfälzer Str.	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102030001	Studenten-Viertel	102030001 / Studenten-Viertel	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102040001	Südbahnhof-Viertel	102040001 / Südbahnhof-Viertel	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102050001	Komponisten-Viertel - Jean-Claude-Letist-Platz	102050001 / Komponisten-Viertel - Jean-Claude-Letist-Platz	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102050002	Komponisten-Viertel - Yitzhak-Rabin-Platz	102050002 / Komponisten-Viertel - Yitzhak-Rabin-Platz	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102050003	Komponisten-Viertel - Aachener Str.	102050003 / Komponisten-Viertel - Aachener Str.	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102050004	Komponisten-Viertel - Lützowstr.	102050004 / Komponisten-Viertel - Lützowstr.	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102060001	Rathenau-Viertel - Rathenauplatz	102060001 / Rathenau-Viertel - Rathenauplatz	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102060002	Rathenau-Viertel - Dasselstr.	102060002 / Rathenau-Viertel - Dasselstr.	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	102070001	GE Südstadt	102070001 / GE Südstadt	102	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	103010001	Kuniberts-Viertel - St. Kunibert	103010001 / Kuniberts-Viertel - St. Kunibert	103	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	103010002	Kuniberts-Viertel - Thürmchenswall	103010002 / Kuniberts-Viertel - Thürmchenswall	103	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	103020001	Eigelstein-Viertel	103020001 / Eigelstein-Viertel	103	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	103030001	Gereons-Viertel - St. Gereon	103030001 / Gereons-Viertel - St. Gereon	103	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	103030002	Gereons-Viertel - Klingelpützpark	103030002 / Gereons-Viertel - Klingelpützpark	103	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	103040001	Neumarkt-Viertel - St. Andreas	103040001 / Neumarkt-Viertel - St. Andreas	103	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	103050001	City - St. Martin	103050001 / City - St. Martin	103	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	103070001	Ursula-Viertel	103070001 / Ursula-Viertel	103	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	103090001	Apostel-Viertel	103090001 / Apostel-Viertel	103	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104010001	Belgisches Viertel - Brüsseler Platz	104010001 / Belgisches Viertel - Brüsseler Platz	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104010002	Belgisches Viertel - Lütticher Str.	104010002 / Belgisches Viertel - Lütticher Str.	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104010003	Belgisches Viertel - Bismarckstr.	104010003 / Belgisches Viertel - Bismarckstr.	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104020001	Stadtgarten-Viertel - Colonius	104020001 / Stadtgarten-Viertel - Colonius	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104020002	Stadtgarten-Viertel - Bismarckstr.	104020002 / Stadtgarten-Viertel - Bismarckstr.	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104030001	Agnes-Viertel - Aquinostr.	104030001 / Agnes-Viertel - Aquinostr.	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104030002	Agnes-Viertel - St. Agnes	104030002 / Agnes-Viertel - St. Agnes	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104030003	Agnes-Viertel - Lupusstr.	104030003 / Agnes-Viertel - Lupusstr.	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104030004	Agnes-Viertel - Prälat-Otto-Müller-Platz	104030004 / Agnes-Viertel - Prälat-Otto-Müller-Platz	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104030005	Agnes-Viertel - Alte Feuerwache	104030005 / Agnes-Viertel - Alte Feuerwache	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104040001	Media-Park	104040001 / Media-Park	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104050001	Gerichts-Viertel	104050001 / Gerichts-Viertel	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	104060001	Villen-Viertel - Theodor-Heuss-Ring	104060001 / Villen-Viertel - Theodor-Heuss-Ring	104	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	105010001	Deutz - Ottoplatz	105010001 / Deutz - Ottoplatz	105	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	105010002	Deutz - St. Heribert	105010002 / Deutz - St. Heribert	105	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	105010003	Deutz - Reischplatz	105010003 / Deutz - Reischplatz	105	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	105010004	Deutz - Mathildenstr.	105010004 / Deutz - Mathildenstr.	105	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	105020001	Germanen-Viertel - Eduardus-Krankenhaus	105020001 / Germanen-Viertel - Eduardus-Krankenhaus	105	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	105020002	Germanen-Viertel - Thusneldastr.	105020002 / Germanen-Viertel - Thusneldastr.	105	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	105030001	Hafen-Viertel	105030001 / Hafen-Viertel	105	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	105060001	Fachhochschule Deutz - Messe	105060001 / Fachhochschule Deutz - Messe	105	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	201010001	Bayenthal - Mathiaskirchplatz	201010001 / Bayenthal - Mathiaskirchplatz	201	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	201010002	Bayenthal - Gustav-Heinemann-Ufer	201010002 / Bayenthal - Gustav-Heinemann-Ufer	201	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	201010003	Bayenthal - Goltsteinstr.	201010003 / Bayenthal - Goltsteinstr.	201	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	201020001	Dichter-Viertel	201020001 / Dichter-Viertel	201	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	201030001	Wohnpark Bayenthal	201030001 / Wohnpark Bayenthal	201	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	201040001	GE Bayenthal	201040001 / GE Bayenthal	201	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	202010001	Marienburg - Am Südpark	202010001 / Marienburg - Am Südpark	202	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	202010002	Marienburg - Alteburger Mühle	202010002 / Marienburg - Alteburger Mühle	202	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	202020001	Arnoldshöhe	202020001 / Arnoldshöhe	202	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	203010001	Rheinsteinstr.	203010001 / Rheinsteinstr.	203	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	203020001	Raderberg - Mergentheimer Str.	203020001 / Raderberg - Mergentheimer Str.	203	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	203020002	Raderberg - Marktstr.	203020002 / Raderberg - Marktstr.	203	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	204010001	Volkspark-Siedlung	204010001 / Volkspark-Siedlung	204	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	204020001	Raderthal	204020001 / Raderthal	204	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205010001	Siedlung Zollstock	205010001 / Siedlung Zollstock	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205020001	Südfriedhof - Kalscheurer Weg	205020001 / Südfriedhof - Kalscheurer Weg	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205020002	Südfriedhof - Höninger Platz	205020002 / Südfriedhof - Höninger Platz	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205020003	Südfriedhof - Zum Heiligen Geist	205020003 / Südfriedhof - Zum Heiligen Geist	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205030001	Vorgebirgspark - Schwalbacher Str.	205030001 / Vorgebirgspark - Schwalbacher Str.	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205030002	Vorgebirgspark - Fritz-Hecker-Str.	205030002 / Vorgebirgspark - Fritz-Hecker-Str.	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205040001	Zollstock - Höninger Weg	205040001 / Zollstock - Höninger Weg	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205040002	Zollstock - St. Pius	205040002 / Zollstock - St. Pius	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205040003	Zollstock - Vorgebirgsplatz	205040003 / Zollstock - Vorgebirgsplatz	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205040004	Zollstock - Kottenforststr.	205040004 / Zollstock - Kottenforststr.	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205050001	Zollstock-Nord - Zollstock Arkaden	205050001 / Zollstock-Nord - Zollstock Arkaden	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205050002	Zollstock-Nord - Bernhard-Feilchenfeld-Str.	205050002 / Zollstock-Nord - Bernhard-Feilchenfeld-Str.	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	205060001	GE Zollstock - Zollstockhöfe	205060001 / GE Zollstock - Zollstockhöfe	205	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	206010001	Rondorf	206010001 / Rondorf	206	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	206020001	Hochkirchen	206020001 / Hochkirchen	206	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	206030001	Rondorf-West - Höningen	206030001 / Rondorf-West - Höningen	206	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	206070001	Rondorf-Ost - Sperberweg	206070001 / Rondorf-Ost - Sperberweg	206	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	206070002	Rondorf-Ost - Merlinweg	206070002 / Rondorf-Ost - Merlinweg	206	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	207030001	Hahnwald	207030001 / Hahnwald	207	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	208020001	Künstler-Viertel	208020001 / Künstler-Viertel	208	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	208030001	Flußviertel - Gymnasium	208030001 / Flußviertel - Gymnasium	208	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	208030002	Flußviertel - Urftstr.	208030002 / Flußviertel - Urftstr.	208	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	208040001	Auenviertel	208040001 / Auenviertel	208	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	208050001	Rodenkirchen - Mildred-Scheel-Str.	208050001 / Rodenkirchen - Mildred-Scheel-Str.	208	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	208050002	Rodenkirchen - St. Maternus	208050002 / Rodenkirchen - St. Maternus	208	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	208050003	Rodenkirchen - Rathaus	208050003 / Rodenkirchen - Rathaus	208	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	208060001	Schillingsrott	208060001 / Schillingsrott	208	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	208100001	Sürther Feld - Michaelshoven	208100001 / Sürther Feld - Michaelshoven	208	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	209010001	Neu-Weiß - Friedhof	209010001 / Neu-Weiß - Friedhof	209	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	209010002	Neu-Weiß - Pflasterhofweg	209010002 / Neu-Weiß - Pflasterhofweg	209	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	209010003	Neu-Weiß - Heinrichstr.	209010003 / Neu-Weiß - Heinrichstr.	209	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	209020001	Alt-Weiß	209020001 / Alt-Weiß	209	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	210010001	Sürth - Marktplatz	210010001 / Sürth - Marktplatz	210	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	210010002	Sürth - Ströer-Allee	210010002 / Sürth - Ströer-Allee	210	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	210010003	Sürth - Dominikus-Böhm-Str.	210010003 / Sürth - Dominikus-Böhm-Str.	210	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	210030001	Sürth-Nord - Am Greinshof	210030001 / Sürth-Nord - Am Greinshof	210	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	210030002	Sürth-Nord - Am Feldrain	210030002 / Sürth-Nord - Am Feldrain	210	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	211010001	Godorf	211010001 / Godorf	211	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	212010001	Immendorf	212010001 / Immendorf	212	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	213010001	Alt-Meschenich - Kirche	213010001 / Alt-Meschenich - Kirche	213	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	213010002	Alt-Meschenich - Alt Engeldorfer Hof	213010002 / Alt-Meschenich - Alt Engeldorfer Hof	213	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	213020001	Kölnberg - Alte Brühler Str.	213020001 / Kölnberg - Alte Brühler Str.	213	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	213020002	Kölnberg - Brühler Landstr.	213020002 / Kölnberg - Brühler Landstr.	213	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	213030001	Neu-Meschenich	213030001 / Neu-Meschenich	213	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	301010001	Klettenberg - Klettenbergpark	301010001 / Klettenberg - Klettenbergpark	301	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	301010002	Klettenberg - Stenzelbergstr.	301010002 / Klettenberg - Stenzelbergstr.	301	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	301010003	Klettenberg - Honnefer Platz	301010003 / Klettenberg - Honnefer Platz	301	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	301010004	Klettenberg - Nonnenstrombergstr.	301010004 / Klettenberg - Nonnenstrombergstr.	301	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	301010005	Klettenberg - St. Bruno	301010005 / Klettenberg - St. Bruno	301	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	301010006	Klettenberg - August-Macke-Str.	301010006 / Klettenberg - August-Macke-Str.	301	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302010001	Weißhaus-Viertel - Weißhaus	302010001 / Weißhaus-Viertel - Weißhaus	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302010002	Weißhaus-Viertel - Räuberwäldchen	302010002 / Weißhaus-Viertel - Räuberwäldchen	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020001	Sülz - Marsiliusstr.	302020001 / Sülz - Marsiliusstr.	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020002	Sülz - Schiller-Gymnasium	302020002 / Sülz - Schiller-Gymnasium	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020003	Sülz - Manderscheider Platz	302020003 / Sülz - Manderscheider Platz	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020004	Sülz - Remigiusstr.	302020004 / Sülz - Remigiusstr.	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020005	Sülz - St. Nikolaus	302020005 / Sülz - St. Nikolaus	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020006	Sülz - Gerolsteiner Str.	302020006 / Sülz - Gerolsteiner Str.	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020007	Sülz - Auerbachplatz	302020007 / Sülz - Auerbachplatz	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020008	Sülz - Kyllburger Str.	302020008 / Sülz - Kyllburger Str.	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020009	Sülz - St. Borromäus	302020009 / Sülz - St. Borromäus	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302020010	Sülz - De-Noël-Platz	302020010 / Sülz - De-Noël-Platz	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302030001	Beethovenpark - Platz der Kinderrechte	302030001 / Beethovenpark - Platz der Kinderrechte	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302030002	Beethovenpark - Asbergplatz	302030002 / Beethovenpark - Asbergplatz	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302030003	Beethovenpark - Nonnenwerthstr.	302030003 / Beethovenpark - Nonnenwerthstr.	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302040001	Kriel - Hermeskeiler Platz	302040001 / Kriel - Hermeskeiler Platz	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302040002	Kriel - Curtiusstr.	302040002 / Kriel - Curtiusstr.	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302040003	Kriel - Kaisersescher Str.	302040003 / Kriel - Kaisersescher Str.	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302040004	Kriel - Am Beethovenpark	302040004 / Kriel - Am Beethovenpark	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302050001	Justiz-Viertel	302050001 / Justiz-Viertel	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	302060001	Uni-Center	302060001 / Uni-Center	302	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303010001	Alt-Lindenthal - Wittgensteinstr.	303010001 / Alt-Lindenthal - Wittgensteinstr.	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303010002	Alt-Lindenthal - Lortzingplatz	303010002 / Alt-Lindenthal - Lortzingplatz	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303010003	Alt-Lindenthal - Dürener Str.	303010003 / Alt-Lindenthal - Dürener Str.	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303010004	Alt-Lindenthal - St. Hildegardis Krankenhaus	303010004 / Alt-Lindenthal - St. Hildegardis Krankenhaus	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303010005	Alt-Lindenthal - Geibelstr.	303010005 / Alt-Lindenthal - Geibelstr.	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303010006	Alt-Lindenthal - St. Stephan	303010006 / Alt-Lindenthal - St. Stephan	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303020001	Uni-Viertel - Kliniken	303020001 / Uni-Viertel - Kliniken	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303020002	Uni-Viertel - St. Laurentius	303020002 / Uni-Viertel - St. Laurentius	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303030001	Neu-Lindenthal - Hans-A.-Müllerheim-Park	303030001 / Neu-Lindenthal - Hans-A.-Müllerheim-Park	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303030002	Neu-Lindenthal - Johann-Heinrich-Platz	303030002 / Neu-Lindenthal - Johann-Heinrich-Platz	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303030003	Neu-Lindenthal - Krieler Dom	303030003 / Neu-Lindenthal - Krieler Dom	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303030004	Neu-Lindenthal - Feuerwache	303030004 / Neu-Lindenthal - Feuerwache	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303040001	Hohenlind	303040001 / Hohenlind	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303050001	Deckstein	303050001 / Deckstein	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303060001	Melaten - Auferstehungskirche	303060001 / Melaten - Auferstehungskirche	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303060002	Melaten - Clarenbachkanal	303060002 / Melaten - Clarenbachkanal	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	303060003	Melaten - Clarenbachstr.	303060003 / Melaten - Clarenbachstr.	303	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	304010001	Braunsfeld - Pauliplatz	304010001 / Braunsfeld - Pauliplatz	304	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	304010002	Braunsfeld - Technologie Park	304010002 / Braunsfeld - Technologie Park	304	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	304010003	Braunsfeld - Alsdorfer Str.	304010003 / Braunsfeld - Alsdorfer Str.	304	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	304010004	Braunsfeld - Aachener Str.	304010004 / Braunsfeld - Aachener Str.	304	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	304020001	Baumeister-Viertel - Dreifaltigkeits-Krankenhaus	304020001 / Baumeister-Viertel - Dreifaltigkeits-Krankenhaus	304	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	304020002	Baumeister-Viertel - St. Joseph	304020002 / Baumeister-Viertel - St. Joseph	304	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	304040001	GE Braunsfeld	304040001 / GE Braunsfeld	304	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	305010001	Alt-Müngersdorf - Gut Petershof	305010001 / Alt-Müngersdorf - Gut Petershof	305	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	305010002	Alt-Müngersdorf - Technologie Park	305010002 / Alt-Müngersdorf - Technologie Park	305	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	305030001	Siedlung Egelspfad	305030001 / Siedlung Egelspfad	305	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	305040001	Neu-Müngersdorf	305040001 / Neu-Müngersdorf	305	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	306010001	Junkersdorf - Beethovenstr.	306010001 / Junkersdorf - Beethovenstr.	306	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	306010002	Junkersdorf - Am Klostergarten	306010002 / Junkersdorf - Am Klostergarten	306	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	306010003	Junkersdorf - Neuer Friedhof	306010003 / Junkersdorf - Neuer Friedhof	306	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	306010004	Junkersdorf - Feldblumenweg	306010004 / Junkersdorf - Feldblumenweg	306	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	306010005	Junkersdorf - Alter Friedhof	306010005 / Junkersdorf - Alter Friedhof	306	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	306010006	Junkersdorf - Frohnhof	306010006 / Junkersdorf - Frohnhof	306	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	306010007	Junkersdorf - Stüttgerhofweg	306010007 / Junkersdorf - Stüttgerhofweg	306	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	306020001	Stadtwaldsiedlung - Marsdorf	306020001 / Stadtwaldsiedlung - Marsdorf	306	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307010001	Alt-Weiden	307010001 / Alt-Weiden	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307020001	Neu-Weiden - Danziger Str.	307020001 / Neu-Weiden - Danziger Str.	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307020002	Neu-Weiden - Körnerstr.	307020002 / Neu-Weiden - Körnerstr.	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307020003	Neu-Weiden - Sportplatz	307020003 / Neu-Weiden - Sportplatz	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307020004	Neu-Weiden - Kronstädter Str.	307020004 / Neu-Weiden - Kronstädter Str.	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307020005	Neu-Weiden - Einkaufszentrum	307020005 / Neu-Weiden - Einkaufszentrum	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307020006	Neu-Weiden - Schulzentrum	307020006 / Neu-Weiden - Schulzentrum	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307020007	Neu-Weiden - Alte Post	307020007 / Neu-Weiden - Alte Post	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307030001	Üsdorf - Am Clarenhof	307030001 / Üsdorf - Am Clarenhof	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	307030002	Üsdorf - Wickrather Hof	307030002 / Üsdorf - Wickrather Hof	307	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	308010001	Lövenich	308010001 / Lövenich	308	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	308030001	Lövenich-Ost - Kölner Str.	308030001 / Lövenich-Ost - Kölner Str.	308	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	308030002	Lövenich-Ost - Siedlung Haus Közal	308030002 / Lövenich-Ost - Siedlung Haus Közal	308	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	308040001	Lövenich-West - Friedhof	308040001 / Lövenich-West - Friedhof	308	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	308040002	Lövenich-West - An der Ronne	308040002 / Lövenich-West - An der Ronne	308	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	308040003	Lövenich-West - Gut Keuschhof	308040003 / Lövenich-West - Gut Keuschhof	308	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	309010001	Neu-Widdersdorf - Gut Burghof	309010001 / Neu-Widdersdorf - Gut Burghof	309	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	309010002	Neu-Widdersdorf - Indianapolis-Str.	309010002 / Neu-Widdersdorf - Indianapolis-Str.	309	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	309010003	Neu-Widdersdorf - Alte Sandkaul	309010003 / Neu-Widdersdorf - Alte Sandkaul	309	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	309020001	Alt-Widdersdorf	309020001 / Alt-Widdersdorf	309	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	309050001	Widdersdorf-Süd - Golfplatz	309050001 / Widdersdorf-Süd - Golfplatz	309	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	309050002	Widdersdorf-Süd - Sportanlage	309050002 / Widdersdorf-Süd - Sportanlage	309	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	309050003	Widdersdorf-Süd - Im Toennesfeld	309050003 / Widdersdorf-Süd - Im Toennesfeld	309	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401010001	Ehrenfeld-West - Alpenerplatz	401010001 / Ehrenfeld-West - Alpenerplatz	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401010002	Ehrenfeld-West - Helmholtzplatz	401010002 / Ehrenfeld-West - Helmholtzplatz	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401010003	Ehrenfeld-West - Gumprechtstr.	401010003 / Ehrenfeld-West - Gumprechtstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401010004	Ehrenfeld-West - Leo-Amann-Park	401010004 / Ehrenfeld-West - Leo-Amann-Park	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401010005	Ehrenfeld-West - Platenstr.	401010005 / Ehrenfeld-West - Platenstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401010006	Ehrenfeld-West - Intzestr.	401010006 / Ehrenfeld-West - Intzestr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401010007	Ehrenfeld-West - Subbelrather Str.	401010007 / Ehrenfeld-West - Subbelrather Str.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401010008	Ehrenfeld-West - Hackländerstr.	401010008 / Ehrenfeld-West - Hackländerstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401020001	Ehrenfeld - Lichtstr.	401020001 / Ehrenfeld - Lichtstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401020002	Ehrenfeld - Ölstr.	401020002 / Ehrenfeld - Ölstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401020003	Ehrenfeld - Leyendeckerstr.	401020003 / Ehrenfeld - Leyendeckerstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401030001	Ehrenfeld - Bezirkssportanlage Mitte	401030001 / Ehrenfeld - Bezirkssportanlage Mitte	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401030002	Ehrenfeld - Hansemannstr.	401030002 / Ehrenfeld - Hansemannstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401030003	Ehrenfeld - St. Josef	401030003 / Ehrenfeld - St. Josef	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401030004	Ehrenfeld - Pellenzstr.	401030004 / Ehrenfeld - Pellenzstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401030005	Ehrenfeld - Wißmannstr.	401030005 / Ehrenfeld - Wißmannstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401040001	Vogelsanger Str. - Fröbelplatz	401040001 / Vogelsanger Str. - Fröbelplatz	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401040002	Vogelsanger Str. - Vincenz-Statz-Schule	401040002 / Vogelsanger Str. - Vincenz-Statz-Schule	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401040003	Vogelsanger Str. - Keplerstr.	401040003 / Vogelsanger Str. - Keplerstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401040004	Vogelsanger Str. - Neptunplatz	401040004 / Vogelsanger Str. - Neptunplatz	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401040005	Vogelsanger Str. - Berufskolleg	401040005 / Vogelsanger Str. - Berufskolleg	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	401040006	Vogelsanger Str. - Weinsbergstr.	401040006 / Vogelsanger Str. - Weinsbergstr.	401	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402010001	Takufeld - St. Barbara	402010001 / Takufeld - St. Barbara	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402010002	Takufeld - Husumer Str.	402010002 / Takufeld - Husumer Str.	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402010003	Takufeld - Takuplatz	402010003 / Takufeld - Takuplatz	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402010004	Takufeld - Barbarabrunnen	402010004 / Takufeld - Barbarabrunnen	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402020001	Neuehrenfeld - Herkules Hochhaus	402020001 / Neuehrenfeld - Herkules Hochhaus	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402020002	Neuehrenfeld - Lukasstr.	402020002 / Neuehrenfeld - Lukasstr.	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402020003	Neuehrenfeld - Liebigstr.	402020003 / Neuehrenfeld - Liebigstr.	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402020004	Neuehrenfeld - St. Anna	402020004 / Neuehrenfeld - St. Anna	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402020005	Neuehrenfeld - Eichendorffstr.	402020005 / Neuehrenfeld - Eichendorffstr.	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402020006	Neuehrenfeld - Brandtsplatz	402020006 / Neuehrenfeld - Brandtsplatz	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402020007	Neuehrenfeld - Lenauplatz	402020007 / Neuehrenfeld - Lenauplatz	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402020008	Neuehrenfeld - Versöhnungskirche	402020008 / Neuehrenfeld - Versöhnungskirche	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	402030001	Schlachthof-Süd	402030001 / Schlachthof-Süd	402	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403020001	Westend - Daimlerstr.	403020001 / Westend - Daimlerstr.	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403020002	Westend - Wolffsohnstr.	403020002 / Westend - Wolffsohnstr.	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403020003	Westend - Ossendorfer Weg	403020003 / Westend - Ossendorfer Weg	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403030001	Bickendorf - Am Rosenhof	403030001 / Bickendorf - Am Rosenhof	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403030002	Bickendorf - Rochuskapelle	403030002 / Bickendorf - Rochuskapelle	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403030003	Bickendorf - Teichstr.	403030003 / Bickendorf - Teichstr.	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403030004	Bickendorf - Montessori Zentrum	403030004 / Bickendorf - Montessori Zentrum	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403030005	Bickendorf - Am Rosengarten	403030005 / Bickendorf - Am Rosengarten	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403040001	Garten-Siedlung	403040001 / Garten-Siedlung	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	403050001	Bickendorf - Gewerbegebiet	403050001 / Bickendorf - Gewerbegebiet	403	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	404010001	Neu-Vogelsang	404010001 / Neu-Vogelsang	404	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	404020001	Vogelsang - St. Konrad	404020001 / Vogelsang - St. Konrad	404	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	404020002	Vogelsang - Habichtweg	404020002 / Vogelsang - Habichtweg	404	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	404040001	Vogelsang-Nord - Kolkrabenschule	404040001 / Vogelsang-Nord - Kolkrabenschule	404	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	405010001	Alt-Bocklemünd	405010001 / Alt-Bocklemünd	405	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	405020001	Mengenich - BioCampus	405020001 / Mengenich - BioCampus	405	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	405040001	Neu-Bocklemünd - Max-Ernst-Gesamtschule	405040001 / Neu-Bocklemünd - Max-Ernst-Gesamtschule	405	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	405040002	Neu-Bocklemünd - Lasker-Schüler-Str.	405040002 / Neu-Bocklemünd - Lasker-Schüler-Str.	405	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	405040003	Neu-Bocklemünd - Dehmelstr.	405040003 / Neu-Bocklemünd - Dehmelstr.	405	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	405040004	Neu-Bocklemünd - Auferstehungskirche	405040004 / Neu-Bocklemünd - Auferstehungskirche	405	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	405040005	Neu-Bocklemünd - Börnestr.	405040005 / Neu-Bocklemünd - Börnestr.	405	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	406010001	Ossendorf - Gerhard-Bruders-Str.	406010001 / Ossendorf - Gerhard-Bruders-Str.	406	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	406010002	Ossendorf - König-Baudouin-Platz	406010002 / Ossendorf - König-Baudouin-Platz	406	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	406010003	Ossendorf - Franziska-Anneke-Str.	406010003 / Ossendorf - Franziska-Anneke-Str.	406	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	406010004	Ossendorf - Am Pistorhof	406010004 / Ossendorf - Am Pistorhof	406	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	406030001	Siedlung Butzweiler Hof	406030001 / Siedlung Butzweiler Hof	406	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	406040001	Ossendorf-Nord	406040001 / Ossendorf-Nord	406	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501010001	Sechzig-Viertel - Werkstattstr.	501010001 / Sechzig-Viertel - Werkstattstr.	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501010002	Sechzig-Viertel - Josephskirchplatz	501010002 / Sechzig-Viertel - Josephskirchplatz	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501010003	Sechzig-Viertel - Knechtstedener Str.	501010003 / Sechzig-Viertel - Knechtstedener Str.	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501010004	Sechzig-Viertel - Kulturkirche	501010004 / Sechzig-Viertel - Kulturkirche	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020001	Nippes - Erzbergerplatz	501020001 / Nippes - Erzbergerplatz	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020002	Nippes - Edith-Stein-Schule	501020002 / Nippes - Edith-Stein-Schule	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020003	Nippes - Holbeinstr.	501020003 / Nippes - Holbeinstr.	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020004	Nippes - Wartburgplatz	501020004 / Nippes - Wartburgplatz	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020005	Nippes - Wilhelmplatz	501020005 / Nippes - Wilhelmplatz	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020006	Nippes - St. Vinzenz Hospital	501020006 / Nippes - St. Vinzenz Hospital	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020007	Nippes - Baudriplatz	501020007 / Nippes - Baudriplatz	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020008	Nippes - Auerstr.	501020008 / Nippes - Auerstr.	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020009	Nippes - Gellertstr.	501020009 / Nippes - Gellertstr.	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020010	Nippes - Leipziger Platz	501020010 / Nippes - Leipziger Platz	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501020011	Nippes - Waterloostr.	501020011 / Nippes - Waterloostr.	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501030001	Nordpark - Xantener Str.	501030001 / Nordpark - Xantener Str.	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501030002	Nordpark - Am Nordpark	501030002 / Nordpark - Am Nordpark	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501040001	Siedlung Florastr.	501040001 / Siedlung Florastr.	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501050001	Clouth-Gelände	501050001 / Clouth-Gelände	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501060001	Nippes - Lokomotivstr.	501060001 / Nippes - Lokomotivstr.	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	501060002	Nippes - Am Alten Stellwerk	501060002 / Nippes - Am Alten Stellwerk	501	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	502010001	Nibelungen-Siedlung - Kriemhildplatz	502010001 / Nibelungen-Siedlung - Kriemhildplatz	502	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	502010002	Nibelungen-Siedlung - St. Quirinus	502010002 / Nibelungen-Siedlung - St. Quirinus	502	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	502030001	Grüner Hof	502030001 / Grüner Hof	502	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	503010001	Riehl - Mathias-Schleiden-Str.	503010001 / Riehl - Mathias-Schleiden-Str.	503	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	503010002	Riehl - St. Engelbert	503010002 / Riehl - St. Engelbert	503	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	503020001	Riehler Heimstätten	503020001 / Riehler Heimstätten	503	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	503030001	Zoo-Flora	503030001 / Zoo-Flora	503	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	503050001	Niederländer-Viertel	503050001 / Niederländer-Viertel	503	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	503060001	Naumann-Viertel	503060001 / Naumann-Viertel	503	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504010001	Gelsenkirchener Str. - Monika-Plonka-Platz	504010001 / Gelsenkirchener Str. - Monika-Plonka-Platz	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504010002	Gelsenkirchener Str. - Erich Kästner-Gymnasium	504010002 / Gelsenkirchener Str. - Erich Kästner-Gymnasium	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504020001	Niehl-Süd - Erlenhofstr.	504020001 / Niehl-Süd - Erlenhofstr.	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504020002	Niehl-Süd - Petrikirche	504020002 / Niehl-Süd - Petrikirche	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504030001	Wohnpark Niehl	504030001 / Wohnpark Niehl	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504040001	Niehl - St. Agatha Krankenhaus	504040001 / Niehl - St. Agatha Krankenhaus	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504040002	Niehl - St. Katharina	504040002 / Niehl - St. Katharina	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504060001	Hafen Niehl	504060001 / Hafen Niehl	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504070001	Ford-Siedlung - Pohlmanstr.	504070001 / Ford-Siedlung - Pohlmanstr.	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	504070002	Ford-Siedlung - Königsberger Str.	504070002 / Ford-Siedlung - Königsberger Str.	504	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	505010001	Rennbahn-Viertel - Schlesischer Platz	505010001 / Rennbahn-Viertel - Schlesischer Platz	505	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	505010002	Rennbahn-Viertel - Scheibenstr.	505010002 / Rennbahn-Viertel - Scheibenstr.	505	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	505020001	Weidenpesch - Madonna im Grünen	505020001 / Weidenpesch - Madonna im Grünen	505	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	505040001	Merheim (lrh.) - Scheibenstr.	505040001 / Merheim (lrh.) - Scheibenstr.	505	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	505040002	Merheim (lrh.) - Am Ginsterpfad	505040002 / Merheim (lrh.) - Am Ginsterpfad	505	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	505040003	Merheim (lrh.) - Mönchsgasse	505040003 / Merheim (lrh.) - Mönchsgasse	505	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	506010001	Gartenstadt-Nord - Altonaer Platz	506010001 / Gartenstadt-Nord - Altonaer Platz	506	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	506010002	Gartenstadt-Nord - Heilig Geist-Krankenhaus	506010002 / Gartenstadt-Nord - Heilig Geist-Krankenhaus	506	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	506020001	Neu-Longerich - St. Bernhard	506020001 / Neu-Longerich - St. Bernhard	506	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	506020002	Neu-Longerich - Lüttich-Kaserne	506020002 / Neu-Longerich - Lüttich-Kaserne	506	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	506030001	Alt-Longerich - Kriegerplatz	506030001 / Alt-Longerich - Kriegerplatz	506	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	506050001	Lützlongerich	506050001 / Lützlongerich	506	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	507010001	Bilderstöckchen - St. Franziskus	507010001 / Bilderstöckchen - St. Franziskus	507	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	507010002	Bilderstöckchen - Heinrich-Pesch-Str.	507010002 / Bilderstöckchen - Heinrich-Pesch-Str.	507	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	507010003	Bilderstöckchen - Hunsrückstr.	507010003 / Bilderstöckchen - Hunsrückstr.	507	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	507010004	Bilderstöckchen - Lukasschule	507010004 / Bilderstöckchen - Lukasschule	507	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	507020001	Parkgürtel-Nord - Dreikönigsgymnasium	507020001 / Parkgürtel-Nord - Dreikönigsgymnasium	507	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	507020002	Parkgürtel-Nord - Göppinger Str.	507020002 / Parkgürtel-Nord - Göppinger Str.	507	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	507030001	Parkgürtel-Süd - Parkgürtel	507030001 / Parkgürtel-Süd - Parkgürtel	507	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	507030002	Parkgürtel-Süd - Böblinger Str.	507030002 / Parkgürtel-Süd - Böblinger Str.	507	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	507050001	Schlachthof-Nord	507050001 / Schlachthof-Nord	507	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	601020001	Langel (lrh.) - Rheinkassel	601020001 / Langel (lrh.) - Rheinkassel	601	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	601030001	Merkenich - Spoerkelhof	601030001 / Merkenich - Spoerkelhof	601	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	601030002	Merkenich - St. Brictius	601030002 / Merkenich - St. Brictius	601	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	602010001	Fühlingen	602010001 / Fühlingen	602	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	603010001	Seeberg-Nord - Gustav-Heinemann-Schule	603010001 / Seeberg-Nord - Gustav-Heinemann-Schule	603	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	603010002	Seeberg-Nord - Henry-Ford-Realschule	603010002 / Seeberg-Nord - Henry-Ford-Realschule	603	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	603010003	Seeberg-Nord - Riphahnstr.	603010003 / Seeberg-Nord - Riphahnstr.	603	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	603010004	Seeberg-Nord - Ludwig-Gies-Str.	603010004 / Seeberg-Nord - Ludwig-Gies-Str.	603	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	603030001	Siedlung Oranjehof	603030001 / Siedlung Oranjehof	603	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	603040001	Seeberg-Mitte	603040001 / Seeberg-Mitte	603	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	604010001	Heimersdorf-Nord	604010001 / Heimersdorf-Nord	604	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	604020001	Heimersdorf	604020001 / Heimersdorf	604	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	604030001	Baum-Siedlung	604030001 / Baum-Siedlung	604	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	605010001	Lindweiler - Kirburger Weg	605010001 / Lindweiler - Kirburger Weg	605	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	605010002	Lindweiler - Krombachweg	605010002 / Lindweiler - Krombachweg	605	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	606010001	Pesch - St. Elisabeth	606010001 / Pesch - St. Elisabeth	606	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	606010002	Pesch - Erich-Ohser-Schule	606010002 / Pesch - Erich-Ohser-Schule	606	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	606010003	Pesch - Marienstr.	606010003 / Pesch - Marienstr.	606	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	606010004	Pesch - Heribert-Klar-Platz	606010004 / Pesch - Heribert-Klar-Platz	606	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	607010001	Esch - St. Martinus	607010001 / Esch - St. Martinus	607	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	607010002	Esch - St. Mariä	607010002 / Esch - St. Mariä	607	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	607020001	Auweiler	607020001 / Auweiler	607	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	607030001	Krawinkel-Siedlung	607030001 / Krawinkel-Siedlung	607	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	608010001	Volkhoven	608010001 / Volkhoven	608	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	608020001	Weiler - Generationenpark	608020001 / Weiler - Generationenpark	608	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	608020002	Weiler - St. Cosmas und Damian	608020002 / Weiler - St. Cosmas und Damian	608	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	609010001	Chorweiler - Turkuplatz	609010001 / Chorweiler - Turkuplatz	609	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	609010002	Chorweiler - Uppsalasteig	609010002 / Chorweiler - Uppsalasteig	609	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	609010003	Chorweiler - Osloer Str.	609010003 / Chorweiler - Osloer Str.	609	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	609020001	Chorweiler-Nord - Usedomstr.	609020001 / Chorweiler-Nord - Usedomstr.	609	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	609020002	Chorweiler-Nord - Weserplatz	609020002 / Chorweiler-Nord - Weserplatz	609	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	609020003	Chorweiler-Nord - Allerstr.	609020003 / Chorweiler-Nord - Allerstr.	609	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	609020004	Chorweiler-Nord - Heinrich-Böll-Gesamtschule	609020004 / Chorweiler-Nord - Heinrich-Böll-Gesamtschule	609	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	610010001	Blumenberg - Michelsbergstr.	610010001 / Blumenberg - Michelsbergstr.	610	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	610010002	Blumenberg - Staffelsbergstr.	610010002 / Blumenberg - Staffelsbergstr.	610	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	610010003	Blumenberg - St. Katharina	610010003 / Blumenberg - St. Katharina	610	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	611010001	Roggendorf	611010001 / Roggendorf	611	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	611030001	Thenhoven	611030001 / Thenhoven	611	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	612010001	Alt-Worringen - An den Kaulen	612010001 / Alt-Worringen - An den Kaulen	612	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	612010002	Alt-Worringen - St. Pankratius	612010002 / Alt-Worringen - St. Pankratius	612	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	612010003	Alt-Worringen - Hackhauser Weg	612010003 / Alt-Worringen - Hackhauser Weg	612	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	612040001	Neu-Worringen - Krebelspfad	612040001 / Neu-Worringen - Krebelspfad	612	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	612040002	Neu-Worringen - Büttgener Weg	612040002 / Neu-Worringen - Büttgener Weg	612	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	701010001	Rolshoven	701010001 / Rolshoven	701	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	701020001	Poll - Salmstr.	701020001 / Poll - Salmstr.	701	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	701020002	Poll - Weingartengasse	701020002 / Poll - Weingartengasse	701	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	701020003	Poll - Jakob-Kneip-Str.	701020003 / Poll - Jakob-Kneip-Str.	701	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	701030001	Poll-Ost - TÜV Rheinland	701030001 / Poll-Ost - TÜV Rheinland	701	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	701030002	Poll-Ost - Siegburger Str.	701030002 / Poll-Ost - Siegburger Str.	701	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	702020001	Westhoven - Kölner Str.	702020001 / Westhoven - Kölner Str.	702	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	702020002	Westhoven - Rheinaustr.	702020002 / Westhoven - Rheinaustr.	702	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	703010001	Ensen - Gertrudenstr.	703010001 / Ensen - Gertrudenstr.	703	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	703010002	Ensen - Hohe Str.	703010002 / Ensen - Hohe Str.	703	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	703010003	Ensen - Evastr.	703010003 / Ensen - Evastr.	703	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	703020001	Ensen-Ost	703020001 / Ensen-Ost	703	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	704010001	Gremberghoven - Auf dem Streitacker	704010001 / Gremberghoven - Auf dem Streitacker	704	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	704010002	Gremberghoven - Rather Str.	704010002 / Gremberghoven - Rather Str.	704	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	705010001	Eil-Süd - Duisburger Str.	705010001 / Eil-Süd - Duisburger Str.	705	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	705010002	Eil-Süd - Kurt-Schumacher-Str.	705010002 / Eil-Süd - Kurt-Schumacher-Str.	705	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	705010003	Eil-Süd - Wuppertaler Str.	705010003 / Eil-Süd - Wuppertaler Str.	705	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	705020001	Eil - St.-Rochus-Str.	705020001 / Eil - St.-Rochus-Str.	705	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	705020002	Eil - Pfaffengäßchen	705020002 / Eil - Pfaffengäßchen	705	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	706010001	Porz-Mitte - Zentrum	706010001 / Porz-Mitte - Zentrum	706	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	706010002	Porz-Mitte - Glashüttenstr.	706010002 / Porz-Mitte - Glashüttenstr.	706	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	706010003	Porz-Mitte - Germania Carré	706010003 / Porz-Mitte - Germania Carré	706	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	706010004	Porz-Mitte - Rathaus	706010004 / Porz-Mitte - Rathaus	706	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	706030001	Porz-Ost - Alfred-Nobel-Str.	706030001 / Porz-Ost - Alfred-Nobel-Str.	706	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	706030002	Porz-Ost - Im Porzer Feld	706030002 / Porz-Ost - Im Porzer Feld	706	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	706060001	Krankenhaus Porz	706060001 / Krankenhaus Porz	706	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	707010001	Urbach - Am Urbacher Wall	707010001 / Urbach - Am Urbacher Wall	707	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	707010002	Urbach - Gronaustr.	707010002 / Urbach - Gronaustr.	707	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	707010003	Urbach - Zündorfer Str.	707010003 / Urbach - Zündorfer Str.	707	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	707010004	Urbach - Fauststr.	707010004 / Urbach - Fauststr.	707	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	707010005	Urbach - Forsbachstr.	707010005 / Urbach - Forsbachstr.	707	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	707010006	Urbach - Königsberger Str.	707010006 / Urbach - Königsberger Str.	707	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	707010007	Urbach - Auf dem Stallberg	707010007 / Urbach - Auf dem Stallberg	707	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	708010001	Elsdorf	708010001 / Elsdorf	708	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	709010001	Alt-Grengel	709010001 / Alt-Grengel	709	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	709040001	Neu-Grengel - Akazienweg	709040001 / Neu-Grengel - Akazienweg	709	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	709040002	Neu-Grengel - Kantstr.	709040002 / Neu-Grengel - Kantstr.	709	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	710010001	Wahnheide - Grengeler Mauspfad	710010001 / Wahnheide - Grengeler Mauspfad	710	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	710010002	Wahnheide - Magazinstr.	710010002 / Wahnheide - Magazinstr.	710	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	710010003	Wahnheide - Scheuermühlenstr.	710010003 / Wahnheide - Scheuermühlenstr.	710	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	710010004	Wahnheide - Gudrunstr.	710010004 / Wahnheide - Gudrunstr.	710	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	711010001	Wahn - Nachtigallenstr.	711010001 / Wahn - Nachtigallenstr.	711	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	711010002	Wahn - Schloss Wahn	711010002 / Wahn - Schloss Wahn	711	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	711010003	Wahn - Siebengebirgsallee	711010003 / Wahn - Siebengebirgsallee	711	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	711010004	Wahn - Adolph-Kolping-Str.	711010004 / Wahn - Adolph-Kolping-Str.	711	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	712010001	Lind - Linder Mauspfad	712010001 / Lind - Linder Mauspfad	712	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	712010002	Lind - Am Linder Kreuz	712010002 / Lind - Am Linder Kreuz	712	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	713010001	Libur	713010001 / Libur	713	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	714010001	Zündorf - Wahner Str.	714010001 / Zündorf - Wahner Str.	714	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	714010002	Zündorf - Hauptstr.	714010002 / Zündorf - Hauptstr.	714	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	714020001	Zündorf-Süd - Schmittgasse	714020001 / Zündorf-Süd - Schmittgasse	714	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	714020002	Zündorf-Süd - Hauptstr.	714020002 / Zündorf-Süd - Hauptstr.	714	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	714030001	Zündorf-Nord - Rosenstr.	714030001 / Zündorf-Nord - Rosenstr.	714	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	714030002	Zündorf-Nord - Rosenhügel	714030002 / Zündorf-Nord - Rosenhügel	714	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	715010001	Langel-Süd (rrh.)	715010001 / Langel-Süd (rrh.)	715	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	715020001	Langel-Nord (rrh.)	715020001 / Langel-Nord (rrh.)	715	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	716010001	Finkenberg - Genter Str.	716010001 / Finkenberg - Genter Str.	716	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	716010002	Finkenberg - Gesamtschule	716010002 / Finkenberg - Gesamtschule	716	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	716010003	Finkenberg - Konrad-Adenauer-Str.	716010003 / Finkenberg - Konrad-Adenauer-Str.	716	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	716010004	Finkenberg - Lütticher Str.	716010004 / Finkenberg - Lütticher Str.	716	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	801010001	Humboldt - Berufskolleg	801010001 / Humboldt - Berufskolleg	801	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	801010002	Humboldt - Gießener Str.	801010002 / Humboldt - Gießener Str.	801	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	801010003	Humboldt - Lahnstr.	801010003 / Humboldt - Lahnstr.	801	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	801010004	Humboldt - Wattstr.	801010004 / Humboldt - Wattstr.	801	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	801020001	Gremberg	801020001 / Gremberg	801	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	801030001	Siedlung Lüderichstr.	801030001 / Siedlung Lüderichstr.	801	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	801040001	Siedlung Humboldt	801040001 / Siedlung Humboldt	801	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802010001	Kalk - Nießenstr.	802010001 / Kalk - Nießenstr.	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802010002	Kalk - Vorsterstr.	802010002 / Kalk - Vorsterstr.	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802010003	Kalk - St. Joseph	802010003 / Kalk - St. Joseph	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802010004	Kalk - St. Marien	802010004 / Kalk - St. Marien	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802010005	Kalk - Thumbstr.	802010005 / Kalk - Thumbstr.	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802010006	Kalk - Trimbornstr.	802010006 / Kalk - Trimbornstr.	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802020001	Köln Arcaden	802020001 / Köln Arcaden	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802030001	Technologie- und Industriepark Kalk-Süd	802030001 / Technologie- und Industriepark Kalk-Süd	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802040001	Kalk-Nord - Eythstr.	802040001 / Kalk-Nord - Eythstr.	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802040002	Kalk-Nord - Albermannstr.	802040002 / Kalk-Nord - Albermannstr.	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802040003	Kalk-Nord - Krankenhaus	802040003 / Kalk-Nord - Krankenhaus	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	802040004	Kalk-Nord - Lüttringhauser Str.	802040004 / Kalk-Nord - Lüttringhauser Str.	802	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	803010001	Schweden-Siedlung - Thorwaldsenstr.	803010001 / Schweden-Siedlung - Thorwaldsenstr.	803	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	803010002	Schweden-Siedlung - Kierkegaardstr.	803010002 / Schweden-Siedlung - Kierkegaardstr.	803	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	803020001	Siedlung Vingst - Kuthstr.	803020001 / Siedlung Vingst - Kuthstr.	803	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	803020002	Siedlung Vingst - Waldstr.	803020002 / Siedlung Vingst - Waldstr.	803	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	803030001	Vingst - St. Theodor	803030001 / Vingst - St. Theodor	803	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	803030002	Vingst - Homarstr.	803030002 / Vingst - Homarstr.	803	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	803030003	Vingst - Olpener Str.	803030003 / Vingst - Olpener Str.	803	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	803030004	Vingst - Ansbacher Str.	803030004 / Vingst - Ansbacher Str.	803	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	804010001	Germania-Siedlung - Koburger Str.	804010001 / Germania-Siedlung - Koburger Str.	804	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	804010002	Germania-Siedlung - Frankfurter Str.	804010002 / Germania-Siedlung - Frankfurter Str.	804	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	804020001	Höhenberg-Süd	804020001 / Höhenberg-Süd	804	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	804030001	Höhenberg - St. Elisabeth	804030001 / Höhenberg - St. Elisabeth	804	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	804030002	Höhenberg - Münchener Str.	804030002 / Höhenberg - Münchener Str.	804	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	804030003	Höhenberg - Gesamtschule	804030003 / Höhenberg - Gesamtschule	804	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	805010001	Ostheim-Nord - Rösrather Str.	805010001 / Ostheim-Nord - Rösrather Str.	805	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	805010002	Ostheim-Nord - Buchheimer Weg	805010002 / Ostheim-Nord - Buchheimer Weg	805	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	805010003	Ostheim-Nord - Steinrutschweg	805010003 / Ostheim-Nord - Steinrutschweg	805	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	805020001	Ostheim-Süd	805020001 / Ostheim-Süd	805	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	805030001	Siedlung Gernsheimer Str.	805030001 / Siedlung Gernsheimer Str.	805	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	805060001	Waldbad-Viertel	805060001 / Waldbad-Viertel	805	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	806010001	Merheim	806010001 / Merheim	806	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	806020001	Siedlung Madaus - Auf dem Eichenbrett	806020001 / Siedlung Madaus - Auf dem Eichenbrett	806	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	806020002	Siedlung Madaus - Hopfenstr.	806020002 / Siedlung Madaus - Hopfenstr.	806	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	806030001	Merheim-Mitte - Olpener Str.	806030001 / Merheim-Mitte - Olpener Str.	806	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	806030002	Merheim-Mitte - Kratzweg	806030002 / Merheim-Mitte - Kratzweg	806	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	806030003	Merheim-Mitte - Winterberger Str.	806030003 / Merheim-Mitte - Winterberger Str.	806	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	807010001	Brück	807010001 / Brück	807	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	807030001	Bergische Siedlung - Mudersbacher Str.	807030001 / Bergische Siedlung - Mudersbacher Str.	807	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	807030002	Bergische Siedlung - Am Schildchen	807030002 / Bergische Siedlung - Am Schildchen	807	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	807040001	Siedlung Lehmbacher Weg	807040001 / Siedlung Lehmbacher Weg	807	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	807050001	Waldtier-Siedlung	807050001 / Waldtier-Siedlung	807	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	807060001	Siedlung Klausenberg	807060001 / Siedlung Klausenberg	807	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	808010001	Göttersiedlung	808010001 / Göttersiedlung	808	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	808020001	Rath - Porzer Str.	808020001 / Rath - Porzer Str.	808	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	808020002	Rath - Rösrather Str.	808020002 / Rath - Rösrather Str.	808	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	808020003	Rath - Rather Burg	808020003 / Rath - Rather Burg	808	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	808020004	Rath - An der Mollburg	808020004 / Rath - An der Mollburg	808	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	808030001	Heumar - Wikingerstr.	808030001 / Heumar - Wikingerstr.	808	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	808030002	Heumar - Forststr.	808030002 / Heumar - Forststr.	808	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	809010001	Bungalow-Siedlung	809010001 / Bungalow-Siedlung	809	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	809020001	Neubrück - St. Adelheid	809020001 / Neubrück - St. Adelheid	809	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	809020002	Neubrück - Thomas-Dehler-Weg	809020002 / Neubrück - Thomas-Dehler-Weg	809	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	809020003	Neubrück - Hermann-Hesse-Weg	809020003 / Neubrück - Hermann-Hesse-Weg	809	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901010001	Stegerwald-Siedlung - St. Urban	901010001 / Stegerwald-Siedlung - St. Urban	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901010002	Stegerwald-Siedlung - Gesamtschule	901010002 / Stegerwald-Siedlung - Gesamtschule	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901020001	Mülheimer Stadtgarten - Rendsburger Platz	901020001 / Mülheimer Stadtgarten - Rendsburger Platz	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901020002	Mülheimer Stadtgarten - Rhodiusstr.	901020002 / Mülheimer Stadtgarten - Rhodiusstr.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901020003	Mülheimer Stadtgarten - Jan-Wellem-Str.	901020003 / Mülheimer Stadtgarten - Jan-Wellem-Str.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901020004	Mülheimer Stadtgarten - Montanusstr.	901020004 / Mülheimer Stadtgarten - Montanusstr.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901030001	Mülheim - Mülheimer Freiheit	901030001 / Mülheim - Mülheimer Freiheit	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901030002	Mülheim - Gymnasiumstr.	901030002 / Mülheim - Gymnasiumstr.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901030003	Mülheim - Papageienstr.	901030003 / Mülheim - Papageienstr.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901030004	Mülheim - Deutz-Mülheimer Str.	901030004 / Mülheim - Deutz-Mülheimer Str.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901030005	Mülheim - Herz-Jesu-Kirche	901030005 / Mülheim - Herz-Jesu-Kirche	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901030006	Mülheim - Liebfrauen-Kirche	901030006 / Mülheim - Liebfrauen-Kirche	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901040001	Keupstr. - Schanzenstr.	901040001 / Keupstr. - Schanzenstr.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901040002	Keupstr. - Holweider Str.	901040002 / Keupstr. - Holweider Str.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901050001	Mülheim-Nord - Hacketäuer Siedlung	901050001 / Mülheim-Nord - Hacketäuer Siedlung	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901050002	Mülheim-Nord - Marktplatz	901050002 / Mülheim-Nord - Marktplatz	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901050003	Mülheim-Nord - Berliner Str.	901050003 / Mülheim-Nord - Berliner Str.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901060001	Bruder-Klaus-Siedlung - Siedlung Neurath	901060001 / Bruder-Klaus-Siedlung - Siedlung Neurath	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901100001	Böcking-Siedlung - Düsseldorfer Str.	901100001 / Böcking-Siedlung - Düsseldorfer Str.	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	901100002	Böcking-Siedlung - Rheinufer	901100002 / Böcking-Siedlung - Rheinufer	901	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	902010001	Buchforst - Wildunger Str.	902010001 / Buchforst - Wildunger Str.	902	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	902020001	Siedlung Blauer Hof - Heidelberger Str.	902020001 / Siedlung Blauer Hof - Heidelberger Str.	902	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	902030001	Siedlung Weiße Stadt - Kopernikusstr.	902030001 / Siedlung Weiße Stadt - Kopernikusstr.	902	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	903010001	Siedlung Buchheim	903010001 / Siedlung Buchheim	903	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	903020001	Buchheim - Wuppertaler Str.	903020001 / Buchheim - Wuppertaler Str.	903	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	903020002	Buchheim - Gronauer Str.	903020002 / Buchheim - Gronauer Str.	903	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	903020003	Buchheim - Johanniterstr.	903020003 / Buchheim - Johanniterstr.	903	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	903020004	Buchheim - St. Mauritius	903020004 / Buchheim - St. Mauritius	903	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	903020005	Buchheim - Hermann-Kunz-Str.	903020005 / Buchheim - Hermann-Kunz-Str.	903	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	903020006	Buchheim - Arnsberger Str.	903020006 / Buchheim - Arnsberger Str.	903	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	903020007	Buchheim - Kleinherl	903020007 / Buchheim - Kleinherl	903	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904010001	Holweide-West - Ringenstr.	904010001 / Holweide-West - Ringenstr.	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904010002	Holweide-West - Wilhelm-David-Str.	904010002 / Holweide-West - Wilhelm-David-Str.	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904010003	Holweide-West - Friedlandstr.	904010003 / Holweide-West - Friedlandstr.	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904020001	Holweide-Ost - Schnellweider Str.	904020001 / Holweide-Ost - Schnellweider Str.	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904020002	Holweide-Ost - Piccoloministr.	904020002 / Holweide-Ost - Piccoloministr.	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904020003	Holweide-Ost - Gerhart-Hauptmann-Str.	904020003 / Holweide-Ost - Gerhart-Hauptmann-Str.	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904020004	Holweide-Ost - Franz-Werfel-Str.	904020004 / Holweide-Ost - Franz-Werfel-Str.	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904030001	Siedlung Wichheim	904030001 / Siedlung Wichheim	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904040001	Schweinheim - Iddelsfeld - Schlagbaum	904040001 / Schweinheim - Iddelsfeld - Schlagbaum	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	904090001	Ober-Iddelsfeld	904090001 / Ober-Iddelsfeld	904	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905010001	Dellbrück - Marthastr.	905010001 / Dellbrück - Marthastr.	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905010002	Dellbrück - Von-Quadt-Str.	905010002 / Dellbrück - Von-Quadt-Str.	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905010003	Dellbrück - Ernastr.	905010003 / Dellbrück - Ernastr.	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905020001	Hagedorn - Märchen-Siedlung	905020001 / Hagedorn - Märchen-Siedlung	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905020002	Hagedorn - Talstr.	905020002 / Hagedorn - Talstr.	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905030001	Blumen-Siedlung	905030001 / Blumen-Siedlung	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905040001	Strunden - Mielenforster Heide	905040001 / Strunden - Mielenforster Heide	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905050001	Thielenbruch	905050001 / Thielenbruch	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905060001	Siedlung Mielenforst	905060001 / Siedlung Mielenforst	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905070001	Dellbrück-Süd	905070001 / Dellbrück-Süd	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905080001	Thurn - Strundener Str.	905080001 / Thurn - Strundener Str.	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	905080002	Thurn - Gemarkenstr.	905080002 / Thurn - Gemarkenstr.	905	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	906010001	Siedlung Schönrath	906010001 / Siedlung Schönrath	906	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	906030001	Höhenhaus - Gesamtschule	906030001 / Höhenhaus - Gesamtschule	906	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	906030002	Höhenhaus - Finnensiedlung	906030002 / Höhenhaus - Finnensiedlung	906	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	906030003	Höhenhaus - Honschaftsstr.	906030003 / Höhenhaus - Honschaftsstr.	906	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	906030004	Höhenhaus - Rosenmaarschule	906030004 / Höhenhaus - Rosenmaarschule	906	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	906050001	Siedlung Goldregenweg	906050001 / Siedlung Goldregenweg	906	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	906060001	Gewürzviertel	906060001 / Gewürzviertel	906	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	906070001	Berliner Straße	906070001 / Berliner Straße	906	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	907010001	Oststraßen-Siedlung	907010001 / Oststraßen-Siedlung	907	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	907020001	Dünnwald - Von-Diergardt-Str.	907020001 / Dünnwald - Von-Diergardt-Str.	907	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	907020002	Dünnwald - Berliner Str.	907020002 / Dünnwald - Berliner Str.	907	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	907020003	Dünnwald - An der Walkmühle	907020003 / Dünnwald - An der Walkmühle	907	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	907030001	Siedlung Klosterhof	907030001 / Siedlung Klosterhof	907	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	907060001	Siedlung Am Donewald	907060001 / Siedlung Am Donewald	907	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	908010001	Stammheim-Nord	908010001 / Stammheim-Nord	908	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	908020001	Stammheim-Süd - Adolf-Kober-Str.	908020001 / Stammheim-Süd - Adolf-Kober-Str.	908	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	908020002	Stammheim-Süd - Ricarda-Huch-Str.	908020002 / Stammheim-Süd - Ricarda-Huch-Str.	908	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	908030001	Stammheim	908030001 / Stammheim	908	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	909010001	Flittard	909010001 / Flittard	909	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	909030001	Bayer-Siedlung - Rungestr.	909030001 / Bayer-Siedlung - Rungestr.	909	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	909030002	Bayer-Siedlung - Roggendorfstr.	909030002 / Bayer-Siedlung - Roggendorfstr.	909	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
+Statistische Quartiere	909030003	Bayer-Siedlung - Hufelandstr.	909030003 / Bayer-Siedlung - Hufelandstr.	909	ja								ja	Quartiersgeometrie nicht im Repository; Eltern-Nummer aus den ersten drei Ziffern abgeleitet
