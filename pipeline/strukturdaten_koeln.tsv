@@ -1,0 +1,212 @@
+indikator_id	code	katalog_id	format	typ	typ_sicherheit	einheit	zaehler_id	nenner_id	faktor	typ_begruendung	beleg_zaehler_nenner
+koeln_A0002A	A0002A	A0002	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0002P	A0002P	A0002	%	anteil	eindeutig	%	koeln_A0002A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0002A / A0025A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0005S	A0005S	A0005	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0006S	A0006S	A0006	andere	anzahl	unsicher	Anzahl				Format andere ohne abs; Saldo als Differenz von Anzahlen, Rückfrage	
+koeln_A0007S	A0007S	A0007	andere	anzahl	unsicher	Anzahl				Format andere ohne abs; Saldo als Differenz von Anzahlen, Rückfrage	
+koeln_A0008S	A0008S	A0008	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0009S	A0009S	A0009	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0012S	A0012S	A0012	andere	quote	unsicher	ungeprüft				Format andere; Name ohne erkennbares Muster, Rückfrage	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0014S	A0014S	A0014	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0016S	A0016S	A0016	andere	anzahl	unsicher	Anzahl				Format andere ohne abs; Saldo als Differenz von Anzahlen, Rückfrage	
+koeln_A0018S	A0018S	A0018	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0022S	A0022S	A0022	andere	mittelwert	eindeutig	Jahre				Format andere; Name nennt Durchschnitt, Median oder Lebenserwartung	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_A0025A	A0025A	A0025	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0027A	A0027A	A0027	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0027P	A0027P	A0027	%	anteil	eindeutig	%	koeln_A0027A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0027A / A0025A in allen 9534 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0029A	A0029A	A0029	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0029P	A0029P	A0029	%	anteil	eindeutig	%	koeln_A0029A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0029A / A0025A in allen 9556 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0035A	A0035A	A0035	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0035P	A0035P	A0035	%	anteil	eindeutig	%	koeln_A0035A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0035A / A0025A in allen 9557 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0043A	A0043A	A0043	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0043P	A0043P	A0043	%	anteil	eindeutig	%	koeln_A0043A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0043A / A0025A in allen 9544 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0060A	A0060A	A0060	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0060P	A0060P	A0060	%	anteil	eindeutig	%	koeln_A0060A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0060A / A0025A in allen 9556 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0065A	A0065A	A0065	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0065P	A0065P	A0065	%	anteil	eindeutig	%	koeln_A0065A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0065A / A0025A in allen 9550 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0109A	A0109A	A0109	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0109P	A0109P	A0109	%	anteil	eindeutig	%	koeln_A0109A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0109A / A0025A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0112A	A0112A	A0112	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0114A	A0114A	A0114	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0114P	A0114P	A0114	%	anteil	eindeutig	%	koeln_A0114A	koeln_A0029A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0114A / A0029A in allen 9550 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0117A	A0117A	A0117	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0117P	A0117P	A0117	%	anteil	eindeutig	%	koeln_A0117A	koeln_A0035A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0117A / A0035A in allen 9528 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0123A	A0123A	A0123	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0123P	A0123P	A0123	%	anteil	eindeutig	%	koeln_A0123A	koeln_A0043A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0123A / A0043A in allen 9430 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0126A	A0126A	A0126	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0136A	A0136A	A0136	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0136P	A0136P	A0136	%	anteil	eindeutig	%	koeln_A0136A	koeln_A0060A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0136A / A0060A in allen 9554 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0138A	A0138A	A0138	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0140A	A0140A	A0140	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0140P	A0140P	A0140	%	anteil	eindeutig	%	koeln_A0140A	koeln_A0065A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0140A / A0065A in allen 9489 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0153A	A0153A	A0153	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0153P	A0153P	A0153	%	anteil	eindeutig	%	koeln_A0153A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0153A / A0025A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0157A	A0157A	A0157	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0157P	A0157P	A0157	%	anteil	eindeutig	%				Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt); Zähler aus gleicher Katalogzeile (abs), nicht geprüft
+koeln_A0213A	A0213A	A0213	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0213P	A0213P	A0213	%	anteil	eindeutig	%	koeln_A0213A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0213A / A0025A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0216A	A0216A	A0216	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0218A	A0218A	A0218	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0218P	A0218P	A0218	%	anteil	eindeutig	%	koeln_A0218A	koeln_A0029A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0218A / A0029A in allen 9544 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0221A	A0221A	A0221	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0221P	A0221P	A0221	%	anteil	eindeutig	%	koeln_A0221A	koeln_A0035A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0221A / A0035A in allen 9519 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0227A	A0227A	A0227	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0227P	A0227P	A0227	%	anteil	eindeutig	%	koeln_A0227A	koeln_A0043A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0227A / A0043A in allen 9434 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0230A	A0230A	A0230	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0240A	A0240A	A0240	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0240P	A0240P	A0240	%	anteil	eindeutig	%	koeln_A0240A	koeln_A0060A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0240A / A0060A in allen 9554 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0242A	A0242A	A0242	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0244A	A0244A	A0244	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0244P	A0244P	A0244	%	anteil	eindeutig	%	koeln_A0244A	koeln_A0065A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0244A / A0065A in allen 9508 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0267A	A0267A	A0267	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0269A	A0269A	A0269	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0269P	A0269P	A0269	%	anteil	eindeutig	%	koeln_A0269A	koeln_A0267A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0269A / A0267A in allen 9534 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0273A	A0273A	A0273	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0273P	A0273P	A0273	%	anteil	eindeutig	%	koeln_A0273A	koeln_A0267A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0273A / A0267A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0275A	A0275A	A0275	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0275P	A0275P	A0275	%	anteil	eindeutig	%	koeln_A0275A	koeln_A0267A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0275A / A0267A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0279S	A0279S	A0279	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0282A	A0282A	A0282	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0282S	A0282S	A0282	andere	quote	eindeutig	je 100 Einwohner*innen	koeln_A0282A	koeln_A0025A	100	Format andere; Name nennt Bewegungen je 100 Einwohner*innen (Rate)	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0282A / A0025A in allen 9558 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 0.0001)
+koeln_A0283A	A0283A	A0283	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0283S	A0283S	A0283	andere	quote	eindeutig	je 100 Einwohner*innen	koeln_A0283A	koeln_A0025A	100	Format andere; Name nennt Bewegungen je 100 Einwohner*innen (Rate)	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0283A / A0025A in allen 9558 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 0.0001)
+koeln_A0287S	A0287S	A0287	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0289A	A0289A	A0289	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0290A	A0290A	A0290	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0290P	A0290P	A0290	%	anteil	eindeutig	%	koeln_A0290A	koeln_A0267A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0290A / A0267A in allen 9558 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0291A	A0291A	A0291	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0291P	A0291P	A0291	%	anteil	eindeutig	%	koeln_A0291A	koeln_A0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0291A / A0025A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0292A	A0292A	A0292	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0293A	A0293A	A0293	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0294A	A0294A	A0294	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0295A	A0295A	A0295	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0296S	A0296S	A0296	andere	mittelwert	eindeutig	Jahre				Format andere; Name nennt Durchschnitt, Median oder Lebenserwartung	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_A0297S	A0297S	A0297	andere	mittelwert	eindeutig	Jahre				Format andere; Name nennt Durchschnitt, Median oder Lebenserwartung	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_A0298S	A0298S	A0298	andere	mittelwert	eindeutig	Jahre				Format andere; Name nennt Durchschnitt, Median oder Lebenserwartung	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_A0299S	A0299S	A0299	andere	mittelwert	eindeutig	Jahre				Format andere; Name nennt Durchschnitt, Median oder Lebenserwartung	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_A0300A	A0300A	A0300	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0301A	A0301A	A0301	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0302A	A0302A	A0302	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0303A	A0303A	A0303	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0304A	A0304A	A0304	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0305A	A0305A	A0305	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0306A	A0306A	A0306	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0307A	A0307A	A0307	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0314A	A0314A	A0314	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0314P	A0314P	A0314	%	anteil	eindeutig	%	koeln_A0314A	koeln_A0267A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0314A / A0267A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0315A	A0315A	A0315	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0315P	A0315P	A0315	%	anteil	eindeutig	%	koeln_A0315A	koeln_A0267A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0315A / A0267A in allen 9557 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0316A	A0316A	A0316	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0316P	A0316P	A0316	%	anteil	eindeutig	%	koeln_A0316A	koeln_A0267A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0316A / A0267A in allen 9556 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0317A	A0317A	A0317	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0317P	A0317P	A0317	%	anteil	eindeutig	%	koeln_A0317A	koeln_A0267A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × A0317A / A0267A in allen 9477 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 5e-07)
+koeln_A0355A	A0355A	A0355	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0359A	A0359A	A0359	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0363A	A0363A	A0363	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0364A	A0364A	A0364	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0365A	A0365A	A0365	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0366A	A0366A	A0366	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0367A	A0367A	A0367	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0368A	A0368A	A0368	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0369A	A0369A	A0369	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0370A	A0370A	A0370	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0371A	A0371A	A0371	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0372A	A0372A	A0372	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0373A	A0373A	A0373	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0374A	A0374A	A0374	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_A0407S	A0407S	A0407	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0408S	A0408S	A0408	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0409S	A0409S	A0409	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0410S	A0410S	A0410	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0411S	A0411S	A0411	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0412S	A0412S	A0412	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0413S	A0413S	A0413	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0414S	A0414S	A0414	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0542S	A0542S	A0542	andere	quote	unsicher	ungeprüft				Format andere; demografische Maßzahl, kein passender Vertragstyp, Rückfrage	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0547S	A0547S	A0547	andere	quote	unsicher	ungeprüft				Format andere; Veränderungsrate, kein Bestandsverhältnis; Vertrag kennt keinen Veränderungstyp, Rückfrage	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_A0548S	A0548S	A0548	andere	quote	unsicher	ungeprüft				Format andere; Veränderungsrate, kein Bestandsverhältnis; Vertrag kennt keinen Veränderungstyp, Rückfrage	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_B0002S	B0002S	B0002	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_B0003A	B0003A	B0003	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_B0004A	B0004A	B0004	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_B0009A	B0009A	B0009	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_B0021S	B0021S	B0021	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_B0022S	B0022S	B0022	andere	mittelwert	plausibel	m²				Format andere; Wohnfläche je Person bzw. Wohnung (Quadratmeter laut Name)	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_B0023S	B0023S	B0023	andere	mittelwert	plausibel	m²				Format andere; Wohnfläche je Person bzw. Wohnung (Quadratmeter laut Name)	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_B0025A	B0025A	B0025	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_B0026A	B0026A	B0026	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_B0026P	B0026P	B0026	%	anteil	eindeutig	%	koeln_B0026A	koeln_B0025A	100	Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026), numerisch geprüft: Wert = 100 × B0026A / B0025A in allen 3680 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 1e-06)
+koeln_C0004A	C0004A	C0004	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_C0007A	C0007A	C0007	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_C0007P	C0007P	C0007	%	anteil	eindeutig	%				Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt); Zähler aus gleicher Katalogzeile (abs), nicht geprüft
+koeln_D0001A	D0001A	D0001	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_D0001P	D0001P	D0001	%	quote	eindeutig	%				Format %; Name im Datenblatt nennt eine Quote	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt); Zähler aus gleicher Katalogzeile (abs), nicht geprüft
+koeln_D0011A	D0011A	D0011	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_D0011P	D0011P	D0011	%	anteil	eindeutig	%				Format %; Name im Datenblatt beginnt mit „Anteil … an …“	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt); Zähler aus gleicher Katalogzeile (abs), nicht geprüft
+koeln_D0028S	D0028S	D0028	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_D0029S	D0029S	D0029	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_D0030S	D0030S	D0030	andere	quote	unsicher	ungeprüft				Format andere neben abs; analog A0282S/A0283S (je 100 Einwohner*innen) vermutlich Rate, im Katalog nicht benannt	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_D0046S	D0046S	D0046	andere	quote	unsicher	Bund = 100				Format andere; Indexwert (Bezug = 100), kein passender Vertragstyp, Rückfrage	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_D0053S	D0053S	D0053	andere	quote	unsicher	Bund = 100				Format andere; Indexwert (Bezug = 100), kein passender Vertragstyp, Rückfrage	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_D0054S	D0054S	D0054	andere	anzahl	unsicher	Mio. Euro				Format andere; Geldsumme, additiv wie eine Anzahl	
+koeln_D0058S	D0058S	D0058	andere	quote	unsicher	Köln = 100				Format andere; Indexwert (Bezug = 100), kein passender Vertragstyp, Rückfrage	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_E0001A	E0001A	E0001	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_E0002A	E0002A	E0002	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_F0014S	F0014S	F0014	andere	mittelwert	unsicher	Anzahl (Jahresdurchschnitt)				Format andere; Name nennt Durchschnitt, Median oder Lebenserwartung	Phase 0 (10.11.2026): nicht ableitbar (nur Katalog)
+koeln_H0001A	H0001A	H0001	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0003S	H0003S	H0003	andere	dichte	plausibel	je 1000 Einwohner*innen	koeln_H0029A	koeln_A0025A	1000	Format andere; Name nennt eine Dichte (Bestand je Fläche, Adresse oder Bevölkerung)	Phase 0 (10.11.2026), numerisch geprüft: Wert = 1000 × H0029A / A0025A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 0.001)
+koeln_H0004A	H0004A	H0004	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0005A	H0005A	H0005	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0006A	H0006A	H0006	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0007A	H0007A	H0007	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0008A	H0008A	H0008	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0009A	H0009A	H0009	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0010A	H0010A	H0010	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0011A	H0011A	H0011	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0012A	H0012A	H0012	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0013A	H0013A	H0013	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0014A	H0014A	H0014	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0015A	H0015A	H0015	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0016A	H0016A	H0016	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0017A	H0017A	H0017	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0018A	H0018A	H0018	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0019A	H0019A	H0019	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0020A	H0020A	H0020	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0021A	H0021A	H0021	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0022A	H0022A	H0022	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0023A	H0023A	H0023	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0024A	H0024A	H0024	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0025A	H0025A	H0025	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0026A	H0026A	H0026	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0027A	H0027A	H0027	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0028A	H0028A	H0028	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0029A	H0029A	H0029	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0030A	H0030A	H0030	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0031A	H0031A	H0031	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0032A	H0032A	H0032	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0033A	H0033A	H0033	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0034A	H0034A	H0034	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0035A	H0035A	H0035	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0036A	H0036A	H0036	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0037A	H0037A	H0037	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0038A	H0038A	H0038	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0039A	H0039A	H0039	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0040A	H0040A	H0040	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0041A	H0041A	H0041	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0042A	H0042A	H0042	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0043A	H0043A	H0043	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0044A	H0044A	H0044	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0045A	H0045A	H0045	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0046A	H0046A	H0046	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0047A	H0047A	H0047	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0048A	H0048A	H0048	abs	anzahl	eindeutig	Anzahl				Formatspalte abs = X	
+koeln_H0049S	H0049S	H0049	andere	mittelwert	eindeutig	ccm				Format andere; Name nennt Durchschnitt, Median oder Lebenserwartung	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_H0050S	H0050S	H0050	andere	mittelwert	eindeutig	km/h				Format andere; Name nennt Durchschnitt, Median oder Lebenserwartung	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_H0051S	H0051S	H0051	andere	mittelwert	eindeutig	kw				Format andere; Name nennt Durchschnitt, Median oder Lebenserwartung	Phase 0 (10.11.2026): im Datenblatt nicht ableitbar (Zähler oder Nenner fehlt)
+koeln_H0052S	H0052S	H0052	andere	dichte	plausibel	je 1000 Einwohner*innen	koeln_H0037A	koeln_A0025A	1000	Format andere; Name nennt eine Dichte (Bestand je Fläche, Adresse oder Bevölkerung)	Phase 0 (10.11.2026), numerisch geprüft: Wert = 1000 × H0037A / A0025A in allen 9559 Zeilen mit Zahlen, Abweichung höchstens eine Einheit der letzten Stelle (max. 0.001)
+koeln_I0001A	I0001A	I0001	abs	mittelwert	unsicher	ungeprüft				Format abs, Name: Jahresdurchschnitt einer Messgröße; nicht additiv über Räume	
+koeln_I0002A	I0002A	I0002	abs	mittelwert	unsicher	Liter pro Quadratmeter				Format abs, aber Messwert (Umwelt/Klima/Pegel); kein passender Vertragstyp, Rückfrage	
+koeln_I0003A	I0003A	I0003	abs	mittelwert	unsicher	Stunden				Format abs, aber Messwert (Umwelt/Klima/Pegel); kein passender Vertragstyp, Rückfrage	
+koeln_I0004A	I0004A	I0004	abs	mittelwert	unsicher	cm				Format abs, aber Messwert (Umwelt/Klima/Pegel); kein passender Vertragstyp, Rückfrage	
+koeln_I0005A	I0005A	I0005	abs	mittelwert	unsicher	cm				Format abs, aber Messwert (Umwelt/Klima/Pegel); kein passender Vertragstyp, Rückfrage	
+koeln_I0006A	I0006A	I0006	abs	mittelwert	unsicher	Grad Celsius				Format abs, aber Messwert (Umwelt/Klima/Pegel); kein passender Vertragstyp, Rückfrage	
+koeln_I0007A	I0007A	I0007	abs	mittelwert	unsicher	Grad Celsius				Format abs, aber Messwert (Umwelt/Klima/Pegel); kein passender Vertragstyp, Rückfrage	
