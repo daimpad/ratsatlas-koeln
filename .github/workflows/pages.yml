@@ -1,11 +1,13 @@
 # Ratsatlas Köln: Daten der Kölner OParl-API abrufen, aufbereiten und veröffentlichen (CLAUDE.md 5.1, 7.5).
-# Die fertige Seite geht in den Branch `deploy` (ohne Historie der Seite; Plesk-Git auf koeln.ratsatlas.de holt ihn per
-# Webhook) und auf den Spiegel bei GitHub Pages (Canonical auf die Hauptadresse).
+# Die fertige Seite geht in den Branch `deploy` (Plesk-Git auf koeln.ratsatlas.de holt ihn per Webhook; flacher Klon, ein
+# Commit je Lauf: die Historie wächst um die Änderungen, Plesk-Git räumt mit git gc auf) und auf den Spiegel bei GitHub
+# Pages (Canonical auf die Hauptadresse).
 #
 # Sperre: Der Abruf läuft erst, wenn die Repository-Variable RATSATLAS_STADT_INFORMIERT den Wert „ja“ hat
 # (Einstellungen → Secrets and variables → Actions → Variables). Bis dahin – und bis ein vollständiger Abruf vorliegt –
 # veröffentlicht der Lauf eine Kartenvorschau ohne Ratsvorlagen (Gebiete, Kennzahlen, Ebenen; Entscheidung 07.11.2026).
-# Weitere Variablen: RATSATLAS_KONTAKT (Kontakt im User-Agent), SITE_URL (Vorgabe https://koeln.ratsatlas.de/).
+# Weitere Variablen: RATSATLAS_KONTAKT (Kontakt im User-Agent, Pflicht: ohne ihn bricht der freigegebene Abruf vor der
+# ersten Anfrage als Einstellungsfehler ab), SITE_URL (Vorgabe https://koeln.ratsatlas.de/).
 # Abhilfen, die der Abruf in STAND.json und im Log nennt (der Zustand liegt im Zwischenspeicher dieses Workflows, ein
 # Lauf an anderer Stelle hilft nicht): RATSATLAS_VOLLABRUF („ja“ oder Listen, etwa „meetings“: Vollabruf statt
 # modified_since, über Nächte fortgesetzt) und RATSATLAS_KUERZER_ANNEHMEN (Listen, etwa „organizations“: kürzeren
@@ -153,8 +155,11 @@ jobs:
       - name: Linkprüfung (innere Links)
         run: python tools/linkpruefung.py _site
 
-      # Ohne Datenpaket (Zip, täglich vollständig neu), damit die Historie nur um die Änderungen wächst; auf dem eigenen
-      # Server verweist der Link auf das Paket beim Spiegel (config.PAKET_URL)
+      # Flacher Klon, ein Commit je Lauf: Die Historie wächst um die Änderungen (Plesk-Git räumt mit git gc auf). Ohne
+      # Datenpaket (Zip, täglich vollständig neu, es käme jeden Tag ganz hinzu); auf dem eigenen Server verweist der Link
+      # auf das Paket beim Spiegel (config.PAKET_URL). Größenwache: GitHub nimmt höchstens 100 MB je Datei an (in der
+      # Generalprobe lag audit_prozess.tsv bei 98,3 MB). Jede Datei über 95 MB (95 000 000 Byte) bleibt mit Warnung im
+      # Log draußen (sie liegt im Datenpaket und auf dem Spiegel GitHub Pages); der Push läuft weiter
       - name: Fertige Seite in den Branch deploy schreiben
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -173,6 +178,11 @@ jobs:
           find _deploy -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -r _site/. _deploy/
           rm -f _deploy/data/export/ratsatlas-koeln-export.zip
+          find _deploy -path _deploy/.git -prune -o -type f -size +95000000c -print | while IFS= read -r datei; do
+            mb=$(awk -v b="$(stat -c %s "$datei")" 'BEGIN { printf "%.1f", b / 1000000 }' | tr . ,)
+            echo "::warning::${datei#_deploy/} (${mb} MB) nicht im Branch deploy: GitHub nimmt höchstens 100 MB je Datei an; liegt im Datenpaket und auf dem Spiegel GitHub Pages"
+            rm -f "$datei"
+          done
           cp deploy/htaccess _deploy/.htaccess
           paket=$(python -c 'from pipeline import config; print(config.PAKET_URL)')
           sed -i "s|href=\"data/export/ratsatlas-koeln-export.zip\"|href=\"${paket}\"|" _deploy/index.html

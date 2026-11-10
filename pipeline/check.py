@@ -84,6 +84,11 @@ def kennzahlen(db):
     print("Kennzahlen (Vergleichswerte: keine – Kölner OParl-API noch nicht gemessen; Bonner Werte gelten nicht)")
     print("Pilot-Stadtteil: keiner (ganz Köln, CLAUDE.md 2)")
     print("Vorlagen:", n)
+    # build lässt Vorlagen ohne `reference` aus (build.einlesen), statt eine Nummer zu erfinden
+    print("Vorlagen ohne Drucksachennummer (beim Aufbau ausgelassen):",
+          one("SELECT COUNT(*) FROM skipped_paper") if one(
+              "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'skipped_paper'")
+          else "nicht erfasst (Datenbank ohne Tabelle skipped_paper)")
     print("Vorlagen mit Koordinate:", one(
         "SELECT COUNT(DISTINCT pl.paper_id) FROM paper_location pl "
         "JOIN location l ON l.id = pl.location_id WHERE l.lon IS NOT NULL"))

@@ -55,6 +55,8 @@ CREATE TABLE paper_originator (
 CREATE TABLE paper_responsibility (
   paper_id TEXT REFERENCES paper, organization_id TEXT REFERENCES organization, kind TEXT,
   method TEXT, evidence TEXT, derived INTEGER);
+-- Vorlagen, die der Aufbau auslässt (ohne Drucksachennummer, einlesen()); Zählung in der Ausgabe von check
+CREATE TABLE skipped_paper (id TEXT PRIMARY KEY, reason TEXT, source TEXT);
 CREATE INDEX consultation_paper ON consultation(paper_id);
 CREATE INDEX relation_child ON paper_relation(child_id);
 CREATE INDEX paper_location_loc ON paper_location(location_id);
@@ -67,6 +69,55 @@ CREATE INDEX responsibility_paper ON paper_responsibility(paper_id);
 def _read_jsonl(path):
     with open(path, encoding="utf-8") as f:
         return [json.loads(line) for line in f]
+
+
+# Listenwertige Felder einer Vorlage (OParl 1.1) und ihrer Beratungen. Kommt statt der Liste ein einzelnes Objekt bzw.
+# eine einzelne Adresse, wird es zur Liste mit diesem Element, null zur leeren Liste (Gegenprüfung der Generalprobe
+# 09./10.11.2026: sonst Abbruch oder Werte, die in Zeichen zerlegt werden)
+LISTENFELDER = ("auxiliaryFile", "consultation", "keyword", "location", "originatorOrganization", "originatorPerson",
+                "relatedPaper", "subordinatedPaper", "superordinatedPaper", "underDirectionOf")
+BERATUNG_LISTENFELDER = ("keyword", "organization")
+OHNE_NUMMER = "ohne Drucksachennummer"
+# Listen, deren Einträge build als Objekte mit Kennung liest: andere Einträge (etwa nur eine Adresse) fallen heraus
+OBJEKTLISTEN = ("consultation", "location")
+
+
+def _als_liste(obj, feld, angeglichen):
+    wert = obj.get(feld)
+    if isinstance(wert, list):
+        return wert
+    if feld in obj:
+        angeglichen[feld] += 1
+    return [] if wert is None else [wert]
+
+
+def einlesen(papers):
+    """Vorlagen aus den Rohdaten in der Form, die build erwartet, vor jeder Verwendung (data/raw bleibt unverändert):
+    listenwertige Felder als Liste (LISTENFELDER, in Beratungen BERATUNG_LISTENFELDER), in OBJEKTLISTEN nur Objekte mit
+    Kennung, `paperType` null oder fehlend wie eine leere Vorlagenart (""). Vorlagen ohne Drucksachennummer
+    (`reference` fehlt, null oder leer) werden ausgelassen, nie mit erfundener Nummer.
+    Liefert (Vorlagen, IDs der ausgelassenen Vorlagen, Zähler der angeglichenen Felder)."""
+    out, ohne_nummer, angeglichen = [], [], Counter()
+    for roh in papers:
+        ref = roh.get("reference")
+        if not isinstance(ref, str) or not ref.strip():
+            ohne_nummer.append(roh["id"])
+            continue
+        p = dict(roh)
+        for feld in LISTENFELDER:
+            p[feld] = _als_liste(roh, feld, angeglichen)
+        for feld in OBJEKTLISTEN:
+            gut = [x for x in p[feld] if isinstance(x, dict) and isinstance(x.get("id"), str) and x["id"]]
+            angeglichen[f"{feld} (Eintrag ohne Objekt oder Kennung)"] += len(p[feld]) - len(gut)
+            p[feld] = gut
+        p["consultation"] = [{**c, **{f: _als_liste(c, f, angeglichen) for f in BERATUNG_LISTENFELDER}}
+                             for c in p["consultation"]]
+        if not isinstance(p.get("paperType"), str):
+            if p.get("paperType") is not None:
+                angeglichen["paperType"] += 1
+            p["paperType"] = ""
+        out.append(p)
+    return out, ohne_nummer, +angeglichen
 
 
 # Zahlen außer Postleitzahlen (fünfstellig, 5xxxx) gelten in Ortsangaben der Stadt als Hausnummern; check.py prüft
@@ -89,7 +140,14 @@ def build():
         print(f"Hinweis: {config.CONSULTATIONS_LITE} fehlt – Beratungen ohne Sitzung/TOP.")
     # dieselbe Vorlage kann beim seitenweisen Abruf zweimal vorkommen (neue Vorlagen verschieben die Seiten);
     # doppelt eingetragene Einreichende und Zuständigkeiten vermeiden (Code-Prüfung 23.10.2026)
-    papers = list({p["id"]: p for p in _read_jsonl(config.PAPERS) if not p.get("deleted")}.values())
+    papers, ohne_nummer, angeglichen = einlesen(
+        {p["id"]: p for p in _read_jsonl(config.PAPERS) if not p.get("deleted")}.values())
+    if ohne_nummer:
+        print(f"{len(ohne_nummer)} Vorlagen ohne Drucksachennummer ausgelassen")
+    if angeglichen:
+        print("Feldformen angeglichen (einzelner Wert → Liste, null → leere Liste, Einträge ohne Objekt oder Kennung "
+              "entfernt, paperType → leer): "
+              + ", ".join(f"{k} {n}" for k, n in sorted(angeglichen.items())))
     orgs = json.loads(config.ORGANIZATIONS.read_text())
     lite = ({c["uri"]: c for c in _read_jsonl(config.CONSULTATIONS_LITE)}
             if config.CONSULTATIONS_LITE.exists() else {})
@@ -230,6 +288,8 @@ def build():
     db.executemany("INSERT OR IGNORE INTO paper_location VALUES (?,?,?,?,?,?,?)", rows["ploc"])
     db.executemany("INSERT INTO paper_originator VALUES (?,?,?,?,?,?,?)", rows["orig"])
     db.executemany("INSERT INTO paper_responsibility VALUES (?,?,?,?,?,?)", rows["resp"])
+    db.executemany(f"INSERT OR IGNORE INTO skipped_paper VALUES (?, '{OHNE_NUMMER}', '{config.QUELLE_OPARL}')",
+                   [(i,) for i in ohne_nummer])
     db.commit()
     db.close()
     print(f"{len(papers)} Vorlagen, {len(rows['cons'])} Beratungen, {len(meetings)} Sitzungen, "

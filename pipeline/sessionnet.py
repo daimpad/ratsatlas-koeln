@@ -165,6 +165,8 @@ SPERRE_GLEICHE_NACHT = timedelta(hours=12)   # nach einem Verdacht kein weiterer
 # HTTP-Antworten, nach denen die Nacht als Nacht mit möglicher Sperre zählt (Art `http`; 429 endet sonst als
 # `aufgegeben`, das ebenfalls zählt)
 SPERRE_HTTP = (401, 403, 429)
+# HTTP-Codes, die eine gespeicherte Fortsetzung als veraltet verwerfen, wenn schon ihre erste Seite sie liefert
+VERALTET_HTTP = (404, 410)
 STAT_SPALTEN = ["datum", "liste", "modus", "seiten", "objekte", "neu", "geaendert", "geloescht", "filter_wirksam",
                 "anfragen", "fehler", "wiederholungen", "weiterleitungen", "proxy", "bytes", "sekunden", "ergebnis"]
 # Zähler aus abruf.statistik(), je Zeile der Abrufstatistik als Differenz
@@ -912,10 +914,12 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
         if e.art in warnungen:   # nur diese Liste beenden, die übrigen laufen weiter
             return _nur_warnung(warnungen[e.art], e, zeile, e.objekte, e.seiten, seit, pfad, schluessel)
         # Vollabruf: gelesenen Teil sichern und morgen eine Seite zurück fortsetzen (fängt bis zu einer Seite
-        # Löschungen ab); eine veraltete Folgeseite (HTTP 4xx gleich zu Beginn der Fortsetzung) oder ein Abbruch aus
-        # OHNE_FORTSETZUNG (Schleife, Weiterleitung, Proxy, Adresse) verwirft die Fortsetzung, dann beginnt der
-        # nächste Lauf von vorn
-        veraltet = fort and e.art == "http" and e.seiten == fort.get("seiten", 0)
+        # Löschungen ab); eine veraltete Folgeseite (HTTP 404 oder 410 gleich zu Beginn der Fortsetzung, VERALTET_HTTP)
+        # oder ein Abbruch aus OHNE_FORTSETZUNG (Schleife, Weiterleitung, Proxy, Adresse) verwirft die Fortsetzung,
+        # dann beginnt der nächste Lauf von vorn. 401, 403 und andere Codes behalten sie (401/403 zählen weiter als
+        # mögliche Sperre, moegliche_sperre)
+        veraltet = (fort and e.art == "http" and getattr(e, "code", None) in VERALTET_HTTP
+                    and e.seiten == fort.get("seiten", 0))
         verwerfen = veraltet or e.art in OHNE_FORTSETZUNG
         e.inkrementell = bool(seit)   # für den Hinweis am Ende des Zeitfensters (_abbruch_vermerken)
         if not seit and e.naechste and e.seiten and not verwerfen:
@@ -1171,7 +1175,12 @@ def _einstellungen_pruefen():
     """Einstellungsfehler vor der ersten Anfrage laut ablehnen (ValueError wie andere Einstellungsfehler, kein
     Sperrverdacht): RATSATLAS_LIMIT keine positive ganze Zahl, RATSATLAS_MAX_OBJEKTE unter max_objekte_mindestens() (0,
     negativ oder so klein, dass eine Fortsetzung nicht über die wiederholte Seite und die Seitenverschiebung
-    hinauskäme), unbekannte Listen in RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF (außer „ja“)."""
+    hinauskäme), unbekannte Listen in RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF (außer „ja“), leerer Kontakt
+    (RATSATLAS_KONTAKT) bei einem Ziel, das kein lokaler Testserver ist: Der User-Agent nennt den Kontakt (CLAUDE.md
+    5.1), auch vor der Anfrage des Bodys."""
+    if not abruf.lokal(config.OPARL_BODY) and not config.KONTAKT:
+        raise ValueError("RATSATLAS_KONTAKT fehlt (Kontakt im User-Agent ist Pflicht, CLAUDE.md 5.1; in GitHub Actions "
+                         "als Repository-Variable setzen); keine Anfrage gesendet")
     mindestens, g = max_objekte_mindestens(), _seitengroesse()
     if config.ABRUF_MAX_OBJEKTE < mindestens:
         limit = "" if config.ABRUF_SEITENGROESSE else f" leer, gerechnet mit {g}"
