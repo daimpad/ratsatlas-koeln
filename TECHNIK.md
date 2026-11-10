@@ -26,6 +26,8 @@ python -m pipeline kontext-ausschnitte   # einmalig: Zensus, BORIS, Klima, Über
 python -m pipeline ebenen-laden          # einmalig: weitere Ebenen (Stadt, Land); je Datensatz höchstens 3 Anfragen
 python -m pipeline bplan-koeln           # Bebauungspläne aus der OGC-API Bauleitplanung NRW
 python -m pipeline geo-koeln  # Geodaten neu ableiten (lädt Zip-Dateien von offenedaten-koeln.de, falls nicht in data/raw/geo)
+python -m pipeline strukturdaten-abruf   # nur auf Freigabe (STRUKTURDATEN_ABRUF=ja, RATSATLAS_KONTAKT); höchstens 6 Anfragen
+python -m pipeline strukturdaten         # ohne Netz: Zwischenspeicher → data/strukturdaten/
 ```
 
 | Schritt | Ergebnis |
@@ -68,6 +70,18 @@ Menge ohne Hauskoordinate als Fixpunkt (Runde 19b, Prüfung r19): `geocode.sperr
 - Stufe B und Volltext (Prüfung r19b): Eine Straße, die das Straßenverzeichnis nicht kennt, kennt der Gazetteer nur aus dem Punkt der Ortsangabe einer erlaubten Vorlage (Quelle `oparl-koeln`); dieser Punkt ist oft eine Anschrift. Für eine gesperrte Vorlage gilt eine solche Straße nur als Stadtteil des Punkts (`build._stadtteil_statt_stadtpunkt`: Ebene Stadtteil, Methode bleibt, Fundstelle „… (Straße nur aus einer Ortsangabe der Stadt bekannt: Stadtteil)“). Vorher stand eine Eingabe, die die Straße mit Hausnummer nennt, auf dem Punkt, den die Stadt für die Anschrift angibt.
 - `check`: meldet genaue Punkte aus Ortsangaben der Stadt bei Vorlagen ohne Erlaubnis (Datenbank: jeder Ort der Quelle `oparl-koeln` mit Koordinate auf Ebene „strasse“, aus der eigenen Ortsangabe, vererbt oder aus Stufe B; `vorlagen.geojson` und Gebietsdateien: Methode `oparl_location` oder `location_source` bzw. `source` `oparl-koeln` mit Koordinate, in den Gebietsdateien auf Ebene „strasse“, in `vorlagen.geojson` ohne Ebene außer Stadtteil und vererbten Orten) und genaue Punkte auf einer Ortsangabe, die auch eine ausgelassene Vorlage nennt (`skipped_location`) und prüft unter Punkt 2 neben den Titeln auch die Ortsnamen (`place` in `vorlagen.geojson`, `locations[].name` in den Gebietsdateien) auf Hausnummern.
 Geprüft in `tests/test_datenschutz_fixpunkt.py` (erfundene Fälle, Fehler im Aufbau, die `check` meldet, veränderte Exportdateien).
+
+### Strukturdaten (Datenvertrag „Strukturdaten v1“)
+
+`pipeline/strukturdaten.py`; Typ, Einheit, Zähler und Nenner der Kölner Indikatoren stehen aus Phase 0 in `pipeline/strukturdaten_koeln.tsv`.
+
+- **Abruf** (`strukturdaten-abruf`, nicht im täglichen Lauf): je Quelldatei eine Anfrage und eine für die OpenAPI-Beschreibung des Wegweisers, ohne Wiederholung und ohne Weiterleitung, mindestens 2 s Abstand, höchstens 100 MB je Antwort. Nicht lokale Adressen nur mit `STRUKTURDATEN_ABRUF=ja` und mit Kontakt im User-Agent (`RATSATLAS_KONTAKT`). Fehlt der Kontakt, ist das ein Einstellungsfehler: Ausstieg 2, nichts gesendet. Die XLSX der Stadt wird nur mit `RATSATLAS_STADT_INFORMIERT=ja` im Zeitfenster geladen. Zuerst wird `info.version` der Wegweiser-OpenAPI geprüft; weicht sie vom Stand in `meta.json` ab, endet der Lauf. Fortsetzung nach Prüfung mit `STRUKTURDATEN_OPENAPI_BESTAETIGT=<Version>`. Zwischenspeicher ist `STRUKTURDATEN_DL` (Vorgabe `_kontext_dl/strukturdaten/`, nicht versioniert), das Protokoll heißt `audit_abruf.tsv`. Die fünf Wegweiser-Dateien eines Laufs liegen zunächst in `lauf_wegweiser/` und ersetzen die vorigen nur gemeinsam. Bricht der Lauf vorher ab, stehen sie als „verworfen (Lauf unvollständig)“ im Protokoll, und die vorigen bleiben.
+- **Normalisierung** (`strukturdaten`, ohne Netz): Jede Eingabe muss mit ihrer Prüfsumme im Protokoll stehen. Die Pfade lassen sich einzeln setzen: `STRUKTURDATEN_XLSX`, `STRUKTURDATEN_WW_EXPORT`, `STRUKTURDATEN_WW_INDIKATOREN`, `STRUKTURDATEN_WW_REGIONEN`, `STRUKTURDATEN_WW_VERSION`, `STRUKTURDATEN_WW_OPENAPI`, `STRUKTURDATEN_PROTOKOLL`; die Ausgabe über `STRUKTURDATEN_AUS`. Gleiche Eingaben ergeben byte-gleiche Dateien.
+- **Ausgabe** in `data/strukturdaten/`: `indikatoren.tsv`, `werte.tsv` (Gesamtstadt, Stadtbezirke, Stadtteile; Quartiere folgen in Phase 2), `gesamtstadt.tsv` (Wegweiser), `meta.json`, `zurueckgestellt.tsv` (39 unsichere Typen und 2 Wegweiser-Indikatoren mit einem Unternehmen als Datenhalter), `audit_abruf.tsv` (nur die verwendeten Abrufe).
+- **Schreibweise** (`meta.json`, `formate`): TSV in UTF-8 ohne BOM, Tabulator, Zeilenende LF, ohne Anführungszeichen. `wert`: Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und Exponent, Ziffern wie in der Quelle, leer bei `geheim` und `fehlt`. `jahre`: vierstellig und aufsteigend, Bereiche mit ASCII-Bindestrich, Teile mit Semikolon ohne Leerzeichen (`2012-2014;2016;2018-2025`). `raumebenen`: mit Semikolon in der Reihenfolge `gesamtstadt;stadtbezirk;stadtteil`. `raum_id`: Nummer aus der Quelle. `quellobjekt`: Zelle `Daten!<Spalte><Zeile>` der XLSX mit der Prüfsumme aus `meta.json`. Kennungen: `koeln_<Code>` und `ww_<friendlyUrl>`.
+- **Eigene Einordnungen:** `typ` und `einheit` (`meta.json`, `typ_einordnung`). Vorläufig ist der Typ `quote` für `ww_bevoelkerungsentwicklung-ueber-die-letzten-5-jahre` (`typ_vorlaeufig` und Metatext).
+- **Geheimhaltung:** `status=geheim`, das Feld `wert` bleibt leer. Die Anzeige bildet keine Summen oder Differenzen, die einen geheim gehaltenen Wert offenlegen könnten (`meta.json`, `geheimhaltung_hinweis`).
+- **„k.A.“ im Wegweiser:** keine Zeile in `gesamtstadt.tsv`; die Jahre nennt der Metatext des Indikators.
 
 ## Lokale Entwicklung ohne Abruf
 

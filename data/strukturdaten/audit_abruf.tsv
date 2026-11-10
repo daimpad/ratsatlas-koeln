@@ -1,0 +1,7 @@
+quelle	url	zeitstempel	http_status	zeilen	pruefsumme	hinweis
+offenedaten-koeln	https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Stadt_K%C3%B6ln_Statistischer%20Datenkatalog_0.xlsx	2026-11-10T10:45:58+01:00	200	9576	0645793fe92d248859bb979b80fe2c854e850789c485dbca2ae644e61e473382	
+wegweiser-kommune	https://www.wegweiser-kommune.de/openapi?format=JSON	2026-11-10T10:46:28+01:00	200	1	add68f81695089d5cf803d78ab42066e05d28a5345b3c8037aadc280ed010df8	info.version 3.12.0
+wegweiser-kommune	https://www.wegweiser-kommune.de/data-api/rest/statistics/version	2026-11-10T10:47:05+01:00	200	1	808e77ebe49e64d78e7742ca72c7759d4c7ce6fb6005d815de481055991b0376	Datenversion 2026-10-15T08:45:18.099083Z-ec57fa
+wegweiser-kommune	https://www.wegweiser-kommune.de/data-api/rest/indicator/list?max=2000	2026-11-10T10:47:08+01:00	200	393	a58e64e6d82b9837fe050c9b021a47c9ab95d4bf349a297ac133bf6aee4f18be	
+wegweiser-kommune	https://www.wegweiser-kommune.de/data-api/rest/region/list?types=KREISFREIE_STADT&max=500	2026-11-10T10:47:13+01:00	200	106	88d23cf618ccf13b72e42992fb23255da44babd1e82281137f165e0603984dcb	
+wegweiser-kommune	https://www.wegweiser-kommune.de/data-api/rest/export/bevoelkerung+bevoelkerungsentwicklung-ueber-die-letzten-5-jahre+durchschnittsalter+jugendquotient+altenquotient+sgb-ii-quote+arbeitslose-an-den-svb+beschaeftigungsquote+auslaenderanteil+wohnflaeche-pro-person+bonn+koeln+wuppertal+2006-2023+tabelle.csv?charset=UTF-8	2026-11-10T12:31:02+01:00	200	10	e40304bf45f7a0c8f38dbcaf87c2d2d53ced3c2b2e9e4961d6f18b3a5dbdf906	
