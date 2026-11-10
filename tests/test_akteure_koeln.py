@@ -1,9 +1,11 @@
 """Einreichende im Kölner Rat (pipeline/actors.py) und Kölner Gremiennamen – mit ERFUNDENEN Titeln, nicht aus echten
 Vorlagen. Grundlage der Namen: explore/ergebnisse/fraktionen_rat.tsv, fraktionen_bv.tsv, gremien_koeln.tsv."""
+import re
+
 import pytest
 
 from pipeline import glossar, topics
-from pipeline.actors import originators
+from pipeline.actors import PARTIES, originators
 from pipeline.build import bv_bezirk
 from pipeline.geocode import hausnummer_punkt_erlaubt
 
@@ -360,3 +362,67 @@ def test_bezirksfraktion_aus_dem_titel_mit_fundstelle():
 def test_antwortart_nur_am_anfang_der_vorlagenart(art, titel, erwartet):
     r = originators({"paperType": art, "date": NEUE_WP, "name": titel}, [], {"Kalk"})
     assert [(x["actor"], x["actor_type"], x["method"]) for x in r] == erwartet
+
+
+# Runde 18: Köln liefert die Ratsfraktionen und -gruppen mit `classification` „Fraktionen und Gruppen“ (Stufe 3,
+# 09.11.2026: 23 Organisationen, `organizationType` fehlt bei allen, ohne Bezirksfraktionen). Öffentliche Namen und
+# Zeiträume der Organisationen (keine Personen); die Titel sind ERFUNDEN.
+FG = "Fraktionen und Gruppen"
+ORGS_KOELN = [{"id": f"k-{i}", "name": name, "classification": FG,
+               **({"startDate": von} if von else {}), **({"endDate": bis} if bis else {})}
+              for i, (name, von, bis) in enumerate([
+                  ("Sozialdemokratische Partei Deutschlands (SPD)", "2004-09-26", None),
+                  ("Christlich Demokratische Union (CDU)", "2003-09-26", None),
+                  ("Bündnis 90/Die Grünen (GRÜNE)", "2004-09-26", None),
+                  ("Die Linke", "2004-09-26", None),
+                  ("Volt", "2020-11-01", None),
+                  ("Alternative für Deutschland (AfD)", "2014-06-01", None),
+                  ("Freie Demokratische Partei (FDP)", "2004-09-26", "2025-10-31"),
+                  ("Freie Demokratische Partei/Kölner Stadtgesellschaft (FDP/KSG)", "2025-11-01", None),
+                  ("GUT Köln", "2011-08-23", "2025-10-31"),
+                  ("GUT & KLIMA FREUNDE", "2025-11-01", None),
+                  ("Bündnis Sahra Wagenknecht (BSW)", "2025-11-01", None),
+                  ("Die PARTEI", "2024-10-03", None),
+                  ("Sachkundige Bürgerinnen und Bürger", None, None)])]
+KOELN_ID = {o["name"]: o["id"] for o in ORGS_KOELN}
+
+
+@pytest.mark.parametrize("titel, datum, erwartet", [
+    ("Antrag der SPD-Fraktion betreffend Sitzbänke am Musterweg", NEUE_WP,
+     [("SPD", "Sozialdemokratische Partei Deutschlands (SPD)")]),
+    ("Antrag der FDP-Fraktion betreffend Sitzbänke am Musterweg", VOR_WAHL,
+     [("FDP", "Freie Demokratische Partei (FDP)")]),
+    ("Antrag der FDP-Fraktion betreffend Sitzbänke am Musterweg", NEUE_WP,
+     [("FDP/KSG", "Freie Demokratische Partei/Kölner Stadtgesellschaft (FDP/KSG)")]),
+    ("Antrag der Fraktion Bündnis 90/Die Grünen betreffend Sitzbänke", NEUE_WP,
+     [("Grüne", "Bündnis 90/Die Grünen (GRÜNE)")]),
+    ("Antrag der Fraktionen CDU, Die Linke und Volt betreffend Spielgeräte", NEUE_WP,
+     [("CDU", "Christlich Demokratische Union (CDU)"), ("Die Linke", "Die Linke"), ("Volt", "Volt")]),
+    ("Anfrage der AfD-Fraktion betreffend Öffnungszeiten im Musterbad", NEUE_WP,
+     [("AfD", "Alternative für Deutschland (AfD)")]),
+    ("Antrag der Ratsgruppe GUT betreffend Sitzbänke", "2021-03-01", [("GUT Köln", "GUT Köln")]),
+    ("Antrag von GUT & KLIMA FREUNDE betreffend Sitzbänke", NEUE_WP, [("GUT & KLIMA FREUNDE", "GUT & KLIMA FREUNDE")]),
+    ("Anfrage der Gruppe BSW betreffend Öffnungszeiten im Musterbad", NEUE_WP,
+     [("BSW", "Bündnis Sahra Wagenknecht (BSW)")]),
+    ("Antrag der Gruppe Die PARTEI betreffend Sitzbänke", NEUE_WP, [("Die PARTEI", "Die PARTEI")]),
+])
+def test_koelner_klasse_fraktionen_und_gruppen(titel, datum, erwartet):
+    """Organisationen der Klasse „Fraktionen und Gruppen“ werden den aus dem Titel erkannten Fraktionen zugeordnet,
+    nach dem Datum der Vorlage (FDP bis 31.10.2025, danach FDP/KSG)."""
+    r = originators({"paperType": ANTRAG, "date": datum, "name": titel}, ORGS_KOELN)
+    assert [(x["actor"], x["organization_id"], x["method"]) for x in r] == [
+        (anzeige, KOELN_ID[name], "title") for anzeige, name in erwartet]
+
+
+def test_sachkundige_buerger_nie_zugeordnet():
+    """„Sachkundige Bürgerinnen und Bürger“ (gleiche Klasse, ohne Daten) ist keine Fraktion: kein Muster einer Fraktion
+    passt auf den Namen, keine Zuordnung, auch nicht in Jahren ohne aktive Organisation der erkannten Fraktion."""
+    sachkundig = KOELN_ID["Sachkundige Bürgerinnen und Bürger"]
+    for p in PARTIES:
+        assert not re.search(p.org, "Sachkundige Bürgerinnen und Bürger"), p.name
+    for datum in (VOR_WAHL, UEBERGANG, NEUE_WP, "2010-05-01", ""):
+        for titel in ("Antrag der SPD-Fraktion betreffend Sitzbänke", "Antrag der FDP/KSG-Fraktion betreffend Sitzbänke",
+                      "Antrag der Gruppe BSW betreffend Sitzbänke", "Antrag der Fraktion Volt betreffend Sitzbänke",
+                      "Antrag der Ratsgruppe GUT betreffend Sitzbänke", "Antrag der Sachkundigen Bürger betreffend Bänke"):
+            r = originators({"paperType": ANTRAG, "date": datum, "name": titel}, ORGS_KOELN)
+            assert sachkundig not in {x["organization_id"] for x in r}, (titel, datum)

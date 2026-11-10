@@ -10,7 +10,8 @@
 - nur im nächtlichen Zeitfenster (`config.ABRUF_ZEITFENSTER`, Ortszeit Köln), sofern gesetzt; geprüft vor jedem
   Versuch, auch nach einer Pause, und nach dem Warten auf den Abstand noch einmal unmittelbar vor dem Senden (das
   Fenster kann während des Wartens enden)
-- nach HTTP 429, 5xx und unlesbaren Antworten (kein JSON, auch zu tief verschachtelt) wachsende Pausen
+- nach HTTP 429, 5xx und unlesbaren Antworten (kein JSON, ungültiges UTF-8, auch zu tief verschachtelt; rohe
+  Steuerzeichen in Zeichenketten gelten als lesbar, json.loads mit strict=False) wachsende Pausen
   (`config.ABRUF_PAUSEN`, bis zu mehreren Stunden), danach Abbruch der Art `aufgegeben`. Einen `Retry-After`-Kopf
   (Sekunden oder HTTP-Datum) hält der Abruf mindestens ein. Sofort `aufgegeben` (ohne Pause): wenn die nächste Pause
   nicht vor dem Ende des laufenden Zeitfensters endet (`fenster_offen_nach`, gerechnet in UTC, also auch über eine
@@ -494,7 +495,9 @@ def get_json(url, pausen=None):
         if daten is not None:
             _zaehler["bytes"] += len(daten)
             try:
-                antwort = json.loads(daten)
+                # strict=False: rohe Steuerzeichen in Zeichenketten (etwa \x0b in einem Titel) machen eine Seite nicht
+                # unlesbar (sonst Wiederholungen mit langen Pausen, dann „aufgegeben“ als mögliche Sperre)
+                antwort = json.loads(daten, strict=False)
             except (ValueError, RecursionError) as e:   # unlesbar: kein JSON, falsche Kodierung, zu tief verschachtelt
                 _zaehler["fehler"] += 1
                 letzter_fehler = e

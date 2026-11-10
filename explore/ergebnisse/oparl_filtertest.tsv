@@ -1,0 +1,12 @@
+feld	wert
+adresse	https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers?created_since=2025-06-03T00%3A00%3A00%2B02%3A00&created_until=2025-06-04T23%3A59%3A59%2B02%3A00&limit=100
+fenster	2025-06-03T00:00:00+02:00 bis 2025-06-04T23:59:59+02:00
+objekte	42
+created_since wirkt	ja (keines vor der Grenze; frühestes created 7 h 42 min nach der Grenze)
+created_until wirkt	ja (keines nach der Grenze; spätestes created 4 h 14 min vor der Grenze)
+created unlesbar	0
+pagination	"{""elementsPerPage"": 100, ""currentPage"": 1}"
+links	Objekt mit first,self
+links.next	fehlt
+ende	Seite nicht voll (42 von 100): Ende der Liste erwartet, links.next fehlt
+antwortzeit	3.07 s (Status 200)

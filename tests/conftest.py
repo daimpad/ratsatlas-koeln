@@ -192,7 +192,7 @@ class Daten:
         }
 
     def stoerung(self, pfad, q):
-        """Für Tests überschreibbar: True erzeugt HTTP 404 für diese Anfrage."""
+        """Für Tests überschreibbar: True erzeugt HTTP 404 für diese Anfrage, eine Zahl diesen HTTP-Status."""
         return False
 
     def body(self):
@@ -241,8 +241,9 @@ def oparl(tmp_path, monkeypatch):
                                                                          if x))
             d.anfragen.append((u.path, q, self.headers.get("User-Agent")))
             d.roh.append((u.path, u.query))
-            if d.stoerung(u.path, q):
-                self.send_response(404)
+            stoerung = d.stoerung(u.path, q)
+            if stoerung:
+                self.send_response(404 if stoerung is True else stoerung)
                 self.end_headers()
                 return
             antwort = {"/body": d.body,
@@ -279,5 +280,6 @@ def oparl(tmp_path, monkeypatch):
         monkeypatch.setattr(config, name, wert)
     monkeypatch.delenv("RATSATLAS_STADT_INFORMIERT", raising=False)
     monkeypatch.delenv("RATSATLAS_VOLLABRUF", raising=False)
+    monkeypatch.delenv("RATSATLAS_KUERZER_ANNEHMEN", raising=False)
     yield daten["d"]
     server.shutdown()

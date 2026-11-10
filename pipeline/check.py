@@ -7,6 +7,7 @@ Die Bonner Vergleichswerte (Phase-0-Bericht Bonn, Pilot-Ortsteil) gelten für K�
 Vergleichswerte folgen mit der Messung der OParl-API (CLAUDE.md 7.1 und 9). Zusatzthemen werden nur geprüft, wenn sie in
 config.ZUSATZTHEMEN freigegeben sind; abgeschaltete weist die Ausgabe als solche aus.
 """
+import csv
 import json
 import re
 import sqlite3
@@ -35,6 +36,7 @@ ZAEHLUNG = {
     "geojson_hauskoordinaten": "davon auf einer Hauskoordinate",
     "gebietsdateien": "Vorlagen in den Gebietsdateien der Karte untersucht",
     "gebietsdateien_hauskoordinaten": "davon mit Hauskoordinate",
+    "stichprobe_hausnummern": "Titel in der Stichprobe Hausnummern untersucht",
 }
 
 
@@ -82,6 +84,13 @@ def kennzahlen(db):
     print("Kennzahlen (Vergleichswerte: keine – Kölner OParl-API noch nicht gemessen; Bonner Werte gelten nicht)")
     print("Pilot-Stadtteil: keiner (ganz Köln, CLAUDE.md 2)")
     print("Vorlagen:", n)
+    # build lässt Vorlagen ohne `reference` oder mit einer, die keine Zeichenkette ist, aus (build.einlesen), statt eine
+    # Nummer zu erfinden; je Grund eine Zeile
+    from .build import AUSLASSUNG
+    for grund, text in AUSLASSUNG.items():
+        print(f"Vorlagen {text} (beim Aufbau ausgelassen):",
+              one("SELECT COUNT(*) FROM skipped_paper WHERE reason = ?", grund) if _hat_ausgelassene(db)
+              else "nicht erfasst (Datenbank ohne Tabelle skipped_paper)")
     print("Vorlagen mit Koordinate:", one(
         "SELECT COUNT(DISTINCT pl.paper_id) FROM paper_location pl "
         "JOIN location l ON l.id = pl.location_id WHERE l.lon IS NOT NULL"))
@@ -190,10 +199,16 @@ def _hauskoordinate(level=None, method=None, source=None):
     return level == "adresse" or method == PUNKT or source == config.QUELLE_ADRESSEN
 
 
+def _hat_ausgelassene(db):
+    return bool(db.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'skipped_paper'").fetchone())
+
+
 def erlaubnis(db):
     """Drucksache → darf ihr Ortsbezug auf einer Hauskoordinate liegen? Gleiche Regel und Eingaben wie im Aufbau
     (geocode.hausnummer_punkt_erlaubt in build._stage_b): Drucksache, Vorlagenart und Titel aus der Datenbank, Namen der
-    beratenden Gremien. Gibt es eine Drucksache mehrfach, muss jede die Erlaubnis haben. Liefert ({Vorlagen-ID: bool},
+    beratenden Gremien; dazu die verbundenen Vorlagen (geocode.ohne_hauskoordinate über paper_relation), auch die einer
+    beim Aufbau ausgelassenen Vorlage (skipped_paper, ohne Drucksachennummer also ohne Erlaubnis). Gibt es eine
+    Drucksache mehrfach, muss jede die Erlaubnis haben. Liefert ({Vorlagen-ID: bool},
     {Drucksache: bool}, {Vorlagen-ID: Drucksache})."""
     gremien = {}
     for pid, name in db.execute(
@@ -202,9 +217,17 @@ def erlaubnis(db):
         gremien.setdefault(pid, []).append(name or "")
     je_id, je_ref, ref_of = {}, {}, {}
     for pid, ref, typ, name in db.execute("SELECT id, reference, paper_type, name FROM paper"):
-        ok = geocode.hausnummer_punkt_erlaubt({"reference": ref, "paperType": typ, "name": name}, gremien.get(pid, ()))
-        je_id[pid], ref_of[pid] = ok, ref
-        je_ref[ref] = je_ref.get(ref, True) and ok
+        je_id[pid] = geocode.hausnummer_punkt_erlaubt({"reference": ref, "paperType": typ, "name": name},
+                                                      gremien.get(pid, ()))
+        ref_of[pid] = ref
+    # verbundene Vorlagen (über- und untergeordnet) einer Vorlage ohne Erlaubnis: ebenfalls ohne (wie im Aufbau)
+    ausgelassen = {r[0] for r in db.execute("SELECT id FROM skipped_paper")} if _hat_ausgelassene(db) else set()
+    for pid in geocode.ohne_hauskoordinate({pid for pid, ok in je_id.items() if not ok} | ausgelassen,
+                                           db.execute("SELECT parent_id, child_id FROM paper_relation")):
+        if pid in je_id:
+            je_id[pid] = False
+    for pid, ok in je_id.items():
+        je_ref[ref_of[pid]] = je_ref.get(ref_of[pid], True) and ok
     return je_id, je_ref, ref_of
 
 
@@ -302,6 +325,14 @@ def datenschutz(db, base=None):
                 auf.add(p["reference"])
     zahl["gebietsdateien"] = len(refs)
     zahl["gebietsdateien_hauskoordinaten"] = len(auf)
+    # Stichprobe Hausnummern (build._hnr_audit, maskiert in export; liegt in data/export, also auf der Seite und im
+    # Datenpaket): Titel wie in der Suche; fehlt sie, gibt es nichts zu prüfen
+    stichprobe = base.parent / "hausnummern" / "stichprobe_hausnummern.tsv"
+    if stichprobe.exists():
+        with open(stichprobe, encoding="utf-8", newline="") as f:
+            zeilen = list(csv.reader(f, delimiter="\t"))[1:]
+        zahl["stichprobe_hausnummern"] = len(zeilen)
+        offen |= {z[1] for z in zeilen if len(z) > 2 and m.offen(z[2], z[1])}
     _verstoss(befunde, "Gebietsdateien der Karte", [r for r in auf if not je_ref.get(r)])
     if offen:
         befunde.append(f"Datenschutz: Hausnummern in Titeln aus Einwohnerschaft, Bauordnung oder Naturschutz "

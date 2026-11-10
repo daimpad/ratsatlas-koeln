@@ -21,8 +21,10 @@ OHNE_NR = "[Hausnummer ausgelassen]"
 # Bauordnungsamt und Untere Naturschutzbehörden: Titel nennen oft private Baugrundstücke mit Hausnummer
 AMT_PRIVAT = re.compile(r"^(?:63(?:\s|-)|56-3\b|67-6\b)")
 _L = r"[^\W\d_]"   # Buchstabe (wie \p{L})
-# wie NR und SUFFIX in site/chat/tools.js
-NR = (rf"\d{{1,3}}(?:\s?[a-zA-Z](?!{_L}))?(?:\s*(?:-|–|bis|und|u\.|/|,)\s*\d{{1,3}}(?:\s?[a-zA-Z](?!{_L}))?)*(?!\d)")
+# wie NR und SUFFIX in site/chat/tools.js, aber bis zu vier Ziffern: Kölner Straßen haben vierstellige Hausnummern
+# („Aachener Straße 1175“, „Militärringstraße 1000“; geocode.HAUSNUMMER liest sie ebenso; Generalprobe 09.11.2026).
+# Der Assistent (site/chat/tools.js, in Köln abgeschaltet) folgt mit seiner Freigabe
+NR = (rf"\d{{1,4}}(?:\s?[a-zA-Z](?!{_L}))?(?:\s*(?:-|–|bis|und|u\.|/|,)\s*\d{{1,4}}(?:\s?[a-zA-Z](?!{_L}))?)*(?!\d)")
 SUFFIX = (rf"(?:{_L}|[.-])*(?:straße|strasse|str\.|weg|platz|gasse|allee|ring|ufer|damm|pfad|chaussee|hof|markt|"
           r"graben|berg|feld)")
 
@@ -68,17 +70,28 @@ class Maske:
         return self._betroffen(titel, ref) and bool(self.rx.search(titel) or WORT.search(titel))
 
 
+def _tabelle(db, name):
+    return db.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", (name,)).fetchone()
+
+
 def aus_db(db, strassen=None):
-    """Maske für alle Vorlagen der Datenbank (Einwohnerschaft, Bauordnung, Naturschutz und verbundene Vorlagen)."""
+    """Maske für alle Vorlagen der Datenbank (Einwohnerschaft, Bauordnung, Naturschutz und verbundene Vorlagen). Beim
+    Aufbau ausgelassene Vorlagen (skipped_paper, ohne Drucksachennummer; Art und Titel unbekannt) gelten wie Eingaben:
+    Ihre verbundenen Vorlagen zeigen keine Hausnummer im Titel (wie ohne Hauskoordinate, check.erlaubnis)."""
     spalten = {r[1] for r in db.execute("PRAGMA table_info(paper)")}
     amt = ("(SELECT name FROM organization o WHERE o.id = paper.under_direction_of)"
            if "under_direction_of" in spalten else "NULL")
     papers = {r[0]: {"reference": r[1], "paper_type": r[2], "name": r[3], "amt_name": r[4], "superordinated": [],
                      "subordinated": []}
               for r in db.execute(f"SELECT id, reference, paper_type, name, {amt} FROM paper")}
-    has_rel = db.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'paper_relation'").fetchone()
-    for parent, child in db.execute("SELECT parent_id, child_id FROM paper_relation") if has_rel else ():
+    for (pid,) in db.execute("SELECT id FROM skipped_paper") if _tabelle(db, "skipped_paper") else ():
+        # die Kennung als Schlüssel (keine Drucksache); chat.einwohner verbindet über diesen Schlüssel
+        papers.setdefault(pid, {"reference": pid, "paper_type": None, "name": None, "amt_name": None,
+                                "superordinated": [], "subordinated": [], "ausgelassen": True})
+    beziehungen = (db.execute("SELECT parent_id, child_id FROM paper_relation") if _tabelle(db, "paper_relation")
+                   else ())
+    for parent, child in beziehungen:
         if parent in papers and child in papers:
             papers[child]["superordinated"].append({"reference": papers[parent]["reference"]})
             papers[parent]["subordinated"].append({"reference": papers[child]["reference"]})
-    return Maske(chat.einwohner(list(papers.values()), auch=privat), strassen)
+    return Maske(chat.einwohner(list(papers.values()), auch=lambda p: p.get("ausgelassen") or privat(p)), strassen)

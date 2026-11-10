@@ -7,6 +7,7 @@ import json
 import math
 import os
 import re
+import shutil
 import sqlite3
 import ssl
 import subprocess
@@ -17,6 +18,7 @@ import types
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from zoneinfo import ZoneInfo
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -202,6 +204,55 @@ def test_nach_drei_naechten_mit_abbruch_pausiert_der_abruf(oparl, monkeypatch):
     assert "pausiert" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
 
 
+def test_abbruch_und_pause_als_warnung_im_workflow(oparl, monkeypatch, capsys):
+    """Generalprobe 09.11.2026: Ein Abbruch mit möglicher Sperre (etwa HTTP 401 auf die inkrementelle Sitzungsliste)
+    und die Pause nach drei Nächten („bitte Kontakt zur Stadt aufnehmen“) standen nur als einfache Zeile im grünen
+    Abrufschritt. Jetzt als Warnung (in GitHub Actions ::warning::), mit der Zahl der Nächte."""
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+
+    def abgelehnt(url, pausen=None):
+        raise abruf.Abbruch(f"HTTP 401: {url}", "http", code=401)
+    monkeypatch.setattr(abruf, "get_json", abgelehnt)
+    for nacht in range(1, 4):
+        sessionnet.fetch_all()
+        out, err = capsys.readouterr()
+        assert "::warning::Abruf abgebrochen, letzter gültiger Stand bleibt" in err
+        assert f"Nacht mit möglicher Sperre ({nacht}. ohne vollständigen Lauf; nach 3 Nächten 7 Tage Pause)" in err
+        assert "Abruf abgebrochen" not in out
+    monkeypatch.setattr(abruf, "get_json", lambda *a, **k: pytest.fail("darf nicht abrufen"))
+    sessionnet.fetch_all()
+    err = capsys.readouterr().err
+    assert "::warning::Abruf übersprungen (Abruf pausiert bis" in err and "Kontakt zur Stadt" in err
+
+
+def test_abbruch_ohne_sperre_als_warnung_ende_des_fensters_ohne(oparl, monkeypatch, capsys):
+    """Jeder andere Abbruch (hier HTTP 404, keine Sperrnacht) ebenfalls als Warnung, ohne Zusatz zur Sperre; das Ende
+    des Zeitfensters und ein Lauf außerhalb des Zeitfensters (Push tagsüber) bleiben ohne Warnung."""
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+
+    def nicht_gefunden(url, pausen=None):
+        raise abruf.Abbruch(f"HTTP 404: {url}", "http", code=404)
+
+    def fenster_zu(url, pausen=None):
+        raise abruf.Abbruch("außerhalb des Zeitfensters 23-1 Uhr (RATSATLAS_ZEITFENSTER)", "zeitfenster")
+    monkeypatch.setattr(abruf, "get_json", nicht_gefunden)
+    sessionnet.fetch_all()
+    err = capsys.readouterr().err
+    assert "::warning::Abruf abgebrochen" in err and "möglicher Sperre" not in err
+    config.ZUSTAND.unlink()
+    monkeypatch.setattr(abruf, "get_json", fenster_zu)
+    sessionnet.fetch_all()
+    out, err = capsys.readouterr()
+    assert "::warning::" not in err and "Abruf unterbrochen (Das Zeitfenster endete" in out
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "OPARL_BODY", "https://oparl.example.invalid/body")   # nicht lokal, nie gesendet
+    monkeypatch.setattr(abruf, "get_json", lambda *a, **k: pytest.fail("darf nicht abrufen"))
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: False)
+    sessionnet.fetch_all()
+    out, err = capsys.readouterr()
+    assert "::warning::" not in err and "Abruf übersprungen (außerhalb des Zeitfensters" in out
+
+
 def test_abgebrochener_vollabruf_wird_fortgesetzt(oparl, monkeypatch):
     monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: pfad == "/papers" and q.get("page") == "3")
     sessionnet.fetch_all()
@@ -303,6 +354,7 @@ def _schein_proxy(monkeypatch, connect, get=407):
     monkeypatch.setattr(abruf, "_OEFFNER", abruf.oeffner())
     monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
     monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")   # Pflicht vor Anfragen an nicht lokale Ziele
     monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
     return proxy
 
@@ -516,6 +568,7 @@ def test_unlesbare_antwort_des_proxys_auf_connect_ist_moegliche_sperre(oparl, mo
     monkeypatch.setattr(abruf, "_OEFFNER", abruf.oeffner())
     monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
     monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")   # Pflicht vor Anfragen an nicht lokale Ziele
     monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
     with pytest.raises(abruf.Abbruch) as e:
         abruf.get_json("https://example.invalid/oparl/body", pausen=[0, 0])
@@ -698,8 +751,10 @@ def _nacht_spaeter(stunden=13):
 
 
 def _nicht_lokal(monkeypatch):
-    """Lokalen Testserver wie einen Server der Stadt behandeln (Freigabe, Zeitfenster, Mindestabstand 0 für die Tests)."""
+    """Lokalen Testserver wie einen Server der Stadt behandeln (Freigabe, Zeitfenster, Mindestabstand 0 für die Tests,
+    Kontakt im User-Agent wie in GitHub Actions: ohne ihn keine Anfrage an ein nicht lokales Ziel)."""
     monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")
     monkeypatch.setattr(abruf, "lokal", lambda url: False)
     monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
     monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
@@ -918,7 +973,7 @@ def test_unerwartete_form_tief_im_objekt_ist_kein_sperrverdacht(oparl, monkeypat
 def test_programmfehler_bricht_laut_ab_ohne_sperrverdacht(oparl, monkeypatch):
     """Ein Programmfehler (hier KeyError in beratungen) ist kein Sperrsignal: vermerkt in STAND.json, Traceback, kein
     Zähler."""
-    def kaputt(papers, meetings):
+    def kaputt(papers, meetings, *weitere):
         raise KeyError("feld")
     monkeypatch.setattr(sessionnet, "beratungen", kaputt)
     with pytest.raises(KeyError):
@@ -1289,7 +1344,7 @@ def test_kein_zweiter_lauf_in_derselben_nacht_nach_jedem_abbruch(oparl, monkeypa
     _nicht_lokal(monkeypatch)
     uhr = _scheinuhr(monkeypatch)
     if fall == "programmfehler":
-        monkeypatch.setattr(sessionnet, "beratungen", lambda papers, meetings: {}["feld"])
+        monkeypatch.setattr(sessionnet, "beratungen", lambda papers, meetings, *weitere: {}["feld"])
     elif fall == "adresse":
         _nach_seite(monkeypatch, 2, lambda: abruf.Abbruch("ungültige Adresse", "adresse"), einmal=False)
     elif fall == "http":
@@ -1318,7 +1373,7 @@ def test_kein_zweiter_lauf_in_derselben_nacht_nach_jedem_abbruch(oparl, monkeypa
     assert "derselben Nacht" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
     uhr.t = _nacht(1)                                      # nächste Nacht (Scheinuhr)
     if fall == "programmfehler":
-        monkeypatch.setattr(sessionnet, "beratungen", lambda papers, meetings: None)
+        monkeypatch.setattr(sessionnet, "beratungen", lambda papers, meetings, *weitere: None)
     sessionnet.fetch_all()                                 # nächste Nacht: wieder ein Abruf
     assert oparl.anfragen
 
@@ -1326,7 +1381,7 @@ def test_kein_zweiter_lauf_in_derselben_nacht_nach_jedem_abbruch(oparl, monkeypa
 @pytest.mark.parametrize("fehler", [RecursionError("zu tief"), RuntimeError("ohne Art")])
 def test_runtimeerror_ohne_art_ist_programmfehler(oparl, monkeypatch, fehler):
     """Ein RuntimeError ohne Art (auch RecursionError) ist kein Abbruch: laut mit Traceback, kein Sperrverdacht."""
-    def kaputt(papers, meetings):
+    def kaputt(papers, meetings, *weitere):
         raise fehler
     monkeypatch.setattr(sessionnet, "beratungen", kaputt)
     with pytest.raises(type(fehler)):
@@ -1463,7 +1518,7 @@ def test_seitengrenze_gilt_je_lauf(oparl, monkeypatch):
     """RATSATLAS_MAX_OBJEKTE (in Seiten der tatsächlichen Größe) zählt die Seiten eines Laufs, nicht die einer
     Fortsetzung insgesamt (sonst begänne ein großer Vollabruf in einer späteren Nacht von vorn und würde nie fertig)."""
     monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", 6)                     # 3 Seiten zu 2
-    monkeypatch.setattr(sessionnet, "MAX_OBJEKTE_MINDESTENS", 4)            # skaliert: 2 Seiten zu 2
+    monkeypatch.setattr(sessionnet, "max_objekte_mindestens", lambda: 4)    # skaliert: 2 Seiten zu 2
     monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: pfad == "/papers" and q.get("page") == "2")
     sessionnet.fetch_all()                                   # Nacht 1: Seite 1, dann HTTP 404
     assert json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]["seiten"] == 1
@@ -1644,7 +1699,7 @@ def test_gesamtgrenze_der_seiten_ueber_fortsetzungen(oparl, monkeypatch, rest):
     zweiten Anfrage eines Laufs (vorher ist die Seitengröße unbekannt) und vor der Grenze je Lauf: Erreicht der Lauf
     beide zugleich (`rest` 2, die Grenze je Lauf ist 2 Seiten), gilt die Gesamtgrenze (keine Fortsetzung)."""
     monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", 4)                     # 2 Seiten zu 2 je Lauf
-    monkeypatch.setattr(sessionnet, "MAX_OBJEKTE_MINDESTENS", 4)            # skaliert: 2 Seiten zu 2
+    monkeypatch.setattr(sessionnet, "max_objekte_mindestens", lambda: 4)    # skaliert: 2 Seiten zu 2
     monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE_GESAMT", 12)             # 6 Seiten zu 2 insgesamt
     gesamt = 6
     oparl.papers = [oparl.paper(i) for i in range(1, 11)]
@@ -1668,8 +1723,9 @@ def test_gesamtgrenze_der_seiten_ueber_fortsetzungen(oparl, monkeypatch, rest):
 
 def _tls_bereit(monkeypatch):
     """Adressen mit https auf 127.0.0.1 gelten nicht als lokal: Freigabe, Zeitfenster offen, Mindestabstand 0 (nur hier,
-    um die Tests kurz zu halten), Öffner ohne Proxy."""
+    um die Tests kurz zu halten), Öffner ohne Proxy, Kontakt im User-Agent."""
     monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")
     monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
     monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
     monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
@@ -2465,6 +2521,7 @@ class _Scheinnetz:
         self.oparl, self.dauer, self.t, self.anfragen = oparl, dauer, start, []
         monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
         monkeypatch.setattr(abruf, "lokal", lambda url: False)
+        monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")   # Pflicht vor Anfragen an nicht lokale Ziele
         monkeypatch.setattr(config, "ABRUF_ABSTAND", 2.0)
         monkeypatch.setattr(abruf, "uhr", lambda: self.t)
         monkeypatch.setattr(abruf, "time", types.SimpleNamespace(monotonic=lambda: self.t.timestamp(),
@@ -2730,7 +2787,7 @@ def test_unvollstaendige_organisationen_blockieren_die_vorlagen_nicht(oparl, mon
     assert not {"listenfehler", "letzter_abbruch", "sperre_verdacht", "organizations_fortsetzung"} & set(zustand)
     assert zustand["organizations"] == stand["organizations"] == frueher and "abruf_fehler" not in stand
     assert roh == {f: (config.RAW / f).read_bytes() for f in roh}
-    assert stand["abruf_hinweis"]["meldung"].startswith(
+    assert "abruf_hinweis" not in stand and stand["abruf_warnungen"]["organizations"]["meldung"].startswith(
         "Organisationen unvollständig (unter 90 % des Stands), nicht aktualisiert (letzter gültiger Stand bleibt, kein "
         "Listenfehler): organizations.jsonl: nur 8 statt bisher 10")
     z = [r for r in _statistik() if r["liste"] == "organizations"][-1]
@@ -2739,7 +2796,7 @@ def test_unvollstaendige_organisationen_blockieren_die_vorlagen_nicht(oparl, mon
     assert sum(x["name"] == "geändert" for x in _jsonl(config.PAPERS)) == 1
     oparl.orgs = alle                                                      # wieder vollständig
     sessionnet.fetch_all()
-    assert "abruf_hinweis" not in json.loads(config.STAND.read_text())
+    assert not {"abruf_hinweis", "abruf_warnungen"} & set(json.loads(config.STAND.read_text()))
     assert json.loads(config.ZUSTAND.read_text())["organizations"] != frueher
     echt, einmal = abruf.get_json, []
 
@@ -2755,7 +2812,8 @@ def test_unvollstaendige_organisationen_blockieren_die_vorlagen_nicht(oparl, mon
     sessionnet.fetch_all()                                                 # bis zum Ende: 8 von 10, Warnung
     assert "organizations_fortsetzung" not in json.loads(config.ZUSTAND.read_text())
     assert not (config.RAW / "organizations.teil.jsonl").exists()
-    assert json.loads(config.STAND.read_text())["abruf_hinweis"]["meldung"].startswith("Organisationen unvollständig")
+    assert json.loads(config.STAND.read_text())["abruf_warnungen"]["organizations"]["meldung"].startswith(
+        "Organisationen unvollständig")
 
 
 def test_sitzungen_ohne_zeitfilter_nur_warnung(oparl, monkeypatch):
@@ -2783,8 +2841,8 @@ def test_sitzungen_ohne_zeitfilter_nur_warnung(oparl, monkeypatch):
     assert not {"listenfehler", "letzter_abbruch", "sperre_verdacht", "meetings_fortsetzung"} & set(neu_zustand)
     assert neu_zustand["meetings"] == neu_stand["meetings"] == frueher and neu_zustand["papers"] != frueher
     assert roh == {f: (config.RAW / f).read_bytes() for f in roh}
-    assert "abruf_fehler" not in neu_stand
-    assert neu_stand["abruf_hinweis"]["meldung"].startswith(
+    assert not {"abruf_fehler", "abruf_hinweis"} & set(neu_stand)
+    assert neu_stand["abruf_warnungen"]["meetings"]["meldung"].startswith(
         "Zeitfilter bei Sitzungen nicht angewandt, Sitzungen nicht aktualisiert (letzter gültiger Stand bleibt, kein "
         "Listenfehler): Zeitfilter auf Seite 1 nicht angewandt: 2 von 2 Objekten")
     z = [r for r in _statistik() if r["liste"] == "meetings"][-1]
@@ -2794,8 +2852,9 @@ def test_sitzungen_ohne_zeitfilter_nur_warnung(oparl, monkeypatch):
     assert (p["modus"], p["geaendert"], p["ergebnis"]) == ("inkrementell", "1", "ok")
     assert sum(x["name"] == "geändert" for x in _jsonl(config.PAPERS)) == 1 and len(_jsonl(config.BERATUNGEN)) == 5
     monkeypatch.setattr(oparl, "liste", echt)                              # Filter angewandt
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "meetings")                 # Runde 17: erst ein Vollabruf liest sie
     sessionnet.fetch_all()
-    assert "abruf_hinweis" not in json.loads(config.STAND.read_text())
+    assert "abruf_warnungen" not in json.loads(config.STAND.read_text())
     assert "Sitzung geändert" in [x["name"] for x in json.loads(config.MEETINGS.read_text())]
 
 
@@ -2840,7 +2899,7 @@ def test_geloeschtes_objekt_mit_altem_modified_ohne_alarm(monkeypatch):
 def test_max_objekte_fehleinstellung_beim_start_abgelehnt(oparl, monkeypatch, wert):
     """RATSATLAS_MAX_OBJEKTE unter 1200 (zwei Seiten zu 100 plus die größte Seitenverschiebung): Einstellungsfehler vor
     der ersten Anfrage, laut (ValueError mit Traceback), vermerkt in STAND.json, kein Sperrverdacht. 1200 geht."""
-    assert sessionnet.MAX_OBJEKTE_MINDESTENS == 1200
+    assert sessionnet.max_objekte_mindestens() == 1200
     monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", wert)
     with pytest.raises(ValueError, match=rf"RATSATLAS_MAX_OBJEKTE={wert} liegt unter 1200 \(zwei Seiten zu 100"):
         sessionnet.fetch_all()
@@ -2920,7 +2979,7 @@ def test_inkrementeller_lauf_an_der_grenze_je_lauf_verweist_auf_vollabruf(oparl,
     sessionnet.fetch_all()
     zeit = json.loads(config.ZUSTAND.read_text())["papers"]
     oparl.papers = [dict(p, modified=zeit) for p in oparl.papers]          # 3 Seiten zu 2
-    monkeypatch.setattr(sessionnet, "MAX_OBJEKTE_MINDESTENS", 4)            # skaliert: 2 Seiten zu 2
+    monkeypatch.setattr(sessionnet, "max_objekte_mindestens", lambda: 4)    # skaliert: 2 Seiten zu 2
     monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", 4)
     sessionnet.fetch_all()
     zustand = json.loads(config.ZUSTAND.read_text())
@@ -2928,3 +2987,869 @@ def test_inkrementeller_lauf_an_der_grenze_je_lauf_verweist_auf_vollabruf(oparl,
     hinweis = json.loads(config.STAND.read_text())["abruf_hinweis"]["meldung"]
     assert ("ein inkrementeller Lauf erreichte die Grenze je Lauf (RATSATLAS_MAX_OBJEKTE) und beginnt jede Nacht "
             "erneut; Abhilfe: einmal mit RATSATLAS_VOLLABRUF=ja") in hinweis and "von vorn" not in hinweis
+
+
+# --- Runde 17: Warnungen der Nebenlisten dauerhaft und sichtbar, Sitzungen ohne Zeitfilter ohne Anfrage, kürzerer Stand
+# ausdrücklich, Untergrenze aus der Seitengröße, Testlücken -------------------------------------------------------------
+
+def _stand():
+    return json.loads(config.STAND.read_text())
+
+
+def _zustand():
+    return json.loads(config.ZUSTAND.read_text())
+
+
+def _papers_inkrementell_geaendert(oparl, name):
+    """Eine Vorlage seit dem letzten Lauf geändert (für den inkrementellen Lauf)."""
+    oparl.papers[0] = dict(oparl.papers[0], name=name, modified=_zustand()["papers"])
+
+
+@pytest.mark.parametrize("abbruch", ["filter", "zeitfenster"])
+def test_warnung_der_sitzungen_bleibt_bis_zur_regulaeren_aktualisierung(oparl, monkeypatch, abbruch):
+    """Die Warnung der Sitzungen (Zeitfilter nicht angewandt) steht in STAND.json unter `abruf_warnungen`, nicht in
+    `abruf_hinweis`. Ein späterer Abbruch der Vorlagen (Zeitfilter nicht angewandt oder Ende des Zeitfensters,
+    _abbruch_vermerken) und ein vollständiger Lauf (Sitzungen übersprungen) lassen sie unverändert stehen; erst die
+    reguläre Aktualisierung der Sitzungen (Vollabruf RATSATLAS_VOLLABRUF=meetings) entfernt sie."""
+    sessionnet.fetch_all()
+    echt = _ohne_zeitfilter(oparl, monkeypatch, "/meetings")
+    sessionnet.fetch_all()                                                 # Befund bei den Sitzungen
+    warnung = _stand()["abruf_warnungen"]["meetings"]
+    assert warnung["meldung"].startswith("Zeitfilter bei Sitzungen nicht angewandt, Sitzungen nicht aktualisiert")
+    assert "RATSATLAS_VOLLABRUF=meetings" in warnung["meldung"] and "abruf_hinweis" not in _stand()
+    if abbruch == "filter":
+        _ohne_zeitfilter(oparl, monkeypatch, "/papers")
+    else:
+        oparl.papers = [dict(p, modified=_zustand()["papers"]) for p in oparl.papers]   # 3 Seiten
+        _nach_seite(monkeypatch, 2, _ende_fenster)
+    sessionnet.fetch_all()                                                 # Abbruch bei den Vorlagen
+    stand = _stand()
+    assert stand["abruf_warnungen"] == {"meetings": warnung}
+    assert ("fehlerhaften Liste (filter)" if abbruch == "filter" else "Zeitfenster endete") in stand[
+        "abruf_hinweis"]["meldung"]
+    monkeypatch.setattr(oparl, "liste", echt)                              # Vorlagen wieder gefiltert
+    sessionnet.fetch_all()                                                 # vollständig, Sitzungen übersprungen
+    stand = _stand()
+    assert "abruf_hinweis" not in stand and "abruf_fehler" not in stand
+    assert stand["abruf_warnungen"]["meetings"]["meldung"].startswith(
+        "Zeitfilter bei Sitzungen nicht angewandt, Sitzungen nicht aktualisiert (Befund vom ")
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "meetings")
+    sessionnet.fetch_all()                                                 # Sitzungen regulär aktualisiert
+    assert "abruf_warnungen" not in _stand() and "meetings_ohne_zeitfilter" not in _zustand()
+
+
+def test_warnung_der_organisationen_bleibt_bei_abbruch_der_vorlagen(oparl, monkeypatch):
+    """Bis Runde 16 schrieb erst das Ende eines vollständigen Laufs die Warnung der Organisationen: Brachen danach die
+    Vorlagen ab, ging sie verloren. Jetzt steht sie gleich in STAND.json (`abruf_warnungen`) und bleibt, bis die
+    Organisationen wieder regulär aktualisiert sind."""
+    alle = oparl.orgs + [dict(oparl.orgs[1], id=f"{oparl.b}/organizations/{i}", name=f"Gremium {i}") for i in range(8)]
+    oparl.orgs = list(alle)
+    sessionnet.fetch_all()
+    oparl.orgs = alle[:8]                                                  # unter 90 %: Warnung
+    echt = _ohne_zeitfilter(oparl, monkeypatch, "/papers")                 # Vorlagen: Abbruch `filter`
+    sessionnet.fetch_all()
+    stand = _stand()
+    assert stand["abruf_warnungen"]["organizations"]["meldung"].startswith("Organisationen unvollständig")
+    assert "abruf_fehler" in stand and "fehlerhaften Liste (filter)" in stand["abruf_hinweis"]["meldung"]
+    oparl.orgs = alle
+    monkeypatch.setattr(oparl, "liste", echt)
+    sessionnet.fetch_all()
+    assert not {"abruf_warnungen", "abruf_hinweis", "abruf_fehler"} & set(_stand())
+
+
+@pytest.mark.parametrize("vollabruf", ["meetings", "ja"])
+def test_sitzungen_ohne_zeitfilter_folgenaechte_ohne_anfrage(oparl, monkeypatch, vollabruf):
+    """Nach dem Befund „Zeitfilter bei Sitzungen nicht angewandt“ steht `meetings_ohne_zeitfilter` mit Zeitpunkt im
+    Zustand. In der zweiten und dritten Nacht danach keine Anfrage an die Sitzungen (Zeile `übersprungen`, 0 Anfragen;
+    bis Runde 16 jede Nacht die Seiten bis zum Befund, nach einem Jahr rund 30), die Vorlagen laufen inkrementell, die
+    Beratungen kommen aus dem letzten gültigen Stand, Warnung bleibt, kein Listenfehler. Ein Lauf mit
+    RATSATLAS_VOLLABRUF=meetings (nur die Sitzungen vollständig, Vorlagen inkrementell) oder =ja liest die Sitzungen
+    vollständig und setzt Vermerk und Warnung zurück."""
+    m = oparl.meetings[0]
+    oparl.meetings = [dict(m, id=f"{oparl.b}/meetings/{i}", name=f"Sitzung {i}") for i in (2, 3)] + [m]   # 2 Seiten
+    sessionnet.fetch_all()
+    beratungen = config.BERATUNGEN.read_bytes()
+    _ohne_zeitfilter(oparl, monkeypatch, "/meetings")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht mit Befund: eine Seite
+    assert [q.get("page", "1") for p, q, _ in oparl.anfragen if p == "/meetings"] == ["1"]
+    vermerk = _zustand()["meetings_ohne_zeitfilter"]
+    assert vermerk["meldung"].startswith("Zeitfilter auf Seite 1 nicht angewandt") and sessionnet._zeit(vermerk["zeit"])
+    for nacht in (2, 3):
+        _papers_inkrementell_geaendert(oparl, f"geändert {nacht}")
+        oparl.anfragen.clear()
+        sessionnet.fetch_all()
+        assert not [p for p, *_ in oparl.anfragen if p == "/meetings"], nacht
+        assert [q for p, q, _ in oparl.anfragen if p == "/papers"] and all(
+            "modified_since" in q for p, q, _ in oparl.anfragen if p == "/papers")
+        z = [r for r in _statistik() if r["liste"] == "meetings"][-1]
+        assert (z["modus"], z["seiten"], z["anfragen"]) == ("übersprungen", "0", "0")
+        assert z["ergebnis"].startswith("warnung: Zeitfilter bei Sitzungen nicht angewandt, Sitzungen nicht "
+                                        f"aktualisiert (Befund vom {vermerk['zeit'][:10]}; ohne Anfrage übersprungen")
+        p = [r for r in _statistik() if r["liste"] == "papers"][-1]
+        assert (p["modus"], p["ergebnis"]) == ("inkrementell", "ok")
+        assert sum(x["name"] == f"geändert {nacht}" for x in _jsonl(config.PAPERS)) == 1
+        assert config.BERATUNGEN.read_bytes() == beratungen
+        zustand, stand = _zustand(), _stand()
+        assert not {"listenfehler", "letzter_abbruch", "sperre_verdacht"} & set(zustand)
+        assert zustand["meetings_ohne_zeitfilter"] == vermerk and "abruf_ok" in stand and "abruf_hinweis" not in stand
+        assert "ohne Anfrage übersprungen" in stand["abruf_warnungen"]["meetings"]["meldung"]
+        # Runde 17c: auch die Meldung ohne Anfrage (_ohne_anfrage) nennt die Abhilfe
+        assert ("übersprungen, letzter gültiger Stand bleibt) – bis die Liste einmal vollständig gelesen ist (Abhilfe: "
+                "ein Lauf mit RATSATLAS_VOLLABRUF=meetings; =ja erreicht die Sitzungen erst nach dem fertigen Vollabruf "
+                "der Vorlagen)") in stand["abruf_warnungen"]["meetings"]["meldung"]
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", vollabruf)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert [q.get("page", "1") for p, q, _ in oparl.anfragen if p == "/meetings"] == ["1", "2"]
+    assert not any("modified_since" in q for p, q, _ in oparl.anfragen if p == "/meetings")
+    assert all(("modified_since" in q) == (vollabruf == "meetings") for p, q, _ in oparl.anfragen if p == "/papers")
+    assert "meetings_ohne_zeitfilter" not in _zustand() and "abruf_warnungen" not in _stand()
+    z = [r for r in _statistik() if r["liste"] == "meetings"][-1]
+    assert (z["modus"], z["ergebnis"]) == ("voll", "ok")
+
+
+def test_nur_warnung_liefert_den_letzten_gueltigen_stand(oparl, monkeypatch):
+    """Endet die Sitzungsliste mit Warnung (Zeitfilter nicht angewandt), erhält beratungen() die Sitzungen des letzten
+    gültigen Stands, nicht die gelesene ungefilterte Seite 1: Dort tragen die Sitzungen andere TOP-Kennungen. Die
+    Beratungen bleiben unverändert."""
+    sessionnet.fetch_all()
+    vorher, roh = config.BERATUNGEN.read_bytes(), _jsonl(config.RAW / "meetings_roh.jsonl")
+    m = oparl.meetings[0]
+    oparl.meetings = [dict(m, agendaItem=[dict(t, id=t["id"] + "-neu") for t in m["agendaItem"]])]
+    _ohne_zeitfilter(oparl, monkeypatch, "/meetings")
+    erhalten, echt = [], sessionnet.beratungen
+
+    def beratungen(papers, meetings, *weitere):
+        erhalten.append(meetings)
+        return echt(papers, meetings, *weitere)
+    monkeypatch.setattr(sessionnet, "beratungen", beratungen)
+    sessionnet.fetch_all()
+    assert [r for r in _statistik() if r["liste"] == "meetings"][-1]["ergebnis"].startswith("warnung: Zeitfilter")
+    assert erhalten == [roh] and not any(t["id"].endswith("-neu") for t in erhalten[0][0]["agendaItem"])
+    assert config.BERATUNGEN.read_bytes() == vorher
+
+
+@pytest.mark.parametrize("seite_1, art, seiten", [([], "liste", 6), (["a", "b"], "obergrenze", 3)])
+def test_frischer_vollabruf_ohne_neue_objekte_bis_zur_grenze(monkeypatch, seite_1, art, seiten):
+    """Frischer Vollabruf (keine Fortsetzung), Grenze je Lauf 6 Objekte: Bringen alle Seiten bis zur Grenze keine
+    Objekte (leere Seiten mit links.next; g gilt als 1, also 6 Seiten), endet der Lauf mit Art `liste` (eine
+    Fortsetzung käme nie voran), nicht mit `obergrenze`. Bringt nur die erste Seite neue Objekte, zählen sie als
+    Fortschritt (ein frischer Lauf hat keine wiederholte Seite): `obergrenze` nach 3 Seiten zu 2."""
+    monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", 6)
+    monkeypatch.setattr(config, "ABRUF_SEITENGROESSE", "")
+
+    def get_json(url, pausen=None):
+        n = int(url.rsplit("=", 1)[1]) if "?s=" in url else 1
+        return {"data": [{"id": i} for i in seite_1] if n == 1 else [],
+                "links": {"next": f"http://127.0.0.1/l?s={n + 1}"}}
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    with pytest.raises(sessionnet.Teilabbruch) as e:
+        sessionnet.liste("http://127.0.0.1/l")
+    assert (e.value.art, e.value.seiten, len(e.value.objekte)) == (art, seiten, len(seite_1))
+
+
+def test_kuerzerer_stand_der_organisationen_ausdruecklich_angenommen(oparl, monkeypatch, capsys):
+    """Organisationen unter 90 % des Stands: Die Warnung nennt die Abhilfe RATSATLAS_KUERZER_ANNEHMEN=organizations. Mit
+    dieser Einstellung nimmt ein Lauf den kürzeren Stand an: organizations.json aktualisiert, Warnung entfällt,
+    Vermerk im Log und in der Abrufstatistik. Danach (ohne Einstellung) gilt die 90-%-Regel gegenüber dem neuen
+    Stand."""
+    alle = oparl.orgs + [dict(oparl.orgs[1], id=f"{oparl.b}/organizations/{i}", name=f"Gremium {i}") for i in range(8)]
+    oparl.orgs = list(alle)
+    sessionnet.fetch_all()
+    oparl.orgs = alle[:8]
+    sessionnet.fetch_all()
+    assert ("– Abhilfe, wenn der kürzere Stand stimmt (nicht bei 0 Objekten): ein Lauf mit "
+            "RATSATLAS_KUERZER_ANNEHMEN=organizations" in _stand()["abruf_warnungen"]["organizations"]["meldung"])
+    assert len(json.loads(config.ORGANIZATIONS.read_text())) == 10
+    monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "organizations")
+    capsys.readouterr()
+    sessionnet.fetch_all()
+    assert len(json.loads(config.ORGANIZATIONS.read_text())) == 8 and "abruf_warnungen" not in _stand()
+    z = [r for r in _statistik() if r["liste"] == "organizations"][-1]
+    assert z["ergebnis"] == "ok; kürzerer Stand angenommen: 8 statt bisher 10 (RATSATLAS_KUERZER_ANNEHMEN)"
+    assert "organizations.jsonl: kürzerer Stand angenommen: 8 statt bisher 10" in capsys.readouterr().err
+    monkeypatch.delenv("RATSATLAS_KUERZER_ANNEHMEN")
+    oparl.orgs = alle[:7]                                                  # 7 von 8: wieder unter 90 %
+    sessionnet.fetch_all()
+    assert "nur 7 statt bisher 8" in _stand()["abruf_warnungen"]["organizations"]["meldung"]
+    assert len(json.loads(config.ORGANIZATIONS.read_text())) == 8
+
+
+@pytest.mark.parametrize("variable, wert, meldung", [
+    ("RATSATLAS_KUERZER_ANNEHMEN", "organisationen", "RATSATLAS_KUERZER_ANNEHMEN: unbekannte Liste organisationen"),
+    ("RATSATLAS_KUERZER_ANNEHMEN", "ja", "RATSATLAS_KUERZER_ANNEHMEN: unbekannte Liste ja (erlaubt: organizations, "
+     "papers, meetings); keine Anfrage gesendet"),
+    ("RATSATLAS_VOLLABRUF", "sitzungen", "RATSATLAS_VOLLABRUF: unbekannte Liste sitzungen"),
+    ("RATSATLAS_VOLLABRUF", "ja,meetings", "RATSATLAS_VOLLABRUF: unbekannte Liste ja"),
+    ("RATSATLAS_LIMIT", "0", "RATSATLAS_LIMIT='0' ist keine positive ganze Zahl"),
+    ("RATSATLAS_LIMIT", "hundert", "RATSATLAS_LIMIT='hundert' ist keine positive ganze Zahl")])
+def test_einstellungsfehler_vor_der_ersten_anfrage(oparl, monkeypatch, variable, wert, meldung):
+    """Unbekannte Listen in RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF (außer „ja“) und ein RATSATLAS_LIMIT,
+    das keine positive ganze Zahl ist: Einstellungsfehler vor der ersten Anfrage (laut, kein Sperrverdacht)."""
+    if variable == "RATSATLAS_LIMIT":
+        monkeypatch.setattr(config, "ABRUF_SEITENGROESSE", wert)
+    else:
+        monkeypatch.setenv(variable, wert)
+    with pytest.raises(ValueError, match=re.escape(meldung)):
+        sessionnet.fetch_all()
+    assert oparl.anfragen == [] and "sperre_verdacht" not in _zustand()
+
+
+@pytest.mark.parametrize("limit, mindestens", [("100", 1200), ("150", 1350), ("", 1200)])
+def test_untergrenze_der_obergrenze_aus_der_seitengroesse(oparl, monkeypatch, limit, mindestens):
+    """Untergrenze von RATSATLAS_MAX_OBJEKTE aus der eingestellten Seitengröße g: (ceil(1000 / g) + 2) · g, bei 100 also
+    1200, bei 150 1350 (7 Seiten Verschiebung plus 2); ohne limit wie 100. Darunter Einstellungsfehler vor der ersten
+    Anfrage, die Meldung nennt die Annahme; die Untergrenze selbst geht."""
+    monkeypatch.setattr(config, "ABRUF_SEITENGROESSE", limit)
+    assert sessionnet.max_objekte_mindestens() == mindestens
+    monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", mindestens - 1)
+    g = limit or "100"
+    with pytest.raises(ValueError, match=re.escape(
+            f"RATSATLAS_MAX_OBJEKTE={mindestens - 1} liegt unter {mindestens} (zwei Seiten zu {g} plus die größte "
+            f"Seitenverschiebung von 1000 Objekten, aufgerundet auf Seiten zu {g}; Annahme: der Server liefert {g} "
+            "Objekte je Seite wie verlangt, RATSATLAS_LIMIT")):
+        sessionnet.fetch_all()
+    assert oparl.anfragen == []
+    config.ZUSTAND.unlink()
+    monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", mindestens)
+    sessionnet.fetch_all()
+    assert [r["ergebnis"] for r in _statistik() if r["liste"] == "papers"][-1] == "ok"
+
+
+def test_export_uebernimmt_gueltige_warnungen_der_nebenlisten(oparl, monkeypatch):
+    """index.json (meta.abruf_warnungen) aus STAND.json: je Liste Zeitpunkt, Meldung und Stand der Liste (letzte
+    reguläre Aktualisierung). Nur gültige: eine Warnung vor der letzten regulären Aktualisierung ihrer Liste entfällt,
+    unbekannte Listen und Einträge ohne Meldung ebenso; ein unlesbarer Zeitpunkt wird gezeigt."""
+    from pipeline import export
+    w = {"zeit": "2026-11-09T22:30:00+00:00", "meldung": "Zeitfilter bei Sitzungen nicht angewandt"}
+    stand = {"meetings": "2026-11-08T22:20:00+00:00", "organizations": "2026-11-09T22:40:00+00:00",
+             "abruf_warnungen": {"meetings": w, "organizations": dict(w), "papers": dict(w), "x": "kaputt"}}
+    assert export._abruf_warnungen(stand) == {"meetings": {**w, "stand": "2026-11-08T22:20:00+00:00"}}
+    kaputt = {"zeit": "gestern", "meldung": "x"}
+    assert export._abruf_warnungen({"organizations": "2026-11-09T22:40:00+00:00", "abruf_warnungen": {
+        "organizations": kaputt, "meetings": {"zeit": w["zeit"]}}}) == {
+        "organizations": {**kaputt, "stand": "2026-11-09T22:40:00+00:00"}}
+    assert export._abruf_warnungen({}) == {} and export._abruf_warnungen({"abruf_warnungen": []}) == {}
+    sessionnet.fetch_all()
+    _ohne_zeitfilter(oparl, monkeypatch, "/meetings")
+    sessionnet.fetch_all()                                                 # Warnung der Sitzungen
+    build.build()
+    export.export()
+    meta = json.loads((config.EXPORT / config.STADT / "index.json").read_text())["meta"]
+    assert list(meta["abruf_warnungen"]) == ["meetings"] and meta["abruf_fehler"] is None
+    assert meta["abruf_warnungen"]["meetings"]["stand"] == _stand()["meetings"]
+    assert meta["abruf_warnungen"]["meetings"]["meldung"].startswith("Zeitfilter bei Sitzungen nicht angewandt")
+
+
+def test_seite_zeigt_warnungen_der_nebenlisten_im_datenstand():
+    """site/app.js (standWarnungen, standFehler): je Liste ein Satz in einfacher Sprache im Datenstand, mit dem Stand
+    der Liste oder „der letzte gültige Stand“; ohne Warnung und ohne Fehler nichts (der Text des Datenstands bleibt
+    unverändert). Das Datum kommt aus dem vollen Zeitstempel in Europe/Berlin (Runde 17b; bis dahin die ersten zehn
+    Zeichen des UTC-Werts: 23:30 UTC am 09.11. ergab 09.11. statt 10.11.); unlesbare Werte wie bisher (die ersten zehn
+    Zeichen). Ausgeführt mit node (Funktionen und Formatierer aus app.js, Rechnerzone UTC und New York)."""
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("node fehlt")
+    js = (Path(__file__).resolve().parents[1] / "site" / "app.js").read_text(encoding="utf-8")
+    teil = re.search(r"^  const ISO_DAY = .*?\n  const standFehler = .*?;\n", js, re.S | re.M)
+    assert teil, "standWarnungen oder standFehler fehlt in site/app.js"
+    # im Datenstand (Runde 17c: über standText, test_datenstand_mit_einer_datumsregel)
+    assert "    $(\"#stand\").textContent = standText(meta, index && index.meta);\n" in js
+    warnungen = [None, {}, {"papers": {"stand": "2026-11-08"}}, {"meetings": {"stand": "2026-11-08T22:20:00+00:00"}},
+                 {"organizations": {"stand": None}, "meetings": {"stand": "2026-11-08T22:20:00+00:00"}},
+                 {"meetings": {"stand": "2026-11-09T23:30:00+00:00"}}, {"meetings": {"stand": "2026-11-09"}},
+                 {"organizations": {"stand": "2026-11-09 kaputt"}}]
+    fehler = [None, {"zeit": "2026-11-09T23:30:00+00:00"}, {"zeit": "2026-11-09T22:59:59+00:00"},
+              {"zeit": "2026-11-09 kaputt"}]
+    code = (teil.group(0) + f"console.log(JSON.stringify([{json.dumps(warnungen)}.map(standWarnungen), "
+                            f"{json.dumps(fehler)}.map(standFehler)]));")
+    sitzungen = " · Sitzungstermine wurden beim letzten Abruf nicht aktualisiert; gezeigt wird "
+    gremien = " · Die Liste der Gremien wurde beim letzten Abruf nicht aktualisiert; gezeigt wird "
+    fehlgeschlagen = " ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand."
+    for zone in ("UTC", "America/New_York"):
+        r = subprocess.run([node, "-e", code], capture_output=True, text=True, timeout=60,
+                           env={**os.environ, "TZ": zone})
+        assert r.returncode == 0, r.stderr
+        assert json.loads(r.stdout) == [
+            ["", "", "", sitzungen + "der Stand vom 08.11.2026.",
+             sitzungen + "der Stand vom 08.11.2026." + gremien + "der letzte gültige Stand.",
+             sitzungen + "der Stand vom 10.11.2026.", sitzungen + "der Stand vom 09.11.2026.",
+             gremien + "der Stand vom 09.11.2026."],
+            ["", " · Der letzte Abruf am 10.11.2026" + fehlgeschlagen,
+             " · Der letzte Abruf am 09.11.2026" + fehlgeschlagen,
+             " · Der letzte Abruf am 09.11.2026" + fehlgeschlagen]], zone
+
+
+# --- Runde 17b: RATSATLAS_KUERZER_ANNEHMEN enger (nie 0 Objekte; Beratungen nur nach einem in diesem Lauf angenommenen
+# kürzeren Stand der Vorlagen oder Sitzungen), Fortsetzung der Sitzungen nach dem Befund ohne Zeitfilter ---------------
+
+def _gremien(oparl, anzahl=10):
+    """`anzahl` Organisationen: die zwei des Testservers und erfundene Gremien."""
+    return oparl.orgs[:2] + [dict(oparl.orgs[1], id=f"{oparl.b}/organizations/{i}", name=f"Gremium {i}")
+                             for i in range(anzahl - 2)]
+
+
+def test_kuerzer_annehmen_lockert_nur_die_genannte_liste(oparl, monkeypatch):
+    """RATSATLAS_KUERZER_ANNEHMEN=organizations lockert nur die Organisationen: Ein Vollabruf der Vorlagen unter 90 %
+    des Stands (RATSATLAS_VOLLABRUF=papers, 3 von 5) bricht weiter ab (Art `leer`); papers.jsonl und Beratungen
+    bleiben."""
+    sessionnet.fetch_all()
+    vorher = {f: f.read_bytes() for f in (config.PAPERS, config.BERATUNGEN)}
+    oparl.papers = oparl.papers[:3]
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "papers")
+    monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "organizations")
+    sessionnet.fetch_all()
+    assert vorher == {f: f.read_bytes() for f in vorher}
+    assert _stand()["abruf_fehler"]["meldung"] == ("papers.jsonl: nur 3 statt bisher 5 – unvollständige Antwort? "
+                                                   "Vorhandener Stand bleibt.")
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert z["modus"] == "voll" and z["ergebnis"].startswith("abbruch: papers.jsonl: nur 3 statt bisher 5")
+
+
+@pytest.mark.parametrize("kuerzer", ["organizations", "papers", "organizations,papers,meetings"])
+def test_beratungen_nur_nach_angenommenem_kuerzerem_stand_gelockert(oparl, monkeypatch, kuerzer):
+    """Die 90-%-Prüfung der Beratungen entfällt nur, wenn dieser Lauf für papers oder meetings tatsächlich einen
+    kürzeren Stand angenommen hat (Runde 17: schon, wenn papers oder meetings in RATSATLAS_KUERZER_ANNEHMEN stand).
+    Inkrementeller Lauf, drei Vorlagen ohne Beratung (2 von 5 Beratungen), Vorlagen und Sitzungen nicht kürzer: Abbruch
+    `leer`, beratungen.jsonl bleibt. Ein angenommener kürzerer Stand der Organisationen lockert sie nicht."""
+    oparl.orgs = _gremien(oparl)
+    sessionnet.fetch_all()
+    beratungen, zeit = config.BERATUNGEN.read_bytes(), _zustand()["papers"]
+    for i in range(3):
+        oparl.papers[i] = dict(oparl.papers[i], consultation=[], modified=zeit)
+    if "organizations" in kuerzer:
+        oparl.orgs = oparl.orgs[:8]                                        # 8 von 10, angenommen
+    monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", kuerzer)
+    sessionnet.fetch_all()
+    assert config.BERATUNGEN.read_bytes() == beratungen
+    assert _stand()["abruf_fehler"]["meldung"] == "Beratungen: nur 2 statt bisher 5"
+    orgs = "ok; kürzerer Stand angenommen: 8 statt bisher 10 (RATSATLAS_KUERZER_ANNEHMEN)"
+    assert [(r["liste"], r["modus"], r["ergebnis"]) for r in _statistik()[-3:]] == [
+        ("organizations", "voll", orgs if "organizations" in kuerzer else "ok"), ("papers", "inkrementell", "ok"),
+        ("meetings", "inkrementell", "ok")]
+    assert len(json.loads(config.ORGANIZATIONS.read_text())) == (8 if "organizations" in kuerzer else 10)
+    assert "beratungen_kuerzer_erlaubt" not in _zustand()   # Runde 17c: nur genannt oder Organisationen: kein Vermerk
+
+
+def test_kuerzerer_stand_der_vorlagen_mit_beratungen_angenommen(oparl, monkeypatch, capsys):
+    """RATSATLAS_KUERZER_ANNEHMEN=papers mit einem kürzeren Vollabruf der Vorlagen (RATSATLAS_VOLLABRUF=papers, 3 von
+    5): Vorlagen und die daraus abgeleiteten Beratungen (3 von 5) gelten, vermerkt in Abrufstatistik und Log; der Lauf
+    ist vollständig."""
+    sessionnet.fetch_all()
+    oparl.papers = oparl.papers[:3]
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "papers")
+    monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "papers")
+    capsys.readouterr()
+    sessionnet.fetch_all()
+    assert len(_jsonl(config.PAPERS)) == 3 and len(_jsonl(config.BERATUNGEN)) == 3
+    assert "abruf_fehler" not in _stand() and "letzter_abbruch" not in _zustand()
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert (z["modus"], z["ergebnis"]) == ("voll", "ok; kürzerer Stand angenommen: 3 statt bisher 5 "
+                                                   "(RATSATLAS_KUERZER_ANNEHMEN)")
+    fehler = capsys.readouterr().err
+    assert "papers.jsonl: kürzerer Stand angenommen: 3 statt bisher 5 (RATSATLAS_KUERZER_ANNEHMEN)" in fehler
+    assert "Beratungen: kürzerer Stand angenommen: 3 statt bisher 5 (RATSATLAS_KUERZER_ANNEHMEN)" in fehler
+
+
+@pytest.mark.parametrize("geloescht", [False, True])
+@pytest.mark.parametrize("liste", ["organizations", "papers"])
+def test_leerer_vollabruf_wird_nie_angenommen(oparl, monkeypatch, liste, geloescht):
+    """Ein Vollabruf ohne Objekte gilt nie, auch nicht mit RATSATLAS_KUERZER_ANNEHMEN für diese Liste (Art `leer`): Die
+    Organisationen enden mit Warnung (letzter gültiger Stand, Vorlagen und Sitzungen laufen), die Vorlagen brechen ab;
+    der Stand bleibt. Runde 17c: Es zählen nur nicht gelöschte Objekte; ein Vollabruf nur mit `deleted: true` (so viele
+    wie bisher, über 90 %) gilt als leer."""
+    sessionnet.fetch_all()
+    datei, bisher = (config.ORGANIZATIONS, 2) if liste == "organizations" else (config.PAPERS, 5)
+    vorher = datei.read_bytes()
+    if liste == "organizations":
+        oparl.orgs = [dict(o, deleted=True) for o in oparl.orgs] if geloescht else []
+    else:
+        oparl.papers = [dict(p, deleted=True) for p in oparl.papers] if geloescht else []
+        monkeypatch.setenv("RATSATLAS_VOLLABRUF", "papers")
+    monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", liste)
+    sessionnet.fetch_all()
+    assert datei.read_bytes() == vorher
+    text = (f"{liste}.jsonl: nur 0 statt bisher {bisher} – unvollständige Antwort? Vorhandener Stand bleibt. "
+            + (f"Geliefert: nur gelöschte Objekte ({bisher}). " if geloescht else "")
+            + "Ein leerer Vollabruf wird nie angenommen, auch nicht mit RATSATLAS_KUERZER_ANNEHMEN.")
+    stand = _stand()
+    if liste == "organizations":
+        assert text in stand["abruf_warnungen"]["organizations"]["meldung"] and "abruf_fehler" not in stand
+        assert [(r["liste"], r["ergebnis"]) for r in _statistik()[-2:]] == [("papers", "ok"), ("meetings", "ok")]
+    else:
+        assert stand["abruf_fehler"]["meldung"] == text
+
+
+def test_vollabruf_der_sitzungen_ueber_eine_fortsetzung_hebt_den_befund_auf(oparl, monkeypatch):
+    """Vermerk meetings_ohne_zeitfilter, dann ein Lauf mit RATSATLAS_VOLLABRUF=meetings, der am Ende des Zeitfensters
+    vor Seite 2 der Sitzungen abbricht (Fortsetzung gespeichert, Vermerk und Warnung bleiben), dann eine Nacht ohne
+    Einstellung: Die Fortsetzung fragt die Sitzungen an (Seite 1 wiederholt, dann Seite 2, ohne modified_since), statt
+    sie wegen des Vermerks ohne Anfrage zu überspringen; danach sind Fortsetzung, Vermerk und Warnung entfernt. Die
+    Warnung nennt als Abhilfe RATSATLAS_VOLLABRUF=meetings und =ja nur mit Zusatz."""
+    m = oparl.meetings[0]
+    oparl.meetings = [dict(m, id=f"{oparl.b}/meetings/{i}", name=f"Sitzung {i}") for i in (2, 3)] + [m]   # 2 Seiten
+    sessionnet.fetch_all()
+    _ohne_zeitfilter(oparl, monkeypatch, "/meetings")
+    sessionnet.fetch_all()                                                 # Befund: Vermerk und Warnung
+    assert "meetings_ohne_zeitfilter" in _zustand()
+    assert ("(Abhilfe: ein Lauf mit RATSATLAS_VOLLABRUF=meetings; =ja erreicht die Sitzungen erst nach dem fertigen "
+            "Vollabruf der Vorlagen)") in _stand()["abruf_warnungen"]["meetings"]["meldung"]
+    echt, einmal = abruf.get_json, []
+
+    def get_json(url, pausen=None):   # Ende des Zeitfensters vor Seite 2 der Sitzungen, einmal
+        if "/meetings" in url and "page=2" in url and not einmal:
+            einmal.append(url)
+            raise _ende_fenster()
+        return echt(url, pausen)
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "meetings")
+    sessionnet.fetch_all()                                                 # Vollabruf der Sitzungen bis Seite 1
+    zustand, stand = _zustand(), _stand()
+    assert einmal and {"meetings_fortsetzung", "meetings_ohne_zeitfilter"} <= set(zustand)
+    assert "meetings" in stand["abruf_warnungen"] and "Zeitfenster endete" in stand["abruf_hinweis"]["meldung"]
+    monkeypatch.delenv("RATSATLAS_VOLLABRUF")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht ohne Einstellung: Fortsetzung
+    assert [q.get("page", "1") for p, q, _ in oparl.anfragen if p == "/meetings"] == ["1", "2"]
+    assert not any("modified_since" in q for p, q, _ in oparl.anfragen if p == "/meetings")
+    zustand, stand = _zustand(), _stand()
+    assert not {"meetings_fortsetzung", "meetings_ohne_zeitfilter"} & set(zustand)
+    assert not {"abruf_warnungen", "abruf_hinweis", "abruf_fehler"} & set(stand)
+    z = [r for r in _statistik() if r["liste"] == "meetings"][-1]
+    assert (z["modus"], z["ergebnis"]) == ("voll, fortgesetzt", "ok")
+
+
+# --- Runde 17c: Ein angenommener kürzerer Stand der Vorlagen oder Sitzungen blockiert die Beratungen nicht dauerhaft
+# (Vermerk beratungen_kuerzer_erlaubt), RATSATLAS_KUERZER_ANNEHMEN=meetings, leere Beratungen nie --------------------
+
+def _sitzungen_enden_am_fenster(monkeypatch):
+    """abruf.get_json, das vor jeder Anfrage an die Sitzungen das Ende des Zeitfensters meldet (nach dem Schreiben von
+    papers.jsonl, vor beratungen()); liefert die echte Funktion."""
+    echt = abruf.get_json
+
+    def get_json(url, pausen=None):
+        if "/meetings" in url:
+            raise _ende_fenster()
+        return echt(url, pausen)
+    monkeypatch.setattr(abruf, "get_json", get_json)
+    return echt
+
+
+def _kuerzere_vorlagen_angenommen(oparl, monkeypatch, vorlagen):
+    """Lauf mit RATSATLAS_VOLLABRUF=papers und RATSATLAS_KUERZER_ANNEHMEN=papers, Vorlagen `vorlagen` (unter 90 %);
+    danach beide Einstellungen entfernt."""
+    oparl.papers = vorlagen
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "papers")
+    monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "papers")
+    sessionnet.fetch_all()
+    monkeypatch.delenv("RATSATLAS_VOLLABRUF")
+    monkeypatch.delenv("RATSATLAS_KUERZER_ANNEHMEN")
+
+
+@pytest.mark.parametrize("abbrueche, vermerk", [(1, True), (2, True), (1, False)])
+def test_angenommener_kuerzerer_stand_blockiert_die_beratungen_nicht(oparl, monkeypatch, capsys, abbrueche, vermerk):
+    """Vorlagen 3 von 5 mit RATSATLAS_KUERZER_ANNEHMEN=papers angenommen und geschrieben, dann enden die Sitzungen am
+    Ende des Zeitfensters (vor beratungen()). Der Vermerk beratungen_kuerzer_erlaubt (Zeit, Listen) steht im Zustand
+    und bleibt bei einem erneuten Abbruch vor beratungen() in einer Folgenacht ohne Einstellung stehen. Die erste Nacht
+    ohne Einstellung, die die Beratungen erreicht, leitet sie ab (3 von 5; bis Runde 17b jede Folgenacht `leer`) und
+    entfernt den Vermerk erst danach. Ohne Vermerk (hier entfernt) und ohne Annahme in diesem Lauf weiter `leer`."""
+    sessionnet.fetch_all()
+    beratungen = config.BERATUNGEN.read_bytes()
+    echt = _sitzungen_enden_am_fenster(monkeypatch)
+    _kuerzere_vorlagen_angenommen(oparl, monkeypatch, oparl.papers[:3])
+    for _ in range(abbrueche - 1):                                        # Folgenacht ohne Einstellung, Abbruch
+        sessionnet.fetch_all()
+    assert len(_jsonl(config.PAPERS)) == 3 and config.BERATUNGEN.read_bytes() == beratungen
+    eintrag = _zustand()["beratungen_kuerzer_erlaubt"]
+    assert eintrag["listen"] == ["papers"] and sessionnet._zeit(eintrag["zeit"])
+    assert "Zeitfenster endete" in _stand()["abruf_hinweis"]["meldung"] and "abruf_fehler" not in _stand()
+    if not vermerk:
+        sessionnet._zustand_setzen("beratungen_kuerzer_erlaubt", None)
+    monkeypatch.setattr(abruf, "get_json", echt)
+    capsys.readouterr()
+    sessionnet.fetch_all()                                                 # Nacht ohne Einstellung bis beratungen()
+    if not vermerk:
+        assert config.BERATUNGEN.read_bytes() == beratungen
+        assert _stand()["abruf_fehler"]["meldung"] == "Beratungen: nur 3 statt bisher 5"
+        return
+    assert len(_jsonl(config.BERATUNGEN)) == 3 and "beratungen_kuerzer_erlaubt" not in _zustand()
+    assert not {"abruf_fehler", "abruf_hinweis"} & set(_stand())
+    assert ("Beratungen: kürzerer Stand angenommen: 3 statt bisher 5 (RATSATLAS_KUERZER_ANNEHMEN; Vermerk "
+            "beratungen_kuerzer_erlaubt eines früheren Laufs: papers)") in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("liste", ["papers", "meetings"])
+def test_vermerk_bleibt_bis_beratungen_geschrieben_sind(oparl, monkeypatch, liste):
+    """Scheitert das Schreiben von beratungen.jsonl (hier OSError, Programmfehler), bleibt der Vermerk
+    beratungen_kuerzer_erlaubt stehen; der nächste Lauf ohne Einstellung leitet die Beratungen ab und entfernt ihn.
+    Ebenso für die Sitzungen (Runde 17d: RATSATLAS_VOLLABRUF=meetings und RATSATLAS_KUERZER_ANNEHMEN=meetings,
+    Sitzungen 8 von 10 angenommen, der Lauf endet vor dem Schreiben der Beratungen 3 von 5)."""
+    if liste == "meetings":
+        _sitzungen_je_vorlage(oparl)
+    sessionnet.fetch_all()
+    echt = sessionnet._write
+
+    def schreiben(pfad, text):
+        if pfad == config.BERATUNGEN:
+            raise OSError("Datenträger voll (Test)")
+        return echt(pfad, text)
+    monkeypatch.setattr(sessionnet, "_write", schreiben)
+    with pytest.raises(OSError):
+        if liste == "papers":
+            _kuerzere_vorlagen_angenommen(oparl, monkeypatch, oparl.papers[:3])
+        else:
+            oparl.meetings = [m for m in oparl.meetings if not m["id"].endswith(("/meetings/4", "/meetings/5"))]
+            monkeypatch.setenv("RATSATLAS_VOLLABRUF", "meetings")
+            monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "meetings")
+            sessionnet.fetch_all()
+    if liste == "meetings":
+        assert len(json.loads(config.MEETINGS.read_text())) == 8
+    assert _zustand()["beratungen_kuerzer_erlaubt"]["listen"] == [liste] and len(_jsonl(config.BERATUNGEN)) == 5
+    monkeypatch.delenv("RATSATLAS_VOLLABRUF")
+    monkeypatch.delenv("RATSATLAS_KUERZER_ANNEHMEN")
+    monkeypatch.setattr(sessionnet, "_write", echt)
+    sessionnet.fetch_all()
+    assert len(_jsonl(config.BERATUNGEN)) == 3 and "beratungen_kuerzer_erlaubt" not in _zustand()
+
+
+@pytest.mark.parametrize("wert", ["x", {"listen": "papers"}, {"listen": ["organizations"]}])
+def test_unpassender_vermerk_lockert_die_beratungen_nicht(oparl, monkeypatch, wert):
+    """Runde 17d: Ein von Hand gesetzter Vermerk beratungen_kuerzer_erlaubt ohne papers oder meetings in einer Liste
+    (kein Objekt, `listen` als Zeichenkette, nur organizations) lockert die 90-%-Prüfung der Beratungen nicht.
+    Inkrementeller Lauf, drei Vorlagen ohne Beratung (2 von 5): Abbruch `leer`, beratungen.jsonl und Vermerk bleiben."""
+    sessionnet.fetch_all()
+    beratungen, zeit = config.BERATUNGEN.read_bytes(), _zustand()["papers"]
+    for i in range(3):
+        oparl.papers[i] = dict(oparl.papers[i], consultation=[], modified=zeit)
+    sessionnet._zustand_setzen("beratungen_kuerzer_erlaubt", wert)
+    sessionnet.fetch_all()
+    assert config.BERATUNGEN.read_bytes() == beratungen
+    assert _stand()["abruf_fehler"]["meldung"] == "Beratungen: nur 2 statt bisher 5"
+    assert _zustand()["beratungen_kuerzer_erlaubt"] == wert
+
+
+def test_leerer_beratungsstand_wird_nie_angenommen(oparl, monkeypatch):
+    """Vorlagen 3 von 5 angenommen (RATSATLAS_KUERZER_ANNEHMEN=papers), aber ohne Beratungen: 0 statt bisher 5 gilt
+    nie, auch gelockert nicht (Abbruch `leer`, beratungen.jsonl bleibt); der Vermerk bleibt stehen."""
+    sessionnet.fetch_all()
+    beratungen = config.BERATUNGEN.read_bytes()
+    _kuerzere_vorlagen_angenommen(oparl, monkeypatch, [dict(p, consultation=[]) for p in oparl.papers[:3]])
+    assert len(_jsonl(config.PAPERS)) == 3 and config.BERATUNGEN.read_bytes() == beratungen
+    assert _stand()["abruf_fehler"]["meldung"] == ("Beratungen: nur 0 statt bisher 5 (ein leerer Stand wird nie "
+                                                   "angenommen, auch nicht mit RATSATLAS_KUERZER_ANNEHMEN)")
+    assert _zustand()["beratungen_kuerzer_erlaubt"]["listen"] == ["papers"]
+
+
+def _sitzungen_je_vorlage(oparl, anzahl=10):
+    """Je Vorlage i eine Sitzung i mit TOP i (die Beratung der Vorlage verweist darauf), dazu Sitzungen ohne TOP bis
+    `anzahl`."""
+    m, tops = oparl.meetings[0], oparl.meetings[0]["agendaItem"]
+    oparl.meetings = [dict(m, id=f"{oparl.b}/meetings/{i}", name=f"Sitzung {i}",
+                           agendaItem=[tops[i - 1]] if i <= len(tops) else []) for i in range(1, anzahl + 1)]
+    for i, p in enumerate(oparl.papers, 1):
+        p["consultation"] = [dict(p["consultation"][0], meeting=f"{oparl.b}/meetings/{i}")]
+
+
+def test_kuerzerer_stand_der_sitzungen_mit_beratungen_angenommen(oparl, monkeypatch, capsys):
+    """RATSATLAS_VOLLABRUF=meetings und RATSATLAS_KUERZER_ANNEHMEN=meetings, Sitzungen 8 von 10 und daraus Beratungen 3
+    von 5 (Sitzungen der Vorlagen 4 und 5 fehlen): beide angenommen, vermerkt in Log und Abrufstatistik; der Lauf ist
+    vollständig, kein Vermerk bleibt im Zustand."""
+    _sitzungen_je_vorlage(oparl)
+    sessionnet.fetch_all()
+    assert len(_jsonl(config.BERATUNGEN)) == 5
+    oparl.meetings = [m for m in oparl.meetings if not m["id"].endswith(("/meetings/4", "/meetings/5"))]
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "meetings")
+    monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "meetings")
+    capsys.readouterr()
+    sessionnet.fetch_all()
+    assert len(json.loads(config.MEETINGS.read_text())) == 8 and len(_jsonl(config.BERATUNGEN)) == 3
+    assert not {"abruf_fehler", "abruf_hinweis"} & set(_stand())
+    assert not {"letzter_abbruch", "beratungen_kuerzer_erlaubt"} & set(_zustand())
+    z = [r for r in _statistik() if r["liste"] == "meetings"][-1]
+    assert (z["modus"], z["ergebnis"]) == ("voll", "ok; kürzerer Stand angenommen: 8 statt bisher 10 "
+                                                   "(RATSATLAS_KUERZER_ANNEHMEN)")
+    fehler = capsys.readouterr().err
+    assert "meetings_roh.jsonl: kürzerer Stand angenommen: 8 statt bisher 10 (RATSATLAS_KUERZER_ANNEHMEN)" in fehler
+    assert "Beratungen: kürzerer Stand angenommen: 3 statt bisher 5 (RATSATLAS_KUERZER_ANNEHMEN)\n" in fehler
+
+
+def test_datenstand_mit_einer_datumsregel():
+    """site/app.js (standText, zeitDatum; Runde 17c): Im Datenstand stehen auch das Abrufdatum der Quellen
+    („Ratsinformationssystem: …“, retrieved_at) und „erzeugt …“ (generated_at) als Datum des vollen Zeitstempels in
+    Europe/Berlin (23:30 UTC am 09.11. → 10.11.2026), wie Fehler und Warnungen. Ist ein Wert auch in den ersten zehn
+    Zeichen kein Datum (null, undefined, „kaputt“, 2026-13-45), „unbekannt“ statt eines RangeError; der Datenstand
+    entsteht immer. Ohne Warnung und Fehler ist der Text bis auf die Datumsregel unverändert (Vergleich mit der Formel
+    bis Runde 17b bei Werten am Tag). Ausgeführt mit node (Rechnerzone UTC und New York)."""
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("node fehlt")
+    js = (Path(__file__).resolve().parents[1] / "site" / "app.js").read_text(encoding="utf-8")
+    teil = re.search(r"^  const ISO_DAY = .*?\n  const standText = .*?\n  };\n", js, re.S | re.M)
+    namen = re.search(r"^  const QUELLE_NAME = .*?;\n", js, re.S | re.M)
+    assert teil and namen, "standText, zeitDatum oder QUELLE_NAME fehlt in site/app.js"
+    # Formel bis Runde 17b (ohne Fehler und Warnungen): erste zehn Zeichen des UTC-Werts
+    alt = ("const alt = (m) => { const stand = m.sources.filter((s) => s.retrieved_at).map((s) => `${QUELLE_NAME[s.name] "
+           "|| s.name}: ${fmtDate(String(s.retrieved_at).slice(0, 10))}`).join(\" · \"); return `Datenstand: ${stand || "
+           "\"–\"}${m.generated_at ? ` · erzeugt ${fmtDate(m.generated_at.slice(0, 10))}` : \"\"}`; };\n")
+    tag = [{"sources": [{"name": "oparl-koeln", "retrieved_at": "2026-11-09T12:00:00+00:00"},
+                        {"name": "geo-koeln", "retrieved_at": "2026-11-04"}, {"name": "osm"},
+                        {"name": "kontext-x", "retrieved_at": "2026-11-07T21:59:00+00:00"}],
+            "generated_at": "2026-11-09T12:10:00+00:00"},
+           {"sources": [], "generated_at": "2026-11-09T05:00:00+00:00"},
+           {"sources": [{"name": "oparl-koeln", "retrieved_at": "2026-11-08"}]}]
+    nacht = {"sources": [{"name": "oparl-koeln", "retrieved_at": "2026-11-09T23:30:00+00:00"}],
+             "generated_at": "2026-11-09T23:45:00+00:00"}
+    kaputt = {"sources": [{"name": "oparl-koeln", "retrieved_at": "kaputt"}, {"name": "geo-koeln", "retrieved_at": 7}],
+              "generated_at": "2026-13-45T00:00:00+00:00"}
+    code = (namen.group(0) + teil.group(0) + alt
+            + f"const tag = {json.dumps(tag)};\n"
+            + "console.log(JSON.stringify([tag.map((m) => [standText(m, null), standText(m, {}), alt(m)]), "
+            + f"standText({json.dumps(nacht)}, {{}}), standText({json.dumps(kaputt)}, {{}}), "
+            + "standText({}, {abruf_fehler: {zeit: null}}), "
+            + "[null, undefined, 'kaputt', '2026-13-45', '', 0, '2026-11-09 kaputt'].map(zeitDatum)]));")
+    for zone in ("UTC", "America/New_York"):
+        r = subprocess.run([node, "-e", code], capture_output=True, text=True, timeout=60,
+                           env={**os.environ, "TZ": zone})
+        assert r.returncode == 0, r.stderr
+        gleich, n, k, ohne, werte = json.loads(r.stdout)
+        assert [a for a, b, c in gleich if not a == b == c] == [], zone
+        assert gleich[0][0] == ("Datenstand: Ratsinformationssystem: 09.11.2026 · Gebiete: 04.11.2026 · kontext-x: "
+                                "07.11.2026 · erzeugt 09.11.2026"), zone
+        assert n == "Datenstand: Ratsinformationssystem: 10.11.2026 · erzeugt 10.11.2026", zone
+        assert k == "Datenstand: Ratsinformationssystem: unbekannt · Gebiete: unbekannt · erzeugt unbekannt", zone
+        assert ohne == ("Datenstand: – · Der letzte Abruf am unbekannt ist fehlgeschlagen; gezeigt wird der letzte "
+                        "gültige Datenstand."), zone
+        assert werte == ["unbekannt"] * 6 + ["09.11.2026"], zone
+
+
+# --- Runde 17d: Datenstand (#stand, dataStand) nur aus lesbaren Werten, Zeitstempel ohne Zone als UTC --------------
+
+def _app_js_teil(muster):
+    js = (Path(__file__).resolve().parents[1] / "site" / "app.js").read_text(encoding="utf-8")
+    teile = [re.search(m, js, re.S | re.M) for m in muster]
+    assert all(teile), f"Abschnitt fehlt in site/app.js: {muster}"
+    return js, "".join(t.group(0) for t in teile)
+
+
+def _node_json(code, zone):
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("node fehlt")
+    r = subprocess.run([node, "-e", code], capture_output=True, text=True, timeout=60, env={**os.environ, "TZ": zone})
+    assert r.returncode == 0, r.stderr
+    return json.loads(r.stdout)
+
+
+def _mit_oparl(wert, erzeugt=None):
+    """meta mit einer Gebietsquelle und der OParl-Quelle (retrieved_at `wert`), generated_at nur, wenn angegeben."""
+    return {"sources": [{"name": "geo-koeln", "retrieved_at": "2026-11-01"}, {"name": "oparl-koeln", "retrieved_at": wert}],
+            **({"generated_at": erzeugt} if erzeugt is not None else {})}
+
+
+def test_datenstand_nur_aus_lesbarem_wert():
+    """site/app.js (standTag, zeitTag, loadArea): Der Datenstand (dataStand: Markierung in der Zeitleiste, Jahresgrenze
+    in hasPaperFeed) ist der Berliner Kalendertag nach derselben Regel wie zeitDatum, gebildet nur aus einem lesbaren
+    Wert: retrieved_at der OParl-Quelle, sonst generated_at, sonst heute. Ein unlesbares retrieved_at („kaputt“, Zahl,
+    Objekt) brachte bis Runde 17c loadArea zum Absturz (`.slice` auf Zahl oder Objekt) oder ergab einen ungültigen
+    Stand; #stand zeigt dann „unbekannt“ und wird vor tl.setData gesetzt. Zeitstempel ohne Zone gelten als UTC (das
+    Datum hängt nicht von der Zone des Rechners ab). Ausgeführt mit node (Rechnerzone UTC und Tokio)."""
+    js, teil = _app_js_teil([r"^  const QUELLE_NAME = .*?;\n", r"^  const heute = .*?\n  const standTag = .*?\n  };\n"])
+    lade = re.search(r"^  async function loadArea\(.*?\n  }\n", js, re.S | re.M).group(0)
+    stand = "    $(\"#stand\").textContent = standText(meta, index && index.meta);\n"
+    assert "    dataStand = standTag(meta);\n" in lade and lade.count(stand) == 1
+    assert lade.index("dataStand = standTag(meta);") < lade.index(stand) < lade.index("tl.setData(")
+    faelle = [_mit_oparl("kaputt", "2026-11-09T23:30:00+00:00"), _mit_oparl(7, "2026-11-08T10:00:00+00:00"),
+              _mit_oparl({"a": 1}, "2026-11-07"), _mit_oparl("kaputt"), _mit_oparl(20261109), _mit_oparl({}, "kaputt"),
+              {}, None, {"sources": "kaputt", "generated_at": 5},
+              _mit_oparl("2026-12-31T23:30:00+00:00", "kaputt"), _mit_oparl("2026-12-31T23:30:00"),
+              _mit_oparl("2026-11-09T00:30:00"), _mit_oparl("2026-11-09 23:30:00"), _mit_oparl("2026-11-09"),
+              _mit_oparl("2026-11-05T10:00:00+00:00", "2026-11-09T10:00:00+00:00")]
+    code = (teil + f"const faelle = {json.dumps(faelle)};\n"
+            + "console.log(JSON.stringify([heute(), faelle.map(standTag), "
+            + "['kaputt', 7, {}].map((w) => standText({sources: [{name: 'oparl-koeln', retrieved_at: w}]}, {})), "
+            + "['2026-11-09T23:30:00', '2026-11-09T00:30:00', '2026-11-09 23:30:00', '2026-11-09T23:30:00.123456', "
+            + "'2026-11-09T23:30:00+09:00', '2026-11-09T23:30:00Z', '2026-11-09'].map(zeitDatum)]));")
+    for zone in ("UTC", "Asia/Tokyo"):
+        heute, tage, texte, daten = _node_json(code, zone)
+        assert tage == ["2026-11-10", "2026-11-08", "2026-11-07", heute, heute, heute, heute, heute, heute,
+                        "2027-01-01", "2027-01-01", "2026-11-09", "2026-11-10", "2026-11-09", "2026-11-05"], zone
+        assert texte == ["Datenstand: Ratsinformationssystem: unbekannt"] * 3, zone
+        assert daten == ["10.11.2026", "09.11.2026", "10.11.2026", "10.11.2026", "09.11.2026", "10.11.2026",
+                         "09.11.2026"], zone
+
+
+def test_datenstand_mit_warnung_vollstaendig():
+    """site/app.js (standText mit index.json meta.abruf_warnungen und abruf_fehler): der vollständige Text des
+    Datenstands mit Warnsatz, Datum des vollen Zeitstempels in Europe/Berlin (23:30 UTC am 09.11. → 10.11.2026).
+    Ausgeführt mit node (Rechnerzone UTC und Tokio)."""
+    _, teil = _app_js_teil([r"^  const QUELLE_NAME = .*?;\n", r"^  const ISO_DAY = .*?\n  const standText = .*?\n  };\n"])
+    m = {"sources": [{"name": "oparl-koeln", "retrieved_at": "2026-11-09T22:10:00+00:00"}],
+         "generated_at": "2026-11-09T22:40:00+00:00"}
+    warnung = {"abruf_warnungen": {"meetings": {"stand": "2026-11-09T23:30:00+00:00", "zeit": "2026-11-09T23:35:00+00:00",
+                                                "meldung": "Zeitfilter bei Sitzungen nicht angewandt"}}}
+    beides = {**warnung, "abruf_fehler": {"zeit": "2026-11-09T23:50:00+00:00", "meldung": "x"}}
+    code = (teil + f"console.log(JSON.stringify([standText({json.dumps(m)}, {json.dumps(warnung)}), "
+            + f"standText({json.dumps(m)}, {json.dumps(beides)})]));")
+    satz = "Sitzungstermine wurden beim letzten Abruf nicht aktualisiert; gezeigt wird der Stand vom 10.11.2026."
+    for zone in ("UTC", "Asia/Tokyo"):
+        nur, mit_fehler = _node_json(code, zone)
+        assert nur == f"Datenstand: Ratsinformationssystem: 09.11.2026 · erzeugt 09.11.2026 · {satz}", zone
+        assert mit_fehler == ("Datenstand: Ratsinformationssystem: 09.11.2026 · erzeugt 09.11.2026 · Der letzte Abruf "
+                              f"am 10.11.2026 ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand. · {satz}"), zone
+
+
+# --- Runde 17e: Jahresgrenze der Vorgangs-Feeds in Pipeline und Seite, Quellenliste im Vorgang -------------------------
+
+def test_jahresgrenze_der_vorgangs_feeds_wie_auf_der_seite():
+    """pipeline/export.py (feed_grenze, berliner_tag) und site/app.js (standTag, hasPaperFeed): Die Jahresgrenze der
+    Feeds je Vorlage ist der 1. Januar des Vorjahres des Berliner Kalendertags von retrieved_at (Zeitstempel ohne Zone
+    als UTC; unlesbar heute). Bis Runde 17d nahm die Pipeline das Jahr aus den ersten vier Zeichen (UTC): Ein Abruf am
+    31.12.2026 um 23:30 UTC ergab dort 2026, auf der Seite 2027. Mitten im Jahr bleibt die Grenze unverändert.
+    Ausgeführt mit node (Rechnerzone UTC und Tokio)."""
+    from pipeline import export, publish
+    quelle = (Path(__file__).resolve().parents[1] / "pipeline" / "export.py").read_text(encoding="utf-8")
+    assert "publish.write_feeds(out / \"feeds\", areas, cache, names, home, slug, feed_grenze(stand))\n" in quelle
+    _, teil = _app_js_teil([r"^  const heute = .*?\n  const standTag = .*?\n  };\n", r"^  const hasPaperFeed = .*?;\n"])
+    werte = ["2026-12-31T23:30:00+00:00", "2026-12-31T23:30:00", "2026-12-31T22:30:00+00:00",
+             "2026-06-15T10:00:00+00:00", "2026-06-15", "kaputt", "", 7, None]
+    vorlagen = [{"date": d, "stand": "beschlossen"} for d in ("2025-12-31", "2026-01-01")]
+    code = ("let index = {}, dataStand;\n" + teil + f"const werte = {json.dumps(werte)};\n"
+            + f"const vorlagen = {json.dumps(vorlagen)};\n"
+            + "console.log(JSON.stringify([heute(), werte.map((w) => { dataStand = standTag({sources: [{name: "
+            + "'oparl-koeln', retrieved_at: w}]}); return [dataStand.slice(0, 4), vorlagen.map(hasPaperFeed)]; })]));")
+    grenzen = [export.feed_grenze(w) for w in werte]
+    assert grenzen[:5] == ["2026-01-01", "2026-01-01", "2025-01-01", "2025-01-01", "2025-01-01"]
+    assert grenzen[3] == f"{int(werte[3][:4]) - 1}-01-01"   # mitten im Jahr wie bis Runde 17d
+    assert [export.berliner_tag(w) for w in werte] == ["2027-01-01", "2027-01-01", "2026-12-31", "2026-06-15",
+                                                       "2026-06-15", None, None, None, None]
+    for zone in ("UTC", "Asia/Tokyo"):
+        heute, seite = _node_json(code, zone)
+        pipeline = [[(export.berliner_tag(w) or heute)[:4], [publish.has_paper_feed(p, g) for p in vorlagen]]
+                    for w, g in zip(werte, grenzen)]
+        assert seite == pipeline, zone
+        # 31.12. 23:30 UTC: Grenze 01.01.2026 (Vorlage vom 31.12.2025 ohne Feed); eine Stunde früher und mitten im Jahr
+        # Grenze 01.01.2025 (beide mit Feed)
+        assert seite[0] == ["2027", [False, True]] and seite[2] == seite[3] == ["2026", [True, True]], zone
+
+
+def test_quellen_im_vorgang_aus_unlesbarem_meta():
+    """site/app.js (Vorgangsansicht, Quellenliste): Quellen nur aus einer Liste und ohne leere Einträge (sources
+    „kaputt“ oder [null] brachten bis Runde 17d die Vorgangsansicht zum Absturz); das Abrufdatum folgt der Regel des
+    Datenstands (zeitDatum, Berliner Kalendertag, unlesbar „unbekannt“), nicht mehr den ersten zehn Zeichen."""
+    js, teil = _app_js_teil([r"^  const esc = .*?;\n", r"^  const heute = .*?\n  const standTag = .*?\n  };\n",
+                             r"^    // Quellen nur aus einer Liste.*?\n    const sources = .*?\.join\(\"\"\);\n"])
+    assert "String(s.retrieved_at).slice(0, 10)" not in js
+    faelle = [{"sources": "kaputt"}, {"sources": [None]}, None, {},
+              {"sources": [None, {"name": "oparl-koeln", "license": "CC BY 3.0 DE", "retrieved_at": "kaputt"}]},
+              {"sources": [{"name": "oparl-koeln", "license": "L", "retrieved_at": "2026-11-09T23:30:00+00:00"},
+                           {"name": "osm", "license": "ODbL"}]}]
+    code = (teil.replace("    const sources = ", "    const quellen = (meta) => { const sources = ", 1)
+            .rstrip("\n") + " return sources; };\n"
+            + f"console.log(JSON.stringify({json.dumps(faelle)}.map(quellen)));")
+    for zone in ("UTC", "Asia/Tokyo"):
+        assert _node_json(code, zone) == [
+            "", "", "", "", "<li>oparl-koeln: CC BY 3.0 DE · Abruf unbekannt</li>",
+            "<li>oparl-koeln: L · Abruf 10.11.2026</li><li>osm: ODbL</li>"], zone
+
+
+def test_datenstand_mit_retrieved_at_als_liste():
+    """site/app.js (standText, standTag): retrieved_at als Liste (["2026-11-09"]) ist kein lesbarer Zeitpunkt; der
+    Datenstand zeigt „unbekannt“ (nicht das Datum aus String(["2026-11-09"])), und dataStand fällt auf generated_at
+    zurück."""
+    _, teil = _app_js_teil([r"^  const QUELLE_NAME = .*?;\n", r"^  const heute = .*?\n  const standTag = .*?\n  };\n"])
+    m = _mit_oparl(["2026-11-09"], "2026-11-07T10:00:00+00:00")
+    code = teil + f"const m = {json.dumps(m)};\nconsole.log(JSON.stringify([standText(m, {{}}), standTag(m)]));"
+    for zone in ("UTC", "Asia/Tokyo"):
+        text, tag = _node_json(code, zone)
+        assert text == "Datenstand: Gebiete: 01.11.2026 · Ratsinformationssystem: unbekannt · erzeugt 07.11.2026", zone
+        assert tag == "2026-11-07", zone
+
+
+# --- Runde 18: Fortsetzung nur bei 404/410 veraltet, Steuerzeichen in JSON, Kontakt im User-Agent Pflicht -------------
+
+@pytest.mark.parametrize("code, verworfen", [(401, False), (403, False), (400, False), (404, True), (410, True)])
+def test_fortsetzung_nur_bei_404_oder_410_veraltet(oparl, monkeypatch, code, verworfen):
+    """Liefert schon die erste Seite einer Fortsetzung HTTP 404 oder 410, ist sie veraltet: verworfen, der nächste Lauf
+    beginnt von vorn. 401, 403 und andere Codes behalten Fortsetzung und Teildatei (die nächste Nacht setzt dort fort);
+    401 und 403 zählen wie bisher als Nacht mit möglicher Sperre (Generalprobe 09./10.11.2026)."""
+    monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: pfad == "/papers" and q.get("page") == "3")
+    sessionnet.fetch_all()                                   # Nacht 1: HTTP 404 auf Seite 3, Fortsetzung ab Seite 2
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    teil = config.RAW / "papers.teil.jsonl"
+    vorher = teil.read_bytes()
+    assert fort["seiten"] == 2 and "page=2" in fort["naechste"] and len(_jsonl(teil)) == 4
+    monkeypatch.setattr(oparl, "stoerung",
+                        lambda pfad, q: code if pfad == "/papers" and q.get("page") == "2" else False)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                   # Nacht 2: schon die erste Fortsetzungsseite scheitert
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["2"]
+    assert f"HTTP {code}" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    zustand = json.loads(config.ZUSTAND.read_text())
+    if verworfen:
+        assert "papers_fortsetzung" not in zustand and not teil.exists()
+    else:
+        assert {k: zustand["papers_fortsetzung"][k] for k in ("naechste", "seiten", "start")} == {
+            k: fort[k] for k in ("naechste", "seiten", "start")}
+        assert teil.read_bytes() == vorher
+    assert (zustand.get("sperre_verdacht") or {}).get("naechte") == (1 if code in (401, 403) else None)
+    monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: False)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                   # Nacht 3: von vorn bzw. an der gespeicherten Stelle
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == (
+        [None, "2", "3"] if verworfen else ["2", "3"])
+    assert len(_jsonl(config.PAPERS)) == 5 and not teil.exists()
+    assert "sperre_verdacht" not in json.loads(config.ZUSTAND.read_text())
+
+
+def _antwort_200(inhalt):
+    return (b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: " + str(len(inhalt)).encode()
+            + b"\r\n\r\n" + inhalt)
+
+
+def test_steuerzeichen_in_zeichenketten_sind_lesbar(oparl, monkeypatch, roher_server):
+    """Rohe Steuerzeichen in JSON-Zeichenketten (etwa \\x0b in einem Titel) machen eine Seite nicht unlesbar: eine
+    Anfrage, keine Wiederholung, Titel unverändert. Ungültiges UTF-8 und kein JSON bleiben unlesbar (Wiederholungen,
+    dann „aufgegeben“)."""
+    monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+    titel = "Sitzbänke\x0bam\tMusterweg\x01\x1f"
+    server = roher_server(_antwort_200(('{"id": "x", "name": "' + titel + '"}').encode("utf-8")))   # roh, unmaskiert
+    vorher = abruf.statistik()
+    assert abruf.get_json(f"{server.url}/papers", pausen=[0, 0])["name"] == titel
+    assert server.anfragen == ["GET /papers HTTP/1.1"]
+    assert (abruf.statistik()["fehler"] - vorher["fehler"], abruf.statistik()["wiederholungen"]
+            - vorher["wiederholungen"]) == (0, 0)
+    for kaputt in ('{"name": "Sitzbänke"}'.encode("latin-1"), b"<html>kein JSON</html>",
+                   b'{"name": "ohne Ende'):
+        server = roher_server(_antwort_200(kaputt))
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(f"{server.url}/papers", pausen=[0, 0])
+        assert e.value.art == "aufgegeben" and len(server.anfragen) == 3, kaputt
+
+
+def test_kontakt_pflicht_vor_anfragen_an_die_stadt(oparl, monkeypatch, capsys):
+    """Der User-Agent nennt den Kontakt (CLAUDE.md 5.1): Ohne RATSATLAS_KONTAKT sendet ein Lauf gegen ein nicht lokales
+    Ziel keine Anfrage, auch nicht die des Bodys (Einstellungsfehler wie andere: ValueError, abruf_fehler in STAND.json,
+    keine Nacht mit möglicher Sperre). Mit Kontakt läuft derselbe Abruf in der nächsten Nacht; ein lokaler Testserver
+    braucht keinen Kontakt."""
+    _nicht_lokal(monkeypatch)
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: True)
+    monkeypatch.setattr(config, "KONTAKT", "")
+    vorher = abruf.statistik()
+    with pytest.raises(ValueError, match="RATSATLAS_KONTAKT fehlt"):
+        sessionnet.fetch_all()
+    assert oparl.anfragen == [] and abruf.statistik()["anfragen"] == vorher["anfragen"]
+    assert "keine Anfrage gesendet" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert "sperre_verdacht" not in zustand and zustand["letzter_abbruch"]["art"] == "programmfehler"
+    _nacht_spaeter()
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")
+    sessionnet.fetch_all()
+    assert oparl.anfragen and len(_jsonl(config.PAPERS)) == 5
+    assert "abruf_fehler" not in json.loads(config.STAND.read_text())
+    # lokaler Testserver: ohne Kontakt erlaubt
+    monkeypatch.setattr(abruf, "lokal", lambda url: True)
+    monkeypatch.setattr(config, "KONTAKT", "")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert oparl.anfragen and "abruf_fehler" not in json.loads(config.STAND.read_text())

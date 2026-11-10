@@ -2306,3 +2306,43 @@ def test_testserver_ausgang_vor_dem_schreiben(monkeypatch):
             ende.append(time.monotonic())
     assert len(s.eingang) == len(s.ausgang) == 3 and beim_senden == [(1, 1), (2, 2), (3, 3)]
     assert all(e + 0.2 <= a <= z for e, a, z in zip(s.eingang, s.ausgang, ende))
+
+
+# --- Runde 17: _filter_urteil ohne modified und älteste zuerst mit neuer Vorlage; Eingang des Testservers --------------
+
+def test_filter_urteil_ohne_modified_und_aelteste_zuerst_mit_neuer_vorlage():
+    """(E5) Ein Objekt der gefilterten Antwort ganz ohne `modified` zählt nicht als unlesbar: kein Zusatz „mit
+    unlesbarem modified“ (nur ein vorhandener, unlesbarer Wert zählt). (E8) Älteste zuerst: Neue Vorlagen rücken nur
+    hinten an, alle Plätze der ungefilterten Seite zählen; eine neue fremde Vorlage (created nicht älter als die jüngste
+    der ungefilterten Seite) in der Antwort lässt „ja (3 fehlen)“ unverändert (die Kürzung der Plätze um neue Vorlagen
+    gilt nur bei neueste zuerst; dort fielen hier die beiden jüngsten Vorlagen unter der Grenze heraus)."""
+    om = importlib.import_module("oparl_messung")
+    t0 = dt.datetime(2026, 11, 8, 12, tzinfo=dt.timezone.utc)
+    grenze = t0 - dt.timedelta(days=1)
+    nach_created = [_vorlage_m(f"m{n}", t0 - dt.timedelta(days=n / 10), t0 - dt.timedelta(hours=10 * n))
+                    for n in range(8)]                                     # m3–m7 unter der Grenze
+    ohne = {"id": "o1", "created": (t0 - dt.timedelta(days=40)).isoformat()}
+    assert om._filter_urteil(nach_created, nach_created[:3] + [ohne], "modified", von=grenze)["von"] == "ja (5 fehlen)"
+    aelteste_zuerst = [_vorlage_m(f"q{n}", t0 - dt.timedelta(days=10 - n),
+                                  t0 - dt.timedelta(hours=1 if n < 3 else 72)) for n in range(6)]   # q3–q5 darunter
+    assert om._neueste_zuerst(aelteste_zuerst, umgekehrt=True) and not om._neueste_zuerst(aelteste_zuerst)
+    neu = _vorlage_m("n1", t0 + dt.timedelta(hours=1), t0 + dt.timedelta(hours=1))
+    assert om._filter_urteil(aelteste_zuerst, aelteste_zuerst[:3] + [neu], "modified", von=grenze)["von"] == (
+        "ja (3 fehlen)")
+
+
+def test_testserver_eingang_vor_stoerung_und_antwort():
+    """explore/testserver.py erfasst `eingang` gleich zu Beginn von do_GET, vor Störung und Antwort (bis Runde 16
+    danach: Eine langsame Störungs- oder Antwortfunktion verschob den Eingang nach hinten und vergrößerte so scheinbar
+    den Abstand zur vorigen Antwort)."""
+    oeffner = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    beginn = []
+
+    def stoerung(pfad, abfrage):
+        beginn.append(time.monotonic())
+        time.sleep(0.2)
+    with testserver.Testserver() as s:
+        s.stoerung = stoerung
+        with oeffner.open(s.system_url, timeout=30) as r:
+            r.read()
+    assert len(s.eingang) == len(beginn) == 1 and s.eingang[0] <= beginn[0]
