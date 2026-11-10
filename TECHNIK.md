@@ -67,6 +67,8 @@ python tools/seite_bauen.py && python -m http.server -d _site 8000
 
 Testdaten werden nie veröffentlicht: `pages.yml` bricht ab, wenn `STAND.json` sie kennzeichnet.
 
+Bedienung im Browser (Runde 18): `tests/browser/bedienung.js` prüft mit Playwright bei 1400 und 390 px und mit axe-core `aria-current` der Listeneinträge und Suchtreffer (`markCurrent` in `site/app.js`, immer „true“ oder „false“), das Menü ☰ über offenen Überlagerungen (`body.nav-open .nav`, z-index 1160), die Tour ohne abgeschaltete Funktionen und „Weitere anzeigen“ ohne Neuzeichnen der Karte; nur 127.0.0.1, Aufruf von Hand (Anleitung im Kopf der Datei), nicht in `tests.yml`. Die Textprüfungen dazu stehen in `tests/test_seite_bedienung.py`. `tools/seite_bauen.groessen_eintragen` schreibt die Größe der gebauten Dateien unter `data/export/` in die Karten des Menüs „Daten“ (1 MB = 10^6 Byte); das `href` bleibt, damit `pages.yml` den Link auf das Datenpaket weiter auf den Spiegel umschreibt.
+
 Laufen mehrere Testsuiten gleichzeitig (etwa in mehreren Arbeitskopien) mit gesetztem `RATSATLAS_SPERRE`, braucht jede einen eigenen Ort, sonst beendet die gemeinsame Sperrdatei `abruf.lock` Tests der anderen mit `abbruch (parallel)` (ohne die Variable legt jede Testsitzung selbst einen eigenen Temp-Ordner an).
 
 ## Workflows

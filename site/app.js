@@ -1629,6 +1629,7 @@
     selected = null;
     shownPlan = null;
     highlight();
+    markCurrent(null);
     $("#detail-heading").textContent = "Bebauungspläne";
     $("#detail").innerHTML = `<h3 tabindex="-1">Bebauungspläne mit Vorlagen · ${esc(area.name || "")}</h3>
       <p class="hint">Pläne, deren Nummer im Titel einer Vorlage dieses Gebiets steht. Die Karte zeigt alle rechtskräftigen Pläne der Stadt.</p>
@@ -1726,6 +1727,7 @@
     shownPlan = null;
     shownSite = null;
     highlight();
+    markCurrent(null);
     $("#detail-heading").textContent = "Baustellen";
     $("#detail").innerHTML = `<h3 tabindex="-1">Baustellen · ${esc(area.name || "ganz Köln")}</h3>
       <p class="hint">Gemeldete Baustellen mit Einfluss auf den Verkehr; Termine unverbindlich.</p>

@@ -76,8 +76,9 @@ def test_aria_current_an_allen_stellen():
     assert re.findall(r'setAttribute\("aria-current"', APP) == ['setAttribute("aria-current"'], "nur in markCurrent"
     select = _teil(APP, r"^  function select\(p, fromMap\) \{\n.*?\n  \}\n")
     assert "    markCurrent(p.reference);\n" in select
-    for fn in (r"^  async function showPlan\(key\) \{\n.*?\n  \}\n", r"^  function showSite\(id\) \{\n.*?\n  \}\n"):
-        assert "    markCurrent(null);\n" in _teil(APP, fn)
+    for fn in (r"^  async function showPlan\(key\) \{\n.*?\n  \}\n", r"^  function showSite\(id\) \{\n.*?\n  \}\n",
+               r"^  async function showPlanList\(\) \{\n.*?\n  \}\n", r"^  function showSiteList\(\) \{\n.*?\n  \}\n"):
+        assert "    markCurrent(null);\n" in _teil(APP, fn), fn
 
 
 # --- B2: Menü ☰ auf dem Telefon über offenen Überlagerungen ------------------------------------------------------------
@@ -381,3 +382,12 @@ def test_seite_bauen_traegt_groessen_ein(oparl, tmp_path):
         groesse = sb.groesse_text((site / pfad).stat().st_size)
         assert f'{text} ({groesse}).</span></a>' in html, pfad
     assert _sed_muster() in html
+
+
+def test_zeitleiste_ohne_bonner_grenzen():
+    """site/timeline.js, „Was die Zeitleiste nicht zeigt“: keine Aussagen über das Bonner ALLRIS-Archiv oder OParl-Lite."""
+    tl = (ROOT / "site" / "timeline.js").read_text(encoding="utf-8")
+    grenzen = _teil(tl, r'<ul class="tl-limits">.*?</ul>')
+    for bonn in ("ALLRIS", "OParl-Lite", "Oktober 2019"):
+        assert bonn not in grenzen, bonn
+    assert "ohne verknüpfte Sitzung" in grenzen

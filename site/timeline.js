@@ -110,10 +110,10 @@
       <details class="acc tl-table"><summary>Monatsübersicht als Tabelle</summary><div class="tl-table-body" tabindex="0" role="region" aria-label="Monatsübersicht"></div></details>
       <details class="acc"><summary>Was die Zeitleiste nicht zeigt</summary>
         <ul class="tl-limits">
-          <li>Vorlagen vor Oktober 2019 (nur im ALLRIS-Archiv).</li>
+          <li>Vorlagen, die nicht über die OParl-Schnittstelle der Stadt Köln veröffentlicht sind.</li>
           <li>Verwaltungsinterne Vorlaufzeiten vor dem Datum der Vorlage.</li>
           <li>Die Umsetzung von Beschlüssen (Beschlusskontrolle ohne Schnittstelle).</li>
-          <li>Sitzungsdaten von Beratungen, die OParl-Lite (noch) nicht verknüpft; sie fehlen in der Achse „Sitzungsdatum“.</li>
+          <li>Sitzungsdaten von Beratungen ohne verknüpfte Sitzung; sie fehlen in der Achse „Sitzungsdatum“.</li>
           <li class="tl-bau-grenze" hidden>Baustellen vor Beginn des Archivs; ihre Termine sind laut Quelle unverbindlich (Balken mit unscharfen Enden).</li>
         </ul>
       </details>`;
