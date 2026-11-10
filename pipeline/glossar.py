@@ -157,7 +157,8 @@ BEGRIFFE = [
     ("Verortung", "Zuordnung einer Vorlage zu einem Ort: aus der Ortsangabe der Stadt (Stufe A) oder aus Straßen-, "
                   "Stadtteil- und Bezirksnamen im Titel (Stufe B). Jede Verortung nennt Methode, Konfidenz und "
                   "Fundstelle. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische "
-                  "Anträge, nie Eingaben von Einwohnerinnen und Einwohnern.", "abgeleitet (Ratsatlas)"),
+                  "Anträge, nie Eingaben von Einwohnerinnen und Einwohnern; ist die Art einer Vorlage nicht erkennbar, "
+                  "zeigt die Karte höchstens die Straße.", "abgeleitet (Ratsatlas)"),
     # Kürzel
     ("TOP", "Tagesordnungspunkt einer Sitzung.", ALLGEMEIN),
     ("GO NRW", "Gemeindeordnung für das Land Nordrhein-Westfalen; sie regelt Aufgaben und Arbeit von Rat, Ausschüssen "

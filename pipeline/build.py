@@ -8,8 +8,9 @@ from collections import Counter
 
 from . import actors, config
 from .geo import Ortsteile
-from .geocode import (ANDERE_FORM, AUSSCHLUSS, Gazetteer, hausnummer_punkt_erlaubt, nicht_erkannte_arten,
-                      ohne_hauskoordinate, plan_numbers, punkt_ausschluss, vorlagenart_bezeichnung)
+from .geocode import (ANDERE_FORM, AUSSCHLUSS, Gazetteer, erkannte_arten, gleiche_drucksache, hausnummer_punkt_erlaubt,
+                      nicht_erkannte_arten, ohne_hauskoordinate, plan_numbers, punkt_ausschluss,
+                      vorlagenart_bezeichnung)
 from .plans import Plans, plan_locations
 from . import volltext
 from .objekte import Objekte
@@ -321,15 +322,21 @@ def build():
     # weiter ihre Beantwortung oder Stellungnahme
     start = ({p["id"] for p in papers if not hausnummer_punkt_erlaubt(p, gremien.get(p["id"], ()))}
              | {a["id"] for a in ausgelassen})
-    gesperrt = ohne_hauskoordinate(start, rows["rel"])
-    # Log: Gründe je Vorlage und die nicht erkannten Vorlagenarten mit Anzahl (nur die Art), damit das Muster
-    # geocode.VORLAGENART_PUNKT nach dem Vollabruf ergänzt werden kann
+    verbunden = ohne_hauskoordinate(start, rows["rel"])
+    # dazu jede Vorlage mit der Drucksache einer davon: Exporte führen Vorlagen unter ihrer Drucksache, und
+    # check.erlaubnis verlangt dort die Erlaubnis jeder Vorlage mit dieser Drucksache (gleiches Urteil wie die Prüfung)
+    gleiche = gleiche_drucksache(verbunden, {p["id"]: p["reference"] for p in papers})
+    gesperrt = verbunden | gleiche
+    # Log: Gründe je Vorlage und die erkannten und nicht erkannten Vorlagenarten mit Anzahl (nur die Art), damit das
+    # Muster geocode.VORLAGENART_PUNKT nach dem Vollabruf in beide Richtungen geprüft und ergänzt werden kann
     grund = {p["id"]: punkt_ausschluss(p, gremien.get(p["id"], ())) for p in papers}
     je_grund = Counter(grund.values())
     print(f"Ohne Erlaubnis für Hauskoordinaten: {len(gesperrt & grund.keys())} von {len(papers)} Vorlagen ("
           + ", ".join(f"{text} {je_grund[g]}" for g, text in AUSSCHLUSS.items())
-          + f", verbunden mit einer davon oder einer ausgelassenen Vorlage {len((gesperrt - start) & grund.keys())})")
+          + f", verbunden mit einer davon oder einer ausgelassenen Vorlage {len((verbunden - start) & grund.keys())}"
+          + f", mit derselben Drucksache wie eine davon {len(gleiche)})")
     print(nicht_erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] == "vorlagenart")))
+    print(erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] is None)))
     rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien, gesperrt)
     plans = Plans()
     rows["plan"] = [(pid, nr, ev, plans.classify(nr)[0]) for pid, nr, ev in rows["plan"]]

@@ -29,7 +29,8 @@ ZAEHLUNG = {
     "ortsangaben": "Ortsangaben der OParl-API (Straße, Beschreibung) untersucht",
     "vorlagen": "Vorlagen in der Datenbank untersucht",
     "ohne_hauskoordinate": "davon ohne Erlaubnis für Hauskoordinaten (§ 24 GO NRW, natürliche Personen, Ausschuss "
-                           "für Anregungen und Beschwerden, Vorlagenart nicht erkennbar, verbundene Vorlagen)",
+                           "für Anregungen und Beschwerden, Vorlagenart nicht erkennbar, verbundene Vorlagen, "
+                           "dieselbe Drucksache)",
     "vorlagenart_nicht_erkennbar": "davon mit leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026)",
     "hauskoordinaten": "Vorlagen mit Hauskoordinate in der Datenbank",
     "suche": "Titel in suche.json untersucht",
@@ -209,14 +210,16 @@ def _hat_ausgelassene(db):
     return _hat_tabelle(db, "skipped_paper")
 
 
-def erlaubnis(db, nicht_erkannt=None):
+def erlaubnis(db, nicht_erkannt=None, erkannt=None):
     """Drucksache → darf ihr Ortsbezug auf einer Hauskoordinate liegen? Gleiche Regel und Eingaben wie im Aufbau
     (geocode.hausnummer_punkt_erlaubt in build.build): Drucksache, Vorlagenart und Titel aus der Datenbank, Namen der
     beratenden Gremien, Vorlagenart in anderer Form (paper_type_other_form, gilt als nicht erkennbar); dazu die
     verbundenen Vorlagen (geocode.ohne_hauskoordinate über paper_relation), auch die einer beim Aufbau ausgelassenen
     Vorlage (skipped_paper, ohne Drucksachennummer also ohne Erlaubnis). Gibt es eine Drucksache mehrfach, muss jede die
-    Erlaubnis haben. `nicht_erkannt`: Counter, der je nicht erkannter Vorlagenart (geocode.vorlagenart_bezeichnung) die
-    Vorlagen zählt. Liefert ({Vorlagen-ID: bool}, {Drucksache: bool}, {Vorlagen-ID: Drucksache})."""
+    Erlaubnis haben (geocode.gleiche_drucksache, wie im Aufbau). `nicht_erkannt`, `erkannt`: Counter, die je nicht
+    erkannter bzw. erkannter Vorlagenart (geocode.vorlagenart_bezeichnung) die Vorlagen zählen (erkannt: Erlaubnis nach
+    eigener Angabe, geocode.erkannte_arten). Liefert ({Vorlagen-ID: bool}, {Drucksache: bool}, {Vorlagen-ID:
+    Drucksache})."""
     gremien = {}
     for pid, name in db.execute(
             "SELECT c.paper_id, o.name FROM consultation c LEFT JOIN organization o ON o.id = c.organization_id "
@@ -231,6 +234,8 @@ def erlaubnis(db, nicht_erkannt=None):
         je_id[pid] = grund is None
         if grund == "vorlagenart" and nicht_erkannt is not None:
             nicht_erkannt[geocode.vorlagenart_bezeichnung(p)] += 1
+        if grund is None and erkannt is not None:
+            erkannt[geocode.vorlagenart_bezeichnung(p)] += 1
         ref_of[pid] = ref
     # verbundene Vorlagen (über- und untergeordnet) einer Vorlage ohne Erlaubnis: ebenfalls ohne (wie im Aufbau)
     ausgelassen = {r[0] for r in db.execute("SELECT id FROM skipped_paper")} if _hat_ausgelassene(db) else set()
@@ -238,6 +243,9 @@ def erlaubnis(db, nicht_erkannt=None):
                                            db.execute("SELECT parent_id, child_id FROM paper_relation")):
         if pid in je_id:
             je_id[pid] = False
+    # Vorlagen mit derselben Drucksache wie eine ohne Erlaubnis: ebenfalls ohne (wie im Aufbau)
+    for pid in geocode.gleiche_drucksache({pid for pid, ok in je_id.items() if not ok}, ref_of):
+        je_id[pid] = False
     for pid, ok in je_id.items():
         je_ref[ref_of[pid]] = je_ref.get(ref_of[pid], True) and ok
     return je_id, je_ref, ref_of
@@ -261,8 +269,8 @@ def datenschutz(db, base=None):
     3. Hauskoordinaten nur bei Verwaltungsvorlagen und politischen Anträgen (Entscheidung 04.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
        Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
-       nicht erkannten Arten stehen mit Anzahl in der Ausgabe) – in der Datenbank, in vorlagen.geojson und in den
-       Gebietsdateien der Karte.
+       erkannten und nicht erkannten Arten stehen mit Anzahl in der Ausgabe) – in der Datenbank, in vorlagen.geojson
+       und in den Gebietsdateien der Karte.
     Ausgaben nennen nur Drucksachen und Orts-IDs, keine Titel oder Hausnummern (Protokolle der Workflows sind
     öffentlich). Liefert {"untersucht": {Schlüssel aus ZAEHLUNG: Anzahl}, "befunde": [...], "fehlend": [...]}."""
     base = Path(base) if base else config.EXPORT / config.STADT
@@ -287,8 +295,8 @@ def datenschutz(db, base=None):
                        f"z. B. {', '.join(mit_nummer[:5])}")
 
     # 3a. Hauskoordinaten in der Datenbank
-    nicht_erkannt = Counter()
-    je_id, je_ref, ref_of = erlaubnis(db, nicht_erkannt)
+    nicht_erkannt, erkannt = Counter(), Counter()
+    je_id, je_ref, ref_of = erlaubnis(db, nicht_erkannt, erkannt)
     zahl["vorlagen"] = len(je_id)
     zahl["ohne_hauskoordinate"] = sum(not ok for ok in je_id.values())
     zahl["vorlagenart_nicht_erkennbar"] = sum(nicht_erkannt.values())
@@ -358,8 +366,9 @@ def datenschutz(db, base=None):
     for k, text in ZAEHLUNG.items():
         if k in zahl:
             print(f"{text}: {zahl[k]}")
-    # nicht erkannte Vorlagenarten mit Anzahl (nur die Art), wie im Log von build
+    # nicht erkannte und erkannte Vorlagenarten mit Anzahl (nur die Art), wie im Log von build
     print(geocode.nicht_erkannte_arten(nicht_erkannt))
+    print(geocode.erkannte_arten(erkannt))
     return {"untersucht": zahl, "befunde": befunde, "fehlend": fehlend}
 
 

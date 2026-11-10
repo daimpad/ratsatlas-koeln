@@ -2,8 +2,9 @@
 erkennbarer Vorlagenart gibt es keine Hauskoordinate, höchstens die Straße – wie bei Eingaben nach § 24 GO NRW und
 Vorlagen natürlicher Personen (Regel vom 04.11.2026). Prüft die Regel (geocode.punkt_ausschluss), den Aufbau
 (build.build) mit erfundenen Vorlagen aus tools/testdaten.py und eingefügten erfundenen Vorlagen in den temporären
-Pfaden der Fixture `oparl`, die Prüfung (check.erlaubnis, check.datenschutz) und die Zählung der nicht erkannten
-Vorlagenarten in Log und Prüfung. Keine Anfragen an die Stadt."""
+Pfaden der Fixture `oparl`, die Prüfung (check.erlaubnis, check.datenschutz), die Zählung der erkannten und nicht
+erkannten Vorlagenarten in Log und Prüfung, andere Schreibungen (Vergleichstexte), Vorlagen mit derselben Drucksache und
+die Erklärtexte. Keine Anfragen an die Stadt."""
 import importlib.util
 import json
 import sqlite3
@@ -13,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from pipeline import build, check, config, export, geocode, kontext
+from pipeline import build, check, config, export, geocode, glossar, kontext
 from pipeline.geocode import hausnummer_punkt_erlaubt, punkt_ausschluss
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,12 +28,24 @@ ERKANNT = ["Antrag nach § 3 der GeschO des Rates", "Anfrage nach § 4 der Gesch
            "Beantwortung einer Anfrage (BV)", "Antrag nach § 3 der Geschäftsordnung des Rates", "Beschlussvorlage",
            "Mitteilung", "Mitteilungsvorlage", "Stellungnahme der Verwaltung", "Dringlichkeitsantrag",
            "Dringlichkeitsentscheidung OB", "Große Anfrage", "Informationsbrief", "BESCHLUSSVORLAGE",
-           "  mitteilung bv  "]
-# nicht erkennbar: leer, nur Leerraum, null, unbekannt, keine Zeichenkette, Vorlagen aus der Einwohnerschaft ohne Wort
-# einer Eingabe
+           "  mitteilung bv  ", "Antwort der Verwaltung",
+           # „Bürgermeister“ ist keine Einwohnerschaft (auch in anderer Schreibung)
+           "Dringlichkeitsentscheidung des Oberbürgermeisters", "Mitteilung der Oberbürgermeisterin",
+           "Vorlage des Bezirksbürgermeisters", "Antrag des Bezirksbürgermeisters", "Mitteilung des Buergermeisters"]
+# nicht erkennbar: leer, nur Leerraum, null, unbekannt, keine Zeichenkette, Vorlagen aus der Einwohnerschaft oder von
+# Privatpersonen ohne Wort einer Eingabe (auch über einen Zeilenumbruch, in anderer Schreibung oder hinter „ue“)
 NICHT_ERKANNT = ["", "   ", "\t\n", None, "Sonstiges", "Information", "Bürgerbrief", "Bericht", "Vortrag",
                  ["Beschlussvorlage"], {"name": "Mitteilung"}, 17, "Bürgeranfrage", "Einwohnervorlage",
-                 "Antrag einer Bürgerin"]
+                 "Antrag einer Bürgerin", "Antrag\nEinwohner", "Antrag einer Privatperson", "Antrag (Privat)",
+                 "Anwohnerantrag", "Bauantrag", "Bauvoranfrage", "Buergeranfrage", "Neueinwohnervorlage",
+                 "Bürger*innenantrag"]
+# andere Schreibungen einer Eingabe: zerlegte Umlaute, weiches Trennzeichen, Zeichen ohne Breite, Vollbreite,
+# „ue“ statt „ü“, Großschreibung, „Paragraf“ statt „§“; „Neueingabe“ (das „ue“ darf „eingabe“ nicht verdecken)
+WEICH, OHNE_BREITE, TREMA, VOLL_B = chr(0x00AD), chr(0x200B), chr(0x0308), chr(0xFF22)
+EINGABE_SCHREIBUNGEN = ["Bu" + TREMA + "rgerantrag", "Bür" + WEICH + "gerantrag", "Bür" + OHNE_BREITE + "gerantrag",
+                        VOLL_B + "ürgerantrag", "Buergerantrag", "BUERGERANTRAG",
+                        "Ein" + WEICH + "wohneranfrage nach § 39 Abs. 6", "Antrag nach Paragraf 24 GO",
+                        "Antrag nach Paragraph 24 GO NRW", "Neueingabe"]
 
 
 def _vv(art, **felder):
@@ -75,6 +88,22 @@ def test_eingaben_gehen_vor():
     assert punkt_ausschluss(_vv("Beschlussvorlage", reference="AZ 191/21")) == "drucksache"
 
 
+@pytest.mark.parametrize("art", EINGABE_SCHREIBUNGEN)
+def test_eingabe_in_anderer_schreibung(art):
+    """Eine andere Schreibung lässt eine Eingabe nicht als erkannte Vorlagenart durch (geocode._vergleichstexte)."""
+    assert punkt_ausschluss(_vv(art)) == "eingabe"
+
+
+def test_titel_und_gremium_in_anderer_schreibung():
+    """Auch Titel und Gremien werden über den Vergleichstext abgeglichen; Datenbank und Log behalten die Schreibung."""
+    assert punkt_ausschluss(_vv("Antrag nach § 4 der GeschO des Rates",
+                                name="Ein" + WEICH + "wohneranfrage zum Musterweg 3")) == "eingabe"
+    assert punkt_ausschluss(_vv("Beschlussvorlage"), ["Ausschuss fuer Buergerbeteiligung"]) == "gremium"
+    assert punkt_ausschluss(_vv("Beschlussvorlage"), ["Ausschuss für An" + WEICH + "regungen und Beschwerden"]) == (
+        "gremium")
+    assert geocode.vorlagenart_bezeichnung(_vv("Bür" + WEICH + "gerbrief")) == "„Bür" + WEICH + "gerbrief“"
+
+
 def test_bezeichnung_und_zeile():
     assert geocode.vorlagenart_bezeichnung(_vv("  Sonstiges ")) == "„Sonstiges“"
     assert geocode.vorlagenart_bezeichnung(_vv(" ")) == geocode.vorlagenart_bezeichnung(_vv(None)) == "(leer)"
@@ -86,6 +115,16 @@ def test_bezeichnung_und_zeile():
     viele = geocode.nicht_erkannte_arten(Counter({f"„Art {i:02d}“": 1 for i in range(45)}), hoechstens=40)
     assert viele.count("„Art ") == 40 and viele.endswith("… und 5 weitere Arten")
     assert geocode.nicht_erkannte_arten(Counter()).endswith(": 0 Vorlagen")
+    assert geocode.erkannte_arten(Counter({"„Mitteilung“": 1, "„Beschlussvorlage“": 4})) == (
+        "Vorlagenart erkannt, Hauskoordinate möglich (geocode.VORLAGENART_PUNKT): 5 Vorlagen – „Beschlussvorlage“ 4, "
+        "„Mitteilung“ 1")
+    assert geocode.erkannte_arten(Counter({f"„Art {i:02d}“": 1 for i in range(42)})).endswith("… und 2 weitere Arten")
+
+
+def test_gleiche_drucksache():
+    drucksachen = {"a": "1/2026", "b": "1/2026", "c": "2/2026", "d": "3/2026"}
+    assert geocode.gleiche_drucksache({"a", "x"}, drucksachen) == {"b"}
+    assert geocode.gleiche_drucksache({"c"}, drucksachen) == set()
 
 
 # --- Aufbau, Export, Prüfung ------------------------------------------------------------------------------------------
@@ -146,11 +185,25 @@ FAELLE = [
     # Beschlussvorlage, verbunden mit einer Vorlage nicht erkennbarer Art (Ausbreitung, vorsichtige Auslegung)
     (30, {"paperType": "Beschlussvorlage", "superordinatedPaper": [f"{B}/papers/art-31"]}, "strasse"),
     (31, {"paperType": "Sonstiges", "name": "[Testdaten] Ohne Ort"}, None),
+    # dieselbe Drucksache, nicht verbunden: Beschlussvorlage und eine Vorlage nicht erkennbarer Art (Exporte und
+    # check.erlaubnis urteilen je Drucksache, der Aufbau ebenso)
+    (40, {"paperType": "Beschlussvorlage"}, "strasse"),
+    (41, {"paperType": "Sonstiges", "name": "[Testdaten] Ohne Ort", "reference": "1540/2026"}, None),
 ]
 ERWARTETE_ZEILE = ("Vorlagenart nicht erkennbar, daher keine Hauskoordinate (höchstens Straße; "
-                   "geocode.VORLAGENART_PUNKT): 9 Vorlagen – (leer) 4, „Sonstiges“ 2, "
+                   "geocode.VORLAGENART_PUNKT): 10 Vorlagen – (leer) 4, „Sonstiges“ 3, "
                    "„Beschlussvorlage“ (als Liste oder Objekt geliefert) 1, „Information“ 1, "
                    "„https://example.invalid/oparl/paperTypes/7; Mitteilung“ (als Liste oder Objekt geliefert) 1")
+# erkannte Arten der eingefügten Vorlagen (Erlaubnis nach eigener Angabe; 30 und 40 verlieren den Punkt erst über die
+# verbundene Vorlage bzw. die gleiche Drucksache)
+ERKANNT_EINGEFUEGT = Counter({"„Beschlussvorlage“": 3, "„Antrag nach § 3 der GeschO des Rates“": 1,
+                              "„Anfrage nach § 4 der GeschO des Rates“": 1, "„Mitteilung BV“": 1,
+                              "„Antrag nach § 3 BV2 (CDU)“": 1})
+
+
+def _testdaten_arten():
+    """Vorlagenarten der Vorlagen aus tools/testdaten.py (vor dem Einfügen): Counter je Art."""
+    return Counter(json.loads(z)["paperType"] for z in config.PAPERS.read_text(encoding="utf-8").splitlines() if z)
 
 
 def _einfuegen():
@@ -171,8 +224,9 @@ def test_aufbau_pruefung_und_zaehlung(testdaten, capsys):
     """Nicht erkennbare Art → Straßenabschnitt (Ebene „strasse“, Methode „strasse+hausnummer“) statt Hauskoordinate,
     auch für die mit ihr verbundene Beschlussvorlage; erkannte Kölner und Bonner Arten → Hauskoordinate
     (Ebene „adresse“, Methode „strasse+hausnummer_punkt“); Einwohneranfrage → Straße. Aufbau und check.erlaubnis
-    urteilen gleich, check besteht ohne Befund; Log von build und Ausgabe von check nennen die nicht erkannten Arten mit
-    Anzahl, aber keine Titel."""
+    urteilen gleich (auch bei gleicher Drucksache), check besteht ohne Befund; Log von build und Ausgabe von check
+    nennen die Gründe und die erkannten und nicht erkannten Arten mit Anzahl, aber keine Titel."""
+    td = _testdaten_arten()
     strasse, nr = _einfuegen()
     build.build()
     aus_build = capsys.readouterr().out
@@ -209,19 +263,33 @@ def test_aufbau_pruefung_und_zaehlung(testdaten, capsys):
     assert db.execute("SELECT paper_type FROM paper WHERE id = ?", (f"{B}/papers/art-7",)).fetchone() == (
         "Beschlussvorlage",)
     db.close()
-    # Zählung: die Testdaten haben nur erkennbare Arten, gezählt werden die neun eingefügten Vorlagen
-    assert ERWARTETE_ZEILE in aus_build
-    assert ERWARTETE_ZEILE in aus_check
-    assert "davon mit leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026): 9" in aus_check
-    assert "Ohne Erlaubnis für Hauskoordinaten: " in aus_build and "Vorlagenart nicht erkennbar 9" in aus_build
-    assert "verbunden mit einer davon oder einer ausgelassenen Vorlage 1)" in aus_build
+    # Zählung: die Testdaten haben nur erkennbare Arten oder Eingaben („Anregungen und Beschwerden“) und keine
+    # Beziehungen; gezählt werden dazu die zehn eingefügten Vorlagen nicht erkennbarer Art
+    assert set(td) <= {"Antrag nach § 3 der Geschäftsordnung des Rates", "Beschlussvorlage", "Mitteilung",
+                       "Anregungen und Beschwerden"}, td
+    eingaben = td["Anregungen und Beschwerden"] + 1   # dazu die Einwohneranfrage (25)
+    alle = sum(td.values()) + len(FAELLE)
+    assert (f"Ohne Erlaubnis für Hauskoordinaten: {eingaben + 10 + 2} von {alle} Vorlagen (Drucksache in anderem "
+            f"Schema 0, Eingabe oder Einwohneranfrage {eingaben}, Ausschuss für Anregungen und Beschwerden 0, "
+            f"Vorlagenart nicht erkennbar 10, verbunden mit einer davon oder einer ausgelassenen Vorlage 1, mit "
+            f"derselben Drucksache wie eine davon 1)\n") in aus_build
+    assert ERWARTETE_ZEILE + "\n" in aus_build
+    assert ERWARTETE_ZEILE + "\n" in aus_check
+    erkannt = Counter({f"„{art}“": n for art, n in td.items() if art != "Anregungen und Beschwerden"})
+    erkannt.update(ERKANNT_EINGEFUEGT)
+    assert geocode.erkannte_arten(erkannt) + "\n" in aus_build
+    assert geocode.erkannte_arten(erkannt) + "\n" in aus_check
+    assert "davon mit leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026): 10\n" in aus_check
+    assert [z for z in aus_check.splitlines() if z.startswith("davon ohne Erlaubnis für Hauskoordinaten")][0].endswith(
+        f": {eingaben + 10 + 2}")   # wie im Aufbau, samt verbundener Vorlage und gleicher Drucksache
     for aus in (aus_build, aus_check):   # Protokolle der Workflows sind öffentlich: keine Titel, keine Hausnummer
         assert "Sitzbänke" not in aus and f"{strasse} {nr}" not in aus
 
 
 def test_pruefung_meldet_eingeschleusten_punkt_bei_unbekannter_art(testdaten, monkeypatch, capsys):
     """Setzt ein Fehler im Aufbau Vorlagen nicht erkennbarer Art doch auf die Hauskoordinate (Regel ohne die Erkennung
-    der Vorlagenart), meldet check es in Datenbank, vorlagen.geojson und Gebietsdateien; Eingaben bleiben gesperrt."""
+    der Vorlagenart), meldet check es in Datenbank, vorlagen.geojson und Gebietsdateien, auch die Beschlussvorlage mit
+    derselben Drucksache wie eine Vorlage nicht erkennbarer Art; Eingaben bleiben gesperrt."""
     _einfuegen()
     monkeypatch.setattr(build, "hausnummer_punkt_erlaubt",
                         lambda p, g=(): punkt_ausschluss(p, g) in (None, "vorlagenart"))
@@ -239,4 +307,15 @@ def test_pruefung_meldet_eingeschleusten_punkt_bei_unbekannter_art(testdaten, mo
     for wo in ("Datenbank", "vorlagen.geojson", "Gebietsdateien der Karte"):
         b = [x for x in erg["befunde"] if f"Hauskoordinate bei Vorlagen ohne Erlaubnis ({wo};" in x]
         assert len(b) == 1 and f": {len(verstoss)}, z. B. {', '.join(sorted(verstoss)[:5])}" in b[0], (wo, b)
-    assert erg["untersucht"]["vorlagenart_nicht_erkennbar"] == 9
+    assert erg["untersucht"]["vorlagenart_nicht_erkennbar"] == 10
+    # gleiche Drucksache (40 und 41): auch in der Datenbank gemeldet, nicht nur in den Exporten
+    assert "1540/2026" in verstoss
+
+
+def test_erklaertexte_nennen_die_regel():
+    """Begriff „Verortung“ (Begriffsseite, glossar.json) und „Verstehen“ in site/index.html nennen die Regel vom
+    10.11.2026 gleich: ist die Art einer Vorlage nicht erkennbar, zeigt die Karte höchstens die Straße."""
+    satz = "ist die Art einer Vorlage nicht erkennbar, zeigt die Karte höchstens die Straße"
+    g = {b["begriff"]: b for b in glossar.glossar()["begriffe"]}
+    assert satz in g["Verortung"]["erklaerung"]
+    assert satz in (ROOT / "site" / "index.html").read_text(encoding="utf-8")
