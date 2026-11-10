@@ -248,7 +248,7 @@
   },
   {
    "begriff": "Verortung",
-   "erklaerung": "Zuordnung einer Vorlage zu einem Ort: aus der Ortsangabe der Stadt (Stufe A) oder aus Straßen-, Stadtteil- und Bezirksnamen im Titel (Stufe B). Jede Verortung nennt Methode, Konfidenz und Fundstelle. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung und politische Anträge, nie Eingaben von Einwohnerinnen und Einwohnern.",
+   "erklaerung": "Zuordnung einer Vorlage zu einem Ort: aus der Ortsangabe der Stadt (Stufe A) oder aus Straßen-, Stadtteil- und Bezirksnamen im Titel (Stufe B). Jede Verortung nennt Methode, Konfidenz und Fundstelle. Auf ein einzelnes Haus gesetzt werden nur Vorlagen der Verwaltung sowie politische Anträge und Anfragen, nie Eingaben von Einwohnerinnen und Einwohnern; ist die Art einer Vorlage nicht erkennbar, zeigt die Karte höchstens die Straße.",
    "fundstelle": "abgeleitet (Ratsatlas)",
    "gruppe": "gebiete",
    "anker": "verortung"

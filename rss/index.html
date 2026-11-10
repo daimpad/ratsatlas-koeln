@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
   <title>Inhalte abonnieren und weiterverwenden – Ratsatlas Köln</title>
-  <meta name="description" content="Feeds des Ratsatlas Köln abonnieren oder einbinden: neue Vorlagen und Beratungsergebnisse aus ganz Köln, je Gebiet und je Thema, offen und ohne Konto.">
+  <meta name="description" content="Feeds des Ratsatlas Köln abonnieren oder einbinden: neue Vorlagen und Beratungsergebnisse aus ganz Köln, je Gebiet, offen und ohne Konto.">
   <link rel="canonical" href="https://koeln.ratsatlas.de/rss/">
   <link rel="icon" href="../favicon.ico" sizes="32x32">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
@@ -43,10 +43,10 @@
         <li><strong>Adresse einfügen.</strong> Kopieren Sie die Feed-Adresse oben und fügen Sie sie im Reader bei „Feed hinzufügen“ oder „Abonnieren“ ein.</li>
         <li><strong>Neues erhalten.</strong> Der Reader zeigt neue Einträge von selbst, sobald die Karte sie übernimmt (einmal am Tag, frühmorgens). Abbestellen geht jederzeit im Reader; der Ratsatlas erfährt davon nichts.</li>
       </ol>
-      <p class="rss-weiter"><button type="button" class="rss-knopf rss-haupt" data-kopieren="#rss-url" hidden>RSS-Adresse kopieren</button> <a href="#weitere">Nur ein Gebiet oder Thema abonnieren</a></p>
+      <p class="rss-weiter"><button type="button" class="rss-knopf rss-haupt" data-kopieren="#rss-url" hidden>RSS-Adresse kopieren</button> <a href="#weitere">Nur ein Gebiet abonnieren</a></p>
       <details class="hh-mehr" id="weitere">
-        <summary>Feeds für einzelne Gebiete und Themen</summary>
-        <p>Diese Feeds enthalten nur die Vorlagen eines Gebiets oder einer Themenseite. Für einen einzelnen Vorgang gibt es in der <a href="../">Karte</a> beim Vorgang unter „Mitmachen“ einen eigenen Feed.</p>
+        <summary>Feeds für einzelne Gebiete</summary>
+        <p>Diese Feeds enthalten nur die Vorlagen eines Gebiets. Für einen einzelnen Vorgang gibt es in der <a href="../">Karte</a> beim Vorgang unter „Mitmachen“ einen eigenen Feed.</p>
         
         
         
@@ -71,11 +71,11 @@
       <dl class="rss-felder">
         <dt>Format</dt><dd>Atom 1.0 (<a href="https://www.rfc-editor.org/rfc/rfc4287" target="_blank" rel="noopener">RFC 4287</a>), UTF-8. Atom erfüllt denselben Zweck wie RSS 2.0; jeder gängige Reader liest beides.</dd>
         <dt>Feed</dt><dd><code>id</code>, <code>title</code>, <code>subtitle</code>, <code>updated</code> (jüngster Eintrag), <code>link rel="self"</code>, <code>link rel="alternate"</code> (Karte), <code>author</code>, <code>rights</code> (Lizenz).</dd>
-        <dt>Eintrag</dt><dd><code>id</code>, <code>title</code>, <code>updated</code>, <code>link rel="alternate"</code> (Vorgang in der Karte), <code>link rel="related"</code> (Original im Ratsinformationssystem der Stadt), <code>summary</code> (Art, federführendes Amt, Stand; gekennzeichnete KI-Kurzfassung, wo vorhanden).</dd>
+        <dt>Eintrag</dt><dd><code>id</code>, <code>title</code>, <code>updated</code>, <code>link rel="alternate"</code> (Vorgang in der Karte), <code>link rel="related"</code> (Original im Ratsinformationssystem der Stadt), <code>summary</code> (Art, federführendes Amt, Stand).</dd>
         <dt>Kennung</dt><dd><code>id</code> ist stabil und entspricht <code>guid</code> in RSS: OParl-Adresse der Vorlage und Art des Ereignisses, z. B. <code>…/oparl/papers/2022978#vorlage</code>, <code>…#beratung-2026-06-10-Rat</code>, <code>…#folge-…</code>. Dieselbe Vorlage hat in allen Feeds dieselbe Kennung.</dd>
         <dt>Datum</dt><dd><code>updated</code> ist der Tag des Ereignisses (Datum der Vorlage oder der Sitzung), immer 00:00 UTC; ein eigenes Veröffentlichungsdatum gibt es nicht.</dd>
         <dt>Umfang</dt><dd>Die letzten 100 Einträge je Feed, neueste zuerst; Feeds je Vorgang enthalten alle Ereignisse.</dd>
-        <dt>Adressen</dt><dd><code>data/export/koeln/feeds/ganz-koeln.xml</code>, <code>feeds/ortsteil-&lt;name&gt;.xml</code>, <code>feeds/bezirk-&lt;name&gt;.xml</code>, <code>feeds/ohne-&lt;jahr&gt;.xml</code>, <code>feeds/vorlagen/&lt;drucksache&gt;.xml</code>, <code>dossiers/&lt;thema&gt;.xml</code>.</dd>
+        <dt>Adressen</dt><dd><code>data/export/koeln/feeds/ganz-koeln.xml</code>, <code>feeds/ortsteil-&lt;name&gt;.xml</code>, <code>feeds/bezirk-&lt;name&gt;.xml</code>, <code>feeds/ohne-&lt;jahr&gt;.xml</code>, <code>feeds/vorlagen/&lt;drucksache&gt;.xml</code>.</dd>
         <dt>Abruf</dt><dd>Die Feeds ändern sich höchstens einmal am Tag (täglicher Lauf ab 22:10 Uhr UTC). Bitte höchstens einmal pro Stunde abrufen, besser einmal am Tag; der Server beantwortet bedingte Abrufe (<code>If-Modified-Since</code>, <code>If-None-Match</code>). Ohne Schlüssel und ohne Anmeldung. Für den Abruf aus dem Browser anderer Websites (CORS) nutzen Sie derzeit den Spiegel <code>https://daimpad.github.io/ratsatlas-koeln/</code> mit denselben Pfaden; auf der Hauptadresse ist die Freigabe noch nicht eingerichtet.</dd>
       </dl>
       <p>Beispiel in Python, nur mit der Standardbibliothek:</p>
