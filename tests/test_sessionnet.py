@@ -354,6 +354,7 @@ def _schein_proxy(monkeypatch, connect, get=407):
     monkeypatch.setattr(abruf, "_OEFFNER", abruf.oeffner())
     monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
     monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")   # Pflicht vor Anfragen an nicht lokale Ziele
     monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
     return proxy
 
@@ -567,6 +568,7 @@ def test_unlesbare_antwort_des_proxys_auf_connect_ist_moegliche_sperre(oparl, mo
     monkeypatch.setattr(abruf, "_OEFFNER", abruf.oeffner())
     monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
     monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")   # Pflicht vor Anfragen an nicht lokale Ziele
     monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
     with pytest.raises(abruf.Abbruch) as e:
         abruf.get_json("https://example.invalid/oparl/body", pausen=[0, 0])
@@ -749,8 +751,10 @@ def _nacht_spaeter(stunden=13):
 
 
 def _nicht_lokal(monkeypatch):
-    """Lokalen Testserver wie einen Server der Stadt behandeln (Freigabe, Zeitfenster, Mindestabstand 0 für die Tests)."""
+    """Lokalen Testserver wie einen Server der Stadt behandeln (Freigabe, Zeitfenster, Mindestabstand 0 für die Tests,
+    Kontakt im User-Agent wie in GitHub Actions: ohne ihn keine Anfrage an ein nicht lokales Ziel)."""
     monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")
     monkeypatch.setattr(abruf, "lokal", lambda url: False)
     monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
     monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
@@ -1719,8 +1723,9 @@ def test_gesamtgrenze_der_seiten_ueber_fortsetzungen(oparl, monkeypatch, rest):
 
 def _tls_bereit(monkeypatch):
     """Adressen mit https auf 127.0.0.1 gelten nicht als lokal: Freigabe, Zeitfenster offen, Mindestabstand 0 (nur hier,
-    um die Tests kurz zu halten), Öffner ohne Proxy."""
+    um die Tests kurz zu halten), Öffner ohne Proxy, Kontakt im User-Agent."""
     monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")
     monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
     monkeypatch.setattr(config, "ABRUF_ABSTAND", 0.0)
     monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "")
@@ -2516,6 +2521,7 @@ class _Scheinnetz:
         self.oparl, self.dauer, self.t, self.anfragen = oparl, dauer, start, []
         monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
         monkeypatch.setattr(abruf, "lokal", lambda url: False)
+        monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")   # Pflicht vor Anfragen an nicht lokale Ziele
         monkeypatch.setattr(config, "ABRUF_ABSTAND", 2.0)
         monkeypatch.setattr(abruf, "uhr", lambda: self.t)
         monkeypatch.setattr(abruf, "time", types.SimpleNamespace(monotonic=lambda: self.t.timestamp(),
@@ -3758,3 +3764,92 @@ def test_datenstand_mit_retrieved_at_als_liste():
         text, tag = _node_json(code, zone)
         assert text == "Datenstand: Gebiete: 01.11.2026 · Ratsinformationssystem: unbekannt · erzeugt 07.11.2026", zone
         assert tag == "2026-11-07", zone
+
+
+# --- Runde 18: Fortsetzung nur bei 404/410 veraltet, Steuerzeichen in JSON, Kontakt im User-Agent Pflicht -------------
+
+@pytest.mark.parametrize("code, verworfen", [(401, False), (403, False), (400, False), (404, True), (410, True)])
+def test_fortsetzung_nur_bei_404_oder_410_veraltet(oparl, monkeypatch, code, verworfen):
+    """Liefert schon die erste Seite einer Fortsetzung HTTP 404 oder 410, ist sie veraltet: verworfen, der nächste Lauf
+    beginnt von vorn. 401, 403 und andere Codes behalten Fortsetzung und Teildatei (die nächste Nacht setzt dort fort);
+    401 und 403 zählen wie bisher als Nacht mit möglicher Sperre (Generalprobe 09./10.11.2026)."""
+    monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: pfad == "/papers" and q.get("page") == "3")
+    sessionnet.fetch_all()                                   # Nacht 1: HTTP 404 auf Seite 3, Fortsetzung ab Seite 2
+    fort = json.loads(config.ZUSTAND.read_text())["papers_fortsetzung"]
+    teil = config.RAW / "papers.teil.jsonl"
+    vorher = teil.read_bytes()
+    assert fort["seiten"] == 2 and "page=2" in fort["naechste"] and len(_jsonl(teil)) == 4
+    monkeypatch.setattr(oparl, "stoerung",
+                        lambda pfad, q: code if pfad == "/papers" and q.get("page") == "2" else False)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                   # Nacht 2: schon die erste Fortsetzungsseite scheitert
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == ["2"]
+    assert f"HTTP {code}" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    zustand = json.loads(config.ZUSTAND.read_text())
+    if verworfen:
+        assert "papers_fortsetzung" not in zustand and not teil.exists()
+    else:
+        assert {k: zustand["papers_fortsetzung"][k] for k in ("naechste", "seiten", "start")} == {
+            k: fort[k] for k in ("naechste", "seiten", "start")}
+        assert teil.read_bytes() == vorher
+    assert (zustand.get("sperre_verdacht") or {}).get("naechte") == (1 if code in (401, 403) else None)
+    monkeypatch.setattr(oparl, "stoerung", lambda pfad, q: False)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                   # Nacht 3: von vorn bzw. an der gespeicherten Stelle
+    assert [q.get("page") for p, q, _ in oparl.anfragen if p == "/papers"] == (
+        [None, "2", "3"] if verworfen else ["2", "3"])
+    assert len(_jsonl(config.PAPERS)) == 5 and not teil.exists()
+    assert "sperre_verdacht" not in json.loads(config.ZUSTAND.read_text())
+
+
+def _antwort_200(inhalt):
+    return (b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: " + str(len(inhalt)).encode()
+            + b"\r\n\r\n" + inhalt)
+
+
+def test_steuerzeichen_in_zeichenketten_sind_lesbar(oparl, monkeypatch, roher_server):
+    """Rohe Steuerzeichen in JSON-Zeichenketten (etwa \\x0b in einem Titel) machen eine Seite nicht unlesbar: eine
+    Anfrage, keine Wiederholung, Titel unverändert. Ungültiges UTF-8 und kein JSON bleiben unlesbar (Wiederholungen,
+    dann „aufgegeben“)."""
+    monkeypatch.setattr(abruf, "_OEFFNER", OHNE_PROXY)
+    titel = "Sitzbänke\x0bam\tMusterweg\x01\x1f"
+    server = roher_server(_antwort_200(('{"id": "x", "name": "' + titel + '"}').encode("utf-8")))   # roh, unmaskiert
+    vorher = abruf.statistik()
+    assert abruf.get_json(f"{server.url}/papers", pausen=[0, 0])["name"] == titel
+    assert server.anfragen == ["GET /papers HTTP/1.1"]
+    assert (abruf.statistik()["fehler"] - vorher["fehler"], abruf.statistik()["wiederholungen"]
+            - vorher["wiederholungen"]) == (0, 0)
+    for kaputt in ('{"name": "Sitzbänke"}'.encode("latin-1"), b"<html>kein JSON</html>",
+                   b'{"name": "ohne Ende'):
+        server = roher_server(_antwort_200(kaputt))
+        with pytest.raises(abruf.Abbruch) as e:
+            abruf.get_json(f"{server.url}/papers", pausen=[0, 0])
+        assert e.value.art == "aufgegeben" and len(server.anfragen) == 3, kaputt
+
+
+def test_kontakt_pflicht_vor_anfragen_an_die_stadt(oparl, monkeypatch, capsys):
+    """Der User-Agent nennt den Kontakt (CLAUDE.md 5.1): Ohne RATSATLAS_KONTAKT sendet ein Lauf gegen ein nicht lokales
+    Ziel keine Anfrage, auch nicht die des Bodys (Einstellungsfehler wie andere: ValueError, abruf_fehler in STAND.json,
+    keine Nacht mit möglicher Sperre). Mit Kontakt läuft derselbe Abruf in der nächsten Nacht; ein lokaler Testserver
+    braucht keinen Kontakt."""
+    _nicht_lokal(monkeypatch)
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: True)
+    monkeypatch.setattr(config, "KONTAKT", "")
+    vorher = abruf.statistik()
+    with pytest.raises(ValueError, match="RATSATLAS_KONTAKT fehlt"):
+        sessionnet.fetch_all()
+    assert oparl.anfragen == [] and abruf.statistik()["anfragen"] == vorher["anfragen"]
+    assert "keine Anfrage gesendet" in json.loads(config.STAND.read_text())["abruf_fehler"]["meldung"]
+    zustand = json.loads(config.ZUSTAND.read_text())
+    assert "sperre_verdacht" not in zustand and zustand["letzter_abbruch"]["art"] == "programmfehler"
+    _nacht_spaeter()
+    monkeypatch.setattr(config, "KONTAKT", "kontakt@example.invalid")
+    sessionnet.fetch_all()
+    assert oparl.anfragen and len(_jsonl(config.PAPERS)) == 5
+    assert "abruf_fehler" not in json.loads(config.STAND.read_text())
+    # lokaler Testserver: ohne Kontakt erlaubt
+    monkeypatch.setattr(abruf, "lokal", lambda url: True)
+    monkeypatch.setattr(config, "KONTAKT", "")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert oparl.anfragen and "abruf_fehler" not in json.loads(config.STAND.read_text())

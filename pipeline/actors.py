@@ -176,9 +176,11 @@ _VERBINDUNG = re.compile(
     r"Rat|Rates|Stadt|Köln|(?:Rats|Bezirks)?[Ff]raktion(?:en)?|(?:Rats|Wähler)?[Gg]ruppen?|Einzelmandat\w*|"
     r"Ratsmitglied\w*)(?!\w))*")
 # Klassen (`classification`) der Organisationen von Fraktionen, Gruppen und Einzelmandaten im Rat bzw. in den
-# Bezirksvertretungen („Bezirksfraktionen (intern)“): Werte aus Bonn. Die Kölner Werte werden mit dem Abruf gemessen
-# (offen); ohne passende Klasse bleibt organization_id leer.
-RAT_CLASSES = ("Fraktion", "Gruppen", "Einzelmandate")
+# Bezirksvertretungen („Bezirksfraktionen (intern)“): Werte aus Bonn und der Kölner Wert „Fraktionen und Gruppen“
+# (Stufe 3, 09.11.2026: 23 Organisationen, `organizationType` fehlt bei allen, keine Bezirksfraktionen darunter; auch
+# „Sachkundige Bürgerinnen und Bürger“, auf das kein Muster in PARTIES passt). Ohne passende Klasse bleibt
+# organization_id leer.
+RAT_CLASSES = ("Fraktion", "Gruppen", "Einzelmandate", "Fraktionen und Gruppen")
 
 
 def _stopp(title, pos):

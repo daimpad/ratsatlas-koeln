@@ -55,6 +55,9 @@ CREATE TABLE paper_originator (
 CREATE TABLE paper_responsibility (
   paper_id TEXT REFERENCES paper, organization_id TEXT REFERENCES organization, kind TEXT,
   method TEXT, evidence TEXT, derived INTEGER);
+-- Vorlagen, die der Aufbau auslässt (ohne Drucksachennummer, einlesen()); Zählung in der Ausgabe von check; für den
+-- Datenschutz Startmenge ohne Hauskoordinate (check.erlaubnis, maske.aus_db), ihre Beziehungen in paper_relation
+CREATE TABLE skipped_paper (id TEXT PRIMARY KEY, reason TEXT, source TEXT);
 CREATE INDEX consultation_paper ON consultation(paper_id);
 CREATE INDEX relation_child ON paper_relation(child_id);
 CREATE INDEX paper_location_loc ON paper_location(location_id);
@@ -67,6 +70,102 @@ CREATE INDEX responsibility_paper ON paper_responsibility(paper_id);
 def _read_jsonl(path):
     with open(path, encoding="utf-8") as f:
         return [json.loads(line) for line in f]
+
+
+# Listenwertige Felder einer Vorlage (OParl 1.1) und ihrer Beratungen. Kommt statt der Liste ein einzelnes Objekt bzw.
+# eine einzelne Adresse, wird es zur Liste mit diesem Element, null zur leeren Liste (Gegenprüfung der Generalprobe
+# 09./10.11.2026: sonst Abbruch oder Werte, die in Zeichen zerlegt werden)
+LISTENFELDER = ("auxiliaryFile", "consultation", "keyword", "location", "originatorOrganization", "originatorPerson",
+                "relatedPaper", "subordinatedPaper", "superordinatedPaper", "underDirectionOf")
+BERATUNG_LISTENFELDER = ("keyword", "organization")
+# Gründe für das Auslassen (Spalte reason in skipped_paper) und ihr Text im Log von build und in der Ausgabe von check
+OHNE_NUMMER = "ohne Drucksachennummer"
+NUMMER_UNERWARTET = "Drucksachennummer in unerwarteter Form"
+AUSLASSUNG = {OHNE_NUMMER: "ohne Drucksachennummer", NUMMER_UNERWARTET: "mit Drucksachennummer in unerwarteter Form"}
+# Listen, deren Einträge build als Objekte mit Kennung liest: andere Einträge (etwa nur eine Adresse) fallen heraus
+OBJEKTLISTEN = ("consultation", "location")
+# Listen von Adressen, die build als Kennung (Zeichenkette) liest; in Beratungen das Gremium. Ein eingebettetes Objekt
+# zählt mit seiner `id`, Einträge ohne Kennung fallen heraus (sonst Abbruch: Objekte sind keine Schlüssel)
+ADRESSLISTEN = ("originatorOrganization", "originatorPerson", "relatedPaper", "subordinatedPaper",
+                "superordinatedPaper", "underDirectionOf")
+BERATUNG_ADRESSLISTEN = ("organization",)
+BEZIEHUNGEN = ("subordinatedPaper", "superordinatedPaper")
+
+
+def _als_liste(obj, feld, angeglichen):
+    wert = obj.get(feld)
+    if isinstance(wert, list):
+        return wert
+    if feld in obj:
+        angeglichen[feld] += 1
+    return [] if wert is None else [wert]
+
+
+def _adressen(werte, feld, angeglichen):
+    out = []
+    for x in werte:
+        if isinstance(x, dict) and isinstance(x.get("id"), str) and x["id"]:
+            angeglichen[f"{feld} (Objekt statt Adresse)"] += 1
+            x = x["id"]
+        if isinstance(x, str) and x:
+            out.append(x)
+        else:
+            angeglichen[f"{feld} (Eintrag ohne Kennung)"] += 1
+    return out
+
+
+def _text(wert):
+    """Zeichenkettenteile eines Werts in anderer Form (Liste, Objekt; Zahlen als Text) in der Reihenfolge der Quelle."""
+    if isinstance(wert, str):
+        return [wert.strip()] if wert.strip() else []
+    if isinstance(wert, (int, float)) and not isinstance(wert, bool):
+        return [str(wert)]
+    teile = wert.values() if isinstance(wert, dict) else wert if isinstance(wert, list) else ()
+    return [t for x in teile for t in _text(x)]
+
+
+def einlesen(papers):
+    """Vorlagen aus den Rohdaten in der Form, die build erwartet, vor jeder Verwendung (data/raw bleibt unverändert):
+    listenwertige Felder als Liste (LISTENFELDER, in Beratungen BERATUNG_LISTENFELDER), in OBJEKTLISTEN nur Objekte mit
+    Kennung, in ADRESSLISTEN (in Beratungen BERATUNG_ADRESSLISTEN) nur Kennungen (eingebettetes Objekt → seine `id`),
+    `mainFile` nur als Objekt, `paperType` null oder fehlend wie eine leere Vorlagenart (""), in anderer Form (Liste,
+    Objekt) als Text aus ihren Zeichenkettenteilen, damit die Regel für Eingaben greift (geocode.EINGABE).
+    Vorlagen ohne Drucksachennummer (`reference` fehlt, null oder leer) oder mit einer, die keine Zeichenkette ist,
+    werden ausgelassen, nie mit erfundener Nummer; ihre Beziehungen (BEZIEHUNGEN) bleiben für den Datenschutz erhalten.
+    Liefert (Vorlagen, ausgelassene Vorlagen als {id, grund, BEZIEHUNGEN}, Zähler der angeglichenen Felder)."""
+    out, ausgelassen, angeglichen = [], [], Counter()
+    for roh in papers:
+        ref = roh.get("reference")
+        if not isinstance(ref, str) or not ref.strip():
+            ausgelassen.append({"id": roh["id"],
+                                "grund": OHNE_NUMMER if ref is None or isinstance(ref, str) else NUMMER_UNERWARTET,
+                                **{f: _adressen(_als_liste(roh, f, Counter()), f, Counter()) for f in BEZIEHUNGEN}})
+            continue
+        p = dict(roh)
+        for feld in LISTENFELDER:
+            p[feld] = _als_liste(roh, feld, angeglichen)
+        for feld in OBJEKTLISTEN:
+            gut = [x for x in p[feld] if isinstance(x, dict) and isinstance(x.get("id"), str) and x["id"]]
+            angeglichen[f"{feld} (Eintrag ohne Objekt oder Kennung)"] += len(p[feld]) - len(gut)
+            p[feld] = gut
+        for feld in ADRESSLISTEN:
+            p[feld] = _adressen(p[feld], feld, angeglichen)
+        p["consultation"] = [{**c, **{f: _als_liste(c, f, angeglichen) for f in BERATUNG_LISTENFELDER}}
+                             for c in p["consultation"]]
+        for c in p["consultation"]:
+            for feld in BERATUNG_ADRESSLISTEN:
+                c[feld] = _adressen(c[feld], f"consultation/{feld}", angeglichen)
+        if p.get("mainFile") is not None and not isinstance(p["mainFile"], dict):
+            angeglichen["mainFile (kein Objekt)"] += 1
+            p["mainFile"] = None
+        typ = p.get("paperType")
+        if typ is None:
+            p["paperType"] = ""
+        elif not isinstance(typ, str):
+            angeglichen["paperType (keine Zeichenkette)"] += 1
+            p["paperType"] = "; ".join(_text(typ))
+        out.append(p)
+    return out, ausgelassen, +angeglichen
 
 
 # Zahlen außer Postleitzahlen (fünfstellig, 5xxxx) gelten in Ortsangaben der Stadt als Hausnummern; check.py prüft
@@ -89,7 +188,14 @@ def build():
         print(f"Hinweis: {config.CONSULTATIONS_LITE} fehlt – Beratungen ohne Sitzung/TOP.")
     # dieselbe Vorlage kann beim seitenweisen Abruf zweimal vorkommen (neue Vorlagen verschieben die Seiten);
     # doppelt eingetragene Einreichende und Zuständigkeiten vermeiden (Code-Prüfung 23.10.2026)
-    papers = list({p["id"]: p for p in _read_jsonl(config.PAPERS) if not p.get("deleted")}.values())
+    papers, ausgelassen, angeglichen = einlesen(
+        {p["id"]: p for p in _read_jsonl(config.PAPERS) if not p.get("deleted")}.values())
+    for grund, n in sorted(Counter(a["grund"] for a in ausgelassen).items()):
+        print(f"{n} Vorlagen {AUSLASSUNG[grund]} ausgelassen")
+    if angeglichen:
+        print("Feldformen angeglichen (einzelner Wert → Liste, null → leere Liste, Objekt in einer Adressliste → seine "
+              "Kennung, Einträge ohne Objekt oder Kennung entfernt, mainFile ohne Objekt → fehlend, paperType ohne "
+              "Zeichenkette → Text): " + ", ".join(f"{k} {n}" for k, n in sorted(angeglichen.items())))
     orgs = json.loads(config.ORGANIZATIONS.read_text())
     lite = ({c["uri"]: c for c in _read_jsonl(config.CONSULTATIONS_LITE)}
             if config.CONSULTATIONS_LITE.exists() else {})
@@ -193,13 +299,20 @@ def build():
             rows["resp"].append((p["id"], r["organization_id"], r["kind"], r["method"],
                                  r["evidence"], r["derived"]))
 
+    # Beziehungen ausgelassener Vorlagen (ohne Drucksachennummer): Sie fehlen in `paper` (der Export zeigt sie nicht),
+    # zählen aber für den Datenschutz (check.erlaubnis liest sie aus paper_relation)
+    for a in ausgelassen:
+        rows["rel"] += [(a["id"], c) for c in a["subordinatedPaper"]] + [(o, a["id"]) for o in a["superordinatedPaper"]]
+
     points = [(loc[1], loc[5], loc[6]) for loc in locations.values() if loc[-1] == config.QUELLE_OPARL]
     gaz = Gazetteer(street_points=points)
     gremien = {p["id"]: [(orgs_by_id.get((c.get("organization") or [None])[0]) or {}).get("name", "")
                          for c in p.get("consultation") or [] if isinstance(c, dict)] for p in papers}
-    # ohne Hauskoordinate: Eingaben, Vorlagen natürlicher Personen und alle mit ihnen verbundenen Vorlagen
-    gesperrt = ohne_hauskoordinate({p["id"] for p in papers if not hausnummer_punkt_erlaubt(p, gremien.get(p["id"], ()))},
-                                   rows["rel"])
+    # ohne Hauskoordinate: Eingaben, Vorlagen natürlicher Personen und alle mit ihnen verbundenen Vorlagen; ausgelassene
+    # Vorlagen gehören zur Startmenge (ohne Drucksachennummer keine Erlaubnis, geocode.REFERENZ_PUNKT): eine Eingabe
+    # ohne Nummer sperrt so weiter ihre Beantwortung oder Stellungnahme
+    gesperrt = ohne_hauskoordinate({p["id"] for p in papers if not hausnummer_punkt_erlaubt(p, gremien.get(p["id"], ()))}
+                                   | {a["id"] for a in ausgelassen}, rows["rel"])
     rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien, gesperrt)
     plans = Plans()
     rows["plan"] = [(pid, nr, ev, plans.classify(nr)[0]) for pid, nr, ev in rows["plan"]]
@@ -214,7 +327,7 @@ def build():
           f"{len({r[0] for r in rows['plan']})} mit Plannummer im Titel, "
           f"{len(sure)} eindeutig (Vorrang vor {len(precedence)} Ortsbezügen aus dem Titel)")
     rows["ploc"] += _objects_in_titles(papers, locations, gaz, {r[0] for r in rows["ploc"]})
-    rows["ploc"] += _fulltext(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]})
+    rows["ploc"] += _fulltext(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]}, ausgelassen)
     rows["ploc"] += _inherited(papers, papers_by_id, rows["ploc"])
     rows["ploc"] += _from_committee(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]})
 
@@ -230,6 +343,8 @@ def build():
     db.executemany("INSERT OR IGNORE INTO paper_location VALUES (?,?,?,?,?,?,?)", rows["ploc"])
     db.executemany("INSERT INTO paper_originator VALUES (?,?,?,?,?,?,?)", rows["orig"])
     db.executemany("INSERT INTO paper_responsibility VALUES (?,?,?,?,?,?)", rows["resp"])
+    db.executemany(f"INSERT OR IGNORE INTO skipped_paper VALUES (?, ?, '{config.QUELLE_OPARL}')",
+                   [(a["id"], a["grund"]) for a in ausgelassen])
     db.commit()
     db.close()
     print(f"{len(papers)} Vorlagen, {len(rows['cons'])} Beratungen, {len(meetings)} Sitzungen, "
@@ -289,15 +404,16 @@ def _objects_in_titles(papers, locations, gaz, placed):
     return out
 
 
-def _fulltext(papers, bv_bezirke, locations, gaz, placed):
+def _fulltext(papers, bv_bezirke, locations, gaz, placed, ausgelassen=()):
     """Ortsbezüge aus dem Volltext der Hauptdatei (volltext.py) für Vorlagen ohne eigenen Ortsbezug; Audit und
-    einmalig eine Stichprobe (ohne Textauszüge)."""
+    einmalig eine Stichprobe (ohne Textauszüge). `ausgelassen`: Vorlagen ohne Drucksachennummer (einlesen); mit ihnen
+    verbundene Vorlagen werden wie die Kette der Einwohnerschaft nicht aus dem Volltext verortet."""
     texts = volltext.load_texts()
     if not texts:
         print(f"Volltext: {config.TEXTE} fehlt – keine Verortung aus Dokumenten.")
         return []
     out, audit, found = [], [], {}
-    kette = volltext.einwohner_kette(papers)
+    kette = volltext.einwohner_kette(papers, ausgelassen)
     for p in papers:
         text = texts.get((p.get("mainFile") or {}).get("id"))
         if not text or p["id"] in placed or not volltext.allowed(p.get("paperType")) or p["id"] in kette:
