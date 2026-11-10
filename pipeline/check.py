@@ -207,12 +207,22 @@ def _hauskoordinate(level=None, method=None, source=None):
 # genauer Punkt aus einer Ortsangabe der Stadt (Stufe A, geojson Point): Methode in den Exporten (ohne Erlaubnis führt
 # build ihn auf den Stadtteil zurück, Methode „oparl_sublocality“, oder lässt die Koordinate weg)
 OPARL_PUNKT = "oparl_location"
+OPARL_STADTTEIL = "oparl_sublocality"
 
 
-def _oparl_punkt(method=None, lon=None):
-    """Ortsbezug auf dem genauen Punkt einer Ortsangabe der Stadt (Exporte; vererbte Punkte erkennt die Prüfung der
-    Datenbank)."""
-    return method == OPARL_PUNKT and lon is not None
+def _oparl_punkt(method=None, lon=None, source=None, level=None):
+    """Ortsbezug auf dem genauen Punkt einer Ortsangabe der Stadt (Exporte): Methode „oparl_location“ (Stufe A) oder
+    ein Ort mit Quelle der Stadt (location_source bzw. source „oparl-koeln“) auf Ebene „strasse“, etwa eine Straße, die
+    nur aus der Ortsangabe einer anderen Vorlage bekannt ist (Stufe B), oder ein vererbter Punkt. Ohne Ebene
+    (vorlagen.geojson) jede Methode außer dem Stadtteil („oparl_sublocality“) und vererbten Ortsbezügen, deren Ebene dort
+    fehlt; vererbte Punkte erkennen die Prüfung der Datenbank und der Gebietsdateien."""
+    if lon is None:
+        return False
+    if method == OPARL_PUNKT:
+        return True
+    if source != config.QUELLE_OPARL:
+        return False
+    return level == "strasse" if level is not None else method not in (OPARL_STADTTEIL, "vererbt")
 
 
 def _hat_tabelle(db, name):
@@ -294,8 +304,9 @@ def datenschutz(db, base=None):
        Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
        erkannten und nicht erkannten Arten stehen mit Anzahl in der Ausgabe), nie neben einem Titel ohne Hausnummer und
        nie bei damit verbundenen Vorlagen (check.erlaubnis) – in der Datenbank, in vorlagen.geojson und in den
-       Gebietsdateien der Karte; ebenso kein genauer Punkt aus einer Ortsangabe der Stadt (OParl, Stufe A) bei diesen
-       Vorlagen.
+       Gebietsdateien der Karte; ebenso kein genauer Punkt aus einer Ortsangabe der Stadt (OParl: Stufe A, vererbt oder
+       als Straße, die nur aus der Ortsangabe einer anderen Vorlage bekannt ist) bei diesen Vorlagen und bei
+       Ortsangaben, die auch eine beim Aufbau ausgelassene Vorlage nennt.
     Ausgaben nennen nur Drucksachen und Orts-IDs, keine Titel oder Hausnummern (Protokolle der Workflows sind
     öffentlich). Liefert {"untersucht": {Schlüssel aus ZAEHLUNG: Anzahl}, "befunde": [...], "fehlend": [...]}."""
     base = Path(base) if base else config.EXPORT / config.STADT
@@ -330,14 +341,25 @@ def datenschutz(db, base=None):
         "WHERE l.level = 'adresse' OR pl.method = ? OR l.source = ?", (PUNKT, config.QUELLE_ADRESSEN))}
     zahl["hauskoordinaten"] = len(punkte)
     _verstoss(befunde, "Datenbank", [ref_of.get(p) or p for p in punkte if not je_id.get(p)])
-    # 3c. genaue Punkte aus Ortsangaben der Stadt (OParl-Ortsangabe der Stufe A mit Koordinate, Ebene „strasse“), auch
-    # vererbt: bei Vorlagen ohne Erlaubnis nie (build führt sie auf den Stadtteil zurück)
+    # 3c. genaue Punkte aus Ortsangaben der Stadt (Ort der Quelle oparl-koeln mit Koordinate auf Ebene „strasse“): aus
+    # der eigenen Ortsangabe (Stufe A), vererbt oder als Straße, die nur aus der Ortsangabe einer anderen Vorlage bekannt
+    # ist (Stufe B, Prüfung r19b): bei Vorlagen ohne Erlaubnis nie (build führt sie auf den Stadtteil zurück)
     oparl = {r[0] for r in db.execute(
         "SELECT DISTINCT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
-        "WHERE l.source = ? AND l.level = 'strasse' AND l.lon IS NOT NULL AND l.id IN "
-        "(SELECT location_id FROM paper_location WHERE stage = 'A')", (config.QUELLE_OPARL,))}
+        "WHERE l.source = ? AND l.level = 'strasse' AND l.lon IS NOT NULL", (config.QUELLE_OPARL,))}
     zahl["oparl_punkte"] = len(oparl)
     _verstoss_oparl(befunde, "Datenbank", [ref_of.get(p) or p for p in oparl if not je_id.get(p)])
+    # Ortsangaben ausgelassener Vorlagen (skipped_location): auch bei anderen Vorlagen mit derselben Ortsangabe kein
+    # genauer Punkt (build: grob; Prüfung r19b)
+    if _hat_tabelle(db, "skipped_location"):
+        geteilt = sorted({str(ref_of.get(r[0]) or r[0]) for r in db.execute(
+            "SELECT DISTINCT pl.paper_id FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+            "WHERE l.source = ? AND l.level = 'strasse' AND l.lon IS NOT NULL AND l.id IN "
+            "(SELECT location_id FROM skipped_location)", (config.QUELLE_OPARL,))})
+        if geteilt:
+            befunde.append(f"Datenschutz: genauer Punkt aus einer Ortsangabe der Stadt (OParl), die auch eine beim "
+                           f"Aufbau ausgelassene Vorlage nennt (Datenbank; höchstens Stadtteil, CLAUDE.md 2 und 9): "
+                           f"{len(geteilt)}, z. B. {', '.join(geteilt[:5])}")
     stand = json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
     if not je_id:
         if stand.get("vorschau"):
@@ -372,7 +394,8 @@ def datenschutz(db, base=None):
         _verstoss(befunde, "vorlagen.geojson", [r for r in auf if not je_ref.get(r)])
         _verstoss_oparl(befunde, "vorlagen.geojson",
                         [p["reference"] for p, f in zip(props, geo["features"])
-                         if _oparl_punkt(p.get("method"), ((f.get("geometry") or {}).get("coordinates") or [None])[0])
+                         if _oparl_punkt(p.get("method"), ((f.get("geometry") or {}).get("coordinates") or [None])[0],
+                                         p.get("location_source"))
                          and not je_ref.get(p["reference"])])
     for d in GEBIETSDATEIEN_PFLICHT:
         if not (base / d).is_dir():
@@ -388,7 +411,7 @@ def datenschutz(db, base=None):
                 offen.add(p["reference"])
             if any(_hauskoordinate(x.get("level"), x.get("method"), x.get("source")) for x in orte):
                 auf.add(p["reference"])
-            if any(_oparl_punkt(x.get("method"), x.get("lon")) for x in orte):
+            if any(_oparl_punkt(x.get("method"), x.get("lon"), x.get("source"), x.get("level")) for x in orte):
                 auf_oparl.add(p["reference"])
     zahl["gebietsdateien"] = len(refs)
     zahl["gebietsdateien_hauskoordinaten"] = len(auf)

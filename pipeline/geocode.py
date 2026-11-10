@@ -543,33 +543,6 @@ def erkannte_arten(zaehler, hoechstens=40):
     return _arten_zeile("Vorlagenart erkannt, Hauskoordinate möglich (geocode.VORLAGENART_PUNKT)", zaehler, hoechstens)
 
 
-def ohne_hauskoordinate(ohne, beziehungen):
-    """Vorlagen ohne Erlaubnis für Hauskoordinaten (`ohne`, IDs), erweitert um alle Vorlagen, die mit ihnen verbunden
-    sind, auch über mehrere Stufen: Beantwortung oder Stellungnahme zu einer Eingabe oder Einwohneranfrage nennen oft
-    dieselbe Anschrift, tragen aber weder die Art noch das Wort im Titel (wie chat.einwohner für die Hausnummer im Titel;
-    Generalprobe 09.11.2026). `beziehungen`: Paare (übergeordnet, untergeordnet; für den Datenschutz auch relatedPaper),
-    in beiden Richtungen. Baustein von sperrmenge."""
-    nachbarn = defaultdict(set)
-    for a, b in beziehungen:
-        nachbarn[a].add(b)
-        nachbarn[b].add(a)
-    gesehen, offen = set(ohne), list(ohne)
-    while offen:
-        for n in nachbarn[offen.pop()]:
-            if n not in gesehen:
-                gesehen.add(n)
-                offen.append(n)
-    return gesehen
-
-
-def gleiche_drucksache(gesperrt, drucksachen):
-    """Vorlagen (IDs), die ihre Drucksache mit einer Vorlage aus `gesperrt` teilen, ohne diese selbst: vorlagen.geojson
-    und die Gebietsdateien führen Vorlagen unter ihrer Drucksache, und check.erlaubnis verlangt dort die Erlaubnis jeder
-    Vorlage mit dieser Drucksache. `drucksachen`: {Vorlagen-ID: Drucksache}. Baustein von sperrmenge."""
-    refs = {drucksachen[i] for i in gesperrt if i in drucksachen}
-    return {i for i, r in drucksachen.items() if r in refs} - set(gesperrt)
-
-
 # Weg, über den eine Vorlage in die Menge ohne Hauskoordinate kommt (sperrmenge), mit Bezeichnung im Log von build
 WEG = {"beziehung": "verbunden mit einer davon oder einer ausgelassenen Vorlage",
        "drucksache": "mit derselben Drucksache wie eine davon"}
@@ -578,20 +551,46 @@ WEG = {"beziehung": "verbunden mit einer davon oder einer ausgelassenen Vorlage"
 def sperrmenge(start, beziehungen, drucksachen):
     """Alle Vorlagen ohne Erlaubnis für Hauskoordinaten als Fixpunkt, eine Funktion für den Aufbau (build.build) und die
     Prüfung (check.erlaubnis): Ausgehend von `start` (IDs mit Grund aus punkt_ausschluss und beim Aufbau ausgelassene
-    Vorlagen) werden abwechselnd die verbundenen Vorlagen (ohne_hauskoordinate über `beziehungen`: über- und
-    untergeordnet und relatedPaper, Paare in beiden Richtungen) und die Vorlagen mit derselben Drucksache
-    (gleiche_drucksache über `drucksachen`, {Vorlagen-ID: Drucksache}) hinzugenommen, bis nichts mehr hinzukommt. So
-    sperrt eine Kopie mit derselben Drucksache wie eine Eingabe auch ihre verbundenen Vorlagen, und eine Vorlage, die
-    über eine Beziehung gesperrt ist, sperrt die Vorlagen mit ihrer Drucksache (Prüfung r19: vorher nur ein Schritt).
-    Liefert {ID: Weg} mit Weg „start“, „beziehung“ oder „drucksache“ (wodurch die Vorlage hinzukam; WEG)."""
-    beziehungen = list(beziehungen)
+    Vorlagen) kommen abwechselnd alle verbundenen Vorlagen hinzu (über `beziehungen`, auch über mehrere Stufen: über-
+    und untergeordnet und relatedPaper, Paare in beiden Richtungen; Beantwortung oder Stellungnahme zu einer Eingabe
+    nennen oft dieselbe Anschrift, tragen aber weder die Art noch das Wort im Titel) und alle Vorlagen mit derselben
+    Drucksache (`drucksachen`, {Vorlagen-ID: Drucksache}; vorlagen.geojson und die Gebietsdateien führen Vorlagen unter
+    ihrer Drucksache), bis nichts mehr hinzukommt. So sperrt eine Kopie mit derselben Drucksache wie eine Eingabe auch
+    ihre verbundenen Vorlagen, und eine Vorlage, die über eine Beziehung gesperrt ist, sperrt die Vorlagen mit ihrer
+    Drucksache (Prüfung r19: vorher nur ein Schritt).
+    Gerechnet als eine Breitensuche in Schichten, in linearer Zeit (Prüfung r19b: vorher je Wechsel zwischen Beziehung
+    und Drucksache ein Durchlauf über alle Vorlagen, bei langen Ketten quadratisch): Nachbarn und Vorlagen je Drucksache
+    werden einmal aufgestellt; eine Schicht nimmt zuerst alles hinzu, was über Beziehungen erreichbar ist, dann bilden
+    die noch fehlenden Vorlagen mit der Drucksache einer Vorlage der Schicht die nächste Schicht (jede Drucksache
+    einmal). Liefert {ID: Weg} mit Weg „start“, „beziehung“ oder „drucksache“ (wodurch die Vorlage hinzukam; WEG),
+    gleich dem früheren Ablauf in Runden."""
+    nachbarn = {}
+    for a, b in beziehungen:
+        nachbarn.setdefault(a, []).append(b)
+        nachbarn.setdefault(b, []).append(a)
+    je_drucksache = {}
+    for i, ref in drucksachen.items():
+        je_drucksache.setdefault(ref, []).append(i)
     weg = dict.fromkeys(start, "start")
-    neu = set(weg)
-    while neu:
-        for i in ohne_hauskoordinate(neu, beziehungen):
-            weg.setdefault(i, "beziehung")
-        neu = gleiche_drucksache(weg, drucksachen)
-        weg.update(dict.fromkeys(neu, "drucksache"))
+    schicht, erledigt = list(weg), set()
+    while schicht:
+        offen = list(schicht)
+        while offen:
+            for n in nachbarn.get(offen.pop(), ()):
+                if n not in weg:
+                    weg[n] = "beziehung"
+                    offen.append(n)
+                    schicht.append(n)
+        naechste = []
+        for i in schicht:
+            if i not in drucksachen or drucksachen[i] in erledigt:
+                continue
+            erledigt.add(drucksachen[i])
+            for n in je_drucksache[drucksachen[i]]:
+                if n not in weg:
+                    weg[n] = "drucksache"
+                    naechste.append(n)
+        schicht = naechste
     return weg
 
 

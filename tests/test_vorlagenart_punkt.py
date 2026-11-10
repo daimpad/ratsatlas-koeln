@@ -122,9 +122,10 @@ def test_bezeichnung_und_zeile():
 
 
 def test_gleiche_drucksache():
+    """Vorlagen mit derselben Drucksache wie eine gesperrte (geocode.sperrmenge ohne Beziehungen)."""
     drucksachen = {"a": "1/2026", "b": "1/2026", "c": "2/2026", "d": "3/2026"}
-    assert geocode.gleiche_drucksache({"a", "x"}, drucksachen) == {"b"}
-    assert geocode.gleiche_drucksache({"c"}, drucksachen) == set()
+    assert geocode.sperrmenge({"a", "x"}, [], drucksachen) == {"a": "start", "x": "start", "b": "drucksache"}
+    assert geocode.sperrmenge({"c"}, [], drucksachen) == {"c": "start"}
 
 
 # --- Aufbau, Export, Prüfung ------------------------------------------------------------------------------------------

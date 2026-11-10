@@ -88,12 +88,13 @@ def test_punktregel_einwohneranfrage():
 
 
 def test_ohne_hauskoordinate_verbundene_vorlagen():
-    from pipeline.geocode import ohne_hauskoordinate
+    """Verbundene Vorlagen über mehrere Stufen und in beiden Richtungen (geocode.sperrmenge ohne Drucksachen)."""
+    from pipeline.geocode import sperrmenge
     rel = [("anfrage", "antwort"), ("antwort", "nachtrag"), ("vorlage", "aenderung")]
-    assert ohne_hauskoordinate({"anfrage"}, rel) == {"anfrage", "antwort", "nachtrag"}
-    assert ohne_hauskoordinate({"nachtrag"}, rel) == {"anfrage", "antwort", "nachtrag"}
-    assert ohne_hauskoordinate({"einzeln"}, rel) == {"einzeln"}
-    assert ohne_hauskoordinate(set(), rel) == set()
+    assert set(sperrmenge({"anfrage"}, rel, {})) == {"anfrage", "antwort", "nachtrag"}
+    assert set(sperrmenge({"nachtrag"}, rel, {})) == {"anfrage", "antwort", "nachtrag"}
+    assert set(sperrmenge({"einzeln"}, rel, {})) == {"einzeln"}
+    assert set(sperrmenge(set(), rel, {})) == set()
 
 
 @pytest.mark.parametrize("name, bezirk", [
