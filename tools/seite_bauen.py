@@ -24,6 +24,16 @@ KARTE_DOWNLOAD = re.compile(r'(?P<kopf><a class="card" href="(?P<href>data/expor
 
 # Nur im Datenpaket (pipeline/paket.py), nicht als lose Dateien unter _site/data/export (in jedem Unterordner)
 NUR_IM_PAKET = ("audit_*.tsv", "stichprobe_*.tsv", "abrufstatistik.tsv")
+# Ordner aus site/, die nur mit Freigabe (config.ZUSATZTHEMEN) auf die Seite kommen: chat/ enthält die Module und den
+# Bonner Systemprompt des Ratsassistenten; app.js lädt chat/ui.js nur über dessen Schaltfläche (data-funktion="chat")
+ORDNER_MIT_FREIGABE = {"chat": "chat"}
+
+
+def ohne_abgeschaltete_ordner(ziel):
+    """Ordner aus ORDNER_MIT_FREIGABE in `ziel` entfernen, wenn die Freigabe fehlt (Entscheidung 10.11.2026)."""
+    for funktion, ordner in ORDNER_MIT_FREIGABE.items():
+        if not config.ZUSATZTHEMEN.get(funktion):
+            shutil.rmtree(Path(ziel) / ordner, ignore_errors=True)
 
 
 def nur_im_paket(name):
@@ -79,6 +89,7 @@ def main(ziel=ROOT / "_site"):
     shutil.rmtree(ziel, ignore_errors=True)
     shutil.copytree(ROOT / "site", ziel)
     (ziel / "og-image.jpg").unlink(missing_ok=True)       # Bonner Vorschaubild nicht ausliefern (zweiter Lauf)
+    ohne_abgeschaltete_ordner(ziel)                       # Ratsassistent nur mit Freigabe
     exporte_kopieren(config.EXPORT, ziel / "data" / "export")   # ohne Audits und Stichproben (nur im Datenpaket)
     shutil.copy(ROOT / "data" / "LICENSE-DATA.md", ziel / "data" / "LICENSE-DATA.md")
     (ziel / "data" / "geo").mkdir(parents=True, exist_ok=True)

@@ -5,6 +5,7 @@ Feeds und Technik – nur mit Freigabe (config.ZUSATZTHEMEN). Bau über den loka
 Anfragen an Server der Stadt."""
 import fnmatch
 import importlib.util
+import json
 import re
 import subprocess
 import sys
@@ -15,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from pipeline import build, config, ebenen, export, kontext, paket, rssseite, seo, sessionnet, technikseite
+from pipeline import build, config, ebenen, export, kontext, paket, publish, rssseite, seo, sessionnet, technikseite
 from pipeline.gebietsseiten import _page
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -131,6 +132,19 @@ def test_audits_nur_im_datenpaket(oparl, tmp_path):
             assert [w for w in woerter if w in html] == [], (funktion, rel)
     if not config.ZUSATZTHEMEN.get("chat"):
         assert "data-funktion" not in (site / "datenschutz.html").read_text(encoding="utf-8")
+        assert not (site / "chat").exists()   # Module und Bonner Systemprompt des Ratsassistenten
+
+    # Nachbesserung: keine Bonner Dienste im Seitenkopf, Lizenz der OParl-Exporte, Beschreibung des Datenpakets
+    assert "OParl-Lite" not in (site / "index.html").read_text(encoding="utf-8")
+    with zipfile.ZipFile(zip_pfad) as z:
+        lizenz_im_paket = z.read(f"{paket.ORDNER}/LICENSE-DATA.md").decode("utf-8")
+    for lizenz in ((site / "data" / "LICENSE-DATA.md").read_text(encoding="utf-8"), lizenz_im_paket):
+        assert "Noch nicht enthalten: Daten der OParl-API" not in lizenz and "| `export/koeln/" in lizenz
+    dcat = json.loads((site / "data" / "export" / config.STADT / "dcat.jsonld").read_text(encoding="utf-8"))
+    (beschreibung,) = [d["dct:description"]["@value"] for d in dcat["dcat:distribution"]
+                       if d["dct:title"]["@value"] == "Datenpaket (Zip)"]
+    assert "Verifikation" not in beschreibung and "nur in diesem Paket" in beschreibung
+    assert not any(n.startswith(f"{paket.ORDNER}/verifikation") for n in namen)
 
 
 def test_hauptlauf_packt_vor_dem_zusammenstellen():
@@ -189,6 +203,109 @@ def test_abschalten_auf_seiten_ohne_skript(monkeypatch):
     _freigaben(monkeypatch, chat=True)
     for html in (*beispiele, '<div data-funktion="chat">A</div>'):
         assert seo.ohne_abgeschaltete(html) == html
+
+
+# Formen, die AUS_BLOCK und AUS_SATZ nicht entfernen; sichtbar, solange sie in der Seite stehen (Nachbesserung Runde 19)
+SICHTBAR_ANDERE_FORM = (
+    '<p class="hinweis" data-funktion="chat">Ratsassistent</p>',   # weiteres Attribut davor
+    '<section data-funktion="chat" id="ki">\n<h2>KI</h2>\n</section>',   # weiteres Attribut danach
+    '<p><span data-funktion="chat" >Satz. </span>Rest.</p>',   # Leerzeichen im Tag
+    "<ul>\n<li data-funktion='chat'>Eintrag</li>\n</ul>",   # einfache Anführungszeichen
+    '<span data-funktion="chat" aria-hidden="true">Satz</span>',   # aria-hidden ist nicht hidden
+    '<img src="a.png" alt="" data-funktion=chat>',   # ohne Anführungszeichen
+    '<br data-funktion="chat"/>',   # leeres Element
+)
+# Was die Wache durchlässt: verborgene Elemente (app.js), Kommentare, Inhalt von script
+NICHT_SICHTBAR = (
+    '<div hidden data-funktion="chat">A</div>',
+    '<button type="button" data-funktion=\'chat\' class="toggle" hidden="">KI</button>',
+    '<!-- Elemente mit data-funktion="chat" entfernt der Bau -->',
+    '<script>const t = \'<p data-funktion="chat">A</p>\';</script>',
+)
+
+
+@pytest.mark.parametrize("html", SICHTBAR_ANDERE_FORM)
+def test_wache_findet_jede_sichtbare_form(monkeypatch, html):
+    """seo.ohne_abgeschaltete: Ein sichtbares Element einer abgeschalteten Funktion bricht den Bau ab, gleich wo
+    data-funktion im Tag steht und wie der Wert geschrieben ist; mit Freigabe bleibt es unverändert."""
+    _freigaben(monkeypatch)
+    with pytest.raises(ValueError, match="abgeschalteten Funktion"):
+        seo.ohne_abgeschaltete(html)
+    _freigaben(monkeypatch, chat=True)
+    assert seo.ohne_abgeschaltete(html) == html
+
+
+@pytest.mark.parametrize("html", NICHT_SICHTBAR)
+def test_wache_laesst_verborgenes_stehen(monkeypatch, html):
+    _freigaben(monkeypatch)
+    assert seo.ohne_abgeschaltete(html) == html
+
+
+def test_seiten_bestehen_die_wache(monkeypatch):
+    """Die Quellen in seo.PAGES laufen mit allen Freigaben aus, an und wie in config.py ohne Fehler durch; mit allen
+    Freigaben bleiben sie unverändert."""
+    alle = list(config.ZUSATZTHEMEN)
+    for wert in (False, True, None):
+        for k in alle:
+            if wert is not None:
+                monkeypatch.setitem(config.ZUSATZTHEMEN, k, wert)
+        for name in seo.PAGES:
+            quelle = (ROOT / "site" / name).read_text(encoding="utf-8")
+            aus = seo.ohne_abgeschaltete(quelle)
+            if wert:
+                assert aus == quelle, name
+        monkeypatch.undo()
+
+
+# --- Nachbesserung Runde 19: Ordner chat/, Beschreibung des Datenpakets, Bonner Reste, Lizenz der OParl-Exporte -----
+
+def test_ordner_des_assistenten_nur_mit_freigabe(monkeypatch, tmp_path):
+    """tools/seite_bauen.py: Ohne Freigabe „chat“ fehlt der Ordner chat/ (Module und Bonner Systemprompt des
+    Ratsassistenten) in der Seite; mit Freigabe bleibt er."""
+    assert (ROOT / "site" / "chat" / "systemprompt.md").is_file()   # sonst prüft der Test nichts
+    mod = _seite_bauen()
+    for an in (False, True):
+        ziel = tmp_path / str(an)
+        (ziel / "chat").mkdir(parents=True)
+        (ziel / "chat" / "systemprompt.md").write_text("# [Testdaten]\n", encoding="utf-8")
+        (ziel / "app.js").write_text("// [Testdaten]\n", encoding="utf-8")
+        _freigaben(monkeypatch, chat=an)
+        mod.ohne_abgeschaltete_ordner(ziel)
+        assert (ziel / "chat").exists() == an
+        assert (ziel / "app.js").is_file()
+
+
+def test_dcat_beschreibt_das_datenpaket(tmp_path):
+    """DCAT-Distribution „Datenpaket (Zip)“: nennt, was pipeline/paket.py hineinlegt (keine Verifikation, die im
+    Kölner Lauf nicht entsteht), und dass Prüfprotokolle und Stichproben nur dort liegen."""
+    publish.write_dcat(tmp_path / "dcat.jsonld", None, None)
+    doc = json.loads((tmp_path / "dcat.jsonld").read_text(encoding="utf-8"))
+    (text,) = [d["dct:description"]["@value"] for d in doc["dcat:distribution"]
+               if d["dct:title"]["@value"] == "Datenpaket (Zip)"]
+    assert "Verifikation" not in text and "Alle Exporte" not in text
+    for teil in ("Exporte (ohne Feeds)", "Prüfprotokolle und Stichproben (TSV, nur in diesem Paket", "Abrufstatistik",
+                 "Berichte der Projektphasen", "Lizenzübersicht"):
+        assert teil in text, teil
+
+
+def test_seiten_ohne_bonner_dienste():
+    """Quellen der Seiten in seo.PAGES nennen OParl-Lite nicht, auch nicht im Kommentar (für Köln kein solcher
+    Dienst)."""
+    for name in seo.PAGES:
+        assert "OParl-Lite" not in (ROOT / "site" / name).read_text(encoding="utf-8"), name
+
+
+def test_lizenz_der_oparl_exporte():
+    """data/LICENSE-DATA.md (auf der Seite und im Datenpaket): eine Zeile für die Exporte aus der OParl-API mit
+    Lizenzangabe, offener Klärung und Namensnennung; nicht mehr „noch nicht enthalten“."""
+    text = (ROOT / "data" / "LICENSE-DATA.md").read_text(encoding="utf-8")
+    assert "Noch nicht enthalten: Daten der OParl-API" not in text
+    (zeile,) = [z for z in text.splitlines() if z.startswith("| `export/koeln/")]
+    spalten = [s.strip() for s in zeile.strip("|").split(" | ")]
+    assert len(spalten) == 4, spalten
+    assert "OParl-API" in spalten[1] and "ohne Volltexte" in spalten[1]
+    assert "dl-de/zero 2.0" in spalten[2] and "Klärung" in spalten[2]
+    assert spalten[3] == config.NAMENSNENNUNG
 
 
 @pytest.mark.parametrize("an", [{}, {"themenseiten": True}, {"kurzfassungen": True},
