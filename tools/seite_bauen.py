@@ -2,7 +2,12 @@
 
 Aufruf: python3 tools/seite_bauen.py [ziel]   (Vorgabe: _site; nicht versioniert)
 Danach z. B.: python3 -m http.server -d _site 8000
+
+Audit-Protokolle, Stichproben und die Abrufstatistik (NUR_IM_PAKET) kommen nicht als lose Dateien auf die Seite, also
+weder in den Branch deploy noch auf den Spiegel; sie liegen nur im Datenpaket (Entscheidung 10.11.2026). pages.yml
+packt das Datenpaket (python -m pipeline package) vor diesem Schritt aus data/export, daher enthält es sie weiter.
 """
+import fnmatch
 import re
 import shutil
 import sys
@@ -15,6 +20,29 @@ from pipeline import config, seo  # noqa: E402
 # Karte im Menü „Daten“ (index.html): Link mit `download` auf eine Datei unter data/export/, Kartentext bis zum Ende
 KARTE_DOWNLOAD = re.compile(r'(?P<kopf><a class="card" href="(?P<href>data/export/[^"]+)" download>(?:(?!</a>).)*?'
                             r'<span class="card-text">)(?P<text>[^<]*?)(?P<punkt>\.?)</span></a>', re.S)
+
+
+# Nur im Datenpaket (pipeline/paket.py), nicht als lose Dateien unter _site/data/export (in jedem Unterordner)
+NUR_IM_PAKET = ("audit_*.tsv", "stichprobe_*.tsv", "abrufstatistik.tsv")
+
+
+def nur_im_paket(name):
+    """True für Dateinamen aus NUR_IM_PAKET (Audit-Protokolle, Stichproben, Abrufstatistik)."""
+    return any(fnmatch.fnmatchcase(name, muster) for muster in NUR_IM_PAKET)
+
+
+def _ohne_paketdateien(ordner, namen):
+    """`ignore` für shutil.copytree: Dateien aus NUR_IM_PAKET auslassen."""
+    return {n for n in namen if nur_im_paket(n) and (Path(ordner) / n).is_file()}
+
+
+def exporte_kopieren(quelle, ziel):
+    """data/export → ziel ohne die Dateien aus NUR_IM_PAKET; Ordner, die dadurch leer bleiben (etwa hausnummern/ mit
+    nur der Stichprobe), entfallen."""
+    shutil.copytree(quelle, ziel, ignore=_ohne_paketdateien)
+    for ordner in sorted(Path(ziel).rglob("*"), reverse=True):   # Unterordner vor ihren Eltern
+        if ordner.is_dir() and not any(ordner.iterdir()) and any((Path(quelle) / ordner.relative_to(ziel)).iterdir()):
+            ordner.rmdir()
 
 
 def groesse_text(n):
@@ -51,7 +79,7 @@ def main(ziel=ROOT / "_site"):
     shutil.rmtree(ziel, ignore_errors=True)
     shutil.copytree(ROOT / "site", ziel)
     (ziel / "og-image.jpg").unlink(missing_ok=True)       # Bonner Vorschaubild nicht ausliefern (zweiter Lauf)
-    shutil.copytree(config.EXPORT, ziel / "data" / "export")
+    exporte_kopieren(config.EXPORT, ziel / "data" / "export")   # ohne Audits und Stichproben (nur im Datenpaket)
     shutil.copy(ROOT / "data" / "LICENSE-DATA.md", ziel / "data" / "LICENSE-DATA.md")
     (ziel / "data" / "geo").mkdir(parents=True, exist_ok=True)
     for f in (ROOT / "data" / "geo").glob("*.geojson"):

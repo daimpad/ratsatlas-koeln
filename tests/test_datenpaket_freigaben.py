@@ -1,0 +1,221 @@
+"""Runde 19 (Entscheidungen des Auftraggebers vom 10.11.2026): Audit-Protokolle, Stichproben und Abrufstatistik nur im
+Datenpaket, nicht als lose Dateien auf der Seite (also weder im Branch deploy noch auf dem Spiegel); Texte zu
+abgeschalteten Funktionen – Ratsassistent auf der Datenschutzseite, Themenseiten und KI-Kurzfassungen auf den Seiten zu
+Feeds und Technik – nur mit Freigabe (config.ZUSATZTHEMEN). Bau über den lokalen Testserver mit erfundenen Daten; keine
+Anfragen an Server der Stadt."""
+import fnmatch
+import importlib.util
+import re
+import subprocess
+import sys
+import urllib.parse
+import zipfile
+from html.parser import HTMLParser
+from pathlib import Path
+
+import pytest
+
+from pipeline import build, config, ebenen, export, kontext, paket, rssseite, seo, sessionnet, technikseite
+from pipeline.gebietsseiten import _page
+
+ROOT = Path(__file__).resolve().parents[1]
+URL = "https://koeln.ratsatlas.de/"
+# bewusst hier ausgeschrieben und nicht aus tools/seite_bauen.py übernommen (Entscheidung 10.11.2026)
+NUR_IM_PAKET = ("audit_*.tsv", "stichprobe_*.tsv", "abrufstatistik.tsv")
+
+# Was eine Seite ohne die jeweilige Freigabe nicht nennen darf (Rohtext der Seite, einschließlich Kopf und Kommentaren)
+OHNE_FREIGABE = {
+    "chat": {"datenschutz.html": ("Ratsassistent", "ris-assistent", "Anthropic", "Mistral", "OpenRouter",
+                                  "API-Schlüssel", "Gesprächsverlauf")},
+    "themenseiten": {"rss/index.html": ("Themenseite", "dossiers/", "je Thema", "oder Thema", "und Themen"),
+                     "technik/index.html": ("Themenseite",)},
+    "kurzfassungen": {"rss/index.html": ("Kurzfassung", "KI-")},
+}
+# bisherige Texte (vor Runde 19), die mit der Freigabe wieder erscheinen
+RSS_THEMEN = ('<a href="#weitere">Nur ein Gebiet oder Thema abonnieren</a>',
+              "<summary>Feeds für einzelne Gebiete und Themen</summary>",
+              "Diese Feeds enthalten nur die Vorlagen eines Gebiets oder einer Themenseite. Für einen einzelnen Vorgang",
+              "<code>feeds/vorlagen/&lt;drucksache&gt;.xml</code>, <code>dossiers/&lt;thema&gt;.xml</code>.</dd>",
+              "neue Vorlagen und Beratungsergebnisse aus ganz Köln, je Gebiet und je Thema, offen und ohne Konto.")
+RSS_OHNE_THEMEN = ('<a href="#weitere">Nur ein Gebiet abonnieren</a>',
+                   "<summary>Feeds für einzelne Gebiete</summary>",
+                   "Diese Feeds enthalten nur die Vorlagen eines Gebiets. Für einen einzelnen Vorgang",
+                   "<code>feeds/vorlagen/&lt;drucksache&gt;.xml</code>.</dd>",
+                   "neue Vorlagen und Beratungsergebnisse aus ganz Köln, je Gebiet, offen und ohne Konto.")
+RSS_KURZ = "<code>summary</code> (Art, federführendes Amt, Stand; gekennzeichnete KI-Kurzfassung, wo vorhanden).</dd>"
+RSS_OHNE_KURZ = "<code>summary</code> (Art, federführendes Amt, Stand).</dd>"
+TECHNIK_THEMEN = "Python-Paket aus requirements.txt: Bild der Themenseite als PNG zum Teilen"
+TECHNIK_OHNE_THEMEN = "Python-Paket aus requirements.txt: Umwandlung von SVG-Bildern in PNG, derzeit ungenutzt"
+
+
+def _paketdatei(name):
+    return any(fnmatch.fnmatchcase(name, m) for m in NUR_IM_PAKET)
+
+
+def _seite_bauen():
+    spec = importlib.util.spec_from_file_location("seite_bauen", ROOT / "tools" / "seite_bauen.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+class _Links(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.ziele = []
+
+    def handle_starttag(self, tag, attrs):
+        self.ziele += [v for k, v in attrs if k in ("href", "src") and v]
+
+
+def _freigaben(monkeypatch, **an):
+    for k in ("chat", "themenseiten", "kurzfassungen"):
+        monkeypatch.setitem(config.ZUSATZTHEMEN, k, an.get(k, False))
+
+
+# --- (1) Audit-Protokolle nur im Datenpaket ---------------------------------------------------------------------------
+
+def test_audits_nur_im_datenpaket(oparl, tmp_path):
+    """tools/seite_bauen.py wie im Hauptlauf (nach `package`): keine Audits, Stichproben oder Abrufstatistik als lose
+    Dateien in _site, auch nicht in Unterordnern; ein Ordner nur mit einer Stichprobe entfällt; andere TSV-Dateien
+    bleiben; das Datenpaket enthält alle; keine Links darauf; Linkprüfung ohne Befund. Dazu die Texte der gebauten
+    Datenschutz-, Feed- und Technikseite mit den Kölner Freigaben aus config.py."""
+    sessionnet.fetch_all()   # schreibt auch die Abrufstatistik nach data/export
+    build.build()
+    export.export()
+    kontext.write()
+    ebenen.write()
+    hnr = config.EXPORT / "hausnummern" / "stichprobe_hausnummern.tsv"   # Ordner nur mit einer Stichprobe
+    if not hnr.exists():
+        hnr.parent.mkdir(parents=True, exist_ok=True)
+        hnr.write_text("drucksache\turteil\n[Testdaten]\t\n", encoding="utf-8")
+    andere = config.EXPORT / "koeln" / "andere_liste.tsv"   # erfunden: keine Prüfdatei, bleibt auf der Seite
+    andere.write_text("spalte\n[Testdaten]\n", encoding="utf-8")
+    zip_pfad = paket.write()
+    site = tmp_path / "_site"
+    _seite_bauen().main(site)
+
+    in_export = {p.relative_to(config.EXPORT).as_posix() for p in config.EXPORT.rglob("*")
+                 if p.is_file() and _paketdatei(p.name)}
+    assert {"abrufstatistik.tsv", "audit_geokodierung.tsv", "audit_prozess.tsv", "audit_zeit.tsv", "audit_themen.tsv",
+            "stichprobe_geokodierung.tsv", "hausnummern/stichprobe_hausnummern.tsv"} <= in_export
+    assert [p.relative_to(site).as_posix() for p in site.rglob("*") if p.is_file() and _paketdatei(p.name)] == []
+    assert not (site / "data" / "export" / "hausnummern").exists()
+    assert (site / "data" / "export" / "koeln" / "andere_liste.tsv").read_text(encoding="utf-8") == "spalte\n[Testdaten]\n"
+    assert (site / "data" / "export" / "koeln" / "index.json").is_file()
+
+    # Datenpaket: auf dem Spiegel dieselbe Datei wie aus `package`, mit allen Audits und Stichproben
+    assert (site / "data" / "export" / "ratsatlas-koeln-export.zip").read_bytes() == zip_pfad.read_bytes()
+    with zipfile.ZipFile(zip_pfad) as z:
+        namen = set(z.namelist())
+        liesmich = z.read(f"{paket.ORDNER}/LIESMICH.txt").decode("utf-8")
+    assert {f"{paket.ORDNER}/{r}" for r in in_export} <= namen
+    assert "nur in diesem Paket, nicht als einzelne Dateien auf der Seite" in liesmich
+
+    # keine Links auf diese Dateien (innere wie äußere), innere Links heil
+    for seite in sorted(site.rglob("*.html")):
+        p = _Links()
+        p.feed(seite.read_text(encoding="utf-8"))
+        for ziel in p.ziele:
+            assert not _paketdatei(urllib.parse.urlsplit(ziel).path.rsplit("/", 1)[-1]), (seite, ziel)
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "linkpruefung.py"), str(site)], capture_output=True,
+                       text=True, timeout=300)
+    assert r.returncode == 0, r.stdout + r.stderr
+
+    # Texte zu abgeschalteten Funktionen: mit den Freigaben aus config.py
+    for funktion, seiten in OHNE_FREIGABE.items():
+        if config.ZUSATZTHEMEN.get(funktion):
+            continue
+        for rel, woerter in seiten.items():
+            html = (site / rel).read_text(encoding="utf-8")
+            assert [w for w in woerter if w in html] == [], (funktion, rel)
+    if not config.ZUSATZTHEMEN.get("chat"):
+        assert "data-funktion" not in (site / "datenschutz.html").read_text(encoding="utf-8")
+
+
+def test_hauptlauf_packt_vor_dem_zusammenstellen():
+    """pages.yml: Das Datenpaket entsteht aus ganz data/export, bevor tools/seite_bauen.py die Seite ohne die Audits
+    zusammenstellt; Branch deploy und Spiegel nehmen die fertige Seite (_site). Größenwache und Ersatz des Zip-Links
+    prüfen tests/test_workflows.py und tests/test_seite_bedienung.py."""
+    text = (ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    stellen = [text.index(s) for s in ("python -m pipeline export", "python -m pipeline package",
+                                       "python tools/seite_bauen.py _site", "cp -r _site/. _deploy/",
+                                       "rm -f _deploy/data/export/ratsatlas-koeln-export.zip", 'path: "_site"')]
+    assert stellen == sorted(stellen)
+    assert text.count("python -m pipeline package") == 1 and text.count("python tools/seite_bauen.py") == 1
+
+
+# --- (3) Texte nur mit Freigabe -----------------------------------------------------------------------------------
+
+def test_datenschutz_ratsassistent_nur_mit_freigabe(monkeypatch):
+    """site/datenschutz.html: Abschnitt „Ratsassistent (KI)“, die Einträge zum Speicher des Assistenten und der Satz
+    zu seinem Schlüssel nur mit Freigabe „chat“; mit Freigabe unverändert. Die Seite läuft durch seo.ohne_abgeschaltete
+    (seo.PAGES)."""
+    assert "datenschutz.html" in seo.PAGES
+    quelle = (ROOT / "site" / "datenschutz.html").read_text(encoding="utf-8")
+    _freigaben(monkeypatch)
+    aus = seo.ohne_abgeschaltete(quelle)
+    assert [w for w in OHNE_FREIGABE["chat"]["datenschutz.html"] if w in aus] == []
+    assert "data-funktion" not in aus
+    ueberschriften = re.findall(r"<h2>(.*?)</h2>", quelle)
+    assert "Ratsassistent (KI)" in ueberschriften
+    assert re.findall(r"<h2>(.*?)</h2>", aus) == [h for h in ueberschriften if h != "Ratsassistent (KI)"]
+    assert ("<li><code>ris-karte-farbig</code>: ob die Karte farbig oder grau erscheint</li>\n    </ul>\n    <p>Diese "
+            "Angaben verlassen Ihr Gerät nicht; sie sind für die von Ihnen gewünschten Funktionen erforderlich") in aus
+    _freigaben(monkeypatch, chat=True)
+    assert seo.ohne_abgeschaltete(quelle) == quelle
+    _freigaben(monkeypatch, themenseiten=True, kurzfassungen=True)   # andere Freigaben ändern nichts am Assistenten
+    assert seo.ohne_abgeschaltete(quelle) == aus
+
+
+def test_abschalten_auf_seiten_ohne_skript(monkeypatch):
+    """seo.ohne_abgeschaltete: section und li auf eigener Zeile fallen samt Zeile heraus, span im Fließtext ohne
+    Leerraum davor; Elemente mit hidden (Startseite, app.js) bleiben wie bisher; ein sichtbares Element einer
+    abgeschalteten Funktion in anderer Form bricht den Bau ab."""
+    _freigaben(monkeypatch)
+    beispiele = {
+        "<main>\n  <section data-funktion=\"chat\">\n  <h2>A</h2>\n  <ul><li>x</li></ul>\n  </section>\n  <h2>B</h2>\n</main>":
+            "<main>\n  <h2>B</h2>\n</main>",
+        "<ul>\n  <li data-funktion=\"chat\"><code>a</code>: A</li>\n  <li>B</li>\n</ul>": "<ul>\n  <li>B</li>\n</ul>",
+        "<p><span data-funktion=\"chat\">A (<code>a</code>). </span>B.</p>": "<p>B.</p>",
+    }
+    for html, erwartet in beispiele.items():
+        assert seo.ohne_abgeschaltete(html) == erwartet
+    versteckt = '<button type="button" class="toggle" data-funktion="chat" hidden>KI</button>'
+    assert seo.ohne_abgeschaltete(versteckt) == versteckt
+    for falsch in ('<div data-funktion="chat">A</div>', '<p data-funktion="chat">A</p>'):
+        with pytest.raises(ValueError, match="abgeschalteten Funktion"):
+            seo.ohne_abgeschaltete(falsch)
+    _freigaben(monkeypatch, chat=True)
+    for html in (*beispiele, '<div data-funktion="chat">A</div>'):
+        assert seo.ohne_abgeschaltete(html) == html
+
+
+@pytest.mark.parametrize("an", [{}, {"themenseiten": True}, {"kurzfassungen": True},
+                                {"themenseiten": True, "kurzfassungen": True}])
+def test_feedseite_themen_und_kurzfassungen_nur_mit_freigabe(monkeypatch, tmp_path, an):
+    """pipeline/rssseite.py: Feeds je Themenseite (dossiers/) und die KI-Kurzfassung im Eintrag nur mit Freigabe;
+    mit beiden Freigaben die bisherigen Texte."""
+    _freigaben(monkeypatch, **an)
+    rssseite.write(tmp_path, URL, _page)
+    html = (tmp_path / "rss" / "index.html").read_text(encoding="utf-8")
+    themen, kurz = an.get("themenseiten", False), an.get("kurzfassungen", False)
+    for alt, neu in zip(RSS_THEMEN, RSS_OHNE_THEMEN):
+        assert (alt in html, neu in html) == (themen, not themen), (alt, neu)
+    assert (RSS_KURZ in html, RSS_OHNE_KURZ in html) == (kurz, not kurz)
+    for funktion in ("themenseiten", "kurzfassungen"):
+        if not an.get(funktion):
+            assert [w for w in OHNE_FREIGABE[funktion]["rss/index.html"] if w in html] == [], funktion
+
+
+@pytest.mark.parametrize("themen", [False, True])
+def test_technikseite_themenseite_nur_mit_freigabe(monkeypatch, tmp_path, themen):
+    """pipeline/technikseite.py: die Erklärung zu cairosvg nennt die Themenseite nur mit Freigabe; Prüfprotokolle
+    stehen im Datenpaket."""
+    _freigaben(monkeypatch, themenseiten=themen)
+    technikseite.write(tmp_path, URL, _page)
+    html = (tmp_path / "technik" / "index.html").read_text(encoding="utf-8")
+    if "cairosvg" in (ROOT / "requirements.txt").read_text(encoding="utf-8"):
+        assert (TECHNIK_THEMEN in html, TECHNIK_OHNE_THEMEN in html) == (themen, not themen)
+    assert ("Themenseite" in html) == themen
+    assert "Prüfprotokolle als TSV im Datenpaket" in html and "Kurzfassung" not in html and "Ratsassistent" not in html

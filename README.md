@@ -27,7 +27,7 @@ Die Ratsinformationen werden in drei Richtungen erschlossen:
 | 🕒 | **Wann?** | Je Vorlage eine Prozesslinie: Veröffentlichung, Beratungen mit Gremium, Datum, Tagesordnungspunkt und wörtlichem Ergebnis, Folgevorlagen; kommende Sitzungen als offene Stationen. |
 | 👥 | **Wer?** | Befasste Gremien (Rat, Fachausschüsse, Bezirksvertretungen), einreichende Fraktionen und – sobald ermittelbar – die federführende Dienststelle. |
 
-Dazu gibt es eine Suche, Erklärungen der Begriffe, Feeds und einen Sitzungskalender zum Abonnieren sowie ein Datenpaket zum Weiterverwenden.
+Dazu gibt es eine Suche, Erklärungen der Begriffe, Feeds und einen Sitzungskalender zum Abonnieren sowie ein Datenpaket zum Weiterverwenden. Die Prüfprotokolle (Audits) und Stichproben zur Verortung stehen nur im Datenpaket, nicht als einzelne Dateien auf der Seite.
 
 ## Herkunft
 

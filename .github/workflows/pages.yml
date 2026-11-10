@@ -146,6 +146,9 @@ jobs:
           path: _kacheln
         continue-on-error: true
 
+      # Audit-Protokolle, Stichproben und Abrufstatistik kommen nicht als lose Dateien auf die Seite (also weder in den
+      # Branch deploy noch auf den Spiegel), sondern nur ins Datenpaket (Entscheidung 10.11.2026, tools/seite_bauen.py
+      # NUR_IM_PAKET); das Paket entsteht im Schritt davor aus ganz data/export und enthält sie daher
       - name: Seite zusammenstellen (Frontend, Exporte, Flächen, Kacheln, Adressen für SITE_URL)
         env:
           SITE_URL: ${{ vars.SITE_URL || 'https://koeln.ratsatlas.de/' }}
@@ -158,8 +161,9 @@ jobs:
       # Flacher Klon, ein Commit je Lauf: Die Historie wächst um die Änderungen (Plesk-Git räumt mit git gc auf). Ohne
       # Datenpaket (Zip, täglich vollständig neu, es käme jeden Tag ganz hinzu); auf dem eigenen Server verweist der Link
       # auf das Paket beim Spiegel (config.PAKET_URL). Größenwache: GitHub nimmt höchstens 100 MB je Datei an (in der
-      # Generalprobe lag audit_prozess.tsv bei 98,3 MB). Jede Datei über 95 MB (95 000 000 Byte) bleibt mit Warnung im
-      # Log draußen (sie liegt im Datenpaket und auf dem Spiegel GitHub Pages); der Push läuft weiter
+      # Generalprobe lag audit_prozess.tsv bei 98,3 MB; die Audits liegen seit dem 10.11.2026 nur im Datenpaket). Jede
+      # Datei über 95 MB (95 000 000 Byte) bleibt mit Warnung im Log draußen (sie liegt im Datenpaket und auf dem
+      # Spiegel GitHub Pages); der Push läuft weiter
       - name: Fertige Seite in den Branch deploy schreiben
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

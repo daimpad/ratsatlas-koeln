@@ -29,12 +29,28 @@ def sitemap(site_url, extra=()):
 
 
 AUS_FUNKTION = re.compile(r'\s*<a class="card" href="[^"]*" data-funktion="(\w+)" hidden>.*?</a>', re.S)
+# Texte zu Zusatzthemen auf Seiten ohne Skript (datenschutz.html; Entscheidung 10.11.2026): Element mit data-funktion als
+# erstem und einzigem Attribut, ohne hidden, also sichtbar, solange es da ist. Abschnitte und Listeneinträge stehen auf
+# eigenen Zeilen und fallen samt Zeile heraus, einzelne Sätze als span im Fließtext. Ein solches Element darf kein
+# Element derselben Art enthalten (die Suche endet am ersten schließenden Tag).
+AUS_BLOCK = re.compile(r'^[ \t]*<(section|li) data-funktion="(\w+)">.*?</\1>[ \t]*\n', re.S | re.M)
+AUS_SATZ = re.compile(r'<span data-funktion="(\w+)">.*?</span>', re.S)
+FUNKTION_SICHTBAR = re.compile(r'<\w+ data-funktion="(\w+)">')
 
 
 def ohne_abgeschaltete(html):
     """Karten abgeschalteter Zusatzthemen (data-funktion, config.ZUSATZTHEMEN) aus der veröffentlichten Seite entfernen,
-    damit Suchmaschinen keinen Links auf nicht erzeugte Seiten folgen; die Quelle in site/ bleibt vollständig."""
-    return AUS_FUNKTION.sub(lambda m: m.group(0) if config.ZUSATZTHEMEN.get(m.group(1)) else "", html)
+    damit Suchmaschinen keinen Links auf nicht erzeugte Seiten folgen; ebenso Abschnitte, Listeneinträge und Sätze, die
+    eine abgeschaltete Funktion beschreiben (AUS_BLOCK, AUS_SATZ). Mit Freigabe bleibt alles unverändert; die Quelle in
+    site/ bleibt vollständig. Ein sichtbares Element einer abgeschalteten Funktion in anderer Form bricht den Bau ab."""
+    an = config.ZUSATZTHEMEN.get
+    html = AUS_FUNKTION.sub(lambda m: m.group(0) if an(m.group(1)) else "", html)
+    html = AUS_BLOCK.sub(lambda m: m.group(0) if an(m.group(2)) else "", html)
+    html = AUS_SATZ.sub(lambda m: m.group(0) if an(m.group(1)) else "", html)
+    rest = [m.group(0) for m in FUNKTION_SICHTBAR.finditer(html) if not an(m.group(1))]
+    if rest:
+        raise ValueError(f"Text einer abgeschalteten Funktion nicht entfernt (nur section, li, span): {rest}")
+    return html
 
 
 def write(site=Path("_site"), site_url=None):

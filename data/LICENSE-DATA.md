@@ -1,6 +1,6 @@
 # Lizenzen der Daten
 
-Stand 07.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/` gilt:
+Stand 10.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/` gilt:
 
 | Datei | Quelle | Lizenz | Namensnennung |
 |---|---|---|---|
@@ -19,8 +19,10 @@ Stand 07.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/
 | `ebenen/lebenswerte_veedel.geojson`, `sozialraeume.geojson`, `stimmbezirke.geojson`, `baupotenziale.geojson`, `fahrradstrassen.geojson`, `denkmaeler.geojson` | Stadt Köln (offenedaten-koeln.de, Geoportal); ohne Flurstücke und Eigentumsangaben | dl-de/zero 2.0 | Datenquelle: Stadt Köln – offenedaten-koeln.de |
 | `ebenen/naturschutz.geojson` | LANUK NRW, INSPIRE Schutzgebiete (Natur-, Landschaftsschutz, FFH) | dl-de/zero 2.0 | – |
 | `ebenen/hochwasser.geojson` | Land NRW, Hochwassergefahrenkarten (HQ100, HQextrem), je Szenario zusammengefasst, um 2 m vereinfacht | dl-de/zero 2.0 (Angabe von opengeodata.nrw.de) | – |
-| `export/abrufstatistik.tsv` (entsteht beim Abruf) | eigene Protokollierung | dl-de/zero 2.0 | – |
+| `export/abrufstatistik.tsv` (entsteht beim Abruf; nur im Datenpaket) | eigene Protokollierung | dl-de/zero 2.0 | – |
 
 Die Namensnennung führt der Ratsatlas immer, auch wo die Lizenz sie nicht verlangt (CLAUDE.md 8).
+
+Prüfprotokolle (`audit_*.tsv`), Stichproben (`stichprobe_*.tsv`) und die Abrufstatistik stehen nur im Datenpaket (Zip), nicht als einzelne Dateien auf der Seite.
 
 Noch nicht enthalten: Daten der OParl-API der Stadt Köln (Abruf erst nach Information der Stadt; Lizenz laut Katalog dl-de/zero 2.0, Klärung offen). Das Kölner Straßenverzeichnis (XLSX) steht unter dl-de/by 2.0 und wird bisher nicht verwendet. Volltexte, Auszüge und PDFs werden bis zur Lizenzklärung nicht veröffentlicht (CLAUDE.md 2 und 6).
