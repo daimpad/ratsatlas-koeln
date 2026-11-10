@@ -3736,21 +3736,26 @@ def test_jahresgrenze_der_vorgangs_feeds_wie_auf_der_seite():
 def test_quellen_im_vorgang_aus_unlesbarem_meta():
     """site/app.js (Vorgangsansicht, Quellenliste): Quellen nur aus einer Liste und ohne leere Einträge (sources
     „kaputt“ oder [null] brachten bis Runde 17d die Vorgangsansicht zum Absturz); das Abrufdatum folgt der Regel des
-    Datenstands (zeitDatum, Berliner Kalendertag, unlesbar „unbekannt“), nicht mehr den ersten zehn Zeichen."""
+    Datenstands (zeitDatum, Berliner Kalendertag, unlesbar „unbekannt“), nicht mehr den ersten zehn Zeichen. Seit
+    Runde 19b ohne internen Verweis auf CLAUDE.md im Lizenztext (lizenzOeffentlich)."""
     js, teil = _app_js_teil([r"^  const esc = .*?;\n", r"^  const heute = .*?\n  const standTag = .*?\n  };\n",
+                             r"^  const lizenzOeffentlich = .*?;\n",
                              r"^    // Quellen nur aus einer Liste.*?\n    const sources = .*?\.join\(\"\"\);\n"])
     assert "String(s.retrieved_at).slice(0, 10)" not in js
     faelle = [{"sources": "kaputt"}, {"sources": [None]}, None, {},
               {"sources": [None, {"name": "oparl-koeln", "license": "CC BY 3.0 DE", "retrieved_at": "kaputt"}]},
               {"sources": [{"name": "oparl-koeln", "license": "L", "retrieved_at": "2026-11-09T23:30:00+00:00"},
-                           {"name": "osm", "license": "ODbL"}]}]
+                           {"name": "osm", "license": "ODbL"}]},
+              {"sources": [{"name": "oparl-koeln", "license": config.SOURCES[config.QUELLE_OPARL]["license"]}]}]
     code = (teil.replace("    const sources = ", "    const quellen = (meta) => { const sources = ", 1)
             .rstrip("\n") + " return sources; };\n"
             + f"console.log(JSON.stringify({json.dumps(faelle)}.map(quellen)));")
     for zone in ("UTC", "Asia/Tokyo"):
         assert _node_json(code, zone) == [
             "", "", "", "", "<li>oparl-koeln: CC BY 3.0 DE · Abruf unbekannt</li>",
-            "<li>oparl-koeln: L · Abruf 10.11.2026</li><li>osm: ODbL</li>"], zone
+            "<li>oparl-koeln: L · Abruf 10.11.2026</li><li>osm: ODbL</li>",
+            "<li>oparl-koeln: dl-de/zero 2.0 laut Katalog „OParl API Koeln“ (Klärung offen); " + config.NAMENSNENNUNG
+            + "</li>"], zone
 
 
 def test_datenstand_mit_retrieved_at_als_liste():

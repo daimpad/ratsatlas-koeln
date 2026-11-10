@@ -349,7 +349,7 @@ def export_all():
         _dump(out / "zeit.json", _time_index(db, areas, cache))
     _dump(out / "prozesse.json", _paths(db, cache))
 
-    _dump(out / "suche.json", _search_index(cache, areas, names))
+    _dump(out / "suche.json", _search_index(cache, areas, names, _meta(db, True)["sources"]))
 
     # Abonnieren und Nachnutzen (publish.py)
     home = {}
@@ -369,12 +369,16 @@ def export_all():
         _write_tsv(out / "kurzfassungen.tsv", KURZ_COLUMNS,
                    [(ref, k["text"], k["modell"], k["erzeugt"], KURZ_HINWEIS) for ref, k in sorted(kurz.items())])
     publish.write_dcat(out / "dcat.jsonld", min((p["date"] for p in cache.values() if p["date"]), default=None),
-                       stand[:10] or datetime.now(timezone.utc).date().isoformat(), kurzfassungen=bool(kurz))
+                       stand[:10] or datetime.now(timezone.utc).date().isoformat(), kurzfassungen=bool(kurz),
+                       orte=publish.ortsquellen(cache))
     n_shards = chat.write_chat(out / "chat", db, cache, meetings, sources, _meta(db, True)) if _an("chat") else 0
-    # Bebauungspläne: Register je Plannummer (Grundlage der Planchronik); leer, bis Geltungsbereiche vorliegen
+    # Bebauungspläne: Register je Plannummer (Grundlage der Planchronik); Geltungsbereich, Inkrafttreten und Link zum
+    # Plan aus den Bebauungsplänen (config.QUELLE_BPLAN), sobald die Datei vorliegt; das verlinkte Plandokument ist nicht
+    # Teil der Daten (Runde 19b)
     reg = plans.register(cache.values(), _plans())
-    _dump(out / "plaene.json", {"meta": {**_meta(db, True), "note": "Pläne und Inkrafttreten belegt (Stadt Köln, "
-                                         "Bebauungspläne); Verfahrensschritte aus dem Titel abgeleitet"}, **reg})
+    _dump(out / "plaene.json", {"meta": {**_meta(db, True), "note": "Geltungsbereich, Inkrafttreten und Link zum Plan belegt, "
+                                         "Lizenz der Bebauungspläne " + config.SOURCES[config.QUELLE_BPLAN]["license"]
+                                         + "; Verfahrensschritte aus dem Titel abgeleitet"}, **reg})
     # Bonner Zusatzthemen (deaktiviert, CLAUDE.md 5.4): Soll-Modell, Reiter „Prozesse“, Themenseiten
     if _an("soll"):
         _dump(out / "soll.json", soll.site_data())
@@ -526,12 +530,13 @@ def _sample(db, out, ortsteil, n=50, seed=2026):
                 "konfidenz", "fundstelle", "urteil (richtig/falsch/unklar)", "anmerkung"], rows)
 
 
-# --- Suche über ganz Bonn: Themen und Parteien -------------------------------------------------------
+# --- Suche über ganz Köln: Themen und Parteien -------------------------------------------------------
 
-def _search_index(cache, areas, names):
-    """Kompakter Index aller Vorlagen für die Suche über ganz Bonn. Je Zeile: Drucksache, Titel, Datum,
+def _search_index(cache, areas, names, sources=None):
+    """Kompakter Index aller Vorlagen für die Suche über ganz Köln. Je Zeile: Drucksache, Titel, Datum,
     Vorlagenart, Stand, Gebiet (zum Öffnen), Themen, eigene Parteien, Parteien der übergeordneten Vorlage
-    (z. B. Stellungnahme der Verwaltung zu einem Antrag)."""
+    (z. B. Stellungnahme der Verwaltung zu einem Antrag). meta.sources: Quellen mit Lizenz und Namensnennung wie in
+    den Gebietsdateien (ohne Abrufzeit, Runde 19b); die Seite liest meta nicht."""
     home = {}
     for key, ids in areas.items():
         if key != "gesamt":
@@ -554,7 +559,8 @@ def _search_index(cache, areas, names):
                      [party_list.index(x) for x in sorted(related - set(p["parties"]))],
                      aemter.index(p["amt"]) if p["amt"] else -1,
                      sorted({gremien.index(c["gremium"]) for c in p["process"] if c["gremium"]})])
-    return {"meta": {"note": "Themen und Parteien sind abgeleitet (siehe pipeline/topics.py); Spalten: "
+    return {"meta": {**({"sources": sources} if sources is not None else {}),
+                     "note": "Themen und Parteien sind abgeleitet (siehe pipeline/topics.py); Spalten: "
                              "Drucksache, Titel, Datum, Vorlagenart, Stand, Gebiet, Themen, Parteien, "
                              "Parteien der übergeordneten Vorlage, federführendes Amt, beratende Gremien"},
             "themes": [{"id": k, "label": v} for k, v in topics.THEMES], "parties": party_list,

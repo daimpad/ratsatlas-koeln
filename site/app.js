@@ -36,7 +36,7 @@
     ortsteil_variante: "Stadtteilname im Titel, abweichende Schreibung", stadtbezirk_name: "Stadtbezirk im Titel",
     stadtbezirk_variante: "Stadtbezirk im Titel, abweichende Schreibung",
     stadtbezirk_adjektiv: "Stadtbezirk im Titel (Adjektiv)", vererbt: "von der übergeordneten Vorlage übernommen",
-    bebauungsplan: "Bebauungsplan-Nummer im Titel, Geltungsbereich laut Stadt Köln",
+    bebauungsplan: "Bebauungsplan-Nummer im Titel, Geltungsbereich laut Bauleitplanung NRW (IT.NRW)",
     objekt_name: "Name eines Gebäudes oder einer Anlage im Titel, Lage laut OpenStreetMap",
   };
   const STATUS = {
@@ -106,6 +106,10 @@
     const oparl = (Array.isArray(m && m.sources) ? m.sources : []).find((s) => s && s.name === "oparl-koeln") || {};
     return zeitTag(oparl.retrieved_at) || zeitTag(m && m.generated_at) || heute();
   };
+  // Beginn der Daten (zeit.json data_start: ältestes Datum einer Vorlage) für Angaben wie „seit …“; ohne lesbaren
+  // Wert (Vorschau ohne Vorlagen) null, dann neutral „seit Beginn der Daten“ (Runde 19b statt des Bonner Datenbeginns)
+  const datenBeginn = () => (zeit && ISO_DAY.test(String(zeit.data_start || "")) ? zeit.data_start : null);
+  const seitBeginn = () => (datenBeginn() ? `seit ${fmtDate(datenBeginn())}` : "seit Beginn der Daten");
   const debounce = (fn, ms) => { let h; return (...a) => { clearTimeout(h); h = setTimeout(() => fn(...a), ms); }; };
 
   let index = null, zeit = null, geo = {}, meta = null, papers = [], area = null, selected = null, dataStand = null, kontext = null, anliegen = null;
@@ -923,7 +927,7 @@
     : !navMetric ? (vorschau ? "" : de(info.jahr)) : info.themen ? pct((info.themen[navMetric] || [0, 0])[1]) : "–");
   const otInfo = (l) => index.ortsteile.find((o) => o.name === l.feature.properties.ortsteil_bez) || {};
   const bzInfo = (l) => index.bezirke.find((b) => b.name === l.feature.properties.bezirk_bez) || {};
-  // Themenebene: statt der Zahl der Vorlagen der Anteil eines Themas an allen Vorlagen des Gebiets seit 2019
+  // Themenebene: statt der Zahl der Vorlagen der Anteil eines Themas an allen Vorlagen des Gebiets seit Beginn der Daten
   // (index.json, gebietszahlen.theme_shares; Themen abgeleitet); unter der Mindestzahl grau
   // navDefault: Färbung ohne Angabe im Link (sonst Zahl der Vorlagen, in der Vorschau die erste angebotene Kennzahl)
   let navMetric = "", navDefault = "";
@@ -1007,7 +1011,7 @@
     const opt = (k, v) => `<option value="${k}"${k === navMetric ? " selected" : ""}>${esc(v)}</option>`;
     navLegend.innerHTML = `<summary></summary>${themes.length || kx.length ? `<label class="nav-metric">Flächen färben nach
       <select id="nav-metric">${vorschau ? "" : '<option value="">Zahl der Vorlagen (12 Monate)</option>'}
-      ${themes.length ? `<optgroup label="Anteil eines Themas (seit 2019)">${themes.map(([k, v]) => opt(k, v)).join("")}</optgroup>` : ""}
+      ${themes.length ? `<optgroup label="Anteil eines Themas (${seitBeginn()})">${themes.map(([k, v]) => opt(k, v)).join("")}</optgroup>` : ""}
       ${kx.length ? `<optgroup label="Zahlen zum Gebiet (abgeleitet)">${kx.map(([k, v]) => opt(`kontext-${k}`, v)).join("")}</optgroup>` : ""}</select></label>` : ""}
       <div class="nav-legend-body"></div>`;
     navLegend.querySelector("#nav-metric")?.addEventListener("change", (e) => {
@@ -1082,7 +1086,7 @@
             <li><span class="nav-sw nav-sw-none" aria-hidden="true"></span>zu wenige Vorlagen (unter ${de(z.themen_min || 20)})</li></ol>
           <p>Anteil der Vorlagen mit diesem Thema an allen Vorlagen mit Ortsbezug je ${far ? "Stadtbezirk" : "Stadtteil"}; in ganz Köln ${pct((z.themen_bonn || {})[navMetric] || 0)}. <span class="derived">abgeleitet</span> Themen aus Amt, Ausschuss und Stichwort; eine Vorlage kann mehrere Themen haben.</p>`
         : `<ol class="nav-ramp">${ranges(br).map((r, k) => `<li><span class="nav-sw nav-sw${k}" aria-hidden="true"></span>${r}</li>`).join("")}</ol>
-          <p>Je ${far ? "Stadtbezirk" : "Stadtteil"}${z.seit ? `, ${fmtDate(z.seit)} bis ${fmtDate(z.bis)}` : ""}. Gezählt werden Vorlagen mit Ortsbezug im Gebiet (Verortung teils abgeleitet); mehr als die Hälfte aller Vorlagen hat keinen. „Auffällig häufig“ beim Überfahren: Thema, das im Gebiet deutlich häufiger vorkommt als in ganz Köln (abgeleitet).</p>`;
+          <p>Je ${far ? "Stadtbezirk" : "Stadtteil"}${z.seit ? `, ${fmtDate(z.seit)} bis ${fmtDate(z.bis)}` : ""}. Gezählt werden Vorlagen mit Ortsbezug im Gebiet (Verortung teils abgeleitet); Vorlagen ohne Ortsbezug zählen nicht mit. „Auffällig häufig“ beim Überfahren: Thema, das im Gebiet deutlich häufiger vorkommt als in ganz Köln (abgeleitet).</p>`;
     }
     if (far) labels(navBezirke.getLayers(), "nav-label-bz");
     else if (navFocus) labels(navOrtsteile.getLayers().filter((l) => l.feature.properties.bezirk_bez === navFocus), "nav-label-ot");
@@ -1388,7 +1392,7 @@
     return `${REPO}/issues/new?${q}`;
   }
   const link = (url, text, cls) => { const u = safeUrl(url); return u ? `<a ${cls ? `class="${cls}" ` : ""}href="${u}" target="_blank" rel="noopener">${text}</a>` : ""; };
-  // Bebauungspläne: Geltungsbereiche der Stadt (CC0), erst bei Bedarf geladen
+  // Bebauungspläne: Geltungsbereiche aus der Bauleitplanung NRW (config.QUELLE_BPLAN), erst bei Bedarf geladen
   let plansData = null, planLayer = null;
   const loadPlans = () => (plansData ||= loadGeo("bplan").catch(() => ({ features: [] })));
   async function showPlans(p, fit) {
@@ -1553,12 +1557,20 @@
     allPlans.bringToBack();
     if (outline) outline.bringToBack();
   }
-  // Register je Plannummer (data/export/bonn/plaene.json): Vorlagen chronologisch, Verfahrensschritte abgeleitet
+  // Register je Plannummer (data/export/koeln/plaene.json): Vorlagen chronologisch, Verfahrensschritte abgeleitet
   let planReg = null;
   const planIndexUrl = () => (index ? BONN + "plaene.json" : null);
   const loadPlanReg = () => (planReg ||= (planIndexUrl() ? fetch(planIndexUrl()).then((r) => (r.ok ? r.json() : null)).catch(() => null) : Promise.resolve(null)));
   const PLAN_MATCH = { eindeutig: "eindeutig zugeordnet", grundnummer: "im Datensatz nur die Grundnummer", mehrdeutig: "mehrere Pläne passen",
     nicht_im_datensatz: "nicht unter den rechtskräftigen Plänen (im Verfahren oder aufgehoben)" };
+  // Quellen der Planchronik aus den Daten (Runde 19b): plaene.json meta.sources, sonst index.json; Lizenz und
+  // Namensnennung wie in config.SOURCES. Fehlt eine Quelle, nennt die Zeile keine Lizenz, sondern die Übersicht.
+  const LIZENZEN_LINK = '<a href="data/LICENSE-DATA.md">Lizenzen der Daten</a>';
+  // Lizenztext ohne Verweis auf die Arbeitsdatei CLAUDE.md (wie config.lizenz_oeffentlich); die Daten bleiben unverändert
+  const lizenzOeffentlich = (t) => String(t ?? "").replace(/\s*\(CLAUDE\.md \d+(?:\.\d+)*\)/g, "").replace(/,\s*CLAUDE\.md \d+(?:\.\d+)*/g, "");
+  const quelleAus = (reg, name) => [reg && reg.meta && reg.meta.sources, index && index.meta && index.meta.sources]
+    .map((l) => (Array.isArray(l) ? l : []).find((s) => s && s.name === name && s.license)).find(Boolean) || null;
+  const quelleText = (reg, name) => { const q = quelleAus(reg, name); return `${esc(QUELLE_NAME[name] || name)}, ${q ? esc(lizenzOeffentlich(q.license)) : `Lizenz siehe ${LIZENZEN_LINK}`}`; };
   // detailSeq: eine langsam geladene Planchronik überschreibt keine neuere Auswahl (Code-Prüfung 23.10.2026)
   async function showPlan(key) {
     const seq = ++detailSeq;
@@ -1582,7 +1594,7 @@
       map.fitBounds(planLayer.getBounds(), { ...mapPadding(), maxZoom: 17 });
     }
     const facts = feats.map((f) => `<li><strong>${esc(f.properties.name)}</strong> – rechtskräftig seit ${fmtDate(f.properties.inkraft_seit)}
-      <span class="derived">belegt, Stadt Köln</span><br>${link(f.properties.plan, "Plan (PDF)")}${f.properties.begruendung ? " · " + link(f.properties.begruendung, "Begründung (PDF)") : ""}</li>`).join("");
+      <span class="derived">belegt, Bauleitplanung NRW</span><br>${link(f.properties.plan, "Plan (PDF)")}${f.properties.begruendung ? " · " + link(f.properties.begruendung, "Begründung (PDF)") : ""}</li>`).join("");
     const ortsteile = [...new Set(entries.flatMap((e) => e.ortsteile))];
     const match = [...new Set(entries.map((e) => e.treffer))].map((t) => PLAN_MATCH[t] || t).join("; ");
     const item = (v) => `<li><button type="button" class="link-btn" data-open-ref="${esc(v.drucksache)}">${esc(v.drucksache)}</button> · ${fmtDate(v.datum)} · ${esc(v.art || "")}<br>${esc(v.titel)}</li>`;
@@ -1596,7 +1608,7 @@
     }).join("");
     const inkraft = feats.map((f) => f.properties.inkraft_seit).filter(Boolean).sort().pop();
     const final = `<li class="step" data-status="${inkraft ? "belegt" : "soll"}"><span class="mark mark-${inkraft ? "belegt" : "soll"}" aria-hidden="true"></span>
-      <div class="step-head">Inkrafttreten (Bekanntmachung)<span class="step-status">${inkraft ? "belegt, Stadt Köln" : "soll, nicht unter den rechtskräftigen Plänen"}</span></div>
+      <div class="step-head">Inkrafttreten (Bekanntmachung)<span class="step-status">${inkraft ? "belegt, Bauleitplanung NRW" : "soll, nicht unter den rechtskräftigen Plänen"}</span></div>
       <div class="step-body">Fundstelle: § 10 Abs. 3 BauGB${inkraft ? `<br>${fmtDate(inkraft)}` : ""}</div></li>`;
     $("#detail-heading").textContent = "Bebauungsplan";
     $("#detail").innerHTML = `
@@ -1605,13 +1617,14 @@
       <dl class="facts">${ortsteile.length ? `<dt>Stadtteile</dt><dd>${esc(ortsteile.join(", "))}</dd>` : ""}
         ${match ? `<dt>Zuordnung</dt><dd>${esc(match)} <span class="derived">abgeleitet, Plannummer im Titel</span></dd>` : ""}</dl>
       ${reg ? `<h4>Planchronik</h4>
-        <p class="hint">Verfahrensschritte nach BauGB als Soll; eine Vorlage ist einem Schritt zugeordnet, wenn ihr Titel ihn nennt (abgeleitet). Vereinfachte Verfahren (§§ 13, 13a BauGB) kennen weniger Schritte. „soll“ heißt: keine Vorlage seit Oktober 2019 nennt den Schritt – nicht, dass er fehlt.</p>
+        <p class="hint">Verfahrensschritte nach BauGB als Soll; eine Vorlage ist einem Schritt zugeordnet, wenn ihr Titel ihn nennt (abgeleitet). Vereinfachte Verfahren (§§ 13, 13a BauGB) kennen weniger Schritte. „soll“ heißt: keine Vorlage ${datenBeginn() ? `seit dem ${fmtDate(datenBeginn())} (Beginn der Daten)` : "in den Daten"} nennt den Schritt – nicht, dass er fehlt.</p>
         <ol class="steps">${steps}${final}</ol>
         <h4>Vorlagen mit dieser Plannummer (${vorlagen.length})</h4>
         ${vorlagen.length ? `<ol class="related plan-papers">${vorlagen.map(item).join("")}</ol>` : "<p>Keine Vorlage nennt diese Plannummer im Titel.</p>"}` : ""}
       <details class="acc"><summary>Quellen</summary><ul>
-        <li>Geltungsbereich, Inkrafttreten, Plan und Begründung: Stadt Köln, Lage der Bebauungspläne (CC0)</li>
-        <li>Vorlagen: OParl-API der Stadt Köln (CC0); Zuordnung über die Plannummer im Titel (abgeleitet)</li></ul></details>`;
+        <li>Geltungsbereich, Inkrafttreten und Link zum Plan: ${quelleText(reg, "bplan-koeln")}</li>
+        <li>Vorlagen: ${quelleText(reg, "oparl-koeln")}; Zuordnung über die Plannummer im Titel (abgeleitet)</li>
+        <li>${LIZENZEN_LINK}</li></ul></details>`;
     $("#announce").textContent = `Bebauungsplan ${key} geöffnet`;
     if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
     $("#detail").scrollTop = 0;
@@ -1876,7 +1889,7 @@
     const rel = (arr) => arr.map((r) => `<li>${esc(r.reference)} · ${esc(r.paper_type)} – ${esc(r.name)}</li>`).join("");
     // Quellen nur aus einer Liste (sonst keine), ohne leere Einträge; Abrufdatum nach der Regel des Datenstands (zeitDatum)
     const sources = (Array.isArray(meta && meta.sources) ? meta.sources.filter(Boolean) : [])
-      .map((s) => `<li>${esc(s.name)}: ${esc(s.license)}${s.retrieved_at ? ` · Abruf ${zeitDatum(s.retrieved_at)}` : ""}</li>`).join("");
+      .map((s) => `<li>${esc(s.name)}: ${esc(lizenzOeffentlich(s.license))}${s.retrieved_at ? ` · Abruf ${zeitDatum(s.retrieved_at)}` : ""}</li>`).join("");
     $("#detail-heading").textContent = "Vorgang";
     $("#detail").innerHTML = `
       <h3 tabindex="-1">${esc(p.name)}</h3>

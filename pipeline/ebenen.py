@@ -298,9 +298,12 @@ def write():
                 out["_teil"] = TEILE.get(pr["_teil"], pr["_teil"])
             return out
         gj = {"features": [{**f, "properties": eigenschaften(f["properties"])} for f in gj["features"]]}
-        data = flaechen.simplify(gj, TOLERANZ) if q["art"] != "punkt" else gj
-        (ziel / f"ebene_{key}.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n")
+        data = flaechen.simplify(gj, TOLERANZ) if q["art"] != "punkt" else {"type": "FeatureCollection", **gj}
         s = stand.get(key, {})
+        # Quelle, Lizenz mit Namensnennung und Abruf wie in ebenen.json (Runde 19b); die Seite liest nur `features`
+        data["meta"] = {"quelle": q["quelle"], "url": q["url"], "lizenz": q["lizenz"], "stand": s.get("abgerufen"),
+                        "hinweis": "Ausgewählte Felder, für die Karte vereinfacht; verbindlich ist die Quelle."}
+        (ziel / f"ebene_{key}.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n")
         verzeichnis.append({"key": key, "kurz": q.get("kurz", q["titel"]), "titel": q["titel"], "gruppe": q["gruppe"], "art": q["art"], "farbe": q["farbe"],
                             "datei": f"flaechen/ebene_{key}.json", "felder": FELDTITEL.get(key, {}),
                             "quelle": q["quelle"], "url": q["url"], "lizenz": q["lizenz"],

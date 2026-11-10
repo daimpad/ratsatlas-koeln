@@ -220,7 +220,9 @@ def write_geojson(path, cache, sources):
                  "Anregungen und Beschwerden nach § 24 GO NRW oder bei leerer oder nicht erkennbarer Vorlagenart. In "
                  "Titeln von Vorlagen aus der Einwohnerschaft ist die Hausnummer ausgeblendet, das Original verlinkt "
                  "`web`. Ortsbezüge mit location_source 'osm' sind aus "
-                 "OpenStreetMap abgeleitet (ODbL 1.0); übrige Felder dl-de/zero 2.0. " + config.NAMENSNENNUNG + "."},
+                 "OpenStreetMap abgeleitet (ODbL 1.0), mit location_source 'bplan-koeln' aus den Bebauungsplänen, Lizenz "
+                 + config.SOURCES[config.QUELLE_BPLAN]["license"] + "; übrige Felder dl-de/zero 2.0. "
+                 + config.NAMENSNENNUNG + "."},
         "features": features}, ensure_ascii=False, separators=(",", ":")))
     return len(features)
 
@@ -230,21 +232,113 @@ def _bbox_wkt():
     return f"POLYGON(({w} {s}, {e} {s}, {e} {n}, {w} {n}, {w} {s}))"
 
 
-def write_dcat(path, data_start, modified, kurzfassungen=False):
+# Lizenz und Rechtehinweis je DCAT-Verteilung aus den Teilen, die sie enthält (Runde 19b). DCAT-AP.de kennt je
+# Verteilung eine Lizenz; enthält eine Datei Daten unter mehreren Lizenzen, steht dort die strengste (RANG). dl-de/zero
+# 2.0 erlaubt jede Nutzung ohne Bedingung, also auch die Weitergabe zusammen mit Daten unter dl-de/by 2.0; wer die
+# Datei als Ganze nach dl-de/by 2.0 nutzt (mit Namensnennung), hält die Bedingungen aller Teile ein. dct:rights nennt
+# Lizenz und Namensnennung jedes Teils: aus config.SOURCES, für Kennzahlen und Kartenebenen aus deren Ständen.
+RANG = ("odbl", "dl-de-by", "dl-de-zero")
+LIZENZ_MUSTER = (("odbl", re.compile(r"ODbL")), ("dl-de-by", re.compile(r"dl-de/by")),
+                 ("dl-de-zero", re.compile(r"dl-de/zero")))
+TEIL_NAME = {config.QUELLE_OPARL: "Ratsinformationssystem der Stadt Köln (OParl-API)",
+             config.QUELLE_GEO: "Stadtteile und Stadtbezirke", config.QUELLE_STRASSEN: "Straßen",
+             config.QUELLE_ADRESSEN: "Adressen", config.QUELLE_BPLAN: "Bebauungspläne",
+             "osm": "Ortsbezüge aus OpenStreetMap"}
+RIS_TEILE = (config.QUELLE_OPARL, config.QUELLE_GEO, config.QUELLE_STRASSEN, config.QUELLE_ADRESSEN)
+
+
+def _teil(name):
+    """(Bezeichnung, Lizenz mit Namensnennung) einer Quelle aus config.SOURCES; bei OpenStreetMap ohne den Zusatz zum
+    Kartenhintergrund, denn hier geht es um Ortsbezüge; ohne internen Verweis auf CLAUDE.md (config.lizenz_oeffentlich)."""
+    lizenz = config.lizenz_oeffentlich(config.SOURCES[name]["license"])
+    return TEIL_NAME[name], (lizenz.split(" (Kartenhintergrund")[0] if name == "osm" else lizenz)
+
+
+def lizenz_der_teile(teile):
+    """Schlüssel in LICENCE für eine Verteilung aus ihren Teilen [(Bezeichnung, Lizenztext)]: die strengste. Ein Teil
+    ohne bekannte Lizenz bricht ab, statt still als dl-de/zero zu gelten."""
+    if not teile:
+        raise ValueError("DCAT: Verteilung ohne Teile")
+    stufen = set()
+    for name, text in teile:
+        treffer = [k for k, m in LIZENZ_MUSTER if m.search(text)]
+        if not treffer:
+            raise ValueError(f"DCAT: Lizenz von „{name}“ nicht erkannt: {text}")
+        stufen.add(min(treffer, key=RANG.index))
+    return min(stufen, key=RANG.index)
+
+
+def _rechte(teile):
+    """Rechtehinweis: je Lizenz die Teile, die darunter stehen (gleiche Angaben zusammengefasst, getrennt durch „ · “,
+    weil Bezeichnungen Kommas enthalten), dann der Verweis auf die Lizenzübersicht je Datei."""
+    gruppen = {}
+    for name, text in teile:
+        gruppen.setdefault(text, []).append(name)
+    return ("; ".join(f"{' · '.join(dict.fromkeys(namen))}: {text}" for text, namen in gruppen.items())
+            + f". Lizenzen je Datei: {config.SITE_URL}data/LICENSE-DATA.md")
+
+
+def _kontext_teile():
+    """Quellen der Kennzahlen wie in kontext.json (meta.quellen): Titel und Lizenz aus den Ständen in data/kontext/."""
+    from . import kontext
+    return [(q.get("titel") or k, q.get("lizenz") or "") for k, q in sorted(kontext.quellen_stand().items())]
+
+
+def _ebenen_teile():
+    """Quellen der Kartenebenen wie in ebenen.json (Schritt `ebenen` läuft, sobald data/ebenen/STAND.json da ist): nur
+    Ebenen, deren Datei unter data/ebenen/ liegt."""
+    from . import ebenen
+    if not ebenen.STAND.exists():
+        return []
+    return [(q["quelle"], q["lizenz"]) for k, q in ebenen.QUELLEN.items() if (ebenen.EBENEN / f"{k}.geojson").exists()]
+
+
+def ortsquellen(cache):
+    """location_source der Punkte, die write_geojson schreibt (nur Orte mit Koordinate)."""
+    return {loc["source"] for p in cache.values() for loc in p["locations"] if loc["lon"] is not None}
+
+
+def _ortsquellen(ordner):
+    """Ohne Angabe von export.py: location_source der Punkte in vorlagen.geojson neben dcat.jsonld. Fehlt die Datei,
+    gelten die Bebauungspläne als enthalten, sobald es sie gibt (vorsichtig: dann dl-de/by 2.0)."""
+    datei = Path(ordner) / "vorlagen.geojson"
+    if not datei.exists():
+        return {config.QUELLE_BPLAN} if config.BPLAN.exists() else set()
+    return {f["properties"].get("location_source") for f in json.loads(datei.read_text(encoding="utf-8"))["features"]}
+
+
+def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
+    """DCAT-Beschreibung; orte: location_source der Punkte in vorlagen.geojson (ortsquellen), sonst aus der Datei."""
     site, base = config.SITE_URL, f"{config.SITE_URL}data/export/"
     # zeit.json schreibt export.py nur mit Vorlagen (nicht in der Vorschau): nur aufführen, was daneben liegt
     zeit = (Path(path).parent / "zeit.json").exists()
     mt = "https://www.iana.org/assignments/media-types/"
-    rights = ("Felder aus der OParl-API der Stadt Köln (Lizenz laut Katalog dl-de/zero 2.0, Klärung offen) und aus den "
-              "Kölner Geodaten (dl-de/zero 2.0); " + config.NAMENSNENNUNG + ". Ortsbezüge aus OpenStreetMap, falls "
-              "vorhanden, ODbL 1.0. Einzelheiten: " + f"{site}data/LICENSE-DATA.md")
+    bplan = config.BPLAN.exists()
+    kontext_an = config.ZUSATZTHEMEN.get("kontext") and (config.ROOT / "data" / "kontext" / "STAND.json").exists()
+    orte = _ortsquellen(Path(path).parent) if orte is None else set(orte)
+    ris = [_teil(n) for n in RIS_TEILE]
+    teile = {
+        "vorlagen": ris + [_teil(n) for n in (config.QUELLE_BPLAN, "osm") if n in orte],
+        "zeit": [_teil(config.QUELLE_OPARL), _teil(config.QUELLE_GEO)],
+        "oparl": [_teil(config.QUELLE_OPARL)],
+        # plaene.json entsteht nach dcat.jsonld: Inkrafttreten und Link zum Plan stammen aus den Bebauungsplänen, sobald
+        # es sie gibt
+        "plaene": [_teil(config.QUELLE_OPARL)] + ([_teil(config.QUELLE_BPLAN)] if bplan else []),
+        "kontext": ([_teil(config.QUELLE_GEO)] + _kontext_teile()) if kontext_an else [],
+        "ebenen": _ebenen_teile(),
+    }
+    # Datenpaket: alle Exporte, Audits und data/geo (pipeline/paket.py), dazu Kennzahlen (wenn freigegeben) und Ebenen
+    teile["paket"] = list(dict.fromkeys(ris + [_teil(n) for n in ("osm",) if n in orte]
+                                        + ([_teil(config.QUELLE_BPLAN)] if bplan or config.QUELLE_BPLAN in orte else [])
+                                        + teile["kontext"] + teile["ebenen"]))
 
-    def dist(name, file, media, licence, desc):
+    def dist(name, file, media, teil, desc, licence=None):
         url = file if file.startswith("https://") else f"{base}{file}"
         return {"@id": url, "@type": "dcat:Distribution", "dct:title": {"@language": "de", "@value": name},
                 "dct:description": {"@language": "de", "@value": desc}, "dcat:accessURL": {"@id": url},
                 "dcat:downloadURL": {"@id": url}, "dcat:mediaType": {"@id": mt + media},
-                "dct:license": {"@id": LICENCE[licence]}, "dct:rights": {"@type": "dct:RightsStatement", "rdfs:label": rights}}
+                "dct:license": {"@id": LICENCE[licence or lizenz_der_teile(teile[teil])]},
+                "dct:rights": {"@type": "dct:RightsStatement", "rdfs:label": _rechte(teile[teil])}}
 
     doc = {
         "@context": {"dcat": "http://www.w3.org/ns/dcat#", "dct": "http://purl.org/dc/terms/",
@@ -272,34 +366,38 @@ def write_dcat(path, data_start, modified, kurzfassungen=False):
         "dct:source": [{"@id": config.OPARL_BODY}],
         "dcat:landingPage": {"@id": site},
         "dcat:distribution": [
-            dist("Verortete Vorlagen (GeoJSON)", f"{config.STADT}/vorlagen.geojson", "application/geo+json", "dl-de-zero",
+            dist("Verortete Vorlagen (GeoJSON)", f"{config.STADT}/vorlagen.geojson", "application/geo+json", "vorlagen",
                  "Ein Punkt je Vorlage und Ort mit Stufe, Methode, Konfidenz und Fundstelle der Verortung."),
-            dist("Datenpaket (Zip)", config.PAKET_URL, "application/zip", "dl-de-zero",
+            dist("Datenpaket (Zip)", config.PAKET_URL, "application/zip", "paket",
                  "Exporte (ohne Feeds), Prüfprotokolle und Stichproben (TSV, nur in diesem Paket, nicht als einzelne "
                  "Dateien auf der Seite), Abrufstatistik, abgeleitete Geodaten, Berichte der Projektphasen und "
                  "Lizenzübersicht."),
-        ] + ([dist("Zeitleiste: Monatsaggregate (JSON)", f"{config.STADT}/zeit.json", "application/json", "dl-de-zero",
+        ] + ([dist("Zeitleiste: Monatsaggregate (JSON)", f"{config.STADT}/zeit.json", "application/json", "zeit",
                    "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden.")] if zeit else []) + [
-            dist("Typische Wege je Vorlagenart (JSON)", f"{config.STADT}/prozesse.json", "application/json", "dl-de-zero",
+            dist("Typische Wege je Vorlagenart (JSON)", f"{config.STADT}/prozesse.json", "application/json", "oparl",
                  "Häufigste Abfolgen von Beratungen und Ergebnissen je Vorlagenart."),
-            dist("Sitzungskalender (iCalendar)", f"{config.STADT}/termine.ics", "text/calendar", "dl-de-zero",
+            dist("Sitzungskalender (iCalendar)", f"{config.STADT}/termine.ics", "text/calendar", "oparl",
                  "Sitzungen von Rat, Ausschüssen und Bezirksvertretungen mit Links zur Tagesordnung."),
-            dist("Planregister Bebauungspläne (JSON)", f"{config.STADT}/plaene.json", "application/json", "dl-de-zero",
+            dist("Planregister Bebauungspläne (JSON)", f"{config.STADT}/plaene.json", "application/json", "plaene",
                  "Je Plannummer aus Vorlagentiteln: Vorlagen mit den im Titel genannten Verfahrensschritten nach BauGB "
-                 "(abgeleitet); Geltungsbereiche folgen, sobald eine Bezugsquelle vorliegt."),
-        ] + ([dist("KI-Kurzfassungen (TSV)", f"{config.STADT}/kurzfassungen.tsv", "text/tab-separated-values", "cc-by",
+                 "(abgeleitet)" + ("; für rechtsverbindliche Pläne Inkrafttreten und Link zum Plan aus der Schnittstelle "
+                                   "„Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW), die Geltungsbereiche in "
+                                   "flaechen/bebauungsplaene.json." if bplan else
+                                   "; ohne Geltungsbereiche und Inkrafttreten (keine Bebauungspläne im Datenstand).")),
+        ] + ([dist("KI-Kurzfassungen (TSV)", f"{config.STADT}/kurzfassungen.tsv", "text/tab-separated-values", "oparl",
                    "Mit einem Sprachmodell aus dem Text der Hauptdokumente formulierte Kurzfassungen, abgeleitet und "
-                   "gekennzeichnet; kein Zitat, Einzelheiten können ungenau sein. Maßgeblich ist das Original.")]
+                   "gekennzeichnet; kein Zitat, Einzelheiten können ungenau sein. Maßgeblich ist das Original.",
+                   licence="cc-by")]
              if kurzfassungen else [])
-          + ([dist("Kennzahlen je Stadtteil (JSON)", f"{config.STADT}/kontext.json", "application/json", "dl-de-by",
+          + ([dist("Kennzahlen je Stadtteil (JSON)", f"{config.STADT}/kontext.json", "application/json", "kontext",
                    f"Kennzahlen je Stadtteil, Stadtbezirk und für ganz {config.STADT_NAME} zur Einordnung von Vorlagen: "
                    "Einwohner und Altersanteile und Nettokaltmiete (Zensus 2022, © Destatis), Bodenrichtwert Wohnbauland "
                    "(BORIS NRW), Haltestellen (VRS), Kitas und Schulen (Land NRW), Hitze (Klimaanalyse NRW), "
                    "Überschwemmungsgebiete (Land NRW); auf Stadtteile umgerechnet (abgeleitet), je Kennzahl mit Quelle, "
-                   "Lizenz und Stand."),
-              dist("Kartenebenen (JSON)", f"{config.STADT}/ebenen.json", "application/json", "dl-de-by",
-                   "Verzeichnis der zuschaltbaren Kartenebenen aus offenen Daten der Stadt, des Landes und des Bundes mit "
-                   "Quelle, Lizenz und Stand je Ebene; die Flächen liegen unter flaechen/ebene_*.json.")]
-             if config.ZUSATZTHEMEN.get("kontext") and (config.ROOT / "data" / "kontext" / "STAND.json").exists() else []),
+                   "Lizenz und Stand.")] if kontext_an else [])
+          + ([dist("Kartenebenen (JSON)", f"{config.STADT}/ebenen.json", "application/json", "ebenen",
+                   "Verzeichnis der zuschaltbaren Kartenebenen aus offenen Daten der Stadt und des Landes mit Quelle, "
+                   "Lizenz und Stand je Ebene; die Flächen liegen unter flaechen/ebene_*.json.")]
+             if kontext_an and teile["ebenen"] else []),
     }
     path.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n")
