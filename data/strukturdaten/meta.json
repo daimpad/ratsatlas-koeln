@@ -18,6 +18,17 @@
  "einwohner_indikator": "koeln_A0355A",
  "quellobjekt": "werte.tsv: Zelle im Blatt Daten der XLSX-Datei mit der Prüfsumme unter quellen[] (Daten!<Spalte><Zeile>; Spalte = Indikator, Zeile = Jahr und Raum). gesamtstadt.tsv: Zelle des Wegweiser-Exports (Indikator, Jahr, Kommune).",
  "gesamtstadt_ka": "Jahre mit „k.A.“ im Wegweiser-Export stehen nicht in gesamtstadt.tsv (der Vertrag sieht dort keinen Status vor); der Metatext des Indikators nennt sie.",
+ "typ_einordnung": "typ und einheit stehen nicht in den Quellen; es sind eigene Einordnungen. Statistischer Datenkatalog Köln: typ und einheit aus Phase 0 nach der Formatspalte des Blatts Katalog (abs, %, andere) und dem Namen, Begründung je Indikator in pipeline/strukturdaten_koeln.tsv (Spalte typ_begruendung); zaehler_id und nenner_id nur, wo die Beziehung in jeder Zeile nachgerechnet ist. Wegweiser Kommune: typ nach Name, Einheit und Berechnung laut Indikatorliste des Wegweisers, einheit unverändert aus der Indikatorliste. Vorläufige Einordnungen stehen unter typ_vorlaeufig und im Metatext.",
+ "typ_vorlaeufig": {
+  "ww_bevoelkerungsentwicklung-ueber-die-letzten-5-jahre": "Veränderungsrate über fünf Jahre, kein Bestandsverhältnis; der Datenvertrag v1 kennt keinen Typ für Veränderungsraten (die Kölner Veränderungsraten koeln_A0547S und koeln_A0548S sind aus diesem Grund zurückgestellt). Offen: Typ quote bestätigen oder einen Typ für Veränderungsraten in eine Vertragsversion 2 aufnehmen"
+ },
+ "formate": {
+  "dateien": "TSV in UTF-8 ohne BOM, Tabulator als Trennzeichen, Zeilenende LF, erste Zeile mit den Spaltennamen, ohne Anführungszeichen; Felder ohne Tabulator und Zeilenumbruch.",
+  "wert": "Zahl mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und ohne Exponent, Ziffern wie in der Quelle; in werte.tsv leer bei status geheim und fehlt; gesamtstadt.tsv enthält nur Zeilen mit Wert.",
+  "jahre": "indikatoren.tsv: Jahre, für die werte.tsv mindestens eine Zeile mit status ok oder geheim hat (Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und aufsteigend, aufeinanderfolgende Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon ohne Leerzeichen getrennt, z. B. 2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile gibt.",
+  "raumebenen": "indikatoren.tsv: Raumebenen, für die werte.tsv mindestens eine Zeile mit status ok oder geheim hat (Wegweiser: gesamtstadt), durch Semikolon ohne Leerzeichen getrennt, in der Reihenfolge von raumebenen (gesamtstadt;stadtbezirk;stadtteil)."
+ },
+ "geheimhaltung_hinweis": "status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen oder Teilgrößen hinweg.",
  "quellen": [
   {
    "kennung": "statistischer-datenkatalog-koeln",

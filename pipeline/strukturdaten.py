@@ -15,13 +15,18 @@ Schritte:
   ohne Weiterleitungen, mit dem User-Agent des Projekts und mindestens `abruf.MINDESTABSTAND` Sekunden zwischen den
   Anfragen. Jede Anfrage an eine nicht lokale Adresse braucht `STRUKTURDATEN_ABRUF=ja` (Freigabe je Abruf durch den
   Auftraggeber). Adressen der Stadt (`abruf.stadt`) gelten wie in pipeline/abruf.py: nur mit
-  `RATSATLAS_STADT_INFORMIERT=ja` und im Zeitfenster (`config.ABRUF_ZEITFENSTER`), sonst „nicht gesendet“. Zuerst wird
+  `RATSATLAS_STADT_INFORMIERT=ja` und im Zeitfenster (`config.ABRUF_ZEITFENSTER`), sonst „nicht gesendet“. Ohne
+  Kontakt im User-Agent (`RATSATLAS_KONTAKT`, CLAUDE.md 5.1) geht keine Anfrage an eine nicht lokale Adresse oder einen
+  Server der Stadt: Einstellungsfehler (ValueError wie in pipeline/sessionnet.py), nichts gesendet, nicht gezählt, im
+  Protokoll „nicht gesendet (einstellung)“. Zuerst wird
   `info.version` der Wegweiser-OpenAPI mit dem zuletzt veröffentlichten Stand (meta.json) verglichen; weicht sie ab,
   bricht der Lauf vor jeder weiteren Anfrage ab (Fortsetzung nach Prüfung mit
   `STRUKTURDATEN_OPENAPI_BESTAETIGT=<neue Version>`). Rohdateien liegen im Zwischenspeicher außerhalb der versionierten
   Dateien (`STRUKTURDATEN_DL`, Vorgabe _kontext_dl/strukturdaten/), das Protokoll dort in audit_abruf.tsv (quelle, url,
-  zeitstempel, http_status, zeilen, pruefsumme, hinweis). Eine Datei ersetzt die vorige erst, wenn sie vollständig und
-  lesbar ist.
+  zeitstempel, http_status, zeilen, pruefsumme, hinweis). Die XLSX ersetzt die vorige erst, wenn sie vollständig und
+  lesbar ist. Die fünf Wegweiser-Dateien eines Laufs liegen zunächst im Unterordner `STUFE` und ersetzen die vorigen
+  gemeinsam, sobald alle fünf vollständig und lesbar sind; sonst werden sie verworfen (Protokoll „verworfen (Lauf
+  unvollständig)“), und die vorigen bleiben. So stammen Datenversion, Listen und Export immer aus demselben Lauf.
 - `strukturdaten` (ohne Netz): normalisiert die Dateien des Zwischenspeichers (einzeln überschreibbar mit
   STRUKTURDATEN_XLSX, STRUKTURDATEN_WW_EXPORT, STRUKTURDATEN_WW_INDIKATOREN, STRUKTURDATEN_WW_REGIONEN,
   STRUKTURDATEN_WW_VERSION, STRUKTURDATEN_WW_OPENAPI, STRUKTURDATEN_PROTOKOLL) nach data/strukturdaten/
@@ -39,7 +44,9 @@ Typ, Einheit sowie Zähler und Nenner der Kölner Indikatoren stammen aus Phase 
 abgeleitet, nicht aus der Quelle). Zähler und Nenner stehen nur dort, wo Phase 0 sie numerisch geprüft hat, und nur,
 wenn die Beziehung in der aktuellen Datei weiter in jeder Zeile gilt (Abweichung höchstens eine Einheit der letzten
 veröffentlichten Stelle). In Phase 0 als unsicher eingestufte Typen, Spalten ohne Klassifikation und die
-Wegweiser-Indikatoren mit einem Unternehmen als Datenhalter werden zurückgestellt (zurueckgestellt.tsv).
+Wegweiser-Indikatoren mit einem Unternehmen als Datenhalter werden zurückgestellt (zurueckgestellt.tsv). Den Typ der
+Wegweiser-Indikatoren ordnet dieses Modul selbst ein (`WW_AUSWAHL`); vorläufige Einordnungen (`WW_TYP_VORLAEUFIG`)
+nennen Metatext und meta.json. meta.json beschreibt außerdem die Schreibweise der Felder (`formate`).
 """
 import csv
 import hashlib
@@ -98,6 +105,16 @@ WW_AUSWAHL = {
     "auslaenderanteil": "anteil",
     "wohnflaeche-pro-person": "mittelwert",
 }
+# Vorläufige Einordnungen bis zur Entscheidung des Auftraggebers (Prüfung r1, 10.11.2026): Grund für meta.json
+# (typ_vorlaeufig) und kurzer Satz für den Metatext
+WW_TYP_VORLAEUFIG = {
+    "bevoelkerungsentwicklung-ueber-die-letzten-5-jahre": (
+        "Veränderungsrate über fünf Jahre, kein Bestandsverhältnis; der Datenvertrag v1 kennt keinen Typ für "
+        "Veränderungsraten (die Kölner Veränderungsraten koeln_A0547S und koeln_A0548S sind aus diesem Grund "
+        "zurückgestellt). Offen: Typ quote bestätigen oder einen Typ für Veränderungsraten in eine Vertragsversion 2 "
+        "aufnehmen",
+        "Veränderungsrate; der Datenvertrag v1 kennt keinen Typ für Veränderungsraten"),
+}
 # Zurückgestellt bis zur Klärung: Datenhalter ist ein Unternehmen (Nexiga GmbH); ob die Stiftung diese Werte unter CC0
 # stellen darf, ist nicht belegt (Phase 0, Entscheidung 10.11.2026)
 WW_ZURUECKGESTELLT = ("einpersonen-haushalte", "haushalte-mit-kindern")
@@ -127,6 +144,10 @@ DATEIEN = {
     "ww_export": ("wegweiser_export.csv", "STRUKTURDATEN_WW_EXPORT"),
 }
 PROTOKOLL = ("audit_abruf.tsv", "STRUKTURDATEN_PROTOKOLL")
+# Wegweiser-Dateien: nur gemeinsam aus einem Lauf übernommen (Unterordner STUFE des Zwischenspeichers bis dahin)
+WW_DATEIEN = tuple(k for k in DATEIEN if k.startswith("ww_"))
+STUFE = "lauf_wegweiser"
+VERWORFEN = "verworfen (Lauf unvollständig)"
 # Reihenfolge des Abrufs: zuerst die OpenAPI-Beschreibung (Prüfung von info.version), die Datei der Stadt zuletzt
 ABRUFE = [
     ("ww_openapi", WW + "/openapi?format=JSON", "wegweiser-kommune"),
@@ -224,15 +245,17 @@ def de_zahl(text):
     return text.replace(".", "").replace(",", ".")
 
 
-def jahre_text(jahre):
-    """Jahre als Bereiche: „2012–2025“, Lücken getrennt durch Semikolon („2012–2014;2016–2025“)."""
+def jahre_text(jahre, strich="-"):
+    """Jahre als Bereiche: „2012-2025“, Lücken getrennt durch Semikolon („2012-2014;2016-2025“). `strich` trennt Anfang
+    und Ende eines Bereichs: im Feld `jahre` der ASCII-Bindestrich (Schreibweise in meta.json, `formate`), im
+    Fließtext des Metatexts der Gedankenstrich."""
     jahre = sorted({int(j) for j in jahre})
     teile, start = [], None
     for i, j in enumerate(jahre):
         if start is None:
             start = j
         if i + 1 == len(jahre) or jahre[i + 1] != j + 1:
-            teile.append(str(j) if start == j else f"{start}–{j}")
+            teile.append(str(j) if start == j else f"{start}{strich}{j}")
             start = None
     return ";".join(teile)
 
@@ -337,6 +360,7 @@ class _Lauf:
         self.letzte = None          # Ende der letzten Antwort (time.monotonic)
         self.version_geprueft = False
         self.ergebnis = []          # (Schlüssel, Ergebnis)
+        self.gestuft = {}           # Wegweiser-Dateien dieses Laufs in STUFE: Schlüssel → (Quelle, URL, Prüfsumme)
 
     def protokollieren(self, quelle, url, status, zeilen="", summe="", hinweis=""):
         neu = not self.protokoll.exists()
@@ -361,6 +385,14 @@ class _Lauf:
                 raise NichtGesendet(f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr (Server der Stadt)")
         if schluessel.startswith("ww_") and schluessel != "ww_openapi" and not self.version_geprueft:
             raise NichtGesendet("info.version der Wegweiser-OpenAPI nicht geprüft")
+        # Einstellungsfehler (ValueError, laut, nicht gezählt), erst nach den Gründen, aus denen ohnehin nichts gesendet
+        # wird: Kontakt im User-Agent ist Pflicht (CLAUDE.md 5.1, wie sessionnet._einstellungen_pruefen)
+        if (not abruf.lokal(url) or abruf.stadt(url)) and not config.KONTAKT:
+            raise ValueError("RATSATLAS_KONTAKT fehlt (Kontakt im User-Agent ist Pflicht, CLAUDE.md 5.1; in GitHub "
+                             "Actions als Repository-Variable setzen); keine Anfrage gesendet")
+        if any(ord(z) < 32 or ord(z) == 127 for z in config.USER_AGENT):
+            raise ValueError(f"User-Agent enthält Steuerzeichen (RATSATLAS_KONTAKT prüfen): {config.USER_AGENT!r}; "
+                             "keine Anfrage gesendet")
         if self.anfragen >= MAX_ANFRAGEN:
             raise Abbruch(f"Obergrenze von {MAX_ANFRAGEN} Anfragen je Lauf erreicht", "obergrenze")
 
@@ -407,9 +439,14 @@ class _Lauf:
         except Abbruch as e:
             self.protokollieren(quelle, url, f"nicht gesendet ({e.art})", hinweis=str(e))
             raise
+        except ValueError as e:   # Einstellungsfehler: nichts gesendet
+            self.protokollieren(quelle, url, "nicht gesendet (einstellung)", hinweis=str(e))
+            raise
         dl = zwischenspeicher()
-        dl.mkdir(parents=True, exist_ok=True)
-        ziel = dl / DATEIEN[schluessel][0]
+        ww = schluessel in WW_DATEIEN
+        ordner = dl / STUFE if ww else dl
+        ordner.mkdir(parents=True, exist_ok=True)
+        ziel = ordner / DATEIEN[schluessel][0]
         tmp = ziel.with_name(ziel.name + ".tmp")
         try:
             status, summe, _ = self.senden(url, tmp)
@@ -439,7 +476,7 @@ class _Lauf:
         if schluessel == "ww_openapi":
             neu, alt = openapi_version(tmp), letzte_openapi_version()
             if alt is not None and neu != alt and os.environ.get("STRUKTURDATEN_OPENAPI_BESTAETIGT") != neu:
-                tmp.replace(ziel.with_name("wegweiser_openapi.neu.json"))
+                tmp.replace(dl / "wegweiser_openapi.neu.json")
                 self.protokollieren(quelle, url, str(status), zeilen, summe,
                                     f"{hinweis}; zuletzt {alt}: Lauf abgebrochen")
                 raise Abbruch(f"info.version der Wegweiser-OpenAPI ist {neu}, zuletzt {alt}: Lauf abgebrochen. "
@@ -451,6 +488,45 @@ class _Lauf:
         tmp.replace(ziel)
         self.protokollieren(quelle, url, str(status), zeilen, summe, hinweis)
         self.ergebnis.append((schluessel, f"HTTP {status}, {zeilen} Zeilen, sha256 {summe[:12]}"))
+        if ww:
+            self.gestuft[schluessel] = (quelle, url, summe)
+            if set(self.gestuft) == set(WW_DATEIEN):
+                self.uebernehmen()
+
+    def uebernehmen(self):
+        """Alle Wegweiser-Dateien dieses Laufs gemeinsam an ihren Platz (erst, wenn alle vollständig und lesbar sind)."""
+        dl = zwischenspeicher()
+        for schluessel in WW_DATEIEN:
+            name = DATEIEN[schluessel][0]
+            (dl / STUFE / name).replace(dl / name)
+        self.ergebnis.append(("wegweiser", f"{len(self.gestuft)} Dateien gemeinsam übernommen"))
+        self.gestuft = {}
+        stufe_leeren()
+
+    def verwerfen(self):
+        """Wegweiser-Dateien eines unvollständigen Laufs verwerfen (die vorigen bleiben) und im Protokoll vermerken;
+        ohne gestufte Dateien nichts."""
+        for quelle, url, summe in self.gestuft.values():
+            self.protokollieren(quelle, url, VERWORFEN, "", summe, "Wegweiser-Dateien eines Laufs werden nur "
+                                "gemeinsam übernommen; vorige Datei bleibt")
+        if self.gestuft:
+            self.ergebnis.append(("wegweiser", f"{len(self.gestuft)} Dateien dieses Laufs verworfen (Lauf "
+                                               "unvollständig); vorige Dateien bleiben"))
+        self.gestuft = {}
+        stufe_leeren()
+
+
+def stufe_leeren():
+    """Wegweiser-Dateien in STUFE entfernen (verworfen oder Reste eines unterbrochenen Prozesses, nie übernommen)."""
+    ordner = zwischenspeicher() / STUFE
+    for schluessel in WW_DATEIEN:
+        name = DATEIEN[schluessel][0]
+        for pfad in (ordner / name, ordner / (name + ".tmp")):
+            pfad.unlink(missing_ok=True)
+    try:
+        ordner.rmdir()
+    except OSError:   # fehlt oder enthält Fremdes: bleibt
+        pass
 
 
 def _pruefen_inhalt(schluessel, pfad):
@@ -479,13 +555,17 @@ def _pruefen_inhalt(schluessel, pfad):
 def abruf_lauf():
     """Schritt `strukturdaten-abruf`: höchstens MAX_ANFRAGEN Anfragen, ohne Wiederholung."""
     lauf = _Lauf(protokoll_pfad())
+    stufe_leeren()
     try:
         for schluessel, url, quelle in ABRUFE:
             lauf.laden(schluessel, url, quelle)
     except Abbruch as e:
+        lauf.verwerfen()
         for schluessel, text in lauf.ergebnis:
             print(f"  {schluessel}: {text}")
         raise SystemExit(f"strukturdaten-abruf abgebrochen ({e.art}) nach {lauf.anfragen} Anfragen: {e}") from e
+    finally:
+        lauf.verwerfen()   # auch nach Einstellungsfehlern und ohne alle fünf Wegweiser-Dateien
     for schluessel, text in lauf.ergebnis:
         print(f"  {schluessel}: {text}")
     print(f"{lauf.anfragen} Anfragen; Protokoll {lauf.protokoll}")
@@ -687,10 +767,21 @@ def abrufprotokoll(pfad):
 
 
 def herkunft(schluessel, pfad, protokoll, zeilen=None):
-    """Protokollzeile der Eingabedatei (gleiche Prüfsumme, letzter erfolgreicher Abruf); sonst ValueError. `zeilen`:
-    bereits gezählte Datensätze (sonst gezählt wie im Abruf)."""
+    """Protokollzeile der Eingabedatei (gleiche Prüfsumme, letzter erfolgreicher und übernommener Abruf); sonst
+    ValueError. Ein Abruf, der danach als verworfen vermerkt ist (gleiche Adresse und Prüfsumme), zählt nicht: die
+    Datei an ihrem Platz stammt dann aus einem früheren Abruf. `zeilen`: bereits gezählte Datensätze (sonst gezählt wie
+    im Abruf)."""
     summe = pruefsumme(pfad)
-    treffer = [z for z in protokoll if z["pruefsumme"] == summe and z["http_status"] == "200"]
+    uebernommen = []
+    for z in protokoll:
+        if z["http_status"] == "200":
+            uebernommen.append(z)
+        elif z["http_status"] == VERWORFEN:
+            for i in range(len(uebernommen) - 1, -1, -1):
+                if (uebernommen[i]["url"], uebernommen[i]["pruefsumme"]) == (z["url"], z["pruefsumme"]):
+                    del uebernommen[i]
+                    break
+    treffer = [z for z in uebernommen if z["pruefsumme"] == summe]
     if not treffer:
         raise ValueError(f"{schluessel}: {pfad.name} (sha256 {summe}) steht nicht im Abrufprotokoll; Herkunft und "
                          "Abrufdatum unbelegt")
@@ -718,18 +809,26 @@ def _verhaeltnis(spalte, zeilen, wert, zaehler, nenner, faktor):
 
 
 def _summe(spalte, zeilen, gesamt, teile):
-    """(gilt, geprüfte Zeilen): gesamt = Summe der Teile in jeder Zeile, in der alle Zahlen sind."""
+    """(gilt, geprüfte Zeilen, nicht prüfbare Zeilen je Grund): gesamt = Summe der Teile in jeder Zeile, in der alle
+    Werte ganze Zahlen sind. Gründe: „geheim“ (ein Wert „*“), „fehlt“ (ein Wert leer), „andere“ (sonstiger Inhalt)."""
     if gesamt not in spalte or any(t not in spalte for t in teile):
-        return False, 0
-    n = 0
+        return False, 0, {}
+    n, offen = 0, {}
     for *_, werte in zeilen:
         v = [werte[spalte[c]] for c in (gesamt, *teile)]
         if not all(isinstance(x, int) and not isinstance(x, bool) for x in v):
+            grund = ("geheim" if any(isinstance(x, str) and x.strip() == "*" for x in v) else
+                     "fehlt" if any(x is None or (isinstance(x, str) and not x.strip()) for x in v) else "andere")
+            offen[grund] = offen.get(grund, 0) + 1
             continue
         n += 1
         if v[0] != sum(v[1:]):
-            return False, n
-    return n > 0, n
+            return False, n, offen
+    return n > 0, n, offen
+
+
+def _zeilen(n):
+    return f"{n} Zeile" if n == 1 else f"{n} Zeilen"
 
 
 def _koeln(kat, klass, beleg):
@@ -767,8 +866,9 @@ def _koeln(kat, klass, beleg):
         hinweise.append(f"{len(fehlen)} Indikatoren aus Phase 0 stehen nicht im Blatt Daten dieser Datei: "
                         f"{', '.join(fehlen[:10])}{' …' if len(fehlen) > 10 else ''}")
     codes = {c for c, *_ in aufnehmen}
-    gesamt_gilt, gesamt_n = _summe(spalte, kat.zeilen, GESAMT, (HAUPT, NEBEN))
-    hinweise.append(f"{GESAMT} = {HAUPT} + {NEBEN}: {'gilt' if gesamt_gilt else 'gilt nicht'} ({gesamt_n} Zeilen)")
+    gesamt_gilt, gesamt_n, gesamt_offen = _summe(spalte, kat.zeilen, GESAMT, (HAUPT, NEBEN))
+    hinweise.append(f"{GESAMT} = {HAUPT} + {NEBEN}: {'gilt' if gesamt_gilt else 'gilt nicht'} ({gesamt_n} Zeilen, "
+                    f"nicht prüfbar {gesamt_offen or 'keine'})")
     indikatoren, werte = [], []
     for code, n, buchstabe, k in aufnehmen:
         iid = "koeln_" + code
@@ -791,8 +891,12 @@ def _koeln(kat, klass, beleg):
                 hinweise.append(f"{iid}: Zähler/Nenner aus Phase 0 gelten in dieser Datei nicht "
                                 f"({geprueft} Zeilen geprüft); nicht übernommen")
         if code == GESAMT and gesamt_gilt:
+            offen = [f"{_zeilen(gesamt_offen[g])} mit {text}" for g, text in (
+                ("geheim", "geheim gehaltenem Wert"), ("fehlt", "fehlendem Wert"), ("andere", "anderem Zellinhalt"))
+                if gesamt_offen.get(g)]
             meta.append(f"Summe aus Einwohner*innen mit Hauptwohnsitz (koeln_{HAUPT}) und mit Nebenwohnsitz "
-                        f"(koeln_{NEBEN}), nachgerechnet.")
+                        f"(koeln_{NEBEN}), nachgerechnet in {gesamt_n} von {len(kat.zeilen)} Zeilen"
+                        + (f"; nicht prüfbar: {', '.join(offen)}." if offen else "."))
         quellenangabe, anmerkung = kat.quellen.get(code, ("", ""))
         if anmerkung:
             meta.append(f"Anmerkung der Quelle: {anmerkung}")
@@ -834,7 +938,7 @@ def _ka_text(ka, namen):
     gruppen = {}
     for jahr, kommunen in je_jahr.items():
         gruppen.setdefault(tuple(sorted(kommunen)), []).append(jahr)
-    teile = sorted((jahre_text(j).replace(";", ", "), k) for k, j in gruppen.items())
+    teile = sorted((jahre_text(j, "–").replace(";", ", "), k) for k, j in gruppen.items())
     return "; ".join(f"{j} ({', '.join(k)})" for j, k in teile)
 
 
@@ -854,6 +958,8 @@ def _wegweiser(ww, beleg):
                     "abweichen, Werte nicht miteinander verrechnen.")
         if ka:
             meta.append(f"Ohne Angabe im Wegweiser („k.A.“, nicht übernommen): {_ka_text(ka, ww.kommunen)}.")
+        if fu in WW_TYP_VORLAEUFIG:
+            meta.append(f"Typ {typ}: eigene Einordnung des Ratsatlas, vorläufig ({WW_TYP_VORLAEUFIG[fu][1]}).")
         iid = f"ww_{fu}"
         indikatoren.append({
             "indikator_id": iid, "name": i["name"], "thema": "; ".join(i.get("topics") or []),
@@ -945,6 +1051,33 @@ def _meta(kat, ww, belege, indikatoren):
                         "des Wegweiser-Exports (Indikator, Jahr, Kommune)."),
         "gesamtstadt_ka": ("Jahre mit „k.A.“ im Wegweiser-Export stehen nicht in gesamtstadt.tsv (der Vertrag sieht "
                            "dort keinen Status vor); der Metatext des Indikators nennt sie."),
+        "typ_einordnung": ("typ und einheit stehen nicht in den Quellen; es sind eigene Einordnungen. Statistischer "
+                           "Datenkatalog Köln: typ und einheit aus Phase 0 nach der Formatspalte des Blatts Katalog "
+                           "(abs, %, andere) und dem Namen, Begründung je Indikator in pipeline/strukturdaten_koeln.tsv "
+                           "(Spalte typ_begruendung); zaehler_id und nenner_id nur, wo die Beziehung in jeder Zeile "
+                           "nachgerechnet ist. Wegweiser Kommune: typ nach Name, Einheit und Berechnung laut "
+                           "Indikatorliste des Wegweisers, einheit unverändert aus der Indikatorliste. Vorläufige "
+                           "Einordnungen stehen unter typ_vorlaeufig und im Metatext."),
+        "typ_vorlaeufig": {f"ww_{fu}": grund for fu, (grund, _) in WW_TYP_VORLAEUFIG.items()
+                           if any(i["indikator_id"] == f"ww_{fu}" for i in indikatoren)},
+        "formate": {
+            "dateien": ("TSV in UTF-8 ohne BOM, Tabulator als Trennzeichen, Zeilenende LF, erste Zeile mit den "
+                        "Spaltennamen, ohne Anführungszeichen; Felder ohne Tabulator und Zeilenumbruch."),
+            "wert": ("Zahl mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und ohne Exponent, Ziffern "
+                     "wie in der Quelle; in werte.tsv leer bei status geheim und fehlt; gesamtstadt.tsv enthält nur "
+                     "Zeilen mit Wert."),
+            "jahre": ("indikatoren.tsv: Jahre, für die werte.tsv mindestens eine Zeile mit status ok oder geheim hat "
+                      "(Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und aufsteigend, aufeinanderfolgende "
+                      "Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon ohne Leerzeichen getrennt, z. B. "
+                      "2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile gibt."),
+            "raumebenen": ("indikatoren.tsv: Raumebenen, für die werte.tsv mindestens eine Zeile mit status ok oder "
+                           "geheim hat (Wegweiser: gesamtstadt), durch Semikolon ohne Leerzeichen getrennt, in der "
+                           "Reihenfolge von raumebenen (gesamtstadt;stadtbezirk;stadtteil)."),
+        },
+        "geheimhaltung_hinweis": ("status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld "
+                                  "geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen "
+                                  "oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen "
+                                  "könnten, etwa über Raumebenen oder Teilgrößen hinweg."),
         "quellen": q,
     }
 

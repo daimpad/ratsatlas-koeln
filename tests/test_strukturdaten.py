@@ -192,8 +192,9 @@ def test_zahlen_unveraendert():
 
 
 def test_jahre_als_bereiche():
-    assert strukturdaten.jahre_text(["2025", "2024", "2023"]) == "2023–2025"
-    assert strukturdaten.jahre_text([2012, 2013, 2015, 2017, 2018]) == "2012–2013;2015;2017–2018"
+    assert strukturdaten.jahre_text(["2025", "2024", "2023"]) == "2023-2025"
+    assert strukturdaten.jahre_text([2012, 2013, 2015, 2017, 2018]) == "2012-2013;2015;2017-2018"
+    assert strukturdaten.jahre_text([2012, 2013, 2015], "–") == "2012–2013;2015"   # Fließtext im Metatext
     assert strukturdaten.jahre_text([]) == ""
 
 
@@ -260,7 +261,7 @@ def test_indikatoren_und_zurueckgestellte(umgebung):
     a = ind["koeln_A0109P"]
     assert (a["typ"], a["einheit"], a["zaehler_id"], a["nenner_id"]) == ("anteil", "%", "koeln_A0109A", "koeln_A0025A")
     assert "Haupt- und Nebenwohnsitz" in a["metatext"] and a["thema"] == "Bevölkerung und Haushalte"
-    assert (a["raumebenen"], a["jahre"], a["abrufdatum"]) == ("gesamtstadt;stadtbezirk;stadtteil", "2024–2025",
+    assert (a["raumebenen"], a["jahre"], a["abrufdatum"]) == ("gesamtstadt;stadtbezirk;stadtteil", "2024-2025",
                                                                "2026-11-10")
     assert a["geheimhaltung"] == GEHEIM and a["quell_url"] == strukturdaten.DATENSATZ_URL
     assert a["datenhalter"] == "Stadt Köln - Testamt (eigene Berechnung)"
@@ -456,7 +457,10 @@ def test_obergrenze_der_anfragen(server, umgebung, monkeypatch):
     with pytest.raises(SystemExit, match="obergrenze"):
         strukturdaten.abruf_lauf()
     assert len(server["anfragen"]) == 3
-    assert _protokoll(dl)[-1]["http_status"] == "nicht gesendet (obergrenze)"
+    status = [z["http_status"] for z in _protokoll(dl)]
+    # danach die drei geladenen Wegweiser-Dateien als verworfen (nur gemeinsam mit allen fünf übernommen)
+    assert status == ["200"] * 3 + ["nicht gesendet (obergrenze)"] + [strukturdaten.VERWORFEN] * 3
+    assert not any((dl / name).exists() for name, _ in strukturdaten.DATEIEN.values())
 
 
 def test_keine_wiederholung_nach_503(server, umgebung):
@@ -469,7 +473,8 @@ def test_keine_wiederholung_nach_503(server, umgebung):
     pfade = [p for p, _ in server["anfragen"]]
     assert pfade.count("/export.csv") == 1 and "/katalog.xlsx" not in pfade   # keine Wiederholung, Lauf beendet
     assert (dl / "wegweiser_export.csv").read_text(encoding="utf-8") == "vorher"   # vorige Datei bleibt
-    assert _protokoll(dl)[-1]["http_status"] == "503"
+    assert [z["http_status"] for z in _protokoll(dl)][4:] == ["503"] + [strukturdaten.VERWORFEN] * 4
+    assert not (dl / "wegweiser_version.txt").exists()   # Wegweiser-Dateien nur gemeinsam übernommen
 
 
 def test_weiterleitung_nicht_verfolgt(server, umgebung):
@@ -527,6 +532,7 @@ def test_stadtschutz_mit_lokalem_server(server, umgebung, monkeypatch):
     dl, _ = umgebung
     monkeypatch.setattr(abruf, "STADT_DOMAINS", ("127.0.0.1",))
     monkeypatch.setattr(abruf, "MINDESTABSTAND", 0.0)
+    monkeypatch.setattr(config, "KONTAKT", "test@example.invalid")   # Pflicht für Server der Stadt
     monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "23-1")
     monkeypatch.setattr(strukturdaten, "ABRUFE", [("xlsx", server["basis"] + "/katalog.xlsx", "offenedaten-koeln")])
     assert abruf.stadt(server["basis"] + "/katalog.xlsx")
@@ -540,3 +546,204 @@ def test_stadtschutz_mit_lokalem_server(server, umgebung, monkeypatch):
     monkeypatch.setattr(abruf, "uhr", lambda: datetime(2026, 11, 10, 22, 30, tzinfo=timezone.utc))
     assert strukturdaten.abruf_lauf().anfragen == 1 and len(server["anfragen"]) == 1
     assert [z["http_status"][:14] for z in _protokoll(dl)] == ["nicht gesendet"] * 2 + ["200"]
+
+
+# --- Prüfung r1 (10.11.2026): Kontakt, Abstand, Zeitfenster, Version, Größe, unlesbare Antwort, gemischter Stand -----
+
+KONTAKT = "test@example.invalid"
+
+
+def _als_stadt(server, monkeypatch, abrufe, kontakt=KONTAKT):
+    """Der lokale Server gilt als Server der Stadt (Freigabe gesetzt, 23:30 Uhr in Köln, Zeitfenster 23–1 Uhr);
+    `abrufe`: Schlüssel, deren Pfade der Lauf lädt. `kontakt` leer: User-Agent ohne Kontakt."""
+    monkeypatch.setattr(abruf, "STADT_DOMAINS", ("127.0.0.1",))
+    monkeypatch.setattr(config, "ABRUF_ZEITFENSTER", "23-1")
+    monkeypatch.setattr(config, "KONTAKT", kontakt)
+    monkeypatch.setattr(config, "USER_AGENT", "ratsatlas-koeln/0.1 (+https://github.com/daimpad/ratsatlas-koeln"
+                        + (f"; {kontakt}" if kontakt else "") + ")")
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    uhr = {"jetzt": datetime(2026, 11, 10, 22, 30, tzinfo=timezone.utc)}   # 23:30 in Köln
+    monkeypatch.setattr(abruf, "uhr", lambda: uhr["jetzt"])
+    quelle = dict((k, q) for k, _, q in strukturdaten.ABRUFE)
+    monkeypatch.setattr(strukturdaten, "ABRUFE", [(k, server["basis"] + PFADE[k], quelle[k]) for k in abrufe])
+    return uhr
+
+
+def test_ohne_kontakt_keine_anfrage(server, umgebung, monkeypatch):
+    """Ohne RATSATLAS_KONTAKT geht keine Anfrage an einen Server der Stadt (CLAUDE.md 5.1, wie sessionnet): laut als
+    Einstellungsfehler (ValueError, Ausstieg 2), nicht gezählt, im Protokoll vermerkt. Mit Kontakt steht er im
+    User-Agent."""
+    dl, _ = umgebung
+    _als_stadt(server, monkeypatch, ["xlsx"], kontakt="")
+    with pytest.raises(ValueError, match="RATSATLAS_KONTAKT fehlt"):
+        strukturdaten.abruf_lauf()
+    with pytest.raises(SystemExit) as aus:
+        strukturdaten.abruf_schritt()
+    assert aus.value.code == 2 and not server["anfragen"]
+    assert [z["http_status"] for z in _protokoll(dl)] == ["nicht gesendet (einstellung)"] * 2
+    _als_stadt(server, monkeypatch, ["xlsx"])
+    assert strukturdaten.abruf_lauf().anfragen == 1
+    assert server["anfragen"] == [("/katalog.xlsx", f"ratsatlas-koeln/0.1 (+https://github.com/daimpad/ratsatlas-koeln; "
+                                                     f"{KONTAKT})")]
+
+
+def test_ohne_kontakt_auch_nicht_an_den_wegweiser(umgebung, monkeypatch):
+    """Auch nicht lokale Adressen außerhalb der Stadt (Wegweiser) nur mit Kontakt; kein Versuch einer Verbindung."""
+    monkeypatch.setattr(strukturdaten, "_OEFFNER", _KeinNetz())
+    monkeypatch.setattr(config, "KONTAKT", "")
+    monkeypatch.setenv("STRUKTURDATEN_ABRUF", "ja")
+    with pytest.raises(ValueError, match="RATSATLAS_KONTAKT fehlt"):
+        strukturdaten.abruf_lauf()
+    assert [z["http_status"] for z in _protokoll(umgebung[0])] == ["nicht gesendet (einstellung)"]
+
+
+def test_mindestabstand_zwischen_anfragen(server, umgebung, monkeypatch):
+    """Zwischen zwei Anfragen an die Stadt liegen mindestens abruf.MINDESTABSTAND Sekunden, auch mit
+    RATSATLAS_ABSTAND=0 (time.sleep protokolliert statt gewartet)."""
+    _als_stadt(server, monkeypatch, ["ww_openapi", "ww_version"])
+    pausen = []
+    monkeypatch.setattr(strukturdaten.time, "sleep", pausen.append)
+    assert strukturdaten.abruf_lauf().anfragen == 2 and len(server["anfragen"]) == 2
+    assert len(pausen) == 1 and abruf.MINDESTABSTAND - 0.5 < pausen[0] <= abruf.MINDESTABSTAND
+
+
+def test_zeitfenster_endet_beim_warten(server, umgebung, monkeypatch):
+    """Endet das Zeitfenster während des Wartens auf den Abstand, wird die Anfrage nicht gesendet (Prüfung unmittelbar
+    vor dem Senden)."""
+    dl, _ = umgebung
+    uhr = _als_stadt(server, monkeypatch, ["ww_openapi", "ww_version"])
+
+    def warten(sekunden):
+        uhr["jetzt"] = datetime(2026, 11, 11, 0, 0, 1, tzinfo=timezone.utc)   # 01:00:01 in Köln
+    monkeypatch.setattr(strukturdaten.time, "sleep", warten)
+    assert strukturdaten.abruf_lauf().anfragen == 1
+    assert [p for p, _ in server["anfragen"]] == ["/openapi"]
+    assert _protokoll(dl)[1]["http_status"].startswith("nicht gesendet (außerhalb des Zeitfensters 23-1 Uhr")
+
+
+def test_wegweiser_nur_nach_versionspruefung(server, umgebung, monkeypatch):
+    """Ohne geprüfte info.version keine Anfrage an den Wegweiser; die Datei der Stadt (hier lokal) bleibt unberührt."""
+    dl, _ = umgebung
+    monkeypatch.setattr(strukturdaten, "ABRUFE", [a for a in strukturdaten.ABRUFE if a[0] != "ww_openapi"])
+    assert strukturdaten.abruf_lauf().anfragen == 1
+    assert [p for p, _ in server["anfragen"]] == ["/katalog.xlsx"]
+    status = [z["http_status"] for z in _protokoll(dl)]
+    assert status == ["nicht gesendet (info.version der Wegweiser-OpenAPI nicht geprüft)"] * 4 + ["200"]
+
+
+def test_groessenobergrenze(server, umgebung, monkeypatch):
+    dl, _ = umgebung
+    dl.mkdir(parents=True, exist_ok=True)
+    (dl / "wegweiser_openapi.json").write_text("vorher", encoding="utf-8")
+    monkeypatch.setattr(strukturdaten, "MAX_BYTES", 10)
+    with pytest.raises(SystemExit, match=r"abgebrochen \(unlesbar\).*größer als 10 Bytes"):
+        strukturdaten.abruf_lauf()
+    assert [p for p, _ in server["anfragen"]] == ["/openapi"]
+    assert (dl / "wegweiser_openapi.json").read_text(encoding="utf-8") == "vorher"
+    assert not list(dl.rglob("*.tmp")) and _protokoll(dl)[-1]["http_status"] == "abbruch (unlesbar)"
+
+
+@pytest.mark.parametrize("schluessel", ["ww_export", "xlsx"])
+def test_unlesbare_antwort_vorige_datei_bleibt(server, umgebung, monkeypatch, schluessel):
+    """Eine Webseite statt der Daten: Lauf endet (unlesbar), die vorige Datei bleibt, keine weitere Anfrage."""
+    dl, _ = umgebung
+    dl.mkdir(parents=True, exist_ok=True)
+    name, pfad = strukturdaten.DATEIEN[schluessel][0], PFADE[schluessel]
+    (dl / name).write_text("vorher", encoding="utf-8")
+    server["inhalt"][pfad] = b"<!DOCTYPE html><html><body>Wartung</body></html>"
+    if schluessel == "xlsx":
+        monkeypatch.setattr(strukturdaten, "ABRUFE", [a for a in strukturdaten.ABRUFE if a[0] == "xlsx"])
+    with pytest.raises(SystemExit, match=r"abgebrochen \(unlesbar\)"):
+        strukturdaten.abruf_lauf()
+    assert [p for p, _ in server["anfragen"]][-1] == pfad
+    assert (dl / name).read_text(encoding="utf-8") == "vorher" and not list(dl.rglob("*.tmp"))
+    zeilen = [z for z in _protokoll(dl) if z["url"].endswith(pfad)]
+    assert zeilen[0]["hinweis"].startswith("unlesbar: Webseite statt Daten") and len(zeilen) == 1
+
+
+def test_unternehmen_als_datenhalter_abgelehnt(tmp_path):
+    pfade = dateien_schreiben(tmp_path)
+    liste = indikatorliste()
+    liste[3]["source"] = "Nexiga GmbH, ZEFIR, eigene Berechnungen"   # jugendquotient
+    pfade["ww_indikatoren"].write_text(json.dumps(liste, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(ValueError, match="jugendquotient hat ein Unternehmen als Datenhalter"):
+        strukturdaten.Wegweiser(pfade["ww_export"], pfade["ww_indikatoren"], pfade["ww_regionen"],
+                                pfade["ww_version"], pfade["ww_openapi"])
+
+
+@pytest.mark.parametrize("pfad", ["/kätalog.xlsx", "ftp://127.0.0.1/katalog.xlsx"])
+def test_ungueltige_adresse_nicht_gesendet(server, umgebung, monkeypatch, pfad):
+    dl, _ = umgebung
+    url = pfad if "://" in pfad else server["basis"] + pfad
+    monkeypatch.setattr(strukturdaten, "ABRUFE", [("xlsx", url, "offenedaten-koeln")])
+    with pytest.raises(SystemExit, match=r"abgebrochen \(adresse\)"):
+        strukturdaten.abruf_lauf()
+    assert not server["anfragen"] and _protokoll(dl)[-1]["http_status"] == "nicht gesendet (adresse)"
+
+
+def test_abgebrochener_lauf_mischt_keine_staende(server, umgebung, monkeypatch):
+    """Die Wegweiser-Dateien eines Laufs ersetzen die vorigen nur gemeinsam: Bricht der Lauf vor dem Export ab, bleiben
+    Datenversion, Listen und Export aus dem vorigen vollständigen Lauf; meta.json nennt die passende Datenversion."""
+    dl, aus = umgebung
+    uhr = {"jetzt": datetime(2026, 11, 10, 9, 0, tzinfo=timezone.utc)}
+    monkeypatch.setattr(abruf, "uhr", lambda: uhr["jetzt"])
+    strukturdaten.abruf_lauf()
+    uhr["jetzt"] = datetime(2026, 11, 10, 10, 0, tzinfo=timezone.utc)
+    vorher = {name: (dl / name).read_bytes() for name, _ in strukturdaten.DATEIEN.values()}
+    server["inhalt"]["/version"] = b"2027-05-01T00:00:00Z-neu"
+    server["status"]["/export.csv"] = 503
+    with pytest.raises(SystemExit, match="HTTP 503"):
+        strukturdaten.abruf_lauf()
+    assert {name: (dl / name).read_bytes() for name in vorher} == vorher
+    assert not (dl / strukturdaten.STUFE).exists()
+    status = [z["http_status"] for z in _protokoll(dl)]
+    assert status[6:] == ["200", "200", "200", "200", "503"] + [strukturdaten.VERWORFEN] * 4
+    meta = strukturdaten.write()
+    assert "Datenversion 2026-10-15T08:45:18.099083Z-test" in meta["datenstand_hinweis"]
+    beleg = {q["kennung"]: q for q in meta["quellen"]}["wegweiser-openapi"]
+    erster = next(z for z in _protokoll(dl) if z["url"].endswith("/openapi"))
+    assert beleg["abgerufen"] == erster["zeitstempel"]   # nicht der verworfene Abruf mit gleichem Inhalt
+    # vollständiger Lauf: alle fünf Dateien neu, die XLSX unabhängig davon
+    del server["status"]["/export.csv"]
+    server["status"]["/katalog.xlsx"] = 503
+    uhr["jetzt"] = datetime(2026, 11, 10, 11, 0, tzinfo=timezone.utc)
+    with pytest.raises(SystemExit, match="HTTP 503"):
+        strukturdaten.abruf_lauf()
+    assert (dl / "wegweiser_version.txt").read_bytes() == b"2027-05-01T00:00:00Z-neu"
+    assert (dl / "statistischer_datenkatalog_koeln.xlsx").read_bytes() == vorher[
+        "statistischer_datenkatalog_koeln.xlsx"]
+    assert "Datenversion 2027-05-01T00:00:00Z-neu" in strukturdaten.write()["datenstand_hinweis"]
+
+
+# --- Prüfung r1: Kennzeichnung eigener Einordnungen, Formate, Metatext A0025A ------------------------------------------
+
+def test_eigene_einordnungen_und_formate_gekennzeichnet(umgebung):
+    dl, aus = umgebung
+    _, t = _normalisieren(dl, aus)
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    assert "eigene Einordnung" in meta["typ_einordnung"] and "strukturdaten_koeln.tsv" in meta["typ_einordnung"]
+    vorl = meta["typ_vorlaeufig"]
+    assert set(vorl) == {"ww_bevoelkerungsentwicklung-ueber-die-letzten-5-jahre"}
+    assert "Veränderungsrate" in vorl["ww_bevoelkerungsentwicklung-ueber-die-letzten-5-jahre"]
+    ind = {i["indikator_id"]: i for i in t["indikatoren.tsv"]}
+    e = ind["ww_bevoelkerungsentwicklung-ueber-die-letzten-5-jahre"]
+    assert e["typ"] == "quote" and "vorläufig" in e["metatext"] and "Veränderungsrate" in e["metatext"]
+    assert "vorläufig" not in ind["ww_altenquotient"]["metatext"]
+    assert set(meta["formate"]) >= {"jahre", "raumebenen", "wert", "dateien"}
+    assert "2012-2014;2016" in meta["formate"]["jahre"]
+    assert "geheim" in meta["geheimhaltung_hinweis"]
+    assert all(i["jahre"].isascii() for i in t["indikatoren.tsv"])
+    assert ind["koeln_A0109P"]["jahre"] == "2024-2025"
+
+
+def test_metatext_summe_nennt_nicht_pruefbare_zeilen(umgebung):
+    """A0025A = A0355A + A0359A: der Metatext nennt geprüfte und nicht prüfbare Zeilen (Testdaten: A0359A fehlt für
+    201/2024, für 102/2025 geheim)."""
+    dl, aus = umgebung
+    pfade = dateien_schreiben(dl)
+    xlsx_bauen(pfade["xlsx"], lambda d: d.__setitem__("F7", "*"))
+    protokoll_schreiben(dl, pfade)
+    strukturdaten.write()
+    a = next(i for i in _lesen(aus / "indikatoren.tsv") if i["indikator_id"] == "koeln_A0025A")
+    assert ("nachgerechnet in 10 von 12 Zeilen; nicht prüfbar: 1 Zeile mit geheim gehaltenem Wert, 1 Zeile mit "
+            "fehlendem Wert") in a["metatext"]
