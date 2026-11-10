@@ -453,7 +453,8 @@ _UNSICHTBAR = re.compile(r"[\u00ad\u034f\u180e\u200b-\u200f\u2060-\u2064\ufeff]"
 ANDERE_FORM = "_vorlagenart_andere_form"
 # Gründe ohne Hauskoordinate (punkt_ausschluss) in der Reihenfolge der Prüfung, mit Bezeichnung im Log von build
 AUSSCHLUSS = {"drucksache": "Drucksache in anderem Schema", "eingabe": "Eingabe oder Einwohneranfrage",
-              "gremium": "Ausschuss für Anregungen und Beschwerden", "vorlagenart": "Vorlagenart nicht erkennbar"}
+              "gremium": "Ausschuss für Anregungen und Beschwerden", "vorlagenart": "Vorlagenart nicht erkennbar",
+              "maske": "Titel ohne Hausnummer (Einwohnerschaft, Bauordnung, Naturschutz)"}
 
 
 def _vergleichstexte(text):
@@ -478,13 +479,16 @@ def vorlagenart_erkannt(paper):
             and all(VORLAGENART_PUNKT.search(t) for t in _vergleichstexte(art)))
 
 
-def punkt_ausschluss(paper, gremien=()):
+def punkt_ausschluss(paper, gremien=(), amt=None):
     """Grund, aus dem eine Straße mit Hausnummer im Titel nicht auf die Hauskoordinate gesetzt wird (AUSSCHLUSS), oder
-    None, wenn es erlaubt ist. `gremien`: Namen der beratenden Gremien. Ausgeschlossen: andere Referenzschemata,
-    Vorlagenart oder Titel mit Hinweis auf eine Eingabe, jede Beratung im Ausschuss für Anregungen und Beschwerden bzw.
-    Bürgerbeteiligung, eine leere oder nicht erkennbare Vorlagenart (VORLAGENART_PUNKT). Abgleich über die
-    Vergleichstexte (_vergleichstexte): andere Schreibungen wie „Buergerantrag“ oder mit weichem Trennzeichen gelten
-    wie die übliche."""
+    None, wenn es erlaubt ist. `gremien`: Namen der beratenden Gremien; `amt`: Name der federführenden Organisation
+    (`underDirectionOf`). Ausgeschlossen: andere Referenzschemata, Vorlagenart oder Titel mit Hinweis auf eine Eingabe,
+    jede Beratung im Ausschuss für Anregungen und Beschwerden bzw. Bürgerbeteiligung, eine leere oder nicht erkennbare
+    Vorlagenart (VORLAGENART_PUNKT) und jede Vorlage, deren Titel maske.py ohne Hausnummer zeigt (Einwohnerschaft nach
+    Art oder Titel, Bauordnungsamt oder Untere Naturschutzbehörde federführend; maske.titel_ohne_hausnummer, gleiche
+    Angaben wie maske.aus_db): Neben einem Titel ohne Hausnummer stünde sonst die Anschrift als Ortsname mit
+    Hauskoordinate (Prüfung r19). Abgleich über die Vergleichstexte (_vergleichstexte): andere Schreibungen wie
+    „Buergerantrag“ oder mit weichem Trennzeichen gelten wie die übliche."""
     if not REFERENZ_PUNKT.match(paper.get("reference") or ""):
         return "drucksache"
     art = paper.get("paperType")
@@ -494,12 +498,15 @@ def punkt_ausschluss(paper, gremien=()):
     if any(re.search(r"(?i)anregungen und beschwerden|bürgerbeteiligung", t)
            for g in gremien for t in _vergleichstexte(g)):
         return "gremium"
-    return None if vorlagenart_erkannt(paper) else "vorlagenart"
+    if not vorlagenart_erkannt(paper):
+        return "vorlagenart"
+    from . import maske   # hier: maske → chat → geocode
+    return "maske" if maske.titel_ohne_hausnummer(paper.get("paperType"), paper.get("name"), amt) else None
 
 
-def hausnummer_punkt_erlaubt(paper, gremien=()):
+def hausnummer_punkt_erlaubt(paper, gremien=(), amt=None):
     """Darf eine Straße mit Hausnummer im Titel auf die Hauskoordinate gesetzt werden? (punkt_ausschluss)"""
-    return punkt_ausschluss(paper, gremien) is None
+    return punkt_ausschluss(paper, gremien, amt) is None
 
 
 def vorlagenart_bezeichnung(paper):
@@ -537,11 +544,11 @@ def erkannte_arten(zaehler, hoechstens=40):
 
 
 def ohne_hauskoordinate(ohne, beziehungen):
-    """Vorlagen ohne Erlaubnis für Hauskoordinaten (`ohne`, IDs), erweitert um alle Vorlagen, die mit ihnen über- oder
-    untergeordnet verbunden sind, auch über mehrere Stufen: Beantwortung oder Stellungnahme zu einer Eingabe oder
-    Einwohneranfrage nennen oft dieselbe Anschrift, tragen aber weder die Art noch das Wort im Titel (wie
-    chat.einwohner für die Hausnummer im Titel; Generalprobe 09.11.2026). `beziehungen`: Paare (übergeordnet,
-    untergeordnet). Gleiche Regel im Aufbau (build._stage_b) und in der Prüfung (check.erlaubnis)."""
+    """Vorlagen ohne Erlaubnis für Hauskoordinaten (`ohne`, IDs), erweitert um alle Vorlagen, die mit ihnen verbunden
+    sind, auch über mehrere Stufen: Beantwortung oder Stellungnahme zu einer Eingabe oder Einwohneranfrage nennen oft
+    dieselbe Anschrift, tragen aber weder die Art noch das Wort im Titel (wie chat.einwohner für die Hausnummer im Titel;
+    Generalprobe 09.11.2026). `beziehungen`: Paare (übergeordnet, untergeordnet; für den Datenschutz auch relatedPaper),
+    in beiden Richtungen. Baustein von sperrmenge."""
     nachbarn = defaultdict(set)
     for a, b in beziehungen:
         nachbarn[a].add(b)
@@ -558,10 +565,34 @@ def ohne_hauskoordinate(ohne, beziehungen):
 def gleiche_drucksache(gesperrt, drucksachen):
     """Vorlagen (IDs), die ihre Drucksache mit einer Vorlage aus `gesperrt` teilen, ohne diese selbst: vorlagen.geojson
     und die Gebietsdateien führen Vorlagen unter ihrer Drucksache, und check.erlaubnis verlangt dort die Erlaubnis jeder
-    Vorlage mit dieser Drucksache. `drucksachen`: {Vorlagen-ID: Drucksache}. Gleiche Regel im Aufbau (build.build) und
-    in der Prüfung (check.erlaubnis)."""
+    Vorlage mit dieser Drucksache. `drucksachen`: {Vorlagen-ID: Drucksache}. Baustein von sperrmenge."""
     refs = {drucksachen[i] for i in gesperrt if i in drucksachen}
     return {i for i, r in drucksachen.items() if r in refs} - set(gesperrt)
+
+
+# Weg, über den eine Vorlage in die Menge ohne Hauskoordinate kommt (sperrmenge), mit Bezeichnung im Log von build
+WEG = {"beziehung": "verbunden mit einer davon oder einer ausgelassenen Vorlage",
+       "drucksache": "mit derselben Drucksache wie eine davon"}
+
+
+def sperrmenge(start, beziehungen, drucksachen):
+    """Alle Vorlagen ohne Erlaubnis für Hauskoordinaten als Fixpunkt, eine Funktion für den Aufbau (build.build) und die
+    Prüfung (check.erlaubnis): Ausgehend von `start` (IDs mit Grund aus punkt_ausschluss und beim Aufbau ausgelassene
+    Vorlagen) werden abwechselnd die verbundenen Vorlagen (ohne_hauskoordinate über `beziehungen`: über- und
+    untergeordnet und relatedPaper, Paare in beiden Richtungen) und die Vorlagen mit derselben Drucksache
+    (gleiche_drucksache über `drucksachen`, {Vorlagen-ID: Drucksache}) hinzugenommen, bis nichts mehr hinzukommt. So
+    sperrt eine Kopie mit derselben Drucksache wie eine Eingabe auch ihre verbundenen Vorlagen, und eine Vorlage, die
+    über eine Beziehung gesperrt ist, sperrt die Vorlagen mit ihrer Drucksache (Prüfung r19: vorher nur ein Schritt).
+    Liefert {ID: Weg} mit Weg „start“, „beziehung“ oder „drucksache“ (wodurch die Vorlage hinzukam; WEG)."""
+    beziehungen = list(beziehungen)
+    weg = dict.fromkeys(start, "start")
+    neu = set(weg)
+    while neu:
+        for i in ohne_hauskoordinate(neu, beziehungen):
+            weg.setdefault(i, "beziehung")
+        neu = gleiche_drucksache(weg, drucksachen)
+        weg.update(dict.fromkeys(neu, "drucksache"))
+    return weg
 
 
 def plan_numbers(title):

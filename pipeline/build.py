@@ -8,9 +8,8 @@ from collections import Counter
 
 from . import actors, config
 from .geo import Ortsteile
-from .geocode import (ANDERE_FORM, AUSSCHLUSS, Gazetteer, erkannte_arten, gleiche_drucksache, hausnummer_punkt_erlaubt,
-                      nicht_erkannte_arten, ohne_hauskoordinate, plan_numbers, punkt_ausschluss,
-                      vorlagenart_bezeichnung)
+from .geocode import (ANDERE_FORM, AUSSCHLUSS, WEG, Gazetteer, erkannte_arten, hausnummer_punkt_erlaubt,
+                      nicht_erkannte_arten, plan_numbers, punkt_ausschluss, sperrmenge, vorlagenart_bezeichnung)
 from .plans import Plans, plan_locations
 from . import volltext
 from .objekte import Objekte
@@ -27,6 +26,11 @@ CREATE TABLE paper (
   main_file_url TEXT, main_file_name TEXT, source TEXT);
 CREATE TABLE paper_relation (
   parent_id TEXT, child_id TEXT, source TEXT, PRIMARY KEY (parent_id, child_id));
+-- relatedPaper (wie geliefert, auch von ausgelassenen Vorlagen): nur für den Datenschutz, in beiden Richtungen eine
+-- Beziehung wie paper_relation (geocode.sperrmenge in build und check.erlaubnis); Export, maske.aus_db und
+-- volltext.einwohner_kette lesen nur paper_relation
+CREATE TABLE paper_related (
+  paper_id TEXT, related_id TEXT, source TEXT, PRIMARY KEY (paper_id, related_id));
 CREATE TABLE meeting (
   id TEXT PRIMARY KEY, name TEXT, start_date TEXT, cancelled INTEGER, source TEXT);
 CREATE TABLE agenda_item (
@@ -95,6 +99,8 @@ ADRESSLISTEN = ("originatorOrganization", "originatorPerson", "relatedPaper", "s
                 "superordinatedPaper", "underDirectionOf")
 BERATUNG_ADRESSLISTEN = ("organization",)
 BEZIEHUNGEN = ("subordinatedPaper", "superordinatedPaper")
+# weitere Beziehung nur für den Datenschutz (Tabelle paper_related)
+VERWANDT = "relatedPaper"
 
 
 def _als_liste(obj, feld, angeglichen):
@@ -137,15 +143,17 @@ def einlesen(papers):
     Objekt) als Text aus ihren Zeichenkettenteilen, damit die Regel für Eingaben greift (geocode.EINGABE), und mit dem
     Kennzeichen geocode.ANDERE_FORM (Vorlagenart nicht erkennbar, keine Hauskoordinate; Entscheidung 10.11.2026).
     Vorlagen ohne Drucksachennummer (`reference` fehlt, null oder leer) oder mit einer, die keine Zeichenkette ist,
-    werden ausgelassen, nie mit erfundener Nummer; ihre Beziehungen (BEZIEHUNGEN) bleiben für den Datenschutz erhalten.
-    Liefert (Vorlagen, ausgelassene Vorlagen als {id, grund, BEZIEHUNGEN}, Zähler der angeglichenen Felder)."""
+    werden ausgelassen, nie mit erfundener Nummer; ihre Beziehungen (BEZIEHUNGEN und VERWANDT) bleiben für den
+    Datenschutz erhalten. Liefert (Vorlagen, ausgelassene Vorlagen als {id, grund, BEZIEHUNGEN, VERWANDT}, Zähler der
+    angeglichenen Felder)."""
     out, ausgelassen, angeglichen = [], [], Counter()
     for roh in papers:
         ref = roh.get("reference")
         if not isinstance(ref, str) or not ref.strip():
             ausgelassen.append({"id": roh["id"],
                                 "grund": OHNE_NUMMER if ref is None or isinstance(ref, str) else NUMMER_UNERWARTET,
-                                **{f: _adressen(_als_liste(roh, f, Counter()), f, Counter()) for f in BEZIEHUNGEN}})
+                                **{f: _adressen(_als_liste(roh, f, Counter()), f, Counter())
+                                   for f in BEZIEHUNGEN + (VERWANDT,)}})
             continue
         p = dict(roh)
         for feld in LISTENFELDER:
@@ -239,17 +247,26 @@ def build():
     papers_by_id = {p["id"]: p for p in papers}
     ortsteile = Ortsteile()
     meetings, agenda, locations, bv_bezirke = {}, {}, {}, {}
-    rows = {k: [] for k in ("paper", "rel", "cons", "ploc", "orig", "resp", "plan")}
+    rows = {k: [] for k in ("paper", "rel", "related", "cons", "ploc", "orig", "resp", "plan")}
+
+    # Beziehungen (auch ausgelassener Vorlagen ohne Drucksachennummer: Sie fehlen in `paper`, der Export zeigt sie
+    # nicht, sie zählen aber für den Datenschutz; check.erlaubnis liest paper_relation und paper_related)
+    for p in papers + ausgelassen:
+        rows["rel"] += ([(p["id"], c) for c in p.get("subordinatedPaper") or []]
+                        + [(o, p["id"]) for o in p.get("superordinatedPaper") or []])
+        rows["related"] += [(p["id"], r) for r in p.get(VERWANDT) or []]
+    gremien = {p["id"]: [(orgs_by_id.get((c.get("organization") or [None])[0]) or {}).get("name", "")
+                         for c in p.get("consultation") or [] if isinstance(c, dict)] for p in papers}
+    gesperrt = _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rows["rel"], rows["related"])
+    # OParl-Ortsangaben einer Vorlage ohne Erlaubnis: kein genauer Punkt (Stufe A), auch nicht für andere Vorlagen mit
+    # derselben Ortsangabe (vorsichtige Auslegung)
+    grob = {loc["id"] for p in papers if p["id"] in gesperrt for loc in p.get("location") or []}
 
     for p in papers:
         mf = p.get("mainFile") or {}
         rows["paper"].append((p["id"], p.get("reference"), p.get("name"), p.get("paperType"),
                               p.get("date"), (p.get("underDirectionOf") or [None])[0],
                               p.get("web"), mf.get("accessUrl"), mf.get("fileName")))
-        for child in p.get("subordinatedPaper") or []:
-            rows["rel"].append((p["id"], child))
-        for parent in p.get("superordinatedPaper") or []:
-            rows["rel"].append((parent, p["id"]))
 
         bezirke = set()
         for pos, c in enumerate(p.get("consultation") or []):
@@ -275,13 +292,18 @@ def build():
         for loc in p.get("location") or []:
             geom = (loc.get("geojson") or {}).get("geometry") or {}
             lon = lat = ot = None
-            if geom.get("type") == "Point":
+            if geom.get("type") == "Point" and loc["id"] not in grob:
                 lon, lat = geom["coordinates"][:2]
                 ot = ortsteile.locate(lon, lat)
                 level, method, conf = "strasse", "oparl_location", "hoch"
             else:
-                # Köln: Ort meist nur als subLocality (Stadtteil) ohne Geometrie → Stadtteilfläche (CLAUDE.md 5.2, Stufe A)
+                # Köln: Ort meist nur als subLocality (Stadtteil) ohne Geometrie → Stadtteilfläche (CLAUDE.md 5.2, Stufe A);
+                # ohne Erlaubnis für Hauskoordinaten (grob) gilt ein Punkt nur für seinen Stadtteil (Stadtteilfläche wie
+                # bei subLocality; Datenschutz, Prüfung r19), außerhalb der Stadtteile ohne Koordinate
                 treffer = ortsteile.by_name(loc.get("subLocality"))
+                if not treffer and geom.get("type") == "Point":
+                    im = ortsteile.locate(*geom["coordinates"][:2])
+                    treffer = ortsteile.by_name(im["ortsteil_bez"]) if im else None
                 if treffer:
                     ot, pt = treffer
                     lon, lat = round(pt.x, 6), round(pt.y, 6)
@@ -306,37 +328,11 @@ def build():
             rows["resp"].append((p["id"], r["organization_id"], r["kind"], r["method"],
                                  r["evidence"], r["derived"]))
 
-    # Beziehungen ausgelassener Vorlagen (ohne Drucksachennummer): Sie fehlen in `paper` (der Export zeigt sie nicht),
-    # zählen aber für den Datenschutz (check.erlaubnis liest sie aus paper_relation)
-    for a in ausgelassen:
-        rows["rel"] += [(a["id"], c) for c in a["subordinatedPaper"]] + [(o, a["id"]) for o in a["superordinatedPaper"]]
-
-    points = [(loc[1], loc[5], loc[6]) for loc in locations.values() if loc[-1] == config.QUELLE_OPARL]
+    # Straßenpunkte aus den Ortsangaben der Stadt für Namen, die im Straßenverzeichnis fehlen; ohne die auf den Stadtteil
+    # zurückgeführten Ortsangaben (grob: ihr Punkt ist der Stadtteil, nicht die Straße)
+    points = [(loc[1], loc[5], loc[6]) for loc in locations.values()
+              if loc[-1] == config.QUELLE_OPARL and loc[0] not in grob]
     gaz = Gazetteer(street_points=points)
-    gremien = {p["id"]: [(orgs_by_id.get((c.get("organization") or [None])[0]) or {}).get("name", "")
-                         for c in p.get("consultation") or [] if isinstance(c, dict)] for p in papers}
-    # ohne Hauskoordinate: Eingaben, Vorlagen natürlicher Personen, Vorlagen mit leerer oder nicht erkennbarer
-    # Vorlagenart (Entscheidung 10.11.2026) und alle mit ihnen verbundenen Vorlagen (vorsichtige Auslegung: auch eine
-    # Vorlage unbekannter Art kann eine Eingabe sein und sperrt ihre Beantwortung); ausgelassene Vorlagen gehören zur
-    # Startmenge (ohne Drucksachennummer keine Erlaubnis, geocode.REFERENZ_PUNKT): eine Eingabe ohne Nummer sperrt so
-    # weiter ihre Beantwortung oder Stellungnahme
-    start = ({p["id"] for p in papers if not hausnummer_punkt_erlaubt(p, gremien.get(p["id"], ()))}
-             | {a["id"] for a in ausgelassen})
-    verbunden = ohne_hauskoordinate(start, rows["rel"])
-    # dazu jede Vorlage mit der Drucksache einer davon: Exporte führen Vorlagen unter ihrer Drucksache, und
-    # check.erlaubnis verlangt dort die Erlaubnis jeder Vorlage mit dieser Drucksache (gleiches Urteil wie die Prüfung)
-    gleiche = gleiche_drucksache(verbunden, {p["id"]: p["reference"] for p in papers})
-    gesperrt = verbunden | gleiche
-    # Log: Gründe je Vorlage und die erkannten und nicht erkannten Vorlagenarten mit Anzahl (nur die Art), damit das
-    # Muster geocode.VORLAGENART_PUNKT nach dem Vollabruf in beide Richtungen geprüft und ergänzt werden kann
-    grund = {p["id"]: punkt_ausschluss(p, gremien.get(p["id"], ())) for p in papers}
-    je_grund = Counter(grund.values())
-    print(f"Ohne Erlaubnis für Hauskoordinaten: {len(gesperrt & grund.keys())} von {len(papers)} Vorlagen ("
-          + ", ".join(f"{text} {je_grund[g]}" for g, text in AUSSCHLUSS.items())
-          + f", verbunden mit einer davon oder einer ausgelassenen Vorlage {len((verbunden - start) & grund.keys())}"
-          + f", mit derselben Drucksache wie eine davon {len(gleiche)})")
-    print(nicht_erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] == "vorlagenart")))
-    print(erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] is None)))
     rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien, gesperrt)
     plans = Plans()
     rows["plan"] = [(pid, nr, ev, plans.classify(nr)[0]) for pid, nr, ev in rows["plan"]]
@@ -352,12 +348,13 @@ def build():
           f"{len(sure)} eindeutig (Vorrang vor {len(precedence)} Ortsbezügen aus dem Titel)")
     rows["ploc"] += _objects_in_titles(papers, locations, gaz, {r[0] for r in rows["ploc"]})
     rows["ploc"] += _fulltext(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]}, ausgelassen)
-    rows["ploc"] += _inherited(papers, papers_by_id, rows["ploc"])
+    rows["ploc"] += _inherited(papers, papers_by_id, rows["ploc"], locations, gaz, gesperrt)
     rows["ploc"] += _from_committee(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]})
 
     # OR REPLACE: ändert sich die Quelle während des seitenweisen Abrufs, kann eine Vorlage doppelt kommen
     db.executemany(f"INSERT OR REPLACE INTO paper VALUES (?,?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}')", rows["paper"])
     db.executemany(f"INSERT OR IGNORE INTO paper_relation VALUES (?,?,'{config.QUELLE_OPARL}')", rows["rel"])
+    db.executemany(f"INSERT OR IGNORE INTO paper_related VALUES (?,?,'{config.QUELLE_OPARL}')", rows["related"])
     db.executemany(f"INSERT INTO meeting VALUES (?,?,?,?,'{config.QUELLE_SITZUNG}')", meetings.values())
     db.executemany(f"INSERT INTO agenda_item VALUES (?,?,?,?,?,?,'{config.QUELLE_SITZUNG}')", agenda.values())
     db.executemany(f"INSERT OR REPLACE INTO consultation VALUES (?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}',?)", rows["cons"])
@@ -375,6 +372,35 @@ def build():
     db.close()
     print(f"{len(papers)} Vorlagen, {len(rows['cons'])} Beratungen, {len(meetings)} Sitzungen, "
           f"{len(agenda)} TOPs, {len(locations)} Orte → {config.DB}")
+
+
+def _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rel, related):
+    """IDs ohne Erlaubnis für Hauskoordinaten, gleiches Urteil wie check.erlaubnis (geocode.sperrmenge): Startmenge sind
+    Eingaben, Vorlagen natürlicher Personen, Beratungen im Ausschuss für Anregungen und Beschwerden, Vorlagen mit leerer
+    oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026), Vorlagen, deren Titel maske.py ohne Hausnummer zeigt
+    (Einwohnerschaft, Bauordnung, Naturschutz; federführende Organisation aus `underDirectionOf` wie in maske.aus_db),
+    und die ausgelassenen Vorlagen (ohne Drucksachennummer keine Erlaubnis, geocode.REFERENZ_PUNKT); dazu als Fixpunkt
+    alle verbundenen Vorlagen (über- und untergeordnet, relatedPaper) und alle Vorlagen mit derselben Drucksache
+    (vorsichtige Auslegung: auch eine Vorlage unbekannter Art kann eine Eingabe sein und sperrt ihre Beantwortung).
+    Log: Gründe, Wege, relatedPaper und die erkannten und nicht erkannten Vorlagenarten mit Anzahl (nur die Art), damit
+    das Muster geocode.VORLAGENART_PUNKT nach dem Vollabruf in beide Richtungen geprüft und ergänzt werden kann."""
+    amt = {p["id"]: (orgs_by_id.get((p.get("underDirectionOf") or [None])[0]) or {}).get("name") for p in papers}
+    grund = {p["id"]: punkt_ausschluss(p, gremien.get(p["id"], ()), amt[p["id"]]) for p in papers}
+    start = {pid for pid, g in grund.items() if g} | {a["id"] for a in ausgelassen}
+    drucksachen = {p["id"]: p["reference"] for p in papers}
+    weg = sperrmenge(start, rel + related, drucksachen)
+    ohne_verwandt = sperrmenge(start, rel, drucksachen)
+    je_grund, je_weg = Counter(grund.values()), Counter(weg[i] for i in grund if i in weg)
+    print(f"Ohne Erlaubnis für Hauskoordinaten: {len(weg.keys() & grund.keys())} von {len(papers)} Vorlagen ("
+          + ", ".join([f"{text} {je_grund[g]}" for g, text in AUSSCHLUSS.items()]
+                      + [f"{text} {je_weg[w]}" for w, text in WEG.items()]) + ")")
+    # relatedPaper: ob Köln das Feld füllt, ist ungemessen (Vollabruf); Vorlagen, die nur darüber gesperrt sind
+    print(f"relatedPaper: {len({a for a, _ in related} & grund.keys())} Vorlagen mit relatedPaper "
+          f"({len(set(related))} Verweise); ohne Hauskoordinate nur über relatedPaper: "
+          f"{len((weg.keys() - ohne_verwandt.keys()) & grund.keys())} Vorlagen")
+    print(nicht_erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] == "vorlagenart")))
+    print(erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] is None)))
+    return set(weg)
 
 
 def _add_location(r, locations, gaz):
@@ -591,8 +617,22 @@ def _from_committee(papers, bv_bezirke, locations, gaz, placed):
     return out
 
 
-def _inherited(papers, papers_by_id, own_rows):
-    """Vorlagen ohne eigenen Ortsbezug erben die Ortsbezüge der übergeordneten Vorlage."""
+def _strassenabschnitt(loc, locations, gaz):
+    """Orts-IDs des Straßenabschnitts zu einer Hauskoordinate (Ort der Ebene „adresse“ aus _add_location): dieselbe
+    Straße im Stadtteil der Hausnummer, ohne Nummer, wie die Rückfallstufe in _stage_b („strasse+hausnummer“); leer,
+    wenn das Straßenverzeichnis die Straße dort nicht kennt."""
+    strasse, ortsteil = loc[1].rsplit(" ", 1)[0], loc[7]   # Straße „Name Hausnummer“; die Hausnummer ohne Leerzeichen
+    return sorted({_add_location(dict(level="strasse", name=strasse, ortsteil=ortsteil, bezirk=e["bezirk"], lon=e["lon"],
+                                      lat=e["lat"], source=e["source"]), locations, gaz)
+                   for e in gaz.streets.get(strasse, ()) if e["ortsteil"] == ortsteil})
+
+
+def _inherited(papers, papers_by_id, own_rows, locations=None, gaz=None, gesperrt=frozenset()):
+    """Vorlagen ohne eigenen Ortsbezug erben die Ortsbezüge der übergeordneten Vorlage. Eine Vorlage ohne Erlaubnis für
+    Hauskoordinaten (`gesperrt`, geocode.sperrmenge) erbt nie eine Hauskoordinate: statt des Orts der Ebene „adresse“
+    den Straßenabschnitt (_strassenabschnitt), sonst nichts von diesem Ort. Mit dem Fixpunkt ist die übergeordnete
+    Vorlage einer gesperrten Vorlage selbst gesperrt und hat keine Hauskoordinate; die Regel hier sichert das zusätzlich
+    ab (Prüfung r19: vorher erbte eine Kopie mit derselben Drucksache wie eine Eingabe den Punkt, check hielt an)."""
     own = {}
     for r in own_rows:
         own.setdefault(r[0], []).append(r)
@@ -602,10 +642,14 @@ def _inherited(papers, papers_by_id, own_rows):
             continue
         for parent_id in p.get("superordinatedPaper") or []:
             parent = papers_by_id.get(parent_id)
+            ev = f"übergeordnete Vorlage {parent.get('reference') if parent else parent_id}"
             # abgeleitet, daher Stufe B; die Konfidenz liegt höchstens bei „mittel“
             for _, loc_id, _, _, conf, _, _ in own.get(parent_id, []):
-                out.append((p["id"], loc_id, "B", "vererbt", "mittel" if conf == "hoch" else conf,
-                            f"übergeordnete Vorlage {parent.get('reference') if parent else parent_id}",
-                            parent_id))
+                conf = "mittel" if conf == "hoch" else conf
+                if p["id"] in gesperrt and locations[loc_id][10] == "adresse":
+                    out += [(p["id"], abschnitt, "B", "vererbt", conf, f"{ev} (Straßenabschnitt ohne Hausnummer)",
+                             parent_id) for abschnitt in _strassenabschnitt(locations[loc_id], locations, gaz)]
+                    continue
+                out.append((p["id"], loc_id, "B", "vererbt", conf, ev, parent_id))
     print(f"Vererbt: {len({r[0] for r in out})} Vorlagen")
     return out

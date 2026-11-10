@@ -152,6 +152,17 @@ def _dump(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")))
 
 
+def aus_einwohnerschaft(paper_type, name):
+    """Ausgangsvorlage aus der Einwohnerschaft nach Art oder Titel (einwohner(), ohne verbundene Vorlagen; auch
+    geocode.punkt_ausschluss über maske.titel_ohne_hausnummer)."""
+    return bool(paper_type in EINWOHNER or EINWOHNER_TITEL.search(name or "")
+                # Köln: dieselben Eingaben und Vorlagen natürlicher Personen wie in der Punktregel (geocode.EINGABE auf
+                # Art und Titel: „Eingabe nach § 24 GO NRW“, „Einwohneranfrage nach § 39 Abs. 6“, „… – Bürgereingabe“),
+                # damit eine Vorlage ohne Hauskoordinate ihre Hausnummer auch nicht im Titel zeigt (Generalprobe
+                # 09.11.2026)
+                or EINGABE.search(paper_type or "") or EINGABE.search(name or ""))
+
+
 def einwohner(papers, auch=None):
     """Drucksachen von Vorlagen aus der Einwohnerschaft und aller Vorlagen, die mit ihnen über- oder untergeordnet
     verbunden sind (auch über mehrere Stufen): Stellungnahmen und Mitteilungen zu einem Bürgerantrag nennen oft
@@ -163,12 +174,7 @@ def einwohner(papers, auch=None):
             nachbarn[p["reference"]].add(r["reference"])
             nachbarn[r["reference"]].add(p["reference"])
     offen = [p["reference"] for p in papers
-             if p["paper_type"] in EINWOHNER or EINWOHNER_TITEL.search(p["name"] or "")
-             # Köln: dieselben Eingaben und Vorlagen natürlicher Personen wie in der Punktregel (geocode.EINGABE auf Art
-             # und Titel: „Eingabe nach § 24 GO NRW“, „Einwohneranfrage nach § 39 Abs. 6“, „… – Bürgereingabe“), damit
-             # eine Vorlage ohne Hauskoordinate ihre Hausnummer auch nicht im Titel zeigt (Generalprobe 09.11.2026)
-             or EINGABE.search(p["paper_type"] or "") or EINGABE.search(p["name"] or "")
-             or (auch and auch(p))]
+             if aus_einwohnerschaft(p["paper_type"], p["name"]) or (auch and auch(p))]
     gesehen = set(offen)
     while offen:
         for n in nachbarn[offen.pop()]:

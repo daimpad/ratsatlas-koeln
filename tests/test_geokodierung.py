@@ -2,7 +2,7 @@
 import pytest
 
 from pipeline.build import bv_bezirk
-from pipeline.geocode import Gazetteer, hausnummer_punkt_erlaubt
+from pipeline.geocode import Gazetteer, hausnummer_punkt_erlaubt, punkt_ausschluss
 
 
 @pytest.fixture(scope="module")
@@ -74,14 +74,17 @@ def test_punktregel():
 
 def test_punktregel_einwohneranfrage():
     """Kölner Einwohneranfrage (natürliche Person, Stufe 2: „Einwohneranfrage nach § 39 Abs. 6“, Drucksache wie
-    Anträge): keine Hauskoordinate, auch ohne Hinweis im Titel; die Einwohnerbefragung der Verwaltung bleibt erlaubt."""
+    Anträge): keine Hauskoordinate, auch ohne Hinweis im Titel. Die Einwohnerbefragung der Verwaltung gilt nicht als
+    Eingabe, bekommt aber seit Runde 19b ebenfalls keine Hauskoordinate: maske.py blendet die Hausnummer in Titeln mit
+    „Einwohner“ aus, und neben einem Titel ohne Hausnummer steht keine Anschrift mit Hauskoordinate."""
     ew = {"reference": "AN/0012/2026", "name": "Zustand des Gehwegs vor Musterweg 3",
           "paperType": "Einwohneranfrage nach § 39 Abs. 6"}
     assert not hausnummer_punkt_erlaubt(ew)
     assert not hausnummer_punkt_erlaubt({"reference": "1234/2026", "paperType": "Mitteilung",
                                          "name": "Beantwortung einer Einwohnerfrage: Musterweg 3"})
-    assert hausnummer_punkt_erlaubt({"reference": "1234/2026", "paperType": "Beschlussvorlage",
-                                     "name": "Einwohnerbefragung zur Umgestaltung Musterweg 3"})
+    befragung = {"reference": "1234/2026", "paperType": "Beschlussvorlage",
+                 "name": "Einwohnerbefragung zur Umgestaltung Musterweg 3"}
+    assert punkt_ausschluss(befragung) == "maske" and not hausnummer_punkt_erlaubt(befragung)
 
 
 def test_ohne_hauskoordinate_verbundene_vorlagen():
