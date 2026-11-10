@@ -47,6 +47,14 @@ def privat(p):
     return any(AMT_PRIVAT.match(n or "") for n in namen)
 
 
+def titel_ohne_hausnummer(paper_type, name, amt_name=None):
+    """Ist die Vorlage selbst Ausgangspunkt der Maske (ohne verbundene Vorlagen)? Gleiche Angaben wie aus_db: Art und
+    Titel aus der Einwohnerschaft (chat.aus_einwohnerschaft) oder Bauordnung bzw. Naturschutz federführend (privat über
+    den Namen der Organisation aus `underDirectionOf`). geocode.punkt_ausschluss gibt solchen Vorlagen keine
+    Hauskoordinate, damit neben dem Titel ohne Hausnummer keine Anschrift als Ortsname steht."""
+    return chat.aus_einwohnerschaft(paper_type, name) or privat({"amt_name": amt_name})
+
+
 class Maske:
     """maske(titel, drucksache) → Titel ohne Hausnummer, wenn die Drucksache zur Einwohnerschaft gehört."""
 

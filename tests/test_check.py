@@ -76,7 +76,7 @@ def test_check_besteht_mit_testdaten(testdaten, capsys):
 
 def test_eingeschleuster_punkt_auf_hausnummer(testdaten, monkeypatch, capsys):
     """Ein Fehler im Aufbau setzt Eingaben auf die Hauskoordinate: Datenbank, GeoJSON und Gebietsdateien melden ihn."""
-    monkeypatch.setattr(build, "hausnummer_punkt_erlaubt", lambda *a: True)
+    monkeypatch.setattr(build, "punkt_ausschluss", lambda *a: None)   # Fehler: keine Startmenge
     db = _aufbauen()
     verstoss = {r[0] for r in db.execute(
         "SELECT p.reference FROM paper p JOIN paper_location pl ON pl.paper_id = p.id JOIN location l "
@@ -155,7 +155,8 @@ def test_stichprobe_hausnummern_ohne_hausnummer_aus_eingaben(testdaten):
     kopf = "nr\tdrucksache\ttitel\tlink\tstrasse\tortsteile_ohne_hausnummer\tortsteil_der_hausnummer\twirkung\turteil\tanmerkung\n"
     pfad.write_text(kopf + f"1\t{ref}\t{titel}\t\tX\tA; B\tA\teindeutig\t\t\n", encoding="utf-8")
     befunde = check.datenschutz(db)["befunde"]
-    assert len(befunde) == 1 and "Titeln aus Einwohnerschaft" in befunde[0] and befunde[0].endswith(f"z. B. {ref}")
+    assert len(befunde) == 1 and "Titeln oder Ortsnamen aus Einwohnerschaft" in befunde[0] and befunde[0].endswith(
+        f"z. B. {ref}")
     export.export_audits()
     zeile = pfad.read_text(encoding="utf-8").splitlines()[1].split("\t")
     assert zeile[1] == ref and "[Hausnummer ausgelassen]" in zeile[2] and zeile[2] != titel
@@ -182,7 +183,7 @@ def test_verstoss_nur_im_export(testdaten):
     db.close()
     assert len(befunde) == 2, befunde
     assert "(vorlagen.geojson;" in befunde[0] and befunde[0].endswith(f": 1, z. B. {ziel['reference']}")
-    assert "Titeln aus Einwohnerschaft" in befunde[1] and befunde[1].endswith(f": 1, z. B. {zeile[0]}")
+    assert "Titeln oder Ortsnamen aus Einwohnerschaft" in befunde[1] and befunde[1].endswith(f": 1, z. B. {zeile[0]}")
 
 
 def test_fehlende_dateien_werden_gemeldet(testdaten, monkeypatch, capsys):

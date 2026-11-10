@@ -122,9 +122,10 @@ def test_bezeichnung_und_zeile():
 
 
 def test_gleiche_drucksache():
+    """Vorlagen mit derselben Drucksache wie eine gesperrte (geocode.sperrmenge ohne Beziehungen)."""
     drucksachen = {"a": "1/2026", "b": "1/2026", "c": "2/2026", "d": "3/2026"}
-    assert geocode.gleiche_drucksache({"a", "x"}, drucksachen) == {"b"}
-    assert geocode.gleiche_drucksache({"c"}, drucksachen) == set()
+    assert geocode.sperrmenge({"a", "x"}, [], drucksachen) == {"a": "start", "x": "start", "b": "drucksache"}
+    assert geocode.sperrmenge({"c"}, [], drucksachen) == {"c": "start"}
 
 
 # --- Aufbau, Export, Prüfung ------------------------------------------------------------------------------------------
@@ -271,8 +272,9 @@ def test_aufbau_pruefung_und_zaehlung(testdaten, capsys):
     alle = sum(td.values()) + len(FAELLE)
     assert (f"Ohne Erlaubnis für Hauskoordinaten: {eingaben + 10 + 2} von {alle} Vorlagen (Drucksache in anderem "
             f"Schema 0, Eingabe oder Einwohneranfrage {eingaben}, Ausschuss für Anregungen und Beschwerden 0, "
-            f"Vorlagenart nicht erkennbar 10, verbunden mit einer davon oder einer ausgelassenen Vorlage 1, mit "
-            f"derselben Drucksache wie eine davon 1)\n") in aus_build
+            f"Vorlagenart nicht erkennbar 10, Titel ohne Hausnummer (Einwohnerschaft, Bauordnung, Naturschutz) 0, "
+            f"verbunden mit einer davon oder einer ausgelassenen Vorlage 1, mit derselben Drucksache wie eine davon 1)\n"
+            ) in aus_build
     assert ERWARTETE_ZEILE + "\n" in aus_build
     assert ERWARTETE_ZEILE + "\n" in aus_check
     erkannt = Counter({f"„{art}“": n for art, n in td.items() if art != "Anregungen und Beschwerden"})
@@ -291,8 +293,9 @@ def test_pruefung_meldet_eingeschleusten_punkt_bei_unbekannter_art(testdaten, mo
     der Vorlagenart), meldet check es in Datenbank, vorlagen.geojson und Gebietsdateien, auch die Beschlussvorlage mit
     derselben Drucksache wie eine Vorlage nicht erkennbarer Art; Eingaben bleiben gesperrt."""
     _einfuegen()
-    monkeypatch.setattr(build, "hausnummer_punkt_erlaubt",
-                        lambda p, g=(): punkt_ausschluss(p, g) in (None, "vorlagenart"))
+    monkeypatch.setattr(build, "punkt_ausschluss",
+                        lambda p, g=(), amt=None: None if punkt_ausschluss(p, g, amt) == "vorlagenart"
+                        else punkt_ausschluss(p, g, amt))
     build.build()
     export.export()
     capsys.readouterr()
