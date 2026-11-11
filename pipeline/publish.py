@@ -58,6 +58,11 @@ def events(p, with_followups=False):
     return out
 
 
+# Steuerzeichen aus der Quelle sind in XML nicht erlaubt; sie machten den ganzen Feed ungültig (_atom entfernt sie,
+# check._feeds vergleicht Texte in derselben Form)
+STEUERZEICHEN = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+
+
 def _atom(feed_id, title, subtitle, self_url, alt_url, entries):
     entries = sorted(entries, key=lambda e: (e["date"], e["id"]), reverse=True)
     updated = (entries[0]["date"] if entries else "2019-10-01") + "T00:00:00Z"
@@ -76,8 +81,7 @@ def _atom(feed_id, title, subtitle, self_url, alt_url, entries):
                   f'<link rel="related" type="text/html" href={quoteattr(e["original"])}/>' if e.get("original") else "",
                   f"<summary>{escape(e['summary'])}</summary>", "</entry>"]
     parts.append("</feed>")
-    # Steuerzeichen aus der Quelle sind in XML nicht erlaubt; sie machten den ganzen Feed ungültig
-    return re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", "\n".join(x for x in parts if x)) + "\n"
+    return STEUERZEICHEN.sub("", "\n".join(x for x in parts if x)) + "\n"
 
 
 OPEN = ("in Beratung", "offen")

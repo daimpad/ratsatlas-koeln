@@ -4,6 +4,7 @@ import json
 import re
 import random
 import sqlite3
+import unicodedata
 from collections import Counter
 
 from . import actors, config, maske
@@ -204,15 +205,38 @@ def _je_kennung_einmal(roh):
     return [*vorhanden.values(), *geloescht.values()]
 
 
-# Zahlen außer Postleitzahlen (fünfstellig, 5xxxx) gelten in Ortsangaben der Stadt als Hausnummern; check.py prüft
-_NUMMER = re.compile(r"(?<!\d)(?!5\d{4}\b)\d{1,4}(?:\s?[a-zA-Z](?![a-zA-ZäöüÄÖÜß]))?"
-                     r"(?:\s*(?:-|–|/|bis)\s*\d{1,4}(?:\s?[a-zA-Z](?![a-zA-ZäöüÄÖÜß]))?)?(?!\d)")
+# Postleitzahl (fünfstellig, 5xxxx, als ganzes Wort): die einzige Zahl, die in Ortsangaben der Stadt stehen bleibt;
+# check.datenschutz prüft mit derselben Regel (PLZ)
+PLZ = re.compile(r"\b5[0-9]{4}\b")
+# jede andere Ziffernfolge gilt als Hausnummer und fällt samt Buchstabenzusatz und Liste weg („12a“, „12-14“, „12/14“),
+# auch längere: Vorher blieben fünf- und mehrstellige Nummern ganz oder teilweise stehen („Bebauungsplan 61459/04“ als
+# „Bebauungsplan 61459/“, „Flurstück 12345/6“, „50823Köln“), und check meldete sie als Hausnummer (Prüfung r20a, zweite
+# Korrektur)
+_NUMMER = re.compile(r"(?<!\d)(?!\b5[0-9]{4}\b)\d+(?:\s?[a-zA-Z](?![a-zA-ZäöüÄÖÜß]))?"
+                     r"(?:\s*(?:-|–|/|bis)\s*\d+(?:\s?[a-zA-Z](?![a-zA-ZäöüÄÖÜß]))?)*")
+
+
+def _ziffern_angleichen(text):
+    """Jedes Zeichen, dessen NFKC-Form eine Ziffer enthält, in dieser Form („½“ als „1/2“, „¹“ als „1“, „⒓“ als
+    „12“): Für \\d sind solche Zeichen keine Ziffern, für die Titelmaske (maske._falten) schon. Vorher blieb
+    „Severinstraße 12½“ als „Severinstraße ½“ stehen, und check hätte die Veröffentlichung mit einem Befund angehalten,
+    den die Maske nicht behebt (Prüfung r20a, dritte Korrektur)."""
+    return "".join(c if c.isdecimal() or not any(d.isdigit() for d in unicodedata.normalize("NFKC", c))
+                   else unicodedata.normalize("NFKC", c).replace("\u2044", "/").rstrip(".") for c in text)
+
+
+def ziffer_ausser_plz(text):
+    """Steht in einer Ortsangabe eine Ziffer (auch nach NFKC, _ziffern_angleichen) außerhalb einer Postleitzahl?
+    Dieselbe Regel wie ohne_hausnummer; check prüft damit die Ortsangaben der Stadt."""
+    return bool(re.search(r"\d", PLZ.sub("", _ziffern_angleichen(text or ""))))
 
 
 def ohne_hausnummer(text):
     """Ortsangabe der Stadt ohne Hausnummer (CLAUDE.md 5.2): bisher hätte eine Hausnummer in der Quelle die
-    tägliche Veröffentlichung angehalten, statt die Straße zu zeigen (Code-Prüfung 23.10.2026)."""
-    out = re.sub(r"\s+,", ",", re.sub(r"\s{2,}", " ", _NUMMER.sub("", (text or "").strip()))).strip(" ,")
+    tägliche Veröffentlichung angehalten, statt die Straße zu zeigen (Code-Prüfung 23.10.2026). Ziffern auch nach NFKC
+    (_ziffern_angleichen; Prüfung r20a, dritte Korrektur)."""
+    out = re.sub(r"\s+,", ",", re.sub(r"\s{2,}", " ", _NUMMER.sub("", _ziffern_angleichen((text or "").strip()))))
+    out = out.strip(" ,")
     return out or None
 
 

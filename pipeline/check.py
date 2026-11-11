@@ -37,6 +37,9 @@ ZAEHLUNG = {
     "suche": "Titel in suche.json untersucht",
     "titel_geschuetzt": "davon aus Einwohnerschaft, Bauordnung oder Naturschutz samt verbundenen Vorlagen (auch über "
                         "relatedPaper) und derselben Drucksache (Hausnummer ausgeblendet)",
+    "ohne_punkt_ohne_maske": "Vorlagen ohne Hauskoordinate nur über das Gremium (Anregungen und Beschwerden) oder "
+                             "eine nicht erkennbare Vorlagenart, außerhalb der Titelmaske, mit einer Zahl außerhalb "
+                             "bekannter Zusammenhänge im Titel (Hinweis, kein Befund; Entscheidung offen, TECHNIK.md)",
     "ortsnamen": "Ortsnamen in vorlagen.geojson und den Gebietsdateien untersucht",
     "geojson": "Punkte in vorlagen.geojson untersucht",
     "geojson_hauskoordinaten": "davon auf einer Hauskoordinate",
@@ -45,13 +48,17 @@ ZAEHLUNG = {
     "stichprobe_hausnummern": "Titel in der Stichprobe Hausnummern untersucht",
     "stichprobe_volltext": "Titel und Orte in der Stichprobe Volltext untersucht",
     "stichprobe_objekte": "Titel und Orte in der Stichprobe Gebäude und Anlagen untersucht",
-    "tabellen_mit_titel": "TSV-Dateien mit Drucksache und Titel unter data/export untersucht (Datenpaket)",
+    "tabellen_mit_titel": "TSV-Dateien mit Drucksache und Titel, Fundstelle oder Ortsnamen unter data/export "
+                          "untersucht (Datenpaket)",
     "tabellen_zeilen": "davon Zeilen",
     "fundstellen": "Fundstellen aus dem Titel in vorlagen.geojson, den Gebietsdateien und plaene.json untersucht",
+    "verbundene_titel": "Titel verbundener Vorlagen und Ergebnisse der Beratungen in den Gebietsdateien untersucht",
+    "feeds": "Einträge in Feeds (*.xml) untersucht",
 }
-# Spalten der TSV-Dateien mit Drucksache und Titel, die Teile des Titels oder einen Ortsnamen tragen (Fundstelle,
-# Treffer): geprüft wie der Titel (Prüfung r20a; vorher nur „titel“)
-TSV_TEXTSPALTEN = {"titel", "fundstelle", "treffer"}
+# Spalten der TSV-Dateien mit Drucksache, die Titel, Teile des Titels oder einen Ortsnamen tragen: geprüft wie der Titel
+# (Prüfung r20a; vorher nur „titel“; zweite Korrektur: „ort“, „zurueckgestellt“); export._tabellen_maskieren maskiert
+# dieselben Spalten (maske.TEXTSPALTEN; dritte Korrektur: jede Datei mit „drucksache“)
+TSV_TEXTSPALTEN = maske.TEXTSPALTEN
 
 
 def check():
@@ -303,12 +310,14 @@ def _verstoss_oparl(befunde, wo, refs):
 
 
 def _tabellen_mit_titel(wurzel, m, zahl, befunde):
-    """Titel in TSV-Dateien unter `wurzel` (data/export, auch in Unterordnern; paket.write packt sie ins Datenpaket):
-    Jede Datei mit den Spalten „drucksache“ und „titel“ (Audits, Stichproben, auch abgeschalteter Zusatzthemen) wird
-    gegen die Titelmaske geprüft (maske.Maske.offen), ohne feste Liste, mit den Spalten aus TSV_TEXTSPALTEN (Fundstelle
-    und Ortsnamen, Prüfung r20a); in den Stichproben aus maske.STICHPROBEN dazu deren weitere Spalten (gefundene Orte).
-    Fehlt einer vorhandenen Stichprobe aus maske.STICHPROBEN „drucksache“ oder eine ihrer Spalten, ist das ein Befund:
-    export könnte sie nicht maskieren (vorher übersprungen; Prüfung r20a).
+    """Titel, Fundstellen und Ortsnamen in TSV-Dateien unter `wurzel` (data/export, auch in Unterordnern; paket.write
+    packt sie ins Datenpaket): Jede Datei mit der Spalte „drucksache“ und einer Spalte aus TSV_TEXTSPALTEN (Audits,
+    Stichproben, auch abgeschalteter Zusatzthemen) wird gegen die Titelmaske geprüft (maske.Maske.offen), ohne feste
+    Liste; in den Stichproben aus maske.STICHPROBEN dazu deren weitere Spalten (gefundene Orte). Vorher nur Dateien mit
+    „titel“ (Prüfung r20a, dritte Korrektur: audit_volltext.tsv und audit_objekte_titel.tsv blieben ungeprüft); export
+    maskiert dieselben Spalten (export._tabellen_maskieren). Fehlt einer vorhandenen Stichprobe aus maske.STICHPROBEN
+    „drucksache“ oder eine ihrer Spalten, ist das ein Befund: export könnte sie nicht maskieren (vorher übersprungen;
+    Prüfung r20a).
     Liefert die Drucksachen mit Hausnummer; zählt Dateien und Zeilen in `zahl`, nennt nur Pfade und Spaltennamen."""
     konfiguriert = {wurzel.joinpath(*teile): maskiert for teile, maskiert in maske.STICHPROBEN.items()}
     offen, dateien, n, gesehen = set(), 0, 0, {}
@@ -325,7 +334,7 @@ def _tabellen_mit_titel(wurzel, m, zahl, befunde):
         with open(pfad, encoding="utf-8", newline="") as f:
             leser = csv.reader(f, delimiter="\t")
             kopf = next(leser, [])
-            fehlt = [k for k in ("drucksache", *(maskiert or ("titel",))) if k not in kopf]
+            fehlt = [k for k in ("drucksache", *(maskiert or ())) if k not in kopf]
             if fehlt:
                 if maskiert is not None:
                     befunde.append(f"Datenschutz: Stichprobe {pfad.relative_to(wurzel)} ohne Spalte "
@@ -334,6 +343,8 @@ def _tabellen_mit_titel(wurzel, m, zahl, befunde):
                 continue
             ref = kopf.index("drucksache")
             spalten = [i for i, k in enumerate(kopf) if k in TSV_TEXTSPALTEN | set(maskiert or ())]
+            if not spalten:
+                continue
             zeilen = 0
             for z in leser:
                 zeilen += 1
@@ -343,6 +354,68 @@ def _tabellen_mit_titel(wurzel, m, zahl, befunde):
         if maskiert is not None:
             zahl[pfad.name.removesuffix(".tsv")] = zeilen
     zahl["tabellen_mit_titel"], zahl["tabellen_zeilen"] = dateien, n
+    return offen
+
+
+def _feeds(base, db, m, zahl):
+    """Feeds (Atom, *.xml unter `base`: je Gebiet, ganz Köln, je Vorlage, Themenseiten): Titel und Zusammenfassung jedes
+    Eintrags und der Kopf eines Feeds je Vorlage enthalten keinen Text der Vorlage ungekürzt, den die Maske ändert
+    (Titel, Ergebnisse der Beratungen, Titel der Folgevorlagen; Prüfung r20a, dritte Korrektur: Feeds waren ungeprüft).
+    Ein Eintrag nennt seine Vorlage in der ID (OParl-Kennung vor „#“, publish.events). Ein Vergleich mit dem
+    ungekürzten Text statt der Maske selbst, weil Einträge Gremium und Ergebnis neben dem Titel tragen. Vorher fallen
+    die maskierten Texte derselben Vorlage weg, die einen ungekürzten enthalten (Nachprüfung der dritten Korrektur:
+    Setzt der Titel einer Folgevorlage den Titel der Eingabe fort, „… Musterpark 2. Nachtrag“, rückt deren letzte Zahl
+    in einen bekannten Zusammenhang und bleibt nach der Maske stehen; der ungekürzte Titel der Eingabe stand dann als
+    Teil im Eintrag, und check meldete einen Befund, den die Maske nicht beheben konnte). Texte in der Form, die ein
+    Feed nach dem Lesen trägt (ohne publish.STEUERZEICHEN, Zeilenende „\\n“). Liefert die Drucksachen mit ungekürztem
+    Text; zählt die Einträge in `zahl`."""
+    import xml.etree.ElementTree as ET
+    from .publish import STEUERZEICHEN
+    atom = "{http://www.w3.org/2005/Atom}"
+    ref_von = dict(db.execute("SELECT id, reference FROM paper"))
+    texte = {}
+
+    def wie_im_feed(t):
+        return re.sub(r"\r\n?", "\n", STEUERZEICHEN.sub("", t))
+
+    def ungekuerzt(pid):
+        """(Texte der Vorlage, die die Maske ändert, ungekürzt; maskierte Texte der Vorlage, die einen davon enthalten,
+        längere zuerst)."""
+        if pid not in texte:
+            ref = ref_von.get(pid)
+            kandidaten = []
+            if ref in m.refs:
+                kandidaten = [(r[0], ref) for r in db.execute("SELECT name FROM paper WHERE id = ?", (pid,))]
+                kandidaten += [(r[0], ref) for r in db.execute(
+                    "SELECT a.result FROM consultation c JOIN agenda_item a ON a.id = c.agenda_item_id "
+                    "WHERE c.paper_id = ?", (pid,))]
+                kandidaten += db.execute("SELECT p.name, p.reference FROM paper_relation r JOIN paper p "
+                                         "ON p.id = r.child_id WHERE r.parent_id = ?", (pid,)).fetchall()
+            # ab sechs Zeichen: ein kurzer Text wie „12“ stünde auch zufällig im Eintrag (Datum der Beratung)
+            roh = [wie_im_feed(t) for t, r in kandidaten if t and len(t) >= 6 and m(t, r) != t]
+            huellen = {wie_im_feed(m(t, r)) for t, r in kandidaten if t} if roh else set()
+            texte[pid] = (roh, sorted((h for h in huellen if any(t in h for t in roh)), key=len, reverse=True))
+        return texte[pid]
+
+    offen, n = set(), 0
+    for pfad in sorted(p for p in base.rglob("*.xml") if p.is_file()):
+        try:
+            wurzel = ET.parse(pfad).getroot()
+        except ET.ParseError:
+            continue
+        kopf = " ".join(wurzel.findtext(f"{atom}{k}") or "" for k in ("title", "subtitle"))
+        for e in wurzel.iter(f"{atom}entry"):
+            n += 1
+            pid = (e.findtext(f"{atom}id") or "").split("#")[0]
+            roh, huellen = ungekuerzt(pid)
+            if not roh:
+                continue
+            text = " ".join(e.findtext(f"{atom}{k}") or "" for k in ("title", "summary")) + " " + kopf
+            for h in huellen:
+                text = text.replace(h, " ")
+            if any(t in text for t in roh):
+                offen.add(ref_von.get(pid) or pid)
+    zahl["feeds"] = n
     return offen
 
 
@@ -359,8 +432,12 @@ def datenschutz(db, base=None):
        Drucksache der Titelmaske mit Erlaubnis für
        Hauskoordinaten (Titelmaske und Hauskoordinaten folgen denselben Beziehungen, Runde 20) und keine Eingabe ohne
        Hauskoordinate (Grund „eingabe“) außerhalb der Titelmaske (Prüfung r20), ebenso keine Vorlagenart aus der
-       Einwohnerschaft oder von Privatpersonen (geocode.art_von_personen); Hausnummern mit dem Muster der Maske und
-       einer unabhängig gebauten Probe (maske.Maske.offen; Prüfung r20n),
+       Einwohnerschaft oder von Privatpersonen (geocode.art_von_personen); Hausnummern mit den Mustern der Maske, ihrer
+       Probe und ihrer Positivliste (maske.Maske.offen; Prüfung r20n; seit der zweiten Korrektur der Prüfung r20a
+       blendet die Maske aus, was die Probe meldet, seit der dritten jede Zahl außerhalb bekannter Zusammenhänge; ein
+       Befund heißt also: Text ohne Maske). Seit der dritten Korrektur auch Titel verbundener Vorlagen, Ergebnisse der
+       Beratungen und Feeds (_feeds) und jede TSV-Datei mit „drucksache“; als Hinweis ohne Befund Vorlagen ohne
+       Hauskoordinate nur über das Gremium oder die Vorlagenart außerhalb der Titelmaske (Entscheidung offen),
     3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
        Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
@@ -382,12 +459,15 @@ def datenschutz(db, base=None):
         fehlend.append(_fehlt("Datenschutz", f, "export"))
         return None
 
-    # 1. Straße und Beschreibung der Orte aus der OParl-API
+    # 1. Straße und Beschreibung der Orte aus der OParl-API: jede Ziffer außer in einer Postleitzahl (dieselbe Regel wie
+    # build.ohne_hausnummer, eine Funktion: build.ziffer_ausser_plz; Prüfung r20a, zweite Korrektur: vorher entfernte
+    # build nur Zahlen bis vier Stellen, und check meldete den Rest eines Bebauungsplans „61459/“ als Hausnummer; dritte
+    # Korrektur: Ziffern auch nach NFKC, „Severinstraße 12½“)
+    from .build import ziffer_ausser_plz
     orte = db.execute("SELECT id, street, description FROM location WHERE source = ? "
                       "AND (street IS NOT NULL OR description IS NOT NULL)", (config.QUELLE_OPARL,)).fetchall()
     zahl["ortsangaben"] = sum((s is not None) + (d is not None) for _, s, d in orte)
-    mit_nummer = sorted(i for i, *texte in orte
-                        if any(t and re.search(r"\d", re.sub(r"\b5[0-9]{4}\b", "", t)) for t in texte))
+    mit_nummer = sorted(i for i, *texte in orte if any(t and ziffer_ausser_plz(t) for t in texte))
     if mit_nummer:
         befunde.append(f"Datenschutz: Hausnummern in Ortsangaben der Stadt (CLAUDE.md 5.2): {len(mit_nummer)} Orte, "
                        f"z. B. {', '.join(mit_nummer[:5])}")
@@ -454,12 +534,28 @@ def datenschutz(db, base=None):
                        f"auch nach der Vorlagenart, geocode.art_von_personen), aber nicht in der Titelmaske (maske.py; "
                        f"Titelmaske und Hauskoordinaten urteilen verschieden): "
                        f"{len(ungeschuetzt)}, z. B. {', '.join(ungeschuetzt[:5])}")
+    # Hinweis ohne Befund (Prüfung r20a, dritte Korrektur; Entscheidung des Auftraggebers offen, TECHNIK.md): Vorlagen
+    # ohne Hauskoordinate nur über das Gremium (Ausschuss für Anregungen und Beschwerden) oder eine nicht erkennbare
+    # Vorlagenart sind nicht Ausgangspunkt der Titelmaske; wie viele davon eine Zahl außerhalb bekannter Zusammenhänge
+    # im Titel tragen, zeigt diese Zählung (nur Anzahl und Drucksachen)
+    titel_von = dict(db.execute("SELECT id, name FROM paper"))
+    nur_gremium = sorted({str(ref_of.get(pid) or pid) for pid, grund in gruende.items()
+                          if grund in ("gremium", "vorlagenart") and ref_of.get(pid) not in m.refs
+                          and maske.restzahlen(titel_von.get(pid) or "")})
+    zahl["ohne_punkt_ohne_maske"] = len(nur_gremium)
+    if nur_gremium:
+        print(f"Hinweis (kein Befund): Vorlagen ohne Hauskoordinate nur über das Gremium oder die Vorlagenart, "
+              f"außerhalb der Titelmaske, mit einer Zahl im Titel: {len(nur_gremium)}, "
+              f"z. B. {', '.join(nur_gremium[:10])}")
     offen = set()
     suche = lesen("suche.json")
     if suche is not None:
         rows = suche["rows"]
         zahl["suche"] = len(rows)
         zahl["titel_geschuetzt"] = sum(r[0] in m.refs for r in rows)
+        # seit der dritten Korrektur der Prüfung r20a mit der Positivliste der Maske (Maske.offen): jede Zahl außerhalb
+        # bekannter Zusammenhänge ist ein Befund (vorher nur ein Hinweis, maske.restzahlen; die Maske blendet sie aus,
+        # ein Befund heißt also: Text ohne Maske)
         offen |= {r[0] for r in rows if m.offen(r[1], r[0])}
         if len(rows) != len(je_id):
             befunde.append(f"Datenschutz: suche.json nennt {len(rows)} Vorlagen, die Datenbank {len(je_id)} – "
@@ -499,6 +595,15 @@ def datenschutz(db, base=None):
             if (m.offen(p.get("name"), p["reference"]) or any(m.offen(x.get("name"), p["reference"]) for x in orte)
                     or any(m.offen(x, p["reference"]) for x in fund)):
                 offen.add(p["reference"])
+            # Titel verbundener Vorlagen (je mit ihrer Drucksache) und Ergebnisse der Beratungen (Prüfung r20a, dritte
+            # Korrektur: vorher ungeprüft; export maskiert sie wie den Titel)
+            verbunden = [(x.get("name"), x.get("reference")) for k in ("superordinated", "subordinated")
+                         for x in p.get(k) or ()]
+            verbunden += [(x.get("title"), x.get("reference")) for x in p.get("steps") or () if x.get("title")]
+            verbunden += [(x.get("result"), p["reference"]) for k in ("process", "steps") for x in p.get(k) or ()
+                          if x.get("result")]
+            zahl["verbundene_titel"] = zahl.get("verbundene_titel", 0) + len(verbunden)
+            offen |= {r for t, r in verbunden if m.offen(t, r)}
             if any(_hauskoordinate(x.get("level"), x.get("method"), x.get("source")) for x in orte):
                 auf.add(p["reference"])
             if any(_oparl_punkt(x.get("method"), x.get("lon"), x.get("source"), x.get("level")) for x in orte):
@@ -514,6 +619,7 @@ def datenschutz(db, base=None):
             if m.offen(v.get("titel"), v.get("drucksache")) or m.offen(v.get("fundstelle"), v.get("drucksache")):
                 offen.add(v.get("drucksache"))
     offen |= _tabellen_mit_titel(base.parent, m, zahl, befunde)
+    offen |= _feeds(base, db, m, zahl)
     _verstoss(befunde, "Gebietsdateien der Karte", [r for r in auf if not je_ref.get(r)])
     _verstoss_oparl(befunde, "Gebietsdateien der Karte", [r for r in auf_oparl if not je_ref.get(r)])
     if offen:
