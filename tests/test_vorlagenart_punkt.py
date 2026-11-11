@@ -7,6 +7,7 @@ erkannten Vorlagenarten in Log und Prüfung, andere Schreibungen (Vergleichstext
 die Erklärtexte. Keine Anfragen an die Stadt."""
 import importlib.util
 import json
+import re
 import sqlite3
 import sys
 from collections import Counter
@@ -47,7 +48,11 @@ WEICH, OHNE_BREITE, TREMA, VOLL_B = chr(0x00AD), chr(0x200B), chr(0x0308), chr(0
 EINGABE_SCHREIBUNGEN = ["Bu" + TREMA + "rgerantrag", "Bür" + WEICH + "gerantrag", "Bür" + OHNE_BREITE + "gerantrag",
                         VOLL_B + "ürgerantrag", "Buergerantrag", "BUERGERANTRAG",
                         "Ein" + WEICH + "wohneranfrage nach § 39 Abs. 6", "Antrag nach Paragraf 24 GO",
-                        "Antrag nach Paragraph 24 GO NRW", "Neueingabe"]
+                        "Antrag nach Paragraph 24 GO NRW", "Neueingabe",
+                        # Prüfung r20a: ohne Leerzeichen, direkt vor Buchstaben, abgekürzt
+                        "Antrag nach §24GO NRW", "Antrag nach § 24GO NRW", "Antrag nach §24 GO", "Antrag nach §§ 24GO",
+                        "Antrag nach Par. 24 GO NRW", "Antrag nach par.24 GO", "Antrag nach Paragr. 24 GO NRW",
+                        "ANTRAG NACH PARAGR.24GO"]
 
 
 def _vv(art, **felder):
@@ -100,6 +105,25 @@ def test_eingaben_gehen_vor():
 def test_eingabe_in_anderer_schreibung(art):
     """Eine andere Schreibung lässt eine Eingabe nicht als erkannte Vorlagenart durch (geocode._vergleichstexte)."""
     assert punkt_ausschluss(_vv(art)) == "eingabe"
+
+
+def test_paragraf_24_ohne_leerzeichen_und_abgekuerzt():
+    """Prüfung r20a: „§ 24“ zählt auch ohne Leerzeichen und direkt vor Buchstaben (vorher verlangte EINGABE mit \\b eine
+    Wortgrenze hinter der 24: „§24GO“ ging als erkannter „Antrag“ mit Hauskoordinate durch), „Par. 24“ und „Paragr. 24“
+    wie „§ 24“; im Titel ebenso, Titelmaske eingeschlossen. Nicht vor einer weiteren Ziffer und nicht bei „Par“ ohne
+    Punkt."""
+    from pipeline import chat
+    assert not re.search(r"(?i)§\s*24\b", "Antrag nach §24GO NRW")   # die alte Regel: keine Eingabe
+    for art in ("Antrag nach §24GO NRW", "Antrag nach Par. 24 GO", "Antrag nach Paragr. 24 GO NRW"):
+        assert chat.aus_einwohnerschaft(art, "Bank am Musterweg 3")
+    for titel in ("Antrag nach §24GO NRW: Bank am Musterweg 3", "Par. 24 GO: Bank am Musterweg 3",
+                  "Paragr.24GO NRW – Bank am Musterweg 3"):
+        assert punkt_ausschluss(_vv("Mitteilung", name=titel)) == "eingabe", titel
+        assert chat.aus_einwohnerschaft("Mitteilung", titel), titel
+    for art in ("Antrag nach § 240", "Antrag nach § 245 GO", "Antrag nach Par. 240", "Antrag nach Paragr. 2400",
+                "Antrag nach § 3 der GeschO des Rates", "Antrag Par 24"):
+        assert punkt_ausschluss(_vv(art)) is None, art
+    assert geocode._vergleichstexte("Antrag nach Par. 24 und Paragr.24")[0] == "antrag nach § 24 und § 24"
 
 
 def test_titel_und_gremium_in_anderer_schreibung():

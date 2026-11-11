@@ -426,8 +426,10 @@ REFERENZ_PUNKT = re.compile(r"^(?:AN/)?\d{1,4}/\d{4}$")
 # Einwohnerfragen, Bürgeranträge, -anfragen und -fragen auch mit Trennzeichen und in Genderform („Bürger-Antrag“,
 # „Einwohner*innenanfrage“, „Einwohner_innenanfrage“, „Bürger:innenantrag“, „Bürgerinnenantrag“, „Bürgerfragestunde“;
 # Prüfung r20n). „Einwohnerbefragung“ ist hier keine Eingabe (Verwaltung), über chat.EINWOHNER_TITEL („einwohner“ im
-# Titel) aber Ausgangspunkt der Titelmaske und damit ohne Hauskoordinate (Grund „maske“; Abwägung offen, TECHNIK.md)
-EINGABE = re.compile(r"(?i)§\s*24\b|anregung|beschwerde|eingabe|petition"
+# Titel) aber Ausgangspunkt der Titelmaske und damit ohne Hauskoordinate (Grund „maske“; Abwägung offen, TECHNIK.md).
+# „§ 24“ auch ohne Leerzeichen und direkt vor Buchstaben („§24GO“, „§ 24GO NRW“; vorher verlangte \b eine Wortgrenze
+# hinter der 24), nicht vor einer weiteren Ziffer („§ 240“; Prüfung r20a)
+EINGABE = re.compile(r"(?i)§\s*24(?!\d)|anregung|beschwerde|eingabe|petition"
                      r"|bürger\W*(?:_?innen\W*)?(?:an)?(?:trag|frage)"
                      r"|einwohner\W*(?:_?innen\W*)?(?:an)?(?:trag|frage)")
 # Hauskoordinate nur bei erkennbarer Vorlagenart (Entscheidung 10.11.2026): leer, nur Leerraum, null, nicht als Text
@@ -471,13 +473,14 @@ def _vergleichstexte(text):
     """Vergleichstexte für die Regeln zur Hauskoordinate (EINGABE, Gremien, VORLAGENART_PUNKT), damit eine andere
     Schreibung eine Eingabe nicht durchlässt: Unicode-Normalform NFKC (zerlegte Umlaute, Vollbreite), ohne weiche
     Trennzeichen und Zeichen ohne Breite (_UNSICHTBAR), kleingeschrieben, Leerraum am Rand entfernt und im Text zu einem
-    Leerzeichen zusammengefasst („Bürgerbrief “, „Anregungen  und Beschwerden“; Prüfung r20n), „Paragraf 24“ wie „§ 24“;
-    dazu derselbe Text mit „ae“, „oe“, „ue“ als „ä“, „ö“, „ü“ („Buergerantrag“). Ein Ausschluss gilt, wenn einer der
-    beiden Texte passt, eine Erkennung nur, wenn beide passen (so verdeckt „ue“ kein folgendes Wort: „Neueingabe“). Nur
-    für den Abgleich; Datenbank, Export und Log behalten die gelieferte Schreibung."""
+    Leerzeichen zusammengefasst („Bürgerbrief “, „Anregungen  und Beschwerden“; Prüfung r20n), „Paragraf 24“ wie „§ 24“,
+    ebenso die Abkürzungen „Par. 24“ und „Paragr. 24“ (mit Punkt vor einer Ziffer; Prüfung r20a); dazu derselbe Text
+    mit „ae“, „oe“, „ue“ als „ä“, „ö“, „ü“ („Buergerantrag“). Ein Ausschluss gilt, wenn einer der beiden Texte passt,
+    eine Erkennung nur, wenn beide passen (so verdeckt „ue“ kein folgendes Wort: „Neueingabe“). Nur für den Abgleich;
+    Datenbank, Export und Log behalten die gelieferte Schreibung."""
     t = unicodedata.normalize("NFKC", _UNSICHTBAR.sub("", text or "")).lower()
     t = re.sub(r"\s+", " ", t).strip()
-    t = re.sub(r"paragra(?:f|ph)(?:en)?\.?\s*(?=\d)", "§ ", t)
+    t = re.sub(r"(?:paragra(?:f|ph)(?:en)?\.?|par(?:agr)?\.)\s*(?=\d)", "§ ", t)
     return t, t.replace("ae", "ä").replace("oe", "ö").replace("ue", "ü")
 
 

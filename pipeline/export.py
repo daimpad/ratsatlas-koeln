@@ -175,22 +175,28 @@ def export_audits():
 
 
 def _stichproben_maskieren(db):
-    """Titel der Stichproben mit vollem Titel (maske.STICHPROBEN: build._hnr_audit und build._fulltext_sample schreiben
-    sie nach data/export, also ins Datenpaket; in der Stichprobe Volltext auch die gefundenen Orte) mit derselben Maske
-    wie Suche, Gebietsdateien und Audits; idempotent (Generalprobe 09.11.2026: dort standen Hausnummern aus Eingaben und
-    Einwohneranfragen; Prüfung r20: die Volltextkette lässt Bauordnung und Naturschutz als Ausgangsvorlagen aus)."""
+    """Titel der Stichproben mit vollem Titel (maske.STICHPROBEN: build._hnr_audit, build._fulltext_sample und
+    build._objects_in_titles schreiben sie nach data/export, also ins Datenpaket; in den Stichproben Volltext und
+    Gebäude und Anlagen auch die gefundenen Orte) mit derselben Maske wie Suche, Gebietsdateien und Audits; idempotent
+    (Generalprobe 09.11.2026: dort standen Hausnummern aus Eingaben und Einwohneranfragen; Prüfung r20: die
+    Volltextkette lässt Bauordnung und Naturschutz als Ausgangsvorlagen aus). Spalten nach ihrem Namen im Kopf, die
+    Drucksache aus der Spalte „drucksache“; fehlt eine davon, bleibt die Datei unverändert und check meldet sie
+    (Prüfung r20a)."""
     for teile, maskiert in maske.STICHPROBEN.items():
         pfad = config.EXPORT.joinpath(*teile)
         if not pfad.exists():
             continue
         with open(pfad, encoding="utf-8", newline="") as f:
             zeilen = list(csv.reader(f, delimiter="\t"))
-        if not zeilen or zeilen[0][1:3] != ["drucksache", "titel"]:
+        kopf = zeilen[0] if zeilen else []
+        fehlt = [k for k in ("drucksache", *maskiert) if k not in kopf]
+        if fehlt:
+            print(f"Hinweis: Stichprobe {pfad} ohne Spalte {', '.join(fehlt)} – nicht maskiert (check meldet sie)")
             continue
-        m = _maske(db)
-        spalten = {i for i, k in enumerate(zeilen[0]) if k in maskiert}
-        _write_tsv(pfad, zeilen[0], [[m(w, z[1]) if i in spalten else w for i, w in enumerate(z)] if len(z) > 2 else z
-                                     for z in zeilen[1:]])
+        m, ref = _maske(db), kopf.index("drucksache")
+        spalten = {i for i, k in enumerate(kopf) if k in maskiert}
+        _write_tsv(pfad, kopf, [[m(w, z[ref]) if i in spalten else w for i, w in enumerate(z)] if len(z) > ref else z
+                                for z in zeilen[1:]])
 
 
 def _sample_methods(db, path, n=50, seed=2026):

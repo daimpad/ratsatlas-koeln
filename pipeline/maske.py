@@ -26,11 +26,14 @@ import unicodedata
 from . import chat, config, geocode
 
 OHNE_NR = "[Hausnummer ausgelassen]"
-# Stichproben, die build mit vollem Titel nach data/export schreibt (Weg ab config.EXPORT; Kopf mit „drucksache“ in
-# Spalte 2): Spalten, die export.export_audits maskiert und check.datenschutz prüft. Die Stichprobe Volltext nennt
-# auch die gefundenen Orte (Prüfung r20)
+# Stichproben, die build mit vollem Titel nach data/export und damit ins Datenpaket schreibt (Weg ab config.EXPORT;
+# Kopf mit der Spalte „drucksache“): Spalten, die export.export_audits maskiert und check.datenschutz prüft; fehlt einer
+# vorhandenen Stichprobe eine dieser Spalten oder „drucksache“, meldet check das. Die Stichproben Volltext und Gebäude
+# und Anlagen nennen auch die gefundenen Orte (Prüfung r20, r20a). Daneben prüft check jede TSV-Datei unter
+# data/export mit den Spalten „drucksache“ und „titel“ (Prüfung r20a)
 STICHPROBEN = {("hausnummern", "stichprobe_hausnummern.tsv"): ("titel",),
-               ("volltext", "stichprobe_volltext.tsv"): ("titel", "orte (Ortsteil)")}
+               ("volltext", "stichprobe_volltext.tsv"): ("titel", "orte (Ortsteil)"),
+               ("objekte", "stichprobe_objekte.tsv"): ("titel", "gebäude oder anlage (Ortsteil)")}
 # Bauordnungsamt und Untere Naturschutzbehörden: Titel nennen oft private Baugrundstücke mit Hausnummer
 AMT_PRIVAT = re.compile(r"^(?:63(?:\s|-)|56-3\b|67-6\b)")
 _L = r"[^\W\d_]"   # Buchstabe (wie \p{L})

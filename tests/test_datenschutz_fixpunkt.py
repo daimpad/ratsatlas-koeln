@@ -1097,3 +1097,171 @@ def test_vorlagenart_und_schreibweise_ende_zu_ende(testdaten, monkeypatch, capsy
         db.close()
     b = [x for x in erg["befunde"] if "Hausnummern in Titeln oder Ortsnamen" in x]
     assert len(b) == 1 and b[0].endswith(": 5, z. B. 1801/2026, 1802/2026, 1803/2026, 1804/2026, 1805/2026"), b
+
+
+# --- Prüfung r20a: „§24GO“ und abgekürzte Paragrafen, Stichprobe Gebäude und Anlagen, jede TSV-Datei mit Titel -------
+
+# Vorlagenarten mit „§ 24“ ohne Leerzeichen bzw. abgekürzt: vorher keine Eingabe (EINGABE verlangte eine Wortgrenze
+# hinter der 24, der Vergleichstext kannte „Par.“ und „Paragr.“ nicht), sondern ein erkannter „Antrag“ mit Hauskoordinate
+PARAGRAF_24 = [("p24a", "1901/2026", "Antrag nach §24GO NRW"), ("p24b", "1902/2026", "Antrag nach § 24GO NRW"),
+               ("p24c", "1903/2026", "Antrag nach Par. 24 GO NRW"), ("p24d", "1904/2026", "Antrag nach Paragr. 24 GO NRW")]
+
+
+def test_paragraf_24_ohne_leerzeichen_ende_zu_ende(testdaten, capsys):
+    """Prüfung r20a, Ende zu Ende mit erfundenen Vorlagen: „Antrag nach §24GO NRW“ (und „§ 24GO“, „Par. 24“,
+    „Paragr. 24“) mit Hausnummer im Titel bekommt keine Hauskoordinate (höchstens den Straßenabschnitt, Grund
+    „eingabe“), der Titel erscheint in suche.json, vorlagen.geojson und den Gebietsdateien ohne Hausnummer, und check
+    meldet nichts (Titelmaske und Hauskoordinaten urteilen gleich). Die erlaubte Kontrollvorlage behält ihre
+    Hauskoordinate."""
+    alt = re.compile(r"(?i)§\s*24\b")
+    for _, _, art in PARAGRAF_24:   # Regel vor der Prüfung r20a: keine Eingabe, Vorlagenart erkannt
+        assert not alt.search(art.lower()) and geocode.VORLAGENART_PUNKT.search(art.lower())
+    strasse, nr, xy, _ = _einfuegen()
+    titel = f"[Testdaten] Sitzbänke an der {strasse} {nr[0]}"
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.writelines(json.dumps(_vorlage(k, ref, titel, art=art), ensure_ascii=False) + "\n"
+                     for k, ref, art in PARAGRAF_24)
+    build.build()
+    export.export()
+    capsys.readouterr()
+    db = sqlite3.connect(config.DB)
+    assert {o[0] for o in _orte(db, "kontrolle")} == {"adresse"}
+    for k, ref, art in PARAGRAF_24:
+        orte = _orte(db, k)
+        assert {o[0] for o in orte} == {"strasse"} and {o[1] for o in orte} == {STRASSE_HNR}, (art, orte)
+    gruende = {}
+    _, je_ref, _ = check.erlaubnis(db, gruende=gruende)
+    refs = {ref for _, ref, _ in PARAGRAF_24}
+    assert {gruende.get(_id(k)) for k, _, _ in PARAGRAF_24} == {"eingabe"}
+    assert not any(je_ref[r] for r in refs) and je_ref["1601/2026"]
+    assert refs <= maske.aus_db(db).refs
+    base = config.EXPORT / config.STADT
+    gezeigt = [r[1] for r in json.loads((base / "suche.json").read_text())["rows"] if r[0] in refs]
+    gezeigt += [f["properties"].get("name") for f in json.loads((base / "vorlagen.geojson").read_text())["features"]
+                if f["properties"]["reference"] in refs]
+    for d in check.GEBIETSDATEIEN:
+        for datei in (base / d).glob("*.json"):
+            gezeigt += [p["name"] for p in json.loads(datei.read_text())["papers"] if p["reference"] in refs]
+    assert len(gezeigt) >= 2 * len(refs) and all(hnr_aus(x, strasse, nr) for x in gezeigt), gezeigt
+    punkte = {(r, *p) for r, *p in _punkte_im_export()}
+    assert ("1601/2026", *xy[0]) in punkte and not {(r, *p) for r in refs for p in xy} & punkte
+    erg = check.datenschutz(db)
+    db.close()
+    assert erg["befunde"] == [] and erg["fehlend"] == [], erg
+
+
+OBJEKT = "Prüfhaus Erfundenhausen"     # erfundenes Gebäude für das Verzeichnis (config.OBJEKTE)
+OBJEKT_WEG = "Erfundener Probeweg"     # nicht im Straßenverzeichnis: die Vorlage bleibt ohne eigenen Ortsbezug
+
+
+def _objekt_verzeichnis():
+    """Erfundenes Verzeichnis der Gebäude und Anlagen in der umgelenkten Datei (conftest: config.OBJEKTE) mit einem
+    Gebäude in einem Kölner Stadtteil; liefert den Stadtteil."""
+    from shapely.geometry import shape
+    f = json.loads(config.ORTSTEILE.read_text())["features"][0]
+    pt = shape(f["geometry"]).representative_point()
+    ot, bz = f["properties"]["ortsteil_bez"], f["properties"]["bezirk_bez"]
+    config.OBJEKTE.write_text(json.dumps({"objekte": {"way/1": {
+        "name": OBJEKT, "art": "Gebäude", "ortsteil": ot, "bezirk": bz, "lon": round(pt.x, 6),
+        "lat": round(pt.y, 6)}}}, ensure_ascii=False))
+    assert OBJEKT_WEG not in json.loads(config.STRASSEN.read_text())["streets"]
+    return ot
+
+
+def _tsv(pfad):
+    return [z.split("\t") for z in pfad.read_text(encoding="utf-8").splitlines()]
+
+
+def test_stichprobe_objekte_maskiert_geprueft_und_im_paket(testdaten, capsys):
+    """Prüfung r20a: build._objects_in_titles schreibt die Stichprobe Gebäude und Anlagen
+    (objekte/stichprobe_objekte.tsv, im Datenpaket) mit vollem Titel. Sie steht in maske.STICHPROBEN: export blendet die
+    Hausnummer einer erfundenen Eingabe in Titel und Orten aus wie in der Suche, eine erlaubte Vorlage bleibt
+    unverändert; check prüft beide Spalten, meldet den vollen Titel und eine fehlende Spalte; das Datenpaket
+    (paket.write aus data/export) enthält nur den gekürzten Titel."""
+    from pipeline import paket
+    import zipfile
+    ot = _objekt_verzeichnis()
+    eingabe = f"[Testdaten] Anregung zum {OBJEKT}, {OBJEKT_WEG} 5"
+    erlaubt = f"[Testdaten] Neubau {OBJEKT}, {OBJEKT_WEG} 7"
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.write(json.dumps(_vorlage("ob_e", "1910/2026", eingabe, art=EINGABE), ensure_ascii=False) + "\n")
+        f.write(json.dumps(_vorlage("ob_v", "1911/2026", erlaubt), ensure_ascii=False) + "\n")
+    build.build()
+    pfad = config.EXPORT / "objekte" / "stichprobe_objekte.tsv"
+    roh = {z[1]: z for z in _tsv(pfad)[1:]}
+    assert roh["1910/2026"][2] == eingabe and roh["1911/2026"][2] == erlaubt   # build: voller Titel
+    assert roh["1910/2026"][4] == f"{OBJEKT} ({ot})"
+    export.export()
+    capsys.readouterr()
+    kopf, *zeilen = _tsv(pfad)
+    neu = {z[1]: z for z in zeilen}
+    assert kopf[1:3] == ["drucksache", "titel"] and set(neu) == {"1910/2026", "1911/2026"}
+    assert neu["1910/2026"][2] == f"[Testdaten] Anregung zum {OBJEKT}, {OBJEKT_WEG} {maske.OHNE_NR}"
+    assert neu["1911/2026"] == roh["1911/2026"]
+    db = sqlite3.connect(config.DB)
+    erg = check.datenschutz(db)
+    assert erg["befunde"] == [] and erg["untersucht"]["stichprobe_objekte"] == 2, erg
+    assert erg["untersucht"]["tabellen_mit_titel"] >= 4   # Audits, Stichprobe je Methode, Stichprobe Gebäude
+
+    # voller Titel bzw. Ort mit Hausnummer in der Stichprobe (etwa aus einem früheren Lauf): Befund
+    pfad.write_text("\n".join("\t".join(z) for z in [kopf, list(roh["1910/2026"]), list(roh["1911/2026"])]) + "\n",
+                    encoding="utf-8")
+    b = check.datenschutz(db)["befunde"]
+    assert len(b) == 1 and "Hausnummern in Titeln oder Ortsnamen" in b[0] and b[0].endswith(": 1, z. B. 1910/2026"), b
+    ort = list(neu["1910/2026"])
+    ort[4] = f"{OBJEKT_WEG} 5 ({ot})"
+    pfad.write_text("\n".join("\t".join(z) for z in [kopf, ort]) + "\n", encoding="utf-8")
+    b = check.datenschutz(db)["befunde"]
+    assert len(b) == 1 and b[0].endswith(": 1, z. B. 1910/2026"), "Spalte der Orte"
+
+    # Stichprobe ohne eine ihrer Spalten: Befund statt stillem Überspringen; export lässt sie unverändert
+    ohne = [[w for i, w in enumerate(z) if i != 2] for z in [kopf, list(roh["1910/2026"])]]
+    pfad.write_text("\n".join("\t".join(z) for z in ohne) + "\n", encoding="utf-8")
+    b = check.datenschutz(db)["befunde"]
+    assert b == ["Datenschutz: Stichprobe objekte/stichprobe_objekte.tsv ohne Spalte „titel“ (maske.STICHPROBEN; "
+                 "export maskiert sie nicht, sie liegt im Datenpaket)"], b
+    export.export_audits()
+    assert _tsv(pfad) == ohne and "ohne Spalte titel" in capsys.readouterr().out
+
+    # wieder mit vollem Titel; export maskiert, das Datenpaket enthält nur den gekürzten Titel
+    pfad.write_text("\n".join("\t".join(z) for z in [kopf, *roh.values()]) + "\n", encoding="utf-8")
+    export.export_audits()
+    assert {z[1]: z for z in _tsv(pfad)[1:]} == neu
+    assert check.datenschutz(db)["befunde"] == []
+    db.close()
+    zip_pfad = paket.write(config.BUILD / "paket.zip")
+    with zipfile.ZipFile(zip_pfad) as z:
+        tsv = {n: z.read(n).decode("utf-8") for n in z.namelist() if n.endswith(".tsv")}
+    assert neu["1910/2026"][2] in tsv[f"{paket.ORDNER}/objekte/stichprobe_objekte.tsv"]
+    assert [n for n, text in tsv.items() if f"{OBJEKT_WEG} 5" in text] == []
+    assert [n for n, text in tsv.items() if erlaubt in text]   # erlaubte Vorlage mit Hausnummer (Gegenprobe)
+
+
+def test_jede_tsv_datei_mit_titel_geprueft(testdaten, capsys):
+    """Prüfung r20a: check prüft jede TSV-Datei unter data/export (auch in Unterordnern, ohne feste Liste) mit den
+    Spalten „drucksache“ und „titel“ gegen die Titelmaske, unabhängig von der Reihenfolge der Spalten; Dateien ohne
+    diese Spalten bleiben ungeprüft. Erfundene Datei mit dem vollen Titel einer erfundenen Eingabe."""
+    strasse, nr, _, _ = _einfuegen()
+    build.build()
+    export.export()
+    capsys.readouterr()
+    db = sqlite3.connect(config.DB)
+    vorher = check.datenschutz(db)
+    assert vorher["befunde"] == []
+    titel = f"[Testdaten] Anregung zum {UNBEKANNT2} 7"   # Eingabe fs_g (1681/2026), Titel mit Hausnummer
+    assert "1681/2026" in maske.aus_db(db).refs
+    datei = config.EXPORT / "zusatz" / "unter" / "stichprobe_erfunden.tsv"
+    datei.parent.mkdir(parents=True)
+    datei.write_text(f"titel\turteil\tdrucksache\n{titel}\t\t1681/2026\n[Testdaten] {strasse} {nr[0]}\t\t1601/2026\n",
+                     encoding="utf-8")
+    ohne_spalte = config.EXPORT / "zusatz" / "liste.tsv"   # ohne „titel“: keine Tabelle mit Titel
+    ohne_spalte.write_text(f"drucksache\tbezeichnung\n1681/2026\t{titel}\n", encoding="utf-8")
+    erg = check.datenschutz(db)
+    b = erg["befunde"]
+    assert len(b) == 1 and "Hausnummern in Titeln oder Ortsnamen" in b[0] and b[0].endswith(": 1, z. B. 1681/2026"), b
+    z, z0 = erg["untersucht"], vorher["untersucht"]
+    assert z["tabellen_mit_titel"] == z0["tabellen_mit_titel"] + 1 and z["tabellen_zeilen"] == z0["tabellen_zeilen"] + 2
+    datei.write_text(f"titel\turteil\tdrucksache\n{titel.replace(' 7', ' ' + maske.OHNE_NR)}\t\t1681/2026\n",
+                     encoding="utf-8")
+    assert check.datenschutz(db)["befunde"] == []
+    db.close()

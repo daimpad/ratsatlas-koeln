@@ -44,6 +44,9 @@ ZAEHLUNG = {
     "gebietsdateien_hauskoordinaten": "davon mit Hauskoordinate",
     "stichprobe_hausnummern": "Titel in der Stichprobe Hausnummern untersucht",
     "stichprobe_volltext": "Titel und Orte in der Stichprobe Volltext untersucht",
+    "stichprobe_objekte": "Titel und Orte in der Stichprobe Gebäude und Anlagen untersucht",
+    "tabellen_mit_titel": "TSV-Dateien mit Drucksache und Titel unter data/export untersucht (Datenpaket)",
+    "tabellen_zeilen": "davon Zeilen",
 }
 
 
@@ -295,6 +298,49 @@ def _verstoss_oparl(befunde, wo, refs):
                        f"{len(refs)}, z. B. {', '.join(refs[:5])}")
 
 
+def _tabellen_mit_titel(wurzel, m, zahl, befunde):
+    """Titel in TSV-Dateien unter `wurzel` (data/export, auch in Unterordnern; paket.write packt sie ins Datenpaket):
+    Jede Datei mit den Spalten „drucksache“ und „titel“ (Audits, Stichproben, auch abgeschalteter Zusatzthemen) wird
+    gegen die Titelmaske geprüft (maske.Maske.offen), ohne feste Liste; in den Stichproben aus maske.STICHPROBEN dazu
+    deren weitere Spalten (gefundene Orte). Fehlt einer vorhandenen Stichprobe aus maske.STICHPROBEN „drucksache“ oder
+    eine ihrer Spalten, ist das ein Befund: export könnte sie nicht maskieren (vorher übersprungen; Prüfung r20a).
+    Liefert die Drucksachen mit Hausnummer; zählt Dateien und Zeilen in `zahl`, nennt nur Pfade und Spaltennamen."""
+    konfiguriert = {wurzel.joinpath(*teile): maskiert for teile, maskiert in maske.STICHPROBEN.items()}
+    offen, dateien, n, gesehen = set(), 0, 0, {}
+
+    def hat_nummer(text, ref):   # Titel wiederholen sich (je Ortsbezug, je Thema): jede Kombination einmal prüfen
+        if ref not in m.refs:
+            return False
+        if (text, ref) not in gesehen:
+            gesehen[text, ref] = m.offen(text, ref)
+        return gesehen[text, ref]
+
+    for pfad in sorted(p for p in wurzel.rglob("*.tsv") if p.is_file()):
+        maskiert = konfiguriert.get(pfad)
+        with open(pfad, encoding="utf-8", newline="") as f:
+            leser = csv.reader(f, delimiter="\t")
+            kopf = next(leser, [])
+            fehlt = [k for k in ("drucksache", *(maskiert or ("titel",))) if k not in kopf]
+            if fehlt:
+                if maskiert is not None:
+                    befunde.append(f"Datenschutz: Stichprobe {pfad.relative_to(wurzel)} ohne Spalte "
+                                   f"{', '.join(f'„{k}“' for k in fehlt)} (maske.STICHPROBEN; export maskiert sie "
+                                   f"nicht, sie liegt im Datenpaket)")
+                continue
+            ref = kopf.index("drucksache")
+            spalten = [i for i, k in enumerate(kopf) if k in {"titel", *(maskiert or ())}]
+            zeilen = 0
+            for z in leser:
+                zeilen += 1
+                if len(z) > ref and any(i < len(z) and hat_nummer(z[i], z[ref]) for i in spalten):
+                    offen.add(z[ref])
+        dateien, n = dateien + 1, n + zeilen
+        if maskiert is not None:
+            zahl[pfad.name.removesuffix(".tsv")] = zeilen
+    zahl["tabellen_mit_titel"], zahl["tabellen_zeilen"] = dateien, n
+    return offen
+
+
 def datenschutz(db, base=None):
     """Datenschutzprüfung (CLAUDE.md 2 und 9) über Datenbank und Kölner Export (`base`, Vorgabe
     config.EXPORT / config.STADT):
@@ -302,8 +348,10 @@ def datenschutz(db, base=None):
     2. Titel aus Einwohnerschaft, Bauordnung und Naturschutz ohne Hausnummer in suche.json, vorlagen.geojson und den
        Gebietsdateien (maske.aus_db, samt verbundenen Vorlagen auch über relatedPaper und derselben Drucksache;
        Entscheidung des Auftraggebers 24.10.2026: überall ausblenden), ebenso ihre Ortsnamen (`place` in
-       vorlagen.geojson, `locations[].name` in den Gebietsdateien) und in den Stichproben mit Titel (maske.STICHPROBEN,
-       in der Stichprobe Volltext auch die gefundenen Orte); keine Drucksache der Titelmaske mit Erlaubnis für
+       vorlagen.geojson, `locations[].name` in den Gebietsdateien) und in jeder TSV-Datei unter data/export mit den
+       Spalten „drucksache“ und „titel“ (Audits und Stichproben im Datenpaket, _tabellen_mit_titel; in den Stichproben
+       aus maske.STICHPROBEN auch die gefundenen Orte, eine fehlende Spalte dort ist ein Befund; Prüfung r20a); keine
+       Drucksache der Titelmaske mit Erlaubnis für
        Hauskoordinaten (Titelmaske und Hauskoordinaten folgen denselben Beziehungen, Runde 20) und keine Eingabe ohne
        Hauskoordinate (Grund „eingabe“) außerhalb der Titelmaske (Prüfung r20), ebenso keine Vorlagenart aus der
        Einwohnerschaft oder von Privatpersonen (geocode.art_von_personen); Hausnummern mit dem Muster der Maske und
@@ -445,19 +493,7 @@ def datenschutz(db, base=None):
                 auf_oparl.add(p["reference"])
     zahl["gebietsdateien"] = len(refs)
     zahl["gebietsdateien_hauskoordinaten"] = len(auf)
-    # Stichproben mit Titel (build._hnr_audit und build._fulltext_sample, maskiert in export; liegen in data/export,
-    # also im Datenpaket): Titel wie in der Suche, in der Stichprobe Volltext auch die gefundenen Orte; fehlt eine,
-    # gibt es dort nichts zu prüfen
-    for teile, maskiert in maske.STICHPROBEN.items():
-        stichprobe = base.parent.joinpath(*teile)
-        if not stichprobe.exists():
-            continue
-        with open(stichprobe, encoding="utf-8", newline="") as f:
-            kopf, *zeilen = list(csv.reader(f, delimiter="\t")) or [[]]
-        schluessel = teile[-1].removesuffix(".tsv")
-        spalten = [i for i, k in enumerate(kopf) if k in maskiert]
-        zahl[schluessel] = len(zeilen)
-        offen |= {z[1] for z in zeilen if len(z) > 1 and any(i < len(z) and m.offen(z[i], z[1]) for i in spalten)}
+    offen |= _tabellen_mit_titel(base.parent, m, zahl, befunde)
     _verstoss(befunde, "Gebietsdateien der Karte", [r for r in auf if not je_ref.get(r)])
     _verstoss_oparl(befunde, "Gebietsdateien der Karte", [r for r in auf_oparl if not je_ref.get(r)])
     if offen:
