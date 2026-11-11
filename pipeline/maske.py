@@ -40,7 +40,9 @@ Datum, Uhrzeit, Ordnungszahl vor einem Wort, Betrag und Menge mit Einheit, „TO
 Kennung wie „U18“). Kölner Hausnummern haben höchstens vier Stellen (data/geo/hausnummern_koeln.json: höchste 1435),
 keine liegt zwischen 1900 und 2099. Das kürzt auch Zahlen, die keine Hausnummer sind („Kita [Hausnummer ausgelassen]“);
 das Original bleibt über den Link erreichbar. Fundstellen aus dem Titel maskiert die Maske im Zusammenhang des ganzen
-Titels (Maske.ausschnitt), Hausnummern in Worten hinter „Hausnummer“ oder „Nummer“ ebenso (ZAHLWORT)."""
+Titels (Maske.ausschnitt), Hausnummern in Worten hinter „Hausnummer“ oder „Nummer“ ebenso (ZAHLWORT).
+Ergänzt in der Nachprüfung der dritten Korrektur: Ein unsichtbares Zeichen zwischen zwei Ziffern gilt als Bindestrich
+(_unsichtbar_trennen); vorher verschmolzen „98\u00ad100“ oder „20\u00ad22“ zu einer Zahl, die die Maske stehen ließ."""
 import json
 import re
 import unicodedata
@@ -199,17 +201,42 @@ def _muster(strassen):
     return re.compile(rf"((?:(?<!{_L})(?:{_namen_muster(names)})|{SUFFIX}){ZWISCHEN}{LAGE}?){NR_WORT}{NR}", re.I)
 
 
+# Trennzeichen für unsichtbare Zeichen zwischen zwei Ziffern (_angleichen, _falten): Gelöscht verschmolz „98\u00ad100“
+# (weiches Trennzeichen U+00AD, Word: Strg+-) oder „20\u200b22“ (Zeichen ohne Breite) zu einer Zahl mit fünf Stellen
+# oder einer Jahreszahl, die weder Muster noch Positivliste ausblenden; der Titel blieb unverändert, und check meldete
+# nichts (Nachprüfung der dritten Korrektur der Prüfung r20a). Als Bindestrich sehen Muster, Probe und Positivliste
+# zwei Nummern einer Liste und ersetzen beide samt dem Zeichen
+_ZIFFERNTRENNER = "-"
+
+
+def _unsichtbar_trennen(text):
+    """Je Zeichen des Texts (Stelle, Zeichen nach NFKC oder None für ein unsichtbares Zeichen, das wegfällt): Steht ein
+    unsichtbares Zeichen (auch mehrere) zwischen zwei Ziffern, gilt das erste als _ZIFFERNTRENNER."""
+    hinter_ziffer, trenner = False, None
+    for i, c in enumerate(text):
+        if geocode._UNSICHTBAR.match(c):
+            if hinter_ziffer and trenner is None:
+                trenner = i
+            yield i, None
+            continue
+        n = unicodedata.normalize("NFKC", c)
+        if trenner is not None and n[:1].isdecimal():
+            yield trenner, _ZIFFERNTRENNER
+        trenner, hinter_ziffer = None, n[-1:].isdecimal()
+        yield i, n
+
+
 def _angleichen(titel):
     """Angeglichene Fassung eines Titels für den Abgleich und je Zeichen seine Stelle im Titel: je Zeichen NFKC
     (Vollbreite, „№“ als „No“, geschütztes Leerzeichen), ein folgendes Kombinationszeichen mit dem Buchstaben davor
-    zusammengesetzt, ohne weiche Trennzeichen und Zeichen ohne Breite (geocode._UNSICHTBAR), jeder Leerraum (auch
-    Zeilenumbruch, doppelt) als ein Leerzeichen. Ersetzt wird über die Stellen im gelieferten Titel, der sonst
-    unverändert bleibt."""
+    zusammengesetzt, ohne weiche Trennzeichen und Zeichen ohne Breite (geocode._UNSICHTBAR; zwischen zwei Ziffern als
+    _ZIFFERNTRENNER), jeder Leerraum (auch Zeilenumbruch, doppelt) als ein Leerzeichen. Ersetzt wird über die Stellen im
+    gelieferten Titel, der sonst unverändert bleibt."""
     zeichen, stellen = [], []
-    for i, c in enumerate(titel):
-        if geocode._UNSICHTBAR.match(c):
+    for i, n in _unsichtbar_trennen(titel):
+        if n is None:
             continue
-        for d in unicodedata.normalize("NFKC", c):
+        for d in n:
             if d.isspace():
                 if zeichen and zeichen[-1] == " ":
                     continue
@@ -226,13 +253,13 @@ def _angleichen(titel):
 
 def _falten(text):
     """Text für die Probe und je Zeichen seine Stelle im Text: je Zeichen NFKC und casefold („ß“ als „ss“), ein folgendes
-    Kombinationszeichen mit dem Buchstaben davor zusammengesetzt, ohne unsichtbare Zeichen, Leerraum als ein Leerzeichen.
-    Die Stellen braucht das Sicherheitsnetz der Maske (Maske._spannen)."""
+    Kombinationszeichen mit dem Buchstaben davor zusammengesetzt, ohne unsichtbare Zeichen (zwischen zwei Ziffern als
+    _ZIFFERNTRENNER), Leerraum als ein Leerzeichen. Die Stellen braucht das Sicherheitsnetz der Maske (Maske._spannen)."""
     zeichen, stellen = [], []
-    for i, c in enumerate(text or ""):
-        if geocode._UNSICHTBAR.match(c):
+    for i, n in _unsichtbar_trennen(text or ""):
+        if n is None:
             continue
-        for d in unicodedata.normalize("NFKC", c):
+        for d in n:
             if d.isspace():
                 if zeichen and zeichen[-1] == " ":
                     continue

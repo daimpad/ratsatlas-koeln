@@ -2017,3 +2017,113 @@ def test_hinweis_vorlagen_nur_ueber_gremium(testdaten, capsys):
     assert erg["befunde"] == [] and erg["untersucht"]["ohne_punkt_ohne_maske"] >= 1, erg
     hinweis = next(z for z in aus.splitlines() if z.startswith("Hinweis (kein Befund): Vorlagen ohne Hauskoordinate"))
     assert "2950/2026" in hinweis and strasse not in hinweis
+
+
+# --- Nachprüfung der dritten Korrektur: unsichtbare Zeichen zwischen Ziffern, Feeds mit fortgesetztem Titel ----------
+
+def _sichtbar(text):
+    """Text, wie Leser:innen ihn sehen (Orakel der Tests, unabhängig von der Maske): ohne weiche Trennzeichen und
+    Zeichen ohne Breite, NFKC."""
+    import unicodedata
+    return unicodedata.normalize("NFKC", re.sub("[\u00ad\u200b-\u200f\u2060-\u2064\ufeff]", "", text))
+
+
+_MASKEN = []
+
+
+def _zwei_masken():
+    """Zwei Masken mit dem Kölner Verzeichnis: eine maskiert, die andere prüft (offen() auf derselben Instanz ist für
+    jedes ihrer Ergebnisse vorab falsch)."""
+    if not _MASKEN:
+        _MASKEN.extend(maske.Maske({"1/2026"}, strassen=_verzeichnis()) for _ in range(2))
+    return _MASKEN
+
+
+@pytest.mark.parametrize("titel, nummern", [
+    ("Venloer Straße 20\u00ad22", "20 22"), ("Eingabe nach § 24 GO NRW: Wupperstraße 98\u00ad100", "98 100"),
+    ("Einwohneranfrage: Ampel Im Fichtenhain 20\u00ad22", "20 22"),
+    ("Bürgerantrag: Parkverbot Godorfer Hauptstraße 124\u00ad126", "124 126"),
+    ("Aachener Straße 1175\u200b1177", "1175 1177"), ("Anregung: Lärm vor Haus 120\u2060122", "120 122"),
+    ("Venloer Straße 19\u00ad\u200b21", "19 21"), ("Venloer Straße 12\ufeff14", "12 14"),
+    ("Severinstraße 3\u200c5a", "3 5"), ("Lärm 1175\u200d1177 Venloer Straße", "1175 1177")])
+def test_maske_unsichtbares_zeichen_zwischen_ziffern(titel, nummern):
+    """Nachprüfung der dritten Korrektur: Ein weiches Trennzeichen oder Zeichen ohne Breite zwischen zwei Zifferngruppen
+    (Word: Strg+-, kopierter Webtext) ließ beide Gruppen zu einer Zahl verschmelzen; mit fünf und mehr Stellen oder als
+    Jahreszahl („98\u00ad100“, „20\u00ad22“) blieb der Titel unverändert, und offen() meldete nichts. Orakel: Weder die einzelnen
+    Gruppen noch die verschmolzene Zahl stehen danach im Titel, roh oder so, wie Leser:innen ihn sehen; eine zweite
+    Maske meldet den rohen Titel und nicht das Ergebnis."""
+    maskierend, pruefend = _zwei_masken()
+    aus = maskierend(titel, "1/2026")
+    verboten = set(nummern.split()) | {"".join(nummern.split())}
+    assert maske.OHNE_NR in aus and not (_zahlen(aus) | _zahlen(_sichtbar(aus))) & verboten, aus
+    assert pruefend.offen(titel, "1/2026") and not pruefend.offen(aus, "1/2026"), aus
+    assert maskierend(titel, "2/2026") == titel
+
+
+def test_feed_folgevorlage_setzt_titel_fort(testdaten, capsys):
+    """Nachprüfung der dritten Korrektur, Ende zu Ende: Setzt der Titel einer Folgevorlage den Titel der Eingabe fort,
+    rückt deren letzte Zahl in einen bekannten Zusammenhang („2. Nachtrag“, „7 Uhr“, „12. hier: …“) und bleibt im Titel
+    der Folgevorlage stehen; der ungekürzte Titel der Eingabe steht dann als Teil darin. check._feeds meldete das als
+    Befund, den die Maske nicht beheben konnte (Veröffentlichung angehalten). Jetzt kein Befund, auch mit Zeilenende
+    und Steuerzeichen im Titel der Folgevorlage (im Feed nach dem Lesen anders geschrieben); die Eingabe selbst
+    zeigt ihre Nummer in keinem eigenen Eintrag. Gegenprobe: der ungekürzte Titel in einem eigenen Eintrag oder neben
+    einem veränderten Titel der Folgevorlage ist ein Befund. Dazu Eingaben mit weichem Trennzeichen zwischen zwei
+    Hausnummern („98\u00ad100“, „20\u00ad22“): in keiner Datei unter data/export stehen die Nummern."""
+    strasse = _lage()[0]
+    paare = [("n1", "9001/2026", "9002/2026", "[Testdaten] Eingabe: Spielplatz im Musterpark 2", ". Nachtrag"),
+             ("n3", "9003/2026", "9004/2026", "[Testdaten] Anregung: Lärm am Kiosk 7", " Uhr morgens – Stellungnahme"),
+             ("n5", "9005/2026", "9006/2026", "[Testdaten] Anregung: Halteverbot vor Haus 12",
+              ". hier: Stellungnahme der Verwaltung"),
+             # Zeilenende und Steuerzeichen im Titel der Folgevorlage: im Feed nach dem Lesen „\n“ und ohne „\x01“
+             ("n7", "9007/2026", "9008/2026", "[Testdaten] Anregung: Bank am Brunnen 5",
+              ". Nachtrag\r\nStellungnahme\x01 der Verwaltung")]
+    vorlagen = []
+    for k, ref, folge, titel, fortsetzung in paare:
+        vorlagen += [_vorlage(k, ref, titel, art=EINGABE, subordinatedPaper=[_id(f"{k}f")]),
+                     _vorlage(f"{k}f", folge, titel + fortsetzung, art="Stellungnahme der Verwaltung",
+                              superordinatedPaper=[_id(k)])]
+    weich = {"9011/2026": f"[Testdaten] Eingabe nach § 24 GO NRW: {strasse} 98\u00ad100",
+             "9012/2026": f"[Testdaten] Einwohneranfrage: Ampel {strasse} 20\u00ad22"}
+    vorlagen += [_vorlage(f"w{i}", ref, t, art=EINGABE) for i, (ref, t) in enumerate(weich.items())]
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.writelines(json.dumps(p, ensure_ascii=False) + "\n" for p in vorlagen)
+    build.build()
+    export.export()
+    capsys.readouterr()
+    db = sqlite3.connect(config.DB)
+    m = maske.aus_db(db)
+    assert {r for _, ref, folge, _, _ in paare for r in (ref, folge)} | set(weich) <= m.refs
+    erg = check.datenschutz(db)
+    assert erg["befunde"] == [] and erg["fehlend"] == [], erg
+    base = config.EXPORT / config.STADT
+    feeds = base / "feeds" / "vorlagen"
+    for _, ref, _, titel, fortsetzung in paare[:3]:
+        text = (feeds / f"{export.slug(ref)}.xml").read_text(encoding="utf-8")
+        gekuerzt = titel[:titel.rindex(" ") + 1] + maske.OHNE_NR
+        assert f"Neue Vorlage {ref}: {gekuerzt}" in text and titel + fortsetzung in text, ref
+        assert text.count(titel) == text.count(titel + fortsetzung), ref   # nur im Titel der Folgevorlage
+    gekuerzt = 0
+    for p in config.EXPORT.rglob("*"):
+        if p.is_file() and p.suffix in (".json", ".geojson", ".tsv", ".xml", ".ics", ".csv"):
+            text = p.read_text(encoding="utf-8")
+            sichtbar = _sichtbar(text)
+            assert not [r for r in (f"{strasse} 98100", f"{strasse} 2022", "98\u00ad100", "20\u00ad22")
+                        if r in sichtbar or r in text], p
+            gekuerzt += f"Ampel {strasse} {maske.OHNE_NR}" in sichtbar
+    assert gekuerzt >= 3   # Suche, GeoJSON, Gebietsdatei, Feeds: das Orakel sieht die Texte
+
+    def befund(pfad, alt, neu):
+        text = pfad.read_text(encoding="utf-8")
+        assert alt in text, (pfad, alt)
+        pfad.write_text(text.replace(alt, neu, 1), encoding="utf-8")
+        b = check.datenschutz(db)["befunde"]
+        pfad.write_text(text, encoding="utf-8")
+        return b
+
+    feed = feeds / f"{export.slug('9001/2026')}.xml"
+    titel = paare[0][3]
+    b = befund(feed, f"Neue Vorlage 9001/2026: {titel[:-1]}{maske.OHNE_NR}", f"Neue Vorlage 9001/2026: {titel}")
+    assert len(b) == 1 and "9001/2026" in b[0], b
+    b = befund(feed, f"{titel}. Nachtrag", f"{titel}, Nachtrag")
+    assert len(b) == 1 and "9001/2026" in b[0], b
+    db.close()

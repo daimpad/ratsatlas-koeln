@@ -9,6 +9,7 @@ config.ZUSATZTHEMEN freigegeben sind; abgeschaltete weist die Ausgabe als solche
 """
 import csv
 import json
+import re
 import sqlite3
 from collections import Counter
 from pathlib import Path
@@ -361,15 +362,25 @@ def _feeds(base, db, m, zahl):
     Eintrags und der Kopf eines Feeds je Vorlage enthalten keinen Text der Vorlage ungekürzt, den die Maske ändert
     (Titel, Ergebnisse der Beratungen, Titel der Folgevorlagen; Prüfung r20a, dritte Korrektur: Feeds waren ungeprüft).
     Ein Eintrag nennt seine Vorlage in der ID (OParl-Kennung vor „#“, publish.events). Ein Vergleich mit dem
-    ungekürzten Text statt der Maske selbst, weil Einträge Gremium und Ergebnis neben dem Titel tragen. Liefert die
-    Drucksachen mit ungekürztem Text; zählt die Einträge in `zahl`."""
+    ungekürzten Text statt der Maske selbst, weil Einträge Gremium und Ergebnis neben dem Titel tragen. Vorher fallen
+    die maskierten Texte derselben Vorlage weg, die einen ungekürzten enthalten (Nachprüfung der dritten Korrektur:
+    Setzt der Titel einer Folgevorlage den Titel der Eingabe fort, „… Musterpark 2. Nachtrag“, rückt deren letzte Zahl
+    in einen bekannten Zusammenhang und bleibt nach der Maske stehen; der ungekürzte Titel der Eingabe stand dann als
+    Teil im Eintrag, und check meldete einen Befund, den die Maske nicht beheben konnte). Texte in der Form, die ein
+    Feed nach dem Lesen trägt (ohne publish.STEUERZEICHEN, Zeilenende „\\n“). Liefert die Drucksachen mit ungekürztem
+    Text; zählt die Einträge in `zahl`."""
     import xml.etree.ElementTree as ET
+    from .publish import STEUERZEICHEN
     atom = "{http://www.w3.org/2005/Atom}"
     ref_von = dict(db.execute("SELECT id, reference FROM paper"))
     texte = {}
 
+    def wie_im_feed(t):
+        return re.sub(r"\r\n?", "\n", STEUERZEICHEN.sub("", t))
+
     def ungekuerzt(pid):
-        """Texte der Vorlage, die die Maske ändert (ungekürzt), mit ihrer Drucksache."""
+        """(Texte der Vorlage, die die Maske ändert, ungekürzt; maskierte Texte der Vorlage, die einen davon enthalten,
+        längere zuerst)."""
         if pid not in texte:
             ref = ref_von.get(pid)
             kandidaten = []
@@ -381,7 +392,9 @@ def _feeds(base, db, m, zahl):
                 kandidaten += db.execute("SELECT p.name, p.reference FROM paper_relation r JOIN paper p "
                                          "ON p.id = r.child_id WHERE r.parent_id = ?", (pid,)).fetchall()
             # ab sechs Zeichen: ein kurzer Text wie „12“ stünde auch zufällig im Eintrag (Datum der Beratung)
-            texte[pid] = [t for t, r in kandidaten if t and len(t) >= 6 and m(t, r) != t]
+            roh = [wie_im_feed(t) for t, r in kandidaten if t and len(t) >= 6 and m(t, r) != t]
+            huellen = {wie_im_feed(m(t, r)) for t, r in kandidaten if t} if roh else set()
+            texte[pid] = (roh, sorted((h for h in huellen if any(t in h for t in roh)), key=len, reverse=True))
         return texte[pid]
 
     offen, n = set(), 0
@@ -394,8 +407,13 @@ def _feeds(base, db, m, zahl):
         for e in wurzel.iter(f"{atom}entry"):
             n += 1
             pid = (e.findtext(f"{atom}id") or "").split("#")[0]
+            roh, huellen = ungekuerzt(pid)
+            if not roh:
+                continue
             text = " ".join(e.findtext(f"{atom}{k}") or "" for k in ("title", "summary")) + " " + kopf
-            if any(t in text for t in ungekuerzt(pid)):
+            for h in huellen:
+                text = text.replace(h, " ")
+            if any(t in text for t in roh):
                 offen.add(ref_von.get(pid) or pid)
     zahl["feeds"] = n
     return offen
