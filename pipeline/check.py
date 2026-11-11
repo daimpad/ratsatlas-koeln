@@ -47,7 +47,11 @@ ZAEHLUNG = {
     "stichprobe_objekte": "Titel und Orte in der Stichprobe Gebäude und Anlagen untersucht",
     "tabellen_mit_titel": "TSV-Dateien mit Drucksache und Titel unter data/export untersucht (Datenpaket)",
     "tabellen_zeilen": "davon Zeilen",
+    "fundstellen": "Fundstellen aus dem Titel in vorlagen.geojson, den Gebietsdateien und plaene.json untersucht",
 }
+# Spalten der TSV-Dateien mit Drucksache und Titel, die Teile des Titels oder einen Ortsnamen tragen (Fundstelle,
+# Treffer): geprüft wie der Titel (Prüfung r20a; vorher nur „titel“)
+TSV_TEXTSPALTEN = {"titel", "fundstelle", "treffer"}
 
 
 def check():
@@ -301,9 +305,10 @@ def _verstoss_oparl(befunde, wo, refs):
 def _tabellen_mit_titel(wurzel, m, zahl, befunde):
     """Titel in TSV-Dateien unter `wurzel` (data/export, auch in Unterordnern; paket.write packt sie ins Datenpaket):
     Jede Datei mit den Spalten „drucksache“ und „titel“ (Audits, Stichproben, auch abgeschalteter Zusatzthemen) wird
-    gegen die Titelmaske geprüft (maske.Maske.offen), ohne feste Liste; in den Stichproben aus maske.STICHPROBEN dazu
-    deren weitere Spalten (gefundene Orte). Fehlt einer vorhandenen Stichprobe aus maske.STICHPROBEN „drucksache“ oder
-    eine ihrer Spalten, ist das ein Befund: export könnte sie nicht maskieren (vorher übersprungen; Prüfung r20a).
+    gegen die Titelmaske geprüft (maske.Maske.offen), ohne feste Liste, mit den Spalten aus TSV_TEXTSPALTEN (Fundstelle
+    und Ortsnamen, Prüfung r20a); in den Stichproben aus maske.STICHPROBEN dazu deren weitere Spalten (gefundene Orte).
+    Fehlt einer vorhandenen Stichprobe aus maske.STICHPROBEN „drucksache“ oder eine ihrer Spalten, ist das ein Befund:
+    export könnte sie nicht maskieren (vorher übersprungen; Prüfung r20a).
     Liefert die Drucksachen mit Hausnummer; zählt Dateien und Zeilen in `zahl`, nennt nur Pfade und Spaltennamen."""
     konfiguriert = {wurzel.joinpath(*teile): maskiert for teile, maskiert in maske.STICHPROBEN.items()}
     offen, dateien, n, gesehen = set(), 0, 0, {}
@@ -328,7 +333,7 @@ def _tabellen_mit_titel(wurzel, m, zahl, befunde):
                                    f"nicht, sie liegt im Datenpaket)")
                 continue
             ref = kopf.index("drucksache")
-            spalten = [i for i, k in enumerate(kopf) if k in {"titel", *(maskiert or ())}]
+            spalten = [i for i, k in enumerate(kopf) if k in TSV_TEXTSPALTEN | set(maskiert or ())]
             zeilen = 0
             for z in leser:
                 zeilen += 1
@@ -465,7 +470,9 @@ def datenschutz(db, base=None):
         zahl["geojson"] = len(props)
         zahl["ortsnamen"] = zahl.get("ortsnamen", 0) + sum(bool(p.get("place")) for p in props)
         offen |= {p["reference"] for p in props
-                  if m.offen(p.get("name"), p["reference"]) or m.offen(p.get("place"), p["reference"])}
+                  if m.offen(p.get("name"), p["reference"]) or m.offen(p.get("place"), p["reference"])
+                  or m.offen(p.get("evidence"), p["reference"])}
+        zahl["fundstellen"] = zahl.get("fundstellen", 0) + sum(bool(p.get("evidence")) for p in props)
         auf = [p["reference"] for p in props
                if _hauskoordinate(method=p.get("method"), source=p.get("location_source"))]
         zahl["geojson_hauskoordinaten"] = len(auf)
@@ -485,7 +492,12 @@ def datenschutz(db, base=None):
             refs.add(p["reference"])
             orte = p.get("locations") or ()
             zahl["ortsnamen"] = zahl.get("ortsnamen", 0) + sum(bool(x.get("name")) for x in orte)
-            if m.offen(p.get("name"), p["reference"]) or any(m.offen(x.get("name"), p["reference"]) for x in orte):
+            # Fundstellen: Teile des Titels (Bebauungsplan, Einreichende) und Ortsbezüge (Prüfung r20a)
+            fund = [x.get("evidence") for k in ("locations", "plans", "originators", "responsibility")
+                    for x in p.get(k) or ()]
+            zahl["fundstellen"] = zahl.get("fundstellen", 0) + sum(bool(x) for x in fund)
+            if (m.offen(p.get("name"), p["reference"]) or any(m.offen(x.get("name"), p["reference"]) for x in orte)
+                    or any(m.offen(x, p["reference"]) for x in fund)):
                 offen.add(p["reference"])
             if any(_hauskoordinate(x.get("level"), x.get("method"), x.get("source")) for x in orte):
                 auf.add(p["reference"])
@@ -493,6 +505,14 @@ def datenschutz(db, base=None):
                 auf_oparl.add(p["reference"])
     zahl["gebietsdateien"] = len(refs)
     zahl["gebietsdateien_hauskoordinaten"] = len(auf)
+    # Planregister (plaene.json, Planchronik): Titel und Fundstelle je Vorlage (Prüfung r20a); ohne die Datei (ältere
+    # Exporte) nichts zu prüfen
+    if (base / "plaene.json").exists():
+        for v in (v for e in json.loads((base / "plaene.json").read_text()).get("plaene") or ()
+                  for v in e.get("vorlagen") or ()):
+            zahl["fundstellen"] = zahl.get("fundstellen", 0) + bool(v.get("fundstelle"))
+            if m.offen(v.get("titel"), v.get("drucksache")) or m.offen(v.get("fundstelle"), v.get("drucksache")):
+                offen.add(v.get("drucksache"))
     offen |= _tabellen_mit_titel(base.parent, m, zahl, befunde)
     _verstoss(befunde, "Gebietsdateien der Karte", [r for r in auf if not je_ref.get(r)])
     _verstoss_oparl(befunde, "Gebietsdateien der Karte", [r for r in auf_oparl if not je_ref.get(r)])

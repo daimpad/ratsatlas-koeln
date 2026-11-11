@@ -458,8 +458,9 @@ VORLAGENART_PUNKT = re.compile(rf"(?is)^(?!.*(?:{ART_PERSONEN}))"
                                r"|informationsbrief|antrag|anfrage)")
 _ART_PERSONEN = re.compile(ART_PERSONEN, re.I | re.S)
 # Zeichen ohne Breite und weiche Trennzeichen: fallen im Vergleichstext weg („Bür\u00adgerantrag“ wie
-# „Bürgerantrag“)
-_UNSICHTBAR = re.compile(r"[\u00ad\u034f\u180e\u200b-\u200f\u2060-\u2064\ufeff]")
+# „Bürgerantrag“), ebenso Steuerzeichen für die Schreibrichtung (U+061C, U+202A–U+202E, U+2066–U+2069; Prüfung
+# r20a: mitten in einer Hausnummer ließen sie in der Titelmaske eine Ziffer stehen)
+_UNSICHTBAR = re.compile(r"[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]")
 # Kennzeichen an einer Vorlage, deren Vorlagenart nicht als Zeichenkette kam (Liste, Objekt; build.einlesen macht Text
 # daraus): gilt als nicht erkennbar, auch wenn der Text passt (vorsichtige Auslegung)
 ANDERE_FORM = "_vorlagenart_andere_form"

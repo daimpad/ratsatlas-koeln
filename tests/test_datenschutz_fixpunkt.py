@@ -989,7 +989,16 @@ SCHREIBWEISEN_HNR = [
     ("Mülheimer Straße 3", "Mülheimer Straße {o}"),
     # unverändert wie bisher
     ("Lärm Aachener Straße 1175", "Lärm Aachener Straße {o}"), ("Haus-Nr. 1234", "{o}"),
-    ("(neben Haus-Nr.) 68", "(neben {o})"), ("Straße Nr. 5", "Straße {o}")]
+    ("(neben Haus-Nr.) 68", "(neben {o})"), ("Straße Nr. 5", "Straße {o}"),
+    # Prüfung r20a (Fix): andere Wörter für die Nummer, zweite Nummer einer Liste, Steuerzeichen der Schreibrichtung
+    ("Aachener Straße, Hausnummer: 8", "Aachener Straße, {o}"), ("Aachener Straße Hs.-Nr. 12", "Aachener Straße {o}"),
+    ("Aachener Straße HNr. 12", "Aachener Straße {o}"), ("Aachener Straße H.-Nr. 12", "Aachener Straße {o}"),
+    ("Aachener Straße Haus-Nummer 12", "Aachener Straße {o}"), ("Aachener Straße Nrn. 12-14", "Aachener Straße {o}"),
+    ("Aachener Straße 12 bzw. 14", "Aachener Straße {o}"), ("Aachener Straße 12 oder 14", "Aachener Straße {o}"),
+    ("Aachener Straße 12 sowie 14", "Aachener Straße {o}"), ("Aachener Straße 12 & 14", "Aachener Straße {o}"),
+    ("Aachener Straße 12 + 14", "Aachener Straße {o}"), ("Aachener Straße 12 — 14", "Aachener Straße {o}"),
+    ("Aachener Straße 12 − 14", "Aachener Straße {o}"), ("Aachener Straße 12\u201114", "Aachener Straße {o}"),
+    ("Aachener Straße 1\u20662", "Aachener Straße {o}"), ("Aachener Straße 12 bzw. 14a, Ende", "Aachener Straße {o}, Ende")]
 
 
 @pytest.mark.parametrize("titel, erwartet", SCHREIBWEISEN_HNR)
@@ -1007,10 +1016,21 @@ def test_maske_andere_schreibweisen_der_hausnummer(titel, erwartet):
 
 
 @pytest.mark.parametrize("titel", ["Ausbau L 845", "BAB 57 Lärmschutz", "Aachener Straße, 50931 Köln",
-                                   "Bebauungsplan Nr. 6158/03", "Haus 2 der Gesamtschule", "Aachener Straße Nord 12"])
+                                   "Bebauungsplan Nr. 6158/03", "Haus 2 der Gesamtschule", "Aachener Straße Nord 12",
+                                   # Prüfung r20a (Fix): Rechtsgrundlage, Beträge und Zeichen, Datum, Uhrzeit
+                                   "Musterstraße (§ 24 GO NRW)", "Musterstraße, § 24 GO", "Musterstraße § 24 GO NRW",
+                                   "Sperrung der Aachener Straße (§ 24 GO NRW)", "Musterstraße §24 GO",
+                                   "Neumarkt (€ 1.000)", "Neumarkt € 1.000", "Neumarkt (% 20)", "Musterweg (* 12)",
+                                   "Musterweg – „2. Bauabschnitt“", "Musterweg, 12.03.2026", "Musterweg (12.03.2026)",
+                                   "Musterweg, 1.000 EUR", "Aachener Straße 12:30 Uhr", "Tagesordnungspunkt 5",
+                                   "TOP 5", "Raum 12", "Anlage 1", "Az. 12"])
 def test_maske_laesst_andere_nummern_stehen(titel):
     """Nummern, die keine Hausnummer hinter einer Straße sind (Straßenname mit Ziffer, Postleitzahl, Bebauungsplan,
-    bloßes „Haus“), bleiben stehen, und die Prüfung meldet sie nicht (ein Befund hielte die Veröffentlichung an)."""
+    bloßes „Haus“), bleiben stehen, und die Prüfung meldet sie nicht (ein Befund hielte die Veröffentlichung an).
+    Prüfung r20a (Fix): „§“, „€“, „%“ und „*“ trennen Straße und Nummer weder in der Maske noch in der Probe (vorher
+    meldete die Probe „Straße (§ 24 GO NRW)“ mit bis zu vier Trennzeichen, die Maske ließ den Titel stehen, und check
+    hielt die Veröffentlichung an); vor „.“ oder „:“ mit Ziffer steht keine Hausnummer (Datum, Tausenderpunkt,
+    Uhrzeit)."""
     m = maske.Maske({"1/2026"}, strassen=["Aachener Straße", "L 84", "BAB 57"])
     assert m(titel, "1/2026") == titel and not m.offen(titel, "1/2026")
 
@@ -1030,6 +1050,41 @@ def test_probe_unabhaengig_von_der_maske(monkeypatch):
         assert m(titel, "1/2026") == titel                                 # die alte Maske lässt sie stehen
         assert m.offen(titel, "1/2026"), titel                             # die Probe findet sie
         assert not m.rx.search(titel) and not maske.WORT.search(titel)
+
+
+def test_probe_findet_zweite_nummer_einer_liste(monkeypatch):
+    """Prüfung r20a (Fix): Liest die Maske ein Listenwort nicht (hier: Muster vor dem Fix ohne „bzw.“, „oder“, „&“),
+    bleibt die zweite Nummer hinter der ausgeblendeten stehen; die Probe meldet sie (Ziffernfolge hinter
+    „[Hausnummer ausgelassen]“ und einem Listenwort oder -zeichen). Mit der Maske nach dem Fix fehlt die Nummer."""
+    alt = (rf"\d{{1,4}}(?:\s?[a-zA-Z](?!{maske._L}))?(?:\s*(?:-|–|bis|und|u\.|/|,)\s*\d{{1,4}}"
+           rf"(?:\s?[a-zA-Z](?!{maske._L}))?)*(?!\d)")
+    neu = maske.Maske({"1/2026"}, strassen=["Aachener Straße"])
+    with monkeypatch.context() as mp:
+        mp.setattr(maske, "NR", alt)
+        m = maske.Maske({"1/2026"}, strassen=["Aachener Straße"])
+    for wort in ("bzw.", "oder", "sowie", "&", "+", "—"):
+        titel = f"Aachener Straße 12 {wort} 14"
+        aus = m(titel, "1/2026")
+        assert aus == f"Aachener Straße {maske.OHNE_NR} {wort} 14", aus
+        assert m.offen(aus, "1/2026") and not m.rx.search(aus) and not maske.WORT.search(aus), aus
+        assert neu(titel, "1/2026") == f"Aachener Straße {maske.OHNE_NR}"
+    # keine Liste: eine Zahl mit fünf Stellen, ein Datum oder ein Wort danach meldet die Probe nicht
+    for aus in (f"Aachener Straße {maske.OHNE_NR} und 50931 Köln", f"Aachener Straße {maske.OHNE_NR} bis 12.03.2026",
+                f"Aachener Straße {maske.OHNE_NR}, Haus 3"):
+        assert not neu.offen(aus, "1/2026"), aus
+
+
+def test_offen_rechnet_jeden_text_einmal(monkeypatch):
+    """Prüfung r20a (Fix, Laufzeit von check): Maske.offen rechnet je (Text, Drucksache) einmal; derselbe Titel in
+    Suche, GeoJSON, Gebietsdateien und Tabellen kostet danach nur einen Blick in den Zwischenspeicher."""
+    m = maske.Maske({"1/2026"}, strassen=["Aachener Straße"])
+    gerufen = []
+    echt = maske._angleichen
+    monkeypatch.setattr(maske, "_angleichen", lambda t: gerufen.append(t) or echt(t))
+    for _ in range(3):
+        assert m.offen("Aachener Straße 12", "1/2026") and not m.offen("Aachener Straße, 50931 Köln", "1/2026")
+    assert len(gerufen) == 2
+    assert not m.offen("Aachener Straße 12", "2/2026") and len(gerufen) == 2   # andere Drucksache: nicht betroffen
 
 
 def test_vorlagenart_und_schreibweise_ende_zu_ende(testdaten, monkeypatch, capsys):
@@ -1263,5 +1318,78 @@ def test_jede_tsv_datei_mit_titel_geprueft(testdaten, capsys):
     assert z["tabellen_mit_titel"] == z0["tabellen_mit_titel"] + 1 and z["tabellen_zeilen"] == z0["tabellen_zeilen"] + 2
     datei.write_text(f"titel\turteil\tdrucksache\n{titel.replace(' 7', ' ' + maske.OHNE_NR)}\t\t1681/2026\n",
                      encoding="utf-8")
+    assert check.datenschutz(db)["befunde"] == []
+    db.close()
+
+
+def test_fundstelle_bebauungsplan_maskiert_und_geprueft(testdaten, monkeypatch, capsys):
+    """Prüfung r20a (Fix), Ende zu Ende mit erfundenen Eingaben: Die Fundstelle eines Bebauungsplans (Text zwischen
+    „Bebauungsplan“ und der Plannummer, geocode.PLAN) nennt die Hausnummer aus dem Titel. export blendet sie wie im
+    Titel aus: in vorlagen.geojson (evidence), den Gebietsdateien (plans[].evidence, locations[].evidence), plaene.json
+    (vorlagen[].fundstelle) und den Spalten „fundstelle“ der Audits und der Stichprobe je Methode; die Datenbank behält
+    die volle Fundstelle (Verortung und Audit arbeiten mit dem vollen Titel). check meldet nichts und meldet die
+    ungekürzte Fundstelle in jeder dieser Dateien. Dazu eine Eingabe, die ihre Rechtsgrundlage in Klammern hinter der
+    Straße nennt („(§ 24 GO NRW)“): Titel unverändert, kein Befund (vorher hielt die Probe die Veröffentlichung an)."""
+    monkeypatch.setattr(config, "BPLAN", config.GEO / "bebauungsplaene_koeln.geojson")
+    monkeypatch.setattr(export, "_PLANS", None)
+    strasse, nr, _ = _lage()
+    titel = f"[Testdaten] Bebauungsplan für das Grundstück {strasse} {nr[0]} (57450/02)"
+    paragraf = f"[Testdaten] Sperrung der {strasse} (§ 24 GO NRW)"
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.write(json.dumps(_vorlage("bp_e", "1950/2026", titel, art=EINGABE), ensure_ascii=False) + "\n")
+        f.write(json.dumps(_vorlage("bp_p", "1951/2026", paragraf, art=EINGABE), ensure_ascii=False) + "\n")
+    build.build()
+    export.export()
+    capsys.readouterr()
+    voll = f"{strasse} {nr[0]}"
+    db = sqlite3.connect(config.DB)
+    assert {"1950/2026", "1951/2026"} <= maske.aus_db(db).refs
+    roh = db.execute("SELECT evidence FROM paper_plan WHERE paper_id = ?", (_id("bp_e"),)).fetchone()[0]
+    assert voll in roh and roh.startswith("Bebauungsplan")   # Datenbank: volle Fundstelle
+
+    base = config.EXPORT / config.STADT
+    geo = json.loads((base / "vorlagen.geojson").read_text())
+    fund = [f["properties"]["evidence"] for f in geo["features"] if f["properties"]["reference"] == "1950/2026"]
+    gebiete = [p for d in check.GEBIETSDATEIEN for datei in (base / d).glob("*.json")
+               for p in json.loads(datei.read_text())["papers"] if p["reference"] == "1950/2026"]
+    fund += [x["evidence"] for p in gebiete for k in ("plans", "locations") for x in p[k]]
+    plaene = json.loads((base / "plaene.json").read_text())
+    fund += [v["fundstelle"] for e in plaene["plaene"] for v in e["vorlagen"] if v["drucksache"] == "1950/2026"]
+    tabellen = {}
+    for pfad in (config.EXPORT / "audit_geokodierung.tsv", config.EXPORT / "audit_bebauungsplaene.tsv",
+                 config.EXPORT / "stichprobe_geokodierung.tsv"):
+        kopf, *zeilen = _tsv(pfad)
+        tabellen[pfad] = [z[kopf.index("fundstelle")] for z in zeilen if z[kopf.index("drucksache")] == "1950/2026"]
+        fund += tabellen[pfad]
+    gekuerzt = roh.replace(voll, f"{strasse} {maske.OHNE_NR}")
+    assert gebiete and all(tabellen.values()) and gekuerzt in fund, fund
+    assert not [x for x in fund if x and nr[0] in x.replace("57450/02", "")], fund
+    assert [r[1] for r in json.loads((base / "suche.json").read_text())["rows"] if r[0] == "1951/2026"] == [paragraf]
+    erg = check.datenschutz(db)
+    assert erg["befunde"] == [] and erg["untersucht"]["fundstellen"] >= len(fund) - 3, erg
+
+    # Gegenprobe: die ungekürzte Fundstelle in einer der Dateien meldet check (je Datei einzeln)
+    def ungekuerzt(text):
+        return text.replace(gekuerzt, roh) if isinstance(text, str) else text
+
+    def json_datei(pfad):
+        return pfad, lambda d: json.loads(ungekuerzt(json.dumps(d, ensure_ascii=False)))
+
+    dateien = [json_datei(base / "vorlagen.geojson"), json_datei(base / "plaene.json")]
+    dateien += [json_datei(datei) for d in check.GEBIETSDATEIEN for datei in (base / d).glob("*.json")
+                if "1950/2026" in datei.read_text()][:1]
+    for pfad, aendern in dateien:
+        alt = pfad.read_text()
+        pfad.write_text(json.dumps(aendern(json.loads(alt)), ensure_ascii=False))
+        b = check.datenschutz(db)["befunde"]
+        pfad.write_text(alt)
+        assert len(b) == 1 and "Hausnummern in Titeln oder Ortsnamen" in b[0] and b[0].endswith(
+            ": 1, z. B. 1950/2026"), (pfad, b)
+    for pfad in tabellen:
+        alt = pfad.read_text(encoding="utf-8")
+        pfad.write_text(alt.replace(gekuerzt, roh), encoding="utf-8")
+        b = check.datenschutz(db)["befunde"]
+        pfad.write_text(alt, encoding="utf-8")
+        assert len(b) == 1 and b[0].endswith(": 1, z. B. 1950/2026"), (pfad, b)
     assert check.datenschutz(db)["befunde"] == []
     db.close()

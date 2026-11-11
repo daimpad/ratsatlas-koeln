@@ -18,7 +18,11 @@ Fassung des Titels (_angleichen: je Zeichen NFKC, ohne weiche Trennzeichen und Z
 Leerzeichen), ersetzt wird im gelieferten Titel (sonst unverändert); zwischen Straße und Nummer bis zu drei Zeichen
 außer Buchstaben und Ziffern („Str.12“, „Straße12“, „Straße, 12“, „Straße (Nr. 12)“, „Straße #12“, „Straße № 12“) und
 „Nr.“, „No.“, „Nummer“ oder „Haus“; Straßennamen auch mit „ss“ statt „ß“ und umgekehrt. check prüft die Titel zudem
-mit einer unabhängig gebauten Probe (Maske.offen, _Probe)."""
+mit einer unabhängig gebauten Probe (Maske.offen, _Probe).
+Ergänzt in der Prüfung r20a (Fix): „§“, „€“, „%“ und „*“ trennen Straße und Nummer nicht („Straße (§ 24 GO NRW)“ bleibt,
+in der Probe vorher bis zu vier Trennzeichen und ein Befund, den die Maske nicht beheben konnte); Listen auch mit „bzw.“,
+„oder“, „sowie“, „&“, „+“ und jedem Binde- oder Gedankenstrich; „Hausnummer:“, „Haus-Nummer“, „Hs.-Nr.“, „HNr.“,
+„H.-Nr.“ und hinter der Straße „Nrn.“; keine Nummer vor „.“ oder „:“ mit Ziffer (Datum, Tausenderpunkt, Uhrzeit)."""
 import json
 import re
 import unicodedata
@@ -40,22 +44,29 @@ _L = r"[^\W\d_]"   # Buchstabe (wie \p{L})
 # wie NR und SUFFIX in site/chat/tools.js, aber bis zu vier Ziffern: Kölner Straßen haben vierstellige Hausnummern
 # („Aachener Straße 1175“, „Militärringstraße 1000“; geocode.HAUSNUMMER liest sie ebenso; Generalprobe 09.11.2026).
 # „Str“ auch ohne Punkt („Aachener Str 12“, Prüfung r20n). Der Assistent (site/chat/tools.js, in Köln abgeschaltet)
-# folgt mit seiner Freigabe
-NR = (rf"\d{{1,4}}(?:\s?[a-zA-Z](?!{_L}))?(?:\s*(?:-|–|bis|und|u\.|/|,)\s*\d{{1,4}}(?:\s?[a-zA-Z](?!{_L}))?)*(?!\d)")
+# folgt mit seiner Freigabe. Listen auch mit „bzw.“, „oder“, „sowie“, „&“, „+“ und jedem Binde- oder Gedankenstrich
+# („12 bzw. 14“, „12 — 14“, „12‑14“ mit geschütztem Bindestrich; vorher blieb die zweite Nummer stehen). Keine Nummer
+# vor „.“ oder „:“ mit Ziffer („Musterweg, 12.03.2026“, „1.000 EUR“, „12:30 Uhr“; Prüfung r20a)
+_ZIFFERN = r"\d{1,4}(?![.:]\d)"
+LISTE = r"(?:[-‐‑‒–—−/,&+]|bis|und|u\.|bzw\.?|oder|sowie)"
+NR = (rf"{_ZIFFERN}(?:\s?[a-zA-Z](?!{_L}))?(?:\s*{LISTE}\s*{_ZIFFERN}(?:\s?[a-zA-Z](?!{_L}))?)*(?!\d)")
 SUFFIX = (rf"(?:{_L}|[.-])*(?:straße|strasse|str(?:\.|(?!{_L}))|weg|platz|gasse|allee|ring|ufer|damm|pfad|chaussee|hof"
           r"|markt|graben|berg|feld)")
 
 
 # „Hausnummer 82“, „Haus-Nr. 264“, „Haus Nr. 5“, „Hausnummern 36 bis 40“, „(neben Haus-Nr.) 68“ (wie WORT in
-# site/chat/tools.js); eine schließende Klammer bleibt stehen
-WORT = re.compile(rf"\b(?:hausnummern?|hausnr\.?|haus-nr\.?|haus\s+nr\.?)\s*(\))?\s*{NR}", re.I)
+# site/chat/tools.js); eine schließende Klammer bleibt stehen. Auch „Hausnummer: 8“, „Haus-Nummer 12“, „Hs.-Nr. 12“,
+# „HNr. 12“ und „H.-Nr. 12“ (Prüfung r20a)
+WORT = re.compile(rf"\b(?:haus-?nummern?|haus(?:-|\s+)?nr|hs\.?-?nr|h\.?-?nr)\.?:?\s*(\))?\s*{NR}", re.I)
 
 
 # zwischen Straße und Nummer: bis zu drei Zeichen außer Buchstaben und Ziffern (Leerzeichen, Komma, Klammer, „#“, „№“
 # nach NFKC „No“), oder keines, wenn die Straße nicht auf eine Ziffer endet („Str.12“, „Straße12“; nicht „L 84“ + „5“);
-# danach wahlweise „Nr.“, „No.“, „Nummer“ oder „Haus“ (fallen mit der Nummer weg)
-ZWISCHEN = r"(?:[^\w]{1,3}|(?<!\d))"
-NR_WORT = rf"(?:(?:nr|no|nummer|haus)(?!{_L})\.?[^\w]{{0,3}})?"
+# danach wahlweise „Nr.“, „Nrn.“, „No.“, „Nummer“ oder „Haus“ (fallen mit der Nummer weg). „§“, „€“, „%“ und „*“ trennen
+# nicht: „Straße (§ 24 GO NRW)“, „Straße § 24 GO“, „Neumarkt € 1.000“ bleiben (Prüfung r20a; die Probe zählt gleich)
+TRENN = r"[^\w§€%*]"
+ZWISCHEN = rf"(?:{TRENN}{{1,3}}|(?<!\d))"
+NR_WORT = rf"(?:(?:nrn?|no|nummer|haus)(?!{_L})\.?{TRENN}{{0,3}})?"
 
 
 def _name_muster(name):
@@ -101,17 +112,23 @@ def _falten(text):
 
 class _Probe:
     """Unabhängig gebaute Probe für check (nicht für die Ausgabe): Steht im gefalteten Titel (_falten) eine Ziffernfolge
-    mit bis zu vier Stellen hinter einem Straßennamen oder einem Wort mit Straßen-Endung, getrennt durch bis zu vier
-    Zeichen außer Buchstaben und Ziffern (oder ohne, wenn davor keine Ziffer steht) und wahlweise „Nr“, „No“, „Nummer“
-    oder „Haus“? Nicht hinter einem bloßen „Nr.“ oder „Haus“ (Bebauungsplan-, Drucksachen- und Gebäudenummern; ein
-    Befund hielte die Veröffentlichung an)."""
+    mit bis zu vier Stellen hinter einem Straßennamen oder einem Wort mit Straßen-Endung, getrennt durch bis zu drei
+    Zeichen außer Buchstaben, Ziffern, „§“, „€“, „%“ und „*“ (oder ohne, wenn davor keine Ziffer steht) und wahlweise
+    „Nr“, „Nrn“, „No“, „Nummer“ oder „Haus“, nicht vor „.“ oder „:“ mit Ziffer? Oder steht eine Ziffernfolge hinter einer
+    ausgeblendeten Hausnummer und einem Wort oder Zeichen für eine Liste („[Hausnummer ausgelassen] bzw. 14“)? Nicht
+    hinter einem bloßen „Nr.“ oder „Haus“ (Bebauungsplan-, Drucksachen- und Gebäudenummern). So viele Trennzeichen wie
+    die Maske (ZWISCHEN; Prüfung r20a: mit vier und „§“ meldete die Probe „Straße (§ 24 GO NRW)“, die Maske ließ es zu
+    Recht stehen, und der Befund hielte die Veröffentlichung an, ohne dass die Maske ihn beheben könnte)."""
 
     def __init__(self, strassen):
         namen = sorted({_falten(s) for s in strassen if s}, key=len, reverse=True)
         endung = (r"[^\W\d_]*(?:strasse|str(?:\.|(?![^\W\d_]))|weg|platz|gasse|allee|ring|ufer|damm|pfad|chaussee"
                   r"|hof|markt|graben|berg|feld)")
-        self.rx = re.compile(rf"(?:{'|'.join([*map(re.escape, namen), endung])})(?:[^\w]{{1,4}}|(?<!\d))"
-                             rf"(?:(?:nr|no|nummer|haus)\.?[^\w]{{0,4}})?\d{{1,4}}(?!\d)")
+        nummer = r"\d{1,4}(?!\d|[.:]\d)"
+        self.rx = re.compile(rf"(?:{'|'.join([*map(re.escape, namen), endung])})(?:[^\w§€%*]{{1,3}}|(?<!\d))"
+                             rf"(?:(?:nrn?|no|nummer|haus)\.?[^\w§€%*]{{0,3}})?{nummer}"
+                             rf"|\[hausnummer ausgelassen\]\)?\s*(?:[-‐‑‒–—−/,&+]|bis|und|u\.|bzw\.?|oder|sowie)\s*"
+                             rf"{nummer}")
 
     def __call__(self, titel):
         return bool(self.rx.search(_falten(titel)))
@@ -143,6 +160,7 @@ class Maske:
         self.strassen = list(strassen)
         self.rx = _muster(self.strassen)
         self._probe = None
+        self._offen = {}   # check prüft denselben Titel je Datei und Ortsbezug: je (Text, Drucksache) einmal rechnen
 
     def _betroffen(self, titel, ref):
         # ohne Ziffer keine Hausnummer: spart die teure Regex bei den meisten Titeln (gleiche Ergebnisse)
@@ -174,10 +192,13 @@ class Maske:
         unabhängig gebauten Probe (_Probe), damit die Regel nicht nur sich selbst prüft (Prüfung r20n)."""
         if not self._betroffen(titel, ref):
             return False
-        if self._probe is None:
-            self._probe = _Probe(self.strassen)
-        angeglichen = _angleichen(titel)[0]
-        return bool(self.rx.search(angeglichen) or WORT.search(angeglichen) or self._probe(titel))
+        if (titel, ref) not in self._offen:
+            if self._probe is None:
+                self._probe = _Probe(self.strassen)
+            angeglichen = _angleichen(titel)[0]
+            self._offen[titel, ref] = bool(self.rx.search(angeglichen) or WORT.search(angeglichen)
+                                           or self._probe(titel))
+        return self._offen[titel, ref]
 
 
 def kette(vorlagen, ausgelassen, beziehungen, privat_auch=True):

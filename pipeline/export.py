@@ -71,8 +71,11 @@ def _paper_detail(db, pid):
     orig = db.execute(
         "SELECT actor, actor_type, organization_id, method, evidence, derived "
         "FROM paper_originator WHERE paper_id = ?", (pid,)).fetchall()
-    locs = _locations(db, pid)
     m = _maske(db)
+    # Fundstellen sind Teile des Titels (Bebauungsplan: Text zwischen Stichwort und Plannummer, Einreichende: Abschnitt
+    # des Titels): dieselbe Maske wie der Titel (Prüfung r20a; vorher stand dort die Hausnummer, die der Titel ausblendet)
+    fund = lambda rows: [{**dict(r), "evidence": m(r["evidence"], p["reference"])} for r in rows]
+    locs = fund(_locations(db, pid))
     rel = lambda sql: [{**dict(r), "name": m(r["name"], r["reference"])} for r in db.execute(sql, (pid,))]
     d = {
         "reference": p["reference"],
@@ -82,8 +85,8 @@ def _paper_detail(db, pid):
         "amt": p["amt"],
         "web": p["web"],
         "main_file": p["main_file_url"],
-        "responsibility": [dict(r) for r in resp],
-        "originators": [dict(r) for r in orig],
+        "responsibility": fund(resp),
+        "originators": fund(orig),
         "process": [{**dict(r), "status": _status(r)} for r in process],
         "superordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
                               "JOIN paper p ON p.id = r.parent_id WHERE r.child_id = ?"),
@@ -93,7 +96,7 @@ def _paper_detail(db, pid):
         "locations": locs,
         # Plannummern im Titel (Methode B3); match = Treffer im Datensatz der rechtskräftigen Pläne,
         # names = zugeordnete Pläne (Teilpläne, Grundnummer), area = Geltungsbereich vorhanden
-        "plans": [_plan_entry(nr, ev, match) for nr, ev, match in
+        "plans": [_plan_entry(nr, m(ev, p["reference"]), match) for nr, ev, match in
                   db.execute("SELECT plan_nr, evidence, match FROM paper_plan WHERE paper_id = ?", (pid,))],
         "source_object": pid,
     }
@@ -133,6 +136,7 @@ def _audit_rows(db, where="", params=()):
             f"JOIN location l ON l.id = pl.location_id {where} ORDER BY p.date DESC, p.reference", params):
         pid, *vals = r
         vals[3] = _maske(db)(vals[3], vals[0])
+        vals[11] = _maske(db)(vals[11], vals[0])   # Fundstelle (Bebauungsplan: Teil des Titels; Prüfung r20a)
         status = "Quelle (Stufe A)" if vals[4] == "A" else "ungeprüft"
         if vals[4] != "A" and pid in a and vals[6] != "stadtbezirk":
             status = "bestätigt durch Stufe A" if vals[8] in a[pid] else "abweichend von Stufe A"
@@ -212,10 +216,10 @@ def _sample_methods(db, path, n=50, seed=2026):
         for pid in sorted(random.Random(f"{seed}{m}").sample(ids, min(n, len(ids)))):
             p = list(db.execute("SELECT reference, date, paper_type, name, web FROM paper WHERE id = ?", (pid,)).fetchone())
             p[3] = maske_(p[3], p[0])
-            locs = db.execute(
+            locs = [(*l[:5], maske_(l[5], p[0])) for l in db.execute(
                 "SELECT COALESCE(l.street, l.description, l.ortsteil, l.stadtbezirk), l.level, l.ortsteil, l.stadtbezirk, "
                 "pl.confidence, pl.evidence FROM paper_location pl JOIN location l ON l.id = pl.location_id "
-                "WHERE pl.paper_id = ? AND pl.method = ?", (pid, m)).fetchall()
+                "WHERE pl.paper_id = ? AND pl.method = ?", (pid, m))]
             rows.append([m, *p, "; ".join(str(l[0]) for l in locs), "; ".join(sorted({l[1] for l in locs})),
                          "; ".join(sorted({str(l[2] or l[3]) for l in locs})), "; ".join(sorted({l[4] for l in locs})),
                          "; ".join(sorted({str(l[5]) for l in locs})), "", ""])
@@ -528,10 +532,10 @@ def _sample(db, out, ortsteil, n=50, seed=2026):
     for i, pid in enumerate(pick, 1):
         p = list(db.execute("SELECT reference, date, paper_type, name, web FROM paper WHERE id = ?", (pid,)).fetchone())
         p[3] = _maske(db)(p[3], p[0])
-        locs = db.execute(
+        locs = [(*l[:3], _maske(db)(l[3], p[0])) for l in db.execute(
             "SELECT COALESCE(l.street, l.description), pl.method, pl.confidence, pl.evidence "
             "FROM paper_location pl JOIN location l ON l.id = pl.location_id "
-            "WHERE pl.paper_id = ? AND l.ortsteil = ?", (pid, ortsteil)).fetchall()
+            "WHERE pl.paper_id = ? AND l.ortsteil = ?", (pid, ortsteil))]
         rows.append([i, *p, "; ".join(l[0] for l in locs), "; ".join(sorted({l[1] for l in locs})),
                      "; ".join(sorted({l[2] for l in locs})), "; ".join(sorted({l[3] for l in locs})),
                      "", ""])
@@ -734,10 +738,11 @@ def plan_audit_rows(db, where="", args=()):
         ortsteile = sorted({r[0] for n in names for r in db.execute(
             "SELECT l.ortsteil FROM paper_location pl JOIN location l ON l.id = pl.location_id "
             "WHERE pl.paper_id = ? AND pl.method = 'bebauungsplan' AND l.description = ?", (pid, f"Bebauungsplan {n}"))})
-        back = "; ".join(f"{e} ({m}, {ot or 'ohne Ortsteil'})" for e, m, ot in db.execute(
+        back = "; ".join(f"{_maske(db)(e, ref)} ({m}, {ot or 'ohne Ortsteil'})" for e, m, ot in db.execute(
             "SELECT DISTINCT pp.evidence, pp.method, l.ortsteil FROM plan_precedence pp JOIN location l ON l.id = pp.location_id "
             "WHERE pp.paper_id = ? ORDER BY 1, 3", (pid,)))
-        out.append([ref, _maske(db)(name, ref), nr, ev, match, "; ".join(names) or "nicht im Datensatz",
+        # Fundstelle wie der Titel maskiert (Text zwischen „Bebauungsplan“ und Plannummer; Prüfung r20a)
+        out.append([ref, _maske(db)(name, ref), nr, _maske(db)(ev, ref), match, "; ".join(names) or "nicht im Datensatz",
                     "; ".join(sorted({f["properties"]["inkraft_seit"] or "" for f in hits})), "; ".join(ortsteile),
                     CONFIDENCE.get(match, "–"), back,
                     "ungeprüft" if hits else "kein rechtskräftiger Plan (Verfahren oder aufgehoben)"])
