@@ -8,7 +8,7 @@ from collections import Counter
 
 from . import actors, config, maske
 from .geo import Ortsteile
-from .geocode import (ANDERE_FORM, AUSSCHLUSS, WEG, Gazetteer, erkannte_arten, hausnummer_punkt_erlaubt,
+from .geocode import (ANDERE_FORM, AUSSCHLUSS, WEG, Gazetteer, beziehungen, erkannte_arten, hausnummer_punkt_erlaubt,
                       nicht_erkannte_arten, plan_numbers, punkt_ausschluss, sperrmenge, vorlagenart_bezeichnung)
 from .plans import Plans, plan_locations
 from . import volltext
@@ -27,8 +27,8 @@ CREATE TABLE paper (
 CREATE TABLE paper_relation (
   parent_id TEXT, child_id TEXT, source TEXT, PRIMARY KEY (parent_id, child_id));
 -- relatedPaper (wie geliefert, auch von ausgelassenen Vorlagen): nur für den Datenschutz, in beiden Richtungen eine
--- Beziehung wie paper_relation (geocode.sperrmenge in build und check.erlaubnis); Export, maske.aus_db und
--- volltext.einwohner_kette lesen nur paper_relation
+-- Beziehung wie paper_relation (geocode.sperrmenge in build und check.erlaubnis, seit Runde 20 auch Titelmaske
+-- maske.aus_db und Volltextkette volltext.einwohner_kette); der Export zeigt nur paper_relation
 CREATE TABLE paper_related (
   paper_id TEXT, related_id TEXT, source TEXT, PRIMARY KEY (paper_id, related_id));
 CREATE TABLE meeting (
@@ -268,11 +268,9 @@ def build():
     rows = {k: [] for k in ("paper", "rel", "related", "cons", "ploc", "orig", "resp", "plan")}
 
     # Beziehungen (auch ausgelassener Vorlagen ohne Drucksachennummer: Sie fehlen in `paper`, der Export zeigt sie
-    # nicht, sie zählen aber für den Datenschutz; check.erlaubnis liest paper_relation und paper_related)
-    for p in papers + ausgelassen:
-        rows["rel"] += ([(p["id"], c) for c in p.get("subordinatedPaper") or []]
-                        + [(o, p["id"]) for o in p.get("superordinatedPaper") or []])
-        rows["related"] += [(p["id"], r) for r in p.get(VERWANDT) or []]
+    # nicht, sie zählen aber für den Datenschutz; check.erlaubnis und maske.aus_db lesen paper_relation und
+    # paper_related über geocode.beziehungen_db)
+    rows["rel"], rows["related"] = beziehungen(papers + ausgelassen)
     gremien = {p["id"]: [(orgs_by_id.get((c.get("organization") or [None])[0]) or {}).get("name", "")
                          for c in p.get("consultation") or [] if isinstance(c, dict)] for p in papers}
     gesperrt = _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rows["rel"], rows["related"])
@@ -367,7 +365,8 @@ def build():
           f"{len({r[0] for r in rows['plan']})} mit Plannummer im Titel, "
           f"{len(sure)} eindeutig (Vorrang vor {len(precedence)} Ortsbezügen aus dem Titel)")
     rows["ploc"] += _objects_in_titles(papers, locations, gaz, {r[0] for r in rows["ploc"]})
-    rows["ploc"] += _fulltext(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]}, ausgelassen, gesperrt)
+    rows["ploc"] += _fulltext(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]}, ausgelassen, gesperrt,
+                              rows["rel"] + rows["related"])
     rows["ploc"] += _inherited(papers, papers_by_id, rows["ploc"], locations, gaz, gesperrt)
     rows["ploc"] += _from_committee(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]})
 
@@ -404,8 +403,9 @@ def _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rel, related)
     und die ausgelassenen Vorlagen (ohne Drucksachennummer keine Erlaubnis, geocode.REFERENZ_PUNKT); dazu als Fixpunkt
     alle verbundenen Vorlagen (über- und untergeordnet, relatedPaper) und alle Vorlagen mit derselben Drucksache
     (vorsichtige Auslegung: auch eine Vorlage unbekannter Art kann eine Eingabe sein und sperrt ihre Beantwortung).
-    Log: Gründe, Wege, relatedPaper und die erkannten und nicht erkannten Vorlagenarten mit Anzahl (nur die Art), damit
-    das Muster geocode.VORLAGENART_PUNKT nach dem Vollabruf in beide Richtungen geprüft und ergänzt werden kann."""
+    Log: Gründe, Wege, relatedPaper, der Umfang der Titelmaske (_titelmaske_zeile) und die erkannten und nicht
+    erkannten Vorlagenarten mit Anzahl (nur die Art), damit das Muster geocode.VORLAGENART_PUNKT nach dem Vollabruf in
+    beide Richtungen geprüft und ergänzt werden kann."""
     amt = {p["id"]: (orgs_by_id.get((p.get("underDirectionOf") or [None])[0]) or {}).get("name") for p in papers}
     grund = {p["id"]: punkt_ausschluss(p, gremien.get(p["id"], ()), amt[p["id"]]) for p in papers}
     start = {pid for pid, g in grund.items() if g} | {a["id"] for a in ausgelassen}
@@ -428,9 +428,28 @@ def _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rel, related)
     print(f"„Einwohner“ im Titel einer erkannten Vorlage (Grund Titel ohne Hausnummer, nicht Bauordnung oder "
           f"Naturschutz; Entscheidung offen): {len(titel)} Vorlagen; ohne Hauskoordinate nur darüber: "
           f"{len((weg.keys() - ohne_titel.keys()) & grund.keys())} Vorlagen")
+    print(_titelmaske_zeile(papers, ausgelassen, amt, rel, related))
     print(nicht_erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] == "vorlagenart")))
     print(erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] is None)))
     return set(weg)
+
+
+def _titelmaske_zeile(papers, ausgelassen, amt, rel, related):
+    """Zeile für das Log: Umfang der Titelmaske (maske.kette mit denselben Angaben und Beziehungen wie maske.aus_db beim
+    Export) und was davon nur über relatedPaper hinzukommt (Entscheidung 10.11.2026, Runde 20: Umfang nach der ersten
+    Abrufnacht prüfen). Nur Zahlen, keine Titel: Vorlagen in der Maske, Vorlagen nur über relatedPaper und davon die
+    Titel, in denen die Maske eine Hausnummer ausblendet (nur für diese gerechnet: die Maske braucht je Titel mit
+    Ziffer etwa 1 ms)."""
+    vorlagen = [(p["id"], p["reference"], p.get("paperType"), p.get("name"), amt[p["id"]]) for p in papers]
+    aus = [a["id"] for a in ausgelassen]
+    mit = maske.kette(vorlagen, aus, rel + related)
+    ohne = maske.kette(vorlagen, aus, rel)
+    nur = [p for p in papers if p["id"] in mit and p["id"] not in ohne]
+    m = maske.Maske({p["reference"] for p in nur}) if nur else None
+    gekuerzt = sum(m(p.get("name"), p["reference"]) != p.get("name") for p in nur)
+    return (f"Titelmaske (maske.py, Hausnummer im Titel ausgeblendet; verbundene Vorlagen auch über relatedPaper): "
+            f"{sum(p['id'] in mit for p in papers)} Vorlagen; nur über relatedPaper: {len(nur)} Vorlagen, davon "
+            f"{gekuerzt} mit gekürztem Titel")
 
 
 def _add_location(r, locations, gaz):
@@ -486,18 +505,19 @@ def _objects_in_titles(papers, locations, gaz, placed):
     return out
 
 
-def _fulltext(papers, bv_bezirke, locations, gaz, placed, ausgelassen=(), gesperrt=frozenset()):
+def _fulltext(papers, bv_bezirke, locations, gaz, placed, ausgelassen=(), gesperrt=frozenset(), paare=None):
     """Ortsbezüge aus dem Volltext der Hauptdatei (volltext.py) für Vorlagen ohne eigenen Ortsbezug; Audit und
     einmalig eine Stichprobe (ohne Textauszüge). `ausgelassen`: Vorlagen ohne Drucksachennummer (einlesen); mit ihnen
     verbundene Vorlagen werden wie die Kette der Einwohnerschaft nicht aus dem Volltext verortet. `gesperrt`: IDs ohne
     Erlaubnis für Hauskoordinaten; eine Straße, die nur aus einer Ortsangabe der Stadt bekannt ist, gilt für sie nur als
-    Stadtteil (_stadtteil_statt_stadtpunkt)."""
+    Stadtteil (_stadtteil_statt_stadtpunkt). `paare`: dieselben Beziehungen wie für die Hauskoordinaten (über- und
+    untergeordnet und relatedPaper; volltext.einwohner_kette), ohne Angabe aus den Vorlagen."""
     texts = volltext.load_texts()
     if not texts:
         print(f"Volltext: {config.TEXTE} fehlt – keine Verortung aus Dokumenten.")
         return []
     out, audit, found = [], [], {}
-    kette = volltext.einwohner_kette(papers, ausgelassen)
+    kette = volltext.einwohner_kette(papers, ausgelassen, paare)
     for p in papers:
         text = texts.get((p.get("mainFile") or {}).get("id"))
         if not text or p["id"] in placed or not volltext.allowed(p.get("paperType")) or p["id"] in kette:

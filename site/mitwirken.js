@@ -7,7 +7,9 @@
 //   (ohne ausstehende Entscheidung), Mitteilung ohne Termin und Genehmigung durch den Rat schließen den Vorgang;
 //   ein offener Vorgang ohne Termin
 //   und ohne Datum in den letzten 12 Monaten gilt als „unklar“ (eigene Festlegung: meist fehlt die Verknüpfung)
-// - termin: nächste Beratung dieser Vorlage mit Datum ab heute ohne Ergebnis (Sitzung über OParl-Lite verknüpft)
+// - termin: nächste Beratung dieser Vorlage mit Datum ab heute ohne Ergebnis (Sitzung über `consultation.meeting`,
+//   sonst über den Tagesordnungspunkt `consultation.agendaItem` der OParl-Schnittstelle von SessionNet verknüpft,
+//   pipeline/sessionnet.py beratungen)
 // - ebene: „bezirk“, wenn nur Bezirksvertretungen beraten, sonst „stadt“; ohne Beratung keine Ebene
 // - Ziel eines Bürgerantrags: Bezirksvertretung (Ebene Bezirk) oder Ausschuss für Beteiligung der Bürgerinnen
 //   und Bürger; nächste Sitzung laut Sitzungskalender, deren Frist (21 Tage vorher) noch nicht verstrichen ist

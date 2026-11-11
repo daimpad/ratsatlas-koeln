@@ -423,9 +423,15 @@ class Gazetteer:
 REFERENZ_PUNKT = re.compile(r"^(?:AN/)?\d{1,4}/\d{4}$")
 # Eingaben und Vorlagen natürlicher Personen (Entscheidung 04.11.2026): auch Kölner Einwohneranfragen („Einwohneranfrage
 # nach § 39 Abs. 6“, Stufe 2, explore/BERICHT_phase1.md 6.5; Drucksache wie Anträge AN/NNNN/JJJJ möglich) und
-# Einwohnerfragen; nicht „Einwohnerbefragung“ (Verwaltung)
-EINGABE = re.compile(r"(?i)§\s*24\b|anregung|beschwerde|eingabe|petition|bürgerantrag|einwohner(?:innen)?antrag"
-                     r"|einwohner(?:innen)?(?:an)?frage")
+# Einwohnerfragen, Bürgeranträge, -anfragen und -fragen auch mit Trennzeichen und in Genderform („Bürger-Antrag“,
+# „Einwohner*innenanfrage“, „Einwohner_innenanfrage“, „Bürger:innenantrag“, „Bürgerinnenantrag“, „Bürgerfragestunde“;
+# Prüfung r20n). „Einwohnerbefragung“ ist hier keine Eingabe (Verwaltung), über chat.EINWOHNER_TITEL („einwohner“ im
+# Titel) aber Ausgangspunkt der Titelmaske und damit ohne Hauskoordinate (Grund „maske“; Abwägung offen, TECHNIK.md).
+# „§ 24“ auch ohne Leerzeichen und direkt vor Buchstaben („§24GO“, „§ 24GO NRW“; vorher verlangte \b eine Wortgrenze
+# hinter der 24), nicht vor einer weiteren Ziffer („§ 240“; Prüfung r20a)
+EINGABE = re.compile(r"(?i)§\s*24(?!\d)|anregung|beschwerde|eingabe|petition"
+                     r"|bürger\W*(?:_?innen\W*)?(?:an)?(?:trag|frage)"
+                     r"|einwohner\W*(?:_?innen\W*)?(?:an)?(?:trag|frage)")
 # Hauskoordinate nur bei erkennbarer Vorlagenart (Entscheidung 10.11.2026): leer, nur Leerraum, null, nicht als Text
 # geliefert oder ohne Treffer hier → keine Hauskoordinate, höchstens die Straße (wie bei Eingaben). Erkannt werden
 # Verwaltungsvorlagen und politische Anträge und Anfragen, Groß- und Kleinschreibung egal, auch als Wortteil
@@ -441,13 +447,20 @@ EINGABE = re.compile(r"(?i)§\s*24\b|anregung|beschwerde|eingabe|petition|bürge
 # Hauskoordinate. Abgeglichen wird der Vergleichstext (_vergleichstexte), nicht die gelieferte Schreibung. Die
 # vollständige Kölner Liste fehlt bis zum Vollabruf: erkannte und nicht erkannte Arten stehen mit Anzahl im Log von
 # build und in der Ausgabe von check.
-VORLAGENART_PUNKT = re.compile(r"(?is)^(?!.*(?:bürger(?!meister)|einwohner|anwohner|privat"
-                               r"|bau(?:vor)?an(?:trag|frage)))"
+# Vorlagenarten aus der Einwohnerschaft oder von Privatpersonen (in der Art „Bürger“ außer „Bürgermeister“,
+# „Einwohner“, „Anwohner“, „privat“, „Bauantrag“, „Bauvoranfrage“): nie Hauskoordinate (VORLAGENART_PUNKT) und, mit
+# derselben Regel (art_von_personen), Ausgangspunkt der Titelmaske (chat.aus_einwohnerschaft), auch in anderer Schreibung
+# („Bürger-Antrag“, „Einwohner*innenanfrage“, „Anwohnerantrag“, „Privatantrag“, „Bürgerbriefe“; Prüfung r20n: vorher
+# ohne Hauskoordinate, aber mit Hausnummer im Titel)
+ART_PERSONEN = r"bürger(?!meister)|einwohner|anwohner|privat|bau(?:vor)?an(?:trag|frage)"
+VORLAGENART_PUNKT = re.compile(rf"(?is)^(?!.*(?:{ART_PERSONEN}))"
                                r".*(?:vorlage|mitteilung|stellungnahme|antwort|dringlichkeitsentscheidung"
                                r"|informationsbrief|antrag|anfrage)")
+_ART_PERSONEN = re.compile(ART_PERSONEN, re.I | re.S)
 # Zeichen ohne Breite und weiche Trennzeichen: fallen im Vergleichstext weg („Bür\u00adgerantrag“ wie
-# „Bürgerantrag“)
-_UNSICHTBAR = re.compile(r"[\u00ad\u034f\u180e\u200b-\u200f\u2060-\u2064\ufeff]")
+# „Bürgerantrag“), ebenso Steuerzeichen für die Schreibrichtung (U+061C, U+202A–U+202E, U+2066–U+2069; Prüfung
+# r20a: mitten in einer Hausnummer ließen sie in der Titelmaske eine Ziffer stehen)
+_UNSICHTBAR = re.compile(r"[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]")
 # Kennzeichen an einer Vorlage, deren Vorlagenart nicht als Zeichenkette kam (Liste, Objekt; build.einlesen macht Text
 # daraus): gilt als nicht erkennbar, auch wenn der Text passt (vorsichtige Auslegung)
 ANDERE_FORM = "_vorlagenart_andere_form"
@@ -460,13 +473,34 @@ AUSSCHLUSS = {"drucksache": "Drucksache in anderem Schema", "eingabe": "Eingabe 
 def _vergleichstexte(text):
     """Vergleichstexte für die Regeln zur Hauskoordinate (EINGABE, Gremien, VORLAGENART_PUNKT), damit eine andere
     Schreibung eine Eingabe nicht durchlässt: Unicode-Normalform NFKC (zerlegte Umlaute, Vollbreite), ohne weiche
-    Trennzeichen und Zeichen ohne Breite (_UNSICHTBAR), kleingeschrieben, „Paragraf 24“ wie „§ 24“; dazu derselbe Text
+    Trennzeichen und Zeichen ohne Breite (_UNSICHTBAR), kleingeschrieben, Leerraum am Rand entfernt und im Text zu einem
+    Leerzeichen zusammengefasst („Bürgerbrief “, „Anregungen  und Beschwerden“; Prüfung r20n), „Paragraf 24“ wie „§ 24“,
+    ebenso die Abkürzungen „Par. 24“ und „Paragr. 24“ (mit Punkt vor einer Ziffer; Prüfung r20a); dazu derselbe Text
     mit „ae“, „oe“, „ue“ als „ä“, „ö“, „ü“ („Buergerantrag“). Ein Ausschluss gilt, wenn einer der beiden Texte passt,
     eine Erkennung nur, wenn beide passen (so verdeckt „ue“ kein folgendes Wort: „Neueingabe“). Nur für den Abgleich;
     Datenbank, Export und Log behalten die gelieferte Schreibung."""
     t = unicodedata.normalize("NFKC", _UNSICHTBAR.sub("", text or "")).lower()
-    t = re.sub(r"paragra(?:f|ph)(?:en)?\.?\s*(?=\d)", "§ ", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    t = re.sub(r"(?:paragra(?:f|ph)(?:en)?\.?|par(?:agr)?\.)\s*(?=\d)", "§ ", t)
     return t, t.replace("ae", "ä").replace("oe", "ö").replace("ue", "ü")
+
+
+def eingabe(art, titel):
+    """Hinweis auf eine Eingabe oder Einwohneranfrage (EINGABE) in Vorlagenart oder Titel, abgeglichen über die
+    Vergleichstexte (_vergleichstexte; eine Vorlagenart in anderer Form gilt als Text, null als leer). Eine Regel für
+    die Hauskoordinate (punkt_ausschluss, Grund „eingabe“) und die Titelmaske samt Volltextkette
+    (chat.aus_einwohnerschaft), damit eine Eingabe in anderer Schreibung („Buergerantrag“, „Antrag nach Paragraf 24 GO
+    NRW“, weiches Trennzeichen) weder die Hauskoordinate bekommt noch ihre Hausnummer im Titel zeigt (Prüfung r20)."""
+    art = art if isinstance(art, str) else "" if art is None else str(art)
+    return any(EINGABE.search(t) for t in _vergleichstexte(art) + _vergleichstexte(titel))
+
+
+def art_von_personen(art):
+    """Vorlagenart aus der Einwohnerschaft oder von Privatpersonen (ART_PERSONEN, in einem der Vergleichstexte; eine
+    Vorlagenart in anderer Form gilt als Text, null als leer): dieselbe Regel wie der Ausschluss in VORLAGENART_PUNKT,
+    für die Titelmaske (chat.aus_einwohnerschaft) und die Gegenprobe in check.datenschutz (Prüfung r20n)."""
+    art = art if isinstance(art, str) else "" if art is None else str(art)
+    return any(_ART_PERSONEN.search(t) for t in _vergleichstexte(art))
 
 
 def vorlagenart_erkannt(paper):
@@ -491,9 +525,7 @@ def punkt_ausschluss(paper, gremien=(), amt=None):
     „Buergerantrag“ oder mit weichem Trennzeichen gelten wie die übliche."""
     if not REFERENZ_PUNKT.match(paper.get("reference") or ""):
         return "drucksache"
-    art = paper.get("paperType")
-    art = art if isinstance(art, str) else "" if art is None else str(art)
-    if any(EINGABE.search(t) for t in _vergleichstexte(art) + _vergleichstexte(paper.get("name"))):
+    if eingabe(paper.get("paperType"), paper.get("name")):
         return "eingabe"
     if any(re.search(r"(?i)anregungen und beschwerden|bürgerbeteiligung", t)
            for g in gremien for t in _vergleichstexte(g)):
@@ -563,7 +595,8 @@ def sperrmenge(start, beziehungen, drucksachen):
     werden einmal aufgestellt; eine Schicht nimmt zuerst alles hinzu, was über Beziehungen erreichbar ist, dann bilden
     die noch fehlenden Vorlagen mit der Drucksache einer Vorlage der Schicht die nächste Schicht (jede Drucksache
     einmal). Liefert {ID: Weg} mit Weg „start“, „beziehung“ oder „drucksache“ (wodurch die Vorlage hinzukam; WEG),
-    gleich dem früheren Ablauf in Runden."""
+    gleich dem früheren Ablauf in Runden. Mit anderer Startmenge und denselben Beziehungen (beziehungen,
+    beziehungen_db) rechnet maske.kette die Titelmaske und die Volltextkette (Runde 20)."""
     nachbarn = {}
     for a, b in beziehungen:
         nachbarn.setdefault(a, []).append(b)
@@ -592,6 +625,31 @@ def sperrmenge(start, beziehungen, drucksachen):
                     naechste.append(n)
         schicht = naechste
     return weg
+
+
+def beziehungen(papers):
+    """Beziehungen der Vorlagen für sperrmenge aus den Rohdaten (nach build.einlesen; auch ausgelassene Vorlagen, die nur
+    Kennung und Beziehungen tragen): ([(übergeordnet, untergeordnet)] aus `subordinatedPaper` und `superordinatedPaper`,
+    [(Vorlage, verwandte Vorlage)] aus `relatedPaper`), je wie geliefert. build schreibt sie in paper_relation und
+    paper_related und rechnet mit beiden Listen; volltext.einwohner_kette ohne Datenbank ebenso (Runde 20)."""
+    rel, related = [], []
+    for p in papers:
+        rel += ([(p["id"], c) for c in p.get("subordinatedPaper") or []]
+                + [(o, p["id"]) for o in p.get("superordinatedPaper") or []])
+        related += [(p["id"], r) for r in p.get("relatedPaper") or []]
+    return rel, related
+
+
+def beziehungen_db(db):
+    """Dieselben Beziehungen aus der Datenbank als eine Liste von Paaren: paper_relation und, wo vorhanden (ältere
+    Datenbanken ohne die Tabelle), relatedPaper aus paper_related. Eine Menge für check.erlaubnis (Hauskoordinaten) und
+    maske.aus_db (Titelmaske), wie beim Aufbau (Runde 20: vorher folgte die Titelmaske nur paper_relation)."""
+    def tabelle(name):
+        return db.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", (name,)).fetchone()
+    out = db.execute("SELECT parent_id, child_id FROM paper_relation").fetchall() if tabelle("paper_relation") else []
+    if tabelle("paper_related"):
+        out += db.execute("SELECT paper_id, related_id FROM paper_related").fetchall()
+    return out
 
 
 def plan_numbers(title):

@@ -6,9 +6,10 @@
                       Methode und Konfidenz; Straßenebene ohne Hausnummern
 - gremien.json        Gremien und Verwaltungsbereiche mit Zählungen und Thema (abgeleitet)
 - datenstand.json     Abrufzeitpunkte, Lizenzen, Umfang, Verortungsquote, bekannte Lücken
-- einwohner.json      Drucksachen, deren Titel ohne Hausnummer erscheinen (Einwohnerschaft; Bauordnung und Naturschutz)
-                      samt allen Vorlagen desselben Vorgangs; der Assistent lässt in ihren Titeln und Fundstellen
-                      Hausnummern aus (site/chat/tools.js)
+- einwohner.json      Drucksachen, deren Titel ohne Hausnummer erscheinen (Titelmaske maske.aus_db: Einwohnerschaft,
+                      Bauordnung und Naturschutz samt verbundenen Vorlagen, auch über relatedPaper, und derselben
+                      Drucksache); der Assistent lässt in ihren Titeln und Fundstellen Hausnummern aus
+                      (site/chat/tools.js)
 
 Die Dateien tragen keine Erzeugungszeitpunkte (stabile Ausgaben); Abrufzeitpunkte stehen nur in
 datenstand.json."""
@@ -18,7 +19,7 @@ from collections import Counter, defaultdict
 from datetime import date
 
 from . import config, topics
-from .geocode import EINGABE
+from .geocode import _vergleichstexte, art_von_personen, eingabe
 
 PAPER_FIELDS = ("reference", "name", "paper_type", "date", "amt", "web", "main_file", "source_object", "stand",
                 "parties", "plans")
@@ -26,9 +27,12 @@ LOC_FIELDS = ("level", "name", "ortsteil", "stadtbezirk", "stage", "method", "co
 REL_FIELDS = ("reference", "paper_type", "name", "date")
 
 # wie EINWOHNER und EINWOHNER_TITEL in site/chat/tools.js (Assistent, in Köln abgeschaltet; die Kölner Ergänzung um
-# geocode.EINGABE in einwohner() fehlt dort noch und folgt mit der Freigabe des Assistenten)
+# geocode.eingabe und den Abgleich über die Vergleichstexte in aus_einwohnerschaft() fehlt dort noch und folgt mit der
+# Freigabe des Assistenten)
 EINWOHNER = {"Bürgerantrag § 24 GO - Öffentlich", "Anregungen und Beschwerden", "Einwohnerfrage", "Bürgerbrief"}
 EINWOHNER_TITEL = re.compile(r"bürgerantrag|einwohner|anregung|beschwerde", re.I)
+# EINWOHNER als Vergleichstexte (geocode._vergleichstexte: Normalform, kleingeschrieben, „Paragraf 24“ wie „§ 24“)
+_EINWOHNER_VERGLEICH = {_vergleichstexte(art)[0] for art in EINWOHNER}
 
 LUECKEN = [
     "Vorlagen vor Oktober 2019 sind nicht enthalten.",
@@ -37,7 +41,8 @@ LUECKEN = [
     "Verwaltungsinterne Abläufe vor dem Datum der Vorlage sind nicht öffentlich.",
     "Inhalte nichtöffentlicher Beratungen sind nicht einsehbar.",
     "Den Vollzug von Beschlüssen zeigt keine öffentliche Schnittstelle (Beschlusskontrolle).",
-    "Ergebnisse und Sitzungstermine der Beratungen stammen aus OParl-Lite; nicht jede Beratung ist verknüpft.",
+    "Ergebnisse und Sitzungstermine der Beratungen stammen aus den Sitzungen und Tagesordnungspunkten der "
+    "OParl-Schnittstelle (SessionNet); nicht jede Beratung ist verknüpft.",
     "Einreichende, Themen, Parteien und Ortsbezüge der Stufe B sind abgeleitet und nicht vollständig geprüft.",
     "Das Soll nach Regelwerk ist ein vereinfachtes Modell; abgeglichen wird nur, welche Gremienarten beraten haben.",
     "Abstimmungsergebnisse einzelner Fraktionen oder Personen sind nicht enthalten.",
@@ -153,35 +158,22 @@ def _dump(path, data):
 
 
 def aus_einwohnerschaft(paper_type, name):
-    """Ausgangsvorlage aus der Einwohnerschaft nach Art oder Titel (einwohner(), ohne verbundene Vorlagen; auch
-    geocode.punkt_ausschluss über maske.titel_ohne_hausnummer)."""
-    return bool(paper_type in EINWOHNER or EINWOHNER_TITEL.search(name or "")
-                # Köln: dieselben Eingaben und Vorlagen natürlicher Personen wie in der Punktregel (geocode.EINGABE auf
-                # Art und Titel: „Eingabe nach § 24 GO NRW“, „Einwohneranfrage nach § 39 Abs. 6“, „… – Bürgereingabe“),
-                # damit eine Vorlage ohne Hauskoordinate ihre Hausnummer auch nicht im Titel zeigt (Generalprobe
-                # 09.11.2026)
-                or EINGABE.search(paper_type or "") or EINGABE.search(name or ""))
-
-
-def einwohner(papers, auch=None):
-    """Drucksachen von Vorlagen aus der Einwohnerschaft und aller Vorlagen, die mit ihnen über- oder untergeordnet
-    verbunden sind (auch über mehrere Stufen): Stellungnahmen und Mitteilungen zu einem Bürgerantrag nennen oft
-    dieselbe Anschrift, tragen aber weder die Art noch das Wort im Titel (Code-Prüfung 23.10.2026).
-    auch: weitere Ausgangsvorlagen (maske.privat: Bauordnung und Naturschutz, nur zum Ausblenden der Hausnummer)."""
-    nachbarn = defaultdict(set)
-    for p in papers:
-        for r in p["superordinated"] + p["subordinated"]:
-            nachbarn[p["reference"]].add(r["reference"])
-            nachbarn[r["reference"]].add(p["reference"])
-    offen = [p["reference"] for p in papers
-             if aus_einwohnerschaft(p["paper_type"], p["name"]) or (auch and auch(p))]
-    gesehen = set(offen)
-    while offen:
-        for n in nachbarn[offen.pop()]:
-            if n not in gesehen:
-                gesehen.add(n)
-                offen.append(n)
-    return sorted(gesehen)
+    """Ausgangsvorlage aus der Einwohnerschaft nach Art oder Titel, ohne verbundene Vorlagen (Titelmaske und
+    Volltextkette: maske.kette; geocode.punkt_ausschluss über maske.titel_ohne_hausnummer). Abgeglichen wird wie in der
+    Punktregel über die Vergleichstexte (geocode._vergleichstexte), nicht die gelieferte Schreibung: „Buergerantrag“,
+    „Bür\u00adgerantrag“ oder „Antrag nach Paragraf 24 GO NRW“ gelten wie die übliche Schreibung (Prüfung r20). Dazu
+    jede Vorlagenart, die die Punktregel als Vorlage aus der Einwohnerschaft oder von Privatpersonen ausschließt
+    (geocode.art_von_personen, dieselbe Regel wie in VORLAGENART_PUNKT: „Bürger-Antrag“, „Einwohner*innenanfrage“,
+    „Anwohnerantrag“, „Privatantrag“, „Bürgerbriefe“; Prüfung r20n)."""
+    art = paper_type if isinstance(paper_type, str) else "" if paper_type is None else str(paper_type)
+    return bool(any(t in _EINWOHNER_VERGLEICH for t in _vergleichstexte(art))
+                or any(EINWOHNER_TITEL.search(t) for t in _vergleichstexte(name))
+                # Köln: dieselben Eingaben und Vorlagen natürlicher Personen wie in der Punktregel (geocode.eingabe auf
+                # Art und Titel, eine Funktion: „Eingabe nach § 24 GO NRW“, „Einwohneranfrage nach § 39 Abs. 6“,
+                # „… – Bürgereingabe“), damit eine Vorlage ohne Hauskoordinate ihre Hausnummer auch nicht im Titel
+                # zeigt (Generalprobe 09.11.2026)
+                or eingabe(paper_type, name)
+                or art_von_personen(paper_type))
 
 
 def write_chat(out, db, cache, meetings, sources, meta):
@@ -197,7 +189,9 @@ def write_chat(out, db, cache, meetings, sources, meta):
     besetzt = besetzung.gremien(prozessarten._term_start(terms, date.today().isoformat()))[0]
     _dump(out / "gremien.json", {"meta": meta, "organizations": organizations(db, papers, meetings, besetzt)})
     _dump(out / "datenstand.json", data_status(sources, papers, meetings))
-    # Drucksachen, deren Titel ohne Hausnummer erscheinen (Einwohnerschaft, Bauordnung und Naturschutz; maske.py)
+    # Drucksachen, deren Titel ohne Hausnummer erscheinen: dieselbe Titelmaske wie in Export und Prüfung (maske.aus_db,
+    # verbundene Vorlagen auch über relatedPaper; Runde 20), beschränkt auf die exportierten Vorlagen
     from . import maske   # hier, weil maske chat importiert
-    _dump(out / "einwohner.json", {"meta": meta, "drucksachen": einwohner(papers, auch=maske.privat)})
+    refs = maske.aus_db(db).refs
+    _dump(out / "einwohner.json", {"meta": meta, "drucksachen": sorted({p["reference"] for p in papers} & refs)})
     return len(shards)

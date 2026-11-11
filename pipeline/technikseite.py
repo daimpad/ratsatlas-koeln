@@ -31,7 +31,9 @@ BREIT, HOCH = 760, 340   # Breite der Grafiken (Seite höchstens 760 px; Telefon
 SCHRITTE = {
     "fetch": ("Abruf", "Holt Vorlagen, Gremien und Sitzungen mit ihren Tagesordnungspunkten über die OParl-Schnittstelle "
                        "der Stadt Köln: nachts, mit einer Verbindung und Abstand zwischen den Anfragen, nach dem ersten "
-                       "Lauf nur Geänderte. Bricht ein Abruf ab, bleibt der Stand des letzten Laufs."),
+                       "Lauf nur Geänderte (Gremien jede Nacht vollständig, Sitzungen ebenso, solange die Schnittstelle "
+                       "sie nicht nach dem Änderungsdatum auswählt). Bricht ein Abruf ab, bleibt der Stand des letzten "
+                       "Laufs."),
     "build": ("Datenbank und Verortung", "Baut eine SQLite-Datenbank aus Vorlagen, Beratungen, Sitzungen und Gremien, "
                                          "verortet Vorlagen nach festen Regeln und leitet den Stand jedes Vorgangs ab."),
     "export": ("Export", "Schreibt je Gebiet eine Datei für die Karte, dazu Feeds, Kalender, GeoJSON und "

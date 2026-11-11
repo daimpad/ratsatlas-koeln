@@ -139,9 +139,12 @@
   const THEME_METHOD = { amt: "Amt", gremium: "Gremium", stichwort: "Stichwort im Titel" };
 
   // --- Flächen ein- und ausklappen ---------------------------------------------------------------
-  const SHEETS = ["panel-list", "panel-detail", "panel-auswertung", "panel-termine", "panel-prozesse", "panel-mitmachen", "timeline-wrap", "panel-assistent"];
-  const LEFT = ["panel-list", "panel-assistent"];  // Liste und Assistent teilen sich die linke Seite
-  const OVERLAYS = ["panel-auswertung", "panel-termine", "panel-prozesse", "panel-mitmachen"];
+  // Assistent und Mitmachen stehen nur mit Freigabe („chat“, „mitmachen“) in der veröffentlichten Seite (data-freigabe,
+  // pipeline/seo.py); fehlt eine Fläche, fehlt sie auch in diesen Listen, und setPanel und focusPanel übergehen sie
+  const vorhanden = (id) => Boolean(document.getElementById(id));
+  const SHEETS = ["panel-list", "panel-detail", "panel-auswertung", "panel-termine", "panel-prozesse", "panel-mitmachen", "timeline-wrap", "panel-assistent"].filter(vorhanden);
+  const LEFT = ["panel-list", "panel-assistent"].filter(vorhanden);  // Liste und Assistent teilen sich die linke Seite
+  const OVERLAYS = ["panel-auswertung", "panel-termine", "panel-prozesse", "panel-mitmachen"].filter(vorhanden);
   const toggleFor = (id) => document.querySelector(`.toggle[data-panel="${id}"]`);
   // Ratsassistent (site/chat/ui.js und sechs weitere Module) erst laden, wenn die Fläche zum ersten Mal aufgeht
   // oder die Schaltfläche den Fokus bekommt; der Seitenstart braucht ihn nicht
@@ -153,6 +156,7 @@
   const opener = {};   // Element, das eine Fläche ohne eigene Schaltfläche in der Leiste geöffnet hat (Fokus beim Schließen)
   function setPanel(id, open) {
     const el = document.getElementById(id);
+    if (!el) return;
     if (open && el.hidden && document.activeElement && document.activeElement !== document.body) opener[id] = document.activeElement;
     el.hidden = !open;
     document.querySelectorAll(`.toggle[data-panel="${id}"]`).forEach((b) => b.setAttribute("aria-pressed", String(open)));
@@ -163,6 +167,7 @@
     if (id === "panel-mitmachen") { if (open) openMitmachen(); syncUrl(); }
     if (!open) return;
     closeMega();
+    if (MOBILE.matches) setMapMenu(false);   // Telefon: nicht zugleich mit dem Blatt „Karte“ (siehe MapMenu)
     // schmale Bildschirme: nur eine Fläche; mittlere Breiten: Liste oder Vorgang, damit die Zeitleiste Platz hat;
     // Auswertung und Termine liegen mittig übereinander, daher immer nur eines davon
     const others = MOBILE.matches ? SHEETS : OVERLAYS.includes(id) ? OVERLAYS
@@ -172,6 +177,7 @@
   }
   function focusPanel(id) {
     const el = document.getElementById(id);
+    if (!el) return;
     const target = el.querySelector("h2[tabindex], .tl-stage, summary");
     if (target) target.focus();
   }
@@ -194,7 +200,7 @@
   }
   document.addEventListener("click", (e) => {
     const t = e.target.closest("[data-panel]");
-    if (t) {
+    if (t && vorhanden(t.dataset.panel)) {
       const open = document.getElementById(t.dataset.panel).hidden;
       setPanel(t.dataset.panel, open);
       if (open) focusPanel(t.dataset.panel);
@@ -217,6 +223,7 @@
     if (MOBILE.matches) {
       const open = SHEETS.filter((id) => !document.getElementById(id).hidden);
       open.slice(1).forEach((id) => setPanel(id, false));
+      if (open.length) setMapMenu(false);   // Wechsel auf Telefonbreite: Blatt „Karte“ nicht unter einer Fläche
     } else if (NARROW.matches && !$("#panel-list").hidden && !$("#panel-detail").hidden) setPanel("panel-detail", false);
     $("#timeline-wrap").classList.toggle("tl-compact", MOBILE.matches);
     if (!MOBILE.matches) setNav(false);
@@ -672,6 +679,10 @@
         const set = (open) => {
           map.getContainer().classList.toggle("map-menu-open", open); b.setAttribute("aria-expanded", String(open));
           if (open) setNav(false);   // Telefon: nicht zugleich mit dem Hamburger-Menü
+          // Telefon: nicht zugleich mit einer Fläche (wie die Mega-Menüs). Das Blatt liegt in der Karte (#map, z-index 0)
+          // und damit unter jeder Fläche; bei offenem „Los geht's“ verdeckte dessen „Detail einklappen“ das „Schließen“
+          // des Blatts (Runde 20). Umgekehrt schließt setPanel das Blatt, wenn auf dem Telefon eine Fläche aufgeht.
+          if (open && MOBILE.matches) SHEETS.forEach((s) => !document.getElementById(s).hidden && setPanel(s, false));
         };
         setMapMenu = set;
         // Zahl der eingeschalteten Ebenen; auf dem Telefon heißt der Knopf „Karte“ (Ebenen, Legenden und Quellen)
@@ -747,7 +758,8 @@
   });
   function mapPadding() {
     const desktop = !MOBILE.matches;
-    const left = !desktop ? 16 : !$("#panel-list").hidden ? widthOf("list") + 32 : !$("#panel-assistent").hidden ? $("#panel-assistent").offsetWidth + 32 : 16;
+    const chat = $("#panel-assistent");
+    const left = !desktop ? 16 : !$("#panel-list").hidden ? widthOf("list") + 32 : chat && !chat.hidden ? chat.offsetWidth + 32 : 16;
     const right = desktop && !$("#panel-detail").hidden ? widthOf("detail") + 32 : 16;
     const top = desktop && !$("#timeline-wrap").hidden ? 86 + $("#timeline-wrap").offsetHeight + 12 : 90;
     return { paddingTopLeft: [left, top], paddingBottomRight: [right, desktop ? 70 : 150], animate: !REDUCED };
@@ -1283,8 +1295,10 @@
     .forEach((b) => b.setAttribute("aria-current", String((b.dataset.ref ?? b.dataset.gref) === ref)));
 
   // Suche über ganz Köln: Treffer aus dem Index, Öffnen lädt das Gebiet der Vorlage
-  // Suche im Text der Dokumente: in Bonn über die Volltextsuche von OParl-Lite (machdenstaat). Für Köln gibt es keinen
-  // solchen Dienst; die Funktion bleibt abgeschaltet (LITE = null), die Schaltfläche ist in index.html ausgeblendet.
+  // Suche im Text der Dokumente (aus dem Ratsatlas Bonn übernommen, dort über einen externen Volltextdienst). Die Kölner
+  // Daten kommen aus der OParl-Schnittstelle von SessionNet (pipeline/sessionnet.py); OParl sieht keine Suche im Text
+  // der Dokumente vor, und Volltexte erscheinen bis zur Lizenzklärung nicht auf der Seite (CLAUDE.md 2). Die Funktion
+  // bleibt abgeschaltet (LITE = null), die Schaltfläche ist in index.html ausgeblendet.
   const LITE = null;
   const DOC_QUERY = "query($q:String!,$o:Int){ fileFullTextSearch(query:$q, limit:100, offset:$o){ totalCount pageInfo { hasNextPage } items { file { papers { reference } } } } }";
   const DOC_PAGES = 3;
@@ -2409,7 +2423,7 @@
     state.verfahren = pz && pz.tab === "verfahren" && pz.verfahren ? pz.verfahren : "";
     state.gremium = pz && pz.tab === "gremien" && pz.gremium ? pz.gremium : "";
     state.amt = pz && pz.tab === "aemter" && pz.amt ? pz.amt : "";
-    const mm = !$("#panel-mitmachen").hidden && mmState;
+    const mm = vorhanden("panel-mitmachen") && !$("#panel-mitmachen").hidden && mmState;
     state.mitmachen = mm ? "1" : "";
     state.bezirk = mm ? mm.bezirk : "";
     if (sdModul) Object.assign(state, sdModul.zustand());   // Flächenfarben der Strukturdaten (struktur, struktur_…)
@@ -2579,7 +2593,7 @@
     else if (params.get("plan")) await showPlan(params.get("plan"));
     else if (params.get("baustelle") && bau && bau.baustellen.some((b) => b.id === params.get("baustelle"))) showSite(params.get("baustelle"));
     else showIntro();
-    if (params.get("mitmachen") === "1") {
+    if (params.get("mitmachen") === "1" && vorhanden("panel-mitmachen")) {
       setPanel("panel-mitmachen", true);
       await openMitmachen({ bezirk: params.get("bezirk") || areaBezirk() || "Innenstadt" });
     }

@@ -80,20 +80,5 @@
   .sd-legende p, .sd-ramp li { font-size: 13px; }
 }
 
-/* Ebenen-Menü mit dem zusätzlichen Schalter „Strukturdaten“: auf niedrigen Bildschirmen enger, damit die Spalte nicht
-   unter die Leiste reicht (nur mit Freigabe geladen; ohne sie bleibt das Menü wie bisher) */
-@media (min-width: 901px) and (max-height: 1000px) {
-  .leaflet-container.map-menu-open .leaflet-right .map-style:not(.map-menu) { padding: 5px 10px; }
-  .leaflet-container.map-menu-open .leaflet-bottom.leaflet-right .leaflet-control { margin-bottom: 5px; }
-}
-@media (min-width: 901px) and (max-height: 800px) {
-  .leaflet-container.map-menu-open .leaflet-right .map-style:not(.map-menu) { padding: 3px 8px; font-size: 12px; }
-  .leaflet-container.map-menu-open .leaflet-bottom.leaflet-right .leaflet-control { margin-bottom: 3px; }
-}
-
-/* Telefon, Blatt „Karte“: Der Stapel der Legenden ist ein Leaflet-Steuerelement (z-index 800) und lag beim Rollen über
-   dem festen Kopf des Blatts mit „Schließen“; die Legende der Strukturdaten ist lang genug, dass man rollt. Hier nur mit
-   Freigabe; für alle Legenden gehört die Regel in einer eigenen, freizugebenden Änderung nach style.css */
-@media (max-width: 900px) {
-  .map-sheet .map-sheet-kopf { z-index: 801; }
-}
+/* Ebenen-Menü auf niedrigen Bildschirmen enger und Kopf des Blatts „Karte“ über dem Stapel der Legenden: seit Runde 20
+   für alle Ebenen und Legenden in style.css (gleiche Werte wie zuvor hier) */
