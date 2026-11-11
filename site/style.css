@@ -487,6 +487,23 @@ body.detail-closed #timeline-wrap { right: 16px; }
 .map-menu-n { display: inline-block; min-width: 20px; margin-left: 6px; padding: 2px 6px; border-radius: 999px; background: #fff; color: var(--accent-ink); font-size: 12px; text-align: center; }
 .leaflet-container:not(.map-menu-open) .leaflet-right .map-style:not(.map-menu):not(.map-whole) { display: none; }
 .map-style[aria-pressed="true"] { background: var(--accent-fill); color: #fff; border-color: transparent; }
+/* Offenes Menü „Ebenen“ auf niedrigen Bildschirmen enger, damit die Spalte (Leaflet-Ecke unten rechts, nach oben
+   wachsend) nicht unter die Leiste reicht: bei 1400×900 mit den Kartenebenen lag „Ebenen“ selbst darunter. Bis Runde 20
+   standen die Stufen bis 1000 und 800 px nur in strukturdaten/strukturdaten.css und galten nur mit Freigabe
+   „strukturdaten“ (Werte unverändert); die Stufe bis 660 px ist neu (niedrige Fenster, auch mit Browser-Zoom) */
+@media (min-width: 901px) and (max-height: 1000px) {
+  .leaflet-container.map-menu-open .leaflet-right .map-style:not(.map-menu) { padding: 5px 10px; }
+  .leaflet-container.map-menu-open .leaflet-bottom.leaflet-right .leaflet-control { margin-bottom: 5px; }
+}
+@media (min-width: 901px) and (max-height: 800px) {
+  .leaflet-container.map-menu-open .leaflet-right .map-style:not(.map-menu) { padding: 3px 8px; font-size: 12px; }
+  .leaflet-container.map-menu-open .leaflet-bottom.leaflet-right .leaflet-control { margin-bottom: 3px; }
+}
+@media (min-width: 901px) and (max-height: 660px) {
+  .leaflet-container.map-menu-open .leaflet-right .map-style:not(.map-menu) { padding: 2px 8px; }
+  .leaflet-container.map-menu-open .leaflet-right .map-style.map-menu { min-height: 36px; padding: 8px 16px; }
+  .leaflet-container.map-menu-open .leaflet-bottom.leaflet-right .leaflet-control { margin-bottom: 2px; }
+}
 /* „Ganz Bonn ansehen“: auf breiten Bildschirmen als Text, auf dem Telefon als Symbol (siehe unten) */
 .map-whole .icon { display: none; }
 /* Blatt „Karte“ (Ebenen, Legenden, Quellen) nur auf dem Telefon */
@@ -775,7 +792,9 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
     background: rgba(255, 255, 255, 0.97); border: 1px solid var(--border); box-shadow: var(--shadow-lift), var(--highlight);
     font: 400 14px/1.4 var(--font-body); color: var(--text); animation: mega-in .2s var(--ease); cursor: auto;
   }
-  .map-sheet-kopf { display: flex; align-items: center; justify-content: space-between; position: sticky; top: -6px; z-index: 1;
+  /* Kopf mit „Schließen“ über dem Stapel der Legenden: der ist ein Leaflet-Steuerelement (z-index 800) und lag beim
+     Rollen über dem festen Kopf (bis Runde 20 nur mit Freigabe „strukturdaten“ behoben, deren Legende lang ist) */
+  .map-sheet-kopf { display: flex; align-items: center; justify-content: space-between; position: sticky; top: -6px; z-index: 801;
     margin: 0 -14px; padding: 6px 8px 4px 14px; background: rgba(255, 255, 255, 0.97); }
   .map-sheet-kopf h2 { margin: 0; font: 700 18px/1.2 var(--font-display); }
   .map-sheet-h { margin: 10px 0 8px; font: 600 12px/1 var(--font-body); letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }

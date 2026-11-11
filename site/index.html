@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Content-Security-Policy: Skripte, Stile und Schrift nur von hier (Leaflet und Schrift lokal in vendor/ und fonts/,
        Bibliotheken mit Integritätsprüfung), keine Inline-Skripte;
-       Verbindungen nur zu den Daten der Seite, den unterstützten Anbietern des Ratsassistenten und lokalen Modellen.
+       Verbindungen nur zu den Daten der Seite; die Anbieter des Ratsassistenten und lokale Modelle in connect-src nur mit
+       Freigabe „chat“ (pipeline/seo.py entfernt sie sonst beim Bau aus der veröffentlichten Seite).
        Inline-Stile bleiben erlaubt (Leaflet, Balken der Auswertung). -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://api.anthropic.com https://api.mistral.ai https://openrouter.ai http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer</title>
@@ -112,7 +113,7 @@
           <svg class="icon" aria-hidden="true"><use href="#i-doc"/></svg><span>Vorgang</span></button>
         <button type="button" class="toggle" data-panel="panel-prozesse" aria-controls="panel-prozesse" aria-pressed="false" title="Verfahren, Gremien und Ämter: wer entscheidet was?" data-funktion="soll" hidden>
           <svg class="icon" aria-hidden="true"><use href="#i-route"/></svg><span>Prozesse</span></button>
-        <button type="button" class="toggle toggle-ai" data-panel="panel-assistent" aria-controls="panel-assistent" aria-pressed="false" title="Ratsassistent (KI)" data-funktion="chat" hidden>
+        <button type="button" class="toggle toggle-ai" data-panel="panel-assistent" aria-controls="panel-assistent" aria-pressed="false" title="Ratsassistent (KI)" data-funktion="chat" data-freigabe="chat" hidden>
           <svg class="icon" aria-hidden="true"><use href="#i-assist"/></svg><span>Assistent</span></button>
       </div>
       <div class="nav-group" role="group" aria-label="Menü">
@@ -325,7 +326,9 @@
 
     <section id="timeline-wrap" class="glass" aria-label="Zeitleiste" hidden></section>
 
-    <section id="panel-assistent" class="panel glass chat" aria-labelledby="assistent-heading" hidden>
+    <!-- Elemente mit data-freigabe (Flächen „Ratsassistent“ und „Mitmachen in Köln“, Schaltfläche „Assistent“ in der
+         Leiste) stehen nur mit ihrer Freigabe in der veröffentlichten Seite (pipeline/seo.py, Runde 20) -->
+    <section id="panel-assistent" class="panel glass chat" aria-labelledby="assistent-heading" data-freigabe="chat" hidden>
       <div class="panel-head">
         <h2 id="assistent-heading" tabindex="-1">Ratsassistent <span class="ai-badge">KI</span></h2>
         <span class="chat-head-actions">
@@ -440,7 +443,7 @@
       <div class="panel-body" id="termine"></div>
     </section>
 
-    <section id="panel-mitmachen" class="glass overlay overlay-wide" aria-labelledby="mitmachen-heading" hidden>
+    <section id="panel-mitmachen" class="glass overlay overlay-wide" aria-labelledby="mitmachen-heading" data-freigabe="mitmachen" hidden>
       <div class="panel-head">
         <h2 id="mitmachen-heading" tabindex="-1">Mitmachen in Köln</h2>
         <button type="button" class="icon-btn" data-close="panel-mitmachen" aria-label="Mitmachen in Köln schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>

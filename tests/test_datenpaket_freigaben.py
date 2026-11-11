@@ -134,6 +134,19 @@ def test_audits_nur_im_datenpaket(oparl, tmp_path):
         assert "data-funktion" not in (site / "datenschutz.html").read_text(encoding="utf-8")
         assert not (site / "chat").exists()   # Module und Bonner Systemprompt des Ratsassistenten
 
+    # Runde 20 (tests/test_aufraeumen_runde20.py): CSP aller Seiten ohne Quellen des Assistenten, Flächen nur mit Freigabe
+    richtlinien = {s.relative_to(site).as_posix(): seo.csp_richtlinien(s.read_text(encoding="utf-8"))
+                   for s in site.rglob("*.html")}
+    assert len([r for r in richtlinien.values() if r]) > 90 and richtlinien["index.html"]
+    hosts = [seo._host(q) for q in seo.CSP_NUR_MIT_FREIGABE["chat"]]
+    an_chat = bool(config.ZUSATZTHEMEN.get("chat"))
+    for rel, rs in richtlinien.items():
+        for r in rs:
+            assert [h for h in hosts if h in r] == (hosts if an_chat and rel == "index.html" else []), rel
+    index = (site / "index.html").read_text(encoding="utf-8")
+    for flaeche, funktion in (("panel-assistent", "chat"), ("panel-mitmachen", "mitmachen")):
+        assert (f'id="{flaeche}"' in index) == bool(config.ZUSATZTHEMEN.get(funktion)), flaeche
+
     # Nachbesserung: keine Bonner Dienste im Seitenkopf, Lizenz der OParl-Exporte, Beschreibung des Datenpakets
     assert "OParl-Lite" not in (site / "index.html").read_text(encoding="utf-8")
     with zipfile.ZipFile(zip_pfad) as z:
