@@ -3704,6 +3704,7 @@ def test_sitzungen_ohne_zeitfilter_jede_nacht_vollstaendig(oparl, monkeypatch, c
     Listenfehler, keine Warnung in STAND.json (die Sitzungen sind aktualisiert), Befund im Zustand, Warnung im Log und
     Zeile in der Abrufstatistik. Die nächste Nacht prüft den Filter erneut und liest wieder vollständig; wendet der
     Server ihn wieder an, bleibt der Lauf inkrementell (eine Anfrage) und der Befund entfällt."""
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)   # Warnung in lokaler Form („Warnung: …“), auch in der CI
     oparl.meetings = _sitzungen(oparl)                                     # 10 Sitzungen, 5 Seiten
     sessionnet.fetch_all()
     zeit = _zustand()["papers"]
