@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Content-Security-Policy: Skripte, Stile und Schrift nur von hier (Leaflet und Schrift lokal in vendor/ und fonts/,
        Bibliotheken mit Integritätsprüfung), keine Inline-Skripte;
-       Verbindungen nur zu den Daten der Seite, den unterstützten Anbietern des Ratsassistenten und lokalen Modellen.
+       Verbindungen nur zu den Daten der Seite; die Anbieter des Ratsassistenten und lokale Modelle in connect-src nur mit
+       Freigabe „chat“ (pipeline/seo.py entfernt sie sonst beim Bau aus der veröffentlichten Seite).
        Inline-Stile bleiben erlaubt (Leaflet, Balken der Auswertung). -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://api.anthropic.com https://api.mistral.ai https://openrouter.ai http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer</title>
   <meta name="description" content="Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen.">
   <meta name="author" content="Damian Paderta">
@@ -112,8 +113,6 @@
           <svg class="icon" aria-hidden="true"><use href="#i-doc"/></svg><span>Vorgang</span></button>
         <button type="button" class="toggle" data-panel="panel-prozesse" aria-controls="panel-prozesse" aria-pressed="false" title="Verfahren, Gremien und Ämter: wer entscheidet was?" data-funktion="soll" hidden>
           <svg class="icon" aria-hidden="true"><use href="#i-route"/></svg><span>Prozesse</span></button>
-        <button type="button" class="toggle toggle-ai" data-panel="panel-assistent" aria-controls="panel-assistent" aria-pressed="false" title="Ratsassistent (KI)" data-funktion="chat" hidden>
-          <svg class="icon" aria-hidden="true"><use href="#i-assist"/></svg><span>Assistent</span></button>
       </div>
       <div class="nav-group" role="group" aria-label="Menü">
         <button type="button" class="menu-btn" data-mega="mega-auswertung" aria-expanded="false" aria-controls="mega-auswertung" data-vorschau="aus">
@@ -313,71 +312,8 @@
 
     <section id="timeline-wrap" class="glass" aria-label="Zeitleiste" hidden></section>
 
-    <section id="panel-assistent" class="panel glass chat" aria-labelledby="assistent-heading" hidden>
-      <div class="panel-head">
-        <h2 id="assistent-heading" tabindex="-1">Ratsassistent <span class="ai-badge">KI</span></h2>
-        <span class="chat-head-actions">
-          <button type="button" class="icon-btn" id="chat-new" aria-label="Neues Gespräch" title="Neues Gespräch"><svg class="icon" aria-hidden="true"><use href="#i-new"/></svg></button>
-          <button type="button" class="icon-btn" data-close="panel-assistent" aria-label="Assistent einklappen">‹</button>
-        </span>
-      </div>
-      <div class="panel-body chat-body" id="chat-body">
-        <div class="chat-intro" id="chat-intro">
-          <p><strong>Dies ist ein KI-System.</strong> Ein Sprachmodell beantwortet Fragen zu Kölner Ratsvorgängen und nutzt dafür ausschließlich die Daten dieser Seite. Antworten können Fehler enthalten; maßgeblich sind die verlinkten Originale.</p>
-          <p><strong>Datenschutz:</strong> Ihre Fragen gehen direkt von Ihrem Browser an den gewählten Anbieter und unterliegen dessen Bedingungen. Das Projekt speichert keine Gesprächsinhalte und wertet sie nicht aus. Bitte geben Sie keine persönlichen Daten ein.</p>
-          <details class="acc"><summary>Was der Assistent nicht kann</summary><ul>
-            <li>Keine Rechtsberatung und keine Bewertung von Parteien, Personen oder Beschlüssen.</li>
-            <li>Er durchsucht Titel und Angaben der Vorlagen, nicht die Texte der Dokumente.</li>
-            <li>Nichtöffentliche Beratungen, die Arbeit in der Verwaltung und die Umsetzung von Beschlüssen sind nicht einsehbar.</li>
-            <li>Vorlagen vor Oktober 2019 und Abstimmungsergebnisse einzelner Fraktionen sind nicht enthalten.</li>
-          </ul></details>
-          <button type="button" class="btn btn-cta" id="chat-consent">Verstanden</button>
-        </div>
-
-        <details class="acc chat-settings" id="chat-settings">
-          <summary><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span id="chat-settings-summary">Anbieter und Schlüssel</span></summary>
-          <div class="chat-settings-body">
-            <label for="chat-provider">Anbieter</label>
-            <select id="chat-provider"></select>
-            <label for="chat-model">Modell</label>
-            <input id="chat-model" list="chat-models" autocomplete="off" spellcheck="false">
-            <datalist id="chat-models"></datalist>
-            <div id="chat-base-wrap" hidden>
-              <label for="chat-base">Adresse des lokalen Servers</label>
-              <input id="chat-base" placeholder="http://localhost:11434" autocomplete="off" spellcheck="false">
-              <p class="hint">Nur <code>http://localhost</code> oder <code>http://127.0.0.1</code>. Der Server muss Anfragen von dieser Seite erlauben, bei Ollama etwa mit <code>OLLAMA_ORIGINS</code>.</p>
-            </div>
-            <div id="chat-key-wrap">
-              <label for="chat-key">API-Schlüssel</label>
-              <input id="chat-key" type="password" autocomplete="off" spellcheck="false" placeholder="Schlüssel einfügen">
-              <label class="check"><input type="checkbox" id="chat-remember"> Bis zum Schließen des Tabs merken</label>
-              <p class="hint">Der Schlüssel geht nur an den gewählten Anbieter, sonst nirgendwohin. Legen Sie einen eigenen Schlüssel mit Ausgabenlimit an; die Kosten tragen Sie. <a id="chat-key-link" href="#" target="_blank" rel="noopener">Schlüssel beim Anbieter anlegen</a></p>
-              <button type="button" class="btn btn-ghost" id="chat-key-clear">Schlüssel löschen</button>
-            </div>
-          </div>
-        </details>
-
-        <div class="chat-log" id="chat-log" role="log" aria-label="Gesprächsverlauf"></div>
-        <div class="chat-examples" id="chat-examples">
-          <p class="hint">Zum Beispiel:</p>
-          <button type="button" class="chip">Was wurde 2026 zur Endenicher Straße beraten?</button>
-          <button type="button" class="chip">Wann tagt die Bezirksvertretung Ehrenfeld das nächste Mal?</button>
-          <button type="button" class="chip">Wo steht Vorlage 261798?</button>
-          <button type="button" class="chip">Was bedeutet „zur Kenntnis genommen“?</button>
-        </div>
-      </div>
-      <form class="chat-form" id="chat-form">
-        <label class="check chat-context"><input type="checkbox" id="chat-context" checked> <span id="chat-context-text">Gebiet und Zeitraum der Karte mitschicken</span></label>
-        <label class="visually-hidden" for="chat-input">Frage an den Ratsassistenten</label>
-        <div class="chat-compose">
-          <textarea id="chat-input" rows="2" placeholder="Frage zu Kölner Ratsvorgängen …" disabled></textarea>
-          <button type="submit" class="btn btn-cta" id="chat-send" disabled><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg><span>Fragen</span></button>
-          <button type="button" class="btn btn-soft" id="chat-stop" hidden><svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg><span>Abbrechen</span></button>
-        </div>
-        <p class="hint chat-status" id="chat-status"></p>
-        <p class="visually-hidden" id="chat-announce" aria-live="polite"></p>
-      </form>
-    </section>
+    <!-- Elemente mit data-freigabe (Flächen „Ratsassistent“ und „Mitmachen in Köln“, Schaltfläche „Assistent“ in der
+         Leiste) stehen nur mit ihrer Freigabe in der veröffentlichten Seite (pipeline/seo.py, Runde 20) -->
 
     <section id="panel-detail" class="panel glass" aria-labelledby="detail-heading">
       <div class="resizer" data-resize="detail" role="separator" tabindex="0" aria-orientation="vertical" aria-controls="panel-detail" aria-label="Breite des Vorgangs ändern (Pfeiltasten)"></div>
@@ -426,14 +362,6 @@
         <button type="button" class="icon-btn" data-close="panel-termine" aria-label="Termine schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
       </div>
       <div class="panel-body" id="termine"></div>
-    </section>
-
-    <section id="panel-mitmachen" class="glass overlay overlay-wide" aria-labelledby="mitmachen-heading" hidden>
-      <div class="panel-head">
-        <h2 id="mitmachen-heading" tabindex="-1">Mitmachen in Köln</h2>
-        <button type="button" class="icon-btn" data-close="panel-mitmachen" aria-label="Mitmachen in Köln schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
-      </div>
-      <div class="panel-body" id="bt-body"><p class="hint" aria-live="polite">Wird geladen …</p></div>
     </section>
 
     <!-- Quellen, Lizenzen und Datenstand: auf der Karte unter den Legenden (app.js setzt das Element in den Stapel) -->
