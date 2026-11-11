@@ -71,23 +71,27 @@ def _paper_detail(db, pid):
     orig = db.execute(
         "SELECT actor, actor_type, organization_id, method, evidence, derived "
         "FROM paper_originator WHERE paper_id = ?", (pid,)).fetchall()
-    m = _maske(db)
-    # Fundstellen sind Teile des Titels (Bebauungsplan: Text zwischen Stichwort und Plannummer, Einreichende: Abschnitt
-    # des Titels): dieselbe Maske wie der Titel (Prüfung r20a; vorher stand dort die Hausnummer, die der Titel ausblendet)
-    fund = lambda rows: [{**dict(r), "evidence": m(r["evidence"], p["reference"])} for r in rows]
-    locs = fund(_locations(db, pid))
+    m, ref = _maske(db), p["reference"]
+    # Fundstellen sind Teile des Titels (Bebauungsplan: Text zwischen Stichwort und Plannummer, Einreichende:
+    # Abschnitt des Titels): dieselbe Maske wie der Titel (Prüfung r20a; vorher stand dort die Hausnummer, die der
+    # Titel ausblendet), im Zusammenhang des ganzen Titels (Maske.ausschnitt; dritte Korrektur: vorher allein maskiert,
+    # und „1175, Hinterhof … – Anfrage der Fraktion …“ behielt die Nummer, deren Straße vor dem Ausschnitt stand).
+    # Ortsnamen und Ergebnisse der Beratungen ebenso (dritte Korrektur: check prüft sie, die Maske kann also jeden
+    # Befund beheben)
+    fund = lambda rows: [{**dict(r), "evidence": m.ausschnitt(r["evidence"], p["name"], ref)} for r in rows]
+    locs = [{**r, "name": m(r["name"], ref)} for r in fund(_locations(db, pid))]
     rel = lambda sql: [{**dict(r), "name": m(r["name"], r["reference"])} for r in db.execute(sql, (pid,))]
     d = {
-        "reference": p["reference"],
-        "name": m(p["name"], p["reference"]),
+        "reference": ref,
+        "name": m(p["name"], ref),
         "paper_type": p["paper_type"],
         "date": p["date"],
         "amt": p["amt"],
         "web": p["web"],
         "main_file": p["main_file_url"],
-        "responsibility": fund(resp),
+        "responsibility": [{**dict(r), "evidence": m(r["evidence"], ref)} for r in resp],
         "originators": fund(orig),
-        "process": [{**dict(r), "status": _status(r)} for r in process],
+        "process": [{**dict(r), "result": m(r["result"], ref), "status": _status(r)} for r in process],
         "superordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
                               "JOIN paper p ON p.id = r.parent_id WHERE r.child_id = ?"),
         "subordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
@@ -96,7 +100,7 @@ def _paper_detail(db, pid):
         "locations": locs,
         # Plannummern im Titel (Methode B3); match = Treffer im Datensatz der rechtskräftigen Pläne,
         # names = zugeordnete Pläne (Teilpläne, Grundnummer), area = Geltungsbereich vorhanden
-        "plans": [_plan_entry(nr, m(ev, p["reference"]), match) for nr, ev, match in
+        "plans": [_plan_entry(nr, m.ausschnitt(ev, p["name"], ref), match) for nr, ev, match in
                   db.execute("SELECT plan_nr, evidence, match FROM paper_plan WHERE paper_id = ?", (pid,))],
         "source_object": pid,
     }
@@ -135,8 +139,10 @@ def _audit_rows(db, where="", params=()):
             "pl.source_object FROM paper_location pl JOIN paper p ON p.id = pl.paper_id "
             f"JOIN location l ON l.id = pl.location_id {where} ORDER BY p.date DESC, p.reference", params):
         pid, *vals = r
-        vals[3] = _maske(db)(vals[3], vals[0])
-        vals[11] = _maske(db)(vals[11], vals[0])   # Fundstelle (Bebauungsplan: Teil des Titels; Prüfung r20a)
+        m, titel = _maske(db), vals[3]
+        vals[3] = m(titel, vals[0])
+        vals[7] = m(vals[7], vals[0])                        # Ortsname (Prüfung r20a, dritte Korrektur)
+        vals[11] = m.ausschnitt(vals[11], titel, vals[0])    # Fundstelle (Teil des Titels; Prüfung r20a)
         status = "Quelle (Stufe A)" if vals[4] == "A" else "ungeprüft"
         if vals[4] != "A" and pid in a and vals[6] != "stadtbezirk":
             status = "bestätigt durch Stufe A" if vals[8] in a[pid] else "abweichend von Stufe A"
@@ -173,34 +179,40 @@ def export_audits():
     _write_tsv(config.EXPORT / "audit_zeit.tsv", TIME_AUDIT, time_audit_rows(papers, _meetings(db)))
     _write_tsv(config.EXPORT / "audit_themen.tsv", THEME_AUDIT, theme_audit_rows(papers))
     n = _sample_methods(db, config.EXPORT / "stichprobe_geokodierung.tsv")
-    _stichproben_maskieren(db)
+    _tabellen_maskieren(db)
     db.close()
     print(f"Audits: {len(papers)} Vorlagen; Stichprobe je Methode: {n} Zeilen → {config.EXPORT}")
 
 
-def _stichproben_maskieren(db):
-    """Titel der Stichproben mit vollem Titel (maske.STICHPROBEN: build._hnr_audit, build._fulltext_sample und
-    build._objects_in_titles schreiben sie nach data/export, also ins Datenpaket; in den Stichproben Volltext und
-    Gebäude und Anlagen auch die gefundenen Orte) mit derselben Maske wie Suche, Gebietsdateien und Audits; idempotent
-    (Generalprobe 09.11.2026: dort standen Hausnummern aus Eingaben und Einwohneranfragen; Prüfung r20: die
-    Volltextkette lässt Bauordnung und Naturschutz als Ausgangsvorlagen aus). Spalten nach ihrem Namen im Kopf, die
-    Drucksache aus der Spalte „drucksache“; fehlt eine davon, bleibt die Datei unverändert und check meldet sie
-    (Prüfung r20a)."""
-    for teile, maskiert in maske.STICHPROBEN.items():
-        pfad = config.EXPORT.joinpath(*teile)
-        if not pfad.exists():
-            continue
+def _tabellen_maskieren(db):
+    """Jede TSV-Datei unter data/export mit der Spalte „drucksache“ (Audits, Stichproben, auch abgeschalteter
+    Zusatzthemen und aus build: paket.write packt sie ins Datenpaket): Spalten mit Titel, Fundstelle oder Ortsnamen
+    (maske.TEXTSPALTEN; in den Stichproben aus maske.STICHPROBEN auch die gefundenen Orte) mit derselben Maske wie
+    Suche, Gebietsdateien und Audits; idempotent, eine Datei wird nur bei einer Änderung neu geschrieben.
+    Vorher nur die Stichproben aus maske.STICHPROBEN (build._hnr_audit, build._fulltext_sample und
+    build._objects_in_titles schreiben sie mit vollem Titel; Generalprobe 09.11.2026, Prüfung r20); seit der dritten
+    Korrektur der Prüfung r20a jede Datei, die check prüft (audit_volltext.tsv „ort“, audit_objekte_titel.tsv,
+    Fundstellen in audit_themen.tsv), damit check nur meldet, was die Maske nicht durchlaufen hat. Spalten nach ihrem
+    Namen im Kopf, die Drucksache aus der Spalte „drucksache“; fehlt einer Stichprobe aus maske.STICHPROBEN eine
+    davon, bleibt die Datei unverändert und check meldet sie (Prüfung r20a)."""
+    m = _maske(db)
+    konfiguriert = {config.EXPORT.joinpath(*teile): maskiert for teile, maskiert in maske.STICHPROBEN.items()}
+    for pfad in sorted(p for p in config.EXPORT.rglob("*.tsv") if p.is_file()):
+        maskiert = konfiguriert.get(pfad)
         with open(pfad, encoding="utf-8", newline="") as f:
             zeilen = list(csv.reader(f, delimiter="\t"))
         kopf = zeilen[0] if zeilen else []
-        fehlt = [k for k in ("drucksache", *maskiert) if k not in kopf]
+        fehlt = [k for k in ("drucksache", *(maskiert or ())) if k not in kopf]
         if fehlt:
-            print(f"Hinweis: Stichprobe {pfad} ohne Spalte {', '.join(fehlt)} – nicht maskiert (check meldet sie)")
+            if maskiert is not None:
+                print(f"Hinweis: Stichprobe {pfad} ohne Spalte {', '.join(fehlt)} – nicht maskiert (check meldet sie)")
             continue
-        m, ref = _maske(db), kopf.index("drucksache")
-        spalten = {i for i, k in enumerate(kopf) if k in maskiert}
-        _write_tsv(pfad, kopf, [[m(w, z[ref]) if i in spalten else w for i, w in enumerate(z)] if len(z) > ref else z
-                                for z in zeilen[1:]])
+        ref = kopf.index("drucksache")
+        spalten = {i for i, k in enumerate(kopf) if k in maske.TEXTSPALTEN or k in (maskiert or ())}
+        neu = [[m(w, z[ref]) if i in spalten else w for i, w in enumerate(z)] if len(z) > ref else z
+               for z in zeilen[1:]]
+        if spalten and neu != zeilen[1:]:
+            _write_tsv(pfad, kopf, neu)
 
 
 def _sample_methods(db, path, n=50, seed=2026):
@@ -215,9 +227,9 @@ def _sample_methods(db, path, n=50, seed=2026):
                                         (m,))]
         for pid in sorted(random.Random(f"{seed}{m}").sample(ids, min(n, len(ids)))):
             p = list(db.execute("SELECT reference, date, paper_type, name, web FROM paper WHERE id = ?", (pid,)).fetchone())
-            p[3] = maske_(p[3], p[0])
+            titel, p[3] = p[3], maske_(p[3], p[0])
             # Ort und Fundstelle wie der Titel maskiert (Prüfung r20a, zweite Korrektur: vorher nur die Fundstelle)
-            locs = [(maske_(l[0], p[0]), *l[1:5], maske_(l[5], p[0])) for l in db.execute(
+            locs = [(maske_(l[0], p[0]), *l[1:5], maske_.ausschnitt(l[5], titel, p[0])) for l in db.execute(
                 "SELECT COALESCE(l.street, l.description, l.ortsteil, l.stadtbezirk), l.level, l.ortsteil, l.stadtbezirk, "
                 "pl.confidence, pl.evidence FROM paper_location pl JOIN location l ON l.id = pl.location_id "
                 "WHERE pl.paper_id = ? AND pl.method = ?", (pid, m))]
@@ -532,8 +544,8 @@ def _sample(db, out, ortsteil, n=50, seed=2026):
     rows = []
     for i, pid in enumerate(pick, 1):
         p = list(db.execute("SELECT reference, date, paper_type, name, web FROM paper WHERE id = ?", (pid,)).fetchone())
-        p[3] = _maske(db)(p[3], p[0])
-        locs = [(*l[:3], _maske(db)(l[3], p[0])) for l in db.execute(
+        titel, p[3] = p[3], _maske(db)(p[3], p[0])
+        locs = [(_maske(db)(l[0], p[0]), *l[1:3], _maske(db).ausschnitt(l[3], titel, p[0])) for l in db.execute(
             "SELECT COALESCE(l.street, l.description), pl.method, pl.confidence, pl.evidence "
             "FROM paper_location pl JOIN location l ON l.id = pl.location_id "
             "WHERE pl.paper_id = ? AND l.ortsteil = ?", (pid, ortsteil))]
@@ -739,11 +751,16 @@ def plan_audit_rows(db, where="", args=()):
         ortsteile = sorted({r[0] for n in names for r in db.execute(
             "SELECT l.ortsteil FROM paper_location pl JOIN location l ON l.id = pl.location_id "
             "WHERE pl.paper_id = ? AND pl.method = 'bebauungsplan' AND l.description = ?", (pid, f"Bebauungsplan {n}"))})
-        back = "; ".join(f"{_maske(db)(e, ref)} ({m}, {ot or 'ohne Ortsteil'})" for e, m, ot in db.execute(
+        mk = _maske(db)
+        # zurückgestellte Ortsbezüge: jede Fundstelle im Zusammenhang des Titels und die zusammengesetzte Spalte noch
+        # einmal als Ganzes (check prüft die Spalte als Ganzes; vorher konnte „… (strasse, Ehrenfeld); 2 Bäume“ einen
+        # Befund ergeben, den die Maske nicht behob; Prüfung r20a, dritte Korrektur)
+        back = mk("; ".join(f"{mk.ausschnitt(e, name, ref)} ({m}, {ot or 'ohne Ortsteil'})" for e, m, ot in db.execute(
             "SELECT DISTINCT pp.evidence, pp.method, l.ortsteil FROM plan_precedence pp JOIN location l ON l.id = pp.location_id "
-            "WHERE pp.paper_id = ? ORDER BY 1, 3", (pid,)))
+            "WHERE pp.paper_id = ? ORDER BY 1, 3", (pid,))), ref)
         # Fundstelle wie der Titel maskiert (Text zwischen „Bebauungsplan“ und Plannummer; Prüfung r20a)
-        out.append([ref, _maske(db)(name, ref), nr, _maske(db)(ev, ref), match, "; ".join(names) or "nicht im Datensatz",
+        out.append([ref, mk(name, ref), nr, mk.ausschnitt(ev, name, ref), match,
+                    "; ".join(names) or "nicht im Datensatz",
                     "; ".join(sorted({f["properties"]["inkraft_seit"] or "" for f in hits})), "; ".join(ortsteile),
                     CONFIDENCE.get(match, "–"), back,
                     "ungeprüft" if hits else "kein rechtskräftiger Plan (Verfahren oder aufgehoben)"])
