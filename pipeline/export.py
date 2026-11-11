@@ -169,27 +169,28 @@ def export_audits():
     _write_tsv(config.EXPORT / "audit_zeit.tsv", TIME_AUDIT, time_audit_rows(papers, _meetings(db)))
     _write_tsv(config.EXPORT / "audit_themen.tsv", THEME_AUDIT, theme_audit_rows(papers))
     n = _sample_methods(db, config.EXPORT / "stichprobe_geokodierung.tsv")
-    _stichprobe_hausnummern_maskieren(db)
+    _stichproben_maskieren(db)
     db.close()
     print(f"Audits: {len(papers)} Vorlagen; Stichprobe je Methode: {n} Zeilen → {config.EXPORT}")
 
 
-STICHPROBE_HNR = ("hausnummern", "stichprobe_hausnummern.tsv")
-
-
-def _stichprobe_hausnummern_maskieren(db):
-    """Titel der Stichprobe Hausnummern (build._hnr_audit schreibt sie mit dem vollen Titel nach data/export, also auf
-    die Seite und ins Datenpaket) mit derselben Maske wie Suche, Gebietsdateien und Audits; idempotent (Generalprobe
-    09.11.2026: dort standen Hausnummern aus Eingaben und Einwohneranfragen)."""
-    pfad = config.EXPORT.joinpath(*STICHPROBE_HNR)
-    if not pfad.exists():
-        return
-    with open(pfad, encoding="utf-8", newline="") as f:
-        zeilen = list(csv.reader(f, delimiter="\t"))
-    if not zeilen or zeilen[0][1:3] != ["drucksache", "titel"]:
-        return
-    m = _maske(db)
-    _write_tsv(pfad, zeilen[0], [[z[0], z[1], m(z[2], z[1]), *z[3:]] if len(z) > 2 else z for z in zeilen[1:]])
+def _stichproben_maskieren(db):
+    """Titel der Stichproben mit vollem Titel (maske.STICHPROBEN: build._hnr_audit und build._fulltext_sample schreiben
+    sie nach data/export, also ins Datenpaket; in der Stichprobe Volltext auch die gefundenen Orte) mit derselben Maske
+    wie Suche, Gebietsdateien und Audits; idempotent (Generalprobe 09.11.2026: dort standen Hausnummern aus Eingaben und
+    Einwohneranfragen; Prüfung r20: die Volltextkette lässt Bauordnung und Naturschutz als Ausgangsvorlagen aus)."""
+    for teile, maskiert in maske.STICHPROBEN.items():
+        pfad = config.EXPORT.joinpath(*teile)
+        if not pfad.exists():
+            continue
+        with open(pfad, encoding="utf-8", newline="") as f:
+            zeilen = list(csv.reader(f, delimiter="\t"))
+        if not zeilen or zeilen[0][1:3] != ["drucksache", "titel"]:
+            continue
+        m = _maske(db)
+        spalten = {i for i, k in enumerate(zeilen[0]) if k in maskiert}
+        _write_tsv(pfad, zeilen[0], [[m(w, z[1]) if i in spalten else w for i, w in enumerate(z)] if len(z) > 2 else z
+                                     for z in zeilen[1:]])
 
 
 def _sample_methods(db, path, n=50, seed=2026):

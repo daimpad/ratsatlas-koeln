@@ -43,6 +43,7 @@ ZAEHLUNG = {
     "gebietsdateien": "Vorlagen in den Gebietsdateien der Karte untersucht",
     "gebietsdateien_hauskoordinaten": "davon mit Hauskoordinate",
     "stichprobe_hausnummern": "Titel in der Stichprobe Hausnummern untersucht",
+    "stichprobe_volltext": "Titel und Orte in der Stichprobe Volltext untersucht",
 }
 
 
@@ -234,7 +235,7 @@ def _hat_ausgelassene(db):
     return _hat_tabelle(db, "skipped_paper")
 
 
-def erlaubnis(db, nicht_erkannt=None, erkannt=None):
+def erlaubnis(db, nicht_erkannt=None, erkannt=None, gruende=None):
     """Drucksache → darf ihr Ortsbezug auf einer Hauskoordinate liegen? Gleiche Regel, Eingaben und Funktion wie im
     Aufbau (build._ohne_hauskoordinate): Startmenge nach geocode.punkt_ausschluss mit Drucksache, Vorlagenart und Titel
     aus der Datenbank, Namen der beratenden Gremien, Name der federführenden Organisation (under_direction_of, wie
@@ -244,8 +245,9 @@ def erlaubnis(db, nicht_erkannt=None, erkannt=None):
     dieselben wie für die Titelmaske maske.aus_db) und dieselbe Drucksache.
     Gibt es eine Drucksache mehrfach, muss jede die Erlaubnis haben. `nicht_erkannt`, `erkannt`: Counter, die je nicht
     erkannter bzw. erkannter Vorlagenart (geocode.vorlagenart_bezeichnung) die Vorlagen zählen (erkannt: Erlaubnis nach
-    eigener Angabe, geocode.erkannte_arten). Liefert ({Vorlagen-ID: bool}, {Drucksache: bool}, {Vorlagen-ID:
-    Drucksache})."""
+    eigener Angabe, geocode.erkannte_arten). `gruende`: dict, das je Vorlage der Startmenge den Grund aus
+    geocode.punkt_ausschluss aufnimmt (Gegenprobe der Titelmaske in datenschutz). Liefert ({Vorlagen-ID: bool},
+    {Drucksache: bool}, {Vorlagen-ID: Drucksache})."""
     gremien = {}
     for pid, name in db.execute(
             "SELECT c.paper_id, o.name FROM consultation c LEFT JOIN organization o ON o.id = c.organization_id "
@@ -261,6 +263,8 @@ def erlaubnis(db, nicht_erkannt=None, erkannt=None):
         grund = geocode.punkt_ausschluss(p, gremien.get(pid, ()), amt_name)
         if grund:
             start.add(pid)
+            if gruende is not None:
+                gruende[pid] = grund
         if grund == "vorlagenart" and nicht_erkannt is not None:
             nicht_erkannt[geocode.vorlagenart_bezeichnung(p)] += 1
         if grund is None and erkannt is not None:
@@ -298,8 +302,10 @@ def datenschutz(db, base=None):
     2. Titel aus Einwohnerschaft, Bauordnung und Naturschutz ohne Hausnummer in suche.json, vorlagen.geojson und den
        Gebietsdateien (maske.aus_db, samt verbundenen Vorlagen auch über relatedPaper und derselben Drucksache;
        Entscheidung des Auftraggebers 24.10.2026: überall ausblenden), ebenso ihre Ortsnamen (`place` in
-       vorlagen.geojson, `locations[].name` in den Gebietsdateien); keine Drucksache der Titelmaske mit Erlaubnis für
-       Hauskoordinaten (Titelmaske und Hauskoordinaten folgen denselben Beziehungen, Runde 20),
+       vorlagen.geojson, `locations[].name` in den Gebietsdateien) und in den Stichproben mit Titel (maske.STICHPROBEN,
+       in der Stichprobe Volltext auch die gefundenen Orte); keine Drucksache der Titelmaske mit Erlaubnis für
+       Hauskoordinaten (Titelmaske und Hauskoordinaten folgen denselben Beziehungen, Runde 20) und keine Eingabe ohne
+       Hauskoordinate (Grund „eingabe“) außerhalb der Titelmaske (Prüfung r20),
     3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
        Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
@@ -332,8 +338,8 @@ def datenschutz(db, base=None):
                        f"z. B. {', '.join(mit_nummer[:5])}")
 
     # 3a. Hauskoordinaten in der Datenbank
-    nicht_erkannt, erkannt = Counter(), Counter()
-    je_id, je_ref, ref_of = erlaubnis(db, nicht_erkannt, erkannt)
+    nicht_erkannt, erkannt, gruende = Counter(), Counter(), {}
+    je_id, je_ref, ref_of = erlaubnis(db, nicht_erkannt, erkannt, gruende)
     zahl["vorlagen"] = len(je_id)
     zahl["ohne_hauskoordinate"] = sum(not ok for ok in je_id.values())
     zahl["vorlagenart_nicht_erkennbar"] = sum(nicht_erkannt.values())
@@ -380,6 +386,15 @@ def datenschutz(db, base=None):
         befunde.append(f"Datenschutz: Titel ohne Hausnummer (maske.py), aber Erlaubnis für Hauskoordinaten "
                        f"(check.erlaubnis; Titelmaske und Hauskoordinaten urteilen verschieden): {len(widerspruch)}, "
                        f"z. B. {', '.join(widerspruch[:5])}")
+    # Gegenrichtung (Prüfung r20): jede Eingabe oder Einwohneranfrage nach der Punktregel (Grund „eingabe“) ist
+    # Ausgangspunkt der Titelmaske, auch in anderer Schreibung (geocode.eingabe in punkt_ausschluss und
+    # chat.aus_einwohnerschaft); sonst zeigte sie ihre Hausnummer im Titel
+    ungeschuetzt = sorted({str(ref_of.get(pid) or pid) for pid, g in gruende.items()
+                           if g == "eingabe" and ref_of.get(pid) not in m.refs})
+    if ungeschuetzt:
+        befunde.append(f"Datenschutz: Eingabe oder Einwohneranfrage ohne Hauskoordinate (geocode.punkt_ausschluss), "
+                       f"aber nicht in der Titelmaske (maske.py; Titelmaske und Hauskoordinaten urteilen verschieden): "
+                       f"{len(ungeschuetzt)}, z. B. {', '.join(ungeschuetzt[:5])}")
     offen = set()
     suche = lesen("suche.json")
     if suche is not None:
@@ -424,14 +439,19 @@ def datenschutz(db, base=None):
                 auf_oparl.add(p["reference"])
     zahl["gebietsdateien"] = len(refs)
     zahl["gebietsdateien_hauskoordinaten"] = len(auf)
-    # Stichprobe Hausnummern (build._hnr_audit, maskiert in export; liegt in data/export, also auf der Seite und im
-    # Datenpaket): Titel wie in der Suche; fehlt sie, gibt es nichts zu prüfen
-    stichprobe = base.parent / "hausnummern" / "stichprobe_hausnummern.tsv"
-    if stichprobe.exists():
+    # Stichproben mit Titel (build._hnr_audit und build._fulltext_sample, maskiert in export; liegen in data/export,
+    # also im Datenpaket): Titel wie in der Suche, in der Stichprobe Volltext auch die gefundenen Orte; fehlt eine,
+    # gibt es dort nichts zu prüfen
+    for teile, maskiert in maske.STICHPROBEN.items():
+        stichprobe = base.parent.joinpath(*teile)
+        if not stichprobe.exists():
+            continue
         with open(stichprobe, encoding="utf-8", newline="") as f:
-            zeilen = list(csv.reader(f, delimiter="\t"))[1:]
-        zahl["stichprobe_hausnummern"] = len(zeilen)
-        offen |= {z[1] for z in zeilen if len(z) > 2 and m.offen(z[2], z[1])}
+            kopf, *zeilen = list(csv.reader(f, delimiter="\t")) or [[]]
+        schluessel = teile[-1].removesuffix(".tsv")
+        spalten = [i for i, k in enumerate(kopf) if k in maskiert]
+        zahl[schluessel] = len(zeilen)
+        offen |= {z[1] for z in zeilen if len(z) > 1 and any(i < len(z) and m.offen(z[i], z[1]) for i in spalten)}
     _verstoss(befunde, "Gebietsdateien der Karte", [r for r in auf if not je_ref.get(r)])
     _verstoss_oparl(befunde, "Gebietsdateien der Karte", [r for r in auf_oparl if not je_ref.get(r)])
     if offen:

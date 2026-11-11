@@ -19,6 +19,11 @@ import re
 from . import chat, config, geocode
 
 OHNE_NR = "[Hausnummer ausgelassen]"
+# Stichproben, die build mit vollem Titel nach data/export schreibt (Weg ab config.EXPORT; Kopf mit „drucksache“ in
+# Spalte 2): Spalten, die export.export_audits maskiert und check.datenschutz prüft. Die Stichprobe Volltext nennt
+# auch die gefundenen Orte (Prüfung r20)
+STICHPROBEN = {("hausnummern", "stichprobe_hausnummern.tsv"): ("titel",),
+               ("volltext", "stichprobe_volltext.tsv"): ("titel", "orte (Ortsteil)")}
 # Bauordnungsamt und Untere Naturschutzbehörden: Titel nennen oft private Baugrundstücke mit Hausnummer
 AMT_PRIVAT = re.compile(r"^(?:63(?:\s|-)|56-3\b|67-6\b)")
 _L = r"[^\W\d_]"   # Buchstabe (wie \p{L})

@@ -44,10 +44,16 @@ können ein altes `modified` tragen), wendet der Server den Filter nicht an. Je 
   Folgeseiten ebenso übergeht und die Seitengrenzen mit und ohne Filter gleich sind, ist ungemessen, und ein
   unbemerkt doch gefilterter „Vollabruf“ ersetzte den Stand durch einen Teil (unter 90 % fiele es auf, darüber nicht).
   Der Neustart sendet dieselben Anfragen wie ein Vollabruf dieser Liste (RATSATLAS_VOLLABRUF=meetings) und gilt wie
-  einer: 90-%-Regel gegenüber dem Stand (Art `leer`, Abbruch des Laufs), der Stand wird ersetzt, nicht
-  zusammengeführt; beenden ihn das Zeitfenster oder die Grenze je Lauf, folgt die Fortsetzung in der nächsten Nacht.
-  Die Seiten mit Zeitfilter zählen zur Grenze je Lauf (höchstens config.ABRUF_MAX_OBJEKTE / g Seiten je Liste und
-  Nacht), nicht zu den Seiten des Vollabrufs (Gesamtgrenze, Fortsetzung). Kein Listenfehler, keine Pause, keine
+  einer: 90-%-Regel gegenüber dem Stand (Art `leer`, Abbruch des Laufs; Meldung mit Anlass und Abhilfe
+  RATSATLAS_KUERZER_ANNEHMEN=meetings), der Stand wird ersetzt, nicht zusammengeführt; beenden ihn das Zeitfenster
+  oder die Grenze je Lauf, folgt die Fortsetzung in der nächsten Nacht. Die Seiten mit Zeitfilter zählen zur Grenze je
+  Lauf (höchstens config.ABRUF_MAX_OBJEKTE / g Seiten je Liste und Nacht; ist sie mit ihnen schon erreicht, Art
+  `obergrenze` ohne weitere Anfrage und ohne Fortsetzung), nicht zu den Seiten des Vollabrufs (Gesamtgrenze,
+  Fortsetzung). Jede Nacht, nicht jeder Lauf: Sind die Sitzungen in dieser Nacht schon gelesen (Zustand `meetings`,
+  Beginn des letzten erfolgreichen Lesens, weniger als SPERRE_GLEICHE_NACHT zurück; nicht für lokale Testserver),
+  liest ein weiterer Lauf (Push auf main im Zeitfenster, Knopfdruck) sie nicht noch einmal vollständig: mit Vermerk
+  ohne Anfrage, sonst nach dem Befund (k Seiten); letzter gültiger Stand, Zeile `übersprungen` in der Abrufstatistik,
+  keine Warnung in STAND.json (_schon_gelesen). Kein Listenfehler, keine Pause, keine
   Warnung in `abruf_warnungen` (die Sitzungen sind aktualisiert); Warnung „Zeitfilter bei Sitzungen nicht angewandt,
   Sitzungen vollständig gelesen“ im Log und in der Abrufstatistik (`ok; …`, modus „voll, Zeitfilter nicht
   angewandt“, filter_wirksam „nein“ aus den Seiten mit Zeitfilter, `anfragen` mit ihnen). Der Befund steht im Zustand
@@ -57,7 +63,8 @@ können ein altes `modified` tragen), wendet der Server den Filter nicht an. Je 
   aus älterem Code (bis Runde 19 übersprangen die Folgenächte die Liste ohne Anfrage) ändert nichts mehr; eine
   Warnung „Sitzungen nicht aktualisiert“ in STAND.json entfällt mit der nächsten Aktualisierung der Sitzungen.
   Mehranfragen je Nacht, solange der Server den Filter übergeht: ⌈M / g⌉ Seiten ohne Filter zusätzlich zu den k
-  Seiten mit Filter bis zum Befund (meist k = 1; M Sitzungen insgesamt, ungemessen; g Objekte je Seite, 100).
+  Seiten mit Filter bis zum Befund (meist k = 1; M Sitzungen insgesamt, ungemessen; g Objekte je Seite, 100); ein
+  weiterer Lauf in derselben Nacht 0 (mit Vermerk) bzw. k.
 - organizations: immer ohne Zeitfilter, vollständig (kleine Liste; Münster lehnt modified_since bei organization mit
   HTTP 401 ab, explore/ergebnisse/sessionnet_befunde.tsv; Umfang in Köln misst Stufe 3), keine Filterprüfung. Weil sie
   vor den Vorlagen kommen, beendet ein Vollabruf unter 90 % des Stands (Art `leer`) dort nur diese Liste: letzter
@@ -678,10 +685,12 @@ def liste(url, seit=None, start=None, objekte=None, seiten=0, verschiebung=VERSC
         vor = sorted(t for o in daten if not o.get("deleted") and (t := _zeit(o.get("modified"))) is not None
                      and t < filtergrenze) if filtergrenze else []
         if vor:   # der Server wendet modified_since auf dieser Seite nicht an: nicht bis zum Fensterende weiterlesen
-            raise Teilabbruch(abruf.Abbruch(
+            fehler = Teilabbruch(abruf.Abbruch(
                 f"Zeitfilter auf Seite {seiten} nicht angewandt: {len(vor)} von {len(daten)} Objekten mit modified vor "
                 f"modified_since={seit} (frühestes {vor[0].isoformat()}); Abbruch nach dieser Seite: {naechste}",
                 "filter"), objekte, None, seiten, naechste, verlassen)
+            fehler.groesse = groesse   # Seitengröße g dieses Laufs: Grenze je Lauf vor einem Neustart (_abruf_liste)
+            raise fehler
         zuletzt, naechste = naechste, weiter
     return objekte, seiten
 
@@ -851,6 +860,34 @@ def _nur_warnung(text, e, zeile, objekte, seiten, seit, pfad, schluessel):
     return list(_vorhanden(pfad).values()), meldung
 
 
+def _in_dieser_nacht_gelesen(schluessel):
+    """Zeitpunkt des letzten erfolgreichen Lesens der Liste (Zustand `<liste>`, Beginn jenes Lesens), wenn er weniger
+    als SPERRE_GLEICHE_NACHT zurückliegt (dieselbe Nacht), sonst None; ein künftiger Zeitpunkt gilt nicht. Nicht für
+    lokale Testserver (wie die 12-Stunden-Regel)."""
+    if abruf.lokal(config.OPARL_BODY):
+        return None
+    t = _zeit(_zustand().get(schluessel))
+    return t if t is not None and timedelta(0) <= abruf.uhr() - t < SPERRE_GLEICHE_NACHT else None
+
+
+def _schon_gelesen(name, zuletzt, befund, zeile, pfad, seiten=0, filter_wirksam=""):
+    """Zweiter Lauf in derselben Nacht (etwa nach einem Push auf main im Zeitfenster oder auf Knopfdruck), Sitzungen
+    ohne angewandten Zeitfilter: Sie sind in dieser Nacht schon gelesen (`zuletzt`, _in_dieser_nacht_gelesen), also kein
+    erneutes vollständiges Lesen (Entscheidung 10.11.2026: jede Nacht, nicht jeder Lauf). Letzter gültiger Stand,
+    Zeitpunkt und Datei unverändert, keine Warnung in STAND.json, Zeile `übersprungen` in der Abrufstatistik. `befund`:
+    Meldung des Befunds in diesem Lauf (nach den Seiten mit Zeitfilter) oder "" (ohne Anfrage, Vermerk aus einem
+    früheren Lauf). Liefert (letzter gültiger Stand, Meldung) wie eine Warnung, damit fetch_meetings Datei und Zeitpunkt
+    nicht neu schreibt."""
+    meldung = (f"{name}: in dieser Nacht schon gelesen (Beginn {zuletzt.isoformat(timespec='seconds')}), "
+               f"{'Zeitfilter nicht angewandt' if befund else 'ohne Anfrage'}, nicht erneut vollständig gelesen; "
+               "letzter gültiger Stand bleibt" + (f"; Befund: {befund}" if befund else ""))
+    (_warnung if befund else print)(meldung)
+    alle = list(_vorhanden(pfad).values())
+    zeile.update(modus="übersprungen" if not befund else zeile["modus"], seiten=seiten, objekte=len(alle),
+                 filter_wirksam=filter_wirksam, ergebnis=f"übersprungen: {meldung}"[:300])
+    return alle, meldung
+
+
 def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, angenommen=None, voll_ohne_filter=""):
     """Inkrementeller Abruf einer Liste mit Statistik; schreibt die zusammengeführten Objekte als JSONL. Nimmt der Lauf
     für diese Liste einen kürzeren Stand an (RATSATLAS_KUERZER_ANNEHMEN, _zusammenfuehren), kommt `schluessel` in die
@@ -864,12 +901,16 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
     `filter` im inkrementellen Lauf, nach der Seite mit dem Befund), liest der Lauf die Liste gleich vollständig, neu ab
     Seite 1 ohne modified_since (nicht über links.next der gefilterten Seite, siehe Moduldoku), und behandelt sie wie
     einen Vollabruf: 90-%-Regel, Stand ersetzt, Fortsetzung nach einem Abbruch; die Seiten mit Zeitfilter zählen zur
-    Grenze je Lauf (liste(), `im_lauf`). Der Befund steht im Zustand (`<liste>_ohne_zeitfilter` mit `zeit` und
-    `meldung`); ein Lauf, der die Liste ohne Befund liest (inkrementell mit wirksamem Filter oder vollständig, auch
-    als Fortsetzung), entfernt ihn. Ohne `voll_ohne_filter` (papers) bricht der Lauf bei Art `filter` ab. Jede reguläre
-    Aktualisierung einer Liste mit `warnungen` oder `voll_ohne_filter` entfernt ihre Warnung in STAND.json. Liefert
-    (Objekte, Warnung): den zusammengeführten Stand und "", nach einer Warnung den letzten gültigen Stand und ihren
-    Text."""
+    Grenze je Lauf (liste(), `im_lauf`; schon mit ihnen erreicht: Art `obergrenze` ohne weitere Anfrage). Der Befund
+    steht im Zustand (`<liste>_ohne_zeitfilter` mit `zeit` und `meldung`); ein Lauf, der die Liste ohne Befund liest
+    (inkrementell mit wirksamem Filter oder vollständig, auch als Fortsetzung), entfernt ihn. Ist die Liste in dieser
+    Nacht schon gelesen (_in_dieser_nacht_gelesen), liest ein weiterer Lauf sie nicht noch einmal vollständig: mit
+    Vermerk ohne Anfrage, sonst nach dem Befund (_schon_gelesen). Endet das vollständige Lesen nach dem Befund unter 90 %
+    des Stands (Art `leer`), nennt die Meldung den Anlass und die Abhilfe. Ohne `voll_ohne_filter` (papers) bricht der
+    Lauf bei Art `filter` ab. Jede reguläre Aktualisierung einer Liste mit `warnungen` oder `voll_ohne_filter` entfernt
+    ihre Warnung in STAND.json. Liefert (Objekte, Warnung): den zusammengeführten Stand und "", nach einer Warnung oder
+    ohne erneutes Lesen in derselben Nacht den letzten gültigen Stand und die Meldung (fetch_meetings schreibt dann
+    weder meetings.json noch ihren Zeitpunkt neu)."""
     warnungen = warnungen or {}
     objekte, seiten = [], 0
     vorher = abruf.statistik()
@@ -885,6 +926,11 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
             objekte, seiten = liste(url, start=fort["naechste"], objekte=bisher, seiten=fort.get("seiten", 0),
                                     verschiebung=verschiebung_erlaubt(fort.get("gespeichert")))
         else:
+            # zweiter Lauf in derselben Nacht nach einem Befund (Vermerk) und erfolgreichem Lesen: ohne Anfrage
+            vermerk = _zustand().get(f"{schluessel}_ohne_zeitfilter") if voll_ohne_filter and seit else None
+            zuletzt = _in_dieser_nacht_gelesen(schluessel) if isinstance(vermerk, dict) else None
+            if zuletzt:
+                return _schon_gelesen(name, zuletzt, "", zeile, pfad)
             try:
                 objekte, seiten = liste(url, seit)
             except Teilabbruch as e:
@@ -894,6 +940,20 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
                 befund = {"vermerk": {"zeit": abruf.uhr().isoformat(timespec="seconds"), "meldung": str(e)[:300]},
                           "seiten": e.seiten, "filter_wirksam": _filter_wirksam(e.objekte, seit)}
                 _zustand_setzen(f"{schluessel}_ohne_zeitfilter", befund["vermerk"])
+                zuletzt = _in_dieser_nacht_gelesen(schluessel)
+                if zuletzt:   # in dieser Nacht schon gelesen (vollständig oder inkrementell): nicht noch einmal
+                    return _schon_gelesen(name, zuletzt, befund["vermerk"]["meldung"], zeile, pfad, e.seiten,
+                                          befund["filter_wirksam"])
+                # Grenze je Lauf: die Seiten mit Zeitfilter zählen mit; schon erreicht, folgt keine Anfrage mehr (vor
+                # der ersten Seite ohne Filter kennt liste() die Seitengröße noch nicht)
+                g = getattr(e, "groesse", 0)
+                je_lauf = math.ceil(config.ABRUF_MAX_OBJEKTE / max(g, 1))
+                if g and e.seiten >= je_lauf:
+                    raise Teilabbruch(abruf.Abbruch(
+                        f"Obergrenze je Nacht erreicht: {je_lauf} Seiten mit Zeitfilter in diesem Lauf "
+                        f"({config.ABRUF_MAX_OBJEKTE} Objekte bei {g} je Seite, RATSATLAS_MAX_OBJEKTE); kein "
+                        "vollständiges Lesen ohne modified_since in dieser Nacht", "obergrenze"),
+                        e.objekte, None, e.seiten) from e
                 print(f"{name}: {e}; die Liste wird in diesem Lauf vollständig ohne modified_since gelesen, neu ab "
                       "Seite 1", flush=True)
                 seit = None
@@ -963,6 +1023,14 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
     except abruf.Abbruch as e:
         if e.art in warnungen:   # etwa `leer` aus _zusammenfuehren, nachdem die Liste vollständig gelesen ist
             return _nur_warnung(warnungen[e.art], e, zeile, objekte, seiten, seit, pfad, schluessel)
+        if befund and e.art == "leer":
+            # vollständiges Lesen nach dem Befund unter 90 % des Stands: Abbruch wie bei einem Vollabruf (Entscheidung
+            # offen, TECHNIK.md), aber mit Anlass und Abhilfe in STAND.json und Seiten und Objekten in der Statistik
+            zeile.update(seiten=seiten, objekte=len(objekte))
+            neu = abruf.Abbruch(f"{e} (vollständiges Lesen nach nicht angewandtem Zeitfilter) – "
+                                + ABHILFE["leer"].format(liste=schluessel), "leer")
+            zeile["ergebnis"] = f"abbruch: {neu}"[:300]
+            raise neu from e
         zeile["ergebnis"] = f"abbruch: {e}"[:300]
         raise
     except Exception as e:
@@ -1033,8 +1101,9 @@ def _kennung(wert):
 def fetch_meetings(body, angenommen=None):
     """Sitzungen; ob Köln modified_since hier anwendet, ist ungemessen. Wendet der Server ihn nicht an, liest der Lauf
     die Sitzungen gleich vollständig (_abruf_liste mit `voll_ohne_filter`; Entscheidung 10.11.2026, jede Nacht neu, bis
-    der Server den Filter wieder anwendet): meetings.json und ihr Zeitstempel aktualisiert, kein Listenfehler.
-    `angenommen`: siehe _abruf_liste. Liefert (Sitzungen, Warnung oder "")."""
+    der Server den Filter wieder anwendet): meetings.json und ihr Zeitstempel aktualisiert, kein Listenfehler; in einem
+    weiteren Lauf derselben Nacht nicht noch einmal (_schon_gelesen: letzter gültiger Stand, Datei und Zeitstempel
+    unverändert). `angenommen`: siehe _abruf_liste. Liefert (Sitzungen, Warnung oder "")."""
     alle, warnung = _abruf_liste(
         "meetings", body["meeting"], config.RAW / "meetings_roh.jsonl", "meetings",
         voll_ohne_filter="Zeitfilter bei Sitzungen nicht angewandt, Sitzungen vollständig gelesen",

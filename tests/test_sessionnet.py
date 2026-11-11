@@ -3827,7 +3827,8 @@ def test_sitzungen_ohne_zeitfilter_grenze_je_lauf_mit_den_seiten_mit_filter(opar
 
 def test_sitzungen_ohne_zeitfilter_90_prozent_regel(oparl, monkeypatch):
     """Das vollständige Lesen nach dem Befund gilt wie ein Vollabruf: unter 90 % des Stands (8 von 10) Abbruch `leer`
-    (Stand bleibt, kein Listenfehler, keine Nacht mit möglicher Sperre), jede Nacht erneut; mit
+    (Stand bleibt, kein Listenfehler, keine Nacht mit möglicher Sperre), jede Nacht erneut; die Meldung in STAND.json
+    nennt den Anlass und die Abhilfe, die Abrufstatistik Seiten und Objekte (Prüfung r20). Mit
     RATSATLAS_KUERZER_ANNEHMEN=meetings gilt der kürzere Stand, vermerkt in der Abrufstatistik."""
     oparl.meetings = _sitzungen(oparl)
     sessionnet.fetch_all()
@@ -3841,11 +3842,15 @@ def test_sitzungen_ohne_zeitfilter_90_prozent_regel(oparl, monkeypatch):
         assert vorher == {f: f.read_bytes() for f in vorher}
         zustand, stand = _zustand(), _stand()
         assert zustand["letzter_abbruch"]["art"] == "leer" and not {"listenfehler", "sperre_verdacht"} & set(zustand)
-        assert stand["abruf_fehler"]["meldung"] == ("meetings_roh.jsonl: nur 8 statt bisher 10 – unvollständige "
-                                                    "Antwort? Vorhandener Stand bleibt.")
+        assert stand["abruf_fehler"]["meldung"] == (
+            "meetings_roh.jsonl: nur 8 statt bisher 10 – unvollständige Antwort? Vorhandener Stand bleibt. "
+            "(vollständiges Lesen nach nicht angewandtem Zeitfilter) – Abhilfe, wenn der kürzere Stand stimmt (nicht "
+            "bei 0 Objekten): ein Lauf mit RATSATLAS_KUERZER_ANNEHMEN=meetings")
         z = _zeile("meetings")
-        assert (z["modus"], z["filter_wirksam"]) == ("voll, Zeitfilter nicht angewandt", "nein (2 ältere)")
+        assert (z["modus"], z["filter_wirksam"], z["seiten"], z["objekte"]) == (
+            "voll, Zeitfilter nicht angewandt", "nein (2 ältere)", "4", "8")
         assert z["ergebnis"].startswith("abbruch: meetings_roh.jsonl: nur 8 statt bisher 10")
+        assert z["ergebnis"].endswith("RATSATLAS_KUERZER_ANNEHMEN=meetings")
     monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "meetings")
     sessionnet.fetch_all()
     assert len(json.loads(config.MEETINGS.read_text())) == 8 and "abruf_fehler" not in _stand()
@@ -3947,6 +3952,114 @@ def test_vollabruf_der_sitzungen_nach_dem_befund(oparl, monkeypatch, vollabruf):
     assert _sitzungsanfragen(oparl) == [("1", False), ("2", False)]
     assert "meetings_ohne_zeitfilter" not in _zustand()
     assert (_zeile("meetings")["modus"], _zeile("meetings")["ergebnis"]) == ("voll", "ok")
+
+
+# --- Prüfung r20: jede Nacht, nicht jeder Lauf; Grenze je Lauf vor dem Neustart --------------------------------------
+
+def _naechste_nacht(stunden=13):
+    """Zeitpunkte des letzten Lesens (papers, meetings) um `stunden` zurückdatieren (die nächste Nacht, wie
+    _nacht_spaeter für Abbrüche)."""
+    z = _zustand()
+    for liste in ("organizations", "papers", "meetings"):
+        if liste in z:
+            z[liste] = (datetime.fromisoformat(z[liste]) - timedelta(hours=stunden)).isoformat(timespec="seconds")
+    config.ZUSTAND.write_text(json.dumps(z))
+
+
+def _wie_die_stadt(oparl, monkeypatch):
+    """Erster Lauf lokal (vollständig), danach den Testserver wie einen Server der Stadt behandeln (12-Stunden-Regeln,
+    Zeitfenster immer offen); die nächste Nacht beginnt."""
+    oparl.meetings = _sitzungen(oparl)                                     # 10 Sitzungen, 5 Seiten
+    sessionnet.fetch_all()
+    _nicht_lokal(monkeypatch)
+    monkeypatch.setattr(abruf, "im_zeitfenster", lambda jetzt=None: True)
+    _naechste_nacht()
+
+
+def test_sitzungen_ohne_zeitfilter_zweiter_lauf_in_derselben_nacht_ohne_anfrage(oparl, monkeypatch):
+    """Ein zweiter vollständiger Lauf in derselben Nacht (Push auf main im Zeitfenster, Knopfdruck) liest die Sitzungen
+    nach dem Befund nicht noch einmal vollständig (Entscheidung 10.11.2026: jede Nacht, nicht jeder Lauf; wie bis Runde
+    19 ohne Anfrage): letzter gültiger Stand, meetings.json und ihr Zeitpunkt unverändert, keine Warnung in STAND.json,
+    Vermerk bleibt, Zeile `übersprungen`. Die nächste Nacht liest wieder vollständig."""
+    _wie_die_stadt(oparl, monkeypatch)
+    _ohne_zeitfilter(oparl, monkeypatch, "/meetings")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht: Befund, vollständig gelesen
+    assert _sitzungsanfragen(oparl) == ALLE_SEITEN_OHNE_FILTER
+    zustand, stand = _zustand(), _stand()
+    vorher = {f: f.read_bytes() for f in (config.MEETINGS, config.RAW / "meetings_roh.jsonl")}
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # zweiter Lauf derselben Nacht
+    assert _sitzungsanfragen(oparl) == [] and [p for p, _, _ in oparl.anfragen].count("/papers") == 1
+    assert vorher == {f: f.read_bytes() for f in vorher}
+    nachher = _zustand()
+    assert nachher["meetings"] == zustand["meetings"] and _stand()["meetings"] == stand["meetings"]
+    assert nachher["meetings_ohne_zeitfilter"] == zustand["meetings_ohne_zeitfilter"]
+    assert not {"abruf_warnungen", "abruf_fehler", "abruf_hinweis"} & set(_stand()) and "letzter_abbruch" not in nachher
+    z = _zeile("meetings")
+    assert (z["modus"], z["seiten"], z["objekte"], z["anfragen"]) == ("übersprungen", "0", "10", "0")
+    assert z["ergebnis"].startswith("übersprungen: meetings: in dieser Nacht schon gelesen (Beginn ")
+    assert "ohne Anfrage, nicht erneut vollständig gelesen" in z["ergebnis"]
+    assert len(_jsonl(config.BERATUNGEN)) == 5
+    _naechste_nacht()
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # nächste Nacht: wieder vollständig
+    assert _sitzungsanfragen(oparl) == ALLE_SEITEN_OHNE_FILTER
+
+
+def test_sitzungen_ohne_zeitfilter_nach_vollstaendigem_lesen_derselben_nacht(oparl, monkeypatch):
+    """Sind die Sitzungen in dieser Nacht schon vollständig gelesen (hier mit RATSATLAS_VOLLABRUF=meetings, ebenso
+    nach dem ersten Vollabruf), liest ein weiterer Lauf mit Befund sie nicht noch einmal: nur die Seite mit Zeitfilter
+    (eine Anfrage, wie bis Runde 19), Vermerk gesetzt, letzter gültiger Stand. Lokal (Tests, Generalprobe) gilt das
+    nicht, wie die 12-Stunden-Regel."""
+    _wie_die_stadt(oparl, monkeypatch)
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "meetings")
+    sessionnet.fetch_all()
+    monkeypatch.delenv("RATSATLAS_VOLLABRUF")
+    vorher = config.MEETINGS.read_bytes()
+    _ohne_zeitfilter(oparl, monkeypatch, "/meetings")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert _sitzungsanfragen(oparl) == [("1", True)] and config.MEETINGS.read_bytes() == vorher
+    assert _zustand()["meetings_ohne_zeitfilter"]["meldung"].startswith("Zeitfilter auf Seite 1 nicht angewandt")
+    z = _zeile("meetings")
+    assert (z["modus"], z["seiten"], z["anfragen"], z["filter_wirksam"]) == ("inkrementell", "1", "1",
+                                                                              "nein (2 ältere)")
+    assert z["ergebnis"].startswith("übersprungen: meetings: in dieser Nacht schon gelesen (Beginn ")
+    assert "Zeitfilter nicht angewandt, nicht erneut vollständig gelesen; letzter gültiger Stand bleibt; Befund: " \
+           "Zeitfilter auf Seite 1" in z["ergebnis"]
+    assert not {"abruf_warnungen", "abruf_fehler"} & set(_stand()) and "letzter_abbruch" not in _zustand()
+    monkeypatch.setattr(abruf, "lokal", lambda url: True)                  # lokal: wie bisher vollständig
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert _sitzungsanfragen(oparl) == ALLE_SEITEN_OHNE_FILTER
+
+
+def test_sitzungen_ohne_zeitfilter_grenze_je_lauf_schon_mit_den_seiten_mit_filter(oparl, monkeypatch):
+    """Fällt der Befund auf die letzte Seite, die die Grenze je Lauf erlaubt (3 Seiten zu 2), folgt keine weitere
+    Anfrage (vorher eine Seite ohne Filter zu viel, weil liste() vor der ersten Seite die Seitengröße nicht kennt):
+    Art `obergrenze` ohne Fortsetzung, kein Listenfehler; die nächste Nacht beginnt wieder mit Zeitfilter."""
+    oparl.meetings = _sitzungen(oparl)
+    sessionnet.fetch_all()
+    monkeypatch.setattr(config, "ABRUF_MAX_OBJEKTE", 6)                     # 3 Seiten zu 2 je Lauf
+    monkeypatch.setattr(sessionnet, "max_objekte_mindestens", lambda: 4)
+    jetzt = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    oparl.meetings = [dict(m, modified=jetzt) if i < 4 else m for i, m in enumerate(oparl.meetings)]
+    _ohne_zeitfilter(oparl, monkeypatch, "/meetings")                      # Seiten 1 und 2 neu, Seite 3 alt
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    # Seiten 2 und 3 über links.next der gefilterten Seite (der Testserver nennt modified_since dort nicht); vorher
+    # folgte noch ("1", False)
+    assert _sitzungsanfragen(oparl) == [("1", True), ("2", False), ("3", False)]
+    zustand = _zustand()
+    assert zustand["letzter_abbruch"]["art"] == "obergrenze" and "meetings_fortsetzung" not in zustand
+    assert not {"listenfehler", "sperre_verdacht"} & set(zustand) and "meetings_ohne_zeitfilter" in zustand
+    assert "Obergrenze je Nacht erreicht: 3 Seiten mit Zeitfilter in diesem Lauf" in _zeile("meetings")["ergebnis"]
+    assert _stand()["abruf_hinweis"]["meldung"].startswith("Obergrenze je Nacht erreicht, der inkrementelle Abruf "
+                                                           "beginnt in der nächsten Nacht erneut")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # lokal: nächster Lauf wieder mit Filter
+    assert _sitzungsanfragen(oparl)[:1] == [("1", True)]
 
 
 def _vollabruf_naechte(oparl, monkeypatch):

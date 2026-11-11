@@ -469,6 +469,16 @@ def _vergleichstexte(text):
     return t, t.replace("ae", "ä").replace("oe", "ö").replace("ue", "ü")
 
 
+def eingabe(art, titel):
+    """Hinweis auf eine Eingabe oder Einwohneranfrage (EINGABE) in Vorlagenart oder Titel, abgeglichen über die
+    Vergleichstexte (_vergleichstexte; eine Vorlagenart in anderer Form gilt als Text, null als leer). Eine Regel für
+    die Hauskoordinate (punkt_ausschluss, Grund „eingabe“) und die Titelmaske samt Volltextkette
+    (chat.aus_einwohnerschaft), damit eine Eingabe in anderer Schreibung („Buergerantrag“, „Antrag nach Paragraf 24 GO
+    NRW“, weiches Trennzeichen) weder die Hauskoordinate bekommt noch ihre Hausnummer im Titel zeigt (Prüfung r20)."""
+    art = art if isinstance(art, str) else "" if art is None else str(art)
+    return any(EINGABE.search(t) for t in _vergleichstexte(art) + _vergleichstexte(titel))
+
+
 def vorlagenart_erkannt(paper):
     """Ist die Vorlagenart als Verwaltungsvorlage oder politischer Antrag bzw. Anfrage erkennbar (VORLAGENART_PUNKT,
     in beiden Vergleichstexten)? Nein bei null, fehlend, keiner Zeichenkette oder dem Kennzeichen ANDERE_FORM; eine
@@ -491,9 +501,7 @@ def punkt_ausschluss(paper, gremien=(), amt=None):
     „Buergerantrag“ oder mit weichem Trennzeichen gelten wie die übliche."""
     if not REFERENZ_PUNKT.match(paper.get("reference") or ""):
         return "drucksache"
-    art = paper.get("paperType")
-    art = art if isinstance(art, str) else "" if art is None else str(art)
-    if any(EINGABE.search(t) for t in _vergleichstexte(art) + _vergleichstexte(paper.get("name"))):
+    if eingabe(paper.get("paperType"), paper.get("name")):
         return "eingabe"
     if any(re.search(r"(?i)anregungen und beschwerden|bürgerbeteiligung", t)
            for g in gremien for t in _vergleichstexte(g)):

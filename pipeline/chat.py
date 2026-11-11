@@ -19,7 +19,7 @@ from collections import Counter, defaultdict
 from datetime import date
 
 from . import config, topics
-from .geocode import EINGABE
+from .geocode import _vergleichstexte, eingabe
 
 PAPER_FIELDS = ("reference", "name", "paper_type", "date", "amt", "web", "main_file", "source_object", "stand",
                 "parties", "plans")
@@ -27,9 +27,12 @@ LOC_FIELDS = ("level", "name", "ortsteil", "stadtbezirk", "stage", "method", "co
 REL_FIELDS = ("reference", "paper_type", "name", "date")
 
 # wie EINWOHNER und EINWOHNER_TITEL in site/chat/tools.js (Assistent, in Köln abgeschaltet; die Kölner Ergänzung um
-# geocode.EINGABE in aus_einwohnerschaft() fehlt dort noch und folgt mit der Freigabe des Assistenten)
+# geocode.eingabe und den Abgleich über die Vergleichstexte in aus_einwohnerschaft() fehlt dort noch und folgt mit der
+# Freigabe des Assistenten)
 EINWOHNER = {"Bürgerantrag § 24 GO - Öffentlich", "Anregungen und Beschwerden", "Einwohnerfrage", "Bürgerbrief"}
 EINWOHNER_TITEL = re.compile(r"bürgerantrag|einwohner|anregung|beschwerde", re.I)
+# EINWOHNER als Vergleichstexte (geocode._vergleichstexte: Normalform, kleingeschrieben, „Paragraf 24“ wie „§ 24“)
+_EINWOHNER_VERGLEICH = {_vergleichstexte(art)[0] for art in EINWOHNER}
 
 LUECKEN = [
     "Vorlagen vor Oktober 2019 sind nicht enthalten.",
@@ -38,7 +41,8 @@ LUECKEN = [
     "Verwaltungsinterne Abläufe vor dem Datum der Vorlage sind nicht öffentlich.",
     "Inhalte nichtöffentlicher Beratungen sind nicht einsehbar.",
     "Den Vollzug von Beschlüssen zeigt keine öffentliche Schnittstelle (Beschlusskontrolle).",
-    "Ergebnisse und Sitzungstermine der Beratungen stammen aus OParl-Lite; nicht jede Beratung ist verknüpft.",
+    "Ergebnisse und Sitzungstermine der Beratungen stammen aus den Sitzungen und Tagesordnungspunkten der "
+    "OParl-Schnittstelle (SessionNet); nicht jede Beratung ist verknüpft.",
     "Einreichende, Themen, Parteien und Ortsbezüge der Stufe B sind abgeleitet und nicht vollständig geprüft.",
     "Das Soll nach Regelwerk ist ein vereinfachtes Modell; abgeglichen wird nur, welche Gremienarten beraten haben.",
     "Abstimmungsergebnisse einzelner Fraktionen oder Personen sind nicht enthalten.",
@@ -155,13 +159,17 @@ def _dump(path, data):
 
 def aus_einwohnerschaft(paper_type, name):
     """Ausgangsvorlage aus der Einwohnerschaft nach Art oder Titel, ohne verbundene Vorlagen (Titelmaske und
-    Volltextkette: maske.kette; geocode.punkt_ausschluss über maske.titel_ohne_hausnummer)."""
-    return bool(paper_type in EINWOHNER or EINWOHNER_TITEL.search(name or "")
-                # Köln: dieselben Eingaben und Vorlagen natürlicher Personen wie in der Punktregel (geocode.EINGABE auf
-                # Art und Titel: „Eingabe nach § 24 GO NRW“, „Einwohneranfrage nach § 39 Abs. 6“, „… – Bürgereingabe“),
-                # damit eine Vorlage ohne Hauskoordinate ihre Hausnummer auch nicht im Titel zeigt (Generalprobe
-                # 09.11.2026)
-                or EINGABE.search(paper_type or "") or EINGABE.search(name or ""))
+    Volltextkette: maske.kette; geocode.punkt_ausschluss über maske.titel_ohne_hausnummer). Abgeglichen wird wie in der
+    Punktregel über die Vergleichstexte (geocode._vergleichstexte), nicht die gelieferte Schreibung: „Buergerantrag“,
+    „Bür\u00adgerantrag“ oder „Antrag nach Paragraf 24 GO NRW“ gelten wie die übliche Schreibung (Prüfung r20)."""
+    art = paper_type if isinstance(paper_type, str) else "" if paper_type is None else str(paper_type)
+    return bool(any(t in _EINWOHNER_VERGLEICH for t in _vergleichstexte(art))
+                or any(EINWOHNER_TITEL.search(t) for t in _vergleichstexte(name))
+                # Köln: dieselben Eingaben und Vorlagen natürlicher Personen wie in der Punktregel (geocode.eingabe auf
+                # Art und Titel, eine Funktion: „Eingabe nach § 24 GO NRW“, „Einwohneranfrage nach § 39 Abs. 6“,
+                # „… – Bürgereingabe“), damit eine Vorlage ohne Hauskoordinate ihre Hausnummer auch nicht im Titel
+                # zeigt (Generalprobe 09.11.2026)
+                or eingabe(paper_type, name))
 
 
 def write_chat(out, db, cache, meetings, sources, meta):

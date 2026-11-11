@@ -2,7 +2,9 @@
 // offenen Überlagerungen (Telefon), Themen-Chips ohne Zahl bei „ganz Köln“, Tour ohne abgeschaltete Funktionen,
 // Hinweis zu Baustellen in der Zeitleiste nur mit Baustellen, „Weitere … anzeigen“ ohne Neuzeichnen der Karte; dazu
 // axe-core (WCAG 2.1 A/AA) in den geprüften Zuständen. Punktzahl und Termine je Gebiet stehen in der Ausgabe (Vergleich
-// zweier Fassungen der Seite mit denselben Daten).
+// zweier Fassungen der Seite mit denselben Daten). Prüfung r20: Profile „desktop-csp“ und „telefon-csp“ ohne
+// bypassCSP (wie die veröffentlichte Seite): Verstöße gegen die Content-Security-Policy in den üblichen Abläufen und auf
+// den Unterseiten, axe per page.evaluate, auf dem Telefon das Blatt „Karte“ über „Los geht's“.
 // Nur die lokale Seite: Anfragen an andere Hosts werden abgebrochen.
 // Aufruf (Seite mit Testdaten, z. B. python3 tools/testdaten.py, Pipeline, tools/seite_bauen.py, dann
 //   python3 -m http.server --bind 127.0.0.1 8790 -d _site):
@@ -40,10 +42,15 @@ const geladen = (page) => page.waitForFunction(() => {
 const aktuell = (page) => page.$$eval("#papers button[data-gref], #papers button[data-ref]",
   (bs) => bs.map((b) => [b.dataset.gref || b.dataset.ref, b.getAttribute("aria-current")]));
 
-async function neueSeite(browser, profil) {
-  const ctx = await browser.newContext({ ...PROFILE[profil], bypassCSP: true });   // axe als Skript einfügen
+async function neueSeite(browser, profil, mitCsp = false) {
+  // ohne CSP-Prüfung axe als Skript einfügen (bypassCSP); mit CSP-Prüfung wie die veröffentlichte Seite
+  const ctx = await browser.newContext({ ...PROFILE[profil], bypassCSP: !mitCsp });
   const page = await ctx.newPage();
   const fehler = [];
+  if (mitCsp) await page.addInitScript(() => {
+    window.__csp = [];
+    document.addEventListener("securitypolicyviolation", (e) => window.__csp.push(`${e.violatedDirective} ${e.blockedURI}`));
+  });
   page.on("pageerror", (e) => fehler.push(`pageerror: ${e.message}`));
   page.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource|net::ERR/.test(m.text())) fehler.push(`console: ${m.text()}`); });
   await page.route((u) => !u.href.startsWith(BASIS), (r) => r.abort());
@@ -247,6 +254,108 @@ async function menueUeberAuswertung(browser, gebiet) {
   await ctx.close();
 }
 
+// Prüfung r20: ohne bypassCSP. Verstöße gegen die CSP je Ablauf (Start, Gebiet mit Liste, Vorgang, Zeitleiste und
+// allen Ebenen, Menüs, ?mitmachen=1, Unterseiten); axe per page.evaluate (läuft auch unter der CSP, addScriptTag nicht)
+const cspVerstoesse = (page) => page.evaluate(() => window.__csp || []);
+const axeOhneBypass = async (page) => {
+  if (!AXE) return null;
+  await page.evaluate(AXE);
+  const r = await page.evaluate(async () => await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] } }));
+  return r.violations.map((v) => `${v.id} (${v.nodes.length}): ${v.nodes.slice(0, 2).map((n) => n.target.join(" ")).join(" | ")}`);
+};
+
+async function cspDesktop(browser, gebiet) {
+  const profil = "desktop-csp";
+  const { ctx, page, fehler } = await neueSeite(browser, "desktop", true);
+  const verstoesse = [];
+  const sammeln = async (wo) => { for (const v of await cspVerstoesse(page)) verstoesse.push(`${wo}: ${v}`); };
+  await page.goto(BASIS, { waitUntil: "load" });
+  await geladen(page);
+  await sammeln("Start");
+  await page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
+  await geladen(page);
+  await page.click('.toggle[data-panel="panel-list"]');
+  await page.waitForSelector("#panel-list:not([hidden]) #papers li button");
+  await page.click("#papers li button");
+  await page.waitForSelector("#detail h3", { timeout: 20000 });
+  await page.click('.toggle[data-panel="timeline-wrap"]');
+  await page.waitForTimeout(300);
+  await page.evaluate(() => document.querySelector(".map-menu").click());   // die Zeitleiste kann „Ebenen“ verdecken
+  await page.evaluate(async () => {
+    for (const t of document.querySelectorAll(".leaflet-right .map-style:not(.map-menu):not(.map-whole)")) {
+      if (t.offsetParent) { t.click(); await new Promise((r) => setTimeout(r, 150)); }
+    }
+  });
+  await page.waitForTimeout(1500);
+  await sammeln("Gebiet, Liste, Vorgang, Zeitleiste, alle Ebenen");
+  for (const m of ["mega-auswertung", "mega-mitmachen", "mega-daten", "mega-verstehen"]) {
+    await page.evaluate((m) => { const b = document.querySelector(`[data-mega="${m}"]`); if (b && b.offsetParent) b.click(); }, m);
+    await page.waitForTimeout(200);
+  }
+  await sammeln("Menüs");
+  const axeCsp = await axeOhneBypass(page);
+  if (axeCsp) pruefen(profil, "axe unter der CSP (Gebiet, Vorgang, Zeitleiste, Ebenen, Menü)", axeCsp.length === 0, axeCsp);
+  await page.goto(`${BASIS}?mitmachen=1`, { waitUntil: "load" });
+  await geladen(page);
+  await sammeln("?mitmachen=1");
+  const slug = gebiet.split(":")[1];
+  const bezirk = await page.evaluate(async () => (await (await fetch("data/export/koeln/index.json")).json()).bezirke[0].slug);
+  const status = {};
+  for (const s of ["gebiete/", "begriffe/", "rss/", "technik/", "datenschutz.html", `ortsteil/${slug}/`, `stadtbezirk/${bezirk}/`, "404.html"]) {
+    const r = await page.goto(BASIS + s, { waitUntil: "load" });
+    await page.waitForTimeout(200);
+    status[s] = r ? r.status() : null;
+    await sammeln(s);
+  }
+  pruefen(profil, "Unterseiten geladen", Object.values(status).every((c) => c === 200), status);
+  pruefen(profil, "keine Verstöße gegen die Content-Security-Policy", verstoesse.length === 0, verstoesse.slice(0, 10));
+  pruefen(profil, "keine Skriptfehler (CSP)", fehler.length === 0, fehler);
+  await ctx.close();
+}
+
+// Telefon: „Los geht's“ offen, „Karte“ antippen: das Blatt liegt oben („Schließen“ trifft sich selbst), die Fläche ist
+// zu; ebenso mit allen Legenden offen und ans Ende gerollt (vorher verdeckte „Detail einklappen“ das „Schließen“)
+async function blattKarte(browser) {
+  const profil = "telefon-csp";
+  const { ctx, page, fehler } = await neueSeite(browser, "telefon", true);
+  await page.goto(BASIS, { waitUntil: "load" });
+  await geladen(page);
+  await page.waitForTimeout(400);
+  const start = await page.evaluate(() => ({ detail: !document.getElementById("panel-detail").hidden,
+    titel: document.getElementById("detail-heading").textContent.trim().slice(0, 40) }));
+  const frei = () => page.evaluate(() => {
+    const zu = document.querySelector(".map-sheet-zu");
+    const r = zu.getBoundingClientRect();
+    const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return { blatt: document.getElementById("map").classList.contains("map-menu-open"), zuFrei: Boolean(t && (t === zu || zu.contains(t))),
+      getroffen: t ? String(t.id || t.getAttribute("class") || t.tagName).slice(0, 40) : null, detailZu: document.getElementById("panel-detail").hidden };
+  });
+  let geklickt = true;
+  await page.click(".map-menu", { timeout: 5000 }).catch(() => { geklickt = false; });
+  await page.waitForTimeout(400);
+  const offen = await frei();
+  pruefen(profil, "Blatt „Karte“ über „Los geht's“: Schließen frei, Fläche zu", start.detail && geklickt && offen.blatt && offen.zuFrei && offen.detailZu,
+    { start, geklickt, offen });
+  await page.evaluate(() => document.querySelectorAll("#map-sheet details").forEach((d) => { d.open = true; }));
+  await page.waitForTimeout(300);
+  await page.evaluate(() => { const s = document.getElementById("map-sheet"); s.scrollTop = s.scrollHeight; });
+  await page.waitForTimeout(300);
+  const gerollt = await frei();
+  pruefen(profil, "Blatt „Karte“ mit allen Legenden, gerollt: Schließen frei", gerollt.blatt && gerollt.zuFrei && gerollt.detailZu, gerollt);
+  const axeBlatt = await axeOhneBypass(page);
+  if (axeBlatt) pruefen(profil, "axe unter der CSP (Blatt „Karte“)", axeBlatt.length === 0, axeBlatt);
+  let zu = true;
+  await page.click(".map-sheet-zu", { timeout: 5000 }).catch(() => { zu = false; });
+  await page.waitForTimeout(300);
+  const danach = await page.evaluate(() => ({ blatt: document.getElementById("map").classList.contains("map-menu-open"),
+    fokus: document.activeElement.className }));
+  pruefen(profil, "Schließen schließt das Blatt, Fokus auf „Karte“", zu && !danach.blatt && /map-menu/.test(danach.fokus), danach);
+  const v = await cspVerstoesse(page);
+  pruefen(profil, "keine Verstöße gegen die Content-Security-Policy", v.length === 0, v);
+  pruefen(profil, "keine Skriptfehler (Blatt)", fehler.length === 0, fehler);
+  await ctx.close();
+}
+
 // B4: Tour mit den Kölner Freigaben (Datenbetrieb, vorschau=false): keine abgeschaltete Funktion, ohne Fehler bis zum Ende
 async function tour(browser, profil) {
   const { ctx, page, fehler } = await neueSeite(browser, profil);
@@ -289,6 +398,8 @@ async function tour(browser, profil) {
       if (profil === "desktop") await termineJeGebiet(browser, profil, gebiet);
       if (profil === "telefon") await menueUeberAuswertung(browser, gebiet);
       touren[profil] = await tour(browser, profil);
+      if (profil === "desktop") await cspDesktop(browser, mitPunkten);
+      if (profil === "telefon") await blattKarte(browser);
     }
   } catch (e) {
     pruefen("-", "Ablauf", false, String(e && e.stack || e).slice(0, 600));

@@ -20,7 +20,7 @@ from pathlib import Path
 import pytest
 from shapely.geometry import Point
 
-from pipeline import build, check, config, export, geocode, kontext, maske, volltext
+from pipeline import build, chat, check, config, export, geocode, kontext, maske, volltext
 
 ROOT = Path(__file__).resolve().parents[1]
 B = "https://example.invalid/oparl"
@@ -787,3 +787,128 @@ def test_pruefung_meldet_oparl_punkt_und_ortsnamen(testdaten, tmp_path, capsys):
     for aendern in (geo_ort, gebiet("name", f"{strasse} {nr[0]}", "1660/2026")):
         b = pruefen(aendern)
         assert len(b) == 1 and "Hausnummern in Titeln oder Ortsnamen" in b[0] and b[0].endswith(": 1, z. B. 1660/2026")
+
+
+# --- Prüfung r20: Eingaben in anderer Schreibung in Titelmaske und Volltextkette, Gegenprobe in check, Stichproben ----
+
+# Schreibungen, die die Punktregel über die Vergleichstexte als Eingabe erkennt (geocode._vergleichstexte); vorher
+# erkannte chat.aus_einwohnerschaft sie nicht (gelieferte Schreibung), die Titel zeigten ihre Hausnummer
+SCHREIBUNGEN = [("Buergerantrag", "[Testdaten] Bank an der Musterstraße 10"),
+                ("Bür\u00adgerantrag", "[Testdaten] Bank an der Musterstraße 10"),
+                ("Antrag nach Paragraf 24 GO NRW", "[Testdaten] Bank an der Musterstraße 10"),
+                ("Mitteilung", "[Testdaten] Ein\u00adgabe: Bank an der Musterstraße 10"),
+                ("Mitteilung", "[Testdaten] Buergerantrag zur Musterstraße 10"),
+                ("Buergerbrief", "[Testdaten] Bank an der Musterstraße 10"),
+                ("Ｂｕｅｒｇｅｒａｎｔｒａｇ", "[Testdaten] Bank an der Musterstraße 10")]
+
+
+@pytest.mark.parametrize("art, titel", SCHREIBUNGEN)
+def test_eingabe_in_anderer_schreibung_in_titelmaske_und_volltextkette(art, titel):
+    """Prüfung r20: Titelmaske und Volltextkette (chat.aus_einwohnerschaft) gleichen wie die Punktregel über die
+    Vergleichstexte ab; eine Eingabe ohne Hauskoordinate zeigt ihre Hausnummer auch nicht im Titel, und eine Vorlage
+    über relatedPaper ebenso nicht."""
+    p = {"reference": "10/2026", "paperType": art, "name": titel}
+    assert geocode.punkt_ausschluss(p)   # ohne Hauskoordinate („eingabe“, „Buergerbrief“: „vorlagenart“)
+    assert chat.aus_einwohnerschaft(art, titel) and maske.titel_ohne_hausnummer(art, titel)
+    vorlagen = [("e", "10/2026", art, titel, None), ("s", "11/2026", "Stellungnahme der Verwaltung", titel, None)]
+    for privat_auch in (True, False):
+        assert set(maske.kette(vorlagen, (), [("s", "e")], privat_auch)) == {"e", "s"}
+    assert volltext.einwohner_kette([{"id": "e", "reference": "10/2026", "paperType": art, "name": titel},
+                                     {"id": "s", "reference": "11/2026", "paperType": "Mitteilung", "name": titel,
+                                      "relatedPaper": ["e"]}]) >= {"e", "s"}
+
+
+def test_eingabe_und_titelmaske_eine_regel():
+    """Jede Vorlage mit Grund „eingabe“ ist Ausgangspunkt der Titelmaske (eine Funktion geocode.eingabe); ohne
+    Hinweis auf eine Eingabe bleibt der Titel unverändert (erfundene Titel)."""
+    arten = ["Beschlussvorlage", "Mitteilung", "Anregungen und Beschwerden", "ANREGUNGEN UND BESCHWERDEN",
+             "Einwohnerfrage", "Einwohneranfrage nach § 39 Abs. 6", "Antrag nach § 3 der GeschO des Rates", None, "",
+             "Bürgerbrief", "Petition"]
+    titel = ["[Testdaten] Bank an der Musterstraße 10", "[Testdaten] Beschwerde zur Musterstraße 10",
+             "[Testdaten] Paragraph 24: Musterstraße 10", "[Testdaten] Neue Bänke", None]
+    for art in arten:
+        for t in titel:
+            if geocode.punkt_ausschluss({"reference": "10/2026", "paperType": art, "name": t}) == "eingabe":
+                assert chat.aus_einwohnerschaft(art, t), (art, t)
+    assert not chat.aus_einwohnerschaft("Mitteilung", "[Testdaten] Bank an der Musterstraße 10")
+    assert not chat.aus_einwohnerschaft("Beschlussvorlage", "[Testdaten] Bürgermeisterin besucht die Musterstraße 10")
+
+
+def _alt_aus_einwohnerschaft(paper_type, name):
+    """chat.aus_einwohnerschaft vor der Prüfung r20 (gelieferte Schreibung)."""
+    return bool(paper_type in chat.EINWOHNER or chat.EINWOHNER_TITEL.search(name or "")
+                or geocode.EINGABE.search(paper_type or "") or geocode.EINGABE.search(name or ""))
+
+
+def test_eingabe_in_anderer_schreibung_ende_zu_ende(testdaten, monkeypatch, capsys):
+    """Prüfung r20, Ende zu Ende mit erfundenen Vorlagen: „Buergerantrag“, eine Stellungnahme dazu über relatedPaper,
+    „Ein\u00adgabe:“ im Titel einer Mitteilung und „Paragraf 24“ in der Art zeigen ihre Hausnummer weder in
+    suche.json noch in vorlagen.geojson oder den Gebietsdateien; check meldet nichts. Urteilt die Titelmaske wieder
+    nach der gelieferten Schreibung, meldet check die Eingaben ohne Hauskoordinate außerhalb der Maske (Gegenrichtung)."""
+    strasse, nr, _, _ = _einfuegen()
+    t = f"[Testdaten] Sitzbänke an der {strasse} {nr[0]}"
+    faelle = [_vorlage("bu", "1697/2026", t, art="Buergerantrag"),
+              _vorlage("bu_s", "1698/2026", t, art="Stellungnahme der Verwaltung", relatedPaper=[_id("bu")]),
+              _vorlage("eg", "1701/2026", f"[Testdaten] Ein\u00adgabe: Sitzbänke an der {strasse} {nr[0]}",
+                       art="Mitteilung"),
+              _vorlage("pa", "1702/2026", t, art="Antrag nach Paragraf 24 GO NRW")]
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.writelines(json.dumps(p, ensure_ascii=False) + "\n" for p in faelle)
+    build.build()
+    export.export()
+    capsys.readouterr()
+    base, hnr = config.EXPORT / config.STADT, f"{strasse} {nr[0]}"
+    refs = {"1697/2026", "1698/2026", "1701/2026", "1702/2026"}
+    titel = [r[1] for r in json.loads((base / "suche.json").read_text())["rows"] if r[0] in refs]
+    titel += [f["properties"].get(k) for f in json.loads((base / "vorlagen.geojson").read_text())["features"]
+              if f["properties"]["reference"] in refs for k in ("name", "place")]
+    for d in check.GEBIETSDATEIEN:
+        for datei in (base / d).glob("*.json"):
+            titel += [p["name"] for p in json.loads(datei.read_text())["papers"] if p["reference"] in refs]
+    assert len([x for x in titel if x]) >= 4 and not [x for x in titel if x and hnr in x], titel
+    db = sqlite3.connect(config.DB)
+    assert refs <= maske.aus_db(db).refs
+    erg = check.datenschutz(db)
+    assert erg["befunde"] == [], erg["befunde"]
+    monkeypatch.setattr(chat, "aus_einwohnerschaft", _alt_aus_einwohnerschaft)   # Fehler: alte Schreibung
+    erg = check.datenschutz(db)
+    db.close()
+    b = [x for x in erg["befunde"] if "Eingabe oder Einwohneranfrage ohne Hauskoordinate" in x]
+    assert len(b) == 1 and b[0].endswith(": 3, z. B. 1697/2026, 1701/2026, 1702/2026"), erg["befunde"]
+
+
+def test_stichprobe_volltext_maskiert_und_geprueft(testdaten, capsys):
+    """Prüfung r20: Die Stichprobe Volltext (build._fulltext_sample, im Datenpaket) trug den vollen Titel und die
+    gefundenen Orte; die Volltextkette lässt Bauordnung und Naturschutz als Ausgangsvorlagen aus. export blendet die
+    Hausnummer in Titel und Orten aus wie in der Suche, check prüft beide Spalten."""
+    strasse, nr, _, _ = _einfuegen()
+    build.build()
+    export.export()
+    capsys.readouterr()
+    titel = f"[Testdaten] Sitzbänke an der {strasse} {nr[0]}"   # Vorlage „bau“ (1660/2026): Bauordnungsamt
+    pfad = config.EXPORT / "volltext" / "stichprobe_volltext.tsv"
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    kopf = ["nr", "drucksache", "titel", "link", "orte (Ortsteil)", "konfidenz", "teil",
+            "urteil (richtig/falsch/unklar)", "anmerkung"]
+    zeilen = [["1", "1660/2026", titel, "", f"{strasse} {nr[0]} (Erfunden)", "hoch", "Hauptteil", "", ""],
+              ["2", "1601/2026", titel, "", f"{strasse} {nr[0]} (Erfunden)", "hoch", "Hauptteil", "", ""]]
+    pfad.write_text("\n".join("\t".join(z) for z in [kopf, *zeilen]) + "\n", encoding="utf-8")
+    db = sqlite3.connect(config.DB)
+    befunde = check.datenschutz(db)["befunde"]
+    assert len(befunde) == 1 and "Hausnummern in Titeln oder Ortsnamen" in befunde[0] and befunde[0].endswith(
+        ": 1, z. B. 1660/2026"), befunde
+    pfad.write_text("\n".join("\t".join(z) for z in [kopf, zeilen[0][:4] + ["Erfunden"] + zeilen[0][5:]]) + "\n",
+                    encoding="utf-8")
+    assert check.datenschutz(db)["befunde"], "nur der Titel"
+    pfad.write_text("\n".join("\t".join(z) for z in [kopf, *zeilen]) + "\n", encoding="utf-8")
+    export.export_audits()
+    neu = [z.split("\t") for z in pfad.read_text(encoding="utf-8").splitlines()]
+    assert neu[0] == kopf and neu[2] == zeilen[1]                         # erlaubte Vorlage unverändert
+    assert neu[1][1] == "1660/2026" and hnr_aus(neu[1][2], strasse, nr) and hnr_aus(neu[1][4], strasse, nr)
+    erg = check.datenschutz(db)
+    db.close()
+    assert erg["befunde"] == [] and erg["untersucht"]["stichprobe_volltext"] == 2
+
+
+def hnr_aus(text, strasse, nr):
+    return f"{strasse} {maske.OHNE_NR}" in text and f"{strasse} {nr[0]}" not in text
