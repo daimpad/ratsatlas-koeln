@@ -35,7 +35,8 @@ ZAEHLUNG = {
     "hauskoordinaten": "Vorlagen mit Hauskoordinate in der Datenbank",
     "oparl_punkte": "Vorlagen mit genauem Punkt aus der Ortsangabe der Stadt (OParl) in der Datenbank",
     "suche": "Titel in suche.json untersucht",
-    "titel_geschuetzt": "davon aus Einwohnerschaft, Bauordnung oder Naturschutz (Hausnummer ausgeblendet)",
+    "titel_geschuetzt": "davon aus Einwohnerschaft, Bauordnung oder Naturschutz samt verbundenen Vorlagen (auch über "
+                        "relatedPaper) und derselben Drucksache (Hausnummer ausgeblendet)",
     "ortsnamen": "Ortsnamen in vorlagen.geojson und den Gebietsdateien untersucht",
     "geojson": "Punkte in vorlagen.geojson untersucht",
     "geojson_hauskoordinaten": "davon auf einer Hauskoordinate",
@@ -239,7 +240,8 @@ def erlaubnis(db, nicht_erkannt=None, erkannt=None):
     aus der Datenbank, Namen der beratenden Gremien, Name der federführenden Organisation (under_direction_of, wie
     maske.aus_db) und Vorlagenart in anderer Form (paper_type_other_form, gilt als nicht erkennbar), dazu die beim Aufbau
     ausgelassenen Vorlagen (skipped_paper, ohne Drucksachennummer also ohne Erlaubnis); daraus der Fixpunkt
-    geocode.sperrmenge über die Beziehungen (paper_relation und relatedPaper aus paper_related) und dieselbe Drucksache.
+    geocode.sperrmenge über die Beziehungen (geocode.beziehungen_db: paper_relation und relatedPaper aus paper_related,
+    dieselben wie für die Titelmaske maske.aus_db) und dieselbe Drucksache.
     Gibt es eine Drucksache mehrfach, muss jede die Erlaubnis haben. `nicht_erkannt`, `erkannt`: Counter, die je nicht
     erkannter bzw. erkannter Vorlagenart (geocode.vorlagenart_bezeichnung) die Vorlagen zählen (erkannt: Erlaubnis nach
     eigener Angabe, geocode.erkannte_arten). Liefert ({Vorlagen-ID: bool}, {Drucksache: bool}, {Vorlagen-ID:
@@ -265,10 +267,7 @@ def erlaubnis(db, nicht_erkannt=None, erkannt=None):
             erkannt[geocode.vorlagenart_bezeichnung(p)] += 1
         ref_of[pid] = ref
     start |= {r[0] for r in db.execute("SELECT id FROM skipped_paper")} if _hat_ausgelassene(db) else set()
-    beziehungen = db.execute("SELECT parent_id, child_id FROM paper_relation").fetchall()
-    if _hat_tabelle(db, "paper_related"):
-        beziehungen += db.execute("SELECT paper_id, related_id FROM paper_related").fetchall()
-    gesperrt = geocode.sperrmenge(start, beziehungen, ref_of)
+    gesperrt = geocode.sperrmenge(start, geocode.beziehungen_db(db), ref_of)
     je_id = {pid: pid not in gesperrt for pid in ref_of}
     for pid, ok in je_id.items():
         je_ref[ref_of[pid]] = je_ref.get(ref_of[pid], True) and ok
@@ -297,8 +296,10 @@ def datenschutz(db, base=None):
     config.EXPORT / config.STADT):
     1. Ortsangaben der OParl-API ohne Hausnummer (build.ohne_hausnummer; Postleitzahlen 5xxxx sind keine),
     2. Titel aus Einwohnerschaft, Bauordnung und Naturschutz ohne Hausnummer in suche.json, vorlagen.geojson und den
-       Gebietsdateien (maske.py; Entscheidung des Auftraggebers 24.10.2026: überall ausblenden), ebenso ihre Ortsnamen
-       (`place` in vorlagen.geojson, `locations[].name` in den Gebietsdateien),
+       Gebietsdateien (maske.aus_db, samt verbundenen Vorlagen auch über relatedPaper und derselben Drucksache;
+       Entscheidung des Auftraggebers 24.10.2026: überall ausblenden), ebenso ihre Ortsnamen (`place` in
+       vorlagen.geojson, `locations[].name` in den Gebietsdateien); keine Drucksache der Titelmaske mit Erlaubnis für
+       Hauskoordinaten (Titelmaske und Hauskoordinaten folgen denselben Beziehungen, Runde 20),
     3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
        Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
@@ -371,6 +372,14 @@ def datenschutz(db, base=None):
 
     # 2. und 3b. Export: Titel und Punkte; unbekannte Drucksachen gelten als nicht erlaubt
     m = maske.aus_db(db)
+    # Titelmaske und Menge ohne Hauskoordinate folgen denselben Beziehungen (geocode.beziehungen_db, geocode.sperrmenge),
+    # jede Ausgangsvorlage der Maske ist ohne Erlaubnis (geocode.punkt_ausschluss): eine Drucksache der Maske mit
+    # Erlaubnis heißt, dass Maske und Hauskoordinaten nicht mehr nach denselben Regeln urteilen
+    widerspruch = sorted(r for r in m.refs if je_ref.get(r))
+    if widerspruch:
+        befunde.append(f"Datenschutz: Titel ohne Hausnummer (maske.py), aber Erlaubnis für Hauskoordinaten "
+                       f"(check.erlaubnis; Titelmaske und Hauskoordinaten urteilen verschieden): {len(widerspruch)}, "
+                       f"z. B. {', '.join(widerspruch[:5])}")
     offen = set()
     suche = lesen("suche.json")
     if suche is not None:

@@ -4,7 +4,8 @@ und dieselbe Drucksache, bis nichts mehr hinzukommt; keine vererbte Hauskoordina
 (build._inherited), kein genauer Punkt aus OParl-Ortsangaben gesperrter Vorlagen (Stufe A), keine Hauskoordinate neben
 einem Titel, den maske.py ohne Hausnummer zeigt (Bauordnung, Naturschutz, Einwohnerschaft), und die Prüfung meldet
 OParl-Punkte und Ortsnamen mit Hausnummer. Prüfung r19b: Fixpunkt in linearer Zeit, Straßen, die nur aus der
-Ortsangabe einer anderen Vorlage bekannt sind, Ortsangaben ausgelassener Vorlagen und gelöschte Vorlagen. Erfundene
+Ortsangabe einer anderen Vorlage bekannt sind, Ortsangaben ausgelassener Vorlagen und gelöschte Vorlagen. Runde 20:
+Titelmaske und Volltextkette (maske.kette) folgen denselben Beziehungen samt relatedPaper über dieselbe Funktion. Erfundene
 Vorlagen (tools/testdaten.py und eingefügte Vorlagen in den temporären Pfaden der Fixture `oparl`); keine Anfragen an
 die Stadt."""
 import importlib.util
@@ -19,7 +20,7 @@ from pathlib import Path
 import pytest
 from shapely.geometry import Point
 
-from pipeline import build, check, config, export, geocode, kontext
+from pipeline import build, check, config, export, geocode, kontext, maske, volltext
 
 ROOT = Path(__file__).resolve().parents[1]
 B = "https://example.invalid/oparl"
@@ -109,6 +110,163 @@ def test_sperrmenge_wie_runden_und_linear():
     assert set(weg) == {f"k{i}" for i in range(n)}
     assert [weg[f"k{i}"] for i in range(5)] == ["start", "beziehung", "drucksache", "beziehung", "drucksache"]
     assert dauer < 2, dauer
+
+
+# --- Titelmaske und Volltextkette (maske.kette, Runde 20) ------------------------------------------------------------
+
+EINWOHNERANFRAGE = "Einwohneranfrage nach § 39 Abs. 6"
+MUSTER = "Musterstraße"   # erfundene Straße für die Maske (strassen=[MUSTER])
+
+
+def _titel(n):
+    return f"[Testdaten] Bank an der {MUSTER} {n}"
+
+
+# (ID, Drucksache, Vorlagenart, Titel, federführende Organisation) wie in maske.kette
+KETTE_VORLAGEN = [
+    # relatedPaper von der Eingabe zur Stellungnahme
+    ("e1", "2001/2026", EINGABE, "[Testdaten] Eingabe", None),
+    ("s1", "2002/2026", "Stellungnahme der Verwaltung", _titel(1), None),
+    # relatedPaper von der Stellungnahme zur Einwohneranfrage (andere Richtung)
+    ("s2", "2003/2026", "Stellungnahme der Verwaltung", _titel(2), None),
+    ("a2", "2004/2026", EINWOHNERANFRAGE, "[Testdaten] Einwohneranfrage", None),
+    # gemischt: Eingabe –untergeordnet– m3 =Drucksache= k3 –relatedPaper– r3 –übergeordnet– u3 =Drucksache= d3
+    ("e3", "2010/2026", EINGABE, "[Testdaten] Eingabe", None),
+    ("m3", "2011/2026", "Mitteilung", _titel(3), None),
+    ("k3", "2011/2026", "Mitteilung", _titel(3), None),
+    ("r3", "2012/2026", "Beschlussvorlage", _titel(4), None),
+    ("u3", "2013/2026", "Beschlussvorlage", _titel(5), None),
+    ("d3", "2013/2026", "Beschlussvorlage", _titel(5), None),
+    # relatedPaper einer ausgelassenen Vorlage (x4, ohne Drucksachennummer)
+    ("s4", "2020/2026", "Mitteilung", _titel(6), None),
+    # Bauordnung federführend: Titelmaske ja, Volltextkette nein (wie bisher)
+    ("b5", "2030/2026", "Beschlussvorlage", _titel(7), "63 Bauaufsicht"),
+    ("n5", "2031/2026", "Mitteilung", _titel(8), None),
+    # ohne Verbindung zu einer Eingabe: nie in der Maske
+    ("f6", "2040/2026", "Beschlussvorlage", _titel(9), None),
+    ("g6", "2041/2026", "Beschlussvorlage", _titel(10), None),
+    ("h6", "2042/2026", "Antrag nach § 3 der GeschO des Rates", _titel(11), None),
+    ("j6", "2043/2026", "Mitteilung", _titel(12), None),
+]
+KETTE_REL = [("e3", "m3"), ("u3", "r3"), ("j6", "unbekannt")]
+KETTE_RELATED = [("e1", "s1"), ("s2", "a2"), ("k3", "r3"), ("x4", "s4"), ("b5", "n5"), ("g6", "h6")]
+NUR_RELATED = {"s1", "s2", "r3", "u3", "d3", "s4", "n5"}
+
+
+def test_kette_folgt_related_in_beiden_richtungen():
+    """Titelmaske: relatedPaper in beiden Richtungen, Ketten aus untergeordnet, relatedPaper und derselben Drucksache,
+    ausgelassene Vorlagen als Ausgangspunkt; keine Vorlage ohne Verbindung zu einer Eingabe (auch nicht über eine
+    Kennung ohne Vorlage). Volltextkette ohne Bauordnung als Ausgangspunkt. Beides ist Teil der Menge ohne
+    Hauskoordinate (geocode.sperrmenge mit denselben Beziehungen)."""
+    paare = KETTE_REL + KETTE_RELATED
+    weg = maske.kette(KETTE_VORLAGEN, ["x4"], paare)
+    erwartet = {"e1", "s1", "s2", "a2", "e3", "m3", "k3", "r3", "u3", "d3", "x4", "s4", "b5", "n5"}
+    assert set(weg) == erwartet
+    assert (weg["s1"], weg["a2"], weg["k3"], weg["r3"], weg["d3"], weg["x4"]) == (
+        "beziehung", "start", "drucksache", "beziehung", "drucksache", "start")
+    # ohne relatedPaper (Stand vor Runde 20) fehlen genau die Vorlagen, die nur darüber verbunden sind
+    assert erwartet - set(maske.kette(KETTE_VORLAGEN, ["x4"], KETTE_REL)) == NUR_RELATED
+    # Volltextkette: ohne Bauordnung und Naturschutz als Ausgangsvorlagen, sonst gleich
+    assert set(maske.kette(KETTE_VORLAGEN, ["x4"], paare, privat_auch=False)) == erwartet - {"b5", "n5"}
+    # Teil der Menge ohne Hauskoordinate: gleiche Beziehungen, Startmenge nach geocode.punkt_ausschluss
+    start = {i for i, ref, art, titel, amt in KETTE_VORLAGEN
+             if geocode.punkt_ausschluss({"reference": ref, "paperType": art, "name": titel}, (), amt)} | {"x4"}
+    gesperrt = geocode.sperrmenge(start, paare, {i: ref for i, ref, *_ in KETTE_VORLAGEN})
+    assert set(weg) <= set(gesperrt)
+    # Maske wie in maske.aus_db: Hausnummer nur in den Titeln der Kette ausgeblendet
+    refs = {ref for i, ref, *_ in KETTE_VORLAGEN if i in weg}
+    m = maske.Maske(refs, strassen=[MUSTER])
+    for i, ref, _, titel, _ in KETTE_VORLAGEN:
+        if i in ("s1", "s2", "r3", "u3", "s4", "n5"):
+            assert m(titel, ref) == f"[Testdaten] Bank an der {MUSTER} {maske.OHNE_NR}", i
+        if i in ("f6", "g6", "h6", "j6"):
+            assert m(titel, ref) == titel, i
+
+
+def test_volltextkette_folgt_related():
+    """volltext.einwohner_kette auf Rohdaten (build.einlesen): relatedPaper in beiden Richtungen, auch bei ausgelassenen
+    Vorlagen; gleich maske.kette ohne Bauordnung mit den Beziehungen aus geocode.beziehungen."""
+    felder = {"e1": {"relatedPaper": ["s1"]}, "s2": {"relatedPaper": ["a2"]}, "e3": {"subordinatedPaper": ["m3"]},
+              "k3": {"relatedPaper": ["r3"]}, "r3": {"superordinatedPaper": ["u3"]}, "b5": {"relatedPaper": ["n5"]},
+              "g6": {"relatedPaper": ["h6"]}, "j6": {"subordinatedPaper": ["unbekannt"]}}
+    papers = [{"id": i, "reference": ref, "paperType": art, "name": titel, **felder.get(i, {})}
+              for i, ref, art, titel, _ in KETTE_VORLAGEN]
+    ausgelassen = [{"id": "x4", "subordinatedPaper": [], "superordinatedPaper": [], "relatedPaper": ["s4"]}]
+    rel, related = geocode.beziehungen([*papers, *ausgelassen])
+    assert sorted(rel) == sorted(KETTE_REL) and sorted(related) == sorted(KETTE_RELATED)
+    kette = volltext.einwohner_kette(papers, ausgelassen)
+    assert kette == {"e1", "s1", "s2", "a2", "e3", "m3", "k3", "r3", "u3", "d3", "s4"}
+    assert kette == volltext.einwohner_kette(papers, ausgelassen, rel + related)
+    # ohne relatedPaper (übergebene Paare wie vor Runde 20) fehlen die Vorlagen, die nur darüber verbunden sind
+    assert kette - volltext.einwohner_kette(papers, ausgelassen, rel) == NUR_RELATED - {"n5"}
+
+
+def _kette_db(mit_related=True):
+    """Datenbank mit dem Schema von build und den Fällen aus KETTE_VORLAGEN (maske.aus_db, check.erlaubnis)."""
+    db = sqlite3.connect(":memory:")
+    db.executescript(build.SCHEMA)
+    db.execute("INSERT INTO organization (id, name, org_type) VALUES ('amt63', '63 Bauaufsicht', 'Verwaltungsbereich')")
+    db.executemany("INSERT INTO paper (id, reference, name, paper_type, under_direction_of) VALUES (?,?,?,?,?)",
+                   [(i, ref, titel, art, "amt63" if amt else None) for i, ref, art, titel, amt in KETTE_VORLAGEN])
+    db.executemany("INSERT INTO paper_relation (parent_id, child_id) VALUES (?,?)", KETTE_REL)
+    db.executemany("INSERT INTO paper_related (paper_id, related_id) VALUES (?,?)", KETTE_RELATED)
+    db.execute("INSERT INTO skipped_paper (id, reason) VALUES ('x4', ?)", (build.OHNE_NUMMER,))
+    if not mit_related:   # Datenbank von vor Runde 19b ohne paper_related
+        db.execute("DROP TABLE paper_related")
+    return db
+
+
+def test_titelmaske_aus_db_wie_hauskoordinaten():
+    """maske.aus_db liest dieselben Beziehungen wie check.erlaubnis (geocode.beziehungen_db, samt paper_related): jede
+    Drucksache der Maske ist ohne Erlaubnis für Hauskoordinaten; eine ältere Datenbank ohne paper_related bleibt
+    lesbar (dann ohne relatedPaper, in Maske und Prüfung gleich)."""
+    db = _kette_db()
+    m = maske.aus_db(db, strassen=[MUSTER])
+    refs = {ref for i, ref, *_ in KETTE_VORLAGEN if i not in ("f6", "g6", "h6", "j6")}
+    assert m.refs == refs
+    assert m(_titel(1), "2002/2026") == f"[Testdaten] Bank an der {MUSTER} {maske.OHNE_NR}"
+    assert m(_titel(9), "2040/2026") == _titel(9)
+    je_ref = check.erlaubnis(db)[1]
+    assert not [r for r in m.refs if je_ref[r]]
+    assert {r for r, ok in je_ref.items() if ok} >= {"2040/2026", "2041/2026", "2042/2026"}
+    alt = _kette_db(mit_related=False)
+    nur_related = {ref for i, ref, *_ in KETTE_VORLAGEN if i in NUR_RELATED}
+    assert maske.aus_db(alt, strassen=[MUSTER]).refs == refs - nur_related
+    assert not [r for r in maske.aus_db(alt).refs if check.erlaubnis(alt)[1][r]]
+
+
+def test_kette_linear_grosser_bestand():
+    """Titelmaske und Volltextkette bleiben bei einem großen Bestand schnell (geocode.sperrmenge, linear): eine Kette aus
+    4000 Vorlagen, die abwechselnd über relatedPaper (in beiden Richtungen), untergeordnet und dieselbe Drucksache läuft,
+    neben 135 000 weiteren Vorlagen, von denen keine in die Kette gerät."""
+    n_frei, n = 135_000, 4000
+    papers = [{"id": f"h{i}", "reference": f"{i}/2020", "paperType": "Beschlussvorlage", "name": _titel(i),
+               "subordinatedPaper": [f"h{i + 1}"] if i % 3 == 0 else [],
+               "relatedPaper": [f"h{i + 2}"] if i % 5 == 0 else []} for i in range(n_frei)]
+    kette = [{"id": f"k{i}", "reference": f"K{(i + 1) // 2}/2026", "paperType": "Mitteilung", "name": _titel(i)}
+             for i in range(n)]
+    kette[0].update(paperType=EINGABE)
+    # k0 –relatedPaper→ k1 =Drucksache= k2 ←relatedPaper– k3 =Drucksache= k4 –untergeordnet– k5 =Drucksache= k6 …
+    for i in range(0, n - 1, 2):
+        art = (i // 2) % 3
+        if art == 0:
+            kette[i]["relatedPaper"] = [kette[i + 1]["id"]]
+        elif art == 1:
+            kette[i + 1]["relatedPaper"] = [kette[i]["id"]]
+        else:
+            kette[i]["subordinatedPaper"] = [kette[i + 1]["id"]]
+    alle = papers + kette
+    rel, related = geocode.beziehungen(alle)
+    vorlagen = [(p["id"], p["reference"], p["paperType"], p["name"], None) for p in alle]
+    t = time.perf_counter()
+    weg = maske.kette(vorlagen, [], rel + related)
+    dauer_maske = time.perf_counter() - t
+    t = time.perf_counter()
+    voll = volltext.einwohner_kette(alle)
+    dauer_voll = time.perf_counter() - t
+    assert set(weg) == voll == {f"k{i}" for i in range(n)}
+    # gemessen etwa 1 s je Aufruf (davon das meiste für die Ausgangsvorlagen); quadratisch wären es Minuten
+    assert dauer_maske < 6 and dauer_voll < 6, (dauer_maske, dauer_voll)
 
 
 # --- build._inherited ----------------------------------------------------------------------------------------------
@@ -424,6 +582,10 @@ def test_fixpunkt_aufbau_und_pruefung(testdaten, capsys):
     assert ("„Einwohner“ im Titel einer erkannten Vorlage (Grund Titel ohne Hausnummer, nicht Bauordnung oder "
             "Naturschutz; Entscheidung offen): 1 Vorlagen; ohne Hauskoordinate nur darüber: 1 Vorlagen\n") in aus_build
     assert "1 Vorlagen als gelöscht gemeldet (OParl deleted) ausgelassen\n" in aus_build
+    # Runde 20: Titelmaske folgt relatedPaper (s3, s3b, s5); das Log nennt nur Zahlen
+    zeile = next(z for z in aus_build.splitlines() if z.startswith("Titelmaske (maske.py"))
+    assert zeile.endswith("; nur über relatedPaper: 3 Vorlagen, davon 3 mit gekürztem Titel"), zeile
+    assert strasse not in zeile and "[Testdaten]" not in zeile
     assert "Vorlagen als gelöscht gemeldet (OParl deleted) (beim Aufbau ausgelassen): 1\n" in aus_check
     # keine Hauskoordinate und kein genauer OParl-Punkt einer gesperrten Vorlage in einer Exportdatei (Drucksachen der
     # eingefügten Fälle; die Testdaten nutzen andere Nummern)
@@ -439,10 +601,19 @@ def test_fixpunkt_aufbau_und_pruefung(testdaten, capsys):
     assert {p["reference"] for p in geo} >= gesperrt - {"1611/2026", "1620/2026", "1630/2026", "1631/2026",
                                                         "1640/2026", "1643/2026"}   # verortete gesperrte Fälle
     assert not [p for p in geo if p["reference"] in gesperrt and p["method"] in (PUNKT, "oparl_location")]
-    # Titel und Ortsname ohne Hausnummer bei Bauordnung und „Einwohner“ im Titel
+    # Titel und Ortsname ohne Hausnummer bei Bauordnung und „Einwohner“ im Titel, ebenso bei Vorlagen, die nur über
+    # relatedPaper mit einer Eingabe verbunden sind (Runde 20), auch in der Suche; die Kontrolle behält ihre Hausnummer
+    nur_related = {"1641/2026", "1642/2026", "1650/2026"}
+    geprueft = set()
     for p in geo:
-        if p["reference"] in ("1660/2026", "1661/2026"):
+        if p["reference"] in {"1660/2026", "1661/2026"} | nur_related:
             assert f"{strasse} {nr[0]}" not in p["name"] + p["place"], p
+            geprueft.add(p["reference"])
+    assert geprueft >= nur_related
+    suche = {r[0]: r[1] for r in json.loads((config.EXPORT / config.STADT / "suche.json").read_text())["rows"]}
+    for ref in nur_related:
+        assert suche[ref] == f"[Testdaten] Sitzbänke an der {strasse} {maske.OHNE_NR}", (ref, suche[ref])
+    assert suche["1601/2026"] == f"[Testdaten] Sitzbänke an der {strasse} {nr[0]}"
 
 
 def test_pruefung_meldet_fehler_im_aufbau(testdaten, monkeypatch, capsys):
@@ -474,6 +645,33 @@ def test_pruefung_meldet_fehler_im_aufbau(testdaten, monkeypatch, capsys):
         assert len(b) == 1 and f": {len(verstoss)}, z. B. {', '.join(sorted(verstoss))}" in b[0], (name, erg)
         if name == "punkt_ausschluss":   # Ortsname mit Hausnummer neben dem Titel ohne Hausnummer
             assert any("Titeln oder Ortsnamen" in x and "1660/2026, 1661/2026" in x for x in erg["befunde"]), erg
+
+
+def test_pruefung_titelmaske_mit_relatedpaper(testdaten, monkeypatch, capsys):
+    """Runde 20: check urteilt über die Titel wie der Export mit relatedPaper. Folgt die Maske beim Export nur
+    paper_relation (Stand vor Runde 20), meldet check die Hausnummern in den Titeln der Vorlagen, die nur über
+    relatedPaper mit einer Eingabe verbunden sind. Urteilt die Prüfung der Hauskoordinaten über den Grund „Titel ohne
+    Hausnummer“ anders als die Maske, meldet check die Drucksachen der Maske mit Erlaubnis."""
+    _einfuegen()
+    build.build()
+    with monkeypatch.context() as mp:
+        mp.setattr(geocode, "beziehungen_db",
+                   lambda db: db.execute("SELECT parent_id, child_id FROM paper_relation").fetchall())
+        export.export()
+    capsys.readouterr()
+    db = sqlite3.connect(config.DB)
+    erg = check.datenschutz(db)
+    b = [x for x in erg["befunde"] if "Hausnummern in Titeln oder Ortsnamen" in x]
+    assert len(b) == 1 and b[0].endswith(": 3, z. B. 1641/2026, 1642/2026, 1650/2026"), erg["befunde"]
+    assert not [x for x in erg["befunde"] if "aber Erlaubnis" in x], erg["befunde"]
+    echt = geocode.punkt_ausschluss
+    with monkeypatch.context() as mp:   # Fehler: Prüfung ohne den Grund „Titel ohne Hausnummer“
+        mp.setattr(geocode, "punkt_ausschluss",
+                   lambda p, g=(), amt=None: (lambda r: None if r == "maske" else r)(echt(p, g, amt)))
+        erg = check.datenschutz(db)
+    db.close()
+    b = [x for x in erg["befunde"] if "Titel ohne Hausnummer (maske.py), aber Erlaubnis für Hauskoordinaten" in x]
+    assert len(b) == 1 and b[0].endswith(": 2, z. B. 1660/2026, 1661/2026"), erg["befunde"]
 
 
 def test_pruefung_meldet_stadtpunkt_bei_gesperrter_vorlage(testdaten, monkeypatch, capsys):

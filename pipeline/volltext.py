@@ -20,7 +20,7 @@ import json
 import re
 from collections import Counter
 
-from . import config
+from . import config, geocode, maske
 from .geocode import GENERIC_NAMES
 
 MAX_ORTSTEILE = 5
@@ -37,24 +37,22 @@ def allowed(paper_type):
     return not (paper_type or "").startswith(OHNE_VOLLTEXT)
 
 
-def einwohner_kette(papers, ausgelassen=()):
-    """Ids der Vorlagen aus der Einwohnerschaft und aller mit ihnen verbundenen Vorlagen (OParl-Rohdaten; wie
-    chat.einwohner): Stellungnahmen und Mitteilungen zu einem Bürgerantrag nennen oft dieselbe Anschrift und werden
-    ebenfalls nicht aus dem Volltext verortet (Code-Prüfung 24.10.2026). `ausgelassen`: Vorlagen ohne Drucksachennummer
-    ({id, subordinatedPaper, superordinatedPaper}, build.einlesen); sie gelten wie Eingaben (Art und Titel unbekannt),
-    damit eine Eingabe ohne Nummer ihre verbundenen Vorlagen weiter sperrt."""
-    from . import chat
-    ref = {p["id"]: p.get("reference") for p in papers}
-    ref.update({a["id"]: a["id"] for a in ausgelassen})   # ohne Drucksachennummer: die Kennung als Schlüssel
-    rel = lambda p, k: [{"reference": ref[x]} for x in (p.get(k) or []) if x in ref]
-    eintraege = [{"reference": p.get("reference"), "paper_type": p.get("paperType"), "name": p.get("name"),
-                  "superordinated": rel(p, "superordinatedPaper"), "subordinated": rel(p, "subordinatedPaper")}
-                 for p in papers]
-    eintraege += [{"reference": a["id"], "paper_type": None, "name": None, "ausgelassen": True,
-                   "superordinated": rel(a, "superordinatedPaper"), "subordinated": rel(a, "subordinatedPaper")}
-                  for a in ausgelassen]
-    kette = set(chat.einwohner(eintraege, auch=lambda p: p.get("ausgelassen")))
-    return {p["id"] for p in papers if p.get("reference") in kette}
+def einwohner_kette(papers, ausgelassen=(), beziehungen=None):
+    """Volltextkette: Ids der Vorlagen aus der Einwohnerschaft und aller mit ihnen verbundenen Vorlagen (OParl-Rohdaten
+    nach build.einlesen): Stellungnahmen und Mitteilungen zu einem Bürgerantrag nennen oft dieselbe Anschrift und werden
+    ebenfalls nicht aus dem Volltext verortet (Code-Prüfung 24.10.2026). Dieselbe Funktion wie die Titelmaske
+    (maske.kette, ohne Bauordnung und Naturschutz als Ausgangsvorlagen) und dieselben Beziehungen wie für die
+    Hauskoordinaten: über- und untergeordnet und relatedPaper in beiden Richtungen, dieselbe Drucksache (Runde 20).
+    `ausgelassen`: Vorlagen ohne Drucksachennummer ({id, subordinatedPaper, superordinatedPaper, relatedPaper},
+    build.einlesen); sie gelten wie Eingaben (Art und Titel unbekannt), damit eine Eingabe ohne Nummer ihre verbundenen
+    Vorlagen weiter sperrt. `beziehungen`: Paare wie in build (geocode.beziehungen); ohne Angabe aus `papers` und
+    `ausgelassen`."""
+    if beziehungen is None:
+        rel, related = geocode.beziehungen([*papers, *ausgelassen])
+        beziehungen = rel + related
+    weg = maske.kette([(p["id"], p.get("reference"), p.get("paperType"), p.get("name"), None) for p in papers],
+                      [a["id"] for a in ausgelassen], beziehungen, privat_auch=False)
+    return {p["id"] for p in papers if p["id"] in weg}
 
 
 # Titel ohne gemeinsamen Ort: Sammellisten nichtöffentlicher Punkte (oft Personalfragen) und Vorlagen zu Gesellschaften,

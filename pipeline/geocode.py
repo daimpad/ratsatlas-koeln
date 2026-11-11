@@ -563,7 +563,8 @@ def sperrmenge(start, beziehungen, drucksachen):
     werden einmal aufgestellt; eine Schicht nimmt zuerst alles hinzu, was über Beziehungen erreichbar ist, dann bilden
     die noch fehlenden Vorlagen mit der Drucksache einer Vorlage der Schicht die nächste Schicht (jede Drucksache
     einmal). Liefert {ID: Weg} mit Weg „start“, „beziehung“ oder „drucksache“ (wodurch die Vorlage hinzukam; WEG),
-    gleich dem früheren Ablauf in Runden."""
+    gleich dem früheren Ablauf in Runden. Mit anderer Startmenge und denselben Beziehungen (beziehungen,
+    beziehungen_db) rechnet maske.kette die Titelmaske und die Volltextkette (Runde 20)."""
     nachbarn = {}
     for a, b in beziehungen:
         nachbarn.setdefault(a, []).append(b)
@@ -592,6 +593,31 @@ def sperrmenge(start, beziehungen, drucksachen):
                     naechste.append(n)
         schicht = naechste
     return weg
+
+
+def beziehungen(papers):
+    """Beziehungen der Vorlagen für sperrmenge aus den Rohdaten (nach build.einlesen; auch ausgelassene Vorlagen, die nur
+    Kennung und Beziehungen tragen): ([(übergeordnet, untergeordnet)] aus `subordinatedPaper` und `superordinatedPaper`,
+    [(Vorlage, verwandte Vorlage)] aus `relatedPaper`), je wie geliefert. build schreibt sie in paper_relation und
+    paper_related und rechnet mit beiden Listen; volltext.einwohner_kette ohne Datenbank ebenso (Runde 20)."""
+    rel, related = [], []
+    for p in papers:
+        rel += ([(p["id"], c) for c in p.get("subordinatedPaper") or []]
+                + [(o, p["id"]) for o in p.get("superordinatedPaper") or []])
+        related += [(p["id"], r) for r in p.get("relatedPaper") or []]
+    return rel, related
+
+
+def beziehungen_db(db):
+    """Dieselben Beziehungen aus der Datenbank als eine Liste von Paaren: paper_relation und, wo vorhanden (ältere
+    Datenbanken ohne die Tabelle), relatedPaper aus paper_related. Eine Menge für check.erlaubnis (Hauskoordinaten) und
+    maske.aus_db (Titelmaske), wie beim Aufbau (Runde 20: vorher folgte die Titelmaske nur paper_relation)."""
+    def tabelle(name):
+        return db.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", (name,)).fetchone()
+    out = db.execute("SELECT parent_id, child_id FROM paper_relation").fetchall() if tabelle("paper_relation") else []
+    if tabelle("paper_related"):
+        out += db.execute("SELECT paper_id, related_id FROM paper_related").fetchall()
+    return out
 
 
 def plan_numbers(title):
