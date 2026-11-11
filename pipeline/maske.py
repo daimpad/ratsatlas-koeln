@@ -22,7 +22,16 @@ mit einer unabhängig gebauten Probe (Maske.offen, _Probe).
 Ergänzt in der Prüfung r20a (Fix): „§“, „€“, „%“ und „*“ trennen Straße und Nummer nicht („Straße (§ 24 GO NRW)“ bleibt,
 in der Probe vorher bis zu vier Trennzeichen und ein Befund, den die Maske nicht beheben konnte); Listen auch mit „bzw.“,
 „oder“, „sowie“, „&“, „+“ und jedem Binde- oder Gedankenstrich; „Hausnummer:“, „Haus-Nummer“, „Hs.-Nr.“, „HNr.“,
-„H.-Nr.“ und hinter der Straße „Nrn.“; keine Nummer vor „.“ oder „:“ mit Ziffer (Datum, Tausenderpunkt, Uhrzeit)."""
+„H.-Nr.“ und hinter der Straße „Nrn.“; keine Nummer vor „.“ oder „:“ mit Ziffer (Datum, Tausenderpunkt, Uhrzeit).
+Ergänzt in der Prüfung r20a (zweite Korrektur): Was die Probe meldet, blendet die Maske selbst aus (Sicherheitsnetz in
+Maske.__call__: nach den Mustern die Ziffernfolgen, die die Probe findet, bis nichts mehr übrig ist; offen heißt „die
+Maske würde den Text noch ändern“). Vorher konnte check einen Titel melden, den die Maske nicht beheben konnte
+(„(Musterstraße 12) – 2. Nachtrag“), und hätte die Veröffentlichung angehalten. Dazu „u“ und „u.“ in Listen („7 u. 9“;
+vorher las die Maske das „u“ als Zusatz der Hausnummer), „;“ und „Nr.“ vor jeder weiteren Nummer („Nr. 23 und Nr. 25“),
+Lagewörter zwischen Straße und Nummer („vor Nr. 300“, „in Höhe Haus 12“, „zwischen 300 und 320“), ein bloßes „Nr. 12“
+ohne folgendes „/“, Mehrzahl und Leerzeichen im Wort („Haus-Nrn.“, „Haus Nummer“, „Häuser“, hinter der Straße „Hs.“) und
+Straßennamen mit „St.“, „St. “ oder „Sankt“ und mit Leerzeichen statt Bindestrich („An St. Katharinen“, „Bertha Benz
+Karree“)."""
 import json
 import re
 import unicodedata
@@ -48,35 +57,90 @@ _L = r"[^\W\d_]"   # Buchstabe (wie \p{L})
 # („12 bzw. 14“, „12 — 14“, „12‑14“ mit geschütztem Bindestrich; vorher blieb die zweite Nummer stehen). Keine Nummer
 # vor „.“ oder „:“ mit Ziffer („Musterweg, 12.03.2026“, „1.000 EUR“, „12:30 Uhr“; Prüfung r20a)
 _ZIFFERN = r"\d{1,4}(?![.:]\d)"
-LISTE = r"(?:[-‐‑‒–—−/,&+]|bis|und|u\.|bzw\.?|oder|sowie)"
-NR = (rf"{_ZIFFERN}(?:\s?[a-zA-Z](?!{_L}))?(?:\s*{LISTE}\s*{_ZIFFERN}(?:\s?[a-zA-Z](?!{_L}))?)*(?!\d)")
+# Buchstabe der Hausnummer („12a“, „12 b“), aber nicht das „u“ einer Liste vor einer Ziffer („7 u. 9“, „53 u 55“; vorher
+# las die Maske „ u“ als Zusatz, und die zweite Nummer blieb stehen; Prüfung r20a, zweite Korrektur)
+_ZUSATZ = rf"(?:\s?(?!u\.?\s*\d)[a-zA-Z](?!{_L}))?"
+LISTE = rf"(?:[-‐‑‒–—−/,;&+]|bis|und|u\.?(?!{_L})|bzw\.?|oder|sowie)"
+# Wörter für die Hausnummer, auch in der Mehrzahl und mit Leerzeichen („Haus-Nrn.“, „Hausnrn.“, „Haus Nummer“, „Häuser“)
+_HNR = r"haus(?:-|\s+)?(?:nummern?|nrn?)|hs\.?-?nrn?|h\.?-?nrn?|häusern?"
+# vor der Nummer hinter einer Straße und vor jeder weiteren Nummer einer Liste („Nr. 23 und Nr. 25“, „12 bis Nr. 20“)
+_NRW = rf"(?:{_HNR}|nrn?|no|nummer|haus|hs)(?!{_L})\.?:?"
+NR = rf"{_ZIFFERN}{_ZUSATZ}(?:\s*{LISTE}\s*(?:{_NRW}\s*)?{_ZIFFERN}{_ZUSATZ})*(?!\d)"
 SUFFIX = (rf"(?:{_L}|[.-])*(?:straße|strasse|str(?:\.|(?!{_L}))|weg|platz|gasse|allee|ring|ufer|damm|pfad|chaussee|hof"
           r"|markt|graben|berg|feld)")
 
 
 # „Hausnummer 82“, „Haus-Nr. 264“, „Haus Nr. 5“, „Hausnummern 36 bis 40“, „(neben Haus-Nr.) 68“ (wie WORT in
 # site/chat/tools.js); eine schließende Klammer bleibt stehen. Auch „Hausnummer: 8“, „Haus-Nummer 12“, „Hs.-Nr. 12“,
-# „HNr. 12“ und „H.-Nr. 12“ (Prüfung r20a)
-WORT = re.compile(rf"\b(?:haus-?nummern?|haus(?:-|\s+)?nr|hs\.?-?nr|h\.?-?nr)\.?:?\s*(\))?\s*{NR}", re.I)
+# „HNr. 12“ und „H.-Nr. 12“ (Prüfung r20a), „Haus-Nrn.“, „Haus Nummer“, „Häuser 300 bis 304“ (zweite Korrektur)
+WORT = re.compile(rf"\b(?:{_HNR})(?!{_L})\.?:?\s*(\))?\s*{NR}", re.I)
+# bloßes „Nr. 12“ ohne Straße davor („Behindertenparkplatz vor Nr. 12 der Musterstraße“), aber nicht vor „/“
+# (Drucksache „Nr. 1234/2026“, Bebauungsplan „Nr. 6158/03“; Prüfung r20a, zweite Korrektur)
+NUR_NR = re.compile(rf"\b(?:nrn?|no)(?!{_L})\.?:?\s*(?!\d{{1,4}}{_ZUSATZ}\s*/){NR}", re.I)
 
 
 # zwischen Straße und Nummer: bis zu drei Zeichen außer Buchstaben und Ziffern (Leerzeichen, Komma, Klammer, „#“, „№“
 # nach NFKC „No“), oder keines, wenn die Straße nicht auf eine Ziffer endet („Str.12“, „Straße12“; nicht „L 84“ + „5“);
-# danach wahlweise „Nr.“, „Nrn.“, „No.“, „Nummer“ oder „Haus“ (fallen mit der Nummer weg). „§“, „€“, „%“ und „*“ trennen
-# nicht: „Straße (§ 24 GO NRW)“, „Straße § 24 GO“, „Neumarkt € 1.000“ bleiben (Prüfung r20a; die Probe zählt gleich)
+# danach wahlweise „Nr.“, „Nrn.“, „No.“, „Nummer“, „Haus“, „Hs.“ oder ein Wort aus _HNR (fallen mit der Nummer weg).
+# „§“, „€“, „%“ und „*“ trennen nicht: „Straße (§ 24 GO NRW)“, „Straße § 24 GO“, „Neumarkt € 1.000“ bleiben (Prüfung
+# r20a; die Probe zählt gleich)
 TRENN = r"[^\w§€%*]"
 ZWISCHEN = rf"(?:{TRENN}{{1,3}}|(?<!\d))"
-NR_WORT = rf"(?:(?:nrn?|no|nummer|haus)(?!{_L})\.?{TRENN}{{0,3}})?"
+NR_WORT = rf"(?:{_NRW}{TRENN}{{0,3}})?"
+# Lage zwischen Straße und Nummer (bleibt stehen): vor „Nr.“, „Haus“ usw. („vor Nr. 300“, „in Höhe Haus 12“, „gegenüber
+# dem Haus 5“), vor einer bloßen Zahl nur Wörter, die keine Jahreszahl einleiten („Höhe 12“, „zwischen 300 und 320“;
+# „ab 2027“ bleibt; Prüfung r20a, zweite Korrektur)
+_LAGE_NR = r"(?:in\s)?h[öo]he|zwischen|zw\.|gegenüber|ggü\.?|vor|neben|hinter|ecke|ab|bis|bei|nahe"
+_LAGE_ZAHL = r"(?:in\s)?h[öo]he|zwischen|zw\.|gegenüber|ggü\.?|neben|hinter|ecke"
+LAGE = (rf"(?:(?:{_LAGE_NR})(?!{_L})\.?\s?(?:(?:den|dem|der|von|vom)\s)?(?={_NRW})"
+        rf"|(?:{_LAGE_ZAHL})(?!{_L})\.?\s?(?=\d))")
+# Teile eines Straßennamens, die Titel anders schreiben: „St.“ und „Sankt“ mit und ohne Leerzeichen („An St.Katharinen“
+# im Verzeichnis, „An St. Katharinen“ im Titel), Punkt mit und ohne Leerzeichen, Bindestrich und Leerzeichen
+_NAMENSTEILE = re.compile(rf"(\bst\.\s?|\bsankt(?!{_L})\s?|\.\s?|[-\s]+)", re.I)
 
 
-def _name_muster(name):
-    """Straßenname als Muster für den angeglichenen Titel: „ß“ und „ss“ gleich („Am Schlossgarten“)."""
-    return re.sub("ß|ss", "(?:ß|ss)", re.escape(name))
+def _name_atome(name):
+    """Straßenname als Folge von Teilmustern für den angeglichenen Titel: „ß“ und „ss“ gleich („Am Schlossgarten“), „St.“
+    wie „Sankt“ mit und ohne Leerzeichen, Punkt mit und ohne Leerzeichen, Bindestrich wie Leerzeichen („Bertha Benz
+    Karree“; Prüfung r20a, zweite Korrektur). Buchstaben klein (re.I bzw. casefold in der Probe)."""
+    atome = []
+    for i, t in enumerate(_NAMENSTEILE.split(name)):
+        if i % 2 == 0:
+            atome += ["(?:ß|ss)" if x in ("ß", "ss") else re.escape(x.lower()) for x in re.findall("ß|ss|.", t, re.S)]
+        elif t[:1] in "sS":
+            atome.append(r"(?:st\.\s?|sankt[-\s]?)")
+        elif t[:1] == ".":
+            atome.append(r"\.\s?")
+        else:
+            atome.append(r"[-\s]")
+    return atome
+
+
+def _namen_muster(namen):
+    """Alle Straßennamen als ein Muster in Baumform (gemeinsame Anfänge einmal): Ein Muster mit 5 000 Namen als einfache
+    Alternative brauchte etwa 5 ms je Titel, die Maske prüft seit dem Sicherheitsnetz jeden Titel zweimal (Prüfung r20a,
+    zweite Korrektur). Längere Namen gehen vor (wahlweises Ende hinter den Fortsetzungen, wie vorher die Sortierung nach
+    Länge)."""
+    baum = {}
+    for name in namen:
+        knoten = baum
+        for atom in _name_atome(name):
+            knoten = knoten.setdefault(atom, {})
+        knoten[""] = {}
+
+    def muster(knoten):
+        zweige = [atom + muster(knoten[atom]) for atom in sorted(a for a in knoten if a)]
+        if not zweige:
+            return ""
+        teil = zweige[0] if len(zweige) == 1 else f"(?:{'|'.join(zweige)})"
+        return f"(?:{teil})?" if "" in knoten else teil
+
+    return muster(baum) or r"(?!)"
 
 
 def _muster(strassen):
-    names = sorted({s for s in strassen if s}, key=len, reverse=True)
-    return re.compile(rf"((?:{'|'.join([*map(_name_muster, names), SUFFIX])}){ZWISCHEN}){NR_WORT}{NR}", re.I)
+    names = {s for s in strassen if s}
+    return re.compile(rf"((?:{_namen_muster(names)}|{SUFFIX}){ZWISCHEN}{LAGE}?){NR_WORT}{NR}", re.I)
 
 
 def _angleichen(titel):
@@ -105,33 +169,118 @@ def _angleichen(titel):
 
 
 def _falten(text):
-    """Text für die Probe: NFKC, ohne unsichtbare Zeichen, casefold („ß“ als „ss“), Leerraum als ein Leerzeichen."""
-    t = unicodedata.normalize("NFKC", geocode._UNSICHTBAR.sub("", text or "")).casefold()
-    return re.sub(r"\s+", " ", t)
+    """Text für die Probe und je Zeichen seine Stelle im Text: je Zeichen NFKC und casefold („ß“ als „ss“), ein folgendes
+    Kombinationszeichen mit dem Buchstaben davor zusammengesetzt, ohne unsichtbare Zeichen, Leerraum als ein Leerzeichen.
+    Die Stellen braucht das Sicherheitsnetz der Maske (Maske._spannen)."""
+    zeichen, stellen = [], []
+    for i, c in enumerate(text or ""):
+        if geocode._UNSICHTBAR.match(c):
+            continue
+        for d in unicodedata.normalize("NFKC", c):
+            if d.isspace():
+                if zeichen and zeichen[-1] == " ":
+                    continue
+                d = " "
+            elif zeichen and unicodedata.combining(d):
+                z = unicodedata.normalize("NFC", zeichen[-1] + d)
+                if len(z) == 1:
+                    zeichen[-1] = z
+                    continue
+            for f in d.casefold():
+                zeichen.append(f)
+                stellen.append(i)
+    return "".join(zeichen), stellen
+
+
+def _im_text(stellen, a, e, laenge):
+    """Stellen a bis e einer angeglichenen oder gefalteten Fassung als Stellen im gelieferten Text; endet der Treffer
+    mitten in einem Zeichen, das NFKC erweitert („⒓“ als „12.“), fällt das ganze Zeichen weg."""
+    if e >= len(stellen):
+        return stellen[a], laenge
+    return stellen[a], (stellen[e - 1] + 1 if stellen[e] == stellen[e - 1] else stellen[e])
+
+
+def _ersetzen(text, teile):
+    """Ersetzt (von, bis, Ersatz) im Text; überlappende Teile (nach dem Runden auf ganze Zeichen) bilden einen."""
+    aus, bis = [], 0
+    for von, nach, ersatz in sorted(teile):
+        if von < bis:
+            bis = max(bis, nach)
+            continue
+        aus += [text[bis:von], ersatz]
+        bis = nach
+    return "".join(aus) + text[bis:]
 
 
 class _Probe:
-    """Unabhängig gebaute Probe für check (nicht für die Ausgabe): Steht im gefalteten Titel (_falten) eine Ziffernfolge
-    mit bis zu vier Stellen hinter einem Straßennamen oder einem Wort mit Straßen-Endung, getrennt durch bis zu drei
-    Zeichen außer Buchstaben, Ziffern, „§“, „€“, „%“ und „*“ (oder ohne, wenn davor keine Ziffer steht) und wahlweise
-    „Nr“, „Nrn“, „No“, „Nummer“ oder „Haus“, nicht vor „.“ oder „:“ mit Ziffer? Oder steht eine Ziffernfolge hinter einer
-    ausgeblendeten Hausnummer und einem Wort oder Zeichen für eine Liste („[Hausnummer ausgelassen] bzw. 14“)? Nicht
-    hinter einem bloßen „Nr.“ oder „Haus“ (Bebauungsplan-, Drucksachen- und Gebäudenummern). So viele Trennzeichen wie
-    die Maske (ZWISCHEN; Prüfung r20a: mit vier und „§“ meldete die Probe „Straße (§ 24 GO NRW)“, die Maske ließ es zu
-    Recht stehen, und der Befund hielte die Veröffentlichung an, ohne dass die Maske ihn beheben könnte)."""
+    """Unabhängig gebaute Probe für check und Sicherheitsnetz der Maske: Steht im gefalteten Titel (_falten) eine
+    Ziffernfolge mit bis zu vier Stellen hinter einem Straßennamen oder einem Wort mit Straßen-Endung, getrennt durch bis
+    zu drei Zeichen außer Buchstaben, Ziffern, „§“, „€“, „%“ und „*“ (oder ohne, wenn davor keine Ziffer steht), wahlweise
+    mit einem Lagewort („vor“, „in Höhe“, „zwischen“) und „Nr“, „Nrn“, „No“, „Nummer“, „Haus“, „Hs“ oder einem Wort für
+    die Hausnummer, nicht vor „.“ oder „:“ mit Ziffer? Oder hinter einem Wort für die Hausnummer, hinter einem bloßen „Nr.“
+    ohne folgendes „/“, oder hinter einer ausgeblendeten Hausnummer, wahlweise einer Klammer, einem Wort oder Zeichen für
+    eine Liste und „Nr.“ („[Hausnummer ausgelassen] bzw. 14“, „[Hausnummer ausgelassen]) und Nr. 15“)? Nicht hinter einem
+    bloßen „Haus“ (Gebäudenummern). So viele Trennzeichen wie die Maske (ZWISCHEN; Prüfung r20a: mit vier und „§“
+    meldete die Probe „Straße (§ 24 GO NRW)“). Was die Probe findet, blendet die Maske aus (Maske._spannen): Ein Befund
+    in check heißt seither, dass ein Text die Maske nicht durchlaufen hat, nie, dass die Maske ihn nicht beheben kann
+    (Prüfung r20a, zweite Korrektur)."""
 
     def __init__(self, strassen):
-        namen = sorted({_falten(s) for s in strassen if s}, key=len, reverse=True)
-        endung = (r"[^\W\d_]*(?:strasse|str(?:\.|(?![^\W\d_]))|weg|platz|gasse|allee|ring|ufer|damm|pfad|chaussee"
-                  r"|hof|markt|graben|berg|feld)")
+        b = r"[^\W\d_]"
+        namen = {_falten(s)[0] for s in strassen if s}
+        endung = (rf"{b}*(?:strasse|str(?:\.|(?!{b}))|weg|platz|gasse|allee|ring|ufer|damm|pfad|chaussee|hof|markt"
+                  r"|graben|berg|feld)")
         nummer = r"\d{1,4}(?!\d|[.:]\d)"
-        self.rx = re.compile(rf"(?:{'|'.join([*map(re.escape, namen), endung])})(?:[^\w§€%*]{{1,3}}|(?<!\d))"
-                             rf"(?:(?:nrn?|no|nummer|haus)\.?[^\w§€%*]{{0,3}})?{nummer}"
-                             rf"|\[hausnummer ausgelassen\]\)?\s*(?:[-‐‑‒–—−/,&+]|bis|und|u\.|bzw\.?|oder|sowie)\s*"
-                             rf"{nummer}")
+        trenn = r"[^\w§€%*]"
+        wort = r"haus(?:-|\s)?(?:nummern?|nrn?)|hs\.?-?nrn?|h\.?-?nrn?|häusern?"
+        nr_wort = rf"(?:{wort}|nrn?|no|nummer|haus|hs)(?!{b})\.?:?"
+        lage = (rf"(?:(?:in\s)?h[öo]he|zwischen|zw\.|gegenüber|ggü\.?|vor|neben|hinter|ecke|ab|bis|bei|nahe)(?!{b})"
+                rf"\.?\s?(?:(?:den|dem|der|von|vom)\s)?(?={nr_wort})"
+                rf"|(?:(?:in\s)?h[öo]he|zwischen|zw\.|gegenüber|ggü\.?|neben|hinter|ecke)(?!{b})\.?\s?(?=\d)")
+        liste = rf"(?:[-‐‑‒–—−/,;&+]|bis|und|u\.?(?!{b})|bzw\.?|oder|sowie)"
+        strasse = f"{_namen_muster(namen)}|{endung}"
+        self.rx = re.compile(rf"(?:{strasse})(?:{trenn}{{1,3}}|(?<!\d))(?:{lage})?(?:{nr_wort}{trenn}{{0,3}})?{nummer}"
+                             rf"|\[hausnummer ausgelassen\]\s*[()]?\s*{liste}\s*(?:{nr_wort}\s*)?{nummer}"
+                             rf"|\b(?:{wort})(?!{b})\.?:?\s*\)?\s*{nummer}"
+                             rf"|\b(?:nrn?|no)(?!{b})\.?:?\s*(?!\d{{1,4}}\s?[a-z]?\s*/){nummer}")
 
     def __call__(self, titel):
-        return bool(self.rx.search(_falten(titel)))
+        return bool(self.rx.search(_falten(titel)[0]))
+
+    def spannen(self, titel):
+        """Stellen der gemeldeten Ziffernfolgen im gelieferten Titel: (von, bis); jeder Treffer endet mit der Nummer."""
+        gefaltet, stellen = _falten(titel)
+        teile = []
+        for m in self.rx.finditer(gefaltet):
+            a = m.end()
+            while a > m.start() and gefaltet[a - 1].isdigit():
+                a -= 1
+            teile.append(_im_text(stellen, a, m.end(), len(titel)))
+        return teile
+
+
+# Zusammenhänge, in denen eine Zahl keine Hausnummer ist (grobe zweite Probe, restzahlen): Rechtsgrundlage, Nummer mit
+# „/“ (Drucksache, Bebauungsplan), Jahreszahl, Datum, Uhrzeit und Tausenderpunkt, Ordnungszahl, Zahl mit Einheit oder
+# hinter einem Wort wie „TOP“, „Anlage“, „Tempo“, „Linie“ oder einer Straßenklasse („A 4“, „L 84“)
+_BEKANNT = re.compile(
+    r"§+\s*\d+[a-z]?(?:\s*(?:abs\.?|absatz|satz|s\.|nr\.?|ziff\.?|buchst\.?)\s*\d+[a-z]?)*"
+    r"|\d+[a-z]?\s*/\s*\d+(?:\s*/\s*\d+)*"
+    r"|(?<!\d)(?:19|20)\d{2}(?!\d)"
+    r"|\d+(?:[.:]\d+)+"
+    r"|(?<!\d)\d{1,3}\.(?=\s|$)"
+    r"|\d+(?:,\d+)?\s*(?:km/h|km|m|qm|m²|ha|%|prozent|euro|eur|€|mio\.?|stunden|std\.?|minuten|min\.?|tage[n]?"
+    r"|wochen|monate[n]?|jahre[n]?|personen|plätze|stellplätze|parkplätze|bäume|meter|wohnungen|wohneinheiten|kinder)"
+    r"(?![^\W\d_])"
+    r"|\b(?:top|anlage|anlagen|tempo|linie|linien|buslinie|stadtbahnlinie|bab|[abkl]|art\.?|artikel|kapitel|stufe|phase"
+    r"|bauabschnitt|abschnitt|teil|los|wahlperiode|ziffer|punkt|gruppe|klasse|nummer der drucksache)\s*\d+[a-z]?(?!\d)")
+
+
+def restzahlen(titel):
+    """Grobe zweite Probe für check (nur Hinweis, kein Befund; Prüfung r20a, zweite Korrektur): Steht nach dem Ausblenden
+    noch eine Zahl mit bis zu vier Stellen außerhalb bekannter Zusammenhänge (_BEKANNT) im Titel? Gedacht für die
+    Durchsicht von Hand nach dem ersten Vollabruf, nicht als Sperre."""
+    rest = _BEKANNT.sub(" ", _falten(titel)[0])
+    return bool(re.search(r"(?<!\d)\d{1,4}(?!\d)", rest))
 
 
 def privat(p):
@@ -161,43 +310,61 @@ class Maske:
         self.rx = _muster(self.strassen)
         self._probe = None
         self._offen = {}   # check prüft denselben Titel je Datei und Ortsbezug: je (Text, Drucksache) einmal rechnen
+        self._aus = {}     # export maskiert denselben Titel je Datei, Audit und Ortsbezug: ebenso (Prüfung r20a)
 
     def _betroffen(self, titel, ref):
-        # ohne Ziffer keine Hausnummer: spart die teure Regex bei den meisten Titeln (gleiche Ergebnisse)
-        return bool(titel) and ref in self.refs and any(c.isdigit() for c in titel)
+        # ohne Ziffer keine Hausnummer: spart die teure Regex bei den meisten Titeln (gleiche Ergebnisse); Ziffern auch
+        # erst nach NFKC („⒓“ ist für isdigit keine Ziffer; Prüfung r20a, zweite Korrektur)
+        return (bool(titel) and ref in self.refs
+                and any(c.isdigit() for c in unicodedata.normalize("NFKC", titel)))
 
     def _stellen(self, angeglichen):
-        """Zu ersetzende Stellen im angeglichenen Titel: (Anfang, Ende, Ersatz); Straße und Trennzeichen bleiben stehen,
-        „Nr.“ und die Nummer fallen weg; „Hausnummer 5“ samt dem Wort (WORT), eine schließende Klammer bleibt."""
+        """Zu ersetzende Stellen im angeglichenen Titel: (Anfang, Ende, Ersatz); Straße, Trennzeichen und Lagewort
+        bleiben stehen, „Nr.“ und die Nummer fallen weg; „Hausnummer 5“ samt dem Wort (WORT), eine schließende Klammer
+        bleibt; ein bloßes „Nr. 5“ samt „Nr.“ (NUR_NR)."""
         teile = [(m.end(1), m.end(), OHNE_NR) for m in self.rx.finditer(angeglichen)]
-        for m in WORT.finditer(angeglichen):
-            if not any(a < m.end() and m.start() < e for a, e, _ in teile):
-                teile.append((m.start(), m.end(), OHNE_NR + (m.group(1) or "")))
+        for rx, klammer in ((WORT, True), (NUR_NR, False)):
+            for m in rx.finditer(angeglichen):
+                if not any(a < m.end() and m.start() < e for a, e, _ in teile):
+                    teile.append((m.start(), m.end(), OHNE_NR + ((m.group(1) or "") if klammer else "")))
         return sorted(teile)
 
+    def _spannen(self, text):
+        """Was die Maske im Text ersetzt: (von, bis, Ersatz) im gelieferten Text. Zuerst die Muster der Maske; finden sie
+        nichts, die Ziffernfolgen, die die Probe meldet (Sicherheitsnetz, Prüfung r20a, zweite Korrektur)."""
+        angeglichen, stellen = _angleichen(text)
+        teile = [(*_im_text(stellen, a, e, len(text)), ersatz) for a, e, ersatz in self._stellen(angeglichen)]
+        if not teile:
+            if self._probe is None:
+                self._probe = _Probe(self.strassen)
+            teile = [(von, bis, OHNE_NR) for von, bis in self._probe.spannen(text)]
+        return teile
+
     def __call__(self, titel, ref):
+        """Ersetzt, bis weder die Muster der Maske noch die Probe etwas finden: jede Runde blendet mindestens eine
+        Ziffernfolge aus, also endet die Schleife. Danach ist offen() für das Ergebnis immer falsch; ein Befund in check
+        kann also nur einen Text betreffen, der die Maske nicht durchlaufen hat (vorher meldete check etwa
+        „(Musterstraße 12) – 2. Nachtrag“, die Maske ließ die 2 stehen, und die Veröffentlichung hätte angehalten)."""
         if not self._betroffen(titel, ref):
             return titel
-        angeglichen, stellen = _angleichen(titel)
-        aus, bis = [], 0
-        for a, e, ersatz in self._stellen(angeglichen):
-            von = stellen[a]
-            nach = stellen[e] if e < len(stellen) else len(titel)
-            aus += [titel[bis:von], ersatz]
-            bis = nach
-        return "".join(aus) + titel[bis:]
+        if (titel, ref) not in self._aus:
+            aus = titel
+            for _ in range(len(titel) + 1):
+                teile = self._spannen(aus)
+                if not teile:
+                    break
+                aus = _ersetzen(aus, teile)
+            self._aus[titel, ref] = aus
+            self._offen[aus, ref] = bool(teile)
+        return self._aus[titel, ref]
 
     def offen(self, titel, ref):
-        """Bleibt nach dem Ausblenden eine Hausnummer stehen? (Prüfung in check.py) Mit dem Muster der Maske und der
-        unabhängig gebauten Probe (_Probe), damit die Regel nicht nur sich selbst prüft (Prüfung r20n)."""
+        """Bleibt eine Hausnummer stehen, würde die Maske den Text also noch ändern? (Prüfung in check.py) Mit den Mustern
+        der Maske und der unabhängig gebauten Probe (_Probe; Prüfung r20n)."""
         if not self._betroffen(titel, ref):
             return False
         if (titel, ref) not in self._offen:
-            if self._probe is None:
-                self._probe = _Probe(self.strassen)
-            angeglichen = _angleichen(titel)[0]
-            self._offen[titel, ref] = bool(self.rx.search(angeglichen) or WORT.search(angeglichen)
-                                           or self._probe(titel))
+            self._offen[titel, ref] = bool(self._spannen(titel))
         return self._offen[titel, ref]
 
 

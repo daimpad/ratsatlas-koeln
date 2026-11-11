@@ -204,9 +204,15 @@ def _je_kennung_einmal(roh):
     return [*vorhanden.values(), *geloescht.values()]
 
 
-# Zahlen außer Postleitzahlen (fünfstellig, 5xxxx) gelten in Ortsangaben der Stadt als Hausnummern; check.py prüft
-_NUMMER = re.compile(r"(?<!\d)(?!5\d{4}\b)\d{1,4}(?:\s?[a-zA-Z](?![a-zA-ZäöüÄÖÜß]))?"
-                     r"(?:\s*(?:-|–|/|bis)\s*\d{1,4}(?:\s?[a-zA-Z](?![a-zA-ZäöüÄÖÜß]))?)?(?!\d)")
+# Postleitzahl (fünfstellig, 5xxxx, als ganzes Wort): die einzige Zahl, die in Ortsangaben der Stadt stehen bleibt;
+# check.datenschutz prüft mit derselben Regel (PLZ)
+PLZ = re.compile(r"\b5[0-9]{4}\b")
+# jede andere Ziffernfolge gilt als Hausnummer und fällt samt Buchstabenzusatz und Liste weg („12a“, „12-14“, „12/14“),
+# auch längere: Vorher blieben fünf- und mehrstellige Nummern ganz oder teilweise stehen („Bebauungsplan 61459/04“ als
+# „Bebauungsplan 61459/“, „Flurstück 12345/6“, „50823Köln“), und check meldete sie als Hausnummer (Prüfung r20a, zweite
+# Korrektur)
+_NUMMER = re.compile(r"(?<!\d)(?!\b5[0-9]{4}\b)\d+(?:\s?[a-zA-Z](?![a-zA-ZäöüÄÖÜß]))?"
+                     r"(?:\s*(?:-|–|/|bis)\s*\d+(?:\s?[a-zA-Z](?![a-zA-ZäöüÄÖÜß]))?)*")
 
 
 def ohne_hausnummer(text):

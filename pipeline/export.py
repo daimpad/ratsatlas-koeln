@@ -216,7 +216,8 @@ def _sample_methods(db, path, n=50, seed=2026):
         for pid in sorted(random.Random(f"{seed}{m}").sample(ids, min(n, len(ids)))):
             p = list(db.execute("SELECT reference, date, paper_type, name, web FROM paper WHERE id = ?", (pid,)).fetchone())
             p[3] = maske_(p[3], p[0])
-            locs = [(*l[:5], maske_(l[5], p[0])) for l in db.execute(
+            # Ort und Fundstelle wie der Titel maskiert (Prüfung r20a, zweite Korrektur: vorher nur die Fundstelle)
+            locs = [(maske_(l[0], p[0]), *l[1:5], maske_(l[5], p[0])) for l in db.execute(
                 "SELECT COALESCE(l.street, l.description, l.ortsteil, l.stadtbezirk), l.level, l.ortsteil, l.stadtbezirk, "
                 "pl.confidence, pl.evidence FROM paper_location pl JOIN location l ON l.id = pl.location_id "
                 "WHERE pl.paper_id = ? AND pl.method = ?", (pid, m))]

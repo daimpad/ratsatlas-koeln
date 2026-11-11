@@ -37,6 +37,8 @@ ZAEHLUNG = {
     "suche": "Titel in suche.json untersucht",
     "titel_geschuetzt": "davon aus Einwohnerschaft, Bauordnung oder Naturschutz samt verbundenen Vorlagen (auch über "
                         "relatedPaper) und derselben Drucksache (Hausnummer ausgeblendet)",
+    "titel_restzahlen": "davon mit einer Zahl außerhalb bekannter Zusammenhänge (grobe zweite Probe, maske.restzahlen; "
+                        "nur Hinweis, von Hand prüfen)",
     "ortsnamen": "Ortsnamen in vorlagen.geojson und den Gebietsdateien untersucht",
     "geojson": "Punkte in vorlagen.geojson untersucht",
     "geojson_hauskoordinaten": "davon auf einer Hauskoordinate",
@@ -50,8 +52,9 @@ ZAEHLUNG = {
     "fundstellen": "Fundstellen aus dem Titel in vorlagen.geojson, den Gebietsdateien und plaene.json untersucht",
 }
 # Spalten der TSV-Dateien mit Drucksache und Titel, die Teile des Titels oder einen Ortsnamen tragen (Fundstelle,
-# Treffer): geprüft wie der Titel (Prüfung r20a; vorher nur „titel“)
-TSV_TEXTSPALTEN = {"titel", "fundstelle", "treffer"}
+# Treffer): geprüft wie der Titel (Prüfung r20a; vorher nur „titel“); dazu der Ort der Stichprobe je Methode und die
+# zurückgestellten Ortsbezüge im Audit der Bebauungspläne (zweite Korrektur)
+TSV_TEXTSPALTEN = {"titel", "fundstelle", "treffer", "ort", "zurueckgestellt"}
 
 
 def check():
@@ -360,7 +363,9 @@ def datenschutz(db, base=None):
        Hauskoordinaten (Titelmaske und Hauskoordinaten folgen denselben Beziehungen, Runde 20) und keine Eingabe ohne
        Hauskoordinate (Grund „eingabe“) außerhalb der Titelmaske (Prüfung r20), ebenso keine Vorlagenart aus der
        Einwohnerschaft oder von Privatpersonen (geocode.art_von_personen); Hausnummern mit dem Muster der Maske und
-       einer unabhängig gebauten Probe (maske.Maske.offen; Prüfung r20n),
+       einer unabhängig gebauten Probe (maske.Maske.offen; Prüfung r20n; seit der zweiten Korrektur der Prüfung r20a
+       blendet die Maske aus, was die Probe meldet, ein Befund heißt also: Text ohne Maske), dazu als Hinweis ohne
+       Befund Titel der Maske mit einer Zahl außerhalb bekannter Zusammenhänge (maske.restzahlen),
     3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
        Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
@@ -382,12 +387,15 @@ def datenschutz(db, base=None):
         fehlend.append(_fehlt("Datenschutz", f, "export"))
         return None
 
-    # 1. Straße und Beschreibung der Orte aus der OParl-API
+    # 1. Straße und Beschreibung der Orte aus der OParl-API: jede Ziffer außer in einer Postleitzahl (dieselbe Regel wie
+    # build.ohne_hausnummer, build.PLZ; Prüfung r20a, zweite Korrektur: vorher entfernte build nur Zahlen bis vier
+    # Stellen, und check meldete den Rest eines Bebauungsplans „61459/“ als Hausnummer)
+    from .build import PLZ
     orte = db.execute("SELECT id, street, description FROM location WHERE source = ? "
                       "AND (street IS NOT NULL OR description IS NOT NULL)", (config.QUELLE_OPARL,)).fetchall()
     zahl["ortsangaben"] = sum((s is not None) + (d is not None) for _, s, d in orte)
     mit_nummer = sorted(i for i, *texte in orte
-                        if any(t and re.search(r"\d", re.sub(r"\b5[0-9]{4}\b", "", t)) for t in texte))
+                        if any(t and re.search(r"\d", PLZ.sub("", t)) for t in texte))
     if mit_nummer:
         befunde.append(f"Datenschutz: Hausnummern in Ortsangaben der Stadt (CLAUDE.md 5.2): {len(mit_nummer)} Orte, "
                        f"z. B. {', '.join(mit_nummer[:5])}")
@@ -461,6 +469,14 @@ def datenschutz(db, base=None):
         zahl["suche"] = len(rows)
         zahl["titel_geschuetzt"] = sum(r[0] in m.refs for r in rows)
         offen |= {r[0] for r in rows if m.offen(r[1], r[0])}
+        # grobe zweite Probe (Prüfung r20a, zweite Korrektur): Probe und Maske kennen dieselben Schreibweisen; was beide
+        # nicht kennen, zeigt sich hier als verbliebene Zahl. Nur ein Hinweis mit Drucksachen zur Prüfung von Hand, kein
+        # Befund (Zahlen wie „Tempo 30“ oder „3 Bäume“ hielten sonst die Veröffentlichung an)
+        rest = sorted({str(r[0]) for r in rows if r[0] in m.refs and maske.restzahlen(r[1])})
+        zahl["titel_restzahlen"] = len(rest)
+        if rest:
+            print(f"Hinweis (kein Befund): Titel der Maske mit einer Zahl außerhalb bekannter Zusammenhänge, von Hand "
+                  f"prüfen: {len(rest)}, z. B. {', '.join(rest[:10])}")
         if len(rows) != len(je_id):
             befunde.append(f"Datenschutz: suche.json nennt {len(rows)} Vorlagen, die Datenbank {len(je_id)} – "
                            "Export und Datenbank passen nicht zusammen (`python -m pipeline export`)")

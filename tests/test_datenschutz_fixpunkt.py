@@ -1037,7 +1037,10 @@ def test_maske_laesst_andere_nummern_stehen(titel):
 
 def test_probe_unabhaengig_von_der_maske(monkeypatch):
     """Die Probe in check (Maske.offen) ist unabhängig gebaut: Fehlt der Maske eine Schreibweise (hier: altes Muster mit
-    Leerraum zwischen Straße und Nummer, ohne Angleichung), meldet die Probe die stehengebliebene Hausnummer trotzdem."""
+    Leerraum zwischen Straße und Nummer, ohne Angleichung), meldet die Probe die stehengebliebene Hausnummer trotzdem.
+    Seit der Prüfung r20a (zweite Korrektur) blendet die Maske aus, was die Probe meldet (Sicherheitsnetz): Die Nummer
+    fehlt im Ergebnis, und offen() meldet danach nichts (vorher blieb sie stehen, und check hielt die Veröffentlichung
+    an, ohne dass die Maske den Befund beheben konnte)."""
     def alt(strassen):
         names = sorted({s for s in strassen if s}, key=len, reverse=True)
         return re.compile(rf"((?:{'|'.join([*map(re.escape, names), maske.SUFFIX])})\s+)(?:nr\.?\s*)?{maske.NR}",
@@ -1047,15 +1050,17 @@ def test_probe_unabhaengig_von_der_maske(monkeypatch):
     m = maske.Maske({"1/2026"}, strassen=["Aachener Straße", "Am Schloßgarten"])
     for titel in ("Aachener Straße12", "Aachener Str.12", "Am Schlossgarten 4", "Aachener Straße, Nr. 12",
                   "Ａａｃｈｅｎｅｒ Ｓｔｒａßｅ １２"):
-        assert m(titel, "1/2026") == titel                                 # die alte Maske lässt sie stehen
+        assert not m.rx.search(titel) and not maske.WORT.search(titel)     # die alten Muster finden sie nicht
         assert m.offen(titel, "1/2026"), titel                             # die Probe findet sie
-        assert not m.rx.search(titel) and not maske.WORT.search(titel)
+        aus = m(titel, "1/2026")                                           # und die Maske blendet sie aus
+        assert maske.OHNE_NR in aus and not re.search(r"[0-9０-９]", aus) and not m.offen(aus, "1/2026"), aus
 
 
 def test_probe_findet_zweite_nummer_einer_liste(monkeypatch):
     """Prüfung r20a (Fix): Liest die Maske ein Listenwort nicht (hier: Muster vor dem Fix ohne „bzw.“, „oder“, „&“),
-    bleibt die zweite Nummer hinter der ausgeblendeten stehen; die Probe meldet sie (Ziffernfolge hinter
-    „[Hausnummer ausgelassen]“ und einem Listenwort oder -zeichen). Mit der Maske nach dem Fix fehlt die Nummer."""
+    bleibt nach den Mustern die zweite Nummer hinter der ausgeblendeten stehen; die Probe meldet sie (Ziffernfolge hinter
+    „[Hausnummer ausgelassen]“ und einem Listenwort oder -zeichen), und seit der zweiten Korrektur blendet die Maske sie
+    darüber aus (Sicherheitsnetz). Mit der Maske nach dem Fix fehlt die Nummer schon nach den Mustern."""
     alt = (rf"\d{{1,4}}(?:\s?[a-zA-Z](?!{maske._L}))?(?:\s*(?:-|–|bis|und|u\.|/|,)\s*\d{{1,4}}"
            rf"(?:\s?[a-zA-Z](?!{maske._L}))?)*(?!\d)")
     neu = maske.Maske({"1/2026"}, strassen=["Aachener Straße"])
@@ -1064,14 +1069,13 @@ def test_probe_findet_zweite_nummer_einer_liste(monkeypatch):
         m = maske.Maske({"1/2026"}, strassen=["Aachener Straße"])
     for wort in ("bzw.", "oder", "sowie", "&", "+", "—"):
         titel = f"Aachener Straße 12 {wort} 14"
-        aus = m(titel, "1/2026")
-        assert aus == f"Aachener Straße {maske.OHNE_NR} {wort} 14", aus
-        assert m.offen(aus, "1/2026") and not m.rx.search(aus) and not maske.WORT.search(aus), aus
+        rest = f"Aachener Straße {maske.OHNE_NR} {wort} 14"   # nach den alten Mustern
+        assert m.offen(rest, "1/2026") and not m.rx.search(rest) and not maske.WORT.search(rest), rest
+        assert m(titel, "1/2026") == f"Aachener Straße {maske.OHNE_NR} {wort} {maske.OHNE_NR}"
         assert neu(titel, "1/2026") == f"Aachener Straße {maske.OHNE_NR}"
-    # keine Liste: eine Zahl mit fünf Stellen, ein Datum oder ein Wort danach meldet die Probe nicht
-    for aus in (f"Aachener Straße {maske.OHNE_NR} und 50931 Köln", f"Aachener Straße {maske.OHNE_NR} bis 12.03.2026",
-                f"Aachener Straße {maske.OHNE_NR}, Haus 3"):
-        assert not neu.offen(aus, "1/2026"), aus
+    # keine Liste: eine Zahl mit fünf Stellen oder ein Datum danach meldet die Probe nicht
+    for aus in (f"Aachener Straße {maske.OHNE_NR} und 50931 Köln", f"Aachener Straße {maske.OHNE_NR} bis 12.03.2026"):
+        assert not neu.offen(aus, "1/2026") and neu(aus, "1/2026") == aus, aus
 
 
 def test_offen_rechnet_jeden_text_einmal(monkeypatch):
@@ -1142,16 +1146,32 @@ def test_vorlagenart_und_schreibweise_ende_zu_ende(testdaten, monkeypatch, capsy
         return re.compile(rf"((?:{'|'.join([*map(re.escape, namen), altes_suffix])})\s+)(?:nr\.?\s*)?{maske.NR}",
                           re.I)
 
-    with monkeypatch.context() as mp:   # Fehler: Maske ohne die neuen Schreibweisen, auch in der Prüfung
+    with monkeypatch.context() as mp:   # Maske ohne die neuen Schreibweisen: das Sicherheitsnetz (Probe) blendet aus
         mp.setattr(maske, "_muster", altes_muster)
+        export.export()
+        capsys.readouterr()
+        titel = titel_im_export()
+        assert len(titel) >= 5 and not [x for x in titel if nr[0] in x], titel
+
+    def ohne_sicherheitsnetz(self, titel, ref):   # Maske vor der zweiten Korrektur der Prüfung r20a: nur die Muster
+        if not self._betroffen(titel, ref):
+            return titel
+        angeglichen, stellen = maske._angleichen(titel)
+        return maske._ersetzen(titel, [(*maske._im_text(stellen, a, e, len(titel)), x)
+                                       for a, e, x in self._stellen(angeglichen)])
+
+    with monkeypatch.context() as mp:   # Fehler: Maske ohne die neuen Schreibweisen und ohne Sicherheitsnetz
+        mp.setattr(maske, "_muster", altes_muster)
+        mp.setattr(maske.Maske, "__call__", ohne_sicherheitsnetz)
         export.export()
         capsys.readouterr()
         assert [x for x in titel_im_export() if nr[0] in x]
         db = sqlite3.connect(config.DB)
         erg = check.datenschutz(db)
         db.close()
+    # „…straße, Nr. 5“ und „…straße (Nr. 5)“ blendet auch ohne die neuen Schreibweisen das bloße „Nr.“ aus (NUR_NR)
     b = [x for x in erg["befunde"] if "Hausnummern in Titeln oder Ortsnamen" in x]
-    assert len(b) == 1 and b[0].endswith(": 5, z. B. 1801/2026, 1802/2026, 1803/2026, 1804/2026, 1805/2026"), b
+    assert len(b) == 1 and b[0].endswith(": 3, z. B. 1801/2026, 1804/2026, 1805/2026"), b
 
 
 # --- Prüfung r20a: „§24GO“ und abgekürzte Paragrafen, Stichprobe Gebäude und Anlagen, jede TSV-Datei mit Titel -------
@@ -1393,3 +1413,249 @@ def test_fundstelle_bebauungsplan_maskiert_und_geprueft(testdaten, monkeypatch, 
         assert len(b) == 1 and b[0].endswith(": 1, z. B. 1950/2026"), (pfad, b)
     assert check.datenschutz(db)["befunde"] == []
     db.close()
+
+
+# --- Prüfung r20a, zweite Korrektur: Sicherheitsnetz der Maske, Listen, Lagewörter, Wörter, Straßennamen --------------
+
+# echte Namen aus dem Kölner Straßenverzeichnis ohne Straßen-Endung, wie dort geschrieben („St.“ ohne Leerzeichen)
+NAMEN_R20A2 = ["Aachener Straße", "Venloer Straße", "An St. Heinrich", "An St.Katharinen", "An Groß St.Martin",
+               "An St.Agatha", "Bertha-Benz-Karree", "Maler-Bock-Gäßchen"]
+# (Titel, erwartet); erwartet mit {o} für OHNE_NR
+SCHREIBWEISEN_R20A2 = [
+    # „)“ und ein Listenwort hinter der Nummer: vorher meldete check den Titel, und die Maske konnte ihn nicht beheben
+    ("Eingabe nach § 24 GO NRW (Venloer Straße 12/14) – 2. Nachtrag",
+     "Eingabe nach § 24 GO NRW (Venloer Straße {o}) – {o}. Nachtrag"),
+    ("Einwohneranfrage (Venloer Straße 5), 2. Beratung", "Einwohneranfrage (Venloer Straße {o}), {o}. Beratung"),
+    ("Anregung gemäß § 24 GO NRW (Venloer Straße 300) und 2 weitere Eingaben",
+     "Anregung gemäß § 24 GO NRW (Venloer Straße {o}) und {o} weitere Eingaben"),
+    ("Tempo 30 Aachener Straße (Hausnummer: 27) – 2. Ergänzung", "Tempo 30 Aachener Straße ({o}) – {o}. Ergänzung"),
+    ("Aachener Straße (Haus-Nr. 9) und 15", "Aachener Straße ({o}) und {o}"),
+    ("Aachener Straße (22) und 28", "Aachener Straße ({o}) und {o}"),
+    ("Aachener Straße 16 (und 18)", "Aachener Straße {o} (und {o})"),
+    # „u.“ und „u“: vorher las die Maske das „u“ als Zusatz der Hausnummer, die zweite Nummer blieb ohne Befund stehen
+    ("Aachener Straße 7 u. 9", "Aachener Straße {o}"), ("Aachener Straße 53 u 55", "Aachener Straße {o}"),
+    ("Aachener Straße, Hausnummern 22 u. 24", "Aachener Straße, {o}"), ("Venloer Str. 300 u. 302a", "Venloer Str. {o}"),
+    ("Hausnummer 12 u. 14", "{o}"), ("Aachener Straße 12a u. 14", "Aachener Straße {o}"),
+    # „Nr.“ vor einer weiteren Nummer und „;“
+    ("Aachener Straße Nr. 23 und Nr. 25", "Aachener Straße {o}"), ("Aachener Straße 228 und Nr. 230", "Aachener Straße {o}"),
+    ("Aachener Straße 12 bis Nr. 20", "Aachener Straße {o}"), ("Aachener Straße 12 – Nr. 20", "Aachener Straße {o}"),
+    ("Aachener Straße 12, Nr. 14", "Aachener Straße {o}"), ("Aachener Straße 12 bzw. Nr. 14", "Aachener Straße {o}"),
+    ("Aachener Straße Nr. 300 sowie Nr. 302", "Aachener Straße {o}"),
+    ("Aachener Straße Nr. 300/Nr. 302", "Aachener Straße {o}"),
+    ("Aachener Straße Hausnummer 300 und Nr. 302", "Aachener Straße {o}"), ("Aachener Straße 300; 302", "Aachener Straße {o}"),
+    # Lagewort zwischen Straße und Nummer, bloßes „Nr.“
+    ("Behindertenparkplatz Venloer Straße vor Nr. 300", "Behindertenparkplatz Venloer Straße vor {o}"),
+    ("in der Venloer Straße in Höhe Nr. 300", "in der Venloer Straße in Höhe {o}"),
+    ("Venloer Straße, Höhe Nr. 300", "Venloer Straße, Höhe {o}"), ("Venloer Straße gegenüber Nr. 300", "Venloer Straße gegenüber {o}"),
+    ("Venloer Straße neben Nr. 300", "Venloer Straße neben {o}"), ("Venloer Straße hinter Nr. 300", "Venloer Straße hinter {o}"),
+    ("Venloer Straße ab Nr. 12", "Venloer Straße ab {o}"), ("Venloer Straße Ecke Nr. 300", "Venloer Straße Ecke {o}"),
+    ("Venloer Straße zwischen Nr. 12 und 20", "Venloer Straße zwischen {o}"),
+    ("Venloer Straße zwischen 300 und 320", "Venloer Straße zwischen {o}"), ("Venloer Straße Höhe 12", "Venloer Straße Höhe {o}"),
+    ("Venloer Straße, vor Haus 2", "Venloer Straße, vor {o}"),
+    ("Venloer Straße gegenüber dem Haus 300", "Venloer Straße gegenüber dem {o}"),
+    ("Poller vor Nr. 12 der Venloer Straße", "Poller vor {o} der Venloer Straße"),
+    # Wörter für die Hausnummer: Mehrzahl, Leerzeichen, „Häuser“, hinter der Straße „Hs.“
+    ("Venloer Straße Haus-Nrn. 300 bis 304", "Venloer Straße {o}"), ("Venloer Straße Hausnrn. 300-304", "Venloer Straße {o}"),
+    ("Venloer Straße Hs.-Nrn. 300-304", "Venloer Straße {o}"), ("Venloer Straße HNrn. 300-304", "Venloer Straße {o}"),
+    ("Venloer Straße Haus Nummer 300", "Venloer Straße {o}"), ("Venloer Straße Häuser 300 bis 304", "Venloer Straße {o}"),
+    ("Venloer Straße Hs. 300", "Venloer Straße {o}"),
+    ("vor Haus Nummer 300 in der Venloer Straße", "vor {o} in der Venloer Straße"),
+    ("Venloer Straße zwischen den Häusern 300 und 302", "Venloer Straße zwischen den {o}"),
+    # Straßennamen ohne Endung in anderer Schreibung als im Verzeichnis
+    ("Lärm An St. Katharinen 5", "Lärm An St. Katharinen {o}"), ("An Groß St. Martin 5", "An Groß St. Martin {o}"),
+    ("An Sankt Agatha 5", "An Sankt Agatha {o}"), ("An St.Heinrich 4", "An St.Heinrich {o}"),
+    ("Bertha Benz Karree 3", "Bertha Benz Karree {o}"), ("Maler Bock Gäßchen 2", "Maler Bock Gäßchen {o}"),
+    # Ziffer erst nach NFKC (isdigit kennt „⒓“ nicht)
+    ("Venloer Straße ⒓", "Venloer Straße {o}")]
+
+
+@pytest.mark.parametrize("titel, erwartet", SCHREIBWEISEN_R20A2)
+def test_maske_r20a_zweite_korrektur(titel, erwartet):
+    """Prüfung r20a, zweite Korrektur: Hausnummern, die die Maske stehen ließ (ohne Befund in check: „u.“, „Nr.“ vor einer
+    weiteren Nummer, Lagewörter, Mehrzahl des Worts, „St. “ und „Sankt“, „⒓“), oder die check meldete, ohne dass die Maske
+    sie beheben konnte (Klammer und Listenwort hinter der Nummer: hätte die erste Veröffentlichung angehalten). Danach
+    meldet offen() nichts; andere Drucksachen bleiben unverändert."""
+    m = maske.Maske({"1/2026"}, strassen=NAMEN_R20A2)
+    assert m.offen(titel, "1/2026")
+    aus = m(titel, "1/2026")
+    assert aus == erwartet.format(o=maske.OHNE_NR), aus
+    assert not m.offen(aus, "1/2026") and m(aus, "1/2026") == aus and m(titel, "2/2026") == titel
+
+
+@pytest.mark.parametrize("titel", ["Musterstraße ab 2027", "Sperrung der Musterstraße bis 2030",
+                                   "Drucksache Nr. 1234/2026", "Bebauungsplan Nr. 70459", "Haus 2 der Gesamtschule",
+                                   "Musterweg, 50931 Köln", "Musterweg (§ 24 GO NRW) – Vorlage 1234/2026"])
+def test_maske_r20a_zweite_korrektur_laesst_stehen(titel):
+    """Jahreszahlen hinter „ab“ und „bis“, Nummern mit „/“, fünfstellige Nummern und „Haus“ ohne Straße davor bleiben
+    stehen, auch mit dem Sicherheitsnetz (die Probe meldet sie nicht)."""
+    m = maske.Maske({"1/2026"}, strassen=NAMEN_R20A2)
+    assert m(titel, "1/2026") == titel and not m.offen(titel, "1/2026")
+
+
+def _verzeichnis():
+    return sorted(json.loads((ROOT / "data" / "geo" / "strassen_koeln.json").read_text())["streets"])
+
+
+def test_maske_fixpunkt_viele_schreibweisen():
+    """Prüfung r20a, zweite Korrektur: 3 000 erfundene Titel aus Namen des Kölner Straßenverzeichnisses (auch mit
+    „St. “ und Leerzeichen statt Bindestrich), Trennzeichen, Lagewörtern, Wörtern für die Hausnummer, Listen,
+    Klammern und Anhängen wie „– 2. Nachtrag“: Die Hausnummern fehlen danach, und offen() meldet für kein Ergebnis etwas
+    (ein Befund hielte die Veröffentlichung an). Vorher blieben in dieser Menge Nummern ohne Befund stehen, und check
+    meldete Titel, die die Maske nicht beheben konnte."""
+    namen = [n for n in _verzeichnis() if not re.search(r"\d", n)]
+    m = maske.Maske({"1/2026"}, strassen=namen)
+    rnd = random.Random(2026)
+    anfang = ["Anregung gemäß § 24 GO NRW: Verkehrsberuhigung ", "Einwohneranfrage zur Baustelle ", "Tempo 30 ",
+              "Eingabe nach § 24 GO NRW (", "", "Behindertenparkplatz in der "]
+    vor = [(" ", ""), (", ", ""), (" (", ""), ("", ""), (" #", ""), (", Höhe ", ""), (" zwischen ", ""),
+           (" vor ", "Nr. "), (" gegenüber ", "Haus "), (" ", "Nr. "), (" ", "Haus "), (" ", "Hausnummer "),
+           (" ", "Haus-Nrn. "), (" ", "Hs. "), (", ", "Hausnummer: "), (" ", "Häuser "), (" in Höhe ", "Nr. ")]
+    liste = ["", " u. {m}", " u {m}", " und Nr. {m}", "-{m}", "; {m}", " bis {m}", " (und {m})", " bzw. {m}a", "/{m}"]
+    ende = ["", " – 2. Nachtrag", ", 2. Beratung", " und 2 weitere Eingaben", " – 1. Ergänzung", " (§ 24 GO NRW)"]
+    gesehen = 0
+    for _ in range(3000):
+        name = rnd.choice(namen)
+        if rnd.random() < 0.3:
+            name = re.sub(r"St\.(?=\w)", "St. ", name).replace("-", " ")
+        n, k = rnd.sample(range(100, 1000), 2)
+        start = rnd.choice(anfang)
+        trenn, wort = rnd.choice(vor)
+        titel = (f"{start}{name}{trenn}{wort}{n}{rnd.choice(['', 'a', ' b'])}{rnd.choice(liste).format(m=k)}"
+                 f"{')' if '(' in start + trenn else ''}{rnd.choice(ende)}")
+        aus = m(titel, "1/2026")
+        assert str(n) not in aus and str(k) not in aus, (titel, aus)
+        assert not m.offen(aus, "1/2026"), (titel, aus)
+        gesehen += aus != titel
+    assert gesehen == 3000
+
+
+def test_maske_sicherheitsnetz_beliebige_texte():
+    """Prüfung r20a, zweite Korrektur: Für jeden Text endet die Maske, und offen() meldet für das Ergebnis nichts (Texte
+    aus Straßen, Wörtern, Listen, Klammern, Ziffern auch in Vollbreite und mit Zeichen ohne Breite, ausgeblendeten
+    Hausnummern): Ein Befund in check kann seither nur einen Text betreffen, der die Maske nicht durchlaufen hat."""
+    m = maske.Maske({"1/2026"}, strassen=NAMEN_R20A2)
+    rnd = random.Random(20)
+    teile = ["Aachener Straße", "Musterweg", " ", ", ", "(", ")", "Nr. ", "Haus ", "Hausnummer ", " u. ", " und ", "-",
+             "/", ";", "12", "7", "１２", "3a", "​", "⒓", "§ 24", "2.", "50931", "12.03.2026", maske.OHNE_NR,
+             " vor ", " Höhe ", "Häuser ", "St.", "An St. Katharinen", "–"]
+    for _ in range(4000):
+        titel = "".join(rnd.choice(teile) for _ in range(rnd.randint(1, 12)))
+        aus = m(titel, "1/2026")
+        assert not m.offen(aus, "1/2026"), (titel, aus)
+
+
+def test_maske_rechnet_jeden_titel_einmal(monkeypatch):
+    """Prüfung r20a, zweite Korrektur (Laufzeit von export): Maske.__call__ rechnet je (Titel, Drucksache) einmal;
+    derselbe Titel in Suche, GeoJSON, Gebietsdateien, Audits und Stichproben kostet danach nur einen Blick in den
+    Zwischenspeicher. offen() für das Ergebnis ist dabei schon bekannt."""
+    m = maske.Maske({"1/2026"}, strassen=["Aachener Straße"])
+    gerufen = []
+    echt = maske._angleichen
+    monkeypatch.setattr(maske, "_angleichen", lambda t: gerufen.append(t) or echt(t))
+    for _ in range(3):
+        aus = m("Aachener Straße 12", "1/2026")
+    n = len(gerufen)
+    assert aus == f"Aachener Straße {maske.OHNE_NR}" and n == 2   # eine Runde mit Treffer, eine ohne
+    assert not m.offen(aus, "1/2026") and len(gerufen) == n
+
+
+def test_maske_name_in_baumform_wie_alternative():
+    """Das Muster der Straßennamen in Baumform (_namen_muster) findet jeden Namen des Verzeichnisses vor einer
+    Hausnummer wie die einfache Alternative vorher, auch längere Namen mit gleichem Anfang („Am Hof“, „Am Hofgarten“)."""
+    namen = [n for n in _verzeichnis() if not re.search(r"\d", n)]
+    rx = re.compile(rf"(?:{maske._namen_muster(namen)})(?= 12$)", re.I)
+    for name in namen:
+        assert rx.match(f"{name} 12") and rx.match(f"{name} 12").group() == name, name
+    assert maske._namen_muster([]) == "(?!)"
+
+
+@pytest.mark.parametrize("text, erwartet", [
+    ("Bebauungsplan 61459/04", "Bebauungsplan"), ("Flurstück 12345/6", "Flurstück"), ("50823Köln", "Köln"),
+    ("Venloer Straße 300, 50823 Köln", "Venloer Straße, 50823 Köln"), ("Venloer Straße 12-14", "Venloer Straße"),
+    ("Gemarkung Müngersdorf, Flur 12, Flurstück 345/6", "Gemarkung Müngersdorf, Flur, Flurstück"),
+    ("50823 Köln-Ehrenfeld", "50823 Köln-Ehrenfeld"), ("Aachener Straße 1175 a", "Aachener Straße")])
+def test_ortsangabe_ohne_hausnummer_wie_pruefung(text, erwartet):
+    """Prüfung r20a, zweite Korrektur: build.ohne_hausnummer entfernt jede Ziffernfolge außer einer Postleitzahl als
+    ganzem Wort (build.PLZ), dieselbe Regel, mit der check die Ortsangaben der Stadt prüft. Vorher blieben fünf- und
+    mehrstellige Nummern stehen („Bebauungsplan 61459/“), und check meldete sie als Hausnummer."""
+    assert build.ohne_hausnummer(text) == erwartet
+    assert not re.search(r"\d", build.PLZ.sub("", erwartet))
+
+
+def test_ortsangabe_ohne_hausnummer_beliebige_texte():
+    """Für jeden Text lässt build.ohne_hausnummer nur Ziffern in Postleitzahlen stehen (die Prüfung in check findet
+    nichts)."""
+    rnd = random.Random(24)
+    teile = ["Straße", " ", ",", "-", "/", "12", "61459", "50823", "5082", "a", "Köln", "(", ")", "bis", "٣", "x", "_"]
+    for _ in range(5000):
+        text = "".join(rnd.choice(teile) for _ in range(rnd.randint(1, 10)))
+        aus = build.ohne_hausnummer(text) or ""
+        assert not re.search(r"\d", build.PLZ.sub("", aus)), (text, aus)
+
+
+def test_ortsangabe_mit_plannummer_ende_zu_ende(testdaten, capsys):
+    """Prüfung r20a, zweite Korrektur, Ende zu Ende mit einer erfundenen Ortsangabe der Stadt: Straße „Bebauungsplan
+    61459/04“, Beschreibung „Flurstück 12345/6, 50823Köln“. build speichert sie ohne Nummern, check meldet nichts
+    (vorher: „Hausnummern in Ortsangaben der Stadt“)."""
+    xy = _zweite_lage(_lage()[0])
+    ort = {**_ort("plan", "Bebauungsplan 61459/04", xy[0]), "description": "Flurstück 12345/6, 50823Köln"}
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.write(json.dumps(_vorlage("plan_o", "1970/2026", "[Testdaten] Mitteilung zum Bebauungsplan", location=[ort]),
+                           ensure_ascii=False) + "\n")
+    build.build()
+    export.export()
+    capsys.readouterr()
+    db = sqlite3.connect(config.DB)
+    assert db.execute("SELECT street, description FROM location WHERE id = ?", (ort["id"],)).fetchone() == (
+        "Bebauungsplan", "Flurstück, Köln")
+    erg = check.datenschutz(db)
+    db.close()
+    assert erg["befunde"] == [] and erg["fehlend"] == [], erg
+
+
+def test_neue_schreibweisen_ende_zu_ende(testdaten, capsys):
+    """Prüfung r20a, zweite Korrektur, Ende zu Ende mit erfundenen Eingaben nach § 24 GO NRW: „u.“, „Nr. … und Nr. …“,
+    „vor Nr.“, „Haus-Nrn.“ und „(Straße 5) – 2. Nachtrag“. In keiner Datei unter data/export (Suche, GeoJSON,
+    Gebietsdateien, Feeds, Audits, Stichproben) steht eine dieser Hausnummern; check meldet nichts. Die Stichprobe je
+    Methode maskiert auch die Spalte „ort“, check prüft sie (und „zurueckgestellt“); eine ungekürzte Spalte „ort“ meldet
+    check als Befund. Die grobe zweite Probe nennt eine Eingabe mit einer Zahl ohne Straße als Hinweis, ohne Befund."""
+    strasse, nr, _ = _lage()
+    a, b = nr[0], nr[1]
+    faelle = [("ng_u", "1981/2026", f"[Testdaten] Poller {strasse} {a} u. {b}"),
+              ("ng_nr", "1982/2026", f"[Testdaten] Halteverbot {strasse} Nr. {a} und Nr. {b}"),
+              ("ng_vor", "1983/2026", f"[Testdaten] Behindertenparkplatz {strasse} vor Nr. {a}"),
+              ("ng_hn", "1984/2026", f"[Testdaten] Lärm {strasse} Haus-Nrn. {a} bis {b}"),
+              ("ng_kl", "1985/2026", f"[Testdaten] Eingabe ({strasse} {a}) – {b}. Nachtrag"),
+              ("ng_rest", "1986/2026", "[Testdaten] Lärm am Kiosk Nummer zwölf, Pavillon 7")]
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.writelines(json.dumps(_vorlage(k, ref, titel, art=EINGABE), ensure_ascii=False) + "\n"
+                     for k, ref, titel in faelle)
+    build.build()
+    export.export()
+    capsys.readouterr()
+    roh = [f"{a} u. {b}", f"Nr. {a} und Nr. {b}", f"vor Nr. {a}", f"Haus-Nrn. {a}", f"{strasse} {a}", f"– {b}. Nachtrag"]
+    dateien = [p for p in config.EXPORT.rglob("*") if p.is_file() and p.suffix in (".json", ".geojson", ".tsv", ".xml",
+                                                                                    ".ics", ".csv")]
+    assert any(p.suffix == ".xml" for p in dateien) and any(p.suffix == ".tsv" for p in dateien)
+    for p in dateien:
+        text = p.read_text(encoding="utf-8")
+        assert not [r for r in roh if r in text], p
+    db = sqlite3.connect(config.DB)
+    assert {ref for _, ref, _ in faelle} <= maske.aus_db(db).refs
+    erg = check.datenschutz(db)
+    aus = capsys.readouterr().out
+    assert erg["befunde"] == [] and erg["fehlend"] == [], erg
+    assert erg["untersucht"]["titel_restzahlen"] >= 1
+    hinweis = next(z for z in aus.splitlines() if z.startswith("Hinweis (kein Befund): Titel der Maske"))
+    assert "1986/2026" in hinweis and strasse not in hinweis
+    assert {"ort", "zurueckgestellt"} <= check.TSV_TEXTSPALTEN
+    # Stichprobe je Methode: Ort ungekürzt (etwa aus einem früheren Lauf) meldet check
+    pfad = config.EXPORT / "stichprobe_geokodierung.tsv"
+    kopf, *zeilen = _tsv(pfad)
+    i, j = kopf.index("drucksache"), kopf.index("ort")
+    zeile = next(z for z in zeilen if z[i] in maske.aus_db(db).refs)
+    zeile[j] = f"{strasse} {a}"
+    pfad.write_text("\n".join("\t".join(z) for z in [kopf, zeile]) + "\n", encoding="utf-8")
+    b_ = check.datenschutz(db)["befunde"]
+    db.close()
+    assert len(b_) == 1 and "Hausnummern in Titeln oder Ortsnamen" in b_[0] and b_[0].endswith(f"z. B. {zeile[i]}"), b_
