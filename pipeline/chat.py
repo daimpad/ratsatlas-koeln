@@ -19,7 +19,7 @@ from collections import Counter, defaultdict
 from datetime import date
 
 from . import config, topics
-from .geocode import _vergleichstexte, eingabe
+from .geocode import _vergleichstexte, art_von_personen, eingabe
 
 PAPER_FIELDS = ("reference", "name", "paper_type", "date", "amt", "web", "main_file", "source_object", "stand",
                 "parties", "plans")
@@ -161,7 +161,10 @@ def aus_einwohnerschaft(paper_type, name):
     """Ausgangsvorlage aus der Einwohnerschaft nach Art oder Titel, ohne verbundene Vorlagen (Titelmaske und
     Volltextkette: maske.kette; geocode.punkt_ausschluss über maske.titel_ohne_hausnummer). Abgeglichen wird wie in der
     Punktregel über die Vergleichstexte (geocode._vergleichstexte), nicht die gelieferte Schreibung: „Buergerantrag“,
-    „Bür\u00adgerantrag“ oder „Antrag nach Paragraf 24 GO NRW“ gelten wie die übliche Schreibung (Prüfung r20)."""
+    „Bür\u00adgerantrag“ oder „Antrag nach Paragraf 24 GO NRW“ gelten wie die übliche Schreibung (Prüfung r20). Dazu
+    jede Vorlagenart, die die Punktregel als Vorlage aus der Einwohnerschaft oder von Privatpersonen ausschließt
+    (geocode.art_von_personen, dieselbe Regel wie in VORLAGENART_PUNKT: „Bürger-Antrag“, „Einwohner*innenanfrage“,
+    „Anwohnerantrag“, „Privatantrag“, „Bürgerbriefe“; Prüfung r20n)."""
     art = paper_type if isinstance(paper_type, str) else "" if paper_type is None else str(paper_type)
     return bool(any(t in _EINWOHNER_VERGLEICH for t in _vergleichstexte(art))
                 or any(EINWOHNER_TITEL.search(t) for t in _vergleichstexte(name))
@@ -169,7 +172,8 @@ def aus_einwohnerschaft(paper_type, name):
                 # Art und Titel, eine Funktion: „Eingabe nach § 24 GO NRW“, „Einwohneranfrage nach § 39 Abs. 6“,
                 # „… – Bürgereingabe“), damit eine Vorlage ohne Hauskoordinate ihre Hausnummer auch nicht im Titel
                 # zeigt (Generalprobe 09.11.2026)
-                or eingabe(paper_type, name))
+                or eingabe(paper_type, name)
+                or art_von_personen(paper_type))
 
 
 def write_chat(out, db, cache, meetings, sources, meta):

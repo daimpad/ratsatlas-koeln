@@ -305,7 +305,9 @@ def datenschutz(db, base=None):
        vorlagen.geojson, `locations[].name` in den Gebietsdateien) und in den Stichproben mit Titel (maske.STICHPROBEN,
        in der Stichprobe Volltext auch die gefundenen Orte); keine Drucksache der Titelmaske mit Erlaubnis für
        Hauskoordinaten (Titelmaske und Hauskoordinaten folgen denselben Beziehungen, Runde 20) und keine Eingabe ohne
-       Hauskoordinate (Grund „eingabe“) außerhalb der Titelmaske (Prüfung r20),
+       Hauskoordinate (Grund „eingabe“) außerhalb der Titelmaske (Prüfung r20), ebenso keine Vorlagenart aus der
+       Einwohnerschaft oder von Privatpersonen (geocode.art_von_personen); Hausnummern mit dem Muster der Maske und
+       einer unabhängig gebauten Probe (maske.Maske.offen; Prüfung r20n),
     3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
        Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
@@ -388,12 +390,16 @@ def datenschutz(db, base=None):
                        f"z. B. {', '.join(widerspruch[:5])}")
     # Gegenrichtung (Prüfung r20): jede Eingabe oder Einwohneranfrage nach der Punktregel (Grund „eingabe“) ist
     # Ausgangspunkt der Titelmaske, auch in anderer Schreibung (geocode.eingabe in punkt_ausschluss und
-    # chat.aus_einwohnerschaft); sonst zeigte sie ihre Hausnummer im Titel
-    ungeschuetzt = sorted({str(ref_of.get(pid) or pid) for pid, g in gruende.items()
-                           if g == "eingabe" and ref_of.get(pid) not in m.refs})
+    # chat.aus_einwohnerschaft); sonst zeigte sie ihre Hausnummer im Titel. Ebenso jede Vorlage, deren Vorlagenart die
+    # Punktregel als Vorlage aus der Einwohnerschaft oder von Privatpersonen ausschließt (geocode.art_von_personen,
+    # meist Grund „vorlagenart“: „Bürger-Antrag“, „Einwohner*innenanfrage“, „Anwohnerantrag“; Prüfung r20n)
+    personen = {pid for pid, typ in db.execute("SELECT id, paper_type FROM paper") if geocode.art_von_personen(typ)}
+    ungeschuetzt = sorted({str(ref_of.get(pid) or pid) for pid in ref_of
+                           if (gruende.get(pid) == "eingabe" or pid in personen) and ref_of.get(pid) not in m.refs})
     if ungeschuetzt:
-        befunde.append(f"Datenschutz: Eingabe oder Einwohneranfrage ohne Hauskoordinate (geocode.punkt_ausschluss), "
-                       f"aber nicht in der Titelmaske (maske.py; Titelmaske und Hauskoordinaten urteilen verschieden): "
+        befunde.append(f"Datenschutz: Eingabe oder Einwohneranfrage ohne Hauskoordinate (geocode.punkt_ausschluss; "
+                       f"auch nach der Vorlagenart, geocode.art_von_personen), aber nicht in der Titelmaske (maske.py; "
+                       f"Titelmaske und Hauskoordinaten urteilen verschieden): "
                        f"{len(ungeschuetzt)}, z. B. {', '.join(ungeschuetzt[:5])}")
     offen = set()
     suche = lesen("suche.json")

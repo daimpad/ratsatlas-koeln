@@ -11,6 +11,7 @@ die Stadt."""
 import importlib.util
 import json
 import random
+import re
 import shutil
 import sqlite3
 import sys
@@ -912,3 +913,187 @@ def test_stichprobe_volltext_maskiert_und_geprueft(testdaten, capsys):
 
 def hnr_aus(text, strasse, nr):
     return f"{strasse} {maske.OHNE_NR}" in text and f"{strasse} {nr[0]}" not in text
+
+
+# --- Prüfung r20n: Vorlagenarten aus der Einwohnerschaft in anderer Schreibung, Hausnummern in anderen Schreibweisen,
+# unabhängige Probe in check -------------------------------------------------------------------------------------------
+
+# Vorlagenarten, die die Punktregel als Vorlage aus der Einwohnerschaft oder von Privatpersonen ausschließt (Grund
+# „eingabe“ oder „vorlagenart“), die Titelmaske aber nicht erkannte (Prüfung r20n: Hausnummer im Titel)
+ARTEN_R20N = ["Einwohner-Anfrage", "Einwohner*innenanfrage", "Einwohner_innenanfrage", "Bürger*innenantrag",
+              "Bürger:innenantrag", "Bürgerinnenantrag", "Bürger-Antrag", "Bürger‑Antrag", "Bürger-\nantrag",
+              "Bürgeranfrage", "Bürgerfrage", "Bürgerfragestunde", "Fragen von Einwohnerinnen und Einwohnern",
+              "Anfrage von Bürgerinnen und Bürgern", "Vorlage aus der Einwohnerschaft", "Anwohnerantrag",
+              "Privatantrag", "Bürgerbrief ", "Bürgerbriefe"]
+
+
+@pytest.mark.parametrize("art", ARTEN_R20N)
+def test_vorlagenart_aus_der_einwohnerschaft_in_titelmaske(art):
+    """Prüfung r20n: Jede Vorlagenart, die die Punktregel als Vorlage aus der Einwohnerschaft oder von Privatpersonen
+    ausschließt, ist Ausgangspunkt der Titelmaske und der Volltextkette (geocode.art_von_personen, dieselbe Regel wie in
+    VORLAGENART_PUNKT), auch mit Bindestrich, Genderform oder Leerraum am Ende; verbundene Vorlagen ebenso."""
+    titel = f"[Testdaten] Bank an der {MUSTER} 10"
+    p = {"reference": "10/2026", "paperType": art, "name": titel}
+    assert geocode.punkt_ausschluss(p) in ("eingabe", "vorlagenart") and geocode.art_von_personen(art)
+    assert chat.aus_einwohnerschaft(art, titel) and maske.titel_ohne_hausnummer(art, titel)
+    vorlagen = [("e", "10/2026", art, titel, None), ("s", "11/2026", "Stellungnahme der Verwaltung", titel, None)]
+    for privat_auch in (True, False):
+        assert set(maske.kette(vorlagen, (), [("s", "e")], privat_auch)) == {"e", "s"}
+    m = maske.Maske({"10/2026", "11/2026"}, strassen=[MUSTER])
+    assert m(titel, "10/2026") == m(titel, "11/2026") == f"[Testdaten] Bank an der {MUSTER} {maske.OHNE_NR}"
+
+
+@pytest.mark.parametrize("titel", ["[Testdaten] Bürger-Antrag: Bank an der Musterstraße 10",
+                                   "[Testdaten] Einwohner*innenanfrage zur Musterstraße 10",
+                                   "[Testdaten] Bürgeranfrage zur Musterstraße 10"])
+def test_eingabe_im_titel_mit_trennzeichen_und_genderform(titel):
+    """Prüfung r20n: geocode.EINGABE erkennt Bürger- und Einwohneranträge und -anfragen auch mit Trennzeichen und in
+    Genderform im Titel einer Mitteilung (Punktregel und Titelmaske, eine Funktion)."""
+    assert geocode.punkt_ausschluss({"reference": "10/2026", "paperType": "Mitteilung", "name": titel}) == "eingabe"
+    assert chat.aus_einwohnerschaft("Mitteilung", titel)
+
+
+@pytest.mark.parametrize("art, titel", [
+    ("Beschlussvorlage", "[Testdaten] Bürgermeisterin besucht die Musterstraße 10"),
+    ("Beschlussvorlage", "[Testdaten] Neues Bürgerhaus an der Musterstraße 10"),
+    ("Mitteilung", "[Testdaten] Bürgersteig an der Musterstraße 10"),
+    ("Beschlussvorlage", "[Testdaten] Bürgerbeteiligung zur Musterstraße 10"),
+    ("Dringlichkeitsentscheidung des Oberbürgermeisters", "[Testdaten] Musterstraße 10")])
+def test_verwaltungsvorlage_mit_buerger_im_titel_bleibt(art, titel):
+    """„Bürgermeister“, „Bürgerhaus“, „Bürgersteig“ und „Bürgerbeteiligung“ machen eine Verwaltungsvorlage nicht zur
+    Eingabe (Hauskoordinate erlaubt, Titel unverändert)."""
+    assert geocode.punkt_ausschluss({"reference": "10/2026", "paperType": art, "name": titel}) is None
+    assert not chat.aus_einwohnerschaft(art, titel) and not geocode.art_von_personen(art)
+
+
+def test_vergleichstexte_leerraum():
+    """Leerraum am Rand fällt weg, mehrfacher Leerraum (auch Zeilenumbruch, geschütztes Leerzeichen) wird ein
+    Leerzeichen: „Bürgerbrief “ ist „Bürgerbrief“, „Anregungen  und Beschwerden“ das Gremium für Eingaben."""
+    assert geocode._vergleichstexte(" Bürgerbrief \n")[0] == "bürgerbrief"
+    assert chat.aus_einwohnerschaft("Bürgerbrief ", None)
+    assert geocode.punkt_ausschluss({"reference": "10/2026", "paperType": "Mitteilung", "name": "Musterstraße 10"},
+                                    ["Ausschuss für Anregungen  und\nBeschwerden"]) == "gremium"
+
+
+# Schreibweisen der Hausnummer, die die Maske stehen ließ (Prüfung r20n); erwartet: Titel bis auf die Nummer gleich
+SCHREIBWEISEN_HNR = [
+    ("Aachener Str.12", "Aachener Str.{o}"), ("Aachener Straße12", "Aachener Straße{o}"),
+    ("Aachener Str 12", "Aachener Str {o}"), ("Aachener Straße, Nr. 12", "Aachener Straße, {o}"),
+    ("Aachener Straße (Nr. 12)", "Aachener Straße ({o})"), ("Aachener Straße, 12", "Aachener Straße, {o}"),
+    ("Aachener Straße, Haus 12", "Aachener Straße, {o}"), ("Aachener Straße #12", "Aachener Straße #{o}"),
+    ("Aachener Straße № 12", "Aachener Straße {o}"), ("Aachener Straße ​12", "Aachener Straße ​{o}"),
+    ("Aachener Stra­ße 12", "Aachener Stra­ße {o}"), ("Am  Leystapel 3", "Am  Leystapel {o}"),
+    ("Am Leystapel 3", "Am Leystapel {o}"), ("Am\nLeystapel 3", "Am\nLeystapel {o}"),
+    ("Am Schlossgarten 4", "Am Schlossgarten {o}"), ("Auf dem  Berlich 7a", "Auf dem  Berlich {o}"),
+    ("Aachener Straße Nummer 12", "Aachener Straße {o}"), ("AACHENER STRASSE 12-14", "AACHENER STRASSE {o}"),
+    ("Mülheimer Straße 3", "Mülheimer Straße {o}"),
+    # unverändert wie bisher
+    ("Lärm Aachener Straße 1175", "Lärm Aachener Straße {o}"), ("Haus-Nr. 1234", "{o}"),
+    ("(neben Haus-Nr.) 68", "(neben {o})"), ("Straße Nr. 5", "Straße {o}")]
+
+
+@pytest.mark.parametrize("titel, erwartet", SCHREIBWEISEN_HNR)
+def test_maske_andere_schreibweisen_der_hausnummer(titel, erwartet):
+    """Prüfung r20n: Die Maske gleicht eine angeglichene Fassung des Titels ab (Leerraum, unsichtbare Zeichen, NFKC) und
+    ersetzt im gelieferten Titel; zwischen Straße und Nummer auch kein Leerzeichen, Komma, Klammer, „#“, „№“, „Nr.“,
+    „Haus“; Straßennamen ohne Endung auch mit „ss“ statt „ß“. Die Prüfung (offen) findet danach nichts mehr, vorher
+    schon."""
+    m = maske.Maske({"1/2026"}, strassen=["Aachener Straße", "Am Leystapel", "Am Schloßgarten", "Auf dem Berlich",
+                                          "Mülheimer Straße"])
+    assert m.offen(titel, "1/2026")
+    aus = m(titel, "1/2026")
+    assert aus == erwartet.format(o=maske.OHNE_NR), aus
+    assert not m.offen(aus, "1/2026") and m(titel, "2/2026") == titel
+
+
+@pytest.mark.parametrize("titel", ["Ausbau L 845", "BAB 57 Lärmschutz", "Aachener Straße, 50931 Köln",
+                                   "Bebauungsplan Nr. 6158/03", "Haus 2 der Gesamtschule", "Aachener Straße Nord 12"])
+def test_maske_laesst_andere_nummern_stehen(titel):
+    """Nummern, die keine Hausnummer hinter einer Straße sind (Straßenname mit Ziffer, Postleitzahl, Bebauungsplan,
+    bloßes „Haus“), bleiben stehen, und die Prüfung meldet sie nicht (ein Befund hielte die Veröffentlichung an)."""
+    m = maske.Maske({"1/2026"}, strassen=["Aachener Straße", "L 84", "BAB 57"])
+    assert m(titel, "1/2026") == titel and not m.offen(titel, "1/2026")
+
+
+def test_probe_unabhaengig_von_der_maske(monkeypatch):
+    """Die Probe in check (Maske.offen) ist unabhängig gebaut: Fehlt der Maske eine Schreibweise (hier: altes Muster mit
+    Leerraum zwischen Straße und Nummer, ohne Angleichung), meldet die Probe die stehengebliebene Hausnummer trotzdem."""
+    def alt(strassen):
+        names = sorted({s for s in strassen if s}, key=len, reverse=True)
+        return re.compile(rf"((?:{'|'.join([*map(re.escape, names), maske.SUFFIX])})\s+)(?:nr\.?\s*)?{maske.NR}",
+                          re.I)
+    monkeypatch.setattr(maske, "_muster", alt)
+    monkeypatch.setattr(maske, "_angleichen", lambda t: (t, list(range(len(t)))))
+    m = maske.Maske({"1/2026"}, strassen=["Aachener Straße", "Am Schloßgarten"])
+    for titel in ("Aachener Straße12", "Aachener Str.12", "Am Schlossgarten 4", "Aachener Straße, Nr. 12",
+                  "Ａａｃｈｅｎｅｒ Ｓｔｒａßｅ １２"):
+        assert m(titel, "1/2026") == titel                                 # die alte Maske lässt sie stehen
+        assert m.offen(titel, "1/2026"), titel                             # die Probe findet sie
+        assert not m.rx.search(titel) and not maske.WORT.search(titel)
+
+
+def test_vorlagenart_und_schreibweise_ende_zu_ende(testdaten, monkeypatch, capsys):
+    """Prüfung r20n, Ende zu Ende mit erfundenen Vorlagen: Vorlagenarten aus der Einwohnerschaft in anderer Schreibung
+    („Einwohner-Anfrage“, „Anwohnerantrag“, „Bürgerbrief “ mit Leerzeichen, „Bürger‑Antrag“ mit geschütztem
+    Bindestrich), eine Stellungnahme dazu über relatedPaper und Hausnummern in anderer Schreibweise („…str.5“,
+    „…straße, Nr. 5“, „…straße (Nr. 5)“, „…straße, Haus 5“) erscheinen ohne Hausnummer in suche.json, vorlagen.geojson
+    und den Gebietsdateien; check meldet nichts. Fehlt der Titelmaske die Regel nach der Vorlagenart, meldet check die
+    Vorlage (Gegenprobe); fehlen der Maske die Schreibweisen, meldet es die unabhängige Probe."""
+    strasse, nr, _, _ = _einfuegen()
+    kurz = strasse.removesuffix("straße") + "str."
+    faelle = [_vorlage("ea", "1801/2026", f"[Testdaten] Sitzbänke an der {kurz}{nr[0]}", art="Einwohner-Anfrage"),
+              _vorlage("aw", "1802/2026", f"[Testdaten] Sitzbänke an der {strasse}, Nr. {nr[0]}",
+                       art="Anwohnerantrag"),
+              _vorlage("bb", "1803/2026", f"[Testdaten] Sitzbänke an der {strasse} (Nr. {nr[0]})", art="Bürgerbrief "),
+              _vorlage("bs", "1804/2026", f"[Testdaten] Sitzbänke an der {kurz}{nr[0]}",
+                       art="Stellungnahme der Verwaltung", relatedPaper=[_id("aw")]),
+              _vorlage("ba", "1805/2026", f"[Testdaten] Sitzbänke an der {strasse}, Haus {nr[0]}",
+                       art="Bürger\u2011Antrag")]
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.writelines(json.dumps(p, ensure_ascii=False) + "\n" for p in faelle)
+    build.build()
+    export.export()
+    capsys.readouterr()
+    base = config.EXPORT / config.STADT
+    refs = {"1801/2026", "1802/2026", "1803/2026", "1804/2026", "1805/2026"}
+
+    def titel_im_export():
+        titel = [r[1] for r in json.loads((base / "suche.json").read_text())["rows"] if r[0] in refs]
+        titel += [f["properties"].get(k) for f in json.loads((base / "vorlagen.geojson").read_text())["features"]
+                  if f["properties"]["reference"] in refs for k in ("name", "place")]
+        for d in check.GEBIETSDATEIEN:
+            for datei in (base / d).glob("*.json"):
+                titel += [p["name"] for p in json.loads(datei.read_text())["papers"] if p["reference"] in refs]
+        return [x for x in titel if x]
+
+    titel = titel_im_export()
+    assert len(titel) >= 5 and not [x for x in titel if nr[0] in x], titel
+    assert all(maske.OHNE_NR in x for x in titel if x.startswith("[Testdaten] Sitzbänke")), titel
+    db = sqlite3.connect(config.DB)
+    assert refs <= maske.aus_db(db).refs
+    assert check.datenschutz(db)["befunde"] == []
+    with monkeypatch.context() as mp:   # Fehler: Titelmaske ohne die Regel nach der Vorlagenart
+        mp.setattr(chat, "art_von_personen", lambda art: False)
+        erg = check.datenschutz(db)
+    db.close()
+    # „Einwohner-Anfrage“ und „Bürger‑Antrag“ erkennt geocode.EINGABE, „Bürgerbrief “ chat.EINWOHNER (ohne Leerraum)
+    b = [x for x in erg["befunde"] if "Eingabe oder Einwohneranfrage ohne Hauskoordinate" in x]
+    assert len(b) == 1 and b[0].endswith(": 1, z. B. 1802/2026"), erg["befunde"]
+    altes_suffix = maske.SUFFIX.replace(r"str(?:\.|(?!" + maske._L + "))", r"str\.")
+    assert altes_suffix != maske.SUFFIX
+
+    def altes_muster(strassen):   # Muster von 5decb33: Leerraum zwischen Straße und Nummer, „ß“ wie geliefert
+        namen = sorted({s for s in strassen if s}, key=len, reverse=True)
+        return re.compile(rf"((?:{'|'.join([*map(re.escape, namen), altes_suffix])})\s+)(?:nr\.?\s*)?{maske.NR}",
+                          re.I)
+
+    with monkeypatch.context() as mp:   # Fehler: Maske ohne die neuen Schreibweisen, auch in der Prüfung
+        mp.setattr(maske, "_muster", altes_muster)
+        export.export()
+        capsys.readouterr()
+        assert [x for x in titel_im_export() if nr[0] in x]
+        db = sqlite3.connect(config.DB)
+        erg = check.datenschutz(db)
+        db.close()
+    b = [x for x in erg["befunde"] if "Hausnummern in Titeln oder Ortsnamen" in x]
+    assert len(b) == 1 and b[0].endswith(": 5, z. B. 1801/2026, 1802/2026, 1803/2026, 1804/2026, 1805/2026"), b

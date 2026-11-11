@@ -35,10 +35,12 @@ ERKANNT = ["Antrag nach § 3 der GeschO des Rates", "Anfrage nach § 4 der Gesch
 # nicht erkennbar: leer, nur Leerraum, null, unbekannt, keine Zeichenkette, Vorlagen aus der Einwohnerschaft oder von
 # Privatpersonen ohne Wort einer Eingabe (auch über einen Zeilenumbruch, in anderer Schreibung oder hinter „ue“)
 NICHT_ERKANNT = ["", "   ", "\t\n", None, "Sonstiges", "Information", "Bürgerbrief", "Bericht", "Vortrag",
-                 ["Beschlussvorlage"], {"name": "Mitteilung"}, 17, "Bürgeranfrage", "Einwohnervorlage",
+                 ["Beschlussvorlage"], {"name": "Mitteilung"}, 17, "Einwohnervorlage",
                  "Antrag einer Bürgerin", "Antrag\nEinwohner", "Antrag einer Privatperson", "Antrag (Privat)",
-                 "Anwohnerantrag", "Bauantrag", "Bauvoranfrage", "Buergeranfrage", "Neueinwohnervorlage",
-                 "Bürger*innenantrag"]
+                 "Anwohnerantrag", "Bauantrag", "Bauvoranfrage", "Neueinwohnervorlage"]
+# seit der Prüfung r20n Eingaben nach geocode.EINGABE (Trennzeichen, Genderform, Bürgeranfrage): ohne Hauskoordinate wie
+# bisher, aber mit Grund „eingabe“ statt „vorlagenart“
+ALS_EINGABE = ["Bürgeranfrage", "Buergeranfrage", "Bürger*innenantrag"]
 # andere Schreibungen einer Eingabe: zerlegte Umlaute, weiches Trennzeichen, Zeichen ohne Breite, Vollbreite,
 # „ue“ statt „ü“, Großschreibung, „Paragraf“ statt „§“; „Neueingabe“ (das „ue“ darf „eingabe“ nicht verdecken)
 WEICH, OHNE_BREITE, TREMA, VOLL_B = chr(0x00AD), chr(0x200B), chr(0x0308), chr(0xFF22)
@@ -62,6 +64,12 @@ def test_erkannte_vorlagenart_erlaubt(art):
 @pytest.mark.parametrize("art", NICHT_ERKANNT)
 def test_nicht_erkennbare_vorlagenart_ohne_hauskoordinate(art):
     assert punkt_ausschluss(_vv(art)) == "vorlagenart"
+    assert not hausnummer_punkt_erlaubt(_vv(art))
+
+
+@pytest.mark.parametrize("art", ALS_EINGABE)
+def test_eingabe_nach_der_vorlagenart_ohne_hauskoordinate(art):
+    assert punkt_ausschluss(_vv(art)) == "eingabe"
     assert not hausnummer_punkt_erlaubt(_vv(art))
 
 

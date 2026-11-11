@@ -50,8 +50,9 @@ können ein altes `modified` tragen), wendet der Server den Filter nicht an. Je 
   Lauf (höchstens config.ABRUF_MAX_OBJEKTE / g Seiten je Liste und Nacht; ist sie mit ihnen schon erreicht, Art
   `obergrenze` ohne weitere Anfrage und ohne Fortsetzung), nicht zu den Seiten des Vollabrufs (Gesamtgrenze,
   Fortsetzung). Jede Nacht, nicht jeder Lauf: Sind die Sitzungen in dieser Nacht schon gelesen (Zustand `meetings`,
-  Beginn des letzten erfolgreichen Lesens, weniger als SPERRE_GLEICHE_NACHT zurück; nicht für lokale Testserver),
-  liest ein weiterer Lauf (Push auf main im Zeitfenster, Knopfdruck) sie nicht noch einmal vollständig: mit Vermerk
+  Beginn des letzten erfolgreichen Lesens, oder `meetings` in STAND.json, sein Ende, auch das einer Fortsetzung;
+  weniger als SPERRE_GLEICHE_NACHT zurück; nicht für lokale Testserver; _in_dieser_nacht_gelesen), liest ein weiterer
+  Lauf (Push auf main im Zeitfenster, Knopfdruck) sie nicht noch einmal vollständig: mit Vermerk
   ohne Anfrage, sonst nach dem Befund (k Seiten); letzter gültiger Stand, Zeile `übersprungen` in der Abrufstatistik,
   keine Warnung in STAND.json (_schon_gelesen). Kein Listenfehler, keine Pause, keine
   Warnung in `abruf_warnungen` (die Sitzungen sind aktualisiert); Warnung „Zeitfilter bei Sitzungen nicht angewandt,
@@ -860,14 +861,30 @@ def _nur_warnung(text, e, zeile, objekte, seiten, seit, pfad, schluessel):
     return list(_vorhanden(pfad).values()), meldung
 
 
+def _stand_zeit(schluessel):
+    """Zeitpunkt aus STAND.json (etwa `meetings`, von fetch_meetings erst nach dem Schreiben gesetzt), ohne Nebenwirkung
+    (anders als _stand legt eine unlesbare Datei hier nichts beiseite); None, wenn fehlend oder unlesbar."""
+    try:
+        s = json.loads(config.STAND.read_text(encoding="utf-8"))
+    except (OSError, ValueError, RecursionError):
+        return None
+    return _zeit(s.get(schluessel)) if isinstance(s, dict) else None
+
+
 def _in_dieser_nacht_gelesen(schluessel):
-    """Zeitpunkt des letzten erfolgreichen Lesens der Liste (Zustand `<liste>`, Beginn jenes Lesens), wenn er weniger
-    als SPERRE_GLEICHE_NACHT zurückliegt (dieselbe Nacht), sonst None; ein künftiger Zeitpunkt gilt nicht. Nicht für
-    lokale Testserver (wie die 12-Stunden-Regel)."""
+    """Zeitpunkt, zu dem die Liste in dieser Nacht zuletzt erfolgreich gelesen wurde, sonst None. Belege sind der
+    Zustand `<liste>` (Beginn jenes Lesens; nach einer Fortsetzung der Beginn in der Vornacht) und der Zeitpunkt der
+    Liste in STAND.json (_stamp nach dem Schreiben, also das Ende des Lesens, auch einer Fortsetzung; Prüfung r20n):
+    Es gilt der spätere der Belege, die weniger als SPERRE_GLEICHE_NACHT zurückliegen (dieselbe Nacht); ein künftiger
+    oder unlesbarer Zeitpunkt zählt nicht. So gilt eine Liste, deren Fortsetzung in dieser Nacht fertig wurde, als in
+    dieser Nacht gelesen. Liest nur, schreibt keinen neuen Schlüssel (Vollabrufnächte schreiben denselben Zustand wie
+    90928bc). Nicht für lokale Testserver (wie die 12-Stunden-Regel)."""
     if abruf.lokal(config.OPARL_BODY):
         return None
-    t = _zeit(_zustand().get(schluessel))
-    return t if t is not None and timedelta(0) <= abruf.uhr() - t < SPERRE_GLEICHE_NACHT else None
+    jetzt = abruf.uhr()
+    belege = [t for t in (_zeit(_zustand().get(schluessel)), _stand_zeit(schluessel))
+              if t is not None and timedelta(0) <= jetzt - t < SPERRE_GLEICHE_NACHT]
+    return max(belege) if belege else None
 
 
 def _schon_gelesen(name, zuletzt, befund, zeile, pfad, seiten=0, filter_wirksam=""):
@@ -878,7 +895,7 @@ def _schon_gelesen(name, zuletzt, befund, zeile, pfad, seiten=0, filter_wirksam=
     Meldung des Befunds in diesem Lauf (nach den Seiten mit Zeitfilter) oder "" (ohne Anfrage, Vermerk aus einem
     früheren Lauf). Liefert (letzter gültiger Stand, Meldung) wie eine Warnung, damit fetch_meetings Datei und Zeitpunkt
     nicht neu schreibt."""
-    meldung = (f"{name}: in dieser Nacht schon gelesen (Beginn {zuletzt.isoformat(timespec='seconds')}), "
+    meldung = (f"{name}: in dieser Nacht schon gelesen (zuletzt {zuletzt.isoformat(timespec='seconds')}), "
                f"{'Zeitfilter nicht angewandt' if befund else 'ohne Anfrage'}, nicht erneut vollständig gelesen; "
                "letzter gültiger Stand bleibt" + (f"; Befund: {befund}" if befund else ""))
     (_warnung if befund else print)(meldung)

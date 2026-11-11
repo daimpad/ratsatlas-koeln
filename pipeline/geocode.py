@@ -423,9 +423,13 @@ class Gazetteer:
 REFERENZ_PUNKT = re.compile(r"^(?:AN/)?\d{1,4}/\d{4}$")
 # Eingaben und Vorlagen natürlicher Personen (Entscheidung 04.11.2026): auch Kölner Einwohneranfragen („Einwohneranfrage
 # nach § 39 Abs. 6“, Stufe 2, explore/BERICHT_phase1.md 6.5; Drucksache wie Anträge AN/NNNN/JJJJ möglich) und
-# Einwohnerfragen; nicht „Einwohnerbefragung“ (Verwaltung)
-EINGABE = re.compile(r"(?i)§\s*24\b|anregung|beschwerde|eingabe|petition|bürgerantrag|einwohner(?:innen)?antrag"
-                     r"|einwohner(?:innen)?(?:an)?frage")
+# Einwohnerfragen, Bürgeranträge, -anfragen und -fragen auch mit Trennzeichen und in Genderform („Bürger-Antrag“,
+# „Einwohner*innenanfrage“, „Einwohner_innenanfrage“, „Bürger:innenantrag“, „Bürgerinnenantrag“, „Bürgerfragestunde“;
+# Prüfung r20n). „Einwohnerbefragung“ ist hier keine Eingabe (Verwaltung), über chat.EINWOHNER_TITEL („einwohner“ im
+# Titel) aber Ausgangspunkt der Titelmaske und damit ohne Hauskoordinate (Grund „maske“; Abwägung offen, TECHNIK.md)
+EINGABE = re.compile(r"(?i)§\s*24\b|anregung|beschwerde|eingabe|petition"
+                     r"|bürger\W*(?:_?innen\W*)?(?:an)?(?:trag|frage)"
+                     r"|einwohner\W*(?:_?innen\W*)?(?:an)?(?:trag|frage)")
 # Hauskoordinate nur bei erkennbarer Vorlagenart (Entscheidung 10.11.2026): leer, nur Leerraum, null, nicht als Text
 # geliefert oder ohne Treffer hier → keine Hauskoordinate, höchstens die Straße (wie bei Eingaben). Erkannt werden
 # Verwaltungsvorlagen und politische Anträge und Anfragen, Groß- und Kleinschreibung egal, auch als Wortteil
@@ -441,10 +445,16 @@ EINGABE = re.compile(r"(?i)§\s*24\b|anregung|beschwerde|eingabe|petition|bürge
 # Hauskoordinate. Abgeglichen wird der Vergleichstext (_vergleichstexte), nicht die gelieferte Schreibung. Die
 # vollständige Kölner Liste fehlt bis zum Vollabruf: erkannte und nicht erkannte Arten stehen mit Anzahl im Log von
 # build und in der Ausgabe von check.
-VORLAGENART_PUNKT = re.compile(r"(?is)^(?!.*(?:bürger(?!meister)|einwohner|anwohner|privat"
-                               r"|bau(?:vor)?an(?:trag|frage)))"
+# Vorlagenarten aus der Einwohnerschaft oder von Privatpersonen (in der Art „Bürger“ außer „Bürgermeister“,
+# „Einwohner“, „Anwohner“, „privat“, „Bauantrag“, „Bauvoranfrage“): nie Hauskoordinate (VORLAGENART_PUNKT) und, mit
+# derselben Regel (art_von_personen), Ausgangspunkt der Titelmaske (chat.aus_einwohnerschaft), auch in anderer Schreibung
+# („Bürger-Antrag“, „Einwohner*innenanfrage“, „Anwohnerantrag“, „Privatantrag“, „Bürgerbriefe“; Prüfung r20n: vorher
+# ohne Hauskoordinate, aber mit Hausnummer im Titel)
+ART_PERSONEN = r"bürger(?!meister)|einwohner|anwohner|privat|bau(?:vor)?an(?:trag|frage)"
+VORLAGENART_PUNKT = re.compile(rf"(?is)^(?!.*(?:{ART_PERSONEN}))"
                                r".*(?:vorlage|mitteilung|stellungnahme|antwort|dringlichkeitsentscheidung"
                                r"|informationsbrief|antrag|anfrage)")
+_ART_PERSONEN = re.compile(ART_PERSONEN, re.I | re.S)
 # Zeichen ohne Breite und weiche Trennzeichen: fallen im Vergleichstext weg („Bür\u00adgerantrag“ wie
 # „Bürgerantrag“)
 _UNSICHTBAR = re.compile(r"[\u00ad\u034f\u180e\u200b-\u200f\u2060-\u2064\ufeff]")
@@ -460,11 +470,13 @@ AUSSCHLUSS = {"drucksache": "Drucksache in anderem Schema", "eingabe": "Eingabe 
 def _vergleichstexte(text):
     """Vergleichstexte für die Regeln zur Hauskoordinate (EINGABE, Gremien, VORLAGENART_PUNKT), damit eine andere
     Schreibung eine Eingabe nicht durchlässt: Unicode-Normalform NFKC (zerlegte Umlaute, Vollbreite), ohne weiche
-    Trennzeichen und Zeichen ohne Breite (_UNSICHTBAR), kleingeschrieben, „Paragraf 24“ wie „§ 24“; dazu derselbe Text
-    mit „ae“, „oe“, „ue“ als „ä“, „ö“, „ü“ („Buergerantrag“). Ein Ausschluss gilt, wenn einer der beiden Texte passt,
-    eine Erkennung nur, wenn beide passen (so verdeckt „ue“ kein folgendes Wort: „Neueingabe“). Nur für den Abgleich;
-    Datenbank, Export und Log behalten die gelieferte Schreibung."""
+    Trennzeichen und Zeichen ohne Breite (_UNSICHTBAR), kleingeschrieben, Leerraum am Rand entfernt und im Text zu einem
+    Leerzeichen zusammengefasst („Bürgerbrief “, „Anregungen  und Beschwerden“; Prüfung r20n), „Paragraf 24“ wie „§ 24“;
+    dazu derselbe Text mit „ae“, „oe“, „ue“ als „ä“, „ö“, „ü“ („Buergerantrag“). Ein Ausschluss gilt, wenn einer der
+    beiden Texte passt, eine Erkennung nur, wenn beide passen (so verdeckt „ue“ kein folgendes Wort: „Neueingabe“). Nur
+    für den Abgleich; Datenbank, Export und Log behalten die gelieferte Schreibung."""
     t = unicodedata.normalize("NFKC", _UNSICHTBAR.sub("", text or "")).lower()
+    t = re.sub(r"\s+", " ", t).strip()
     t = re.sub(r"paragra(?:f|ph)(?:en)?\.?\s*(?=\d)", "§ ", t)
     return t, t.replace("ae", "ä").replace("oe", "ö").replace("ue", "ü")
 
@@ -477,6 +489,14 @@ def eingabe(art, titel):
     NRW“, weiches Trennzeichen) weder die Hauskoordinate bekommt noch ihre Hausnummer im Titel zeigt (Prüfung r20)."""
     art = art if isinstance(art, str) else "" if art is None else str(art)
     return any(EINGABE.search(t) for t in _vergleichstexte(art) + _vergleichstexte(titel))
+
+
+def art_von_personen(art):
+    """Vorlagenart aus der Einwohnerschaft oder von Privatpersonen (ART_PERSONEN, in einem der Vergleichstexte; eine
+    Vorlagenart in anderer Form gilt als Text, null als leer): dieselbe Regel wie der Ausschluss in VORLAGENART_PUNKT,
+    für die Titelmaske (chat.aus_einwohnerschaft) und die Gegenprobe in check.datenschutz (Prüfung r20n)."""
+    art = art if isinstance(art, str) else "" if art is None else str(art)
+    return any(_ART_PERSONEN.search(t) for t in _vergleichstexte(art))
 
 
 def vorlagenart_erkannt(paper):
