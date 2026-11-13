@@ -65,6 +65,16 @@ FEHLERART = re.compile(r"[A-Za-z][A-Za-z0-9_]{0,59}")
 # Federführung aus dem Kopf (actors.responsibilities): Methode und Fundstelle (ohne Text des Dokuments)
 METHODE = "pdf_kopf"
 EVIDENZ = "Kopf der Vorlage (S. 1)"
+# Datei aus `auxiliaryFile`, weil `mainFile` fehlt (Entscheidung des Auftraggebers 13.11.2026 (a)): eigene Methode und
+# Fundstelle, Konfidenz eine Stufe unter der Hauptdatei (mittel → niedrig). Unter „niedrig“ gibt es keine Stufe: Die
+# ausgeschriebene Form (`dezernat_dienststelle`, aus der Hauptdatei schon „niedrig“) aus einer Anlage wird gespeichert,
+# aber nicht als Federführung übernommen
+METHODE_ANLAGE = "pdf_kopf_anlage"
+EVIDENZ_ANLAGE = "Kopf der Anlage (S. 1)"
+# Herkunft der gelesenen Datei → (Methode, Fundstelle, {Trefferart: Konfidenz}); eine Trefferart ohne Konfidenz wird
+# nicht als Federführung übernommen
+VERWENDUNG = {"mainFile": (METHODE, EVIDENZ, MIT_KENNUNG),
+              "auxiliaryFile": (METHODE_ANLAGE, EVIDENZ_ANLAGE, {"kennung": "niedrig"})}
 # Grenzen für pypdf (Byte je entpacktem Datenstrom; pypdf selbst erlaubt 75 MB)
 PYPDF_GRENZE = 30_000_000
 

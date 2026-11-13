@@ -99,7 +99,7 @@ def _paper_detail(db, pid):
         # Federführung mit Zuordnung zur Ämtertabelle (pipeline/aemter.py, CLAUDE.md 5.3): Dezernat und Dienststelle
         # laut Geschäfts- und Dezernatsverteilungsplan mit Methode, Stand und Fundstelle; ohne eindeutigen Treffer nur
         # der Status, die Zeile bleibt sonst wie zuvor. confidence und kennung nur bei der Federführung aus dem Kopf der
-        # Vorlage (pdf_kopf), sonst wie bisher ohne
+        # Vorlage (pdf_kopf, aus einer Anlage pdf_kopf_anlage), sonst wie bisher ohne
         "responsibility": [_mit_aemtertabelle({**{k: v for k, v in dict(r).items() if v is not None or k not in ("confidence", "kennung")},
                                                "evidence": m(r["evidence"], ref)}, p["date"]) for r in resp],
         "originators": fund(orig),

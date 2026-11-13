@@ -1949,10 +1949,15 @@
     syncUrl();
     if (tl) tl.select(p);
     highlight();
-    // Kennung aus dem Kopf der Vorlage (pdf_kopf): ohne Ämtertabelle keinem Amt zugeordnet, als Kennung gezeigt
-    const KOPF_SICHERHEIT = { mittel: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“", niedrig: "erkannt in ausgeschriebener Form, weniger sicher" };
-    const resp = p.responsibility.map((r) => r.method === "pdf_kopf"
-      ? `Kennung ${esc(r.kennung)} <span class="derived">abgeleitet aus dem Kopf der Vorlage (Seite 1), noch keinem Amt zugeordnet${KOPF_SICHERHEIT[r.confidence] ? ` · ${KOPF_SICHERHEIT[r.confidence]}` : ""}</span>`
+    // Kennung aus dem Kopf der Vorlage (pdf_kopf) oder, wenn die Stadt kein Hauptdokument nennt, einer Anlage
+    // (pdf_kopf_anlage, eine Stufe weniger sicher; Entscheidung 13.11.2026): ohne Ämtertabelle keinem Amt zugeordnet,
+    // als Kennung gezeigt
+    const KOPF = {
+      pdf_kopf: ["dem Kopf der Vorlage (Seite 1)", { mittel: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“", niedrig: "erkannt in ausgeschriebener Form, weniger sicher" }],
+      pdf_kopf_anlage: ["dem Kopf einer Anlage (Seite 1), weil die Stadt kein Hauptdokument nennt", { niedrig: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“, weniger sicher" }],
+    };
+    const resp = p.responsibility.map((r) => Object.hasOwn(KOPF, r.method)
+      ? `Kennung ${esc(r.kennung)} <span class="derived">abgeleitet aus ${KOPF[r.method][0]}, noch keinem Amt zugeordnet${KOPF[r.method][1][r.confidence] ? ` · ${KOPF[r.method][1][r.confidence]}` : ""}</span>`
       : [`${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`, aemterZeile(r.aemtertabelle)].filter(Boolean).join("<br>")).join("<br>");
     const outside = (l) => (area.kind === "ortsteil" && l.ortsteil && l.ortsteil !== area.name)
       || (area.kind === "bezirk" && l.stadtbezirk && l.stadtbezirk !== area.name);

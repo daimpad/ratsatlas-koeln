@@ -42,11 +42,12 @@
 # Fällt der Abruf aus, wird der letzte gültige Stand aus dem Zwischenspeicher veröffentlicht und als solcher angezeigt;
 # ein vollständiger Lauf entfernt die Fehlermeldung wieder.
 # Dokumente (PDF-Köpfe, pipeline/dokumente.py; Entscheidung 13.11.2026: gebaut, getestet, abgeschaltet): Der Schritt nach
-# dem Abruf liest die erste Seite der Hauptdatei von Verwaltungsvorlagen und speichert nur die Kennung „Dezernat,
-# Dienststelle“ (kein Text, keine Datei). Er sendet nur mit RATSATLAS_PDF_FREIGEGEBEN = „ja“ (zusätzlich zu
-# RATSATLAS_STADT_INFORMIERT) eine Anfrage; ohne sie schreibt er nichts (Nächte ohne Freigabe bleiben in Anfragen und
-# Abrufzustand unverändert). RATSATLAS_PDF_MAX: Dateien je Nacht (leer: 300; 0, negativ oder unlesbar: keine Anfrage;
-# ein einmaliger Test mit 100 Köpfen ist die erste Nacht mit 100). Dieselbe Abrufpolitik und derselbe Zustand wie beim
+# dem Abruf liest die erste Seite der Hauptdatei von Verwaltungsvorlagen (fehlt sie, einer Datei aus auxiliaryFile;
+# Entscheidung 13.11.2026 (a)) und speichert nur die Kennung „Dezernat, Dienststelle“ (kein Text, keine Datei). Er
+# sendet nur mit RATSATLAS_PDF_FREIGEGEBEN = „ja“ (zusätzlich zu RATSATLAS_STADT_INFORMIERT) eine Anfrage; ohne sie
+# schreibt er nichts (Nächte ohne Freigabe bleiben in Anfragen und Abrufzustand unverändert). RATSATLAS_PDF_MAX: Dateien
+# je Nacht (leer: 300; 0, negativ oder unlesbar: keine Anfrage; der Test nach dem Telefonat mit der Stadt ist die erste
+# Nacht mit 100, Entscheidung 13.11.2026 (c)). Dieselbe Abrufpolitik und derselbe Zustand wie beim
 # Abruf, nach ihm und nur, wenn er in dieser Nacht vollständig war; ein Abbruch zählt wie einer des Abrufs (12-Stunden-
 # Regel, Nacht mit möglicher Sperre) und nach drei Nächten mit möglicher Sperre beim Dokumentabruf ruhen die Dokumente
 # sieben Tage. Ein Fehler in diesem Schritt hält die Veröffentlichung nicht an; er hat ein eigenes Zeitlimit (150 min).

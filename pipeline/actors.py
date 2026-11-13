@@ -21,7 +21,7 @@ bleiben unverändert.
 import re
 from typing import NamedTuple, Optional
 
-from .pdfkopf import EVIDENZ, KENNUNG_FORM, METHODE, MIT_KENNUNG
+from .pdfkopf import KENNUNG_FORM, VERWENDUNG
 
 CO_DEZERNAT = "Co-Dezernat"
 
@@ -401,14 +401,17 @@ def amt_label(org):
 def responsibilities(paper, orgs_by_id, papers_by_id, kopf=None):
     """Federführung (strukturiert) und, bei „Co-Dezernat“, fachliche Zuständigkeit aus den
     Stellungnahmen der Verwaltung (abgeleitet). Ohne `underDirectionOf` und mit `kopf` (Eintrag der Dokumente mit
-    Kennung aus dem Kopf der Vorlage, pipeline/dokumente.py; der Aufrufer prüft Hauptdatei und Datenschutz): Kennung als
-    Federführung, Methode „pdf_kopf“, Konfidenz nach Trefferart (pdfkopf.MIT_KENNUNG), Fundstelle „Kopf der Vorlage
-    (S. 1): <Kennung>“ (kein Text des Dokuments). Ohne versionierte Ämtertabelle bleibt die Kennung keinem Amt und keiner
-    Organisation zugeordnet (organization_id None)."""
+    Kennung aus dem Kopf der aktuell gewählten Datei, pipeline/dokumente.py: kopf_der_vorlage; der Aufrufer prüft Datei
+    und Datenschutz): Kennung als Federführung nach der Herkunft der Datei (pdfkopf.VERWENDUNG): aus `mainFile` Methode
+    „pdf_kopf“, Konfidenz nach Trefferart, Fundstelle „Kopf der Vorlage (S. 1): <Kennung>“; aus `auxiliaryFile`
+    (Entscheidung 13.11.2026 (a)) Methode „pdf_kopf_anlage“, eine Stufe niedriger, Fundstelle „Kopf der Anlage (S. 1):
+    <Kennung>“, die ausgeschriebene Form nicht. Nie Text des Dokuments. Ohne versionierte Ämtertabelle bleibt die Kennung
+    keinem Amt und keiner Organisation zugeordnet (organization_id None)."""
     lead = (paper.get("underDirectionOf") or [None])[0]
-    if not lead and kopf and kopf.get("trefferart") in MIT_KENNUNG and KENNUNG_FORM.fullmatch(kopf.get("kennung") or ""):
-        return [dict(organization_id=None, kind="federfuehrend", method=METHODE, evidence=f"{EVIDENZ}: {kopf['kennung']}",
-                     derived=1, confidence=MIT_KENNUNG[kopf["trefferart"]], kennung=kopf["kennung"])]
+    methode, evidenz, konfidenz = VERWENDUNG.get((kopf or {}).get("quelle"), (None, None, {}))
+    if not lead and kopf and kopf.get("trefferart") in konfidenz and KENNUNG_FORM.fullmatch(kopf.get("kennung") or ""):
+        return [dict(organization_id=None, kind="federfuehrend", method=methode, evidence=f"{evidenz}: {kopf['kennung']}",
+                     derived=1, confidence=konfidenz[kopf["trefferart"]], kennung=kopf["kennung"])]
     rows = [dict(organization_id=lead, kind="federfuehrend", method="underDirectionOf",
                  evidence=None, derived=0)] if lead else []
     if not lead or (orgs_by_id.get(lead) or {}).get("classification") != CO_DEZERNAT:

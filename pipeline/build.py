@@ -59,8 +59,9 @@ CREATE TABLE plan_precedence (
 CREATE TABLE paper_originator (
   paper_id TEXT REFERENCES paper, actor TEXT, actor_type TEXT,
   organization_id TEXT REFERENCES organization, method TEXT, evidence TEXT, derived INTEGER);
--- confidence und kennung nur bei der Federführung aus dem Kopf der Vorlage (method „pdf_kopf“, pipeline/dokumente.py:
--- Kennung wie „VI/61“, ohne Organisation, keinem Amt zugeordnet), sonst NULL
+-- confidence und kennung nur bei der Federführung aus dem Kopf der Vorlage (method „pdf_kopf“ aus mainFile,
+-- „pdf_kopf_anlage“ aus auxiliaryFile; pipeline/dokumente.py: Kennung wie „VI/61“, ohne Organisation, keinem Amt
+-- zugeordnet), sonst NULL
 CREATE TABLE paper_responsibility (
   paper_id TEXT REFERENCES paper, organization_id TEXT REFERENCES organization, kind TEXT,
   method TEXT, evidence TEXT, derived INTEGER, confidence TEXT, kennung TEXT);
@@ -300,7 +301,8 @@ def build():
     gremien, _ = angaben_roh(papers, orgs_by_id)
     gesperrt = _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rows["rel"], rows["related"])
     # Federführung aus dem Kopf der Vorlage (pipeline/dokumente.py): nur Vorlagen ohne underDirectionOf und mit Erlaubnis
-    # für Hauskoordinaten (nicht in `gesperrt`), Datei = aktuelle Hauptdatei; ohne Datei der Dokumente nichts
+    # für Hauskoordinaten (nicht in `gesperrt`), Datei = die jetzt gewählte (Hauptdatei, sonst eine Anlage: datei_wahl)
+    # mit derselben Herkunft wie beim Lesen (dokumente.kopf_der_vorlage); ohne Datei der Dokumente nichts
     koepfe = dokumente.koepfe()
     # OParl-Ortsangaben einer Vorlage ohne Erlaubnis: kein genauer Punkt (Stufe A), auch nicht für andere Vorlagen mit
     # derselben Ortsangabe (vorsichtige Auslegung); dazu die Ortsangaben ausgelassener Vorlagen (alle ohne Erlaubnis;
@@ -370,7 +372,7 @@ def build():
         for r in actors.originators(p, orgs, bezirke):
             rows["orig"].append((p["id"], r["actor"], r["actor_type"], r["organization_id"],
                                  r["method"], r["evidence"], 1))
-        kopf = koepfe.get((p.get("mainFile") or {}).get("id")) if p["id"] not in gesperrt else None
+        kopf = dokumente.kopf_der_vorlage(p, koepfe) if koepfe and p["id"] not in gesperrt else None
         for r in actors.responsibilities(p, orgs_by_id, papers_by_id, kopf):
             rows["resp"].append((p["id"], r["organization_id"], r["kind"], r["method"],
                                  r["evidence"], r["derived"], r.get("confidence"), r.get("kennung")))
@@ -413,9 +415,11 @@ def build():
     db.executemany("INSERT INTO paper_originator VALUES (?,?,?,?,?,?,?)", rows["orig"])
     db.executemany("INSERT INTO paper_responsibility VALUES (?,?,?,?,?,?,?,?)", rows["resp"])
     if koepfe:
-        n = sum(1 for r in rows["resp"] if r[3] == pdfkopf.METHODE)
-        print(f"Federführung aus dem Kopf der Vorlage (PDF, Seite 1): {n} Vorlagen ohne underDirectionOf mit Kennung "
-              f"(keinem Amt zugeordnet; {len(koepfe)} Dateien mit Kennung)")
+        n = Counter(r[3] for r in rows["resp"])
+        print(f"Federführung aus dem Kopf der Vorlage (PDF, Seite 1): {n[pdfkopf.METHODE]} Vorlagen aus mainFile, "
+              f"{n[pdfkopf.METHODE_ANLAGE]} aus auxiliaryFile (Konfidenz eine Stufe niedriger, ausgeschriebene Form "
+              f"nicht übernommen), ohne underDirectionOf mit Kennung (keinem Amt zugeordnet; {len(koepfe)} Dateien mit "
+              f"Kennung)")
     db.executemany(f"INSERT OR IGNORE INTO skipped_paper VALUES (?, ?, '{config.QUELLE_OPARL}')",
                    [(a["id"], a["grund"]) for a in ausgelassen])
     db.executemany("INSERT OR IGNORE INTO skipped_location VALUES (?, ?)",

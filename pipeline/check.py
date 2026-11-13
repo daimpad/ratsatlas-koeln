@@ -97,30 +97,38 @@ def check():
 
 
 def federfuehrung_kopf(db):
-    """Federführung aus dem Kopf der Vorlage (Methode „pdf_kopf“, pipeline/dokumente.py): jede Zeile nur mit Kennung
-    nach pdfkopf.KENNUNG_FORM, Fundstelle genau „Kopf der Vorlage (S. 1): <Kennung>“ (kein Text des Dokuments),
-    Konfidenz nach Trefferart, ohne Organisation (keinem Amt zugeordnet), nur bei Vorlagen ohne underDirectionOf und mit
-    Erlaubnis für Hauskoordinaten (erlaubnis, dieselbe Regel wie im Aufbau). Liefert die Befunde."""
+    """Federführung aus dem Kopf der Vorlage (pipeline/dokumente.py; Methode „pdf_kopf“ aus mainFile, „pdf_kopf_anlage“
+    aus auxiliaryFile, Entscheidung 13.11.2026 (a)): jede Zeile nur mit Kennung nach pdfkopf.KENNUNG_FORM, Fundstelle
+    genau „Kopf der Vorlage (S. 1): <Kennung>“ bzw. „Kopf der Anlage (S. 1): <Kennung>“ (kein Text des Dokuments),
+    Konfidenz der Methode (pdfkopf.VERWENDUNG: aus einer Anlage nur „niedrig“), ohne Organisation (keinem Amt
+    zugeordnet), nur bei Vorlagen ohne underDirectionOf und mit Erlaubnis für Hauskoordinaten (erlaubnis, dieselbe Regel
+    wie im Aufbau), höchstens eine Zeile je Vorlage. Liefert die Befunde."""
     print("\nFederführung aus dem Kopf der Vorlage (PDF, Seite 1)")
     spalten = {r[1] for r in db.execute("PRAGMA table_info(paper_responsibility)")}
     if not {"confidence", "kennung"} <= spalten:
         print("nicht anwendbar: Datenbank ohne die Spalten confidence und kennung")
         return []
+    # Methode → (Fundstelle, zulässige Konfidenzen)
+    verwendung = {methode: (evidenz, set(konfidenz.values()))
+                  for methode, evidenz, konfidenz in pdfkopf.VERWENDUNG.values()}
     zeilen = db.execute(
         "SELECT r.paper_id, p.reference, r.organization_id, r.kind, r.evidence, r.derived, r.confidence, r.kennung, "
-        "p.under_direction_of FROM paper_responsibility r JOIN paper p ON p.id = r.paper_id WHERE r.method = ?",
-        (pdfkopf.METHODE,)).fetchall()
+        "p.under_direction_of, r.method FROM paper_responsibility r JOIN paper p ON p.id = r.paper_id "
+        f"WHERE r.method IN ({', '.join('?' * len(verwendung))})", tuple(verwendung)).fetchall()
     if not zeilen:
         print("keine (Dokumentschritt abgeschaltet oder ohne erkannte Kennung)")
         return []
     erlaubt = erlaubnis(db)[0]
-    falsch = sorted({ref for pid, ref, org, kind, ev, derived, conf, kennung, udo in zeilen
+    je_vorlage = Counter(pid for pid, *_ in zeilen)
+    falsch = sorted({ref for pid, ref, org, kind, ev, derived, conf, kennung, udo, methode in zeilen
                      if not (isinstance(kennung, str) and pdfkopf.KENNUNG_FORM.fullmatch(kennung)
-                             and ev == f"{pdfkopf.EVIDENZ}: {kennung}" and org is None and kind == "federfuehrend"
-                             and derived == 1 and conf in pdfkopf.MIT_KENNUNG.values() and not udo
-                             and erlaubt.get(pid))})
-    print(f"{len(zeilen)} Vorlagen mit Kennung aus dem Kopf (keinem Amt zugeordnet); in unerwarteter Form oder ohne "
-          f"Erlaubnis: {len(falsch)}")
+                             and ev == f"{verwendung[methode][0]}: {kennung}" and org is None
+                             and kind == "federfuehrend" and derived == 1 and conf in verwendung[methode][1]
+                             and not udo and erlaubt.get(pid) and je_vorlage[pid] == 1)})
+    arten = Counter(z[-1] for z in zeilen)
+    print(f"{len(zeilen)} Vorlagen mit Kennung aus dem Kopf (keinem Amt zugeordnet; "
+          + ", ".join(f"{m} {arten[m]}" for m in verwendung) + f"); in unerwarteter Form oder ohne Erlaubnis: "
+          f"{len(falsch)}")
     return ([f"Federführung aus dem Kopf der Vorlage in unerwarteter Form, bei Vorlagen mit underDirectionOf oder ohne "
              f"Erlaubnis für Hauskoordinaten: {', '.join(falsch[:20])}"] if falsch else [])
 

@@ -1,6 +1,7 @@
 """Dokumente (PDF-Köpfe): federführende Dienststelle aus dem Kopf der Verwaltungsvorlagen („Dezernat, Dienststelle“,
 CLAUDE.md 5.3). Gebaut und getestet, aber abgeschaltet (Entscheidung des Auftraggebers 13.11.2026): Der Auftraggeber
-ruft die Stadt vorher an; ein einmaliger Test mit 100 Köpfen ist einfach die erste Nacht mit RATSATLAS_PDF_MAX=100.
+ruft die Stadt vorher an; danach ist die erste Nacht mit RATSATLAS_PDF_MAX=100 der Test, später gelten 300 je Nacht
+(Entscheidung 13.11.2026 (c)).
 
 Freigabe: keine Anfrage ohne RATSATLAS_STADT_INFORMIERT=ja UND RATSATLAS_PDF_FREIGEGEBEN=ja (Repository-Variablen,
 auch für lokale Testserver). Ohne beide schreibt der Schritt nichts (weder Zustand noch Abrufstatistik): Nächte ohne
@@ -22,13 +23,13 @@ weil ein vollständiger Abruf der Metadaten `sperre_verdacht` jede Nacht zurück
 kein Fehler. Je Datei höchstens LESEFRIST Sekunden ab dem Senden für Verbindungsaufbau, Kopf und Inhalt (Wächter in
 abruf.get_datei, auch bei tröpfelnder Antwort; Prüfung dok-f).
 
-Fehlversuche je Datei (Prüfung dok-f): Ein Abbruch, der an der Datei liegen kann (HTTP 401, 403, 429, Weiterleitung,
-„aufgegeben“ nach 429/5xx, Zeitüberschreitung, Lesefrist, abgeschnittene Antwort), und `fehler_pruefung` (der
-Prüfprozess scheiterte) werden zur Datei vorläufig vermerkt (Status `abbruch_<Art>` bzw. `fehler_pruefung`, Zähler
-`fehlversuche`). Die Sperrlogik bleibt dabei unverändert (Abbruch der Nacht, gemeinsame und eigene Zählung). In der
-nächsten Nacht steht die Datei hinter allen anderen (so hält eine einzelne Datei mit dauerhaftem Fehler die älteren
-nicht auf); nach FEHLVERSUCHE_GRENZE Nächten ohne Ergebnis wird sie nicht mehr angefragt, bis sich ihre Merkmale
-ändern. Abbrüche der Ausführungsumgebung (tls, proxy) zählen nicht zur Datei.
+Fehlversuche je Datei (Prüfung dok-f, bestätigt als Entscheidung 13.11.2026 (b)): Ein Abbruch, der an der Datei liegen
+kann (HTTP 401, 403, 429, Weiterleitung, „aufgegeben“ nach 429/5xx, Zeitüberschreitung, Lesefrist, abgeschnittene
+Antwort), und `fehler_pruefung` (der Prüfprozess scheiterte) werden zur Datei vorläufig vermerkt (Status
+`abbruch_<Art>` bzw. `fehler_pruefung`, Zähler `fehlversuche`). Die Sperrlogik bleibt dabei unverändert (Abbruch der
+Nacht, gemeinsame und eigene Zählung). In der nächsten Nacht steht die Datei hinter allen anderen (so hält eine einzelne
+Datei mit dauerhaftem Fehler die älteren nicht auf); nach FEHLVERSUCHE_GRENZE Nächten ohne Ergebnis wird sie nicht mehr
+angefragt, bis sich ihre Merkmale ändern. Abbrüche der Ausführungsumgebung (tls, proxy) zählen nicht zur Datei.
 
 Obergrenze: höchstens RATSATLAS_PDF_MAX Dateien je Nacht (Vorgabe 300; leer oder nicht gesetzt: 300; 0, negativ oder
 unlesbar: keine Anfrage). Gezählt wird jede Datei, für die eine Anfrage beginnt, im Zustand (`dokumente.nacht`,
@@ -36,20 +37,24 @@ unlesbar: keine Anfrage). Gezählt wird jede Datei, für die eine Anfrage beginn
 Knopfdruck) liest nur den Rest.
 
 Auswahl (ohne Anfrage, aus papers.jsonl, organizations.json und beratungen.jsonl; fehlt eine der drei Dateien, keine
-Anfrage): nur die Hauptdatei (`mainFile`) von
-Verwaltungsvorlagen: Drucksache NNNN/JJJJ und Vorlagenart der Verwaltung (actors.VERWALTUNG_TYPES, nicht
-actors.EINWOHNER_TYPES, als Zeichenkette geliefert). Nie: Vorlagen ohne Erlaubnis für Hauskoordinaten oder in der
-Titelmaske (gesperrt(): dieselben Funktionen und Angaben wie build und check: geocode.punkt_ausschluss mit Eingaben,
-Vorlagen natürlicher Personen, Ausschuss für Anregungen und Beschwerden, nicht erkennbare Vorlagenart, maske.py; Fixpunkt
-geocode.sperrmenge; Titelmaske maske.kette), nicht öffentliche Beratungen (`public` weder true noch fehlend)
-und Sammellisten nichtöffentlicher Punkte. Fehlt `mainFile`, wird nicht unter `auxiliaryFile` geraten: gezählt und im
-Log genannt (Entscheidung des Auftraggebers offen). In Köln fehlte `mainFile` bisher bei allen gemessenen Vorlagen
-(Stufe 1: 25 von 25, Stufe 2: 100 von 100 jüngsten; explore/BERICHT_phase1.md); ohne diese Entscheidung liest der
-Schritt daher voraussichtlich keine Datei, auch nicht in der ersten Nacht mit RATSATLAS_PDF_MAX=100. Nur Adressen auf
-dem Host der OParl-API (config.OPARL_BODY: Schema, Host und Port gleich; `downloadUrl`, sonst `accessUrl`), nur PDF
-laut `mimeType` (falls angegeben), höchstens MAX_BYTES laut `size`. Neueste zuerst (Datum der Vorlage, dann
-`created`), Dateien mit Fehlversuch dahinter. Schon verarbeitete Dateien (auch mit endgültigem Fehler) nur erneut,
-wenn sich `modified`, `size`, `accessUrl` oder `downloadUrl` der Datei geändert haben.
+Anfrage): je Verwaltungsvorlage höchstens eine Datei: die Hauptdatei (`mainFile`); fehlt sie (in Köln bisher bei allen
+gemessenen Vorlagen: Stufe 1 25 von 25, Stufe 2 100 von 100 jüngsten, nur `auxiliaryFile` mit 1–3 PDF-Dateien;
+explore/BERICHT_phase1.md), nach der Entscheidung des Auftraggebers vom 13.11.2026 (a) eine Datei aus `auxiliaryFile`:
+unter den PDF-Dateien (laut `mimeType`, ohne ihn nur mit der Endung „.pdf“) in der Reihenfolge der Quelle die erste,
+deren `name` oder `fileName` die Drucksache (1234/2026, 1234-2026, 1234_2026) oder das Wort „Vorlage“ trägt, sonst die
+erste (datei_wahl; Herkunft `quelle` im Eintrag). Verwaltungsvorlagen: Drucksache NNNN/JJJJ und Vorlagenart der
+Verwaltung (actors.VERWALTUNG_TYPES, nicht actors.EINWOHNER_TYPES, als Zeichenkette geliefert). Nie: Vorlagen ohne
+Erlaubnis für Hauskoordinaten oder in der Titelmaske (gesperrt(): dieselben Funktionen und Angaben wie build und check:
+geocode.punkt_ausschluss mit Eingaben, Vorlagen natürlicher Personen, Ausschuss für Anregungen und Beschwerden, nicht
+erkennbare Vorlagenart, maske.py; Fixpunkt geocode.sperrmenge; Titelmaske maske.kette), nicht öffentliche Beratungen
+(`public` weder true noch fehlend) und Sammellisten nichtöffentlicher Punkte, und keine Datei, die auch bei einer
+solchen Vorlage steht (Hauptdatei oder Anlage). Gezählt werden Vorlagen ohne PDF-Datei (weder `mainFile` noch eine
+PDF-Datei in `auxiliaryFile`). Nur Adressen auf dem Host der OParl-API (config.OPARL_BODY: Schema, Host und Port
+gleich; `downloadUrl`, sonst `accessUrl`), nur PDF laut `mimeType` (falls angegeben), höchstens MAX_BYTES laut `size`;
+eine gewählte Anlage, die daran scheitert, wird nicht durch eine andere ersetzt. Neueste zuerst (Datum der Vorlage,
+dann `created`), Dateien mit Fehlversuch dahinter; die Obergrenze je Nacht gilt für Haupt- und Anlagedateien zusammen.
+Schon verarbeitete Dateien (auch mit endgültigem Fehler) nur erneut, wenn sich `modified`, `size`, `accessUrl` oder
+`downloadUrl` der Datei oder ihre Herkunft geändert haben (eine Anlage, die zur Hauptdatei wird, einmal neu).
 
 Verarbeitung: Vor der ersten Anfrage einer Nacht prüft ein Selbsttest den Prüfprozess an einer eingebauten Probedatei
 mit erfundenem Kopf (`selbsttest`); liefert er nicht das erwartete Ergebnis (pypdf fehlt in der isolierten Umgebung,
@@ -61,15 +66,20 @@ Speicherabzüge, Frist PRUEF_FRIST; nur Seite 1 mit pypdf, keine externen Werkze
 Kennung und den Namen einer Fehlerklasse zurück, nie Text. Gespeichert wird je Datei nur Abgeleitetes in
 data/raw/dokumente_koepfe.jsonl (config.DOKUMENTE; im Zwischenspeicher des Workflows wie die übrigen Rohdaten, nicht
 im Repository, nicht auf der Seite, nicht im Datenpaket): OParl-Kennung der Datei und der Vorlage, SHA-256, Größe,
-Zeitpunkt, Kennung, Trefferart, Status, Fehlerklasse, Zahl der Fehlversuche und die Merkmale der Datei zur Erkennung
-von Änderungen
-(`modified`, `size`, `accessUrl`, `downloadUrl` aus den Metadaten). Jeder Eintrag wird vor dem Schreiben und beim Lesen
-gegen feste Formen geprüft (FELDER, pdfkopf.KENNUNG_FORM). Log und Abrufstatistik nennen nur Zahlen.
+Zeitpunkt, Kennung, Trefferart, Status, Fehlerklasse, Zahl der Fehlversuche, Herkunft (`quelle`: mainFile oder
+auxiliaryFile) und die Merkmale der Datei zur Erkennung von Änderungen (`modified`, `size`, `accessUrl`, `downloadUrl`
+aus den Metadaten). Jeder Eintrag wird vor dem Schreiben und beim Lesen gegen feste Formen geprüft (FELDER,
+pdfkopf.KENNUNG_FORM). Log und Abrufstatistik nennen nur Zahlen.
 
-Verwendung: build übernimmt die Kennung als Federführung nur ohne `underDirectionOf`, nur für die aktuelle Hauptdatei
-und nur bei Vorlagen mit Erlaubnis für Hauskoordinaten (actors.responsibilities, Methode „pdf_kopf“, Konfidenz
-„mittel“ bzw. „niedrig“ nach Trefferart, Fundstelle „Kopf der Vorlage (S. 1): <Kennung>“). Eine versionierte
-Ämtertabelle gibt es noch nicht: Die Kennung bleibt keinem Amt zugeordnet und wird als solche gezeigt.
+Verwendung: build übernimmt die Kennung als Federführung nur ohne `underDirectionOf`, nur für die Datei, die jetzt für
+die Vorlage gilt, mit derselben Herkunft wie beim Lesen (kopf_der_vorlage), nur für Verwaltungsvorlagen wie in der
+Auswahl und nur bei Vorlagen mit Erlaubnis für Hauskoordinaten (actors.responsibilities, pdfkopf.VERWENDUNG): aus
+`mainFile` Methode „pdf_kopf“, Konfidenz „mittel“ bzw. „niedrig“ nach Trefferart, Fundstelle „Kopf der Vorlage (S. 1):
+<Kennung>“; aus `auxiliaryFile` Methode „pdf_kopf_anlage“, Konfidenz eine Stufe niedriger („niedrig“; die
+ausgeschriebene Form, aus der Hauptdatei schon „niedrig“, wird aus einer Anlage nicht übernommen), Fundstelle „Kopf der
+Anlage (S. 1): <Kennung>“. Erscheint später die Hauptdatei oder ändert sich die Wahl unter `auxiliaryFile`, gilt das
+alte Ergebnis nicht mehr; die neue Datei wird gelesen. Eine versionierte Ämtertabelle gibt es noch nicht: Die Kennung
+bleibt keinem Amt zugeordnet und wird als solche gezeigt.
 """
 import hashlib
 import json
@@ -101,9 +111,15 @@ FEHLVERSUCHE_GRENZE = 2
 SCHLUESSEL = "dokumente"         # Eintrag im Zustand (zustand_abruf.json)
 RE_VERWALTUNGSVORLAGE = re.compile(r"^\d{1,4}/\d{4}$")
 # Felder eines Eintrags in config.DOKUMENTE; nichts sonst wird geschrieben
-FELDER = ("file", "paper", "sha256", "groesse", "zeit", "kennung", "trefferart", "status", "fehlerart", "fehlversuche",
-          "modified", "size", "accessUrl", "downloadUrl")
+FELDER = ("file", "paper", "quelle", "sha256", "groesse", "zeit", "kennung", "trefferart", "status", "fehlerart",
+          "fehlversuche", "modified", "size", "accessUrl", "downloadUrl")
 MERKMALE = ("modified", "size", "accessUrl", "downloadUrl")
+# Herkunft der gelesenen Datei: die Hauptdatei oder, wenn sie fehlt, eine Datei aus `auxiliaryFile` (Entscheidung
+# 13.11.2026 (a)); bestimmt Methode und Konfidenz der Federführung (pdfkopf.VERWENDUNG)
+QUELLEN = ("mainFile", "auxiliaryFile")
+# Name einer Datei in auxiliaryFile, der sie als Vorlage ausweist: das Wort „Vorlage“, auch als Wortteil
+# („Beschlussvorlage“), in beliebiger Schreibung (daneben die Drucksache, _drucksache_muster)
+RE_VORLAGE_WORT = re.compile(r"vorlage", re.I)
 # Status je Datei: aus dem Prüfprozess (pdfkopf.STATUS) oder vom Abruf
 STATUS = (*pdfkopf.STATUS, "zeitueberschreitung", "fehler_pruefung", "zu_gross", "kein_pdf", "adresse")
 RE_HTTP_STATUS = re.compile(r"http_[1-5]\d\d")
@@ -116,7 +132,8 @@ RE_SHA256 = re.compile(r"[0-9a-f]{64}")
 GRUENDE = {
     "drucksache": "Drucksache nicht NNNN/JJJJ", "vorlagenart": "keine Vorlagenart der Verwaltung",
     "ohne_hauskoordinate": "ohne Hauskoordinate oder Titelmaske", "nicht_oeffentlich": "nicht öffentlich beraten",
-    "ohne_hauptdatei": "ohne mainFile", "doppelt": "Hauptdatei schon ausgewählt", "kein_pdf": "kein PDF laut mimeType",
+    "ohne_datei": "ohne mainFile und ohne PDF-Datei in auxiliaryFile", "doppelt": "Datei schon ausgewählt",
+    "datei_gesperrt": "Datei auch bei einer ausgeschlossenen Vorlage", "kein_pdf": "kein PDF laut mimeType",
     "fremder_host": "Adresse nicht auf dem Host der OParl-API", "zu_gross": f"über {MAX_BYTES // 1_000_000} MB laut size",
     "bekannt": "schon verarbeitet, unverändert",
     "fehlversuche": f"nach {FEHLVERSUCHE_GRENZE} Nächten ohne Ergebnis zurückgestellt",
@@ -183,6 +200,8 @@ def eintrag_gueltig(e):
     if not isinstance(e, dict) or set(e) != set(FELDER):
         return False
     if not all(isinstance(e[k], str) and e[k] and len(e[k]) <= 2000 for k in ("file", "paper")):
+        return False
+    if e["quelle"] not in QUELLEN:
         return False
     status, art, kennung = e["status"], e["trefferart"], e["kennung"]
     if not (status in STATUS or isinstance(status, str) and RE_HTTP_STATUS.fullmatch(status) or vorlaeufig(status)):
@@ -253,6 +272,19 @@ def koepfe():
     return {f: e for f, e in laden().items() if e["status"] == "ok" and e["trefferart"] in pdfkopf.MIT_KENNUNG}
 
 
+def kopf_der_vorlage(p, koepfe_):
+    """Eintrag mit Kennung für die Datei, die jetzt für die Vorlage gilt (datei_wahl), nur wenn er für dieselbe Datei mit
+    derselben Herkunft gelesen wurde, und nur für Verwaltungsvorlagen wie in der Auswahl (sonst bekäme etwa ein Antrag
+    mit derselben Datei als Anlage die Kennung der Verwaltung); sonst None. So ersetzt die Hauptdatei, die später
+    erscheint, das Ergebnis einer Anlage, und eine geänderte Wahl unter auxiliaryFile das bisherige, sobald die neue Datei
+    gelesen ist (bis dahin keine Federführung aus einem Kopf). `p`: Vorlage nach build.einlesen; `koepfe_`: koepfe()."""
+    if not (RE_VERWALTUNGSVORLAGE.match(p["reference"]) and _verwaltungsvorlage(p)):
+        return None
+    datei, quelle = datei_wahl(p)
+    e = koepfe_.get(datei["id"]) if datei else None
+    return e if e and e["quelle"] == quelle else None
+
+
 # --- Auswahl (ohne Anfrage) ---------------------------------------------------------------------------------------------
 
 def gesperrt(papers, ausgelassen, orgs_by_id):
@@ -287,17 +319,89 @@ def _verwaltungsvorlage(p):
             and art not in actors.EINWOHNER_TYPES)
 
 
+def _datei_ok(f):
+    """Eintrag einer Dateiliste als Datei mit Kennung (Objekt, `id` als nicht leere Zeichenkette, nicht gelöscht)?"""
+    return isinstance(f, dict) and isinstance(f.get("id"), str) and bool(f["id"]) and not f.get("deleted")
+
+
+def _pdf_endung(wert):
+    """Endet ein Dateiname oder der Pfad einer Adresse auf „.pdf“?"""
+    if not isinstance(wert, str):
+        return False
+    try:
+        pfad = urllib.parse.urlsplit(wert).path if "://" in wert else wert
+    except ValueError:
+        return False
+    return pfad.lower().endswith(".pdf")
+
+
+def _pdf_laut_metadaten(f):
+    """Ist eine Datei aus auxiliaryFile eine PDF-Datei? Laut `mimeType`, falls angegeben (wie bei der Hauptdatei);
+    fehlt er, nur mit der Endung „.pdf“ in `fileName`, `downloadUrl` oder `accessUrl`: Anlagen sind oft keine PDF-Dateien
+    (Tabellen, Pläne), und eine Antwort ohne PDF-Kennung beendet die Nacht als mögliche Sperre."""
+    mime = f.get("mimeType")
+    if isinstance(mime, str) and mime.strip():
+        return mime.split(";")[0].strip().lower() == "application/pdf"
+    return any(_pdf_endung(f.get(k)) for k in ("fileName", "downloadUrl", "accessUrl"))
+
+
+def _drucksache_muster(reference):
+    """Muster der Drucksache NNNN/JJJJ in einem Dateinamen: Nummer (auch mit führenden Nullen), „/“, „-“ oder „_“, Jahr,
+    nicht innerhalb einer längeren Zahl („11234/2026“, „1234/20261“ nicht); None für andere Drucksachen."""
+    m = re.fullmatch(r"(\d{1,4})/(\d{4})", reference if isinstance(reference, str) else "")
+    if not m:
+        return None
+    return re.compile(r"(?<![0-9])0*" + str(int(m.group(1))) + r"[/_-]" + m.group(2) + r"(?![0-9])")
+
+
+def datei_wahl(p):
+    """Datei, deren erste Seite für die Vorlage gelesen wird, und ihre Herkunft: (Datei, „mainFile“), sonst (Entscheidung
+    des Auftraggebers 13.11.2026 (a)) höchstens eine Datei aus `auxiliaryFile`: unter den PDF-Dateien
+    (_pdf_laut_metadaten) in der Reihenfolge der Quelle die erste, deren `name` oder `fileName` die Drucksache (1234/2026,
+    1234-2026, 1234_2026) oder das Wort „Vorlage“ trägt, sonst die erste (Datei, „auxiliaryFile“); ohne beides (None,
+    None). Eine Hauptdatei in anderer Form als PDF bleibt die Wahl (ausgeschlossen als „kein PDF laut mimeType“, keine
+    Anlage ersatzweise). Eine Funktion für die Auswahl und für build (kopf_der_vorlage)."""
+    mf = p.get("mainFile")
+    if _datei_ok(mf):
+        return mf, "mainFile"
+    aux = p.get("auxiliaryFile")
+    aux = [aux] if isinstance(aux, dict) else aux if isinstance(aux, list) else []
+    pdfs = [f for f in aux if _datei_ok(f) and _pdf_laut_metadaten(f)]
+    if not pdfs:
+        return None, None
+    muster = _drucksache_muster(p.get("reference"))
+    for f in pdfs:
+        namen = [f[k] for k in ("name", "fileName") if isinstance(f.get(k), str)]
+        if any(RE_VORLAGE_WORT.search(n) or muster and muster.search(n) for n in namen):
+            return f, "auxiliaryFile"
+    return pdfs[0], "auxiliaryFile"
+
+
+def _dateien(p):
+    """Kennungen aller Dateien einer Vorlage (mainFile und auxiliaryFile)."""
+    aux = p.get("auxiliaryFile")
+    aux = [aux] if isinstance(aux, dict) else aux if isinstance(aux, list) else []
+    return {f["id"] for f in [p.get("mainFile"), *aux] if isinstance(f, dict) and isinstance(f.get("id"), str)}
+
+
 def auswahl(roh, orgs, beratungen, eintraege):
     """Dateien zum Lesen, neueste zuerst, und Zähler der Gründe, aus denen Vorlagen oder Dateien nicht in Frage kommen
     (GRUENDE). `roh`: Vorlagen wie in papers.jsonl; `orgs`: organizations.json; `beratungen`: Zeilen aus
-    beratungen.jsonl; `eintraege`: laden()."""
+    beratungen.jsonl; `eintraege`: laden(). Je Vorlage höchstens eine Datei (datei_wahl: mainFile, sonst eine aus
+    auxiliaryFile), mit ihrer Herkunft (`quelle`). Dateien, die auch bei einer Vorlage ohne Hauskoordinate (oder in der
+    Titelmaske) oder einer nicht öffentlich beratenen stehen, werden nie gelesen (etwa eine Eingabe als Anlage einer
+    Mitteilung). Eine Datei, die für eine Vorlage Hauptdatei und für eine andere Anlage ist, zählt als Hauptdatei. Schon
+    verarbeitete Dateien erst wieder nach einer Änderung ihrer Merkmale oder ihrer Herkunft (eine Anlage, die zur
+    Hauptdatei wird, wird einmal neu gelesen)."""
     from . import build   # hier: build importiert dieses Modul
     papers, ausgelassen, _ = build.einlesen(build._je_kennung_einmal(roh))
     orgs_by_id = {o["id"]: o for o in orgs if isinstance(o, dict) and isinstance(o.get("id"), str)}
     sperre = gesperrt(papers, ausgelassen, orgs_by_id)
     oeffentlich = {b.get("uri"): (b.get("agendaItem") or {}).get("public") for b in beratungen
                    if isinstance(b, dict) and isinstance(b.get("agendaItem"), (dict, type(None)))}
-    gruende, kandidaten, gesehen = Counter(), [], set()
+    # Dateien ausgeschlossener Vorlagen (Datenschutz, nicht öffentlich): nie lesen, auch nicht über eine andere Vorlage
+    ausgeschlossen = {f for p in papers if p["id"] in sperre or _nicht_oeffentlich(p, oeffentlich) for f in _dateien(p)}
+    gruende, wahl, kandidaten, gesehen = Counter(), [], [], set()
     for p in papers:
         if not RE_VERWALTUNGSVORLAGE.match(p["reference"]):
             gruende["drucksache"] += 1
@@ -307,38 +411,43 @@ def auswahl(roh, orgs, beratungen, eintraege):
             gruende["ohne_hauskoordinate"] += 1
         elif _nicht_oeffentlich(p, oeffentlich):
             gruende["nicht_oeffentlich"] += 1
-        elif not isinstance(p.get("mainFile"), dict) or not isinstance(p["mainFile"].get("id"), str) \
-                or not p["mainFile"]["id"] or p["mainFile"].get("deleted"):
-            gruende["ohne_hauptdatei"] += 1
         else:
-            f = p["mainFile"]
-            mime = f.get("mimeType")
-            url = f.get("downloadUrl") or f.get("accessUrl")
-            size = f.get("size")
-            merkmale = {k: _merkmal(f.get(k)) for k in MERKMALE}
-            alt = eintraege.get(f["id"])
-            unveraendert = bool(alt) and all(alt.get(k) == merkmale[k] for k in MERKMALE)
-            # Fehlversuche zählen nur für dieselbe, unveränderte Datei
-            fehlversuche = alt.get("fehlversuche", 0) if unveraendert and vorlaeufig(alt.get("status")) else 0
-            if f["id"] in gesehen:
-                gruende["doppelt"] += 1
-            elif isinstance(mime, str) and mime.strip() and mime.split(";")[0].strip().lower() != "application/pdf":
-                gruende["kein_pdf"] += 1
-            elif not auf_oparl_host(url):
-                gruende["fremder_host"] += 1
-            elif isinstance(size, int) and not isinstance(size, bool) and size > MAX_BYTES:
-                gruende["zu_gross"] += 1
-            elif unveraendert and fehlversuche >= FEHLVERSUCHE_GRENZE:
-                gruende["fehlversuche"] += 1
-            elif unveraendert and not fehlversuche:
-                gruende["bekannt"] += 1
+            f, quelle = datei_wahl(p)
+            if f is None:
+                gruende["ohne_datei"] += 1
             else:
-                kandidaten.append({"file": f["id"], "paper": p["id"], "url": url, **merkmale,
-                                   "_fehlversuche": fehlversuche,
-                                   "_ordnung": (str(p.get("date") or "") if isinstance(p.get("date"), str) else "",
-                                                str(p.get("created") or "") if isinstance(p.get("created"), str) else "",
-                                                p["id"])})
-            gesehen.add(f["id"])
+                wahl.append((p, f, quelle))
+    wahl.sort(key=lambda w: w[2] != "mainFile")   # stabil: Hauptdateien zuerst (eine Datei, die beides ist)
+    for p, f, quelle in wahl:
+        mime = f.get("mimeType")
+        url = f.get("downloadUrl") or f.get("accessUrl")
+        size = f.get("size")
+        merkmale = {k: _merkmal(f.get(k)) for k in MERKMALE}
+        alt = eintraege.get(f["id"])
+        unveraendert = bool(alt) and all(alt.get(k) == merkmale[k] for k in MERKMALE) and alt.get("quelle") == quelle
+        # Fehlversuche zählen nur für dieselbe, unveränderte Datei
+        fehlversuche = alt.get("fehlversuche", 0) if unveraendert and vorlaeufig(alt.get("status")) else 0
+        if f["id"] in gesehen:
+            gruende["doppelt"] += 1
+        elif f["id"] in ausgeschlossen:
+            gruende["datei_gesperrt"] += 1
+        elif isinstance(mime, str) and mime.strip() and mime.split(";")[0].strip().lower() != "application/pdf":
+            gruende["kein_pdf"] += 1
+        elif not auf_oparl_host(url):
+            gruende["fremder_host"] += 1
+        elif isinstance(size, int) and not isinstance(size, bool) and size > MAX_BYTES:
+            gruende["zu_gross"] += 1
+        elif unveraendert and fehlversuche >= FEHLVERSUCHE_GRENZE:
+            gruende["fehlversuche"] += 1
+        elif unveraendert and not fehlversuche:
+            gruende["bekannt"] += 1
+        else:
+            kandidaten.append({"file": f["id"], "paper": p["id"], "quelle": quelle, "url": url, **merkmale,
+                               "_fehlversuche": fehlversuche,
+                               "_ordnung": (str(p.get("date") or "") if isinstance(p.get("date"), str) else "",
+                                            str(p.get("created") or "") if isinstance(p.get("created"), str) else "",
+                                            p["id"])})
+        gesehen.add(f["id"])
     kandidaten.sort(key=lambda k: k["_ordnung"], reverse=True)
     kandidaten.sort(key=lambda k: k["_fehlversuche"])   # stabil: nach einem Fehlversuch hinter allen anderen
     return kandidaten, gruende
@@ -497,13 +606,18 @@ def _abbruch_vermerken(e, jetzt):
 
 # --- Schritt ------------------------------------------------------------------------------------------------------------
 
-def _zusammenfassung(kandidaten, versucht, schon, grenze, ergebnisse, gruende):
+def _zusammenfassung(kandidaten, lauf, schon, grenze, gruende):
+    ergebnisse, versucht = lauf["ergebnisse"], lauf["versucht"]
     arten = Counter(e["trefferart"] for e in ergebnisse if e["status"] == "ok")
     erkannt = sum(arten[a] for a in pdfkopf.MIT_KENNUNG)
     fehler = Counter(e["status"] for e in ergebnisse if e["status"] != "ok")
     nachrang = sum(1 for k in kandidaten if k["_fehlversuche"])
+    auswahl_ = Counter(k["quelle"] for k in kandidaten)
     teile = [f"Auswahl {len(kandidaten)} Dateien (neu, geändert oder nach einem Fehlversuch erneut: {nachrang}), in "
              f"diesem Lauf {versucht} (in dieser Nacht {schon + versucht} von höchstens {grenze})",
+             "Herkunft: Auswahl " + ", ".join(f"aus {q} {auswahl_[q]}" for q in QUELLEN) + "; in diesem Lauf "
+             + ", ".join(f"aus {q} {lauf['quellen'][q]}" for q in QUELLEN)
+             + f"; Vorlagen ohne PDF-Datei {gruende['ohne_datei']}",
              f"erkannt {erkannt} (" + ", ".join(f"{a} {arten[a]}" for a in pdfkopf.MIT_KENNUNG) + ")",
              "ohne Kennung " + ", ".join(f"{a} {arten[a]}" for a in pdfkopf.OHNE_KENNUNG),
              "nicht gelesen oder geprüft " + (", ".join(f"{s} {n}" for s, n in sorted(fehler.items())) or "0"),
@@ -577,11 +691,12 @@ def _lauf(zeile):
     orgs = json.loads(config.ORGANIZATIONS.read_text(encoding="utf-8"))
     beratungen = [json.loads(x) for x in config.BERATUNGEN.read_text(encoding="utf-8").splitlines() if x.strip()]
     kandidaten, gruende = auswahl(roh, orgs, beratungen, eintraege)
-    if gruende["ohne_hauptdatei"]:
-        sessionnet._warnung(f"Dokumente: {gruende['ohne_hauptdatei']} Verwaltungsvorlagen ohne mainFile; nicht unter "
-                            "auxiliaryFile geraten (Entscheidung offen)")
+    anlagen = sum(1 for k in kandidaten if k["quelle"] == "auxiliaryFile")
+    if anlagen or gruende["ohne_datei"]:
+        print(f"Dokumente: {anlagen} Dateien aus auxiliaryFile ausgewählt (ohne mainFile, Entscheidung 13.11.2026 (a)); "
+              f"{gruende['ohne_datei']} Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei in auxiliaryFile")
     rest = max(grenze - schon, 0)
-    lauf = {"ergebnisse": [], "versucht": 0}
+    lauf = {"ergebnisse": [], "versucht": 0, "quellen": Counter()}
     ergebnis = f"übersprungen: Obergrenze dieser Nacht erreicht ({schon} von höchstens {grenze})"
     try:
         if rest and kandidaten and not selbsttest():   # vor der ersten Anfrage: ohne heilen Prüfprozess keine
@@ -592,7 +707,7 @@ def _lauf(zeile):
     finally:
         if config.DOKUMENTE.exists():   # angehängte Einträge zusammenführen (je Datei einer, geordnet)
             _schreiben({**eintraege, **{e["file"]: e for e in lauf["ergebnisse"]}})
-    return f"{ergebnis}; " + _zusammenfassung(kandidaten, lauf["versucht"], schon, grenze, lauf["ergebnisse"], gruende)
+    return f"{ergebnis}; " + _zusammenfassung(kandidaten, lauf, schon, grenze, gruende)
 
 
 def _lesen(auswahl_, nacht, schon, lauf, zeile):
@@ -601,6 +716,7 @@ def _lesen(auswahl_, nacht, schon, lauf, zeile):
     gelesen, ergebnisse = 0, lauf["ergebnisse"]
     for k in auswahl_:
         lauf["versucht"] += 1
+        lauf["quellen"][k["quelle"]] += 1
         _eigener_zustand_setzen(nacht=nacht, dateien=schon + lauf["versucht"])
         daten = None
         try:
@@ -649,7 +765,8 @@ def _abbruch_status(a):
 
 
 def _vermerken(k, e, ergebnisse, zeile):
-    eintrag = {"file": k["file"], "paper": k["paper"], "zeit": _now(), **{m: k[m] for m in MERKMALE},
+    eintrag = {"file": k["file"], "paper": k["paper"], "quelle": k["quelle"], "zeit": _now(),
+               **{m: k[m] for m in MERKMALE},
                **{f: e[f] for f in ("status", "trefferart", "kennung", "fehlerart", "sha256", "groesse",
                                     "fehlversuche")}}
     _anhaengen(eintrag)

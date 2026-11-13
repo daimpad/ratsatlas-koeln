@@ -37,7 +37,8 @@ SCHRITTE = {
                        "als bisher, bleibt der bisherige Stand; ruht der Abruf einer Liste deshalb, bis das geprüft ist, "
                        "nennt das der Datenstand."),
     "dokumente": ("Dokumente", "Liest nach dem Abruf, nur nach Freigabe durch die Stadt (bis dahin abgeschaltet), "
-                               "nachts höchstens 300 Vorlagen der Verwaltung (nur die erste Seite) und erkennt im Kopf "
+                               "nachts höchstens 300 Vorlagen der Verwaltung (nur die erste Seite des Hauptdokuments; "
+                               "nennt die Stadt keins, einer Anlage) und erkennt im Kopf "
                                "die Kennung von Dezernat und Dienststelle. Gespeichert wird nur diese Kennung, kein Text "
                                "und keine Datei; die Kennung gilt nur, wenn die Schnittstelle keine federführende "
                                "Dienststelle nennt."),

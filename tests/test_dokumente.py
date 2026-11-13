@@ -625,24 +625,29 @@ def test_ohne_funktionierenden_pruefprozess_keine_anfrage(oparl, monkeypatch, ca
     assert [x["kennung"] for x in _eintraege()] == ["VI/61"] * 3
 
 
-def test_fremde_hosts_und_fehlende_hauptdatei_werden_nicht_gesendet(oparl, monkeypatch, capsys):
-    """Nur Adressen auf dem Host der OParl-API (Schema, Host, Port); downloadUrl geht vor. Fehlt mainFile, wird nicht
-    unter auxiliaryFile geraten: gezählt und gemeldet."""
+def test_fremde_hosts_und_vorlagen_ohne_pdf_werden_nicht_gesendet(oparl, monkeypatch, capsys):
+    """Nur Adressen auf dem Host der OParl-API (Schema, Host, Port); downloadUrl geht vor, auch bei einer Datei aus
+    auxiliaryFile (eine gewählte Anlage auf fremdem Host wird nicht durch eine andere ersetzt: höchstens eine Datei je
+    Vorlage). Vorlagen ohne mainFile und ohne PDF-Datei in auxiliaryFile: gezählt und gemeldet."""
     port = oparl.b.rsplit(":", 1)[1]
-    _mit_dateien(oparl, {1: KOPF, 3: KOPF, 5: KOPF, 7: KOPF, 9: KOPF})
+    _mit_dateien(oparl, {1: KOPF, 3: KOPF, 5: KOPF, 7: KOPF, 9: KOPF, 11: KOPF})
     _vorlage(oparl, 1)["mainFile"]["accessUrl"] = f"http://127.0.0.2:{port}/files/1.pdf"
     _vorlage(oparl, 3)["mainFile"]["accessUrl"] = "http://127.0.0.1:1/files/3.pdf"
     _vorlage(oparl, 5)["mainFile"]["accessUrl"] = f"https://127.0.0.1:{port}/files/5.pdf"
     _vorlage(oparl, 7)["mainFile"]["downloadUrl"] = "http://example.invalid/files/7.pdf"
-    hilfs = _vorlage(oparl, 9).pop("mainFile")
-    _vorlage(oparl, 9)["auxiliaryFile"] = [hilfs]
+    anlage = _vorlage(oparl, 9).pop("mainFile")
+    anlage["downloadUrl"] = "http://example.invalid/files/9.pdf"
+    _vorlage(oparl, 9)["auxiliaryFile"] = [anlage, _datei(oparl, 90, _pdf([KOPF]))]
+    tabelle = _vorlage(oparl, 11).pop("mainFile")
+    _vorlage(oparl, 11)["auxiliaryFile"] = [dict(tabelle, mimeType="application/vnd.ms-excel")]
     sessionnet.fetch_all()
     _freigabe(monkeypatch)
     dokumente.schritt()
     assert _dateianfragen(oparl) == [] and _statistik()[-1]["anfragen"] == "0"
     ergebnis = _statistik()[-1]["ergebnis"]
-    assert "Adresse nicht auf dem Host der OParl-API 4" in ergebnis and "ohne mainFile 1" in ergebnis
-    assert "1 Verwaltungsvorlagen ohne mainFile; nicht unter auxiliaryFile geraten" in capsys.readouterr().err
+    assert "Adresse nicht auf dem Host der OParl-API 5" in ergebnis
+    assert "ohne mainFile und ohne PDF-Datei in auxiliaryFile 1" in ergebnis and "Vorlagen ohne PDF-Datei 1" in ergebnis
+    assert "1 Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei in auxiliaryFile" in capsys.readouterr().out
 
 
 def test_zu_grosse_und_unlesbare_dateien(oparl, monkeypatch):
@@ -732,7 +737,8 @@ def test_abstand_gilt_ueber_json_und_dateien(oparl, monkeypatch):
 
 
 def test_auswahl_regeln_und_reihenfolge():
-    """Auswahl ohne Anfrage: nur Hauptdateien von Verwaltungsvorlagen (NNNN/JJJJ, Vorlagenart der Verwaltung), nie
+    """Auswahl ohne Anfrage: nur Dateien von Verwaltungsvorlagen (NNNN/JJJJ, Vorlagenart der Verwaltung; die
+    Hauptdatei, ohne sie eine Datei aus auxiliaryFile), nie
     Eingaben, Vorlagen natürlicher Personen, im Ausschuss für Anregungen und Beschwerden beratene, mit ihnen verbundene
     (auch über relatedPaper), Titel der Maske, nicht öffentlich beratene oder Sammellisten; neueste zuerst, Dateien mit
     einem Fehlversuch dahinter, nach zwei Fehlversuchen nicht mehr (bis zu einer Änderung)."""
@@ -756,6 +762,7 @@ def test_auswahl_regeln_und_reihenfolge():
         vorlage(7, "2007/2026", name="Einwohnerversammlung zur Musterstraße 3"),
         vorlage(8, "2008/2026", consultation=[{"id": f"{b}/c/8"}, {"id": f"{b}/c/8b"}]),
         vorlage(9, "2009/2026", name="Punkte der nichtöffentlichen Sitzung"),
+        # ohne mainFile: die Datei aus auxiliaryFile (PDF nach der Endung, Entscheidung 13.11.2026 (a))
         vorlage(10, "2010/2026", datei=False, auxiliaryFile=[{"id": f"{b}/files/10", "accessUrl": f"{b}/f/10.pdf"}]),
         vorlage(11, "2011/2026"),
         vorlage(12, "2012/2026", art="Mitteilung"),
@@ -779,22 +786,22 @@ def test_auswahl_regeln_und_reihenfolge():
     beratungen = [{"uri": f"{b}/c/8", "agendaItem": {"public": True}}, {"uri": f"{b}/c/8b", "agendaItem": {"public": False}},
                   {"uri": f"{b}/c/20", "agendaItem": {"public": "false"}}, {"uri": f"{b}/c/21", "agendaItem": None}]
     # schon verarbeitet: 17 unverändert, 18 mit anderem modified (also geändert)
-    eintraege = {f"{b}/files/{i}": {"file": f"{b}/files/{i}",
+    eintraege = {f"{b}/files/{i}": {"file": f"{b}/files/{i}", "quelle": "mainFile",
                                     **{k: je[i]["mainFile"].get(k) for k in dokumente.MERKMALE},
                                     **({"modified": "2026-09-01T00:00:00+02:00"} if i == 18 else {})}
                  for i in (17, 18)}
     for i, n, status in ((22, 1, "abbruch_http_403"), (23, 2, "abbruch_sperre"), (24, 2, "fehler_pruefung")):
-        eintraege[f"{b}/files/{i}"] = {"file": f"{b}/files/{i}", "status": status, "fehlversuche": n,
-                                       **{k: je[i]["mainFile"].get(k) for k in dokumente.MERKMALE}}
+        eintraege[f"{b}/files/{i}"] = {"file": f"{b}/files/{i}", "quelle": "mainFile", "status": status,
+                                       "fehlversuche": n, **{k: je[i]["mainFile"].get(k) for k in dokumente.MERKMALE}}
     eintraege[f"{b}/files/24"]["size"] = 999
     from unittest import mock
     with mock.patch.object(config, "OPARL_BODY", f"{b}/body"):
         kandidaten, gruende = dokumente.auswahl(roh, [bab], beratungen, eintraege)
-    assert [(k["paper"].rsplit("/", 1)[1], k["_fehlversuche"]) for k in kandidaten] == [
-        ("24", 0), ("2", 0), ("18", 0), ("1", 0), ("21", 0), ("22", 1)]
+    assert [(k["paper"].rsplit("/", 1)[1], k["quelle"], k["_fehlversuche"]) for k in kandidaten] == [
+        ("24", "mainFile", 0), ("2", "mainFile", 0), ("18", "mainFile", 0), ("10", "auxiliaryFile", 0),
+        ("1", "mainFile", 0), ("21", "mainFile", 0), ("22", "mainFile", 1)]
     assert dict(gruende) == {"drucksache": 1, "vorlagenart": 2, "ohne_hauskoordinate": 5, "nicht_oeffentlich": 3,
-                             "ohne_hauptdatei": 1, "kein_pdf": 1, "doppelt": 1, "bekannt": 1, "zu_gross": 1,
-                             "fehlversuche": 1}
+                             "kein_pdf": 1, "doppelt": 1, "bekannt": 1, "zu_gross": 1, "fehlversuche": 1}
 
 
 @pytest.fixture
@@ -822,3 +829,226 @@ def test_sperre_der_auswahl_wie_check(testdaten):
     je_id = check.erlaubnis(sqlite3.connect(config.DB))[0]
     assert {pid for pid, ok in je_id.items() if not ok} == gesperrt & set(je_id)
     assert 0 < len(gesperrt & set(je_id)) < len(je_id)
+
+
+# --- Datei aus auxiliaryFile, wenn mainFile fehlt (Entscheidung des Auftraggebers 13.11.2026 (a)) ---------------------
+
+def _anlage(i, name=None, fileName=None, mime="application/pdf", **felder):
+    f = {"id": f"F{i}", "accessUrl": f"http://h.invalid/f/{i}"}
+    for k, v in (("name", name), ("fileName", fileName), ("mimeType", mime)):
+        if v is not None:
+            f[k] = v
+    return {**f, **felder}
+
+
+@pytest.mark.parametrize("aux, erwartet", [
+    ([_anlage(1, "Anlage 1 Lageplan"), _anlage(2, "Vorlage"), _anlage(3, "Vorlage 2")], "F2"),   # Wort „Vorlage“
+    ([_anlage(1, "Anlage 1"), _anlage(2, "Beschlussvorlage")], "F2"),                            # als Wortteil
+    ([_anlage(1, "Anlage 1"), _anlage(2, "VORLAGE")], "F2"),
+    ([_anlage(1, "Anlage 1"), _anlage(2, fileName="1234-2026.pdf")], "F2"),                     # Drucksache mit „-“
+    ([_anlage(1, "Anlage 1"), _anlage(2, fileName="1234_2026_Text.pdf")], "F2"),                # mit „_“
+    ([_anlage(1, "Anlage"), _anlage(2, "Drucksache 1234/2026")], "F2"),                         # mit „/“
+    ([_anlage(1, "Anlage"), _anlage(2, "Drucksache 01234/2026")], "F2"),                        # führende Null
+    ([_anlage(1, "Anlage"), _anlage(2, "11234/2026"), _anlage(3, "1234/20261")], "F1"),         # andere Zahlen
+    ([_anlage(1, "Anlage"), _anlage(2, "1235/2026"), _anlage(3, "1234/2025")], "F1"),
+    ([_anlage(1, "Vorlage", mime="application/msword"), _anlage(2, "Anlage")], "F2"),          # nur PDF-Dateien
+    ([_anlage(1, "Vorlage", mime=None, fileName="vorlage.docx"), _anlage(2, "Anlage")], "F2"),  # ohne mimeType: .pdf
+    ([_anlage(1, "Anlage", mime=None, fileName="anlage.PDF"), _anlage(2, "Vorlage")], "F2"),
+    ([_anlage(1, "Anlage", mime=None, fileName="anlage.PDF"), _anlage(2, "Plan")], "F1"),
+    ([_anlage(1, "Plan", mime=None, accessUrl="http://h.invalid/f/1.pdf?x=1")], "F1"),
+    ([_anlage(1, "Plan", mime=["application/pdf"], fileName="plan.xlsx")], None),             # mimeType in anderer Form
+    ([_anlage(1, "Vorlage", deleted=True), _anlage(2, "Anlage")], "F2"),                       # gelöscht
+    ([{"accessUrl": "http://h.invalid/f/1.pdf", "name": "Vorlage", "mimeType": "application/pdf"},
+      _anlage(2, "Anlage")], "F2"),                                                             # ohne Kennung
+    (["http://h.invalid/files/1", _anlage(2, "Anlage")], "F2"),                                 # nur eine Adresse
+    ([_anlage(1, "Anlage", mime="Application/PDF; charset=binary")], "F1"),
+    ([_anlage(1, "Vorlage", mime="text/html")], None),
+    ([], None),
+    (None, None),
+    (_anlage(1, "Anlage"), "F1"),                                                               # ein Objekt
+])
+def test_wahl_unter_auxiliaryFile(aux, erwartet):
+    """Ohne mainFile höchstens eine Datei aus auxiliaryFile: unter den PDF-Dateien (laut mimeType, ohne ihn nur mit der
+    Endung .pdf) in der Reihenfolge der Quelle die erste, deren name oder fileName die Drucksache (1234/2026, 1234-2026,
+    1234_2026) oder das Wort „Vorlage“ trägt, sonst die erste. Orakel: die erwartete Datei je Fall."""
+    f, quelle = dokumente.datei_wahl({"id": "P", "reference": "1234/2026", "auxiliaryFile": aux})
+    assert (f["id"] if f else None, quelle) == (erwartet, "auxiliaryFile" if erwartet else None)
+
+
+def test_hauptdatei_geht_vor():
+    """Mit mainFile bleibt es die Wahl, auch wenn sie keine PDF-Datei ist (dann ausgeschlossen, keine Anlage
+    ersatzweise); eine gelöschte Hauptdatei fehlt."""
+    anlagen = [_anlage(1, "Vorlage")]
+    haupt = _anlage(9, "Hauptdokument", mime="application/msword")
+    assert dokumente.datei_wahl({"reference": "1/2026", "mainFile": haupt, "auxiliaryFile": anlagen}) == (
+        haupt, "mainFile")
+    assert dokumente.datei_wahl({"reference": "1/2026", "mainFile": dict(haupt, deleted=True),
+                                 "auxiliaryFile": anlagen}) == (anlagen[0], "auxiliaryFile")
+    assert dokumente.datei_wahl({"reference": "1/2026", "mainFile": None, "auxiliaryFile": anlagen})[1] == \
+        "auxiliaryFile"
+
+
+def test_anlage_wird_federfuehrung_eine_stufe_niedriger(oparl, monkeypatch):
+    """Ende zu Ende gegen den Testserver: Vorlagen ohne mainFile lesen genau eine Datei aus auxiliaryFile (die als
+    Vorlage benannte, sonst die erste PDF-Datei; nie eine Tabelle). build übernimmt die Kennung als Methode
+    pdf_kopf_anlage mit Konfidenz „niedrig“ (eine Stufe unter der Hauptdatei) und Fundstelle „Kopf der Anlage (S. 1)“;
+    die ausgeschriebene Form aus einer Anlage nicht. Abrufstatistik mit Herkunft und Vorlagen ohne PDF-Datei; export
+    und check wie bei der Hauptdatei."""
+    _mit_dateien(oparl, {1: KOPF})
+    _vorlage(oparl, 9)
+    _vorlage(oparl, 3)["auxiliaryFile"] = [_datei(oparl, 30, _pdf([["Anlage 1: Lageplan"]]), name="Anlage 1"),
+                                           _datei(oparl, 31, _pdf([["Dezernat, Dienststelle", "II/II/2"]]),
+                                                  name="Vorlage")]
+    _vorlage(oparl, 5)["auxiliaryFile"] = [_datei(oparl, 50, _pdf([["Dezernat VI, 61/2"]]), name="Mitteilung")]
+    _vorlage(oparl, 7)["auxiliaryFile"] = [_datei(oparl, 70, b"PK", name="Vorlage",
+                                                  mimeType="application/vnd.ms-excel")]
+    _vorlage(oparl, 9)["auxiliaryFile"] = [_datei(oparl, 90, b"DOC", name="Vorlage", mimeType="application/msword"),
+                                           _datei(oparl, 91, _pdf([KOPF]), name="Anlage 2")]
+    # ein Antrag mit der Vorlage der Verwaltung als Anlage: weder gelesen noch mit ihrer Kennung
+    _vorlage(oparl, 4)["auxiliaryFile"] = [_vorlage(oparl, 3)["auxiliaryFile"][1]]
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == ["/files/91.pdf", "/files/50.pdf", "/files/31.pdf", "/files/1.pdf"]
+    e = {x["paper"].rsplit("/", 1)[1]: x for x in _eintraege()}
+    assert {k: (x["quelle"], x["trefferart"], x["kennung"]) for k, x in e.items()} == {
+        "1": ("mainFile", "kennung", "VI/61"), "3": ("auxiliaryFile", "kennung", "II/II/2"),
+        "5": ("auxiliaryFile", "dezernat_dienststelle", "VI/61/2"), "9": ("auxiliaryFile", "kennung", "VI/61")}
+    assert all(dokumente.eintrag_gueltig(x) for x in e.values())
+    ergebnis = _statistik()[-1]["ergebnis"]
+    assert ("Herkunft: Auswahl aus mainFile 1, aus auxiliaryFile 3; in diesem Lauf aus mainFile 1, aus "
+            "auxiliaryFile 3; Vorlagen ohne PDF-Datei 1") in ergebnis
+    build.build()
+    db = sqlite3.connect(config.DB)
+    resp = {pid.rsplit("/", 1)[1]: r for pid, *r in db.execute(
+        "SELECT paper_id, organization_id, method, evidence, derived, confidence, kennung FROM paper_responsibility")}
+    assert resp == {
+        "1": [None, "pdf_kopf", "Kopf der Vorlage (S. 1): VI/61", 1, "mittel", "VI/61"],
+        "3": [None, "pdf_kopf_anlage", "Kopf der Anlage (S. 1): II/II/2", 1, "niedrig", "II/II/2"],
+        "9": [None, "pdf_kopf_anlage", "Kopf der Anlage (S. 1): VI/61", 1, "niedrig", "VI/61"]}
+    assert check.federfuehrung_kopf(db) == []
+    export.export()
+    papers = {p["reference"]: p for f in (config.EXPORT / config.STADT).rglob("*.json") if f.name != "index.json"
+              for p in (json.loads(f.read_text()).get("papers") or []) if isinstance(p, dict) and "responsibility" in p}
+    assert papers["1003/2026"]["responsibility"] == [{
+        "kind": "federfuehrend", "method": "pdf_kopf_anlage", "evidence": "Kopf der Anlage (S. 1): II/II/2",
+        "derived": 1, "confidence": "niedrig", "kennung": "II/II/2", "label": None, "name": None}]
+    assert papers["1005/2026"]["responsibility"] == []
+
+
+def _nacht_mit_aenderung(oparl, monkeypatch, stunden, **vorlagen):
+    """Die Stadt ändert Vorlagen (neues modified), Abruf und Dokumentschritt; liefert die Dateianfragen der Nacht."""
+    neu = (datetime.now(timezone.utc) + timedelta(hours=stunden)).isoformat(timespec="seconds")
+    for i, aendern in vorlagen.items():
+        aendern(_vorlage(oparl, int(i.removeprefix("p"))))
+        _vorlage(oparl, int(i.removeprefix("p")))["modified"] = neu
+    sessionnet.fetch_all()
+    oparl.anfragen.clear()
+    dokumente.schritt()
+    return _dateianfragen(oparl)
+
+
+def _federfuehrung(pid):
+    build.build()
+    db = sqlite3.connect(config.DB)
+    zeilen = db.execute("SELECT method, confidence, kennung FROM paper_responsibility WHERE paper_id = ?",
+                        (pid,)).fetchall()
+    assert check.federfuehrung_kopf(db) == []
+    return zeilen
+
+
+def test_hauptdatei_ersetzt_anlage_und_neue_wahl_ersetzt_alte(oparl, monkeypatch):
+    """Wird eine gelesene Anlage später zur Hauptdatei (dieselbe Datei), wird sie einmal neu gelesen und gilt dann als
+    Hauptdatei (pdf_kopf, mittel); danach nicht wieder. Ändert sich die Wahl unter auxiliaryFile (eine neue Datei mit
+    der Drucksache im Namen), wird nur die neue Datei gelesen und ersetzt das alte Ergebnis; kommt später eine
+    Hauptdatei, die nicht lesbar ist (404), gilt kein altes Ergebnis einer Anlage mehr."""
+    _freigabe(monkeypatch)
+    a = _datei(oparl, 10, _pdf([KOPF]), name="Vorlage")
+    _vorlage(oparl, 1)["auxiliaryFile"] = [a]
+    b = _datei(oparl, 30, _pdf([["Dezernat, Dienststelle", "IV/41"]]), name="Anlage")
+    _vorlage(oparl, 3)["auxiliaryFile"] = [b]
+    assert _nacht_mit_aenderung(oparl, monkeypatch, 1) == ["/files/30.pdf", "/files/10.pdf"]
+    p1, p3 = f"{oparl.b}/papers/1", f"{oparl.b}/papers/3"
+    assert _federfuehrung(p1) == [("pdf_kopf_anlage", "niedrig", "VI/61")]
+    assert _federfuehrung(p3) == [("pdf_kopf_anlage", "niedrig", "IV/41")]
+
+    def befoerdern(p):
+        p["mainFile"], p["auxiliaryFile"] = a, []
+    assert _nacht_mit_aenderung(oparl, monkeypatch, 2, p1=befoerdern) == ["/files/10.pdf"]
+    assert _federfuehrung(p1) == [("pdf_kopf", "mittel", "VI/61")]
+    assert _nacht_mit_aenderung(oparl, monkeypatch, 3) == []
+
+    c = _datei(oparl, 31, _pdf([["Dezernat, Dienststelle", "V/50"]]), fileName="1003-2026.pdf")
+    assert _nacht_mit_aenderung(oparl, monkeypatch, 4, p3=lambda p: p.update(auxiliaryFile=[b, c])) == \
+        ["/files/31.pdf"]
+    assert _federfuehrung(p3) == [("pdf_kopf_anlage", "niedrig", "V/50")]
+    d = _datei(oparl, 32, (404, {}, b""))
+    assert _nacht_mit_aenderung(oparl, monkeypatch, 5, p3=lambda p: p.update(mainFile=d)) == ["/files/32.pdf"]
+    assert _federfuehrung(p3) == []
+    e = {x["file"].rsplit("/", 1)[1]: (x["quelle"], x["status"]) for x in _eintraege()}
+    assert e == {"10": ("mainFile", "ok"), "30": ("auxiliaryFile", "ok"), "31": ("auxiliaryFile", "ok"),
+                 "32": ("mainFile", "http_404")}
+
+
+def test_datei_einer_ausgeschlossenen_vorlage_wird_nie_gelesen():
+    """Eine Datei, die auch bei einer Vorlage ohne Hauskoordinate (hier eine Eingabe) oder einer nicht öffentlich
+    beratenen steht, wird über keine andere Vorlage gelesen (etwa als Anlage einer Mitteilung). Eine Datei, die für eine
+    Vorlage Hauptdatei und für eine andere Anlage ist, zählt einmal, als Hauptdatei (gleich in welcher Reihenfolge)."""
+    b = "http://127.0.0.1:8"
+
+    def datei(i, **felder):
+        return {"id": f"{b}/files/{i}", "accessUrl": f"{b}/files/{i}.pdf", "mimeType": "application/pdf",
+                "name": "Vorlage", **felder}
+
+    def vorlage(i, art="Beschlussvorlage", **felder):
+        return {"id": f"{b}/papers/{i}", "reference": f"{2000 + i}/2026", "paperType": art, "name": f"Vorlage {i}",
+                "date": "2026-10-01", "created": f"2026-10-01T10:00:{i:02d}+02:00", "consultation": [], **felder}
+    roh = [vorlage(1, auxiliaryFile=[datei(20)]),
+           vorlage(2, art="Anregungen und Beschwerden", mainFile=datei(20)),
+           vorlage(3, auxiliaryFile=[datei(40)]),
+           vorlage(4, consultation=[{"id": f"{b}/c/4"}], mainFile=datei(41), auxiliaryFile=[datei(40)]),
+           vorlage(5, auxiliaryFile=[datei(60)]),
+           vorlage(6, mainFile=datei(60))]
+    beratungen = [{"uri": f"{b}/c/4", "agendaItem": {"public": False}}]
+    from unittest import mock
+    with mock.patch.object(config, "OPARL_BODY", f"{b}/body"):
+        kandidaten, gruende = dokumente.auswahl(roh, [], beratungen, {})
+    assert [(k["file"].rsplit("/", 1)[1], k["paper"].rsplit("/", 1)[1], k["quelle"]) for k in kandidaten] == [
+        ("60", "6", "mainFile")]
+    # die Eingabe zählt als Vorlagenart, die nicht der Verwaltung ist; ihre Datei bleibt trotzdem gesperrt
+    assert (gruende["datei_gesperrt"], gruende["doppelt"], gruende["vorlagenart"], gruende["nicht_oeffentlich"]) == (
+        2, 1, 1, 1)
+
+
+@pytest.mark.parametrize("methode, evidenz, konfidenz, doppelt", [
+    ("pdf_kopf_anlage", "Kopf der Anlage (S. 1): VI/61", "mittel", False),     # Anlage höchstens „niedrig“
+    ("pdf_kopf_anlage", "Kopf der Vorlage (S. 1): VI/61", "niedrig", False),   # Fundstelle der Hauptdatei
+    ("pdf_kopf", "Kopf der Anlage (S. 1): VI/61", "mittel", False),
+    ("pdf_kopf_anlage", "Kopf der Anlage (S. 1): VI/61", "niedrig", True),     # zwei Zeilen je Vorlage
+])
+def test_check_meldet_kopf_der_anlage_in_anderer_form(oparl, monkeypatch, methode, evidenz, konfidenz, doppelt):
+    """Gegenprobe zu check.federfuehrung_kopf: Fundstelle und Konfidenz müssen zur Methode passen, höchstens eine Zeile
+    je Vorlage; die richtige Zeile allein ist kein Befund."""
+    sessionnet.fetch_all()
+    build.build()
+    db = sqlite3.connect(config.DB)
+    pid = f"{oparl.b}/papers/1"
+    zeile = "INSERT INTO paper_responsibility VALUES (?, NULL, 'federfuehrend', ?, ?, 1, ?, 'VI/61')"
+    db.execute(zeile, (pid, "pdf_kopf_anlage", "Kopf der Anlage (S. 1): VI/61", "niedrig"))
+    assert check.federfuehrung_kopf(db) == []
+    if not doppelt:
+        db.execute("DELETE FROM paper_responsibility WHERE paper_id = ?", (pid,))
+    db.execute(zeile, (pid, methode, evidenz, konfidenz))
+    befunde = check.federfuehrung_kopf(db)
+    assert befunde and "1001/2026" in befunde[0]
+
+
+def test_eintrag_nur_mit_bekannter_herkunft():
+    """Einträge der Dokumente nur mit Herkunft mainFile oder auxiliaryFile (sonst verworfen)."""
+    e = {"file": "F", "paper": "P", "quelle": "mainFile", "sha256": "", "groesse": None,
+         "zeit": "2026-11-13T22:30:00+00:00", "kennung": "VI/61", "trefferart": "kennung", "status": "ok",
+         "fehlerart": "", "fehlversuche": 0, "modified": None, "size": None, "accessUrl": None, "downloadUrl": None}
+    assert dokumente.eintrag_gueltig(e) and dokumente.eintrag_gueltig(dict(e, quelle="auxiliaryFile"))
+    for quelle in ("anlage", "", None, ["mainFile"]):
+        assert not dokumente.eintrag_gueltig(dict(e, quelle=quelle))
+    assert not dokumente.eintrag_gueltig({k: v for k, v in e.items() if k != "quelle"})
