@@ -513,6 +513,17 @@ def vorlagenart_erkannt(paper):
             and all(VORLAGENART_PUNKT.search(t) for t in _vergleichstexte(art)))
 
 
+# Ausschuss für Anregungen und Beschwerden bzw. Bürgerbeteiligung (im Vergleichstext des Namens eines beratenden Gremiums)
+GREMIUM = re.compile(r"(?i)anregungen und beschwerden|bürgerbeteiligung")
+
+
+def gremium_ausschluss(gremien):
+    """Beratung im Ausschuss für Anregungen und Beschwerden bzw. Bürgerbeteiligung (GREMIUM in einem Vergleichstext
+    eines der Gremiennamen)? Eine Regel für die Hauskoordinate (punkt_ausschluss, Grund „gremium“) und die Titelmaske
+    (maske.ausgang_punktregel; Entscheidung 13.11.2026)."""
+    return any(GREMIUM.search(t) for g in gremien for t in _vergleichstexte(g))
+
+
 def punkt_ausschluss(paper, gremien=(), amt=None):
     """Grund, aus dem eine Straße mit Hausnummer im Titel nicht auf die Hauskoordinate gesetzt wird (AUSSCHLUSS), oder
     None, wenn es erlaubt ist. `gremien`: Namen der beratenden Gremien; `amt`: Name der federführenden Organisation
@@ -527,8 +538,7 @@ def punkt_ausschluss(paper, gremien=(), amt=None):
         return "drucksache"
     if eingabe(paper.get("paperType"), paper.get("name")):
         return "eingabe"
-    if any(re.search(r"(?i)anregungen und beschwerden|bürgerbeteiligung", t)
-           for g in gremien for t in _vergleichstexte(g)):
+    if gremium_ausschluss(gremien):
         return "gremium"
     if not vorlagenart_erkannt(paper):
         return "vorlagenart"
@@ -650,6 +660,30 @@ def beziehungen_db(db):
     if tabelle("paper_related"):
         out += db.execute("SELECT paper_id, related_id FROM paper_related").fetchall()
     return out
+
+
+def angaben_db(db):
+    """Angaben jeder Vorlage der Datenbank für die Punktregel (punkt_ausschluss) und die Titelmaske, eine Funktion für
+    check.erlaubnis und maske.aus_db (Entscheidung 13.11.2026: Die Titelmaske liest Gremien und Vorlagenart wie die
+    Punktregel): [(ID, Vorlage {reference, paperType, name, ANDERE_FORM}, Namen der beratenden Gremien in der
+    Beratungsfolge, Name der federführenden Organisation aus under_direction_of)]. Ältere Datenbanken ohne die Spalte
+    under_direction_of, die Tabelle paper_type_other_form oder consultation bleiben lesbar (dann ohne Amt, andere Form
+    bzw. Gremien)."""
+    def tabelle(name):
+        return db.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", (name,)).fetchone()
+    gremien = {}
+    if tabelle("consultation"):
+        for pid, name in db.execute(
+                "SELECT c.paper_id, o.name FROM consultation c LEFT JOIN organization o ON o.id = c.organization_id "
+                "ORDER BY c.paper_id, c.position"):
+            gremien.setdefault(pid, []).append(name or "")
+    andere_form = ({r[0] for r in db.execute("SELECT paper_id FROM paper_type_other_form")}
+                   if tabelle("paper_type_other_form") else set())
+    amt = ("(SELECT name FROM organization o WHERE o.id = paper.under_direction_of)"
+           if "under_direction_of" in {r[1] for r in db.execute("PRAGMA table_info(paper)")} else "NULL")
+    return [(pid, {"reference": ref, "paperType": typ, "name": name, ANDERE_FORM: pid in andere_form},
+             gremien.get(pid, ()), amt_name)
+            for pid, ref, typ, name, amt_name in db.execute(f"SELECT id, reference, paper_type, name, {amt} FROM paper")]
 
 
 def plan_numbers(title):

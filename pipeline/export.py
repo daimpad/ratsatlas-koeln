@@ -60,7 +60,7 @@ def _paper_detail(db, pid):
         "SELECT p.*, o.label AS amt, o.name AS vb_name FROM paper p "
         "LEFT JOIN organization o ON o.id = p.under_direction_of WHERE p.id = ?", (pid,)).fetchone()
     process = db.execute(
-        "SELECT c.position, c.role, c.authoritative, c.meeting_id, g.name AS gremium, "
+        "SELECT c.position, c.role, c.authoritative, c.meeting_id, c.agenda_item_id, g.name AS gremium, "
         "m.name AS meeting, m.start_date, m.cancelled, a.number, a.result, a.public "
         "FROM consultation c LEFT JOIN organization g ON g.id = c.organization_id "
         "LEFT JOIN meeting m ON m.id = c.meeting_id LEFT JOIN agenda_item a ON a.id = c.agenda_item_id "
@@ -77,7 +77,10 @@ def _paper_detail(db, pid):
     # Titel ausblendet), im Zusammenhang des ganzen Titels (Maske.ausschnitt; dritte Korrektur: vorher allein maskiert,
     # und „1175, Hinterhof … – Anfrage der Fraktion …“ behielt die Nummer, deren Straße vor dem Ausschnitt stand).
     # Ortsnamen und Ergebnisse der Beratungen ebenso (dritte Korrektur: check prüft sie, die Maske kann also jeden
-    # Befund beheben)
+    # Befund beheben). Ergebnisse je Tagesordnungspunkt und Sitzungsnamen je Sitzung (Offen (8) und (9) der Nachprüfung
+    # der dritten Korrektur): Wird dort eine Vorlage der Maske beraten (Maske.tops, Maske.sitzungen), läuft der Text
+    # bei jeder Vorlage, die ihn zeigt, mit deren Drucksache durch die Maske; die Kennung des Tagesordnungspunkts
+    # bleibt intern (Datenmodell unverändert)
     fund = lambda rows: [{**dict(r), "evidence": m.ausschnitt(r["evidence"], p["name"], ref)} for r in rows]
     locs = [{**r, "name": m(r["name"], ref)} for r in fund(_locations(db, pid))]
     rel = lambda sql: [{**dict(r), "name": m(r["name"], r["reference"])} for r in db.execute(sql, (pid,))]
@@ -91,7 +94,10 @@ def _paper_detail(db, pid):
         "main_file": p["main_file_url"],
         "responsibility": [{**dict(r), "evidence": m(r["evidence"], ref)} for r in resp],
         "originators": fund(orig),
-        "process": [{**dict(r), "result": m(r["result"], ref), "status": _status(r)} for r in process],
+        "process": [{**{k: v for k, v in dict(r).items() if k != "agenda_item_id"},
+                     "meeting": m(r["meeting"], m.sitzungen.get(r["meeting_id"])),
+                     "result": m(r["result"], m.tops.get(r["agenda_item_id"], ref)), "status": _status(r)}
+                    for r in process],
         "superordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
                               "JOIN paper p ON p.id = r.parent_id WHERE r.child_id = ?"),
         "subordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
@@ -676,16 +682,20 @@ def gremium_der_sitzung(m, names, bekannt=None):
 
 
 def _meetings(db):
-    """Sitzungen der städtischen OParl-API (auch künftige, als Termin belegt)."""
+    """Sitzungen der städtischen OParl-API (auch künftige, als Termin belegt). Wird in einer Sitzung eine Vorlage der
+    Titelmaske beraten (Maske.sitzungen), läuft ihr Name durch die Maske, ebenso ein Gremium, das aus dem Namen stammt
+    (Offen (9) der Nachprüfung der dritten Korrektur: zeit.json, termine.ics; check._sitzungen prüft das)."""
     if not config.MEETINGS.exists():
         return []
     names = dict(db.execute("SELECT id, name FROM organization"))
     bekannt = {_schluessel(n): n for n in sorted(names.values(), key=str)}
+    mk = _maske(db)
     out = []
     for m in json.loads(config.MEETINGS.read_text()):
         if not m.get("start"):
             continue
         time = m["start"][11:16] if len(m["start"]) > 10 and m["start"][11:16] != "00:00" else None
+        m = {**m, "name": mk(m.get("name"), mk.sitzungen.get(m.get("id")))}
         gremium = gremium_der_sitzung(m, names, bekannt)
         out.append({"date": proc.local_day(m["start"]), "time": time, "gremium": gremium,
                     "name": m.get("name"), "cancelled": bool(m.get("cancelled")), "state": m.get("meetingState"),

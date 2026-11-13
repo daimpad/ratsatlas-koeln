@@ -42,7 +42,13 @@ keine liegt zwischen 1900 und 2099. Das kürzt auch Zahlen, die keine Hausnummer
 das Original bleibt über den Link erreichbar. Fundstellen aus dem Titel maskiert die Maske im Zusammenhang des ganzen
 Titels (Maske.ausschnitt), Hausnummern in Worten hinter „Hausnummer“ oder „Nummer“ ebenso (ZAHLWORT).
 Ergänzt in der Nachprüfung der dritten Korrektur: Ein unsichtbares Zeichen zwischen zwei Ziffern gilt als Bindestrich
-(_unsichtbar_trennen); vorher verschmolzen „98\u00ad100“ oder „20\u00ad22“ zu einer Zahl, die die Maske stehen ließ."""
+(_unsichtbar_trennen); vorher verschmolzen „98\u00ad100“ oder „20\u00ad22“ zu einer Zahl, die die Maske stehen ließ.
+Erweitert am 13.11.2026 (Entscheidung des Auftraggebers): auch Vorlagen, die nur über das Gremium (Ausschuss für
+Bürgerbeteiligung, Anregungen und Beschwerden) oder eine nicht erkennbare Vorlagenart keine Hauskoordinate erhalten,
+und ihre verbundenen Vorlagen (ausgang_punktregel, dieselben Funktionen wie geocode.punkt_ausschluss). Dazu (Offen aus
+der Nachprüfung): Ergebnisse je Tagesordnungspunkt und Sitzungsnamen je Sitzung (Maske.tops, Maske.sitzungen),
+Fundstellen ohne Ziffer im Zusammenhang des Titels (Maske.ausschnitt), Ordnungswörter am Wortende (_ORDNUNG) und die
+Straßen-Endung am Anfang des ganzen Worts (_WORTANFANG)."""
 import json
 import re
 import unicodedata
@@ -100,21 +106,43 @@ _EINHEIT_BETRAG = r"%|prozent|euro|eur|€|mio\.?|mrd\.?|tsd\.?|uhr"
 _EINHEIT = (rf"{_EINHEIT_BETRAG}|km/h|km|qm|m²|ha|stunden|std\.?|minuten|min\.?|tag(?:e|en)?|woche(?:n)?"
             r"|monat(?:e|en)?|jahr(?:e|en)?|personen|plätze|stellplätze|parkplätze|bäume|meter|wohnungen|wohneinheiten"
             r"|kinder|stimmen|stück|mal")
-_ORDNUNG = (r"nachtrag|änderung|aenderung|ergänzung|ergaenzung|fortschreibung|bauabschnitt|abschnitt|sitzung|lesung"
-            r"|satzung|quartal|halbjahr|beratung|version|fassung|stufe|phase|teil|auflage|bericht|sachstand|runde"
-            r"|staffel|etappe|preis|ebene|etage|obergeschoss|termin|jahrestag|geburtstag|jubiläum|jubilaeum"
-            r"|bürgermeister|buergermeister|stellvertret|vorsitz|beigeordnet|ausschreibung|wahl|legislatur|haushalt"
-            r"|nachtragshaushalt|fortsetzung|durchgang|verfahren|offenlage|beteiligung|planänderung|entwurf|vorlage"
-            r"|mitteilung|beschluss|kölner|koelner|internationale|deutsche|januar|februar|märz|maerz|april|juni|juli"
-            r"|august|september|oktober|november|dezember|(?:los|og|stock|fc|mai|jan|feb|mär|apr|jun|jul|aug|sept?|okt"
-            r"|nov|dez)(?![^\W\d_])")
+# Wörter nach einer Ordnungszahl, am Wortende gebunden (Offen (11) der Nachprüfung der dritten Korrektur: vorher galt
+# jedes Wort, das so anfing, auch „Teilweise“, „Termine“, „Preise“, „Vorlagen“; eine Nummer mit Punkt vor einem Satz,
+# der so beginnt, blieb in Titeln der Maske stehen: „vor Haus 12. Teilweise …“). Erlaubt sind die nötigen Formen:
+# Genitiv („des 2. Nachtrags“), Mehrzahl der Wörter auf -ung und „Nachträge“ („2. Änderungen“, „5. Sitzungen“),
+# Zusammensetzungen mit Fugen-s bei Wörtern auf -ung („1. Änderungssatzung“, „2. Satzungsänderung“) und einige
+# Zusammensetzungen, die vorher über den Wortanfang galten („2. Teilabschnitt“, „18. Wahlperiode“, „1. Haushaltsjahr“).
+# Keine Mehrzahl, die als Satzanfang üblich ist („Teile“, „Termine“, „Preise“, „Vorlagen“, „Stufen“, „Phasen“)
+_UNG = r"(?:en|s[^\W\d_]+)?"
+_ORDNUNG = ("(?:" + "|".join([
+    r"nachtr(?:ag(?:s|es|s[^\W\d_]+)?|(?:ä|ae)gen?)", rf"(?:plan|teil)?(?:ä|ae)nderung{_UNG}",
+    rf"erg(?:ä|ae)nzung{_UNG}", rf"fortschreibung{_UNG}", r"(?:bau|teil)?abschnitt(?:s|es)?", rf"sitzung{_UNG}",
+    rf"lesung{_UNG}", rf"satzung{_UNG}", r"quartal(?:s|es)?", r"halbjahr(?:s|es)?", rf"beratung{_UNG}",
+    r"version(?:en)?", rf"fassung{_UNG}", r"stufe", r"phase", r"teil(?:s|es|bereich(?:s|es)?|plan(?:s|es)?)?",
+    r"auflage", r"bericht(?:s|es)?", r"sachstand(?:s|es|sbericht(?:s|es)?)?", r"runde", r"staffel", r"etappe",
+    r"preis(?:es)?", r"ebene", r"etage", r"obergescho(?:ss|ß)(?:es)?", r"termin(?:s|es)?", r"jahrestag(?:s|es)?",
+    r"geburtstag(?:s|es)?", r"jubil(?:ä|ae)um(?:s)?", r"(?:ober)?b(?:ü|ue)rgermeister(?:in(?:nen)?|s)?",
+    r"stellvertret(?:er(?:in(?:nen)?|s)?|ende[nmrs]?)", r"vorsitz(?:es|ende[nmrs]?)?", r"beigeordnete[nmrs]?",
+    rf"ausschreibung{_UNG}", r"wahl(?:gang(?:s|es)?|periode|kreis(?:es)?)?", r"legislatur(?:periode)?",
+    r"haushalt(?:s|es|ssatzung|splan(?:s|es)?|sjahr(?:s|es)?)?", r"nachtragshaushalt(?:s|es|ssatzung)?",
+    rf"fortsetzung{_UNG}", r"durchgang(?:s|es)?", r"verfahren(?:s)?", r"offenlage", rf"beteiligung{_UNG}",
+    r"entwurf(?:s|es)?", r"vorlage", rf"mitteilung{_UNG}", r"beschlu(?:ss|ß)(?:es)?", r"k(?:ö|oe)lner",
+    r"internationale[nmrs]?", r"deutsche[nmrs]?",
+    r"januar|februar|m(?:ä|ae)rz|april|juni|juli|august|september|oktober|november|dezember",
+    r"los|og|stock(?:werk(?:s|es)?)?|fc|mai|jan|feb|mär|apr|jun|jul|aug|sept?|okt|nov|dez"]) + r")(?![^\W\d_])")
 _KEIN_BETRAG = rf"(?!\d+(?:,\d+)?\s*(?:{_EINHEIT_BETRAG})(?![^\W\d_]))"
 _KEINE_NR = rf"(?!\d+(?:,\d+)?\s*(?:{_EINHEIT})(?![^\W\d_])|\d{{1,3}}\.\s?(?:{_ORDNUNG}))"
 NR = (rf"{_KEIN_BETRAG}{_ZIFFERN}{_ZUSATZ}"
       rf"(?:\s*{LISTE}\s*(?:{_NRW}\s*)?(?!{_DRUCKSACHE}){_KEINE_NR}{_ZIFFERN}{_ZUSATZ})*(?!\d)")
 # Straßen-Endung am Anfang eines Worts gebunden (kein Buchstabe, Punkt oder Bindestrich davor): dieselben Treffer, aber
-# ohne quadratischen Aufwand bei langen Wörtern (Prüfung r20a, dritte Korrektur: ein Wort aus 5 000 Buchstaben 3 s)
-_WORTANFANG = r"(?<![^\W\d_.-])"
+# ohne quadratischen Aufwand bei langen Wörtern (Prüfung r20a, dritte Korrektur: ein Wort aus 5 000 Buchstaben 3 s).
+# Offen (12) der Nachprüfung: Das Muster schloss nur einen Buchstaben davor aus („.“ und „-“ gehören schon zu \W, die
+# Klasse [^\W\d_.-] war also nur die der Buchstaben); jede Stelle hinter „-“ oder „.“ war ein neuer Anfang, und ein Wort
+# aus vielen Teilen kostete quadratisch Zeit („a-a-a-…“ mit 5 000 Zeichen 0,8 s je Durchlauf). Jetzt wie beschrieben:
+# Weil der Name selbst Punkt und Bindestrich enthalten darf, beginnt jeder Treffer am Anfang des ganzen Worts
+# („Konrad-Adenauer-Straße“, „St.-Apern-Str.“); dieselben Hausnummern fallen weg. Endet ein Treffer derselben Runde
+# mitten in einem Wort („Musterweg 12a-Hauptstraße 5“), findet die nächste Runde die folgende Straße
+_WORTANFANG = r"(?<![^\W\d_]|[.-])"
 SUFFIX = (rf"{_WORTANFANG}(?:{_L}|[.-])*(?:straße|strasse|str(?:\.|(?!{_L}))|weg|platz|gasse|allee|ring|ufer|damm|pfad"
           r"|chaussee|hof|markt|graben|berg|feld)")
 # Hausnummer in Worten hinter „Hausnummer“, „Nr.“ oder „Nummer“ („Venloer Straße Hausnummer zwölf“; Prüfung r20a, dritte
@@ -311,7 +339,9 @@ class _Probe:
     def __init__(self, strassen):
         b = r"[^\W\d_]"
         namen = {_falten(s)[0] for s in strassen if s}
-        endung = (rf"(?<![^\W\d_.-]){b}*(?:strasse|str(?:\.|(?!{b}))|weg|platz|gasse|allee|ring|ufer|damm|pfad|chaussee"
+        # kein Buchstabe davor; Punkt und Bindestrich schon, weil das Wort hier nur aus Buchstaben besteht
+        # („Konrad-Adenauer-Strasse“ ab „Strasse“; linear, jedes Zeichen gehört zu einem Wort)
+        endung = (rf"(?<![^\W\d_]){b}*(?:strasse|str(?:\.|(?!{b}))|weg|platz|gasse|allee|ring|ufer|damm|pfad|chaussee"
                   r"|hof|markt|graben|berg|feld)")
         nummer = rf"(?!{_JAHR})\d{{1,4}}(?!\d|[.:]\d)"
         erste, weitere = f"{_KEIN_BETRAG}{nummer}", f"{_KEINE_NR}{nummer}"
@@ -467,6 +497,10 @@ class Maske:
         self._offen = {}   # check prüft denselben Titel je Datei und Ortsbezug: je (Text, Drucksache) einmal rechnen
         self._aus = {}     # export maskiert denselben Titel je Datei, Audit und Ortsbezug: ebenso (Prüfung r20a)
         self._herkunft = {}   # Herkunft je Zeichen der zuletzt maskierten Titel (ausschnitt; klein gehalten)
+        # Tagesordnungspunkte und Sitzungen, in denen eine Vorlage der Maske beraten wird: {Kennung: Drucksache einer
+        # solchen Vorlage} (aus_db, beratungen_der_maske). Ihr Ergebnis bzw. ihr Name läuft bei jeder Vorlage, die ihn
+        # zeigt, mit dieser Drucksache durch die Maske (Offen (8) und (9) der Nachprüfung der dritten Korrektur)
+        self.tops, self.sitzungen = {}, {}
 
     def _betroffen(self, titel, ref):
         # ohne Ziffer und ohne Hausnummer in Worten keine Hausnummer: spart die teure Regex bei den meisten Titeln
@@ -522,7 +556,10 @@ class Maske:
         Runde blendet mindestens eine Ziffernfolge aus; nach RUNDEN Runden blendet der Rückfall jede verbliebene
         Ziffernfolge mit bis zu vier Stellen aus. Danach ist offen() für das Ergebnis falsch. Weil die Positivliste jede
         unbekannte Zahl ausblendet, heißt ein Befund in check: Der Text hat die Maske nicht durchlaufen; eine Hausnummer
-        bleibt nur in einem Zusammenhang aus _BEKANNT stehen (TECHNIK.md, offen)."""
+        bleibt nur in einem Zusammenhang aus _BEKANNT stehen (TECHNIK.md, offen).
+        Diese Instanz vermerkt offen() für ihr Ergebnis vorab als falsch (Zwischenspeicher, ohne Rechnung): Ein Test,
+        der offen(m(x)) auf derselben Instanz prüft, sichert damit nichts zu und braucht eine zweite Maske (Offen (10)
+        der Nachprüfung der dritten Korrektur); check baut seine eigene (aus_db)."""
         if not self._betroffen(titel, ref):
             return titel
         if (titel, ref) not in self._aus:
@@ -540,8 +577,11 @@ class Maske:
         export den Ausschnitt allein, und „1175, Hinterhof … – Anfrage der Fraktion …“ behielt die Nummer, deren Straße
         vor dem Ausschnitt stand; Prüfung r20a, dritte Korrektur). Ein Zusatz hinter „ (“, der nicht im Titel steht,
         und eine Fundstelle außerhalb des Titels werden für sich maskiert; zuletzt das Ganze noch einmal (offen() ist
-        danach falsch, auch wo der Ausschnitt einen bekannten Zusammenhang abschneidet)."""
-        if not self._betroffen(text, ref):
+        danach falsch, auch wo der Ausschnitt einen bekannten Zusammenhang abschneidet). Die Übertragung gilt für jede
+        Fundstelle eines Titels der Maske, auch ohne Ziffer (Offen (7) der Nachprüfung der dritten Korrektur: vorher
+        kam eine Fundstelle ohne Ziffer und ohne Wort wie „Hausnummer“ unverändert zurück; begann sie zwischen
+        „Hausnummer“ und einer Hausnummer in Worten, blieb das Zahlwort stehen: „zwölf – Antrag der …“)."""
+        if not text or ref not in self.refs:
             return text
         teil, rest = "", text
         if titel and self._betroffen(titel, ref):
@@ -570,7 +610,18 @@ class Maske:
         return self._offen[titel, ref]
 
 
-def kette(vorlagen, ausgelassen, beziehungen, privat_auch=True):
+def ausgang_punktregel(paper, gremien=()):
+    """Ausgangspunkt der Titelmaske über die Punktregel (Entscheidung 13.11.2026): Beratung im Ausschuss für
+    Bürgerbeteiligung, Anregungen und Beschwerden (geocode.gremium_ausschluss) oder leere bzw. nicht erkennbare
+    Vorlagenart (geocode.vorlagenart_erkannt), dieselben Funktionen wie geocode.punkt_ausschluss (Gründe „gremium“ und
+    „vorlagenart“), aber unabhängig von der Reihenfolge der Gründe: auch bei einer Drucksache in anderem Schema (Grund
+    „drucksache“). Vorher hatten solche Vorlagen keine Hauskoordinate, zeigten ihre Hausnummer aber im Titel (Hinweis
+    „ohne_punkt_ohne_maske“ in check). `paper`: {reference, paperType, name, geocode.ANDERE_FORM} wie in
+    geocode.angaben_db oder die Rohdaten nach build.einlesen; `gremien`: Namen der beratenden Gremien."""
+    return geocode.gremium_ausschluss(gremien) or not geocode.vorlagenart_erkannt(paper)
+
+
+def kette(vorlagen, ausgelassen, beziehungen, privat_auch=True, punktregel=()):
     """Titelmaske (privat_auch, aus_db) und Volltextkette (ohne Bauordnung und Naturschutz, volltext.einwohner_kette):
     eine Regel, eine Funktion. Ausgangsvorlagen sind die Vorlagen aus der Einwohnerschaft nach Art oder Titel
     (chat.aus_einwohnerschaft), mit `privat_auch` auch die, die Bauordnungsamt oder Untere Naturschutzbehörde
@@ -581,10 +632,12 @@ def kette(vorlagen, ausgelassen, beziehungen, privat_auch=True):
     Stellungnahme, die nur über relatedPaper mit einer Eingabe verbunden ist, ihre Hausnummer im Titel ebenso verliert
     wie eine untergeordnete (Entscheidung 10.11.2026, Runde 20). Jede Ausgangsvorlage ist auch ohne Erlaubnis für
     Hauskoordinaten (geocode.punkt_ausschluss), die Kette also Teil der Menge ohne Hauskoordinate.
-    `vorlagen`: [(ID, Drucksache, Vorlagenart, Titel, Name der federführenden Organisation)]. Liefert {ID: Weg} wie
-    geocode.sperrmenge (auch Kennungen ohne Vorlage, über die eine Beziehung läuft)."""
+    `vorlagen`: [(ID, Drucksache, Vorlagenart, Titel, Name der federführenden Organisation)]. `punktregel`: Kennungen
+    der Vorlagen, die über Gremium oder Vorlagenart Ausgangspunkt sind (ausgang_punktregel; nur die Titelmaske,
+    Entscheidung 13.11.2026; die Volltextkette ohne). Liefert {ID: Weg} wie geocode.sperrmenge (auch Kennungen ohne
+    Vorlage, über die eine Beziehung läuft)."""
     ausgang = titel_ohne_hausnummer if privat_auch else lambda art, titel, _amt: chat.aus_einwohnerschaft(art, titel)
-    drucksachen, start = {}, set(ausgelassen)
+    drucksachen, start = {}, set(ausgelassen) | set(punktregel)
     for pid, ref, art, titel, amt_name in vorlagen:
         drucksachen[pid] = ref
         if ausgang(art, titel, amt_name):
@@ -597,15 +650,40 @@ def _tabelle(db, name):
 
 
 def aus_db(db, strassen=None):
-    """Maske für alle Vorlagen der Datenbank (kette: Einwohnerschaft, Bauordnung, Naturschutz und verbundene Vorlagen
-    über paper_relation und relatedPaper aus paper_related, dieselbe Drucksache). Beim Aufbau ausgelassene Vorlagen
-    (skipped_paper, ohne Drucksachennummer oder gelöscht; Art und Titel unbekannt) gelten wie Eingaben: Ihre verbundenen
-    Vorlagen zeigen keine Hausnummer im Titel (wie ohne Hauskoordinate, check.erlaubnis)."""
-    spalten = {r[1] for r in db.execute("PRAGMA table_info(paper)")}
-    amt = ("(SELECT name FROM organization o WHERE o.id = paper.under_direction_of)"
-           if "under_direction_of" in spalten else "NULL")
-    vorlagen = db.execute(f"SELECT id, reference, paper_type, name, {amt} FROM paper").fetchall()
+    """Maske für alle Vorlagen der Datenbank (kette: Einwohnerschaft, Bauordnung, Naturschutz, seit dem 13.11.2026 auch
+    Gremium und Vorlagenart wie in der Punktregel, und verbundene Vorlagen über paper_relation und relatedPaper aus
+    paper_related, dieselbe Drucksache). Gremien, Vorlagenart und federführende Organisation liest dieselbe Funktion
+    wie check.erlaubnis (geocode.angaben_db). Beim Aufbau ausgelassene Vorlagen (skipped_paper, ohne Drucksachennummer
+    oder gelöscht; Art und Titel unbekannt) gelten wie Eingaben: Ihre verbundenen Vorlagen zeigen keine Hausnummer im
+    Titel (wie ohne Hauskoordinate, check.erlaubnis). Dazu die Tagesordnungspunkte und Sitzungen der Maske
+    (Maske.tops, Maske.sitzungen; beratungen_der_maske)."""
+    angaben = geocode.angaben_db(db)
+    vorlagen = [(pid, p["reference"], p["paperType"], p["name"], amt) for pid, p, _, amt in angaben]
+    punktregel = [pid for pid, p, gremien, _ in angaben if ausgang_punktregel(p, gremien)]
     ausgelassen = ([r[0] for r in db.execute("SELECT id FROM skipped_paper")] if _tabelle(db, "skipped_paper")
                    else [])
-    weg = kette(vorlagen, ausgelassen, geocode.beziehungen_db(db))
-    return Maske({ref for pid, ref, *_ in vorlagen if pid in weg}, strassen)
+    weg = kette(vorlagen, ausgelassen, geocode.beziehungen_db(db), punktregel=punktregel)
+    m = Maske({ref for pid, ref, *_ in vorlagen if pid in weg}, strassen)
+    m.tops, m.sitzungen = beratungen_der_maske(db, m.refs)
+    return m
+
+
+def beratungen_der_maske(db, refs):
+    """Tagesordnungspunkte und Sitzungen, in denen eine Vorlage mit einer Drucksache aus `refs` beraten wird:
+    ({TOP: Drucksache}, {Sitzung: Drucksache}), je mit der kleinsten solchen Drucksache (stabil; die Maske hängt nur
+    davon ab, ob die Drucksache in der Maske ist). Eine Funktion für export (Ergebnisse, Sitzungsnamen) und check:
+    Ist eine Vorlage eines Tagesordnungspunkts in der Maske, läuft sein Ergebnis bei jeder Vorlage durch die Maske, die
+    ihn zeigt (Offen (8)); ebenso der Name einer solchen Sitzung in Gebietsdateien, zeit.json und termine.ics (Offen
+    (9))."""
+    tops, sitzungen = {}, {}
+    if not _tabelle(db, "consultation"):
+        return tops, sitzungen
+    for top, sitzung, ref in db.execute(
+            "SELECT c.agenda_item_id, c.meeting_id, p.reference FROM consultation c JOIN paper p ON p.id = c.paper_id "
+            "WHERE c.agenda_item_id IS NOT NULL OR c.meeting_id IS NOT NULL ORDER BY p.reference"):
+        if ref in refs:
+            if top:
+                tops.setdefault(top, ref)
+            if sitzung:
+                sitzungen.setdefault(sitzung, ref)
+    return tops, sitzungen

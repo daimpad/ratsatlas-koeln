@@ -58,9 +58,16 @@ def events(p, with_followups=False):
     return out
 
 
-# Steuerzeichen aus der Quelle sind in XML nicht erlaubt; sie machten den ganzen Feed ungültig (_atom entfernt sie,
-# check._feeds vergleicht Texte in derselben Form)
-STEUERZEICHEN = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+# Zeichen, die XML 1.0 nicht erlaubt (alles außer Tab, Zeilenende, U+0020–U+D7FF, U+E000–U+FFFD und
+# U+10000–U+10FFFF): Steuerzeichen, einzelne Ersatzzeichen (U+D800–U+DFFF) sowie U+FFFE und U+FFFF aus der Quelle
+# machten den ganzen Feed ungültig und damit für check ungeprüft (Offen (6) der Nachprüfung der dritten Korrektur:
+# vorher nur die Steuerzeichen). _atom entfernt sie, check._feeds vergleicht Texte in derselben Form (xml_text)
+XML_UNGUELTIG = re.compile("[^\t\n\r\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]")
+
+
+def xml_text(text):
+    """Text ohne Zeichen, die XML 1.0 nicht erlaubt (XML_UNGUELTIG); eine Regel für die Feeds und check._feeds."""
+    return XML_UNGUELTIG.sub("", text)
 
 
 def _atom(feed_id, title, subtitle, self_url, alt_url, entries):
@@ -81,7 +88,7 @@ def _atom(feed_id, title, subtitle, self_url, alt_url, entries):
                   f'<link rel="related" type="text/html" href={quoteattr(e["original"])}/>' if e.get("original") else "",
                   f"<summary>{escape(e['summary'])}</summary>", "</entry>"]
     parts.append("</feed>")
-    return STEUERZEICHEN.sub("", "\n".join(x for x in parts if x)) + "\n"
+    return xml_text("\n".join(x for x in parts if x)) + "\n"
 
 
 OPEN = ("in Beratung", "offen")
