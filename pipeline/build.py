@@ -7,7 +7,7 @@ import sqlite3
 import unicodedata
 from collections import Counter
 
-from . import actors, config, maske
+from . import actors, config, dokumente, maske, pdfkopf
 from .geo import Ortsteile
 from .geocode import (ANDERE_FORM, AUSSCHLUSS, WEG, Gazetteer, beziehungen, erkannte_arten, hausnummer_punkt_erlaubt,
                       nicht_erkannte_arten, plan_numbers, punkt_ausschluss, sperrmenge, vorlagenart_bezeichnung)
@@ -59,9 +59,11 @@ CREATE TABLE plan_precedence (
 CREATE TABLE paper_originator (
   paper_id TEXT REFERENCES paper, actor TEXT, actor_type TEXT,
   organization_id TEXT REFERENCES organization, method TEXT, evidence TEXT, derived INTEGER);
+-- confidence und kennung nur bei der Federführung aus dem Kopf der Vorlage (method „pdf_kopf“, pipeline/dokumente.py:
+-- Kennung wie „VI/61“, ohne Organisation, keinem Amt zugeordnet), sonst NULL
 CREATE TABLE paper_responsibility (
   paper_id TEXT REFERENCES paper, organization_id TEXT REFERENCES organization, kind TEXT,
-  method TEXT, evidence TEXT, derived INTEGER);
+  method TEXT, evidence TEXT, derived INTEGER, confidence TEXT, kennung TEXT);
 -- Vorlagen, die der Aufbau auslässt (ohne Drucksachennummer oder als gelöscht gemeldet, einlesen()); Zählung in der
 -- Ausgabe von check; für den Datenschutz Startmenge ohne Hauskoordinate (check.erlaubnis, maske.aus_db), ihre
 -- Beziehungen in paper_relation
@@ -295,9 +297,11 @@ def build():
     # nicht, sie zählen aber für den Datenschutz; check.erlaubnis und maske.aus_db lesen paper_relation und
     # paper_related über geocode.beziehungen_db)
     rows["rel"], rows["related"] = beziehungen(papers + ausgelassen)
-    gremien = {p["id"]: [(orgs_by_id.get((c.get("organization") or [None])[0]) or {}).get("name", "")
-                         for c in p.get("consultation") or [] if isinstance(c, dict)] for p in papers}
+    gremien, _ = angaben_roh(papers, orgs_by_id)
     gesperrt = _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rows["rel"], rows["related"])
+    # Federführung aus dem Kopf der Vorlage (pipeline/dokumente.py): nur Vorlagen ohne underDirectionOf und mit Erlaubnis
+    # für Hauskoordinaten (nicht in `gesperrt`), Datei = aktuelle Hauptdatei; ohne Datei der Dokumente nichts
+    koepfe = dokumente.koepfe()
     # OParl-Ortsangaben einer Vorlage ohne Erlaubnis: kein genauer Punkt (Stufe A), auch nicht für andere Vorlagen mit
     # derselben Ortsangabe (vorsichtige Auslegung); dazu die Ortsangaben ausgelassener Vorlagen (alle ohne Erlaubnis;
     # Prüfung r19b: sonst gab eine erlaubte Vorlage den Punkt einer ausgelassenen Eingabe weiter)
@@ -366,9 +370,10 @@ def build():
         for r in actors.originators(p, orgs, bezirke):
             rows["orig"].append((p["id"], r["actor"], r["actor_type"], r["organization_id"],
                                  r["method"], r["evidence"], 1))
-        for r in actors.responsibilities(p, orgs_by_id, papers_by_id):
+        kopf = koepfe.get((p.get("mainFile") or {}).get("id")) if p["id"] not in gesperrt else None
+        for r in actors.responsibilities(p, orgs_by_id, papers_by_id, kopf):
             rows["resp"].append((p["id"], r["organization_id"], r["kind"], r["method"],
-                                 r["evidence"], r["derived"]))
+                                 r["evidence"], r["derived"], r.get("confidence"), r.get("kennung")))
 
     # Straßenpunkte aus den Ortsangaben der Stadt für Namen, die im Straßenverzeichnis fehlen; ohne die auf den Stadtteil
     # zurückgeführten Ortsangaben (grob: ihr Punkt ist der Stadtteil, nicht die Straße)
@@ -406,7 +411,11 @@ def build():
     db.executemany("INSERT INTO plan_precedence VALUES (?,?,?,?)", precedence)
     db.executemany("INSERT OR IGNORE INTO paper_location VALUES (?,?,?,?,?,?,?)", rows["ploc"])
     db.executemany("INSERT INTO paper_originator VALUES (?,?,?,?,?,?,?)", rows["orig"])
-    db.executemany("INSERT INTO paper_responsibility VALUES (?,?,?,?,?,?)", rows["resp"])
+    db.executemany("INSERT INTO paper_responsibility VALUES (?,?,?,?,?,?,?,?)", rows["resp"])
+    if koepfe:
+        n = sum(1 for r in rows["resp"] if r[3] == pdfkopf.METHODE)
+        print(f"Federführung aus dem Kopf der Vorlage (PDF, Seite 1): {n} Vorlagen ohne underDirectionOf mit Kennung "
+              f"(keinem Amt zugeordnet; {len(koepfe)} Dateien mit Kennung)")
     db.executemany(f"INSERT OR IGNORE INTO skipped_paper VALUES (?, ?, '{config.QUELLE_OPARL}')",
                    [(a["id"], a["grund"]) for a in ausgelassen])
     db.executemany("INSERT OR IGNORE INTO skipped_location VALUES (?, ?)",
@@ -417,6 +426,16 @@ def build():
     db.close()
     print(f"{len(papers)} Vorlagen, {len(rows['cons'])} Beratungen, {len(meetings)} Sitzungen, "
           f"{len(agenda)} TOPs, {len(locations)} Orte → {config.DB}")
+
+
+def angaben_roh(papers, orgs_by_id):
+    """Angaben der Vorlagen (nach einlesen) für Punktregel und Titelmaske aus den Rohdaten, eine Funktion für den Aufbau
+    und die Auswahl der Dokumente (pipeline/dokumente.py): ({ID: Namen der beratenden Gremien in der Beratungsfolge},
+    {ID: Name der federführenden Organisation aus underDirectionOf oder None})."""
+    gremien = {p["id"]: [(orgs_by_id.get((c.get("organization") or [None])[0]) or {}).get("name", "")
+                         for c in p.get("consultation") or [] if isinstance(c, dict)] for p in papers}
+    amt = {p["id"]: (orgs_by_id.get((p.get("underDirectionOf") or [None])[0]) or {}).get("name") for p in papers}
+    return gremien, amt
 
 
 def _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rel, related):
@@ -430,7 +449,7 @@ def _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rel, related)
     Log: Gründe, Wege, relatedPaper, der Umfang der Titelmaske (_titelmaske_zeile) und die erkannten und nicht
     erkannten Vorlagenarten mit Anzahl (nur die Art), damit das Muster geocode.VORLAGENART_PUNKT nach dem Vollabruf in
     beide Richtungen geprüft und ergänzt werden kann."""
-    amt = {p["id"]: (orgs_by_id.get((p.get("underDirectionOf") or [None])[0]) or {}).get("name") for p in papers}
+    _, amt = angaben_roh(papers, orgs_by_id)
     grund = {p["id"]: punkt_ausschluss(p, gremien.get(p["id"], ()), amt[p["id"]]) for p in papers}
     start = {pid for pid, g in grund.items() if g} | {a["id"] for a in ausgelassen}
     drucksachen = {p["id"]: p["reference"] for p in papers}

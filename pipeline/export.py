@@ -66,7 +66,8 @@ def _paper_detail(db, pid):
         "LEFT JOIN meeting m ON m.id = c.meeting_id LEFT JOIN agenda_item a ON a.id = c.agenda_item_id "
         "WHERE c.paper_id = ? ORDER BY c.position", (pid,)).fetchall()
     resp = db.execute(
-        "SELECT r.kind, r.method, r.evidence, r.derived, o.label, o.name FROM paper_responsibility r "
+        "SELECT r.kind, r.method, r.evidence, r.derived, r.confidence, r.kennung, o.label, o.name "
+        "FROM paper_responsibility r "
         "LEFT JOIN organization o ON o.id = r.organization_id WHERE r.paper_id = ?", (pid,)).fetchall()
     orig = db.execute(
         "SELECT actor, actor_type, organization_id, method, evidence, derived "
@@ -97,8 +98,10 @@ def _paper_detail(db, pid):
         "main_file": p["main_file_url"],
         # Federführung mit Zuordnung zur Ämtertabelle (pipeline/aemter.py, CLAUDE.md 5.3): Dezernat und Dienststelle
         # laut Geschäfts- und Dezernatsverteilungsplan mit Methode, Stand und Fundstelle; ohne eindeutigen Treffer nur
-        # der Status, die Zeile bleibt sonst wie zuvor
-        "responsibility": [_mit_aemtertabelle({**dict(r), "evidence": m(r["evidence"], ref)}, p["date"]) for r in resp],
+        # der Status, die Zeile bleibt sonst wie zuvor. confidence und kennung nur bei der Federführung aus dem Kopf der
+        # Vorlage (pdf_kopf), sonst wie bisher ohne
+        "responsibility": [_mit_aemtertabelle({**{k: v for k, v in dict(r).items() if v is not None or k not in ("confidence", "kennung")},
+                                               "evidence": m(r["evidence"], ref)}, p["date"]) for r in resp],
         "originators": fund(orig),
         "process": [{**{k: v for k, v in dict(r).items() if k != "agenda_item_id"},
                      "meeting": m(r["meeting"], m.sitzungen.get(r["meeting_id"])),

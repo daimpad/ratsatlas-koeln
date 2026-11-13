@@ -144,6 +144,8 @@ RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_W
 
 ## Stufe 6 – PDF-Köpfe (erst nach Klärung mit der Stadt)
 
+> Seit dem 13.11.2026 gibt es dafür den Pipeline-Schritt `python -m pipeline dokumente` (gebaut, getestet, abgeschaltet; TECHNIK.md, Abschnitt „Dokumente (PDF-Köpfe)“): Er läuft in GitHub Actions nach dem Abruf, nur mit `RATSATLAS_PDF_FREIGEGEBEN=ja`, und braucht keine Stichprobe aus Stufe 5. Der Test mit 100 Köpfen ist dort die erste Nacht mit `RATSATLAS_PDF_MAX=100` (Entscheidung des Auftraggebers 13.11.2026). Die Muster sind aus `RE_DEZ` und `RE_DEZ_LOSE` unten abgeleitet (`pipeline/pdfkopf.py`).
+
 ```bash
 RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_WIEDERHOLUNGEN=0 RATSATLAS_MAX_DAUER=5 RATSATLAS_STUFE=6 RATSATLAS_PDF_FREIGEGEBEN=ja RATSATLAS_MAX_ANFRAGEN=100 python3 explore/oparl_messung.py pdf-koepfe --anzahl 100
 ```

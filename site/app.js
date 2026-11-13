@@ -1949,7 +1949,11 @@
     syncUrl();
     if (tl) tl.select(p);
     highlight();
-    const resp = p.responsibility.map((r) => [`${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`, aemterZeile(r.aemtertabelle)].filter(Boolean).join("<br>")).join("<br>");
+    // Kennung aus dem Kopf der Vorlage (pdf_kopf): ohne Ämtertabelle keinem Amt zugeordnet, als Kennung gezeigt
+    const KOPF_SICHERHEIT = { mittel: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“", niedrig: "erkannt in ausgeschriebener Form, weniger sicher" };
+    const resp = p.responsibility.map((r) => r.method === "pdf_kopf"
+      ? `Kennung ${esc(r.kennung)} <span class="derived">abgeleitet aus dem Kopf der Vorlage (Seite 1), noch keinem Amt zugeordnet${KOPF_SICHERHEIT[r.confidence] ? ` · ${KOPF_SICHERHEIT[r.confidence]}` : ""}</span>`
+      : [`${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`, aemterZeile(r.aemtertabelle)].filter(Boolean).join("<br>")).join("<br>");
     const outside = (l) => (area.kind === "ortsteil" && l.ortsteil && l.ortsteil !== area.name)
       || (area.kind === "bezirk" && l.stadtbezirk && l.stadtbezirk !== area.name);
     const locItem = (l) => `<li><strong>${esc(l.name || l.ortsteil || l.stadtbezirk)}</strong>

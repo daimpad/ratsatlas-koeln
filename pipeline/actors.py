@@ -11,14 +11,17 @@ Ratsfraktionen; eine Nummer außerhalb 1–9 ergibt Bezirksfraktionen ohne Bezir
 einer Anfrage (BV)“) sind keine Einreichung einer Fraktion: Einreichende ist die Verwaltung (Fragesteller nicht
 getrennt erfasst). Fraktionen, Gruppen und
 Einzelmandate des Kölner Rates 2020–2025 und 2025–2030 stehen in PARTIES, Bezeichnungen einer Wahlperiode mit
-Datumsgrenzen (Regeln dort). Die Federführung aus dem Kopf der Verwaltungsvorlage („Dezernat, Dienststelle“) folgt mit
-dem Abruf der PDFs. Dezernat und Dienststelle der Federführung (Name der Organisation aus `underDirectionOf` oder Kennung
-aus dem Kopf) ordnet `export` über die Ämtertabelle zu (pipeline/aemter.py: `zuordnen`, je Vorlage mit dem Plan, dessen
-Stand an ihrem Datum der jüngste ist, bis zu seiner letzten Prüfung; nur eindeutige Treffer, sonst Status); die Zeilen
-hier bleiben unverändert.
+Datumsgrenzen (Regeln dort). Die Federführung aus dem Kopf der Verwaltungsvorlage („Dezernat, Dienststelle“) liefert
+pipeline/dokumente.py (abgeschaltet bis zur Freigabe des Dokumentabrufs); sie gilt nur ohne `underDirectionOf`.
+Dezernat und Dienststelle der Federführung (Name der Organisation aus `underDirectionOf` oder Kennung aus dem Kopf)
+ordnet `export` über die Ämtertabelle zu (pipeline/aemter.py: `zuordnen`, je Vorlage mit dem Plan, dessen Stand an
+ihrem Datum der jüngste ist, bis zu seiner letzten Prüfung; nur eindeutige Treffer, sonst Status); die Zeilen hier
+bleiben unverändert.
 """
 import re
 from typing import NamedTuple, Optional
+
+from .pdfkopf import EVIDENZ, KENNUNG_FORM, METHODE, MIT_KENNUNG
 
 CO_DEZERNAT = "Co-Dezernat"
 
@@ -395,10 +398,17 @@ def amt_label(org):
     return org["name"] if cls == CO_DEZERNAT or not cls else cls
 
 
-def responsibilities(paper, orgs_by_id, papers_by_id):
+def responsibilities(paper, orgs_by_id, papers_by_id, kopf=None):
     """Federführung (strukturiert) und, bei „Co-Dezernat“, fachliche Zuständigkeit aus den
-    Stellungnahmen der Verwaltung (abgeleitet)."""
+    Stellungnahmen der Verwaltung (abgeleitet). Ohne `underDirectionOf` und mit `kopf` (Eintrag der Dokumente mit
+    Kennung aus dem Kopf der Vorlage, pipeline/dokumente.py; der Aufrufer prüft Hauptdatei und Datenschutz): Kennung als
+    Federführung, Methode „pdf_kopf“, Konfidenz nach Trefferart (pdfkopf.MIT_KENNUNG), Fundstelle „Kopf der Vorlage
+    (S. 1): <Kennung>“ (kein Text des Dokuments). Ohne versionierte Ämtertabelle bleibt die Kennung keinem Amt und keiner
+    Organisation zugeordnet (organization_id None)."""
     lead = (paper.get("underDirectionOf") or [None])[0]
+    if not lead and kopf and kopf.get("trefferart") in MIT_KENNUNG and KENNUNG_FORM.fullmatch(kopf.get("kennung") or ""):
+        return [dict(organization_id=None, kind="federfuehrend", method=METHODE, evidence=f"{EVIDENZ}: {kopf['kennung']}",
+                     derived=1, confidence=MIT_KENNUNG[kopf["trefferart"]], kennung=kopf["kennung"])]
     rows = [dict(organization_id=lead, kind="federfuehrend", method="underDirectionOf",
                  evidence=None, derived=0)] if lead else []
     if not lead or (orgs_by_id.get(lead) or {}).get("classification") != CO_DEZERNAT:

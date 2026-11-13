@@ -44,6 +44,20 @@ def test_abhilfen_als_variablen_sicherungen_nicht():
     assert len(werte) == 1 and float(werte[0]) >= 20 and re.search(r'RATSATLAS_ABSTAND: "?[0-9.]+"?$', schritt, re.M)
 
 
+def test_dokumentschritt_gesperrt_und_ohne_anhalten():
+    """Der Dokumentschritt (Entscheidung 13.11.2026) bekommt genau die Freigaben, den Kontakt und die Obergrenze als
+    Repository-Variablen, läuft gleich nach dem Abruf (nicht nach einem roten Abrufschritt: kein eigenes `if`) und hält
+    die Veröffentlichung bei einem Fehler nicht an; der Kopf erklärt beide neuen Variablen."""
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    schritt = next(s for s in text.split("\n      - ") if "run: python -m pipeline dokumente" in s)
+    variablen = set(re.findall(r"^\s+(RATSATLAS_\w+): \$\{\{ vars\.(\w+) \}\}$", schritt, re.M))
+    assert variablen == {(v, v) for v in ("RATSATLAS_STADT_INFORMIERT", "RATSATLAS_KONTAKT", "RATSATLAS_PDF_FREIGEGEBEN",
+                                          "RATSATLAS_PDF_MAX")}
+    assert re.search(r"^\s+continue-on-error: true$", schritt, re.M) and not re.search(r"^\s+if:", schritt, re.M)
+    kopf = text.split("\nname:")[0]
+    assert "RATSATLAS_PDF_FREIGEGEBEN" in kopf and "RATSATLAS_PDF_MAX" in kopf
+
+
 def test_leere_abhilfe_variablen_ohne_wirkung(monkeypatch):
     """Nicht gesetzte Repository-Variablen kommen als leere Umgebungsvariablen an: kein Vollabruf, kein kürzerer Stand,
     kein Einstellungsfehler."""
@@ -64,7 +78,10 @@ def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
     schritte = text.split("\n      - ")
     i = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
     assert "id: abruf" in schritte[i]
-    sichern = schritte[i + 1]
+    # dazwischen nur der Dokumentschritt (pipeline/dokumente.py): Seine Ergebnisse und die Zählung der Nacht liegen im
+    # selben Zustand und werden mitgesichert
+    assert "run: python -m pipeline dokumente" in schritte[i + 1]
+    sichern = schritte[i + 2]
     assert re.search(r"^\s+if: always\(\)", sichern, re.M) and "steps.abruf.outcome" in sichern
     save = re.search(r"uses: actions/cache/save@([0-9a-f]{40})", sichern)
     assert save, sichern

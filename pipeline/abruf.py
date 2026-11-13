@@ -66,6 +66,12 @@
   direkt über urllib abrufen (geodaten.py, ebenen.py, kontext.py u. a.), erfasst dieser Schutz nicht
 - eine Uhr für alle Zeitpunkte (`uhr()`, UTC): Zeitfenster, Retry-After und der Zustand in sessionnet.py; Tests
   ersetzen sie durch eine Scheinuhr
+- Dateien (`get_datei`, nur für pipeline/dokumente.py, Entscheidung 13.11.2026): derselbe Kern wie `get_json`
+  (`_anfrage`: Freigabe, Abstand ab dem Ende der letzten Antwort gleich welcher Art, Zeitfenster vor jedem Versuch,
+  Pausen, Weiterleitungen, Fehlerarten, Zählwerk); zusätzlich höchstens n Byte (Content-Length oder gelesen; Abbruch
+  der Art `zu_gross`, kein Sperrsignal), eine Gesamtfrist für die Antwort (Art `sperre`, mögliche Sperre wie eine
+  Zeitüberschreitung), Zeitüberschreitung des Sockets 60 s und nur PDF-Dateien (Kennung „%PDF-“ in den ersten 1024
+  Byte, sonst Art `unlesbar` ohne Wiederholung: etwa eine Anmelde- oder Sperrseite)
 """
 import email.utils
 import http.client
@@ -115,8 +121,8 @@ def uhr():
 
 class Abbruch(RuntimeError):
     """Der Abruf wird beendet; der letzte gültige Datenstand bleibt erhalten. `art`: sperre, proxy, tls, weiterleitung,
-    zeitfenster, gesperrt, http, aufgegeben, unlesbar, adresse, liste, obergrenze, filter oder leer (die letzten vier
-    aus sessionnet.py); `ziel`: Ziel einer Weiterleitung; `code`:
+    zeitfenster, gesperrt, http, aufgegeben, unlesbar, adresse, zu_gross (nur get_datei), liste, obergrenze, filter oder
+    leer (die letzten vier aus sessionnet.py); `ziel`: Ziel einer Weiterleitung; `code`:
     HTTP-Status (bei http, bei aufgegeben nach HTTP 429/5xx oder CONNECT-Antwort 429/503, bei sperre nach einer
     CONNECT-Antwort wie 502/504), sonst None; `nicht_vor`: Zeitpunkt (UTC) aus einem Retry-After, vor dem keine
     Anfrage folgen soll, sonst None."""
@@ -393,8 +399,115 @@ def statistik():
     return dict(_zaehler)
 
 
+class _Grenze(Exception):
+    """Grenze beim Lesen einer Datei (get_datei): `art` „zu_gross“ (mehr als die erlaubte Größe laut Content-Length oder
+    beim Lesen) oder „frist“ (Antwort dauert insgesamt länger als die Frist). Kein OSError, kein ValueError und keine
+    HTTPException: _anfrage wertet sie eigens aus."""
+
+    def __init__(self, art, meldung):
+        super().__init__(meldung)
+        self.art = art
+
+
+class _Wiederholen(Exception):
+    """Antwort unlesbar (etwa kein JSON): wie HTTP 429/5xx mit Pausen wiederholen; `ursache`: der eigentliche Fehler."""
+
+    def __init__(self, ursache):
+        super().__init__(str(ursache))
+        self.ursache = ursache
+
+
+def _alles_lesen(r):
+    return r.read()   # weniger Bytes als Content-Length oder chunked ohne Abschluss: IncompleteRead
+
+
+def _json_auswerten(url, daten):
+    """JSON-Objekt aus der Antwort. Unlesbar (kein JSON, falsche Kodierung, zu tief verschachtelt): _Wiederholen.
+    strict=False: rohe Steuerzeichen in Zeichenketten (etwa \\x0b in einem Titel) machen eine Seite nicht unlesbar
+    (sonst Wiederholungen mit langen Pausen, dann „aufgegeben“ als mögliche Sperre)."""
+    try:
+        return json.loads(daten, strict=False)
+    except (ValueError, RecursionError) as e:
+        raise _Wiederholen(e) from e
+
+
+def _json_pruefen(url, antwort):
+    if not isinstance(antwort, dict):   # gültiges JSON in unerwarteter Form: kein Überlastungssignal
+        _zaehler["fehler"] += 1
+        raise Abbruch(f"unerwartete Antwortform (JSON-Objekt erwartet, erhalten: "
+                      f"{type(antwort).__name__}): {url}", "unlesbar")
+    return antwort
+
+
 def get_json(url, pausen=None):
     """Eine Anfrage nach der Abrufpolitik; liefert das JSON-Objekt."""
+    return _anfrage(url, pausen, "application/json", _alles_lesen, _json_auswerten, _json_pruefen, 90)
+
+
+# Dateien (get_datei): Kennung am Anfang einer PDF-Datei; die Spezifikation erlaubt davor bis zu 1024 Byte
+PDF_KENNUNG = b"%PDF-"
+PDF_KENNUNG_BEREICH = 1024
+
+
+def _begrenzt_lesen(hoechstens, frist):
+    """Leser für get_datei: höchstens `hoechstens` Byte (sonst _Grenze „zu_gross“, ohne den Rest zu lesen; eine größere
+    Content-Length schon vor dem Lesen), insgesamt höchstens `frist` Sekunden (sonst _Grenze „frist“; geprüft nach
+    jedem Block, ein einzelner Block wartet höchstens die Zeitüberschreitung des Sockets). Weniger Bytes als
+    Content-Length: http.client.IncompleteRead wie bei get_json (abgeschnittene Antwort, mögliche Sperre)."""
+    def lesen(r):
+        kopf = getattr(r, "headers", None)
+        laenge = (kopf.get("Content-Length") or "").strip() if kopf is not None else ""
+        laenge = int(laenge) if laenge.isdigit() and len(laenge) <= 15 else None
+        if laenge is not None and laenge > hoechstens:
+            raise _Grenze("zu_gross", f"Content-Length {laenge} Byte über der Grenze von {hoechstens} Byte")
+        teile, n, beginn = [], 0, time.monotonic()
+        while True:
+            teil = r.read(min(65536, hoechstens + 1 - n))
+            if not teil:
+                break
+            n += len(teil)
+            teile.append(teil)
+            if n > hoechstens:
+                raise _Grenze("zu_gross", f"mehr als {hoechstens} Byte")
+            if time.monotonic() - beginn > frist:
+                raise _Grenze("frist", f"Antwort nach {frist:g} s nicht vollständig")
+        if laenge is not None and n < laenge:
+            raise http.client.IncompleteRead(b"", laenge - n)
+        return b"".join(teile)
+    return lesen
+
+
+def _pdf_auswerten(url, daten):
+    return daten
+
+
+def _pdf_pruefen(url, daten):
+    """Nur PDF-Dateien: Fehlt die Kennung „%PDF-“ in den ersten 1024 Byte (etwa eine HTML-Seite, eine Anmelde- oder
+    Sperrseite mit Status 200), Abbruch der Art `unlesbar` ohne Wiederholung (in sessionnet.moegliche_sperre eine Nacht
+    mit möglicher Sperre). Der Inhalt erscheint in keiner Meldung."""
+    if PDF_KENNUNG not in daten[:PDF_KENNUNG_BEREICH]:
+        _zaehler["fehler"] += 1
+        raise Abbruch(f"keine PDF-Datei (Kennung %PDF- fehlt; etwa eine HTML-, Anmelde- oder Sperrseite): {url}",
+                      "unlesbar")
+    return daten
+
+
+def get_datei(url, hoechstens, frist, pausen=None):
+    """Eine Datei (PDF) nach derselben Abrufpolitik und mit demselben Abstand, Zeitfenster und Zählwerk wie get_json
+    (pipeline/dokumente.py): Freigabe, Kontakt im User-Agent, eine Verbindung, Abstand ab dem Ende der letzten Antwort
+    (auch einer JSON-Antwort desselben Prozesses), Zeitfenster vor jedem Versuch, Pausen nach 429/5xx nie über das
+    Fenster hinaus, keine Weiterleitung, 401/403/404 sofortiger Abbruch. Zusätzlich: höchstens `hoechstens` Byte
+    (Abbruch der Art `zu_gross`, kein Sperrsignal; die Anfrage zählt), insgesamt höchstens `frist` Sekunden (Art
+    `sperre`, mögliche Sperre wie eine Zeitüberschreitung), Zeitüberschreitung des Sockets 60 s, Antwort muss eine
+    PDF-Datei sein (sonst Art `unlesbar`). Liefert die Bytes; der Aufrufer hält sie nur im Arbeitsspeicher."""
+    return _anfrage(url, pausen, "application/pdf", _begrenzt_lesen(hoechstens, frist), _pdf_auswerten, _pdf_pruefen,
+                    60)
+
+
+def _anfrage(url, pausen, accept, lesen, auswerten, pruefen, timeout):
+    """Eine Anfrage nach der Abrufpolitik (gemeinsam für get_json und get_datei): `lesen(r)` liest die Antwort,
+    `auswerten(url, daten)` wandelt sie um (_Wiederholen: unlesbar, mit Pausen wiederholen), `pruefen(url, wert)` prüft
+    die Form (Abbruch ohne Wiederholung)."""
     global _letzte
     if not freigegeben(url):
         raise Abbruch("Abruf gesperrt: Die Stadt Köln ist noch nicht informiert (CLAUDE.md 9). "
@@ -423,7 +536,7 @@ def get_json(url, pausen=None):
             fenster_pruefen(versuch)   # unmittelbar vor dem Senden: das Fenster kann während des Wartens enden
         start = time.monotonic()
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": config.USER_AGENT, "Accept": "application/json"})
+            req = urllib.request.Request(url, headers={"User-Agent": config.USER_AGENT, "Accept": accept})
         except ValueError as e:   # von adresse_pruefen nicht erkannt: nicht gesendet, keine Sperre
             _zaehler["fehler"] += 1
             raise Abbruch(f"ungültige Adresse, nicht gesendet: {url} ({e})", "adresse") from e
@@ -432,9 +545,15 @@ def get_json(url, pausen=None):
         daten = None
         gesendet = False
         try:
-            with _OEFFNER.open(req, timeout=90) as r:
+            with _OEFFNER.open(req, timeout=timeout) as r:
                 gesendet = True
-                daten = r.read()   # weniger Bytes als Content-Length oder chunked ohne Abschluss: IncompleteRead
+                daten = lesen(r)   # weniger Bytes als Content-Length oder chunked ohne Abschluss: IncompleteRead
+        except _Grenze as e:   # nur get_datei: Datei zu groß (kein Sperrsignal) oder Frist überschritten (mögliche Sperre)
+            _zaehler["sekunden"] += time.monotonic() - start
+            if e.art == "frist":
+                _zaehler["fehler"] += 1
+                raise Abbruch(f"{e}, mögliche Sperre: {url}; nächster Versuch im nächsten Zeitfenster", "sperre") from e
+            raise Abbruch(f"Datei zu groß ({e}), nicht weiter gelesen: {url}", "zu_gross") from e
         except urllib.error.HTTPError as e:
             _zaehler["fehler"] += 1
             if 300 <= e.code < 400:   # Weiterleitung: nicht folgen, Ziel nennen, abbrechen
@@ -495,19 +614,13 @@ def get_json(url, pausen=None):
         if daten is not None:
             _zaehler["bytes"] += len(daten)
             try:
-                # strict=False: rohe Steuerzeichen in Zeichenketten (etwa \x0b in einem Titel) machen eine Seite nicht
-                # unlesbar (sonst Wiederholungen mit langen Pausen, dann „aufgegeben“ als mögliche Sperre)
-                antwort = json.loads(daten, strict=False)
-            except (ValueError, RecursionError) as e:   # unlesbar: kein JSON, falsche Kodierung, zu tief verschachtelt
+                antwort = auswerten(url, daten)
+            except _Wiederholen as e:   # unlesbar: kein JSON, falsche Kodierung, zu tief verschachtelt
                 _zaehler["fehler"] += 1
-                letzter_fehler = e
+                letzter_fehler = e.ursache
             else:
                 _zaehler["sekunden"] += time.monotonic() - start
-                if not isinstance(antwort, dict):   # gültiges JSON in unerwarteter Form: kein Überlastungssignal
-                    _zaehler["fehler"] += 1
-                    raise Abbruch(f"unerwartete Antwortform (JSON-Objekt erwartet, erhalten: "
-                                  f"{type(antwort).__name__}): {url}", "unlesbar")
-                return antwort
+                return pruefen(url, antwort)
         _zaehler["sekunden"] += time.monotonic() - start
         if versuch < len(pausen):
             # Sofort aufgeben (zählt als Nacht mit möglicher Sperre), statt eine Pause abzuwarten, die nicht passt;

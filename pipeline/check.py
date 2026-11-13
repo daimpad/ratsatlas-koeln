@@ -14,7 +14,7 @@ import sqlite3
 from collections import Counter
 from pathlib import Path
 
-from . import actors, besetzung, config, geocode, kontext, maske
+from . import actors, besetzung, config, geocode, kontext, maske, pdfkopf
 
 # Gebiete laut CLAUDE.md 2: ganz Köln mit 86 Stadtteilen und 9 Stadtbezirken
 STADTTEILE, STADTBEZIRKE = 86, 9
@@ -75,6 +75,7 @@ def check():
         kennzahlen(db)
         befunde, fehlend = gebiete(db)
         ds = datenschutz(db)
+        befunde += federfuehrung_kopf(db)
     finally:
         db.close()
     befunde += ds["befunde"]
@@ -93,6 +94,35 @@ def check():
                 ([f"nicht durchgeführt (Datei fehlt): {'; '.join(fehlend)}"] if fehlend else [])
         raise SystemExit("Prüfung fehlgeschlagen – " + " | ".join(teile))
     print("Alle Prüfungen durchgeführt, keine Befunde.")
+
+
+def federfuehrung_kopf(db):
+    """Federführung aus dem Kopf der Vorlage (Methode „pdf_kopf“, pipeline/dokumente.py): jede Zeile nur mit Kennung
+    nach pdfkopf.KENNUNG_FORM, Fundstelle genau „Kopf der Vorlage (S. 1): <Kennung>“ (kein Text des Dokuments),
+    Konfidenz nach Trefferart, ohne Organisation (keinem Amt zugeordnet), nur bei Vorlagen ohne underDirectionOf und mit
+    Erlaubnis für Hauskoordinaten (erlaubnis, dieselbe Regel wie im Aufbau). Liefert die Befunde."""
+    print("\nFederführung aus dem Kopf der Vorlage (PDF, Seite 1)")
+    spalten = {r[1] for r in db.execute("PRAGMA table_info(paper_responsibility)")}
+    if not {"confidence", "kennung"} <= spalten:
+        print("nicht anwendbar: Datenbank ohne die Spalten confidence und kennung")
+        return []
+    zeilen = db.execute(
+        "SELECT r.paper_id, p.reference, r.organization_id, r.kind, r.evidence, r.derived, r.confidence, r.kennung, "
+        "p.under_direction_of FROM paper_responsibility r JOIN paper p ON p.id = r.paper_id WHERE r.method = ?",
+        (pdfkopf.METHODE,)).fetchall()
+    if not zeilen:
+        print("keine (Dokumentschritt abgeschaltet oder ohne erkannte Kennung)")
+        return []
+    erlaubt = erlaubnis(db)[0]
+    falsch = sorted({ref for pid, ref, org, kind, ev, derived, conf, kennung, udo in zeilen
+                     if not (isinstance(kennung, str) and pdfkopf.KENNUNG_FORM.fullmatch(kennung)
+                             and ev == f"{pdfkopf.EVIDENZ}: {kennung}" and org is None and kind == "federfuehrend"
+                             and derived == 1 and conf in pdfkopf.MIT_KENNUNG.values() and not udo
+                             and erlaubt.get(pid))})
+    print(f"{len(zeilen)} Vorlagen mit Kennung aus dem Kopf (keinem Amt zugeordnet); in unerwarteter Form oder ohne "
+          f"Erlaubnis: {len(falsch)}")
+    return ([f"Federführung aus dem Kopf der Vorlage in unerwarteter Form, bei Vorlagen mit underDirectionOf oder ohne "
+             f"Erlaubnis für Hauskoordinaten: {', '.join(falsch[:20])}"] if falsch else [])
 
 
 def _pct(n, d):
