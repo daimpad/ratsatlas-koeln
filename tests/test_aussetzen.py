@@ -189,14 +189,31 @@ def _fall_kuerzer_fortgesetzt_angenommen(n, oparl, mp):
 
 
 def _fall_vollabruf_einer_nacht_kuerzer(n, oparl, mp):
-    """Ein Vollabruf, der in derselben Nacht beginnt und endet (RATSATLAS_VOLLABRUF), unter 90 %: Abbruch `leer` wie
-    bisher, auch zweimal; ohne die Einstellung wieder inkrementell."""
+    """Ein Vollabruf, der in derselben Nacht beginnt und endet (RATSATLAS_VOLLABRUF für eine Nacht), unter 90 %:
+    Abbruch `leer` wie bisher; ohne die Einstellung wieder inkrementell (der Lauf ist vollständig), danach noch einmal
+    für eine Nacht gesetzt wieder Abbruch. Zwei solche Nächte direkt nacheinander setzen die Liste seit der Prüfung rp-b
+    aus (test_dauerhafter_vollabruf_in_einer_nacht_setzt_beim_zweiten_mal_aus); bis dahin stand diese Folge hier."""
     oparl.papers = [oparl.paper(i) for i in range(1, 11)]
     n.nacht()
     oparl.papers = oparl.papers[:8]
     n.nacht(RATSATLAS_VOLLABRUF="papers")
+    n.nacht()
     n.nacht(RATSATLAS_VOLLABRUF="papers")
     n.nacht()
+    n.nacht(RATSATLAS_VOLLABRUF="meetings")
+
+
+def _fall_vollabruf_wechselnde_listen(n, oparl, mp):
+    """Abbrüche `leer` verschiedener Listen direkt nacheinander (RATSATLAS_VOLLABRUF erst für die Sitzungen, dann für
+    die Vorlagen, dann wieder für die Sitzungen): keine Wiederholung derselben Liste, also jedes Mal Abbruch wie
+    bisher, kein Aussetzen."""
+    oparl.papers = [oparl.paper(i) for i in range(1, 11)]
+    oparl.meetings = _sitzungen(oparl, 10)
+    n.nacht()
+    oparl.meetings = _sitzungen(oparl, 8)
+    n.nacht(RATSATLAS_VOLLABRUF="meetings")
+    oparl.papers = oparl.papers[:8]
+    n.nacht(RATSATLAS_VOLLABRUF="papers")
     n.nacht(RATSATLAS_VOLLABRUF="meetings")
 
 
@@ -226,8 +243,10 @@ WIE_78DE995 = {
         "6090639c4cda4ab5", "6eea281e9f1af3c0", "7e54f72c6e0f926e", "5050082d6733112c"
     ],
     _fall_vollabruf_einer_nacht_kuerzer: [
-        "6090639c4cda4ab5", "0f179e7126a25dc7", "381b0755435748ec", "17fba264c11ffbcb", "8ab923bd400a3ec3"
+        "6090639c4cda4ab5", "0f179e7126a25dc7", "dcbb4d1d6dc6b400", "4f398062bd18032a", "5d9417c54eed75cd",
+        "df4d7537b56ad375"
     ],
+    _fall_vollabruf_wechselnde_listen: ["156852c19ea03164", "e919b641be005a10", "4e7c7e75b17ee760", "4263d4b51b226414"],
     _fall_leer_nie_angenommen: ["b998794c220d3693", "a2cae88263423e03", "1056a4b622bb0580"],
 }
 
@@ -534,3 +553,145 @@ def test_zustand_nach_abbruch_leer_aus_78de995(oparl, monkeypatch):
     oparl.anfragen.clear()
     sessionnet.fetch_all()
     assert _anfragen(oparl, "/meetings") == []
+
+
+# --- RATSATLAS_VOLLABRUF dauerhaft gesetzt (Prüfung rp-b) -------------------------------------------------------------
+
+def _liste_mit(oparl, liste, anzahl):
+    """Die Stadt liefert `anzahl` Vorlagen bzw. Sitzungen (je Seite 2; die kürzere Liste ist ein Teil der längeren)."""
+    if liste == "papers":
+        oparl.papers = [oparl.paper(i) for i in range(1, anzahl + 1)]
+    else:
+        oparl.meetings = _sitzungen(oparl, anzahl)
+
+
+def _datei(liste):
+    return config.PAPERS if liste == "papers" else config.RAW / "meetings_roh.jsonl"
+
+
+@pytest.mark.parametrize("liste", ["meetings", "papers"])
+def test_dauerhafter_vollabruf_in_einer_nacht_setzt_beim_zweiten_mal_aus(oparl, monkeypatch, capsys, liste):
+    """RATSATLAS_VOLLABRUF nennt die Liste dauerhaft (für `meetings` erlaubt, wenn die Stadt modified_since bei den
+    Sitzungen ablehnt), und jeder Vollabruf endet in derselben Nacht unter 90 % des Stands (8 von 10). Die erste Nacht
+    bricht wie bisher ab (`leer`); die zweite wiederholt ihn nur, weil die Einstellung blieb, und setzt die Liste aus
+    statt erneut abzubrechen: Lauf vollständig (`abruf_ok`, Beratungen), kein Fehler. Danach keine Anfrage an die
+    Liste, solange die Einstellung gesetzt bleibt (sie hebt dieses Aussetzen nicht auf); erst nach einem Lauf ohne sie
+    hebt sie es wieder auf (neuer Vollabruf ab Seite 1)."""
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    pfad = f"/{liste}"
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", liste)
+    _liste_mit(oparl, liste, 10)
+    sessionnet.fetch_all()                                                 # Nacht 0: 10, vollständig
+    roh = _datei(liste).read_bytes()
+    beratungen = config.BERATUNGEN.read_bytes()
+    assert len(_jsonl(_datei(liste))) == 10
+    _liste_mit(oparl, liste, 8)
+    voll = [(str(s), False) for s in range(1, 5)]
+    # Nacht 1: 8 von 10, Abbruch wie bisher
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert _anfragen(oparl, pfad) == voll
+    assert _zustand()["letzter_abbruch"]["art"] == "leer" and f"{liste}_ausgesetzt" not in _zustand()
+    assert "abruf_fehler" in _stand() and _datei(liste).read_bytes() == roh
+    # Nacht 2: derselbe Vollabruf noch einmal, wieder 8 von 10: die Liste setzt aus, der Lauf ist vollständig
+    sessionnet._stand_setzen(abruf_ok="2026-11-01T00:00:00+00:00")
+    oparl.anfragen.clear()
+    capsys.readouterr()
+    sessionnet.fetch_all()
+    assert _anfragen(oparl, pfad) == voll
+    zustand, stand = _zustand(), _stand()
+    a = zustand[f"{liste}_ausgesetzt"]
+    assert (a["objekte"], a["bisher"], a["anlass"], a["vollabruf_seit_beginn"]) == (8, 10, "wiederholter Vollabruf",
+                                                                                     True)
+    assert stand["abruf_ausgesetzt"] == {liste: a}
+    assert not {"letzter_abbruch", "listenfehler", "sperre_verdacht"} & set(zustand)
+    assert "abruf_fehler" not in stand and stand["abruf_ok"] != "2026-11-01T00:00:00+00:00"
+    assert _datei(liste).read_bytes() == roh and config.BERATUNGEN.read_bytes() == beratungen
+    assert _zeile(liste)["ergebnis"].startswith(f"ausgesetzt: {sessionnet.LISTEN_NAME[liste]} ausgesetzt "
+                                                "(wiederholter Vollabruf unter 90 % des Stands)")
+    # Nacht 3 und 4: die Einstellung bleibt gesetzt, keine Anfrage an die Liste
+    for _ in range(2):
+        oparl.anfragen.clear()
+        capsys.readouterr()
+        sessionnet.fetch_all()
+        assert _anfragen(oparl, pfad) == [] and _zustand()[f"{liste}_ausgesetzt"] == a
+        z = _zeile(liste)
+        assert (z["modus"], z["anfragen"]) == ("ausgesetzt", "0")
+        assert "RATSATLAS_VOLLABRUF nennt die Liste seit Beginn des Aussetzens" in z["ergebnis"]
+        assert "RATSATLAS_VOLLABRUF nennt die Liste seit Beginn des Aussetzens" in capsys.readouterr().err
+    # Nacht 5: ohne die Einstellung, keine Anfrage; ab jetzt hebt sie das Aussetzen auf
+    monkeypatch.delenv("RATSATLAS_VOLLABRUF")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert _anfragen(oparl, pfad) == []
+    assert _zustand()[f"{liste}_ausgesetzt"] == dict(a, vollabruf_seit_beginn=False)
+    assert _stand()["abruf_ausgesetzt"] == {liste: dict(a, vollabruf_seit_beginn=False)}
+    # Nacht 6: wieder gesetzt, die Stadt liefert wieder alle: aufgehoben, neuer Vollabruf ab Seite 1
+    _liste_mit(oparl, liste, 10)
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", liste)
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert _anfragen(oparl, pfad) == [(str(s), False) for s in range(1, 6)]
+    assert f"{liste}_ausgesetzt" not in _zustand() and "abruf_ausgesetzt" not in _stand()
+    assert len(_jsonl(_datei(liste))) == 10 and "aufgehoben (RATSATLAS_VOLLABRUF)" in _zeile(liste)["ergebnis"]
+
+
+@pytest.mark.parametrize("liste", ["meetings", "papers"])
+def test_dauerhafter_vollabruf_ueber_naechte_hebt_das_aussetzen_nicht_auf(oparl, monkeypatch, liste):
+    """RATSATLAS_VOLLABRUF nennt die Liste dauerhaft, der Vollabruf erstreckt sich über zwei Nächte und endet unter
+    90 %: Die Liste setzt aus, und die Einstellung hebt das Aussetzen in der nächsten Nacht nicht von selbst wieder auf
+    (sonst wechselten Aussetzen und neuer Vollabruf ab Seite 1 Nacht für Nacht). RATSATLAS_KUERZER_ANNEHMEN wirkt auch
+    bei weiter gesetzter Einstellung: Fortsetzung ab Seite 2, kürzerer Stand angenommen, Aussetzen beendet."""
+    pfad = f"/{liste}"
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", liste)
+    _liste_mit(oparl, liste, 10)
+    sessionnet.fetch_all()                                                 # Nacht 0: 10, vollständig
+    roh = _datei(liste).read_bytes()
+    _liste_mit(oparl, liste, 8)
+    echt = _fenster_vor(monkeypatch, pfad, 3)                              # Nacht 1: Zeitfenster endet vor Seite 3
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    monkeypatch.setattr(abruf, "get_json", echt)
+    assert _anfragen(oparl, pfad) == [("1", False), ("2", False)]
+    fort = _zustand()[f"{liste}_fortsetzung"]
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # Nacht 2: Fortsetzung, 8 von 10
+    assert _anfragen(oparl, pfad) == [("2", False), ("3", False), ("4", False)]
+    a = _zustand()[f"{liste}_ausgesetzt"]
+    assert (a["objekte"], a["bisher"], a["anlass"], a["vollabruf_seit_beginn"]) == (8, 10, "fortgesetzter Vollabruf",
+                                                                                     True)
+    for _ in range(2):                                                     # Nacht 3 und 4: keine Anfrage
+        oparl.anfragen.clear()
+        sessionnet.fetch_all()
+        assert _anfragen(oparl, pfad) == []
+        assert _zustand()[f"{liste}_ausgesetzt"] == a and _zustand()[f"{liste}_fortsetzung"] == fort
+        assert _datei(liste).read_bytes() == roh
+    monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", liste)               # Nacht 5: kürzerer Stand angenommen
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert _anfragen(oparl, pfad) == [("2", False), ("3", False), ("4", False)]
+    assert not {f"{liste}_ausgesetzt", f"{liste}_fortsetzung"} & set(_zustand())
+    assert len(_jsonl(_datei(liste))) == 8 and "abruf_ausgesetzt" not in _stand()
+
+
+@pytest.mark.parametrize("wert", ["ja", 0, 1, []])
+def test_unlesbares_feld_vollabruf_seit_beginn_gilt_wie_true(oparl, monkeypatch, wert):
+    """Ein anderer Wert als true oder false im Feld `vollabruf_seit_beginn` (auch 0) gilt vorsichtig wie true: Die
+    gesetzte Einstellung RATSATLAS_VOLLABRUF hebt das Aussetzen nicht auf (keine Anfrage). Ein Lauf ohne sie setzt das
+    Feld auf false, danach hebt sie es auf."""
+    _vorlagen_ausgesetzt(oparl, monkeypatch)
+    a = dict(_zustand()["papers_ausgesetzt"], vollabruf_seit_beginn=wert)
+    sessionnet._zustand_setzen("papers_ausgesetzt", a)
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "papers")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert _anfragen(oparl, "/papers") == [] and _zustand()["papers_ausgesetzt"] == a
+    monkeypatch.delenv("RATSATLAS_VOLLABRUF")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert _anfragen(oparl, "/papers") == []
+    assert _zustand()["papers_ausgesetzt"] == dict(a, vollabruf_seit_beginn=False)
+    monkeypatch.setenv("RATSATLAS_VOLLABRUF", "papers")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()
+    assert _anfragen(oparl, "/papers")[0] == ("1", False) and "papers_ausgesetzt" not in _zustand()
