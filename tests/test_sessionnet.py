@@ -3827,38 +3827,71 @@ def test_sitzungen_ohne_zeitfilter_grenze_je_lauf_mit_den_seiten_mit_filter(opar
     assert _zeile("meetings")["ergebnis"] == "ok" and "meetings_fortsetzung" not in _zustand()
 
 
-def test_sitzungen_ohne_zeitfilter_90_prozent_regel(oparl, monkeypatch):
-    """Das vollständige Lesen nach dem Befund gilt wie ein Vollabruf: unter 90 % des Stands (8 von 10) Abbruch `leer`
-    (Stand bleibt, kein Listenfehler, keine Nacht mit möglicher Sperre), jede Nacht erneut; die Meldung in STAND.json
-    nennt den Anlass und die Abhilfe, die Abrufstatistik Seiten und Objekte (Prüfung r20). Mit
-    RATSATLAS_KUERZER_ANNEHMEN=meetings gilt der kürzere Stand, vermerkt in der Abrufstatistik."""
+def test_sitzungen_ohne_zeitfilter_90_prozent_regel(oparl, monkeypatch, capsys):
+    """Das vollständige Lesen nach dem Befund gilt wie ein Vollabruf: Unter 90 % des Stands (8 von 10) setzt die Liste
+    der Sitzungen aus (Entscheidung 13.11.2026; bis dahin Abbruch `leer` und jede Nacht erneut bis zum Listenende).
+    Stand und Dateien bleiben, kein Abbruch, kein Listenfehler, keine Nacht mit möglicher Sperre; Vorlagen und Beratungen
+    laufen weiter, `abruf_ok` wird erneuert. Eintrag mit Zeit, Zahlen, Anlass und Abhilfe im Zustand und in STAND.json,
+    Warnung im Log, Zeile in der Abrufstatistik. In den Folgenächten keine Anfrage an die Sitzungen, auch nicht der
+    nächtliche Versuch mit Zeitfilter. Mit RATSATLAS_KUERZER_ANNEHMEN=meetings liest der Lauf sie vollständig ohne
+    Zeitfilter (keine Fortsetzung: ab Seite 1) und nimmt den kürzeren Stand an, das Aussetzen endet; die nächste Nacht
+    beginnt wieder mit Zeitfilter."""
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)   # Warnung in lokaler Form („Warnung: …“), auch in der CI
     oparl.meetings = _sitzungen(oparl)
     sessionnet.fetch_all()
     vorher = {f: f.read_bytes() for f in (config.MEETINGS, config.RAW / "meetings_roh.jsonl", config.BERATUNGEN)}
+    sessionnet._stand_setzen(abruf_ok="2026-11-01T00:00:00+00:00")
     oparl.meetings = oparl.meetings[2:]                                    # 8 von 10
     _ohne_zeitfilter(oparl, monkeypatch, "/meetings")
-    for nacht in (1, 2):
+    oparl.anfragen.clear()
+    capsys.readouterr()
+    sessionnet.fetch_all()
+    assert _sitzungsanfragen(oparl) == ALLE_SEITEN_OHNE_FILTER[:5]
+    assert vorher == {f: f.read_bytes() for f in vorher}
+    zustand, stand = _zustand(), _stand()
+    assert not {"letzter_abbruch", "listenfehler", "sperre_verdacht", "meetings_fortsetzung"} & set(zustand)
+    a = zustand["meetings_ausgesetzt"]
+    anlass = "vollständiges Lesen nach nicht angewandtem Zeitfilter"
+    assert (a["objekte"], a["bisher"], a["anlass"]) == (8, 10, anlass) and sessionnet._zeit(a["seit"])
+    assert a["meldung"].startswith(
+        f"Sitzungen ausgesetzt ({anlass} unter 90 % des Stands): meetings_roh.jsonl: nur 8 statt bisher 10")
+    assert "RATSATLAS_KUERZER_ANNEHMEN=meetings" in a["meldung"] and "RATSATLAS_VOLLABRUF=meetings" in a["meldung"]
+    assert stand["abruf_ausgesetzt"] == {"meetings": a}
+    assert not {"abruf_fehler", "abruf_hinweis", "abruf_warnungen"} & set(stand)
+    assert stand["abruf_ok"] != "2026-11-01T00:00:00+00:00"
+    z = _zeile("meetings")
+    assert (z["modus"], z["filter_wirksam"], z["seiten"], z["objekte"], z["anfragen"]) == (
+        "voll, Zeitfilter nicht angewandt", "nein (2 ältere)", "4", "8", "5")
+    assert z["ergebnis"].startswith("ausgesetzt: Sitzungen ausgesetzt (vollständiges Lesen")
+    assert (_zeile("papers")["ergebnis"], _zeile("organizations")["ergebnis"]) == ("ok", "ok")
+    assert "Warnung: Sitzungen ausgesetzt" in capsys.readouterr().err
+    for nacht in (2, 3):                                                   # keine Anfrage an die Sitzungen
         oparl.anfragen.clear()
         sessionnet.fetch_all()
-        assert _sitzungsanfragen(oparl) == ALLE_SEITEN_OHNE_FILTER[:5], nacht
-        assert vorher == {f: f.read_bytes() for f in vorher}
-        zustand, stand = _zustand(), _stand()
-        assert zustand["letzter_abbruch"]["art"] == "leer" and not {"listenfehler", "sperre_verdacht"} & set(zustand)
-        assert stand["abruf_fehler"]["meldung"] == (
-            "meetings_roh.jsonl: nur 8 statt bisher 10 – unvollständige Antwort? Vorhandener Stand bleibt. "
-            "(vollständiges Lesen nach nicht angewandtem Zeitfilter) – Abhilfe, wenn der kürzere Stand stimmt (nicht "
-            "bei 0 Objekten): ein Lauf mit RATSATLAS_KUERZER_ANNEHMEN=meetings")
+        assert _sitzungsanfragen(oparl) == [] and [p for p, *_ in oparl.anfragen].count("/papers") == 1, nacht
+        assert vorher == {f: f.read_bytes() for f in vorher}, nacht
+        assert _zustand()["meetings_ausgesetzt"] == a and _stand()["abruf_ausgesetzt"] == {"meetings": a}, nacht
         z = _zeile("meetings")
-        assert (z["modus"], z["filter_wirksam"], z["seiten"], z["objekte"]) == (
-            "voll, Zeitfilter nicht angewandt", "nein (2 ältere)", "4", "8")
-        assert z["ergebnis"].startswith("abbruch: meetings_roh.jsonl: nur 8 statt bisher 10")
-        assert z["ergebnis"].endswith("RATSATLAS_KUERZER_ANNEHMEN=meetings")
+        assert (z["modus"], z["anfragen"], z["seiten"], z["objekte"]) == ("ausgesetzt", "0", "0", "10"), nacht
+        assert z["ergebnis"].startswith(f"ausgesetzt: meetings: Abruf ausgesetzt seit {a['seit']} ({anlass}: 8 statt "
+                                        "bisher 10); keine Anfrage, letzter gültiger Stand bleibt – Abhilfe: "), nacht
+        assert "Warnung: meetings: Abruf ausgesetzt seit" in capsys.readouterr().err, nacht
     monkeypatch.setenv("RATSATLAS_KUERZER_ANNEHMEN", "meetings")
+    oparl.anfragen.clear()
     sessionnet.fetch_all()
-    assert len(json.loads(config.MEETINGS.read_text())) == 8 and "abruf_fehler" not in _stand()
-    assert _zeile("meetings")["ergebnis"].startswith(
-        "ok; Zeitfilter bei Sitzungen nicht angewandt, Sitzungen vollständig gelesen (4 Seiten ohne modified_since "
-        "nach 1 mit Zeitfilter); kürzerer Stand angenommen: 8 statt bisher 10 (RATSATLAS_KUERZER_ANNEHMEN); Befund: ")
+    assert _sitzungsanfragen(oparl) == [("1", False), ("2", False), ("3", False), ("4", False)]
+    assert len(json.loads(config.MEETINGS.read_text())) == 8
+    assert not {"meetings_ausgesetzt", "meetings_ohne_zeitfilter"} & set(_zustand())
+    assert not {"abruf_ausgesetzt", "abruf_fehler"} & set(_stand())
+    z = _zeile("meetings")
+    assert (z["modus"], z["ergebnis"]) == ("voll", (
+        f"ok; kürzerer Stand angenommen: 8 statt bisher 10 (RATSATLAS_KUERZER_ANNEHMEN); Aussetzen seit {a['seit']} "
+        f"({anlass}: 8 statt bisher 10) aufgehoben (RATSATLAS_KUERZER_ANNEHMEN)"))
+    monkeypatch.delenv("RATSATLAS_KUERZER_ANNEHMEN")
+    oparl.anfragen.clear()
+    sessionnet.fetch_all()                                                 # wieder mit Zeitfilter, dann vollständig
+    assert _sitzungsanfragen(oparl) == ALLE_SEITEN_OHNE_FILTER[:5]
+    assert _zeile("meetings")["ergebnis"].startswith("ok; Zeitfilter bei Sitzungen nicht angewandt")
 
 
 def test_sitzungen_ohne_zeitfilter_sperrnacht_im_vollstaendigen_lesen(oparl, monkeypatch):

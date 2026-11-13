@@ -16,7 +16,12 @@
 # modified_since bei den Sitzungen ablehnt (etwa HTTP 401; dann jede Nacht alle Sitzungen, 50–200 Seiten). Übergeht sie
 # den Filter nur, braucht es die Variable nicht: Seit Runde 20 liest der Abruf die Sitzungen dann in derselben Nacht von
 # selbst vollständig neu und kehrt zum inkrementellen Lauf zurück, sobald der Filter wirkt (mit dauerhaft gesetztem
-# „meetings“ entfiele dieser Versuch). Abstand, Zeitfenster und Grenzen je Nacht sind nicht über Variablen einstellbar.
+# „meetings“ entfiele dieser Versuch). Eine ausgesetzte Liste (Vorlagen oder Sitzungen, deren Vollabruf über Nächte oder
+# deren vollständiges Lesen nach nicht angewandtem Zeitfilter unter 90 % des Stands endete; Hinweis in STAND.json unter
+# abruf_ausgesetzt, Entscheidung 13.11.2026) sendet keine Anfrage, bis KUERZER_ANNEHMEN sie nennt (liest sie vollständig
+# und nimmt den kürzeren Stand an; gesetzt lassen, bis der Lauf fertig ist) oder VOLLABRUF (hebt das Aussetzen auf,
+# neuer Vollabruf ab Seite 1; eine Nacht). Abstand, Zeitfenster und Grenzen je Nacht sind nicht über Variablen
+# einstellbar.
 # Abrufpolitik: eine Verbindung, Abstand 20 s (seit 15.11.2026, fest im Abrufschritt; der Code verlangt mindestens 2 s),
 # nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (Retry-After als
 # Sekunden oder Datum eingehalten), aber nie über das Ende des Zeitfensters: Reicht die nächste Pause darüber hinaus

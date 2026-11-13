@@ -33,7 +33,9 @@ SCHRITTE = {
                        "der Stadt Köln: nachts, mit einer Verbindung und Abstand zwischen den Anfragen, nach dem ersten "
                        "Lauf nur Geänderte (Gremien jede Nacht vollständig, Sitzungen ebenso, solange die Schnittstelle "
                        "sie nicht nach dem Änderungsdatum auswählt). Bricht ein Abruf ab, bleibt der Stand des letzten "
-                       "Laufs."),
+                       "Laufs. Liefert die Stadt beim vollständigen Lesen der Vorlagen oder Sitzungen deutlich weniger "
+                       "als bisher, bleibt der bisherige Stand; ruht der Abruf einer Liste deshalb, bis das geprüft ist, "
+                       "nennt das der Datenstand."),
     "build": ("Datenbank und Verortung", "Baut eine SQLite-Datenbank aus Vorlagen, Beratungen, Sitzungen und Gremien, "
                                          "verortet Vorlagen nach festen Regeln und leitet den Stand jedes Vorgangs ab."),
     "export": ("Export", "Schreibt je Gebiet eine Datei für die Karte, dazu Feeds, Kalender, GeoJSON und "

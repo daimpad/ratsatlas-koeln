@@ -100,6 +100,13 @@
   // pipeline/export.py): ein Satz je Liste im Datenstand, ohne Fachbegriffe und nicht nur als Farbe
   const WARNUNG_SATZ = { meetings: "Sitzungstermine wurden", organizations: "Die Liste der Gremien wurde" };
   const standWarnungen = (w) => Object.keys(WARNUNG_SATZ).filter((k) => w && w[k]).map((k) => ` · ${WARNUNG_SATZ[k]} beim letzten Abruf nicht aktualisiert; gezeigt wird ${w[k].stand ? `der Stand vom ${zeitDatum(w[k].stand)}` : "der letzte gültige Stand"}.`).join("");
+  // Listen, deren Abruf ruht (index.json meta.abruf_ausgesetzt, pipeline/export.py; Entscheidung 13.11.2026: die Stadt
+  // lieferte beim vollständigen Lesen deutlich weniger als bisher): ein Satz je Liste mit Beginn und gezeigtem Stand
+  const AUSGESETZT_SATZ = { papers: ["der Vorlagen", "Vorlagen"], meetings: ["der Sitzungstermine", "Sitzungen"] };
+  const standAusgesetzt = (a) => Object.keys(AUSGESETZT_SATZ).filter((k) => a && a[k]).map((k) => {
+    const [wessen, was] = AUSGESETZT_SATZ[k], seit = zeitTag(a[k].seit);
+    return ` · Der Abruf ${wessen} ruht ${seit ? `seit dem ${fmtDate(seit)}` : "derzeit"}: Die Stadt lieferte zuletzt deutlich weniger ${was} als bisher, das wird geprüft. Gezeigt wird ${a[k].stand ? `der Stand vom ${zeitDatum(a[k].stand)}` : "der letzte gültige Stand"}.`;
+  }).join("");
   // fehlgeschlagener Abruf (index.json meta.abruf_fehler) im Datenstand
   const standFehler = (f) => f ? ` · Der letzte Abruf am ${zeitDatum(f.zeit)} ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand.` : "";
   // Zeile im Datenstand (#stand) aus meta (Quellen, generated_at) und index.json meta (Fehler, Warnungen); alle Daten
@@ -108,7 +115,8 @@
     const quellen = (Array.isArray(m && m.sources) ? m.sources : []).filter((s) => s && s.retrieved_at)
       .map((s) => `${QUELLE_NAME[s.name] || s.name}: ${zeitDatum(s.retrieved_at)}`).join(" · ");
     return `Datenstand: ${quellen || "–"}${m && m.generated_at ? ` · erzeugt ${zeitDatum(m.generated_at)}` : ""}`
-      + standFehler(im && im.abruf_fehler) + standWarnungen(im && im.abruf_warnungen);
+      + standFehler(im && im.abruf_fehler) + standWarnungen(im && im.abruf_warnungen)
+      + standAusgesetzt(im && im.abruf_ausgesetzt);
   };
   // Datenstand als Berliner Kalendertag (Markierung in der Zeitleiste, Jahresgrenze in hasPaperFeed) nach derselben
   // Regel (zeitTag): Abruf des Ratsinformationssystems, sonst Erzeugung, sonst heute; nur lesbare Werte
