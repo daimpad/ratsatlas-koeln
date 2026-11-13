@@ -139,7 +139,7 @@ Für Haushaltsgröße und Wohnungsbau gibt es keinen Wegweiser-Indikator. Der We
 
 Prompt Phase 4: Stichprobe von 20 Werten gegen die Originalquelle, Lizenzhinweise vollständig, Datenstand dokumentiert. Ergebnis: `data/strukturdaten/audit_verifikation.tsv` (Spalten und Verfahren in `meta.json` unter `audit_verifikation_spalten` und `verifikation`), Skript `explore/strukturdaten/verifikation.py`.
 
-**Abrufe** (je 1 Anfrage, keine an die OParl-API; das Protokoll nennt Zeit, Status, Größe und Typ, nicht die Adresse):
+**Abrufe** (je 1 Anfrage, keine an die OParl-API; das Protokoll nennt Zeit, Status, Größe und Typ; Adressen nachgetragen: XLSX wie in `meta.json` unter `quellen` (`statistischer-datenkatalog-koeln`), Wegweiser `https://www.wegweiser-kommune.de/data-api/rest/export/bevoelkerung+durchschnittsalter+sgb-ii-quote+koeln+2022-2023+tabelle.csv?charset=UTF-8`):
 
 | Ziel | Zeit | Status | Bytes | SHA-256 |
 |---|---|---|---|---|
