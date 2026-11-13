@@ -2344,9 +2344,11 @@ def test_ergebnis_je_tagesordnungspunkt(testdaten, capsys):
     """Offen (8): Ergebnisse wurden je Vorlage maskiert, nicht je Tagesordnungspunkt; beriet eine Vorlage außerhalb der
     Maske (ohne Beziehung, ohne Stichwort im Titel) denselben Punkt wie eine Eingabe, zeigte sie das Ergebnis ungekürzt
     (Gebietsdatei, Feed, Datenpaket). Jetzt gilt: Ist eine Vorlage eines Tagesordnungspunkts in der Maske, wird sein
-    Ergebnis bei jeder Vorlage maskiert, die ihn zeigt; ein anderer Punkt derselben Vorlage bleibt unverändert. Orakel:
-    die Ziffernfolge in jeder Datei. Gegenprobe: das ungekürzte Ergebnis in Gebietsdatei oder Feed der Vorlage außerhalb
-    der Maske ist ein Befund (vorher prüfte check Ergebnisse nur mit der Drucksache der Vorlage selbst)."""
+    Ergebnis bei jeder Vorlage maskiert, die ihn zeigt, und mit ihm jedes andere Ergebnis dieser Vorlage
+    (Maske.drucksache_ergebnisse; vorher blieb ein anderer Punkt unverändert, siehe
+    test_ergebnis_gleicher_text_auf_zweitem_punkt). Orakel: die Ziffernfolge in jeder Datei. Gegenprobe: das ungekürzte
+    Ergebnis in Gebietsdatei oder Feed der Vorlage außerhalb der Maske ist ein Befund (vorher prüfte check Ergebnisse
+    nur mit der Drucksache der Vorlage selbst)."""
     strasse, nr, _ = _lage()
     a, b = nr[0], nr[1]
     s, top1, top2 = f"{B}/meetings/fp-t", f"{B}/meetings/fp-t/top/1", f"{B}/meetings/fp-t/top/2"
@@ -2371,13 +2373,15 @@ def test_ergebnis_je_tagesordnungspunkt(testdaten, capsys):
     base = config.EXPORT / config.STADT
     gebiet = next(f for d in check.GEBIETSDATEIEN for f in (base / d).glob("*.json") if "2981/2026" in f.read_text())
     q = next(p for p in json.loads(gebiet.read_text())["papers"] if p["reference"] == "2981/2026")
-    assert {x["result"] for x in q["process"]} == {f"Ortstermin vor Haus {maske.OHNE_NR} beschlossen", ergebnis2}
+    assert {x["result"] for x in q["process"]} == {f"Ortstermin vor Haus {maske.OHNE_NR} beschlossen",
+                                                   f"Ortstermin vor Haus {maske.OHNE_NR} vertagt"}
     assert "agenda_item_id" not in q["process"][0]   # Datenmodell unverändert
     for p in config.EXPORT.rglob("*"):
         if p.is_file() and p.suffix in (".json", ".geojson", ".tsv", ".xml", ".ics", ".csv"):
-            assert f"vor Haus {a} beschlossen" not in p.read_text(encoding="utf-8"), p
+            text = p.read_text(encoding="utf-8")
+            assert f"vor Haus {a} beschlossen" not in text and f"vor Haus {b} vertagt" not in text, p
     feed = base / "feeds" / "vorlagen" / f"{export.slug('2981/2026')}.xml"
-    assert ergebnis2 in feed.read_text(encoding="utf-8")
+    assert f"Ortstermin vor Haus {maske.OHNE_NR} vertagt" in feed.read_text(encoding="utf-8")
     erg = check.datenschutz(db)
     assert erg["befunde"] == [] and erg["fehlend"] == [], erg
     b_ = _befund_nach(db, feed, f"Ortstermin vor Haus {maske.OHNE_NR} beschlossen", ergebnis1)
@@ -2385,9 +2389,81 @@ def test_ergebnis_je_tagesordnungspunkt(testdaten, capsys):
     # in der Gebietsdatei nur bei der Vorlage außerhalb der Maske (die Eingabe steht in derselben Datei)
     daten = json.loads(gebiet.read_text())
     for x in next(p for p in daten["papers"] if p["reference"] == "2981/2026")["process"]:
-        x["result"] = ergebnis1 if maske.OHNE_NR in x["result"] else x["result"]
+        x["result"] = ergebnis1 if x["result"].endswith("beschlossen") else x["result"]
     b_ = _befund_nach(db, gebiet, gebiet.read_text(), json.dumps(daten, ensure_ascii=False, separators=(",", ":")))
     assert len(b_) == 1 and b_[0].endswith(": 1, z. B. 2981/2026"), b_
+    db.close()
+
+
+def test_ergebnis_gleicher_text_auf_zweitem_punkt(testdaten, capsys):
+    """Fehlalarm aus Offen (8): Eine Vorlage außerhalb der Maske berät denselben Tagesordnungspunkt wie eine Eingabe
+    und einen zweiten Punkt allein, mit demselben Ergebnis (oder einem längeren, das es enthält). Vorher maskierte export
+    nur das Ergebnis des gemeinsamen Punkts, check verglich aber jeden Eintrag der Vorlage mit dem ungekürzten Text und
+    meldete den zweiten Punkt als Befund, den die Maske nicht beheben konnte (hielt die Veröffentlichung an). Jetzt
+    laufen alle Ergebnisse einer Vorlage mit einem Tagesordnungspunkt der Maske durch die Maske
+    (Maske.drucksache_ergebnisse, eine Funktion für export und check). Orakel: die Ziffernfolge „3 und 4“ in jeder Datei
+    und die Befunde von check. Gegenproben: eine Vorlage ohne Punkt der Maske behält das Ergebnis ungekürzt; das
+    ungekürzte Ergebnis des zweiten Punkts in Feed oder Gebietsdatei ist ein Befund."""
+    beratungen = []
+    vorlagen = [_vorlage("ge", "2880/2026", OHNE_ORT, art=EINGABE)]
+    roh, laenger, ordnung = ("Beschluss gemäß Anlagen 3 und 4", "Beschluss gemäß Anlagen 3 und 4 mit Änderungen",
+                             "Beschluss gemäß Anlagen 3 und 4. Änderung abgelehnt")
+    # 2881: derselbe Text auf beiden Punkten; 2883: ein längerer auf dem zweiten; 2885: ein längerer, in dem die 4 vor
+    # „Änderung“ in einem bekannten Zusammenhang steht (die Maske lässt ihn stehen, wie Offen (1))
+    for key, ref, zweites in (("g1", "2881/2026", roh), ("g3", "2883/2026", laenger), ("g5", "2885/2026", ordnung)):
+        v = _vorlage(key, ref, f"[Testdaten] Sammelvorlage {key}", art="Beschlussvorlage")
+        v["consultation"].append({"id": f"{B}/consultations/fp-{key}b", "role": "Beratung",
+                                  "organization": [f"{B}/organizations/avr"], "authoritative": False})
+        vorlagen.append(v)
+        beratungen += [_beratung(f"{B}/consultations/fp-{key}", f"{B}/meetings/fp-g", f"{B}/meetings/fp-g/top/1",
+                                 "1", roh),
+                       _beratung(f"{B}/consultations/fp-{key}b", f"{B}/meetings/fp-g{key}",
+                                 f"{B}/meetings/fp-g{key}/top/1", "1", zweites, name="Ausschuss für Verkehr",
+                                 start="2026-10-27T17:00:00+01:00")]
+    beratungen.append(_beratung(f"{B}/consultations/fp-ge", f"{B}/meetings/fp-g", f"{B}/meetings/fp-g/top/1", "1",
+                                roh))
+    # Gegenprobe: dasselbe Ergebnis bei einer Vorlage ohne Tagesordnungspunkt der Maske
+    vorlagen.append(_vorlage("g7", "2887/2026", "[Testdaten] Sammelvorlage Grünflächen", art="Beschlussvorlage"))
+    beratungen.append(_beratung(f"{B}/consultations/fp-g7", f"{B}/meetings/fp-g7", f"{B}/meetings/fp-g7/top/1", "1",
+                                roh))
+    with open(config.PAPERS, "a", encoding="utf-8") as f:
+        f.writelines(json.dumps(p, ensure_ascii=False) + "\n" for p in vorlagen)
+    with open(config.BERATUNGEN, "a", encoding="utf-8") as f:
+        f.writelines(json.dumps(z, ensure_ascii=False) + "\n" for z in beratungen)
+    build.build()
+    export.export()
+    capsys.readouterr()
+    db = sqlite3.connect(config.DB)
+    m = maske.aus_db(db)
+    assert "2880/2026" in m.refs and not {"2881/2026", "2883/2026", "2885/2026", "2887/2026"} & m.refs
+    base = config.EXPORT / config.STADT
+    maskiert = f"Beschluss gemäß Anlagen 3 und {maske.OHNE_NR}"
+    feeds = {r: base / "feeds" / "vorlagen" / f"{export.slug(r)}.xml"
+             for r in ("2881/2026", "2883/2026", "2885/2026", "2887/2026")}
+    # Orakel: „3 und 4“ ungekürzt nur bei der Vorlage ohne Punkt der Maske und im längeren Text mit „4. Änderung“
+    for r in ("2881/2026", "2883/2026"):
+        text = feeds[r].read_text(encoding="utf-8")
+        assert "3 und 4" not in text and text.count(maskiert) == 2, (r, text)
+    assert "3 und 4." in feeds["2885/2026"].read_text(encoding="utf-8")
+    assert roh in feeds["2887/2026"].read_text(encoding="utf-8")
+    gebiet = next(f for d in check.GEBIETSDATEIEN for f in (base / d).glob("*.json") if "2881/2026" in f.read_text())
+    daten = json.loads(gebiet.read_text())
+    ergebnisse = {p["reference"]: [x["result"] for x in p["process"]] for p in daten["papers"]
+                  if p["reference"] in feeds}
+    assert ergebnisse["2881/2026"] == [maskiert, maskiert], ergebnisse
+    assert ergebnisse["2883/2026"] == [maskiert, f"{maskiert} mit Änderungen"], ergebnisse
+    assert ergebnisse["2885/2026"] == [maskiert, ordnung] and ergebnisse["2887/2026"] == [roh], ergebnisse
+    erg = check.datenschutz(db)
+    assert erg["befunde"] == [] and erg["fehlend"] == [], erg
+    # Gegenproben: das ungekürzte Ergebnis des zweiten Punkts im Feed bzw. in der Gebietsdatei ist ein Befund
+    for r, zweites in (("2881/2026", roh), ("2883/2026", laenger)):
+        alt = maskiert if r == "2881/2026" else f"{maskiert} mit Änderungen"
+        b_ = _befund_nach(db, feeds[r], alt, zweites)
+        assert len(b_) == 1 and b_[0].endswith(f": 1, z. B. {r}"), (r, b_)
+        neu = json.loads(gebiet.read_text())
+        next(p for p in neu["papers"] if p["reference"] == r)["process"][1]["result"] = zweites
+        b_ = _befund_nach(db, gebiet, gebiet.read_text(), json.dumps(neu, ensure_ascii=False, separators=(",", ":")))
+        assert len(b_) == 1 and b_[0].endswith(f": 1, z. B. {r}"), (r, b_)
     db.close()
 
 

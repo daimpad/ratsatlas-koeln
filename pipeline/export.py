@@ -80,7 +80,10 @@ def _paper_detail(db, pid):
     # Befund beheben). Ergebnisse je Tagesordnungspunkt und Sitzungsnamen je Sitzung (Offen (8) und (9) der Nachprüfung
     # der dritten Korrektur): Wird dort eine Vorlage der Maske beraten (Maske.tops, Maske.sitzungen), läuft der Text
     # bei jeder Vorlage, die ihn zeigt, mit deren Drucksache durch die Maske; die Kennung des Tagesordnungspunkts
-    # bleibt intern (Datenmodell unverändert)
+    # bleibt intern (Datenmodell unverändert). Bei Ergebnissen gilt das für alle Punkte einer solchen Vorlage
+    # (Maske.drucksache_ergebnisse, dieselbe Funktion in check): Derselbe Text auf einem zweiten Punkt blieb sonst
+    # ungekürzt, und check meldete ihn im Feed der Vorlage als Befund, den die Maske nicht beheben konnte
+    ref_ergebnisse = m.drucksache_ergebnisse(ref, [r["agenda_item_id"] for r in process])
     fund = lambda rows: [{**dict(r), "evidence": m.ausschnitt(r["evidence"], p["name"], ref)} for r in rows]
     locs = [{**r, "name": m(r["name"], ref)} for r in fund(_locations(db, pid))]
     rel = lambda sql: [{**dict(r), "name": m(r["name"], r["reference"])} for r in db.execute(sql, (pid,))]
@@ -96,7 +99,7 @@ def _paper_detail(db, pid):
         "originators": fund(orig),
         "process": [{**{k: v for k, v in dict(r).items() if k != "agenda_item_id"},
                      "meeting": m(r["meeting"], m.sitzungen.get(r["meeting_id"])),
-                     "result": m(r["result"], m.tops.get(r["agenda_item_id"], ref)), "status": _status(r)}
+                     "result": m(r["result"], ref_ergebnisse), "status": _status(r)}
                     for r in process],
         "superordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
                               "JOIN paper p ON p.id = r.parent_id WHERE r.child_id = ?"),

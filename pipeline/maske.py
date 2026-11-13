@@ -502,6 +502,18 @@ class Maske:
         # zeigt, mit dieser Drucksache durch die Maske (Offen (8) und (9) der Nachprüfung der dritten Korrektur)
         self.tops, self.sitzungen = {}, {}
 
+    def drucksache_ergebnisse(self, ref, tops):
+        """Drucksache, mit der die Ergebnisse der Beratungen einer Vorlage (Drucksache `ref`, Tagesordnungspunkte
+        `tops`) durch die Maske laufen; eine Funktion für export und check. Wird auf einem ihrer Punkte eine Vorlage der
+        Maske beraten (Maske.tops), gilt das für alle ihre Ergebnisse, nicht nur für diesen Punkt: Stand derselbe Text
+        (oder ein längerer, der ihn enthält) auf einem zweiten Punkt derselben Vorlage, blieb er dort ungekürzt, und
+        check meldete ihn im Feed der Vorlage als Befund, den die Maske nicht beheben konnte (Fehlalarm aus Offen (8)
+        der Nachprüfung der dritten Korrektur; hielt die Veröffentlichung an). Eine Vorlage der Maske behält ihre
+        Drucksache; ohne Punkt der Maske bleibt `ref` (die Maske ändert dann nichts)."""
+        if ref in self.refs:
+            return ref
+        return min((self.tops[t] for t in tops if t in self.tops), default=ref)
+
     def _betroffen(self, titel, ref):
         # ohne Ziffer und ohne Hausnummer in Worten keine Hausnummer: spart die teure Regex bei den meisten Titeln
         # (gleiche Ergebnisse); Ziffern auch erst nach NFKC („⒓“ ist für isdigit keine Ziffer; Prüfung r20a, zweite

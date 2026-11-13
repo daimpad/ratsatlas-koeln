@@ -412,7 +412,10 @@ def _feeds(base, db, m, zahl, befunde):
     Teil im Eintrag, und check meldete einen Befund, den die Maske nicht beheben konnte). Texte in der Form, die ein
     Feed nach dem Lesen trägt (ohne Zeichen, die XML 1.0 nicht erlaubt: dieselbe Regel publish.xml_text wie beim
     Schreiben; Zeilenende „\\n“). Ergebnisse eines Tagesordnungspunkts, auf dem eine Vorlage der Maske beraten wird,
-    gelten bei jeder Vorlage, die ihn zeigt (Maske.tops; Offen (8) der Nachprüfung der dritten Korrektur). Ein Feed,
+    gelten bei jeder Vorlage, die ihn zeigt (Maske.tops; Offen (8) der Nachprüfung der dritten Korrektur), und mit ihnen
+    alle Ergebnisse dieser Vorlage, wie export sie maskiert (Maske.drucksache_ergebnisse: vorher verglich check jeden
+    Eintrag mit dem ungekürzten Ergebnis des Punkts der Maske und meldete denselben Text auf einem zweiten Punkt, den
+    export dort zu Recht ungekürzt ließ; ein längerer Text, den die Maske stehen lässt, fällt als Hülle weg). Ein Feed,
     den ElementTree nicht lesen kann, ist ein Befund in `befunde` (Offen (6); vorher übergangen, ohne Zählung). Liefert
     die Drucksachen mit ungekürztem Text; zählt die Einträge in `zahl`."""
     import xml.etree.ElementTree as ET
@@ -429,10 +432,13 @@ def _feeds(base, db, m, zahl, befunde):
         längere zuerst)."""
         if pid not in texte:
             ref = ref_von.get(pid)
-            # Ergebnisse je Tagesordnungspunkt der Maske (bei einer Vorlage der Maske jeder ihrer Punkte)
-            kandidaten = [(r, m.tops[a]) for r, a in db.execute(
+            # Ergebnisse der Vorlage mit der Drucksache wie in export (Maske.drucksache_ergebnisse: alle, sobald einer
+            # ihrer Tagesordnungspunkte zur Maske gehört; bei einer Vorlage der Maske jeder ihrer Punkte)
+            ergebnisse = db.execute(
                 "SELECT a.result, c.agenda_item_id FROM consultation c JOIN agenda_item a ON a.id = c.agenda_item_id "
-                "WHERE c.paper_id = ?", (pid,)) if a in m.tops]
+                "WHERE c.paper_id = ?", (pid,)).fetchall()
+            r_erg = m.drucksache_ergebnisse(ref, [a for _, a in ergebnisse])
+            kandidaten = [(r, r_erg) for r, _ in ergebnisse]
             if ref in m.refs:
                 kandidaten += [(r[0], ref) for r in db.execute("SELECT name FROM paper WHERE id = ?", (pid,))]
                 kandidaten += db.execute("SELECT p.name, p.reference FROM paper_relation r JOIN paper p "
@@ -485,7 +491,8 @@ def datenschutz(db, base=None):
        blendet die Maske aus, was die Probe meldet, seit der dritten jede Zahl außerhalb bekannter Zusammenhänge; ein
        Befund heißt also: Text ohne Maske). Seit der dritten Korrektur auch Titel verbundener Vorlagen, Ergebnisse der
        Beratungen und Feeds (_feeds) und jede TSV-Datei mit „drucksache“; seit dem 13.11.2026 Ergebnisse je
-       Tagesordnungspunkt und Sitzungsnamen je Sitzung der Maske (auch bei Vorlagen außerhalb, _sitzungen für zeit.json
+       Tagesordnungspunkt (alle Ergebnisse einer Vorlage mit einem Punkt der Maske, Maske.drucksache_ergebnisse) und
+       Sitzungsnamen je Sitzung der Maske (auch bei Vorlagen außerhalb, _sitzungen für zeit.json
        und termine.ics), ein unlesbarer Feed als Befund, und jede Vorlage ohne Hauskoordinate über Gremium oder
        Vorlagenart ist Ausgangspunkt der Titelmaske (Gegenprobe als Befund, Entscheidung 13.11.2026); als Hinweis ohne
        Befund nur noch Vorlagen ohne Hauskoordinate außerhalb der Titelmaske (erwartet: Drucksache in anderem Schema),
@@ -645,11 +652,11 @@ def datenschutz(db, base=None):
             fehlend.append(_fehlt("Datenschutz", base / d, "export"))
     dateien = [f for d in GEBIETSDATEIEN for f in sorted((base / d).glob("*.json"))]
     refs, auf, auf_oparl = set(), set(), set()
-    # Tagesordnungspunkt je Beratung einer Vorlage (Stelle in der Beratungsfolge, `process[].position` wie in export),
-    # soweit dort eine Vorlage der Maske beraten wird (Maske.tops; Offen (8))
-    top_ref = {(pid, pos): m.tops[top] for pid, pos, top in db.execute(
-        "SELECT paper_id, position, agenda_item_id FROM consultation WHERE agenda_item_id IS NOT NULL")
-        if top in m.tops}
+    # Tagesordnungspunkte je Vorlage: Drucksache ihrer Ergebnisse wie in export (Maske.drucksache_ergebnisse; alle
+    # Ergebnisse, sobald auf einem ihrer Punkte eine Vorlage der Maske beraten wird, Offen (8))
+    tops_je = {}
+    for pid, top in db.execute("SELECT paper_id, agenda_item_id FROM consultation WHERE agenda_item_id IS NOT NULL"):
+        tops_je.setdefault(pid, []).append(top)
     for f in dateien:
         for p in json.loads(f.read_text())["papers"]:
             refs.add(p["reference"])
@@ -671,11 +678,12 @@ def datenschutz(db, base=None):
                           if x.get("result")]
             zahl["verbundene_titel"] = zahl.get("verbundene_titel", 0) + len(verbunden)
             offen |= {r for t, r in verbunden if m.offen(t, r)}
-            # Ergebnis eines Tagesordnungspunkts, auf dem eine Vorlage der Maske beraten wird, und Name einer Sitzung
-            # mit einer Vorlage der Maske: bei jeder Vorlage, auch außerhalb der Maske (Offen (8) und (9); die
-            # Ergebnisse in `steps` sind Kopien aus `process`). Befund unter der Drucksache der zeigenden Vorlage
-            bei = [(x.get("result"), top_ref.get((p.get("source_object"), x.get("position"))))
-                   for x in p.get("process") or () if x.get("result")]
+            # Ergebnisse einer Vorlage mit einem Tagesordnungspunkt, auf dem eine Vorlage der Maske beraten wird, und
+            # Name einer Sitzung mit einer Vorlage der Maske: bei jeder Vorlage, auch außerhalb der Maske (Offen (8) und
+            # (9); die Ergebnisse in `steps` sind Kopien aus `process`). Befund unter der Drucksache der zeigenden
+            # Vorlage
+            r_erg = m.drucksache_ergebnisse(p["reference"], tops_je.get(p.get("source_object"), ()))
+            bei = [(x.get("result"), r_erg) for k in ("process", "steps") for x in p.get(k) or () if x.get("result")]
             sitzungen = [(x.get("meeting"), m.sitzungen.get(x.get("meeting_id"))) for x in p.get("process") or ()
                          if x.get("meeting") and x.get("meeting_id") in m.sitzungen]
             zahl["sitzungen"] = zahl.get("sitzungen", 0) + len(sitzungen)
