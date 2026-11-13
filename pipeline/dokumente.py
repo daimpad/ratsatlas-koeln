@@ -48,7 +48,9 @@ Erlaubnis für Hauskoordinaten oder in der Titelmaske (gesperrt(): dieselben Fun
 geocode.punkt_ausschluss mit Eingaben, Vorlagen natürlicher Personen, Ausschuss für Anregungen und Beschwerden, nicht
 erkennbare Vorlagenart, maske.py; Fixpunkt geocode.sperrmenge; Titelmaske maske.kette), nicht öffentliche Beratungen
 (`public` weder true noch fehlend) und Sammellisten nichtöffentlicher Punkte, und keine Datei, die auch bei einer
-solchen Vorlage steht (Hauptdatei oder Anlage). Gezählt werden Vorlagen ohne PDF-Datei (weder `mainFile` noch eine
+solchen Vorlage steht (Hauptdatei oder Anlage), auch bei einer ausgelassenen (ohne Drucksachennummer oder als gelöscht
+gemeldet) und auch unter einer anderen Kennung mit derselben Adresse (Kennung, downloadUrl und accessUrl in der
+Vergleichsform _adresse; Prüfung dok2). Gezählt werden Vorlagen ohne PDF-Datei (weder `mainFile` noch eine
 PDF-Datei in `auxiliaryFile`). Nur Adressen auf dem Host der OParl-API (config.OPARL_BODY: Schema, Host und Port
 gleich; `downloadUrl`, sonst `accessUrl`), nur PDF laut `mimeType` (falls angegeben), höchstens MAX_BYTES laut `size`;
 eine gewählte Anlage, die daran scheitert, wird nicht durch eine andere ersetzt. Neueste zuerst (Datum der Vorlage,
@@ -84,6 +86,7 @@ bleibt keinem Amt zugeordnet und wird als solche gezeigt.
 import hashlib
 import json
 import os
+import posixpath
 import re
 import signal
 import subprocess
@@ -133,7 +136,8 @@ GRUENDE = {
     "drucksache": "Drucksache nicht NNNN/JJJJ", "vorlagenart": "keine Vorlagenart der Verwaltung",
     "ohne_hauskoordinate": "ohne Hauskoordinate oder Titelmaske", "nicht_oeffentlich": "nicht öffentlich beraten",
     "ohne_datei": "ohne mainFile und ohne PDF-Datei in auxiliaryFile", "doppelt": "Datei schon ausgewählt",
-    "datei_gesperrt": "Datei auch bei einer ausgeschlossenen Vorlage", "kein_pdf": "kein PDF laut mimeType",
+    "datei_gesperrt": "Datei (Kennung oder Adresse) auch bei einer ausgeschlossenen Vorlage",
+    "kein_pdf": "kein PDF laut mimeType",
     "fremder_host": "Adresse nicht auf dem Host der OParl-API", "zu_gross": f"über {MAX_BYTES // 1_000_000} MB laut size",
     "bekannt": "schon verarbeitet, unverändert",
     "fehlversuche": f"nach {FEHLVERSUCHE_GRENZE} Nächten ohne Ergebnis zurückgestellt",
@@ -377,11 +381,43 @@ def datei_wahl(p):
     return pdfs[0], "auxiliaryFile"
 
 
-def _dateien(p):
-    """Kennungen aller Dateien einer Vorlage (mainFile und auxiliaryFile)."""
-    aux = p.get("auxiliaryFile")
-    aux = [aux] if isinstance(aux, dict) else aux if isinstance(aux, list) else []
-    return {f["id"] for f in [p.get("mainFile"), *aux] if isinstance(f, dict) and isinstance(f.get("id"), str)}
+def _adresse(wert):
+    """Vergleichsform einer Datei-Kennung oder Adresse, nur für den Ausschluss und daher eher zu weit als zu eng
+    (Prüfung dok2: dieselbe Datei kann unter einer anderen Kennung oder in anderer Schreibung stehen): ohne Schema,
+    Port, Zugangsdaten und Fragment; Host ohne abschließenden Punkt; Pfad prozentdekodiert, mehrfache „/“
+    zusammengefasst, „.“ und „..“ aufgelöst; Teile der Query dekodiert und sortiert; alles in Kleinbuchstaben. None für
+    anderes als eine nicht leere Zeichenkette."""
+    if not isinstance(wert, str) or not wert.strip():
+        return None
+    wert = wert.strip()
+    try:
+        t = urllib.parse.urlsplit(wert)
+        host, pfad, query = (t.hostname or "").rstrip("."), t.path, t.query
+    except ValueError:
+        host, pfad, query = "", wert, ""
+    pfad = posixpath.normpath(re.sub(r"/+", "/", "/" + urllib.parse.unquote(pfad)))
+    teile = sorted(x for x in urllib.parse.unquote(query).split("&") if x)
+    return (host + pfad + ("?" + "&".join(teile) if teile else "")).lower()
+
+
+def _adressen_der_datei(f):
+    """Vergleichsformen (_adresse) von Kennung, downloadUrl und accessUrl eines Dateiobjekts."""
+    return {a for a in (_adresse(f.get(k)) for k in ("id", "downloadUrl", "accessUrl")) if a}
+
+
+def _dateiadressen(p):
+    """Vergleichsformen aller Dateien einer Vorlage in Rohform (wie in papers.jsonl, auch einer ausgelassenen):
+    Kennung, downloadUrl und accessUrl jedes Eintrags in mainFile und auxiliaryFile, als Objekt, Liste oder Verweis
+    (Zeichenkette), auch als gelöscht gemeldete Einträge."""
+    aus = set()
+    for feld in ("mainFile", "auxiliaryFile"):
+        wert = p.get(feld)
+        for f in wert if isinstance(wert, list) else [wert]:
+            if isinstance(f, dict):
+                aus |= _adressen_der_datei(f)
+            elif _adresse(f):
+                aus.add(_adresse(f))
+    return aus
 
 
 def auswahl(roh, orgs, beratungen, eintraege):
@@ -390,17 +426,24 @@ def auswahl(roh, orgs, beratungen, eintraege):
     beratungen.jsonl; `eintraege`: laden(). Je Vorlage höchstens eine Datei (datei_wahl: mainFile, sonst eine aus
     auxiliaryFile), mit ihrer Herkunft (`quelle`). Dateien, die auch bei einer Vorlage ohne Hauskoordinate (oder in der
     Titelmaske) oder einer nicht öffentlich beratenen stehen, werden nie gelesen (etwa eine Eingabe als Anlage einer
-    Mitteilung). Eine Datei, die für eine Vorlage Hauptdatei und für eine andere Anlage ist, zählt als Hauptdatei. Schon
-    verarbeitete Dateien erst wieder nach einer Änderung ihrer Merkmale oder ihrer Herkunft (eine Anlage, die zur
-    Hauptdatei wird, wird einmal neu gelesen)."""
+    Mitteilung), auch nicht die einer ausgelassenen Vorlage (ohne Drucksachennummer oder als gelöscht gemeldet; ohne
+    Erlaubnis wie in gesperrt()), und auch nicht unter einer anderen Kennung mit derselben Adresse: verglichen werden
+    Kennung, downloadUrl und accessUrl in der Vergleichsform _adresse (Prüfung dok2: vorher nur die Kennung, und nur bei
+    Vorlagen nach build.einlesen). Eine Datei, die für eine Vorlage Hauptdatei und für eine andere Anlage ist, zählt als
+    Hauptdatei. Schon verarbeitete Dateien erst wieder nach einer Änderung ihrer Merkmale oder ihrer Herkunft (eine
+    Anlage, die zur Hauptdatei wird, wird einmal neu gelesen)."""
     from . import build   # hier: build importiert dieses Modul
     papers, ausgelassen, _ = build.einlesen(build._je_kennung_einmal(roh))
     orgs_by_id = {o["id"]: o for o in orgs if isinstance(o, dict) and isinstance(o.get("id"), str)}
     sperre = gesperrt(papers, ausgelassen, orgs_by_id)
     oeffentlich = {b.get("uri"): (b.get("agendaItem") or {}).get("public") for b in beratungen
                    if isinstance(b, dict) and isinstance(b.get("agendaItem"), (dict, type(None)))}
-    # Dateien ausgeschlossener Vorlagen (Datenschutz, nicht öffentlich): nie lesen, auch nicht über eine andere Vorlage
-    ausgeschlossen = {f for p in papers if p["id"] in sperre or _nicht_oeffentlich(p, oeffentlich) for f in _dateien(p)}
+    # Dateien ausgeschlossener Vorlagen (Datenschutz, nicht öffentlich): nie lesen, auch nicht über eine andere
+    # Vorlage. Aus den Rohdaten, damit die ausgelassenen Vorlagen dabei sind (`sperre` enthält ihre Kennungen,
+    # build.einlesen aber nicht ihre Dateien), und aus jeder Zeile mit derselben Kennung (doppelt oder mit Löschvermerk)
+    ohne = sperre | {p["id"] for p in papers if _nicht_oeffentlich(p, oeffentlich)}
+    ausgeschlossen = set().union(*(_dateiadressen(r) for r in roh
+                                   if isinstance(r, dict) and isinstance(r.get("id"), str) and r["id"] in ohne))
     gruende, wahl, kandidaten, gesehen = Counter(), [], [], set()
     for p in papers:
         if not RE_VERWALTUNGSVORLAGE.match(p["reference"]):
@@ -429,7 +472,7 @@ def auswahl(roh, orgs, beratungen, eintraege):
         fehlversuche = alt.get("fehlversuche", 0) if unveraendert and vorlaeufig(alt.get("status")) else 0
         if f["id"] in gesehen:
             gruende["doppelt"] += 1
-        elif f["id"] in ausgeschlossen:
+        elif _adressen_der_datei(f) & ausgeschlossen:   # Kennung oder eine Adresse (auch `url`) ausgeschlossen
             gruende["datei_gesperrt"] += 1
         elif isinstance(mime, str) and mime.strip() and mime.split(";")[0].strip().lower() != "application/pdf":
             gruende["kein_pdf"] += 1

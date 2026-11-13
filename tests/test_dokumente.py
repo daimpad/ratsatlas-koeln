@@ -1020,6 +1020,127 @@ def test_datei_einer_ausgeschlossenen_vorlage_wird_nie_gelesen():
         2, 1, 1, 1)
 
 
+# --- Prüfung dok2: Dateien ausgelassener Vorlagen und dieselbe Adresse unter anderer Kennung -------------------------------
+
+B_AUSWAHL = "http://127.0.0.1:8"
+
+
+def _datei_roh(i, **felder):
+    """Erfundenes Dateiobjekt wie in papers.jsonl (Host des Testservers, PDF)."""
+    return {"id": f"{B_AUSWAHL}/files/{i}", "accessUrl": f"{B_AUSWAHL}/files/{i}.pdf", "mimeType": "application/pdf",
+            "name": "Vorlage", **felder}
+
+
+def _vorlage_roh(i, art="Beschlussvorlage", **felder):
+    """Erfundene Vorlage wie in papers.jsonl (Drucksache 2000+i/2026, ohne Beratung)."""
+    return {"id": f"{B_AUSWAHL}/papers/{i}", "reference": f"{2000 + i}/2026", "paperType": art,
+            "name": f"Erfundene Vorlage {i}", "date": "2026-10-01", "created": f"2026-10-01T10:00:{i:02d}+02:00",
+            "consultation": [], **felder}
+
+
+def _auswahl(roh, beratungen=()):
+    """(gelesene Dateien als [(Datei, Vorlage)], Gründe) ohne Anfrage."""
+    from unittest import mock
+    with mock.patch.object(config, "OPARL_BODY", f"{B_AUSWAHL}/body"):
+        kandidaten, gruende = dokumente.auswahl(roh, [], list(beratungen), {})
+    return [(k["file"].rsplit("/", 1)[1], k["paper"].rsplit("/", 1)[1]) for k in kandidaten], gruende
+
+
+@pytest.mark.parametrize("auslassen", [
+    {"reference": None}, {"reference": ""}, {"reference": "   "}, {"reference": ["2002/2026"]}, "ohne_feld",
+    {"deleted": True},                                     # mit gültiger Drucksache, aber als gelöscht gemeldet
+])
+@pytest.mark.parametrize("feld", ["mainFile", "auxiliaryFile"])
+@pytest.mark.parametrize("art", ["Anregungen und Beschwerden", "Beschlussvorlage"])
+def test_datei_einer_ausgelassenen_vorlage_wird_nie_gelesen(auslassen, feld, art):
+    """Prüfung dok2: Eine Vorlage, die build.einlesen auslässt (ohne Drucksachennummer, mit einer Nummer, die keine
+    Zeichenkette ist, oder als gelöscht gemeldet), hat keine Erlaubnis (dokumente.gesperrt wie build); ihre Dateien
+    werden auch über eine andere Vorlage nie gelesen, gleich welcher Art sie ist und ob die Datei bei ihr Hauptdatei oder
+    Anlage ist. Vorher fehlten diese Vorlagen in der Menge der ausgeschlossenen Dateien (nur Vorlagen nach einlesen).
+    Gegenprobe: eine Verwaltungsvorlage mit eigener Datei wird gelesen."""
+    eingabe = _vorlage_roh(2, art=art, **{feld: _datei_roh(20) if feld == "mainFile" else [_datei_roh(20)]})
+    if auslassen == "ohne_feld":
+        del eingabe["reference"]
+    else:
+        eingabe.update(auslassen)
+    roh = [_vorlage_roh(1, auxiliaryFile=[_datei_roh(20)]), eingabe, _vorlage_roh(3, auxiliaryFile=[_datei_roh(30)])]
+    gelesen, gruende = _auswahl(roh)
+    assert gelesen == [("30", "3")]
+    assert gruende["datei_gesperrt"] == 1 and sum(gruende.values()) == 1
+
+
+def test_ausgeschlossene_datei_unter_anderer_kennung_oder_schreibung():
+    """Prüfung dok2: Verglichen werden Kennung, downloadUrl und accessUrl in vorsichtig angeglichener Form
+    (dokumente._adresse): dieselbe Adresse unter einer anderen Kennung, in anderer Schreibung (Groß- und Kleinschreibung,
+    Prozentkodierung, doppelte „/“, „./“, Reihenfolge der Query), ein Verweis als Zeichenkette statt eines Objekts und
+    eine zweite Zeile derselben ausgeschlossenen Vorlage mit einer anderen Datei sperren die Datei. Gegenproben: ähnliche,
+    aber andere Adressen werden gelesen."""
+    b, eingabe = B_AUSWAHL, "Anregungen und Beschwerden"
+    roh = [
+        # gleiche accessUrl, andere Kennung (der Fall aus der Prüfung)
+        _vorlage_roh(1, auxiliaryFile=[_datei_roh(23, accessUrl=f"{b}/files/99.pdf")]),
+        _vorlage_roh(2, art=eingabe, mainFile=_datei_roh(99)),
+        # downloadUrl der Anlage in anderer Schreibung als die downloadUrl der Eingabe
+        _vorlage_roh(3, auxiliaryFile=[_datei_roh(24, downloadUrl="HTTP://127.0.0.1:8//files/./%39%38.PDF")]),
+        _vorlage_roh(4, art=eingabe, auxiliaryFile=[_datei_roh(98, downloadUrl=f"{b}/files/98.pdf")]),
+        # Verweis als Zeichenkette bei einer Eingabe ohne Drucksachennummer
+        _vorlage_roh(5, auxiliaryFile=[_datei_roh(97)]),
+        {**_vorlage_roh(6, art=eingabe), "reference": None, "mainFile": f"{b}/files/97"},
+        # Query in anderer Reihenfolge
+        _vorlage_roh(7, auxiliaryFile=[_datei_roh(25, accessUrl=f"{b}/getfile.pdf?type=do&id=5")]),
+        _vorlage_roh(8, art=eingabe, mainFile=_datei_roh(26, accessUrl=f"{b}/getfile.pdf?id=5&type=do")),
+        # dieselbe Eingabe zweimal geliefert (seitenweiser Abruf), zuerst mit Datei 80, zuletzt mit Datei 81
+        _vorlage_roh(9, auxiliaryFile=[_datei_roh(80)]),
+        _vorlage_roh(11, art=eingabe, mainFile=_datei_roh(80)),
+        _vorlage_roh(11, art=eingabe, mainFile=_datei_roh(81)),
+        # Gegenproben: andere Nummer, anderer Wert in der Query, anderer Host
+        _vorlage_roh(12, auxiliaryFile=[_datei_roh(990)]),
+        _vorlage_roh(13, auxiliaryFile=[_datei_roh(27, accessUrl=f"{b}/getfile.pdf?id=55&type=do")]),
+        _vorlage_roh(14, auxiliaryFile=[_datei_roh(28)]),
+        _vorlage_roh(15, art=eingabe, mainFile=_datei_roh(29, accessUrl="http://127.0.0.2:8/files/28.pdf")),
+    ]
+    gelesen, gruende = _auswahl(roh)
+    assert sorted(gelesen) == [("27", "13"), ("28", "14"), ("990", "12")]
+    assert (gruende["datei_gesperrt"], gruende["vorlagenart"]) == (5, 5)
+
+
+@pytest.mark.parametrize("wert, gleich", [
+    ("http://127.0.0.1:8/files/1.pdf", ["HTTPS://127.0.0.1/files/1.pdf", "http://user@127.0.0.1.:8/files/1.pdf#x",
+                                        "http://127.0.0.1:8/files//1%2Epdf", "http://127.0.0.1:8/a/../files/1.pdf",
+                                        " http://127.0.0.1:8/FILES/1.pdf "]),
+    ("http://127.0.0.1:8/getfile?id=1&type=do", ["http://127.0.0.1:8/getfile?type=do&id=1&",
+                                                  "http://127.0.0.1:8/getfile?type=d%6F&id=1"]),
+])
+def test_vergleichsform_der_adressen(wert, gleich):
+    """dokumente._adresse: Schreibvarianten derselben Adresse ergeben dieselbe Vergleichsform (für den Ausschluss eher
+    zu weit als zu eng); andere Dateien bleiben verschieden; anderes als eine nicht leere Zeichenkette ergibt None."""
+    assert {dokumente._adresse(w) for w in gleich} == {dokumente._adresse(wert)}
+    for anders in ("http://127.0.0.1:8/files/10.pdf", "http://127.0.0.1:8/files/1.pdf/x", "http://127.0.0.2:8/files/1.pdf",
+                   "http://127.0.0.1:8/getfile?id=11&type=do", "http://127.0.0.1:8/getfile?id=1"):
+        assert dokumente._adresse(anders) != dokumente._adresse(wert)
+    for leer in (None, "", "  ", 7, {"id": wert}, ["x"]):
+        assert dokumente._adresse(leer) is None
+
+
+def test_ausgelassene_eingabe_ohne_nummer_im_lauf(oparl, monkeypatch):
+    """Ende zu Ende gegen den Testserver (Prüfung dok2): Eine Eingabe ohne Drucksachennummer hat dieselbe Datei als
+    Hauptdatei, die eine Verwaltungsvorlage als Anlage führt; eine zweite Verwaltungsvorlage führt eine Datei mit
+    derselben Adresse unter anderer Kennung wie eine gelöschte Vorlage. Keine der beiden Dateien wird angefragt; die
+    übrige Verwaltungsvorlage wird gelesen."""
+    _freigabe(monkeypatch)
+    geteilt = _datei(oparl, 10, _pdf([KOPF]), name="Vorlage")
+    _vorlage(oparl, 1)["auxiliaryFile"] = [geteilt]
+    eingabe = _vorlage(oparl, 2)
+    eingabe.update(reference=None, paperType="Anregungen und Beschwerden", mainFile=dict(geteilt))
+    _vorlage(oparl, 3)["auxiliaryFile"] = [_datei(oparl, 30, _pdf([KOPF]), accessUrl=f"{oparl.b}/files/40.pdf")]
+    _vorlage(oparl, 4).update(deleted=True, mainFile=_datei(oparl, 40, _pdf([KOPF])))
+    _mit_dateien(oparl, {5: KOPF})
+    sessionnet.fetch_all()
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == ["/files/5.pdf"]
+    assert [x["paper"].rsplit("/", 1)[1] for x in _eintraege()] == ["5"]
+
+
 @pytest.mark.parametrize("methode, evidenz, konfidenz, doppelt", [
     ("pdf_kopf_anlage", "Kopf der Anlage (S. 1): VI/61", "mittel", False),     # Anlage höchstens „niedrig“
     ("pdf_kopf_anlage", "Kopf der Vorlage (S. 1): VI/61", "niedrig", False),   # Fundstelle der Hauptdatei
