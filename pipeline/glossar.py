@@ -109,15 +109,19 @@ BEGRIFFE = [
                 "Geschäftsordnung.", GESCHO),
     ("Dringlichkeitsantrag", "Antrag, der ohne die übliche Frist auf die Tagesordnung kommen soll, weil die "
      "Angelegenheit keinen Aufschub duldet; ob er behandelt wird, entscheidet das Gremium.", ALLGEMEIN),
-    ("Anregungen und Beschwerden", "Jede Person kann sich schriftlich mit Anregungen oder Beschwerden in "
-     "Angelegenheiten der Gemeinde an den Rat wenden, allein oder gemeinsam mit anderen. In Köln berät darüber der "
-     "Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden. Der Ratsatlas zeigt solche Eingaben höchstens auf "
-     "Straßen- oder Stadtteilebene. Nicht zu verwechseln mit dem Einwohnerantrag.", "§ 24 GO NRW; " + HAUPTSATZUNG),
+    # Köln, zweiter Lauf (13.11.2026): Kreis der Berechtigten und Textform nach § 24 GO NRW in der Fassung ab 01.01.2026
+    # (recht.nrw.de, abgerufen 13.11.2026), Beratung im Ausschuss oder in der Bezirksvertretung laut Seite der Stadt Köln
+    ("Anregungen und Beschwerden", "Wer seit mindestens drei Monaten in der Gemeinde wohnt, kann sich allein oder "
+     "gemeinsam mit anderen in Textform mit Anregungen oder Beschwerden in Angelegenheiten der Gemeinde an den Rat oder "
+     "die Bezirksvertretung wenden. In Köln beraten darüber der Ausschuss für Bürgerbeteiligung, Anregungen und "
+     "Beschwerden oder die zuständige Bezirksvertretung. Der Ratsatlas zeigt solche Eingaben höchstens auf Straßen- oder "
+     "Stadtteilebene. Nicht zu verwechseln mit dem Einwohnerantrag.", "§ 24 GO NRW; " + HAUPTSATZUNG),
     ("Einwohnerantrag", "Einwohnerinnen und Einwohner können beantragen, dass der Rat über eine bestimmte "
      "Angelegenheit berät und entscheidet. Der Antrag braucht die Unterschriften einer Mindestzahl von "
      "Einwohnerinnen und Einwohnern; Einzelheiten regelt die Gemeindeordnung.", "§ 25 GO NRW"),
-    ("Einwohnerfragestunde", "Zeit in einer Sitzung, in der Einwohnerinnen und Einwohner Fragen stellen können; "
-                             "Einzelheiten regelt die Geschäftsordnung.", GESCHO),
+    ("Einwohnerfragestunde", "Zeit in einer Sitzung, in der Einwohnerinnen und Einwohner Fragen an die Verwaltung "
+                             "stellen können. In Köln beginnt jede Sitzung einer Bezirksvertretung damit; die Frage "
+                             "wird vorher schriftlich eingereicht.", GESCHO + " § 39"),
     ("Rat", "Gewählte Vertretung der Bürgerinnen und Bürger; er ist für alle Angelegenheiten der Gemeinde zuständig, "
             "soweit nichts anderes bestimmt ist.", "§ 41 GO NRW"),
     ("Bezirksvertretung", "Gewählte Vertretung eines Stadtbezirks in kreisfreien Städten. Köln hat neun Stadtbezirke "

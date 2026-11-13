@@ -133,7 +133,8 @@ console.log(JSON.stringify(aus));
 
 # --- B4: Tourtexte nach den Freigaben ---------------------------------------------------------------------------------
 
-# Texte der Tour vor Runde 18 (Bonner Fassung): mit allen Freigaben unverändert
+# Texte der Tour vor Runde 18 (Bonner Fassung): mit allen Freigaben unverändert; „Mitmachen“ seit dem zweiten Lauf
+# (13.11.2026) mit dem Kölner Text („Alle Wege im Überblick“ zeigt die Kölner Wege, kein Bürgerantrag und keine Fristen)
 BONN_TEXTE = {
     "Die Karte": (
         "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt "
@@ -149,9 +150,10 @@ BONN_TEXTE = {
         "Lizenzen und Datenstand."),
     "Mitmachen": (
         "Kommende Sitzungen, auch als Kalenderdatei; unter „Informiert bleiben“ Feeds, die neue Vorlagen im "
-        "Gebiet oder Änderungen an einem Vorgang melden; der Weg zum Bürgerantrag nach § 24 GO NRW; „Alle "
-        "Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen, die Fristen und alle Wege, sich "
-        "einzubringen; und ein Hinweis, wenn etwas falsch zugeordnet ist."),
+        "Gebiet oder Änderungen an einem Vorgang melden; der Weg, sich mit Anregungen und Beschwerden nach § 24 "
+        "GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; „Alle Wege im Überblick“ zeigt je "
+        "Stadtbezirk die nächsten Sitzungen und alle Wege, sich einzubringen, von der Einwohnerfragestunde bis "
+        "zum Bürgerbegehren; und ein Hinweis, wenn etwas falsch zugeordnet ist."),
     "Verstehen": (
         "Hilfen zum Lesen der Karte: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge"
         " oder Zuschussbedarf in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie"

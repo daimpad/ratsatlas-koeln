@@ -25,6 +25,11 @@ const run = async (p, name, rows) => {
   await p.click('.toggle[data-panel="timeline-wrap"]'); await p.waitForTimeout(500); await run(p, 'zeitleiste', rows);
   await p.click('#about-open'); await p.waitForTimeout(300); await run(p, 'ueber', rows); await p.keyboard.press('Escape');
   await p.click('[data-mega="mega-mitmachen"]'); await p.waitForTimeout(300); await run(p, 'mitmachen', rows);
+  // Fläche „Mitmachen in Köln“ (nur mit Freigabe „mitmachen“; zweiter Lauf, 13.11.2026) mit gewähltem Stadtbezirk
+  await p.goto(B + '?gebiet=ortsteil:ehrenfeld&mitmachen=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+  if (await p.$('#panel-mitmachen:not([hidden]) #bt-bezirk')) {
+    await p.click('.bt-quorum summary').catch(() => {}); await p.waitForTimeout(200); await run(p, 'mitmachen-flaeche', rows);
+  }
   for (const s of ['gebiete/', 'begriffe/', 'einfach/', 'rss/', 'datenschutz.html', 'ortsteil/ehrenfeld/', '404.html']) {
     const r = await p.goto(B + s, { waitUntil: 'networkidle' }); if (r && r.status() < 400) await run(p, s, rows); else rows.push([s, 'nicht gefunden', '', '', '', '']);
   }

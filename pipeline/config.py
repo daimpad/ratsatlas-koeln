@@ -150,9 +150,10 @@ PILOT_ORTSTEIL = None
 ZUSATZTHEMEN = {
     "haushalt": False, "baustellen": False, "anliegen": False, "wahlen": False, "themenseiten": False,
     "kontext": True, "soll": False, "chat": False,
-    # zweiter Lauf (Entscheidung 04.11.2026); Einfache Sprache für Köln neu geschrieben und eingeschaltet am 13.11.2026
-    # (Auftraggeber: zweiten Lauf jetzt beginnen; pipeline/einfachseite.py)
-    "einfache_sprache": True, "kurzfassungen": False, "mitmachen": False, "besetzung": False,
+    # zweiter Lauf (Entscheidung 04.11.2026; Beginn am 13.11.2026 freigegeben): Einfache Sprache für Köln neu geschrieben
+    # (pipeline/einfachseite.py) und „mitmachen“ (Fläche „Mitmachen in Köln“, site/beteiligung.js, Quellen am 13.11.2026
+    # geprüft; TECHNIK.md, „Mitmachen in Köln“), beide eingeschaltet am 13.11.2026
+    "einfache_sprache": True, "kurzfassungen": False, "mitmachen": True, "besetzung": False,
     # Seite technik/ (aus den Workflows erzeugt; für Köln seit Phase 5)
     "technik": True,
     # Strukturdaten (Datenvertrag „Strukturdaten“, data/strukturdaten/) auf Seite und im Datenpaket, Einwohnerzahl und

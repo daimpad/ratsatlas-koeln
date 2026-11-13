@@ -66,6 +66,8 @@ Abgerufen wird nachts, mit einer Verbindung und Abstand zwischen den Anfragen; n
 
 ## Mitmachen
 
+Wie Sie sich selbst in Rat, Ausschüssen und Bezirksvertretungen einbringen können, von der Einwohnerfragestunde bis zum Bürgerbegehren, zeigt der Ratsatlas unter „Mitmachen“ → „Alle Wege im Überblick“, mit den nächsten Sitzungen Ihres Stadtbezirks und Links zu den Seiten der Stadt Köln.
+
 Hinweise auf falsche Orte oder Fehler bitte als [Issue](https://github.com/daimpad/ratsatlas-koeln/issues/new/choose); wie man am Code mitarbeitet, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Kontakt: contact@nozilla.de · [Impressum](https://nozilla.de/impressum/)

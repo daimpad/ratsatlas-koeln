@@ -16,11 +16,13 @@ const BASIS = process.argv[2] || "http://127.0.0.1:8790/";
 const AUSGABE = process.argv[3];
 const AXE = process.env.AXE_PFAD ? fs.readFileSync(process.env.AXE_PFAD, "utf8") : null;
 // Wörter, die in der Tour nur mit der Freigabe ihrer Funktion (index.json meta.funktionen) vorkommen dürfen (wie
-// tests/test_seite_bedienung.py); die Einfache Sprache ist seit 13.11.2026 freigegeben
+// tests/test_seite_bedienung.py); Einfache Sprache und „Alle Wege im Überblick“ (mitmachen) sind seit 13.11.2026
+// freigegeben. „Bürgerantrag“ ist ein Bonner Begriff (in Köln: Einwohnerantrag) und bleibt immer verboten.
 const WOERTER_JE_FUNKTION = { baustellen: ["Baustelle"], einfache_sprache: ["Einfache Sprache", "Einfacher Sprache"],
-  haushalt: ["Zuschussbedarf", "Haushalt"], mitmachen: ["Alle Wege im Überblick", "Bürgerantrag"], soll: ["Prozesse"],
+  haushalt: ["Zuschussbedarf", "Haushalt"], mitmachen: ["Alle Wege im Überblick"], soll: ["Prozesse"],
   chat: ["Assistent"], themenseiten: ["Themenseiten"] };
-const abgeschaltet = (fn) => Object.entries(WOERTER_JE_FUNKTION).filter(([f]) => !(fn || {})[f]).flatMap(([, w]) => w);
+const IMMER_VERBOTEN = ["Bürgerantrag"];
+const abgeschaltet = (fn) => IMMER_VERBOTEN.concat(Object.entries(WOERTER_JE_FUNKTION).filter(([f]) => !(fn || {})[f]).flatMap(([, w]) => w));
 const PROFILE = {
   desktop: { viewport: { width: 1400, height: 900 } },
   telefon: { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
@@ -187,8 +189,9 @@ async function termineJeGebiet(browser, profil, extra) {
   const { ctx, page, fehler } = await neueSeite(browser, profil);
   await page.goto(BASIS, { waitUntil: "load" });
   await geladen(page);
-  const gebiete = [...(await page.evaluate(async () => (await (await fetch("data/export/koeln/index.json")).json()).bezirke
-    .map((b) => "bezirk:" + b.slug))), extra];
+  const bezirke = await page.evaluate(async () => (await (await fetch("data/export/koeln/index.json")).json()).bezirke
+    .map((b) => ({ slug: b.slug, name: b.name })));
+  const gebiete = [...bezirke.map((b) => "bezirk:" + b.slug), extra];
   const termine = {};
   for (const gebiet of gebiete) {
     await page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
@@ -196,7 +199,8 @@ async function termineJeGebiet(browser, profil, extra) {
     await page.evaluate(() => document.getElementById("cta-termine").click());
     await page.waitForSelector("#termine .count");
     const lesen = () => page.$eval("#termine", (t) => ({ sitzungen: t.querySelectorAll(".meeting").length,
-      tagesordnung: [...t.querySelectorAll(".agenda button[data-ref]")].map((b) => b.dataset.ref), text: t.innerText }));
+      tagesordnung: [...t.querySelectorAll(".agenda button[data-ref]")].map((b) => b.dataset.ref), text: t.innerText,
+      gremien: [...t.querySelectorAll(".meeting-head strong")].map((s) => s.textContent) }));
     const eigene = await lesen();
     await page.selectOption("#termine-scope", "alle");
     await page.waitForTimeout(200);
@@ -204,6 +208,15 @@ async function termineJeGebiet(browser, profil, extra) {
   }
   const n = Object.values(termine).reduce((a, t) => a + t.alle.tagesordnung.length, 0);
   pruefen(profil, "Termine mit Vorlagen auf der Tagesordnung", n > 0, { gebiete: gebiete.length, tagesordnung: n });
+  // zweiter Lauf: „Rat, Ausschüsse und Bezirksvertretung …“ zeigt die eigene Bezirksvertretung, keine andere
+  const bv = (g) => /^Bezirksvertretung/.test(g);
+  const eigeneBV = bezirke.map((b) => {
+    const t = termine["bezirk:" + b.slug];
+    const fremd = t.eigene.gremien.filter((g) => bv(g) && !g.includes(b.name));
+    const fehlt = t.alle.gremien.some((g) => bv(g) && g.includes(b.name)) && !t.eigene.gremien.some((g) => bv(g) && g.includes(b.name));
+    return { bezirk: b.name, fremd, fehlt };
+  }).filter((x) => x.fremd.length || x.fehlt);
+  pruefen(profil, "Termine je Stadtbezirk mit der eigenen Bezirksvertretung", eigeneBV.length === 0, eigeneBV);
   vergleich[profil + "_termine"] = termine;
   pruefen(profil, "keine Skriptfehler (Termine)", fehler.length === 0, fehler);
   await ctx.close();
@@ -362,6 +375,67 @@ async function blattKarte(browser) {
   await ctx.close();
 }
 
+// Zweiter Lauf (13.11.2026): Fläche „Mitmachen in Köln“ mit Freigabe „mitmachen“ unter der CSP: öffnet über
+// ?mitmachen=1 mit dem Stadtbezirk des Gebiets, Kölner Inhalt ohne Bonner Reste, äußere Links nur zur Stadt Köln und zu
+// recht.nrw.de (dazu die Sitzungen aus den Daten), Wechsel des Stadtbezirks mit der eigenen Bezirksvertretung, axe ohne
+// Verstoß; aus dem Vorgang über „Alle Wege, sich einzubringen“. Ohne Freigabe fehlt die Fläche.
+async function mitmachenFlaeche(browser, gebiet) {
+  const profil = "desktop-csp";
+  const { ctx, page, fehler } = await neueSeite(browser, "desktop", true);
+  await page.goto(BASIS, { waitUntil: "load" });
+  await geladen(page);
+  const idx = await page.evaluate(async () => (await (await fetch("data/export/koeln/index.json")).json()));
+  if (!(idx.meta.funktionen || {}).mitmachen) {
+    pruefen(profil, "ohne Freigabe „mitmachen“ keine Fläche", !(await page.$("#panel-mitmachen")));
+    await ctx.close();
+    return;
+  }
+  const [b0, b1] = idx.bezirke;
+  await page.goto(`${BASIS}?gebiet=bezirk:${b0.slug}&mitmachen=1`, { waitUntil: "load" });
+  await geladen(page);
+  await page.waitForSelector("#panel-mitmachen:not([hidden]) #bt-bezirk", { timeout: 20000 });
+  const lesen = () => page.evaluate(() => {
+    const p = document.getElementById("panel-mitmachen");
+    return { titel: p.querySelector("h2").textContent, wahl: p.querySelector("#bt-bezirk").value, text: p.innerText,
+      links: [...p.querySelectorAll("a[href]")].map((a) => a.href), termine: [...p.querySelectorAll(".bt-dates li")].map((li) => li.innerText),
+      adresse: location.search };
+  });
+  const a = await lesen();
+  // innen nur die Seite zum Datenschutz; außen die Stadt, recht.nrw.de und die Sitzungen aus den Daten (Testdaten: example.invalid)
+  const fremdeLinks = a.links.filter((u) => u !== new URL("datenschutz.html", BASIS).href
+    && !/^https:\/\/(www\.stadt-koeln\.de|recht\.nrw\.de)\//.test(u) && !/^https:\/\/example\.invalid\//.test(u));
+  const bonn = ["Bonn", "Bürgerantrag", "21 Tage", "bonn.de"].filter((w) => a.text.includes(w) || a.links.some((u) => u.includes(w)));
+  pruefen(profil, "Mitmachen in Köln: Inhalt, Stadtbezirk aus dem Gebiet, Links", a.titel === "Mitmachen in Köln" && a.wahl === b0.name
+    && ["Einwohnerfragestunde", "Anregungen und Beschwerden", "Einwohnerantrag", "Bürgerbegehren", "Ihre Angaben und der Ratsatlas"].every((w) => a.text.includes(w))
+    && fremdeLinks.length === 0 && bonn.length === 0 && /mitmachen=1/.test(a.adresse), { wahl: a.wahl, fremdeLinks, bonn, adresse: a.adresse });
+  await page.selectOption("#bt-bezirk", b1.name);
+  await page.waitForTimeout(200);
+  const b = await lesen();
+  const fokus = await page.evaluate(() => document.activeElement.id);
+  const bvFremd = b.termine.filter((t) => /Bezirksvertretung/.test(t) && !t.includes(b1.name));
+  pruefen(profil, "Mitmachen in Köln: Wechsel des Stadtbezirks", b.wahl === b1.name && bvFremd.length === 0 && fokus === "bt-bezirk"
+    && new URLSearchParams(b.adresse).get("bezirk") === b1.name, { wahl: b.wahl, termine: b.termine, fokus, adresse: b.adresse });
+  const axeMm = await axeOhneBypass(page);
+  if (axeMm) pruefen(profil, "axe unter der CSP (Mitmachen in Köln)", axeMm.length === 0, axeMm);
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(200);
+  pruefen(profil, "Mitmachen in Köln: Esc schließt", await page.evaluate(() => document.getElementById("panel-mitmachen").hidden));
+  // aus dem Vorgang
+  await page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
+  await geladen(page);
+  await page.click('.toggle[data-panel="panel-list"]');
+  await page.waitForSelector("#panel-list:not([hidden]) #papers li button");
+  await page.click("#papers li button");
+  await page.waitForSelector("#detail [data-mitmachen-oeffnen]", { timeout: 20000 });
+  await page.click("#detail [data-mitmachen-oeffnen]");
+  await page.waitForSelector("#panel-mitmachen:not([hidden]) #bt-bezirk", { timeout: 20000 });
+  pruefen(profil, "Mitmachen in Köln aus dem Vorgang", await page.evaluate(() => document.activeElement.id === "mitmachen-heading"));
+  const v = await cspVerstoesse(page);
+  pruefen(profil, "keine Verstöße gegen die Content-Security-Policy (Mitmachen)", v.length === 0, v);
+  pruefen(profil, "keine Skriptfehler (Mitmachen)", fehler.length === 0, fehler);
+  await ctx.close();
+}
+
 // B4: Tour mit den Kölner Freigaben (Datenbetrieb, vorschau=false): keine abgeschaltete Funktion, ohne Fehler bis zum Ende
 async function tour(browser, profil) {
   const { ctx, page, fehler } = await neueSeite(browser, profil);
@@ -413,6 +487,7 @@ async function tour(browser, profil) {
       if (profil === "telefon") await menueUeberAuswertung(browser, gebiet);
       touren[profil] = await tour(browser, profil);
       if (profil === "desktop") await cspDesktop(browser, mitPunkten);
+      if (profil === "desktop") await mitmachenFlaeche(browser, mitPunkten);
       if (profil === "telefon") await blattKarte(browser);
     }
   } catch (e) {

@@ -13,8 +13,8 @@
   const TELEFON_KARTE = MOBILE.matches ? " Auf dem Telefon liegen Ebenen, Legenden und Quellen zusammen hinter „Karte“." : "";
   // Freigaben (index.json meta.funktionen, config.ZUSATZTHEMEN): app.js blendet Elemente mit data-funktion aus und zeigt
   // den Schalter „Baustellen“ nur mit Baustellen. Sätze über abgeschaltete Funktionen entfallen, die Texte für Bonn
-  // bleiben für die spätere Freigabe stehen (Runde 18; in Köln abgeschaltet: Baustellen, Haushalt, „Alle Wege im
-  // Überblick“, Prozesse, Ratsassistent; Einfache Sprache seit 13.11.2026 freigegeben)
+  // bleiben für die spätere Freigabe stehen (Runde 18; in Köln abgeschaltet: Baustellen, Haushalt, Prozesse,
+  // Ratsassistent; Einfache Sprache und „Alle Wege im Überblick“ seit dem zweiten Lauf, 13.11.2026, mit Kölner Text)
   const sichtbar = (sel) => { const el = document.querySelector(sel); return Boolean(el) && !el.hidden; };
   const AN = {
     baustellen: () => sichtbar(".map-bau"),
@@ -91,7 +91,7 @@
     { menu: "mega-mitmachen", target: "#mega-mitmachen", beacons: ["#cta-termine", "#cta-mitmachen", "#cta-feed .btn"],
       title: "Mitmachen",
       text: () => "Kommende Sitzungen, auch als Kalenderdatei; unter „Informiert bleiben“ Feeds, die neue Vorlagen im Gebiet oder Änderungen an einem Vorgang melden; "
-        + (AN.mitmachen() ? "der Weg zum Bürgerantrag nach § 24 GO NRW; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen, die Fristen und alle Wege, sich einzubringen; "
+        + (AN.mitmachen() ? "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen und alle Wege, sich einzubringen, von der Einwohnerfragestunde bis zum Bürgerbegehren; "
           : "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden; ")
         + "und ein Hinweis, wenn etwas falsch zugeordnet ist.",
       vorschau: "Unter „Informiert bleiben“ stehen Feeds, die neue Vorlagen im gewählten Gebiet melden; sie füllen sich, sobald Ratsvorlagen vorliegen. Kommende Sitzungen und die Kalenderdatei folgen mit den Ratsvorlagen. Außerdem: der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden, und ein Hinweis, wenn etwas falsch zugeordnet oder unklar ist." },
