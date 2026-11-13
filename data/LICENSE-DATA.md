@@ -6,8 +6,8 @@ Die Pfade beginnen unter `data/`: Auf der Seite liegt `export/koeln/vorlagen.geo
 
 | Datei | Quelle | Lizenz | Namensnennung |
 |---|---|---|---|
-| `geo/stadtteile_koeln.geojson` | Stadt Köln, Datensatz „Stadtteile Köln“ (offenedaten-koeln.de), umgerechnet nach WGS84, um 2 m vereinfacht | Datenlizenz Deutschland – Zero – Version 2.0 | Datenquelle: Stadt Köln – offenedaten-koeln.de |
-| `geo/stadtbezirke_koeln.geojson` | Stadt Köln, Datensatz „Stadtbezirke Köln“, umgerechnet und vereinfacht wie oben | dl-de/zero 2.0 | wie oben |
+| `geo/stadtteile_koeln.geojson` | Stadt Köln, Datensatz „Stadtteile Köln“ (offenedaten-koeln.de), umgerechnet nach WGS84, um 2 m vereinfacht, danach ohne Lücken und Überlappungen zwischen Nachbarn bereinigt (Grenzen um höchstens 2,21 m verschoben) | Datenlizenz Deutschland – Zero – Version 2.0 | Datenquelle: Stadt Köln – offenedaten-koeln.de |
+| `geo/stadtbezirke_koeln.geojson` | Flächen: Vereinigung der Stadtteile oben je Stadtbezirk; Nummer und Name aus dem Datensatz „Stadtbezirke Köln“ der Stadt Köln | dl-de/zero 2.0 | wie oben |
 | `geo/strassen_koeln.json` | abgeleitet aus Stadt Köln, Datensatz „Straßen Köln“ (Lage je Stadtteil, Kreuzungen; Namen ausgeschrieben) | dl-de/zero 2.0 | wie oben |
 | `geo/hausnummern_koeln.json` | abgeleitet aus Stadt Köln, Datensatz „Adressen Köln“ (Hausnummern je Straße und Stadtteil, Hauskoordinaten mit 5 Nachkommastellen) | dl-de/zero 2.0 | wie oben |
 | `geo/bebauungsplaene_koeln.geojson` | OGC-API „Bauleitplanung in NRW (INSPIRE)“ des MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln (`ogc-api.nrw.de/inspire-lu-bplan/v1`); nur rechtsverbindliche Pläne, um 0,5 m vereinfacht, Plannummer in der Schreibweise der Vorlagentitel | Datenlizenz Deutschland – Namensnennung – Version 2.0 (Angabe der Schnittstelle; die Metadaten nennen „keine Bedingungen“, geführt wird die strengere Angabe) | MHKBD NRW / IT.NRW, Bauleitplanung in NRW; Datengrundlage Stadt Köln |

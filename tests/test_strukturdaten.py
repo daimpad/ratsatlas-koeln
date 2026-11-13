@@ -1856,6 +1856,30 @@ def test_herkunft_der_gebiete_aus_data_geo(umgebung, monkeypatch):
     assert set(strukturdaten_raum.GEO_HERKUNFT.values()) == {"stadtteile_koeln.geojson", "stadtbezirke_koeln.geojson"}
 
 
+def test_herkunft_der_bereinigten_gebiete(umgebung, monkeypatch):
+    """Die am 13.11.2026 ohne Download lückenlos bereinigte Fassung von data/geo (strukturdaten_raum.GEO_ABGELEITET)
+    behält das Abrufdatum der Quelle (04.11.2026) und sagt, woraus sie abgeleitet ist."""
+    dl, aus = umgebung
+    _normalisieren(dl, aus)
+    monkeypatch.setattr(strukturdaten_raum, "GEO_ABGELEITET", {
+        hashlib.sha256(strukturdaten.geo_pfad(e).read_bytes()).hexdigest(): strukturdaten.geo_pfad(e).name
+        for e in ("stadtteil", "stadtbezirk")})
+    strukturdaten.write()
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    for ebene, name in (("stadtteil", "stadtteile_koeln.geojson"), ("stadtbezirk", "stadtbezirke_koeln.geojson")):
+        r = meta["raum"][ebene]
+        assert r["abgerufen"] == "2026-11-04"
+        assert (f"data/geo/{name} in dieser Fassung (sha256) am 13.11.2026 ohne neuen Download aus der Fassung von "
+                "Commit 3964836 als lückenlose Abdeckung abgeleitet") in r["abgerufen_beleg"]
+        assert _geojson(aus, ebene)["meta"]["abgerufen"] == "2026-11-04"
+    # eine Datei mit dem Namen der anderen zählt nicht (Prüfsumme und Name müssen zusammenpassen)
+    monkeypatch.setattr(strukturdaten_raum, "GEO_ABGELEITET", {
+        hashlib.sha256(strukturdaten.geo_pfad("stadtteil").read_bytes()).hexdigest(): "stadtbezirke_koeln.geojson"})
+    strukturdaten.write()
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    assert meta["raum"]["stadtteil"]["abgerufen"] == "nicht dokumentiert"
+
+
 def test_geheim_aber_ableitbar_gemeldet(umgebung):
     """Ist genau ein Wert einer geprüften Beziehung geheim und durch die veröffentlichten Werte derselben Zeile bestimmt,
     zählt meta.json die Zeilen je Raumebene (geheimhaltung_ableitbar) und nennt die Zahl im Hinweis, ohne Beziehung

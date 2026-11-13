@@ -2,14 +2,20 @@
 
 Die Seite braucht für Navigation, Umrisse und Bebauungspläne keine Zentimetergenauigkeit. Vereinfacht wird mit
 etwa 2 m Toleranz (Douglas-Peucker, Topologie je Fläche erhalten), Koordinaten auf 5 Nachkommastellen (rund 1 m).
-Die Dateien enden auf .json, damit Webserver sie wie die übrigen Daten komprimieren. Für Verortung und
-Datenpaket bleiben die vollen Flächen in data/geo/ maßgeblich."""
+Stadtteile und Stadtbezirke bleiben dabei wie in data/geo ohne Lücken und Überlappungen (`gebiete_fuer_karte`,
+Entscheidung 13.11.2026): gemeinsame Grenzen werden einmal vereinfacht und gemeinsam gerundet, die Stadtbezirke sind
+die Vereinigung ihrer Stadtteile. Die Dateien enden auf .json, damit Webserver sie wie die übrigen Daten komprimieren.
+Für Verortung und Datenpaket bleiben die vollen Flächen in data/geo/ maßgeblich."""
 import json
+from collections import defaultdict
 
+import numpy as np
+import shapely
 from shapely import make_valid
+from shapely.errors import GEOSException
 from shapely.geometry import MultiPolygon, mapping, shape
 
-from . import config
+from . import config, geodaten
 
 TOLERANZ = 0.00002  # Grad, etwa 1,4 m in Nord-Süd- und 2,2 m in Ost-West-Richtung
 NACHKOMMA = 5
@@ -54,6 +60,31 @@ def simplify(collection, toleranz=TOLERANZ):
     return {"type": "FeatureCollection", "features": feats}
 
 
+def gebiete_fuer_karte(teile, bezirke, toleranz=TOLERANZ):
+    """(Stadtteile, Stadtbezirke) als FeatureCollections für die Karte, ohne Lücken und Überlappungen wie data/geo:
+    shapely.coverage_simplify über alle Stadtteile (jede gemeinsame Grenze einmal, Visvalingam-Whyatt mit `toleranz`
+    in Grad), gemeinsam auf NACHKOMMA Stellen gerundet (geodaten.gemeinsam_runden), die Stadtbezirke als Vereinigung
+    ihrer Stadtteile (Eigenschaft bezirk). Eigenschaften und Reihenfolge wie in den Eingaben. ValueError oder
+    GEOSException, wenn das nicht geht (etwa ohne gültige Abdeckung in data/geo)."""
+    feats = teile["features"]
+    geoms = np.array([shape(f["geometry"]) for f in feats], dtype=object)
+    leicht = geodaten.gemeinsam_runden(shapely.coverage_simplify(geoms, toleranz), 10 ** -NACHKOMMA,
+                                       [f["properties"]["ortsteil"] for f in feats])
+    gruppen = defaultdict(list)
+    for f, g in zip(feats, leicht):
+        gruppen[f["properties"]["bezirk"]].append(g)
+    if {f["properties"]["bezirk"] for f in bezirke["features"]} != set(gruppen):
+        raise ValueError("Stadtbezirke und Stadtteile passen nicht zusammen")
+    bz = [shapely.orient_polygons(shapely.coverage_union_all(gruppen[f["properties"]["bezirk"]]), exterior_cw=True)
+          for f in bezirke["features"]]
+
+    def sammlung(quelle, flaechen):
+        return {"type": "FeatureCollection",
+                "features": [{"type": "Feature", "properties": f.get("properties", {}), "geometry": _round(mapping(g))}
+                             for f, g in zip(quelle, flaechen)]}
+    return sammlung(feats, leicht), sammlung(bezirke["features"], bz)
+
+
 def meta(name, quelle_meta):
     """meta einer vereinfachten Datei: Quelle, Adresse (Bezugsquelle der Datei in data/geo/, sonst config.SOURCES),
     Lizenz mit Namensnennung aus config.SOURCES, Abrufzeit, falls die Quelle sie nennt. Die Seite liest nur `features`."""
@@ -68,12 +99,19 @@ def write(out):
     """Schreibt die vereinfachten Flächen nach out/flaechen/; fehlende Quelldateien werden übersprungen."""
     target = out / "flaechen"
     target.mkdir(parents=True, exist_ok=True)
-    sizes = {}
+    sizes, gebiete = {}, {}
+    if DATEIEN["ortsteile"].exists() and DATEIEN["bezirke"].exists():
+        try:
+            gebiete = dict(zip(("ortsteile", "bezirke"), gebiete_fuer_karte(
+                json.loads(DATEIEN["ortsteile"].read_text()), json.loads(DATEIEN["bezirke"].read_text()))))
+        except (ValueError, GEOSException) as e:   # nur Anzeige: dann wie bisher je Fläche vereinfacht
+            print(f"Flächen für die Karte: Stadtteile und Stadtbezirke nicht gemeinsam vereinfacht ({e}); je Fläche "
+                  "vereinfacht, mit Lücken und Überlappungen zwischen Nachbarn")
     for name, src in DATEIEN.items():
         if not src.exists():
             continue
         quelle = json.loads(src.read_text())
-        data = {**simplify(quelle), "meta": meta(name, quelle.get("meta") or {})}
+        data = {**(gebiete.get(name) or simplify(quelle)), "meta": meta(name, quelle.get("meta") or {})}
         text = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
         (target / f"{name}.json").write_text(text)
         sizes[name] = len(text)
