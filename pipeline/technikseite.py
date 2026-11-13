@@ -76,7 +76,15 @@ QUELLEN = {
                                       "auf der Fläche des Plans."),
     "osm": ("OpenStreetMap", "Daten der grauen Karte."),
 }
-WEITERE_QUELLEN = []
+# Quellen außerhalb von config.SOURCES (ohne Lizenzangabe der Quelle, daher nicht im DCAT): (Kennung, Kurzname,
+# Erklärung, Adresse)
+WEITERE_QUELLEN = [
+    ("q-aemter", "Dezernate und Dienststellen",
+     "Geschäfts- und Dezernatsverteilungsplan der Stadt Köln (PDF, Stand 01.11.2026): ordnet die federführende "
+     "Dienststelle einer Vorlage ihrem Dezernat zu, mit dem Stand, der am Datum der Vorlage galt. Im Plan ist keine "
+     "Lizenz angegeben; übernommen sind nur Kennungen und Bezeichnungen.",
+     "https://www.stadt-koeln.de/mediaasset/content/verwaltung/geschaefts-und-dezernatsverteilungsplan.pdf"),
+]
 
 AUSGABEN = [
     ("a-karte", "Karte und Liste", "Je Gebiet eine JSON-Datei, die die Karte im Browser lädt; die Suche über ganz Köln "
@@ -436,7 +444,7 @@ def daten(root="../"):
     quellen = [(f"q-{k}", QUELLEN[k][0], f"{QUELLEN[k][1]} Lizenz: {config.lizenz_oeffentlich(config.SOURCES[k]['license'])}.",
                 config.SOURCES[k]["url"] if config.SOURCES[k]["url"].startswith("http") else None, "Quelle")
                for k in config.SOURCES]
-    quellen += [(k, t, e, z, "Seite") for k, t, e, z in WEITERE_QUELLEN]
+    quellen += [(k, t, e, z, "Quelle") for k, t, e, z in WEITERE_QUELLEN]
     ausgaben = [(k, t, e, z, "Öffnen") for k, t, e, z in AUSGABEN]
     ueberblick = [(kopf, [(k, t, e, None, "") for k, t, e in boxen]) for kopf, boxen in UEBERBLICK]
 

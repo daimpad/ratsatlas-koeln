@@ -26,6 +26,13 @@ VORHABEN = ["Umgestaltung der {s}", "Sanierung der Fahrbahn {s}", "Neue Fahrrada
 ERGEBNISSE = ["ungeändert beschlossen", "geändert beschlossen", "Kenntnis genommen", "vertagt", "abgelehnt",
               "zurückgezogen"]
 FRAKTIONEN = ["SPD", "CDU", "GRÜNE", "FDP", "Die Linke", "Volt"]
+# Federführende Dienststellen (underDirectionOf) für einen Teil der Verwaltungsvorlagen, in verschiedenen Schreibweisen
+# des Namens, damit die Zuordnung zur Ämtertabelle (pipeline/aemter.py) alle Fälle durchläuft: Nummer und Name, Name
+# allein, Kennung und Name, mehrdeutiger Name, Nummer mit anderem Namen, unbekannte Dienststelle. Ob und wie Köln
+# underDirectionOf füllt, ist ungemessen (Stichproben 2026: bei keiner Vorlage)
+DIENSTSTELLEN = ["61 Stadtplanungsamt", "Amt für Straßen und Radwegebau", "Amt für Kinder, Jugend und Familie",
+                 "Umwelt- und Verbraucherschutzamt", "VIII/67 Amt für Landschaftspflege und Grünflächen", "Verwaltung",
+                 "52 Kulturamt", "[Testdaten] Dienststelle ohne Eintrag"]
 
 
 def main():
@@ -49,6 +56,10 @@ def main():
              "organizationType": "Gremium"}]
     orgs += [{"id": f"{B}/organizations/bv{nr}", "name": f"Bezirksvertretung {nr} ({name})", "organizationType": "Gremium"}
              for nr, name in BEZIRKE_KOELN.items()]
+    verwaltung = [{"id": f"{B}/organizations/dst{k}", "name": name} for k, name in enumerate(DIENSTSTELLEN, 1)]
+    orgs += verwaltung
+    # eigener Zufallsgenerator (wie rp), damit die übrigen Testdaten gleich bleiben
+    ra = random.Random(a.seed + 2)
     heute = date(2026, 11, 4)
     meetings = {}
 
@@ -93,7 +104,9 @@ def main():
             cons.append({"id": f"{B}/consultations/{i}-{k}", "meeting": m["id"], "agendaItem": top_id,
                          "organization": [org["id"]], "role": "Entscheidung" if k == len(folge) - 1 else "Beratung",
                          "authoritative": k == len(folge) - 1})
+        federfuehrend = ra.choice(verwaltung) if ra.random() < 0.5 and not politisch and not eingabe else None
         papers.append({
+            **({"underDirectionOf": [federfuehrend["id"]]} if federfuehrend else {}),
             "id": f"{B}/papers/{i}", "reference": (f"AN/{1000 + i}/{tag.year}" if politisch else f"{2000 + i}/{tag.year}"),
             "name": f"[Testdaten] {titel}", "date": tag.isoformat(),
             "paperType": ("Antrag nach § 3 der Geschäftsordnung des Rates" if politisch

@@ -140,8 +140,11 @@ BEGRIFFE = [
      "kann die Öffentlichkeit ausgeschlossen werden. Inhalte nichtöffentlicher Beratungen sind nicht einsehbar.",
      "§ 48 GO NRW"),
     ("Federführende Dienststelle", "Dezernat und Amt der Verwaltung, die eine Vorlage verantworten; in Köln im Kopf der "
-     "Verwaltungsvorlage als „Dezernat, Dienststelle“ angegeben (z. B. „II/II/2“).",
-     DATENFELD + ", Feld „underDirectionOf“ bzw. Kopf der Vorlage"),
+     "Verwaltungsvorlage als „Dezernat, Dienststelle“ angegeben (z. B. „II/II/2“). Dezernat und Bezeichnung ergänzt der "
+     "Ratsatlas aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt, wenn der Plan am Datum der Vorlage galt und "
+     "die Angabe eindeutig passt (abgeleitet, mit Fundstelle im Plan).",
+     DATENFELD + ", Feld „underDirectionOf“ bzw. Kopf der Vorlage; Geschäfts- und Dezernatsverteilungsplan der Stadt "
+     "Köln"),
     ("Beratungsfolge", "Reihenfolge der Gremien, die eine Vorlage beraten, jeweils mit Rolle (Entscheidung, Empfehlung, "
                        "Anhörung, Kenntnisnahme).", DATENFELD + ", Objekt „Consultation“"),
     ("Tagesordnungspunkt", "Punkt der Tagesordnung einer Sitzung; über ihn wird beraten und gegebenenfalls "

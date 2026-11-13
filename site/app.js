@@ -86,6 +86,15 @@
   };
   // Datum eines Zeitpunkts nach derselben Regel, sonst „unbekannt“
   const zeitDatum = (wert) => { const tag = zeitTag(wert); return tag ? fmtDate(tag) : "unbekannt"; };
+  // Federführung im Geschäfts- und Dezernatsverteilungsplan (responsibility[].aemtertabelle, pipeline/aemter.py):
+  // Dezernat und Dienststelle mit Fundstelle, abgeleitet; ohne eindeutige Zuordnung nichts
+  const AEMTER_ZUGEORDNET = ["eindeutig", "eindeutig bis zur Dienststelle"];
+  const aemterZeile = (a) => {
+    if (!a || !AEMTER_ZUGEORDNET.includes(a.status)) return "";
+    const teile = [a.dezernat_label, a.ebene !== "dezernat" && a.uebergeordnet && a.uebergeordnet.label,
+      a.ebene !== "dezernat" && a.label].filter(Boolean).map(esc).join(" · ");
+    return `<span class="meta">${teile}</span> <span class="derived">abgeleitet, über ${esc(a.fundstelle)}</span>`;
+  };
   // Nebenlisten, die beim letzten Abruf nicht aktualisiert wurden (index.json meta.abruf_warnungen,
   // pipeline/export.py): ein Satz je Liste im Datenstand, ohne Fachbegriffe und nicht nur als Farbe
   const WARNUNG_SATZ = { meetings: "Sitzungstermine wurden", organizations: "Die Liste der Gremien wurde" };
@@ -1930,7 +1939,7 @@
     syncUrl();
     if (tl) tl.select(p);
     highlight();
-    const resp = p.responsibility.map((r) => `${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`).join("<br>");
+    const resp = p.responsibility.map((r) => [`${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`, aemterZeile(r.aemtertabelle)].filter(Boolean).join("<br>")).join("<br>");
     const outside = (l) => (area.kind === "ortsteil" && l.ortsteil && l.ortsteil !== area.name)
       || (area.kind === "bezirk" && l.stadtbezirk && l.stadtbezirk !== area.name);
     const locItem = (l) => `<li><strong>${esc(l.name || l.ortsteil || l.stadtbezirk)}</strong>
