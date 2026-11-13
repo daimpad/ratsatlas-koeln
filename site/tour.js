@@ -13,8 +13,8 @@
   const TELEFON_KARTE = MOBILE.matches ? " Auf dem Telefon liegen Ebenen, Legenden und Quellen zusammen hinter „Karte“." : "";
   // Freigaben (index.json meta.funktionen, config.ZUSATZTHEMEN): app.js blendet Elemente mit data-funktion aus und zeigt
   // den Schalter „Baustellen“ nur mit Baustellen. Sätze über abgeschaltete Funktionen entfallen, die Texte für Bonn
-  // bleiben für die spätere Freigabe stehen (Runde 18; in Köln abgeschaltet: Baustellen, Einfache Sprache, Haushalt,
-  // „Alle Wege im Überblick“, Prozesse, Ratsassistent)
+  // bleiben für die spätere Freigabe stehen (Runde 18; in Köln abgeschaltet: Baustellen, Haushalt, „Alle Wege im
+  // Überblick“, Prozesse, Ratsassistent; Einfache Sprache seit 13.11.2026 freigegeben)
   const sichtbar = (sel) => { const el = document.querySelector(sel); return Boolean(el) && !el.hidden; };
   const AN = {
     baustellen: () => sichtbar(".map-bau"),
@@ -102,7 +102,7 @@
     { menu: "mega-verstehen", target: "#mega-verstehen",
       title: "Verstehen",
       text: () => `Hilfen zum Lesen der Karte: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder ${AN.haushalt() ? "Zuschussbedarf" : "Stadtbezirk"} in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.`,
-      vorschau: "Hilfen zum Lesen der Karte: Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder." },
+      vorschau: () => `Hilfen zum Lesen der Karte: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.` },
     { when: () => document.querySelector(".toggle-ai")?.hidden === false,
       target: ".toggle-ai",
       title: "Der Ratsassistent",

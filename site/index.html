@@ -28,8 +28,16 @@
   <meta property="og:title" content="Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer">
   <meta property="og:description" content="Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen.">
   <meta property="og:url" content="https://daimpad.github.io/ratsatlas-koeln/">
-  <!-- Vorschaubild für Köln folgt im zweiten Lauf (Entscheidung 04.11.2026); das Bonner Bild wird nicht ausgeliefert -->
-  <meta name="twitter:card" content="summary">
+  <!-- Vorschaubild (pipeline/vorschaubild.py, erzeugt mit tools/vorschaubild.py): Karte der Stadtteile aus data/geo,
+       ohne Kacheln aus OpenStreetMap; dieselben Angaben setzt pipeline/gebietsseiten.py auf den Unterseiten -->
+  <meta property="og:image" content="https://daimpad.github.io/ratsatlas-koeln/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ratsatlas Köln: Schriftzug und der Satz „Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer“ neben einer Karte der 9 Stadtbezirke und 86 Stadtteile von Köln. Gebietsgrenzen: Stadt Köln – offenedaten-koeln.de (dl-de/zero 2.0).">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://daimpad.github.io/ratsatlas-koeln/og-image.png">
+  <meta name="twitter:image:alt" content="Ratsatlas Köln: Schriftzug und der Satz „Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer“ neben einer Karte der 9 Stadtbezirke und 86 Stadtteile von Köln. Gebietsgrenzen: Stadt Köln – offenedaten-koeln.de (dl-de/zero 2.0).">
   <!-- strukturierte Daten (nur Daten, wird nicht ausgeführt; mit der CSP vereinbar) -->
   <script type="application/ld+json">
   {"@context": "https://schema.org", "@graph": [
@@ -506,6 +514,7 @@
       <ul>
         <li><a href="gebiete/">Vorlagen nach Gebiet</a>: eine Übersichtsseite je Stadtteil und Stadtbezirk.</li>
         <li><a href="begriffe/">Begriffe</a>: Vorlagenarten, Gremien, Gebiete und Ergebnisse in einfachen Worten, mit Fundstelle; im Vorgang erklärt ein „?“ neben dem Begriff.</li>
+        <li data-funktion="einfache_sprache"><a href="einfach/">Einfache Sprache</a>: was die Karte zeigt, wer in Köln entscheidet und wie Sie mitmachen können, in kurzen Sätzen.</li>
       </ul>
 
       <h3>Informiert bleiben</h3>
@@ -535,6 +544,7 @@
       <ul>
         <li>Erste Fassung für Köln auf Grundlage des Ratsatlas Bonn: ganz Köln mit 9 Stadtbezirken und 86 Stadtteilen, Liste, Vorgang mit Prozesslinie, Suche, Feeds und Kalender.</li>
         <li>Orte aus dem Titel und aus den Ortsangaben der Stadt; Hauskoordinaten nur bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, deren Art erkennbar ist.</li>
+        <li data-funktion="einfache_sprache">Der Ratsatlas in Einfacher Sprache: was die Karte zeigt, wer in Köln entscheidet und wie Sie mitmachen können (Menü „Verstehen“).</li>
         <li>Bonner Zusatzthemen (Haushalt, Themenseiten, Ratsassistent und weitere) sind für Köln noch nicht freigegeben.</li>
       </ul>
     </div>

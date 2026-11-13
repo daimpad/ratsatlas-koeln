@@ -25,7 +25,7 @@ const run = async (p, name, rows) => {
   await p.click('.toggle[data-panel="timeline-wrap"]'); await p.waitForTimeout(500); await run(p, 'zeitleiste', rows);
   await p.click('#about-open'); await p.waitForTimeout(300); await run(p, 'ueber', rows); await p.keyboard.press('Escape');
   await p.click('[data-mega="mega-mitmachen"]'); await p.waitForTimeout(300); await run(p, 'mitmachen', rows);
-  for (const s of ['gebiete/', 'begriffe/', 'rss/', 'datenschutz.html', 'ortsteil/ehrenfeld/', '404.html']) {
+  for (const s of ['gebiete/', 'begriffe/', 'einfach/', 'rss/', 'datenschutz.html', 'ortsteil/ehrenfeld/', '404.html']) {
     const r = await p.goto(B + s, { waitUntil: 'networkidle' }); if (r && r.status() < 400) await run(p, s, rows); else rows.push([s, 'nicht gefunden', '', '', '', '']);
   }
   // Tastatur: Tab-Reihenfolge der ersten 25 Fokusziele auf der Startseite, sichtbarer Fokus

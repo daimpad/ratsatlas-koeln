@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from pipeline import build, ebenen, export, kontext, paket, sessionnet
+from pipeline import build, config, ebenen, export, kontext, paket, sessionnet
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = (ROOT / "site" / "app.js").read_text(encoding="utf-8")
@@ -161,18 +161,24 @@ BONN_TEXTE = {
         " Prozesse und Assistent lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. "
         "Esc schließt die Fläche, in der Sie gerade sind."),
 }
-ABGESCHALTET = ["Baustelle", "Einfache Sprache", "Einfacher Sprache", "Zuschussbedarf", "Alle Wege im Überblick",
-                "Bürgerantrag", "Prozesse", "Assistent", "Haushalt", "Themenseiten"]
+# Wörter, die nur mit der Freigabe ihrer Funktion in der Tour stehen dürfen (wie tests/browser/bedienung.js)
+WOERTER_JE_FUNKTION = {"baustellen": ["Baustelle"], "einfache_sprache": ["Einfache Sprache", "Einfacher Sprache"],
+                       "haushalt": ["Zuschussbedarf", "Haushalt"], "mitmachen": ["Alle Wege im Überblick", "Bürgerantrag"],
+                       "soll": ["Prozesse"], "chat": ["Assistent"], "themenseiten": ["Themenseiten"]}
+ABGESCHALTET = [w for woerter in WOERTER_JE_FUNKTION.values() for w in woerter]
 # Schalter und Karten der Zusatzthemen (app.js applyFunktionen und Schalter „Baustellen“); in der veröffentlichten Seite
 # fehlen die Karten abgeschalteter Themen ganz (pipeline/seo.ohne_abgeschaltete)
 SCHALTER = {".map-bau": "baustellen", '[data-funktion="einfache_sprache"]': "einfache_sprache",
             '[data-funktion="haushalt"]': "haushalt", '[data-funktion="mitmachen"]': "mitmachen",
             '.toggle[data-panel="panel-prozesse"]': "soll", ".toggle-ai": "chat"}
+# Kölner Freigaben (config.ZUSATZTHEMEN) unter den Schaltern; seit 13.11.2026 mit Einfacher Sprache
+KOELN = {f for f in SCHALTER.values() if config.ZUSATZTHEMEN.get(f)}
 
 
-def _tour(an, telefon=False, fehlen=False, zeitleiste=True):
+def _tour(an, telefon=False, fehlen=False, zeitleiste=True, vorschau=False):
     """Titel und Text der Schritte, die die Tour zeigt (when erfüllt), bei Freigaben `an` (Menge der Funktionen);
-    `fehlen`: Elemente abgeschalteter Funktionen fehlen im Dokument statt ausgeblendet zu sein."""
+    `fehlen`: Elemente abgeschalteter Funktionen fehlen im Dokument statt ausgeblendet zu sein; `vorschau`:
+    Kartenvorschau ohne Ratsvorlagen (Text unter vorschau, wo vorhanden, wie tour.js show)."""
     teil = _teil(TOUR, r"^  const MOBILE = matchMedia.*?\n  \];\n")
     dom = {sel: {"hidden": fn not in an} for sel, fn in SCHALTER.items() if fn in an or not fehlen}
     dom['.toggle[data-panel="timeline-wrap"]'] = {"hidden": not zeitleiste}
@@ -183,36 +189,41 @@ def _tour(an, telefon=False, fehlen=False, zeitleiste=True):
     code = f"""
 const DOM = {json.dumps(dom)}, FL = {json.dumps(flaechen)};
 const matchMedia = () => ({{ matches: {json.dumps(telefon)} }});
-const document = {{ documentElement: {{ dataset: {{}} }},
+const document = {{ documentElement: {{ dataset: {json.dumps({"vorschau": "ja"} if vorschau else {})} }},
   querySelector: (sel) => DOM[sel] || null,
   querySelectorAll: (sel) => {{ if (sel.startsWith("[data-tour-")) return [];   // Sätze von Zusatzmodulen (keine geladen)
     if (sel !== ".nav-group.seg .toggle[data-panel]") throw new Error(sel); return FL; }} }};
 """ + teil + """
-const aus = STEPS.filter((s) => !s.when || s.when()).map((s) => [s.title, typeof s.text === "function" ? s.text() : s.text]);
+const text = (s) => (VORSCHAU() && s.vorschau ? s.vorschau : s.text);
+const aus = STEPS.filter((s) => !s.when || s.when()).map((s) => [s.title, typeof text(s) === "function" ? text(s)() : text(s)]);
 console.log(JSON.stringify(aus));
 """
     return dict(_node(code))
 
 
 def test_tour_nennt_keine_abgeschaltete_funktion():
-    """Datenbetrieb mit den Kölner Freigaben (Baustellen, Einfache Sprache, Haushalt, Mitmachen, Prozesse und Assistent
-    aus): kein Schritt nennt eine abgeschaltete Funktion, ob ihr Element ausgeblendet ist oder fehlt; an ihrer Stelle
-    steht, was die Seite zeigt (Text der Vorschau zu § 24 GO NRW und zu den Begriffen)."""
-    for telefon in (False, True):
-        for fehlen in (False, True):
-            texte = _tour(set(), telefon, fehlen)
-            genannt = [(t, w) for t, x in texte.items() for w in ABGESCHALTET if w in t + " " + x]
-            assert genannt == [], (telefon, fehlen, genannt)
-            assert "Prozesse: Wer entscheidet was?" not in texte and "Der Ratsassistent" not in texte
-            assert "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden; " \
-                   "und ein Hinweis" in texte["Mitmachen"]
-            assert texte["Verstehen"].startswith("Hilfen zum Lesen der Karte: Begriffe wie Vorlage, Beratungsfolge "
-                                                 "oder Stadtbezirk in einfachen Worten")
+    """Datenbetrieb mit den Kölner Freigaben (Baustellen, Haushalt, Mitmachen, Prozesse und Assistent aus, Einfache
+    Sprache seit 13.11.2026 an): kein Schritt nennt eine abgeschaltete Funktion, ob ihr Element ausgeblendet ist oder
+    fehlt; an ihrer Stelle steht, was die Seite zeigt (Text der Vorschau zu § 24 GO NRW und zu den Begriffen)."""
+    assert KOELN == {"einfache_sprache"}
+    aus_koeln = [w for f, woerter in WOERTER_JE_FUNKTION.items() if not config.ZUSATZTHEMEN.get(f) for w in woerter]
+    for an, verboten in ((KOELN, aus_koeln), (set(), ABGESCHALTET)):
+        for telefon in (False, True):
+            for fehlen in (False, True):
+                texte = _tour(an, telefon, fehlen)
+                genannt = [(t, w) for t, x in texte.items() for w in verboten if w in t + " " + x]
+                assert genannt == [], (an, telefon, fehlen, genannt)
+                assert "Prozesse: Wer entscheidet was?" not in texte and "Der Ratsassistent" not in texte
+                assert "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden; " \
+                       "und ein Hinweis" in texte["Mitmachen"]
+                einfach = "der Ratsatlas in Einfacher Sprache, " if an else ""
+                assert texte["Verstehen"].startswith(f"Hilfen zum Lesen der Karte: {einfach}Begriffe wie Vorlage, "
+                                                     "Beratungsfolge oder Stadtbezirk in einfachen Worten")
             assert texte["Flächen ein- und ausklappen"].startswith(
                 "Vorlagen (die Liste aller Vorlagen im Gebiet), Zeitleiste und Vorgang (die Einzelheiten einer "
                 "Vorlage) lassen sich hier öffnen")
             assert "Planchronik. „Überschwemmungsgebiete“" in texte["Die Karte"]
-    ohne_zeit = _tour(set(), zeitleiste=False)["Flächen ein- und ausklappen"]
+    ohne_zeit = _tour(KOELN, zeitleiste=False)["Flächen ein- und ausklappen"]
     assert ohne_zeit.startswith("Vorlagen (die Liste aller Vorlagen im Gebiet) und Vorgang (die Einzelheiten einer "
                                 "Vorlage) lassen sich")
 
@@ -234,6 +245,19 @@ def test_tour_mit_freigaben_wie_in_bonn():
     assert "„Alle Wege im Überblick“" not in einzeln["chat"]["Mitmachen"]
     assert "Vorgang (die Einzelheiten einer Vorlage) und Prozesse lassen" in einzeln["soll"]["Flächen ein- und ausklappen"]
     assert "Vorgang (die Einzelheiten einer Vorlage) und Assistent lassen" in einzeln["chat"]["Flächen ein- und ausklappen"]
+
+
+def test_tour_vorschau_nennt_einfache_sprache_nur_mit_freigabe():
+    """Kartenvorschau ohne Ratsvorlagen: Der Schritt „Verstehen“ nennt die Einfache Sprache wie im Datenbetrieb nur, wenn
+    ihre Karte sichtbar ist (13.11.2026; vorher stand der Text der Vorschau fest ohne sie)."""
+    for telefon in (False, True):
+        mit = _tour(KOELN, telefon, vorschau=True)["Verstehen"]
+        ohne = _tour(set(), telefon, vorschau=True)["Verstehen"]
+        assert mit == ("Hilfen zum Lesen der Karte: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, "
+                       "Beratungsfolge oder Stadtbezirk in einfachen Worten und wie verlässlich die Angaben sind. Diese "
+                       "Tour finden Sie hier wieder.")
+        assert ohne == mit.replace("der Ratsatlas in Einfacher Sprache, ", "")
+        assert "Ratsvorlagen" in _tour(KOELN, telefon, vorschau=True)["Willkommen zur Tour"]
 
 
 def test_zeitleiste_hinweis_zu_baustellen_nur_mit_baustellen():

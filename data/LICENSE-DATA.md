@@ -64,4 +64,6 @@ Die Dateien unter `strukturdaten/` liegen bisher nur im Repository; auf der Seit
 Mit der Freigabe der Strukturdaten stehen die Dateien unter `strukturdaten/` auf der Seite unter `data/strukturdaten/` (ohne `werte.tsv` und `werte_quartier.tsv.gz`, deren Zeilen dort aufgeteilt in `raumwerte/` und `karte/` liegen, und ohne Prüfprotokolle und `zurueckgestellt.tsv`) und im Datenpaket vollständig und unverändert unter `ratsatlas-koeln/strukturdaten/`.
 <!-- ende -->
 
+Das Vorschaubild der Seite (`og-image.png` neben `index.html`, Bild beim Teilen eines Links; erzeugt mit `tools/vorschaubild.py`) zeigt die Flächen aus `geo/stadtteile_koeln.geojson` und `geo/stadtbezirke_koeln.geojson` (Stadt Köln, Datenlizenz Deutschland – Zero – Version 2.0; Datenquelle: Stadt Köln – offenedaten-koeln.de); Namensnennung und Lizenz stehen im Bild und in seinem Alternativtext. Es enthält keine Kartenkacheln und keine Daten aus OpenStreetMap.
+
 Das Kölner Straßenverzeichnis (XLSX) steht unter dl-de/by 2.0 und wird bisher nicht verwendet. Volltexte, Auszüge und PDFs werden bis zur Lizenzklärung nicht veröffentlicht.

@@ -18,7 +18,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from html import escape
 from urllib.parse import quote
 
-from . import begriffsseite, config, topics
+from . import begriffsseite, config, topics, vorschaubild
 from .kontext import ANTEILE
 
 LATEST = 20
@@ -70,6 +70,25 @@ def feed_head(datei, titel, root):
             f'href="{root}data/export/koeln/{datei}">')
 
 
+def teilen_head(site_url, path, title, description, head=""):
+    """Angaben zum Teilen eines Links (Open Graph, Twitter) mit dem Kölner Vorschaubild (pipeline/vorschaubild.py);
+    leer, wenn `head` schon eigene Open-Graph-Angaben bringt (Themenseiten, pipeline/dossier.py)."""
+    if 'property="og:' in head:
+        return ""
+    return (f'\n  <meta property="og:type" content="website">'
+            f'\n  <meta property="og:site_name" content="{escape(vorschaubild.NAME)}">'
+            f'\n  <meta property="og:locale" content="de_DE">'
+            f'\n  <meta property="og:title" content="{escape(title)}">'
+            f'\n  <meta property="og:description" content="{escape(description)}">'
+            f'\n  <meta property="og:url" content="{escape(site_url + path)}">\n'
+            + vorschaubild.meta_tags(site_url).rstrip("\n"))
+
+
+def _einfach_link(root):
+    """Link auf die Seite in Einfacher Sprache in der Fußzeile, nur mit Freigabe „einfache_sprache“."""
+    return f' · <a href="{root}einfach/">Einfache Sprache</a>' if config.ZUSATZTHEMEN.get("einfache_sprache") else ""
+
+
 def _page(site_url, path, title, description, body, root, head=""):
     return neuer_tab(f"""<!doctype html>
 <html lang="de">
@@ -79,7 +98,7 @@ def _page(site_url, path, title, description, body, root, head=""):
   <meta http-equiv="Content-Security-Policy" content="{CSP}">
   <title>{escape(title)}</title>
   <meta name="description" content="{escape(description)}">
-  <link rel="canonical" href="{escape(site_url + path)}">
+  <link rel="canonical" href="{escape(site_url + path)}">{teilen_head(site_url, path, title, description, head)}
   <link rel="icon" href="{root}favicon.ico" sizes="32x32">
   <link rel="icon" href="{root}favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="{root}page.css">{head}
@@ -94,7 +113,7 @@ def _page(site_url, path, title, description, body, root, head=""):
 {body}
   </main>
   <footer class="page-foot">
-    <a href="{root}gebiete/">Alle Gebiete</a> · <a href="{root}begriffe/">Begriffe</a> · <a href="{root}rss/">Abonnieren (RSS)</a> · <a href="https://nozilla.de/impressum/">Impressum</a> · <a href="{root}datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a>
+    <a href="{root}gebiete/">Alle Gebiete</a> · <a href="{root}begriffe/">Begriffe</a>{_einfach_link(root)} · <a href="{root}rss/">Abonnieren (RSS)</a> · <a href="https://nozilla.de/impressum/">Impressum</a> · <a href="{root}datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a>
     <br>{escape(config.NAMENSNENNUNG)} · <a href="{root}data/LICENSE-DATA.md">Lizenzen der Daten</a>
   </footer>
 </body>

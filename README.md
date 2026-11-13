@@ -27,7 +27,7 @@ Die Ratsinformationen werden in drei Richtungen erschlossen:
 | 🕒 | **Wann?** | Je Vorlage eine Prozesslinie: Veröffentlichung, Beratungen mit Gremium, Datum, Tagesordnungspunkt und wörtlichem Ergebnis, Folgevorlagen; kommende Sitzungen als offene Stationen. |
 | 👥 | **Wer?** | Befasste Gremien (Rat, Fachausschüsse, Bezirksvertretungen), einreichende Fraktionen und – sobald ermittelbar – die federführende Dienststelle. |
 
-Dazu gibt es eine Suche, Erklärungen der Begriffe, Feeds und einen Sitzungskalender zum Abonnieren sowie ein Datenpaket zum Weiterverwenden. Nach der Freigabe der Strukturdaten zeigt die Seite außerdem Zahlen der Kölner Stadtstatistik je Stadtteil, Stadtbezirk und für ganz Köln (mit Zeitreihe, Quelle und Vergleich mit Bonn und Wuppertal) und auf Wunsch als Flächenfarben auf der Karte, mit gleichwertiger Tabelle. Die Prüfprotokolle (Audits) und Stichproben zur Verortung stehen nur im Datenpaket, nicht als einzelne Dateien auf der Seite.
+Dazu gibt es eine Suche, Erklärungen der Begriffe, eine Seite in Einfacher Sprache, Feeds und einen Sitzungskalender zum Abonnieren sowie ein Datenpaket zum Weiterverwenden. Nach der Freigabe der Strukturdaten zeigt die Seite außerdem Zahlen der Kölner Stadtstatistik je Stadtteil, Stadtbezirk und für ganz Köln (mit Zeitreihe, Quelle und Vergleich mit Bonn und Wuppertal) und auf Wunsch als Flächenfarben auf der Karte, mit gleichwertiger Tabelle. Die Prüfprotokolle (Audits) und Stichproben zur Verortung stehen nur im Datenpaket, nicht als einzelne Dateien auf der Seite.
 
 ## Herkunft
 

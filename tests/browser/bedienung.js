@@ -15,9 +15,12 @@ const fs = require("fs");
 const BASIS = process.argv[2] || "http://127.0.0.1:8790/";
 const AUSGABE = process.argv[3];
 const AXE = process.env.AXE_PFAD ? fs.readFileSync(process.env.AXE_PFAD, "utf8") : null;
-// Wörter, die in der Tour mit den Kölner Freigaben (index.json meta.funktionen) nicht vorkommen dürfen
-const ABGESCHALTET = ["Baustelle", "Einfache Sprache", "Einfacher Sprache", "Zuschussbedarf", "Alle Wege im Überblick",
-  "Bürgerantrag", "Prozesse", "Assistent", "Haushalt", "Themenseiten"];
+// Wörter, die in der Tour nur mit der Freigabe ihrer Funktion (index.json meta.funktionen) vorkommen dürfen (wie
+// tests/test_seite_bedienung.py); die Einfache Sprache ist seit 13.11.2026 freigegeben
+const WOERTER_JE_FUNKTION = { baustellen: ["Baustelle"], einfache_sprache: ["Einfache Sprache", "Einfacher Sprache"],
+  haushalt: ["Zuschussbedarf", "Haushalt"], mitmachen: ["Alle Wege im Überblick", "Bürgerantrag"], soll: ["Prozesse"],
+  chat: ["Assistent"], themenseiten: ["Themenseiten"] };
+const abgeschaltet = (fn) => Object.entries(WOERTER_JE_FUNKTION).filter(([f]) => !(fn || {})[f]).flatMap(([, w]) => w);
 const PROFILE = {
   desktop: { viewport: { width: 1400, height: 900 } },
   telefon: { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
@@ -301,7 +304,10 @@ async function cspDesktop(browser, gebiet) {
   const slug = gebiet.split(":")[1];
   const bezirk = await page.evaluate(async () => (await (await fetch("data/export/koeln/index.json")).json()).bezirke[0].slug);
   const status = {};
-  for (const s of ["gebiete/", "begriffe/", "rss/", "technik/", "datenschutz.html", `ortsteil/${slug}/`, `stadtbezirk/${bezirk}/`, "404.html"]) {
+  const funktionen = await page.evaluate(async () => (await (await fetch("data/export/koeln/index.json")).json()).meta.funktionen || {});
+  const unterseiten = ["gebiete/", "begriffe/", "rss/", "technik/", "datenschutz.html", `ortsteil/${slug}/`, `stadtbezirk/${bezirk}/`, "404.html"];
+  if (funktionen.einfache_sprache) unterseiten.splice(2, 0, "einfach/");
+  for (const s of unterseiten) {
     const r = await page.goto(BASIS + s, { waitUntil: "load" });
     await page.waitForTimeout(200);
     status[s] = r ? r.status() : null;
@@ -375,9 +381,17 @@ async function tour(browser, profil) {
     await page.keyboard.press("ArrowRight");
     await page.waitForTimeout(250);
   }
-  const genannt = schritte.flatMap((s) => ABGESCHALTET.filter((w) => (s.titel + " " + s.text).includes(w)).map((w) => `${s.titel}: ${w}`));
+  const verboten = abgeschaltet(meta.funktionen);
+  const genannt = schritte.flatMap((s) => verboten.filter((w) => (s.titel + " " + s.text).includes(w)).map((w) => `${s.titel}: ${w}`));
   pruefen(profil, "Tour mit Kölner Freigaben ohne abgeschaltete Funktion", meta.vorschau === false && !(await page.$(".tour")) && schritte.length > 8 && genannt.length === 0,
     { vorschau: meta.vorschau, schritte: schritte.length, genannt, flaechen: (schritte.find((s) => s.titel === "Flächen ein- und ausklappen") || {}).text });
+  // Freigegebene Einfache Sprache: Karte im Menü „Verstehen“ sichtbar und in der Tour genannt
+  if ((meta.funktionen || {}).einfache_sprache) {
+    const verstehen = (schritte.find((s) => s.titel === "Verstehen") || {}).text || "";
+    pruefen(profil, "Einfache Sprache: Karte sichtbar und in der Tour genannt",
+      verstehen.includes("der Ratsatlas in Einfacher Sprache") && await page.evaluate(() => { const k = document.querySelector('#mega-verstehen a[href="einfach/"]'); return Boolean(k) && !k.hidden; }),
+      verstehen.slice(0, 80));
+  }
   pruefen(profil, "keine Skriptfehler (Tour)", fehler.length === 0, fehler);
   await ctx.close();
   return schritte;
