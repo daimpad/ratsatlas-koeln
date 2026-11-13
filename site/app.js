@@ -1015,7 +1015,7 @@
     if (!index) return;
     map.createPane("gebiete").style.zIndex = 350;
     navOrtsteile = L.geoJSON(geo.ortsteil, {
-      pane: "gebiete", renderer: navRenderer, style: NAV_LINE,
+      pane: "gebiete", renderer: navRenderer, style: NAV_LINE, smoothFactor: 0,  // lückenlose Flächen: Nachbarn behalten dieselben Stützpunkte
       filter: (f) => index.ortsteile.some((o) => o.name === f.properties.ortsteil_bez),
       onEachFeature(f, layer) {
         const o = index.ortsteile.find((x) => x.name === f.properties.ortsteil_bez);
@@ -1027,7 +1027,7 @@
       },
     });
     navBezirke = L.geoJSON(geo.bezirk, {
-      pane: "gebiete", renderer: navRenderer, style: BZ_LINE,
+      pane: "gebiete", renderer: navRenderer, style: BZ_LINE, smoothFactor: 0,
       onEachFeature(f, layer) {
         const name = f.properties.bezirk_bez;
         const n = index.ortsteile.filter((o) => o.stadtbezirk === name).length;

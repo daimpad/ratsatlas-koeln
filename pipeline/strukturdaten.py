@@ -38,6 +38,8 @@ Schritte:
   data/strukturdaten/ (`STRUKTURDATEN_AUS`): indikatoren.tsv, werte.tsv, werte_quartier.tsv.gz, raum/<ebene>.geojson,
   zuordnung.tsv, gesamtstadt.tsv, meta.json, zurueckgestellt.tsv, audit_abruf.tsv, audit_raumabgleich.tsv. Jede
   Eingabedatei des Zwischenspeichers muss mit ihrer Prüfsumme im Abrufprotokoll stehen (Herkunft und Abrufdatum).
+  audit_verifikation.tsv (Stichprobe gegen die Quelle, Phase 4) schreibt dieser Lauf nicht; meta.json nennt die Datei
+  nur für die XLSX, gegen die sie geprüft ist (VERIFIKATION).
   werte_quartier.tsv.gz ist deterministisch komprimiert (gzip Stufe 9, mtime 0, ohne Dateinamen im Kopf), damit gleiche
   Eingaben byte-gleiche Dateien ergeben.
 
@@ -105,6 +107,97 @@ KOELN_NAMENSNENNUNG = (f"{KOELN_HERAUSGEBER} ({KOELN_TITEL}); in lange Tabellenf
 OPEN_NRW_RESSOURCEN = {
     "0645793fe92d248859bb979b80fe2c854e850789c485dbca2ae644e61e473382": ("06.07.2026", "10.11.2026"),
 }
+# Regel der Vertragsversion (meta.json, vertrag_regel): wie bei Version 1.1 (neue Datei des Vertrags) und Phase 3
+# (status abgeleitet ohne neue Version) festgehalten
+VERTRAG_REGEL = ("Die Vertragsversion ändert sich, wenn sich Dateien des Vertrags (dateien mit vertrag true), ihre "
+                 "Spalten oder die Bedeutung bestehender Felder ändern. Ergänzungen, die bestehende Leser nicht "
+                 "berühren, lassen sie unverändert: Zeilen mit einem im Vertrag vorgesehenen status, weitere Angaben "
+                 "in meta.json und Dateien außerhalb des Vertrags (vertrag false, etwa Prüfprotokolle).")
+# Strukturdaten Phase 4 (Verifikation, 13.11.2026): Stichprobe veröffentlichter Werte, unabhängig von diesem Modul gegen
+# die Quelle geprüft (explore/strukturdaten/verifikation.py → audit_verifikation.tsv; die Datei schreibt nicht dieser
+# Lauf). meta.json nennt Datei, Spalten und Ergebnis nur für die XLSX mit derselben Prüfsumme (sha256 → Angaben); nach
+# einem neuen Abruf steht unter verifikation „für diese Datei nicht geprüft“, und tests/test_strukturdaten.py meldet die
+# veraltete Datei (veröffentlichte Werte der Stichprobe ungleich werte.tsv).
+VERIFIKATION_DATEI = "audit_verifikation.tsv"
+VERIFIKATION_INHALT = ("Stichprobe von 20 veröffentlichten Werten und 6 Werten des Wegweisers Kommune, gegen die Quelle "
+                       "geprüft (Phase 4; Spalten unter audit_verifikation_spalten, Verfahren unter verifikation); "
+                       "nicht vom Lauf erzeugt")
+VERIFIKATION = {
+    "0645793fe92d248859bb979b80fe2c854e850789c485dbca2ae644e61e473382": {
+        "datei": VERIFIKATION_DATEI,
+        "datum": "2026-11-13",
+        "skript": "explore/strukturdaten/verifikation.py",
+        "verfahren": (
+            "Stichprobe aus den veröffentlichten Dateien, je 5 Werte aus gesamtstadt, stadtbezirk und stadtteil "
+            "(werte.tsv) und quartier (werte_quartier.tsv.gz); Zufallszahlen aus Python random.Random mit dem "
+            "Startwert unter startwert. Je Raumebene feste Plätze (schichtung), je Platz gezogen, bis Indikator (in "
+            "der ganzen Stichprobe) und Jahr (in der Raumebene) neu sind. Jede Zelle unabhängig vom Lauf in der XLSX "
+            "gesucht (Blatt Daten: Spalte nach dem Code im Kopf, Zeile nach Jahr und Raum) und verglichen: Wert und "
+            "Status, Fundstelle mit quellobjekt, Name des Indikators, Einheit mit der Endung des Codes und dem Format "
+            "im Blatt Katalog, Jahr, Nummer und Name der Raumeinheit mit raum/<raumebene>.geojson, Stadtbezirk eines "
+            "Stadtteils und Stadtteil eines Quartiers mit zuordnung.tsv und eltern_id. Abgeleitete Anteile aus den "
+            "veröffentlichten Eingangswerten derselben Zeile nachgerechnet (dezimal, kaufmännisch gerundet), ihre "
+            "Eingangszellen ebenso in der XLSX geprüft. Geheim gehaltene Zellen: nur der Status verglichen, kein Wert "
+            "in der Datei. Dazu alle 6 Werte eines Wegweiser-Exports für Köln (Bevölkerung, Durchschnittsalter, SGB "
+            "II-Quote, 2022 und 2023) mit gesamtstadt.tsv, Indikator und Einheit über den Zeilenkopf."),
+        "startwert": 20261113,
+        "schichtung": {
+            "gesamtstadt": "1 abgeleitet (koeln_abg_unter18), 4 ok",
+            "stadtbezirk": "1 fehlt, 4 ok",
+            "stadtteil": "1 abgeleitet (koeln_abg_ab65), 4 ok",
+            "quartier": "1 geheim, 1 fehlt, 3 ok",
+            "vorrat": ("ok und fehlt: Indikatoren der Quelle (koeln_…, ohne koeln_abg_…); geheim: nur Indikatoren, die "
+                       "keine Anzahl sind und an keiner in indikatoren.tsv genannten Beziehung beteiligt sind "
+                       "(zaehler_id und nenner_id leer, nicht als Zähler oder Nenner genannt)"),
+        },
+        "zeilen": {"stichprobe": 20, "wegweiser": 6},
+        "ergebnis": {"gleich": 25, "abweichend": 0, "nur_status": 1},
+        "abrufe": [
+            {"ziel": "offenedaten-koeln.de: Statistischer Datenkatalog Köln (XLSX)",
+             "zeit": "2026-11-13T09:41:50+01:00", "http_status": 200, "bytes": 12329414,
+             "sha256": "0645793fe92d248859bb979b80fe2c854e850789c485dbca2ae644e61e473382",
+             "hinweis": ("Prüfsumme gleich dem Abruf vom 10.11.2026 (quellen, statistischer-datenkatalog-koeln); "
+                         "Blatt Info: Auswertung erstellt am 15.10.2026")},
+            {"ziel": ("wegweiser-kommune.de: Datenexport (CSV) Bevölkerung, Durchschnittsalter und SGB II-Quote, Köln, "
+                      "2022–2023"),
+             "zeit": "2026-11-13T09:42:02+01:00", "http_status": 200, "bytes": 910,
+             "sha256": "f0398bda1edc80df7b2e056c423f77309200179bbbb85b84eae4b589f50cf48d",
+             "hinweis": "nur zur Verifikation; gesamtstadt.tsv beruht auf dem Export vom 10.11.2026 (quellen)"},
+        ],
+    },
+}
+VERIFIKATION_SPALTEN = {
+    "nr": "laufende Nummer",
+    "pruefung": ("stichprobe (Wert aus werte.tsv bzw. werte_quartier.tsv.gz gegen die XLSX) oder wegweiser (Wert aus "
+                 "gesamtstadt.tsv gegen den Wegweiser-Export)"),
+    "ebene": "Raumebene",
+    "raum_id": "Nummer der Raumeinheit wie in werte.tsv; bei wegweiser die kommune aus gesamtstadt.tsv",
+    "raum_name": ("Name der Raumeinheit laut Blatt Daten (mit raum/<raumebene>.geojson verglichen); bei wegweiser "
+                  "laut Export"),
+    "indikator": "indikator_id",
+    "einheit": "einheit laut indikatoren.tsv",
+    "jahr": "Jahr",
+    "wert_veroeffentlicht": "wert der veröffentlichten Zeile (leer bei status geheim und fehlt)",
+    "status_veroeffentlicht": "status der veröffentlichten Zeile; bei wegweiser leer (gesamtstadt.tsv ohne status)",
+    "quelle": "geprüfte Quelle (Datei und Abrufdatum unter verifikation, abrufe)",
+    "fundstelle": ("Zelle Daten!<Spalte><Zeile>, unabhängig vom Lauf gesucht; bei abgeleiteten Anteilen die Formel mit "
+                   "den Zellen; bei wegweiser Zeile und Spalte des Exports"),
+    "wert_quelle": ("Zahl der Zelle in der Schreibweise von formate.wert; bei abgeleiteten Anteilen der nachgerechnete "
+                    "Wert; leer bei geheim gehaltenen (nur Status verglichen) und leeren Zellen"),
+    "ergebnis": "gleich, abweichend oder nur_status (geheim gehaltene Zelle: nur der Status verglichen)",
+    "bemerkung": "was verglichen wurde, bei Abweichung der Grund",
+}
+
+
+def verifikation(pruefsumme):
+    """Angaben zu audit_verifikation.tsv für meta.json: (Eintrag für dateien oder None, Spalten oder None, Angaben
+    unter verifikation). Nur für die XLSX mit der Prüfsumme aus VERIFIKATION."""
+    v = VERIFIKATION.get(pruefsumme)
+    if v is None:
+        return None, None, ("Stichprobe gegen die Quelle (Phase 4) für diese Datei nicht geprüft; "
+                            f"{VERIFIKATION_DATEI} gilt nur für die XLSX mit der Prüfsumme "
+                            f"{', '.join(sorted(VERIFIKATION))}")
+    return {"datei": VERIFIKATION_DATEI, "vertrag": False, "inhalt": VERIFIKATION_INHALT}, VERIFIKATION_SPALTEN, v
 # Schätz- und Verfahrenswerte: Laut Datensatzbeschreibung des Statistischen Datenkatalogs sind Angaben zum
 # Migrationshintergrund Schätzwerte und Angaben zu Haushalten Verfahrenswerte (Haushaltegenerierung); Beleg: Prompt
 # „Strukturdaten“ v0.1, Abschnitt 2 (Hinweise aus der Datensatzbeschreibung, Stand 10.11.2026), dort „im Metatext so
@@ -1427,6 +1520,7 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
     abg = abgeleitet or None
     status_mit = "status ok, geheim oder abgeleitet" if abg else "status ok oder geheim"
     splitter = {k: v["groesster_splitter"] or "keiner" for k, v in erg.items()}
+    v_datei, v_spalten, v_angaben = verifikation(belege["xlsx"]["pruefsumme"])
     return {
         "vertrag_version": VERTRAG_VERSION,
         "vertrag_aenderungen": {
@@ -1435,7 +1529,9 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
                     "deterministisch (Stufe 9, mtime 0, ohne Dateinamen im Kopf). werte.tsv enthält weiter nur "
                     "gesamtstadt, stadtbezirk und stadtteil. Dazu raum/quartier.geojson und die Liste dateien."),
         },
-        "dateien": [{"datei": d, "vertrag": v, "inhalt": i} for d, v, i in DATEIEN_AUSGABE],
+        "vertrag_regel": VERTRAG_REGEL,
+        "dateien": [{"datei": d, "vertrag": v, "inhalt": i} for d, v, i in DATEIEN_AUSGABE] + (
+            [v_datei] if v_datei else []),
         "datenstand": kat.datenstand,
         "datenstand_hinweis": (f"Datenstand des Statistischen Datenkatalogs laut Blatt Info („Auswertung erstellt am "
                                f"{kat.stand_text}“); maßgeblich ist die Angabe in der Datei, {katalog_portal}. "
@@ -1521,7 +1617,9 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
             "geojson": (f"raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit "
                         f"Quelle, Prüfsumme und Lizenz; Flächen mit Toleranz {rm.TOLERANZ_M:g} m vereinfacht, "
                         "Koordinaten auf 1e-6 Grad gerundet. Stadtbezirke und Stadtteile wie data/geo (jede Fläche für "
-                        "sich, Douglas-Peucker); Quartiere gemeinsam als lückenlose Abdeckung (Visvalingam-Whyatt, "
+                        "sich mit Douglas-Peucker vereinfacht, danach als lückenlose Abdeckung bereinigt, die "
+                        "Stadtbezirke als Vereinigung ihrer Stadtteile; Verfahren und Messung in data/geo unter "
+                        "meta.abdeckung); Quartiere gemeinsam als lückenlose Abdeckung (Visvalingam-Whyatt, "
                         "Nachbarn mit denselben Stützpunkten an der gemeinsamen Grenze; Verfahren unter "
                         "raum.quartier.geometrie, Prüfung unter raum.quartier.abdeckung, gemessene Abweichung unter "
                         "raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als Text), "
@@ -1566,12 +1664,14 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
                                         "namen_abweichend)",
                             "nicht_zugeordnet": "ohne Geometrie oder ohne Ziel mit mindestens splitter_anteil; keine "
                                                 "Zeile in zuordnung.tsv"},
-            "geometrie_hinweis": (f"data/geo ist mit {rm.TOLERANZ_M:g} m vereinfacht (jede Fläche für sich) und auf "
-                                  "1e-6 Grad gerundet (beste verfügbare Geometrie der Stadtteile und Stadtbezirke im "
-                                  "Repository). Die Grenzen weichen daher von der Quelle ab (für data/geo nicht "
-                                  "gemessen, die unvereinfachten Flächen liegen nicht im Repository; dasselbe "
-                                  "Verfahren ergab bei den Quartieren am 10.11.2026 bis 12,61 m, 37 von 570 Quartieren "
-                                  "über 2 m; die Quartiere werden seitdem gemeinsam vereinfacht, "
+            "geometrie_hinweis": (f"data/geo ist mit {rm.TOLERANZ_M:g} m vereinfacht (jede Fläche für sich), auf "
+                                  "1e-6 Grad gerundet und danach als lückenlose Abdeckung bereinigt (Stadtbezirke als "
+                                  "Vereinigung ihrer Stadtteile, data/geo meta.abdeckung; beste verfügbare Geometrie "
+                                  "der Stadtteile und Stadtbezirke im Repository). Die Grenzen weichen daher von der "
+                                  "Quelle ab (für data/geo nicht gemessen, die unvereinfachten Flächen liegen nicht im "
+                                  "Repository; die Vereinfachung je Fläche ergab bei den Quartieren am 10.11.2026 bis "
+                                  "12,61 m, 37 von 570 Quartieren über 2 m, die Bereinigung von data/geo verschob die "
+                                  "Grenzen um höchstens 2,21 m; die Quartiere werden seitdem gemeinsam vereinfacht, "
                                   "raum.quartier.geometrie): Hauptanteile liegen knapp unter 1, an den Rändern "
                                   "entstehen Randsplitter (größter Splitter: "
                                   + "; ".join(f"{k} {v}" for k, v in splitter.items()) + ")."),
@@ -1579,6 +1679,8 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
             "id_abgleich": rmeta["id_abgleich"],
         },
         "audit_raumabgleich_spalten": rm.AUDIT_SPALTEN,
+        **({"audit_verifikation_spalten": v_spalten} if v_spalten else {}),
+        "verifikation": v_angaben,
         "geheimhaltung_hinweis": _geheimhaltung_text(ableitbar) + (
             " Die abgeleiteten Altersanteile (koeln_abg_…) entstehen nur aus veröffentlichten Werten derselben Zeile; "
             "ist einer davon geheim, bleibt der Anteil leer (status geheim)." if abg else ""),

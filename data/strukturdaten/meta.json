@@ -3,6 +3,7 @@
  "vertrag_aenderungen": {
   "1.1": "10.11.2026 (Entscheidung des Auftraggebers): Werte der Raumebene quartier in werte_quartier.tsv.gz mit genau den Spalten von werte.tsv (raumebene quartier); gzip deterministisch (Stufe 9, mtime 0, ohne Dateinamen im Kopf). werte.tsv enthält weiter nur gesamtstadt, stadtbezirk und stadtteil. Dazu raum/quartier.geojson und die Liste dateien."
  },
+ "vertrag_regel": "Die Vertragsversion ändert sich, wenn sich Dateien des Vertrags (dateien mit vertrag true), ihre Spalten oder die Bedeutung bestehender Felder ändern. Ergänzungen, die bestehende Leser nicht berühren, lassen sie unverändert: Zeilen mit einem im Vertrag vorgesehenen status, weitere Angaben in meta.json und Dateien außerhalb des Vertrags (vertrag false, etwa Prüfprotokolle).",
  "dateien": [
   {
    "datei": "indikatoren.tsv",
@@ -63,6 +64,11 @@
    "datei": "audit_raumabgleich.tsv",
    "vertrag": false,
    "inhalt": "Prüfung des Raumabgleichs je Raumeinheit (Spalten unter audit_raumabgleich_spalten)"
+  },
+  {
+   "datei": "audit_verifikation.tsv",
+   "vertrag": false,
+   "inhalt": "Stichprobe von 20 veröffentlichten Werten und 6 Werten des Wegweisers Kommune, gegen die Quelle geprüft (Phase 4; Spalten unter audit_verifikation_spalten, Verfahren unter verifikation); nicht vom Lauf erzeugt"
   }
  ],
  "datenstand": "2026-10-15",
@@ -393,6 +399,64 @@
   "in_geometrie": "ja, wenn die Einheit in der Geometriequelle steht",
   "in_werten": "ja, wenn die Einheit im Blatt Daten des Statistischen Datenkatalogs steht",
   "grund": "Begründung des Prüfstatus; dazu Hinweise ohne Einfluss auf den Prüfstatus (Geometrie repariert, Name im Blatt Daten abweichend vom Namen der Geometriequelle, mit Jahren)"
+ },
+ "audit_verifikation_spalten": {
+  "nr": "laufende Nummer",
+  "pruefung": "stichprobe (Wert aus werte.tsv bzw. werte_quartier.tsv.gz gegen die XLSX) oder wegweiser (Wert aus gesamtstadt.tsv gegen den Wegweiser-Export)",
+  "ebene": "Raumebene",
+  "raum_id": "Nummer der Raumeinheit wie in werte.tsv; bei wegweiser die kommune aus gesamtstadt.tsv",
+  "raum_name": "Name der Raumeinheit laut Blatt Daten (mit raum/<raumebene>.geojson verglichen); bei wegweiser laut Export",
+  "indikator": "indikator_id",
+  "einheit": "einheit laut indikatoren.tsv",
+  "jahr": "Jahr",
+  "wert_veroeffentlicht": "wert der veröffentlichten Zeile (leer bei status geheim und fehlt)",
+  "status_veroeffentlicht": "status der veröffentlichten Zeile; bei wegweiser leer (gesamtstadt.tsv ohne status)",
+  "quelle": "geprüfte Quelle (Datei und Abrufdatum unter verifikation, abrufe)",
+  "fundstelle": "Zelle Daten!<Spalte><Zeile>, unabhängig vom Lauf gesucht; bei abgeleiteten Anteilen die Formel mit den Zellen; bei wegweiser Zeile und Spalte des Exports",
+  "wert_quelle": "Zahl der Zelle in der Schreibweise von formate.wert; bei abgeleiteten Anteilen der nachgerechnete Wert; leer bei geheim gehaltenen (nur Status verglichen) und leeren Zellen",
+  "ergebnis": "gleich, abweichend oder nur_status (geheim gehaltene Zelle: nur der Status verglichen)",
+  "bemerkung": "was verglichen wurde, bei Abweichung der Grund"
+ },
+ "verifikation": {
+  "datei": "audit_verifikation.tsv",
+  "datum": "2026-11-13",
+  "skript": "explore/strukturdaten/verifikation.py",
+  "verfahren": "Stichprobe aus den veröffentlichten Dateien, je 5 Werte aus gesamtstadt, stadtbezirk und stadtteil (werte.tsv) und quartier (werte_quartier.tsv.gz); Zufallszahlen aus Python random.Random mit dem Startwert unter startwert. Je Raumebene feste Plätze (schichtung), je Platz gezogen, bis Indikator (in der ganzen Stichprobe) und Jahr (in der Raumebene) neu sind. Jede Zelle unabhängig vom Lauf in der XLSX gesucht (Blatt Daten: Spalte nach dem Code im Kopf, Zeile nach Jahr und Raum) und verglichen: Wert und Status, Fundstelle mit quellobjekt, Name des Indikators, Einheit mit der Endung des Codes und dem Format im Blatt Katalog, Jahr, Nummer und Name der Raumeinheit mit raum/<raumebene>.geojson, Stadtbezirk eines Stadtteils und Stadtteil eines Quartiers mit zuordnung.tsv und eltern_id. Abgeleitete Anteile aus den veröffentlichten Eingangswerten derselben Zeile nachgerechnet (dezimal, kaufmännisch gerundet), ihre Eingangszellen ebenso in der XLSX geprüft. Geheim gehaltene Zellen: nur der Status verglichen, kein Wert in der Datei. Dazu alle 6 Werte eines Wegweiser-Exports für Köln (Bevölkerung, Durchschnittsalter, SGB II-Quote, 2022 und 2023) mit gesamtstadt.tsv, Indikator und Einheit über den Zeilenkopf.",
+  "startwert": 20261113,
+  "schichtung": {
+   "gesamtstadt": "1 abgeleitet (koeln_abg_unter18), 4 ok",
+   "stadtbezirk": "1 fehlt, 4 ok",
+   "stadtteil": "1 abgeleitet (koeln_abg_ab65), 4 ok",
+   "quartier": "1 geheim, 1 fehlt, 3 ok",
+   "vorrat": "ok und fehlt: Indikatoren der Quelle (koeln_…, ohne koeln_abg_…); geheim: nur Indikatoren, die keine Anzahl sind und an keiner in indikatoren.tsv genannten Beziehung beteiligt sind (zaehler_id und nenner_id leer, nicht als Zähler oder Nenner genannt)"
+  },
+  "zeilen": {
+   "stichprobe": 20,
+   "wegweiser": 6
+  },
+  "ergebnis": {
+   "gleich": 25,
+   "abweichend": 0,
+   "nur_status": 1
+  },
+  "abrufe": [
+   {
+    "ziel": "offenedaten-koeln.de: Statistischer Datenkatalog Köln (XLSX)",
+    "zeit": "2026-11-13T09:41:50+01:00",
+    "http_status": 200,
+    "bytes": 12329414,
+    "sha256": "0645793fe92d248859bb979b80fe2c854e850789c485dbca2ae644e61e473382",
+    "hinweis": "Prüfsumme gleich dem Abruf vom 10.11.2026 (quellen, statistischer-datenkatalog-koeln); Blatt Info: Auswertung erstellt am 15.10.2026"
+   },
+   {
+    "ziel": "wegweiser-kommune.de: Datenexport (CSV) Bevölkerung, Durchschnittsalter und SGB II-Quote, Köln, 2022–2023",
+    "zeit": "2026-11-13T09:42:02+01:00",
+    "http_status": 200,
+    "bytes": 910,
+    "sha256": "f0398bda1edc80df7b2e056c423f77309200179bbbb85b84eae4b589f50cf48d",
+    "hinweis": "nur zur Verifikation; gesamtstadt.tsv beruht auf dem Export vom 10.11.2026 (quellen)"
+   }
+  ]
  },
  "geheimhaltung_hinweis": "status geheim: Wert von der Quelle nicht veröffentlicht (Regel im Feld geheimhaltung von indikatoren.tsv), Feld wert leer. Die Anzeige bildet keine Summen oder Differenzen aus diesen Daten, die einen geheim gehaltenen Wert offenlegen könnten, etwa über Raumebenen (Quartier, Stadtteil, Stadtbezirk) oder Teilgrößen hinweg; zuordnung.tsv dient nicht der Verrechnung von Werten. In 1291 Zeilen ist ein geheim gehaltener Wert aus veröffentlichten Werten derselben Zeile ableitbar (stadtteil 3, quartier 1288; geheimhaltung_ableitbar); die Quelle wendet dort keine sekundäre Geheimhaltung an. Die Werte bleiben unverändert (quellentreu); die Anzeige bildet auch dort keine Summen, Differenzen oder Verhältnisse, die einen geheimen Wert ergeben. Die abgeleiteten Altersanteile (koeln_abg_…) entstehen nur aus veröffentlichten Werten derselben Zeile; ist einer davon geheim, bleibt der Anteil leer (status geheim).",
  "geheimhaltung_ableitbar": {

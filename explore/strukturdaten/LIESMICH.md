@@ -7,6 +7,7 @@ Bericht und Anlagen der Exploration zum Prompt „Strukturdaten als Kontext- und
 - `NACHRICHT_wegweiser.md`: Entwurf vom 10.11.2026, Versand durch den Auftraggeber.
 - Ein Hinweis an die Statistikstelle zur Geheimhaltung liegt außerhalb des Repositorys (Versand durch den Auftraggeber).
 - `laden.py`: gedrosselter Einzelabruf über `explore/abruf.py` (Freigabe vom 10.11.2026: höchstens 3 Anfragen an offenedaten-koeln.de, 15 an wegweiser-kommune.de; genutzt 3 und 7).
+- `verifikation.py`: Strukturdaten Phase 4 (13.11.2026), Stichprobe von 20 veröffentlichten Werten und 6 Werten des Wegweisers gegen die Quelle (ohne Netz, ohne Import der Pipeline; Aufruf im Kopf der Datei); Ergebnis `data/strukturdaten/audit_verifikation.tsv`, Bericht Abschnitt 11.
 - `VERTRAG_v2_entwurf.md`: Entwurf Datenvertrag v2 zur Abstimmung mit Bonn und Wuppertal (10.11.2026, nicht freigegeben).
 - übrige TSV-Dateien: Anlagen des Berichts (Abschnitt 10). Die heruntergeladenen Rohdateien liegen nicht im Repository.
 

@@ -16,6 +16,7 @@ import re
 import threading
 import zipfile
 from datetime import datetime, timezone
+from decimal import ROUND_HALF_UP, Decimal
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
@@ -1085,15 +1086,17 @@ def _veroeffentlichte_texte(root):
 
 def test_veroeffentlichte_texte_ohne_rechenweg():
     """Entscheidung 10.11.2026 („nur zählen, ohne Formel“): Kein veröffentlichter Text nennt einen Rechenweg zu den
-    geheim gehaltenen Werten der Summenprüfung: Felder von indikatoren.tsv und zurueckgestellt.tsv, alle Texte in
-    meta.json und die Texte aus _veroeffentlichte_texte (Markdown und Seite je Zeile, TSV je Zelle). meta.json zählt nur
-    Zeilen je Raumebene. Dazu die Kommentarzeilen in pipeline/*.py."""
+    geheim gehaltenen Werten der Summenprüfung: Felder von indikatoren.tsv, zurueckgestellt.tsv und
+    audit_verifikation.tsv (Phase 4), alle Texte in meta.json und die Texte aus _veroeffentlichte_texte (Markdown und
+    Seite je Zeile, TSV je Zelle). meta.json zählt nur Zeilen je Raumebene. Dazu die Kommentarzeilen in pipeline/*.py und
+    alle Zeilen der Skripte in explore/strukturdaten/ (verifikation.py, laden.py)."""
     root = config.ROOT
     daten = root / "data" / "strukturdaten"
     funde = []
-    for name in ("indikatoren.tsv", "zurueckgestellt.tsv"):
+    for name in ("indikatoren.tsv", "zurueckgestellt.tsv", strukturdaten.VERIFIKATION_DATEI):
         for z in _lesen(daten / name):
-            funde += [f"{name}: {z.get('indikator_id')} {k}" for k, v in z.items() if _nennt_rechenweg(v or "")]
+            funde += [f"{name}: {z.get('indikator_id', z.get('nr'))} {k}" for k, v in z.items()
+                      if _nennt_rechenweg(v or "")]
     meta = json.loads((daten / "meta.json").read_text(encoding="utf-8"))
     funde += [f"meta.json: {s[:80]}" for s in _json_texte(meta) if _nennt_rechenweg(s)]
     g = meta["geheimhaltung_ableitbar"]
@@ -1106,6 +1109,12 @@ def test_veroeffentlichte_texte_ohne_rechenweg():
     for pfad in sorted((root / "pipeline").glob("*.py")):
         for nr, zeile in enumerate(pfad.read_text(encoding="utf-8").splitlines(), 1):
             if zeile.lstrip().startswith("#") and _nennt_rechenweg(zeile):
+                funde.append(f"{pfad.relative_to(root)}:{nr}")
+    skripte = sorted((root / "explore" / "strukturdaten").glob("*.py"))
+    assert root / "explore" / "strukturdaten" / "verifikation.py" in skripte
+    for pfad in skripte:
+        for nr, zeile in enumerate(pfad.read_text(encoding="utf-8").splitlines(), 1):
+            if _nennt_rechenweg(zeile):
                 funde.append(f"{pfad.relative_to(root)}:{nr}")
     texte = _veroeffentlichte_texte(root)
     for pfad in ("TECHNIK.md", "README.md", "data/LICENSE-DATA.md", "explore/ANFRAGE_stadt_koeln.md",
@@ -1856,6 +1865,30 @@ def test_herkunft_der_gebiete_aus_data_geo(umgebung, monkeypatch):
     assert set(strukturdaten_raum.GEO_HERKUNFT.values()) == {"stadtteile_koeln.geojson", "stadtbezirke_koeln.geojson"}
 
 
+def test_herkunft_der_bereinigten_gebiete(umgebung, monkeypatch):
+    """Die am 13.11.2026 ohne Download lückenlos bereinigte Fassung von data/geo (strukturdaten_raum.GEO_ABGELEITET)
+    behält das Abrufdatum der Quelle (04.11.2026) und sagt, woraus sie abgeleitet ist."""
+    dl, aus = umgebung
+    _normalisieren(dl, aus)
+    monkeypatch.setattr(strukturdaten_raum, "GEO_ABGELEITET", {
+        hashlib.sha256(strukturdaten.geo_pfad(e).read_bytes()).hexdigest(): strukturdaten.geo_pfad(e).name
+        for e in ("stadtteil", "stadtbezirk")})
+    strukturdaten.write()
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    for ebene, name in (("stadtteil", "stadtteile_koeln.geojson"), ("stadtbezirk", "stadtbezirke_koeln.geojson")):
+        r = meta["raum"][ebene]
+        assert r["abgerufen"] == "2026-11-04"
+        assert (f"data/geo/{name} in dieser Fassung (sha256) am 13.11.2026 ohne neuen Download aus der Fassung von "
+                "Commit 3964836 als lückenlose Abdeckung abgeleitet") in r["abgerufen_beleg"]
+        assert _geojson(aus, ebene)["meta"]["abgerufen"] == "2026-11-04"
+    # eine Datei mit dem Namen der anderen zählt nicht (Prüfsumme und Name müssen zusammenpassen)
+    monkeypatch.setattr(strukturdaten_raum, "GEO_ABGELEITET", {
+        hashlib.sha256(strukturdaten.geo_pfad("stadtteil").read_bytes()).hexdigest(): "stadtbezirke_koeln.geojson"})
+    strukturdaten.write()
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    assert meta["raum"]["stadtteil"]["abgerufen"] == "nicht dokumentiert"
+
+
 def test_geheim_aber_ableitbar_gemeldet(umgebung):
     """Ist genau ein Wert einer geprüften Beziehung geheim und durch die veröffentlichten Werte derselben Zeile bestimmt,
     zählt meta.json die Zeilen je Raumebene (geheimhaltung_ableitbar) und nennt die Zahl im Hinweis, ohne Beziehung
@@ -1907,3 +1940,195 @@ def test_dokumentation_vertrag_1_1():
     assert config.NAMENSNENNUNG in zeile
     (zeile,) = [z for z in lizenz if z.startswith("| `strukturdaten/zuordnung.tsv`")]
     assert "Datenlizenz Deutschland – Namensnennung" not in zeile
+
+
+# --- Verifikation (Strukturdaten Phase 4, 13.11.2026) -----------------------------------------------------------------
+
+DATEN = config.ROOT / "data" / "strukturdaten"
+AUDIT_V = DATEN / strukturdaten.VERIFIKATION_DATEI
+SKRIPT_V = config.ROOT / "explore" / "strukturdaten" / "verifikation.py"
+
+
+def _zaehlen(werte):
+    z = {}
+    for w in werte:
+        z[w] = z.get(w, 0) + 1
+    return z
+
+
+def _stichprobe():
+    zeilen = _lesen(AUDIT_V)
+    return ([z for z in zeilen if z["pruefung"] == "stichprobe"], [z for z in zeilen if z["pruefung"] == "wegweiser"],
+            zeilen)
+
+
+def test_audit_verifikation_aufbau():
+    """audit_verifikation.tsv: TSV wie meta.json formate.dateien (UTF-8 ohne BOM, LF, Tabulator, ohne
+    Anführungszeichen), Kopf wie audit_verifikation_spalten, 20 Zeilen der Stichprobe (je 5 je Raumebene) und 6 des
+    Wegweisers, fortlaufend nummeriert; Ergebnis gleich oder, nur bei geheim gehaltenen Zellen, nur_status."""
+    roh = AUDIT_V.read_bytes()
+    text = roh.decode("utf-8")
+    assert not roh.startswith(b"\xef\xbb\xbf") and "\r" not in text and '"' not in text and text.endswith("\n")
+    kopf = text.split("\n", 1)[0].split("\t")
+    assert kopf == list(strukturdaten.VERIFIKATION_SPALTEN)
+    assert all(len(z.split("\t")) == len(kopf) for z in text.splitlines())
+    stich, ww, zeilen = _stichprobe()
+    assert [z["nr"] for z in zeilen] == [str(n) for n in range(1, 27)]
+    assert len(stich) == 20 and len(ww) == 6
+    assert _zaehlen(z["ebene"] for z in stich) == {e: 5 for e in strukturdaten.EBENEN_REIHENFOLGE}
+    assert {z["ergebnis"] for z in zeilen} <= {"gleich", "nur_status"}
+    assert all((z["ergebnis"] == "nur_status") == (z["status_veroeffentlicht"] == "geheim") for z in zeilen)
+    assert all(z["quelle"] and z["fundstelle"] and z["bemerkung"] for z in zeilen)
+
+
+def test_audit_verifikation_schichtung():
+    """Schichtung wie in meta.json (verifikation.schichtung): beide abgeleiteten Anteile, mindestens eine geheim
+    gehaltene und eine leere Zelle, 20 verschiedene Indikatoren, je Raumebene verschiedene Jahre und insgesamt mehrere
+    Jahre. Geheim gehaltene Zellen nur von Indikatoren, die keine Anzahl sind und an keiner Beziehung in
+    indikatoren.tsv beteiligt sind."""
+    stich, _, _ = _stichprobe()
+    meta = json.loads((DATEN / "meta.json").read_text(encoding="utf-8"))
+    status = [z["status_veroeffentlicht"] for z in stich]
+    assert {z["indikator"] for z in stich if z["status_veroeffentlicht"] == "abgeleitet"} == set(
+        meta["abgeleitet"]["indikatoren"])
+    assert status.count("geheim") >= 1 and status.count("fehlt") >= 1 and status.count("abgeleitet") >= 2
+    assert len({z["indikator"] for z in stich}) == 20 and len({z["jahr"] for z in stich}) >= 8
+    for ebene in strukturdaten.EBENEN_REIHENFOLGE:
+        jahre = [z["jahr"] for z in stich if z["ebene"] == ebene]
+        assert len(set(jahre)) == len(jahre), ebene
+        soll = {s: int(n) for n, s in re.findall(r"(\d+) (ok|fehlt|geheim|abgeleitet)",
+                                                 meta["verifikation"]["schichtung"][ebene])}
+        assert _zaehlen(z["status_veroeffentlicht"] for z in stich if z["ebene"] == ebene) == soll, ebene
+    ind = {i["indikator_id"]: i for i in _lesen(DATEN / "indikatoren.tsv")}
+    bezogen = {i[k] for i in ind.values() for k in ("zaehler_id", "nenner_id") if i[k]}
+    for z in stich:
+        if z["status_veroeffentlicht"] == "geheim":
+            i = ind[z["indikator"]]
+            assert i["typ"] != "anzahl" and not i["zaehler_id"] and not i["nenner_id"] and z["indikator"] not in bezogen
+    assert re.search(rf"^STARTWERT = {meta['verifikation']['startwert']}$", SKRIPT_V.read_text(encoding="utf-8"), re.M)
+
+
+def _veroeffentlichte_zeilen(schluessel):
+    """{(raumebene, raum_id, indikator_id, jahr): Zeile} aus werte.tsv und werte_quartier.tsv.gz für die Schlüssel."""
+    gefunden = {}
+    for pfad, oeffnen in ((DATEN / "werte.tsv", open), (DATEN / "werte_quartier.tsv.gz", gzip.open)):
+        with oeffnen(pfad, "rt", encoding="utf-8", newline="") as fh:
+            kopf = fh.readline().rstrip("\n").split("\t")
+            assert kopf == strukturdaten.KOPF_WERTE
+            for zeile in fh:
+                teile = zeile.rstrip("\n").split("\t")
+                if tuple(teile[:4]) in schluessel:
+                    gefunden[tuple(teile[:4])] = dict(zip(kopf, teile))
+    return gefunden
+
+
+def test_audit_verifikation_aktuell_und_ohne_geheimen_wert():
+    """Die Stichprobe veraltet nicht unbemerkt: Wert, Status und quellobjekt (= fundstelle) jeder Zeile stehen weiter so
+    in werte.tsv bzw. werte_quartier.tsv.gz, die Werte des Wegweisers so in gesamtstadt.tsv (kommune = raum_id). Bei
+    gleich ist wert_quelle der veröffentlichte Wert; abgeleitete Anteile ergeben sich weiter aus den veröffentlichten
+    Eingangswerten derselben Zeile (dezimal, kaufmännisch gerundet). Geheimhaltung: Zeilen mit status geheim tragen
+    keinen Wert (weder veröffentlicht noch aus der Quelle) und keine Ziffer in der Bemerkung. Nach einem neuen Abruf
+    schlägt der Test fehl, bis die Stichprobe neu gezogen ist (explore/strukturdaten/verifikation.py)."""
+    stich, ww, _ = _stichprobe()
+    abg = json.loads((DATEN / "meta.json").read_text(encoding="utf-8"))["abgeleitet"]["indikatoren"]
+    schluessel = {(z["ebene"], z["raum_id"], z["indikator"], z["jahr"]) for z in stich}
+    for z in stich:
+        if z["indikator"] in abg:
+            f = abg[z["indikator"]]
+            schluessel |= {(z["ebene"], z["raum_id"], c, z["jahr"]) for c in [*f["zaehler"], f["nenner"]]}
+    veroeff = _veroeffentlichte_zeilen(schluessel)
+    assert set(veroeff) == schluessel
+    for z in stich:
+        w = veroeff[(z["ebene"], z["raum_id"], z["indikator"], z["jahr"])]
+        assert (w["wert"], w["status"], w["quellobjekt"]) == (
+            z["wert_veroeffentlicht"], z["status_veroeffentlicht"], z["fundstelle"]), z["nr"]
+        if z["status_veroeffentlicht"] in ("geheim", "fehlt"):
+            assert z["wert_veroeffentlicht"] == z["wert_quelle"] == "", z["nr"]
+        else:
+            assert z["wert_quelle"] == z["wert_veroeffentlicht"] != "", z["nr"]
+        if z["status_veroeffentlicht"] == "geheim":
+            assert z["ergebnis"] == "nur_status" and not re.search(r"\d", z["bemerkung"]), z["nr"]
+        if z["indikator"] in abg:
+            f = abg[z["indikator"]]
+            ein = [veroeff[(z["ebene"], z["raum_id"], c, z["jahr"])] for c in [*f["zaehler"], f["nenner"]]]
+            assert all(e["status"] == "ok" for e in ein)
+            *zaehler, nenner = (Decimal(e["wert"]) for e in ein)
+            nach = (sum(zaehler) / nenner * f["faktor"]).quantize(Decimal(1).scaleb(-f["stellen"]), ROUND_HALF_UP)
+            assert str(nach) == z["wert_veroeffentlicht"], z["nr"]
+            assert z["fundstelle"] == f"({'+'.join(e['quellobjekt'] for e in ein[:-1])})/{ein[-1]['quellobjekt']}*100"
+    gesamt = {(g["kommune"], g["indikator_id"], g["jahr"]): g["wert"] for g in _lesen(DATEN / "gesamtstadt.tsv")}
+    for z in ww:
+        assert gesamt[(z["raum_id"], z["indikator"], z["jahr"])] == z["wert_veroeffentlicht"] == z["wert_quelle"]
+    assert {(z["raum_id"], z["indikator"], z["jahr"]) for z in ww} == {
+        ("koeln", i, j) for i in ("ww_bevoelkerung", "ww_durchschnittsalter", "ww_sgb-ii-quote") for j in ("2022", "2023")}
+
+
+def test_meta_nennt_die_verifikation():
+    """meta.json (veröffentlicht): dateien mit audit_verifikation.tsv (vertrag false) nach den Dateien des Laufs,
+    audit_verifikation_spalten und verifikation genau wie strukturdaten.verifikation() für die Prüfsumme der XLSX unter
+    quellen; Ergebnis und Zahl der Zeilen wie in der Datei, der Abruf der XLSX vom 13.11.2026 mit derselben Prüfsumme;
+    Vertragsversion 1.1 mit vertrag_regel; jede Datei unter dateien liegt in data/strukturdaten/."""
+    meta = json.loads((DATEN / "meta.json").read_text(encoding="utf-8"))
+    sha = next(q["sha256"] for q in meta["quellen"] if q["kennung"] == "statistischer-datenkatalog-koeln")
+    eintrag, spalten, angaben = strukturdaten.verifikation(sha)
+    assert eintrag == {"datei": strukturdaten.VERIFIKATION_DATEI, "vertrag": False,
+                       "inhalt": strukturdaten.VERIFIKATION_INHALT}
+    assert [d["datei"] for d in meta["dateien"]] == [d for d, *_ in strukturdaten.DATEIEN_AUSGABE] + [eintrag["datei"]]
+    assert meta["dateien"][-1] == eintrag and all((DATEN / d["datei"]).is_file() for d in meta["dateien"])
+    assert meta["audit_verifikation_spalten"] == spalten and meta["verifikation"] == angaben
+    assert meta["vertrag_version"] == "1.1" and meta["vertrag_regel"] == strukturdaten.VERTRAG_REGEL
+    stich, ww, zeilen = _stichprobe()
+    assert {k: v for k, v in angaben["ergebnis"].items() if v} == _zaehlen(z["ergebnis"] for z in zeilen)
+    assert angaben["ergebnis"]["abweichend"] == 0
+    assert angaben["zeilen"] == {"stichprobe": len(stich), "wegweiser": len(ww)}
+    xlsx, wegweiser = angaben["abrufe"]
+    assert xlsx["sha256"] == sha and xlsx["zeit"].startswith(angaben["datum"]) and xlsx["http_status"] == 200
+    assert wegweiser["zeit"].startswith(angaben["datum"]) and len(wegweiser["sha256"]) == 64
+    assert meta["datenstand"] == "2026-10-15" and meta["abrufdatum"] == "2026-11-10"
+
+
+def test_verifikation_nur_fuer_die_gepruefte_xlsx(umgebung, monkeypatch):
+    """Lauf mit einer anderen XLSX (Testdaten): meta.json ohne audit_verifikation.tsv unter dateien und ohne
+    audit_verifikation_spalten, verifikation „nicht geprüft“; mit der Prüfsumme in VERIFIKATION nennt der Lauf Datei,
+    Spalten und Angaben. audit_verifikation.tsv schreibt der Lauf nie, eine vorhandene Datei bleibt unverändert."""
+    dl, aus = umgebung
+    pfade, _ = _normalisieren(dl, aus)
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    assert strukturdaten.VERIFIKATION_DATEI not in {d["datei"] for d in meta["dateien"]}
+    assert "audit_verifikation_spalten" not in meta and "nicht geprüft" in meta["verifikation"]
+    assert meta["vertrag_version"] == "1.1" and meta["vertrag_regel"] == strukturdaten.VERTRAG_REGEL
+    assert not (aus / strukturdaten.VERIFIKATION_DATEI).exists()
+    (aus / strukturdaten.VERIFIKATION_DATEI).write_text("Probe\n", encoding="utf-8")
+    sha = hashlib.sha256(pfade["xlsx"].read_bytes()).hexdigest()
+    monkeypatch.setitem(strukturdaten.VERIFIKATION, sha, {"datei": strukturdaten.VERIFIKATION_DATEI, "datum": "2026-01-01"})
+    strukturdaten.write()
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    assert meta["dateien"][-1] == {"datei": strukturdaten.VERIFIKATION_DATEI, "vertrag": False,
+                                   "inhalt": strukturdaten.VERIFIKATION_INHALT}
+    assert meta["audit_verifikation_spalten"] == strukturdaten.VERIFIKATION_SPALTEN
+    assert meta["verifikation"]["datum"] == "2026-01-01"
+    assert (aus / strukturdaten.VERIFIKATION_DATEI).read_text(encoding="utf-8") == "Probe\n"
+
+
+def test_verifikation_dokumentiert_und_im_paket():
+    """LICENSE-DATA.md mit einer Zeile für audit_verifikation.tsv (beide Quellen mit Lizenz und Namensnennung, Geodaten
+    der Stadt), TECHNIK.md und Bericht mit Abschnitt zur Phase 4, README mit Datenstand, Abrufdatum und Prüfung; die Datei
+    liegt im Datenpaket (paketdateien), nicht auf der Seite (KOPIEREN)."""
+    from pipeline import strukturdaten_web
+    root = config.ROOT
+    lizenz = (root / "data" / "LICENSE-DATA.md").read_text(encoding="utf-8")
+    (zeile,) = [z for z in lizenz.splitlines() if z.startswith(f"| `strukturdaten/{strukturdaten.VERIFIKATION_DATEI}`")]
+    for erwartet in (strukturdaten.KOELN_LIZENZ, strukturdaten.KOELN_LIZENZ_URL,
+                     f"{strukturdaten.KOELN_HERAUSGEBER} ({strukturdaten.KOELN_TITEL})", strukturdaten.WW_QUELLENANGABE,
+                     "CC0 1.0", "dl-de/zero 2.0", config.NAMENSNENNUNG):
+        assert erwartet in zeile, erwartet
+    assert len(zeile.strip().strip("|").split(" | ")) == 4 and lizenz.startswith("# Lizenzen der Daten\n\nStand 13.11.2026.")
+    technik = (root / "TECHNIK.md").read_text(encoding="utf-8").split("### Strukturdaten", 1)[1].split("\n## ", 1)[0]
+    assert "- **Verifikation** (Phase 4, 13.11.2026;" in technik and "`vertrag_regel`" in technik
+    bericht = (root / "explore" / "strukturdaten" / "BERICHT_strukturdaten_phase0.md").read_text(encoding="utf-8")
+    assert "## 11. Phase 4: Verifikation (13.11.2026)" in bericht and "random.Random(20261113)" in bericht
+    readme = (root / "README.md").read_text(encoding="utf-8").split("## Datenstand", 1)[1].split("\n## ", 1)[0]
+    assert all(t in readme for t in ("15.10.2026", "abgerufen am 10.11.2026", "13.11.2026", "audit_verifikation.tsv"))
+    namen = [n for _, n in strukturdaten_web.paketdateien(DATEN)]
+    assert f"strukturdaten/{strukturdaten.VERIFIKATION_DATEI}" in namen
+    assert strukturdaten.VERIFIKATION_DATEI not in strukturdaten_web.KOPIEREN

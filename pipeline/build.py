@@ -452,28 +452,37 @@ def _ohne_hauskoordinate(papers, ausgelassen, gremien, orgs_by_id, rel, related)
     print(f"„Einwohner“ im Titel einer erkannten Vorlage (Grund Titel ohne Hausnummer, nicht Bauordnung oder "
           f"Naturschutz; Entscheidung offen): {len(titel)} Vorlagen; ohne Hauskoordinate nur darüber: "
           f"{len((weg.keys() - ohne_titel.keys()) & grund.keys())} Vorlagen")
-    print(_titelmaske_zeile(papers, ausgelassen, amt, rel, related))
+    print(_titelmaske_zeile(papers, ausgelassen, amt, rel, related, gremien))
     print(nicht_erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] == "vorlagenart")))
     print(erkannte_arten(Counter(vorlagenart_bezeichnung(p) for p in papers if grund[p["id"]] is None)))
     return set(weg)
 
 
-def _titelmaske_zeile(papers, ausgelassen, amt, rel, related):
-    """Zeile für das Log: Umfang der Titelmaske (maske.kette mit denselben Angaben und Beziehungen wie maske.aus_db beim
-    Export) und was davon nur über relatedPaper hinzukommt (Entscheidung 10.11.2026, Runde 20: Umfang nach der ersten
-    Abrufnacht prüfen). Nur Zahlen, keine Titel: Vorlagen in der Maske, Vorlagen nur über relatedPaper und davon die
-    Titel, in denen die Maske eine Hausnummer ausblendet (nur für diese gerechnet: die Maske braucht je Titel mit
-    Ziffer etwa 1 ms)."""
+def _titelmaske_zeile(papers, ausgelassen, amt, rel, related, gremien=None):
+    """Zeilen für das Log: Umfang der Titelmaske (maske.kette mit denselben Angaben und Beziehungen wie maske.aus_db
+    beim Export), was davon nur über relatedPaper hinzukommt (Entscheidung 10.11.2026, Runde 20: Umfang nach der ersten
+    Abrufnacht prüfen) und was über Gremium oder Vorlagenart als Ausgangspunkt (maske.ausgang_punktregel mit den Namen
+    der beratenden Gremien wie geocode.punkt_ausschluss; Entscheidung 13.11.2026: Kosten nach dem Vollabruf ablesen).
+    Nur Zahlen, keine Titel: Vorlagen in der Maske, Vorlagen nur über relatedPaper bzw. nur über die Punktregel und
+    davon die Titel, in denen die Maske eine Hausnummer ausblendet (nur für diese gerechnet: die Maske braucht je Titel
+    mit Ziffer etwa 1 ms)."""
     vorlagen = [(p["id"], p["reference"], p.get("paperType"), p.get("name"), amt[p["id"]]) for p in papers]
     aus = [a["id"] for a in ausgelassen]
-    mit = maske.kette(vorlagen, aus, rel + related)
-    ohne = maske.kette(vorlagen, aus, rel)
+    punktregel = [p["id"] for p in papers if maske.ausgang_punktregel(p, (gremien or {}).get(p["id"], ()))]
+    mit = maske.kette(vorlagen, aus, rel + related, punktregel=punktregel)
+    ohne = maske.kette(vorlagen, aus, rel, punktregel=punktregel)
+    ohne_regel = maske.kette(vorlagen, aus, rel + related)
     nur = [p for p in papers if p["id"] in mit and p["id"] not in ohne]
-    m = maske.Maske({p["reference"] for p in nur}) if nur else None
+    zusatz = [p for p in papers if p["id"] in mit and p["id"] not in ohne_regel]
+    m = maske.Maske({p["reference"] for p in nur + zusatz}) if nur or zusatz else None
     gekuerzt = sum(m(p.get("name"), p["reference"]) != p.get("name") for p in nur)
+    gekuerzt_regel = sum(m(p.get("name"), p["reference"]) != p.get("name") for p in zusatz)
     return (f"Titelmaske (maske.py, Hausnummer im Titel ausgeblendet; verbundene Vorlagen auch über relatedPaper): "
             f"{sum(p['id'] in mit for p in papers)} Vorlagen; nur über relatedPaper: {len(nur)} Vorlagen, davon "
-            f"{gekuerzt} mit gekürztem Titel")
+            f"{gekuerzt} mit gekürztem Titel\n"
+            f"Titelmaske über Gremium oder Vorlagenart (Ausschuss für Anregungen und Beschwerden, Vorlagenart nicht "
+            f"erkennbar; Entscheidung 13.11.2026): {len(punktregel)} Ausgangsvorlagen; ohne diese Regel nicht in der "
+            f"Maske: {len(zusatz)} Vorlagen zusätzlich, davon {gekuerzt_regel} mit gekürztem Titel")
 
 
 def _add_location(r, locations, gaz):

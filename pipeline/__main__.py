@@ -1,4 +1,4 @@
-"""Aufruf: python -m pipeline {fetch|geo-koeln|bplan-koeln|ebenen-laden|ebenen|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fetch-texts|fetch-streets|gazetteer|build|export|check|verify|package|seo|baustellen|anliegen|anliegen-seite|kandidaten|baustellen-seite|kurzfassungen|stufe-c|soll|kontext-ausschnitte|wahlen-rohdaten|wahlen-ausschnitt|haushalt-ausschnitt|haushalt-pruefbogen|haushalt-ebenen|haushalt-pruefbogen-ebenen|haushalt-ist2024|haushalt-investitionen|haushalt-pruefbogen-erweiterung|haushalt-ist2024-investitionen|haushalt-pruefbogen-erweiterung-finanz|haushalt-ertragsarten|haushalt-pruefbogen-ertragsarten|fetch-haltestellen|kontext|strukturdaten-abruf|strukturdaten|kultur-stichprobe|verkehr-stichprobe|schule-stichprobe|wohnen-stichprobe|klima-stichprobe|kinder-stichprobe|soziales-stichprobe|sicherheit-stichprobe|wirtschaft-stichprobe|digital-stichprobe|all}"""
+"""Aufruf: python -m pipeline {fetch|geo-koeln|geo-abdeckung|bplan-koeln|ebenen-laden|ebenen|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fetch-texts|fetch-streets|gazetteer|build|export|check|verify|package|seo|baustellen|anliegen|anliegen-seite|kandidaten|baustellen-seite|kurzfassungen|stufe-c|soll|kontext-ausschnitte|wahlen-rohdaten|wahlen-ausschnitt|haushalt-ausschnitt|haushalt-pruefbogen|haushalt-ebenen|haushalt-pruefbogen-ebenen|haushalt-ist2024|haushalt-investitionen|haushalt-pruefbogen-erweiterung|haushalt-ist2024-investitionen|haushalt-pruefbogen-erweiterung-finanz|haushalt-ertragsarten|haushalt-pruefbogen-ertragsarten|fetch-haltestellen|kontext|strukturdaten-abruf|strukturdaten|kultur-stichprobe|verkehr-stichprobe|schule-stichprobe|wohnen-stichprobe|klima-stichprobe|kinder-stichprobe|soziales-stichprobe|sicherheit-stichprobe|wirtschaft-stichprobe|digital-stichprobe|all}"""
 import sys
 
 from . import anliegen, baustellen, bplan, ebenen, besetzung, build, check, config, dossier, export, fetch, geodaten, kandidaten, paket, kontext, haushaltsplan, kurzfassung, seo, sessionnet, soll, strukturdaten, stufe_c, verify, wahlen
@@ -13,6 +13,7 @@ def _ersetzt(durch):
 STEPS = {
     "fetch": sessionnet.fetch_all,  # SessionNet-Adapter Köln (Abrufpolitik, inkrementell, Abrufstatistik)
     "geo-koeln": geodaten.write,  # Stadtteile, Stadtbezirke und Straßenverzeichnis aus den Kölner Geodaten
+    "geo-abdeckung": geodaten.abdeckung_schreiben,  # ohne Netz: data/geo-Flächen lückenlos (Entscheidung 13.11.2026)
     "fetch-papers": _ersetzt("fetch"),
     "fetch-organizations": _ersetzt("fetch"),
     "fetch-besetzung": besetzung.fetch,  # laufende Mitgliedschaften (Auszug ohne Kontaktdaten), nach fetch-organizations

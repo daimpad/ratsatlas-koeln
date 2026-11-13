@@ -7,12 +7,14 @@ Eingaben (ohne Netz; aufgerufen aus pipeline/strukturdaten.py, Schritt `struktur
   Entpacken auf die Platte; das Koordinatenbezugssystem kommt aus der .prj-Datei (am 10.11.2026 ETRS89/UTM 32N,
   EPSG 25832).
 - Stadtteile und Stadtbezirke aus data/geo/ (pipeline/geodaten.py: Shapefiles der Stadt, WGS84, mit
-  geodaten.TOLERANZ_M vereinfacht, jede Fläche für sich, Koordinaten auf 1e-6 Grad gerundet). Eine unvereinfachte
-  Fassung liegt nicht im Repository; data/geo ist die beste verfügbare Geometrie. Wirkung: Die Grenzen weichen von der
-  Quelle ab (für data/geo nicht gemessen; dasselbe Verfahren ergab bei den Quartieren am 10.11.2026 bis 12,61 m, 37 von
-  570 Quartieren über 2 m), an den Rändern entstehen kleine Splitter (Anteile unter SPLITTER_ANTEIL); sie werden
-  gemeldet, nicht zugeordnet. data/geo hat kein Abrufprotokoll; Abrufdatum und Stand stehen nur für die Fassung mit den
-  Prüfsummen in GEO_HERKUNFT.
+  geodaten.TOLERANZ_M vereinfacht, jede Fläche für sich, Koordinaten auf 1e-6 Grad gerundet; seit dem 13.11.2026
+  danach als lückenlose Abdeckung bereinigt, die Stadtbezirke als Vereinigung ihrer Stadtteile, geodaten.abdeckung).
+  Eine unvereinfachte Fassung liegt nicht im Repository; data/geo ist die beste verfügbare Geometrie. Wirkung: Die
+  Grenzen weichen von der Quelle ab (für data/geo nicht gemessen; dasselbe Verfahren ergab bei den Quartieren am
+  10.11.2026 bis 12,61 m, 37 von 570 Quartieren über 2 m; die Bereinigung verschob die Grenzen um höchstens 2,21 m),
+  an den Rändern der Quartiere entstehen kleine Splitter (Anteile unter SPLITTER_ANTEIL); sie werden gemeldet, nicht
+  zugeordnet. data/geo hat kein Abrufprotokoll; Abrufdatum und Stand stehen nur für die Fassungen mit den Prüfsummen in
+  GEO_HERKUNFT und GEO_ABGELEITET.
 
 Ausgaben (Rückgabe an strukturdaten.write, das die Dateien schreibt):
 - raum/stadtbezirk.geojson, raum/stadtteil.geojson: Geometrie unverändert aus data/geo; raum/quartier.geojson: aus dem
@@ -80,10 +82,20 @@ GEO_HERKUNFT = {
     "2bcc2349d2399734003ae2af4871a6534168b0f2d3d15d7eb5c83c6f29805e0c": "stadtteile_koeln.geojson",
     "21c4447b13d00a7813c0401ff584cb0e26e446acd05d50832ae72ee6eb0bbcb8": "stadtbezirke_koeln.geojson",
 }
+# Am 13.11.2026 (Entscheidung „lückenlose Abdeckung“) ist data/geo ohne neuen Download aus dieser Fassung abgeleitet
+# worden (pipeline/geodaten.abdeckung, Schritt `geo-abdeckung`): Abrufdatum und Stand der Quelle bleiben dieselben.
+GEO_ABGELEITET = {
+    "ba3c7ec9cb6b4ffdc3b60efb0a793d15244c3c8e4c0ce0d645774c5661154bbe": "stadtteile_koeln.geojson",
+    "f43ddc18080abc4fb0c8d4260467ec043c6ddd073382c0a4daa0c751d12e86a7": "stadtbezirke_koeln.geojson",
+}
 GEO_ABGERUFEN = "2026-11-04"
 GEO_BELEG = ("kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_phase1.md (Abschnitt 1) am 04.11.2026 "
              "geladen, Stand der Ressource laut Katalog 24.09.2026; data/geo/{name} in dieser Fassung (sha256) seit "
              "Commit 3964836 vom 04.11.2026")
+GEO_BELEG_ABGELEITET = ("kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_phase1.md (Abschnitt 1) am "
+                        "04.11.2026 geladen, Stand der Ressource laut Katalog 24.09.2026; data/geo/{name} in dieser "
+                        "Fassung (sha256) am 13.11.2026 ohne neuen Download aus der Fassung von Commit 3964836 als "
+                        "lückenlose Abdeckung abgeleitet (pipeline/geodaten.abdeckung)")
 GEO_OHNE_BELEG = ("data/geo/{name} weicht von der Fassung vom 04.11.2026 ab (sha256); Abrufdatum und Stand der Quelle "
                   "nicht dokumentiert")
 
@@ -679,14 +691,15 @@ def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad
         titel = "Stadtbezirke Köln" if ebene == "stadtbezirk" else "Stadtteile Köln"
         quelle = f"{GEO_HERAUSGEBER}, {titel} (offenedaten-koeln.de)"
         summe, name = pruefsumme(pfad), Path(pfad).name
-        belegt = GEO_HERKUNFT.get(summe) == name
+        belegt, abgeleitet = GEO_HERKUNFT.get(summe) == name, GEO_ABGELEITET.get(summe) == name
         features = [_feature(rid, einheiten[rid]["name"], ebene, eltern.get(ebene, {}).get(rid, ""),
                              einheiten[rid]["geometrie"], quelle) for rid in _sortiert(einheiten)]
         geojson_meta[ebene] = {
             "raumebene": ebene, "quelle": quelle, "quelle_url": meta.get("source", ""),
             "abgeleitet_aus": f"data/geo/{name}", "sha256": summe,
-            "abgerufen": GEO_ABGERUFEN if belegt else "nicht dokumentiert",
-            "abgerufen_beleg": (GEO_BELEG if belegt else GEO_OHNE_BELEG).format(name=name),
+            "abgerufen": GEO_ABGERUFEN if belegt or abgeleitet else "nicht dokumentiert",
+            "abgerufen_beleg": (GEO_BELEG if belegt else GEO_BELEG_ABGELEITET if abgeleitet else
+                                GEO_OHNE_BELEG).format(name=name),
             "lizenz": GEO_LIZENZ, "lizenz_url": GEO_LIZENZ_URL, "namensnennung": GEO_NAMENSNENNUNG,
             "crs": meta.get("crs", "WGS84 (EPSG 4326)"), "vereinfacht_m": meta.get("vereinfacht_m", ""),
             "geometrie": "unverändert aus data/geo (pipeline/geodaten.py)",

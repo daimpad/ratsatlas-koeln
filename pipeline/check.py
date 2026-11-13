@@ -37,9 +37,11 @@ ZAEHLUNG = {
     "suche": "Titel in suche.json untersucht",
     "titel_geschuetzt": "davon aus Einwohnerschaft, Bauordnung oder Naturschutz samt verbundenen Vorlagen (auch über "
                         "relatedPaper) und derselben Drucksache (Hausnummer ausgeblendet)",
-    "ohne_punkt_ohne_maske": "Vorlagen ohne Hauskoordinate nur über das Gremium (Anregungen und Beschwerden) oder "
-                             "eine nicht erkennbare Vorlagenart, außerhalb der Titelmaske, mit einer Zahl außerhalb "
-                             "bekannter Zusammenhänge im Titel (Hinweis, kein Befund; Entscheidung offen, TECHNIK.md)",
+    "titel_punktregel": "davon über Gremium (Anregungen und Beschwerden) oder nicht erkennbare Vorlagenart "
+                        "Ausgangspunkt der Titelmaske (Entscheidung 13.11.2026)",
+    "ohne_punkt_ohne_maske": "Vorlagen ohne Hauskoordinate außerhalb der Titelmaske (erwartet nur über eine "
+                             "Drucksache in anderem Schema) mit einer Zahl außerhalb bekannter Zusammenhänge im Titel "
+                             "(Hinweis, kein Befund; Entscheidung offen, TECHNIK.md)",
     "ortsnamen": "Ortsnamen in vorlagen.geojson und den Gebietsdateien untersucht",
     "geojson": "Punkte in vorlagen.geojson untersucht",
     "geojson_hauskoordinaten": "davon auf einer Hauskoordinate",
@@ -53,6 +55,8 @@ ZAEHLUNG = {
     "tabellen_zeilen": "davon Zeilen",
     "fundstellen": "Fundstellen aus dem Titel in vorlagen.geojson, den Gebietsdateien und plaene.json untersucht",
     "verbundene_titel": "Titel verbundener Vorlagen und Ergebnisse der Beratungen in den Gebietsdateien untersucht",
+    "sitzungen": "Sitzungsnamen zu Sitzungen mit einer Vorlage der Titelmaske in den Gebietsdateien, zeit.json und "
+                 "termine.ics untersucht",
     "feeds": "Einträge in Feeds (*.xml) untersucht",
 }
 # Spalten der TSV-Dateien mit Drucksache, die Titel, Teile des Titels oder einen Ortsnamen tragen: geprüft wie der Titel
@@ -249,7 +253,7 @@ def _hat_ausgelassene(db):
     return _hat_tabelle(db, "skipped_paper")
 
 
-def erlaubnis(db, nicht_erkannt=None, erkannt=None, gruende=None):
+def erlaubnis(db, nicht_erkannt=None, erkannt=None, gruende=None, punktregel=None):
     """Drucksache → darf ihr Ortsbezug auf einer Hauskoordinate liegen? Gleiche Regel, Eingaben und Funktion wie im
     Aufbau (build._ohne_hauskoordinate): Startmenge nach geocode.punkt_ausschluss mit Drucksache, Vorlagenart und Titel
     aus der Datenbank, Namen der beratenden Gremien, Name der federführenden Organisation (under_direction_of, wie
@@ -260,21 +264,16 @@ def erlaubnis(db, nicht_erkannt=None, erkannt=None, gruende=None):
     Gibt es eine Drucksache mehrfach, muss jede die Erlaubnis haben. `nicht_erkannt`, `erkannt`: Counter, die je nicht
     erkannter bzw. erkannter Vorlagenart (geocode.vorlagenart_bezeichnung) die Vorlagen zählen (erkannt: Erlaubnis nach
     eigener Angabe, geocode.erkannte_arten). `gruende`: dict, das je Vorlage der Startmenge den Grund aus
-    geocode.punkt_ausschluss aufnimmt (Gegenprobe der Titelmaske in datenschutz). Liefert ({Vorlagen-ID: bool},
-    {Drucksache: bool}, {Vorlagen-ID: Drucksache})."""
-    gremien = {}
-    for pid, name in db.execute(
-            "SELECT c.paper_id, o.name FROM consultation c LEFT JOIN organization o ON o.id = c.organization_id "
-            "ORDER BY c.paper_id, c.position"):
-        gremien.setdefault(pid, []).append(name or "")
-    andere_form = ({r[0] for r in db.execute("SELECT paper_id FROM paper_type_other_form")}
-                   if _hat_tabelle(db, "paper_type_other_form") else set())
-    amt = ("(SELECT name FROM organization o WHERE o.id = paper.under_direction_of)"
-           if "under_direction_of" in {r[1] for r in db.execute("PRAGMA table_info(paper)")} else "NULL")
+    geocode.punkt_ausschluss aufnimmt (Gegenprobe der Titelmaske in datenschutz). `punktregel`: Menge, die die
+    Vorlagen aufnimmt, die über Gremium oder Vorlagenart Ausgangspunkt der Titelmaske sind (maske.ausgang_punktregel,
+    Entscheidung 13.11.2026). Gremien, Vorlagenart und federführende Organisation liest dieselbe Funktion wie
+    maske.aus_db (geocode.angaben_db). Liefert ({Vorlagen-ID: bool}, {Drucksache: bool}, {Vorlagen-ID: Drucksache})."""
     je_id, je_ref, ref_of, start = {}, {}, {}, set()
-    for pid, ref, typ, name, amt_name in db.execute(f"SELECT id, reference, paper_type, name, {amt} FROM paper"):
-        p = {"reference": ref, "paperType": typ, "name": name, geocode.ANDERE_FORM: pid in andere_form}
-        grund = geocode.punkt_ausschluss(p, gremien.get(pid, ()), amt_name)
+    for pid, p, gremien, amt_name in geocode.angaben_db(db):
+        ref = p["reference"]
+        grund = geocode.punkt_ausschluss(p, gremien, amt_name)
+        if punktregel is not None and maske.ausgang_punktregel(p, gremien):
+            punktregel.add(pid)
         if grund:
             start.add(pid)
             if gruende is not None:
@@ -357,7 +356,51 @@ def _tabellen_mit_titel(wurzel, m, zahl, befunde):
     return offen
 
 
-def _feeds(base, db, m, zahl):
+def _ics_ereignisse(pfad):
+    """VEVENT-Blöcke einer iCalendar-Datei (publish.write_calendar) als [{Feld: Text}]: Zeilen entfaltet, Text nach
+    RFC 5545 zurückgewandelt (\\n, \\, \\; \\\\), Parameter am Feldnamen abgetrennt."""
+    text = re.sub(r"\r?\n[ \t]", "", pfad.read_text(encoding="utf-8"))
+    out = []
+    for block in text.split("BEGIN:VEVENT")[1:]:
+        felder = {}
+        for zeile in re.split(r"\r?\n", block.split("END:VEVENT")[0]):
+            name, trenner, wert = zeile.partition(":")
+            if trenner:
+                felder[name.split(";")[0].upper()] = re.sub(
+                    r"\\([\\;,nN])", lambda x: "\n" if x.group(1) in "nN" else x.group(1), wert)
+        out.append(felder)
+    return out
+
+
+def _sitzungen(base, db, m, zahl):
+    """Namen der Sitzungen, in denen eine Vorlage der Maske beraten wird (Maske.sitzungen), in zeit.json
+    (`meetings[].name` und `gremium`) und termine.ics (erste Zeile der Beschreibung ist der Name, die Zusammenfassung
+    das Gremium): export maskiert den Namen und ein Gremium, das aus dem Namen stammt, mit der Drucksache einer solchen
+    Vorlage (Offen (9) der Nachprüfung der dritten Korrektur; vorher weder maskiert noch geprüft). Ein Gremium mit dem
+    Namen einer Organisation der Datenbank stammt nicht aus dem Namen und bleibt (wie export.gremium_der_sitzung).
+    Liefert die Drucksachen (je Sitzung die der Maske); zählt die Namen in `zahl`."""
+    organisationen = {r[0] for r in db.execute("SELECT name FROM organization") if r[0]}
+    offen = set()
+
+    def pruefen(sitzung, name, gremium):
+        ref = m.sitzungen.get(sitzung)
+        if not ref:
+            return
+        zahl["sitzungen"] = zahl.get("sitzungen", 0) + 1
+        if m.offen(name, ref) or (gremium not in organisationen and m.offen(gremium, ref)):
+            offen.add(ref)
+
+    if (base / "zeit.json").exists():
+        for x in json.loads((base / "zeit.json").read_text()).get("meetings") or ():
+            pruefen(x.get("source_object"), x.get("name"), x.get("gremium"))
+    if (base / "termine.ics").exists():
+        for e in _ics_ereignisse(base / "termine.ics"):
+            pruefen(e.get("UID"), (e.get("DESCRIPTION") or "").split("\n")[0],
+                    re.sub(r" \(abgesagt\)$", "", e.get("SUMMARY") or ""))
+    return offen
+
+
+def _feeds(base, db, m, zahl, befunde):
     """Feeds (Atom, *.xml unter `base`: je Gebiet, ganz Köln, je Vorlage, Themenseiten): Titel und Zusammenfassung jedes
     Eintrags und der Kopf eines Feeds je Vorlage enthalten keinen Text der Vorlage ungekürzt, den die Maske ändert
     (Titel, Ergebnisse der Beratungen, Titel der Folgevorlagen; Prüfung r20a, dritte Korrektur: Feeds waren ungeprüft).
@@ -367,28 +410,37 @@ def _feeds(base, db, m, zahl):
     Setzt der Titel einer Folgevorlage den Titel der Eingabe fort, „… Musterpark 2. Nachtrag“, rückt deren letzte Zahl
     in einen bekannten Zusammenhang und bleibt nach der Maske stehen; der ungekürzte Titel der Eingabe stand dann als
     Teil im Eintrag, und check meldete einen Befund, den die Maske nicht beheben konnte). Texte in der Form, die ein
-    Feed nach dem Lesen trägt (ohne publish.STEUERZEICHEN, Zeilenende „\\n“). Liefert die Drucksachen mit ungekürztem
-    Text; zählt die Einträge in `zahl`."""
+    Feed nach dem Lesen trägt (ohne Zeichen, die XML 1.0 nicht erlaubt: dieselbe Regel publish.xml_text wie beim
+    Schreiben; Zeilenende „\\n“). Ergebnisse eines Tagesordnungspunkts, auf dem eine Vorlage der Maske beraten wird,
+    gelten bei jeder Vorlage, die ihn zeigt (Maske.tops; Offen (8) der Nachprüfung der dritten Korrektur), und mit ihnen
+    alle Ergebnisse dieser Vorlage, wie export sie maskiert (Maske.drucksache_ergebnisse: vorher verglich check jeden
+    Eintrag mit dem ungekürzten Ergebnis des Punkts der Maske und meldete denselben Text auf einem zweiten Punkt, den
+    export dort zu Recht ungekürzt ließ; ein längerer Text, den die Maske stehen lässt, fällt als Hülle weg). Ein Feed,
+    den ElementTree nicht lesen kann, ist ein Befund in `befunde` (Offen (6); vorher übergangen, ohne Zählung). Liefert
+    die Drucksachen mit ungekürztem Text; zählt die Einträge in `zahl`."""
     import xml.etree.ElementTree as ET
-    from .publish import STEUERZEICHEN
+    from .publish import xml_text
     atom = "{http://www.w3.org/2005/Atom}"
     ref_von = dict(db.execute("SELECT id, reference FROM paper"))
     texte = {}
 
     def wie_im_feed(t):
-        return re.sub(r"\r\n?", "\n", STEUERZEICHEN.sub("", t))
+        return re.sub(r"\r\n?", "\n", xml_text(t))
 
     def ungekuerzt(pid):
         """(Texte der Vorlage, die die Maske ändert, ungekürzt; maskierte Texte der Vorlage, die einen davon enthalten,
         längere zuerst)."""
         if pid not in texte:
             ref = ref_von.get(pid)
-            kandidaten = []
+            # Ergebnisse der Vorlage mit der Drucksache wie in export (Maske.drucksache_ergebnisse: alle, sobald einer
+            # ihrer Tagesordnungspunkte zur Maske gehört; bei einer Vorlage der Maske jeder ihrer Punkte)
+            ergebnisse = db.execute(
+                "SELECT a.result, c.agenda_item_id FROM consultation c JOIN agenda_item a ON a.id = c.agenda_item_id "
+                "WHERE c.paper_id = ?", (pid,)).fetchall()
+            r_erg = m.drucksache_ergebnisse(ref, [a for _, a in ergebnisse])
+            kandidaten = [(r, r_erg) for r, _ in ergebnisse]
             if ref in m.refs:
-                kandidaten = [(r[0], ref) for r in db.execute("SELECT name FROM paper WHERE id = ?", (pid,))]
-                kandidaten += [(r[0], ref) for r in db.execute(
-                    "SELECT a.result FROM consultation c JOIN agenda_item a ON a.id = c.agenda_item_id "
-                    "WHERE c.paper_id = ?", (pid,))]
+                kandidaten += [(r[0], ref) for r in db.execute("SELECT name FROM paper WHERE id = ?", (pid,))]
                 kandidaten += db.execute("SELECT p.name, p.reference FROM paper_relation r JOIN paper p "
                                          "ON p.id = r.child_id WHERE r.parent_id = ?", (pid,)).fetchall()
             # ab sechs Zeichen: ein kurzer Text wie „12“ stünde auch zufällig im Eintrag (Datum der Beratung)
@@ -401,7 +453,9 @@ def _feeds(base, db, m, zahl):
     for pfad in sorted(p for p in base.rglob("*.xml") if p.is_file()):
         try:
             wurzel = ET.parse(pfad).getroot()
-        except ET.ParseError:
+        except ET.ParseError as e:
+            befunde.append(f"Datenschutz: Feed {pfad.relative_to(base)} nicht lesbar ({e}), Einträge ungeprüft "
+                           f"(publish.xml_text)")
             continue
         kopf = " ".join(wurzel.findtext(f"{atom}{k}") or "" for k in ("title", "subtitle"))
         for e in wurzel.iter(f"{atom}entry"):
@@ -436,8 +490,12 @@ def datenschutz(db, base=None):
        Probe und ihrer Positivliste (maske.Maske.offen; Prüfung r20n; seit der zweiten Korrektur der Prüfung r20a
        blendet die Maske aus, was die Probe meldet, seit der dritten jede Zahl außerhalb bekannter Zusammenhänge; ein
        Befund heißt also: Text ohne Maske). Seit der dritten Korrektur auch Titel verbundener Vorlagen, Ergebnisse der
-       Beratungen und Feeds (_feeds) und jede TSV-Datei mit „drucksache“; als Hinweis ohne Befund Vorlagen ohne
-       Hauskoordinate nur über das Gremium oder die Vorlagenart außerhalb der Titelmaske (Entscheidung offen),
+       Beratungen und Feeds (_feeds) und jede TSV-Datei mit „drucksache“; seit dem 13.11.2026 Ergebnisse je
+       Tagesordnungspunkt (alle Ergebnisse einer Vorlage mit einem Punkt der Maske, Maske.drucksache_ergebnisse) und
+       Sitzungsnamen je Sitzung der Maske (auch bei Vorlagen außerhalb, _sitzungen für zeit.json
+       und termine.ics), ein unlesbarer Feed als Befund, und jede Vorlage ohne Hauskoordinate über Gremium oder
+       Vorlagenart ist Ausgangspunkt der Titelmaske (Gegenprobe als Befund, Entscheidung 13.11.2026); als Hinweis ohne
+       Befund nur noch Vorlagen ohne Hauskoordinate außerhalb der Titelmaske (erwartet: Drucksache in anderem Schema),
     3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
        Anregungen und Beschwerden, nie bei leerer oder nicht erkennbarer Vorlagenart (Entscheidung 10.11.2026; die
@@ -473,8 +531,8 @@ def datenschutz(db, base=None):
                        f"z. B. {', '.join(mit_nummer[:5])}")
 
     # 3a. Hauskoordinaten in der Datenbank
-    nicht_erkannt, erkannt, gruende = Counter(), Counter(), {}
-    je_id, je_ref, ref_of = erlaubnis(db, nicht_erkannt, erkannt, gruende)
+    nicht_erkannt, erkannt, gruende, punktregel = Counter(), Counter(), {}, set()
+    je_id, je_ref, ref_of = erlaubnis(db, nicht_erkannt, erkannt, gruende, punktregel)
     zahl["vorlagen"] = len(je_id)
     zahl["ohne_hauskoordinate"] = sum(not ok for ok in je_id.values())
     zahl["vorlagenart_nicht_erkennbar"] = sum(nicht_erkannt.values())
@@ -534,19 +592,30 @@ def datenschutz(db, base=None):
                        f"auch nach der Vorlagenart, geocode.art_von_personen), aber nicht in der Titelmaske (maske.py; "
                        f"Titelmaske und Hauskoordinaten urteilen verschieden): "
                        f"{len(ungeschuetzt)}, z. B. {', '.join(ungeschuetzt[:5])}")
-    # Hinweis ohne Befund (Prüfung r20a, dritte Korrektur; Entscheidung des Auftraggebers offen, TECHNIK.md): Vorlagen
-    # ohne Hauskoordinate nur über das Gremium (Ausschuss für Anregungen und Beschwerden) oder eine nicht erkennbare
-    # Vorlagenart sind nicht Ausgangspunkt der Titelmaske; wie viele davon eine Zahl außerhalb bekannter Zusammenhänge
-    # im Titel tragen, zeigt diese Zählung (nur Anzahl und Drucksachen)
+    # Entscheidung 13.11.2026 (1): Vorlagen ohne Hauskoordinate über das Gremium (Ausschuss für Bürgerbeteiligung,
+    # Anregungen und Beschwerden) oder eine nicht erkennbare Vorlagenart sind Ausgangspunkt der Titelmaske (vorher nur
+    # ein Hinweis). Gegenprobe wie bei den Eingaben: Grund „gremium“ oder „vorlagenart“ aus geocode.punkt_ausschluss
+    # oder maske.ausgang_punktregel (auch bei einer Drucksache in anderem Schema), aber nicht in der Titelmaske
+    zahl["titel_punktregel"] = len(punktregel)
+    ohne_maske = sorted({str(ref_of.get(pid) or pid) for pid in ref_of
+                         if (gruende.get(pid) in ("gremium", "vorlagenart") or pid in punktregel)
+                         and ref_of.get(pid) not in m.refs})
+    if ohne_maske:
+        befunde.append(f"Datenschutz: ohne Hauskoordinate über das Gremium (Anregungen und Beschwerden) oder eine "
+                       f"nicht erkennbare Vorlagenart, aber nicht in der Titelmaske (maske.ausgang_punktregel, "
+                       f"Entscheidung 13.11.2026; Titelmaske und Hauskoordinaten urteilen verschieden): "
+                       f"{len(ohne_maske)}, z. B. {', '.join(ohne_maske[:5])}")
+    # Hinweis ohne Befund (Entscheidung des Auftraggebers offen, TECHNIK.md): Übrig bleiben ohne Hauskoordinate und
+    # außerhalb der Titelmaske nur Vorlagen mit einer Drucksache in anderem Schema (Grund „drucksache“) und ihre
+    # verbundenen Vorlagen; wie viele davon eine Zahl außerhalb bekannter Zusammenhänge im Titel tragen, zeigt diese
+    # Zählung (nur Anzahl und Drucksachen)
     titel_von = dict(db.execute("SELECT id, name FROM paper"))
-    nur_gremium = sorted({str(ref_of.get(pid) or pid) for pid, grund in gruende.items()
-                          if grund in ("gremium", "vorlagenart") and ref_of.get(pid) not in m.refs
-                          and maske.restzahlen(titel_von.get(pid) or "")})
-    zahl["ohne_punkt_ohne_maske"] = len(nur_gremium)
-    if nur_gremium:
-        print(f"Hinweis (kein Befund): Vorlagen ohne Hauskoordinate nur über das Gremium oder die Vorlagenart, "
-              f"außerhalb der Titelmaske, mit einer Zahl im Titel: {len(nur_gremium)}, "
-              f"z. B. {', '.join(nur_gremium[:10])}")
+    aussen = sorted({str(ref_of.get(pid) or pid) for pid, ok in je_id.items()
+                     if not ok and ref_of.get(pid) not in m.refs and maske.restzahlen(titel_von.get(pid) or "")})
+    zahl["ohne_punkt_ohne_maske"] = len(aussen)
+    if aussen:
+        print(f"Hinweis (kein Befund): Vorlagen ohne Hauskoordinate außerhalb der Titelmaske (erwartet nur über eine "
+              f"Drucksache in anderem Schema), mit einer Zahl im Titel: {len(aussen)}, z. B. {', '.join(aussen[:10])}")
     offen = set()
     suche = lesen("suche.json")
     if suche is not None:
@@ -583,6 +652,11 @@ def datenschutz(db, base=None):
             fehlend.append(_fehlt("Datenschutz", base / d, "export"))
     dateien = [f for d in GEBIETSDATEIEN for f in sorted((base / d).glob("*.json"))]
     refs, auf, auf_oparl = set(), set(), set()
+    # Tagesordnungspunkte je Vorlage: Drucksache ihrer Ergebnisse wie in export (Maske.drucksache_ergebnisse; alle
+    # Ergebnisse, sobald auf einem ihrer Punkte eine Vorlage der Maske beraten wird, Offen (8))
+    tops_je = {}
+    for pid, top in db.execute("SELECT paper_id, agenda_item_id FROM consultation WHERE agenda_item_id IS NOT NULL"):
+        tops_je.setdefault(pid, []).append(top)
     for f in dateien:
         for p in json.loads(f.read_text())["papers"]:
             refs.add(p["reference"])
@@ -604,6 +678,17 @@ def datenschutz(db, base=None):
                           if x.get("result")]
             zahl["verbundene_titel"] = zahl.get("verbundene_titel", 0) + len(verbunden)
             offen |= {r for t, r in verbunden if m.offen(t, r)}
+            # Ergebnisse einer Vorlage mit einem Tagesordnungspunkt, auf dem eine Vorlage der Maske beraten wird, und
+            # Name einer Sitzung mit einer Vorlage der Maske: bei jeder Vorlage, auch außerhalb der Maske (Offen (8) und
+            # (9); die Ergebnisse in `steps` sind Kopien aus `process`). Befund unter der Drucksache der zeigenden
+            # Vorlage
+            r_erg = m.drucksache_ergebnisse(p["reference"], tops_je.get(p.get("source_object"), ()))
+            bei = [(x.get("result"), r_erg) for k in ("process", "steps") for x in p.get(k) or () if x.get("result")]
+            sitzungen = [(x.get("meeting"), m.sitzungen.get(x.get("meeting_id"))) for x in p.get("process") or ()
+                         if x.get("meeting") and x.get("meeting_id") in m.sitzungen]
+            zahl["sitzungen"] = zahl.get("sitzungen", 0) + len(sitzungen)
+            if any(r and m.offen(t, r) for t, r in bei + sitzungen):
+                offen.add(p["reference"])
             if any(_hauskoordinate(x.get("level"), x.get("method"), x.get("source")) for x in orte):
                 auf.add(p["reference"])
             if any(_oparl_punkt(x.get("method"), x.get("lon"), x.get("source"), x.get("level")) for x in orte):
@@ -619,7 +704,8 @@ def datenschutz(db, base=None):
             if m.offen(v.get("titel"), v.get("drucksache")) or m.offen(v.get("fundstelle"), v.get("drucksache")):
                 offen.add(v.get("drucksache"))
     offen |= _tabellen_mit_titel(base.parent, m, zahl, befunde)
-    offen |= _feeds(base, db, m, zahl)
+    offen |= _sitzungen(base, db, m, zahl)
+    offen |= _feeds(base, db, m, zahl, befunde)
     _verstoss(befunde, "Gebietsdateien der Karte", [r for r in auf if not je_ref.get(r)])
     _verstoss_oparl(befunde, "Gebietsdateien der Karte", [r for r in auf_oparl if not je_ref.get(r)])
     if offen:
