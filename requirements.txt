@@ -3,4 +3,4 @@ pyproj>=3.6
 pyshp>=2.3
 openpyxl>=3.1  # Statistischer Datenkatalog Köln (XLSX, pipeline/strukturdaten.py)
 cairosvg>=2.7  # Bild der Themenseite als PNG (pipeline/prozessbild.py); ohne Cairo nur SVG
-pypdf>=6.17  # Kopf „Dezernat, Dienststelle“ auf Seite 1 (pipeline/pdfkopf.py, nur mit RATSATLAS_PDF_FREIGEGEBEN=ja); reines Python, Grenzen für entpackte Datenströme (pypdf.filters), getestet mit 6.17.0
+pypdf>=6.17,<7  # Kopf „Dezernat, Dienststelle“ auf Seite 1 (pipeline/pdfkopf.py, nur mit RATSATLAS_PDF_FREIGEGEBEN=ja); reines Python, Grenzen für entpackte Datenströme (pypdf.filters), getestet mit 6.17.0; obere Grenze, weil eine neue Hauptversion die API ändern kann (der Selbsttest in pipeline/dokumente.py hält dann jede Anfrage an)

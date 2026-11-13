@@ -69,9 +69,14 @@
 - Dateien (`get_datei`, nur für pipeline/dokumente.py, Entscheidung 13.11.2026): derselbe Kern wie `get_json`
   (`_anfrage`: Freigabe, Abstand ab dem Ende der letzten Antwort gleich welcher Art, Zeitfenster vor jedem Versuch,
   Pausen, Weiterleitungen, Fehlerarten, Zählwerk); zusätzlich höchstens n Byte (Content-Length oder gelesen; Abbruch
-  der Art `zu_gross`, kein Sperrsignal), eine Gesamtfrist für die Antwort (Art `sperre`, mögliche Sperre wie eine
-  Zeitüberschreitung), Zeitüberschreitung des Sockets 60 s und nur PDF-Dateien (Kennung „%PDF-“ in den ersten 1024
-  Byte, sonst Art `unlesbar` ohne Wiederholung: etwa eine Anmelde- oder Sperrseite)
+  der Art `zu_gross`, kein Sperrsignal), eine Gesamtfrist für die ganze Antwort ab dem Senden (Art `sperre`, mögliche
+  Sperre wie eine Zeitüberschreitung), Zeitüberschreitung des Sockets 60 s und nur PDF-Dateien (Kennung „%PDF-“ in den
+  ersten 1024 Byte, sonst Art `unlesbar` ohne Wiederholung: etwa eine Anmelde- oder Sperrseite). Die Gesamtfrist
+  sichert ein Wächter (SIGALRM, wie explore/abruf.py; nur im Hauptthread), der auch einen hängenden Verbindungsaufbau
+  oder tröpfelnden Kopf beendet; dazu wird der Inhalt in Blöcken mit höchstens einem Lesevorgang gelesen (read1) und
+  die Frist nach jedem geprüft (ohne Wächter außerhalb des Hauptthreads: höchstens Frist plus Zeitüberschreitung des
+  Sockets für den Inhalt; der Kopf ist dann nur durch die Zeitüberschreitung je Lesevorgang begrenzt; Prüfung dok-f).
+  `get_json` bleibt ohne Gesamtfrist (unverändert)
 """
 import email.utils
 import http.client
@@ -79,8 +84,10 @@ import json
 import math
 import os
 import re
+import signal
 import ssl
 import sys
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -409,6 +416,43 @@ class _Grenze(Exception):
         self.art = art
 
 
+class _Frist(BaseException):
+    """Der Wächter (SIGALRM, nur get_datei) meldet: Die Gesamtfrist einer Antwort ist abgelaufen. BaseException, damit
+    kein `except Exception` unterwegs (urllib, http.client) sie verschluckt."""
+
+
+_frist_aktiv = False   # der Wächter darf auslösen (ein verspätet zugestelltes SIGALRM danach bleibt ohne Wirkung)
+
+
+def _frist_abgelaufen(_nummer, _rahmen):
+    if _frist_aktiv:
+        raise _Frist()
+
+
+def _waechter_an(frist):
+    """Wächter für die Gesamtfrist ab dem Senden (wie explore/abruf.py): SIGALRM nach `frist` Sekunden beendet das
+    Warten auf Verbindungsaufbau, Handshake, Kopf oder Inhalt (_Frist). Nur im Hauptthread (Signale) und nur mit einer
+    Frist; sonst ohne Wächter (dann gilt nur die Prüfung nach jedem Block in _begrenzt_lesen). Die Behandlung von
+    SIGALRM bleibt danach gesetzt, ohne Wirkung (die Vorgabe für SIGALRM beendete den Prozess bei einem verspätet
+    zugestellten Signal); die Pipeline nutzt SIGALRM sonst nicht. Liefert, ob der Wächter läuft."""
+    global _frist_aktiv
+    if not frist or frist <= 0 or not hasattr(signal, "setitimer") \
+            or threading.current_thread() is not threading.main_thread():
+        return False
+    signal.signal(signal.SIGALRM, _frist_abgelaufen)
+    _frist_aktiv = True
+    signal.setitimer(signal.ITIMER_REAL, frist)
+    return True
+
+
+def _waechter_aus(aktiv):
+    """Wächter abstellen (zuerst ohne Wirkung, dann den Zeitgeber)."""
+    global _frist_aktiv
+    if aktiv:
+        _frist_aktiv = False
+        signal.setitimer(signal.ITIMER_REAL, 0)
+
+
 class _Wiederholen(Exception):
     """Antwort unlesbar (etwa kein JSON): wie HTTP 429/5xx mit Pausen wiederholen; `ursache`: der eigentliche Fehler."""
 
@@ -417,7 +461,7 @@ class _Wiederholen(Exception):
         self.ursache = ursache
 
 
-def _alles_lesen(r):
+def _alles_lesen(r, start):
     return r.read()   # weniger Bytes als Content-Length oder chunked ohne Abschluss: IncompleteRead
 
 
@@ -451,26 +495,30 @@ PDF_KENNUNG_BEREICH = 1024
 
 def _begrenzt_lesen(hoechstens, frist):
     """Leser für get_datei: höchstens `hoechstens` Byte (sonst _Grenze „zu_gross“, ohne den Rest zu lesen; eine größere
-    Content-Length schon vor dem Lesen), insgesamt höchstens `frist` Sekunden (sonst _Grenze „frist“; geprüft nach
-    jedem Block, ein einzelner Block wartet höchstens die Zeitüberschreitung des Sockets). Weniger Bytes als
+    Content-Length schon vor dem Lesen), insgesamt höchstens `frist` Sekunden ab dem Senden (`start`; sonst _Grenze
+    „frist“). Gelesen wird in Blöcken mit höchstens einem Lesevorgang (read1: kommt ein Byte, kehrt er zurück, statt auf
+    den ganzen Block zu warten), die Frist wird nach jedem geprüft, auch nach dem letzten, leeren (später Abschluss).
+    Ohne Wächter (außerhalb des Hauptthreads) dauert eine tröpfelnde Antwort so höchstens die Frist plus die
+    Zeitüberschreitung des Sockets; mit Wächter (_waechter_an) endet sie mit der Frist. Weniger Bytes als
     Content-Length: http.client.IncompleteRead wie bei get_json (abgeschnittene Antwort, mögliche Sperre)."""
-    def lesen(r):
+    def lesen(r, start):
         kopf = getattr(r, "headers", None)
         laenge = (kopf.get("Content-Length") or "").strip() if kopf is not None else ""
         laenge = int(laenge) if laenge.isdigit() and len(laenge) <= 15 else None
         if laenge is not None and laenge > hoechstens:
             raise _Grenze("zu_gross", f"Content-Length {laenge} Byte über der Grenze von {hoechstens} Byte")
-        teile, n, beginn = [], 0, time.monotonic()
+        block = getattr(r, "read1", None) or r.read
+        teile, n = [], 0
         while True:
-            teil = r.read(min(65536, hoechstens + 1 - n))
+            teil = block(min(65536, hoechstens + 1 - n))
+            if time.monotonic() - start > frist:
+                raise _Grenze("frist", f"Antwort nach {frist:g} s nicht vollständig")
             if not teil:
                 break
             n += len(teil)
             teile.append(teil)
             if n > hoechstens:
                 raise _Grenze("zu_gross", f"mehr als {hoechstens} Byte")
-            if time.monotonic() - beginn > frist:
-                raise _Grenze("frist", f"Antwort nach {frist:g} s nicht vollständig")
         if laenge is not None and n < laenge:
             raise http.client.IncompleteRead(b"", laenge - n)
         return b"".join(teile)
@@ -497,17 +545,19 @@ def get_datei(url, hoechstens, frist, pausen=None):
     (pipeline/dokumente.py): Freigabe, Kontakt im User-Agent, eine Verbindung, Abstand ab dem Ende der letzten Antwort
     (auch einer JSON-Antwort desselben Prozesses), Zeitfenster vor jedem Versuch, Pausen nach 429/5xx nie über das
     Fenster hinaus, keine Weiterleitung, 401/403/404 sofortiger Abbruch. Zusätzlich: höchstens `hoechstens` Byte
-    (Abbruch der Art `zu_gross`, kein Sperrsignal; die Anfrage zählt), insgesamt höchstens `frist` Sekunden (Art
-    `sperre`, mögliche Sperre wie eine Zeitüberschreitung), Zeitüberschreitung des Sockets 60 s, Antwort muss eine
-    PDF-Datei sein (sonst Art `unlesbar`). Liefert die Bytes; der Aufrufer hält sie nur im Arbeitsspeicher."""
+    (Abbruch der Art `zu_gross`, kein Sperrsignal; die Anfrage zählt), insgesamt höchstens `frist` Sekunden ab dem
+    Senden für Verbindungsaufbau, Kopf und Inhalt (Wächter und Prüfung nach jedem Block; Art `sperre`, mögliche Sperre
+    wie eine Zeitüberschreitung), Zeitüberschreitung des Sockets 60 s, Antwort muss eine PDF-Datei sein (sonst Art
+    `unlesbar`). Liefert die Bytes; der Aufrufer hält sie nur im Arbeitsspeicher."""
     return _anfrage(url, pausen, "application/pdf", _begrenzt_lesen(hoechstens, frist), _pdf_auswerten, _pdf_pruefen,
-                    60)
+                    60, frist)
 
 
-def _anfrage(url, pausen, accept, lesen, auswerten, pruefen, timeout):
-    """Eine Anfrage nach der Abrufpolitik (gemeinsam für get_json und get_datei): `lesen(r)` liest die Antwort,
-    `auswerten(url, daten)` wandelt sie um (_Wiederholen: unlesbar, mit Pausen wiederholen), `pruefen(url, wert)` prüft
-    die Form (Abbruch ohne Wiederholung)."""
+def _anfrage(url, pausen, accept, lesen, auswerten, pruefen, timeout, frist=None):
+    """Eine Anfrage nach der Abrufpolitik (gemeinsam für get_json und get_datei): `lesen(r, start)` liest die Antwort
+    (`start`: Zeitpunkt des Sendens, time.monotonic), `auswerten(url, daten)` wandelt sie um (_Wiederholen: unlesbar,
+    mit Pausen wiederholen), `pruefen(url, wert)` prüft die Form (Abbruch ohne Wiederholung). `frist`: Gesamtfrist je
+    Versuch ab dem Senden mit Wächter (_waechter_an; nur get_datei), sonst None."""
     global _letzte
     if not freigegeben(url):
         raise Abbruch("Abruf gesperrt: Die Stadt Köln ist noch nicht informiert (CLAUDE.md 9). "
@@ -545,9 +595,16 @@ def _anfrage(url, pausen, accept, lesen, auswerten, pruefen, timeout):
         daten = None
         gesendet = False
         try:
-            with _OEFFNER.open(req, timeout=timeout) as r:
-                gesendet = True
-                daten = lesen(r)   # weniger Bytes als Content-Length oder chunked ohne Abschluss: IncompleteRead
+            waechter = _waechter_an(frist)
+            try:
+                with _OEFFNER.open(req, timeout=timeout) as r:
+                    gesendet = True
+                    daten = lesen(r, start)   # weniger Bytes als Content-Length, chunked ohne Abschluss: IncompleteRead
+            except _Frist:   # Wächter: Verbindungsaufbau, Kopf oder Inhalt nach der Frist nicht vollständig
+                raise _Grenze("frist", f"Antwort nach {frist:g} s nicht vollständig (Verbindungsaufbau, Kopf oder "
+                                       "Inhalt)") from None
+            finally:
+                _waechter_aus(waechter)
         except _Grenze as e:   # nur get_datei: Datei zu groß (kein Sperrsignal) oder Frist überschritten (mögliche Sperre)
             _zaehler["sekunden"] += time.monotonic() - start
             if e.art == "frist":

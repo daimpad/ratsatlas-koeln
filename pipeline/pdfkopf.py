@@ -11,14 +11,18 @@ Zwei Verwendungen:
   enthalten) ebenso wenig, nur der Name der Fehlerklasse. Der aufrufende Prozess wirft die Standardfehlerausgabe weg.
 
 Muster (abgeleitet aus explore/oparl_messung.py, RE_DEZ und RE_DEZ_LOSE, und dem Beispiel in CLAUDE.md 5.3 „II/II/2“):
-- `kennung`: Bezeichnung „Dezernat, Dienststelle“ (Komma und Doppelpunkt mit beliebigem Leerraum, auch Zeilenumbruch)
-  gefolgt von einer Kennung aus römischer Zahl und bis zu vier weiteren Teilen nach „/“ (römisch oder Ziffern), etwa
-  „II/II/2“, „VI/61“, „VI / 61 / 2“ (Leerraum entfällt). Die Kennung endet vor einem Kleinbuchstaben nicht (sonst
-  wäre „I“ aus „Integrationsrat“ eine Kennung); ein unmittelbar folgender Großbuchstabe ist erlaubt (pypdf setzt Zeilen
-  mitunter ohne Leerraum aneinander: „VI/61Beschlussvorlage“).
-- `dezernat_dienststelle`: ausgeschriebene Form „Dezernat VI, 61“ oder „Dezernat VI, Dienststelle 61/2“ (römische Zahl
-  des Dezernats, Komma, Nummer der Dienststelle mit zwei oder drei Ziffern und weiteren Teilen), normiert wie oben
-  („VI/61“, „VI/61/2“). Schwächer: Sie kann auch im Fließtext stehen.
+- `kennung`: Bezeichnung „Dezernat, Dienststelle“ (Groß- und Kleinschreibung beliebig, auch „DEZERNAT,
+  DIENSTSTELLE“; Komma und Doppelpunkt mit beliebigem Leerraum, auch Zeilenumbruch) gefolgt von einer Kennung aus einer
+  gültigen römischen Zahl (I bis XXXIX; nicht „VIIII“ oder „IVX“) und bis zu vier weiteren Teilen nach „/“ (Ziffern
+  oder eine gültige römische Zahl), etwa „II/II/2“, „VI/61“, „VI / 61 / 2“ (Leerraum entfällt). Die Kennung selbst
+  nur in Großbuchstaben. Mit mindestens einem Teil nach „/“ endet sie nicht vor einem Kleinbuchstaben oder einer
+  Ziffer; ein unmittelbar folgender Großbuchstabe ist erlaubt (pypdf setzt Zeilen mitunter ohne Leerraum aneinander:
+  „VI/61Beschlussvorlage“). Ohne Teil nach „/“ (nur das Dezernat, etwa „VI“) zählt sie nur vor Leerraum oder am Ende
+  des Textes und nicht vor „/“: So wird weder „V“ aus „VORLAGE“, „III“ aus „III. Quartal“, „X“ aus „X-Ring“, „I“ aus
+  „Integrationsrat“ noch „VI“ aus „VI / 61abc“ eine Kennung (Prüfung dok-f).
+- `dezernat_dienststelle`: ausgeschriebene Form „Dezernat VI, 61“ oder „Dezernat VI, Dienststelle 61/2“ (gültige
+  römische Zahl des Dezernats, Komma, Nummer der Dienststelle mit zwei oder drei Ziffern und weiteren Teilen), normiert
+  wie oben („VI/61“, „VI/61/2“). Schwächer: Sie kann auch im Fließtext stehen.
 - ohne Kennung: `nur_bezeichnung` (die Bezeichnung steht da, die Kennung hat eine andere Form, etwa „OB/01“ oder
   Kleinbuchstaben), `kein_text` (kein Text auf Seite 1, etwa ein Scan), `nein` (Text ohne Bezeichnung).
 Welche Formen Köln tatsächlich verwendet, zeigt erst der erste Lauf (Test mit 100 Köpfen); die Muster werden danach
@@ -30,16 +34,27 @@ import json
 import re
 import sys
 
-# Kennung: römische Zahl, dann bis zu vier Teile nach „/“; atomar, damit eine nicht passende Fortsetzung („VI/61abc“)
-# nicht zu einer kürzeren Kennung („VI“) zurückweicht
-_KENNUNG = r"(?>[IVX]+(?:\s*/\s*[0-9IVX]+){0,4})(?![a-zäöüß])"
+# gültige römische Zahl von I bis XXXIX, nicht von einer weiteren römischen Ziffer gefolgt („VIIII“, „IVX“: keine)
+_ROEMISCH = r"(?=[IVX])X{0,3}(?:IX|IV|V?I{0,3})(?![IVX])"
+# weiterer Teil nach „/“: höchstens sechs Ziffern oder eine gültige römische Zahl
+_TEIL = r"(?:[0-9]{1,6}(?![0-9])|" + _ROEMISCH + r")"
+# Kennung (nur Großbuchstaben, Ziffern und „/“):
+# - mit mindestens einem Teil nach „/“, atomar, damit eine nicht passende Fortsetzung („VI/61abc“) nicht zu einer
+#   kürzeren Kennung zurückweicht; danach kein Kleinbuchstabe und keine Ziffer, ein Großbuchstabe schon
+#   („VI/61Beschlussvorlage“);
+# - nur die römische Zahl (das Dezernat): nur vor Leerraum oder am Ende, und kein „/“ dahinter (auch nicht nach
+#   Leerraum: sonst würde aus „VI / 61abc“ „VI“)
+_KENNUNG = (r"(?>" + _ROEMISCH + r"(?:\s*/\s*" + _TEIL + r"){1,4})(?![a-zäöüß0-9])"
+            r"|" + _ROEMISCH + r"(?=\s|\Z)(?!\s*/)")
 _BEZEICHNUNG = r"Dezernat\s*,\s*Dienststelle"
-RE_KENNUNG = re.compile(_BEZEICHNUNG + r"\s*:?\s*(" + _KENNUNG + r")")
-RE_AUSGESCHRIEBEN = re.compile(r"(?<![A-Za-zÄÖÜäöüß])Dezernat\s+([IVX]+)\s*,\s*(?:Dienststelle\s*:?\s*)?"
+# die Bezeichnung ohne Rücksicht auf Groß- und Kleinschreibung, die Kennung nicht
+RE_KENNUNG = re.compile(r"(?i:" + _BEZEICHNUNG + r")\s*:?\s*(" + _KENNUNG + r")")
+RE_AUSGESCHRIEBEN = re.compile(r"(?<![A-Za-zÄÖÜäöüß])Dezernat\s+(" + _ROEMISCH + r")\s*,\s*(?:Dienststelle\s*:?\s*)?"
                                r"(?>(\d{2,3}(?:\s*/\s*\d{1,4}){0,3}))(?![0-9a-zäöüß])")
 RE_BEZEICHNUNG = re.compile(r"Dezernat\s*,?\s*Dienststelle", re.I)
-# zulässige Form einer gespeicherten Kennung (nur römische Zahlen, Ziffern und „/“): Was nicht passt, wird verworfen
-KENNUNG_FORM = re.compile(r"[IVX]{1,6}(?:/[0-9IVX]{1,6}){0,4}")
+# zulässige Form einer gespeicherten Kennung (gültige römische Zahl, dann bis zu vier Teile nach „/“ aus Ziffern oder
+# einer gültigen römischen Zahl; fullmatch): Was nicht passt, wird verworfen (Einträge, Aufbau, check)
+KENNUNG_FORM = re.compile(_ROEMISCH + r"(?:/(?:[0-9]{1,6}|" + _ROEMISCH + r")){0,4}")
 # Trefferarten mit Kennung (Federführung: Konfidenz) und ohne
 MIT_KENNUNG = {"kennung": "mittel", "dezernat_dienststelle": "niedrig"}
 OHNE_KENNUNG = ("nur_bezeichnung", "kein_text", "nein")

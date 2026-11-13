@@ -19,7 +19,16 @@ Nacht, auch kein Abruf), `sperre_verdacht` nach sessionnet.moegliche_sperre, `ni
 `tlsfehler`; dazu eigene Zählung unter `dokumente.verdacht` (Nächte mit möglicher Sperre beim Dokumentabruf, nach drei
 Nächten sieben Tage keine Dokumente; zurückgesetzt nach einem Lauf ohne Abbruch mit mindestens einer gelesenen Datei),
 weil ein vollständiger Abruf der Metadaten `sperre_verdacht` jede Nacht zurücksetzt. Das Ende des Zeitfensters ist
-kein Fehler.
+kein Fehler. Je Datei höchstens LESEFRIST Sekunden ab dem Senden für Verbindungsaufbau, Kopf und Inhalt (Wächter in
+abruf.get_datei, auch bei tröpfelnder Antwort; Prüfung dok-f).
+
+Fehlversuche je Datei (Prüfung dok-f): Ein Abbruch, der an der Datei liegen kann (HTTP 401, 403, 429, Weiterleitung,
+„aufgegeben“ nach 429/5xx, Zeitüberschreitung, Lesefrist, abgeschnittene Antwort), und `fehler_pruefung` (der
+Prüfprozess scheiterte) werden zur Datei vorläufig vermerkt (Status `abbruch_<Art>` bzw. `fehler_pruefung`, Zähler
+`fehlversuche`). Die Sperrlogik bleibt dabei unverändert (Abbruch der Nacht, gemeinsame und eigene Zählung). In der
+nächsten Nacht steht die Datei hinter allen anderen (so hält eine einzelne Datei mit dauerhaftem Fehler die älteren
+nicht auf); nach FEHLVERSUCHE_GRENZE Nächten ohne Ergebnis wird sie nicht mehr angefragt, bis sich ihre Merkmale
+ändern. Abbrüche der Ausführungsumgebung (tls, proxy) zählen nicht zur Datei.
 
 Obergrenze: höchstens RATSATLAS_PDF_MAX Dateien je Nacht (Vorgabe 300; leer oder nicht gesetzt: 300; 0, negativ oder
 unlesbar: keine Anfrage). Gezählt wird jede Datei, für die eine Anfrage beginnt, im Zustand (`dokumente.nacht`,
@@ -34,20 +43,26 @@ Titelmaske (gesperrt(): dieselben Funktionen und Angaben wie build und check: ge
 Vorlagen natürlicher Personen, Ausschuss für Anregungen und Beschwerden, nicht erkennbare Vorlagenart, maske.py; Fixpunkt
 geocode.sperrmenge; Titelmaske maske.kette), nicht öffentliche Beratungen (`public` weder true noch fehlend)
 und Sammellisten nichtöffentlicher Punkte. Fehlt `mainFile`, wird nicht unter `auxiliaryFile` geraten: gezählt und im
-Log genannt (Entscheidung später; in Köln fehlte `mainFile` in Stufe 1 bei 25 Vorlagen, in Stufe 2 bei keiner der
-100 jüngsten). Nur Adressen auf dem Host der OParl-API (config.OPARL_BODY: Schema, Host und Port gleich;
-`downloadUrl`, sonst `accessUrl`), nur PDF laut `mimeType` (falls angegeben), höchstens MAX_BYTES laut `size`.
-Neueste zuerst (Datum der Vorlage, dann `created`). Schon verarbeitete Dateien (auch mit Fehler) nur erneut, wenn sich
-`modified`, `size`, `accessUrl` oder `downloadUrl` der Datei geändert haben.
+Log genannt (Entscheidung des Auftraggebers offen). In Köln fehlte `mainFile` bisher bei allen gemessenen Vorlagen
+(Stufe 1: 25 von 25, Stufe 2: 100 von 100 jüngsten; explore/BERICHT_phase1.md); ohne diese Entscheidung liest der
+Schritt daher voraussichtlich keine Datei, auch nicht in der ersten Nacht mit RATSATLAS_PDF_MAX=100. Nur Adressen auf
+dem Host der OParl-API (config.OPARL_BODY: Schema, Host und Port gleich; `downloadUrl`, sonst `accessUrl`), nur PDF
+laut `mimeType` (falls angegeben), höchstens MAX_BYTES laut `size`. Neueste zuerst (Datum der Vorlage, dann
+`created`), Dateien mit Fehlversuch dahinter. Schon verarbeitete Dateien (auch mit endgültigem Fehler) nur erneut,
+wenn sich `modified`, `size`, `accessUrl` oder `downloadUrl` der Datei geändert haben.
 
-Verarbeitung: Die Antwort bleibt im Arbeitsspeicher (höchstens MAX_BYTES, Lesefrist LESEFRIST), wird nie auf die Platte
-geschrieben und nach der Prüfung verworfen, auch bei einem Fehler. Geprüft wird in einem eigenen Prozess
+Verarbeitung: Vor der ersten Anfrage einer Nacht prüft ein Selbsttest den Prüfprozess an einer eingebauten Probedatei
+mit erfundenem Kopf (`selbsttest`); liefert er nicht das erwartete Ergebnis (pypdf fehlt in der isolierten Umgebung,
+eine andere Version antwortet anders, Absturz), geht keine Anfrage hinaus (Warnung). Die Antwort bleibt im
+Arbeitsspeicher (höchstens MAX_BYTES, Lesefrist LESEFRIST), wird nie auf die Platte geschrieben und nach der Prüfung
+verworfen, auch bei einem Fehler. Geprüft wird in einem eigenen Prozess
 (pipeline/pdfkopf.py, `python -I`, ohne Umgebungsvariablen außer PATH, Grenzen für Speicher, Rechenzeit, Dateien und
 Speicherabzüge, Frist PRUEF_FRIST; nur Seite 1 mit pypdf, keine externen Werkzeuge); er gibt nur Status, Trefferart,
 Kennung und den Namen einer Fehlerklasse zurück, nie Text. Gespeichert wird je Datei nur Abgeleitetes in
 data/raw/dokumente_koepfe.jsonl (config.DOKUMENTE; im Zwischenspeicher des Workflows wie die übrigen Rohdaten, nicht
 im Repository, nicht auf der Seite, nicht im Datenpaket): OParl-Kennung der Datei und der Vorlage, SHA-256, Größe,
-Zeitpunkt, Kennung, Trefferart, Status, Fehlerklasse und die Merkmale der Datei zur Erkennung von Änderungen
+Zeitpunkt, Kennung, Trefferart, Status, Fehlerklasse, Zahl der Fehlversuche und die Merkmale der Datei zur Erkennung
+von Änderungen
 (`modified`, `size`, `accessUrl`, `downloadUrl` aus den Metadaten). Jeder Eintrag wird vor dem Schreiben und beim Lesen
 gegen feste Formen geprüft (FELDER, pdfkopf.KENNUNG_FORM). Log und Abrufstatistik nennen nur Zahlen.
 
@@ -75,21 +90,27 @@ FREIGABE = "RATSATLAS_PDF_FREIGEGEBEN"
 HOECHSTENS = "RATSATLAS_PDF_MAX"
 HOECHSTENS_VORGABE = 300
 MAX_BYTES = 25_000_000           # je Datei (laut size, Content-Length und gelesen)
-LESEFRIST = 120                  # Sekunden für eine ganze Antwort (darüber: mögliche Sperre)
+LESEFRIST = 120                  # Sekunden für eine ganze Antwort ab dem Senden (darüber: mögliche Sperre)
 PRUEF_FRIST = 60                 # Sekunden für den Prüfprozess (Wanduhr)
 PRUEF_CPU = 30                   # Sekunden Rechenzeit im Prüfprozess
 PRUEF_SPEICHER = 1 << 30         # Adressraum des Prüfprozesses (1 GiB)
 VERDACHT_NAECHTE = 3
 VERDACHT_PAUSE = timedelta(days=7)
+# Nächte ohne Ergebnis für dieselbe unveränderte Datei (vorläufiger Status), danach zurückgestellt bis zu einer Änderung
+FEHLVERSUCHE_GRENZE = 2
 SCHLUESSEL = "dokumente"         # Eintrag im Zustand (zustand_abruf.json)
 RE_VERWALTUNGSVORLAGE = re.compile(r"^\d{1,4}/\d{4}$")
 # Felder eines Eintrags in config.DOKUMENTE; nichts sonst wird geschrieben
-FELDER = ("file", "paper", "sha256", "groesse", "zeit", "kennung", "trefferart", "status", "fehlerart", "modified",
-          "size", "accessUrl", "downloadUrl")
+FELDER = ("file", "paper", "sha256", "groesse", "zeit", "kennung", "trefferart", "status", "fehlerart", "fehlversuche",
+          "modified", "size", "accessUrl", "downloadUrl")
 MERKMALE = ("modified", "size", "accessUrl", "downloadUrl")
 # Status je Datei: aus dem Prüfprozess (pdfkopf.STATUS) oder vom Abruf
 STATUS = (*pdfkopf.STATUS, "zeitueberschreitung", "fehler_pruefung", "zu_gross", "kein_pdf", "adresse")
 RE_HTTP_STATUS = re.compile(r"http_[1-5]\d\d")
+# vorläufige Status (Fehlversuch, die Datei kommt in einer späteren Nacht wieder dran): Abbruch, der an der Datei
+# liegen kann, und ein gescheiterter Prüfprozess
+RE_ABBRUCH = re.compile(r"abbruch_(?:sperre|aufgegeben|weiterleitung|http_[1-5]\d\d)")
+VORLAEUFIG = ("fehler_pruefung",)
 RE_SHA256 = re.compile(r"[0-9a-f]{64}")
 # Gründe, aus denen eine Vorlage oder Datei nicht ausgewählt wird (Log und Abrufstatistik)
 GRUENDE = {
@@ -98,6 +119,7 @@ GRUENDE = {
     "ohne_hauptdatei": "ohne mainFile", "doppelt": "Hauptdatei schon ausgewählt", "kein_pdf": "kein PDF laut mimeType",
     "fremder_host": "Adresse nicht auf dem Host der OParl-API", "zu_gross": f"über {MAX_BYTES // 1_000_000} MB laut size",
     "bekannt": "schon verarbeitet, unverändert",
+    "fehlversuche": f"nach {FEHLVERSUCHE_GRENZE} Nächten ohne Ergebnis zurückgestellt",
 }
 
 
@@ -150,6 +172,11 @@ def _merkmal(wert):
     return None
 
 
+def vorlaeufig(status):
+    """Vorläufiger Status (Fehlversuch): `fehler_pruefung` oder `abbruch_<Art>`."""
+    return isinstance(status, str) and (status in VORLAEUFIG or bool(RE_ABBRUCH.fullmatch(status)))
+
+
 def eintrag_gueltig(e):
     """Hat ein Eintrag genau die erlaubte Form (FELDER, Werte nach festen Mustern)? Was nicht passt, wird weder
     geschrieben noch gelesen: So gelangt kein Text des Dokuments in den Zustand."""
@@ -158,7 +185,10 @@ def eintrag_gueltig(e):
     if not all(isinstance(e[k], str) and e[k] and len(e[k]) <= 2000 for k in ("file", "paper")):
         return False
     status, art, kennung = e["status"], e["trefferart"], e["kennung"]
-    if not (status in STATUS or isinstance(status, str) and RE_HTTP_STATUS.fullmatch(status)):
+    if not (status in STATUS or isinstance(status, str) and RE_HTTP_STATUS.fullmatch(status) or vorlaeufig(status)):
+        return False
+    n = e["fehlversuche"]
+    if isinstance(n, bool) or not isinstance(n, int) or not 0 <= n <= 99 or vorlaeufig(status) != (n >= 1):
         return False
     if not isinstance(art, str) or not isinstance(kennung, str) or not isinstance(e["fehlerart"], str):
         return False
@@ -287,6 +317,9 @@ def auswahl(roh, orgs, beratungen, eintraege):
             size = f.get("size")
             merkmale = {k: _merkmal(f.get(k)) for k in MERKMALE}
             alt = eintraege.get(f["id"])
+            unveraendert = bool(alt) and all(alt.get(k) == merkmale[k] for k in MERKMALE)
+            # Fehlversuche zählen nur für dieselbe, unveränderte Datei
+            fehlversuche = alt.get("fehlversuche", 0) if unveraendert and vorlaeufig(alt.get("status")) else 0
             if f["id"] in gesehen:
                 gruende["doppelt"] += 1
             elif isinstance(mime, str) and mime.strip() and mime.split(";")[0].strip().lower() != "application/pdf":
@@ -295,15 +328,19 @@ def auswahl(roh, orgs, beratungen, eintraege):
                 gruende["fremder_host"] += 1
             elif isinstance(size, int) and not isinstance(size, bool) and size > MAX_BYTES:
                 gruende["zu_gross"] += 1
-            elif alt and all(alt[k] == merkmale[k] for k in MERKMALE):
+            elif unveraendert and fehlversuche >= FEHLVERSUCHE_GRENZE:
+                gruende["fehlversuche"] += 1
+            elif unveraendert and not fehlversuche:
                 gruende["bekannt"] += 1
             else:
                 kandidaten.append({"file": f["id"], "paper": p["id"], "url": url, **merkmale,
+                                   "_fehlversuche": fehlversuche,
                                    "_ordnung": (str(p.get("date") or "") if isinstance(p.get("date"), str) else "",
                                                 str(p.get("created") or "") if isinstance(p.get("created"), str) else "",
                                                 p["id"])})
             gesehen.add(f["id"])
     kandidaten.sort(key=lambda k: k["_ordnung"], reverse=True)
+    kandidaten.sort(key=lambda k: k["_fehlversuche"])   # stabil: nach einem Fehlversuch hinter allen anderen
     return kandidaten, gruende
 
 
@@ -329,6 +366,33 @@ def pruefen(daten):
         return {"status": "zeitueberschreitung", **leer}
     ergebnis = pdfkopf.ergebnis_pruefen(r.stdout) if r.returncode == 0 else None
     return ergebnis or {"status": "fehler_pruefung", **leer}
+
+
+def _probedatei():
+    """Kleine PDF-Datei mit erfundenem Kopf für den Selbsttest (PDF 1.4, eine Seite, Helvetica, nur ASCII)."""
+    strom = b"BT /F1 11 Tf 14 TL 56 780 Td (Probe) Tj T* (Dezernat, Dienststelle) Tj T* (VI/61) Tj T* ET"
+    objekte = [b"<< /Type /Catalog /Pages 2 0 R >>", b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+               b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> "
+               b"/Contents 5 0 R >>",
+               b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+               b"<< /Length %d >>\nstream\n" % len(strom) + strom + b"\nendstream"]
+    aus, lage = b"%PDF-1.4\n", []
+    for i, o in enumerate(objekte, 1):
+        lage.append(len(aus))
+        aus += b"%d 0 obj\n" % i + o + b"\nendobj\n"
+    xref = len(aus)
+    aus += b"xref\n0 %d\n0000000000 65535 f \n" % (len(objekte) + 1) + b"".join(b"%010d 00000 n \n" % x for x in lage)
+    return aus + b"trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF\n" % (len(objekte) + 1, xref)
+
+
+PROBE_ERWARTET = {"status": "ok", "trefferart": "kennung", "kennung": "VI/61", "fehlerart": ""}
+
+
+def selbsttest():
+    """Liefert der Prüfprozess für die eingebaute Probedatei das erwartete Ergebnis? Sonst (pypdf fehlt in der isolierten
+    Umgebung, eine andere Version antwortet anders, Absturz) keine Anfrage in dieser Nacht: Jede Datei käme als
+    `fehler_pruefung` zurück, die Anfragen an die Stadt wären vergeudet."""
+    return pruefen(_probedatei()) == PROBE_ERWARTET
 
 
 # --- Zustand ------------------------------------------------------------------------------------------------------------
@@ -437,8 +501,9 @@ def _zusammenfassung(kandidaten, versucht, schon, grenze, ergebnisse, gruende):
     arten = Counter(e["trefferart"] for e in ergebnisse if e["status"] == "ok")
     erkannt = sum(arten[a] for a in pdfkopf.MIT_KENNUNG)
     fehler = Counter(e["status"] for e in ergebnisse if e["status"] != "ok")
-    teile = [f"Auswahl {len(kandidaten)} Dateien (neu oder geändert), in diesem Lauf {versucht} (in dieser Nacht "
-             f"{schon + versucht} von höchstens {grenze})",
+    nachrang = sum(1 for k in kandidaten if k["_fehlversuche"])
+    teile = [f"Auswahl {len(kandidaten)} Dateien (neu, geändert oder nach einem Fehlversuch erneut: {nachrang}), in "
+             f"diesem Lauf {versucht} (in dieser Nacht {schon + versucht} von höchstens {grenze})",
              f"erkannt {erkannt} (" + ", ".join(f"{a} {arten[a]}" for a in pdfkopf.MIT_KENNUNG) + ")",
              "ohne Kennung " + ", ".join(f"{a} {arten[a]}" for a in pdfkopf.OHNE_KENNUNG),
              "nicht gelesen oder geprüft " + (", ".join(f"{s} {n}" for s, n in sorted(fehler.items())) or "0"),
@@ -519,7 +584,10 @@ def _lauf(zeile):
     lauf = {"ergebnisse": [], "versucht": 0}
     ergebnis = f"übersprungen: Obergrenze dieser Nacht erreicht ({schon} von höchstens {grenze})"
     try:
-        if rest:
+        if rest and kandidaten and not selbsttest():   # vor der ersten Anfrage: ohne heilen Prüfprozess keine
+            ergebnis = _uebersprungen("Prüfprozess besteht den Selbsttest an der eingebauten Probedatei nicht (pypdf "
+                                      "fehlt, andere Version oder Absturz)", True)
+        elif rest:
             ergebnis = _lesen(kandidaten[:rest], nacht, schon, lauf, zeile)
     finally:
         if config.DOKUMENTE.exists():   # angehängte Einträge zusammenführen (je Datei einer, geordnet)
@@ -538,15 +606,20 @@ def _lesen(auswahl_, nacht, schon, lauf, zeile):
         try:
             daten = abruf.get_datei(k["url"], MAX_BYTES, LESEFRIST)
             e = pruefen(daten)
-            e.update(sha256=hashlib.sha256(daten).hexdigest(), groesse=len(daten))
+            # ein gescheiterter Prüfprozess ist kein Ergebnis der Datei: vorläufig (Fehlversuch)
+            e.update(sha256=hashlib.sha256(daten).hexdigest(), groesse=len(daten),
+                     fehlversuche=k["_fehlversuche"] + 1 if vorlaeufig(e["status"]) else 0)
             gelesen += 1
         except abruf.Abbruch as a:
             status = ("zu_gross" if a.art == "zu_gross" else "adresse" if a.art == "adresse"
                       else "kein_pdf" if a.art == "unlesbar"
                       else f"http_{a.code}" if a.art == "http" and a.code not in sessionnet.SPERRE_HTTP else None)
-            if status:   # nur dateibezogene Ergebnisse: so wird die Datei erst nach einer Änderung erneut gelesen
-                _vermerken(k, {"status": status, "trefferart": "", "kennung": "", "fehlerart": "", "sha256": "",
-                               "groesse": None}, ergebnisse, zeile)
+            leer = {"trefferart": "", "kennung": "", "fehlerart": "", "sha256": "", "groesse": None}
+            if status:   # dateibezogene Ergebnisse: so wird die Datei erst nach einer Änderung erneut gelesen
+                _vermerken(k, {"status": status, **leer, "fehlversuche": 0}, ergebnisse, zeile)
+            elif _abbruch_status(a):   # kann an der Datei liegen: vorläufig, in der nächsten Nacht hinter den anderen
+                _vermerken(k, {"status": _abbruch_status(a), **leer, "fehlversuche": k["_fehlversuche"] + 1},
+                           ergebnisse, zeile)
             if a.art in ("zu_gross", "adresse"):
                 continue
             if a.art == "zeitfenster":
@@ -562,9 +635,23 @@ def _lesen(auswahl_, nacht, schon, lauf, zeile):
     return "ok"
 
 
+def _abbruch_status(a):
+    """Vorläufiger Status einer Datei nach einem Abbruch, der an ihr liegen kann: HTTP 401/403/429
+    (`abbruch_http_<Code>`), Weiterleitung, „aufgegeben“ (nach 429/5xx) und `sperre` (Zeitüberschreitung, Lesefrist,
+    abgeschnittene Antwort); None für Abbrüche der Ausführungsumgebung (tls, proxy) und alle übrigen."""
+    if a.art == "http" and a.code in sessionnet.SPERRE_HTTP:
+        status = f"abbruch_http_{a.code}"
+    elif a.art in ("sperre", "aufgegeben", "weiterleitung"):
+        status = f"abbruch_{a.art}"
+    else:
+        return None
+    return status if RE_ABBRUCH.fullmatch(status) else None
+
+
 def _vermerken(k, e, ergebnisse, zeile):
     eintrag = {"file": k["file"], "paper": k["paper"], "zeit": _now(), **{m: k[m] for m in MERKMALE},
-               **{f: e[f] for f in ("status", "trefferart", "kennung", "fehlerart", "sha256", "groesse")}}
+               **{f: e[f] for f in ("status", "trefferart", "kennung", "fehlerart", "sha256", "groesse",
+                                    "fehlversuche")}}
     _anhaengen(eintrag)
     ergebnisse.append(eintrag)
     zeile["objekte"] = len(ergebnisse)

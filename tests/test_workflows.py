@@ -46,14 +46,18 @@ def test_abhilfen_als_variablen_sicherungen_nicht():
 
 def test_dokumentschritt_gesperrt_und_ohne_anhalten():
     """Der Dokumentschritt (Entscheidung 13.11.2026) bekommt genau die Freigaben, den Kontakt und die Obergrenze als
-    Repository-Variablen, läuft gleich nach dem Abruf (nicht nach einem roten Abrufschritt: kein eigenes `if`) und hält
-    die Veröffentlichung bei einem Fehler nicht an; der Kopf erklärt beide neuen Variablen."""
+    Repository-Variablen, läuft nach dem Abruf (nicht nach einem roten Abrufschritt: kein eigenes `if`), hält die
+    Veröffentlichung bei einem Fehler nicht an und hat ein eigenes Zeitlimit (Prüfung dok-f: länger als das Zeitfenster
+    von 2 h plus einer Datei, kürzer als das des Jobs); der Kopf erklärt beide neuen Variablen."""
     text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     schritt = next(s for s in text.split("\n      - ") if "run: python -m pipeline dokumente" in s)
     variablen = set(re.findall(r"^\s+(RATSATLAS_\w+): \$\{\{ vars\.(\w+) \}\}$", schritt, re.M))
     assert variablen == {(v, v) for v in ("RATSATLAS_STADT_INFORMIERT", "RATSATLAS_KONTAKT", "RATSATLAS_PDF_FREIGEGEBEN",
                                           "RATSATLAS_PDF_MAX")}
     assert re.search(r"^\s+continue-on-error: true$", schritt, re.M) and not re.search(r"^\s+if:", schritt, re.M)
+    limit = re.search(r"^\s+timeout-minutes: (\d+)$", schritt, re.M)
+    job = re.search(r"^    timeout-minutes: (\d+)", text, re.M)
+    assert limit and 125 <= int(limit.group(1)) < int(job.group(1))
     kopf = text.split("\nname:")[0]
     assert "RATSATLAS_PDF_FREIGEGEBEN" in kopf and "RATSATLAS_PDF_MAX" in kopf
 
@@ -73,16 +77,25 @@ def test_leere_abhilfe_variablen_ohne_wirkung(monkeypatch):
 def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
     """Der Zustand mit der Zählung der Nächte mit möglicher Sperre (zustand_abruf.json), STAND.json und die
     Abrufstatistik werden direkt nach dem Abrufschritt mit actions/cache/save und `if: always()` gesichert, nicht erst
-    im Post-Schritt von actions/cache, der nur nach einem erfolgreichen Lauf speichert."""
+    im Post-Schritt von actions/cache, der nur nach einem erfolgreichen Lauf speichert. Der Dokumentschritt folgt erst
+    nach ihr und dem Fortschritt (Prüfung dok-f: sonst hinge die Sicherung an seiner Dauer); nach ihm eine zweite
+    Sicherung, nur mit seiner Freigabe, mit eigenem Schlüssel unter demselben Präfix (der nächste Lauf nimmt den
+    jüngsten Stand)."""
     text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     schritte = text.split("\n      - ")
     i = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
     assert "id: abruf" in schritte[i]
-    # dazwischen nur der Dokumentschritt (pipeline/dokumente.py): Seine Ergebnisse und die Zählung der Nacht liegen im
-    # selben Zustand und werden mitgesichert
-    assert "run: python -m pipeline dokumente" in schritte[i + 1]
-    sichern = schritte[i + 2]
+    sichern = schritte[i + 1]
     assert re.search(r"^\s+if: always\(\)", sichern, re.M) and "steps.abruf.outcome" in sichern
+    # danach der Fortschritt (test_fortschritt_gleich_nach_dem_sichern), der Dokumentschritt (pipeline/dokumente.py)
+    # und die zweite Sicherung seiner Ergebnisse und Zählungen
+    assert "run: python tools/abrufstand.py" in schritte[i + 2]
+    assert "run: python -m pipeline dokumente" in schritte[i + 3] and "id: dokumente" in schritte[i + 3]
+    zweite = schritte[i + 4]
+    assert re.search(r"^\s+if: always\(\) && steps\.dokumente\.outcome != 'skipped' && "
+                     r"vars\.RATSATLAS_STADT_INFORMIERT == 'ja' && vars\.RATSATLAS_PDF_FREIGEGEBEN == 'ja'$", zweite, re.M)
+    assert "key: raw-${{ github.run_id }}-${{ github.run_attempt }}-dokumente" in zweite
+    assert re.search(r"uses: actions/cache/save@([0-9a-f]{40})", zweite)
     save = re.search(r"uses: actions/cache/save@([0-9a-f]{40})", sichern)
     assert save, sichern
     # dieselbe festgenagelte Version wie die Wiederherstellung; kein actions/cache mit Speichern im Post-Schritt
@@ -90,7 +103,7 @@ def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
     assert "uses: actions/cache@" not in text and "uses: actions/cache/restore@" in text
     wiederherstellen = next(s for s in schritte if "actions/cache/restore@" in s)
     for pfad in ("data/raw/", "data/export/abrufstatistik.tsv"):         # data/raw/: zustand_abruf.json, STAND.json
-        assert pfad in sichern and pfad in wiederherstellen
+        assert pfad in sichern and pfad in wiederherstellen and pfad in zweite
     assert "key: raw-${{ github.run_id }}-${{ github.run_attempt }}" in sichern
     assert "restore-keys: raw-" in wiederherstellen
     assert config.ZUSTAND.parent == config.STAND.parent == config.RAW

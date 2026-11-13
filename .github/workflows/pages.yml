@@ -49,13 +49,16 @@
 # ein einmaliger Test mit 100 Köpfen ist die erste Nacht mit 100). Dieselbe Abrufpolitik und derselbe Zustand wie beim
 # Abruf, nach ihm und nur, wenn er in dieser Nacht vollständig war; ein Abbruch zählt wie einer des Abrufs (12-Stunden-
 # Regel, Nacht mit möglicher Sperre) und nach drei Nächten mit möglicher Sperre beim Dokumentabruf ruhen die Dokumente
-# sieben Tage. Ein Fehler in diesem Schritt hält die Veröffentlichung nicht an.
+# sieben Tage. Ein Fehler in diesem Schritt hält die Veröffentlichung nicht an; er hat ein eigenes Zeitlimit (150 min).
 # Der Zwischenspeicher (Rohdaten, Zustand des Abrufs mit der Zählung der Nächte, STAND.json, Abrufstatistik) wird gleich
-# nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert. Danach steht der
-# Fortschritt des Abrufs im Log und in der Zusammenfassung des Laufs (tools/abrufstand.py, nur Zahlen und Zustände).
+# nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert; mit Freigabe des
+# Dokumentschritts nach diesem ein zweites Mal (eigener Schlüssel; der nächste Lauf nimmt den jüngsten Stand). Gleich
+# nach der ersten Sicherung steht der Fortschritt des Abrufs im Log und in der Zusammenfassung des Laufs
+# (tools/abrufstand.py, nur Zahlen und Zustände).
 # Fehlt nach dem Wiederherstellen der Zustand des Abrufs (data/raw/zustand_abruf.json), hält ein Wächter den
-# freigegebenen Lauf vor dem Abruf an (rot: kein Abruf, keine Veröffentlichung, keine Sicherung); überstimmen nur
-# mit RATSATLAS_VOLLABRUF=ja (neuer Vollabruf ab Seite 1, gesetzt lassen, bis eine Abrufnacht gelaufen ist).
+# freigegebenen Lauf vor dem Abruf an (rot: kein Abruf, keine Dokumente, keine Veröffentlichung, keine Sicherung);
+# überstimmen nur mit RATSATLAS_VOLLABRUF=ja (neuer Vollabruf ab Seite 1, gesetzt lassen, bis eine Abrufnacht gelaufen
+# ist).
 name: Daten aktualisieren und Seite veröffentlichen
 
 on:
@@ -94,7 +97,8 @@ jobs:
 
       # Rohdaten-Cache: letzter gültiger Stand, Zustand des inkrementellen Abrufs, Abrufstatistik. Hier nur
       # Wiederherstellen; gesichert wird im Schritt direkt nach dem Abruf, nicht erst am Ende eines erfolgreichen Laufs
-      # (data/raw/ ändert nach dem Abruf kein Schritt mehr)
+      # (data/raw/ ändert nach dem Abruf nur noch der Dokumentschritt, nach dem mit seiner Freigabe ein zweites Mal
+      # gesichert wird)
       - name: Rohdaten des letzten Laufs
         id: rohdaten
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
@@ -147,20 +151,6 @@ jobs:
           RATSATLAS_ABSTAND: "20"
         run: python -m pipeline fetch
 
-      # Dokumente (PDF-Köpfe) gleich nach dem Abruf, im selben Zeitfenster und nach derselben Abrufpolitik (eigener
-      # Prozess: der Abstand von 2 s zählt ab seinem Start, also auch zur letzten Anfrage des Abrufs); nur mit
-      # RATSATLAS_PDF_FREIGEGEBEN=ja, sonst keine Anfrage und nichts geschrieben (siehe Kopf). Läuft nicht nach einem
-      # roten Abrufschritt; vor der Sicherung des Zustands, damit Ergebnisse und Zählung der Nacht erhalten bleiben
-      - name: Dokumente der Stadt Köln (PDF-Köpfe, gesperrt bis zur Freigabe)
-        id: dokumente
-        continue-on-error: true
-        env:
-          RATSATLAS_STADT_INFORMIERT: ${{ vars.RATSATLAS_STADT_INFORMIERT }}
-          RATSATLAS_KONTAKT: ${{ vars.RATSATLAS_KONTAKT }}
-          RATSATLAS_PDF_FREIGEGEBEN: ${{ vars.RATSATLAS_PDF_FREIGEGEBEN }}
-          RATSATLAS_PDF_MAX: ${{ vars.RATSATLAS_PDF_MAX }}
-        run: python -m pipeline dokumente
-
       # Sofort sichern, auch wenn der Abruf oder ein späterer Schritt scheitert: Sonst ginge die Zählung der Nächte mit
       # möglicher Sperre (sperre_verdacht in zustand_abruf.json) verloren, und die Pause nach drei Nächten bliebe aus.
       # Schlüssel je Versuch, damit auch ein wiederholter Lauf speichert; der nächste Lauf nimmt den jüngsten (raw-).
@@ -183,6 +173,35 @@ jobs:
         if: always()
         continue-on-error: true
         run: python tools/abrufstand.py
+
+      # Dokumente (PDF-Köpfe) nach dem Abruf, seiner Sicherung und dem Fortschritt, im selben Zeitfenster und nach
+      # derselben Abrufpolitik (eigener Prozess: der Abstand von 2 s zählt ab seinem Start, also auch zur letzten Anfrage
+      # des Abrufs); nur mit RATSATLAS_PDF_FREIGEGEBEN=ja, sonst keine Anfrage und nichts geschrieben (siehe Kopf). Läuft
+      # nicht nach einem roten Abrufschritt (kein eigenes `if`, also auch nicht nach einem roten Wächter). Eigenes Zeitlimit als letzte Sicherung: Das Zeitfenster endet um 1 Uhr und jede Datei hat
+      # höchstens 120 s; der Zustand wird vor jeder Anfrage geschrieben, ein Abbruch von außen verliert höchstens die
+      # laufende Datei
+      - name: Dokumente der Stadt Köln (PDF-Köpfe, gesperrt bis zur Freigabe)
+        id: dokumente
+        continue-on-error: true
+        timeout-minutes: 150
+        env:
+          RATSATLAS_STADT_INFORMIERT: ${{ vars.RATSATLAS_STADT_INFORMIERT }}
+          RATSATLAS_KONTAKT: ${{ vars.RATSATLAS_KONTAKT }}
+          RATSATLAS_PDF_FREIGEGEBEN: ${{ vars.RATSATLAS_PDF_FREIGEGEBEN }}
+          RATSATLAS_PDF_MAX: ${{ vars.RATSATLAS_PDF_MAX }}
+        run: python -m pipeline dokumente
+
+      # Zweite Sicherung nur mit Freigabe des Dokumentschritts (ohne sie schreibt er nichts): Ergebnisse, Zählung der
+      # Nacht und Abbrüche im Zustand; auch nach einem Fehler oder dem Zeitlimit des Schritts. Eigener Schlüssel, der
+      # nächste Lauf nimmt den jüngsten (raw-)
+      - name: Abrufzustand nach den Dokumenten sichern
+        if: always() && steps.dokumente.outcome != 'skipped' && vars.RATSATLAS_STADT_INFORMIERT == 'ja' && vars.RATSATLAS_PDF_FREIGEGEBEN == 'ja'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            data/raw/
+            data/export/abrufstatistik.tsv
+          key: raw-${{ github.run_id }}-${{ github.run_attempt }}-dokumente
 
       # Nie mit Testdaten veröffentlichen (tools/testdaten.py setzt „testdaten“ in STAND.json)
       - name: Gibt es Daten zum Veröffentlichen?

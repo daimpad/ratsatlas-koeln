@@ -164,7 +164,8 @@ class Daten:
         self.limit_wirkt = False   # `limit` anwenden (Köln, Stufe 2) statt `groesse`
         self.anfragen = []
         self.roh = []          # Abfragen unverändert (Kodierung)
-        # Dateien (pipeline/dokumente.py): Pfad → Bytes (200, application/pdf) oder (Status, Kopfzeilen, Bytes)
+        # Dateien (pipeline/dokumente.py): Pfad → Bytes (200, application/pdf), (Status, Kopfzeilen, Bytes) oder eine
+        # Funktion, die die Antwort selbst schreibt (Argument: der Request-Handler; etwa eine tröpfelnde Antwort)
         self.dateien = {}
         self.papers = [self.paper(i) for i in range(1, 6)]
         self.meetings = [{
@@ -250,6 +251,9 @@ def oparl(tmp_path, monkeypatch):
                 return
             if u.path in d.dateien:
                 datei = d.dateien[u.path]
+                if callable(datei):   # eigene Antwort (etwa tröpfelnd): schreibt selbst auf self.wfile
+                    datei(self)
+                    return
                 status, kopf, inhalt = datei if isinstance(datei, tuple) else (200, {}, datei)
                 self.send_response(status)
                 for k, v in {"Content-Type": "application/pdf", "Content-Length": str(len(inhalt)), **kopf}.items():

@@ -8,9 +8,11 @@ import hashlib
 import io
 import json
 import os
+import signal
 import sqlite3
 import sys
 import tempfile
+import threading
 import time
 import types
 import zlib
@@ -170,9 +172,34 @@ def _wie_stadt(monkeypatch, start=NACHT):
     ("Mitteilung ohne Kopf", ("nein", "")),
     ("", ("kein_text", "")),
     (" \n\t", ("kein_text", "")),
+    # Prüfung dok-f: ohne „/“-Teil nur eine gültige römische Zahl vor Leerraum oder am Ende, nie ein Wortanfang
+    ("Dezernat, Dienststelle\nVI\nBeschlussvorlage", ("kennung", "VI")),
+    ("Dezernat, Dienststelle IX", ("kennung", "IX")),
+    ("Dezernat, Dienststelle II/IIBeschlussvorlage", ("kennung", "II/II")),
+    ("DEZERNAT, DIENSTSTELLE VI/61", ("kennung", "VI/61")),                       # Bezeichnung in Großbuchstaben
+    ("Dezernat, Dienststelle\nVORLAGE", ("nur_bezeichnung", "")),
+    ("Dezernat, Dienststelle\nVERWALTUNGSVORLAGE", ("nur_bezeichnung", "")),
+    ("Dezernat, Dienststelle\nIII. Quartal", ("nur_bezeichnung", "")),
+    ("Dezernat, Dienststelle\nX-Ring", ("nur_bezeichnung", "")),
+    ("Dezernat, Dienststelle\nIVZ", ("nur_bezeichnung", "")),
+    ("Dezernat, Dienststelle\nVI. Beschluss", ("nur_bezeichnung", "")),
+    ("Dezernat, Dienststelle VIIII/61", ("nur_bezeichnung", "")),                # keine gültige römische Zahl
+    ("Dezernat, Dienststelle IVXVIX/61", ("nur_bezeichnung", "")),
+    ("Dezernat, Dienststelle VI / 61abc", ("nur_bezeichnung", "")),              # auch mit Leerraum kein „VI“
+    ("Dezernat VIIII, 61", ("nein", "")),
 ])
 def test_kopf_erkennen_an_erfundenen_koepfen(text, erwartet):
     assert pdfkopf.kopf_erkennen(text) == erwartet
+
+
+@pytest.mark.parametrize("kennung, gueltig", [
+    ("VI/61", True), ("II/II/2", True), ("IX", True), ("XIV/3", True), ("IV/IV/1/22/3", True),
+    ("VIIII/61", False), ("IIII", False), ("IVX/61", False), ("VI/6I", False), ("VI/61/", False), ("V I", False),
+    ("", False), ("VI/1234567", False)])
+def test_gespeicherte_kennung_nur_in_fester_form(kennung, gueltig):
+    """Form einer gespeicherten Kennung (Einträge, Aufbau, check): gültige römische Zahl, dann bis zu vier Teile nach
+    „/“ aus Ziffern oder einer gültigen römischen Zahl."""
+    assert bool(pdfkopf.KENNUNG_FORM.fullmatch(kennung)) == gueltig
 
 
 @pytest.mark.parametrize("ausgabe", [
@@ -212,6 +239,21 @@ def test_pruefprozess_grenzen_und_unerwartete_ausgabe(monkeypatch, befehl, statu
     beginn = time.monotonic()
     assert dokumente.pruefen(b"%PDF-1.4\n") == {"status": status, "trefferart": "", "kennung": "", "fehlerart": ""}
     assert time.monotonic() - beginn < 10
+
+
+@pytest.mark.parametrize("befehl", [
+    [sys.executable, "-I", "-c", "import pypdf_gibt_es_nicht"],                  # pypdf fehlt in der Umgebung
+    [sys.executable, "-c", "import sys; sys.exit(3)"],
+    [sys.executable, "-c", 'print(\'{"status": "ok", "trefferart": "nein", "kennung": "", "fehlerart": ""}\')'],
+    [sys.executable, "-c", 'print(\'{"status": "fehler_pdf", "trefferart": "", "kennung": "", '
+                           '"fehlerart": "AttributeError"}\')'],                # andere API von pypdf
+])
+def test_selbsttest_des_pruefprozesses(monkeypatch, befehl):
+    """Selbsttest an einer eingebauten Probedatei mit erfundenem Kopf: Der echte Prüfprozess besteht ihn, ein fehlender,
+    abstürzender oder anders antwortender nicht."""
+    assert dokumente.selbsttest()
+    monkeypatch.setattr(dokumente, "_befehl", lambda: befehl)
+    assert not dokumente.selbsttest()
 
 
 # --- Freigabe: ohne sie keine Anfrage und nichts geschrieben --------------------------------------------------------------
@@ -384,18 +426,19 @@ def test_vorrang_der_metadaten(oparl, monkeypatch):
 
 
 @pytest.mark.parametrize("antwort, art, sperrnacht, status", [
-    ((403, {}, b""), "http", True, None),
+    ((403, {}, b""), "http", True, "abbruch_http_403"),
     ((404, {}, b""), "http", False, "http_404"),
-    ((302, {"Location": "http://example.invalid/sperre"}, b""), "weiterleitung", True, None),
+    ((302, {"Location": "http://example.invalid/sperre"}, b""), "weiterleitung", True, "abbruch_weiterleitung"),
     ((200, {"Content-Type": "text/html"}, b"<html>Zugriff verweigert</html>"), "unlesbar", True, "kein_pdf"),
-    ((200, {"Content-Length": "100000"}, b"%PDF-1.4\n" + b"x" * 90), "sperre", True, None),
-    ((429, {"Retry-After": "999999"}, b""), "aufgegeben", True, None),
+    ((200, {"Content-Length": "100000"}, b"%PDF-1.4\n" + b"x" * 90), "sperre", True, "abbruch_sperre"),
+    ((429, {"Retry-After": "999999"}, b""), "aufgegeben", True, "abbruch_aufgegeben"),
 ])
 def test_abbruch_wie_beim_abruf(oparl, monkeypatch, antwort, art, sperrnacht, status):
     """Abbrüche beim Dokumentabruf: sofort, ohne weitere Datei; im gemeinsamen Zustand letzter_abbruch (in derselben
-    Nacht weder Dokumente noch Abruf), bei möglicher Sperre sperre_verdacht und die eigene Zählung; nur dateibezogene
-    Ergebnisse (404, keine PDF-Datei) werden zur Datei vermerkt, 401/403/429 und Abbrüche der Verbindung nicht (die Datei
-    kommt später wieder dran)."""
+    Nacht weder Dokumente noch Abruf), bei möglicher Sperre sperre_verdacht und die eigene Zählung. Dateibezogene
+    Ergebnisse (404, keine PDF-Datei) werden zur Datei endgültig vermerkt, 401/403/429, Weiterleitungen und Abbrüche der
+    Verbindung vorläufig (Status abbruch_<Art>, ein Fehlversuch: die Datei kommt später wieder dran, hinter den
+    anderen)."""
     _mit_dateien(oparl, {1: KOPF, 3: KOPF})
     sessionnet.fetch_all()
     _freigabe(monkeypatch)
@@ -407,7 +450,8 @@ def test_abbruch_wie_beim_abruf(oparl, monkeypatch, antwort, art, sperrnacht, st
     assert z["letzter_abbruch"]["art"] == art and z["letzter_abbruch"]["meldung"].startswith("Dokumente: ")
     assert ("sperre_verdacht" in z) == sperrnacht
     assert (z["dokumente"].get("verdacht", {}).get("naechte") == 1) == sperrnacht
-    assert [x["status"] for x in _eintraege()] == ([status] if status else [])
+    assert [(x["status"], x["fehlversuche"]) for x in _eintraege()] == [(status, 1 if "abbruch" in status else 0)]
+    assert all(dokumente.eintrag_gueltig(x) for x in _eintraege())
     if art == "aufgegeben":
         assert z["nicht_vor"]
     assert _statistik()[-1]["ergebnis"].startswith("abbruch: ")
@@ -421,12 +465,15 @@ def test_abbruch_wie_beim_abruf(oparl, monkeypatch, antwort, art, sperrnacht, st
 
 def test_drei_naechte_mit_sperrverdacht_sieben_tage_pause(oparl, monkeypatch):
     """Die eigene Zählung der Dokumente: Ein vollständiger Abruf setzt sperre_verdacht jede Nacht zurück; nach drei
-    Nächten mit möglicher Sperre beim Dokumentabruf ruhen die Dokumente trotzdem sieben Tage."""
-    _mit_dateien(oparl, {1: KOPF})
+    Nächten mit möglicher Sperre beim Dokumentabruf ruhen die Dokumente trotzdem sieben Tage. Wie bei einer echten
+    Sperre scheitert jede Nacht die erste Datei (nach einem Fehlversuch steht eine Datei hinten, also jede Nacht eine
+    andere); danach werden alle gelesen und die Zählung zurückgesetzt."""
+    _mit_dateien(oparl, {1: KOPF, 3: KOPF, 5: KOPF})
     sessionnet.fetch_all()
     _freigabe(monkeypatch)
     uhr = _wie_stadt(monkeypatch)
-    oparl.dateien["/files/1.pdf"] = (403, {}, b"")
+    for i in (1, 3, 5):
+        oparl.dateien[f"/files/{i}.pdf"] = (403, {}, b"")
 
     def nacht(tag):
         uhr.t = NACHT + timedelta(days=tag)
@@ -435,12 +482,147 @@ def test_drei_naechte_mit_sperrverdacht_sieben_tage_pause(oparl, monkeypatch):
         oparl.anfragen.clear()
         dokumente.schritt()
         return _dateianfragen(oparl)
-    assert [nacht(t) for t in (0, 1, 2)] == [["/files/1.pdf"]] * 3
+    assert [nacht(t) for t in (0, 1, 2)] == [["/files/5.pdf"], ["/files/3.pdf"], ["/files/1.pdf"]]
     assert _zustand()["dokumente"]["verdacht"]["naechte"] == 3
     assert nacht(3) == [] and "Dokumentabruf pausiert bis 2026-11-22" in _statistik()[-1]["ergebnis"]
-    oparl.dateien["/files/1.pdf"] = _pdf([KOPF])
-    assert nacht(9) == ["/files/1.pdf"]
+    for i in (1, 3, 5):
+        oparl.dateien[f"/files/{i}.pdf"] = _pdf([KOPF])
+    assert nacht(9) == ["/files/5.pdf", "/files/3.pdf", "/files/1.pdf"]
     assert "verdacht" not in _zustand()["dokumente"]                                  # zurückgesetzt nach einem Lauf
+    assert [(x["status"], x["fehlversuche"]) for x in _eintraege()] == [("ok", 0)] * 3
+
+
+def _tropfen(teil):
+    """Antwort, die 6 s lang alle 0,2 s ein Byte schickt (jeder Lesevorgang käme weit vor der Zeitüberschreitung des
+    Sockets): `teil` „inhalt“ (Kopf vollständig, der Inhalt tröpfelt) oder „kopf“ (schon der Kopf tröpfelt)."""
+    def antwort(h):
+        try:
+            h.wfile.write(b"HTTP/1.0 200 OK\r\nContent-Type: application/pdf\r\nContent-Length: 1000\r\n\r\n%PDF-1.4\n"
+                          if teil == "inhalt" else b"HTTP/1.0 200 OK\r\n")
+            ende = time.monotonic() + 6
+            while time.monotonic() < ende:
+                h.wfile.write(b"x" if teil == "inhalt" else b"X")
+                time.sleep(0.2)
+        except OSError:   # der Abruf hat die Verbindung geschlossen
+            pass
+    return antwort
+
+
+@pytest.mark.parametrize("teil", ["inhalt", "kopf"])
+def test_lesefrist_gilt_fuer_die_ganze_antwort(oparl, teil):
+    """Prüfung dok-f: Eine tröpfelnde Antwort bricht nach der Frist ab (hier 1 s, Art `sperre`), nicht erst, wenn der
+    Server schließt (vorher 6 s); auch wenn schon der Kopf tröpfelt (Wächter). Danach ist kein Zeitgeber gesetzt."""
+    oparl.dateien["/files/1.pdf"] = _tropfen(teil)
+    beginn = time.monotonic()
+    with pytest.raises(abruf.Abbruch) as e:
+        abruf.get_datei(f"{oparl.b}/files/1.pdf", 25_000_000, 1)
+    dauer = time.monotonic() - beginn
+    assert e.value.art == "sperre" and "nach 1 s nicht vollständig" in str(e.value)
+    assert 0.9 < dauer < 2.5, dauer
+    assert signal.getitimer(signal.ITIMER_REAL) == (0.0, 0.0)
+    # eine zügige Antwort danach: kein verspätetes Signal, Datei vollständig
+    oparl.dateien["/files/3.pdf"] = _pdf([KOPF])
+    assert abruf.get_datei(f"{oparl.b}/files/3.pdf", 25_000_000, 1) == oparl.dateien["/files/3.pdf"]
+
+
+def test_lesefrist_ohne_waechter_ausserhalb_des_hauptthreads(oparl):
+    """Außerhalb des Hauptthreads gibt es keinen Wächter (Signale). Gelesen wird in Blöcken mit höchstens einem
+    Lesevorgang (read1) und die Frist nach jedem geprüft: Ein tröpfelnder Inhalt endet so kurz nach der Frist."""
+    oparl.dateien["/files/1.pdf"] = _tropfen("inhalt")
+    ergebnis = {}
+
+    def lauf():
+        beginn = time.monotonic()
+        try:
+            abruf.get_datei(f"{oparl.b}/files/1.pdf", 25_000_000, 1)
+        except abruf.Abbruch as e:
+            ergebnis.update(art=e.art, dauer=time.monotonic() - beginn)
+    t = threading.Thread(target=lauf)
+    t.start()
+    t.join(30)
+    assert ergebnis["art"] == "sperre" and ergebnis["dauer"] < 2.5, ergebnis
+
+
+@pytest.mark.parametrize("antwort, status", [
+    ((403, {}, b""), "abbruch_http_403"),
+    ((401, {}, b""), "abbruch_http_401"),
+    ((302, {"Location": "http://example.invalid/anmeldung"}, b""), "abbruch_weiterleitung"),
+    ((500, {}, b""), "abbruch_aufgegeben"),
+    ("tropfen", "abbruch_sperre"),
+])
+def test_dauerhafter_fehler_einer_datei_haelt_den_schritt_nicht_auf(oparl, monkeypatch, antwort, status):
+    """Prüfung dok-f: Liefert die neueste Datei dauerhaft 401/403, eine Weiterleitung oder 500 oder überschreitet sie die
+    Lesefrist, bricht die Nacht wie bisher ab (Sperrlogik unverändert). Die Datei steht aber in der nächsten Nacht hinter
+    allen anderen und wird nach zwei Nächten nicht mehr angefragt, bis sich ihre Merkmale ändern: Die älteren Dateien
+    werden gelesen, die Stadt sieht die fehlerhafte Datei in zwei Nächten, und es kommt zu keiner Pause von sieben
+    Tagen."""
+    monkeypatch.setattr(config, "ABRUF_PAUSEN", [0])
+    monkeypatch.setattr(dokumente, "LESEFRIST", 1)
+    _mit_dateien(oparl, {1: KOPF, 3: KOPF, 5: KOPF})
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    uhr = _wie_stadt(monkeypatch)
+    oparl.dateien["/files/5.pdf"] = _tropfen("inhalt") if antwort == "tropfen" else antwort
+    naechte = []
+    for tag in range(6):
+        uhr.t = NACHT + timedelta(days=tag)
+        sessionnet._zustand_aendern(sperre_verdacht=None, letzter_abbruch=None)      # vollständiger Abruf vorher
+        sessionnet._stand_setzen(abruf_ok=uhr.t.isoformat())
+        oparl.anfragen.clear()
+        dokumente.schritt()
+        naechte.append(list(dict.fromkeys(_dateianfragen(oparl))))
+    assert naechte == [["/files/5.pdf"], ["/files/3.pdf", "/files/1.pdf", "/files/5.pdf"], [], [], [], []]
+    e = {x["paper"].rsplit("/", 1)[1]: x for x in _eintraege()}
+    assert (e["5"]["status"], e["5"]["fehlversuche"], e["5"]["kennung"]) == (status, 2, "")
+    assert (e["1"]["kennung"], e["3"]["kennung"]) == ("VI/61", "VI/61")
+    assert all(dokumente.eintrag_gueltig(x) for x in e.values())
+    assert _zustand()["dokumente"]["verdacht"]["naechte"] == 2
+    ergebnis = _statistik()[-1]["ergebnis"]
+    assert ergebnis.startswith("ok; Auswahl 0") and "nach 2 Nächten ohne Ergebnis zurückgestellt 1" in ergebnis
+
+
+def test_fehler_im_pruefprozess_wird_spaeter_wiederholt(oparl, monkeypatch):
+    """Prüfung dok-f: `fehler_pruefung` (der Prüfprozess scheiterte, nicht unbedingt die Datei) ist kein dauerhaftes
+    Ergebnis: Die Datei kommt in der nächsten Nacht hinter den anderen wieder dran und wird dann erkannt."""
+    _mit_dateien(oparl, {1: KOPF, 3: [*KOPF, "Anlage 1"]})   # verschiedene Bytes
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    uhr = types.SimpleNamespace(t=NACHT)
+    monkeypatch.setattr(abruf, "uhr", lambda: uhr.t)
+    echt, kaputt = dokumente.pruefen, {oparl.dateien["/files/3.pdf"]}
+    monkeypatch.setattr(dokumente, "pruefen", lambda daten: {"status": "fehler_pruefung", "trefferart": "",
+                                                             "kennung": "", "fehlerart": ""}
+                        if daten in kaputt else echt(daten))
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == ["/files/3.pdf", "/files/1.pdf"]
+    assert {x["paper"].rsplit("/", 1)[1]: (x["status"], x["fehlversuche"]) for x in _eintraege()} == {
+        "1": ("ok", 0), "3": ("fehler_pruefung", 1)}
+    kaputt.clear()
+    uhr.t = NACHT + timedelta(days=1)
+    oparl.anfragen.clear()
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == ["/files/3.pdf"]
+    assert {x["paper"].rsplit("/", 1)[1]: (x["kennung"], x["fehlversuche"]) for x in _eintraege()} == {
+        "1": ("VI/61", 0), "3": ("VI/61", 0)}
+
+
+def test_ohne_funktionierenden_pruefprozess_keine_anfrage(oparl, monkeypatch, capsys):
+    """Prüfung dok-f: Vor der ersten Anfrage ein Selbsttest des Prüfprozesses. Fehlt pypdf in der isolierten Umgebung
+    (oder antwortet der Prüfprozess anders als erwartet), geht keine Anfrage hinaus und nichts wird zur Datei vermerkt;
+    mit heilem Prüfprozess werden danach alle Dateien gelesen."""
+    _mit_dateien(oparl, {1: KOPF, 3: KOPF, 5: KOPF})
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    heil = dokumente._befehl
+    monkeypatch.setattr(dokumente, "_befehl", lambda: [sys.executable, "-I", "-c", "import pypdf_gibt_es_nicht"])
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == [] and _eintraege() == []
+    assert _statistik()[-1]["ergebnis"].startswith("übersprungen: Prüfprozess")
+    assert "Selbsttest" in capsys.readouterr().err
+    monkeypatch.setattr(dokumente, "_befehl", heil)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == ["/files/5.pdf", "/files/3.pdf", "/files/1.pdf"]
+    assert [x["kennung"] for x in _eintraege()] == ["VI/61"] * 3
 
 
 def test_fremde_hosts_und_fehlende_hauptdatei_werden_nicht_gesendet(oparl, monkeypatch, capsys):
@@ -552,7 +734,8 @@ def test_abstand_gilt_ueber_json_und_dateien(oparl, monkeypatch):
 def test_auswahl_regeln_und_reihenfolge():
     """Auswahl ohne Anfrage: nur Hauptdateien von Verwaltungsvorlagen (NNNN/JJJJ, Vorlagenart der Verwaltung), nie
     Eingaben, Vorlagen natürlicher Personen, im Ausschuss für Anregungen und Beschwerden beratene, mit ihnen verbundene
-    (auch über relatedPaper), Titel der Maske, nicht öffentlich beratene oder Sammellisten; neueste zuerst."""
+    (auch über relatedPaper), Titel der Maske, nicht öffentlich beratene oder Sammellisten; neueste zuerst, Dateien mit
+    einem Fehlversuch dahinter, nach zwei Fehlversuchen nicht mehr (bis zu einer Änderung)."""
     b = "http://127.0.0.1:8"
 
     def vorlage(i, ref, art="Beschlussvorlage", name=None, datum="2026-10-01", datei=True, **felder):
@@ -584,6 +767,9 @@ def test_auswahl_regeln_und_reihenfolge():
         vorlage(19, "2019/2026"),
         vorlage(20, "2020/2026", consultation=[{"id": f"{b}/c/20"}]),      # public als Text: vorsichtig nicht öffentlich
         vorlage(21, "2021/2026", datum="2026-09-01", consultation=[{"id": f"{b}/c/21"}]),   # ohne TOP: öffentlich
+        vorlage(22, "2022/2026", datum="2026-10-09"),     # ein Fehlversuch: hinter allen anderen
+        vorlage(23, "2023/2026", datum="2026-10-09"),     # zwei Fehlversuche, unverändert: zurückgestellt
+        vorlage(24, "2024/2026", datum="2026-10-07"),     # zwei Fehlversuche, aber geändert: wie neu
         {"id": f"{b}/papers/14", "deleted": True},
     ]
     je = {int(p["id"].rsplit("/", 1)[1]): p for p in roh}
@@ -597,12 +783,18 @@ def test_auswahl_regeln_und_reihenfolge():
                                     **{k: je[i]["mainFile"].get(k) for k in dokumente.MERKMALE},
                                     **({"modified": "2026-09-01T00:00:00+02:00"} if i == 18 else {})}
                  for i in (17, 18)}
+    for i, n, status in ((22, 1, "abbruch_http_403"), (23, 2, "abbruch_sperre"), (24, 2, "fehler_pruefung")):
+        eintraege[f"{b}/files/{i}"] = {"file": f"{b}/files/{i}", "status": status, "fehlversuche": n,
+                                       **{k: je[i]["mainFile"].get(k) for k in dokumente.MERKMALE}}
+    eintraege[f"{b}/files/24"]["size"] = 999
     from unittest import mock
     with mock.patch.object(config, "OPARL_BODY", f"{b}/body"):
         kandidaten, gruende = dokumente.auswahl(roh, [bab], beratungen, eintraege)
-    assert [k["paper"].rsplit("/", 1)[1] for k in kandidaten] == ["2", "18", "1", "21"]
+    assert [(k["paper"].rsplit("/", 1)[1], k["_fehlversuche"]) for k in kandidaten] == [
+        ("24", 0), ("2", 0), ("18", 0), ("1", 0), ("21", 0), ("22", 1)]
     assert dict(gruende) == {"drucksache": 1, "vorlagenart": 2, "ohne_hauskoordinate": 5, "nicht_oeffentlich": 3,
-                             "ohne_hauptdatei": 1, "kein_pdf": 1, "doppelt": 1, "bekannt": 1, "zu_gross": 1}
+                             "ohne_hauptdatei": 1, "kein_pdf": 1, "doppelt": 1, "bekannt": 1, "zu_gross": 1,
+                             "fehlversuche": 1}
 
 
 @pytest.fixture
