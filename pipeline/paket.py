@@ -44,11 +44,14 @@ Quellcode: https://github.com/daimpad/ratsatlas-koeln (MIT)
 # Ergänzung von LIESMICH.txt mit Freigabe „strukturdaten“ (nach dem Eintrag zu geo/)
 LIESMICH_STRUKTURDATEN = """- strukturdaten/: Strukturdaten im Datenvertrag „Strukturdaten“ (Werte je Gesamtstadt, Stadtbezirk und Stadtteil in
   werte.tsv, je Statistischem Quartier in werte_quartier.tsv.gz, Indikatoren, Flächen, Zuordnung der Raumeinheiten,
-  Vergleichswerte des Wegweisers Kommune, meta.json und Prüfprotokolle). Statistischer Datenkatalog Köln: dl-de/by 2.0,
-  Namensnennung „Stadt Köln, Amt für Stadtentwicklung und Statistik (Statistischer Datenkatalog Köln)“; Werte
-  unverändert, die Anteile unter 18 und ab 65 Jahren vom Ratsatlas aus den Altersgruppen berechnet (status
-  abgeleitet). Flächen der Statistischen Quartiere: dl-de/zero 2.0. Wegweiser Kommune (Bertelsmann Stiftung,
-  wegweiser-kommune.de): CC0 1.0, Datenhalter je Indikator in indikatoren.tsv
+  Vergleichswerte des Wegweisers Kommune, meta.json und Prüfprotokolle, darunter eine Stichprobe gegen die Quelle in
+  audit_verifikation.tsv). Statistischer Datenkatalog Köln: dl-de/by 2.0 (https://www.govdata.de/dl-de/by-2-0),
+  Namensnennung „Stadt Köln, Amt für Stadtentwicklung und Statistik (Statistischer Datenkatalog Köln)“, Datensatz
+  https://open.nrw/dataset/statistischer-datenkatalog-koln-k; in lange Tabellenform umgeformt, Werte unverändert, die
+  Anteile unter 18 und ab 65 Jahren vom Ratsatlas aus den Altersgruppen berechnet (status abgeleitet). Flächen der
+  Statistischen Quartiere: dl-de/zero 2.0, Datenquelle: Stadt Köln – offenedaten-koeln.de. Wegweiser Kommune
+  (Bertelsmann Stiftung, wegweiser-kommune.de): CC0 1.0, Datenhalter je Indikator in indikatoren.tsv. Datenstand und
+  Abrufdatum in meta.json
 """
 
 

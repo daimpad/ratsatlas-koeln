@@ -347,3 +347,28 @@ console.log(JSON.stringify(STEPS.filter((s) => s.title === "Die Karte" || s.titl
             assert "Strukturdaten" not in z and "Stadtstatistik" not in z, (name, z)
     modul = MODUL.read_text(encoding="utf-8")
     assert "tourKarte:" in modul and "tourListe:" in modul and "b.dataset.tourKarte" in modul
+
+
+def test_quellenangaben_mit_namensnennung_und_abrufdatum():
+    """Strukturdaten Phase 4 (13.11.2026): Quellenzeile der Karte (fester Text in index.html und seine Fassung aus
+    meta.json), Quelle im Panel, in Vorgang und Tabelle (quelleZeile) und in der Legende der Flächenfarben nennen den
+    Statistischen Datenkatalog mit Link auf Datensatz und Lizenz, die Namensnennung aus meta.json und Datenstand mit
+    Abrufdatum; der Wegweiser steht mit der Quellenangabe „Bertelsmann Stiftung, wegweiser-kommune.de“ und Lizenz."""
+    modul = MODUL.read_text(encoding="utf-8")
+    fuss = _teil(modul, r"^function fusszeile\(\) \{\n.*?\n\}\n")
+    zeile = _teil(modul, r"^function quelleZeile\(\) \{\n.*?\n\}\n")
+    legende = next(z for z in modul.splitlines() if z.lstrip().startswith("<p>Quelle: ${link(s.datensatz_url"))
+    for teil in (fuss, zeile, legende):
+        for erwartet in ('link(s.datensatz_url, "Statistischer Datenkatalog Köln")', "link(s.lizenz_url",
+                         "Namensnennung: ${esc(s.namensnennung", "Datenstand ${esc(datum(M.datenstand))}",
+                         "abgerufen am ${esc(datum(s.abgerufen))}"):
+            assert erwartet in teil, (erwartet, teil[:60])
+    assert "${esc(w.namensnennung" in fuss and "link(w.lizenz_url" in fuss
+    assert "Flächen: ${esc(q.namensnennung" in legende
+    assert modul.count("quelleZeile()") >= 3   # Panel, Vorgang, Tabelle
+    (fest,) = [t for t in re.findall(r'<span data-funktion="strukturdaten">(.*?)</span>', INDEX, re.S)
+               if "Statistischer Datenkatalog" in t and "Quartiere" in t]
+    for erwartet in ('<a href="https://open.nrw/dataset/statistischer-datenkatalog-koln-k">',
+                     '<a href="https://www.govdata.de/dl-de/by-2-0">', "Stadt Köln, Amt für Stadtentwicklung und Statistik",
+                     "Werte unverändert", "Bertelsmann Stiftung, wegweiser-kommune.de", "Datenstand und Abrufdatum"):
+        assert erwartet in fest, erwartet

@@ -276,14 +276,14 @@ function fusszeile() {
     try { await metaLaden(); } catch { return; }   // fester Text aus index.html bleibt
     el.dataset.gefuellt = "1";
     const s = quelleStat(), q = quelleQuartiere(), w = quelleWw();
-    el.innerHTML = ` · Strukturdaten: ${link(s.datensatz_url, "Statistischer Datenkatalog Köln")} (${esc(s.herausgeber || "")}; ${link(s.lizenz_url, esc(s.lizenz || ""))}), Datenstand ${esc(datum(M.datenstand))}; Statistische Quartiere (${esc(q.herausgeber || "")}, ${esc(q.lizenz || "")}); Vergleich der Städte aus dem ${link(w.datensatz_url, "Wegweiser Kommune")} (${esc(w.herausgeber || "")}, ${esc(w.lizenz || "")}). Altersanteile vom Ratsatlas berechnet (abgeleitet)`;
+    el.innerHTML = ` · Strukturdaten: ${link(s.datensatz_url, "Statistischer Datenkatalog Köln")} (${link(s.lizenz_url, esc(s.lizenz || ""))}; Namensnennung: ${esc(s.namensnennung || s.herausgeber || "")}), Datenstand ${esc(datum(M.datenstand))}, abgerufen am ${esc(datum(s.abgerufen))}; Statistische Quartiere (${esc(q.herausgeber || "")}, ${esc(q.lizenz || "")}); Vergleich der Städte aus dem ${link(w.datensatz_url, "Wegweiser Kommune")} (${esc(w.namensnennung || w.herausgeber || "")}, ${link(w.lizenz_url, esc(w.lizenz || ""))}). Altersanteile vom Ratsatlas berechnet (abgeleitet)`;
   };
   if (quellen.open) fuellen2();
   else quellen.addEventListener("toggle", () => { if (quellen.open) fuellen2(); });
 }
 function quelleZeile() {
   const s = quelleStat();
-  return `Quelle: ${link(s.datensatz_url, "Statistischer Datenkatalog Köln")} – ${esc(s.herausgeber || "")}, ${link(s.lizenz_url, esc(s.lizenz || ""))}; Datenstand ${esc(datum(M.datenstand))}. Altersanteile vom Ratsatlas aus veröffentlichten Altersgruppen berechnet (abgeleitet). <a href="data/LICENSE-DATA.md">Lizenzen der Daten</a>`;
+  return `Quelle: ${link(s.datensatz_url, "Statistischer Datenkatalog Köln")}, ${link(s.lizenz_url, esc(s.lizenz || ""))}; Namensnennung: ${esc(s.namensnennung || s.herausgeber || "")}; Datenstand ${esc(datum(M.datenstand))}, abgerufen am ${esc(datum(s.abgerufen))}. Altersanteile vom Ratsatlas aus veröffentlichten Altersgruppen berechnet (abgeleitet). <a href="data/LICENSE-DATA.md">Lizenzen der Daten</a>`;
 }
 
 // --- Kontext-Panel in der Liste (Gebiet) -----------------------------------------------------------------------------
@@ -669,7 +669,7 @@ async function zeichnen() {
       ${aktuell.stadt ? `Ganz Köln ${esc(lage.jahr)}: ${hatWert(aktuell.stadt) ? esc(zahl(aktuell.stadt.wert, st)) + (einheitText(ind.einheit) ? ` ${esc(ind.einheit)}` : "") : esc(statusText(aktuell.stadt))} (eigene Zeile der Stadtstatistik).` : ""}</p>
     ${abgeleitet(lage.ind) ? `<p>${esc(formelText(lage.ind))}</p>` : ""}
     <p>${esc(A.texte.einordnung)} ${esc(A.texte.fehlschluss)} ${esc(A.texte.raumebenen)}</p>
-    <p>Quelle: ${link(s.datensatz_url, "Statistischer Datenkatalog Köln")} – ${esc(s.herausgeber || "")}, ${link(s.lizenz_url, esc(s.lizenz || ""))}; Datenstand ${esc(datum(M.datenstand))}. Flächen: Stadt Köln (${esc(q.lizenz || "")}).</p>
+    <p>Quelle: ${link(s.datensatz_url, "Statistischer Datenkatalog Köln")}, ${link(s.lizenz_url, esc(s.lizenz || ""))}; Namensnennung: ${esc(s.namensnennung || s.herausgeber || "")}; Datenstand ${esc(datum(M.datenstand))}, abgerufen am ${esc(datum(s.abgerufen))}. Flächen: ${esc(q.namensnennung || "Stadt Köln")} (${esc(q.lizenz || "")}).</p>
     <div class="sd-info" aria-live="polite"></div>
     <button type="button" class="btn btn-soft sd-tabelle-auf">Als Tabelle zeigen</button>`;
   legende.querySelector(".sd-tabelle-auf").addEventListener("click", tabelle);
