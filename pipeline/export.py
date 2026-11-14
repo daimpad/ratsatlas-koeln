@@ -9,7 +9,7 @@ import shutil
 import sqlite3
 from datetime import date, datetime, timezone
 
-from . import chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, maske, plans, process as proc, prozessarten, publish, soll, topics
+from . import aemter, chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, maske, plans, process as proc, prozessarten, publish, soll, topics
 from .themenseiten import ALLE as THEMENSEITEN
 
 DERIVED_NOTE = (
@@ -95,7 +95,10 @@ def _paper_detail(db, pid):
         "amt": p["amt"],
         "web": p["web"],
         "main_file": p["main_file_url"],
-        "responsibility": [{**dict(r), "evidence": m(r["evidence"], ref)} for r in resp],
+        # Federführung mit Zuordnung zur Ämtertabelle (pipeline/aemter.py, CLAUDE.md 5.3): Dezernat und Dienststelle
+        # laut Geschäfts- und Dezernatsverteilungsplan mit Methode, Stand und Fundstelle; ohne eindeutigen Treffer nur
+        # der Status, die Zeile bleibt sonst wie zuvor
+        "responsibility": [_mit_aemtertabelle({**dict(r), "evidence": m(r["evidence"], ref)}, p["date"]) for r in resp],
         "originators": fund(orig),
         "process": [{**{k: v for k, v in dict(r).items() if k != "agenda_item_id"},
                      "meeting": m(r["meeting"], m.sitzungen.get(r["meeting_id"])),
@@ -121,6 +124,16 @@ def _paper_detail(db, pid):
     if p["reference"] in _kurzfassungen():
         d["kurzfassung"] = _kurzfassungen()[p["reference"]]
     return d
+
+
+def _mit_aemtertabelle(r, datum):
+    """Zeile der Federführung (kind „federfuehrend“) mit `aemtertabelle` (aemter.fuer_export): Kennung aus dem Kopf der
+    Vorlage (Spalte `kennung`, sobald der Schritt „Dokumente“ sie liefert), sonst Name der Organisation aus
+    `underDirectionOf`, je mit dem Plan, dessen Stand am Datum der Vorlage der jüngste ist, wenn das Datum nicht nach
+    seiner letzten Prüfung liegt (aemter.zuordnen). Andere Zeilen unverändert."""
+    if r.get("kind") != "federfuehrend":
+        return r
+    return {**r, "aemtertabelle": aemter.fuer_export(aemter.zuordnung_federfuehrung(r, datum))}
 
 
 def _locations(db, pid):
@@ -187,6 +200,8 @@ def export_audits():
     _write_tsv(config.EXPORT / "audit_prozess.tsv", PROCESS_AUDIT, process_audit_rows(papers))
     _write_tsv(config.EXPORT / "audit_zeit.tsv", TIME_AUDIT, time_audit_rows(papers, _meetings(db)))
     _write_tsv(config.EXPORT / "audit_themen.tsv", THEME_AUDIT, theme_audit_rows(papers))
+    _write_tsv(config.EXPORT / "audit_federfuehrung.tsv", FEDERFUEHRUNG_AUDIT, federfuehrung_audit_rows(papers))
+    print(federfuehrung_zeile(papers))
     n = _sample_methods(db, config.EXPORT / "stichprobe_geokodierung.tsv")
     _tabellen_maskieren(db)
     db.close()
@@ -602,6 +617,40 @@ def _search_index(cache, areas, names, sources=None):
             "themes": [{"id": k, "label": v} for k, v in topics.THEMES], "parties": party_list,
             "areas": [{"key": k, "name": names[k]} for k in area_list], "types": types, "stands": list(proc.STAENDE),
             "aemter": aemter, "gremien": gremien, "rows": rows}
+
+
+# Federführung und Zuordnung zur Ämtertabelle je Vorlage mit Federführung (ohne Titel; „angabe“ ist der Name der
+# Organisation aus underDirectionOf bzw. die Kennung aus dem Kopf der Vorlage, „plan_geprueft“ der Tag der letzten
+# Prüfung des Plans, „plan_fundstelle“ die Stelle im Plan)
+FEDERFUEHRUNG_AUDIT = ["drucksache", "datum", "vorlagenart", "methode", "angabe", "abgleich", "methode_abgleich",
+                       "plan_stand", "plan_geprueft", "kennung", "dezernat", "dienststelle", "plan_fundstelle",
+                       "pruefstatus"]
+
+
+def federfuehrung_audit_rows(papers):
+    rows = []
+    for p in papers:
+        for r in p["responsibility"]:
+            a = r.get("aemtertabelle")
+            if r.get("kind") != "federfuehrend" or a is None:
+                continue
+            rows.append([p["reference"], p["date"] or "", p["paper_type"] or "", r.get("method") or "",
+                         r.get("kennung") or r.get("name") or "", a["status"], a.get("methode") or "",
+                         a.get("stand") or "", a.get("geprueft") or "", a.get("kennung", ""),
+                         a.get("dezernat_label", ""), a.get("label", ""),
+                         a.get("fundstelle", ""), "ungeprüft"])
+    return rows
+
+
+def federfuehrung_zeile(papers):
+    """Abdeckung im Log: Vorlagen mit Federführung (underDirectionOf oder Kennung) und das Ergebnis des Abgleichs mit
+    der Ämtertabelle je Status (aemter.STATUS)."""
+    status = [r["aemtertabelle"]["status"] for p in papers for r in p["responsibility"]
+              if r.get("kind") == "federfuehrend" and r.get("aemtertabelle")]
+    zugeordnet = sum(s in aemter.ZUGEORDNET for s in status)
+    je = ", ".join(f"{s} {status.count(s)}" for s in aemter.STATUS if status.count(s))
+    return (f"Federführung: {len(status)} Angaben bei {len(papers)} Vorlagen, davon {zugeordnet} der Ämtertabelle "
+            f"zugeordnet" + (f" ({je})" if je else ""))
 
 
 THEME_AUDIT = ["drucksache", "titel", "thema", "methode", "fundstelle", "konfidenz", "pruefstatus"]

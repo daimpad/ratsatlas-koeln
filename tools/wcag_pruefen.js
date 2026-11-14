@@ -25,7 +25,15 @@ const run = async (p, name, rows) => {
   await p.click('.toggle[data-panel="timeline-wrap"]'); await p.waitForTimeout(500); await run(p, 'zeitleiste', rows);
   await p.click('#about-open'); await p.waitForTimeout(300); await run(p, 'ueber', rows); await p.keyboard.press('Escape');
   await p.click('[data-mega="mega-mitmachen"]'); await p.waitForTimeout(300); await run(p, 'mitmachen', rows);
-  for (const s of ['gebiete/', 'begriffe/', 'rss/', 'datenschutz.html', 'ortsteil/ehrenfeld/', '404.html']) {
+  // Fläche „Mitmachen in Köln“ (nur mit Freigabe „mitmachen“; zweiter Lauf, 13.11.2026) mit gewähltem Stadtbezirk
+  // Mit Freigabe steht #panel-mitmachen im HTML; öffnet sich die Fläche dann nicht, ist das ein Befund (keine stille Lücke)
+  await p.goto(B + '?gebiet=ortsteil:ehrenfeld&mitmachen=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+  if (await p.$('#panel-mitmachen')) {
+    if (await p.waitForSelector('#panel-mitmachen:not([hidden]) #bt-bezirk', { timeout: 10000 }).catch(() => null)) {
+      await p.click('.bt-quorum summary').catch(() => {}); await p.waitForTimeout(200); await run(p, 'mitmachen-flaeche', rows);
+    } else rows.push(['mitmachen-flaeche', 'nicht geöffnet', '', '', 'Fläche „Mitmachen in Köln“ trotz Freigabe nicht geöffnet', '']);
+  }
+  for (const s of ['gebiete/', 'begriffe/', 'einfach/', 'rss/', 'datenschutz.html', 'ortsteil/ehrenfeld/', '404.html']) {
     const r = await p.goto(B + s, { waitUntil: 'networkidle' }); if (r && r.status() < 400) await run(p, s, rows); else rows.push([s, 'nicht gefunden', '', '', '', '']);
   }
   // Tastatur: Tab-Reihenfolge der ersten 25 Fokusziele auf der Startseite, sichtbarer Fokus

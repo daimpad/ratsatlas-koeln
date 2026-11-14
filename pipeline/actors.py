@@ -12,7 +12,10 @@ einer Anfrage (BV)“) sind keine Einreichung einer Fraktion: Einreichende ist d
 getrennt erfasst). Fraktionen, Gruppen und
 Einzelmandate des Kölner Rates 2020–2025 und 2025–2030 stehen in PARTIES, Bezeichnungen einer Wahlperiode mit
 Datumsgrenzen (Regeln dort). Die Federführung aus dem Kopf der Verwaltungsvorlage („Dezernat, Dienststelle“) folgt mit
-dem Abruf der PDFs.
+dem Abruf der PDFs. Dezernat und Dienststelle der Federführung (Name der Organisation aus `underDirectionOf` oder Kennung
+aus dem Kopf) ordnet `export` über die Ämtertabelle zu (pipeline/aemter.py: `zuordnen`, je Vorlage mit dem Plan, dessen
+Stand an ihrem Datum der jüngste ist, bis zu seiner letzten Prüfung; nur eindeutige Treffer, sonst Status); die Zeilen
+hier bleiben unverändert.
 """
 import re
 from typing import NamedTuple, Optional

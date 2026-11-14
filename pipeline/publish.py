@@ -384,7 +384,8 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
             "Vorlagen aus dem Ratsinformationssystem der Stadt Köln mit Ortsbezug "
             "(Stadtteil, Straße; Stufe A aus der OParl-API, Stufe B regelbasiert aus dem Titel), "
             "Prozessschritten mit Evidenzstatus, Beratungsfolge und Ergebnissen, federführendem Amt "
-            "und abgeleiteten Einreichenden. Abgeleitete Angaben sind gekennzeichnet.")},
+            "(Dezernat und Bezeichnung, wo eindeutig, abgeleitet aus dem Geschäfts- und Dezernatsverteilungsplan der "
+            "Stadt Köln) und abgeleiteten Einreichenden. Abgeleitete Angaben sind gekennzeichnet.")},
         "dcat:keyword": ["Ratsinformationssystem", "OParl", config.STADT_NAME, "Kommunalpolitik", "Vorlagen",
                          "Bezirksvertretung", "Stadtrat", "Bürgerbeteiligung"],
         "dcat:theme": {"@id": "http://publications.europa.eu/resource/authority/data-theme/GOVE"},

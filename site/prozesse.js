@@ -331,7 +331,7 @@ export async function init(c) {
 }
 export function show(s) {
   if (s) Object.assign(state, Object.fromEntries(Object.entries(s).filter(([k, v]) => k !== "gremiumName" && v !== undefined && v !== null)));
-  // Gremium per Name (aus „Mitmachen in Bonn“)
+  // Gremium per Name (aus dem Vorgang, data-gremium-name)
   if (s && s.gremiumName && data) state.gremium = ((data.gremien || []).find((g) => g.name === s.gremiumName) || {}).id || state.gremium;
   render();
 }

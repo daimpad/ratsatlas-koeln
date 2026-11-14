@@ -150,8 +150,10 @@ PILOT_ORTSTEIL = None
 ZUSATZTHEMEN = {
     "haushalt": False, "baustellen": False, "anliegen": False, "wahlen": False, "themenseiten": False,
     "kontext": True, "soll": False, "chat": False,
-    # zweiter Lauf (Entscheidung 04.11.2026)
-    "einfache_sprache": False, "kurzfassungen": False, "mitmachen": False, "besetzung": False,
+    # zweiter Lauf (Entscheidung 04.11.2026; Beginn am 13.11.2026 freigegeben): Einfache Sprache für Köln neu geschrieben
+    # (pipeline/einfachseite.py) und „mitmachen“ (Fläche „Mitmachen in Köln“, site/beteiligung.js, Quellen am 13.11.2026
+    # geprüft; TECHNIK.md, „Mitmachen in Köln“), beide eingeschaltet am 13.11.2026
+    "einfache_sprache": True, "kurzfassungen": False, "mitmachen": True, "besetzung": False,
     # Seite technik/ (aus den Workflows erzeugt; für Köln seit Phase 5)
     "technik": True,
     # Strukturdaten (Datenvertrag „Strukturdaten“, data/strukturdaten/) auf Seite und im Datenpaket, Einwohnerzahl und
@@ -169,7 +171,8 @@ BAUSTELLEN_LICENSE = ("CC0 1.0 (Stadt Bonn, Baustellen tagesaktuell und geplant;
                       "sind nicht mehr im Katalog von opendata.bonn.de)")
 
 # Öffentliche Adresse der Seite (für absolute Links in Feeds, Kalender und DCAT-Beschreibung)
-SITE_URL = os.environ.get("SITE_URL", "https://koeln.ratsatlas.de/")
+SITE_URL_HAUPT = "https://koeln.ratsatlas.de/"   # Hauptadresse (auch im Vorschaubild, pipeline/vorschaubild.py)
+SITE_URL = os.environ.get("SITE_URL", SITE_URL_HAUPT)
 # Das Datenpaket (Zip) liegt nur auf dem Pages-Spiegel; der Branch `deploy` für die Hauptadresse enthält es nicht
 PAKET_URL = os.environ.get("PAKET_URL",
                            "https://daimpad.github.io/ratsatlas-koeln/data/export/ratsatlas-koeln-export.zip")

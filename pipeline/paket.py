@@ -21,13 +21,16 @@ LIESMICH = f"""Ratsatlas Köln – Datenpaket
 
 Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API) und den Geodaten der Stadt Köln.
 {config.NAMENSNENNUNG}. Bebauungspläne, Kennzahlen und Kartenebenen stammen zum Teil von Land und Bund
-und stehen teils unter dl-de/by 2.0 mit eigener Namensnennung. Lizenzen je Datei: LICENSE-DATA.md
+und stehen teils unter dl-de/by 2.0 mit eigener Namensnennung. Dezernat und Bezeichnung der federführenden Dienststelle
+(responsibility[].aemtertabelle) sind abgeleitet aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt Köln (im
+Plan keine Lizenz angegeben; Stand und letzte Prüfung je Zuordnung). Lizenzen je Datei: LICENSE-DATA.md
 (dort stehen die Pfade wie im Repository: export/koeln/… entspricht koeln/… in diesem Paket).
 
 Inhalt
 - koeln/: Exporte je Stadtteil, Stadtbezirk und ohne Ortsbezug, Suche, Zeitleiste, GeoJSON, DCAT, Kalender,
   Planregister; Kennzahlen (kontext.json) und Flächen für die Karte (flaechen/) mit Quelle und Lizenz in meta
-- audit_*.tsv: Prüfprotokolle (Geokodierung mit Methode, Konfidenz und Fundstelle; Prozess; Zeit; Themen)
+- audit_*.tsv: Prüfprotokolle (Geokodierung mit Methode, Konfidenz und Fundstelle; Prozess; Zeit; Themen;
+  Federführung mit Zuordnung zum Geschäfts- und Dezernatsverteilungsplan)
 - stichprobe_*.tsv (auch in Unterordnern): Stichproben je Methode zur Prüfung von Hand
 - abrufstatistik.tsv: Anfragen, Fehler und Dauer je Abruf
 - geo/: Stadtteile, Stadtbezirke, Straßen- und Hausnummernverzeichnis (abgeleitet, Stadt Köln) und

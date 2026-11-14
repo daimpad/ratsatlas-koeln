@@ -109,15 +109,21 @@ BEGRIFFE = [
                 "Geschäftsordnung.", GESCHO),
     ("Dringlichkeitsantrag", "Antrag, der ohne die übliche Frist auf die Tagesordnung kommen soll, weil die "
      "Angelegenheit keinen Aufschub duldet; ob er behandelt wird, entscheidet das Gremium.", ALLGEMEIN),
-    ("Anregungen und Beschwerden", "Jede Person kann sich schriftlich mit Anregungen oder Beschwerden in "
-     "Angelegenheiten der Gemeinde an den Rat wenden, allein oder gemeinsam mit anderen. In Köln berät darüber der "
-     "Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden. Der Ratsatlas zeigt solche Eingaben höchstens auf "
-     "Straßen- oder Stadtteilebene. Nicht zu verwechseln mit dem Einwohnerantrag.", "§ 24 GO NRW; " + HAUPTSATZUNG),
+    # Köln, zweiter Lauf (13.11.2026): Kreis der Berechtigten und Textform nach § 24 GO NRW in der Fassung ab 01.01.2026
+    # (recht.nrw.de, abgerufen 13.11.2026), Beratung im Ausschuss oder in der Bezirksvertretung laut Seite der Stadt Köln
+    ("Anregungen und Beschwerden", "Wer seit mindestens drei Monaten in der Gemeinde wohnt, kann sich allein oder "
+     "gemeinsam mit anderen in Textform mit Anregungen oder Beschwerden in Angelegenheiten der Gemeinde an den Rat oder "
+     "die Bezirksvertretung wenden. In Köln beraten darüber der Ausschuss für Bürgerbeteiligung, Anregungen und "
+     "Beschwerden oder die zuständige Bezirksvertretung. Der Ratsatlas zeigt solche Eingaben höchstens auf Straßen- oder "
+     "Stadtteilebene. Nicht zu verwechseln mit dem Einwohnerantrag.", "§ 24 GO NRW; " + HAUPTSATZUNG),
     ("Einwohnerantrag", "Einwohnerinnen und Einwohner können beantragen, dass der Rat über eine bestimmte "
      "Angelegenheit berät und entscheidet. Der Antrag braucht die Unterschriften einer Mindestzahl von "
      "Einwohnerinnen und Einwohnern; Einzelheiten regelt die Gemeindeordnung.", "§ 25 GO NRW"),
-    ("Einwohnerfragestunde", "Zeit in einer Sitzung, in der Einwohnerinnen und Einwohner Fragen stellen können; "
-                             "Einzelheiten regelt die Geschäftsordnung.", GESCHO),
+    # Köln (Geschäftsordnung vom 19.03.2026, § 39): Frage vorher schriftlich, Antwort der Verwaltung schriftlich
+    ("Einwohnerfragestunde", "Teil einer Sitzung, in dem Fragen von Einwohnerinnen und Einwohnern an die Verwaltung "
+                             "behandelt werden. In Köln beginnt jede Sitzung einer Bezirksvertretung damit; die Frage "
+                             "wird vorher schriftlich eingereicht, und die Verwaltung antwortet schriftlich.",
+     GESCHO + " § 39"),
     ("Rat", "Gewählte Vertretung der Bürgerinnen und Bürger; er ist für alle Angelegenheiten der Gemeinde zuständig, "
             "soweit nichts anderes bestimmt ist.", "§ 41 GO NRW"),
     ("Bezirksvertretung", "Gewählte Vertretung eines Stadtbezirks in kreisfreien Städten. Köln hat neun Stadtbezirke "
@@ -140,8 +146,12 @@ BEGRIFFE = [
      "kann die Öffentlichkeit ausgeschlossen werden. Inhalte nichtöffentlicher Beratungen sind nicht einsehbar.",
      "§ 48 GO NRW"),
     ("Federführende Dienststelle", "Dezernat und Amt der Verwaltung, die eine Vorlage verantworten; in Köln im Kopf der "
-     "Verwaltungsvorlage als „Dezernat, Dienststelle“ angegeben (z. B. „II/II/2“).",
-     DATENFELD + ", Feld „underDirectionOf“ bzw. Kopf der Vorlage"),
+     "Verwaltungsvorlage als „Dezernat, Dienststelle“ angegeben (z. B. „II/II/2“). Dezernat und Bezeichnung ergänzt der "
+     "Ratsatlas aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt, wenn die Vorlage aus der Zeit stammt, für "
+     "die der Plan belegt ist (von seinem Stand bis zu seiner letzten Prüfung durch den Ratsatlas), und die Angabe "
+     "eindeutig passt (abgeleitet, mit Fundstelle im Plan).",
+     DATENFELD + ", Feld „underDirectionOf“ bzw. Kopf der Vorlage; Geschäfts- und Dezernatsverteilungsplan der Stadt "
+     "Köln"),
     ("Beratungsfolge", "Reihenfolge der Gremien, die eine Vorlage beraten, jeweils mit Rolle (Entscheidung, Empfehlung, "
                        "Anhörung, Kenntnisnahme).", DATENFELD + ", Objekt „Consultation“"),
     ("Tagesordnungspunkt", "Punkt der Tagesordnung einer Sitzung; über ihn wird beraten und gegebenenfalls "

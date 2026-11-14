@@ -224,6 +224,8 @@ legend { font-size: 13px; color: var(--text-muted); padding: 0; margin-bottom: 2
 .papers button[aria-current="true"] { background: rgba(196, 181, 253, 0.28); border-color: var(--accent-soft); }
 .title { font-weight: 500; font-size: 14px; line-height: 1.35; }
 .meta { font-size: 12px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 3px 10px; }
+/* Dezernat und Dienststelle laut Geschäfts- und Dezernatsverteilungsplan (aemterZeile in app.js): wie .meta, aber inline */
+.aemter-zeile { font-size: 12px; color: var(--text-muted); }
 .conf { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }
 .conf::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 .conf-hoch { color: var(--hoch); } .conf-mittel { color: var(--mittel); } .conf-niedrig { color: var(--niedrig); }
@@ -813,7 +815,7 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
   .attr-info { display: inline-block; padding: 0 4px; font-size: 14px; text-decoration: none; }
 }
 
-/* Mitmachen in Bonn (site/beteiligung.js) */
+/* Mitmachen in Köln (site/beteiligung.js) */
 #bt-body h3 { font-size: 15px; margin: 16px 0 8px; }
 .bt-pick { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
 .bt-pick select { min-height: 40px; }
@@ -831,6 +833,12 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
 .bt-card { padding: 10px 14px; border-radius: 14px; background: var(--surface-strong); border: 1px solid var(--border-alt); }
 .bt-card h4 { margin: 2px 0 6px; font-size: 14px; }
 .bt-card p { margin: 4px 0; }
+.bt-quorum { margin: 6px 0; }
+.bt-quorum summary { cursor: pointer; font-weight: 600; }
+.bt-quorum table { border-collapse: collapse; margin: 6px 0 0; font-size: 13px; }
+.bt-quorum th, .bt-quorum td { padding: 2px 10px 2px 0; text-align: left; font-variant-numeric: tabular-nums; }
+.bt-quorum td { text-align: right; }
+.bt-quorum tr.bt-hier th, .bt-quorum tr.bt-hier td { font-weight: 700; color: var(--accent-ink); }
 @media (max-width: 760px) {
   .bt-line { grid-template-columns: 1fr; padding-left: 22px; }
   .bt-line::before { left: 6px; right: auto; top: 4px; bottom: 4px; width: 2px; height: auto; }

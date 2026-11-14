@@ -94,7 +94,6 @@ def main(ziel=ROOT / "_site"):
     ziel = Path(ziel)
     shutil.rmtree(ziel, ignore_errors=True)
     shutil.copytree(ROOT / "site", ziel)
-    (ziel / "og-image.jpg").unlink(missing_ok=True)       # Bonner Vorschaubild nicht ausliefern (zweiter Lauf)
     ohne_abgeschaltete_ordner(ziel)                       # Ratsassistent nur mit Freigabe
     exporte_kopieren(config.EXPORT, ziel / "data" / "export")   # ohne Audits und Stichproben (nur im Datenpaket)
     (ziel / "data" / "LICENSE-DATA.md").write_bytes(freigaben.datei(ROOT / "data" / "LICENSE-DATA.md"))
