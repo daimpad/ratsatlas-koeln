@@ -2364,7 +2364,8 @@
       });
       return m;
     }).catch((e) => { mmReady = null; console.warn("Mitmachen nicht geladen", e); return null; });   // beim nächsten Öffnen erneut
-    return mmReady.then((m) => { if (m) m.show(s || { bezirk: mmState ? mmState.bezirk : areaBezirk() || "" }); return m; });
+    // ohne gewählten Stadtbezirk in der Fläche gilt der des Gebiets (auch nach einem ersten Öffnen ohne Gebiet)
+    return mmReady.then((m) => { if (m) m.show(s || { bezirk: (mmState && mmState.bezirk) || areaBezirk() || "" }); return m; });
   }
 
   // --- Strukturdaten der Stadtstatistik (site/strukturdaten/strukturdaten.js) -----------------------------

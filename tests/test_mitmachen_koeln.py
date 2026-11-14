@@ -192,3 +192,133 @@ def test_texte_im_menue_glossar_und_vorgang():
     teil = re.search(r"function participate\(p\) \{.*?\n  \}\n", APP, re.S).group(0)
     assert "${BUERGERANTRAG}" in teil and 'vorhanden("panel-mitmachen")' in teil and "data-mitmachen-oeffnen" in teil
     assert re.search(r'closest\("\[data-mitmachen-oeffnen\]"\) && vorhanden\("panel-mitmachen"\)', APP)
+
+
+# --- Nachprüfung vom 14.11.2026 (Befunde der Prüfung zu f683b66) ------------------------------------------------------
+
+def _karte(html, titel):
+    """Die Karte (<article class="bt-card">) mit Überschrift `titel`."""
+    m = re.search(r'<article class="bt-card"><h4>' + re.escape(titel) + r"</h4>.*?</article>", html, re.S)
+    assert m, titel
+    return m.group(0)
+
+
+def test_fragestunde_hinweis_neben_dem_link():
+    """Die Seite der Stadt zur Einwohnerfragestunde beschreibt noch die Geschäftsordnung von 2020 (Antwort in der Regel
+    mündlich in der Sitzung); die Karte folgt der Fassung vom 19.03.2026. Der Unterschied steht auf der Karte direkt vor
+    der Zeile mit dem Link, nicht nur in TECHNIK.md – in jeder Darstellung (mit und ohne Stadtbezirk, Vorschau)."""
+    url = re.escape(QUELLE_URL["fragestunde"])
+    d = _darstellung()
+    for name in ("innenstadt", "ohne", "vorschau"):
+        karte = _karte(d[name], "Eine Frage in der Einwohnerfragestunde stellen")
+        m = re.search(r'<p class="hint bt-abweichung">(.*?)</p>\s*<p class="hint">Grundlage: [^<]*<a href="' + url, karte, re.S)
+        assert m, name
+        hinweis = m.group(1)
+        assert "Geschäftsordnung von 2020" in hinweis and "mündlich in der Sitzung" in hinweis, hinweis
+        assert "Geschäftsordnung vom 19.03.2026" in hinweis and "schriftlich" in hinweis, hinweis
+        # Die Karte selbst nennt die Regel von 2026 (schriftliche Antwort, möglichst innerhalb von vier Wochen)
+        assert "Die Verwaltung antwortet schriftlich, nach der Geschäftsordnung möglichst innerhalb von vier Wochen." in karte
+    # Der Hinweis steht nur auf dieser Karte
+    assert d["innenstadt"].count("bt-abweichung") == 1
+    # TECHNIK.md vermerkt, dass der Unterschied jetzt auf der Seite sichtbar ist
+    assert "auf der Karte selbst" in _abschnitt_technik()
+
+
+QUELLE_URL = {k: v for k, v in re.findall(r'(\w+): \{ label: "[^"]*", wo: [^,]+,\s*url: "([^"]+)"', QUELLE)}
+
+
+def test_rat_oder_bezirksvertretung_nach_wortlaut():
+    """§ 37 Abs. 1 Buchst. a GO NRW nennt Unterhaltung und Ausstattung der Schulen und öffentlichen Einrichtungen im
+    Stadtbezirk (nicht ihre Errichtung oder Auflösung; die ist nach § 41 Abs. 1 Buchst. m Sache des Rates); am
+    14.11.2026 gegen recht.nrw.de abgeglichen."""
+    d = _darstellung()
+    for name, wer in (("innenstadt", "Die Bezirksvertretung Innenstadt"), ("ohne", "Die Bezirksvertretung Ihres Stadtbezirks")):
+        absatz = re.search(r"<p><strong>Rat oder Bezirksvertretung\?</strong>(.*?)</p>", d[name], re.S).group(1)
+        assert "er entscheidet zum Beispiel, ob öffentliche Einrichtungen errichtet, erweitert oder aufgelöst werden" in absatz
+        assert f"{wer} entscheidet, soweit nicht der Rat zuständig ist," in absatz
+        assert "über die Unterhaltung und Ausstattung der Schulen und öffentlichen Einrichtungen im Stadtbezirk" in absatz
+        assert "die Betreuung und Unterstützung örtlicher Vereine" in absatz
+        assert "(§ 41 Abs. 1, § 37 Abs. 1 GO NRW)" in absatz
+        assert "etwa über Schulen und öffentliche Einrichtungen" not in absatz
+
+
+def test_naechste_ratssitzung_in_allen_schreibweisen():
+    """Die nächste Ratssitzung wird auch unter den Schreibweisen erkannt, die site/timeline.js kennt (GREMIUM_ALIAS:
+    „Rat der Stadt Köln“, „Stadtrat“); andere Gremien mit „Rat“ im Namen nicht."""
+    alias = re.search(r"const GREMIUM_ALIAS = (\{.*?\});", (ROOT / "site" / "timeline.js").read_text(encoding="utf-8")).group(1)
+    namen = [k for k, v in json.loads(alias).items() if v == "Rat"]
+    assert set(namen) == {"Rat der Stadt Köln", "Stadtrat"}
+    for name in namen:
+        sitzungen = [{"date": "2026-11-26", "time": "15:30", "gremium": name, "web": None},
+                     {"date": "2026-11-19", "time": "17:00", "gremium": "Integrationsrat", "web": None},
+                     {"date": "2026-11-20", "time": "17:00", "gremium": "Seniorenrat", "web": None}]
+        aus = _node_modul(f"""
+const o = {{ termine: true, meetings: {json.dumps(sitzungen)}, heute: "2026-11-13", bvBezirk }};
+console.log(JSON.stringify(m.inhalt("", o)));
+""")
+        liste = re.search(r'<ul class="bt-dates">(.*?)</ul>', aus, re.S).group(1)
+        assert "Do., 26.11.2026, 15:30 Uhr" in liste and "Rat der Stadt Köln; Ratssitzungen" in liste, name
+        assert "19.11.2026" not in liste and "20.11.2026" not in liste, name
+
+
+def test_zuhoeren_in_der_vorschau_ohne_kommende_sitzungen():
+    """In der Vorschau (ohne zeit.json) gibt es „Kommende Sitzungen“ noch nicht; die Karte „Zuhören und zuschauen“
+    sagt dann, dass die Termine mit den Ratsvorlagen erscheinen, statt auf eine leere Fläche zu verweisen."""
+    d = _darstellung()
+    mit = _karte(d["innenstadt"], "Zuhören und zuschauen")
+    ohne = _karte(d["vorschau"], "Zuhören und zuschauen")
+    assert "Die Termine stehen im Ratsatlas unter „Kommende Sitzungen“" in mit
+    assert "Die Termine stehen im Ratsatlas" not in ohne and "Tagesordnung" not in ohne
+    assert "Die Termine erscheinen im Ratsatlas unter „Kommende Sitzungen“, auch als Kalenderdatei, sobald die Ratsvorlagen vorliegen." in ohne
+
+
+def test_postanschrift_der_geschaeftsstelle():
+    """Briefe gehen laut Seite der Geschäftsstelle an Postfach 10 35 64, 50475 Köln; die Ludwigstraße 8 ist die
+    Anschrift (beides am 14.11.2026 geprüft)."""
+    karte = _karte(_darstellung()["innenstadt"], "Anregungen und Beschwerden an Rat oder Bezirksvertretung")
+    assert "Briefe gehen an Postfach 10 35 64, 50475 Köln" in karte
+    assert "E-Mails an geschaeftsstelle-anregungen-beschwerden@stadt-koeln.de" in karte
+    assert "die Geschäftsstelle selbst sitzt in der Ludwigstraße 8, 50667 Köln" in karte
+
+
+def test_texte_rat_oder_bezirksvertretung_ueberall():
+    """§ 24 GO NRW: Tour (mit und ohne Freigabe, Vorschau) nennt wie Glossar, Menü, Vorgang und Fläche „Rat oder
+    Bezirksvertretung“; das Glossar beschreibt die Kölner Einwohnerfragestunde mit schriftlicher Antwort."""
+    tour = (ROOT / "site" / "tour.js").read_text(encoding="utf-8")
+    assert "§ 24 GO NRW" in tour
+    for m in re.finditer(r"§ 24 GO NRW selbst an den Rat[^;,]*", tour):
+        assert "oder die Bezirksvertretung" in m.group(0), m.group(0)
+    assert len(re.findall(r"§ 24 GO NRW selbst an den Rat oder die Bezirksvertretung", tour)) == 3
+    frage = {b[0]: b for b in glossar.BEGRIFFE}["Einwohnerfragestunde"][1]
+    assert "vorher schriftlich eingereicht" in frage and "die Verwaltung antwortet schriftlich" in frage
+    assert "stellen können" not in frage
+
+
+def test_flaeche_merkt_sich_leere_wahl_nicht():
+    """Öffnet man die Fläche ohne Stadtbezirk und wählt danach ein Gebiet, ist beim erneuten Öffnen dessen Stadtbezirk
+    vorgewählt (eine leere Wahl der Fläche verdeckt das Gebiet nicht)."""
+    teil = re.search(r"function openMitmachen\(s\) \{.*?\n  \}\n", APP, re.S).group(0)
+    assert '(mmState && mmState.bezirk) || areaBezirk() || ""' in teil
+    assert "mmState ? mmState.bezirk : areaBezirk()" not in teil
+
+
+def test_wcag_pruefung_meldet_fehlende_flaeche():
+    """tools/wcag_pruefen.js: Steht die Fläche im HTML (Freigabe an) und öffnet sich nicht, ist das ein Befund statt
+    einer stillen Lücke mit „0 Befunde“."""
+    wcag = (ROOT / "tools" / "wcag_pruefen.js").read_text(encoding="utf-8")
+    assert "if (await p.$('#panel-mitmachen:not([hidden]) #bt-bezirk'))" not in wcag
+    assert "if (await p.$('#panel-mitmachen'))" in wcag
+    assert "rows.push(['mitmachen-flaeche', 'nicht geöffnet'" in wcag
+
+
+def test_nachpruefung_vom_14_11_2026_vermerkt():
+    """Die Nachprüfung am 14.11.2026 (höchstens 4 Abrufe, nur www.stadt-koeln.de und recht.nrw.de, keine OParl-API)
+    steht mit Adresse, Zahl und Zweck in TECHNIK.md; jede Adresse ist eine der geprüften Adressen der Fläche."""
+    abschnitt = _abschnitt_technik()
+    zeilen = [z for z in abschnitt.splitlines() if z.startswith("| `") and "14.11.2026" in z]
+    assert zeilen
+    assert sum(int(m) for z in zeilen for m in re.findall(r"\| (\d+) \|", z)) <= 4
+    for z in zeilen:
+        u = re.search(r"`(https://[^`]+)`", z).group(1)
+        assert re.match(r"https://([^/]+)/", u).group(1) in ERLAUBTE_HOSTS, u
+        assert u in QUELLE, u

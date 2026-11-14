@@ -119,9 +119,11 @@ BEGRIFFE = [
     ("Einwohnerantrag", "Einwohnerinnen und Einwohner können beantragen, dass der Rat über eine bestimmte "
      "Angelegenheit berät und entscheidet. Der Antrag braucht die Unterschriften einer Mindestzahl von "
      "Einwohnerinnen und Einwohnern; Einzelheiten regelt die Gemeindeordnung.", "§ 25 GO NRW"),
-    ("Einwohnerfragestunde", "Zeit in einer Sitzung, in der Einwohnerinnen und Einwohner Fragen an die Verwaltung "
-                             "stellen können. In Köln beginnt jede Sitzung einer Bezirksvertretung damit; die Frage "
-                             "wird vorher schriftlich eingereicht.", GESCHO + " § 39"),
+    # Köln (Geschäftsordnung vom 19.03.2026, § 39): Frage vorher schriftlich, Antwort der Verwaltung schriftlich
+    ("Einwohnerfragestunde", "Teil einer Sitzung, in dem Fragen von Einwohnerinnen und Einwohnern an die Verwaltung "
+                             "behandelt werden. In Köln beginnt jede Sitzung einer Bezirksvertretung damit; die Frage "
+                             "wird vorher schriftlich eingereicht, und die Verwaltung antwortet schriftlich.",
+     GESCHO + " § 39"),
     ("Rat", "Gewählte Vertretung der Bürgerinnen und Bürger; er ist für alle Angelegenheiten der Gemeinde zuständig, "
             "soweit nichts anderes bestimmt ist.", "§ 41 GO NRW"),
     ("Bezirksvertretung", "Gewählte Vertretung eines Stadtbezirks in kreisfreien Städten. Köln hat neun Stadtbezirke "

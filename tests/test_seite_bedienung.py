@@ -204,10 +204,11 @@ console.log(JSON.stringify(aus));
 
 
 def test_tour_nennt_keine_abgeschaltete_funktion():
-    """Datenbetrieb mit den Kölner Freigaben (Baustellen, Haushalt, Mitmachen, Prozesse und Assistent aus, Einfache
-    Sprache seit 13.11.2026 an): kein Schritt nennt eine abgeschaltete Funktion, ob ihr Element ausgeblendet ist oder
-    fehlt; an ihrer Stelle steht, was die Seite zeigt (Text der Vorschau zu § 24 GO NRW und zu den Begriffen)."""
-    assert KOELN == {"einfache_sprache"}
+    """Datenbetrieb mit den Kölner Freigaben (Baustellen, Haushalt, Prozesse und Assistent aus; Einfache Sprache und
+    „Mitmachen in Köln“ seit 13.11.2026 an): kein Schritt nennt eine abgeschaltete Funktion, ob ihr Element
+    ausgeblendet ist oder fehlt; an ihrer Stelle steht, was die Seite zeigt (Text der Vorschau zu § 24 GO NRW und zu
+    den Begriffen)."""
+    assert KOELN == {"einfache_sprache", "mitmachen"}
     aus_koeln = [w for f, woerter in WOERTER_JE_FUNKTION.items() if not config.ZUSATZTHEMEN.get(f) for w in woerter]
     for an, verboten in ((KOELN, aus_koeln), (set(), ABGESCHALTET)):
         for telefon in (False, True):
@@ -216,9 +217,11 @@ def test_tour_nennt_keine_abgeschaltete_funktion():
                 genannt = [(t, w) for t, x in texte.items() for w in verboten if w in t + " " + x]
                 assert genannt == [], (an, telefon, fehlen, genannt)
                 assert "Prozesse: Wer entscheidet was?" not in texte and "Der Ratsassistent" not in texte
-                assert "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden; " \
-                       "und ein Hinweis" in texte["Mitmachen"]
-                einfach = "der Ratsatlas in Einfacher Sprache, " if an else ""
+                if "mitmachen" not in an:
+                    # § 24 GO NRW: Rat oder Bezirksvertretung, auch ohne Freigabe „mitmachen“ (Nachprüfung 14.11.2026)
+                    assert "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die " \
+                           "Bezirksvertretung zu wenden; und ein Hinweis" in texte["Mitmachen"]
+                einfach = "der Ratsatlas in Einfacher Sprache, " if "einfache_sprache" in an else ""
                 assert texte["Verstehen"].startswith(f"Hilfen zum Lesen der Karte: {einfach}Begriffe wie Vorlage, "
                                                      "Beratungsfolge oder Stadtbezirk in einfachen Worten")
             assert texte["Flächen ein- und ausklappen"].startswith(

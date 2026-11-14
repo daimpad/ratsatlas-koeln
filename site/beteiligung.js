@@ -3,7 +3,8 @@
 // Zweiter Lauf (Entscheidung 13.11.2026), ersetzt die Bonner Fassung (Regelwerk aus soll.json, Bonner Stadtbezirke und
 // Links). Die Texte fassen die Gemeindeordnung NRW (Fassung ab 01.01.2026), die Geschäftsordnung des Rates und der
 // Bezirksvertretungen der Stadt Köln (beschlossen am 19.03.2026) und Seiten der Stadt Köln zusammen; jede Angabe nennt
-// ihre Fundstelle. Alle Adressen am 13.11.2026 abgerufen und geprüft (Liste in TECHNIK.md, „Mitmachen in Köln“);
+// ihre Fundstelle. Alle Adressen am 13.11.2026 abgerufen und geprüft (Liste in TECHNIK.md, „Mitmachen in Köln“; vier
+// Stellen am 14.11.2026 nachgeprüft: § 37 Abs. 1 und § 41 Abs. 1 GO NRW, Seite zur Einwohnerfragestunde, Postanschrift);
 // tests/test_mitmachen_koeln.py prüft, dass keine andere Adresse vorkommt. Fristen stehen als Regel da, ohne berechnetes
 // Datum (Arbeitstage hängen von Feiertagen ab). Wird von app.js erst beim Öffnen geladen; ohne Freigabe „mitmachen“
 // (config.ZUSATZTHEMEN) fehlt die Fläche im veröffentlichten HTML.
@@ -50,6 +51,9 @@ const tag = (iso) => TAG.format(new Date(iso + "T12:00:00Z"));
 const when = (m) => `${tag(m.date)}${m.time ? `, ${esc(m.time)} Uhr` : ""}`;
 const ext = (k) => { const q = QUELLEN[k]; return `<a href="${q.url}" target="_blank" rel="noopener">${esc(q.label)}<span class="visually-hidden"> (${esc(q.wo)}, neuer Tab)</span></a>`; };
 const AUSSCHUSS = /Anregungen und Beschwerden/i;
+// Rat in den Schreibweisen, die site/timeline.js (GREMIUM_ALIAS) kennt; welche die Kölner API liefert, ist bis zum
+// ersten Vollabruf offen (TECHNIK.md, „Mitmachen in Köln“)
+const RAT = new Set(["Rat", "Rat der Stadt Köln", "Stadtrat"]);
 
 // nächste Sitzung (nicht abgesagt, ab heute), die `passt`
 function naechste(meetings, heute, passt) {
@@ -66,7 +70,7 @@ function sitzungen(bz, o) {
     return `<section class="bt-next" aria-labelledby="bt-next-h">${kopf}<p class="hint">Die Sitzungstermine erscheinen hier, sobald die Ratsvorlagen im Ratsatlas vorliegen.</p></section>`;
   }
   const bv = bz ? naechste(o.meetings, o.heute, (g) => o.bvBezirk(g) === bz) : null;
-  const rat = naechste(o.meetings, o.heute, (g) => g === "Rat");
+  const rat = naechste(o.meetings, o.heute, (g) => RAT.has(g));
   const aab = naechste(o.meetings, o.heute, (g) => AUSSCHUSS.test(g));
   const items = [
     bv ? row(bv, `${esc(bv.gremium)}; die Sitzung beginnt mit der Einwohnerfragestunde`) : "",
@@ -81,6 +85,11 @@ function sitzungen(bz, o) {
     <p class="bt-actions"><button type="button" class="btn btn-soft" id="bt-termine">Alle kommenden Sitzungen</button></p></section>`;
 }
 
+// Die Seite der Stadt zur Einwohnerfragestunde beschreibt noch die Geschäftsordnung vom 18.06.2020 (Antwort in der Regel
+// mündlich in der Sitzung, 30 Minuten; am 13. und 14.11.2026 geprüft); die Karte folgt der Fassung vom 19.03.2026.
+// Der Hinweis steht direkt über dem Link, damit der Unterschied dort sichtbar ist, wo man der Seite folgt.
+const FRAGESTUNDE_HINWEIS = `<p class="hint bt-abweichung">Hinweis: Die Seite der Stadt zur Einwohnerfragestunde beschreibt noch die Geschäftsordnung von 2020; danach wird in der Regel mündlich in der Sitzung geantwortet. Maßgeblich ist die Geschäftsordnung vom 19.03.2026, nach der die Verwaltung schriftlich antwortet (Stand der Prüfung: 14.11.2026).</p>`;
+
 const karte = (titel, absaetze, grundlage, links, extra = "") => `<article class="bt-card"><h4>${titel}</h4>${absaetze.map((p) => `<p>${p}</p>`).join("")}
   ${extra}<p class="hint">Grundlage: ${grundlage}${links.length ? ` · ${links.map(ext).join(" · ")}` : ""}</p></article>`;
 
@@ -90,24 +99,25 @@ function quorumTabelle(bz) {
     <thead><tr><th scope="col">Stadtbezirk</th><th scope="col">Anteil</th><th scope="col">Unterschriften</th></tr></thead><tbody>${zeilen}</tbody></table></details>`;
 }
 
-function wege(bz) {
+function wege(bz, o) {
   const [kp, kn] = QUORUM.Köln;
   const bezirkQuorum = bz ? ` Im Stadtbezirk ${esc(bz)} sind es ${QUORUM[bz][0]} Prozent, also ${ZAHL.format(QUORUM[bz][1])} Unterschriften.` : "";
   const karten = [
     karte("Zuhören und zuschauen", [
       "Die Sitzungen des Rates sind öffentlich; für die Ausschüsse und die Bezirksvertretungen gilt das entsprechend. Sie können als Zuhörerin oder Zuhörer dabei sein. Einzelne Punkte werden nichtöffentlich beraten, etwa Personal-, Grundstücks- und Vergabeangelegenheiten.",
       "Ratssitzungen überträgt die Stadt live im Internet.",
-      "Die Termine stehen im Ratsatlas unter „Kommende Sitzungen“, auch als Kalenderdatei; der Link „Tagesordnung“ führt ins Ratsinformationssystem der Stadt.",
+      o.termine ? "Die Termine stehen im Ratsatlas unter „Kommende Sitzungen“, auch als Kalenderdatei; der Link „Tagesordnung“ führt ins Ratsinformationssystem der Stadt."
+        : "Die Termine erscheinen im Ratsatlas unter „Kommende Sitzungen“, auch als Kalenderdatei, sobald die Ratsvorlagen vorliegen.",
     ], "§ 48 Abs. 2, § 36 Abs. 5 und § 58 Abs. 2 GO NRW; § 2 Abs. 4 der Geschäftsordnung", ["ratLive", "go"]),
     karte("Eine Frage in der Einwohnerfragestunde stellen", [
       "Jede Sitzung einer Bezirksvertretung beginnt mit der Einwohnerfragestunde. Wer im Stadtbezirk wohnt, kann dort der Verwaltung eine Frage zu einer Angelegenheit des Stadtbezirks stellen: eine Frage mit höchstens fünf Unterfragen je Sitzung.",
       "So geht es: Reichen Sie Ihre Frage schriftlich bei der Bezirksbürgermeisterin oder dem Bezirksbürgermeister ein, spätestens am fünften Arbeitstag vor der Sitzung bis 12 Uhr. Die Verwaltung antwortet schriftlich, nach der Geschäftsordnung möglichst innerhalb von vier Wochen.",
       "Nicht möglich sind Fragen zu Angelegenheiten, die nichtöffentlich beraten werden, Fragen, die schutzwürdige Interessen anderer berühren, und Fragen zu einem laufenden Verwaltungsverfahren, in dem Sie selbst Auskunft verlangen können. Fragen und Antworten stellt die Stadt ins Ratsinformationssystem.",
       `Rat und Hilfe gibt die Geschäftsstelle der Bezirksvertretung im Bürgeramt ${bz ? esc(bz) : "Ihres Stadtbezirks"}.`,
-    ], "§ 39 der Geschäftsordnung", ["fragestunde", "gescho"]),
+    ], "§ 39 der Geschäftsordnung", ["fragestunde", "gescho"], FRAGESTUNDE_HINWEIS),
     karte("Anregungen und Beschwerden an Rat oder Bezirksvertretung", [
       "Wenn Ihnen in Köln etwas am Herzen liegt oder Sie etwas stört, können Sie sich direkt an die Politik wenden: Wer seit mindestens drei Monaten in Köln wohnt, kann sich allein oder gemeinsam mit anderen mit einer Anregung oder Beschwerde an den Rat oder an eine Bezirksvertretung wenden.",
-      "So geht es: Schreiben Sie Ihr Anliegen auf, per Brief oder E-Mail. Die Eingaben bearbeitet die Geschäftsstelle für Anregungen und Beschwerden an Rat und Bezirksvertretungen, Ludwigstraße 8, 50667 Köln, E-Mail geschaeftsstelle-anregungen-beschwerden@stadt-koeln.de; die Stadt bietet dazu auch ein Kontaktformular an.",
+      "So geht es: Schreiben Sie Ihr Anliegen auf, per Brief oder E-Mail. Die Eingaben bearbeitet die Geschäftsstelle für Anregungen und Beschwerden an Rat und Bezirksvertretungen: Briefe gehen an Postfach 10 35 64, 50475 Köln, E-Mails an geschaeftsstelle-anregungen-beschwerden@stadt-koeln.de; die Geschäftsstelle selbst sitzt in der Ludwigstraße 8, 50667 Köln. Die Stadt bietet dazu auch ein Kontaktformular an.",
       "Wie es weitergeht: Zuerst nimmt die zuständige Fachverwaltung Stellung. Danach berät der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden oder, wenn sie zuständig ist, die Bezirksvertretung. Sie werden zur Sitzung eingeladen und können Ihr Anliegen dort bis zu fünf Minuten lang erläutern. Der Ausschuss kann Empfehlungen aussprechen, etwa an den Rat oder die Verwaltung; die Bezirksvertretungen entscheiden in ihrem Bereich selbst. Über die Stellungnahme werden Sie unterrichtet.",
       "Nicht auf diesem Weg laufen Angelegenheiten mit einem eigenen Verfahren, etwa Dienstaufsichtsbeschwerden oder Fälle, in denen Sie ein Rechtsmittel wie einen Widerspruch einlegen können. Eingaben können nichtöffentlich beraten werden, wenn eine öffentliche Beratung schutzwürdige Interessen einzelner Personen gefährden könnte.",
     ], "§ 24 GO NRW; § 2 Abs. 4, § 34 Abs. 13 und § 38 Abs. 15 der Geschäftsordnung", ["ausschuss", "geschaeftsstelle", "formular"]),
@@ -137,8 +147,8 @@ export function inhalt(bz, o) {
   const b = BEZIRKE.includes(bz) ? bz : "";
   return `<p>Im Rat, in seinen Ausschüssen und in den neun Bezirksvertretungen wird über vieles entschieden, was Ihren Alltag in Köln betrifft. Sie können zuhören, Fragen stellen und eigene Anliegen einbringen. Hier finden Sie die Wege dazu, mit den Regeln aus Gemeindeordnung und Geschäftsordnung und mit Links zu den Seiten der Stadt Köln.</p>
     <label class="bt-pick">Ihr Stadtbezirk <select id="bt-bezirk"><option value=""${b ? "" : " selected"}>bitte wählen</option>${BEZIRKE.map((x) => `<option${x === b ? " selected" : ""}>${esc(x)}</option>`).join("")}</select></label>
-    <p><strong>Rat oder Bezirksvertretung?</strong> Der Rat ist für ganz Köln zuständig. Die Bezirksvertretung ${b ? esc(b) : "Ihres Stadtbezirks"} entscheidet über Angelegenheiten, deren Bedeutung nicht wesentlich über den Stadtbezirk hinausgeht, etwa über Schulen und öffentliche Einrichtungen im Stadtbezirk, die Grünpflege oder die Unterstützung örtlicher Vereine (§§ 41, 37 GO NRW).</p>
-    ${sitzungen(b, o)}${wege(b)}${DATENSCHUTZ}
+    <p><strong>Rat oder Bezirksvertretung?</strong> Der Rat ist für ganz Köln zuständig; er entscheidet zum Beispiel, ob öffentliche Einrichtungen errichtet, erweitert oder aufgelöst werden. Die Bezirksvertretung ${b ? esc(b) : "Ihres Stadtbezirks"} entscheidet, soweit nicht der Rat zuständig ist, über Angelegenheiten, deren Bedeutung nicht wesentlich über den Stadtbezirk hinausgeht, etwa über die Unterhaltung und Ausstattung der Schulen und öffentlichen Einrichtungen im Stadtbezirk, die Grünpflege oder die Betreuung und Unterstützung örtlicher Vereine (§ 41 Abs. 1, § 37 Abs. 1 GO NRW).</p>
+    ${sitzungen(b, o)}${wege(b, o)}${DATENSCHUTZ}
     <p class="hint">Zusammengefasst aus der Gemeindeordnung NRW (Fassung ab 01.01.2026), der Geschäftsordnung des Rates und der Bezirksvertretungen der Stadt Köln (19.03.2026) und den verlinkten Seiten der Stadt Köln, Stand ${STAND}. Keine Rechtsauskunft; maßgeblich sind Gesetz, Geschäftsordnung und die Angaben der Stadt.</p>`;
 }
 
