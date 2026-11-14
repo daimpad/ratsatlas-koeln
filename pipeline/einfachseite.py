@@ -190,7 +190,7 @@ def body(root, vorschau=False):
     <h2 id="mitmachen">Wie kann ich mitmachen?</h2>
     <ul>
       <li><strong>Sitzungen besuchen:</strong> Die Sitzungen sind in der Regel öffentlich. Dann darf jede Person zuhören. Bei einzelnen Themen kann ein Gremium die Öffentlichkeit ausschließen. Die Termine finden Sie auf der Karte im Menü „Mitmachen“ bei „Termine anzeigen“.</li>
-      <li><strong>Anregungen und Beschwerden:</strong> Sie können sich schriftlich an den Rat wenden. Mit einer Anregung oder mit einer Beschwerde. Darüber berät der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden. Wie Sie das einreichen, erklärt die Stadt Köln. Einen geprüften Link dazu ergänzen wir noch.</li>
+      <li><strong>Anregungen und Beschwerden:</strong> Sie können sich schriftlich an den Rat oder an Ihre Bezirksvertretung wenden. Mit einer Anregung oder mit einer Beschwerde. Darüber berät der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden oder die Bezirksvertretung. Wie Sie das einreichen, erklärt die Stadt Köln auf ihrer <a href="https://www.stadt-koeln.de/politik-und-verwaltung/mitwirkung-von-buergerinnen/anregungenbeschwerden">Seite zu Anregungen und Beschwerden</a>.</li>
       <li><strong>Informiert bleiben:</strong> Ein Feed meldet neue Vorlagen von selbst. Dafür brauchen Sie ein Programm für Feeds, einen Feed-Reader. <a href="{root}rss/">So geht es</a></li>
     </ul>
     <p>Wichtig: Der Ratsatlas gehört nicht zur Stadt Köln. Anregungen, Beschwerden und Fragen zu einer Vorlage gehen an die Stadt Köln.</p>

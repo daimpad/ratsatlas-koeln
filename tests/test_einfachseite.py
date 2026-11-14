@@ -149,16 +149,20 @@ def test_regeln_der_einfachen_sprache():
 
 
 def test_offenes_als_offen_gekennzeichnet():
-    """Ohne geprüften Link zur Seite der Stadt über Anregungen und Beschwerden (wie site/app.js) kein Link, sondern der
-    Hinweis; die Prüfung von Hand steht noch aus; das zuständige Amt nur, wenn die Daten es zeigen."""
+    """Einziger externer Link ist der geprüfte Link zur Seite der Stadt über Anregungen und Beschwerden, derselbe wie in
+    site/app.js und site/beteiligung.js (abgerufen und geprüft am 13.11.2026, TECHNIK.md „Mitmachen in Köln“); die
+    Prüfung von Hand steht noch aus; das zuständige Amt nur, wenn die Daten es zeigen."""
     html = einfachseite.body("../")
-    assert "Einen geprüften Link dazu ergänzen wir noch." in html
+    assert "Einen geprüften Link dazu ergänzen wir noch." not in html
     assert "Die Orte sind noch nicht von Hand geprüft." in html
     assert "Wenn die Daten es zeigen, nennt der Ratsatlas das zuständige Amt." in html
-    externe = [h for h in _lesen(html).hrefs if h.startswith("http")]
-    assert externe == []
     app = (ROOT / "site" / "app.js").read_text(encoding="utf-8")
-    assert "Link zur Seite der Stadt über Anregungen und Beschwerden folgt nach Prüfung" in app
+    geprueft = re.search(r'const BUERGERANTRAG = "(https://[^"]+)"', app).group(1)
+    assert geprueft in (ROOT / "site" / "beteiligung.js").read_text(encoding="utf-8")
+    assert f"`{geprueft}`" in (ROOT / "TECHNIK.md").read_text(encoding="utf-8")
+    externe = [h for h in _lesen(html).hrefs if h.startswith("http")]
+    assert externe == [geprueft]
+    assert "an den Rat oder an Ihre Bezirksvertretung" in html
 
 
 def test_datenschutz_wie_auf_der_seite():
