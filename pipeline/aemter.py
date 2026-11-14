@@ -7,17 +7,27 @@ Gruppe dazu. Jede Zeile nennt ihre Fundstelle (Seite, Spalte, Eintrag), die Adre
 des PDFs. Übernommen sind nur Kennungen und Bezeichnungen von Dezernaten und Dienststellen, keine Namen von Personen und
 kein weiterer Text.
 
-Zuordnung (`zuordnen`): Ein Plan gilt ab seinem Stand bis zum Stand des nächsten Plans in der Tabelle; eine Vorlage wird
-mit dem Plan verglichen, der an ihrem Datum gilt. Vorlagen vor dem ältesten Plan und Vorlagen ohne Datum bleiben ohne
-Zuordnung, der Status nennt den Grund: Zuschnitt und Bezeichnungen ändern sich (CLAUDE.md 3.2 nennt den Stand
-01.10.2026, die geladene Fassung den Stand 01.11.2026), ein jüngerer Plan belegt den früheren Zuschnitt nicht.
+Zuordnung (`zuordnen`): Belegt ist ein Plan von seinem Stand bis zu seiner letzten Prüfung, dem Tag des jüngsten Abrufs
+(`abgerufen`; ein erneuter Abruf mit `tools/aemter_tabelle.py` verlängert ihn, wenn die Stadt dasselbe PDF ausliefert),
+höchstens bis zum Stand des nächsten Plans in der Tabelle. Eine Vorlage wird mit dem Plan verglichen, dessen Stand an
+ihrem Datum der jüngste ist, und nur, wenn ihr Datum in diese Spanne fällt. Vorlagen vor dem ältesten Plan, nach der
+letzten Prüfung des Plans (auch zwischen der Prüfung und dem Stand des nächsten Plans: ein dazwischen gültiger Plan ist
+nicht ausgeschlossen) und ohne Datum bleiben ohne Zuordnung, der Status nennt den Grund: Zuschnitt und Bezeichnungen
+ändern sich (CLAUDE.md 3.2 nennt den Stand 01.10.2026, die geladene Fassung den Stand 01.11.2026), weder belegt ein
+jüngerer Plan den früheren Zuschnitt noch ein älterer den späteren.
 Verglichen wird
 - eine Kennung wie im Kopf der Verwaltungsvorlage („Dezernat, Dienststelle“, z. B. „VI/61“, „II/II/2“; auch „II/2“ und
-  „VI/61/612“): Dezernat und Dienststelle müssen im Plan zusammenpassen, sonst „Dezernat weicht ab“;
+  „VI/61/612“): Dezernat und Dienststelle müssen im Plan zusammenpassen, sonst „Dezernat weicht ab“. Die Form ist an
+  Köpfen echter Vorlagen noch nicht gemessen; Kennungen mit drei oder mehr Teilen und einer Nummer an zweiter Stelle
+  werden deshalb nur bis zur Dienststelle zugeordnet („eindeutig bis zur Dienststelle“), auch wenn der Plan eine
+  Untereinheit in derselben Schreibweise führt (ob „51/1“ oder die Abteilung „511“ gemeint ist, bleibt offen). Ausnahme:
+  Bei drei Teilen ist der dritte selbst eine Nummer des Plans unter dieser Dienststelle („VI/61/612“). „II/II/2“
+  (Einheit des Dezernats, Beispiel aus CLAUDE.md 5.3) bleibt eindeutig;
 - der Name der Organisation aus `underDirectionOf`: Nummer und Name („61 Stadtplanungsamt“, „61 - Stadtplanungsamt“),
   Nummer allein („Amt 61“), Kennung („VI/61“) oder Name allein („Stadtplanungsamt“, auch ohne Klammerzusatz wie
   „(e. E.)“ oder mit dem Kurznamen „DigIT“). Tragen mehrere Einträge des Plans denselben Namen („Verwaltung“), gilt das
-  als mehrdeutig, ohne Zuordnung.
+  als mehrdeutig, ohne Zuordnung. Bestätigt der Name hinter einer dreiteiligen Kennung die Untereinheit in der
+  Schreibweise des Plans („IX/37/1 Grundsätzliche Angelegenheiten der FF“), gilt sie als eindeutig.
 Nur eindeutige Treffer zählen (ZUGEORDNET); alles andere bleibt wie zuvor und trägt nur den Status (Export
 `responsibility[].aemtertabelle`, `audit_federfuehrung.tsv`).
 
@@ -50,11 +60,12 @@ KEIN_TREFFER = "kein Treffer"
 DEZERNAT_WEICHT_AB = "Dezernat weicht ab"
 NAME_WEICHT_AB = "Name weicht ab"
 VOR_PLAN = "vor dem ältesten Plan"
+NACH_PRUEFUNG = "nach der letzten Prüfung des Plans"   # Datum nach dem jüngsten Abruf des Plans, der dann gälte
 OHNE_DATUM = "ohne Datum"
 OHNE_ANGABE = "ohne Angabe"
 ZUGEORDNET = (EINDEUTIG, NUR_DIENSTSTELLE)
 STATUS = (EINDEUTIG, NUR_DIENSTSTELLE, MEHRDEUTIG, KEIN_TREFFER, DEZERNAT_WEICHT_AB, NAME_WEICHT_AB, VOR_PLAN,
-          OHNE_DATUM, OHNE_ANGABE)
+          NACH_PRUEFUNG, OHNE_DATUM, OHNE_ANGABE)
 
 DEZERNAT_ID = re.compile(r"^(?:OB|[IVX]+)$")
 _DATUM = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -102,10 +113,15 @@ def stand_text(iso):
 
 class Plan:
     """Ein Plan (Zeilen mit demselben gueltig_ab): Einträge nach Nummer der Dienststelle (im Plan eindeutig), Dezernate
-    und Namen (Vergleichsform → Einträge)."""
+    und Namen (Vergleichsform → Einträge); `geprueft` ist der Tag des jüngsten Abrufs (UTC), bis zu dem der Plan belegt
+    ist."""
 
     def __init__(self, stand, zeilen):
         self.stand, self.zeilen = stand, zeilen
+        abrufe = {z["abgerufen"][:10] for z in zeilen}
+        if not all(_DATUM.match(a) for a in abrufe):
+            raise ValueError(f"Plan {stand}: Zeile ohne lesbare Abrufzeit ({sorted(abrufe)})")
+        self.geprueft = max(abrufe)
         self.dezernate = {z["dezernat"]: z for z in zeilen if z["ebene"] == "dezernat"}
         self.nummern, self.namen = {}, {}
         for i, z in enumerate(zeilen):
@@ -140,10 +156,13 @@ class Plan:
             return EINDEUTIG, treffer[0]
         return (MEHRDEUTIG if treffer else KEIN_TREFFER), None
 
+    @staticmethod
+    def _teile(kennung):
+        return re.sub(r"\s+", "", kennung).upper().split("/")
+
     def nach_kennung(self, kennung):
-        """(Status, Eintrag) für eine Kennung wie im Kopf der Vorlage."""
-        k = re.sub(r"\s+", "", kennung).upper()
-        teile = k.split("/")
+        """(Status, Eintrag) für eine Kennung wie im Kopf der Vorlage (Regeln in der Modulbeschreibung)."""
+        teile = self._teile(kennung)
         dez = teile[0]
         if dez not in self.dezernate or "" in teile:
             return KEIN_TREFFER, None
@@ -153,20 +172,31 @@ class Plan:
         def passt(z, status=EINDEUTIG):
             return (status, z) if z["dezernat"] == dez else (DEZERNAT_WEICHT_AB, None)
 
-        ganz = self.nummern.get(k)   # Einheit des Dezernats in der Schreibweise des Plans („II/2“)
+        ganz = self.nummern.get("/".join(teile))   # Einheit des Dezernats in der Schreibweise des Plans („II/2“)
         if ganz and ganz["ebene"] == "dezernatseinheit":
             return passt(ganz)
-        rest = self.nummern.get("/".join(teile[1:]))   # „VI/61“, „II/II/2“, „IV/51/1“
-        if rest:
-            return passt(rest)
-        if len(teile) >= 3:
-            unter = self.nummern.get("/".join(teile[2:]))   # „VI/61/612“
+        if len(teile) == 2:
+            z = self.nummern.get(teile[1])   # „VI/61“, „VI/612“
+            return passt(z) if z else (KEIN_TREFFER, None)
+        einheit = self.nummern.get("/".join(teile[1:]))   # „II/II/2“: Einheit des Dezernats
+        if DEZERNAT_ID.match(teile[1]) and einheit and einheit["ebene"] == "dezernatseinheit":
+            return passt(einheit)
+        if len(teile) == 3:
+            unter = self.nummern.get(teile[2])   # „VI/61/612“: der dritte Teil ist eine Nummer unter der Dienststelle
             if unter and unter["uebergeordnet"] == teile[1]:
                 return passt(unter)
-            ds = self.nummern.get(teile[1])
-            if ds and ds["ebene"] == "dienststelle":
-                return passt(ds, NUR_DIENSTSTELLE)
+        # „VI/61/1“, „IV/51/1“, „I/02-6/4“: Bedeutung des Rests ungemessen, nur die Dienststelle
+        ds = self.nummern.get(teile[1])
+        if ds and ds["ebene"] == "dienststelle":
+            return passt(ds, NUR_DIENSTSTELLE)
         return KEIN_TREFFER, None
+
+    def _schreibweise_des_plans(self, kennung):
+        """Eintrag, dessen Nummer im Plan dem Rest einer mindestens dreiteiligen Kennung gleicht („IX/37/1“ → „37/1“),
+        mit demselben Dezernat; sonst None. Nur zusammen mit einem bestätigenden Namen verwendet."""
+        teile = self._teile(kennung)
+        z = self.nummern.get("/".join(teile[1:])) if len(teile) >= 3 else None
+        return z if z and z["dezernat"] == teile[0] else None
 
     def nach_organisation(self, name):
         """(Status, Eintrag) für den Namen einer Organisation (Formen siehe Modulbeschreibung)."""
@@ -179,9 +209,13 @@ class Plan:
         for muster, nach in ((_KENNUNG_NAME, self.nach_kennung), (_NUMMER_NAME, self._nach_nummer)):
             if m := muster.match(s):
                 status, z = nach(m["code"])
-                if z is None or not m["rest"]:
+                if not m["rest"] or (z is not None and norm(m["rest"]) in self._namen(z)):
                     return status, z
-                return (status, z) if norm(m["rest"]) in self._namen(z) else (NAME_WEICHT_AB, None)
+                # der Name bestätigt die Untereinheit in der Schreibweise des Plans („IX/37/1 Grundsätzliche …“)
+                w = self._schreibweise_des_plans(m["code"]) if muster is _KENNUNG_NAME else None
+                if w is not None and norm(m["rest"]) in self._namen(w):
+                    return EINDEUTIG, w
+                return (status, None) if z is None else (NAME_WEICHT_AB, None)
         return self.nach_name(s)
 
     def _nach_nummer(self, code):
@@ -199,16 +233,19 @@ class Tabelle:
         self.plaene = [Plan(s, gruppen[s]) for s in sorted(gruppen)]
 
     def plan(self, datum):
-        """Plan, der am Datum gilt (Stand ≤ Datum, der jüngste davon), sonst None."""
+        """Plan, dessen Stand am Datum der jüngste ist (Stand ≤ Datum), sonst None; ob er an diesem Datum belegt ist,
+        sagt `geprueft` (zuordnen)."""
         tag = (datum or "")[:10]
         gilt = [p for p in self.plaene if p.stand <= tag]
         return gilt[-1] if gilt else None
 
     def zuordnen(self, name=None, kennung=None, datum=None):
         """Zuordnung einer Federführung: {status, methode („kennung“ oder „name“), stand (gueltig_ab des Plans oder
-        None), eintrag (Zeile der Tabelle oder None)}. Hat die Angabe eine Kennung, zählt sie vor dem Namen."""
+        None), geprueft (Tag der letzten Prüfung dieses Plans oder None), eintrag (Zeile der Tabelle oder None)}. Hat die
+        Angabe eine Kennung, zählt sie vor dem Namen. Liegt das Datum nach der letzten Prüfung des Plans, wird nicht
+        verglichen (NACH_PRUEFUNG, mit Stand und Prüfung)."""
         methode = "kennung" if kennung else "name" if name else None
-        aus = {"status": OHNE_ANGABE, "methode": methode, "stand": None, "eintrag": None}
+        aus = {"status": OHNE_ANGABE, "methode": methode, "stand": None, "geprueft": None, "eintrag": None}
         if not methode:
             return aus
         tag = (datum or "")[:10]
@@ -217,8 +254,15 @@ class Tabelle:
         plan = self.plan(tag)
         if plan is None:
             return {**aus, "status": VOR_PLAN}
+        aus = {**aus, "stand": plan.stand, "geprueft": plan.geprueft}
+        if tag > plan.geprueft:
+            return {**aus, "status": NACH_PRUEFUNG}
         status, z = plan.nach_kennung(kennung) if kennung else plan.nach_organisation(name)
-        return {**aus, "status": status, "stand": plan.stand, "eintrag": z}
+        return {**aus, "status": status, "eintrag": z}
+
+    def neuester(self):
+        """Jüngster Plan der Tabelle (für Quellenangaben: Stand und letzte Prüfung), sonst None."""
+        return self.plaene[-1] if self.plaene else None
 
     def dezernat(self, stand, dez):
         return next(p for p in self.plaene if p.stand == stand).dezernate[dez]
@@ -235,6 +279,13 @@ def zuordnen(name=None, kennung=None, datum=None, pfad=None):
     return tabelle(pfad).zuordnen(name=name, kennung=kennung, datum=datum)
 
 
+def quellenangabe(pfad=None):
+    """„Stand 01.11.2026, zuletzt geprüft am 13.11.2026“ für den jüngsten Plan der Tabelle (Quellenangaben auf der
+    Technikseite); ohne Tabelle None."""
+    p = tabelle(pfad).neuester()
+    return f"Stand {stand_text(p.stand)}, zuletzt geprüft am {stand_text(p.geprueft)}" if p else None
+
+
 def fundstelle(eintrag):
     """„Geschäfts- und Dezernatsverteilungsplan der Stadt Köln, Stand 01.11.2026, Seite 1, Spalte Dezernat VI,
     Eintrag 12“."""
@@ -244,10 +295,11 @@ def fundstelle(eintrag):
 def fuer_export(ergebnis, pfad=None):
     """Angaben einer Zuordnung für den Export (`responsibility[].aemtertabelle`): bei einem Treffer Kennung, Dezernat
     (mit Bereich), Dienststelle, Name, Ebene, übergeordnete Dienststelle, Fundstelle und Adresse des Plans; sonst nur
-    Status, Methode und – falls ein Plan galt – sein Stand."""
+    Status, Methode und – falls ein Plan in Frage kam – sein Stand und der Tag seiner letzten Prüfung."""
     aus = {"status": ergebnis["status"], "methode": ergebnis["methode"]}
     if ergebnis["stand"]:
         aus["stand"] = ergebnis["stand"]
+        aus["geprueft"] = ergebnis["geprueft"]
     z = ergebnis["eintrag"]
     if ergebnis["status"] not in ZUGEORDNET or z is None:
         return aus

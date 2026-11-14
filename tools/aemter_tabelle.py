@@ -6,6 +6,10 @@ Aufruf (Python isoliert, alle Pfade als Argumente; das PDF lädt ein freigegeben
 
 Ergebnis: data/aemter/aemter_koeln.tsv (Spalten pipeline.aemter.SPALTEN). Zeilen anderer Pläne (anderes `gueltig_ab`)
 bleiben stehen, die des gelesenen Plans werden ersetzt; derselbe PDF ergibt byte-gleich dieselbe Datei.
+Erneute Prüfung: Dasselbe PDF (gleiche Prüfsumme) mit einem neuen `--abgerufen` ändert nur die Abrufzeit und verlängert
+damit die Zeit, für die der Plan belegt ist (pipeline/aemter.py). Liefert die Stadt unter demselben Stand ein anderes PDF
+(andere Prüfsumme), bricht das Skript ab: Ob der Inhalt auch für Vorlagen vor dem neuen Abruf gilt, ist dann offen und
+wird von Hand entschieden (`--ersetzen` übernimmt den neuen Inhalt für den ganzen Stand).
 
 Verfahren (Plan vom Stand 01.11.2026: eine Seite A3 quer, je Dezernat eine Spalte):
 1. Wortkoordinaten mit `pdftotext -bbox` (poppler-utils), in Leserichtung der gedrehten Seite.
@@ -269,10 +273,14 @@ def plan_lesen(seiten):
     return stand, zeilen
 
 
-def zusammenfuehren(alt, neu):
+def zusammenfuehren(alt, neu, ersetzen=False):
     """Zeilen anderer Pläne bleiben, die des neuen Plans ersetzen seine bisherigen; sortiert nach Stand, im Plan in der
-    Reihenfolge des Plans."""
+    Reihenfolge des Plans. Hat derselbe Stand bisher eine andere Prüfsumme, Abbruch (außer mit ersetzen)."""
     stand = neu[0]["gueltig_ab"]
+    bisher = {z.get("sha256") for z in alt if z["gueltig_ab"] == stand}
+    if bisher and bisher != {neu[0].get("sha256")} and not ersetzen:
+        raise ValueError(f"Plan Stand {aemter.stand_text(stand)}: anderes PDF (Prüfsumme {sorted(map(str, bisher))} → "
+                         f"{neu[0].get('sha256')}); Übernahme nur mit --ersetzen")
     # sorted ist stabil: innerhalb eines Plans bleibt die Reihenfolge
     return sorted([z for z in alt if z["gueltig_ab"] != stand] + neu, key=lambda z: z["gueltig_ab"])
 
@@ -292,6 +300,8 @@ def main(argv=None):
     ap.add_argument("--url", required=True)
     ap.add_argument("--abgerufen", required=True, help="Zeitpunkt des Abrufs (ISO 8601, aus dem Abrufprotokoll)")
     ap.add_argument("--tabelle", default=str(aemter.TABELLE))
+    ap.add_argument("--ersetzen", action="store_true",
+                    help="anderes PDF unter demselben Stand übernehmen (nach Entscheidung von Hand)")
     a = ap.parse_args(argv)
     daten = Path(a.pdf).read_bytes()
     if not daten.startswith(b"%PDF-"):
@@ -300,7 +310,7 @@ def main(argv=None):
     stand, zeilen = plan_lesen(woerter(bbox.decode("utf-8")))
     sha = hashlib.sha256(daten).hexdigest()
     zeilen = [{**z, "quelle": a.url, "abgerufen": a.abgerufen, "sha256": sha} for z in zeilen]
-    alle = zusammenfuehren(aemter.lesen(a.tabelle), zeilen)
+    alle = zusammenfuehren(aemter.lesen(a.tabelle), zeilen, a.ersetzen)
     schreiben(a.tabelle, alle)
     je = {e: sum(z["ebene"] == e for z in zeilen) for e in aemter.EBENEN}
     print(f"Plan Stand {aemter.stand_text(stand)}: {len(zeilen)} Zeilen ("

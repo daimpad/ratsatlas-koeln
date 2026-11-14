@@ -87,13 +87,14 @@
   // Datum eines Zeitpunkts nach derselben Regel, sonst „unbekannt“
   const zeitDatum = (wert) => { const tag = zeitTag(wert); return tag ? fmtDate(tag) : "unbekannt"; };
   // Federführung im Geschäfts- und Dezernatsverteilungsplan (responsibility[].aemtertabelle, pipeline/aemter.py):
-  // Dezernat und Dienststelle mit Fundstelle, abgeleitet; ohne eindeutige Zuordnung nichts
+  // Dezernat und Dienststelle mit Fundstelle, abgeleitet; ohne eindeutige Zuordnung nichts. Inline (span.aemter-zeile),
+  // damit das <br> davor keine Leerzeile erzeugt (span.meta ist ein Flex-Container und damit ein Block)
   const AEMTER_ZUGEORDNET = ["eindeutig", "eindeutig bis zur Dienststelle"];
   const aemterZeile = (a) => {
     if (!a || !AEMTER_ZUGEORDNET.includes(a.status)) return "";
     const teile = [a.dezernat_label, a.ebene !== "dezernat" && a.uebergeordnet && a.uebergeordnet.label,
       a.ebene !== "dezernat" && a.label].filter(Boolean).map(esc).join(" · ");
-    return `<span class="meta">${teile}</span> <span class="derived">abgeleitet, über ${esc(a.fundstelle)}</span>`;
+    return `<span class="aemter-zeile">${teile}</span> <span class="derived">abgeleitet, über ${esc(a.fundstelle)}</span>`;
   };
   // Nebenlisten, die beim letzten Abruf nicht aktualisiert wurden (index.json meta.abruf_warnungen,
   // pipeline/export.py): ein Satz je Liste im Datenstand, ohne Fachbegriffe und nicht nur als Farbe

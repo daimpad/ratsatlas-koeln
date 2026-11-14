@@ -277,13 +277,32 @@ def test_zusammenfuehren_ersetzt_nur_denselben_plan():
     assert GEN.zusammenfuehren(alt, aelter) == aelter + alt
 
 
+def test_erneute_pruefung_verlaengert_nur_mit_gleicher_pruefsumme():
+    """Dasselbe PDF mit neuer Abrufzeit ersetzt nur die Abrufzeit (der Plan ist länger belegt); ein anderes PDF unter
+    demselben Stand bricht ab, außer mit ersetzen (Entscheidung von Hand)."""
+    alt = [{"gueltig_ab": "2026-11-01", "abgerufen": ABGERUFEN, "sha256": SHA, "name": "A"}]
+    gleich = [{**alt[0], "abgerufen": "2026-12-14T22:30:00Z"}]
+    assert GEN.zusammenfuehren(alt, gleich) == gleich
+    anders = [{**gleich[0], "sha256": "0" * 64, "name": "B"}]
+    with pytest.raises(ValueError, match="anderes PDF"):
+        GEN.zusammenfuehren(alt, anders)
+    assert GEN.zusammenfuehren(alt, anders, ersetzen=True) == anders
+    neuer_stand = [{**anders[0], "gueltig_ab": "2026-12-01"}]
+    assert GEN.zusammenfuehren(alt, neuer_stand) == alt + neuer_stand
+
+
 # --- Zuordnung ---------------------------------------------------------------------------------------------------------
+
+# letzte Prüfung je erfundenem Plan (Abrufzeit in UTC): der frühere Plan bis zum 20.10.2026 belegt, der jüngere bis zum
+# 13.11.2026
+ABRUF = {"2026-10-01": "2026-10-20T21:00:00Z", "2026-11-01": "2026-11-13T22:24:35Z"}
+
 
 def _zeile(stand, dez, code, ebene, name, ober="", kurz=""):
     return {"gueltig_ab": stand, "dezernat": dez, "dienststelle": code, "kennung": f"{dez}/{code}" if code else dez,
             "ebene": ebene, "uebergeordnet": ober, "name": name, "kurzname": kurz, "eigenbetriebsaehnlich": "",
             "markierung": "", "fundstelle": f"Seite 1, Spalte Dezernat {dez}", "quelle": "https://example.invalid/plan",
-            "abgerufen": "", "sha256": ""}
+            "abgerufen": ABRUF.get(stand, ""), "sha256": ""}
 
 
 ERFUNDEN = [
@@ -293,6 +312,7 @@ ERFUNDEN = [
     _zeile("2026-11-01", "II", "II/2", "dezernatseinheit", "Stabsstelle"),
     _zeile("2026-11-01", "VI", "61", "dienststelle", "Stadtplanungsamt"),
     _zeile("2026-11-01", "VI", "610", "untereinheit", "Verwaltung", "61"),
+    _zeile("2026-11-01", "VI", "61/1", "untereinheit", "Amtsweite Themen", "61"),
     _zeile("2026-11-01", "VI", "62", "dienststelle", "Bauamt (e. E.)", kurz="BA"),
     _zeile("2026-11-01", "VI", "620", "untereinheit", "Verwaltung", "62"),
 ]
@@ -304,6 +324,15 @@ ERFUNDEN = [
     (None, "VI/61/610", "2026-11-05", aemter.EINDEUTIG, "610"),
     (None, "VI/610", "2026-11-05", aemter.EINDEUTIG, "610"),
     (None, "VI/61/9", "2026-11-05", aemter.NUR_DIENSTSTELLE, "61"),
+    # dreiteilig mit Nummer in der Mitte: nur bis zur Dienststelle, ob der Plan „61/1“ führt oder nicht („62/1“)
+    (None, "VI/61/1", "2026-11-05", aemter.NUR_DIENSTSTELLE, "61"),
+    (None, "VI/62/1", "2026-11-05", aemter.NUR_DIENSTSTELLE, "62"),
+    (None, "II/61/1", "2026-11-05", aemter.DEZERNAT_WEICHT_AB, None),
+    (None, "VI/61/610/2", "2026-11-05", aemter.NUR_DIENSTSTELLE, "61"),   # vierteilig ebenso
+    # der Name bestätigt die Untereinheit in der Schreibweise des Plans
+    ("VI/61/1 Amtsweite Themen", None, "2026-11-05", aemter.EINDEUTIG, "61/1"),
+    ("VI/61/1 Stadtplanungsamt", None, "2026-11-05", aemter.NUR_DIENSTSTELLE, "61"),
+    ("VI/61/1 Anderes Amt", None, "2026-11-05", aemter.NAME_WEICHT_AB, None),
     (None, "II/II/2", "2026-11-05", aemter.EINDEUTIG, "II/2"),
     (None, "II/2", "2026-11-05", aemter.EINDEUTIG, "II/2"),
     (None, "II/61", "2026-11-05", aemter.DEZERNAT_WEICHT_AB, None),
@@ -313,6 +342,13 @@ ERFUNDEN = [
     (None, "VI/61", "2026-10-15", aemter.KEIN_TREFFER, None),
     (None, "V/61", "2026-10-15", aemter.EINDEUTIG, "61"),
     (None, "V/61", "2026-09-30", aemter.VOR_PLAN, None),
+    # belegt nur bis zur letzten Prüfung (Tag des Abrufs eingeschlossen), auch nicht bis zum Stand des nächsten Plans
+    (None, "V/61", "2026-10-20", aemter.EINDEUTIG, "61"),
+    (None, "V/61", "2026-10-21", aemter.NACH_PRUEFUNG, None),
+    (None, "VI/61", "2026-10-31", aemter.NACH_PRUEFUNG, None),
+    (None, "VI/61", "2026-11-13", aemter.EINDEUTIG, "61"),
+    (None, "VI/61", "2026-11-14", aemter.NACH_PRUEFUNG, None),
+    ("Stadtplanungsamt", None, "2027-06-01", aemter.NACH_PRUEFUNG, None),
     (None, "VI/61", None, aemter.OHNE_DATUM, None),
     (None, "VI/61", "13.11.2026", aemter.OHNE_DATUM, None),
     ("61 Stadtplanungsamt", None, "2026-11-05", aemter.EINDEUTIG, "61"),
@@ -335,32 +371,78 @@ def test_zuordnung(name, kennung, datum, status, nummer):
     erg = aemter.Tabelle(ERFUNDEN).zuordnen(name=name, kennung=kennung, datum=datum)
     assert erg["status"] == status
     assert (erg["eintrag"]["dienststelle"] if erg["eintrag"] else None) == nummer
-    if status in aemter.ZUGEORDNET:
-        assert erg["stand"] == ("2026-10-01" if datum < "2026-11-01" else "2026-11-01")
+    if status in aemter.ZUGEORDNET + (aemter.NACH_PRUEFUNG,):
+        assert erg["stand"]
+    if erg["stand"]:
+        stand = "2026-10-01" if datum < "2026-11-01" else "2026-11-01"
+        assert (erg["stand"], erg["geprueft"]) == (stand, ABRUF[stand][:10])
+    else:
+        assert erg["geprueft"] is None
+
+
+def test_plan_ohne_abrufzeit_bricht_ab():
+    """Ohne Abrufzeit ist offen, bis wann der Plan belegt ist: Abbruch statt einer Gültigkeit ohne Ende."""
+    with pytest.raises(ValueError, match="Abrufzeit"):
+        aemter.Tabelle(ERFUNDEN + [{**_zeile("2026-12-01", "VI", "", "dezernat", "Neu"), "abgerufen": ""}])
 
 
 def test_zuordnung_mit_der_tabelle():
     """Beispiele aus dem Plan vom 01.11.2026 (Orakel oben)."""
     tag = "2026-11-13"
-    erwartet = {("kennung", "VI/61"): "VI/61", ("kennung", "II/II/2"): "II/II/2", ("kennung", "OB/14"): "OB/14",
-                ("kennung", "IV/51/513"): "IV/513", ("kennung", "I/02-6/4"): "I/02-6/4",
-                ("name", "Amt für Straßen und Radwegebau"): "III/66", ("name", "DigIT"): "I/12",
-                ("name", "Gebäudewirtschaft der Stadt Köln"): "VI/26", ("name", "37 Berufsfeuerwehr, Amt für "
-                "Feuerschutz, Rettungsdienst und Bevölkerungsschutz"): "IX/37"}
-    for (art, angabe), kennung in erwartet.items():
+    E, D = aemter.EINDEUTIG, aemter.NUR_DIENSTSTELLE
+    erwartet = {("kennung", "VI/61"): (E, "VI/61"), ("kennung", "II/II/2"): (E, "II/II/2"),
+                ("kennung", "OB/14"): (E, "OB/14"), ("kennung", "IV/51/513"): (E, "IV/513"),
+                # dreiteilig mit Nummer in der Mitte: gleich behandelt, ob der Plan die Untereinheit in dieser
+                # Schreibweise führt („51/1“, „37/1“, „21/1“, „02-6/4“) oder nicht („61/1“)
+                ("kennung", "IV/51/1"): (D, "IV/51"), ("kennung", "VI/61/1"): (D, "VI/61"),
+                ("kennung", "IX/37/1"): (D, "IX/37"), ("kennung", "II/21/1"): (D, "II/21"),
+                ("kennung", "I/02-6/4"): (D, "I/02-6"),
+                ("name", "IX/37/1 Grundsätzliche Angelegenheiten der FF"): (E, "IX/37/1"),
+                ("name", "Amt für Straßen und Radwegebau"): (E, "III/66"), ("name", "DigIT"): (E, "I/12"),
+                ("name", "Gebäudewirtschaft der Stadt Köln"): (E, "VI/26"), ("name", "37 Berufsfeuerwehr, Amt für "
+                "Feuerschutz, Rettungsdienst und Bevölkerungsschutz"): (E, "IX/37")}
+    for (art, angabe), (status, kennung) in erwartet.items():
         erg = aemter.zuordnen(**{art: angabe}, datum=tag)
-        assert erg["status"] == aemter.EINDEUTIG and erg["eintrag"]["kennung"] == kennung, angabe
+        assert (erg["status"], erg["eintrag"]["kennung"]) == (status, kennung), angabe
     assert aemter.zuordnen(name="Verwaltung", datum=tag)["status"] == aemter.MEHRDEUTIG
     assert aemter.zuordnen(kennung="III/61", datum=tag)["status"] == aemter.DEZERNAT_WEICHT_AB
     assert aemter.zuordnen(kennung="VI/61", datum="2026-10-31")["status"] == aemter.VOR_PLAN
+    # belegt bis zum Abruf am 13.11.2026, danach keine Zuordnung, bis der Plan erneut geprüft ist
+    for angabe in ({"name": "Mobilität"}, {"kennung": "IV/51/1"}, {"kennung": "VI/61"}):
+        assert aemter.zuordnen(**angabe, datum="2026-11-13")["status"] in aemter.ZUGEORDNET
+        for datum in ("2026-11-14", "2027-06-01"):
+            assert aemter.fuer_export(aemter.zuordnen(**angabe, datum=datum)) == {
+                "status": aemter.NACH_PRUEFUNG, "methode": next(iter(angabe)), "stand": "2026-11-01",
+                "geprueft": "2026-11-13"}, (angabe, datum)
     aus = aemter.fuer_export(aemter.zuordnen(kennung="VI/612", datum=tag))
     assert aus["dezernat_label"] == "Dezernat VI – Stadtentwicklung, Wirtschaft, Planen und Bauen"
     assert aus["uebergeordnet"]["label"] == "61 Stadtplanungsamt"
     assert aus["label"] == "612 Städtebauliche Planung und Bebauungsplanung für die Stadtbezirke 3, 4, 6"
     assert aus["fundstelle"] == ("Geschäfts- und Dezernatsverteilungsplan der Stadt Köln, Stand 01.11.2026, Seite 1, "
                                  "Spalte Dezernat VI, Eintrag 30")
+    assert aus["stand"] == "2026-11-01" and aus["geprueft"] == "2026-11-13"
     assert aemter.fuer_export(aemter.zuordnen(name="Verwaltung", datum=tag)) == {
-        "status": aemter.MEHRDEUTIG, "methode": "name", "stand": "2026-11-01"}
+        "status": aemter.MEHRDEUTIG, "methode": "name", "stand": "2026-11-01", "geprueft": "2026-11-13"}
+
+
+def test_quellenangaben_folgen_der_tabelle():
+    """README, LICENSE-DATA.md und Technikseite nennen Stand und letzte Prüfung des jüngsten Plans; jedes Datum neben
+    dem Plan ist Stand bzw. Prüfung eines Plans der Tabelle (ein weiterer Plan macht veraltete Stellen sichtbar)."""
+    from pipeline import technikseite
+    t = aemter.tabelle()
+    p = t.neuester()
+    staende = {aemter.stand_text(x.stand) for x in t.plaene}
+    pruefungen = {aemter.stand_text(x.geprueft) for x in t.plaene}
+    for datei in (ROOT / "README.md", ROOT / "data" / "LICENSE-DATA.md"):
+        zeilen = [z for z in datei.read_text(encoding="utf-8").splitlines() if "Dezernatsverteilungsplan" in z]
+        text = "\n".join(zeilen)
+        assert f"Stand {aemter.stand_text(p.stand)}" in text, datei
+        assert re.search(rf"(?:geprüft|abgerufen) am {re.escape(aemter.stand_text(p.geprueft))}", text), datei
+        assert set(re.findall(r"Stand (\d\d\.\d\d\.\d{4})", text)) <= staende, datei
+        assert set(re.findall(r"(?:geprüft|abgerufen) am (\d\d\.\d\d\.\d{4})", text)) <= pruefungen, datei
+    (eintrag,) = technikseite.weitere_quellen()
+    assert aemter.quellenangabe() in eintrag[2] and eintrag[3] == p.zeilen[0]["quelle"]
+    assert aemter.quellenangabe() == "Stand 01.11.2026, zuletzt geprüft am 13.11.2026"
 
 
 def test_plan_mit_doppelter_nummer_bricht_ab():
@@ -401,10 +483,18 @@ def test_export_federfuehrung_mit_aemtertabelle(testdaten, capsys):
         assert a["status"] == erwartet["status"]
         if datum < "2026-11-01":
             assert a == {"status": aemter.VOR_PLAN, "methode": "name"}
-        elif name == "Amt für Straßen und Radwegebau":
-            assert a["kennung"] == "III/66" and a["fundstelle"].endswith("Spalte Dezernat III, Eintrag 13")
+        elif datum > "2026-11-13":   # nach dem Abruf des Plans: nicht belegt, keine Zuordnung
+            assert a == {"status": aemter.NACH_PRUEFUNG, "methode": "name", "stand": "2026-11-01",
+                         "geprueft": "2026-11-13"}
+        else:
+            assert (a["stand"], a["geprueft"]) == ("2026-11-01", "2026-11-13")
+            if name == "Amt für Straßen und Radwegebau":
+                assert a["kennung"] == "III/66" and a["fundstelle"].endswith("Spalte Dezernat III, Eintrag 13")
     audit = (config.EXPORT / "audit_federfuehrung.tsv").read_text(encoding="utf-8").splitlines()
     assert audit[0].split("\t") == export.FEDERFUEHRUNG_AUDIT and len(audit) == len(roh) + 1
+    spalten = [dict(zip(export.FEDERFUEHRUNG_AUDIT, z.split("\t"))) for z in audit[1:]]
+    assert {(z["plan_stand"], z["plan_geprueft"]) for z in spalten if z["abgleich"] in aemter.ZUGEORDNET} \
+        == {("2026-11-01", "2026-11-13")}
     assert f"Federführung: {len(roh)} Angaben bei 300 Vorlagen" in out
 
 
@@ -425,7 +515,7 @@ def test_seite_zeigt_zuordnung_abgeleitet_mit_fundstelle():
     r = subprocess.run([node, "-e", code], capture_output=True, text=True, timeout=60)
     assert r.returncode == 0, r.stderr
     aus = json.loads(r.stdout)
-    assert aus[0] == ('<span class="meta">Dezernat VI – Stadtentwicklung, Wirtschaft, Planen und Bauen · 61 '
+    assert aus[0] == ('<span class="aemter-zeile">Dezernat VI – Stadtentwicklung, Wirtschaft, Planen und Bauen · 61 '
                       'Stadtplanungsamt · 612 Städtebauliche Planung und Bebauungsplanung für die Stadtbezirke 3, 4, 6'
                       '</span> <span class="derived">abgeleitet, über Geschäfts- und Dezernatsverteilungsplan der Stadt '
                       'Köln, Stand 01.11.2026, Seite 1, Spalte Dezernat VI, Eintrag 30</span>')

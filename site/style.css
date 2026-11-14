@@ -224,6 +224,8 @@ legend { font-size: 13px; color: var(--text-muted); padding: 0; margin-bottom: 2
 .papers button[aria-current="true"] { background: rgba(196, 181, 253, 0.28); border-color: var(--accent-soft); }
 .title { font-weight: 500; font-size: 14px; line-height: 1.35; }
 .meta { font-size: 12px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 3px 10px; }
+/* Dezernat und Dienststelle laut Geschäfts- und Dezernatsverteilungsplan (aemterZeile in app.js): wie .meta, aber inline */
+.aemter-zeile { font-size: 12px; color: var(--text-muted); }
 .conf { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }
 .conf::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 .conf-hoch { color: var(--hoch); } .conf-mittel { color: var(--mittel); } .conf-niedrig { color: var(--niedrig); }

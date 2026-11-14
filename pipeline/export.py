@@ -129,7 +129,8 @@ def _paper_detail(db, pid):
 def _mit_aemtertabelle(r, datum):
     """Zeile der Federführung (kind „federfuehrend“) mit `aemtertabelle` (aemter.fuer_export): Kennung aus dem Kopf der
     Vorlage (Spalte `kennung`, sobald der Schritt „Dokumente“ sie liefert), sonst Name der Organisation aus
-    `underDirectionOf`, je mit dem Plan, der am Datum der Vorlage gilt. Andere Zeilen unverändert."""
+    `underDirectionOf`, je mit dem Plan, dessen Stand am Datum der Vorlage der jüngste ist, wenn das Datum nicht nach
+    seiner letzten Prüfung liegt (aemter.zuordnen). Andere Zeilen unverändert."""
     if r.get("kind") != "federfuehrend":
         return r
     return {**r, "aemtertabelle": aemter.fuer_export(aemter.zuordnung_federfuehrung(r, datum))}
@@ -619,9 +620,11 @@ def _search_index(cache, areas, names, sources=None):
 
 
 # Federführung und Zuordnung zur Ämtertabelle je Vorlage mit Federführung (ohne Titel; „angabe“ ist der Name der
-# Organisation aus underDirectionOf bzw. die Kennung aus dem Kopf der Vorlage, „plan_fundstelle“ die Stelle im Plan)
+# Organisation aus underDirectionOf bzw. die Kennung aus dem Kopf der Vorlage, „plan_geprueft“ der Tag der letzten
+# Prüfung des Plans, „plan_fundstelle“ die Stelle im Plan)
 FEDERFUEHRUNG_AUDIT = ["drucksache", "datum", "vorlagenart", "methode", "angabe", "abgleich", "methode_abgleich",
-                       "plan_stand", "kennung", "dezernat", "dienststelle", "plan_fundstelle", "pruefstatus"]
+                       "plan_stand", "plan_geprueft", "kennung", "dezernat", "dienststelle", "plan_fundstelle",
+                       "pruefstatus"]
 
 
 def federfuehrung_audit_rows(papers):
@@ -633,7 +636,8 @@ def federfuehrung_audit_rows(papers):
                 continue
             rows.append([p["reference"], p["date"] or "", p["paper_type"] or "", r.get("method") or "",
                          r.get("kennung") or r.get("name") or "", a["status"], a.get("methode") or "",
-                         a.get("stand") or "", a.get("kennung", ""), a.get("dezernat_label", ""), a.get("label", ""),
+                         a.get("stand") or "", a.get("geprueft") or "", a.get("kennung", ""),
+                         a.get("dezernat_label", ""), a.get("label", ""),
                          a.get("fundstelle", ""), "ungeprüft"])
     return rows
 
