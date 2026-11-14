@@ -28,8 +28,16 @@
   <meta property="og:title" content="Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer">
   <meta property="og:description" content="Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen.">
   <meta property="og:url" content="https://koeln.ratsatlas.de/">
-  <!-- Vorschaubild für Köln folgt im zweiten Lauf (Entscheidung 04.11.2026); das Bonner Bild wird nicht ausgeliefert -->
-  <meta name="twitter:card" content="summary">
+  <!-- Vorschaubild (pipeline/vorschaubild.py, erzeugt mit tools/vorschaubild.py): Karte der Stadtteile aus data/geo,
+       ohne Kacheln aus OpenStreetMap; dieselben Angaben setzt pipeline/gebietsseiten.py auf den Unterseiten -->
+  <meta property="og:image" content="https://koeln.ratsatlas.de/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ratsatlas Köln: Schriftzug und der Satz „Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer“ neben einer Karte der 9 Stadtbezirke und 86 Stadtteile von Köln. Gebietsgrenzen: Stadt Köln – offenedaten-koeln.de (dl-de/zero 2.0).">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://koeln.ratsatlas.de/og-image.png">
+  <meta name="twitter:image:alt" content="Ratsatlas Köln: Schriftzug und der Satz „Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer“ neben einer Karte der 9 Stadtbezirke und 86 Stadtteile von Köln. Gebietsgrenzen: Stadt Köln – offenedaten-koeln.de (dl-de/zero 2.0).">
   <!-- strukturierte Daten (nur Daten, wird nicht ausgeführt; mit der CSP vereinbar) -->
   <script type="application/ld+json">
   {"@context": "https://schema.org", "@graph": [
@@ -52,7 +60,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="list-closed detail-open">
-  <p id="vorschau-hinweis" class="testdaten vorschau" role="status" hidden><strong>Vorschau:</strong> Die Karte zeigt Stadtteile und offene Daten (Menü „Ebenen“). Die Ratsvorlagen der Stadt Köln folgen, sobald der Abruf eingerichtet ist.</p>
+  <p id="vorschau-hinweis" class="testdaten vorschau" role="status" hidden><strong>Vorschau:</strong> Die Karte zeigt Stadtteile und offene Daten (Menü „Ebenen“). Die Ratsvorlagen der Stadt Köln folgen nach dem ersten vollständigen Abruf.</p>
   <p id="testdaten-hinweis" class="testdaten" role="status" hidden><strong>Testdaten:</strong> Diese Fassung zeigt erfundene Vorlagen zur Prüfung der Seite, keine Daten der Stadt Köln.</p>
   <noscript><div class="noscript glass"><p><strong>Ratsatlas Köln</strong> zeigt Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste. Für die Karte wird JavaScript benötigt.</p>
     <p>Die Daten gibt es auch ohne Karte: <a href="https://daimpad.github.io/ratsatlas-koeln/data/export/ratsatlas-koeln-export.zip">Datenpaket (Zip)</a> · <a href="gebiete/">Vorlagen nach Gebiet</a> · <a href="data/export/koeln/vorlagen.geojson">GeoJSON</a> · <a href="https://github.com/daimpad/ratsatlas-koeln" target="_blank" rel="noopener">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></p></div></noscript>
@@ -139,7 +147,7 @@
         </div>
         <p class="mega-count" id="mega-count" aria-live="polite"></p>
       </div>
-      <p class="hint" data-vorschau="nur" hidden>Die Vorschau enthält noch keine Ratsvorlagen. Suche und Schnellfilter nach Thema und Partei folgen, sobald der Abruf der Stadt Köln eingerichtet ist.</p>
+      <p class="hint" data-vorschau="nur" hidden>Die Vorschau enthält noch keine Ratsvorlagen. Suche und Schnellfilter nach Thema und Partei folgen nach dem ersten vollständigen Abruf bei der Stadt Köln.</p>
       <h3 class="mega-label" data-vorschau="aus"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>Themen</h3>
       <div class="chips" id="chips-theme" role="group" aria-label="Thema wählen" data-vorschau="aus"></div>
       <h3 class="mega-label" data-vorschau="aus"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Partei / Fraktion</h3>
@@ -192,7 +200,7 @@
         <div class="card static">
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg></span>
           <span class="card-title">Selbst mitwirken</span>
-          <span class="card-text">Mit Anregungen und Beschwerden nach § 24 GO NRW können Sie sich selbst an den Rat wenden. In Köln berät darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden.</span>
+          <span class="card-text">Mit Anregungen und Beschwerden nach § 24 GO NRW können Sie sich selbst an den Rat oder Ihre Bezirksvertretung wenden. In Köln beraten darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden oder die zuständige Bezirksvertretung.</span>
           <span class="card-actions">
             <button type="button" class="btn btn-soft" id="cta-mitmachen" data-funktion="mitmachen" hidden><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg>Alle Wege im Überblick</button>
           </span>
@@ -227,6 +235,10 @@
     <!-- Verstehen (Entscheidung 02.11.2026): Hilfen zum Lesen der Karte, bisher unter „Daten“ -->
     <section class="mega glass" id="mega-verstehen" aria-label="Verstehen: Hilfen zum Lesen der Karte" hidden>
       <div class="cards cards-3">
+        <a class="card" href="einfach/" data-funktion="einfache_sprache" hidden>
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span>
+          <span class="card-title">Einfache Sprache</span>
+          <span class="card-text">Was die Karte zeigt, wer in Köln entscheidet und wie Sie mitmachen können, in kurzen Sätzen.</span></a>
         <a class="card" href="begriffe/">
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>
           <span class="card-title">Begriffe erklärt</span>
@@ -238,7 +250,7 @@
         <a class="card" href="technik/" data-funktion="technik" hidden>
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>
           <span class="card-title">So funktioniert der Ratsatlas</span>
-          <span class="card-text">Woher die Daten kommen, was jeden Morgen passiert und welche Technik dahintersteht, in vier Grafiken.</span></a>
+          <span class="card-text">Woher die Daten kommen, was jede Nacht passiert und welche Technik dahintersteht, in vier Grafiken.</span></a>
       </div>
       <p class="mega-links"><button type="button" class="btn btn-soft" data-tour><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg>Tour durch alle Funktionen</button></p>
     </section>
@@ -364,11 +376,19 @@
       <div class="panel-body" id="termine"></div>
     </section>
 
+    <section id="panel-mitmachen" class="glass overlay overlay-wide" aria-labelledby="mitmachen-heading" data-freigabe="mitmachen" hidden>
+      <div class="panel-head">
+        <h2 id="mitmachen-heading" tabindex="-1">Mitmachen in Köln</h2>
+        <button type="button" class="icon-btn" data-close="panel-mitmachen" aria-label="Mitmachen in Köln schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="panel-body" id="bt-body"><p class="hint" aria-live="polite">Wird geladen …</p></div>
+    </section>
+
     <!-- Quellen, Lizenzen und Datenstand: auf der Karte unter den Legenden (app.js setzt das Element in den Stapel) -->
     <details class="map-legend map-sources" id="sources">
       <summary>Quellen, Lizenzen und Datenstand</summary>
       <div>
-        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, der Hauskoordinate) · Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln; dl-de/by 2.0)<span data-funktion="kontext"> · Kennzahlen und Kartenebenen: Quelle, Lizenz und Stand je Ebene in der Legende</span> · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
+        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, der Hauskoordinate) · Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln; dl-de/by 2.0) · Dezernate und Dienststellen zur federführenden Dienststelle aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt Köln (nur für Vorlagen aus der Zeit vom Stand des Plans bis zu seiner letzten Prüfung, beides auf der Seite „So funktioniert der Ratsatlas“; im Plan keine Lizenz angegeben, übernommen sind nur Kennungen und Bezeichnungen)<span data-funktion="kontext"> · Kennzahlen und Kartenebenen: Quelle, Lizenz und Stand je Ebene in der Legende</span> · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
         <p id="stand"></p>
         <p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/koeln/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersicht nach Gebiet</a> · <a href="https://github.com/daimpad/ratsatlas-koeln" target="_blank" rel="noopener">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a></p>
       </div>
@@ -419,6 +439,7 @@
       <ul>
         <li><a href="gebiete/">Vorlagen nach Gebiet</a>: eine Übersichtsseite je Stadtteil und Stadtbezirk.</li>
         <li><a href="begriffe/">Begriffe</a>: Vorlagenarten, Gremien, Gebiete und Ergebnisse in einfachen Worten, mit Fundstelle; im Vorgang erklärt ein „?“ neben dem Begriff.</li>
+        <li data-funktion="einfache_sprache"><a href="einfach/">Einfache Sprache</a>: was die Karte zeigt, wer in Köln entscheidet und wie Sie mitmachen können, in kurzen Sätzen.</li>
       </ul>
 
       <h3>Informiert bleiben</h3>
@@ -448,6 +469,7 @@
       <ul>
         <li>Erste Fassung für Köln auf Grundlage des Ratsatlas Bonn: ganz Köln mit 9 Stadtbezirken und 86 Stadtteilen, Liste, Vorgang mit Prozesslinie, Suche, Feeds und Kalender.</li>
         <li>Orte aus dem Titel und aus den Ortsangaben der Stadt; Hauskoordinaten nur bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, deren Art erkennbar ist.</li>
+        <li data-funktion="einfache_sprache">Der Ratsatlas in Einfacher Sprache: was die Karte zeigt, wer in Köln entscheidet und wie Sie mitmachen können (Menü „Verstehen“).</li>
         <li>Bonner Zusatzthemen (Haushalt, Themenseiten, Ratsassistent und weitere) sind für Köln noch nicht freigegeben.</li>
       </ul>
     </div>

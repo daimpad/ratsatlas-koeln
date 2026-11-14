@@ -13,8 +13,8 @@
   const TELEFON_KARTE = MOBILE.matches ? " Auf dem Telefon liegen Ebenen, Legenden und Quellen zusammen hinter „Karte“." : "";
   // Freigaben (index.json meta.funktionen, config.ZUSATZTHEMEN): app.js blendet Elemente mit data-funktion aus und zeigt
   // den Schalter „Baustellen“ nur mit Baustellen. Sätze über abgeschaltete Funktionen entfallen, die Texte für Bonn
-  // bleiben für die spätere Freigabe stehen (Runde 18; in Köln abgeschaltet: Baustellen, Einfache Sprache, Haushalt,
-  // „Alle Wege im Überblick“, Prozesse, Ratsassistent)
+  // bleiben für die spätere Freigabe stehen (Runde 18; in Köln abgeschaltet: Baustellen, Haushalt, Prozesse,
+  // Ratsassistent; Einfache Sprache und „Alle Wege im Überblick“ seit dem zweiten Lauf, 13.11.2026, mit Kölner Text)
   const sichtbar = (sel) => { const el = document.querySelector(sel); return Boolean(el) && !el.hidden; };
   const AN = {
     baustellen: () => sichtbar(".map-bau"),
@@ -37,11 +37,11 @@
   const STEPS = [
     { title: "Willkommen zur Tour",
       text: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Tour stellt die Funktionen der Reihe nach vor. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc.",
-      vorschau: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Vorschau enthält noch keine Ratsvorlagen; sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist. Bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten. Die Tour stellt vor, was schon verfügbar ist. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc." },
+      vorschau: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Vorschau enthält noch keine Ratsvorlagen; sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln. Bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten. Die Tour stellt vor, was schon verfügbar ist. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc." },
     { menu: "mega-suche", target: "#mega-suche", fallback: "#nav-search", beacons: ["#q"],
       title: "Suche in ganz Köln",
       text: "Ein Stichwort oder eine Vorlagennummer eingeben, etwa „Radweg“ oder „2250/2025“. Darunter stehen Schnellfilter nach Thema und Partei; die Treffer lassen sich in der Liste anzeigen.",
-      vorschau: "Das Suchfeld ist für Vorlagen in ganz Köln gedacht: nach Stichwort oder Vorlagennummer, dazu Schnellfilter nach Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; Suche und Schnellfilter folgen, sobald der Abruf der Stadt Köln eingerichtet ist." },
+      vorschau: "Das Suchfeld ist für Vorlagen in ganz Köln gedacht: nach Stichwort oder Vorlagennummer, dazu Schnellfilter nach Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; Suche und Schnellfilter folgen nach dem ersten vollständigen Abruf bei der Stadt Köln." },
     { target: "#f-area",
       title: "Gebiet wählen",
       text: "Ein Stadtteil, ein ganzer Stadtbezirk oder Vorlagen ohne Ortsbezug je Jahr. Zu Beginn zeigt die Karte ganz Köln: erst einen Stadtbezirk anklicken, dann einen Stadtteil. Herangezoomt lassen sich Stadtteile direkt anklicken; „Ganz Köln ansehen“ führt zurück. In der obersten Legende unten links lassen sich die Flächen statt nach der Zahl der Vorlagen nach dem Anteil eines Themas färben, etwa Verkehr, oder nach Zahlen zum Gebiet wie Miete, Altersanteilen oder Hitze (abgeleitet, zur Einordnung). Ist ein Stadtteil gewählt, stehen diese Zahlen auch in der Liste neben denen des Stadtbezirks. Karte, Liste und Zeitleiste zeigen jeweils das gewählte Gebiet." + TELEFON_LEGENDEN,
@@ -60,7 +60,7 @@
       title: "Die Vorlagen",
       text: () => "Alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte und mit der Tastatur bedienbar. Filter nach Stichwort, Vorlagenart, Stand, Thema und Partei; unter „Weitere Filter“ nach Amt, Gremium und Sicherheit der Ortsangabe."
         + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen."),
-      vorschau: () => "Hier stehen künftig alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte, mit der Tastatur bedienbar und mit Filtern nach Stichwort, Vorlagenart, Stand, Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist. Ist ein Stadtteil oder Stadtbezirk gewählt, stehen hier schon jetzt die Zahlen zum Gebiet."
+      vorschau: () => "Hier stehen künftig alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte, mit der Tastatur bedienbar und mit Filtern nach Stichwort, Vorlagenart, Stand, Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln. Ist ein Stadtteil oder Stadtbezirk gewählt, stehen hier schon jetzt die Zahlen zum Gebiet."
         + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen.") },
     { when: () => !document.querySelector('.toggle[data-panel="timeline-wrap"]').hidden,
       before: (ui) => ui.panel("timeline-wrap", true), target: "#timeline-wrap", beacons: [".tl-presets"],
@@ -91,10 +91,10 @@
     { menu: "mega-mitmachen", target: "#mega-mitmachen", beacons: ["#cta-termine", "#cta-mitmachen", "#cta-feed .btn"],
       title: "Mitmachen",
       text: () => "Kommende Sitzungen, auch als Kalenderdatei; unter „Informiert bleiben“ Feeds, die neue Vorlagen im Gebiet oder Änderungen an einem Vorgang melden; "
-        + (AN.mitmachen() ? "der Weg zum Bürgerantrag nach § 24 GO NRW; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen, die Fristen und alle Wege, sich einzubringen; "
-          : "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden; ")
+        + (AN.mitmachen() ? "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen und alle Wege, sich einzubringen, von der Einwohnerfragestunde bis zum Bürgerbegehren; "
+          : "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; ")
         + "und ein Hinweis, wenn etwas falsch zugeordnet ist.",
-      vorschau: "Unter „Informiert bleiben“ stehen Feeds, die neue Vorlagen im gewählten Gebiet melden; sie füllen sich, sobald Ratsvorlagen vorliegen. Kommende Sitzungen und die Kalenderdatei folgen mit den Ratsvorlagen. Außerdem: der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat zu wenden, und ein Hinweis, wenn etwas falsch zugeordnet oder unklar ist." },
+      vorschau: "Unter „Informiert bleiben“ stehen Feeds, die neue Vorlagen im gewählten Gebiet melden; sie füllen sich, sobald Ratsvorlagen vorliegen. Kommende Sitzungen und die Kalenderdatei folgen mit den Ratsvorlagen. Außerdem: der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden, und ein Hinweis, wenn etwas falsch zugeordnet oder unklar ist." },
     { menu: "mega-daten", target: "#mega-daten",
       title: "Offene Daten",
       text: "Alle Daten zum Herunterladen: das Datenpaket mit Prüfprotokollen, die verorteten Vorlagen als GeoJSON und eine Datensatzbeschreibung nach DCAT-AP. Quellen, Lizenzen und Datenstand stehen auf der Karte unter den Legenden.",
@@ -102,7 +102,7 @@
     { menu: "mega-verstehen", target: "#mega-verstehen",
       title: "Verstehen",
       text: () => `Hilfen zum Lesen der Karte: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder ${AN.haushalt() ? "Zuschussbedarf" : "Stadtbezirk"} in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.`,
-      vorschau: "Hilfen zum Lesen der Karte: Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder." },
+      vorschau: () => `Hilfen zum Lesen der Karte: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.` },
     { when: () => document.querySelector(".toggle-ai")?.hidden === false,
       target: ".toggle-ai",
       title: "Der Ratsassistent",

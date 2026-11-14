@@ -129,7 +129,7 @@
   },
   {
    "begriff": "Anregungen und Beschwerden",
-   "erklaerung": "Jede Person kann sich schriftlich mit Anregungen oder Beschwerden in Angelegenheiten der Gemeinde an den Rat wenden, allein oder gemeinsam mit anderen. In Köln berät darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden. Der Ratsatlas zeigt solche Eingaben höchstens auf Straßen- oder Stadtteilebene. Nicht zu verwechseln mit dem Einwohnerantrag.",
+   "erklaerung": "Wer seit mindestens drei Monaten in der Gemeinde wohnt, kann sich allein oder gemeinsam mit anderen in Textform mit Anregungen oder Beschwerden in Angelegenheiten der Gemeinde an den Rat oder die Bezirksvertretung wenden. In Köln beraten darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden oder die zuständige Bezirksvertretung. Der Ratsatlas zeigt solche Eingaben höchstens auf Straßen- oder Stadtteilebene. Nicht zu verwechseln mit dem Einwohnerantrag.",
    "fundstelle": "§ 24 GO NRW; Hauptsatzung der Stadt Köln",
    "gruppe": "gremium",
    "anker": "anregungen-und-beschwerden"
@@ -143,8 +143,8 @@
   },
   {
    "begriff": "Einwohnerfragestunde",
-   "erklaerung": "Zeit in einer Sitzung, in der Einwohnerinnen und Einwohner Fragen stellen können; Einzelheiten regelt die Geschäftsordnung.",
-   "fundstelle": "Geschäftsordnung des Rates der Stadt Köln",
+   "erklaerung": "Teil einer Sitzung, in dem Fragen von Einwohnerinnen und Einwohnern an die Verwaltung behandelt werden. In Köln beginnt jede Sitzung einer Bezirksvertretung damit; die Frage wird vorher schriftlich eingereicht, und die Verwaltung antwortet schriftlich.",
+   "fundstelle": "Geschäftsordnung des Rates der Stadt Köln § 39",
    "gruppe": "gremium",
    "anker": "einwohnerfragestunde"
   },
@@ -206,8 +206,8 @@
   },
   {
    "begriff": "Federführende Dienststelle",
-   "erklaerung": "Dezernat und Amt der Verwaltung, die eine Vorlage verantworten; in Köln im Kopf der Verwaltungsvorlage als „Dezernat, Dienststelle“ angegeben (z. B. „II/II/2“).",
-   "fundstelle": "Ratsinformationssystem der Stadt Köln (OParl-API), Feld „underDirectionOf“ bzw. Kopf der Vorlage",
+   "erklaerung": "Dezernat und Amt der Verwaltung, die eine Vorlage verantworten; in Köln im Kopf der Verwaltungsvorlage als „Dezernat, Dienststelle“ angegeben (z. B. „II/II/2“). Dezernat und Bezeichnung ergänzt der Ratsatlas aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt, wenn die Vorlage aus der Zeit stammt, für die der Plan belegt ist (von seinem Stand bis zu seiner letzten Prüfung durch den Ratsatlas), und die Angabe eindeutig passt (abgeleitet, mit Fundstelle im Plan).",
+   "fundstelle": "Ratsinformationssystem der Stadt Köln (OParl-API), Feld „underDirectionOf“ bzw. Kopf der Vorlage; Geschäfts- und Dezernatsverteilungsplan der Stadt Köln",
    "gruppe": "verfahren",
    "anker": "federfuehrende-dienststelle"
   },

@@ -15,7 +15,7 @@
  },
  "dct:description": {
   "@language": "de",
-  "@value": "Vorlagen aus dem Ratsinformationssystem der Stadt Köln mit Ortsbezug (Stadtteil, Straße; Stufe A aus der OParl-API, Stufe B regelbasiert aus dem Titel), Prozessschritten mit Evidenzstatus, Beratungsfolge und Ergebnissen, federführendem Amt und abgeleiteten Einreichenden. Abgeleitete Angaben sind gekennzeichnet."
+  "@value": "Vorlagen aus dem Ratsinformationssystem der Stadt Köln mit Ortsbezug (Stadtteil, Straße; Stufe A aus der OParl-API, Stufe B regelbasiert aus dem Titel), Prozessschritten mit Evidenzstatus, Beratungsfolge und Ergebnissen, federführendem Amt (Dezernat und Bezeichnung, wo eindeutig, abgeleitet aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt Köln) und abgeleiteten Einreichenden. Abgeleitete Angaben sind gekennzeichnet."
  },
  "dcat:keyword": [
   "Ratsinformationssystem",
@@ -38,7 +38,7 @@
  },
  "dct:modified": {
   "@type": "xsd:date",
-  "@value": "2026-11-13"
+  "@value": "2026-11-14"
  },
  "dct:spatial": {
   "@type": "dct:Location",

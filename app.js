@@ -86,6 +86,16 @@
   };
   // Datum eines Zeitpunkts nach derselben Regel, sonst „unbekannt“
   const zeitDatum = (wert) => { const tag = zeitTag(wert); return tag ? fmtDate(tag) : "unbekannt"; };
+  // Federführung im Geschäfts- und Dezernatsverteilungsplan (responsibility[].aemtertabelle, pipeline/aemter.py):
+  // Dezernat und Dienststelle mit Fundstelle, abgeleitet; ohne eindeutige Zuordnung nichts. Inline (span.aemter-zeile),
+  // damit das <br> davor keine Leerzeile erzeugt (span.meta ist ein Flex-Container und damit ein Block)
+  const AEMTER_ZUGEORDNET = ["eindeutig", "eindeutig bis zur Dienststelle"];
+  const aemterZeile = (a) => {
+    if (!a || !AEMTER_ZUGEORDNET.includes(a.status)) return "";
+    const teile = [a.dezernat_label, a.ebene !== "dezernat" && a.uebergeordnet && a.uebergeordnet.label,
+      a.ebene !== "dezernat" && a.label].filter(Boolean).map(esc).join(" · ");
+    return `<span class="aemter-zeile">${teile}</span> <span class="derived">abgeleitet, über ${esc(a.fundstelle)}</span>`;
+  };
   // Nebenlisten, die beim letzten Abruf nicht aktualisiert wurden (index.json meta.abruf_warnungen,
   // pipeline/export.py): ein Satz je Liste im Datenstand, ohne Fachbegriffe und nicht nur als Farbe
   const WARNUNG_SATZ = { meetings: "Sitzungstermine wurden", organizations: "Die Liste der Gremien wurde" };
@@ -123,7 +133,7 @@
   // „strukturdaten“): Modul erst bei Bedarf; solange dessen Flächenfarben an sind, färbt die Ebene „gebiete“ nicht
   // (flaechenAus: nur eine Flächenfarbe zugleich)
   let funktionen = {}, sdModul = null, sdLaden = null, flaechenAus = false;
-  const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist; bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
+  const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln; bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
   // Suche über ganz Köln (suche.json, erst bei Bedarf geladen)
   let search = null, searchLoading = null;
   const THEMES = {  // wie pipeline/topics.THEMES
@@ -1876,9 +1886,10 @@
         <div class="hint">${esc(UMSETZUNG_HINT)} Ob und wie die Verwaltung den Beschluss umsetzt, bleibt unklar.</div></div></li>`;
   }
 
-  // Beteiligung: nächste Sitzung eines beteiligten Gremiums (laut Sitzungsliste der Stadt), Bürgerantrag
-  // Köln: Link zur Seite der Stadt über Anregungen und Beschwerden folgt nach Prüfung (Phase 6); bis dahin ohne Link
-  const BUERGERANTRAG = null;
+  // Beteiligung: nächste Sitzung eines beteiligten Gremiums (laut Sitzungsliste der Stadt), Anregungen und Beschwerden
+  // nach § 24 GO NRW mit der Seite der Stadt Köln zum Ausschuss (abgerufen und geprüft am 13.11.2026, TECHNIK.md
+  // „Mitmachen in Köln“) und, mit Freigabe „mitmachen“, dem Weg zur Fläche „Mitmachen in Köln“
+  const BUERGERANTRAG = "https://www.stadt-koeln.de/politik-und-verwaltung/mitwirkung-von-buergerinnen/anregungenbeschwerden";
   function participate(p) {
     const today = heute();
     const gremien = new Set(p.steps.filter((s) => s.typ === "beratung" || s.typ === "entscheidung").map((s) => s.label));
@@ -1886,11 +1897,11 @@
       ? zeit.meetings.find((m) => m.date >= today && !m.cancelled && gremien.has(m.gremium)) : null;
     const onAgenda = next && p.steps.some((s) => s.label === next.gremium && s.date === next.date);
     const meeting = next ? `<li data-generic="sitzung" data-key="${esc(next.gremium)}|${esc(next.date)}">Nächste Sitzung eines beteiligten Gremiums: <strong>${esc(next.gremium)}</strong>, ${fmtDay(next.date)}${next.time ? `, ${esc(next.time)} Uhr` : ""}${onAgenda ? " – die Vorlage steht dort auf der Tagesordnung <span class=\"derived\">abgeleitet, über die Sitzung verknüpft</span>" : ""}.
-      ${link(next.web, "Tagesordnung") || "Die Tagesordnung erscheint etwa zwei Wochen vorher."} Die Sitzung ist in der Regel öffentlich; Sie können zuhören.</li>` : "";
+      ${link(next.web, "Tagesordnung") || "Die Tagesordnung erscheint vor der Sitzung im Ratsinformationssystem."} Die Sitzung ist in der Regel öffentlich; Sie können zuhören.</li>` : "";
     const done = p.stand === "entschieden" ? "<li data-generic=\"done\">Das Verfahren ist entschieden. Neue Anliegen zum Thema lassen sich mit Anregungen und Beschwerden nach § 24 GO NRW einbringen.</li>" : "";
     return `<section class="participate" aria-labelledby="participate-h"><h4 id="participate-h">Selbst mitwirken</h4><ul>
       ${meeting}${done}
-      ${p.soll?.verfahren === "buergerantrag" ? "" : `<li data-generic="buergerantrag">Mit Anregungen und Beschwerden nach § 24 GO NRW können Sie sich selbst an den Rat wenden; in Köln berät darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden.${BUERGERANTRAG ? ` <a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Mehr dazu<span class="visually-hidden"> (Seite der Stadt Köln, neuer Tab)</span></a>` : ""}</li>`}
+      ${p.soll?.verfahren === "buergerantrag" ? "" : `<li data-generic="buergerantrag">Mit Anregungen und Beschwerden nach § 24 GO NRW können Sie sich selbst an den Rat oder Ihre Bezirksvertretung wenden; in Köln beraten darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden oder die zuständige Bezirksvertretung. <a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Mehr dazu<span class="visually-hidden"> (Seite der Stadt Köln, neuer Tab)</span></a>${vorhanden("panel-mitmachen") ? ' · <button type="button" class="link-btn" data-mitmachen-oeffnen>Alle Wege, sich einzubringen</button>' : ""}</li>`}
       ${hasPaperFeed(p) ? "<li data-generic=\"feed\">Mit dem Feed „Diesen Vorgang abonnieren“ (unten) erfahren Sie von neuen Beratungen und Ergebnissen.</li>" : ""}
     </ul><p class="hint mitwirken-hint" hidden></p></section>`;
   }
@@ -1930,7 +1941,7 @@
     syncUrl();
     if (tl) tl.select(p);
     highlight();
-    const resp = p.responsibility.map((r) => `${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`).join("<br>");
+    const resp = p.responsibility.map((r) => [`${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`, aemterZeile(r.aemtertabelle)].filter(Boolean).join("<br>")).join("<br>");
     const outside = (l) => (area.kind === "ortsteil" && l.ortsteil && l.ortsteil !== area.name)
       || (area.kind === "bezirk" && l.stadtbezirk && l.stadtbezirk !== area.name);
     const locItem = (l) => `<li><strong>${esc(l.name || l.ortsteil || l.stadtbezirk)}</strong>
@@ -2010,6 +2021,7 @@
     if (site) { showSite(site.dataset.openSite); return; }
     const ref = e.target.closest("[data-open-ref]");
     if (ref) { const p = papers.find((x) => x.reference === ref.dataset.openRef); if (p) select(p); else window.risKarte.open(ref.dataset.openRef); return; }
+    if (e.target.closest("[data-mitmachen-oeffnen]") && vorhanden("panel-mitmachen")) { setPanel("panel-mitmachen", true); focusPanel("panel-mitmachen"); return; }
     const erk = e.target.closest(".erkl-btn");
     if (erk) {
       const open = erk.getAttribute("aria-expanded") !== "true";
@@ -2092,7 +2104,18 @@
   }
 
   // --- Termine: kommende Sitzungen -------------------------------------------------------------------
-  const isBV = (g) => /^Bezirksvertretung/.test(g || "");
+  // Stadtbezirk einer Bezirksvertretung aus dem Gremiennamen wie pipeline/build.bv_bezirk: „Bezirksvertretung 3
+  // (Lindenthal)“, „Bezirksvertretung 3“, „Bezirksvertretung Lindenthal“, „BV 3“ → „Lindenthal“; sonst null. Bis zum
+  // zweiten Lauf verglich die Auswahl „Rat, Ausschüsse und Bezirksvertretung …“ mit „Bezirksvertretung <Stadtbezirk>“ und
+  // ließ die Kölner Bezirksvertretungen („Bezirksvertretung 1 (Innenstadt)“) weg
+  const BV_NUMMER = ["Innenstadt", "Rodenkirchen", "Lindenthal", "Ehrenfeld", "Nippes", "Chorweiler", "Porz", "Kalk", "Mülheim"];
+  function bvBezirk(name) {
+    const m = /^(?:Bezirksvertretung|BV)\s+(?:(\d+)\s*)?(?:\((.+)\)|(.+))?$/.exec(String(name || "").trim());
+    if (!m) return null;
+    if (m[2] || m[3]) return (m[2] || m[3]).trim();
+    return m[1] ? BV_NUMMER[Number(m[1]) - 1] || null : null;
+  }
+  const isBV = (g) => /^Bezirksvertretung/.test(g || "") || bvBezirk(g) !== null;
   function areaBezirk() {
     if (!area || !index) return null;
     if (area.kind === "ortsteil") return (index.ortsteile.find((o) => o.slug === area.key) || {}).stadtbezirk;
@@ -2123,7 +2146,7 @@
     const bezirk = areaBezirk();
     const scope = box.querySelector("#termine-scope") ? box.querySelector("#termine-scope").value : "gebiet";
     const today = heute();
-    const relevant = (m) => scope === "alle" || !isBV(m.gremium) || !bezirk || m.gremium === `Bezirksvertretung ${bezirk}`;
+    const relevant = (m) => scope === "alle" || !isBV(m.gremium) || !bezirk || bvBezirk(m.gremium) === bezirk;
     const list = zeit.meetings.filter((m) => m.date >= today && relevant(m));
     const where = area.kind === "ohne" ? "Vorlagen ohne Ortsbezug" : area.name;
     // Vorlagen des Gebiets, deren Beratung (über die Sitzung verknüpft) auf dieser Sitzung liegt
@@ -2142,7 +2165,7 @@
         ${ps.length ? `<div class="agenda"><span>Aus ${esc(where)} auf der Tagesordnung:</span><ul>${ps.map((p) => `<li><button type="button" class="linkish" data-ref="${esc(p.reference)}">${esc(p.reference)} – ${esc(p.name)}</button></li>`).join("")}</ul></div>` : ""}
       </div>`;
     }).join("");
-    box.innerHTML = `<p class="hint">Sitzungen von Rat, Ausschüssen, Beiräten und Bezirksvertretungen laut OParl-API der Stadt. Sie sind in der Regel öffentlich; Ort und Tagesordnung stehen in der Einladung, die etwa zwei Wochen vorher erscheint.</p>
+    box.innerHTML = `<p class="hint">Sitzungen von Rat, Ausschüssen, Beiräten und Bezirksvertretungen laut OParl-API der Stadt. Sie sind in der Regel öffentlich; Ort und Tagesordnung stehen in der Einladung im Ratsinformationssystem, zu der der Link „Tagesordnung“ führt.</p>
       <div class="filters termine-filters"><label>Gremien
         <select id="termine-scope"><option value="gebiet"${scope === "gebiet" ? " selected" : ""}>${bezirk ? `Rat, Ausschüsse und Bezirksvertretung ${esc(bezirk)}` : "alle (kein Stadtbezirk gewählt)"}</option>
         <option value="alle"${scope === "alle" ? " selected" : ""}>alle Gremien</option></select></label>
@@ -2325,29 +2348,24 @@
     return pzReady.then((m) => { if (m) m.show(s); return m; });
   }
 
-  // --- Fläche „Mitmachen in Bonn“ (site/beteiligung.js, erst beim Öffnen geladen) --------------------------
+  // --- Fläche „Mitmachen in Köln“ (site/beteiligung.js, erst beim Öffnen geladen; nur mit Freigabe „mitmachen“) ---
+  // Wege, sich einzubringen, mit den nächsten Sitzungen je Stadtbezirk aus zeit.json; ohne Stadtbezirk (keine Wahl, kein
+  // Gebiet) nur Rat und Ausschuss. Zweiter Lauf, 13.11.2026: ohne Soll-Modell und Bonner Regeln
   let mmState = null, mmReady = null;
   function openMitmachen(s) {
     mmReady ||= import("./beteiligung.js").then(async (m) => {
       await m.init({
-        loadSoll,
+        termine: () => Boolean(zeit),
         meetings: () => (zeit ? zeit.meetings : []),
+        heute,
+        bvBezirk,
         onState(st) { mmState = st; syncUrl(); },
         openTermine() { setPanel("panel-mitmachen", false); setPanel("panel-termine", true); showTermine(); focusPanel("panel-termine"); },
-        openPlaene() {
-          setPanel("panel-mitmachen", false);
-          const b = document.querySelector(".map-plans");
-          if (b && !planOn) b.click();
-        },
-        openGremium(name) {
-          setPanel("panel-mitmachen", false);
-          setPanel("panel-prozesse", true);
-          openProzesse({ tab: "gremien", gremiumName: name });
-        },
       });
       return m;
     }).catch((e) => { mmReady = null; console.warn("Mitmachen nicht geladen", e); return null; });   // beim nächsten Öffnen erneut
-    return mmReady.then((m) => { if (m) m.show(s || { bezirk: mmState ? mmState.bezirk : areaBezirk() || "Innenstadt" }); return m; });
+    // ohne gewählten Stadtbezirk in der Fläche gilt der des Gebiets (auch nach einem ersten Öffnen ohne Gebiet)
+    return mmReady.then((m) => { if (m) m.show(s || { bezirk: (mmState && mmState.bezirk) || areaBezirk() || "" }); return m; });
   }
 
   // --- Strukturdaten der Stadtstatistik (site/strukturdaten/strukturdaten.js) -----------------------------
@@ -2595,7 +2613,7 @@
     else showIntro();
     if (params.get("mitmachen") === "1" && vorhanden("panel-mitmachen")) {
       setPanel("panel-mitmachen", true);
-      await openMitmachen({ bezirk: params.get("bezirk") || areaBezirk() || "Innenstadt" });
+      await openMitmachen({ bezirk: params.get("bezirk") || areaBezirk() || "" });
     }
     if (["verfahren", "gremien", "aemter"].includes(params.get("prozesse"))) {
       setPanel("panel-prozesse", true);
