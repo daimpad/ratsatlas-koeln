@@ -10,9 +10,12 @@ Eingabe. Keine Erzeugungszeitpunkte (stabile Ausgabe).
 
 Quellen der Angaben: Stadtbezirke (Namen, Reihenfolge nach Nummer) und Zahl der Stadtteile aus data/geo; Gremien,
 Begriffe und Fundstellen aus dem Glossar; Bedienung, Verlässlichkeit, Datenstand und Datenschutz wie in site/index.html
-(Dialog „Über den Ratsatlas Köln“), site/datenschutz.html und README.md. Was dort nicht belegt ist, steht hier nicht
-oder ist als offen gekennzeichnet (Link zur Seite der Stadt über Anregungen und Beschwerden: noch nicht geprüft, wie in
-site/app.js). Sätze zu abgeschalteten Zusatzthemen (Kurzfassungen, Ebenen ohne „kontext“) nur mit deren Freigabe; in
+(Dialog „Über den Ratsatlas Köln“), site/datenschutz.html und README.md; der Abschnitt Datenschutz nennt wie
+datenschutz.html auch die Kopie auf GitHub Pages (USA) und die farbige Karte von tile.openstreetmap.org (Prüfung
+14.11.2026). Bezeichnungen der Oberfläche in Anführungszeichen stehen so in site/index.html, site/app.js oder
+site/tour.js (Test). Das Wort „Gruppe“ steht nur für die Gruppe im Rat. Was in diesen Quellen nicht belegt ist, steht
+hier nicht oder ist als offen gekennzeichnet (Link zur Seite der Stadt über Anregungen und Beschwerden: noch nicht
+geprüft, wie in site/app.js). Sätze zu abgeschalteten Zusatzthemen (Kurzfassungen, Ebenen ohne „kontext“) nur mit deren Freigabe; in
 der Kartenvorschau ohne Ratsvorlagen (index.json meta.vorschau) steht oben ein Hinweis."""
 import json
 from html import escape
@@ -29,7 +32,7 @@ WOERTER = [
     ("Vorlagennummer", "Die Nummer einer Vorlage. Mit dieser Nummer finden Sie die Vorlage wieder. Vorlagen der "
                        "Verwaltung haben Nummern wie 2250/2025. Anträge und Anfragen haben Nummern wie AN/1756/2026.",
      "Vorlagennummer"),
-    ("Gremium", "Eine Gruppe, die berät und entscheidet. Zum Beispiel der Rat, ein Ausschuss oder eine "
+    ("Gremium", "Eine Runde von Menschen, die berät und entscheidet. Zum Beispiel der Rat, ein Ausschuss oder eine "
                 "Bezirksvertretung.", None),
     ("Beschlussvorlage", "Die Verwaltung schlägt etwas vor. Das Gremium soll darüber entscheiden.", "Beschlussvorlage"),
     ("Mitteilung", "Die Verwaltung informiert das Gremium. Eine Entscheidung ist nicht vorgesehen.", "Mitteilung"),
@@ -41,8 +44,8 @@ WOERTER = [
     ("Anregungen und Beschwerden", "Jede Person kann sich schriftlich mit einer Anregung oder einer Beschwerde an den "
                                    "Rat wenden. In Köln berät darüber ein eigener Ausschuss.",
      "Anregungen und Beschwerden"),
-    ("Fraktion", "Mitglieder im Rat oder in einer Bezirksvertretung, die sich zu einer Gruppe zusammenschließen.",
-     "Fraktion"),
+    ("Fraktion", "Mitglieder im Rat oder in einer Bezirksvertretung schließen sich zusammen. Für eine Fraktion braucht "
+                 "es eine Mindestzahl an Mitgliedern.", "Fraktion"),
     ("Gruppe", "Einige Mitglieder im Rat schließen sich zusammen. Sie sind aber zu wenige für eine Fraktion. Dann "
                "heißen sie Gruppe.", "Gruppe"),
     ("Beratungsfolge", "Die Reihenfolge der Gremien, die über eine Vorlage beraten.", "Beratungsfolge"),
@@ -91,7 +94,7 @@ def body(root, vorschau=False):
     bezirke, n_teile = stadtbezirke()
     n_bezirke = len(bezirke)
     quelle = escape(config.NAMENSNENNUNG)
-    hinweis = ("""    <p><strong>Vorschau:</strong> Auf der Karte fehlen noch die Vorlagen der Stadt Köln. Sie kommen, sobald der Abruf eingerichtet ist. Bis dahin zeigt die Karte die Stadtteile und andere offene Daten.</p>
+    hinweis = ("""    <p><strong>Vorschau:</strong> Auf der Karte fehlen noch die Vorlagen der Stadt Köln. Sie kommen, nachdem der Ratsatlas alle Daten der Stadt zum ersten Mal abgefragt hat. Bis dahin zeigt die Karte die Stadtteile und andere offene Daten.</p>
 """ if vorschau else "")
     ebenen = ("""      <li>Im Menü „Ebenen“ gibt es noch mehr Daten. Zum Beispiel Schulen, Haltestellen oder Gebiete, die bei Hochwasser überschwemmt werden können. Diese Daten kommen nicht aus dem Ratsinformationssystem. Jede Ebene nennt ihre Quelle.</li>
 """ if an("kontext") else "")
@@ -103,7 +106,7 @@ def body(root, vorschau=False):
     <div class="einfach">
     <h2 id="was">Was ist der Ratsatlas?</h2>
     <p>In Köln beraten der Rat und andere Gremien über viele Themen. Zum Beispiel über Verkehr, Schulen oder Grünflächen.</p>
-    <p>Ein Gremium ist eine Gruppe, die berät und entscheidet.</p>
+    <p>Ein Gremium ist eine Runde von Menschen, die berät und entscheidet.</p>
     <p>Zu jeder Sache gibt es ein Schreiben. Dieses Schreiben heißt Vorlage.</p>
     <p>Die öffentlichen Vorlagen stehen im Ratsinformationssystem der Stadt Köln. Das ist eine Internetseite der Stadt.</p>
     <p>Der Ratsatlas zeigt diese Vorlagen auf einer Karte. Ein Atlas ist eine Sammlung von Karten. So sehen Sie: Worum geht es in meiner Nähe? Wann wurde darüber beraten? Und wer war beteiligt?</p>
@@ -154,10 +157,10 @@ def body(root, vorschau=False):
 
     <h2 id="karte">Was zeigt die Karte?</h2>
     <ul>
-      <li>Jeder Punkt ist eine Vorlage mit einem Ort.</li>
+      <li>Jeder Punkt ist eine Vorlage mit einem genauen Ort. Zum Beispiel eine Straße oder ein Bebauungsplan.</li>
       <li>Eine Zahl in einem Kreis fasst mehrere Punkte zusammen. Klicken Sie darauf. Dann zeigt die Karte das Gebiet größer.</li>
       <li>Die Farbe eines Punktes zeigt, wie sicher der Ort ist. Mehr dazu steht unten bei <a href="#sicher">Wie sicher sind die Angaben?</a></li>
-      <li>Manche Vorlagen haben keinen genauen Ort. Sie betreffen zum Beispiel einen ganzen Stadtbezirk. Oder die ganze Stadt. Sie finden diese Vorlagen bei „Gebiet wählen“.</li>
+      <li>Manche Vorlagen haben keinen genauen Ort. Sie betreffen zum Beispiel einen ganzen Stadtteil oder Stadtbezirk. Oder die ganze Stadt. Diese Vorlagen haben keinen Punkt auf der Karte. Sie stehen aber in der Liste des Gebiets. Sie finden sie über „Gebiet wählen“.</li>
       <li>Im Menü „Ebenen“ blendet „Bebauungspläne“ die Gebiete der Bebauungspläne ein. Ein Bebauungsplan ist eine Regel der Stadt. Er legt fest, wie man in einem Gebiet bauen darf.</li>
 {ebenen}      <li>Mit der Zeitleiste wählen Sie einen Zeitraum. Dann zeigen Karte und Liste nur Vorlagen aus dieser Zeit.</li>
     </ul>
@@ -165,28 +168,28 @@ def body(root, vorschau=False):
     <h2 id="sicher">Wie sicher sind die Angaben?</h2>
     <p>Die meisten Angaben kommen unverändert von der Stadt Köln.</p>
     <p>Manche Angaben hat der Ratsatlas selbst erschlossen. Zum Beispiel den Ort oder das Thema einer Vorlage. Diese Angaben heißen „abgeleitet“. Sie können Fehler haben.</p>
-    <p>Bei Orten gibt es 3 Stufen. Die Farbe auf der Karte zeigt die Stufe:</p>
+    <p>Bei Orten gibt es 3 Stufen. Auf der Karte zeigt die Farbe eines Punktes die Stufe:</p>
     <ul>
       <li><strong>gesichert (grün):</strong> Der Ort ist ein Haus aus dem Adressverzeichnis der Stadt. Oder ein Bebauungsplan passt eindeutig.</li>
       <li><strong>erschlossen (braun):</strong> Im Titel steht der Name einer Straße oder eines Stadtteils. Oder die Stadt nennt den Stadtteil.</li>
       <li><strong>unsicher (violett):</strong> Der Name passt zu mehreren Orten. Oder nur das Gremium deutet auf einen Stadtbezirk. Zum Beispiel, weil nur eine Bezirksvertretung beraten hat.</li>
     </ul>
-    <p>Bei jedem Ort steht, woher er kommt.</p>
+    <p>Ein ganzer Stadtteil oder Stadtbezirk hat keinen Punkt auf der Karte. Beim Vorgang steht aber bei jedem Ort die Stufe. Und woher der Ort kommt.</p>
     <p>Die Orte sind noch nicht von Hand geprüft. Diese Prüfung kommt noch. Die Ergebnisse stehen dann auf der Karte im Menü „Verstehen“ unter „Wie verlässlich sind die Angaben?“.</p>
     <p>Im Zweifel gilt immer das Original bei der Stadt Köln.</p>
 {_fach("Verortung in Stufe A (Ortsangabe der Stadt) und Stufe B (Straßen-, Stadtteil- und Bezirksnamen, Hausnummern, Bebauungspläne); jede Verortung nennt Methode, Konfidenz und Fundstelle. Prüfung von Hand: 50 Vorlagen je Methode, noch offen.")}
 
     <h2 id="aktuell">Wie aktuell sind die Daten?</h2>
     <p>Der Ratsatlas fragt die Daten jede Nacht bei der Stadt Köln ab.</p>
-    <p>Er fragt langsam und mit Pausen. So belastet er den Server der Stadt nicht.</p>
-    <p>Nach dem ersten Mal holt er nur noch, was sich geändert hat.</p>
+    <p>Er fragt langsam und mit Pausen. So belastet er den Server der Stadt möglichst wenig.</p>
+    <p>Nach dem ersten Mal holt er vor allem, was sich geändert hat.</p>
     <p>Wann die Daten zuletzt abgefragt wurden, steht auf der Karte bei „Quellen, Lizenzen und Datenstand“.</p>
     <p>Manchmal klappt die Abfrage nicht. Dann zeigt der Ratsatlas die letzten Daten, die er hat. Und er weist darauf hin.</p>
-{_fach("Abruf über die OParl-Schnittstelle nachts mit einer Verbindung und Abstand zwischen den Anfragen; nach dem ersten Lauf nur geänderte Objekte, Gremien und Sitzungen jede Nacht vollständig (README, Abschnitt „Datenstand“).")}
+{_fach("Abruf über die OParl-Schnittstelle nachts mit einer Verbindung und Abstand zwischen den Anfragen; nach dem ersten Lauf nur geänderte Objekte, die Gremien jede Nacht vollständig und die Sitzungen ebenso, solange die Schnittstelle sie nicht nach dem Änderungsdatum auswählt (README, Abschnitt „Datenstand“).")}
 
     <h2 id="mitmachen">Wie kann ich mitmachen?</h2>
     <ul>
-      <li><strong>Sitzungen besuchen:</strong> Die Sitzungen sind in der Regel öffentlich. Dann darf jede Person zuhören. Bei einzelnen Punkten kann ein Gremium die Öffentlichkeit ausschließen. Die Termine finden Sie auf der Karte im Menü „Mitmachen“ bei „Termine anzeigen“.</li>
+      <li><strong>Sitzungen besuchen:</strong> Die Sitzungen sind in der Regel öffentlich. Dann darf jede Person zuhören. Bei einzelnen Themen kann ein Gremium die Öffentlichkeit ausschließen. Die Termine finden Sie auf der Karte im Menü „Mitmachen“ bei „Termine anzeigen“.</li>
       <li><strong>Anregungen und Beschwerden:</strong> Sie können sich schriftlich an den Rat wenden. Mit einer Anregung oder mit einer Beschwerde. Darüber berät der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden. Wie Sie das einreichen, erklärt die Stadt Köln. Einen geprüften Link dazu ergänzen wir noch.</li>
       <li><strong>Informiert bleiben:</strong> Ein Feed meldet neue Vorlagen von selbst. Dafür brauchen Sie ein Programm für Feeds, einen Feed-Reader. <a href="{root}rss/">So geht es</a></li>
     </ul>
@@ -198,7 +201,9 @@ def body(root, vorschau=False):
       <li>Der Ratsatlas setzt keine Cookies. Ein Cookie ist eine kleine Datei, die eine Internetseite auf Ihrem Gerät speichert.</li>
       <li>Nur ein paar Einstellungen merkt sich Ihr Browser. Zum Beispiel, ob die Karte farbig oder grau ist.</li>
       <li>Es gibt keine Anmeldung und keine Werbung. Der Ratsatlas wertet nicht aus, wer die Seite besucht.</li>
-      <li>Der Server der Seite speichert, wie jeder Server, ein Protokoll der Aufrufe.</li>
+      <li>Der Server der Seite speichert, wie jeder Server, ein Protokoll der Aufrufe. Dazu gehört Ihre IP-Adresse. Das ist die Nummer Ihres Internet-Anschlusses.</li>
+      <li>Eine Kopie der Seite liegt bei GitHub. GitHub ist eine Firma in den USA. Rufen Sie die Kopie auf, gehen die Daten aus dem Protokoll in die USA. Das vermeiden Sie mit der Adresse koeln.ratsatlas.de.</li>
+      <li>Die Bilder der grauen Karte kommen vom Server der Seite. Wählen Sie die farbige Karte, lädt Ihr Browser die Bilder von OpenStreetMap. Betreiber ist die OpenStreetMap Foundation im Vereinigten Königreich. Sie erfährt dabei Ihre IP-Adresse und den Ausschnitt der Karte. Fehlen die grauen Bilder einmal, kommen auch sie von OpenStreetMap.</li>
       <li>Was Sie in die Suche eingeben, bleibt auf Ihrem Gerät.</li>
       <li>Der Ratsatlas zeigt keine Wohnadressen von Privatpersonen.</li>
       <li>Anregungen und Beschwerden aus der Bevölkerung zeigt die Karte höchstens mit Straße oder Stadtteil. Nie mit Hausnummer.</li>
@@ -215,7 +220,7 @@ def body(root, vorschau=False):
     </ul>
 
     <h2 id="kontakt">Kontakt</h2>
-    <p>Den Ratsatlas Köln macht Damian Paderta. Er ist ein offenes Projekt. Das heißt: Jede Person kann den Code ansehen und verwenden.</p>
+    <p>Den Ratsatlas Köln macht Damian Paderta. Der Ratsatlas ist ein offenes Projekt. Das heißt: Jede Person kann das Programm hinter der Seite ansehen und verwenden.</p>
     <p>E-Mail: <a href="mailto:contact@nozilla.de">contact@nozilla.de</a></p>
     <p>Haben Sie einen Fehler gefunden? Schreiben Sie uns. Oder klicken Sie bei einer Vorlage auf „Verortung falsch? Hinweis geben“. Das öffnet ein Formular bei GitHub. Dort ist Ihr Hinweis öffentlich.</p>
     </div>

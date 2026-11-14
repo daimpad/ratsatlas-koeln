@@ -133,7 +133,7 @@
   // „strukturdaten“): Modul erst bei Bedarf; solange dessen Flächenfarben an sind, färbt die Ebene „gebiete“ nicht
   // (flaechenAus: nur eine Flächenfarbe zugleich)
   let funktionen = {}, sdModul = null, sdLaden = null, flaechenAus = false;
-  const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist; bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
+  const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln; bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
   // Suche über ganz Köln (suche.json, erst bei Bedarf geladen)
   let search = null, searchLoading = null;
   const THEMES = {  // wie pipeline/topics.THEMES

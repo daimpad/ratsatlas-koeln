@@ -37,11 +37,11 @@
   const STEPS = [
     { title: "Willkommen zur Tour",
       text: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Tour stellt die Funktionen der Reihe nach vor. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc.",
-      vorschau: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Vorschau enthält noch keine Ratsvorlagen; sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist. Bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten. Die Tour stellt vor, was schon verfügbar ist. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc." },
+      vorschau: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Vorschau enthält noch keine Ratsvorlagen; sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln. Bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten. Die Tour stellt vor, was schon verfügbar ist. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc." },
     { menu: "mega-suche", target: "#mega-suche", fallback: "#nav-search", beacons: ["#q"],
       title: "Suche in ganz Köln",
       text: "Ein Stichwort oder eine Vorlagennummer eingeben, etwa „Radweg“ oder „2250/2025“. Darunter stehen Schnellfilter nach Thema und Partei; die Treffer lassen sich in der Liste anzeigen.",
-      vorschau: "Das Suchfeld ist für Vorlagen in ganz Köln gedacht: nach Stichwort oder Vorlagennummer, dazu Schnellfilter nach Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; Suche und Schnellfilter folgen, sobald der Abruf der Stadt Köln eingerichtet ist." },
+      vorschau: "Das Suchfeld ist für Vorlagen in ganz Köln gedacht: nach Stichwort oder Vorlagennummer, dazu Schnellfilter nach Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; Suche und Schnellfilter folgen nach dem ersten vollständigen Abruf bei der Stadt Köln." },
     { target: "#f-area",
       title: "Gebiet wählen",
       text: "Ein Stadtteil, ein ganzer Stadtbezirk oder Vorlagen ohne Ortsbezug je Jahr. Zu Beginn zeigt die Karte ganz Köln: erst einen Stadtbezirk anklicken, dann einen Stadtteil. Herangezoomt lassen sich Stadtteile direkt anklicken; „Ganz Köln ansehen“ führt zurück. In der obersten Legende unten links lassen sich die Flächen statt nach der Zahl der Vorlagen nach dem Anteil eines Themas färben, etwa Verkehr, oder nach Zahlen zum Gebiet wie Miete, Altersanteilen oder Hitze (abgeleitet, zur Einordnung). Ist ein Stadtteil gewählt, stehen diese Zahlen auch in der Liste neben denen des Stadtbezirks. Karte, Liste und Zeitleiste zeigen jeweils das gewählte Gebiet." + TELEFON_LEGENDEN,
@@ -60,7 +60,7 @@
       title: "Die Vorlagen",
       text: () => "Alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte und mit der Tastatur bedienbar. Filter nach Stichwort, Vorlagenart, Stand, Thema und Partei; unter „Weitere Filter“ nach Amt, Gremium und Sicherheit der Ortsangabe."
         + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen."),
-      vorschau: () => "Hier stehen künftig alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte, mit der Tastatur bedienbar und mit Filtern nach Stichwort, Vorlagenart, Stand, Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; sie folgen, sobald der Abruf der Stadt Köln eingerichtet ist. Ist ein Stadtteil oder Stadtbezirk gewählt, stehen hier schon jetzt die Zahlen zum Gebiet."
+      vorschau: () => "Hier stehen künftig alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte, mit der Tastatur bedienbar und mit Filtern nach Stichwort, Vorlagenart, Stand, Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln. Ist ein Stadtteil oder Stadtbezirk gewählt, stehen hier schon jetzt die Zahlen zum Gebiet."
         + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen.") },
     { when: () => !document.querySelector('.toggle[data-panel="timeline-wrap"]').hidden,
       before: (ui) => ui.panel("timeline-wrap", true), target: "#timeline-wrap", beacons: [".tl-presets"],

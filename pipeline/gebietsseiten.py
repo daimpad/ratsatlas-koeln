@@ -25,8 +25,8 @@ LATEST = 20
 CSP = ("default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; "
        "object-src 'none'; base-uri 'self'; form-action 'none'")
 ZOOM_HINWEIS = "Viele Objekte: erscheint erst bei näherer Ansicht, falls nötig hineinzoomen"
-VORSCHAU = (f"<p><strong>Vorschau:</strong> Die Ratsvorlagen der Stadt {config.STADT_NAME} folgen, sobald der Abruf "
-            "aus dem Ratsinformationssystem eingerichtet ist.</p>")
+VORSCHAU = (f"<p><strong>Vorschau:</strong> Die Ratsvorlagen der Stadt {config.STADT_NAME} folgen nach dem ersten "
+            "vollständigen Abruf aus dem Ratsinformationssystem.</p>")
 
 
 def _date(iso):

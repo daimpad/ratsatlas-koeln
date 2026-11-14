@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from pipeline import begriffsseite, config, einfachseite, glossar, seo
+from pipeline import begriffsseite, config, einfachseite, glossar, seo, technikseite
 from pipeline.gebietsseiten import _page
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -162,11 +162,34 @@ def test_offenes_als_offen_gekennzeichnet():
 
 
 def test_datenschutz_wie_auf_der_seite():
-    """Die Sätze zum Datenschutz sagen nichts anderes als datenschutz.html und die Regel zu Hausnummern."""
+    """Die Sätze zum Datenschutz sagen nichts anderes als datenschutz.html und die Regel zu Hausnummern. Sie nennen auch,
+    was an Dritte geht (Prüfung 14.11.2026): die IP-Adresse im Protokoll, die Kopie auf GitHub Pages in den USA und die
+    farbige Karte von tile.openstreetmap.org (auch als Ersatz für fehlende graue Kacheln)."""
     html = einfachseite.body("../")
     ds = (ROOT / "site" / "datenschutz.html").read_text(encoding="utf-8")
     assert "setzt keine Cookies" in ds and "Der Ratsatlas setzt keine Cookies." in html
     assert "Zugriffsprotokoll" in ds and "ein Protokoll der Aufrufe" in html
+    assert "sowie die IP-Adresse" in ds and "ein Protokoll der Aufrufe. Dazu gehört Ihre IP-Adresse." in html
+    # Kopie auf GitHub Pages
+    assert "stellt GitHub Pages bereit (GitHub Inc., USA)" in ds
+    assert "Bei der Kopie auf GitHub Pages werden Daten in die USA" in ds
+    assert "Wer das vermeiden möchte, nutzt die Adresse koeln.ratsatlas.de." in ds
+    assert "Eine Kopie der Seite liegt bei GitHub. GitHub ist eine Firma in den USA." in html
+    assert ("Rufen Sie die Kopie auf, gehen die Daten aus dem Protokoll in die USA. Das vermeiden Sie mit der Adresse "
+            "koeln.ratsatlas.de.") in html
+    # Kartenkacheln
+    assert "lädt Ihr Browser die Kacheln von <strong>tile.openstreetmap.org</strong>" in ds
+    assert "OpenStreetMap Foundation (Vereinigtes Königreich)" in ds and "Kartenausschnitt" in ds
+    assert "die Bilder der grauen Karte" in ds and "liegen auf dem Server dieser Seite" in ds
+    assert "ersatzweise die Kacheln von OpenStreetMap in Grau" in ds
+    assert "Die Bilder der grauen Karte kommen vom Server der Seite." in html
+    assert "Wählen Sie die farbige Karte, lädt Ihr Browser die Bilder von OpenStreetMap." in html
+    assert "Betreiber ist die OpenStreetMap Foundation im Vereinigten Königreich." in html
+    assert "Sie erfährt dabei Ihre IP-Adresse und den Ausschnitt der Karte." in html
+    assert "Fehlen die grauen Bilder einmal, kommen auch sie von OpenStreetMap." in html
+    # die farbige Karte lädt wirklich von dort (site/app.js)
+    app = (ROOT / "site" / "app.js").read_text(encoding="utf-8")
+    assert 'L.tileLayer("https://tile.openstreetmap.org/' in app
     assert "Was Sie eingeben, wird nicht übertragen." in ds and "Was Sie in die Suche eingeben, bleibt auf Ihrem Gerät." in html
     assert "höchstens auf Ebene der Straße oder des Stadtteils" in ds
     assert "höchstens mit Straße oder Stadtteil. Nie mit Hausnummer." in html
@@ -249,3 +272,131 @@ def test_woerter_ohne_markup():
     """Die Erklärungen der Wörter sind reiner Text (die Seite setzt sie mit escape); keine doppelten Leerzeichen."""
     for wort, text, _ in einfachseite.WOERTER:
         assert "<" not in wort + text and "  " not in text, wort
+
+
+def test_gruppe_nur_als_fachwort():
+    """Prüfung 14.11.2026: „Gruppe“ ist ein Fachwort (Gruppe im Rat, § 56 GO NRW) und erklärt weder die Fraktion noch das
+    Gremium. Außerhalb seiner eigenen Erklärung steht es nur in der Aufzählung der Einreichenden („Eine Fraktion, eine
+    Gruppe oder ein Mitglied“), also im Sinn des Fachworts."""
+    erlaubt = "Eine Fraktion, eine Gruppe oder ein Mitglied"
+    erklaerung = {w: t for w, t, _ in einfachseite.WOERTER}
+    assert "Gruppe" not in erklaerung["Fraktion"] and "Gruppe" not in erklaerung["Gremium"]
+    assert "Mindestzahl" in erklaerung["Fraktion"] and "zu wenige für eine Fraktion" in erklaerung["Gruppe"]
+    for wort, text in erklaerung.items():
+        if wort != "Gruppe":
+            assert "Gruppe" not in text.replace(erlaubt, ""), wort
+    p = _lesen(einfachseite.body("../"))
+    rest = [b for b in p.bloecke if b not in ("Gruppe", erklaerung["Gruppe"]) and "Gruppe" in b.replace(erlaubt, "")]
+    assert rest == [], rest
+
+
+def test_karte_und_stufen_ohne_punkt():
+    """Prüfung 14.11.2026: Punkte gibt es nur für genaue Orte (site/app.js drawMarkers: Straße, Objekt,
+    Bebauungsplan); ein ganzer Stadtteil oder Stadtbezirk hat keinen Punkt, seine Stufe steht beim Vorgang
+    (locItem mit CONF)."""
+    html = einfachseite.body("../")
+    app = (ROOT / "site" / "app.js").read_text(encoding="utf-8")
+    assert ('(l.level === "strasse" || l.level === "objekt" || l.level === "bebauungsplan") && l.lon != null'
+            in app)
+    assert '<span class="conf conf-${esc(l.confidence)}">${CONF[l.confidence]' in app
+    assert "Jeder Punkt ist eine Vorlage mit einem genauen Ort." in html
+    assert "Diese Vorlagen haben keinen Punkt auf der Karte." in html
+    assert "Auf der Karte zeigt die Farbe eines Punktes die Stufe:" in html
+    assert "Ein ganzer Stadtteil oder Stadtbezirk hat keinen Punkt auf der Karte." in html
+    assert "Beim Vorgang steht aber bei jedem Ort die Stufe." in html
+    assert "Die Farbe auf der Karte zeigt die Stufe" not in html
+
+
+def test_datenstand_wie_im_readme():
+    """Die Zeile „Für Fachleute“ zum Datenstand gibt die Bedingung für die Sitzungen wie README wieder; der Text für alle
+    verspricht nicht, dass der Server der Stadt gar nicht belastet wird."""
+    html = einfachseite.body("../")
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    bedingung = "die Sitzungen ebenso, solange die Schnittstelle sie nicht nach dem Änderungsdatum auswählt"
+    assert bedingung in readme and bedingung in html
+    assert "mit einer Verbindung und Abstand zwischen den Anfragen" in readme
+    assert "So belastet er den Server der Stadt möglichst wenig." in html
+    assert "belastet er den Server der Stadt nicht" not in html
+
+
+# Angaben in Anführungszeichen, die keine Bezeichnung der Oberfläche sind (Beispiele für Vorlagenarten aus dem Glossar,
+# Paragrafen, Ergebniswörter): jede mit eigener Fundstelle
+KEINE_BEZEICHNUNG = {"Antrag nach § 3": "glossar", "Anfrage nach § 4": "glossar", "§ 3": "seite",
+                     "abgelehnt": "ergebnis"}
+
+
+def test_bezeichnungen_der_oberflaeche_gibt_es():
+    """Prüfung 14.11.2026: Jede Angabe in Anführungszeichen im Text für alle (Menüs, Schaltflächen, Karten) steht so in
+    site/index.html, site/app.js oder site/tour.js; sonst ist sie ein bekanntes Beispiel mit eigener Fundstelle. Ändert
+    sich eine Bezeichnung der Oberfläche, fällt dieser Test auf."""
+    text = " ".join(_lesen(einfachseite.body("../")).bloecke)
+    zitate = set(re.findall(r"„([^“]+)“", text))
+    assert len(zitate) >= 10
+    oberflaeche = "".join((ROOT / "site" / d).read_text(encoding="utf-8") for d in ("index.html", "app.js", "tour.js"))
+    glossar_text = " ".join(e for _, e, _ in glossar.BEGRIFFE)
+    fehlen = []
+    for z in sorted(zitate):
+        art = KEINE_BEZEICHNUNG.get(z)
+        if art == "glossar":
+            ok = z in glossar_text
+        elif art == "ergebnis":
+            ok = z in glossar.ERGEBNISSE
+        elif art == "seite":
+            ok = True
+        else:
+            ok = z in oberflaeche
+        if not ok:
+            fehlen.append(z)
+    assert fehlen == [], fehlen
+    for z in ("Gebiet wählen", "Termine anzeigen", "Mitmachen", "Verstehen", "Ebenen", "Bebauungspläne",
+              "Quellen, Lizenzen und Datenstand", "Wie verlässlich sind die Angaben?",
+              "Original im Ratsinformationssystem", "Verortung falsch? Hinweis geben", "Tour durch alle Funktionen"):
+        assert z in zitate, z
+
+
+def test_vorschau_ohne_veralteten_hinweis():
+    """Der Abruf ist eingerichtet und läuft (Vollabruf ab 13.11.2026): Kein Hinweis der Vorschau sagt mehr, die Vorlagen
+    kämen, „sobald der Abruf eingerichtet ist“; er nennt den ersten vollständigen Abruf ohne Zeitangabe."""
+    dateien = [ROOT / "site" / d for d in ("index.html", "app.js", "tour.js")]
+    dateien += [ROOT / "pipeline" / d for d in ("gebietsseiten.py", "einfachseite.py")]
+    for datei in dateien:
+        inhalt = datei.read_text(encoding="utf-8")
+        assert not re.search(r"Abruf[^.;]{0,60}eingerichtet ist", inhalt), datei.name
+    html = einfachseite.body("../", vorschau=True)
+    assert "Sie kommen, nachdem der Ratsatlas alle Daten der Stadt zum ersten Mal abgefragt hat." in html
+    index = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
+    assert "Die Ratsvorlagen der Stadt Köln folgen nach dem ersten vollständigen Abruf." in index
+
+
+def test_kleinere_maengel_der_einfachen_sprache():
+    """Prüfung 14.11.2026: „Er“ bezieht sich nicht auf die Person, „Punkte“ heißt auf dieser Seite nur Punkte der Karte,
+    GitHub ist beim ersten Vorkommen erklärt."""
+    html = einfachseite.body("../")
+    assert "Er ist ein offenes Projekt." not in html and "Der Ratsatlas ist ein offenes Projekt." in html
+    assert "Bei einzelnen Punkten" not in html and "Bei einzelnen Themen kann ein Gremium" in html
+    bloecke = _lesen(html).bloecke
+    # der erste Absatz mit dem Wort erklärt es
+    for wort, erklaerung in (("GitHub", "GitHub ist eine Firma in den USA."),
+                             ("IP-Adresse", "Das ist die Nummer Ihres Internet-Anschlusses.")):
+        erster = next(b for b in bloecke if wort in b)
+        assert erklaerung in erster, wort
+
+
+@pytest.mark.parametrize("an", [True, False])
+def test_technikseite_nennt_einfache_sprache_nur_mit_freigabe(tmp_path, freigaben, an):
+    """Die Technikseite zählt unter „Statische Seiten“ die Einfache Sprache auf, wenn sie freigegeben ist."""
+    freigaben["einfache_sprache"] = an
+    technikseite.write(tmp_path, URL, _page)
+    html = (tmp_path / "technik" / "index.html").read_text(encoding="utf-8")
+    mit = "Gebietsseiten, Begriffe, Einfache Sprache, Feeds und diese Seite, ohne Skript lesbar."
+    ohne = "Gebietsseiten, Begriffe, Feeds und diese Seite, ohne Skript lesbar."
+    assert (mit in html, ohne in html) == (an, not an)
+
+
+def test_karte_so_funktioniert_ohne_bonner_rest():
+    """Die Karte „So funktioniert der Ratsatlas“ im Menü „Verstehen“ beschreibt den Kölner Ablauf (jede Nacht, wie die
+    Technikseite), nicht den Bonner („jeden Morgen“)."""
+    index = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
+    assert "jeden Morgen" not in index
+    assert "Woher die Daten kommen, was jede Nacht passiert und welche Technik dahintersteht, in vier Grafiken." in index
+    assert "ordnet sie jede Nacht neu" in (ROOT / "pipeline" / "technikseite.py").read_text(encoding="utf-8")

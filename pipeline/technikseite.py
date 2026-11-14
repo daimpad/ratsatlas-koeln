@@ -451,7 +451,7 @@ def daten(root="../"):
                 config.SOURCES[k]["url"] if config.SOURCES[k]["url"].startswith("http") else None, "Quelle")
                for k in config.SOURCES]
     quellen += [(k, t, e, z, "Quelle") for k, t, e, z in weitere_quellen()]
-    ausgaben = [(k, t, e, z, "Öffnen") for k, t, e, z in AUSGABEN]
+    ausgaben = [(k, t, ausgabe_text(k, e), z, "Öffnen") for k, t, e, z in AUSGABEN]
     ueberblick = [(kopf, [(k, t, e, None, "") for k, t, e in boxen]) for kopf, boxen in UEBERBLICK]
 
     termine = []
@@ -537,6 +537,19 @@ SCHRITTE_MIT_FREIGABE = {
 # Erklärungen, die zu einem Zusatzthema gehören (config.ZUSATZTHEMEN): ohne dessen Freigabe gilt der Ersatztext, damit die
 # Seite keine abgeschaltete Funktion nennt
 PAKET_FREIGABE = {"cairosvg": ("themenseiten", "Umwandlung von SVG-Bildern in PNG, derzeit ungenutzt")}
+
+
+# Ausgaben, deren Erklärung mit einer Freigabe anders lautet (config.ZUSATZTHEMEN): Kennung → (Freigabe, Text mit
+# Freigabe); ohne Freigabe gilt der Text aus AUSGABEN
+AUSGABEN_MIT_FREIGABE = {
+    "a-seiten": ("einfache_sprache", "Gebietsseiten, Begriffe, Einfache Sprache, Feeds und diese Seite, ohne Skript "
+                                     "lesbar."),
+}
+
+
+def ausgabe_text(kennung, text):
+    freigabe, mit = AUSGABEN_MIT_FREIGABE.get(kennung, (None, None))
+    return mit if freigabe and config.ZUSATZTHEMEN.get(freigabe) else text
 
 
 def paket_text(paket):
