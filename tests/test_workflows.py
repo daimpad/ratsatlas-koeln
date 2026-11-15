@@ -33,8 +33,13 @@ def test_abhilfen_als_variablen_sicherungen_nicht():
     variablen = set(re.findall(r"^\s+(RATSATLAS_\w+): \$\{\{ vars\.(\w+) \}\}$", schritt, re.M))
     assert variablen == {(v, v) for v in ("RATSATLAS_STADT_INFORMIERT", "RATSATLAS_KONTAKT", "RATSATLAS_VOLLABRUF",
                                           "RATSATLAS_KUERZER_ANNEHMEN")}
-    for gesperrt in ("RATSATLAS_ABSTAND", "RATSATLAS_ZEITFENSTER", "RATSATLAS_LIMIT", "RATSATLAS_MAX_OBJEKTE"):
+    for gesperrt in ("RATSATLAS_ZEITFENSTER", "RATSATLAS_LIMIT", "RATSATLAS_MAX_OBJEKTE"):
         assert gesperrt not in text
+    # Abstand: kein Repository-Variable, nur ein fester Wert im Abrufschritt, nicht unter 20 s (Entscheidung 15.11.2026:
+    # vermutete Drosselung nach etwa einer Minute mit 2 s Abstand)
+    assert "vars.RATSATLAS_ABSTAND" not in text
+    werte = re.findall(r'^\s+RATSATLAS_ABSTAND: "?([0-9.]+)"?$', text, re.M)
+    assert len(werte) == 1 and float(werte[0]) >= 20 and re.search(r'RATSATLAS_ABSTAND: "?[0-9.]+"?$', schritt, re.M)
 
 
 def test_leere_abhilfe_variablen_ohne_wirkung(monkeypatch):
