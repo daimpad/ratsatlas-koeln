@@ -111,15 +111,16 @@ jobs:
           key: raw-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: raw-
 
-      # Wächter (16.11.2026): Fehlt nach dem Wiederherstellen der Zustand des Abrufs (etwa nach einer Störung des
-      # Dienstes, nach dem Löschen eines Eintrags oder weil eine neue Fassung von actions/cache ältere Einträge raw- nicht
-      # findet; actions/cache meldet das nur als Hinweis), begänne der Abruf ab Seite 1: Die Zählung der Nächte mit
-      # möglicher Sperre, nicht_vor und die Fortsetzung des Vollabrufs gingen verloren, der Lauf veröffentlichte die
-      # Kartenvorschau, und die Sicherung legte den fast leeren Stand als jüngsten Eintrag raw- ab. Mit Freigabe des
-      # Abrufs hält der Lauf deshalb hier an (rot): Abruf, Sicherung und Veröffentlichung entfallen (die Sicherung hängt
-      # an einem übersprungenen Abruf), die Seite bleibt, wie sie ist. Maßgeblich ist die Datei selbst, nicht nur die
-      # Ausgabe der Aktion; ohne Freigabe (Kartenvorschau) kein Halt. Überstimmen nur ausdrücklich mit
-      # RATSATLAS_VOLLABRUF=ja (ohne Zustand ohnehin ein Vollabruf ab Seite 1)
+      # Wächter (16.11.2026, Prüfung stapelf): Fehlt nach dem Wiederherstellen der Zustand des Abrufs (etwa nach einer
+      # Störung des Dienstes, nach dem Löschen eines Eintrags oder weil eine neue Fassung von actions/cache ältere
+      # Einträge raw- nicht findet; actions/cache meldet das nur als Hinweis), begänne der Abruf ab Seite 1: Die Zählung
+      # der Nächte mit möglicher Sperre, nicht_vor, die Fortsetzung des Vollabrufs und die Zählung der Dokumente gingen
+      # verloren, der Lauf veröffentlichte die Kartenvorschau, und die Sicherung legte den fast leeren Stand als jüngsten
+      # Eintrag raw- ab. Mit Freigabe des Abrufs hält der Lauf deshalb hier an (rot): Abruf, Dokumente, Veröffentlichung
+      # und beide Sicherungen entfallen (die Sicherungen hängen an übersprungenen Schritten ohne eigenes if: Abruf bzw.
+      # Dokumente), die Seite bleibt, wie sie ist. Maßgeblich ist die Datei selbst, nicht nur die Ausgabe der Aktion;
+      # ohne Freigabe (Kartenvorschau) kein Halt. Überstimmen nur ausdrücklich mit RATSATLAS_VOLLABRUF=ja (ohne Zustand
+      # ohnehin ein Vollabruf ab Seite 1)
       - name: Abrufzustand wiederhergestellt? (Wächter vor Abruf und Veröffentlichung)
         env:
           GEFUNDEN: ${{ steps.rohdaten.outputs.cache-matched-key }}
@@ -132,7 +133,7 @@ jobs:
             echo "::warning::Kein Abrufzustand (data/raw/zustand_abruf.json) im Zwischenspeicher; mit RATSATLAS_VOLLABRUF=ja beginnt der Abruf ohne ihn (Vollabruf ab Seite 1, Zählung der Nächte mit möglicher Sperre von vorn). Nach der ersten Abrufnacht den vorigen Wert der Variablen wiederherstellen (meist: löschen)."
             exit 0
           fi
-          echo "::error::Kein Abrufzustand (data/raw/zustand_abruf.json) im Zwischenspeicher: Der Abruf begänne ab Seite 1, die Zählung der Nächte mit möglicher Sperre, nicht_vor und die Fortsetzung des Vollabrufs gingen verloren. Daher kein Abruf, keine Veröffentlichung, keine Sicherung; die Seite bleibt, wie sie ist. Prüfen: Log von „Rohdaten des letzten Laufs“ und Actions → Caches (Einträge raw-). Vorübergehende Störung: Lauf wiederholen. Findet eine neue Fassung von actions/cache die älteren Einträge nicht: auf die vorige Fassung zurückstellen (GitHub löscht Einträge, die 7 Tage nicht gelesen wurden). Nur beim ersten Lauf überhaupt oder wenn der Zustand verloren ist: Repository-Variable RATSATLAS_VOLLABRUF=ja, bis eine Abrufnacht gelaufen ist; vorher in der Zusammenfassung „Abrufstand“ des letzten Laufs mit Zustand prüfen, ob eine Pause lief (Retry-After, 7 Tage nach drei Nächten mit möglicher Sperre), und erst nach ihrem Ende überstimmen. Bis der neue Vollabruf vollständig ist, zeigt die Seite dann die Kartenvorschau."
+          echo "::error::Kein Abrufzustand (data/raw/zustand_abruf.json) im Zwischenspeicher: Der Abruf begänne ab Seite 1, die Zählung der Nächte mit möglicher Sperre, nicht_vor, die Fortsetzung des Vollabrufs und die Zählung der Dokumente gingen verloren. Daher kein Abruf, keine Dokumente, keine Veröffentlichung, keine Sicherung; die Seite bleibt, wie sie ist. Prüfen: Log von „Rohdaten des letzten Laufs“ und Actions → Caches (Einträge raw-). Vorübergehende Störung: Lauf wiederholen. Findet eine neue Fassung von actions/cache die älteren Einträge nicht: auf die vorige Fassung zurückstellen (GitHub löscht Einträge, die 7 Tage nicht gelesen wurden). Nur beim ersten Lauf überhaupt oder wenn der Zustand verloren ist: Repository-Variable RATSATLAS_VOLLABRUF=ja, bis eine Abrufnacht gelaufen ist; vorher in der Zusammenfassung „Abrufstand“ des letzten Laufs mit Zustand prüfen, ob eine Pause lief (Retry-After, 7 Tage nach drei Nächten mit möglicher Sperre), und erst nach ihrem Ende überstimmen. Bis der neue Vollabruf vollständig ist, zeigt die Seite dann die Kartenvorschau."
           exit 1
 
       # Dauer: höchstens bis zum Ende des Zeitfensters (1 Uhr) plus eine Anfrage (Zeitüberschreitung 90 s); mit 100

@@ -133,11 +133,12 @@ def _skript(schritt):
 
 def test_waechter_vor_abruf_und_veroeffentlichung():
     """Ein Wächter direkt nach dem Wiederherstellen und direkt vor dem Abruf hält den freigegebenen Lauf an, wenn der
-    Zustand des Abrufs fehlt (etwa nach einer Störung von actions/cache oder einem gelöschten Eintrag). Er hat weder
-    `if` noch `continue-on-error`; jeder spätere Schritt, der auch nach einem Fehler liefe (`always()`, `failure()`,
-    `cancelled()`), hängt an einem übersprungenen Schritt ohne eigenes `if` (Abruf) oder liest nur (Fortschritt), und
-    der Job deploy braucht einen erfolgreichen Job build. Ein roter Wächter lässt also Abruf, Sicherung und
-    Veröffentlichung aus."""
+    Zustand des Abrufs fehlt (etwa nach einer Störung von actions/cache, einem gelöschten Eintrag oder weil eine neue
+    Fassung der Aktion die älteren Einträge nicht findet; Prüfung stapelf). Er hat weder `if` noch `continue-on-error`;
+    jeder spätere Schritt, der auch nach einem Fehler liefe (`always()`, `failure()`, `cancelled()`), hängt an einem
+    übersprungenen Schritt ohne eigenes `if` (Abruf, Dokumente) oder liest nur (Fortschritt), und der Job deploy braucht
+    einen erfolgreichen Job build. Ein roter Wächter lässt also Abruf, Dokumente, beide Sicherungen und Veröffentlichung
+    aus."""
     schritte = _schritte()
     r = next(k for k, s in enumerate(schritte) if "uses: actions/cache/restore@" in s)
     assert re.search(r"^\s+id: rohdaten$", schritte[r], re.M)
@@ -166,6 +167,12 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
                 continue   # Fortschritt: liest nur, schreibt nichts nach data/ und hält den Lauf nie an
             haengt = re.findall(r"steps\.(\w+)\.outcome != 'skipped'", bedingung.group(1))
             assert any(i in ids and not re.search(r"^\s+if:", ids[i], re.M) for i in haengt), s.splitlines()[0]
+    # der Dokumentschritt (ohne eigenes `if`, läuft nur nach Erfolg aller Schritte davor) und die beiden Sicherungen,
+    # die auch nach einem Fehler laufen: an übersprungenem Abruf bzw. übersprungenen Dokumenten
+    assert "dokumente" in ids and not re.search(r"^\s+if:", ids["dokumente"], re.M)
+    haengen = {i for s in schritte[w + 1:] if "uses: actions/cache/save@" in s
+               for i in re.findall(r"steps\.(\w+)\.outcome != 'skipped'", s)}
+    assert haengen == {"abruf", "dokumente"}
     job = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n  deploy:\n")[1]
     assert re.search(r"^    needs: build$", job, re.M)
     assert not re.search(r"always\(\)|failure\(\)|cancelled\(\)", job)
@@ -206,7 +213,7 @@ def test_waechter_haelt_freigegebenen_lauf_ohne_zustand_an(tmp_path, monkeypatch
         assert len(fehler) == (1 if freigegeben else 0)
         if fehler:
             for teil in ("zustand_abruf.json", "Lauf wiederholen", "vorige Fassung", "7 Tage",
-                         "RATSATLAS_VOLLABRUF=ja"):
+                         "RATSATLAS_VOLLABRUF=ja", "Zählung der Dokumente", "keine Dokumente"):
                 assert teil in fehler[0]
     erg = lauf("", "ja")
     assert erg.returncode == 0, erg.stderr
