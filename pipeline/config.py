@@ -162,6 +162,11 @@ ZUSATZTHEMEN = {
     # Phase 3 (Entscheidung 10.11.2026, Abend). Ohne Freigabe bleiben Seite, Datenpaket und kontext.json wie zuvor
     # (pipeline/strukturdaten_web.py, pipeline/kontext.py)
     "strukturdaten": False,
+    # Wahlbeteiligung der Ratswahl 2025 je Stadtteil aus einer Datei der Stadt (pipeline/wahl_koeln.py,
+    # tools/wahlbeteiligung.py; Entscheidung 16.11.2026 (1)): Kennzahl in kontext.json statt der Bonner Schätzung über
+    # Stimmbezirke. Eingeschaltet erst nach Klärung der Lizenz mit der Statistikstelle und nach der ersten
+    # Veröffentlichung; ohne Freigabe bleibt kontext.json wie zuvor (TECHNIK.md, „Wahlbeteiligung je Stadtteil“)
+    "wahlbeteiligung": False,
 }
 
 # Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)

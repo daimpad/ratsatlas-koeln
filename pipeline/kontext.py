@@ -40,7 +40,7 @@ from pathlib import Path
 from shapely import STRtree, from_wkb, make_valid, prepare, union_all
 from shapely.geometry import Point, mapping, shape
 
-from . import config, flaechen, strukturdaten
+from . import config, flaechen, strukturdaten, wahl_koeln
 
 KONTEXT = config.ROOT / "data" / "kontext"
 DL = Path(os.environ.get("KONTEXT_DL", config.ROOT / "_kontext_dl"))
@@ -51,6 +51,7 @@ ZENSUS, BRW, KLIMA, UESG, KITAS, HALT, SCHULEN = (KONTEXT / n for n in (
     f"zensus_{S}.tsv", f"bodenrichtwerte_{S}.geojson", f"klima_{S}.geojson", f"ueberschwemmung_{S}.geojson",
     f"kitas_{S}.tsv", f"haltestellen_{S}.tsv", f"schulen_{S}.tsv"))
 WAHL_SB, WAHL_ZU = KONTEXT / "wahl2025_stimmbezirke.tsv", KONTEXT / "wahl2025_zuordnung.tsv"   # pipeline/wahlen.py
+WAHL_STADTTEILE = wahl_koeln.TSV   # Köln: amtlich je Stadtteil (pipeline/wahl_koeln.py), nur mit Freigabe „wahlbeteiligung“
 OUT = "kontext.json"
 AUDIT = "audit_kontext.tsv"
 AUDIT_WAHL = "audit_wahlbeteiligung.tsv"
@@ -118,6 +119,10 @@ KENNZAHLEN = {
                         "auf Stadtteile verteilt; geschätzt; ganze Stadt amtlich; kein Wert für Stadtteile ohne eigenen "
                         "Stimmbezirk (in Köln noch ohne Quelle)"),
 }
+# Köln (pipeline/wahl_koeln.py, Freigabe „wahlbeteiligung“): Werte der Stadt je Stadtteil statt der Schätzung
+KENNZAHL_WAHL_AMTLICH = ("Wahlbeteiligung Ratswahl 2025", "%", "wahl2025",
+                         "Wählerinnen und Wähler je 100 Wahlberechtigte laut Stadt Köln, je Stadtteil; Stadtbezirke und "
+                         "ganze Stadt aus der Summe ihrer Stadtteile")
 OHNE_WERT = {"wahlbeteiligung": "ohne eigenen Stimmbezirk"}   # Grund, wenn ein Ortsteil keinen Wert hat (sonst Mindestgröße)
 ANTEILE = {"unter_18", "ab_65", "miete", "bodenrichtwert", "bodenrichtwert_abdeckung", "hitze", "ueberschwemmung",
            "wahlbeteiligung"}   # erst ab MIN_EINWOHNER
@@ -532,11 +537,51 @@ def _wmedian(paare):
     return None
 
 
+def wahlbeteiligung_an():
+    """Köln: Freigabe „wahlbeteiligung“ (config.ZUSATZTHEMEN), amtliche Wahlbeteiligung je Stadtteil."""
+    return bool(config.ZUSATZTHEMEN.get("wahlbeteiligung"))
+
+
+def wahlbeteiligung_koeln():
+    """Köln (Entscheidung 16.11.2026 (1)): Wahlberechtigte und Wähler der Ratswahl 2025 je Stadtteil aus
+    data/kontext/wahl2025_stadtteile.tsv (pipeline/wahl_koeln.py), nur mit Freigabe „wahlbeteiligung“; Stadtbezirke und
+    Stadt als Summe der Stadtteile. Spalten nur laut wahl_koeln.SPALTEN (keine Ergebnisse der Parteien), jeder
+    Stadtteil aus data/geo genau einmal. Rückgabe wie wahlbeteiligung(), Art „amtlich“, oder None."""
+    if not (wahlbeteiligung_an() and WAHL_STADTTEILE.exists()):
+        return None
+    with open(WAHL_STADTTEILE, encoding="utf-8", newline="") as f:
+        leser = csv.DictReader(f, delimiter="\t")
+        if tuple(leser.fieldnames or ()) != wahl_koeln.SPALTEN:
+            raise ValueError(f"{WAHL_STADTTEILE.name}: Spalten {leser.fieldnames}, erlaubt nur {list(wahl_koeln.SPALTEN)}")
+        rows = list(leser)
+    geb = wahl_koeln.gebiete()
+    namen = {int(r["stadtteil_id"]): r["stadtteil"] for r in rows}
+    if len(namen) != len(rows) or namen != {i: n for i, (n, _) in geb.items()}:
+        raise ValueError(f"{WAHL_STADTTEILE.name}: Stadtteile passen nicht zu data/geo (python -I tools/wahlbeteiligung.py)")
+    ot, audit = {}, []
+    for r in rows:
+        a, w = int(r["wahlberechtigte"]), int(r["waehler"])
+        if not 0 <= w <= a or a <= 0:
+            raise ValueError(f"{WAHL_STADTTEILE.name}: {r['stadtteil']}: mehr Wähler als Wahlberechtigte")
+        ot[r["stadtteil"]] = [a, w]
+        audit.append([r["stadtteil_id"], r["stadtteil"], geb[int(r["stadtteil_id"])][1], a, w, r["beteiligung_prozent"]])
+    gesamt = [sum(a for a, _ in ot.values()), sum(w for _, w in ot.values())]
+    return ot, set(ot), gesamt, audit, "amtlich"
+
+
+AUDIT_WAHL_KOPF = {"geschaetzt": ["stimmbezirke", "wahlberechtigte", "waehler_urne", "briefwaehler_geschaetzt",
+                                  "beteiligung_geschaetzt_prozent", "hauptortsteil", "anteil_adressen_hauptortsteil",
+                                  "weitere_ortsteile_adressen"],
+                   "amtlich": ["stadtteil_id", "stadtteil", "stadtbezirk", "wahlberechtigte", "waehler",
+                               "beteiligung_prozent"]}
+
+
 def wahlbeteiligung():
     """Wahlbeteiligung der Ratswahl 2025 (wahlen/phase0/BERICHT.md): je Urnenstimmbezirk die Wähler an der Urne und die
     Briefwähler des Wahlbezirks im Verhältnis des Sperrvermerks „W“; je Gruppe des Straßenverzeichnisses anteilig nach
     Adressen auf Ortsteile verteilt. ({Ortsteil: [Wahlberechtigte, Wähler]}, Ortsteile mit eigenem Stimmbezirk
-    (Hauptanteil der Adressen), Stadt [Wahlberechtigte, Wähler] amtlich, Audit-Zeilen je Gruppe) oder None ohne Ausschnitt."""
+    (Hauptanteil der Adressen), Stadt [Wahlberechtigte, Wähler] amtlich, Audit-Zeilen je Gruppe, Art „geschaetzt“) oder
+    None ohne Ausschnitt. In Köln gibt es keinen Ausschnitt (Bonner Weg, abgeschaltet); dort gilt wahlbeteiligung_koeln()."""
     if not (WAHL_SB.exists() and WAHL_ZU.exists()):
         return None
     with open(WAHL_SB, encoding="utf-8") as f:
@@ -572,7 +617,7 @@ def wahlbeteiligung():
     if set(sb) - gesehen:
         raise RuntimeError(f"Wahlbeteiligung: Stimmbezirke ohne Zuordnung {sorted(set(sb) - gesehen)}")
     gesamt = [sum(int(r["wahlberechtigte"]) for r in rows), sum(int(r["waehler"]) for r in rows)]
-    return ot, eigen, gesamt, audit
+    return ot, eigen, gesamt, audit, "geschaetzt"
 
 
 def kennzahlen(stat=None):
@@ -657,7 +702,7 @@ def kennzahlen(stat=None):
                 if fl["properties"]["prioritaet"] in DRINGEND:
                     acc[gb]["klima_dringend"] += ew
 
-    wahl = wahlbeteiligung()
+    wahl = wahlbeteiligung_koeln() or wahlbeteiligung()
     if wahl:
         for name, (a, w) in wahl[0].items():
             if name in bezirk:
@@ -689,14 +734,16 @@ def kennzahlen(stat=None):
             if wahl and g[0] == "stadt":
                 v["wahlbeteiligung"] = round(100 * wahl[2][1] / wahl[2][0], 1)
             elif wahl and a["wahl_a"] and (g[0] == "bezirk" or g[1] in wahl[1]):
-                v["wahlbeteiligung"] = round(100 * a["wahl_w"] / a["wahl_a"])   # geschätzt: ganze Prozent
+                anteil = 100 * a["wahl_w"] / a["wahl_a"]
+                # geschätzt (Bonn): ganze Prozent; amtlich (Köln, je Stadtteil): eine Nachkommastelle
+                v["wahlbeteiligung"] = round(anteil, 1) if wahl[4] == "amtlich" else round(anteil)
         werte[g] = v
         geheim = max(a["unter_18_geheim"], a["ab_65_geheim"])
         audit.append([g[0], g[1], e, round(100 * geheim / e, 1) if e else "", int(a["wohnungen"]),
                       round(100 * a["brw_ohne_zone"] / e, 1) if e else "", round(100 * a["brw_ueberlagert"] / e, 1) if e else "",
                       round(a["klima_ew"]),
                       "ja" if (ew or 0) < MIN_EINWOHNER else ""])
-    return werte, audit, (wahl[3] if wahl else None)
+    return werte, audit, ((wahl[4], wahl[3]) if wahl else None)
 
 
 # Zuschaltbare Flächen der Karte (nur beim Einschalten geladen): Überschwemmungsgebiete je Art, Bodenrichtwertzonen,
@@ -765,6 +812,11 @@ def write():
     werte, audit, audit_wahl = kennzahlen(stat)
     zuordnung = {n: b for n, b, _ in _gebiete()[0]}
     staende = quellen_stand()
+    if not audit_wahl:   # Quelle der Wahlbeteiligung nur, wenn die Kennzahl erscheint (Köln: Freigabe „wahlbeteiligung“)
+        staende.pop("wahl2025", None)
+    kennzahl_def = dict(KENNZAHLEN)
+    if audit_wahl and audit_wahl[0] == "amtlich":
+        kennzahl_def["wahlbeteiligung"] = KENNZAHL_WAHL_AMTLICH
     if stat:
         staende = {**staende, STRUKTURDATEN: stat["quelle"]}
     meta = {"hinweis": ("Einordnung, kein Urteil. Einwohnerzahl (Hauptwohnsitz) und Altersanteile stammen aus der Kölner "
@@ -781,8 +833,10 @@ def write():
             # (Runde 19b); nicht unter „quellen“, die die Seite als Quellen der Kennzahlen auflistet
             "gebiete": {"titel": "Stadtteile und Stadtbezirke der Stadt Köln", "url": config.SOURCES[config.QUELLE_GEO]["url"],
                         "lizenz": config.SOURCES[config.QUELLE_GEO]["license"]},
-            "kennzahlen": {k: {"titel": t, "einheit": u, "quelle": q, "methode": m, **({"ohne_wert": OHNE_WERT[k]} if k in OHNE_WERT else {})}
-                           for k, (t, u, q, m) in KENNZAHLEN.items() if k != "wahlbeteiligung" or audit_wahl}}
+            "kennzahlen": {k: {"titel": t, "einheit": u, "quelle": q, "methode": m,
+                               **({"ohne_wert": OHNE_WERT[k]} if k in OHNE_WERT and kennzahl_def[k] is KENNZAHLEN[k] else {}),
+                               **({"amtlich": True} if kennzahl_def[k] is not KENNZAHLEN[k] else {})}
+                           for k, (t, u, q, m) in kennzahl_def.items() if k != "wahlbeteiligung" or audit_wahl}}
     if stat:   # Option (b): Quelle, Jahr, Indikator und Kennzeichnung „abgeleitet“ der Kennzahlen aus der Stadtstatistik
         meta["kennzahlen"].update(kennzahlen_stadtstatistik(stat["jahre"]))
         meta["mindest_einwohner_bezug"] = "einwohner (Hauptwohnsitz, Stadtstatistik)"
@@ -804,9 +858,8 @@ def write():
     if audit_wahl:
         with open(config.EXPORT / AUDIT_WAHL, "w", newline="", encoding="utf-8") as f:
             wr = csv.writer(f, delimiter="\t", lineterminator="\n")
-            wr.writerow(["stimmbezirke", "wahlberechtigte", "waehler_urne", "briefwaehler_geschaetzt", "beteiligung_geschaetzt_prozent",
-                         "hauptortsteil", "anteil_adressen_hauptortsteil", "weitere_ortsteile_adressen"])
-            wr.writerows(audit_wahl)
+            wr.writerow(AUDIT_WAHL_KOPF[audit_wahl[0]])
+            wr.writerows(audit_wahl[1])
     print(f"Kontextdaten: {len(doc['ortsteile'])} Ortsteile, {len(doc['bezirke'])} Stadtbezirke, "
           f"{config.STADT_NAME} {doc['stadt']['einwohner']} Einwohner → {out}")
 
@@ -854,6 +907,11 @@ def pruefen(path=None):
         q = doc["meta"]["quellen"].get(d["quelle"]) or {}
         if not q.get("lizenz") or not q.get("stand"):
             befunde.append(f"Kennzahl {k}: Quelle {d['quelle']} ohne Lizenz oder Stand")
+    kw = doc["meta"]["kennzahlen"].get("wahlbeteiligung") or {}
+    if kw.get("amtlich"):   # Köln: nur mit klarer Lizenz (pipeline/wahl_koeln.py, Entscheidung 16.11.2026 (1))
+        lizenz = ((doc["meta"]["quellen"].get(kw.get("quelle")) or {}).get("lizenz") or "")
+        if not any(lizenz == k or lizenz.startswith(k + ",") for k in wahl_koeln.LIZENZEN):
+            befunde.append(f"Wahlbeteiligung: Lizenz {lizenz!r} nicht klar (erlaubt: {', '.join(wahl_koeln.LIZENZEN)})")
     wb = doc["stadt"].get("wahlbeteiligung")
     if wb is not None and AMTLICH_WAHLBETEILIGUNG is not None and wb != AMTLICH_WAHLBETEILIGUNG:
         befunde.append(f"Wahlbeteiligung {config.STADT_NAME} {wb} % weicht vom amtlichen Wert {AMTLICH_WAHLBETEILIGUNG} % ab")
