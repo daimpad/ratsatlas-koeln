@@ -35,7 +35,8 @@
 # Fällt der Abruf aus, wird der letzte gültige Stand aus dem Zwischenspeicher veröffentlicht und als solcher angezeigt;
 # ein vollständiger Lauf entfernt die Fehlermeldung wieder.
 # Der Zwischenspeicher (Rohdaten, Zustand des Abrufs mit der Zählung der Nächte, STAND.json, Abrufstatistik) wird gleich
-# nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert.
+# nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert. Danach steht der
+# Fortschritt des Abrufs im Log und in der Zusammenfassung des Laufs (tools/abrufstand.py, nur Zahlen und Zustände).
 name: Daten aktualisieren und Seite veröffentlichen
 
 on:
@@ -113,6 +114,16 @@ jobs:
             data/raw/
             data/export/abrufstatistik.tsv
           key: raw-${{ github.run_id }}-${{ github.run_attempt }}
+
+      # Fortschritt des Abrufs ins Log und in die Zusammenfassung des Laufs: je Liste Anfragen und Objekte der letzten
+      # Nacht, Seiten bisher, Stelle der Fortsetzung, gespeicherter Stand, Zähler der Nächte mit möglicher Sperre und
+      # Pause, letzter Abbruch, abruf_ok. Liest nur zustand_abruf.json, STAND.json und abrufstatistik.tsv; nur Zahlen
+      # und Zustände, keine Inhalte der Objekte und keine Meldungstexte. Immer, auch nach einem gescheiterten oder
+      # übersprungenen Abruf; fehlende oder unlesbare Dateien sind kein Fehler, und der Schritt hält den Lauf nie an
+      - name: Fortschritt des Abrufs (Log und Zusammenfassung)
+        if: always()
+        continue-on-error: true
+        run: python tools/abrufstand.py
 
       # Nie mit Testdaten veröffentlichen (tools/testdaten.py setzt „testdaten“ in STAND.json)
       - name: Gibt es Daten zum Veröffentlichen?
