@@ -9,6 +9,7 @@ dem Senden abgewiesen."""
 import csv
 import gzip
 import hashlib
+import io
 import itertools
 import json
 import math
@@ -1889,6 +1890,147 @@ def test_herkunft_der_bereinigten_gebiete(umgebung, monkeypatch):
     assert meta["raum"]["stadtteil"]["abgerufen"] == "nicht dokumentiert"
 
 
+# --- Schritt strukturdaten-gebiete: nur Stadtteile und Stadtbezirke aus data/geo (ohne Zwischenspeicher) -------------
+
+def _flaeche_aendern(rid, rechteck):
+    """Stadtteil `rid` in der Datei unter STRUKTURDATEN_GEO_STADTTEILE mit einem anderen Rechteck (EPSG 25832, Meter
+    relativ zu X0, Y0), wie geo_schreiben in WGS84."""
+    pfad = strukturdaten.geo_pfad("stadtteil")
+    daten = json.loads(pfad.read_text(encoding="utf-8"))
+    nach = Transformer.from_crs(25832, 4326, always_xy=True)
+    for f in daten["features"]:
+        if str(f["properties"]["ortsteil"]) == rid:
+            f["geometry"] = {"type": "Polygon",
+                             "coordinates": [[list(nach.transform(x, y)) for x, y in _ring(rechteck)[::-1]]]}
+    pfad.write_text(json.dumps(daten, ensure_ascii=False), encoding="utf-8")
+
+
+def test_gebiete_ohne_aenderung_byte_gleich(umgebung):
+    """Ändert sich data/geo nicht, schreibt `strukturdaten-gebiete` jede Datei byte-gleich zum vollständigen Lauf
+    (dieselben Funktionen für Flächen, Abgleich und meta.json); ein zweiter Aufruf ebenso."""
+    dl, aus = umgebung
+    _normalisieren(dl, aus)
+    erst = _dateien(aus)
+    strukturdaten.gebiete_schreiben()
+    assert _dateien(aus) == erst
+    strukturdaten.gebiete_schreiben()
+    assert _dateien(aus) == erst
+    fassungen = json.loads(erst["meta.json"])["raumabgleich"]["geometrie_fassungen"]
+    summen = {e: hashlib.sha256(strukturdaten.geo_pfad(e).read_bytes()).hexdigest() for e in ("stadtteil", "stadtbezirk")}
+    assert fassungen["stadtteil→stadtbezirk"] == summen
+    assert fassungen["quartier→stadtteil"]["stadtteil"] == summen["stadtteil"]
+    assert fassungen["hinweis"] == strukturdaten.FASSUNGEN_HINWEIS
+
+
+def test_gebiete_neu_wie_vollstaendiger_lauf(umgebung, tmp_path, monkeypatch):
+    """Nach einer Änderung der Stadtteilflächen schreibt `strukturdaten-gebiete` raum/stadtteil.geojson,
+    raum/stadtbezirk.geojson, die Zeilen Stadtteil → Stadtbezirk in zuordnung.tsv und audit_raumabgleich.tsv sowie
+    raum.<ebene>, ergebnis und id_abgleich in meta.json genau wie ein vollständiger Lauf. Quartier → Stadtteil bleibt aus
+    dem vorigen Lauf (der vollständige Lauf rechnet es mit den neuen Stadtteilen anders), meta.json nennt dessen Fassung
+    der Stadtteile; alle übrigen Dateien und Angaben bleiben byte- bzw. wertgleich."""
+    dl, aus = umgebung
+    _normalisieren(dl, aus)
+    erst = _dateien(aus)
+    meta_erst = json.loads(erst["meta.json"])
+    summe_vorher = hashlib.sha256(strukturdaten.geo_pfad("stadtteil").read_bytes()).hexdigest()
+    _flaeche_aendern("201", (0, 997, 2000, 2000))   # 3 m in Stadtbezirk 1 (Splitter 0,3 %)
+    strukturdaten.gebiete_schreiben()
+    teil = _dateien(aus)
+    meta = json.loads(teil["meta.json"])
+    voll_aus = tmp_path / "voll"
+    monkeypatch.setenv("STRUKTURDATEN_AUS", str(voll_aus))
+    strukturdaten.write()
+    voll = _dateien(voll_aus)
+    meta_voll = json.loads(voll["meta.json"])
+
+    for name in ("raum/stadtteil.geojson", "raum/stadtbezirk.geojson"):
+        assert teil[name] == voll[name], name
+    assert teil["raum/stadtteil.geojson"] != erst["raum/stadtteil.geojson"]
+    for name in set(erst) - {"raum/stadtteil.geojson", "raum/stadtbezirk.geojson", "zuordnung.tsv",
+                             "audit_raumabgleich.tsv", "meta.json"}:
+        assert teil[name] == erst[name], name
+    for name in ("zuordnung.tsv", "audit_raumabgleich.tsv"):
+        zeilen = {n: _lesen(d / name) for n, d in (("teil", aus), ("voll", voll_aus))}
+        vorher = [z for z in csv.DictReader(io.StringIO(erst[name].decode("utf-8")), delimiter="\t",
+                                            quoting=csv.QUOTE_NONE)]
+        assert [z for z in zeilen["teil"] if z["von_ebene"] == "stadtteil"] == [
+            z for z in zeilen["voll"] if z["von_ebene"] == "stadtteil"]
+        assert [z for z in zeilen["teil"] if z["von_ebene"] == "quartier"] == [
+            z for z in vorher if z["von_ebene"] == "quartier"]
+        assert [z["von_ebene"] for z in zeilen["teil"]] == sorted((z["von_ebene"] for z in zeilen["teil"]),
+                                                                  key=["stadtteil", "quartier"].index)
+    audit = {a["von_id"]: a for a in _lesen(aus / "audit_raumabgleich.tsv")}
+    assert (audit["201"]["splitter"], audit["201"]["splitter_max_anteil"]) == ("1", "0.0030")
+    # der vollständige Lauf rechnet Quartier → Stadtteil mit den neuen Stadtteilen anders: 101010003 reicht dort 6 m
+    # in Stadtteil 201 (Anteil 0.0149, weiteres Ziel statt Splitter); hier bleibt die Zeile des vorigen Laufs
+    q_voll = {a["von_id"]: a for a in _lesen(voll_aus / "audit_raumabgleich.tsv")}["101010003"]
+    assert (q_voll["weitere_ziele"], q_voll["splitter"]) == ("1", "0")
+    assert (audit["101010003"]["weitere_ziele"], audit["101010003"]["splitter"]) == ("0", "1")
+
+    for e in ("stadtteil", "stadtbezirk"):
+        assert meta["raum"][e] == meta_voll["raum"][e]
+    assert meta["raum"]["stadtteil"]["sha256"] != summe_vorher
+    ra, ra_voll, ra_erst = meta["raumabgleich"], meta_voll["raumabgleich"], meta_erst["raumabgleich"]
+    assert ra["ergebnis"]["stadtteil→stadtbezirk"] == ra_voll["ergebnis"]["stadtteil→stadtbezirk"]
+    assert ra["ergebnis"]["quartier→stadtteil"] == ra_erst["ergebnis"]["quartier→stadtteil"]
+    assert ra["id_abgleich"] == ra_voll["id_abgleich"] == ra_erst["id_abgleich"]
+    assert ra["geometrie_hinweis"] == strukturdaten._geometrie_hinweis(ra["ergebnis"])
+    assert "stadtteil→stadtbezirk 0.0030" in ra["geometrie_hinweis"]
+    f = ra["geometrie_fassungen"]
+    assert f["stadtteil→stadtbezirk"] == ra_voll["geometrie_fassungen"]["stadtteil→stadtbezirk"]
+    assert f["quartier→stadtteil"] == {"quartier": meta["raum"]["quartier"]["sha256"], "stadtteil": summe_vorher}
+    assert ra_voll["geometrie_fassungen"]["quartier→stadtteil"]["stadtteil"] == meta["raum"]["stadtteil"]["sha256"]
+    assert "strukturdaten-gebiete" in f["hinweis"] and "Fassung nicht dokumentiert" in f["hinweis"]
+    assert ra_voll["geometrie_fassungen"]["hinweis"] == strukturdaten.FASSUNGEN_HINWEIS
+    assert list(meta) == list(meta_erst) and list(ra) == list(ra_erst)
+    geaendert = {("raum", "stadtteil"), ("raum", "stadtbezirk"), ("raumabgleich", "ergebnis"),
+                 ("raumabgleich", "geometrie_hinweis"), ("raumabgleich", "geometrie_fassungen")}
+    for k, v in meta.items():
+        if isinstance(v, dict):
+            for k2, v2 in v.items():
+                if (k, k2) not in geaendert:
+                    assert v2 == meta_erst[k][k2], (k, k2)
+        else:
+            assert v == meta_erst[k], k
+    # ein zweiter Aufruf ändert nichts mehr, auch nicht die Fassung, mit der Quartier → Stadtteil gerechnet ist
+    strukturdaten.gebiete_schreiben()
+    assert _dateien(aus) == teil
+
+
+@pytest.mark.parametrize("fall", ["name", "nummer", "namen_abweichend", "werte", "ohne_lauf"])
+def test_gebiete_bricht_ab_statt_zu_raten(umgebung, fall):
+    """Ohne die XLSX kennt der Schritt die Namen des Blatts Daten nicht: Er bricht ab und verlangt den vollständigen
+    Lauf, wenn sich Nummern oder Namen ändern, der letzte Lauf abweichende Namen gemeldet hat, die Nummern in werte.tsv
+    nicht zu id_abgleich passen oder die Ausgabe fehlt; dabei bleibt jede Datei unverändert."""
+    dl, aus = umgebung
+    if fall == "ohne_lauf":
+        with pytest.raises(SystemExit, match="vollständiger Lauf"):
+            strukturdaten.gebiete_schreiben()
+        assert not aus.exists() or not any(aus.rglob("*"))
+        return
+    _normalisieren(dl, aus)
+    pfad = strukturdaten.geo_pfad("stadtteil")
+    daten = json.loads(pfad.read_text(encoding="utf-8"))
+    if fall == "name":
+        daten["features"][0]["properties"]["ortsteil_bez"] = "Teststadtteil A neu"
+        pfad.write_text(json.dumps(daten, ensure_ascii=False), encoding="utf-8")
+    elif fall == "nummer":
+        daten["features"] = daten["features"][1:]
+        pfad.write_text(json.dumps(daten, ensure_ascii=False), encoding="utf-8")
+    elif fall == "namen_abweichend":
+        meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+        meta["raumabgleich"]["id_abgleich"]["stadtbezirk"]["namen_abweichend"] = ["2"]
+        (aus / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    else:
+        text = (aus / "werte.tsv").read_text(encoding="utf-8")
+        (aus / "werte.tsv").write_text("".join(z for z in text.splitlines(keepends=True)
+                                               if not z.startswith("stadtteil\t201\t")), encoding="utf-8")
+    vorher = _dateien(aus)
+    with pytest.raises(SystemExit, match="vollständiger Lauf `strukturdaten` nötig"):
+        strukturdaten.gebiete_schreiben()
+    assert _dateien(aus) == vorher
+
+
 def test_geheim_aber_ableitbar_gemeldet(umgebung):
     """Ist genau ein Wert einer geprüften Beziehung geheim und durch die veröffentlichten Werte derselben Zeile bestimmt,
     zählt meta.json die Zeilen je Raumebene (geheimhaltung_ableitbar) und nennt die Zahl im Hinweis, ohne Beziehung
@@ -2085,6 +2227,67 @@ def test_meta_nennt_die_verifikation():
     assert xlsx["sha256"] == sha and xlsx["zeit"].startswith(angaben["datum"]) and xlsx["http_status"] == 200
     assert wegweiser["zeit"].startswith(angaben["datum"]) and len(wegweiser["sha256"]) == 64
     assert meta["datenstand"] == "2026-10-15" and meta["abrufdatum"] == "2026-11-10"
+
+
+def test_veroeffentlichte_flaechen_aus_data_geo():
+    """data/strukturdaten/raum/stadtteil.geojson und stadtbezirk.geojson tragen die lückenlose Fassung von data/geo
+    (Geometrie, Nummern und Namen wie dort, Prüfsumme in GEO_ABGELEITET, ohne Lücken und Überlappungen); meta.json nennt
+    dieselben Prüfsummen. Stadtteil → Stadtbezirk ist damit gerechnet (alle ok, Anteil 1.0000, ohne Splitter), eltern_id
+    folgt dem Audit, Zuordnung und Audit passen zueinander. Quartier → Stadtteil stammt aus dem Lauf vom 10.11.2026 mit
+    der Fassung vor der Bereinigung (geometrie_fassungen); Gegenprobe mit den neuen Stadtteilen und den veröffentlichten
+    Quartiersflächen als Ersatz der Quelle: jedes Quartier im selben Stadtteil wie im Audit, Hauptanteil ab 0.99."""
+    rm = strukturdaten_raum
+    meta = json.loads((DATEN / "meta.json").read_text(encoding="utf-8"))
+    flaechen = {}
+    for ebene, datei, nummer, name in (("stadtteil", "stadtteile_koeln.geojson", "ortsteil", "ortsteil_bez"),
+                                       ("stadtbezirk", "stadtbezirke_koeln.geojson", "bezirk", "bezirk_bez")):
+        geo_pfad = config.ROOT / "data" / "geo" / datei
+        geo = {str(f["properties"][nummer]): f for f in json.loads(geo_pfad.read_text(encoding="utf-8"))["features"]}
+        raum = _geojson(DATEN, ebene)
+        summe = hashlib.sha256(geo_pfad.read_bytes()).hexdigest()
+        assert rm.GEO_ABGELEITET[summe] == datei
+        assert raum["meta"]["sha256"] == meta["raum"][ebene]["sha256"] == summe
+        assert raum["meta"]["abgerufen"] == meta["raum"][ebene]["abgerufen"] == "2026-11-04"
+        assert "als lückenlose Abdeckung abgeleitet" in meta["raum"][ebene]["abgerufen_beleg"]
+        assert [f["properties"]["raum_id"] for f in raum["features"]] == sorted(geo, key=int)
+        for f in raum["features"]:
+            g = geo[f["properties"]["raum_id"]]
+            assert f["geometry"] == g["geometry"] and f["properties"]["name"] == g["properties"][name]
+        flaechen[ebene] = {f["properties"]["raum_id"]: shape(f["geometry"]) for f in raum["features"]}
+        gemessen = geodaten.luecken_ueberlappungen(list(flaechen[ebene].values()))
+        assert (gemessen["luecken_teile"], gemessen["ueberlappung_paare"]) == (0, 0)
+    ra = meta["raumabgleich"]
+    f = ra["geometrie_fassungen"]
+    assert f["stadtteil→stadtbezirk"] == {e: meta["raum"][e]["sha256"] for e in ("stadtteil", "stadtbezirk")}
+    assert f["quartier→stadtteil"]["quartier"] == meta["raum"]["quartier"]["sha256"]
+    assert rm.GEO_HERKUNFT[f["quartier→stadtteil"]["stadtteil"]] == "stadtteile_koeln.geojson"
+    assert "vor der lückenlosen Bereinigung vom 13.11.2026" in f["hinweis"] and "strukturdaten-gebiete" in f["hinweis"]
+    zuordnung, audit = _lesen(DATEN / "zuordnung.tsv"), _lesen(DATEN / "audit_raumabgleich.tsv")
+    teile = [a for a in audit if a["von_ebene"] == "stadtteil"]
+    assert len(teile) == 86 and all(a["pruefstatus"] == "ok" and a["flaechenanteil"] == "1.0000"
+                                    and a["splitter"] == "0" and a["ausserhalb_anteil"] == "0.0000" for a in teile)
+    erg = ra["ergebnis"]["stadtteil→stadtbezirk"]
+    assert (erg["kleinster_groesster_anteil"], erg["einheiten_mit_splitter"], erg["groesster_splitter"]) == (
+        "1.0000", 0, "")
+    zeilen = {(z["von_ebene"], z["von_id"], z["nach_id"]): z for z in zuordnung}
+    for a in audit:
+        if a["nach_id"]:
+            z = zeilen[(a["von_ebene"], a["von_id"], a["nach_id"])]
+            assert (z["flaechenanteil"], z["methode"], z["konfidenz"]) == (a["flaechenanteil"], a["methode"],
+                                                                         a["konfidenz"])
+    eltern = {f["properties"]["raum_id"]: f["properties"]["eltern_id"] for f in _geojson(DATEN, "stadtteil")["features"]}
+    assert eltern == {a["von_id"]: a["nach_id"] if a["pruefstatus"] == "ok" else "" for a in teile}
+    # Gegenprobe Quartier → Stadtteil mit den neuen Stadtteilen
+    utm = {r: rm._umrechnen(g, rm._NACH_UTM) for r, g in flaechen["stadtteil"].items()}
+    ids = sorted(utm, key=int)
+    baum = shapely.STRtree([utm[i] for i in ids])
+    ziel = {a["von_id"]: a["nach_id"] for a in audit if a["von_ebene"] == "quartier"}
+    quartiere = _geojson(DATEN, "quartier")["features"]
+    assert len(quartiere) == len(ziel) == 570
+    for q in quartiere:
+        g = rm._umrechnen(shape(q["geometry"]), rm._NACH_UTM)
+        anteil, haupt = max((shapely.intersection(g, utm[ids[j]]).area / g.area, ids[j]) for j in baum.query(g))
+        assert haupt == ziel[q["properties"]["raum_id"]] and anteil >= rm.ANTEIL_HOCH, q["properties"]["raum_id"]
 
 
 def test_verifikation_nur_fuer_die_gepruefte_xlsx(umgebung, monkeypatch):
