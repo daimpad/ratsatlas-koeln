@@ -1,5 +1,6 @@
 """Workflows und Technikseite: jede Datei, jeder Schritt und jede Quelle hat eine Erklärung; der Hauptlauf ist bis zur
 Information der Stadt gesperrt, veröffentlicht nie Testdaten und sichert den Abrufzustand gleich nach dem Abruf."""
+import itertools
 import os
 import re
 import shutil
@@ -82,20 +83,24 @@ def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
     """Der Zustand mit der Zählung der Nächte mit möglicher Sperre (zustand_abruf.json), STAND.json und die
     Abrufstatistik werden direkt nach dem Abrufschritt mit actions/cache/save und `if: always()` gesichert, nicht erst
     im Post-Schritt von actions/cache, der nur nach einem erfolgreichen Lauf speichert. Der Dokumentschritt folgt erst
-    nach ihr und dem Fortschritt (Prüfung dok-f: sonst hinge die Sicherung an seiner Dauer); nach ihm eine zweite
-    Sicherung, nur mit seiner Freigabe, mit eigenem Schlüssel unter demselben Präfix (der nächste Lauf nimmt den
-    jüngsten Stand)."""
+    nach ihr und den beiden lesenden Schritten Fortschritt und Feldabdeckung (Prüfung dok-f: sonst hinge die Sicherung
+    an seiner Dauer); nach ihm eine zweite Sicherung, nur mit seiner Freigabe, mit eigenem Schlüssel unter demselben
+    Präfix (der nächste Lauf nimmt den jüngsten Stand). Reihenfolge: Abruf (i), Sicherung (i+1), Fortschritt (i+2),
+    Feldabdeckung (i+3), Dokumente (i+4), zweite Sicherung (i+5)."""
     text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     schritte = text.split("\n      - ")
     i = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
     assert "id: abruf" in schritte[i]
     sichern = schritte[i + 1]
     assert re.search(r"^\s+if: always\(\)", sichern, re.M) and "steps.abruf.outcome" in sichern
-    # danach der Fortschritt (test_fortschritt_gleich_nach_dem_sichern), der Dokumentschritt (pipeline/dokumente.py)
-    # und die zweite Sicherung seiner Ergebnisse und Zählungen
+    # danach der Fortschritt (test_fortschritt_gleich_nach_dem_sichern), die Feldabdeckung
+    # (test_feldabdeckung_gleich_nach_dem_fortschritt), der Dokumentschritt (pipeline/dokumente.py) und die zweite
+    # Sicherung seiner Ergebnisse und Zählungen
     assert "run: python tools/abrufstand.py" in schritte[i + 2]
-    assert "run: python -m pipeline dokumente" in schritte[i + 3] and "id: dokumente" in schritte[i + 3]
-    zweite = schritte[i + 4]
+    assert "run: python tools/feldabdeckung.py" in schritte[i + 3]
+    assert "run: python -m pipeline dokumente" in schritte[i + 4] and "id: dokumente" in schritte[i + 4]
+    zweite = schritte[i + 5]
+    assert zweite.startswith("name: Abrufzustand nach den Dokumenten sichern")
     assert re.search(r"^\s+if: always\(\) && steps\.dokumente\.outcome != 'skipped' && "
                      r"vars\.RATSATLAS_STADT_INFORMIERT == 'ja' && vars\.RATSATLAS_PDF_FREIGEGEBEN == 'ja'$", zweite, re.M)
     assert "key: raw-${{ github.run_id }}-${{ github.run_attempt }}-dokumente" in zweite
@@ -114,6 +119,10 @@ def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
 
 
 WAECHTER = "name: Abrufzustand wiederhergestellt? (Wächter vor Abruf und Veröffentlichung)"
+# Die einzigen Schritte nach dem Wächter, die auch nach einem Fehler laufen, ohne an einem übersprungenen Schritt zu
+# hängen: sie lesen nur (Skript → Name des Schritts)
+LESEND = {"tools/abrufstand.py": "name: Fortschritt des Abrufs (Log und Zusammenfassung)",
+          "tools/feldabdeckung.py": "name: Feldabdeckung der Rohdaten (nur Zahlen)"}
 
 
 def _schritte():
@@ -131,14 +140,70 @@ def _skript(schritt):
     return "\n".join(zeilen) + "\n"
 
 
+def _ohne_kommentare(schritt):
+    """Zeilen eines Schritts ohne Kommentare und Leerzeilen (die Kommentare des folgenden Schritts stehen am Ende)."""
+    return [z.strip() for z in schritt.splitlines() if z.strip() and not z.strip().startswith("#")]
+
+
+def _lesende_form(schritt, skript):
+    """Ein lesender Schritt (LESEND): genau die Schlüssel name, if (always()), continue-on-error (true), höchstens
+    timeout-minutes und eine Zeile `run: python tools/….py` ohne Angaben; kein env, keine Ausdrücke (also weder
+    secrets noch vars), kein uses, with, shell oder working-directory."""
+    zeilen = _ohne_kommentare(schritt)
+    assert zeilen[0] == LESEND[skript], zeilen
+    schluessel = [re.match(r"([\w-]+): ", z) for z in zeilen]
+    assert all(schluessel), zeilen   # jede Zeile ein Schlüssel: kein mehrzeiliges Skript, kein env-Block
+    namen = [m.group(1) for m in schluessel]
+    assert sorted(namen) in (sorted(["name", "if", "continue-on-error", "run"]),
+                             sorted(["name", "if", "continue-on-error", "timeout-minutes", "run"])), namen
+    assert "if: always()" in zeilen and "continue-on-error: true" in zeilen
+    assert [z for z in zeilen if z.startswith("run:")] == [f"run: python {skript}"]
+    assert not any(x in z for z in zeilen for x in ("${{", "secrets", "vars.", "env"))
+    assert (config.ROOT / skript).exists()
+
+
+# Schlüssel `if` in jeder Schreibweise (auch in Anführungszeichen, mit Leerzeichen vor dem Doppelpunkt, nach „- “, „{“,
+# „,“ oder „? “) und die einzige Form, die die Prüfungen hier lesen: `if: <Wert>` auf einer Zeile
+IF_SCHLUESSEL = re.compile(r"""(?:^|[\s{,?-])["']?if["']?\s*:""")
+IF_FORM = re.compile(r"""^(\s*(?:- )?)if: ([^\s|>&*!'"#{\[%@`].*)$""")
+
+
+def _if_befunde(text):
+    """Stellen eines Workflows, an denen ein `if` anders steht, als test_waechter_vor_abruf_und_veroeffentlichung es
+    mit `if: (.+)` je Zeile liest (Prüfung feldf, Mutation M8b): als Blockskalar (`if: >-`, `if: |`), mit dem Wert
+    erst in der nächsten Zeile, über mehrere Zeilen fortgesetzt, in Anführungszeichen oder mit Leerzeichen vor dem
+    Doppelpunkt, als Anker oder Verweis (`&name`, `*name`), dazu YAML-Formen, die Schritte anders gliedern, als der
+    Text sie trennt (Schritt in Flussform, Spiegelstrich allein auf einer Zeile, Zusammenführen mit `<<:`, `? `
+    als Schlüssel). Kommentarzeilen zählen nicht."""
+    befunde = []
+    zeilen = text.splitlines()
+    for k, z in enumerate(zeilen):
+        if not z.strip() or z.strip().startswith("#"):
+            continue
+        if (re.match(r"^\s*(?:- )?(?:[\w-]+\s*:\s+)?[&*][\w-]+(?:\s|$)", z) or re.search(r"<<\s*:", z)
+                or re.match(r"^\s*\?(?:\s|$)", z) or re.match(r"^\s*-\s*(?:[{\[]|$)", z)
+                or re.match(r"^\s*steps:\s*[{\[]", z)):
+            befunde.append((k + 1, "YAML-Form, die die Schritte anders gliedert"))
+        if not IF_SCHLUESSEL.search(z):
+            continue
+        form = IF_FORM.match(z)
+        if not form:
+            befunde.append((k + 1, "if nicht als `if: <Wert>` auf einer Zeile"))
+            continue
+        folgende = next((x for x in zeilen[k + 1:] if x.strip()), "")
+        if len(folgende) - len(folgende.lstrip(" ")) > len(form.group(1)):
+            befunde.append((k + 1, "if über mehrere Zeilen"))
+    return befunde
+
+
 def test_waechter_vor_abruf_und_veroeffentlichung():
     """Ein Wächter direkt nach dem Wiederherstellen und direkt vor dem Abruf hält den freigegebenen Lauf an, wenn der
     Zustand des Abrufs fehlt (etwa nach einer Störung von actions/cache, einem gelöschten Eintrag oder weil eine neue
     Fassung der Aktion die älteren Einträge nicht findet; Prüfung stapelf). Er hat weder `if` noch `continue-on-error`;
     jeder spätere Schritt, der auch nach einem Fehler liefe (`always()`, `failure()`, `cancelled()`), hängt an einem
-    übersprungenen Schritt ohne eigenes `if` (Abruf, Dokumente) oder liest nur (Fortschritt), und der Job deploy braucht
-    einen erfolgreichen Job build. Ein roter Wächter lässt also Abruf, Dokumente, beide Sicherungen und Veröffentlichung
-    aus."""
+    übersprungenen Schritt ohne eigenes `if` (Abruf, Dokumente) oder ist genau einer der beiden lesenden Schritte
+    (Fortschritt, Feldabdeckung; LESEND, in lesender Form), und der Job deploy braucht einen erfolgreichen Job build.
+    Ein roter Wächter lässt also Abruf, Dokumente, beide Sicherungen und Veröffentlichung aus."""
     schritte = _schritte()
     r = next(k for k, s in enumerate(schritte) if "uses: actions/cache/restore@" in s)
     assert re.search(r"^\s+id: rohdaten$", schritte[r], re.M)
@@ -159,14 +224,21 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     assert not re.search(r"^ {0,8}RATSATLAS_RAW:", text, re.M)
     assert "working-directory" not in text and not re.search(r"^\s*defaults:", text, re.M)
     assert f"[ -f {config.ZUSTAND.relative_to(config.ROOT).as_posix()} ]" in _skript(waechter)
+    assert not _if_befunde(text)   # jedes `if` so, wie die Schleife unten es liest
     ids = {m.group(1): s for s in schritte[w + 1:] for m in [re.search(r"^\s+id: (\w+)$", s, re.M)] if m}
+    lesend = []
     for s in schritte[w + 1:]:
         bedingung = re.search(r"(?:^|\n)\s*if: (.+)", s)   # auch ein Schritt, der mit „- if:“ beginnt
         if bedingung and re.search(r"always\(\)|failure\(\)|cancelled\(\)", bedingung.group(1)):
-            if re.search(r"^\s+run: python tools/abrufstand\.py$", s, re.M):
-                continue   # Fortschritt: liest nur, schreibt nichts nach data/ und hält den Lauf nie an
+            skript = re.search(r"^\s+run: python (tools/[\w.]+)", s, re.M)
+            if skript and skript.group(1) in LESEND:
+                # Fortschritt und Feldabdeckung: lesen nur, schreiben nichts nach data/, halten den Lauf nie an
+                _lesende_form(s, skript.group(1))
+                lesend.append(skript.group(1))
+                continue
             haengt = re.findall(r"steps\.(\w+)\.outcome != 'skipped'", bedingung.group(1))
             assert any(i in ids and not re.search(r"^\s+if:", ids[i], re.M) for i in haengt), s.splitlines()[0]
+    assert sorted(lesend) == sorted(LESEND)   # genau diese beiden, je einmal
     # der Dokumentschritt (ohne eigenes `if`, läuft nur nach Erfolg aller Schritte davor) und die beiden Sicherungen,
     # die auch nach einem Fehler laufen: an übersprungenem Abruf bzw. übersprungenen Dokumenten
     assert "dokumente" in ids and not re.search(r"^\s+if:", ids["dokumente"], re.M)
@@ -176,6 +248,62 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     job = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n  deploy:\n")[1]
     assert re.search(r"^    needs: build$", job, re.M)
     assert not re.search(r"always\(\)|failure\(\)|cancelled\(\)", job)
+
+
+# Schritte, die nach „Gibt es Daten zum Veröffentlichen?“ eingefügt die Prüfung des Wächters umgingen, wenn ihr `if`
+# nicht gelesen würde: jeder schreibt (Abruf) und liefe nach einem Fehler (Mutationen aus der Prüfung feldf)
+UMGEHUNGEN = {
+    "Blockskalar >-": "      - name: x\n        if: >-\n          always()\n        run: python -m pipeline fetch\n",
+    "Blockskalar |": "      - name: x\n        if: |\n          always()\n        run: python -m pipeline fetch\n",
+    "Wert in der nächsten Zeile": ("      - name: x\n        if:\n          always()\n"
+                                   "        run: python -m pipeline fetch\n"),
+    "fortgesetzt": ("      - name: x\n        if: steps.daten.outputs.da == 'ja' ||\n          always()\n"
+                    "        run: python -m pipeline fetch\n"),
+    "beginnt mit if": "      - if: >-\n          always()\n        run: python -m pipeline fetch\n",
+    "Leerzeichen vor dem Doppelpunkt": ("      - name: x\n        if : always()\n"
+                                        "        run: python -m pipeline fetch\n"),
+    "Schlüssel in Anführungszeichen": ("      - name: x\n        \"if\": always()\n"
+                                       "        run: python -m pipeline fetch\n"),
+    "Wert in Anführungszeichen": "      - name: x\n        if: \"always()\"\n        run: python -m pipeline fetch\n",
+    "Verweis": "      - name: x\n        if: *immer\n        run: python -m pipeline fetch\n",
+    "Flussform": "      - {name: x, if: always(), run: python -m pipeline fetch}\n",
+    "Spiegelstrich allein": "      -\n        name: x\n        if: always()\n        run: python -m pipeline fetch\n",
+}
+
+
+def test_if_nur_einzeilig_in_pages():
+    """Jedes `if` in pages.yml steht als `if: <Wert>` auf einer Zeile, wie die Prüfung des Wächters es liest; jede
+    andere Schreibweise eines nach einem Fehler laufenden, schreibenden Schritts nach dem Wächter fällt auf (vorher
+    bestand ein Schritt mit `if: >-` und `always()` in der nächsten Zeile alle Tests, Mutation M8b)."""
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    assert not _if_befunde(text), _if_befunde(text)
+    stelle = "      - name: Kartenvorschau (leere Rohdaten in eigenem Verzeichnis)\n"
+    assert text.count(stelle) == 1
+    for art, schritt in UMGEHUNGEN.items():
+        assert _if_befunde(text.replace(stelle, schritt + "\n" + stelle)), art
+    # unverändert lesbar: ein einzeiliges if mit Kommentar und ein Schritt, der mit `- if:` beginnt
+    for schritt in ("      - name: x\n        if: always()   # Kommentar\n        run: python tools/abrufstand.py\n",
+                    "      - if: always()\n        name: x\n        run: python tools/abrufstand.py\n"):
+        assert not _if_befunde(text.replace(stelle, schritt + "\n" + stelle)), schritt
+
+
+def test_if_wie_yaml_es_liest():
+    """Gegenprobe, wo PyYAML installiert ist (nicht in requirements.txt, also nicht in GitHub Actions): Die Schritte,
+    wie die Tests hier sie aus dem Text trennen, und ihr `if` stimmen mit dem überein, was YAML liest."""
+    yaml = pytest.importorskip("yaml")
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    jobs = yaml.safe_load(text)["jobs"]
+    gelesen = [schritt.get("if") for job in jobs.values() for schritt in job["steps"]]
+    getrennt = []
+    for s in _schritte()[1:]:
+        # nur die Zeilen des Schritts: bis zur ersten Zeile außer Kommentaren, die weniger als acht Zeichen eingerückt
+        # ist (etwa der nächste Job mit eigenem `if`)
+        eigene = s.split("\n")[:1] + list(itertools.takewhile(
+            lambda z: not z.strip() or z.lstrip().startswith("#") or len(z) - len(z.lstrip(" ")) >= 8,
+            s.split("\n")[1:]))
+        bedingung = re.search(r"(?:^|\n)\s*if: (.+)", "\n".join(eigene))
+        getrennt.append(bedingung.group(1).strip() if bedingung else None)
+    assert getrennt == gelesen
 
 
 @pytest.mark.parametrize("informiert", ["ja", "", "Ja", " ja", "nein"])
@@ -254,6 +382,34 @@ def test_fortschritt_gleich_nach_dem_sichern(tmp_path):
                          env={**os.environ, "GITHUB_STEP_SUMMARY": str(zusammenfassung)})
     assert erg.returncode == 0 and "Abrufstand" in erg.stdout and "::warning::" not in erg.stdout, erg
     assert zusammenfassung.read_text(encoding="utf-8").startswith("### Abrufstand")
+
+
+def test_feldabdeckung_gleich_nach_dem_fortschritt(tmp_path):
+    """Feldabdeckung der Rohdaten (Entscheidung 16.11.2026) direkt nach dem Fortschritt und vor dem Dokumentschritt,
+    seiner Sicherung und der Entscheidung über die Veröffentlichung: immer, ohne den Lauf anzuhalten (continue-on-error,
+    Zeitlimit 10 Minuten), ohne Variablen, Geheimnisse und Abruf; der Abruf, die Sicherungen, der Dokumentschritt und
+    der Wächter bleiben, wie sie sind (die übrigen Tests hier). Wie im Lauf ohne Rohdaten: Exit-Code 0 und eine
+    Zusammenfassung."""
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    schritte = text.split("\n      - ")
+    i = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
+    assert "uses: actions/cache/save@" in schritte[i + 1]
+    assert schritte[i + 2].startswith(LESEND["tools/abrufstand.py"])
+    feld = schritte[i + 3]
+    assert feld.startswith(LESEND["tools/feldabdeckung.py"])
+    _lesende_form(feld, "tools/feldabdeckung.py")
+    assert "timeout-minutes: 10" in _ohne_kommentare(feld)
+    assert "run: python -m pipeline dokumente" in schritte[i + 4] and "id: dokumente" in schritte[i + 4]
+    assert schritte[i + 5].startswith("name: Abrufzustand nach den Dokumenten sichern")
+    assert schritte[i + 6].startswith("name: Gibt es Daten zum Veröffentlichen?")
+    assert text.count("python tools/feldabdeckung.py") == 1
+    zusammenfassung = tmp_path / "summary.md"
+    erg = subprocess.run([sys.executable, str(config.ROOT / "tools" / "feldabdeckung.py"), "--raw",
+                          str(tmp_path / "raw")], capture_output=True, text=True, timeout=120,
+                         env={**os.environ, "GITHUB_STEP_SUMMARY": str(zusammenfassung)})
+    assert erg.returncode == 0 and "Feldabdeckung der Rohdaten" in erg.stdout and "::warning::" not in erg.stdout, erg
+    assert "papers.jsonl fehlt" in erg.stdout and not (tmp_path / "raw").exists()
+    assert zusammenfassung.read_text(encoding="utf-8").startswith("### Feldabdeckung der Rohdaten")
 
 
 def test_technikseite_ohne_bonn(tmp_path):

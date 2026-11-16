@@ -56,7 +56,9 @@
 # nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert; mit Freigabe des
 # Dokumentschritts nach diesem ein zweites Mal (eigener Schlüssel; der nächste Lauf nimmt den jüngsten Stand). Gleich
 # nach der ersten Sicherung steht der Fortschritt des Abrufs im Log und in der Zusammenfassung des Laufs
-# (tools/abrufstand.py, nur Zahlen und Zustände).
+# (tools/abrufstand.py, nur Zahlen und Zustände), dann die Feldabdeckung der Rohdaten (tools/feldabdeckung.py, nur
+# Anzahlen, Anteile und häufige Kategorien; während des Vollabrufs als Zwischenstand); beide Schritte lesen nur und
+# halten den Lauf nie an. Erst danach folgen der Dokumentschritt und seine Sicherung.
 # Fehlt nach dem Wiederherstellen der Zustand des Abrufs (data/raw/zustand_abruf.json), hält ein Wächter den
 # freigegebenen Lauf vor dem Abruf an (rot: kein Abruf, keine Dokumente, keine Veröffentlichung, keine Sicherung);
 # überstimmen nur mit RATSATLAS_VOLLABRUF=ja (neuer Vollabruf ab Seite 1, gesetzt lassen, bis eine Abrufnacht gelaufen
@@ -179,10 +181,24 @@ jobs:
         continue-on-error: true
         run: python tools/abrufstand.py
 
-      # Dokumente (PDF-Köpfe) nach dem Abruf, seiner Sicherung und dem Fortschritt, im selben Zeitfenster und nach
-      # derselben Abrufpolitik (eigener Prozess: der Abstand von 20 s zählt ab seinem Start, also auch zur letzten
-      # Anfrage des Abrufs); nur mit RATSATLAS_PDF_FREIGEGEBEN=ja, sonst keine Anfrage und nichts geschrieben (siehe
-      # Kopf). Läuft nicht nach einem roten Abrufschritt (kein eigenes `if`, also auch nicht nach einem roten Wächter).
+      # Feldabdeckung der Rohdaten (Entscheidung 16.11.2026): wie vollständig die Felder der Vorlagen, Sitzungen und
+      # Gremien gefüllt sind (underDirectionOf, originator*, mainFile/auxiliaryFile, location, agendaItem.result, Arten
+      # der Vorlagen und Gremien), während des Vollabrufs als Zwischenstand aus fertiger Datei und Teildatei. Liest nur
+      # data/raw und data/geo; nur Anzahlen, Anteile und häufige Kategorien im Log und in der Zusammenfassung, keine
+      # Inhalte der Objekte; schreibt nichts, veröffentlicht nichts, ohne Variablen und Geheimnisse. Immer, auch nach
+      # einem gescheiterten oder übersprungenen Abruf; hält den Lauf nie an (Exit-Code 0, Frist im Skript 7 Minuten)
+      - name: Feldabdeckung der Rohdaten (nur Zahlen)
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 10
+        run: python tools/feldabdeckung.py
+
+      # Dokumente (PDF-Köpfe) nach dem Abruf, seiner Sicherung, dem Fortschritt und der Feldabdeckung, im selben
+      # Zeitfenster und nach derselben Abrufpolitik (eigener Prozess: der Abstand von 20 s zählt ab seinem Start, also
+      # auch zur letzten Anfrage des Abrufs); nur mit RATSATLAS_PDF_FREIGEGEBEN=ja, sonst keine Anfrage und nichts
+      # geschrieben (siehe Kopf). Läuft nicht nach einem roten Abrufschritt (kein eigenes `if`, also auch nicht nach
+      # einem roten Wächter). Die beiden lesenden Schritte davor verkürzen nur die Zeit bis 1 Uhr (die Feldabdeckung
+      # höchstens um ihr Zeitlimit von 10 Minuten); was bis dahin nicht gelesen ist, folgt in der nächsten Nacht.
       # Eigenes Zeitlimit als letzte Sicherung: Das Zeitfenster endet um 1 Uhr und jede Datei hat höchstens 120 s; der
       # Zustand wird vor jeder Anfrage geschrieben, ein Abbruch von außen verliert höchstens die laufende Datei
       - name: Dokumente der Stadt Köln (PDF-Köpfe, gesperrt bis zur Freigabe)
