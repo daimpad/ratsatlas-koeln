@@ -15,7 +15,13 @@ GitHub Actions, als Markdown an `$GITHUB_STEP_SUMMARY`:
   `abruf_ok`;
 - verbleibende Nächte der Vorlagen nur mit bekannter Gesamtzahl: Die Kölner API nennt in `pagination` keine
   (Stufe 1, 07.11.2026), der Abruf speichert keine; ohne `--vorlagen-gesamt` (etwa eine Angabe der Stadt) steht dort
-  „unbekannt“.
+  „unbekannt“;
+- Dokumentschritt (PDF-Köpfe, pipeline/dokumente.py; läuft in pages.yml erst nach diesem Schritt, gezeigt wird also
+  der Stand vor ihm): aus dem eigenen Eintrag `dokumente` im Zustand die Nacht und die Zahl der darin angefragten
+  Dateien (`nacht`, `dateien`) und die Nächte mit möglicher Sperre beim Dokumentabruf samt Pause (`verdacht`); aus der
+  letzten Zeile `dokumente` der Abrufstatistik Zeitpunkt, Anfragen, Dateien mit Ergebnis und die Art des Ergebnisses.
+  Keine Kennungen, Adressen, Dateinamen oder Ergebnisse einzelner Dateien; wie viele Dateien insgesamt noch zu lesen
+  sind, steht in keiner der drei Dateien (nur im Text der Abrufstatistik, der nicht ausgegeben wird).
 Nur Zahlen und Zustände: keine Titel, Namen oder anderen Inhalte von Objekten und keine Meldungstexte (`meldung` in
 Zustand und STAND.json, `ergebnis` der Abrufstatistik nur als Art wie „ok“ oder „unterbrochen“), denn sie können
 Adressen und Ausschnitte enthalten; einzig der Grund eines übersprungenen Laufs (`abruf_uebersprungen.grund`, vom Abruf
@@ -50,6 +56,11 @@ VON_VORN = ("voll", "voll, Fortsetzung verworfen", "voll, Zeitfilter nicht angew
 PARAMETER = ("page", "limit")
 MAX_ZEILEN = 5000   # letzte Zeilen der Abrufstatistik (je Lauf vier bis fünf)
 NACHT = sessionnet.SPERRE_GLEICHE_NACHT   # Zeilen bis 12 Stunden vor der jüngsten gelten als dieselbe Nacht
+# Dokumentschritt (pipeline/dokumente.py: SCHLUESSEL, VERDACHT_NAECHTE, VERDACHT_PAUSE; hier ohne Import, denn das Modul
+# lädt Geokodierung und Titelmaske; tests/test_abrufstand.py vergleicht die Werte)
+DOKUMENTE = "dokumente"
+DOKUMENTE_NAECHTE = 3
+DOKUMENTE_PAUSE = timedelta(days=7)
 ZAEHLER = (   # Schlüssel im Zustand, Text, Grenze der Nächte, Pause danach
     ("sperre_verdacht", "Nächte mit möglicher Sperre", sessionnet.SPERRE_NAECHTE, sessionnet.SPERRE_PAUSE),
     ("listenfehler", "Nächte mit fehlerhafter Liste", sessionnet.LISTENFEHLER_NAECHTE, sessionnet.LISTENFEHLER_PAUSE),
@@ -311,6 +322,36 @@ def zaehler_auswerten(zustand, schluessel, grenze, pause, jetzt):
     return ", ".join(teile), (f"Pause bis {wann(bis)}" if jetzt < bis else "Pause abgelaufen")
 
 
+def dokumente_auswerten(zustand, zeilen, jetzt):
+    """Dokumentschritt nur aus Zahlen und Zuständen: Eintrag `dokumente` im Zustand (Nacht und Zahl der darin
+    angefragten Dateien, Zähler `verdacht` wie dokumente._pause) und letzte Zeile `dokumente` der Abrufstatistik
+    (Zeitpunkt, Anfragen, Dateien mit Ergebnis, Art des Ergebnisses). Ohne beides None (noch kein Lauf mit Freigabe:
+    ohne sie schreibt der Schritt nichts)."""
+    eintrag = zustand.get(DOKUMENTE)
+    eigene = [z for z in zeilen if z.get("liste") == DOKUMENTE]
+    if eintrag is None and not eigene:
+        return None
+    d = {"nacht": "keine vermerkt", "verdacht": ("–", "–"), "zeile": None}
+    if eintrag is not None and not isinstance(eintrag, dict):
+        d["nacht"] = "unlesbar"
+        d["verdacht"] = ("unlesbar", "unlesbar")
+    elif isinstance(eintrag, dict):
+        nacht, dateien = eintrag.get("nacht"), zahl(eintrag.get("dateien"))
+        if "nacht" in eintrag or "dateien" in eintrag:
+            # wie dokumente._eigener_zustand: unlesbar gilt in der Nacht des nächsten Laufs als ausgeschöpft
+            lesbar = (isinstance(nacht, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", nacht)
+                      and isinstance(eintrag.get("dateien"), int) and dateien is not None)
+            # die Nacht ist nach dem Abend benannt, an dem sie beginnt (dokumente._nacht: 12 bis 12 Uhr Ortszeit)
+            d["nacht"] = (f"{tausend(dateien)} in der Nacht vom {nacht[8:10]}.{nacht[5:7]}.{nacht[:4]}"
+                          if lesbar else "unlesbar (gilt in der Nacht des nächsten Laufs als ausgeschöpft)")
+        d["verdacht"] = zaehler_auswerten(eintrag, "verdacht", DOKUMENTE_NAECHTE, DOKUMENTE_PAUSE, jetzt)
+    if eigene:
+        z = eigene[-1]
+        d["zeile"] = {"datum": zeit(z.get("datum")), "anfragen": zahl(z.get("anfragen")),
+                      "objekte": zahl(z.get("objekte")), "ergebnis": ergebnis_art(z.get("ergebnis"))}
+    return d
+
+
 def restnaechte(gesamt, bisher, je_nacht):
     """Verbleibende Nächte eines Vollabrufs: ⌈(Gesamtzahl − bisher gelesen) / Objekte je Nacht⌉; ohne eine der Zahlen
     oder ohne Fortschritt je Nacht None."""
@@ -327,9 +368,10 @@ def auswerten(zustand_pfad, stand_pfad, statistik_pfad, vorlagen_gesamt=None, je
     zeilen, t_datei = statistik_lesen(statistik_pfad)
     nacht, beginn = letzte_nacht(zeilen)
     listen = {name: liste_auswerten(name, zeilen, nacht, zustand) for name in LISTEN}
+    dokumente = dokumente_auswerten(zustand, zeilen, jetzt)
     a = {"dateien": {Path(zustand_pfad).name: z_datei, Path(stand_pfad).name: s_datei,
                      Path(statistik_pfad).name: t_datei},
-         "nacht_beginn": beginn, "nacht_anfragen": None, "listen": listen, "jetzt": jetzt}
+         "nacht_beginn": beginn, "nacht_anfragen": None, "listen": listen, "jetzt": jetzt, "dokumente": dokumente}
     werte = [zahl(zeilen[i].get("anfragen")) for i in sorted(nacht)]
     if any(w is not None for w in werte):
         a["nacht_anfragen"] = sum(w for w in werte if w is not None)
@@ -416,6 +458,25 @@ def _fortsetzung_text(r, markdown=False):
             f"{wann(f['start'])}")
 
 
+def _dokumente_zeilen(d):
+    """Angaben zum Dokumentschritt (ohne Überschrift), je eine Zeile."""
+    if d is None:
+        return ["noch kein Lauf mit Freigabe (kein Eintrag im Zustand, keine Zeile in der Abrufstatistik)"]
+    out = [f"angefragte Dateien: {d['nacht']}"]
+    z = d["zeile"]
+    if z is None:
+        out.append("letzte Zeile der Abrufstatistik: keine")
+    else:
+        out.append(f"letzte Zeile der Abrufstatistik: {wann(z['datum'])}, Anfragen {tausend(z['anfragen'])}, Dateien "
+                   f"mit Ergebnis {tausend(z['objekte'])}, Ergebnis {z['ergebnis']}")
+    naechte, pause = d["verdacht"]
+    out.append(f"Nächte mit möglicher Sperre beim Dokumentabruf: {naechte}; {pause}")
+    return out
+
+
+DOKUMENTE_TITEL = "Dokumente (PDF-Köpfe; Stand vor dem Dokumentschritt dieses Laufs)"
+
+
 def zeilen_text(a):
     """Ausgabe für das Log (Klartext, eine Angabe je Zeile)."""
     out = ["Abrufstand (nur Zahlen und Zustände, keine Inhalte der Objekte)",
@@ -454,6 +515,8 @@ def zeilen_text(a):
     out.append(f"Verbleibende Nächte (Vorlagen): {a['rest']}")
     for text, naechte, pause in a["zaehler"]:
         out.append(f"{text}: {naechte}; {pause}")
+    out.append(f"{DOKUMENTE_TITEL}:")
+    out += [f"  {z}" for z in _dokumente_zeilen(a["dokumente"])]
     out.append(f"Retry-After: {a['nicht_vor']}")
     out.append(f"Letzter Abbruch: {a['letzter_abbruch']}")
     out.append(f"abruf_ok: {a['abruf_ok']}")
@@ -491,6 +554,7 @@ def markdown(a):
             _fortsetzung_text(r, markdown=True), gespeichert]) + " |")
     zeilen += ["", f"- Verbleibende Nächte (Vorlagen): {a['rest']}"]
     zeilen += [f"- {text}: {naechte}; {pause}" for text, naechte, pause in a["zaehler"]]
+    zeilen += [f"- {DOKUMENTE_TITEL}: " + "; ".join(_dokumente_zeilen(a["dokumente"]))]
     zeilen += [f"- Retry-After: {a['nicht_vor']}", f"- Letzter Abbruch: {a['letzter_abbruch']}",
                f"- `abruf_ok`: {a['abruf_ok']}",
                "- Meldungen in `STAND.json` (Text dort): " + (", ".join(a["meldungen"]) or "keine"),

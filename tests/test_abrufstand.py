@@ -326,3 +326,72 @@ def test_ende_der_nacht_nur_uebersprungen(stand, tmp_path, capsys):
     _statistik(_pfade(tmp_path)[2], [
         _zeile("2026-11-15T22:10:05+00:00", "meetings", "übersprungen", 0, 50, 0, "übersprungen: schon gelesen")])
     assert "Ende der letzten Nacht: übersprungen (in dieser Nacht schon gelesen)\n" in _aufruf(stand, tmp_path, capsys)
+
+
+def test_dokumente_nur_zahlen_und_zustaende(stand, tmp_path, capsys, monkeypatch):
+    """Dokumentschritt (läuft nach dem Fortschritt; gezeigt wird der Stand vor ihm): Nacht und Zahl der angefragten
+    Dateien aus dem eigenen Eintrag `dokumente`, Nächte mit möglicher Sperre beim Dokumentabruf mit Pause wie
+    dokumente._pause, letzte Zeile `dokumente` der Abrufstatistik nur mit Zahlen und der Art des Ergebnisses; keine
+    Meldungstexte, Kennungen oder Adressen. Die Zeile `dokumente` stört die Listen nicht."""
+    zusammenfassung = tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(zusammenfassung))
+    z, s, t = _pfade(tmp_path)
+    z.write_text(json.dumps({
+        "papers": "2026-11-15T22:30:00+00:00",
+        "dokumente": {"nacht": "2026-11-15", "dateien": 120,
+                      "verdacht": {"naechte": 1, "zuletzt": "2026-11-14T23:40:00+00:00", "art": "sperre",
+                                   "code": 429}},
+        "letzter_abbruch": {"zuletzt": "2026-11-14T23:40:00+00:00", "art": "sperre", "code": 429,
+                            "meldung": f"Dokumente: {GEHEIM[0]} {BASIS}/files/1/{GEHEIM[1]}.pdf"}}), encoding="utf-8")
+    s.write_text(json.dumps({"abruf_ok": "2026-11-15T22:30:00+00:00"}), encoding="utf-8")
+    _statistik(t, [
+        _zeile("2026-11-15T22:30:00+00:00", "papers", "inkrementell", 1, 64000, 2, "ok", neu=3, geaendert=4,
+               geloescht=0),
+        _zeile("2026-11-15T23:55:00+00:00", "dokumente", "pdf-koepfe", "", 118, 120,
+               f"ok; Auswahl 300 Dateien; {GEHEIM[0]} VI/61 {BASIS}/files/2/{GEHEIM[2]}.pdf")])
+    out = _aufruf(stand, tmp_path, capsys)
+    teil = out.split("Dokumente (PDF-Köpfe; Stand vor dem Dokumentschritt dieses Laufs):\n", 1)[1]
+    assert teil.startswith("  angefragte Dateien: 120 in der Nacht vom 15.11.2026\n"
+                           "  letzte Zeile der Abrufstatistik: 16.11.2026, 00:55 Uhr, Anfragen 120, Dateien mit "
+                           "Ergebnis 118, Ergebnis ok\n"
+                           "  Nächte mit möglicher Sperre beim Dokumentabruf: 1 von 3, zuletzt 15.11.2026, 00:40 Uhr, "
+                           "Art sperre, HTTP 429; keine Pause\n"), teil
+    assert "Vorlagen (papers): Vollabruf abgeschlossen" in out and "neu 3, geändert 4, gelöscht 0" in out
+    md = zusammenfassung.read_text(encoding="utf-8")
+    assert ("- Dokumente (PDF-Köpfe; Stand vor dem Dokumentschritt dieses Laufs): angefragte Dateien: 120 in der Nacht "
+            "vom 15.11.2026; letzte Zeile der Abrufstatistik:") in md
+    for text in (out, md):
+        assert not any(g in text for g in GEHEIM) and "VI/61" not in text and "/files/" not in text
+
+
+@pytest.mark.parametrize("eintrag, erwartet", [
+    (None, ["noch kein Lauf mit Freigabe (kein Eintrag im Zustand, keine Zeile in der Abrufstatistik)"]),
+    ({"verdacht": {"naechte": 3, "zuletzt": "2026-11-14T23:40:00+00:00", "art": "zeitueberschreitung"}},
+     ["angefragte Dateien: keine vermerkt", "letzte Zeile der Abrufstatistik: keine",
+      "Nächte mit möglicher Sperre beim Dokumentabruf: 3 von 3, zuletzt 15.11.2026, 00:40 Uhr, Art "
+      "zeitueberschreitung; Pause bis 22.11.2026, 00:40 Uhr"]),
+    ({"nacht": 5, "dateien": "viele", "verdacht": "x"},
+     ["angefragte Dateien: unlesbar (gilt in der Nacht des nächsten Laufs als ausgeschöpft)",
+      "Nächte mit möglicher Sperre beim Dokumentabruf: unlesbar; unlesbar (gilt beim nächsten Lauf als Pause)"]),
+    ({"nacht": "2026-11-15", "dateien": True}, ["angefragte Dateien: unlesbar (gilt in der Nacht des nächsten "
+                                                "Laufs als ausgeschöpft)"]),
+    ([1], ["angefragte Dateien: unlesbar", "Nächte mit möglicher Sperre beim Dokumentabruf: unlesbar; unlesbar"]),
+])
+def test_dokumente_ohne_lauf_und_unlesbar(stand, tmp_path, capsys, eintrag, erwartet):
+    """Ohne Eintrag und ohne Zeile (Freigabe nie erteilt): ein Satz; unlesbare Werte wie dokumente._eigener_zustand
+    („ausgeschöpft“, Zähler gilt als Grenze); eine Pause nach drei Nächten bis sieben Tage nach der letzten."""
+    z = _pfade(tmp_path)[0]
+    z.write_text(json.dumps({} if eintrag is None else {"dokumente": eintrag}), encoding="utf-8")
+    out = _aufruf(stand, tmp_path, capsys)
+    assert "Abrufstand nicht ermittelt" not in out
+    teil = out.split("Dokumente (PDF-Köpfe; Stand vor dem Dokumentschritt dieses Laufs):\n", 1)[1]
+    for zeile in erwartet:
+        assert f"  {zeile}\n" in teil, teil
+
+
+def test_dokumente_werte_wie_im_schritt(stand):
+    """Schlüssel, Grenze und Pause stehen in abrufstand.py ohne Import (das Modul lädt Geokodierung und Titelmaske);
+    sie gleichen denen des Dokumentschritts."""
+    from pipeline import dokumente
+    assert (stand.DOKUMENTE, stand.DOKUMENTE_NAECHTE, stand.DOKUMENTE_PAUSE) == (
+        dokumente.SCHLUESSEL, dokumente.VERDACHT_NAECHTE, dokumente.VERDACHT_PAUSE)

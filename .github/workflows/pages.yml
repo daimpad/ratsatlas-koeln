@@ -168,10 +168,12 @@ jobs:
 
       # Fortschritt des Abrufs ins Log und in die Zusammenfassung des Laufs: je Liste Anfragen und Objekte der letzten
       # Nacht, Seiten bisher, Stelle der Fortsetzung, gespeicherter Stand, Zähler der Nächte mit möglicher Sperre und
-      # Pause, letzter Abbruch, wie die Nacht endete, abruf_ok. Liest nur zustand_abruf.json, STAND.json und
-      # abrufstatistik.tsv; nur Zahlen und Zustände, keine Inhalte der Objekte und keine Meldungstexte (außer dem Grund
-      # eines übersprungenen Laufs, aus festen Texten des Abrufs). Immer, auch nach einem gescheiterten oder
-      # übersprungenen Abruf; fehlende oder unlesbare Dateien sind kein Fehler, und der Schritt hält den Lauf nie an
+      # Pause, letzter Abbruch, wie die Nacht endete, abruf_ok; dazu der Dokumentschritt im Stand vor seinem Lauf
+      # (angefragte Dateien der letzten Nacht mit Freigabe, Nächte mit möglicher Sperre beim Dokumentabruf, letzte
+      # Zeile der Abrufstatistik). Liest nur zustand_abruf.json, STAND.json und abrufstatistik.tsv; nur Zahlen und
+      # Zustände, keine Inhalte der Objekte und keine Meldungstexte (außer dem Grund eines übersprungenen Laufs, aus
+      # festen Texten des Abrufs). Immer, auch nach einem gescheiterten oder übersprungenen Abruf; fehlende oder
+      # unlesbare Dateien sind kein Fehler, und der Schritt hält den Lauf nie an
       - name: Fortschritt des Abrufs (Log und Zusammenfassung)
         if: always()
         continue-on-error: true
