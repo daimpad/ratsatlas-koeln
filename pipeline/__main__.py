@@ -34,10 +34,10 @@ STEPS = {
     "verify-bonn": verify.verify,
     "package": paket.write,  # Datenpaket Köln (data/export/ratsatlas-koeln-export.zip)
     "seo": seo.write,  # nach dem Zusammenstellen der Seite in _site
-    "baustellen": baustellen.archive,  # Archiv der Baustellen (eigener Workflow, Branch archiv)
-    "anliegen": anliegen.archive,  # Archiv des Mängelmelders (Workflow baustellen.yml, Branch archiv, Ordner anliegen)
-    "anliegen-seite": anliegen.seite,  # Zahlen je Ortsteil für den Steckbrief (nach dem Auschecken des Archivs)
-    "kandidaten": kandidaten.write,  # Kandidaten Beschluss ↔ Baustelle (Audit, Stichprobe)
+    "baustellen": baustellen.archive,  # Baustellen Köln (WFS; Freigabe BAUSTELLEN_ABRUF, pipeline/dienste.py), Branch archiv
+    "anliegen": anliegen.archive,  # Sag’s uns (Open311; Freigabe ANLIEGEN_ABRUF), Branch archiv, Ordner anliegen
+    "anliegen-seite": anliegen.seite,  # Zahlen je Stadtteil für den Steckbrief (nach dem Auschecken des Archivs)
+    "kandidaten": kandidaten.write,  # Kandidaten Beschluss ↔ Baustelle (Audit, Stichprobe; nur aus dem Archiv)
     "baustellen-seite": kandidaten.write_site,
     "kurzfassungen": kurzfassung.erzeugen,  # Kurzfassungen mit Mistral (Secret MISTRAL_API_KEY), Branch kurzfassungen
     "stufe-c": stufe_c.schritt,  # Stufe C (Sprachmodell, nach build, vor export): Anfragen, Gegenprüfung, Audit

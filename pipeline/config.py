@@ -169,11 +169,13 @@ ZUSATZTHEMEN = {
     "wahlbeteiligung": False,
 }
 
-# Archiv der Baustellen (Bonn, deaktiviert; Branch „archiv“, im Workflow nach _archiv ausgecheckt)
+# Archiv der Zusatzthemen „baustellen“ und „anliegen“ (abgeschaltet; Branch „archiv“, im Workflow nach _archiv
+# ausgecheckt; pipeline/baustellen.py, pipeline/anliegen.py, Abruf über pipeline/dienste.py, vorbereitet 16.11.2026)
 BAUSTELLEN_ARCHIV = Path(os.environ.get("BAUSTELLEN_ARCHIV", ROOT / "_archiv"))
-# noch nicht in SOURCES, solange die Baustellen nicht auf der Seite erscheinen
-BAUSTELLEN_LICENSE = ("CC0 1.0 (Stadt Bonn, Baustellen tagesaktuell und geplant; Lizenz laut Auftraggeber, die Datensätze "
-                      "sind nicht mehr im Katalog von opendata.bonn.de)")
+# Lizenzen laut Datensatzseite (geprüft 16.11.2026); noch nicht in SOURCES, solange die Themen nicht auf der Seite
+# erscheinen (beim Einschalten: SOURCES, data/LICENSE-DATA.md, README, Quellenzeile, Technikseite; TECHNIK.md)
+BAUSTELLEN_LICENSE = "dl-de/zero 2.0 (Stadt Köln, Baustellen Köln, Amt für Verkehrsmanagement); " + NAMENSNENNUNG
+ANLIEGEN_LICENSE = "dl-de/zero 2.0 (Stadt Köln, Sags uns Anliegenmanagement Köln); " + NAMENSNENNUNG
 
 # Öffentliche Adresse der Seite (für absolute Links in Feeds, Kalender und DCAT-Beschreibung)
 SITE_URL_HAUPT = "https://koeln.ratsatlas.de/"   # Hauptadresse (auch im Vorschaubild, pipeline/vorschaubild.py)

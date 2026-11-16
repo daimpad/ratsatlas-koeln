@@ -1,26 +1,42 @@
-# Archiv der Baustellen der Stadt Bonn (Phase 2): täglicher Abruf der drei Feeds, Momentaufnahmen bei Änderungen,
-# Zustand je Baustelle und Änderungsprotokoll im Branch `archiv`. Die Quelle hält keine früheren Stände vor;
-# das Archiv beginnt mit dem ersten Lauf.
-# Dazu der Mängelmelder (Ordner anliegen/): je Meldung nur Kategorie, Tag, Ortsteil und Status, weil ältere Meldungen
-# aus der öffentlichen Liste verschwinden (anliegen/phase0/BERICHT.md). Scheitert eine Quelle, wird die andere
-# trotzdem gesichert; der Lauf gilt dann als fehlgeschlagen.
-name: Archiv (Baustellen, Mängelmelder)
+# Archiv der Kölner Zusatzthemen „Baustellen Köln“ (WFS des Geoportals) und „Sag’s uns“ (Open311) im Branch `archiv`
+# (pipeline/baustellen.py, pipeline/anliegen.py, Abruf über pipeline/dienste.py). INAKTIV: liegt unter
+# .github/workflows-inaktiv und läuft nicht (vorbereitet am 16.11.2026 ohne Abruf; Einschalten nach TECHNIK.md,
+# „Baustellen und Sag’s uns“).
+#
+# Sperren (alle nötig, sonst wird nichts gesendet und nichts geschrieben):
+# - Zusatzthema in pipeline/config.py ZUSATZTHEMEN eingeschaltet („baustellen“, „anliegen“; ohne bricht der Schritt
+#   mit „deaktiviert“ ab);
+# - eigene Freigabe des täglichen Abrufs je Dienst: Repository-Variablen BAUSTELLEN_ABRUF und ANLIEGEN_ABRUF = „ja“
+#   (Entscheidung 16.11.2026: tägliche Abrufe an weitere Server der Stadt brauchen eine eigene Freigabe);
+# - RATSATLAS_STADT_INFORMIERT = „ja“ und das Zeitfenster 23–1 Uhr Ortszeit (beide Hosts sind Server der Stadt);
+# - RATSATLAS_KONTAKT (Kontakt im User-Agent, Pflicht).
+# Je Lauf höchstens 2 Anfragen an den WFS und 14 an Open311 (erster Lauf 13, danach 5), mindestens 2 s Abstand, keine
+# Wiederholung. Passt eine Antwort nicht zu den erwarteten Feldern, schreibt der Schritt nichts und endet rot.
+# Offen vor dem Einschalten: ob dieser Lauf neben dem nächtlichen Abruf der OParl-API (pages.yml, ab 22:10 UTC) laufen
+# darf (andere Hosts derselben Stadt) oder danach; die Uhrzeit unten liegt im Zeitfenster (MEZ und MESZ).
+name: Archiv (Baustellen, Sag’s uns)
 
 on:
   schedule:
-    - cron: "23 5 * * *"
+    - cron: "41 22 * * *"   # 23:41 MEZ, 00:41 MESZ
   workflow_dispatch:
 
 permissions:
   contents: write   # Branch archiv
 
 concurrency:
-  group: "baustellen"
+  group: "archiv"
   cancel-in-progress: false
 
 jobs:
   archiv:
     runs-on: ubuntu-latest
+    env:
+      RATSATLAS_STADT_INFORMIERT: ${{ vars.RATSATLAS_STADT_INFORMIERT }}
+      RATSATLAS_KONTAKT: ${{ vars.RATSATLAS_KONTAKT }}
+      BAUSTELLEN_ABRUF: ${{ vars.BAUSTELLEN_ABRUF }}
+      ANLIEGEN_ABRUF: ${{ vars.ANLIEGEN_ABRUF }}
+      BAUSTELLEN_ARCHIV: _archiv
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
 
@@ -45,17 +61,18 @@ jobs:
           else
             git init -q -b archiv _archiv
           fi
-          cp baustellen/ARCHIV_README.md _archiv/README.md
-          mkdir -p _archiv/anliegen
-          cp anliegen/ARCHIV_README.md _archiv/anliegen/README.md
 
       - name: Baustellen abrufen und archivieren
         id: baustellen
+        env:
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre   # Sperrdatei abruf.lock (eine Verbindung)
         run: python -m pipeline baustellen
         continue-on-error: true
 
-      - name: Mängelmelder abrufen und archivieren
+      - name: Sag’s uns abrufen und archivieren
         id: anliegen
+        env:
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
         run: python -m pipeline anliegen
         continue-on-error: true
 
@@ -74,5 +91,5 @@ jobs:
       - name: Ergebnis
         if: steps.baustellen.outcome != 'success' || steps.anliegen.outcome != 'success'
         run: |
-          echo "Baustellen: ${{ steps.baustellen.outcome }}, Mängelmelder: ${{ steps.anliegen.outcome }}"
+          echo "Baustellen: ${{ steps.baustellen.outcome }}, Sag’s uns: ${{ steps.anliegen.outcome }}"
           exit 1
