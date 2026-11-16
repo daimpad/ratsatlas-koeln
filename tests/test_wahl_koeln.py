@@ -12,7 +12,7 @@ from pathlib import Path
 import openpyxl
 import pytest
 
-from pipeline import config, kontext, wahl_koeln
+from pipeline import config, export, kontext, publish, wahl_koeln
 
 ROOT = Path(__file__).resolve().parents[1]
 GEB = wahl_koeln.gebiete()
@@ -31,6 +31,11 @@ def _zahlen(k):
     """Erfundene Wahlberechtigte und Wähler für den k-ten Stadtteil (ganze Zahlen, Beteiligung 30–79 %)."""
     a = 2000 + 37 * k
     return a, a * (30 + k % 50) // 100
+
+
+# Erfundenes „amtliches Ergebnis“ der ganzen Stadt: genau die Summe der erfundenen Stadtteile
+SUMME = {"summe_wahlberechtigte": sum(_zahlen(k)[0] for k in range(86)),
+         "summe_waehler": sum(_zahlen(k)[1] for k in range(86))}
 
 
 def _blatt_amt(ws, titel, zahl=_zahlen):
@@ -86,14 +91,15 @@ def test_aufbau_des_amts_nur_positivliste(xlsx, tmp_path):
     stand.write_text(json.dumps({"zensus": {"lizenz": "x"}}), encoding="utf-8")
     tsv, _ = wahl_koeln.schreiben(gelesen, zeilen, url="https://example.invalid/anhang.xlsx", titel="Testdaten",
                                   lizenz="dl-de/by-2.0", namensnennung=NENNUNG, abgerufen="2026-11-16",
-                                  tsv=tmp_path / "w.tsv", stand=stand)
+                                  tsv=tmp_path / "w.tsv", stand=stand, **SUMME)
     text = tsv.read_text(encoding="utf-8")
     assert text.splitlines()[0].split("\t") == list(wahl_koeln.SPALTEN) and len(text.splitlines()) == 87
     eintrag = json.loads(stand.read_text(encoding="utf-8"))
     assert set(eintrag) == {"zensus", "wahl2025"}   # andere Quellen bleiben
     w = eintrag["wahl2025"]
     assert w["lizenz"] == f"dl-de/by-2.0, {NENNUNG}" and w["stand"] == "2025-09-14" and w["stadtteile"] == 86
-    assert w["wahlberechtigte"] == sum(_zahlen(k)[0] for k in range(86))
+    assert w["wahlberechtigte"] == SUMME["summe_wahlberechtigte"] and w["wahl_geprueft"] is True
+    assert w["vergleich_amtlich"] == {"wahlberechtigte": SUMME["summe_wahlberechtigte"], "waehler": SUMME["summe_waehler"]}
     for p in PARTEIEN:   # keine Ergebnisse der Parteien, weder in der Tabelle noch im Vermerk
         assert p not in text and p not in json.dumps(eintrag, ensure_ascii=False)
 
@@ -162,6 +168,81 @@ def test_nur_wahlbeteiligung_in_prozent(tmp_path):
         assert z["wahlberechtigte"] == a and abs(z["waehler"] - w) <= a * 0.0005 + 1
 
 
+def test_anteil_statt_prozent(tmp_path):
+    """Nennt die Datei nur die Wahlbeteiligung und steht sie als Anteil darin (Excel-Prozentformat, 0,523 statt 52,3),
+    bricht das Ableiten ab, statt die Wähler mit etwa 0,5 % der Wahlberechtigten zu berechnen."""
+    pfad = tmp_path / "Ratswahl_2025_Stadtteile.xlsx"
+    wb = openpyxl.Workbook()
+    wb.active.title = "Ratswahl 2025"
+    wb.active.append(["Stadtteil-Nr.", "Stadtteil", "Wahlberechtigte", "Wahlbeteiligung"])
+    for k, (i, (name, _)) in enumerate(sorted(GEB.items())):
+        a, w = _zahlen(k)
+        wb.active.append([str(i), name, a, w / a])
+    wb.save(pfad)
+    gelesen = wahl_koeln.lesen(pfad)
+    with pytest.raises(ValueError, match="als Anteil statt in Prozent"):
+        wahl_koeln.ableiten(gelesen)
+
+
+def test_schreiben_nur_mit_passenden_summen(xlsx, tmp_path, capsys):
+    """--schreiben verlangt das amtliche Ergebnis der ganzen Stadt; weichen die Summen der Stadtteile mehr als
+    SUMMEN_TOLERANZ ab (etwa ohne Briefwahl) oder liegt ein Stadtteil außerhalb von PLAUSIBEL, wird nichts geschrieben."""
+    gelesen = wahl_koeln.lesen(xlsx)
+    zeilen = wahl_koeln.ableiten(gelesen)
+    tsv, stand = tmp_path / "w.tsv", tmp_path / "STAND.json"
+    basis = dict(url="https://example.invalid/x.xlsx", titel="T", lizenz="dl-de/zero-2.0", namensnennung="",
+                 abgerufen="2026-11-16", tsv=tsv, stand=stand)
+    ohne_brief = dict(SUMME, summe_waehler=round(SUMME["summe_waehler"] * 1.6))   # Briefwahl fehlte je Stadtteil
+    for summen, grund in (({}, "amtliches Ergebnis"), ({"summe_wahlberechtigte": SUMME["summe_wahlberechtigte"]},
+                                                        "amtliches Ergebnis"), (ohne_brief, "Briefwahl")):
+        with pytest.raises(ValueError, match=grund):
+            wahl_koeln.schreiben(gelesen, zeilen, **basis, **summen)
+    assert not tsv.exists() and not stand.exists()
+    # innerhalb der Schwelle: geschrieben
+    knapp = dict(SUMME, summe_waehler=int(SUMME["summe_waehler"] * (1 + wahl_koeln.SUMMEN_TOLERANZ / 2)))
+    wahl_koeln.schreiben(gelesen, zeilen, **basis, **knapp)
+    assert tsv.exists()
+    tsv.unlink(), stand.unlink()
+    # ein Stadtteil außerhalb der plausiblen Spanne (erfunden: 10 %), Summen passend dazu
+    zeilen_aus = [dict(z) for z in zeilen]
+    z0 = zeilen_aus[0]
+    z0["waehler"], z0["beteiligung_prozent"] = z0["wahlberechtigte"] // 10, round(100 * (z0["wahlberechtigte"] // 10)
+                                                                                   / z0["wahlberechtigte"], 1)
+    summen = {"summe_wahlberechtigte": sum(z["wahlberechtigte"] for z in zeilen_aus),
+              "summe_waehler": sum(z["waehler"] for z in zeilen_aus)}
+    with pytest.raises(ValueError, match="Wahlbeteiligung außerhalb 20–95 % \\(wie check\\): 1;"):
+        wahl_koeln.schreiben(gelesen, zeilen_aus, **basis, **summen)
+    assert not tsv.exists() and not stand.exists()
+    # Werkzeug: ohne Summen Exit-Code 1 ohne Änderung, im Prüfmodus der Hinweis
+    args = ["--datei", str(xlsx), "--tsv", str(tsv), "--stand", str(stand)]
+    assert _tool().main(args + ["--schreiben", "--lizenz", "dl-de/zero-2.0", "--url", "https://example.invalid/x.xlsx",
+                                "--abgerufen", "2026-11-16"]) == 1
+    assert "amtliches Ergebnis" in capsys.readouterr().err and not tsv.exists() and not stand.exists()
+    assert _tool().main(args + ["--summe-wahlberechtigte", str(ohne_brief["summe_wahlberechtigte"]),
+                                "--summe-waehler", str(ohne_brief["summe_waehler"])]) == 0
+    assert "--schreiben bräche ab" in capsys.readouterr().out
+
+
+def test_werkzeug_schreibt_mit_klarer_lizenz(xlsx, tmp_path, capsys):
+    """Erfolgreicher Weg des Werkzeugs: Exit-Code 0, Adresse und Titel in STAND.json; mit --ohne-wahlpruefung (dann
+    mit --blatt) steht wahl_geprueft: false im Vermerk."""
+    tsv, stand = tmp_path / "w.tsv", tmp_path / "STAND.json"
+    args = ["--datei", str(xlsx), "--schreiben", "--lizenz", "dl-de/by-2.0", "--namensnennung", NENNUNG,
+            "--url", "https://example.invalid/anhang.xlsx", "--titel", "Testdaten Ratswahl", "--abgerufen", "2026-11-16",
+            "--summe-wahlberechtigte", str(SUMME["summe_wahlberechtigte"]), "--summe-waehler", str(SUMME["summe_waehler"]),
+            "--tsv", str(tsv), "--stand", str(stand)]
+    assert _tool().main(args) == 0
+    assert "geschrieben:" in capsys.readouterr().out
+    w = json.loads(stand.read_text(encoding="utf-8"))["wahl2025"]
+    assert (w["url"], w["titel"], w["blatt"], w["wahl_geprueft"]) == ("https://example.invalid/anhang.xlsx",
+                                                                      "Testdaten Ratswahl", "Ratswahl", True)
+    assert len(tsv.read_text(encoding="utf-8").splitlines()) == 87
+    assert _tool().main(args + ["--ohne-wahlpruefung"]) == 1   # beide Blätter passen dann: --blatt nötig
+    assert "Blatt angeben" in capsys.readouterr().err
+    assert _tool().main(args + ["--ohne-wahlpruefung", "--blatt", "Ratswahl"]) == 0
+    assert json.loads(stand.read_text(encoding="utf-8"))["wahl2025"]["wahl_geprueft"] is False
+
+
 def test_abgleich_meldet_alle_abweichungen(xlsx):
     gelesen = wahl_koeln.lesen(xlsx)
     z = gelesen["zeilen"]
@@ -209,7 +290,7 @@ def wahldaten(xlsx, tmp_path, monkeypatch):
     gelesen = wahl_koeln.lesen(xlsx)
     wahl_koeln.schreiben(gelesen, wahl_koeln.ableiten(gelesen), url="https://example.invalid/anhang.xlsx",
                          titel="Testdaten", lizenz="dl-de/by-2.0", namensnennung=NENNUNG, abgerufen="2026-11-16",
-                         tsv=tmp_path / "wahl2025_stadtteile.tsv", stand=stand)
+                         tsv=tmp_path / "wahl2025_stadtteile.tsv", stand=stand, **SUMME)
     monkeypatch.setattr(config, "EXPORT", tmp_path / "export")
     return tmp_path / "wahl2025_stadtteile.tsv", stand
 
@@ -265,6 +346,43 @@ def test_kontext_mit_freigabe(wahldaten, monkeypatch):
     assert any("Lizenz" in b and "nicht klar" in b for b in kontext.pruefen())
 
 
+def test_quelle_nur_mit_werten(wahldaten, monkeypatch):
+    """Liegen Tabelle und Eintrag in STAND.json vor, die Freigabe aber nicht, nennen weder quellen_stand() noch DCAT und
+    Rechtehinweis (publish._kontext_teile) die Quelle „wahl2025“, wie kontext.json; mit Freigabe alle."""
+    tsv, stand = wahldaten
+    monkeypatch.setattr(kontext, "WAHL_STADTTEILE", tsv)
+    monkeypatch.setattr(kontext, "STAND", stand)
+    assert "wahl2025" in json.loads(stand.read_text(encoding="utf-8"))
+    assert "wahl2025" not in kontext.quellen_stand()
+    assert not [t for t, _ in publish._kontext_teile() if t == "Testdaten"]
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "wahlbeteiligung", True)
+    assert kontext.quellen_stand()["wahl2025"]["lizenz"] == f"dl-de/by-2.0, {NENNUNG}"
+    assert ("Testdaten", f"dl-de/by-2.0, {NENNUNG}") in publish._kontext_teile()
+
+
+def test_index_funktionen_ohne_freigabe_unveraendert(monkeypatch):
+    """index.json meta.funktionen nennt „wahlbeteiligung“ erst eingeschaltet (index.json bleibt sonst byte-gleich)."""
+    assert "wahlbeteiligung" not in export.funktionen()
+    assert "strukturdaten" not in export.funktionen() or config.ZUSATZTHEMEN["strukturdaten"]
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "wahlbeteiligung", True)
+    assert export.funktionen()["wahlbeteiligung"] is True
+
+
+@pytest.mark.parametrize("wahlberechtigte,waehler,grund", [(0, 0, "keine Wahlberechtigten"),
+                                                           (100, -1, "weniger als null"),
+                                                           (100, 101, "mehr Wähler als Wahlberechtigte")])
+def test_kontext_fehler_der_tabelle(wahldaten, monkeypatch, wahlberechtigte, waehler, grund):
+    tsv, _ = wahldaten
+    zeilen = tsv.read_text(encoding="utf-8").splitlines()
+    teile = zeilen[1].split("\t")
+    teile[2:4] = [str(wahlberechtigte), str(waehler)]
+    tsv.write_text("\n".join([zeilen[0], "\t".join(teile)] + zeilen[2:]) + "\n", encoding="utf-8")
+    monkeypatch.setattr(kontext, "WAHL_STADTTEILE", tsv)
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "wahlbeteiligung", True)
+    with pytest.raises(ValueError, match=grund):
+        kontext.wahlbeteiligung_koeln()
+
+
 def test_kontext_positivliste_der_spalten(wahldaten, monkeypatch):
     """Eine Spalte außerhalb von wahl_koeln.SPALTEN (etwa Stimmen einer Partei) bricht ab."""
     tsv, stand = wahldaten
@@ -277,10 +395,13 @@ def test_kontext_positivliste_der_spalten(wahldaten, monkeypatch):
 
 
 def test_freigabe_aus_und_stand_passend():
-    """Im Repository: Freigabe aus; die Tabelle liegt genau dann vor, wenn STAND.json die Quelle nennt."""
+    """Im Repository: Freigabe aus. Tabelle und Eintrag „wahl2025“ in STAND.json liegen genau dann vor, wenn die
+    Freigabe an ist (beides kommt im Pull Request zum Einschalten), damit STAND.json keine Quelle mit Summen nennt, die
+    kontext.json nicht zeigt."""
     assert config.ZUSATZTHEMEN["wahlbeteiligung"] is False
+    an = config.ZUSATZTHEMEN["wahlbeteiligung"]
     stand = json.loads(kontext.STAND.read_text(encoding="utf-8"))
-    assert kontext.WAHL_STADTTEILE.exists() == ("wahl2025" in stand)
+    assert kontext.WAHL_STADTTEILE.exists() == an and ("wahl2025" in stand) == an
 
 
 def test_texte_fuer_leser():

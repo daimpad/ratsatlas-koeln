@@ -449,11 +449,8 @@ def export_all():
     flaechen.write(out)
     # Übersichtskarte: Vorlagen der letzten zwölf Monate und auffälliges Thema je Gebiet
     gebietszahlen.annotate(index, areas, cache, stand or datetime.now(timezone.utc).isoformat())
-    # Freigaben für site/app.js (idx.meta.funktionen; ein fehlender Schlüssel gilt als aus). Die Strukturdaten stehen
-    # erst mit Freigabe darin, damit index.json ohne sie unverändert bleibt (pipeline/strukturdaten_web.py)
-    funktionen = {k: v for k, v in config.ZUSATZTHEMEN.items() if k != "strukturdaten" or v}
     _dump(out / "index.json", {"meta": _meta(db, stadt=config.STADT_NAME, seitenname=config.SEITENNAME,
-                                             funktionen=funktionen,
+                                             funktionen=funktionen(),
                                              testdaten=bool(_stand().get("testdaten")),
                                              vorschau=bool(_stand().get("vorschau")),
                                              abruf_fehler=_abruf_fehler(_stand()),
@@ -461,6 +458,17 @@ def export_all():
     db.close()
     print(f"{config.STADT_NAME}: {len(index['ortsteile'])} Stadtteile, {len(index['bezirke'])} Bezirke, "
           f"{len(years)} Jahre ohne Ortsbezug, {len(cache)} Vorlagen, {n_points} Punkte im GeoJSON, {n_shards} Dateien für den Assistenten → {out}")
+
+
+# Freigaben, die index.json erst eingeschaltet nennt, damit index.json ohne sie byte-gleich bleibt: die Strukturdaten
+# (pipeline/strukturdaten_web.py) und die Wahlbeteiligung je Stadtteil (pipeline/wahl_koeln.py, nur kontext.json,
+# kein Bezug in site/)
+FUNKTIONEN_NUR_AN = ("strukturdaten", "wahlbeteiligung")
+
+
+def funktionen():
+    """Freigaben für site/app.js (index.json meta.funktionen; ein fehlender Schlüssel gilt als aus)."""
+    return {k: v for k, v in config.ZUSATZTHEMEN.items() if k not in FUNKTIONEN_NUR_AN or v}
 
 
 def _stand():

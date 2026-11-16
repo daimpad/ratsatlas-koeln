@@ -16,9 +16,11 @@ nur Schlüssel und Name des Stadtteils, Wahlberechtigte und Wähler oder die Wah
   Excel-Anhang zu KSN 17/2025 so aufgebaut ist, ist ungeprüft.
 - Tabelle mit einer Kopfzeile (XLSX, CSV oder TSV), auch die Open-Data-CSV des votemanagers (`gebiet-nr`,
   `gebiet-name`, `A` Wahlberechtigte insgesamt, `B` Wähler laut Feldbeschreibung der Stadt Köln zur Kommunalwahl
-  2020); ob es für 2025 eine solche Datei gibt, ist ungeprüft.
+  2020; Feldnamen aus Suchergebnissen, die Feldbeschreibung selbst ist ungeprüft); ob es für 2025 eine solche Datei
+  gibt, ist ungeprüft.
 Geschrieben (data/kontext/wahl2025_stadtteile.tsv, Eintrag „wahl2025“ in data/kontext/STAND.json) wird nur mit einer
-klaren Lizenz (`LIZENZEN`); ohne sie prüft das Werkzeug nur und schreibt nichts.
+klaren Lizenz (`LIZENZEN`), wenn die Summen der Stadtteile zum amtlichen Ergebnis der Stadt passen (`SUMMEN_TOLERANZ`)
+und kein Stadtteil außerhalb von `PLAUSIBEL` liegt; sonst prüft das Werkzeug nur und schreibt nichts.
 """
 import csv
 import hashlib
@@ -37,6 +39,14 @@ WAHLTAG = "2025-09-14"
 # Klare Lizenzen (Auftrag 16.11.2026): nur diese erlauben das Schreiben; dl-de/by verlangt eine Namensnennung
 LIZENZEN = {"dl-de/zero-2.0": "https://www.govdata.de/dl-de/zero-2-0",
             "dl-de/by-2.0": "https://www.govdata.de/dl-de/by-2-0"}
+# Plausible Wahlbeteiligung je Stadtteil in % (dieselbe Spanne prüft `check` in kontext.pruefen); außerhalb schreibt
+# das Werkzeug nichts (etwa bei einem Excel-Anteil 0,523 statt 52,3 %). Liegt ein echter Wert außerhalb, die Spanne hier
+# mit Begründung ändern.
+PLAUSIBEL = (20, 95)
+# Größte Abweichung der Summen der Stadtteile (Wahlberechtigte, Wähler) vom amtlichen Ergebnis der ganzen Stadt, als
+# Anteil (festgelegt, nicht gemessen). Fehlt in den Werten je Stadtteil etwa die Briefwahl, liegt die Summe der Wähler
+# weit darunter; dann schreibt das Werkzeug nichts.
+SUMMEN_TOLERANZ = 0.005
 
 # Positivliste der Überschriften (verglichen nach _kopf); alles andere wird nicht gelesen
 KOPF = {"wahlberechtigte": {"wahlberechtigte", "wahlberechtigte insgesamt"},
@@ -253,7 +263,8 @@ def _werte(z, ort):
 def ableiten(gelesen, geb=None):
     """Zeilen je Stadtteil von data/geo (Nummer, Name aus data/geo, Wahlberechtigte, Wähler, Beteiligung in % mit einer
     Nachkommastelle), sortiert nach Nummer. Jeder der Stadtteile genau einmal, Schlüssel und Name wie in data/geo;
-    sonst Fehler mit allen Abweichungen."""
+    sonst Fehler mit allen Abweichungen. Nennt die Datei nur die Wahlbeteiligung und ist sie überall höchstens 1, ist
+    sie als Anteil statt in Prozent abgelegt (Excel-Prozentformat): Fehler."""
     geb = gebiete() if geb is None else geb
     zeilen = gelesen["zeilen"]
     mit_schluessel = bool(zeilen) and all((z["schluessel"] or "").isdigit() for z in zeilen)
@@ -282,6 +293,11 @@ def ableiten(gelesen, geb=None):
         fehler.append("ohne Zeile: " + ", ".join(f"{i} {geb[i][0]}" for i in fehlen))
     if fehler:
         raise ValueError("Abgleich mit data/geo: " + "; ".join(fehler))
+    if all(z.get("waehler") is None for z in gefunden.values()):
+        p = [_zahl(z.get("beteiligung"), "Wahlbeteiligung") for z in gefunden.values()]
+        if all(x is not None and x <= 1 for x in p):
+            raise ValueError("Wahlbeteiligung überall höchstens 1: als Anteil statt in Prozent abgelegt "
+                             "(Excel-Prozentformat?); Datei prüfen")
     out = []
     for i in sorted(gefunden):
         a, w = _werte(gefunden[i], f"Stadtteil {i} {geb[i][0]}")
@@ -300,7 +316,7 @@ def zusammenfassung(gelesen, zeilen):
             "waehler_aus": "Wähler" if "waehler" in gelesen["spalten"] else "Wahlbeteiligung (Wähler abgeleitet)",
             "stadtteile": len(zeilen), "wahlberechtigte": a, "waehler": w,
             "beteiligung_prozent": round(100 * w / a, 1) if a else None,
-            "ausserhalb_20_95": sum(1 for z in zeilen if not 20 <= z["beteiligung_prozent"] <= 95)}
+            "ausserhalb_20_95": sum(1 for z in zeilen if not PLAUSIBEL[0] <= z["beteiligung_prozent"] <= PLAUSIBEL[1])}
 
 
 # --- Schreiben (nur mit klarer Lizenz) ------------------------------------------------------------------------------
@@ -315,9 +331,29 @@ def lizenz_klar(lizenz, namensnennung=""):
     return None
 
 
-def schreiben(gelesen, zeilen, *, url, titel, lizenz, namensnennung, abgerufen, tsv=None, stand=None):
-    """data/kontext/wahl2025_stadtteile.tsv (Spalten SPALTEN) und STAND.json „wahl2025“; nur mit klarer Lizenz."""
-    grund = lizenz_klar(lizenz, namensnennung)
+def summen_pruefen(z, summe_wahlberechtigte, summe_waehler):
+    """Grund, warum nicht geschrieben werden darf, oder None: amtliche Summen der ganzen Stadt fehlen, die Summen der
+    Stadtteile weichen um mehr als SUMMEN_TOLERANZ davon ab (etwa ohne Briefwahl), oder Stadtteile liegen außerhalb
+    von PLAUSIBEL. Ohne Werte einzelner Stadtteile."""
+    if summe_wahlberechtigte is None or summe_waehler is None:
+        return ("amtliches Ergebnis der ganzen Stadt fehlt (--summe-wahlberechtigte und --summe-waehler, etwa aus dem "
+                "Endergebnis der Ratswahl 2025)")
+    for was, soll in (("wahlberechtigte", summe_wahlberechtigte), ("waehler", summe_waehler)):
+        if soll <= 0 or abs(z[was] - soll) > SUMMEN_TOLERANZ * soll:
+            return (f"Summe {was} der Stadtteile {z[was]} weicht vom amtlichen Wert {soll} um mehr als "
+                    f"{SUMMEN_TOLERANZ:.1%} ab (fehlt die Briefwahl in den Werten je Stadtteil?)")
+    if z["ausserhalb_20_95"]:
+        return (f"Stadtteile mit Wahlbeteiligung außerhalb {PLAUSIBEL[0]}–{PLAUSIBEL[1]} % (wie check): "
+                f"{z['ausserhalb_20_95']}; Datei prüfen")
+    return None
+
+
+def schreiben(gelesen, zeilen, *, url, titel, lizenz, namensnennung, abgerufen, summe_wahlberechtigte=None,
+              summe_waehler=None, tsv=None, stand=None):
+    """data/kontext/wahl2025_stadtteile.tsv (Spalten SPALTEN) und STAND.json „wahl2025“; nur mit klarer Lizenz, mit
+    Summen passend zum amtlichen Ergebnis der ganzen Stadt und ohne Stadtteil außerhalb von PLAUSIBEL."""
+    grund = lizenz_klar(lizenz, namensnennung) or summen_pruefen(zusammenfassung(gelesen, zeilen),
+                                                                 summe_wahlberechtigte, summe_waehler)
     if grund:
         raise ValueError(f"nichts geschrieben: {grund}")
     if not str(url).startswith("https://"):
@@ -334,6 +370,7 @@ def schreiben(gelesen, zeilen, *, url, titel, lizenz, namensnennung, abgerufen, 
     nennung = (namensnennung or "").strip()
     alt[STAND_SCHLUESSEL] = {"titel": titel, "url": url, "lizenz": f"{lizenz}, {nennung}" if nennung else lizenz,
                              "lizenz_url": LIZENZEN[lizenz], "stand": WAHLTAG, "abgerufen": abgerufen,
-                             **zusammenfassung(gelesen, zeilen)}
+                             **zusammenfassung(gelesen, zeilen),
+                             "vergleich_amtlich": {"wahlberechtigte": summe_wahlberechtigte, "waehler": summe_waehler}}
     stand.write_text(json.dumps(alt, ensure_ascii=False, indent=1, sort_keys=True) + "\n", encoding="utf-8")
     return tsv, stand

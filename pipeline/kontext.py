@@ -542,6 +542,12 @@ def wahlbeteiligung_an():
     return bool(config.ZUSATZTHEMEN.get("wahlbeteiligung"))
 
 
+def wahl_daten():
+    """Gibt es Werte der Wahlbeteiligung? Köln: Freigabe und Tabelle je Stadtteil (wahlbeteiligung_koeln); Bonn:
+    Ausschnitt der Stimmbezirke (wahlbeteiligung)."""
+    return (wahlbeteiligung_an() and WAHL_STADTTEILE.exists()) or (WAHL_SB.exists() and WAHL_ZU.exists())
+
+
 def wahlbeteiligung_koeln():
     """Köln (Entscheidung 16.11.2026 (1)): Wahlberechtigte und Wähler der Ratswahl 2025 je Stadtteil aus
     data/kontext/wahl2025_stadtteile.tsv (pipeline/wahl_koeln.py), nur mit Freigabe „wahlbeteiligung“; Stadtbezirke und
@@ -561,7 +567,11 @@ def wahlbeteiligung_koeln():
     ot, audit = {}, []
     for r in rows:
         a, w = int(r["wahlberechtigte"]), int(r["waehler"])
-        if not 0 <= w <= a or a <= 0:
+        if a <= 0:
+            raise ValueError(f"{WAHL_STADTTEILE.name}: {r['stadtteil']}: keine Wahlberechtigten")
+        if w < 0:
+            raise ValueError(f"{WAHL_STADTTEILE.name}: {r['stadtteil']}: weniger als null Wähler")
+        if w > a:
             raise ValueError(f"{WAHL_STADTTEILE.name}: {r['stadtteil']}: mehr Wähler als Wahlberechtigte")
         ot[r["stadtteil"]] = [a, w]
         audit.append([r["stadtteil_id"], r["stadtteil"], geb[int(r["stadtteil_id"])][1], a, w, r["beteiligung_prozent"]])
@@ -768,8 +778,14 @@ def _uesg_karte(gj):
 
 def quellen_stand():
     """Quellen der Kennzahlen mit Titel, Adresse, Lizenz und Stand (data/kontext/STAND.json, Haltestellen aus der eigenen
-    Datei); Grundlage von kontext.json (meta.quellen), den zuschaltbaren Dateien und der DCAT-Beschreibung."""
-    return {**json.loads(STAND.read_text()), **({"haltestellen": json.loads(HALT_STAND.read_text())} if HALT_STAND.exists() else {})}
+    Datei); Grundlage von kontext.json (meta.quellen), den zuschaltbaren Dateien und der DCAT-Beschreibung (Quellen und
+    Rechtehinweis in publish.py). Die Quelle der Wahlbeteiligung („wahl2025“) nur, wenn es Werte dazu gibt
+    (wahl_daten()), damit kontext.json, DCAT und Rechtehinweis dieselben Quellen nennen."""
+    staende = {**json.loads(STAND.read_text()),
+               **({"haltestellen": json.loads(HALT_STAND.read_text())} if HALT_STAND.exists() else {})}
+    if not wahl_daten():
+        staende.pop(wahl_koeln.STAND_SCHLUESSEL, None)
+    return staende
 
 
 def _quelle(stand, key, hinweis):
@@ -867,7 +883,9 @@ def write():
 # Bevölkerung Köln am 31.12.2022, Fortschreibung auf Basis des Zensus 2022 (IT.NRW, Kommunalprofil Köln, Stand
 # 15.01.2026, statistik.nrw/sites/default/files/municipalprofiles/l05315.pdf)
 AMTLICH_EINWOHNER = 1021253
-# Wahlbeteiligung: für Köln noch ohne Quelle (keine Kennzahl)
+# Wahlbeteiligung: für Köln noch ohne Quelle (keine Kennzahl). Beim Einschalten der Freigabe „wahlbeteiligung“ mit dem
+# amtlichen Endergebnis der Ratswahl 2025 und dessen Quelle setzen (TECHNIK.md, „Wahlbeteiligung je Stadtteil“);
+# `check` vergleicht dann den Wert der Stadt (Summe der Stadtteile) auf eine Nachkommastelle
 AMTLICH_WAHLBETEILIGUNG = None
 
 
@@ -916,7 +934,7 @@ def pruefen(path=None):
     if wb is not None and AMTLICH_WAHLBETEILIGUNG is not None and wb != AMTLICH_WAHLBETEILIGUNG:
         befunde.append(f"Wahlbeteiligung {config.STADT_NAME} {wb} % weicht vom amtlichen Wert {AMTLICH_WAHLBETEILIGUNG} % ab")
     for n, v in doc["ortsteile"].items():
-        if v.get("wahlbeteiligung") is not None and not 20 <= v["wahlbeteiligung"] <= 95:
+        if v.get("wahlbeteiligung") is not None and not wahl_koeln.PLAUSIBEL[0] <= v["wahlbeteiligung"] <= wahl_koeln.PLAUSIBEL[1]:
             befunde.append(f"{n}: Wahlbeteiligung {v['wahlbeteiligung']} % außerhalb des plausiblen Bereichs")
         if (v["einwohner"] or 0) < doc["meta"]["mindest_einwohner"] and ANTEILE & set(v):
             befunde.append(f"{n}: Anteile trotz {v['einwohner']} Einwohnern")
