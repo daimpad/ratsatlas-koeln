@@ -149,6 +149,9 @@ def test_vollabruf_ueber_mehrere_naechte(stand, tmp_path, capsys, monkeypatch):
         assert f"{BASIS}/papers?page=500&limit=100" in text
     assert "Letzte Nacht mit Anfragen: ab 15.11.2026, 23:10 Uhr; Anfragen insgesamt 253" in out
     assert "Danach übersprungen: 16.11.2026, 09:30 Uhr: außerhalb des Zeitfensters 23-1 Uhr" in out
+    # letzter_abbruch liegt vor dieser Nacht: Sie endete mit dem Zeitfenster, nicht mit dem Abbruch vom 14.11.
+    assert "Ende der letzten Nacht: Ende des Zeitfensters; Fortsetzung in der nächsten Nacht" in out
+    assert "Ende der letzten Nacht: Ende des Zeitfensters; Fortsetzung in der nächsten Nacht." in md
     teile = out.split("Vorlagen (papers): ")[1].split("Sitzungen (meetings): ")
     papers, rest = teile[0], teile[1]
     assert papers.startswith("Vollabruf läuft")
@@ -218,6 +221,7 @@ def test_mit_dem_abruf_gegen_den_testserver(oparl, monkeypatch, capsys):
     assert f"Fortsetzung: Seite 2 ({oparl.b}/papers?page=2)" in papers
     assert "letzte Nacht: Anfragen 3, Objekte 4" in papers   # Seiten 1 bis 3, die dritte mit HTTP 404
     assert "Letzter Abbruch: Art http, HTTP 404" in out and "abruf_ok: nein" in out
+    assert "Ende der letzten Nacht: Abbruch (Art http, " in out
     assert "Meldungen in STAND.json (Text dort): abruf_fehler (" in out
     # die Fortsetzung folgt in der nächsten Nacht: Zeilen des ersten Laufs einen Tag zurückdatieren
     with open(config.ABRUFSTATISTIK, encoding="utf-8", newline="") as f:
@@ -234,6 +238,9 @@ def test_mit_dem_abruf_gegen_den_testserver(oparl, monkeypatch, capsys):
     assert papers.startswith("Vollabruf abgeschlossen") and "Fortsetzung: –" in papers
     assert "letzte Nacht: Anfragen 2, Objekte 1" in papers   # Seite 2 wiederholt, Seite 3 neu (eine Vorlage)
     assert "gespeicherter Stand: 5 Objekte" in papers and "ok (Modus voll, fortgesetzt)" in papers
+    # Seiten 1 und 2, dann 2 (Nahtstelle) und 3: vier Abrufe über beide Nächte
+    assert "Seitenabrufe im Vollabruf insgesamt: 4" in papers and "Seiten im letzten Lauf" not in papers
+    assert "Ende der letzten Nacht: vollständig" in out
     assert "Verbleibende Nächte (Vorlagen): keine (Vollabruf der Vorlagen abgeschlossen)" in out
     assert "abruf_ok: ja, letzter vollständiger Lauf" in out and "Letzter Abbruch: keiner vermerkt" in out
     assert "Meldungen in STAND.json (Text dort): keine" in out
@@ -256,3 +263,66 @@ def test_nacht_umfasst_zwoelf_stunden(stand):
     zeilen = [{"datum": (jung - timedelta(hours=h)).isoformat()} for h in (25, 12, 11.9, 0)] + [{"datum": "x"}]
     assert stand.letzte_nacht(zeilen) == ({2, 3}, jung - timedelta(hours=11.9))
     assert stand.letzte_nacht([{"datum": None}]) == (set(), None)
+
+
+def test_fortsetzung_nach_einer_nacht_mit_programmfehler(stand, tmp_path, capsys):
+    """Liegt zwischen der letzten Zeile „unterbrochen“ und der letzten Nacht eine Nacht mit „programmfehler“ derselben
+    Fortsetzung, zählt der Zuwachs gegenüber der Zeile „unterbrochen“ (49 900 − 25 000); eine Zeile, die von vorn
+    begann oder mit „ok“ endete, beendet die Suche."""
+    t = _pfade(tmp_path)[2]
+    unterbrochen = _zeile("2026-11-13T22:10:20+00:00", "papers", "voll", 250, 25_000, 250, "unterbrochen nach 250")
+    fehler = _zeile("2026-11-14T22:10:20+00:00", "papers", "voll, fortgesetzt", 250, 0, 1, "programmfehler: X")
+    nacht = _zeile("2026-11-15T22:10:20+00:00", "papers", "voll, fortgesetzt", 500, 49_900, 251,
+                   "unterbrochen nach 500")
+    _statistik(t, [unterbrochen, fehler, nacht])
+    assert "letzte Nacht: Anfragen 251, Objekte 24.900" in _aufruf(stand, tmp_path, capsys)
+    for trenner in (_zeile("2026-11-14T22:10:20+00:00", "papers", "voll", 1, 0, 1, "abbruch: X"),
+                    _zeile("2026-11-14T22:10:20+00:00", "papers", "inkrementell", 1, 9, 1, "ok")):
+        _statistik(t, [unterbrochen, trenner, nacht])
+        assert "letzte Nacht: Anfragen 251, Objekte unbekannt" in _aufruf(stand, tmp_path, capsys)
+
+
+@pytest.mark.parametrize("abbruch, ergebnis, erwartet", [
+    ({"zuletzt": "2026-11-15T22:11:30+00:00", "art": "sperre", "code": None}, "unterbrochen nach 12 Seiten",
+     "Abbruch (Art sperre, 15.11.2026, 23:11 Uhr)"),
+    ({"zuletzt": "2026-11-15T23:30:00+00:00", "art": "obergrenze", "code": None}, "unterbrochen nach 300 Seiten",
+     "Obergrenze je Nacht erreicht (16.11.2026, 00:30 Uhr); Fortsetzung in der nächsten Nacht"),
+    ({"zuletzt": "2026-11-13T22:11:30+00:00", "art": "sperre", "code": None}, "unterbrochen nach 12 Seiten",
+     "Ende des Zeitfensters; Fortsetzung in der nächsten Nacht"),
+    (None, "ok", "vollständig"),
+    (None, "warnung: leer", "vollständig (mit Warnung)"),
+    (None, "programmfehler: X", "Programmfehler"),
+    (None, "abbruch: X", "Abbruch"),
+])
+def test_ende_der_letzten_nacht(stand, tmp_path, capsys, abbruch, ergebnis, erwartet):
+    """Wie die letzte Nacht endete, nur aus Zeitpunkten und Arten: Abbruch nur mit `letzter_abbruch` in dieser Nacht."""
+    z, _, t = _pfade(tmp_path)
+    z.write_text(json.dumps({"letzter_abbruch": abbruch} if abbruch else {}), encoding="utf-8")
+    _statistik(t, [_zeile("2026-11-15T22:10:05+00:00", "organizations", "voll", 1, 96, 1, "ok"),
+                   _zeile("2026-11-15T22:10:20+00:00", "papers", "voll", 12, 1200, 13, ergebnis)])
+    assert f"Ende der letzten Nacht: {erwartet}\n" in _aufruf(stand, tmp_path, capsys)
+
+
+def test_ungewoehnliche_werte_wie_der_abruf(stand, tmp_path, capsys):
+    """Zähler als Text gilt wie in sessionnet._zaehler_pruefen als Grenze (Pause), `nicht_vor` mehr als 30 Tage voraus
+    wird wie im Abruf begrenzt, ein nicht darstellbarer Zeitpunkt erscheint als „unlesbar“ statt die Ausgabe zu
+    ersetzen."""
+    z = _pfade(tmp_path)[0]
+    z.write_text(json.dumps({
+        "sperre_verdacht": {"naechte": "2", "zuletzt": "2026-11-15T22:11:30+00:00", "art": "sperre"},
+        "listenfehler": {"naechte": 1, "zuletzt": "0001-01-01T00:00:00+14:00", "art": "filter"},
+        "letzter_abbruch": {"zuletzt": "0001-01-01T00:00:00+14:00", "art": "sperre"},
+        "nicht_vor": "2027-06-01T00:00:00+00:00"}), encoding="utf-8")
+    out = _aufruf(stand, tmp_path, capsys)
+    assert "Abrufstand nicht ermittelt" not in out
+    assert ("Nächte mit möglicher Sperre: unlesbar (gilt als 3), zuletzt 15.11.2026, 23:11 Uhr, Art sperre; Pause bis "
+            "22.11.2026, 23:11 Uhr") in out
+    assert "Nächte mit fehlerhafter Liste: 1 von 3, zuletzt unlesbar, Art filter; keine Pause" in out
+    assert "Letzter Abbruch: Art sperre, unlesbar" in out
+    assert "Retry-After: kein Abruf vor 16.12.2026, 10:00 Uhr (gespeichert weiter in der Zukunft, gilt als 30 Tage)" in out
+
+
+def test_ende_der_nacht_nur_uebersprungen(stand, tmp_path, capsys):
+    _statistik(_pfade(tmp_path)[2], [
+        _zeile("2026-11-15T22:10:05+00:00", "meetings", "übersprungen", 0, 50, 0, "übersprungen: schon gelesen")])
+    assert "Ende der letzten Nacht: übersprungen (in dieser Nacht schon gelesen)\n" in _aufruf(stand, tmp_path, capsys)

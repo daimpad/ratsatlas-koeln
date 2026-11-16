@@ -2260,8 +2260,13 @@ def test_veroeffentlichte_flaechen_aus_data_geo():
     f = ra["geometrie_fassungen"]
     assert f["stadtteil→stadtbezirk"] == {e: meta["raum"][e]["sha256"] for e in ("stadtteil", "stadtbezirk")}
     assert f["quartier→stadtteil"]["quartier"] == meta["raum"]["quartier"]["sha256"]
-    assert rm.GEO_HERKUNFT[f["quartier→stadtteil"]["stadtteil"]] == "stadtteile_koeln.geojson"
-    assert "vor der lückenlosen Bereinigung vom 13.11.2026" in f["hinweis"] and "strukturdaten-gebiete" in f["hinweis"]
+    if f["quartier→stadtteil"]["stadtteil"] == meta["raum"]["stadtteil"]["sha256"]:
+        # nach dem nächsten vollständigen Lauf `strukturdaten`: beide Paare mit derselben Fassung, ohne Zusatzsatz
+        assert f["hinweis"] == strukturdaten.FASSUNGEN_HINWEIS
+    else:   # Übergang seit `strukturdaten-gebiete` (16.11.2026): Quartier → Stadtteil mit der früheren Fassung
+        assert rm.GEO_HERKUNFT[f["quartier→stadtteil"]["stadtteil"]] == "stadtteile_koeln.geojson"
+        assert ("vor der lückenlosen Bereinigung vom 13.11.2026" in f["hinweis"]
+                and "strukturdaten-gebiete" in f["hinweis"])
     zuordnung, audit = _lesen(DATEN / "zuordnung.tsv"), _lesen(DATEN / "audit_raumabgleich.tsv")
     teile = [a for a in audit if a["von_ebene"] == "stadtteil"]
     assert len(teile) == 86 and all(a["pruefstatus"] == "ok" and a["flaechenanteil"] == "1.0000"

@@ -55,7 +55,7 @@ REGELN = [
     ("pipeline/einfachseite.py", D, "Verstehen (Einfache Sprache)", "nicht in 5.4; zweiter Lauf (Entscheidung 04.11.2026)"),
     ("pipeline/kurzfassung.py", D, "Kurzfassungen", "laut 2. zulässig, nicht in 5.4; zweiter Lauf (Entscheidung 04.11.2026), braucht Volltexte"),
     ("pipeline/chat.py", D, "Ratsassistent", "Daten für den Chat (5.4: deaktivieren)"),
-    ("pipeline/anliegen.py", D, "Mängelmelder Bonn", "Archiv des Bonner Anliegenmelders, ohne Kölner Pendant"),
+    ("pipeline/anliegen.py", D, "Mängelmelder Bonn", "Archiv des Bonner Anliegenmelders; Kölner Gegenstück „Sag’s uns“ (Open311, dl-de/zero 2.0, Recherche 16.11.2026), Abruf nur mit eigener Freigabe"),
     ("pipeline/baustellen.py", D, "Baustellen", "Bonner Baustellenfeeds (5.4: deaktivieren)"),
     ("pipeline/kandidaten.py", D, "Baustellen", "Abgleich Beschluss ↔ Baustelle, hängt an baustellen.py"),
     ("pipeline/haushaltsplan.py", D, "Haushalt", "liest Bonner Haushaltspläne (PDF) (5.4: deaktivieren)"),

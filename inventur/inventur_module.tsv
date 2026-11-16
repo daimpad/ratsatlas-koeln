@@ -33,7 +33,7 @@ pipeline/__init__.py	1	Bonn-spezifisch, anpassen	Paket	Paketbeschreibung nennt a
 pipeline/__main__.py	93	Bonn-spezifisch, anpassen	Aufruf	Schrittliste enthält Bonner Schritte (fetch-lite, Baustellen, Wahlen); Köln-Schritte und Abschaltung ergänzen	5
 pipeline/abruf.py	88	generisch	Abruf	neu (Phase 2): Abrufpolitik Köln – eine Verbindung, Abstand, Zeitfenster, Backoff, Sperre bis zur Information der Stadt	0
 pipeline/actors.py	184	Bonn-spezifisch, anpassen	Akteure	Bonner Vorlagenarten, Titelmuster, „Co-Dezernat“; Köln: underDirectionOf bzw. PDF-Kopf „Dezernat, Dienststelle“, Ämtertabelle, § 3/§ 4-Muster	1
-pipeline/anliegen.py	248	Bonn-Zusatzthema, deaktivieren	Mängelmelder Bonn	Archiv des Bonner Anliegenmelders, ohne Kölner Pendant	11
+pipeline/anliegen.py	248	Bonn-Zusatzthema, deaktivieren	Mängelmelder Bonn	Archiv des Bonner Anliegenmelders; Kölner Gegenstück „Sag’s uns“ (Open311, dl-de/zero 2.0, Recherche 16.11.2026), Abruf nur mit eigener Freigabe	11
 pipeline/baustellen.py	143	Bonn-Zusatzthema, deaktivieren	Baustellen	Bonner Baustellenfeeds (5.4: deaktivieren)	2
 pipeline/begriffsseite.py	116	Bonn-spezifisch, anpassen	Verstehen	Seite begriffe/; Texte auf Köln	0
 pipeline/besetzung.py	251	Bonn-Zusatzthema, deaktivieren	Akteure (Gremien)	Mitgliedschaften aus Bonner OParl; zweiter Lauf (Entscheidung 04.11.2026), zusätzliche Abrufe gegen Abrufpolitik abwägen	2

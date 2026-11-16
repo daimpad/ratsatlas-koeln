@@ -9,6 +9,7 @@ GitHub Actions, als Markdown an `$GITHUB_STEP_SUMMARY`:
   Abrufstatistik bis 12 Stunden vor der jüngsten), Seiten bisher, Vollabruf läuft oder abgeschlossen, Stelle der
   Fortsetzung (Seitennummer und Adresse nur mit `page` und `limit`, ohne andere Parameter, Zugangsdaten oder Anker),
   gespeicherter Stand (Objekte der letzten Zeile mit Ergebnis `ok` oder `übersprungen`);
+- wie die letzte Nacht endete (Abbruch, Ende des Zeitfensters oder vollständig; nur aus Zeitpunkten und Arten);
 - Zähler der Nächte mit möglicher Sperre samt Pause von sieben Tagen (wie sessionnet._pause_grund), Nächte mit
   fehlerhafter Liste und mit Zertifikatsfehlern, Retry-After (`nicht_vor`), letzter Abbruch (Art, HTTP-Code, Zeit),
   `abruf_ok`;
@@ -109,8 +110,14 @@ def zeit(wert):
 
 
 def wann(t):
-    """Zeitpunkt in Ortszeit Köln, etwa „16.11.2026, 23:10 Uhr“; None: „unbekannt“."""
-    return t.astimezone(abruf.ORTSZEIT).strftime("%d.%m.%Y, %H:%M Uhr") if t is not None else "unbekannt"
+    """Zeitpunkt in Ortszeit Köln, etwa „16.11.2026, 23:10 Uhr“; None: „unbekannt“; nicht darstellbar (etwa
+    0001-01-01T00:00+14:00): „unlesbar“."""
+    if t is None:
+        return "unbekannt"
+    try:
+        return t.astimezone(abruf.ORTSZEIT).strftime("%d.%m.%Y, %H:%M Uhr")
+    except (OverflowError, ValueError, OSError):
+        return "unlesbar"
 
 
 def tausend(n):
@@ -173,6 +180,21 @@ def letzte_nacht(zeilen):
     return {i for i, _ in nacht}, min(t for _, t in nacht)
 
 
+def ausgangswert(zeilen, vorher):
+    """Objekte des laufenden Vollabrufs vor der letzten Nacht: aus der letzten Zeile „unterbrochen“ davor (nur sie
+    speichert eine Fortsetzung, sessionnet._abruf_liste). Dazwischen dürfen Zeilen „abbruch“, „programmfehler“ oder
+    „warnung“ derselben Fortsetzung liegen; eine Zeile, die von vorn begann (VON_VORN) oder mit „ok“ endete, beendet
+    die Suche (None)."""
+    for i in reversed(vorher):
+        z = zeilen[i]
+        art = ergebnis_art(z.get("ergebnis"))
+        if art == "unterbrochen":
+            return zahl(z.get("objekte"))
+        if art == "ok" or z.get("modus") in VON_VORN:
+            return None
+    return None
+
+
 def liste_auswerten(name, zeilen, nacht, zustand):
     """Kennzahlen einer Liste aus Abrufstatistik (Zeilen, Indizes der letzten Nacht) und Zustand."""
     eigene = [i for i, z in enumerate(zeilen) if z.get("liste") == name]
@@ -193,13 +215,10 @@ def liste_auswerten(name, zeilen, nacht, zustand):
         if m == "voll, fortgesetzt":
             # Objekte der Fortsetzung zählen über die Nächte weiter: Zuwachs gegenüber der letzten Zeile vor dieser
             # Nacht; begann der Vollabruf erst in dieser Nacht (erste Zeile der Nacht ohne Fortsetzung), ab 0
-            davor = zeilen[vorher[-1]] if vorher else None
             if zeilen[in_nacht[0]].get("modus") in VON_VORN:
                 basis = 0
-            elif davor and ergebnis_art(davor.get("ergebnis")) == "unterbrochen":
-                basis = zahl(davor.get("objekte"))
             else:
-                basis = None
+                basis = ausgangswert(zeilen, vorher)
             r["objekte_nacht"] = objekte - basis if objekte is not None and basis is not None and objekte >= basis \
                 else None
         elif m == "inkrementell" and art == "ok":
@@ -241,6 +260,31 @@ def liste_auswerten(name, zeilen, nacht, zustand):
     return r
 
 
+def ende_der_nacht(zeilen, nacht, beginn, la):
+    """Wie die letzte Nacht mit Anfragen endete, nur aus Zeitpunkten und Arten: Abbruch, wenn `letzter_abbruch.zuletzt`
+    in dieser Nacht liegt (jeder Abbruch außer dem Ende des Zeitfensters setzt ihn, sessionnet.abrufen); sonst mit
+    einer Zeile „unterbrochen“ das Ende des Zeitfensters; sonst nach den Arten der Zeilen."""
+    if beginn is None:
+        return "keine Nacht mit Anfragen in der Abrufstatistik"
+    if isinstance(la, dict):
+        t = zeit(la.get("zuletzt"))
+        if t is not None and timedelta(0) <= t - beginn < NACHT:
+            if la.get("art") == "obergrenze":
+                return f"Obergrenze je Nacht erreicht ({wann(t)}); Fortsetzung in der nächsten Nacht"
+            return f"Abbruch (Art {art_text(la.get('art'))}, {wann(t)})"
+    arten = {ergebnis_art(zeilen[i].get("ergebnis")) for i in nacht}
+    if "unterbrochen" in arten:
+        return "Ende des Zeitfensters; Fortsetzung in der nächsten Nacht"
+    for art, text in (("programmfehler", "Programmfehler"), ("abbruch", "Abbruch")):
+        if art in arten:
+            return text
+    if arten == {"übersprungen"}:
+        return "übersprungen (in dieser Nacht schon gelesen)"
+    if arten and arten <= {"ok", "übersprungen", "warnung"}:
+        return "vollständig" + (" (mit Warnung)" if "warnung" in arten else "")
+    return "unbekannt"
+
+
 def zaehler_auswerten(zustand, schluessel, grenze, pause, jetzt):
     """Zähler der Nächte und Pause wie sessionnet._pause_grund: (Nächte als Text, Pause als Text)."""
     v = zustand.get(schluessel)
@@ -248,7 +292,9 @@ def zaehler_auswerten(zustand, schluessel, grenze, pause, jetzt):
         return f"0 von {grenze}", "keine Pause"
     if not isinstance(v, dict):
         return "unlesbar", "unlesbar (gilt beim nächsten Lauf als Pause)"
-    n, zuletzt = zahl(v.get("naechte")), zeit(v.get("zuletzt"))
+    n, zuletzt = v.get("naechte"), zeit(v.get("zuletzt"))
+    if isinstance(n, bool) or not isinstance(n, int) or n < 0:   # wie sessionnet._zaehler_pruefen: gilt als Grenze
+        n = None
     teile = [f"{n} von {grenze}" if n is not None else f"unlesbar (gilt als {grenze})"]
     if zuletzt is not None:
         teile.append(f"zuletzt {wann(zuletzt)}")
@@ -291,9 +337,13 @@ def auswerten(zustand_pfad, stand_pfad, statistik_pfad, vorlagen_gesamt=None, je
                     for s, text, grenze, pause in ZAEHLER]
     nv = zustand.get("nicht_vor")
     t = zeit(nv)
+    grenze = jetzt + abruf.RETRY_AFTER_HOECHSTENS   # wie sessionnet: weiter in der Zukunft gilt als 30 Tage
     a["nicht_vor"] = ("keiner" if nv is None else "unlesbar (gilt beim nächsten Lauf als 7 Tage)" if t is None
+                      else f"kein Abruf vor {wann(grenze)} (gespeichert weiter in der Zukunft, gilt als "
+                           f"{abruf.RETRY_AFTER_HOECHSTENS.days} Tage)" if t > grenze
                       else f"kein Abruf vor {wann(t)}" if t > jetzt else "abgelaufen")
     la = zustand.get("letzter_abbruch")
+    a["ende_nacht"] = ende_der_nacht(zeilen, nacht, beginn, la)
     if not la:
         a["letzter_abbruch"] = "keiner vermerkt (seit dem letzten vollständigen Lauf oder nur Ende des Zeitfensters)"
     elif not isinstance(la, dict):
@@ -375,6 +425,7 @@ def zeilen_text(a):
     else:
         out.append(f"Letzte Nacht mit Anfragen: ab {wann(a['nacht_beginn'])}; Anfragen insgesamt "
                    f"{tausend(a['nacht_anfragen'])}")
+    out.append(f"Ende der letzten Nacht: {a['ende_nacht']}")
     if a["uebersprungen"]:
         out.append(f"Danach übersprungen: {a['uebersprungen']}")
     for name in LISTEN:
@@ -388,7 +439,10 @@ def zeilen_text(a):
             out.append(f"  Seiten bisher: {tausend(r['seiten'])}; Objekte im laufenden Vollabruf: "
                        f"{tausend(r['objekte_bisher'])}")
         else:
-            out.append(f"  Seiten im letzten Lauf: {tausend(r['seiten']) if r['ergebnis'] else '–'}")
+            # die Spalte `seiten` zählt über alle Nächte, die Seite an der Nahtstelle jeder Fortsetzung doppelt
+            bezeichnung = ("Seitenabrufe im Vollabruf insgesamt" if r["modus"] == "voll, fortgesetzt"
+                           else "Seiten im letzten Lauf")
+            out.append(f"  {bezeichnung}: {tausend(r['seiten']) if r['ergebnis'] else '–'}")
         out.append(f"  Fortsetzung: {_fortsetzung_text(r)}")
         out.append("  gespeicherter Stand: " + (f"{tausend(r['gespeichert'])} Objekte ({wann(r['gespeichert_am'])})"
                                                if r["gespeichert_am"] or r["gespeichert"] is not None else "keiner"))
@@ -417,10 +471,11 @@ def markdown(a):
     else:
         zeilen.append(f"Letzte Nacht mit Anfragen: ab {wann(a['nacht_beginn'])}; Anfragen insgesamt "
                       f"{tausend(a['nacht_anfragen'])}.")
+    zeilen.append(f"Ende der letzten Nacht: {a['ende_nacht']}.")
     if a["uebersprungen"]:
         zeilen.append(f"Danach übersprungen: {a['uebersprungen'].replace('|', '/')}.")
     zeilen += ["", "| Liste | Stand | Anfragen (letzte Nacht) | Objekte (letzte Nacht) | "
-                   "Seiten (Vollabruf bisher, sonst letzter Lauf) | Objekte im Vollabruf | Fortsetzung | "
+                   "Seiten (Vollabruf: Abrufe bisher bzw. insgesamt, sonst letzter Lauf) | Objekte im Vollabruf | Fortsetzung | "
                    "gespeicherter Stand |",
                "|---|---|---:|---:|---:|---:|---|---|"]
     for name in LISTEN:
