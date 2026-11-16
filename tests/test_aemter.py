@@ -521,3 +521,50 @@ def test_seite_zeigt_zuordnung_abgeleitet_mit_fundstelle():
                       'Köln, Stand 01.11.2026, Seite 1, Spalte Dezernat VI, Eintrag 30</span>')
     assert "II/2 &lt;b&gt;" in aus[1] and "Dezernat II – Finanzen und Gleichstellung" in aus[1]
     assert aus[2] == aus[3] == ""
+
+
+def test_seite_zeigt_kennung_aus_dem_kopf_mit_zuordnung():
+    """site/app.js (federZeile): Federführung aus dem Kopf der Vorlage (pdf_kopf) oder einer Anlage (pdf_kopf_anlage)
+    als Kennung mit Herkunft und Sicherheit, darunter Dezernat und Dienststelle laut Ämtertabelle wie bei
+    underDirectionOf (aemterZeile; TECHNIK.md „Schnittstelle für den Schritt Dokumente“); ohne eindeutige Zuordnung nur
+    die Kennung, nie „noch keinem Amt zugeordnet“. Zeilen aus underDirectionOf unverändert, Text maskiert."""
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("node fehlt")
+    app = (ROOT / "site" / "app.js").read_text(encoding="utf-8")
+    assert "keinem Amt zugeordnet" not in app
+    teile = [re.search(m, app, re.S | re.M).group(0) for m in (
+        r"^  const esc = .*?;\n", r"^  const AEMTER_ZUGEORDNET = .*?;\n",
+        r"^  const aemterZeile = \(a\) => \{.*?^  \};\n", r"^  const KOPF = \{.*?^  \};\n",
+        r"^  const federZeile = \(r\) => .*?;\n")]
+    zugeordnet = aemter.fuer_export(aemter.zuordnen(kennung="VI/61", datum="2026-11-05"))
+    vor_plan = aemter.fuer_export(aemter.zuordnen(kennung="II/II/2", datum="2026-09-20"))
+    assert zugeordnet["status"] == aemter.EINDEUTIG and vor_plan["status"] == aemter.VOR_PLAN
+    zeilen = [
+        {"kind": "federfuehrend", "method": "pdf_kopf", "evidence": "Kopf der Vorlage (S. 1): VI/61", "derived": 1,
+         "confidence": "mittel", "kennung": "VI/61", "label": None, "name": None, "aemtertabelle": zugeordnet},
+        {"kind": "federfuehrend", "method": "pdf_kopf_anlage", "evidence": "Kopf der Anlage (S. 1): II/II/2",
+         "derived": 1, "confidence": "niedrig", "kennung": "II/II/2", "label": None, "name": None,
+         "aemtertabelle": vor_plan},
+        {"kind": "federfuehrend", "method": "pdf_kopf", "evidence": "Kopf der Vorlage (S. 1): VI/61", "derived": 1,
+         "confidence": "mittel", "kennung": "VI/61 <b>", "label": None, "name": None},
+        {"kind": "federfuehrend", "method": "underDirectionOf", "evidence": "underDirectionOf", "derived": 0,
+         "label": "61 Stadtplanungsamt", "name": "61 Stadtplanungsamt", "aemtertabelle": zugeordnet},
+    ]
+    code = "".join(teile) + f"console.log(JSON.stringify({json.dumps(zeilen)}.map(federZeile)));"
+    r = subprocess.run([node, "-e", code], capture_output=True, text=True, timeout=60)
+    assert r.returncode == 0, r.stderr
+    aus = json.loads(r.stdout)
+    amt = ('<span class="aemter-zeile">Dezernat VI – Stadtentwicklung, Wirtschaft, Planen und Bauen · 61 '
+           'Stadtplanungsamt</span> <span class="derived">abgeleitet, über Geschäfts- und Dezernatsverteilungsplan der '
+           'Stadt Köln, Stand 01.11.2026, Seite 1, Spalte Dezernat VI, Eintrag ')
+    kopf, zuordnung = aus[0].split("<br>")
+    assert kopf == ('Kennung VI/61 <span class="derived">abgeleitet aus dem Kopf der Vorlage (Seite 1) · erkannt nach '
+                    'der Bezeichnung „Dezernat, Dienststelle“</span>')
+    assert zuordnung.startswith(amt)
+    assert aus[1] == ('Kennung II/II/2 <span class="derived">abgeleitet aus dem Kopf einer Anlage (Seite 1), weil die '
+                      'Stadt kein Hauptdokument nennt · erkannt nach der Bezeichnung „Dezernat, Dienststelle“, weniger '
+                      'sicher</span>')   # vor dem Plan: keine Zuordnung, nur die Kennung
+    assert aus[2].startswith("Kennung VI/61 &lt;b&gt; ") and "<br>" not in aus[2]
+    label, zuordnung = aus[3].split("<br>")
+    assert label == "61 Stadtplanungsamt" and zuordnung.startswith(amt)

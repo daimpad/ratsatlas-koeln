@@ -20,7 +20,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from pipeline import abruf, build, check, config, dokumente, export, pdfkopf, sessionnet
+from pipeline import abruf, aemter, build, check, config, dokumente, export, pdfkopf, sessionnet
 
 # --- erfundene PDF-Dateien -------------------------------------------------------------------------------------------
 
@@ -281,11 +281,14 @@ def test_ohne_freigabe_keine_anfrage_und_zustand_unveraendert(oparl, monkeypatch
 def test_kennung_wird_federfuehrung_ohne_underdirectionof(oparl, monkeypatch):
     """Ende zu Ende gegen den Testserver: neueste zuerst, nur Abgeleitetes je Datei, Zeile in der Abrufstatistik;
     build übernimmt die Kennung als Federführung (pdf_kopf, Konfidenz nach Trefferart) nur ohne underDirectionOf;
-    export zeigt sie mit Kennung, check besteht."""
+    export zeigt sie mit Kennung und ordnet sie über die Ämtertabelle zu (aemter.zuordnen mit Kennung und Datum der
+    Vorlage; eine dreiteilige Kennung nur bis zur Dienststelle), check besteht."""
     oparl.orgs.append({"id": f"{oparl.b}/organizations/amt61", "name": "61 Stadtplanungsamt",
                        "organizationType": "Verwaltungsbereich", "classification": "Stadtplanungsamt"})
     _mit_dateien(oparl, {1: KOPF, 3: ["Dezernat VI, 61/2"], 5: ["Mitteilung ohne Kopf"], 7: KOPF})
     _vorlage(oparl, 7)["underDirectionOf"] = [f"{oparl.b}/organizations/amt61"]
+    for i in (1, 3, 5, 7):   # im Zeitraum des Plans (Stand 01.11.2026, geprüft am 13.11.2026); Reihenfolge wie vorher
+        _vorlage(oparl, i)["date"] = "2026-11-05"
     sessionnet.fetch_all()
     _freigabe(monkeypatch)
     dokumente.schritt()
@@ -313,11 +316,25 @@ def test_kennung_wird_federfuehrung_ohne_underdirectionof(oparl, monkeypatch):
     export.export()
     papers = {p["reference"]: p for f in (config.EXPORT / config.STADT).rglob("*.json") if f.name != "index.json"
               for p in (json.loads(f.read_text()).get("papers") or []) if isinstance(p, dict) and "responsibility" in p}
+    # Zuordnung über die Kennung (TECHNIK.md, Ämtertabelle „Schnittstelle für den Schritt Dokumente“)
+    zuordnung = aemter.fuer_export(aemter.zuordnen(kennung="VI/61", datum="2026-11-05"))
+    assert (zuordnung["status"], zuordnung["methode"], zuordnung["kennung"]) == (aemter.EINDEUTIG, "kennung", "VI/61")
     assert papers["1001/2026"]["responsibility"] == [{
         "kind": "federfuehrend", "method": "pdf_kopf", "evidence": "Kopf der Vorlage (S. 1): VI/61", "derived": 1,
-        "confidence": "mittel", "kennung": "VI/61", "label": None, "name": None}]
-    # ohne Kopf bleibt die Form wie bisher (ohne confidence und kennung)
-    assert set(papers["1007/2026"]["responsibility"][0]) == {"kind", "method", "evidence", "derived", "label", "name"}
+        "confidence": "mittel", "kennung": "VI/61", "label": None, "name": None, "aemtertabelle": zuordnung}]
+    # dreiteilige Kennung aus der ausgeschriebenen Form: nur bis zur Dienststelle
+    dreiteilig = papers["1003/2026"]["responsibility"][0]["aemtertabelle"]
+    assert dreiteilig == aemter.fuer_export(aemter.zuordnen(kennung="VI/61/2", datum="2026-11-05"))
+    assert (dreiteilig["status"], dreiteilig["kennung"]) == (aemter.NUR_DIENSTSTELLE, "VI/61")
+    # ohne Kopf bleibt die Form wie bisher (ohne confidence und kennung), Abgleich über den Namen der Organisation
+    assert set(papers["1007/2026"]["responsibility"][0]) == {"kind", "method", "evidence", "derived", "label", "name",
+                                                              "aemtertabelle"}
+    assert papers["1007/2026"]["responsibility"][0]["aemtertabelle"]["methode"] == "name"
+    # Prüfprotokoll: Methode der Federführung, Kennung als Angabe, Ergebnis und Methode des Abgleichs
+    audit = {z.split("\t")[0]: z.split("\t") for z in
+             (config.EXPORT / "audit_federfuehrung.tsv").read_text(encoding="utf-8").splitlines()[1:]}
+    assert audit["1001/2026"][3:7] == ["pdf_kopf", "VI/61", aemter.EINDEUTIG, "kennung"]
+    assert audit["1003/2026"][3:7] == ["pdf_kopf", "VI/61/2", aemter.NUR_DIENSTSTELLE, "kennung"]
 
 
 def test_check_meldet_federfuehrung_aus_kopf_ohne_erlaubnis(oparl, monkeypatch):
@@ -906,6 +923,7 @@ def test_anlage_wird_federfuehrung_eine_stufe_niedriger(oparl, monkeypatch):
                                            _datei(oparl, 91, _pdf([KOPF]), name="Anlage 2")]
     # ein Antrag mit der Vorlage der Verwaltung als Anlage: weder gelesen noch mit ihrer Kennung
     _vorlage(oparl, 4)["auxiliaryFile"] = [_vorlage(oparl, 3)["auxiliaryFile"][1]]
+    _vorlage(oparl, 9)["date"] = "2026-11-05"   # im Zeitraum des Plans (Stand 01.11.2026, geprüft am 13.11.2026)
     sessionnet.fetch_all()
     _freigabe(monkeypatch)
     dokumente.schritt()
@@ -930,9 +948,16 @@ def test_anlage_wird_federfuehrung_eine_stufe_niedriger(oparl, monkeypatch):
     export.export()
     papers = {p["reference"]: p for f in (config.EXPORT / config.STADT).rglob("*.json") if f.name != "index.json"
               for p in (json.loads(f.read_text()).get("papers") or []) if isinstance(p, dict) and "responsibility" in p}
+    # Zuordnung über die Ämtertabelle wie bei der Hauptdatei: vor dem ältesten Plan nur der Status, im Zeitraum des
+    # Plans Dezernat und Dienststelle
     assert papers["1003/2026"]["responsibility"] == [{
         "kind": "federfuehrend", "method": "pdf_kopf_anlage", "evidence": "Kopf der Anlage (S. 1): II/II/2",
-        "derived": 1, "confidence": "niedrig", "kennung": "II/II/2", "label": None, "name": None}]
+        "derived": 1, "confidence": "niedrig", "kennung": "II/II/2", "label": None, "name": None,
+        "aemtertabelle": {"status": aemter.VOR_PLAN, "methode": "kennung"}}]
+    anlage = papers["1009/2026"]["responsibility"][0]
+    assert (anlage["method"], anlage["kennung"]) == ("pdf_kopf_anlage", "VI/61")
+    assert anlage["aemtertabelle"] == aemter.fuer_export(aemter.zuordnen(kennung="VI/61", datum="2026-11-05"))
+    assert anlage["aemtertabelle"]["status"] == aemter.EINDEUTIG
     assert papers["1005/2026"]["responsibility"] == []
 
 

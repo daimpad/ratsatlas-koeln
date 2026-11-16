@@ -405,8 +405,8 @@ def responsibilities(paper, orgs_by_id, papers_by_id, kopf=None):
     und Datenschutz): Kennung als Federführung nach der Herkunft der Datei (pdfkopf.VERWENDUNG): aus `mainFile` Methode
     „pdf_kopf“, Konfidenz nach Trefferart, Fundstelle „Kopf der Vorlage (S. 1): <Kennung>“; aus `auxiliaryFile`
     (Entscheidung 13.11.2026 (a)) Methode „pdf_kopf_anlage“, eine Stufe niedriger, Fundstelle „Kopf der Anlage (S. 1):
-    <Kennung>“, die ausgeschriebene Form nicht. Nie Text des Dokuments. Ohne versionierte Ämtertabelle bleibt die Kennung
-    keinem Amt und keiner Organisation zugeordnet (organization_id None)."""
+    <Kennung>“, die ausgeschriebene Form nicht. Nie Text des Dokuments. Die Kennung bleibt hier ohne Organisation
+    (organization_id None); Dezernat und Dienststelle ordnet `export` über die Ämtertabelle zu (pipeline/aemter.py)."""
     lead = (paper.get("underDirectionOf") or [None])[0]
     methode, evidenz, konfidenz = VERWENDUNG.get((kopf or {}).get("quelle"), (None, None, {}))
     if not lead and kopf and kopf.get("trefferart") in konfidenz and KENNUNG_FORM.fullmatch(kopf.get("kennung") or ""):

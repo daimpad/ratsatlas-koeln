@@ -100,9 +100,10 @@ def federfuehrung_kopf(db):
     """Federführung aus dem Kopf der Vorlage (pipeline/dokumente.py; Methode „pdf_kopf“ aus mainFile, „pdf_kopf_anlage“
     aus auxiliaryFile, Entscheidung 13.11.2026 (a)): jede Zeile nur mit Kennung nach pdfkopf.KENNUNG_FORM, Fundstelle
     genau „Kopf der Vorlage (S. 1): <Kennung>“ bzw. „Kopf der Anlage (S. 1): <Kennung>“ (kein Text des Dokuments),
-    Konfidenz der Methode (pdfkopf.VERWENDUNG: aus einer Anlage nur „niedrig“), ohne Organisation (keinem Amt
-    zugeordnet), nur bei Vorlagen ohne underDirectionOf und mit Erlaubnis für Hauskoordinaten (erlaubnis, dieselbe Regel
-    wie im Aufbau), höchstens eine Zeile je Vorlage. Liefert die Befunde."""
+    Konfidenz der Methode (pdfkopf.VERWENDUNG: aus einer Anlage nur „niedrig“), ohne Organisation (Dezernat und
+    Dienststelle ordnet erst der Export über die Ämtertabelle zu), nur bei Vorlagen ohne underDirectionOf und mit
+    Erlaubnis für Hauskoordinaten (erlaubnis, dieselbe Regel wie im Aufbau), höchstens eine Zeile je Vorlage. Liefert
+    die Befunde."""
     print("\nFederführung aus dem Kopf der Vorlage (PDF, Seite 1)")
     spalten = {r[1] for r in db.execute("PRAGMA table_info(paper_responsibility)")}
     if not {"confidence", "kennung"} <= spalten:
@@ -126,7 +127,7 @@ def federfuehrung_kopf(db):
                              and kind == "federfuehrend" and derived == 1 and conf in verwendung[methode][1]
                              and not udo and erlaubt.get(pid) and je_vorlage[pid] == 1)})
     arten = Counter(z[-1] for z in zeilen)
-    print(f"{len(zeilen)} Vorlagen mit Kennung aus dem Kopf (keinem Amt zugeordnet; "
+    print(f"{len(zeilen)} Vorlagen mit Kennung aus dem Kopf (ohne Organisation, Zuordnung zur Ämtertabelle im Export; "
           + ", ".join(f"{m} {arten[m]}" for m in verwendung) + f"); in unerwarteter Form oder ohne Erlaubnis: "
           f"{len(falsch)}")
     return ([f"Federführung aus dem Kopf der Vorlage in unerwarteter Form, bei Vorlagen mit underDirectionOf oder ohne "

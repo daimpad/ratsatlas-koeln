@@ -60,8 +60,8 @@ CREATE TABLE paper_originator (
   paper_id TEXT REFERENCES paper, actor TEXT, actor_type TEXT,
   organization_id TEXT REFERENCES organization, method TEXT, evidence TEXT, derived INTEGER);
 -- confidence und kennung nur bei der Federführung aus dem Kopf der Vorlage (method „pdf_kopf“ aus mainFile,
--- „pdf_kopf_anlage“ aus auxiliaryFile; pipeline/dokumente.py: Kennung wie „VI/61“, ohne Organisation, keinem Amt
--- zugeordnet), sonst NULL
+-- „pdf_kopf_anlage“ aus auxiliaryFile; pipeline/dokumente.py: Kennung wie „VI/61“, ohne Organisation; Dezernat und
+-- Dienststelle ordnet export über die Ämtertabelle zu, pipeline/aemter.py), sonst NULL
 CREATE TABLE paper_responsibility (
   paper_id TEXT REFERENCES paper, organization_id TEXT REFERENCES organization, kind TEXT,
   method TEXT, evidence TEXT, derived INTEGER, confidence TEXT, kennung TEXT);
@@ -418,8 +418,8 @@ def build():
         n = Counter(r[3] for r in rows["resp"])
         print(f"Federführung aus dem Kopf der Vorlage (PDF, Seite 1): {n[pdfkopf.METHODE]} Vorlagen aus mainFile, "
               f"{n[pdfkopf.METHODE_ANLAGE]} aus auxiliaryFile (Konfidenz eine Stufe niedriger, ausgeschriebene Form "
-              f"nicht übernommen), ohne underDirectionOf mit Kennung (keinem Amt zugeordnet; {len(koepfe)} Dateien mit "
-              f"Kennung)")
+              f"nicht übernommen), ohne underDirectionOf mit Kennung (ohne Organisation, Zuordnung zur Ämtertabelle im "
+              f"Export; {len(koepfe)} Dateien mit Kennung)")
     db.executemany(f"INSERT OR IGNORE INTO skipped_paper VALUES (?, ?, '{config.QUELLE_OPARL}')",
                    [(a["id"], a["grund"]) for a in ausgelassen])
     db.executemany("INSERT OR IGNORE INTO skipped_location VALUES (?, ?)",

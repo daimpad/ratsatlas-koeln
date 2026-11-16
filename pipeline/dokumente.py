@@ -80,8 +80,9 @@ Auswahl und nur bei Vorlagen mit Erlaubnis für Hauskoordinaten (actors.responsi
 <Kennung>“; aus `auxiliaryFile` Methode „pdf_kopf_anlage“, Konfidenz eine Stufe niedriger („niedrig“; die
 ausgeschriebene Form, aus der Hauptdatei schon „niedrig“, wird aus einer Anlage nicht übernommen), Fundstelle „Kopf der
 Anlage (S. 1): <Kennung>“. Erscheint später die Hauptdatei oder ändert sich die Wahl unter `auxiliaryFile`, gilt das
-alte Ergebnis nicht mehr; die neue Datei wird gelesen. Eine versionierte Ämtertabelle gibt es noch nicht: Die Kennung
-bleibt keinem Amt zugeordnet und wird als solche gezeigt.
+alte Ergebnis nicht mehr; die neue Datei wird gelesen. Die Kennung bleibt ohne Organisation der OParl-Daten; Dezernat
+und Dienststelle ordnet `export` über die Ämtertabelle zu (pipeline/aemter.py: `zuordnen` mit Kennung und Datum der
+Vorlage), die Seite zeigt die Kennung und darunter diese Zuordnung.
 """
 import hashlib
 import json

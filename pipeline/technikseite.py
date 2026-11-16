@@ -41,7 +41,8 @@ SCHRITTE = {
                                "nennt die Stadt keins, einer Anlage) und erkennt im Kopf "
                                "die Kennung von Dezernat und Dienststelle. Gespeichert wird nur diese Kennung, kein Text "
                                "und keine Datei; die Kennung gilt nur, wenn die Schnittstelle keine federführende "
-                               "Dienststelle nennt."),
+                               "Dienststelle nennt, und wird wie diese über den Geschäfts- und "
+                               "Dezernatsverteilungsplan Dezernat und Dienststelle zugeordnet."),
     "build": ("Datenbank und Verortung", "Baut eine SQLite-Datenbank aus Vorlagen, Beratungen, Sitzungen und Gremien, "
                                          "verortet Vorlagen nach festen Regeln und leitet den Stand jedes Vorgangs ab."),
     "export": ("Export", "Schreibt je Gebiet eine Datei für die Karte, dazu Feeds, Kalender, GeoJSON und "

@@ -96,6 +96,19 @@
       a.ebene !== "dezernat" && a.label].filter(Boolean).map(esc).join(" · ");
     return `<span class="aemter-zeile">${teile}</span> <span class="derived">abgeleitet, über ${esc(a.fundstelle)}</span>`;
   };
+  // Zeile der Federführung (responsibility[]): Organisation aus underDirectionOf oder Kennung aus dem Kopf der Vorlage
+  // (pdf_kopf) bzw., wenn die Stadt kein Hauptdokument nennt, einer Anlage (pdf_kopf_anlage, eine Stufe weniger sicher;
+  // Entscheidung 13.11.2026) mit Herkunft und Sicherheit; darunter in beiden Fällen Dezernat und Dienststelle laut
+  // Ämtertabelle (aemterZeile; die Kennung ordnet export über aemter.zuordnen mit Kennung und Datum der Vorlage zu),
+  // ohne eindeutige Zuordnung nichts
+  const KOPF = {
+    pdf_kopf: ["dem Kopf der Vorlage (Seite 1)", { mittel: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“", niedrig: "erkannt in ausgeschriebener Form, weniger sicher" }],
+    pdf_kopf_anlage: ["dem Kopf einer Anlage (Seite 1), weil die Stadt kein Hauptdokument nennt", { niedrig: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“, weniger sicher" }],
+  };
+  const federZeile = (r) => [Object.hasOwn(KOPF, r.method)
+    ? `Kennung ${esc(r.kennung)} <span class="derived">abgeleitet aus ${KOPF[r.method][0]}${KOPF[r.method][1][r.confidence] ? ` · ${KOPF[r.method][1][r.confidence]}` : ""}</span>`
+    : `${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`,
+  aemterZeile(r.aemtertabelle)].filter(Boolean).join("<br>");
   // Nebenlisten, die beim letzten Abruf nicht aktualisiert wurden (index.json meta.abruf_warnungen,
   // pipeline/export.py): ein Satz je Liste im Datenstand, ohne Fachbegriffe und nicht nur als Farbe
   const WARNUNG_SATZ = { meetings: "Sitzungstermine wurden", organizations: "Die Liste der Gremien wurde" };
@@ -1949,16 +1962,7 @@
     syncUrl();
     if (tl) tl.select(p);
     highlight();
-    // Kennung aus dem Kopf der Vorlage (pdf_kopf) oder, wenn die Stadt kein Hauptdokument nennt, einer Anlage
-    // (pdf_kopf_anlage, eine Stufe weniger sicher; Entscheidung 13.11.2026): ohne Ämtertabelle keinem Amt zugeordnet,
-    // als Kennung gezeigt
-    const KOPF = {
-      pdf_kopf: ["dem Kopf der Vorlage (Seite 1)", { mittel: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“", niedrig: "erkannt in ausgeschriebener Form, weniger sicher" }],
-      pdf_kopf_anlage: ["dem Kopf einer Anlage (Seite 1), weil die Stadt kein Hauptdokument nennt", { niedrig: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“, weniger sicher" }],
-    };
-    const resp = p.responsibility.map((r) => Object.hasOwn(KOPF, r.method)
-      ? `Kennung ${esc(r.kennung)} <span class="derived">abgeleitet aus ${KOPF[r.method][0]}, noch keinem Amt zugeordnet${KOPF[r.method][1][r.confidence] ? ` · ${KOPF[r.method][1][r.confidence]}` : ""}</span>`
-      : [`${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`, aemterZeile(r.aemtertabelle)].filter(Boolean).join("<br>")).join("<br>");
+    const resp = p.responsibility.map(federZeile).join("<br>");
     const outside = (l) => (area.kind === "ortsteil" && l.ortsteil && l.ortsteil !== area.name)
       || (area.kind === "bezirk" && l.stadtbezirk && l.stadtbezirk !== area.name);
     const locItem = (l) => `<li><strong>${esc(l.name || l.ortsteil || l.stadtbezirk)}</strong>
