@@ -28,22 +28,33 @@ Gesamt:
 (a) gepoolt, ungewichtet: x und n über alle gerechneten Zeilen, Wilson-Intervall. Jede Zeile zählt gleich; weil je
     Methode höchstens 50 Vorlagen gezogen werden, sind seltene Methoden darin überrepräsentiert. Kein Schätzwert für
     alle Vorlagen.
-(b) geschichtet, gewichtet (nur mit --audit): Schicht h = Methode, Umfang N_h = verschiedene Drucksachen der Methode
-    im Audit `audit_geokodierung.tsv` desselben Datenpakets. Einheit ist Vorlage × Methode: Eine Vorlage, die mehrere
+(b) geschichtet, gewichtet (nur mit --audit): Schicht h = Methode, Umfang N_h = Vorlagen der Methode im Audit
+    `audit_geokodierung.tsv` desselben Datenpakets, gezählt als verschiedene Kombinationen aus Drucksache, Datum und
+    Vorlagenart (Zeilen ohne Drucksache zählen nicht). Einheit ist Vorlage × Methode: Eine Vorlage, die mehrere
     Methoden verortet haben, zählt in jeder dieser Schichten (N = Σ N_h ist daher größer als die Zahl der verorteten
     Vorlagen). Gerechnet werden die Schichten mit n_h > 0; W_h = N_h / Σ N_h über diese Schichten (ihr Anteil an allen
     N_h steht in der Ausgabe).
         p_st = Σ W_h · p_h
         Var(p_st) = Σ W_h² · (1 − f_h) · p̃_h (1 − p̃_h) / ñ_h,  f_h = n_h / N_h (Endlichkeitskorrektur, höchstens 1),
         p̃_h = (x_h + z²/2) / (n_h + z²),  ñ_h = n_h + z²  (Agresti–Coull)
-        95-%-Intervall: p_st ± z · √Var(p_st), auf [0, 1] begrenzt.
+        95-%-Intervall: Wilson um p_st mit dem effektiven Umfang n_eff = p̃_st (1 − p̃_st) / Var(p_st) − z²,
+        p̃_st = Σ W_h · p̃_h; bei Var(p_st) = 0 (jede gerechnete Methode vollständig geprüft) nur der Punkt p_st.
     Die Agresti–Coull-Anpassung hält die Varianz auch bei p_h = 0 oder 1 über null (die übliche Schätzung
     p_h(1 − p_h)/(n_h − 1) wäre dort null und bei n_h = 1 nicht definiert); die Endlichkeitskorrektur setzt sie für
-    eine vollständig geprüfte Methode (n_h = N_h) auf null. Der Schätzwert selbst nutzt das unangepasste p_h.
+    eine vollständig geprüfte Methode (n_h = N_h) auf null. Der Schätzwert selbst nutzt das unangepasste p_h. Mit einer
+    einzigen Schicht ohne Endlichkeitskorrektur ist n_eff = n und das Intervall genau das Wilson-Intervall der Methode;
+    sonst ist n_eff mindestens das kleinste n_h. Vorher (bis 16.11.2026) p_st ± z·√Var (Wald-Typ): am Rand zu schmal
+    (eine Schicht 50 von 50 bei N = 1000: 95,2–100 % gegen Wilson 92,9–100 %; Überdeckung 0,92 bei p = 0,95 im
+    Monte-Carlo-Versuch mit Ziehen ohne Zurücklegen, mit n_eff 0,97; über elf Aufteilungen mit p von 0,5 bis 0,99
+    Überdeckung 0,92–1,00 gegen 0,94–0,98).
+    Grenze von N_h: Kopien einer Vorlage mit derselben Drucksache, demselben Datum und derselben Vorlagenart zählen im
+    Audit als eine Vorlage, in der Stichprobe (gezogen über die Kennung der Vorlage) einzeln; dann kann N_h zu klein
+    sein. Die Ausgabe nennt die Zahl der Drucksachen, die in einer Methode der Stichprobe mehrfach vorkommen.
 Warnungen (kein Abbruch): Methode der Stichprobe fehlt im Audit (nicht in (b)); mehr Zeilen in der Stichprobe als
 Vorlagen im Audit (n_h > N_h, Endlichkeitskorrektur dann 0); Zeilen der Stichprobe, deren Drucksache im Audit bei
-dieser Methode fehlt (nur Anzahl). Beides deutet auf Stichprobe und Audit aus verschiedenen Datenständen. Den
-Datenstand nennt die Ausgabe, wenn neben der Stichprobe oder dem Audit `koeln/index.json` liegt (meta.generated_at).
+dieser Methode fehlt (nur Anzahl). Beides deutet auf Stichprobe und Audit aus verschiedenen Datenständen. Ohne
+--audit nur der Hinweis auf mehrfach vorkommende Drucksachen (Anzahl je Methode). Den Datenstand nennt die Ausgabe,
+wenn neben der Stichprobe oder dem Audit `koeln/index.json` liegt (meta.generated_at).
 
 Ausgabe: Markdown-Tabellen auf stdout (für den Bericht), mit --tsv dieselben Zahlen als TSV (Anteile als Dezimalzahl
 mit Punkt). Nur Zahlen: keine Titel, Drucksachen, Orte, Links oder Anmerkungen; Methoden nur, wenn der Name wie eine
@@ -111,14 +122,19 @@ def _text(pfad):
 
 
 def tabelle_lesen(pfad):
-    """(Kopf, [(Zeilennummer, Felder)], Kodierung); ganz leere Zeilen entfallen, zählen aber für die Nummern."""
+    """(Kopf, [(Zeilennummer, Felder)], Kodierung); ganz leere Zeilen entfallen, zählen aber für die Nummern. Felder
+    dürfen so lang sein wie die Datei (die Grenze des csv-Moduls, 131 072 Zeichen, gilt nur während des Lesens nicht)."""
     text, kodierung = _text(pfad)
     erste = text.split("\n", 1)[0]
     trenner = "\t" if "\t" in erste else ";" if ";" in erste else "," if "," in erste else "\t"
+    grenze = csv.field_size_limit()
     try:
+        csv.field_size_limit(max(grenze, len(text) + 1))
         datensaetze = list(csv.reader(io.StringIO(text, newline=""), delimiter=trenner))
-    except csv.Error:
+    except (csv.Error, OverflowError):
         raise Unbrauchbar(f"Datei nicht als Tabelle lesbar: {pfad}") from None
+    finally:
+        csv.field_size_limit(grenze)
     if not datensaetze:
         raise Unbrauchbar(f"Datei ist leer: {pfad}")
     kopf = [k.strip().lstrip("\ufeff").strip().casefold() for k in datensaetze[0]]
@@ -150,16 +166,21 @@ def stichprobe_lesen(pfad):
 
 
 def audit_lesen(pfad):
-    """Drucksachen je Methode aus audit_geokodierung.tsv (Methode, die nicht wie eine aussieht: „(Methode unlesbar)“)."""
+    """Vorlagen je Methode aus audit_geokodierung.tsv als Menge von (Drucksache, Datum, Vorlagenart); so zählen Kopien
+    mit derselben Drucksache, aber anderem Datum oder anderer Vorlagenart einzeln. Zeilen ohne Drucksache entfallen;
+    fehlen die Spalten „datum“ oder „vorlagenart“, zählen nur die Drucksachen. Methode, die nicht wie eine aussieht:
+    „(Methode unlesbar)“."""
     kopf, zeilen, _ = tabelle_lesen(pfad)
     i, j = _spalte(kopf, "methode"), _spalte(kopf, "drucksache")
     if i is None or j is None:
         raise Unbrauchbar(f"Audit ohne Spalte „methode“ oder „drucksache“: {pfad}")
+    weitere = [_spalte(kopf, "datum"), _spalte(kopf, "vorlagenart")]
     je = {}
     for _, z in zeilen:
         if max(i, j) < len(z) and z[i].strip() and z[j].strip():
             m = z[i].strip()
-            je.setdefault(m if METHODE.fullmatch(m) else UNLESBAR, set()).add(z[j].strip())
+            schluessel = (z[j].strip(), *(z[k].strip() if k is not None and k < len(z) else "" for k in weitere))
+            je.setdefault(m if METHODE.fullmatch(m) else UNLESBAR, set()).add(schluessel)
     return je
 
 
@@ -181,32 +202,43 @@ def datenstand(*pfade):
 
 # --- Rechnen -------------------------------------------------------------------------------------------------------
 
+def _wilson_p(p, n, z=Z):
+    """Wilson-Intervall um den Anteil p bei (auch nicht ganzzahligem) Umfang n > 0; bei p = 0 unten genau 0, bei p = 1
+    oben genau 1."""
+    z2 = z * z
+    nenner = 1 + z2 / n
+    mitte = (p + z2 / (2 * n)) / nenner
+    halb = z / nenner * math.sqrt(max(0.0, p * (1 - p)) / n + z2 / (4 * n * n))
+    return (0.0 if p <= 0 else max(0.0, mitte - halb)), (1.0 if p >= 1 else min(1.0, mitte + halb))
+
+
 def wilson(x, n, z=Z):
     """Wilson-Intervall (unten, oben) für x Treffer unter n; None ohne gerechnete Zeile."""
     if n <= 0:
         return None
-    p, z2 = x / n, z * z
-    nenner = 1 + z2 / n
-    mitte = (p + z2 / (2 * n)) / nenner
-    halb = z / nenner * math.sqrt(p * (1 - p) / n + z2 / (4 * n * n))
-    return max(0.0, mitte - halb), min(1.0, mitte + halb)
+    return _wilson_p(x / n, n, z)
 
 
 def geschichtet(schichten, z=Z):
     """Geschichtete Schätzung aus [(N_h, n_h, x_h)]; Schichten mit n_h = 0 oder N_h = 0 entfallen.
-    Ergebnis: p, se, unten, oben, N (gerechnete Schichten) oder None."""
+    Ergebnis: p, se, n_eff (None bei Varianz 0), unten, oben (Wilson um p mit n_eff), N (gerechnete Schichten) oder
+    None."""
     s = [(N, n, x) for N, n, x in schichten if n > 0 and N > 0]
     gesamt = sum(N for N, _, _ in s)
     if not gesamt:
         return None
-    z2, p, var = z * z, 0.0, 0.0
+    z2, p, p_ac, var = z * z, 0.0, 0.0, 0.0
     for N, n, x in s:
         w = N / gesamt
         p += w * x / n
         pt = (x + z2 / 2) / (n + z2)
+        p_ac += w * pt
         var += w * w * max(0.0, 1 - n / N) * pt * (1 - pt) / (n + z2)
-    se = math.sqrt(var)
-    return {"p": p, "se": se, "unten": max(0.0, p - z * se), "oben": min(1.0, p + z * se), "N": gesamt}
+    if var <= 0:
+        return {"p": p, "se": 0.0, "n_eff": None, "unten": p, "oben": p, "N": gesamt}
+    n_eff = p_ac * (1 - p_ac) / var - z2
+    unten, oben = _wilson_p(p, n_eff, z)
+    return {"p": p, "se": math.sqrt(var), "n_eff": n_eff, "unten": unten, "oben": oben, "N": gesamt}
 
 
 def _ebene(wert):
@@ -228,18 +260,28 @@ def _lesarten(c):
     return out
 
 
+def _anzahl(n, einzahl, mehrzahl):
+    """„1 Zeile“, „2 Zeilen“."""
+    return f"{n} {einzahl if n == 1 else mehrzahl}"
+
+
 def _nummern(nummern):
+    """„Zeile 3“, „Zeilen 3, 4“, „Zeilen 3, 4, … und 5 weitere“."""
     text = ", ".join(map(str, nummern[:MAX_NUMMERN]))
-    return text + (f" und {len(nummern) - MAX_NUMMERN} weitere" if len(nummern) > MAX_NUMMERN else "")
+    return ("Zeile " if len(nummern) == 1 else "Zeilen ") + text + (
+        f" und {len(nummern) - MAX_NUMMERN} weitere" if len(nummern) > MAX_NUMMERN else "")
 
 
 def auswerten(zeilen, audit=None):
     je, ebenen, mehr = {}, {}, Counter()
     ungueltig, unlesbar = [], []
+    drucksachen = {}   # Methode → Zähler der Drucksachen (nur für den Hinweis auf mehrfach vorkommende)
     for z in zeilen:
         m = z["methode"] if METHODE.fullmatch(z["methode"]) else UNLESBAR
         if m == UNLESBAR:
             unlesbar.append(z["nr"])
+        elif z["drucksache"]:
+            drucksachen.setdefault(m, Counter())[z["drucksache"]] += 1
         u = urteil_normal(z["urteil"])
         k = "offen" if u == "" else "ungueltig" if u is None else u
         if u is None:
@@ -264,13 +306,21 @@ def auswerten(zeilen, audit=None):
     for r in lesbar:
         summe.update({k: r[k] for k in KATEGORIEN})
     e = {"methoden": zeilen_m, "ebenen": zeilen_e, "ebenen_nicht_aufgeteilt": dict(mehr), "zeilen": len(zeilen),
-         "summe": dict(summe), "gepoolt": _lesarten(summe), "hinweise": [], "geschichtet": None}
+         "unlesbar": len(unlesbar), "summe": dict(summe), "gepoolt": _lesarten(summe), "hinweise": [],
+         "geschichtet": None}
     if ungueltig:
-        e["hinweise"].append(f"Ungültige Urteile (weder richtig, teilweise, falsch, unklar noch leer) in Zeile "
+        e["hinweise"].append(f"Ungültige Urteile (weder richtig, teilweise, falsch, unklar noch leer) in "
                              f"{_nummern(ungueltig)}: nicht gerechnet, bitte korrigieren.")
     if unlesbar:
-        e["hinweise"].append(f"Methode leer oder unlesbar in Zeile {_nummern(unlesbar)}: in der Tabelle je Methode "
+        e["hinweise"].append(f"Methode leer oder unlesbar in {_nummern(unlesbar)}: in der Tabelle je Methode "
                              f"gesondert, nicht im Gesamtwert.")
+    for m in sorted(drucksachen):
+        mehrfach = sum(1 for k in drucksachen[m].values() if k > 1)
+        if mehrfach:
+            e["hinweise"].append(
+                f"Methode `{m}`: {_anzahl(mehrfach, 'Drucksache steht', 'Drucksachen stehen')} mehr als einmal in der "
+                f"Stichprobe (Kopien einer Vorlage mit derselben Drucksache); jede Zeile zählt einzeln. N_h im Audit "
+                f"zählt Drucksache, Datum und Vorlagenart und kann solche Kopien zusammenfassen (dann zu klein).")
     if audit is not None:
         e["geschichtet"] = _geschichtet(lesbar, zeilen, audit, e["hinweise"])
     return e
@@ -289,11 +339,12 @@ def _geschichtet(lesbar, zeilen, audit, hinweise):
             hinweise.append(f"Methode `{r['methode']}`: mehr Zeilen in der Stichprobe ({r['gezogen']}, davon "
                             f"gerechnet {r['n']}) als Vorlagen im Audit ({N}); f_h = n_h/N_h höchstens 1 "
                             f"(Stichprobe und Audit aus verschiedenen Datenständen?).")
+    im_audit = {m: {k[0] for k in schluessel} for m, schluessel in audit.items()}
     fremd = sum(1 for z in zeilen if z["drucksache"] and METHODE.fullmatch(z["methode"])
-                and z["methode"] in audit and z["drucksache"] not in audit[z["methode"]])
+                and z["methode"] in im_audit and z["drucksache"] not in im_audit[z["methode"]])
     if fremd:
-        hinweise.append(f"{fremd} Zeilen der Stichprobe: Drucksache bei dieser Methode nicht im Audit (Stichprobe und "
-                        f"Audit aus verschiedenen Datenständen?).")
+        hinweise.append(f"{_anzahl(fremd, 'Zeile', 'Zeilen')} der Stichprobe: Drucksache bei dieser Methode nicht im "
+                        f"Audit (Stichprobe und Audit aus verschiedenen Datenständen?).")
     for m in sorted(set(audit) - set(alle)):
         alle[m] = len(audit[m])
     gesamt = sum(alle.values())
@@ -312,9 +363,9 @@ def _geschichtet(lesbar, zeilen, audit, hinweise):
     ohne = [s for s in zeilen_s if s["methode"] not in gerechnet and s["N"] > 0]
     if ohne:
         anteil = sum(s["N"] for s in ohne) / gesamt if gesamt else 0
-        hinweise.append(f"Methoden ohne gerechnete Zeile (nicht im geschichteten Gesamtwert): "
-                        f"{', '.join('`' + s['methode'] + '`' for s in ohne)} – zusammen "
-                        f"{sum(s['N'] for s in ohne)} Vorlagen ({_prozent(anteil)} von Σ N_h).")
+        hinweise.append(f"{'Methode' if len(ohne) == 1 else 'Methoden'} ohne gerechnete Zeile (nicht im geschichteten "
+                        f"Gesamtwert): {', '.join(_m(s['methode']) for s in ohne)} – zusammen "
+                        f"{_anzahl(sum(s['N'] for s in ohne), 'Vorlage', 'Vorlagen')} ({_prozent(anteil)} von Σ N_h).")
     return {"schichten": zeilen_s, "N_gesamt": gesamt, "N_gerechnet": N_ger, **ergebnis}
 
 
@@ -326,6 +377,10 @@ def _prozent(p):
 
 def _punkte(x):
     return f"{100 * x:.1f}".replace(".", ",")
+
+
+def _zahl(x):
+    return f"{x:.1f}".replace(".", ",")
 
 
 def _intervall(ci):
@@ -346,9 +401,13 @@ def _m(name):
 def markdown(e, name="", kodierung="UTF-8", stand=()):
     s = e["summe"]
     z = ["## Präzision der Geokodierung (Prüfung von Hand)", ""]
-    z.append(f"Stichprobe{' `' + name + '`' if name else ''}: {e['zeilen']} Zeilen (je Zeile eine Vorlage mit einer "
-             f"Methode), Kodierung {kodierung}. Beurteilt {sum(s.get(k, 0) for k in URTEILE)} (davon unklar "
-             f"{s.get('unklar', 0)}), offen {s.get('offen', 0)}, ungültig {s.get('ungueltig', 0)}.")
+    unlesbar = e.get("unlesbar", 0)
+    z.append(f"Stichprobe{' `' + name + '`' if name else ''}: {_anzahl(e['zeilen'], 'Zeile', 'Zeilen')} (je Zeile "
+             f"eine Vorlage mit einer Methode), Kodierung {kodierung}."
+             + (f" Davon {_anzahl(unlesbar, 'Zeile', 'Zeilen')} mit leerer oder unlesbarer Methode (nur in der Tabelle "
+                f"je Methode); in den übrigen {e['zeilen'] - unlesbar}:" if unlesbar else "")
+             + f" Beurteilt {sum(s.get(k, 0) for k in URTEILE)} (davon unklar {s.get('unklar', 0)}), offen "
+             f"{s.get('offen', 0)}, ungültig {s.get('ungueltig', 0)}.")
     z.append("Datenstand des Pakets (`koeln/index.json`, meta.generated_at): "
              + (", ".join(stand) if stand else "nicht ermittelt – im Bericht angeben") + ".")
     z += ["", "Lesarten: **streng** = nur „richtig“ zählt als Treffer; **nachsichtig** = „richtig“ und „teilweise“. "
@@ -361,17 +420,18 @@ def markdown(e, name="", kodierung="UTF-8", stand=()):
         z.append("| " + " | ".join([_m(r["methode"]), *(str(r[k]) for k in ("gezogen", "beurteilt", *KATEGORIEN, "n")),
                                     *_kennzahlen(r)]) + " |")
     z += ["", "### Je Methode und Ebene (nur Zeilen mit genau einer Ebene)", "",
-          "| Methode | Ebene | gezogen | richtig | teilweise | falsch | unklar | offen | gerechnet | streng "
+          "| Methode | Ebene | gezogen | richtig | teilweise | falsch | unklar | offen | ungültig | gerechnet | streng "
           "| 95-%-Intervall | nachsichtig | 95-%-Intervall |",
-          "|---|---|" + "---:|" * 7 + "---:|---|---:|---|"]
+          "|---|---|" + "---:|" * 8 + "---:|---|---:|---|"]
     for r in e["ebenen"]:
         z.append("| " + " | ".join([_m(r["methode"]), EBENEN[r["ebene"]],
-                                    *(str(r[k]) for k in ("gezogen", *URTEILE, "offen", "n")), *_kennzahlen(r)]) + " |")
+                                    *(str(r[k]) for k in ("gezogen", *KATEGORIEN, "n")), *_kennzahlen(r)]) + " |")
     na = e["ebenen_nicht_aufgeteilt"]
     if na:
-        teile = [f"{na[k]} mit {t}" for k, t in (("mehrere", "mehreren Ebenen"), ("ohne", "leerer Ebene"),
-                                                 ("unbekannt", "unbekannter Ebene")) if na.get(k)]
-        z += ["", "Nicht nach Ebene aufgeteilt: " + ", ".join(teile) + " (Zeilen)."]
+        teile = [f"{_anzahl(na[k], 'Zeile', 'Zeilen')} mit {t}"
+                 for k, t in (("mehrere", "mehreren Ebenen"), ("ohne", "leerer Ebene"),
+                              ("unbekannt", "unbekannter Ebene")) if na.get(k)]
+        z += ["", "Nicht nach Ebene aufgeteilt: " + ", ".join(teile) + "."]
     g = e["gepoolt"]
     z += ["", "### Gesamt", "", "(a) **Gepoolt, ungewichtet** über alle gerechneten Zeilen: Jede Zeile zählt gleich. "
           "Je Methode werden höchstens 50 Vorlagen gezogen, seltene Methoden sind darin also überrepräsentiert; "
@@ -384,23 +444,25 @@ def markdown(e, name="", kodierung="UTF-8", stand=()):
     if st is None:
         z.append("(b) **Geschichtet, gewichtet**: entfällt (ohne `--audit` keine Zahl der Vorlagen je Methode).")
     else:
-        z += [f"(b) **Geschichtet, gewichtet nach Vorlagen je Methode** (N_h = verschiedene Drucksachen der Methode im "
-              f"Audit). Einheit Vorlage × Methode: Eine Vorlage mit mehreren Methoden zählt in jeder. Σ N_h = "
-              f"{st['N_gesamt']}, davon in Methoden mit gerechneten Zeilen {st['N_gerechnet']} "
+        z += [f"(b) **Geschichtet, gewichtet nach Vorlagen je Methode** (N_h = Vorlagen der Methode im Audit, gezählt "
+              f"nach Drucksache, Datum und Vorlagenart). Einheit Vorlage × Methode: Eine Vorlage mit mehreren Methoden "
+              f"zählt in jeder. Σ N_h = {st['N_gesamt']}, davon in Methoden mit gerechneten Zeilen {st['N_gerechnet']} "
               f"({_prozent(st['N_gerechnet'] / st['N_gesamt'] if st['N_gesamt'] else None)}). Varianz mit "
-              f"Endlichkeitskorrektur und Agresti–Coull-angepasstem p je Methode (Formel: Kopf von "
-              f"`tools/praezision.py`, TECHNIK.md).", "",
+              f"Endlichkeitskorrektur und Agresti–Coull-angepasstem p je Methode, Intervall nach Wilson mit dem "
+              f"effektiven Umfang (Formel: Kopf von `tools/praezision.py`, TECHNIK.md).", "",
               "| Methode | N_h (Audit) | n_h (gerechnet) | Gewicht W_h | Treffer streng | Treffer nachsichtig |",
               "|---|---:|---:|---:|---:|---:|"]
         for s in st["schichten"]:
             z.append(f"| {_m(s['methode'])}{'' if s['in_stichprobe'] else ' (nicht in der Stichprobe)'} | {s['N']} | "
                      f"{s['n']} | {_prozent(s['gewicht'])} | {s['streng']} | {s['nachsichtig']} |")
-        z += ["", "| Lesart | Schätzwert | 95-%-Intervall | Standardfehler |", "|---|---:|---|---:|"]
+        z += ["", "| Lesart | Schätzwert | 95-%-Intervall (Wilson, effektiver Umfang) | Standardfehler "
+              "| effektiver Umfang |", "|---|---:|---|---:|---:|"]
         for name, _ in LESARTEN:
             r = st[name]
-            z.append(f"| {name} | – | – | – |" if r is None else
+            z.append(f"| {name} | – | – | – | – |" if r is None else
                      f"| {name} | {_prozent(r['p'])} | {_intervall((r['unten'], r['oben']))} | "
-                     f"{_punkte(r['se'])} Prozentpunkte |")
+                     f"{_punkte(r['se'])} Prozentpunkte | "
+                     f"{'– (alle vollständig geprüft)' if r['n_eff'] is None else _zahl(r['n_eff'])} |")
     if e["hinweise"]:
         z += ["", "### Hinweise", ""] + [f"- {h}" for h in e["hinweise"]]
     return "\n".join(z) + "\n"

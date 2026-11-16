@@ -1,12 +1,12 @@
 # Prüfregeln: Stichprobe der Geokodierung
 
-Für `stichprobe_geokodierung.tsv` aus dem Datenpaket (je Methode bis zu 50 Vorlagen, CLAUDE.md 7.3). Beurteilt wird im Prüfbogen `tools/pruefbogen.html` (lokal, ohne Netz), ausgewertet mit `tools/praezision.py` (TECHNIK.md, „Präzision der Geokodierung“). Danke, dass du dir die Zeit nimmst: Jede beurteilte Zeile macht die Karte verlässlicher.
+Für `stichprobe_geokodierung.tsv` aus dem Datenpaket (je Methode bis zu 50 Vorlagen, CLAUDE.md 7.3). Beurteilt wird im Prüfbogen `tools/pruefbogen.html` (lokal, ohne Netz), ausgewertet mit `tools/praezision.py` (TECHNIK.md, „Präzision der Geokodierung“). Danke, dass Sie sich die Zeit nehmen: Jede beurteilte Zeile zeigt genauer, wie verlässlich die Karte ist.
 
 ## Was beurteilt wird
 
-Eine Zeile ist eine Vorlage mit einer Methode. Beurteilt wird die ganze Zeile: alle Orte, die diese Methode der Vorlage zuordnet (Spalten „ort“, „ebene“, „stadtteil_oder_bezirk“). Maßstab ist der Gegenstand der Vorlage, also das, worüber sie entscheidet, berichtet oder fragt. Ihn entnimmst du dem Titel; reicht der Titel nicht, dem Original im Ratsinformationssystem über den Link.
+Eine Zeile ist eine Vorlage mit einer Methode. Beurteilt wird die ganze Zeile: alle Orte, die diese Methode der Vorlage zuordnet (Spalten „ort“, „ebene“, „stadtteil_oder_bezirk“). Maßstab ist der Gegenstand der Vorlage, also das, worüber sie entscheidet, berichtet oder fragt. Er ergibt sich aus dem Titel; reicht der Titel nicht, aus dem Original im Ratsinformationssystem über den Link.
 
-Geprüft wird die Präzision, nicht die Vollständigkeit: Fehlt ein Ort, ändert das das Urteil nicht. Ein Ort stimmt, wenn er auf seiner Ebene stimmt; eine gröbere Ebene als möglich ist kein Fehler. Eine ausgeblendete Hausnummer („[Hausnummer ausgelassen]“) suchst du nicht heraus.
+Geprüft wird die Präzision, nicht die Vollständigkeit: Fehlt ein Ort, ändert das das Urteil nicht. Ein Ort stimmt, wenn er auf seiner Ebene stimmt; eine gröbere Ebene als möglich ist kein Fehler. Eine ausgeblendete Hausnummer („[Hausnummer ausgelassen]“) wird nicht herausgesucht.
 
 ## Urteile
 

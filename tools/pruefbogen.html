@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-MNDixsvlfou6tMNME7y5HFmOzrVg6Im7/JclfathDR8='; style-src 'sha256-pPnhsmT0jJT3/r8RFtfbp5RPg0+mYHaNxXDXDnaeegc='; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AN25RwwJMT65fBe883ywgnJh13pBaCxOBsJwvFNezLQ='; style-src 'sha256-QNZdpjHEAkgr5YGHdVgpP6oS7aH8W4/kVVzNPRZviS4='; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Prüfbogen Geokodierung – Ratsatlas Köln</title>
@@ -14,7 +14,8 @@ tests/test_praezision.py). Öffnen direkt aus dem Dateisystem (file://), Stichpr
 python tools/praezision.py <datei>_beurteilt.tsv --audit <audit_geokodierung.tsv>. Nicht unter site/, nicht im
 Datenpaket. Die gespeicherte Datei ändert nur die Spalten des Urteils und der Anmerkung und hat das Format von Pythons
 csv.writer(delimiter="\t", lineterminator="\n"). Zwischenstand im localStorage dieses Browsers (Schlüssel aus einer
-Prüfsumme des Dateiinhalts); ohne localStorage geht nichts verloren, solange die Seite offen ist.
+Prüfsumme des Dateiinhalts); ohne localStorage geht nichts verloren, solange die Seite offen ist. Unter file:// teilen
+sich lokale HTML-Dateien den localStorage (Chromium); daher der Hinweis, ihn nach dem letzten Speichern zu löschen.
 -->
 <style>
 :root { --bg: #fafaff; --surface: #ffffff; --text: #0f0f14; --muted: #5a5a68; --line: #d9d6e8; --ink: #6d28d9;
@@ -25,8 +26,8 @@ main, header, footer { max-width: 980px; margin: 0 auto; padding: 0 16px; }
 header { padding-top: 24px; }
 h1 { font-size: 1.6rem; margin: 0 0 4px; }
 h2 { font-size: 1.2rem; margin: 24px 0 8px; }
-h3 { font-size: 1.05rem; margin: 16px 0 6px; }
-p, li { max-width: 72ch; }
+h3 { font-size: 1.05rem; margin: 16px 0 6px; overflow-wrap: anywhere; }
+p, li { max-width: 72ch; overflow-wrap: anywhere; }
 a { color: var(--ink); }
 .leise { color: var(--muted); }
 :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
@@ -56,7 +57,7 @@ dl.felder dd { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
 .urteile button[data-urteil="unklar"][aria-pressed="true"] { background: var(--unklar); }
 .reihe { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0; }
 textarea { width: 100%; min-height: 4.5rem; border: 1px solid var(--muted); border-radius: 10px; padding: 8px; background: var(--surface); }
-select { border: 1px solid var(--muted); border-radius: 10px; padding: 8px; background: var(--surface); min-height: 44px; }
+select { border: 1px solid var(--muted); border-radius: 10px; padding: 8px; background: var(--surface); min-height: 44px; max-width: 100%; }
 kbd { font: 600 .85em/1 ui-monospace, monospace; border: 1px solid var(--muted); border-radius: 4px; padding: 1px 5px; background: var(--surface); }
 table { border-collapse: collapse; width: 100%; }
 th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; overflow-wrap: anywhere; }
@@ -89,8 +90,8 @@ footer { padding-bottom: 32px; }
   <details class="karte regeln" id="regeln">
     <summary>Prüfregeln</summary>
     <h3>Was beurteilt wird</h3>
-    <p>Eine Zeile ist eine Vorlage mit einer Methode. Beurteilt wird die ganze Zeile: alle Orte, die diese Methode der Vorlage zuordnet (Spalten „ort“, „ebene“, „stadtteil_oder_bezirk“). Maßstab ist der Gegenstand der Vorlage, also das, worüber sie entscheidet, berichtet oder fragt. Ihn entnimmst du dem Titel; reicht der Titel nicht, dem Original im Ratsinformationssystem über den Link.</p>
-    <p>Geprüft wird die Präzision, nicht die Vollständigkeit: Fehlt ein Ort, ändert das das Urteil nicht. Ein Ort stimmt, wenn er auf seiner Ebene stimmt; eine gröbere Ebene als möglich ist kein Fehler. Eine ausgeblendete Hausnummer („[Hausnummer ausgelassen]“) suchst du nicht heraus.</p>
+    <p>Eine Zeile ist eine Vorlage mit einer Methode. Beurteilt wird die ganze Zeile: alle Orte, die diese Methode der Vorlage zuordnet (Spalten „ort“, „ebene“, „stadtteil_oder_bezirk“). Maßstab ist der Gegenstand der Vorlage, also das, worüber sie entscheidet, berichtet oder fragt. Er ergibt sich aus dem Titel; reicht der Titel nicht, aus dem Original im Ratsinformationssystem über den Link.</p>
+    <p>Geprüft wird die Präzision, nicht die Vollständigkeit: Fehlt ein Ort, ändert das das Urteil nicht. Ein Ort stimmt, wenn er auf seiner Ebene stimmt; eine gröbere Ebene als möglich ist kein Fehler. Eine ausgeblendete Hausnummer („[Hausnummer ausgelassen]“) wird nicht herausgesucht.</p>
     <h3>Urteile</h3>
     <ul class="regel-urteile">
       <li><strong>richtig</strong>: Jeder Ort der Zeile ist Gegenstand der Vorlage und auf seiner Ebene richtig aufgelöst.</li>
@@ -111,7 +112,7 @@ footer { padding-bottom: 32px; }
     <h3>Anmerkungen</h3>
     <p>Kurz und sachlich, etwa „Stadtteil falsch, Bezirk richtig“. Keine Namen oder Anschriften von Privatpersonen und keine Zitate aus Dokumenten. Die beurteilte Datei kommt nicht auf die Seite; in den Bericht geht nur die Auswertung mit Zahlen.</p>
     <h3>Tasten</h3>
-    <p><kbd>R</kbd> richtig · <kbd>T</kbd> teilweise · <kbd>F</kbd> falsch · <kbd>U</kbd> unklar · <kbd>Entf</kbd> oder <kbd>⌫</kbd> Urteil entfernen · <kbd>←</kbd> zurück · <kbd>→</kbd> weiter · <kbd>N</kbd> nächste offene Zeile. Im Anmerkungsfeld und in der Auswahl der Methode gelten die Tasten nicht.</p>
+    <p><kbd>R</kbd> richtig · <kbd>T</kbd> teilweise · <kbd>F</kbd> falsch · <kbd>U</kbd> unklar · <kbd>Entf</kbd> oder <kbd>⌫</kbd> Urteil entfernen · <kbd>←</kbd> zurück · <kbd>→</kbd> weiter · <kbd>N</kbd> nächste offene oder ungültige Zeile. Im Anmerkungsfeld und in der Auswahl der Methode gelten die Tasten nicht.</p>
   </details>
 
   <section id="bogen" hidden aria-labelledby="bogen-titel">
@@ -125,7 +126,7 @@ footer { padding-bottom: 32px; }
 
     <article class="karte" id="zeile" aria-labelledby="zeile-titel">
       <div class="zeile-kopf">
-        <h3 id="zeile-titel">Zeile</h3>
+        <h3 id="zeile-titel" tabindex="-1">Zeile</h3>
         <span id="zeile-urteil" class="leise"></span>
       </div>
       <h4 class="leise">Was die Methode gefunden hat</h4>
@@ -152,7 +153,7 @@ footer { padding-bottom: 32px; }
     <nav class="reihe" aria-label="Zeilen">
       <button type="button" id="zurueck" aria-keyshortcuts="ArrowLeft">← zurück</button>
       <button type="button" id="vor" aria-keyshortcuts="ArrowRight">weiter →</button>
-      <button type="button" id="offen" aria-keyshortcuts="N">nächste offene Zeile <kbd>N</kbd></button>
+      <button type="button" id="offen" aria-keyshortcuts="N">nächste offene oder ungültige Zeile <kbd>N</kbd></button>
     </nav>
 
     <section class="karte" aria-labelledby="fortschritt-titel">
@@ -168,6 +169,7 @@ footer { padding-bottom: 32px; }
       <button type="button" id="loeschen">Zwischenstand im Browser löschen</button>
     </div>
     <p id="speicherstatus" role="status" class="leise"></p>
+    <p class="leise" id="zwischenstand-hinweis">Der Zwischenstand (nur Urteile und Anmerkungen, keine Titel) bleibt in diesem Browser gespeichert, bis er gelöscht wird. Je nach Browser können andere HTML-Dateien, die direkt aus dem Dateisystem geöffnet werden, ihn lesen. Nach dem letzten Speichern der TSV daher den Zwischenstand im Browser löschen.</p>
   </section>
 </main>
 <footer>
@@ -308,15 +310,63 @@ function speichername(name) {
   var stamm = String(name || 'stichprobe_geokodierung').replace(/\.(tsv|txt|csv)$/i, '');
   return (/_beurteilt$/.test(stamm) ? stamm : stamm + '_beurteilt') + '.tsv';
 }
+
+// Methode einer Zeile für Filter und Fortschritt
+function methodeVon(bogen, zeile) { return wert(bogen, zeile, 'methode').trim() || '(ohne Methode)'; }
+
+// Urteil einer Zeile: aus dem Zwischenstand (Zeilennummer → Text), sonst aus der Datei
+function urteilRoh(bogen, urteile, zeile) {
+  return Object.prototype.hasOwnProperty.call(urteile, zeile.nr) ? urteile[zeile.nr] : wert(bogen, zeile, 'urteil');
+}
+
+// Zählung je Methode (z Zeilen, b beurteilt, x ungültig) und gesamt; Schlüssel ohne Prototyp, damit Methoden wie
+// „__proto__“ oder „constructor“ wie jede andere zählen
+function zaehlen(bogen, urteile) {
+  var je = Object.create(null), gesamt = { z: 0, b: 0, x: 0 };
+  bogen.zeilen.forEach(function (z) {
+    var k = methodeVon(bogen, z), u = urteilNormal(urteilRoh(bogen, urteile, z));
+    if (!je[k]) je[k] = { z: 0, b: 0, x: 0 };
+    je[k].z++; gesamt.z++;
+    if (u) { je[k].b++; gesamt.b++; }
+    if (u === null) { je[k].x++; gesamt.x++; }
+  });
+  return { je: je, gesamt: gesamt };
+}
+
+// Zahl der gesetzten Urteile im Zwischenstand (entfernte, also leere, zählen nicht)
+function urteileGesetzt(urteile) {
+  return Object.keys(urteile).filter(function (k) { return !!urteilNormal(urteile[k]); }).length;
+}
+
+// Anzeige langer Felder: ab max Zeichen gekürzt (die Datei bleibt unverändert)
+var GEKUERZT = ' … (gekürzt, vollständig in der Datei)';
+function kurz(text, max) {
+  var s = String(text == null ? '' : text);
+  if (s.length <= max) return s;
+  var ende = max, c = s.charCodeAt(ende - 1);
+  if (c >= 0xD800 && c <= 0xDBFF) ende--;   // kein halbes Zeichen (Ersatzpaar)
+  return s.slice(0, ende) + GEKUERZT;
+}
+
+// Link zum Original: nur https; der Text nennt den Host und nur bei den bekannten Hosts das Ratsinformationssystem
+var RIS_HOSTS = ['buergerinfo.stadt-koeln.de', 'ratsinformation.stadt-koeln.de'];
+function originalLink(text) {
+  var t = String(text == null ? '' : text).trim(), url = null;
+  try { url = /^https:\/\/\S+$/.test(t) ? new URL(t) : null; } catch (e) { url = null; }
+  if (!url || url.protocol !== 'https:' || !url.hostname) return null;
+  var ris = RIS_HOSTS.indexOf(url.hostname) >= 0;
+  return { href: url.href, ris: ris, text: (ris ? 'im Ratsinformationssystem öffnen' : 'Link öffnen') + ' (' + kurz(url.hostname, 80) + ', neues Fenster)' };
+}
 // END kern
 
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var SPEICHER = 'ratsatlas-pruefbogen:';
+  var FELD_MAX = 2000, NAME_MAX = 80;   // Anzeige: Felder und Methodennamen ab dieser Länge gekürzt
   var ORT = [['methode', 'Methode'], ['ebene', 'Ebene'], ['ort', 'Ort'], ['stadtteil_oder_bezirk', 'Stadtteil oder Stadtbezirk'],
     ['konfidenz', 'Konfidenz'], ['fundstelle', 'Fundstelle (Teil des Titels)']];
   var VORLAGE = [['titel', 'Titel'], ['drucksache', 'Drucksache'], ['datum', 'Datum'], ['vorlagenart', 'Vorlagenart']];
-  var s = null;   // Zustand: bogen, name, schluessel, urteile, anmerkungen, liste (Indizes im Filter), pos
+  var s = null;   // Zustand: bogen, name, schluessel, urteile, anmerkungen, liste (Indizes im Filter), pos, zaehlung
 
   function el(tag, text, attrs) {
     var e = document.createElement(tag);
@@ -328,12 +378,12 @@ function speichername(name) {
   function speicherSchreiben(k, v) { try { window.localStorage.setItem(k, v); return true; } catch (e) { return false; } }
   function speicherLoeschen(k) { try { window.localStorage.removeItem(k); return true; } catch (e) { return false; } }
 
-  function urteilVon(zeile) {
-    return Object.prototype.hasOwnProperty.call(s.urteile, zeile.nr) ? s.urteile[zeile.nr] : wert(s.bogen, zeile, 'urteil');
-  }
+  function urteilVon(zeile) { return urteilRoh(s.bogen, s.urteile, zeile); }
   function anmerkungVon(zeile) {
     return Object.prototype.hasOwnProperty.call(s.anmerkungen, zeile.nr) ? s.anmerkungen[zeile.nr] : wert(s.bogen, zeile, 'anmerkung');
   }
+  // offen oder ungültig: noch ohne gültiges Urteil (Sprung mit N, Startzeile)
+  function ohneUrteil(zeile) { return !urteilNormal(urteilVon(zeile)); }
   function sichern() {
     if (!s) return;
     var ok = speicherSchreiben(s.schluessel, JSON.stringify({ v: 1, urteile: s.urteile, anmerkungen: s.anmerkungen }));
@@ -353,38 +403,35 @@ function speichername(name) {
       if (alt) {
         try {
           var j = JSON.parse(alt);
-          if (j && j.v === 1) { s.urteile = j.urteile || {}; s.anmerkungen = j.anmerkungen || {}; uebernommen = Object.keys(s.urteile).length; }
+          if (j && j.v === 1) { s.urteile = j.urteile || {}; s.anmerkungen = j.anmerkungen || {}; uebernommen = urteileGesetzt(s.urteile); }
         } catch (e) { /* unlesbar: neu beginnen */ }
       }
       $('ladestatus').className = '';
-      $('ladestatus').textContent = datei.name + ': ' + bogen.zeilen.length + ' Zeilen (' + d.kodierung + ')' +
-        (uebernommen ? '; Zwischenstand aus diesem Browser übernommen (' + uebernommen + ' Urteile).' : '.') +
+      $('ladestatus').textContent = kurz(datei.name, NAME_MAX) + ': ' + bogen.zeilen.length + (bogen.zeilen.length === 1 ? ' Zeile' : ' Zeilen') +
+        ' (' + d.kodierung + ')' +
+        (uebernommen ? '; Zwischenstand aus diesem Browser übernommen (' + uebernommen + (uebernommen === 1 ? ' Urteil).' : ' Urteile).') : '.') +
         (bogen.sp.anmerkung === undefined ? ' Ohne Spalte „anmerkung“: Anmerkungen sind abgeschaltet.' : '');
-      $('anmerkung').disabled = bogen.sp.anmerkung === undefined;
       filterFuellen();
+      fortschritt();
       $('bogen').hidden = false;
-      s.pos = Math.max(0, s.liste.findIndex(function (i) { return urteilNormal(urteilVon(s.bogen.zeilen[i])) === ''; }));
+      s.pos = Math.max(0, s.liste.findIndex(function (i) { return ohneUrteil(s.bogen.zeilen[i]); }));
       zeigen(true);
+      $('zeile-titel').focus();   // Tasten wirken sofort, auch wenn die Datei mit der Tastatur gewählt wurde
     };
     leser.readAsArrayBuffer(datei);
   }
 
-  function methoden() {
-    var m = {};
-    s.bogen.zeilen.forEach(function (z) { var k = wert(s.bogen, z, 'methode').trim() || '(ohne Methode)'; m[k] = (m[k] || 0) + 1; });
-    return m;
-  }
   function filterFuellen() {
-    var f = $('filter'), m = methoden();
+    var f = $('filter'), je = zaehlen(s.bogen, s.urteile).je;
     f.replaceChildren(el('option', 'alle Methoden (' + s.bogen.zeilen.length + ')', { value: '' }));
-    Object.keys(m).sort().forEach(function (k) { f.appendChild(el('option', k + ' (' + m[k] + ')', { value: k })); });
+    Object.keys(je).sort().forEach(function (k) { f.appendChild(el('option', kurz(k, NAME_MAX) + ' (' + je[k].z + ')', { value: k })); });
     f.value = s.filter;
     listeBilden();
   }
   function listeBilden() {
     s.liste = [];
     s.bogen.zeilen.forEach(function (z, i) {
-      if (!s.filter || (wert(s.bogen, z, 'methode').trim() || '(ohne Methode)') === s.filter) s.liste.push(i);
+      if (!s.filter || methodeVon(s.bogen, z) === s.filter) s.liste.push(i);
     });
     s.pos = Math.min(s.pos, Math.max(0, s.liste.length - 1));
   }
@@ -393,12 +440,28 @@ function speichername(name) {
     var u = urteilNormal(roh);
     return u === null ? 'ungültig' : u === '' ? 'offen' : u;
   }
+  function bedienbar(ja) {
+    Array.prototype.forEach.call($('urteile').querySelectorAll('button'), function (b) { b.disabled = !ja; });
+    $('offen').disabled = !ja;
+    $('anmerkung').disabled = !ja || s.bogen.sp.anmerkung === undefined;
+  }
 
   function zeigen(ansage, vorher) {
     var zeile = s.bogen.zeilen[s.liste[s.pos]];
-    if (!zeile) return;
+    if (!zeile) {   // nur die Kopfzeile: nichts zu beurteilen
+      $('zeile-titel').textContent = 'Keine Zeile zum Beurteilen';
+      $('zeile-urteil').textContent = '';
+      $('felder-ort').replaceChildren(); $('felder-vorlage').replaceChildren();
+      $('anmerkung').value = '';
+      bedienbar(false);
+      $('zurueck').disabled = $('vor').disabled = true;
+      fortschritt();
+      if (ansage) $('status').textContent = 'Die Datei enthält keine Zeile unter der Kopfzeile.';
+      return;
+    }
+    bedienbar(true);
     var u = urteilNormal(urteilVon(zeile));
-    $('zeile-titel').textContent = 'Zeile ' + zeile.nr + ' · ' + (s.pos + 1) + ' von ' + s.liste.length + (s.filter ? ' (' + s.filter + ')' : '');
+    $('zeile-titel').textContent = 'Zeile ' + zeile.nr + ' · ' + (s.pos + 1) + ' von ' + s.liste.length + (s.filter ? ' (' + kurz(s.filter, NAME_MAX) + ')' : '');
     $('zeile-urteil').textContent = 'Urteil: ' + urteilText(urteilVon(zeile));
     $('zeile-urteil').className = u === null ? 'ungueltig' : 'leise';
     [['felder-ort', ORT], ['felder-vorlage', VORLAGE]].forEach(function (paar) {
@@ -407,15 +470,13 @@ function speichername(name) {
       paar[1].forEach(function (f) {
         dl.appendChild(el('dt', f[1]));
         var v = wert(s.bogen, zeile, f[0]);
-        dl.appendChild(el('dd', v === '' ? '–' : v));
+        dl.appendChild(el('dd', v === '' ? '–' : kurz(v, FELD_MAX)));
       });
       if (paar[0] === 'felder-vorlage') {
         dl.appendChild(el('dt', 'Original'));
-        var dd = el('dd'), link = wert(s.bogen, zeile, 'link').trim(), url = null;
-        try { url = /^https:\/\/\S+$/.test(link) ? new URL(link) : null; } catch (e) { url = null; }
-        if (url && url.protocol === 'https:') {
-          dd.appendChild(el('a', 'im Ratsinformationssystem öffnen (neues Fenster)', { href: url.href, target: '_blank', rel: 'noopener noreferrer' }));
-        } else dd.textContent = link ? 'kein https-Link' : '–';
+        var dd = el('dd'), link = wert(s.bogen, zeile, 'link').trim(), ziel = originalLink(link);
+        if (ziel) dd.appendChild(el('a', ziel.text, { href: ziel.href, target: '_blank', rel: 'noopener noreferrer' }));
+        else dd.textContent = link ? 'kein https-Link' : '–';
         dl.appendChild(dd);
       }
     });
@@ -429,27 +490,16 @@ function speichername(name) {
     if (ansage) ansagen(vorher);
   }
 
-  function zaehlen() {
-    var je = {}, gesamt = { z: 0, b: 0 };
-    s.bogen.zeilen.forEach(function (z) {
-      var k = wert(s.bogen, z, 'methode').trim() || '(ohne Methode)', u = urteilNormal(urteilVon(z));
-      je[k] = je[k] || { z: 0, b: 0, x: 0 };
-      je[k].z++; gesamt.z++;
-      if (u) { je[k].b++; gesamt.b++; }
-      if (u === null) je[k].x++;
-    });
-    return { je: je, gesamt: gesamt };
-  }
   function fortschritt() {
-    var c = zaehlen(), tb = $('fortschritt');
+    var c = zaehlen(s.bogen, s.urteile), tb = $('fortschritt');
     tb.replaceChildren();
     Object.keys(c.je).sort().forEach(function (k) {
-      var r = c.je[k], tr = el('tr');
-      tr.appendChild(el('th', k, { scope: 'row' }));
+      var r = c.je[k], tr = el('tr'), name = kurz(k, NAME_MAX);
+      tr.appendChild(el('th', name, { scope: 'row' }));
       tr.appendChild(el('td', String(r.b), { 'class': 'zahl' }));
       tr.appendChild(el('td', String(r.z), { 'class': 'zahl' }));
       tr.appendChild(el('td', String(r.x), { 'class': r.x ? 'zahl ungueltig' : 'zahl' }));
-      var td = el('td'), p = el('progress', null, { max: String(r.z), value: String(r.b), 'aria-label': k + ': ' + r.b + ' von ' + r.z + ' beurteilt' });
+      var td = el('td'), p = el('progress', null, { max: String(r.z), value: String(r.b), 'aria-label': name + ': ' + r.b + ' von ' + r.z + ' beurteilt' });
       td.appendChild(p); tr.appendChild(td); tb.appendChild(tr);
     });
     s.zaehlung = c;
@@ -457,7 +507,7 @@ function speichername(name) {
   function ansagen(vorher) {
     var zeile = s.bogen.zeilen[s.liste[s.pos]];
     $('status').textContent = (vorher || '') + 'Zeile ' + zeile.nr + ', ' + (s.pos + 1) + ' von ' + s.liste.length +
-      ' (Methode ' + (wert(s.bogen, zeile, 'methode') || '–') + '). Urteil: ' + urteilText(urteilVon(zeile)) +
+      ' (Methode ' + (kurz(wert(s.bogen, zeile, 'methode'), NAME_MAX) || '–') + '). Urteil: ' + urteilText(urteilVon(zeile)) +
       '. Beurteilt ' + s.zaehlung.gesamt.b + ' von ' + s.zaehlung.gesamt.z + '.';
   }
 
@@ -471,27 +521,28 @@ function speichername(name) {
     zeigen(true, weiter ? 'Zeile ' + zeile.nr + ': ' + v + '. Weiter mit ' : '');
   }
   function gehen(d) {
-    if (!s) return;
+    if (!s || !s.liste.length) return;
     var neu = Math.min(Math.max(0, s.pos + d), s.liste.length - 1);
     if (neu !== s.pos) { s.pos = neu; zeigen(true); }
   }
-  function naechsteOffene() {
-    if (!s) return;
+  function naechsteOffene() {   // nächste Zeile ohne gültiges Urteil (offen oder ungültig)
+    if (!s || !s.liste.length) return;
     for (var k = 1; k <= s.liste.length; k++) {
       var i = (s.pos + k) % s.liste.length;
-      if (urteilNormal(urteilVon(s.bogen.zeilen[s.liste[i]])) === '') { s.pos = i; zeigen(true); return; }
+      if (ohneUrteil(s.bogen.zeilen[s.liste[i]])) { s.pos = i; zeigen(true); return; }
     }
-    $('status').textContent = 'Keine offene Zeile' + (s.filter ? ' in ' + s.filter : '') + '. Beurteilt ' + s.zaehlung.gesamt.b + ' von ' + s.zaehlung.gesamt.z + '.';
+    $('status').textContent = 'Keine offene oder ungültige Zeile' + (s.filter ? ' in ' + kurz(s.filter, NAME_MAX) : '') + '. Beurteilt ' + s.zaehlung.gesamt.b + ' von ' + s.zaehlung.gesamt.z + '.';
   }
 
   function speichern() {
     if (!s) return;
-    var text = bogenSchreiben(s.bogen, s.urteile, s.anmerkungen), name = speichername(s.name);
+    var text = bogenSchreiben(s.bogen, s.urteile, s.anmerkungen), name = speichername(s.name), c = zaehlen(s.bogen, s.urteile);
     var url = URL.createObjectURL(new Blob([text], { type: 'text/tab-separated-values;charset=utf-8' }));
     var a = el('a', null, { href: url, download: name });
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
-    $('speicherstatus').textContent = 'Gespeichert als ' + name + ' (' + s.zaehlung.gesamt.b + ' von ' + s.zaehlung.gesamt.z + ' beurteilt).';
+    $('speicherstatus').textContent = 'Gespeichert als ' + kurz(name, NAME_MAX) + ' (' + c.gesamt.b + ' von ' + c.gesamt.z + ' beurteilt). ' +
+      'Ist die Prüfung abgeschlossen: Zwischenstand im Browser löschen.';
   }
   function loeschen() {
     if (!s) return;
@@ -500,6 +551,13 @@ function speichername(name) {
     s.urteile = {}; s.anmerkungen = {};
     zeigen(true);
     $('speicherstatus').textContent = 'Zwischenstand gelöscht; angezeigt sind die Werte aus der Datei.';
+  }
+
+  // Tasten nicht in Feldern zur Eingabe oder Auswahl; im Dateifeld und auf Kontrollkästchen gelten sie
+  function eingabefeld(t) {
+    if (!t || !t.tagName) return false;
+    if (t.isContentEditable || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT') return true;
+    return t.tagName === 'INPUT' && t.type !== 'file' && t.type !== 'checkbox';
   }
 
   $('datei').addEventListener('change', function () { if (this.files && this.files[0]) laden(this.files[0]); });
@@ -525,9 +583,7 @@ function speichername(name) {
     sichern();
   });
   document.addEventListener('keydown', function (e) {
-    if (!s || $('bogen').hidden || e.ctrlKey || e.metaKey || e.altKey) return;
-    var t = e.target, tag = t && t.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+    if (!s || $('bogen').hidden || e.ctrlKey || e.metaKey || e.altKey || eingabefeld(e.target)) return;
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (Object.prototype.hasOwnProperty.call(KURZ, k)) { e.preventDefault(); urteilen(KURZ[k]); }
     else if (k === 'Delete' || k === 'Backspace') { e.preventDefault(); urteilen(''); }

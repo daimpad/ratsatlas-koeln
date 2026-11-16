@@ -99,14 +99,41 @@ def test_geschichtet_mit_endlichkeitskorrektur(pz):
     assert r["p"] == pytest.approx(0.95, abs=1e-12)
     assert r["se"] == pytest.approx(math.sqrt(var), abs=1e-12)
     assert r["se"] == pytest.approx(0.04956, abs=1e-4)                 # von Hand: √0,0024561
-    assert r["unten"] == pytest.approx(0.95 - Z * math.sqrt(var), abs=1e-12) and r["oben"] == 1.0
-    assert r["N"] == 400
-    # ohne Endlichkeitskorrektur wäre die Varianz größer; vollständig geprüfte Schicht (n = N): Varianz 0
+    # Intervall: Wilson um p mit dem effektiven Umfang n_eff = p̃(1 − p̃)/Var − z², p̃ = Σ W_h p̃_h
+    pt = 0.25 * pa + 0.75 * pb
+    n_eff = pt * (1 - pt) / var - z2
+    assert r["n_eff"] == pytest.approx(n_eff, abs=1e-9) and n_eff >= 10    # mindestens das kleinste n_h
+    assert (r["unten"], r["oben"]) == pytest.approx(_wilson_p(0.95, n_eff), abs=1e-12)
+    assert r["unten"] < 0.95 < r["oben"] < 1 and r["N"] == 400
+    # ohne Endlichkeitskorrektur wäre die Varianz größer; vollständig geprüfte Schicht (n = N): Varianz 0, nur der Punkt
     voll = pz.geschichtet([(20, 20, 17)])
     assert voll["p"] == pytest.approx(0.85) and voll["se"] == 0 and voll["unten"] == voll["oben"] == pytest.approx(0.85)
+    assert voll["n_eff"] is None
     # n > N (verschiedene Datenstände): Korrektur höchstens 1, keine negative Varianz
     assert pz.geschichtet([(10, 12, 6)])["se"] == 0
     assert pz.geschichtet([]) is None and pz.geschichtet([(10, 0, 0)]) is None
+
+
+def _wilson_p(p, n):
+    """Wilson-Intervall um p bei Umfang n (Lehrbuchform, unabhängig von tools/praezision.py)."""
+    m = (p + Z * Z / (2 * n)) / (1 + Z * Z / n)
+    h = Z / (1 + Z * Z / n) * math.sqrt(p * (1 - p) / n + Z * Z / (4 * n * n))
+    return max(0.0, m - h), min(1.0, m + h)
+
+
+def test_geschichtet_eine_schicht_ist_wilson(pz):
+    """Eine Schicht ohne Endlichkeitskorrektur: das geschichtete Intervall ist das Wilson-Intervall der Methode
+    (n_eff = n). Mit Endlichkeitskorrektur etwas schmaler, aber am Rand nicht mehr so knapp wie vorher p ± z·se
+    (50 von 50 bei N = 1000: vorher 95,2–100 %, Wilson 92,9–100 %; 48 von 50: vorher 89,2–100 %, Wilson 86,5–98,9 %)."""
+    for x in (0, 1, 25, 48, 50):
+        r = pz.geschichtet([(10 ** 15, 50, x)])
+        assert r["n_eff"] == pytest.approx(50, abs=1e-6)
+        assert (r["unten"], r["oben"]) == pytest.approx(pz.wilson(x, 50), abs=1e-9)
+    for x, vorher_unten, wilson_unten in ((50, 0.952, 0.929), (48, 0.892, 0.865)):
+        r = pz.geschichtet([(1000, 50, x)])
+        assert wilson_unten < r["unten"] < vorher_unten, (x, r)
+        assert r["n_eff"] == pytest.approx((50 + Z * Z) / 0.95 - Z * Z, abs=1e-9)
+    assert pz.geschichtet([(1000, 50, 48)])["oben"] < 1   # vorher auf 100 % begrenzt
 
 
 def test_p_null_und_eins(pz):
@@ -161,8 +188,13 @@ def test_ungueltige_werte_nur_mit_zeilennummer(pz, tmp_path, capsys):
                                            _zeile("strasse", "x"), _zeile("strasse", "")])
     rc, aus, err = _lauf(pz, capsys, pfad)
     assert rc == 0 and err == ""
-    assert "Zeile 3, 4:" in aus and "GEHEIMWERT" not in aus
+    assert "in Zeilen 3, 4:" in aus and "GEHEIMWERT" not in aus
     assert "| `strasse` | 4 | 1 | 1 | 0 | 0 | 0 | 1 | 2 | 1 |" in aus
+    # Ebene: Spalte „ungültig“, die Spalten ergeben „gezogen“
+    assert "| `strasse` | Straße | 4 | 1 | 0 | 0 | 0 | 1 | 2 | 1 |" in aus
+    pfad = _schreiben(tmp_path / "s1.tsv", [_zeile("strasse", "richtig"), _zeile("strasse", "x")])
+    rc, aus, err = _lauf(pz, capsys, pfad)
+    assert rc == 0 and "in Zeile 3:" in aus and "Stichprobe `s1.tsv`: 2 Zeilen" in aus
 
 
 def test_bom_crlf_anfuehrungszeichen_utf16(pz, tmp_path):
@@ -194,25 +226,77 @@ def test_schichtung_mit_audit_und_warnungen(pz, tmp_path, capsys):
     # Warnungen: Methode fehlt im Audit; mehr Zeilen als Vorlagen; Drucksache 0003/2099 nicht im Audit bei ortsteil_name
     assert "Methode `neu_methode` steht in der Stichprobe, aber nicht im Audit" in aus
     assert "Methode `ortsteil_name`: mehr Zeilen in der Stichprobe (3, davon gerechnet 3) als Vorlagen im Audit (2)" in aus
-    assert "1 Zeilen der Stichprobe: Drucksache bei dieser Methode nicht im Audit" in aus
-    assert "`vererbt` – zusammen 50 Vorlagen" in aus
+    assert "1 Zeile der Stichprobe: Drucksache bei dieser Methode nicht im Audit" in aus
+    assert "Methode ohne gerechnete Zeile (nicht im geschichteten Gesamtwert): `vererbt` – zusammen 50 Vorlagen" in aus
     # unabhängige Rechnung: strasse N=100, n=10; ortsteil_name N=2, n=3 (Korrektur 0); vererbt ohne Zeile
     z2 = Z * Z
     for lesart, xs in (("streng", 8), ("nachsichtig", 9)):
         w1, w2 = 100 / 102, 2 / 102
         p = w1 * xs / 10 + w2 * 1.0
         pt = (xs + z2 / 2) / (10 + z2)
-        se = math.sqrt(w1 ** 2 * 0.9 * pt * (1 - pt) / (10 + z2))
+        var = w1 ** 2 * 0.9 * pt * (1 - pt) / (10 + z2)
+        p_ac = w1 * pt + w2 * (3 + z2 / 2) / (3 + z2)
+        unten, oben = _wilson_p(p, p_ac * (1 - p_ac) / var - z2)
         zeile = next(z for z in csv.reader(open(tmp_path / "aus.tsv", encoding="utf-8"), delimiter="\t")
                      if z[0] == "gesamt_geschichtet_gewichtet")
         kopf = next(csv.reader(open(tmp_path / "aus.tsv", encoding="utf-8"), delimiter="\t"))
         werte = dict(zip(kopf, zeile))
         assert float(werte[lesart]) == pytest.approx(p, abs=5e-5)
-        assert float(werte[f"{lesart}_unten"]) == pytest.approx(max(0, p - Z * se), abs=5e-5)
-        assert float(werte[f"{lesart}_oben"]) == pytest.approx(min(1, p + Z * se), abs=5e-5)
+        assert float(werte[f"{lesart}_unten"]) == pytest.approx(unten, abs=5e-5)
+        assert float(werte[f"{lesart}_oben"]) == pytest.approx(oben, abs=5e-5)
         assert werte["vorlagen_im_audit"] == "102"
     assert "Σ N_h = 152, davon in Methoden mit gerechneten Zeilen 102 (67,1 %)" in aus
     assert "| `strasse` | 100 | 10 | 98,0 % | 8 | 9 |" in aus
+
+
+def test_n_h_kopien_derselben_drucksache(pz, tmp_path, capsys):
+    """N_h zählt Drucksache, Datum und Vorlagenart: Kopien mit derselben Drucksache und anderem Datum oder anderer
+    Vorlagenart zählen einzeln, mehrere Orte derselben Vorlage einmal, Zeilen ohne Drucksache nicht. Kommt eine
+    Drucksache in einer Methode der Stichprobe mehrfach vor, nennt die Ausgabe nur die Anzahl (ohne Drucksache)."""
+    kopf = ["drucksache", "datum", "vorlagenart", "titel", "stufe", "methode", "ebene", "treffer", "ortsteil",
+            "stadtbezirk", "konfidenz", "fundstelle", "quellobjekt", "pruefstatus"]
+
+    def a(ref, datum, art, m="strasse"):
+        return [ref, datum, art, "", "B", m, "strasse", "", "", "", "", "", "", ""]
+    audit = _schreiben(tmp_path / "audit.tsv", [
+        a("0001/2099", "2099-01-01", "Beschlussvorlage"), a("0001/2099", "2099-01-01", "Beschlussvorlage"),  # zwei Orte
+        a("0001/2099", "2099-02-01", "Beschlussvorlage"), a("0001/2099", "2099-01-01", "Mitteilung"),         # Kopien
+        a("0002/2099", "2099-01-01", "Beschlussvorlage"), a("", "2099-01-01", "Beschlussvorlage"),            # ohne Nr.
+        a("0003/2099", "", "", m="ortsteil_name")], kopf)
+    je = pz.audit_lesen(audit)
+    assert {m: len(v) for m, v in je.items()} == {"strasse": 4, "ortsteil_name": 1}
+    # ohne Spalten „datum“ und „vorlagenart“: nur Drucksachen
+    schmal = _schreiben(tmp_path / "schmal.tsv", [["0001/2099", "strasse"], ["0001/2099", "strasse"],
+                                                  ["0002/2099", "strasse"]], kopf=["drucksache", "methode"])
+    assert {m: len(v) for m, v in pz.audit_lesen(schmal).items()} == {"strasse": 2}
+    stichprobe = _schreiben(tmp_path / "s.tsv", [_zeile("strasse", "richtig", nr=1), _zeile("strasse", "falsch", nr=1),
+                                                 _zeile("strasse", "richtig", nr=2),
+                                                 _zeile("ortsteil_name", "richtig", ebene="ortsteil", nr=3)])
+    rc, aus, err = _lauf(pz, capsys, stichprobe, "--audit", audit)
+    assert rc == 0 and err == ""
+    assert "Methode `strasse`: 1 Drucksache steht mehr als einmal in der Stichprobe" in aus
+    assert "`ortsteil_name`: " not in aus.split("### Hinweise", 1)[1]   # keine Kopie, keine Warnung
+    assert "| `strasse` | 4 | 3 | 80,0 % | 2 | 2 |" in aus
+    assert "0001" not in aus and "2099" not in aus and "nicht im Audit" not in aus
+    # ohne Audit: derselbe Hinweis
+    assert "1 Drucksache steht mehr als einmal" in _lauf(pz, capsys, stichprobe)[1]
+
+
+def test_kopfzeile_und_lange_felder(pz, tmp_path, capsys):
+    """Kopfzeile: Zeilen mit unlesbarer Methode gesondert, sodass beurteilt, offen und ungültig zur übrigen Zahl
+    passen; Ebenen im Singular und Plural. Felder über der Grenze des csv-Moduls (131 072 Zeichen) sind lesbar, die
+    Grenze ist danach wieder die alte."""
+    grenze = csv.field_size_limit()
+    pfad = _schreiben(tmp_path / "s.tsv", [_zeile("strasse", "richtig", titel="[Testdaten] " + "x" * 200_000),
+                                           _zeile("strasse", "", nr=2), _zeile("", "falsch", nr=3),
+                                           _zeile("strasse", "f", ebene="strasse; ortsteil", nr=4)])
+    rc, aus, err = _lauf(pz, capsys, pfad)
+    assert rc == 0 and err == "" and csv.field_size_limit() == grenze
+    assert ("4 Zeilen (je Zeile eine Vorlage mit einer Methode), Kodierung UTF-8. Davon 1 Zeile mit leerer oder "
+            "unlesbarer Methode (nur in der Tabelle je Methode); in den übrigen 3: Beurteilt 2 (davon unklar 0), offen 1, "
+            "ungültig 0.") in aus
+    assert "Nicht nach Ebene aufgeteilt: 1 Zeile mit mehreren Ebenen." in aus and "xxxx" not in aus
+    assert "Methode leer oder unlesbar in Zeile 4:" in aus
 
 
 def test_ausgabe_ohne_inhalte(pz, tmp_path, capsys):
@@ -266,7 +350,7 @@ NODE_LAUF = r"""
 const fs = require('fs'), vm = require('vm');
 const html = fs.readFileSync(process.argv[1], 'utf8');
 const kern = html.split('// BEGIN kern')[1].split('// END kern')[0];
-const ctx = { TextDecoder: TextDecoder }; vm.createContext(ctx); vm.runInContext(kern, ctx);
+const ctx = { TextDecoder: TextDecoder, URL: URL }; vm.createContext(ctx); vm.runInContext(kern, ctx);
 const auftrag = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const aus = { parse: auftrag.parse.map((t) => ctx.parseTsv(t)), normal: auftrag.normal.map((w) => ctx.urteilNormal(w)),
               namen: auftrag.namen.map((n) => ctx.speichername(n)) };
@@ -276,6 +360,20 @@ aus.nummern = bogen.zeilen.map((z) => z.nr);
 aus.kodierung = d.kodierung;
 fs.writeFileSync(auftrag.aus, ctx.bogenSchreiben(bogen, auftrag.urteile, auftrag.anmerkungen), 'utf8');
 try { ctx.bogenLesen('titel\tlink\nx\ty\n'); } catch (e) { aus.fehler = e.message; }
+// Methoden mit Namen von Eigenschaften eines Objekts zählen wie andere; leere Datei; gesetzte Urteile
+const namen = ['__proto__', 'constructor', 'toString', 'hasOwnProperty', 'strasse', '__proto__', ''];
+const datei = { 1: 'x', 2: 'r', 4: 'r', 6: 'u' };
+const proto = ctx.bogenLesen('methode\turteil\n' + namen.map((m, i) => m + '\t' + (datei[i] || '')).join('\n') + '\n');
+const c = ctx.zaehlen(proto, { 5: 'falsch', 6: '' });
+aus.zaehlung = { je: Object.keys(c.je).sort().map((k) => [k, c.je[k].z, c.je[k].b, c.je[k].x]), gesamt: c.gesamt };
+const leer = ctx.bogenLesen('methode\turteil\n');
+aus.leer = [leer.zeilen.length, ctx.zaehlen(leer, {}).gesamt];
+aus.gesetzt = ctx.urteileGesetzt({ 2: 'richtig', 3: '', 4: 'unklar', 5: 'falsch', 6: '' });
+aus.kurz = [ctx.kurz('abc', 3), ctx.kurz('abcd', 3), ctx.kurz('a\uD83D\uDE00b', 2).length, ctx.kurz(null, 3)];
+aus.links = ['https://buergerinfo.stadt-koeln.de/vo0050.asp?__kvonr=1', 'https://example.invalid/vo/1',
+  'https://buergerinfo.stadt-koeln.de.example.invalid/x', 'https://buergerinfo.stadt-koeln.de@example.invalid/x',
+  'http://buergerinfo.stadt-koeln.de/x', 'javascript:alert(1)', 'https://', ' https://ratsinformation.stadt-koeln.de/ ']
+  .map((t) => { const l = ctx.originalLink(t); return l && [l.href, l.ris, l.text]; });
 process.stdout.write(JSON.stringify(aus));
 """
 SCHWIERIG = [
@@ -321,6 +419,22 @@ def test_pruefbogen_kern_rundweg(tmp_path):
                             "stichprobe_geokodierung_beurteilt.tsv"]
     assert erg["nummern"] == [2, 3, 4, 5, 6] and erg["kodierung"] == "UTF-8"
     assert "„methode“ und „urteil“ fehlt" in erg["fehler"]
+    # Zählung ohne Prototyp: „__proto__“ (zweimal) und „constructor“ wie jede Methode; ungültig je Methode und gesamt
+    assert erg["zaehlung"] == {"je": [["(ohne Methode)", 1, 1, 0], ["__proto__", 2, 0, 0], ["constructor", 1, 0, 1],
+                                      ["hasOwnProperty", 1, 1, 0], ["strasse", 1, 0, 0], ["toString", 1, 1, 0]],
+                               "gesamt": {"z": 7, "b": 3, "x": 1}}
+    assert erg["leer"] == [0, {"z": 0, "b": 0, "x": 0}] and erg["gesetzt"] == 3
+    assert erg["kurz"] == ["abc", "abc … (gekürzt, vollständig in der Datei)",
+                           len("a … (gekürzt, vollständig in der Datei)"), ""]
+    ris = "im Ratsinformationssystem öffnen"
+    assert erg["links"] == [
+        ["https://buergerinfo.stadt-koeln.de/vo0050.asp?__kvonr=1", True, f"{ris} (buergerinfo.stadt-koeln.de, neues Fenster)"],
+        ["https://example.invalid/vo/1", False, "Link öffnen (example.invalid, neues Fenster)"],
+        ["https://buergerinfo.stadt-koeln.de.example.invalid/x", False,
+         "Link öffnen (buergerinfo.stadt-koeln.de.example.invalid, neues Fenster)"],
+        ["https://buergerinfo.stadt-koeln.de@example.invalid/x", False, "Link öffnen (example.invalid, neues Fenster)"],
+        None, None, None,
+        ["https://ratsinformation.stadt-koeln.de/", True, f"{ris} (ratsinformation.stadt-koeln.de, neues Fenster)"]]
     vorher = list(csv.reader(open(ein, encoding="utf-8", newline=""), delimiter="\t"))
     nachher = list(csv.reader(open(tmp_path / "aus.tsv", encoding="utf-8", newline=""), delimiter="\t"))
     iu, ia = KOPF.index(URTEIL), KOPF.index("anmerkung")
@@ -389,6 +503,17 @@ def test_pruefregeln_gleich_in_markdown_und_pruefbogen():
         assert a == b, abschnitt
     for text in (md, html):
         assert "Keine Namen oder Anschriften von Privatpersonen" in text and "keine Zitate aus Dokumenten" in text
+    # „Was beurteilt wird“ gleichlautend; Anrede wie auf der Seite mit „Sie“ oder neutral, nie „du“
+    teil_md = md.split("## Was beurteilt wird\n", 1)[1].split("\n## ", 1)[0]
+    teil_html = html.split("<h3>Was beurteilt wird</h3>", 1)[1].split("<h3>", 1)[0]
+    absaetze_md = [re.sub(r"\s+", " ", a).strip() for a in teil_md.split("\n\n") if a.strip()]
+    absaetze_html = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", a)).strip()
+                     for a in re.findall(r"<p>(.+?)</p>", teil_html, re.S)]
+    assert absaetze_md == absaetze_html and len(absaetze_md) == 2
+    hilfe = html.split('<details class="karte regeln" id="regeln">', 1)[1].split("</details>", 1)[0]
+    for text in (md, hilfe):
+        assert not re.search(r"\b(du|dir|dich|dein\w*)\b", text, re.I)
+    assert "zeigt genauer, wie verlässlich die Karte ist" in md and "macht die Karte verlässlicher" not in md
 
 
 # --- Prüfbogen im Browser (nur lokal) ------------------------------------------------------------------------------
@@ -417,7 +542,29 @@ def test_pruefbogen_im_browser(tmp_path):
     assert erg["img"] == [0, True] and erg["zeile_ohne_link"] == 0 and erg["links"] == [["https:", "_blank", "noopener noreferrer"]]
     assert erg["fokus_sichtbar"] and erg["gedrueckt"] == []
     assert erg["dateiname"] == "stichprobe_geokodierung_beurteilt.tsv"
-    assert "übernommen (6 Urteile)" in erg["wieder"] and erg["nach_loeschen"] == ["1", "0", "0"]
+    # übernommen: nur gesetzte Urteile (fünf; ein entferntes zählt nicht)
+    assert "übernommen (5 Urteile)" in erg["wieder"] and erg["nach_loeschen"] == ["1", "0", "0"]
+    # nur Kopfzeile: kein Fehler bei N, Pfeilen, R und „TSV speichern“; Datei unverändert gespeichert
+    leer = erg["leer"]
+    assert leer["fokus"] == "zeile-titel" and leer["titel"] == "Keine Zeile zum Beurteilen" and leer["knoepfe"] == 0
+    assert leer["gespeichert"] and leer["speicherstatus"].startswith("Gespeichert als nur_kopf_beurteilt.tsv (0 von 0")
+    # Sonderfälle: Fokus nach dem Laden, Tasten im Dateifeld und auf dem Kontrollkästchen, N springt zu ungültig
+    so = erg["sonder"]
+    assert so["fokus"] == "zeile-titel" and so["erste"] == "Zeile 2 · 1 von 5" and so["nach_datei"] == "Zeile 3 · 2 von 5"
+    assert so["nach_kontrollkaestchen"] == "Zeile 2 · 1 von 5" and so["sprung"] == ["Zeile 3 · 2 von 5", "Urteil: ungültig"]
+    # Methoden mit Namen von Objekteigenschaften wie andere; lange Namen gekürzt
+    gekuerzt = " … (gekürzt, vollständig in der Datei)"
+    assert so["filter"] == ["alle Methoden (5)", "__proto__ (1)", "constructor (1)", "m" + "y" * 79 + gekuerzt + " (1)",
+                            "strasse (1)", "toString (1)"]
+    assert [z[0] for z in so["fortschritt"]] == ["__proto__", "constructor", "m" + "y" * 79 + gekuerzt, "strasse",
+                                                  "toString"]
+    assert so["fortschritt"][1] == ["constructor", "0", "1", "1"]
+    # Felder mit 100 000 Zeichen: gekürzt angezeigt, schnell; keine seitliche Verschiebung bei 320, 375 und 1400 px
+    assert max(so["lang"]) == 2000 + len(gekuerzt) and so["lang_ende"].endswith(gekuerzt)
+    assert so["laden_ms"] < 3000 and so["lang_ms"] < 3000, so
+    assert so["breite"] == {"320": 0, "375": 0, "1400": 0}
+    assert so["filter_proto"] == ["Zeile 2 · 1 von 1 (__proto__)", "Link öffnen (example.invalid, neues Fenster)"]
+    assert so["csp"] == []
     assert erg["gezogen"] == "gezogen.tsv: 8 Zeilen (UTF-8)."   # gleicher Inhalt, Zwischenstand gelöscht
     assert erg["schritte"][0] == ["r", "Zeile 2: richtig. Weiter mit Zeile 3, 2 von 8 (Methode strasse). Urteil: offen. "
                                        "Beurteilt 2 von 8."]
