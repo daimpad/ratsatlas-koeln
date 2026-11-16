@@ -257,6 +257,10 @@ ABHILFE = {
 # Zeitfilter unter 90 % des Stands (Art `leer`, ohne RATSATLAS_KUERZER_ANNEHMEN) aussetzen (Entscheidung 13.11.2026):
 # Eintrag `<liste>_ausgesetzt` im Zustand (maßgeblich) und `abruf_ausgesetzt` in STAND.json (für Export und Seite)
 AUSSETZEN = ("papers", "meetings")
+# Anlass eines Aussetzens (Feld `anlass` im Eintrag; tools/abrufstand.py gibt nur diese festen Texte aus)
+AUSSETZEN_ANLASS = {"fortgesetzt": "fortgesetzter Vollabruf",
+                    "befund": "vollständiges Lesen nach nicht angewandtem Zeitfilter",
+                    "wiederholt": "wiederholter Vollabruf"}
 LISTEN_NAME = {"papers": "Vorlagen", "meetings": "Sitzungen"}
 ABHILFE_AUSGESETZT = (
     "Abhilfe: stimmt der kürzere Stand, RATSATLAS_KUERZER_ANNEHMEN={liste} (liest die Liste zu Ende bzw. vollständig "
@@ -1250,8 +1254,8 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
             # fortgesetzter Vollabruf, vollständiges Lesen nach dem Befund oder wiederholter Vollabruf (schon der vorige
             # Abbruch war `leer` dieser Liste, etwa RATSATLAS_VOLLABRUF dauerhaft gesetzt) unter 90 % des Stands: sonst
             # wiederholte er sich jede Nacht bis zum Listenende (Entscheidung 13.11.2026: die Liste setzt aus)
-            anlass = ("vollständiges Lesen nach nicht angewandtem Zeitfilter" if befund else
-                      "fortgesetzter Vollabruf" if fort else "wiederholter Vollabruf")
+            anlass = (AUSSETZEN_ANLASS["befund"] if befund else
+                      AUSSETZEN_ANLASS["fortgesetzt"] if fort else AUSSETZEN_ANLASS["wiederholt"])
             return _aussetzen(schluessel, e, zeile, objekte, seiten,
                               befund["filter_wirksam"] if befund else _filter_wirksam(objekte, seit), pfad, anlass)
         if befund and e.art == "leer":
