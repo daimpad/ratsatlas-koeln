@@ -261,7 +261,7 @@ def _sample_methods(db, path, n=50, seed=2026):
                          "; ".join(sorted({str(l[2] or l[3]) for l in locs})), "; ".join(sorted({l[4] for l in locs})),
                          "; ".join(sorted({str(l[5]) for l in locs})), "", ""])
     _write_tsv(path, ["methode", "drucksache", "datum", "vorlagenart", "titel", "link", "ort", "ebene",
-                      "stadtteil_oder_bezirk", "konfidenz", "fundstelle", "urteil (richtig/teilweise/falsch)",
+                      "stadtteil_oder_bezirk", "konfidenz", "fundstelle", "urteil (richtig/teilweise/falsch/unklar)",
                       "anmerkung"], rows)
     return len(rows)
 
