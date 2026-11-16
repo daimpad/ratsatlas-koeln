@@ -1,5 +1,6 @@
 """Workflows und Technikseite: jede Datei, jeder Schritt und jede Quelle hat eine Erklärung; der Hauptlauf ist bis zur
 Information der Stadt gesperrt, veröffentlicht nie Testdaten und sichert den Abrufzustand gleich nach dem Abruf."""
+import itertools
 import os
 import re
 import shutil
@@ -123,6 +124,40 @@ def _lesende_form(schritt, skript):
     assert (config.ROOT / skript).exists()
 
 
+# Schlüssel `if` in jeder Schreibweise (auch in Anführungszeichen, mit Leerzeichen vor dem Doppelpunkt, nach „- “, „{“,
+# „,“ oder „? “) und die einzige Form, die die Prüfungen hier lesen: `if: <Wert>` auf einer Zeile
+IF_SCHLUESSEL = re.compile(r"""(?:^|[\s{,?-])["']?if["']?\s*:""")
+IF_FORM = re.compile(r"""^(\s*(?:- )?)if: ([^\s|>&*!'"#{\[%@`].*)$""")
+
+
+def _if_befunde(text):
+    """Stellen eines Workflows, an denen ein `if` anders steht, als test_waechter_vor_abruf_und_veroeffentlichung es
+    mit `if: (.+)` je Zeile liest (Prüfung feldf, Mutation M8b): als Blockskalar (`if: >-`, `if: |`), mit dem Wert
+    erst in der nächsten Zeile, über mehrere Zeilen fortgesetzt, in Anführungszeichen oder mit Leerzeichen vor dem
+    Doppelpunkt, als Anker oder Verweis (`&name`, `*name`), dazu YAML-Formen, die Schritte anders gliedern, als der
+    Text sie trennt (Schritt in Flussform, Spiegelstrich allein auf einer Zeile, Zusammenführen mit `<<:`, `? `
+    als Schlüssel). Kommentarzeilen zählen nicht."""
+    befunde = []
+    zeilen = text.splitlines()
+    for k, z in enumerate(zeilen):
+        if not z.strip() or z.strip().startswith("#"):
+            continue
+        if (re.match(r"^\s*(?:- )?(?:[\w-]+\s*:\s+)?[&*][\w-]+(?:\s|$)", z) or re.search(r"<<\s*:", z)
+                or re.match(r"^\s*\?(?:\s|$)", z) or re.match(r"^\s*-\s*(?:[{\[]|$)", z)
+                or re.match(r"^\s*steps:\s*[{\[]", z)):
+            befunde.append((k + 1, "YAML-Form, die die Schritte anders gliedert"))
+        if not IF_SCHLUESSEL.search(z):
+            continue
+        form = IF_FORM.match(z)
+        if not form:
+            befunde.append((k + 1, "if nicht als `if: <Wert>` auf einer Zeile"))
+            continue
+        folgende = next((x for x in zeilen[k + 1:] if x.strip()), "")
+        if len(folgende) - len(folgende.lstrip(" ")) > len(form.group(1)):
+            befunde.append((k + 1, "if über mehrere Zeilen"))
+    return befunde
+
+
 def test_waechter_vor_abruf_und_veroeffentlichung():
     """Ein Wächter direkt nach dem Wiederherstellen und direkt vor dem Abruf hält den freigegebenen Lauf an, wenn der
     Zustand des Abrufs fehlt (etwa nach einer Störung von actions/cache oder einem gelöschten Eintrag). Er hat weder
@@ -150,6 +185,7 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     assert not re.search(r"^ {0,8}RATSATLAS_RAW:", text, re.M)
     assert "working-directory" not in text and not re.search(r"^\s*defaults:", text, re.M)
     assert f"[ -f {config.ZUSTAND.relative_to(config.ROOT).as_posix()} ]" in _skript(waechter)
+    assert not _if_befunde(text)   # jedes `if` so, wie die Schleife unten es liest
     ids = {m.group(1): s for s in schritte[w + 1:] for m in [re.search(r"^\s+id: (\w+)$", s, re.M)] if m}
     lesend = []
     for s in schritte[w + 1:]:
@@ -167,6 +203,62 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     job = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n  deploy:\n")[1]
     assert re.search(r"^    needs: build$", job, re.M)
     assert not re.search(r"always\(\)|failure\(\)|cancelled\(\)", job)
+
+
+# Schritte, die nach „Gibt es Daten zum Veröffentlichen?“ eingefügt die Prüfung des Wächters umgingen, wenn ihr `if`
+# nicht gelesen würde: jeder schreibt (Abruf) und liefe nach einem Fehler (Mutationen aus der Prüfung feldf)
+UMGEHUNGEN = {
+    "Blockskalar >-": "      - name: x\n        if: >-\n          always()\n        run: python -m pipeline fetch\n",
+    "Blockskalar |": "      - name: x\n        if: |\n          always()\n        run: python -m pipeline fetch\n",
+    "Wert in der nächsten Zeile": ("      - name: x\n        if:\n          always()\n"
+                                   "        run: python -m pipeline fetch\n"),
+    "fortgesetzt": ("      - name: x\n        if: steps.daten.outputs.da == 'ja' ||\n          always()\n"
+                    "        run: python -m pipeline fetch\n"),
+    "beginnt mit if": "      - if: >-\n          always()\n        run: python -m pipeline fetch\n",
+    "Leerzeichen vor dem Doppelpunkt": ("      - name: x\n        if : always()\n"
+                                        "        run: python -m pipeline fetch\n"),
+    "Schlüssel in Anführungszeichen": ("      - name: x\n        \"if\": always()\n"
+                                       "        run: python -m pipeline fetch\n"),
+    "Wert in Anführungszeichen": "      - name: x\n        if: \"always()\"\n        run: python -m pipeline fetch\n",
+    "Verweis": "      - name: x\n        if: *immer\n        run: python -m pipeline fetch\n",
+    "Flussform": "      - {name: x, if: always(), run: python -m pipeline fetch}\n",
+    "Spiegelstrich allein": "      -\n        name: x\n        if: always()\n        run: python -m pipeline fetch\n",
+}
+
+
+def test_if_nur_einzeilig_in_pages():
+    """Jedes `if` in pages.yml steht als `if: <Wert>` auf einer Zeile, wie die Prüfung des Wächters es liest; jede
+    andere Schreibweise eines nach einem Fehler laufenden, schreibenden Schritts nach dem Wächter fällt auf (vorher
+    bestand ein Schritt mit `if: >-` und `always()` in der nächsten Zeile alle Tests, Mutation M8b)."""
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    assert not _if_befunde(text), _if_befunde(text)
+    stelle = "      - name: Kartenvorschau (leere Rohdaten in eigenem Verzeichnis)\n"
+    assert text.count(stelle) == 1
+    for art, schritt in UMGEHUNGEN.items():
+        assert _if_befunde(text.replace(stelle, schritt + "\n" + stelle)), art
+    # unverändert lesbar: ein einzeiliges if mit Kommentar und ein Schritt, der mit `- if:` beginnt
+    for schritt in ("      - name: x\n        if: always()   # Kommentar\n        run: python tools/abrufstand.py\n",
+                    "      - if: always()\n        name: x\n        run: python tools/abrufstand.py\n"):
+        assert not _if_befunde(text.replace(stelle, schritt + "\n" + stelle)), schritt
+
+
+def test_if_wie_yaml_es_liest():
+    """Gegenprobe, wo PyYAML installiert ist (nicht in requirements.txt, also nicht in GitHub Actions): Die Schritte,
+    wie die Tests hier sie aus dem Text trennen, und ihr `if` stimmen mit dem überein, was YAML liest."""
+    yaml = pytest.importorskip("yaml")
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    jobs = yaml.safe_load(text)["jobs"]
+    gelesen = [schritt.get("if") for job in jobs.values() for schritt in job["steps"]]
+    getrennt = []
+    for s in _schritte()[1:]:
+        # nur die Zeilen des Schritts: bis zur ersten Zeile außer Kommentaren, die weniger als acht Zeichen eingerückt
+        # ist (etwa der nächste Job mit eigenem `if`)
+        eigene = s.split("\n")[:1] + list(itertools.takewhile(
+            lambda z: not z.strip() or z.lstrip().startswith("#") or len(z) - len(z.lstrip(" ")) >= 8,
+            s.split("\n")[1:]))
+        bedingung = re.search(r"(?:^|\n)\s*if: (.+)", "\n".join(eigene))
+        getrennt.append(bedingung.group(1).strip() if bedingung else None)
+    assert getrennt == gelesen
 
 
 @pytest.mark.parametrize("informiert", ["ja", "", "Ja", " ja", "nein"])

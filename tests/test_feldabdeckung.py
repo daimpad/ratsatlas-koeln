@@ -74,8 +74,13 @@ def test_fertige_datei_und_teildatei_je_kennung_einmal(fa, tmp_path, capsys):
     assert r["stand"].startswith("Zwischenstand: Vollabruf läuft") and "und der Stand davor" in r["stand"]
     assert r["dateien"]["papers.jsonl"] == "gelesen: 7 Zeilen, davon 1 unlesbar und 2 ohne Kennung"
     assert r["dateien"]["papers.teil.jsonl"] == "gelesen: 4 Zeilen"
+    # was der fertige Vollabruf aus der Teildatei behält (sessionnet._zusammenfuehren mit voll=True): 1, 5, 2
+    # (gelöscht, obwohl es 2 im Stand davor ohne Löschvermerk gibt), 6; 3 und 4 aus dem Stand davor fallen weg
+    assert r["nur_teil"] == {"kennungen": 4, "geloescht": 1}
     out = _aufruf(fa, raw, capsys)
     assert "Stand: Zwischenstand: Vollabruf läuft (Fortsetzung steht aus)" in out
+    assert ("Nur aus der Teildatei: 4 Kennungen, davon 1 zuletzt als gelöscht gemeldet. Der fertige Vollabruf behält "
+            "nur die darin und auf den übrigen Seiten gelesenen Objekte") in out
     assert "Vorlagen je Kennung: 5; als gelöscht gemeldet (deleted, getrennt): 1" in out
     assert "Fassungen derselben Kennung (je Kennung einmal gezählt): 2 ersetzt" in out
     assert "  underDirectionOf: 1 (20,0 %)" in out
@@ -225,8 +230,16 @@ def test_kategorien_nur_haeufig_kurz_und_unbedenklich(fa):
         assert fa.zeigbar(fa.normal(wert)), wert
     for wert in ("https://example.invalid/typ", "www.example.invalid", "vorlage.pdf", "Drucksache 1234/2026",
                  "AN/0123/2026 Antrag", "Kennung 123456", "a" * 81, "Antrag!", "Name@example.invalid", "„Zitat“",
-                 "1234", "Tab\x00Zeichen", "Bür­gerantrag", "Café"):
+                 "1234", "Tab\x00Zeichen", "Bür­gerantrag", "Café",
+                 # Personen, Anschriften, Rufnummern (Prüfung feldf); bloße Namen ohne Anrede bleiben offen (TECHNIK.md)
+                 "Musterweg 12, Köln-Ehrenfeld", "Tel. 0221-221-1234", "DE89 3704 0044 0532 0130 00",
+                 "Anregung nach § 24 GO von Herrn Max Mustermann, Musterstr. 3", "Herr Müller", "frau Muster",
+                 "Dr. Muster", "Prof Muster", "Musterstraße 3", "Musterstrasse 3", "Am Gürtel 7", "Musterplatz 1a",
+                 "M&uuml;ller", "Anfrage &quot;Muster&quot;", "0221 221 12 34"):
         assert not fa.zeigbar(fa.normal(wert)), wert
+    for wert in ("Antrag nach § 3 Abs. 1 Satz 2 GO", "Frauen und Gleichstellung", "Wegweiser 2",
+                 "Bezirksvertretung 2 (Rodenkirchen)", "Beschluss & Rat; Verwaltung", "Anfrage nach § 4"):
+        assert fa.zeigbar(fa.normal(wert)), wert
     assert fa.zeigbar("application/pdf", mime=True) and fa.zeigbar("application/vnd.ms-excel", mime=True)
     for wert in ("pdf", "vorlage.pdf", "x/pdf", "Application/PDF", "application/pdf; name=a.pdf", "text/"):
         assert not fa.zeigbar(wert, mime=True), wert
@@ -396,9 +409,106 @@ def test_ueberlange_zeile_und_zeitgrenze(fa, tmp_path, capsys, monkeypatch):
     assert a["listen"]["papers"]["auswertung"].n == 2
     assert a["listen"]["papers"]["dateien"]["papers.jsonl"] == "gelesen: 3 Zeilen, davon 1 unlesbar und 0 ohne Kennung"
     out = _aufruf(fa, raw, capsys, "--frist", "-1")
-    assert out.count("Unvollständig: Zeitgrenze des Schritts erreicht") == 1   # nur die Liste, die gelesen wurde
-    assert "Vorlagen je Kennung: 0;" in out and "meetings_roh.jsonl fehlt" in out
+    # nur die Liste, die gelesen wurde; im ersten Durchgang keine Zahlen statt „0“ (Prüfung feldf)
+    assert out.count("Nicht ausgewertet: Zeitgrenze im ersten Durchgang (Kennungen) erreicht") == 1
+    assert "Vorlagen je Kennung" not in out and "Unvollständig" not in out and "meetings_roh.jsonl fehlt" in out
     assert "Dateien: papers.jsonl bis zur Zeitgrenze gelesen: 0 Zeilen;" in out
+
+
+class _Uhr:
+    """Uhr für die Frist: steht still, bis ein Test sie stellt."""
+    def __init__(self):
+        self.jetzt = 0.0
+
+    def monotonic(self):
+        return self.jetzt
+
+
+def _uhr_springt(fa, monkeypatch, datei, durchgang, nach, auf):
+    """Die Uhr springt auf `auf`, sobald im Durchgang `durchgang` (1 oder 2) der Datei `datei` das Element `nach`
+    gelesen ist: wie eine Liste, die für ihren Anteil an der Frist zu lange braucht."""
+    uhr, elemente, aufrufe = _Uhr(), fa._elemente, {}
+    monkeypatch.setattr(fa, "time", uhr)
+
+    def langsam(pfad, art):
+        aufrufe[pfad.name] = aufrufe.get(pfad.name, 0) + 1
+        for i, e in enumerate(elemente(pfad, art)):
+            if pfad.name == datei and aufrufe[pfad.name] == durchgang and i == nach:
+                uhr.jetzt = auf
+            yield e
+    monkeypatch.setattr(fa, "_elemente", langsam)
+
+
+def test_zeitgrenze_je_liste_im_ersten_durchgang(fa, tmp_path, capsys, monkeypatch):
+    """Braucht die Liste der Vorlagen im ersten Durchgang länger als ihr Anteil an der Frist (ANTEIL_FRIST), erscheint
+    sie als „nicht ausgewertet“ ohne irreführende Zahlen; Sitzungen und Gremien bekommen ihren Anteil am Rest und
+    werden ausgewertet (Prüfung feldf)."""
+    raw = tmp_path / "raw"
+    _jsonl(raw / "papers.jsonl", [_vorlage(i) for i in range(2000)])
+    _jsonl(raw / "meetings_roh.jsonl", [{"id": f"{B}/m/{i}", "start": "2026-01-01T10:00:00+01:00"} for i in range(3)])
+    _jsonl(raw / "organizations.jsonl", [{"id": f"{B}/o/{i}", "organizationType": "Gremium"} for i in range(5)])
+    assert fa.ANTEIL_FRIST["papers"] < 1
+    frist = 100
+    _uhr_springt(fa, monkeypatch, "papers.jsonl", 1, 300, frist * fa.ANTEIL_FRIST["papers"] + 1)
+    out = _aufruf(fa, raw, capsys, "--frist", str(frist))
+    vorlagen, rest = out.split("== Sitzungen")
+    assert "Dateien: papers.jsonl bis zur Zeitgrenze gelesen: 512 Zeilen;" in vorlagen
+    assert ("Nicht ausgewertet: Zeitgrenze im ersten Durchgang (Kennungen) erreicht; zu dieser Liste keine "
+            "Zahlen") in vorlagen
+    assert "Vorlagen je Kennung" not in vorlagen and "Unvollständig" not in vorlagen
+    assert "Sitzungen je Kennung: 3;" in rest and "Gremien je Kennung: 5;" in rest
+    assert "Zeitgrenze" not in rest and "„Gremium“: 5 (100,0 %)" in rest
+
+
+def test_zeitgrenze_im_zweiten_durchgang(fa, tmp_path, capsys, monkeypatch):
+    """Endet die Frist erst im zweiten Durchgang, umfassen die Zahlen die bis dahin ausgewerteten Kennungen, mit
+    deren Anzahl; die Dateien sind ganz gelesen (erster Durchgang)."""
+    raw = tmp_path / "raw"
+    _jsonl(raw / "papers.jsonl", [_vorlage(i) for i in range(2000)])
+    _uhr_springt(fa, monkeypatch, "papers.jsonl", 2, 300, 1000)
+    out = _aufruf(fa, raw, capsys, "--frist", "100")
+    assert "Dateien: papers.jsonl gelesen: 2.000 Zeilen;" in out
+    assert ("Unvollständig: Zeitgrenze im zweiten Durchgang erreicht; die Zahlen umfassen nur die bis dahin "
+            "ausgewerteten 512 von 2.000 Kennungen") in out
+    assert "Vorlagen je Kennung: 512;" in out
+    # danach ist die Frist für alle aufgebraucht: die folgenden Listen haben keine Dateien und bleiben ohne Vermerk
+    assert out.count("Zeitgrenze") == 1
+
+
+def test_beratungen_mit_organization_aus_der_sitzung_getrennt(fa, tmp_path, capsys):
+    """Gremien, die der Abruf selbst aus der Sitzung in die Beratung schreibt (sessionnet.beratungen,
+    `_organization_quelle`), zählen nicht als organization aus den Rohdaten der Stadt, sondern getrennt (Prüfung
+    feldf)."""
+    raw = tmp_path / "raw"
+    _jsonl(raw / "papers.jsonl", [
+        _vorlage(1, consultation=[{"id": f"{B}/c/1", "meeting": f"{B}/m/1", "organization": [f"{B}/o/1"]},
+                                  {"id": f"{B}/c/2", "meeting": f"{B}/m/1", "organization": [f"{B}/o/2"],
+                                   "_organization_quelle": "sitzung"}]),
+        _vorlage(2, consultation=[{"id": f"{B}/c/3", "meeting": f"{B}/m/2", "organization": [f"{B}/o/2"],
+                                   "_organization_quelle": "sitzung"}])])
+    a = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)
+    w = a["listen"]["papers"]["auswertung"]
+    assert (w.beratung["objekt"], w.beratung["meeting"], w.beratung["organization"],
+            w.beratung["organization_ergaenzt"]) == (3, 3, 1, 2)
+    out = _aufruf(fa, raw, capsys)
+    assert ("mit organization aus den Rohdaten der Stadt 1; organization vom Abruf aus der Sitzung ergänzt, nicht "
+            "mitgezählt: 2)") in out
+    assert "sitzung" not in out
+
+
+def test_beratungen_wie_der_abruf_sie_ergaenzt(oparl, monkeypatch, capsys):
+    """Mit dem Abruf gegen den lokalen Testserver: Beratungen ohne organization, die sessionnet.beratungen aus der
+    Sitzung ergänzt und in papers.jsonl schreibt, zählen getrennt."""
+    monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
+    fa = _modul()
+    sessionnet.fetch_all()
+    ergaenzt = sum(1 for z in config.PAPERS.read_text(encoding="utf-8").splitlines() if z.strip()
+                   for c in json.loads(z).get("consultation") or []
+                   if isinstance(c, dict) and c.get("_organization_quelle"))
+    assert ergaenzt >= 1   # der Testserver liefert mindestens eine Beratung ohne organization (test_sessionnet)
+    assert fa.main([]) == 0
+    out = capsys.readouterr().out
+    assert f"organization vom Abruf aus der Sitzung ergänzt, nicht mitgezählt: {ergaenzt})" in out
 
 
 def test_laufzeit_einige_tausend_vorlagen(fa, tmp_path):

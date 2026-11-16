@@ -21,18 +21,28 @@ während des Vollabrufs auf dem bisher gelesenen Teil. Liest nur (Vorgaben aus p
 Je Kennung zählt ein Objekt einmal wie in build (build._je_kennung_einmal), über die fertige Datei und die Teildatei
 hinweg: die zuletzt gelesene Fassung ohne Löschvermerk (die Teildatei nach der fertigen Datei, eine spätere Zeile nach
 einer früheren); als gelöscht (`deleted`) zählt eine Kennung nur, wenn es sie nicht auch ohne Löschvermerk gibt.
+Der Abruf hält es am Ende eines Vollabrufs anders (sessionnet._zusammenfuehren mit voll=True): Er behält nur die neu
+gelesenen Objekte (Teildatei und übrige Seiten, je Kennung die zuletzt gelesene Fassung, auch eine gelöschte). Gibt es
+neben der Teildatei eines laufenden Vollabrufs noch die fertige Datei (ein späterer Vollabruf), steht deshalb
+zusätzlich die Zahl der Kennungen nur aus der Teildatei da (Prüfung feldf).
 Gelöschte Objekte stehen getrennt, Anteile beziehen sich auf die übrigen. Gelesen wird zeilenweise in zwei Durchgängen
 (erst die Kennungen, dann die geltenden Fassungen), damit der Speicher nicht mit der Größe der Objekte wächst (je
 Kennung ein Hashwert); unlesbare Zeilen, Zeilen ohne Kennung und überlange Zeilen (über 32 MiB) werden gezählt und
-übersprungen. Nach der Frist (Vorgabe 7 Minuten; der Schritt hat 10) endet das Lesen mit dem Vermerk „unvollständig“.
+übersprungen. Die Frist (Vorgabe 7 Minuten; der Schritt hat 10) teilt sich auf die Listen auf (ANTEIL_FRIST: Vorlagen
+höchstens 60 % davon, Sitzungen 80 % des Rests, Gremien der Rest), damit eine langsame Liste den übrigen nicht alle
+Zeit nimmt. Endet sie im ersten Durchgang, bleibt die Liste ohne Zahlen („nicht ausgewertet“); im zweiten Durchgang
+umfassen die Zahlen die bis dahin ausgewerteten Kennungen („unvollständig“, mit Anzahl).
 Ausgabe nur auf stdout und, in GitHub Actions, als Markdown an `$GITHUB_STEP_SUMMARY`; das Skript schreibt nichts in
 data/, veröffentlicht nichts und sendet keine Anfrage. Nur Anzahlen, Anteile und vorsichtig gefilterte Kategorien:
 Werte von paperType, mimeType, result (Tagesordnungspunkt), organizationType und classification erscheinen nur, wenn
 sie mindestens 5-mal vorkommen, nach Zusammenfassen des Leerraums höchstens 80 Zeichen haben und nur aus Buchstaben
 (mit Umlauten und ß), Ziffern, Leerzeichen und . , ; : - / ( ) § & bestehen, mindestens einen Buchstaben enthalten und
 keine Merkmale von Adressen, Dateinamen, Drucksachennummern oder Kennungen tragen („://“, „www.“, ein Punkt zwischen
-Buchstaben oder Ziffern, Zahl/Jahr, fünf und mehr Ziffern in Folge); mimeType nur in der Form typ/untertyp mit
-bekanntem Typ. Alles andere zählt als „sonstige (n Werte, m Objekte)“. Nie Kennungen, Titel, Namen,
+Buchstaben oder Ziffern, Zahl/Jahr, fünf und mehr Ziffern in Folge) und keine von Personen, Anschriften oder
+Rufnummern (Anrede oder Titel als ganzes Wort: Herr, Herrn, Frau, Dr., Prof.; ein Straßenwort oder -kürzel mit
+folgender Zahl; drei und mehr Zifferngruppen; eine Zeichenreferenz wie „&auml;“); mimeType nur in der Form
+typ/untertyp mit bekanntem Typ. Alles andere zählt als „sonstige (n Werte, m Objekte)“. Ein bloßer Name ohne Anrede
+ist von einer Kategorie nicht zu unterscheiden (TECHNIK.md). Nie Kennungen, Titel, Namen,
 Drucksachennummern (nur ihre Form als Klasse), Adressen, Dateinamen, Personenangaben (originatorPerson nur „Liste nicht
 leer“, nie aufgelöst), Werte der Ortsangaben oder anderer Freitext. Fehlende oder unlesbare Dateien erscheinen als
 „fehlt“ bzw. „unlesbar“; das Skript endet immer mit 0 (auch nach einem unerwarteten Fehler: Warnung mit dem Namen des
@@ -60,6 +70,9 @@ MAX_ANGEZEIGT = 25                   # Werte je Kategorienliste; weitere zählen
 MAX_GEMERKT = 5000                   # gemerkte anzeigbare Werte je Feld (Speicher); weitere zählen unter „sonstige“
 MAX_HASHES = 100_000                 # gemerkte Hashwerte nicht anzeigbarer Werte je Feld (nur für die Zahl der Werte)
 KREUZ_ARTEN = 10                     # häufigste Vorlagenarten in der Kreuztabelle
+# Anteil an der jeweils verbleibenden Frist je Liste (in dieser Reihenfolge gelesen): eine langsame Liste nimmt den
+# folgenden nicht alle Zeit (Prüfung feldf)
+ANTEIL_FRIST = {"papers": 0.6, "meetings": 0.8, "organizations": 1.0}
 LISTEN = {   # Liste: (fertige Datei, Ersatz als JSON-Liste, nur ohne fertige Datei und Teildatei gelesen)
     "papers": ("papers.jsonl", None),
     "meetings": ("meetings_roh.jsonl", "meetings.json"),
@@ -72,6 +85,14 @@ NAME = {"papers": "Vorlagen", "meetings": "Sitzungen", "organizations": "Gremien
 BUCHSTABE = re.compile(r"[A-Za-zÄÖÜäöüß]")
 ZEICHEN = re.compile(r"[A-Za-zÄÖÜäöüß0-9 .,;:\-/()§&]+")
 VERDAECHTIG = re.compile(r"://|www\.|[A-Za-z0-9]\.[A-Za-z0-9]{2,}|\d+/\d{2,4}(?!\d)|\d{5,}", re.I)
+# Merkmale von Personen, Anschriften und Rufnummern (Prüfung feldf): Anrede oder Titel als ganzes Wort, ein Straßenwort
+# oder -kürzel mit folgender Zahl („Musterweg 12“, „Musterstr. 3“), drei und mehr Zifferngruppen (Telefon, IBAN) und
+# Zeichenreferenzen („&auml;“), die Zeichen außerhalb der Zeichenklasse verdecken
+PERSON_ANSCHRIFT = re.compile(
+    r"\b(?:herrn?|frau|dr|prof)\b"
+    r"|(?:stra(?:ß|ss)e|str\.?|weg|platz|allee|gasse|ring|damm|ufer|wall|gürtel|pfad)\s*\d"
+    r"|\d+(?:[ \-/.]+\d+){2,}"
+    r"|&[A-Za-zÄÖÜäöüß]+;", re.I)
 MIME = re.compile(r"(?:application|audio|font|image|message|model|multipart|text|video)/[a-z0-9][a-z0-9.+\-]*")
 # Drucksachennummern nur als Klasse (CLAUDE.md 3.1; geocode.REFERENZ_PUNKT lässt 1–4 Ziffern zu)
 REFERENZEN = (("AN/NNNN/JJJJ", re.compile(r"AN/\d{4}/\d{4}")), ("NNNN/JJJJ", re.compile(r"\d{4}/\d{4}")),
@@ -159,15 +180,34 @@ def _kennung(text):
     return hashlib.blake2b(text.encode("utf-8", "surrogatepass"), digest_size=16).digest()
 
 
-def geltende(quellen, frist, dateien):
+def geltende(quellen, frist, dateien, teil=None):
     """Positionen der geltenden Fassungen, je Kennung einmal wie build._je_kennung_einmal (die zuletzt gelesene
-    Fassung ohne Löschvermerk; eine Löschung nur ohne solche), und die Zahl der ersetzten Fassungen."""
+    Fassung ohne Löschvermerk; eine Löschung nur ohne solche), die Zahl der ersetzten Fassungen und, steht die
+    Teildatei `teil` hinter einer anderen Quelle, die Kennungen nur aus ihr wie am Ende eines Vollabrufs
+    (sessionnet._zusammenfuehren mit voll=True: je Kennung die zuletzt gelesene Fassung, auch eine gelöschte) als
+    Counter mit „kennungen“ und „geloescht“, sonst None."""
     lebend, geloescht, fassungen = {}, {}, 0
     for pos, o in _objekte(quellen, frist, dateien):
         fassungen += 1
         (geloescht if o.get("deleted") else lebend)[_kennung(o["id"])] = pos
     gilt = set(lebend.values()) | {p for k, p in geloescht.items() if k not in lebend}
-    return gilt, fassungen - len(gilt)
+    nur_teil = None
+    namen = [p.name for p, _ in quellen]
+    if teil is not None and teil.name in namen[1:]:
+        # Positionen der Teildatei beginnen nach allen Zeilen der Quellen davor (_objekte zählt jede mit); die zuletzt
+        # gelesene Fassung einer Kennung, die in der Teildatei vorkommt, steht in ihr
+        grenze = sum(dateien[n]["zeilen"] for n in namen[:namen.index(teil.name)])
+        nur_teil = collections.Counter(kennungen=0, geloescht=0)
+        for k, p in lebend.items():
+            g = geloescht.get(k, -1)
+            if max(p, g) >= grenze:
+                nur_teil["kennungen"] += 1
+                nur_teil["geloescht"] += g > p
+        for k, g in geloescht.items():
+            if k not in lebend and g >= grenze:
+                nur_teil["kennungen"] += 1
+                nur_teil["geloescht"] += 1
+    return gilt, fassungen - len(gilt), nur_teil
 
 
 def json_lesen(pfad):
@@ -259,7 +299,8 @@ def zeigbar(text, mime=False):
         return False
     if mime:
         return bool(MIME.fullmatch(text))
-    return bool(ZEICHEN.fullmatch(text) and BUCHSTABE.search(text) and not VERDAECHTIG.search(text))
+    return bool(ZEICHEN.fullmatch(text) and BUCHSTABE.search(text) and not VERDAECHTIG.search(text)
+                and not PERSON_ANSCHRIFT.search(text))
 
 
 class Kategorien:
@@ -374,6 +415,11 @@ class Vorlagen:
                 self.beratung["objekt"] += 1
                 for f in ("meeting", "agendaItem", "organization"):
                     ja = nicht_leer(c.get(f))
+                    if f == "organization" and ja and c.get("_organization_quelle"):
+                        # vom Abruf aus der Sitzung ergänzt (sessionnet.beratungen schreibt es in papers.jsonl):
+                        # nicht aus den Rohdaten der Stadt, getrennt gezählt (Prüfung feldf)
+                        self.beratung["organization_ergaenzt"] += 1
+                        ja = False
                     self.beratung[f] += ja
                     mit[f] += ja
             elif isinstance(c, str) and c.strip():
@@ -478,13 +524,14 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
     fertig = raw / datei
     teil = sessionnet._teil(fertig)
     quellen = [(p, "jsonl") for p in (fertig, teil) if p.exists()]
-    r = {"name": name, "dateien": {}, "ersatz": None, "ersetzt": 0, "unvollstaendig": False, "auswertung": auswertung,
-         "nicht_auswertbar": collections.Counter()}
+    r = {"name": name, "dateien": {}, "ersatz": None, "ersetzt": 0, "unvollstaendig": False, "zeitgrenze": None,
+         "kennungen": None, "nur_teil": None, "auswertung": auswertung, "nicht_auswertbar": collections.Counter()}
     if not quellen and ersatz and (raw / ersatz).exists():
         quellen = [(raw / ersatz, "json")]
         r["ersatz"] = ersatz
     r["ohne_dateien"] = not quellen
     fort = zustand.get(f"{name}_fortsetzung")
+    r["vollabruf_laeuft"] = z_datei == "gelesen" and fort is not None
     if z_datei != "gelesen":
         r["stand"] = f"unbekannt (zustand_abruf.json {z_datei})"
     elif fort is not None:
@@ -507,8 +554,11 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
         r["stand"] += (f"; {teil.name} ohne Fortsetzung im Zustand (veraltet, der Abruf liest sie nicht mehr; "
                        "mitgezählt)")
     dateien = {}
+    durchgang = "erster Durchgang"
     try:
-        gilt, r["ersetzt"] = geltende(quellen, frist, dateien)
+        gilt, r["ersetzt"], r["nur_teil"] = geltende(quellen, frist, dateien, teil)
+        r["kennungen"] = len(gilt)
+        durchgang = "zweiter Durchgang"
         for _, o in _objekte(quellen, frist, {}, nur=gilt):
             try:
                 auswertung.add(o)
@@ -516,7 +566,8 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
                 # Objekt zählt nicht in n; Felder davor sind womöglich schon gezählt)
                 r["nicht_auswertbar"][type(e).__name__] += 1
     except Zeitgrenze:
-        r["unvollstaendig"] = True
+        # im ersten Durchgang: keine geltenden Fassungen, also keine Zahlen; im zweiten: die bis dahin ausgewerteten
+        r["unvollstaendig"], r["zeitgrenze"] = True, durchgang
     fehlerart = dateien.pop("_fehlerart", {})
     for p in (fertig, teil) + ((raw / ersatz,) if ersatz else ()):
         s = dateien.get(p.name)
@@ -529,7 +580,7 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
         if s["unlesbar"] or s["ohne_kennung"]:
             text += f", davon {tausend(s['unlesbar'])} unlesbar und {tausend(s['ohne_kennung'])} ohne Kennung"
         art = f" ({ERSATZ[p.name]})" if p.name == r["ersatz"] else ""
-        vor = "bis zur Zeitgrenze " if r["unvollstaendig"] else ""
+        vor = "bis zur Zeitgrenze " if r["zeitgrenze"] == "erster Durchgang" else ""   # im zweiten: alle Zeilen
         r["dateien"][p.name] = (f"nicht weiter lesbar{art} ({fehlerart.get(p.name, 'Fehler')}), bis dahin {text}"
                                 if s["fehler"] else f"{vor}gelesen{art}: {text}")
     return r
@@ -545,7 +596,9 @@ def auswerten(raw, zustand_pfad, stadtteile_pfad, frist_sekunden=FRIST):
     a = {"zustand": z_datei, "stadtteile": st_datei, "listen": {}}
     for name, auswertung in (("papers", Vorlagen(ist_stadtteil or (lambda _: False))), ("meetings", Sitzungen()),
                              ("organizations", Gremien())):
-        a["listen"][name] = liste_lesen(name, raw, zustand, z_datei, frist, auswertung)
+        jetzt = time.monotonic()
+        eigene = min(frist, jetzt + max(frist - jetzt, 0) * ANTEIL_FRIST[name])   # Anteil an der verbleibenden Frist
+        a["listen"][name] = liste_lesen(name, raw, zustand, z_datei, eigene, auswertung)
     a["abgleich"] = ist_stadtteil is not None
     a["dauer"] = time.monotonic() - beginn
     return a
@@ -601,9 +654,21 @@ def bloecke(a):
         b.append(("h", f"{NAME[name]} (`{name}`)"))
         b.append(("p", "Dateien: " + "; ".join(f"{k} {v}" for k, v in r["dateien"].items())))
         b.append(("p", f"Stand: {r['stand']}"))
-        if r["unvollstaendig"]:
-            b.append(("p", "Unvollständig: Zeitgrenze des Schritts erreicht, die Zahlen umfassen nur das bis dahin "
-                           "Gelesene"))
+        if r["vollabruf_laeuft"] and r["nur_teil"] is not None:
+            t = r["nur_teil"]
+            b.append(("p", f"Nur aus der Teildatei: {tausend(t['kennungen'])} Kennungen, davon "
+                           f"{tausend(t['geloescht'])} zuletzt als gelöscht gemeldet. Der fertige Vollabruf behält "
+                           "nur die darin und auf den übrigen Seiten gelesenen Objekte; Objekte des Stands davor, die "
+                           "er nicht wieder liest, fallen weg, und eine Löschung in der Teildatei gilt dann"))
+        if r["zeitgrenze"] == "erster Durchgang":
+            b.append(("p", "Nicht ausgewertet: Zeitgrenze im ersten Durchgang (Kennungen) erreicht; zu dieser Liste "
+                           "keine Zahlen"))
+            continue
+        w = r["auswertung"]
+        if r["zeitgrenze"]:
+            bisher = w.n + w.geloescht + sum(r["nicht_auswertbar"].values())
+            b.append(("p", f"Unvollständig: Zeitgrenze im zweiten Durchgang erreicht; die Zahlen umfassen nur die bis "
+                           f"dahin ausgewerteten {tausend(bisher)} von {tausend(r['kennungen'])} Kennungen"))
         if r["ohne_dateien"] and name == "meetings":
             b.append(("p", "Hinweis: Der Abruf liest die Sitzungen nach den Vorlagen; während des ersten Vollabrufs der "
                            "Vorlagen gibt es sie noch nicht"))
@@ -612,7 +677,6 @@ def bloecke(a):
         if r["nicht_auswertbar"]:
             b.append(("p", "Nicht auswertbar (unerwartete Form, nicht mitgezählt): " + ", ".join(
                 f"{tausend(n)} ({k})" for k, n in sorted(r["nicht_auswertbar"].items()))))
-        w = r["auswertung"]
         b.append(("p", f"{NAME[name]} je Kennung: {tausend(w.n)}; als gelöscht gemeldet (deleted, getrennt): "
                        f"{tausend(w.geloescht)}"))
         if not w.n:
@@ -675,8 +739,10 @@ def _vorlagen(w, a):
     if beratungen:
         out.append(("p", f"Beratungen (consultation-Einträge): {tausend(beratungen)}; eingebettet "
                          f"{tausend(br['objekt'])} (davon mit meeting {tausend(br['meeting'])}, mit agendaItem "
-                         f"{tausend(br['agendaItem'])}, mit organization {tausend(br['organization'])}), nur als "
-                         f"Adresse {tausend(br['adresse'])}, andere Form {tausend(br['andere'])}"))
+                         f"{tausend(br['agendaItem'])}, mit organization aus den Rohdaten der Stadt "
+                         f"{tausend(br['organization'])}; organization vom Abruf aus der Sitzung ergänzt, nicht "
+                         f"mitgezählt: {tausend(br['organization_ergaenzt'])}), nur als Adresse "
+                         f"{tausend(br['adresse'])}, andere Form {tausend(br['andere'])}"))
     out.append(("t", "Form der Felder (nur Typ)", ["Feld", "Form (Anzahl)"], _formen(w.formen, FORM_FELDER)))
     arten = [k for k, _ in w.art.ergebnis()[0][:KREUZ_ARTEN]]
     zeilen = []
