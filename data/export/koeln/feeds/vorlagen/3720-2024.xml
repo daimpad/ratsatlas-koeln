@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/3720-2024</id>
+<title>Vorlage 3720/2024: Beantwortung einer Nachfrage von Frau Knoll (Die Linke) aus der Sitzung der Bezirksvertretung 9 vom 02.09.2024 zur Vorlage 2055/2024 betreffend "Zustand von Wald- und Forstwegen"</title>
+<subtitle>Verlauf der Vorlage 3720/2024: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2024-11-26T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/3720-2024.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#3720/2024"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124651#vorlage</id>
+<title>Neue Vorlage 3720/2024: Beantwortung einer Nachfrage von Frau Knoll (Die Linke) aus der Sitzung der Bezirksvertretung 9 vom 02.09.2024 zur Vorlage 2055/2024 betreffend "Zustand von Wald- und Forstwegen"</title>
+<updated>2024-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#3720/2024"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124651#folge-2055%2F2024</id>
+<title>Beantwortung einer Anfrage (BV) 2055/2024: Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Mülheim vom 03.06.2024 (AN/0801/2024) betreffend Zustand von Wald- und Forstwegen im Bezirk Köln-Mülheim</title>
+<updated>2024-07-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#3720/2024"/>
+<summary>Folgevorlage zu 3720/2024</summary>
+</entry>
+</feed>

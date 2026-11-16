@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/4011-2024</id>
+<title>Vorlage 4011/2024: Sachstand zum Beschluss "Sofortentsiegelung" (AN/1365/2023) aus der Sitzung des Ausschuss Klima, Umwelt und Grün vom 24.08.2023</title>
+<subtitle>Verlauf der Vorlage 4011/2024: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/4011-2024.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#4011/2024"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125121#beratung-2025-01-30-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 4011/2024 Sachstand zum Beschluss "Sofortentsiegelung" (AN/1365/2023) aus der Sitzung des Ausschuss Klima, Umwelt und Grün vom 24.08.2023</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#4011/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125121#beratung-2025-01-30-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 4011/2024 Sachstand zum Beschluss "Sofortentsiegelung" (AN/1365/2023) aus der Sitzung des Ausschuss Klima, Umwelt und Grün vom 24.08.2023</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#4011/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125121#beratung-2025-01-28-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 4011/2024 Sachstand zum Beschluss "Sofortentsiegelung" (AN/1365/2023) aus der Sitzung des Ausschuss Klima, Umwelt und Grün vom 24.08.2023</title>
+<updated>2025-01-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#4011/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125121#beratung-2025-01-27-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 4011/2024 Sachstand zum Beschluss "Sofortentsiegelung" (AN/1365/2023) aus der Sitzung des Ausschuss Klima, Umwelt und Grün vom 24.08.2023</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#4011/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125121#vorlage</id>
+<title>Neue Vorlage 4011/2024: Sachstand zum Beschluss "Sofortentsiegelung" (AN/1365/2023) aus der Sitzung des Ausschuss Klima, Umwelt und Grün vom 24.08.2023</title>
+<updated>2025-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#4011/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125121#folge-AN%2F1365%2F2023</id>
+<title>Gem. Antrag nach § 3 (Volt) AN/1365/2023: Sofortentsiegelung</title>
+<updated>2023-08-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#4011/2024"/>
+<summary>Folgevorlage zu 4011/2024</summary>
+</entry>
+</feed>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0011-2025</id>
+<title>Vorlage 0011/2025: Beantwortung einer gemeinsamen schriftlichen Anfrage AN/1590/2024 der Fraktionen Bündnis 90/Die Grünen, CDU und Volt aus der Sitzung des Ausschusses für Soziales, Seniorinnen und Senioren vom 21.11.2024 betreffend Strukturförderfonds 2024</title>
+<subtitle>Verlauf der Vorlage 0011/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-03-13T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0011-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#0011/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125154#beratung-2025-03-13-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Kenntnis genommen“ – 0011/2025 Beantwortung einer gemeinsamen schriftlichen Anfrage AN/1590/2024 der Fraktionen Bündnis 90/Die Grünen, CDU und Volt aus der Sitzung des Ausschusses für Soziales, Seniorinnen und Senioren vom 21.11.2024 betreffend Strukturförderfonds 2024</title>
+<updated>2025-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#0011/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125154#vorlage</id>
+<title>Neue Vorlage 0011/2025: Beantwortung einer gemeinsamen schriftlichen Anfrage AN/1590/2024 der Fraktionen Bündnis 90/Die Grünen, CDU und Volt aus der Sitzung des Ausschusses für Soziales, Seniorinnen und Senioren vom 21.11.2024 betreffend Strukturförderfonds 2024</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#0011/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125154#folge-AN%2F1590%2F2024</id>
+<title>Gem. Anfrage nach § 4 (Grüne) AN/1590/2024: Strukturförderfonds</title>
+<updated>2024-11-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#0011/2025"/>
+<summary>Folgevorlage zu 0011/2025</summary>
+</entry>
+</feed>

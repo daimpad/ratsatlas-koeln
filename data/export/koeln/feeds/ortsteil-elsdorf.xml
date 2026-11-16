@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-elsdorf</id>
 <title>Ratsatlas Köln – Elsdorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Elsdorf</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-09-24T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-elsdorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134568#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig zurückgezogen“ – AN/1387/2026 Fahrbahnmarkierungen auf der Frankfurter Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1387/2026"/>
+<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134366#vorlage</id>
+<title>Neue Vorlage 2424/2026: Baubeschluss für die Instandsetzung des Vingster Rings zwischen Ostheimer Straße und Frankfurter Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2424/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134409#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1308/2026 Antrag der CDU-Fraktion "Sachstandsbericht zum Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1308/2026"/>
+<summary>Antrag / Anfrage am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134568#vorlage</id>
+<title>Neue Vorlage AN/1387/2026: Fahrbahnmarkierungen auf der Frankfurter Straße</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1387/2026"/>
+<summary>Antrag nach § 3 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134409#vorlage</id>
+<title>Neue Vorlage AN/1308/2026: Antrag der CDU-Fraktion "Sachstandsbericht zum Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1308/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133337#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0956/2026 Antrag der CDU-Fraktion "Fußweg Frankfurter Straße 298 bis 316"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0956/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133109#vorlage</id>
+<title>Neue Vorlage AN/0858/2026: Überprüfung und Nachbesserung der Baustellenverkehrsführung an der Frankfurter Straße sowie flächendeckende Kontrolle und Optimierung aller Baustellen im Stadtbezirk</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0858/2026"/>
+<summary>Antrag nach § 3 BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133109#beratung-2026-06-18-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – AN/0858/2026 Überprüfung und Nachbesserung der Baustellenverkehrsführung an der Frankfurter Straße sowie flächendeckende Kontrolle und Optimierung aller Baustellen im Stadtbezirk</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0858/2026"/>
+<summary>Entscheidung am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133337#vorlage</id>
+<title>Neue Vorlage AN/0956/2026: Antrag der CDU-Fraktion "Fußweg Frankfurter Straße 298 bis 316"</title>
+<updated>2026-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0956/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132366#beratung-2026-04-30-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1139/2026 Beantwortung einer schriftlichen Anfrage der AFD Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 12.03.2026 (AN/0423/2026) betreffend "Sanierungsmaßnahmen auf der Frankfurter Straße"</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1139/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132038#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0900/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - „Einrichtung einer Warnampel Frankfurter Straße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0900/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132366#vorlage</id>
+<title>Neue Vorlage 1139/2026: Beantwortung einer schriftlichen Anfrage der AFD Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 12.03.2026 (AN/0423/2026) betreffend "Sanierungsmaßnahmen auf der Frankfurter Straße"</title>
+<updated>2026-04-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1139/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132020#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0884/2026 Mitteilung zur Bürgereingabe nach § 24 GO – Verbesserung der Schulwegsicherheit – Frankfurter Straße / Elsdorfer Straße, 51145 Köln sowie Feldweg zum SC Neptun, Köln-Porz, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0884/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132038#vorlage</id>
+<title>Neue Vorlage 0900/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - „Einrichtung einer Warnampel Frankfurter Straße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0900/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132020#vorlage</id>
+<title>Neue Vorlage 0884/2026: Mitteilung zur Bürgereingabe nach § 24 GO – Verbesserung der Schulwegsicherheit – Frankfurter Straße / Elsdorfer Straße, 51145 Köln sowie Feldweg zum SC Neptun, Köln-Porz, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0884/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131678#beratung-2026-03-12-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0423/2026 Sanierungsmaßnahmen auf der Frankfurter Straße</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0423/2026"/>
+<summary>Antrag / Anfrage am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131678#vorlage</id>
+<title>Neue Vorlage AN/0423/2026: Sanierungsmaßnahmen auf der Frankfurter Straße</title>
+<updated>2026-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0423/2026"/>
+<summary>Anfrage nach § 4 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130584#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 0041/2026 Planungsbeschluss für verkehrliche Maßnahmen zur Schulwegerschließung am neuen Schulstandort Friedensstraße in</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0041/2026"/>
+<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130584#vorlage</id>
+<title>Neue Vorlage 0041/2026: Planungsbeschluss für verkehrliche Maßnahmen zur Schulwegerschließung am neuen Schulstandort Friedensstraße in</title>
+<updated>2026-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0041/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129742#beratung-2025-11-24-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 3094/2025 Erneuerung Bahnübergang "Baumschulenweg“ in Köln, Strecke 2655 Köln, Frankfurter Str. – Overath Bahn-km 8,529 bis Bahn-km 10,597, hier: Antrag auf Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3094/2025"/>
+<summary>Entscheidung am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129742#vorlage</id>
+<title>Neue Vorlage 3094/2025: Erneuerung Bahnübergang "Baumschulenweg“ in Köln, Strecke 2655 Köln, Frankfurter Str. – Overath Bahn-km 8,529 bis Bahn-km 10,597, hier: Antrag auf Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3094/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129039#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/1132/2025 Anfrage der SPD-Fraktion "Kann die Zuwegung Sportplatz Brucknerstraße sicherer gemacht werden?"</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1132/2025"/>
+<summary>Antrag / Anfrage am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129039#vorlage</id>
+<title>Neue Vorlage AN/1132/2025: Anfrage der SPD-Fraktion "Kann die Zuwegung Sportplatz Brucknerstraße sicherer gemacht werden?"</title>
+<updated>2025-08-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1132/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1749/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128398#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig abgelehnt“ – AN/0998/2025 Änderungsantrag der SPD Fraktion "Neubau der zweigliedrigen Grundschule Friedensstraße"</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0998/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-06-26-Sportausschuss</id>
+<title>Sportausschuss: „ohne Votum behandelt“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert empfohlen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1749/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128398#vorlage</id>
+<title>Neue Vorlage AN/0998/2025: Änderungsantrag der SPD Fraktion "Neubau der zweigliedrigen Grundschule Friedensstraße"</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0998/2025"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#vorlage</id>
+<title>Neue Vorlage 1749/2025: Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1749/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126421#beratung-2025-05-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig zurückgezogen“ – AN/0364/2025 Anfrage der SPD-Fraktion "Verkehrssicherheit auf der Frankfurter Straße zwischen Wahn und Elsdorf"</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0364/2025"/>
+<summary>Antrag / Anfrage am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126421#vorlage</id>
+<title>Neue Vorlage AN/0364/2025: Anfrage der SPD-Fraktion "Verkehrssicherheit auf der Frankfurter Straße zwischen Wahn und Elsdorf"</title>
+<updated>2025-03-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0364/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124605#beratung-2025-02-13-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 3698/2024 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplanentwurf Nr. 76380/03, Blatt 3, Arbeitstitel "Südlich Friedensstraße - Ostteil" in Köln-Porz-Elsdorf</title>
+<updated>2025-02-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3698/2024"/>
+<summary>Entscheidung am 2025-02-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124605#beratung-2025-02-06-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert empfohlen“ – 3698/2024 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplanentwurf Nr. 76380/03, Blatt 3, Arbeitstitel "Südlich Friedensstraße - Ostteil" in Köln-Porz-Elsdorf</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3698/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2025-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125117#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 4009/2024 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 05.12.2024 (AN/1726/2024) betreffend „Ausbau der Frankfurter Straße einschließlich ÖPNV“</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#4009/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124944#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1726/2024 Anfrage der CDU-Fraktion "Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1726/2024"/>
+<summary>Antrag / Anfrage am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124605#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 3698/2024 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplanentwurf Nr. 76380/03, Blatt 3, Arbeitstitel "Südlich Friedensstraße - Ostteil" in Köln-Porz-Elsdorf</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3698/2024"/>
+<summary>Anhörung (BV) am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125117#vorlage</id>
+<title>Neue Vorlage 4009/2024: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 05.12.2024 (AN/1726/2024) betreffend „Ausbau der Frankfurter Straße einschließlich ÖPNV“</title>
+<updated>2025-01-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#4009/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124605#vorlage</id>
+<title>Neue Vorlage 3698/2024: Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplanentwurf Nr. 76380/03, Blatt 3, Arbeitstitel "Südlich Friedensstraße - Ostteil" in Köln-Porz-Elsdorf</title>
+<updated>2024-12-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3698/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124944#vorlage</id>
+<title>Neue Vorlage AN/1726/2024: Anfrage der CDU-Fraktion "Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1726/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122352#beratung-2024-09-19-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 2095/2024 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch des Bebauungsplan-Entwurfes 76380/03, Blatt 3, Arbeitstitel: Südlich Friedensstraße - Ostteil in Köln-Porz-Elsdorf</title>
+<updated>2024-09-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2095/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-09-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122352#beratung-2024-09-17-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2095/2024 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch des Bebauungsplan-Entwurfes 76380/03, Blatt 3, Arbeitstitel: Südlich Friedensstraße - Ostteil in Köln-Porz-Elsdorf</title>
+<updated>2024-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2095/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122352#beratung-2024-09-09-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 2095/2024 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch des Bebauungsplan-Entwurfes 76380/03, Blatt 3, Arbeitstitel: Südlich Friedensstraße - Ostteil in Köln-Porz-Elsdorf</title>
+<updated>2024-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2095/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-09-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122352#vorlage</id>
+<title>Neue Vorlage 2095/2024: Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch des Bebauungsplan-Entwurfes 76380/03, Blatt 3, Arbeitstitel: Südlich Friedensstraße - Ostteil in Köln-Porz-Elsdorf</title>
+<updated>2024-08-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2095/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121224#beratung-2024-05-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig abgelehnt“ – AN/0663/2024 Antrag der SPD-Fraktion "Parksituation Friedensstraße in Porz-Elsdorf"</title>
+<updated>2024-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0663/2024"/>
+<summary>Antrag / Anfrage am 2024-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117348#beratung-2024-04-25-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „ungeändert beschlossen“ – 2964/2023 Entscheidung über die Erteilung einer Fällerlaubnis in Zusammenhang mit dem Bauvorhaben „Frankfurter Straße [Hausnummer ausgelassen], 51145 Köln“ (Gemarkung: Elsdorf, Flur: [Hausnummer ausgelassen], Flurstück: [Hausnummer ausgelassen]/[Hausnummer ausgelassen])</title>
+<updated>2024-04-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2964/2023"/>
+<summary>Entscheidung am 2024-04-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121224#vorlage</id>
+<title>Neue Vorlage AN/0663/2024: Antrag der SPD-Fraktion "Parksituation Friedensstraße in Porz-Elsdorf"</title>
+<updated>2024-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0663/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117348#vorlage</id>
+<title>Neue Vorlage 2964/2023: Entscheidung über die Erteilung einer Fällerlaubnis in Zusammenhang mit dem Bauvorhaben „Frankfurter Straße [Hausnummer ausgelassen], 51145 Köln“ (Gemarkung: Elsdorf, Flur: [Hausnummer ausgelassen], Flurstück: [Hausnummer ausgelassen]/[Hausnummer ausgelassen])</title>
+<updated>2024-02-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2964/2023"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119839#vorlage</id>
+<title>Neue Vorlage AN/0195/2024: Änderungsantrag der Fraktion Bündis 90/Die Grünen "Ausbau der Frankfurter Straße"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0195/2024"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119839#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0195/2024 Änderungsantrag der Fraktion Bündis 90/Die Grünen "Ausbau der Frankfurter Straße"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0195/2024"/>
+<summary>Antrag / Anfrage am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119817#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0187/2024 Dringlichkeitsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Straßenbenennung Baugebiet Fuchskaule"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0187/2024"/>
+<summary>Antrag / Anfrage am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119816#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0186/2024 Änderungsantrag der SPD-Fraktion "Ausbau der Frankfurter Straße"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0186/2024"/>
+<summary>Antrag / Anfrage am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119669#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – 0387/2024 Beantwortung einer Anfrage (BV) zum Thema "Bebauungsplan Haus Wolle"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0387/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119653#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – AN/0136/2024 Anfrage der Fraktion Bündnis 90/Die Grünen "Bebauungsplan Haus Wolle"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0136/2024"/>
+<summary>Antrag / Anfrage am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119502#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – AN/0098/2024 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0098/2024"/>
+<summary>Antrag / Anfrage am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118171#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig abgelehnt“ – 3517/2023 Bürgereingabe gem. § 24 GO,</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3517/2023"/>
+<summary>Entscheidung am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119817#vorlage</id>
+<title>Neue Vorlage AN/0187/2024: Dringlichkeitsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Straßenbenennung Baugebiet Fuchskaule"</title>
+<updated>2024-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0187/2024"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119816#vorlage</id>
+<title>Neue Vorlage AN/0186/2024: Änderungsantrag der SPD-Fraktion "Ausbau der Frankfurter Straße"</title>
+<updated>2024-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0186/2024"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119669#vorlage</id>
+<title>Neue Vorlage 0387/2024: Beantwortung einer Anfrage (BV) zum Thema "Bebauungsplan Haus Wolle"</title>
+<updated>2024-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0387/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119653#vorlage</id>
+<title>Neue Vorlage AN/0136/2024: Anfrage der Fraktion Bündnis 90/Die Grünen "Bebauungsplan Haus Wolle"</title>
+<updated>2024-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0136/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119502#vorlage</id>
+<title>Neue Vorlage AN/0098/2024: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2024-01-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0098/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118171#vorlage</id>
+<title>Neue Vorlage 3517/2023: Bürgereingabe gem. § 24 GO,</title>
+<updated>2023-11-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3517/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115676#beratung-2023-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1154/2023 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Parkverbot Fußweg Frankfurter Straße"</title>
+<updated>2023-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1154/2023"/>
+<summary>Antrag / Anfrage am 2023-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115260#beratung-2023-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1638/2023 Benennung der Planstraßen im Baugebiet Fuchskaule in Köln-Porz-Elsdorf</title>
+<updated>2023-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1638/2023"/>
+<summary>Entscheidung am 2023-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115676#vorlage</id>
+<title>Neue Vorlage AN/1154/2023: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Parkverbot Fußweg Frankfurter Straße"</title>
+<updated>2023-05-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1154/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98574#beratung-2023-05-23-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „endgültig zurückgezogen“ – 3728/2020 Planungs- und Bedarfsfeststellungsbeschluss für die Vergabe der weiteren externen Ingenieur- und Dienstleistungen (HOAI, Leistungsphasen 1 bis 9) zur Realisierung der Maßnahme „Vierspuriger Ausbau der Frankfurter Straße zwischen der Theodor-Heuss-Str</title>
+<updated>2023-05-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3728/2020"/>
+<summary>Vorberatung (Fachausschuss) am 2023-05-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115260#vorlage</id>
+<title>Neue Vorlage 1638/2023: Benennung der Planstraßen im Baugebiet Fuchskaule in Köln-Porz-Elsdorf</title>
+<updated>2023-05-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1638/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115155#beratung-2023-05-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0883/2023 Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Generalsanierung Feldweg Gilsonstraße"</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0883/2023"/>
+<summary>Antrag / Anfrage am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115006#beratung-2023-05-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0807/2023 Änderungsantrag der Fraktionen CDU, SPD und Bündnis 90/Die Grünen "Straßenbenennungen Fuchskaule"</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0807/2023"/>
+<summary>Antrag / Anfrage am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114468#beratung-2023-05-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – 1178/2023 Beschluss für die Generalsanierung des Feldwegs zwischen der Gilsonstraße und Frankfurter Straße in Köln Porz (Elsdorf)</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1178/2023"/>
+<summary>Entscheidung am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114102#beratung-2023-05-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig zurückgezogen“ – AN/0491/2023 Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Benennung von Planstraßen im Baugebiet Fuchskaule"</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0491/2023"/>
+<summary>Antrag / Anfrage am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113168#beratung-2023-05-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – 0353/2023 Benennung der Planstraßen im Baugebiet Fuchskaule in Köln-Porz-Elsdorf</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0353/2023"/>
+<summary>Entscheidung am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115155#vorlage</id>
+<title>Neue Vorlage AN/0883/2023: Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Generalsanierung Feldweg Gilsonstraße"</title>
+<updated>2023-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0883/2023"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115006#vorlage</id>
+<title>Neue Vorlage AN/0807/2023: Änderungsantrag der Fraktionen CDU, SPD und Bündnis 90/Die Grünen "Straßenbenennungen Fuchskaule"</title>
+<updated>2023-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0807/2023"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114468#vorlage</id>
+<title>Neue Vorlage 1178/2023: Beschluss für die Generalsanierung des Feldwegs zwischen der Gilsonstraße und Frankfurter Straße in Köln Porz (Elsdorf)</title>
+<updated>2023-04-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#1178/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109387#beratung-2023-03-23-Rat</id>
+<title>Rat: „geändert beschlossen“ – 2183/2022 Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße (B 8) über die B 55a</title>
+<updated>2023-03-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2183/2022"/>
+<summary>Entscheidung am 2023-03-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109387#beratung-2023-03-20-Finanzausschuss</id>
+<title>Finanzausschuss: „geändert beschlossen“ – 2183/2022 Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße (B 8) über die B 55a</title>
+<updated>2023-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2183/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2023-03-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113874#beratung-2023-03-16-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0403/2023 Antrag der Fraktion DIE LINKE/Die PARTEI "Sicherer Verkehr an der Kita „Kleine Riesen“ Frankfurter Str. 77"</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0403/2023"/>
+<summary>Antrag / Anfrage am 2023-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114102#vorlage</id>
+<title>Neue Vorlage AN/0491/2023: Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Benennung von Planstraßen im Baugebiet Fuchskaule"</title>
+<updated>2023-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0491/2023"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109387#beratung-2023-03-07-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „mit Änderungen empfohlen“ – 2183/2022 Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße (B 8) über die B 55a</title>
+<updated>2023-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2183/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2023-03-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113874#vorlage</id>
+<title>Neue Vorlage AN/0403/2023: Antrag der Fraktion DIE LINKE/Die PARTEI "Sicherer Verkehr an der Kita „Kleine Riesen“ Frankfurter Str. 77"</title>
+<updated>2023-03-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0403/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113168#vorlage</id>
+<title>Neue Vorlage 0353/2023: Benennung der Planstraßen im Baugebiet Fuchskaule in Köln-Porz-Elsdorf</title>
+<updated>2023-02-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#0353/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98574#beratung-2023-02-06-Finanzausschuss</id>
+<title>Finanzausschuss: „zurückgestellt“ – 3728/2020 Planungs- und Bedarfsfeststellungsbeschluss für die Vergabe der weiteren externen Ingenieur- und Dienstleistungen (HOAI, Leistungsphasen 1 bis 9) zur Realisierung der Maßnahme „Vierspuriger Ausbau der Frankfurter Straße zwischen der Theodor-Heuss-Str</title>
+<updated>2023-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3728/2020"/>
+<summary>Vorberatung (Fachausschuss) am 2023-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113306#beratung-2023-02-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0219/2023 Dringlichkeitsantrag der SPD-Fraktion "Sanierung des Mühlenwegs in Elsdorf"</title>
+<updated>2023-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0219/2023"/>
+<summary>Antrag / Anfrage am 2023-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113306#vorlage</id>
+<title>Neue Vorlage AN/0219/2023: Dringlichkeitsantrag der SPD-Fraktion "Sanierung des Mühlenwegs in Elsdorf"</title>
+<updated>2023-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0219/2023"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109387#beratung-2023-01-30-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 2183/2022 Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße (B 8) über die B 55a</title>
+<updated>2023-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2183/2022"/>
+<summary>Anhörung (BV) am 2023-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113225#beratung-2023-01-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig abgelehnt“ – AN/0186/2023 Änderungsantrag der Fraktion Bündnis 90/Die Grünen zu TOP 8.2.3 () "Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße ( B 8) über die B 55 a"</title>
+<updated>2023-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0186/2023"/>
+<summary>Entscheidung am 2023-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113224#beratung-2023-01-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0185/2023 3 Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße ( B 8) über die B 55 a</title>
+<updated>2023-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0185/2023"/>
+<summary>Antrag / Anfrage am 2023-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109387#beratung-2023-01-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 2183/2022 Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße (B 8) über die B 55a</title>
+<updated>2023-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2183/2022"/>
+<summary>Anhörung (BV) am 2023-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113225#vorlage</id>
+<title>Neue Vorlage AN/0186/2023: Änderungsantrag der Fraktion Bündnis 90/Die Grünen zu TOP 8.2.3 () "Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße ( B 8) über die B 55 a"</title>
+<updated>2023-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0186/2023"/>
+<summary>Änderungsantrag BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113224#vorlage</id>
+<title>Neue Vorlage AN/0185/2023: 3 Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße ( B 8) über die B 55 a</title>
+<updated>2023-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0185/2023"/>
+<summary>Gem. Änderungsantrag BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109387#beratung-2023-01-24-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „im ersten Durchgang verwiesen“ – 2183/2022 Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße (B 8) über die B 55a</title>
+<updated>2023-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2183/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2023-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109387#vorlage</id>
+<title>Neue Vorlage 2183/2022: Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße (B 8) über die B 55a</title>
+<updated>2022-12-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2183/2022"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111998#beratung-2022-12-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/2106/2022 Antrag der SPD-Fraktion "Prüfung der Einrichtung einer geeigneten Querungshilfe in Höhe der Kindertageseinrichtung Little Giants, Frankfurter Str. 714, 51145 Köln"</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/2106/2022"/>
+<summary>Antrag / Anfrage am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111469#beratung-2022-12-01-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 3605/2022 Sachstand Gesamtkonzept der Sportanlagen Humboldtstraße und Brucknerstraße</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3605/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111469#beratung-2022-12-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 3605/2022 Sachstand Gesamtkonzept der Sportanlagen Humboldtstraße und Brucknerstraße</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3605/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111442#beratung-2022-12-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1891/2022 Anfrage von Frau Bastian (FDP) "Gesamtkonzept der Sportanlagen Humboltstraße/Brucknerstraße Vorlage 0792/2019"</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1891/2022"/>
+<summary>Antrag / Anfrage am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111469#vorlage</id>
+<title>Neue Vorlage 3605/2022: Sachstand Gesamtkonzept der Sportanlagen Humboldtstraße und Brucknerstraße</title>
+<updated>2022-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#3605/2022"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

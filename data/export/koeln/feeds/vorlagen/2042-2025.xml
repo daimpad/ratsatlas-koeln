@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/2042-2025</id>
+<title>Vorlage 2042/2025: Bestellung eines Schriftführers für die Sondersitzung des Liegenschaftsausschusses am 30.06.2025</title>
+<subtitle>Verlauf der Vorlage 2042/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/2042-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#2042/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128263#beratung-2025-06-30-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „ungeändert beschlossen“ – 2042/2025 Bestellung eines Schriftführers für die Sondersitzung des Liegenschaftsausschusses am 30.06.2025</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#2042/2025"/>
+<summary>Entscheidung am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128263#vorlage</id>
+<title>Neue Vorlage 2042/2025: Bestellung eines Schriftführers für die Sondersitzung des Liegenschaftsausschusses am 30.06.2025</title>
+<updated>2025-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#2042/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+</feed>

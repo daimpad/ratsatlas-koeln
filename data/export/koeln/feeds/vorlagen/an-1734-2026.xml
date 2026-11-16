@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/an-1734-2026</id>
+<title>Vorlage AN/1734/2026: Ausweisung eines neuen Naturschutzgebietes am Weisser Bogen</title>
+<subtitle>Verlauf der Vorlage AN/1734/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/an-1734-2026.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/1734/2026"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135415#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig zurückgezogen“ – AN/1734/2026 Ausweisung eines neuen Naturschutzgebietes am Weisser Bogen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/1734/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135415#vorlage</id>
+<title>Neue Vorlage AN/1734/2026: Ausweisung eines neuen Naturschutzgebietes am Weisser Bogen</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/1734/2026"/>
+<summary>Änderungsantrag BV2 (FDP/KSG) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135415#folge-1469%2F2026</id>
+<title>Beschlussvorlage Rat bzw. Hauptausschuss 1469/2026: Aufstellungsbeschluss zur 16. Änderung des Landschaftsplans Köln, hier: Ausweisung eines neuen Naturschutzgebietes am Weißer Bogen</title>
+<updated>2026-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/1734/2026"/>
+<summary>Folgevorlage zu AN/1734/2026</summary>
+</entry>
+</feed>

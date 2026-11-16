@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/ohne-2016</id>
+<title>Ratsatlas Köln – stadtweit / ohne Ortsbezug 2016</title>
+<subtitle>Neue Vorlagen und Beratungsergebnisse: stadtweit / ohne Ortsbezug 2016</subtitle>
+<updated>2016-12-06T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ohne-2016.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/64578#vorlage</id>
+<title>Neue Vorlage 3590/2016: Kommunalinvestitionsförderungsgesetz</title>
+<updated>2016-12-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#3590/2016"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/66351#vorlage</id>
+<title>Neue Vorlage AN/2047/2016: Gemeinsamer Dringlichkeitsantrag zum Schutz vor Vandalismus und mehr Sauberkeit am Baui</title>
+<updated>2016-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/2047/2016"/>
+<summary>Gem. Dringlichkeitsantrag BV1 (FDP) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/66164#vorlage</id>
+<title>Neue Vorlage AN/1983/2016: Ein Plan für den Kölner Osten: Wohnungsbau statt Autostau</title>
+<updated>2016-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1983/2016"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/66128#vorlage</id>
+<title>Neue Vorlage AN/1962/2016: Verschönerung des Bereichs vor der Pferderennbahn</title>
+<updated>2016-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1962/2016"/>
+<summary>Antrag nach § 3 BV5 (CDU) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/65738#vorlage</id>
+<title>Neue Vorlage AN/1819/2016: Umsetzung der Aufhebung der Radwegenutzungspflicht auf den Ringen</title>
+<updated>2016-11-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1819/2016"/>
+<summary>Gem. Dringlichkeitsantrag BV1 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/65781#vorlage</id>
+<title>Neue Vorlage AN/1844/2016: Litfaßsäulen als Kunstsäulen erhalten</title>
+<updated>2016-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1844/2016"/>
+<summary>Dringlichkeitsantrag BV4 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/64577#vorlage</id>
+<title>Neue Vorlage AN/1766/2016: Ergänzungsantrag zum Antrag A1194/2016 vom 15.9.2016 nach OT am 26.9.2016</title>
+<updated>2016-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1766/2016"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/64372#vorlage</id>
+<title>Neue Vorlage AN/1661/2016: Öffnung von Einbahnstraßen für den Radverkehr</title>
+<updated>2016-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1661/2016"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/64514#vorlage</id>
+<title>Neue Vorlage AN/1738/2016: Unser Büdchen ist Kult(ur)! Tag der Büdchen in der Kölner Innenstadt, Gem. Antrag SPD, Linke, Deine Freunde</title>
+<updated>2016-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1738/2016"/>
+<summary>Gem. Antrag nach § 3 BV1 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/64488#vorlage</id>
+<title>Neue Vorlage AN/1722/2016: Beseitigung einer Gefahrenquelle in der Nähe der Wendeschleife der Stadtbahn Linie 12</title>
+<updated>2016-10-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1722/2016"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/64264#vorlage</id>
+<title>Neue Vorlage AN/1634/2016: Bauvorhaben „Deutsche Welle“: Informationen über geplante Fällungen</title>
+<updated>2016-10-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1634/2016"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/64262#vorlage</id>
+<title>Neue Vorlage AN/1632/2016: Radverkehr: Runder Tisch</title>
+<updated>2016-10-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1632/2016"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/64287#vorlage</id>
+<title>Neue Vorlage AN/1639/2016: Restaurierung eines Trinkwasserbrunnens im historischen „Rosengarten“ im Vorgebirgspark.</title>
+<updated>2016-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1639/2016"/>
+<summary>Antrag nach § 3 BV2 (FWK) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/64280#vorlage</id>
+<title>Neue Vorlage AN/1636/2016: Beschilderung für Fahrradfahrer und Fußgänger am Heinrich-Lübbke-Ufer</title>
+<updated>2016-10-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1636/2016"/>
+<summary>Antrag nach § 3 BV2 (Die Linke) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/63598#vorlage</id>
+<title>Neue Vorlage AN/1403/2016: "Jeck im Sunnesching“ - Mehr Spaß ohne Glas", Antrag Grüne</title>
+<updated>2016-09-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1403/2016"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/63781#vorlage</id>
+<title>Neue Vorlage AN/1480/2016: Platzflächen für Großdemonstrationen</title>
+<updated>2016-09-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1480/2016"/>
+<summary>Dringlichkeitsantrag BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58963#vorlage</id>
+<title>Neue Vorlage AN/0575/2016: Überweg Butzweiler Straße</title>
+<updated>2016-08-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0575/2016"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/63525#vorlage</id>
+<title>Neue Vorlage AN/1366/2016: Nahverkehrsplan (aktueller Entwurf): Ergänzungen</title>
+<updated>2016-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1366/2016"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/63147#vorlage</id>
+<title>Neue Vorlage AN/1293/2016: Austausch ungeeigneter Gullideckel und Maßnahmen gegen Überschwemmungen durch Starkregen.</title>
+<updated>2016-08-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1293/2016"/>
+<summary>Antrag nach § 3 BV2 (FWK) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/62610#vorlage</id>
+<title>Neue Vorlage AN/1192/2016: Verbreiterung Gehweg/Verringerung Buskurve Haltestelle Chldowigplatz (stadtauswärts)</title>
+<updated>2016-07-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1192/2016"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/62780#vorlage</id>
+<title>Neue Vorlage AN/1266/2016: Gedenkplakette für die Edelweißpiratin  Gertrud "Mucki“ Koch im Volksgarten</title>
+<updated>2016-07-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1266/2016"/>
+<summary>Dringlichkeitsantrag BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/62677#vorlage</id>
+<title>Neue Vorlage AN/1218/2016: Antrag: Lokalen Einzelhandel effizient durch Fahrradabstellanlagen fördern</title>
+<updated>2016-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1218/2016"/>
+<summary>Antrag nach § 3 BV1 (Deine Freunde) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/62597#vorlage</id>
+<title>Neue Vorlage AN/1186/2016: Restaurierung des historischen Geländers an der Rheinuferpromenade</title>
+<updated>2016-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1186/2016"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/62591#vorlage</id>
+<title>Neue Vorlage AN/1182/2016: Barrierefreie öffentliche Räume für bürgerschaftliches Engagement</title>
+<updated>2016-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1182/2016"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/62585#vorlage</id>
+<title>Neue Vorlage AN/1179/2016: Blühstreifen zur optischen und ökologischen Aufwertung</title>
+<updated>2016-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1179/2016"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/62578#vorlage</id>
+<title>Neue Vorlage AN/1172/2016: Bus-Rendezvous-System im Kölner Süden</title>
+<updated>2016-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1172/2016"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/62572#vorlage</id>
+<title>Neue Vorlage AN/1169/2016: Verkehrskonzept für den Kölner Süden</title>
+<updated>2016-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1169/2016"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/61014#vorlage</id>
+<title>Neue Vorlage AN/0945/2016: Gentrifizierung stoppen – Grünfraß verhindern! Konsequentes Vorgehen gegen Zweckentfremdung von Wohnraum durch kommerziell betriebene Ferienwohnungen</title>
+<updated>2016-06-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0945/2016"/>
+<summary>Antrag nach § 3 BV4 (Linke) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/61241#vorlage</id>
+<title>Neue Vorlage AN/1019/2016: Ad hoc-Programm zur Genehmigung von Außengastronomie - Änderung der Maßnahmen</title>
+<updated>2016-06-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1019/2016"/>
+<summary>Dringlichkeitsantrag BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/61232#vorlage</id>
+<title>Neue Vorlage AN/1017/2016: Für eine mobile Schäl Sick: Et wed endlich zick!</title>
+<updated>2016-06-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/1017/2016"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/61051#vorlage</id>
+<title>Neue Vorlage AN/0957/2016: Öffentliche Veranstaltung zur Neugestaltung der Bezirkssportanlage</title>
+<updated>2016-05-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0957/2016"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/61022#vorlage</id>
+<title>Neue Vorlage AN/0948/2016: Fußweg Max-Ernst-Gesamtschule</title>
+<updated>2016-05-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0948/2016"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/60931#vorlage</id>
+<title>Neue Vorlage AN/0931/2016: Angstraum Rheinpark</title>
+<updated>2016-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0931/2016"/>
+<summary>Antrag nach § 3 BV1 (CDU) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/60876#vorlage</id>
+<title>Neue Vorlage AN/0912/2016: Konzept für eine transparente Vergabe von Nutzungen von Veedelsplätzen, Antrag FDP</title>
+<updated>2016-05-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0912/2016"/>
+<summary>Antrag nach § 3 BV1 (FDP) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/60767#vorlage</id>
+<title>Neue Vorlage AN/0886/2016: Ersatzpflanzung Stavenhof</title>
+<updated>2016-05-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0886/2016"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/60758#vorlage</id>
+<title>Neue Vorlage AN/0880/2016: Modellprojekt zur Änderung der Vorrangschaltung für Stadtbahn und Straßenverkehr</title>
+<updated>2016-05-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0880/2016"/>
+<summary>Antrag nach § 3 BV1 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/59124#vorlage</id>
+<title>Neue Vorlage AN/0652/2016: Grill-Sharing – Aufstellung von öffentlichen Elektrogrills</title>
+<updated>2016-04-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0652/2016"/>
+<summary>Antrag nach § 3 BV5 (CDU) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/59120#vorlage</id>
+<title>Neue Vorlage AN/0650/2016: Objekt "Hitzeler Straße 125": Renovierung zur Unterbringung von Flüchtlingen</title>
+<updated>2016-04-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0650/2016"/>
+<summary>Gem. Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/59115#vorlage</id>
+<title>Neue Vorlage AN/0646/2016: Hinweisschilder zum Finkens Garten</title>
+<updated>2016-04-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0646/2016"/>
+<summary>Gem. Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/59111#vorlage</id>
+<title>Neue Vorlage AN/0642/2016: WC-Toiletten-Kombination für den Vorgebirgspark</title>
+<updated>2016-04-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0642/2016"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/59109#vorlage</id>
+<title>Neue Vorlage AN/0640/2016: Hotline für ehrenamtlich tätige Bürger und Bürgerinnen in der Flüchtlingshilfe</title>
+<updated>2016-04-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0640/2016"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/59050#vorlage</id>
+<title>Neue Vorlage AN/0623/2016: Ausleuchtung des Bahnhofsvorplatzes</title>
+<updated>2016-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0623/2016"/>
+<summary>Antrag nach § 3 BV1 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/59038#vorlage</id>
+<title>Neue Vorlage AN/0617/2016: Schutz der Severinstorburg</title>
+<updated>2016-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0617/2016"/>
+<summary>Antrag nach § 3 BV1 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58995#vorlage</id>
+<title>Neue Vorlage AN/0596/2016: Prostitution im Eigelsteinviertel</title>
+<updated>2016-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0596/2016"/>
+<summary>Antrag nach § 3 BV1 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58723#vorlage</id>
+<title>Neue Vorlage AN/0528/2016: Schutzräume für LGBT-Flüchtlinge durch integrative Unterbringung.</title>
+<updated>2016-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0528/2016"/>
+<summary>Antrag nach § 3 BV2 (FWK) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/57925#vorlage</id>
+<title>Neue Vorlage AN/0250/2016: Schaffung einer integrativen Flüchtlingsunterkunft im ehemaligen Bonotel.</title>
+<updated>2016-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0250/2016"/>
+<summary>Antrag nach § 3 BV2 (FWK) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58659#vorlage</id>
+<title>Neue Vorlage AN/0504/2016: Interkultureller Gemeinschaftsgarten</title>
+<updated>2016-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0504/2016"/>
+<summary>Gem. Dringlichkeitsantrag BV4 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58105#vorlage</id>
+<title>Neue Vorlage AN/0298/2016: City WC Aachener Weiher</title>
+<updated>2016-03-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0298/2016"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58462#vorlage</id>
+<title>Neue Vorlage 0759/2016: 10-Punkte-Plan für den Radverkehr an den Ringen der Initiative RingFrei</title>
+<updated>2016-03-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#0759/2016"/>
+<summary>Gem. Dringlichkeitsantrag BV1 (DF) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58445#vorlage</id>
+<title>Neue Vorlage AN/0445/2016: Verbesserte Reinigung Venloer Straßenfest</title>
+<updated>2016-03-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0445/2016"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58151#vorlage</id>
+<title>Neue Vorlage AN/0314/2016: “KVB: Mehr Fahrten weniger warten!”</title>
+<updated>2016-02-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0314/2016"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58219#vorlage</id>
+<title>Neue Vorlage AN/0348/2016: Fahrradabstellanlagen an Flüchtlingsunterkünften</title>
+<updated>2016-02-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0348/2016"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58094#vorlage</id>
+<title>Neue Vorlage AN/0291/2016: Neupflanzung von Ginkgo Bäumen</title>
+<updated>2016-02-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0291/2016"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/58088#vorlage</id>
+<title>Neue Vorlage AN/0287/2016: Ergänzungen zum Gestaltungshandbuch, Antrag SPD</title>
+<updated>2016-02-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0287/2016"/>
+<summary>Antrag nach § 3 BV1 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/57751#vorlage</id>
+<title>Neue Vorlage AN/0205/2016: Stadtverschönerungsmittel 2015</title>
+<updated>2016-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0205/2016"/>
+<summary>Gem. Dringlichkeitsantrag BV 1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/57747#vorlage</id>
+<title>Neue Vorlage AN/0204/2016: Dringlichkeitsantrag zur Überprüfung und Anpassung der Anzahl und Anordnung von Bänken in den umliegenden Straßen der Oper</title>
+<updated>2016-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0204/2016"/>
+<summary>Dringlichkeitsantrag BV1 (FPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/57522#vorlage</id>
+<title>Neue Vorlage AN/0122/2016: Aufstellen mobiler Pissoirs bei Großereignissen</title>
+<updated>2016-01-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0122/2016"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/57297#vorlage</id>
+<title>Neue Vorlage AN/0016/2016: Sicherheit an U-Bahn-Stationen im Stadtbezirk</title>
+<updated>2016-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0016/2016"/>
+<summary>Antrag nach § 3 BV5 (CDU) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/57313#vorlage</id>
+<title>Neue Vorlage AN/0025/2016: Verpflichtende Eintragungen in Wachbücher von Flüchtlingsunterkünften.</title>
+<updated>2016-01-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2016#AN/0025/2016"/>
+<summary>Antrag nach § 3 BV2 (FWK) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+</feed>

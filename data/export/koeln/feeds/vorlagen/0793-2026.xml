@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0793-2026</id>
+<title>Vorlage 0793/2026: Beantwortung der schriftlichen Anfrage der Fraktion Die Linke betreffend "Sexuelle Übergriffe während des Karnevals und der Schutz davor" (AN/0480/2026)</title>
+<subtitle>Verlauf der Vorlage 0793/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-10-05T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0793-2026.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#0793/2026"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131898#beratung-2026-10-05-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „vertagt“ – 0793/2026 Beantwortung der schriftlichen Anfrage der Fraktion Die Linke betreffend "Sexuelle Übergriffe während des Karnevals und der Schutz davor" (AN/0480/2026)</title>
+<updated>2026-10-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#0793/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131898#vorlage</id>
+<title>Neue Vorlage 0793/2026: Beantwortung der schriftlichen Anfrage der Fraktion Die Linke betreffend "Sexuelle Übergriffe während des Karnevals und der Schutz davor" (AN/0480/2026)</title>
+<updated>2026-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#0793/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131898#folge-AN%2F0480%2F2026</id>
+<title>Die Linke. Anfrage nach § 4 AN/0480/2026: Sexuelle Übergriffe während des Karnevals und der Schutz davor</title>
+<updated>2026-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#0793/2026"/>
+<summary>Folgevorlage zu 0793/2026</summary>
+</entry>
+</feed>

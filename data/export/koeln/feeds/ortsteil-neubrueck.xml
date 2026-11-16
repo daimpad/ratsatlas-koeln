@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-neubrueck</id>
 <title>Ratsatlas Köln – Neubrück</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Neubrück</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-10-30T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-neubrueck.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135077#vorlage</id>
+<title>Neue Vorlage 2814/2026: Schulstraßen am Standort Kapitelstraße und Andreas-Hermes-Straße</title>
+<updated>2026-10-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2814/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132872#vorlage</id>
+<title>Neue Vorlage 1445/2026: Konzept Öffentlichkeitsbeteiligung für die Stadtbahnanbindung Neubrück</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1445/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134097#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 2213/2026 Beantwortung einer schriftlichen Anfrage der GUT &amp; KLIMA FREUNDE-Fraktion aus der Sitzung des Ausschusses für Stadtenwicklung und regionale Zusammenarbeit vom 23.06.2026 (AN/1130/2026) betreffend Straßenbahn für Neubrück</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2213/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133653#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – AN/1130/2026 Straßenbahn für Neubrück</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1130/2026"/>
+<summary>Entscheidung am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134859#vorlage</id>
+<title>Neue Vorlage AN/1542/2026: Konzept Öffentlichkeitsbeteiligung für die Stadtbahnanbindung Neubrück</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1542/2026"/>
+<summary>Gem. Änderungsantrag BV8 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134859#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/1542/2026 Konzept Öffentlichkeitsbeteiligung für die Stadtbahnanbindung Neubrück</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1542/2026"/>
+<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133904#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 2046/2026 Baubeschluss Endausbau Gartenlabor Pohlstadtsweg in Neubrück</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2046/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132872#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 1445/2026 Konzept Öffentlichkeitsbeteiligung für die Stadtbahnanbindung Neubrück</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1445/2026"/>
+<summary>Anhörung (BV) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132872#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert beschlossen“ – 1445/2026 Konzept Öffentlichkeitsbeteiligung für die Stadtbahnanbindung Neubrück</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1445/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133904#vorlage</id>
+<title>Neue Vorlage 2046/2026: Baubeschluss Endausbau Gartenlabor Pohlstadtsweg in Neubrück</title>
+<updated>2026-09-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2046/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134097#vorlage</id>
+<title>Neue Vorlage 2213/2026: Beantwortung einer schriftlichen Anfrage der GUT &amp; KLIMA FREUNDE-Fraktion aus der Sitzung des Ausschusses für Stadtenwicklung und regionale Zusammenarbeit vom 23.06.2026 (AN/1130/2026) betreffend Straßenbahn für Neubrück</title>
+<updated>2026-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2213/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133653#vorlage</id>
+<title>Neue Vorlage AN/1130/2026: Straßenbahn für Neubrück</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1130/2026"/>
+<summary>KLIMA-GUT Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133436#vorlage</id>
+<title>Neue Vorlage AN/1012/2026: Schulplatzversorgung im Stadtbezirk Kalk sichern und Gesamtschulbedarf am Standort Helene-Weber-Platz vorbereiten</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1012/2026"/>
+<summary>Gem. Dringlichkeitsantrag (Rat) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132339#beratung-2026-04-30-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0619/2026 Baumpflanzungen auf der geplanten Strassenbahntrasse in Neubrück</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0619/2026"/>
+<summary>Antrag / Anfrage am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132338#beratung-2026-04-30-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0618/2026 Aufstellung eines Schildes „Feuerwehraufstellfläche“ in Neubrück</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0618/2026"/>
+<summary>Antrag / Anfrage am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132339#vorlage</id>
+<title>Neue Vorlage AN/0619/2026: Baumpflanzungen auf der geplanten Strassenbahntrasse in Neubrück</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0619/2026"/>
+<summary>Anfrage nach § 4 BV8 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132338#vorlage</id>
+<title>Neue Vorlage AN/0618/2026: Aufstellung eines Schildes „Feuerwehraufstellfläche“ in Neubrück</title>
+<updated>2026-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0618/2026"/>
+<summary>Antrag nach § 3 BV8 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131524#beratung-2026-03-12-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0341/2026 Zebrastreifen vor Grundschulen in Neubrück</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0341/2026"/>
+<summary>Antrag / Anfrage am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131524#vorlage</id>
+<title>Neue Vorlage AN/0341/2026: Zebrastreifen vor Grundschulen in Neubrück</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0341/2026"/>
+<summary>Gem. Antrag nach § 3 BV8 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130133#beratung-2025-11-27-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig abgelehnt“ – AN/1399/2025 Änderungsantrag nach §13 zu TOP 7.1</title>
+<updated>2025-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1399/2025"/>
+<summary>Antrag / Anfrage am 2025-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129902#beratung-2025-11-27-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – AN/1319/2025 Errichtung eines Interims während der Renovierung der Stadtteilbibliothek Neubrück</title>
+<updated>2025-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1319/2025"/>
+<summary>Antrag / Anfrage am 2025-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128872#beratung-2025-11-27-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2450/2025 Einwohneranfrage  betr. Klärung der Gültigkeit der Gestaltungssatzungen für Neubrück von 1969 und 1982</title>
+<updated>2025-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2450/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130133#vorlage</id>
+<title>Neue Vorlage AN/1399/2025: Änderungsantrag nach §13 zu TOP 7.1</title>
+<updated>2025-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1399/2025"/>
+<summary>Änderungsantrag BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128872#vorlage</id>
+<title>Neue Vorlage 2450/2025: Einwohneranfrage  betr. Klärung der Gültigkeit der Gestaltungssatzungen für Neubrück von 1969 und 1982</title>
+<updated>2025-11-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2450/2025"/>
+<summary>Beantwortung e. Einwohneranfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129902#vorlage</id>
+<title>Neue Vorlage AN/1319/2025: Errichtung eines Interims während der Renovierung der Stadtteilbibliothek Neubrück</title>
+<updated>2025-11-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1319/2025"/>
+<summary>Gem. Antrag nach § 3 BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#beratung-2025-09-04-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1310/2025 Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1310/2025"/>
+<summary>Entscheidung am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#beratung-2025-09-04-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 1310/2025 Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1310/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126785#beratung-2025-09-04-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1143/2025 Mitteilung über die Erhöhung der Investitionsauszahlungen gemäß § 25 Abs. 1 [Hausnummer ausgelassen], hier: Partizipatorische Neugestaltung Platz an St Adelheid in Neubrück</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1143/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#beratung-2025-09-01-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 1310/2025 Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1310/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#beratung-2025-08-26-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „ungeändert beschlossen“ – 1310/2025 Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-08-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1310/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-08-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#vorlage</id>
+<title>Neue Vorlage 1310/2025: Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-08-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1310/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126785#beratung-2025-07-03-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 1143/2025 Mitteilung über die Erhöhung der Investitionsauszahlungen gemäß § 25 Abs. 1 [Hausnummer ausgelassen], hier: Partizipatorische Neugestaltung Platz an St Adelheid in Neubrück</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1143/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126785#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 1143/2025 Mitteilung über die Erhöhung der Investitionsauszahlungen gemäß § 25 Abs. 1 [Hausnummer ausgelassen], hier: Partizipatorische Neugestaltung Platz an St Adelheid in Neubrück</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1143/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126785#vorlage</id>
+<title>Neue Vorlage 1143/2025: Mitteilung über die Erhöhung der Investitionsauszahlungen gemäß § 25 Abs. 1 [Hausnummer ausgelassen], hier: Partizipatorische Neugestaltung Platz an St Adelheid in Neubrück</title>
+<updated>2025-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1143/2025"/>
+<summary>Haushaltsrechtl. Unterrichtung d. Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128444#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Sache ist erledigt“ – AN/1013/2025 ÄA zu  TOP 5.2 - Beschluss über die Leitlinien des Qualifizierungsverfahrens (verfahrensleitender Beschluss); Arbeitstitel: Neubrücker Ring in Köln-Neubrück</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1013/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128440#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig abgelehnt“ – AN/1011/2025 ÄA zu Beschluss über die Leitlinien des Qualifizierungsverfahrens (verfahrensleitender Beschluss);</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1011/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127887#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1830/2025 Einwohneranfrage  betr. Klärung der Gültigkeit der Gestaltungssatzungen für Neubrück von 1969 und 1982</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1830/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127245#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „geändert beschlossen“ – 1426/2025 Beschluss über die Leitlinien des Qualifizierungsverfahrens (verfahrensleitender Beschluss); Arbeitstitel: Neubrücker Ring in Köln-Neubrück</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1426/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127245#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 1426/2025 Beschluss über die Leitlinien des Qualifizierungsverfahrens (verfahrensleitender Beschluss); Arbeitstitel: Neubrücker Ring in Köln-Neubrück</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1426/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128444#vorlage</id>
+<title>Neue Vorlage AN/1013/2025: ÄA zu  TOP 5.2 - Beschluss über die Leitlinien des Qualifizierungsverfahrens (verfahrensleitender Beschluss); Arbeitstitel: Neubrücker Ring in Köln-Neubrück</title>
+<updated>2025-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1013/2025"/>
+<summary>Die Linke. Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128440#vorlage</id>
+<title>Neue Vorlage AN/1011/2025: ÄA zu Beschluss über die Leitlinien des Qualifizierungsverfahrens (verfahrensleitender Beschluss);</title>
+<updated>2025-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1011/2025"/>
+<summary>Änderungsantrag BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127785#beratung-2025-06-16-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „endgültig abgelehnt“ – AN/0749/2025 Errichtung einer Gesamtschule am Standort Helene-Weber-Platz im Stadtteil Neubrück und gleichzeitige auslaufende Schließung der Kurt-Tucholsky-Hauptschule</title>
+<updated>2025-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0749/2025"/>
+<summary>Antrag / Anfrage am 2025-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127887#vorlage</id>
+<title>Neue Vorlage 1830/2025: Einwohneranfrage  betr. Klärung der Gültigkeit der Gestaltungssatzungen für Neubrück von 1969 und 1982</title>
+<updated>2025-06-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1830/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127785#vorlage</id>
+<title>Neue Vorlage AN/0749/2025: Errichtung einer Gesamtschule am Standort Helene-Weber-Platz im Stadtteil Neubrück und gleichzeitige auslaufende Schließung der Kurt-Tucholsky-Hauptschule</title>
+<updated>2025-06-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0749/2025"/>
+<summary>Gem. Antrag nach § 3 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127245#vorlage</id>
+<title>Neue Vorlage 1426/2025: Beschluss über die Leitlinien des Qualifizierungsverfahrens (verfahrensleitender Beschluss); Arbeitstitel: Neubrücker Ring in Köln-Neubrück</title>
+<updated>2025-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1426/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126794#beratung-2025-05-22-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 1150/2025 Stellungnahme der Verwaltung zum gemeinsamen Änderungsantrag AN/0400/2025 der Fraktion Bündnis 90/Die Grünen, CDU-Fraktion und Volt-Fraktion zum Aufstellungsbeschluss des Bebauungsplans "Neubrücker Ring" in Köln-Neubrück (0330/2025)</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1150/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126537#beratung-2025-05-22-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „geändert beschlossen“ – AN/0400/2025 Änderrungsantrag zu TOP 10.3 - Beschluss über die Aufstellung eines Bebauungsplanes Arbeitstitel: Neubrücker Ring in Köln-Neubrück (0330/2025)</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0400/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125639#beratung-2025-05-22-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „geändert beschlossen“ – 0330/2025 Beschluss über die Aufstellung eines Bebauungsplans und Durchführung der frühzeitigen Öffentlichkeitsbeteiligung, Arbeitstitel: Neubrücker Ring in Köln-Neubrück</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0330/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126298#beratung-2025-05-20-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 0795/2025 Ortswechsel der Jugendwerkstatt Berliner Straße nach Neubrück</title>
+<updated>2025-05-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0795/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126673#beratung-2025-05-15-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 1049/2025 Kleinräumige Analyse und Bewertung der Herausforderungen und Ziele der Sozialplanung für das Sozialraumgebiet Ostheim/Neubrück</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1049/2025"/>
+<summary>Entscheidung am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126298#beratung-2025-05-15-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 0795/2025 Ortswechsel der Jugendwerkstatt Berliner Straße nach Neubrück</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0795/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126298#beratung-2025-05-12-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0795/2025 Ortswechsel der Jugendwerkstatt Berliner Straße nach Neubrück</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0795/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126673#vorlage</id>
+<title>Neue Vorlage 1049/2025: Kleinräumige Analyse und Bewertung der Herausforderungen und Ziele der Sozialplanung für das Sozialraumgebiet Ostheim/Neubrück</title>
+<updated>2025-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1049/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126794#vorlage</id>
+<title>Neue Vorlage 1150/2025: Stellungnahme der Verwaltung zum gemeinsamen Änderungsantrag AN/0400/2025 der Fraktion Bündnis 90/Die Grünen, CDU-Fraktion und Volt-Fraktion zum Aufstellungsbeschluss des Bebauungsplans "Neubrücker Ring" in Köln-Neubrück (0330/2025)</title>
+<updated>2025-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1150/2025"/>
+<summary>Stellungnahme zu e. Antrag (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126298#vorlage</id>
+<title>Neue Vorlage 0795/2025: Ortswechsel der Jugendwerkstatt Berliner Straße nach Neubrück</title>
+<updated>2025-04-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0795/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126537#vorlage</id>
+<title>Neue Vorlage AN/0400/2025: Änderrungsantrag zu TOP 10.3 - Beschluss über die Aufstellung eines Bebauungsplanes Arbeitstitel: Neubrücker Ring in Köln-Neubrück (0330/2025)</title>
+<updated>2025-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0400/2025"/>
+<summary>Gem. Änderungsantrag (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126345#beratung-2025-03-20-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig abgelehnt“ – AN/0344/2025 Gärten und Wald statt Beton und Asphalt - Aufstellung eines (Nicht-) Bebauungsplans</title>
+<updated>2025-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0344/2025"/>
+<summary>Entscheidung am 2025-03-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125639#beratung-2025-03-20-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 0330/2025 Beschluss über die Aufstellung eines Bebauungsplans und Durchführung der frühzeitigen Öffentlichkeitsbeteiligung, Arbeitstitel: Neubrücker Ring in Köln-Neubrück</title>
+<updated>2025-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0330/2025"/>
+<summary>Anhörung (BV) am 2025-03-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126345#vorlage</id>
+<title>Neue Vorlage AN/0344/2025: Gärten und Wald statt Beton und Asphalt - Aufstellung eines (Nicht-) Bebauungsplans</title>
+<updated>2025-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0344/2025"/>
+<summary>Änderungsantrag BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125639#vorlage</id>
+<title>Neue Vorlage 0330/2025: Beschluss über die Aufstellung eines Bebauungsplans und Durchführung der frühzeitigen Öffentlichkeitsbeteiligung, Arbeitstitel: Neubrücker Ring in Köln-Neubrück</title>
+<updated>2025-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0330/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96482#vorlage</id>
+<title>Neue Vorlage AN/0893/2020: Sicherung der Realisierung der Maßnahme „Gestaltung Platz An St. Adelheid“ in Köln-Neubrück – Maßnahme aus dem Programm „Starke Veedel – Starkes Köln“</title>
+<updated>2025-02-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0893/2020"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123680#beratung-2025-01-23-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3044/2024 Abschlussbericht der Maßnahme "Büro für Quartiersmanagement und Aktivierung" im Soziale-Stadt-Gebiet Ostheim und Neubrück</title>
+<updated>2025-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#3044/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123680#beratung-2024-12-05-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 3044/2024 Abschlussbericht der Maßnahme "Büro für Quartiersmanagement und Aktivierung" im Soziale-Stadt-Gebiet Ostheim und Neubrück</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#3044/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124154#beratung-2024-11-28-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3383/2024 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Eine Gesamtschule für Köln-Neubrück, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#3383/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123680#vorlage</id>
+<title>Neue Vorlage 3044/2024: Abschlussbericht der Maßnahme "Büro für Quartiersmanagement und Aktivierung" im Soziale-Stadt-Gebiet Ostheim und Neubrück</title>
+<updated>2024-11-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#3044/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124154#vorlage</id>
+<title>Neue Vorlage 3383/2024: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Eine Gesamtschule für Köln-Neubrück, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-10-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#3383/2024"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/57826#vorlage</id>
+<title>Neue Vorlage AN/0220/2016: Etablierung eines Wohndialogs in Köln-Neubrück</title>
+<updated>2024-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0220/2016"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123002#beratung-2024-09-05-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/1124/2024 Klimaveedel und Fernwärme</title>
+<updated>2024-09-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1124/2024"/>
+<summary>Antrag / Anfrage am 2024-09-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123002#vorlage</id>
+<title>Neue Vorlage AN/1124/2024: Klimaveedel und Fernwärme</title>
+<updated>2024-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1124/2024"/>
+<summary>Anfrage nach § 4 BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121511#vorlage</id>
+<title>Neue Vorlage 1562/2024: Schulrechtliche Errichtung einer Gesamtschule am Standort Helene-Weber-Platz im Stadtteil Neubrück zum Schuljahr 2026/27 bei auslaufender Schließung der Kurt-Tucholsky-Schule, Hauptschule Helene-Weber-Platz zum Schuljahr 2025/26</title>
+<updated>2024-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1562/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121511#beratung-2024-06-27-Rat</id>
+<title>Rat: „geändert beschlossen“ – 1562/2024 Schulrechtliche Errichtung einer Gesamtschule am Standort Helene-Weber-Platz im Stadtteil Neubrück zum Schuljahr 2026/27 bei auslaufender Schließung der Kurt-Tucholsky-Schule, Hauptschule Helene-Weber-Platz zum Schuljahr 2025/26</title>
+<updated>2024-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1562/2024"/>
+<summary>Entscheidung am 2024-06-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122311#vorlage</id>
+<title>Neue Vorlage AN/1017/2024: Änderungsantrag zu TOP 1.5 zur Vorlage: Schulrechtliche Errichtung einer Gesamtschule am Standort Helene-Weber-Platz im Stadtteil Neubrück zum Schuljahr 2026/27 bei auslaufender Schließung der KurtTucholsky-Schule, Hauptschule Helene-Weber-Platz zum</title>
+<updated>2024-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/1017/2024"/>
+<summary>Gem. Änderungsantrag (CDU) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121511#beratung-2024-06-26-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1562/2024 Schulrechtliche Errichtung einer Gesamtschule am Standort Helene-Weber-Platz im Stadtteil Neubrück zum Schuljahr 2026/27 bei auslaufender Schließung der Kurt-Tucholsky-Schule, Hauptschule Helene-Weber-Platz zum Schuljahr 2025/26</title>
+<updated>2024-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1562/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121511#beratung-2024-06-24-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum in nachfolgende Gremien“ – 1562/2024 Schulrechtliche Errichtung einer Gesamtschule am Standort Helene-Weber-Platz im Stadtteil Neubrück zum Schuljahr 2026/27 bei auslaufender Schließung der Kurt-Tucholsky-Schule, Hauptschule Helene-Weber-Platz zum Schuljahr 2025/26</title>
+<updated>2024-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1562/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121696#beratung-2024-06-06-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1698/2024 Beantwortung einer mündlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Kalk vom 25.04.2024 (AN 0350/2024) zur Umgestaltung des Marktplatzes im Klimaveedel Neubrück 1167/2024</title>
+<updated>2024-06-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1698/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-06-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121696#vorlage</id>
+<title>Neue Vorlage 1698/2024: Beantwortung einer mündlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Kalk vom 25.04.2024 (AN 0350/2024) zur Umgestaltung des Marktplatzes im Klimaveedel Neubrück 1167/2024</title>
+<updated>2024-05-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1698/2024"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120853#beratung-2024-04-25-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1167/2024 Beantwortung der Anfrage der Fraktion Die Linke (AN/0350/2024) zur Umgestaltung des Marktplatzes im Klimaveedel Neubrück</title>
+<updated>2024-04-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1167/2024"/>
+<summary>Entscheidung am 2024-04-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120853#vorlage</id>
+<title>Neue Vorlage 1167/2024: Beantwortung der Anfrage der Fraktion Die Linke (AN/0350/2024) zur Umgestaltung des Marktplatzes im Klimaveedel Neubrück</title>
+<updated>2024-04-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1167/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120350#beratung-2024-03-07-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0350/2024 Umgestaltung des Marktplatzes im Klimaveedel Neubrück</title>
+<updated>2024-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0350/2024"/>
+<summary>Antrag / Anfrage am 2024-03-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119919#beratung-2024-03-07-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 0559/2024 Projektanträge im Rahmen des sechsten Antragsdurchlaufs des Verfügungsfonds für das Soziale-Stadt-Gebiet „Ostheim und Neubrück“</title>
+<updated>2024-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0559/2024"/>
+<summary>Entscheidung am 2024-03-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120350#vorlage</id>
+<title>Neue Vorlage AN/0350/2024: Umgestaltung des Marktplatzes im Klimaveedel Neubrück</title>
+<updated>2024-03-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0350/2024"/>
+<summary>Anfrage nach § 4 BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119919#vorlage</id>
+<title>Neue Vorlage 0559/2024: Projektanträge im Rahmen des sechsten Antragsdurchlaufs des Verfügungsfonds für das Soziale-Stadt-Gebiet „Ostheim und Neubrück“</title>
+<updated>2024-02-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0559/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117050#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 2786/2023 Projektanträge im Rahmen des fünften Antragsdurchlaufs des Verfügungsfonds für das Soziale-Stadt-Gebiet „Ostheim und Neubrück“</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2786/2023"/>
+<summary>Entscheidung am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116967#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2732/2023 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Spielplatz "Kletterpark Ludwig", Köln-Neubrück, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2732/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117050#vorlage</id>
+<title>Neue Vorlage 2786/2023: Projektanträge im Rahmen des fünften Antragsdurchlaufs des Verfügungsfonds für das Soziale-Stadt-Gebiet „Ostheim und Neubrück“</title>
+<updated>2023-09-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2786/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116967#vorlage</id>
+<title>Neue Vorlage 2732/2023: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Spielplatz "Kletterpark Ludwig", Köln-Neubrück, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#2732/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115206#beratung-2023-08-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1605/2023 Beantwortung einer schriftlichen Anfrage der FDP-Fraktion aus der Sitzung des BV8 vom 11.05.2023 (AN/0614/2023) betreffend des "Projektes der KVB-Bahnlinie nach Neubrück"</title>
+<updated>2023-08-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1605/2023"/>
+<summary>Entscheidung am 2023-08-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115206#vorlage</id>
+<title>Neue Vorlage 1605/2023: Beantwortung einer schriftlichen Anfrage der FDP-Fraktion aus der Sitzung des BV8 vom 11.05.2023 (AN/0614/2023) betreffend des "Projektes der KVB-Bahnlinie nach Neubrück"</title>
+<updated>2023-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1605/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114764#beratung-2023-05-11-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 1376/2023 Projektanträge im Rahmen des vierten Antragsdurchlaufs des Verfügungsfonds für das Soziale-Stadt-Gebiet „Ostheim und Neubrück“</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1376/2023"/>
+<summary>Entscheidung am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114471#beratung-2023-05-11-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig zurückgezogen“ – AN/0614/2023 Anfrage der FDP: "Projektes der KVB-Bahnlinie nach Neubrück"</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0614/2023"/>
+<summary>Antrag / Anfrage am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114471#vorlage</id>
+<title>Neue Vorlage AN/0614/2023: Anfrage der FDP: "Projektes der KVB-Bahnlinie nach Neubrück"</title>
+<updated>2023-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#AN/0614/2023"/>
+<summary>Anfrage nach § 4 BV8 (FDP) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114764#vorlage</id>
+<title>Neue Vorlage 1376/2023: Projektanträge im Rahmen des vierten Antragsdurchlaufs des Verfügungsfonds für das Soziale-Stadt-Gebiet „Ostheim und Neubrück“</title>
+<updated>2023-04-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#1376/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113479#beratung-2023-03-09-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 0545/2023 Projektanträge im Rahmen des dritten Antragsdurchlaufs des Verfügungsfonds für das "Soziale-Stadt-Gebiet Ostheim und Neubrück"</title>
+<updated>2023-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0545/2023"/>
+<summary>Entscheidung am 2023-03-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113380#beratung-2023-03-09-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 0479/2023 Beantwortung einer Anfrage: Einfluss einer Gesamtschule Neubrück auf Nachverdichtungsbedarfe an Gymnasien im Sj. 23/24</title>
+<updated>2023-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0479/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-03-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112054#beratung-2023-03-09-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3954/2022 Bolzplatz Georgestraße in Köln-Neubrück</title>
+<updated>2023-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#3954/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-03-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113380#vorlage</id>
+<title>Neue Vorlage 0479/2023: Beantwortung einer Anfrage: Einfluss einer Gesamtschule Neubrück auf Nachverdichtungsbedarfe an Gymnasien im Sj. 23/24</title>
+<updated>2023-02-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0479/2023"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112054#vorlage</id>
+<title>Neue Vorlage 3954/2022: Bolzplatz Georgestraße in Köln-Neubrück</title>
+<updated>2023-02-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#3954/2022"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113479#vorlage</id>
+<title>Neue Vorlage 0545/2023: Projektanträge im Rahmen des dritten Antragsdurchlaufs des Verfügungsfonds für das "Soziale-Stadt-Gebiet Ostheim und Neubrück"</title>
+<updated>2023-02-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#0545/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112322#beratung-2023-01-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 4115/2022 Bänke für die Hundefreilauffläche Neubrück zur Entschärfung des Konfliktes zwischen Hundebesitzenden und Fahrradfahrenden (AN/2011/2022)</title>
+<updated>2023-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#4115/2022"/>
+<summary>Entscheidung am 2023-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112322#vorlage</id>
+<title>Neue Vorlage 4115/2022: Bänke für die Hundefreilauffläche Neubrück zur Entschärfung des Konfliktes zwischen Hundebesitzenden und Fahrradfahrenden (AN/2011/2022)</title>
+<updated>2022-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neubrueck#4115/2022"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

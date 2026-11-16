@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-poll</id>
 <title>Ratsatlas Köln – Poll</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Poll</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-10T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-poll.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134546#beratung-2026-11-10-Hauptausschuss</id>
+<title>Hauptausschuss: „Kenntnis genommen“ – 2517/2026 Aktueller Sachstand Südbrücke</title>
+<updated>2026-11-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2517/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135523#vorlage</id>
+<title>Neue Vorlage AN/1771/2026: Änderungsantrag der Fraktionen CDU, SPD und Bündnis90/DieGrünenVolt "Südbrücke "</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1771/2026"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135523#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1771/2026 Änderungsantrag der Fraktionen CDU, SPD und Bündnis90/DieGrünenVolt "Südbrücke "</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1771/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135381#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2999/2026 Stellungnahme zum Beschlussantrag der SPD-Fraktion auf Offenlegung Genehmigung Veranstaltungsfreifläche der Open Air Location  Südbrücke</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2999/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135296#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1674/2026 Antrag SPD Fraktion "Weitere Verwendung des bisherigen Kita-Grundstücks Auf dem Sandberg 5"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1674/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135294#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1673/2026 Antrag der SPD-Fraktion"Offenlegung Genehmigung Veranstaltungsfreifläche der Open Air Location Südbrücke, Alfred-Schütte-Allee, Köln-Poll"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1673/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135381#vorlage</id>
+<title>Neue Vorlage 2999/2026: Stellungnahme zum Beschlussantrag der SPD-Fraktion auf Offenlegung Genehmigung Veranstaltungsfreifläche der Open Air Location  Südbrücke</title>
+<updated>2026-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2999/2026"/>
+<summary>Stellungnahme zu einem Antrag (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135296#vorlage</id>
+<title>Neue Vorlage AN/1674/2026: Antrag SPD Fraktion "Weitere Verwendung des bisherigen Kita-Grundstücks Auf dem Sandberg 5"</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1674/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135294#vorlage</id>
+<title>Neue Vorlage AN/1673/2026: Antrag der SPD-Fraktion"Offenlegung Genehmigung Veranstaltungsfreifläche der Open Air Location Südbrücke, Alfred-Schütte-Allee, Köln-Poll"</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1673/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133612#beratung-2026-10-08-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1880/2026 Satzung über die abweichende Herstellung der Erschließungsanlage Poller Kirchweg von Am Schnellert bis Müllergasse in Köln-Poll</title>
+<updated>2026-10-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1880/2026"/>
+<summary>Entscheidung am 2026-10-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134878#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – AN/1554/2026 Umsetzung des Mobilitätskonzepts für den Deutzer Hafen und zur Umgestaltung der Siegburger Straße</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1554/2026"/>
+<summary>Antrag / Anfrage am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134546#beratung-2026-10-01-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „Kenntnis genommen“ – 2517/2026 Aktueller Sachstand Südbrücke</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2517/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#beratung-2026-09-28-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 2325/2026 Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2325/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134878#vorlage</id>
+<title>Neue Vorlage AN/1554/2026: Umsetzung des Mobilitätskonzepts für den Deutzer Hafen und zur Umgestaltung der Siegburger Straße</title>
+<updated>2026-09-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1554/2026"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134546#vorlage</id>
+<title>Neue Vorlage 2517/2026: Aktueller Sachstand Südbrücke</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2517/2026"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134237#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2332/2026 Beantwortung einer schriftlichen Anfrage der Fraktion BÜNDNIS 90/ DIE GRÜNEN in der Sitzung der Bezirksregierung Kalk vom 26.06.2025 "AN/0757/2025" betreffend versenkbarer Poller in Kalk</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2332/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133612#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert empfohlen“ – 1880/2026 Satzung über die abweichende Herstellung der Erschließungsanlage Poller Kirchweg von Am Schnellert bis Müllergasse in Köln-Poll</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1880/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134395#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1302/2026 Antrag der SPD-Fraktion "Parken auf der Sperrzone Siegburger Straße im Bereich Marktplatz, Verlagerung Taxistand, Umgestaltung Siegburger Straße im Rahmen des Mobilitätskonzeptes Deutzer Hafen"</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1302/2026"/>
+<summary>Antrag / Anfrage am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134392#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1300/2026 Antrag der SPD-Fraktion "Reparaturen Gleiskörper KVB-Linie 7, Siegburger Str. in Poll"</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1300/2026"/>
+<summary>Antrag / Anfrage am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133612#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert empfohlen“ – 1880/2026 Satzung über die abweichende Herstellung der Erschließungsanlage Poller Kirchweg von Am Schnellert bis Müllergasse in Köln-Poll</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1880/2026"/>
+<summary>Anhörung (BV) am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#vorlage</id>
+<title>Neue Vorlage 2325/2026: Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2325/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134395#vorlage</id>
+<title>Neue Vorlage AN/1302/2026: Antrag der SPD-Fraktion "Parken auf der Sperrzone Siegburger Straße im Bereich Marktplatz, Verlagerung Taxistand, Umgestaltung Siegburger Straße im Rahmen des Mobilitätskonzeptes Deutzer Hafen"</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1302/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134392#vorlage</id>
+<title>Neue Vorlage AN/1300/2026: Antrag der SPD-Fraktion "Reparaturen Gleiskörper KVB-Linie 7, Siegburger Str. in Poll"</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1300/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134237#vorlage</id>
+<title>Neue Vorlage 2332/2026: Beantwortung einer schriftlichen Anfrage der Fraktion BÜNDNIS 90/ DIE GRÜNEN in der Sitzung der Bezirksregierung Kalk vom 26.06.2025 "AN/0757/2025" betreffend versenkbarer Poller in Kalk</title>
+<updated>2026-08-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2332/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133612#vorlage</id>
+<title>Neue Vorlage 1880/2026: Satzung über die abweichende Herstellung der Erschließungsanlage Poller Kirchweg von Am Schnellert bis Müllergasse in Köln-Poll</title>
+<updated>2026-07-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1880/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133046#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 1583/2026 Mitteilung über die Veröffentlichung gemäß § 3 Abs. 2 BauGB des Bebauungsplan Nr. 69420/06, 1. Änderung - Arbeitstitel: Käulchensweg in Köln-Poll, Teilaufhebung</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1583/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132040#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „ungeändert beschlossen“ – 0902/2026 1. Änderung Bebauungsplan Nr.: 69420/06 Arbeitstitel: Käulchensweg in Köln-Poll, Teilaufhebung</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0902/2026"/>
+<summary>Entscheidung am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133658#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1133/2026 Änderungsantrag der SPD-Fraktion "Bodenmarkierungen zur Sichtbarmachung der Parkfläche &amp; Profilraum der Stadtbahnlinie 7 in der Siegburger Str. 369"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1133/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133256#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig zurückgezogen“ – AN/0914/2026 Antrag der AfD-Fraktion "Bodenmarkierung zur Sichtbarmachung der Parkfläche &amp; Profilraum der Stadtbahnlinie 7 in der Siegburger Str. 369, 51105 Köln"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0914/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133046#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1583/2026 Mitteilung über die Veröffentlichung gemäß § 3 Abs. 2 BauGB des Bebauungsplan Nr. 69420/06, 1. Änderung - Arbeitstitel: Käulchensweg in Köln-Poll, Teilaufhebung</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1583/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132953#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 1514/2026 Kunststoffrasen-Belagserneuerung auf der Sportanlage In der Gracht in Köln-Poll</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1514/2026"/>
+<summary>Entscheidung am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132040#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert empfohlen“ – 0902/2026 1. Änderung Bebauungsplan Nr.: 69420/06 Arbeitstitel: Käulchensweg in Köln-Poll, Teilaufhebung</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0902/2026"/>
+<summary>Anhörung (BV) am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133658#vorlage</id>
+<title>Neue Vorlage AN/1133/2026: Änderungsantrag der SPD-Fraktion "Bodenmarkierungen zur Sichtbarmachung der Parkfläche &amp; Profilraum der Stadtbahnlinie 7 in der Siegburger Str. 369"</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1133/2026"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132953#vorlage</id>
+<title>Neue Vorlage 1514/2026: Kunststoffrasen-Belagserneuerung auf der Sportanlage In der Gracht in Köln-Poll</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1514/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133046#vorlage</id>
+<title>Neue Vorlage 1583/2026: Mitteilung über die Veröffentlichung gemäß § 3 Abs. 2 BauGB des Bebauungsplan Nr. 69420/06, 1. Änderung - Arbeitstitel: Käulchensweg in Köln-Poll, Teilaufhebung</title>
+<updated>2026-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1583/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133256#vorlage</id>
+<title>Neue Vorlage AN/0914/2026: Antrag der AfD-Fraktion "Bodenmarkierung zur Sichtbarmachung der Parkfläche &amp; Profilraum der Stadtbahnlinie 7 in der Siegburger Str. 369, 51105 Köln"</title>
+<updated>2026-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0914/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132040#vorlage</id>
+<title>Neue Vorlage 0902/2026: 1. Änderung Bebauungsplan Nr.: 69420/06 Arbeitstitel: Käulchensweg in Köln-Poll, Teilaufhebung</title>
+<updated>2026-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0902/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132188#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0564/2026 Antrag der SPD-Fraktion "Weiterentwicklung und Umgestaltung des Poller Marktplatzes unter Einbeziehung der vorliegenden Konzeptstudie"</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0564/2026"/>
+<summary>Antrag / Anfrage am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132188#vorlage</id>
+<title>Neue Vorlage AN/0564/2026: Antrag der SPD-Fraktion "Weiterentwicklung und Umgestaltung des Poller Marktplatzes unter Einbeziehung der vorliegenden Konzeptstudie"</title>
+<updated>2026-04-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0564/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131290#beratung-2026-03-18-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 0451/2026 Beantwortung einer mündlichen Anfrage der der SPD-Fraktion von RM Lorenz vom 11.12.2025 betreffend "Sachstand zur Sportanlage In der Gracht (Ballfangzaun)"</title>
+<updated>2026-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0451/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131576#beratung-2026-03-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0372/2026 Antrag von Marlis Pöttgen (FDP), betr.: Poller im Heinzelmännchenweg</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0372/2026"/>
+<summary>Antrag / Anfrage am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130168#beratung-2026-03-16-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 3412/2025 Baubeschluss für die Generalinstandsetzung der Straße „An den Maien“ in Köln-Poll sowie Freigabe einer investiven Auszahlungsermächtigung bei der Finanzstelle 6601-1201-0-6605, Generalinstandsetzung von Straßen</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#3412/2025"/>
+<summary>Entscheidung am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131458#beratung-2026-03-10-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0315/2026 Antrag der SPD-Fraktion "Fahrradunterstände an der KVB-Haltestelle Salmstraße / Marktplatz Poll"</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0315/2026"/>
+<summary>Antrag / Anfrage am 2026-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130168#beratung-2026-03-10-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 3412/2025 Baubeschluss für die Generalinstandsetzung der Straße „An den Maien“ in Köln-Poll sowie Freigabe einer investiven Auszahlungsermächtigung bei der Finanzstelle 6601-1201-0-6605, Generalinstandsetzung von Straßen</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#3412/2025"/>
+<summary>Entscheidung am 2026-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131290#vorlage</id>
+<title>Neue Vorlage 0451/2026: Beantwortung einer mündlichen Anfrage der der SPD-Fraktion von RM Lorenz vom 11.12.2025 betreffend "Sachstand zur Sportanlage In der Gracht (Ballfangzaun)"</title>
+<updated>2026-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0451/2026"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131576#vorlage</id>
+<title>Neue Vorlage AN/0372/2026: Antrag von Marlis Pöttgen (FDP), betr.: Poller im Heinzelmännchenweg</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0372/2026"/>
+<summary>Antrag nach § 3 BV4 (FDP) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131458#vorlage</id>
+<title>Neue Vorlage AN/0315/2026: Antrag der SPD-Fraktion "Fahrradunterstände an der KVB-Haltestelle Salmstraße / Marktplatz Poll"</title>
+<updated>2026-02-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0315/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129252#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2695/2025 Beantwortung einer schriftlichen Anfrage der SPD Fraktion aus der Sitzung des Bezirksvertretung Porz vom 18.06.2025  (AN/0951/2025) betr. "Schulwegsicherheit im Bereich der Salmstraße."</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2695/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128291#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0951/2025 Anfrage der SPD-Fraktion "Schulwegsicherheit im Bereich der Salmstraße"</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0951/2025"/>
+<summary>Antrag / Anfrage am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130168#vorlage</id>
+<title>Neue Vorlage 3412/2025: Baubeschluss für die Generalinstandsetzung der Straße „An den Maien“ in Köln-Poll sowie Freigabe einer investiven Auszahlungsermächtigung bei der Finanzstelle 6601-1201-0-6605, Generalinstandsetzung von Straßen</title>
+<updated>2026-01-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#3412/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129252#vorlage</id>
+<title>Neue Vorlage 2695/2025: Beantwortung einer schriftlichen Anfrage der SPD Fraktion aus der Sitzung des Bezirksvertretung Porz vom 18.06.2025  (AN/0951/2025) betr. "Schulwegsicherheit im Bereich der Salmstraße."</title>
+<updated>2025-12-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2695/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-12-08-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128824#beratung-2025-12-04-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2411/2025 Begrenzung der Geschwindigkeit auf einem Teil der Siegburger Straße</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2411/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129742#beratung-2025-11-24-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 3094/2025 Erneuerung Bahnübergang "Baumschulenweg“ in Köln, Strecke 2655 Köln, Frankfurter Str. – Overath Bahn-km 8,529 bis Bahn-km 10,597, hier: Antrag auf Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#3094/2025"/>
+<summary>Entscheidung am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-11-24-Hauptausschuss</id>
+<title>Hauptausschuss: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#vorlage</id>
+<title>Neue Vorlage 3073/2025: Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#3073/2025"/>
+<summary>Mitteilung Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129742#vorlage</id>
+<title>Neue Vorlage 3094/2025: Erneuerung Bahnübergang "Baumschulenweg“ in Köln, Strecke 2655 Köln, Frankfurter Str. – Overath Bahn-km 8,529 bis Bahn-km 10,597, hier: Antrag auf Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#3094/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128824#vorlage</id>
+<title>Neue Vorlage 2411/2025: Begrenzung der Geschwindigkeit auf einem Teil der Siegburger Straße</title>
+<updated>2025-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2411/2025"/>
+<summary>Stellungnahme zu einem Antrag (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129063#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2590/2025 Mitteilung zur Bürgereingabe nach § 24 GO – Rolshover Kirchweg Poll, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2590/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128997#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2564/2025 Beantwortung einer Anfrage der SPD-Fraktion aus der Sitzung der BV Porz am 15.05.2025 (AN/0533/2025) betr. "Fehlender Baumschutz auf der Alfred-Schütte-Allee, Poll"</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2564/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128495#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 1634/2025/1 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025/1"/>
+<summary>Anhörung (BV) am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127103#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0533/2025 Anfrage der SPD-Fraktion "Fehlender Baumschutz auf der Alfred-Schütte-Allee, Poll"</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0533/2025"/>
+<summary>Antrag / Anfrage am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129000#beratung-2025-09-01-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1109/2025 Poller Neuenhöfer Allee</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1109/2025"/>
+<summary>Entscheidung am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128997#vorlage</id>
+<title>Neue Vorlage 2564/2025: Beantwortung einer Anfrage der SPD-Fraktion aus der Sitzung der BV Porz am 15.05.2025 (AN/0533/2025) betr. "Fehlender Baumschutz auf der Alfred-Schütte-Allee, Poll"</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2564/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129063#vorlage</id>
+<title>Neue Vorlage 2590/2025: Mitteilung zur Bürgereingabe nach § 24 GO – Rolshover Kirchweg Poll, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-08-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2590/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129000#vorlage</id>
+<title>Neue Vorlage AN/1109/2025: Poller Neuenhöfer Allee</title>
+<updated>2025-08-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1109/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127584#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1634/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126437#beratung-2025-07-03-Rat</id>
+<title>Rat: „unter Vorbehalt beschlossen“ – 0885/2025 Beschluss über Stellungnahmen sowie Satzungsbeschluss des Bebauungsplanentwurfs Nummer 69430/06, Arbeitstitel: "Erweiterung TÜV" in Köln-Poll</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0885/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126291#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0791/2025 Baubeschluss zur Umsetzung der verkehrlichen Maßnahmen zur Schulwegsicherung am Schulstandort Grundschule Siegburger Straße in Poll sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0791/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128495#vorlage</id>
+<title>Neue Vorlage 1634/2025/1: Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025/1"/>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127584#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1634/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127584#beratung-2025-07-01-Stadtarbeitsgemeinschaft%20Behindertenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Behindertenpolitik: „ohne Votum behandelt“ – 1634/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-07-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127584#vorlage</id>
+<title>Neue Vorlage 1634/2025: Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127584#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 1634/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126291#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 0791/2025 Baubeschluss zur Umsetzung der verkehrlichen Maßnahmen zur Schulwegsicherung am Schulstandort Grundschule Siegburger Straße in Poll sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0791/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128397#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2108/2025 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verlegung der Haltestelle des Sparkassen Busses in Köln Poll, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2108/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128057#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – AN/0865/2025 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Umgestaltung des Poller Marktplatzes für weitere Nutzungen"</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0865/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128044#beratung-2025-06-26-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „geändert beschlossen“ – AN/0856/2025 Begrenzung der Geschwindigkeit auf einem Teil der Siegburger Straße, Antrag CDU</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0856/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127977#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0817/2025 Antrag der SPD-Fraktion "Ortstermin zur Parksituation und Wegefreiheit für Einsatzfahrzeuge am Efeuplatz, Poll"</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0817/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127799#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0757/2025 Versenkbare Poller endlich auch in Kalk?</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0757/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127584#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ohne Votum behandelt“ – 1634/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127584#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – 1634/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127584#beratung-2025-06-26-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 1634/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Auf dem Sandberg 120, 51105 Köln (Schulnummer: 154490) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1634/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127006#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0486/2025 Antrag der SPD-Fraktion "Schaffung einer fußläufigen Verbindung zwischen Salmstraße, der GGS Poller Hauptstraße (Schulpfad) und der Straße Auf dem</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0486/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126907#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 1234/2025 Neugestaltung der Grünanlage und Spielfläche Im Forst in Köln-Poll</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1234/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126437#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ohne Votum behandelt“ – 0885/2025 Beschluss über Stellungnahmen sowie Satzungsbeschluss des Bebauungsplanentwurfs Nummer 69430/06, Arbeitstitel: "Erweiterung TÜV" in Köln-Poll</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0885/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126437#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – 0885/2025 Beschluss über Stellungnahmen sowie Satzungsbeschluss des Bebauungsplanentwurfs Nummer 69430/06, Arbeitstitel: "Erweiterung TÜV" in Köln-Poll</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0885/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126291#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert empfohlen“ – 0791/2025 Baubeschluss zur Umsetzung der verkehrlichen Maßnahmen zur Schulwegsicherung am Schulstandort Grundschule Siegburger Straße in Poll sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0791/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126076#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 0654/2025 Aufhebung des Aufstellungsbeschlusses zum Bebauungsplanverfahren mit dem Arbeitstitel Salmstaße in Köln-Poll</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0654/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126076#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert empfohlen“ – 0654/2025 Aufhebung des Aufstellungsbeschlusses zum Bebauungsplanverfahren mit dem Arbeitstitel Salmstaße in Köln-Poll</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0654/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128397#vorlage</id>
+<title>Neue Vorlage 2108/2025: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verlegung der Haltestelle des Sparkassen Busses in Köln Poll, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#2108/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126907#beratung-2025-06-24-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „ungeändert beschlossen“ – 1234/2025 Neugestaltung der Grünanlage und Spielfläche Im Forst in Köln-Poll</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1234/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126291#beratung-2025-06-24-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert empfohlen“ – 0791/2025 Baubeschluss zur Umsetzung der verkehrlichen Maßnahmen zur Schulwegsicherung am Schulstandort Grundschule Siegburger Straße in Poll sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0791/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128291#vorlage</id>
+<title>Neue Vorlage AN/0951/2025: Anfrage der SPD-Fraktion "Schulwegsicherheit im Bereich der Salmstraße"</title>
+<updated>2025-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0951/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127799#vorlage</id>
+<title>Neue Vorlage AN/0757/2025: Versenkbare Poller endlich auch in Kalk?</title>
+<updated>2025-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0757/2025"/>
+<summary>Anfrage nach § 4 BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128044#vorlage</id>
+<title>Neue Vorlage AN/0856/2025: Begrenzung der Geschwindigkeit auf einem Teil der Siegburger Straße, Antrag CDU</title>
+<updated>2025-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0856/2025"/>
+<summary>Antrag nach § 3 BV1 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128057#vorlage</id>
+<title>Neue Vorlage AN/0865/2025: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Umgestaltung des Poller Marktplatzes für weitere Nutzungen"</title>
+<updated>2025-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0865/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127977#vorlage</id>
+<title>Neue Vorlage AN/0817/2025: Antrag der SPD-Fraktion "Ortstermin zur Parksituation und Wegefreiheit für Einsatzfahrzeuge am Efeuplatz, Poll"</title>
+<updated>2025-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0817/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126907#vorlage</id>
+<title>Neue Vorlage 1234/2025: Neugestaltung der Grünanlage und Spielfläche Im Forst in Köln-Poll</title>
+<updated>2025-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1234/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126437#beratung-2025-06-05-Wirtschaftsausschuss</id>
+<title>Wirtschaftsausschuss: „ungeändert beschlossen“ – 0885/2025 Beschluss über Stellungnahmen sowie Satzungsbeschluss des Bebauungsplanentwurfs Nummer 69430/06, Arbeitstitel: "Erweiterung TÜV" in Köln-Poll</title>
+<updated>2025-06-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#0885/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

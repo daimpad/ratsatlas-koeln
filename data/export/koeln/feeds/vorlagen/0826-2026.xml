@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0826-2026</id>
+<title>Vorlage 0826/2026: Beantwortung einer schriftlichen Anfrage der DIE  LINKE zur Sitzung der Bezirksvertretung Mülheim am 15.05.2023</title>
+<subtitle>Verlauf der Vorlage 0826/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0826-2026.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#0826/2026"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131950#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0826/2026 Beantwortung einer schriftlichen Anfrage der DIE  LINKE zur Sitzung der Bezirksvertretung Mülheim am 15.05.2023</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#0826/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131950#vorlage</id>
+<title>Neue Vorlage 0826/2026: Beantwortung einer schriftlichen Anfrage der DIE  LINKE zur Sitzung der Bezirksvertretung Mülheim am 15.05.2023</title>
+<updated>2026-03-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#0826/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131950#folge-AN%2F0969%2F2023</id>
+<title>Anfrage nach § 4 der GeschO des Rates AN/0969/2023: Servicesäulen für den Radverkehr</title>
+<updated>2023-05-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#0826/2026"/>
+<summary>Folgevorlage zu 0826/2026</summary>
+</entry>
+</feed>

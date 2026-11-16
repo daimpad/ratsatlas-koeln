@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-weidenpesch</id>
 <title>Ratsatlas Köln – Weidenpesch</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Weidenpesch</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-11T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-weidenpesch.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135429#vorlage</id>
+<title>Neue Vorlage AN/1741/2026: Sachstand zur weiteren Nutzung des ehemaligen Kinderkrankenhauses Pallenbergstraße 24 und des umgebenden Geländes</title>
+<updated>2026-11-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1741/2026"/>
+<summary>Gem. Anfrage BV5 · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135429#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – AN/1741/2026 Sachstand zur weiteren Nutzung des ehemaligen Kinderkrankenhauses Pallenbergstraße 24 und des umgebenden Geländes</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1741/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135426#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1739/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssicherheit Neusser Straße, Altenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1739/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135304#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1682/2026 Sparkassenbus in Weidenpesch</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1682/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135301#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – AN/1679/2026 Überplanung des Geländes zwischen Neusser Straße und Bezirkssportanlage Weidenpesch</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1679/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135297#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – AN/1675/2026 Planungsstand Bezirkssportanlage Weidenpesch</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1675/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135276#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – AN/1661/2026 Zukunft des Galeria Kaufhof in der Neusser Straße</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1661/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135256#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – AN/1660/2026 Flutlichtanlage, ökologische Aufwertung und andere Maßnahmen auf der Bezirkssportanlage Weidenpesch</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1660/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135130#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 2856/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssicherheit Neusser Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2856/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134841#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „endgültig zurückgezogen“ – AN/1536/2026 Bürgereingabe nach § 24 GO–Versetzen einer Bank auf der Neusser Straße, Ecke Scharnhorst Straße Aktenzeichen [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1536/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134082#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 2202/2026 Bürgereingabe nach § 24 GO–Versetzen einer Bank auf der Neusser Straße, Ecke Scharnhorst Straße Aktenzeichen [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2202/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135426#vorlage</id>
+<title>Neue Vorlage AN/1739/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssicherheit Neusser Straße, Altenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1739/2026"/>
+<summary>Änderungsantrag BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135297#vorlage</id>
+<title>Neue Vorlage AN/1675/2026: Planungsstand Bezirkssportanlage Weidenpesch</title>
+<updated>2026-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1675/2026"/>
+<summary>Anfrage nach § 4 BV5 (Die Linke) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135304#vorlage</id>
+<title>Neue Vorlage AN/1682/2026: Sparkassenbus in Weidenpesch</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1682/2026"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135301#vorlage</id>
+<title>Neue Vorlage AN/1679/2026: Überplanung des Geländes zwischen Neusser Straße und Bezirkssportanlage Weidenpesch</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1679/2026"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135276#vorlage</id>
+<title>Neue Vorlage AN/1661/2026: Zukunft des Galeria Kaufhof in der Neusser Straße</title>
+<updated>2026-10-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1661/2026"/>
+<summary>Anfrage nach § 4 BV5 (Grüne) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135256#vorlage</id>
+<title>Neue Vorlage AN/1660/2026: Flutlichtanlage, ökologische Aufwertung und andere Maßnahmen auf der Bezirkssportanlage Weidenpesch</title>
+<updated>2026-10-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1660/2026"/>
+<summary>Anfrage nach § 4 BV5 (Grüne) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135130#vorlage</id>
+<title>Neue Vorlage 2856/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssicherheit Neusser Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-10-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2856/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134504#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 2502/2026 Bauantrag für die Nutzungsänderung in eine Verkaufsstätte mit Verkaufsräumen für einen Markt für Aktions- bzw. Sonderverkaufswaren (keine Lebensmittel) mit einer Verkaufsfläche &lt;800 m² auf dem Grundstück Neusser Str. 479</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2502/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133302#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1740/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung Bezirksvertretung Nippes vom 29.01.2026 betreffend "Verkehrskonzept Friedrich-Karl-Straße" (AN/1494/2025)</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1740/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133064#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1595/2026 Beantwortung einer schrftlichen Anfrage der Fraktion Alternative für Deutschland zur Sitzung der BV Nippes am 07.05.2026 zur Mitteilung 0808/2026 betreffend "Fahrradstraße Jesuitengasse"</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1595/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132683#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 1319/2026 Varianten zum Beschluss (0463/2021) „Erste Protected-Bike-Lane in Nippes – Fahrrad(r)evolution auf der Scheibenstraße“</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1319/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130503#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – AN/1494/2025 Verkehrskonzept Friedrich-Karl-Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1494/2025"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134841#vorlage</id>
+<title>Neue Vorlage AN/1536/2026: Bürgereingabe nach § 24 GO–Versetzen einer Bank auf der Neusser Straße, Ecke Scharnhorst Straße Aktenzeichen [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-09-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1536/2026"/>
+<summary>Änderungsantrag BV5 (Die Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134426#beratung-2026-09-21-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 2466/2026 Beantwortung einer mündlichen Anfrage von RM Seek aus der Sitzung vom 15. Juni 2026 bezüglich der Sporthalle der Montessori-Grundschule Friedrich-Karl-Straße 64, 50737 Köln</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2466/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134504#vorlage</id>
+<title>Neue Vorlage 2502/2026: Bauantrag für die Nutzungsänderung in eine Verkaufsstätte mit Verkaufsräumen für einen Markt für Aktions- bzw. Sonderverkaufswaren (keine Lebensmittel) mit einer Verkaufsfläche &lt;800 m² auf dem Grundstück Neusser Str. 479</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2502/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134426#vorlage</id>
+<title>Neue Vorlage 2466/2026: Beantwortung einer mündlichen Anfrage von RM Seek aus der Sitzung vom 15. Juni 2026 bezüglich der Sporthalle der Montessori-Grundschule Friedrich-Karl-Straße 64, 50737 Köln</title>
+<updated>2026-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2466/2026"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134082#vorlage</id>
+<title>Neue Vorlage 2202/2026: Bürgereingabe nach § 24 GO–Versetzen einer Bank auf der Neusser Straße, Ecke Scharnhorst Straße Aktenzeichen [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-08-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2202/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132683#vorlage</id>
+<title>Neue Vorlage 1319/2026: Varianten zum Beschluss (0463/2021) „Erste Protected-Bike-Lane in Nippes – Fahrrad(r)evolution auf der Scheibenstraße“</title>
+<updated>2026-07-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1319/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133064#vorlage</id>
+<title>Neue Vorlage 1595/2026: Beantwortung einer schrftlichen Anfrage der Fraktion Alternative für Deutschland zur Sitzung der BV Nippes am 07.05.2026 zur Mitteilung 0808/2026 betreffend "Fahrradstraße Jesuitengasse"</title>
+<updated>2026-07-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1595/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132082#beratung-2026-07-02-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0938/2026 Beschluss über Planung und Durchführung des Abrisses von 15 Einfamilienhäusern, eines Mehrfamilienhauses sowie Rückbau versiegelter Flächen auf dem städtischen Grundstück Auf dem Ginsterberg 2-34, 50737 Köln-Weidenpesch</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0938/2026"/>
+<summary>Entscheidung am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131474#beratung-2026-07-02-Rat</id>
+<title>Rat: „geändert beschlossen“ – 0573/2026 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 66499/09 Arbeitstitel: Südliche Schmiedegasse in Köln-Weidenpesch</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0573/2026"/>
+<summary>Entscheidung am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#beratung-2026-07-02-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0559/2026 Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0559/2026"/>
+<summary>Entscheidung am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131474#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „ungeändert empfohlen“ – 0573/2026 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 66499/09 Arbeitstitel: Südliche Schmiedegasse in Köln-Weidenpesch</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0573/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „ungeändert empfohlen“ – 0559/2026 Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0559/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132082#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 0938/2026 Beschluss über Planung und Durchführung des Abrisses von 15 Einfamilienhäusern, eines Mehrfamilienhauses sowie Rückbau versiegelter Flächen auf dem städtischen Grundstück Auf dem Ginsterberg 2-34, 50737 Köln-Weidenpesch</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0938/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133379#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 1784/2026 Vergabe bezirksorientierter Mittel an das Seniorennetzwerk Weidenpesch, Haus Mobile e.V.</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1784/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133357#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0969/2026 Verbesserung der Schulwegsicherheit für Schüler*innen der Carl-von-Ossietzky Gesamtschule im Bereich Kempener Straße/Etzelstraße</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0969/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133302#vorlage</id>
+<title>Neue Vorlage 1740/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung Bezirksvertretung Nippes vom 29.01.2026 betreffend "Verkehrskonzept Friedrich-Karl-Straße" (AN/1494/2025)</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1740/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132894#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1467/2026 Beantwortung einer schriftlichen Nachfrage der Fraktion Bündnis 90/Die Grünen zur Sitzung der BV Nippes am 09.09.2025 (AN/1234/2025) betreffend "Anfrage Sicherheit auf der Fahrradstraße: Etzelstraße"</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1467/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132746#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1357/2026 Bauvoranfrage (Bebauungsgenehmigung) für ein Gebäude zur Wohn- und Gewerbenutzung; hier: Errichtung eines Mehrfamilienhauses mit Verkaufsstätten, Beherbergung und Tiefgarage sowie Errichtung von zwei weiteren Mehrfamilienhäusern entlang der Siegmunds</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1357/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132082#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 0938/2026 Beschluss über Planung und Durchführung des Abrisses von 15 Einfamilienhäusern, eines Mehrfamilienhauses sowie Rückbau versiegelter Flächen auf dem städtischen Grundstück Auf dem Ginsterberg 2-34, 50737 Köln-Weidenpesch</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0938/2026"/>
+<summary>Anhörung (BV) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131474#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 0573/2026 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 66499/09 Arbeitstitel: Südliche Schmiedegasse in Köln-Weidenpesch</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0573/2026"/>
+<summary>Anhörung (BV) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 0559/2026 Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0559/2026"/>
+<summary>Anhörung (BV) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132082#beratung-2026-06-23-Ausschuss%20f%C3%BCr%20Bauen%20und%20Wohnen</id>
+<title>Ausschuss für Bauen und Wohnen: „ohne Votum behandelt“ – 0938/2026 Beschluss über Planung und Durchführung des Abrisses von 15 Einfamilienhäusern, eines Mehrfamilienhauses sowie Rückbau versiegelter Flächen auf dem städtischen Grundstück Auf dem Ginsterberg 2-34, 50737 Köln-Weidenpesch</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0938/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#vorlage</id>
+<title>Neue Vorlage 0559/2026: Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0559/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132082#vorlage</id>
+<title>Neue Vorlage 0938/2026: Beschluss über Planung und Durchführung des Abrisses von 15 Einfamilienhäusern, eines Mehrfamilienhauses sowie Rückbau versiegelter Flächen auf dem städtischen Grundstück Auf dem Ginsterberg 2-34, 50737 Köln-Weidenpesch</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0938/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131474#beratung-2026-06-15-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0573/2026 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 66499/09 Arbeitstitel: Südliche Schmiedegasse in Köln-Weidenpesch</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0573/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#beratung-2026-06-15-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0559/2026 Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0559/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133379#vorlage</id>
+<title>Neue Vorlage 1784/2026: Vergabe bezirksorientierter Mittel an das Seniorennetzwerk Weidenpesch, Haus Mobile e.V.</title>
+<updated>2026-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1784/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133357#vorlage</id>
+<title>Neue Vorlage AN/0969/2026: Verbesserung der Schulwegsicherheit für Schüler*innen der Carl-von-Ossietzky Gesamtschule im Bereich Kempener Straße/Etzelstraße</title>
+<updated>2026-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0969/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131474#vorlage</id>
+<title>Neue Vorlage 0573/2026: Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 66499/09 Arbeitstitel: Südliche Schmiedegasse in Köln-Weidenpesch</title>
+<updated>2026-05-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0573/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132894#vorlage</id>
+<title>Neue Vorlage 1467/2026: Beantwortung einer schriftlichen Nachfrage der Fraktion Bündnis 90/Die Grünen zur Sitzung der BV Nippes am 09.09.2025 (AN/1234/2025) betreffend "Anfrage Sicherheit auf der Fahrradstraße: Etzelstraße"</title>
+<updated>2026-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1467/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126586#beratung-2026-05-12-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 0982/2025 Mitteilung über eine Kostenerhöhung gem § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO NRW i.V.m. § 12 der Haushaltssatzung der Stadt Köln: Generalsanierung und Erweiterung der Feuerwehrhauptzentrale Köln Weidenpesch</title>
+<updated>2026-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0982/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126586#beratung-2026-05-11-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 0982/2025 Mitteilung über eine Kostenerhöhung gem § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO NRW i.V.m. § 12 der Haushaltssatzung der Stadt Köln: Generalsanierung und Erweiterung der Feuerwehrhauptzentrale Köln Weidenpesch</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0982/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132746#vorlage</id>
+<title>Neue Vorlage 1357/2026: Bauvoranfrage (Bebauungsgenehmigung) für ein Gebäude zur Wohn- und Gewerbenutzung; hier: Errichtung eines Mehrfamilienhauses mit Verkaufsstätten, Beherbergung und Tiefgarage sowie Errichtung von zwei weiteren Mehrfamilienhäusern entlang der Siegmunds</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#1357/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132126#beratung-2026-05-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 0978/2026 Namensgebung der Gemeinschaftsgrundschule Friedrich-Karl-Straße</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0978/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131915#beratung-2026-05-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 0808/2026 Fahrradstraße Jesuitengasse</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0808/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129365#beratung-2026-05-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 2746/2025 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen zur Sitzung der BV Nippes am 09.09.2025 (AN/1234/2025) betreffend "Anfrage Sicherheit auf der Fahrradstraße: Etzelstraße"</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2746/2025"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129280#beratung-2026-05-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – AN/1234/2025 Anfrage Sicherheit auf der Fahrradstraße: Etzelstraße</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1234/2025"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126586#beratung-2026-05-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 0982/2025 Mitteilung über eine Kostenerhöhung gem § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO NRW i.V.m. § 12 der Haushaltssatzung der Stadt Köln: Generalsanierung und Erweiterung der Feuerwehrhauptzentrale Köln Weidenpesch</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0982/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126586#beratung-2026-05-05-Ausschuss%20f%C3%BCr%20Bauen%20und%20Wohnen</id>
+<title>Ausschuss für Bauen und Wohnen: „Kenntnis genommen“ – 0982/2025 Mitteilung über eine Kostenerhöhung gem § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO NRW i.V.m. § 12 der Haushaltssatzung der Stadt Köln: Generalsanierung und Erweiterung der Feuerwehrhauptzentrale Köln Weidenpesch</title>
+<updated>2026-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0982/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126586#beratung-2026-05-04-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 0982/2025 Mitteilung über eine Kostenerhöhung gem § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO NRW i.V.m. § 12 der Haushaltssatzung der Stadt Köln: Generalsanierung und Erweiterung der Feuerwehrhauptzentrale Köln Weidenpesch</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0982/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126586#vorlage</id>
+<title>Neue Vorlage 0982/2025: Mitteilung über eine Kostenerhöhung gem § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO NRW i.V.m. § 12 der Haushaltssatzung der Stadt Köln: Generalsanierung und Erweiterung der Feuerwehrhauptzentrale Köln Weidenpesch</title>
+<updated>2026-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0982/2025"/>
+<summary>Haushaltsrechtl. Unterrichtung d. Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132126#vorlage</id>
+<title>Neue Vorlage 0978/2026: Namensgebung der Gemeinschaftsgrundschule Friedrich-Karl-Straße</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0978/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131915#vorlage</id>
+<title>Neue Vorlage 0808/2026: Fahrradstraße Jesuitengasse</title>
+<updated>2026-04-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0808/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129365#vorlage</id>
+<title>Neue Vorlage 2746/2025: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen zur Sitzung der BV Nippes am 09.09.2025 (AN/1234/2025) betreffend "Anfrage Sicherheit auf der Fahrradstraße: Etzelstraße"</title>
+<updated>2026-03-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#2746/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130469#beratung-2026-03-19-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 3608/2025 Generalinstandsetzung der Mönchsgasse zwischen Jesuitengasse und Simonskaul</title>
+<updated>2026-03-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3608/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130404#beratung-2026-03-17-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 3561/2025 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch (BauGB) der 200. Änderung des Flächennutzungsplanes (FNP); Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3561/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130469#beratung-2026-03-16-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 3608/2025 Generalinstandsetzung der Mönchsgasse zwischen Jesuitengasse und Simonskaul</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3608/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131722#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0440/2026 Verbesserungen für den Rad- und Fußverkehr in Weidenpesch</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0440/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131556#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0360/2026 Verbesserung Zugang Elefantenspielplatz in Weidenpesch</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0360/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131555#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0359/2026 Naturschutzgebiet Ginsterpfad schützen</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0359/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131528#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0345/2026 Bessere Wegeführung von Neusser Straße aus Norden kommend in die Scheibenstraße</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0345/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131312#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 0463/2026 Bürgereingabe nach § 24 GO NRW - Verbesserungen für den Rad- und Fußverkehr in Weidenpesch, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0463/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130469#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 3608/2025 Generalinstandsetzung der Mönchsgasse zwischen Jesuitengasse und Simonskaul</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3608/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130404#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 3561/2025 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch (BauGB) der 200. Änderung des Flächennutzungsplanes (FNP); Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3561/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131556#vorlage</id>
+<title>Neue Vorlage AN/0360/2026: Verbesserung Zugang Elefantenspielplatz in Weidenpesch</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0360/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131722#vorlage</id>
+<title>Neue Vorlage AN/0440/2026: Verbesserungen für den Rad- und Fußverkehr in Weidenpesch</title>
+<updated>2026-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0440/2026"/>
+<summary>Gem. Änderungsantrag BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130469#beratung-2026-03-03-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Kenntnis genommen“ – 3608/2025 Generalinstandsetzung der Mönchsgasse zwischen Jesuitengasse und Simonskaul</title>
+<updated>2026-03-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3608/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131555#vorlage</id>
+<title>Neue Vorlage AN/0359/2026: Naturschutzgebiet Ginsterpfad schützen</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0359/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131528#vorlage</id>
+<title>Neue Vorlage AN/0345/2026: Bessere Wegeführung von Neusser Straße aus Norden kommend in die Scheibenstraße</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0345/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130404#vorlage</id>
+<title>Neue Vorlage 3561/2025: Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch (BauGB) der 200. Änderung des Flächennutzungsplanes (FNP); Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-02-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3561/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131312#vorlage</id>
+<title>Neue Vorlage 0463/2026: Bürgereingabe nach § 24 GO NRW - Verbesserungen für den Rad- und Fußverkehr in Weidenpesch, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-02-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#0463/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130469#vorlage</id>
+<title>Neue Vorlage 3608/2025: Generalinstandsetzung der Mönchsgasse zwischen Jesuitengasse und Simonskaul</title>
+<updated>2026-02-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3608/2025"/>
+<summary>Haushaltsrechtl. Unterrichtung d. Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130828#beratung-2026-01-29-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0106/2026 Verkehrssicherheit Neusser Straße</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0106/2026"/>
+<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130816#vorlage</id>
+<title>Neue Vorlage AN/0101/2026: Außerkraftsetzung des Baubeschlusses zur Generalinstandsetzung der Merheimer Straße (Vorlagennr. 0454/2020)</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0101/2026"/>
+<summary>Antrag nach § 3 BV5 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130816#beratung-2026-01-29-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „endgültig abgelehnt“ – AN/0101/2026 Außerkraftsetzung des Baubeschlusses zur Generalinstandsetzung der Merheimer Straße (Vorlagennr. 0454/2020)</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0101/2026"/>
+<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130764#beratung-2026-01-29-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0069/2026 Sicherheit für die Fußgänger*innen auf der Neusser Straße in Höhe der Haltestelle Scheibenstraße stärken</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0069/2026"/>
+<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130343#beratung-2026-01-29-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 3512/2025 Mitteilung über die Veröffentlichung gemäß § 3 Abs. 2 BauGB des Bebauungsplanentwurfs Nr. 66499/09, Arbeitstitel Südliche Schmiedegasse in Köln-Weidenpesch</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3512/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130343#beratung-2026-01-29-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 3512/2025 Mitteilung über die Veröffentlichung gemäß § 3 Abs. 2 BauGB des Bebauungsplanentwurfs Nr. 66499/09, Arbeitstitel Südliche Schmiedegasse in Köln-Weidenpesch</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3512/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130343#vorlage</id>
+<title>Neue Vorlage 3512/2025: Mitteilung über die Veröffentlichung gemäß § 3 Abs. 2 BauGB des Bebauungsplanentwurfs Nr. 66499/09, Arbeitstitel Südliche Schmiedegasse in Köln-Weidenpesch</title>
+<updated>2026-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3512/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130828#vorlage</id>
+<title>Neue Vorlage AN/0106/2026: Verkehrssicherheit Neusser Straße</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0106/2026"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130764#vorlage</id>
+<title>Neue Vorlage AN/0069/2026: Sicherheit für die Fußgänger*innen auf der Neusser Straße in Höhe der Haltestelle Scheibenstraße stärken</title>
+<updated>2026-01-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/0069/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130503#vorlage</id>
+<title>Neue Vorlage AN/1494/2025: Verkehrskonzept Friedrich-Karl-Straße</title>
+<updated>2025-12-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1494/2025"/>
+<summary>Anfrage nach § 4 BV5 (Die Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130275#vorlage</id>
+<title>Neue Vorlage AN/1444/2025: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Entsiegelung Jesuitengasse Ecke Klarissenweg, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1444/2025"/>
+<summary>Gem. Änderungsantrag BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130275#beratung-2025-12-04-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1444/2025 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Entsiegelung Jesuitengasse Ecke Klarissenweg, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1444/2025"/>
+<summary>Entscheidung am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130079#vorlage</id>
+<title>Neue Vorlage AN/1383/2025: Verkehrssicherheit Etzelstraße/Schulwegsicherung</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1383/2025"/>
+<summary>Gem. Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130079#beratung-2025-12-04-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1383/2025 Verkehrssicherheit Etzelstraße/Schulwegsicherung</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#AN/1383/2025"/>
+<summary>Entscheidung am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129826#beratung-2025-12-04-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 3163/2025 Beantwortung einer schriftlichen Anfrage der Partei Die Grünen/Bündnis 90 aus der Sitzung „Bezirksvertretung 5 (Nippes)“ vom 02.05.2024 („AN/0626/2024") betreffend „Parken auf Etzelstraße - Einschränkung "Nur für PKW" möglich?"</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weidenpesch#3163/2025"/>
+<summary>Entscheidung am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

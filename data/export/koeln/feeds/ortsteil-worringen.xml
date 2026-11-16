@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-worringen</id>
 <title>Ratsatlas Köln – Worringen</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Worringen</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-05T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-worringen.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135418#beratung-2026-11-05-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1735/2026 Schlechter baulicher Zusatand der Hackenbroicher Str. in Worringen</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/1735/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135418#vorlage</id>
+<title>Neue Vorlage AN/1735/2026: Schlechter baulicher Zusatand der Hackenbroicher Str. in Worringen</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/1735/2026"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134731#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 2603/2026 Mitteilung zur Projekteinstellung des Bauvorhabens Brombeergasse in Köln-Worringen</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2603/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134735#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1477/2026 Sanierung der Alte Straße in Worringen</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/1477/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134731#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2603/2026 Mitteilung zur Projekteinstellung des Bauvorhabens Brombeergasse in Köln-Worringen</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2603/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134585#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/1394/2026 Reinigung und Beseitigung von Wildwuchs an der Hochwasserschutzmauer zwischen Merkenich und Worringen</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/1394/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134530#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2510/2026 Baufortschrittsbericht – Generalinstandsetzung Neusser Landstraße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2510/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133151#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig abgelehnt“ – AN/0869/2026 Überprüfung und Verbesserung der Busanbindungen in den Randlagen Blumenberg, Worringen und Roggendorf/Thenhoven</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0869/2026"/>
+<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133062#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig abgelehnt“ – AN/0852/2026 Prüfauftrag zur Sanierung und verkehrssicheren Neugestaltung der Bruchstraße sowie des Blumenbergswegs zwischen Roggendorf/Thenhoven, Worringen und Blumenberg</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0852/2026"/>
+<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132724#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig zurückgezogen“ – 1343/2026 Städtebauliches Planungskonzept "Brombeergasse" in Köln-Worringen; Anhörung der Bezirksvertretung Chorweiler zu den Ergebnissen der frühzeitigen Öffentlichkeitsbeteiligung; Beschluss über die Vorgaben zur Ausarbeitung des Bebauungsplan-Entwurfes</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1343/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134735#vorlage</id>
+<title>Neue Vorlage AN/1477/2026: Sanierung der Alte Straße in Worringen</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/1477/2026"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134731#vorlage</id>
+<title>Neue Vorlage 2603/2026: Mitteilung zur Projekteinstellung des Bauvorhabens Brombeergasse in Köln-Worringen</title>
+<updated>2026-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2603/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134530#vorlage</id>
+<title>Neue Vorlage 2510/2026: Baufortschrittsbericht – Generalinstandsetzung Neusser Landstraße</title>
+<updated>2026-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2510/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134585#vorlage</id>
+<title>Neue Vorlage AN/1394/2026: Reinigung und Beseitigung von Wildwuchs an der Hochwasserschutzmauer zwischen Merkenich und Worringen</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/1394/2026"/>
+<summary>Antrag nach § 3 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132961#beratung-2026-07-02-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1516/2026 Vertretung der Stadt Köln im Vorstand der Krankenhausstiftung Worringen</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1516/2026"/>
+<summary>Entscheidung am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132724#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – 1343/2026 Städtebauliches Planungskonzept "Brombeergasse" in Köln-Worringen; Anhörung der Bezirksvertretung Chorweiler zu den Ergebnissen der frühzeitigen Öffentlichkeitsbeteiligung; Beschluss über die Vorgaben zur Ausarbeitung des Bebauungsplan-Entwurfes</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1343/2026"/>
+<summary>Entscheidung am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133373#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0971/2026 Anwohnerdurchfahrt Schleusenweg Worringen</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0971/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133297#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „geändert beschlossen“ – AN/0935/2026 : Errichtung eines Fußgängerüberwegs (Zebrastreifen) am Kreisverkehr Alte Römerstraße in Köln-Rheinkassel</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0935/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131654#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0656/2026 Beantwortung der Anfrage AN/0403/2026 bezüglich dem Abriss der alten Hauptschule Holzheimer Weg in Worringen/Neubau der Gesamtschule</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0656/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133073#beratung-2026-06-22-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 1604/2026 Beantwortung der Anfrage AN/0802/2026</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1604/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132823#beratung-2026-06-22-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Sache ist erledigt“ – AN/0802/2026 Anfrage (Nesseler) zu im Naturschutzgebiet Worringer Rheinaue erfolgten Pflegemaßnahmen</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0802/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132961#vorlage</id>
+<title>Neue Vorlage 1516/2026: Vertretung der Stadt Köln im Vorstand der Krankenhausstiftung Worringen</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1516/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132880#beratung-2026-06-16-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Kenntnis genommen“ – 1453/2026 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung des Mobilitätsausschusses vom 28.04.2026 (AN/0661/2026) betreffend "Sanierung der Neusser Landstraße (B9) in Köln-Worringen"</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1453/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132446#beratung-2026-06-16-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Sache ist erledigt“ – AN/0661/2026 Sanierung der Neusser Landstraße (B9) in Köln-Worringen</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0661/2026"/>
+<summary>Antrag / Anfrage am 2026-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133373#vorlage</id>
+<title>Neue Vorlage AN/0971/2026: Anwohnerdurchfahrt Schleusenweg Worringen</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0971/2026"/>
+<summary>Gem. Antrag nach § 3 BV6 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133297#vorlage</id>
+<title>Neue Vorlage AN/0935/2026: : Errichtung eines Fußgängerüberwegs (Zebrastreifen) am Kreisverkehr Alte Römerstraße in Köln-Rheinkassel</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0935/2026"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133151#vorlage</id>
+<title>Neue Vorlage AN/0869/2026: Überprüfung und Verbesserung der Busanbindungen in den Randlagen Blumenberg, Worringen und Roggendorf/Thenhoven</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0869/2026"/>
+<summary>Antrag nach § 3 BV6 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133062#vorlage</id>
+<title>Neue Vorlage AN/0852/2026: Prüfauftrag zur Sanierung und verkehrssicheren Neugestaltung der Bruchstraße sowie des Blumenbergswegs zwischen Roggendorf/Thenhoven, Worringen und Blumenberg</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0852/2026"/>
+<summary>Antrag nach § 3 BV6 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131654#vorlage</id>
+<title>Neue Vorlage 0656/2026: Beantwortung der Anfrage AN/0403/2026 bezüglich dem Abriss der alten Hauptschule Holzheimer Weg in Worringen/Neubau der Gesamtschule</title>
+<updated>2026-06-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0656/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133073#vorlage</id>
+<title>Neue Vorlage 1604/2026: Beantwortung der Anfrage AN/0802/2026</title>
+<updated>2026-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1604/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132880#vorlage</id>
+<title>Neue Vorlage 1453/2026: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung des Mobilitätsausschusses vom 28.04.2026 (AN/0661/2026) betreffend "Sanierung der Neusser Landstraße (B9) in Köln-Worringen"</title>
+<updated>2026-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1453/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132724#vorlage</id>
+<title>Neue Vorlage 1343/2026: Städtebauliches Planungskonzept "Brombeergasse" in Köln-Worringen; Anhörung der Bezirksvertretung Chorweiler zu den Ergebnissen der frühzeitigen Öffentlichkeitsbeteiligung; Beschluss über die Vorgaben zur Ausarbeitung des Bebauungsplan-Entwurfes</title>
+<updated>2026-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1343/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132823#vorlage</id>
+<title>Neue Vorlage AN/0802/2026: Anfrage (Nesseler) zu im Naturschutzgebiet Worringer Rheinaue erfolgten Pflegemaßnahmen</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0802/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132607#beratung-2026-05-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0729/2026 Antrag der SPD Fraktion: Lärmschutzmaßnahmen im Bereich K4 und BAB 57</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0729/2026"/>
+<summary>Antrag / Anfrage am 2026-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132405#beratung-2026-05-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0643/2026 Prüfung der Einrichtung einer Hundefreilauffläche in Köln-Worringen</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0643/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132296#beratung-2026-05-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 1100/2026 Baufortschrittsbericht – Generalinstandsetzung Neusser Landstraße</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1100/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132163#beratung-2026-05-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 1013/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis90/Die Grünen aus der Sitzung der Bezirksvertretung Chorweiler am 30.11.2023 betr. "Sanierung Bruchstraße" (AN/1996/2023)</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1013/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131519#beratung-2026-05-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „endgültig abgelehnt“ – AN/0337/2026 Radwegverbindung Neusser Landstraße – Merkenich</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0337/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132296#vorlage</id>
+<title>Neue Vorlage 1100/2026: Baufortschrittsbericht – Generalinstandsetzung Neusser Landstraße</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1100/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132607#vorlage</id>
+<title>Neue Vorlage AN/0729/2026: Antrag der SPD Fraktion: Lärmschutzmaßnahmen im Bereich K4 und BAB 57</title>
+<updated>2026-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0729/2026"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132405#vorlage</id>
+<title>Neue Vorlage AN/0643/2026: Prüfung der Einrichtung einer Hundefreilauffläche in Köln-Worringen</title>
+<updated>2026-04-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0643/2026"/>
+<summary>Antrag nach § 3 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132446#vorlage</id>
+<title>Neue Vorlage AN/0661/2026: Sanierung der Neusser Landstraße (B9) in Köln-Worringen</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0661/2026"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132163#vorlage</id>
+<title>Neue Vorlage 1013/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis90/Die Grünen aus der Sitzung der Bezirksvertretung Chorweiler am 30.11.2023 betr. "Sanierung Bruchstraße" (AN/1996/2023)</title>
+<updated>2026-04-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1013/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131541#beratung-2026-04-16-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0351/2026 Aufstellung eines zusätzlichen Mülleimers im Bereich Worringen Süd-West</title>
+<updated>2026-04-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0351/2026"/>
+<summary>Entscheidung am 2026-04-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131459#beratung-2026-04-16-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0316/2026 Gesundheitsschutz und Wohnqualität sicherstellen- Lärmschutz an der B9 in Worringen</title>
+<updated>2026-04-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0316/2026"/>
+<summary>Entscheidung am 2026-04-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131832#vorlage</id>
+<title>Neue Vorlage AN/0501/2026: Radwegeverbindung Neusser Landstraße</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0501/2026"/>
+<summary>Änderungsantrag BV6 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131832#beratung-2026-03-12-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig zurückgezogen“ – AN/0501/2026 Radwegeverbindung Neusser Landstraße</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0501/2026"/>
+<summary>Antrag / Anfrage am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131635#beratung-2026-03-12-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0403/2026 Abriss der alten Hauptschule Holzheimer Weg in Worringen/Neubau der Gesamtschule</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0403/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131514#beratung-2026-03-12-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig zurückgezogen“ – AN/0335/2026 Radwegverbindung Neusser Landstraße – Merkenich</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0335/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131635#vorlage</id>
+<title>Neue Vorlage AN/0403/2026: Abriss der alten Hauptschule Holzheimer Weg in Worringen/Neubau der Gesamtschule</title>
+<updated>2026-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0403/2026"/>
+<summary>Gem. Anfrage BV6 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131541#vorlage</id>
+<title>Neue Vorlage AN/0351/2026: Aufstellung eines zusätzlichen Mülleimers im Bereich Worringen Süd-West</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0351/2026"/>
+<summary>Antrag nach § 3 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131514#vorlage</id>
+<title>Neue Vorlage AN/0335/2026: Radwegverbindung Neusser Landstraße – Merkenich</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0335/2026"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131459#vorlage</id>
+<title>Neue Vorlage AN/0316/2026: Gesundheitsschutz und Wohnqualität sicherstellen- Lärmschutz an der B9 in Worringen</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0316/2026"/>
+<summary>Gem. Antrag nach § 3 BV6 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131519#vorlage</id>
+<title>Neue Vorlage AN/0337/2026: Radwegverbindung Neusser Landstraße – Merkenich</title>
+<updated>2026-02-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0337/2026"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130771#beratung-2026-01-29-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0072/2026 Verbesserung der Beleuchtung an der Bushaltestelle "Worringen Alte Straße"</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0072/2026"/>
+<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130706#beratung-2026-01-29-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0115/2026 Baufortschrittsbericht – Generalinstandsetzung Neusser Landstraße</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0115/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130706#vorlage</id>
+<title>Neue Vorlage 0115/2026: Baufortschrittsbericht – Generalinstandsetzung Neusser Landstraße</title>
+<updated>2026-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0115/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130771#vorlage</id>
+<title>Neue Vorlage AN/0072/2026: Verbesserung der Beleuchtung an der Bushaltestelle "Worringen Alte Straße"</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0072/2026"/>
+<summary>Gem. Antrag nach § 3 BV6 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130232#beratung-2025-12-11-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 3448/2025 Sanierungsnotwendigkeit der Kita Sankt-Tönnis-Straße in Köln-Worringen</title>
+<updated>2025-12-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#3448/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130232#beratung-2025-12-09-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 3448/2025 Sanierungsnotwendigkeit der Kita Sankt-Tönnis-Straße in Köln-Worringen</title>
+<updated>2025-12-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#3448/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130232#vorlage</id>
+<title>Neue Vorlage 3448/2025: Sanierungsnotwendigkeit der Kita Sankt-Tönnis-Straße in Köln-Worringen</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#3448/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128975#beratung-2025-12-04-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 2542/2025 Beantwortung von mündlichen Anfragen aus der Sitzung des Ausschusses Klima, Umwelt und Grün vom 12.06.2025 betr.: "Planfeststellungsbeschluss für die Herstellung des Retentionsraumes Worringen"</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2542/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128594#beratung-2025-12-01-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 2217/2025 Beantwortung einer Anfrage aus dem Ausschuss Schule und Weiterbildung der Fraktion Bündnis 90/Die Grünen, der CDU-Fraktion und von VOLT bezüglich Schulstandort Holzheimer Weg und Ausweichgrundstück für ein neues Grundschulgebäude - AN/0782/2025</title>
+<updated>2025-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2217/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127875#beratung-2025-12-01-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – AN/0782/2025 Schulstandort Holzheimer Weg und Ausweichgrundstück für ein neues Grundschulgebäude</title>
+<updated>2025-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0782/2025"/>
+<summary>Entscheidung am 2025-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128594#vorlage</id>
+<title>Neue Vorlage 2217/2025: Beantwortung einer Anfrage aus dem Ausschuss Schule und Weiterbildung der Fraktion Bündnis 90/Die Grünen, der CDU-Fraktion und von VOLT bezüglich Schulstandort Holzheimer Weg und Ausweichgrundstück für ein neues Grundschulgebäude - AN/0782/2025</title>
+<updated>2025-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2217/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129451#beratung-2025-11-20-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 2826/2025 Vertretung der Stadt Köln im Vorstand der Krankenhausstiftung Worringen</title>
+<updated>2025-11-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2826/2025"/>
+<summary>Entscheidung am 2025-11-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129451#vorlage</id>
+<title>Neue Vorlage 2826/2025: Vertretung der Stadt Köln im Vorstand der Krankenhausstiftung Worringen</title>
+<updated>2025-11-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2826/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128975#vorlage</id>
+<title>Neue Vorlage 2542/2025: Beantwortung von mündlichen Anfragen aus der Sitzung des Ausschusses Klima, Umwelt und Grün vom 12.06.2025 betr.: "Planfeststellungsbeschluss für die Herstellung des Retentionsraumes Worringen"</title>
+<updated>2025-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2542/2025"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128994#beratung-2025-09-02-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2561/2025 Baufortschrittsbericht BV6 – Generalinstandsetzung Neusser Landstraße</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2561/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128994#vorlage</id>
+<title>Neue Vorlage 2561/2025: Baufortschrittsbericht BV6 – Generalinstandsetzung Neusser Landstraße</title>
+<updated>2025-08-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#2561/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125789#beratung-2025-07-03-Rat</id>
+<title>Rat: „geändert beschlossen“ – 0425/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung am der Gemeinschaftsgrundschule und Katholischen Grundschule An den Kaulen 62-64, 50769 Köln</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0425/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128550#vorlage</id>
+<title>Neue Vorlage AN/1051/2025: Ergänzungsantrag Zu Top 4.1 „Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung am der Gemeinschaftsgrundschule und Katholischen Grundschule An den Kaulen 62-64, 50769 Köln“</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/1051/2025"/>
+<summary>SPD Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128550#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – AN/1051/2025 Ergänzungsantrag Zu Top 4.1 „Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung am der Gemeinschaftsgrundschule und Katholischen Grundschule An den Kaulen 62-64, 50769 Köln“</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/1051/2025"/>
+<summary>Antrag / Anfrage am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128550#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – AN/1051/2025 Ergänzungsantrag Zu Top 4.1 „Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung am der Gemeinschaftsgrundschule und Katholischen Grundschule An den Kaulen 62-64, 50769 Köln“</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/1051/2025"/>
+<summary>Antrag / Anfrage am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125789#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „mit Änderungen empfohlen“ – 0425/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung am der Gemeinschaftsgrundschule und Katholischen Grundschule An den Kaulen 62-64, 50769 Köln</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0425/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125789#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „mit Änderungen empfohlen“ – 0425/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung am der Gemeinschaftsgrundschule und Katholischen Grundschule An den Kaulen 62-64, 50769 Köln</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0425/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125789#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 0425/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung am der Gemeinschaftsgrundschule und Katholischen Grundschule An den Kaulen 62-64, 50769 Köln</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0425/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128035#beratung-2025-06-26-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0850/2025 Baumaßnahmen im Rahmen der Sanierung und Umgestaltung der B9 in Worringen</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0850/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127339#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 1484/2025 Beschluss über die Aufstellung und Durchführung der frühzeitigen Öffentlichkeitsbeteiligung zur 249. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 6, Köln-Chorweiler</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1484/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127339#beratung-2025-06-26-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 1484/2025 Beschluss über die Aufstellung und Durchführung der frühzeitigen Öffentlichkeitsbeteiligung zur 249. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 6, Köln-Chorweiler</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1484/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126765#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 1124/2025 Beschluss über die Aufstellung eines Bebauungsplans und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung Arbeitstitel: Brombeergasse in Köln-Worringen</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1124/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126765#beratung-2025-06-26-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 1124/2025 Beschluss über die Aufstellung eines Bebauungsplans und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung Arbeitstitel: Brombeergasse in Köln-Worringen</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1124/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125789#beratung-2025-06-26-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 0425/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung am der Gemeinschaftsgrundschule und Katholischen Grundschule An den Kaulen 62-64, 50769 Köln</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0425/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125789#vorlage</id>
+<title>Neue Vorlage 0425/2025: Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung am der Gemeinschaftsgrundschule und Katholischen Grundschule An den Kaulen 62-64, 50769 Köln</title>
+<updated>2025-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0425/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126945#beratung-2025-06-12-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 1268/2025 Planfeststellungsbeschluss für die Herstellung des Retentionsraums Worringen</title>
+<updated>2025-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1268/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128035#vorlage</id>
+<title>Neue Vorlage AN/0850/2025: Baumaßnahmen im Rahmen der Sanierung und Umgestaltung der B9 in Worringen</title>
+<updated>2025-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0850/2025"/>
+<summary>Antrag nach § 5 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127875#vorlage</id>
+<title>Neue Vorlage AN/0782/2025: Schulstandort Holzheimer Weg und Ausweichgrundstück für ein neues Grundschulgebäude</title>
+<updated>2025-06-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0782/2025"/>
+<summary>Gem. Anfrage nach § 4 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127339#vorlage</id>
+<title>Neue Vorlage 1484/2025: Beschluss über die Aufstellung und Durchführung der frühzeitigen Öffentlichkeitsbeteiligung zur 249. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 6, Köln-Chorweiler</title>
+<updated>2025-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1484/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126765#vorlage</id>
+<title>Neue Vorlage 1124/2025: Beschluss über die Aufstellung eines Bebauungsplans und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung Arbeitstitel: Brombeergasse in Köln-Worringen</title>
+<updated>2025-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1124/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126945#beratung-2025-05-22-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 1268/2025 Planfeststellungsbeschluss für die Herstellung des Retentionsraums Worringen</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1268/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126945#vorlage</id>
+<title>Neue Vorlage 1268/2025: Planfeststellungsbeschluss für die Herstellung des Retentionsraums Worringen</title>
+<updated>2025-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#1268/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125772#beratung-2025-03-20-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „geändert beschlossen“ – 0415/2025 Entscheidungsvorlage zur weiteren schulischen Nutzung des Schulstandorts Holzheimer Weg</title>
+<updated>2025-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0415/2025"/>
+<summary>Anhörung (BV) am 2025-03-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126311#beratung-2025-03-17-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert beschlossen“ – AN/0331/2025 Änderungsantrag zum TOP 7.1 "Entscheidungsvorlage zur weiteren schulischen Nut-zung des Schulstandorts Holzheimer Weg"</title>
+<updated>2025-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0331/2025"/>
+<summary>Antrag / Anfrage am 2025-03-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126234#beratung-2025-03-17-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „endgültig abgelehnt“ – AN/0311/2025 Zu Top 7.1 Entscheidungsvorlage zur weiteren schulischen Nutzung des Schulstandorts Holzheimer Weg</title>
+<updated>2025-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0311/2025"/>
+<summary>Antrag / Anfrage am 2025-03-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125772#beratung-2025-03-17-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „geändert beschlossen“ – 0415/2025 Entscheidungsvorlage zur weiteren schulischen Nutzung des Schulstandorts Holzheimer Weg</title>
+<updated>2025-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0415/2025"/>
+<summary>Entscheidung am 2025-03-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126311#vorlage</id>
+<title>Neue Vorlage AN/0331/2025: Änderungsantrag zum TOP 7.1 "Entscheidungsvorlage zur weiteren schulischen Nut-zung des Schulstandorts Holzheimer Weg"</title>
+<updated>2025-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0331/2025"/>
+<summary>Gem. Änderungsantrag (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126234#vorlage</id>
+<title>Neue Vorlage AN/0311/2025: Zu Top 7.1 Entscheidungsvorlage zur weiteren schulischen Nutzung des Schulstandorts Holzheimer Weg</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#AN/0311/2025"/>
+<summary>SPD Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125772#vorlage</id>
+<title>Neue Vorlage 0415/2025: Entscheidungsvorlage zur weiteren schulischen Nutzung des Schulstandorts Holzheimer Weg</title>
+<updated>2025-03-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0415/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125714#beratung-2025-02-06-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0381/2025 Sanierung Krebelshof</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0381/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125549#beratung-2025-02-06-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0274/2025 Wahlräume in Köln-Worringen</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:worringen#0274/2025"/>
+<summary>Antrag / Anfrage am 2025-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

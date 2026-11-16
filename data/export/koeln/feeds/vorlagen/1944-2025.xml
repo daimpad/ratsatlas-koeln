@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/1944-2025</id>
+<title>Vorlage 1944/2025: Beantwortung einer mündlichen Anfrage eines Ratsmitgliedes zur Sitzung des Bauausschusses am 16.09.2024 und zur Sitzung des Betriebsausschuss Gebäudewirtschaft am 16.09.2024 zum Klimaschutz-Monitoring 2381/2024</title>
+<subtitle>Verlauf der Vorlage 1944/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/1944-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:deutz#1944/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128099#vorlage</id>
+<title>Neue Vorlage 1944/2025: Beantwortung einer mündlichen Anfrage eines Ratsmitgliedes zur Sitzung des Bauausschusses am 16.09.2024 und zur Sitzung des Betriebsausschuss Gebäudewirtschaft am 16.09.2024 zum Klimaschutz-Monitoring 2381/2024</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:deutz#1944/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128099#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „Kenntnis genommen“ – 1944/2025 Beantwortung einer mündlichen Anfrage eines Ratsmitgliedes zur Sitzung des Bauausschusses am 16.09.2024 und zur Sitzung des Betriebsausschuss Gebäudewirtschaft am 16.09.2024 zum Klimaschutz-Monitoring 2381/2024</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:deutz#1944/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+</feed>

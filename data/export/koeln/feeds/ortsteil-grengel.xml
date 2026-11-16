@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-grengel</id>
 <title>Ratsatlas Köln – Grengel</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Grengel</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-05T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-grengel.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134580#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2538/2026 Anfrage der CDU-Fraktion bezüglich des Gerüstes an der GGS Heideschule Schützenstraße AN/1389/2026</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#2538/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134574#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1389/2026 Anfrage der CDU-FRaktion "Gerüst an der GGS Heideschule"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1389/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134580#vorlage</id>
+<title>Neue Vorlage 2538/2026: Anfrage der CDU-Fraktion bezüglich des Gerüstes an der GGS Heideschule Schützenstraße AN/1389/2026</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#2538/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134574#vorlage</id>
+<title>Neue Vorlage AN/1389/2026: Anfrage der CDU-FRaktion "Gerüst an der GGS Heideschule"</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1389/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131865#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0769/2026 Beantwortung einer schriftlichen Anfrage der AfD-Fraktion Porz aus der Sitzung der Bezirksvertretung 7 (Porz) vom 12.01.2026 (AN/0029/2026) betreffend "Geruchsbelästigung in Grengel - Verdacht auf Kerosin"</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0769/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130666#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0029/2026 Anfrage der AfD-Fraktion "Geruchsbelästigung in Grengel – Verdacht auf Kerosin"</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0029/2026"/>
+<summary>Antrag / Anfrage am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131865#vorlage</id>
+<title>Neue Vorlage 0769/2026: Beantwortung einer schriftlichen Anfrage der AfD-Fraktion Porz aus der Sitzung der Bezirksvertretung 7 (Porz) vom 12.01.2026 (AN/0029/2026) betreffend "Geruchsbelästigung in Grengel - Verdacht auf Kerosin"</title>
+<updated>2026-03-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0769/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130995#beratung-2026-03-10-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0269/2026 Beantwortung der Anfrage AN/0178/2026 der SPD-Fraktion bezüglich der Nutzung der Sporthallen in Köln-Grengel</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0269/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130990#beratung-2026-03-10-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0178/2026 Anfrage der SPD-Fraktion "Bauliche Situation und Nutzung der Turnhallen im Grengel"</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0178/2026"/>
+<summary>Antrag / Anfrage am 2026-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125802#beratung-2026-02-05-Rat</id>
+<title>Rat: „geändert beschlossen“ – 0438/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Eduard-Mörike-Schule, Mörikeweg 2-6, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-02-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0438/2025"/>
+<summary>Entscheidung am 2026-02-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130995#vorlage</id>
+<title>Neue Vorlage 0269/2026: Beantwortung der Anfrage AN/0178/2026 der SPD-Fraktion bezüglich der Nutzung der Sporthallen in Köln-Grengel</title>
+<updated>2026-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0269/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125802#beratung-2026-02-02-Finanzausschuss</id>
+<title>Finanzausschuss: „mit Änderungen empfohlen“ – 0438/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Eduard-Mörike-Schule, Mörikeweg 2-6, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0438/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130584#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 0041/2026 Planungsbeschluss für verkehrliche Maßnahmen zur Schulwegerschließung am neuen Schulstandort Friedensstraße in</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0041/2026"/>
+<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125802#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „mit Änderungen empfohlen“ – 0438/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Eduard-Mörike-Schule, Mörikeweg 2-6, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0438/2025"/>
+<summary>Anhörung (BV) am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125802#beratung-2026-01-27-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 0438/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Eduard-Mörike-Schule, Mörikeweg 2-6, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0438/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130990#vorlage</id>
+<title>Neue Vorlage AN/0178/2026: Anfrage der SPD-Fraktion "Bauliche Situation und Nutzung der Turnhallen im Grengel"</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0178/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130584#vorlage</id>
+<title>Neue Vorlage 0041/2026: Planungsbeschluss für verkehrliche Maßnahmen zur Schulwegerschließung am neuen Schulstandort Friedensstraße in</title>
+<updated>2026-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0041/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125802#beratung-2026-01-19-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0438/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Eduard-Mörike-Schule, Mörikeweg 2-6, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0438/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-01-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130666#vorlage</id>
+<title>Neue Vorlage AN/0029/2026: Anfrage der AfD-Fraktion "Geruchsbelästigung in Grengel – Verdacht auf Kerosin"</title>
+<updated>2026-01-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0029/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125802#vorlage</id>
+<title>Neue Vorlage 0438/2025: Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Eduard-Mörike-Schule, Mörikeweg 2-6, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2025-12-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0438/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1749/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128398#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig abgelehnt“ – AN/0998/2025 Änderungsantrag der SPD Fraktion "Neubau der zweigliedrigen Grundschule Friedensstraße"</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0998/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-06-26-Sportausschuss</id>
+<title>Sportausschuss: „ohne Votum behandelt“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert empfohlen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1749/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128398#vorlage</id>
+<title>Neue Vorlage AN/0998/2025: Änderungsantrag der SPD Fraktion "Neubau der zweigliedrigen Grundschule Friedensstraße"</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0998/2025"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#vorlage</id>
+<title>Neue Vorlage 1749/2025: Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1749/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125191#beratung-2025-01-27-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 0044/2025 Beantwortung einer mündlichen Anfrage von RM Schlieben aus der Sitzung des Ausschusses Schule und Weiterbildung vom 28.10.2024 bezüglich eines Zeitplans für die Interimsbauten am Kaiserin-Theophanu-Gymnasium, Kantstraße 3, 51103 Köln</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0044/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124555#beratung-2025-01-27-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 3660/2024 Beantwortung einer mündlichen Anfrage von Dr. Helge Schlieben, CDU-Fraktion, aus der Sitzung des Ausschusses Schule und Weiterbildung vom 28.10.2024 bezüglich eines Zeitplans für Sanierungen an der Kaiserin-Theophanu-Schule, Kantstraße 3, 51103 Köln</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#3660/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125191#vorlage</id>
+<title>Neue Vorlage 0044/2025: Beantwortung einer mündlichen Anfrage von RM Schlieben aus der Sitzung des Ausschusses Schule und Weiterbildung vom 28.10.2024 bezüglich eines Zeitplans für die Interimsbauten am Kaiserin-Theophanu-Gymnasium, Kantstraße 3, 51103 Köln</title>
+<updated>2025-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0044/2025"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124555#vorlage</id>
+<title>Neue Vorlage 3660/2024: Beantwortung einer mündlichen Anfrage von Dr. Helge Schlieben, CDU-Fraktion, aus der Sitzung des Ausschusses Schule und Weiterbildung vom 28.10.2024 bezüglich eines Zeitplans für Sanierungen an der Kaiserin-Theophanu-Schule, Kantstraße 3, 51103 Köln</title>
+<updated>2024-12-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#3660/2024"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118480#beratung-2024-05-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Alternative beschlossen“ – 3745/2023 Punktuelle Ausweitung von Bewohnerreservierungen im Bewohnerparkgebiet Grengel (GRE)</title>
+<updated>2024-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#3745/2023"/>
+<summary>Entscheidung am 2024-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118480#vorlage</id>
+<title>Neue Vorlage 3745/2023: Punktuelle Ausweitung von Bewohnerreservierungen im Bewohnerparkgebiet Grengel (GRE)</title>
+<updated>2024-04-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#3745/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118875#beratung-2023-11-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – AN/2139/2023 Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Finanzierung der Personalkosten der drei Porzer Jugendzentren Glashütte, Grengel und Bauspielplatz"</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/2139/2023"/>
+<summary>Antrag / Anfrage am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118549#beratung-2023-11-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – AN/2016/2023 Antrag der SPD-Fraktion "Ausreichende Finanzierung der Personalkosten der drei Porzer Jugendzentren Glashütte, Grengel und Bauspielplatz"</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/2016/2023"/>
+<summary>Antrag / Anfrage am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118875#vorlage</id>
+<title>Neue Vorlage AN/2139/2023: Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Finanzierung der Personalkosten der drei Porzer Jugendzentren Glashütte, Grengel und Bauspielplatz"</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/2139/2023"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118549#vorlage</id>
+<title>Neue Vorlage AN/2016/2023: Antrag der SPD-Fraktion "Ausreichende Finanzierung der Personalkosten der drei Porzer Jugendzentren Glashütte, Grengel und Bauspielplatz"</title>
+<updated>2023-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/2016/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#vorlage</id>
+<title>Neue Vorlage 1196/2023: Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-10-26-Rat</id>
+<title>Rat: „geändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Entscheidung am 2023-10-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117653#beratung-2023-10-19-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig zurückgezogen“ – AN/1750/2023 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Wegekreuz Grengel - Stadtverschönerungsmittel"</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1750/2023"/>
+<summary>Antrag / Anfrage am 2023-10-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117653#vorlage</id>
+<title>Neue Vorlage AN/1750/2023: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Wegekreuz Grengel - Stadtverschönerungsmittel"</title>
+<updated>2023-10-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1750/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117505#vorlage</id>
+<title>Neue Vorlage AN/1714/2023: Beschleunigungspaket weiterführende Schulen – Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstr. 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstr. 3 und der Heinrich-Böll-Gesamtschule Merianstr. 11-15 durch Ge</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1714/2023"/>
+<summary>Änderungsantrag BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117505#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Sache ist erledigt“ – AN/1714/2023 Beschleunigungspaket weiterführende Schulen – Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstr. 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstr. 3 und der Heinrich-Böll-Gesamtschule Merianstr. 11-15 durch Ge</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1714/2023"/>
+<summary>Antrag / Anfrage am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117452#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Sache ist erledigt“ – AN/1687/2023 Beschleunigungspaket weiterführende Schulen – Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstr. 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstr. 3 und der Heinrich-Böll-Gesamtschule Merianstr. 11-15 durch Ge</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1687/2023"/>
+<summary>Antrag / Anfrage am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Anhörung (BV) am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117452#vorlage</id>
+<title>Neue Vorlage AN/1687/2023: Beschleunigungspaket weiterführende Schulen – Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstr. 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstr. 3 und der Heinrich-Böll-Gesamtschule Merianstr. 11-15 durch Ge</title>
+<updated>2023-09-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1687/2023"/>
+<summary>Änderungsantrag BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-09-07-Rat</id>
+<title>Rat: „geändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Entscheidung am 2023-09-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-09-04-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum in nachfolgende Gremien“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116836#beratung-2023-08-31-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1459/2023 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Bewohnerparken im Grengel"</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1459/2023"/>
+<summary>Antrag / Anfrage am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-31-Sportausschuss</id>
+<title>Sportausschuss: „ungeändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-31-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Anhörung (BV) am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117027#vorlage</id>
+<title>Neue Vorlage AN/1533/2023: TOP 6.1 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstraße 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstraße 3 und der Heinrich- Böll-Gesamtschule Merianstraße</title>
+<updated>2023-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1533/2023"/>
+<summary>Gem. Änderungsantrag nach § 13 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117027#beratung-2023-08-28-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „mit Änderungen empfohlen“ – AN/1533/2023 TOP 6.1 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstraße 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstraße 3 und der Heinrich- Böll-Gesamtschule Merianstraße</title>
+<updated>2023-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1533/2023"/>
+<summary>Entscheidung am 2023-08-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-28-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „mit Änderungen empfohlen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-08-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-21-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ohne Votum in nachfolgende Gremien“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-08-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116836#vorlage</id>
+<title>Neue Vorlage AN/1459/2023: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Bewohnerparken im Grengel"</title>
+<updated>2023-08-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1459/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1196/2023"/>
+<summary>Anhörung (BV) am 2023-08-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111806#beratung-2022-12-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig abgelehnt“ – AN/2024/2022 Antrag von Herrn Krasson (AfD) "Ergänzung eines Fußgängerüberwegs an der Kreuzung Grengeler Mauspfad/L84"</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/2024/2022"/>
+<summary>Antrag / Anfrage am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111806#vorlage</id>
+<title>Neue Vorlage AN/2024/2022: Antrag von Herrn Krasson (AfD) "Ergänzung eines Fußgängerüberwegs an der Kreuzung Grengeler Mauspfad/L84"</title>
+<updated>2022-11-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/2024/2022"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111441#beratung-2022-11-03-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „zurückgestellt“ – AN/1890/2022 Anfrage von Frau Bastian (FDP) "Radweg Alte Kölner Straße (L 84) entlang der Wahner Heide"</title>
+<updated>2022-11-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1890/2022"/>
+<summary>Antrag / Anfrage am 2022-11-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111441#vorlage</id>
+<title>Neue Vorlage AN/1890/2022: Anfrage von Frau Bastian (FDP) "Radweg Alte Kölner Straße (L 84) entlang der Wahner Heide"</title>
+<updated>2022-10-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1890/2022"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106364#beratung-2022-01-27-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0202/2022 Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Prüfauftrag Parkraumregelung Grengeler Mauspfad"</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0202/2022"/>
+<summary>Antrag / Anfrage am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106078#beratung-2022-01-27-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0066/2022 Antrag von Frau Bastian (FDP) "Prüfauftrag Parkraumregelung Grengeler Mauspfad"</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0066/2022"/>
+<summary>Antrag / Anfrage am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106364#vorlage</id>
+<title>Neue Vorlage AN/0202/2022: Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Prüfauftrag Parkraumregelung Grengeler Mauspfad"</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0202/2022"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106078#vorlage</id>
+<title>Neue Vorlage AN/0066/2022: Antrag von Frau Bastian (FDP) "Prüfauftrag Parkraumregelung Grengeler Mauspfad"</title>
+<updated>2022-01-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0066/2022"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103334#beratung-2021-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1686/2021 Antrag von Frau Bastian "Sitzbänke entlang der Friedensstraße zwischen Grengel und Urbach"</title>
+<updated>2021-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1686/2021"/>
+<summary>Antrag / Anfrage am 2021-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103334#vorlage</id>
+<title>Neue Vorlage AN/1686/2021: Antrag von Frau Bastian "Sitzbänke entlang der Friedensstraße zwischen Grengel und Urbach"</title>
+<updated>2021-08-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1686/2021"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101106#beratung-2021-04-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – AN/0918/2021 Änderungsantrag von Frau Bastian (FDP) "Benennung von zwei Planstraßen südliche Friedensstraße"</title>
+<updated>2021-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0918/2021"/>
+<summary>Antrag / Anfrage am 2021-04-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101106#vorlage</id>
+<title>Neue Vorlage AN/0918/2021: Änderungsantrag von Frau Bastian (FDP) "Benennung von zwei Planstraßen südliche Friedensstraße"</title>
+<updated>2021-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0918/2021"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98292#beratung-2021-02-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1442/2020 Antrag von Frau Bastian (FDP) "Sachstand zum FDP-Antrag Abendbus-Verbindung zwischen den Ortsteilen Wahn/Wahnheide/Lind und Grengel vom 04.10.2016"</title>
+<updated>2021-02-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1442/2020"/>
+<summary>Antrag / Anfrage am 2021-02-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98276#beratung-2021-02-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1432/2020 Antrag der CDU-Fraktion und der Fraktion Bündnis 90/Die Grünen "Sanierung eines Teilstücks der Waldstraße und Einrichtung einer Fußgängerquerungshilfe"</title>
+<updated>2021-02-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1432/2020"/>
+<summary>Antrag / Anfrage am 2021-02-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96024#beratung-2021-02-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1871/2020 Baugebiet „Südliche Friedensstraße“ - zur gemeinsamen Anfrage der CDU-Fraktion, der Fraktion DIE GRÜNEN  und der FDP-Fraktion zur Sitzung der Bezirksvertretung Porz am 16.06.2020</title>
+<updated>2021-02-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1871/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-02-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/95992#beratung-2021-02-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0842/2020 Anfrage der CDU-Fraktion, der Fraktion Bündnis 90/Die Grünen und von Frau Bastian (FDP) "Baugebiet - Südliche Friedensstraße"</title>
+<updated>2021-02-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0842/2020"/>
+<summary>Antrag / Anfrage am 2021-02-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98292#vorlage</id>
+<title>Neue Vorlage AN/1442/2020: Antrag von Frau Bastian (FDP) "Sachstand zum FDP-Antrag Abendbus-Verbindung zwischen den Ortsteilen Wahn/Wahnheide/Lind und Grengel vom 04.10.2016"</title>
+<updated>2020-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1442/2020"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98276#vorlage</id>
+<title>Neue Vorlage AN/1432/2020: Antrag der CDU-Fraktion und der Fraktion Bündnis 90/Die Grünen "Sanierung eines Teilstücks der Waldstraße und Einrichtung einer Fußgängerquerungshilfe"</title>
+<updated>2020-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1432/2020"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96024#vorlage</id>
+<title>Neue Vorlage 1871/2020: Baugebiet „Südliche Friedensstraße“ - zur gemeinsamen Anfrage der CDU-Fraktion, der Fraktion DIE GRÜNEN  und der FDP-Fraktion zur Sitzung der Bezirksvertretung Porz am 16.06.2020</title>
+<updated>2020-10-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#1871/2020"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/95992#vorlage</id>
+<title>Neue Vorlage AN/0842/2020: Anfrage der CDU-Fraktion, der Fraktion Bündnis 90/Die Grünen und von Frau Bastian (FDP) "Baugebiet - Südliche Friedensstraße"</title>
+<updated>2020-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0842/2020"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/95676#beratung-2020-06-16-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0738/2020 Antrag von Frau Bastian (FDP) - Überprüfung Parksituation Waldstraße und Durchführung von geeigneten Maßnahmen"</title>
+<updated>2020-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0738/2020"/>
+<summary>Antrag / Anfrage am 2020-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/94463#beratung-2020-06-16-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Sache ist erledigt“ – AN/0389/2020 Änderungsantrag Wohnungsbauprogramm Südlich Friedensstraße</title>
+<updated>2020-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0389/2020"/>
+<summary>Antrag / Anfrage am 2020-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/94463#beratung-2020-06-16-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0389/2020 Änderungsantrag Wohnungsbauprogramm Südlich Friedensstraße</title>
+<updated>2020-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0389/2020"/>
+<summary>Antrag / Anfrage am 2020-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/95676#vorlage</id>
+<title>Neue Vorlage AN/0738/2020: Antrag von Frau Bastian (FDP) - Überprüfung Parksituation Waldstraße und Durchführung von geeigneten Maßnahmen"</title>
+<updated>2020-06-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0738/2020"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/94326#beratung-2020-05-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0776/2020 Beantwortung einer Anfrage zum Gewässerentwicklungskonzept - hier: Weiher in Wahn-Heide und Grengel</title>
+<updated>2020-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0776/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/94463#vorlage</id>
+<title>Neue Vorlage AN/0389/2020: Änderungsantrag Wohnungsbauprogramm Südlich Friedensstraße</title>
+<updated>2020-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0389/2020"/>
+<summary>Gem. Änderungsantrag (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/94326#vorlage</id>
+<title>Neue Vorlage 0776/2020: Beantwortung einer Anfrage zum Gewässerentwicklungskonzept - hier: Weiher in Wahn-Heide und Grengel</title>
+<updated>2020-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0776/2020"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/91800#beratung-2020-02-03-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 4151/2019 Baubeschluss für die Umgestaltung des Knotenpunktes Friedensstraße/Akazienweg in einen Kreisverkehr sowie Freigabe einer investiven Auszahlungsermächtigung - hier: Finanzstelle 6601-1201-0-6600, Umbau von signalisierten Verkehrsknotenpunkten</title>
+<updated>2020-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#4151/2019"/>
+<summary>Entscheidung am 2020-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/91800#beratung-2020-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 4151/2019 Baubeschluss für die Umgestaltung des Knotenpunktes Friedensstraße/Akazienweg in einen Kreisverkehr sowie Freigabe einer investiven Auszahlungsermächtigung - hier: Finanzstelle 6601-1201-0-6600, Umbau von signalisierten Verkehrsknotenpunkten</title>
+<updated>2020-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#4151/2019"/>
+<summary>Entscheidung am 2020-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/91800#vorlage</id>
+<title>Neue Vorlage 4151/2019: Baubeschluss für die Umgestaltung des Knotenpunktes Friedensstraße/Akazienweg in einen Kreisverkehr sowie Freigabe einer investiven Auszahlungsermächtigung - hier: Finanzstelle 6601-1201-0-6600, Umbau von signalisierten Verkehrsknotenpunkten</title>
+<updated>2019-12-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#4151/2019"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/88212#vorlage</id>
+<title>Neue Vorlage 2294/2019: Parken mit Parkscheibe in Grengel und Urbach; hier:Beschluss der BV Porz vom 13.06.2019,TOP 8.12</title>
+<updated>2019-07-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#2294/2019"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/88212#beratung-2019-07-04-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2294/2019 Parken mit Parkscheibe in Grengel und Urbach; hier:Beschluss der BV Porz vom 13.06.2019,TOP 8.12</title>
+<updated>2019-07-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#2294/2019"/>
+<summary>Kenntnisnahme (Mitteilung) am 2019-07-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/87951#vorlage</id>
+<title>Neue Vorlage AN/0851/2019: Dringlichkeitsantrag der Fraktionen CDU und Grüne sowie von Frau Bastian: Wohnungsbauprogramm Südlich Friedensstraße</title>
+<updated>2019-06-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0851/2019"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/87951#beratung-2019-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0851/2019 Dringlichkeitsantrag der Fraktionen CDU und Grüne sowie von Frau Bastian: Wohnungsbauprogramm Südlich Friedensstraße</title>
+<updated>2019-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0851/2019"/>
+<summary>Antrag / Anfrage am 2019-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/87622#beratung-2019-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0758/2019 NEUFASSUNG: Antrag von Frau Bastian (FDP): Parken mit Parkscheibe in Grengel und Urbach</title>
+<updated>2019-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0758/2019"/>
+<summary>Antrag / Anfrage am 2019-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/87622#vorlage</id>
+<title>Neue Vorlage AN/0758/2019: NEUFASSUNG: Antrag von Frau Bastian (FDP): Parken mit Parkscheibe in Grengel und Urbach</title>
+<updated>2019-06-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/0758/2019"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/84161#beratung-2019-03-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0174/2019 Bewohnerparken am Grengel</title>
+<updated>2019-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0174/2019"/>
+<summary>Kenntnisnahme (Mitteilung) am 2019-03-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/81089#beratung-2019-03-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – AN/1594/2018 Anfrage von Frau Bastian: Anwohnerparken am Grengel</title>
+<updated>2019-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1594/2018"/>
+<summary>Antrag / Anfrage am 2019-03-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/84161#vorlage</id>
+<title>Neue Vorlage 0174/2019: Bewohnerparken am Grengel</title>
+<updated>2019-01-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#0174/2019"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/81089#vorlage</id>
+<title>Neue Vorlage AN/1594/2018: Anfrage von Frau Bastian: Anwohnerparken am Grengel</title>
+<updated>2018-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#AN/1594/2018"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/72474#beratung-2018-06-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 3852/2017 Widmung eines Teilstücks der Reinholdstraße in Köln-Grengel</title>
+<updated>2018-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:grengel#3852/2017"/>
+<summary>Entscheidung am 2018-06-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

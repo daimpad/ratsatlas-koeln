@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-heimersdorf</id>
 <title>Ratsatlas Köln – Heimersdorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Heimersdorf</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-10-15T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-heimersdorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132846#vorlage</id>
+<title>Neue Vorlage 1427/2026: Baubeschluss für die Nachrüstung von taktilen Leitsystemen in den unterirdischen Stadtbahnhaltestellen Heimersdorf, Florastraße, Christophstraße/Mediapark und Rudolfplatz</title>
+<updated>2026-10-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1427/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131699#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0684/2026 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der BV Chorweiler vom 12.3.2026 betr. "Bedarf und Standortprüfung für eine öffentliche Toilettenanlage in Köln Heimersdorf"</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0684/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131699#vorlage</id>
+<title>Neue Vorlage 0684/2026: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der BV Chorweiler vom 12.3.2026 betr. "Bedarf und Standortprüfung für eine öffentliche Toilettenanlage in Köln Heimersdorf"</title>
+<updated>2026-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0684/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133355#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig zurückgezogen“ – AN/0967/2026 Erarbeitung eines modernen, naturschutzverträglichen Beleuchtungskonzepts für den Spielplatz Stallagsweg</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0967/2026"/>
+<summary>Antrag / Anfrage am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133166#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig zurückgezogen“ – AN/0875/2026 Erarbeitung eines modernen, naturschutzverträglichen Beleuchtungskonzepts für den Spielplatz Pingenweg</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0875/2026"/>
+<summary>Antrag / Anfrage am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133355#vorlage</id>
+<title>Neue Vorlage AN/0967/2026: Erarbeitung eines modernen, naturschutzverträglichen Beleuchtungskonzepts für den Spielplatz Stallagsweg</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0967/2026"/>
+<summary>Antrag nach § 3 BV6 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133166#vorlage</id>
+<title>Neue Vorlage AN/0875/2026: Erarbeitung eines modernen, naturschutzverträglichen Beleuchtungskonzepts für den Spielplatz Pingenweg</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0875/2026"/>
+<summary>Antrag nach § 3 BV6 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131534#beratung-2026-04-16-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0604/2026 Stand Bauvorhaben Querungshilfe Mercatorstraße</title>
+<updated>2026-04-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0604/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131534#vorlage</id>
+<title>Neue Vorlage 0604/2026: Stand Bauvorhaben Querungshilfe Mercatorstraße</title>
+<updated>2026-04-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0604/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131689#beratung-2026-03-12-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0428/2026 : Bedarf und Standortprüfung für eine öffentliche Toilettenanlage in Köln Heimersdorf</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0428/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131307#beratung-2026-03-12-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0460/2026 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion betreffend: "Verbesserung der Verkehrssicherheit am Giershausener Weg" (AN/0933/2025)</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0460/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131689#vorlage</id>
+<title>Neue Vorlage AN/0428/2026: : Bedarf und Standortprüfung für eine öffentliche Toilettenanlage in Köln Heimersdorf</title>
+<updated>2026-03-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0428/2026"/>
+<summary>Anfrage nach § 4 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131307#vorlage</id>
+<title>Neue Vorlage 0460/2026: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion betreffend: "Verbesserung der Verkehrssicherheit am Giershausener Weg" (AN/0933/2025)</title>
+<updated>2026-03-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0460/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128409#beratung-2025-09-02-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2115/2025 Beantwortung einer Anfrage der CDU-Fraktion aus der Sitzung der BV Chorweiler am 29.08.2024 (AN/1093/2024) betreffend "Marode Sitzbänke am Marktplatz in Heimersdorf"</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2115/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127953#beratung-2025-09-02-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 1876/2025 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung 6 am 22.05.2025 betr. "Kurzzeitparkzone Friedhof Volkhovener Weg" (AN/0648/2025)</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1876/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128409#vorlage</id>
+<title>Neue Vorlage 2115/2025: Beantwortung einer Anfrage der CDU-Fraktion aus der Sitzung der BV Chorweiler am 29.08.2024 (AN/1093/2024) betreffend "Marode Sitzbänke am Marktplatz in Heimersdorf"</title>
+<updated>2025-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2115/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128270#beratung-2025-06-26-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0942/2025 Sachstandsanfrage zum Austausch der maroden Sitzbänke am Marktplatz in Heimersdorf</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0942/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128256#beratung-2025-06-26-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0933/2025 Anfrage zur Verbesserung der Verkehrssicherheit am Giershausener Weg in Köln</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0933/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127992#beratung-2025-06-26-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0822/2025 Antrag Verbesserung der Verkehrssicherheit auf den Radwegen entlang der Nettesheimer Straße und des Volkhovener Weg</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0822/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127953#vorlage</id>
+<title>Neue Vorlage 1876/2025: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung 6 am 22.05.2025 betr. "Kurzzeitparkzone Friedhof Volkhovener Weg" (AN/0648/2025)</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1876/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128270#vorlage</id>
+<title>Neue Vorlage AN/0942/2025: Sachstandsanfrage zum Austausch der maroden Sitzbänke am Marktplatz in Heimersdorf</title>
+<updated>2025-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0942/2025"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128256#vorlage</id>
+<title>Neue Vorlage AN/0933/2025: Anfrage zur Verbesserung der Verkehrssicherheit am Giershausener Weg in Köln</title>
+<updated>2025-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0933/2025"/>
+<summary>Anfrage nach § 4 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127992#vorlage</id>
+<title>Neue Vorlage AN/0822/2025: Antrag Verbesserung der Verkehrssicherheit auf den Radwegen entlang der Nettesheimer Straße und des Volkhovener Weg</title>
+<updated>2025-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0822/2025"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127392#beratung-2025-05-22-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0648/2025 Kurzzeitparkzone Friedhof Volkhovener Weg</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0648/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127209#beratung-2025-05-22-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „geändert beschlossen“ – AN/0585/2025 Verkehrssicherheit erhöhen – Fahrbahnschwellen in der Nettesheimer Straße Köln-Heimersdorf</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0585/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127208#beratung-2025-05-22-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0584/2025 Prüfantrag zur Einrichtung eines Zebrastreifens am Haselnußhof</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0584/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126979#beratung-2025-05-22-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 1289/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion in der Sitzung der BV 6 am 20.03.2025 betreffend "Zustand und Zukunft des Sportplatzes KSV Heimersdorf" AN/0314/2025</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1289/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127392#vorlage</id>
+<title>Neue Vorlage AN/0648/2025: Kurzzeitparkzone Friedhof Volkhovener Weg</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0648/2025"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127209#vorlage</id>
+<title>Neue Vorlage AN/0585/2025: Verkehrssicherheit erhöhen – Fahrbahnschwellen in der Nettesheimer Straße Köln-Heimersdorf</title>
+<updated>2025-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0585/2025"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127208#vorlage</id>
+<title>Neue Vorlage AN/0584/2025: Prüfantrag zur Einrichtung eines Zebrastreifens am Haselnußhof</title>
+<updated>2025-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0584/2025"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126979#vorlage</id>
+<title>Neue Vorlage 1289/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion in der Sitzung der BV 6 am 20.03.2025 betreffend "Zustand und Zukunft des Sportplatzes KSV Heimersdorf" AN/0314/2025</title>
+<updated>2025-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1289/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126239#beratung-2025-03-20-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0314/2025 Anfrage Zustand und Zukunft des Sportplatzes KSV  Heimersdorf</title>
+<updated>2025-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0314/2025"/>
+<summary>Entscheidung am 2025-03-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126239#vorlage</id>
+<title>Neue Vorlage AN/0314/2025: Anfrage Zustand und Zukunft des Sportplatzes KSV  Heimersdorf</title>
+<updated>2025-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0314/2025"/>
+<summary>Anfrage nach § 4 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124407#beratung-2024-12-05-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 3574/2024 Beantwortung einer Anfrage der CDU-Fraktion aus der Sitzung der BV 6 vom 29.08.2024 (AN/1093/2024) betr. "Marode Sitzbänke am Marktplatz Heimersdorf"</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#3574/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124407#vorlage</id>
+<title>Neue Vorlage 3574/2024: Beantwortung einer Anfrage der CDU-Fraktion aus der Sitzung der BV 6 vom 29.08.2024 (AN/1093/2024) betr. "Marode Sitzbänke am Marktplatz Heimersdorf"</title>
+<updated>2024-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#3574/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123697#beratung-2024-11-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 3059/2024 Beschluss der Bezirksvertretung Chorweiler vom 19.10.2023 zum Antrag AN/1742/2023 betreffend: „Querungsmöglichkeit Mercatorstraße – Einholung einer externen Rechtsberatung und Klagemöglichkeit“ – Stellungnahme der Verwaltung</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#3059/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123697#vorlage</id>
+<title>Neue Vorlage 3059/2024: Beschluss der Bezirksvertretung Chorweiler vom 19.10.2023 zum Antrag AN/1742/2023 betreffend: „Querungsmöglichkeit Mercatorstraße – Einholung einer externen Rechtsberatung und Klagemöglichkeit“ – Stellungnahme der Verwaltung</title>
+<updated>2024-10-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#3059/2024"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119851#beratung-2024-09-23-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 0502/2024 Neuverteilung der Mittel aus "ehemals Volkhovener Weg - Konzeptvergabe"</title>
+<updated>2024-09-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0502/2024"/>
+<summary>Entscheidung am 2024-09-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119851#beratung-2024-09-17-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „ungeändert beschlossen“ – 0502/2024 Neuverteilung der Mittel aus "ehemals Volkhovener Weg - Konzeptvergabe"</title>
+<updated>2024-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0502/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119851#vorlage</id>
+<title>Neue Vorlage 0502/2024: Neuverteilung der Mittel aus "ehemals Volkhovener Weg - Konzeptvergabe"</title>
+<updated>2024-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0502/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122893#beratung-2024-08-29-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1093/2024 Marode Sitzbänke</title>
+<updated>2024-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1093/2024"/>
+<summary>Entscheidung am 2024-08-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122004#beratung-2024-08-29-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 1873/2024 Mündliche Anfrage der SPD-Fraktion in der Sitzung vom 2. Februar 2023 bezüglich des Weiterbertriebs des blauen Containergebäudes an der Katholischen Grundschule Lebensbaumweg</title>
+<updated>2024-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1873/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-08-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122893#vorlage</id>
+<title>Neue Vorlage AN/1093/2024: Marode Sitzbänke</title>
+<updated>2024-08-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1093/2024"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122004#vorlage</id>
+<title>Neue Vorlage 1873/2024: Mündliche Anfrage der SPD-Fraktion in der Sitzung vom 2. Februar 2023 bezüglich des Weiterbertriebs des blauen Containergebäudes an der Katholischen Grundschule Lebensbaumweg</title>
+<updated>2024-08-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1873/2024"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122095#vorlage</id>
+<title>Neue Vorlage 1935/2024: Verkehrswidriges Verhalten von Autofahrenden im Mutzerather Weg in Köln-Heimersdorf</title>
+<updated>2024-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1935/2024"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117696#beratung-2023-11-27-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3179/2023 Rückbau der Geschwindigkeitsmessanlagen auf der BAB 1 - Leverkusener Autobahnbrücke</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#3179/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118435#vorlage</id>
+<title>Neue Vorlage 3718/2023: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/ Die Grünen aus der Sitzung der BV 6 vom 21.01.2022 (AN/0156/2022) betreffend Verwahrloste Grünfläche an der Johannes-Albers-Straße</title>
+<updated>2023-11-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#3718/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117954#vorlage</id>
+<title>Neue Vorlage AN/1861/2023: Beleuchtung auf der Kriegerhofstraße und dem Waldweg in Heimersdorf</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1861/2023"/>
+<summary>Dringlichkeitsantrag BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117954#beratung-2023-10-19-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/1861/2023 Beleuchtung auf der Kriegerhofstraße und dem Waldweg in Heimersdorf</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1861/2023"/>
+<summary>Entscheidung am 2023-10-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117696#vorlage</id>
+<title>Neue Vorlage 3179/2023: Rückbau der Geschwindigkeitsmessanlagen auf der BAB 1 - Leverkusener Autobahnbrücke</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#3179/2023"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117633#beratung-2023-10-19-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „geändert beschlossen“ – AN/1742/2023 Querungsmöglichkeit Mercatorstraße</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1742/2023"/>
+<summary>Entscheidung am 2023-10-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117633#vorlage</id>
+<title>Neue Vorlage AN/1742/2023: Querungsmöglichkeit Mercatorstraße</title>
+<updated>2023-10-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1742/2023"/>
+<summary>Gem. Antrag nach § 3 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116239#beratung-2023-08-31-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2250/2023 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Fußweg zwischen Damiansweg [Hausnummer ausgelassen] und Volkhovener Weg [Hausnummer ausgelassen] und Absenkung des Bordsteins , AZ.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2250/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116239#vorlage</id>
+<title>Neue Vorlage 2250/2023: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Fußweg zwischen Damiansweg [Hausnummer ausgelassen] und Volkhovener Weg [Hausnummer ausgelassen] und Absenkung des Bordsteins , AZ.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-07-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2250/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107505#beratung-2022-05-12-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 0983/2022 Errichtung eines offenen Bücherschrankes am Standort " Haselnußhof in Köln-Heimersdorf"</title>
+<updated>2022-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0983/2022"/>
+<summary>Entscheidung am 2022-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107505#vorlage</id>
+<title>Neue Vorlage 0983/2022: Errichtung eines offenen Bücherschrankes am Standort " Haselnußhof in Köln-Heimersdorf"</title>
+<updated>2022-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0983/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107685#beratung-2022-04-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 1079/2022 KVB-Fahrgastunterstand EKZ Heimersdorf, Sicherung des Fahrgastunterstands an der Bushaltestelle Heimersdorf</title>
+<updated>2022-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1079/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-04-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107685#vorlage</id>
+<title>Neue Vorlage 1079/2022: KVB-Fahrgastunterstand EKZ Heimersdorf, Sicherung des Fahrgastunterstands an der Bushaltestelle Heimersdorf</title>
+<updated>2022-04-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1079/2022"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106694#beratung-2022-03-10-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0488/2022 KVB-Fahrgastunterstand EKZ Heimersdorf</title>
+<updated>2022-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0488/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106694#vorlage</id>
+<title>Neue Vorlage 0488/2022: KVB-Fahrgastunterstand EKZ Heimersdorf</title>
+<updated>2022-02-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0488/2022"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105709#beratung-2022-01-25-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 4335/2021 Kindertageseinrichtung Lebensbaumweg, Heimersdorf</title>
+<updated>2022-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#4335/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106269#vorlage</id>
+<title>Neue Vorlage AN/0156/2022: Verwahrloste Grünfläche an der Johannes-Albers-Straße</title>
+<updated>2022-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0156/2022"/>
+<summary>Anfrage nach § 4 BV6 (Grüne) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106249#vorlage</id>
+<title>Neue Vorlage AN/0147/2022: Dächer des Einkaufszentrums Heimersdorf</title>
+<updated>2022-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0147/2022"/>
+<summary>Anfrage nach § 4 BV6 (SPD) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105709#vorlage</id>
+<title>Neue Vorlage 4335/2021: Kindertageseinrichtung Lebensbaumweg, Heimersdorf</title>
+<updated>2021-12-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#4335/2021"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105434#beratung-2021-12-09-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig zurückgezogen“ – AN/2574/2021 KiTa Lebensbaumweg</title>
+<updated>2021-12-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/2574/2021"/>
+<summary>Entscheidung am 2021-12-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105434#vorlage</id>
+<title>Neue Vorlage AN/2574/2021: KiTa Lebensbaumweg</title>
+<updated>2021-11-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/2574/2021"/>
+<summary>Dringlichkeitsantrag BV6 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104548#beratung-2021-11-04-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/2192/2021 Prüfantrag für eine Ausweitung der Tempo 30 Bereich auf der Merianstrasse beginnend der Kreuzung Fühlinger Weg bis zur 30 Tempo  Ecke Kelzenberger Weg.</title>
+<updated>2021-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/2192/2021"/>
+<summary>Entscheidung am 2021-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104548#vorlage</id>
+<title>Neue Vorlage AN/2192/2021: Prüfantrag für eine Ausweitung der Tempo 30 Bereich auf der Merianstrasse beginnend der Kreuzung Fühlinger Weg bis zur 30 Tempo  Ecke Kelzenberger Weg.</title>
+<updated>2021-10-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/2192/2021"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103089#beratung-2021-08-26-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/1589/2021 Prüfantrag für eine Ausweitung der Tempo 30 Bereich auf der Merianstrasse beginnend der Kreuzung Fühlinger Weg bis zur 30 Zone Ecke Kelzenberger Weg.</title>
+<updated>2021-08-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1589/2021"/>
+<summary>Entscheidung am 2021-08-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103089#vorlage</id>
+<title>Neue Vorlage AN/1589/2021: Prüfantrag für eine Ausweitung der Tempo 30 Bereich auf der Merianstrasse beginnend der Kreuzung Fühlinger Weg bis zur 30 Zone Ecke Kelzenberger Weg.</title>
+<updated>2021-08-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1589/2021"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101863#beratung-2021-06-17-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2057/2021 Spielplatzreaktivierung in Heimersdorf</title>
+<updated>2021-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2057/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101863#vorlage</id>
+<title>Neue Vorlage 2057/2021: Spielplatzreaktivierung in Heimersdorf</title>
+<updated>2021-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2057/2021"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101610#beratung-2021-05-27-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1079/2021 Spielplatzreaktivierung in Heimersdorf</title>
+<updated>2021-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1079/2021"/>
+<summary>Entscheidung am 2021-05-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101610#vorlage</id>
+<title>Neue Vorlage AN/1079/2021: Spielplatzreaktivierung in Heimersdorf</title>
+<updated>2021-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1079/2021"/>
+<summary>Anfrage nach § 4 BV6 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99145#beratung-2021-04-15-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0218/2021 KVB-Fahrgastunterstand EKZ Heimersdorf</title>
+<updated>2021-04-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0218/2021"/>
+<summary>Entscheidung am 2021-04-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99145#vorlage</id>
+<title>Neue Vorlage AN/0218/2021: KVB-Fahrgastunterstand EKZ Heimersdorf</title>
+<updated>2021-02-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0218/2021"/>
+<summary>Anfrage nach § 4 BV6 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/97185#beratung-2020-12-03-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2716/2020 Bushaltestelle der Linien 122 und 125 in Köln-Heimersdorf, Haselnußweg</title>
+<updated>2020-12-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2716/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-12-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96795#beratung-2020-12-03-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2518/2020 Deckenschäden am Abgang der Stadtbahnhaltestelle in Heimersdorf</title>
+<updated>2020-12-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2518/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-12-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/97185#vorlage</id>
+<title>Neue Vorlage 2716/2020: Bushaltestelle der Linien 122 und 125 in Köln-Heimersdorf, Haselnußweg</title>
+<updated>2020-10-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2716/2020"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96795#vorlage</id>
+<title>Neue Vorlage 2518/2020: Deckenschäden am Abgang der Stadtbahnhaltestelle in Heimersdorf</title>
+<updated>2020-08-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2518/2020"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/95543#beratung-2020-06-04-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0677/2020 Deckenschäden am Abgang der Stadtbahnhaltestelle in Heimersdorf</title>
+<updated>2020-06-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0677/2020"/>
+<summary>Entscheidung am 2020-06-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/93538#beratung-2020-06-04-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0203/2020 Fußweg in Heimersdorf</title>
+<updated>2020-06-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0203/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-06-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/95543#vorlage</id>
+<title>Neue Vorlage AN/0677/2020: Deckenschäden am Abgang der Stadtbahnhaltestelle in Heimersdorf</title>
+<updated>2020-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0677/2020"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/93538#vorlage</id>
+<title>Neue Vorlage 0203/2020: Fußweg in Heimersdorf</title>
+<updated>2020-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0203/2020"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/93995#beratung-2020-03-05-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0537/2020 Öffentlichkeitsarbeit zur Forststraße in Köln-Heimersdorf</title>
+<updated>2020-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0537/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-03-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/93995#vorlage</id>
+<title>Neue Vorlage 0537/2020: Öffentlichkeitsarbeit zur Forststraße in Köln-Heimersdorf</title>
+<updated>2020-02-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#0537/2020"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/93387#beratung-2020-01-23-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0052/2020 Fußweg in Heimersdorf</title>
+<updated>2020-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0052/2020"/>
+<summary>Entscheidung am 2020-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/93255#beratung-2020-01-23-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0007/2020 Die Aufstellung von zwei Ruhebänken auf der Nettesheimer Straße</title>
+<updated>2020-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0007/2020"/>
+<summary>Entscheidung am 2020-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/91483#beratung-2020-01-23-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 3943/2019 Öffentlichkeitsarbeit zu der Forststraße in Köln-Heimersdorf</title>
+<updated>2020-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#3943/2019"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/93387#vorlage</id>
+<title>Neue Vorlage AN/0052/2020: Fußweg in Heimersdorf</title>
+<updated>2020-01-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0052/2020"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/93255#vorlage</id>
+<title>Neue Vorlage AN/0007/2020: Die Aufstellung von zwei Ruhebänken auf der Nettesheimer Straße</title>
+<updated>2020-01-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0007/2020"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/91483#vorlage</id>
+<title>Neue Vorlage 3943/2019: Öffentlichkeitsarbeit zu der Forststraße in Köln-Heimersdorf</title>
+<updated>2019-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#3943/2019"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/90388#beratung-2019-09-19-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1223/2019 Deckenbeschädigungen an der Stadtbahnhaltestelle Heimersdorf</title>
+<updated>2019-09-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1223/2019"/>
+<summary>Entscheidung am 2019-09-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/90253#beratung-2019-09-19-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1164/2019 Öffentlichkeitsarbeit zu der Forststraße in Köln -Heimerstdorf als öffentliche Parkfläche</title>
+<updated>2019-09-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1164/2019"/>
+<summary>Entscheidung am 2019-09-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/89622#beratung-2019-09-19-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2598/2019 Bushaltestelle der Linien 122 und 125 in Köln-Heimersdorf, Haselnußweg</title>
+<updated>2019-09-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2598/2019"/>
+<summary>Kenntnisnahme (Mitteilung) am 2019-09-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/90388#vorlage</id>
+<title>Neue Vorlage AN/1223/2019: Deckenbeschädigungen an der Stadtbahnhaltestelle Heimersdorf</title>
+<updated>2019-09-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1223/2019"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/90253#vorlage</id>
+<title>Neue Vorlage AN/1164/2019: Öffentlichkeitsarbeit zu der Forststraße in Köln -Heimerstdorf als öffentliche Parkfläche</title>
+<updated>2019-09-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/1164/2019"/>
+<summary>Anfrage nach § 4 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/89622#vorlage</id>
+<title>Neue Vorlage 2598/2019: Bushaltestelle der Linien 122 und 125 in Köln-Heimersdorf, Haselnußweg</title>
+<updated>2019-08-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2598/2019"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/88225#beratung-2019-06-27-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2304/2019 Künftige Nutzung der Immobilie Anna-Langohr-Schule in Heimersdorf - AN/0903/2019</title>
+<updated>2019-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2304/2019"/>
+<summary>Kenntnisnahme (Mitteilung) am 2019-06-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/88083#beratung-2019-06-27-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0903/2019 Künftige Nutzung der Immobilie Anna-Langohr-Schule in Heimersdorf</title>
+<updated>2019-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#AN/0903/2019"/>
+<summary>Entscheidung am 2019-06-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

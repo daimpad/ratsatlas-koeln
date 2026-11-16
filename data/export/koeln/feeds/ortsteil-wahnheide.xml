@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-wahnheide</id>
 <title>Ratsatlas Köln – Wahnheide</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Wahnheide</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-05T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-wahnheide.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135435#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/1746/2026 Anfrage SPD Fraktion " Entwicklungsperspektiven für die Grundstücke Heidestraße 40 und 140 in Köln-Porz-Wahn und -Wahnheide</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1746/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135314#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1691/2026 Antrag der CDU-Fraktion "Reparatur der defekten Beläge auf den Radwegen der Heidestraße in beiden Fahrtrichtungen in Porz-Wahn, -Wahnheide"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1691/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135300#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1678/2026 Antrag SPD Fraktion "Dynamische Fahrgastinformation an KVB-Haltestellen in Wahn, Wahnheide"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1678/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134580#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2538/2026 Anfrage der CDU-Fraktion bezüglich des Gerüstes an der GGS Heideschule Schützenstraße AN/1389/2026</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2538/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134576#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/1391/2026 Anfrage der SPD-Fraktion "Eingezäunte Grünfläche im Umfeld der Pestalozzischule in Wahnheide"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1391/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134574#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1389/2026 Anfrage der CDU-FRaktion "Gerüst an der GGS Heideschule"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1389/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135435#vorlage</id>
+<title>Neue Vorlage AN/1746/2026: Anfrage SPD Fraktion " Entwicklungsperspektiven für die Grundstücke Heidestraße 40 und 140 in Köln-Porz-Wahn und -Wahnheide</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1746/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135314#vorlage</id>
+<title>Neue Vorlage AN/1691/2026: Antrag der CDU-Fraktion "Reparatur der defekten Beläge auf den Radwegen der Heidestraße in beiden Fahrtrichtungen in Porz-Wahn, -Wahnheide"</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1691/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135300#vorlage</id>
+<title>Neue Vorlage AN/1678/2026: Antrag SPD Fraktion "Dynamische Fahrgastinformation an KVB-Haltestellen in Wahn, Wahnheide"</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1678/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134580#vorlage</id>
+<title>Neue Vorlage 2538/2026: Anfrage der CDU-Fraktion bezüglich des Gerüstes an der GGS Heideschule Schützenstraße AN/1389/2026</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2538/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134121#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 2232/2026 Baubeschluss für die Durchführung von straßenbaulichen Anpassungs- und Instandsetzungsmaßnahmen an sechs Knotenpunkten entlang der Heidestraße in Köln-Porz</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2232/2026"/>
+<summary>Entscheidung am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134576#vorlage</id>
+<title>Neue Vorlage AN/1391/2026: Anfrage der SPD-Fraktion "Eingezäunte Grünfläche im Umfeld der Pestalozzischule in Wahnheide"</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1391/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134574#vorlage</id>
+<title>Neue Vorlage AN/1389/2026: Anfrage der CDU-FRaktion "Gerüst an der GGS Heideschule"</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1389/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134121#vorlage</id>
+<title>Neue Vorlage 2232/2026: Baubeschluss für die Durchführung von straßenbaulichen Anpassungs- und Instandsetzungsmaßnahmen an sechs Knotenpunkten entlang der Heidestraße in Köln-Porz</title>
+<updated>2026-08-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2232/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133314#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig zurückgezogen“ – AN/0946/2026 Antrag der SPD-Fraktion "Namenszusatzschild Paul-Brätter-Straße in Köln-Porz-Wahnheide"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0946/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133314#vorlage</id>
+<title>Neue Vorlage AN/0946/2026: Antrag der SPD-Fraktion "Namenszusatzschild Paul-Brätter-Straße in Köln-Porz-Wahnheide"</title>
+<updated>2026-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0946/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129621#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2977/2025 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 09.06.2022 betreffend "Quartiersgarage Barbarastraße" (AN/1208/2022)</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2977/2025"/>
+<summary>Entscheidung am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109064#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1208/2022 Anfrage der CDU-Fraktion "Quartiersgarage Barbarastraße"</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1208/2022"/>
+<summary>Antrag / Anfrage am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129621#vorlage</id>
+<title>Neue Vorlage 2977/2025: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 09.06.2022 betreffend "Quartiersgarage Barbarastraße" (AN/1208/2022)</title>
+<updated>2026-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2977/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130578#beratung-2026-03-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 0442/2025/1 Beantwortung einer mündlichen Anfrage von Ausschussvorsitzendem Dr. Schlieben aus der Sitzung des Ausschusses Schule und Weiterbildung vom 01.12.2025 bezüglich der energetischen Sanierung an der Pestalozzischule, Sportplatzstraße 82-86, 51147 Köln</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0442/2025/1"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130578#vorlage</id>
+<title>Neue Vorlage 0442/2025/1: Beantwortung einer mündlichen Anfrage von Ausschussvorsitzendem Dr. Schlieben aus der Sitzung des Ausschusses Schule und Weiterbildung vom 01.12.2025 bezüglich der energetischen Sanierung an der Pestalozzischule, Sportplatzstraße 82-86, 51147 Köln</title>
+<updated>2026-02-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0442/2025/1"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125805#beratung-2026-02-05-Rat</id>
+<title>Rat: „geändert beschlossen“ – 0441/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Heideschule, Neue Heide 25-27, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-02-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0441/2025"/>
+<summary>Entscheidung am 2026-02-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125805#beratung-2026-02-02-Finanzausschuss</id>
+<title>Finanzausschuss: „mit Änderungen empfohlen“ – 0441/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Heideschule, Neue Heide 25-27, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0441/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130671#vorlage</id>
+<title>Neue Vorlage AN/0033/2026: Antrag der AfD-Fraktion "Errichtung eines kombinierten Rad- und Fußwegs zwischen Heidestraße und Bieselweg"</title>
+<updated>2026-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0033/2026"/>
+<summary>Antrag nach § 3 BV7 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131006#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0187/2026 Änderungsantrag der Fraktion Bündnis 90/Die Grünen und Volt "Fußweg Bieselweg"</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0187/2026"/>
+<summary>Antrag / Anfrage am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130817#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0102/2026 Antrag der SPD-Fraktion "Verkehrssituation Scheuermühlenstr. / Linder Weg"</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0102/2026"/>
+<summary>Antrag / Anfrage am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130671#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – AN/0033/2026 Antrag der AfD-Fraktion "Errichtung eines kombinierten Rad- und Fußwegs zwischen Heidestraße und Bieselweg"</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0033/2026"/>
+<summary>Antrag / Anfrage am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125805#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „mit Änderungen empfohlen“ – 0441/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Heideschule, Neue Heide 25-27, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0441/2025"/>
+<summary>Anhörung (BV) am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131006#vorlage</id>
+<title>Neue Vorlage AN/0187/2026: Änderungsantrag der Fraktion Bündnis 90/Die Grünen und Volt "Fußweg Bieselweg"</title>
+<updated>2026-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0187/2026"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125805#beratung-2026-01-27-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 0441/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Heideschule, Neue Heide 25-27, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0441/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130817#vorlage</id>
+<title>Neue Vorlage AN/0102/2026: Antrag der SPD-Fraktion "Verkehrssituation Scheuermühlenstr. / Linder Weg"</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0102/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125805#beratung-2026-01-19-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0441/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Heideschule, Neue Heide 25-27, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0441/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-01-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125805#vorlage</id>
+<title>Neue Vorlage 0441/2025: Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Heideschule, Neue Heide 25-27, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2025-12-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0441/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125806#beratung-2025-12-01-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „endgültig zurückgezogen“ – 0442/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Pestalozzischule, Sportplatzstraße 82-86, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2025-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0442/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125806#vorlage</id>
+<title>Neue Vorlage 0442/2025: Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Pestalozzischule, Sportplatzstraße 82-86, 51147 Köln - Bedarfsprüfungsbeschluss</title>
+<updated>2025-11-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0442/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129263#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/1225/2025 Anfrage der CDU Fraktion "Verkehrssicherheit für Radfahrer in Wahnheide, Magazin- und Sportplatzstraße"</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1225/2025"/>
+<summary>Antrag / Anfrage am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128493#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 1633/2025/1 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025/1"/>
+<summary>Anhörung (BV) am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129263#vorlage</id>
+<title>Neue Vorlage AN/1225/2025: Anfrage der CDU Fraktion "Verkehrssicherheit für Radfahrer in Wahnheide, Magazin- und Sportplatzstraße"</title>
+<updated>2025-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1225/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127583#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1633/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128493#vorlage</id>
+<title>Neue Vorlage 1633/2025/1: Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025/1"/>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127583#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1633/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127583#beratung-2025-07-01-Stadtarbeitsgemeinschaft%20Behindertenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Behindertenpolitik: „ohne Votum behandelt“ – 1633/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-07-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127583#vorlage</id>
+<title>Neue Vorlage 1633/2025: Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127583#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 1633/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127583#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ohne Votum behandelt“ – 1633/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127583#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – 1633/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127583#beratung-2025-06-26-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 1633/2025 Schulrechtliche Änderung Förderschule Geistige Entwicklung, Sportplatzstraße 82-84, 51147 Köln (Schulnummer: 154880) durch die Bildung eines Teilstandortes am Standort Neuerburgstraße 19, 51103 Köln zum Schuljahr 2025/26</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1633/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127553#vorlage</id>
+<title>Neue Vorlage 1608/2025: Beantwortung einer mündlichen Anfrage von Frau Gelbach betreffend "Sportanlage/halle Nachtigallenstraße"</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1608/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127553#beratung-2025-05-22-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 1608/2025 Beantwortung einer mündlichen Anfrage von Frau Gelbach betreffend "Sportanlage/halle Nachtigallenstraße"</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1608/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127212#beratung-2025-05-19-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „Kenntnis genommen“ – 1404/2025 Beantwortung mündlicher Anfragen aus der Sitzung des Betriebsausschusses Gebäudewirtschaft vom 24.03.2025 bezüglich der Gefährdungsbeurteilung zur Kaltlufthalle Nachtigallenstraße, 51147 Köln</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1404/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127212#beratung-2025-05-12-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 1404/2025 Beantwortung mündlicher Anfragen aus der Sitzung des Betriebsausschusses Gebäudewirtschaft vom 24.03.2025 bezüglich der Gefährdungsbeurteilung zur Kaltlufthalle Nachtigallenstraße, 51147 Köln</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1404/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127212#vorlage</id>
+<title>Neue Vorlage 1404/2025: Beantwortung mündlicher Anfragen aus der Sitzung des Betriebsausschusses Gebäudewirtschaft vom 24.03.2025 bezüglich der Gefährdungsbeurteilung zur Kaltlufthalle Nachtigallenstraße, 51147 Köln</title>
+<updated>2025-05-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1404/2025"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/110260#beratung-2025-04-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1517/2022 Anfrage der SPD-Fraktion "Prüfantrag zur Errichtung eines Fußgängerschutzes an der Bonner Straße</title>
+<updated>2025-04-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1517/2022"/>
+<summary>Antrag / Anfrage am 2025-04-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125014#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 3943/2024 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung am 03.11.2022 "Verkehrssituation Sportplatzstraße in Wahn", AN/1922/2022</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#3943/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111514#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1922/2022 Anfrage der CDU-Fraktion "Verkehrssituation Sportplatzstraße in Wahn-Heide"</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1922/2022"/>
+<summary>Antrag / Anfrage am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125014#vorlage</id>
+<title>Neue Vorlage 3943/2024: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung am 03.11.2022 "Verkehrssituation Sportplatzstraße in Wahn", AN/1922/2022</title>
+<updated>2024-12-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#3943/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123053#vorlage</id>
+<title>Neue Vorlage 2663/2024: Bericht über den Ausgang des verwaltungsgerichtlichen Verfahrens betreffend die Zuständigkeit für die Sperrung eines Teilabschnitts der Kitschburger Straße</title>
+<updated>2024-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2663/2024"/>
+<summary>Mitteilung Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123053#beratung-2024-09-02-Hauptausschuss</id>
+<title>Hauptausschuss: „Kenntnis genommen“ – 2663/2024 Bericht über den Ausgang des verwaltungsgerichtlichen Verfahrens betreffend die Zuständigkeit für die Sperrung eines Teilabschnitts der Kitschburger Straße</title>
+<updated>2024-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2663/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122401#vorlage</id>
+<title>Neue Vorlage 2142/2024: Beantwortung einer schriftlichen Anfrage der AfD Fraktion von Herrn Krasson aus der Sitzung BV 7 vom 11.05.2023 (AN/0733/2023) betr. "Straßenbaumaßnahmen Elisabethstraße"</title>
+<updated>2024-07-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2142/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120916#beratung-2024-06-20-Sportausschuss</id>
+<title>Sportausschuss: „ungeändert beschlossen“ – 1207/2024 Sportanlage Nachtigallenstraße - Belagserneuerung Kunststoffrasen und Kunststofflaufbahn</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1207/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120916#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 1207/2024 Sportanlage Nachtigallenstraße - Belagserneuerung Kunststoffrasen und Kunststofflaufbahn</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1207/2024"/>
+<summary>Entscheidung am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120916#vorlage</id>
+<title>Neue Vorlage 1207/2024: Sportanlage Nachtigallenstraße - Belagserneuerung Kunststoffrasen und Kunststofflaufbahn</title>
+<updated>2024-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1207/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117096#beratung-2024-05-16-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 2813/2023 Mitteilung über die Kostenerhöhung von Sanierungsmaßnahmen an vier Einfamilienhäusern zur Unterbringung Geflüchteter unter den Anschriften Elisabethstr. [Hausnummer ausgelassen] in 51147 Köln-Porz</title>
+<updated>2024-05-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2813/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-05-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121451#vorlage</id>
+<title>Neue Vorlage AN/0736/2024: Dringlichkeitsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Vier Einfamilienhäuser Elisabethstraße"</title>
+<updated>2024-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0736/2024"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121451#beratung-2024-05-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – AN/0736/2024 Dringlichkeitsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Vier Einfamilienhäuser Elisabethstraße"</title>
+<updated>2024-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0736/2024"/>
+<summary>Antrag / Anfrage am 2024-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117096#beratung-2024-05-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2813/2023 Mitteilung über die Kostenerhöhung von Sanierungsmaßnahmen an vier Einfamilienhäusern zur Unterbringung Geflüchteter unter den Anschriften Elisabethstr. [Hausnummer ausgelassen] in 51147 Köln-Porz</title>
+<updated>2024-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2813/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117096#beratung-2024-05-06-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 2813/2023 Mitteilung über die Kostenerhöhung von Sanierungsmaßnahmen an vier Einfamilienhäusern zur Unterbringung Geflüchteter unter den Anschriften Elisabethstr. [Hausnummer ausgelassen] in 51147 Köln-Porz</title>
+<updated>2024-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2813/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-05-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117096#beratung-2024-04-29-Bauausschuss</id>
+<title>Bauausschuss: „Kenntnis genommen“ – 2813/2023 Mitteilung über die Kostenerhöhung von Sanierungsmaßnahmen an vier Einfamilienhäusern zur Unterbringung Geflüchteter unter den Anschriften Elisabethstr. [Hausnummer ausgelassen] in 51147 Köln-Porz</title>
+<updated>2024-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2813/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-04-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117096#beratung-2024-04-18-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Kenntnis genommen“ – 2813/2023 Mitteilung über die Kostenerhöhung von Sanierungsmaßnahmen an vier Einfamilienhäusern zur Unterbringung Geflüchteter unter den Anschriften Elisabethstr. [Hausnummer ausgelassen] in 51147 Köln-Porz</title>
+<updated>2024-04-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2813/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-04-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117096#beratung-2024-04-16-Integrationsrat</id>
+<title>Integrationsrat: „Kenntnis genommen“ – 2813/2023 Mitteilung über die Kostenerhöhung von Sanierungsmaßnahmen an vier Einfamilienhäusern zur Unterbringung Geflüchteter unter den Anschriften Elisabethstr. [Hausnummer ausgelassen] in 51147 Köln-Porz</title>
+<updated>2024-04-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2813/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-04-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120919#beratung-2024-04-15-Hauptausschuss</id>
+<title>Hauptausschuss: „Kenntnis genommen“ – 1210/2024 Bericht über das verwaltungsgerichtliche Verfahren betreffend die Zuständigkeit für die Sperrung eines Teilabschnitts der Kitschburger Straße</title>
+<updated>2024-04-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1210/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-04-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120919#vorlage</id>
+<title>Neue Vorlage 1210/2024: Bericht über das verwaltungsgerichtliche Verfahren betreffend die Zuständigkeit für die Sperrung eines Teilabschnitts der Kitschburger Straße</title>
+<updated>2024-04-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1210/2024"/>
+<summary>Mitteilung Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117096#vorlage</id>
+<title>Neue Vorlage 2813/2023: Mitteilung über die Kostenerhöhung von Sanierungsmaßnahmen an vier Einfamilienhäusern zur Unterbringung Geflüchteter unter den Anschriften Elisabethstr. [Hausnummer ausgelassen] in 51147 Köln-Porz</title>
+<updated>2024-04-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2813/2023"/>
+<summary>Haushaltsrechtl. Unterrichtung d. Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122401#beratung-2024-03-14-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – 2142/2024 Beantwortung einer schriftlichen Anfrage der AfD Fraktion von Herrn Krasson aus der Sitzung BV 7 vom 11.05.2023 (AN/0733/2023) betr. "Straßenbaumaßnahmen Elisabethstraße"</title>
+<updated>2024-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2142/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120500#beratung-2024-03-14-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0933/2024 Beantwortung einer Anfrage von Herrn Krasson (AfD) zu "Straßenbaumaßnahme Elisabethstraße"</title>
+<updated>2024-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0933/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114812#beratung-2024-03-14-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0733/2023 Anfrage von Herrn Krasson (AfD) "Straßenbaumaßnahmen Elisabethstraße"</title>
+<updated>2024-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0733/2023"/>
+<summary>Antrag / Anfrage am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120500#vorlage</id>
+<title>Neue Vorlage 0933/2024: Beantwortung einer Anfrage von Herrn Krasson (AfD) zu "Straßenbaumaßnahme Elisabethstraße"</title>
+<updated>2024-03-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#0933/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117547#beratung-2024-02-05-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 3082/2023 Prioritätenliste Kunststoffrasen #6: Planungsbeschluss Generalsanierung Sportanlage Bieselwald</title>
+<updated>2024-02-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#3082/2023"/>
+<summary>Entscheidung am 2024-02-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117547#beratung-2024-02-01-Sportausschuss</id>
+<title>Sportausschuss: „ungeändert beschlossen“ – 3082/2023 Prioritätenliste Kunststoffrasen #6: Planungsbeschluss Generalsanierung Sportanlage Bieselwald</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#3082/2023"/>
+<summary>Entscheidung am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117547#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 3082/2023 Prioritätenliste Kunststoffrasen #6: Planungsbeschluss Generalsanierung Sportanlage Bieselwald</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#3082/2023"/>
+<summary>Anhörung (BV) am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117341#beratung-2024-01-22-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 2958/2023 Beantwortung einer Anfrage der SPD-Fraktion betreffend Ausnahmezustand am Maximilian-Kolbe-Gymnasium Nachtigallenstraße, Köln</title>
+<updated>2024-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2958/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117547#vorlage</id>
+<title>Neue Vorlage 3082/2023: Prioritätenliste Kunststoffrasen #6: Planungsbeschluss Generalsanierung Sportanlage Bieselwald</title>
+<updated>2023-12-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#3082/2023"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118305#beratung-2023-11-30-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 3626/2023 Sportentwicklungsplanung "Kölle Aktiv - Das Sportlabor" - neuer Standort des mobilen Pumptracks im Senkelsgraben Porz</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#3626/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118305#beratung-2023-11-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 3626/2023 Sportentwicklungsplanung "Kölle Aktiv - Das Sportlabor" - neuer Standort des mobilen Pumptracks im Senkelsgraben Porz</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#3626/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118305#vorlage</id>
+<title>Neue Vorlage 3626/2023: Sportentwicklungsplanung "Kölle Aktiv - Das Sportlabor" - neuer Standort des mobilen Pumptracks im Senkelsgraben Porz</title>
+<updated>2023-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#3626/2023"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117341#vorlage</id>
+<title>Neue Vorlage 2958/2023: Beantwortung einer Anfrage der SPD-Fraktion betreffend Ausnahmezustand am Maximilian-Kolbe-Gymnasium Nachtigallenstraße, Köln</title>
+<updated>2023-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#2958/2023"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115465#beratung-2023-08-31-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – 1712/2023 Bürgereingabe nach § 24 GO - Wegebenennung "Jürgen-Schumann-Weg" querend den "Senkelsgraben" hinter der "Gernotstr. [Hausnummer ausgelassen]" in 51147 Köln entlang der Zufahrt zu den Toren des Bauspielplatzes, Gernotstr. [Hausnummer ausgelassen]</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1712/2023"/>
+<summary>Entscheidung am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115419#beratung-2023-08-31-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 1691/2023 Beschluss über die Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1691/2023"/>
+<summary>Entscheidung am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115419#beratung-2023-08-31-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 1691/2023 Beschluss über die Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1691/2023"/>
+<summary>Anhörung (BV) am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115419#vorlage</id>
+<title>Neue Vorlage 1691/2023: Beschluss über die Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung</title>
+<updated>2023-07-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1691/2023"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115465#vorlage</id>
+<title>Neue Vorlage 1712/2023: Bürgereingabe nach § 24 GO - Wegebenennung "Jürgen-Schumann-Weg" querend den "Senkelsgraben" hinter der "Gernotstr. [Hausnummer ausgelassen]" in 51147 Köln entlang der Zufahrt zu den Toren des Bauspielplatzes, Gernotstr. [Hausnummer ausgelassen]</title>
+<updated>2023-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1712/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115677#beratung-2023-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1155/2023 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Reparatur der defekten Beläge auf den Radwegen der Heidestraße in beiden Fahrtrichtungen"</title>
+<updated>2023-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1155/2023"/>
+<summary>Antrag / Anfrage am 2023-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114910#beratung-2023-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1448/2023 Ersatzbepflanzung Pestalozzischule auf dem Grundstück Elisabethstraße - zu Anfrage AN/0730/2023 der AfD-Fraktion</title>
+<updated>2023-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1448/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114807#beratung-2023-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0730/2023 Anfrage von Herrn Krasson (AfD) "Ersatzbepflanzung Pestalozzischule"</title>
+<updated>2023-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0730/2023"/>
+<summary>Antrag / Anfrage am 2023-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114910#vorlage</id>
+<title>Neue Vorlage 1448/2023: Ersatzbepflanzung Pestalozzischule auf dem Grundstück Elisabethstraße - zu Anfrage AN/0730/2023 der AfD-Fraktion</title>
+<updated>2023-06-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1448/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115677#vorlage</id>
+<title>Neue Vorlage AN/1155/2023: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Reparatur der defekten Beläge auf den Radwegen der Heidestraße in beiden Fahrtrichtungen"</title>
+<updated>2023-05-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/1155/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114955#beratung-2023-05-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1473/2023 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Wegebenennung „Jürgen-Schumann-Weg“ entlang des heutigen „Senkelsgraben“ hinter der Gernotstr. [Hausnummer ausgelassen]  in 51147 Köln,  AZ [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1473/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114882#beratung-2023-05-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1432/2023 Verkehrssituation auf der Sportplatzstraße in Wahnheide</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1432/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114825#beratung-2023-05-11-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0743/2023 Anfrage der CDU-Fraktion "Verkehrssituation auf der Sportplatzstraße in Wahnheide"</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#AN/0743/2023"/>
+<summary>Antrag / Anfrage am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114955#vorlage</id>
+<title>Neue Vorlage 1473/2023: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Wegebenennung „Jürgen-Schumann-Weg“ entlang des heutigen „Senkelsgraben“ hinter der Gernotstr. [Hausnummer ausgelassen]  in 51147 Köln,  AZ [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:wahnheide#1473/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

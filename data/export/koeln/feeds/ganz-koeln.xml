@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ganz-koeln</id>
 <title>Ratsatlas Köln – ganz Köln</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: ganz Köln</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-12-31T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ganz-koeln.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=koeln:ganz"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99221#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – AN/0234/2021 Erwerb des Grundstückes Deutz-Mülheimer-Straße 147 bis 149 (ehemaligen KHD-Hauptverwaltung)</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:deutz#AN/0234/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133974#beratung-2026-12-31-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „für das Digitale Berichtswesen“ – AN/1226/2026 Verkehrschaos in der Innenstadt beenden / Trankgasse vollständig und unverzüglich öffnen</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:altstadt-nord#AN/1226/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130903#beratung-2026-12-31-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „für das Digitale Berichtswesen“ – AN/0141/2026 Katastrophen- und Zivilschutz in Köln ausbauen: Einrichtung eines Unterausschusses</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#AN/0141/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129401#beratung-2026-12-31-Ausschuss%20f%C3%BCr%20Bauen%20und%20Wohnen</id>
+<title>Ausschuss für Bauen und Wohnen: „für das Digitale Berichtswesen“ – 2780/2025 Errichtung eines Erweiterungsbaues für Ganztag für das Rheingymnasium Düsseldorfer Straße 13, 51063 Köln, - Weiterplanungs- und Baubeschluss, sowie Kostenfortschreibungsbeschluss</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:eil#2780/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127618#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/0722/2025 Menschen im Kölner Norden schützen – Klärschlammtransport aus Bonn darf nur mit Schiff erfolgen!</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#AN/0722/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127407#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/0660/2025 Cologne Clean UP – Müll und Dreck im Kölner Stadtbild</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#AN/0660/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126134#beratung-2026-12-31-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „für das Digitale Berichtswesen“ – AN/0258/2025 Zunehmende Verwahrlosung in Köln – Lösungswege für Sicherheit, Sauberkeit, Prävention und gegen Stillstand</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#AN/0258/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125842#beratung-2026-12-31-Ausschuss%20f%C3%BCr%20Bauen%20und%20Wohnen</id>
+<title>Ausschuss für Bauen und Wohnen: „für das Digitale Berichtswesen“ – 0464/2025 Umbau und Sanierung des Umweltbildungszentrums im Gut Leidenhausen - Bedarfsfeststellungs- und Planungsbeschluss</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:eil#0464/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125515#beratung-2026-12-31-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „für das Digitale Berichtswesen“ – AN/0108/2025 Konsequent gegen Verpackungsmüll – für mehr Sauberkeit in Köln</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#AN/0108/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124867#beratung-2026-12-31-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „für das Digitale Berichtswesen“ – AN/1700/2024 Virtuelles Bürger*innenbüro</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2024#AN/1700/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117866#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/1827/2023 Klima-Bonus-App – Klimafreundliches Verhalten verstärken und ausbauen</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2023#AN/1827/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115779#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – AN/1191/2023 Existenz und Betriebssicherheit des Kölner Großmarktes sichern</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2023#AN/1191/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115610#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – 1784/2023 Anregung der Bezirksvertretung Nippes, Umzug des Großmarkts beschleunigen und das Frischezentrum in Betrieb nehmen</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:nippes#1784/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114502#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – 1203/2023 Ergänzung der Richtlinien des Rates für die Neu- und Umbenennung von Straßen und Plätzen hinsichtlich der Benennung nach Frauen</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2023#1203/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112287#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/2226/2022 Pilotprojekt öffentliche Toiletten</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2022#AN/2226/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109599#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – 2379/2022 Benennung des Platzes vor dem Schauspielhaus ("kleiner Offenbachplatz")</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:altstadt-nord#2379/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109036#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/1190/2022 Stadtwaldholz für Köln sinnvoll und nachhaltig nutzen</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2022#AN/1190/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107918#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/0804/2022 Zwei neue Landschaftsparks entlang der A4 und zwischen Widdersdorf und Lövenich</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:loevenich#AN/0804/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105530#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/2624/2021 Strukturen und Ressourcen für eine integrierte Klimafolgenanpassung in der Stadt Köln</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2624/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102528#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – AN/1488/2021 Ehemalige KHD Hauptverwaltung, Mülheimer Str. 147 - 149; Ausübung des besonderen Vorkaufsrechts nach § 25 Abs. 1 S. 1 Nr. 2 BauGB</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:eil#AN/1488/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101969#beratung-2026-12-31-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „für das Digitale Berichtswesen“ – 2093/2021 Anregung der Bezirksvertretung Kalk zur Einrichtung eines dezentralen Stützpunktes des Ordnungsamtes in Kalk (Ordnungsdienste vor Ort)</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:kalk#2093/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101381#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – AN/1020/2021 KHD-Gelände</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/1020/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101143#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/0942/2021 Erstellung eines Zero Waste-Konzepts</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/0942/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101123#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – AN/0929/2021 Planungssicherheit für die Händlerinnen und Händler am Großmarkt schaffen und das Frischezentrum in Marsdorf zügig entwickeln</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/0929/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100124#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/0535/2021 Masterplan Grün Köln</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/0535/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130327#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „abgesetzt für diese Sitzung“ – 3497/2025 Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation Luxemburger Straße", und einer Verkehrszählung zur Aktualisierung der Datenbasis</title>
+<updated>2026-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#3497/2025"/>
+<summary>Entscheidung am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135109#beratung-2026-11-17-Ausschuss%20Soziales%2C%20Gesundheit%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss Soziales, Gesundheit, Seniorinnen und Senioren: „abgesetzt für diese Sitzung“ – 2835/2026 Projektergebnis „Prozesskette Nachhaltigkeit (PKN): Ergänzungsband Indikatoren - Stadtstrategie „Kölner Perspektiven 2030+“</title>
+<updated>2026-11-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2835/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135679#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1810/2026 Tiny houses am Kalscheurer Weiher</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/1810/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135675#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1807/2026 Jahrmärkte in Godorf</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1807/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135656#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Sache ist erledigt“ – AN/1803/2026 Änderungsantrag der Fraktion Bündnis 90/Die Grünen, SPD-Fraktion und der Einzelmandatsträgerinnen Frau Faßbender und Frau Hinsen - Gehwegparken in Zollstock</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:zollstock#AN/1803/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135647#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1800/2026 Weihnachtsmärkte in Zollstock</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:zollstock#AN/1800/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135646#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1799/2026 Verlängerung der Rampen der Fähre Weiß-Zündorf</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1799/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135637#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 3179/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Umbenennung der "Mercedes-Benz-Allee" in Köln-Ehrenfeld Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ehrenfeld#3179/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135626#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/1795/2026 Anfrage der Fraktion Bündnis 90/Die Grünen, betr.: PV-Anlagen auf öffentlichen Gebäuden im Bezirk Ehrenfeld</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1795/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135608#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1790/2026 Anfrage der SPD-Fraktion, betr.: Sachstand zur Umsetzung des Antrags AN/0021/2024 – Markierung von Kreuzungen mit dem StVO-Zeichen 342</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vogelsang#AN/1790/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135607#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1789/2026 Anfrage der SPD-Fraktion, betr.: Parksituation bei Veranstaltungen auf dem Gelände Venloer Straße 716 im Rahmen der Zwischennutzung für das „Neue Quartier Bickendorf“</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#AN/1789/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135590#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – 3144/2026 Einwohneranfrage Finkens Garten vom 09.11.2026</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#3144/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135586#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3140/2026 Niederschrift 19. Runder Tisch Rad- und Fußverkehr</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#3140/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135585#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – 3139/2026 Wiederbelebung des derzeit leerstehenden Altbaus der Kolbhalle an der Leyendeckerstraße</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ehrenfeld#3139/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135578#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3133/2026 Partizipation von Kindern und Jugendlichen an den Entscheidungsprozessen der Verwaltung und der Lokalpolitik</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#3133/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135565#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1781/2026 AN/1033/2025 vom 30.06.2025 -Sichere Schulwege in Zollstock</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:zollstock#AN/1781/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135510#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1765/2026 Antrag der Fraktion Bündnis 90/Die Grünen, betr.: Freiflächen vor Hauseingängen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1765/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135507#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – AN/1764/2026 Jahrmärkte Godorf unterbinden</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1764/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135505#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig zurückgezogen“ – AN/1763/2026 Gehwegparken in Zollstock</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:zollstock#AN/1763/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135496#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1760/2026 Antrag der Fraktion Die Linke, betr.: Übersicht über Beschlüsse und Anfragen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1760/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135491#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 3072/2026 Vergabe der bezirksorientierten Mittel für das Jahr 2026 im Stadtbezirk Rodenkirchen - 3. Runde</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#3072/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135488#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/1757/2026 Dauerhafte Sperrung Zufahrt Brohler Str.im Knotenpunkt Bonner Straße</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bayenthal#AN/1757/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135454#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3045/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssituation „Auf der Ronne“ in Köln-Meschenich, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#3045/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135453#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/1748/2026 Antrag der Fraktion Die Linke, betr.: Sachstandsbericht zu dem Projekt Ehre &amp; Liebig</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neuehrenfeld#AN/1748/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135445#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 3037/2026 Beantwortung der Anfrage der Fraktion Die Linke, betr. neuen Bebauungspläne ohne Dachbegrünung</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#3037/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135444#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 3036/2026 Beantwortung der Anfrage der Fraktion Die Linke, betr. Dachbegrünung bei neuen Bebauungsplänen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#3036/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135430#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – 3028/2026 Einwohneranfrage - Godorf, Hofanlage mit Laubenhaus, Godorfer Hauptstr. [Hausnummer ausgelassen] bedroht</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#3028/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135427#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – 3027/2026 Einwohneranfrage - Rheinische Musikschule - Regionalschule Rodenkirchen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#3027/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135423#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 3024/2026 Fortführung Jugendforum als „Jugendvertretung Rodenkirchen“</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#3024/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135415#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig zurückgezogen“ – AN/1734/2026 Ausweisung eines neuen Naturschutzgebietes am Weisser Bogen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/1734/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135414#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1733/2026 Hilfe und Unterstützung für Pflegekinder ohne gültige Ausweispapiere im Stadtbezirk Köln-Rodenkirchen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#AN/1733/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135413#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig abgelehnt“ – AN/1732/2026 Einrichtung von mobilen wiederverwendbaren Aschenbechern an geeigneten Standorten im Stadtbezirk Köln-Rodenkirchen – Pilotprojekt</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#AN/1732/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135407#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1730/2026 Kleingärten am Vorgebirgsglacisweg – Erhalt und Einbindung in die Parkstadt Süd</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1730/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135397#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/1729/2026 Antrag der Fraktion Bündnis 90/Die Grünen, betr.: Verkehrssicherheit in der Feltenstraße kurzfristig verbessern</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#AN/1729/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135396#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 3007/2026 Förderung des Brauchtums in den Veedeln  - Sicherung der Durchführung der Veedelszüge im Stadtbezirk Ehrenfeld 2027 - Mittelvergabe</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#3007/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135383#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – 3000/2026 Bürgereingabe nach § 24 GO NRW – „Versetzung der Sitzbank an der Kreuzung Weißer Straße/Hammerschmidtstraße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#3000/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135344#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2977/2026 Änderungen zum Fahrplanwechsel 2026 (Fahrplanjahr 2027)</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2977/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135311#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – AN/1688/2026 Gemeinsamer Antrag der Fraktion Bündnis 90/Die Grünen, SPD-Fraktion, Fraktion Die Linke, CDU-Fraktion, Volt/FDP-Fraktion, betr.: Zeitnahe Umsetzung von Schulstraßen im Bezirk Ehrenfeld</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1688/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135310#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1687/2026 Antrag der SPD-Fraktion, betr.: Verbesserung Parksituation Gesamtschule Ossendorf</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1687/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135293#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „endgültig abgelehnt“ – AN/1672/2026 Antrag der SPD-Fraktion, betr.: Verbesserung Situation für Fahrradfahrerinnen und Fahrradfahrer auf Erlenweg</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#AN/1672/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135292#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2964/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Parkplatzsituation Am Tannenhof und Eibenweg, Köln-Rodenkirchen“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#2964/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135290#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/1671/2026 Bessere Beleuchtung im gesperrten Straßenabschnitt der Industriestraße im Abschnitt Industriestraße/ Ecke Schillingsrotter Straße bis Industriestraße Hausnummer 127 in Köln-Rodenkirchen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#AN/1671/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135280#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – AN/1665/2026 Antrag der SPD-Fraktion, betr.: Einrichtung von Parkzone nur für PKW in Köln-Bickendorf</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#AN/1665/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135279#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/1664/2026 Antrag der SPD-Fraktion, betr.: Installation von Fahrradstellplätzen („Fahrradnadeln“) auf dem Platz Ennenstraße / Ecke Horster Straße durch Entfernung entbehrlicher Waschbetonblöcke</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neuehrenfeld#AN/1664/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135278#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/1663/2026 Antrag der SPD-Fraktion, betr.: Aufwertung des städtischen Grundstücks vor dem Haus Am Rosengarten 35 durch Einrichtung einer Fahrradabstellfläche</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#AN/1663/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135277#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – AN/1662/2026 Antrag der SPD-Fraktion, betr.: Beschilderung Vorfahrtsstraße an der Rochusstraße</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#AN/1662/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135252#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 2938/2026 Widmung eines Teilstücks der Straße Westhovener Weg in Köln-Weiß</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#2938/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135216#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2915/2026 Voreinschätzung zur Zustimmungsfähigkeit eines Vorhabens für Verfahrenserleichterungen des „Wohnungsbau-Turbos“: Stormstraße/Rilkestraße in Köln - Immendorf</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:immendorf#2915/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135173#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 2883/2026 Gestaltungsplanung für das Kooperationsgräberfeld "Bestattungsgärten" auf Flur 9 und 10 des Friedhofs Bocklemünd</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bocklemuend-mengenich#2883/2026"/>
+<summary>Anhörung (BV) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135155#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2873/2026 Stellungnahme zu einem Antrag der SPD-Fraktion "Vorläufige Fertigstellung der Kreuzungsbereiche bei der Baustelle Nord-Süd-Stadtbahn, 3. Baustufe"</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2873/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135124#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 2850/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Begrünung der Subbelrather Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-nord#2850/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135054#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2799/2026 Bewirtschaftung des städtischen Waldes 2027</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2799/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135028#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2775/2026 Beantwortung einer mündlichen Anfrage der FDP/KSG Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 21.09.2026 betreffend "Zukunft der Verkehrsverbindung im Wasserwerkswäldchen in Rondorf-Hochkirchen" (2210/2026)</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rondorf#2775/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134866#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – 2671/2026 Einwohneranfrage gem. § 39 Geschäftsordnung, betr.: Ausbleibende Umsetzung des Beschlusses vom 16.05.2022 zur Sicherung bestehender Fahrradfreifläche am Simarplatz</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neuehrenfeld#2671/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134697#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1459/2026 Anfrage der SPD-Fraktion, betr.: Ampelanlagen an den Ein- und Ausfahrten der A57 zum Parkgürtel sowie an der Äußeren Kanalstraße</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neuehrenfeld#AN/1459/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134692#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1458/2026 Anfrage der SPD-Fraktion, betr.: Maßnahmen zur Erhöhung der Schulwegsicherheit an der Peter-Lustig-Schule, Wilhelm-Schreiber-Straße</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1458/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134688#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1456/2026 Anfrage der Fraktion Bündnis 90/Die Grünen, betr.: Schulwegsicherheit GGS und KGS Erlenweg</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#AN/1456/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134658#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/1444/2026 Anfrage der Fraktion Die Linke, betr.: neuen Bebauungspläne ohne Dachbegrünung</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1444/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134657#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/1443/2026 Anfrage der Fraktion Die Linke, betr.: Dachbegrünung bei neuen Bebauungsplänen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1443/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134642#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/1429/2026 Anfrage der Fraktion Die Linke, betr.: Obdachlose in den U-Bahn-Stationen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1429/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134518#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1366/2026 Antrag der Volt/FDP-Fraktion, betr.: Kreuzung Ehrenfeldgürtel / Hüttenstraße / Bartholomäus-Schink-Straße</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ehrenfeld#AN/1366/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134500#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1352/2026 Antrag der CDU-Fraktion, betr.: Änderung der Baumschutzsatzung der Stadt Köln</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1352/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134441#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – AN/1321/2026 Vorläufige Fertigstellung der Kreuzungsbereiche bei der Baustelle Nord-Süd-Stadtbahn, 3. Baustufe</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1321/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134415#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2455/2026 Wohnungsbau-Turbo: Einschätzung zur Zustimmungsfähigkeit des Vorhabens "Grüngürtelstraße 118 -122 in Köln - Rodenkirchen"</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#2455/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134324#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2404/2026 Wohnungsbau-Turbo: Einschätzung zur Zustimmungsfähigkeit des Vorhabens "Raderberger Str. 199 in Köln - Raderberg"</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderberg#2404/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134283#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2372/2026 Sportentwicklungsplanung: Modellprojekt "Innovation durch öffentliche Sportangebote" – Rückblick "Kölle aktiv 2026„</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2372/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134271#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 2360/2026 Baubeschluss für die Generalsanierung der Straße Hochkirchener Straße von Hitzeler Straße bis Kreibohmstraße sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#2360/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134252#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2345/2026 24. Statusbericht zum Ausbau der Kindertagesbetreuung in Köln</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2345/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134184#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 2285/2026 Beschluss über Stellungnahmen, Änderung sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) Nr. 66461/16 Arbeitstitel: "Franz-Geuer-Straße" in Köln-Ehrenfeld</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ehrenfeld#2285/2026"/>
+<summary>Anhörung (BV) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134131#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2238/2026 Beantwortung der Einwohneranfrage - Forstbotanischer Garten -  vom 20.07.2026</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#2238/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133980#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – 2112/2026 Einwohnerfrage - Finkens Garten</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#2112/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133858#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 2003/2026 Feststellungsbeschluss zur 247. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 4, Köln-Ehrenfeld – Arbeitstitel: „Entwicklungsraum Max-Becker-Areal“ in Köln-Ehrenfeld</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ehrenfeld#2003/2026"/>
+<summary>Anhörung (BV) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133833#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 1980/2026 Neubekanntmachung des Flächennutzungsplanes der Stadt Köln</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#1980/2026"/>
+<summary>Anhörung (BV) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133833#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 1980/2026 Neubekanntmachung des Flächennutzungsplanes der Stadt Köln</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#1980/2026"/>
+<summary>Anhörung (BV) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133831#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – 1978/2026 Integriertes Klimaanpassungskonzept IKA Köln inklusive Maßnahmenpakete Klimawandelanpassung</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#1978/2026"/>
+<summary>Anhörung (BV) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

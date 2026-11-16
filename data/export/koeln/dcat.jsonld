@@ -40,6 +40,13 @@
   "@type": "xsd:date",
   "@value": "2026-11-16"
  },
+ "dct:temporal": {
+  "@type": "dct:PeriodOfTime",
+  "dcat:startDate": {
+   "@type": "xsd:date",
+   "@value": "2009-08-21"
+  }
+ },
  "dct:spatial": {
   "@type": "dct:Location",
   "rdfs:label": "Köln",
@@ -85,11 +92,11 @@
     "@id": "https://www.iana.org/assignments/media-types/application/geo+json"
    },
    "dct:license": {
-    "@id": "http://dcat-ap.de/def/licenses/dl-zero-de/2.0"
+    "@id": "http://dcat-ap.de/def/licenses/dl-by-de/2.0"
    },
    "dct:rights": {
     "@type": "dct:RightsStatement",
-    "rdfs:label": "Ratsinformationssystem der Stadt Köln (OParl-API): dl-de/zero 2.0 laut Katalog „OParl API Koeln“ (Klärung offen); Datenquelle: Stadt Köln – offenedaten-koeln.de; Stadtteile und Stadtbezirke: dl-de/zero 2.0 (Stadt Köln, Stadtteile und Stadtbezirke); Datenquelle: Stadt Köln – offenedaten-koeln.de; Straßen: dl-de/zero 2.0 (Stadt Köln, Straßen Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de; Adressen: dl-de/zero 2.0 (Stadt Köln, Adressen Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de. Lizenzen je Datei: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+    "rdfs:label": "Ratsinformationssystem der Stadt Köln (OParl-API): dl-de/zero 2.0 laut Katalog „OParl API Koeln“ (Klärung offen); Datenquelle: Stadt Köln – offenedaten-koeln.de; Stadtteile und Stadtbezirke: dl-de/zero 2.0 (Stadt Köln, Stadtteile und Stadtbezirke); Datenquelle: Stadt Köln – offenedaten-koeln.de; Straßen: dl-de/zero 2.0 (Stadt Köln, Straßen Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de; Adressen: dl-de/zero 2.0 (Stadt Köln, Adressen Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de; Bebauungspläne: dl-de/by 2.0 (Bauleitplanung in NRW, INSPIRE: MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln). Lizenzen je Datei: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
    }
   },
   {
@@ -118,6 +125,34 @@
    "dct:rights": {
     "@type": "dct:RightsStatement",
     "rdfs:label": "Ratsinformationssystem der Stadt Köln (OParl-API): dl-de/zero 2.0 laut Katalog „OParl API Koeln“ (Klärung offen); Datenquelle: Stadt Köln – offenedaten-koeln.de; Stadtteile und Stadtbezirke: dl-de/zero 2.0 (Stadt Köln, Stadtteile und Stadtbezirke); Datenquelle: Stadt Köln – offenedaten-koeln.de; Straßen: dl-de/zero 2.0 (Stadt Köln, Straßen Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de; Adressen: dl-de/zero 2.0 (Stadt Köln, Adressen Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de; Bebauungspläne: dl-de/by 2.0 (Bauleitplanung in NRW, INSPIRE: MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln); BORIS NRW, Bodenrichtwerte (Gutachterausschuss für Grundstückswerte in der Stadt Köln) · VRS-Fahrplandaten (GTFS) · Klimaanalyse NRW 2026, Planungshinweiskarte (Handlungspriorität) · Überschwemmungsgebiete NRW (festgesetzt und vorläufig gesichert): dl-de/zero-2.0; Kindertageseinrichtungen in NRW: dl-de/by-2.0, Land NRW; Grunddaten der Schulen in NRW (Ministerium für Schule und Bildung NRW): dl-de/by-2.0, Ministerium für Schule und Bildung NRW; Zensus 2022, Gitterzellen 100 m: dl-de/by-2.0, © Statistisches Bundesamt (Destatis), Zensus 2022; Stadt Köln, Programm „Lebenswerte Veedel – Bürger*innen- und Sozialraumorientierung in Köln“ · Stadt Köln, Baupotenziale (automatisiert ermittelt, ohne Prüfung im Einzelfall) · Stadt Köln, Sozialräume Köln · Stadt Köln, Stimmbezirke Köln · Stadt Köln, Fahrradstraßen · Stadt Köln, Denkmalliste: dl-de/zero 2.0 (Stadt Köln); Datenquelle: Stadt Köln – offenedaten-koeln.de; LANUK NRW, INSPIRE Schutzgebiete in Nordrhein-Westfalen (OGC API): dl-de/zero 2.0 (Land NRW); Land NRW, Hochwassergefahrenkarten nach HWRM-RL, Überschwemmungsgrenzen: dl-de/zero 2.0 (Land NRW; Angabe von opengeodata.nrw.de, nicht einzeln geprüft). Lizenzen je Datei: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
+   }
+  },
+  {
+   "@id": "https://koeln.ratsatlas.de/data/export/koeln/zeit.json",
+   "@type": "dcat:Distribution",
+   "dct:title": {
+    "@language": "de",
+    "@value": "Zeitleiste: Monatsaggregate (JSON)"
+   },
+   "dct:description": {
+    "@language": "de",
+    "@value": "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden."
+   },
+   "dcat:accessURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/zeit.json"
+   },
+   "dcat:downloadURL": {
+    "@id": "https://koeln.ratsatlas.de/data/export/koeln/zeit.json"
+   },
+   "dcat:mediaType": {
+    "@id": "https://www.iana.org/assignments/media-types/application/json"
+   },
+   "dct:license": {
+    "@id": "http://dcat-ap.de/def/licenses/dl-zero-de/2.0"
+   },
+   "dct:rights": {
+    "@type": "dct:RightsStatement",
+    "rdfs:label": "Ratsinformationssystem der Stadt Köln (OParl-API): dl-de/zero 2.0 laut Katalog „OParl API Koeln“ (Klärung offen); Datenquelle: Stadt Köln – offenedaten-koeln.de; Stadtteile und Stadtbezirke: dl-de/zero 2.0 (Stadt Köln, Stadtteile und Stadtbezirke); Datenquelle: Stadt Köln – offenedaten-koeln.de. Lizenzen je Datei: https://koeln.ratsatlas.de/data/LICENSE-DATA.md"
    }
   },
   {

@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-duennwald</id>
 <title>Ratsatlas Köln – Dünnwald</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Dünnwald</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-09T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-duennwald.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135377#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „endgültig abgelehnt“ – AN/1720/2026 Behebung von Sicherheitsrisiken und Überprüfung baulicher sowie linienführungstechni-scher Maßnahmen an der Haltestelle Leuchterstraße (Bussteig B)</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1720/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135362#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1714/2026 Aufstellung von Abfalleimern in Köln-Dünnwald</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1714/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135377#vorlage</id>
+<title>Neue Vorlage AN/1720/2026: Behebung von Sicherheitsrisiken und Überprüfung baulicher sowie linienführungstechni-scher Maßnahmen an der Haltestelle Leuchterstraße (Bussteig B)</title>
+<updated>2026-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1720/2026"/>
+<summary>Antrag nach § 3 BV9 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135362#vorlage</id>
+<title>Neue Vorlage AN/1714/2026: Aufstellung von Abfalleimern in Köln-Dünnwald</title>
+<updated>2026-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1714/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134323#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1272/2026 Entwicklung eines sozialen Brennpunktes in der Dorfheidestraße, Köln-Dünnwald</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1272/2026"/>
+<summary>Entscheidung am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134289#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1266/2026 Aufstellen von Mülleimern an den drei Bänken entlang des Faulbachs (Höhe Buchheimer Ring) und am “Parkeingang” Amselstraße (neben der Kirche - Hausnummer 22)</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1266/2026"/>
+<summary>Entscheidung am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134323#vorlage</id>
+<title>Neue Vorlage AN/1272/2026: Entwicklung eines sozialen Brennpunktes in der Dorfheidestraße, Köln-Dünnwald</title>
+<updated>2026-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1272/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134289#vorlage</id>
+<title>Neue Vorlage AN/1266/2026: Aufstellen von Mülleimern an den drei Bänken entlang des Faulbachs (Höhe Buchheimer Ring) und am “Parkeingang” Amselstraße (neben der Kirche - Hausnummer 22)</title>
+<updated>2026-08-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1266/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133294#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – AN/0932/2026 Schaffung einer direkten fußläufigen Wegeverbindung im Bereich der Straße Am Wildpark in Köln-Dünnwald</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0932/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133294#vorlage</id>
+<title>Neue Vorlage AN/0932/2026: Schaffung einer direkten fußläufigen Wegeverbindung im Bereich der Straße Am Wildpark in Köln-Dünnwald</title>
+<updated>2026-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0932/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132231#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1054/2026 Bauvorhaben "Circus-Roncalli-Weg 7</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1054/2026"/>
+<summary>Entscheidung am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132218#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/0578/2026 Sichere Alternative für die Schranke an der Einmündung Zeisbuschweg und Dünnwalder Mauspfad zeitnah prüfen und umsetzen</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0578/2026"/>
+<summary>Entscheidung am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131615#beratung-2026-04-27-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 3292/2025/1 Beantwortung einer mündlichen Anfrage von RM Aengenvoort aus der Sitzung des Ausschusses Schule und Weiterbildung vom 19.01.2026 bezüglich eines Sachstands zur Mängelbeseitigung an der Grundschule Am Portzenacker</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3292/2025/1"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131153#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0363/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der BV Mülheim vom 08.12.2025 (AN/1420/2025) betreffend  "Einrichtung einer wassergebundenen Wegedecke am Gut Klosterhof und Seniorenzentrum Herz-Jesu-Stift"</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0363/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127473#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1557/2025 Beantwortung einer schriftlichen Anfrage der Fraktion Bünndnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Mülheim vom 12.05.2025 (AN/0493/2025) betreffend "Wann wird der Geh- und Radweg am Peter-Baum-Weg endlich umgesetzt?"</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1557/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132231#vorlage</id>
+<title>Neue Vorlage 1054/2026: Bauvorhaben "Circus-Roncalli-Weg 7</title>
+<updated>2026-04-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1054/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131153#vorlage</id>
+<title>Neue Vorlage 0363/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der BV Mülheim vom 08.12.2025 (AN/1420/2025) betreffend  "Einrichtung einer wassergebundenen Wegedecke am Gut Klosterhof und Seniorenzentrum Herz-Jesu-Stift"</title>
+<updated>2026-04-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0363/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132218#vorlage</id>
+<title>Neue Vorlage AN/0578/2026: Sichere Alternative für die Schranke an der Einmündung Zeisbuschweg und Dünnwalder Mauspfad zeitnah prüfen und umsetzen</title>
+<updated>2026-04-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0578/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131615#vorlage</id>
+<title>Neue Vorlage 3292/2025/1: Beantwortung einer mündlichen Anfrage von RM Aengenvoort aus der Sitzung des Ausschusses Schule und Weiterbildung vom 19.01.2026 bezüglich eines Sachstands zur Mängelbeseitigung an der Grundschule Am Portzenacker</title>
+<updated>2026-03-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3292/2025/1"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127473#vorlage</id>
+<title>Neue Vorlage 1557/2025: Beantwortung einer schriftlichen Anfrage der Fraktion Bünndnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Mülheim vom 12.05.2025 (AN/0493/2025) betreffend "Wann wird der Geh- und Radweg am Peter-Baum-Weg endlich umgesetzt?"</title>
+<updated>2026-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1557/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130123#beratung-2026-03-16-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 3376/2025 Mitteilung zu dem Bürgerschreiben "Fußgängerübergang Birkenweg, 51061 Köln"</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3376/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129916#beratung-2026-02-05-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 3244/2025 13. Änderung des Landschaftsplans Köln zur Ausweisung des Naturschutzgebiets (NSG) N 24 "Isborns Heide und Hommelsheimer Bruch"</title>
+<updated>2026-02-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3244/2025"/>
+<summary>Entscheidung am 2026-02-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130123#vorlage</id>
+<title>Neue Vorlage 3376/2025: Mitteilung zu dem Bürgerschreiben "Fußgängerübergang Birkenweg, 51061 Köln"</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3376/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129992#beratung-2026-01-19-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 3292/2025 Beantwortung einer mündlichen Anfrage von RM Hauser in der Sitzung vom 12. Mai 2025 bezüglich eines Sachstands zur Mängelbeseitigung an der Grundschule Am Portzenacker</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3292/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-01-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129916#vorlage</id>
+<title>Neue Vorlage 3244/2025: 13. Änderung des Landschaftsplans Köln zur Ausweisung des Naturschutzgebiets (NSG) N 24 "Isborns Heide und Hommelsheimer Bruch"</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3244/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129992#vorlage</id>
+<title>Neue Vorlage 3292/2025: Beantwortung einer mündlichen Anfrage von RM Hauser in der Sitzung vom 12. Mai 2025 bezüglich eines Sachstands zur Mängelbeseitigung an der Grundschule Am Portzenacker</title>
+<updated>2025-12-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3292/2025"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130210#beratung-2025-12-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1419/2025 Verkehrsschau durch Straßen NRW am Dünnwalder Mauspfad ohne dass eine Verbesserung der Verkehrssicherheit für Fahrradfahrende und Fußgänger*innen erzielt wurde</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1419/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130103#beratung-2025-12-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1390/2025 Einen Senior*innenentreff in der Siedlung „Am Donewald“ im Stadtteil Köln-Dünnwald einrichten</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1390/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130100#beratung-2025-12-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – AN/1388/2025 Endlich die Geschwindigkeitsreduzierung auf dem Dünnwalder Mauspfad im Bereich des Höhenfelder Sees bis zur Einmündung in den Kalkweg auf 50 km/h umsetzen und widersprüchliche Verkehrszeichen korrigieren</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1388/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129772#beratung-2025-12-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 3119/2025 Berliner Straße 221 - Neubau eines Mehrfamilienwohnhauses (Grundstück &gt; 3.000qm)</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3119/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129922#beratung-2025-12-04-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 3248/2025 Beantwortung einer schriftlichen Nachfrage der SPD-Fraktion aus der Sitzung des Ausschusses Klima, Umwelt und Grün zur Vorlage 0811/2025 betreffend "Hochwasserschutz in Dünnwald"</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3248/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130211#vorlage</id>
+<title>Neue Vorlage AN/1420/2025: Beschlossene Bürgereingabe: Einrichtung einer wassergebundenen Wegedecke im geschützten Landschaftsbestandteil  Mutzbach am Gut Klosterhof sowie am Seniorenzentrum Herz-Jesu- Stift, Köln-Dünnwald</title>
+<updated>2025-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1420/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130210#vorlage</id>
+<title>Neue Vorlage AN/1419/2025: Verkehrsschau durch Straßen NRW am Dünnwalder Mauspfad ohne dass eine Verbesserung der Verkehrssicherheit für Fahrradfahrende und Fußgänger*innen erzielt wurde</title>
+<updated>2025-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1419/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130103#vorlage</id>
+<title>Neue Vorlage AN/1390/2025: Einen Senior*innenentreff in der Siedlung „Am Donewald“ im Stadtteil Köln-Dünnwald einrichten</title>
+<updated>2025-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1390/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130100#vorlage</id>
+<title>Neue Vorlage AN/1388/2025: Endlich die Geschwindigkeitsreduzierung auf dem Dünnwalder Mauspfad im Bereich des Höhenfelder Sees bis zur Einmündung in den Kalkweg auf 50 km/h umsetzen und widersprüchliche Verkehrszeichen korrigieren</title>
+<updated>2025-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1388/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129922#vorlage</id>
+<title>Neue Vorlage 3248/2025: Beantwortung einer schriftlichen Nachfrage der SPD-Fraktion aus der Sitzung des Ausschusses Klima, Umwelt und Grün zur Vorlage 0811/2025 betreffend "Hochwasserschutz in Dünnwald"</title>
+<updated>2025-11-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3248/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129772#vorlage</id>
+<title>Neue Vorlage 3119/2025: Berliner Straße 221 - Neubau eines Mehrfamilienwohnhauses (Grundstück &gt; 3.000qm)</title>
+<updated>2025-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3119/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129133#beratung-2025-09-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1164/2025 Rechtsabbiegen für Fahrradfahrer auf die Berliner Straße erlauben</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1164/2025"/>
+<summary>Entscheidung am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126749#beratung-2025-09-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 1108/2025 13. Änderung des Landschaftsplans Köln zur Ausweisung des Naturschutzgebiets (NSG) N [Hausnummer ausgelassen] „Isborns Heide und Hommelsheimer Bruch“ hier: Beschluss über Bedenken und Anregungen sowie Satzungsbeschluss</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1108/2025"/>
+<summary>Anhörung (BV) am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126652#beratung-2025-09-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – 1029/2025 Wiederherstellung des Parkplatz im Bereich Odenthaler Str. / Leuchter Str. in Köln Dünnwald - 23/25</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1029/2025"/>
+<summary>Entscheidung am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129133#vorlage</id>
+<title>Neue Vorlage AN/1164/2025: Rechtsabbiegen für Fahrradfahrer auf die Berliner Straße erlauben</title>
+<updated>2025-08-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1164/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126749#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1108/2025 13. Änderung des Landschaftsplans Köln zur Ausweisung des Naturschutzgebiets (NSG) N [Hausnummer ausgelassen] „Isborns Heide und Hommelsheimer Bruch“ hier: Beschluss über Bedenken und Anregungen sowie Satzungsbeschluss</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1108/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126749#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1108/2025 13. Änderung des Landschaftsplans Köln zur Ausweisung des Naturschutzgebiets (NSG) N [Hausnummer ausgelassen] „Isborns Heide und Hommelsheimer Bruch“ hier: Beschluss über Bedenken und Anregungen sowie Satzungsbeschluss</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1108/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126749#beratung-2025-06-26-Sportausschuss</id>
+<title>Sportausschuss: „ungeändert beschlossen“ – 1108/2025 13. Änderung des Landschaftsplans Köln zur Ausweisung des Naturschutzgebiets (NSG) N [Hausnummer ausgelassen] „Isborns Heide und Hommelsheimer Bruch“ hier: Beschluss über Bedenken und Anregungen sowie Satzungsbeschluss</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1108/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128148#beratung-2025-06-23-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1970/2025 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/ Die Grünen aus der Sitzung der BV Mülheim vom 28.05.2025 (AN/0765/2025) betreffend "Welcher Magier war in der Kunstfelder Straße unterwegs?"</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1970/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127820#beratung-2025-06-23-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0765/2025 Welcher Magier war in der Kunstfelder Straße unterwegs ?</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0765/2025"/>
+<summary>Entscheidung am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127816#beratung-2025-06-23-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/0762/2025 Pflanzung von Straßenbäumen in Dünnwald</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0762/2025"/>
+<summary>Entscheidung am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126326#beratung-2025-06-23-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0811/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung des Ausschusses Klima, Umwelt und Grün vom 30.01.2025 (AN/0131/2025) betreffend "Hochwasserschutz in Dünnwald"</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0811/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126749#vorlage</id>
+<title>Neue Vorlage 1108/2025: 13. Änderung des Landschaftsplans Köln zur Ausweisung des Naturschutzgebiets (NSG) N [Hausnummer ausgelassen] „Isborns Heide und Hommelsheimer Bruch“ hier: Beschluss über Bedenken und Anregungen sowie Satzungsbeschluss</title>
+<updated>2025-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1108/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128148#vorlage</id>
+<title>Neue Vorlage 1970/2025: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/ Die Grünen aus der Sitzung der BV Mülheim vom 28.05.2025 (AN/0765/2025) betreffend "Welcher Magier war in der Kunstfelder Straße unterwegs?"</title>
+<updated>2025-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1970/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126749#beratung-2025-06-12-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „ungeändert beschlossen“ – 1108/2025 13. Änderung des Landschaftsplans Köln zur Ausweisung des Naturschutzgebiets (NSG) N [Hausnummer ausgelassen] „Isborns Heide und Hommelsheimer Bruch“ hier: Beschluss über Bedenken und Anregungen sowie Satzungsbeschluss</title>
+<updated>2025-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1108/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126326#beratung-2025-06-12-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 0811/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung des Ausschusses Klima, Umwelt und Grün vom 30.01.2025 (AN/0131/2025) betreffend "Hochwasserschutz in Dünnwald"</title>
+<updated>2025-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0811/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125571#beratung-2025-06-12-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – AN/0131/2025 Hochwasserschutz in Köln-Dünnwald</title>
+<updated>2025-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0131/2025"/>
+<summary>Antrag / Anfrage am 2025-06-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126326#vorlage</id>
+<title>Neue Vorlage 0811/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung des Ausschusses Klima, Umwelt und Grün vom 30.01.2025 (AN/0131/2025) betreffend "Hochwasserschutz in Dünnwald"</title>
+<updated>2025-06-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0811/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127820#vorlage</id>
+<title>Neue Vorlage AN/0765/2025: Welcher Magier war in der Kunstfelder Straße unterwegs ?</title>
+<updated>2025-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0765/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127816#vorlage</id>
+<title>Neue Vorlage AN/0762/2025: Pflanzung von Straßenbäumen in Dünnwald</title>
+<updated>2025-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0762/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126298#beratung-2025-05-20-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 0795/2025 Ortswechsel der Jugendwerkstatt Berliner Straße nach Neubrück</title>
+<updated>2025-05-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0795/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126298#beratung-2025-05-15-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 0795/2025 Ortswechsel der Jugendwerkstatt Berliner Straße nach Neubrück</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0795/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127014#beratung-2025-05-12-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0493/2025 Wann wird der Geh- und Radweg am Peter-Baum-Weg endlich umgesetzt?</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0493/2025"/>
+<summary>Entscheidung am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126298#beratung-2025-05-12-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0795/2025 Ortswechsel der Jugendwerkstatt Berliner Straße nach Neubrück</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0795/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125936#beratung-2025-05-12-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 0537/2025 Beantwortung einer mündlichen Anfrage von Herrn Philippi (SPD Fraktion) aus dem Ausschuss für Schule und Weiterbildung vom 27.01.2025 betreffend "Waldklasse an der Förderschule Berliner Straße 975"</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0537/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127014#vorlage</id>
+<title>Neue Vorlage AN/0493/2025: Wann wird der Geh- und Radweg am Peter-Baum-Weg endlich umgesetzt?</title>
+<updated>2025-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0493/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126652#vorlage</id>
+<title>Neue Vorlage 1029/2025: Wiederherstellung des Parkplatz im Bereich Odenthaler Str. / Leuchter Str. in Köln Dünnwald - 23/25</title>
+<updated>2025-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1029/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126298#vorlage</id>
+<title>Neue Vorlage 0795/2025: Ortswechsel der Jugendwerkstatt Berliner Straße nach Neubrück</title>
+<updated>2025-04-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0795/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125936#vorlage</id>
+<title>Neue Vorlage 0537/2025: Beantwortung einer mündlichen Anfrage von Herrn Philippi (SPD Fraktion) aus dem Ausschuss für Schule und Weiterbildung vom 27.01.2025 betreffend "Waldklasse an der Förderschule Berliner Straße 975"</title>
+<updated>2025-04-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0537/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126211#beratung-2025-03-24-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0303/2025 Fahrradnadeln auf dem hinteren Teil des Marktplatzes Berliner Straße vor dem Supermarkt"Netto" nachhaltig nutzbar machen</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0303/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126203#beratung-2025-03-24-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0295/2025 Erweiterung des Netzes der KVB-Rad-Stationen in Höhenhaus und Dünnwald</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0295/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126211#vorlage</id>
+<title>Neue Vorlage AN/0303/2025: Fahrradnadeln auf dem hinteren Teil des Marktplatzes Berliner Straße vor dem Supermarkt"Netto" nachhaltig nutzbar machen</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0303/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126203#vorlage</id>
+<title>Neue Vorlage AN/0295/2025: Erweiterung des Netzes der KVB-Rad-Stationen in Höhenhaus und Dünnwald</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0295/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124245#beratung-2025-02-10-Finanzausschuss</id>
+<title>Finanzausschuss: „geändert beschlossen“ – 3451/2024 Baubeschluss für die Generalinstandsetzung des Mainwegs zwischen Honschaftsstraße und Birkenweg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-02-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3451/2024"/>
+<summary>Entscheidung am 2025-02-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125416#beratung-2025-02-03-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0202/2025 Geräusche unbekannter Herkunft in Dünnwald und Dellbrück - Sachstand</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0202/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125155#beratung-2025-02-03-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0012/2025 Beantwortung der Anfrage AN/0002/2025 der SPD-Fraktion, der CDU-Fraktion und der FDP-Fraktion bezüglich der Nutzung der Nebenstelle Am Jungholz der Förderschule Berliner Straße</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0012/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125143#beratung-2025-02-03-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0002/2025 Förderschule Berliner Straße in Dünnwald - Nebenstelle Am Jungholz</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0002/2025"/>
+<summary>Entscheidung am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124245#beratung-2025-02-03-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – 3451/2024 Baubeschluss für die Generalinstandsetzung des Mainwegs zwischen Honschaftsstraße und Birkenweg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3451/2024"/>
+<summary>Entscheidung am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125416#beratung-2025-01-30-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 0202/2025 Geräusche unbekannter Herkunft in Dünnwald und Dellbrück - Sachstand</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0202/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125004#beratung-2025-01-27-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 3933/2024 Beantwortung einer schriftl. Anfrage der SPD-Fraktion im Ausschuss Schule und Weiterbildung am 27.01.2025 bezgl. "Waldklasse der Förderschule Berliner Str." (AN/1745/2024)</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3933/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124988#beratung-2025-01-27-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – AN/1745/2024 Waldklasse der Förderschule Berliner Str.</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1745/2024"/>
+<summary>Antrag / Anfrage am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125571#vorlage</id>
+<title>Neue Vorlage AN/0131/2025: Hochwasserschutz in Köln-Dünnwald</title>
+<updated>2025-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0131/2025"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125416#vorlage</id>
+<title>Neue Vorlage 0202/2025: Geräusche unbekannter Herkunft in Dünnwald und Dellbrück - Sachstand</title>
+<updated>2025-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0202/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125155#vorlage</id>
+<title>Neue Vorlage 0012/2025: Beantwortung der Anfrage AN/0002/2025 der SPD-Fraktion, der CDU-Fraktion und der FDP-Fraktion bezüglich der Nutzung der Nebenstelle Am Jungholz der Förderschule Berliner Straße</title>
+<updated>2025-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0012/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125143#vorlage</id>
+<title>Neue Vorlage AN/0002/2025: Förderschule Berliner Straße in Dünnwald - Nebenstelle Am Jungholz</title>
+<updated>2025-01-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/0002/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125004#vorlage</id>
+<title>Neue Vorlage 3933/2024: Beantwortung einer schriftl. Anfrage der SPD-Fraktion im Ausschuss Schule und Weiterbildung am 27.01.2025 bezgl. "Waldklasse der Förderschule Berliner Str." (AN/1745/2024)</title>
+<updated>2024-12-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3933/2024"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124988#vorlage</id>
+<title>Neue Vorlage AN/1745/2024: Waldklasse der Förderschule Berliner Str.</title>
+<updated>2024-12-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1745/2024"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124245#vorlage</id>
+<title>Neue Vorlage 3451/2024: Baubeschluss für die Generalinstandsetzung des Mainwegs zwischen Honschaftsstraße und Birkenweg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3451/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124339#vorlage</id>
+<title>Neue Vorlage 3526/2024: Fällung eines Naturdenkmals an der Berliner Str. gegenüber von Hs-Nr. 1017, 51069 Köln, Gemarkung: Dünnwald, Flur: 52, Flurstück: 219</title>
+<updated>2024-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3526/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124339#beratung-2024-11-25-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „ungeändert beschlossen“ – 3526/2024 Fällung eines Naturdenkmals an der Berliner Str. gegenüber von Hs-Nr. 1017, 51069 Köln, Gemarkung: Dünnwald, Flur: 52, Flurstück: 219</title>
+<updated>2024-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3526/2024"/>
+<summary>Entscheidung am 2024-11-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124537#vorlage</id>
+<title>Neue Vorlage 3649/2024: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Fuß- und Radweg Kalkweg, Köln-Mülheim, AZ [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-11-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#3649/2024"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123974#beratung-2024-11-04-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1419/2024 Endlich den Beschluss der Geschwindigkeitsreduzierung auf dem Dünnwalder Mauspfad im Bereich des Höhenfelder  Sees – Ende des Radweges bis zur Einmündung in den Kalkweg auf 50 Km pro Stunde vom 13.06.2022 umsetzen</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1419/2024"/>
+<summary>Entscheidung am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122119#beratung-2024-10-28-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 1946/2024 Beantwortung einer mündlichen Anfrage der CDU-Fraktion aus der Sitzung des Ausschusses für Schule und Weiterbildung am 22.04.2024 betreffend "Mensa katholische Grundschule Am Portzenacker 1b, 51069 Köln"</title>
+<updated>2024-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1946/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-10-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123974#vorlage</id>
+<title>Neue Vorlage AN/1419/2024: Endlich den Beschluss der Geschwindigkeitsreduzierung auf dem Dünnwalder Mauspfad im Bereich des Höhenfelder  Sees – Ende des Radweges bis zur Einmündung in den Kalkweg auf 50 Km pro Stunde vom 13.06.2022 umsetzen</title>
+<updated>2024-10-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1419/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122252#beratung-2024-09-23-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 2032/2024 Baubeschluss (Fortschreibung) Zeisbuschweg/Birkenweg in Köln-Mülheim sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-09-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#2032/2024"/>
+<summary>Entscheidung am 2024-09-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122119#vorlage</id>
+<title>Neue Vorlage 1946/2024: Beantwortung einer mündlichen Anfrage der CDU-Fraktion aus der Sitzung des Ausschusses für Schule und Weiterbildung am 22.04.2024 betreffend "Mensa katholische Grundschule Am Portzenacker 1b, 51069 Köln"</title>
+<updated>2024-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#1946/2024"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122828#beratung-2024-09-02-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1066/2024 Prüfung und Installation einer effektiven und sicheren Schaltung der Fußgänger*innenampel an der Kreuzung Berliner Straße / Leuchterstraße in Köln- Dünnwald</title>
+<updated>2024-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1066/2024"/>
+<summary>Entscheidung am 2024-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122252#beratung-2024-09-02-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 2032/2024 Baubeschluss (Fortschreibung) Zeisbuschweg/Birkenweg in Köln-Mülheim sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#2032/2024"/>
+<summary>Entscheidung am 2024-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122828#vorlage</id>
+<title>Neue Vorlage AN/1066/2024: Prüfung und Installation einer effektiven und sicheren Schaltung der Fußgänger*innenampel an der Kreuzung Berliner Straße / Leuchterstraße in Köln- Dünnwald</title>
+<updated>2024-08-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#AN/1066/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122252#vorlage</id>
+<title>Neue Vorlage 2032/2024: Baubeschluss (Fortschreibung) Zeisbuschweg/Birkenweg in Köln-Mülheim sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-08-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#2032/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119989#beratung-2024-06-27-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0624/2024 Aufstellungsbeschluss zur 13. Änderung des Landschaftsplans Köln</title>
+<updated>2024-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0624/2024"/>
+<summary>Entscheidung am 2024-06-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119989#beratung-2024-06-13-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „ungeändert empfohlen“ – 0624/2024 Aufstellungsbeschluss zur 13. Änderung des Landschaftsplans Köln</title>
+<updated>2024-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0624/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119989#beratung-2024-06-10-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „ungeändert empfohlen“ – 0624/2024 Aufstellungsbeschluss zur 13. Änderung des Landschaftsplans Köln</title>
+<updated>2024-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0624/2024"/>
+<summary>Anhörung (BV) am 2024-06-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119989#beratung-2024-06-03-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 0624/2024 Aufstellungsbeschluss zur 13. Änderung des Landschaftsplans Köln</title>
+<updated>2024-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:duennwald#0624/2024"/>
+<summary>Anhörung (BV) am 2024-06-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

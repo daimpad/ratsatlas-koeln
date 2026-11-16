@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/3257-2025</id>
+<title>Vorlage 3257/2025: Beantwortung einer schriftlichen Anfrage der SPD_Fraktion aus der Sitzung der Bezirksvertretung 2 (Rodenkirchen) vom 24.03.2025 (AN/0273/2025) betreffend "Sachstand Ausweitung Tempo 30 km/h auf der Weißer Hauptstraße"</title>
+<subtitle>Verlauf der Vorlage 3257/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/3257-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3257/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129939#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3257/2025 Beantwortung einer schriftlichen Anfrage der SPD_Fraktion aus der Sitzung der Bezirksvertretung 2 (Rodenkirchen) vom 24.03.2025 (AN/0273/2025) betreffend "Sachstand Ausweitung Tempo 30 km/h auf der Weißer Hauptstraße"</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3257/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129939#vorlage</id>
+<title>Neue Vorlage 3257/2025: Beantwortung einer schriftlichen Anfrage der SPD_Fraktion aus der Sitzung der Bezirksvertretung 2 (Rodenkirchen) vom 24.03.2025 (AN/0273/2025) betreffend "Sachstand Ausweitung Tempo 30 km/h auf der Weißer Hauptstraße"</title>
+<updated>2025-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3257/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129939#folge-AN%2F0273%2F2025</id>
+<title>Anfrage nach § 4 BV2 (SPD) AN/0273/2025: Sachstand Ausweitung Tempo 30 km/h auf der Weißer Hauptstraße</title>
+<updated>2025-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3257/2025"/>
+<summary>Folgevorlage zu 3257/2025</summary>
+</entry>
+</feed>

@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-ossendorf</id>
 <title>Ratsatlas Köln – Ossendorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Ossendorf</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-16T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-ossendorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135310#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1687/2026 Antrag der SPD-Fraktion, betr.: Verbesserung Parksituation Gesamtschule Ossendorf</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1687/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135277#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – AN/1662/2026 Antrag der SPD-Fraktion, betr.: Beschilderung Vorfahrtsstraße an der Rochusstraße</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1662/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134692#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1458/2026 Anfrage der SPD-Fraktion, betr.: Maßnahmen zur Erhöhung der Schulwegsicherheit an der Peter-Lustig-Schule, Wilhelm-Schreiber-Straße</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1458/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135310#vorlage</id>
+<title>Neue Vorlage AN/1687/2026: Antrag der SPD-Fraktion, betr.: Verbesserung Parksituation Gesamtschule Ossendorf</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1687/2026"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135277#vorlage</id>
+<title>Neue Vorlage AN/1662/2026: Antrag der SPD-Fraktion, betr.: Beschilderung Vorfahrtsstraße an der Rochusstraße</title>
+<updated>2026-10-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1662/2026"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135050#vorlage</id>
+<title>Neue Vorlage 2795/2026: Beantwortung der Anfrage AN/1460/2026, Anfrage der SPD-Fraktion, betr.: Sachstand Gewerbe- und Medienpark Köln-Ossendorf</title>
+<updated>2026-10-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2795/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134801#beratung-2026-10-01-Sportausschuss</id>
+<title>Sportausschuss: „vertagt“ – 2636/2026 Beantwortung einer schriftlichen Anfrage der FDP/KSG-Fraktion von 19.06.2026 in dem Sportausschuss am 1.10.26 betreffend Sachstand zur dreiteilbaren Sporthalle auf der BZA Bocklemünd, Heinrich-Rohlmann-Str. und ihrer Ersatzhalle</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2636/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133599#beratung-2026-10-01-Sportausschuss</id>
+<title>Sportausschuss: „vertagt“ – AN/1100/2026 Sachstand zur dreiteilbaren Sporthalle auf der Bezirkssportanalage Bocklemünd, Heinrich-Rohlmann-Straße und ihrer Ersatzsporthalle</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1100/2026"/>
+<summary>Antrag / Anfrage am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134801#vorlage</id>
+<title>Neue Vorlage 2636/2026: Beantwortung einer schriftlichen Anfrage der FDP/KSG-Fraktion von 19.06.2026 in dem Sportausschuss am 1.10.26 betreffend Sachstand zur dreiteilbaren Sporthalle auf der BZA Bocklemünd, Heinrich-Rohlmann-Str. und ihrer Ersatzhalle</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2636/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134699#vorlage</id>
+<title>Neue Vorlage AN/1460/2026: Anfrage der SPD-Fraktion, betr.: Sachstand Gewerbe- und Medienpark Köln-Ossendorf</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1460/2026"/>
+<summary>Anfrage nach § 4 BV4 (SPD) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134692#vorlage</id>
+<title>Neue Vorlage AN/1458/2026: Anfrage der SPD-Fraktion, betr.: Maßnahmen zur Erhöhung der Schulwegsicherheit an der Peter-Lustig-Schule, Wilhelm-Schreiber-Straße</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1458/2026"/>
+<summary>Anfrage nach § 4 BV4 (SPD) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133117#beratung-2026-06-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1639/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Findlinge Peter-Michels-Straße und Zufahrtsbegrenzung Butzweilerstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1639/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133599#vorlage</id>
+<title>Neue Vorlage AN/1100/2026: Sachstand zur dreiteilbaren Sporthalle auf der Bezirkssportanalage Bocklemünd, Heinrich-Rohlmann-Straße und ihrer Ersatzsporthalle</title>
+<updated>2026-06-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1100/2026"/>
+<summary>FDP/KSG Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133117#vorlage</id>
+<title>Neue Vorlage 1639/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Findlinge Peter-Michels-Straße und Zufahrtsbegrenzung Butzweilerstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1639/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132607#beratung-2026-05-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0729/2026 Antrag der SPD Fraktion: Lärmschutzmaßnahmen im Bereich K4 und BAB 57</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0729/2026"/>
+<summary>Antrag / Anfrage am 2026-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132573#beratung-2026-05-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0714/2026 Antrag der Fraktion Bündnis 90/Die Grünen: Schulwegsicherheit priorisieren: Tempo 30 und weitere Maßnahmen rund um die Gesamtschule Ossendorf</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0714/2026"/>
+<summary>Antrag / Anfrage am 2026-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131058#beratung-2026-05-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – 0301/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Behindertenparkplatz in der Frohnhofstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0301/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 0880/2026 Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0880/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132607#vorlage</id>
+<title>Neue Vorlage AN/0729/2026: Antrag der SPD Fraktion: Lärmschutzmaßnahmen im Bereich K4 und BAB 57</title>
+<updated>2026-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0729/2026"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132573#vorlage</id>
+<title>Neue Vorlage AN/0714/2026: Antrag der Fraktion Bündnis 90/Die Grünen: Schulwegsicherheit priorisieren: Tempo 30 und weitere Maßnahmen rund um die Gesamtschule Ossendorf</title>
+<updated>2026-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0714/2026"/>
+<summary>Antrag nach § 3 BV4 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#vorlage</id>
+<title>Neue Vorlage 0880/2026: Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0880/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131058#vorlage</id>
+<title>Neue Vorlage 0301/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Behindertenparkplatz in der Frohnhofstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0301/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131302#beratung-2026-03-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 0458/2026 Herstellung einer Querungshilfe über die Hugo-Eckener-Straße</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0458/2026"/>
+<summary>Entscheidung am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131302#vorlage</id>
+<title>Neue Vorlage 0458/2026: Herstellung einer Querungshilfe über die Hugo-Eckener-Straße</title>
+<updated>2026-02-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0458/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130756#beratung-2026-02-02-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 0144/2026 Neubau Logistikhalle</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0144/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130241#beratung-2026-02-02-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 2353/2025/3 Einrichtungs- und Mittelfreigabebeschluss für die Einrichtung des Neubaus mit Fünffachturnhalle der Gesamtschule Fitzmauricestraße in Köln-Ossendorf</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2353/2025/3"/>
+<summary>Genehmigung (DE/EilE) am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130756#vorlage</id>
+<title>Neue Vorlage 0144/2026: Neubau Logistikhalle</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0144/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128756#beratung-2025-12-16-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 2353/2025 Einrichtungs- und Mittelfreigabebeschluss für die Einrichtung des Neubaus mit Fünffachturnhalle der Gesamtschule Fitzmauricestraße in Köln-Ossendorf</title>
+<updated>2025-12-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2353/2025"/>
+<summary>Entscheidung am 2025-12-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130241#vorlage</id>
+<title>Neue Vorlage 2353/2025/3: Einrichtungs- und Mittelfreigabebeschluss für die Einrichtung des Neubaus mit Fünffachturnhalle der Gesamtschule Fitzmauricestraße in Köln-Ossendorf</title>
+<updated>2025-12-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2353/2025/3"/>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128756#vorlage</id>
+<title>Neue Vorlage 2353/2025: Einrichtungs- und Mittelfreigabebeschluss für die Einrichtung des Neubaus mit Fünffachturnhalle der Gesamtschule Fitzmauricestraße in Köln-Ossendorf</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2353/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129164#beratung-2025-12-01-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 2638/2025 Beantwortung einer Anfrage der SPD-Fraktion aus der Sitzung vom 19.05.2025 der BV Ehrenfeld betr.: Verkehrssicherheit und Schulwegsicherung an der Gesamtschule (AN/0568/2025)</title>
+<updated>2025-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2638/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128183#beratung-2025-12-01-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/0907/2025 Anfrage von Marlis Pöttgen (FDP), betr.: Status „Sportplatz“ der Peter-Lustig-Schule</title>
+<updated>2025-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0907/2025"/>
+<summary>Antrag / Anfrage am 2025-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127165#beratung-2025-12-01-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/0568/2025 Anfrage der SPD-Fraktion, betr.: Verkehrssicherheit und Schulwegsicherung an der Gesamtschule</title>
+<updated>2025-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0568/2025"/>
+<summary>Antrag / Anfrage am 2025-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129164#vorlage</id>
+<title>Neue Vorlage 2638/2025: Beantwortung einer Anfrage der SPD-Fraktion aus der Sitzung vom 19.05.2025 der BV Ehrenfeld betr.: Verkehrssicherheit und Schulwegsicherung an der Gesamtschule (AN/0568/2025)</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2638/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128416#beratung-2025-06-30-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/1003/2025 Gemeinsamer Antrag, betr.: Aufstellen von Bänken auf dem Josef-Roesberg-Platz in Köln-Ossendorf</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1003/2025"/>
+<summary>Antrag / Anfrage am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128416#vorlage</id>
+<title>Neue Vorlage AN/1003/2025: Gemeinsamer Antrag, betr.: Aufstellen von Bänken auf dem Josef-Roesberg-Platz in Köln-Ossendorf</title>
+<updated>2025-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1003/2025"/>
+<summary>Gem. Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128183#vorlage</id>
+<title>Neue Vorlage AN/0907/2025: Anfrage von Marlis Pöttgen (FDP), betr.: Status „Sportplatz“ der Peter-Lustig-Schule</title>
+<updated>2025-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0907/2025"/>
+<summary>Anfrage nach § 4 BV4 (FDP) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123708#beratung-2025-05-22-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 3065/2024 Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3065/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123708#beratung-2025-05-22-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 3065/2024 Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3065/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126820#beratung-2025-05-19-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1172/2025 Geschwindigkeitsüberwachung auf der Butzweilerhofallee</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1172/2025"/>
+<summary>Entscheidung am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126302#beratung-2025-05-19-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – 0796/2025 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Behindertenparkplatz in der Frohnhofstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0796/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127165#vorlage</id>
+<title>Neue Vorlage AN/0568/2025: Anfrage der SPD-Fraktion, betr.: Verkehrssicherheit und Schulwegsicherung an der Gesamtschule</title>
+<updated>2025-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0568/2025"/>
+<summary>Anfrage nach § 4 BV4 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126820#vorlage</id>
+<title>Neue Vorlage 1172/2025: Geschwindigkeitsüberwachung auf der Butzweilerhofallee</title>
+<updated>2025-04-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1172/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123708#vorlage</id>
+<title>Neue Vorlage 3065/2024: Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<updated>2025-04-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3065/2024"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126201#beratung-2025-03-24-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0293/2025 Antrag der Fraktion Bündnis 90/Die Grünen, betr.: KVB Leihradsystem am Butzweilerhof erweitern</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0293/2025"/>
+<summary>Antrag / Anfrage am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126006#beratung-2025-03-24-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 0599/2025 Fällung von geschützten Bäumen in der Rochusstr. 201, Köln-Ossendorf</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0599/2025"/>
+<summary>Anhörung (BV) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126032#beratung-2025-03-20-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „ungeändert beschlossen“ – 0599/2025/1 Fällung von geschützten Bäumen in der Rochusstr. 201, Köln-Ossendorf</title>
+<updated>2025-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0599/2025/1"/>
+<summary>Genehmigung (DE/EilE) am 2025-03-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126302#vorlage</id>
+<title>Neue Vorlage 0796/2025: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Behindertenparkplatz in der Frohnhofstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0796/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126032#vorlage</id>
+<title>Neue Vorlage 0599/2025/1: Fällung von geschützten Bäumen in der Rochusstr. 201, Köln-Ossendorf</title>
+<updated>2025-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0599/2025/1"/>
+<summary>Dringlichkeitsvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126201#vorlage</id>
+<title>Neue Vorlage AN/0293/2025: Antrag der Fraktion Bündnis 90/Die Grünen, betr.: KVB Leihradsystem am Butzweilerhof erweitern</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0293/2025"/>
+<summary>Antrag nach § 3 BV4 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126006#vorlage</id>
+<title>Neue Vorlage 0599/2025: Fällung von geschützten Bäumen in der Rochusstr. 201, Köln-Ossendorf</title>
+<updated>2025-02-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0599/2025"/>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125434#beratung-2025-02-03-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0073/2025 Antrag der SPD-Fraktion, betr.: Einbahnstraße Bertha-Sander-Str.</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0073/2025"/>
+<summary>Antrag / Anfrage am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125217#beratung-2025-01-27-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „zurückgestellt“ – 0068/2025 Radwegesanierung entlang der Militärringstraße</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0068/2025"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125434#vorlage</id>
+<title>Neue Vorlage AN/0073/2025: Antrag der SPD-Fraktion, betr.: Einbahnstraße Bertha-Sander-Str.</title>
+<updated>2025-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0073/2025"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125217#vorlage</id>
+<title>Neue Vorlage 0068/2025: Radwegesanierung entlang der Militärringstraße</title>
+<updated>2025-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0068/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123673#beratung-2024-11-04-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/1359/2024 Antrag der Fraktion Bündnis 90/Die Grünen betr.: Sicherer Schulweg für Schüler*innen: Tempo 30 auf der Rochusstraße</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1359/2024"/>
+<summary>Antrag / Anfrage am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123451#beratung-2024-11-04-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1530/2024/1 Beantwortung der mündlichen Nachfrage von BV Hanselmann, SPD-Fraktion, bezüglich der Container an der Peter-Lustig-Schule, Wilhelm-Schreiber-Straße 56, 50827 Köln</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1530/2024/1"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123451#vorlage</id>
+<title>Neue Vorlage 1530/2024/1: Beantwortung der mündlichen Nachfrage von BV Hanselmann, SPD-Fraktion, bezüglich der Container an der Peter-Lustig-Schule, Wilhelm-Schreiber-Straße 56, 50827 Köln</title>
+<updated>2024-10-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1530/2024/1"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123673#vorlage</id>
+<title>Neue Vorlage AN/1359/2024: Antrag der Fraktion Bündnis 90/Die Grünen betr.: Sicherer Schulweg für Schüler*innen: Tempo 30 auf der Rochusstraße</title>
+<updated>2024-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1359/2024"/>
+<summary>Antrag nach § 3 BV4 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122538#beratung-2024-09-09-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 2265/2024 Teileinziehung der Straße Am Pistorhof in Köln-Ossendorf</title>
+<updated>2024-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2265/2024"/>
+<summary>Entscheidung am 2024-09-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121469#beratung-2024-09-09-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1530/2024 Beantwortung der Anfrage AN/0743/2024 der SPD-Fraktion bezüglich der Nutzung der Container an der Peter-Lustig-Schule, Wilhelm-Schreiber-Straße 56, 50827 Köln</title>
+<updated>2024-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1530/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-09-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121466#beratung-2024-09-09-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/0743/2024 Anfrage der SPD-Fraktion, betr.: Nutzung der Container Peter-Lustig-Schule</title>
+<updated>2024-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0743/2024"/>
+<summary>Antrag / Anfrage am 2024-09-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121469#vorlage</id>
+<title>Neue Vorlage 1530/2024: Beantwortung der Anfrage AN/0743/2024 der SPD-Fraktion bezüglich der Nutzung der Container an der Peter-Lustig-Schule, Wilhelm-Schreiber-Straße 56, 50827 Köln</title>
+<updated>2024-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1530/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122538#vorlage</id>
+<title>Neue Vorlage 2265/2024: Teileinziehung der Straße Am Pistorhof in Köln-Ossendorf</title>
+<updated>2024-08-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2265/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119490#beratung-2024-06-27-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0258/2024 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 63482/02, Arbeitstitel: Rochusstraße in Köln-Ossendorf</title>
+<updated>2024-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0258/2024"/>
+<summary>Entscheidung am 2024-06-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121739#beratung-2024-06-20-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 1726/2024 Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen sowie der CDU-Fraktion betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1726/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121739#beratung-2024-06-20-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 1726/2024 Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen sowie der CDU-Fraktion betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1726/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121331#beratung-2024-06-20-Sportausschuss</id>
+<title>Sportausschuss: „Sache ist erledigt“ – AN/0698/2024 Sportanlage Rochusstraße</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0698/2024"/>
+<summary>Antrag / Anfrage am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119490#beratung-2024-06-20-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 0258/2024 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 63482/02, Arbeitstitel: Rochusstraße in Köln-Ossendorf</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0258/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122080#beratung-2024-06-17-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1922/2024 Temporärer Parkplatz auf dem Eckgrundstück Butzweilerstr./Butzweilerhofallee, Köln-Ossendorf</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1922/2024"/>
+<summary>Entscheidung am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121772#beratung-2024-06-17-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – 1743/2024 Planungsbeschluss für die Errichtung einer Querungshilfe über die Hugo-Eckener-Straße zur Schulwegsicherung am Schulstandort Fitzmauricestraße in Köln-Ossendorf</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1743/2024"/>
+<summary>Entscheidung am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122080#vorlage</id>
+<title>Neue Vorlage 1922/2024: Temporärer Parkplatz auf dem Eckgrundstück Butzweilerstr./Butzweilerhofallee, Köln-Ossendorf</title>
+<updated>2024-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1922/2024"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121772#vorlage</id>
+<title>Neue Vorlage 1743/2024: Planungsbeschluss für die Errichtung einer Querungshilfe über die Hugo-Eckener-Straße zur Schulwegsicherung am Schulstandort Fitzmauricestraße in Köln-Ossendorf</title>
+<updated>2024-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1743/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121739#vorlage</id>
+<title>Neue Vorlage 1726/2024: Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen sowie der CDU-Fraktion betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<updated>2024-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1726/2024"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120930#beratung-2024-05-16-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1217/2024 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 6250/03 Arbeitstitel: „Von-Hünefeld-Straße in Köln-Ossendorf, 2. Änderung</title>
+<updated>2024-05-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1217/2024"/>
+<summary>Entscheidung am 2024-05-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121326#beratung-2024-05-13-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0694/2024 Antrag der CDU-Fraktion, betr.: Verkehrsüberwachung auf dem Straßenbeschnitt der Militärringstraße</title>
+<updated>2024-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0694/2024"/>
+<summary>Antrag / Anfrage am 2024-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120928#beratung-2024-05-13-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 1216/2024 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 6250/03 Arbeitstitel: "Von-Hünefeld-Straße in Köln-Ossendorf, 2. Änderung"</title>
+<updated>2024-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1216/2024"/>
+<summary>Genehmigung (DE/EilE) am 2024-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121466#vorlage</id>
+<title>Neue Vorlage AN/0743/2024: Anfrage der SPD-Fraktion, betr.: Nutzung der Container Peter-Lustig-Schule</title>
+<updated>2024-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0743/2024"/>
+<summary>Anfrage nach § 4 BV4 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120930#beratung-2024-05-02-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert empfohlen“ – 1217/2024 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 6250/03 Arbeitstitel: „Von-Hünefeld-Straße in Köln-Ossendorf, 2. Änderung</title>
+<updated>2024-05-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1217/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-05-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121331#vorlage</id>
+<title>Neue Vorlage AN/0698/2024: Sportanlage Rochusstraße</title>
+<updated>2024-04-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0698/2024"/>
+<summary>Gem. Anfrage nach § 4 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121326#vorlage</id>
+<title>Neue Vorlage AN/0694/2024: Antrag der CDU-Fraktion, betr.: Verkehrsüberwachung auf dem Straßenbeschnitt der Militärringstraße</title>
+<updated>2024-04-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/0694/2024"/>
+<summary>Antrag nach § 3 BV4 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120928#vorlage</id>
+<title>Neue Vorlage 1216/2024: Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 6250/03 Arbeitstitel: "Von-Hünefeld-Straße in Köln-Ossendorf, 2. Änderung"</title>
+<updated>2024-04-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1216/2024"/>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120930#vorlage</id>
+<title>Neue Vorlage 1217/2024: Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf 6250/03 Arbeitstitel: „Von-Hünefeld-Straße in Köln-Ossendorf, 2. Änderung</title>
+<updated>2024-04-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#1217/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119869#beratung-2024-03-14-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 0518/2024 Offenlage nach § 3 Absatz 2 Baugesetzbuch (BauGB), Bebauungsplan-Entwurf 6250/03, 2. Änderung, Arbeitstitel: 2. Änderung Von-Hünefeld-Straße in Köln-Ossendorf</title>
+<updated>2024-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0518/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119869#beratung-2024-03-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 0518/2024 Offenlage nach § 3 Absatz 2 Baugesetzbuch (BauGB), Bebauungsplan-Entwurf 6250/03, 2. Änderung, Arbeitstitel: 2. Änderung Von-Hünefeld-Straße in Köln-Ossendorf</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0518/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119490#beratung-2024-03-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „abgelehnt (in der Vorberatung)“ – 0258/2024 Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 63482/02, Arbeitstitel: Rochusstraße in Köln-Ossendorf</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0258/2024"/>
+<summary>Anhörung (BV) am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119869#vorlage</id>
+<title>Neue Vorlage 0518/2024: Offenlage nach § 3 Absatz 2 Baugesetzbuch (BauGB), Bebauungsplan-Entwurf 6250/03, 2. Änderung, Arbeitstitel: 2. Änderung Von-Hünefeld-Straße in Köln-Ossendorf</title>
+<updated>2024-02-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0518/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119490#vorlage</id>
+<title>Neue Vorlage 0258/2024: Beschluss über Stellungnahmen sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 63482/02, Arbeitstitel: Rochusstraße in Köln-Ossendorf</title>
+<updated>2024-02-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0258/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119633#vorlage</id>
+<title>Neue Vorlage 0361/2024: Beantwortung einer schriftlichen Anfrage der FDP Fraktion aus der Sitzung der Bezirksvertretung Ehrenfeld vom 25.09.2023 (AN/1669/2023), betreffend "Sportplatz der Peter-Lustig-Grundschule in der Wilhelm-Schreiber-Straße"</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0361/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119633#beratung-2024-01-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 0361/2024 Beantwortung einer schriftlichen Anfrage der FDP Fraktion aus der Sitzung der Bezirksvertretung Ehrenfeld vom 25.09.2023 (AN/1669/2023), betreffend "Sportplatz der Peter-Lustig-Grundschule in der Wilhelm-Schreiber-Straße"</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0361/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118950#beratung-2024-01-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 4025/2023 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Tischtennisplatte und Trinkbrunnen Hermann-Josef-Hieronymi-Park, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#4025/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118859#beratung-2024-01-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 3965/2023 Mitteilung zur Bürgereingabe nach § 24 GO - Park Butzweilerhofallee - Anbringen einer Wegebeleuchtung und Errichten eines Trimm-dich-Pfads, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3965/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117397#beratung-2024-01-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/1669/2023 Anfrage von Frau Pöttgen (FDP), betr.: Sportplatz der Peter-Lustig-Grundschule in der Wilhelm-Schreiber-Straße</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#AN/1669/2023"/>
+<summary>Antrag / Anfrage am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118950#vorlage</id>
+<title>Neue Vorlage 4025/2023: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Tischtennisplatte und Trinkbrunnen Hermann-Josef-Hieronymi-Park, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-12-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#4025/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113284#beratung-2023-12-04-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 0421/2023 Einrichtung und Freigabe von investiven Auszahlungsermächtigungen für die Elly-Heuss-Knapp-Realschule und die Ferdinand-Lassalle-Realschule in Köln Mülheim und die Peter-Lustig-Grundschule ind Köln Ossendorf</title>
+<updated>2023-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#0421/2023"/>
+<summary>Entscheidung am 2023-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116270#beratung-2023-11-30-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „geändert beschlossen“ – 2277/2023 Beschluss über die Einleitung betreffend die Änderung des Bebauungsplanes Nummer 6250/04; Arbeitstitel: Gewerbe- und Medienpark in Köln-Ossendorf, 7. Änderung Motorworld Einzelhandel und Büro</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#2277/2023"/>
+<summary>Entscheidung am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118859#vorlage</id>
+<title>Neue Vorlage 3965/2023: Mitteilung zur Bürgereingabe nach § 24 GO - Park Butzweilerhofallee - Anbringen einer Wegebeleuchtung und Errichten eines Trimm-dich-Pfads, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-11-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3965/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118696#vorlage</id>
+<title>Neue Vorlage 3872/2023: Ampelschaltung Kreuzung Westendstr. /Mühlenweg/Mathias-Brüggen-Str.</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3872/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118696#beratung-2023-11-27-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 3872/2023 Ampelschaltung Kreuzung Westendstr. /Mühlenweg/Mathias-Brüggen-Str.</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3872/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117696#beratung-2023-11-27-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3179/2023 Rückbau der Geschwindigkeitsmessanlagen auf der BAB 1 - Leverkusener Autobahnbrücke</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3179/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

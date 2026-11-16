@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/1996-2019</id>
+<title>Vorlage 1996/2019: Ziel- und Leistungsvereinbarung 2019 - Bürgerzentrum Alte Feuerwache, Bürgerzentrum Deutz, Quäker Nachbarschaftsheim, Bürgerhaus Stollwerck</title>
+<subtitle>Verlauf der Vorlage 1996/2019: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2019-06-12T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/1996-2019.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:deutz#1996/2019"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/87743#vorlage</id>
+<title>Neue Vorlage 1996/2019: Ziel- und Leistungsvereinbarung 2019 - Bürgerzentrum Alte Feuerwache, Bürgerzentrum Deutz, Quäker Nachbarschaftsheim, Bürgerhaus Stollwerck</title>
+<updated>2019-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:deutz#1996/2019"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: offen</summary>
+</entry>
+</feed>

@@ -3,9 +3,711 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-riehl</id>
 <title>Ratsatlas Köln – Riehl</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Riehl</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-05T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-riehl.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135410#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 3018/2026 Beantwortung einer mündlichen Anfrage von Herrn Meier aus der Sitzung der BV 5 am 24.09.2026 zur Kita "An der Schanz"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3018/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135308#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – AN/1686/2026 Sachstand zur Prüfung einer Einbahnstraßenregelung auf der Stammheimer Straße in Köln-Riehl</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1686/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135305#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1683/2026 Geschwindigkeitsmessungen und Prüfung weiterer Maßnahmen zur Verkehrsberuhigung in der Hittorfstraße in Köln-Riehl</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1683/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135066#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 2809/2026 Bildung eines Teilstandortes für das Erich-Kästner-Gymnasium, Castroper Straße 7, 50735 Köln-Nippes, in der Stammheimer Str. 101, 50735 Köln-Nippes</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#2809/2026"/>
+<summary>Anhörung (BV) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135066#vorlage</id>
+<title>Neue Vorlage 2809/2026: Bildung eines Teilstandortes für das Erich-Kästner-Gymnasium, Castroper Straße 7, 50735 Köln-Nippes, in der Stammheimer Str. 101, 50735 Köln-Nippes</title>
+<updated>2026-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#2809/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135410#vorlage</id>
+<title>Neue Vorlage 3018/2026: Beantwortung einer mündlichen Anfrage von Herrn Meier aus der Sitzung der BV 5 am 24.09.2026 zur Kita "An der Schanz"</title>
+<updated>2026-11-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3018/2026"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135308#vorlage</id>
+<title>Neue Vorlage AN/1686/2026: Sachstand zur Prüfung einer Einbahnstraßenregelung auf der Stammheimer Straße in Köln-Riehl</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1686/2026"/>
+<summary>Anfrage nach § 4 BV5 (SPD) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135305#vorlage</id>
+<title>Neue Vorlage AN/1683/2026: Geschwindigkeitsmessungen und Prüfung weiterer Maßnahmen zur Verkehrsberuhigung in der Hittorfstraße in Köln-Riehl</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1683/2026"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-10-08-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-10-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1935/2026"/>
+<summary>Entscheidung am 2026-10-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-10-07-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert empfohlen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-10-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1935/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134598#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1400/2026 Verbesserte Sicherheit auf der Xantener Straße/Kretzer Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1400/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1935/2026"/>
+<summary>Anhörung (BV) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133311#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1743/2026 Beantwortung der Anfrage AN/0454/2026 der SPD-Fraktion aus der Sitzung der BV Nipppes zum Sachverhalt Kita "An der Schanz"</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1743/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131740#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – AN/0454/2026 Sachstand Erhalt der Kita „An der Schanz“</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0454/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert empfohlen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1935/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert empfohlen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1935/2026"/>
+<summary>Anhörung (BV) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134598#vorlage</id>
+<title>Neue Vorlage AN/1400/2026: Verbesserte Sicherheit auf der Xantener Straße/Kretzer Straße</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1400/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert empfohlen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1935/2026"/>
+<summary>Anhörung (BV) am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#vorlage</id>
+<title>Neue Vorlage 1935/2026: Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1935/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133311#vorlage</id>
+<title>Neue Vorlage 1743/2026: Beantwortung der Anfrage AN/0454/2026 der SPD-Fraktion aus der Sitzung der BV Nipppes zum Sachverhalt Kita "An der Schanz"</title>
+<updated>2026-07-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1743/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133591#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 1863/2026 Vergabe bezirksorientierter Mittel an die Stadtteilkonferenz der Sozialbetriebe Köln-Riehl</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1863/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133112#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1634/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Barrierefreie Haltestelle Slabystraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1634/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132733#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1350/2026 Mitteilung zur Schulentwicklung der Grundschulen Garthestr. 20-24 in Köln-Riehl</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1350/2026"/>
+<summary>Anhörung (BV) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133591#vorlage</id>
+<title>Neue Vorlage 1863/2026: Vergabe bezirksorientierter Mittel an die Stadtteilkonferenz der Sozialbetriebe Köln-Riehl</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1863/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127385#beratung-2026-06-16-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „geändert beschlossen“ – 1517/2025 Bedarfsfeststellungsbeschluss: Verkehrsuntersuchung zur Verträglichkeit einer geänderten Radverkehrsführung auf der Mülheimer Brücke – Vergabe einer freiberuflichen Leistung: MIKROSIMULATION</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1517/2025"/>
+<summary>Entscheidung am 2026-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132733#beratung-2026-06-15-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 1350/2026 Mitteilung zur Schulentwicklung der Grundschulen Garthestr. 20-24 in Köln-Riehl</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1350/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133112#vorlage</id>
+<title>Neue Vorlage 1634/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Barrierefreie Haltestelle Slabystraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1634/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132733#vorlage</id>
+<title>Neue Vorlage 1350/2026: Mitteilung zur Schulentwicklung der Grundschulen Garthestr. 20-24 in Köln-Riehl</title>
+<updated>2026-05-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1350/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132513#beratung-2026-05-07-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „geändert beschlossen“ – AN/0687/2026 Ertüchtigung der Geländer der Brücke über die Innere Kanalstraße im Lentpark, Antrag B90/Die Grünen</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0687/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132411#beratung-2026-05-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1165/2026 Beantwortung einer Anfrage der Fraktion Die Linke aus der Sitzung am 29.01.2026 (AN/0044/2026) betr. Sachstand Buslinie Innere Kanalstraße</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1165/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132091#beratung-2026-05-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 0946/2026 Vergabe bezirksorientierter Mittel an die St. Engelbertus Schützenbruderschaft Köln-Riehl, gegr. 1952 e.V.</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0946/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130701#beratung-2026-05-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – AN/0044/2026 Sachstand Buslinie Innere Kanalstraße</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0044/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132411#vorlage</id>
+<title>Neue Vorlage 1165/2026: Beantwortung einer Anfrage der Fraktion Die Linke aus der Sitzung am 29.01.2026 (AN/0044/2026) betr. Sachstand Buslinie Innere Kanalstraße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1165/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131250#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0424/2026 Installation beheizter Einhausungen zur Installationen "Blitzeranlagen" auf der Zoobrücke</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0424/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132513#vorlage</id>
+<title>Neue Vorlage AN/0687/2026: Ertüchtigung der Geländer der Brücke über die Innere Kanalstraße im Lentpark, Antrag B90/Die Grünen</title>
+<updated>2026-04-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0687/2026"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132091#vorlage</id>
+<title>Neue Vorlage 0946/2026: Vergabe bezirksorientierter Mittel an die St. Engelbertus Schützenbruderschaft Köln-Riehl, gegr. 1952 e.V.</title>
+<updated>2026-03-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0946/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131250#vorlage</id>
+<title>Neue Vorlage 0424/2026: Installation beheizter Einhausungen zur Installationen "Blitzeranlagen" auf der Zoobrücke</title>
+<updated>2026-03-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0424/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131077#beratung-2026-03-19-Rat</id>
+<title>Rat: „endgültig abgelehnt“ – AN/0212/2026 Aufhebung des Schließungsbeschlusses des Kölner Stadtrats vom 15.6.2023 für das Krankenhauses Holweide und die Kinderklinik Amsterdamer Straße, Erhalt der flächendeckenden Krankenhausversorgung in Köln</title>
+<updated>2026-03-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0212/2026"/>
+<summary>Antrag / Anfrage am 2026-03-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127385#beratung-2026-03-16-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „endgültig abgelehnt“ – 1517/2025 Bedarfsfeststellungsbeschluss: Verkehrsuntersuchung zur Verträglichkeit einer geänderten Radverkehrsführung auf der Mülheimer Brücke – Vergabe einer freiberuflichen Leistung: MIKROSIMULATION</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1517/2025"/>
+<summary>Anhörung (BV) am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131565#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0366/2026 Verbesserung der Querungssituation an der Kreuzung Riehler Tal/Hildegardisstraße/Naumannstraße</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0366/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131511#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – AN/0333/2026 Verbesserung der Verkehrssicherheit und Aufenthaltsqualität auf dem Riehler Wochenmarkt</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0333/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130910#beratung-2026-03-12-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 0219/2026 Stellungnahme zum gemeinsamen Änderungsantrag von Grünen, Linken und Volt in der Sitzung der Bezirksvertretung Nippes am 05.12.2025  (AN/1442/2025) betreffend "Stadtbahnhaltestelle Slabystraße"</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0219/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131740#vorlage</id>
+<title>Neue Vorlage AN/0454/2026: Sachstand Erhalt der Kita „An der Schanz“</title>
+<updated>2026-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0454/2026"/>
+<summary>Anfrage nach § 4 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131565#vorlage</id>
+<title>Neue Vorlage AN/0366/2026: Verbesserung der Querungssituation an der Kreuzung Riehler Tal/Hildegardisstraße/Naumannstraße</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0366/2026"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131511#vorlage</id>
+<title>Neue Vorlage AN/0333/2026: Verbesserung der Verkehrssicherheit und Aufenthaltsqualität auf dem Riehler Wochenmarkt</title>
+<updated>2026-02-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0333/2026"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130910#vorlage</id>
+<title>Neue Vorlage 0219/2026: Stellungnahme zum gemeinsamen Änderungsantrag von Grünen, Linken und Volt in der Sitzung der Bezirksvertretung Nippes am 05.12.2025  (AN/1442/2025) betreffend "Stadtbahnhaltestelle Slabystraße"</title>
+<updated>2026-02-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0219/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130997#beratung-2026-02-02-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0180/2026 Installation beheizter Einhausungen zur Erwärmung des Brückenkörpers der Zoobrücke zwecks Installation der Blitzeranlagen</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0180/2026"/>
+<summary>Entscheidung am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131077#vorlage</id>
+<title>Neue Vorlage AN/0212/2026: Aufhebung des Schließungsbeschlusses des Kölner Stadtrats vom 15.6.2023 für das Krankenhauses Holweide und die Kinderklinik Amsterdamer Straße, Erhalt der flächendeckenden Krankenhausversorgung in Köln</title>
+<updated>2026-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0212/2026"/>
+<summary>BSW Antrag nach § 3 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130830#beratung-2026-01-29-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – AN/0107/2026 Verkehrkontrollen Amsterdamer Straße</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0107/2026"/>
+<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127385#beratung-2026-01-29-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 1517/2025 Bedarfsfeststellungsbeschluss: Verkehrsuntersuchung zur Verträglichkeit einer geänderten Radverkehrsführung auf der Mülheimer Brücke – Vergabe einer freiberuflichen Leistung: MIKROSIMULATION</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1517/2025"/>
+<summary>Anhörung (BV) am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130997#vorlage</id>
+<title>Neue Vorlage AN/0180/2026: Installation beheizter Einhausungen zur Erwärmung des Brückenkörpers der Zoobrücke zwecks Installation der Blitzeranlagen</title>
+<updated>2026-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0180/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130744#beratung-2026-01-20-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert beschlossen“ – AN/0063/2026 Änderungsantrag zu TOP 3.1 Bedarfsfeststellungsbeschluss: Verkehrsuntersuchung zur Bewertung einer geänderten Radverkehrsführung auf der Mülheimer Brücke – Vergabe einer freiberuflichen Leistung: Mikrosimulation</title>
+<updated>2026-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0063/2026"/>
+<summary>Antrag / Anfrage am 2026-01-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127385#beratung-2026-01-20-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „geändert beschlossen“ – 1517/2025 Bedarfsfeststellungsbeschluss: Verkehrsuntersuchung zur Verträglichkeit einer geänderten Radverkehrsführung auf der Mülheimer Brücke – Vergabe einer freiberuflichen Leistung: MIKROSIMULATION</title>
+<updated>2026-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1517/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-01-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130830#vorlage</id>
+<title>Neue Vorlage AN/0107/2026: Verkehrkontrollen Amsterdamer Straße</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0107/2026"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130744#vorlage</id>
+<title>Neue Vorlage AN/0063/2026: Änderungsantrag zu TOP 3.1 Bedarfsfeststellungsbeschluss: Verkehrsuntersuchung zur Bewertung einer geänderten Radverkehrsführung auf der Mülheimer Brücke – Vergabe einer freiberuflichen Leistung: Mikrosimulation</title>
+<updated>2026-01-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0063/2026"/>
+<summary>SPD Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130701#vorlage</id>
+<title>Neue Vorlage AN/0044/2026: Sachstand Buslinie Innere Kanalstraße</title>
+<updated>2026-01-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0044/2026"/>
+<summary>Anfrage nach § 4 BV5 (Die Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127385#vorlage</id>
+<title>Neue Vorlage 1517/2025: Bedarfsfeststellungsbeschluss: Verkehrsuntersuchung zur Verträglichkeit einer geänderten Radverkehrsführung auf der Mülheimer Brücke – Vergabe einer freiberuflichen Leistung: MIKROSIMULATION</title>
+<updated>2026-01-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1517/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130273#vorlage</id>
+<title>Neue Vorlage AN/1442/2025: Mitteilung zur Bürgereingabe nach §24 GO NRW - Haltestelle Slabystraße, Köln-Riehl, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1442/2025"/>
+<summary>Gem. Änderungsantrag BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130273#beratung-2025-12-04-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1442/2025 Mitteilung zur Bürgereingabe nach §24 GO NRW - Haltestelle Slabystraße, Köln-Riehl, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1442/2025"/>
+<summary>Entscheidung am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130080#beratung-2025-12-04-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1384/2025 Verkehrssicherheit Xantener Straße</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1384/2025"/>
+<summary>Entscheidung am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130059#beratung-2025-12-04-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 3332/2025 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Haltestelle Slabystraße, Köln-Riehl, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3332/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130059#vorlage</id>
+<title>Neue Vorlage 3332/2025: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Haltestelle Slabystraße, Köln-Riehl, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3332/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130080#vorlage</id>
+<title>Neue Vorlage AN/1384/2025: Verkehrssicherheit Xantener Straße</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1384/2025"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128763#beratung-2025-09-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2361/2025 Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Mülheim (AN/1414/2025) betr.: "Säuberung der Treppe an der Mülheimer Brücke in Köln"</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#2361/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128763#vorlage</id>
+<title>Neue Vorlage 2361/2025: Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Mülheim (AN/1414/2025) betr.: "Säuberung der Treppe an der Mülheimer Brücke in Köln"</title>
+<updated>2025-08-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#2361/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126807#beratung-2025-07-03-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 1161/2025 Gesamtinstandsetzung Mülheimer Brücke - Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung der Stadt Köln für das Haushaltsjahr 2025</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1161/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126807#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 1161/2025 Gesamtinstandsetzung Mülheimer Brücke - Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung der Stadt Köln für das Haushaltsjahr 2025</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1161/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126807#beratung-2025-06-26-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1161/2025 Gesamtinstandsetzung Mülheimer Brücke - Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung der Stadt Köln für das Haushaltsjahr 2025</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1161/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126807#beratung-2025-06-24-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 1161/2025 Gesamtinstandsetzung Mülheimer Brücke - Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung der Stadt Köln für das Haushaltsjahr 2025</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1161/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126807#beratung-2025-06-23-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1161/2025 Gesamtinstandsetzung Mülheimer Brücke - Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung der Stadt Köln für das Haushaltsjahr 2025</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1161/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126807#vorlage</id>
+<title>Neue Vorlage 1161/2025: Gesamtinstandsetzung Mülheimer Brücke - Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung der Stadt Köln für das Haushaltsjahr 2025</title>
+<updated>2025-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1161/2025"/>
+<summary>Haushaltsrechtl. Unterrichtung d. Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125834#vorlage</id>
+<title>Neue Vorlage 0460/2025: Gesamtinstandsetzung Mülheimer Brücke – Sachstand Bauphase II</title>
+<updated>2025-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0460/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127071#beratung-2025-05-08-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 1327/2025 Sachstand geplante Erstaufnahme-Einrichtung des Landes Riehler Straße (ehemalige OFD)</title>
+<updated>2025-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1327/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127071#vorlage</id>
+<title>Neue Vorlage 1327/2025: Sachstand geplante Erstaufnahme-Einrichtung des Landes Riehler Straße (ehemalige OFD)</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#1327/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125834#beratung-2025-03-27-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 0460/2025 Gesamtinstandsetzung Mülheimer Brücke – Sachstand Bauphase II</title>
+<updated>2025-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0460/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125929#beratung-2025-03-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 0530/2025 Pilotprojekt Wiederinbetriebnahme Geschwindigkeitsüberwachung Zoobrücke</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0530/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125834#beratung-2025-03-24-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0460/2025 Gesamtinstandsetzung Mülheimer Brücke – Sachstand Bauphase II</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0460/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125834#beratung-2025-03-18-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 0460/2025 Gesamtinstandsetzung Mülheimer Brücke – Sachstand Bauphase II</title>
+<updated>2025-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0460/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125929#vorlage</id>
+<title>Neue Vorlage 0530/2025: Pilotprojekt Wiederinbetriebnahme Geschwindigkeitsüberwachung Zoobrücke</title>
+<updated>2025-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0530/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124649#vorlage</id>
+<title>Neue Vorlage 3719/2024: Bürgereingabe nach § 24 GO NRW - Mülheimer Brücke: Fahrspuren nach Abschluss der Sanierung umwidmen, LKW-Verkehr sperren, rechts-/linksrheinische Anschlusspunkte neu gestalten, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-02-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3719/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125778#vorlage</id>
+<title>Neue Vorlage AN/0199/2025: Ersetzungsantrag zu Ö.2.2, BV5-Sitzung 6.2.2025, AN 3719/2024, Mülheimer Brücke</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/0199/2025"/>
+<summary>Änderungsantrag BV5 (Grüne) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124649#beratung-2025-02-06-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 3719/2024 Bürgereingabe nach § 24 GO NRW - Mülheimer Brücke: Fahrspuren nach Abschluss der Sanierung umwidmen, LKW-Verkehr sperren, rechts-/linksrheinische Anschlusspunkte neu gestalten, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3719/2024"/>
+<summary>Entscheidung am 2025-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124649#beratung-2025-02-03-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – 3719/2024 Bürgereingabe nach § 24 GO NRW - Mülheimer Brücke: Fahrspuren nach Abschluss der Sanierung umwidmen, LKW-Verkehr sperren, rechts-/linksrheinische Anschlusspunkte neu gestalten, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3719/2024"/>
+<summary>Entscheidung am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125256#beratung-2025-01-27-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „geändert beschlossen“ – 0101/2025 Eisenbahnüberführung Innere Kanalstr. Erweiterung Baustelleneinrichtungsfläche</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0101/2025"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125256#vorlage</id>
+<title>Neue Vorlage 0101/2025: Eisenbahnüberführung Innere Kanalstr. Erweiterung Baustelleneinrichtungsfläche</title>
+<updated>2025-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0101/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124649#beratung-2024-12-09-Ausschuss%20f%C3%BCr%20B%C3%BCrgerbeteiligung%2C%20Anregungen%20und%20Beschwerden</id>
+<title>Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden: „geändert beschlossen“ – 3719/2024 Bürgereingabe nach § 24 GO NRW - Mülheimer Brücke: Fahrspuren nach Abschluss der Sanierung umwidmen, LKW-Verkehr sperren, rechts-/linksrheinische Anschlusspunkte neu gestalten, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-12-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3719/2024"/>
+<summary>Entscheidung am 2024-12-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124654#beratung-2024-12-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1631/2024 Neugestaltung und Begrünung der frei gewordenen
+ Fläche im Bereich Stammheimer Straße 98</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1631/2024"/>
+<summary>Entscheidung am 2024-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124371#beratung-2024-12-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 3548/2024 Bürgereingabe nach § 24 GO "Lärmschutz ernst nehmen - Tempo 30 für die Riehler und Neusser Straße im Agnesviertel" AZ [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3548/2024"/>
+<summary>Entscheidung am 2024-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124654#vorlage</id>
+<title>Neue Vorlage AN/1631/2024: Neugestaltung und Begrünung der frei gewordenen
+ Fläche im Bereich Stammheimer Straße 98</title>
+<updated>2024-11-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1631/2024"/>
+<summary>Gem. Antrag nach § 3 BV5 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120245#beratung-2024-11-21-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „ungeändert beschlossen“ – 0783/2024 Unterkunft für Geflüchtete Boltensternstr. 10a, 50735 Köln-Riehl hier: Einbau von Etagenküchen und Erhöhung der Waschkapazitäten</title>
+<updated>2024-11-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0783/2024"/>
+<summary>Entscheidung am 2024-11-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124371#vorlage</id>
+<title>Neue Vorlage 3548/2024: Bürgereingabe nach § 24 GO "Lärmschutz ernst nehmen - Tempo 30 für die Riehler und Neusser Straße im Agnesviertel" AZ [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3548/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120245#beratung-2024-11-12-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 0783/2024 Unterkunft für Geflüchtete Boltensternstr. 10a, 50735 Köln-Riehl hier: Einbau von Etagenküchen und Erhöhung der Waschkapazitäten</title>
+<updated>2024-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0783/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-11-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123956#beratung-2024-11-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – AN/1405/2024 Bushaltestelle "Seniorenzentrum Riehl", Zugang zum Unterstand erleichtern</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1405/2024"/>
+<summary>Entscheidung am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122729#beratung-2024-11-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 2438/2024 Gesamtinstandsetzung Mülheimer Brücke - Verzögerte Inbetriebnahme Stadtbahn</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#2438/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120245#beratung-2024-11-07-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert empfohlen“ – 0783/2024 Unterkunft für Geflüchtete Boltensternstr. 10a, 50735 Köln-Riehl hier: Einbau von Etagenküchen und Erhöhung der Waschkapazitäten</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0783/2024"/>
+<summary>Anhörung (BV) am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120245#beratung-2024-11-04-Bauausschuss</id>
+<title>Bauausschuss: „ohne Votum behandelt“ – 0783/2024 Unterkunft für Geflüchtete Boltensternstr. 10a, 50735 Köln-Riehl hier: Einbau von Etagenküchen und Erhöhung der Waschkapazitäten</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0783/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122729#beratung-2024-10-29-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 2438/2024 Gesamtinstandsetzung Mülheimer Brücke - Verzögerte Inbetriebnahme Stadtbahn</title>
+<updated>2024-10-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#2438/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-10-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122287#beratung-2024-10-29-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Alternative beschlossen“ – 2049/2024 Anregung der Bezirksvertretung Nippes betreffend "Mülheimer Brücke: Zwei Fahrspuren ausschließlich für Radverkehr"</title>
+<updated>2024-10-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#2049/2024"/>
+<summary>Entscheidung am 2024-10-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123956#vorlage</id>
+<title>Neue Vorlage AN/1405/2024: Bushaltestelle "Seniorenzentrum Riehl", Zugang zum Unterstand erleichtern</title>
+<updated>2024-10-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1405/2024"/>
+<summary>Antrag nach § 3 BV5 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120245#beratung-2024-10-08-Integrationsrat</id>
+<title>Integrationsrat: „ungeändert beschlossen“ – 0783/2024 Unterkunft für Geflüchtete Boltensternstr. 10a, 50735 Köln-Riehl hier: Einbau von Etagenküchen und Erhöhung der Waschkapazitäten</title>
+<updated>2024-10-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0783/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-10-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

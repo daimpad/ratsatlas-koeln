@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-braunsfeld</id>
 <title>Ratsatlas Köln – Braunsfeld</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Braunsfeld</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-02T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-braunsfeld.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135434#vorlage</id>
+<title>Neue Vorlage AN/1745/2026: Ergänzungsantrag zu TOP Ö 8.1.10 – Mobilstation Aachener Straße/Gürtel</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1745/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135434#beratung-2026-11-02-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „endgültig zurückgezogen“ – AN/1745/2026 Ergänzungsantrag zu TOP Ö 8.1.10 – Mobilstation Aachener Straße/Gürtel</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1745/2026"/>
+<summary>Entscheidung am 2026-11-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135208#beratung-2026-11-02-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1644/2026 Einrichtung einer Mobilstation Aachener Straße/Stadtwaldgürtel</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1644/2026"/>
+<summary>Entscheidung am 2026-11-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135177#beratung-2026-11-02-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1636/2026 Tempo 30 auf der Kitschburger Straße</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1636/2026"/>
+<summary>Entscheidung am 2026-11-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135208#vorlage</id>
+<title>Neue Vorlage AN/1644/2026: Einrichtung einer Mobilstation Aachener Straße/Stadtwaldgürtel</title>
+<updated>2026-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1644/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135178#vorlage</id>
+<title>Neue Vorlage AN/1637/2026: Überweg Kitschburger Straße</title>
+<updated>2026-10-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1637/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135177#vorlage</id>
+<title>Neue Vorlage AN/1636/2026: Tempo 30 auf der Kitschburger Straße</title>
+<updated>2026-10-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1636/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133119#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – 1641/2026 Stellungnahme der Verwaltung zu einer Anregung der Bezirksvertretung Ehrenfeld an den Rat aus der Sitzung vom 03.07.2025, Session-Nr. 1568/2025, betreffend "Reformierung des Rahmenplanungsbeirats Braunsfeld, Müngersdorf, Ehrenfeld"</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1641/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127489#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – 1568/2025 Anregung der Bezirksvertretung Ehrenfeld zu "Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld - AN/0576/2025"</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1568/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134662#beratung-2026-09-28-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – AN/1448/2026 Einhaltung von Tempo 30 auf der Friedrich-Schmidt-Straße zwischen Hültzplatz und Stadtwaldgürtel</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1448/2026"/>
+<summary>Entscheidung am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134406#beratung-2026-09-28-Ausschuss%20f%C3%BCr%20B%C3%BCrgerbeteiligung%2C%20Anregungen%20und%20Beschwerden</id>
+<title>Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden: „Kenntnis genommen“ – 2453/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Kitschburger Straße dauerhaft Autofrei, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#2453/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134540#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert beschlossen“ – AN/1378/2026 Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1378/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134505#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „endgültig abgelehnt“ – AN/1355/2026 Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1355/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134505#vorlage</id>
+<title>Neue Vorlage AN/1355/2026: Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1355/2026"/>
+<summary>FDP/KSG Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134662#vorlage</id>
+<title>Neue Vorlage AN/1448/2026: Einhaltung von Tempo 30 auf der Friedrich-Schmidt-Straße zwischen Hültzplatz und Stadtwaldgürtel</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1448/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134540#vorlage</id>
+<title>Neue Vorlage AN/1378/2026: Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1378/2026"/>
+<summary>Gem. Antrag nach § 3 (Rat) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134372#vorlage</id>
+<title>Neue Vorlage 2430/2026: Antrag auf Befreiung von den Verbotsvorschriften der Ordnungsbehördlichen Verordnung zum Schutz von Naturdenkmälern im Gebiet der Stadt Köln (NDI-VO) gem. § 67 Abs. 1 Nr. 2 BNatSchG: NDI 304.01, Zerreiche, Voigtelstr. 2, Braunsfeld</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#2430/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134406#vorlage</id>
+<title>Neue Vorlage 2453/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Kitschburger Straße dauerhaft Autofrei, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#2453/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133986#vorlage</id>
+<title>Neue Vorlage 2118/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Pflasterschleif-Verfahren zur Herstellung der Barrierefreiheit und Fahrradfreundlichkeit in der Christian-Gau-Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-07-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#2118/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-07-02-Rat</id>
+<title>Rat: „geändert beschlossen“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3070/2025"/>
+<summary>Entscheidung am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133757#vorlage</id>
+<title>Neue Vorlage AN/1182/2026: Kurzfristige Maßnahmen zur Verkehrssicherheit auf der Stolberger Straße in Köln-Braunsfeld</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1182/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133757#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1182/2026 Kurzfristige Maßnahmen zur Verkehrssicherheit auf der Stolberger Straße in Köln-Braunsfeld</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1182/2026"/>
+<summary>Entscheidung am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133480#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – AN/1044/2026 Tempo 30 Goethestraße zwischen Bahnhof Lövenich und Aachener Straße</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1044/2026"/>
+<summary>Entscheidung am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133473#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1038/2026 Zebrastreifen Stolberger Straße im Bereich der Schulen</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1038/2026"/>
+<summary>Entscheidung am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133119#beratung-2026-06-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1641/2026 Stellungnahme der Verwaltung zu einer Anregung der Bezirksvertretung Ehrenfeld an den Rat aus der Sitzung vom 03.07.2025, Session-Nr. 1568/2025, betreffend "Reformierung des Rahmenplanungsbeirats Braunsfeld, Müngersdorf, Ehrenfeld"</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1641/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133119#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 1641/2026 Stellungnahme der Verwaltung zu einer Anregung der Bezirksvertretung Ehrenfeld an den Rat aus der Sitzung vom 03.07.2025, Session-Nr. 1568/2025, betreffend "Reformierung des Rahmenplanungsbeirats Braunsfeld, Müngersdorf, Ehrenfeld"</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1641/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132528#beratung-2026-06-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1238/2026 Sanierung eines Teilstücks des Radweges auf dem Melatengürtel</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1238/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert empfohlen“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3070/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133560#vorlage</id>
+<title>Neue Vorlage 1847/2026: Nutzungsänderung eines Hochhauses in ein Beherbergungsbetrieb (Boarding House) auf der Eupener Str. 137</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1847/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133480#vorlage</id>
+<title>Neue Vorlage AN/1044/2026: Tempo 30 Goethestraße zwischen Bahnhof Lövenich und Aachener Straße</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1044/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133473#vorlage</id>
+<title>Neue Vorlage AN/1038/2026: Zebrastreifen Stolberger Straße im Bereich der Schulen</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1038/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133119#vorlage</id>
+<title>Neue Vorlage 1641/2026: Stellungnahme der Verwaltung zu einer Anregung der Bezirksvertretung Ehrenfeld an den Rat aus der Sitzung vom 03.07.2025, Session-Nr. 1568/2025, betreffend "Reformierung des Rahmenplanungsbeirats Braunsfeld, Müngersdorf, Ehrenfeld"</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1641/2026"/>
+<summary>Stellungnahme zu e. Antrag (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132528#beratung-2026-06-16-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Kenntnis genommen“ – 1238/2026 Sanierung eines Teilstücks des Radweges auf dem Melatengürtel</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1238/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-06-16-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „mit Änderungen empfohlen“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3070/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132528#vorlage</id>
+<title>Neue Vorlage 1238/2026: Sanierung eines Teilstücks des Radweges auf dem Melatengürtel</title>
+<updated>2026-05-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1238/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-05-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ohne Votum behandelt“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3070/2025"/>
+<summary>Anhörung (BV) am 2026-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131403#beratung-2026-05-07-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „ungeändert beschlossen“ – 0531/2026 Aufhebung des Einleitungsbeschlusses zur Teilaufhebung des Bebauungsplanes Nr.63450/03 Arbeitstitel: Maarweg/Scheidtweilerstraße in Köln-Braunsfeld</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0531/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132687#vorlage</id>
+<title>Neue Vorlage AN/0762/2026: Ergänzungsantrag 5 Stellplätze im Bereich der Einmündung Stolberger Straße in den Kreisverkehr</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0762/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132687#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „endgültig abgelehnt“ – AN/0762/2026 Ergänzungsantrag 5 Stellplätze im Bereich der Einmündung Stolberger Straße in den Kreisverkehr</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0762/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132680#vorlage</id>
+<title>Neue Vorlage AN/0758/2026: Ergänzungsantrag 4 Aachener Straße Südseite</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0758/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132680#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „endgültig abgelehnt“ – AN/0758/2026 Ergänzungsantrag 4 Aachener Straße Südseite</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0758/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132678#vorlage</id>
+<title>Neue Vorlage AN/0756/2026: Ergänzungsantrag 2 Baubeschluss Neubau Anschluss Militärring an die Stolberger Straße , hier Aachender Straße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0756/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132678#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0756/2026 Ergänzungsantrag 2 Baubeschluss Neubau Anschluss Militärring an die Stolberger Straße , hier Aachender Straße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0756/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132675#vorlage</id>
+<title>Neue Vorlage AN/0755/2026: Ergänzungsantrag 1 Anschluss Stolberger Straße Bedarfsampel und sicherer Radweg</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0755/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132675#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0755/2026 Ergänzungsantrag 1 Anschluss Stolberger Straße Bedarfsampel und sicherer Radweg</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0755/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 0880/2026 Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0880/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131403#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 0531/2026 Aufhebung des Einleitungsbeschlusses zur Teilaufhebung des Bebauungsplanes Nr.63450/03 Arbeitstitel: Maarweg/Scheidtweilerstraße in Köln-Braunsfeld</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0531/2026"/>
+<summary>Anhörung (BV) am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3070/2025"/>
+<summary>Anhörung (BV) am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-04-28-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ohne Votum behandelt“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3070/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-04-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132329#vorlage</id>
+<title>Neue Vorlage AN/0611/2026: Antrag Zugangspoller Stadtwald Friedrich-Schmidt-Straße</title>
+<updated>2026-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0611/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#vorlage</id>
+<title>Neue Vorlage 3070/2025: Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-04-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3070/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#vorlage</id>
+<title>Neue Vorlage 0880/2026: Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0880/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131403#vorlage</id>
+<title>Neue Vorlage 0531/2026: Aufhebung des Einleitungsbeschlusses zur Teilaufhebung des Bebauungsplanes Nr.63450/03 Arbeitstitel: Maarweg/Scheidtweilerstraße in Köln-Braunsfeld</title>
+<updated>2026-03-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0531/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129599#beratung-2026-01-26-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 2955/2025 Bürgereingabe gem. §24 GO, Umgestaltung öffentlicher Raum Ecke Kitschburger Straße / Aachener Straße (Az. [Hausnummer ausgelassen]/[Hausnummer ausgelassen])</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#2955/2025"/>
+<summary>Entscheidung am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129599#vorlage</id>
+<title>Neue Vorlage 2955/2025: Bürgereingabe gem. §24 GO, Umgestaltung öffentlicher Raum Ecke Kitschburger Straße / Aachener Straße (Az. [Hausnummer ausgelassen]/[Hausnummer ausgelassen])</title>
+<updated>2025-12-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#2955/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129143#beratung-2025-09-01-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – AN/1173/2025 Verkehrssicherheit an der Aachener Straße zwischen Maarweg und Eupener Straße</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1173/2025"/>
+<summary>Entscheidung am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128360#beratung-2025-09-01-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 2087/2025 Mitteilung zur Bürgereingabe - Spielplatz Pauliplatz, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#2087/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129143#vorlage</id>
+<title>Neue Vorlage AN/1173/2025: Verkehrssicherheit an der Aachener Straße zwischen Maarweg und Eupener Straße</title>
+<updated>2025-08-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1173/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127489#beratung-2025-07-03-Rat</id>
+<title>Rat: „verwiesen in nachfolgende Gremien (ohne Rücklauf)“ – 1568/2025 Anregung der Bezirksvertretung Ehrenfeld zu "Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld - AN/0576/2025"</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1568/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127318#vorlage</id>
+<title>Neue Vorlage 1466/2025: Beschluss über die Aufstellung eines Bebauungsplans und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung Arbeitstitel: Oskar-Jäger-Straße südlich Low Line in Köln-Ehrenfeld/Braunsfeld</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1466/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127318#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1466/2025 Beschluss über die Aufstellung eines Bebauungsplans und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung Arbeitstitel: Oskar-Jäger-Straße südlich Low Line in Köln-Ehrenfeld/Braunsfeld</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1466/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127318#beratung-2025-06-30-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – 1466/2025 Beschluss über die Aufstellung eines Bebauungsplans und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung Arbeitstitel: Oskar-Jäger-Straße südlich Low Line in Köln-Ehrenfeld/Braunsfeld</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1466/2025"/>
+<summary>Anhörung (BV) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126507#beratung-2025-06-30-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 0934/2025 Aufhebung des Aufstellungsbeschlusses zur 2. Änderung des Bebauungsplanes Nr. 63450/03 (63450/03-00-02) Arbeitstitel: Oskar-Jäger-Straße 2. Änderung in Köln-Braunsfeld/Ehrenfeld</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0934/2025"/>
+<summary>Anhörung (BV) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127318#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 1466/2025 Beschluss über die Aufstellung eines Bebauungsplans und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung Arbeitstitel: Oskar-Jäger-Straße südlich Low Line in Köln-Ehrenfeld/Braunsfeld</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1466/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126507#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 0934/2025 Aufhebung des Aufstellungsbeschlusses zur 2. Änderung des Bebauungsplanes Nr. 63450/03 (63450/03-00-02) Arbeitstitel: Oskar-Jäger-Straße 2. Änderung in Köln-Braunsfeld/Ehrenfeld</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0934/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128360#vorlage</id>
+<title>Neue Vorlage 2087/2025: Mitteilung zur Bürgereingabe - Spielplatz Pauliplatz, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#2087/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127903#beratung-2025-06-23-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0788/2025 Barrierefreie Überquerung der Straßen im Kreuzungsbereich Christian-Gau-Str. / Hermann-Pflaume-Str.</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0788/2025"/>
+<summary>Entscheidung am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127318#beratung-2025-06-23-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – 1466/2025 Beschluss über die Aufstellung eines Bebauungsplans und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung Arbeitstitel: Oskar-Jäger-Straße südlich Low Line in Köln-Ehrenfeld/Braunsfeld</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1466/2025"/>
+<summary>Anhörung (BV) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126507#beratung-2025-06-23-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 0934/2025 Aufhebung des Aufstellungsbeschlusses zur 2. Änderung des Bebauungsplanes Nr. 63450/03 (63450/03-00-02) Arbeitstitel: Oskar-Jäger-Straße 2. Änderung in Köln-Braunsfeld/Ehrenfeld</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0934/2025"/>
+<summary>Anhörung (BV) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127489#vorlage</id>
+<title>Neue Vorlage 1568/2025: Anregung der Bezirksvertretung Ehrenfeld zu "Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld - AN/0576/2025"</title>
+<updated>2025-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1568/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127318#beratung-2025-06-17-Rahmenplanungsbeirat%20Braunsfeld%20%2F%20M%C3%BCngersdorf%20%2F%20Ehrenfeld</id>
+<title>Rahmenplanungsbeirat Braunsfeld / Müngersdorf / Ehrenfeld: „geändert beschlossen“ – 1466/2025 Beschluss über die Aufstellung eines Bebauungsplans und zur Durchführung der frühzeitigen Öffentlichkeitsbeteiligung Arbeitstitel: Oskar-Jäger-Straße südlich Low Line in Köln-Ehrenfeld/Braunsfeld</title>
+<updated>2025-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1466/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126507#beratung-2025-06-17-Rahmenplanungsbeirat%20Braunsfeld%20%2F%20M%C3%BCngersdorf%20%2F%20Ehrenfeld</id>
+<title>Rahmenplanungsbeirat Braunsfeld / Müngersdorf / Ehrenfeld: „ungeändert empfohlen“ – 0934/2025 Aufhebung des Aufstellungsbeschlusses zur 2. Änderung des Bebauungsplanes Nr. 63450/03 (63450/03-00-02) Arbeitstitel: Oskar-Jäger-Straße 2. Änderung in Köln-Braunsfeld/Ehrenfeld</title>
+<updated>2025-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0934/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127903#vorlage</id>
+<title>Neue Vorlage AN/0788/2025: Barrierefreie Überquerung der Straßen im Kreuzungsbereich Christian-Gau-Str. / Hermann-Pflaume-Str.</title>
+<updated>2025-06-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0788/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126507#beratung-2025-05-22-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „unter Vorbehalt beschlossen“ – 0934/2025 Aufhebung des Aufstellungsbeschlusses zur 2. Änderung des Bebauungsplanes Nr. 63450/03 (63450/03-00-02) Arbeitstitel: Oskar-Jäger-Straße 2. Änderung in Köln-Braunsfeld/Ehrenfeld</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0934/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126667#beratung-2025-05-20-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „ungeändert beschlossen“ – 1044/2025 Mittelfreigabe "Projektkostenzuschuss Reallabor (Haus am Maarweg)"</title>
+<updated>2025-05-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1044/2025"/>
+<summary>Genehmigung (DE/EilE) am 2025-05-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127186#beratung-2025-05-19-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – AN/0576/2025 Gemeinsamer Antrag der Fraktion Bündnis [Hausnummer ausgelassen]/Die Grünen, der Fraktion Die Linke/DIE PARTEI und Klimafreunde, betr.: Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0576/2025"/>
+<summary>Antrag / Anfrage am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127130#beratung-2025-05-19-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0552/2025 Verbesserung Fußgängerüberquerung Maarweg zwischen Aachener und Stolberger</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0552/2025"/>
+<summary>Entscheidung am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127112#beratung-2025-05-19-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0542/2025 Reformierung des Rahmenplanungsbeirates Braunsfeld / Müngersdorf /Ehrenfeld</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0542/2025"/>
+<summary>Entscheidung am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126667#vorlage</id>
+<title>Neue Vorlage 1044/2025: Mittelfreigabe "Projektkostenzuschuss Reallabor (Haus am Maarweg)"</title>
+<updated>2025-05-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#1044/2025"/>
+<summary>Dringlichkeitsvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126507#vorlage</id>
+<title>Neue Vorlage 0934/2025: Aufhebung des Aufstellungsbeschlusses zur 2. Änderung des Bebauungsplanes Nr. 63450/03 (63450/03-00-02) Arbeitstitel: Oskar-Jäger-Straße 2. Änderung in Köln-Braunsfeld/Ehrenfeld</title>
+<updated>2025-05-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0934/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127186#vorlage</id>
+<title>Neue Vorlage AN/0576/2025: Gemeinsamer Antrag der Fraktion Bündnis [Hausnummer ausgelassen]/Die Grünen, der Fraktion Die Linke/DIE PARTEI und Klimafreunde, betr.: Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld</title>
+<updated>2025-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0576/2025"/>
+<summary>Gem. Antrag nach § 3 BV4 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120184#beratung-2025-05-12-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 0751/2024 Stellungnahme zum Antrag AN/1970/2023 der Ratsgruppe KLIMA FREUNDE &amp; GUT betreffend: "Bestandsschutz der Kleingartenanlage „Kölsche Kiwis“ am Maarweg"</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0751/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118426#beratung-2025-05-12-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Sache ist erledigt“ – AN/1970/2023 Bestandsschutz der Kleingartenanlage „Kölsche Kiwis“ am Maarweg</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1970/2023"/>
+<summary>Antrag / Anfrage am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127130#vorlage</id>
+<title>Neue Vorlage AN/0552/2025: Verbesserung Fußgängerüberquerung Maarweg zwischen Aachener und Stolberger</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0552/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127112#vorlage</id>
+<title>Neue Vorlage AN/0542/2025: Reformierung des Rahmenplanungsbeirates Braunsfeld / Müngersdorf /Ehrenfeld</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0542/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124474#beratung-2025-03-27-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 3613/2024 Aufhebung des Aufstellungsbeschlusses zur 3. Änderung des Bebauungsplanes Nr. 62450/04 (62450/04-03)</title>
+<updated>2025-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3613/2024"/>
+<summary>Entscheidung am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120184#beratung-2025-03-27-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 0751/2024 Stellungnahme zum Antrag AN/1970/2023 der Ratsgruppe KLIMA FREUNDE &amp; GUT betreffend: "Bestandsschutz der Kleingartenanlage „Kölsche Kiwis“ am Maarweg"</title>
+<updated>2025-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0751/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118426#beratung-2025-03-27-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Sache ist erledigt“ – AN/1970/2023 Bestandsschutz der Kleingartenanlage „Kölsche Kiwis“ am Maarweg</title>
+<updated>2025-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/1970/2023"/>
+<summary>Antrag / Anfrage am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126151#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0265/2025 Schulwegsicherung Alter Militärring</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0265/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125981#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 0574/2025 Beantwortung der Anfrage AN/2062/2023 der Fraktion Bündnis 90/Die Grünen bezüglich Baumfällungen an der Gemeinschaftsgrundschule Braunsfeld, Geilenkircher Straße 52, 50933 Köln</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0574/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 0163/2025 Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0163/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124474#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 3613/2024 Aufhebung des Aufstellungsbeschlusses zur 3. Änderung des Bebauungsplanes Nr. 62450/04 (62450/04-03)</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3613/2024"/>
+<summary>Anhörung (BV) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#beratung-2025-03-18-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 0163/2025 Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0163/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#beratung-2025-03-11-Rahmenplanungsbeirat%20Braunsfeld%20%2F%20M%C3%BCngersdorf%20%2F%20Ehrenfeld</id>
+<title>Rahmenplanungsbeirat Braunsfeld / Müngersdorf / Ehrenfeld: „Kenntnis genommen“ – 0163/2025 Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0163/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126151#vorlage</id>
+<title>Neue Vorlage AN/0265/2025: Schulwegsicherung Alter Militärring</title>
+<updated>2025-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#AN/0265/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125981#vorlage</id>
+<title>Neue Vorlage 0574/2025: Beantwortung der Anfrage AN/2062/2023 der Fraktion Bündnis 90/Die Grünen bezüglich Baumfällungen an der Gemeinschaftsgrundschule Braunsfeld, Geilenkircher Straße 52, 50933 Köln</title>
+<updated>2025-02-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0574/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124474#beratung-2025-02-06-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 3613/2024 Aufhebung des Aufstellungsbeschlusses zur 3. Änderung des Bebauungsplanes Nr. 62450/04 (62450/04-03)</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#3613/2024"/>
+<summary>Entscheidung am 2025-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#beratung-2025-02-03-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 0163/2025 Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0163/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#vorlage</id>
+<title>Neue Vorlage 0163/2025: Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0163/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125217#beratung-2025-01-27-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „zurückgestellt“ – 0068/2025 Radwegesanierung entlang der Militärringstraße</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:braunsfeld#0068/2025"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
 </feed>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/an-0123-2026</id>
+<title>Vorlage AN/0123/2026: Änderungsantrag zur Vorlage 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd (zu Ziffer 2)</title>
+<subtitle>Verlauf der Vorlage AN/0123/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/an-0123-2026.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0123/2026"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130865#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Sache ist erledigt“ – AN/0123/2026 Änderungsantrag zur Vorlage 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd (zu Ziffer 2)</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0123/2026"/>
+<summary>Antrag / Anfrage am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130865#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – AN/0123/2026 Änderungsantrag zur Vorlage 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd (zu Ziffer 2)</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0123/2026"/>
+<summary>Antrag / Anfrage am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130865#vorlage</id>
+<title>Neue Vorlage AN/0123/2026: Änderungsantrag zur Vorlage 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd (zu Ziffer 2)</title>
+<updated>2026-05-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0123/2026"/>
+<summary>Volt Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+</feed>

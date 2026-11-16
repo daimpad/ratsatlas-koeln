@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0827-2026</id>
+<title>Vorlage 0827/2026: Beantwortung einer schriftlichen Anfrage der Fraktion BÜNDNIS 90/DIE GRÜNEN aus der Sitzung am 24.03.2025 betr.: "Errichtung einer Ladezone vor dem Postshop auf der Rodenkirchener Hauptstraße" (AN/0261/2025)</title>
+<subtitle>Verlauf der Vorlage 0827/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0827-2026.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#0827/2026"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131952#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0827/2026 Beantwortung einer schriftlichen Anfrage der Fraktion BÜNDNIS 90/DIE GRÜNEN aus der Sitzung am 24.03.2025 betr.: "Errichtung einer Ladezone vor dem Postshop auf der Rodenkirchener Hauptstraße" (AN/0261/2025)</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#0827/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131952#vorlage</id>
+<title>Neue Vorlage 0827/2026: Beantwortung einer schriftlichen Anfrage der Fraktion BÜNDNIS 90/DIE GRÜNEN aus der Sitzung am 24.03.2025 betr.: "Errichtung einer Ladezone vor dem Postshop auf der Rodenkirchener Hauptstraße" (AN/0261/2025)</title>
+<updated>2026-03-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#0827/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131952#folge-AN%2F0261%2F2025</id>
+<title>Anfrage nach § 4 BV2 (Grüne) AN/0261/2025: Betr: Einrichtung einer Ladezone vor dem Postshop auf der Rodenkirchener Hauptstraße</title>
+<updated>2025-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#0827/2026"/>
+<summary>Folgevorlage zu 0827/2026</summary>
+</entry>
+</feed>

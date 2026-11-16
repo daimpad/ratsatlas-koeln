@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-meschenich</id>
 <title>Ratsatlas Köln – Meschenich</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Meschenich</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-16T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-meschenich.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135454#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3045/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssituation „Auf der Ronne“ in Köln-Meschenich, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#3045/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135364#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1716/2026 Schulstraße auf dem Johannesweg in Höhenhaus</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1716/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135454#vorlage</id>
+<title>Neue Vorlage 3045/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssituation „Auf der Ronne“ in Köln-Meschenich, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#3045/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135364#vorlage</id>
+<title>Neue Vorlage AN/1716/2026: Schulstraße auf dem Johannesweg in Höhenhaus</title>
+<updated>2026-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1716/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134218#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2314/2026 Mitteilung über aktualisierte Vormerkliste Schulstraße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2314/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134218#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2314/2026 Mitteilung über aktualisierte Vormerkliste Schulstraße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2314/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134394#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2445/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Bürgereingabe nach § 24 GO– Umwidmung der Annastraße in eine ‚Schulstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2445/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134218#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2314/2026 Mitteilung über aktualisierte Vormerkliste Schulstraße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2314/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134394#vorlage</id>
+<title>Neue Vorlage 2445/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Bürgereingabe nach § 24 GO– Umwidmung der Annastraße in eine ‚Schulstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2445/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134218#vorlage</id>
+<title>Neue Vorlage 2314/2026: Mitteilung über aktualisierte Vormerkliste Schulstraße</title>
+<updated>2026-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2314/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133124#beratung-2026-06-25-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 1643/2026 Teileinziehung der Lochnerstraße in Köln-Neustadt/Süd - Schulstraße</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1643/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133115#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 1637/2026 Teileinziehung Schulstraße Kretzerstraße</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1637/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133284#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 1731/2026 Thomas Begegnungsstätte in Köln-Meschenich, Beirat</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1731/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133270#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0922/2026 Sport- und Freizeitfeld in Meschenich</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0922/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-18-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133284#vorlage</id>
+<title>Neue Vorlage 1731/2026: Thomas Begegnungsstätte in Köln-Meschenich, Beirat</title>
+<updated>2026-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1731/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133270#vorlage</id>
+<title>Neue Vorlage AN/0922/2026: Sport- und Freizeitfeld in Meschenich</title>
+<updated>2026-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0922/2026"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#vorlage</id>
+<title>Neue Vorlage 2002/2025: Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133124#vorlage</id>
+<title>Neue Vorlage 1643/2026: Teileinziehung der Lochnerstraße in Köln-Neustadt/Süd - Schulstraße</title>
+<updated>2026-06-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1643/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133115#vorlage</id>
+<title>Neue Vorlage 1637/2026: Teileinziehung Schulstraße Kretzerstraße</title>
+<updated>2026-06-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1637/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130792#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 0160/2026 Kleinräumige Analyse und Bewertung der Herausforderungen und Ziele der Sozialplanung für das Sozialraumgebiet Meschenich/Rondorf</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0160/2026"/>
+<summary>Entscheidung am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130792#vorlage</id>
+<title>Neue Vorlage 0160/2026: Kleinräumige Analyse und Bewertung der Herausforderungen und Ziele der Sozialplanung für das Sozialraumgebiet Meschenich/Rondorf</title>
+<updated>2026-04-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0160/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130585#beratung-2026-01-19-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 0042/2026 Beantwortung einer mündl. Anfrage von Frau Aengenvoort (CDU) in der Sitzung des ASW am 01.12.2025 zu TOP 9 betreffend "Sachstand zur schimmelbefallenden Rückwand in der Mensaküche der Schule IM Süden (GGS Kettelerstr.)"</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0042/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-01-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130585#vorlage</id>
+<title>Neue Vorlage 0042/2026: Beantwortung einer mündl. Anfrage von Frau Aengenvoort (CDU) in der Sitzung des ASW am 01.12.2025 zu TOP 9 betreffend "Sachstand zur schimmelbefallenden Rückwand in der Mensaküche der Schule IM Süden (GGS Kettelerstr.)"</title>
+<updated>2026-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0042/2026"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129901#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3233/2025 Neubau von 19 Einfamilienhäusern auf dem Grundstück Brühler Landstr. 495</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#3233/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129901#vorlage</id>
+<title>Neue Vorlage 3233/2025: Neubau von 19 Einfamilienhäusern auf dem Grundstück Brühler Landstr. 495</title>
+<updated>2025-11-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#3233/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129112#beratung-2025-09-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/1153/2025 Integriertes Gestaltungs- und Verkehrskonzept für den Ortsteil Meschenich</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1153/2025"/>
+<summary>Antrag / Anfrage am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129112#vorlage</id>
+<title>Neue Vorlage AN/1153/2025: Integriertes Gestaltungs- und Verkehrskonzept für den Ortsteil Meschenich</title>
+<updated>2025-08-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1153/2025"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125703#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0371/2025 Planungsaufnahme und Baubeschluss zur Erstellung eines Erweiterungsbaus für die Gemeinschaftsgrundschule (GGS), Kettelerstraße 14, 50997 Köln-Meschenich</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0371/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125703#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 0371/2025 Planungsaufnahme und Baubeschluss zur Erstellung eines Erweiterungsbaus für die Gemeinschaftsgrundschule (GGS), Kettelerstraße 14, 50997 Köln-Meschenich</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0371/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125703#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0371/2025 Planungsaufnahme und Baubeschluss zur Erstellung eines Erweiterungsbaus für die Gemeinschaftsgrundschule (GGS), Kettelerstraße 14, 50997 Köln-Meschenich</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0371/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127735#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1730/2025 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen am 11.03.2024 betr. "Schulstraße Rosenzweigweg" (AN/0362/2024)</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1730/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125703#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 0371/2025 Planungsaufnahme und Baubeschluss zur Erstellung eines Erweiterungsbaus für die Gemeinschaftsgrundschule (GGS), Kettelerstraße 14, 50997 Köln-Meschenich</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0371/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125703#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 0371/2025 Planungsaufnahme und Baubeschluss zur Erstellung eines Erweiterungsbaus für die Gemeinschaftsgrundschule (GGS), Kettelerstraße 14, 50997 Köln-Meschenich</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0371/2025"/>
+<summary>Anhörung (BV) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128188#beratung-2025-06-26-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1998/2025 Schulstraße am Standort Kretzer Straße in Köln-Nippes</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1998/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128184#beratung-2025-06-26-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 1995/2025 Schulstraße am Standort Lochner Straße Köln-Innenstadt</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1995/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128191#beratung-2025-06-23-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2001/2025 Schulstraße am Standort Horststraße in Köln-Mülheim</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2001/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125703#vorlage</id>
+<title>Neue Vorlage 0371/2025: Planungsaufnahme und Baubeschluss zur Erstellung eines Erweiterungsbaus für die Gemeinschaftsgrundschule (GGS), Kettelerstraße 14, 50997 Köln-Meschenich</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0371/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128191#vorlage</id>
+<title>Neue Vorlage 2001/2025: Schulstraße am Standort Horststraße in Köln-Mülheim</title>
+<updated>2025-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2001/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128188#vorlage</id>
+<title>Neue Vorlage 1998/2025: Schulstraße am Standort Kretzer Straße in Köln-Nippes</title>
+<updated>2025-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1998/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128184#vorlage</id>
+<title>Neue Vorlage 1995/2025: Schulstraße am Standort Lochner Straße Köln-Innenstadt</title>
+<updated>2025-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1995/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127735#vorlage</id>
+<title>Neue Vorlage 1730/2025: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen am 11.03.2024 betr. "Schulstraße Rosenzweigweg" (AN/0362/2024)</title>
+<updated>2025-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1730/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126750#beratung-2025-05-05-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „ungeändert beschlossen“ – 1109/2025 Neubau Regenrückhaltebecken "Am Kradepohl" durch StEB, LB 2.13 "Kradepohl, Meschenich", Bezirk 2 Rodenkirchen. Hier: Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1109/2025"/>
+<summary>Entscheidung am 2025-05-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126750#vorlage</id>
+<title>Neue Vorlage 1109/2025: Neubau Regenrückhaltebecken "Am Kradepohl" durch StEB, LB 2.13 "Kradepohl, Meschenich", Bezirk 2 Rodenkirchen. Hier: Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1109/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126179#beratung-2025-03-24-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0280/2025 Holweide – Einrichtung einer Schulstraße für die KGS Neufelder</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0280/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123074#beratung-2025-03-24-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Sache ist erledigt“ – AN/1145/2024 Freischneiden des Fuß-und Radweges zwischen Immendorf und Meschenich</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1145/2024"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126179#vorlage</id>
+<title>Neue Vorlage AN/0280/2025: Holweide – Einrichtung einer Schulstraße für die KGS Neufelder</title>
+<updated>2025-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0280/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124622#beratung-2024-12-12-Rat</id>
+<title>Rat: „endgültig abgelehnt“ – AN/1618/2024 StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-12-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1618/2024"/>
+<summary>Antrag / Anfrage am 2024-12-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123186#beratung-2024-12-12-Rat</id>
+<title>Rat: „geändert beschlossen“ – 2742/2024 StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-12-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2742/2024"/>
+<summary>Entscheidung am 2024-12-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125001#vorlage</id>
+<title>Neue Vorlage AN/1748/2024: Haltestelle „Meschenich Nord„ als Umsteigestation nördlich der Straße „Am Kölnberg“ ausbauen!</title>
+<updated>2024-12-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1748/2024"/>
+<summary>Die Linke. Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125001#beratung-2024-12-10-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „endgültig abgelehnt“ – AN/1748/2024 Haltestelle „Meschenich Nord„ als Umsteigestation nördlich der Straße „Am Kölnberg“ ausbauen!</title>
+<updated>2024-12-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1748/2024"/>
+<summary>Antrag / Anfrage am 2024-12-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124969#beratung-2024-12-10-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „endgültig abgelehnt“ – AN/1734/2024 Änderungsantrag zu TOP 1.1 - StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich (2742/2024)</title>
+<updated>2024-12-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1734/2024"/>
+<summary>Entscheidung am 2024-12-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123186#beratung-2024-12-10-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „mit Änderungen empfohlen“ – 2742/2024 StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-12-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2742/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-12-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124969#vorlage</id>
+<title>Neue Vorlage AN/1734/2024: Änderungsantrag zu TOP 1.1 - StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich (2742/2024)</title>
+<updated>2024-12-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1734/2024"/>
+<summary>SPD Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124834#beratung-2024-12-05-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Sache ist erledigt“ – AN/1687/2024 Haltestelle „Meschenich Nord„ als Umsteigestation nördlich der Straße „Am Kölnberg“ ausbauen!</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1687/2024"/>
+<summary>Antrag / Anfrage am 2024-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124622#beratung-2024-12-05-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ohne Votum behandelt“ – AN/1618/2024 StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1618/2024"/>
+<summary>Antrag / Anfrage am 2024-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123186#beratung-2024-12-05-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ohne Votum behandelt“ – 2742/2024 StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2742/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124834#vorlage</id>
+<title>Neue Vorlage AN/1687/2024: Haltestelle „Meschenich Nord„ als Umsteigestation nördlich der Straße „Am Kölnberg“ ausbauen!</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1687/2024"/>
+<summary>Die Linke. Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124622#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – AN/1618/2024 StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1618/2024"/>
+<summary>Antrag / Anfrage am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123581#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 2972/2024 Umgestaltungs- und Entwässerungsmaßnahme Festplatz Meschenich</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2972/2024"/>
+<summary>Entscheidung am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123186#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – 2742/2024 StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2742/2024"/>
+<summary>Anhörung (BV) am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124622#vorlage</id>
+<title>Neue Vorlage AN/1618/2024: StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1618/2024"/>
+<summary>FDP/KSG Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124737#beratung-2024-11-26-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Sache ist erledigt“ – AN/1662/2024 Haltestelle „Meschenich Nord“ als Umsteigestation nördlich der Straße „Am Kölnberg“ ausbauen!</title>
+<updated>2024-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1662/2024"/>
+<summary>Antrag / Anfrage am 2024-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124622#beratung-2024-11-26-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Sache ist erledigt“ – AN/1618/2024 StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1618/2024"/>
+<summary>Antrag / Anfrage am 2024-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123186#beratung-2024-11-26-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ohne Votum behandelt“ – 2742/2024 StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2742/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124737#vorlage</id>
+<title>Neue Vorlage AN/1662/2024: Haltestelle „Meschenich Nord“ als Umsteigestation nördlich der Straße „Am Kölnberg“ ausbauen!</title>
+<updated>2024-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1662/2024"/>
+<summary>Die Linke. Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124373#beratung-2024-11-25-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 3549/2024 Beantwortung einer mündl. Anfrage von Frau Hölzing (Bündnis90/Die Grünen) in der Sitzung des Ausschusses für Schule und Weiterbildung am 22.04.2024 zu TOP 2 hier: bezgl. Containersituation an der Grundschule IM Süden</title>
+<updated>2024-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#3549/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123581#vorlage</id>
+<title>Neue Vorlage 2972/2024: Umgestaltungs- und Entwässerungsmaßnahme Festplatz Meschenich</title>
+<updated>2024-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2972/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124373#vorlage</id>
+<title>Neue Vorlage 3549/2024: Beantwortung einer mündl. Anfrage von Frau Hölzing (Bündnis90/Die Grünen) in der Sitzung des Ausschusses für Schule und Weiterbildung am 22.04.2024 zu TOP 2 hier: bezgl. Containersituation an der Grundschule IM Süden</title>
+<updated>2024-11-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#3549/2024"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123186#vorlage</id>
+<title>Neue Vorlage 2742/2024: StadtBahn Süd – Festlegung des vorläufigen Endhaltepunktes in Meschenich</title>
+<updated>2024-11-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2742/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123100#beratung-2024-09-19-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1157/2024 Einrichtung eines temporären Durchfahrtverbotes im Niehler Kirchweg (Schulstraße)</title>
+<updated>2024-09-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1157/2024"/>
+<summary>Entscheidung am 2024-09-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123100#vorlage</id>
+<title>Neue Vorlage AN/1157/2024: Einrichtung eines temporären Durchfahrtverbotes im Niehler Kirchweg (Schulstraße)</title>
+<updated>2024-09-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1157/2024"/>
+<summary>Gem. Antrag nach § 3 BV5 (GUT/Klima) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123074#vorlage</id>
+<title>Neue Vorlage AN/1145/2024: Freischneiden des Fuß-und Radweges zwischen Immendorf und Meschenich</title>
+<updated>2024-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1145/2024"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121789#beratung-2024-06-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/0827/2024 Prüf-AT „Planfreie Querung-Radweg KP Entflechtungsstraße/Bödinger Str.“</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0827/2024"/>
+<summary>Antrag / Anfrage am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121685#beratung-2024-06-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1689/2024 Beantwortung einer schriflichen Anfrage der CDU-Fraktion in der Sitzung der Bezirksvertretung Köln-Rodenkirchen vom 06.05.2024 (AN/0701/2024) betreffend "Finanzierung der 4. Baustufe der Stadtbahn / Linie 5 nach Meschenich"</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1689/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121789#vorlage</id>
+<title>Neue Vorlage AN/0827/2024: Prüf-AT „Planfreie Querung-Radweg KP Entflechtungsstraße/Bödinger Str.“</title>
+<updated>2024-05-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0827/2024"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121685#vorlage</id>
+<title>Neue Vorlage 1689/2024: Beantwortung einer schriflichen Anfrage der CDU-Fraktion in der Sitzung der Bezirksvertretung Köln-Rodenkirchen vom 06.05.2024 (AN/0701/2024) betreffend "Finanzierung der 4. Baustufe der Stadtbahn / Linie 5 nach Meschenich"</title>
+<updated>2024-05-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1689/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117641#vorlage</id>
+<title>Neue Vorlage AN/1744/2023: - Einrichtung eines temporären Durchfahrtverbotes in der Kretzerstraße (Schulstraße) -</title>
+<updated>2024-05-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1744/2023"/>
+<summary>Gem. Antrag nach § 3 BV5 (GUT/Klima) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121345#beratung-2024-05-06-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0701/2024 Finanzierung der 4. Baustufe der Stadtbahn / Linie 5 nach Meschenich</title>
+<updated>2024-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0701/2024"/>
+<summary>Entscheidung am 2024-05-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121345#vorlage</id>
+<title>Neue Vorlage AN/0701/2024: Finanzierung der 4. Baustufe der Stadtbahn / Linie 5 nach Meschenich</title>
+<updated>2024-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0701/2024"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120375#beratung-2024-03-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0362/2024 Schulstraße Rosenzweigweg</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0362/2024"/>
+<summary>Antrag / Anfrage am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120182#beratung-2024-03-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – 0749/2024 Bürgereingabe gem. § 24 GO - Gehwegparken auf der Brühler Landstraße, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0749/2024"/>
+<summary>Entscheidung am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120057#beratung-2024-03-04-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/0236/2024 Schulstraße Rosenmaar beibehalten</title>
+<updated>2024-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0236/2024"/>
+<summary>Entscheidung am 2024-03-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120375#vorlage</id>
+<title>Neue Vorlage AN/0362/2024: Schulstraße Rosenzweigweg</title>
+<updated>2024-03-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0362/2024"/>
+<summary>Anfrage nach § 4 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120182#vorlage</id>
+<title>Neue Vorlage 0749/2024: Bürgereingabe gem. § 24 GO - Gehwegparken auf der Brühler Landstraße, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-02-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#0749/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120057#vorlage</id>
+<title>Neue Vorlage AN/0236/2024: Schulstraße Rosenmaar beibehalten</title>
+<updated>2024-02-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/0236/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117641#beratung-2023-10-19-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – AN/1744/2023 - Einrichtung eines temporären Durchfahrtverbotes in der Kretzerstraße (Schulstraße) -</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1744/2023"/>
+<summary>Entscheidung am 2023-10-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116596#vorlage</id>
+<title>Neue Vorlage AN/1334/2023: Schulstraße an der Rosenmaarschule Höhenhaus</title>
+<updated>2023-08-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1334/2023"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115445#beratung-2023-06-05-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1032/2023 Schulstraße Rosenzweigweg</title>
+<updated>2023-06-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1032/2023"/>
+<summary>Antrag / Anfrage am 2023-06-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115445#vorlage</id>
+<title>Neue Vorlage AN/1032/2023: Schulstraße Rosenzweigweg</title>
+<updated>2023-05-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#AN/1032/2023"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114854#beratung-2023-05-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1411/2023 Haltestelle der Busbibliothek der Stadtbibliothek Köln in Köln-Meschenich</title>
+<updated>2023-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#1411/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-05-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

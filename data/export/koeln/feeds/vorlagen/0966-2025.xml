@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0966-2025</id>
+<title>Vorlage 0966/2025: Genehmigung der Haushaltssatzung 2025/2026 durch die Bezirksregierung Köln</title>
+<subtitle>Verlauf der Vorlage 0966/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-04-03T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0966-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#0966/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126555#beratung-2025-04-03-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 0966/2025 Genehmigung der Haushaltssatzung 2025/2026 durch die Bezirksregierung Köln</title>
+<updated>2025-04-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#0966/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-04-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126555#vorlage</id>
+<title>Neue Vorlage 0966/2025: Genehmigung der Haushaltssatzung 2025/2026 durch die Bezirksregierung Köln</title>
+<updated>2025-03-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#0966/2025"/>
+<summary>Haushaltsrechtl. Unterrichtung d. Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126555#beratung-2025-03-31-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 0966/2025 Genehmigung der Haushaltssatzung 2025/2026 durch die Bezirksregierung Köln</title>
+<updated>2025-03-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#0966/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+</feed>

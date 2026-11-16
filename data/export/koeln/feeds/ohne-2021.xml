@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/ohne-2021</id>
+<title>Ratsatlas Köln – stadtweit / ohne Ortsbezug 2021</title>
+<subtitle>Neue Vorlagen und Beratungsergebnisse: stadtweit / ohne Ortsbezug 2021</subtitle>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ohne-2021.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105530#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/2624/2021 Strukturen und Ressourcen für eine integrierte Klimafolgenanpassung in der Stadt Köln</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2624/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101381#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – AN/1020/2021 KHD-Gelände</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/1020/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101143#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/0942/2021 Erstellung eines Zero Waste-Konzepts</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/0942/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101123#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – AN/0929/2021 Planungssicherheit für die Händlerinnen und Händler am Großmarkt schaffen und das Frischezentrum in Marsdorf zügig entwickeln</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/0929/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100124#beratung-2026-12-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „für das Digitale Berichtswesen“ – AN/0535/2021 Masterplan Grün Köln</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/0535/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105542#beratung-2025-12-31-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „für das Digitale Berichtswesen“ – AN/2635/2021 Masterplan Parken</title>
+<updated>2025-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2635/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2025-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104734#beratung-2025-12-31-Bauausschuss</id>
+<title>Bauausschuss: „für das Digitale Berichtswesen“ – AN/2282/2021 Prüfung einer qualitativen Bauberatung</title>
+<updated>2025-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2282/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2025-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104713#beratung-2025-12-31-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „für das Digitale Berichtswesen“ – AN/2271/2021 Sondernutzungserlaubnis für E-Scooter einführen</title>
+<updated>2025-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2271/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2025-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100183#beratung-2025-12-31-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „für das Digitale Berichtswesen“ – AN/0566/2021 Ein neu definiertes Grundnetz für den Motorisierten Individualverkehr</title>
+<updated>2025-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/0566/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2025-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104571#beratung-2023-01-30-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Sache ist erledigt“ – AN/2200/2021 Antragsstau bei den Ausländerämtern in Köln: Werden nun endlich Stellen zugesetzt?</title>
+<updated>2023-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2200/2021"/>
+<summary>Entscheidung am 2023-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104050#beratung-2022-10-24-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „endgültig abgelehnt“ – AN/2014/2021 Kurt-Tucholsky-Schule in eine Gesamtschule umwandeln</title>
+<updated>2022-10-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2014/2021"/>
+<summary>Entscheidung am 2022-10-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101765#beratung-2022-09-20-Integrationsrat</id>
+<title>Integrationsrat: „Sache ist erledigt“ – AN/1126/2021 Anfrage: Einführung vegetarischer Tage in den Kantinen/Verpflegungseinrichtungen der Stadt Köln</title>
+<updated>2022-09-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/1126/2021"/>
+<summary>Antrag / Anfrage am 2022-09-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100278#beratung-2022-08-25-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 1066/2021 PFC-Belastung Kölner Süden</title>
+<updated>2022-08-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#1066/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-08-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101014#beratung-2022-05-31-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „endgültig zurückgezogen“ – 1503/2021 Leitbild für Kulturelle Teilhabe und Vielfalt</title>
+<updated>2022-05-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#1503/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2022-05-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105153#beratung-2022-05-16-Digitalisierungsausschuss</id>
+<title>Digitalisierungsausschuss: „Kenntnis genommen“ – AN/2428/2021 Öffentliches WLAN in Köln</title>
+<updated>2022-05-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2428/2021"/>
+<summary>Entscheidung am 2022-05-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105567#beratung-2022-05-05-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 4241/2021 280. Satzung über die Festlegungen gemäß § 8 der Satzung der Stadt Köln vom 28. Februar 2005 über die Erhebung von Beiträgen nach § 8 Absatz 1 Satz 2 KAG NRW für straßenbauliche Maßnahmen</title>
+<updated>2022-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4241/2021"/>
+<summary>Entscheidung am 2022-05-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103583#beratung-2022-05-03-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „Kenntnis genommen“ – 3127/2021 Bewerbung um Fördermittel des Ministeriums für Kultur und Wissenschaft des Landes Nordrhein-Westfalen</title>
+<updated>2022-05-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3127/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-05-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104304#beratung-2022-04-25-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „Kenntnis genommen“ – 3520/2021 Kostenlose Menstruationsartikel an Kölner Schulen und in städtischen Gebäuden</title>
+<updated>2022-04-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3520/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-04-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105781#beratung-2022-04-05-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „Kenntnis genommen“ – 4399/2021 Beantwortung einer schriftlichen Anfrage zum Kunstwerk "ruhender Verkehr" von Wolf Vostell</title>
+<updated>2022-04-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4399/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-04-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105549#beratung-2022-04-05-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „Kenntnis genommen“ – AN/2641/2021 Schriftliche Anfrage von Frau Prof. Dr. Schock-Werner, als sachkundige Bürgerin zum Kunstwerk von Wolf Vostell "ruhender Verkehr"</title>
+<updated>2022-04-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2641/2021"/>
+<summary>Antrag / Anfrage am 2022-04-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105236#beratung-2022-04-05-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „Kenntnis genommen“ – 4090/2021 Beantwortung der Anfrage AN/2218/2021 der Fraktion Die LINKE.: Professionelle Aufarbeitung der Kölner Kolonialgeschichte tut not!</title>
+<updated>2022-04-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4090/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-04-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104342#beratung-2022-03-31-Stadtarbeitsgemeinschaft%20Behindertenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Behindertenpolitik: „Kenntnis genommen“ – 3550/2021 Kurzer Sachstandsbericht zur Maßnahmenumsetzung der aktuellen Spielplatzbedarfsplanung und Ausblick auf die Fortschreibung in 2022</title>
+<updated>2022-03-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3550/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104165#beratung-2022-03-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 3437/2021 Stellungnahme zum Antrag (AN/1729/2021) der Fraktion Die Linke zur Erfassung der Luftqualität im Kölner Norden</title>
+<updated>2022-03-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3437/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104117#beratung-2022-03-31-Stadtarbeitsgemeinschaft%20Behindertenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Behindertenpolitik: „Kenntnis genommen“ – 3401/2021 Ungesicherte Querungsstellen von Straßen im Stadtgebiet Köln</title>
+<updated>2022-03-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3401/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103407#beratung-2022-03-31-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „endgültig abgelehnt“ – AN/1729/2021 Erfassung der Luftqualität im Kölner Norden</title>
+<updated>2022-03-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/1729/2021"/>
+<summary>Antrag / Anfrage am 2022-03-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105567#beratung-2022-03-29-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert empfohlen“ – 4241/2021 280. Satzung über die Festlegungen gemäß § 8 der Satzung der Stadt Köln vom 28. Februar 2005 über die Erhebung von Beiträgen nach § 8 Absatz 1 Satz 2 KAG NRW für straßenbauliche Maßnahmen</title>
+<updated>2022-03-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4241/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2022-03-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105129#beratung-2022-03-29-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Sache ist erledigt“ – AN/2419/2021 Fluoreszierende Fahrradwege</title>
+<updated>2022-03-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2419/2021"/>
+<summary>Antrag / Anfrage am 2022-03-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104223#beratung-2022-03-24-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Sache ist erledigt“ – AN/2084/2021 Bemühungen der Stadt Köln, den Fachkräftemangel in der Pflege positiv zu beeinflussen</title>
+<updated>2022-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2084/2021"/>
+<summary>Antrag / Anfrage am 2022-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103186#beratung-2022-03-18-Stadtarbeitsgemeinschaft%20Seniorenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Seniorenpolitik: „Kenntnis genommen“ – 2926/2021 Sachstand zur Umsetzung des Beschlusses zur Einrichtung eines Runden Tisches Pflege</title>
+<updated>2022-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#2926/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102921#beratung-2022-03-18-Stadtarbeitsgemeinschaft%20Seniorenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Seniorenpolitik: „Kenntnis genommen“ – 2714/2021 Projekt "Zukunft der Pflege" - Handlungsempfehlungen aus dem 2. Bericht der Kommunalen Pflegeplanung</title>
+<updated>2022-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#2714/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101618#beratung-2022-03-18-Stadtarbeitsgemeinschaft%20Seniorenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Seniorenpolitik: „Kenntnis genommen“ – 1903/2021 Beantwortung einer mündlichen Anfrage der Fraktion Bündnis 90/Die Grünen zu TOP 14.16 „Vorstellung des zweiten Berichts zur Kommunalen Pflegeplanung der Stadt Köln nach dem Alten- und Pflegegesetz Nordrhein-Westfalen (APG NRW)" vom 15. April 2021</title>
+<updated>2022-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#1903/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101510#beratung-2022-03-18-Stadtarbeitsgemeinschaft%20Seniorenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Seniorenpolitik: „Kenntnis genommen“ – 1837/2021 Dienstleistungen für Senior*innen - Berücksichtigung spezifischer Bedarfe?</title>
+<updated>2022-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#1837/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101189#beratung-2022-03-18-Stadtarbeitsgemeinschaft%20Seniorenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Seniorenpolitik: „Kenntnis genommen“ – 1599/2021 Praxishandbuch "Vielfalt Pflegen" -  eine Publikation des Kompetenzzentrum Selbstbestimmt Leben (KSL) NRW</title>
+<updated>2022-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#1599/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100478#beratung-2022-03-18-Stadtarbeitsgemeinschaft%20Seniorenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Seniorenpolitik: „Kenntnis genommen“ – 1222/2021 „Das ist alles unsere Lebenszeit. Ältere Lesben und Schwule in der Corona-Krise"; eine Publikation des rubicon e.V.</title>
+<updated>2022-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#1222/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100234#beratung-2022-03-18-Stadtarbeitsgemeinschaft%20Seniorenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Seniorenpolitik: „Kenntnis genommen“ – 1035/2021 Schriftliche Anfrage zum Konzept für zukünftige Sitzungen der StadtAG LST</title>
+<updated>2022-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#1035/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100067#beratung-2022-03-18-Stadtarbeitsgemeinschaft%20Seniorenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Seniorenpolitik: „Kenntnis genommen“ – 0946/2021 Vorstellung des zweiten Berichts zur Kommunalen Pflegeplanung der Stadt Köln nach dem Alten- und Pflegegesetz Nordrhein-Westfalen (APG NRW)</title>
+<updated>2022-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#0946/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105521#beratung-2022-03-14-Finanzausschuss</id>
+<title>Finanzausschuss: „geändert beschlossen“ – AN/2615/2021 Kostenheranziehung für Pflege- und Heimkindern durch das Jugendamt abschaffen</title>
+<updated>2022-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2615/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2022-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102922#beratung-2022-03-14-Ausschuss%20f%C3%BCr%20B%C3%BCrgerbeteiligung%2C%20Anregungen%20und%20Beschwerden</id>
+<title>Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden: „geändert beschlossen“ – 2715/2021 Bürgereingabe gem. § 24 GO, betr.: Rad- und Fußgängerüberwege Innerer Grüngürtel (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]/[Hausnummer ausgelassen])</title>
+<updated>2022-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#2715/2021"/>
+<summary>Entscheidung am 2022-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102922#beratung-2022-03-10-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „mit Änderungen empfohlen“ – 2715/2021 Bürgereingabe gem. § 24 GO, betr.: Rad- und Fußgängerüberwege Innerer Grüngürtel (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]/[Hausnummer ausgelassen])</title>
+<updated>2022-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#2715/2021"/>
+<summary>Anhörung (BV) am 2022-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105607#beratung-2022-03-08-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „Kenntnis genommen“ – 4265/2021 Klosterkirche zum Guten Hirten</title>
+<updated>2022-03-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4265/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105546#beratung-2022-03-08-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „Kenntnis genommen“ – 4232/2021 Mündliche Anfrage aus der 7. Sitzung Ausschuss Kunst und Kultur am 30.11.2021, der  SPD Fraktion (Herr Prof. Schäfer)</title>
+<updated>2022-03-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4232/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104367#beratung-2022-03-08-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „Kenntnis genommen“ – 3568/2021 Rheingassentörchen</title>
+<updated>2022-03-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3568/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105567#beratung-2022-03-07-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 4241/2021 280. Satzung über die Festlegungen gemäß § 8 der Satzung der Stadt Köln vom 28. Februar 2005 über die Erhebung von Beiträgen nach § 8 Absatz 1 Satz 2 KAG NRW für straßenbauliche Maßnahmen</title>
+<updated>2022-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4241/2021"/>
+<summary>Anhörung (BV) am 2022-03-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105421#beratung-2022-03-07-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 4179/2021 Trendstudie zur Vereinbarkeit von Beruf und Familie</title>
+<updated>2022-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4179/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105624#beratung-2022-02-17-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Sache ist erledigt“ – AN/2664/2021 formale und auditierte Managementprozesse</title>
+<updated>2022-02-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2664/2021"/>
+<summary>Antrag / Anfrage am 2022-02-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105614#beratung-2022-02-17-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 4269/2021 Mündliche Anfrage der sachkundigen Einwohnerin Frau Michel</title>
+<updated>2022-02-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4269/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-02-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104342#beratung-2022-02-17-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 3550/2021 Kurzer Sachstandsbericht zur Maßnahmenumsetzung der aktuellen Spielplatzbedarfsplanung und Ausblick auf die Fortschreibung in 2022</title>
+<updated>2022-02-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3550/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-02-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104289#beratung-2022-02-15-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert beschlossen“ – 3512/2021 Abschluss der Machbarkeitsuntersuchung für ein regionales Wasserbussystem auf dem Rhein</title>
+<updated>2022-02-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3512/2021"/>
+<summary>Entscheidung am 2022-02-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102543#beratung-2022-02-14-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „Sache ist erledigt“ – AN/1495/2021 Änderungsantrag zu TOP 3.1.15 betr. „Sozial gerechte Liegenschaftspolitik“</title>
+<updated>2022-02-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/1495/2021"/>
+<summary>Antrag / Anfrage am 2022-02-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102311#beratung-2022-02-14-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „Sache ist erledigt“ – AN/1379/2021 Sozial gerechte Liegenschaftspolitik</title>
+<updated>2022-02-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/1379/2021"/>
+<summary>Antrag / Anfrage am 2022-02-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105787#beratung-2022-02-10-Wirtschaftsausschuss</id>
+<title>Wirtschaftsausschuss: „geändert beschlossen“ – AN/2697/2021 Nacht- und Abendmärkte für Köln</title>
+<updated>2022-02-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2697/2021"/>
+<summary>Antrag / Anfrage am 2022-02-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105767#beratung-2022-02-10-Wirtschaftsausschuss</id>
+<title>Wirtschaftsausschuss: „Kenntnis genommen“ – 4385/2021 „Multilingualität von Anfang an -Aktuelle Übersicht zu Angeboten und Sprachfördermöglichkeiten von Mehrsprachigkeit in der Stadt Köln“</title>
+<updated>2022-02-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4385/2021"/>
+<summary>Entscheidung am 2022-02-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105081#beratung-2022-02-08-Integrationsrat</id>
+<title>Integrationsrat: „Kenntnis genommen“ – 4010/2021 Anfrage von Grün offene Liste (GOL) in der Sitzung des Integrationsrates am 28.09.2021 zur Rückgabe der sogenannten Benin-Bronzen</title>
+<updated>2022-02-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4010/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-02-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105788#beratung-2022-02-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 4405/2021 Nachbesetzung Sachkundiger Einwohner*innen auf Empfehlung der Stadtarbeitsgemeinschaft Lesben, Schwule und Transgender</title>
+<updated>2022-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4405/2021"/>
+<summary>Entscheidung am 2022-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105659#beratung-2022-02-03-Rat</id>
+<title>Rat: „Sache ist erledigt“ – AN/2677/2021 CoronaCarnevalColonia</title>
+<updated>2022-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2677/2021"/>
+<summary>Antrag / Anfrage am 2022-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104305#beratung-2022-02-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 3521/2021 278. Satzung über die Festlegungen gemäß § 8 der Satzung der Stadt Köln vom 28. Februar 2005 über die Erhebung von Beiträgen nach § 8 Absatz 1 Satz 2 KAG NRW für straßenbauliche Maßnahmen</title>
+<updated>2022-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3521/2021"/>
+<summary>Entscheidung am 2022-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103864#beratung-2022-02-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 3260/2021 Änderung der Hauptsatzung, hier: Anregung der Stadtarbeitsgemeinschaft Seniorenpolitik zu Sachverständigen für seniorenpolitische Fragen in den Bezirksvertretungen</title>
+<updated>2022-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3260/2021"/>
+<summary>Entscheidung am 2022-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105777#beratung-2022-01-31-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 4395/2021 Haushaltssatzung der Stadt Köln für das Haushaltsjahr 2022</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4395/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105770#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20B%C3%BCrgerbeteiligung%2C%20Anregungen%20und%20Beschwerden</id>
+<title>Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden: „Kenntnis genommen“ – 4388/2021 Bürgereingabe § 24 GO- "Bessere Beschilderung der Ladezonen an den Kölner Einkaufsstraßen"</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4388/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105694#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20B%C3%BCrgerbeteiligung%2C%20Anregungen%20und%20Beschwerden</id>
+<title>Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden: „Kenntnis genommen“ – 4326/2021 Bürger*innenrat für Köln</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4326/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105567#beratung-2022-01-31-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 4241/2021 280. Satzung über die Festlegungen gemäß § 8 der Satzung der Stadt Köln vom 28. Februar 2005 über die Erhebung von Beiträgen nach § 8 Absatz 1 Satz 2 KAG NRW für straßenbauliche Maßnahmen</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4241/2021"/>
+<summary>Anhörung (BV) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105500#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „Kenntnis genommen“ – AN/2603/2021 Geschlechterparitätische Verteilung von Stipendien der Stadt Köln und deren Auswahlgremien</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2603/2021"/>
+<summary>Antrag / Anfrage am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105499#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „Kenntnis genommen“ – AN/2602/2021 Schwangerschaftsabbrüche in Kölner Krankenhäusern</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2602/2021"/>
+<summary>Antrag / Anfrage am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105498#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20B%C3%BCrgerbeteiligung%2C%20Anregungen%20und%20Beschwerden</id>
+<title>Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden: „geändert beschlossen“ – 4223/2021 Bürgereingabe nach § 24 GO – Anpassung der Sondernutzungserlaubnis für Parteien zur Landtagswahl 2022</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4223/2021"/>
+<summary>Entscheidung am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105425#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „Kenntnis genommen“ – 4182/2021 Ergänzende Beantwortung einer mündlichen Anfrage aus der Sitzung vom 13.09.2021 zur Beantwortung 2348/2021 auf die Anfrage AN/1437/2021 - Ergänzung um die Zahlen der städtischen Beteiligungen</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4182/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105421#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „Kenntnis genommen“ – 4179/2021 Trendstudie zur Vereinbarkeit von Beruf und Familie</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4179/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105352#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „endgültig zurückgezogen“ – AN/2533/2021 Prüfauftrag – Femorial auch in Köln umsetzen</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2533/2021"/>
+<summary>Antrag / Anfrage am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104873#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „Kenntnis genommen“ – 3868/2021 Umsetzung des Konzeptes: Kostenlose Menstruationsartikel an Kölner Schulen und städtischen Gebäuden</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3868/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104824#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „Kenntnis genommen“ – 3832/2021 Beantwortung einer mündlichen Anfrage aus der Sitzung vom 13.09.2021 zur Beantwortung 2348/2021 auf die Anfrage AN/1437/2021 vom 13.09.2021 - Homeoffice in der Coronapandemie</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3832/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104643#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20B%C3%BCrgerbeteiligung%2C%20Anregungen%20und%20Beschwerden</id>
+<title>Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden: „ungeändert beschlossen“ – 3737/2021 Ausweitung der sozialen Staffelung der Mitgliedsbeiträge bei der Stadtbibliothek Köln</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3737/2021"/>
+<summary>Entscheidung am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104289#beratung-2022-01-31-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – 3512/2021 Abschluss der Machbarkeitsuntersuchung für ein regionales Wasserbussystem auf dem Rhein</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3512/2021"/>
+<summary>Anhörung (BV) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102381#beratung-2022-01-31-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „Kenntnis genommen“ – AN/1427/2021 Umsetzung des Konzeptes: Kostenlose Menstruationsartikel an Kölner Schulen und städtischen Gebäuden</title>
+<updated>2022-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/1427/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105802#beratung-2022-01-27-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 4419/2021 Sportentwicklungsplanung - Kölle aktiv</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4419/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105769#beratung-2022-01-27-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 4387/2021 Sportentwicklungsplanung - Sportbox</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4387/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105567#beratung-2022-01-27-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig abgelehnt“ – 4241/2021 280. Satzung über die Festlegungen gemäß § 8 der Satzung der Stadt Köln vom 28. Februar 2005 über die Erhebung von Beiträgen nach § 8 Absatz 1 Satz 2 KAG NRW für straßenbauliche Maßnahmen</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4241/2021"/>
+<summary>Anhörung (BV) am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105266#beratung-2022-01-27-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 4101/2021 Geplante Sportprojekte mit den Kölner Partnerstädten 2022</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4101/2021"/>
+<summary>Entscheidung am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104342#beratung-2022-01-27-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3550/2021 Kurzer Sachstandsbericht zur Maßnahmenumsetzung der aktuellen Spielplatzbedarfsplanung und Ausblick auf die Fortschreibung in 2022</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3550/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104289#beratung-2022-01-27-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert empfohlen“ – 3512/2021 Abschluss der Machbarkeitsuntersuchung für ein regionales Wasserbussystem auf dem Rhein</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3512/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103864#beratung-2022-01-27-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 3260/2021 Änderung der Hauptsatzung, hier: Anregung der Stadtarbeitsgemeinschaft Seniorenpolitik zu Sachverständigen für seniorenpolitische Fragen in den Bezirksvertretungen</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3260/2021"/>
+<summary>Anhörung (BV) am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105754#beratung-2022-01-25-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „ungeändert beschlossen“ – 4374/2021 Jugendhilfeplanung in der Kindertagesbetreuung 2022/23 als Grundlage für die Beantragung von Landeszuschüssen nach § 24 KiBiz (Kinderbildungsgesetz)</title>
+<updated>2022-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4374/2021"/>
+<summary>Entscheidung am 2022-01-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105521#beratung-2022-01-25-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „geändert beschlossen“ – AN/2615/2021 Kostenheranziehung für Pflege- und Heimkindern durch das Jugendamt abschaffen</title>
+<updated>2022-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2615/2021"/>
+<summary>Entscheidung am 2022-01-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105385#beratung-2022-01-25-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – AN/2553/2021 Testkapazitäten in Familienzentren ermöglichen, Boostern vorantreiben, Kinder, Jugendliche, Eltern und Personal schützen</title>
+<updated>2022-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2553/2021"/>
+<summary>Antrag / Anfrage am 2022-01-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105025#beratung-2022-01-25-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 3967/2021 Bürgereingabe gem. § 24 GO NRW- "Testpflicht für Kitas"- Aktenzeichen [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2022-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3967/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105737#beratung-2022-01-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 4357/2021 Maskenpflicht in der Innenstadt</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4357/2021"/>
+<summary>Entscheidung am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105594#beratung-2022-01-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 4261/2021 Handeln der Verwaltung im Hinblick auf die StVO Novelle</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4261/2021"/>
+<summary>Antrag / Anfrage am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105401#beratung-2022-01-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „ungeändert beschlossen“ – 4168/2021 Verfassungsbeschwerde GFG</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4168/2021"/>
+<summary>Entscheidung am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105108#beratung-2022-01-24-Bauausschuss</id>
+<title>Bauausschuss: „Kenntnis genommen“ – 3077/2021/2 Sachstandsbericht zur Generalinstandsetzung des Römisch-Germanischen Museums (RGM) - Stand 8. November 2021</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3077/2021/2"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104818#beratung-2022-01-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3827/2021 Kwartier Latäng - mündliche Anfrage von Monika Möller (SB) zur zugenommenen Gewaltbereitschaft</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3827/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104457#beratung-2022-01-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „ungeändert beschlossen“ – 3616/2021 Externe Unterstützung für den Aufbau eines Innovationsbüros</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3616/2021"/>
+<summary>Entscheidung am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104445#beratung-2022-01-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3610/2021 Tätigkeitsbericht 2021 Büro für Europa und Internationales</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3610/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104363#beratung-2022-01-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3564/2021 Beantwortung einer Anfrage gem. §4 der Geschäftsordnung des Rates, AN/2013/2021 der SPD-Fraktion "Entsorgung von Schrottfahrrädern auf Fahrradabstellflächen"</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3564/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103864#beratung-2022-01-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „ungeändert beschlossen“ – 3260/2021 Änderung der Hauptsatzung, hier: Anregung der Stadtarbeitsgemeinschaft Seniorenpolitik zu Sachverständigen für seniorenpolitische Fragen in den Bezirksvertretungen</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3260/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103690#beratung-2022-01-24-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3174/2021 Beantwortung einer mündlichen Anfrage zum Evaluierungsbericht des Sachstandsberichtes der Stadt Köln zum 10-Punkte-Aktionsplan</title>
+<updated>2022-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#3174/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105486#beratung-2022-01-20-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 4217/2021 Naturbezogene Naherholung und Tagestourismus in der Region Köln/Bonn</title>
+<updated>2022-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4217/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105468#beratung-2022-01-20-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 4202/2021 Anfrage gem. § 4 der Geschäftsordnung des Rates aus der Ausschusssitzung Klima, Umwelt und Grün vom 25.11.2021</title>
+<updated>2022-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4202/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105290#beratung-2022-01-20-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 4109/2021 Bewirtschaftung des städtischen Waldes 2021/22</title>
+<updated>2022-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4109/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105249#beratung-2022-01-20-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Sache ist erledigt“ – AN/2483/2021 Unbegrünte Grünflächen</title>
+<updated>2022-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2483/2021"/>
+<summary>Antrag / Anfrage am 2022-01-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105080#beratung-2022-01-20-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „geändert beschlossen“ – AN/2401/2021 Schutz von Igeln, Insekten und Amphibien</title>
+<updated>2022-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#AN/2401/2021"/>
+<summary>Antrag / Anfrage am 2022-01-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105575#beratung-2022-01-18-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Sache ist erledigt“ – 4248/2021 Radverkehrsführung Kölner Ringe</title>
+<updated>2022-01-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4248/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105567#beratung-2022-01-18-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert empfohlen“ – 4241/2021 280. Satzung über die Festlegungen gemäß § 8 der Satzung der Stadt Köln vom 28. Februar 2005 über die Erhebung von Beiträgen nach § 8 Absatz 1 Satz 2 KAG NRW für straßenbauliche Maßnahmen</title>
+<updated>2022-01-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2021#4241/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2022-01-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+</feed>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0702-2025</id>
+<title>Vorlage 0702/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 13.03.2023 (AN/0302/2023) betreffend „Verlegung der LKW Ein-/ Ausfahrt zur Shell Raffinerie in Godorf auf die Industriestraße“</title>
+<subtitle>Verlauf der Vorlage 0702/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0702-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0702/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126138#beratung-2025-03-24-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0702/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 13.03.2023 (AN/0302/2023) betreffend „Verlegung der LKW Ein-/ Ausfahrt zur Shell Raffinerie in Godorf auf die Industriestraße“</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0702/2025"/>
+<summary>Antrag / Anfrage am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126138#vorlage</id>
+<title>Neue Vorlage 0702/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 13.03.2023 (AN/0302/2023) betreffend „Verlegung der LKW Ein-/ Ausfahrt zur Shell Raffinerie in Godorf auf die Industriestraße“</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0702/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126138#folge-AN%2F0302%2F2023</id>
+<title>Anfrage nach § 4 BV2 (SPD) AN/0302/2023: Verlegung der LKW Ein-/ Ausfahrt zur Shell Raffinerie in Godorf auf die Industriestraße</title>
+<updated>2023-02-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0702/2025"/>
+<summary>Folgevorlage zu 0702/2025</summary>
+</entry>
+</feed>

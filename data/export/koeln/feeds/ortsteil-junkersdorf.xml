@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-junkersdorf</id>
 <title>Ratsatlas Köln – Junkersdorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Junkersdorf</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-02T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-junkersdorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135437#vorlage</id>
+<title>Neue Vorlage AN/1747/2026: Anfrage Versiegelung Ackerwinde 5</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1747/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135437#beratung-2026-11-02-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „vertagt“ – AN/1747/2026 Anfrage Versiegelung Ackerwinde 5</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1747/2026"/>
+<summary>Entscheidung am 2026-11-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135434#vorlage</id>
+<title>Neue Vorlage AN/1745/2026: Ergänzungsantrag zu TOP Ö 8.1.10 – Mobilstation Aachener Straße/Gürtel</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1745/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135434#beratung-2026-11-02-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „endgültig zurückgezogen“ – AN/1745/2026 Ergänzungsantrag zu TOP Ö 8.1.10 – Mobilstation Aachener Straße/Gürtel</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1745/2026"/>
+<summary>Entscheidung am 2026-11-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135205#beratung-2026-11-02-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1641/2026 Versetzung des Zaunes zwischen GGS Alfons-Nowak-Straße und ehem.Dependance der Ildefons-Herwegen-Grundschule in Köln-Junkersdorf</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1641/2026"/>
+<summary>Entscheidung am 2026-11-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135205#vorlage</id>
+<title>Neue Vorlage AN/1641/2026: Versetzung des Zaunes zwischen GGS Alfons-Nowak-Straße und ehem.Dependance der Ildefons-Herwegen-Grundschule in Köln-Junkersdorf</title>
+<updated>2026-10-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1641/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#beratung-2026-09-28-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 2325/2026 Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2325/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134123#beratung-2026-09-28-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 2234/2026 Sachstand zur Erweiterung des Anwohnerschutzkonzeptes am RheinEnergieSTADION</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2234/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134540#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert beschlossen“ – AN/1378/2026 Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1378/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134505#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „endgültig abgelehnt“ – AN/1355/2026 Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1355/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134052#vorlage</id>
+<title>Neue Vorlage 2175/2026: Beantwortung der schriftlichen Anfrage der CDU-Fraktion aus der Sitzung des Mobilitätsausschusses vom 16.06.2026 betr. "Verkehrssituation auf der Horbeller Straße in Marsdorf" (AN/0863/2026)</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2175/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134052#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Kenntnis genommen“ – 2175/2026 Beantwortung der schriftlichen Anfrage der CDU-Fraktion aus der Sitzung des Mobilitätsausschusses vom 16.06.2026 betr. "Verkehrssituation auf der Horbeller Straße in Marsdorf" (AN/0863/2026)</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2175/2026"/>
+<summary>Entscheidung am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133125#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Sache ist erledigt“ – AN/0863/2026 Verkehrssituation auf der Horbeller Straße in Marsdorf</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0863/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133027#beratung-2026-09-22-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „geändert beschlossen“ – 1572/2026 Grundstücksverkauf Rheinische Allee in Köln-Marsdorf - Bewertungskriterien zur Konzeptausschreibung</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#1572/2026"/>
+<summary>Entscheidung am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134505#vorlage</id>
+<title>Neue Vorlage AN/1355/2026: Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1355/2026"/>
+<summary>FDP/KSG Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#vorlage</id>
+<title>Neue Vorlage 2325/2026: Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2325/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134540#vorlage</id>
+<title>Neue Vorlage AN/1378/2026: Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1378/2026"/>
+<summary>Gem. Antrag nach § 3 (Rat) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133027#vorlage</id>
+<title>Neue Vorlage 1572/2026: Grundstücksverkauf Rheinische Allee in Köln-Marsdorf - Bewertungskriterien zur Konzeptausschreibung</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#1572/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134123#vorlage</id>
+<title>Neue Vorlage 2234/2026: Sachstand zur Erweiterung des Anwohnerschutzkonzeptes am RheinEnergieSTADION</title>
+<updated>2026-08-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2234/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133480#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – AN/1044/2026 Tempo 30 Goethestraße zwischen Bahnhof Lövenich und Aachener Straße</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1044/2026"/>
+<summary>Entscheidung am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133480#vorlage</id>
+<title>Neue Vorlage AN/1044/2026: Tempo 30 Goethestraße zwischen Bahnhof Lövenich und Aachener Straße</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1044/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133125#vorlage</id>
+<title>Neue Vorlage AN/0863/2026: Verkehrssituation auf der Horbeller Straße in Marsdorf</title>
+<updated>2026-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0863/2026"/>
+<summary>CDU Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132680#vorlage</id>
+<title>Neue Vorlage AN/0758/2026: Ergänzungsantrag 4 Aachener Straße Südseite</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0758/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132680#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „endgültig abgelehnt“ – AN/0758/2026 Ergänzungsantrag 4 Aachener Straße Südseite</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0758/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131687#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0676/2026 Beantwortung einer Anfrage AN/0703/2024 zu Wasserspielplätze und zu dem Spielplatz Max-Planck-Str.</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0676/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131687#vorlage</id>
+<title>Neue Vorlage 0676/2026: Beantwortung einer Anfrage AN/0703/2024 zu Wasserspielplätze und zu dem Spielplatz Max-Planck-Str.</title>
+<updated>2026-03-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0676/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131306#beratung-2026-03-09-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – 0459/2026 Bürgereingabe nach § 24 GO NRW - Ausweitung von Tempo 30 auf dem gesamten Salzburger Weg als Erprobungsmaßnahme, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0459/2026"/>
+<summary>Entscheidung am 2026-03-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130422#beratung-2026-03-03-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert beschlossen“ – 3572/2025 66. Anordnung der Kostenspaltung gemäß § 8 der Satzung der Stadt Köln über die Erhebung eines Erschließungsbeitrages vom 29.06.2001</title>
+<updated>2026-03-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3572/2025"/>
+<summary>Entscheidung am 2026-03-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131306#vorlage</id>
+<title>Neue Vorlage 0459/2026: Bürgereingabe nach § 24 GO NRW - Ausweitung von Tempo 30 auf dem gesamten Salzburger Weg als Erprobungsmaßnahme, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-02-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0459/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130422#vorlage</id>
+<title>Neue Vorlage 3572/2025: 66. Anordnung der Kostenspaltung gemäß § 8 der Satzung der Stadt Köln über die Erhebung eines Erschließungsbeitrages vom 29.06.2001</title>
+<updated>2026-02-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3572/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130652#beratung-2026-01-26-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0022/2026 Ersetzungsantrag Teilentsiegelung der Taxistandsfläche an der KVB-Haltestelle Dürener Str./Gürtel</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0022/2026"/>
+<summary>Entscheidung am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130652#vorlage</id>
+<title>Neue Vorlage AN/0022/2026: Ersetzungsantrag Teilentsiegelung der Taxistandsfläche an der KVB-Haltestelle Dürener Str./Gürtel</title>
+<updated>2026-01-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0022/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-12-08-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129918#beratung-2025-12-01-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „vertagt“ – AN/1323/2025 Teilentsiegelung der Taxistandsfläche an der KVB-Haltestelle Dürener Str./Gürtel</title>
+<updated>2025-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1323/2025"/>
+<summary>Entscheidung am 2025-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-11-24-Hauptausschuss</id>
+<title>Hauptausschuss: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129918#vorlage</id>
+<title>Neue Vorlage AN/1323/2025: Teilentsiegelung der Taxistandsfläche an der KVB-Haltestelle Dürener Str./Gürtel</title>
+<updated>2025-11-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1323/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#vorlage</id>
+<title>Neue Vorlage 3073/2025: Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3073/2025"/>
+<summary>Mitteilung Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128322#vorlage</id>
+<title>Neue Vorlage 2073/2025: Schenkungsannahme Außengerätehaus GGS Alfons-Nowak-Straße</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2073/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128322#beratung-2025-06-23-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 2073/2025 Schenkungsannahme Außengerätehaus GGS Alfons-Nowak-Straße</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2073/2025"/>
+<summary>Entscheidung am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127901#beratung-2025-06-23-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 1842/2025 Umgestaltung des öffentlichen Spielplatzes Vogelsanger Platz in Junkersdorf</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#1842/2025"/>
+<summary>Entscheidung am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127901#vorlage</id>
+<title>Neue Vorlage 1842/2025: Umgestaltung des öffentlichen Spielplatzes Vogelsanger Platz in Junkersdorf</title>
+<updated>2025-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#1842/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127638#vorlage</id>
+<title>Neue Vorlage AN/0729/2025: Änderungsantrag zu TOP 10.9 - Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestelle Junkersdorf</title>
+<updated>2025-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0729/2025"/>
+<summary>CDU Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127638#beratung-2025-05-27-Rat</id>
+<title>Rat: „endgültig abgelehnt“ – AN/0729/2025 Änderungsantrag zu TOP 10.9 - Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestelle Junkersdorf</title>
+<updated>2025-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0729/2025"/>
+<summary>Antrag / Anfrage am 2025-05-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120889#beratung-2025-05-27-Rat</id>
+<title>Rat: „geändert beschlossen“ – 2494/2023/1 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestelle Junkersdorf</title>
+<updated>2025-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023/1"/>
+<summary>Entscheidung am 2025-05-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120889#beratung-2025-05-22-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ohne Votum behandelt“ – 2494/2023/1 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestelle Junkersdorf</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023/1"/>
+<summary>Vorberatung (Fachausschuss) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126340#beratung-2025-05-13-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert empfohlen“ – AN/0341/2025 Änderungsantrag Haltestelle Junkersdorf, Variante 10</title>
+<updated>2025-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0341/2025"/>
+<summary>Antrag / Anfrage am 2025-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120889#beratung-2025-05-13-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „mit Änderungen empfohlen“ – 2494/2023/1 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestelle Junkersdorf</title>
+<updated>2025-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023/1"/>
+<summary>Vorberatung (Fachausschuss) am 2025-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126116#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 0687/2025 Annahme der Schenkung "Soccercourt" durch den Förderverein an der GGS Kirchweg/Junkersdorf</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0687/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120889#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – 2494/2023/1 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestelle Junkersdorf</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023/1"/>
+<summary>Anhörung (BV) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126116#vorlage</id>
+<title>Neue Vorlage 0687/2025: Annahme der Schenkung "Soccercourt" durch den Förderverein an der GGS Kirchweg/Junkersdorf</title>
+<updated>2025-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0687/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126340#vorlage</id>
+<title>Neue Vorlage AN/0341/2025: Änderungsantrag Haltestelle Junkersdorf, Variante 10</title>
+<updated>2025-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0341/2025"/>
+<summary>Die Linke. Antrag nach § 3 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120889#vorlage</id>
+<title>Neue Vorlage 2494/2023/1: Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestelle Junkersdorf</title>
+<updated>2025-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023/1"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124579#beratung-2025-02-10-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 3676/2024 Baubeschluss für die Generalsanierung der Horbeller Straße von Toyota Alle bis Zufahrt Haus.-Nr. 10-14 sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-02-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3676/2024"/>
+<summary>Entscheidung am 2025-02-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124243#beratung-2025-02-10-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 3450/2024 Baubeschluss für die Generalsanierung des Steyrer Wegs von Statthalterhofallee bis Donauweg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-02-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3450/2024"/>
+<summary>Entscheidung am 2025-02-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124579#beratung-2025-01-27-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 3676/2024 Baubeschluss für die Generalsanierung der Horbeller Straße von Toyota Alle bis Zufahrt Haus.-Nr. 10-14 sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3676/2024"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124243#beratung-2025-01-27-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 3450/2024 Baubeschluss für die Generalsanierung des Steyrer Wegs von Statthalterhofallee bis Donauweg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3450/2024"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124579#vorlage</id>
+<title>Neue Vorlage 3676/2024: Baubeschluss für die Generalsanierung der Horbeller Straße von Toyota Alle bis Zufahrt Haus.-Nr. 10-14 sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-12-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3676/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124243#vorlage</id>
+<title>Neue Vorlage 3450/2024: Baubeschluss für die Generalsanierung des Steyrer Wegs von Statthalterhofallee bis Donauweg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-12-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3450/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124241#beratung-2024-12-09-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 3448/2024 Baubeschluss für die Generalsanierung des Kärntner Wegs von Statthalterhofallee bis Donauweg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-12-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3448/2024"/>
+<summary>Entscheidung am 2024-12-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124237#beratung-2024-12-09-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 3444/2024 Baubeschluss für die Generalsanierung des Falkenwegs von Statthalterhofallee bis Kölner Weg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-12-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3444/2024"/>
+<summary>Entscheidung am 2024-12-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124241#beratung-2024-12-02-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 3448/2024 Baubeschluss für die Generalsanierung des Kärntner Wegs von Statthalterhofallee bis Donauweg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3448/2024"/>
+<summary>Entscheidung am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124237#beratung-2024-12-02-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 3444/2024 Baubeschluss für die Generalsanierung des Falkenwegs von Statthalterhofallee bis Kölner Weg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3444/2024"/>
+<summary>Entscheidung am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124241#vorlage</id>
+<title>Neue Vorlage 3448/2024: Baubeschluss für die Generalsanierung des Kärntner Wegs von Statthalterhofallee bis Donauweg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-11-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3448/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124237#vorlage</id>
+<title>Neue Vorlage 3444/2024: Baubeschluss für die Generalsanierung des Falkenwegs von Statthalterhofallee bis Kölner Weg sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2024-11-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3444/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124132#beratung-2024-11-12-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1476/2024 Tempo 30 /Salzburger Weg</title>
+<updated>2024-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1476/2024"/>
+<summary>Entscheidung am 2024-11-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124132#vorlage</id>
+<title>Neue Vorlage AN/1476/2024: Tempo 30 /Salzburger Weg</title>
+<updated>2024-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1476/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122036#beratung-2024-09-23-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 1892/2024 Widmung verschiedener Flurstücke der Stichstraße Jungbluthgasse zu Haus-Nr. 8-32 in Köln-Junkersdorf</title>
+<updated>2024-09-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#1892/2024"/>
+<summary>Entscheidung am 2024-09-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122036#vorlage</id>
+<title>Neue Vorlage 1892/2024: Widmung verschiedener Flurstücke der Stichstraße Jungbluthgasse zu Haus-Nr. 8-32 in Köln-Junkersdorf</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#1892/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121839#beratung-2024-06-17-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0846/2024 Beschilderung des parallel zum Brauweiler Weg verlaufenden Radwegs für beide Fahrtrichtungen zwischen Lovis-Corinth-Straße und Aachener Straße</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0846/2024"/>
+<summary>Entscheidung am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121330#beratung-2024-06-17-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 1443/2024 Erweiterung Anwohnerschutzkonzept RheinEnergieSTADION</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#1443/2024"/>
+<summary>Entscheidung am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121330#vorlage</id>
+<title>Neue Vorlage 1443/2024: Erweiterung Anwohnerschutzkonzept RheinEnergieSTADION</title>
+<updated>2024-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#1443/2024"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121839#vorlage</id>
+<title>Neue Vorlage AN/0846/2024: Beschilderung des parallel zum Brauweiler Weg verlaufenden Radwegs für beide Fahrtrichtungen zwischen Lovis-Corinth-Straße und Aachener Straße</title>
+<updated>2024-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0846/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121194#beratung-2024-05-06-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0639/2024 Aus Verkehrssicherheitsgründen (für Fahrradfahrer) abzusenkende Bordsteinkante zu Beginn der Zufahrt zum P3 am Brauweiler Weg in Köln Junkersdorf.</title>
+<updated>2024-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0639/2024"/>
+<summary>Entscheidung am 2024-05-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120542#beratung-2024-05-06-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 0958/2024 Baubeschluss für die Generalinstandsetzung des Stüttgenweges im Teilabschnitt „KVB-Haltestelle Stüttgenhof“ und Bachemer Landstraße in Köln-Lindenthal</title>
+<updated>2024-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0958/2024"/>
+<summary>Entscheidung am 2024-05-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121194#vorlage</id>
+<title>Neue Vorlage AN/0639/2024: Aus Verkehrssicherheitsgründen (für Fahrradfahrer) abzusenkende Bordsteinkante zu Beginn der Zufahrt zum P3 am Brauweiler Weg in Köln Junkersdorf.</title>
+<updated>2024-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0639/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120693#beratung-2024-03-21-Rat</id>
+<title>Rat: „Sache ist erledigt“ – AN/0491/2024 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0491/2024"/>
+<summary>Antrag / Anfrage am 2024-03-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120542#vorlage</id>
+<title>Neue Vorlage 0958/2024: Baubeschluss für die Generalinstandsetzung des Stüttgenweges im Teilabschnitt „KVB-Haltestelle Stüttgenhof“ und Bachemer Landstraße in Köln-Lindenthal</title>
+<updated>2024-03-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0958/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116527#beratung-2024-03-21-Rat</id>
+<title>Rat: „geändert beschlossen“ – 2494/2023 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023"/>
+<summary>Entscheidung am 2024-03-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120693#vorlage</id>
+<title>Neue Vorlage AN/0491/2024: Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0491/2024"/>
+<summary>Gem. Änderungsantrag (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120573#beratung-2024-03-18-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum in nachfolgende Gremien“ – AN/0438/2024 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0438/2024"/>
+<summary>Entscheidung am 2024-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116527#beratung-2024-03-18-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum in nachfolgende Gremien“ – 2494/2023 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2024-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120573#vorlage</id>
+<title>Neue Vorlage AN/0438/2024: Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0438/2024"/>
+<summary>Gem. Änderungsantrag (FDP/KSG) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120432#beratung-2024-03-05-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ohne Votum in nachfolgende Gremien“ – AN/0384/2024 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0384/2024"/>
+<summary>Antrag / Anfrage am 2024-03-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116527#beratung-2024-03-05-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ohne Votum in nachfolgende Gremien“ – 2494/2023 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2024-03-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120432#vorlage</id>
+<title>Neue Vorlage AN/0384/2024: Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0384/2024"/>
+<summary>Gem. Änderungsantrag (FDP/KSG) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116527#vorlage</id>
+<title>Neue Vorlage 2494/2023: Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119583#beratung-2024-01-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „zurückgestellt“ – AN/0116/2024 Nächtliche Geschwindigkeitsüberschreitungen an der Aachener Straße</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0116/2024"/>
+<summary>Entscheidung am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119384#beratung-2024-01-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0052/2024 Bewohnerparken Junkersdorf</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0052/2024"/>
+<summary>Entscheidung am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119255#beratung-2024-01-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 0112/2024 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Parkverbot und Tempo 30 Marsdorfer Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0112/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118949#beratung-2024-01-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 4024/2023 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Einrichtung eines Gehweges auf der Max-Planck-Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#4024/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116527#beratung-2024-01-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – 2494/2023 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023"/>
+<summary>Anhörung (BV) am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119583#vorlage</id>
+<title>Neue Vorlage AN/0116/2024: Nächtliche Geschwindigkeitsüberschreitungen an der Aachener Straße</title>
+<updated>2024-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0116/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119384#vorlage</id>
+<title>Neue Vorlage AN/0052/2024: Bewohnerparken Junkersdorf</title>
+<updated>2024-01-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/0052/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119255#vorlage</id>
+<title>Neue Vorlage 0112/2024: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Parkverbot und Tempo 30 Marsdorfer Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-01-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#0112/2024"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118949#vorlage</id>
+<title>Neue Vorlage 4024/2023: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Einrichtung eines Gehweges auf der Max-Planck-Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-12-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#4024/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116527#beratung-2023-11-30-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ohne Votum in nachfolgende Gremien“ – 2494/2023 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117696#beratung-2023-11-27-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3179/2023 Rückbau der Geschwindigkeitsmessanlagen auf der BAB 1 - Leverkusener Autobahnbrücke</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3179/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116527#beratung-2023-11-21-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ohne Votum in nachfolgende Gremien“ – 2494/2023 Erweiterter Planungsbeschluss für die Kapazitätserweiterung auf der Ost-West-Achse, Bereich West, Haltestellen Melaten, Junkersdorf, Mohnweg, Bahnstraße, Weiden Zentrum, Weiden Römergrab und Weiden West</title>
+<updated>2023-11-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#2494/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-11-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117696#vorlage</id>
+<title>Neue Vorlage 3179/2023: Rückbau der Geschwindigkeitsmessanlagen auf der BAB 1 - Leverkusener Autobahnbrücke</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#3179/2023"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116703#beratung-2023-08-28-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1389/2023 Verlagerung der Bushaltestelle KVB 140 Aachener Straße auf den urspünglichen Haltepunkt</title>
+<updated>2023-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:junkersdorf#AN/1389/2023"/>
+<summary>Entscheidung am 2023-08-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

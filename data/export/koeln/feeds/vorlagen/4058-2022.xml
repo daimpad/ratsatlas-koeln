@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/4058-2022</id>
+<title>Vorlage 4058/2022: Übersicht BV Anfragen Stand  24.11.2022</title>
+<subtitle>Verlauf der Vorlage 4058/2022: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2022-11-24T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/4058-2022.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#4058/2022"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112234#vorlage</id>
+<title>Neue Vorlage 4058/2022: Übersicht BV Anfragen Stand  24.11.2022</title>
+<updated>2022-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#4058/2022"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: offen</summary>
+</entry>
+</feed>

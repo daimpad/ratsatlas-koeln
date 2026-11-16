@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-finkenberg</id>
 <title>Ratsatlas Köln – Finkenberg</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Finkenberg</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-05T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-finkenberg.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135431#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/1742/2026 Anfrage der SPD Fraktion "Rattenbefall im Bereich Brüsseler Straße in Köln-Porz-Finkenberg"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1742/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135428#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/1740/2026 Antrag der SPD-Fraktion "Parkhaus mit Tiefgarage, Brüsseler Str. Ecke Eupener Str. in 51149 Köln-Porz"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1740/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132332#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/0614/2026 Anfrage der CDU-Fraktion "Parkplatzsituation in Porz-Finkenberg"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0614/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135431#vorlage</id>
+<title>Neue Vorlage AN/1742/2026: Anfrage der SPD Fraktion "Rattenbefall im Bereich Brüsseler Straße in Köln-Porz-Finkenberg"</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1742/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135428#vorlage</id>
+<title>Neue Vorlage AN/1740/2026: Antrag der SPD-Fraktion "Parkhaus mit Tiefgarage, Brüsseler Str. Ecke Eupener Str. in 51149 Köln-Porz"</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1740/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134888#beratung-2026-10-01-Sportausschuss</id>
+<title>Sportausschuss: „vertagt“ – AN/1557/2026 Künftige Nutzung der Sportanlage Konrad-Adenauer-Straße</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1557/2026"/>
+<summary>Antrag / Anfrage am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133808#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 1968/2026 Beantwortung einer mündlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung des Ausschusses für Stadtentwicklung und regionale Zusammenarbeit vom 07.05.2026 betreffend Erneuerung der Eisenbahnüberführung Luxemburger Straße 0373/2026</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1968/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134888#vorlage</id>
+<title>Neue Vorlage AN/1557/2026: Künftige Nutzung der Sportanlage Konrad-Adenauer-Straße</title>
+<updated>2026-09-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1557/2026"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134800#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „endgültig abgelehnt“ – AN/1518/2026 Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1518/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134734#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „endgültig abgelehnt“ – AN/1476/2026 Änderungsantrag zu TOP 2.1 - Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1476/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134800#vorlage</id>
+<title>Neue Vorlage AN/1518/2026: Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1518/2026"/>
+<summary>FDP/KSG Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134741#vorlage</id>
+<title>Neue Vorlage AN/1483/2026: Lärmbelastung Luxemburger Straße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1483/2026"/>
+<summary>CDU Anfrage nach § 4 · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134734#vorlage</id>
+<title>Neue Vorlage AN/1476/2026: Änderungsantrag zu TOP 2.1 - Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1476/2026"/>
+<summary>CDU Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133808#vorlage</id>
+<title>Neue Vorlage 1968/2026: Beantwortung einer mündlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung des Ausschusses für Stadtentwicklung und regionale Zusammenarbeit vom 07.05.2026 betreffend Erneuerung der Eisenbahnüberführung Luxemburger Straße 0373/2026</title>
+<updated>2026-07-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1968/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133144#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1658/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Nachhaltige Lösung der Parksituation in Köln-Finkenberg, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1658/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132383#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1150/2026 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 23.04.2026 (AN/0613/2026) betr. "Fußweg Kopenhagener Str. / Bahndamm"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1150/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132331#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0613/2026 Anfrage der SPD-Fraktion "In Köln-Porz-Finkenberg verläuft am äußeren Stadtteilrand ein unbenannter Fußweg, der in Nähe der Kopenhagener Str. hinter einem Garagenhof beginnt, zum Bahndamm verläuft und dann im Bogen am Bahndamm entlang ..."</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0613/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131671#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0421/2026 Anfrage der CDU-Fraktion "Parkbänke auf dem an den Bahndamm angrenzenden Grünstreifen in Porz-Finkenberg"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0421/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133144#vorlage</id>
+<title>Neue Vorlage 1658/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Nachhaltige Lösung der Parksituation in Köln-Finkenberg, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1658/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132383#vorlage</id>
+<title>Neue Vorlage 1150/2026: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 23.04.2026 (AN/0613/2026) betr. "Fußweg Kopenhagener Str. / Bahndamm"</title>
+<updated>2026-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1150/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132227#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1052/2026 Zielvereinbarungen 2026 - Bürgerzentren Engelshof und Finkenberg</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1052/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132186#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0562/2026 Antrag der SPD-Fraktion "Aufstellung eines digitalen Informationsterminals für Beratungsangebote in Finkenberg"</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0562/2026"/>
+<summary>Antrag / Anfrage am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132332#vorlage</id>
+<title>Neue Vorlage AN/0614/2026: Anfrage der CDU-Fraktion "Parkplatzsituation in Porz-Finkenberg"</title>
+<updated>2026-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0614/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132331#vorlage</id>
+<title>Neue Vorlage AN/0613/2026: Anfrage der SPD-Fraktion "In Köln-Porz-Finkenberg verläuft am äußeren Stadtteilrand ein unbenannter Fußweg, der in Nähe der Kopenhagener Str. hinter einem Garagenhof beginnt, zum Bahndamm verläuft und dann im Bogen am Bahndamm entlang ..."</title>
+<updated>2026-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0613/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132227#vorlage</id>
+<title>Neue Vorlage 1052/2026: Zielvereinbarungen 2026 - Bürgerzentren Engelshof und Finkenberg</title>
+<updated>2026-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1052/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132186#vorlage</id>
+<title>Neue Vorlage AN/0562/2026: Antrag der SPD-Fraktion "Aufstellung eines digitalen Informationsterminals für Beratungsangebote in Finkenberg"</title>
+<updated>2026-04-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0562/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131077#beratung-2026-03-19-Rat</id>
+<title>Rat: „endgültig abgelehnt“ – AN/0212/2026 Aufhebung des Schließungsbeschlusses des Kölner Stadtrats vom 15.6.2023 für das Krankenhauses Holweide und die Kinderklinik Amsterdamer Straße, Erhalt der flächendeckenden Krankenhausversorgung in Köln</title>
+<updated>2026-03-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0212/2026"/>
+<summary>Antrag / Anfrage am 2026-03-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131465#beratung-2026-03-10-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0320/2026 Antrag der CDU-Fraktion "Kreisverkehr Steinstraße/Theodor-Heuss-Straße in Porz-Finkenberg"</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0320/2026"/>
+<summary>Antrag / Anfrage am 2026-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131671#vorlage</id>
+<title>Neue Vorlage AN/0421/2026: Anfrage der CDU-Fraktion "Parkbänke auf dem an den Bahndamm angrenzenden Grünstreifen in Porz-Finkenberg"</title>
+<updated>2026-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0421/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131465#vorlage</id>
+<title>Neue Vorlage AN/0320/2026: Antrag der CDU-Fraktion "Kreisverkehr Steinstraße/Theodor-Heuss-Straße in Porz-Finkenberg"</title>
+<updated>2026-02-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0320/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125801#beratung-2026-02-05-Rat</id>
+<title>Rat: „geändert beschlossen“ – 0437/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Gemeinschaftsgrundschule Konrad-Adenauer-Straße 20, 51149 Köln</title>
+<updated>2026-02-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0437/2025"/>
+<summary>Entscheidung am 2026-02-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125801#beratung-2026-02-02-Finanzausschuss</id>
+<title>Finanzausschuss: „mit Änderungen empfohlen“ – 0437/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Gemeinschaftsgrundschule Konrad-Adenauer-Straße 20, 51149 Köln</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0437/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131077#vorlage</id>
+<title>Neue Vorlage AN/0212/2026: Aufhebung des Schließungsbeschlusses des Kölner Stadtrats vom 15.6.2023 für das Krankenhauses Holweide und die Kinderklinik Amsterdamer Straße, Erhalt der flächendeckenden Krankenhausversorgung in Köln</title>
+<updated>2026-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0212/2026"/>
+<summary>BSW Antrag nach § 3 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125801#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „mit Änderungen empfohlen“ – 0437/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Gemeinschaftsgrundschule Konrad-Adenauer-Straße 20, 51149 Köln</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0437/2025"/>
+<summary>Anhörung (BV) am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125801#beratung-2026-01-27-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 0437/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Gemeinschaftsgrundschule Konrad-Adenauer-Straße 20, 51149 Köln</title>
+<updated>2026-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0437/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125801#beratung-2026-01-19-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0437/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Gemeinschaftsgrundschule Konrad-Adenauer-Straße 20, 51149 Köln</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0437/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-01-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125801#vorlage</id>
+<title>Neue Vorlage 0437/2025: Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Gemeinschaftsgrundschule Konrad-Adenauer-Straße 20, 51149 Köln</title>
+<updated>2025-12-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0437/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126342#beratung-2025-05-13-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „endgültig abgelehnt“ – AN/0343/2025 Lebenswerte Luxemburger Straße</title>
+<updated>2025-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0343/2025"/>
+<summary>Antrag / Anfrage am 2025-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126341#beratung-2025-05-13-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „endgültig abgelehnt“ – AN/0342/2025 Lebenswerte Luxemburger Straße</title>
+<updated>2025-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0342/2025"/>
+<summary>Antrag / Anfrage am 2025-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126096#beratung-2025-04-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0670/2025 Beantwortung der Anfrage der CDU-Fraktion "Maßnahmenkatalog für Porz-Finkenberg"</title>
+<updated>2025-04-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0670/2025"/>
+<summary>Entscheidung am 2025-04-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124945#beratung-2025-04-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1727/2024 Anfrage der CDU-Fraktion "Maßnahmenkatalog für Porz-Finkenberg"</title>
+<updated>2025-04-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1727/2024"/>
+<summary>Antrag / Anfrage am 2025-04-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126342#vorlage</id>
+<title>Neue Vorlage AN/0343/2025: Lebenswerte Luxemburger Straße</title>
+<updated>2025-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0343/2025"/>
+<summary>Die Linke. Antrag nach § 3 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126341#vorlage</id>
+<title>Neue Vorlage AN/0342/2025: Lebenswerte Luxemburger Straße</title>
+<updated>2025-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0342/2025"/>
+<summary>Die Linke. Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126096#vorlage</id>
+<title>Neue Vorlage 0670/2025: Beantwortung der Anfrage der CDU-Fraktion "Maßnahmenkatalog für Porz-Finkenberg"</title>
+<updated>2025-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0670/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124945#vorlage</id>
+<title>Neue Vorlage AN/1727/2024: Anfrage der CDU-Fraktion "Maßnahmenkatalog für Porz-Finkenberg"</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1727/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123048#beratung-2024-09-17-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „zurückgestellt“ – AN/1140/2024 Anfrage der Fraktion Bündnis 90/Die Grünen "Nutzung Parkplätze in Finkenberg"</title>
+<updated>2024-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1140/2024"/>
+<summary>Antrag / Anfrage am 2024-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122269#beratung-2024-09-17-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2038/2024 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 07.06.2021 (AN/1362/2021) betreffend Sachstand zur Umsetzung des Beschlusses AN/0382/2021 vom 04.03.2021</title>
+<updated>2024-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2038/2024"/>
+<summary>Anhörung (BV) am 2024-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102268#beratung-2024-09-17-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1362/2021 Anfrage der SPD-Fraktion "Sachstand zur Umsetzung des Beschlusses AN/0382/2021 vom 04.03.2021"</title>
+<updated>2024-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1362/2021"/>
+<summary>Antrag / Anfrage am 2024-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123048#vorlage</id>
+<title>Neue Vorlage AN/1140/2024: Anfrage der Fraktion Bündnis 90/Die Grünen "Nutzung Parkplätze in Finkenberg"</title>
+<updated>2024-08-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1140/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122269#vorlage</id>
+<title>Neue Vorlage 2038/2024: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 07.06.2021 (AN/1362/2021) betreffend Sachstand zur Umsetzung des Beschlusses AN/0382/2021 vom 04.03.2021</title>
+<updated>2024-07-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2038/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122310#beratung-2024-06-27-Rat</id>
+<title>Rat: „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1016/2024 Aktuelle Stunde: Bezirksregierung stoppt den erneuten Alleingang des Verkehrsdezernenten für Tempo 30 auf der Luxemburger Straße</title>
+<updated>2024-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1016/2024"/>
+<summary>Antrag / Anfrage am 2024-06-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122310#vorlage</id>
+<title>Neue Vorlage AN/1016/2024: Aktuelle Stunde: Bezirksregierung stoppt den erneuten Alleingang des Verkehrsdezernenten für Tempo 30 auf der Luxemburger Straße</title>
+<updated>2024-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1016/2024"/>
+<summary>FDP/KSG Antrag nach § 5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122222#vorlage</id>
+<title>Neue Vorlage 2008/2024: Beantwortung einer schriftlichen Anfrage der CDU-Ratsfraktion vom 20.06.2024 betreffend "Einrichtung Tempo 30 auf der Luxemburger Straße", AN/0980/2024</title>
+<updated>2024-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2008/2024"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122222#beratung-2024-06-24-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 2008/2024 Beantwortung einer schriftlichen Anfrage der CDU-Ratsfraktion vom 20.06.2024 betreffend "Einrichtung Tempo 30 auf der Luxemburger Straße", AN/0980/2024</title>
+<updated>2024-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2008/2024"/>
+<summary>Entscheidung am 2024-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122184#beratung-2024-06-24-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Sache ist erledigt“ – AN/0980/2024 Einrichtung Tempo 30 auf der Luxemburger Straße</title>
+<updated>2024-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0980/2024"/>
+<summary>Entscheidung am 2024-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122168#beratung-2024-06-24-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – 1975/2024 Lärmschutz auf der Luxemburger Straße</title>
+<updated>2024-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1975/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122168#vorlage</id>
+<title>Neue Vorlage 1975/2024: Lärmschutz auf der Luxemburger Straße</title>
+<updated>2024-06-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1975/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122184#vorlage</id>
+<title>Neue Vorlage AN/0980/2024: Einrichtung Tempo 30 auf der Luxemburger Straße</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0980/2024"/>
+<summary>CDU Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121636#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0786/2024 Antrag JBV "Bolzplatz Brüsseler Straße"</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0786/2024"/>
+<summary>Antrag / Anfrage am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121496#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 1552/2024 Aufwertungsmaßnahme für eine Grünanlage in Porz-Finkenberg durch die Anlage einer Bewegungsstation Hier: Annahme einer Schenkung der Kölner Grün Stiftung vom 23.04.2024</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1552/2024"/>
+<summary>Entscheidung am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121636#vorlage</id>
+<title>Neue Vorlage AN/0786/2024: Antrag JBV "Bolzplatz Brüsseler Straße"</title>
+<updated>2024-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0786/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121496#vorlage</id>
+<title>Neue Vorlage 1552/2024: Aufwertungsmaßnahme für eine Grünanlage in Porz-Finkenberg durch die Anlage einer Bewegungsstation Hier: Annahme einer Schenkung der Kölner Grün Stiftung vom 23.04.2024</title>
+<updated>2024-05-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1552/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119167#beratung-2024-05-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 0030/2024 Sanierung von zwei Teilbauwerken der Fußgängerbrücke Theodor-Heuss-Straße in Porz-Finkenberg</title>
+<updated>2024-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0030/2024"/>
+<summary>Entscheidung am 2024-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119167#vorlage</id>
+<title>Neue Vorlage 0030/2024: Sanierung von zwei Teilbauwerken der Fußgängerbrücke Theodor-Heuss-Straße in Porz-Finkenberg</title>
+<updated>2024-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0030/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118554#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig zurückgezogen“ – AN/2021/2023 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Abbau der beiden Parkbänke auf dem an den Bahndamm angrenzenden Grünstreifen in Porz- Finkenberg"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/2021/2023"/>
+<summary>Antrag / Anfrage am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117723#vorlage</id>
+<title>Neue Vorlage 3197/2023: Petition: Keine Schließung des Kinderkrankenhauses Amsterdamer Straße und des Krankenhauses Holweide, AZ [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#3197/2023"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118554#vorlage</id>
+<title>Neue Vorlage AN/2021/2023: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Abbau der beiden Parkbänke auf dem an den Bahndamm angrenzenden Grünstreifen in Porz- Finkenberg"</title>
+<updated>2023-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/2021/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115872#beratung-2023-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1214/2023 Änderungsantrag der SPD-Fraktion "Einrichtung einer Jugend-Theke in Finkenberg"</title>
+<updated>2023-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1214/2023"/>
+<summary>Antrag / Anfrage am 2023-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115820#beratung-2023-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1907/2023 Antrag der BBM-JBV "Einrichtung einer Jugend-Theke"</title>
+<updated>2023-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1907/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115872#vorlage</id>
+<title>Neue Vorlage AN/1214/2023: Änderungsantrag der SPD-Fraktion "Einrichtung einer Jugend-Theke in Finkenberg"</title>
+<updated>2023-06-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1214/2023"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115820#vorlage</id>
+<title>Neue Vorlage 1907/2023: Antrag der BBM-JBV "Einrichtung einer Jugend-Theke"</title>
+<updated>2023-06-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#1907/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112680#beratung-2023-02-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0028/2023 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Kreuzungsumwandlung Humboldtstraße/Theodor-Heuss-Straße als alternative Betriebsform zur Ampelanlage in einem Kreisverkehr, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0028/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111796#beratung-2023-02-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 3809/2022 Baustellen Humboldtstr./Steinstr.</title>
+<updated>2023-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#3809/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111591#beratung-2023-02-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1945/2022 Anfrage der SPD-Fraktion "Baustellen Humboldtstr./Steinstr."</title>
+<updated>2023-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1945/2022"/>
+<summary>Antrag / Anfrage am 2023-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112680#vorlage</id>
+<title>Neue Vorlage 0028/2023: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Kreuzungsumwandlung Humboldtstraße/Theodor-Heuss-Straße als alternative Betriebsform zur Ampelanlage in einem Kreisverkehr, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2023-01-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0028/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111796#vorlage</id>
+<title>Neue Vorlage 3809/2022: Baustellen Humboldtstr./Steinstr.</title>
+<updated>2022-12-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#3809/2022"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112232#beratung-2022-12-01-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 4056/2022 Abschlussbericht der Maßnahme „Büro für Quartiersmanagement und Aktivierung“ im Sozial-raum „Porz-Ost, Finkenberg, Gremberghoven und Eil“</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#4056/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112232#beratung-2022-12-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 4056/2022 Abschlussbericht der Maßnahme „Büro für Quartiersmanagement und Aktivierung“ im Sozial-raum „Porz-Ost, Finkenberg, Gremberghoven und Eil“</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#4056/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111469#beratung-2022-12-01-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 3605/2022 Sachstand Gesamtkonzept der Sportanlagen Humboldtstraße und Brucknerstraße</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#3605/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111469#beratung-2022-12-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 3605/2022 Sachstand Gesamtkonzept der Sportanlagen Humboldtstraße und Brucknerstraße</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#3605/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112232#vorlage</id>
+<title>Neue Vorlage 4056/2022: Abschlussbericht der Maßnahme „Büro für Quartiersmanagement und Aktivierung“ im Sozial-raum „Porz-Ost, Finkenberg, Gremberghoven und Eil“</title>
+<updated>2022-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#4056/2022"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111469#vorlage</id>
+<title>Neue Vorlage 3605/2022: Sachstand Gesamtkonzept der Sportanlagen Humboldtstraße und Brucknerstraße</title>
+<updated>2022-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#3605/2022"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/110982#beratung-2022-11-03-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig abgelehnt“ – 3284/2022 Projektantrag im Rahmen des sechsten Antragsdurchlaufs des Verfügungsfonds für das Ge-biet der Sozialen Stadt „Porz-Ost, Finkenberg, Gremberghoven und Eil“</title>
+<updated>2022-11-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#3284/2022"/>
+<summary>Anhörung (BV) am 2022-11-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111591#vorlage</id>
+<title>Neue Vorlage AN/1945/2022: Anfrage der SPD-Fraktion "Baustellen Humboldtstr./Steinstr."</title>
+<updated>2022-10-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1945/2022"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/110982#vorlage</id>
+<title>Neue Vorlage 3284/2022: Projektantrag im Rahmen des sechsten Antragsdurchlaufs des Verfügungsfonds für das Ge-biet der Sozialen Stadt „Porz-Ost, Finkenberg, Gremberghoven und Eil“</title>
+<updated>2022-10-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#3284/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109388#beratung-2022-09-19-Hauptausschuss</id>
+<title>Hauptausschuss: „Kenntnis genommen“ – 2184/2022 WDR-Beitrag über Finkenberg; Hier: Äußerungen des Herrn Beigeordneten Dr. Rau</title>
+<updated>2022-09-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2184/2022"/>
+<summary>Entscheidung am 2022-09-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109346#beratung-2022-09-19-Hauptausschuss</id>
+<title>Hauptausschuss: „Sache ist erledigt“ – AN/1287/2022 WDR-Beitrag über Finkenberg; Hier: Äußerungen des Herrn Beigeordneten Dr. Rau</title>
+<updated>2022-09-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1287/2022"/>
+<summary>Antrag / Anfrage am 2022-09-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109388#vorlage</id>
+<title>Neue Vorlage 2184/2022: WDR-Beitrag über Finkenberg; Hier: Äußerungen des Herrn Beigeordneten Dr. Rau</title>
+<updated>2022-07-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2184/2022"/>
+<summary>Beantwortung einer Anfrage (Rat bzw. HA) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109346#vorlage</id>
+<title>Neue Vorlage AN/1287/2022: WDR-Beitrag über Finkenberg; Hier: Äußerungen des Herrn Beigeordneten Dr. Rau</title>
+<updated>2022-07-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/1287/2022"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107053#beratung-2022-03-14-Ausschuss%20f%C3%BCr%20B%C3%BCrgerbeteiligung%2C%20Anregungen%20und%20Beschwerden</id>
+<title>Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden: „ungeändert beschlossen“ – 0685/2022 Bürgereingabe gem. § 24 GO - "Rechte Fahrspur als Radspur auf der Luxemburger Straße" - Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2022-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0685/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107053#vorlage</id>
+<title>Neue Vorlage 0685/2022: Bürgereingabe gem. § 24 GO - "Rechte Fahrspur als Radspur auf der Luxemburger Straße" - Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2022-03-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0685/2022"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106577#beratung-2022-02-17-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 0407/2022 Projektanträge im Rahmen des sechsten Antragsdurchlaufs des Verfügungsfonds für das Gebiet der Sozialen Stadt „Porz-Ost, Finkenberg, Gremberghoven und Eil“</title>
+<updated>2022-02-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0407/2022"/>
+<summary>Entscheidung am 2022-02-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105796#beratung-2022-02-17-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 4413/2021 Beschluss zur Änderung der Richtlinie zur Umsetzung des „Haus-, Hof- und Fassadenprogramms„ im Projekt „Starke Veedel – Starkes Köln“ im Sozialraum „Porz-Ost, Finkenberg, Gremberghoven und Eil“</title>
+<updated>2022-02-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#4413/2021"/>
+<summary>Entscheidung am 2022-02-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106577#vorlage</id>
+<title>Neue Vorlage 0407/2022: Projektanträge im Rahmen des sechsten Antragsdurchlaufs des Verfügungsfonds für das Gebiet der Sozialen Stadt „Porz-Ost, Finkenberg, Gremberghoven und Eil“</title>
+<updated>2022-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#0407/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105796#vorlage</id>
+<title>Neue Vorlage 4413/2021: Beschluss zur Änderung der Richtlinie zur Umsetzung des „Haus-, Hof- und Fassadenprogramms„ im Projekt „Starke Veedel – Starkes Köln“ im Sozialraum „Porz-Ost, Finkenberg, Gremberghoven und Eil“</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#4413/2021"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100866#beratung-2022-01-27-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0808/2021 Antrag der SPD-Fraktion "Querungshilfe auf der Stresemannstr. in Höhe der GGS Friedrich List und der Lise-Meitner-Gesamtschule in 51149 Köln"</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#AN/0808/2021"/>
+<summary>Antrag / Anfrage am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102682#beratung-2021-12-14-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 2500/2021 Zügigkeitserweiterung der Lise-Meitner-Gesamtschule, Stresemannstraße 36 in Köln-Finkenberg zum Schuljahr 2022/23 nach § 81 Absatz 2 Schulgesetz Nordrhein-Westfalen</title>
+<updated>2021-12-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2500/2021"/>
+<summary>Entscheidung am 2021-12-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102682#beratung-2021-12-06-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 2500/2021 Zügigkeitserweiterung der Lise-Meitner-Gesamtschule, Stresemannstraße 36 in Köln-Finkenberg zum Schuljahr 2022/23 nach § 81 Absatz 2 Schulgesetz Nordrhein-Westfalen</title>
+<updated>2021-12-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2500/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2021-12-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102682#beratung-2021-11-29-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „ungeändert beschlossen“ – 2500/2021 Zügigkeitserweiterung der Lise-Meitner-Gesamtschule, Stresemannstraße 36 in Köln-Finkenberg zum Schuljahr 2022/23 nach § 81 Absatz 2 Schulgesetz Nordrhein-Westfalen</title>
+<updated>2021-11-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2500/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2021-11-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102682#beratung-2021-11-22-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert beschlossen“ – 2500/2021 Zügigkeitserweiterung der Lise-Meitner-Gesamtschule, Stresemannstraße 36 in Köln-Finkenberg zum Schuljahr 2022/23 nach § 81 Absatz 2 Schulgesetz Nordrhein-Westfalen</title>
+<updated>2021-11-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:finkenberg#2500/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2021-11-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

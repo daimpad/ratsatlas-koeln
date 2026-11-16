@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0002-2026-2</id>
+<title>Vorlage 0002/2026/2: Sachstandsbericht zum Neubau Erweiterung Wallraf-Richartz-Museum und Fondation Corboud mit Neubau Blockrandbebauung für städtische Nutzflächen, Stand: 25. Februar 2026</title>
+<subtitle>Verlauf der Vorlage 0002/2026/2: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0002-2026-2.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#0002/2026/2"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131054#beratung-2026-03-12-Betriebsausschuss%20Wallraf-Richartz-Museum%20%26%20Fondation%20Corboud</id>
+<title>Betriebsausschuss Wallraf-Richartz-Museum &amp; Fondation Corboud: „Kenntnis genommen“ – 0002/2026/2 Sachstandsbericht zum Neubau Erweiterung Wallraf-Richartz-Museum und Fondation Corboud mit Neubau Blockrandbebauung für städtische Nutzflächen, Stand: 25. Februar 2026</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#0002/2026/2"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131054#beratung-2026-03-10-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „Kenntnis genommen“ – 0002/2026/2 Sachstandsbericht zum Neubau Erweiterung Wallraf-Richartz-Museum und Fondation Corboud mit Neubau Blockrandbebauung für städtische Nutzflächen, Stand: 25. Februar 2026</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#0002/2026/2"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131054#vorlage</id>
+<title>Neue Vorlage 0002/2026/2: Sachstandsbericht zum Neubau Erweiterung Wallraf-Richartz-Museum und Fondation Corboud mit Neubau Blockrandbebauung für städtische Nutzflächen, Stand: 25. Februar 2026</title>
+<updated>2026-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#0002/2026/2"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131054#folge-0002%2F2026</id>
+<title>Mitteilung Ausschuss 0002/2026: Sachstandsbericht zum Neubau Erweiterung Wallraf-Richartz-Museum und Fondation Corboud mit Neubau Blockrandbebauung für städtische Nutzflächen, Stand: 31. Dezember 2025</title>
+<updated>2026-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#0002/2026/2"/>
+<summary>Folgevorlage zu 0002/2026/2</summary>
+</entry>
+</feed>

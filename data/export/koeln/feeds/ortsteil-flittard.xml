@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-flittard</id>
 <title>Ratsatlas Köln – Flittard</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Flittard</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-12-31T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-flittard.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129401#beratung-2026-12-31-Ausschuss%20f%C3%BCr%20Bauen%20und%20Wohnen</id>
+<title>Ausschuss für Bauen und Wohnen: „für das Digitale Berichtswesen“ – 2780/2025 Errichtung eines Erweiterungsbaues für Ganztag für das Rheingymnasium Düsseldorfer Straße 13, 51063 Köln, - Weiterplanungs- und Baubeschluss, sowie Kostenfortschreibungsbeschluss</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2780/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134636#vorlage</id>
+<title>Neue Vorlage AN/1423/2026: Anfrage (Frau Franke); LSG-Rhein, Rheinauen und Uferbereiche von Flittard bis Rodenkirchen (hier: Teilbereich Rheinpark)</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1423/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130611#beratung-2026-05-12-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0061/2026 Konzept Öffentlichkeitsbeteiligung für den Grünzug Flittard</title>
+<updated>2026-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0061/2026"/>
+<summary>Entscheidung am 2026-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132659#vorlage</id>
+<title>Neue Vorlage AN/0748/2026: Atelierhaus Flittard</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0748/2026"/>
+<summary>Grüne Anfrage nach § 4 · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130611#beratung-2026-04-30-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „ungeändert empfohlen“ – 0061/2026 Konzept Öffentlichkeitsbeteiligung für den Grünzug Flittard</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0061/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130611#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert empfohlen“ – 0061/2026 Konzept Öffentlichkeitsbeteiligung für den Grünzug Flittard</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0061/2026"/>
+<summary>Anhörung (BV) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131687#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0676/2026 Beantwortung einer Anfrage AN/0703/2024 zu Wasserspielplätze und zu dem Spielplatz Max-Planck-Str.</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0676/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130611#vorlage</id>
+<title>Neue Vorlage 0061/2026: Konzept Öffentlichkeitsbeteiligung für den Grünzug Flittard</title>
+<updated>2026-04-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0061/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131687#vorlage</id>
+<title>Neue Vorlage 0676/2026: Beantwortung einer Anfrage AN/0703/2024 zu Wasserspielplätze und zu dem Spielplatz Max-Planck-Str.</title>
+<updated>2026-03-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0676/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131126#beratung-2026-03-16-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 0348/2026 Widmung eines Teilstücks der Pützlachstraße in Köln-Mülheim (Gemarkung Stammheim-Flittard, Flur 44, Flurstück 1536)</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0348/2026"/>
+<summary>Entscheidung am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131126#vorlage</id>
+<title>Neue Vorlage 0348/2026: Widmung eines Teilstücks der Pützlachstraße in Köln-Mülheim (Gemarkung Stammheim-Flittard, Flur 44, Flurstück 1536)</title>
+<updated>2026-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0348/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131002#beratung-2026-02-02-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0184/2026 Zustand und Sanierung des Flittarder Damms</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0184/2026"/>
+<summary>Entscheidung am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130879#beratung-2026-02-02-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/0129/2026 Schadhafte Stelle des Flittarder Deichs in Höhe des RTHC- Ruderclubs zeitnah ausbessern und einen Ortstermin oder ein Fachgespräch mit der Verwaltung zur Thematik vereinbaren</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0129/2026"/>
+<summary>Entscheidung am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130872#beratung-2026-02-02-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/0127/2026 Prüfauftrag zur durchgehenden Einrichtung von Tempo 30 auf der Roggendorfstraße</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0127/2026"/>
+<summary>Entscheidung am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131002#vorlage</id>
+<title>Neue Vorlage AN/0184/2026: Zustand und Sanierung des Flittarder Damms</title>
+<updated>2026-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0184/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130879#vorlage</id>
+<title>Neue Vorlage AN/0129/2026: Schadhafte Stelle des Flittarder Deichs in Höhe des RTHC- Ruderclubs zeitnah ausbessern und einen Ortstermin oder ein Fachgespräch mit der Verwaltung zur Thematik vereinbaren</title>
+<updated>2026-01-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0129/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130872#vorlage</id>
+<title>Neue Vorlage AN/0127/2026: Prüfauftrag zur durchgehenden Einrichtung von Tempo 30 auf der Roggendorfstraße</title>
+<updated>2026-01-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0127/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130257#beratung-2025-12-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – AN/1438/2025 Das Gebäude in der Eduard-Heis-Straße erhalten !</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1438/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130257#vorlage</id>
+<title>Neue Vorlage AN/1438/2025: Das Gebäude in der Eduard-Heis-Straße erhalten !</title>
+<updated>2025-12-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1438/2025"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130256#vorlage</id>
+<title>Neue Vorlage AN/1437/2025: Bezahlbaren Wohnraum in der Eduard-Heis-Straße erhalten, Obdachlosigkeit verhindern !</title>
+<updated>2025-12-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1437/2025"/>
+<summary>Antrag auf eine Aktuelle Stunde nach § 5 · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129401#beratung-2025-11-20-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 2780/2025 Errichtung eines Erweiterungsbaues für Ganztag für das Rheingymnasium Düsseldorfer Straße 13, 51063 Köln, - Weiterplanungs- und Baubeschluss, sowie Kostenfortschreibungsbeschluss</title>
+<updated>2025-11-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2780/2025"/>
+<summary>Entscheidung am 2025-11-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129401#vorlage</id>
+<title>Neue Vorlage 2780/2025: Errichtung eines Erweiterungsbaues für Ganztag für das Rheingymnasium Düsseldorfer Straße 13, 51063 Köln, - Weiterplanungs- und Baubeschluss, sowie Kostenfortschreibungsbeschluss</title>
+<updated>2025-11-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2780/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129518#vorlage</id>
+<title>Neue Vorlage AN/1296/2025: Unterstützung für die von der Räumung bedrohten Familien in Köln-Flittard – Eigentümer in die Pflicht nehmen, wohnortnahe Lösungen sichern</title>
+<updated>2025-09-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1296/2025"/>
+<summary>SPD Dringlichkeitsantrag nach § 12 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129518#beratung-2025-09-29-Hauptausschuss</id>
+<title>Hauptausschuss: „ungeändert beschlossen“ – AN/1296/2025 Unterstützung für die von der Räumung bedrohten Familien in Köln-Flittard – Eigentümer in die Pflicht nehmen, wohnortnahe Lösungen sichern</title>
+<updated>2025-09-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1296/2025"/>
+<summary>Antrag / Anfrage am 2025-09-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129495#beratung-2025-09-29-Hauptausschuss</id>
+<title>Hauptausschuss: „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1289/2025 Mieter*innen in Flittard schützen. Wohnungen in der Eduard-Heiss-Straße 3 bis 9 in menschenwürdigen Zustand bringen.</title>
+<updated>2025-09-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1289/2025"/>
+<summary>Antrag / Anfrage am 2025-09-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129377#beratung-2025-09-29-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „ohne Votum behandelt“ – 2756/2025 Nutzungsänderung Gut Scheuerhof, LB 9.36, EZ 4, hier: Befreiung gem. § 67 Abs. 1 von den Ge- und Verboten des Landschaftsplans</title>
+<updated>2025-09-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2756/2025"/>
+<summary>Entscheidung am 2025-09-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129495#vorlage</id>
+<title>Neue Vorlage AN/1289/2025: Mieter*innen in Flittard schützen. Wohnungen in der Eduard-Heiss-Straße 3 bis 9 in menschenwürdigen Zustand bringen.</title>
+<updated>2025-09-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1289/2025"/>
+<summary>Die Linke. Antrag nach § 5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129377#vorlage</id>
+<title>Neue Vorlage 2756/2025: Nutzungsänderung Gut Scheuerhof, LB 9.36, EZ 4, hier: Befreiung gem. § 67 Abs. 1 von den Ge- und Verboten des Landschaftsplans</title>
+<updated>2025-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2756/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129372#vorlage</id>
+<title>Neue Vorlage AN/1280/2025: Gefährdungsverhinderung im Wohnblock Eduard-Heis-Straße 5-9, 51061 Köln</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1280/2025"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129372#beratung-2025-09-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1280/2025 Gefährdungsverhinderung im Wohnblock Eduard-Heis-Straße 5-9, 51061 Köln</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1280/2025"/>
+<summary>Entscheidung am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129168#beratung-2025-09-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1192/2025 Kreuzung Roggendorfstraße / B8 in Köln-Flittard: Endlich die Verkehrssicherheit für Fahrradfahrende erhöhen und den Beschluss vom 13.03.2023 nach zweieinhalb Jahren umsetzen</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1192/2025"/>
+<summary>Entscheidung am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128667#beratung-2025-09-08-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 2279/2025 Schadstoffsanierung und Neugestaltung der Spielfläche Fritz-Haber-Straße in Köln-Flittard</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2279/2025"/>
+<summary>Entscheidung am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128667#beratung-2025-09-01-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 2279/2025 Schadstoffsanierung und Neugestaltung der Spielfläche Fritz-Haber-Straße in Köln-Flittard</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2279/2025"/>
+<summary>Entscheidung am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128667#beratung-2025-08-26-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „ungeändert beschlossen“ – 2279/2025 Schadstoffsanierung und Neugestaltung der Spielfläche Fritz-Haber-Straße in Köln-Flittard</title>
+<updated>2025-08-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2279/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-08-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129168#vorlage</id>
+<title>Neue Vorlage AN/1192/2025: Kreuzung Roggendorfstraße / B8 in Köln-Flittard: Endlich die Verkehrssicherheit für Fahrradfahrende erhöhen und den Beschluss vom 13.03.2023 nach zweieinhalb Jahren umsetzen</title>
+<updated>2025-08-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1192/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128667#vorlage</id>
+<title>Neue Vorlage 2279/2025: Schadstoffsanierung und Neugestaltung der Spielfläche Fritz-Haber-Straße in Köln-Flittard</title>
+<updated>2025-08-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2279/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128171#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 1985/2025 Beantwortung einer mündlichen Nachfrage von SB Frenzel aus der Sitzung des Stadtentwicklungsausschusses vom 22.05.2025 zur bereits beantworteten schriftlichen Anfrage, Session-Nr. 0357/2025, betreffend "Siedlung Egonstraße"</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1985/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128171#vorlage</id>
+<title>Neue Vorlage 1985/2025: Beantwortung einer mündlichen Nachfrage von SB Frenzel aus der Sitzung des Stadtentwicklungsausschusses vom 22.05.2025 zur bereits beantworteten schriftlichen Anfrage, Session-Nr. 0357/2025, betreffend "Siedlung Egonstraße"</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1985/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127504#beratung-2025-06-23-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1581/2025 Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Mülheim vom 12.05.2025 (AN/0548/2025) betreffend "Mähen der Wiesen am Flittarder Deich"</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1581/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127240#beratung-2025-06-23-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1422/2025 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen in der Bezirksvertretung Mülheim betreffend AN/0494/2025 : "Wie lässt sich die Einzelhandelssituation in Stammheim und Flittard verbessern?"</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1422/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127504#vorlage</id>
+<title>Neue Vorlage 1581/2025: Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Mülheim vom 12.05.2025 (AN/0548/2025) betreffend "Mähen der Wiesen am Flittarder Deich"</title>
+<updated>2025-05-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1581/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127240#vorlage</id>
+<title>Neue Vorlage 1422/2025: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen in der Bezirksvertretung Mülheim betreffend AN/0494/2025 : "Wie lässt sich die Einzelhandelssituation in Stammheim und Flittard verbessern?"</title>
+<updated>2025-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1422/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125634#beratung-2025-05-22-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 0327/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion (AN/0066/2025) betreffend "Siedlung Egonstraße im Zusammenhang mit der Regionalplan-Neuaufstellung"</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0327/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127118#beratung-2025-05-12-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0548/2025 Mähen der Wiesen am Flittarder Deich</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0548/2025"/>
+<summary>Entscheidung am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127016#beratung-2025-05-12-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0494/2025 Wie lässt sich die Einzelhandelssituation in Stammheim und Flittard verbessern?</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0494/2025"/>
+<summary>Entscheidung am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127118#vorlage</id>
+<title>Neue Vorlage AN/0548/2025: Mähen der Wiesen am Flittarder Deich</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0548/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127016#vorlage</id>
+<title>Neue Vorlage AN/0494/2025: Wie lässt sich die Einzelhandelssituation in Stammheim und Flittard verbessern?</title>
+<updated>2025-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0494/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126216#beratung-2025-03-24-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0308/2025 Überprüfung wie Umweltschutz und Naherholung im Naturschutzgebiet Flittarder Rheinaue besser in Einklang gebracht werden können</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0308/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126214#beratung-2025-03-24-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0306/2025 Bauanträge von Anwohner*innen im Bereich der Siedlung Egonstraße in Köln- Mülheim</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0306/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126213#beratung-2025-03-24-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0305/2025 Überprüfung und Umsetzung einer Nachbesserung und einer mittelfristigen, umfassenden Sanierung des Flittarder DEich</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0305/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124004#beratung-2025-03-24-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 3290/2024 Beantwortung einer Anfrage der Fraktion Die Linke betr. Bürgereingabe vom Oktober 2022 - Überprüfung wie Umweltschutz und Naherholung im Naturschutzgebiet Flittarder Rheinaue besser in Einklang gebracht werden können</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#3290/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126216#vorlage</id>
+<title>Neue Vorlage AN/0308/2025: Überprüfung wie Umweltschutz und Naherholung im Naturschutzgebiet Flittarder Rheinaue besser in Einklang gebracht werden können</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0308/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126214#vorlage</id>
+<title>Neue Vorlage AN/0306/2025: Bauanträge von Anwohner*innen im Bereich der Siedlung Egonstraße in Köln- Mülheim</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0306/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126213#vorlage</id>
+<title>Neue Vorlage AN/0305/2025: Überprüfung und Umsetzung einer Nachbesserung und einer mittelfristigen, umfassenden Sanierung des Flittarder DEich</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0305/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124004#vorlage</id>
+<title>Neue Vorlage 3290/2024: Beantwortung einer Anfrage der Fraktion Die Linke betr. Bürgereingabe vom Oktober 2022 - Überprüfung wie Umweltschutz und Naherholung im Naturschutzgebiet Flittarder Rheinaue besser in Einklang gebracht werden können</title>
+<updated>2025-02-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#3290/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125411#beratung-2025-02-06-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – AN/0066/2025 Siedlung Egonstraße im Zusammenhang mit der Regionalplan-Neuaufstellung</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0066/2025"/>
+<summary>Entscheidung am 2025-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125634#vorlage</id>
+<title>Neue Vorlage 0327/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion (AN/0066/2025) betreffend "Siedlung Egonstraße im Zusammenhang mit der Regionalplan-Neuaufstellung"</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0327/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125214#beratung-2025-02-03-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0065/2025 Fahrradfreundliche Anpassung der Aufpflasterungen auf der Düsseldorfer Straße - Testfläche</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0065/2025"/>
+<summary>Entscheidung am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125144#beratung-2025-02-03-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/0003/2025 Verbreiterung Radweg Stammheimer Ufer Höhe Gymnasium Düsseldorfer Straße</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0003/2025"/>
+<summary>Entscheidung am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125411#vorlage</id>
+<title>Neue Vorlage AN/0066/2025: Siedlung Egonstraße im Zusammenhang mit der Regionalplan-Neuaufstellung</title>
+<updated>2025-01-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0066/2025"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125214#vorlage</id>
+<title>Neue Vorlage 0065/2025: Fahrradfreundliche Anpassung der Aufpflasterungen auf der Düsseldorfer Straße - Testfläche</title>
+<updated>2025-01-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0065/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125144#vorlage</id>
+<title>Neue Vorlage AN/0003/2025: Verbreiterung Radweg Stammheimer Ufer Höhe Gymnasium Düsseldorfer Straße</title>
+<updated>2025-01-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0003/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123520#beratung-2024-09-30-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1314/2024 Umweltschutz und Naherholung im Naturschutzgebiet Flittarder Rheinaue besser in Einklang bringen</title>
+<updated>2024-09-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1314/2024"/>
+<summary>Entscheidung am 2024-09-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123520#vorlage</id>
+<title>Neue Vorlage AN/1314/2024: Umweltschutz und Naherholung im Naturschutzgebiet Flittarder Rheinaue besser in Einklang bringen</title>
+<updated>2024-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1314/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122236#beratung-2024-09-02-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 1021/2024/1 Schulrechtliche Erweiterung der GGS Köln-Flittard von 3 auf 4 Züge zum Schuljahr 2025/26 in Köln-Flittard</title>
+<updated>2024-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1021/2024/1"/>
+<summary>Anhörung (BV) am 2024-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122236#vorlage</id>
+<title>Neue Vorlage 1021/2024/1: Schulrechtliche Erweiterung der GGS Köln-Flittard von 3 auf 4 Züge zum Schuljahr 2025/26 in Köln-Flittard</title>
+<updated>2024-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1021/2024/1"/>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120667#beratung-2024-06-27-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1021/2024 Schulrechtliche Erweiterung der GGS Köln-Flittard von 3 auf 4 Züge zum Schuljahr 2025/26 in Köln-Flittard</title>
+<updated>2024-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1021/2024"/>
+<summary>Entscheidung am 2024-06-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120667#vorlage</id>
+<title>Neue Vorlage 1021/2024: Schulrechtliche Erweiterung der GGS Köln-Flittard von 3 auf 4 Züge zum Schuljahr 2025/26 in Köln-Flittard</title>
+<updated>2024-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1021/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120667#beratung-2024-06-26-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1021/2024 Schulrechtliche Erweiterung der GGS Köln-Flittard von 3 auf 4 Züge zum Schuljahr 2025/26 in Köln-Flittard</title>
+<updated>2024-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1021/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120611#beratung-2024-04-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – 0995/2024 Baubeschluss für die Generalinstandsetzung der Hubertusstraße zwischen Pützlachstraße und Flittarder Hauptstraße</title>
+<updated>2024-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0995/2024"/>
+<summary>Entscheidung am 2024-04-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120611#vorlage</id>
+<title>Neue Vorlage 0995/2024: Baubeschluss für die Generalinstandsetzung der Hubertusstraße zwischen Pützlachstraße und Flittarder Hauptstraße</title>
+<updated>2024-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0995/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119988#beratung-2024-03-04-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0623/2024 Beantwortung einer schriftlichen Anfrage der SPD Fraktion, CDU Fraktion und des Einzelmandatträgers Tücks (FDP) zur Sitzung am 22.05.2023 (AN/0986/2023)  betreffend "Sachstand Instandsetzung der Fahrbahndecke in der Siedlung Egonstraße"</title>
+<updated>2024-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0623/2024"/>
+<summary>Entscheidung am 2024-03-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113480#beratung-2024-03-04-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – 0546/2023 Fahrradstraße Düsseldorfer Straße (RadPendlerRoute 1)</title>
+<updated>2024-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0546/2023"/>
+<summary>Entscheidung am 2024-03-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119988#vorlage</id>
+<title>Neue Vorlage 0623/2024: Beantwortung einer schriftlichen Anfrage der SPD Fraktion, CDU Fraktion und des Einzelmandatträgers Tücks (FDP) zur Sitzung am 22.05.2023 (AN/0986/2023)  betreffend "Sachstand Instandsetzung der Fahrbahndecke in der Siedlung Egonstraße"</title>
+<updated>2024-02-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0623/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119587#beratung-2024-01-29-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0326/2024 Ergänzende Information zur Schließung des Spielplatzes Fritz-Haber-Straße zur Gefahrenabwehr</title>
+<updated>2024-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0326/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119587#vorlage</id>
+<title>Neue Vorlage 0326/2024: Ergänzende Information zur Schließung des Spielplatzes Fritz-Haber-Straße zur Gefahrenabwehr</title>
+<updated>2024-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0326/2024"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118613#beratung-2023-11-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 3827/2023 Schließung des Spielplatzes Fritz-Haber-Straße zur Gefahrenabwehr</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#3827/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118608#beratung-2023-11-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/2040/2023 Bürgereingabe vom Oktober 2022  - Überprüfung  wie Umweltschutz und Naherholung im Naturschutzgebiet Flittarder Rheinaue  besser in Einklang gebracht werden können</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/2040/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118613#vorlage</id>
+<title>Neue Vorlage 3827/2023: Schließung des Spielplatzes Fritz-Haber-Straße zur Gefahrenabwehr</title>
+<updated>2023-11-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#3827/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118608#vorlage</id>
+<title>Neue Vorlage AN/2040/2023: Bürgereingabe vom Oktober 2022  - Überprüfung  wie Umweltschutz und Naherholung im Naturschutzgebiet Flittarder Rheinaue  besser in Einklang gebracht werden können</title>
+<updated>2023-11-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/2040/2023"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118100#beratung-2023-10-30-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1903/2023 Umsetzung von Maßnahmen Knochenbergsweg</title>
+<updated>2023-10-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1903/2023"/>
+<summary>Entscheidung am 2023-10-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117856#beratung-2023-10-30-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1821/2023 Endlich den Belag des Fahrradweges an vier großflächigen Stellen entlang der westlichen Seite der B8 zwischen der Stammheimer Hauptstraße und der Roggendorfstraße in Flittard in Stand setzen</title>
+<updated>2023-10-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1821/2023"/>
+<summary>Entscheidung am 2023-10-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118100#vorlage</id>
+<title>Neue Vorlage AN/1903/2023: Umsetzung von Maßnahmen Knochenbergsweg</title>
+<updated>2023-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1903/2023"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117856#vorlage</id>
+<title>Neue Vorlage AN/1821/2023: Endlich den Belag des Fahrradweges an vier großflächigen Stellen entlang der westlichen Seite der B8 zwischen der Stammheimer Hauptstraße und der Roggendorfstraße in Flittard in Stand setzen</title>
+<updated>2023-10-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1821/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117168#beratung-2023-09-18-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1577/2023 Überlegungen der Verwaltung zur Anlage einer Fahrradstraße in der Düsseldorfer Str.</title>
+<updated>2023-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1577/2023"/>
+<summary>Entscheidung am 2023-09-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115977#beratung-2023-09-18-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 2002/2023 Öffentlichkeitsbeteiligung zur Fahrradstraße Düsseldorfer Straße (RadPendlerRoute 1)</title>
+<updated>2023-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2002/2023"/>
+<summary>Entscheidung am 2023-09-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115093#beratung-2023-09-18-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „endgültig abgelehnt“ – 1557/2023 Bürgereingabe gem. § 24 GO, betr.: Sperrung Knochenbergsweg am Kurtekotten (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen])</title>
+<updated>2023-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1557/2023"/>
+<summary>Entscheidung am 2023-09-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117168#vorlage</id>
+<title>Neue Vorlage AN/1577/2023: Überlegungen der Verwaltung zur Anlage einer Fahrradstraße in der Düsseldorfer Str.</title>
+<updated>2023-09-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1577/2023"/>
+<summary>Anfrage nach § 4 BV9 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116445#beratung-2023-08-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „endgültig abgelehnt“ – AN/1298/2023 Fahrradspur aufmalen Düsseldorfer Str.</title>
+<updated>2023-08-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1298/2023"/>
+<summary>Entscheidung am 2023-08-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116445#vorlage</id>
+<title>Neue Vorlage AN/1298/2023: Fahrradspur aufmalen Düsseldorfer Str.</title>
+<updated>2023-08-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/1298/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115977#vorlage</id>
+<title>Neue Vorlage 2002/2023: Öffentlichkeitsbeteiligung zur Fahrradstraße Düsseldorfer Straße (RadPendlerRoute 1)</title>
+<updated>2023-07-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#2002/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115350#beratung-2023-05-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/0986/2023 Sachstand Instandsetzung der Fahrbahndecke in der Siedlung Egonstraße</title>
+<updated>2023-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0986/2023"/>
+<summary>Entscheidung am 2023-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115093#vorlage</id>
+<title>Neue Vorlage 1557/2023: Bürgereingabe gem. § 24 GO, betr.: Sperrung Knochenbergsweg am Kurtekotten (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen])</title>
+<updated>2023-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1557/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115350#vorlage</id>
+<title>Neue Vorlage AN/0986/2023: Sachstand Instandsetzung der Fahrbahndecke in der Siedlung Egonstraße</title>
+<updated>2023-05-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0986/2023"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114612#vorlage</id>
+<title>Neue Vorlage AN/0642/2023: Fahrradstraße Düsseldorfer Straße (RadPendlerRoute)</title>
+<updated>2023-04-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#AN/0642/2023"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114507#beratung-2023-04-17-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1208/2023 Beantwortung einer Anfrage nach § 4 BV9 (CDU) betreffend Internetversorgung der OGS Regenbogen / GGS Peter-Grieß-Straße in Köln-Flittard, AN/2159/2022</title>
+<updated>2023-04-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1208/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-04-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114250#beratung-2023-04-17-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1022/2023 Stellungnahme zur Anfrage AN/2160/2022 der CDU-Fraktion zur „Situation an der OGS Am Feldrain in Köln-Flittard“</title>
+<updated>2023-04-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1022/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-04-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114507#vorlage</id>
+<title>Neue Vorlage 1208/2023: Beantwortung einer Anfrage nach § 4 BV9 (CDU) betreffend Internetversorgung der OGS Regenbogen / GGS Peter-Grieß-Straße in Köln-Flittard, AN/2159/2022</title>
+<updated>2023-04-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1208/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114250#vorlage</id>
+<title>Neue Vorlage 1022/2023: Stellungnahme zur Anfrage AN/2160/2022 der CDU-Fraktion zur „Situation an der OGS Am Feldrain in Köln-Flittard“</title>
+<updated>2023-04-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#1022/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113480#vorlage</id>
+<title>Neue Vorlage 0546/2023: Fahrradstraße Düsseldorfer Straße (RadPendlerRoute 1)</title>
+<updated>2023-04-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:flittard#0546/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

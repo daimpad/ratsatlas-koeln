@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-nippes</id>
 <title>Ratsatlas Köln – Nippes</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Nippes</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-10T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-nippes.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131193#beratung-2026-11-10-Stadtarbeitsgemeinschaft%20Behindertenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Behindertenpolitik: „ohne Votum behandelt“ – 0391/2026 Beschluss über die Entwurfsplanung sowie Baubeschluss für die Radverbindung Niehler Gürtel zwischen Merheimer Straße und Niehler Kirchweg im GrünZug Nippes</title>
+<updated>2026-11-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#0391/2026"/>
+<summary>Anhörung (BV) am 2026-11-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135503#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1761/2026 Finanzielle Unterstützung der Nippeser Veedelszöch 2027</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1761/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135483#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 3067/2026 Finanzielle Unterstützung der Nippeser Veedelszööch 2027</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#3067/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135426#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1739/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssicherheit Neusser Straße, Altenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1739/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135303#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1681/2026 Freier Bürgersteig an der Schillstraße - Abpollerung gegen illegales Parken</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1681/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135302#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1680/2026 Bienenhaltestellen und Photovoltaik für Nippes</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1680/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135299#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1677/2026 Bewohnerparken in der Schwerinstraße</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1677/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135298#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1676/2026 Verkehrssicherheit in der Escher Straße</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1676/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135276#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – AN/1661/2026 Zukunft des Galeria Kaufhof in der Neusser Straße</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1661/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135244#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 2930/2026 Vergabe bezirksorientierter Mittel an die KKG Nippeser-Bürgerwehr 1903 e.V.</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2930/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135130#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 2856/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssicherheit Neusser Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2856/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135066#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 2809/2026 Bildung eines Teilstandortes für das Erich-Kästner-Gymnasium, Castroper Straße 7, 50735 Köln-Nippes, in der Stammheimer Str. 101, 50735 Köln-Nippes</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2809/2026"/>
+<summary>Anhörung (BV) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134841#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „endgültig zurückgezogen“ – AN/1536/2026 Bürgereingabe nach § 24 GO–Versetzen einer Bank auf der Neusser Straße, Ecke Scharnhorst Straße Aktenzeichen [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1536/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134819#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 2648/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Die Grünen aus der Sitzung vom 22.05.2025 betreff; "Baustellenabsperrung Lohsestraße und Holbeinstraße" (AN/0637/2025)</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2648/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134785#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – AN/1507/2026 Bürgerzentrum Turmstraße – Nutzung, Auslastung und Vergabe des ehemaligen Schulgebäudes mit Hallen</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1507/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134492#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 2497/2026 Beantwortung einer schriftlichen Anfrage der Fraktion BÜNDNIS 90/DIE GRÜNEN aus der Sitzung der Bezirksvertretung Nippes vom 06.02.2025 (AN/0172/2025) betreffend „Unübersichtliche Situation in der Kautschukstraße nahe Niehler Straße“</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2497/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134082#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 2202/2026 Bürgereingabe nach § 24 GO–Versetzen einer Bank auf der Neusser Straße, Ecke Scharnhorst Straße Aktenzeichen [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2202/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133329#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – 1755/2026 Einwohnerfrage Standortentscheidung Bolzplatz Johannes-Giesberts-Park</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1755/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133327#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – 1753/2026 Einwohnerfrage Flächennutzung Johannes-Giesberts-Park</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1753/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133239#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 1713/2026 Planungsbeschluss für den barrierefreien Ausbau der KVB-Haltestelle Neusser Straße/Gürtel einschl. der Buswendeschleife in Höhe des Bezirksrathauses Nippes  Neusser Straße/Gürtel</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1713/2026"/>
+<summary>Anhörung (BV) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131193#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 0391/2026 Beschluss über die Entwurfsplanung sowie Baubeschluss für die Radverbindung Niehler Gürtel zwischen Merheimer Straße und Niehler Kirchweg im GrünZug Nippes</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#0391/2026"/>
+<summary>Anhörung (BV) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127373#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – AN/0637/2025 Baustellenabsperrung Lohsestraße und Holbeinstraße</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0637/2025"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125686#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – AN/0172/2025 Unübersichtliche Situation in der Kautschukstraße zwischen Niehler Straße und Josefine-Clouth-Straße</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0172/2025"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116849#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „vertagt“ – AN/1469/2023 Umsetzung von AN/0774/2021 LKW-Durchfahrtsverbot in der Kuenstraße</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1469/2023"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135503#vorlage</id>
+<title>Neue Vorlage AN/1761/2026: Finanzielle Unterstützung der Nippeser Veedelszöch 2027</title>
+<updated>2026-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1761/2026"/>
+<summary>Gem. Änderungsantrag BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135066#vorlage</id>
+<title>Neue Vorlage 2809/2026: Bildung eines Teilstandortes für das Erich-Kästner-Gymnasium, Castroper Straße 7, 50735 Köln-Nippes, in der Stammheimer Str. 101, 50735 Köln-Nippes</title>
+<updated>2026-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2809/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135483#vorlage</id>
+<title>Neue Vorlage 3067/2026: Finanzielle Unterstützung der Nippeser Veedelszööch 2027</title>
+<updated>2026-11-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#3067/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135426#vorlage</id>
+<title>Neue Vorlage AN/1739/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssicherheit Neusser Straße, Altenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1739/2026"/>
+<summary>Änderungsantrag BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133239#vorlage</id>
+<title>Neue Vorlage 1713/2026: Planungsbeschluss für den barrierefreien Ausbau der KVB-Haltestelle Neusser Straße/Gürtel einschl. der Buswendeschleife in Höhe des Bezirksrathauses Nippes  Neusser Straße/Gürtel</title>
+<updated>2026-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1713/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135303#vorlage</id>
+<title>Neue Vorlage AN/1681/2026: Freier Bürgersteig an der Schillstraße - Abpollerung gegen illegales Parken</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1681/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135302#vorlage</id>
+<title>Neue Vorlage AN/1680/2026: Bienenhaltestellen und Photovoltaik für Nippes</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1680/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135299#vorlage</id>
+<title>Neue Vorlage AN/1677/2026: Bewohnerparken in der Schwerinstraße</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1677/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135298#vorlage</id>
+<title>Neue Vorlage AN/1676/2026: Verkehrssicherheit in der Escher Straße</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1676/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131193#vorlage</id>
+<title>Neue Vorlage 0391/2026: Beschluss über die Entwurfsplanung sowie Baubeschluss für die Radverbindung Niehler Gürtel zwischen Merheimer Straße und Niehler Kirchweg im GrünZug Nippes</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#0391/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135276#vorlage</id>
+<title>Neue Vorlage AN/1661/2026: Zukunft des Galeria Kaufhof in der Neusser Straße</title>
+<updated>2026-10-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1661/2026"/>
+<summary>Anfrage nach § 4 BV5 (Grüne) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135244#vorlage</id>
+<title>Neue Vorlage 2930/2026: Vergabe bezirksorientierter Mittel an die KKG Nippeser-Bürgerwehr 1903 e.V.</title>
+<updated>2026-10-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2930/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134819#vorlage</id>
+<title>Neue Vorlage 2648/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Die Grünen aus der Sitzung vom 22.05.2025 betreff; "Baustellenabsperrung Lohsestraße und Holbeinstraße" (AN/0637/2025)</title>
+<updated>2026-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2648/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132846#vorlage</id>
+<title>Neue Vorlage 1427/2026: Baubeschluss für die Nachrüstung von taktilen Leitsystemen in den unterirdischen Stadtbahnhaltestellen Heimersdorf, Florastraße, Christophstraße/Mediapark und Rudolfplatz</title>
+<updated>2026-10-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1427/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135130#vorlage</id>
+<title>Neue Vorlage 2856/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssicherheit Neusser Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-10-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2856/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134492#vorlage</id>
+<title>Neue Vorlage 2497/2026: Beantwortung einer schriftlichen Anfrage der Fraktion BÜNDNIS 90/DIE GRÜNEN aus der Sitzung der Bezirksvertretung Nippes vom 06.02.2025 (AN/0172/2025) betreffend „Unübersichtliche Situation in der Kautschukstraße nahe Niehler Straße“</title>
+<updated>2026-10-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2497/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134673#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 2569/2026 Förderprogramm der Bezirksvertretung Nippes zur Sicherung der Veedelszüge im Stadtbezirk Köln-Nippes für das Jahr 2026</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2569/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134663#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1449/2026 Stopp der Installation von „Lümmelbänken“ – Für eine inklusive und barrierefreie Stadtmöblierung in Nippes</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1449/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134640#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „unter Vorbehalt beschlossen“ – AN/1427/2026 Antrag zur Sicherung der Mittel für das Bürgerzentrum Nippes im Haushaltsplan 2027/2028</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1427/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134598#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1400/2026 Verbesserte Sicherheit auf der Xantener Straße/Kretzer Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1400/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134597#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1399/2026 Bessere Kennzeichnung von gegenläufigem Radverkehr Mauenheimer Straße/Kempener Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1399/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134566#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 2532/2026 Vergabe bezirksorientierter Mittel an den Denkort Afrikaviertel Köln Nippes e.V. (i.G.)</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2532/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134563#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1385/2026 Ortstermin Bahndamm Sechzigstraße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1385/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134402#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 2449/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrsberuhigung Holbeinstraße, Köln-Nippes, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2449/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134401#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 2448/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Errichtung Fußgängerüberweg Neusser Straße auf Höhe der KVB Haltestelle Florastraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2448/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134116#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 2230/2026 Beantwortung der Anfrage AN/0949/2026 aggressives Betteln auf der Neusser Straße in Nippes</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2230/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133321#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – AN/0949/2026 Aggressives Betteln auf der Neusser Straße in Nippes</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0949/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132683#beratung-2026-09-24-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 1319/2026 Varianten zum Beschluss (0463/2021) „Erste Protected-Bike-Lane in Nippes – Fahrrad(r)evolution auf der Scheibenstraße“</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1319/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134841#vorlage</id>
+<title>Neue Vorlage AN/1536/2026: Bürgereingabe nach § 24 GO–Versetzen einer Bank auf der Neusser Straße, Ecke Scharnhorst Straße Aktenzeichen [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-09-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1536/2026"/>
+<summary>Änderungsantrag BV5 (Die Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134785#vorlage</id>
+<title>Neue Vorlage AN/1507/2026: Bürgerzentrum Turmstraße – Nutzung, Auslastung und Vergabe des ehemaligen Schulgebäudes mit Hallen</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1507/2026"/>
+<summary>Anfrage nach § 4 BV5 (CDU) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134663#vorlage</id>
+<title>Neue Vorlage AN/1449/2026: Stopp der Installation von „Lümmelbänken“ – Für eine inklusive und barrierefreie Stadtmöblierung in Nippes</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1449/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132406#beratung-2026-09-21-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – AN/0644/2026 Anfrage zur Nutzung Turmstraße 5-7</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0644/2026"/>
+<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134673#vorlage</id>
+<title>Neue Vorlage 2569/2026: Förderprogramm der Bezirksvertretung Nippes zur Sicherung der Veedelszüge im Stadtbezirk Köln-Nippes für das Jahr 2026</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2569/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134640#vorlage</id>
+<title>Neue Vorlage AN/1427/2026: Antrag zur Sicherung der Mittel für das Bürgerzentrum Nippes im Haushaltsplan 2027/2028</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1427/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134598#vorlage</id>
+<title>Neue Vorlage AN/1400/2026: Verbesserte Sicherheit auf der Xantener Straße/Kretzer Straße</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1400/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134597#vorlage</id>
+<title>Neue Vorlage AN/1399/2026: Bessere Kennzeichnung von gegenläufigem Radverkehr Mauenheimer Straße/Kempener Straße</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1399/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134566#vorlage</id>
+<title>Neue Vorlage 2532/2026: Vergabe bezirksorientierter Mittel an den Denkort Afrikaviertel Köln Nippes e.V. (i.G.)</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2532/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134563#vorlage</id>
+<title>Neue Vorlage AN/1385/2026: Ortstermin Bahndamm Sechzigstraße</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1385/2026"/>
+<summary>Antrag nach § 3 BV5 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134545#vorlage</id>
+<title>Neue Vorlage AN/1381/2026: Sachstand zur Umbenenung Gustav-Nachtigal-Straße</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1381/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134402#vorlage</id>
+<title>Neue Vorlage 2449/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrsberuhigung Holbeinstraße, Köln-Nippes, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2449/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134401#vorlage</id>
+<title>Neue Vorlage 2448/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Errichtung Fußgängerüberweg Neusser Straße auf Höhe der KVB Haltestelle Florastraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2448/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134116#vorlage</id>
+<title>Neue Vorlage 2230/2026: Beantwortung der Anfrage AN/0949/2026 aggressives Betteln auf der Neusser Straße in Nippes</title>
+<updated>2026-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2230/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134082#vorlage</id>
+<title>Neue Vorlage 2202/2026: Bürgereingabe nach § 24 GO–Versetzen einer Bank auf der Neusser Straße, Ecke Scharnhorst Straße Aktenzeichen [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-08-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#2202/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132683#vorlage</id>
+<title>Neue Vorlage 1319/2026: Varianten zum Beschluss (0463/2021) „Erste Protected-Bike-Lane in Nippes – Fahrrad(r)evolution auf der Scheibenstraße“</title>
+<updated>2026-07-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1319/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#beratung-2026-07-02-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0559/2026 Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#0559/2026"/>
+<summary>Entscheidung am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „ungeändert empfohlen“ – 0559/2026 Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#0559/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132317#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 1118/2026 Umgestaltung der Skateranlage Lohse-Rampe in Köln-Nippes</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1118/2026"/>
+<summary>Entscheidung am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133434#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/1011/2026 Wegeverbindung „Am Ausbesserungswerk“ – S-Bahnhof Geldernstraße/Parkgürtel</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1011/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133419#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0998/2026 Entsiegelung und Schutz von Straßenbäumen auf der Kempener Straße/Bushaltestelle St. Vinzenz-Krankenhaus</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0998/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133407#beratung-2026-06-25-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – AN/0989/2026 Tempo 30 auf der Neusser Straße zw. Ebertplatz und Innere Kanalstraße – gemeinsamer Antrag von: B90/Die Grünen, Die Linke, SPD, Volt (EV)</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0989/2026"/>
+<summary>Antrag / Anfrage am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133380#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 1785/2026 Vergabe bezirksorientierter Mittel an die Ev. Kirchengemeinde Köln-Nippes</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1785/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133374#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „endgültig abgelehnt“ – 1779/2026 Vergabe bezirksorientierter Mittel an den Förderverein der Montessori-Schule Nippes e.V.</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1779/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133357#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0969/2026 Verbesserung der Schulwegsicherheit für Schüler*innen der Carl-von-Ossietzky Gesamtschule im Bereich Kempener Straße/Etzelstraße</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0969/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133356#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0968/2026 Verbesserung der Verkehrssicherheit und Schutz von Straßenbäumen auf der Kempener Straße/Bushaltestelle St. Vinzenz-Krankenhaus</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0968/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133324#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0951/2026 Durchsetzung des Halteverbotes vor der Tiefgarageneinfahrt Niehler Str. 222 („Em Parkveedel“)</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0951/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133259#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 1721/2026 Temporäre Ausweisung einer Hundefreilauffläche im Lis-Böhle-Park an der Grabbestraße aufgrund der Sperrung des Johannes-Giesberts-Parks</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1721/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133127#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1645/2026 Zielvereinbarung 2026 - Bürgerzentrum Nippes</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1645/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133115#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 1637/2026 Teileinziehung Schulstraße Kretzerstraße</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1637/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133106#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 1630/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Anwohnerparken Niehler Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1630/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132317#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 1118/2026 Umgestaltung der Skateranlage Lohse-Rampe in Köln-Nippes</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1118/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#beratung-2026-06-25-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 0559/2026 Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#0559/2026"/>
+<summary>Anhörung (BV) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132317#beratung-2026-06-23-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „ungeändert beschlossen“ – 1118/2026 Umgestaltung der Skateranlage Lohse-Rampe in Köln-Nippes</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1118/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#vorlage</id>
+<title>Neue Vorlage 0559/2026: Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#0559/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133324#vorlage</id>
+<title>Neue Vorlage AN/0951/2026: Durchsetzung des Halteverbotes vor der Tiefgarageneinfahrt Niehler Str. 222 („Em Parkveedel“)</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0951/2026"/>
+<summary>Antrag nach § 3 BV5 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133259#vorlage</id>
+<title>Neue Vorlage 1721/2026: Temporäre Ausweisung einer Hundefreilauffläche im Lis-Böhle-Park an der Grabbestraße aufgrund der Sperrung des Johannes-Giesberts-Parks</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1721/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133434#vorlage</id>
+<title>Neue Vorlage AN/1011/2026: Wegeverbindung „Am Ausbesserungswerk“ – S-Bahnhof Geldernstraße/Parkgürtel</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/1011/2026"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133419#vorlage</id>
+<title>Neue Vorlage AN/0998/2026: Entsiegelung und Schutz von Straßenbäumen auf der Kempener Straße/Bushaltestelle St. Vinzenz-Krankenhaus</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0998/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133407#vorlage</id>
+<title>Neue Vorlage AN/0989/2026: Tempo 30 auf der Neusser Straße zw. Ebertplatz und Innere Kanalstraße – gemeinsamer Antrag von: B90/Die Grünen, Die Linke, SPD, Volt (EV)</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0989/2026"/>
+<summary>Gem. Antrag nach § 3 BV1 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133356#vorlage</id>
+<title>Neue Vorlage AN/0968/2026: Verbesserung der Verkehrssicherheit und Schutz von Straßenbäumen auf der Kempener Straße/Bushaltestelle St. Vinzenz-Krankenhaus</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0968/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131441#beratung-2026-06-15-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0559/2026 Beschluss über die Feststellung der 200. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 5, Köln-Nippes, Arbeitstitel: "Südliche Schmiedegasse" in Köln-Weidenpesch</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#0559/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133380#vorlage</id>
+<title>Neue Vorlage 1785/2026: Vergabe bezirksorientierter Mittel an die Ev. Kirchengemeinde Köln-Nippes</title>
+<updated>2026-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1785/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133374#vorlage</id>
+<title>Neue Vorlage 1779/2026: Vergabe bezirksorientierter Mittel an den Förderverein der Montessori-Schule Nippes e.V.</title>
+<updated>2026-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1779/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133357#vorlage</id>
+<title>Neue Vorlage AN/0969/2026: Verbesserung der Schulwegsicherheit für Schüler*innen der Carl-von-Ossietzky Gesamtschule im Bereich Kempener Straße/Etzelstraße</title>
+<updated>2026-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0969/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133329#vorlage</id>
+<title>Neue Vorlage 1755/2026: Einwohnerfrage Standortentscheidung Bolzplatz Johannes-Giesberts-Park</title>
+<updated>2026-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1755/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133327#vorlage</id>
+<title>Neue Vorlage 1753/2026: Einwohnerfrage Flächennutzung Johannes-Giesberts-Park</title>
+<updated>2026-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#1753/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133321#vorlage</id>
+<title>Neue Vorlage AN/0949/2026: Aggressives Betteln auf der Neusser Straße in Nippes</title>
+<updated>2026-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#AN/0949/2026"/>
+<summary>Anfrage nach § 4 BV5 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

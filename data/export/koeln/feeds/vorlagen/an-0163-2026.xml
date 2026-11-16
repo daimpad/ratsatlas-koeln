@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/an-0163-2026</id>
+<title>Vorlage AN/0163/2026: Einrichtung exklusiver Schwimmzeiten für Frauen im Chorweilerbad</title>
+<subtitle>Verlauf der Vorlage AN/0163/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/an-0163-2026.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/0163/2026"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130968#beratung-2026-01-29-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig zurückgezogen“ – AN/0163/2026 Einrichtung exklusiver Schwimmzeiten für Frauen im Chorweilerbad</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/0163/2026"/>
+<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130968#vorlage</id>
+<title>Neue Vorlage AN/0163/2026: Einrichtung exklusiver Schwimmzeiten für Frauen im Chorweilerbad</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/0163/2026"/>
+<summary>Antrag nach § 3 BV6 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130968#folge-AN%2F0074%2F2026</id>
+<title>Antrag nach § 3 BV6 (SPD) AN/0074/2026: Einrichtung exklusiver Schwimmzeiten für Frauen im Chorweilerbad</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/0163/2026"/>
+<summary>Folgevorlage zu AN/0163/2026</summary>
+</entry>
+</feed>

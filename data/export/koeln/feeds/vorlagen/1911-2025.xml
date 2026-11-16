@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/1911-2025</id>
+<title>Vorlage 1911/2025: „Auszug aus dem Bericht des Jobcenter Köln“ aus der Sitzung des Ausschusses für Soziales, Seniorinnen und Senioren am 05.06.2025 für die Stadtarbeitsgemeinschaft Behindertenpolitik: hier Tag der Inklusion</title>
+<subtitle>Verlauf der Vorlage 1911/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-07-01T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/1911-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#1911/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128038#beratung-2025-07-01-Stadtarbeitsgemeinschaft%20Behindertenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Behindertenpolitik: „Kenntnis genommen“ – 1911/2025 „Auszug aus dem Bericht des Jobcenter Köln“ aus der Sitzung des Ausschusses für Soziales, Seniorinnen und Senioren am 05.06.2025 für die Stadtarbeitsgemeinschaft Behindertenpolitik: hier Tag der Inklusion</title>
+<updated>2025-07-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#1911/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128038#vorlage</id>
+<title>Neue Vorlage 1911/2025: „Auszug aus dem Bericht des Jobcenter Köln“ aus der Sitzung des Ausschusses für Soziales, Seniorinnen und Senioren am 05.06.2025 für die Stadtarbeitsgemeinschaft Behindertenpolitik: hier Tag der Inklusion</title>
+<updated>2025-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2025#1911/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+</feed>

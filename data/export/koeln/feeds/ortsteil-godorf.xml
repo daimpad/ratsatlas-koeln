@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-godorf</id>
 <title>Ratsatlas Köln – Godorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Godorf</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-16T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-godorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135675#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1807/2026 Jahrmärkte in Godorf</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1807/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135507#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – AN/1764/2026 Jahrmärkte Godorf unterbinden</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1764/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135430#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – 3028/2026 Einwohneranfrage - Godorf, Hofanlage mit Laubenhaus, Godorfer Hauptstr. [Hausnummer ausgelassen] bedroht</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#3028/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135675#vorlage</id>
+<title>Neue Vorlage AN/1807/2026: Jahrmärkte in Godorf</title>
+<updated>2026-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1807/2026"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135507#vorlage</id>
+<title>Neue Vorlage AN/1764/2026: Jahrmärkte Godorf unterbinden</title>
+<updated>2026-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1764/2026"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135430#vorlage</id>
+<title>Neue Vorlage 3028/2026: Einwohneranfrage - Godorf, Hofanlage mit Laubenhaus, Godorfer Hauptstr. [Hausnummer ausgelassen] bedroht</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#3028/2026"/>
+<summary>Einwohneranfrage nach § 39 Abs. 6 · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134470#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/1338/2026 Maßnahmen zum Schutz der Anwohnenden von Godorf, betreffend der regelmäßig stattfindenden Trödelmärkte in Godorf</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1338/2026"/>
+<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134032#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2159/2026 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion betreffend: Trödelmärkte Godorf (AN/1058/2026)</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#2159/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133679#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – 1903/2026 Bürgereingabe nach § 24 GO– „Melan Märkte Godorf, Sonntagsruhe“ ([Hausnummer ausgelassen]/[Hausnummer ausgelassen])</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1903/2026"/>
+<summary>Entscheidung am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132891#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1464/2026 Beantwortung einer schriftlichen Anfrage betreffend "Bildung für Kinder in der Flüchtlingseinrichtung in Godorf"</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1464/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133679#vorlage</id>
+<title>Neue Vorlage 1903/2026: Bürgereingabe nach § 24 GO– „Melan Märkte Godorf, Sonntagsruhe“ ([Hausnummer ausgelassen]/[Hausnummer ausgelassen])</title>
+<updated>2026-09-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1903/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134470#vorlage</id>
+<title>Neue Vorlage AN/1338/2026: Maßnahmen zum Schutz der Anwohnenden von Godorf, betreffend der regelmäßig stattfindenden Trödelmärkte in Godorf</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1338/2026"/>
+<summary>Gem. Antrag nach § 3 BV2 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134032#vorlage</id>
+<title>Neue Vorlage 2159/2026: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion betreffend: Trödelmärkte Godorf (AN/1058/2026)</title>
+<updated>2026-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#2159/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132891#vorlage</id>
+<title>Neue Vorlage 1464/2026: Beantwortung einer schriftlichen Anfrage betreffend "Bildung für Kinder in der Flüchtlingseinrichtung in Godorf"</title>
+<updated>2026-08-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1464/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133510#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1058/2026 Trödelmärkte in Godorf</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1058/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133510#vorlage</id>
+<title>Neue Vorlage AN/1058/2026: Trödelmärkte in Godorf</title>
+<updated>2026-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1058/2026"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132481#beratung-2026-05-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0678/2026 Einrichtung einer Tempo-30-Zone am Mennweg (zwischen Kreisverkehr Industriestraße &amp; Anfang Hitdorfer Fährweg</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0678/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131880#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0777/2026 Beantwortung einer Anfrage der SPD-Fraktion zu Zuständen in der Unterkunft für Geflüchtete Kuckucksweg in Köln-Godorf</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0777/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132481#vorlage</id>
+<title>Neue Vorlage AN/0678/2026: Einrichtung einer Tempo-30-Zone am Mennweg (zwischen Kreisverkehr Industriestraße &amp; Anfang Hitdorfer Fährweg</title>
+<updated>2026-04-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0678/2026"/>
+<summary>Gem. Antrag nach § 3 BV6 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131880#vorlage</id>
+<title>Neue Vorlage 0777/2026: Beantwortung einer Anfrage der SPD-Fraktion zu Zuständen in der Unterkunft für Geflüchtete Kuckucksweg in Köln-Godorf</title>
+<updated>2026-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0777/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131796#beratung-2026-03-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0483/2026 Bildung für Kinder in der Flüchtlingseinrichtung in Godorf</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0483/2026"/>
+<summary>Antrag / Anfrage am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131781#beratung-2026-03-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0476/2026 Zustände in der Geflüchtetenunterkunft Kuckucksweg in Köln-Godorf</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0476/2026"/>
+<summary>Antrag / Anfrage am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131796#vorlage</id>
+<title>Neue Vorlage AN/0483/2026: Bildung für Kinder in der Flüchtlingseinrichtung in Godorf</title>
+<updated>2026-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0483/2026"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131781#vorlage</id>
+<title>Neue Vorlage AN/0476/2026: Zustände in der Geflüchtetenunterkunft Kuckucksweg in Köln-Godorf</title>
+<updated>2026-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0476/2026"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130318#beratung-2025-12-11-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1465/2025 "Turbokreisel" Emdenerstraße - Causemannstraße - Zufahrt Industriestraße</title>
+<updated>2025-12-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1465/2025"/>
+<summary>Antrag / Anfrage am 2025-12-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130318#vorlage</id>
+<title>Neue Vorlage AN/1465/2025: "Turbokreisel" Emdenerstraße - Causemannstraße - Zufahrt Industriestraße</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1465/2025"/>
+<summary>Anfrage nach § 4 BV6 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128596#beratung-2025-09-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2219/2025 Beantwortung der schriftlichen Anfrage der FDP-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 30.06.2025 betreffend „Flügel für die Godorfer Mühle“ (AN/0955/2025)</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#2219/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128596#vorlage</id>
+<title>Neue Vorlage 2219/2025: Beantwortung der schriftlichen Anfrage der FDP-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 30.06.2025 betreffend „Flügel für die Godorfer Mühle“ (AN/0955/2025)</title>
+<updated>2025-07-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#2219/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128299#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0955/2025 Flügel für die Godorfer Mühle</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0955/2025"/>
+<summary>Entscheidung am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128058#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1918/2025 Bolzplatz Katharinenstraße in K-Godorf</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1918/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128299#vorlage</id>
+<title>Neue Vorlage AN/0955/2025: Flügel für die Godorfer Mühle</title>
+<updated>2025-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0955/2025"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128058#vorlage</id>
+<title>Neue Vorlage 1918/2025: Bolzplatz Katharinenstraße in K-Godorf</title>
+<updated>2025-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1918/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126722#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0433/2025 Emissionen Alpha Compound Füllstoff GmbH, Otto Hahn Str. 9-11, 50997 Köln</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0433/2025"/>
+<summary>Antrag / Anfrage am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126722#vorlage</id>
+<title>Neue Vorlage AN/0433/2025: Emissionen Alpha Compound Füllstoff GmbH, Otto Hahn Str. 9-11, 50997 Köln</title>
+<updated>2025-04-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0433/2025"/>
+<summary>Anfrage nach § 4 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126138#beratung-2025-03-24-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0702/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 13.03.2023 (AN/0302/2023) betreffend „Verlegung der LKW Ein-/ Ausfahrt zur Shell Raffinerie in Godorf auf die Industriestraße“</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0702/2025"/>
+<summary>Antrag / Anfrage am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98641#vorlage</id>
+<title>Neue Vorlage AN/0012/2021: Maßnahmen zum Lärmschutz der AnwohnerInnen an der BAB 555</title>
+<updated>2025-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0012/2021"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126138#vorlage</id>
+<title>Neue Vorlage 0702/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 13.03.2023 (AN/0302/2023) betreffend „Verlegung der LKW Ein-/ Ausfahrt zur Shell Raffinerie in Godorf auf die Industriestraße“</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0702/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125987#beratung-2025-03-10-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 0580/2025 Mitteilung der Unteren Naturschutzbehörde betreffend Flüchtlingsunterkunft Kuckucksweg 8</title>
+<updated>2025-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0580/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125987#vorlage</id>
+<title>Neue Vorlage 0580/2025: Mitteilung der Unteren Naturschutzbehörde betreffend Flüchtlingsunterkunft Kuckucksweg 8</title>
+<updated>2025-02-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0580/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125574#vorlage</id>
+<title>Neue Vorlage AN/0133/2025: Historisches Laubengang-Fachwerkhaus in Godorf: Erhalt</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0133/2025"/>
+<summary>Gem. Dringlichkeitsantrag BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125574#beratung-2025-01-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – AN/0133/2025 Historisches Laubengang-Fachwerkhaus in Godorf: Erhalt</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0133/2025"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125307#beratung-2025-01-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0133/2025 Beantwortung einer schriftlichen Anfrage der FDP-Fraktion in der Sitzung der Bezirksvertretung Rodenkirchen vom 04.11.2024 "AN/1396/2024" betreffend "Sperrung des Sürther Leinpfads auf Höhe der Werksausfahrt der Firma Theo Steil GmbH in Köln-Godorf"</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0133/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125139#beratung-2025-01-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 4029/2025 Bau einer Unterkunft für Geflüchtete am Kuckucksweg in Godorf</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#4029/2025"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125307#vorlage</id>
+<title>Neue Vorlage 0133/2025: Beantwortung einer schriftlichen Anfrage der FDP-Fraktion in der Sitzung der Bezirksvertretung Rodenkirchen vom 04.11.2024 "AN/1396/2024" betreffend "Sperrung des Sürther Leinpfads auf Höhe der Werksausfahrt der Firma Theo Steil GmbH in Köln-Godorf"</title>
+<updated>2025-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0133/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125139#vorlage</id>
+<title>Neue Vorlage 4029/2025: Bau einer Unterkunft für Geflüchtete am Kuckucksweg in Godorf</title>
+<updated>2025-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#4029/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124510#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1577/2024 Laubenganghäuser in Godorf: Schutz vor dem Verfall</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1577/2024"/>
+<summary>Antrag / Anfrage am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124509#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1576/2024 Anpassung des Halteverbots in der Buchfinkenstraße, Stadtteil Godorf, Gemeinsamer Antrag der CDU-Fraktion, der SPD-Fraktion und der FDP-Fraktion</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1576/2024"/>
+<summary>Antrag / Anfrage am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124510#vorlage</id>
+<title>Neue Vorlage AN/1577/2024: Laubenganghäuser in Godorf: Schutz vor dem Verfall</title>
+<updated>2024-11-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1577/2024"/>
+<summary>Gem. Anfrage BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124509#vorlage</id>
+<title>Neue Vorlage AN/1576/2024: Anpassung des Halteverbots in der Buchfinkenstraße, Stadtteil Godorf, Gemeinsamer Antrag der CDU-Fraktion, der SPD-Fraktion und der FDP-Fraktion</title>
+<updated>2024-11-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1576/2024"/>
+<summary>Gem. Antrag nach § 3 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123924#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1396/2024 Sperrung des Sürther Leinpfads auf Höhe der Werksausfahrt der Firma Theo Steil GmbH in Köln-Godorf</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1396/2024"/>
+<summary>Entscheidung am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124155#vorlage</id>
+<title>Neue Vorlage 3384/2024: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Parksituation Buchfinkenstraße, Köln-Rodenkirchen, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-10-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#3384/2024"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123924#vorlage</id>
+<title>Neue Vorlage AN/1396/2024: Sperrung des Sürther Leinpfads auf Höhe der Werksausfahrt der Firma Theo Steil GmbH in Köln-Godorf</title>
+<updated>2024-10-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1396/2024"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119269#beratung-2024-03-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0015/2024 Herrenlose Einkaufswagen in Godorf</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0015/2024"/>
+<summary>Antrag / Anfrage am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119269#vorlage</id>
+<title>Neue Vorlage AN/0015/2024: Herrenlose Einkaufswagen in Godorf</title>
+<updated>2024-02-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0015/2024"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117016#beratung-2023-12-07-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 2763/2023 Satzung über die abweichende Herstellung der Erschließungsanlage Robert-Bosch-Straße von Stichstraße zu Haus-Nr. 43-61 bis Kreisverkehr Industriestraße</title>
+<updated>2023-12-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#2763/2023"/>
+<summary>Entscheidung am 2023-12-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118417#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/1967/2023 Verkehrssituation für den Fuß- und Radverkehr um die Werksausfahrt der Firma Theo Steil GmbH am Sürther Leinpfad in Köln-Godorf</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1967/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117016#beratung-2023-11-21-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert empfohlen“ – 2763/2023 Satzung über die abweichende Herstellung der Erschließungsanlage Robert-Bosch-Straße von Stichstraße zu Haus-Nr. 43-61 bis Kreisverkehr Industriestraße</title>
+<updated>2023-11-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#2763/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-11-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118417#vorlage</id>
+<title>Neue Vorlage AN/1967/2023: Verkehrssituation für den Fuß- und Radverkehr um die Werksausfahrt der Firma Theo Steil GmbH am Sürther Leinpfad in Köln-Godorf</title>
+<updated>2023-11-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1967/2023"/>
+<summary>Antrag nach § 3 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117016#beratung-2023-10-19-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 2763/2023 Satzung über die abweichende Herstellung der Erschließungsanlage Robert-Bosch-Straße von Stichstraße zu Haus-Nr. 43-61 bis Kreisverkehr Industriestraße</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#2763/2023"/>
+<summary>Anhörung (BV) am 2023-10-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117016#vorlage</id>
+<title>Neue Vorlage 2763/2023: Satzung über die abweichende Herstellung der Erschließungsanlage Robert-Bosch-Straße von Stichstraße zu Haus-Nr. 43-61 bis Kreisverkehr Industriestraße</title>
+<updated>2023-09-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#2763/2023"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114729#beratung-2023-05-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0683/2023 Maßnahmen zum Lärmschutz der Anwohnenden an der BAB 555</title>
+<updated>2023-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0683/2023"/>
+<summary>Antrag / Anfrage am 2023-05-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113938#beratung-2023-05-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0846/2023 Weiterer Verlauf der KVB-Linie 17 über Köln-Godorf</title>
+<updated>2023-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0846/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-05-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114729#vorlage</id>
+<title>Neue Vorlage AN/0683/2023: Maßnahmen zum Lärmschutz der Anwohnenden an der BAB 555</title>
+<updated>2023-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0683/2023"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113938#vorlage</id>
+<title>Neue Vorlage 0846/2023: Weiterer Verlauf der KVB-Linie 17 über Köln-Godorf</title>
+<updated>2023-03-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#0846/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113644#beratung-2023-03-13-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0302/2023 Verlegung der LKW Ein-/ Ausfahrt zur Shell Raffinerie in Godorf auf die Industriestraße</title>
+<updated>2023-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0302/2023"/>
+<summary>Antrag / Anfrage am 2023-03-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112574#beratung-2023-03-13-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 4285/2022 Umgestaltung Bolzplatz Katharinenstraße in Köln-Godorf</title>
+<updated>2023-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#4285/2022"/>
+<summary>Entscheidung am 2023-03-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113644#vorlage</id>
+<title>Neue Vorlage AN/0302/2023: Verlegung der LKW Ein-/ Ausfahrt zur Shell Raffinerie in Godorf auf die Industriestraße</title>
+<updated>2023-02-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0302/2023"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112574#beratung-2023-02-06-Finanzausschuss</id>
+<title>Finanzausschuss: „unter Vorbehalt beschlossen“ – 4285/2022 Umgestaltung Bolzplatz Katharinenstraße in Köln-Godorf</title>
+<updated>2023-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#4285/2022"/>
+<summary>Genehmigung (DE/EilE) am 2023-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112574#beratung-2023-01-31-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „ungeändert beschlossen“ – 4285/2022 Umgestaltung Bolzplatz Katharinenstraße in Köln-Godorf</title>
+<updated>2023-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#4285/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2023-01-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112889#beratung-2023-01-23-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0044/2023 Weiterer Verlauf der KVB-Linie 17 über Köln-Godorf</title>
+<updated>2023-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0044/2023"/>
+<summary>Entscheidung am 2023-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112726#beratung-2023-01-23-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0008/2023 Erneuerung der Gehwegbeleuchtung im Bereich des Schützenplatzes in Richtung der KVB Linie 16 in Godorf</title>
+<updated>2023-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0008/2023"/>
+<summary>Antrag / Anfrage am 2023-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112723#beratung-2023-01-23-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig zurückgezogen“ – AN/0006/2023 Sanierung des Fuß- und Radweges entlang der Godorfer Hauptstraße/Bonner Landstraße</title>
+<updated>2023-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0006/2023"/>
+<summary>Antrag / Anfrage am 2023-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112574#vorlage</id>
+<title>Neue Vorlage 4285/2022: Umgestaltung Bolzplatz Katharinenstraße in Köln-Godorf</title>
+<updated>2023-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#4285/2022"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112889#vorlage</id>
+<title>Neue Vorlage AN/0044/2023: Weiterer Verlauf der KVB-Linie 17 über Köln-Godorf</title>
+<updated>2023-01-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0044/2023"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112723#vorlage</id>
+<title>Neue Vorlage AN/0006/2023: Sanierung des Fuß- und Radweges entlang der Godorfer Hauptstraße/Bonner Landstraße</title>
+<updated>2023-01-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0006/2023"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112726#vorlage</id>
+<title>Neue Vorlage AN/0008/2023: Erneuerung der Gehwegbeleuchtung im Bereich des Schützenplatzes in Richtung der KVB Linie 16 in Godorf</title>
+<updated>2023-01-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0008/2023"/>
+<summary>Gem. Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108110#beratung-2022-12-08-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1335/2022 Neubau einer Unterkunft für Geflüchtete in konventioneller Bauweise auf dem städtischen Grundstück Kuckucksweg 8, 50997 Köln-Godorf - Baubeschluss</title>
+<updated>2022-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1335/2022"/>
+<summary>Entscheidung am 2022-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108110#vorlage</id>
+<title>Neue Vorlage 1335/2022: Neubau einer Unterkunft für Geflüchtete in konventioneller Bauweise auf dem städtischen Grundstück Kuckucksweg 8, 50997 Köln-Godorf - Baubeschluss</title>
+<updated>2022-12-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1335/2022"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108110#beratung-2022-12-05-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 1335/2022 Neubau einer Unterkunft für Geflüchtete in konventioneller Bauweise auf dem städtischen Grundstück Kuckucksweg 8, 50997 Köln-Godorf - Baubeschluss</title>
+<updated>2022-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1335/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2022-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108110#beratung-2022-12-05-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 1335/2022 Neubau einer Unterkunft für Geflüchtete in konventioneller Bauweise auf dem städtischen Grundstück Kuckucksweg 8, 50997 Köln-Godorf - Baubeschluss</title>
+<updated>2022-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1335/2022"/>
+<summary>Anhörung (BV) am 2022-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108110#beratung-2022-11-28-Bauausschuss</id>
+<title>Bauausschuss: „ungeändert empfohlen“ – 1335/2022 Neubau einer Unterkunft für Geflüchtete in konventioneller Bauweise auf dem städtischen Grundstück Kuckucksweg 8, 50997 Köln-Godorf - Baubeschluss</title>
+<updated>2022-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1335/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2022-11-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108110#beratung-2022-11-17-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „ungeändert empfohlen“ – 1335/2022 Neubau einer Unterkunft für Geflüchtete in konventioneller Bauweise auf dem städtischen Grundstück Kuckucksweg 8, 50997 Köln-Godorf - Baubeschluss</title>
+<updated>2022-11-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1335/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2022-11-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111851#vorlage</id>
+<title>Neue Vorlage 3846/2022: Dauernutzung einer temporär genehmigten Fläche zur Aufstellung von Zelten und Containern für Anlagenstillstände im Werk K-Godorf der Shell, L 19 "Friedenswald, Forstbotanischer Garten und Grünverbindungen um Hahnwald", EZ 4, Bezirk 2 Rodenkirchen</title>
+<updated>2022-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#3846/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108110#beratung-2022-11-15-Integrationsrat</id>
+<title>Integrationsrat: „ohne Votum in nachfolgende Gremien“ – 1335/2022 Neubau einer Unterkunft für Geflüchtete in konventioneller Bauweise auf dem städtischen Grundstück Kuckucksweg 8, 50997 Köln-Godorf - Baubeschluss</title>
+<updated>2022-11-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1335/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2022-11-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108110#beratung-2022-11-08-Unterausschuss%20Wohnen</id>
+<title>Unterausschuss Wohnen: „ohne Votum in nachfolgende Gremien“ – 1335/2022 Neubau einer Unterkunft für Geflüchtete in konventioneller Bauweise auf dem städtischen Grundstück Kuckucksweg 8, 50997 Köln-Godorf - Baubeschluss</title>
+<updated>2022-11-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1335/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2022-11-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111570#vorlage</id>
+<title>Neue Vorlage AN/1940/2022: Shell: umfangreiche Baumfällungen auf dem Werksgelände in Godorf - Bericht</title>
+<updated>2022-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1940/2022"/>
+<summary>Gem. Dringlichkeitsantrag BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111570#beratung-2022-11-07-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Sache ist erledigt“ – AN/1940/2022 Shell: umfangreiche Baumfällungen auf dem Werksgelände in Godorf - Bericht</title>
+<updated>2022-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/1940/2022"/>
+<summary>Entscheidung am 2022-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108591#beratung-2022-11-07-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1645/2022 Planungsrechtlicher Vorbescheid (Bebauungsgenehmigung) für das Grundstück Immendorfer Straße 45 in Köln Godorf zur Errichtung von 9 Einfamilienhäusern.</title>
+<updated>2022-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1645/2022"/>
+<summary>Entscheidung am 2022-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108591#vorlage</id>
+<title>Neue Vorlage 1645/2022: Planungsrechtlicher Vorbescheid (Bebauungsgenehmigung) für das Grundstück Immendorfer Straße 45 in Köln Godorf zur Errichtung von 9 Einfamilienhäusern.</title>
+<updated>2022-09-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#1645/2022"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107941#beratung-2022-06-13-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0815/2022 Verkehrssicherheit Gehweg Buchfinkenstraße/Otto-Hahn-Straße in Godorf</title>
+<updated>2022-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0815/2022"/>
+<summary>Antrag / Anfrage am 2022-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104651#beratung-2022-06-13-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/2241/2021 Umgestaltung Teilstück der Buchfinkenstraße in Köln-Godorf in eine Einbahnstraße</title>
+<updated>2022-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/2241/2021"/>
+<summary>Entscheidung am 2022-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98640#vorlage</id>
+<title>Neue Vorlage AN/0011/2021: Verlegung der LKW Ein-/ Ausfahrt zur Shell Raffinerie in Godorf auf die Industriestraße</title>
+<updated>2022-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0011/2021"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108302#beratung-2022-05-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0944/2022 TOP 8.1.13 "Stadtverschönerungsmaßnahmen in den Stadtteilen Köln-Godorf und Köln-Meschenich"</title>
+<updated>2022-05-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0944/2022"/>
+<summary>Antrag / Anfrage am 2022-05-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107942#beratung-2022-05-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/0816/2022 Stadtverschönerungsmaßnahmen im Stadtteil Godorf</title>
+<updated>2022-05-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0816/2022"/>
+<summary>Antrag / Anfrage am 2022-05-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107940#beratung-2022-05-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/0814/2022 Ausbau des Godorfer Bahnhofs zum Umsteigebahnhof für den ÖPNV</title>
+<updated>2022-05-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0814/2022"/>
+<summary>Antrag / Anfrage am 2022-05-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108302#vorlage</id>
+<title>Neue Vorlage AN/0944/2022: TOP 8.1.13 "Stadtverschönerungsmaßnahmen in den Stadtteilen Köln-Godorf und Köln-Meschenich"</title>
+<updated>2022-05-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0944/2022"/>
+<summary>Gem. Änderungsantrag BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108266#vorlage</id>
+<title>Neue Vorlage AN/0933/2022: Verkehrssituation Longericher Hauptstraße/Mühlenhof</title>
+<updated>2022-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0933/2022"/>
+<summary>Dringlichkeitsantrag BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108266#beratung-2022-04-28-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – AN/0933/2022 Verkehrssituation Longericher Hauptstraße/Mühlenhof</title>
+<updated>2022-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0933/2022"/>
+<summary>Entscheidung am 2022-04-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107942#vorlage</id>
+<title>Neue Vorlage AN/0816/2022: Stadtverschönerungsmaßnahmen im Stadtteil Godorf</title>
+<updated>2022-04-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0816/2022"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107941#vorlage</id>
+<title>Neue Vorlage AN/0815/2022: Verkehrssicherheit Gehweg Buchfinkenstraße/Otto-Hahn-Straße in Godorf</title>
+<updated>2022-04-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:godorf#AN/0815/2022"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

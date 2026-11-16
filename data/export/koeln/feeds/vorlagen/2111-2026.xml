@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/2111-2026</id>
+<title>Vorlage 2111/2026: Stellenplan der Bühnen der Stadt Köln für die Kalenderjahre 2027/2028</title>
+<subtitle>Verlauf der Vorlage 2111/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-11-12T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/2111-2026.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2111/2026"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133978#beratung-2026-11-12-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 2111/2026 Stellenplan der Bühnen der Stadt Köln für die Kalenderjahre 2027/2028</title>
+<updated>2026-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2111/2026"/>
+<summary>Entscheidung am 2026-11-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133978#beratung-2026-10-16-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert empfohlen“ – 2111/2026 Stellenplan der Bühnen der Stadt Köln für die Kalenderjahre 2027/2028</title>
+<updated>2026-10-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2111/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133978#beratung-2026-10-12-Betriebsausschuss%20B%C3%BChnen%20der%20Stadt%20K%C3%B6ln</id>
+<title>Betriebsausschuss Bühnen der Stadt Köln: „ungeändert beschlossen“ – 2111/2026 Stellenplan der Bühnen der Stadt Köln für die Kalenderjahre 2027/2028</title>
+<updated>2026-10-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2111/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133978#beratung-2026-10-12-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „ohne Votum behandelt“ – 2111/2026 Stellenplan der Bühnen der Stadt Köln für die Kalenderjahre 2027/2028</title>
+<updated>2026-10-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2111/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133978#beratung-2026-10-05-Ausschuss%20f%C3%BCr%20die%20Gleichstellung%20von%20Frauen%20und%20M%C3%A4nnern</id>
+<title>Ausschuss für die Gleichstellung von Frauen und Männern: „ohne Votum behandelt“ – 2111/2026 Stellenplan der Bühnen der Stadt Köln für die Kalenderjahre 2027/2028</title>
+<updated>2026-10-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2111/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133978#vorlage</id>
+<title>Neue Vorlage 2111/2026: Stellenplan der Bühnen der Stadt Köln für die Kalenderjahre 2027/2028</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2111/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+</feed>

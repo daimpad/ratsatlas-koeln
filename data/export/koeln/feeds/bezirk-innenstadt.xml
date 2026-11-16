@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/bezirk-innenstadt</id>
 <title>Ratsatlas Köln – Stadtbezirk Innenstadt, ohne genaueren Ort</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Stadtbezirk Innenstadt, ohne genaueren Ort</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-05T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/bezirk-innenstadt.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135539#vorlage</id>
+<title>Neue Vorlage AN/1777/2026: Kinder in der Innenstadt halten – Hauptschule am Rhein weiterentwickeln, Änderungsantrag zu 0124/2026 B90/Die Grünen</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1777/2026"/>
+<summary>Änderungsantrag BV1 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135539#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „geändert beschlossen“ – AN/1777/2026 Kinder in der Innenstadt halten – Hauptschule am Rhein weiterentwickeln, Änderungsantrag zu 0124/2026 B90/Die Grünen</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1777/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135385#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/1723/2026 Sachstand der Maßnahmen im Apostelnquartier, Anfrage B90/Die Grünen</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1723/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135342#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2975/2026 Sachstandsberichte</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2975/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135321#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – AN/1698/2026 Trinkbrunnen in der Innenstadt Köln, Antrag Die Linke</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1698/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135319#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/1696/2026 Rettungswege in der Innenstadt: Widersprüchliche Aussagen aufklären. Gemeinsame Kontrollfahrten ermöglichen. Antrag CDU</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1696/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135318#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – AN/1695/2026 Aktuelle und geplante Vorhaben im Georgsviertel und ihre Abhängigkeiten, Antrag B90/Die Grünen</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1695/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135316#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – AN/1693/2026 Beratung der geänderten Vorlage „Köln-Katalog Bestand: Entwicklung von Bestandsquartieren“ (0853/2026), gem. Antrag B90/Die Grünen, CDU und VOLT</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1693/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135313#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Sache ist erledigt“ – AN/1690/2026 Erinnerung verpflichtet. Jüdisches Leben schützen. Gemeinsam gegen Antisemitismus. Antrag CDU</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1690/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135307#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – AN/1685/2026 Zurückweisung der Mitteilung 2629/2026 und Anrufung des Hauptausschusses, gem. Antrag B90/Die Grünen, CDU und VOLT</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1685/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135146#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 2376/2026/1 Ehrung der Sportlerinnen und Sportler im Stadtbezirk Innenstadt, 2026</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2376/2026/1"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134661#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/1447/2026 Taubenverschmutzung an Plätzen und Brücken; Anfrage CDU</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1447/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134653#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/1439/2026 Fehlende Zahlen zum Nettoverlust von Bäumen und fehlendes Fäll- und Pflanzreporting, Anfrage B90/Die Grünen</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1439/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134650#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/1436/2026 Illegale Farbsprühereien in der Kölner Innenstadt, Anfrage CDU</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1436/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134643#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/1430/2026 Rechtmäßigkeit der Parkplatzstreichungen in der Kölner Innenstadt, Anfrage CDU</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1430/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131957#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – 0829/2026 Einnahmeentwicklung durch Ausweitung von Außengastronomieflächen im Rahmen des neuen Genehmigungsverfahrens (AN/0640/2025)</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0829/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131910#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – 0803/2026 Beantwortung der Anfrage AN/0448/2026: Bastei</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0803/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131733#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/0448/2026 Dringende Sanierung und Neustart für die Bastei, Anfrage CDU</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/0448/2026"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127382#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/0640/2025 Einnahmenentwicklung durch Ausweitung von Außengastronomieflächen im Rahmen des neuen Genehmigungsverfahrens, Anfrage SPD</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/0640/2025"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135385#vorlage</id>
+<title>Neue Vorlage AN/1723/2026: Sachstand der Maßnahmen im Apostelnquartier, Anfrage B90/Die Grünen</title>
+<updated>2026-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1723/2026"/>
+<summary>Anfrage nach § 4 BV1 (Grüne) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135342#vorlage</id>
+<title>Neue Vorlage 2975/2026: Sachstandsberichte</title>
+<updated>2026-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2975/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135321#vorlage</id>
+<title>Neue Vorlage AN/1698/2026: Trinkbrunnen in der Innenstadt Köln, Antrag Die Linke</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1698/2026"/>
+<summary>Antrag nach § 3 BV1 (Die Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135319#vorlage</id>
+<title>Neue Vorlage AN/1696/2026: Rettungswege in der Innenstadt: Widersprüchliche Aussagen aufklären. Gemeinsame Kontrollfahrten ermöglichen. Antrag CDU</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1696/2026"/>
+<summary>Antrag nach § 3 BV1 (CDU) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135318#vorlage</id>
+<title>Neue Vorlage AN/1695/2026: Aktuelle und geplante Vorhaben im Georgsviertel und ihre Abhängigkeiten, Antrag B90/Die Grünen</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1695/2026"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135316#vorlage</id>
+<title>Neue Vorlage AN/1693/2026: Beratung der geänderten Vorlage „Köln-Katalog Bestand: Entwicklung von Bestandsquartieren“ (0853/2026), gem. Antrag B90/Die Grünen, CDU und VOLT</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1693/2026"/>
+<summary>Gem. Antrag nach § 3 BV1 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135313#vorlage</id>
+<title>Neue Vorlage AN/1690/2026: Erinnerung verpflichtet. Jüdisches Leben schützen. Gemeinsam gegen Antisemitismus. Antrag CDU</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1690/2026"/>
+<summary>Antrag nach § 3 BV1 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135307#vorlage</id>
+<title>Neue Vorlage AN/1685/2026: Zurückweisung der Mitteilung 2629/2026 und Anrufung des Hauptausschusses, gem. Antrag B90/Die Grünen, CDU und VOLT</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1685/2026"/>
+<summary>Gem. Antrag nach § 3 BV1 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135146#vorlage</id>
+<title>Neue Vorlage 2376/2026/1: Ehrung der Sportlerinnen und Sportler im Stadtbezirk Innenstadt, 2026</title>
+<updated>2026-10-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2376/2026/1"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131338#beratung-2026-10-08-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0483/2026 Energetische Sanierung des Quäker Nachbarschaftsheimes, Kreutzer Straße 5 - 9, 50672 Köln</title>
+<updated>2026-10-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0483/2026"/>
+<summary>Entscheidung am 2026-10-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131338#beratung-2026-10-07-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert empfohlen“ – 0483/2026 Energetische Sanierung des Quäker Nachbarschaftsheimes, Kreutzer Straße 5 - 9, 50672 Köln</title>
+<updated>2026-10-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0483/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131338#beratung-2026-09-29-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „ungeändert beschlossen“ – 0483/2026 Energetische Sanierung des Quäker Nachbarschaftsheimes, Kreutzer Straße 5 - 9, 50672 Köln</title>
+<updated>2026-09-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0483/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131338#beratung-2026-09-29-Ausschuss%20f%C3%BCr%20Bauen%20und%20Wohnen</id>
+<title>Ausschuss für Bauen und Wohnen: „ungeändert empfohlen“ – 0483/2026 Energetische Sanierung des Quäker Nachbarschaftsheimes, Kreutzer Straße 5 - 9, 50672 Köln</title>
+<updated>2026-09-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0483/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132176#beratung-2026-09-24-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 1026/2026 Annahme einer Schenkung der Kölner Grün Stiftung für Aufwertungsmaßnahmen in der historischen Grünanlage Aachener Weiher im Inneren Grüngürtel</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1026/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131338#beratung-2026-09-24-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „ungeändert empfohlen“ – 0483/2026 Energetische Sanierung des Quäker Nachbarschaftsheimes, Kreutzer Straße 5 - 9, 50672 Köln</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0483/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134754#vorlage</id>
+<title>Neue Vorlage AN/1489/2026: Änderungsantrag zum Änderungsantrag AN/1486/2026 zu Top 3.10 Beratung des Haushaltsplan-Entwurfs 2027/28, Änderungsantrag CDU</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1489/2026"/>
+<summary>Änderungsantrag BV1 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134754#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „endgültig abgelehnt“ – AN/1489/2026 Änderungsantrag zum Änderungsantrag AN/1486/2026 zu Top 3.10 Beratung des Haushaltsplan-Entwurfs 2027/28, Änderungsantrag CDU</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1489/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134746#vorlage</id>
+<title>Neue Vorlage AN/1486/2026: Gem. Änderungsantrag zu TOP 3.10 - Beratung des Haushaltsplan-Entwurfs 2027/2028 (2422/2026), gem. Änderungsantrag B90/Die Grünen, Die Linke, SPD und Volt</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1486/2026"/>
+<summary>Gem. Änderungsantrag BV1 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134746#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „geändert beschlossen“ – AN/1486/2026 Gem. Änderungsantrag zu TOP 3.10 - Beratung des Haushaltsplan-Entwurfs 2027/2028 (2422/2026), gem. Änderungsantrag B90/Die Grünen, Die Linke, SPD und Volt</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1486/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134743#vorlage</id>
+<title>Neue Vorlage AN/1485/2026: Vorgaben für das Auswahlverfahren für E-Scooter Verleihsysteme, Dringlichkeitsantrag B90/Die Grünen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1485/2026"/>
+<summary>Dringlichkeitsantrag BV1 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134743#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – AN/1485/2026 Vorgaben für das Auswahlverfahren für E-Scooter Verleihsysteme, Dringlichkeitsantrag B90/Die Grünen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1485/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134742#vorlage</id>
+<title>Neue Vorlage AN/1484/2026: Änderungsantrag zu TOP 5.2.3 Grinding (Abschleifen) von Kopfsteinpflaster (AN/1325/2026), Änderungsantrag B90/Die Grünen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1484/2026"/>
+<summary>Änderungsantrag BV1 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134742#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Sache ist erledigt“ – AN/1484/2026 Änderungsantrag zu TOP 5.2.3 Grinding (Abschleifen) von Kopfsteinpflaster (AN/1325/2026), Änderungsantrag B90/Die Grünen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1484/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134737#vorlage</id>
+<title>Neue Vorlage AN/1479/2026: Änderungsantrag zu TOP 3.1 - "Beschluss einer zeitlich begrenzten Anpassung von städtischen Vorgaben zur Baukostenreduzierung im Wohnungsbau", Änderungsantrag B90/Die Grünen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1479/2026"/>
+<summary>Änderungsantrag BV1 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134737#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „endgültig abgelehnt“ – AN/1479/2026 Änderungsantrag zu TOP 3.1 - "Beschluss einer zeitlich begrenzten Anpassung von städtischen Vorgaben zur Baukostenreduzierung im Wohnungsbau", Änderungsantrag B90/Die Grünen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1479/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134522#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2506/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke zur Sitzung der Bezirksvertretung Innenstadt am 12.03.2026 (AN/0374/2026) betreffend großformatige Werbung in der Innenstadt</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2506/2026"/>
+<summary>Entscheidung am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134455#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „geändert beschlossen“ – AN/1329/2026 Kostenfreies Parken für Elektrofahrzeuge in der Kölner Innenstadt, Antrag CDU</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1329/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134445#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „geändert beschlossen“ – AN/1325/2026 Grinding (Abschleifen) von Kopfsteinpflaster, Antrag der SPD</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1325/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134444#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „endgültig abgelehnt“ – AN/1324/2026 Lutherkirche, Antrag der SPD</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1324/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134389#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2442/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssituation Bahnhaltestelle KölnMesse, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2442/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134376#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 2432/2026 Vergabe von bezirksorientierten Mitteln und Mitteln zur Kulturförderung für den Stadtbezirk Innenstadt, 2026 Teil 2</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2432/2026"/>
+<summary>Entscheidung am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134373#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2431/2026 Sachstandsberichte</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2431/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134370#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 2428/2026 Vergabe Stadtklima- und Stadtverschönerungsmittel 2026 im Stadtbezirk Innenstadt, Restmittel</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2428/2026"/>
+<summary>Entscheidung am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134364#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „geändert beschlossen“ – 2422/2026 Beratung des Haushaltsplan-Entwurfs 2027/2028 einschließlich der Finanzplanung bis 2031 und der sonstigen Anlagen - Anregungen der Bezirksvertretung Innenstadt gem. § 37 Abs. 4 GO NRW</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2422/2026"/>
+<summary>Entscheidung am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134287#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 2376/2026 Ehrung der Sportlerinnen und Sportler im Stadtbezirk Innenstadt, 2026</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2376/2026"/>
+<summary>Entscheidung am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134191#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „geändert beschlossen“ – 2292/2026 Haushaltsplan 2027/2028 hier: Veranschlagung der bezirksorientierten Mittel 2027/2028 gem. § 37 Abs. 3 der Gemeindeordnung Nordrhein-Westfalen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2292/2026"/>
+<summary>Entscheidung am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134013#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2142/2026 Beantwortung einer mündlichen Anfrage der Bezirksbürgermeisterin Cazier aus der Sitzung Bezirksvertretung Innenstadt vom 25.06.2026 betreffend „Einrichtung von Schulstraßen im Kölner Stadtgebiet“ (Vorlagen-Nr.: 2002/2025)</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2142/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133984#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2116/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Umgestaltung und Entsiegelung des Terrassenbereichs im Rheinpark Köln, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2116/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133943#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 2078/2026 Entwurf der Fortschreibung des Straßenreinigungsverzeichnisses</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2078/2026"/>
+<summary>Entscheidung am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133855#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2000/2026 Beantwortung einer Nachfrage aus der Sitzung der Bezirksvertretung Innenstadt vom 25.06.2026 zur Beantwortung betreffend "Umfang und Ursachen kampfmittelbedingter Baumfällungen" (1140/2026)</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2000/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133511#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 1826/2026 Beantwortung einer Einwohneranfrage (1007/2026) betreffend Fragen zur Nettobilanz der Stadtbäume im Bezirk Innenstadt</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1826/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133227#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 1701/2026 Aktueller Stand zum E-Scooter-Sharingangebot und geplantes neues Zulassungsverfahren für 2027 der Stadt Köln</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1701/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133190#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 1685/2026 Antworten der Verwaltung zur Aktuellen Stunde aus der Sitzung vom 07.05.2026 betreffend "Innenstadt-Parkplätze erhalten - Lebensrealitäten anerkennen" (AN/0772/2026)</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1685/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132621#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 1283/2026 Beantwortung einer schriftl. Anfrage der Fraktion Bündnis 90 / Die Grünen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1283/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132367#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 1140/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der BV Innenstadt vom 29.01.2026 (AN/0170/2026) betreffend "Umfang und Ursachen kampfmittelbedingter Baumfällungen"</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1140/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132157#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Sache ist erledigt“ – 1007/2026 Einwohnerfrage - Fragen zur Nettobilanz der Stadtbäume im Bezirk</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1007/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131600#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 0636/2026 Beantwortung der schriflichen Anfrage der Fraktion Bündnis 90/Die Grünen betreffend "Handlungsspielräume bei kampfmittelbedingten Baumfällungen" (AN/0173/2026)</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0636/2026"/>
+<summary>Entscheidung am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131582#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Sache ist erledigt“ – AN/0374/2026 Großformatige Werbung in der Innenstadt, Anfrage Die Linke</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/0374/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131338#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert empfohlen“ – 0483/2026 Energetische Sanierung des Quäker Nachbarschaftsheimes, Kreutzer Straße 5 - 9, 50672 Köln</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0483/2026"/>
+<summary>Anhörung (BV) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131338#beratung-2026-09-17-Ausschuss%20Soziales%2C%20Gesundheit%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss Soziales, Gesundheit, Seniorinnen und Senioren: „ungeändert empfohlen“ – 0483/2026 Energetische Sanierung des Quäker Nachbarschaftsheimes, Kreutzer Straße 5 - 9, 50672 Köln</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0483/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130983#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Sache ist erledigt“ – AN/0173/2026 Vermeidungsstrategien und Handlungsspielräume bei kampfmittelbedingten Baumfällungen, Anfrage B90/Die Grünen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/0173/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130978#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Sache ist erledigt“ – AN/0170/2026 Umfang und Ursachen kampfmittelbedingter Baumfällungen, Anfrage B90/Die Grünen</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/0170/2026"/>
+<summary>Antrag / Anfrage am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134661#vorlage</id>
+<title>Neue Vorlage AN/1447/2026: Taubenverschmutzung an Plätzen und Brücken; Anfrage CDU</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1447/2026"/>
+<summary>Anfrage nach § 4 BV1 (CDU) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134653#vorlage</id>
+<title>Neue Vorlage AN/1439/2026: Fehlende Zahlen zum Nettoverlust von Bäumen und fehlendes Fäll- und Pflanzreporting, Anfrage B90/Die Grünen</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1439/2026"/>
+<summary>Anfrage nach § 4 BV1 (Grüne) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134650#vorlage</id>
+<title>Neue Vorlage AN/1436/2026: Illegale Farbsprühereien in der Kölner Innenstadt, Anfrage CDU</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1436/2026"/>
+<summary>Anfrage nach § 4 BV1 (CDU) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134643#vorlage</id>
+<title>Neue Vorlage AN/1430/2026: Rechtmäßigkeit der Parkplatzstreichungen in der Kölner Innenstadt, Anfrage CDU</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1430/2026"/>
+<summary>Anfrage nach § 4 BV1 (CDU) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134522#vorlage</id>
+<title>Neue Vorlage 2506/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke zur Sitzung der Bezirksvertretung Innenstadt am 12.03.2026 (AN/0374/2026) betreffend großformatige Werbung in der Innenstadt</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2506/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133227#vorlage</id>
+<title>Neue Vorlage 1701/2026: Aktueller Stand zum E-Scooter-Sharingangebot und geplantes neues Zulassungsverfahren für 2027 der Stadt Köln</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1701/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134455#vorlage</id>
+<title>Neue Vorlage AN/1329/2026: Kostenfreies Parken für Elektrofahrzeuge in der Kölner Innenstadt, Antrag CDU</title>
+<updated>2026-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1329/2026"/>
+<summary>Antrag nach § 3 BV1 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134445#vorlage</id>
+<title>Neue Vorlage AN/1325/2026: Grinding (Abschleifen) von Kopfsteinpflaster, Antrag der SPD</title>
+<updated>2026-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1325/2026"/>
+<summary>Antrag nach § 3 BV1 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134444#vorlage</id>
+<title>Neue Vorlage AN/1324/2026: Lutherkirche, Antrag der SPD</title>
+<updated>2026-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1324/2026"/>
+<summary>Antrag nach § 3 BV1 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134389#vorlage</id>
+<title>Neue Vorlage 2442/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssituation Bahnhaltestelle KölnMesse, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2442/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134376#vorlage</id>
+<title>Neue Vorlage 2432/2026: Vergabe von bezirksorientierten Mitteln und Mitteln zur Kulturförderung für den Stadtbezirk Innenstadt, 2026 Teil 2</title>
+<updated>2026-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2432/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134370#vorlage</id>
+<title>Neue Vorlage 2428/2026: Vergabe Stadtklima- und Stadtverschönerungsmittel 2026 im Stadtbezirk Innenstadt, Restmittel</title>
+<updated>2026-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2428/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134373#vorlage</id>
+<title>Neue Vorlage 2431/2026: Sachstandsberichte</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2431/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131957#vorlage</id>
+<title>Neue Vorlage 0829/2026: Einnahmeentwicklung durch Ausweitung von Außengastronomieflächen im Rahmen des neuen Genehmigungsverfahrens (AN/0640/2025)</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0829/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134364#vorlage</id>
+<title>Neue Vorlage 2422/2026: Beratung des Haushaltsplan-Entwurfs 2027/2028 einschließlich der Finanzplanung bis 2031 und der sonstigen Anlagen - Anregungen der Bezirksvertretung Innenstadt gem. § 37 Abs. 4 GO NRW</title>
+<updated>2026-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2422/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134287#vorlage</id>
+<title>Neue Vorlage 2376/2026: Ehrung der Sportlerinnen und Sportler im Stadtbezirk Innenstadt, 2026</title>
+<updated>2026-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2376/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134191#vorlage</id>
+<title>Neue Vorlage 2292/2026: Haushaltsplan 2027/2028 hier: Veranschlagung der bezirksorientierten Mittel 2027/2028 gem. § 37 Abs. 3 der Gemeindeordnung Nordrhein-Westfalen</title>
+<updated>2026-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2292/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132621#vorlage</id>
+<title>Neue Vorlage 1283/2026: Beantwortung einer schriftl. Anfrage der Fraktion Bündnis 90 / Die Grünen</title>
+<updated>2026-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1283/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131338#vorlage</id>
+<title>Neue Vorlage 0483/2026: Energetische Sanierung des Quäker Nachbarschaftsheimes, Kreutzer Straße 5 - 9, 50672 Köln</title>
+<updated>2026-08-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0483/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133943#vorlage</id>
+<title>Neue Vorlage 2078/2026: Entwurf der Fortschreibung des Straßenreinigungsverzeichnisses</title>
+<updated>2026-08-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2078/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134013#vorlage</id>
+<title>Neue Vorlage 2142/2026: Beantwortung einer mündlichen Anfrage der Bezirksbürgermeisterin Cazier aus der Sitzung Bezirksvertretung Innenstadt vom 25.06.2026 betreffend „Einrichtung von Schulstraßen im Kölner Stadtgebiet“ (Vorlagen-Nr.: 2002/2025)</title>
+<updated>2026-08-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2142/2026"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133855#vorlage</id>
+<title>Neue Vorlage 2000/2026: Beantwortung einer Nachfrage aus der Sitzung der Bezirksvertretung Innenstadt vom 25.06.2026 zur Beantwortung betreffend "Umfang und Ursachen kampfmittelbedingter Baumfällungen" (1140/2026)</title>
+<updated>2026-07-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2000/2026"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133984#vorlage</id>
+<title>Neue Vorlage 2116/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Umgestaltung und Entsiegelung des Terrassenbereichs im Rheinpark Köln, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-07-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2116/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131910#vorlage</id>
+<title>Neue Vorlage 0803/2026: Beantwortung der Anfrage AN/0448/2026: Bastei</title>
+<updated>2026-07-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#0803/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133511#vorlage</id>
+<title>Neue Vorlage 1826/2026: Beantwortung einer Einwohneranfrage (1007/2026) betreffend Fragen zur Nettobilanz der Stadtbäume im Bezirk Innenstadt</title>
+<updated>2026-07-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#1826/2026"/>
+<summary>Beantwortung e. Einwohneranfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#2002/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

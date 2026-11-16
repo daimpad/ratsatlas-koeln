@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-muelheim</id>
 <title>Ratsatlas Köln – Mülheim</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Mülheim</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-12-31T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-muelheim.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99221#beratung-2026-12-31-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „für das Digitale Berichtswesen“ – AN/0234/2021 Erwerb des Grundstückes Deutz-Mülheimer-Straße 147 bis 149 (ehemaligen KHD-Hauptverwaltung)</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/0234/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129401#beratung-2026-12-31-Ausschuss%20f%C3%BCr%20Bauen%20und%20Wohnen</id>
+<title>Ausschuss für Bauen und Wohnen: „für das Digitale Berichtswesen“ – 2780/2025 Errichtung eines Erweiterungsbaues für Ganztag für das Rheingymnasium Düsseldorfer Straße 13, 51063 Köln, - Weiterplanungs- und Baubeschluss, sowie Kostenfortschreibungsbeschluss</title>
+<updated>2026-12-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2780/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-12-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135580#vorlage</id>
+<title>Neue Vorlage 3135/2026: Beantwortung einer schriftlichen Anfrage der AfD-Fraktion zur Sitzung der Bezirksvertretung Mülheim am 09.11.2026 (AN/1721/2026) betreffend „Eskalation der Waffenkriminalität in Mülheim“</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#3135/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135580#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 3135/2026 Beantwortung einer schriftlichen Anfrage der AfD-Fraktion zur Sitzung der Bezirksvertretung Mülheim am 09.11.2026 (AN/1721/2026) betreffend „Eskalation der Waffenkriminalität in Mülheim“</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#3135/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135537#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 3100/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Mülheim vom 22.06.2026 (AN/1034/2026) betreffend „Mehr Barrierefreiheit auf dem Wiener Platz und seinen Zugängen herstellen “</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#3100/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135478#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1754/2026 SB Mülheim – Demonstrationsteilnahmen von städtischen Grundschulen und Kindergärten</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1754/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135471#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1750/2026 Vertragskonditionen der Stadt Köln mit der Contipark Parkgaragengesellschaft mbH im Stadtbezirk Köln-Mülheim</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1750/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135391#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 3002/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Tempo 30 auf der Dünnwalder Straße - Umsetzung des Beschlusses zu AN/0768/2024 vom 03.06.2024, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#3002/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135382#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1722/2026 Neugestaltung der Keupstraße</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1722/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135378#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1721/2026 Eskalation der Waffenkriminalität in Mülheim – welche Erkenntnisse über die Sicherheitslage in Mülheim liegen der Verwaltung vor?</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1721/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135365#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1717/2026 Anbindung des Bahnhofs Köln-Mülheim verbessern</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1717/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135363#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – AN/1715/2026 Zeitnahe Aufstellung von „Papierkorbgaragen“ im Bezirk Köln-Mülheim</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1715/2026"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135286#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2960/2026 Wohnungsbau-Turbo: Einschätzung zur Zustimmungsfähigkeit des Vorhabens Piccoloministr. 371, Köln-Mülheim, Holweide</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2960/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135129#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2855/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Baumpflanzungen - Steinkopfstraße, Bahnhof Mülheim und Wiener Platz, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2855/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134305#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „geändert beschlossen“ – 2391/2026 Bürgereingabe nach §24 der Gemeindeordnung NRW -Altkleidercontainer in der Cusanusstraße wegen illegaler Müllablagerungen abziehen AZ [Hausnummer ausgelassen]/2026</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2391/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122757#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 2463/2024 Bürgereingabe nach § 24 GO: "Park and Ride in Köln-Mülheim einrichten" AZ [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-11-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2463/2024"/>
+<summary>Entscheidung am 2026-11-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135537#vorlage</id>
+<title>Neue Vorlage 3100/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Mülheim vom 22.06.2026 (AN/1034/2026) betreffend „Mehr Barrierefreiheit auf dem Wiener Platz und seinen Zugängen herstellen “</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#3100/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135286#vorlage</id>
+<title>Neue Vorlage 2960/2026: Wohnungsbau-Turbo: Einschätzung zur Zustimmungsfähigkeit des Vorhabens Piccoloministr. 371, Köln-Mülheim, Holweide</title>
+<updated>2026-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2960/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135478#vorlage</id>
+<title>Neue Vorlage AN/1754/2026: SB Mülheim – Demonstrationsteilnahmen von städtischen Grundschulen und Kindergärten</title>
+<updated>2026-11-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1754/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135471#vorlage</id>
+<title>Neue Vorlage AN/1750/2026: Vertragskonditionen der Stadt Köln mit der Contipark Parkgaragengesellschaft mbH im Stadtbezirk Köln-Mülheim</title>
+<updated>2026-11-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1750/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135391#vorlage</id>
+<title>Neue Vorlage 3002/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Tempo 30 auf der Dünnwalder Straße - Umsetzung des Beschlusses zu AN/0768/2024 vom 03.06.2024, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-10-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#3002/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135382#vorlage</id>
+<title>Neue Vorlage AN/1722/2026: Neugestaltung der Keupstraße</title>
+<updated>2026-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1722/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135378#vorlage</id>
+<title>Neue Vorlage AN/1721/2026: Eskalation der Waffenkriminalität in Mülheim – welche Erkenntnisse über die Sicherheitslage in Mülheim liegen der Verwaltung vor?</title>
+<updated>2026-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1721/2026"/>
+<summary>Anfrage nach § 4 BV9 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135365#vorlage</id>
+<title>Neue Vorlage AN/1717/2026: Anbindung des Bahnhofs Köln-Mülheim verbessern</title>
+<updated>2026-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1717/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135363#vorlage</id>
+<title>Neue Vorlage AN/1715/2026: Zeitnahe Aufstellung von „Papierkorbgaragen“ im Bezirk Köln-Mülheim</title>
+<updated>2026-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1715/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133521#vorlage</id>
+<title>Neue Vorlage 1832/2026: Verkehrssituation an der Kreuzung Buchheimer Str./ Clevischer Ring und die Sperrung der Unterführung</title>
+<updated>2026-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1832/2026"/>
+<summary>Beantwortung e. Einwohneranfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135129#vorlage</id>
+<title>Neue Vorlage 2855/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Baumpflanzungen - Steinkopfstraße, Bahnhof Mülheim und Wiener Platz, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-10-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2855/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134982#beratung-2026-10-12-Betriebsausschuss%20B%C3%BChnen%20der%20Stadt%20K%C3%B6ln</id>
+<title>Betriebsausschuss Bühnen der Stadt Köln: „Kenntnis genommen“ – 2745/2026 Sachstandsbericht zur Zukunft des Kulturstandorts Köln-Mülheim</title>
+<updated>2026-10-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2745/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134927#vorlage</id>
+<title>Neue Vorlage 2705/2026: Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen betreffend "Weiternutzung des Depots in Köln-Mülheim" (AN/1546/2026)</title>
+<updated>2026-10-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2705/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134927#beratung-2026-10-12-Betriebsausschuss%20B%C3%BChnen%20der%20Stadt%20K%C3%B6ln</id>
+<title>Betriebsausschuss Bühnen der Stadt Köln: „Kenntnis genommen“ – 2705/2026 Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen betreffend "Weiternutzung des Depots in Köln-Mülheim" (AN/1546/2026)</title>
+<updated>2026-10-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2705/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134925#beratung-2026-10-12-Betriebsausschuss%20B%C3%BChnen%20der%20Stadt%20K%C3%B6ln</id>
+<title>Betriebsausschuss Bühnen der Stadt Köln: „Kenntnis genommen“ – 2703/2026 Zukunft des Carlsgartens in Mülheim (AN/1562/2026)</title>
+<updated>2026-10-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2703/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134900#beratung-2026-10-12-Betriebsausschuss%20B%C3%BChnen%20der%20Stadt%20K%C3%B6ln</id>
+<title>Betriebsausschuss Bühnen der Stadt Köln: „Kenntnis genommen“ – AN/1562/2026 Zukunft des Carlsgartens in Köln-Mülheim</title>
+<updated>2026-10-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1562/2026"/>
+<summary>Antrag / Anfrage am 2026-10-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134863#beratung-2026-10-12-Betriebsausschuss%20B%C3%BChnen%20der%20Stadt%20K%C3%B6ln</id>
+<title>Betriebsausschuss Bühnen der Stadt Köln: „Kenntnis genommen“ – AN/1546/2026 Weiternutzung des Depot in Köln-Mülheim</title>
+<updated>2026-10-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1546/2026"/>
+<summary>Antrag / Anfrage am 2026-10-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-10-08-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-10-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1935/2026"/>
+<summary>Entscheidung am 2026-10-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134305#vorlage</id>
+<title>Neue Vorlage 2391/2026: Bürgereingabe nach §24 der Gemeindeordnung NRW -Altkleidercontainer in der Cusanusstraße wegen illegaler Müllablagerungen abziehen AZ [Hausnummer ausgelassen]/2026</title>
+<updated>2026-10-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2391/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-10-07-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert empfohlen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-10-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1935/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134982#vorlage</id>
+<title>Neue Vorlage 2745/2026: Sachstandsbericht zur Zukunft des Kulturstandorts Köln-Mülheim</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2745/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134982#beratung-2026-10-01-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „Kenntnis genommen“ – 2745/2026 Sachstandsbericht zur Zukunft des Kulturstandorts Köln-Mülheim</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2745/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134969#beratung-2026-10-01-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1583/2026 Zukunft der Spielstätte Depot in Köln-Mülheim</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1583/2026"/>
+<summary>Antrag / Anfrage am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134925#vorlage</id>
+<title>Neue Vorlage 2703/2026: Zukunft des Carlsgartens in Mülheim (AN/1562/2026)</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2703/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134235#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 2330/2026 Niederschrift zur 12.Sitzung der Ständigen Jury Mülheimer Süden</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2330/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134969#vorlage</id>
+<title>Neue Vorlage AN/1583/2026: Zukunft der Spielstätte Depot in Köln-Mülheim</title>
+<updated>2026-09-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1583/2026"/>
+<summary>Gem. Antrag nach § 5 (Rat) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134900#vorlage</id>
+<title>Neue Vorlage AN/1562/2026: Zukunft des Carlsgartens in Köln-Mülheim</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1562/2026"/>
+<summary>Grüne Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134863#vorlage</id>
+<title>Neue Vorlage AN/1546/2026: Weiternutzung des Depot in Köln-Mülheim</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1546/2026"/>
+<summary>Grüne Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134568#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig zurückgezogen“ – AN/1387/2026 Fahrbahnmarkierungen auf der Frankfurter Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1387/2026"/>
+<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1935/2026"/>
+<summary>Anhörung (BV) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134366#vorlage</id>
+<title>Neue Vorlage 2424/2026: Baubeschluss für die Instandsetzung des Vingster Rings zwischen Ostheimer Straße und Frankfurter Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2424/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert empfohlen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1935/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134696#vorlage</id>
+<title>Neue Vorlage 2585/2026: Stadtteilmütter in Köln-Mülheim</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2585/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134696#beratung-2026-09-17-Ausschuss%20Soziales%2C%20Gesundheit%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss Soziales, Gesundheit, Seniorinnen und Senioren: „Kenntnis genommen“ – 2585/2026 Stadtteilmütter in Köln-Mülheim</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2585/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert empfohlen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1935/2026"/>
+<summary>Anhörung (BV) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134409#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1308/2026 Antrag der CDU-Fraktion "Sachstandsbericht zum Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1308/2026"/>
+<summary>Antrag / Anfrage am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122757#vorlage</id>
+<title>Neue Vorlage 2463/2024: Bürgereingabe nach § 24 GO: "Park and Ride in Köln-Mülheim einrichten" AZ [Hausnummer ausgelassen]-[Hausnummer ausgelassen]</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2463/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134621#vorlage</id>
+<title>Neue Vorlage AN/1411/2026: Anpassung der Festsetzung der bezirksbezogenen Haushaltsmittel für den Bezirk Köln-Mülheim TOP 9.1.4</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1411/2026"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134621#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „endgültig abgelehnt“ – AN/1411/2026 Anpassung der Festsetzung der bezirksbezogenen Haushaltsmittel für den Bezirk Köln-Mülheim TOP 9.1.4</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1411/2026"/>
+<summary>Entscheidung am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134568#vorlage</id>
+<title>Neue Vorlage AN/1387/2026: Fahrbahnmarkierungen auf der Frankfurter Straße</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1387/2026"/>
+<summary>Antrag nach § 3 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134503#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1354/2026 Warum tut die Stadt nichts, um die Situation in der Buchholzstraße zu verbessern ?</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1354/2026"/>
+<summary>Entscheidung am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134387#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2440/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Eingezäunte Hundewiese in Köln-Mülheim, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2440/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134335#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1278/2026 Zusätzliche Abstellmöglichkeiten und Neuordnung der Fahrradstellplätze im Bereich Buchheimer Straße und Durchgang zum Clevischen Ring</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1278/2026"/>
+<summary>Entscheidung am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134334#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1277/2026 Überprüfung der Erforderlichkeit und gegebenenfalls Nachpflanzungen schattenspendender Bäume auf Spielplätzen im Bezirk Köln-Mülheim</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1277/2026"/>
+<summary>Entscheidung am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134288#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – AN/1265/2026 Prüfauftrag zur Einrichtung fest installierter Hängematten in Parks im Stadtbezirk Köln-Mülheim</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1265/2026"/>
+<summary>Entscheidung am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134253#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2346/2026 Bürgerhaus MüZe, Berliner Straße 77 in Köln-Mülheim - Information zum anstehenden Interessensbekundungsverfahren für eine langfristige Trägerschaft</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2346/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134235#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2330/2026 Niederschrift zur 12.Sitzung der Ständigen Jury Mülheimer Süden</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2330/2026"/>
+<summary>Anhörung (BV) am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134002#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2133/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/ Die Grünen aus der Sitzung der Bezirksvertretung Mülheim vom 03.02.2025 (AN/0088/2025) betreffend „Fehlende durchgehende Fußwege im Bezirk“</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2133/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133985#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2117/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Grillen und Zufahrten Mülheimer Stadtgarten, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2117/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133922#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2062/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Grüne Bögen Elisabeth-Breuer-Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2062/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133873#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 2016/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Anwohnerparken Buchholzstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2016/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#beratung-2026-09-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert empfohlen“ – 1935/2026 Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1935/2026"/>
+<summary>Anhörung (BV) am 2026-09-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133740#vorlage</id>
+<title>Neue Vorlage 1935/2026: Zoobrücke Los D, Los Z1 - Spannungsrisskorrosion</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1935/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134503#vorlage</id>
+<title>Neue Vorlage AN/1354/2026: Warum tut die Stadt nichts, um die Situation in der Buchholzstraße zu verbessern ?</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1354/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134387#vorlage</id>
+<title>Neue Vorlage 2440/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Eingezäunte Hundewiese in Köln-Mülheim, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2440/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134409#vorlage</id>
+<title>Neue Vorlage AN/1308/2026: Antrag der CDU-Fraktion "Sachstandsbericht zum Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1308/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134335#vorlage</id>
+<title>Neue Vorlage AN/1278/2026: Zusätzliche Abstellmöglichkeiten und Neuordnung der Fahrradstellplätze im Bereich Buchheimer Straße und Durchgang zum Clevischen Ring</title>
+<updated>2026-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1278/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134334#vorlage</id>
+<title>Neue Vorlage AN/1277/2026: Überprüfung der Erforderlichkeit und gegebenenfalls Nachpflanzungen schattenspendender Bäume auf Spielplätzen im Bezirk Köln-Mülheim</title>
+<updated>2026-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1277/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134288#vorlage</id>
+<title>Neue Vorlage AN/1265/2026: Prüfauftrag zur Einrichtung fest installierter Hängematten in Parks im Stadtbezirk Köln-Mülheim</title>
+<updated>2026-08-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1265/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134253#vorlage</id>
+<title>Neue Vorlage 2346/2026: Bürgerhaus MüZe, Berliner Straße 77 in Köln-Mülheim - Information zum anstehenden Interessensbekundungsverfahren für eine langfristige Trägerschaft</title>
+<updated>2026-08-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2346/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134235#vorlage</id>
+<title>Neue Vorlage 2330/2026: Niederschrift zur 12.Sitzung der Ständigen Jury Mülheimer Süden</title>
+<updated>2026-08-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2330/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134002#vorlage</id>
+<title>Neue Vorlage 2133/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/ Die Grünen aus der Sitzung der Bezirksvertretung Mülheim vom 03.02.2025 (AN/0088/2025) betreffend „Fehlende durchgehende Fußwege im Bezirk“</title>
+<updated>2026-07-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2133/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133985#vorlage</id>
+<title>Neue Vorlage 2117/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Grillen und Zufahrten Mülheimer Stadtgarten, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-07-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2117/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133922#vorlage</id>
+<title>Neue Vorlage 2062/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Grüne Bögen Elisabeth-Breuer-Straße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-07-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2062/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133873#vorlage</id>
+<title>Neue Vorlage 2016/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Anwohnerparken Buchholzstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-07-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#2016/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132117#beratung-2026-07-02-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 0970/2026 Neubau eines Wohngebäudes im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück Berliner Str. [Hausnummer ausgelassen], 51063 Köln-Mülheim, hier: Haushaltsrechtliche Unterrichtung gem. § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung 2025/2026</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#0970/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133577#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 1858/2026 Beantwortung von zwei weiteren Nachfragen Vorlage „1148/2026“ – Sachstand Bauvorhaben ehemalige Baumwollbleicherei in Köln Mülheim</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1858/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132380#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 1148/2026 Beantwortung einer Anfrage AN/0505/2026 Sachstand Bauvorhaben ehemalige Baumwollbleicherei in Köln Mülheim</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1148/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132117#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 0970/2026 Neubau eines Wohngebäudes im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück Berliner Str. [Hausnummer ausgelassen], 51063 Köln-Mülheim, hier: Haushaltsrechtliche Unterrichtung gem. § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung 2025/2026</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#0970/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133577#vorlage</id>
+<title>Neue Vorlage 1858/2026: Beantwortung von zwei weiteren Nachfragen Vorlage „1148/2026“ – Sachstand Bauvorhaben ehemalige Baumwollbleicherei in Köln Mülheim</title>
+<updated>2026-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1858/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133337#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0956/2026 Antrag der CDU-Fraktion "Fußweg Frankfurter Straße 298 bis 316"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/0956/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132117#beratung-2026-06-23-Ausschuss%20f%C3%BCr%20Bauen%20und%20Wohnen</id>
+<title>Ausschuss für Bauen und Wohnen: „Kenntnis genommen“ – 0970/2026 Neubau eines Wohngebäudes im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück Berliner Str. [Hausnummer ausgelassen], 51063 Köln-Mülheim, hier: Haushaltsrechtliche Unterrichtung gem. § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung 2025/2026</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#0970/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133521#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1832/2026 Verkehrssituation an der Kreuzung Buchheimer Str./ Clevischer Ring und die Sperrung der Unterführung</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1832/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133517#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1062/2026 Welche Perspektive haben künftig Suchtkranke in Köln Mülheim?</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1062/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133470#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1036/2026 Ist eine nachhaltige, sichere, barrierefreie und ansprechende Benutzung der Gehwege im Bezirk Köln-Mülheim nur eine Illusion?</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1036/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133469#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1035/2026 Aufwertung des kleinen unbenannten Platzes an der Lohmühlenstraße in Köln-</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1035/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133468#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – AN/1034/2026 Mehr Barrierefreiheit auf dem Wiener Platz und seinen „Zugängen“ herstellen</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/1034/2026"/>
+<summary>Antrag / Anfrage am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133229#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1703/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Mülheim vom 03.02.2025 (Session-Nr.: 0088/2025) betreffend „Fehlende durchgehende Fußwege im Bezirk“</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1703/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133222#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „vertagt“ – AN/0901/2026 Weg mit dem Taubendreck am Wiener Platz</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#AN/0901/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133102#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 1626/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Hundefreilauffläche in Köln-Mülheim, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1626/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132895#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 1468/2026 Teileinziehung der Horststraße, der Laufenbergstraße sowie der Hardenbergstraße in Köln-Mülheim</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1468/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132538#beratung-2026-06-22-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 1242/2026 Jahresbericht der Naturschutzwacht 2025, Bezirk 9 Mülheim Ost</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#1242/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132117#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert empfohlen“ – 0970/2026 Neubau eines Wohngebäudes im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück Berliner Str. [Hausnummer ausgelassen], 51063 Köln-Mülheim, hier: Haushaltsrechtliche Unterrichtung gem. § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 12 der Haushaltssatzung 2025/2026</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#0970/2026"/>
+<summary>Anhörung (BV) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131549#beratung-2026-06-22-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0611/2026 Beantwortung einer schriftlichen Anfrage betreffend "Gemeinsamer Einsatz von Ordnungsamt und Polizei am 26.11.25 am Wiener Platz zum Platzverweis obdachloser Menschen" (AN/1418/2025)</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#0611/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-lindweiler</id>
 <title>Ratsatlas Köln – Lindweiler</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Lindweiler</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-06-25T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-lindweiler.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133166#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „endgültig zurückgezogen“ – AN/0875/2026 Erarbeitung eines modernen, naturschutzverträglichen Beleuchtungskonzepts für den Spielplatz Pingenweg</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0875/2026"/>
+<summary>Antrag / Anfrage am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133166#vorlage</id>
+<title>Neue Vorlage AN/0875/2026: Erarbeitung eines modernen, naturschutzverträglichen Beleuchtungskonzepts für den Spielplatz Pingenweg</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0875/2026"/>
+<summary>Antrag nach § 3 BV6 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132760#beratung-2026-05-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1363/2026 Schulneubau Lindweiler Hof Rochusstraße [Hausnummer ausgelassen] - Stellungnahme zum Prüfauftrag</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#1363/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131627#beratung-2026-05-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „endgültig zurückgezogen“ – AN/0395/2026 Antrag der SPD-Fraktion, betr.: Schulneubau Lindweiler Hof</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0395/2026"/>
+<summary>Antrag / Anfrage am 2026-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132760#vorlage</id>
+<title>Neue Vorlage 1363/2026: Schulneubau Lindweiler Hof Rochusstraße [Hausnummer ausgelassen] - Stellungnahme zum Prüfauftrag</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#1363/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132478#beratung-2026-05-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0675/2026 Erarbeitung eines modernen, naturschutzverträglichen Beleuchtungskonzepts für die Parkanlage Lindweiler – Aktenzeichen 184/25</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0675/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132478#vorlage</id>
+<title>Neue Vorlage AN/0675/2026: Erarbeitung eines modernen, naturschutzverträglichen Beleuchtungskonzepts für die Parkanlage Lindweiler – Aktenzeichen 184/25</title>
+<updated>2026-04-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0675/2026"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131996#beratung-2026-04-16-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0861/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Beleuchtung Parkanlage Köln Lindweiler, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-04-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0861/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131996#vorlage</id>
+<title>Neue Vorlage 0861/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Beleuchtung Parkanlage Köln Lindweiler, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0861/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131627#vorlage</id>
+<title>Neue Vorlage AN/0395/2026: Antrag der SPD-Fraktion, betr.: Schulneubau Lindweiler Hof</title>
+<updated>2026-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0395/2026"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129286#beratung-2026-02-09-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – 2712/2025 Bürgereingabe nach § 24 GO - Schulneubau Lindweiler Hof in Köln-Bickendorf, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-02-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#2712/2025"/>
+<summary>Entscheidung am 2026-02-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129286#vorlage</id>
+<title>Neue Vorlage 2712/2025: Bürgereingabe nach § 24 GO - Schulneubau Lindweiler Hof in Köln-Bickendorf, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-10-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#2712/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128536#beratung-2025-09-02-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2186/2025 Nutzung Schulhof der Gemeinschaftsgrundschule und Förderschule Soldiner Str. 68 in Lindweiler</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#2186/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128536#vorlage</id>
+<title>Neue Vorlage 2186/2025: Nutzung Schulhof der Gemeinschaftsgrundschule und Förderschule Soldiner Str. 68 in Lindweiler</title>
+<updated>2025-08-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#2186/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127386#beratung-2025-05-22-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0643/2025 Nutzung Schulhof der Gemeinschaftsgrundschule und Förderschule Soldiner Str. in Lindweiler</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0643/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126873#beratung-2025-05-22-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 1206/2025 Beantwortung einer mündlichen Anfrage von Herrn Bezirksbürgermeister Zöllner (CDU) aus der Sitzung der Bezirksvertretung Chorweiler vom 20.03.2025, TOP 10.2.3</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#1206/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127386#vorlage</id>
+<title>Neue Vorlage AN/0643/2025: Nutzung Schulhof der Gemeinschaftsgrundschule und Förderschule Soldiner Str. in Lindweiler</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0643/2025"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126873#vorlage</id>
+<title>Neue Vorlage 1206/2025: Beantwortung einer mündlichen Anfrage von Herrn Bezirksbürgermeister Zöllner (CDU) aus der Sitzung der Bezirksvertretung Chorweiler vom 20.03.2025, TOP 10.2.3</title>
+<updated>2025-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#1206/2025"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125498#beratung-2025-04-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0249/2025 Einzug der Förderschule Lindweiler Hof, derzeit ausgelagert im Interimsstandort Paul-Humburg-Str.13, 50737 Köln-Longerich in das Bestandsgebäude Borsigstr. 13, 50827 Köln-Bickendorf</title>
+<updated>2025-04-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0249/2025"/>
+<summary>Entscheidung am 2025-04-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125766#beratung-2025-03-27-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 0412/2025 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2025-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0412/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125498#beratung-2025-03-27-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 0249/2025 Einzug der Förderschule Lindweiler Hof, derzeit ausgelagert im Interimsstandort Paul-Humburg-Str.13, 50737 Köln-Longerich in das Bestandsgebäude Borsigstr. 13, 50827 Köln-Bickendorf</title>
+<updated>2025-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0249/2025"/>
+<summary>Anhörung (BV) am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125766#beratung-2025-03-25-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 0412/2025 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2025-03-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0412/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125498#beratung-2025-03-24-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 0249/2025 Einzug der Förderschule Lindweiler Hof, derzeit ausgelagert im Interimsstandort Paul-Humburg-Str.13, 50737 Köln-Longerich in das Bestandsgebäude Borsigstr. 13, 50827 Köln-Bickendorf</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0249/2025"/>
+<summary>Anhörung (BV) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125766#beratung-2025-03-20-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0412/2025 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2025-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0412/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125498#beratung-2025-03-17-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0249/2025 Einzug der Förderschule Lindweiler Hof, derzeit ausgelagert im Interimsstandort Paul-Humburg-Str.13, 50737 Köln-Longerich in das Bestandsgebäude Borsigstr. 13, 50827 Köln-Bickendorf</title>
+<updated>2025-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0249/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-03-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125766#beratung-2025-03-13-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Kenntnis genommen“ – 0412/2025 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2025-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0412/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125498#vorlage</id>
+<title>Neue Vorlage 0249/2025: Einzug der Förderschule Lindweiler Hof, derzeit ausgelagert im Interimsstandort Paul-Humburg-Str.13, 50737 Köln-Longerich in das Bestandsgebäude Borsigstr. 13, 50827 Köln-Bickendorf</title>
+<updated>2025-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0249/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125766#vorlage</id>
+<title>Neue Vorlage 0412/2025: Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2025-02-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0412/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121816#beratung-2024-12-02-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „endgültig zurückgezogen“ – AN/0831/2024 Antrag der SPD-Fraktion, betr.: Schulneubau Lindweiler Hof Bickendorf</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0831/2024"/>
+<summary>Antrag / Anfrage am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124012#beratung-2024-11-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/1431/2024 Tierhaltung in der Wohneinrichtung Erbacher Weg 7 in Köln Lindweiler</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/1431/2024"/>
+<summary>Entscheidung am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124012#vorlage</id>
+<title>Neue Vorlage AN/1431/2024: Tierhaltung in der Wohneinrichtung Erbacher Weg 7 in Köln Lindweiler</title>
+<updated>2024-10-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/1431/2024"/>
+<summary>Antrag nach § 3 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122615#beratung-2024-08-29-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 2329/2024 Öffentlichkeitsbeteiligung zur Erstellung einer Bewegungsstation in Lindweiler</title>
+<updated>2024-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#2329/2024"/>
+<summary>Entscheidung am 2024-08-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122615#vorlage</id>
+<title>Neue Vorlage 2329/2024: Öffentlichkeitsbeteiligung zur Erstellung einer Bewegungsstation in Lindweiler</title>
+<updated>2024-08-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#2329/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121816#vorlage</id>
+<title>Neue Vorlage AN/0831/2024: Antrag der SPD-Fraktion, betr.: Schulneubau Lindweiler Hof Bickendorf</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0831/2024"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120597#beratung-2024-06-17-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „Kenntnis genommen“ – 0984/2024 Beantwortung einer Anfrage der SPD-Fraktion aus der Sitzung des Betriebsausschusses der Gebäudewirtschaft am 11. März 2024  zu den Folgen des Starkregenereignisses im Sommer 2021 in Bickendorf – Lindweiler Hof und Umgebung</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0984/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120440#beratung-2024-06-17-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „Kenntnis genommen“ – AN/0387/2024 Folgen des Starkregenereignisses im Sommer 2021 in Bickendorf – Lindweiler Hof und Umgebung</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0387/2024"/>
+<summary>Antrag / Anfrage am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120597#vorlage</id>
+<title>Neue Vorlage 0984/2024: Beantwortung einer Anfrage der SPD-Fraktion aus der Sitzung des Betriebsausschusses der Gebäudewirtschaft am 11. März 2024  zu den Folgen des Starkregenereignisses im Sommer 2021 in Bickendorf – Lindweiler Hof und Umgebung</title>
+<updated>2024-05-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0984/2024"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119429#beratung-2024-03-14-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 0222/2024 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2024-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0222/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119429#beratung-2024-03-14-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0222/2024 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2024-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0222/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119429#beratung-2024-03-12-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 0222/2024 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2024-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0222/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120440#vorlage</id>
+<title>Neue Vorlage AN/0387/2024: Folgen des Starkregenereignisses im Sommer 2021 in Bickendorf – Lindweiler Hof und Umgebung</title>
+<updated>2024-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0387/2024"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119429#beratung-2024-02-29-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Kenntnis genommen“ – 0222/2024 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2024-02-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0222/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-02-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119429#beratung-2024-02-22-Veedelsbeirat%20Lindweiler</id>
+<title>Veedelsbeirat Lindweiler: „Kenntnis genommen“ – 0222/2024 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2024-02-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0222/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-02-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119429#vorlage</id>
+<title>Neue Vorlage 0222/2024: Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2024-02-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0222/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117696#beratung-2023-11-27-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3179/2023 Rückbau der Geschwindigkeitsmessanlagen auf der BAB 1 - Leverkusener Autobahnbrücke</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#3179/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117696#vorlage</id>
+<title>Neue Vorlage 3179/2023: Rückbau der Geschwindigkeitsmessanlagen auf der BAB 1 - Leverkusener Autobahnbrücke</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#3179/2023"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114119#beratung-2023-06-15-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0942/2023 Zügigkeitserweiterung der Gemeinschaftsgrundschule Soldiner Straße, Soldiner Straße 68, 50767 Köln-Lindweiler, Schulnr. 185425, zum Schuljahr 2024/25</title>
+<updated>2023-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0942/2023"/>
+<summary>Entscheidung am 2023-06-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114119#beratung-2023-06-12-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 0942/2023 Zügigkeitserweiterung der Gemeinschaftsgrundschule Soldiner Straße, Soldiner Straße 68, 50767 Köln-Lindweiler, Schulnr. 185425, zum Schuljahr 2024/25</title>
+<updated>2023-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0942/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-06-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115091#beratung-2023-06-06-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 1555/2023 Integriertes Handlungskonzept Lindweiler</title>
+<updated>2023-06-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#1555/2023"/>
+<summary>Entscheidung am 2023-06-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114119#beratung-2023-06-06-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „geändert beschlossen“ – 0942/2023 Zügigkeitserweiterung der Gemeinschaftsgrundschule Soldiner Straße, Soldiner Straße 68, 50767 Köln-Lindweiler, Schulnr. 185425, zum Schuljahr 2024/25</title>
+<updated>2023-06-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0942/2023"/>
+<summary>Anhörung (BV) am 2023-06-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114119#vorlage</id>
+<title>Neue Vorlage 0942/2023: Zügigkeitserweiterung der Gemeinschaftsgrundschule Soldiner Straße, Soldiner Straße 68, 50767 Köln-Lindweiler, Schulnr. 185425, zum Schuljahr 2024/25</title>
+<updated>2023-06-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0942/2023"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114119#beratung-2023-05-22-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0942/2023 Zügigkeitserweiterung der Gemeinschaftsgrundschule Soldiner Straße, Soldiner Straße 68, 50767 Köln-Lindweiler, Schulnr. 185425, zum Schuljahr 2024/25</title>
+<updated>2023-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0942/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115091#vorlage</id>
+<title>Neue Vorlage 1555/2023: Integriertes Handlungskonzept Lindweiler</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#1555/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113919#beratung-2023-05-11-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0835/2023 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2023-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0835/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113919#beratung-2023-05-04-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 0835/2023 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2023-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0835/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113919#beratung-2023-05-02-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 0835/2023 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2023-05-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0835/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-05-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113919#beratung-2023-04-20-Veedelsbeirat%20Lindweiler</id>
+<title>Veedelsbeirat Lindweiler: „Kenntnis genommen“ – 0835/2023 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2023-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0835/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-04-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113919#beratung-2023-04-20-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Kenntnis genommen“ – 0835/2023 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2023-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0835/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-04-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113919#vorlage</id>
+<title>Neue Vorlage 0835/2023: Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2023-04-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0835/2023"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114074#vorlage</id>
+<title>Neue Vorlage 0921/2023: Sachstand Teil-Projekt aus dem IHK Lindweiler</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0921/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114074#beratung-2023-03-16-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0921/2023 Sachstand Teil-Projekt aus dem IHK Lindweiler</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0921/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114000#beratung-2023-03-16-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „verwiesen in nachfolgende Gremien (ohne Rücklauf)“ – AN/0451/2023 Stockender Fortschritt zum Bau des Mehrgenerationenhaus in Köln-Lindweiler</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0451/2023"/>
+<summary>Entscheidung am 2023-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114000#vorlage</id>
+<title>Neue Vorlage AN/0451/2023: Stockender Fortschritt zum Bau des Mehrgenerationenhaus in Köln-Lindweiler</title>
+<updated>2023-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0451/2023"/>
+<summary>Antrag nach § 5 BV6 (CDU) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107294#beratung-2022-04-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 0841/2022 Integriertes Handlungskonzept Lindweiler</title>
+<updated>2022-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0841/2022"/>
+<summary>Entscheidung am 2022-04-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106564#beratung-2022-03-10-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 0399/2022 Integriertes Handlungskonzept Lindweiler</title>
+<updated>2022-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0399/2022"/>
+<summary>Entscheidung am 2022-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107294#vorlage</id>
+<title>Neue Vorlage 0841/2022: Integriertes Handlungskonzept Lindweiler</title>
+<updated>2022-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0841/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106564#vorlage</id>
+<title>Neue Vorlage 0399/2022: Integriertes Handlungskonzept Lindweiler</title>
+<updated>2022-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0399/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105876#beratung-2022-01-27-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 0007/2022 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0007/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105876#beratung-2022-01-27-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0007/2022 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2022-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0007/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105876#beratung-2022-01-25-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 0007/2022 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2022-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0007/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105876#beratung-2022-01-13-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Kenntnis genommen“ – 0007/2022 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2022-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0007/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-01-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105876#vorlage</id>
+<title>Neue Vorlage 0007/2022: Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2022-01-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0007/2022"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105144#beratung-2021-12-09-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 4050/2021 Integriertes Handlungskonzept Lindweiler</title>
+<updated>2021-12-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#4050/2021"/>
+<summary>Entscheidung am 2021-12-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105144#vorlage</id>
+<title>Neue Vorlage 4050/2021: Integriertes Handlungskonzept Lindweiler</title>
+<updated>2021-11-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#4050/2021"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99713#beratung-2021-06-24-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0733/2021 Mehrgenerationen Haus Lindweiler 2021</title>
+<updated>2021-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0733/2021"/>
+<summary>Entscheidung am 2021-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99713#beratung-2021-06-17-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 0733/2021 Mehrgenerationen Haus Lindweiler 2021</title>
+<updated>2021-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0733/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2021-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101251#beratung-2021-06-17-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 1637/2021 Integriertes Handlungskonzept (IHK) Lindweiler</title>
+<updated>2021-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#1637/2021"/>
+<summary>Genehmigung (DE/EilE) am 2021-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99713#beratung-2021-06-15-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „ungeändert beschlossen“ – 0733/2021 Mehrgenerationen Haus Lindweiler 2021</title>
+<updated>2021-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0733/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2021-06-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99713#beratung-2021-06-01-Integrationsrat</id>
+<title>Integrationsrat: „endgültig zurückgezogen“ – 0733/2021 Mehrgenerationen Haus Lindweiler 2021</title>
+<updated>2021-06-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0733/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2021-06-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99713#beratung-2021-05-27-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 0733/2021 Mehrgenerationen Haus Lindweiler 2021</title>
+<updated>2021-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0733/2021"/>
+<summary>Anhörung (BV) am 2021-05-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99713#beratung-2021-05-27-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „ungeändert beschlossen“ – 0733/2021 Mehrgenerationen Haus Lindweiler 2021</title>
+<updated>2021-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0733/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2021-05-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99713#vorlage</id>
+<title>Neue Vorlage 0733/2021: Mehrgenerationen Haus Lindweiler 2021</title>
+<updated>2021-05-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0733/2021"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101251#vorlage</id>
+<title>Neue Vorlage 1637/2021: Integriertes Handlungskonzept (IHK) Lindweiler</title>
+<updated>2021-05-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#1637/2021"/>
+<summary>Dringlichkeitsvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99711#beratung-2021-04-15-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 0732/2021 Änderung der GO Veedelsbeirat Lindweiler</title>
+<updated>2021-04-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0732/2021"/>
+<summary>Entscheidung am 2021-04-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99701#beratung-2021-04-15-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 0724/2021 Integriertes Handlungskonzept Lindweiler</title>
+<updated>2021-04-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0724/2021"/>
+<summary>Entscheidung am 2021-04-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99471#beratung-2021-04-15-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 0573/2021 Integriertes Handlungskonzept Lindweiler</title>
+<updated>2021-04-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0573/2021"/>
+<summary>Entscheidung am 2021-04-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99377#beratung-2021-04-15-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0504/2021 Neubau eines sozialen Zentrums und Ausbau zu einem generationsübergreifenden Bürgerhaus in Köln- Lindweiler, Krombachweg 29 (Gemarkung Longerich, Flur 32, Flurstücke 407 und 2076)</title>
+<updated>2021-04-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0504/2021"/>
+<summary>Entscheidung am 2021-04-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98456#beratung-2021-04-15-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 3623/2020 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2021-04-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#3623/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-04-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99184#beratung-2021-03-23-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0352/2021 Integriertes Handlungskonzept Lindweiler, hier: Änderung der Geschäftsordnung des Veedelsberiates Lindweiler</title>
+<updated>2021-03-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0352/2021"/>
+<summary>Entscheidung am 2021-03-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99184#beratung-2021-03-11-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 0352/2021 Integriertes Handlungskonzept Lindweiler, hier: Änderung der Geschäftsordnung des Veedelsberiates Lindweiler</title>
+<updated>2021-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0352/2021"/>
+<summary>Vorberatung (Fachausschuss) am 2021-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99711#vorlage</id>
+<title>Neue Vorlage 0732/2021: Änderung der GO Veedelsbeirat Lindweiler</title>
+<updated>2021-03-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0732/2021"/>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99701#vorlage</id>
+<title>Neue Vorlage 0724/2021: Integriertes Handlungskonzept Lindweiler</title>
+<updated>2021-02-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0724/2021"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99377#vorlage</id>
+<title>Neue Vorlage 0504/2021: Neubau eines sozialen Zentrums und Ausbau zu einem generationsübergreifenden Bürgerhaus in Köln- Lindweiler, Krombachweg 29 (Gemarkung Longerich, Flur 32, Flurstücke 407 und 2076)</title>
+<updated>2021-02-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0504/2021"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99471#vorlage</id>
+<title>Neue Vorlage 0573/2021: Integriertes Handlungskonzept Lindweiler</title>
+<updated>2021-02-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0573/2021"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99184#vorlage</id>
+<title>Neue Vorlage 0352/2021: Integriertes Handlungskonzept Lindweiler, hier: Änderung der Geschäftsordnung des Veedelsberiates Lindweiler</title>
+<updated>2021-02-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#0352/2021"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98456#beratung-2021-01-28-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 3623/2020 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2021-01-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#3623/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-01-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98456#beratung-2021-01-26-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 3623/2020 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2021-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#3623/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98456#beratung-2021-01-14-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Kenntnis genommen“ – 3623/2020 Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2021-01-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#3623/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-01-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98456#vorlage</id>
+<title>Neue Vorlage 3623/2020: Umsetzung des Integrierten Handlungskonzeptes Köln-Lindweiler</title>
+<updated>2020-12-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#3623/2020"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/97813#beratung-2020-12-03-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 3239/2020 Integriertes Handlungskonzept Lindweiler</title>
+<updated>2020-12-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#3239/2020"/>
+<summary>Entscheidung am 2020-12-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0242-2025</id>
+<title>Vorlage 0242/2025: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen in der Sitzung der BV 6 am 07.11.2024 betreffend "Sachstandsanfrage zur Sanierung von Sportplätzen im Bezirk Chorweiler"</title>
+<subtitle>Verlauf der Vorlage 0242/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0242-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#0242/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125490#beratung-2025-05-22-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0242/2025 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen in der Sitzung der BV 6 am 07.11.2024 betreffend "Sachstandsanfrage zur Sanierung von Sportplätzen im Bezirk Chorweiler"</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#0242/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125490#vorlage</id>
+<title>Neue Vorlage 0242/2025: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen in der Sitzung der BV 6 am 07.11.2024 betreffend "Sachstandsanfrage zur Sanierung von Sportplätzen im Bezirk Chorweiler"</title>
+<updated>2025-03-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#0242/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125490#folge-AN%2F1495%2F2024</id>
+<title>Anfrage nach § 4 BV6 (Grüne) AN/1495/2024: Sachstandsanfrage zur Sanierung von Sportplätzen im Bezirk Chorweiler</title>
+<updated>2024-10-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#0242/2025"/>
+<summary>Folgevorlage zu 0242/2025</summary>
+</entry>
+</feed>

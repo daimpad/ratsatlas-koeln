@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-langel</id>
 <title>Ratsatlas Köln – Langel</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Langel</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-05T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-langel.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134410#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/1309/2026 Antrag der Fraktion Bündnis90/DieGrünenVolt "Aufwertung des Platzes Langeler Berg / Hintergasse"</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1309/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134413#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1312/2026 Antrag der Fraktion Bündnis90/DieGrünenVolt "Benennung Wiesenfestplatz Porz-Langel"</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1312/2026"/>
+<summary>Antrag / Anfrage am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134200#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2300/2026 Beantwortung einer schriftlichen Anfrage der AfD-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 23.06.2026 betreffend "Verkehrsbehinderung in der Ortsddurchfahrt Porz-Langel" (AN/1091/2026)</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2300/2026"/>
+<summary>Entscheidung am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133579#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1091/2026 Anfrage der AfD-Fraktion "‘Verkehrsbehinderungen in der Ortsdurchfahrt Porz-Langel ‘‘ hier: Sandbergstraße, 51143 Kö</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1091/2026"/>
+<summary>Antrag / Anfrage am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134200#vorlage</id>
+<title>Neue Vorlage 2300/2026: Beantwortung einer schriftlichen Anfrage der AfD-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 23.06.2026 betreffend "Verkehrsbehinderung in der Ortsddurchfahrt Porz-Langel" (AN/1091/2026)</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2300/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134413#vorlage</id>
+<title>Neue Vorlage AN/1312/2026: Antrag der Fraktion Bündnis90/DieGrünenVolt "Benennung Wiesenfestplatz Porz-Langel"</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1312/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134410#vorlage</id>
+<title>Neue Vorlage AN/1309/2026: Antrag der Fraktion Bündnis90/DieGrünenVolt "Aufwertung des Platzes Langeler Berg / Hintergasse"</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1309/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133399#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0982/2026 Straßensanierung in Köln Langel</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0982/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133662#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1136/2026 Dringlichkeitsantrag der Fraktion Bündnis 90/Die Grünen-Volt "Angebot KVB-Leihräder in Langel"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1136/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133662#vorlage</id>
+<title>Neue Vorlage AN/1136/2026: Dringlichkeitsantrag der Fraktion Bündnis 90/Die Grünen-Volt "Angebot KVB-Leihräder in Langel"</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1136/2026"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133579#vorlage</id>
+<title>Neue Vorlage AN/1091/2026: Anfrage der AfD-Fraktion "‘Verkehrsbehinderungen in der Ortsdurchfahrt Porz-Langel ‘‘ hier: Sandbergstraße, 51143 Kö</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1091/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133399#vorlage</id>
+<title>Neue Vorlage AN/0982/2026: Straßensanierung in Köln Langel</title>
+<updated>2026-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0982/2026"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132222#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0579/2026 Dringlichkeitsantrag von Frau Rechberger (FDP) "Sondergenehmigung Langeler Wiesenfest 2026"</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0579/2026"/>
+<summary>Antrag / Anfrage am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132194#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0568/2026 Antrag der CDU-Fraktion "Traditionelles Wiesenfest in Porz-Langel"</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0568/2026"/>
+<summary>Antrag / Anfrage am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131738#beratung-2026-04-16-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 0700/2026 Beantwortung der Anfrage nach § 4 (SPD) vom 05.03.2026 aus der Sitzung der Bezirksvertretung 6 betreffend "Glasfaser Ausbau Langel" (AN/0416/2026)</title>
+<updated>2026-04-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#0700/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132222#vorlage</id>
+<title>Neue Vorlage AN/0579/2026: Dringlichkeitsantrag von Frau Rechberger (FDP) "Sondergenehmigung Langeler Wiesenfest 2026"</title>
+<updated>2026-04-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0579/2026"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132194#vorlage</id>
+<title>Neue Vorlage AN/0568/2026: Antrag der CDU-Fraktion "Traditionelles Wiesenfest in Porz-Langel"</title>
+<updated>2026-04-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0568/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131738#vorlage</id>
+<title>Neue Vorlage 0700/2026: Beantwortung der Anfrage nach § 4 (SPD) vom 05.03.2026 aus der Sitzung der Bezirksvertretung 6 betreffend "Glasfaser Ausbau Langel" (AN/0416/2026)</title>
+<updated>2026-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#0700/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131658#beratung-2026-03-12-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/0416/2026 Glasfaser Ausbau Langel</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0416/2026"/>
+<summary>Entscheidung am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131446#beratung-2026-03-10-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0308/2026 Antrag der Fraktion Bündnis 90/Die Grünen und Volt "Stromanschluss auf dem Eulenplatz, Porz-Langel“</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0308/2026"/>
+<summary>Antrag / Anfrage am 2026-03-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131658#vorlage</id>
+<title>Neue Vorlage AN/0416/2026: Glasfaser Ausbau Langel</title>
+<updated>2026-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0416/2026"/>
+<summary>Anfrage nach § 4 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131446#vorlage</id>
+<title>Neue Vorlage AN/0308/2026: Antrag der Fraktion Bündnis 90/Die Grünen und Volt "Stromanschluss auf dem Eulenplatz, Porz-Langel“</title>
+<updated>2026-02-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0308/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128865#beratung-2025-12-11-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2443/2025 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Chorweiler am 05.12.2024 betr.: "Einrichtung einer Einbahnstraße Mohlenweg in Köln Langel" (AN/1669/2024).</title>
+<updated>2025-12-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2443/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128865#vorlage</id>
+<title>Neue Vorlage 2443/2025: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Chorweiler am 05.12.2024 betr.: "Einrichtung einer Einbahnstraße Mohlenweg in Köln Langel" (AN/1669/2024).</title>
+<updated>2025-11-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2443/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128059#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0866/2025 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Umgestaltungen Eulenplatz Langel – Planungen umgehend wieder aufnehmen"</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0866/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128059#vorlage</id>
+<title>Neue Vorlage AN/0866/2025: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Umgestaltungen Eulenplatz Langel – Planungen umgehend wieder aufnehmen"</title>
+<updated>2025-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0866/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127029#beratung-2025-05-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0502/2025 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Alternierendes Parken auf der Lülsdorfer Str. wird nicht eingehalten"</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0502/2025"/>
+<summary>Antrag / Anfrage am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127029#vorlage</id>
+<title>Neue Vorlage AN/0502/2025: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Alternierendes Parken auf der Lülsdorfer Str. wird nicht eingehalten"</title>
+<updated>2025-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0502/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126394#beratung-2025-04-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0356/2025 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Fahrbahnverengungen vor KGS Hinter der Kirche und Fröbel Kindergarten Clemenskids in 51143 Köln-Porz-Langel"</title>
+<updated>2025-04-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0356/2025"/>
+<summary>Antrag / Anfrage am 2025-04-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126394#vorlage</id>
+<title>Neue Vorlage AN/0356/2025: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Fahrbahnverengungen vor KGS Hinter der Kirche und Fröbel Kindergarten Clemenskids in 51143 Köln-Porz-Langel"</title>
+<updated>2025-03-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0356/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124780#beratung-2024-12-05-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1669/2024 Einrichtung einer Einbahnstraße Mohlenweg in Köln-Langel</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1669/2024"/>
+<summary>Entscheidung am 2024-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124780#vorlage</id>
+<title>Neue Vorlage AN/1669/2024: Einrichtung einer Einbahnstraße Mohlenweg in Köln-Langel</title>
+<updated>2024-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1669/2024"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123360#beratung-2024-09-17-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2850/2024 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Porz am 17.09.2024 (AN/1230/2024) betreffend "alternierendes Parken auf der Lülsdorfer Str."</title>
+<updated>2024-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2850/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123301#beratung-2024-09-17-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1230/2024 Anfrage der Fraktion Bündnis 90/Die Grünen "AN 0920/2024 alternierendes Parken auf der Lülsdorfer Str"</title>
+<updated>2024-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1230/2024"/>
+<summary>Antrag / Anfrage am 2024-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122809#beratung-2024-09-17-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – 2505/2024 Bürgereingabe nach § 24 GO– „Verkehrssituation Sandbergstraße, Köln-Porz“ Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2505/2024"/>
+<summary>Entscheidung am 2024-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123360#vorlage</id>
+<title>Neue Vorlage 2850/2024: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Porz am 17.09.2024 (AN/1230/2024) betreffend "alternierendes Parken auf der Lülsdorfer Str."</title>
+<updated>2024-09-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2850/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123301#vorlage</id>
+<title>Neue Vorlage AN/1230/2024: Anfrage der Fraktion Bündnis 90/Die Grünen "AN 0920/2024 alternierendes Parken auf der Lülsdorfer Str"</title>
+<updated>2024-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1230/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122809#vorlage</id>
+<title>Neue Vorlage 2505/2024: Bürgereingabe nach § 24 GO– „Verkehrssituation Sandbergstraße, Köln-Porz“ Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-08-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2505/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122800#beratung-2024-08-29-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2498/2024 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion in der Bezirksvertretung Chorweiler aus der Sitzung vom 20.06.2024 (AN/0941/2024) betreffend "Wiederaufnahme und Fortführung des Fährdienstes zwischen Langel und Hitdorf"</title>
+<updated>2024-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2498/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-08-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122799#beratung-2024-08-29-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2497/2024 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen in der Bezirksvertretung Chorweiler aus der Sitzung vom 31.08.2023 (AN/1504/2023) betr. „Fährboot-Ersatz für die Rheinfähre zwischen Köln-Langel u. Leverkusen"</title>
+<updated>2024-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2497/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-08-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122800#vorlage</id>
+<title>Neue Vorlage 2498/2024: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion in der Bezirksvertretung Chorweiler aus der Sitzung vom 20.06.2024 (AN/0941/2024) betreffend "Wiederaufnahme und Fortführung des Fährdienstes zwischen Langel und Hitdorf"</title>
+<updated>2024-08-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2498/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122799#vorlage</id>
+<title>Neue Vorlage 2497/2024: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen in der Bezirksvertretung Chorweiler aus der Sitzung vom 31.08.2023 (AN/1504/2023) betr. „Fährboot-Ersatz für die Rheinfähre zwischen Köln-Langel u. Leverkusen"</title>
+<updated>2024-08-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2497/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122081#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1923/2024 Stellungnahme zum Dringlichkeitsantrag Überwachung Parken auf der Lülsdorfer Str.</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#1923/2024"/>
+<summary>Entscheidung am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122002#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0920/2024 Dringlichkeitsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Überwachung des alternierenden Parken auf der Lülsdorfer Str. von Rheinbergstr. bis Sandbergstr."</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0920/2024"/>
+<summary>Antrag / Anfrage am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121977#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig zurückgezogen“ – AN/0910/2024 Änderungsantrag SPD-Fraktion "Mobilstationen Zündorf und Langel"</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0910/2024"/>
+<summary>Antrag / Anfrage am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121976#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0909/2024 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Instandsetzung des Rasenplatzes in Köln Porz Langel"</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0909/2024"/>
+<summary>Antrag / Anfrage am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121975#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0908/2024 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Einmündung „Auf dem Loor“ (nördlich) in den Loorweg"</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0908/2024"/>
+<summary>Antrag / Anfrage am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122081#vorlage</id>
+<title>Neue Vorlage 1923/2024: Stellungnahme zum Dringlichkeitsantrag Überwachung Parken auf der Lülsdorfer Str.</title>
+<updated>2024-06-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#1923/2024"/>
+<summary>Stellungnahme zu einem Antrag (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122071#vorlage</id>
+<title>Neue Vorlage AN/0941/2024: Wiederaufnahme und Fortführung des Fährdienstes zwischen Langel und Hitdorf</title>
+<updated>2024-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0941/2024"/>
+<summary>Anfrage nach § 4 BV6 (CDU) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122002#vorlage</id>
+<title>Neue Vorlage AN/0920/2024: Dringlichkeitsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Überwachung des alternierenden Parken auf der Lülsdorfer Str. von Rheinbergstr. bis Sandbergstr."</title>
+<updated>2024-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0920/2024"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121977#vorlage</id>
+<title>Neue Vorlage AN/0910/2024: Änderungsantrag SPD-Fraktion "Mobilstationen Zündorf und Langel"</title>
+<updated>2024-06-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0910/2024"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121976#vorlage</id>
+<title>Neue Vorlage AN/0909/2024: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Instandsetzung des Rasenplatzes in Köln Porz Langel"</title>
+<updated>2024-06-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0909/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121975#vorlage</id>
+<title>Neue Vorlage AN/0908/2024: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Einmündung „Auf dem Loor“ (nördlich) in den Loorweg"</title>
+<updated>2024-06-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0908/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120620#beratung-2024-03-14-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0458/2024 Dringlichkeitsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Abtrennung von Porz Langel vom 19.03.24 bis 25.04.24"</title>
+<updated>2024-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0458/2024"/>
+<summary>Antrag / Anfrage am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120620#vorlage</id>
+<title>Neue Vorlage AN/0458/2024: Dringlichkeitsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Abtrennung von Porz Langel vom 19.03.24 bis 25.04.24"</title>
+<updated>2024-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0458/2024"/>
+<summary>Antrag nach § 12 (Dringlichkeitsantrag) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120214#beratung-2024-03-05-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „geändert beschlossen“ – AN/0293/2024 Änderungsantrag zu TOP  1.2 - Erhalt Fährverbindung Köln-Langel – Leverkusen-Hitdorf - AN/0231/2024</title>
+<updated>2024-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0293/2024"/>
+<summary>Entscheidung am 2024-03-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120032#beratung-2024-03-05-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „geändert beschlossen“ – AN/0231/2024 Erhalt Fährverbindung Köln-Langel – Leverkusen-Hitdorf</title>
+<updated>2024-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0231/2024"/>
+<summary>Antrag / Anfrage am 2024-03-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119511#beratung-2024-03-05-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „endgültig zurückgezogen“ – AN/0102/2024 Erhaltung Fährverbindung Köln-Langel – Leverkusen-Hitdorf</title>
+<updated>2024-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0102/2024"/>
+<summary>Antrag / Anfrage am 2024-03-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120214#vorlage</id>
+<title>Neue Vorlage AN/0293/2024: Änderungsantrag zu TOP  1.2 - Erhalt Fährverbindung Köln-Langel – Leverkusen-Hitdorf - AN/0231/2024</title>
+<updated>2024-03-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0293/2024"/>
+<summary>Gem. Änderungsantrag (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120032#vorlage</id>
+<title>Neue Vorlage AN/0231/2024: Erhalt Fährverbindung Köln-Langel – Leverkusen-Hitdorf</title>
+<updated>2024-02-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0231/2024"/>
+<summary>SPD Antrag nach § 3 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113162#beratung-2024-02-06-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0348/2023 Beschluss über Stellungnahmen sowie Satzungsbeschluss zum Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 71356/02, Arbeitstitel "An der Mühle" in Köln-Porz-Langel</title>
+<updated>2024-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#0348/2023"/>
+<summary>Entscheidung am 2024-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119790#beratung-2024-02-01-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0181/2024 Aktuelle Stunde zur Situation der Rheinfähre Köln-Langel</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0181/2024"/>
+<summary>Entscheidung am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119494#beratung-2024-02-01-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „geändert beschlossen“ – AN/0093/2024 Antrag zur Sicherung des Betriebs der Rheinfähre Köln-Langel /Hitdorf</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0093/2024"/>
+<summary>Entscheidung am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119790#vorlage</id>
+<title>Neue Vorlage AN/0181/2024: Aktuelle Stunde zur Situation der Rheinfähre Köln-Langel</title>
+<updated>2024-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0181/2024"/>
+<summary>Antrag nach § 5 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119511#vorlage</id>
+<title>Neue Vorlage AN/0102/2024: Erhaltung Fährverbindung Köln-Langel – Leverkusen-Hitdorf</title>
+<updated>2024-01-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0102/2024"/>
+<summary>SPD Dringlichkeitsantrag nach § 12 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119494#vorlage</id>
+<title>Neue Vorlage AN/0093/2024: Antrag zur Sicherung des Betriebs der Rheinfähre Köln-Langel /Hitdorf</title>
+<updated>2024-01-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0093/2024"/>
+<summary>Antrag nach § 3 BV6 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118247#beratung-2023-11-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1915/2023 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Alternierendes Parken auf der Sanbergstr Porz Langel"</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1915/2023"/>
+<summary>Antrag / Anfrage am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118245#beratung-2023-11-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1914/2023 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Alternierendes Parken auf der Lülsdorfer Str."</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1914/2023"/>
+<summary>Antrag / Anfrage am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118247#vorlage</id>
+<title>Neue Vorlage AN/1915/2023: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Alternierendes Parken auf der Sanbergstr Porz Langel"</title>
+<updated>2023-11-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1915/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118245#vorlage</id>
+<title>Neue Vorlage AN/1914/2023: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Alternierendes Parken auf der Lülsdorfer Str."</title>
+<updated>2023-11-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1914/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117161#beratung-2023-10-19-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2861/2023 Antrag der BBM - JBV "Instandsetzung Basketballplatz Porz-Langel</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2861/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-10-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116310#beratung-2023-09-28-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 2311/2023 Information zum Beschluss über Stellungnahmen sowie Satzungsbeschluss zum Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 71356/02, Arbeitstitel: An der Mühle in Köln-Porz-Langel</title>
+<updated>2023-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2311/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117161#vorlage</id>
+<title>Neue Vorlage 2861/2023: Antrag der BBM - JBV "Instandsetzung Basketballplatz Porz-Langel</title>
+<updated>2023-09-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2861/2023"/>
+<summary>Stellungnahme zu einem Antrag (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116680#beratung-2023-08-31-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2580/2023 Langeler Wiesenfest der Karnevalsgesellschaft Rut-Wies Löstige Langeler e.V.</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2580/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116310#beratung-2023-08-31-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2311/2023 Information zum Beschluss über Stellungnahmen sowie Satzungsbeschluss zum Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 71356/02, Arbeitstitel: An der Mühle in Köln-Porz-Langel</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2311/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115874#beratung-2023-08-31-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig abgelehnt“ – AN/1216/2023 Änderungsantrag der SPD-Fraktion "Instandsetzung Basketballplatz Porz-Langel"</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1216/2023"/>
+<summary>Entscheidung am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115844#beratung-2023-08-31-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/1210/2023 Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Instandsetzung Basketballplatz Porz-Langel"</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1210/2023"/>
+<summary>Antrag / Anfrage am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115639#beratung-2023-08-31-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1135/2023 Antrag der BBM - JBV "Instandsetzung Basketballplatz Porz-Langel"</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1135/2023"/>
+<summary>Antrag / Anfrage am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116960#vorlage</id>
+<title>Neue Vorlage AN/1504/2023: Fährboot-Ersatz für die Rheinfähre zwischen Köln-Langel und Leverkusen-Hitdorf</title>
+<updated>2023-08-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1504/2023"/>
+<summary>Anfrage nach § 4 BV6 (Grüne) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116680#vorlage</id>
+<title>Neue Vorlage 2580/2023: Langeler Wiesenfest der Karnevalsgesellschaft Rut-Wies Löstige Langeler e.V.</title>
+<updated>2023-08-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2580/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116310#vorlage</id>
+<title>Neue Vorlage 2311/2023: Information zum Beschluss über Stellungnahmen sowie Satzungsbeschluss zum Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 71356/02, Arbeitstitel: An der Mühle in Köln-Porz-Langel</title>
+<updated>2023-08-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#2311/2023"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115833#beratung-2023-06-13-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 1918/2023 Antrag der BBM - JBV "Instandsetzung Basketballplatz in Porz Langel</title>
+<updated>2023-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#1918/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-06-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115833#vorlage</id>
+<title>Neue Vorlage 1918/2023: Antrag der BBM - JBV "Instandsetzung Basketballplatz in Porz Langel</title>
+<updated>2023-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#1918/2023"/>
+<summary>Stellungnahme zu einem Antrag (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115874#vorlage</id>
+<title>Neue Vorlage AN/1216/2023: Änderungsantrag der SPD-Fraktion "Instandsetzung Basketballplatz Porz-Langel"</title>
+<updated>2023-06-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1216/2023"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115844#vorlage</id>
+<title>Neue Vorlage AN/1210/2023: Änderungsantrag der Fraktionen CDU und Bündnis 90/Die Grünen "Instandsetzung Basketballplatz Porz-Langel"</title>
+<updated>2023-06-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1210/2023"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115639#vorlage</id>
+<title>Neue Vorlage AN/1135/2023: Antrag der BBM - JBV "Instandsetzung Basketballplatz Porz-Langel"</title>
+<updated>2023-05-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1135/2023"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/91860#beratung-2023-03-16-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1682/2019 Anfrage der SPD-Fraktion: Kita- und Schulplätze in Zündorf und Langel</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1682/2019"/>
+<summary>Antrag / Anfrage am 2023-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114032#vorlage</id>
+<title>Neue Vorlage 0892/2023: Antrag der SPD-Fraktion „Neubau einer Kindertagesstätte in Langel"</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#0892/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114032#beratung-2023-03-16-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0892/2023 Antrag der SPD-Fraktion „Neubau einer Kindertagesstätte in Langel"</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#0892/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113836#beratung-2023-03-16-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0382/2023 Einrichtung einer Einbahnstraße Mohlenweg in Köln-Langel</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0382/2023"/>
+<summary>Entscheidung am 2023-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113162#beratung-2023-03-16-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert empfohlen“ – 0348/2023 Beschluss über Stellungnahmen sowie Satzungsbeschluss zum Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 71356/02, Arbeitstitel "An der Mühle" in Köln-Porz-Langel</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#0348/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113162#beratung-2023-03-16-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert empfohlen“ – 0348/2023 Beschluss über Stellungnahmen sowie Satzungsbeschluss zum Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 71356/02, Arbeitstitel "An der Mühle" in Köln-Porz-Langel</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#0348/2023"/>
+<summary>Anhörung (BV) am 2023-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113836#vorlage</id>
+<title>Neue Vorlage AN/0382/2023: Einrichtung einer Einbahnstraße Mohlenweg in Köln-Langel</title>
+<updated>2023-02-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/0382/2023"/>
+<summary>Antrag nach § 3 BV6 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111982#beratung-2023-02-02-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 3917/2022 Zustand Sportplatz Langeler Lido</title>
+<updated>2023-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#3917/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111394#beratung-2023-02-02-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – AN/1874/2022 Zustand Sportplatz Langeler Lido</title>
+<updated>2023-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/1874/2022"/>
+<summary>Antrag / Anfrage am 2023-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113162#vorlage</id>
+<title>Neue Vorlage 0348/2023: Beschluss über Stellungnahmen sowie Satzungsbeschluss zum Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) 71356/02, Arbeitstitel "An der Mühle" in Köln-Porz-Langel</title>
+<updated>2023-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#0348/2023"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111982#vorlage</id>
+<title>Neue Vorlage 3917/2022: Zustand Sportplatz Langeler Lido</title>
+<updated>2023-01-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#3917/2022"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111964#beratung-2022-12-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/2086/2022 Antrag der SPD-Fraktion "Neubau einer Kindertagesstätte in Langel"</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/2086/2022"/>
+<summary>Antrag / Anfrage am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111962#beratung-2022-12-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/2085/2022 Antrag der SPD-Fraktion "Verbesserung der Bushaltestelle Langel-Nord"</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/2085/2022"/>
+<summary>Antrag / Anfrage am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111959#beratung-2022-12-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/2083/2022 Anfrage der SPD-Fraktion "Baumöglichkeit der Alexianer Hinter Hoven"</title>
+<updated>2022-12-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:langel#AN/2083/2022"/>
+<summary>Antrag / Anfrage am 2022-12-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

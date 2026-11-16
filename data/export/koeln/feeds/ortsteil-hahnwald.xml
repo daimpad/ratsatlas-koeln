@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-hahnwald</id>
 <title>Ratsatlas Köln – Hahnwald</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Hahnwald</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-10-01T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-hahnwald.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134991#vorlage</id>
+<title>Neue Vorlage AN/1588/2026: Anwendung des Wohnungsbauturbos „Am Stiftswäldchen 19 in Köln-Hahnwald“</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1588/2026"/>
+<summary>SPD Dringlichkeitsantrag nach § 12 · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134991#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – AN/1588/2026 Anwendung des Wohnungsbauturbos „Am Stiftswäldchen 19 in Köln-Hahnwald“</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1588/2026"/>
+<summary>Antrag / Anfrage am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134884#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – 2682/2026 Anregung der Bezirksvertretung Rodenkirchen zu "Wohnungsbau-Turbo: Einschätzung zur Zustimmungsfähigkeit des Vorhabens "Am Stiftswäldchen [Hausnummer ausgelassen] in Köln - Hahnwald"</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2682/2026"/>
+<summary>Entscheidung am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134294#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – 2380/2026 Wohnungsbau-Turbo: Einchätzung zur Zustimmungsfähigkeit des Vorhabens "Am Stiftswäldchen 19 in Köln - Hahnwald"</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2380/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134884#vorlage</id>
+<title>Neue Vorlage 2682/2026: Anregung der Bezirksvertretung Rodenkirchen zu "Wohnungsbau-Turbo: Einschätzung zur Zustimmungsfähigkeit des Vorhabens "Am Stiftswäldchen [Hausnummer ausgelassen] in Köln - Hahnwald"</title>
+<updated>2026-09-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2682/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134751#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/1488/2026 Verfahren beim Bauprojekt "Stiftswäldchen"</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1488/2026"/>
+<summary>Entscheidung am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134489#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/1347/2026 Änderungsantrag zu den beabsichtigen Vorhabenserleichterung für das Wohungsbauprojekt „Stiftswäldchen 19“</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1347/2026"/>
+<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134751#vorlage</id>
+<title>Neue Vorlage AN/1488/2026: Verfahren beim Bauprojekt "Stiftswäldchen"</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1488/2026"/>
+<summary>Dringlichkeitsantrag BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134294#vorlage</id>
+<title>Neue Vorlage 2380/2026: Wohnungsbau-Turbo: Einchätzung zur Zustimmungsfähigkeit des Vorhabens "Am Stiftswäldchen 19 in Köln - Hahnwald"</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2380/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134489#vorlage</id>
+<title>Neue Vorlage AN/1347/2026: Änderungsantrag zu den beabsichtigen Vorhabenserleichterung für das Wohungsbauprojekt „Stiftswäldchen 19“</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1347/2026"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133275#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 1728/2026 Voreinschätzung zur Zustimmungsfähigkeit eines Vorhabens für Verfahrenserleichterung des "Wohnungsbau-Turbos": Am Stiftswäldchen 19 in Köln-Hahnwald</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1728/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133275#vorlage</id>
+<title>Neue Vorlage 1728/2026: Voreinschätzung zur Zustimmungsfähigkeit eines Vorhabens für Verfahrenserleichterung des "Wohnungsbau-Turbos": Am Stiftswäldchen 19 in Köln-Hahnwald</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1728/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133011#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1556/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Einrichtung einer direkten Busverbindung/Verstärkerlinie zwischen Hahnwald und Rondorf und einer Haltestelle nahe der St. George´s School, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1556/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133011#vorlage</id>
+<title>Neue Vorlage 1556/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Einrichtung einer direkten Busverbindung/Verstärkerlinie zwischen Hahnwald und Rondorf und einer Haltestelle nahe der St. George´s School, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1556/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132481#beratung-2026-05-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0678/2026 Einrichtung einer Tempo-30-Zone am Mennweg (zwischen Kreisverkehr Industriestraße &amp; Anfang Hitdorfer Fährweg</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0678/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132481#vorlage</id>
+<title>Neue Vorlage AN/0678/2026: Einrichtung einer Tempo-30-Zone am Mennweg (zwischen Kreisverkehr Industriestraße &amp; Anfang Hitdorfer Fährweg</title>
+<updated>2026-04-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0678/2026"/>
+<summary>Gem. Antrag nach § 3 BV6 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130318#beratung-2025-12-11-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1465/2025 "Turbokreisel" Emdenerstraße - Causemannstraße - Zufahrt Industriestraße</title>
+<updated>2025-12-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1465/2025"/>
+<summary>Antrag / Anfrage am 2025-12-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130318#vorlage</id>
+<title>Neue Vorlage AN/1465/2025: "Turbokreisel" Emdenerstraße - Causemannstraße - Zufahrt Industriestraße</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1465/2025"/>
+<summary>Anfrage nach § 4 BV6 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129892#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 3224/2025 Straßenbaumkonzeptes für den Stadtbezirk Rodenkirchen; hier: Umsetzung Ausführungspläne Bayenthal und Hahnwald</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3224/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126329#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0813/2025 Beantwortung der Anfrage AN/1569/2024 der CDU-Fraktion zu mangelnder KiTa-Versorgung in Immendorf und Hahnwald aus der Sitzung der Bezirksvertretung Rodenkirchen am 02.12.2024</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#0813/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129892#vorlage</id>
+<title>Neue Vorlage 3224/2025: Straßenbaumkonzeptes für den Stadtbezirk Rodenkirchen; hier: Umsetzung Ausführungspläne Bayenthal und Hahnwald</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3224/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126329#vorlage</id>
+<title>Neue Vorlage 0813/2025: Beantwortung der Anfrage AN/1569/2024 der CDU-Fraktion zu mangelnder KiTa-Versorgung in Immendorf und Hahnwald aus der Sitzung der Bezirksvertretung Rodenkirchen am 02.12.2024</title>
+<updated>2025-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#0813/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126329#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig zurückgezogen“ – 0813/2025 Beantwortung der Anfrage AN/1569/2024 der CDU-Fraktion zu mangelnder KiTa-Versorgung in Immendorf und Hahnwald aus der Sitzung der Bezirksvertretung Rodenkirchen am 02.12.2024</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#0813/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123928#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Sache ist erledigt“ – AN/1400/2024 Radweg entlang Kiesgrubenweg / Wattigniestraße (nördlich)</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1400/2024"/>
+<summary>Entscheidung am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98641#vorlage</id>
+<title>Neue Vorlage AN/0012/2021: Maßnahmen zum Lärmschutz der AnwohnerInnen an der BAB 555</title>
+<updated>2025-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0012/2021"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124486#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1569/2024 Mangelnde KiTa-Versorgung in Immendorf und Hahnwald</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1569/2024"/>
+<summary>Entscheidung am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124486#vorlage</id>
+<title>Neue Vorlage AN/1569/2024: Mangelnde KiTa-Versorgung in Immendorf und Hahnwald</title>
+<updated>2024-11-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1569/2024"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123928#vorlage</id>
+<title>Neue Vorlage AN/1400/2024: Radweg entlang Kiesgrubenweg / Wattigniestraße (nördlich)</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1400/2024"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121070#beratung-2024-10-01-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1297/2024 Beschluss über die Stellungnahmen sowie Satzungsbeschluss betreffend den Entwurf zur Änderung des Bebauungsplans Nr. 69370/02 Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2024-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1297/2024"/>
+<summary>Entscheidung am 2024-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121070#beratung-2024-09-19-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert empfohlen“ – 1297/2024 Beschluss über die Stellungnahmen sowie Satzungsbeschluss betreffend den Entwurf zur Änderung des Bebauungsplans Nr. 69370/02 Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2024-09-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1297/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-09-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121070#beratung-2024-06-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 1297/2024 Beschluss über die Stellungnahmen sowie Satzungsbeschluss betreffend den Entwurf zur Änderung des Bebauungsplans Nr. 69370/02 Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1297/2024"/>
+<summary>Anhörung (BV) am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121070#vorlage</id>
+<title>Neue Vorlage 1297/2024: Beschluss über die Stellungnahmen sowie Satzungsbeschluss betreffend den Entwurf zur Änderung des Bebauungsplans Nr. 69370/02 Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2024-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1297/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117016#beratung-2023-12-07-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 2763/2023 Satzung über die abweichende Herstellung der Erschließungsanlage Robert-Bosch-Straße von Stichstraße zu Haus-Nr. 43-61 bis Kreisverkehr Industriestraße</title>
+<updated>2023-12-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2763/2023"/>
+<summary>Entscheidung am 2023-12-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117356#beratung-2023-11-30-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 2968/2023 Offenlage Entwurf zur Änderung des Bebauungsplans 69370/02, Kiesgrubenweg in Köln-Hahnwald,1. Änderung</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2968/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117356#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2968/2023 Offenlage Entwurf zur Änderung des Bebauungsplans 69370/02, Kiesgrubenweg in Köln-Hahnwald,1. Änderung</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2968/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117016#beratung-2023-11-21-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert empfohlen“ – 2763/2023 Satzung über die abweichende Herstellung der Erschließungsanlage Robert-Bosch-Straße von Stichstraße zu Haus-Nr. 43-61 bis Kreisverkehr Industriestraße</title>
+<updated>2023-11-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2763/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-11-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117356#vorlage</id>
+<title>Neue Vorlage 2968/2023: Offenlage Entwurf zur Änderung des Bebauungsplans 69370/02, Kiesgrubenweg in Köln-Hahnwald,1. Änderung</title>
+<updated>2023-11-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2968/2023"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117848#beratung-2023-10-26-Rat</id>
+<title>Rat: „endgültig abgelehnt“ – AN/1818/2023 Neugestaltung Sicherheitskonzept 11.11.2023 - Stadt absperren (außer Hahnwald)!</title>
+<updated>2023-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1818/2023"/>
+<summary>Antrag / Anfrage am 2023-10-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117016#beratung-2023-10-19-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 2763/2023 Satzung über die abweichende Herstellung der Erschließungsanlage Robert-Bosch-Straße von Stichstraße zu Haus-Nr. 43-61 bis Kreisverkehr Industriestraße</title>
+<updated>2023-10-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2763/2023"/>
+<summary>Anhörung (BV) am 2023-10-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117848#vorlage</id>
+<title>Neue Vorlage AN/1818/2023: Neugestaltung Sicherheitskonzept 11.11.2023 - Stadt absperren (außer Hahnwald)!</title>
+<updated>2023-10-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1818/2023"/>
+<summary>Die PARTEI Antrag nach § 3 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117016#vorlage</id>
+<title>Neue Vorlage 2763/2023: Satzung über die abweichende Herstellung der Erschließungsanlage Robert-Bosch-Straße von Stichstraße zu Haus-Nr. 43-61 bis Kreisverkehr Industriestraße</title>
+<updated>2023-09-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2763/2023"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116563#beratung-2023-08-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1326/2023 Unter den Birken - Instandsetzung</title>
+<updated>2023-08-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1326/2023"/>
+<summary>Entscheidung am 2023-08-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116563#vorlage</id>
+<title>Neue Vorlage AN/1326/2023: Unter den Birken - Instandsetzung</title>
+<updated>2023-08-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1326/2023"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114729#beratung-2023-05-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0683/2023 Maßnahmen zum Lärmschutz der Anwohnenden an der BAB 555</title>
+<updated>2023-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0683/2023"/>
+<summary>Antrag / Anfrage am 2023-05-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114729#vorlage</id>
+<title>Neue Vorlage AN/0683/2023: Maßnahmen zum Lärmschutz der Anwohnenden an der BAB 555</title>
+<updated>2023-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0683/2023"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112723#beratung-2023-01-23-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig zurückgezogen“ – AN/0006/2023 Sanierung des Fuß- und Radweges entlang der Godorfer Hauptstraße/Bonner Landstraße</title>
+<updated>2023-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0006/2023"/>
+<summary>Antrag / Anfrage am 2023-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112033#beratung-2023-01-23-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3939/2022 Bauantrag für die Erweiterung eines LKW-Montagebetriebes durch ein Autohaus, eine LKW-Montagehalle und eine Lackier-Vorbereitungshalle</title>
+<updated>2023-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3939/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112723#vorlage</id>
+<title>Neue Vorlage AN/0006/2023: Sanierung des Fuß- und Radweges entlang der Godorfer Hauptstraße/Bonner Landstraße</title>
+<updated>2023-01-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0006/2023"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112033#vorlage</id>
+<title>Neue Vorlage 3939/2022: Bauantrag für die Erweiterung eines LKW-Montagebetriebes durch ein Autohaus, eine LKW-Montagehalle und eine Lackier-Vorbereitungshalle</title>
+<updated>2022-12-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3939/2022"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111851#vorlage</id>
+<title>Neue Vorlage 3846/2022: Dauernutzung einer temporär genehmigten Fläche zur Aufstellung von Zelten und Containern für Anlagenstillstände im Werk K-Godorf der Shell, L 19 "Friedenswald, Forstbotanischer Garten und Grünverbindungen um Hahnwald", EZ 4, Bezirk 2 Rodenkirchen</title>
+<updated>2022-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3846/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109472#beratung-2022-09-01-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 2261/2022 Beteiligung der Öffentlichkeit gemäß § 3 Absatz 1 BauGB in Verbindung mit § 13 Absatz 2 BauGB nach Modell 1; Städtebauliches Planungskonzept zur Änderung des Bebauungsplanes Nummer 69370/02Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2022-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2261/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109472#beratung-2022-08-29-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2261/2022 Beteiligung der Öffentlichkeit gemäß § 3 Absatz 1 BauGB in Verbindung mit § 13 Absatz 2 BauGB nach Modell 1; Städtebauliches Planungskonzept zur Änderung des Bebauungsplanes Nummer 69370/02Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2022-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2261/2022"/>
+<summary>Anhörung (BV) am 2022-08-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109472#vorlage</id>
+<title>Neue Vorlage 2261/2022: Beteiligung der Öffentlichkeit gemäß § 3 Absatz 1 BauGB in Verbindung mit § 13 Absatz 2 BauGB nach Modell 1; Städtebauliches Planungskonzept zur Änderung des Bebauungsplanes Nummer 69370/02Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2022-07-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2261/2022"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107796#beratung-2022-05-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – 1152/2022 Bürgereingabe gem. § 24 GO, betr.: Einrichtung einer Einbahnstr. in Köln-Rodenkirchen (Verkehrssituation Hahnenstraße) (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen])</title>
+<updated>2022-05-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1152/2022"/>
+<summary>Entscheidung am 2022-05-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107796#vorlage</id>
+<title>Neue Vorlage 1152/2022: Bürgereingabe gem. § 24 GO, betr.: Einrichtung einer Einbahnstr. in Köln-Rodenkirchen (Verkehrssituation Hahnenstraße) (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen])</title>
+<updated>2022-04-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1152/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106898#beratung-2022-03-07-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0405/2022 Starkregenereignisse: Konsequenzen bei zukünftigen Bebauungen und Bauleitplanverfahren</title>
+<updated>2022-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0405/2022"/>
+<summary>Antrag / Anfrage am 2022-03-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106898#vorlage</id>
+<title>Neue Vorlage AN/0405/2022: Starkregenereignisse: Konsequenzen bei zukünftigen Bebauungen und Bauleitplanverfahren</title>
+<updated>2022-02-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0405/2022"/>
+<summary>Anfrage nach § 4 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98838#beratung-2021-05-03-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 0133/2021 Widmung der Mannesmannstraße in Köln-Rodenkirchen</title>
+<updated>2021-05-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#0133/2021"/>
+<summary>Entscheidung am 2021-05-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98838#vorlage</id>
+<title>Neue Vorlage 0133/2021: Widmung der Mannesmannstraße in Köln-Rodenkirchen</title>
+<updated>2021-04-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#0133/2021"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99850#beratung-2021-03-15-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0798/2021 Emil-Hoffmann-Straße: Bushaltestelle, Sicherheit der dort Querenden</title>
+<updated>2021-03-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#0798/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-03-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98641#beratung-2021-03-15-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/0012/2021 Maßnahmen zum Lärmschutz der AnwohnerInnen an der BAB 555</title>
+<updated>2021-03-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0012/2021"/>
+<summary>Antrag / Anfrage am 2021-03-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99850#vorlage</id>
+<title>Neue Vorlage 0798/2021: Emil-Hoffmann-Straße: Bushaltestelle, Sicherheit der dort Querenden</title>
+<updated>2021-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#0798/2021"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96334#beratung-2020-09-10-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 2148/2020 Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz [Hausnummer ausgelassen] (Fühlinger See) und Oranjehofstraße, hier: Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 8 Zif</title>
+<updated>2020-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2148/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-09-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96334#beratung-2020-09-07-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 2148/2020 Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz [Hausnummer ausgelassen] (Fühlinger See) und Oranjehofstraße, hier: Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 8 Zif</title>
+<updated>2020-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2148/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-09-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96405#beratung-2020-09-03-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 2218/2020 Beschluss über die Aufstellung eines Bebauungsplanes Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2020-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2218/2020"/>
+<summary>Entscheidung am 2020-09-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96334#beratung-2020-09-01-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 2148/2020 Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz [Hausnummer ausgelassen] (Fühlinger See) und Oranjehofstraße, hier: Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 8 Zif</title>
+<updated>2020-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2148/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96964#beratung-2020-08-31-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2597/2020 Anfrage AN/1006/2020 Abdeckung Mobilfunk im Stadtteil Köln-Hahnwald</title>
+<updated>2020-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2597/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96852#beratung-2020-08-31-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1006/2020 Abdeckung Mobilfunk im Stadtteil Köln-Hahnwald</title>
+<updated>2020-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1006/2020"/>
+<summary>Antrag / Anfrage am 2020-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96405#beratung-2020-08-31-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 2218/2020 Beschluss über die Aufstellung eines Bebauungsplanes Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2020-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2218/2020"/>
+<summary>Anhörung (BV) am 2020-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96964#vorlage</id>
+<title>Neue Vorlage 2597/2020: Anfrage AN/1006/2020 Abdeckung Mobilfunk im Stadtteil Köln-Hahnwald</title>
+<updated>2020-08-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2597/2020"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96334#beratung-2020-08-20-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2148/2020 Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz [Hausnummer ausgelassen] (Fühlinger See) und Oranjehofstraße, hier: Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 8 Zif</title>
+<updated>2020-08-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2148/2020"/>
+<summary>Kenntnisnahme (Mitteilung) am 2020-08-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96852#vorlage</id>
+<title>Neue Vorlage AN/1006/2020: Abdeckung Mobilfunk im Stadtteil Köln-Hahnwald</title>
+<updated>2020-08-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1006/2020"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96334#vorlage</id>
+<title>Neue Vorlage 2148/2020: Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz [Hausnummer ausgelassen] (Fühlinger See) und Oranjehofstraße, hier: Mitteilung über eine Kostenerhöhung gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO i.V.m. § 8 Zif</title>
+<updated>2020-08-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2148/2020"/>
+<summary>Haushaltsrechtl. Unterrichtung d. Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/96405#vorlage</id>
+<title>Neue Vorlage 2218/2020: Beschluss über die Aufstellung eines Bebauungsplanes Arbeitstitel: Kiesgrubenweg in Köln-Hahnwald, 1. Änderung</title>
+<updated>2020-07-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2218/2020"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/94190#beratung-2020-05-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0279/2020 Emil-Hoffmann-Straße: Bushaltestelle, Sicherheit</title>
+<updated>2020-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0279/2020"/>
+<summary>Anhörung (BV) am 2020-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/94190#vorlage</id>
+<title>Neue Vorlage AN/0279/2020: Emil-Hoffmann-Straße: Bushaltestelle, Sicherheit</title>
+<updated>2020-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/0279/2020"/>
+<summary>Anfrage nach § 4 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/91122#beratung-2019-12-02-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Sache ist erledigt“ – 3698/2019 Verkehrsmaßnahme auf dem Kiesgrubenweg in Rodenkirchen</title>
+<updated>2019-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3698/2019"/>
+<summary>Kenntnisnahme (Mitteilung) am 2019-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/91122#beratung-2019-11-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3698/2019 Verkehrsmaßnahme auf dem Kiesgrubenweg in Rodenkirchen</title>
+<updated>2019-11-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3698/2019"/>
+<summary>Kenntnisnahme (Mitteilung) am 2019-11-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/91122#vorlage</id>
+<title>Neue Vorlage 3698/2019: Verkehrsmaßnahme auf dem Kiesgrubenweg in Rodenkirchen</title>
+<updated>2019-10-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3698/2019"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/78759#beratung-2018-12-11-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert beschlossen“ – 2844/2018 Baubeschluss für die Instandsetzung der Industriestraße im Bereich zwischen der Brücke über die BAB 1 bis zur Auffahrt von der Edsel-Ford-Straße</title>
+<updated>2018-12-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2844/2018"/>
+<summary>Entscheidung am 2018-12-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/81371#beratung-2018-12-06-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 3893/2018 Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz 7 und Oranjehofstraße</title>
+<updated>2018-12-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3893/2018"/>
+<summary>Kenntnisnahme (Mitteilung) am 2018-12-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/81371#vorlage</id>
+<title>Neue Vorlage 3893/2018: Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz 7 und Oranjehofstraße</title>
+<updated>2018-11-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3893/2018"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/78759#beratung-2018-11-15-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 2844/2018 Baubeschluss für die Instandsetzung der Industriestraße im Bereich zwischen der Brücke über die BAB 1 bis zur Auffahrt von der Edsel-Ford-Straße</title>
+<updated>2018-11-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2844/2018"/>
+<summary>Anhörung (BV) am 2018-11-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/78759#beratung-2018-11-13-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „im ersten Durchgang verwiesen“ – 2844/2018 Baubeschluss für die Instandsetzung der Industriestraße im Bereich zwischen der Brücke über die BAB 1 bis zur Auffahrt von der Edsel-Ford-Straße</title>
+<updated>2018-11-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2844/2018"/>
+<summary>Vorberatung (Fachausschuss) am 2018-11-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/81084#vorlage</id>
+<title>Neue Vorlage AN/1589/2018: Einschränken der Abbiegebeziehungen an der Ecke Adam-Riese-Straße / Unter den Birken</title>
+<updated>2018-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1589/2018"/>
+<summary>Dringlichkeitsantrag BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/81084#beratung-2018-11-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1589/2018 Einschränken der Abbiegebeziehungen an der Ecke Adam-Riese-Straße / Unter den Birken</title>
+<updated>2018-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1589/2018"/>
+<summary>Antrag / Anfrage am 2018-11-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/81053#vorlage</id>
+<title>Neue Vorlage AN/1582/2018: KVB-Haltestelle "Kirschbaumweg": Erhöhung der Sicherheit mittels Zebrastreifen</title>
+<updated>2018-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1582/2018"/>
+<summary>Gem. Dringlichkeitsantrag BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/81053#beratung-2018-11-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1582/2018 KVB-Haltestelle "Kirschbaumweg": Erhöhung der Sicherheit mittels Zebrastreifen</title>
+<updated>2018-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1582/2018"/>
+<summary>Anhörung (BV) am 2018-11-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/78759#vorlage</id>
+<title>Neue Vorlage 2844/2018: Baubeschluss für die Instandsetzung der Industriestraße im Bereich zwischen der Brücke über die BAB 1 bis zur Auffahrt von der Edsel-Ford-Straße</title>
+<updated>2018-10-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2844/2018"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/77651#beratung-2018-09-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2744/2018 Schleichverkehr über die Adam-Riese-Straße in das Gewerbegebiet Rodenkirchen</title>
+<updated>2018-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2744/2018"/>
+<summary>Kenntnisnahme (Mitteilung) am 2018-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/77032#beratung-2018-09-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2191/2018 Anfrage der CDU-Fraktion - AN/1049/2018 - zum Bebauungsplan Kiesgrubenweg</title>
+<updated>2018-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2191/2018"/>
+<summary>Kenntnisnahme (Mitteilung) am 2018-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/77651#vorlage</id>
+<title>Neue Vorlage 2744/2018: Schleichverkehr über die Adam-Riese-Straße in das Gewerbegebiet Rodenkirchen</title>
+<updated>2018-09-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2744/2018"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/77032#vorlage</id>
+<title>Neue Vorlage 2191/2018: Anfrage der CDU-Fraktion - AN/1049/2018 - zum Bebauungsplan Kiesgrubenweg</title>
+<updated>2018-08-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#2191/2018"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/76973#beratung-2018-07-09-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1049/2018 Bebauungsplan Kiesgrubenweg</title>
+<updated>2018-07-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1049/2018"/>
+<summary>Entscheidung am 2018-07-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/76973#vorlage</id>
+<title>Neue Vorlage AN/1049/2018: Bebauungsplan Kiesgrubenweg</title>
+<updated>2018-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#AN/1049/2018"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/72348#beratung-2018-06-04-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert beschlossen“ – 3776/2017 Baubeschluss für die Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz 7 (Fühlinger See) und Oranjehofstraße mit gleichzeitiger Umgestaltung der Zufahrtsrampe Oranjehofstraße/Industriestraße sowie Freigabe  von investiven</title>
+<updated>2018-06-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3776/2017"/>
+<summary>Entscheidung am 2018-06-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/72348#beratung-2018-06-04-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 3776/2017 Baubeschluss für die Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz 7 (Fühlinger See) und Oranjehofstraße mit gleichzeitiger Umgestaltung der Zufahrtsrampe Oranjehofstraße/Industriestraße sowie Freigabe  von investiven</title>
+<updated>2018-06-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3776/2017"/>
+<summary>Entscheidung am 2018-06-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/72348#beratung-2018-05-17-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „geändert beschlossen“ – 3776/2017 Baubeschluss für die Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz 7 (Fühlinger See) und Oranjehofstraße mit gleichzeitiger Umgestaltung der Zufahrtsrampe Oranjehofstraße/Industriestraße sowie Freigabe  von investiven</title>
+<updated>2018-05-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3776/2017"/>
+<summary>Anhörung (BV) am 2018-05-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/72348#beratung-2018-05-15-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert beschlossen“ – 3776/2017 Baubeschluss für die Generalinstandsetzung der Industriestraße im Bereich zwischen dem Parkplatz 7 (Fühlinger See) und Oranjehofstraße mit gleichzeitiger Umgestaltung der Zufahrtsrampe Oranjehofstraße/Industriestraße sowie Freigabe  von investiven</title>
+<updated>2018-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#3776/2017"/>
+<summary>Vorberatung (Fachausschuss) am 2018-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/74583#vorlage</id>
+<title>Neue Vorlage 1243/2018: Fußgängerampel auf der Bonner Landstraße</title>
+<updated>2018-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hahnwald#1243/2018"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

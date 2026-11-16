@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/3065-2024</id>
+<title>Vorlage 3065/2024: Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<subtitle>Verlauf der Vorlage 3065/2024: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/3065-2024.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3065/2024"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123708#beratung-2025-05-22-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 3065/2024 Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3065/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123708#beratung-2025-05-22-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 3065/2024 Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3065/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123708#vorlage</id>
+<title>Neue Vorlage 3065/2024: Beantwortung einer Anfrage der Fraktion Bündnis 90/Die Grünen betreffend des Bebauungsplans Nr. 63482/02 mit Arbeitstitel „Rochusstraße in Köln-Ossendorf“</title>
+<updated>2025-04-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3065/2024"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123708#folge-AN%2F0698%2F2024</id>
+<title>Gem. Anfrage nach § 4 (Grüne) AN/0698/2024: Sportanlage Rochusstraße</title>
+<updated>2024-04-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ossendorf#3065/2024"/>
+<summary>Folgevorlage zu 3065/2024</summary>
+</entry>
+</feed>

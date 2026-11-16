@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/2711-2025</id>
+<title>Vorlage 2711/2025: Beantwortung einer schriftlichen Anfrage der Ratsgruppe FDP-Fraktion vom 29.08.2025 betreffend „Protest-Camps auf Kölner Grünflächen“, AN/1226/2025</title>
+<subtitle>Verlauf der Vorlage 2711/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/2711-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-nord#2711/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129284#vorlage</id>
+<title>Neue Vorlage 2711/2025: Beantwortung einer schriftlichen Anfrage der Ratsgruppe FDP-Fraktion vom 29.08.2025 betreffend „Protest-Camps auf Kölner Grünflächen“, AN/1226/2025</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-nord#2711/2025"/>
+<summary>Beantwortung einer Anfrage (Rat bzw. HA) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129284#beratung-2025-09-04-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 2711/2025 Beantwortung einer schriftlichen Anfrage der Ratsgruppe FDP-Fraktion vom 29.08.2025 betreffend „Protest-Camps auf Kölner Grünflächen“, AN/1226/2025</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-nord#2711/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129284#folge-AN%2F1226%2F2025</id>
+<title>FDP/KSG Anfrage nach § 4 AN/1226/2025: Protest-Camps auf Kölner Grünflächen</title>
+<updated>2025-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-nord#2711/2025"/>
+<summary>Folgevorlage zu 2711/2025</summary>
+</entry>
+</feed>

@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-raderthal</id>
 <title>Ratsatlas Köln – Raderthal</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Raderthal</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-16T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-raderthal.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134324#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2404/2026 Wohnungsbau-Turbo: Einschätzung zur Zustimmungsfähigkeit des Vorhabens "Raderberger Str. 199 in Köln - Raderberg"</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#2404/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134271#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 2360/2026 Baubeschluss für die Generalsanierung der Straße Hochkirchener Straße von Hitzeler Straße bis Kreibohmstraße sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#2360/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134324#vorlage</id>
+<title>Neue Vorlage 2404/2026: Wohnungsbau-Turbo: Einschätzung zur Zustimmungsfähigkeit des Vorhabens "Raderberger Str. 199 in Köln - Raderberg"</title>
+<updated>2026-11-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#2404/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133781#vorlage</id>
+<title>Neue Vorlage 1949/2026: Anregung der Bezirksvertretung Rodenkirchen zu "Quartiersgarage in der Europaschule in Köln-Raderthal"</title>
+<updated>2026-10-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1949/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133781#beratung-2026-10-08-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1949/2026 Anregung der Bezirksvertretung Rodenkirchen zu "Quartiersgarage in der Europaschule in Köln-Raderthal"</title>
+<updated>2026-10-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1949/2026"/>
+<summary>Entscheidung am 2026-10-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130881#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „ungeändert beschlossen“ – 0204/2026 Aufstellung eines Bebauungsplanes, Aufhebung des vorhabenbezogenen Bebauungsplanes, "Brühler Straße 210-212 in Köln-Raderthal"</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0204/2026"/>
+<summary>Entscheidung am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134271#vorlage</id>
+<title>Neue Vorlage 2360/2026: Baubeschluss für die Generalsanierung der Straße Hochkirchener Straße von Hitzeler Straße bis Kreibohmstraße sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#2360/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#beratung-2026-09-28-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 2325/2026 Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#2325/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130881#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – 0204/2026 Aufstellung eines Bebauungsplanes, Aufhebung des vorhabenbezogenen Bebauungsplanes, "Brühler Straße 210-212 in Köln-Raderthal"</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0204/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#vorlage</id>
+<title>Neue Vorlage 2325/2026: Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#2325/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130881#vorlage</id>
+<title>Neue Vorlage 0204/2026: Aufstellung eines Bebauungsplanes, Aufhebung des vorhabenbezogenen Bebauungsplanes, "Brühler Straße 210-212 in Köln-Raderthal"</title>
+<updated>2026-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0204/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131827#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 0741/2026 Baubeschluss für die Generalsanierung der Dransdorfer Straße zwischen Sinziger Straße und Hausnummer 60 sowie Freigabe einer investiven Auszahlungsermächtigung, hier: Finanzstelle: 6601-1201-0-6605, Generalinstandsetzung von Straßen</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0741/2026"/>
+<summary>Entscheidung am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133607#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Sache ist erledigt“ – AN/1102/2026 Änderungsantrag Quartiersgarage in der Europaschule in Köln-Raderthal</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1102/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133207#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/0891/2026 Quartiersgarage in der Europaschule in Köln-Raderthal</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0891/2026"/>
+<summary>Antrag / Anfrage am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133142#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1656/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Anwohnerparken und Anliegerstraße Swisttalstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1656/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132377#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1146/2026 Schrifliche Anfrage der FDP/KGS-Fraktion in der Bezirksvertretung Köln-Rodenkirchen (AN/0555/2026) betreffend "Zukunft der Verkehrsverbindung Im Wasserwerkswäldchen in Rondorf-Hochkirchen"</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1146/2026"/>
+<summary>Antrag / Anfrage am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131827#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 0741/2026 Baubeschluss für die Generalsanierung der Dransdorfer Straße zwischen Sinziger Straße und Hausnummer 60 sowie Freigabe einer investiven Auszahlungsermächtigung, hier: Finanzstelle: 6601-1201-0-6605, Generalinstandsetzung von Straßen</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0741/2026"/>
+<summary>Anhörung (BV) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133607#vorlage</id>
+<title>Neue Vorlage AN/1102/2026: Änderungsantrag Quartiersgarage in der Europaschule in Köln-Raderthal</title>
+<updated>2026-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1102/2026"/>
+<summary>Änderungsantrag BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133207#vorlage</id>
+<title>Neue Vorlage AN/0891/2026: Quartiersgarage in der Europaschule in Köln-Raderthal</title>
+<updated>2026-06-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0891/2026"/>
+<summary>Gem. Antrag nach § 3 BV2 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133142#vorlage</id>
+<title>Neue Vorlage 1656/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Anwohnerparken und Anliegerstraße Swisttalstraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-06-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1656/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130322#beratung-2026-05-12-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 3493/2025 Satzung über die abweichende Herstellung der Erschließungsanlage Hitzelerstraße von Hitzelerstraße (in östliche Richtung) bis Wendebereich in Köln-Raderthal</title>
+<updated>2026-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3493/2025"/>
+<summary>Entscheidung am 2026-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132377#vorlage</id>
+<title>Neue Vorlage 1146/2026: Schrifliche Anfrage der FDP/KGS-Fraktion in der Bezirksvertretung Köln-Rodenkirchen (AN/0555/2026) betreffend "Zukunft der Verkehrsverbindung Im Wasserwerkswäldchen in Rondorf-Hochkirchen"</title>
+<updated>2026-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1146/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 0880/2026 Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0880/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130322#beratung-2026-04-28-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert empfohlen“ – 3493/2025 Satzung über die abweichende Herstellung der Erschließungsanlage Hitzelerstraße von Hitzelerstraße (in östliche Richtung) bis Wendebereich in Köln-Raderthal</title>
+<updated>2026-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3493/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-04-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132121#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0555/2026 Zukunft der Verkehrsverbindung Im Wasserwerkswäldchen in Rondorf-Hochkirchen</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0555/2026"/>
+<summary>Antrag / Anfrage am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132119#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0972/2026 Beantwortung einer mündlichen Anfrage der CDU-Fraktion in der Sitzung der Bezirksvertretung Rodenkirchen vom 16.03.2026  betreffend „Sachstand Ausweichverkehre in Marienburg, Bayenthal, Raderberg und Raderthal (AN/0554/2025)"</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0972/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130322#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 3493/2025 Satzung über die abweichende Herstellung der Erschließungsanlage Hitzelerstraße von Hitzelerstraße (in östliche Richtung) bis Wendebereich in Köln-Raderthal</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3493/2025"/>
+<summary>Anhörung (BV) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131827#vorlage</id>
+<title>Neue Vorlage 0741/2026: Baubeschluss für die Generalsanierung der Dransdorfer Straße zwischen Sinziger Straße und Hausnummer 60 sowie Freigabe einer investiven Auszahlungsermächtigung, hier: Finanzstelle: 6601-1201-0-6605, Generalinstandsetzung von Straßen</title>
+<updated>2026-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0741/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#vorlage</id>
+<title>Neue Vorlage 0880/2026: Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0880/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132121#vorlage</id>
+<title>Neue Vorlage AN/0555/2026: Zukunft der Verkehrsverbindung Im Wasserwerkswäldchen in Rondorf-Hochkirchen</title>
+<updated>2026-04-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0555/2026"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132119#vorlage</id>
+<title>Neue Vorlage 0972/2026: Beantwortung einer mündlichen Anfrage der CDU-Fraktion in der Sitzung der Bezirksvertretung Rodenkirchen vom 16.03.2026  betreffend „Sachstand Ausweichverkehre in Marienburg, Bayenthal, Raderberg und Raderthal (AN/0554/2025)"</title>
+<updated>2026-04-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0972/2026"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130322#vorlage</id>
+<title>Neue Vorlage 3493/2025: Satzung über die abweichende Herstellung der Erschließungsanlage Hitzelerstraße von Hitzelerstraße (in östliche Richtung) bis Wendebereich in Köln-Raderthal</title>
+<updated>2026-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3493/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131418#beratung-2026-03-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0544/2026 Beantwortung einer Anfrage der CDU-Fraktion in der BV Rodenkirchen am 12.05.2025 betreffend „Sachstand Ausweichverkehre in Marienburg, Bayenthal, Raderberg und Raderthal“ (AN/0554/2025)</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0544/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131418#vorlage</id>
+<title>Neue Vorlage 0544/2026: Beantwortung einer Anfrage der CDU-Fraktion in der BV Rodenkirchen am 12.05.2025 betreffend „Sachstand Ausweichverkehre in Marienburg, Bayenthal, Raderberg und Raderthal“ (AN/0554/2025)</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0544/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130677#beratung-2026-01-20-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „Kenntnis genommen“ – 0101/2026 Interessenbekundungsverfahren Hitzelerstraße 125 in Köln-Raderthal - ehemaliges Funkhaus der WERAG</title>
+<updated>2026-01-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0101/2026"/>
+<summary>Entscheidung am 2026-01-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130677#vorlage</id>
+<title>Neue Vorlage 0101/2026: Interessenbekundungsverfahren Hitzelerstraße 125 in Köln-Raderthal - ehemaliges Funkhaus der WERAG</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0101/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130060#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3333/2025 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Tempo 30 Weißdornweg erweitern und Geschwindigkeitskontrollen, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3333/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129954#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3270/2025 Beantwortung einer Anfrage (AN/1223/2025) - Kleingartensiedlung Faßbenderkaul</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3270/2025"/>
+<summary>Antrag / Anfrage am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-12-08-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130060#vorlage</id>
+<title>Neue Vorlage 3333/2025: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Tempo 30 Weißdornweg erweitern und Geschwindigkeitskontrollen, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3333/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129954#vorlage</id>
+<title>Neue Vorlage 3270/2025: Beantwortung einer Anfrage (AN/1223/2025) - Kleingartensiedlung Faßbenderkaul</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3270/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-11-24-Hauptausschuss</id>
+<title>Hauptausschuss: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#vorlage</id>
+<title>Neue Vorlage 3073/2025: Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3073/2025"/>
+<summary>Mitteilung Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129260#beratung-2025-09-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1223/2025 Kleingartensiedlung Faßbenderkaul</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1223/2025"/>
+<summary>Antrag / Anfrage am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127548#beratung-2025-09-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 1605/2025 Baubeschluss für die Generalsanierung der Kardorfer Straße von Rösberger Straße bis Haus-Nr. 17 sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1605/2025"/>
+<summary>Anhörung (BV) am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127548#beratung-2025-09-01-Finanzausschuss</id>
+<title>Finanzausschuss: „unter Vorbehalt beschlossen“ – 1605/2025 Baubeschluss für die Generalsanierung der Kardorfer Straße von Rösberger Straße bis Haus-Nr. 17 sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1605/2025"/>
+<summary>Entscheidung am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129260#vorlage</id>
+<title>Neue Vorlage AN/1223/2025: Kleingartensiedlung Faßbenderkaul</title>
+<updated>2025-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1223/2025"/>
+<summary>Anfrage nach § 4 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127548#vorlage</id>
+<title>Neue Vorlage 1605/2025: Baubeschluss für die Generalsanierung der Kardorfer Straße von Rösberger Straße bis Haus-Nr. 17 sowie Freigabe von investiven Auszahlungsermächtigungen</title>
+<updated>2025-07-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1605/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128155#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig abgelehnt“ – AN/0900/2025 Rechtsabbiegen vom Raderthalgürtel in die Vorgebirgstraße</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0900/2025"/>
+<summary>Entscheidung am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128133#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0889/2025 Sperrfläche Brühler Straße in Raderthal</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0889/2025"/>
+<summary>Antrag / Anfrage am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126587#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „geändert beschlossen“ – 0983/2025 Beschluss über die Aufstellung und Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) und die Durchführung der freiwilligen frühzeitigen Öffentlichkeitsbeteiligung</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0983/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128155#vorlage</id>
+<title>Neue Vorlage AN/0900/2025: Rechtsabbiegen vom Raderthalgürtel in die Vorgebirgstraße</title>
+<updated>2025-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0900/2025"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128133#vorlage</id>
+<title>Neue Vorlage AN/0889/2025: Sperrfläche Brühler Straße in Raderthal</title>
+<updated>2025-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0889/2025"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126494#beratung-2025-05-27-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0924/2025 Satzung über die abweichende Herstellung der Erschließungsanlage Hitzelerstraße von Brühler Straße bis westliche Grenze Flurstück 2242 in Köln-Raderthal</title>
+<updated>2025-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0924/2025"/>
+<summary>Entscheidung am 2025-05-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126494#beratung-2025-05-13-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert empfohlen“ – 0924/2025 Satzung über die abweichende Herstellung der Erschließungsanlage Hitzelerstraße von Brühler Straße bis westliche Grenze Flurstück 2242 in Köln-Raderthal</title>
+<updated>2025-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0924/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126986#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/0477/2025 Radwege auf dem Zollstockgürtel, Raderberggürtel und Raderthalgürtel</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0477/2025"/>
+<summary>Entscheidung am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126587#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 0983/2025 Beschluss über die Aufstellung und Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) und die Durchführung der freiwilligen frühzeitigen Öffentlichkeitsbeteiligung</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0983/2025"/>
+<summary>Anhörung (BV) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126494#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 0924/2025 Satzung über die abweichende Herstellung der Erschließungsanlage Hitzelerstraße von Brühler Straße bis westliche Grenze Flurstück 2242 in Köln-Raderthal</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0924/2025"/>
+<summary>Anhörung (BV) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125948#beratung-2025-05-12-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „Kenntnis genommen“ – 0549/2025 Städtisches Grundstück Hitzelerstraße 125 in Köln-Raderthal</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0549/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125948#vorlage</id>
+<title>Neue Vorlage 0549/2025: Städtisches Grundstück Hitzelerstraße 125 in Köln-Raderthal</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0549/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126587#vorlage</id>
+<title>Neue Vorlage 0983/2025: Beschluss über die Aufstellung und Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) und die Durchführung der freiwilligen frühzeitigen Öffentlichkeitsbeteiligung</title>
+<updated>2025-05-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0983/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126986#vorlage</id>
+<title>Neue Vorlage AN/0477/2025: Radwege auf dem Zollstockgürtel, Raderberggürtel und Raderthalgürtel</title>
+<updated>2025-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0477/2025"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126494#vorlage</id>
+<title>Neue Vorlage 0924/2025: Satzung über die abweichende Herstellung der Erschließungsanlage Hitzelerstraße von Brühler Straße bis westliche Grenze Flurstück 2242 in Köln-Raderthal</title>
+<updated>2025-04-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0924/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98641#vorlage</id>
+<title>Neue Vorlage AN/0012/2021: Maßnahmen zum Lärmschutz der AnwohnerInnen an der BAB 555</title>
+<updated>2025-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0012/2021"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125217#beratung-2025-01-27-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „zurückgestellt“ – 0068/2025 Radwegesanierung entlang der Militärringstraße</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0068/2025"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125217#vorlage</id>
+<title>Neue Vorlage 0068/2025: Radwegesanierung entlang der Militärringstraße</title>
+<updated>2025-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0068/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124387#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1534/2024 Aufwertung des Basketballplatzes im Fritz-Encke-Volkspark</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1534/2024"/>
+<summary>Antrag / Anfrage am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122602#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 2317/2024 Aufwertungsmaßnahme für die historische Grünanlage Fritz-Encke-Volkspark im Äußeren Grüngürtel.</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#2317/2024"/>
+<summary>Entscheidung am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123804#beratung-2024-11-26-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 3140/2024 Neugestaltung der Vorgebirgstraße in Zollstock auf dem Abschnitt zwischen „Am Vorgebirgstor“ und Raderthalgürtel durch Umwandlung der rechten Fahrspuren in eine Radverkehrsanlage/Schutzstreifen</title>
+<updated>2024-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3140/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124387#vorlage</id>
+<title>Neue Vorlage AN/1534/2024: Aufwertung des Basketballplatzes im Fritz-Encke-Volkspark</title>
+<updated>2024-11-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1534/2024"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123804#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3140/2024 Neugestaltung der Vorgebirgstraße in Zollstock auf dem Abschnitt zwischen „Am Vorgebirgstor“ und Raderthalgürtel durch Umwandlung der rechten Fahrspuren in eine Radverkehrsanlage/Schutzstreifen</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3140/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122602#vorlage</id>
+<title>Neue Vorlage 2317/2024: Aufwertungsmaßnahme für die historische Grünanlage Fritz-Encke-Volkspark im Äußeren Grüngürtel.</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#2317/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123804#vorlage</id>
+<title>Neue Vorlage 3140/2024: Neugestaltung der Vorgebirgstraße in Zollstock auf dem Abschnitt zwischen „Am Vorgebirgstor“ und Raderthalgürtel durch Umwandlung der rechten Fahrspuren in eine Radverkehrsanlage/Schutzstreifen</title>
+<updated>2024-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3140/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121326#beratung-2024-05-13-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0694/2024 Antrag der CDU-Fraktion, betr.: Verkehrsüberwachung auf dem Straßenbeschnitt der Militärringstraße</title>
+<updated>2024-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0694/2024"/>
+<summary>Antrag / Anfrage am 2024-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120940#beratung-2024-05-06-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1225/2024 Mehr Verkehrssicherheit auf der Vorgebirgstraße - Planung eines Fahrradschutzstreifens auf dem Abschnitt zwischen "Am Vorgebirgstor" und "Raderthalgürtel"</title>
+<updated>2024-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1225/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-05-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120306#beratung-2024-05-06-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 0822/2024 Aufwertungsmaßnahme für die historische Grünanlage Fritz-Encke-Volkspark im Äußeren Grüngürtel.</title>
+<updated>2024-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0822/2024"/>
+<summary>Entscheidung am 2024-05-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121326#vorlage</id>
+<title>Neue Vorlage AN/0694/2024: Antrag der CDU-Fraktion, betr.: Verkehrsüberwachung auf dem Straßenbeschnitt der Militärringstraße</title>
+<updated>2024-04-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0694/2024"/>
+<summary>Antrag nach § 3 BV4 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120940#beratung-2024-04-23-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 1225/2024 Mehr Verkehrssicherheit auf der Vorgebirgstraße - Planung eines Fahrradschutzstreifens auf dem Abschnitt zwischen "Am Vorgebirgstor" und "Raderthalgürtel"</title>
+<updated>2024-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1225/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120940#vorlage</id>
+<title>Neue Vorlage 1225/2024: Mehr Verkehrssicherheit auf der Vorgebirgstraße - Planung eines Fahrradschutzstreifens auf dem Abschnitt zwischen "Am Vorgebirgstor" und "Raderthalgürtel"</title>
+<updated>2024-04-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#1225/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120306#vorlage</id>
+<title>Neue Vorlage 0822/2024: Aufwertungsmaßnahme für die historische Grünanlage Fritz-Encke-Volkspark im Äußeren Grüngürtel.</title>
+<updated>2024-04-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0822/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120182#beratung-2024-03-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – 0749/2024 Bürgereingabe gem. § 24 GO - Gehwegparken auf der Brühler Landstraße, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0749/2024"/>
+<summary>Entscheidung am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120182#vorlage</id>
+<title>Neue Vorlage 0749/2024: Bürgereingabe gem. § 24 GO - Gehwegparken auf der Brühler Landstraße, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2024-02-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0749/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119464#beratung-2024-01-23-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 0241/2024 Umgestaltung der Vorgebirgstraße in Zollstock auf dem Abschnitt zwischen „Am Vorgebirgstor“ und Raderthalgürtel durch Umwandlung der rechten Fahrspuren in eine Radverkehrsanlage/Schutzstreifen</title>
+<updated>2024-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0241/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119464#beratung-2024-01-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0241/2024 Umgestaltung der Vorgebirgstraße in Zollstock auf dem Abschnitt zwischen „Am Vorgebirgstor“ und Raderthalgürtel durch Umwandlung der rechten Fahrspuren in eine Radverkehrsanlage/Schutzstreifen</title>
+<updated>2024-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0241/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119464#vorlage</id>
+<title>Neue Vorlage 0241/2024: Umgestaltung der Vorgebirgstraße in Zollstock auf dem Abschnitt zwischen „Am Vorgebirgstor“ und Raderthalgürtel durch Umwandlung der rechten Fahrspuren in eine Radverkehrsanlage/Schutzstreifen</title>
+<updated>2024-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0241/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117522#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3060/2023 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion (AN/1511/2023) betreffend Liegenschaft Hitzeler Straße 125 / Alte Sendezentrale des WDR</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3060/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117289#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig abgelehnt“ – AN/1626/2023 Rechtsabbieger vom Raderthalgürtel in die Vorgebirgstraße</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1626/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117522#vorlage</id>
+<title>Neue Vorlage 3060/2023: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion (AN/1511/2023) betreffend Liegenschaft Hitzeler Straße 125 / Alte Sendezentrale des WDR</title>
+<updated>2023-11-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#3060/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116979#beratung-2023-09-25-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1511/2023 Liegenschaft Hitzeler Straße 125/Alte Sendezentrale des WDR</title>
+<updated>2023-09-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1511/2023"/>
+<summary>Antrag / Anfrage am 2023-09-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117289#vorlage</id>
+<title>Neue Vorlage AN/1626/2023: Rechtsabbieger vom Raderthalgürtel in die Vorgebirgstraße</title>
+<updated>2023-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1626/2023"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116979#vorlage</id>
+<title>Neue Vorlage AN/1511/2023: Liegenschaft Hitzeler Straße 125/Alte Sendezentrale des WDR</title>
+<updated>2023-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/1511/2023"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113385#beratung-2023-08-22-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „geändert beschlossen“ – 0481/2023 Umgestaltung der Vorgebirgstraße in Zollstock auf dem Abschnitt zwischen „Am Vorgbirgstor" und „Raderthalgürtel“ durch Umwandlung der rechten Fahrspur in eine Radverkehrsanlage/Schutzstreifen</title>
+<updated>2023-08-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0481/2023"/>
+<summary>Entscheidung am 2023-08-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114722#beratung-2023-08-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Sache ist erledigt“ – AN/0681/2023 Tempo 30  Weißdornweg</title>
+<updated>2023-08-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0681/2023"/>
+<summary>Antrag / Anfrage am 2023-08-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114729#beratung-2023-05-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0683/2023 Maßnahmen zum Lärmschutz der Anwohnenden an der BAB 555</title>
+<updated>2023-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0683/2023"/>
+<summary>Antrag / Anfrage am 2023-05-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112158#beratung-2023-05-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – 4004/2022 Bürgereingabe nach § 24 GO  Eingabe zur Räumung und Vernichtung von Kleingärten im Sachzusammenhang mit der geplanten Neubebauung im Bereich der Bonner Straße [Hausnummer ausgelassen] in Köln-Raderthal</title>
+<updated>2023-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#4004/2022"/>
+<summary>Entscheidung am 2023-05-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113385#beratung-2023-04-25-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ohne Votum in nachfolgende Gremien“ – 0481/2023 Umgestaltung der Vorgebirgstraße in Zollstock auf dem Abschnitt zwischen „Am Vorgbirgstor" und „Raderthalgürtel“ durch Umwandlung der rechten Fahrspur in eine Radverkehrsanlage/Schutzstreifen</title>
+<updated>2023-04-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0481/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-04-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114729#vorlage</id>
+<title>Neue Vorlage AN/0683/2023: Maßnahmen zum Lärmschutz der Anwohnenden an der BAB 555</title>
+<updated>2023-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0683/2023"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114722#vorlage</id>
+<title>Neue Vorlage AN/0681/2023: Tempo 30  Weißdornweg</title>
+<updated>2023-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#AN/0681/2023"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113210#beratung-2023-03-13-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0378/2023 Sanierung der südlichen Nebenanlagen und den Umbau der Bushaltestelle auf dem Raderberggürtel zwischen Brühler Straße und Mertener Straße in Köln Raderthal (3923/2022)</title>
+<updated>2023-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0378/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-03-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112762#beratung-2023-03-13-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 0098/2023 Bürgereingabe gem. § 24 GO, betr.: Verbot von Kraftfahrzeugen aller Art auf dem Robinienweg im Äußeren Grüngürtel (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen])</title>
+<updated>2023-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderthal#0098/2023"/>
+<summary>Entscheidung am 2023-03-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/1344-2026-1</id>
+<title>Vorlage 1344/2026/1: Zügigkeitsreduzierung der Katholischen Grundschule Zugweg 42-44, 50667 Köln-Neustadt/Süd zum Schuljahr 2027/28</title>
+<subtitle>Verlauf der Vorlage 1344/2026/1: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/1344-2026-1.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1344/2026/1"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134847#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert empfohlen“ – 1344/2026/1 Zügigkeitsreduzierung der Katholischen Grundschule Zugweg 42-44, 50667 Köln-Neustadt/Süd zum Schuljahr 2027/28</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1344/2026/1"/>
+<summary>Anhörung (BV) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134847#vorlage</id>
+<title>Neue Vorlage 1344/2026/1: Zügigkeitsreduzierung der Katholischen Grundschule Zugweg 42-44, 50667 Köln-Neustadt/Süd zum Schuljahr 2027/28</title>
+<updated>2026-10-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1344/2026/1"/>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134847#folge-1344%2F2026</id>
+<title>Beschlussvorlage Rat bzw. Hauptausschuss 1344/2026: Zügigkeitsreduzierung der Katholischen Grundschule Zugweg 42-44, 50667 Köln-Neustadt/Süd zum Schuljahr 2027/28</title>
+<updated>2026-10-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1344/2026/1"/>
+<summary>Folgevorlage zu 1344/2026/1</summary>
+</entry>
+</feed>

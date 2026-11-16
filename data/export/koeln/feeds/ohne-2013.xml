@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/ohne-2013</id>
+<title>Ratsatlas Köln – stadtweit / ohne Ortsbezug 2013</title>
+<subtitle>Neue Vorlagen und Beratungsergebnisse: stadtweit / ohne Ortsbezug 2013</subtitle>
+<updated>2013-11-12T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ohne-2013.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2013"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/43110#vorlage</id>
+<title>Neue Vorlage AN/1355/2013: Antrag der SPD-Fraktion und der Fraktion Bündnis 90/Die Grünen, betr.: Tempo 50 auf der Inneren Kanalstraße</title>
+<updated>2013-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2013#AN/1355/2013"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/42808#vorlage</id>
+<title>Neue Vorlage AN/1255/2013: Elektronischer Versand der Sitzungsunterlagen</title>
+<updated>2013-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2013#AN/1255/2013"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/42453#vorlage</id>
+<title>Neue Vorlage AN/1181/2013: Internet in öffentlichen Verkehrsmitteln</title>
+<updated>2013-09-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2013#AN/1181/2013"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/41441#vorlage</id>
+<title>Neue Vorlage AN/0960/2013: Neufassung der Zuständigkeitsordnung der Stadt Köln</title>
+<updated>2013-07-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2013#AN/0960/2013"/>
+<summary>Gem. Dringlichkeitsantrag BV2 (CDU) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/40609#vorlage</id>
+<title>Neue Vorlage AN/0715/2013: Trägeranteil für regionale Stiftungen als Kindergartenträger</title>
+<updated>2013-06-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2013#AN/0715/2013"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/40350#vorlage</id>
+<title>Neue Vorlage AN/0610/2013: Verbesserung der Internetleitungen an den betroffenen Schulen im Kölner Süden</title>
+<updated>2013-05-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2013#AN/0610/2013"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/40254#vorlage</id>
+<title>Neue Vorlage AN/0589/2013: Gemeinsamer Antrag der SPD-Fraktion, der Fraktion Bündnis 90/Die Grünen und Frau Yesil-Bal (Die Linke.), betr.: Änderung der Zuständigkeitsordnung</title>
+<updated>2013-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2013#AN/0589/2013"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/38290#vorlage</id>
+<title>Neue Vorlage AN/0058/2013: Antrag der SPD-Fraktion, betr.: Verlängerung Linie 3</title>
+<updated>2013-01-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2013#AN/0058/2013"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+</feed>

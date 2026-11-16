@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-ostheim</id>
 <title>Ratsatlas Köln – Ostheim</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Ostheim</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-10-26T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-ostheim.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134087#vorlage</id>
+<title>Neue Vorlage 2205/2026: Beantwortung einer mündlichen Anfrage von Stefanie Ruffen (FDP/KSG) aus der Sitzungs des Ausschusses Schule und Weiterbildung vom 15.06.2026 die Nutzung des Schulgebäudes am Hardtgenbuscher Kirchweg betreffend</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2205/2026"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132671#vorlage</id>
+<title>Neue Vorlage 1314/2026: Zügigkeitserweiterung der James-Krüss-Schule (GGS Zehnthofstraße) und der KGS Zehnthofstraße in Köln-Ostheim auf jeweils drei Züge zum Schuljahr 2027/28</title>
+<updated>2026-09-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1314/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#beratung-2026-09-28-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 2325/2026 Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2325/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134600#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/1402/2026 Sichere Gehwege auf der Rösrather Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1402/2026"/>
+<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134568#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig zurückgezogen“ – AN/1387/2026 Fahrbahnmarkierungen auf der Frankfurter Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1387/2026"/>
+<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134201#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 2301/2026 Baubeschluss für die Instandsetzung der Olpener Straße zwischen Nohlenweg und Frankfurter Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2301/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133199#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1690/2026 Beantwortung einer schriftlichen Anfrage der SPD/CDU-Fraktion von 09.03.2026 in der Sitzung der BV Kalk am 24.09.2026 betreffend Sachstand zur Nutzung der Sportanlage Servatiusstr. durch die Sportschützengesellschaft Köln-Ostheim 1963 e.V.</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1690/2026"/>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126388#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 0854/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 20.03.2025  zum Thema „Servatiusstraße in Ostheim, Tempo 30“ (AN/0321/2025)</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0854/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134366#vorlage</id>
+<title>Neue Vorlage 2424/2026: Baubeschluss für die Instandsetzung des Vingster Rings zwischen Ostheimer Straße und Frankfurter Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2424/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126388#vorlage</id>
+<title>Neue Vorlage 0854/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 20.03.2025  zum Thema „Servatiusstraße in Ostheim, Tempo 30“ (AN/0321/2025)</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0854/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132064#beratung-2026-09-21-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 0922/2026 Schulentwicklungspreis 2026 "Gute gesunde Schule" für James-Krüss-Schule, GGS Zehnthofstraße in Köln-Ostheim</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0922/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134409#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1308/2026 Antrag der CDU-Fraktion "Sachstandsbericht zum Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1308/2026"/>
+<summary>Antrag / Anfrage am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134600#vorlage</id>
+<title>Neue Vorlage AN/1402/2026: Sichere Gehwege auf der Rösrather Straße</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1402/2026"/>
+<summary>Antrag nach § 3 BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134568#vorlage</id>
+<title>Neue Vorlage AN/1387/2026: Fahrbahnmarkierungen auf der Frankfurter Straße</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1387/2026"/>
+<summary>Antrag nach § 3 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#vorlage</id>
+<title>Neue Vorlage 2325/2026: Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2325/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134069#vorlage</id>
+<title>Neue Vorlage 2190/2026: Neubau einer eingeschossigen Schießsportstätte in Köln Ostheim, LSG 26, EZ2, Bezirk 8</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2190/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134409#vorlage</id>
+<title>Neue Vorlage AN/1308/2026: Antrag der CDU-Fraktion "Sachstandsbericht zum Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1308/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134201#vorlage</id>
+<title>Neue Vorlage 2301/2026: Baubeschluss für die Instandsetzung der Olpener Straße zwischen Nohlenweg und Frankfurter Straße</title>
+<updated>2026-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2301/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133199#vorlage</id>
+<title>Neue Vorlage 1690/2026: Beantwortung einer schriftlichen Anfrage der SPD/CDU-Fraktion von 09.03.2026 in der Sitzung der BV Kalk am 24.09.2026 betreffend Sachstand zur Nutzung der Sportanlage Servatiusstr. durch die Sportschützengesellschaft Köln-Ostheim 1963 e.V.</title>
+<updated>2026-07-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1690/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133337#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0956/2026 Antrag der CDU-Fraktion "Fußweg Frankfurter Straße 298 bis 316"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0956/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133155#beratung-2026-06-18-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1663/2026 Einwohneranfrage  betreff "Erhalt der Bäume auf dem Grundstück Buchheimer Weg [Hausnummer ausgelassen] bei einer Neubebauung zu Wohnzwecken"</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1663/2026"/>
+<summary>Entscheidung am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133109#vorlage</id>
+<title>Neue Vorlage AN/0858/2026: Überprüfung und Nachbesserung der Baustellenverkehrsführung an der Frankfurter Straße sowie flächendeckende Kontrolle und Optimierung aller Baustellen im Stadtbezirk</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0858/2026"/>
+<summary>Antrag nach § 3 BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133109#beratung-2026-06-18-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – AN/0858/2026 Überprüfung und Nachbesserung der Baustellenverkehrsführung an der Frankfurter Straße sowie flächendeckende Kontrolle und Optimierung aller Baustellen im Stadtbezirk</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0858/2026"/>
+<summary>Entscheidung am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133337#vorlage</id>
+<title>Neue Vorlage AN/0956/2026: Antrag der CDU-Fraktion "Fußweg Frankfurter Straße 298 bis 316"</title>
+<updated>2026-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0956/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133155#vorlage</id>
+<title>Neue Vorlage 1663/2026: Einwohneranfrage  betreff "Erhalt der Bäume auf dem Grundstück Buchheimer Weg [Hausnummer ausgelassen] bei einer Neubebauung zu Wohnzwecken"</title>
+<updated>2026-06-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1663/2026"/>
+<summary>Einwohneranfrage nach § 39 Abs. 6 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131324#beratung-2026-05-05-Ausschuss%20f%C3%BCr%20Bauen%20und%20Wohnen</id>
+<title>Ausschuss für Bauen und Wohnen: „ungeändert beschlossen“ – 0472/2026 Rückbau der Grundstücksinfrastruktur im Hardtgenbuscher Kirchweg 104, 51107 Köln nach Abbau der Leichtbauhallen zur Unterbringung von geflüchteten Menschen</title>
+<updated>2026-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0472/2026"/>
+<summary>Entscheidung am 2026-05-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132366#beratung-2026-04-30-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1139/2026 Beantwortung einer schriftlichen Anfrage der AFD Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 12.03.2026 (AN/0423/2026) betreffend "Sanierungsmaßnahmen auf der Frankfurter Straße"</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1139/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132243#beratung-2026-04-30-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0587/2026 Durchfahrtsproblematik für Rettungsfahrzeuge im Stadtteil Ostheim</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0587/2026"/>
+<summary>Antrag / Anfrage am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132064#beratung-2026-04-30-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 0922/2026 Schulentwicklungspreis 2026 "Gute gesunde Schule" für James-Krüss-Schule, GGS Zehnthofstraße in Köln-Ostheim</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0922/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131324#beratung-2026-04-30-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 0472/2026 Rückbau der Grundstücksinfrastruktur im Hardtgenbuscher Kirchweg 104, 51107 Köln nach Abbau der Leichtbauhallen zur Unterbringung von geflüchteten Menschen</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0472/2026"/>
+<summary>Anhörung (BV) am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132243#vorlage</id>
+<title>Neue Vorlage AN/0587/2026: Durchfahrtsproblematik für Rettungsfahrzeuge im Stadtteil Ostheim</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0587/2026"/>
+<summary>Anfrage nach § 4 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132038#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0900/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - „Einrichtung einer Warnampel Frankfurter Straße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0900/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132366#vorlage</id>
+<title>Neue Vorlage 1139/2026: Beantwortung einer schriftlichen Anfrage der AFD Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 12.03.2026 (AN/0423/2026) betreffend "Sanierungsmaßnahmen auf der Frankfurter Straße"</title>
+<updated>2026-04-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1139/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132020#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0884/2026 Mitteilung zur Bürgereingabe nach § 24 GO – Verbesserung der Schulwegsicherheit – Frankfurter Straße / Elsdorfer Straße, 51145 Köln sowie Feldweg zum SC Neptun, Köln-Porz, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0884/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131324#beratung-2026-04-23-Ausschuss%20Soziales%2C%20Gesundheit%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss Soziales, Gesundheit, Seniorinnen und Senioren: „ungeändert empfohlen“ – 0472/2026 Rückbau der Grundstücksinfrastruktur im Hardtgenbuscher Kirchweg 104, 51107 Köln nach Abbau der Leichtbauhallen zur Unterbringung von geflüchteten Menschen</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0472/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131324#vorlage</id>
+<title>Neue Vorlage 0472/2026: Rückbau der Grundstücksinfrastruktur im Hardtgenbuscher Kirchweg 104, 51107 Köln nach Abbau der Leichtbauhallen zur Unterbringung von geflüchteten Menschen</title>
+<updated>2026-04-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0472/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132064#vorlage</id>
+<title>Neue Vorlage 0922/2026: Schulentwicklungspreis 2026 "Gute gesunde Schule" für James-Krüss-Schule, GGS Zehnthofstraße in Köln-Ostheim</title>
+<updated>2026-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0922/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132038#vorlage</id>
+<title>Neue Vorlage 0900/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - „Einrichtung einer Warnampel Frankfurter Straße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0900/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132020#vorlage</id>
+<title>Neue Vorlage 0884/2026: Mitteilung zur Bürgereingabe nach § 24 GO – Verbesserung der Schulwegsicherheit – Frankfurter Straße / Elsdorfer Straße, 51145 Köln sowie Feldweg zum SC Neptun, Köln-Porz, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0884/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131731#beratung-2026-03-12-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0447/2026 Sachstand zur Nutzung der Sportanlage Servatiusstraße durch die Sportschützengesellschaft Köln-Ostheim 1963 e.V.</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0447/2026"/>
+<summary>Antrag / Anfrage am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131678#beratung-2026-03-12-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0423/2026 Sanierungsmaßnahmen auf der Frankfurter Straße</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0423/2026"/>
+<summary>Antrag / Anfrage am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131731#vorlage</id>
+<title>Neue Vorlage AN/0447/2026: Sachstand zur Nutzung der Sportanlage Servatiusstraße durch die Sportschützengesellschaft Köln-Ostheim 1963 e.V.</title>
+<updated>2026-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0447/2026"/>
+<summary>Gem. Anfrage BV8 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131678#vorlage</id>
+<title>Neue Vorlage AN/0423/2026: Sanierungsmaßnahmen auf der Frankfurter Straße</title>
+<updated>2026-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0423/2026"/>
+<summary>Anfrage nach § 4 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130645#beratung-2026-01-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – AN/0016/2026 Fuß- und Radweg auf der Nordseite der Ostheimer Str.</title>
+<updated>2026-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0016/2026"/>
+<summary>Antrag / Anfrage am 2026-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130645#vorlage</id>
+<title>Neue Vorlage AN/0016/2026: Fuß- und Radweg auf der Nordseite der Ostheimer Str.</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0016/2026"/>
+<summary>Gem. Antrag nach § 3 BV8 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-12-08-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129742#beratung-2025-11-24-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 3094/2025 Erneuerung Bahnübergang "Baumschulenweg“ in Köln, Strecke 2655 Köln, Frankfurter Str. – Overath Bahn-km 8,529 bis Bahn-km 10,597, hier: Antrag auf Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3094/2025"/>
+<summary>Entscheidung am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-11-24-Hauptausschuss</id>
+<title>Hauptausschuss: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#vorlage</id>
+<title>Neue Vorlage 3073/2025: Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3073/2025"/>
+<summary>Mitteilung Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129742#vorlage</id>
+<title>Neue Vorlage 3094/2025: Erneuerung Bahnübergang "Baumschulenweg“ in Köln, Strecke 2655 Köln, Frankfurter Str. – Overath Bahn-km 8,529 bis Bahn-km 10,597, hier: Antrag auf Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3094/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128646#beratung-2025-09-04-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2260/2025 Beantwortung einer Anfrage der SPD-Fraktion der BV 9 vom 26.06.2025 betr. Vermüllung am Alten Deutzer Postweg</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2260/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128306#beratung-2025-09-04-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2065/2025 Beantwortung einer Anfrage der SPD-Fraktion bezüglich AN/0938/2025 Stillstand in der Sporthalle: Wann kommt die Reparatur der Tribüne am Hardtgenbuscher Kirchweg?</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2065/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#beratung-2025-09-04-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1310/2025 Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1310/2025"/>
+<summary>Entscheidung am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#beratung-2025-09-04-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 1310/2025 Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1310/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#beratung-2025-09-01-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 1310/2025 Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1310/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#beratung-2025-08-26-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „ungeändert beschlossen“ – 1310/2025 Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-08-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1310/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-08-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127035#vorlage</id>
+<title>Neue Vorlage 1310/2025: Neubau der Jugendeinrichtung „Am Wunschtor" in der Gernsheimer Straße 22 in Ostheim im Zuge der Umsetzung des Integrierten Handlungskonzeptes für den Sozialraum „Ostheim und Neubrück" als Bestandteil des Programms „Starke Veedel – Starkes Köln“</title>
+<updated>2025-08-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1310/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128646#vorlage</id>
+<title>Neue Vorlage 2260/2025: Beantwortung einer Anfrage der SPD-Fraktion der BV 9 vom 26.06.2025 betr. Vermüllung am Alten Deutzer Postweg</title>
+<updated>2025-07-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2260/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126634#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1018/2025 Neubau eines Erweiterungsbaus in Modulbauweise, einer Einfachturnhalle, eines Erweiterungsbaus für die Mensa und Umbau von Fachräumen am Schulzentrum Ostheim, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1018/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125790#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0426/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Albert-Schweitzer-Schule und dem Heinrich-Heine-Gymnasium, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0426/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126634#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 1018/2025 Neubau eines Erweiterungsbaus in Modulbauweise, einer Einfachturnhalle, eines Erweiterungsbaus für die Mensa und Umbau von Fachräumen am Schulzentrum Ostheim, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1018/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126634#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1018/2025 Neubau eines Erweiterungsbaus in Modulbauweise, einer Einfachturnhalle, eines Erweiterungsbaus für die Mensa und Umbau von Fachräumen am Schulzentrum Ostheim, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1018/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125790#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 0426/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Albert-Schweitzer-Schule und dem Heinrich-Heine-Gymnasium, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0426/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125790#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 0426/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Albert-Schweitzer-Schule und dem Heinrich-Heine-Gymnasium, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0426/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126634#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 1018/2025 Neubau eines Erweiterungsbaus in Modulbauweise, einer Einfachturnhalle, eines Erweiterungsbaus für die Mensa und Umbau von Fachräumen am Schulzentrum Ostheim, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1018/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125790#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 0426/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Albert-Schweitzer-Schule und dem Heinrich-Heine-Gymnasium, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0426/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128306#vorlage</id>
+<title>Neue Vorlage 2065/2025: Beantwortung einer Anfrage der SPD-Fraktion bezüglich AN/0938/2025 Stillstand in der Sporthalle: Wann kommt die Reparatur der Tribüne am Hardtgenbuscher Kirchweg?</title>
+<updated>2025-06-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2065/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128267#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0939/2025 Vermüllung am Alten Deutzer Postweg zwischen Ostheim und Rath/Heumar</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0939/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128266#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0938/2025 Stillstand in der Sporthalle: Wann kommt die Reparatur der Tribüne am Hardtgenbuscher Kirchweg?</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0938/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127999#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0826/2025 Henleinstraße entlasten - Schulwegsicherheit jetzt verbessern!</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0826/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126634#beratung-2025-06-26-Sportausschuss</id>
+<title>Sportausschuss: „ohne Votum behandelt“ – 1018/2025 Neubau eines Erweiterungsbaus in Modulbauweise, einer Einfachturnhalle, eines Erweiterungsbaus für die Mensa und Umbau von Fachräumen am Schulzentrum Ostheim, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1018/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126634#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 1018/2025 Neubau eines Erweiterungsbaus in Modulbauweise, einer Einfachturnhalle, eines Erweiterungsbaus für die Mensa und Umbau von Fachräumen am Schulzentrum Ostheim, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1018/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125790#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 0426/2025 Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Albert-Schweitzer-Schule und dem Heinrich-Heine-Gymnasium, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0426/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128267#vorlage</id>
+<title>Neue Vorlage AN/0939/2025: Vermüllung am Alten Deutzer Postweg zwischen Ostheim und Rath/Heumar</title>
+<updated>2025-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0939/2025"/>
+<summary>Anfrage nach § 4 BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128266#vorlage</id>
+<title>Neue Vorlage AN/0938/2025: Stillstand in der Sporthalle: Wann kommt die Reparatur der Tribüne am Hardtgenbuscher Kirchweg?</title>
+<updated>2025-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0938/2025"/>
+<summary>Anfrage nach § 4 BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126634#vorlage</id>
+<title>Neue Vorlage 1018/2025: Neubau eines Erweiterungsbaus in Modulbauweise, einer Einfachturnhalle, eines Erweiterungsbaus für die Mensa und Umbau von Fachräumen am Schulzentrum Ostheim, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1018/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125790#vorlage</id>
+<title>Neue Vorlage 0426/2025: Beauftragung der Kölner Schulbaugesellschaft mbH mit Maßnahmen zur energetischen Sanierung an der Albert-Schweitzer-Schule und dem Heinrich-Heine-Gymnasium, Hardtgenbuscher Kirchweg 100, 51107 Köln</title>
+<updated>2025-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0426/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127999#vorlage</id>
+<title>Neue Vorlage AN/0826/2025: Henleinstraße entlasten - Schulwegsicherheit jetzt verbessern!</title>
+<updated>2025-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0826/2025"/>
+<summary>Antrag nach § 3 BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126673#beratung-2025-05-15-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 1049/2025 Kleinräumige Analyse und Bewertung der Herausforderungen und Ziele der Sozialplanung für das Sozialraumgebiet Ostheim/Neubrück</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1049/2025"/>
+<summary>Entscheidung am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126395#beratung-2025-05-15-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 0859/2025 Beantwortung einer schriftlichen Anfrage der Fraktionen aus der Sitzung der Bezirksvertretung Kalk vom 26.01.2023 betreffend Bürgereingabe gem. § 24 GO, betr.: Servatiusstraße in Ostheim, Tempo 30 (AZ.:[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen])</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0859/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126673#vorlage</id>
+<title>Neue Vorlage 1049/2025: Kleinräumige Analyse und Bewertung der Herausforderungen und Ziele der Sozialplanung für das Sozialraumgebiet Ostheim/Neubrück</title>
+<updated>2025-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1049/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126395#vorlage</id>
+<title>Neue Vorlage 0859/2025: Beantwortung einer schriftlichen Anfrage der Fraktionen aus der Sitzung der Bezirksvertretung Kalk vom 26.01.2023 betreffend Bürgereingabe gem. § 24 GO, betr.: Servatiusstraße in Ostheim, Tempo 30 (AZ.:[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen])</title>
+<updated>2025-04-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#0859/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126264#beratung-2025-03-20-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0321/2025 Servatiusstraße in Ostheim, Tempo 30</title>
+<updated>2025-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0321/2025"/>
+<summary>Antrag / Anfrage am 2025-03-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126264#vorlage</id>
+<title>Neue Vorlage AN/0321/2025: Servatiusstraße in Ostheim, Tempo 30</title>
+<updated>2025-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/0321/2025"/>
+<summary>Gem. Anfrage BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125117#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 4009/2024 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 05.12.2024 (AN/1726/2024) betreffend „Ausbau der Frankfurter Straße einschließlich ÖPNV“</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#4009/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124944#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1726/2024 Anfrage der CDU-Fraktion "Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1726/2024"/>
+<summary>Antrag / Anfrage am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123680#beratung-2025-01-23-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3044/2024 Abschlussbericht der Maßnahme "Büro für Quartiersmanagement und Aktivierung" im Soziale-Stadt-Gebiet Ostheim und Neubrück</title>
+<updated>2025-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3044/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123480#beratung-2025-01-23-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Kenntnis genommen“ – 2907/2024 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion und Volt-Fraktion vom 19.09.2024 (AN1298/2024) betreffend „Geplante Sanierung und Wiederinbetriebnahme der Flüchtlingsunterkunft in Köln-Ostheim"</title>
+<updated>2025-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2907/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123461#beratung-2025-01-23-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Sache ist erledigt“ – AN/1298/2024 Geplante Sanierung und Wiederinbetriebnahme der Flüchtlingsunterkunft in Köln-Ostheim</title>
+<updated>2025-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1298/2024"/>
+<summary>Entscheidung am 2025-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123480#vorlage</id>
+<title>Neue Vorlage 2907/2024: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion und Volt-Fraktion vom 19.09.2024 (AN1298/2024) betreffend „Geplante Sanierung und Wiederinbetriebnahme der Flüchtlingsunterkunft in Köln-Ostheim"</title>
+<updated>2025-01-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2907/2024"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125117#vorlage</id>
+<title>Neue Vorlage 4009/2024: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 05.12.2024 (AN/1726/2024) betreffend „Ausbau der Frankfurter Straße einschließlich ÖPNV“</title>
+<updated>2025-01-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#4009/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124944#vorlage</id>
+<title>Neue Vorlage AN/1726/2024: Anfrage der CDU-Fraktion "Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1726/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123680#beratung-2024-12-05-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 3044/2024 Abschlussbericht der Maßnahme "Büro für Quartiersmanagement und Aktivierung" im Soziale-Stadt-Gebiet Ostheim und Neubrück</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3044/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124469#beratung-2024-11-28-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/1562/2024 Toiletten in Ostheim</title>
+<updated>2024-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1562/2024"/>
+<summary>Antrag / Anfrage am 2024-11-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124467#beratung-2024-11-28-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – AN/1560/2024 Mülleimer und (Smarte) Bänke für Ostheim!</title>
+<updated>2024-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1560/2024"/>
+<summary>Entscheidung am 2024-11-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123849#beratung-2024-11-28-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3178/2024 Beantwortung einer Einwohneranfrage nach § 39 der Geschäftsordnung des Rates und der Bezirksvertretungen der Stadt Köln Betreff: Möglichkeiten der baulichen Nutzung des Geländes Buchheimer Weg [Hausnummer ausgelassen], 51107 Köln: Kirche  "Zu den heiligen Engeln"</title>
+<updated>2024-11-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3178/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122944#beratung-2024-11-25-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „zurückgestellt“ – 2590/2024 Neubau einer eingeschossigen Schießsportstätte in Köln Ostheim, LSG 26, EZ2, Bezirk 8</title>
+<updated>2024-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2590/2024"/>
+<summary>Entscheidung am 2024-11-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124469#vorlage</id>
+<title>Neue Vorlage AN/1562/2024: Toiletten in Ostheim</title>
+<updated>2024-11-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1562/2024"/>
+<summary>Antrag nach § 3 BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124467#vorlage</id>
+<title>Neue Vorlage AN/1560/2024: Mülleimer und (Smarte) Bänke für Ostheim!</title>
+<updated>2024-11-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1560/2024"/>
+<summary>Antrag nach § 3 BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123680#vorlage</id>
+<title>Neue Vorlage 3044/2024: Abschlussbericht der Maßnahme "Büro für Quartiersmanagement und Aktivierung" im Soziale-Stadt-Gebiet Ostheim und Neubrück</title>
+<updated>2024-11-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3044/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

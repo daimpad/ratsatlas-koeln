@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/2513-2026</id>
+<title>Vorlage 2513/2026: Beantwortung einer schriftlichen Anfrage Fraktion Bündnis 90/ Die Grünen/ Frau Danke und Herr Kersten gemäß §4 der Geschäftsordnung des Rates betreffend die Sondernutzungsgebühren am Fühlinger See</title>
+<subtitle>Verlauf der Vorlage 2513/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/2513-2026.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#2513/2026"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134536#beratung-2026-11-05-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2513/2026 Beantwortung einer schriftlichen Anfrage Fraktion Bündnis 90/ Die Grünen/ Frau Danke und Herr Kersten gemäß §4 der Geschäftsordnung des Rates betreffend die Sondernutzungsgebühren am Fühlinger See</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#2513/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134536#vorlage</id>
+<title>Neue Vorlage 2513/2026: Beantwortung einer schriftlichen Anfrage Fraktion Bündnis 90/ Die Grünen/ Frau Danke und Herr Kersten gemäß §4 der Geschäftsordnung des Rates betreffend die Sondernutzungsgebühren am Fühlinger See</title>
+<updated>2026-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#2513/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134536#folge-AN%2F1104%2F2026</id>
+<title>Anfrage nach § 4 BV6 (Grüne) AN/1104/2026: Sondernutzungsgebühren Fühlinger See</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#2513/2026"/>
+<summary>Folgevorlage zu 2513/2026</summary>
+</entry>
+</feed>

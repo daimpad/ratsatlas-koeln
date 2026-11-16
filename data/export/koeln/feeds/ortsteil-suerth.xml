@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-suerth</id>
 <title>Ratsatlas Köln – Sürth</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Sürth</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-16T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-suerth.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135383#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – 3000/2026 Bürgereingabe nach § 24 GO NRW – „Versetzung der Sitzbank an der Kreuzung Weißer Straße/Hammerschmidtstraße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3000/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135383#vorlage</id>
+<title>Neue Vorlage 3000/2026: Bürgereingabe nach § 24 GO NRW – „Versetzung der Sitzbank an der Kreuzung Weißer Straße/Hammerschmidtstraße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3000/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134447#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/1327/2026 Sitzbank Bahnhof Sürth</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1327/2026"/>
+<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133979#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1227/2026 Nutzungen des Maternusplatzes und des Marktsplatzes in Sürth 2027, Gemeinsamer Antrag der Fraktionen CDU, Grüne, SPD und FDP/KSG</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1227/2026"/>
+<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133979#vorlage</id>
+<title>Neue Vorlage AN/1227/2026: Nutzungen des Maternusplatzes und des Marktsplatzes in Sürth 2027, Gemeinsamer Antrag der Fraktionen CDU, Grüne, SPD und FDP/KSG</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1227/2026"/>
+<summary>Gem. Antrag nach § 3 BV2 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134447#vorlage</id>
+<title>Neue Vorlage AN/1327/2026: Sitzbank Bahnhof Sürth</title>
+<updated>2026-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1327/2026"/>
+<summary>Gem. Antrag nach § 3 BV2 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132508#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1225/2026 Beantwortung einer mündlichen Nachfrage der Fraktion Bündnis 90 / Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 16.03.2026 (0737/2026) betreffend „Schulwegsicherung Hammerschmidtstraße“.</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1225/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132185#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1031/2026 Beantwortung einer schriftlichen Anfrage der FDP-/KSG-Fraktion aus der Sitzung der BV Rodenkirchen vom 16.01.2026 betreffend Baumfällungen und Bauprojekt Josef-Kallscheuer-Straße in Köln-Sürth (AN/0076/2026)</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1031/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132185#vorlage</id>
+<title>Neue Vorlage 1031/2026: Beantwortung einer schriftlichen Anfrage der FDP-/KSG-Fraktion aus der Sitzung der BV Rodenkirchen vom 16.01.2026 betreffend Baumfällungen und Bauprojekt Josef-Kallscheuer-Straße in Köln-Sürth (AN/0076/2026)</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1031/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130328#beratung-2026-05-12-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 3498/2025 Satzung über die abweichende Herstellung der Erschließungsanlage Unter Buschweg von Rodderweg bis Industriestraße in Köln-Sürth</title>
+<updated>2026-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3498/2025"/>
+<summary>Entscheidung am 2026-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132481#beratung-2026-05-07-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0678/2026 Einrichtung einer Tempo-30-Zone am Mennweg (zwischen Kreisverkehr Industriestraße &amp; Anfang Hitdorfer Fährweg</title>
+<updated>2026-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0678/2026"/>
+<summary>Entscheidung am 2026-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132508#vorlage</id>
+<title>Neue Vorlage 1225/2026: Beantwortung einer mündlichen Nachfrage der Fraktion Bündnis 90 / Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 16.03.2026 (0737/2026) betreffend „Schulwegsicherung Hammerschmidtstraße“.</title>
+<updated>2026-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1225/2026"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130328#beratung-2026-04-28-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert empfohlen“ – 3498/2025 Satzung über die abweichende Herstellung der Erschließungsanlage Unter Buschweg von Rodderweg bis Industriestraße in Köln-Sürth</title>
+<updated>2026-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3498/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-04-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131814#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0736/2026 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.11.2023 (AN/2056/2023) betreffend „Sachstand Schulwegsicherung Hammerschmidtstraße“</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0736/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130328#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 3498/2025 Satzung über die abweichende Herstellung der Erschließungsanlage Unter Buschweg von Rodderweg bis Industriestraße in Köln-Sürth</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3498/2025"/>
+<summary>Anhörung (BV) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132481#vorlage</id>
+<title>Neue Vorlage AN/0678/2026: Einrichtung einer Tempo-30-Zone am Mennweg (zwischen Kreisverkehr Industriestraße &amp; Anfang Hitdorfer Fährweg</title>
+<updated>2026-04-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0678/2026"/>
+<summary>Gem. Antrag nach § 3 BV6 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130328#vorlage</id>
+<title>Neue Vorlage 3498/2025: Satzung über die abweichende Herstellung der Erschließungsanlage Unter Buschweg von Rodderweg bis Industriestraße in Köln-Sürth</title>
+<updated>2026-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3498/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131814#vorlage</id>
+<title>Neue Vorlage 0736/2026: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.11.2023 (AN/2056/2023) betreffend „Sachstand Schulwegsicherung Hammerschmidtstraße“</title>
+<updated>2026-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0736/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131815#beratung-2026-03-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0737/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis90/Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 30.06.2025 (AN/0926/2025) betreffend „Schulwegsicherung Hammerschmidtstraße“</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0737/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131815#vorlage</id>
+<title>Neue Vorlage 0737/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis90/Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 30.06.2025 (AN/0926/2025) betreffend „Schulwegsicherung Hammerschmidtstraße“</title>
+<updated>2026-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0737/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130780#beratung-2026-01-26-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0076/2026 Baumfällungen und Bauprojekt Josef-Kallscheuer-Straße in Köln-Sürth</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0076/2026"/>
+<summary>Entscheidung am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128134#beratung-2026-01-26-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/0890/2025 Anpflanzen einer Hecke am Rande des Sürther Feldes</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0890/2025"/>
+<summary>Antrag / Anfrage am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130780#vorlage</id>
+<title>Neue Vorlage AN/0076/2026: Baumfällungen und Bauprojekt Josef-Kallscheuer-Straße in Köln-Sürth</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0076/2026"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130318#beratung-2025-12-11-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – AN/1465/2025 "Turbokreisel" Emdenerstraße - Causemannstraße - Zufahrt Industriestraße</title>
+<updated>2025-12-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1465/2025"/>
+<summary>Antrag / Anfrage am 2025-12-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130318#vorlage</id>
+<title>Neue Vorlage AN/1465/2025: "Turbokreisel" Emdenerstraße - Causemannstraße - Zufahrt Industriestraße</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1465/2025"/>
+<summary>Anfrage nach § 4 BV6 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126440#beratung-2025-09-04-Rat</id>
+<title>Rat: „geändert beschlossen“ – 0888/2025 Änderung des Geltungsbereiches des in Aufstellung befindlichen vorhabenbezogenen Bebauungsplanes Nr. 70365/02 "Erweiterung STRÖER Campus" in Köln-Sürth und Änderung des Arbeitstitels in: Nördlich Ströer-Allee" in Köln-Sürth</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0888/2025"/>
+<summary>Entscheidung am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126440#vorlage</id>
+<title>Neue Vorlage 0888/2025: Änderung des Geltungsbereiches des in Aufstellung befindlichen vorhabenbezogenen Bebauungsplanes Nr. 70365/02 "Erweiterung STRÖER Campus" in Köln-Sürth und Änderung des Arbeitstitels in: Nördlich Ströer-Allee" in Köln-Sürth</title>
+<updated>2025-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0888/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128134#vorlage</id>
+<title>Neue Vorlage AN/0890/2025: Anpflanzen einer Hecke am Rande des Sürther Feldes</title>
+<updated>2025-08-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0890/2025"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127299#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1459/2025 Generalinstandsetzung der OGTS-Gebäude (Trakt C &amp; D) sowie Teilsanierung der Trakte A, B und E der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen – Bedarfsfeststellungs- und Planungsbeschluss</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128308#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „Kenntnis genommen“ – 1459/2025/1 Mündliche Nachfrage aus dem Ausschuss Schule und Weiterbildung vom 16.06. bezüglich Generalinstandsetzung der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025/1"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128308#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 1459/2025/1 Mündliche Nachfrage aus dem Ausschuss Schule und Weiterbildung vom 16.06. bezüglich Generalinstandsetzung der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025/1"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128308#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1459/2025/1 Mündliche Nachfrage aus dem Ausschuss Schule und Weiterbildung vom 16.06. bezüglich Generalinstandsetzung der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025/1"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128135#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/0891/2025 Aufwertung des Sürther Marktplatzes</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0891/2025"/>
+<summary>Antrag / Anfrage am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128110#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0884/2025 Anordnung Tempo 30 Hammerschmidtstraße</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0884/2025"/>
+<summary>Antrag / Anfrage am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128104#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1945/2025 Beantwortung der Verwaltung - Sommerfest der KG Löstige Flägelskappe 2025 in Köln-Sürth</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1945/2025"/>
+<summary>Entscheidung am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127990#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0821/2025 Sommerfest der KG Löstige Flägelskappe 2025 in Köln-Sürth - Dringlichkeitsanfrage</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0821/2025"/>
+<summary>Entscheidung am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127299#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 1459/2025 Generalinstandsetzung der OGTS-Gebäude (Trakt C &amp; D) sowie Teilsanierung der Trakte A, B und E der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen – Bedarfsfeststellungs- und Planungsbeschluss</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127299#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 1459/2025 Generalinstandsetzung der OGTS-Gebäude (Trakt C &amp; D) sowie Teilsanierung der Trakte A, B und E der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen – Bedarfsfeststellungs- und Planungsbeschluss</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025"/>
+<summary>Anhörung (BV) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126975#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/0473/2025 Zweigeschossige Fahrradabstellplätze am Sürther Bahnhof</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0473/2025"/>
+<summary>Antrag / Anfrage am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126440#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – 0888/2025 Änderung des Geltungsbereiches des in Aufstellung befindlichen vorhabenbezogenen Bebauungsplanes Nr. 70365/02 "Erweiterung STRÖER Campus" in Köln-Sürth und Änderung des Arbeitstitels in: Nördlich Ströer-Allee" in Köln-Sürth</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0888/2025"/>
+<summary>Anhörung (BV) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128308#beratung-2025-06-26-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 1459/2025/1 Mündliche Nachfrage aus dem Ausschuss Schule und Weiterbildung vom 16.06. bezüglich Generalinstandsetzung der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025/1"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127299#beratung-2025-06-26-Sportausschuss</id>
+<title>Sportausschuss: „ohne Votum behandelt“ – 1459/2025 Generalinstandsetzung der OGTS-Gebäude (Trakt C &amp; D) sowie Teilsanierung der Trakte A, B und E der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen – Bedarfsfeststellungs- und Planungsbeschluss</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126440#beratung-2025-06-26-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 0888/2025 Änderung des Geltungsbereiches des in Aufstellung befindlichen vorhabenbezogenen Bebauungsplanes Nr. 70365/02 "Erweiterung STRÖER Campus" in Köln-Sürth und Änderung des Arbeitstitels in: Nördlich Ströer-Allee" in Köln-Sürth</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0888/2025"/>
+<summary>Entscheidung am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128308#vorlage</id>
+<title>Neue Vorlage 1459/2025/1: Mündliche Nachfrage aus dem Ausschuss Schule und Weiterbildung vom 16.06. bezüglich Generalinstandsetzung der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025/1"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128308#beratung-2025-06-23-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „Kenntnis genommen“ – 1459/2025/1 Mündliche Nachfrage aus dem Ausschuss Schule und Weiterbildung vom 16.06. bezüglich Generalinstandsetzung der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025/1"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127299#beratung-2025-06-23-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 1459/2025 Generalinstandsetzung der OGTS-Gebäude (Trakt C &amp; D) sowie Teilsanierung der Trakte A, B und E der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen – Bedarfsfeststellungs- und Planungsbeschluss</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128110#vorlage</id>
+<title>Neue Vorlage AN/0884/2025: Anordnung Tempo 30 Hammerschmidtstraße</title>
+<updated>2025-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0884/2025"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127299#beratung-2025-06-16-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1459/2025 Generalinstandsetzung der OGTS-Gebäude (Trakt C &amp; D) sowie Teilsanierung der Trakte A, B und E der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen – Bedarfsfeststellungs- und Planungsbeschluss</title>
+<updated>2025-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/63620#vorlage</id>
+<title>Neue Vorlage AN/1424/2016: Tempo 30 auf der Bergstraße oder Einrichtung einer Tempo-30-Zone</title>
+<updated>2025-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1424/2016"/>
+<summary>Antrag nach § 3 BV5 (Grüne) · federführend: unbekannt · Stand: ohne Beratungsfolge</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128135#vorlage</id>
+<title>Neue Vorlage AN/0891/2025: Aufwertung des Sürther Marktplatzes</title>
+<updated>2025-06-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0891/2025"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127299#vorlage</id>
+<title>Neue Vorlage 1459/2025: Generalinstandsetzung der OGTS-Gebäude (Trakt C &amp; D) sowie Teilsanierung der Trakte A, B und E der Gemeinschaftsgrundschule Brüder Grimm in der Sürther Hauptstraße 149, Rodenkirchen – Bedarfsfeststellungs- und Planungsbeschluss</title>
+<updated>2025-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1459/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128104#vorlage</id>
+<title>Neue Vorlage 1945/2025: Beantwortung der Verwaltung - Sommerfest der KG Löstige Flägelskappe 2025 in Köln-Sürth</title>
+<updated>2025-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1945/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127990#vorlage</id>
+<title>Neue Vorlage AN/0821/2025: Sommerfest der KG Löstige Flägelskappe 2025 in Köln-Sürth - Dringlichkeitsanfrage</title>
+<updated>2025-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0821/2025"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127307#vorlage</id>
+<title>Neue Vorlage AN/0622/2025: Änderungsantrag zu AN/0465/2025 Aufwertung des Fußballplatzes in der Sürther Rheinaue</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0622/2025"/>
+<summary>Änderungsantrag BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127307#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Sache ist erledigt“ – AN/0622/2025 Änderungsantrag zu AN/0465/2025 Aufwertung des Fußballplatzes in der Sürther Rheinaue</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0622/2025"/>
+<summary>Entscheidung am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127095#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1345/2025 Beantwortung der Anfrage AN/0469(2025 der SPD-Fraktion bezüglich der Sanierung der Toilettenanlage auf dem Sürther Friedhof</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1345/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126971#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0469/2025 Sachstand Sanierung Toilettenanlage Sürther Friedhof</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0469/2025"/>
+<summary>Antrag / Anfrage am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126968#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig abgelehnt“ – AN/0466/2025 Ausweitung der Fahrstrecke der Linie 130 bis Sürth Rodderweg an Sonn- und Feiertagen</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0466/2025"/>
+<summary>Antrag / Anfrage am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126967#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/0465/2025 Aufwertung des Fußballplatzes in der Sürther Rheinaue</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0465/2025"/>
+<summary>Entscheidung am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127095#vorlage</id>
+<title>Neue Vorlage 1345/2025: Beantwortung der Anfrage AN/0469(2025 der SPD-Fraktion bezüglich der Sanierung der Toilettenanlage auf dem Sürther Friedhof</title>
+<updated>2025-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1345/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126975#vorlage</id>
+<title>Neue Vorlage AN/0473/2025: Zweigeschossige Fahrradabstellplätze am Sürther Bahnhof</title>
+<updated>2025-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0473/2025"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126971#vorlage</id>
+<title>Neue Vorlage AN/0469/2025: Sachstand Sanierung Toilettenanlage Sürther Friedhof</title>
+<updated>2025-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0469/2025"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126968#vorlage</id>
+<title>Neue Vorlage AN/0466/2025: Ausweitung der Fahrstrecke der Linie 130 bis Sürth Rodderweg an Sonn- und Feiertagen</title>
+<updated>2025-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0466/2025"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126967#vorlage</id>
+<title>Neue Vorlage AN/0465/2025: Aufwertung des Fußballplatzes in der Sürther Rheinaue</title>
+<updated>2025-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0465/2025"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125307#beratung-2025-01-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0133/2025 Beantwortung einer schriftlichen Anfrage der FDP-Fraktion in der Sitzung der Bezirksvertretung Rodenkirchen vom 04.11.2024 "AN/1396/2024" betreffend "Sperrung des Sürther Leinpfads auf Höhe der Werksausfahrt der Firma Theo Steil GmbH in Köln-Godorf"</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0133/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125307#vorlage</id>
+<title>Neue Vorlage 0133/2025: Beantwortung einer schriftlichen Anfrage der FDP-Fraktion in der Sitzung der Bezirksvertretung Rodenkirchen vom 04.11.2024 "AN/1396/2024" betreffend "Sperrung des Sürther Leinpfads auf Höhe der Werksausfahrt der Firma Theo Steil GmbH in Köln-Godorf"</title>
+<updated>2025-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#0133/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123542#beratung-2024-12-12-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 2945/2024 Satzung über die abweichende Herstellung der Erschließungsanlage Kölnstraße von Seniorenweg bis Am Feldrain in Köln-Sürth sowie Aufhebung der Abweichungssatzung vom 06.03.2023</title>
+<updated>2024-12-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#2945/2024"/>
+<summary>Entscheidung am 2024-12-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123542#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 2945/2024 Satzung über die abweichende Herstellung der Erschließungsanlage Kölnstraße von Seniorenweg bis Am Feldrain in Köln-Sürth sowie Aufhebung der Abweichungssatzung vom 06.03.2023</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#2945/2024"/>
+<summary>Anhörung (BV) am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122954#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1106/2024 Bahnhof Sürth: Vorplatz, Planung und Gestaltung</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1106/2024"/>
+<summary>Entscheidung am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123542#beratung-2024-11-26-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ungeändert empfohlen“ – 2945/2024 Satzung über die abweichende Herstellung der Erschließungsanlage Kölnstraße von Seniorenweg bis Am Feldrain in Köln-Sürth sowie Aufhebung der Abweichungssatzung vom 06.03.2023</title>
+<updated>2024-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#2945/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122954#vorlage</id>
+<title>Neue Vorlage AN/1106/2024: Bahnhof Sürth: Vorplatz, Planung und Gestaltung</title>
+<updated>2024-11-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1106/2024"/>
+<summary>Gem. Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123924#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1396/2024 Sperrung des Sürther Leinpfads auf Höhe der Werksausfahrt der Firma Theo Steil GmbH in Köln-Godorf</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1396/2024"/>
+<summary>Entscheidung am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123886#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – AN/1393/2024 Schulen im Sürther Feld: bessere Erreichbarkeit per ÖPNV, Gemeinsamer Antrag aller Fraktionen</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1393/2024"/>
+<summary>Antrag / Anfrage am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123596#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1335/2024 Nutzungen des Maternusplatzes und des Marktplatzes in Sürth 2025, Gemeinsamer Antrag aller Fraktionen</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1335/2024"/>
+<summary>Antrag / Anfrage am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123542#vorlage</id>
+<title>Neue Vorlage 2945/2024: Satzung über die abweichende Herstellung der Erschließungsanlage Kölnstraße von Seniorenweg bis Am Feldrain in Köln-Sürth sowie Aufhebung der Abweichungssatzung vom 06.03.2023</title>
+<updated>2024-10-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#2945/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123924#vorlage</id>
+<title>Neue Vorlage AN/1396/2024: Sperrung des Sürther Leinpfads auf Höhe der Werksausfahrt der Firma Theo Steil GmbH in Köln-Godorf</title>
+<updated>2024-10-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1396/2024"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123886#vorlage</id>
+<title>Neue Vorlage AN/1393/2024: Schulen im Sürther Feld: bessere Erreichbarkeit per ÖPNV, Gemeinsamer Antrag aller Fraktionen</title>
+<updated>2024-10-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1393/2024"/>
+<summary>Gem. Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123596#vorlage</id>
+<title>Neue Vorlage AN/1335/2024: Nutzungen des Maternusplatzes und des Marktplatzes in Sürth 2025, Gemeinsamer Antrag aller Fraktionen</title>
+<updated>2024-10-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1335/2024"/>
+<summary>Gem. Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123072#beratung-2024-09-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig zurückgezogen“ – AN/1144/2024 Anbringung von Parkplatzmarkierungen auf dem Marktplatz in Sürth</title>
+<updated>2024-09-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1144/2024"/>
+<summary>Entscheidung am 2024-09-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123071#beratung-2024-09-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/1143/2024 Erneuerung von Pollern an der Panzerrampe in Köln-Sürth</title>
+<updated>2024-09-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1143/2024"/>
+<summary>Entscheidung am 2024-09-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122367#beratung-2024-09-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2110/2024 Beantwortung der Anfrage AN/0412/2022 "Umsetzung der künstlerischen Gestaltung der Lärmschutzwand des Flüchtlingsheims an der Industriestraße in Köln Sürth</title>
+<updated>2024-09-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#2110/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-09-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123072#vorlage</id>
+<title>Neue Vorlage AN/1144/2024: Anbringung von Parkplatzmarkierungen auf dem Marktplatz in Sürth</title>
+<updated>2024-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1144/2024"/>
+<summary>Antrag nach § 3 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123071#vorlage</id>
+<title>Neue Vorlage AN/1143/2024: Erneuerung von Pollern an der Panzerrampe in Köln-Sürth</title>
+<updated>2024-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1143/2024"/>
+<summary>Antrag nach § 3 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122367#vorlage</id>
+<title>Neue Vorlage 2110/2024: Beantwortung der Anfrage AN/0412/2022 "Umsetzung der künstlerischen Gestaltung der Lärmschutzwand des Flüchtlingsheims an der Industriestraße in Köln Sürth</title>
+<updated>2024-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#2110/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121777#beratung-2024-06-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – AN/0826/2024 Einstellung Taxibus-Linie 197 zum Bürgeramt Rodenkirchen, Industriestraße 161, Gemeinsamer Antrag aller Fraktionen</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0826/2024"/>
+<summary>Antrag / Anfrage am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121777#vorlage</id>
+<title>Neue Vorlage AN/0826/2024: Einstellung Taxibus-Linie 197 zum Bürgeramt Rodenkirchen, Industriestraße 161, Gemeinsamer Antrag aller Fraktionen</title>
+<updated>2024-05-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0826/2024"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121167#beratung-2024-05-06-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1355/2024 Bekämpfung von Ratten mittels Giftködern an der KVB-Bahnstation Sürth Bahnhof, Beantwortung der Anfrage der FDP-Fraktion (AN/2061/2023) aus der Sitzung am 27.11.2023</title>
+<updated>2024-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1355/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-05-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121167#vorlage</id>
+<title>Neue Vorlage 1355/2024: Bekämpfung von Ratten mittels Giftködern an der KVB-Bahnstation Sürth Bahnhof, Beantwortung der Anfrage der FDP-Fraktion (AN/2061/2023) aus der Sitzung am 27.11.2023</title>
+<updated>2024-04-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#1355/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120165#beratung-2024-03-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/0277/2024 Teiländerung Bebauungsplan Sürther Feld - 3.BA</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0277/2024"/>
+<summary>Antrag / Anfrage am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118449#beratung-2024-03-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3730/2023 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen zum Stand der Bebauung 3. Bauabschnitt am Sürther Feld in Köln-Rodenkirchen</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3730/2023"/>
+<summary>Antrag / Anfrage am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120165#vorlage</id>
+<title>Neue Vorlage AN/0277/2024: Teiländerung Bebauungsplan Sürther Feld - 3.BA</title>
+<updated>2024-02-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0277/2024"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118449#vorlage</id>
+<title>Neue Vorlage 3730/2023: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen zum Stand der Bebauung 3. Bauabschnitt am Sürther Feld in Köln-Rodenkirchen</title>
+<updated>2024-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3730/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119238#beratung-2024-01-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/0007/2024 Verlängerung de Fuß- und Radwegs an der Hammerschmidtstraße</title>
+<updated>2024-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0007/2024"/>
+<summary>Entscheidung am 2024-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119238#vorlage</id>
+<title>Neue Vorlage AN/0007/2024: Verlängerung de Fuß- und Radwegs an der Hammerschmidtstraße</title>
+<updated>2024-01-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/0007/2024"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118101#beratung-2023-12-07-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 3456/2023 Sanierung und Verbreiterung des Geh- und Radweges am Sürther Leinpfad hier: Mitteilung über die Erhöhung der Investitionsauszahlungen gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO NRW i. V. m. § 12 der Haushaltssatzung der Stadt Köln für das Haushaltsjahr 2023</title>
+<updated>2023-12-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3456/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-12-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117016#beratung-2023-12-07-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 2763/2023 Satzung über die abweichende Herstellung der Erschließungsanlage Robert-Bosch-Straße von Stichstraße zu Haus-Nr. 43-61 bis Kreisverkehr Industriestraße</title>
+<updated>2023-12-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#2763/2023"/>
+<summary>Entscheidung am 2023-12-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118101#beratung-2023-12-04-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 3456/2023 Sanierung und Verbreiterung des Geh- und Radweges am Sürther Leinpfad hier: Mitteilung über die Erhöhung der Investitionsauszahlungen gemäß § 25 Abs. 1 [Hausnummer ausgelassen] KomHVO NRW i. V. m. § 12 der Haushaltssatzung der Stadt Köln für das Haushaltsjahr 2023</title>
+<updated>2023-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#3456/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118654#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/2061/2023 Bekämpfung von Ratten mittels Giftködern an der KVB-Bahnstation Sürth Bahnhof</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/2061/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118632#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/2056/2023 Sachstand Schulwegsicherung Hammerschmidtstraße (AN/1736/2022, modifiziert)</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/2056/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118417#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/1967/2023 Verkehrssituation für den Fuß- und Radverkehr um die Werksausfahrt der Firma Theo Steil GmbH am Sürther Leinpfad in Köln-Godorf</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suerth#AN/1967/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

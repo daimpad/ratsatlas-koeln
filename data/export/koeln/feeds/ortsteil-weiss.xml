@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-weiss</id>
 <title>Ratsatlas Köln – Weiß</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Weiß</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-16T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-weiss.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135646#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1799/2026 Verlängerung der Rampen der Fähre Weiß-Zündorf</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1799/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135383#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – 3000/2026 Bürgereingabe nach § 24 GO NRW – „Versetzung der Sitzbank an der Kreuzung Weißer Straße/Hammerschmidtstraße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3000/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135252#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 2938/2026 Widmung eines Teilstücks der Straße Westhovener Weg in Köln-Weiß</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#2938/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132896#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – 1469/2026 Aufstellungsbeschluss zur 16. Änderung des Landschaftsplans Köln, hier: Ausweisung eines neuen Naturschutzgebietes am Weißer Bogen</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1469/2026"/>
+<summary>Anhörung (BV) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135383#vorlage</id>
+<title>Neue Vorlage 3000/2026: Bürgereingabe nach § 24 GO NRW – „Versetzung der Sitzbank an der Kreuzung Weißer Straße/Hammerschmidtstraße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3000/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135646#vorlage</id>
+<title>Neue Vorlage AN/1799/2026: Verlängerung der Rampen der Fähre Weiß-Zündorf</title>
+<updated>2026-11-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1799/2026"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135252#vorlage</id>
+<title>Neue Vorlage 2938/2026: Widmung eines Teilstücks der Straße Westhovener Weg in Köln-Weiß</title>
+<updated>2026-10-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#2938/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132896#vorlage</id>
+<title>Neue Vorlage 1469/2026: Aufstellungsbeschluss zur 16. Änderung des Landschaftsplans Köln, hier: Ausweisung eines neuen Naturschutzgebietes am Weißer Bogen</title>
+<updated>2026-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1469/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134493#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1348/2026 Sachstand Sanierung Boulebahn in Köln-Weiß</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1348/2026"/>
+<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134303#vorlage</id>
+<title>Neue Vorlage 2389/2026: Satzung über die abweichende Herstellung der Erschließungsanlage Birgitstraße von Weißer Straße bis Wendeanlage in Köln-Weiß</title>
+<updated>2026-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#2389/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134493#vorlage</id>
+<title>Neue Vorlage AN/1348/2026: Sachstand Sanierung Boulebahn in Köln-Weiß</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1348/2026"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132508#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1225/2026 Beantwortung einer mündlichen Nachfrage der Fraktion Bündnis 90 / Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 16.03.2026 (0737/2026) betreffend „Schulwegsicherung Hammerschmidtstraße“.</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1225/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132256#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 1072/2026 Widmung eines Teilstücks der Straße Im Garten in Köln-Weiß</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1072/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132508#vorlage</id>
+<title>Neue Vorlage 1225/2026: Beantwortung einer mündlichen Nachfrage der Fraktion Bündnis 90 / Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 16.03.2026 (0737/2026) betreffend „Schulwegsicherung Hammerschmidtstraße“.</title>
+<updated>2026-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1225/2026"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132084#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – 0940/2026 Bürgereingabe nach § 24 GO – Gefahrenstelle Pflasterhofweg, Köln-Weiß, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0940/2026"/>
+<summary>Entscheidung am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131814#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0736/2026 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.11.2023 (AN/2056/2023) betreffend „Sachstand Schulwegsicherung Hammerschmidtstraße“</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0736/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132256#vorlage</id>
+<title>Neue Vorlage 1072/2026: Widmung eines Teilstücks der Straße Im Garten in Köln-Weiß</title>
+<updated>2026-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1072/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132084#vorlage</id>
+<title>Neue Vorlage 0940/2026: Bürgereingabe nach § 24 GO – Gefahrenstelle Pflasterhofweg, Köln-Weiß, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-04-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0940/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131814#vorlage</id>
+<title>Neue Vorlage 0736/2026: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.11.2023 (AN/2056/2023) betreffend „Sachstand Schulwegsicherung Hammerschmidtstraße“</title>
+<updated>2026-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0736/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131815#beratung-2026-03-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0737/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis90/Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 30.06.2025 (AN/0926/2025) betreffend „Schulwegsicherung Hammerschmidtstraße“</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0737/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131815#vorlage</id>
+<title>Neue Vorlage 0737/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Bündnis90/Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 30.06.2025 (AN/0926/2025) betreffend „Schulwegsicherung Hammerschmidtstraße“</title>
+<updated>2026-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0737/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130972#vorlage</id>
+<title>Neue Vorlage AN/0166/2026: Änderungsantrag: Erhöhung der Verkehrssicherheit vor der KiTa „Am Damm“ in Köln-Weiß</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0166/2026"/>
+<summary>Änderungsantrag BV2 (CDU) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130704#beratung-2026-01-26-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/0046/2026 Erhöhung der Verkehrssicherheit vor der KiTa „Am Damm“ in Köln-Weiß</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0046/2026"/>
+<summary>Antrag / Anfrage am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130704#vorlage</id>
+<title>Neue Vorlage AN/0046/2026: Erhöhung der Verkehrssicherheit vor der KiTa „Am Damm“ in Köln-Weiß</title>
+<updated>2026-01-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0046/2026"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129939#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3257/2025 Beantwortung einer schriftlichen Anfrage der SPD_Fraktion aus der Sitzung der Bezirksvertretung 2 (Rodenkirchen) vom 24.03.2025 (AN/0273/2025) betreffend "Sachstand Ausweitung Tempo 30 km/h auf der Weißer Hauptstraße"</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3257/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129939#vorlage</id>
+<title>Neue Vorlage 3257/2025: Beantwortung einer schriftlichen Anfrage der SPD_Fraktion aus der Sitzung der Bezirksvertretung 2 (Rodenkirchen) vom 24.03.2025 (AN/0273/2025) betreffend "Sachstand Ausweitung Tempo 30 km/h auf der Weißer Hauptstraße"</title>
+<updated>2025-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3257/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128110#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0884/2025 Anordnung Tempo 30 Hammerschmidtstraße</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0884/2025"/>
+<summary>Antrag / Anfrage am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128149#beratung-2025-06-24-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 1971/2025 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung des Verkehrsausschusses vom 13.05.2025 (AN/0609/2025)  betreffend Sperrung Auenweg</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1971/2025"/>
+<summary>Entscheidung am 2025-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127265#beratung-2025-06-24-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Sache ist erledigt“ – AN/0609/2025 Sperrung Auenweg</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0609/2025"/>
+<summary>Antrag / Anfrage am 2025-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128149#vorlage</id>
+<title>Neue Vorlage 1971/2025: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung des Verkehrsausschusses vom 13.05.2025 (AN/0609/2025)  betreffend Sperrung Auenweg</title>
+<updated>2025-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1971/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128110#vorlage</id>
+<title>Neue Vorlage AN/0884/2025: Anordnung Tempo 30 Hammerschmidtstraße</title>
+<updated>2025-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0884/2025"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127272#beratung-2025-05-22-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – AN/0610/2025 Nutzung der Freifläche am Heckweg durch die KG Blau-Weiß Alt Lunke</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0610/2025"/>
+<summary>Entscheidung am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126481#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0916/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 24.03.2025 (AN/0274/2025) betreffen Sachstand Sanierung Boulebahn in Köln-Weiß</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0916/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127272#vorlage</id>
+<title>Neue Vorlage AN/0610/2025: Nutzung der Freifläche am Heckweg durch die KG Blau-Weiß Alt Lunke</title>
+<updated>2025-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0610/2025"/>
+<summary>Antrag nach § 3 BV5 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127265#vorlage</id>
+<title>Neue Vorlage AN/0609/2025: Sperrung Auenweg</title>
+<updated>2025-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0609/2025"/>
+<summary>CDU Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126481#vorlage</id>
+<title>Neue Vorlage 0916/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 24.03.2025 (AN/0274/2025) betreffen Sachstand Sanierung Boulebahn in Köln-Weiß</title>
+<updated>2025-03-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0916/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126171#beratung-2025-03-24-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0274/2025 Sachstand Sanierung Boulebahn in Köln-Weiß</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0274/2025"/>
+<summary>Antrag / Anfrage am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126170#beratung-2025-03-24-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0273/2025 Sachstand Ausweitung Tempo 30 km/h auf der Weißer Hauptstraße</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0273/2025"/>
+<summary>Antrag / Anfrage am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125850#beratung-2025-03-24-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0216/2025 Verbesserung der Beschilderung und Unterbindung des Campens „Am Treidelweg“ in Köln-Weiß</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0216/2025"/>
+<summary>Antrag / Anfrage am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126171#vorlage</id>
+<title>Neue Vorlage AN/0274/2025: Sachstand Sanierung Boulebahn in Köln-Weiß</title>
+<updated>2025-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0274/2025"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126170#vorlage</id>
+<title>Neue Vorlage AN/0273/2025: Sachstand Ausweitung Tempo 30 km/h auf der Weißer Hauptstraße</title>
+<updated>2025-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0273/2025"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125850#vorlage</id>
+<title>Neue Vorlage AN/0216/2025: Verbesserung der Beschilderung und Unterbindung des Campens „Am Treidelweg“ in Köln-Weiß</title>
+<updated>2025-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0216/2025"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124987#beratung-2025-02-06-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „endgültig zurückgezogen“ – 3921/2024 Beschluss über die Ablehnung eines Antrags auf Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) mit dem Arbeitstitel: Ludwigstraße / Weißer Hauptstraße - Einzelhandel und Wohnen - in Köln-Weiß</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3921/2024"/>
+<summary>Entscheidung am 2025-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125216#beratung-2025-01-27-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „ungeändert beschlossen“ – 0067/2025 Verlegung einer Rohwasserleitung DN 1.200 von der Brunnengalerie im Weißer Bogen zum Wasserwerk Hochkirchen</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0067/2025"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125191#beratung-2025-01-27-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 0044/2025 Beantwortung einer mündlichen Anfrage von RM Schlieben aus der Sitzung des Ausschusses Schule und Weiterbildung vom 28.10.2024 bezüglich eines Zeitplans für die Interimsbauten am Kaiserin-Theophanu-Gymnasium, Kantstraße 3, 51103 Köln</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0044/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124987#beratung-2025-01-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig zurückgezogen“ – 3921/2024 Beschluss über die Ablehnung eines Antrags auf Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) mit dem Arbeitstitel: Ludwigstraße / Weißer Hauptstraße - Einzelhandel und Wohnen - in Köln-Weiß</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3921/2024"/>
+<summary>Anhörung (BV) am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124555#beratung-2025-01-27-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 3660/2024 Beantwortung einer mündlichen Anfrage von Dr. Helge Schlieben, CDU-Fraktion, aus der Sitzung des Ausschusses Schule und Weiterbildung vom 28.10.2024 bezüglich eines Zeitplans für Sanierungen an der Kaiserin-Theophanu-Schule, Kantstraße 3, 51103 Köln</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3660/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125216#vorlage</id>
+<title>Neue Vorlage 0067/2025: Verlegung einer Rohwasserleitung DN 1.200 von der Brunnengalerie im Weißer Bogen zum Wasserwerk Hochkirchen</title>
+<updated>2025-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0067/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125191#vorlage</id>
+<title>Neue Vorlage 0044/2025: Beantwortung einer mündlichen Anfrage von RM Schlieben aus der Sitzung des Ausschusses Schule und Weiterbildung vom 28.10.2024 bezüglich eines Zeitplans für die Interimsbauten am Kaiserin-Theophanu-Gymnasium, Kantstraße 3, 51103 Köln</title>
+<updated>2025-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0044/2025"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124987#vorlage</id>
+<title>Neue Vorlage 3921/2024: Beschluss über die Ablehnung eines Antrags auf Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) mit dem Arbeitstitel: Ludwigstraße / Weißer Hauptstraße - Einzelhandel und Wohnen - in Köln-Weiß</title>
+<updated>2025-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3921/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124555#vorlage</id>
+<title>Neue Vorlage 3660/2024: Beantwortung einer mündlichen Anfrage von Dr. Helge Schlieben, CDU-Fraktion, aus der Sitzung des Ausschusses Schule und Weiterbildung vom 28.10.2024 bezüglich eines Zeitplans für Sanierungen an der Kaiserin-Theophanu-Schule, Kantstraße 3, 51103 Köln</title>
+<updated>2024-12-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3660/2024"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122363#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2106/2024 Widmung von Teilstücken der Straße Im Garten in Köln-Weiß, hier: Beantwortung eines Änderungsantrages zur Beschlussvorlage 1726/2023</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#2106/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123366#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2854/2024 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 16.09.2024 (AN/1177/2024) betreffend "Sachstand Sanierung Boulebahn in Köln-Weiß"</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#2854/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122363#vorlage</id>
+<title>Neue Vorlage 2106/2024: Widmung von Teilstücken der Straße Im Garten in Köln-Weiß, hier: Beantwortung eines Änderungsantrages zur Beschlussvorlage 1726/2023</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#2106/2024"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123366#vorlage</id>
+<title>Neue Vorlage 2854/2024: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 16.09.2024 (AN/1177/2024) betreffend "Sachstand Sanierung Boulebahn in Köln-Weiß"</title>
+<updated>2024-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#2854/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123267#beratung-2024-09-23-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1222/2024 Fort Deckstein/SC Blau-Weiß Köln: Qualitative und quantitative Optimierung der provisorischen Sanitäranlagen und Schaffung von Umkleidekabinen</title>
+<updated>2024-09-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1222/2024"/>
+<summary>Entscheidung am 2024-09-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123136#beratung-2024-09-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1177/2024 Sachstand Sanierung Boulebahn in Köln-Weiß</title>
+<updated>2024-09-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1177/2024"/>
+<summary>Antrag / Anfrage am 2024-09-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123267#vorlage</id>
+<title>Neue Vorlage AN/1222/2024: Fort Deckstein/SC Blau-Weiß Köln: Qualitative und quantitative Optimierung der provisorischen Sanitäranlagen und Schaffung von Umkleidekabinen</title>
+<updated>2024-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1222/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123136#vorlage</id>
+<title>Neue Vorlage AN/1177/2024: Sachstand Sanierung Boulebahn in Köln-Weiß</title>
+<updated>2024-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1177/2024"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117549#beratung-2024-03-18-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 3084/2023 Prioritätenliste Kunststoffrasen #8: Planungsbeschluss Generalsanierung Sportanlage Am Damm</title>
+<updated>2024-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3084/2023"/>
+<summary>Entscheidung am 2024-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117549#beratung-2024-03-14-Sportausschuss</id>
+<title>Sportausschuss: „ungeändert beschlossen“ – 3084/2023 Prioritätenliste Kunststoffrasen #8: Planungsbeschluss Generalsanierung Sportanlage Am Damm</title>
+<updated>2024-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3084/2023"/>
+<summary>Entscheidung am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119238#beratung-2024-01-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/0007/2024 Verlängerung de Fuß- und Radwegs an der Hammerschmidtstraße</title>
+<updated>2024-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0007/2024"/>
+<summary>Entscheidung am 2024-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117549#beratung-2024-01-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 3084/2023 Prioritätenliste Kunststoffrasen #8: Planungsbeschluss Generalsanierung Sportanlage Am Damm</title>
+<updated>2024-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3084/2023"/>
+<summary>Anhörung (BV) am 2024-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119238#vorlage</id>
+<title>Neue Vorlage AN/0007/2024: Verlängerung de Fuß- und Radwegs an der Hammerschmidtstraße</title>
+<updated>2024-01-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0007/2024"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117549#vorlage</id>
+<title>Neue Vorlage 3084/2023: Prioritätenliste Kunststoffrasen #8: Planungsbeschluss Generalsanierung Sportanlage Am Damm</title>
+<updated>2023-12-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3084/2023"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118453#beratung-2023-11-30-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „endgültig zurückgezogen“ – 3733/2023 Vergabe bezirksorientierter Mittel an die K.G. Blau-Weiß Alt Lunke 1936 e.V.</title>
+<updated>2023-11-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3733/2023"/>
+<summary>Entscheidung am 2023-11-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118632#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/2056/2023 Sachstand Schulwegsicherung Hammerschmidtstraße (AN/1736/2022, modifiziert)</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/2056/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116981#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/1513/2023 Sichere Querungsmöglichkeit Holzweg/Im Salzgrund in Köln-Weiß</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1513/2023"/>
+<summary>Antrag / Anfrage am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115503#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – 1726/2023 Widmung von Teilstücken der Straße im Garten in Köln-Weiß</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1726/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118632#vorlage</id>
+<title>Neue Vorlage AN/2056/2023: Sachstand Schulwegsicherung Hammerschmidtstraße (AN/1736/2022, modifiziert)</title>
+<updated>2023-11-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/2056/2023"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118453#vorlage</id>
+<title>Neue Vorlage 3733/2023: Vergabe bezirksorientierter Mittel an die K.G. Blau-Weiß Alt Lunke 1936 e.V.</title>
+<updated>2023-11-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3733/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116981#vorlage</id>
+<title>Neue Vorlage AN/1513/2023: Sichere Querungsmöglichkeit Holzweg/Im Salzgrund in Köln-Weiß</title>
+<updated>2023-11-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1513/2023"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115503#vorlage</id>
+<title>Neue Vorlage 1726/2023: Widmung von Teilstücken der Straße im Garten in Köln-Weiß</title>
+<updated>2023-11-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1726/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#vorlage</id>
+<title>Neue Vorlage 1196/2023: Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-10-26-Rat</id>
+<title>Rat: „geändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Entscheidung am 2023-10-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117293#beratung-2023-09-25-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1630/2023 Pflasterhofweg</title>
+<updated>2023-09-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1630/2023"/>
+<summary>Entscheidung am 2023-09-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117505#vorlage</id>
+<title>Neue Vorlage AN/1714/2023: Beschleunigungspaket weiterführende Schulen – Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstr. 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstr. 3 und der Heinrich-Böll-Gesamtschule Merianstr. 11-15 durch Ge</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1714/2023"/>
+<summary>Änderungsantrag BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117505#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Sache ist erledigt“ – AN/1714/2023 Beschleunigungspaket weiterführende Schulen – Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstr. 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstr. 3 und der Heinrich-Böll-Gesamtschule Merianstr. 11-15 durch Ge</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1714/2023"/>
+<summary>Antrag / Anfrage am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117452#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Sache ist erledigt“ – AN/1687/2023 Beschleunigungspaket weiterführende Schulen – Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstr. 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstr. 3 und der Heinrich-Böll-Gesamtschule Merianstr. 11-15 durch Ge</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1687/2023"/>
+<summary>Antrag / Anfrage am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Anhörung (BV) am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117452#vorlage</id>
+<title>Neue Vorlage AN/1687/2023: Beschleunigungspaket weiterführende Schulen – Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstr. 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstr. 3 und der Heinrich-Böll-Gesamtschule Merianstr. 11-15 durch Ge</title>
+<updated>2023-09-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1687/2023"/>
+<summary>Änderungsantrag BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117293#vorlage</id>
+<title>Neue Vorlage AN/1630/2023: Pflasterhofweg</title>
+<updated>2023-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1630/2023"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-09-07-Rat</id>
+<title>Rat: „geändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-09-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Entscheidung am 2023-09-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-09-04-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum in nachfolgende Gremien“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-31-Sportausschuss</id>
+<title>Sportausschuss: „ungeändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-31-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Anhörung (BV) am 2023-08-31; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117027#vorlage</id>
+<title>Neue Vorlage AN/1533/2023: TOP 6.1 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstraße 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstraße 3 und der Heinrich- Böll-Gesamtschule Merianstraße</title>
+<updated>2023-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1533/2023"/>
+<summary>Gem. Änderungsantrag nach § 13 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117027#beratung-2023-08-28-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „mit Änderungen empfohlen“ – AN/1533/2023 TOP 6.1 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau der Schulgebäude der Gesamtschule Holweide, Burgwiesenstraße 125, der Kaiserin-Theophanu-Schule, Gymnasium Kantstraße 3 und der Heinrich- Böll-Gesamtschule Merianstraße</title>
+<updated>2023-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1533/2023"/>
+<summary>Entscheidung am 2023-08-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-28-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „mit Änderungen empfohlen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-08-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-21-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ohne Votum in nachfolgende Gremien“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Vorberatung (Fachausschuss) am 2023-08-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114491#beratung-2023-08-14-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „ungeändert beschlossen“ – 1196/2023 Beschleunigungspaket weiterführende Schulen - Generalsanierung und Neubau d. Schulgebäude Gesamtschule Holweide, Burgwiesenstraße, der Kaiserin-Theophanu-Schule, Kantstraße und der Heinrich-Böll-Gesamtschule, Merianstraße - Planungs- und Baubeschluss</title>
+<updated>2023-08-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#1196/2023"/>
+<summary>Anhörung (BV) am 2023-08-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113072#beratung-2023-02-02-Bezirksvertretung%205%20%28Nippes%29</id>
+<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – 0285/2023 Vergabe bezirksorientierter Mittel an die KG Blau-Weiß Alt Lunke 1936 e.V.</title>
+<updated>2023-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0285/2023"/>
+<summary>Entscheidung am 2023-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113072#vorlage</id>
+<title>Neue Vorlage 0285/2023: Vergabe bezirksorientierter Mittel an die KG Blau-Weiß Alt Lunke 1936 e.V.</title>
+<updated>2023-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#0285/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/94204#beratung-2022-12-05-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „zurückgestellt“ – AN/0288/2020 Umgestaltung Kirchplatz Lövenich</title>
+<updated>2022-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/0288/2020"/>
+<summary>Entscheidung am 2022-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112013#beratung-2022-12-05-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3927/2022 Sachstand Umgestaltung Spielplatz Zum Hedelsberg / Im Salzgrund</title>
+<updated>2022-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3927/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112013#vorlage</id>
+<title>Neue Vorlage 3927/2022: Sachstand Umgestaltung Spielplatz Zum Hedelsberg / Im Salzgrund</title>
+<updated>2022-11-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#3927/2022"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111693#vorlage</id>
+<title>Neue Vorlage AN/1981/2022: Schulwegsicherung Hammerschmidtstraße - Ergänzung</title>
+<updated>2022-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1981/2022"/>
+<summary>Änderungsantrag BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111693#beratung-2022-11-07-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Sache ist erledigt“ – AN/1981/2022 Schulwegsicherung Hammerschmidtstraße - Ergänzung</title>
+<updated>2022-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1981/2022"/>
+<summary>Entscheidung am 2022-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/110916#beratung-2022-11-07-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/1736/2022 Schulwegsicherung Hammerschmidtstraße</title>
+<updated>2022-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1736/2022"/>
+<summary>Antrag / Anfrage am 2022-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/110916#vorlage</id>
+<title>Neue Vorlage AN/1736/2022: Schulwegsicherung Hammerschmidtstraße</title>
+<updated>2022-10-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:weiss#AN/1736/2022"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

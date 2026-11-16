@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-muengersdorf</id>
 <title>Ratsatlas Köln – Müngersdorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Müngersdorf</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-02T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-muengersdorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135434#vorlage</id>
+<title>Neue Vorlage AN/1745/2026: Ergänzungsantrag zu TOP Ö 8.1.10 – Mobilstation Aachener Straße/Gürtel</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1745/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135434#beratung-2026-11-02-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „endgültig zurückgezogen“ – AN/1745/2026 Ergänzungsantrag zu TOP Ö 8.1.10 – Mobilstation Aachener Straße/Gürtel</title>
+<updated>2026-11-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1745/2026"/>
+<summary>Entscheidung am 2026-11-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133119#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – 1641/2026 Stellungnahme der Verwaltung zu einer Anregung der Bezirksvertretung Ehrenfeld an den Rat aus der Sitzung vom 03.07.2025, Session-Nr. 1568/2025, betreffend "Reformierung des Rahmenplanungsbeirats Braunsfeld, Müngersdorf, Ehrenfeld"</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1641/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127489#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – 1568/2025 Anregung der Bezirksvertretung Ehrenfeld zu "Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld - AN/0576/2025"</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1568/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134107#beratung-2026-09-28-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 2222/2026 Abstellkonzept Leih E-Scooter und Fahrräder an Veranstaltungstagen im Sportpark Müngersdorf</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#2222/2026"/>
+<summary>Entscheidung am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134107#vorlage</id>
+<title>Neue Vorlage 2222/2026: Abstellkonzept Leih E-Scooter und Fahrräder an Veranstaltungstagen im Sportpark Müngersdorf</title>
+<updated>2026-09-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#2222/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134540#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert beschlossen“ – AN/1378/2026 Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1378/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134505#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „endgültig abgelehnt“ – AN/1355/2026 Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1355/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134505#vorlage</id>
+<title>Neue Vorlage AN/1355/2026: Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1355/2026"/>
+<summary>FDP/KSG Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134540#vorlage</id>
+<title>Neue Vorlage AN/1378/2026: Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1378/2026"/>
+<summary>Gem. Antrag nach § 3 (Rat) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133800#vorlage</id>
+<title>Neue Vorlage AN/1202/2026: Änderungsantrag der AfD-Fraktion zu Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1202/2026"/>
+<summary>AfD Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133800#beratung-2026-07-02-Rat</id>
+<title>Rat: „endgültig abgelehnt“ – AN/1202/2026 Änderungsantrag der AfD-Fraktion zu Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1202/2026"/>
+<summary>Antrag / Anfrage am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-07-02-Rat</id>
+<title>Rat: „geändert beschlossen“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3070/2025"/>
+<summary>Entscheidung am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133480#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – AN/1044/2026 Tempo 30 Goethestraße zwischen Bahnhof Lövenich und Aachener Straße</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1044/2026"/>
+<summary>Entscheidung am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133473#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1038/2026 Zebrastreifen Stolberger Straße im Bereich der Schulen</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1038/2026"/>
+<summary>Entscheidung am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133119#beratung-2026-06-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1641/2026 Stellungnahme der Verwaltung zu einer Anregung der Bezirksvertretung Ehrenfeld an den Rat aus der Sitzung vom 03.07.2025, Session-Nr. 1568/2025, betreffend "Reformierung des Rahmenplanungsbeirats Braunsfeld, Müngersdorf, Ehrenfeld"</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1641/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133119#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 1641/2026 Stellungnahme der Verwaltung zu einer Anregung der Bezirksvertretung Ehrenfeld an den Rat aus der Sitzung vom 03.07.2025, Session-Nr. 1568/2025, betreffend "Reformierung des Rahmenplanungsbeirats Braunsfeld, Müngersdorf, Ehrenfeld"</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1641/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert empfohlen“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3070/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132103#beratung-2026-06-22-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 0958/2026 Stellungnahme des behördlichen Datenschutzbeauftragten der Stadt Köln zur Antrag Top 2.2 zur Beiratssitzung am 02.02.2026 (AN/0378/2026)</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0958/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133480#vorlage</id>
+<title>Neue Vorlage AN/1044/2026: Tempo 30 Goethestraße zwischen Bahnhof Lövenich und Aachener Straße</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1044/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133473#vorlage</id>
+<title>Neue Vorlage AN/1038/2026: Zebrastreifen Stolberger Straße im Bereich der Schulen</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/1038/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133119#vorlage</id>
+<title>Neue Vorlage 1641/2026: Stellungnahme der Verwaltung zu einer Anregung der Bezirksvertretung Ehrenfeld an den Rat aus der Sitzung vom 03.07.2025, Session-Nr. 1568/2025, betreffend "Reformierung des Rahmenplanungsbeirats Braunsfeld, Müngersdorf, Ehrenfeld"</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1641/2026"/>
+<summary>Stellungnahme zu e. Antrag (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-06-16-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „mit Änderungen empfohlen“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3070/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-05-11-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ohne Votum behandelt“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-05-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3070/2025"/>
+<summary>Anhörung (BV) am 2026-05-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132687#vorlage</id>
+<title>Neue Vorlage AN/0762/2026: Ergänzungsantrag 5 Stellplätze im Bereich der Einmündung Stolberger Straße in den Kreisverkehr</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0762/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132687#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „endgültig abgelehnt“ – AN/0762/2026 Ergänzungsantrag 5 Stellplätze im Bereich der Einmündung Stolberger Straße in den Kreisverkehr</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0762/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132680#vorlage</id>
+<title>Neue Vorlage AN/0758/2026: Ergänzungsantrag 4 Aachener Straße Südseite</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0758/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132680#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „endgültig abgelehnt“ – AN/0758/2026 Ergänzungsantrag 4 Aachener Straße Südseite</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0758/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132678#vorlage</id>
+<title>Neue Vorlage AN/0756/2026: Ergänzungsantrag 2 Baubeschluss Neubau Anschluss Militärring an die Stolberger Straße , hier Aachender Straße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0756/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132678#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0756/2026 Ergänzungsantrag 2 Baubeschluss Neubau Anschluss Militärring an die Stolberger Straße , hier Aachender Straße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0756/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132675#vorlage</id>
+<title>Neue Vorlage AN/0755/2026: Ergänzungsantrag 1 Anschluss Stolberger Straße Bedarfsampel und sicherer Radweg</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0755/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132675#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0755/2026 Ergänzungsantrag 1 Anschluss Stolberger Straße Bedarfsampel und sicherer Radweg</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0755/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132207#beratung-2026-05-04-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 1044/2026 Beantwortung einer schriftlichen Anfrage des Naturschutzbeirates aus der Sitzung vom 15.03.2026 (AN/0512/2026) betreffend des GLB 3.04, Teilbereich Freiluga</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1044/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 0880/2026 Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0880/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131869#beratung-2026-05-04-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Sache ist erledigt“ – AN/0512/2026 Anfrage (von der Stein) zur Beteiligung von UNB und anerkannten Naturschutzvereinigungen bei befreiungsrelevanten Vorhaben oder Projekten durch die liegenschaftsverwaltende Dienststelle der Stadt Köln oder den Förderverein Freiluga e.V..</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0512/2026"/>
+<summary>Antrag / Anfrage am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3070/2025"/>
+<summary>Anhörung (BV) am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#beratung-2026-04-28-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ohne Votum behandelt“ – 3070/2025 Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3070/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-04-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132207#vorlage</id>
+<title>Neue Vorlage 1044/2026: Beantwortung einer schriftlichen Anfrage des Naturschutzbeirates aus der Sitzung vom 15.03.2026 (AN/0512/2026) betreffend des GLB 3.04, Teilbereich Freiluga</title>
+<updated>2026-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1044/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129717#vorlage</id>
+<title>Neue Vorlage 3070/2025: Baubeschluss für den Neubau des Anschlusses der Militärringstraße/Stolberger Straße, des Kreisverkehrsplatzes Stolberger Straße/Wendelinstraße/Vitalisstraße, für die Umgestaltung der Anschlüsse d. Militärringstraße/Aachener Straße und Militärringstr.</title>
+<updated>2026-04-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3070/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#vorlage</id>
+<title>Neue Vorlage 0880/2026: Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0880/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132103#vorlage</id>
+<title>Neue Vorlage 0958/2026: Stellungnahme des behördlichen Datenschutzbeauftragten der Stadt Köln zur Antrag Top 2.2 zur Beiratssitzung am 02.02.2026 (AN/0378/2026)</title>
+<updated>2026-04-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0958/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131870#vorlage</id>
+<title>Neue Vorlage AN/0513/2026: Antrag nach § 5.1 der Beirats- GO auf Begehung des Teilbereiches Freiluga des GLB 3.04 durch die UNB, Sachgebiete Landschafts- und Artenschutz.</title>
+<updated>2026-03-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0513/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131870#beratung-2026-03-16-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0513/2026 Antrag nach § 5.1 der Beirats- GO auf Begehung des Teilbereiches Freiluga des GLB 3.04 durch die UNB, Sachgebiete Landschafts- und Artenschutz.</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0513/2026"/>
+<summary>Entscheidung am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131869#vorlage</id>
+<title>Neue Vorlage AN/0512/2026: Anfrage (von der Stein) zur Beteiligung von UNB und anerkannten Naturschutzvereinigungen bei befreiungsrelevanten Vorhaben oder Projekten durch die liegenschaftsverwaltende Dienststelle der Stadt Köln oder den Förderverein Freiluga e.V..</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0512/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131869#beratung-2026-03-16-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0512/2026 Anfrage (von der Stein) zur Beteiligung von UNB und anerkannten Naturschutzvereinigungen bei befreiungsrelevanten Vorhaben oder Projekten durch die liegenschaftsverwaltende Dienststelle der Stadt Köln oder den Förderverein Freiluga e.V..</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0512/2026"/>
+<summary>Antrag / Anfrage am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131755#beratung-2026-03-16-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0461/2026 Sachstandsnachfrage (Herr von der Stein) zum Antrag des Naturschutzbeirates bei der Unteren Naturschutzbehörde auf Herausgabe der negativen Stellungnahme des Datenschutzbeauftragten zu einer Kameraüberwachung der Platane 1 am Bahnhof Belvedere</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0461/2026"/>
+<summary>Antrag / Anfrage am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131592#beratung-2026-03-16-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Übergang zum nächsten Tagesordnungspunkt“ – AN/0378/2026 Antrag des Naturschutzbeirates bei der Unteren Naturschutzbehörde der Stadt Köln auf Herausgabe der negativen Stellungnahme des Datenschutzbeauftragten der Stadt Köln zu einer Kameraüberwachung der Platane 1 im GLB 3.04, Teilbereich Bahnhof Belvedere</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0378/2026"/>
+<summary>Entscheidung am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131755#vorlage</id>
+<title>Neue Vorlage AN/0461/2026: Sachstandsnachfrage (Herr von der Stein) zum Antrag des Naturschutzbeirates bei der Unteren Naturschutzbehörde auf Herausgabe der negativen Stellungnahme des Datenschutzbeauftragten zu einer Kameraüberwachung der Platane 1 am Bahnhof Belvedere</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0461/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131592#vorlage</id>
+<title>Neue Vorlage AN/0378/2026: Antrag des Naturschutzbeirates bei der Unteren Naturschutzbehörde der Stadt Köln auf Herausgabe der negativen Stellungnahme des Datenschutzbeauftragten der Stadt Köln zu einer Kameraüberwachung der Platane 1 im GLB 3.04, Teilbereich Bahnhof Belvedere</title>
+<updated>2026-03-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0378/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130716#beratung-2026-02-02-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – AN/0051/2026 Anfrage (Westermann); Zaun im LSG Müngersdorf Nordfeld</title>
+<updated>2026-02-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0051/2026"/>
+<summary>Antrag / Anfrage am 2026-02-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130650#beratung-2026-01-26-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0020/2026 Schutz des Naturdenkmals Hangkante in Köln Müngersdorf</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0020/2026"/>
+<summary>Entscheidung am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130716#vorlage</id>
+<title>Neue Vorlage AN/0051/2026: Anfrage (Westermann); Zaun im LSG Müngersdorf Nordfeld</title>
+<updated>2026-01-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0051/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130650#vorlage</id>
+<title>Neue Vorlage AN/0020/2026: Schutz des Naturdenkmals Hangkante in Köln Müngersdorf</title>
+<updated>2026-01-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0020/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129728#beratung-2025-11-24-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „geändert beschlossen“ – 3080/2025 Ordnungsbehördliche Verordnung zur Ausweisung und Schutz des Naturdenkmals "Mittelterrassenkante in Müngersdorf" vom 21.04.2015, hier: Befreiung von den Verboten der Verordnung zum Schutz eines Naturdenkmals gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3080/2025"/>
+<summary>Entscheidung am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129728#vorlage</id>
+<title>Neue Vorlage 3080/2025: Ordnungsbehördliche Verordnung zur Ausweisung und Schutz des Naturdenkmals "Mittelterrassenkante in Müngersdorf" vom 21.04.2015, hier: Befreiung von den Verboten der Verordnung zum Schutz eines Naturdenkmals gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3080/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128775#beratung-2025-09-01-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 2373/2025 Umbau Hofanlage Wendelinstr. 48</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#2373/2025"/>
+<summary>Entscheidung am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128370#beratung-2025-09-01-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 2094/2025 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Parken Stolberger Str./Köln-Müngersdorf, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#2094/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128775#vorlage</id>
+<title>Neue Vorlage 2373/2025: Umbau Hofanlage Wendelinstr. 48</title>
+<updated>2025-07-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#2373/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127489#beratung-2025-07-03-Rat</id>
+<title>Rat: „verwiesen in nachfolgende Gremien (ohne Rücklauf)“ – 1568/2025 Anregung der Bezirksvertretung Ehrenfeld zu "Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld - AN/0576/2025"</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1568/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128052#vorlage</id>
+<title>Neue Vorlage 1917/2025: Beantwortung der Anfrage AN/0804/2025 der SPD-Fraktion betreffend Stand der Umsetzung der Sporthallenerweiterung für das Gymnasium Müngersdorf</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1917/2025"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128052#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „Kenntnis genommen“ – 1917/2025 Beantwortung der Anfrage AN/0804/2025 der SPD-Fraktion betreffend Stand der Umsetzung der Sporthallenerweiterung für das Gymnasium Müngersdorf</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1917/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128052#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 1917/2025 Beantwortung der Anfrage AN/0804/2025 der SPD-Fraktion betreffend Stand der Umsetzung der Sporthallenerweiterung für das Gymnasium Müngersdorf</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1917/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127954#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – AN/0804/2025 Stand der Umsetzung der Sporthallenerweiterung für das Gymnasium Müngersdorf</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0804/2025"/>
+<summary>Antrag / Anfrage am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128370#vorlage</id>
+<title>Neue Vorlage 2094/2025: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Parken Stolberger Str./Köln-Müngersdorf, Aktenzeichen: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#2094/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127907#beratung-2025-06-23-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0792/2025 Halteverbot Wendelinstraße in Köln Müngersdorf</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0792/2025"/>
+<summary>Entscheidung am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127898#beratung-2025-06-23-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0785/2025 Fortsetzung der Ausschreibung zur bundesligatauglichen Sporthalle in Köln Müngersdorf</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0785/2025"/>
+<summary>Entscheidung am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127489#vorlage</id>
+<title>Neue Vorlage 1568/2025: Anregung der Bezirksvertretung Ehrenfeld zu "Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld - AN/0576/2025"</title>
+<updated>2025-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1568/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127954#vorlage</id>
+<title>Neue Vorlage AN/0804/2025: Stand der Umsetzung der Sporthallenerweiterung für das Gymnasium Müngersdorf</title>
+<updated>2025-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0804/2025"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127907#vorlage</id>
+<title>Neue Vorlage AN/0792/2025: Halteverbot Wendelinstraße in Köln Müngersdorf</title>
+<updated>2025-06-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0792/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127898#vorlage</id>
+<title>Neue Vorlage AN/0785/2025: Fortsetzung der Ausschreibung zur bundesligatauglichen Sporthalle in Köln Müngersdorf</title>
+<updated>2025-06-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0785/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127186#beratung-2025-05-19-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – AN/0576/2025 Gemeinsamer Antrag der Fraktion Bündnis [Hausnummer ausgelassen]/Die Grünen, der Fraktion Die Linke/DIE PARTEI und Klimafreunde, betr.: Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0576/2025"/>
+<summary>Antrag / Anfrage am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127112#beratung-2025-05-19-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0542/2025 Reformierung des Rahmenplanungsbeirates Braunsfeld / Müngersdorf /Ehrenfeld</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0542/2025"/>
+<summary>Entscheidung am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127111#beratung-2025-05-19-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – AN/0541/2025 Sicherung Fuß- und Radweg Gerhard-Marcks-Weg/Leinsamenweg</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0541/2025"/>
+<summary>Entscheidung am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127110#beratung-2025-05-19-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0540/2025 Optimierung der Verkehrsführung Egelspfad</title>
+<updated>2025-05-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0540/2025"/>
+<summary>Entscheidung am 2025-05-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127186#vorlage</id>
+<title>Neue Vorlage AN/0576/2025: Gemeinsamer Antrag der Fraktion Bündnis [Hausnummer ausgelassen]/Die Grünen, der Fraktion Die Linke/DIE PARTEI und Klimafreunde, betr.: Reformierung des Rahmenplanungsbeirates Braunsfeld, Müngersdorf, Ehrenfeld</title>
+<updated>2025-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0576/2025"/>
+<summary>Gem. Antrag nach § 3 BV4 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127112#vorlage</id>
+<title>Neue Vorlage AN/0542/2025: Reformierung des Rahmenplanungsbeirates Braunsfeld / Müngersdorf /Ehrenfeld</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0542/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127111#vorlage</id>
+<title>Neue Vorlage AN/0541/2025: Sicherung Fuß- und Radweg Gerhard-Marcks-Weg/Leinsamenweg</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0541/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127110#vorlage</id>
+<title>Neue Vorlage AN/0540/2025: Optimierung der Verkehrsführung Egelspfad</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0540/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126911#beratung-2025-05-05-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 1238/2025 Leitungsverlegung (Gas) in der Herriger Gasse für die Bebauung Belvederestraße 40</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1238/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126911#vorlage</id>
+<title>Neue Vorlage 1238/2025: Leitungsverlegung (Gas) in der Herriger Gasse für die Bebauung Belvederestraße 40</title>
+<updated>2025-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#1238/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124474#beratung-2025-03-27-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 3613/2024 Aufhebung des Aufstellungsbeschlusses zur 3. Änderung des Bebauungsplanes Nr. 62450/04 (62450/04-03)</title>
+<updated>2025-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3613/2024"/>
+<summary>Entscheidung am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126151#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0265/2025 Schulwegsicherung Alter Militärring</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0265/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126088#vorlage</id>
+<title>Neue Vorlage 0664/2025: Eine Stadtteilbibliothek im Stadtbezirk Lindenthal</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0664/2025"/>
+<summary>Beantwortung e. Einwohneranfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126088#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 0664/2025 Eine Stadtteilbibliothek im Stadtbezirk Lindenthal</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0664/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125659#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 0340/2025 Kunststoffrasen Belagsreparatur auf der Sportanlage Westkampfbahn im Sportpark Müngersdorf</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0340/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 0163/2025 Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0163/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124474#beratung-2025-03-24-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 3613/2024 Aufhebung des Aufstellungsbeschlusses zur 3. Änderung des Bebauungsplanes Nr. 62450/04 (62450/04-03)</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3613/2024"/>
+<summary>Anhörung (BV) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#beratung-2025-03-18-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 0163/2025 Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0163/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#beratung-2025-03-11-Rahmenplanungsbeirat%20Braunsfeld%20%2F%20M%C3%BCngersdorf%20%2F%20Ehrenfeld</id>
+<title>Rahmenplanungsbeirat Braunsfeld / Müngersdorf / Ehrenfeld: „Kenntnis genommen“ – 0163/2025 Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0163/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126151#vorlage</id>
+<title>Neue Vorlage AN/0265/2025: Schulwegsicherung Alter Militärring</title>
+<updated>2025-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0265/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125659#beratung-2025-02-06-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 0340/2025 Kunststoffrasen Belagsreparatur auf der Sportanlage Westkampfbahn im Sportpark Müngersdorf</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0340/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124474#beratung-2025-02-06-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert beschlossen“ – 3613/2024 Aufhebung des Aufstellungsbeschlusses zur 3. Änderung des Bebauungsplanes Nr. 62450/04 (62450/04-03)</title>
+<updated>2025-02-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#3613/2024"/>
+<summary>Entscheidung am 2025-02-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125659#vorlage</id>
+<title>Neue Vorlage 0340/2025: Kunststoffrasen Belagsreparatur auf der Sportanlage Westkampfbahn im Sportpark Müngersdorf</title>
+<updated>2025-02-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0340/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125453#beratung-2025-02-03-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „endgültig zurückgezogen“ – AN/0079/2025 Antrag der SPD-Fraktion, betr.: Sichere Verkehrsführung im Gebiet Vitalisstraße/Girlitzweg/Widdersdorfer Straße und Teichrohrsängerweg</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0079/2025"/>
+<summary>Antrag / Anfrage am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125446#beratung-2025-02-03-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – 0220/2025 Baubeschluss für die provisorische Herstellung des Teichrohrsängerwegs zwischen Sporthallenzugang und Vitalisstraße</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0220/2025"/>
+<summary>Entscheidung am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#beratung-2025-02-03-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 0163/2025 Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-02-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0163/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-02-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125347#vorlage</id>
+<title>Neue Vorlage 0163/2025: Zeitnahe Realisierung des Anschlusses Stolberger Str. an die Militärringstraße und Ertüchtigung des Knotens Militärring / Aachener Str.</title>
+<updated>2025-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0163/2025"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125446#vorlage</id>
+<title>Neue Vorlage 0220/2025: Baubeschluss für die provisorische Herstellung des Teichrohrsängerwegs zwischen Sporthallenzugang und Vitalisstraße</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0220/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125217#beratung-2025-01-27-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „zurückgestellt“ – 0068/2025 Radwegesanierung entlang der Militärringstraße</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#0068/2025"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125453#vorlage</id>
+<title>Neue Vorlage AN/0079/2025: Antrag der SPD-Fraktion, betr.: Sichere Verkehrsführung im Gebiet Vitalisstraße/Girlitzweg/Widdersdorfer Straße und Teichrohrsängerweg</title>
+<updated>2025-01-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muengersdorf#AN/0079/2025"/>
+<summary>Antrag nach § 3 BV4 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

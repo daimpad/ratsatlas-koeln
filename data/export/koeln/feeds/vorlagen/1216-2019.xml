@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/1216-2019</id>
+<title>Vorlage 1216/2019: Sachstand Trimm-Dich-Pfad am Brücker Wildgehege</title>
+<subtitle>Verlauf der Vorlage 1216/2019: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2019-05-20T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/1216-2019.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:brueck#1216/2019"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/86616#beratung-2019-05-20-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „ohne Votum verwiesen mit erneuter Wiedervorlage“ – 1216/2019 Sachstand Trimm-Dich-Pfad am Brücker Wildgehege</title>
+<updated>2019-05-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:brueck#1216/2019"/>
+<summary>Kenntnisnahme (Mitteilung) am 2019-05-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/86616#vorlage</id>
+<title>Neue Vorlage 1216/2019: Sachstand Trimm-Dich-Pfad am Brücker Wildgehege</title>
+<updated>2019-04-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:brueck#1216/2019"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+</feed>

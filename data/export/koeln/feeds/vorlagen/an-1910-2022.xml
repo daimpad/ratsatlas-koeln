@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/an-1910-2022</id>
+<title>Vorlage AN/1910/2022: ÄA zu 2441/2022 / Straßen- und Wegekonzept der Stadt Köln gemäß § 8a KAG - Fortschreibung 2023 - 2027, Änderungsantrag Grüne</title>
+<subtitle>Verlauf der Vorlage AN/1910/2022: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2022-10-27T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/an-1910-2022.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1910/2022"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111478#vorlage</id>
+<title>Neue Vorlage AN/1910/2022: ÄA zu 2441/2022 / Straßen- und Wegekonzept der Stadt Köln gemäß § 8a KAG - Fortschreibung 2023 - 2027, Änderungsantrag Grüne</title>
+<updated>2022-10-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#AN/1910/2022"/>
+<summary>Änderungsantrag BV1 (Grüne) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+</feed>

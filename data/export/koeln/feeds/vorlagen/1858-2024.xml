@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/1858-2024</id>
+<title>Vorlage 1858/2024: Beantwortung der Anfrage der SPD-Fraktion AN/0085/2024: Aktualisierung des Kinderstadtplans für den Bezirk Chorweiler</title>
+<subtitle>Verlauf der Vorlage 1858/2024: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2024-06-10T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/1858-2024.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#1858/2024"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121979#vorlage</id>
+<title>Neue Vorlage 1858/2024: Beantwortung der Anfrage der SPD-Fraktion AN/0085/2024: Aktualisierung des Kinderstadtplans für den Bezirk Chorweiler</title>
+<updated>2024-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#1858/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121979#folge-AN%2F0085%2F2024</id>
+<title>Anfrage nach § 4 BV6 (SPD) AN/0085/2024: Aktualisierung des Kinderstadtplans für den Bezirk Chorweiler</title>
+<updated>2024-01-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#1858/2024"/>
+<summary>Folgevorlage zu 1858/2024</summary>
+</entry>
+</feed>

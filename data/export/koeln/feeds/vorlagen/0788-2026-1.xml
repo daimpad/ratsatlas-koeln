@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0788-2026-1</id>
+<title>Vorlage 0788/2026/1: Beantwortung einer mündlichen Nachfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.04.2026 bezüglich der geplanten Schulen in Rondorf aus der priorisierenden Schulbaumaßnahmenliste</title>
+<subtitle>Verlauf der Vorlage 0788/2026/1: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0788-2026-1.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rondorf#0788/2026/1"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132577#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0788/2026/1 Beantwortung einer mündlichen Nachfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.04.2026 bezüglich der geplanten Schulen in Rondorf aus der priorisierenden Schulbaumaßnahmenliste</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rondorf#0788/2026/1"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132577#vorlage</id>
+<title>Neue Vorlage 0788/2026/1: Beantwortung einer mündlichen Nachfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.04.2026 bezüglich der geplanten Schulen in Rondorf aus der priorisierenden Schulbaumaßnahmenliste</title>
+<updated>2026-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rondorf#0788/2026/1"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132577#folge-0788%2F2026</id>
+<title>Mitteilung Ausschuss 0788/2026: Statusbericht zur Priorisierenden Schulbaumaßnahmenliste, Stand: 31.12.2025</title>
+<updated>2026-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rondorf#0788/2026/1"/>
+<summary>Folgevorlage zu 0788/2026/1</summary>
+</entry>
+</feed>

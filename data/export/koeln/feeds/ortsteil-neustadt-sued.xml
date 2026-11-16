@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-neustadt-sued</id>
 <title>Ratsatlas Köln – Neustadt/Süd</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Neustadt/Süd</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-24T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-neustadt-sued.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130327#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „abgesetzt für diese Sitzung“ – 3497/2025 Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation Luxemburger Straße", und einer Verkehrszählung zur Aktualisierung der Datenbasis</title>
+<updated>2026-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#3497/2025"/>
+<summary>Entscheidung am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135407#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1730/2026 Kleingärten am Vorgebirgsglacisweg – Erhalt und Einbindung in die Parkstadt Süd</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1730/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135155#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2873/2026 Stellungnahme zu einem Antrag der SPD-Fraktion "Vorläufige Fertigstellung der Kreuzungsbereiche bei der Baustelle Nord-Süd-Stadtbahn, 3. Baustufe"</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2873/2026"/>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134441#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – AN/1321/2026 Vorläufige Fertigstellung der Kreuzungsbereiche bei der Baustelle Nord-Süd-Stadtbahn, 3. Baustufe</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1321/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135155#vorlage</id>
+<title>Neue Vorlage 2873/2026: Stellungnahme zu einem Antrag der SPD-Fraktion "Vorläufige Fertigstellung der Kreuzungsbereiche bei der Baustelle Nord-Süd-Stadtbahn, 3. Baustufe"</title>
+<updated>2026-11-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2873/2026"/>
+<summary>Stellungnahme zu einem Antrag (BV) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135320#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/1697/2026 T30/Fahrradstraße in der Dasselstraße und Abbau eines freilaufenden Rechtsabbiegers, Antrag B90/Die Grünen</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1697/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135117#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2843/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssituation Aachener Straße stadteinwärts, Übergang zur Richard-Wagner-Straße in Höhe der Kreuzung Moltkestraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2843/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134847#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert empfohlen“ – 1344/2026/1 Zügigkeitsreduzierung der Katholischen Grundschule Zugweg 42-44, 50667 Köln-Neustadt/Süd zum Schuljahr 2027/28</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1344/2026/1"/>
+<summary>Anhörung (BV) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134778#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 2629/2026 Barrierefreier Umbau der Bushaltestelle Ubierring</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2629/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133885#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2027/2026 Jahresbericht 2025 der Naturschutzwacht Bezirk Porz Süd</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2027/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115027#beratung-2026-11-05-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „vertagt“ – AN/0814/2023 Sachstand Verkehrsberuhigung und Begrünung Kaesenstraße (Antrag AN/0643/2021 aus 2021), Anfrage B90/Die Grünen</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0814/2023"/>
+<summary>Entscheidung am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135407#vorlage</id>
+<title>Neue Vorlage AN/1730/2026: Kleingärten am Vorgebirgsglacisweg – Erhalt und Einbindung in die Parkstadt Süd</title>
+<updated>2026-11-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1730/2026"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135320#vorlage</id>
+<title>Neue Vorlage AN/1697/2026: T30/Fahrradstraße in der Dasselstraße und Abbau eines freilaufenden Rechtsabbiegers, Antrag B90/Die Grünen</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1697/2026"/>
+<summary>Antrag nach § 3 BV1 (Grüne) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135117#vorlage</id>
+<title>Neue Vorlage 2843/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Verkehrssituation Aachener Straße stadteinwärts, Übergang zur Richard-Wagner-Straße in Höhe der Kreuzung Moltkestraße, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-10-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2843/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132967#beratung-2026-10-08-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1522/2026 Bedarfsfeststellungs- und Baubeschluss für den Abriss der Hallen 63, 65, sowie E12 bis E 18 auf dem Großmarktgelände / Parkstadt Süd</title>
+<updated>2026-10-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1522/2026"/>
+<summary>Entscheidung am 2026-10-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132726#beratung-2026-10-08-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1344/2026 Zügigkeitsreduzierung der Katholischen Grundschule Zugweg 42-44, 50667 Köln-Neustadt/Süd zum Schuljahr 2027/28</title>
+<updated>2026-10-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1344/2026"/>
+<summary>Entscheidung am 2026-10-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132967#beratung-2026-10-07-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert empfohlen“ – 1522/2026 Bedarfsfeststellungs- und Baubeschluss für den Abriss der Hallen 63, 65, sowie E12 bis E 18 auf dem Großmarktgelände / Parkstadt Süd</title>
+<updated>2026-10-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1522/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132726#beratung-2026-10-07-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1344/2026 Zügigkeitsreduzierung der Katholischen Grundschule Zugweg 42-44, 50667 Köln-Neustadt/Süd zum Schuljahr 2027/28</title>
+<updated>2026-10-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1344/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134847#vorlage</id>
+<title>Neue Vorlage 1344/2026/1: Zügigkeitsreduzierung der Katholischen Grundschule Zugweg 42-44, 50667 Köln-Neustadt/Süd zum Schuljahr 2027/28</title>
+<updated>2026-10-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1344/2026/1"/>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132726#vorlage</id>
+<title>Neue Vorlage 1344/2026: Zügigkeitsreduzierung der Katholischen Grundschule Zugweg 42-44, 50667 Köln-Neustadt/Süd zum Schuljahr 2027/28</title>
+<updated>2026-10-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1344/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133808#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 1968/2026 Beantwortung einer mündlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung des Ausschusses für Stadtentwicklung und regionale Zusammenarbeit vom 07.05.2026 betreffend Erneuerung der Eisenbahnüberführung Luxemburger Straße 0373/2026</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1968/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133438#beratung-2026-10-01-Sportausschuss</id>
+<title>Sportausschuss: „vertagt“ – AN/1013/2026 Sachstand zur Finanzierung der Generalsanierung der Sporthalle Süd in Köln-Zollstock</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1013/2026"/>
+<summary>Antrag / Anfrage am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132967#beratung-2026-10-01-Betriebsausschuss%20Parkstadt%20S%C3%BCd</id>
+<title>Betriebsausschuss Parkstadt Süd: „ungeändert empfohlen“ – 1522/2026 Bedarfsfeststellungs- und Baubeschluss für den Abriss der Hallen 63, 65, sowie E12 bis E 18 auf dem Großmarktgelände / Parkstadt Süd</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1522/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132967#beratung-2026-10-01-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „ungeändert empfohlen“ – 1522/2026 Bedarfsfeststellungs- und Baubeschluss für den Abriss der Hallen 63, 65, sowie E12 bis E 18 auf dem Großmarktgelände / Parkstadt Süd</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1522/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133885#beratung-2026-09-28-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 2027/2026 Jahresbericht 2025 der Naturschutzwacht Bezirk Porz Süd</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2027/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130327#beratung-2026-09-28-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „geändert beschlossen“ – 3497/2025 Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation Luxemburger Straße", und einer Verkehrszählung zur Aktualisierung der Datenbasis</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#3497/2025"/>
+<summary>Anhörung (BV) am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134778#vorlage</id>
+<title>Neue Vorlage 2629/2026: Barrierefreier Umbau der Bushaltestelle Ubierring</title>
+<updated>2026-09-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2629/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134800#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „endgültig abgelehnt“ – AN/1518/2026 Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1518/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134734#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „endgültig abgelehnt“ – AN/1476/2026 Änderungsantrag zu TOP 2.1 - Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1476/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134540#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert beschlossen“ – AN/1378/2026 Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1378/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134505#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „endgültig abgelehnt“ – AN/1355/2026 Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1355/2026"/>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134260#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Kenntnis genommen“ – 2352/2026 3. Baustufe Nord-Süd Stadtbahn - Änderung Verkehrsführung Bonner Straße zwischen Gürtel und Marktstraße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2352/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132967#beratung-2026-09-22-Liegenschaftsausschuss</id>
+<title>Liegenschaftsausschuss: „ungeändert empfohlen“ – 1522/2026 Bedarfsfeststellungs- und Baubeschluss für den Abriss der Hallen 63, 65, sowie E12 bis E 18 auf dem Großmarktgelände / Parkstadt Süd</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1522/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130327#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert beschlossen“ – 3497/2025 Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation Luxemburger Straße", und einer Verkehrszählung zur Aktualisierung der Datenbasis</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#3497/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134800#vorlage</id>
+<title>Neue Vorlage AN/1518/2026: Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1518/2026"/>
+<summary>FDP/KSG Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134741#vorlage</id>
+<title>Neue Vorlage AN/1483/2026: Lärmbelastung Luxemburger Straße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1483/2026"/>
+<summary>CDU Anfrage nach § 4 · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134734#vorlage</id>
+<title>Neue Vorlage AN/1476/2026: Änderungsantrag zu TOP 2.1 - Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1476/2026"/>
+<summary>CDU Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134505#vorlage</id>
+<title>Neue Vorlage AN/1355/2026: Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1355/2026"/>
+<summary>FDP/KSG Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134260#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2352/2026 3. Baustufe Nord-Süd Stadtbahn - Änderung Verkehrsführung Bonner Straße zwischen Gürtel und Marktstraße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2352/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132967#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – 1522/2026 Bedarfsfeststellungs- und Baubeschluss für den Abriss der Hallen 63, 65, sowie E12 bis E 18 auf dem Großmarktgelände / Parkstadt Süd</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1522/2026"/>
+<summary>Anhörung (BV) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132967#vorlage</id>
+<title>Neue Vorlage 1522/2026: Bedarfsfeststellungs- und Baubeschluss für den Abriss der Hallen 63, 65, sowie E12 bis E 18 auf dem Großmarktgelände / Parkstadt Süd</title>
+<updated>2026-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1522/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134290#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „geändert beschlossen“ – 2377/2026 Weihnachtsmarkt auf dem Chlodwigplatz 2026</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2377/2026"/>
+<summary>Entscheidung am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133104#beratung-2026-09-17-Ausschuss%20Soziales%2C%20Gesundheit%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss Soziales, Gesundheit, Seniorinnen und Senioren: „Kenntnis genommen“ – 1628/2026 GRÜNGÜRTEL Parkstadt Süd, hier: Öffentlichkeitsbeteiligung im Rahmen der Entwurfsplanung</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1628/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130327#beratung-2026-09-17-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert empfohlen“ – 3497/2025 Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation Luxemburger Straße", und einer Verkehrszählung zur Aktualisierung der Datenbasis</title>
+<updated>2026-09-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#3497/2025"/>
+<summary>Anhörung (BV) am 2026-09-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134260#vorlage</id>
+<title>Neue Vorlage 2352/2026: 3. Baustufe Nord-Süd Stadtbahn - Änderung Verkehrsführung Bonner Straße zwischen Gürtel und Marktstraße</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2352/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134540#vorlage</id>
+<title>Neue Vorlage AN/1378/2026: Umnutzung der bisherigen Busfahrstreifen auf der Aachener Straße</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1378/2026"/>
+<summary>Gem. Antrag nach § 3 (Rat) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134441#vorlage</id>
+<title>Neue Vorlage AN/1321/2026: Vorläufige Fertigstellung der Kreuzungsbereiche bei der Baustelle Nord-Süd-Stadtbahn, 3. Baustufe</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1321/2026"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134356#vorlage</id>
+<title>Neue Vorlage AN/1290/2026: Betriebskonzept für die dritte Baustufe der Nord-Süd-Stadtbahn</title>
+<updated>2026-09-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1290/2026"/>
+<summary>FDP/KSG Anfrage nach § 4 · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134290#vorlage</id>
+<title>Neue Vorlage 2377/2026: Weihnachtsmarkt auf dem Chlodwigplatz 2026</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2377/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133885#vorlage</id>
+<title>Neue Vorlage 2027/2026: Jahresbericht 2025 der Naturschutzwacht Bezirk Porz Süd</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2027/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133104#beratung-2026-09-01-Stadtarbeitsgemeinschaft%20Behindertenpolitik</id>
+<title>Stadtarbeitsgemeinschaft Behindertenpolitik: „Kenntnis genommen“ – 1628/2026 GRÜNGÜRTEL Parkstadt Süd, hier: Öffentlichkeitsbeteiligung im Rahmen der Entwurfsplanung</title>
+<updated>2026-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1628/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130327#vorlage</id>
+<title>Neue Vorlage 3497/2025: Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation Luxemburger Straße", und einer Verkehrszählung zur Aktualisierung der Datenbasis</title>
+<updated>2026-07-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#3497/2025"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133808#vorlage</id>
+<title>Neue Vorlage 1968/2026: Beantwortung einer mündlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung des Ausschusses für Stadtentwicklung und regionale Zusammenarbeit vom 07.05.2026 betreffend Erneuerung der Eisenbahnüberführung Luxemburger Straße 0373/2026</title>
+<updated>2026-07-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1968/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133813#vorlage</id>
+<title>Neue Vorlage AN/1207/2026: Baubeschluss für die Instandsetzung der Trogwände Stadtbahnrampe Barbarossaplatz    TOP 10.11</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1207/2026"/>
+<summary>AfD Änderungsantrag nach § 13 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133813#beratung-2026-07-02-Rat</id>
+<title>Rat: „endgültig abgelehnt“ – AN/1207/2026 Baubeschluss für die Instandsetzung der Trogwände Stadtbahnrampe Barbarossaplatz    TOP 10.11</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1207/2026"/>
+<summary>Antrag / Anfrage am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133600#vorlage</id>
+<title>Neue Vorlage 1871/2026: Beantwortung einer schriftlichen Anfrage der Fraktion DIE LINKE zu der Sitzung des Rates am 02.07.2026 (AN/1099/2026) betreffend "Kostenstand städtiischer Eigenanteil Nord-Süd Stadtbahn"</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1871/2026"/>
+<summary>Beantwortung einer Anfrage (Rat bzw. HA) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133600#beratung-2026-07-02-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 1871/2026 Beantwortung einer schriftlichen Anfrage der Fraktion DIE LINKE zu der Sitzung des Rates am 02.07.2026 (AN/1099/2026) betreffend "Kostenstand städtiischer Eigenanteil Nord-Süd Stadtbahn"</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1871/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133589#beratung-2026-07-02-Rat</id>
+<title>Rat: „Sache ist erledigt“ – AN/1099/2026 Kosten städtischer Eigenanteil Nord-Süd-Stadtbahn</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1099/2026"/>
+<summary>Antrag / Anfrage am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130548#beratung-2026-07-02-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0016/2026 Baubeschluss für die Instandsetzung der Trogwände Stadtbahnrampe Barbarossaplatz</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#0016/2026"/>
+<summary>Entscheidung am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125061#beratung-2026-07-02-Rat</id>
+<title>Rat: „endgültig zurückgezogen“ – AN/1773/2024 Änderungsantrag zu TOP 10.10 - Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1773/2024"/>
+<summary>Antrag / Anfrage am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122740#beratung-2026-07-02-Rat</id>
+<title>Rat: „geändert beschlossen“ – 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd</title>
+<updated>2026-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2446/2024"/>
+<summary>Entscheidung am 2026-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133650#beratung-2026-06-30-Betriebsausschuss%20Parkstadt%20S%C3%BCd</id>
+<title>Betriebsausschuss Parkstadt Süd: „Kenntnis genommen“ – 1891/2026 Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke betreffend „Grundstücksvermarktung Parkstadt Süd“ (AN/0904/2026)</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1891/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133400#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – 1794/2026 Beantwortung einer schriftlichen Anfrage der FDP/KSG-Fraktion betreffend "Verknüpfung Linie 18 mit Bahnhof Köln-Süd" (AN/0629/2026)</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1794/2026"/>
+<summary>Antrag / Anfrage am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133241#beratung-2026-06-30-Betriebsausschuss%20Parkstadt%20S%C3%BCd</id>
+<title>Betriebsausschuss Parkstadt Süd: „Kenntnis genommen“ – AN/0904/2026 Grundstücksvermarktung Parkstadt Süd</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0904/2026"/>
+<summary>Antrag / Anfrage am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133104#beratung-2026-06-30-Betriebsausschuss%20Parkstadt%20S%C3%BCd</id>
+<title>Betriebsausschuss Parkstadt Süd: „Kenntnis genommen“ – 1628/2026 GRÜNGÜRTEL Parkstadt Süd, hier: Öffentlichkeitsbeteiligung im Rahmen der Entwurfsplanung</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1628/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133048#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „mit Änderungen empfohlen“ – AN/0848/2026 Änderungantrag zur Vorlage 2446/2024 - Weiterplanungsbeschluss auf Basis des Vorentwurfs Grüngürtel Parkstadt Süd</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0848/2026"/>
+<summary>Entscheidung am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132369#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Kenntnis genommen“ – AN/0629/2026 Verknüpfung Linie 18 mit Bahnhof Köln-Süd</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0629/2026"/>
+<summary>Antrag / Anfrage am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131204#beratung-2026-06-30-Betriebsausschuss%20Parkstadt%20S%C3%BCd</id>
+<title>Betriebsausschuss Parkstadt Süd: „mit Änderungen empfohlen“ – 0398/2026 Grundsatzbeschluss zur Festlegung der ÖPNV-Erschließung für das Stadtentwicklungsprojekt Parkstadt Süd</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#0398/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131204#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „geändert beschlossen“ – 0398/2026 Grundsatzbeschluss zur Festlegung der ÖPNV-Erschließung für das Stadtentwicklungsprojekt Parkstadt Süd</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#0398/2026"/>
+<summary>Entscheidung am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130865#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Sache ist erledigt“ – AN/0123/2026 Änderungsantrag zur Vorlage 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd (zu Ziffer 2)</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0123/2026"/>
+<summary>Antrag / Anfrage am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130548#beratung-2026-06-30-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert empfohlen“ – 0016/2026 Baubeschluss für die Instandsetzung der Trogwände Stadtbahnrampe Barbarossaplatz</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#0016/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127447#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Sache ist erledigt“ – AN/0677/2025 Änderungsantrag zu TOP 6.1.1 - "Änderungsantrag der CDU-Fraktion zur Ziffer 2 betreffend „Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd“</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0677/2025"/>
+<summary>Antrag / Anfrage am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125061#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „Sache ist erledigt“ – AN/1773/2024 Änderungsantrag zu TOP 10.10 - Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1773/2024"/>
+<summary>Antrag / Anfrage am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122740#beratung-2026-06-30-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
+<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „mit Änderungen empfohlen“ – 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd</title>
+<updated>2026-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2446/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133492#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/1052/2026 Tempo 30 auf der Gleuler Straße zwischen Bachemer Straße und Zülpicher Straße</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1052/2026"/>
+<summary>Entscheidung am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133104#beratung-2026-06-29-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „Kenntnis genommen“ – 1628/2026 GRÜNGÜRTEL Parkstadt Süd, hier: Öffentlichkeitsbeteiligung im Rahmen der Entwurfsplanung</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1628/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130865#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – AN/0123/2026 Änderungsantrag zur Vorlage 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd (zu Ziffer 2)</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0123/2026"/>
+<summary>Antrag / Anfrage am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130548#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „unter Vorbehalt beschlossen“ – 0016/2026 Baubeschluss für die Instandsetzung der Trogwände Stadtbahnrampe Barbarossaplatz</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#0016/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125061#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – AN/1773/2024 Änderungsantrag zu TOP 10.10 - Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1773/2024"/>
+<summary>Antrag / Anfrage am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122740#beratung-2026-06-29-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd</title>
+<updated>2026-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#2446/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133124#beratung-2026-06-25-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert beschlossen“ – 1643/2026 Teileinziehung der Lochnerstraße in Köln-Neustadt/Süd - Schulstraße</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1643/2026"/>
+<summary>Entscheidung am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133104#beratung-2026-06-25-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „Kenntnis genommen“ – 1628/2026 GRÜNGÜRTEL Parkstadt Süd, hier: Öffentlichkeitsbeteiligung im Rahmen der Entwurfsplanung</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1628/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133048#vorlage</id>
+<title>Neue Vorlage AN/0848/2026: Änderungantrag zur Vorlage 2446/2024 - Weiterplanungsbeschluss auf Basis des Vorentwurfs Grüngürtel Parkstadt Süd</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0848/2026"/>
+<summary>Gem. Änderungsantrag (Rat) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131204#beratung-2026-06-25-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „mit Änderungen empfohlen“ – 0398/2026 Grundsatzbeschluss zur Festlegung der ÖPNV-Erschließung für das Stadtentwicklungsprojekt Parkstadt Süd</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#0398/2026"/>
+<summary>Anhörung (BV) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130548#beratung-2026-06-25-Bezirksvertretung%201%20%28Innenstadt%29</id>
+<title>Bezirksvertretung 1 (Innenstadt): „ungeändert empfohlen“ – 0016/2026 Baubeschluss für die Instandsetzung der Trogwände Stadtbahnrampe Barbarossaplatz</title>
+<updated>2026-06-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#0016/2026"/>
+<summary>Anhörung (BV) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133104#beratung-2026-06-23-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 1628/2026 GRÜNGÜRTEL Parkstadt Süd, hier: Öffentlichkeitsbeteiligung im Rahmen der Entwurfsplanung</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1628/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133650#vorlage</id>
+<title>Neue Vorlage 1891/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke betreffend „Grundstücksvermarktung Parkstadt Süd“ (AN/0904/2026)</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1891/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133458#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1027/2026 Schulentwicklungsplanung in der Parkstadt Süd in Köln-Bayenthal</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1027/2026"/>
+<summary>Antrag / Anfrage am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133205#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0889/2026 Mündliche Berichterstattung zur Sanierung des Jean-Löring-Sportparks (Sportpark Süd) und damit verbundener Fragestellungen</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0889/2026"/>
+<summary>Antrag / Anfrage am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133104#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1628/2026 GRÜNGÜRTEL Parkstadt Süd, hier: Öffentlichkeitsbeteiligung im Rahmen der Entwurfsplanung</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1628/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130548#vorlage</id>
+<title>Neue Vorlage 0016/2026: Baubeschluss für die Instandsetzung der Trogwände Stadtbahnrampe Barbarossaplatz</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#0016/2026"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133589#vorlage</id>
+<title>Neue Vorlage AN/1099/2026: Kosten städtischer Eigenanteil Nord-Süd-Stadtbahn</title>
+<updated>2026-06-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1099/2026"/>
+<summary>Die Linke. Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133438#vorlage</id>
+<title>Neue Vorlage AN/1013/2026: Sachstand zur Finanzierung der Generalsanierung der Sporthalle Süd in Köln-Zollstock</title>
+<updated>2026-06-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1013/2026"/>
+<summary>FDP/KSG Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133281#beratung-2026-06-18-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0928/2026 Quartiersentwicklung Kalk Süd ohne Städtebauförderung und ISEK?</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0928/2026"/>
+<summary>Antrag / Anfrage am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133104#beratung-2026-06-18-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „Kenntnis genommen“ – 1628/2026 GRÜNGÜRTEL Parkstadt Süd, hier: Öffentlichkeitsbeteiligung im Rahmen der Entwurfsplanung</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1628/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133496#vorlage</id>
+<title>Neue Vorlage AN/1054/2026: Änderungsantrag zu Top 4.2, Grundsatzbeschluss zur Festlegung der ÖPNV-Erschließung für das Stadtentwicklungsprojekt Parkstadt Süd</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1054/2026"/>
+<summary>Gem. Änderungsantrag (Rat) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133496#beratung-2026-06-16-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert empfohlen“ – AN/1054/2026 Änderungsantrag zu Top 4.2, Grundsatzbeschluss zur Festlegung der ÖPNV-Erschließung für das Stadtentwicklungsprojekt Parkstadt Süd</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1054/2026"/>
+<summary>Antrag / Anfrage am 2026-06-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133492#vorlage</id>
+<title>Neue Vorlage AN/1052/2026: Tempo 30 auf der Gleuler Straße zwischen Bachemer Straße und Zülpicher Straße</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1052/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133458#vorlage</id>
+<title>Neue Vorlage AN/1027/2026: Schulentwicklungsplanung in der Parkstadt Süd in Köln-Bayenthal</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1027/2026"/>
+<summary>Anfrage nach § 4 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133400#vorlage</id>
+<title>Neue Vorlage 1794/2026: Beantwortung einer schriftlichen Anfrage der FDP/KSG-Fraktion betreffend "Verknüpfung Linie 18 mit Bahnhof Köln-Süd" (AN/0629/2026)</title>
+<updated>2026-06-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#1794/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>

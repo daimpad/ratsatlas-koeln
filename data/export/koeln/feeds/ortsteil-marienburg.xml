@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-marienburg</id>
 <title>Ratsatlas Köln – Marienburg</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Marienburg</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-16T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-marienburg.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135488#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/1757/2026 Dauerhafte Sperrung Zufahrt Brohler Str.im Knotenpunkt Bonner Straße</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1757/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135488#vorlage</id>
+<title>Neue Vorlage AN/1757/2026: Dauerhafte Sperrung Zufahrt Brohler Str.im Knotenpunkt Bonner Straße</title>
+<updated>2026-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1757/2026"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134888#beratung-2026-10-01-Sportausschuss</id>
+<title>Sportausschuss: „vertagt“ – AN/1557/2026 Künftige Nutzung der Sportanlage Konrad-Adenauer-Straße</title>
+<updated>2026-10-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1557/2026"/>
+<summary>Antrag / Anfrage am 2026-10-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#beratung-2026-09-28-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 2325/2026 Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#2325/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134888#vorlage</id>
+<title>Neue Vorlage AN/1557/2026: Künftige Nutzung der Sportanlage Konrad-Adenauer-Straße</title>
+<updated>2026-09-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1557/2026"/>
+<summary>SPD Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134753#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2612/2026 Sachstand Einrichtung Fahrradstraße Goethestraße</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#2612/2026"/>
+<summary>Entscheidung am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132601#beratung-2026-09-21-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1274/2026 Beantwortung einer mündlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.04.2026 bezüglich des Neubaus der Gemeinschaftsgrundschule Gaedestraße und der FDP-Fraktion zu den Toiletten im Gymnasium Rodenkirchen</title>
+<updated>2026-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1274/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134753#vorlage</id>
+<title>Neue Vorlage 2612/2026: Sachstand Einrichtung Fahrradstraße Goethestraße</title>
+<updated>2026-09-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#2612/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134230#vorlage</id>
+<title>Neue Vorlage 2325/2026: Erhöhung der Verkehrssicherheit auf der Kreisstraße (K4) im Bereich Herkulestunnel sowie Ausweitung der Geschwindigkeitsüberwachung auf der BAB 4 im Bereich Eifeltor</title>
+<updated>2026-09-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#2325/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132601#vorlage</id>
+<title>Neue Vorlage 1274/2026: Beantwortung einer mündlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.04.2026 bezüglich des Neubaus der Gemeinschaftsgrundschule Gaedestraße und der FDP-Fraktion zu den Toiletten im Gymnasium Rodenkirchen</title>
+<updated>2026-09-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1274/2026"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133252#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0912/2026 Änderung der Taktung der Bedarfs-Lichtsignalanlagen auf dem Raderberggürtel in Höhe der Els-Vordemberge-Straße in Köln-Marienburg</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0912/2026"/>
+<summary>Antrag / Anfrage am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133247#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – AN/0907/2026 Änderungsantrag zum Antrag 0561/2026 - Sicherung des Bahnübergangs der Station "Bayenthalgürtel“ der Stadtbahnlinien 16/17</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0907/2026"/>
+<summary>Antrag / Anfrage am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132377#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1146/2026 Schrifliche Anfrage der FDP/KGS-Fraktion in der Bezirksvertretung Köln-Rodenkirchen (AN/0555/2026) betreffend "Zukunft der Verkehrsverbindung Im Wasserwerkswäldchen in Rondorf-Hochkirchen"</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1146/2026"/>
+<summary>Antrag / Anfrage am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132183#beratung-2026-06-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/0561/2026 Sicherung des Bahnübergangs der Station „Bayenthalgürtel“ der Stadtbahnlinien 16/17</title>
+<updated>2026-06-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0561/2026"/>
+<summary>Entscheidung am 2026-06-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133252#vorlage</id>
+<title>Neue Vorlage AN/0912/2026: Änderung der Taktung der Bedarfs-Lichtsignalanlagen auf dem Raderberggürtel in Höhe der Els-Vordemberge-Straße in Köln-Marienburg</title>
+<updated>2026-06-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0912/2026"/>
+<summary>Gem. Antrag nach § 3 BV2 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133247#vorlage</id>
+<title>Neue Vorlage AN/0907/2026: Änderungsantrag zum Antrag 0561/2026 - Sicherung des Bahnübergangs der Station "Bayenthalgürtel“ der Stadtbahnlinien 16/17</title>
+<updated>2026-06-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0907/2026"/>
+<summary>Gem. Antrag nach § 3 BV2 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132377#vorlage</id>
+<title>Neue Vorlage 1146/2026: Schrifliche Anfrage der FDP/KGS-Fraktion in der Bezirksvertretung Köln-Rodenkirchen (AN/0555/2026) betreffend "Zukunft der Verkehrsverbindung Im Wasserwerkswäldchen in Rondorf-Hochkirchen"</title>
+<updated>2026-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1146/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#beratung-2026-05-04-Bezirksvertretung%203%20%28Lindenthal%29</id>
+<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – 0880/2026 Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-05-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0880/2026"/>
+<summary>Entscheidung am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132121#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0555/2026 Zukunft der Verkehrsverbindung Im Wasserwerkswäldchen in Rondorf-Hochkirchen</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0555/2026"/>
+<summary>Antrag / Anfrage am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132119#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0972/2026 Beantwortung einer mündlichen Anfrage der CDU-Fraktion in der Sitzung der Bezirksvertretung Rodenkirchen vom 16.03.2026  betreffend „Sachstand Ausweichverkehre in Marienburg, Bayenthal, Raderberg und Raderthal (AN/0554/2025)"</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0972/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131826#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0740/2026 Beantwortung einer schriftlichen Anfrage der FDP/KSG Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen am 12.05.2025 betr. "Radwege im Bereich Beginn Bayenthalgürtel bis Ende Zollstockgürtel, Teil II" (AN/0461/2025)</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0740/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131826#vorlage</id>
+<title>Neue Vorlage 0740/2026: Beantwortung einer schriftlichen Anfrage der FDP/KSG Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen am 12.05.2025 betr. "Radwege im Bereich Beginn Bayenthalgürtel bis Ende Zollstockgürtel, Teil II" (AN/0461/2025)</title>
+<updated>2026-04-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0740/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132183#vorlage</id>
+<title>Neue Vorlage AN/0561/2026: Sicherung des Bahnübergangs der Station „Bayenthalgürtel“ der Stadtbahnlinien 16/17</title>
+<updated>2026-04-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0561/2026"/>
+<summary>Antrag nach § 3 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132016#vorlage</id>
+<title>Neue Vorlage 0880/2026: Baubeschluss für die Sanierung des Carl-von-Linné-Wegs im Abschnitt Belvederestraße bis Militärringstraße</title>
+<updated>2026-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0880/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132121#vorlage</id>
+<title>Neue Vorlage AN/0555/2026: Zukunft der Verkehrsverbindung Im Wasserwerkswäldchen in Rondorf-Hochkirchen</title>
+<updated>2026-04-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0555/2026"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132119#vorlage</id>
+<title>Neue Vorlage 0972/2026: Beantwortung einer mündlichen Anfrage der CDU-Fraktion in der Sitzung der Bezirksvertretung Rodenkirchen vom 16.03.2026  betreffend „Sachstand Ausweichverkehre in Marienburg, Bayenthal, Raderberg und Raderthal (AN/0554/2025)"</title>
+<updated>2026-04-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0972/2026"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131641#beratung-2026-03-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – AN/0409/2026 Verbesserung der Parksituation auf der Konrad-Adenauer-Straße</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0409/2026"/>
+<summary>Antrag / Anfrage am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131594#beratung-2026-03-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0379/2026 Rechtswidrige Umgestaltung der Goethestraße in eine Fahrradstraße</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0379/2026"/>
+<summary>Antrag / Anfrage am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131418#beratung-2026-03-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0544/2026 Beantwortung einer Anfrage der CDU-Fraktion in der BV Rodenkirchen am 12.05.2025 betreffend „Sachstand Ausweichverkehre in Marienburg, Bayenthal, Raderberg und Raderthal“ (AN/0554/2025)</title>
+<updated>2026-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0544/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131641#vorlage</id>
+<title>Neue Vorlage AN/0409/2026: Verbesserung der Parksituation auf der Konrad-Adenauer-Straße</title>
+<updated>2026-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0409/2026"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131594#vorlage</id>
+<title>Neue Vorlage AN/0379/2026: Rechtswidrige Umgestaltung der Goethestraße in eine Fahrradstraße</title>
+<updated>2026-03-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0379/2026"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131418#vorlage</id>
+<title>Neue Vorlage 0544/2026: Beantwortung einer Anfrage der CDU-Fraktion in der BV Rodenkirchen am 12.05.2025 betreffend „Sachstand Ausweichverkehre in Marienburg, Bayenthal, Raderberg und Raderthal“ (AN/0554/2025)</title>
+<updated>2026-03-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0544/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130113#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/1392/2025 Sicherheit für Radfahrer - Radwege entlang der Konrad-Adenauer-Straße</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1392/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129954#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3270/2025 Beantwortung einer Anfrage (AN/1223/2025) - Kleingartensiedlung Faßbenderkaul</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3270/2025"/>
+<summary>Antrag / Anfrage am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-12-08-Ausschuss%20Allgemeine%20Verwaltung%20und%20Rechtsfragen%20%2F%20Vergabe%20%2F%20Internationales</id>
+<title>Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129146#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „endgültig zurückgezogen“ – AN/1175/2025 Schutz der Baumscheiben und Neuordnung des ruhenden Verkehrs auf der Sinziger Straße in Köln Marienburg, Antrag der SPD-Fraktion</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1175/2025"/>
+<summary>Entscheidung am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130113#vorlage</id>
+<title>Neue Vorlage AN/1392/2025: Sicherheit für Radfahrer - Radwege entlang der Konrad-Adenauer-Straße</title>
+<updated>2025-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1392/2025"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129954#vorlage</id>
+<title>Neue Vorlage 3270/2025: Beantwortung einer Anfrage (AN/1223/2025) - Kleingartensiedlung Faßbenderkaul</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3270/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#beratung-2025-11-24-Hauptausschuss</id>
+<title>Hauptausschuss: „Kenntnis genommen“ – 3073/2025 Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3073/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129693#beratung-2025-11-24-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „geändert beschlossen“ – 3046/2025 Umbau eines Hockeyspielfeldes auf dem Vereinsgelände des Marienburger Sport-Club 1920 e.V. in Köln-Rodenkirchen, Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3046/2025"/>
+<summary>Entscheidung am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129720#vorlage</id>
+<title>Neue Vorlage 3073/2025: Überwachung des Durchfahrtverbotes über 3,5 Tonnen und Überwachung der Geschwindigkeit auf der BAB A4 - Brückenbauwerk Eifeltor</title>
+<updated>2025-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3073/2025"/>
+<summary>Mitteilung Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129693#vorlage</id>
+<title>Neue Vorlage 3046/2025: Umbau eines Hockeyspielfeldes auf dem Vereinsgelände des Marienburger Sport-Club 1920 e.V. in Köln-Rodenkirchen, Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3046/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129260#beratung-2025-09-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1223/2025 Kleingartensiedlung Faßbenderkaul</title>
+<updated>2025-09-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1223/2025"/>
+<summary>Antrag / Anfrage am 2025-09-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129260#vorlage</id>
+<title>Neue Vorlage AN/1223/2025: Kleingartensiedlung Faßbenderkaul</title>
+<updated>2025-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1223/2025"/>
+<summary>Anfrage nach § 4 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129146#vorlage</id>
+<title>Neue Vorlage AN/1175/2025: Schutz der Baumscheiben und Neuordnung des ruhenden Verkehrs auf der Sinziger Straße in Köln Marienburg, Antrag der SPD-Fraktion</title>
+<updated>2025-08-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1175/2025"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128185#beratung-2025-07-07-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „ungeändert beschlossen“ – 1996/2025 Veränderung von zwei Naturdenkmalen (NDI 202.08) am Bayenthalgürtel/ Ecke Bonner Str. hier: Antrag auf Befreiung von den Verboten der Naturdenkmalverordnung sowie dem Verbot des §41 LNatschG (Alleenschutz) nach § 67 Abs. 1 Nr.1 (BNatschG)</title>
+<updated>2025-07-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1996/2025"/>
+<summary>Entscheidung am 2025-07-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123757#beratung-2025-06-30-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Sache ist erledigt“ – AN/1374/2024 Zuwegung zum Rosengarten am Zwischenwerk VIII B in Köln Marienburg</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1374/2024"/>
+<summary>Antrag / Anfrage am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128185#vorlage</id>
+<title>Neue Vorlage 1996/2025: Veränderung von zwei Naturdenkmalen (NDI 202.08) am Bayenthalgürtel/ Ecke Bonner Str. hier: Antrag auf Befreiung von den Verboten der Naturdenkmalverordnung sowie dem Verbot des §41 LNatschG (Alleenschutz) nach § 67 Abs. 1 Nr.1 (BNatschG)</title>
+<updated>2025-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1996/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127134#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0554/2025 Sachstand Ausweichverkehre in Marienburg</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0554/2025"/>
+<summary>Entscheidung am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126986#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/0477/2025 Radwege auf dem Zollstockgürtel, Raderberggürtel und Raderthalgürtel</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0477/2025"/>
+<summary>Entscheidung am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126963#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0461/2025 Radwege im Bereich Beginn Bayenthalgürtel bis Ende Zollstockgürtel, Teil II</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0461/2025"/>
+<summary>Entscheidung am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126490#beratung-2025-05-12-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0923/2025 Beantwortung der schriftlichen Anfrage der Fraktion Bündnis90/Die Grünen vom 07.03.2025 (AN/0260/2025) betreffend „Mittelallee Bayenthalgürtel“</title>
+<updated>2025-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0923/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126490#vorlage</id>
+<title>Neue Vorlage 0923/2025: Beantwortung der schriftlichen Anfrage der Fraktion Bündnis90/Die Grünen vom 07.03.2025 (AN/0260/2025) betreffend „Mittelallee Bayenthalgürtel“</title>
+<updated>2025-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0923/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127134#vorlage</id>
+<title>Neue Vorlage AN/0554/2025: Sachstand Ausweichverkehre in Marienburg</title>
+<updated>2025-05-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0554/2025"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126986#vorlage</id>
+<title>Neue Vorlage AN/0477/2025: Radwege auf dem Zollstockgürtel, Raderberggürtel und Raderthalgürtel</title>
+<updated>2025-04-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0477/2025"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126963#vorlage</id>
+<title>Neue Vorlage AN/0461/2025: Radwege im Bereich Beginn Bayenthalgürtel bis Ende Zollstockgürtel, Teil II</title>
+<updated>2025-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0461/2025"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126143#beratung-2025-03-24-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0260/2025 Betr: Mittelallee Bayenthalgürtel</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0260/2025"/>
+<summary>Entscheidung am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126045#beratung-2025-03-24-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0630/2025 Beantwortung einer schriftlichen Anfrage gem.§ 4 der Geschäftsordnung des Rates der FDP Fraktion aus der Sitzung der Bezirksvertretung-Rodenkirchen vom 04.11.2024 betrf. "Radwege im Bereich Beginn Bayenthalgürtel bis Ende Zollstockgürtel"</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0630/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125851#beratung-2025-03-24-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – AN/0217/2025 Verbesserung der Verkehrssicherheit am südlichen Raderberggürtel in Köln-Marienburg</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0217/2025"/>
+<summary>Antrag / Anfrage am 2025-03-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/98641#vorlage</id>
+<title>Neue Vorlage AN/0012/2021: Maßnahmen zum Lärmschutz der AnwohnerInnen an der BAB 555</title>
+<updated>2025-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0012/2021"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126045#vorlage</id>
+<title>Neue Vorlage 0630/2025: Beantwortung einer schriftlichen Anfrage gem.§ 4 der Geschäftsordnung des Rates der FDP Fraktion aus der Sitzung der Bezirksvertretung-Rodenkirchen vom 04.11.2024 betrf. "Radwege im Bereich Beginn Bayenthalgürtel bis Ende Zollstockgürtel"</title>
+<updated>2025-03-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0630/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125851#vorlage</id>
+<title>Neue Vorlage AN/0217/2025: Verbesserung der Verkehrssicherheit am südlichen Raderberggürtel in Köln-Marienburg</title>
+<updated>2025-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0217/2025"/>
+<summary>Gem. Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126143#vorlage</id>
+<title>Neue Vorlage AN/0260/2025: Betr: Mittelallee Bayenthalgürtel</title>
+<updated>2025-03-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0260/2025"/>
+<summary>Anfrage nach § 4 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125217#beratung-2025-01-27-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „zurückgestellt“ – 0068/2025 Radwegesanierung entlang der Militärringstraße</title>
+<updated>2025-01-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0068/2025"/>
+<summary>Entscheidung am 2025-01-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125217#vorlage</id>
+<title>Neue Vorlage 0068/2025: Radwegesanierung entlang der Militärringstraße</title>
+<updated>2025-01-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0068/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124507#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3636/2024 Wohnanlage Bonner Str. 536</title>
+<updated>2024-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3636/2024"/>
+<summary>Entscheidung am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124507#vorlage</id>
+<title>Neue Vorlage 3636/2024: Wohnanlage Bonner Str. 536</title>
+<updated>2024-11-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3636/2024"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123929#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/1401/2024 Querung des Militärrings für aus der Leyboldstraße ausfahrende Radfahrende</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1401/2024"/>
+<summary>Antrag / Anfrage am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123927#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – AN/1399/2024 Shuttle-Bus zwischen Gymnasien Rodenkirchen und Rondorf und Marienburger Sportclub (MSC)</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1399/2024"/>
+<summary>Entscheidung am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123923#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1395/2024 Radwege im Bereich Beginn Bayenthalgürtel bis Ende Zollstockgürtel</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1395/2024"/>
+<summary>Entscheidung am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123922#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/1394/2024 Kenntlichmachung Einfahrt P &amp; R Parkplatz an der KVB Haltestelle Heinrich-Lübke-Ufer</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1394/2024"/>
+<summary>Entscheidung am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123764#beratung-2024-11-04-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3111/2024 Zuwegung zum Rosengarten am Zwischenwerk VIIIb in Köln Marienburg AN 1374/2024</title>
+<updated>2024-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3111/2024"/>
+<summary>Entscheidung am 2024-11-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123764#vorlage</id>
+<title>Neue Vorlage 3111/2024: Zuwegung zum Rosengarten am Zwischenwerk VIIIb in Köln Marienburg AN 1374/2024</title>
+<updated>2024-10-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3111/2024"/>
+<summary>Stellungnahme zu einem Antrag (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123929#vorlage</id>
+<title>Neue Vorlage AN/1401/2024: Querung des Militärrings für aus der Leyboldstraße ausfahrende Radfahrende</title>
+<updated>2024-10-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1401/2024"/>
+<summary>Gem. Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123927#vorlage</id>
+<title>Neue Vorlage AN/1399/2024: Shuttle-Bus zwischen Gymnasien Rodenkirchen und Rondorf und Marienburger Sportclub (MSC)</title>
+<updated>2024-10-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1399/2024"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123923#vorlage</id>
+<title>Neue Vorlage AN/1395/2024: Radwege im Bereich Beginn Bayenthalgürtel bis Ende Zollstockgürtel</title>
+<updated>2024-10-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1395/2024"/>
+<summary>Anfrage nach § 4 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123922#vorlage</id>
+<title>Neue Vorlage AN/1394/2024: Kenntlichmachung Einfahrt P &amp; R Parkplatz an der KVB Haltestelle Heinrich-Lübke-Ufer</title>
+<updated>2024-10-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1394/2024"/>
+<summary>Antrag nach § 3 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123757#vorlage</id>
+<title>Neue Vorlage AN/1374/2024: Zuwegung zum Rosengarten am Zwischenwerk VIII B in Köln Marienburg</title>
+<updated>2024-10-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1374/2024"/>
+<summary>Gem. Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122960#beratung-2024-09-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/1109/2024 Betr.: Prüf-AT Radwegeführung - Neugestaltung Bonner Str.</title>
+<updated>2024-09-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1109/2024"/>
+<summary>Antrag / Anfrage am 2024-09-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122960#vorlage</id>
+<title>Neue Vorlage AN/1109/2024: Betr.: Prüf-AT Radwegeführung - Neugestaltung Bonner Str.</title>
+<updated>2024-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1109/2024"/>
+<summary>Antrag nach § 3 BV2 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121818#beratung-2024-06-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „geändert beschlossen“ – AN/0832/2024 Zuwegung zum Rosengarten am Zwischenwerk VIII B</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0832/2024"/>
+<summary>Entscheidung am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121675#beratung-2024-06-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 1679/2024 Baubeschluss für die bauliche Instandsetzung der Fahrbahndeckschicht in der Straße „Unter den Ulmen“ in Köln-Marienburg</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1679/2024"/>
+<summary>Entscheidung am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121551#beratung-2024-06-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 1592/2024 Beantwortung einer schriftlichen Anfrage der Fraktion CDU aus der Sitzung der Bezirksvertretung Rodenkirchen vom 29.04.2024 (AN/0702/2024) betreffend „Straßensanierung in Marienburg“,</title>
+<updated>2024-06-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1592/2024"/>
+<summary>Entscheidung am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121818#vorlage</id>
+<title>Neue Vorlage AN/0832/2024: Zuwegung zum Rosengarten am Zwischenwerk VIII B</title>
+<updated>2024-06-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0832/2024"/>
+<summary>Antrag nach § 3 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121675#vorlage</id>
+<title>Neue Vorlage 1679/2024: Baubeschluss für die bauliche Instandsetzung der Fahrbahndeckschicht in der Straße „Unter den Ulmen“ in Köln-Marienburg</title>
+<updated>2024-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1679/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121551#vorlage</id>
+<title>Neue Vorlage 1592/2024: Beantwortung einer schriftlichen Anfrage der Fraktion CDU aus der Sitzung der Bezirksvertretung Rodenkirchen vom 29.04.2024 (AN/0702/2024) betreffend „Straßensanierung in Marienburg“,</title>
+<updated>2024-05-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#1592/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121326#beratung-2024-05-13-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0694/2024 Antrag der CDU-Fraktion, betr.: Verkehrsüberwachung auf dem Straßenbeschnitt der Militärringstraße</title>
+<updated>2024-05-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0694/2024"/>
+<summary>Antrag / Anfrage am 2024-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121346#beratung-2024-05-06-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0702/2024 Straßensanierung in Marienburg</title>
+<updated>2024-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0702/2024"/>
+<summary>Entscheidung am 2024-05-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119927#beratung-2024-05-06-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 0563/2024 Sanierung historischer Geländer am Oberländer Ufer</title>
+<updated>2024-05-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0563/2024"/>
+<summary>Entscheidung am 2024-05-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121346#vorlage</id>
+<title>Neue Vorlage AN/0702/2024: Straßensanierung in Marienburg</title>
+<updated>2024-04-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0702/2024"/>
+<summary>Anfrage nach § 4 BV2 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121326#vorlage</id>
+<title>Neue Vorlage AN/0694/2024: Antrag der CDU-Fraktion, betr.: Verkehrsüberwachung auf dem Straßenbeschnitt der Militärringstraße</title>
+<updated>2024-04-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0694/2024"/>
+<summary>Antrag nach § 3 BV4 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119927#vorlage</id>
+<title>Neue Vorlage 0563/2024: Sanierung historischer Geländer am Oberländer Ufer</title>
+<updated>2024-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0563/2024"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118908#beratung-2024-03-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 3999/2023 Benennung von zwei Planstraßen Im Baugebiet Mertener Straße "Welle-Areal" in Köln-Marienburg</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3999/2023"/>
+<summary>Entscheidung am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112665#beratung-2024-03-11-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0014/2023 Verkauf von städtischen Grundstücken neben der Bonner Str. 536-540 (AN1369/2022)</title>
+<updated>2024-03-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0014/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-03-11; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118908#vorlage</id>
+<title>Neue Vorlage 3999/2023: Benennung von zwei Planstraßen Im Baugebiet Mertener Straße "Welle-Areal" in Köln-Marienburg</title>
+<updated>2024-01-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3999/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119266#beratung-2024-01-22-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/0012/2024 Radfahrstreifen bzw. Fahrradschutzstreifen auf dem Bayenthalgürtel</title>
+<updated>2024-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0012/2024"/>
+<summary>Antrag / Anfrage am 2024-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112665#vorlage</id>
+<title>Neue Vorlage 0014/2023: Verkauf von städtischen Grundstücken neben der Bonner Str. 536-540 (AN1369/2022)</title>
+<updated>2024-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#0014/2023"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119266#vorlage</id>
+<title>Neue Vorlage AN/0012/2024: Radfahrstreifen bzw. Fahrradschutzstreifen auf dem Bayenthalgürtel</title>
+<updated>2024-01-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/0012/2024"/>
+<summary>Antrag nach § 3 BV2 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117982#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert empfohlen“ – AN/1865/2023 Bayenthalgürtel: Sanierung der Mittelallee</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#AN/1865/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117545#beratung-2023-11-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „ungeändert beschlossen“ – 3080/2023 Errichtung eines "Offenen Bücherschrankes"</title>
+<updated>2023-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:marienburg#3080/2023"/>
+<summary>Entscheidung am 2023-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

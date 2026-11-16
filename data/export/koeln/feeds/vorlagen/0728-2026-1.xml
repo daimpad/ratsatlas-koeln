@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0728-2026-1</id>
+<title>Vorlage 0728/2026/1: Erste Verordnung zur Änderung der Ordnungsbehördlichen Verordnung für das Jahr 2026 über das Offenhalten von Verkaufsstellen in den Stadtteilen Innenstadt, Rodenkirchen, Lindenthal, Sülz-Klettenberg und Porz</title>
+<subtitle>Verlauf der Vorlage 0728/2026/1: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-05-12T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0728-2026-1.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#0728/2026/1"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131937#beratung-2026-05-12-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0728/2026/1 Erste Verordnung zur Änderung der Ordnungsbehördlichen Verordnung für das Jahr 2026 über das Offenhalten von Verkaufsstellen in den Stadtteilen Innenstadt, Rodenkirchen, Lindenthal, Sülz-Klettenberg und Porz</title>
+<updated>2026-05-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#0728/2026/1"/>
+<summary>Genehmigung (DE/EilE) am 2026-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131937#vorlage</id>
+<title>Neue Vorlage 0728/2026/1: Erste Verordnung zur Änderung der Ordnungsbehördlichen Verordnung für das Jahr 2026 über das Offenhalten von Verkaufsstellen in den Stadtteilen Innenstadt, Rodenkirchen, Lindenthal, Sülz-Klettenberg und Porz</title>
+<updated>2026-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#0728/2026/1"/>
+<summary>Dringlichkeitsvorlage Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131937#folge-0728%2F2026</id>
+<title>Dringlichkeitsvorlage Bezirksvertretung 0728/2026: Erste Verordnung zur Änderung der Ordnungsbehördlichen Verordnung für das Jahr 2026 über das Offenhalten von Verkaufsstellen in den Stadtteilen Innenstadt, Rodenkirchen, Lindenthal, Sülz-Klettenberg und Porz</title>
+<updated>2026-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#0728/2026/1"/>
+<summary>Folgevorlage zu 0728/2026/1</summary>
+</entry>
+</feed>

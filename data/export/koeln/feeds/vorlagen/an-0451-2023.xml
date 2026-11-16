@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/an-0451-2023</id>
+<title>Vorlage AN/0451/2023: Stockender Fortschritt zum Bau des Mehrgenerationenhaus in Köln-Lindweiler</title>
+<subtitle>Verlauf der Vorlage AN/0451/2023: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/an-0451-2023.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0451/2023"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114000#beratung-2023-03-16-Bezirksvertretung%206%20%28Chorweiler%29</id>
+<title>Bezirksvertretung 6 (Chorweiler): „verwiesen in nachfolgende Gremien (ohne Rücklauf)“ – AN/0451/2023 Stockender Fortschritt zum Bau des Mehrgenerationenhaus in Köln-Lindweiler</title>
+<updated>2023-03-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0451/2023"/>
+<summary>Entscheidung am 2023-03-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/114000#vorlage</id>
+<title>Neue Vorlage AN/0451/2023: Stockender Fortschritt zum Bau des Mehrgenerationenhaus in Köln-Lindweiler</title>
+<updated>2023-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:lindweiler#AN/0451/2023"/>
+<summary>Antrag nach § 5 BV6 (CDU) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+</feed>

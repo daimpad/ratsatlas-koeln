@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/2974-2025</id>
+<title>Vorlage 2974/2025: Beantwortung einer Anfrage der SPD-Fraktion (AN/1227/2025) in der BV 2 betreffend: Gehwegparkverbot Bornheimer- und Alfter Str. in Köln-Zollstock</title>
+<subtitle>Verlauf der Vorlage 2974/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/2974-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:zollstock#2974/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129618#beratung-2025-12-08-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2974/2025 Beantwortung einer Anfrage der SPD-Fraktion (AN/1227/2025) in der BV 2 betreffend: Gehwegparkverbot Bornheimer- und Alfter Str. in Köln-Zollstock</title>
+<updated>2025-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:zollstock#2974/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129618#vorlage</id>
+<title>Neue Vorlage 2974/2025: Beantwortung einer Anfrage der SPD-Fraktion (AN/1227/2025) in der BV 2 betreffend: Gehwegparkverbot Bornheimer- und Alfter Str. in Köln-Zollstock</title>
+<updated>2025-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:zollstock#2974/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129618#folge-AN%2F1227%2F2025</id>
+<title>Anfrage nach § 4 BV2 (SPD) AN/1227/2025: Gehwegparkverbot Bornheimer- und Alfter Str. in Köln-Zollstock</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:zollstock#2974/2025"/>
+<summary>Folgevorlage zu 2974/2025</summary>
+</entry>
+</feed>

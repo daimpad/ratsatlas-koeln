@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-urbach</id>
 <title>Ratsatlas Köln – Urbach</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Urbach</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-11-05T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-urbach.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135072#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2812/2026 Schulstraße am Standort Kupfergasse in Köln-Porz</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2812/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130985#beratung-2026-11-05-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/0175/2026 Anfrage der SPD-Fraktion "Treppe Ohmstr./Kaiserstr."</title>
+<updated>2026-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0175/2026"/>
+<summary>Antrag / Anfrage am 2026-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135072#vorlage</id>
+<title>Neue Vorlage 2812/2026: Schulstraße am Standort Kupfergasse in Köln-Porz</title>
+<updated>2026-10-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2812/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134568#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig zurückgezogen“ – AN/1387/2026 Fahrbahnmarkierungen auf der Frankfurter Straße</title>
+<updated>2026-09-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1387/2026"/>
+<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134366#vorlage</id>
+<title>Neue Vorlage 2424/2026: Baubeschluss für die Instandsetzung des Vingster Rings zwischen Ostheimer Straße und Frankfurter Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2424/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134409#beratung-2026-09-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1308/2026 Antrag der CDU-Fraktion "Sachstandsbericht zum Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2026-09-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1308/2026"/>
+<summary>Antrag / Anfrage am 2026-09-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134568#vorlage</id>
+<title>Neue Vorlage AN/1387/2026: Fahrbahnmarkierungen auf der Frankfurter Straße</title>
+<updated>2026-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1387/2026"/>
+<summary>Antrag nach § 3 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134409#vorlage</id>
+<title>Neue Vorlage AN/1308/2026: Antrag der CDU-Fraktion "Sachstandsbericht zum Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2026-09-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1308/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133337#beratung-2026-06-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0956/2026 Antrag der CDU-Fraktion "Fußweg Frankfurter Straße 298 bis 316"</title>
+<updated>2026-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0956/2026"/>
+<summary>Antrag / Anfrage am 2026-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133109#vorlage</id>
+<title>Neue Vorlage AN/0858/2026: Überprüfung und Nachbesserung der Baustellenverkehrsführung an der Frankfurter Straße sowie flächendeckende Kontrolle und Optimierung aller Baustellen im Stadtbezirk</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0858/2026"/>
+<summary>Antrag nach § 3 BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133109#beratung-2026-06-18-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – AN/0858/2026 Überprüfung und Nachbesserung der Baustellenverkehrsführung an der Frankfurter Straße sowie flächendeckende Kontrolle und Optimierung aller Baustellen im Stadtbezirk</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0858/2026"/>
+<summary>Entscheidung am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133337#vorlage</id>
+<title>Neue Vorlage AN/0956/2026: Antrag der CDU-Fraktion "Fußweg Frankfurter Straße 298 bis 316"</title>
+<updated>2026-06-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0956/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132366#beratung-2026-04-30-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1139/2026 Beantwortung einer schriftlichen Anfrage der AFD Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 12.03.2026 (AN/0423/2026) betreffend "Sanierungsmaßnahmen auf der Frankfurter Straße"</title>
+<updated>2026-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1139/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132038#beratung-2026-04-27-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
+<title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 0900/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - „Einrichtung einer Warnampel Frankfurter Straße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-04-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0900/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132366#vorlage</id>
+<title>Neue Vorlage 1139/2026: Beantwortung einer schriftlichen Anfrage der AFD Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 12.03.2026 (AN/0423/2026) betreffend "Sanierungsmaßnahmen auf der Frankfurter Straße"</title>
+<updated>2026-04-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1139/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132020#beratung-2026-04-23-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0884/2026 Mitteilung zur Bürgereingabe nach § 24 GO – Verbesserung der Schulwegsicherheit – Frankfurter Straße / Elsdorfer Straße, 51145 Köln sowie Feldweg zum SC Neptun, Köln-Porz, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-04-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0884/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-04-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132038#vorlage</id>
+<title>Neue Vorlage 0900/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - „Einrichtung einer Warnampel Frankfurter Straße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0900/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132020#vorlage</id>
+<title>Neue Vorlage 0884/2026: Mitteilung zur Bürgereingabe nach § 24 GO – Verbesserung der Schulwegsicherheit – Frankfurter Straße / Elsdorfer Straße, 51145 Köln sowie Feldweg zum SC Neptun, Köln-Porz, Az.: [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0884/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131678#beratung-2026-03-12-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0423/2026 Sanierungsmaßnahmen auf der Frankfurter Straße</title>
+<updated>2026-03-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0423/2026"/>
+<summary>Antrag / Anfrage am 2026-03-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131678#vorlage</id>
+<title>Neue Vorlage AN/0423/2026: Sanierungsmaßnahmen auf der Frankfurter Straße</title>
+<updated>2026-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0423/2026"/>
+<summary>Anfrage nach § 4 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130812#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0099/2026 Antrag der CDU-Fraktion "Treppenabgang Forsbachstraße in Porz-Urbach"</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0099/2026"/>
+<summary>Antrag / Anfrage am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130584#beratung-2026-01-29-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 0041/2026 Planungsbeschluss für verkehrliche Maßnahmen zur Schulwegerschließung am neuen Schulstandort Friedensstraße in</title>
+<updated>2026-01-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0041/2026"/>
+<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130985#vorlage</id>
+<title>Neue Vorlage AN/0175/2026: Anfrage der SPD-Fraktion "Treppe Ohmstr./Kaiserstr."</title>
+<updated>2026-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0175/2026"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130584#vorlage</id>
+<title>Neue Vorlage 0041/2026: Planungsbeschluss für verkehrliche Maßnahmen zur Schulwegerschließung am neuen Schulstandort Friedensstraße in</title>
+<updated>2026-01-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0041/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130812#vorlage</id>
+<title>Neue Vorlage AN/0099/2026: Antrag der CDU-Fraktion "Treppenabgang Forsbachstraße in Porz-Urbach"</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0099/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130056#beratung-2025-12-04-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – AN/1376/2025 Antrag der SPD-Fraktion "Schulstraße für die KGS Kupfergasse"</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1376/2025"/>
+<summary>Antrag / Anfrage am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129782#beratung-2025-12-04-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 3128/2025 Elsdorfer Str. 10 / Kupfergasse 3 - Neubau einer Grundschule (Grundstück &gt; 3.000qm)</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#3128/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129371#beratung-2025-12-04-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2752/2025 Beantwortung einer Anfrage der SPD-Fraktion betreffend "Drogenkonsum nahe einem städtischen Bolzplatz an der Dorotheenstr. (AN/0367/2025)"</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2752/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126424#beratung-2025-12-04-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0367/2025 Anfrage der SPD-Fraktion "Drogenkonsum nahe einem städtischen Bolzplatz 7 06 03 03 an der Dorotheenstraße"</title>
+<updated>2025-12-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0367/2025"/>
+<summary>Antrag / Anfrage am 2025-12-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126552#vorlage</id>
+<title>Neue Vorlage 0963/2025: Beschluss über Stellungnahmen sowie Satzungsbeschluss des Bebauungsplanentwurfs Nr. 76399/04 Arbeitstitel: Östlich Im Falkenhorst in Köln-Porz-Urbach</title>
+<updated>2025-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0963/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130056#vorlage</id>
+<title>Neue Vorlage AN/1376/2025: Antrag der SPD-Fraktion "Schulstraße für die KGS Kupfergasse"</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1376/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129742#beratung-2025-11-24-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „Kenntnis genommen“ – 3094/2025 Erneuerung Bahnübergang "Baumschulenweg“ in Köln, Strecke 2655 Köln, Frankfurter Str. – Overath Bahn-km 8,529 bis Bahn-km 10,597, hier: Antrag auf Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#3094/2025"/>
+<summary>Entscheidung am 2025-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129371#vorlage</id>
+<title>Neue Vorlage 2752/2025: Beantwortung einer Anfrage der SPD-Fraktion betreffend "Drogenkonsum nahe einem städtischen Bolzplatz an der Dorotheenstr. (AN/0367/2025)"</title>
+<updated>2025-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2752/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129782#vorlage</id>
+<title>Neue Vorlage 3128/2025: Elsdorfer Str. 10 / Kupfergasse 3 - Neubau einer Grundschule (Grundstück &gt; 3.000qm)</title>
+<updated>2025-11-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#3128/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129742#vorlage</id>
+<title>Neue Vorlage 3094/2025: Erneuerung Bahnübergang "Baumschulenweg“ in Köln, Strecke 2655 Köln, Frankfurter Str. – Overath Bahn-km 8,529 bis Bahn-km 10,597, hier: Antrag auf Befreiung von den Verboten des Landschaftsplans gem. § 67 Abs. 1 Nr. 1 BNatSchG</title>
+<updated>2025-11-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#3094/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121587#beratung-2025-09-04-Rat</id>
+<title>Rat: „geändert beschlossen“ – 1622/2024 Abriss und Neubau eines Mehrfamilienhauses im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück in der Waldstr. 113-115, in 51145 Köln-Urbach - Bedarfsfeststellungs-, Planungs- und Baubeschluss</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1622/2024"/>
+<summary>Entscheidung am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129039#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „vertagt“ – AN/1132/2025 Anfrage der SPD-Fraktion "Kann die Zuwegung Sportplatz Brucknerstraße sicherer gemacht werden?"</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1132/2025"/>
+<summary>Antrag / Anfrage am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128940#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – 2510/2025 Benennung einer Planstraße im Baugebiet östlich im Falkenhorst in Köln-Porz/Urbach</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2510/2025"/>
+<summary>Entscheidung am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128445#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – 2137/2025 Bürgereingabe nach § 24 GO– „Umwidmung des Urbacher Wegs in Porz in eine Anliegerstraße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2137/2025"/>
+<summary>Entscheidung am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121587#beratung-2025-09-02-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Alternative beschlossen“ – 1622/2024 Abriss und Neubau eines Mehrfamilienhauses im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück in der Waldstr. 113-115, in 51145 Köln-Urbach - Bedarfsfeststellungs-, Planungs- und Baubeschluss</title>
+<updated>2025-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1622/2024"/>
+<summary>Anhörung (BV) am 2025-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121587#beratung-2025-09-01-Finanzausschuss</id>
+<title>Finanzausschuss: „geändert beschlossen“ – 1622/2024 Abriss und Neubau eines Mehrfamilienhauses im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück in der Waldstr. 113-115, in 51145 Köln-Urbach - Bedarfsfeststellungs-, Planungs- und Baubeschluss</title>
+<updated>2025-09-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1622/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2025-09-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121587#beratung-2025-08-28-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss für Soziales, Seniorinnen und Senioren: „mit Änderungen empfohlen“ – 1622/2024 Abriss und Neubau eines Mehrfamilienhauses im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück in der Waldstr. 113-115, in 51145 Köln-Urbach - Bedarfsfeststellungs-, Planungs- und Baubeschluss</title>
+<updated>2025-08-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1622/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2025-08-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121587#vorlage</id>
+<title>Neue Vorlage 1622/2024: Abriss und Neubau eines Mehrfamilienhauses im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück in der Waldstr. 113-115, in 51145 Köln-Urbach - Bedarfsfeststellungs-, Planungs- und Baubeschluss</title>
+<updated>2025-08-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1622/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129039#vorlage</id>
+<title>Neue Vorlage AN/1132/2025: Anfrage der SPD-Fraktion "Kann die Zuwegung Sportplatz Brucknerstraße sicherer gemacht werden?"</title>
+<updated>2025-08-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1132/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128940#vorlage</id>
+<title>Neue Vorlage 2510/2025: Benennung einer Planstraße im Baugebiet östlich im Falkenhorst in Köln-Porz/Urbach</title>
+<updated>2025-08-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2510/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128445#vorlage</id>
+<title>Neue Vorlage 2137/2025: Bürgereingabe nach § 24 GO– „Umwidmung des Urbacher Wegs in Porz in eine Anliegerstraße“, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2025-08-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2137/2025"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-07-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-07-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1749/2025"/>
+<summary>Entscheidung am 2025-07-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-07-02-Betriebsausschuss%20Geb%C3%A4udewirtschaft</id>
+<title>Betriebsausschuss Gebäudewirtschaft: „ungeändert empfohlen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-07-02-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-07-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-07-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-06-30-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum behandelt“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128398#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „endgültig abgelehnt“ – AN/0998/2025 Änderungsantrag der SPD Fraktion "Neubau der zweigliedrigen Grundschule Friedensstraße"</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0998/2025"/>
+<summary>Antrag / Anfrage am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-06-26-Sportausschuss</id>
+<title>Sportausschuss: „ohne Votum behandelt“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1749/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#beratung-2025-06-26-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert empfohlen“ – 1749/2025 Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1749/2025"/>
+<summary>Anhörung (BV) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128398#vorlage</id>
+<title>Neue Vorlage AN/0998/2025: Änderungsantrag der SPD Fraktion "Neubau der zweigliedrigen Grundschule Friedensstraße"</title>
+<updated>2025-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0998/2025"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121587#beratung-2025-06-23-Bauausschuss</id>
+<title>Bauausschuss: „mit Änderungen empfohlen“ – 1622/2024 Abriss und Neubau eines Mehrfamilienhauses im öffentlich geförderten Wohnungsbau auf dem städtischen Grundstück in der Waldstr. 113-115, in 51145 Köln-Urbach - Bedarfsfeststellungs-, Planungs- und Baubeschluss</title>
+<updated>2025-06-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1622/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2025-06-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127756#vorlage</id>
+<title>Neue Vorlage 1749/2025: Neubau einer 2-zügigen Clustergrundschule mit Zweifeldsporthalle, Hausmeisterwohnung und Außenanlagen in der Friedensstraße durch die Kölner Schulbaugesellschaft mbH - Planungs- und Baubeschluss</title>
+<updated>2025-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#1749/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126552#beratung-2025-05-27-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0963/2025 Beschluss über Stellungnahmen sowie Satzungsbeschluss des Bebauungsplanentwurfs Nr. 76399/04 Arbeitstitel: Östlich Im Falkenhorst in Köln-Porz-Urbach</title>
+<updated>2025-05-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0963/2025"/>
+<summary>Entscheidung am 2025-05-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126552#beratung-2025-05-22-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert empfohlen“ – 0963/2025 Beschluss über Stellungnahmen sowie Satzungsbeschluss des Bebauungsplanentwurfs Nr. 76399/04 Arbeitstitel: Östlich Im Falkenhorst in Köln-Porz-Urbach</title>
+<updated>2025-05-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0963/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-05-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126552#beratung-2025-05-15-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – 0963/2025 Beschluss über Stellungnahmen sowie Satzungsbeschluss des Bebauungsplanentwurfs Nr. 76399/04 Arbeitstitel: Östlich Im Falkenhorst in Köln-Porz-Urbach</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0963/2025"/>
+<summary>Anhörung (BV) am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125276#beratung-2025-04-03-Rat</id>
+<title>Rat: „ungeändert beschlossen“ – 0119/2025 Feststellungsbeschluss zur 235. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 7, Köln-Porz Arbeitstitel: "Östlich Im Falkenhorst" in Köln-Porz-Urbach</title>
+<updated>2025-04-03T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0119/2025"/>
+<summary>Entscheidung am 2025-04-03; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126470#beratung-2025-04-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0908/2025 Planungsrechtlicher Vorbescheid für die Errichtung 4 MFH</title>
+<updated>2025-04-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0908/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-04-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126420#beratung-2025-04-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „zurückgestellt“ – AN/0363/2025 Anfrage der SPD-Fraktion "Sachstand zum Antrag (An/0444/2017) Sanierung eines Fußweges in Urbach: Danziger Str. zum Marienplatz"</title>
+<updated>2025-04-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0363/2025"/>
+<summary>Antrag / Anfrage am 2025-04-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125276#beratung-2025-04-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert empfohlen“ – 0119/2025 Feststellungsbeschluss zur 235. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 7, Köln-Porz Arbeitstitel: "Östlich Im Falkenhorst" in Köln-Porz-Urbach</title>
+<updated>2025-04-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0119/2025"/>
+<summary>Anhörung (BV) am 2025-04-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125276#beratung-2025-03-27-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „ungeändert empfohlen“ – 0119/2025 Feststellungsbeschluss zur 235. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 7, Köln-Porz Arbeitstitel: "Östlich Im Falkenhorst" in Köln-Porz-Urbach</title>
+<updated>2025-03-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0119/2025"/>
+<summary>Vorberatung (Fachausschuss) am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126470#vorlage</id>
+<title>Neue Vorlage 0908/2025: Planungsrechtlicher Vorbescheid für die Errichtung 4 MFH</title>
+<updated>2025-03-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0908/2025"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126424#vorlage</id>
+<title>Neue Vorlage AN/0367/2025: Anfrage der SPD-Fraktion "Drogenkonsum nahe einem städtischen Bolzplatz 7 06 03 03 an der Dorotheenstraße"</title>
+<updated>2025-03-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0367/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126420#vorlage</id>
+<title>Neue Vorlage AN/0363/2025: Anfrage der SPD-Fraktion "Sachstand zum Antrag (An/0444/2017) Sanierung eines Fußweges in Urbach: Danziger Str. zum Marienplatz"</title>
+<updated>2025-03-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0363/2025"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125276#vorlage</id>
+<title>Neue Vorlage 0119/2025: Feststellungsbeschluss zur 235. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 7, Köln-Porz Arbeitstitel: "Östlich Im Falkenhorst" in Köln-Porz-Urbach</title>
+<updated>2025-03-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0119/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125379#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0053/2025 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "MGV Urbach"</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0053/2025"/>
+<summary>Antrag / Anfrage am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125117#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 4009/2024 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 05.12.2024 (AN/1726/2024) betreffend „Ausbau der Frankfurter Straße einschließlich ÖPNV“</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#4009/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125003#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 3932/2024 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung vom 16.03.2023 betr.: "Verkehrsoptimierungen in Porz Urbach - Auf dem Stallberg" "AN/0412/2023"</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#3932/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124944#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/1726/2024 Anfrage der CDU-Fraktion "Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1726/2024"/>
+<summary>Antrag / Anfrage am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113910#beratung-2025-01-30-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Sache ist erledigt“ – AN/0412/2023 Anfrage der CDU-Fraktion "Verkehrsoptimierungen in Porz Urbach - Auf dem Stallberg"</title>
+<updated>2025-01-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0412/2023"/>
+<summary>Antrag / Anfrage am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125379#vorlage</id>
+<title>Neue Vorlage AN/0053/2025: Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "MGV Urbach"</title>
+<updated>2025-01-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0053/2025"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125117#vorlage</id>
+<title>Neue Vorlage 4009/2024: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Porz vom 05.12.2024 (AN/1726/2024) betreffend „Ausbau der Frankfurter Straße einschließlich ÖPNV“</title>
+<updated>2025-01-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#4009/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/125003#vorlage</id>
+<title>Neue Vorlage 3932/2024: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung vom 16.03.2023 betr.: "Verkehrsoptimierungen in Porz Urbach - Auf dem Stallberg" "AN/0412/2023"</title>
+<updated>2024-12-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#3932/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124944#vorlage</id>
+<title>Neue Vorlage AN/1726/2024: Anfrage der CDU-Fraktion "Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
+<updated>2024-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1726/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123930#beratung-2024-11-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „zurückgestellt“ – AN/1402/2024 Anfrage von Frau Rechberger (FDP) "Müllabholung AWB Tilsiter Straße"</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1402/2024"/>
+<summary>Antrag / Anfrage am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123559#beratung-2024-11-07-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 2957/2024 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch (BauGB) der 235. Änderung des Flächennutzungsplanes (FNP) Arbeitstitel: "Östlich Im Falkenhorst" in Köln-Porz-Urbach</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2957/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123559#beratung-2024-11-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2957/2024 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch (BauGB) der 235. Änderung des Flächennutzungsplanes (FNP) Arbeitstitel: "Östlich Im Falkenhorst" in Köln-Porz-Urbach</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2957/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123022#beratung-2024-11-07-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 2636/2024 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch des Bebauungsplanentwurfes Nr. 76399/04 Arbeitstitel "Östlich Im Falkenhorst in Köln-Porz-Urbach"</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2636/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123022#beratung-2024-11-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 2636/2024 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch des Bebauungsplanentwurfes Nr. 76399/04 Arbeitstitel "Östlich Im Falkenhorst in Köln-Porz-Urbach"</title>
+<updated>2024-11-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2636/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123022#beratung-2024-10-28-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 2636/2024 Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch des Bebauungsplanentwurfes Nr. 76399/04 Arbeitstitel "Östlich Im Falkenhorst in Köln-Porz-Urbach"</title>
+<updated>2024-10-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2636/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-10-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123022#vorlage</id>
+<title>Neue Vorlage 2636/2024: Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch des Bebauungsplanentwurfes Nr. 76399/04 Arbeitstitel "Östlich Im Falkenhorst in Köln-Porz-Urbach"</title>
+<updated>2024-10-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2636/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123930#vorlage</id>
+<title>Neue Vorlage AN/1402/2024: Anfrage von Frau Rechberger (FDP) "Müllabholung AWB Tilsiter Straße"</title>
+<updated>2024-10-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/1402/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123559#vorlage</id>
+<title>Neue Vorlage 2957/2024: Mitteilung über die Veröffentlichung gemäß § 3 Absatz 2 Baugesetzbuch (BauGB) der 235. Änderung des Flächennutzungsplanes (FNP) Arbeitstitel: "Östlich Im Falkenhorst" in Köln-Porz-Urbach</title>
+<updated>2024-10-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#2957/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121984#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0913/2024 Antrag der SPD-Fraktion "Hundefreilauffläche an der Waldstraße in Porz-Urbach"</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0913/2024"/>
+<summary>Antrag / Anfrage am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119197#beratung-2024-06-20-Sportausschuss</id>
+<title>Sportausschuss: „Kenntnis genommen“ – 0059/2024 Beantwortung einer mündlichen Anfrage der SPD-Fraktion aus der Sitzung des Sportausschusses am 28. September 2023 zum Sportunterricht an der katholischen Grundschule Kupfergasse 31 in Porz-Urbach</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0059/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119197#beratung-2024-06-20-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0059/2024 Beantwortung einer mündlichen Anfrage der SPD-Fraktion aus der Sitzung des Sportausschusses am 28. September 2023 zum Sportunterricht an der katholischen Grundschule Kupfergasse 31 in Porz-Urbach</title>
+<updated>2024-06-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0059/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121984#vorlage</id>
+<title>Neue Vorlage AN/0913/2024: Antrag der SPD-Fraktion "Hundefreilauffläche an der Waldstraße in Porz-Urbach"</title>
+<updated>2024-06-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0913/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119197#vorlage</id>
+<title>Neue Vorlage 0059/2024: Beantwortung einer mündlichen Anfrage der SPD-Fraktion aus der Sitzung des Sportausschusses am 28. September 2023 zum Sportunterricht an der katholischen Grundschule Kupfergasse 31 in Porz-Urbach</title>
+<updated>2024-05-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#0059/2024"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121223#beratung-2024-05-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0662/2024 Antrag der SPD-Fraktion "Hundefreilauffläche an der Waldstraße in Porz-Urbach"</title>
+<updated>2024-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0662/2024"/>
+<summary>Antrag / Anfrage am 2024-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121216#beratung-2024-05-07-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „zurückgestellt“ – AN/0656/2024 Anfrage der SPD-Fraktion "Sachstandsbericht zum Treppenabgang Ohmstraße/Kaiserstraße"</title>
+<updated>2024-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0656/2024"/>
+<summary>Antrag / Anfrage am 2024-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121223#vorlage</id>
+<title>Neue Vorlage AN/0662/2024: Antrag der SPD-Fraktion "Hundefreilauffläche an der Waldstraße in Porz-Urbach"</title>
+<updated>2024-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0662/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/121216#vorlage</id>
+<title>Neue Vorlage AN/0656/2024: Anfrage der SPD-Fraktion "Sachstandsbericht zum Treppenabgang Ohmstraße/Kaiserstraße"</title>
+<updated>2024-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0656/2024"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120282#beratung-2024-03-14-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0322/2024 Antrag der SPD-Fraktion "Prüfung geeigneter Maßnahmen zur Sicherung des Fahrradstreifens vor dem Kaiserkiosk in Köln-Porz-Urbach"</title>
+<updated>2024-03-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0322/2024"/>
+<summary>Antrag / Anfrage am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120282#vorlage</id>
+<title>Neue Vorlage AN/0322/2024: Antrag der SPD-Fraktion "Prüfung geeigneter Maßnahmen zur Sicherung des Fahrradstreifens vor dem Kaiserkiosk in Köln-Porz-Urbach"</title>
+<updated>2024-02-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0322/2024"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119839#vorlage</id>
+<title>Neue Vorlage AN/0195/2024: Änderungsantrag der Fraktion Bündis 90/Die Grünen "Ausbau der Frankfurter Straße"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0195/2024"/>
+<summary>Änderungsantrag nach § 13 der GeschO Rat · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119839#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0195/2024 Änderungsantrag der Fraktion Bündis 90/Die Grünen "Ausbau der Frankfurter Straße"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0195/2024"/>
+<summary>Antrag / Anfrage am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119816#beratung-2024-02-01-Bezirksvertretung%207%20%28Porz%29</id>
+<title>Bezirksvertretung 7 (Porz): „ungeändert beschlossen“ – AN/0186/2024 Änderungsantrag der SPD-Fraktion "Ausbau der Frankfurter Straße"</title>
+<updated>2024-02-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:urbach#AN/0186/2024"/>
+<summary>Antrag / Anfrage am 2024-02-01; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 </feed>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/2397-2025</id>
+<title>Vorlage 2397/2025: Anregung der Bezirksvertretung Mülheim, KVB-Fahrplantakt (zur Mitteilung 1590/2025 Änderungen des Fahrplanangebots der Kölner Verkehrs-Betriebe AG (KVB))</title>
+<subtitle>Verlauf der Vorlage 2397/2025: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2025-12-02T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/2397-2025.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#2397/2025"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128803#beratung-2025-12-02-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „geändert beschlossen“ – 2397/2025 Anregung der Bezirksvertretung Mülheim, KVB-Fahrplantakt (zur Mitteilung 1590/2025 Änderungen des Fahrplanangebots der Kölner Verkehrs-Betriebe AG (KVB))</title>
+<updated>2025-12-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#2397/2025"/>
+<summary>Entscheidung am 2025-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128803#vorlage</id>
+<title>Neue Vorlage 2397/2025: Anregung der Bezirksvertretung Mülheim, KVB-Fahrplantakt (zur Mitteilung 1590/2025 Änderungen des Fahrplanangebots der Kölner Verkehrs-Betriebe AG (KVB))</title>
+<updated>2025-11-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#2397/2025"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128803#beratung-2025-09-04-Rat</id>
+<title>Rat: „Alternative beschlossen“ – 2397/2025 Anregung der Bezirksvertretung Mülheim, KVB-Fahrplantakt (zur Mitteilung 1590/2025 Änderungen des Fahrplanangebots der Kölner Verkehrs-Betriebe AG (KVB))</title>
+<updated>2025-09-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:muelheim#2397/2025"/>
+<summary>Entscheidung am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+</feed>

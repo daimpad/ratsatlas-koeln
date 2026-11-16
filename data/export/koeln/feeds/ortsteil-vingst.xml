@@ -3,9 +3,709 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-vingst</id>
 <title>Ratsatlas Köln – Vingst</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Vingst</subtitle>
-<updated>2019-10-01T00:00:00Z</updated>
+<updated>2026-09-22T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-vingst.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134366#vorlage</id>
+<title>Neue Vorlage 2424/2026: Baubeschluss für die Instandsetzung des Vingster Rings zwischen Ostheimer Straße und Frankfurter Straße</title>
+<updated>2026-09-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2424/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133060#beratung-2026-06-18-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1593/2026 Zielvereinbarungen 2026 - Bürgerhaus Kalk und Bürgerzentrum Vingst</title>
+<updated>2026-06-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1593/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133060#vorlage</id>
+<title>Neue Vorlage 1593/2026: Zielvereinbarungen 2026 - Bürgerhaus Kalk und Bürgerzentrum Vingst</title>
+<updated>2026-06-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1593/2026"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130917#vorlage</id>
+<title>Neue Vorlage AN/0145/2026: Bürgereingabe nach § 24 GO NRW - Aufstellen von Warntafeln am Vingster Markt, die auf Ordnungswidrigkeit illegaler Müllentsorgung hinweisen und Bußgeld androhen, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0145/2026"/>
+<summary>Änderungsantrag BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130917#beratung-2026-01-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0145/2026 Bürgereingabe nach § 24 GO NRW - Aufstellen von Warntafeln am Vingster Markt, die auf Ordnungswidrigkeit illegaler Müllentsorgung hinweisen und Bußgeld androhen, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0145/2026"/>
+<summary>Antrag / Anfrage am 2026-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130645#beratung-2026-01-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – AN/0016/2026 Fuß- und Radweg auf der Nordseite der Ostheimer Str.</title>
+<updated>2026-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0016/2026"/>
+<summary>Antrag / Anfrage am 2026-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130610#beratung-2026-01-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 0060/2026 Bürgereingabe nach § 24 GO NRW - Aufstellen von Warntafeln am Vingster Markt, die auf Ordnungswidrigkeit illegaler Müllentsorgung hinweisen und Bußgeld androhen, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0060/2026"/>
+<summary>Entscheidung am 2026-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130488#beratung-2026-01-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3626/2025 Beantwortung einer Anfrage des Bezirksvertreters Robyns (SPD-Fraktion) betreff: "Vingster Freibad"</title>
+<updated>2026-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3626/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128760#beratung-2026-01-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2358/2025 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Kalk am 20.03.2025 betr. "Verkehrssituation auf der Kuthstraße zwischen den KVB-Haltestellen Buslinie 153 „Vingst„ und „Kampgasse“, AN/0325/2025</title>
+<updated>2026-01-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2358/2025"/>
+<summary>Antrag / Anfrage am 2026-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130645#vorlage</id>
+<title>Neue Vorlage AN/0016/2026: Fuß- und Radweg auf der Nordseite der Ostheimer Str.</title>
+<updated>2026-01-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0016/2026"/>
+<summary>Gem. Antrag nach § 3 BV8 · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130610#vorlage</id>
+<title>Neue Vorlage 0060/2026: Bürgereingabe nach § 24 GO NRW - Aufstellen von Warntafeln am Vingster Markt, die auf Ordnungswidrigkeit illegaler Müllentsorgung hinweisen und Bußgeld androhen, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-01-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0060/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128760#vorlage</id>
+<title>Neue Vorlage 2358/2025: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion aus der Sitzung der Bezirksvertretung Kalk am 20.03.2025 betr. "Verkehrssituation auf der Kuthstraße zwischen den KVB-Haltestellen Buslinie 153 „Vingst„ und „Kampgasse“, AN/0325/2025</title>
+<updated>2025-12-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2358/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130488#vorlage</id>
+<title>Neue Vorlage 3626/2025: Beantwortung einer Anfrage des Bezirksvertreters Robyns (SPD-Fraktion) betreff: "Vingster Freibad"</title>
+<updated>2025-12-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3626/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123743#beratung-2025-11-27-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3093/2024 Vingster Freibad</title>
+<updated>2025-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3093/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127690#beratung-2025-06-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1704/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 20.10.2022 (AN/1780/2022) betreffend „Geschwindigkeitsreduzierung auf der Oranienstraße in Köln-Höhenberg und Köln-Vingst“</title>
+<updated>2025-06-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1704/2025"/>
+<summary>Kenntnisnahme (Mitteilung) am 2025-06-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127690#vorlage</id>
+<title>Neue Vorlage 1704/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung Kalk vom 20.10.2022 (AN/1780/2022) betreffend „Geschwindigkeitsreduzierung auf der Oranienstraße in Köln-Höhenberg und Köln-Vingst“</title>
+<updated>2025-06-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1704/2025"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127065#beratung-2025-05-15-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0519/2025 Verbesserung der verkehrssituation auf der Lustheider Straße in Köln-Vingst</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0519/2025"/>
+<summary>Antrag / Anfrage am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127054#beratung-2025-05-15-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0513/2025 Pflanzung des Tiny Forest am HöVi-Land, jetzt!</title>
+<updated>2025-05-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0513/2025"/>
+<summary>Antrag / Anfrage am 2025-05-15; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127065#vorlage</id>
+<title>Neue Vorlage AN/0519/2025: Verbesserung der verkehrssituation auf der Lustheider Straße in Köln-Vingst</title>
+<updated>2025-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0519/2025"/>
+<summary>Gem. Antrag nach § 3 BV8 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/127054#vorlage</id>
+<title>Neue Vorlage AN/0513/2025: Pflanzung des Tiny Forest am HöVi-Land, jetzt!</title>
+<updated>2025-04-30T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0513/2025"/>
+<summary>Antrag nach § 3 BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126296#beratung-2025-03-20-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0325/2025 Anfrage der  CDU-Fraktion in der Sitzung der Bezirksvertretung Kalk am 20.03.2025: "Verkehrssituation auf der Kuthstraße zwischen den KVB-Haltestellen Buslinie 153 „Vingst“ und „Kampgasse“"</title>
+<updated>2025-03-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0325/2025"/>
+<summary>Antrag / Anfrage am 2025-03-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126296#vorlage</id>
+<title>Neue Vorlage AN/0325/2025: Anfrage der  CDU-Fraktion in der Sitzung der Bezirksvertretung Kalk am 20.03.2025: "Verkehrssituation auf der Kuthstraße zwischen den KVB-Haltestellen Buslinie 153 „Vingst“ und „Kampgasse“"</title>
+<updated>2025-03-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0325/2025"/>
+<summary>Anfrage nach § 4 BV8 (CDU) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123525#beratung-2024-11-05-Jugendhilfeausschuss</id>
+<title>Jugendhilfeausschuss: „Kenntnis genommen“ – 2937/2024 Trägerwechsel der Kita Homarstr. 86 auf die Arbeiterwohlfahrt Kreisverband Köln e.V.</title>
+<updated>2024-11-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2937/2024"/>
+<summary>Kenntnisnahme (Mitteilung) am 2024-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123743#vorlage</id>
+<title>Neue Vorlage 3093/2024: Vingster Freibad</title>
+<updated>2024-10-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3093/2024"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123525#vorlage</id>
+<title>Neue Vorlage 2937/2024: Trägerwechsel der Kita Homarstr. 86 auf die Arbeiterwohlfahrt Kreisverband Köln e.V.</title>
+<updated>2024-09-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2937/2024"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123012#beratung-2024-09-05-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/1132/2024 Vingster Freibad</title>
+<updated>2024-09-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/1132/2024"/>
+<summary>Antrag / Anfrage am 2024-09-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120303#beratung-2024-09-05-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 0819/2024 Instandsetzung des Rad- und Gehweges Alter Deutzer Postweg als Verbindungsweg zwischen der Waldbadsiedlung und dem Vingster Ring</title>
+<updated>2024-09-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0819/2024"/>
+<summary>Entscheidung am 2024-09-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123012#vorlage</id>
+<title>Neue Vorlage AN/1132/2024: Vingster Freibad</title>
+<updated>2024-08-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/1132/2024"/>
+<summary>Anfrage nach § 4 BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120303#beratung-2024-06-24-Finanzausschuss</id>
+<title>Finanzausschuss: „ungeändert beschlossen“ – 0819/2024 Instandsetzung des Rad- und Gehweges Alter Deutzer Postweg als Verbindungsweg zwischen der Waldbadsiedlung und dem Vingster Ring</title>
+<updated>2024-06-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0819/2024"/>
+<summary>Vorberatung (Fachausschuss) am 2024-06-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120303#vorlage</id>
+<title>Neue Vorlage 0819/2024: Instandsetzung des Rad- und Gehweges Alter Deutzer Postweg als Verbindungsweg zwischen der Waldbadsiedlung und dem Vingster Ring</title>
+<updated>2024-05-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0819/2024"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118351#beratung-2023-11-23-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/1953/2023 Umsetzung des Beschlusses der Bezirksvertretung Kalk vom 09.03.2023 TOP 2.1. „Errichtung einer Einfahrtblockade für LKW zum Vingster Markt“</title>
+<updated>2023-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/1953/2023"/>
+<summary>Antrag / Anfrage am 2023-11-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/118351#vorlage</id>
+<title>Neue Vorlage AN/1953/2023: Umsetzung des Beschlusses der Bezirksvertretung Kalk vom 09.03.2023 TOP 2.1. „Errichtung einer Einfahrtblockade für LKW zum Vingster Markt“</title>
+<updated>2023-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/1953/2023"/>
+<summary>Anfrage nach § 4 BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116110#beratung-2023-09-28-Stadtentwicklungsausschuss</id>
+<title>Stadtentwicklungsausschuss: „Kenntnis genommen“ – 2129/2023 Vorhabenbezogener Bebauungsplan Oranienstraße - Ergebnis Qualifizierungs- und Beteiligungsverfahren</title>
+<updated>2023-09-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2129/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-09-28; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117225#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2901/2023 Beantwortung einer schriftlichen Einwohneranfrage Planungen ehemalige Parkfläche Treema/Dillenburger Str. und Brache am Kreisel Ostheimer Straße/In den Reihen</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2901/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116110#beratung-2023-09-21-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2129/2023 Vorhabenbezogener Bebauungsplan Oranienstraße - Ergebnis Qualifizierungs- und Beteiligungsverfahren</title>
+<updated>2023-09-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2129/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117225#vorlage</id>
+<title>Neue Vorlage 2901/2023: Beantwortung einer schriftlichen Einwohneranfrage Planungen ehemalige Parkfläche Treema/Dillenburger Str. und Brache am Kreisel Ostheimer Straße/In den Reihen</title>
+<updated>2023-09-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2901/2023"/>
+<summary>Beantwortung e. Einwohneranfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116357#beratung-2023-08-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2355/2023 Aufstellung einer barrierefreien und eingehausten Mobiltoilette im Bereich des Marktplatzes in Vingst</title>
+<updated>2023-08-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2355/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-08-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116110#vorlage</id>
+<title>Neue Vorlage 2129/2023: Vorhabenbezogener Bebauungsplan Oranienstraße - Ergebnis Qualifizierungs- und Beteiligungsverfahren</title>
+<updated>2023-08-21T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2129/2023"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/116357#vorlage</id>
+<title>Neue Vorlage 2355/2023: Aufstellung einer barrierefreien und eingehausten Mobiltoilette im Bereich des Marktplatzes in Vingst</title>
+<updated>2023-08-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2355/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115709#beratung-2023-06-12-Naturschutzbeirat%20bei%20der%20Unteren%20Naturschutzbeh%C3%B6rde</id>
+<title>Naturschutzbeirat bei der Unteren Naturschutzbehörde: „ungeändert beschlossen“ – 1834/2023 Neubau eines Regenrückhaltebeckens als Stauraumkanal am Vingster Ring in Köln Vingst durch die Stadtentwässerungsbetriebe Köln, AöR</title>
+<updated>2023-06-12T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1834/2023"/>
+<summary>Entscheidung am 2023-06-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/115709#vorlage</id>
+<title>Neue Vorlage 1834/2023: Neubau eines Regenrückhaltebeckens als Stauraumkanal am Vingster Ring in Köln Vingst durch die Stadtentwässerungsbetriebe Köln, AöR</title>
+<updated>2023-05-31T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1834/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113914#beratung-2023-03-09-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0414/2023 Änderungsantrag zu TOP 2.[Hausnummer ausgelassen] Bürgereingabe gem. § 24 GO, betr.: Situation Parkplatz gegenüber Ostheimer Str. [Hausnummer ausgelassen], Köln-Vingst (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]) und Errichtung einer Einfahrtblockade für LKW Vingster Markt (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen])</title>
+<updated>2023-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0414/2023"/>
+<summary>Entscheidung am 2023-03-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113176#beratung-2023-03-09-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 0360/2023 Neue Bushaltestellen in der Schweden-Siedlung Vingst und im Servatiusviertel Ostheim</title>
+<updated>2023-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0360/2023"/>
+<summary>Kenntnisnahme (Mitteilung) am 2023-03-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112919#beratung-2023-03-09-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 0213/2023 Bürgereingabe gem. § 24 GO, betr.: Situation Parkplatz gegenüber Ostheimer Str. [Hausnummer ausgelassen], Köln-Vingst (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]) und Errichtung einer Einfahrtblockade für LKW Vingster Markt</title>
+<updated>2023-03-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0213/2023"/>
+<summary>Entscheidung am 2023-03-09; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113914#vorlage</id>
+<title>Neue Vorlage AN/0414/2023: Änderungsantrag zu TOP 2.[Hausnummer ausgelassen] Bürgereingabe gem. § 24 GO, betr.: Situation Parkplatz gegenüber Ostheimer Str. [Hausnummer ausgelassen], Köln-Vingst (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]) und Errichtung einer Einfahrtblockade für LKW Vingster Markt (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen])</title>
+<updated>2023-03-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0414/2023"/>
+<summary>Gem. Änderungsantrag BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113176#vorlage</id>
+<title>Neue Vorlage 0360/2023: Neue Bushaltestellen in der Schweden-Siedlung Vingst und im Servatiusviertel Ostheim</title>
+<updated>2023-03-01T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0360/2023"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113227#vorlage</id>
+<title>Neue Vorlage AN/0188/2023: ÄA zu TOP 8.1.1 - barrierefreie Mobiltoilette Marktplatz Vingst</title>
+<updated>2023-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0188/2023"/>
+<summary>Änderungsantrag BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/113227#beratung-2023-01-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0188/2023 ÄA zu TOP 8.1.1 - barrierefreie Mobiltoilette Marktplatz Vingst</title>
+<updated>2023-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0188/2023"/>
+<summary>Entscheidung am 2023-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112273#beratung-2023-01-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 4083/2022 Mobiltoilette Marktplatz Vingst</title>
+<updated>2023-01-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#4083/2022"/>
+<summary>Entscheidung am 2023-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112919#vorlage</id>
+<title>Neue Vorlage 0213/2023: Bürgereingabe gem. § 24 GO, betr.: Situation Parkplatz gegenüber Ostheimer Str. [Hausnummer ausgelassen], Köln-Vingst (Az.: [Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]-[Hausnummer ausgelassen]) und Errichtung einer Einfahrtblockade für LKW Vingster Markt</title>
+<updated>2023-01-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0213/2023"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112273#vorlage</id>
+<title>Neue Vorlage 4083/2022: Mobiltoilette Marktplatz Vingst</title>
+<updated>2023-01-09T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#4083/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108600#beratung-2022-12-08-Rat</id>
+<title>Rat: „geändert beschlossen“ – 1648/2022 Baubeschluss für die Sanierung des Knotenpunktes Ostheimer Straße/Vingster Ring (inklusive Sanierung der Radverkehrsanlage) sowie einer Freigabe von investiven Auszahlungsermächtigungen bei der Finanzstelle 6601-1201-0-1008, Generalsanierung Radwege</title>
+<updated>2022-12-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1648/2022"/>
+<summary>Entscheidung am 2022-12-08; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108600#beratung-2022-12-05-Finanzausschuss</id>
+<title>Finanzausschuss: „ohne Votum in nachfolgende Gremien“ – 1648/2022 Baubeschluss für die Sanierung des Knotenpunktes Ostheimer Straße/Vingster Ring (inklusive Sanierung der Radverkehrsanlage) sowie einer Freigabe von investiven Auszahlungsermächtigungen bei der Finanzstelle 6601-1201-0-1008, Generalsanierung Radwege</title>
+<updated>2022-12-05T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1648/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2022-12-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108600#beratung-2022-11-24-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 1648/2022 Baubeschluss für die Sanierung des Knotenpunktes Ostheimer Straße/Vingster Ring (inklusive Sanierung der Radverkehrsanlage) sowie einer Freigabe von investiven Auszahlungsermächtigungen bei der Finanzstelle 6601-1201-0-1008, Generalsanierung Radwege</title>
+<updated>2022-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1648/2022"/>
+<summary>Anhörung (BV) am 2022-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111114#beratung-2022-10-20-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/1780/2022 Geschwindigkeitsbegrenzug auf der Oranienstraße in Köln-Höhenberg und Köln-Vingst</title>
+<updated>2022-10-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/1780/2022"/>
+<summary>Antrag / Anfrage am 2022-10-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/110850#beratung-2022-10-20-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – AN/1712/2022 Neue Bushaltestellen in der Schweden-Siedlung Vingst und Servatiusviertel Ostheim</title>
+<updated>2022-10-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/1712/2022"/>
+<summary>Antrag / Anfrage am 2022-10-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111114#vorlage</id>
+<title>Neue Vorlage AN/1780/2022: Geschwindigkeitsbegrenzug auf der Oranienstraße in Köln-Höhenberg und Köln-Vingst</title>
+<updated>2022-10-13T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/1780/2022"/>
+<summary>Anfrage nach § 4 BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/110850#vorlage</id>
+<title>Neue Vorlage AN/1712/2022: Neue Bushaltestellen in der Schweden-Siedlung Vingst und Servatiusviertel Ostheim</title>
+<updated>2022-10-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/1712/2022"/>
+<summary>Antrag nach § 3 BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108600#beratung-2022-09-27-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „ohne Votum in nachfolgende Gremien“ – 1648/2022 Baubeschluss für die Sanierung des Knotenpunktes Ostheimer Straße/Vingster Ring (inklusive Sanierung der Radverkehrsanlage) sowie einer Freigabe von investiven Auszahlungsermächtigungen bei der Finanzstelle 6601-1201-0-1008, Generalsanierung Radwege</title>
+<updated>2022-09-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1648/2022"/>
+<summary>Vorberatung (Fachausschuss) am 2022-09-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/108600#vorlage</id>
+<title>Neue Vorlage 1648/2022: Baubeschluss für die Sanierung des Knotenpunktes Ostheimer Straße/Vingster Ring (inklusive Sanierung der Radverkehrsanlage) sowie einer Freigabe von investiven Auszahlungsermächtigungen bei der Finanzstelle 6601-1201-0-1008, Generalsanierung Radwege</title>
+<updated>2022-09-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1648/2022"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99360#beratung-2022-09-20-Integrationsrat</id>
+<title>Integrationsrat: „Sache ist erledigt“ – AN/0263/2021 Anfrage zur Abfallentsorgung an der Homarstraße</title>
+<updated>2022-09-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0263/2021"/>
+<summary>Antrag / Anfrage am 2022-09-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105358#beratung-2022-09-20-Integrationsrat</id>
+<title>Integrationsrat: „Sache ist erledigt“ – 4151/2021 AN 0263/2020 wilder Müll "Homarstraße in Kalk"</title>
+<updated>2022-09-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#4151/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-09-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105358#beratung-2022-08-25-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 4151/2021 AN 0263/2020 wilder Müll "Homarstraße in Kalk"</title>
+<updated>2022-08-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#4151/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-08-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106558#beratung-2022-05-10-Integrationsrat</id>
+<title>Integrationsrat: „Kenntnis genommen“ – 0393/2022 AN 0263/2020 wilder Müll "Homarstraße" in Köln Kalk</title>
+<updated>2022-05-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0393/2022"/>
+<summary>Kenntnisnahme (Mitteilung) am 2022-05-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/106558#vorlage</id>
+<title>Neue Vorlage 0393/2022: AN 0263/2020 wilder Müll "Homarstraße" in Köln Kalk</title>
+<updated>2022-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0393/2022"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/107883#vorlage</id>
+<title>Neue Vorlage 1202/2022: Geh- und Radwegeumplanung Ostheimer Straße zwischen Frankfurter Straße und Vingster Ring (tlw. L 26, EZ 2)  in Köln-Ostheim</title>
+<updated>2022-04-08T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1202/2022"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103999#beratung-2021-12-14-Rat</id>
+<title>Rat: „Kenntnis genommen“ – 3340/2021 Mehrkosten für die Aufzugsnachrüstung der Stadtbahnhaltestelle Vingst</title>
+<updated>2021-12-14T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3340/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-12-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103999#beratung-2021-12-06-Finanzausschuss</id>
+<title>Finanzausschuss: „Kenntnis genommen“ – 3340/2021 Mehrkosten für die Aufzugsnachrüstung der Stadtbahnhaltestelle Vingst</title>
+<updated>2021-12-06T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3340/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-12-06; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105178#beratung-2021-11-25-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/2444/2021 Mülleimer in Vingst</title>
+<updated>2021-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/2444/2021"/>
+<summary>Antrag / Anfrage am 2021-11-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104962#beratung-2021-11-25-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – AN/2365/2021 Trinkwasserbrunnen am "Bolzplatz" in Vingst Würzburger Straße (West/Bayreuther Str.)</title>
+<updated>2021-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/2365/2021"/>
+<summary>Antrag / Anfrage am 2021-11-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104925#beratung-2021-11-25-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3906/2021 Fußgängersicherung auf dem Bürgersteig in der Burgstraße zwischen den Hausnummern 14 bis 26 in Köln-Kalk</title>
+<updated>2021-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3906/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-11-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104122#beratung-2021-11-25-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 3404/2021 Umgestaltung des Spielplatzes Würzburger Straße in Köln-Vingst</title>
+<updated>2021-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3404/2021"/>
+<summary>Entscheidung am 2021-11-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105358#vorlage</id>
+<title>Neue Vorlage 4151/2021: AN 0263/2020 wilder Müll "Homarstraße in Kalk"</title>
+<updated>2021-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#4151/2021"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103999#beratung-2021-11-23-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 3340/2021 Mehrkosten für die Aufzugsnachrüstung der Stadtbahnhaltestelle Vingst</title>
+<updated>2021-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3340/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-11-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/105178#vorlage</id>
+<title>Neue Vorlage AN/2444/2021: Mülleimer in Vingst</title>
+<updated>2021-11-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/2444/2021"/>
+<summary>Anfrage nach § 4 BV8 (Linke) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104962#vorlage</id>
+<title>Neue Vorlage AN/2365/2021: Trinkwasserbrunnen am "Bolzplatz" in Vingst Würzburger Straße (West/Bayreuther Str.)</title>
+<updated>2021-11-18T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/2365/2021"/>
+<summary>Antrag nach § 3 BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104925#vorlage</id>
+<title>Neue Vorlage 3906/2021: Fußgängersicherung auf dem Bürgersteig in der Burgstraße zwischen den Hausnummern 14 bis 26 in Köln-Kalk</title>
+<updated>2021-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3906/2021"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104076#vorlage</id>
+<title>Neue Vorlage AN/2031/2021: Lustheider Straße attraktiver und sicherer für die Anwohner*innen und Schüler*innen gestalten</title>
+<updated>2021-11-15T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/2031/2021"/>
+<summary>Antrag nach § 3 BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/103999#vorlage</id>
+<title>Neue Vorlage 3340/2021: Mehrkosten für die Aufzugsnachrüstung der Stadtbahnhaltestelle Vingst</title>
+<updated>2021-11-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3340/2021"/>
+<summary>Haushaltsrechtl. Unterrichtung d. Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104122#vorlage</id>
+<title>Neue Vorlage 3404/2021: Umgestaltung des Spielplatzes Würzburger Straße in Köln-Vingst</title>
+<updated>2021-10-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#3404/2021"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/104076#beratung-2021-10-07-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/2031/2021 Lustheider Straße attraktiver und sicherer für die Anwohner*innen und Schüler*innen gestalten</title>
+<updated>2021-10-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/2031/2021"/>
+<summary>Antrag / Anfrage am 2021-10-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102944#beratung-2021-09-02-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 2734/2021 Umgestaltung des Spielplatzes Kuthstraße in Köln-Vingst</title>
+<updated>2021-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2734/2021"/>
+<summary>Entscheidung am 2021-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102411#beratung-2021-09-02-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 2332/2021 Planungsbeschluss für die Umgestaltung der Ostheimer Straße zwischen Unterführung und Burgstraße in Köln Vingst</title>
+<updated>2021-09-02T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2332/2021"/>
+<summary>Entscheidung am 2021-09-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102944#vorlage</id>
+<title>Neue Vorlage 2734/2021: Umgestaltung des Spielplatzes Kuthstraße in Köln-Vingst</title>
+<updated>2021-08-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2734/2021"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102516#vorlage</id>
+<title>Neue Vorlage 2387/2021: Stellungnahme zu einer mündlichen Anfrage zur Inbetriebnahme der Aufzüge an der Haltestelle Vingst aus der BV Kalk vom 10.06.2021</title>
+<updated>2021-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2387/2021"/>
+<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/102411#vorlage</id>
+<title>Neue Vorlage 2332/2021: Planungsbeschluss für die Umgestaltung der Ostheimer Straße zwischen Unterführung und Burgstraße in Köln Vingst</title>
+<updated>2021-06-29T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#2332/2021"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101434#beratung-2021-06-10-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1766/2021 Verbesserung der Helligkeit in der Unterführung Ostheimer Straße/Dillenburger Straße in Köln-Vingst/-Kalk</title>
+<updated>2021-06-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1766/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-06-10; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/101434#vorlage</id>
+<title>Neue Vorlage 1766/2021: Verbesserung der Helligkeit in der Unterführung Ostheimer Straße/Dillenburger Straße in Köln-Vingst/-Kalk</title>
+<updated>2021-05-28T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1766/2021"/>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99402#beratung-2021-04-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 0525/2021 Sanierung der nördlichen Nebenanlagen auf der Ostheimer Straße (L284) zwischen Frankfurter Straße und Vingster Ring</title>
+<updated>2021-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0525/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-04-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100752#beratung-2021-04-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 1387/2021 Realisierung Kreisverkehr Ostheimer Straße/Nobelstraße in Köln Vingst</title>
+<updated>2021-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1387/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-04-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100600#beratung-2021-04-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0676/2021 Verbesserung der Helligkeit in der Unterführung Ostheimer Straße/Dillenburger Straße in Köln-Vingst/-Kalk</title>
+<updated>2021-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0676/2021"/>
+<summary>Antrag / Anfrage am 2021-04-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100549#beratung-2021-04-22-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0657/2021 Realisierung Kreisverkehr Ostheimer Straße/Nobelstraße in Köln-Vingst</title>
+<updated>2021-04-22T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0657/2021"/>
+<summary>Antrag / Anfrage am 2021-04-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99402#beratung-2021-04-20-Verkehrsausschuss</id>
+<title>Verkehrsausschuss: „Kenntnis genommen“ – 0525/2021 Sanierung der nördlichen Nebenanlagen auf der Ostheimer Straße (L284) zwischen Frankfurter Straße und Vingster Ring</title>
+<updated>2021-04-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0525/2021"/>
+<summary>Kenntnisnahme (Mitteilung) am 2021-04-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100752#vorlage</id>
+<title>Neue Vorlage 1387/2021: Realisierung Kreisverkehr Ostheimer Straße/Nobelstraße in Köln Vingst</title>
+<updated>2021-04-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#1387/2021"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100600#vorlage</id>
+<title>Neue Vorlage AN/0676/2021: Verbesserung der Helligkeit in der Unterführung Ostheimer Straße/Dillenburger Straße in Köln-Vingst/-Kalk</title>
+<updated>2021-04-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0676/2021"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99402#vorlage</id>
+<title>Neue Vorlage 0525/2021: Sanierung der nördlichen Nebenanlagen auf der Ostheimer Straße (L284) zwischen Frankfurter Straße und Vingster Ring</title>
+<updated>2021-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#0525/2021"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/100549#vorlage</id>
+<title>Neue Vorlage AN/0657/2021: Realisierung Kreisverkehr Ostheimer Straße/Nobelstraße in Köln-Vingst</title>
+<updated>2021-04-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0657/2021"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99455#beratung-2021-03-04-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/0279/2021 Weniger Müll in Köln-Vingst!</title>
+<updated>2021-03-04T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0279/2021"/>
+<summary>Antrag / Anfrage am 2021-03-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99360#vorlage</id>
+<title>Neue Vorlage AN/0263/2021: Anfrage zur Abfallentsorgung an der Homarstraße</title>
+<updated>2021-02-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0263/2021"/>
+<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/99455#vorlage</id>
+<title>Neue Vorlage AN/0279/2021: Weniger Müll in Köln-Vingst!</title>
+<updated>2021-02-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vingst#AN/0279/2021"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
 </feed>
