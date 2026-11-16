@@ -8,8 +8,9 @@ auch für lokale Testserver). Ohne beide schreibt der Schritt nichts (weder Zust
 Freigabe sind in Anfragen und Abrufzustand gleich wie ohne diesen Schritt.
 
 Abrufpolitik: dieselbe wie beim Abruf der Metadaten (pipeline/abruf.py, `get_datei` teilt Abstand, Zeitfenster,
-Zählwerk und Fehlerbehandlung mit `get_json`): eine Verbindung, mindestens 2 s Abstand (ein eigener Prozess nach dem
-Abrufschritt; der Abstand zählt ab dem Start des Prozesses, also auch zur letzten Anfrage des Abrufs), Zeitfenster
+Zählwerk und Fehlerbehandlung mit `get_json`): eine Verbindung, mindestens 2 s Abstand, im nächtlichen Lauf fest 20 s
+wie beim Abruf (RATSATLAS_ABSTAND im Dokumentschritt von pages.yml, Entscheidung 15.11.2026; ein eigener Prozess nach
+dem Abrufschritt; der Abstand zählt ab dem Start des Prozesses, also auch zur letzten Anfrage des Abrufs), Zeitfenster
 23–1 Uhr vor jedem Versuch, User-Agent mit RATSATLAS_KONTAKT (Pflicht), keine Weiterleitung, 401/403/404 sofortiger
 Abbruch, 429/5xx Pausen nie über das Fenster hinaus. Vor der ersten Anfrage gelten dieselben Pausen wie für den Abruf
 (sessionnet._pause_grund: 12-Stunden-Regel nach jedem Abbruch, auch einem des Abrufs in dieser Nacht, Retry-After,

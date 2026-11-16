@@ -24,8 +24,8 @@
 # Nacht). Nannte VOLLABRUF die Liste schon beim Aussetzen (dauerhaft gesetzt), hebt sie es erst auf, nachdem ein Lauf
 # ohne sie die Liste erreicht hat: für eine Nacht austragen, dann wieder eintragen. Abstand, Zeitfenster und Grenzen je
 # Nacht sind nicht über Variablen einstellbar.
-# Abrufpolitik: eine Verbindung, Abstand 20 s (seit 15.11.2026, fest im Abrufschritt; der Code verlangt mindestens 2 s),
-# nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (Retry-After als
+# Abrufpolitik: eine Verbindung, Abstand 20 s (seit 15.11.2026, fest im Abruf- und im Dokumentschritt; der Code verlangt
+# mindestens 2 s), nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (Retry-After als
 # Sekunden oder Datum eingehalten), aber nie über das Ende des Zeitfensters: Reicht die nächste Pause darüber hinaus
 # oder ist Retry-After länger als 3 h oder unlesbar, gibt der Abruf sofort auf („aufgegeben“). Ein solcher Retry-After
 # gilt über die Nacht hinaus: Bis zu seinem Ablauf (höchstens 30 Tage, unlesbar 7 Tage) wird jeder Lauf übersprungen.
@@ -47,7 +47,8 @@
 # sendet nur mit RATSATLAS_PDF_FREIGEGEBEN = „ja“ (zusätzlich zu RATSATLAS_STADT_INFORMIERT) eine Anfrage; ohne sie
 # schreibt er nichts (Nächte ohne Freigabe bleiben in Anfragen und Abrufzustand unverändert). RATSATLAS_PDF_MAX: Dateien
 # je Nacht (leer: 300; 0, negativ oder unlesbar: keine Anfrage; der Test nach dem Telefonat mit der Stadt ist die erste
-# Nacht mit 100, Entscheidung 13.11.2026 (c)). Dieselbe Abrufpolitik und derselbe Zustand wie beim
+# Nacht mit 100, Entscheidung 13.11.2026 (c)). Dieselbe Abrufpolitik (auch der feste Abstand von 20 s, also mindestens
+# 100 min für 300 Dateien; was bis 1 Uhr nicht gelesen ist, folgt in der nächsten Nacht) und derselbe Zustand wie beim
 # Abruf, nach ihm und nur, wenn er in dieser Nacht vollständig war; ein Abbruch zählt wie einer des Abrufs (12-Stunden-
 # Regel, Nacht mit möglicher Sperre) und nach drei Nächten mit möglicher Sperre beim Dokumentabruf ruhen die Dokumente
 # sieben Tage. Ein Fehler in diesem Schritt hält die Veröffentlichung nicht an; er hat ein eigenes Zeitlimit (150 min).
@@ -176,11 +177,11 @@ jobs:
         run: python tools/abrufstand.py
 
       # Dokumente (PDF-Köpfe) nach dem Abruf, seiner Sicherung und dem Fortschritt, im selben Zeitfenster und nach
-      # derselben Abrufpolitik (eigener Prozess: der Abstand von 2 s zählt ab seinem Start, also auch zur letzten Anfrage
-      # des Abrufs); nur mit RATSATLAS_PDF_FREIGEGEBEN=ja, sonst keine Anfrage und nichts geschrieben (siehe Kopf). Läuft
-      # nicht nach einem roten Abrufschritt (kein eigenes `if`, also auch nicht nach einem roten Wächter). Eigenes Zeitlimit als letzte Sicherung: Das Zeitfenster endet um 1 Uhr und jede Datei hat
-      # höchstens 120 s; der Zustand wird vor jeder Anfrage geschrieben, ein Abbruch von außen verliert höchstens die
-      # laufende Datei
+      # derselben Abrufpolitik (eigener Prozess: der Abstand von 20 s zählt ab seinem Start, also auch zur letzten
+      # Anfrage des Abrufs); nur mit RATSATLAS_PDF_FREIGEGEBEN=ja, sonst keine Anfrage und nichts geschrieben (siehe
+      # Kopf). Läuft nicht nach einem roten Abrufschritt (kein eigenes `if`, also auch nicht nach einem roten Wächter).
+      # Eigenes Zeitlimit als letzte Sicherung: Das Zeitfenster endet um 1 Uhr und jede Datei hat höchstens 120 s; der
+      # Zustand wird vor jeder Anfrage geschrieben, ein Abbruch von außen verliert höchstens die laufende Datei
       - name: Dokumente der Stadt Köln (PDF-Köpfe, gesperrt bis zur Freigabe)
         id: dokumente
         continue-on-error: true
@@ -190,6 +191,9 @@ jobs:
           RATSATLAS_KONTAKT: ${{ vars.RATSATLAS_KONTAKT }}
           RATSATLAS_PDF_FREIGEGEBEN: ${{ vars.RATSATLAS_PDF_FREIGEGEBEN }}
           RATSATLAS_PDF_MAX: ${{ vars.RATSATLAS_PDF_MAX }}
+          # Abstand fest 20 s wie im Abrufschritt (Entscheidung 15.11.2026); ohne die Angabe gälte in diesem eigenen
+          # Prozess die Vorgabe von 2 s. Keine Repository-Variable: nur über eine Änderung an dieser Datei
+          RATSATLAS_ABSTAND: "20"
         run: python -m pipeline dokumente
 
       # Zweite Sicherung nur mit Freigabe des Dokumentschritts (ohne sie schreibt er nichts): Ergebnisse, Zählung der

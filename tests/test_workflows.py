@@ -37,11 +37,15 @@ def test_abhilfen_als_variablen_sicherungen_nicht():
                                           "RATSATLAS_KUERZER_ANNEHMEN")}
     for gesperrt in ("RATSATLAS_ZEITFENSTER", "RATSATLAS_LIMIT", "RATSATLAS_MAX_OBJEKTE"):
         assert gesperrt not in text
-    # Abstand: kein Repository-Variable, nur ein fester Wert im Abrufschritt, nicht unter 20 s (Entscheidung 15.11.2026:
-    # vermutete Drosselung nach etwa einer Minute mit 2 s Abstand)
+    # Abstand: keine Repository-Variable, nur feste Werte im Abruf- und im Dokumentschritt (je ein eigener Prozess, ohne
+    # Angabe gälte dort die Vorgabe von 2 s), nicht unter 20 s (Entscheidung 15.11.2026: vermutete Drosselung nach etwa
+    # einer Minute mit 2 s Abstand)
     assert "vars.RATSATLAS_ABSTAND" not in text
     werte = re.findall(r'^\s+RATSATLAS_ABSTAND: "?([0-9.]+)"?$', text, re.M)
-    assert len(werte) == 1 and float(werte[0]) >= 20 and re.search(r'RATSATLAS_ABSTAND: "?[0-9.]+"?$', schritt, re.M)
+    assert len(werte) == 2 and all(float(w) >= 20 for w in werte)
+    mit_abstand = [re.search(r"^\s+run: python -m pipeline (\S+)$", s, re.M)
+                   for s in text.split("\n      - ") if re.search(r'^\s+RATSATLAS_ABSTAND: "?[0-9.]+"?$', s, re.M)]
+    assert sorted(m.group(1) for m in mit_abstand if m) == ["dokumente", "fetch"] and all(mit_abstand)
 
 
 def test_dokumentschritt_gesperrt_und_ohne_anhalten():
