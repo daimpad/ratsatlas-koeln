@@ -11,7 +11,7 @@ import time
 
 import pytest
 
-from pipeline import abruf, config, sessionnet
+from pipeline import abruf, build, config, sessionnet
 
 ROOT = config.ROOT
 B = "https://oparl.example.invalid/oparl"
@@ -605,30 +605,37 @@ def test_ausgesetzte_liste_kein_zwischenstand(fa, tmp_path, capsys, eintrag, erw
     """Eine ausgesetzte Liste (Eintrag `<liste>_ausgesetzt`, jeder Wert außer null wie sessionnet._ausgesetzt) hat
     Vorrang vor der Fortsetzung, die beim Aussetzen stehen bleibt: kein „Zwischenstand: Vollabruf läuft“, sondern
     „ausgesetzt“ wie in tools/abrufstand.py, nur mit Zeitpunkt und festem Anlass (nie `meldung`, kein freier Anlass).
-    Gezählt werden wie bisher der letzte gültige Stand und die stehen gebliebene Teildatei, je Kennung einmal; der
-    Absatz zum fertigen Vollabruf („Nur aus der Teildatei“) entfällt, denn es läuft keiner."""
+    Gezählt wird wie veröffentlicht nur der letzte gültige Stand (Entscheidung 16.11.2026 (6); bis dahin zählte die
+    stehen gebliebene Teildatei mit, hier 4 statt 3 Vorlagen); von der Teildatei steht nur die Zahl der Kennungen
+    allein aus ihr da (Vorlage 4). Der Absatz zum fertigen Vollabruf („Nur aus der Teildatei“) entfällt, denn es läuft
+    keiner."""
     raw = tmp_path / "raw"
     _ausgesetzt_roh(raw, eintrag)
     a = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)
     r = a["listen"]["papers"]
     assert r["stand"].startswith(erwartet), r["stand"]
-    assert r["stand"].endswith("gezählt der letzte gültige Stand (papers.jsonl) und die stehen gebliebene Teildatei "
-                               "des ausgesetzten Vollabrufs (papers.teil.jsonl), je Kennung einmal"), r["stand"]
+    assert r["stand"].endswith("gezählt wie veröffentlicht nur der letzte gültige Stand (papers.jsonl), nicht die "
+                               "stehen gebliebene Teildatei des abgelehnten Vollabrufs (papers.teil.jsonl)"), r["stand"]
     assert r["ausgesetzt"] and not r["vollabruf_laeuft"]
-    assert (r["auswertung"].n, r["ersetzt"], r["auswertung"].feld["underDirectionOf"]) == (4, 1, 1)
+    # die jüngere Fassung von Vorlage 1 (mit underDirectionOf) steht nur in der Teildatei und zählt nicht
+    assert (r["auswertung"].n, r["ersetzt"], r["auswertung"].feld["underDirectionOf"]) == (3, 0, 0)
+    assert r["nur_teil"] == {"kennungen": 1}
     out = _aufruf(fa, raw, capsys)
     assert f"Stand: {erwartet}" in out
     assert "Zwischenstand" not in out and "Vollabruf läuft" not in out and "Nur aus der Teildatei" not in out
     assert "MARKE" not in out and "nur 8 statt bisher 10" not in out
-    assert "Vorlagen je Kennung: 4;" in out
+    assert "Vorlagen je Kennung: 3;" in out
+    assert ("Kennungen nur aus dem abgelehnten Vollabruf (papers.teil.jsonl; nicht gezählt, ohne Feldabdeckung): 1; "
+            "Zeilen mit Löschvermerk übergangen") in out
 
 
 def test_ausgesetzt_ohne_fortsetzung_und_andere_listen(fa, tmp_path):
-    """Ohne Fortsetzung (etwa ein wiederholter Vollabruf in einer Nacht) ist eine übrig gebliebene Teildatei veraltet
-    und zählt wie ohne Aussetzen mit; der Stand nennt sie unter „gezählt“, mit „je Kennung einmal“ neben dem letzten
-    gültigen Stand und ohne ihn allein (Prüfung stgf: vorher „gezählt nichts (papers.jsonl fehlt)“ bzw. ohne „je
-    Kennung einmal“, obwohl sie mitzählte). Ein Eintrag null gilt nicht als Aussetzen (Zwischenstand wie bisher),
-    Gremien setzen nie aus (nicht in sessionnet.AUSSETZEN), Sitzungen schon."""
+    """Ohne Fortsetzung (etwa ein wiederholter Vollabruf in einer Nacht) ist eine übrig gebliebene Teildatei veraltet;
+    bei ausgesetzter Liste zählt auch sie nicht (Entscheidung 16.11.2026 (6): wie veröffentlicht nur der letzte gültige
+    Stand; bis dahin zählte sie mit, Prüfung stgf). Der Stand nennt sie als nicht gezählt, die Kennungen allein aus ihr
+    stehen als eine Zahl da, ohne den Hinweis auf RATSATLAS_KUERZER_ANNEHMEN als Weg zu ihnen (ohne Fortsetzung liest
+    der Abruf die Liste dann ab Seite 1). Ohne fertige Datei: gezählt nichts. Ein Eintrag null gilt nicht als
+    Aussetzen (Zwischenstand wie bisher), Gremien setzen nie aus (nicht in sessionnet.AUSSETZEN), Sitzungen schon."""
     raw = tmp_path / "raw"
     eintrag = {"seit": "2026-11-15T22:15:00+00:00", "anlass": "wiederholter Vollabruf"}
     _ausgesetzt_roh(raw, eintrag, fortsetzung=False)
@@ -636,16 +643,22 @@ def test_ausgesetzt_ohne_fortsetzung_und_andere_listen(fa, tmp_path):
     vorspann = ("ausgesetzt seit 15.11.2026, 23:15 Uhr (wiederholter Vollabruf unter 90 % des Stands): der Abruf liest "
                 "die Liste nur, wenn RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF sie nennt, sonst bleibt ihr "
                 "letzter gültiger Stand (Abhilfe im Fortschritt des Abrufs); gezählt ")
-    veraltet = ("die veraltete Teildatei ohne Fortsetzung im Zustand (papers.teil.jsonl; der Abruf liest sie nicht "
-                "mehr)")
-    assert r["stand"] == (vorspann + "der letzte gültige Stand (papers.jsonl) und " + veraltet
-                          + ", je Kennung einmal"), r["stand"]
-    assert r["auswertung"].n == 4
-    # ohne fertige Datei: gezählt nur die veraltete Teildatei (2 Kennungen), nicht „nichts“
+    veraltet = (", nicht die veraltete Teildatei ohne Fortsetzung im Zustand (papers.teil.jsonl; der Abruf liest sie "
+                "nicht mehr)")
+    assert r["stand"] == vorspann + "wie veröffentlicht nur der letzte gültige Stand (papers.jsonl)" + veraltet, \
+        r["stand"]
+    assert (r["auswertung"].n, r["auswertung"].feld["underDirectionOf"], r["nur_teil"]) == (3, 0, {"kennungen": 1})
+    text = "\n".join(fa.text(fa.bloecke(fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE))))
+    assert ("Kennungen nur aus der veralteten Teildatei ohne Fortsetzung (papers.teil.jsonl; nicht gezählt, ohne "
+            "Feldabdeckung): 1; Zeilen mit Löschvermerk übergangen. Der Abruf liest sie nicht mehr, auch nicht mit "
+            "RATSATLAS_KUERZER_ANNEHMEN=papers (liest die Liste dann ab Seite 1)") in text
+    assert "abgelehnten" not in text and "Zwischenstand" not in text
+    # ohne fertige Datei: gezählt nichts, beide Kennungen der veralteten Teildatei nur als Zahl
     (raw / "papers.jsonl").unlink()
     r = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
-    assert r["stand"] == vorspann + veraltet, r["stand"]
-    assert r["auswertung"].n == 2 and "nichts" not in r["stand"] and "mitgezählt" not in r["stand"]
+    assert r["stand"] == vorspann + "nichts (papers.jsonl fehlt)" + veraltet, r["stand"]
+    assert (r["auswertung"].n, r["kennungen"], r["nur_teil"]) == (0, 0, {"kennungen": 2})
+    assert "mitgezählt" not in r["stand"]
     _ausgesetzt_roh(raw, None)
     r = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
     assert r["stand"].startswith("Zwischenstand: Vollabruf läuft") and r["vollabruf_laeuft"] and not r["ausgesetzt"]
@@ -656,6 +669,182 @@ def test_ausgesetzt_ohne_fortsetzung_und_andere_listen(fa, tmp_path):
         assert a[liste]["ausgesetzt"] is ausgesetzt
         assert a[liste]["stand"].startswith("ausgesetzt seit") is ausgesetzt, a[liste]["stand"]
     assert a["meetings"]["stand"].endswith("gezählt nichts (meetings_roh.jsonl fehlt)")   # keine Sitzungen
+
+
+# --- Ausgesetzte Liste wie veröffentlicht (Entscheidung 16.11.2026 (6)) ----------------------------------------------
+
+AUSGESETZT = {"seit": "2026-11-15T22:15:00+00:00", "objekte": 8, "bisher": 10, "anlass": "fortgesetzter Vollabruf",
+              "vollabruf_seit_beginn": False, "meldung": "erfundene Meldung"}
+FORTSETZUNG = {"naechste": f"{B}/papers?page=3", "seiten": 2, "start": "2026-11-14T22:10:00+00:00"}
+AMT = [f"{B}/organizations/amt"]
+
+
+def _gezaehlt(auswertung):
+    """Alle Zahlen einer Auswertung (Vorlagen, Sitzungen, Gremien) zum Vergleich; Kategorien mit ihren Zählern, ohne
+    die Funktion für den Stadtteilabgleich."""
+    out = {}
+    for k, v in vars(auswertung).items():
+        if callable(v):
+            continue
+        out[k] = vars(v) if hasattr(v, "zaehler") else v
+    return out
+
+
+def _letzter_gueltiger_stand(raw):
+    """Vorlagen: Fassungen im letzten gültigen Stand (papers.jsonl) und in der Teildatei des abgelehnten Vollabrufs.
+    In der Teildatei: eine jüngere Fassung von 1 mit Feldern, die es im letzten gültigen Stand nicht gibt; neue
+    Vorlagen 7, 8 (zweimal) und 9 (dann gelöscht); Löschvermerke für 2 (im Stand) und 10 (nur hier); eine Fassung von
+    3 ohne Löschvermerk (im Stand gelöscht)."""
+    fertig = [_vorlage(1), _vorlage(2), _vorlage(2, underDirectionOf=AMT, paperType="Mitteilung"),
+              {"id": f"{B}/papers/3", "deleted": True},
+              _vorlage(5, location=[{"id": f"{B}/locations/5", "subLocality": "Ehrenfeld"}], date="2025-05-05")]
+    teil = [_vorlage(1, underDirectionOf=AMT, mainFile={"id": f"{B}/files/1", "mimeType": "application/pdf"},
+                     keyword=["erfunden"], date="2024-01-01"),
+            _vorlage(7), _vorlage(8), _vorlage(8, paperType="Mitteilung"), {"id": f"{B}/papers/2", "deleted": True},
+            {"id": f"{B}/papers/10", "deleted": True}, _vorlage(3), _vorlage(9),
+            {"id": f"{B}/papers/9", "deleted": True}]
+    _jsonl(raw / "papers.jsonl", fertig)
+    _jsonl(sessionnet._teil(raw / "papers.jsonl"), teil)
+    return fertig, teil
+
+
+def _zustand(raw, **eintraege):
+    (raw / "zustand_abruf.json").write_text(json.dumps({"papers": "2026-11-12T22:20:00+00:00", **eintraege}),
+                                            encoding="utf-8")
+
+
+def _nur_fertig(fa, tmp_path, fertig, name="papers.jsonl"):
+    """Unabhängige Zählung des letzten gültigen Stands: dieselben Zeilen allein in einem eigenen Ordner, ohne
+    Teildatei und ohne Zustand."""
+    raw = tmp_path / "nur_fertig"
+    _jsonl(raw / name, fertig)
+    return fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)
+
+
+def test_ausgesetzt_zaehlt_wie_veroeffentlicht(fa, tmp_path, capsys):
+    """Ausgesetzte Liste mit Fortsetzung und Teildatei: Die Zahlen gleichen einer unabhängigen Zählung nur der fertigen
+    Datei (dieselben Zeilen allein, und je Kennung einmal wie build._je_kennung_einmal); die jüngere Fassung von 1 in
+    der Teildatei ändert keine Feldabdeckung. Die Kennungen nur aus der Teildatei (7, 8, 9; nicht 3, die es im Stand
+    gelöscht gibt, und nicht 10, nur mit Löschvermerk) stehen als eine Zahl da, ohne Felder, mit dem Hinweis auf
+    RATSATLAS_KUERZER_ANNEHMEN und RATSATLAS_VOLLABRUF."""
+    raw = tmp_path / "raw"
+    fertig, _ = _letzter_gueltiger_stand(raw)
+    _zustand(raw, papers_fortsetzung=FORTSETZUNG, papers_ausgesetzt=AUSGESETZT)
+    r = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
+    erwartet = _nur_fertig(fa, tmp_path, fertig)["listen"]["papers"]
+    assert _gezaehlt(r["auswertung"]) == _gezaehlt(erwartet["auswertung"])
+    assert (r["kennungen"], r["ersetzt"]) == (erwartet["kennungen"], erwartet["ersetzt"]) == (4, 1)
+    w = r["auswertung"]
+    je_kennung = build._je_kennung_einmal(fertig)
+    assert (w.n, w.geloescht) == (sum(not p.get("deleted") for p in je_kennung),
+                                  sum(bool(p.get("deleted")) for p in je_kennung)) == (3, 1)
+    assert (w.feld["underDirectionOf"], w.feld["mainFile"], w.feld["keyword"], w.feld["stadtteil"]) == (1, 0, 0, 1)
+    assert w.jahre == {2026: 2, 2025: 1}
+    assert r["nur_teil"] == {"kennungen": 3}
+    out = _aufruf(fa, raw, capsys)
+    vorlagen = out.split("== Vorlagen (papers) ==")[1].split("== Sitzungen")[0]
+    assert "Dateien: papers.jsonl gelesen: 5 Zeilen; papers.teil.jsonl gelesen: 9 Zeilen" in vorlagen
+    assert ("gezählt wie veröffentlicht nur der letzte gültige Stand (papers.jsonl), nicht die stehen gebliebene "
+            "Teildatei des abgelehnten Vollabrufs (papers.teil.jsonl)\n") in vorlagen
+    assert ("Kennungen nur aus dem abgelehnten Vollabruf (papers.teil.jsonl; nicht gezählt, ohne Feldabdeckung): 3; "
+            "Zeilen mit Löschvermerk übergangen, sie ändern den gezählten Stand nicht. Den kürzeren Stand nimmt nur "
+            "RATSATLAS_KUERZER_ANNEHMEN=papers an (liest die Liste zu Ende), sonst nach Prüfung ein neuer Vollabruf "
+            "mit RATSATLAS_VOLLABRUF=papers (ab Seite 1); Abhilfe im Fortschritt des Abrufs\n") in vorlagen
+    assert vorlagen.count("Kennungen nur aus") == 1   # eine Zahl, keine Tabelle dazu
+    assert "Vorlagen je Kennung: 3; als gelöscht gemeldet (deleted, getrennt): 1" in vorlagen
+    assert "Fassungen derselben Kennung (je Kennung einmal gezählt): 1 ersetzt" in vorlagen
+    assert "Zwischenstand" not in out and "Nur aus der Teildatei:" not in out
+    # bis auf die Absätze zum Stand und zur Teildatei dieselbe Ausgabe wie die unabhängige Zählung
+    ohne = out.split("== Vorlagen (papers) ==")[1].split("Vorlagen je Kennung")[1].split("== Sitzungen")[0]
+    allein = _aufruf(fa, tmp_path / "nur_fertig", capsys)
+    assert ohne == allein.split("Vorlagen je Kennung")[1].split("== Sitzungen")[0]
+
+
+def test_ausgesetzt_loeschvermerke_der_teildatei_aendern_nichts(fa, tmp_path):
+    """Zeilen mit Löschvermerk in der Teildatei (für eine Vorlage des Stands, für eine nur aus der Teildatei und nach
+    einer Fassung ohne Löschvermerk) ändern weder die gezählten Zahlen noch die Zahl der Kennungen allein aus der
+    Teildatei: ohne sie dasselbe Ergebnis."""
+    raw = tmp_path / "raw"
+    _, teil = _letzter_gueltiger_stand(raw)
+    _zustand(raw, papers_fortsetzung=FORTSETZUNG, papers_ausgesetzt=AUSGESETZT)
+    mit = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
+    assert sum(bool(o.get("deleted")) for o in teil) == 3
+    _jsonl(sessionnet._teil(raw / "papers.jsonl"), [o for o in teil if not o.get("deleted")])
+    ohne = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
+    assert _gezaehlt(mit["auswertung"]) == _gezaehlt(ohne["auswertung"])
+    assert (mit["kennungen"], mit["ersetzt"], mit["nur_teil"]) == (ohne["kennungen"], ohne["ersetzt"],
+                                                                   ohne["nur_teil"]) == (4, 1, {"kennungen": 3})
+    # nur Löschvermerke in der Teildatei: gezählt wie ohne Teildatei, keine Kennung allein aus ihr
+    _jsonl(sessionnet._teil(raw / "papers.jsonl"), [o for o in teil if o.get("deleted")])
+    nur = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
+    assert _gezaehlt(nur["auswertung"]) == _gezaehlt(mit["auswertung"]) and nur["nur_teil"] == {"kennungen": 0}
+
+
+@pytest.mark.parametrize("fortsetzung", [None, FORTSETZUNG])
+def test_ausgesetzt_ohne_teildatei(fa, tmp_path, capsys, fortsetzung):
+    """Ausgesetzt ohne Teildatei (etwa ein wiederholter Vollabruf, dessen Objekte nirgends stehen; oder eine
+    Fortsetzung ohne Teildatei): gezählt wie die fertige Datei allein, keine Zahl zur Teildatei, keine Erwähnung der
+    Teildatei im Stand."""
+    raw = tmp_path / "raw"
+    fertig, _ = _letzter_gueltiger_stand(raw)
+    sessionnet._teil(raw / "papers.jsonl").unlink()
+    _zustand(raw, papers_ausgesetzt=dict(AUSGESETZT, anlass="wiederholter Vollabruf"),
+             **({"papers_fortsetzung": fortsetzung} if fortsetzung else {}))
+    r = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
+    erwartet = _nur_fertig(fa, tmp_path, fertig)["listen"]["papers"]
+    assert _gezaehlt(r["auswertung"]) == _gezaehlt(erwartet["auswertung"])
+    assert (r["kennungen"], r["ersetzt"], r["nur_teil"]) == (4, 1, None)
+    assert r["stand"].endswith("; gezählt wie veröffentlicht nur der letzte gültige Stand (papers.jsonl)"), r["stand"]
+    out = _aufruf(fa, raw, capsys)
+    assert "Dateien: papers.jsonl gelesen: 5 Zeilen; papers.teil.jsonl fehlt" in out
+    assert "Kennungen nur aus" not in out and "Teildatei" not in out.split("== Sitzungen")[0]
+    assert "Vorlagen je Kennung: 3;" in out
+
+
+def test_nicht_ausgesetzt_unveraendert_zwischenstand(fa, tmp_path, capsys):
+    """Ohne Aussetzen (kein Eintrag oder null) bleibt alles wie bisher: Während eines laufenden Vollabruf zählen
+    fertige Datei und Teildatei zusammen, je Kennung einmal wie build über beide (auch die jüngere Fassung von 1 und
+    die Vorlage 3, die in der Teildatei ohne Löschvermerk steht), mit dem Absatz zum fertigen Vollabruf."""
+    raw = tmp_path / "raw"
+    fertig, teil = _letzter_gueltiger_stand(raw)
+    for zustand in ({"papers_fortsetzung": FORTSETZUNG}, {"papers_fortsetzung": FORTSETZUNG, "papers_ausgesetzt": None}):
+        _zustand(raw, **zustand)
+        r = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
+        w = r["auswertung"]
+        je_kennung = build._je_kennung_einmal(fertig + teil)
+        assert (w.n, w.geloescht) == (sum(not p.get("deleted") for p in je_kennung),
+                                      sum(bool(p.get("deleted")) for p in je_kennung)) == (7, 1)
+        assert (w.feld["underDirectionOf"], w.feld["mainFile"]) == (2, 1)
+        # wie am Ende des Vollabrufs (voll=True): 1, 7, 8, 2 (gelöscht), 10 (gelöscht), 3, 9 (gelöscht)
+        assert r["nur_teil"] == {"kennungen": 7, "geloescht": 3}
+        assert not r["ausgesetzt"] and r["vollabruf_laeuft"]
+        out = _aufruf(fa, raw, capsys)
+        assert "Stand: Zwischenstand: Vollabruf läuft" in out and "Nur aus der Teildatei: 7 Kennungen" in out
+        assert "Kennungen nur aus" not in out and "ausgesetzt" not in out
+
+
+def test_ausgesetzte_sitzungen_wie_veroeffentlicht(fa, tmp_path, capsys):
+    """Sitzungen (meetings_roh.jsonl, Teildatei meetings_roh.teil.jsonl) ebenso: gezählt wie die fertige Datei allein,
+    die jüngere Fassung mit Tagesordnungspunkten aus der Teildatei zählt nicht, eine Sitzung nur aus ihr als Zahl."""
+    raw = tmp_path / "raw"
+    tops = [{"id": f"{B}/a/{k}", "public": True, "result": "ungeändert beschlossen"} for k in range(6)]
+    fertig = [{"id": f"{B}/meetings/1", "start": "2026-10-01T17:00:00+02:00"},
+              {"id": f"{B}/meetings/2", "start": "2026-10-02T17:00:00+02:00", "cancelled": True}]
+    _jsonl(raw / "meetings_roh.jsonl", fertig)
+    _jsonl(raw / "meetings_roh.teil.jsonl", [dict(fertig[0], agendaItem=tops),
+                                             {"id": f"{B}/meetings/3", "start": "2026-11-01T17:00:00+01:00"}])
+    (raw / "zustand_abruf.json").write_text(json.dumps({
+        "meetings_fortsetzung": dict(FORTSETZUNG, naechste=f"{B}/meetings?page=3"),
+        "meetings_ausgesetzt": dict(AUSGESETZT, anlass="fortgesetzter Vollabruf")}), encoding="utf-8")
+    r = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["meetings"]
+    erwartet = _nur_fertig(fa, tmp_path, fertig, "meetings_roh.jsonl")["listen"]["meetings"]
+    assert _gezaehlt(r["auswertung"]) == _gezaehlt(erwartet["auswertung"])
+    assert (r["auswertung"].n, r["auswertung"].top["insgesamt"], r["nur_teil"]) == (2, 0, {"kennungen": 1})
+    out = _aufruf(fa, raw, capsys)
+    assert ("Kennungen nur aus dem abgelehnten Vollabruf (meetings_roh.teil.jsonl; nicht gezählt, ohne "
+            "Feldabdeckung): 1;") in out
+    assert "RATSATLAS_KUERZER_ANNEHMEN=meetings an (liest die Liste zu Ende)" in out
+    assert "Sitzungen je Kennung: 2;" in out and "ungeändert beschlossen" not in out
 
 
 def test_dateien_des_dokumentschritts_nicht_gelesen(fa, tmp_path, capsys):
@@ -683,7 +872,8 @@ def test_aussetzen_mit_dem_abruf_gegen_den_testserver(oparl, monkeypatch, capsys
     Vorlagen, wie tests/test_aussetzen.py): Nacht 0 liest 10 Vorlagen; Nacht 1 (RATSATLAS_VOLLABRUF=papers) liest
     nur noch 8 angebotene, das Zeitfenster endet vor Seite 3 (Fortsetzung, Teildatei); Nacht 2 liest die Fortsetzung zu
     Ende, 8 von 10, die Vorlagen setzen aus (Fortsetzung und Teildatei bleiben). Die Feldabdeckung sagt „ausgesetzt“
-    wie tools/abrufstand.py, nicht „Zwischenstand“, und zählt den letzten gültigen Stand mit der Teildatei. Mit
+    wie tools/abrufstand.py, nicht „Zwischenstand“, und zählt wie veröffentlicht nur den letzten gültigen Stand (10
+    Vorlagen, wie build sie liest); die Teildatei hat keine Kennung, die es dort nicht gibt (0). Mit
     RATSATLAS_KUERZER_ANNEHMEN=papers endet das Aussetzen: 8 Vorlagen, kein Vollabruf läuft."""
     monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
     fa = _modul()
@@ -716,12 +906,19 @@ def test_aussetzen_mit_dem_abruf_gegen_den_testserver(oparl, monkeypatch, capsys
     stand = next(z for z in out.splitlines() if z.startswith("Stand: ausgesetzt"))
     assert stand.endswith("(fortgesetzter Vollabruf unter 90 % des Stands): der Abruf liest die Liste nur, wenn "
                           "RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF sie nennt, sonst bleibt ihr letzter "
-                          "gültiger Stand (Abhilfe im Fortschritt des Abrufs); gezählt der letzte gültige Stand "
-                          "(papers.jsonl) und die stehen gebliebene Teildatei des ausgesetzten Vollabrufs "
-                          "(papers.teil.jsonl), je Kennung einmal")
+                          "gültiger Stand (Abhilfe im Fortschritt des Abrufs); gezählt wie veröffentlicht nur der letzte "
+                          "gültige Stand (papers.jsonl), nicht die stehen gebliebene Teildatei des abgelehnten "
+                          "Vollabrufs (papers.teil.jsonl)")
     assert "Zwischenstand" not in out and "Nur aus der Teildatei" not in out
     assert "Dateien: papers.jsonl gelesen: 10 Zeilen; papers.teil.jsonl gelesen: 4 Zeilen" in out
+    # dieselbe Zahl wie build (je Kennung einmal aus papers.jsonl)
+    roh = [json.loads(z) for z in config.PAPERS.read_text(encoding="utf-8").splitlines() if z.strip()]
+    assert len(build._je_kennung_einmal(roh)) == 10
     assert "Vorlagen je Kennung: 10;" in out
+    assert ("Kennungen nur aus dem abgelehnten Vollabruf (papers.teil.jsonl; nicht gezählt, ohne Feldabdeckung): 0; "
+            "Zeilen mit Löschvermerk übergangen, sie ändern den gezählten Stand nicht. Den kürzeren Stand nimmt nur "
+            "RATSATLAS_KUERZER_ANNEHMEN=papers an (liest die Liste zu Ende), sonst nach Prüfung ein neuer Vollabruf "
+            "mit RATSATLAS_VOLLABRUF=papers (ab Seite 1); Abhilfe im Fortschritt des Abrufs") in out
     # derselbe Zeitpunkt wie im Fortschritt des Abrufs (tools/abrufstand.py, Vorrang des Aussetzens dort ebenso)
     spec = importlib.util.spec_from_file_location("abrufstand", ROOT / "tools" / "abrufstand.py")
     abrufstand = importlib.util.module_from_spec(spec)
