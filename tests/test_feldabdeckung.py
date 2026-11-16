@@ -624,20 +624,28 @@ def test_ausgesetzte_liste_kein_zwischenstand(fa, tmp_path, capsys, eintrag, erw
 
 
 def test_ausgesetzt_ohne_fortsetzung_und_andere_listen(fa, tmp_path):
-    """Ohne Fortsetzung (etwa ein wiederholter Vollabruf in einer Nacht) zählt nur der letzte gültige Stand als
-    ausgesetzt; eine übrig gebliebene Teildatei bleibt „veraltet, mitgezählt“ wie ohne Aussetzen. Ein Eintrag null gilt
-    nicht als Aussetzen (Zwischenstand wie bisher), Gremien setzen nie aus (nicht in sessionnet.AUSSETZEN), Sitzungen
-    schon."""
+    """Ohne Fortsetzung (etwa ein wiederholter Vollabruf in einer Nacht) ist eine übrig gebliebene Teildatei veraltet
+    und zählt wie ohne Aussetzen mit; der Stand nennt sie unter „gezählt“, mit „je Kennung einmal“ neben dem letzten
+    gültigen Stand und ohne ihn allein (Prüfung stgf: vorher „gezählt nichts (papers.jsonl fehlt)“ bzw. ohne „je
+    Kennung einmal“, obwohl sie mitzählte). Ein Eintrag null gilt nicht als Aussetzen (Zwischenstand wie bisher),
+    Gremien setzen nie aus (nicht in sessionnet.AUSSETZEN), Sitzungen schon."""
     raw = tmp_path / "raw"
     eintrag = {"seit": "2026-11-15T22:15:00+00:00", "anlass": "wiederholter Vollabruf"}
     _ausgesetzt_roh(raw, eintrag, fortsetzung=False)
     r = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
-    assert r["stand"] == ("ausgesetzt seit 15.11.2026, 23:15 Uhr (wiederholter Vollabruf unter 90 % des Stands): der "
-                          "Abruf liest die Liste nur, wenn RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF sie "
-                          "nennt, sonst bleibt ihr letzter gültiger Stand (Abhilfe im Fortschritt des Abrufs); gezählt "
-                          "der letzte gültige Stand (papers.jsonl); papers.teil.jsonl ohne Fortsetzung im Zustand "
-                          "(veraltet, der Abruf liest sie nicht mehr; mitgezählt)")
+    vorspann = ("ausgesetzt seit 15.11.2026, 23:15 Uhr (wiederholter Vollabruf unter 90 % des Stands): der Abruf liest "
+                "die Liste nur, wenn RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF sie nennt, sonst bleibt ihr "
+                "letzter gültiger Stand (Abhilfe im Fortschritt des Abrufs); gezählt ")
+    veraltet = ("die veraltete Teildatei ohne Fortsetzung im Zustand (papers.teil.jsonl; der Abruf liest sie nicht "
+                "mehr)")
+    assert r["stand"] == (vorspann + "der letzte gültige Stand (papers.jsonl) und " + veraltet
+                          + ", je Kennung einmal"), r["stand"]
     assert r["auswertung"].n == 4
+    # ohne fertige Datei: gezählt nur die veraltete Teildatei (2 Kennungen), nicht „nichts“
+    (raw / "papers.jsonl").unlink()
+    r = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
+    assert r["stand"] == vorspann + veraltet, r["stand"]
+    assert r["auswertung"].n == 2 and "nichts" not in r["stand"] and "mitgezählt" not in r["stand"]
     _ausgesetzt_roh(raw, None)
     r = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)["listen"]["papers"]
     assert r["stand"].startswith("Zwischenstand: Vollabruf läuft") and r["vollabruf_laeuft"] and not r["ausgesetzt"]

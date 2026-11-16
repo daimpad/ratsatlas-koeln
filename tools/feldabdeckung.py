@@ -562,16 +562,29 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
     if z_datei != "gelesen":
         r["stand"] = f"unbekannt (zustand_abruf.json {z_datei})"
     elif aus is not None:
-        # Vorrang vor der Fortsetzung: Sie bleibt für RATSATLAS_KUERZER_ANNEHMEN stehen, läuft aber nicht weiter
-        gezaehlt = ([f"der letzte gültige Stand ({fertig.name})"] if fertig.exists() else
-                    [f"ersatzweise {r['ersatz']}"] if r["ersatz"] else []) + (
-            [f"die stehen gebliebene Teildatei des ausgesetzten Vollabrufs ({teil.name})"]
-            if fort is not None and teil.exists() else [])
+        # Vorrang vor der Fortsetzung: Sie bleibt für RATSATLAS_KUERZER_ANNEHMEN stehen, läuft aber nicht weiter.
+        # Gezählt ist, was tatsächlich gelesen wird (`quellen`), auch eine Teildatei ohne Fortsetzung (Prüfung stgf:
+        # vorher „nichts“ bzw. ohne „je Kennung einmal“, obwohl sie mitzählte)
+        gezaehlt = []
+        for pfad, _ in quellen:
+            if pfad == fertig:
+                gezaehlt.append(f"der letzte gültige Stand ({fertig.name})")
+            elif pfad == teil and fort is not None:
+                gezaehlt.append(f"die stehen gebliebene Teildatei des ausgesetzten Vollabrufs ({teil.name})")
+            elif pfad == teil:
+                gezaehlt.append(f"die veraltete Teildatei ohne Fortsetzung im Zustand ({teil.name}; der Abruf liest "
+                                "sie nicht mehr)")
+            else:
+                gezaehlt.append(f"ersatzweise {r['ersatz']}")
+        if not gezaehlt:
+            was = f"nichts ({fertig.name} fehlt)"
+        elif len(gezaehlt) == 1:
+            was = gezaehlt[0]
+        else:
+            was = " und ".join(gezaehlt) + ", je Kennung einmal"
         r["stand"] = (f"{ausgesetzt_text(aus)}: der Abruf liest die Liste nur, wenn RATSATLAS_KUERZER_ANNEHMEN "
                       "oder RATSATLAS_VOLLABRUF sie nennt, sonst bleibt ihr letzter gültiger Stand (Abhilfe im "
-                      "Fortschritt des Abrufs); gezählt " + (" und ".join(gezaehlt) + (", je Kennung einmal" if len(gezaehlt) > 1
-                                                                      else "") if gezaehlt
-                                             else f"nichts ({fertig.name} fehlt)"))
+                      f"Fortschritt des Abrufs); gezählt {was}")
     elif fort is not None:
         r["stand"] = "Zwischenstand: Vollabruf läuft (Fortsetzung steht aus); gezählt " + (
             "die im laufenden Vollabruf bisher gelesenen Objekte und der Stand davor, je Kennung einmal"
@@ -588,7 +601,7 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
         r["stand"] = "kein laufender Vollabruf (Zeitpunkt des letzten Abrufs unlesbar)"
     else:
         r["stand"] = "noch kein vollständiger Abruf"
-    if teil.exists() and fort is None and z_datei == "gelesen":
+    if teil.exists() and fort is None and z_datei == "gelesen" and aus is None:   # ausgesetzt: oben in `gezaehlt`
         r["stand"] += (f"; {teil.name} ohne Fortsetzung im Zustand (veraltet, der Abruf liest sie nicht mehr; "
                        "mitgezählt)")
     dateien = {}

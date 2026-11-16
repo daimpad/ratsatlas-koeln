@@ -123,10 +123,18 @@ WAECHTER = "name: Abrufzustand wiederhergestellt? (Wächter vor Abruf und Veröf
 # hängen: sie lesen nur (Skript → Name des Schritts)
 LESEND = {"tools/abrufstand.py": "name: Fortschritt des Abrufs (Log und Zusammenfassung)",
           "tools/feldabdeckung.py": "name: Feldabdeckung der Rohdaten (nur Zahlen)"}
+# Statusfunktionen in GitHub Actions (Namen ohne Rücksicht auf Groß- und Kleinschreibung): Steht eine davon im `if`,
+# entfällt das stillschweigende success() davor, und der Schritt kann auch nach einem Fehler laufen, etwa mit
+# `if: success() || true` (Prüfung stgf; vorher zählten nur always(), failure() und cancelled())
+STATUSFUNKTION = re.compile(r"\b(?:always|success|failure|cancelled)\s*\(", re.I)
 
 
-def _schritte():
-    return (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n      - ")
+def _pages():
+    return (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+
+
+def _schritte(text=None):
+    return (_pages() if text is None else text).split("\n      - ")
 
 
 def _skript(schritt):
@@ -200,11 +208,18 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     """Ein Wächter direkt nach dem Wiederherstellen und direkt vor dem Abruf hält den freigegebenen Lauf an, wenn der
     Zustand des Abrufs fehlt (etwa nach einer Störung von actions/cache, einem gelöschten Eintrag oder weil eine neue
     Fassung der Aktion die älteren Einträge nicht findet; Prüfung stapelf). Er hat weder `if` noch `continue-on-error`;
-    jeder spätere Schritt, der auch nach einem Fehler liefe (`always()`, `failure()`, `cancelled()`), hängt an einem
-    übersprungenen Schritt ohne eigenes `if` (Abruf, Dokumente) oder ist genau einer der beiden lesenden Schritte
-    (Fortschritt, Feldabdeckung; LESEND, in lesender Form), und der Job deploy braucht einen erfolgreichen Job build.
-    Ein roter Wächter lässt also Abruf, Dokumente, beide Sicherungen und Veröffentlichung aus."""
-    schritte = _schritte()
+    jeder spätere Schritt, der auch nach einem Fehler liefe (jede Statusfunktion im `if`, STATUSFUNKTION: always(),
+    failure(), cancelled() und success(), etwa `success() || true`), hängt an einem übersprungenen Schritt ohne eigenes
+    `if` (Abruf, Dokumente) oder ist genau einer der beiden lesenden Schritte (Fortschritt, Feldabdeckung; LESEND, in
+    lesender Form), und der Job deploy braucht einen erfolgreichen Job build, ohne Statusfunktion. Ein roter Wächter
+    lässt also Abruf, Dokumente, beide Sicherungen und Veröffentlichung aus."""
+    _waechter_pruefen(_pages())
+
+
+def _waechter_pruefen(text):
+    """Die Prüfungen von test_waechter_vor_abruf_und_veroeffentlichung auf dem Text eines Workflows (auch geändert,
+    test_statusfunktion_laeuft_nach_fehler)."""
+    schritte = _schritte(text)
     r = next(k for k, s in enumerate(schritte) if "uses: actions/cache/restore@" in s)
     assert re.search(r"^\s+id: rohdaten$", schritte[r], re.M)
     w = next(k for k, s in enumerate(schritte) if s.startswith(WAECHTER))
@@ -219,7 +234,6 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     # dieselbe Datei, aus der der Abruf seinen Zustand liest: kein RATSATLAS_RAW im Wächter, im Abruf oder auf Ebene
     # des Workflows oder Jobs (nur die Kartenvorschau setzt es in ihrem eigenen Schritt), kein anderes
     # Arbeitsverzeichnis – also data/raw im Checkout
-    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     assert "RATSATLAS_RAW" not in schritte[w] and "RATSATLAS_RAW" not in schritte[f]
     assert not re.search(r"^ {0,8}RATSATLAS_RAW:", text, re.M)
     assert "working-directory" not in text and not re.search(r"^\s*defaults:", text, re.M)
@@ -229,7 +243,7 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     lesend = []
     for s in schritte[w + 1:]:
         bedingung = re.search(r"(?:^|\n)\s*if: (.+)", s)   # auch ein Schritt, der mit „- if:“ beginnt
-        if bedingung and re.search(r"always\(\)|failure\(\)|cancelled\(\)", bedingung.group(1)):
+        if bedingung and STATUSFUNKTION.search(bedingung.group(1)):
             skript = re.search(r"^\s+run: python (tools/[\w.]+)", s, re.M)
             if skript and skript.group(1) in LESEND:
                 # Fortschritt und Feldabdeckung: lesen nur, schreiben nichts nach data/, halten den Lauf nie an
@@ -245,9 +259,35 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     haengen = {i for s in schritte[w + 1:] if "uses: actions/cache/save@" in s
                for i in re.findall(r"steps\.(\w+)\.outcome != 'skipped'", s)}
     assert haengen == {"abruf", "dokumente"}
-    job = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n  deploy:\n")[1]
+    job = text.split("\n  deploy:\n")[1]
     assert re.search(r"^    needs: build$", job, re.M)
-    assert not re.search(r"always\(\)|failure\(\)|cancelled\(\)", job)
+    assert not STATUSFUNKTION.search(job)
+
+
+@pytest.mark.parametrize("bedingung", ["success() || true", "${{ success() || true }}", "Success() || true",
+                                       "SUCCESS ( ) || vars.X == 'ja'", "always()", "Always()", "failure() || true",
+                                       "!cancelled() && true"])
+def test_statusfunktion_laeuft_nach_fehler(bedingung):
+    """Jede Statusfunktion im `if` (auch success(), in jeder Groß- und Kleinschreibung) hebt das stillschweigende
+    success() auf: Ein schreibender Schritt nach dem Wächter mit `if: success() || true` liefe nach einem roten
+    Wächter und fällt auf (Prüfung stgf; vorher bestand er die Prüfung des Wächters), ebenso eine Statusfunktion im
+    `if` des Jobs deploy. Ohne Statusfunktion (auch mit dem Text 'success' als Vergleichswert) bleibt es beim
+    stillschweigenden success(): kein Befund."""
+    text = _pages()
+    _waechter_pruefen(text)
+    stelle = "      - name: Kartenvorschau (leere Rohdaten in eigenem Verzeichnis)\n"
+    assert text.count(stelle) == 1
+    if not bedingung.startswith("!"):   # `if: !…` ist ein YAML-Tag, _if_befunde meldet es schon
+        schritt = f"      - name: x\n        if: {bedingung}\n        run: python -m pipeline fetch\n"
+        with pytest.raises(AssertionError, match="name: x"):
+            _waechter_pruefen(text.replace(stelle, schritt + "\n" + stelle))
+    kopf = "\n  deploy:\n    needs: build\n    if: needs.build.outputs.daten != ''\n"
+    assert text.count(kopf) == 1
+    with pytest.raises(AssertionError):
+        _waechter_pruefen(text.replace(kopf, kopf.replace("daten != ''", f"daten != '' || {bedingung}")))
+    for ohne in ("steps.daten.outputs.da == 'ja'", "steps.abruf.outcome == 'success'", "true"):
+        _waechter_pruefen(text.replace(stelle, f"      - name: x\n        if: {ohne}\n        run: python -m pipeline "
+                                               f"fetch\n\n" + stelle))
 
 
 # Schritte, die nach „Gibt es Daten zum Veröffentlichen?“ eingefügt die Prüfung des Wächters umgingen, wenn ihr `if`
