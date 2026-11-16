@@ -42,6 +42,14 @@ AMT_UNIT = {"61-3": "verkehr"}
 # Wirtschaftsausschuss zum Ausschuss für Wirtschaft und Digitalisierung zusammengelegt). Schon vorher erfasst:
 # Verkehrsausschuss → Mobilitätsausschuss, Wirtschaftsausschuss → Ausschuss für Wirtschaft und Digitalisierung,
 # Integrationsrat → Ausschuss für Chancengerechtigkeit und Integration.
+# Abgleich 16.11.2026 mit §§ 7–23 der Zuständigkeitsordnung vom 02.06.2026 (pipeline/ausschuesse.py,
+# inventur/ausschuesse_zusto.tsv): Die Namen laut Satzung treffen dieselben Muster wie die bisherigen Schreibweisen
+# (mit und ohne „für“; Test tests/test_ausschuesse.py), keine Schreibweise entfällt. Ohne Thema bleiben wie bisher
+# der Hauptausschuss (§ 7, NO_THEME_GREMIEN) und der Ausschuss für die Gleichstellung von Frauen und Männern (§ 12,
+# keines der zehn Themen passt eindeutig; Zuordnung offen). Der Ausschuss Allgemeine Verwaltung und Rechtsfragen /
+# Vergabe / Internationales (§ 8) erhält „beteiligung“ nur über „Internationales“; seine Kurzformen in der Satzung
+# („Ausschuss AVR“, „Ausschuss Allgemeine Verwaltung und Rechtsfragen“) erhalten kein Thema (unverändert; offen). Der
+# Ausschuss für Chancengerechtigkeit und Integration steht nicht in §§ 7–23 (Abgleich mit der OParl-Liste offen).
 GREMIUM = [
     (r"Soziales|Senioren|Gesundheit", "soziales"),
     (r"Mobilität|Verkehr", "verkehr"),

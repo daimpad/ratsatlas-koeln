@@ -18,8 +18,10 @@ from . import actors, besetzung, config, maske, soll
 ARTEN = {"Rat": "rat", "Ratsgremien": "ausschuss", "Bezirksvertretungen": "bezirksvertretung",
          "Beiräte und Kommissionen": "beirat"}
 # Abschnitt der Zuständigkeitsordnung, dessen Titel vom Namen des Gremiums in der OParl-API abweicht. Offen: Eintrag und
-# Zuständigkeitsordnung (soll.py) stammen aus Bonn; in Köln wirkt der Eintrag nicht (kein Gremium dieses Namens). Kölner
-# Abweichungen erst mit der Kölner Zuständigkeitsordnung und den gemessenen Gremiennamen.
+# Zuständigkeitsordnung (soll.py) stammen aus Bonn; in Köln wirkt der Eintrag nicht (kein Gremium dieses Namens). Die
+# Ausschüsse der Kölner Zuständigkeitsordnung vom 02.06.2026 (§§ 7–23) stehen seit dem 16.11.2026 in
+# pipeline/ausschuesse.py; Kölner Abweichungen erst mit den gemessenen Gremiennamen (`python -m pipeline ausschuesse`
+# nach dem Vollabruf) und einem Kölner Soll-Modell (soll bleibt deaktiviert).
 ZUSTO_ALIAS = {"Ausschuss für Soziales, Migration, Gesundheit, Wohnen und Senioren":
                "Ausschuss für Soziales, Migration, Gesundheit und Senioren"}
 BEISPIELE = 3

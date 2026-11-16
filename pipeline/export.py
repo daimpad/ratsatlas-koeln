@@ -9,7 +9,7 @@ import shutil
 import sqlite3
 from datetime import date, datetime, timezone
 
-from . import aemter, chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, maske, plans, process as proc, prozessarten, publish, soll, topics
+from . import aemter, ausschuesse, chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, maske, plans, process as proc, prozessarten, publish, soll, topics
 from .themenseiten import ALLE as THEMENSEITEN
 
 DERIVED_NOTE = (
@@ -718,8 +718,10 @@ def _nominativ(name):
 
 
 def _schluessel(name):
-    """Vergleich von Gremiennamen ohne Satzzeichen: „Kinder-, Jugend“ wie „Kinder, Jugend“."""
-    return re.sub(r"[\s,\-–]+", " ", name or "").strip().lower()
+    """Vergleich von Gremiennamen ohne Satzzeichen: „Kinder-, Jugend“ wie „Kinder, Jugend“; seit dem 16.11.2026 auch
+    ohne das Wort „für“ und mit Schrägstrich wie Komma (ausschuesse.schluessel: die Zuständigkeitsordnung schreibt
+    „Ausschuss Klima, Umwelt und Grün“ und „Ausschuss für Klima, Umwelt und Grün“)."""
+    return ausschuesse.schluessel(name)
 
 
 def gremium_der_sitzung(m, names, bekannt=None):

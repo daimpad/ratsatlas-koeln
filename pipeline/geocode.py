@@ -513,7 +513,12 @@ def vorlagenart_erkannt(paper):
             and all(VORLAGENART_PUNKT.search(t) for t in _vergleichstexte(art)))
 
 
-# Ausschuss für Anregungen und Beschwerden bzw. Bürgerbeteiligung (im Vergleichstext des Namens eines beratenden Gremiums)
+# Ausschuss für Anregungen und Beschwerden bzw. Bürgerbeteiligung (im Vergleichstext des Namens eines beratenden Gremiums).
+# Abgleich 16.11.2026: Der Name laut § 10 der Zuständigkeitsordnung vom 02.06.2026, „Ausschuss Bürgerbeteiligung,
+# Anregungen und Beschwerden“ (ohne „für“; pipeline/ausschuesse.py), trifft beide Teile wie die bisherige Schreibweise
+# „Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden“ (Test tests/test_ausschuesse.py); das Muster bleibt
+# unverändert. Ob die OParl-API den Ausschuss unter einem dieser Namen führt (Feld `name`, nicht `shortName`), zeigt
+# erst der Vollabruf (`python -m pipeline ausschuesse`).
 GREMIUM = re.compile(r"(?i)anregungen und beschwerden|bürgerbeteiligung")
 
 
