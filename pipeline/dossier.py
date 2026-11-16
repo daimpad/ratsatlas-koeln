@@ -229,7 +229,9 @@ def bahn(t, gremium):
             return key
     if g.startswith("Bezirksvertretung"):
         return "bv"
-    if g == "Ausschuss für Finanzen, Beteiligungen und Vergabe":
+    # Bonner Name und, ergänzt am 16.11.2026, der Kölner Finanzausschuss (§ 11 der Zuständigkeitsordnung vom
+    # 02.06.2026, pipeline/ausschuesse.py); Themenseiten bleiben deaktiviert
+    if g in ("Ausschuss für Finanzen, Beteiligungen und Vergabe", "Finanzausschuss"):
         return "finanz"
     if g in ("Hauptausschuss", "Rat"):
         return "rat"

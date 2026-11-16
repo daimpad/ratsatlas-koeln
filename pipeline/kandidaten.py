@@ -1,6 +1,12 @@
-"""Kandidaten „Beschluss ↔ Baustelle“ (Phase 3): Welche entschiedenen Vorlagen könnten mit einer Baustelle der
-Stadt zusammenhängen? Ergebnis ist ein Kandidat mit Konfidenz und einzeln ausgewiesenen Kriterien, nie die Aussage
-„umgesetzt“. Termine der Baustellen sind laut Quelle unverbindlich.
+"""Kandidaten „Beschluss ↔ Baustelle“ (aus dem Ratsatlas Bonn, Phase 3; Zusatzthema „baustellen“, abgeschaltet): Welche
+entschiedenen Vorlagen könnten mit einer Baustelle zusammenhängen? Ergebnis ist ein Kandidat mit Konfidenz und einzeln
+ausgewiesenen Kriterien, nie die Aussage „umgesetzt“.
+
+Köln (16.11.2026, ohne Abruf vorbereitet): Die Baustellen kommen nur aus dem Archiv von pipeline/baustellen.py (kein
+eigener Abruf mehr). Die Kölner Quelle zeigt Genehmigungszeiträume, nicht zwingend Ausführungszeiträume; ob sie einen
+Träger nennt, ist ungeprüft (`baustellen.ZUORDNUNG` ohne Träger). Ohne Träger gibt es höchstens „mittel“ (Kriterium
+„städtischer Träger“ unbekannt). Die Bonner Ämter für das thematische Kriterium (66 Tiefbauamt, 61-3 Stadtverkehr)
+gelten in Köln nicht; die Kölner Entsprechung ist ungeprüft (`AEMTER_THEMA` leer), es zählt nur das Thema Verkehr.
 
 Kriterien:
 - räumlich: Abstand zwischen Baustelle und Ortsbezug der Vorlage (Straßenpunkt, Bebauungsplan, Koordinate der
@@ -14,7 +20,7 @@ Kriterien:
   Anträge und Änderungsanträge mit Planungsbezug höchstens „mittel“ (Entscheidung des Auftraggebers bei der Prüfung
   der Stichprobe, 19.10.2026).
 Baustellen fremder Träger (Versorger, Straßen NRW, Bahn) setzen in der Regel keinen Ratsbeschluss um und werden
-getrennt ausgewiesen."""
+getrennt ausgewiesen (nur, wenn die Quelle einen Träger nennt)."""
 import json
 import math
 import re
@@ -24,7 +30,8 @@ from pathlib import Path
 from . import baustellen, config
 
 MAX_DIST = 150
-OWN = re.compile(r"Bundesstadt Bonn|^Amt \d|Stadt Bonn", re.I)
+OWN = re.compile(r"Stadt Köln", re.I)   # städtischer Träger (Bonn: „Bundesstadt Bonn“, „Amt …“); in Köln ungeprüft
+AEMTER_THEMA = ()   # Bonn: ("66", "61-3"); Kölner Ämter für Straßen und Verkehr ungeprüft (Ämtertabelle, data/aemter)
 BUILD = re.compile(r"(?i)ausbau|umbau|umgestaltung|neugestaltung|erneuerung|sanierung|neubau|baureife planung|"
                    r"ausführungsplanung|herstellung|verbreiterung|instandsetzung|radweg(?!benutzung)|gehweg|fahrbahn|"
                    r"baumaßnahme|baubeginn")
@@ -44,8 +51,12 @@ def street(name):
 
 
 def parse_de(d):
+    """Datum aus „TT.MM.JJJJ“ (Bonn) oder ISO „JJJJ-MM-TT“ (Köln, pipeline/baustellen.py)."""
     m = re.match(r"(\d{1,2})\.(\d{1,2})\.(\d{4})", d or "")
-    return date(int(m.group(3)), int(m.group(2)), int(m.group(1))) if m else None
+    if m:
+        return date(int(m.group(3)), int(m.group(2)), int(m.group(1)))
+    m = re.match(r"(\d{4})-(\d{2})-(\d{2})", d or "")
+    return date(int(m.group(1)), int(m.group(2)), int(m.group(3))) if m else None
 
 
 def distance_m(lon1, lat1, lon2, lat2):
@@ -73,12 +84,13 @@ def baubeschluss(p):
 
 def thematic(p):
     names = [p.get("amt") or ""] + [r.get("name") or "" for r in p.get("responsibility", [])]
-    return any(n.startswith(("66", "61-3")) for n in names) or any(t.get("theme") == "verkehr" for t in p.get("themes", []))
+    return (bool(AEMTER_THEMA) and any(n.startswith(AEMTER_THEMA) for n in names)) or \
+        any(t.get("theme") == "verkehr" for t in p.get("themes", []))
 
 
 def load_papers(base=None):
     """Alle Vorlagen mit Ortsbezug aus den Gebietsdateien (ohne Doppelte)."""
-    base = Path(base or config.EXPORT / "bonn")
+    base = Path(base or config.EXPORT / config.STADT)
     papers = {}
     for f in sorted([*(base / "ortsteile").glob("*.json"), *(base / "bezirke").glob("*.json")]):
         for p in json.loads(f.read_text(encoding="utf-8"))["papers"]:
@@ -86,14 +98,14 @@ def load_papers(base=None):
     return list(papers.values())
 
 
-def load_sites(archive=None, fetcher=None):
-    """Aktive Baustellen aus dem Archiv (Branch archiv) oder, falls nicht vorhanden, direkt aus dem Feed „1 Jahr“."""
+def load_sites(archive=None):
+    """Aktive Baustellen aus dem Archiv (Branch archiv, pipeline/baustellen.py); ohne Archiv keine (kein eigener
+    Abruf: Anfragen an die Stadt nur über pipeline/dienste.py mit Freigabe)."""
     state_file = Path(archive or config.BAUSTELLEN_ARCHIV) / "baustellen.json"
     if state_file.exists():
         state = json.loads(state_file.read_text(encoding="utf-8"))
         return {k: v["angaben"] for k, v in state.items() if v.get("aktiv")}, "Archiv"
-    feats, _ = (fetcher or baustellen.fetch)(14698)
-    return baustellen.normalize(feats), "Feed 14698 (direkt)"
+    return {}, "ohne Archiv"
 
 
 def candidates(sites, papers):
@@ -112,29 +124,31 @@ def candidates(sites, papers):
         if s.get("lon") is None:
             continue
         begin = parse_de(s.get("von"))
-        names = {street(s.get("bezeichnung")), street(s.get("adresse"))} - {""}
-        own = bool(OWN.search(s.get("traeger") or ""))
+        names = {street(s.get("bezeichnung")), street(s.get("strasse") or s.get("adresse"))} - {""}
+        traeger = s.get("traeger")
+        own = bool(OWN.search(traeger)) if traeger else None   # None: Quelle ohne Träger (Köln, ungeprüft)
         for p, when, locs, pstreets in points:
             dist = min(distance_m(s["lon"], s["lat"], l["lon"], l["lat"]) for l in locs)
             if dist > MAX_DIST or not begin or begin < when:
                 continue
-            same, theme, word = bool(names & pstreets), thematic(p), build_word(p["name"], s.get("massnahme"))
+            massnahme = s.get("massnahme") or s.get("art")
+            same, theme, word = bool(names & pstreets), thematic(p), build_word(p["name"], massnahme)
             bau = baubeschluss(p)
-            if not own:
+            if own is False:
                 conf = "fremd"
             elif same and theme and word:
-                conf = "hoch" if bau else "mittel"
+                conf = "hoch" if bau and own else "mittel"
             elif same and (theme or word):
                 conf = "mittel"
             else:
                 conf = "niedrig"
             why = [f"{round(dist)} m entfernt", "gleiche Straße" if same else "andere Straße",
-                   f"Baubeginn {s.get('von')} nach Entscheidung {when.strftime('%d.%m.%Y')}",
+                   f"Beginn laut Quelle {s.get('von')} nach Entscheidung {when.strftime('%d.%m.%Y')}",
                    "Tiefbau/Verkehr" if theme else "anderes Amt/Thema", "Bau-Stichwort passend zur Maßnahme" if word else "kein passendes Bau-Stichwort",
                    "Baubeschluss" if bau else f"kein Baubeschluss ({p.get('paper_type') or 'Vorlagenart unbekannt'})",
-                   "städtischer Träger" if own else f"fremder Träger ({s.get('traeger')})"]
-            out.append({"konfidenz": conf, "baustelle_id": bid, "bezeichnung": s.get("bezeichnung"), "massnahme": s.get("massnahme"),
-                        "traeger": s.get("traeger"), "von": s.get("von"), "bis": s.get("bis"), "drucksache": p["reference"],
+                   "städtischer Träger" if own else "Träger unbekannt" if own is None else f"fremder Träger ({traeger})"]
+            out.append({"konfidenz": conf, "baustelle_id": bid, "bezeichnung": s.get("bezeichnung"), "massnahme": massnahme,
+                        "traeger": traeger, "von": s.get("von"), "bis": s.get("bis"), "drucksache": p["reference"],
                         "titel": p["name"], "entschieden_am": when.isoformat(), "abstand_m": round(dist),
                         "kriterium_strasse": "ja" if same else "nein", "kriterium_thema": "ja" if theme else "nein",
                         "kriterium_stichwort": "ja" if word else "nein", "begruendung": "; ".join(why), "pruefvermerk": "ungeprüft"})
@@ -175,12 +189,13 @@ def iso(d):
 
 
 SITE_NOTES = [
-    "Termine laut Quelle unverbindlich; erfasst sind nur Baustellen mit nennenswertem Einfluss auf den Verkehr.",
+    *baustellen.HINWEISE,
     "Die Historie beginnt mit dem ersten Abruf des Archivs; frühere Baustellen fehlen.",
     "„Mögliche Umsetzung“ ist ein Indiz aus räumlichen, zeitlichen und thematischen Kriterien, kein Beleg. Gezeigt "
-    "werden nur Kandidaten der Konfidenz „hoch“, also Baubeschlüsse der Verwaltung; eine Stichprobe wurde von Hand geprüft.",
-    "Baustellen fremder Träger (Versorger, Straßen NRW, Bahn) setzen in der Regel keinen Ratsbeschluss um.",
+    "werden nur Kandidaten der Konfidenz „hoch“, also Baubeschlüsse der Verwaltung.",
 ]
+# Bonn: Stichprobe von Hand geprüft (19.10.2026); für Köln steht sie aus (vor dem Einschalten, TECHNIK.md)
+KANDIDATEN_STAND = "nur Konfidenz hoch; Stichprobe für Köln noch nicht von Hand geprüft"
 
 
 def site_data(state, papers, origin, stand=None):
@@ -200,45 +215,37 @@ def site_data(state, papers, origin, stand=None):
         if a.get("lon") is None:
             continue
         out.append({
-            "id": bid, "bezeichnung": a.get("bezeichnung"), "strasse": without_number(a.get("adresse")),
-            "stadtbezirk": a.get("stadtbezirk_bez"), "von": iso(a.get("von")), "bis": iso(a.get("bis")),
-            "traeger": a.get("traeger"), "fremd": not OWN.search(a.get("traeger") or ""), "massnahme": a.get("massnahme"),
+            "id": bid, "bezeichnung": a.get("bezeichnung"), "strasse": without_number(a.get("strasse") or a.get("adresse")),
+            "stadtteil": a.get("stadtteil"), "stadtbezirk": a.get("stadtbezirk") or a.get("stadtbezirk_bez"),
+            "von": iso(a.get("von")), "bis": iso(a.get("bis")), "traeger": a.get("traeger"),
+            "fremd": bool(a.get("traeger")) and not OWN.search(a["traeger"]), "massnahme": a.get("massnahme") or a.get("art"),
             "sperrung": a.get("sperrung"), "lon": a["lon"], "lat": a["lat"], "aktiv": bid in active,
             "seit": v.get("first_seen"), "entfallen": v.get("entfallen"),
             "aenderungen": [x for x in v.get("aenderungen", []) if x.get("feld") in ("von", "bis")],
             "kandidaten": sorted(cands.get(bid, []), key=lambda c: (c["abstand_m"], c["drucksache"]))})
     out.sort(key=lambda b: (b["von"] or "", b["id"]))
     seen = [v.get("first_seen") for v in state.values() if v.get("first_seen")]
-    return {"meta": {"quelle": [baustellen.URL.format(t) for t in baustellen.FEEDS], "lizenz": config.BAUSTELLEN_LICENSE,
+    return {"meta": {"quelle": [baustellen.DATENSATZ], "lizenz": config.BAUSTELLEN_LICENSE,
                      "herkunft": origin, "archiv_beginn": min(seen) if seen else None, "abruf": stand,
-                     "kandidaten": "nur Konfidenz hoch (Stichprobe von Hand geprüft)", "hinweise": SITE_NOTES},
+                     "kandidaten": KANDIDATEN_STAND, "hinweise": SITE_NOTES},
             "baustellen": out}
 
 
-def write_site(out=None, archive=None, fetcher=None):
-    """data/export/bonn/baustellen.json aus dem Archiv; fehlt es, aus den drei Feeds; scheitert auch das, eine leere
-    Liste mit Hinweis (der Build der Seite bricht nicht ab)."""
-    out = Path(out or config.EXPORT / "bonn")
+def write_site(out=None, archive=None):
+    """data/export/<STADT>/baustellen.json aus dem Archiv (pipeline/baustellen.py); ohne Archiv eine leere Liste mit
+    Hinweis (der Build der Seite bricht nicht ab; kein eigener Abruf)."""
+    out = Path(out or config.EXPORT / config.STADT)
     base = Path(archive or config.BAUSTELLEN_ARCHIV)
-    state, origin, stand = None, "Archiv", None
+    state, origin, stand = {}, "Archiv", None
     if (base / "baustellen.json").exists():
         state = json.loads((base / "baustellen.json").read_text(encoding="utf-8"))
         if (base / "STAND.json").exists():
-            stand = max((v.get("abruf") or "" for v in json.loads((base / "STAND.json").read_text(encoding="utf-8")).values()), default=None)
+            stand = json.loads((base / "STAND.json").read_text(encoding="utf-8")).get("abruf")
     else:
-        origin, state = "Feeds (ohne Archiv)", {}
-        for thema in baustellen.FEEDS:
-            try:
-                feats, _ = (fetcher or baustellen.fetch)(thema)
-            except RuntimeError as err:
-                print(f"Baustellen: {err}")
-                continue
-            for bid, a in baustellen.normalize(feats).items():
-                state[bid] = {"angaben": a, "aktiv": True}
-        stand = date.today().isoformat() if state else None
+        origin = "ohne Archiv"
     data = site_data(state, load_papers(out), origin, stand)
     if not state:
-        data["meta"]["fehler"] = "Baustellen derzeit nicht abrufbar"
+        data["meta"]["fehler"] = "Baustellen derzeit nicht verfügbar"
     out.mkdir(parents=True, exist_ok=True)
     (out / "baustellen.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     n = sum(len(b["kandidaten"]) for b in data["baustellen"])

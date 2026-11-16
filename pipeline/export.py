@@ -9,7 +9,7 @@ import shutil
 import sqlite3
 from datetime import date, datetime, timezone
 
-from . import aemter, chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, maske, plans, process as proc, prozessarten, publish, soll, topics
+from . import aemter, ausschuesse, chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, maske, plans, process as proc, prozessarten, publish, soll, topics
 from .themenseiten import ALLE as THEMENSEITEN
 
 DERIVED_NOTE = (
@@ -449,11 +449,8 @@ def export_all():
     flaechen.write(out)
     # Übersichtskarte: Vorlagen der letzten zwölf Monate und auffälliges Thema je Gebiet
     gebietszahlen.annotate(index, areas, cache, stand or datetime.now(timezone.utc).isoformat())
-    # Freigaben für site/app.js (idx.meta.funktionen; ein fehlender Schlüssel gilt als aus). Die Strukturdaten stehen
-    # erst mit Freigabe darin, damit index.json ohne sie unverändert bleibt (pipeline/strukturdaten_web.py)
-    funktionen = {k: v for k, v in config.ZUSATZTHEMEN.items() if k != "strukturdaten" or v}
     _dump(out / "index.json", {"meta": _meta(db, stadt=config.STADT_NAME, seitenname=config.SEITENNAME,
-                                             funktionen=funktionen,
+                                             funktionen=funktionen(),
                                              testdaten=bool(_stand().get("testdaten")),
                                              vorschau=bool(_stand().get("vorschau")),
                                              abruf_fehler=_abruf_fehler(_stand()),
@@ -461,6 +458,17 @@ def export_all():
     db.close()
     print(f"{config.STADT_NAME}: {len(index['ortsteile'])} Stadtteile, {len(index['bezirke'])} Bezirke, "
           f"{len(years)} Jahre ohne Ortsbezug, {len(cache)} Vorlagen, {n_points} Punkte im GeoJSON, {n_shards} Dateien für den Assistenten → {out}")
+
+
+# Freigaben, die index.json erst eingeschaltet nennt, damit index.json ohne sie byte-gleich bleibt: die Strukturdaten
+# (pipeline/strukturdaten_web.py) und die Wahlbeteiligung je Stadtteil (pipeline/wahl_koeln.py, nur kontext.json,
+# kein Bezug in site/)
+FUNKTIONEN_NUR_AN = ("strukturdaten", "wahlbeteiligung")
+
+
+def funktionen():
+    """Freigaben für site/app.js (index.json meta.funktionen; ein fehlender Schlüssel gilt als aus)."""
+    return {k: v for k, v in config.ZUSATZTHEMEN.items() if k not in FUNKTIONEN_NUR_AN or v}
 
 
 def _stand():
@@ -718,19 +726,41 @@ def _nominativ(name):
 
 
 def _schluessel(name):
-    """Vergleich von Gremiennamen ohne Satzzeichen: „Kinder-, Jugend“ wie „Kinder, Jugend“."""
+    """Strenger Vergleich von Gremiennamen: Leerraum, Komma, Binde- und Gedankenstrich als ein Leerzeichen, „Kinder-,
+    Jugend“ wie „Kinder, Jugend“ (der einzige Vergleich bis zum 16.11.2026; erste Stufe von gremium_der_sitzung)."""
     return re.sub(r"[\s,\-–]+", " ", name or "").strip().lower()
 
 
-def gremium_der_sitzung(m, names, bekannt=None):
+def gremien_index(names):
+    """Namen der Organisationen (`names`: OParl-Kennung → Name) für gremium_der_sitzung: je strengem Schlüssel
+    (_schluessel) ein Name, bei gleichem Schlüssel wie bisher der in der Sortierung letzte; je breitem Schlüssel
+    (ausschuesse.schluessel: zusätzlich ohne das Wort „für“, Schrägstrich wie Komma) die strengen Schlüssel."""
+    streng, breit = {}, {}
+    for n in sorted(names.values(), key=str):
+        streng[_schluessel(n)] = n
+        if ausschuesse.schluessel(n):
+            breit.setdefault(ausschuesse.schluessel(n), set()).add(_schluessel(n))
+    return streng, breit
+
+
+def gremium_der_sitzung(m, names, index=None):
     """Gremium einer Sitzung: aus der Organisation; fehlt sie (z. B. neue Wahlperiode, Sitzung am 25.11.2026), aus
-    dem Sitzungsnamen, bei gleichem Namen ohne Satzzeichen in der Schreibweise des bekannten Gremiums."""
+    dem Sitzungsnamen in der Schreibweise eines bekannten Gremiums, in zwei Stufen (gremien_index): zuerst bei
+    gleichem strengem Schlüssel (ohne Satzzeichen; wie bis zum 16.11.2026, bisherige Treffer bleiben), sonst bei
+    gleichem breitem Schlüssel (ausschuesse.schluessel, auch ohne „für“ und mit „/“ wie Komma: die
+    Zuständigkeitsordnung schreibt „Ausschuss Klima, Umwelt und Grün“ und „Ausschuss für Klima, Umwelt und Grün“),
+    aber nur, wenn er genau ein Gremium ergibt. Stehen Gremien der alten und der neuen Wahlperiode mit und ohne „für“
+    nebeneinander, gewinnt so die genau passende Schreibweise; ist der breite Schlüssel mehrdeutig, bleibt der Name aus
+    der Sitzung (Prüfung des Abgleichs vom 16.11.2026)."""
     org = (m.get("organization") or [None])[0]
     if names.get(org):
         return names[org]
     name = _nominativ(re.sub(r"^(Gemeinsame )?Sitzung (des|der) ", "", m.get("name") or ""))
-    bekannt = bekannt if bekannt is not None else {_schluessel(n): n for n in sorted(names.values(), key=str)}
-    return bekannt.get(_schluessel(name), name) or "unbekannt"
+    streng, breit = index if index is not None else gremien_index(names)
+    if _schluessel(name) in streng:
+        return streng[_schluessel(name)] or "unbekannt"
+    kandidaten = breit.get(ausschuesse.schluessel(name)) or ()
+    return (streng[next(iter(kandidaten))] if len(kandidaten) == 1 else name) or "unbekannt"
 
 
 def _meetings(db):
@@ -740,7 +770,7 @@ def _meetings(db):
     if not config.MEETINGS.exists():
         return []
     names = dict(db.execute("SELECT id, name FROM organization"))
-    bekannt = {_schluessel(n): n for n in sorted(names.values(), key=str)}
+    index = gremien_index(names)
     mk = _maske(db)
     out = []
     for m in json.loads(config.MEETINGS.read_text()):
@@ -748,7 +778,7 @@ def _meetings(db):
             continue
         time = m["start"][11:16] if len(m["start"]) > 10 and m["start"][11:16] != "00:00" else None
         m = {**m, "name": mk(m.get("name"), mk.sitzungen.get(m.get("id")))}
-        gremium = gremium_der_sitzung(m, names, bekannt)
+        gremium = gremium_der_sitzung(m, names, index)
         out.append({"date": proc.local_day(m["start"]), "time": time, "gremium": gremium,
                     "name": m.get("name"), "cancelled": bool(m.get("cancelled")), "state": m.get("meetingState"),
                     "web": m.get("web"), "invitation": m.get("invitation"),
