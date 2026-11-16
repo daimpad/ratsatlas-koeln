@@ -87,9 +87,14 @@ def _schritte():
 
 
 def _skript(schritt):
-    """Shell-Text eines Schritts mit `run: |` (ohne Einrückung)."""
-    run = schritt.split("        run: |\n", 1)[1]
-    return "\n".join(z[10:] for z in run.splitlines())
+    """Shell-Text eines Schritts mit `run: |` (ohne Einrückung): bis zur ersten Zeile, die weniger als zehn Zeichen
+    eingerückt ist (etwa die Kommentare des nächsten Schritts) oder leer ist."""
+    zeilen = []
+    for z in schritt.split("        run: |\n", 1)[1].splitlines():
+        if not z.strip() or len(z) - len(z.lstrip(" ")) < 10:
+            break
+        zeilen.append(z[10:])
+    return "\n".join(zeilen) + "\n"
 
 
 def test_waechter_vor_abruf_und_veroeffentlichung():
@@ -111,12 +116,17 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     assert variablen == {"GEFUNDEN": "${{ steps.rohdaten.outputs.cache-matched-key }}",
                          "RATSATLAS_STADT_INFORMIERT": "${{ vars.RATSATLAS_STADT_INFORMIERT }}",
                          "RATSATLAS_VOLLABRUF": "${{ vars.RATSATLAS_VOLLABRUF }}"}
-    # dieselbe Datei, aus der der Abruf seinen Zustand liest (ohne RATSATLAS_RAW im Abrufschritt: data/raw)
-    assert "RATSATLAS_RAW" not in schritte[f]
+    # dieselbe Datei, aus der der Abruf seinen Zustand liest: kein RATSATLAS_RAW im Wächter, im Abruf oder auf Ebene
+    # des Workflows oder Jobs (nur die Kartenvorschau setzt es in ihrem eigenen Schritt), kein anderes
+    # Arbeitsverzeichnis – also data/raw im Checkout
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    assert "RATSATLAS_RAW" not in schritte[w] and "RATSATLAS_RAW" not in schritte[f]
+    assert not re.search(r"^ {0,8}RATSATLAS_RAW:", text, re.M)
+    assert "working-directory" not in text and not re.search(r"^\s*defaults:", text, re.M)
     assert f"[ -f {config.ZUSTAND.relative_to(config.ROOT).as_posix()} ]" in _skript(waechter)
     ids = {m.group(1): s for s in schritte[w + 1:] for m in [re.search(r"^\s+id: (\w+)$", s, re.M)] if m}
     for s in schritte[w + 1:]:
-        bedingung = re.search(r"^\s+if: (.+)$", s, re.M)
+        bedingung = re.search(r"(?:^|\n)\s*if: (.+)", s)   # auch ein Schritt, der mit „- if:“ beginnt
         if bedingung and re.search(r"always\(\)|failure\(\)|cancelled\(\)", bedingung.group(1)):
             if re.search(r"^\s+run: python tools/abrufstand\.py$", s, re.M):
                 continue   # Fortschritt: liest nur, schreibt nichts nach data/ und hält den Lauf nie an
@@ -129,7 +139,7 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
 
 @pytest.mark.parametrize("informiert", ["ja", "", "Ja", " ja", "nein"])
 def test_waechter_haelt_freigegebenen_lauf_ohne_zustand_an(tmp_path, monkeypatch, informiert):
-    """Der Shell-Text des Wächters läuft hier wie in GitHub Actions (bash -eo pipefail) in einem Arbeitsverzeichnis
+    """Der Shell-Text des Wächters läuft hier wie in GitHub Actions (bash -e Datei) in einem Arbeitsverzeichnis
     ohne Netz. Er hält genau dann an (Exit-Code 1, ::error:: mit Abhilfe), wenn der Abruf freigegeben ist (dieselbe
     Regel wie abruf.freigegeben für die Kölner Adresse), zustand_abruf.json fehlt und RATSATLAS_VOLLABRUF nicht genau
     „ja“ ist; eine Fundmeldung von actions/cache allein genügt nicht, eine fehlende allein hält nicht an (maßgeblich
@@ -144,8 +154,11 @@ def test_waechter_haelt_freigegebenen_lauf_ohne_zustand_an(tmp_path, monkeypatch
     zustand = tmp_path / config.ZUSTAND.relative_to(config.ROOT)
     umgebung = {k: v for k, v in os.environ.items() if not k.startswith("RATSATLAS_") and k != "BASH_ENV"}
 
+    datei = tmp_path / "waechter.sh"   # wie in GitHub Actions ohne `shell:`: bash -e {0}
+    datei.write_text(skript, encoding="utf-8")
+
     def lauf(gefunden, vollabruf):
-        return subprocess.run(["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c", skript], cwd=tmp_path,
+        return subprocess.run(["bash", "-e", str(datei)], cwd=tmp_path,
                               env={**umgebung, "GEFUNDEN": gefunden, "RATSATLAS_STADT_INFORMIERT": informiert,
                                    "RATSATLAS_VOLLABRUF": vollabruf},
                               capture_output=True, text=True, timeout=60)
