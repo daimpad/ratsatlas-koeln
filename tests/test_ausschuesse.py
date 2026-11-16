@@ -121,6 +121,64 @@ def test_gremium_aus_sitzungsname(sitzung, bekannt, erwartet):
     assert export.gremium_der_sitzung({"name": sitzung, "organization": list(names)}, names) == bekannt
 
 
+AVR_LEER = "Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Internationales"   # Satzung
+AVR_ENG = "Ausschuss Allgemeine Verwaltung und Rechtsfragen/Vergabe/Internationales"
+
+
+@pytest.mark.parametrize("namen, sitzung, erwartet", [
+    # Gremien der alten und der neuen Wahlperiode mit und ohne „für“ nebeneinander: der genaue Treffer gewinnt
+    (["Ausschuss für Schule und Weiterbildung", "Ausschuss Schule und Weiterbildung"],
+     "Sitzung des Ausschusses Schule und Weiterbildung", "Ausschuss Schule und Weiterbildung"),
+    (["Ausschuss für Schule und Weiterbildung", "Ausschuss Schule und Weiterbildung"],
+     "Sitzung des Ausschusses für Schule und Weiterbildung", "Ausschuss für Schule und Weiterbildung"),
+    (["Ausschuss Klima, Umwelt und Grün", "Ausschuss für Klima, Umwelt und Grün"],
+     "Sitzung des Ausschusses Klima-, Umwelt und Grün", "Ausschuss Klima, Umwelt und Grün"),
+    # „/“ gegen „ / “: der genaue Treffer gewinnt; passt keiner genau und beide breit, bleibt der Name aus der Sitzung
+    ([AVR_LEER, AVR_ENG], f"Sitzung des {AVR_ENG.replace('Ausschuss ', 'Ausschusses ')}", AVR_ENG),
+    ([AVR_LEER, AVR_ENG], f"Sitzung des {AVR_LEER.replace('Ausschuss ', 'Ausschusses ')}", AVR_LEER),
+    ([AVR_LEER, AVR_ENG], "Sitzung des Ausschusses Allgemeine Verwaltung und Rechtsfragen /Vergabe/ Internationales",
+     "Ausschuss Allgemeine Verwaltung und Rechtsfragen /Vergabe/ Internationales"),
+    ([AVR_LEER], "Sitzung des Ausschusses Allgemeine Verwaltung und Rechtsfragen /Vergabe/ Internationales", AVR_LEER),
+    # breiter Schlüssel mehrdeutig („für“ und „/“ gemischt): Name aus der Sitzung
+    (["Ausschuss für Klima, Umwelt und Grün", "Ausschuss Klima/Umwelt und Grün"],
+     "Sitzung des Ausschusses Klima, Umwelt und Grün", "Ausschuss Klima, Umwelt und Grün"),
+    # Namen mit gleichem strengem Schlüssel gelten wie bisher als ein Gremium (der in der Sortierung letzte Name)
+    (["Ausschuss für Kinder, Jugend und Familie", "Ausschuss für Kinder-, Jugend und Familie"],
+     "Sitzung des Ausschusses Kinder, Jugend und Familie", "Ausschuss für Kinder-, Jugend und Familie"),
+    (["Ausschuss für Kinder, Jugend und Familie", "Ausschuss für Kinder-, Jugend und Familie"],
+     "Sitzung des Ausschusses für Kinder, Jugend und Familie", "Ausschuss für Kinder-, Jugend und Familie"),
+    # ohne Namen
+    (["Ausschuss Schule und Weiterbildung"], "", "unbekannt"),
+])
+def test_gremium_genauer_treffer_vor_breitem(namen, sitzung, erwartet):
+    """Prüfung des Abgleichs vom 16.11.2026: Der breite Schlüssel (ohne „für“, „/“ wie Komma) legte Organisationen
+    zusammen, deren Namen sich nur darin unterscheiden; der in der Sortierung letzte Name gewann auch gegen einen genauen
+    Treffer. Jetzt zuerst der strenge Schlüssel, der breite nur bei genau einem Gremium; unabhängig von der Reihenfolge."""
+    for reihe in (namen, namen[::-1]):
+        names = {f"https://example.invalid/oparl/organizations/o{i}": n for i, n in enumerate(reihe)}
+        m = {"name": sitzung, "organization": []}
+        assert export.gremium_der_sitzung(m, names) == erwartet
+        assert export.gremium_der_sitzung(m, names, export.gremien_index(names)) == erwartet
+
+
+def test_gremium_bisherige_treffer_bleiben():
+    """Jeder Treffer des Vergleichs bis zum 16.11.2026 (nur der strenge Schlüssel) bleibt, auch wenn Namen mit und ohne
+    „für“ oder mit „/“ und „ / “ nebeneinander stehen (erfundene Mischung aus Satzung und bisherigen Schreibweisen)."""
+    def alt(name):
+        return re.sub(r"[\s,\-–]+", " ", name or "").strip().lower()
+
+    alle = [n for _, n in NAMEN] + [B10_BISHER, AVR_ENG, "Ausschuss für Kunst und Kultur", "Ausschuss Kinder-, Jugend "
+            "und Familie", "Ausschuss für Soziales, Gesundheit, Seniorinnen und Senioren", "Rat", "Integrationsrat"]
+    names = {f"https://example.invalid/oparl/organizations/o{i}": n for i, n in enumerate(alle)}
+    bisher = {alt(n): n for n in sorted(names.values())}
+    index = export.gremien_index(names)
+    for n in alle:
+        for sitzung in (f"Sitzung des {n}", f"Sitzung des {n.replace('Ausschuss ', 'Ausschusses ', 1)}"):
+            gremium = export._nominativ(sitzung[len("Sitzung des "):])
+            if alt(gremium) in bisher:
+                assert export.gremium_der_sitzung({"name": sitzung}, names, index) == bisher[alt(gremium)], sitzung
+
+
 def test_bahn_finanzausschuss():
     """Themenseiten (deaktiviert): der Kölner Finanzausschuss (§ 11) wie der Bonner Name auf der Bahn „finanz“."""
     class T:
@@ -131,7 +189,8 @@ def test_bahn_finanzausschuss():
 
 
 ORGS = [
-    {"id": "o1", "name": "Mobilitätsausschuss", "short_name": "MobA", "classification": "Ausschuss"},
+    {"id": "o1", "name": "Mobilitätsausschuss", "short_name": "MobA", "classification": "Ausschuss",
+     "start_date": "2025-11-06", "end_date": None},
     {"id": "o2", "name": B10_BISHER, "short_name": "", "classification": "Ausschuss"},
     {"id": "o3", "name": "Unterausschuss Kulturbauten", "short_name": None, "classification": "Ausschuss"},
     {"id": "o4", "name": "Bezirksvertretung 7 (Porz)", "short_name": "BV 7", "classification": "Bezirksvertretung"},
@@ -149,6 +208,30 @@ def test_abgleich_befunde():
     assert ("", "Bezirksvertretung 7 (Porz)") not in befund         # kein Ausschuss
     fehlt = {z[0] for z in zeilen if z[-1] == "fehlt in OParl"}
     assert fehlt == {f"§ {n}" for n in range(7, 24)} - {"§ 10", "§ 11", "§ 17"}
+    assert all(len(z) == len(ausschuesse.SPALTEN) for z in zeilen)
+    zeile = {(z[0], z[2]): dict(zip(ausschuesse.SPALTEN, z)) for z in zeilen}
+    assert zeile[("§ 17", "Mobilitätsausschuss")]["start_date"] == "2025-11-06"
+    assert zeile[("§ 17", "Mobilitätsausschuss")]["treffer"] == "Name"
+    assert zeile[("§ 11", "FinA")]["treffer"] == "Kurzname"
+    assert zeile[("§ 10", B10_BISHER)]["gremiumsregel"] == "ja"
+    assert zeile[("§ 17", "Mobilitätsausschuss")]["gremiumsregel"] == "nein"
+    assert ausschuesse.warnungen(zeilen) == []
+
+
+@pytest.mark.parametrize("orgs, warnung", [
+    # § 10 fehlt in OParl
+    ([{"id": "o1", "name": "Mobilitätsausschuss"}], "fehlt in OParl"),
+    # § 10 nur über den Kurznamen: der Name löst die Gremiumsregel nicht aus (geocode.gremium_ausschluss)
+    ([{"id": "o9", "name": "Ausschuss BAB", "short_name": B10}], "löst die Gremiumsregel aber nicht aus"),
+])
+def test_abgleich_warnt_bei_paragraf_10(orgs, warnung):
+    """Prüfung des Abgleichs vom 16.11.2026: Die Gremiumsregel wertet nur den Namen der Organisation aus; der Abgleich
+    zählte einen Treffer allein über den Kurznamen als „Schreibvariante“, ohne Hinweis auf die Regel."""
+    zeilen = ausschuesse.abgleich(orgs)
+    w = ausschuesse.warnungen(zeilen)
+    assert len(w) == 1 and warnung in w[0] and "§ 10" in w[0]
+    regel = {z[2]: z[ausschuesse.SPALTEN.index("gremiumsregel")] for z in zeilen if z[2]}
+    assert regel.get("Ausschuss BAB", "nein") == "nein"
 
 
 def test_abgleich_schreiben(tmp_path, capsys):
@@ -156,13 +239,23 @@ def test_abgleich_schreiben(tmp_path, capsys):
     with sqlite3.connect(db) as c:
         c.execute("CREATE TABLE organization (id TEXT PRIMARY KEY, name TEXT, short_name TEXT, org_type TEXT, "
                   "classification TEXT, label TEXT, start_date TEXT, end_date TEXT, web TEXT, source TEXT)")
-        c.executemany("INSERT INTO organization (id, name, short_name, classification) VALUES (?, ?, ?, ?)",
-                      [(o["id"], o["name"], o["short_name"], o["classification"]) for o in ORGS])
+        c.executemany("INSERT INTO organization (id, name, short_name, classification, start_date, end_date) "
+                      "VALUES (?, ?, ?, ?, ?, ?)",
+                      [(o["id"], o["name"], o["short_name"], o["classification"], o.get("start_date"),
+                        o.get("end_date")) for o in ORGS])
     ziel = tmp_path / "abgleich.tsv"
     zeilen = ausschuesse.abgleich_schreiben(db, ziel)
     gelesen = list(csv.reader(ziel.open(encoding="utf-8"), delimiter="\t"))
     assert gelesen[0] == ausschuesse.SPALTEN and len(gelesen) == len(zeilen) + 1
-    assert "gleich 1" in capsys.readouterr().out
+    mob = dict(zip(gelesen[0], next(z for z in gelesen if z[2] == "Mobilitätsausschuss")))
+    assert (mob["paragraf"], mob["start_date"], mob["gremiumsregel"]) == ("§ 17", "2025-11-06", "nein")
+    aus = capsys.readouterr().out
+    assert "gleich 1" in aus and "Warnung" not in aus
+    with sqlite3.connect(db) as c:
+        c.execute("DELETE FROM organization WHERE id = 'o2'")
+    ausschuesse.abgleich_schreiben(db, ziel)
+    assert "Warnung: Ausschuss Bürgerbeteiligung, Anregungen und Beschwerden (§ 10) fehlt in OParl" \
+        in capsys.readouterr().out
     with pytest.raises(SystemExit):
         ausschuesse.abgleich_schreiben(tmp_path / "fehlt.sqlite", ziel)
 
