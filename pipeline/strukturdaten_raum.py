@@ -16,7 +16,9 @@ Eingaben (ohne Netz; aufgerufen aus pipeline/strukturdaten.py, Schritt `struktur
   zugeordnet. data/geo hat kein Abrufprotokoll; Abrufdatum und Stand stehen nur für die Fassungen mit den Prüfsummen in
   GEO_HERKUNFT und GEO_ABGELEITET.
 
-Ausgaben (Rückgabe an strukturdaten.write, das die Dateien schreibt):
+Ausgaben (Rückgabe an strukturdaten.write, das die Dateien schreibt; den Teil ohne Quartiersdatei, Stadtteil →
+Stadtbezirk und die Flächen der Stadtteile und Stadtbezirke, rechnet `gebiete_abgleich`, den auch der Schritt
+`strukturdaten-gebiete` in strukturdaten.gebiete_schreiben nutzt):
 - raum/stadtbezirk.geojson, raum/stadtteil.geojson: Geometrie unverändert aus data/geo; raum/quartier.geojson: aus dem
   Shapefile, alle Quartiere gemeinsam als lückenlose Abdeckung vereinfacht und gerundet (`quartiersflaechen`,
   Entscheidung 10.11.2026 „lückenlose Vereinfachung“): Nachbarn haben an ihrer gemeinsamen Grenze dieselben
@@ -665,35 +667,21 @@ def statistik(audit, zuordnung, von_ebene):
             "groesster_splitter": _anteil(max(splitter)) if splitter else ""}
 
 
-def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad, werte_namen, namen_jahre=None):
-    """Alles für Phase 2: {"geojson": {Ebene: Text}, "geojson_meta": {Ebene: meta}, "zuordnung": [...],
-    "audit": [...], "meta": {...}}.
-
-    werte_namen: {Ebene: {Nummer: Name}} der Einheiten mit Zeilen im Blatt Daten (Name aus dem jüngsten Jahr);
-    namen_jahre: {Ebene: {Nummer: {Name: [Jahre]}}} aus allen Jahren (ohne Angabe: nur werte_namen); quartier_beleg:
-    Protokollzeile des Abrufs der Quartiersdatei (url, zeitstempel, pruefsumme)."""
-    if namen_jahre is None:
-        namen_jahre = {e: {r: {n: []} for r, n in w.items()} for e, w in werte_namen.items()}
-    quartiere = Quartiere(quartier_pfad)
-    teile, teile_meta = gebiete(stadtteil_pfad, "stadtteil")
-    bezirke, bezirke_meta = gebiete(stadtbezirk_pfad, "stadtbezirk")
-    zuordnung, audit, eltern = [], [], {}
-    for von, nach in PAARE:
-        quelle = quartiere.einheiten if von == "quartier" else teile
-        ziele = teile if nach == "stadtteil" else bezirke
-        z, a, e = abgleich(von, nach, quelle, ziele, werte_namen.get(von, {}), namen_jahre.get(von, {}))
-        zuordnung += z
-        audit += a
-        eltern[von] = e
+def gebiete_geojson(einheiten, metas, pfade, eltern):
+    """raum/stadtbezirk.geojson und raum/stadtteil.geojson: ({Ebene: Text}, {Ebene: meta}) mit der Geometrie unverändert
+    aus data/geo. einheiten, metas, pfade: je Ebene aus `gebiete` und der Pfad der Datei unter data/geo; eltern:
+    {Nummer: Stadtbezirk} der Stadtteile mit Prüfstatus ok. Derselbe Text im vollständigen Lauf (`raumabgleich`) und in
+    `gebiete_abgleich` (Schritt `strukturdaten-gebiete`)."""
     geojson, geojson_meta = {}, {}
-    for ebene, einheiten, meta, pfad in (("stadtbezirk", bezirke, bezirke_meta, stadtbezirk_pfad),
-                                         ("stadtteil", teile, teile_meta, stadtteil_pfad)):
+    for ebene in ("stadtbezirk", "stadtteil"):
+        meta, pfad = metas[ebene], pfade[ebene]
         titel = "Stadtbezirke Köln" if ebene == "stadtbezirk" else "Stadtteile Köln"
         quelle = f"{GEO_HERAUSGEBER}, {titel} (offenedaten-koeln.de)"
         summe, name = pruefsumme(pfad), Path(pfad).name
         belegt, abgeleitet = GEO_HERKUNFT.get(summe) == name, GEO_ABGELEITET.get(summe) == name
-        features = [_feature(rid, einheiten[rid]["name"], ebene, eltern.get(ebene, {}).get(rid, ""),
-                             einheiten[rid]["geometrie"], quelle) for rid in _sortiert(einheiten)]
+        features = [_feature(rid, einheiten[ebene][rid]["name"], ebene,
+                             (eltern if ebene == "stadtteil" else {}).get(rid, ""),
+                             einheiten[ebene][rid]["geometrie"], quelle) for rid in _sortiert(einheiten[ebene])]
         geojson_meta[ebene] = {
             "raumebene": ebene, "quelle": quelle, "quelle_url": meta.get("source", ""),
             "abgeleitet_aus": f"data/geo/{name}", "sha256": summe,
@@ -707,6 +695,56 @@ def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad
                           if ebene == "stadtbezirk" else
                           "Stadtbezirk, nur bei Prüfstatus ok in audit_raumabgleich.tsv, sonst leer")}
         geojson[ebene] = geojson_text(features, geojson_meta[ebene])
+    return geojson, geojson_meta
+
+
+def id_abgleich(einheiten, werte, namen_jahre):
+    """Nummern einer Raumebene in Geometrie (einheiten: {Nummer: {name}}) und Blatt Daten (werte: Menge der Nummern),
+    dazu die Nummern mit abweichendem Namen im Blatt Daten (namen_jahre: {Nummer: {Name: [Jahre]}})."""
+    return {"geometrie": len(einheiten), "werte": len(werte), "gemeinsam": len(set(einheiten) & werte),
+            "nur_geometrie": _sortiert(set(einheiten) - werte), "nur_werte": _sortiert(werte - set(einheiten)),
+            "namen_abweichend": _sortiert(r for r in set(einheiten) & set(namen_jahre)
+                                          if namen_abweichend(einheiten[r]["name"], namen_jahre[r]))}
+
+
+def gebiete_abgleich(stadtteil_pfad, stadtbezirk_pfad, werte_namen, namen_jahre=None):
+    """Der Teil von `raumabgleich`, der nur Stadtteile und Stadtbezirke aus data/geo braucht (keine Quartiersdatei):
+    Abgleich Stadtteil → Stadtbezirk, raum/stadtbezirk.geojson und raum/stadtteil.geojson, id_abgleich beider Ebenen.
+    Rückgabe {"teile", "bezirke", "zuordnung", "audit", "eltern", "geojson", "geojson_meta", "ergebnis",
+    "id_abgleich"}; werte_namen und namen_jahre wie in `raumabgleich` (nur die Ebenen stadtteil und stadtbezirk)."""
+    if namen_jahre is None:
+        namen_jahre = {e: {r: {n: []} for r, n in w.items()} for e, w in werte_namen.items()}
+    teile, teile_meta = gebiete(stadtteil_pfad, "stadtteil")
+    bezirke, bezirke_meta = gebiete(stadtbezirk_pfad, "stadtbezirk")
+    zuordnung, audit, eltern = abgleich("stadtteil", "stadtbezirk", teile, bezirke, werte_namen.get("stadtteil", {}),
+                                        namen_jahre.get("stadtteil", {}))
+    geojson, geojson_meta = gebiete_geojson({"stadtteil": teile, "stadtbezirk": bezirke},
+                                            {"stadtteil": teile_meta, "stadtbezirk": bezirke_meta},
+                                            {"stadtteil": stadtteil_pfad, "stadtbezirk": stadtbezirk_pfad}, eltern)
+    return {"teile": teile, "bezirke": bezirke, "zuordnung": zuordnung, "audit": audit, "eltern": eltern,
+            "geojson": geojson, "geojson_meta": geojson_meta,
+            "ergebnis": statistik(audit, zuordnung, "stadtteil"),
+            "id_abgleich": {e: id_abgleich(g, set(werte_namen.get(e, {})), namen_jahre.get(e, {}))
+                            for e, g in (("stadtteil", teile), ("stadtbezirk", bezirke))}}
+
+
+def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad, werte_namen, namen_jahre=None):
+    """Alles für Phase 2: {"geojson": {Ebene: Text}, "geojson_meta": {Ebene: meta}, "zuordnung": [...],
+    "audit": [...], "meta": {...}}.
+
+    werte_namen: {Ebene: {Nummer: Name}} der Einheiten mit Zeilen im Blatt Daten (Name aus dem jüngsten Jahr);
+    namen_jahre: {Ebene: {Nummer: {Name: [Jahre]}}} aus allen Jahren (ohne Angabe: nur werte_namen); quartier_beleg:
+    Protokollzeile des Abrufs der Quartiersdatei (url, zeitstempel, pruefsumme). Stadtteile und Stadtbezirke rechnet
+    `gebiete_abgleich` (zuerst, PAARE)."""
+    if namen_jahre is None:
+        namen_jahre = {e: {r: {n: []} for r, n in w.items()} for e, w in werte_namen.items()}
+    quartiere = Quartiere(quartier_pfad)
+    gb = gebiete_abgleich(stadtteil_pfad, stadtbezirk_pfad, werte_namen, namen_jahre)
+    z, a, eltern_q = abgleich("quartier", "stadtteil", quartiere.einheiten, gb["teile"],
+                              werte_namen.get("quartier", {}), namen_jahre.get("quartier", {}))
+    zuordnung, audit = gb["zuordnung"] + z, gb["audit"] + a
+    eltern = {"stadtteil": gb["eltern"], "quartier": eltern_q}
+    geojson, geojson_meta = dict(gb["geojson"]), dict(gb["geojson_meta"])
     quelle = f"{GEO_HERAUSGEBER}, {QUARTIERE_TITEL} (offenedaten-koeln.de)"
     mit_flaeche = {r: e["geom"] for r, e in quartiere.einheiten.items() if e["geom"] is not None}
     flaechen, abdeckung = quartiersflaechen(mit_flaeche)
@@ -743,16 +781,11 @@ def raumabgleich(quartier_pfad, quartier_beleg, stadtteil_pfad, stadtbezirk_pfad
         "abdeckung": abdeckung,
         "eltern_id": "Stadtteil, nur bei Prüfstatus ok in audit_raumabgleich.tsv, sonst leer"}
     geojson["quartier"] = geojson_text(features, geojson_meta["quartier"])
-    ids = {"quartier": (quartiere.einheiten, set(werte_namen.get("quartier", {}))),
-           "stadtteil": (teile, set(werte_namen.get("stadtteil", {}))),
-           "stadtbezirk": (bezirke, set(werte_namen.get("stadtbezirk", {})))}
     meta = {
         "ergebnis": {f"{von}→{nach}": statistik(audit, zuordnung, von) for von, nach in PAARE},
-        "id_abgleich": {e: {"geometrie": len(g), "werte": len(w), "gemeinsam": len(set(g) & w),
-                            "nur_geometrie": _sortiert(set(g) - w), "nur_werte": _sortiert(w - set(g)),
-                            "namen_abweichend": _sortiert(r for r in set(g) & set(namen_jahre.get(e, {}))
-                                                          if namen_abweichend(g[r]["name"], namen_jahre[e][r]))}
-                        for e, (g, w) in ids.items()},
+        "id_abgleich": {"quartier": id_abgleich(quartiere.einheiten, set(werte_namen.get("quartier", {})),
+                                                namen_jahre.get("quartier", {})),
+                        **gb["id_abgleich"]},
         "quartiere_datum_archiv": quartiere.datum.strftime("%d.%m.%Y") if quartiere.datum else "unbekannt",
         "quartiere_crs": quartiere.crs_name,
         "quartiere_ohne_geometrie": _sortiert(r for r, e in quartiere.einheiten.items() if e["geom"] is None),

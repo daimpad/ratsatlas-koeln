@@ -1,8 +1,10 @@
 """Workflows und Technikseite: jede Datei, jeder Schritt und jede Quelle hat eine Erklärung; der Hauptlauf ist bis zur
 Information der Stadt gesperrt, veröffentlicht nie Testdaten und sichert den Abrufzustand gleich nach dem Abruf."""
+import os
 import re
 import shutil
 import subprocess
+import sys
 
 import pytest
 
@@ -75,6 +77,31 @@ def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
     assert "key: raw-${{ github.run_id }}-${{ github.run_attempt }}" in sichern
     assert "restore-keys: raw-" in wiederherstellen
     assert config.ZUSTAND.parent == config.STAND.parent == config.RAW
+
+
+def test_fortschritt_gleich_nach_dem_sichern(tmp_path):
+    """Gleich nach dem Sichern des Abrufzustands, immer und ohne den Lauf anzuhalten: tools/abrufstand.py schreibt den
+    Fortschritt ins Log und in die Zusammenfassung; ohne Variablen, Geheimnisse und Abruf. Der Abrufschritt bleibt, wie
+    er ist (Variablen und Abstand prüft test_abhilfen_als_variablen_sicherungen_nicht)."""
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    schritte = text.split("\n      - ")
+    i = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
+    assert "uses: actions/cache/save@" in schritte[i + 1]
+    fortschritt = schritte[i + 2]
+    assert fortschritt.startswith("name: Fortschritt des Abrufs")
+    assert re.search(r"^\s+if: always\(\)$", fortschritt, re.M)
+    assert re.search(r"^\s+continue-on-error: true$", fortschritt, re.M)
+    assert re.search(r"^\s+run: python tools/abrufstand\.py$", fortschritt, re.M)
+    assert "env:" not in fortschritt and "${{" not in fortschritt and "pipeline fetch" not in fortschritt
+    assert text.count("python tools/abrufstand.py") == 1 and (config.ROOT / "tools" / "abrufstand.py").exists()
+    # wie im Lauf: ohne Dateien (erster Lauf ohne Zwischenspeicher) Exit-Code 0 und eine Zusammenfassung
+    zusammenfassung = tmp_path / "summary.md"
+    erg = subprocess.run([sys.executable, str(config.ROOT / "tools" / "abrufstand.py"), "--zustand",
+                          str(tmp_path / "z.json"), "--stand", str(tmp_path / "s.json"), "--statistik",
+                          str(tmp_path / "a.tsv")], capture_output=True, text=True, timeout=60,
+                         env={**os.environ, "GITHUB_STEP_SUMMARY": str(zusammenfassung)})
+    assert erg.returncode == 0 and "Abrufstand" in erg.stdout and "::warning::" not in erg.stdout, erg
+    assert zusammenfassung.read_text(encoding="utf-8").startswith("### Abrufstand")
 
 
 def test_technikseite_ohne_bonn(tmp_path):

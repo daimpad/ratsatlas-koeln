@@ -42,6 +42,11 @@ Schritte:
   nur für die XLSX, gegen die sie geprüft ist (VERIFIKATION).
   werte_quartier.tsv.gz ist deterministisch komprimiert (gzip Stufe 9, mtime 0, ohne Dateinamen im Kopf), damit gleiche
   Eingaben byte-gleiche Dateien ergeben.
+- `strukturdaten-gebiete` (ohne Netz und ohne Zwischenspeicher, `gebiete_schreiben`): schreibt nur
+  raum/stadtbezirk.geojson, raum/stadtteil.geojson und den Abgleich Stadtteil → Stadtbezirk aus data/geo neu, dazu die
+  davon abhängigen Angaben in meta.json; Quartier → Stadtteil und alle Werte bleiben aus dem letzten vollständigen Lauf
+  (raumabgleich.geometrie_fassungen nennt die Fassungen je Paar). Für eine neue Fassung von data/geo, solange die
+  Quartiersdatei des Zwischenspeichers nicht vorliegt.
 
 Regeln (Vertrag Abschnitt 3): Werte unverändert; „*“ → status geheim, leere Zelle → status fehlt, beide mit leerem
 Wert; keine Verrechnung von Werten zwischen Raumebenen (zuordnung.tsv beschreibt nur die Lage der Einheiten
@@ -1473,6 +1478,75 @@ def _geheimhaltung_text(ableitbar):
         "Differenzen oder Verhältnisse, die einen geheimen Wert ergeben.")
 
 
+# Angaben zu raum/<ebene>.geojson, die meta.json unter raum.<ebene> wiederholt (aus dem meta der Datei)
+RAUM_ANGABEN = ("quelle", "quelle_url", "datensatz_url", "abgeleitet_aus", "abgerufen", "abgerufen_beleg", "sha256",
+                "lizenz", "lizenz_url", "namensnennung", "vereinfacht_m", "geometrie", "abweichung_von_der_quelle",
+                "abdeckung", "eltern_id")
+FASSUNGEN_HINWEIS = ("Prüfsummen (sha256) der Geometrien, mit denen jedes Paar in zuordnung.tsv und "
+                     "audit_raumabgleich.tsv gerechnet ist: Stadtteile und Stadtbezirke die Datei unter data/geo "
+                     "(raum.<ebene>.abgeleitet_aus), Quartiere das Shapefile (raum.quartier.sha256).")
+FASSUNGEN_ABWEICHEND = ("Quartier → Stadtteil (Zeilen in zuordnung.tsv und audit_raumabgleich.tsv, "
+                        "ergebnis.quartier→stadtteil, id_abgleich.quartier, eltern_id in raum/quartier.geojson) "
+                        "stammt aus dem letzten vollständigen Lauf von strukturdaten und ist mit einer anderen Fassung "
+                        "der Stadtteile gerechnet als raum/stadtteil.geojson ({fassung}): Der Schritt "
+                        "strukturdaten-gebiete schreibt nur Stadtteile und Stadtbezirke neu, ohne Download und ohne "
+                        "die Quartiersdatei aus dem Zwischenspeicher. Der nächste vollständige Lauf rechnet beide Paare "
+                        "mit derselben Fassung.")
+
+
+def _format_geojson():
+    """formate.geojson in meta.json (auch im Schritt `strukturdaten-gebiete`)."""
+    rm = strukturdaten_raum
+    return (f"raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit Quelle, "
+            f"Prüfsumme und Lizenz; Flächen mit Toleranz {rm.TOLERANZ_M:g} m vereinfacht, Koordinaten auf 1e-6 Grad "
+            "gerundet. Stadtbezirke und Stadtteile wie data/geo (jede Fläche für sich mit Douglas-Peucker "
+            "vereinfacht, danach als lückenlose Abdeckung bereinigt, die Stadtbezirke als Vereinigung ihrer "
+            "Stadtteile; Verfahren und Messung in data/geo unter meta.abdeckung); Quartiere gemeinsam als lückenlose "
+            "Abdeckung (Visvalingam-Whyatt, Nachbarn mit denselben Stützpunkten an der gemeinsamen Grenze; Verfahren "
+            "unter raum.quartier.geometrie, Prüfung unter raum.quartier.abdeckung, gemessene Abweichung unter "
+            "raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als Text), name, "
+            "raumebene, eltern_id, quelle, lizenz. Nur zur Anzeige, nicht zum Rechnen.")
+
+
+def _raum_eintrag(ebene, geojson_meta):
+    """raum.<ebene> in meta.json: Datei und die Angaben RAUM_ANGABEN aus dem meta von raum/<ebene>.geojson."""
+    return {"datei": f"raum/{ebene}.geojson", **{k: v for k, v in geojson_meta.items() if k in RAUM_ANGABEN}}
+
+
+def _geometrie_hinweis(erg):
+    """raumabgleich.geometrie_hinweis in meta.json mit dem größten Splitter je Paar (erg: raumabgleich.ergebnis)."""
+    rm = strukturdaten_raum
+    splitter = {k: v["groesster_splitter"] or "keiner" for k, v in erg.items()}
+    return (f"data/geo ist mit {rm.TOLERANZ_M:g} m vereinfacht (jede Fläche für sich), auf 1e-6 Grad gerundet und "
+            "danach als lückenlose Abdeckung bereinigt (Stadtbezirke als Vereinigung ihrer Stadtteile, data/geo "
+            "meta.abdeckung; beste verfügbare Geometrie der Stadtteile und Stadtbezirke im Repository). Die Grenzen "
+            "weichen daher von der Quelle ab (für data/geo nicht gemessen, die unvereinfachten Flächen liegen nicht im "
+            "Repository; die Vereinfachung je Fläche ergab bei den Quartieren am 10.11.2026 bis 12,61 m, 37 von 570 "
+            "Quartieren über 2 m, die Bereinigung von data/geo verschob die Grenzen um höchstens 2,21 m; die "
+            "Quartiere werden seitdem gemeinsam vereinfacht, raum.quartier.geometrie): Hauptanteile können knapp unter "
+            "1 liegen, an den Rändern können Randsplitter entstehen (größter Splitter: "
+            + "; ".join(f"{k} {v}" for k, v in splitter.items()) + ").")
+
+
+def _fassungen(summen, quartier_stadtteil=None):
+    """raumabgleich.geometrie_fassungen in meta.json: Prüfsummen der Geometrien je Paar (summen: {Ebene: sha256} der
+    veröffentlichten Fassung). quartier_stadtteil: Prüfsumme der Stadtteile, mit denen Quartier → Stadtteil gerechnet
+    ist, wenn das nicht die veröffentlichte Fassung ist (nur nach `strukturdaten-gebiete`)."""
+    teile = quartier_stadtteil or summen["stadtteil"]
+    hinweis = FASSUNGEN_HINWEIS
+    if teile != summen["stadtteil"]:
+        name = Path(geo_pfad("stadtteil")).name
+        rm = strukturdaten_raum
+        fassung = ("Fassung von Commit 3964836 vom 04.11.2026, vor der lückenlosen Bereinigung vom 13.11.2026"
+                   if rm.GEO_HERKUNFT.get(teile) == name else
+                   "am 13.11.2026 lückenlos bereinigte Fassung" if rm.GEO_ABGELEITET.get(teile) == name else
+                   "Fassung nicht dokumentiert")
+        hinweis += " " + FASSUNGEN_ABWEICHEND.format(fassung=fassung)
+    return {"hinweis": hinweis,
+            "stadtteil→stadtbezirk": {"stadtteil": summen["stadtteil"], "stadtbezirk": summen["stadtbezirk"]},
+            "quartier→stadtteil": {"quartier": summen["quartier"], "stadtteil": teile}}
+
+
 def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
     rm = strukturdaten_raum
     q = []
@@ -1519,7 +1593,6 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
     erg = rmeta["ergebnis"]
     abg = abgeleitet or None
     status_mit = "status ok, geheim oder abgeleitet" if abg else "status ok oder geheim"
-    splitter = {k: v["groesster_splitter"] or "keiner" for k, v in erg.items()}
     v_datei, v_spalten, v_angaben = verifikation(belege["xlsx"]["pruefsumme"])
     return {
         "vertrag_version": VERTRAG_VERSION,
@@ -1614,28 +1687,12 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
                            f"Zeile mit {status_mit} hat (Wegweiser: gesamtstadt), durch Semikolon ohne "
                            "Leerzeichen getrennt, in der Reihenfolge von raumebenen "
                            "(gesamtstadt;stadtbezirk;stadtteil;quartier)."),
-            "geojson": (f"raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit "
-                        f"Quelle, Prüfsumme und Lizenz; Flächen mit Toleranz {rm.TOLERANZ_M:g} m vereinfacht, "
-                        "Koordinaten auf 1e-6 Grad gerundet. Stadtbezirke und Stadtteile wie data/geo (jede Fläche für "
-                        "sich mit Douglas-Peucker vereinfacht, danach als lückenlose Abdeckung bereinigt, die "
-                        "Stadtbezirke als Vereinigung ihrer Stadtteile; Verfahren und Messung in data/geo unter "
-                        "meta.abdeckung); Quartiere gemeinsam als lückenlose Abdeckung (Visvalingam-Whyatt, "
-                        "Nachbarn mit denselben Stützpunkten an der gemeinsamen Grenze; Verfahren unter "
-                        "raum.quartier.geometrie, Prüfung unter raum.quartier.abdeckung, gemessene Abweichung unter "
-                        "raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als Text), "
-                        "name, raumebene, eltern_id, quelle, lizenz. Nur zur Anzeige, nicht zum Rechnen."),
+            "geojson": _format_geojson(),
             "flaechenanteil": ("zuordnung.tsv und audit_raumabgleich.tsv: Anteil der Fläche der Einheit (von) im Ziel "
                                "(nach), 0 bis 1 mit 4 Nachkommastellen und Punkt; berechnet in EPSG 25832. Die "
                                "Schwellen splitter_anteil und anteil_hoch gelten für diesen gerundeten Wert."),
         },
-        "raum": {e: {"datei": f"raum/{e}.geojson", **{k: v for k, v in raum["geojson_meta"][e].items()
-                                                      if k in ("quelle", "quelle_url", "datensatz_url",
-                                                               "abgeleitet_aus", "abgerufen", "abgerufen_beleg",
-                                                               "sha256", "lizenz", "lizenz_url", "namensnennung",
-                                                               "vereinfacht_m", "geometrie",
-                                                               "abweichung_von_der_quelle", "abdeckung",
-                                                               "eltern_id")}}
-                 for e in ("stadtbezirk", "stadtteil", "quartier")},
+        "raum": {e: _raum_eintrag(e, raum["geojson_meta"][e]) for e in ("stadtbezirk", "stadtteil", "quartier")},
         "raumabgleich": {
             "verfahren": ("Verschneidung in EPSG 25832 (ETRS89/UTM 32N): Quartiere unvereinfacht aus dem Shapefile, "
                           "Stadtteile und Stadtbezirke aus data/geo nach EPSG 25832 zurückgerechnet. Je Einheit der "
@@ -1664,19 +1721,11 @@ def _meta(kat, ww, belege, indikatoren, raum, ableitbar, abgeleitet=None):
                                         "namen_abweichend)",
                             "nicht_zugeordnet": "ohne Geometrie oder ohne Ziel mit mindestens splitter_anteil; keine "
                                                 "Zeile in zuordnung.tsv"},
-            "geometrie_hinweis": (f"data/geo ist mit {rm.TOLERANZ_M:g} m vereinfacht (jede Fläche für sich), auf "
-                                  "1e-6 Grad gerundet und danach als lückenlose Abdeckung bereinigt (Stadtbezirke als "
-                                  "Vereinigung ihrer Stadtteile, data/geo meta.abdeckung; beste verfügbare Geometrie "
-                                  "der Stadtteile und Stadtbezirke im Repository). Die Grenzen weichen daher von der "
-                                  "Quelle ab (für data/geo nicht gemessen, die unvereinfachten Flächen liegen nicht im "
-                                  "Repository; die Vereinfachung je Fläche ergab bei den Quartieren am 10.11.2026 bis "
-                                  "12,61 m, 37 von 570 Quartieren über 2 m, die Bereinigung von data/geo verschob die "
-                                  "Grenzen um höchstens 2,21 m; die Quartiere werden seitdem gemeinsam vereinfacht, "
-                                  "raum.quartier.geometrie): Hauptanteile liegen knapp unter 1, an den Rändern "
-                                  "entstehen Randsplitter (größter Splitter: "
-                                  + "; ".join(f"{k} {v}" for k, v in splitter.items()) + ")."),
+            "geometrie_hinweis": _geometrie_hinweis(erg),
             "ergebnis": erg,
             "id_abgleich": rmeta["id_abgleich"],
+            "geometrie_fassungen": _fassungen({e: raum["geojson_meta"][e]["sha256"]
+                                               for e in ("stadtbezirk", "stadtteil", "quartier")}),
         },
         "audit_raumabgleich_spalten": rm.AUDIT_SPALTEN,
         **({"audit_verifikation_spalten": v_spalten} if v_spalten else {}),
@@ -1808,6 +1857,99 @@ def write():
     for h in hinweise:
         print(f"  {h}")
     for name, *_ in DATEIEN_AUSGABE:
+        print(f"  {name}: {(aus / name).stat().st_size} Bytes")
+    return meta
+
+
+GEBIETE_EBENEN = ("stadtteil", "stadtbezirk")
+GEBIETE_DATEIEN = ("meta.json", "werte.tsv", "zuordnung.tsv", "audit_raumabgleich.tsv", "raum/stadtbezirk.geojson",
+                   "raum/stadtteil.geojson")
+
+
+def gebiete_schreiben():
+    """Schritt `strukturdaten-gebiete` (ohne Netz und ohne Zwischenspeicher): schreibt raum/stadtbezirk.geojson und
+    raum/stadtteil.geojson aus data/geo neu, dazu den Abgleich Stadtteil → Stadtbezirk (seine Zeilen in zuordnung.tsv
+    und audit_raumabgleich.tsv) und in meta.json die Angaben, die von diesen Flächen abhängen: raum.stadtbezirk,
+    raum.stadtteil, formate.geojson, raumabgleich.ergebnis.stadtteil→stadtbezirk, raumabgleich.id_abgleich der beiden
+    Ebenen, raumabgleich.geometrie_hinweis und raumabgleich.geometrie_fassungen. Mit denselben Funktionen wie der
+    vollständige Lauf (strukturdaten_raum.gebiete_abgleich, _raum_eintrag, _geometrie_hinweis): Ändert sich data/geo
+    nicht, bleiben alle Dateien byte-gleich.
+
+    Nicht neu gerechnet (dafür braucht es die Quartiersdatei aus dem Zwischenspeicher, also den vollständigen Lauf
+    `strukturdaten`): Quartier → Stadtteil bleibt aus dem letzten Lauf und behält dessen Fassung der Stadtteile
+    (raumabgleich.geometrie_fassungen nennt sie); werte*.tsv, indikatoren.tsv, gesamtstadt.tsv, raum/quartier.geojson
+    und alle Angaben aus der XLSX und dem Wegweiser bleiben unverändert.
+
+    Die Einheiten mit Werten kommen aus werte.tsv. Die Namen des Blatts Daten liegen ohne die XLSX nicht vor; der
+    Schritt bricht deshalb ab (SystemExit, „vollständiger Lauf nötig“), wenn sich Nummern oder Namen der Stadtteile
+    oder Stadtbezirke gegenüber den veröffentlichten Dateien ändern, wenn der letzte Lauf abweichende Namen gemeldet hat
+    (id_abgleich, namen_abweichend) oder wenn die Nummern in werte.tsv nicht zu id_abgleich passen. Unter diesen
+    Bedingungen ergibt der Abgleich dasselbe wie der vollständige Lauf."""
+    rm = strukturdaten_raum
+    aus = ausgabe()
+    for name in GEBIETE_DATEIEN:
+        if not (aus / name).is_file():
+            raise SystemExit(f"strukturdaten-gebiete: {aus / name} fehlt; zuerst ein vollständiger Lauf `strukturdaten`")
+    for ebene in GEO:
+        if not geo_pfad(ebene).exists():
+            raise SystemExit(f"strukturdaten-gebiete: Geometrie {ebene} fehlt ({geo_pfad(ebene)})")
+    meta = json.loads((aus / "meta.json").read_text(encoding="utf-8"))
+    vorher = {e: {f["properties"]["raum_id"]: f["properties"]["name"] for f in json.loads(
+        (aus / "raum" / f"{e}.geojson").read_text(encoding="utf-8"))["features"]} for e in GEBIETE_EBENEN}
+    werte_ids = {e: set() for e in GEBIETE_EBENEN}
+    for w in _tsv_lesen(aus / "werte.tsv"):
+        if w["raumebene"] in werte_ids:
+            werte_ids[w["raumebene"]].add(w["raum_id"])
+    zuordnung, audit = _tsv_lesen(aus / "zuordnung.tsv"), _tsv_lesen(aus / "audit_raumabgleich.tsv")
+    reihenfolge = [von for von, _ in rm.PAARE]   # stadtteil, dann quartier
+    for datei, zeilen in (("zuordnung.tsv", zuordnung), ("audit_raumabgleich.tsv", audit)):
+        ebenen = [z["von_ebene"] for z in zeilen]
+        if not set(ebenen) <= set(reihenfolge) or ebenen != sorted(ebenen, key=reihenfolge.index):
+            raise SystemExit(f"strukturdaten-gebiete: {datei} mit unerwarteter Raumebene oder Reihenfolge")
+    # Name einer Einheit ohne Geometrie: aus dem Audit des letzten Laufs (dort aus dem Blatt Daten)
+    audit_namen = {a["von_id"]: a["name"] for a in audit if a["von_ebene"] == "stadtteil"}
+    werte_namen = {e: {r: vorher[e].get(r) or (audit_namen.get(r, "") if e == "stadtteil" else "")
+                       for r in werte_ids[e]} for e in GEBIETE_EBENEN}
+    neu = rm.gebiete_abgleich(geo_pfad("stadtteil"), geo_pfad("stadtbezirk"), werte_namen)
+    for e, einheiten in (("stadtteil", neu["teile"]), ("stadtbezirk", neu["bezirke"])):
+        alt = meta["raumabgleich"]["id_abgleich"][e]
+        if alt["namen_abweichend"]:
+            raise SystemExit(f"strukturdaten-gebiete: der letzte Lauf meldet abweichende Namen ({e}: "
+                             f"{alt['namen_abweichend']}); vollständiger Lauf `strukturdaten` nötig")
+        if {r: g["name"] for r, g in einheiten.items()} != vorher[e]:
+            raise SystemExit(f"strukturdaten-gebiete: Nummern oder Namen der Raumebene {e} in {geo_pfad(e)} anders als "
+                             f"in raum/{e}.geojson; vollständiger Lauf `strukturdaten` nötig")
+        if neu["id_abgleich"][e] != alt:
+            raise SystemExit(f"strukturdaten-gebiete: Nummern der Raumebene {e} in werte.tsv passen nicht zu "
+                             f"raumabgleich.id_abgleich in meta.json; vollständiger Lauf `strukturdaten` nötig")
+    vorige_fassung = (meta["raumabgleich"].get("geometrie_fassungen", {}).get("quartier→stadtteil", {}).get("stadtteil")
+                      or meta["raum"]["stadtteil"]["sha256"])
+    for ebene, text in neu["geojson"].items():
+        _text_schreiben(aus / "raum" / f"{ebene}.geojson", text)
+    _tsv_schreiben(aus / "zuordnung.tsv", rm.KOPF_ZUORDNUNG,
+                   neu["zuordnung"] + [z for z in zuordnung if z["von_ebene"] == "quartier"])
+    _tsv_schreiben(aus / "audit_raumabgleich.tsv", rm.KOPF_AUDIT,
+                   neu["audit"] + [a for a in audit if a["von_ebene"] == "quartier"])
+    meta["formate"]["geojson"] = _format_geojson()
+    for e in ("stadtbezirk", "stadtteil"):
+        meta["raum"][e] = _raum_eintrag(e, neu["geojson_meta"][e])
+    ra = meta["raumabgleich"]
+    ra["ergebnis"]["stadtteil→stadtbezirk"] = neu["ergebnis"]
+    ra["id_abgleich"].update(neu["id_abgleich"])
+    ra["geometrie_hinweis"] = _geometrie_hinweis(ra["ergebnis"])
+    summen = {e: meta["raum"][e]["sha256"] for e in ("stadtbezirk", "stadtteil", "quartier")}
+    ra["geometrie_fassungen"] = _fassungen(summen, vorige_fassung)
+    _text_schreiben(aus / "meta.json", json.dumps(meta, ensure_ascii=False, indent=1) + "\n")
+    e = neu["ergebnis"]
+    print(f"Raumabgleich stadtteil→stadtbezirk: {e['einheiten']} Einheiten, Prüfstatus {e['pruefstatus']}, "
+          f"{e['zeilen_zuordnung']} Zeilen in zuordnung.tsv, größter Anteil {e['groesster_anteil_verteilung']} "
+          f"(kleinster {e['kleinster_groesster_anteil']}), Splitter bei {e['einheiten_mit_splitter']} Einheiten "
+          f"(größter {e['groesster_splitter'] or '–'})")
+    print(f"Quartier → Stadtteil unverändert aus dem letzten Lauf (Stadtteile sha256 {vorige_fassung}"
+          + (", wie veröffentlicht)" if vorige_fassung == summen["stadtteil"] else
+             f", veröffentlicht {summen['stadtteil']})"))
+    for name in ("raum/stadtbezirk.geojson", "raum/stadtteil.geojson", "zuordnung.tsv", "audit_raumabgleich.tsv",
+                 "meta.json"):
         print(f"  {name}: {(aus / name).stat().st_size} Bytes")
     return meta
 

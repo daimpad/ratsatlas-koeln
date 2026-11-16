@@ -192,7 +192,7 @@
   "wert": "Zahl mit Punkt als Dezimaltrennzeichen, ohne Tausendertrennzeichen und ohne Exponent, Ziffern wie in der Quelle; in werte.tsv und werte_quartier.tsv.gz leer bei status geheim und fehlt; gesamtstadt.tsv enthält nur Zeilen mit Wert. Abgeleitete Werte (status abgeleitet, Kennungen koeln_abg_…, unter abgeleitet) mit genau 2 Nachkommastellen, kaufmännisch gerundet.",
   "jahre": "indikatoren.tsv: Jahre, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit status ok, geheim oder abgeleitet hat (Wegweiser: Jahre mit Wert in gesamtstadt.tsv); vierstellig und aufsteigend, aufeinanderfolgende Jahre als Bereich mit ASCII-Bindestrich, Teile durch Semikolon ohne Leerzeichen getrennt, z. B. 2012-2014;2016;2018-2025; leer, wenn es keine solche Zeile gibt.",
   "raumebenen": "indikatoren.tsv: Raumebenen, für die werte.tsv oder werte_quartier.tsv.gz mindestens eine Zeile mit status ok, geheim oder abgeleitet hat (Wegweiser: gesamtstadt), durch Semikolon ohne Leerzeichen getrennt, in der Reihenfolge von raumebenen (gesamtstadt;stadtbezirk;stadtteil;quartier).",
-  "geojson": "raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit Quelle, Prüfsumme und Lizenz; Flächen mit Toleranz 2 m vereinfacht, Koordinaten auf 1e-6 Grad gerundet. Stadtbezirke und Stadtteile wie data/geo (jede Fläche für sich, Douglas-Peucker); Quartiere gemeinsam als lückenlose Abdeckung (Visvalingam-Whyatt, Nachbarn mit denselben Stützpunkten an der gemeinsamen Grenze; Verfahren unter raum.quartier.geometrie, Prüfung unter raum.quartier.abdeckung, gemessene Abweichung unter raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als Text), name, raumebene, eltern_id, quelle, lizenz. Nur zur Anzeige, nicht zum Rechnen.",
+  "geojson": "raum/<raumebene>.geojson: FeatureCollection in WGS84 (EPSG 4326), kompakt in UTF-8; meta mit Quelle, Prüfsumme und Lizenz; Flächen mit Toleranz 2 m vereinfacht, Koordinaten auf 1e-6 Grad gerundet. Stadtbezirke und Stadtteile wie data/geo (jede Fläche für sich mit Douglas-Peucker vereinfacht, danach als lückenlose Abdeckung bereinigt, die Stadtbezirke als Vereinigung ihrer Stadtteile; Verfahren und Messung in data/geo unter meta.abdeckung); Quartiere gemeinsam als lückenlose Abdeckung (Visvalingam-Whyatt, Nachbarn mit denselben Stützpunkten an der gemeinsamen Grenze; Verfahren unter raum.quartier.geometrie, Prüfung unter raum.quartier.abdeckung, gemessene Abweichung unter raum.quartier.abweichung_von_der_quelle). Properties raum_id (Nummer der Quelle als Text), name, raumebene, eltern_id, quelle, lizenz. Nur zur Anzeige, nicht zum Rechnen.",
   "flaechenanteil": "zuordnung.tsv und audit_raumabgleich.tsv: Anteil der Fläche der Einheit (von) im Ziel (nach), 0 bis 1 mit 4 Nachkommastellen und Punkt; berechnet in EPSG 25832. Die Schwellen splitter_anteil und anteil_hoch gelten für diesen gerundeten Wert."
  },
  "raum": {
@@ -201,9 +201,9 @@
    "quelle": "Stadt Köln, Stadtbezirke Köln (offenedaten-koeln.de)",
    "quelle_url": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Stadtbezirk_0.zip",
    "abgeleitet_aus": "data/geo/stadtbezirke_koeln.geojson",
-   "sha256": "21c4447b13d00a7813c0401ff584cb0e26e446acd05d50832ae72ee6eb0bbcb8",
+   "sha256": "f43ddc18080abc4fb0c8d4260467ec043c6ddd073382c0a4daa0c751d12e86a7",
    "abgerufen": "2026-11-04",
-   "abgerufen_beleg": "kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_phase1.md (Abschnitt 1) am 04.11.2026 geladen, Stand der Ressource laut Katalog 24.09.2026; data/geo/stadtbezirke_koeln.geojson in dieser Fassung (sha256) seit Commit 3964836 vom 04.11.2026",
+   "abgerufen_beleg": "kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_phase1.md (Abschnitt 1) am 04.11.2026 geladen, Stand der Ressource laut Katalog 24.09.2026; data/geo/stadtbezirke_koeln.geojson in dieser Fassung (sha256) am 13.11.2026 ohne neuen Download aus der Fassung von Commit 3964836 als lückenlose Abdeckung abgeleitet (pipeline/geodaten.abdeckung)",
    "lizenz": "Datenlizenz Deutschland – Zero – Version 2.0",
    "lizenz_url": "https://www.govdata.de/dl-de/zero-2-0",
    "namensnennung": "Datenquelle: Stadt Köln – offenedaten-koeln.de",
@@ -216,9 +216,9 @@
    "quelle": "Stadt Köln, Stadtteile Köln (offenedaten-koeln.de)",
    "quelle_url": "https://www.offenedaten-koeln.de/sites/default/files/uploaded_resources/Stadtteil_0.zip",
    "abgeleitet_aus": "data/geo/stadtteile_koeln.geojson",
-   "sha256": "2bcc2349d2399734003ae2af4871a6534168b0f2d3d15d7eb5c83c6f29805e0c",
+   "sha256": "ba3c7ec9cb6b4ffdc3b60efb0a793d15244c3c8e4c0ce0d645774c5661154bbe",
    "abgerufen": "2026-11-04",
-   "abgerufen_beleg": "kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_phase1.md (Abschnitt 1) am 04.11.2026 geladen, Stand der Ressource laut Katalog 24.09.2026; data/geo/stadtteile_koeln.geojson in dieser Fassung (sha256) seit Commit 3964836 vom 04.11.2026",
+   "abgerufen_beleg": "kein Abrufprotokoll im Repository; Geodaten laut explore/BERICHT_phase1.md (Abschnitt 1) am 04.11.2026 geladen, Stand der Ressource laut Katalog 24.09.2026; data/geo/stadtteile_koeln.geojson in dieser Fassung (sha256) am 13.11.2026 ohne neuen Download aus der Fassung von Commit 3964836 als lückenlose Abdeckung abgeleitet (pipeline/geodaten.abdeckung)",
    "lizenz": "Datenlizenz Deutschland – Zero – Version 2.0",
    "lizenz_url": "https://www.govdata.de/dl-de/zero-2-0",
    "namensnennung": "Datenquelle: Stadt Köln – offenedaten-koeln.de",
@@ -313,7 +313,7 @@
    "hinweise": "ein abweichender Name im Blatt Daten und eine reparierte Geometrie stehen als Hinweis in grund und ändern den Prüfstatus nicht (Namen: id_abgleich, namen_abweichend)",
    "nicht_zugeordnet": "ohne Geometrie oder ohne Ziel mit mindestens splitter_anteil; keine Zeile in zuordnung.tsv"
   },
-  "geometrie_hinweis": "data/geo ist mit 2 m vereinfacht (jede Fläche für sich) und auf 1e-6 Grad gerundet (beste verfügbare Geometrie der Stadtteile und Stadtbezirke im Repository). Die Grenzen weichen daher von der Quelle ab (für data/geo nicht gemessen, die unvereinfachten Flächen liegen nicht im Repository; dasselbe Verfahren ergab bei den Quartieren am 10.11.2026 bis 12,61 m, 37 von 570 Quartieren über 2 m; die Quartiere werden seitdem gemeinsam vereinfacht, raum.quartier.geometrie): Hauptanteile liegen knapp unter 1, an den Rändern entstehen Randsplitter (größter Splitter: stadtteil→stadtbezirk 0.0006; quartier→stadtteil 0.0040).",
+  "geometrie_hinweis": "data/geo ist mit 2 m vereinfacht (jede Fläche für sich), auf 1e-6 Grad gerundet und danach als lückenlose Abdeckung bereinigt (Stadtbezirke als Vereinigung ihrer Stadtteile, data/geo meta.abdeckung; beste verfügbare Geometrie der Stadtteile und Stadtbezirke im Repository). Die Grenzen weichen daher von der Quelle ab (für data/geo nicht gemessen, die unvereinfachten Flächen liegen nicht im Repository; die Vereinfachung je Fläche ergab bei den Quartieren am 10.11.2026 bis 12,61 m, 37 von 570 Quartieren über 2 m, die Bereinigung von data/geo verschob die Grenzen um höchstens 2,21 m; die Quartiere werden seitdem gemeinsam vereinfacht, raum.quartier.geometrie): Hauptanteile können knapp unter 1 liegen, an den Rändern können Randsplitter entstehen (größter Splitter: stadtteil→stadtbezirk keiner; quartier→stadtteil 0.0040).",
   "ergebnis": {
    "stadtteil→stadtbezirk": {
     "einheiten": 86,
@@ -324,14 +324,14 @@
     },
     "zeilen_zuordnung": 86,
     "groesster_anteil_verteilung": {
-     "1.0000": 61,
-     "0.9990-0.9999": 25,
+     "1.0000": 86,
+     "0.9990-0.9999": 0,
      "0.9900-0.9989": 0,
      "unter 0.9900": 0
     },
-    "kleinster_groesster_anteil": "0.9993",
-    "einheiten_mit_splitter": 45,
-    "groesster_splitter": "0.0006"
+    "kleinster_groesster_anteil": "1.0000",
+    "einheiten_mit_splitter": 0,
+    "groesster_splitter": ""
    },
    "quartier→stadtteil": {
     "einheiten": 570,
@@ -376,6 +376,17 @@
     "nur_geometrie": [],
     "nur_werte": [],
     "namen_abweichend": []
+   }
+  },
+  "geometrie_fassungen": {
+   "hinweis": "Prüfsummen (sha256) der Geometrien, mit denen jedes Paar in zuordnung.tsv und audit_raumabgleich.tsv gerechnet ist: Stadtteile und Stadtbezirke die Datei unter data/geo (raum.<ebene>.abgeleitet_aus), Quartiere das Shapefile (raum.quartier.sha256). Quartier → Stadtteil (Zeilen in zuordnung.tsv und audit_raumabgleich.tsv, ergebnis.quartier→stadtteil, id_abgleich.quartier, eltern_id in raum/quartier.geojson) stammt aus dem letzten vollständigen Lauf von strukturdaten und ist mit einer anderen Fassung der Stadtteile gerechnet als raum/stadtteil.geojson (Fassung von Commit 3964836 vom 04.11.2026, vor der lückenlosen Bereinigung vom 13.11.2026): Der Schritt strukturdaten-gebiete schreibt nur Stadtteile und Stadtbezirke neu, ohne Download und ohne die Quartiersdatei aus dem Zwischenspeicher. Der nächste vollständige Lauf rechnet beide Paare mit derselben Fassung.",
+   "stadtteil→stadtbezirk": {
+    "stadtteil": "ba3c7ec9cb6b4ffdc3b60efb0a793d15244c3c8e4c0ce0d645774c5661154bbe",
+    "stadtbezirk": "f43ddc18080abc4fb0c8d4260467ec043c6ddd073382c0a4daa0c751d12e86a7"
+   },
+   "quartier→stadtteil": {
+    "quartier": "311eb81527c6e9ba626de149634d8224536c48dc80e316c8344588e26b3f8195",
+    "stadtteil": "2bcc2349d2399734003ae2af4871a6534168b0f2d3d15d7eb5c83c6f29805e0c"
    }
   }
  },
