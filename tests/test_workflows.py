@@ -311,3 +311,28 @@ def test_deploy_kopfkommentar_zur_historie():
     assert "git clone -q --depth 1 --branch deploy" in _deploy_schritt()
     kopf = " ".join(z.lstrip("# ") for z in text.splitlines()[:4])
     assert "flacher Klon, ein Commit je Lauf" in kopf and "git gc" in kopf
+
+
+# Erste Hauptversion je Aktion, die laut ihren Release Notes auf Node.js 24 läuft (gelesen am 16.11.2026):
+# checkout v5.0.0 („Update actions checkout to use node 24“), setup-python v6.0.0 („Upgrade to node 24“), setup-node
+# v5.0.0 („Upgrade action to use node24“), cache v5.0.0 („runs on the Node.js 24 runtime“), configure-pages v6.0.0
+# („upgrade to node 24“), deploy-pages v5.0.0 („Update Node.js version to 24.x“); upload-pages-artifact ist
+# zusammengesetzt und nutzt ab v5.0.0 upload-artifact v7 (Node.js 24 seit upload-artifact v6.0.0)
+NODE24_AB = {"actions/checkout": 5, "actions/setup-python": 6, "actions/setup-node": 5, "actions/cache/restore": 5,
+             "actions/cache/save": 5, "actions/configure-pages": 6, "actions/upload-pages-artifact": 5,
+             "actions/deploy-pages": 5}
+
+
+def test_aktionen_festgenagelt_und_auf_node24():
+    """Jede Aktion der aktiven Workflows ist über den vollen Commit-Hash mit Versionskommentar festgenagelt (nie über
+    einen Tag oder Branch) und steht in einer Hauptversion, die laut Release Notes auf Node.js 24 läuft (Umstellung
+    16.11.2026, TECHNIK.md „Workflows“); eine neue Aktion fällt auf, damit ihre Laufzeit geprüft wird."""
+    gesehen = set()
+    for datei in sorted((config.ROOT / ".github" / "workflows").glob("*.yml")):
+        for zeile in re.findall(r"^\s*(?:- )?uses: (.+)$", datei.read_text(encoding="utf-8"), re.M):
+            m = re.fullmatch(r"([\w.-]+/[\w./-]+)@([0-9a-f]{40})  # v(\d+)\.\d+\.\d+", zeile)
+            assert m, (datei.name, zeile)
+            assert m.group(1) in NODE24_AB, (datei.name, m.group(1))
+            assert int(m.group(3)) >= NODE24_AB[m.group(1)], (datei.name, zeile)
+            gesehen.add(m.group(1))
+    assert gesehen == set(NODE24_AB)
