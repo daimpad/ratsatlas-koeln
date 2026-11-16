@@ -37,6 +37,9 @@
 # Der Zwischenspeicher (Rohdaten, Zustand des Abrufs mit der Zählung der Nächte, STAND.json, Abrufstatistik) wird gleich
 # nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert. Danach steht der
 # Fortschritt des Abrufs im Log und in der Zusammenfassung des Laufs (tools/abrufstand.py, nur Zahlen und Zustände).
+# Fehlt nach dem Wiederherstellen der Zustand des Abrufs (data/raw/zustand_abruf.json), hält ein Wächter den
+# freigegebenen Lauf vor dem Abruf an (rot: kein Abruf, keine Veröffentlichung, keine Sicherung); überstimmen nur
+# mit RATSATLAS_VOLLABRUF=ja (neuer Vollabruf ab Seite 1, gesetzt lassen, bis eine Abrufnacht gelaufen ist).
 name: Daten aktualisieren und Seite veröffentlichen
 
 on:
@@ -77,6 +80,7 @@ jobs:
       # Wiederherstellen; gesichert wird im Schritt direkt nach dem Abruf, nicht erst am Ende eines erfolgreichen Laufs
       # (data/raw/ ändert nach dem Abruf kein Schritt mehr)
       - name: Rohdaten des letzten Laufs
+        id: rohdaten
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
         with:
           path: |
@@ -84,6 +88,30 @@ jobs:
             data/export/abrufstatistik.tsv
           key: raw-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: raw-
+
+      # Wächter (16.11.2026): Fehlt nach dem Wiederherstellen der Zustand des Abrufs (etwa nach einer Störung des
+      # Dienstes, nach dem Löschen eines Eintrags oder weil eine neue Fassung von actions/cache ältere Einträge raw- nicht
+      # findet; actions/cache meldet das nur als Hinweis), begänne der Abruf ab Seite 1: Die Zählung der Nächte mit
+      # möglicher Sperre, nicht_vor und die Fortsetzung des Vollabrufs gingen verloren, der Lauf veröffentlichte die
+      # Kartenvorschau, und die Sicherung legte den fast leeren Stand als jüngsten Eintrag raw- ab. Mit Freigabe des
+      # Abrufs hält der Lauf deshalb hier an (rot): Abruf, Sicherung und Veröffentlichung entfallen (die Sicherung hängt
+      # an einem übersprungenen Abruf), die Seite bleibt, wie sie ist. Maßgeblich ist die Datei selbst, nicht nur die
+      # Ausgabe der Aktion; ohne Freigabe (Kartenvorschau) kein Halt. Überstimmen nur ausdrücklich mit
+      # RATSATLAS_VOLLABRUF=ja (ohne Zustand ohnehin ein Vollabruf ab Seite 1)
+      - name: Abrufzustand wiederhergestellt? (Wächter vor Abruf und Veröffentlichung)
+        env:
+          GEFUNDEN: ${{ steps.rohdaten.outputs.cache-matched-key }}
+          RATSATLAS_STADT_INFORMIERT: ${{ vars.RATSATLAS_STADT_INFORMIERT }}
+          RATSATLAS_VOLLABRUF: ${{ vars.RATSATLAS_VOLLABRUF }}
+        run: |
+          echo "Zwischenspeicher: ${GEFUNDEN:-keiner wiederhergestellt}"
+          if [ -f data/raw/zustand_abruf.json ] || [ "$RATSATLAS_STADT_INFORMIERT" != "ja" ]; then exit 0; fi
+          if [ "$RATSATLAS_VOLLABRUF" = "ja" ]; then
+            echo "::warning::Kein Abrufzustand (data/raw/zustand_abruf.json) im Zwischenspeicher; mit RATSATLAS_VOLLABRUF=ja beginnt der Abruf ohne ihn (Vollabruf ab Seite 1, Zählung der Nächte mit möglicher Sperre von vorn). Die Variable nach der ersten Abrufnacht wieder löschen."
+            exit 0
+          fi
+          echo "::error::Kein Abrufzustand (data/raw/zustand_abruf.json) im Zwischenspeicher: Der Abruf begänne ab Seite 1, die Zählung der Nächte mit möglicher Sperre, nicht_vor und die Fortsetzung des Vollabrufs gingen verloren. Daher kein Abruf, keine Veröffentlichung, keine Sicherung; die Seite bleibt, wie sie ist. Prüfen: Log von „Rohdaten des letzten Laufs“ und Actions → Caches (Einträge raw-). Vorübergehende Störung: Lauf wiederholen. Findet eine neue Fassung von actions/cache die älteren Einträge nicht: auf die vorige Fassung zurückstellen (GitHub löscht Einträge, die 7 Tage nicht gelesen wurden). Nur wenn der Zustand verloren ist: Repository-Variable RATSATLAS_VOLLABRUF=ja, bis eine Abrufnacht gelaufen ist."
+          exit 1
 
       # Dauer: höchstens bis zum Ende des Zeitfensters (1 Uhr) plus eine Anfrage (Zeitüberschreitung 90 s); mit 100
       # Objekten je Seite (limit=100, rund 5 s je Antwort, 20 s Abstand) rund 280 Seiten je Nacht (TECHNIK.md). Das

@@ -79,6 +79,104 @@ def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
     assert config.ZUSTAND.parent == config.STAND.parent == config.RAW
 
 
+WAECHTER = "name: Abrufzustand wiederhergestellt? (Wächter vor Abruf und Veröffentlichung)"
+
+
+def _schritte():
+    return (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n      - ")
+
+
+def _skript(schritt):
+    """Shell-Text eines Schritts mit `run: |` (ohne Einrückung)."""
+    run = schritt.split("        run: |\n", 1)[1]
+    return "\n".join(z[10:] for z in run.splitlines())
+
+
+def test_waechter_vor_abruf_und_veroeffentlichung():
+    """Ein Wächter direkt nach dem Wiederherstellen und direkt vor dem Abruf hält den freigegebenen Lauf an, wenn der
+    Zustand des Abrufs fehlt (etwa nach einer Störung von actions/cache oder einem gelöschten Eintrag). Er hat weder
+    `if` noch `continue-on-error`; jeder spätere Schritt, der auch nach einem Fehler liefe (`always()`, `failure()`,
+    `cancelled()`), hängt an einem übersprungenen Schritt ohne eigenes `if` (Abruf) oder liest nur (Fortschritt), und
+    der Job deploy braucht einen erfolgreichen Job build. Ein roter Wächter lässt also Abruf, Sicherung und
+    Veröffentlichung aus."""
+    schritte = _schritte()
+    r = next(k for k, s in enumerate(schritte) if "uses: actions/cache/restore@" in s)
+    assert re.search(r"^\s+id: rohdaten$", schritte[r], re.M)
+    w = next(k for k, s in enumerate(schritte) if s.startswith(WAECHTER))
+    f = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
+    assert r + 1 == w and w + 1 == f
+    waechter = schritte[w]
+    assert not re.search(r"^\s+(if|continue-on-error):", waechter, re.M)
+    variablen = dict(re.findall(r"^\s+(\w+): (\$\{\{ .+ \}\})$", waechter, re.M))
+    assert variablen == {"GEFUNDEN": "${{ steps.rohdaten.outputs.cache-matched-key }}",
+                         "RATSATLAS_STADT_INFORMIERT": "${{ vars.RATSATLAS_STADT_INFORMIERT }}",
+                         "RATSATLAS_VOLLABRUF": "${{ vars.RATSATLAS_VOLLABRUF }}"}
+    # dieselbe Datei, aus der der Abruf seinen Zustand liest (ohne RATSATLAS_RAW im Abrufschritt: data/raw)
+    assert "RATSATLAS_RAW" not in schritte[f]
+    assert f"[ -f {config.ZUSTAND.relative_to(config.ROOT).as_posix()} ]" in _skript(waechter)
+    ids = {m.group(1): s for s in schritte[w + 1:] for m in [re.search(r"^\s+id: (\w+)$", s, re.M)] if m}
+    for s in schritte[w + 1:]:
+        bedingung = re.search(r"^\s+if: (.+)$", s, re.M)
+        if bedingung and re.search(r"always\(\)|failure\(\)|cancelled\(\)", bedingung.group(1)):
+            if re.search(r"^\s+run: python tools/abrufstand\.py$", s, re.M):
+                continue   # Fortschritt: liest nur, schreibt nichts nach data/ und hält den Lauf nie an
+            haengt = re.findall(r"steps\.(\w+)\.outcome != 'skipped'", bedingung.group(1))
+            assert any(i in ids and not re.search(r"^\s+if:", ids[i], re.M) for i in haengt), s.splitlines()[0]
+    job = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n  deploy:\n")[1]
+    assert re.search(r"^    needs: build$", job, re.M)
+    assert not re.search(r"always\(\)|failure\(\)|cancelled\(\)", job)
+
+
+@pytest.mark.parametrize("informiert", ["ja", "", "Ja", " ja", "nein"])
+def test_waechter_haelt_freigegebenen_lauf_ohne_zustand_an(tmp_path, monkeypatch, informiert):
+    """Der Shell-Text des Wächters läuft hier wie in GitHub Actions (bash -eo pipefail) in einem Arbeitsverzeichnis
+    ohne Netz. Er hält genau dann an (Exit-Code 1, ::error:: mit Abhilfe), wenn der Abruf freigegeben ist (dieselbe
+    Regel wie abruf.freigegeben für die Kölner Adresse), zustand_abruf.json fehlt und RATSATLAS_VOLLABRUF nicht genau
+    „ja“ ist; eine Fundmeldung von actions/cache allein genügt nicht, eine fehlende allein hält nicht an (maßgeblich
+    ist die Datei). Mit RATSATLAS_VOLLABRUF=ja läuft er mit Warnung weiter."""
+    if not shutil.which("bash"):
+        pytest.skip("bash fehlt")
+    from pipeline import abruf
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", informiert)
+    # die Kölner Adresse (im Workflow ohne RATSATLAS_OPARL_BODY); wird nur verglichen, nicht abgerufen
+    freigegeben = abruf.freigegeben("https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln")
+    skript = _skript(next(s for s in _schritte() if s.startswith(WAECHTER)))
+    zustand = tmp_path / config.ZUSTAND.relative_to(config.ROOT)
+    umgebung = {k: v for k, v in os.environ.items() if not k.startswith("RATSATLAS_") and k != "BASH_ENV"}
+
+    def lauf(gefunden, vollabruf):
+        return subprocess.run(["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c", skript], cwd=tmp_path,
+                              env={**umgebung, "GEFUNDEN": gefunden, "RATSATLAS_STADT_INFORMIERT": informiert,
+                                   "RATSATLAS_VOLLABRUF": vollabruf},
+                              capture_output=True, text=True, timeout=60)
+
+    # kein Zwischenspeicher: nichts unter data/raw/
+    for vollabruf in ("", "meetings", "papers,meetings,organizations", "Ja", "ja "):
+        erg = lauf("", vollabruf)
+        assert erg.returncode == (1 if freigegeben else 0), (vollabruf, erg.stdout, erg.stderr)
+        assert erg.stdout.splitlines()[0] == "Zwischenspeicher: keiner wiederhergestellt"
+        fehler = [z for z in erg.stdout.splitlines() if z.startswith("::error::")]
+        assert len(fehler) == (1 if freigegeben else 0)
+        if fehler:
+            for teil in ("zustand_abruf.json", "Lauf wiederholen", "vorige Fassung", "7 Tage",
+                         "RATSATLAS_VOLLABRUF=ja"):
+                assert teil in fehler[0]
+    erg = lauf("", "ja")
+    assert erg.returncode == 0, erg.stderr
+    assert any(z.startswith("::warning::") for z in erg.stdout.splitlines()) == freigegeben
+    assert "::error::" not in erg.stdout
+    # Eintrag gefunden, aber ohne Zustand (etwa ein Stand aus einem Lauf ohne Abrufnacht): hält ebenso an
+    (tmp_path / "data" / "raw").mkdir(parents=True)
+    (tmp_path / "data" / "raw" / "STAND.json").write_text("{}\n", encoding="utf-8")
+    erg = lauf("raw-1-1", "")
+    assert erg.returncode == (1 if freigegeben else 0) and erg.stdout.startswith("Zwischenspeicher: raw-1-1\n")
+    # Zustand vorhanden: weiter ohne Meldung, auch ohne Fundmeldung der Aktion
+    zustand.write_text("{}\n", encoding="utf-8")
+    for gefunden in ("raw-1-1", ""):
+        erg = lauf(gefunden, "")
+        assert erg.returncode == 0 and "::" not in erg.stdout, (erg.stdout, erg.stderr)
+
+
 def test_fortschritt_gleich_nach_dem_sichern(tmp_path):
     """Gleich nach dem Sichern des Abrufzustands, immer und ohne den Lauf anzuhalten: tools/abrufstand.py schreibt den
     Fortschritt ins Log und in die Zusammenfassung; ohne Variablen, Geheimnisse und Abruf. Der Abrufschritt bleibt, wie
