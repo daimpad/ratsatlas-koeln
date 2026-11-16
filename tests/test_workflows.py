@@ -80,6 +80,10 @@ def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
 
 
 WAECHTER = "name: Abrufzustand wiederhergestellt? (Wächter vor Abruf und Veröffentlichung)"
+# Die einzigen Schritte nach dem Wächter, die auch nach einem Fehler laufen, ohne an einem übersprungenen Schritt zu
+# hängen: sie lesen nur (Skript → Name des Schritts)
+LESEND = {"tools/abrufstand.py": "name: Fortschritt des Abrufs (Log und Zusammenfassung)",
+          "tools/feldabdeckung.py": "name: Feldabdeckung der Rohdaten (nur Zahlen)"}
 
 
 def _schritte():
@@ -97,13 +101,35 @@ def _skript(schritt):
     return "\n".join(zeilen) + "\n"
 
 
+def _ohne_kommentare(schritt):
+    """Zeilen eines Schritts ohne Kommentare und Leerzeilen (die Kommentare des folgenden Schritts stehen am Ende)."""
+    return [z.strip() for z in schritt.splitlines() if z.strip() and not z.strip().startswith("#")]
+
+
+def _lesende_form(schritt, skript):
+    """Ein lesender Schritt (LESEND): genau die Schlüssel name, if (always()), continue-on-error (true), höchstens
+    timeout-minutes und eine Zeile `run: python tools/….py` ohne Angaben; kein env, keine Ausdrücke (also weder
+    secrets noch vars), kein uses, with, shell oder working-directory."""
+    zeilen = _ohne_kommentare(schritt)
+    assert zeilen[0] == LESEND[skript], zeilen
+    schluessel = [re.match(r"([\w-]+): ", z) for z in zeilen]
+    assert all(schluessel), zeilen   # jede Zeile ein Schlüssel: kein mehrzeiliges Skript, kein env-Block
+    namen = [m.group(1) for m in schluessel]
+    assert sorted(namen) in (sorted(["name", "if", "continue-on-error", "run"]),
+                             sorted(["name", "if", "continue-on-error", "timeout-minutes", "run"])), namen
+    assert "if: always()" in zeilen and "continue-on-error: true" in zeilen
+    assert [z for z in zeilen if z.startswith("run:")] == [f"run: python {skript}"]
+    assert not any(x in z for z in zeilen for x in ("${{", "secrets", "vars.", "env"))
+    assert (config.ROOT / skript).exists()
+
+
 def test_waechter_vor_abruf_und_veroeffentlichung():
     """Ein Wächter direkt nach dem Wiederherstellen und direkt vor dem Abruf hält den freigegebenen Lauf an, wenn der
     Zustand des Abrufs fehlt (etwa nach einer Störung von actions/cache oder einem gelöschten Eintrag). Er hat weder
     `if` noch `continue-on-error`; jeder spätere Schritt, der auch nach einem Fehler liefe (`always()`, `failure()`,
-    `cancelled()`), hängt an einem übersprungenen Schritt ohne eigenes `if` (Abruf) oder liest nur (Fortschritt), und
-    der Job deploy braucht einen erfolgreichen Job build. Ein roter Wächter lässt also Abruf, Sicherung und
-    Veröffentlichung aus."""
+    `cancelled()`), hängt an einem übersprungenen Schritt ohne eigenes `if` (Abruf) oder ist genau einer der beiden
+    lesenden Schritte (Fortschritt, Feldabdeckung; LESEND, in lesender Form), und der Job deploy braucht einen
+    erfolgreichen Job build. Ein roter Wächter lässt also Abruf, Sicherung und Veröffentlichung aus."""
     schritte = _schritte()
     r = next(k for k, s in enumerate(schritte) if "uses: actions/cache/restore@" in s)
     assert re.search(r"^\s+id: rohdaten$", schritte[r], re.M)
@@ -125,13 +151,19 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     assert "working-directory" not in text and not re.search(r"^\s*defaults:", text, re.M)
     assert f"[ -f {config.ZUSTAND.relative_to(config.ROOT).as_posix()} ]" in _skript(waechter)
     ids = {m.group(1): s for s in schritte[w + 1:] for m in [re.search(r"^\s+id: (\w+)$", s, re.M)] if m}
+    lesend = []
     for s in schritte[w + 1:]:
         bedingung = re.search(r"(?:^|\n)\s*if: (.+)", s)   # auch ein Schritt, der mit „- if:“ beginnt
         if bedingung and re.search(r"always\(\)|failure\(\)|cancelled\(\)", bedingung.group(1)):
-            if re.search(r"^\s+run: python tools/abrufstand\.py$", s, re.M):
-                continue   # Fortschritt: liest nur, schreibt nichts nach data/ und hält den Lauf nie an
+            skript = re.search(r"^\s+run: python (tools/[\w.]+)", s, re.M)
+            if skript and skript.group(1) in LESEND:
+                # Fortschritt und Feldabdeckung: lesen nur, schreiben nichts nach data/, halten den Lauf nie an
+                _lesende_form(s, skript.group(1))
+                lesend.append(skript.group(1))
+                continue
             haengt = re.findall(r"steps\.(\w+)\.outcome != 'skipped'", bedingung.group(1))
             assert any(i in ids and not re.search(r"^\s+if:", ids[i], re.M) for i in haengt), s.splitlines()[0]
+    assert sorted(lesend) == sorted(LESEND)   # genau diese beiden, je einmal
     job = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n  deploy:\n")[1]
     assert re.search(r"^    needs: build$", job, re.M)
     assert not re.search(r"always\(\)|failure\(\)|cancelled\(\)", job)
@@ -213,6 +245,31 @@ def test_fortschritt_gleich_nach_dem_sichern(tmp_path):
                          env={**os.environ, "GITHUB_STEP_SUMMARY": str(zusammenfassung)})
     assert erg.returncode == 0 and "Abrufstand" in erg.stdout and "::warning::" not in erg.stdout, erg
     assert zusammenfassung.read_text(encoding="utf-8").startswith("### Abrufstand")
+
+
+def test_feldabdeckung_gleich_nach_dem_fortschritt(tmp_path):
+    """Feldabdeckung der Rohdaten (Entscheidung 16.11.2026) direkt nach dem Fortschritt und vor der Entscheidung über
+    die Veröffentlichung: immer, ohne den Lauf anzuhalten (continue-on-error, Zeitlimit 10 Minuten), ohne Variablen,
+    Geheimnisse und Abruf; der Abruf, die Sicherung und der Wächter bleiben, wie sie sind (die übrigen Tests hier).
+    Wie im Lauf ohne Rohdaten: Exit-Code 0 und eine Zusammenfassung."""
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    schritte = text.split("\n      - ")
+    i = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
+    assert "uses: actions/cache/save@" in schritte[i + 1]
+    assert schritte[i + 2].startswith(LESEND["tools/abrufstand.py"])
+    feld = schritte[i + 3]
+    assert feld.startswith(LESEND["tools/feldabdeckung.py"])
+    _lesende_form(feld, "tools/feldabdeckung.py")
+    assert "timeout-minutes: 10" in _ohne_kommentare(feld)
+    assert schritte[i + 4].startswith("name: Gibt es Daten zum Veröffentlichen?")
+    assert text.count("python tools/feldabdeckung.py") == 1
+    zusammenfassung = tmp_path / "summary.md"
+    erg = subprocess.run([sys.executable, str(config.ROOT / "tools" / "feldabdeckung.py"), "--raw",
+                          str(tmp_path / "raw")], capture_output=True, text=True, timeout=120,
+                         env={**os.environ, "GITHUB_STEP_SUMMARY": str(zusammenfassung)})
+    assert erg.returncode == 0 and "Feldabdeckung der Rohdaten" in erg.stdout and "::warning::" not in erg.stdout, erg
+    assert "papers.jsonl fehlt" in erg.stdout and not (tmp_path / "raw").exists()
+    assert zusammenfassung.read_text(encoding="utf-8").startswith("### Feldabdeckung der Rohdaten")
 
 
 def test_technikseite_ohne_bonn(tmp_path):
