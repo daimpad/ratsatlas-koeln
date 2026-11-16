@@ -36,7 +36,9 @@
 # ein vollständiger Lauf entfernt die Fehlermeldung wieder.
 # Der Zwischenspeicher (Rohdaten, Zustand des Abrufs mit der Zählung der Nächte, STAND.json, Abrufstatistik) wird gleich
 # nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert. Danach steht der
-# Fortschritt des Abrufs im Log und in der Zusammenfassung des Laufs (tools/abrufstand.py, nur Zahlen und Zustände).
+# Fortschritt des Abrufs im Log und in der Zusammenfassung des Laufs (tools/abrufstand.py, nur Zahlen und Zustände),
+# dann die Feldabdeckung der Rohdaten (tools/feldabdeckung.py, nur Anzahlen, Anteile und häufige Kategorien; während
+# des Vollabrufs als Zwischenstand); beide Schritte lesen nur und halten den Lauf nie an.
 # Fehlt nach dem Wiederherstellen der Zustand des Abrufs (data/raw/zustand_abruf.json), hält ein Wächter den
 # freigegebenen Lauf vor dem Abruf an (rot: kein Abruf, keine Veröffentlichung, keine Sicherung); überstimmen nur
 # mit RATSATLAS_VOLLABRUF=ja (neuer Vollabruf ab Seite 1, gesetzt lassen, bis eine Abrufnacht gelaufen ist).
@@ -153,6 +155,18 @@ jobs:
         if: always()
         continue-on-error: true
         run: python tools/abrufstand.py
+
+      # Feldabdeckung der Rohdaten (Entscheidung 16.11.2026): wie vollständig die Felder der Vorlagen, Sitzungen und
+      # Gremien gefüllt sind (underDirectionOf, originator*, mainFile/auxiliaryFile, location, agendaItem.result, Arten
+      # der Vorlagen und Gremien), während des Vollabrufs als Zwischenstand aus fertiger Datei und Teildatei. Liest nur
+      # data/raw und data/geo; nur Anzahlen, Anteile und häufige Kategorien im Log und in der Zusammenfassung, keine
+      # Inhalte der Objekte; schreibt nichts, veröffentlicht nichts, ohne Variablen und Geheimnisse. Immer, auch nach
+      # einem gescheiterten oder übersprungenen Abruf; hält den Lauf nie an (Exit-Code 0, Frist im Skript 7 Minuten)
+      - name: Feldabdeckung der Rohdaten (nur Zahlen)
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 10
+        run: python tools/feldabdeckung.py
 
       # Nie mit Testdaten veröffentlichen (tools/testdaten.py setzt „testdaten“ in STAND.json)
       - name: Gibt es Daten zum Veröffentlichen?
