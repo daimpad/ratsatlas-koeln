@@ -587,6 +587,14 @@ def _ausgesetzt_roh(raw, eintrag, fortsetzung=True, liste="papers"):
     (raw / "zustand_abruf.json").write_text(json.dumps(zustand), encoding="utf-8")
 
 
+def _nur_teil_absatz(teil, n):
+    """Anfang des Absatzes zu den Kennungen nur aus der stehen gebliebenen Teildatei einer ausgesetzten Liste mit
+    Fortsetzung: nur die Seiten bis zur letzten Unterbrechung, also eine Untergrenze (Prüfung hf)."""
+    return (f"Kennungen nur aus der stehen gebliebenen Teildatei des abgelehnten Vollabrufs ({teil}; nur die Seiten bis "
+            "zur letzten Unterbrechung, was er danach las, ist nicht gespeichert, also eine Untergrenze; nicht gezählt, "
+            f"ohne Feldabdeckung): {n}; ")
+
+
 @pytest.mark.parametrize("eintrag, erwartet", [
     ({"seit": "2026-11-15T22:15:00+00:00", "objekte": 8, "bisher": 10, "anlass": "fortgesetzter Vollabruf",
       "vollabruf_seit_beginn": False, "meldung": "MELDUNG-MARKE papers.jsonl: nur 8 statt bisher 10"},
@@ -625,8 +633,7 @@ def test_ausgesetzte_liste_kein_zwischenstand(fa, tmp_path, capsys, eintrag, erw
     assert "Zwischenstand" not in out and "Vollabruf läuft" not in out and "Nur aus der Teildatei" not in out
     assert "MARKE" not in out and "nur 8 statt bisher 10" not in out
     assert "Vorlagen je Kennung: 3;" in out
-    assert ("Kennungen nur aus dem abgelehnten Vollabruf (papers.teil.jsonl; nicht gezählt, ohne Feldabdeckung): 1; "
-            "Zeilen mit Löschvermerk übergangen") in out
+    assert _nur_teil_absatz("papers.teil.jsonl", 1) + "Zeilen mit Löschvermerk übergangen" in out
 
 
 def test_ausgesetzt_ohne_fortsetzung_und_andere_listen(fa, tmp_path):
@@ -746,9 +753,9 @@ def test_ausgesetzt_zaehlt_wie_veroeffentlicht(fa, tmp_path, capsys):
     assert "Dateien: papers.jsonl gelesen: 5 Zeilen; papers.teil.jsonl gelesen: 9 Zeilen" in vorlagen
     assert ("gezählt wie veröffentlicht nur der letzte gültige Stand (papers.jsonl), nicht die stehen gebliebene "
             "Teildatei des abgelehnten Vollabrufs (papers.teil.jsonl)\n") in vorlagen
-    assert ("Kennungen nur aus dem abgelehnten Vollabruf (papers.teil.jsonl; nicht gezählt, ohne Feldabdeckung): 3; "
-            "Zeilen mit Löschvermerk übergangen, sie ändern den gezählten Stand nicht. Den kürzeren Stand nimmt nur "
-            "RATSATLAS_KUERZER_ANNEHMEN=papers an (liest die Liste zu Ende), sonst nach Prüfung ein neuer Vollabruf "
+    assert (_nur_teil_absatz("papers.teil.jsonl", 3) + "Zeilen mit Löschvermerk übergangen, sie ändern den "
+            "gezählten Stand nicht. Den kürzeren Stand nimmt nur RATSATLAS_KUERZER_ANNEHMEN=papers an (liest die Liste "
+            "zu Ende), sonst nach Prüfung ein neuer Vollabruf "
             "mit RATSATLAS_VOLLABRUF=papers (ab Seite 1); Abhilfe im Fortschritt des Abrufs\n") in vorlagen
     assert vorlagen.count("Kennungen nur aus") == 1   # eine Zahl, keine Tabelle dazu
     assert "Vorlagen je Kennung: 3; als gelöscht gemeldet (deleted, getrennt): 1" in vorlagen
@@ -841,10 +848,89 @@ def test_ausgesetzte_sitzungen_wie_veroeffentlicht(fa, tmp_path, capsys):
     assert _gezaehlt(r["auswertung"]) == _gezaehlt(erwartet["auswertung"])
     assert (r["auswertung"].n, r["auswertung"].top["insgesamt"], r["nur_teil"]) == (2, 0, {"kennungen": 1})
     out = _aufruf(fa, raw, capsys)
-    assert ("Kennungen nur aus dem abgelehnten Vollabruf (meetings_roh.teil.jsonl; nicht gezählt, ohne "
-            "Feldabdeckung): 1;") in out
+    assert _nur_teil_absatz("meetings_roh.teil.jsonl", 1) in out
     assert "RATSATLAS_KUERZER_ANNEHMEN=meetings an (liest die Liste zu Ende)" in out
     assert "Sitzungen je Kennung: 2;" in out and "ungeändert beschlossen" not in out
+
+
+@pytest.mark.parametrize("nach, zeilen", [(0, "0"), (300, "512")])
+def test_ausgesetzt_zeitgrenze_in_der_teildatei(fa, tmp_path, monkeypatch, nach, zeilen):
+    """Endet die Frist beim Lesen der Teildatei einer ausgesetzten Liste, bleiben die Zahlen des letzten gültigen Stands
+    (gleich der unabhängigen Zählung nur der fertigen Datei), und für die Teildatei steht „Zahl nicht ermittelt
+    (Zeitgrenze)“: Sie wird erst nach dem zweiten Durchgang gelesen (Prüfung hf; vorher im ersten Durchgang, dann stand
+    die ganze Liste als „nicht ausgewertet“ da, obwohl der veröffentlichte Stand schon vollständig erfasst war)."""
+    raw = tmp_path / "raw"
+    fertig, teil = _letzter_gueltiger_stand(raw)
+    _jsonl(sessionnet._teil(raw / "papers.jsonl"), teil + [_vorlage(i) for i in range(100, 700)])
+    _zustand(raw, papers_fortsetzung=FORTSETZUNG, papers_ausgesetzt=AUSGESETZT)
+    erwartet = _nur_fertig(fa, tmp_path, fertig)["listen"]["papers"]
+    _uhr_springt(fa, monkeypatch, "papers.teil.jsonl", 1, nach, 1000)
+    reihenfolge, gelesen = [], fa._elemente
+
+    def merken(pfad, art):
+        reihenfolge.append(pfad.name)
+        return gelesen(pfad, art)
+    monkeypatch.setattr(fa, "_elemente", merken)
+    a = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE, 100)
+    r = a["listen"]["papers"]
+    # beide Durchgänge über den letzten gültigen Stand, erst dann die Teildatei
+    assert reihenfolge == ["papers.jsonl", "papers.jsonl", "papers.teil.jsonl"]
+    assert r["zeitgrenze"] is None and not r["unvollstaendig"]
+    assert _gezaehlt(r["auswertung"]) == _gezaehlt(erwartet["auswertung"])
+    assert (r["kennungen"], r["ersetzt"]) == (erwartet["kennungen"], erwartet["ersetzt"]) == (4, 1)
+    assert r["nur_teil"] is None and r["nur_teil_zeitgrenze"]
+    assert r["dateien"] == {"papers.jsonl": "gelesen: 5 Zeilen",
+                            "papers.teil.jsonl": f"bis zur Zeitgrenze gelesen: {zeilen} Zeilen"}
+    text = "\n".join(fa.text(fa.bloecke(a)))
+    assert _nur_teil_absatz("papers.teil.jsonl", "Zahl nicht ermittelt (Zeitgrenze)") in text
+    assert "Vorlagen je Kennung: 3; als gelöscht gemeldet (deleted, getrennt): 1" in text
+    assert "Nicht ausgewertet" not in text and "Unvollständig" not in text
+
+
+@pytest.mark.parametrize("durchgang", [1, 2])
+def test_ausgesetzt_zeitgrenze_vor_der_teildatei(fa, tmp_path, monkeypatch, durchgang):
+    """Endet die Frist schon im letzten gültigen Stand (erster Durchgang: nicht ausgewertet; zweiter: unvollständig),
+    bleibt die Teildatei ungelesen, und ihre Zahl heißt „nicht ermittelt (Zeitgrenze)“ (Prüfung hf)."""
+    raw = tmp_path / "raw"
+    _letzter_gueltiger_stand(raw)
+    _jsonl(raw / "papers.jsonl", [_vorlage(i) for i in range(600)])
+    _zustand(raw, papers_fortsetzung=FORTSETZUNG, papers_ausgesetzt=AUSGESETZT)
+    _uhr_springt(fa, monkeypatch, "papers.jsonl", durchgang, 300, 1000)
+    a = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE, 100)
+    r = a["listen"]["papers"]
+    assert r["zeitgrenze"] == ("erster Durchgang", "zweiter Durchgang")[durchgang - 1]
+    assert r["nur_teil"] is None and r["nur_teil_zeitgrenze"]
+    assert r["dateien"]["papers.teil.jsonl"] == "nicht gelesen (Zeitgrenze)"
+    text = "\n".join(fa.text(fa.bloecke(a)))
+    assert _nur_teil_absatz("papers.teil.jsonl", "Zahl nicht ermittelt (Zeitgrenze)") in text
+    assert ("Nicht ausgewertet: Zeitgrenze im ersten Durchgang (Kennungen) erreicht" in text) is (durchgang == 1)
+    assert ("Unvollständig: Zeitgrenze im zweiten Durchgang erreicht; die Zahlen umfassen nur die bis dahin "
+            "ausgewerteten 512 von 600 Kennungen" in text) is (durchgang == 2)
+
+
+@pytest.mark.parametrize("liste", sessionnet.AUSSETZEN)
+def test_hinweis_wie_die_feste_abhilfe(fa, tmp_path, liste):
+    """Der Hinweis zur Teildatei einer ausgesetzten Liste ist von Hand umschrieben (im Stil von tools/abrufstand.py),
+    nicht aus sessionnet.ABHILFE_AUSGESETZT gebildet: Die Einstellungen und Angaben darin müssen auch in der festen
+    Abhilfe des Abrufs stehen, damit er bei deren Änderung nicht unbemerkt abweicht (Prüfung hf)."""
+    abhilfe = sessionnet.ABHILFE_AUSGESETZT.format(liste=liste)
+    raw = tmp_path / "raw"
+    datei = fa.LISTEN[liste][0]
+    _jsonl(raw / datei, [{"id": f"{B}/{liste}/1", "start": "2026-10-01T17:00:00+02:00", "date": "2026-10-01"}])
+    _jsonl(sessionnet._teil(raw / datei), [{"id": f"{B}/{liste}/2", "start": "2026-10-02T17:00:00+02:00",
+                                            "date": "2026-10-02"}])
+    for fortsetzung, angaben in ((True, [f"RATSATLAS_KUERZER_ANNEHMEN={liste}", f"RATSATLAS_VOLLABRUF={liste}",
+                                         "liest die Liste zu Ende", "nach Prüfung", "ab Seite 1"]),
+                                 (False, [f"RATSATLAS_KUERZER_ANNEHMEN={liste}"])):
+        zustand = {f"{liste}_ausgesetzt": AUSGESETZT}
+        if fortsetzung:
+            zustand[f"{liste}_fortsetzung"] = FORTSETZUNG
+        (raw / "zustand_abruf.json").write_text(json.dumps(zustand), encoding="utf-8")
+        text = fa.text(fa.bloecke(fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)))
+        absatz = [z for z in text if z.startswith("Kennungen nur aus")]
+        assert len(absatz) == 1 and absatz[0].split("): ")[1].startswith("1; "), absatz
+        for angabe in angaben:
+            assert angabe in absatz[0] and angabe in abhilfe, angabe
 
 
 def test_dateien_des_dokumentschritts_nicht_gelesen(fa, tmp_path, capsys):
@@ -911,13 +997,17 @@ def test_aussetzen_mit_dem_abruf_gegen_den_testserver(oparl, monkeypatch, capsys
                           "Vollabrufs (papers.teil.jsonl)")
     assert "Zwischenstand" not in out and "Nur aus der Teildatei" not in out
     assert "Dateien: papers.jsonl gelesen: 10 Zeilen; papers.teil.jsonl gelesen: 4 Zeilen" in out
+    # die Teildatei hat nur die Seiten bis zur Unterbrechung in Nacht 1 (4 Vorlagen); was die Fortsetzung in Nacht 2
+    # danach las (insgesamt 8), speichert das Aussetzen nicht: Die Zahl der Kennungen allein aus ihr ist eine
+    # Untergrenze (Prüfung hf)
+    assert zustand["papers_ausgesetzt"]["objekte"] == 8
     # dieselbe Zahl wie build (je Kennung einmal aus papers.jsonl)
     roh = [json.loads(z) for z in config.PAPERS.read_text(encoding="utf-8").splitlines() if z.strip()]
     assert len(build._je_kennung_einmal(roh)) == 10
     assert "Vorlagen je Kennung: 10;" in out
-    assert ("Kennungen nur aus dem abgelehnten Vollabruf (papers.teil.jsonl; nicht gezählt, ohne Feldabdeckung): 0; "
-            "Zeilen mit Löschvermerk übergangen, sie ändern den gezählten Stand nicht. Den kürzeren Stand nimmt nur "
-            "RATSATLAS_KUERZER_ANNEHMEN=papers an (liest die Liste zu Ende), sonst nach Prüfung ein neuer Vollabruf "
+    assert (_nur_teil_absatz("papers.teil.jsonl", 0) + "Zeilen mit Löschvermerk übergangen, sie ändern den "
+            "gezählten Stand nicht. Den kürzeren Stand nimmt nur RATSATLAS_KUERZER_ANNEHMEN=papers an (liest die Liste "
+            "zu Ende), sonst nach Prüfung ein neuer Vollabruf "
             "mit RATSATLAS_VOLLABRUF=papers (ab Seite 1); Abhilfe im Fortschritt des Abrufs") in out
     # derselbe Zeitpunkt wie im Fortschritt des Abrufs (tools/abrufstand.py, Vorrang des Aussetzens dort ebenso)
     spec = importlib.util.spec_from_file_location("abrufstand", ROOT / "tools" / "abrufstand.py")
