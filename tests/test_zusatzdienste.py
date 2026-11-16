@@ -85,6 +85,9 @@ def test_vorgabe_aus():
     # einzige Stelle der Feldnamen: bis zur Sichtung nicht festgelegt
     assert baustellen.WFS_TYP is None and set(baustellen.ZUORDNUNG.values()) == {None}
     assert anliegen.GRUPPEN == {}
+    # bis zur Klärung: Punkt nur grob, Kürzung ungeprüft (Verdacht hält den Lauf an)
+    assert baustellen.PUNKT_GENAU is False and baustellen.STELLEN_GROB == 3
+    assert baustellen.OBERGRENZE_ANTWORT is None and anliegen.OBERGRENZE_ANTWORT is None
 
 
 @pytest.mark.parametrize("thema", ["baustellen", "anliegen"])
@@ -220,7 +223,7 @@ def _capabilities(*namen):
 
 
 def _baustelle(i, lon, lat, **anders):
-    p = {"t_id": i, "t_text": f"[Testdaten] Maßnahme {i}", "t_art": "Leitungsbau", "t_strasse": "Teststraße 12a",
+    p = {"t_id": i, "t_text": f"[Testdaten] Maßnahme {i}", "t_art": "Leitungsbau", "t_strasse": "Venloer Str. 12a",
          "t_beginn": "2026-11-01", "t_ende": "15.12.2026", "t_antragsteller": "Erika Mustermann", "t_telefon": "0221 000"}
     p.update(anders)
     return {"type": "Feature", "geometry": {"type": "Point", "coordinates": [lon, lat]}, "properties": p}
@@ -247,8 +250,10 @@ def wfs(server, an, monkeypatch):
 
 def test_baustellen_lauf_mit_erfundenen_daten(wfs, tmp_path, monkeypatch):
     monkeypatch.setattr(baustellen, "ZUORDNUNG", ZUORDNUNG_TEST)
-    feats = [_baustelle(1, 6.958, 50.941), _baustelle(2, 356538.26, 5645249.36, t_strasse="Bundesstraße B 55"),
-             _baustelle("3", 7.05, 50.98, t_ende=None)]
+    feats = [_baustelle(1, 6.95812, 50.94137),
+             _baustelle(2, 356538.26, 5645249.36, t_strasse="Hauptstr. 12 / Ecke Testweg",
+                        t_text="Ausbau B 55, Abschnitt 3"),
+             _baustelle("3", 7.05, 50.98, t_ende=None, t_strasse="Teststr. 12 (Firma X)")]
     _wfs(wfs, feats, extra={"numberMatched": 3})
     base = tmp_path / "archiv"
     assert baustellen.archive(base=base, now=JETZT) is not None
@@ -259,12 +264,15 @@ def test_baustellen_lauf_mit_erfundenen_daten(wfs, tmp_path, monkeypatch):
     assert list(state) == ["1", "2", "3"]
     a1, a2, a3 = (state[k]["angaben"] for k in ("1", "2", "3"))
     assert set(a1) == set(baustellen.FELDER)
-    assert (a1["stadtteil"], a1["stadtbezirk"], a1["strasse"]) == ("Altstadt/Nord", "Innenstadt", "Teststraße")
+    assert (a1["stadtteil"], a1["stadtbezirk"], a1["strasse"]) == ("Altstadt/Nord", "Innenstadt", "Venloer Straße")
+    assert (a1["lon"], a1["lat"]) == (6.958, 50.941)   # ohne PUNKT_GENAU nur auf 1e-3 Grad
     assert (a1["von"], a1["bis"]) == ("2026-11-01", "2026-12-15") and a3["bis"] is None
-    assert (a2["lon"], a2["lat"], a2["strasse"]) == (6.958, 50.941, "Bundesstraße B 55")   # aus EPSG 25832 erkannt
-    assert (a3["stadtteil"], a3["stadtbezirk"]) == ("Höhenhaus", "Mülheim")
+    assert (a2["lon"], a2["lat"], a2["strasse"]) == (6.958, 50.941, "Hauptstraße")   # aus EPSG 25832 erkannt
+    assert a2["bezeichnung"] == "Ausbau B 55, Abschnitt" and a1["bezeichnung"] == "[Testdaten] Maßnahme"
+    assert (a3["stadtteil"], a3["stadtbezirk"], a3["strasse"]) == ("Höhenhaus", "Mülheim", None)
     texte = _alle_texte(base)
-    assert "Mustermann" not in texte and "0221 000" not in texte and "Teststraße 12a" not in texte
+    for geheim in ("Mustermann", "0221 000", "12a", "Ecke Testweg", "Firma X", "6.95812", "50.94137"):
+        assert geheim not in texte, geheim
     stand = json.loads((base / "STAND.json").read_text(encoding="utf-8"))
     assert stand["anfragen"] == 2 and stand["objektart"] == "test:erfunden" and stand["anzahl"] == 3
     assert stand["lizenz"] == config.BAUSTELLEN_LICENSE and config.NAMENSNENNUNG in stand["lizenz"]
@@ -294,6 +302,9 @@ def test_baustellen_lauf_mit_erfundenen_daten(wfs, tmp_path, monkeypatch):
     ("linie", "Geometrie LineString, Point statt Point"),
     ("unvollstaendig", "unvollständige Antwort: 5 Objekte laut Quelle, 2 erhalten"),
     ("keine_collection", "keine GeoJSON-FeatureCollection"),
+    ("von_leer", "Datum in 't_beginn' (von) bei 2 von 2 Objekten leer (erwartet mindestens 90 % mit Datum)"),
+    ("bis_leer", "Datum in 't_ende' (bis) bei 2 von 2 Objekten leer (erwartet mindestens 50 % mit Datum)"),
+    ("kuerzung", "Baustellen: möglicherweise gekürzt (genau 25 Objekte, eine übliche Obergrenze"),
 ])
 def test_baustellen_schemapruefung_schreibt_nichts(wfs, tmp_path, monkeypatch, fall, erwartet):
     if fall != "zuordnung_offen":
@@ -312,6 +323,11 @@ def test_baustellen_schemapruefung_schreibt_nichts(wfs, tmp_path, monkeypatch, f
         feats[1]["geometry"] = {"type": "LineString", "coordinates": [[6.93, 50.92], [6.94, 50.93]]}
     elif fall == "unvollstaendig":
         extra = {"numberMatched": 5}
+    elif fall in ("von_leer", "bis_leer"):   # vorhanden, aber leer (eine Zuordnung auf ein leeres Feld)
+        for f, wert in zip(feats, (None, "")):
+            f["properties"]["t_beginn" if fall == "von_leer" else "t_ende"] = wert
+    elif fall == "kuerzung":   # genau eine übliche Obergrenze, ohne Gesamtzahl in der Antwort
+        feats = [_baustelle(i, 6.93 + i / 10000, 50.92) for i in range(1, 26)]
     _wfs(wfs, feats, extra=extra)
     if fall == "keine_collection":
         wfs.antwort = lambda p, q: (200, _capabilities("test:erfunden")) if q.get("REQUEST") == ["GetCapabilities"] \
@@ -356,11 +372,70 @@ def test_capabilities_ohne_entitaeten():
         baustellen.objektarten(b"<nicht")
 
 
-def test_ohne_hausnummer():
-    assert baustellen.ohne_hausnummer("Teststraße 12-14a") == "Teststraße"
-    assert baustellen.ohne_hausnummer("Testweg 7/9") == "Testweg"
-    assert baustellen.ohne_hausnummer("Bundesstraße B 55") == "Bundesstraße B 55"
-    assert baustellen.ohne_hausnummer("") is None
+def test_baustellen_kuerzung_geklaert(wfs, tmp_path, monkeypatch):
+    """Mit Gesamtzahl in der Antwort oder geklärter Obergrenze (0: kürzt nicht) gilt eine übliche Zahl nicht als Verdacht;
+    eine geklärte Obergrenze n hält jede Antwort ab n an."""
+    monkeypatch.setattr(baustellen, "ZUORDNUNG", ZUORDNUNG_TEST)
+    monkeypatch.setattr(baustellen, "WFS_TYP", "test:erfunden")
+    feats = [_baustelle(i, 6.93 + i / 10000, 50.92) for i in range(1, 26)]
+    _wfs(wfs, feats, extra={"numberMatched": 25})
+    assert baustellen.archive(base=tmp_path / "a", now=JETZT) is not None
+    _wfs(wfs, feats)
+    monkeypatch.setattr(baustellen, "OBERGRENZE_ANTWORT", 0)
+    assert baustellen.archive(base=tmp_path / "b", now=JETZT) is not None
+    monkeypatch.setattr(baustellen, "OBERGRENZE_ANTWORT", 25)
+    with pytest.raises(SystemExit, match="gekürzt \\(25 Objekte, Obergrenze des Dienstes 25"):
+        baustellen.archive(base=tmp_path / "c", now=JETZT)
+    assert not (tmp_path / "c").exists()
+
+
+def test_baustellen_punkt_nur_grob_ohne_schalter(wfs, tmp_path, monkeypatch):
+    """Datenschutz: ohne PUNKT_GENAU kommt kein feiner Punkt ins Archiv (Zustand und Momentaufnahme); die Prüfung findet
+    einen feinen Punkt auch in einer Momentaufnahme. Mit dem Schalter (eigener Pull Request) bleibt 1e-5 Grad."""
+    monkeypatch.setattr(baustellen, "ZUORDNUNG", ZUORDNUNG_TEST)
+    monkeypatch.setattr(baustellen, "WFS_TYP", "test:erfunden")
+    _wfs(wfs, [_baustelle(1, 6.95812, 50.94137), _baustelle(2, 6.93456, 50.92345)])
+    base = tmp_path / "archiv"
+    baustellen.archive(base=base, now=JETZT)
+    snap = next((base / "snapshots").rglob("baustellen.json"))
+    for doc in (json.loads((base / "baustellen.json").read_text())["1"]["angaben"],
+                json.loads(snap.read_text())["baustellen"]["1"]):
+        assert (doc["lon"], doc["lat"]) == (6.958, 50.941)
+    assert baustellen.pruefen_archiv(base) == []
+    roh = snap.read_text(encoding="utf-8").replace("6.958,", "6.95812,")   # von Hand verfeinert
+    snap.write_text(roh, encoding="utf-8")
+    assert baustellen.pruefen_archiv(base) == [f"{snap.relative_to(base).as_posix()}: Baustelle 1: Punkt feiner als "
+                                               "1e-3 Grad (PUNKT_GENAU ist aus)"]
+    monkeypatch.setattr(baustellen, "PUNKT_GENAU", True)
+    assert baustellen.pruefen_archiv(base) == []
+    baustellen.archive(base=tmp_path / "genau", now=JETZT)
+    a = json.loads((tmp_path / "genau" / "baustellen.json").read_text())["1"]["angaben"]
+    assert (a["lon"], a["lat"]) == (6.95812, 50.94137)
+
+
+def test_strasse_amtlich_und_ohne_zahlen():
+    """Straße nur als amtlicher Name aus dem Kölner Straßenverzeichnis, Bezeichnung ohne Zahlen außer Straßenklassen;
+    die Fälle der Prüfung vom 16.11.2026, bei denen die alte Regel (Zahl am Ende) die Hausnummer stehen ließ."""
+    faelle = {"Venloer Str. 12, 14": ("Venloer Straße", "Venloer Str."),
+              "Hauptstr. 12 / Ecke Testweg": ("Hauptstraße", "Hauptstr. / Ecke Testweg"),
+              "Teststr. 12 (Firma X)": (None, "Teststr. (Firma X)"),
+              "Ringstraße 3-5, Umbau": ("Ringstraße", "Ringstraße, Umbau"),
+              "Luxemburger Str. 124-136 Höhe Haus 130": ("Luxemburger Straße", "Luxemburger Str. - Höhe Haus"),
+              "Bundesstraße B 55": (None, "Bundesstraße B 55"),
+              "aachener strasse 1": ("Aachener Straße", "aachener strasse"),
+              "Konrad-Adenauer-Ufer 3": ("Konrad-Adenauer-Ufer", "Konrad-Adenauer-Ufer"),
+              "": (None, None)}
+    for text, (strasse, bezeichnung) in faelle.items():
+        assert baustellen.strasse_amtlich(text) == strasse, text
+        assert baustellen.ohne_zahlen(text) == bezeichnung, text
+        assert not baustellen.zahl_in_bezeichnung(bezeichnung), text
+    assert baustellen.ohne_zahlen("Kanalbau L286, 2. Abschnitt ab 01.12.2026") == "Kanalbau L286, Abschnitt ab"
+    assert baustellen.zahl_in_bezeichnung("Venloer Str. 12,") and not baustellen.zahl_in_bezeichnung("Ausbau B 55")
+    # die Prüfung vor dem Schreiben und im Archiv nutzt dieselben Regeln
+    assert baustellen.befunde_angaben({"9": {"strasse": "Teststraße", "bezeichnung": "Haus 12", "lon": 6.95,
+                                             "lat": 50.94}}) == ["Baustelle 9: Straße nicht aus dem Kölner "
+                                                                 "Straßenverzeichnis",
+                                                                 "Baustelle 9: Zahl in der Bezeichnung (Hausnummer?)"]
 
 
 # --- Sag’s uns (Open311 GeoReport v2) -------------------------------------------------------------------------------------
@@ -396,8 +471,8 @@ def test_anliegen_lauf_mit_erfundenen_daten(sags, tmp_path, monkeypatch):
                     "2026-11": [_meldung("103", "2026-11-02T08:00:00+01:00", lat=None, long=None)]})
     base = tmp_path / "archiv"
     anliegen.archive(base=base, now=JETZT)
-    monate = [q["start_date"][0][:7] for _, q, _ in sags.anfragen]
-    assert monate[0] == "2025-11" and monate[-1] == "2026-11" and len(monate) == 13 <= anliegen.MAX_ANFRAGEN
+    monate = [q["start_date"][0][:7] for _, q, _ in sags.anfragen]   # neuester zuerst
+    assert monate[0] == "2026-11" and monate[-1] == "2025-11" and len(monate) == 13 <= anliegen.MAX_ANFRAGEN
     ordner = base / "anliegen"
     zeilen = (ordner / "meldungen.tsv").read_text(encoding="utf-8").splitlines()
     assert zeilen[0].split("\t") == anliegen.KOPF and anliegen.pruefen_archiv(base) == []
@@ -411,11 +486,12 @@ def test_anliegen_lauf_mit_erfundenen_daten(sags, tmp_path, monkeypatch):
         assert geheim not in texte, geheim
     stand = json.loads((ordner / "STAND.json").read_text(encoding="utf-8"))
     assert stand["anfragen"] == 13 and stand["meldungen"] == 3 and stand["lizenz"] == config.ANLIEGEN_LICENSE
-    # Folgelauf: nur die Monate der letzten FENSTER Tage, Status geändert
+    assert stand["erstabruf_ab"] == "2025-11" and len(stand["monate_geprueft"]) == 13 and stand["monate_offen"] == []
+    # Folgelauf: nur die Monate der letzten FENSTER Tage (alle älteren sind geprüft), Status geändert
     _open311(sags, {"2026-10": [_meldung("101", "2026-10-05T10:00:00+02:00", status="closed")]})
     anliegen.archive(base=base, now=JETZT.replace(day=17))
-    assert [q["start_date"][0][:7] for _, q, _ in sags.anfragen[13:]] == ["2026-07", "2026-08", "2026-09", "2026-10",
-                                                                          "2026-11"]
+    assert [q["start_date"][0][:7] for _, q, _ in sags.anfragen[13:]] == ["2026-11", "2026-10", "2026-09", "2026-08",
+                                                                          "2026-07"]
     assert anliegen.read_state(ordner / "meldungen.tsv")["101"]["status"] == "closed"
     assert "2026-11-17\t2026-10\t1\t0\t1\t" in (ordner / "abrufe.tsv").read_text(encoding="utf-8")
     # Seite: nur Zählungen; „gesamt“ zählt alle Meldungen, solange keine Gruppen festgelegt sind
@@ -435,6 +511,9 @@ def test_anliegen_lauf_mit_erfundenen_daten(sags, tmp_path, monkeypatch):
      "außerhalb des angefragten Monats (Zeitfilter wirkt nicht)"),
     ([{"service_request_id": "1", "status": "open", "service_code": "t1", "requested_datetime": "gestern"}],
      "requested_datetime bei 1 Meldungen nicht lesbar"),
+    ([], "Sag’s uns 2026-10: keine Meldung im letzten abgeschlossenen Monat"),
+    ([_meldung(f"t{i}", "2026-10-05T10:00:00Z") for i in range(50)],
+     "Sag’s uns 2026-10: möglicherweise gekürzt (genau 50 Objekte, eine übliche Obergrenze"),
 ])
 def test_anliegen_schemapruefung_schreibt_nichts(sags, tmp_path, antwort, erwartet):
     def antworten(pfad, q):
@@ -447,20 +526,39 @@ def test_anliegen_schemapruefung_schreibt_nichts(sags, tmp_path, antwort, erwart
     assert sags.anfragen[-1][1]["start_date"][0].startswith("2026-10")   # keine Anfrage nach dem Befund
 
 
-def test_anliegen_abbruch_behaelt_gepruefte_monate(sags, tmp_path):
+ALLE_MONATE = [f"2025-{m:02d}" for m in (11, 12)] + [f"2026-{m:02d}" for m in range(1, 12)]
+
+
+def _monate(anfragen):
+    return [q["start_date"][0][:7] for _, q, _ in anfragen]
+
+
+def test_anliegen_abbruch_behaelt_gepruefte_monate_und_holt_nach(sags, tmp_path):
+    """Abbruch im ersten Lauf: die geprüften Monate bleiben; der nächste Lauf holt alle übrigen nach (keine Lücke)."""
+    fehler = {"2026-09"}
+
     def antwort(pfad, q):
         monat = q["start_date"][0][:7]
-        if monat == "2026-10":
+        if monat in fehler:
             return 503, b""
-        return 200, json.dumps([_meldung("9", f"{monat}-03T12:00:00Z")] if monat == "2026-09" else []).encode()
+        return 200, json.dumps([_meldung(monat.replace("-", ""), f"{monat}-03T12:00:00Z")]).encode()
     sags.antwort = antwort
-    with pytest.raises(SystemExit, match="Abbruch nach 11 Monaten"):
+    with pytest.raises(SystemExit, match="Abbruch nach 2 Monaten.*11 Monate noch offen"):
         anliegen.archive(base=tmp_path / "archiv", now=JETZT)
-    assert sags.anfragen[-1][1]["start_date"][0].startswith("2026-10")   # keine Wiederholung, kein weiterer Monat
+    assert _monate(sags.anfragen) == ["2026-11", "2026-10", "2026-09"]   # keine Wiederholung, kein weiterer Monat
     ordner = tmp_path / "archiv" / "anliegen"
-    assert list(anliegen.read_state(ordner / "meldungen.tsv")) == ["9"]
+    assert set(anliegen.read_state(ordner / "meldungen.tsv")) == {"202611", "202610"}
     log = (ordner / "abrufe.tsv").read_text(encoding="utf-8").splitlines()
-    assert log[-1].startswith("2026-11-16\t2026-10\t\t\t\tHTTP 503") and len(log) == 13
+    assert log[-1].startswith("2026-11-16\t2026-09\t\t\t\tHTTP 503") and len(log) == 4
+    stand = json.loads((ordner / "STAND.json").read_text(encoding="utf-8"))
+    assert stand["monate_geprueft"] == ["2026-10", "2026-11"] and len(stand["monate_offen"]) == 11
+    fehler.clear()
+    anliegen.archive(base=tmp_path / "archiv", now=JETZT.replace(day=17))
+    zweiter = _monate(sags.anfragen[3:])
+    assert zweiter == sorted(ALLE_MONATE, reverse=True)   # Fenster und alle noch nie geprüften Monate
+    stand = json.loads((ordner / "STAND.json").read_text(encoding="utf-8"))
+    assert stand["monate_geprueft"] == ALLE_MONATE and stand["monate_offen"] == [] and stand["erstabruf_ab"] == "2025-11"
+    assert len(anliegen.read_state(ordner / "meldungen.tsv")) == 13
 
 
 def test_anliegen_zeitfenster_endet_im_lauf(sags, tmp_path, monkeypatch):
@@ -472,7 +570,7 @@ def test_anliegen_zeitfenster_endet_im_lauf(sags, tmp_path, monkeypatch):
             raise dienste.NichtGesendet("außerhalb des Zeitfensters 23-1 Uhr (Server der Stadt)")
         return echt(self, url)
     monkeypatch.setattr(dienste.Lauf, "_warten", warten)
-    _open311(sags, {"2025-12": [_meldung("8", "2025-12-24T18:00:00Z")]})
+    _open311(sags, {"2026-10": [_meldung("8", "2026-10-24T18:00:00Z")]})
     with pytest.raises(SystemExit, match="Abbruch nach 2 Monaten.*Zeitfenster"):
         anliegen.archive(base=tmp_path / "archiv", now=JETZT)
     assert len(sags.anfragen) == 2
@@ -488,14 +586,23 @@ def test_baustellen_feature_ohne_form(wfs, tmp_path, monkeypatch):
 
 
 def test_anliegen_gestufte_sichtung(sags, tmp_path, monkeypatch):
-    """ANLIEGEN_MAX_ANFRAGEN=1: genau eine Anfrage, der geprüfte Monat wird geschrieben, dann Abbruch (obergrenze)."""
+    """ANLIEGEN_MAX_ANFRAGEN=1: genau eine Anfrage (der neueste Monat), er wird geschrieben, dann Abbruch (obergrenze).
+    Der nächste Lauf ohne Grenze holt jeden Monat seit dem Beginn des Archivs nach, kein Monat fehlt; danach nur noch
+    das Fenster (Prüfung vom 16.11.2026: vorher fehlten 2025-12 bis 2026-06 für immer)."""
     monkeypatch.setenv("ANLIEGEN_MAX_ANFRAGEN", "1")
     assert anliegen.grenze() == 1
-    _open311(sags, {"2025-11": [_meldung("7", "2025-11-20T09:00:00Z")]})
+    _open311(sags, {"2026-11": [_meldung("7", "2026-11-10T09:00:00Z")], "2026-10": [_meldung("6", "2026-10-10T09:00:00Z")]})
     with pytest.raises(SystemExit, match="Abbruch nach 1 Monaten.*Obergrenze von 1 Anfragen"):
         anliegen.archive(base=tmp_path / "archiv", now=JETZT)
-    assert len(sags.anfragen) == 1
+    assert _monate(sags.anfragen) == ["2026-11"]
     assert list(anliegen.read_state(tmp_path / "archiv" / "anliegen" / "meldungen.tsv")) == ["7"]
+    monkeypatch.delenv("ANLIEGEN_MAX_ANFRAGEN")
+    anliegen.archive(base=tmp_path / "archiv", now=JETZT.replace(day=17))
+    assert set(_monate(sags.anfragen)) == set(ALLE_MONATE) and len(sags.anfragen) == 14
+    anliegen.archive(base=tmp_path / "archiv", now=JETZT.replace(day=18))
+    assert _monate(sags.anfragen[14:]) == ["2026-11", "2026-10", "2026-09", "2026-08", "2026-07"]
+    stand = json.loads((tmp_path / "archiv" / "anliegen" / "STAND.json").read_text(encoding="utf-8"))
+    assert stand["monate_offen"] == [] and stand["monate_lauf"] == _monate(sags.anfragen[14:])
     for wert, erwartet in (("99", anliegen.MAX_ANFRAGEN), ("", anliegen.MAX_ANFRAGEN)):   # nur senken
         monkeypatch.setenv("ANLIEGEN_MAX_ANFRAGEN", wert)
         assert anliegen.grenze() == erwartet
@@ -503,6 +610,73 @@ def test_anliegen_gestufte_sichtung(sags, tmp_path, monkeypatch):
         monkeypatch.setenv("ANLIEGEN_MAX_ANFRAGEN", wert)
         with pytest.raises(ValueError, match="keine ganze Zahl ab 1"):
             anliegen.grenze()
+
+
+def test_anliegen_plan():
+    """Monate je Lauf, neuester zuerst: erster Lauf 13 Monate; danach das Fenster und noch nie geprüfte Monate ab dem
+    festgehaltenen Beginn."""
+    heute = datetime(2026, 11, 17).date()
+    monate, beginn = anliegen.plan(heute)
+    assert [f"{m:%Y-%m}" for m in monate] == sorted(ALLE_MONATE, reverse=True) and f"{beginn:%Y-%m}" == "2025-11"
+    stand = {"erstabruf_ab": "2025-11", "monate_geprueft": ALLE_MONATE}
+    assert [f"{m:%Y-%m}" for m in anliegen.plan(heute, stand)[0]] == ["2026-11", "2026-10", "2026-09", "2026-08",
+                                                                       "2026-07"]
+    stand["monate_geprueft"] = ["2026-11"]
+    assert len(anliegen.plan(heute, stand)[0]) == 13
+    # ein Jahr später: der Beginn bleibt, nur die ungeprüften Monate kommen dazu
+    stand = {"erstabruf_ab": "2025-11", "monate_geprueft": [m for m in ALLE_MONATE if m != "2026-02"]}
+    spaeter = [f"{m:%Y-%m}" for m in anliegen.plan(datetime(2027, 11, 17).date(), stand)[0]]
+    assert spaeter[-1] == "2026-02" and len(spaeter) == 13
+
+
+def test_anliegen_alle_monate_leer_schreibt_nichts(sags, tmp_path, monkeypatch):
+    """Liefert die Schnittstelle nur leere Listen (etwa weil sie das Datumsformat nicht annimmt), schreibt der Lauf
+    nichts und endet rot; sonst stünden 0 Meldungen für ganz Köln im Archiv."""
+    _open311(sags, {})
+    with pytest.raises(SystemExit, match="2026-10: keine Meldung im letzten abgeschlossenen Monat.*Nichts geschrieben"):
+        anliegen.archive(base=tmp_path / "archiv", now=JETZT)
+    assert _monate(sags.anfragen) == ["2026-11", "2026-10"] and _dateien(tmp_path) == []
+    monkeypatch.setenv("ANLIEGEN_MAX_ANFRAGEN", "1")   # gestufte Sichtung: nur der laufende Monat, leer
+    with pytest.raises(SystemExit) as e:
+        anliegen.archive(base=tmp_path / "archiv", now=JETZT)
+    assert "alle 1 abgefragten Monate ohne Meldung" in str(e.value) and "Zuvor Abbruch: Obergrenze" in str(e.value)
+    assert str(e.value).endswith("Nichts geschrieben.") and _dateien(tmp_path) == []
+
+
+def test_anliegen_kuerzung(sags, tmp_path, monkeypatch):
+    """Solange OBERGRENZE_ANTWORT ungeprüft ist, hält dieselbe Höchstzahl in mehreren Monaten den Lauf an (nichts
+    geschrieben); geklärt „kürzt nicht“ (0) wird geschrieben; eine geklärte Obergrenze n hält jede Antwort ab n an."""
+    je_monat = {"2026-11": [_meldung("n1", "2026-11-02T08:00:00Z")]}
+    for monat in ("2026-10", "2026-09"):
+        je_monat[monat] = [_meldung(f"{monat}-{i}", f"{monat}-05T10:00:00Z") for i in range(12)]
+    _open311(sags, je_monat)
+    with pytest.raises(SystemExit, match="dieselbe Höchstzahl 12 in 2 Monaten \\(2026-09, 2026-10\\)"):
+        anliegen.archive(base=tmp_path / "archiv", now=JETZT)
+    assert len(sags.anfragen) == 13 and _dateien(tmp_path) == []
+    monkeypatch.setattr(anliegen, "OBERGRENZE_ANTWORT", 12)
+    with pytest.raises(SystemExit, match="2026-10: gekürzt \\(12 Objekte, Obergrenze des Dienstes 12"):
+        anliegen.archive(base=tmp_path / "archiv", now=JETZT)
+    assert _monate(sags.anfragen[13:]) == ["2026-11", "2026-10"] and _dateien(tmp_path) == []
+    monkeypatch.setattr(anliegen, "OBERGRENZE_ANTWORT", 0)
+    anliegen.archive(base=tmp_path / "archiv", now=JETZT)
+    assert len(anliegen.read_state(tmp_path / "archiv" / "anliegen" / "meldungen.tsv")) == 25
+
+
+def test_zeitfenster_als_warnung_in_actions(an, monkeypatch, capsys, tmp_path):
+    """Übersprungen wegen des Zeitfensters (etwa nach verspätetem Start) zeigt GitHub Actions als Warnung; gesendet
+    wird nichts (der Öffner würde den Test scheitern lassen)."""
+    monkeypatch.setattr(abruf, "_OEFFNER", _KeinNetz())
+    monkeypatch.setattr(abruf, "uhr", lambda: datetime(2026, 11, 16, 11, 0, tzinfo=timezone.utc))
+    monkeypatch.setenv("ANLIEGEN_ABRUF", "ja")
+    monkeypatch.setenv("BAUSTELLEN_ABRUF", "ja")
+    monkeypatch.setenv("RATSATLAS_STADT_INFORMIERT", "ja")
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    assert anliegen.archive(base=tmp_path, now=JETZT) is None and baustellen.archive(base=tmp_path, now=JETZT) is None
+    aus = capsys.readouterr().out
+    assert aus.count("::warning title=Außerhalb des Zeitfensters::") == 2
+    monkeypatch.delenv("RATSATLAS_STADT_INFORMIERT")   # anderer Grund: keine Warnung
+    assert anliegen.archive(base=tmp_path, now=JETZT) is None
+    assert "::warning" not in capsys.readouterr().out and _dateien(tmp_path) == []
 
 
 def test_anliegen_seite_schluessel_stadt(tmp_path):

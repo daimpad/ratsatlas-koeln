@@ -10,10 +10,14 @@
 #   (Entscheidung 16.11.2026: tägliche Abrufe an weitere Server der Stadt brauchen eine eigene Freigabe);
 # - RATSATLAS_STADT_INFORMIERT = „ja“ und das Zeitfenster 23–1 Uhr Ortszeit (beide Hosts sind Server der Stadt);
 # - RATSATLAS_KONTAKT (Kontakt im User-Agent, Pflicht).
-# Je Lauf höchstens 2 Anfragen an den WFS und 14 an Open311 (erster Lauf 13, danach 5), mindestens 2 s Abstand, keine
-# Wiederholung. Passt eine Antwort nicht zu den erwarteten Feldern, schreibt der Schritt nichts und endet rot.
+# Je Lauf höchstens 2 Anfragen an den WFS und 14 an Open311 (erster Lauf 13, danach 5 und noch nie geprüfte Monate),
+# mindestens 2 s Abstand, keine Wiederholung. Passt eine Antwort nicht zu den erwarteten Feldern oder besteht Verdacht
+# auf eine Kürzung, schreibt der Schritt nichts und endet rot.
 # Offen vor dem Einschalten: ob dieser Lauf neben dem nächtlichen Abruf der OParl-API (pages.yml, ab 22:10 UTC) laufen
-# darf (andere Hosts derselben Stadt) oder danach; die Uhrzeit unten liegt im Zeitfenster (MEZ und MESZ).
+# darf (andere Hosts derselben Stadt) oder danach; die Uhrzeit unten liegt im Zeitfenster (MEZ und MESZ), im Sommer
+# aber nur 19 Minuten vor dessen Ende. Verspätet sich der Start, wird der Schritt „übersprungen“ (grün) und zeigt eine
+# Warnung „Außerhalb des Zeitfensters“ (pipeline/dienste.py, hinweis_uebersprungen); Startzeit vor dem Einschalten
+# festlegen (TECHNIK.md).
 name: Archiv (Baustellen, Sag’s uns)
 
 on:

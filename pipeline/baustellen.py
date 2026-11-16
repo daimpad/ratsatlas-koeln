@@ -10,10 +10,10 @@ Beschlusses.
 Ungeprüft, weil bis zur Freigabe keine Anfrage gestellt wird: Objektart (TYPENAME), Feldnamen, Datumsformat und das
 Koordinatensystem der Antwort. Deshalb:
 - `WFS_TYP` und `ZUORDNUNG` sind die einzige Stelle für Objektart und Feldnamen; None heißt „noch nicht festgelegt“.
-- `schema_pruefen` prüft jede Antwort vor dem Schreiben (FeatureCollection, Zahl der Objekte, Punkte, jede
-  zugeordnete Eigenschaft in jedem Objekt, Kennung eindeutig, Datum lesbar, Koordinaten in Köln). Passt etwas nicht,
-  endet der Lauf mit `dienste.Schemafehler`; die Meldung nennt die gefundenen Eigenschaftsnamen (keine Werte), und es
-  wird nichts geschrieben.
+- `schema_pruefen` prüft jede Antwort vor dem Schreiben (FeatureCollection, Zahl der Objekte, Verdacht auf Kürzung
+  ohne Gesamtzahl, Punkte, jede zugeordnete Eigenschaft in jedem Objekt, Kennung eindeutig, Datum lesbar und
+  überwiegend vorhanden, Koordinaten in Köln). Passt etwas nicht, endet der Lauf mit `dienste.Schemafehler`; die
+  Meldung nennt die gefundenen Eigenschaftsnamen (keine Werte), und es wird nichts geschrieben.
 
 Ein Lauf (`python -m pipeline baustellen`; nur mit Freigabe, siehe pipeline/dienste.py) stellt höchstens zwei
 Anfragen: ohne festgelegte Objektart zuerst GetCapabilities (genau eine angebotene Objektart wird genommen, sonst
@@ -25,10 +25,13 @@ Schemafehler mit den Namen), dann GetFeature als GeoJSON. Erst nach bestandener 
 - anfragen.tsv – Anfragen je Lauf (Zeit, Adresse, Status, Bytes, Sekunden)
 - STAND.json – letzter Lauf (Zeitpunkt, Objektart, Anfragen, Anzahl, Quelle, Lizenz)
 
-Gespeichert werden nur die zugeordneten Felder: Kennung, Bezeichnung, Art, Straße (ohne Hausnummer), Beginn und Ende
-der Genehmigung (ISO-Datum), der Punkt (gerundet auf 1e-5 Grad) und Stadtteil und Stadtbezirk aus data/geo
-(Punkt in Fläche). Keine Antragsteller, Firmen, Personen oder Kontaktdaten; ob die Punkte auch Genehmigungen für
-Privatpersonen zeigen (etwa an Wohnhäusern), ist ungeprüft und vor dem Einschalten zu klären (TECHNIK.md)."""
+Gespeichert werden nur die zugeordneten Felder: Kennung, Bezeichnung (ohne Zahlen außer Straßenklassen wie „B 55“),
+Art, Straße (nur der amtliche Name aus dem Kölner Straßenverzeichnis, sonst leer), Beginn und Ende der Genehmigung
+(ISO-Datum), der Punkt und Stadtteil und Stadtbezirk aus data/geo (Punkt in Fläche, mit dem genauen Punkt). Keine
+Antragsteller, Firmen, Personen oder Kontaktdaten. Ob die Punkte auch Genehmigungen für Privatpersonen zeigen (etwa an
+Wohnhäusern), ist ungeprüft; bis zur Klärung bleibt `PUNKT_GENAU` aus, und der Punkt wird nur grob gespeichert (1e-3
+Grad, Straßenabschnitt statt Hauseingang). `befunde_angaben` prüft das vor dem Schreiben und `pruefen_archiv` im
+Archiv (auch in den Momentaufnahmen)."""
 import functools
 import hashlib
 import json
@@ -51,6 +54,19 @@ HINWEISE = [
     "Eine Baustelle ist kein Beleg für die Umsetzung eines Beschlusses.",
 ]
 MAX_ANFRAGEN = 2   # GetCapabilities (nur ohne festgelegte Objektart) und GetFeature
+# Punkt je Genehmigung (Datenschutz, CLAUDE.md 2: keine Verortung von Wohnadressen natürlicher Personen): Ob die Quelle
+# auch Genehmigungen für Privatpersonen zeigt (Gerüst oder Container an Wohnhäusern), ist ungeprüft. Solange PUNKT_GENAU
+# aus ist, wird der Punkt auf STELLEN_GROB Nachkommastellen gerundet gespeichert (1e-3 Grad, in Köln etwa 70 m West–Ost
+# und 110 m Süd–Nord); einschalten erst nach geklärter Sichtung und in einem eigenen Pull Request (TECHNIK.md).
+PUNKT_GENAU = False
+STELLEN_GENAU, STELLEN_GROB = 5, 3
+# Kürzung der Antwort ohne numberMatched/totalFeatures (ungeprüft). None: ungeprüft – genau eine übliche Obergrenze
+# (dienste.TYPISCHE_OBERGRENZEN) gilt als Verdacht, der Lauf schreibt nichts. Nach der Klärung eintragen: 0 = der Dienst
+# kürzt nicht; n = höchstens n Objekte je Antwort.
+OBERGRENZE_ANTWORT = None
+# Mindestanteil der Objekte mit lesbarem Datum (Annahme, ungeprüft: eine Genehmigung hat einen Beginn, das Ende kann
+# offen sein); darunter Schemafehler (etwa eine Zuordnung auf ein Feld, das fast immer leer ist)
+MINDESTANTEIL_DATUM = {"von": 0.9, "bis": 0.5}
 
 # --- Einzige Stelle für Objektart und Feldnamen (UNGEPRÜFT, Stand 16.11.2026: nur die Datensatzseite gesichtet) -------
 # Objektart des WFS (TYPENAME, etwa „ms:…“ wie in pipeline/ebenen.py); None: aus GetCapabilities, wenn der Dienst genau
@@ -63,7 +79,7 @@ ZUORDNUNG = {
     "id": None,            # eindeutige Kennung der Genehmigung oder Baustelle
     "bezeichnung": None,   # kurze Bezeichnung der Maßnahme (ohne Adresse und Namen)
     "art": None,           # Art der Maßnahme
-    "strasse": None,       # Straße; eine Hausnummer am Ende entfällt (ohne_hausnummer)
+    "strasse": None,       # Straße; gespeichert nur der amtliche Name am Anfang (strasse_amtlich), sonst leer
     "von": None,           # Beginn der Genehmigung
     "bis": None,           # Ende der Genehmigung
 }
@@ -120,14 +136,50 @@ def objektart_waehlen(namen, typ=None):
     return namen[0]
 
 
-# Zahl am Ende (Hausnummer, auch Bereiche wie „12-14a“ oder „7/9“), nicht nach einer Straßenklasse wie „B 55“
-_HAUSNUMMER = re.compile(r"(?<!\b[ABLK])\s+\d+\s*[a-zA-Z]?(?:\s*[-–/]\s*\d+\s*[a-zA-Z]?)*\s*$")
+@functools.lru_cache(maxsize=1)
+def _strassen():
+    """Amtliche Straßennamen Kölns (config.STRASSEN aus dem Kölner Straßenverzeichnis, Namen ausgeschrieben):
+    Schlüssel ohne Groß- und Kleinschreibung (casefold, „ß“ wie „ss“) → Name."""
+    namen = json.loads(config.STRASSEN.read_text(encoding="utf-8"))["streets"]
+    return {n.casefold(): n for n in namen}
 
 
-def ohne_hausnummer(text):
-    """Nur Straßenebene: eine Zahl am Ende (Hausnummer) entfällt; „Bundesstraße B 55“ bleibt."""
-    t = _HAUSNUMMER.sub("", str(text or "").strip())
+def strasse_amtlich(text):
+    """Nur Straßenebene: der längste amtliche Straßenname, mit dem der Text beginnt („Venloer Str. 12, 14“ → „Venloer
+    Straße“); alles danach entfällt (Hausnummern, „Ecke …“, Firmen in Klammern). Ohne amtlichen Namen am Anfang None:
+    lieber keine Straße als eine Adresse."""
+    t = re.sub(r"\s+", " ", str(text or "").strip())
+    t = re.sub(r"([Ss])tr\.(?=[\s\d,;/()-]|$)", r"\1traße", t).casefold()
+    namen = _strassen()
+    for i in range(len(t), 0, -1):
+        if (i == len(t) or not t[i].isalpha()) and t[:i].rstrip() in namen:
+            return namen[t[:i].rstrip()]
+    return None
+
+
+# Straßenklasse mit Nummer („B 55“, „L286“, „K 12“, „A 3“): bleibt in der Bezeichnung, jede andere Zahl entfällt
+_STRASSENKLASSE = re.compile(r"(\b[ABLK] ?\d+\b)")
+
+
+def ohne_zahlen(text):
+    """Bezeichnung ohne Hausnummern und andere Zahlen (auch Bereiche wie „124-136“, Datumsangaben); Straßenklassen mit
+    Nummer bleiben. Übrig gebliebene Trennzeichen werden zusammengefasst."""
+    teile = _STRASSENKLASSE.split(re.sub(r"\s+", " ", str(text or "")))
+    for i in range(0, len(teile), 2):   # ungerade Stellen: Straßenklassen
+        teile[i] = re.sub(r"\d+(?:[a-zA-Z](?![a-zA-ZäöüÄÖÜß]))?", "", teile[i])
+    t = re.sub(r"\.(?:\s*\.)+", "", "".join(teile))   # Reste von Datumsangaben
+    t = re.sub(r"(^|[\s,;(])\.(?=\s|$)", r"\1", t)        # Punkt einer Ordnungszahl („2. Abschnitt“)
+    # Reste von Bereichen und Aufzählungen („3-5, Umbau“ → „, Umbau“): nur das letzte Trennzeichen bleibt
+    t = re.sub(r"\s*[-–/,;](?:\s*[-–/,;])+", lambda m: m.group().strip()[-1], t)
+    t = re.sub(r"\(\s*\)", "", t)
+    t = re.sub(r"\s+([,;)])", r"\1", re.sub(r"\(\s+", "(", re.sub(r"\s+", " ", t)))
+    t = re.sub(r"^[\s.,;:\-–/]+|[\s,;:\-–/]+$", "", t)
     return t or None
+
+
+def zahl_in_bezeichnung(text):
+    """True, wenn außerhalb von Straßenklassen noch eine Ziffer steht (Prüfung, dieselbe Regel wie ohne_zahlen)."""
+    return bool(re.search(r"\d", _STRASSENKLASSE.sub("", str(text or ""))))
 
 
 def datum(wert):
@@ -175,6 +227,8 @@ def schema_pruefen(doc, zuordnung=None):
         raise dienste.Schemafehler(f"unvollständige Antwort: {erwartet} Objekte laut Quelle, {len(feats)} erhalten")
     if not feats:
         raise dienste.Abbruch("Antwort ohne Objekte (vorige Stände bleiben)", "leer")
+    if not isinstance(erwartet, int) and (kurz := dienste.kuerzung(len(feats), OBERGRENZE_ANTWORT, "Baustellen")):
+        raise dienste.Schemafehler(f"{'; '.join(kurz)}; ohne Gesamtzahl (numberMatched, totalFeatures) in der Antwort.")
     befunde, namen = [], {}
     for f in feats:
         for k in f.get("properties") or {}:
@@ -196,14 +250,17 @@ def schema_pruefen(doc, zuordnung=None):
         if len(set(ids)) != len(ids):
             befunde.append(f"Kennung nicht eindeutig ({len(ids) - len(set(ids))} doppelt)")
         for k in ("von", "bis"):
-            schlecht = 0
+            schlecht = leer = 0
             for f in feats:
                 try:
-                    datum((f.get("properties") or {}).get(zuordnung[k]))
+                    leer += datum((f.get("properties") or {}).get(zuordnung[k])) is None
                 except ValueError:
                     schlecht += 1
             if schlecht:
                 befunde.append(f"Datum in {zuordnung[k]!r} ({k}) bei {schlecht} Objekten nicht lesbar")
+            if len(feats) - leer < MINDESTANTEIL_DATUM[k] * len(feats):
+                befunde.append(f"Datum in {zuordnung[k]!r} ({k}) bei {leer} von {len(feats)} Objekten leer (erwartet "
+                               f"mindestens {round(MINDESTANTEIL_DATUM[k] * 100)} % mit Datum)")
         s, w, n, o = config.STADT_BBOX
         ausserhalb = 0
         for f in feats:
@@ -231,14 +288,15 @@ def normalisieren(doc, ortsteile, zuordnung=None):
         quelle = zuordnung.get(k)
         return (str(p[quelle]).strip() or None) if quelle and p.get(quelle) is not None else None
     out = {}
+    stellen = STELLEN_GENAU if PUNKT_GENAU else STELLEN_GROB
     for f in doc["features"]:
         p = f.get("properties") or {}
         punkt = _punkt(f.get("geometry"))
-        lon, lat = (round(punkt[0], 5), round(punkt[1], 5)) if punkt else (None, None)
-        st = ortsteile.locate(lon, lat) if punkt else None
+        st = ortsteile.locate(*punkt) if punkt else None   # mit dem genauen Punkt, der danach verworfen wird
+        lon, lat = (round(punkt[0], stellen), round(punkt[1], stellen)) if punkt else (None, None)
         out[str(p[zuordnung["id"]]).strip()] = {
-            "bezeichnung": ohne_hausnummer(wert(p, "bezeichnung")), "art": wert(p, "art"),
-            "strasse": ohne_hausnummer(wert(p, "strasse")),
+            "bezeichnung": ohne_zahlen(wert(p, "bezeichnung")), "art": wert(p, "art"),
+            "strasse": strasse_amtlich(wert(p, "strasse")),
             "von": datum(p.get(zuordnung["von"])), "bis": datum(p.get(zuordnung["bis"])), "lon": lon, "lat": lat,
             "stadtteil": st["ortsteil_bez"] if st else "", "stadtbezirk": st["bezirk_bez"] if st else ""}
     return dict(sorted(out.items(), key=lambda kv: (0, int(kv[0]), "") if kv[0].isdigit() else (1, 0, kv[0])))
@@ -300,8 +358,11 @@ def archive(base=None, now=None, ortsteile=None):
             doc = lauf.json(url)
             schema_pruefen(doc)
             items = normalisieren(doc, ortsteile or Ortsteile())
+            if befunde := befunde_angaben(items):   # Datenschutz vor dem Schreiben (dieselbe Prüfung wie im Archiv)
+                raise dienste.Schemafehler(f"Prüfung vor dem Schreiben: {'; '.join(befunde[:10])}.")
     except dienste.NichtGesendet as e:   # vor der ersten Anfrage oder (Zeitfenster) vor GetFeature
         print(f"Baustellen: übersprungen ({e}); {lauf.anfragen} Anfragen gesendet, nichts geschrieben.")
+        dienste.hinweis_uebersprungen(e)
         return None
     except (dienste.Schemafehler, dienste.Abbruch) as e:
         raise SystemExit(f"Baustellen: {e} Nichts geschrieben.") from e
@@ -333,18 +394,31 @@ def archive(base=None, now=None, ortsteile=None):
     return rows
 
 
-def pruefen_archiv(base=None):
-    """Befunde zum Archiv (Datenschutz): je Baustelle nur die Felder in FELDER, Straße und Bezeichnung ohne
-    Hausnummer am Ende."""
-    pfad = Path(base or config.BAUSTELLEN_ARCHIV) / "baustellen.json"
-    if not pfad.exists():
-        return []
-    befunde = []
-    for bid, v in json.loads(pfad.read_text(encoding="utf-8")).items():
-        a = v.get("angaben") or {}
+def befunde_angaben(angaben, wo=""):
+    """Datenschutz je Baustelle ({Kennung: Angaben}): nur die Felder in FELDER, Straße nur als amtlicher Name,
+    Bezeichnung ohne Zahlen außer Straßenklassen, ohne PUNKT_GENAU kein Punkt feiner als STELLEN_GROB."""
+    befunde, namen = [], set(_strassen().values())
+    for bid, a in angaben.items():
         if set(a) - set(FELDER):
-            befunde.append(f"Baustelle {bid}: unerwartete Felder {sorted(set(a) - set(FELDER))}")
-        for k in ("strasse", "bezeichnung"):
-            if a.get(k) and ohne_hausnummer(a[k]) != a[k]:
-                befunde.append(f"Baustelle {bid}: {k} mit Hausnummer")
+            befunde.append(f"{wo}Baustelle {bid}: unerwartete Felder {sorted(set(a) - set(FELDER))}")
+        if a.get("strasse") and a["strasse"] not in namen:
+            befunde.append(f"{wo}Baustelle {bid}: Straße nicht aus dem Kölner Straßenverzeichnis")
+        if a.get("bezeichnung") and zahl_in_bezeichnung(a["bezeichnung"]):
+            befunde.append(f"{wo}Baustelle {bid}: Zahl in der Bezeichnung (Hausnummer?)")
+        if not PUNKT_GENAU and any(isinstance(v, (int, float)) and round(v, STELLEN_GROB) != v
+                                   for v in (a.get("lon"), a.get("lat"))):
+            befunde.append(f"{wo}Baustelle {bid}: Punkt feiner als 1e-{STELLEN_GROB} Grad (PUNKT_GENAU ist aus)")
+    return befunde
+
+
+def pruefen_archiv(base=None):
+    """Befunde zum Archiv (Datenschutz, `befunde_angaben`): baustellen.json und alle Momentaufnahmen."""
+    base = Path(base or config.BAUSTELLEN_ARCHIV)
+    befunde = []
+    if (base / "baustellen.json").exists():
+        state = json.loads((base / "baustellen.json").read_text(encoding="utf-8"))
+        befunde += befunde_angaben({bid: v.get("angaben") or {} for bid, v in state.items()})
+    for snap in sorted((base / "snapshots").rglob("baustellen.json")):
+        doc = json.loads(snap.read_text(encoding="utf-8"))
+        befunde += befunde_angaben(doc.get("baustellen") or {}, f"{snap.relative_to(base).as_posix()}: ")
     return befunde

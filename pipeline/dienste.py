@@ -26,7 +26,9 @@ Abrufpolitik wie pipeline/abruf.py und pipeline/strukturdaten.py:
   `unlesbar`.
 
 Die Adapter prüfen jede Antwort, bevor sie etwas schreiben (`Schemafehler`: nichts geschrieben). So kann der erste
-echte Abruf mit ungeprüften Feldnamen keine falschen Daten erzeugen.
+echte Abruf mit ungeprüften Feldnamen keine falschen Daten erzeugen. Dazu gehört der Verdacht auf eine Kürzung durch
+den Server (`kuerzung`: genau eine übliche Obergrenze wie 1000 Objekte, solange die Obergrenze des Dienstes ungeprüft
+ist). Übersprungen wegen des Zeitfensters zeigt GitHub Actions als Warnung (`hinweis_uebersprungen`).
 """
 import fcntl
 import http.client
@@ -45,7 +47,12 @@ SPERRDATEI = "abruf.lock"        # wie explore/abruf.py
 
 
 class NichtGesendet(RuntimeError):
-    """Die Anfrage wurde nicht gesendet (Zusatzthema aus, ohne Freigabe, Stadt nicht informiert, Zeitfenster)."""
+    """Die Anfrage wurde nicht gesendet (Zusatzthema aus, ohne Freigabe, Stadt nicht informiert, Zeitfenster).
+    `grund`: abgeschaltet, freigabe, stadt, zeitfenster."""
+
+    def __init__(self, meldung, grund=""):
+        super().__init__(meldung)
+        self.grund = grund
 
 
 class Abbruch(RuntimeError):
@@ -65,6 +72,35 @@ class Schemafehler(RuntimeError):
 def sperrort():
     """Ordner der Sperrdatei (beim Aufruf gelesen): `RATSATLAS_SPERRE`, sonst ~/.cache/ratsatlas-koeln."""
     return Path(os.environ.get("RATSATLAS_SPERRE") or Path.home() / ".cache" / "ratsatlas-koeln")
+
+
+# Zahl der Objekte, bei der eine Antwort ohne Gesamtzahl möglicherweise gekürzt ist (übliche Obergrenzen von Servern;
+# Annahme, für die Kölner Dienste ungeprüft). Die Adapter halten an, bis die Kürzung geklärt ist (OBERGRENZE_ANTWORT in
+# pipeline/baustellen.py und pipeline/anliegen.py).
+TYPISCHE_OBERGRENZEN = (25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000)
+
+
+def kuerzung(anzahl, obergrenze, wo):
+    """Befunde zu einer möglichen Kürzung einer Antwort mit `anzahl` Objekten. `obergrenze`: None = ungeprüft (dann
+    gelten TYPISCHE_OBERGRENZEN als Verdacht), 0 = der Dienst kürzt nicht (geklärt), n > 0 = höchstens n Objekte je
+    Antwort (geklärt; ab n gekürzt)."""
+    if obergrenze == 0:
+        return []
+    if obergrenze:
+        if anzahl < obergrenze:
+            return []
+        return [f"{wo}: gekürzt ({anzahl} Objekte, Obergrenze des Dienstes {obergrenze}; kürzere Zeiträume nötig)"]
+    if anzahl in TYPISCHE_OBERGRENZEN:
+        return [f"{wo}: möglicherweise gekürzt (genau {anzahl} Objekte, eine übliche Obergrenze; bis zur Klärung "
+                "OBERGRENZE_ANTWORT eintragen, TECHNIK.md)"]
+    return []
+
+
+def hinweis_uebersprungen(e):
+    """Übersprungen wegen des Zeitfensters: in GitHub Actions als Warnung sichtbar (der Schritt endet sonst grün, und
+    ein verspäteter Start fiele nicht auf)."""
+    if getattr(e, "grund", "") == "zeitfenster" and os.environ.get("GITHUB_ACTIONS") == "true":
+        print(f"::warning title=Außerhalb des Zeitfensters::{text(e, 300)}; nichts abgerufen")
 
 
 def text(wert, laenge=80):
@@ -105,19 +141,20 @@ class Lauf:
     def pruefen(self, url):
         """Gründe gegen das Senden: NichtGesendet (Lauf übersprungen), Abbruch, ValueError (Einstellungsfehler)."""
         if not config.ZUSATZTHEMEN.get(self.thema):
-            raise NichtGesendet(f"Zusatzthema „{self.thema}“ ist abgeschaltet (config.ZUSATZTHEMEN)")
+            raise NichtGesendet(f"Zusatzthema „{self.thema}“ ist abgeschaltet (config.ZUSATZTHEMEN)", "abgeschaltet")
         grund = abruf.adresse_pruefen(url)
         if grund:
             raise Abbruch(f"ungültige Adresse ({grund}), nicht gesendet: {text(url, 200)}", "adresse")
         lokal = abruf.lokal(url)
         if not lokal and os.environ.get(self.schalter) != "ja":
             raise NichtGesendet(f"ohne Freigabe des täglichen Abrufs ({self.schalter}=ja fehlt; Entscheidung "
-                                "16.11.2026: eigene Freigabe für weitere Server der Stadt)")
+                                "16.11.2026: eigene Freigabe für weitere Server der Stadt)", "freigabe")
         if abruf.stadt(url) and not lokal:
             if os.environ.get("RATSATLAS_STADT_INFORMIERT") != "ja":
-                raise NichtGesendet("gesperrt: Server der Stadt Köln (RATSATLAS_STADT_INFORMIERT=ja fehlt)")
+                raise NichtGesendet("gesperrt: Server der Stadt Köln (RATSATLAS_STADT_INFORMIERT=ja fehlt)", "stadt")
             if not abruf.im_zeitfenster():
-                raise NichtGesendet(f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr (Server der Stadt)")
+                raise NichtGesendet(f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr (Server der Stadt)",
+                                "zeitfenster")
         if not lokal and not config.KONTAKT:
             raise ValueError("RATSATLAS_KONTAKT fehlt (Kontakt im User-Agent ist Pflicht, CLAUDE.md 5.1); keine "
                              "Anfrage gesendet")
@@ -149,7 +186,8 @@ class Lauf:
             if rest > 0:
                 time.sleep(rest)
         if stadt and not abruf.im_zeitfenster():
-            raise NichtGesendet(f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr (Server der Stadt)")
+            raise NichtGesendet(f"außerhalb des Zeitfensters {config.ABRUF_ZEITFENSTER} Uhr (Server der Stadt)",
+                                "zeitfenster")
 
     def holen(self, url, accept="application/json"):
         """Eine Anfrage ohne Wiederholung; liefert die Antwort als Bytes."""
