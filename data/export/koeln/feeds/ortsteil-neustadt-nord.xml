@@ -9,6 +9,13 @@
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135212#vorlage</id>
+<title>Neue Vorlage 0025/2026/3: Prüfergebnis zu AN/0231/2026 - Gestaltung der Schullandschaft im Stadtbezirk Innenstadt betreffend Gymnasium Neustadt-Nord - Katholische Hauptschule am Rhein - Weiterbildungskollegs</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-nord#0025/2026/3"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135155#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
 <title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2873/2026 Stellungnahme zu einem Antrag der SPD-Fraktion "Vorläufige Fertigstellung der Kreuzungsbereiche bei der Baustelle Nord-Süd-Stadtbahn, 3. Baustufe"</title>
 <updated>2026-11-16T00:00:00Z</updated>
@@ -700,12 +707,5 @@
 <updated>2026-05-04T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-nord#0870/2026"/>
 <summary>Kenntnisnahme (Mitteilung) am 2026-05-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132006#beratung-2026-04-30-Ausschuss%20f%C3%BCr%20Wirtschaft%20und%20Digitalisierung</id>
-<title>Ausschuss für Wirtschaft und Digitalisierung: „Kenntnis genommen“ – 0870/2026 Sachstandsbericht zur Zukunft des Abendmarktes auf dem Rudolfplatz</title>
-<updated>2026-04-30T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-nord#0870/2026"/>
-<summary>Kenntnisnahme (Mitteilung) am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

@@ -9,6 +9,20 @@
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135715#vorlage</id>
+<title>Neue Vorlage AN/1819/2026: Ausweisung eines neuen Naturschutzgebietes am Weisser Bogen - ohne Verschiebung (nach GO)</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/1819/2026"/>
+<summary>Änderungsantrag BV2 (FDP/KSG) · federführend: unbekannt · Stand: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135715#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – AN/1819/2026 Ausweisung eines neuen Naturschutzgebietes am Weisser Bogen - ohne Verschiebung (nach GO)</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/1819/2026"/>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135679#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
 <title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1810/2026 Tiny houses am Kalscheurer Weiher</title>
 <updated>2026-11-16T00:00:00Z</updated>
@@ -27,7 +41,7 @@
 <title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 3140/2026 Niederschrift 19. Runder Tisch Rad- und Fußverkehr</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#3140/2026"/>
-<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135491#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
@@ -62,7 +76,7 @@
 <title>Neue Vorlage 3140/2026: Niederschrift 19. Runder Tisch Rad- und Fußverkehr</title>
 <updated>2026-11-13T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#3140/2026"/>
-<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135679#vorlage</id>
@@ -692,20 +706,6 @@
 <title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 0225/2026 Stellungnahme der KölnBäder zu AN/0040/2026</title>
 <updated>2026-01-26T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#0225/2026"/>
-<summary>Antrag / Anfrage am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130902#beratung-2026-01-26-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
-<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0140/2026 Buswendescheife Kalscheurer Bahnhof, Anfrage der CDU-Fraktion</title>
-<updated>2026-01-26T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/0140/2026"/>
-<summary>Antrag / Anfrage am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130892#beratung-2026-01-26-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
-<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/0135/2026 Kritische Infrastruktur im Gebiet der Bezirksvertretung Rodenkirchen, Anfrage der AFD-Fraktion</title>
-<updated>2026-01-26T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:rodenkirchen#AN/0135/2026"/>
 <summary>Antrag / Anfrage am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

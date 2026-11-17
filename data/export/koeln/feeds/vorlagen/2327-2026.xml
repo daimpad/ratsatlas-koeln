@@ -3,16 +3,23 @@
 <id>tag:ratsatlas-koeln,2026:feed/vorlage/2327-2026</id>
 <title>Vorlage 2327/2026: Mitteilung über die Verwendung der Budgets der Stadtarbeitsgemeinschaften Behindertenpolitik und Queerpolitik 2026</title>
 <subtitle>Verlauf der Vorlage 2327/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
-<updated>2026-10-23T00:00:00Z</updated>
+<updated>2026-11-17T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/2327-2026.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2327/2026"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134232#beratung-2026-11-17-Ausschuss%20Soziales%2C%20Gesundheit%2C%20Seniorinnen%20und%20Senioren</id>
+<title>Ausschuss Soziales, Gesundheit, Seniorinnen und Senioren: „Kenntnis genommen“ – 2327/2026 Mitteilung über die Verwendung der Budgets der Stadtarbeitsgemeinschaften Behindertenpolitik und Queerpolitik 2026</title>
+<updated>2026-11-17T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2327/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134232#vorlage</id>
 <title>Neue Vorlage 2327/2026: Mitteilung über die Verwendung der Budgets der Stadtarbeitsgemeinschaften Behindertenpolitik und Queerpolitik 2026</title>
 <updated>2026-10-23T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2327/2026"/>
-<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: offen</summary>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 </feed>

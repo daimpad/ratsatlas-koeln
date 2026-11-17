@@ -164,9 +164,9 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34228
-DTSTAMP:20261117T160000Z
-DTSTART:20261117T160000Z
-DTEND:20261116T230000Z
+DTSTAMP:20261117T160300Z
+DTSTART:20261117T160300Z
+DTEND:20261117T181700Z
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
 DESCRIPTION:7. Sitzung des Ausschusses Soziales\, Gesundheit\, Seniorinnen 
  und Senioren\nTagesordnung noch nicht veröffentlicht.\nQuelle: OParl-API 
@@ -614,9 +614,9 @@ DTSTAMP:20261210T130000Z
 DTSTART:20261210T130000Z
 DTEND:20261209T230000Z
 SUMMARY:Rat
-DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
- elle: OParl-API der Stadt Köln\; Datenquelle: Stadt Köln – offenedaten
- -koeln.de
+DESCRIPTION:13. Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.
+ \nQuelle: OParl-API der Stadt Köln\; Datenquelle: Stadt Köln – offened
+ aten-koeln.de
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT

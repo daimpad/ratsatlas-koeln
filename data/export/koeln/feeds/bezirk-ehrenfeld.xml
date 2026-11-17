@@ -9,6 +9,20 @@
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135628#vorlage</id>
+<title>Neue Vorlage 3170/2026: Beantwortung der Anfrage AN/1795/2026 der Fraktion Bündnis 90/Die Grünen bezüglich Photovoltaik-Anlagen auf öffentlichen Gebäuden im Bezirk Ehrenfeld</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#3170/2026"/>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135628#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 3170/2026 Beantwortung der Anfrage AN/1795/2026 der Fraktion Bündnis 90/Die Grünen bezüglich Photovoltaik-Anlagen auf öffentlichen Gebäuden im Bezirk Ehrenfeld</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#3170/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135626#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
 <title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/1795/2026 Anfrage der Fraktion Bündnis 90/Die Grünen, betr.: PV-Anlagen auf öffentlichen Gebäuden im Bezirk Ehrenfeld</title>
 <updated>2026-11-16T00:00:00Z</updated>
@@ -55,21 +69,28 @@
 <title>Bezirksvertretung 4 (Ehrenfeld): „geändert beschlossen“ – AN/1688/2026 Gemeinsamer Antrag der Fraktion Bündnis 90/Die Grünen, SPD-Fraktion, Fraktion Die Linke, CDU-Fraktion, Volt/FDP-Fraktion, betr.: Zeitnahe Umsetzung von Schulstraßen im Bezirk Ehrenfeld</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1688/2026"/>
-<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134693#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
+<title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 2583/2026 Ergänzende Mitteilung zu einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Ehrenfeld vom 01.12.2025 (AN/1386/2025) betreffend "Klimaanpassungsmaßnahmen an der Äußeren Kanalstrasse"</title>
+<updated>2026-11-16T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#2583/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134658#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
 <title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/1444/2026 Anfrage der Fraktion Die Linke, betr.: neuen Bebauungspläne ohne Dachbegrünung</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1444/2026"/>
-<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134657#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
 <title>Bezirksvertretung 4 (Ehrenfeld): „Sache ist erledigt“ – AN/1443/2026 Anfrage der Fraktion Die Linke, betr.: Dachbegrünung bei neuen Bebauungsplänen</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1443/2026"/>
-<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+<summary>Antrag / Anfrage am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134642#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
@@ -90,7 +111,7 @@
 <title>Bezirksvertretung 4 (Ehrenfeld): „Kenntnis genommen“ – 1099/2026 Beantwortung der Anfrage der AfD-Fraktion AN/0551/2026; Sicherheit von Mandatsträger*innen</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#1099/2026"/>
-<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131745#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
@@ -111,14 +132,14 @@
 <title>Neue Vorlage AN/1688/2026: Gemeinsamer Antrag der Fraktion Bündnis 90/Die Grünen, SPD-Fraktion, Fraktion Die Linke, CDU-Fraktion, Volt/FDP-Fraktion, betr.: Zeitnahe Umsetzung von Schulstraßen im Bezirk Ehrenfeld</title>
 <updated>2026-11-13T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1688/2026"/>
-<summary>Gem. Antrag nach § 3 BV4 · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+<summary>Gem. Antrag nach § 3 BV4 · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132293#vorlage</id>
 <title>Neue Vorlage 1099/2026: Beantwortung der Anfrage der AfD-Fraktion AN/0551/2026; Sicherheit von Mandatsträger*innen</title>
 <updated>2026-11-13T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#1099/2026"/>
-<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135626#vorlage</id>
@@ -167,7 +188,7 @@
 <title>Neue Vorlage 2583/2026: Ergänzende Mitteilung zu einer schriftlichen Anfrage der Fraktion Bündnis 90/Die Grünen aus der Sitzung der Bezirksvertretung Ehrenfeld vom 01.12.2025 (AN/1386/2025) betreffend "Klimaanpassungsmaßnahmen an der Äußeren Kanalstrasse"</title>
 <updated>2026-10-07T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#2583/2026"/>
-<summary>Mitteilung BV · federführend: unbekannt · Stand: offen</summary>
+<summary>Mitteilung BV · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134795#vorlage</id>
@@ -195,14 +216,14 @@
 <title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1444/2026 Anfrage der Fraktion Die Linke, betr.: neuen Bebauungspläne ohne Dachbegrünung</title>
 <updated>2026-09-21T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1444/2026"/>
-<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134657#beratung-2026-09-21-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
 <title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1443/2026 Anfrage der Fraktion Die Linke, betr.: Dachbegrünung bei neuen Bebauungsplänen</title>
 <updated>2026-09-21T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1443/2026"/>
-<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+<summary>Antrag / Anfrage am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134642#beratung-2026-09-21-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
@@ -293,14 +314,14 @@
 <title>Neue Vorlage AN/1444/2026: Anfrage der Fraktion Die Linke, betr.: neuen Bebauungspläne ohne Dachbegrünung</title>
 <updated>2026-09-14T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1444/2026"/>
-<summary>Anfrage nach § 4 BV4 (Die Linke) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+<summary>Anfrage nach § 4 BV4 (Die Linke) · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134657#vorlage</id>
 <title>Neue Vorlage AN/1443/2026: Anfrage der Fraktion Die Linke, betr.: Dachbegrünung bei neuen Bebauungsplänen</title>
 <updated>2026-09-14T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/1443/2026"/>
-<summary>Anfrage nach § 4 BV4 (Die Linke) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+<summary>Anfrage nach § 4 BV4 (Die Linke) · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134642#vorlage</id>
@@ -686,26 +707,5 @@
 <updated>2026-01-27T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/0193/2026"/>
 <summary>Gem. Dringlichkeitsantrag BV4 · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130847#vorlage</id>
-<title>Neue Vorlage AN/0112/2026: Antrag der AfD-Fraktion, betr.: Zeitweise Unterbringung von Geflüchteten in Studenten- und Ausbildungswohnheimen zur Entlastung des städtischen Unterbringungssystems</title>
-<updated>2026-01-21T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/0112/2026"/>
-<summary>Antrag nach § 3 BV4 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130767#vorlage</id>
-<title>Neue Vorlage AN/0070/2026: Antrag von Bezirksbürgerrmeister Volker Spelthann auf Durchführung einer Aktuellen Stunde gem. § 5 GeschO, betr.: Auswirkungen Bau Turbo</title>
-<updated>2026-01-16T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#AN/0070/2026"/>
-<summary>Antrag auf eine Aktuelle Stunde nach § 5 · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130726#vorlage</id>
-<title>Neue Vorlage 0123/2026: Beantwortung einer schriftlichen Anfrage der Fraktion Die Linke aus der Sitzung der Bezirksvertretung Ehrenfeld betr . Projekt "Holy Shit" (AN/0005/2026)</title>
-<updated>2026-01-15T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#0123/2026"/>
-<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 </feed>
