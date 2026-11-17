@@ -144,7 +144,7 @@ RATSATLAS_STADT_INFORMIERT=ja RATSATLAS_KONTAKT="contact@nozilla.de" RATSATLAS_W
 
 ## Stufe 6 – PDF-Köpfe (erst nach Klärung mit der Stadt)
 
-> Seit dem 13.11.2026 gibt es dafür den Pipeline-Schritt `python -m pipeline dokumente` (gebaut, getestet, abgeschaltet; TECHNIK.md, Abschnitt „Dokumente (PDF-Köpfe)“): Er läuft in GitHub Actions nach dem Abruf, nur mit `RATSATLAS_PDF_FREIGEGEBEN=ja`, und braucht keine Stichprobe aus Stufe 5. Der Test mit 100 Köpfen ist dort die erste Nacht mit `RATSATLAS_PDF_MAX=100` (Entscheidung des Auftraggebers 13.11.2026). Die Muster sind aus `RE_DEZ` und `RE_DEZ_LOSE` unten abgeleitet (`pipeline/pdfkopf.py`).
+> Seit dem 13.11.2026 gibt es dafür den Pipeline-Schritt `python -m pipeline dokumente` (gebaut, getestet, abgeschaltet; TECHNIK.md, Abschnitt „Dokumente (PDF-Köpfe)“): Er läuft in GitHub Actions nach dem Abruf, nur mit `RATSATLAS_PDF_FREIGEGEBEN=ja`, und braucht keine Stichprobe aus Stufe 5. Der Test mit 100 Köpfen ist dort die erste Nacht mit Dokumenten (Entscheidung des Auftraggebers 13.11.2026; die Grenze von 100 steht seit der Entscheidung vom 17.11.2026 (3) im Code, vorher über `RATSATLAS_PDF_MAX=100`). Die Muster sind aus `RE_DEZ` und `RE_DEZ_LOSE` unten abgeleitet (`pipeline/pdfkopf.py`).
 >
 > **Entschieden (13.11.2026 (a)):** `mainFile` fehlte bisher bei allen gemessenen Vorlagen (Stufe 1: 25 von 25, Stufe 2: 100 von 100 jüngsten; `BERICHT_phase1.md`). Der Pipeline-Schritt liest dann je Vorlage genau eine Datei aus `auxiliaryFile` (die erste PDF-Datei mit der Drucksache oder dem Wort „Vorlage“ im Namen, sonst die erste PDF-Datei) als eigene Methode mit geringerer Konfidenz (TECHNIK.md, „Dokumente (PDF-Köpfe)“). Das Messskript `pdf-koepfe` unten nimmt weiterhin nur `mainFile`.
 

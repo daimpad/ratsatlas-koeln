@@ -1,7 +1,7 @@
 """Dokumente (PDF-Köpfe): federführende Dienststelle aus dem Kopf der Verwaltungsvorlagen („Dezernat, Dienststelle“,
 CLAUDE.md 5.3). Gebaut und getestet, aber abgeschaltet (Entscheidung des Auftraggebers 13.11.2026): Der Auftraggeber
-ruft die Stadt vorher an; danach ist die erste Nacht mit RATSATLAS_PDF_MAX=100 der Test, später gelten 300 je Nacht
-(Entscheidung 13.11.2026 (c)).
+ruft die Stadt vorher an; danach ist die erste Nacht mit Dokumenten der Test mit höchstens 100 Dateien (ERSTE_NACHT, im
+Code, Entscheidung 17.11.2026 (3)), später gelten 300 je Nacht (Entscheidung 13.11.2026 (c)).
 
 Freigabe: keine Anfrage ohne RATSATLAS_STADT_INFORMIERT=ja UND RATSATLAS_PDF_FREIGEGEBEN=ja (Repository-Variablen,
 auch für lokale Testserver). Ohne beide schreibt der Schritt nichts (weder Zustand noch Abrufstatistik): Nächte ohne
@@ -11,11 +11,12 @@ Abrufpolitik: dieselbe wie beim Abruf der Metadaten (pipeline/abruf.py, `get_dat
 Zählwerk und Fehlerbehandlung mit `get_json`): eine Verbindung, mindestens 2 s Abstand, im nächtlichen Lauf fest 20 s
 wie beim Abruf (RATSATLAS_ABSTAND im Dokumentschritt von pages.yml, Entscheidung 15.11.2026; ein eigener Prozess nach
 dem Abrufschritt; der Abstand zählt ab dem Start des Prozesses, also auch zur letzten Anfrage des Abrufs), Zeitfenster
-23–1 Uhr vor jedem Versuch, User-Agent mit RATSATLAS_KONTAKT (Pflicht), keine Weiterleitung, 401/403/404 sofortiger
-Abbruch, 429/5xx Pausen nie über das Fenster hinaus. Vor der ersten Anfrage gelten dieselben Pausen wie für den Abruf
-(sessionnet._pause_grund: 12-Stunden-Regel nach jedem Abbruch, auch einem des Abrufs in dieser Nacht, Retry-After,
-sieben Tage nach drei Nächten mit möglicher Sperre). Vorrang der Metadaten: Der Schritt läuft nach dem Abruf und nur,
-wenn dieser in derselben Nacht vollständig war (`abruf_ok` in STAND.json; lokal genügt ein `abruf_ok`).
+23–1 Uhr vor jedem Versuch, User-Agent mit RATSATLAS_KONTAKT (Pflicht), keine Weiterleitung, 401/403 sofortiger
+Abbruch (HTTP 404 und 410 auf eine Datei: unten, „Fehlende Dateien“), 429/5xx Pausen nie über das Fenster hinaus.
+Vor der ersten Anfrage gelten dieselben Pausen wie für den Abruf (sessionnet._pause_grund: 12-Stunden-Regel nach
+jedem Abbruch, auch einem des Abrufs in dieser Nacht, Retry-After, sieben Tage nach drei Nächten mit möglicher
+Sperre). Vorrang der Metadaten: Der Schritt läuft nach dem Abruf und nur, wenn dieser in derselben Nacht vollständig
+war (`abruf_ok` in STAND.json; lokal genügt ein `abruf_ok`).
 Abbrüche vermerkt er im selben Zustand (zustand_abruf.json): `letzter_abbruch` (kein weiterer Lauf in derselben
 Nacht, auch kein Abruf), `sperre_verdacht` nach sessionnet.moegliche_sperre, `nicht_vor` aus einem Retry-After,
 `tlsfehler`; dazu eigene Zählung unter `dokumente.verdacht` (Nächte mit möglicher Sperre beim Dokumentabruf, nach drei
@@ -32,27 +33,43 @@ Nacht, gemeinsame und eigene Zählung). In der nächsten Nacht steht die Datei h
 Datei mit dauerhaftem Fehler die älteren nicht auf); nach FEHLVERSUCHE_GRENZE Nächten ohne Ergebnis wird sie nicht mehr
 angefragt, bis sich ihre Merkmale ändern. Abbrüche der Ausführungsumgebung (tls, proxy) zählen nicht zur Datei.
 
+Fehlende Dateien (Entscheidung 17.11.2026 (2)): HTTP 404 oder 410 auf eine einzelne Datei liegt an der Datei, nicht an
+einer Sperre. Die Datei wird wie bisher endgültig vermerkt (`http_404`, `http_410`, erneut erst nach einer Änderung
+ihrer Merkmale), dann geht es mit der nächsten Datei weiter (im festen Abstand, ohne `letzter_abbruch`). Die fünfte
+solche Antwort derselben Nacht (GRENZE_FEHLENDE_DATEI, nicht über Variablen einstellbar; gezählt im Zustand unter
+`dokumente.fehlende` zur Nacht in `dokumente.nacht`, ein zweiter Lauf derselben Nacht zählt weiter) beendet den Schritt
+für diese Nacht wie vorher eine einzelne 404: Abbruch der Art `http` mit `letzter_abbruch` (12-Stunden-Regel), keine
+Nacht mit möglicher Sperre; die Warnung nennt den Grund (vielleicht hat sich die Form der Adressen geändert). Nur hier:
+abruf.get_datei, get_json und der Abruf der Metadaten brechen bei 404 weiter sofort ab. Jede Datei zählt wie bisher
+zur Obergrenze.
+
 Obergrenze: höchstens 300 Dateien je Nacht (HOECHSTENS_VORGABE, Entscheidung 13.11.2026 (c), Brief an die Stadt
 Punkt 4); RATSATLAS_PDF_MAX kann sie nur senken (leer oder nicht gesetzt: 300; über 300: 300; 0, negativ oder
-unlesbar: keine Anfrage; Prüfung stj). Gezählt wird jede Datei, für die eine Anfrage beginnt, im Zustand
-(`dokumente.nacht`, `dokumente.dateien`; Nacht = 12 Uhr bis 12 Uhr Ortszeit), vor dem Senden: Ein zweiter Lauf in
-derselben Nacht (Push, Knopfdruck) liest nur den Rest.
+unlesbar: keine Anfrage; Prüfung stj). Erste Nacht mit Dokumenten (Entscheidung 17.11.2026 (3)): Solange
+data/raw/dokumente_koepfe.jsonl keinen Eintrag aus einer früheren Nacht enthält, gelten höchstens ERSTE_NACHT = 100
+Dateien, gleich was RATSATLAS_PDF_MAX sagt (wirksam: das Kleinere). Gezählt wird jede Datei, für die eine Anfrage
+beginnt, im Zustand (`dokumente.nacht`, `dokumente.dateien`; Nacht = 12 Uhr bis 12 Uhr Ortszeit), vor dem Senden: Ein
+zweiter Lauf in derselben Nacht (Push, Knopfdruck) liest nur den Rest, in der ersten Nacht also zusammen höchstens 100.
 
 Auswahl (ohne Anfrage, aus papers.jsonl, organizations.json und beratungen.jsonl; fehlt eine der drei Dateien, keine
-Anfrage): je Verwaltungsvorlage höchstens eine Datei: die Hauptdatei (`mainFile`); fehlt sie (in Köln bisher bei allen
-gemessenen Vorlagen: Stufe 1 25 von 25, Stufe 2 100 von 100 jüngsten, nur `auxiliaryFile` mit 1–3 PDF-Dateien;
-explore/BERICHT_phase1.md), nach der Entscheidung des Auftraggebers vom 13.11.2026 (a) eine Datei aus `auxiliaryFile`:
-unter den PDF-Dateien (laut `mimeType`, ohne ihn nur mit der Endung „.pdf“) in der Reihenfolge der Quelle die erste,
-deren `name` oder `fileName` die Drucksache (1234/2026, 1234-2026, 1234_2026) oder das Wort „Vorlage“ trägt, sonst die
-erste (datei_wahl; Herkunft `quelle` im Eintrag). Welcher Zweig dieser Regel die Datei bestimmt hat (eigene
-Drucksache, Wort „Vorlage“, erste PDF-Datei; dazu wie oft das Wort „Vorlage“ eine Datei mit einer anderen Nummer der
-Form NNNN/JJJJ oder auch dem Wort „Anlage“ im Namen wählt oder die eigene Drucksache erst in einer späteren Datei
-stünde), zählen Log und Abrufstatistik (nur Zahlen, ZWEIGE und HINWEISE; Prüfung stj: mainFile fehlt in Köln bei allen
-rund 43.000 Vorlagen, die Regel bestimmt also jede Wahl). Verwaltungsvorlagen: Drucksache NNNN/JJJJ und Vorlagenart der
-Verwaltung (actors.VERWALTUNG_TYPES, nicht actors.EINWOHNER_TYPES, als Zeichenkette geliefert). Nie: Vorlagen ohne
-Erlaubnis für Hauskoordinaten oder in der Titelmaske (gesperrt(): dieselben Funktionen und Angaben wie build und check:
-geocode.punkt_ausschluss mit Eingaben, Vorlagen natürlicher Personen, Ausschuss für Anregungen und Beschwerden, nicht
-erkennbare Vorlagenart, maske.py; Fixpunkt geocode.sperrmenge; Titelmaske maske.kette), nicht öffentliche Beratungen
+Anfrage): je Verwaltungsvorlage höchstens eine Datei: die Hauptdatei (`mainFile`); fehlt sie (in Köln bei allen rund
+43.000 Vorlagen des vollständigen Abrufs; Prüfung stj), eine Datei aus `auxiliaryFile` nach Regel B (Entscheidung
+17.11.2026 (1), ergänzt 13.11.2026 (a)): unter den PDF-Dateien (laut `mimeType`, ohne ihn nur mit der Endung „.pdf“) in
+der Reihenfolge der Quelle zuerst die erste, deren `name` oder `fileName` die eigene Drucksache trägt (1234/2026,
+1234-2026, 1234_2026); sonst die erste mit dem Wort „Vorlage“ (auch als Wortteil), deren Namen keine andere Nummer der
+Form NNNN/JJJJ tragen (_fremde_nummer: eine Jahresspanne wie „2025/2026“ ist keine Nummer, eine Nummer mit „AN/“
+davor immer eine andere); sonst die erste PDF-Datei (datei_wahl; Herkunft `quelle` im Eintrag). Welcher Zweig die
+Datei bestimmt hat (ZWEIGE: eigene Drucksache, Wort „Vorlage“, erste PDF-Datei) und die Hinweise (HINWEISE: wie oft
+eine Datei mit dem Wort „Vorlage“ wegen einer anderen Nummer übergangen wurde, und wie oft die über „Vorlage“ gewählte
+Datei auch das Wort „Anlage“ trägt) zählen Log und Abrufstatistik (nur Zahlen). Nur Verwaltungsvorlagen der laufenden
+Wahlperiode (Entscheidung 17.11.2026 (4)): Datum (`date`, fehlt es oder ist es unlesbar `created`; als Kalendertag in
+Ortszeit Köln) ab AB_DATUM = 01.11.2025; ohne lesbares Datum keine Datei; ältere Jahre erst nach eigener Entscheidung
+und Absprache mit der Stadt (nicht über Variablen einstellbar). Verwaltungsvorlagen: Drucksache NNNN/JJJJ und
+Vorlagenart der Verwaltung (actors.VERWALTUNG_TYPES, nicht actors.EINWOHNER_TYPES, als Zeichenkette geliefert). Nie:
+Vorlagen ohne Erlaubnis für Hauskoordinaten oder in der Titelmaske (gesperrt(): dieselben Funktionen und Angaben wie
+build und check: geocode.punkt_ausschluss mit Eingaben, Vorlagen natürlicher Personen, Ausschuss für Anregungen und
+Beschwerden, nicht erkennbare Vorlagenart, maske.py; Fixpunkt geocode.sperrmenge; Titelmaske maske.kette), nicht
+öffentliche Beratungen
 (`public` weder true noch fehlend) und Sammellisten nichtöffentlicher Punkte, und keine Datei, die auch bei einer
 solchen Vorlage steht (Hauptdatei oder Anlage), auch bei einer ausgelassenen (ohne Drucksachennummer oder als gelöscht
 gemeldet) und auch unter einer anderen Kennung mit derselben Adresse (Kennung, downloadUrl und accessUrl in der
@@ -100,7 +117,7 @@ import subprocess
 import sys
 import urllib.parse
 from collections import Counter
-from datetime import timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from . import abruf, actors, config, geocode, maske, pdfkopf, sessionnet, volltext
@@ -109,6 +126,17 @@ from .fetch import _now, _write
 FREIGABE = "RATSATLAS_PDF_FREIGEGEBEN"
 HOECHSTENS = "RATSATLAS_PDF_MAX"
 HOECHSTENS_VORGABE = 300
+# erste Nacht mit Dokumenten (kein Eintrag in config.DOKUMENTE aus einer früheren Nacht): höchstens so viele Dateien,
+# gleich was RATSATLAS_PDF_MAX sagt (Entscheidung 17.11.2026 (3); Brief an die Stadt, Punkt 4)
+ERSTE_NACHT = 100
+# HTTP 404 oder 410 auf eine Datei: dateibezogen, weiter mit der nächsten; die GRENZE_FEHLENDE_DATEI-te Antwort dieser
+# Art in derselben Nacht beendet den Schritt wie vorher eine einzelne (Entscheidung 17.11.2026 (2)); keine Variable
+FEHLENDE_DATEI_HTTP = (404, 410)
+GRENZE_FEHLENDE_DATEI = 5
+# Rückstand nur aus der laufenden Wahlperiode: Verwaltungsvorlagen mit Datum ab dem 01.11.2025 (Beginn der Wahlperiode
+# des Rates in NRW; Entscheidung 17.11.2026 (4)); ältere Jahre erst nach eigener Entscheidung und Absprache mit der
+# Stadt, daher keine Variable
+AB_DATUM = date(2025, 11, 1)
 MAX_BYTES = 25_000_000           # je Datei (laut size, Content-Length und gelesen)
 LESEFRIST = 120                  # Sekunden für eine ganze Antwort ab dem Senden (darüber: mögliche Sperre)
 PRUEF_FRIST = 60                 # Sekunden für den Prüfprozess (Wanduhr)
@@ -130,17 +158,19 @@ QUELLEN = ("mainFile", "auxiliaryFile")
 # Name einer Datei in auxiliaryFile, der sie als Vorlage ausweist: das Wort „Vorlage“, auch als Wortteil
 # („Beschlussvorlage“), in beliebiger Schreibung (daneben die Drucksache, _drucksache_muster)
 RE_VORLAGE_WORT = re.compile(r"vorlage", re.I)
-# Zweige der Regel unter auxiliaryFile (datei_wahl, Entscheidung 13.11.2026 (a)) und Hinweise zum Zweig „vorlage“, nur
-# als Zahlen in Log und Abrufstatistik (Prüfung stj): Ob die Regel die Vorlage selbst trifft, soll die Testnacht zeigen
+# Zweige der Regel B unter auxiliaryFile (datei_wahl, Entscheidung 17.11.2026 (1)) und Hinweise, nur als Zahlen in Log
+# und Abrufstatistik (Prüfung stj): Ob die Regel die Vorlage selbst trifft, soll die Testnacht zeigen. Hinweise:
+# „uebergangen“ (eine Datei mit dem Wort „Vorlage“ trug eine andere Nummer und wurde übergangen; Zweige „vorlage“ und
+# „erste“), „auch_anlage“ (die über „Vorlage“ gewählte Datei trägt auch das Wort „Anlage“; Zweig „vorlage“)
 ZWEIGE = {"drucksache": "mit eigener Drucksache", "vorlage": "mit dem Wort „Vorlage“", "erste": "erste PDF-Datei"}
-HINWEISE = {"fremde_nummer": "mit anderer Nummer NNNN/JJJJ im Namen",
-            "eigene_spaeter": "eigene Drucksache erst in einer späteren Datei",
-            "auch_anlage": "auch mit dem Wort „Anlage“"}
+HINWEISE = {"uebergangen": "Datei mit dem Wort „Vorlage“ wegen anderer Nummer NNNN/JJJJ übergangen",
+            "auch_anlage": "über das Wort „Vorlage“ gewählt und auch mit dem Wort „Anlage“"}
 # das Wort „Anlage“ am Wortanfang („Anlage 2“, „Anlagen“, nicht „Grünanlage“), nur für den Hinweis „auch_anlage“
 RE_ANLAGE_WORT = re.compile(r"\banlage", re.I)
-# Nummer der Form NNNN/JJJJ (auch mit „-“ oder „_“) in einem Dateinamen, für den Hinweis „fremde_nummer“; eine
-# Jahresspanne wie „2025/2026“ (Schul- oder Haushaltsjahr) zählt nicht
-RE_NUMMER = re.compile(r"(?<![0-9])(\d{1,4})[/_-]((?:19|20)\d{2})(?![0-9])")
+# Nummer der Form NNNN/JJJJ (auch mit „-“ oder „_“) in einem Dateinamen (_fremde_nummer), mit „AN/“ davor (auch „AN-“,
+# „AN_“, in Großbuchstaben wie in der Drucksache AN/NNNN/JJJJ) als eigene Gruppe: die Nummer eines Antrags oder einer
+# Anfrage; eine Jahresspanne wie „2025/2026“ (Schul- oder Haushaltsjahr) zählt nicht als Nummer
+RE_NUMMER = re.compile(r"(?<![0-9])(AN[/_-])?(\d{1,4})[/_-]((?:19|20)\d{2})(?![0-9])")
 # Status je Datei: aus dem Prüfprozess (pdfkopf.STATUS) oder vom Abruf
 STATUS = (*pdfkopf.STATUS, "zeitueberschreitung", "fehler_pruefung", "zu_gross", "kein_pdf", "adresse")
 RE_HTTP_STATUS = re.compile(r"http_[1-5]\d\d")
@@ -152,6 +182,8 @@ RE_SHA256 = re.compile(r"[0-9a-f]{64}")
 # Gründe, aus denen eine Vorlage oder Datei nicht ausgewählt wird (Log und Abrufstatistik)
 GRUENDE = {
     "drucksache": "Drucksache nicht NNNN/JJJJ", "vorlagenart": "keine Vorlagenart der Verwaltung",
+    "ohne_datum": "ohne lesbares Datum (date, created)",
+    "vor_wahlperiode": f"Datum vor dem {AB_DATUM:%d.%m.%Y} (vor der Wahlperiode)",
     "ohne_hauskoordinate": "ohne Hauskoordinate oder Titelmaske", "nicht_oeffentlich": "nicht öffentlich beraten",
     "ohne_datei": "ohne mainFile und ohne PDF-Datei in auxiliaryFile", "doppelt": "Datei schon ausgewählt",
     "datei_gesperrt": "Datei (Kennung oder Adresse) auch bei einer ausgeschlossenen Vorlage",
@@ -180,6 +212,20 @@ def hoechstens():
 def _nacht(jetzt):
     """Nacht eines Zeitpunkts: 12 Uhr bis 12 Uhr Ortszeit Köln, benannt nach dem Abend (wie die 12-Stunden-Regel)."""
     return (jetzt.astimezone(abruf.ORTSZEIT) - timedelta(hours=12)).date().isoformat()
+
+
+def erste_nacht(eintraege, nacht):
+    """Erste Nacht mit Dokumenten (Entscheidung 17.11.2026 (3))? Ja, solange kein Eintrag (`eintraege`: laden()) aus
+    einer früheren Nacht als `nacht` (_nacht) stammt. So erkennt sie auch ein zweiter Lauf derselben Nacht; fehlt die
+    Datei (etwa nach einem Verlust des Zwischenspeichers), gilt wieder die vorsichtige Grenze."""
+    return not any(_nacht(sessionnet._zeit(e["zeit"])) < nacht for e in eintraege.values())
+
+
+def grenze_der_nacht(eintraege, nacht):
+    """(Dateien je Nacht, erste Nacht?): hoechstens(); in der ersten Nacht mit Dokumenten höchstens ERSTE_NACHT, gleich
+    was RATSATLAS_PDF_MAX sagt (wirksam das Kleinere)."""
+    erste = erste_nacht(eintraege, nacht)
+    return (min(hoechstens(), ERSTE_NACHT) if erste else hoechstens()), erste
 
 
 def _ursprung(url):
@@ -342,6 +388,29 @@ def _verwaltungsvorlage(p):
             and art not in actors.EINWOHNER_TYPES)
 
 
+def _kalendertag(wert):
+    """Kalendertag aus einem ISO-Datum („2025-11-01“) oder Zeitpunkt („2025-11-01T10:00:00+01:00“: mit Zone in Ortszeit
+    Köln umgerechnet, ohne Zone wie geschrieben); None für anderes oder Unlesbares."""
+    if not isinstance(wert, str):
+        return None
+    wert = wert.strip()
+    try:
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", wert):
+            return date.fromisoformat(wert)
+        if re.match(r"\d{4}-\d{2}-\d{2}[T ]", wert):
+            t = datetime.fromisoformat(wert)
+            return t.astimezone(abruf.ORTSZEIT).date() if t.utcoffset() is not None else t.date()
+    except (ValueError, OverflowError):
+        return None
+    return None
+
+
+def datum_der_vorlage(p):
+    """Datum einer Vorlage für den Zeitraum der Auswahl (Entscheidung 17.11.2026 (4)): `date`, fehlt es oder ist es
+    unlesbar, `created` (_kalendertag); ohne beides None (die Vorlage wird nicht ausgewählt)."""
+    return _kalendertag(p.get("date")) or _kalendertag(p.get("created"))
+
+
 def _datei_ok(f):
     """Eintrag einer Dateiliste als Datei mit Kennung (Objekt, `id` als nicht leere Zeichenkette, nicht gelöscht)?"""
     return isinstance(f, dict) and isinstance(f.get("id"), str) and bool(f["id"]) and not f.get("deleted")
@@ -370,20 +439,23 @@ def _pdf_laut_metadaten(f):
 
 def _drucksache_muster(reference):
     """Muster der Drucksache NNNN/JJJJ in einem Dateinamen: Nummer (auch mit führenden Nullen), „/“, „-“ oder „_“, Jahr,
-    nicht innerhalb einer längeren Zahl („11234/2026“, „1234/20261“ nicht); None für andere Drucksachen."""
+    nicht innerhalb einer längeren Zahl („11234/2026“, „1234/20261“ nicht) und nicht als Teil der Drucksache eines
+    Antrags oder einer Anfrage („AN/1234/2026“ ist eine andere Nummer, _fremde_nummer); None für andere Drucksachen."""
     m = re.fullmatch(r"(\d{1,4})/(\d{4})", reference if isinstance(reference, str) else "")
     if not m:
         return None
-    return re.compile(r"(?<![0-9])0*" + str(int(m.group(1))) + r"[/_-]" + m.group(2) + r"(?![0-9])")
+    return re.compile(r"(?<![0-9])(?<!AN[/_-])0*" + str(int(m.group(1))) + r"[/_-]" + m.group(2) + r"(?![0-9])")
 
 
 def datei_wahl(p):
-    """Datei, deren erste Seite für die Vorlage gelesen wird, und ihre Herkunft: (Datei, „mainFile“), sonst (Entscheidung
-    des Auftraggebers 13.11.2026 (a)) höchstens eine Datei aus `auxiliaryFile`: unter den PDF-Dateien
-    (_pdf_laut_metadaten) in der Reihenfolge der Quelle die erste, deren `name` oder `fileName` die Drucksache (1234/2026,
-    1234-2026, 1234_2026) oder das Wort „Vorlage“ trägt, sonst die erste (Datei, „auxiliaryFile“); ohne beides (None,
-    None). Eine Hauptdatei in anderer Form als PDF bleibt die Wahl (ausgeschlossen als „kein PDF laut mimeType“, keine
-    Anlage ersatzweise). Eine Funktion für die Auswahl und für build (kopf_der_vorlage)."""
+    """Datei, deren erste Seite für die Vorlage gelesen wird, und ihre Herkunft: (Datei, „mainFile“), sonst höchstens
+    eine Datei aus `auxiliaryFile` nach Regel B (Entscheidung des Auftraggebers 17.11.2026 (1), ergänzt 13.11.2026 (a)):
+    unter den PDF-Dateien (_pdf_laut_metadaten) in der Reihenfolge der Quelle zuerst die erste, deren `name` oder
+    `fileName` die eigene Drucksache trägt (1234/2026, 1234-2026, 1234_2026); sonst die erste mit dem Wort „Vorlage“,
+    deren Namen keine andere Nummer der Form NNNN/JJJJ tragen (_fremde_nummer); sonst die erste PDF-Datei (Datei,
+    „auxiliaryFile“); ohne beides (None, None). Eine Hauptdatei in anderer Form als PDF bleibt die Wahl (ausgeschlossen
+    als „kein PDF laut mimeType“, keine Anlage ersatzweise). Eine Funktion für die Auswahl und für build
+    (kopf_der_vorlage)."""
     f, quelle, _, _ = wahl_mit_zweig(p)
     return f, quelle
 
@@ -393,21 +465,23 @@ def _namen(f):
 
 
 def _fremde_nummer(namen, reference):
-    """Trägt ein Name eine Nummer der Form NNNN/JJJJ (auch „-“, „_“), die nicht die eigene Drucksache ist (keine
-    Jahresspanne wie „2025/2026“)?"""
+    """Trägt ein Name eine Nummer der Form NNNN/JJJJ (auch „-“, „_“), die nicht die eigene Drucksache ist? Keine Nummer
+    ist eine Jahresspanne wie „2025/2026“; eine Nummer mit „AN/“ davor (Antrag oder Anfrage, RE_NUMMER) ist immer eine
+    andere, auch mit den Ziffern der eigenen Drucksache."""
     eigen = re.fullmatch(r"(\d{1,4})/(\d{4})", reference if isinstance(reference, str) else "")
     eigen = (int(eigen.group(1)), eigen.group(2)) if eigen else None
-    return any((int(n), j) != eigen and not (len(n) == 4 and int(n) == int(j) - 1)
-               for name in namen for n, j in RE_NUMMER.findall(name))
+    return any(an or ((int(n), j) != eigen and not (len(n) == 4 and int(n) == int(j) - 1))
+               for name in namen for an, n, j in RE_NUMMER.findall(name))
 
 
 def wahl_mit_zweig(p):
     """datei_wahl mit dem Zweig der Regel und Hinweisen, nur zum Zählen (Prüfung stj): (Datei, Herkunft, Zweig,
-    Hinweise). Zweig „mainFile“ oder unter auxiliaryFile einer aus ZWEIGE: „drucksache“ (der Name trägt die eigene
-    Drucksache, auch zusammen mit „Vorlage“), „vorlage“ (nur das Wort „Vorlage“), „erste“ (keins von beiden, die erste
-    PDF-Datei). Hinweise (HINWEISE) nur zum Zweig „vorlage“: „fremde_nummer“ (der Name trägt eine andere Nummer der Form
-    NNNN/JJJJ, etwa einer älteren Vorlage), „eigene_spaeter“ (eine spätere PDF-Datei trägt die eigene Drucksache) und
-    „auch_anlage“ (der Name trägt auch das Wort „Anlage“). Ohne Datei (None, None, None, frozenset())."""
+    Hinweise). Zweig „mainFile“ oder unter auxiliaryFile nach Regel B (Entscheidung 17.11.2026 (1)) einer aus ZWEIGE:
+    „drucksache“ (die erste PDF-Datei, deren Name die eigene Drucksache trägt), „vorlage“ (sonst die erste mit dem Wort
+    „Vorlage“ ohne andere Nummer NNNN/JJJJ im Namen), „erste“ (sonst die erste PDF-Datei). Hinweise (HINWEISE):
+    „uebergangen“ (eine Datei mit dem Wort „Vorlage“ wurde wegen einer anderen Nummer übergangen; Zweige „vorlage“ und
+    „erste“, auch wenn die erste PDF-Datei eben diese ist) und „auch_anlage“ (die über „Vorlage“ gewählte Datei trägt
+    auch das Wort „Anlage“). Ohne Datei (None, None, None, frozenset())."""
     mf = p.get("mainFile")
     if _datei_ok(mf):
         return mf, "mainFile", "mainFile", frozenset()
@@ -417,18 +491,19 @@ def wahl_mit_zweig(p):
     if not pdfs:
         return None, None, None, frozenset()
     muster = _drucksache_muster(p.get("reference"))
-    eigene = [bool(muster) and any(muster.search(n) for n in _namen(f)) for f in pdfs]
-    for i, f in enumerate(pdfs):
-        if eigene[i]:
+    for f in pdfs:   # 1. eigene Drucksache, in allen PDF-Dateien vor dem Wort „Vorlage“
+        if muster and any(muster.search(n) for n in _namen(f)):
             return f, "auxiliaryFile", "drucksache", frozenset()
+    hinweise = set()
+    for f in pdfs:   # 2. das Wort „Vorlage“ ohne andere Nummer im Namen
         if any(RE_VORLAGE_WORT.search(n) for n in _namen(f)):
-            hinweise = {"fremde_nummer"} if _fremde_nummer(_namen(f), p.get("reference")) else set()
-            if any(eigene[i + 1:]):
-                hinweise.add("eigene_spaeter")
+            if _fremde_nummer(_namen(f), p.get("reference")):
+                hinweise.add("uebergangen")
+                continue
             if any(RE_ANLAGE_WORT.search(n) for n in _namen(f)):
                 hinweise.add("auch_anlage")
             return f, "auxiliaryFile", "vorlage", frozenset(hinweise)
-    return pdfs[0], "auxiliaryFile", "erste", frozenset()
+    return pdfs[0], "auxiliaryFile", "erste", frozenset(hinweise)   # 3. die erste PDF-Datei
 
 
 def _adresse(wert):
@@ -474,9 +549,11 @@ def auswahl(roh, orgs, beratungen, eintraege):
     """Dateien zum Lesen, neueste zuerst, und Zähler der Gründe, aus denen Vorlagen oder Dateien nicht in Frage kommen
     (GRUENDE). `roh`: Vorlagen wie in papers.jsonl; `orgs`: organizations.json; `beratungen`: Zeilen aus
     beratungen.jsonl; `eintraege`: laden(). Je Vorlage höchstens eine Datei (datei_wahl: mainFile, sonst eine aus
-    auxiliaryFile), mit ihrer Herkunft (`quelle`). Dateien, die auch bei einer Vorlage ohne Hauskoordinate (oder in der
-    Titelmaske) oder einer nicht öffentlich beratenen stehen, werden nie gelesen (etwa eine Eingabe als Anlage einer
-    Mitteilung), auch nicht die einer ausgelassenen Vorlage (ohne Drucksachennummer oder als gelöscht gemeldet; ohne
+    auxiliaryFile), mit ihrer Herkunft (`quelle`); nur Verwaltungsvorlagen mit Datum ab AB_DATUM (datum_der_vorlage;
+    ohne lesbares Datum keine). Die Sperre der Dateien unten gilt für die Vorlagen aller Jahre. Dateien, die auch bei
+    einer Vorlage ohne Hauskoordinate (oder in der Titelmaske) oder einer nicht öffentlich beratenen stehen, werden nie
+    gelesen (etwa eine Eingabe als Anlage einer Mitteilung), auch nicht die einer ausgelassenen Vorlage (ohne
+    Drucksachennummer oder als gelöscht gemeldet; ohne
     Erlaubnis wie in gesperrt()), und auch nicht unter einer anderen Kennung mit derselben Adresse: verglichen werden
     Kennung, downloadUrl und accessUrl in der Vergleichsform _adresse (Prüfung dok2: vorher nur die Kennung, und nur bei
     Vorlagen nach build.einlesen). Eine Datei, die für eine Vorlage Hauptdatei und für eine andere Anlage ist, zählt als
@@ -500,6 +577,10 @@ def auswahl(roh, orgs, beratungen, eintraege):
             gruende["drucksache"] += 1
         elif not _verwaltungsvorlage(p):
             gruende["vorlagenart"] += 1
+        elif (tag := datum_der_vorlage(p)) is None:   # Zeitraum der Auswahl (Entscheidung 17.11.2026 (4))
+            gruende["ohne_datum"] += 1
+        elif tag < AB_DATUM:
+            gruende["vor_wahlperiode"] += 1
         elif p["id"] in sperre:
             gruende["ohne_hauskoordinate"] += 1
         elif _nicht_oeffentlich(p, oeffentlich):
@@ -601,8 +682,9 @@ def selbsttest():
 
 def _eigener_zustand(z, jetzt, grenze):
     """Eintrag `dokumente` im Zustand vorsichtig lesen: unlesbare Nacht oder Zahl → in dieser Nacht ausgeschöpft
-    (`grenze`); unlesbare Zählung der Verdachtsnächte → VERDACHT_NAECHTE, unlesbarer Zeitpunkt → jetzt. Liefert (Eintrag,
-    Meldungen)."""
+    (`grenze`); unlesbare Zahl der fehlenden Dateien (`fehlende`, HTTP 404/410) → GRENZE_FEHLENDE_DATEI − 1 (die
+    nächste solche Antwort in dieser Nacht beendet den Schritt, wie vor dem 17.11.2026 jede); unlesbare Zählung der
+    Verdachtsnächte → VERDACHT_NAECHTE, unlesbarer Zeitpunkt → jetzt. Liefert (Eintrag, Meldungen)."""
     d = z.get(SCHLUESSEL)
     if d is None:
         return {}, []
@@ -616,6 +698,11 @@ def _eigener_zustand(z, jetzt, grenze):
         if "nacht" in d or "dateien" in d:
             meldungen.append(f"{SCHLUESSEL}.nacht/dateien unlesbar, gilt in dieser Nacht als ausgeschöpft")
             d.update(nacht=_nacht(jetzt), dateien=grenze)
+    f = d.get("fehlende")
+    if "fehlende" in d and (isinstance(f, bool) or not isinstance(f, int) or f < 0):
+        meldungen.append(f"{SCHLUESSEL}.fehlende unlesbar, gilt als {GRENZE_FEHLENDE_DATEI - 1} (die nächste Antwort "
+                         "404 oder 410 in dieser Nacht beendet den Schritt)")
+        d["fehlende"] = GRENZE_FEHLENDE_DATEI - 1
     v = d.get("verdacht")
     if v is not None:
         if not isinstance(v, dict):
@@ -700,18 +787,20 @@ def _abbruch_vermerken(e, jetzt):
 # --- Schritt ------------------------------------------------------------------------------------------------------------
 
 def _regel_text(kandidaten, lauf=None):
-    """Zweige der Regel unter auxiliaryFile (ZWEIGE) in der Auswahl und, mit `lauf`, in diesem Lauf, dazu die Hinweise
-    (HINWEISE) in der Auswahl; nur Zahlen (Prüfung stj)."""
+    """Zweige der Regel B unter auxiliaryFile (ZWEIGE) in der Auswahl und, mit `lauf`, in diesem Lauf, dazu die Hinweise
+    (HINWEISE) in der Auswahl; nur Zahlen (Prüfung stj, Entscheidung 17.11.2026 (1))."""
     zweige = Counter(k["_zweig"] for k in kandidaten)
     hinweise = Counter(h for k in kandidaten for h in k["_hinweise"])
     text = ("Regel unter auxiliaryFile: Auswahl " + ", ".join(f"{t} {zweige[z]}" for z, t in ZWEIGE.items())
-            + " (davon mit dem Wort „Vorlage“: " + ", ".join(f"{t} {hinweise[h]}" for h, t in HINWEISE.items()) + ")")
+            + " (Hinweise: " + ", ".join(f"{t} {hinweise[h]}" for h, t in HINWEISE.items()) + ")")
     if lauf is not None:
         text += "; in diesem Lauf " + ", ".join(f"{t} {lauf['zweige'][z]}" for z, t in ZWEIGE.items())
     return text
 
 
-def _zusammenfassung(kandidaten, lauf, schon, grenze, gruende):
+def _zusammenfassung(kandidaten, lauf, schon, grenze, gruende, fehlende=0, erste=False):
+    """Text der Abrufstatistik und des Logs, nur Zahlen. `schon`, `fehlende`: angefragte Dateien und Dateien mit HTTP
+    404/410 dieser Nacht vor diesem Lauf; `erste`: erste Nacht mit Dokumenten (grenze_der_nacht)."""
     ergebnisse, versucht = lauf["ergebnisse"], lauf["versucht"]
     arten = Counter(e["trefferart"] for e in ergebnisse if e["status"] == "ok")
     erkannt = sum(arten[a] for a in pdfkopf.MIT_KENNUNG)
@@ -719,7 +808,8 @@ def _zusammenfassung(kandidaten, lauf, schon, grenze, gruende):
     nachrang = sum(1 for k in kandidaten if k["_fehlversuche"])
     auswahl_ = Counter(k["quelle"] for k in kandidaten)
     teile = [f"Auswahl {len(kandidaten)} Dateien (neu, geändert oder nach einem Fehlversuch erneut: {nachrang}), in "
-             f"diesem Lauf {versucht} (in dieser Nacht {schon + versucht} von höchstens {grenze})",
+             f"diesem Lauf {versucht} (in dieser Nacht {schon + versucht} von höchstens {grenze}"
+             + (", erste Nacht mit Dokumenten" if erste else "") + ")",
              "Herkunft: Auswahl " + ", ".join(f"aus {q} {auswahl_[q]}" for q in QUELLEN) + "; in diesem Lauf "
              + ", ".join(f"aus {q} {lauf['quellen'][q]}" for q in QUELLEN)
              + f"; Vorlagen ohne PDF-Datei {gruende['ohne_datei']}",
@@ -727,6 +817,8 @@ def _zusammenfassung(kandidaten, lauf, schon, grenze, gruende):
              f"erkannt {erkannt} (" + ", ".join(f"{a} {arten[a]}" for a in pdfkopf.MIT_KENNUNG) + ")",
              "ohne Kennung " + ", ".join(f"{a} {arten[a]}" for a in pdfkopf.OHNE_KENNUNG),
              "nicht gelesen oder geprüft " + (", ".join(f"{s} {n}" for s, n in sorted(fehler.items())) or "0"),
+             f"fehlende Dateien (HTTP 404/410): in diesem Lauf {lauf['fehlende']}, in dieser Nacht "
+             f"{fehlende + lauf['fehlende']} (bei {GRENZE_FEHLENDE_DATEI} endet der Schritt für die Nacht)",
              "übersprungen: " + ", ".join(f"{GRUENDE[g]} {gruende[g]}" for g in GRUENDE)]
     return "; ".join(teile)
 
@@ -792,40 +884,53 @@ def _lauf(zeile):
         return _uebersprungen("Abruf der Metadaten in dieser Nacht nicht vollständig (Vorrang der Metadaten)")
     nacht = _nacht(jetzt)
     schon = d.get("dateien", 0) if d.get("nacht") == nacht else 0
+    fehlende = d.get("fehlende", 0) if d.get("nacht") == nacht else 0   # HTTP 404/410 dieser Nacht (eine neue: 0)
     eintraege = laden()
+    grenze, erste = grenze_der_nacht(eintraege, nacht)
+    if erste:
+        print(f"Dokumente: erste Nacht mit Dokumenten: höchstens {ERSTE_NACHT} Dateien (Entscheidung 17.11.2026 (3)); "
+              f"in dieser Nacht höchstens {grenze}")
     roh = [json.loads(x) for x in config.PAPERS.read_text(encoding="utf-8").splitlines() if x.strip()]
     orgs = json.loads(config.ORGANIZATIONS.read_text(encoding="utf-8"))
     beratungen = [json.loads(x) for x in config.BERATUNGEN.read_text(encoding="utf-8").splitlines() if x.strip()]
     kandidaten, gruende = auswahl(roh, orgs, beratungen, eintraege)
+    print(f"Dokumente: nur Verwaltungsvorlagen mit Datum ab dem {AB_DATUM:%d.%m.%Y} (Entscheidung 17.11.2026 (4)); "
+          f"übergangen mit älterem Datum {gruende['vor_wahlperiode']}, ohne lesbares Datum {gruende['ohne_datum']}")
     anlagen = sum(1 for k in kandidaten if k["quelle"] == "auxiliaryFile")
     if anlagen or gruende["ohne_datei"]:
-        print(f"Dokumente: {anlagen} Dateien aus auxiliaryFile ausgewählt (ohne mainFile, Entscheidung 13.11.2026 (a)); "
-              f"{gruende['ohne_datei']} Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei in auxiliaryFile; "
-              + _regel_text(kandidaten))
+        print(f"Dokumente: {anlagen} Dateien aus auxiliaryFile ausgewählt (ohne mainFile, Regel B, Entscheidung "
+              f"17.11.2026 (1)); {gruende['ohne_datei']} Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei in "
+              "auxiliaryFile; " + _regel_text(kandidaten))
     rest = max(grenze - schon, 0)
-    lauf = {"ergebnisse": [], "versucht": 0, "quellen": Counter(), "zweige": Counter()}
+    lauf = {"ergebnisse": [], "versucht": 0, "quellen": Counter(), "zweige": Counter(), "fehlende": 0}
     ergebnis = f"übersprungen: Obergrenze dieser Nacht erreicht ({schon} von höchstens {grenze})"
     try:
         if rest and kandidaten and not selbsttest():   # vor der ersten Anfrage: ohne heilen Prüfprozess keine
             ergebnis = _uebersprungen("Prüfprozess besteht den Selbsttest an der eingebauten Probedatei nicht (pypdf "
                                       "fehlt, andere Version oder Absturz)", True)
         elif rest:
-            ergebnis = _lesen(kandidaten[:rest], nacht, schon, lauf, zeile)
+            ergebnis = _lesen(kandidaten[:rest], nacht, schon, lauf, zeile, fehlende)
     finally:
         if config.DOKUMENTE.exists():   # angehängte Einträge zusammenführen (je Datei einer, geordnet)
             _schreiben({**eintraege, **{e["file"]: e for e in lauf["ergebnisse"]}})
-    return f"{ergebnis}; " + _zusammenfassung(kandidaten, lauf, schon, grenze, gruende)
+    return f"{ergebnis}; " + _zusammenfassung(kandidaten, lauf, schon, grenze, gruende, fehlende, erste)
 
 
-def _lesen(auswahl_, nacht, schon, lauf, zeile):
+def _lesen(auswahl_, nacht, schon, lauf, zeile, fehlende=0):
     """Dateien nacheinander lesen und prüfen; zählt je Datei vor dem Senden (`dokumente.dateien`, `lauf["versucht"]`).
-    Liefert „ok“, „unterbrochen: …“ (Zeitfenster) oder „abbruch: …“."""
+    HTTP 404 oder 410 auf eine Datei (Entscheidung 17.11.2026 (2)): zur Datei vermerkt, gezählt (`dokumente.fehlende`
+    zur Nacht, mit `fehlende` aus früheren Läufen derselben Nacht; `lauf["fehlende"]`), weiter mit der nächsten Datei;
+    die GRENZE_FEHLENDE_DATEI-te dieser Nacht beendet den Schritt wie vorher eine einzelne (Abbruch der Art `http`,
+    `letzter_abbruch`, keine Nacht mit möglicher Sperre). Liefert „ok“, „unterbrochen: …“ (Zeitfenster) oder
+    „abbruch: …“."""
     gelesen, ergebnisse = 0, lauf["ergebnisse"]
     for k in auswahl_:
         lauf["versucht"] += 1
         lauf["quellen"][k["quelle"]] += 1
         lauf["zweige"][k["_zweig"]] += 1
-        _eigener_zustand_setzen(nacht=nacht, dateien=schon + lauf["versucht"])
+        # mit der Nacht auch die Zahl der fehlenden Dateien (in einer neuen Nacht 0: entfernt)
+        _eigener_zustand_setzen(nacht=nacht, dateien=schon + lauf["versucht"],
+                                fehlende=fehlende + lauf["fehlende"] or None)
         daten = None
         try:
             daten = abruf.get_datei(k["url"], MAX_BYTES, LESEFRIST)
@@ -846,6 +951,16 @@ def _lesen(auswahl_, nacht, schon, lauf, zeile):
                            ergebnisse, zeile)
             if a.art in ("zu_gross", "adresse"):
                 continue
+            if a.art == "http" and a.code in FEHLENDE_DATEI_HTTP:   # liegt an der Datei, kein Sperrsignal
+                lauf["fehlende"] += 1
+                n = fehlende + lauf["fehlende"]
+                _eigener_zustand_setzen(fehlende=n)
+                if n < GRENZE_FEHLENDE_DATEI:
+                    continue   # nächste Datei im festen Abstand (abruf._anfrage), ohne letzter_abbruch
+                # dieselbe Art und dieselben Folgen wie vorher eine einzelne 404, mit dem Grund vorn in der Meldung
+                a = abruf.Abbruch(f"{n} Dateien mit HTTP 404 oder 410 in dieser Nacht (Grenze {GRENZE_FEHLENDE_DATEI}; "
+                                  f"vielleicht hat sich die Form der Adressen geändert), zuletzt {a}", a.art, a.ziel,
+                                  a.code, a.nicht_vor)
             if a.art == "zeitfenster":
                 return f"unterbrochen: Zeitfenster endete ({a})"
             meldung = _abbruch_vermerken(a, abruf.uhr())
@@ -873,7 +988,10 @@ def _abbruch_status(a):
 
 
 def _vermerken(k, e, ergebnisse, zeile):
-    eintrag = {"file": k["file"], "paper": k["paper"], "quelle": k["quelle"], "zeit": _now(),
+    # Zeitpunkt nach derselben Uhr wie die Nacht (abruf.uhr, im Betrieb die Systemzeit wie _now): erste_nacht vergleicht
+    # die Nacht der Einträge mit der des Laufs
+    eintrag = {"file": k["file"], "paper": k["paper"], "quelle": k["quelle"],
+               "zeit": abruf.uhr().isoformat(timespec="seconds"),
                **{m: k[m] for m in MERKMALE},
                **{f: e[f] for f in ("status", "trefferart", "kennung", "fehlerart", "sha256", "groesse",
                                     "fehlversuche")}}

@@ -37,7 +37,8 @@ SCHRITTE = {
                        "als bisher, bleibt der bisherige Stand; ruht der Abruf einer Liste deshalb, bis das geprüft ist, "
                        "nennt das der Datenstand."),
     "dokumente": ("Dokumente", "Liest nach dem Abruf, nur nach Freigabe durch die Stadt (bis dahin abgeschaltet), "
-                               "nachts höchstens 300 Vorlagen der Verwaltung, jeweils nur die erste Seite einer Anlage, "
+                               "nachts höchstens 300 Vorlagen der Verwaltung seit dem 1. November 2025 (in der ersten "
+                               "Nacht höchstens 100), jeweils nur die erste Seite einer Anlage, "
                                "weil die Stadt kein Hauptdokument nennt (nennt sie eines, dessen erste Seite), und "
                                "erkennt im Kopf die Kennung von Dezernat und Dienststelle. Aus dem Dokument übernommen "
                                "wird nur diese Kennung; vermerkt werden außerdem nur Prüfsumme und Größe der Datei und "

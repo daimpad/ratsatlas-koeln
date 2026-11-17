@@ -1,8 +1,10 @@
 """Dokumente (PDF-Köpfe, pipeline/dokumente.py und pipeline/pdfkopf.py; Entscheidung 13.11.2026: gebaut, getestet,
 abgeschaltet): Freigabe, Obergrenze je Nacht, Zeitfenster, Abbrüche und Sperrnächte im gemeinsamen Zustand, fremde
 Hosts, zu große und unlesbare Dateien, Erkennung des Kopfs an erfundenen Köpfen, Übernahme als Federführung und dass
-nichts Abgeleitetes Text enthält. Alle PDF-Dateien entstehen hier mit einem kleinen PDF-Schreiber; alle Inhalte sind
-erfunden. Anfragen nur an den lokalen Testserver (conftest.py, `oparl`)."""
+nichts Abgeleitetes Text enthält; nach den Entscheidungen vom 17.11.2026 auch Regel B unter auxiliaryFile, fehlende
+Dateien (HTTP 404/410), die erste Nacht mit höchstens 100 Dateien und der Zeitraum ab dem 01.11.2025. Alle
+PDF-Dateien entstehen hier mit einem kleinen PDF-Schreiber; alle Inhalte sind erfunden. Anfragen nur an den lokalen
+Testserver (conftest.py, `oparl`)."""
 import csv
 import hashlib
 import io
@@ -445,33 +447,36 @@ def test_vorrang_der_metadaten(oparl, monkeypatch):
 
 @pytest.mark.parametrize("antwort, art, sperrnacht, status", [
     ((403, {}, b""), "http", True, "abbruch_http_403"),
-    ((404, {}, b""), "http", False, "http_404"),
+    ((401, {}, b""), "http", True, "abbruch_http_401"),
     ((302, {"Location": "http://example.invalid/sperre"}, b""), "weiterleitung", True, "abbruch_weiterleitung"),
     ((200, {"Content-Type": "text/html"}, b"<html>Zugriff verweigert</html>"), "unlesbar", True, "kein_pdf"),
     ((200, {"Content-Length": "100000"}, b"%PDF-1.4\n" + b"x" * 90), "sperre", True, "abbruch_sperre"),
     ((429, {"Retry-After": "999999"}, b""), "aufgegeben", True, "abbruch_aufgegeben"),
+    ((500, {}, b""), "aufgegeben", True, "abbruch_aufgegeben"),
+    ((503, {}, b""), "aufgegeben", True, "abbruch_aufgegeben"),
 ])
 def test_abbruch_wie_beim_abruf(oparl, monkeypatch, antwort, art, sperrnacht, status):
     """Abbrüche beim Dokumentabruf: sofort, ohne weitere Datei; im gemeinsamen Zustand letzter_abbruch (in derselben
     Nacht weder Dokumente noch Abruf), bei möglicher Sperre sperre_verdacht und die eigene Zählung. Dateibezogene
-    Ergebnisse (404, keine PDF-Datei) werden zur Datei endgültig vermerkt, 401/403/429, Weiterleitungen und Abbrüche der
+    Ergebnisse (keine PDF-Datei) werden zur Datei endgültig vermerkt, 401/403/429/5xx, Weiterleitungen und Abbrüche der
     Verbindung vorläufig (Status abbruch_<Art>, ein Fehlversuch: die Datei kommt später wieder dran, hinter den
-    anderen)."""
+    anderen). Seit der Entscheidung vom 17.11.2026 (2) gilt das alles unverändert; nur HTTP 404/410 beendet die Nacht
+    erst bei der fünften Antwort (test_fehlende_dateien_*), und keine dieser Antworten zählt dazu."""
+    monkeypatch.setattr(config, "ABRUF_PAUSEN", [0])   # 5xx: eine Wiederholung ohne Pause, dann aufgegeben
     _mit_dateien(oparl, {1: KOPF, 3: KOPF})
     sessionnet.fetch_all()
     _freigabe(monkeypatch)
     _wie_stadt(monkeypatch)
     oparl.dateien["/files/3.pdf"] = antwort
     dokumente.schritt()
-    assert _dateianfragen(oparl) == ["/files/3.pdf"]
+    assert list(dict.fromkeys(_dateianfragen(oparl))) == ["/files/3.pdf"]
     z = _zustand()
     assert z["letzter_abbruch"]["art"] == art and z["letzter_abbruch"]["meldung"].startswith("Dokumente: ")
-    assert ("sperre_verdacht" in z) == sperrnacht
+    assert ("sperre_verdacht" in z) == sperrnacht and "fehlende" not in z["dokumente"]
     assert (z["dokumente"].get("verdacht", {}).get("naechte") == 1) == sperrnacht
     assert [(x["status"], x["fehlversuche"]) for x in _eintraege()] == [(status, 1 if "abbruch" in status else 0)]
     assert all(dokumente.eintrag_gueltig(x) for x in _eintraege())
-    if art == "aufgegeben":
-        assert z["nicht_vor"]
+    assert bool(z.get("nicht_vor")) == (antwort[0] == 429)   # nur aus dem Retry-After
     assert _statistik()[-1]["ergebnis"].startswith("abbruch: ")
     # in derselben Nacht kein weiterer Lauf: weder Dokumente noch Abruf
     anfragen = list(oparl.anfragen)
@@ -479,6 +484,240 @@ def test_abbruch_wie_beim_abruf(oparl, monkeypatch, antwort, art, sperrnacht, st
     sessionnet.fetch_all()
     assert oparl.anfragen == anfragen
     assert "in derselben Nacht kein weiterer Abruf" in json.loads(config.STAND.read_text())["abruf_uebersprungen"]["grund"]
+
+
+# --- Fehlende Dateien: HTTP 404 und 410 (Entscheidung des Auftraggebers 17.11.2026 (2)) -----------------------------
+
+def _fehlende(oparl, codes, gute=1):
+    """Verwaltungsvorlagen mit Hauptdatei: die neuesten antworten nacheinander mit den HTTP-Codes in `codes`, die `gute`
+    ältesten mit einem Kopf. Liefert die Pfade in der Reihenfolge der Auswahl (neueste zuerst)."""
+    n = len(codes) + gute
+    _mit_dateien(oparl, {2 * i + 1: KOPF for i in range(n)})
+    pfade = [f"/files/{2 * i + 1}.pdf" for i in reversed(range(n))]
+    for pfad, code in zip(pfade, codes):
+        oparl.dateien[pfad] = (code, {}, b"")
+    return pfade
+
+
+@pytest.mark.parametrize("code", [404, 410])
+def test_fehlende_dateien_unter_der_grenze_weiter_mit_der_naechsten(oparl, monkeypatch, code):
+    """Vier Antworten 404 (bzw. 410) in einer Nacht: jede Datei endgültig vermerkt (http_<Code>, kein Fehlversuch),
+    weiter mit der nächsten Datei, kein letzter_abbruch, keine Nacht mit möglicher Sperre; die Zahl steht im Zustand und
+    in der Abrufstatistik (nur Zahlen)."""
+    pfade = _fehlende(oparl, [code] * 4)
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    _wie_stadt(monkeypatch)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == pfade
+    z = _zustand()
+    assert "letzter_abbruch" not in z and "sperre_verdacht" not in z and "verdacht" not in z["dokumente"]
+    assert z["dokumente"]["fehlende"] == 4
+    e = {x["file"].rsplit("/", 1)[1]: (x["status"], x["fehlversuche"]) for x in _eintraege()}
+    assert e == {"9": (f"http_{code}", 0), "7": (f"http_{code}", 0), "5": (f"http_{code}", 0),
+                 "3": (f"http_{code}", 0), "1": ("ok", 0)}
+    ergebnis = _statistik()[-1]["ergebnis"]
+    assert ergebnis.startswith("ok; ")
+    assert "fehlende Dateien (HTTP 404/410): in diesem Lauf 4, in dieser Nacht 4" in ergebnis
+    # erneut erst nach einer Änderung: in der nächsten Nacht keine Anfrage
+    _wie_stadt(monkeypatch, NACHT + timedelta(days=1))
+    oparl.anfragen.clear()
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == []
+
+
+@pytest.mark.parametrize("codes", [[404] * 5, [410] * 5, [404, 410, 404, 410, 404]])
+def test_fehlende_dateien_die_fuenfte_beendet_die_nacht_wie_bisher(oparl, monkeypatch, capsys, codes):
+    """Die fünfte Antwort 404 oder 410 derselben Nacht beendet den Schritt wie vorher eine einzelne: Abbruch der Art
+    http mit letzter_abbruch (in derselben Nacht weder Dokumente noch Abruf), keine Nacht mit möglicher Sperre; die
+    Warnung nennt den Grund. Die übrigen Dateien bleiben für eine spätere Nacht."""
+    pfade = _fehlende(oparl, codes, gute=2)
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    _wie_stadt(monkeypatch)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == pfade[:5]
+    z = _zustand()
+    assert (z["letzter_abbruch"]["art"], z["letzter_abbruch"]["code"]) == ("http", codes[-1])
+    assert z["letzter_abbruch"]["meldung"].startswith("Dokumente: 5 Dateien mit HTTP 404 oder 410 in dieser Nacht")
+    assert "sperre_verdacht" not in z and "verdacht" not in z["dokumente"] and z["dokumente"]["fehlende"] == 5
+    assert sorted(x["status"] for x in _eintraege()) == sorted(f"http_{c}" for c in codes)
+    assert _statistik()[-1]["ergebnis"].startswith("abbruch: 5 Dateien mit HTTP 404 oder 410")
+    assert "vielleicht hat sich die Form der Adressen geändert" in capsys.readouterr().err
+    anfragen = list(oparl.anfragen)
+    dokumente.schritt()
+    sessionnet.fetch_all()
+    assert oparl.anfragen == anfragen
+
+
+def test_fehlende_dateien_zaehlen_ueber_zwei_laeufe_derselben_nacht(oparl, monkeypatch):
+    """Ein zweiter Lauf derselben Nacht (Push, Knopfdruck) zählt die Antworten 404/410 weiter: drei im ersten Lauf
+    (RATSATLAS_PDF_MAX=3), die vierte und fünfte im zweiten beenden die Nacht."""
+    pfade = _fehlende(oparl, [404] * 5)
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch, "3")
+    _wie_stadt(monkeypatch)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == pfade[:3] and _zustand()["dokumente"]["fehlende"] == 3
+    assert "letzter_abbruch" not in _zustand()
+    monkeypatch.setenv("RATSATLAS_PDF_MAX", "10")
+    oparl.anfragen.clear()
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == pfade[3:5]
+    assert _zustand()["dokumente"]["fehlende"] == 5 and _zustand()["letzter_abbruch"]["code"] == 404
+    ergebnis = _statistik()[-1]["ergebnis"]
+    assert ergebnis.startswith("abbruch: 5 Dateien") and "in diesem Lauf 2, in dieser Nacht 5" in ergebnis
+
+
+def test_fehlende_dateien_in_einer_neuen_nacht_von_vorn(oparl, monkeypatch):
+    """In einer neuen Nacht beginnt die Zählung von vorn: vier Antworten 404 in der ersten Nacht, eine in der zweiten;
+    beide Nächte ohne Abbruch."""
+    pfade = _fehlende(oparl, [404] * 5, gute=2)
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch, "4")
+    _wie_stadt(monkeypatch)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == pfade[:4] and _zustand()["dokumente"]["fehlende"] == 4
+    _wie_stadt(monkeypatch, NACHT + timedelta(days=1))
+    oparl.anfragen.clear()
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == pfade[4:]
+    z = _zustand()
+    assert "letzter_abbruch" not in z and z["dokumente"]["fehlende"] == 1
+    assert z["dokumente"]["nacht"] == "2026-11-14" and z["dokumente"]["dateien"] == 3
+    assert "in diesem Lauf 1, in dieser Nacht 1" in _statistik()[-1]["ergebnis"]
+
+
+@pytest.mark.parametrize("wert", ["drei", -1, True, None, 2.5])
+def test_fehlende_dateien_unlesbar_wie_vorher(oparl, monkeypatch, wert):
+    """Ist die Zahl im Zustand unlesbar, gilt sie in dieser Nacht als erreicht: Die nächste Antwort 404 beendet den
+    Schritt wie vor dem 17.11.2026 jede (Warnung, Zustand neu geschrieben)."""
+    pfade = _fehlende(oparl, [404])
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    _wie_stadt(monkeypatch)
+    sessionnet._zustand_setzen("dokumente", {"nacht": "2026-11-13", "dateien": 0, "fehlende": wert})
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == pfade[:1] and _zustand()["letzter_abbruch"]["code"] == 404
+
+
+# --- Erste Nacht mit Dokumenten (Entscheidung des Auftraggebers 17.11.2026 (3)) --------------------------------------
+
+def _eintrag_um(zeit, i=1):
+    return {"file": f"F{i}", "paper": f"P{i}", "quelle": "auxiliaryFile", "sha256": "", "groesse": None, "zeit": zeit,
+            "kennung": "", "trefferart": "", "status": "http_404", "fehlerart": "", "fehlversuche": 0,
+            "modified": None, "size": None, "accessUrl": None, "downloadUrl": None}
+
+
+@pytest.mark.parametrize("zeiten, pdf_max, erwartet", [
+    ([], None, (100, True)),                                                         # keine Datei
+    (["2026-11-13T23:10:00+01:00", "2026-11-14T00:50:00+01:00"], None, (100, True)),   # nur aus dieser Nacht
+    (["2026-11-13T12:00:00+01:00"], None, (100, True)),                              # Beginn dieser Nacht (12 Uhr)
+    (["2026-11-13T11:59:59+01:00", "2026-11-13T23:10:00+01:00"], None, (300, False)),  # auch aus der Nacht davor
+    (["2026-11-12T22:10:00+00:00"], "50", (50, False)),
+    ([], "50", (50, True)),                                                          # die Variable senkt weiter
+    ([], "150", (100, True)),
+    (["2026-11-13T23:10:00+01:00"], "300", (100, True)),
+])
+def test_erste_nacht_hoechstens_100(monkeypatch, zeiten, pdf_max, erwartet):
+    """Solange dokumente_koepfe.jsonl keinen Eintrag aus einer früheren Nacht (12 bis 12 Uhr Ortszeit) enthält, gelten
+    höchstens 100 Dateien, gleich was RATSATLAS_PDF_MAX sagt (wirksam das Kleinere); danach hoechstens()."""
+    if pdf_max is None:
+        monkeypatch.delenv("RATSATLAS_PDF_MAX", raising=False)
+    else:
+        monkeypatch.setenv("RATSATLAS_PDF_MAX", pdf_max)
+    eintraege = {f"F{i}": _eintrag_um(z, i) for i, z in enumerate(zeiten)}
+    assert all(dokumente.eintrag_gueltig(e) for e in eintraege.values())
+    assert dokumente.grenze_der_nacht(eintraege, "2026-11-13") == erwartet
+    assert dokumente.ERSTE_NACHT == 100
+
+
+def test_erste_nacht_auch_ueber_zwei_laeufe(oparl, monkeypatch, capsys):
+    """Ende zu Ende (Grenze der ersten Nacht hier 2 statt 100): Der erste Lauf liest 2 Dateien und nennt den Grund im
+    Log, ein zweiter Lauf derselben Nacht keine mehr (zusammen höchstens die Grenze); in der nächsten Nacht stammen die
+    Einträge aus einer früheren Nacht, es gilt hoechstens()."""
+    monkeypatch.setattr(dokumente, "ERSTE_NACHT", 2)
+    _mit_dateien(oparl, {i: KOPF for i in (1, 3, 5, 7, 9)})
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    uhr = types.SimpleNamespace(t=NACHT)
+    monkeypatch.setattr(abruf, "uhr", lambda: uhr.t)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == ["/files/9.pdf", "/files/7.pdf"]
+    assert "erste Nacht mit Dokumenten: höchstens 2 Dateien" in capsys.readouterr().out
+    assert "in dieser Nacht 2 von höchstens 2, erste Nacht mit Dokumenten" in _statistik()[-1]["ergebnis"]
+    uhr.t = NACHT + timedelta(hours=1)
+    oparl.anfragen.clear()
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == []
+    assert _statistik()[-1]["ergebnis"].startswith("übersprungen: Obergrenze dieser Nacht erreicht (2 von höchstens 2)")
+    assert "erste Nacht mit Dokumenten: höchstens 2 Dateien" in capsys.readouterr().out
+    uhr.t = NACHT + timedelta(days=1)
+    oparl.anfragen.clear()
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == ["/files/5.pdf", "/files/3.pdf", "/files/1.pdf"]
+    assert "erste Nacht" not in capsys.readouterr().out
+    assert "in dieser Nacht 3 von höchstens 300)" in _statistik()[-1]["ergebnis"]
+
+
+# --- Zeitraum: nur die laufende Wahlperiode (Entscheidung des Auftraggebers 17.11.2026 (4)) --------------------------
+
+@pytest.mark.parametrize("vorlage, tag", [
+    ({"date": "2025-11-01"}, "2025-11-01"),
+    ({"date": " 2025-10-31 "}, "2025-10-31"),
+    ({"date": "2025-11-01T00:30:00+01:00"}, "2025-11-01"),
+    ({"date": "2025-10-31T23:30:00+00:00"}, "2025-11-01"),       # mit Zone in Ortszeit Köln: 00:30 Uhr am 1.11.
+    ({"date": "2025-11-01T00:30:00+02:00"}, "2025-10-31"),       # 23:30 Uhr am 31.10. Ortszeit
+    ({"date": "2025-11-01T08:00:00"}, "2025-11-01"),             # ohne Zone wie geschrieben
+    ({"date": None, "created": "2025-11-02T10:00:00+01:00"}, "2025-11-02"),
+    ({"created": "2025-10-30T10:00:00+01:00"}, "2025-10-30"),
+    ({"date": "31.10.2025", "created": "2025-11-03T09:00:00+01:00"}, "2025-11-03"),   # unlesbar: created
+    ({"date": "2025-13-01", "created": "2025-11-04"}, "2025-11-04"),
+    ({"date": 20251101, "created": "2025-11-05T09:00:00Z"}, "2025-11-05"),
+    ({"date": "", "created": "kaputt"}, None),
+    ({}, None),
+])
+def test_datum_der_vorlage(vorlage, tag):
+    """Datum für den Zeitraum der Auswahl: date (ISO-Datum oder Zeitpunkt), fehlt es oder ist es unlesbar created;
+    Zeitpunkte mit Zone als Kalendertag in Ortszeit Köln."""
+    ergebnis = dokumente.datum_der_vorlage(vorlage)
+    assert (ergebnis.isoformat() if ergebnis else None) == tag
+
+
+def test_auswahl_nur_ab_beginn_der_wahlperiode():
+    """Nur Verwaltungsvorlagen mit Datum ab dem 01.11.2025 (Grenze 31.10./01.11., Zeitpunkt mit Zone, ohne date über
+    created, ohne beides keine), gezählt als Gründe „vor_wahlperiode“ und „ohne_datum“; neueste zuerst wie bisher.
+    Die Datei einer älteren ausgeschlossenen Vorlage bleibt gesperrt."""
+    roh = [_vorlage_roh(1, date="2025-10-31", auxiliaryFile=[_datei_roh(10)]),
+           _vorlage_roh(2, date="2025-11-01", auxiliaryFile=[_datei_roh(20)]),
+           _vorlage_roh(3, date="2025-10-31T23:30:00+00:00", auxiliaryFile=[_datei_roh(30)]),
+           _vorlage_roh(4, date="2025-11-01T00:30:00+02:00", auxiliaryFile=[_datei_roh(40)]),
+           _vorlage_roh(5, date=None, created="2025-11-20T10:00:00+01:00", auxiliaryFile=[_datei_roh(50)]),
+           _vorlage_roh(6, date=None, created=None, auxiliaryFile=[_datei_roh(60)]),
+           _vorlage_roh(7, date="kaputt", created="2025-10-01T10:00:00+02:00", auxiliaryFile=[_datei_roh(70)]),
+           _vorlage_roh(8, date="2026-10-02", auxiliaryFile=[_datei_roh(80)]),
+           # eine ältere Eingabe mit derselben Datei wie eine neue Verwaltungsvorlage: weiter gesperrt
+           _vorlage_roh(9, art="Anregungen und Beschwerden", date="2020-01-01", mainFile=_datei_roh(90)),
+           _vorlage_roh(11, date="2026-01-15", auxiliaryFile=[_datei_roh(90)])]
+    gelesen, gruende = _auswahl(roh)
+    assert gelesen == [("80", "8"), ("20", "2"), ("30", "3"), ("50", "5")]
+    assert (gruende["vor_wahlperiode"], gruende["ohne_datum"], gruende["datei_gesperrt"]) == (3, 1, 1)
+
+
+def test_zeitraum_in_log_und_abrufstatistik(oparl, monkeypatch, capsys):
+    """Ende zu Ende: Eine Verwaltungsvorlage vom 31.10.2025 wird nicht gelesen, eine vom 01.11.2025 schon; Log und
+    Abrufstatistik nennen die Zahlen."""
+    _mit_dateien(oparl, {1: KOPF, 3: KOPF})
+    _vorlage(oparl, 1)["date"] = "2025-10-31"
+    _vorlage(oparl, 3)["date"] = "2025-11-01"
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == ["/files/3.pdf"]
+    ergebnis = _statistik()[-1]["ergebnis"]
+    assert "Datum vor dem 01.11.2025 (vor der Wahlperiode) 1" in ergebnis
+    assert "ohne lesbares Datum (date, created) 0" in ergebnis
+    assert "übergangen mit älterem Datum 1, ohne lesbares Datum 0" in capsys.readouterr().out
 
 
 def test_drei_naechte_mit_sperrverdacht_sieben_tage_pause(oparl, monkeypatch):
@@ -894,20 +1133,25 @@ def test_wahl_unter_auxiliaryFile(aux, erwartet):
 
 
 @pytest.mark.parametrize("namen, erwartet", [
-    # die drei Fälle der Prüfung stj: gewählt wie nach der Regel vom 13.11.2026 (a), aber im Zweig „vorlage“ mit Hinweis
-    (["Mitteilung", "Anlage 2 Vorlage 0815/2019 (Ratsbeschluss)"], (1, "vorlage", {"fremde_nummer", "auch_anlage"})),
-    (["Anlage 1 zur Vorlage", "1234/2026 Mitteilung"], (0, "vorlage", {"eigene_spaeter", "auch_anlage"})),
+    # die drei Fälle der Prüfung stj nach Regel B (Entscheidung 17.11.2026 (1)), eigene Drucksache 1234/2026
+    (["Mitteilung", "Anlage 2 Vorlage 0815/2019 (Ratsbeschluss)"], (0, "erste", {"uebergangen"})),
+    (["Anlage 1 zur Vorlage", "1234/2026 Mitteilung"], (1, "drucksache", set())),
     (["Beantwortung", "Anlage Vorlagenbericht"], (1, "vorlage", {"auch_anlage"})),
-    (["Vorlage 1234/2026", "Anlage 1"], (0, "drucksache", set())),                  # eigene Drucksache geht vor
+    (["Vorlage 1234/2026", "Anlage 1"], (0, "drucksache", set())),
     (["Anlage 1", "Beschlussvorlage 1234-2026"], (1, "drucksache", set())),
     (["Anlage 1", "Beschlussvorlage"], (1, "vorlage", set())),
-    (["Vorlage AN/0815/2026"], (0, "vorlage", {"fremde_nummer"})),                 # Nummer eines Antrags
-    (["Vorlage Schuljahr 2025/2026 zur Grünanlage"], (0, "vorlage", set())),       # Jahresspanne, „Grünanlage“
+    (["Vorlage Schuljahr 2025/2026", "Plan"], (0, "vorlage", set())),            # Jahresspanne: keine Nummer
+    (["Anlage 1", "Vorlage zur Grünanlage"], (1, "vorlage", set())),             # „Grünanlage“: nicht „Anlage“
+    (["Plan", "Vorlage AN/1234/2026"], (0, "erste", {"uebergangen"})),           # Antrag mit denselben Ziffern
+    (["Vorlage AN/0815/2026", "Beschlussvorlage"], (1, "vorlage", {"uebergangen"})),
+    (["Anlage AN_1234_2026", "Plan"], (0, "erste", set())),                      # keine eigene Drucksache
+    (["Vorlage 0815/2019", "Vorlage 0816/2019"], (0, "erste", {"uebergangen"})),  # übergangen und doch die erste
     (["Plan", "Karte"], (0, "erste", set())),
 ])
 def test_zweig_der_wahl_unter_auxiliaryFile(namen, erwartet):
-    """Zweig der Regel und Hinweise nur zum Zählen (Prüfung stj: mainFile fehlt in Köln bei allen Vorlagen); die Wahl
-    selbst bleibt wie datei_wahl."""
+    """Regel B (Entscheidung 17.11.2026 (1)): eigene Drucksache in irgendeiner PDF-Datei vor dem Wort „Vorlage“; eine
+    Datei mit „Vorlage“ und einer anderen Nummer NNNN/JJJJ (auch AN/…, keine Jahresspanne) wird übergangen; sonst die
+    erste PDF-Datei. Zweig und Hinweise nur zum Zählen; die Wahl selbst ist datei_wahl."""
     p = {"reference": "1234/2026", "auxiliaryFile": [_anlage(i, n) for i, n in enumerate(namen)]}
     f, quelle, zweig, hinweise = dokumente.wahl_mit_zweig(p)
     assert (f, quelle) == dokumente.datei_wahl(p)
@@ -917,17 +1161,27 @@ def test_zweig_der_wahl_unter_auxiliaryFile(namen, erwartet):
     assert dokumente.wahl_mit_zweig({"reference": "1/2026"}) == (None, None, None, frozenset())
 
 
+@pytest.mark.parametrize("name, eigen", [
+    ("1234/2026", True), ("Drucksache 01234_2026", True), ("1234-2026.pdf", True), ("AN/1234/2026", False),
+    ("AN-1234-2026", False), ("AN_1234_2026", False), ("11234/2026", False), ("1234/20261", False)])
+def test_eigene_drucksache_nicht_in_einer_an_nummer(name, eigen):
+    """Die eigene Drucksache im Namen (_drucksache_muster), aber nicht als Teil der Drucksache eines Antrags oder einer
+    Anfrage (AN/NNNN/JJJJ), die _fremde_nummer als andere Nummer zählt."""
+    assert bool(dokumente._drucksache_muster("1234/2026").search(name)) == eigen
+    assert dokumente._fremde_nummer([name], "1234/2026") == name.startswith("AN")   # fünfstellig: keine Nummer
+
+
 def test_regel_unter_auxiliaryFile_in_der_abrufstatistik():
     """Log und Abrufstatistik zählen je Zweig und Hinweis (nur Zahlen), in der Auswahl und im Lauf."""
     kandidaten = [{"_zweig": z, "_hinweise": frozenset(h)} for z, h in (
-        ("mainFile", ()), ("drucksache", ()), ("vorlage", ("fremde_nummer", "auch_anlage")), ("vorlage", ("auch_anlage",)),
-        ("erste", ()))]
+        ("mainFile", ()), ("drucksache", ()), ("vorlage", ("uebergangen", "auch_anlage")),
+        ("vorlage", ("auch_anlage",)), ("erste", ("uebergangen",)))]
     lauf = {"zweige": Counter({"vorlage": 2})}
     assert dokumente._regel_text(kandidaten, lauf) == (
         "Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 1, mit dem Wort „Vorlage“ 2, erste PDF-Datei 1 "
-        "(davon mit dem Wort „Vorlage“: mit anderer Nummer NNNN/JJJJ im Namen 1, eigene Drucksache erst in einer "
-        "späteren Datei 0, auch mit dem Wort „Anlage“ 2); in diesem Lauf mit eigener Drucksache 0, mit dem Wort "
-        "„Vorlage“ 2, erste PDF-Datei 0")
+        "(Hinweise: Datei mit dem Wort „Vorlage“ wegen anderer Nummer NNNN/JJJJ übergangen 2, über das Wort „Vorlage“ "
+        "gewählt und auch mit dem Wort „Anlage“ 2); in diesem Lauf mit eigener Drucksache 0, mit dem Wort „Vorlage“ 2, "
+        "erste PDF-Datei 0")
     assert "in diesem Lauf" not in dokumente._regel_text(kandidaten)
 
 
@@ -987,8 +1241,8 @@ def test_anlage_wird_federfuehrung_eine_stufe_niedriger(oparl, monkeypatch):
     ergebnis = _statistik()[-1]["ergebnis"]
     assert ("Herkunft: Auswahl aus mainFile 1, aus auxiliaryFile 3; in diesem Lauf aus mainFile 1, aus "
             "auxiliaryFile 3; Vorlagen ohne PDF-Datei 1; Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 0, "
-            "mit dem Wort „Vorlage“ 1, erste PDF-Datei 2 (davon mit dem Wort „Vorlage“: mit anderer Nummer NNNN/JJJJ "
-            "im Namen 0, eigene Drucksache erst in einer späteren Datei 0, auch mit dem Wort „Anlage“ 0); in diesem "
+            "mit dem Wort „Vorlage“ 1, erste PDF-Datei 2 (Hinweise: Datei mit dem Wort „Vorlage“ wegen anderer Nummer "
+            "NNNN/JJJJ übergangen 0, über das Wort „Vorlage“ gewählt und auch mit dem Wort „Anlage“ 0); in diesem "
             "Lauf mit eigener Drucksache 0, mit dem Wort „Vorlage“ 1, erste PDF-Datei 2") in ergebnis
     build.build()
     db = sqlite3.connect(config.DB)

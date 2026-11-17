@@ -44,15 +44,15 @@
 # ein vollständiger Lauf entfernt die Fehlermeldung wieder.
 # Dokumente (PDF-Köpfe, pipeline/dokumente.py; Entscheidung 13.11.2026: gebaut, getestet, abgeschaltet): Der Schritt nach
 # dem Abruf liest die erste Seite der Hauptdatei von Verwaltungsvorlagen (fehlt sie, einer Datei aus auxiliaryFile;
-# Entscheidung 13.11.2026 (a)) und übernimmt nur die Kennung „Dezernat, Dienststelle“; vermerkt werden dazu nur
-# Prüfsumme, Größe und Ergebnis des Abrufs (kein Text, keine Datei). Er
+# Entscheidung 13.11.2026 (a)), vorerst nur von Vorlagen seit dem 01.11.2025 (Entscheidung 17.11.2026 (4)), und
+# übernimmt nur die Kennung „Dezernat, Dienststelle“; vermerkt werden dazu nur Prüfsumme, Größe und Ergebnis des Abrufs
+# (kein Text, keine Datei). Er
 # sendet nur mit RATSATLAS_PDF_FREIGEGEBEN = „ja“ (zusätzlich zu RATSATLAS_STADT_INFORMIERT) eine Anfrage; ohne sie
 # schreibt er nichts (Nächte ohne Freigabe bleiben in Anfragen und Abrufzustand unverändert). RATSATLAS_PDF_MAX: Dateien
 # je Nacht, senkt die Grenze von 300 nur (leer oder über 300: 300; 0, negativ oder unlesbar: keine Anfrage).
-# Einschalten in dieser Reihenfolge (Entscheidung 13.11.2026 (c); Brief an die Stadt, Punkt 4: zuerst einmalig 100
-# Dokumente zur Prüfung): (1) RATSATLAS_PDF_MAX=100 setzen, (2) erst dann RATSATLAS_PDF_FREIGEGEBEN=ja, (3) nach der
-# Testnacht und ihrer Auswertung RATSATLAS_PDF_MAX löschen (300). Ohne (1) liest schon die erste Nacht bis zu 300
-# Dateien. Dieselbe Abrufpolitik (auch der feste Abstand von 20 s, also mindestens
+# Die erste Nacht mit Dokumenten liest höchstens 100 Dateien, im Code gesichert, auch ohne RATSATLAS_PDF_MAX
+# (Entscheidung 17.11.2026 (3); Brief an die Stadt, Punkt 4: zuerst einmalig 100 Dokumente zur Prüfung); danach 300.
+# Dieselbe Abrufpolitik (auch der feste Abstand von 20 s, also mindestens
 # 100 min für 300 Dateien; was bis 1 Uhr nicht gelesen ist, folgt in der nächsten Nacht) und derselbe Zustand wie beim
 # Abruf, nach ihm und nur, wenn er in dieser Nacht vollständig war; ein Abbruch zählt wie einer des Abrufs (12-Stunden-
 # Regel, Nacht mit möglicher Sperre) und nach drei Nächten mit möglicher Sperre beim Dokumentabruf ruhen die Dokumente
