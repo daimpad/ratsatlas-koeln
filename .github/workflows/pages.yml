@@ -51,7 +51,12 @@
 # schreibt er nichts (Nächte ohne Freigabe bleiben in Anfragen und Abrufzustand unverändert). RATSATLAS_PDF_MAX: Dateien
 # je Nacht, senkt die Grenze von 300 nur (leer oder über 300: 300; 0, negativ oder unlesbar: keine Anfrage).
 # Die erste Nacht mit Dokumenten liest höchstens 100 Dateien, im Code gesichert, auch ohne RATSATLAS_PDF_MAX
-# (Entscheidung 17.11.2026 (3); Brief an die Stadt, Punkt 4: in der ersten Nacht höchstens 100 Dokumente); danach 300.
+# (Entscheidung 17.11.2026 (3); Brief an die Stadt, Punkt 4: in der ersten Nacht höchstens 100 Dokumente).
+# Reihenfolge beim Einschalten (Entscheidung 17.11.2026 (7), wie 13.11.2026 (c)): (1) RATSATLAS_PDF_MAX=100 setzen,
+# (2) erst danach RATSATLAS_PDF_FREIGEGEBEN=ja, (3) RATSATLAS_PDF_MAX erst löschen, wenn die Testnacht ausgewertet ist
+# (Erkennungsquote; Entscheidung 17.11.2026 (5) zu Amt und Filter); danach 300. Die Grenze im Code bleibt als
+# zusätzliche Sicherung und greift auch, wenn die Variable vergessen wurde; RATSATLAS_PDF_MAX=100 hält die Grenze auch
+# dann, wenn die erste Nacht früh endet (Zeitfenster, Abbruch): In der nächsten Nacht gilt die Grenze im Code nicht mehr.
 # Dieselbe Abrufpolitik (auch der feste Abstand von 20 s, also mindestens
 # 100 min für 300 Dateien; was bis 1 Uhr nicht gelesen ist, folgt in der nächsten Nacht) und derselbe Zustand wie beim
 # Abruf, nach ihm und nur, wenn er in dieser Nacht vollständig war; ein Abbruch zählt wie einer des Abrufs (12-Stunden-

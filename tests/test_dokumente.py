@@ -1148,20 +1148,32 @@ def test_wahl_unter_auxiliaryFile(aux, erwartet):
     (["Anlage AN_1234_2026", "Plan"], (0, "erste", set())),                      # keine eigene Drucksache
     (["Stellungnahme an/1234/2026", "Plan"], (0, "erste", set())),              # „an/“ klein (Prüfung stk)
     (["Stellungnahme AN 1234/2026", "Beschlussvorlage"], (1, "vorlage", set())),  # „AN “ mit Leerzeichen
-    (["Vorlage_AN_1234_2026", "Plan"], (0, "erste", {"uebergangen"})),          # „AN_“ nach „_“
+    (["Vorlage_AN_1234_2026", "Plan"], (1, "erste", {"uebergangen"})),          # „AN_“ nach „_“
     (["Anlage", "Bebauungsplan 1234/2026"], (1, "drucksache", set())),           # „…plan 1234/2026“: kein „AN“
-    (["Vorlage 0815/2019", "Vorlage 0816/2019"], (0, "erste", {"uebergangen"})),  # übergangen und doch die erste
     (["Plan", "Karte"], (0, "erste", set())),
+    # Schritt 3 nur unter den nicht übergangenen PDF-Dateien (Entscheidung 17.11.2026 (6)); bleibt keine, keine Datei
+    (["Vorlage 0815/2019", "Anlage 1 Lageplan"], (1, "erste", {"uebergangen"})),
+    (["Vorlage 0815/2019"], (None, None, {"uebergangen"})),
+    (["Vorlage 0815/2019", "Beschlussvorlage 0816/2019"], (None, None, {"uebergangen"})),
+    (["Vorlage 0815/2019", "Vorlage 0816/2019"], (None, None, {"uebergangen"})),
+    (["Vorlage 0815/2019", "Stellungnahme 0815/2019"], (1, "erste", {"uebergangen"})),   # ohne „Vorlage“: wählbar
+    (["Mitteilung 0815/2019", "Plan"], (0, "erste", set())),                     # wie bisher
+    # offen (Entscheidung 17.11.2026 (8)): Monat und Jahr ohne Tag zählen als andere Nummer, allein also keine Datei
+    (["Beschlussvorlage Stand 11/2025"], (None, None, {"uebergangen"})),
 ])
 def test_zweig_der_wahl_unter_auxiliaryFile(namen, erwartet):
     """Regel B (Entscheidung 17.11.2026 (1)): eigene Drucksache in irgendeiner PDF-Datei vor dem Wort „Vorlage“; eine
     Datei mit „Vorlage“ und einer anderen Nummer NNNN/JJJJ (auch AN/…, keine Jahresspanne) wird übergangen; sonst die
-    erste PDF-Datei. Zweig und Hinweise nur zum Zählen; die Wahl selbst ist datei_wahl."""
+    erste PDF-Datei, die nicht übergangen wurde, auch mit anderer Nummer, wenn das Wort „Vorlage“ fehlt (17.11.2026
+    (6)); bleibt keine, keine Datei (mit dem Hinweis „uebergangen“). Zweig und Hinweise nur zum Zählen; die Wahl selbst
+    ist datei_wahl."""
     p = {"reference": "1234/2026", "auxiliaryFile": [_anlage(i, n) for i, n in enumerate(namen)]}
     f, quelle, zweig, hinweise = dokumente.wahl_mit_zweig(p)
     assert (f, quelle) == dokumente.datei_wahl(p)
-    assert (f["id"], zweig, set(hinweise)) == (f"F{erwartet[0]}", erwartet[1], erwartet[2])
-    assert set(hinweise) <= set(dokumente.HINWEISE) and zweig in dokumente.ZWEIGE
+    datei = None if erwartet[0] is None else f"F{erwartet[0]}"
+    assert (f["id"] if f else None, zweig, set(hinweise)) == (datei, erwartet[1], erwartet[2])
+    assert quelle == ("auxiliaryFile" if datei else None)
+    assert set(hinweise) <= set(dokumente.HINWEISE) and (zweig in dokumente.ZWEIGE or not datei and zweig is None)
     assert dokumente.wahl_mit_zweig({"reference": "1/2026", "mainFile": _anlage(9)})[2:] == ("mainFile", frozenset())
     assert dokumente.wahl_mit_zweig({"reference": "1/2026"}) == (None, None, None, frozenset())
 
@@ -1541,3 +1553,63 @@ def test_eintrag_nur_mit_bekannter_herkunft():
     for quelle in ("anlage", "", None, ["mainFile"]):
         assert not dokumente.eintrag_gueltig(dict(e, quelle=quelle))
     assert not dokumente.eintrag_gueltig({k: v for k, v in e.items() if k != "quelle"})
+
+
+# --- Entscheidung 17.11.2026 (6): Schritt 3 der Regel B ohne übergangene Dateien --------------------------------------
+
+def test_auswahl_zaehlt_vorlagen_nur_mit_uebergangenen_dateien():
+    """Entscheidung 17.11.2026 (6): Trägt jede PDF-Datei einer Vorlage das Wort „Vorlage“ und eine andere Nummer, wird
+    keine Datei gewählt; die Vorlage zählt unter „nur_uebergangen“, nicht unter „ohne_datei“. Mit einer weiteren
+    PDF-Datei ohne das Wort „Vorlage“ wird diese gewählt (Zweig „erste“, Hinweis „uebergangen“ je Vorlage einmal), auch
+    wenn sie eine andere Nummer trägt."""
+    roh = [_vorlage_roh(1, auxiliaryFile=[_datei_roh(10, name="Vorlage 0815/2019"),
+                                          _datei_roh(11, name="Anlage 1 Lageplan")]),
+           _vorlage_roh(2, auxiliaryFile=[_datei_roh(20, name="Vorlage 0815/2019")]),
+           _vorlage_roh(3, auxiliaryFile=[_datei_roh(30, name="Vorlage 0815/2019"),
+                                          _datei_roh(31, name="Beschlussvorlage 0816/2019")]),
+           _vorlage_roh(4, auxiliaryFile=[_datei_roh(40, name="Mitteilung 0815/2019")]),
+           _vorlage_roh(5)]
+    from unittest import mock
+    with mock.patch.object(config, "OPARL_BODY", f"{B_AUSWAHL}/body"):
+        kandidaten, gruende = dokumente.auswahl(roh, [], [], {})
+    gewaehlt = sorted(((k["file"].rsplit("/", 1)[1], k["paper"].rsplit("/", 1)[1], k["_zweig"], set(k["_hinweise"]))
+                       for k in kandidaten), key=lambda w: w[0])
+    assert gewaehlt == [("11", "1", "erste", {"uebergangen"}), ("40", "4", "erste", set())]
+    assert (gruende["nur_uebergangen"], gruende["ohne_datei"], sum(gruende.values())) == (2, 1, 3)
+
+
+def test_nur_uebergangene_dateien_ohne_anfrage_und_ohne_kopf(oparl, monkeypatch, capsys):
+    """Entscheidung 17.11.2026 (6), Ende zu Ende gegen den Testserver: Für eine Vorlage, deren einzige PDF-Datei das
+    Wort „Vorlage“ und eine andere Nummer trägt, geht keine Anfrage hinaus; Log und Abrufstatistik zählen sie unter dem
+    neuen Grund. Steht daneben eine PDF-Datei ohne das Wort „Vorlage“, wird diese gelesen. build übernimmt für die erste
+    Vorlage keine Kennung, auch nicht aus einem Eintrag für die übergangene Datei (etwa nach der Regel vor (6) gelesen):
+    Auswahl und Aufbau bleiben über datei_wahl einig."""
+    fremd = _pdf([["Stadt Köln", "Beschlussvorlage", "Dezernat, Dienststelle", "II/II/2", "Vorlagen-Nummer 0815/2019"]])
+    _vorlage(oparl, 3)["auxiliaryFile"] = [_datei(oparl, 30, fremd, name="Vorlage 0815/2019")]
+    _vorlage(oparl, 5)["auxiliaryFile"] = [_datei(oparl, 50, fremd, name="Vorlage 0815/2019"),
+                                           _datei(oparl, 51, _pdf([KOPF]), name="Anlage 1 Lageplan")]
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == ["/files/51.pdf"]
+    ergebnis = _statistik()[-1]["ergebnis"]
+    assert ("ohne mainFile und ohne PDF-Datei in auxiliaryFile 1, nur PDF-Dateien mit dem Wort „Vorlage“ und anderer "
+            "Nummer NNNN/JJJJ 1, Datei schon ausgewählt 0") in ergebnis
+    assert ("Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 0, mit dem Wort „Vorlage“ 0, erste PDF-Datei 1 "
+            "(Hinweise: Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ übergangenen Datei mit dem Wort „Vorlage“ 1, "
+            "über das Wort „Vorlage“ gewählt und auch mit dem Wort „Anlage“ 0)") in ergebnis
+    log = capsys.readouterr().out
+    assert ("1 Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei in auxiliaryFile; 1 Verwaltungsvorlagen ohne "
+            "Datei, weil alle PDF-Dateien das Wort „Vorlage“ und eine andere Nummer NNNN/JJJJ tragen") in log
+    assert "Datei schon ausgewählt 0" in log   # die Abrufstatistik auch im Log
+    # ein Eintrag mit Kennung für die übergangene Datei 30 (wie nach der Regel vor (6) gelesen) gilt beim Aufbau nicht
+    e51 = next(x for x in _eintraege() if x["file"].endswith("/files/51"))
+    datei30 = _vorlage(oparl, 3)["auxiliaryFile"][0]
+    dokumente._anhaengen(dict(e51, file=datei30["id"], paper=f"{oparl.b}/papers/3", kennung="II/II/2",
+                              **{m: datei30.get(m) for m in dokumente.MERKMALE}))
+    assert datei30["id"] in dokumente.koepfe()
+    build.build()
+    db = sqlite3.connect(config.DB)
+    assert {pid.rsplit("/", 1)[1]: (m, k) for pid, m, k in db.execute(
+        "SELECT paper_id, method, kennung FROM paper_responsibility")} == {"5": ("pdf_kopf_anlage", "VI/61")}
+    assert check.federfuehrung_kopf(db) == []

@@ -59,8 +59,10 @@ der Reihenfolge der Quelle zuerst die erste, deren `name` oder `fileName` die ei
 1234-2026, 1234_2026); sonst die erste mit dem Wort „Vorlage“ (auch als Wortteil), deren Namen keine andere Nummer der
 Form NNNN/JJJJ tragen (_fremde_nummer: eine Jahresspanne wie „2025/2026“ ist keine Nummer, Monat und Jahr eines
 Datums wie „17-11-2026“ auch nicht, eine Nummer mit „AN/“ davor immer eine andere, auch „an/“ oder „AN “); sonst die
-erste PDF-Datei (datei_wahl; Herkunft `quelle` im Eintrag). Welcher Zweig die Datei bestimmt hat (ZWEIGE: eigene
-Drucksache, Wort „Vorlage“, erste PDF-Datei) und die Hinweise (HINWEISE, je Vorlage: ob eine Datei mit dem Wort
+erste PDF-Datei, die dabei nicht übergangen wurde (Entscheidung 17.11.2026 (6): nie die Datei mit dem Wort „Vorlage“
+und der Nummer einer anderen Drucksache; bleibt keine, wird für die Vorlage keine Datei gelesen, Grund
+„nur_uebergangen“) (datei_wahl; Herkunft `quelle` im Eintrag). Welcher Zweig die Datei bestimmt hat (ZWEIGE: eigene
+Drucksache, Wort „Vorlage“, erste übrige PDF-Datei) und die Hinweise (HINWEISE, je Vorlage: ob eine Datei mit dem Wort
 „Vorlage“ wegen einer anderen Nummer übergangen wurde, und ob die über „Vorlage“ gewählte Datei auch das Wort
 „Anlage“ trägt) zählen Log und Abrufstatistik (nur Zahlen). Nur Verwaltungsvorlagen der laufenden
 Wahlperiode (Entscheidung 17.11.2026 (4)): Datum (`date`, fehlt es oder ist es unlesbar `created`; als Kalendertag in
@@ -75,12 +77,13 @@ Beschwerden, nicht erkennbare Vorlagenart, maske.py; Fixpunkt geocode.sperrmenge
 solchen Vorlage steht (Hauptdatei oder Anlage), auch bei einer ausgelassenen (ohne Drucksachennummer oder als gelöscht
 gemeldet) und auch unter einer anderen Kennung mit derselben Adresse (Kennung, downloadUrl und accessUrl in der
 Vergleichsform _adresse; Prüfung dok2). Gezählt werden Vorlagen ohne PDF-Datei (weder `mainFile` noch eine
-PDF-Datei in `auxiliaryFile`). Nur Adressen auf dem Host der OParl-API (config.OPARL_BODY: Schema, Host und Port
-gleich; `downloadUrl`, sonst `accessUrl`), nur PDF laut `mimeType` (falls angegeben), höchstens MAX_BYTES laut `size`;
-eine gewählte Anlage, die daran scheitert, wird nicht durch eine andere ersetzt. Neueste zuerst (Datum der Vorlage,
-dann `created`), Dateien mit Fehlversuch dahinter; die Obergrenze je Nacht gilt für Haupt- und Anlagedateien zusammen.
-Schon verarbeitete Dateien (auch mit endgültigem Fehler) nur erneut, wenn sich `modified`, `size`, `accessUrl` oder
-`downloadUrl` der Datei oder ihre Herkunft geändert haben (eine Anlage, die zur Hauptdatei wird, einmal neu).
+PDF-Datei in `auxiliaryFile`) und Vorlagen, deren PDF-Dateien alle übergangen wurden. Nur Adressen auf dem Host der
+OParl-API (config.OPARL_BODY: Schema, Host und Port gleich; `downloadUrl`, sonst `accessUrl`), nur PDF laut `mimeType`
+(falls angegeben), höchstens MAX_BYTES laut `size`; eine gewählte Anlage, die daran scheitert, wird nicht durch eine
+andere ersetzt. Neueste zuerst (Datum der Vorlage, dann `created`), Dateien mit Fehlversuch dahinter; die Obergrenze je
+Nacht gilt für Haupt- und Anlagedateien zusammen. Schon verarbeitete Dateien (auch mit endgültigem Fehler) nur erneut,
+wenn sich `modified`, `size`, `accessUrl` oder `downloadUrl` der Datei oder ihre Herkunft geändert haben (eine Anlage,
+die zur Hauptdatei wird, einmal neu).
 
 Verarbeitung: Vor der ersten Anfrage einer Nacht prüft ein Selbsttest den Prüfprozess an einer eingebauten Probedatei
 mit erfundenem Kopf (`selbsttest`); liefert er nicht das erwartete Ergebnis (pypdf fehlt in der isolierten Umgebung,
@@ -162,8 +165,9 @@ RE_VORLAGE_WORT = re.compile(r"vorlage", re.I)
 # Zweige der Regel B unter auxiliaryFile (datei_wahl, Entscheidung 17.11.2026 (1)) und Hinweise, nur als Zahlen in Log
 # und Abrufstatistik (Prüfung stj): Ob die Regel die Vorlage selbst trifft, soll die Testnacht zeigen. Hinweise, je
 # Vorlage höchstens einmal gezählt (auch wenn mehrere Dateien übergangen wurden; Prüfung stk): „uebergangen“ (eine
-# Datei mit dem Wort „Vorlage“ trug eine andere Nummer und wurde übergangen; Zweige „vorlage“ und „erste“),
-# „auch_anlage“ (die über „Vorlage“ gewählte Datei trägt auch das Wort „Anlage“; Zweig „vorlage“)
+# Datei mit dem Wort „Vorlage“ trug eine andere Nummer und wurde übergangen; Zweige „vorlage“ und „erste“; bleibt keine
+# andere PDF-Datei, wird keine gelesen und die Vorlage zählt unter GRUENDE „nur_uebergangen“, Entscheidung
+# 17.11.2026 (6)), „auch_anlage“ (die über „Vorlage“ gewählte Datei trägt auch das Wort „Anlage“; Zweig „vorlage“)
 ZWEIGE = {"drucksache": "mit eigener Drucksache", "vorlage": "mit dem Wort „Vorlage“", "erste": "erste PDF-Datei"}
 HINWEISE = {"uebergangen": ("Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ übergangenen Datei mit dem Wort "
                             "„Vorlage“"),
@@ -198,7 +202,10 @@ GRUENDE = {
     "ohne_datum": "ohne lesbares Datum (date, created)",
     "vor_wahlperiode": f"Datum vor dem {AB_DATUM:%d.%m.%Y} (vor der Wahlperiode)",
     "ohne_hauskoordinate": "ohne Hauskoordinate oder Titelmaske", "nicht_oeffentlich": "nicht öffentlich beraten",
-    "ohne_datei": "ohne mainFile und ohne PDF-Datei in auxiliaryFile", "doppelt": "Datei schon ausgewählt",
+    "ohne_datei": "ohne mainFile und ohne PDF-Datei in auxiliaryFile",
+    # Regel B, Schritt 3 (Entscheidung 17.11.2026 (6)): alle PDF-Dateien in Schritt 2 übergangen, keine gelesen
+    "nur_uebergangen": "nur PDF-Dateien mit dem Wort „Vorlage“ und anderer Nummer NNNN/JJJJ",
+    "doppelt": "Datei schon ausgewählt",
     "datei_gesperrt": "Datei (Kennung oder Adresse) auch bei einer ausgeschlossenen Vorlage",
     "kein_pdf": "kein PDF laut mimeType",
     "fremder_host": "Adresse nicht auf dem Host der OParl-API", "zu_gross": f"über {MAX_BYTES // 1_000_000} MB laut size",
@@ -482,10 +489,12 @@ def datei_wahl(p):
     eine Datei aus `auxiliaryFile` nach Regel B (Entscheidung des Auftraggebers 17.11.2026 (1), ergänzt 13.11.2026 (a)):
     unter den PDF-Dateien (_pdf_laut_metadaten) in der Reihenfolge der Quelle zuerst die erste, deren `name` oder
     `fileName` die eigene Drucksache trägt (1234/2026, 1234-2026, 1234_2026); sonst die erste mit dem Wort „Vorlage“,
-    deren Namen keine andere Nummer der Form NNNN/JJJJ tragen (_fremde_nummer); sonst die erste PDF-Datei (Datei,
-    „auxiliaryFile“); ohne beides (None, None). Eine Hauptdatei in anderer Form als PDF bleibt die Wahl (ausgeschlossen
+    deren Namen keine andere Nummer der Form NNNN/JJJJ tragen (_fremde_nummer); sonst die erste PDF-Datei, die dabei
+    nicht übergangen wurde (Entscheidung 17.11.2026 (6)) (Datei, „auxiliaryFile“); ohne beides, auch wenn alle
+    PDF-Dateien übergangen wurden, (None, None). Eine Hauptdatei in anderer Form als PDF bleibt die Wahl (ausgeschlossen
     als „kein PDF laut mimeType“, keine Anlage ersatzweise). Eine Funktion für die Auswahl und für build
-    (kopf_der_vorlage)."""
+    (kopf_der_vorlage): Eine Vorlage, die hier keine Datei hat, bekommt auch beim Aufbau keine Kennung aus einem
+    Kopf."""
     f, quelle, _, _ = wahl_mit_zweig(p)
     return f, quelle
 
@@ -515,10 +524,13 @@ def wahl_mit_zweig(p):
     """datei_wahl mit dem Zweig der Regel und Hinweisen, nur zum Zählen (Prüfung stj): (Datei, Herkunft, Zweig,
     Hinweise). Zweig „mainFile“ oder unter auxiliaryFile nach Regel B (Entscheidung 17.11.2026 (1)) einer aus ZWEIGE:
     „drucksache“ (die erste PDF-Datei, deren Name die eigene Drucksache trägt), „vorlage“ (sonst die erste mit dem Wort
-    „Vorlage“ ohne andere Nummer NNNN/JJJJ im Namen), „erste“ (sonst die erste PDF-Datei). Hinweise (HINWEISE):
-    „uebergangen“ (mindestens eine Datei mit dem Wort „Vorlage“ wurde wegen einer anderen Nummer übergangen; Zweige
-    „vorlage“ und „erste“, auch wenn die erste PDF-Datei eben diese ist) und „auch_anlage“ (die über „Vorlage“
-    gewählte Datei trägt auch das Wort „Anlage“). Ohne Datei (None, None, None, frozenset())."""
+    „Vorlage“ ohne andere Nummer NNNN/JJJJ im Namen), „erste“ (sonst die erste PDF-Datei, die in Schritt 2 nicht
+    übergangen wurde; Entscheidung 17.11.2026 (6): nie die Datei mit dem Wort „Vorlage“ und der Nummer einer anderen
+    Drucksache, denn ihr Kopf kann die Kennung einer anderen Vorlage tragen). Hinweise (HINWEISE): „uebergangen“
+    (mindestens eine Datei mit dem Wort „Vorlage“ wurde wegen einer anderen Nummer übergangen; Zweige „vorlage“ und
+    „erste“) und „auch_anlage“ (die über „Vorlage“ gewählte Datei trägt auch das Wort „Anlage“). Ohne Datei (None, None,
+    None, frozenset()); wurden alle PDF-Dateien übergangen, ebenfalls keine Datei, mit dem Hinweis: (None, None, None,
+    frozenset({"uebergangen"})), gezählt in auswahl unter GRUENDE „nur_uebergangen“."""
     mf = p.get("mainFile")
     if _datei_ok(mf):
         return mf, "mainFile", "mainFile", frozenset()
@@ -531,16 +543,22 @@ def wahl_mit_zweig(p):
     for f in pdfs:   # 1. eigene Drucksache, in allen PDF-Dateien vor dem Wort „Vorlage“
         if _traegt_drucksache(muster, _namen(f)):
             return f, "auxiliaryFile", "drucksache", frozenset()
-    hinweise = set()
-    for f in pdfs:   # 2. das Wort „Vorlage“ ohne andere Nummer im Namen
+    hinweise, uebergangen = set(), set()
+    for i, f in enumerate(pdfs):   # 2. das Wort „Vorlage“ ohne andere Nummer im Namen
         if any(RE_VORLAGE_WORT.search(n) for n in _namen(f)):
             if _fremde_nummer(_namen(f), p.get("reference")):
                 hinweise.add("uebergangen")
+                uebergangen.add(i)
                 continue
             if any(RE_ANLAGE_WORT.search(n) for n in _namen(f)):
                 hinweise.add("auch_anlage")
             return f, "auxiliaryFile", "vorlage", frozenset(hinweise)
-    return pdfs[0], "auxiliaryFile", "erste", frozenset(hinweise)   # 3. die erste PDF-Datei
+    # 3. die erste PDF-Datei, die in Schritt 2 nicht übergangen wurde (eine ohne das Wort „Vorlage“, auch mit anderer
+    # Nummer); bleibt keine, keine Datei (Entscheidung 17.11.2026 (6))
+    for i, f in enumerate(pdfs):
+        if i not in uebergangen:
+            return f, "auxiliaryFile", "erste", frozenset(hinweise)
+    return None, None, None, frozenset(hinweise)
 
 
 def _adresse(wert):
@@ -586,8 +604,9 @@ def auswahl(roh, orgs, beratungen, eintraege):
     """Dateien zum Lesen, neueste zuerst, und Zähler der Gründe, aus denen Vorlagen oder Dateien nicht in Frage kommen
     (GRUENDE). `roh`: Vorlagen wie in papers.jsonl; `orgs`: organizations.json; `beratungen`: Zeilen aus
     beratungen.jsonl; `eintraege`: laden(). Je Vorlage höchstens eine Datei (datei_wahl: mainFile, sonst eine aus
-    auxiliaryFile), mit ihrer Herkunft (`quelle`); nur Verwaltungsvorlagen mit Datum ab AB_DATUM (datum_der_vorlage;
-    ohne lesbares Datum keine). Die Sperre der Dateien unten gilt für die Vorlagen aller Jahre. Dateien, die auch bei
+    auxiliaryFile; keine, wenn alle PDF-Dateien nach Regel B übergangen wurden, Grund „nur_uebergangen“), mit ihrer
+    Herkunft (`quelle`); nur Verwaltungsvorlagen mit Datum ab AB_DATUM (datum_der_vorlage; ohne lesbares Datum keine).
+    Die Sperre der Dateien unten gilt für die Vorlagen aller Jahre. Dateien, die auch bei
     einer Vorlage ohne Hauskoordinate (oder in der Titelmaske) oder einer nicht öffentlich beratenen stehen, werden nie
     gelesen (etwa eine Eingabe als Anlage einer Mitteilung), auch nicht die einer ausgelassenen Vorlage (ohne
     Drucksachennummer oder als gelöscht gemeldet; ohne
@@ -624,8 +643,8 @@ def auswahl(roh, orgs, beratungen, eintraege):
             gruende["nicht_oeffentlich"] += 1
         else:
             f, quelle, zweig, hinweise = wahl_mit_zweig(p)
-            if f is None:
-                gruende["ohne_datei"] += 1
+            if f is None:   # ohne PDF-Datei oder nur mit übergangenen (Entscheidung 17.11.2026 (6))
+                gruende["nur_uebergangen" if "uebergangen" in hinweise else "ohne_datei"] += 1
             else:
                 wahl.append((p, f, quelle, zweig, hinweise))
     wahl.sort(key=lambda w: w[2] != "mainFile")   # stabil: Hauptdateien zuerst (eine Datei, die beides ist)
@@ -934,10 +953,11 @@ def _lauf(zeile):
     print(f"Dokumente: nur Verwaltungsvorlagen mit Datum ab dem {AB_DATUM:%d.%m.%Y} (Entscheidung 17.11.2026 (4)); "
           f"übergangen mit älterem Datum {gruende['vor_wahlperiode']}, ohne lesbares Datum {gruende['ohne_datum']}")
     anlagen = sum(1 for k in kandidaten if k["quelle"] == "auxiliaryFile")
-    if anlagen or gruende["ohne_datei"]:
-        print(f"Dokumente: {anlagen} Dateien aus auxiliaryFile ausgewählt (ohne mainFile, Regel B, Entscheidung "
-              f"17.11.2026 (1)); {gruende['ohne_datei']} Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei in "
-              "auxiliaryFile; " + _regel_text(kandidaten))
+    if anlagen or gruende["ohne_datei"] or gruende["nur_uebergangen"]:
+        print(f"Dokumente: {anlagen} Dateien aus auxiliaryFile ausgewählt (ohne mainFile, Regel B, Entscheidungen "
+              f"17.11.2026 (1) und (6)); {gruende['ohne_datei']} Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei "
+              f"in auxiliaryFile; {gruende['nur_uebergangen']} Verwaltungsvorlagen ohne Datei, weil alle PDF-Dateien "
+              "das Wort „Vorlage“ und eine andere Nummer NNNN/JJJJ tragen; " + _regel_text(kandidaten))
     rest = max(grenze - schon, 0)
     lauf = {"ergebnisse": [], "versucht": 0, "quellen": Counter(), "zweige": Counter(), "fehlende": 0}
     ergebnis = f"übersprungen: Obergrenze dieser Nacht erreicht ({schon} von höchstens {grenze})"
