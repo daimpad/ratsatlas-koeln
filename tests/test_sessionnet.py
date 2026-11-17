@@ -61,6 +61,26 @@ def test_vollabruf_folgt_links_next_und_leitet_beratungen_ab(oparl):
     assert all(ua.startswith("ratsatlas-koeln/") for _, _, ua in oparl.anfragen)
 
 
+def test_erneut_gelesene_vorlage_mit_ergaenzter_beratung_zaehlt_nicht_als_geaendert(oparl):
+    """beratungen() schreibt die aus der Sitzung ergänzte Organisation (`_organization_quelle`) nach papers.jsonl
+    zurück. Liefert ein inkrementeller Lauf (Überlappung) dieselbe, unveränderte Vorlage erneut, zählt sie nicht als
+    „geändert“ (Prüfung stj: vorher jede solche Vorlage); eine echte Änderung zählt weiter."""
+    sessionnet.fetch_all()
+    alt = {p["id"]: p for p in _jsonl(config.PAPERS)}
+    assert alt[f"{oparl.b}/papers/1"]["consultation"][0]["_organization_quelle"] == "sitzung"
+    neu = datetime.fromisoformat(json.loads(config.ZUSTAND.read_text())["papers"]).isoformat(timespec="seconds")
+    oparl.papers[0]["modified"] = neu                                          # erneut geliefert, sonst unverändert
+    oparl.papers[1] = oparl.paper(2, name="Geänderter Titel", modified=neu)  # echte Änderung
+    sessionnet.fetch_all()
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert (z["modus"], z["neu"], z["geaendert"]) == ("inkrementell", "0", "2")   # modified ist eine Änderung
+    sessionnet.fetch_all()              # nun ganz unverändert, in der Überlappung erneut geliefert
+    z = [r for r in _statistik() if r["liste"] == "papers"][-1]
+    assert (z["modus"], z["objekte"], z["geaendert"]) == ("inkrementell", "5", "0")
+    p1 = {p["id"]: p for p in _jsonl(config.PAPERS)}[f"{oparl.b}/papers/1"]
+    assert p1["consultation"][0]["_organization_quelle"] == "sitzung"   # Ergänzung bleibt in papers.jsonl
+
+
 def test_zweiter_lauf_ist_inkrementell_und_fuehrt_zusammen(oparl):
     sessionnet.fetch_all()
     zustand = json.loads(config.ZUSTAND.read_text())

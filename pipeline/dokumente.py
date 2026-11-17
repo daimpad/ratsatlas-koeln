@@ -32,10 +32,11 @@ Nacht, gemeinsame und eigene Zählung). In der nächsten Nacht steht die Datei h
 Datei mit dauerhaftem Fehler die älteren nicht auf); nach FEHLVERSUCHE_GRENZE Nächten ohne Ergebnis wird sie nicht mehr
 angefragt, bis sich ihre Merkmale ändern. Abbrüche der Ausführungsumgebung (tls, proxy) zählen nicht zur Datei.
 
-Obergrenze: höchstens RATSATLAS_PDF_MAX Dateien je Nacht (Vorgabe 300; leer oder nicht gesetzt: 300; 0, negativ oder
-unlesbar: keine Anfrage). Gezählt wird jede Datei, für die eine Anfrage beginnt, im Zustand (`dokumente.nacht`,
-`dokumente.dateien`; Nacht = 12 Uhr bis 12 Uhr Ortszeit), vor dem Senden: Ein zweiter Lauf in derselben Nacht (Push,
-Knopfdruck) liest nur den Rest.
+Obergrenze: höchstens 300 Dateien je Nacht (HOECHSTENS_VORGABE, Entscheidung 13.11.2026 (c), Brief an die Stadt
+Punkt 4); RATSATLAS_PDF_MAX kann sie nur senken (leer oder nicht gesetzt: 300; über 300: 300; 0, negativ oder
+unlesbar: keine Anfrage; Prüfung stj). Gezählt wird jede Datei, für die eine Anfrage beginnt, im Zustand
+(`dokumente.nacht`, `dokumente.dateien`; Nacht = 12 Uhr bis 12 Uhr Ortszeit), vor dem Senden: Ein zweiter Lauf in
+derselben Nacht (Push, Knopfdruck) liest nur den Rest.
 
 Auswahl (ohne Anfrage, aus papers.jsonl, organizations.json und beratungen.jsonl; fehlt eine der drei Dateien, keine
 Anfrage): je Verwaltungsvorlage höchstens eine Datei: die Hauptdatei (`mainFile`); fehlt sie (in Köln bisher bei allen
@@ -43,7 +44,11 @@ gemessenen Vorlagen: Stufe 1 25 von 25, Stufe 2 100 von 100 jüngsten, nur `auxi
 explore/BERICHT_phase1.md), nach der Entscheidung des Auftraggebers vom 13.11.2026 (a) eine Datei aus `auxiliaryFile`:
 unter den PDF-Dateien (laut `mimeType`, ohne ihn nur mit der Endung „.pdf“) in der Reihenfolge der Quelle die erste,
 deren `name` oder `fileName` die Drucksache (1234/2026, 1234-2026, 1234_2026) oder das Wort „Vorlage“ trägt, sonst die
-erste (datei_wahl; Herkunft `quelle` im Eintrag). Verwaltungsvorlagen: Drucksache NNNN/JJJJ und Vorlagenart der
+erste (datei_wahl; Herkunft `quelle` im Eintrag). Welcher Zweig dieser Regel die Datei bestimmt hat (eigene
+Drucksache, Wort „Vorlage“, erste PDF-Datei; dazu wie oft das Wort „Vorlage“ eine Datei mit einer anderen Nummer der
+Form NNNN/JJJJ oder auch dem Wort „Anlage“ im Namen wählt oder die eigene Drucksache erst in einer späteren Datei
+stünde), zählen Log und Abrufstatistik (nur Zahlen, ZWEIGE und HINWEISE; Prüfung stj: mainFile fehlt in Köln bei allen
+rund 43.000 Vorlagen, die Regel bestimmt also jede Wahl). Verwaltungsvorlagen: Drucksache NNNN/JJJJ und Vorlagenart der
 Verwaltung (actors.VERWALTUNG_TYPES, nicht actors.EINWOHNER_TYPES, als Zeichenkette geliefert). Nie: Vorlagen ohne
 Erlaubnis für Hauskoordinaten oder in der Titelmaske (gesperrt(): dieselben Funktionen und Angaben wie build und check:
 geocode.punkt_ausschluss mit Eingaben, Vorlagen natürlicher Personen, Ausschuss für Anregungen und Beschwerden, nicht
@@ -125,6 +130,17 @@ QUELLEN = ("mainFile", "auxiliaryFile")
 # Name einer Datei in auxiliaryFile, der sie als Vorlage ausweist: das Wort „Vorlage“, auch als Wortteil
 # („Beschlussvorlage“), in beliebiger Schreibung (daneben die Drucksache, _drucksache_muster)
 RE_VORLAGE_WORT = re.compile(r"vorlage", re.I)
+# Zweige der Regel unter auxiliaryFile (datei_wahl, Entscheidung 13.11.2026 (a)) und Hinweise zum Zweig „vorlage“, nur
+# als Zahlen in Log und Abrufstatistik (Prüfung stj): Ob die Regel die Vorlage selbst trifft, soll die Testnacht zeigen
+ZWEIGE = {"drucksache": "mit eigener Drucksache", "vorlage": "mit dem Wort „Vorlage“", "erste": "erste PDF-Datei"}
+HINWEISE = {"fremde_nummer": "mit anderer Nummer NNNN/JJJJ im Namen",
+            "eigene_spaeter": "eigene Drucksache erst in einer späteren Datei",
+            "auch_anlage": "auch mit dem Wort „Anlage“"}
+# das Wort „Anlage“ am Wortanfang („Anlage 2“, „Anlagen“, nicht „Grünanlage“), nur für den Hinweis „auch_anlage“
+RE_ANLAGE_WORT = re.compile(r"\banlage", re.I)
+# Nummer der Form NNNN/JJJJ (auch mit „-“ oder „_“) in einem Dateinamen, für den Hinweis „fremde_nummer“; eine
+# Jahresspanne wie „2025/2026“ (Schul- oder Haushaltsjahr) zählt nicht
+RE_NUMMER = re.compile(r"(?<![0-9])(\d{1,4})[/_-]((?:19|20)\d{2})(?![0-9])")
 # Status je Datei: aus dem Prüfprozess (pdfkopf.STATUS) oder vom Abruf
 STATUS = (*pdfkopf.STATUS, "zeitueberschreitung", "fehler_pruefung", "zu_gross", "kein_pdf", "adresse")
 RE_HTTP_STATUS = re.compile(r"http_[1-5]\d\d")
@@ -152,12 +168,13 @@ def freigegeben():
 
 
 def hoechstens():
-    """Dateien je Nacht aus RATSATLAS_PDF_MAX: nicht gesetzt oder leer → HOECHSTENS_VORGABE; eine ganze Zahl → sie
-    (0 oder negativ → 0); unlesbar → 0 (keine Anfrage)."""
+    """Dateien je Nacht aus RATSATLAS_PDF_MAX: nicht gesetzt oder leer → HOECHSTENS_VORGABE; eine ganze Zahl → sie,
+    höchstens HOECHSTENS_VORGABE (die Variable senkt die Grenze nur, Prüfung stj: der Brief an die Stadt sagt
+    „höchstens 300 Dokumente je Nacht“; 0 oder negativ → 0); unlesbar → 0 (keine Anfrage)."""
     wert = (os.environ.get(HOECHSTENS) or "").strip()
     if not wert:
         return HOECHSTENS_VORGABE
-    return max(int(wert), 0) if re.fullmatch(r"[+-]?\d{1,9}", wert) else 0
+    return min(max(int(wert), 0), HOECHSTENS_VORGABE) if re.fullmatch(r"[+-]?\d{1,9}", wert) else 0
 
 
 def _nacht(jetzt):
@@ -367,20 +384,51 @@ def datei_wahl(p):
     1234-2026, 1234_2026) oder das Wort „Vorlage“ trägt, sonst die erste (Datei, „auxiliaryFile“); ohne beides (None,
     None). Eine Hauptdatei in anderer Form als PDF bleibt die Wahl (ausgeschlossen als „kein PDF laut mimeType“, keine
     Anlage ersatzweise). Eine Funktion für die Auswahl und für build (kopf_der_vorlage)."""
+    f, quelle, _, _ = wahl_mit_zweig(p)
+    return f, quelle
+
+
+def _namen(f):
+    return [f[k] for k in ("name", "fileName") if isinstance(f.get(k), str)]
+
+
+def _fremde_nummer(namen, reference):
+    """Trägt ein Name eine Nummer der Form NNNN/JJJJ (auch „-“, „_“), die nicht die eigene Drucksache ist (keine
+    Jahresspanne wie „2025/2026“)?"""
+    eigen = re.fullmatch(r"(\d{1,4})/(\d{4})", reference if isinstance(reference, str) else "")
+    eigen = (int(eigen.group(1)), eigen.group(2)) if eigen else None
+    return any((int(n), j) != eigen and not (len(n) == 4 and int(n) == int(j) - 1)
+               for name in namen for n, j in RE_NUMMER.findall(name))
+
+
+def wahl_mit_zweig(p):
+    """datei_wahl mit dem Zweig der Regel und Hinweisen, nur zum Zählen (Prüfung stj): (Datei, Herkunft, Zweig,
+    Hinweise). Zweig „mainFile“ oder unter auxiliaryFile einer aus ZWEIGE: „drucksache“ (der Name trägt die eigene
+    Drucksache, auch zusammen mit „Vorlage“), „vorlage“ (nur das Wort „Vorlage“), „erste“ (keins von beiden, die erste
+    PDF-Datei). Hinweise (HINWEISE) nur zum Zweig „vorlage“: „fremde_nummer“ (der Name trägt eine andere Nummer der Form
+    NNNN/JJJJ, etwa einer älteren Vorlage), „eigene_spaeter“ (eine spätere PDF-Datei trägt die eigene Drucksache) und
+    „auch_anlage“ (der Name trägt auch das Wort „Anlage“). Ohne Datei (None, None, None, frozenset())."""
     mf = p.get("mainFile")
     if _datei_ok(mf):
-        return mf, "mainFile"
+        return mf, "mainFile", "mainFile", frozenset()
     aux = p.get("auxiliaryFile")
     aux = [aux] if isinstance(aux, dict) else aux if isinstance(aux, list) else []
     pdfs = [f for f in aux if _datei_ok(f) and _pdf_laut_metadaten(f)]
     if not pdfs:
-        return None, None
+        return None, None, None, frozenset()
     muster = _drucksache_muster(p.get("reference"))
-    for f in pdfs:
-        namen = [f[k] for k in ("name", "fileName") if isinstance(f.get(k), str)]
-        if any(RE_VORLAGE_WORT.search(n) or muster and muster.search(n) for n in namen):
-            return f, "auxiliaryFile"
-    return pdfs[0], "auxiliaryFile"
+    eigene = [bool(muster) and any(muster.search(n) for n in _namen(f)) for f in pdfs]
+    for i, f in enumerate(pdfs):
+        if eigene[i]:
+            return f, "auxiliaryFile", "drucksache", frozenset()
+        if any(RE_VORLAGE_WORT.search(n) for n in _namen(f)):
+            hinweise = {"fremde_nummer"} if _fremde_nummer(_namen(f), p.get("reference")) else set()
+            if any(eigene[i + 1:]):
+                hinweise.add("eigene_spaeter")
+            if any(RE_ANLAGE_WORT.search(n) for n in _namen(f)):
+                hinweise.add("auch_anlage")
+            return f, "auxiliaryFile", "vorlage", frozenset(hinweise)
+    return pdfs[0], "auxiliaryFile", "erste", frozenset()
 
 
 def _adresse(wert):
@@ -457,13 +505,13 @@ def auswahl(roh, orgs, beratungen, eintraege):
         elif _nicht_oeffentlich(p, oeffentlich):
             gruende["nicht_oeffentlich"] += 1
         else:
-            f, quelle = datei_wahl(p)
+            f, quelle, zweig, hinweise = wahl_mit_zweig(p)
             if f is None:
                 gruende["ohne_datei"] += 1
             else:
-                wahl.append((p, f, quelle))
+                wahl.append((p, f, quelle, zweig, hinweise))
     wahl.sort(key=lambda w: w[2] != "mainFile")   # stabil: Hauptdateien zuerst (eine Datei, die beides ist)
-    for p, f, quelle in wahl:
+    for p, f, quelle, zweig, hinweise in wahl:
         mime = f.get("mimeType")
         url = f.get("downloadUrl") or f.get("accessUrl")
         size = f.get("size")
@@ -488,7 +536,7 @@ def auswahl(roh, orgs, beratungen, eintraege):
             gruende["bekannt"] += 1
         else:
             kandidaten.append({"file": f["id"], "paper": p["id"], "quelle": quelle, "url": url, **merkmale,
-                               "_fehlversuche": fehlversuche,
+                               "_fehlversuche": fehlversuche, "_zweig": zweig, "_hinweise": hinweise,
                                "_ordnung": (str(p.get("date") or "") if isinstance(p.get("date"), str) else "",
                                             str(p.get("created") or "") if isinstance(p.get("created"), str) else "",
                                             p["id"])})
@@ -651,6 +699,18 @@ def _abbruch_vermerken(e, jetzt):
 
 # --- Schritt ------------------------------------------------------------------------------------------------------------
 
+def _regel_text(kandidaten, lauf=None):
+    """Zweige der Regel unter auxiliaryFile (ZWEIGE) in der Auswahl und, mit `lauf`, in diesem Lauf, dazu die Hinweise
+    (HINWEISE) in der Auswahl; nur Zahlen (Prüfung stj)."""
+    zweige = Counter(k["_zweig"] for k in kandidaten)
+    hinweise = Counter(h for k in kandidaten for h in k["_hinweise"])
+    text = ("Regel unter auxiliaryFile: Auswahl " + ", ".join(f"{t} {zweige[z]}" for z, t in ZWEIGE.items())
+            + " (davon mit dem Wort „Vorlage“: " + ", ".join(f"{t} {hinweise[h]}" for h, t in HINWEISE.items()) + ")")
+    if lauf is not None:
+        text += "; in diesem Lauf " + ", ".join(f"{t} {lauf['zweige'][z]}" for z, t in ZWEIGE.items())
+    return text
+
+
 def _zusammenfassung(kandidaten, lauf, schon, grenze, gruende):
     ergebnisse, versucht = lauf["ergebnisse"], lauf["versucht"]
     arten = Counter(e["trefferart"] for e in ergebnisse if e["status"] == "ok")
@@ -663,6 +723,7 @@ def _zusammenfassung(kandidaten, lauf, schon, grenze, gruende):
              "Herkunft: Auswahl " + ", ".join(f"aus {q} {auswahl_[q]}" for q in QUELLEN) + "; in diesem Lauf "
              + ", ".join(f"aus {q} {lauf['quellen'][q]}" for q in QUELLEN)
              + f"; Vorlagen ohne PDF-Datei {gruende['ohne_datei']}",
+             _regel_text(kandidaten, lauf),
              f"erkannt {erkannt} (" + ", ".join(f"{a} {arten[a]}" for a in pdfkopf.MIT_KENNUNG) + ")",
              "ohne Kennung " + ", ".join(f"{a} {arten[a]}" for a in pdfkopf.OHNE_KENNUNG),
              "nicht gelesen oder geprüft " + (", ".join(f"{s} {n}" for s, n in sorted(fehler.items())) or "0"),
@@ -739,9 +800,10 @@ def _lauf(zeile):
     anlagen = sum(1 for k in kandidaten if k["quelle"] == "auxiliaryFile")
     if anlagen or gruende["ohne_datei"]:
         print(f"Dokumente: {anlagen} Dateien aus auxiliaryFile ausgewählt (ohne mainFile, Entscheidung 13.11.2026 (a)); "
-              f"{gruende['ohne_datei']} Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei in auxiliaryFile")
+              f"{gruende['ohne_datei']} Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei in auxiliaryFile; "
+              + _regel_text(kandidaten))
     rest = max(grenze - schon, 0)
-    lauf = {"ergebnisse": [], "versucht": 0, "quellen": Counter()}
+    lauf = {"ergebnisse": [], "versucht": 0, "quellen": Counter(), "zweige": Counter()}
     ergebnis = f"übersprungen: Obergrenze dieser Nacht erreicht ({schon} von höchstens {grenze})"
     try:
         if rest and kandidaten and not selbsttest():   # vor der ersten Anfrage: ohne heilen Prüfprozess keine
@@ -762,6 +824,7 @@ def _lesen(auswahl_, nacht, schon, lauf, zeile):
     for k in auswahl_:
         lauf["versucht"] += 1
         lauf["quellen"][k["quelle"]] += 1
+        lauf["zweige"][k["_zweig"]] += 1
         _eigener_zustand_setzen(nacht=nacht, dateien=schon + lauf["versucht"])
         daten = None
         try:

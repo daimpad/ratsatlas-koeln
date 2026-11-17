@@ -23,7 +23,8 @@
 # gesetzt lassen, bis der Lauf fertig ist) oder VOLLABRUF (hebt das Aussetzen auf, neuer Vollabruf ab Seite 1; eine
 # Nacht). Nannte VOLLABRUF die Liste schon beim Aussetzen (dauerhaft gesetzt), hebt sie es erst auf, nachdem ein Lauf
 # ohne sie die Liste erreicht hat: für eine Nacht austragen, dann wieder eintragen. Abstand, Zeitfenster und Grenzen je
-# Nacht sind nicht über Variablen einstellbar.
+# Nacht sind nicht über Variablen einstellbar; einzig RATSATLAS_PDF_MAX (Dokumentschritt, unten) kann dessen Grenze
+# senken, nicht erhöhen.
 # Abrufpolitik: eine Verbindung, Abstand 20 s (seit 15.11.2026, fest im Abruf- und im Dokumentschritt; der Code verlangt
 # mindestens 2 s), nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (Retry-After als
 # Sekunden oder Datum eingehalten), aber nie über das Ende des Zeitfensters: Reicht die nächste Pause darüber hinaus
@@ -43,11 +44,15 @@
 # ein vollständiger Lauf entfernt die Fehlermeldung wieder.
 # Dokumente (PDF-Köpfe, pipeline/dokumente.py; Entscheidung 13.11.2026: gebaut, getestet, abgeschaltet): Der Schritt nach
 # dem Abruf liest die erste Seite der Hauptdatei von Verwaltungsvorlagen (fehlt sie, einer Datei aus auxiliaryFile;
-# Entscheidung 13.11.2026 (a)) und speichert nur die Kennung „Dezernat, Dienststelle“ (kein Text, keine Datei). Er
+# Entscheidung 13.11.2026 (a)) und übernimmt nur die Kennung „Dezernat, Dienststelle“; vermerkt werden dazu nur
+# Prüfsumme, Größe und Ergebnis des Abrufs (kein Text, keine Datei). Er
 # sendet nur mit RATSATLAS_PDF_FREIGEGEBEN = „ja“ (zusätzlich zu RATSATLAS_STADT_INFORMIERT) eine Anfrage; ohne sie
 # schreibt er nichts (Nächte ohne Freigabe bleiben in Anfragen und Abrufzustand unverändert). RATSATLAS_PDF_MAX: Dateien
-# je Nacht (leer: 300; 0, negativ oder unlesbar: keine Anfrage; der Test nach dem Telefonat mit der Stadt ist die erste
-# Nacht mit 100, Entscheidung 13.11.2026 (c)). Dieselbe Abrufpolitik (auch der feste Abstand von 20 s, also mindestens
+# je Nacht, senkt die Grenze von 300 nur (leer oder über 300: 300; 0, negativ oder unlesbar: keine Anfrage).
+# Einschalten in dieser Reihenfolge (Entscheidung 13.11.2026 (c); Brief an die Stadt, Punkt 4: zuerst einmalig 100
+# Dokumente zur Prüfung): (1) RATSATLAS_PDF_MAX=100 setzen, (2) erst dann RATSATLAS_PDF_FREIGEGEBEN=ja, (3) nach der
+# Testnacht und ihrer Auswertung RATSATLAS_PDF_MAX löschen (300). Ohne (1) liest schon die erste Nacht bis zu 300
+# Dateien. Dieselbe Abrufpolitik (auch der feste Abstand von 20 s, also mindestens
 # 100 min für 300 Dateien; was bis 1 Uhr nicht gelesen ist, folgt in der nächsten Nacht) und derselbe Zustand wie beim
 # Abruf, nach ihm und nur, wenn er in dieser Nacht vollständig war; ein Abbruch zählt wie einer des Abrufs (12-Stunden-
 # Regel, Nacht mit möglicher Sperre) und nach drei Nächten mit möglicher Sperre beim Dokumentabruf ruhen die Dokumente

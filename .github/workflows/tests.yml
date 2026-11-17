@@ -17,7 +17,9 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Zeitlimit 30 statt 15 Minuten (Prüfung stj): Der Job brauchte auf main am 16.11.2026 11,5 bis 15,0 Minuten
+    # (einmal 14:59), mit den Tests des Dokumentschritts gut eine Minute mehr; --durations zeigt die langsamsten Tests
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
@@ -26,7 +28,7 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt pytest
       - name: Pipeline (Abruf gegen Testserver, Aufbereitung, Geokodierung, Geodaten)
-        run: python -m pytest -v tests
+        run: python -m pytest -v --durations=20 tests
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
         with:
           node-version: "22"

@@ -37,10 +37,12 @@ SCHRITTE = {
                        "als bisher, bleibt der bisherige Stand; ruht der Abruf einer Liste deshalb, bis das geprüft ist, "
                        "nennt das der Datenstand."),
     "dokumente": ("Dokumente", "Liest nach dem Abruf, nur nach Freigabe durch die Stadt (bis dahin abgeschaltet), "
-                               "nachts höchstens 300 Vorlagen der Verwaltung (nur die erste Seite des Hauptdokuments; "
-                               "nennt die Stadt keins, einer Anlage) und erkennt im Kopf "
-                               "die Kennung von Dezernat und Dienststelle. Gespeichert wird nur diese Kennung, kein Text "
-                               "und keine Datei; die Kennung gilt nur, wenn die Schnittstelle keine federführende "
+                               "nachts höchstens 300 Vorlagen der Verwaltung, jeweils nur die erste Seite einer Anlage, "
+                               "weil die Stadt kein Hauptdokument nennt (nennt sie eines, dessen erste Seite), und "
+                               "erkennt im Kopf die Kennung von Dezernat und Dienststelle. Aus dem Dokument übernommen "
+                               "wird nur diese Kennung; vermerkt werden außerdem nur Prüfsumme und Größe der Datei und "
+                               "das Ergebnis des Abrufs, kein Text und keine Datei. Die Kennung gilt nur, wenn die "
+                               "Schnittstelle keine federführende "
                                "Dienststelle nennt, und wird wie diese über den Geschäfts- und "
                                "Dezernatsverteilungsplan Dezernat und Dienststelle zugeordnet."),
     "build": ("Datenbank und Verortung", "Baut eine SQLite-Datenbank aus Vorlagen, Beratungen, Sitzungen und Gremien, "

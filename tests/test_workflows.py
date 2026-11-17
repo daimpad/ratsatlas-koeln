@@ -67,6 +67,46 @@ def test_dokumentschritt_gesperrt_und_ohne_anhalten():
     assert "RATSATLAS_PDF_FREIGEGEBEN" in kopf and "RATSATLAS_PDF_MAX" in kopf
 
 
+def _with_block(schritt):
+    """Angaben unter `with:` eines Schritts als {Schlüssel: Wert}; ein Blockskalar (`path: |`) als Liste seiner Zeilen
+    in Reihenfolge. Endet an einer Leerzeile oder einer Zeile, die nicht tiefer als `with:` eingerückt ist."""
+    zeilen = schritt.split("\n")
+    i = next(k for k, z in enumerate(zeilen) if z.strip() == "with:")
+    einzug = len(zeilen[i]) - len(zeilen[i].lstrip(" "))
+    aus, schluessel = {}, None
+    for z in zeilen[i + 1:]:
+        tiefe = len(z) - len(z.lstrip(" "))
+        if not z.strip() or tiefe <= einzug:
+            break
+        assert not z.strip().startswith("#"), z
+        if tiefe == einzug + 2:
+            schluessel, _, wert = z.strip().partition(": ")
+            assert schluessel and schluessel not in aus, z
+            aus[schluessel] = [] if wert.strip() == "|" else wert.strip()
+        else:
+            assert isinstance(aus.get(schluessel), list) and tiefe == einzug + 4, z
+            aus[schluessel].append(z.strip())
+    return aus
+
+
+def test_job_zeitlimit_und_keine_abbrueche_durch_neue_laeufe():
+    """pages.yml (Prüfung stj): `concurrency` mit der Gruppe „pages“ und `cancel-in-progress: false`, damit ein Push
+    auf main in der Nacht den laufenden Abruf nicht abbricht (ein Abbruch von außen schreibt keinen Zustand); das
+    Zeitlimit des Jobs reicht für den Abruf ohne eigenes Zeitlimit (höchstens bis zum Ende des Zeitfensters, 120
+    Minuten ab 23 Uhr), den Dokumentschritt bis zu seinem Zeitlimit und 20 Minuten für Einrichtung, lesende Schritte und
+    Bau (mit vollständigen Daten am 16.11.2026 knapp 3 Minuten)."""
+    text = _pages()
+    assert re.search(r'^concurrency:\n  group: "pages"\n  cancel-in-progress: false$', text, re.M)
+    assert len(re.findall(r"^\s*concurrency:", text, re.M)) == 1 and "cancel-in-progress: true" not in text
+    # Zeitfenster 23–1 Uhr: Vorgabe in config.py, in pages.yml nicht einstellbar (test_abhilfen_als_variablen_…)
+    assert 'os.environ.get("RATSATLAS_ZEITFENSTER", "23-1")' in (config.ROOT / "pipeline" / "config.py").read_text()
+    fenster = 120
+    job = re.search(r"^  build:\n(?:    .*\n)*?    timeout-minutes: (\d+)", text, re.M)
+    dok = re.search(r"^\s+timeout-minutes: (\d+)$",
+                    next(s for s in _schritte(text) if "run: python -m pipeline dokumente" in s), re.M)
+    assert job and dok and int(job.group(1)) >= fenster + int(dok.group(1)) + 20
+
+
 def test_leere_abhilfe_variablen_ohne_wirkung(monkeypatch):
     """Nicht gesetzte Repository-Variablen kommen als leere Umgebungsvariablen an: kein Vollabruf, kein kürzerer Stand,
     kein Einstellungsfehler."""
@@ -111,10 +151,16 @@ def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
     assert set(re.findall(r"uses: actions/cache(?:/restore|/save)?@([0-9a-f]{40})", text)) == {save.group(1)}
     assert "uses: actions/cache@" not in text and "uses: actions/cache/restore@" in text
     wiederherstellen = next(s for s in schritte if "actions/cache/restore@" in s)
-    for pfad in ("data/raw/", "data/export/abrufstatistik.tsv"):         # data/raw/: zustand_abruf.json, STAND.json
-        assert pfad in sichern and pfad in wiederherstellen and pfad in zweite
-    assert "key: raw-${{ github.run_id }}-${{ github.run_attempt }}" in sichern
-    assert "restore-keys: raw-" in wiederherstellen
+    # Genau dieselben Pfade in derselben Reihenfolge (Prüfung stj): actions/cache bildet die Version eines Eintrags aus
+    # den Pfaden in dieser Reihenfolge (dazu Kompression und Salz); eine andere Liste oder Reihenfolge fände den
+    # gesicherten Zustand nicht wieder. Unter `with:` nur diese Schlüssel (etwa kein enableCrossOsArchive)
+    pfade = ["data/raw/", "data/export/abrufstatistik.tsv"]                # data/raw/: zustand_abruf.json, STAND.json
+    w_r, w_s, w_z = (_with_block(x) for x in (wiederherstellen, sichern, zweite))
+    assert w_r["path"] == w_s["path"] == w_z["path"] == pfade
+    assert set(w_r) == {"path", "key", "restore-keys"} and set(w_s) == set(w_z) == {"path", "key"}
+    assert w_s["key"] == "raw-${{ github.run_id }}-${{ github.run_attempt }}"
+    assert w_z["key"] == "raw-${{ github.run_id }}-${{ github.run_attempt }}-dokumente"
+    assert w_r["key"] == w_s["key"] and w_r["restore-keys"] == "raw-"
     assert config.ZUSTAND.parent == config.STAND.parent == config.RAW
 
 

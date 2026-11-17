@@ -106,6 +106,8 @@ def test_naechte_ohne_tropfen_wie_55c772e(oparl, monkeypatch, fall):
     byte-gleich derselbe Zustand, dieselbe STAND.json, dieselben Rohdaten und dieselbe Abrufstatistik (ohne Bytes und
     Sekunden) wie 55c772e, auch bei abgeschnittenen Antworten (gleiche Meldung mit der Zahl der gelesenen Bytes) und
     nach Wiederholungen."""
+    # Spalte `geaendert`: alter Vergleich wie in test_aussetzen.py::test_naechte_ohne_aussetzen_wie_78de995 (Prüfung stj)
+    monkeypatch.setattr(sessionnet, "_ohne_ergaenzung", lambda o: o)
     n = _Naechte(oparl, monkeypatch)
     fall(n, oparl, monkeypatch)
     assert n.summen == WIE_55C772E[fall]

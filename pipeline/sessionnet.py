@@ -902,6 +902,18 @@ def _vorhanden(pfad):
         return {o["id"]: o for o in map(json.loads, f) if o.get("id")}
 
 
+def _ohne_ergaenzung(o):
+    """Vorlage ohne die Angaben, die der Abruf selbst ergänzt hat (beratungen(): `organization` aus der Sitzung mit
+    `_organization_quelle`, in papers.jsonl gespeichert), zum Vergleich mit einer neu gelesenen Fassung der Stadt.
+    Sonst zählte jede in der Überlappung des inkrementellen Abrufs erneut gelesene, unveränderte Vorlage mit ergänzter
+    Beratung als „geändert“ (Prüfung stj). Andere Objekte unverändert."""
+    cons = o.get("consultation") if isinstance(o, dict) else None
+    if not isinstance(cons, list) or not any(isinstance(c, dict) and "_organization_quelle" in c for c in cons):
+        return o
+    return {**o, "consultation": [{k: v for k, v in c.items() if k not in ("organization", "_organization_quelle")}
+                                  if isinstance(c, dict) and "_organization_quelle" in c else c for c in cons]}
+
+
 def _zusammenfuehren(pfad, neu_objekte, voll, kuerzer_annehmen=False):
     """Führt Objekte über die ID mit dem vorhandenen Stand zusammen; liefert (alle, neu, geändert, gelöscht, Vermerk).
     Ein Vollabruf unter 90 % des Stands bricht ab (Art `leer`), außer mit `kuerzer_annehmen`
@@ -926,7 +938,8 @@ def _zusammenfuehren(pfad, neu_objekte, voll, kuerzer_annehmen=False):
                        "(RATSATLAS_KUERZER_ANNEHMEN)")
             _warnung(f"{pfad.name}: {vermerk}")
     neu = sum(1 for o in neu_objekte if o["id"] not in alt)
-    geaendert = sum(1 for o in neu_objekte if o["id"] in alt and o != alt[o["id"]])
+    # geändert: anders als der gespeicherte Stand ohne die eigene Ergänzung der Beratungen (_ohne_ergaenzung)
+    geaendert = sum(1 for o in neu_objekte if o["id"] in alt and o != _ohne_ergaenzung(alt[o["id"]]))
     geloescht = sum(1 for o in neu_objekte if o.get("deleted"))
     stand = {} if voll else dict(alt)
     stand.update({o["id"]: o for o in neu_objekte if o.get("id")})

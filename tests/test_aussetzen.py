@@ -259,6 +259,11 @@ def test_naechte_ohne_aussetzen_wie_78de995(oparl, monkeypatch, fall):
     Vollabruf über Nächte mit Fortsetzungen, RATSATLAS_VOLLABRUF, die Sitzungen ohne Zeitfilter, die Warnung der
     Organisationen, Listenfehler und Sperrnacht, ein mit RATSATLAS_KUERZER_ANNEHMEN angenommener kürzerer Stand und
     ein Vollabruf, der in derselben Nacht unter 90 % endet (Abbruch wie bisher: er wiederholt sich nicht von selbst)."""
+    # Spalte `geaendert` der Abrufstatistik: Seit der Prüfung stj zählt die eigene Ergänzung der Beratungen nicht mehr
+    # als Änderung (sessionnet._ohne_ergaenzung, geprüft in test_sessionnet.py::test_erneut_gelesene_vorlage_mit_…).
+    # Für den Vergleich mit 78de995 gilt hier der alte Vergleich; nachgewiesen bei der Prüfung stj: mit dem neuen
+    # unterscheiden sich die Nächte nur in dieser Spalte (Prüfsummen ohne sie gleich)
+    monkeypatch.setattr(sessionnet, "_ohne_ergaenzung", lambda o: o)
     n = _Naechte(oparl, monkeypatch)
     fall(n, oparl, monkeypatch)
     assert n.summen == WIE_78DE995[fall]
@@ -511,9 +516,10 @@ def test_seite_nennt_ausgesetzte_listen_im_datenstand():
     code = ("".join(t.group(0) for t in teile) + f"console.log(JSON.stringify([{json.dumps(faelle)}.map(standAusgesetzt), "
             f"standText({json.dumps(m)}, {{abruf_ausgesetzt: {json.dumps(faelle[3])}}})]));")
     vorlagen = " · Der Abruf der Vorlagen ruht seit dem "
-    grund_v = ": Die Stadt lieferte zuletzt deutlich weniger Vorlagen als bisher, das wird geprüft. Gezeigt wird "
-    sitzungen = (" · Der Abruf der Sitzungstermine ruht derzeit: Die Stadt lieferte zuletzt deutlich weniger Sitzungen als "
-                 "bisher, das wird geprüft. Gezeigt wird ")
+    # die Ursache bleibt offen (Prüfung stj): nicht „Die Stadt lieferte …“
+    grund_v = ": Beim letzten vollständigen Abruf kamen deutlich weniger Vorlagen an als bisher; das wird geprüft. Gezeigt wird "
+    sitzungen = (" · Der Abruf der Sitzungstermine ruht derzeit: Beim letzten vollständigen Abruf kamen deutlich weniger "
+                 "Sitzungen an als bisher; das wird geprüft. Gezeigt wird ")
     for zone in ("UTC", "Asia/Tokyo"):
         r = subprocess.run([node, "-e", code], capture_output=True, text=True, timeout=60,
                            env={**os.environ, "TZ": zone})

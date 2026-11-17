@@ -118,7 +118,7 @@
   const AUSGESETZT_SATZ = { papers: ["der Vorlagen", "Vorlagen"], meetings: ["der Sitzungstermine", "Sitzungen"] };
   const standAusgesetzt = (a) => Object.keys(AUSGESETZT_SATZ).filter((k) => a && a[k]).map((k) => {
     const [wessen, was] = AUSGESETZT_SATZ[k], seit = zeitTag(a[k].seit);
-    return ` · Der Abruf ${wessen} ruht ${seit ? `seit dem ${fmtDate(seit)}` : "derzeit"}: Die Stadt lieferte zuletzt deutlich weniger ${was} als bisher, das wird geprüft. Gezeigt wird ${a[k].stand ? `der Stand vom ${zeitDatum(a[k].stand)}` : "der letzte gültige Stand"}.`;
+    return ` · Der Abruf ${wessen} ruht ${seit ? `seit dem ${fmtDate(seit)}` : "derzeit"}: Beim letzten vollständigen Abruf kamen deutlich weniger ${was} an als bisher; das wird geprüft. Gezeigt wird ${a[k].stand ? `der Stand vom ${zeitDatum(a[k].stand)}` : "der letzte gültige Stand"}.`;
   }).join("");
   // fehlgeschlagener Abruf (index.json meta.abruf_fehler) im Datenstand
   const standFehler = (f) => f ? ` · Der letzte Abruf am ${zeitDatum(f.zeit)} ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand.` : "";
@@ -1254,7 +1254,11 @@
   function fillFilters() {
     const uniq = (a) => [...new Set(a.filter(Boolean))].sort((x, y) => x.localeCompare(y, "de"));
     options($("#f-type"), uniq(papers.map((p) => p.paper_type)));
-    options($("#f-amt"), uniq(papers.map((p) => p.amt)));
+    const aemter = uniq(papers.map((p) => p.amt));
+    options($("#f-amt"), aemter);
+    // Ohne federführende Dienststelle in den Daten (in Köln fehlt underDirectionOf bisher bei allen Vorlagen) kein
+    // Filter, der nur „alle“ anbietet (Prüfung stj)
+    $("#f-amt").closest("label").hidden = !aemter.length;
     options($("#f-gremium"), uniq(papers.flatMap((p) => p.process.map((s) => s.gremium))));
     fillParties();
   }

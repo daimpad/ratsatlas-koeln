@@ -16,6 +16,7 @@ import threading
 import time
 import types
 import zlib
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 
 import pytest
@@ -892,6 +893,56 @@ def test_wahl_unter_auxiliaryFile(aux, erwartet):
     assert (f["id"] if f else None, quelle) == (erwartet, "auxiliaryFile" if erwartet else None)
 
 
+@pytest.mark.parametrize("namen, erwartet", [
+    # die drei Fälle der Prüfung stj: gewählt wie nach der Regel vom 13.11.2026 (a), aber im Zweig „vorlage“ mit Hinweis
+    (["Mitteilung", "Anlage 2 Vorlage 0815/2019 (Ratsbeschluss)"], (1, "vorlage", {"fremde_nummer", "auch_anlage"})),
+    (["Anlage 1 zur Vorlage", "1234/2026 Mitteilung"], (0, "vorlage", {"eigene_spaeter", "auch_anlage"})),
+    (["Beantwortung", "Anlage Vorlagenbericht"], (1, "vorlage", {"auch_anlage"})),
+    (["Vorlage 1234/2026", "Anlage 1"], (0, "drucksache", set())),                  # eigene Drucksache geht vor
+    (["Anlage 1", "Beschlussvorlage 1234-2026"], (1, "drucksache", set())),
+    (["Anlage 1", "Beschlussvorlage"], (1, "vorlage", set())),
+    (["Vorlage AN/0815/2026"], (0, "vorlage", {"fremde_nummer"})),                 # Nummer eines Antrags
+    (["Vorlage Schuljahr 2025/2026 zur Grünanlage"], (0, "vorlage", set())),       # Jahresspanne, „Grünanlage“
+    (["Plan", "Karte"], (0, "erste", set())),
+])
+def test_zweig_der_wahl_unter_auxiliaryFile(namen, erwartet):
+    """Zweig der Regel und Hinweise nur zum Zählen (Prüfung stj: mainFile fehlt in Köln bei allen Vorlagen); die Wahl
+    selbst bleibt wie datei_wahl."""
+    p = {"reference": "1234/2026", "auxiliaryFile": [_anlage(i, n) for i, n in enumerate(namen)]}
+    f, quelle, zweig, hinweise = dokumente.wahl_mit_zweig(p)
+    assert (f, quelle) == dokumente.datei_wahl(p)
+    assert (f["id"], zweig, set(hinweise)) == (f"F{erwartet[0]}", erwartet[1], erwartet[2])
+    assert set(hinweise) <= set(dokumente.HINWEISE) and zweig in dokumente.ZWEIGE
+    assert dokumente.wahl_mit_zweig({"reference": "1/2026", "mainFile": _anlage(9)})[2:] == ("mainFile", frozenset())
+    assert dokumente.wahl_mit_zweig({"reference": "1/2026"}) == (None, None, None, frozenset())
+
+
+def test_regel_unter_auxiliaryFile_in_der_abrufstatistik():
+    """Log und Abrufstatistik zählen je Zweig und Hinweis (nur Zahlen), in der Auswahl und im Lauf."""
+    kandidaten = [{"_zweig": z, "_hinweise": frozenset(h)} for z, h in (
+        ("mainFile", ()), ("drucksache", ()), ("vorlage", ("fremde_nummer", "auch_anlage")), ("vorlage", ("auch_anlage",)),
+        ("erste", ()))]
+    lauf = {"zweige": Counter({"vorlage": 2})}
+    assert dokumente._regel_text(kandidaten, lauf) == (
+        "Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 1, mit dem Wort „Vorlage“ 2, erste PDF-Datei 1 "
+        "(davon mit dem Wort „Vorlage“: mit anderer Nummer NNNN/JJJJ im Namen 1, eigene Drucksache erst in einer "
+        "späteren Datei 0, auch mit dem Wort „Anlage“ 2); in diesem Lauf mit eigener Drucksache 0, mit dem Wort "
+        "„Vorlage“ 2, erste PDF-Datei 0")
+    assert "in diesem Lauf" not in dokumente._regel_text(kandidaten)
+
+
+@pytest.mark.parametrize("wert, grenze", [(None, 300), ("", 300), ("100", 100), ("300", 300), ("301", 300),
+                                          ("1000", 300), ("0", 0), ("-5", 0), ("abc", 0)])
+def test_variable_senkt_die_obergrenze_nur(monkeypatch, wert, grenze):
+    """RATSATLAS_PDF_MAX kann die Grenze von 300 Dateien je Nacht nur senken (Brief an die Stadt, Punkt 4: höchstens
+    300 Dokumente je Nacht; Prüfung stj)."""
+    if wert is None:
+        monkeypatch.delenv("RATSATLAS_PDF_MAX", raising=False)
+    else:
+        monkeypatch.setenv("RATSATLAS_PDF_MAX", wert)
+    assert dokumente.hoechstens() == grenze
+
+
 def test_hauptdatei_geht_vor():
     """Mit mainFile bleibt es die Wahl, auch wenn sie keine PDF-Datei ist (dann ausgeschlossen, keine Anlage
     ersatzweise); eine gelöschte Hauptdatei fehlt."""
@@ -935,7 +986,10 @@ def test_anlage_wird_federfuehrung_eine_stufe_niedriger(oparl, monkeypatch):
     assert all(dokumente.eintrag_gueltig(x) for x in e.values())
     ergebnis = _statistik()[-1]["ergebnis"]
     assert ("Herkunft: Auswahl aus mainFile 1, aus auxiliaryFile 3; in diesem Lauf aus mainFile 1, aus "
-            "auxiliaryFile 3; Vorlagen ohne PDF-Datei 1") in ergebnis
+            "auxiliaryFile 3; Vorlagen ohne PDF-Datei 1; Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 0, "
+            "mit dem Wort „Vorlage“ 1, erste PDF-Datei 2 (davon mit dem Wort „Vorlage“: mit anderer Nummer NNNN/JJJJ "
+            "im Namen 0, eigene Drucksache erst in einer späteren Datei 0, auch mit dem Wort „Anlage“ 0); in diesem "
+            "Lauf mit eigener Drucksache 0, mit dem Wort „Vorlage“ 1, erste PDF-Datei 2") in ergebnis
     build.build()
     db = sqlite3.connect(config.DB)
     resp = {pid.rsplit("/", 1)[1]: r for pid, *r in db.execute(

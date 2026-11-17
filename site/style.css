@@ -194,6 +194,7 @@ body.resizing .panel, body.resizing #timeline-wrap { transition: none; }
 /* Filter */
 .filters { display: grid; gap: 10px; padding-bottom: 10px; }
 .filters label { display: grid; gap: 3px; font-size: 13px; color: var(--text-muted); min-width: 0; }
+.filters label[hidden] { display: none; }
 .filters input[type=search], .filters select {
   width: 100%; min-width: 0; background: var(--surface); border: 1px solid var(--border-alt); border-radius: var(--radius-s); padding: 8px 10px; color: var(--text);
 }
