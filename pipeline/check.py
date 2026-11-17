@@ -159,14 +159,10 @@ def beratungen_je_vorlage(db):
         one(f"SELECT COUNT(*) FROM ({doppelt})"), one(f"SELECT COALESCE(SUM(n), 0) FROM ({doppelt})"))
 
 
-def reihenfolge_wiederholter_kennungen(db):
-    """Kennungen mehrfach in derselben Vorlage, deren Einträge nach ihrer Stelle in der Beratungsfolge (`position`) nicht
-    nach dem Sitzungstag geordnet sind (ein späterer Eintrag mit früherem Tag; Einträge ohne Sitzung zählen nicht mit):
-    (Kennungen mehrfach in derselben Vorlage, davon abweichend geordnet); nur Zahlen. Der Stand einer Vorlage folgt bei
-    einer solchen Kennung dem Eintrag mit dem spätesten Sitzungstag, bei gleichem Tag dem späteren; hat der letzte
-    Eintrag keinen Sitzungstag, folgt er diesem (process.massgeblich, export._paper_detail; Entscheidung 17.11.2026
-    (15), vorher dem letzten Eintrag nach `position`). Die Zahl zeigt, bei wie vielen Kennungen das vom letzten
-    Eintrag abweichen kann (Prüfung bs). Eine ältere Datenbank ohne `position` im Schlüssel: None."""
+def _wiederholte_kennungen(db):
+    """Einträge jeder Kennung, die in derselben Vorlage mehrfach steht, nach ihrer Stelle in der Beratungsfolge
+    (`position`): je Kennung und Vorlage eine Liste aus (Sitzungstag oder None, Sitzung abgesagt). Eine ältere Datenbank
+    ohne `position` im Schlüssel: None."""
     if not any(r[1] == "position" and r[5] for r in db.execute("PRAGMA table_info(consultation)")):
         return None
     from .process import local_day
@@ -178,12 +174,78 @@ def reihenfolge_wiederholter_kennungen(db):
             return None
 
     je_paar = {}
-    for cid, pid, start in db.execute(
-            "SELECT c.id, c.paper_id, m.start_date FROM consultation c LEFT JOIN meeting m ON m.id = c.meeting_id "
-            "ORDER BY c.paper_id, c.id, c.position"):
-        je_paar.setdefault((cid, pid), []).append(tag(start))
-    mehrfach = [[t for t in tage if t] for tage in je_paar.values() if len(tage) > 1]
+    for cid, pid, start, abgesagt in db.execute(
+            "SELECT c.id, c.paper_id, m.start_date, m.cancelled FROM consultation c "
+            "LEFT JOIN meeting m ON m.id = c.meeting_id ORDER BY c.paper_id, c.id, c.position"):
+        je_paar.setdefault((cid, pid), []).append((tag(start), bool(abgesagt)))
+    return [eintraege for eintraege in je_paar.values() if len(eintraege) > 1]
+
+
+def reihenfolge_wiederholter_kennungen(db):
+    """Kennungen mehrfach in derselben Vorlage, deren Einträge nach ihrer Stelle in der Beratungsfolge (`position`) nicht
+    nach dem Sitzungstag geordnet sind (ein späterer Eintrag mit früherem Tag; Einträge ohne Sitzung zählen nicht mit):
+    (Kennungen mehrfach in derselben Vorlage, davon abweichend geordnet); nur Zahlen. Der Stand einer Vorlage folgt bei
+    einer solchen Kennung dem Eintrag mit dem spätesten Sitzungstag, bei gleichem Tag dem späteren; hat der letzte
+    Eintrag keinen Sitzungstag, folgt er diesem (process.massgeblich, export._paper_detail; Entscheidung 17.11.2026
+    (15), vorher dem letzten Eintrag nach `position`); Einträge abgesagter Sitzungen zählen dabei nicht (Entscheidung
+    17.11.2026 (16) (A)), hier aber mit. Die Zahl zeigt, bei wie vielen Kennungen das vom letzten Eintrag abweichen kann
+    (Prüfung bs). Eine ältere Datenbank ohne `position` im Schlüssel: None."""
+    mehrfach = _wiederholte_kennungen(db)
+    if mehrfach is None:
+        return None
+    mehrfach = [[t for t, _ in eintraege if t] for eintraege in mehrfach]
     return len(mehrfach), sum(tage != sorted(tage) for tage in mehrfach)
+
+
+def abgesagte_wiederholter_kennungen(db):
+    """Kennungen mehrfach in derselben Vorlage, bei denen wegen einer abgesagten Sitzung ein anderer Eintrag für den
+    Stand zählt (process.massgeblich mit und ohne Angabe abgesagter Sitzungen, Entscheidung 17.11.2026 (16) (A) und
+    (B)): (Kennungen mehrfach in derselben Vorlage, davon mit anderem Eintrag); nur Zahlen. Eine ältere Datenbank ohne
+    `position` im Schlüssel: None."""
+    mehrfach = _wiederholte_kennungen(db)
+    if mehrfach is None:
+        return None
+    from .process import massgeblich
+    return len(mehrfach), sum(massgeblich([t for t, _ in e]) != massgeblich([t for t, _ in e], [a for _, a in e])
+                              for e in mehrfach)
+
+
+def stand_und_ende(db, base=None):
+    """Widersprüche zwischen dem Stand im Export und dem Ende des Weges in prozesse.json (Offen (8) in TECHNIK.md,
+    Entscheidung 17.11.2026 (16) (B); nur Zahlen, kein Befund). Das Ende wie in export._paths: process.path_key mit den
+    Stationen der Vorlage aus den Gebietsdateien des Exports (`base`, Vorgabe config.EXPORT / config.STADT) und den
+    Kennungen ihrer Beratungen aus der Datenbank nach `position`; jede Vorlage einmal, auch wenn sie in mehreren
+    Gebietsdateien steht. Liefert (Vorlagen mit Stand „entschieden“ und einem Ergebnis am Ende, das die Beratung nicht
+    abschließt (nicht process.is_final); Vorlagen mit anderem Stand und einem Ergebnis am Ende, das als Ergebnis einer
+    entscheidenden Beratung „entschieden“ ergibt (process.stand); Vorlagen mit Ergebnis am Ende; Vorlagen, deren Zahl
+    der Stationen nicht zur Datenbank passt, ohne Zählung) oder None ohne Gebietsdateien."""
+    from . import process as proc
+    base = base or config.EXPORT / config.STADT
+    dateien = [f for d in GEBIETSDATEIEN for f in sorted((base / d).glob("*.json"))]
+    if not dateien:
+        return None
+    kennungen = {}
+    for pid, kennung in db.execute("SELECT paper_id, id FROM consultation ORDER BY paper_id, position"):
+        kennungen.setdefault(pid, []).append(kennung)
+    gesehen, offen_entschieden, entschieden_anders, mit_ergebnis, abweichend = set(), 0, 0, 0, 0
+    for f in dateien:
+        for p in json.loads(f.read_text())["papers"]:
+            if (p.get("source_object") or p["reference"]) in gesehen:
+                continue
+            gesehen.add(p.get("source_object") or p["reference"])
+            k = kennungen.get(p.get("source_object"), [])
+            if len(k) != len(p["process"]):
+                abweichend += 1
+                continue
+            _, ende, art = proc.path_key(p, k)
+            if art != "ergebnis":
+                continue
+            mit_ergebnis += 1
+            if p.get("stand") == "entschieden":
+                offen_entschieden += not proc.is_final(ende)
+            elif proc.stand({"process": [{"authoritative": True, "result": ende}]}) == "entschieden":
+                entschieden_anders += 1
+    return offen_entschieden, entschieden_anders, mit_ergebnis, abweichend
 
 
 def kennzahlen(db):
@@ -219,7 +281,20 @@ def kennzahlen(db):
     if reihenfolge:
         print(f"Kennungen mehrfach in derselben Vorlage, deren Einträge nicht nach dem Sitzungstag geordnet sind: "
               f"{reihenfolge[1]} von {reihenfolge[0]} (der Stand folgt dem Eintrag mit dem spätesten Sitzungstag, bei "
-              f"gleichem Tag dem späteren; hat der letzte Eintrag keinen Sitzungstag, folgt er diesem)")
+              f"gleichem Tag dem späteren; hat der letzte Eintrag keinen Sitzungstag, folgt er diesem; Einträge "
+              f"abgesagter Sitzungen zählen dabei nicht)")
+    # Entscheidung 17.11.2026 (16) (B): Wirkung von (16) (A) und Widersprüche zwischen Stand und Ende des Weges (Offen
+    # (8)), nur Zahlen, kein Befund
+    abgesagt = abgesagte_wiederholter_kennungen(db)
+    if abgesagt:
+        print(f"Kennungen mehrfach in derselben Vorlage, bei denen wegen einer abgesagten Sitzung ein anderer Eintrag "
+              f"zählt: {abgesagt[1]} von {abgesagt[0]}")
+    ende = stand_und_ende(db)
+    print("Stand und Ende des Weges (prozesse.json) widersprechen sich: " + (
+        "nicht ermittelt (Gebietsdateien des Exports fehlen)" if ende is None else
+        f"{ende[0]} Vorlagen mit Stand „entschieden“ und nicht abschließendem Ergebnis am Ende (etwa vertagt), "
+        f"{ende[1]} Vorlagen mit Entscheidung am Ende und anderem Stand, von {ende[2]} Vorlagen mit Ergebnis am Ende"
+        + (f"; {ende[3]} Vorlagen nicht gezählt (Zahl der Stationen passt nicht zur Datenbank)" if ende[3] else "")))
     # Anteile je Zeile, also je Eintrag der Beratungsfolge einer Vorlage (Entscheidung 17.11.2026 (14))
     print("mit Sitzung:", _pct(one("SELECT COUNT(*) FROM consultation WHERE meeting_id IS NOT NULL"), cons))
     print("mit TOP-Ergebnis:", _pct(one(

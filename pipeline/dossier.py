@@ -210,14 +210,16 @@ def zuordnen(t, p, verfahren=None):
 def _eintrag(p, home, today):
     # Letzte Beratung mit Ergebnis und nächste Beratung nach dem Sitzungstag, nicht nach der Stelle in der
     # Beratungsfolge (Entscheidung 17.11.2026 (15), wie der Stand): die letzte nach proc.massgeblich (spätester Tag, bei
-    # gleichem Tag die spätere; ohne Tag beim letzten Eintrag dieser), die nächste mit dem frühesten kommenden Tag, bei
-    # gleichem Tag die frühere
+    # gleichem Tag die spätere; ohne Tag beim letzten Eintrag dieser; abgesagte Sitzungen nicht, außer alle sind
+    # abgesagt, Entscheidung 17.11.2026 (16) (A)), die nächste mit dem frühesten kommenden Tag, bei gleichem Tag die
+    # frühere
     beraten = [s for s in p["process"] if s.get("result")]
     kommend = [(proc.local_day(s["start_date"]), i) for i, s in enumerate(p["process"])
                if not s.get("result") and not s.get("cancelled") and s.get("start_date")
                and proc.local_day(s["start_date"]) >= today]
     naechste = p["process"][min(kommend)[1]] if kommend else None
-    last = beraten[proc.massgeblich([proc.local_day(s.get("start_date")) for s in beraten])] if beraten else None
+    last = beraten[proc.massgeblich([proc.local_day(s.get("start_date")) for s in beraten],
+                                    [s.get("cancelled") for s in beraten])] if beraten else None
     return {
         "reference": p["reference"], "date": p.get("date"), "paper_type": p.get("paper_type"), "name": p.get("name"),
         "amt": p.get("amt"), "stand": p.get("stand"), "web": p.get("web"), "gebiet": home,

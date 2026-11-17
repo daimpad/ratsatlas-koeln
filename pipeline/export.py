@@ -123,10 +123,11 @@ def _paper_detail(db, pid):
     # Stand nach dem Eintrag jeder Beratung, der zählt (Entscheidung 17.11.2026 (15), proc.massgeblich): Steht eine
     # Kennung in derselben Vorlage mehrfach (etwa nach einer Vertagung), zählt ihr Eintrag mit dem spätesten
     # Sitzungstag, bei gleichem Tag der spätere in der Beratungsfolge; hat ihr letzter Eintrag noch keinen Sitzungstag,
-    # zählt er (bis dahin immer der letzte Eintrag, Entscheidung 17.11.2026 (14)). Die übrigen Einträge bleiben
-    # Stationen der Prozesslinie
-    zaehlt = set(proc.zaehlende([r["beratung"] for r in process],
-                                [proc.local_day(r["start_date"]) for r in process]).values())
+    # zählt er (bis dahin immer der letzte Eintrag, Entscheidung 17.11.2026 (14)). Einträge einer abgesagten Sitzung
+    # zählen dabei nicht, außer alle Einträge der Kennung sind abgesagt (Entscheidung 17.11.2026 (16) (A)). Die übrigen
+    # Einträge bleiben Stationen der Prozesslinie
+    zaehlt = set(proc.zaehlende([r["beratung"] for r in process], [proc.local_day(r["start_date"]) for r in process],
+                                [r["cancelled"] for r in process]).values())
     d["stand"] = proc.stand({"process": [s for i, s in enumerate(d["process"]) if i in zaehlt]})
     d["themes"] = topics.themes(d)
     d["parties"] = topics.parties(d)
