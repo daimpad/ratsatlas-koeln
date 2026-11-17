@@ -1125,9 +1125,10 @@ def _anlage(i, name=None, fileName=None, mime="application/pdf", **felder):
     (_anlage(1, "Anlage"), "F1"),                                                               # ein Objekt
 ])
 def test_wahl_unter_auxiliaryFile(aux, erwartet):
-    """Ohne mainFile höchstens eine Datei aus auxiliaryFile: unter den PDF-Dateien (laut mimeType, ohne ihn nur mit der
-    Endung .pdf) in der Reihenfolge der Quelle die erste, deren name oder fileName die Drucksache (1234/2026, 1234-2026,
-    1234_2026) oder das Wort „Vorlage“ trägt, sonst die erste. Orakel: die erwartete Datei je Fall."""
+    """Ohne mainFile höchstens eine Datei aus auxiliaryFile nach Regel B (Entscheidung 17.11.2026 (1)): unter den
+    PDF-Dateien (laut mimeType, ohne ihn nur mit der Endung .pdf) in der Reihenfolge der Quelle zuerst die erste, deren
+    name oder fileName die eigene Drucksache (1234/2026, 1234-2026, 1234_2026) trägt, sonst die erste mit dem Wort
+    „Vorlage“ ohne andere Nummer NNNN/JJJJ, sonst die erste. Orakel: die erwartete Datei je Fall."""
     f, quelle = dokumente.datei_wahl({"id": "P", "reference": "1234/2026", "auxiliaryFile": aux})
     assert (f["id"] if f else None, quelle) == (erwartet, "auxiliaryFile" if erwartet else None)
 
@@ -1145,6 +1146,10 @@ def test_wahl_unter_auxiliaryFile(aux, erwartet):
     (["Plan", "Vorlage AN/1234/2026"], (0, "erste", {"uebergangen"})),           # Antrag mit denselben Ziffern
     (["Vorlage AN/0815/2026", "Beschlussvorlage"], (1, "vorlage", {"uebergangen"})),
     (["Anlage AN_1234_2026", "Plan"], (0, "erste", set())),                      # keine eigene Drucksache
+    (["Stellungnahme an/1234/2026", "Plan"], (0, "erste", set())),              # „an/“ klein (Prüfung stk)
+    (["Stellungnahme AN 1234/2026", "Beschlussvorlage"], (1, "vorlage", set())),  # „AN “ mit Leerzeichen
+    (["Vorlage_AN_1234_2026", "Plan"], (0, "erste", {"uebergangen"})),          # „AN_“ nach „_“
+    (["Anlage", "Bebauungsplan 1234/2026"], (1, "drucksache", set())),           # „…plan 1234/2026“: kein „AN“
     (["Vorlage 0815/2019", "Vorlage 0816/2019"], (0, "erste", {"uebergangen"})),  # übergangen und doch die erste
     (["Plan", "Karte"], (0, "erste", set())),
 ])
@@ -1161,27 +1166,56 @@ def test_zweig_der_wahl_unter_auxiliaryFile(namen, erwartet):
     assert dokumente.wahl_mit_zweig({"reference": "1/2026"}) == (None, None, None, frozenset())
 
 
-@pytest.mark.parametrize("name, eigen", [
-    ("1234/2026", True), ("Drucksache 01234_2026", True), ("1234-2026.pdf", True), ("AN/1234/2026", False),
-    ("AN-1234-2026", False), ("AN_1234_2026", False), ("11234/2026", False), ("1234/20261", False)])
-def test_eigene_drucksache_nicht_in_einer_an_nummer(name, eigen):
-    """Die eigene Drucksache im Namen (_drucksache_muster), aber nicht als Teil der Drucksache eines Antrags oder einer
-    Anfrage (AN/NNNN/JJJJ), die _fremde_nummer als andere Nummer zählt."""
-    assert bool(dokumente._drucksache_muster("1234/2026").search(name)) == eigen
-    assert dokumente._fremde_nummer([name], "1234/2026") == name.startswith("AN")   # fünfstellig: keine Nummer
+@pytest.mark.parametrize("name, eigen, fremd", [
+    ("1234/2026", True, False), ("Drucksache 01234_2026", True, False), ("1234-2026.pdf", True, False),
+    ("AN/1234/2026", False, True), ("AN-1234-2026", False, True), ("AN_1234_2026", False, True),
+    ("11234/2026", False, False), ("1234/20261", False, False),                   # fünfstellig: keine Nummer
+    # „AN“ in beliebiger Schreibung, mit Leerzeichen, nach „_“, aber nicht am Ende eines Wortes (Prüfung stk)
+    ("Stellungnahme an/1234/2026", False, True), ("Stellungnahme AN 1234/2026", False, True),
+    ("Stellungnahme An /1234/2026", False, True), ("Antrag_an-1234-2026.pdf", False, True),
+    ("Bebauungsplan 1234/2026", True, False), ("Plan_1234_2026", True, False)])
+def test_eigene_drucksache_nicht_in_einer_an_nummer(name, eigen, fremd):
+    """Die eigene Drucksache im Namen (_drucksache_muster, _traegt_drucksache), aber nicht als Teil der Drucksache eines
+    Antrags oder einer Anfrage (AN/NNNN/JJJJ), die _fremde_nummer als andere Nummer zählt."""
+    assert dokumente._traegt_drucksache(dokumente._drucksache_muster("1234/2026"), [name]) == eigen
+    assert dokumente._fremde_nummer([name], "1234/2026") == fremd
+
+
+@pytest.mark.parametrize("reference, namen, erwartet", [
+    # Monat und Jahr eines Datums TT-MM-JJJJ sind keine Nummer NNNN/JJJJ (Prüfung stk)
+    ("1234/2026", [_anlage(0, "Plan"), _anlage(1, "Beschlussvorlage", fileName="Vorlage_17-11-2026.pdf")],
+     (1, "vorlage", set())),
+    ("1234/2026", [_anlage(0, "Plan"), _anlage(1, "Vorlage vom 3_11_2026")], (1, "vorlage", set())),
+    ("1234/2026", [_anlage(0, "Plan"), _anlage(1, "Vorlage 17/11/2026")], (1, "vorlage", set())),
+    ("0011/2026", [_anlage(0, "Anlage vom 17-11-2026"), _anlage(1, "Beschlussvorlage")], (1, "vorlage", set())),
+    ("0011/2026", [_anlage(0, "Anlage"), _anlage(1, "Mitteilung 0011/2026")], (1, "drucksache", set())),
+    ("0011/2026", [_anlage(0, "Anlage"), _anlage(1, "Mitteilung 11/2026")], (1, "drucksache", set())),
+    # eine vierstellige Nummer nach einem Tag bleibt eine Nummer
+    ("1234/2026", [_anlage(0, "Plan"), _anlage(1, "Vorlage 17-0815-2019")], (0, "erste", {"uebergangen"})),
+    # offen (TECHNIK.md, Prüfung stk): Monat und Jahr ohne Tag zählen weiter als andere Nummer
+    ("1234/2026", [_anlage(0, "Plan"), _anlage(1, "Beschlussvorlage Stand 11/2025")], (0, "erste", {"uebergangen"})),
+])
+def test_datum_im_namen_ist_keine_nummer(reference, namen, erwartet):
+    """Ein Datum wie „17-11-2026“ im Namen ist weder die eigene Drucksache noch eine andere Nummer: Tag, Monat und Jahr
+    statt Nummer NNNN/JJJJ (_im_datum). Orakel: Datei, Zweig und Hinweise je Fall."""
+    p = {"reference": reference, "auxiliaryFile": namen}
+    f, quelle, zweig, hinweise = dokumente.wahl_mit_zweig(p)
+    assert (f["id"], zweig, set(hinweise)) == (f"F{erwartet[0]}", erwartet[1], erwartet[2])
+    assert (f, quelle) == dokumente.datei_wahl(p)
 
 
 def test_regel_unter_auxiliaryFile_in_der_abrufstatistik():
-    """Log und Abrufstatistik zählen je Zweig und Hinweis (nur Zahlen), in der Auswahl und im Lauf."""
+    """Log und Abrufstatistik zählen je Zweig und Hinweis (nur Zahlen), in der Auswahl und im Lauf; Hinweise je Vorlage
+    (Prüfung stk: die Beschriftung nennt Vorlagen, nicht Dateien)."""
     kandidaten = [{"_zweig": z, "_hinweise": frozenset(h)} for z, h in (
         ("mainFile", ()), ("drucksache", ()), ("vorlage", ("uebergangen", "auch_anlage")),
         ("vorlage", ("auch_anlage",)), ("erste", ("uebergangen",)))]
     lauf = {"zweige": Counter({"vorlage": 2})}
     assert dokumente._regel_text(kandidaten, lauf) == (
         "Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 1, mit dem Wort „Vorlage“ 2, erste PDF-Datei 1 "
-        "(Hinweise: Datei mit dem Wort „Vorlage“ wegen anderer Nummer NNNN/JJJJ übergangen 2, über das Wort „Vorlage“ "
-        "gewählt und auch mit dem Wort „Anlage“ 2); in diesem Lauf mit eigener Drucksache 0, mit dem Wort „Vorlage“ 2, "
-        "erste PDF-Datei 0")
+        "(Hinweise: Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ übergangenen Datei mit dem Wort „Vorlage“ 2, "
+        "über das Wort „Vorlage“ gewählt und auch mit dem Wort „Anlage“ 2); in diesem Lauf mit eigener Drucksache 0, "
+        "mit dem Wort „Vorlage“ 2, erste PDF-Datei 0")
     assert "in diesem Lauf" not in dokumente._regel_text(kandidaten)
 
 
@@ -1241,9 +1275,10 @@ def test_anlage_wird_federfuehrung_eine_stufe_niedriger(oparl, monkeypatch):
     ergebnis = _statistik()[-1]["ergebnis"]
     assert ("Herkunft: Auswahl aus mainFile 1, aus auxiliaryFile 3; in diesem Lauf aus mainFile 1, aus "
             "auxiliaryFile 3; Vorlagen ohne PDF-Datei 1; Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 0, "
-            "mit dem Wort „Vorlage“ 1, erste PDF-Datei 2 (Hinweise: Datei mit dem Wort „Vorlage“ wegen anderer Nummer "
-            "NNNN/JJJJ übergangen 0, über das Wort „Vorlage“ gewählt und auch mit dem Wort „Anlage“ 0); in diesem "
-            "Lauf mit eigener Drucksache 0, mit dem Wort „Vorlage“ 1, erste PDF-Datei 2") in ergebnis
+            "mit dem Wort „Vorlage“ 1, erste PDF-Datei 2 (Hinweise: Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ "
+            "übergangenen Datei mit dem Wort „Vorlage“ 0, über das Wort „Vorlage“ gewählt und auch mit dem Wort "
+            "„Anlage“ 0); in diesem Lauf mit eigener Drucksache 0, mit dem Wort „Vorlage“ 1, erste PDF-Datei 2"
+            ) in ergebnis
     build.build()
     db = sqlite3.connect(config.DB)
     resp = {pid.rsplit("/", 1)[1]: r for pid, *r in db.execute(

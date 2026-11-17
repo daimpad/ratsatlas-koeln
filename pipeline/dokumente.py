@@ -57,11 +57,12 @@ Anfrage): je Verwaltungsvorlage höchstens eine Datei: die Hauptdatei (`mainFile
 17.11.2026 (1), ergänzt 13.11.2026 (a)): unter den PDF-Dateien (laut `mimeType`, ohne ihn nur mit der Endung „.pdf“) in
 der Reihenfolge der Quelle zuerst die erste, deren `name` oder `fileName` die eigene Drucksache trägt (1234/2026,
 1234-2026, 1234_2026); sonst die erste mit dem Wort „Vorlage“ (auch als Wortteil), deren Namen keine andere Nummer der
-Form NNNN/JJJJ tragen (_fremde_nummer: eine Jahresspanne wie „2025/2026“ ist keine Nummer, eine Nummer mit „AN/“
-davor immer eine andere); sonst die erste PDF-Datei (datei_wahl; Herkunft `quelle` im Eintrag). Welcher Zweig die
-Datei bestimmt hat (ZWEIGE: eigene Drucksache, Wort „Vorlage“, erste PDF-Datei) und die Hinweise (HINWEISE: wie oft
-eine Datei mit dem Wort „Vorlage“ wegen einer anderen Nummer übergangen wurde, und wie oft die über „Vorlage“ gewählte
-Datei auch das Wort „Anlage“ trägt) zählen Log und Abrufstatistik (nur Zahlen). Nur Verwaltungsvorlagen der laufenden
+Form NNNN/JJJJ tragen (_fremde_nummer: eine Jahresspanne wie „2025/2026“ ist keine Nummer, Monat und Jahr eines
+Datums wie „17-11-2026“ auch nicht, eine Nummer mit „AN/“ davor immer eine andere, auch „an/“ oder „AN “); sonst die
+erste PDF-Datei (datei_wahl; Herkunft `quelle` im Eintrag). Welcher Zweig die Datei bestimmt hat (ZWEIGE: eigene
+Drucksache, Wort „Vorlage“, erste PDF-Datei) und die Hinweise (HINWEISE, je Vorlage: ob eine Datei mit dem Wort
+„Vorlage“ wegen einer anderen Nummer übergangen wurde, und ob die über „Vorlage“ gewählte Datei auch das Wort
+„Anlage“ trägt) zählen Log und Abrufstatistik (nur Zahlen). Nur Verwaltungsvorlagen der laufenden
 Wahlperiode (Entscheidung 17.11.2026 (4)): Datum (`date`, fehlt es oder ist es unlesbar `created`; als Kalendertag in
 Ortszeit Köln) ab AB_DATUM = 01.11.2025; ohne lesbares Datum keine Datei; ältere Jahre erst nach eigener Entscheidung
 und Absprache mit der Stadt (nicht über Variablen einstellbar). Verwaltungsvorlagen: Drucksache NNNN/JJJJ und
@@ -159,18 +160,30 @@ QUELLEN = ("mainFile", "auxiliaryFile")
 # („Beschlussvorlage“), in beliebiger Schreibung (daneben die Drucksache, _drucksache_muster)
 RE_VORLAGE_WORT = re.compile(r"vorlage", re.I)
 # Zweige der Regel B unter auxiliaryFile (datei_wahl, Entscheidung 17.11.2026 (1)) und Hinweise, nur als Zahlen in Log
-# und Abrufstatistik (Prüfung stj): Ob die Regel die Vorlage selbst trifft, soll die Testnacht zeigen. Hinweise:
-# „uebergangen“ (eine Datei mit dem Wort „Vorlage“ trug eine andere Nummer und wurde übergangen; Zweige „vorlage“ und
-# „erste“), „auch_anlage“ (die über „Vorlage“ gewählte Datei trägt auch das Wort „Anlage“; Zweig „vorlage“)
+# und Abrufstatistik (Prüfung stj): Ob die Regel die Vorlage selbst trifft, soll die Testnacht zeigen. Hinweise, je
+# Vorlage höchstens einmal gezählt (auch wenn mehrere Dateien übergangen wurden; Prüfung stk): „uebergangen“ (eine
+# Datei mit dem Wort „Vorlage“ trug eine andere Nummer und wurde übergangen; Zweige „vorlage“ und „erste“),
+# „auch_anlage“ (die über „Vorlage“ gewählte Datei trägt auch das Wort „Anlage“; Zweig „vorlage“)
 ZWEIGE = {"drucksache": "mit eigener Drucksache", "vorlage": "mit dem Wort „Vorlage“", "erste": "erste PDF-Datei"}
-HINWEISE = {"uebergangen": "Datei mit dem Wort „Vorlage“ wegen anderer Nummer NNNN/JJJJ übergangen",
+HINWEISE = {"uebergangen": ("Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ übergangenen Datei mit dem Wort "
+                            "„Vorlage“"),
             "auch_anlage": "über das Wort „Vorlage“ gewählt und auch mit dem Wort „Anlage“"}
 # das Wort „Anlage“ am Wortanfang („Anlage 2“, „Anlagen“, nicht „Grünanlage“), nur für den Hinweis „auch_anlage“
 RE_ANLAGE_WORT = re.compile(r"\banlage", re.I)
-# Nummer der Form NNNN/JJJJ (auch mit „-“ oder „_“) in einem Dateinamen (_fremde_nummer), mit „AN/“ davor (auch „AN-“,
-# „AN_“, in Großbuchstaben wie in der Drucksache AN/NNNN/JJJJ) als eigene Gruppe: die Nummer eines Antrags oder einer
-# Anfrage; eine Jahresspanne wie „2025/2026“ (Schul- oder Haushaltsjahr) zählt nicht als Nummer
-RE_NUMMER = re.compile(r"(?<![0-9])(AN[/_-])?(\d{1,4})[/_-]((?:19|20)\d{2})(?![0-9])")
+# „AN“ vor einer Nummer, wie in der Drucksache AN/NNNN/JJJJ eines Antrags oder einer Anfrage: ohne Buchstaben davor
+# (auch nach „_“ wie in „Antrag_AN_1234_2026“, nicht „Plan 1234/2026“), in beliebiger Schreibung, mit „/“, „-“ oder
+# „_“, auch mit einem Leerzeichen davor, oder nur mit einem Leerzeichen („AN/“, „an-“, „AN /“, „AN “; Prüfung stk).
+# Eine Form je Eintrag, damit _drucksache_muster daraus Lookbehinds fester Breite bilden kann
+AN_FORMEN = ("[/_-]", " [/_-]", " ")
+RE_AN = r"(?<![^\W\d_])(?i:an)(?:" + "|".join(AN_FORMEN) + ")"
+# Nummer der Form NNNN/JJJJ (auch mit „-“ oder „_“) in einem Dateinamen (_fremde_nummer), mit „AN/“ davor (RE_AN) als
+# eigene Gruppe: die Nummer eines Antrags oder einer Anfrage; eine Jahresspanne wie „2025/2026“ (Schul- oder
+# Haushaltsjahr) zählt nicht als Nummer, Monat und Jahr eines Datums auch nicht (_im_datum)
+RE_NUMMER = re.compile(r"(?<![0-9])(?P<an>" + RE_AN + r")?(?P<nummer>\d{1,4})[/_-](?P<jahr>(?:19|20)\d{2})(?![0-9])")
+# Tag eines Datums direkt vor einer höchstens zweistelligen Nummer: „17-11-2026“, „17_11_2026“, „1.11/2026“ sind Tag,
+# Monat und Jahr, keine Nummer NNNN/JJJJ (_im_datum, Prüfung stk). Monat und Jahr ohne Tag („Stand 11/2025“) zählen
+# weiter als Nummer: Ob Kölner Drucksachen in Dateinamen immer vierstellig stehen, ist ungemessen (TECHNIK.md)
+RE_TAG_DAVOR = re.compile(r"(?<![0-9])[0-9]{1,2}[./_-]$")
 # Status je Datei: aus dem Prüfprozess (pdfkopf.STATUS) oder vom Abruf
 STATUS = (*pdfkopf.STATUS, "zeitueberschreitung", "fehler_pruefung", "zu_gross", "kein_pdf", "adresse")
 RE_HTTP_STATUS = re.compile(r"http_[1-5]\d\d")
@@ -438,13 +451,30 @@ def _pdf_laut_metadaten(f):
 
 
 def _drucksache_muster(reference):
-    """Muster der Drucksache NNNN/JJJJ in einem Dateinamen: Nummer (auch mit führenden Nullen), „/“, „-“ oder „_“, Jahr,
-    nicht innerhalb einer längeren Zahl („11234/2026“, „1234/20261“ nicht) und nicht als Teil der Drucksache eines
-    Antrags oder einer Anfrage („AN/1234/2026“ ist eine andere Nummer, _fremde_nummer); None für andere Drucksachen."""
+    """Muster der Drucksache NNNN/JJJJ in einem Dateinamen: Nummer (auch mit führenden Nullen; Gruppe „nummer“), „/“,
+    „-“ oder „_“, Jahr, nicht innerhalb einer längeren Zahl („11234/2026“, „1234/20261“ nicht) und nicht als Teil der
+    Drucksache eines Antrags oder einer Anfrage („AN/1234/2026“, auch „an/1234/2026“ oder „AN 1234/2026“, ist eine
+    andere Nummer, RE_AN, _fremde_nummer); None für andere Drucksachen. Ob ein Treffer Monat und Jahr eines Datums ist,
+    prüft _traegt_drucksache."""
     m = re.fullmatch(r"(\d{1,4})/(\d{4})", reference if isinstance(reference, str) else "")
     if not m:
         return None
-    return re.compile(r"(?<![0-9])(?<!AN[/_-])0*" + str(int(m.group(1))) + r"[/_-]" + m.group(2) + r"(?![0-9])")
+    ohne_an = "".join(r"(?<!(?<![^\W\d_])(?i:an)" + form + ")" for form in AN_FORMEN)
+    return re.compile(r"(?<![0-9])" + ohne_an + r"(?P<nummer>0*" + str(int(m.group(1))) + r")[/_-]" + m.group(2)
+                      + r"(?![0-9])")
+
+
+def _im_datum(name, m):
+    """Ist der Treffer `m` (Gruppe „nummer“) in `name` Monat und Jahr eines Datums TT-MM-JJJJ (Tag mit „-“, „_“, „/“
+    oder „.“ davor, RE_TAG_DAVOR)? Nur bei höchstens zweistelliger Nummer; „17-0011-2026“ bleibt eine Nummer
+    (Prüfung stk)."""
+    return len(m.group("nummer")) <= 2 and RE_TAG_DAVOR.search(name, 0, m.start("nummer")) is not None
+
+
+def _traegt_drucksache(muster, namen):
+    """Trägt einer der Namen die eigene Drucksache (`muster` aus _drucksache_muster), nicht nur als Monat und Jahr eines
+    Datums (Drucksache 0011/2026 und „Anlage vom 17-11-2026“: nein; Prüfung stk)?"""
+    return muster is not None and any(not _im_datum(n, m) for n in namen for m in muster.finditer(n))
 
 
 def datei_wahl(p):
@@ -466,12 +496,19 @@ def _namen(f):
 
 def _fremde_nummer(namen, reference):
     """Trägt ein Name eine Nummer der Form NNNN/JJJJ (auch „-“, „_“), die nicht die eigene Drucksache ist? Keine Nummer
-    ist eine Jahresspanne wie „2025/2026“; eine Nummer mit „AN/“ davor (Antrag oder Anfrage, RE_NUMMER) ist immer eine
-    andere, auch mit den Ziffern der eigenen Drucksache."""
+    ist eine Jahresspanne wie „2025/2026“ und Monat und Jahr eines Datums wie „17-11-2026“ (_im_datum); eine Nummer
+    mit „AN/“ davor (Antrag oder Anfrage, RE_AN, auch „an/“ oder „AN “) ist immer eine andere, auch mit den Ziffern der
+    eigenen Drucksache."""
     eigen = re.fullmatch(r"(\d{1,4})/(\d{4})", reference if isinstance(reference, str) else "")
     eigen = (int(eigen.group(1)), eigen.group(2)) if eigen else None
-    return any(an or ((int(n), j) != eigen and not (len(n) == 4 and int(n) == int(j) - 1))
-               for name in namen for an, n, j in RE_NUMMER.findall(name))
+    for name in namen:
+        for m in RE_NUMMER.finditer(name):
+            if m.group("an"):
+                return True
+            n, j = m.group("nummer"), m.group("jahr")
+            if (int(n), j) != eigen and not (len(n) == 4 and int(n) == int(j) - 1) and not _im_datum(name, m):
+                return True
+    return False
 
 
 def wahl_mit_zweig(p):
@@ -479,9 +516,9 @@ def wahl_mit_zweig(p):
     Hinweise). Zweig „mainFile“ oder unter auxiliaryFile nach Regel B (Entscheidung 17.11.2026 (1)) einer aus ZWEIGE:
     „drucksache“ (die erste PDF-Datei, deren Name die eigene Drucksache trägt), „vorlage“ (sonst die erste mit dem Wort
     „Vorlage“ ohne andere Nummer NNNN/JJJJ im Namen), „erste“ (sonst die erste PDF-Datei). Hinweise (HINWEISE):
-    „uebergangen“ (eine Datei mit dem Wort „Vorlage“ wurde wegen einer anderen Nummer übergangen; Zweige „vorlage“ und
-    „erste“, auch wenn die erste PDF-Datei eben diese ist) und „auch_anlage“ (die über „Vorlage“ gewählte Datei trägt
-    auch das Wort „Anlage“). Ohne Datei (None, None, None, frozenset())."""
+    „uebergangen“ (mindestens eine Datei mit dem Wort „Vorlage“ wurde wegen einer anderen Nummer übergangen; Zweige
+    „vorlage“ und „erste“, auch wenn die erste PDF-Datei eben diese ist) und „auch_anlage“ (die über „Vorlage“
+    gewählte Datei trägt auch das Wort „Anlage“). Ohne Datei (None, None, None, frozenset())."""
     mf = p.get("mainFile")
     if _datei_ok(mf):
         return mf, "mainFile", "mainFile", frozenset()
@@ -492,7 +529,7 @@ def wahl_mit_zweig(p):
         return None, None, None, frozenset()
     muster = _drucksache_muster(p.get("reference"))
     for f in pdfs:   # 1. eigene Drucksache, in allen PDF-Dateien vor dem Wort „Vorlage“
-        if muster and any(muster.search(n) for n in _namen(f)):
+        if _traegt_drucksache(muster, _namen(f)):
             return f, "auxiliaryFile", "drucksache", frozenset()
     hinweise = set()
     for f in pdfs:   # 2. das Wort „Vorlage“ ohne andere Nummer im Namen
@@ -788,7 +825,7 @@ def _abbruch_vermerken(e, jetzt):
 
 def _regel_text(kandidaten, lauf=None):
     """Zweige der Regel B unter auxiliaryFile (ZWEIGE) in der Auswahl und, mit `lauf`, in diesem Lauf, dazu die Hinweise
-    (HINWEISE) in der Auswahl; nur Zahlen (Prüfung stj, Entscheidung 17.11.2026 (1))."""
+    (HINWEISE) in der Auswahl, je Vorlage höchstens einmal; nur Zahlen (Prüfung stj, Entscheidung 17.11.2026 (1))."""
     zweige = Counter(k["_zweig"] for k in kandidaten)
     hinweise = Counter(h for k in kandidaten for h in k["_hinweise"])
     text = ("Regel unter auxiliaryFile: Auswahl " + ", ".join(f"{t} {zweige[z]}" for z, t in ZWEIGE.items())
