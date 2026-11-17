@@ -79,7 +79,7 @@ def test_gemeinsame_kennung_in_zwei_und_drei_vorlagen(oparl, capsys):
              "eigene Station)")
     assert zeile + "\n" in aus
     assert zeile + ("; 2 Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener Sitzung oder "
-                    "verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); 0 Einträge ohne "
+                    "verschiedenem TOP steht (je Eintrag nach seinen eigenen Verweisen zugeordnet); 0 Einträge ohne "
                     "eigene Sitzung oder TOP, Verknüpfung über die Kennung übernommen; 0 Einträge ohne Sitzung und TOP, "
                     "obwohl ihre Kennung in beratungen.jsonl steht (eigene Verweise passen zu keiner Zeile, oder ohne "
                     "eigene Verweise mit verschiedenen Zeilen)\n") in log
@@ -175,9 +175,12 @@ def test_dieselbe_kennung_dreimal_jeder_eintrag_eine_station(oparl, capsys, monk
     check.kennzahlen(db)
     aus = capsys.readouterr().out
     assert "mit Sitzung: 9 von 10 (90.0 %)" in aus and "mit TOP-Ergebnis: 9 von 10 (90.0 %)" in aus
+    # Prüfung bs: alle drei wiederholten Kennungen nach dem Sitzungstag geordnet (der Eintrag ohne Sitzung zählt nicht)
+    assert ("Kennungen mehrfach in derselben Vorlage, deren Einträge nicht nach dem Sitzungstag geordnet sind: 0 von 3 "
+            "(der Stand folgt dem letzten Eintrag in der Beratungsfolge)\n") in aus
     db.close()
     assert zeile + ("; 8 Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener Sitzung oder "
-                    "verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); 0 Einträge ohne "
+                    "verschiedenem TOP steht (je Eintrag nach seinen eigenen Verweisen zugeordnet); 0 Einträge ohne "
                     "eigene Sitzung oder TOP, Verknüpfung über die Kennung übernommen; 1 Einträge ohne Sitzung und TOP, "
                     "obwohl ihre Kennung in beratungen.jsonl steht (") in log
     assert "5 Vorlagen, 10 Beratungen (Einträge), 4 Sitzungen und 8 TOPs mit Beratung einer Vorlage, " in log
@@ -190,6 +193,41 @@ def test_dieselbe_kennung_dreimal_jeder_eintrag_eine_station(oparl, capsys, monk
     assert len(beratungen) == 5 and all(z[-1] == "ok" for z in beratungen), beratungen
     assert {z[0]: z[2] for z in beratungen} == {"1001/2026": "1", "AN/102/2026": "3", "1003/2026": "1",
                                                 "AN/104/2026": "2", "1005/2026": "3"}
+
+
+def test_wiederholte_kennung_reihenfolge_und_feed_ids(oparl, capsys):
+    """Prüfung bs: 1001/2026 trägt eine Kennung dreimal, nach der Beratungsfolge zuerst am 05.11. (beschlossen), dann am
+    08.10. und 22.10. (vertagt): check zählt sie als nicht nach dem Sitzungstag geordnet (der Stand folgt dem letzten
+    Eintrag in der Beratungsfolge; ob er dem spätesten Sitzungstag folgen soll, ist offen). AN/102/2026 trägt eine
+    Kennung zweimal in derselben Sitzung unter zwei TOPs: Die Einträge der Feeds haben verschiedene IDs, die erste wie
+    bisher aus Datum und Gremium, die zweite mit der TOP-Nummer; kein Feed enthält eine ID doppelt."""
+    import xml.etree.ElementTree as ET
+    from urllib.parse import quote
+    from pipeline import publish
+    _sitzungen_mit_vertagung(oparl)
+    oparl.papers[0]["consultation"] = [_eintrag(oparl, "r", "v3", "v3"), _eintrag(oparl, "r", "v1", "v1"),
+                                       _eintrag(oparl, "r", "v2", "v2")]
+    oparl.papers[1]["consultation"] = [_beratung(oparl, "q", 1), _beratung(oparl, "q", 4)]
+    _aufbauen(oparl, capsys)
+    db = sqlite3.connect(config.DB)
+    assert check.reihenfolge_wiederholter_kennungen(db) == (2, 1)
+    check.kennzahlen(db)
+    assert ("Kennungen mehrfach in derselben Vorlage, deren Einträge nicht nach dem Sitzungstag geordnet sind: 1 von 2 "
+            "(der Stand folgt dem letzten Eintrag in der Beratungsfolge)\n") in capsys.readouterr().out
+    db.close()
+    p = _exportiert()["AN/102/2026"]
+    assert _stationen(p)[0] == [(BEGINN, GREMIUM, "8.1", BESCHLOSSEN), (BEGINN, GREMIUM, "8.4", KENNTNIS)]
+    basis = f"{oparl.papers[1]['id']}#beratung-2026-10-01-{quote(GREMIUM, safe='')}"
+    assert [e["id"] for e in publish.events(p) if "#beratung-" in e["id"]] == [basis, basis + "-top-8.4"]
+    atom = "{http://www.w3.org/2005/Atom}"
+    feeds = sorted((config.EXPORT / config.STADT / "feeds").rglob("*.xml"))
+    assert feeds
+    gefunden = set()
+    for f in feeds:
+        ids = [e.findtext(f"{atom}id") for e in ET.parse(f).getroot().iter(f"{atom}entry")]
+        assert len(ids) == len(set(ids)), f.name
+        gefunden.update(i for i in ids if i.startswith(basis))
+    assert gefunden == {basis, basis + "-top-8.4"}
 
 
 def test_wiederholte_kennung_erstes_gremium_fuer_datenschutz(oparl, capsys):
@@ -339,7 +377,7 @@ def test_eigene_verweise_ohne_aufloesung_keine_fremde_station(oparl, capsys):
     assert "mit Sitzung: 4 von 5 (80.0 %)" in aus and "mit TOP-Ergebnis: 4 von 5 (80.0 %)" in aus
     db.close()
     assert ("; 0 Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener Sitzung oder verschiedenem TOP "
-            "steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); 1 Einträge ohne eigene Sitzung oder TOP, "
+            "steht (je Eintrag nach seinen eigenen Verweisen zugeordnet); 1 Einträge ohne eigene Sitzung oder TOP, "
             "Verknüpfung über die Kennung übernommen; 1 Einträge ohne Sitzung und TOP, obwohl ihre Kennung in "
             "beratungen.jsonl steht (") in log
 
@@ -387,7 +425,7 @@ def test_beratungen_zeile_zaehlt():
         "Beratungen: 10 Einträge (je Eintrag eine Zeile der Datenbank); 2 Kennungen in mehreren Vorlagen (6 Einträge, "
         "5 Vorlagen); 2-mal eine Kennung mehrfach in derselben Vorlage (5 Einträge, jeder Eintrag eine eigene "
         "Station); 3 Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener "
-        "Sitzung oder verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); 2 Einträge ohne "
+        "Sitzung oder verschiedenem TOP steht (je Eintrag nach seinen eigenen Verweisen zugeordnet); 2 Einträge ohne "
         "eigene Sitzung oder TOP, Verknüpfung über die Kennung übernommen; 1 Einträge ohne Sitzung und TOP, obwohl "
         "ihre Kennung in beratungen.jsonl steht (eigene Verweise passen zu keiner Zeile, oder ohne eigene Verweise mit "
         "verschiedenen Zeilen)")

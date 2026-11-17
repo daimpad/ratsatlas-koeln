@@ -474,7 +474,7 @@ def beratungen_zeile(cons, verschieden=0, uebernommen=0, ohne=0):
     return (beratungen_text(len(cons), len(mehrere), sum(je_paar[cid, pid] for cid in mehrere for pid in vorlagen[cid]),
                             len(set().union(*(vorlagen[cid] for cid in mehrere))), len(doppelt), sum(doppelt))
             + f"; {verschieden} Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener Sitzung oder "
-              f"verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); {uebernommen} Einträge "
+              f"verschiedenem TOP steht (je Eintrag nach seinen eigenen Verweisen zugeordnet); {uebernommen} Einträge "
               f"ohne eigene Sitzung oder TOP, Verknüpfung über die Kennung übernommen; {ohne} Einträge ohne Sitzung und "
               f"TOP, obwohl ihre Kennung in beratungen.jsonl steht (eigene Verweise passen zu keiner Zeile, oder ohne "
               f"eigene Verweise mit verschiedenen Zeilen)")

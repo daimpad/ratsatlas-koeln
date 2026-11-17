@@ -43,11 +43,24 @@ def events(p, with_followups=False):
                     "summary": f"{p['paper_type']} · federführend: {p['amt'] or 'unbekannt'} · Stand: {p['stand']}"
                                + (f" · KI-Kurzfassung (abgeleitet, Einzelheiten können ungenau sein): {p['kurzfassung']['text']}"
                                   if p.get("kurzfassung") else "")})
+    vergeben = set()
     for s in p["steps"]:
         if s["typ"] in ("beratung", "entscheidung") and s.get("result") and s.get("date"):
             # ID aus Datum und Gremium, nicht aus der Position: eine neue Folgevorlage oder Beratung verschob sonst
-            # die Nummern, und Feed-Reader zeigten Einträge doppelt (Code-Prüfung 23.10.2026)
-            out.append({"date": s["date"], "id": f"{p['source_object']}#beratung-{s['date']}-{quote(s['label'], safe='')}",
+            # die Nummern, und Feed-Reader zeigten Einträge doppelt (Code-Prüfung 23.10.2026). Berät dasselbe Gremium
+            # die Vorlage am selben Tag mehrmals (seit der Entscheidung 17.11.2026 (14) je Eintrag eine Station, etwa
+            # dieselbe Beratung unter zwei TOPs), trägt ab der zweiten Station die ID die TOP-Nummer (fehlt sie, eine
+            # laufende Nummer); die erste behält ihre ID, und Feed-Reader fassen die Einträge nicht zusammen (Prüfung bs)
+            basis = f"{p['source_object']}#beratung-{s['date']}-{quote(s['label'], safe='')}"
+            eid = basis
+            if eid in vergeben and s.get("number"):
+                eid = f"{basis}-top-{quote(str(s['number']), safe='')}"
+            n = 1
+            while eid in vergeben:
+                n += 1
+                eid = f"{basis}-{n}"
+            vergeben.add(eid)
+            out.append({"date": s["date"], "id": eid,
                         "title": f"{s['label']}: „{s['result']}“ – {p['reference']} {p['name']}",
                         "summary": f"{s.get('role') or 'Beratung'} am {s['date']}; Ergebnis laut Ratsinformationssystem. "
                                    f"Stand der Vorlage: {p['stand']}"})
