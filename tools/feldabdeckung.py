@@ -56,7 +56,12 @@ Kennungen der Tagesordnungspunkte, Tagesordnungspunkte mit Rückverweis, die kei
 verknüpft (derselbe Textvergleich wie sessionnet.beratungen), nach Grund (GRUENDE_TOP), und Sitzungen ohne Verknüpfung
 nach Art (ARTEN_SITZUNG), Datenstand und Jahr. Die Vorlagen werden vor den Sitzungen gelesen; im Speicher stehen dafür
 nur Hashwerte der Kennungen und je Vorlage mit Beratungen ihre Vorlagenart. Ohne Vorlagen oder nach einer Zeitgrenze bei
-den Vorlagen steht die Verknüpfung als „nicht ermittelt“ da.
+den Vorlagen steht die Verknüpfung als „nicht ermittelt“ da. Nach der Prüfung bk: Als verknüpft zählen wie im Abruf nur
+Beratungen aus einer Liste `consultation` und Tagesordnungspunkte aus einer Liste `agendaItem`; Kennungen mehrfach in
+derselben Vorlage zählen wie im Log von build (Kennungen und alle ihre Einträge dort); ein fester Absatz „Abgleich mit
+build“ nennt, was build weniger aufnimmt (die Sitzungen ohne Verknüpfung sind eine Untergrenze für die Sitzungen, die
+nicht in der Datenbank stehen); sind die Vorlagen nur teilweise gezählt (eine Datei nicht weiter lesbar, Objekte nicht
+auswertbar, Zwischenstand eines Vollabrufs nur aus der Teildatei), folgt ein Hinweis.
 Ausgabe nur auf stdout und, in GitHub Actions, als Markdown an `$GITHUB_STEP_SUMMARY`; das Skript schreibt nichts in
 data/, veröffentlicht nichts und sendet keine Anfrage. Nur Anzahlen, Anteile und vorsichtig gefilterte Kategorien:
 Werte von paperType, mimeType, result (Tagesordnungspunkt), organizationType und classification erscheinen nur, wenn
@@ -130,17 +135,19 @@ FORM_FELDER = ("underDirectionOf", "originatorOrganization", "originatorPerson",
 KREUZ = ("underDirectionOf", "originatorOrganization", "location", "mainFile", "auxiliaryFile")
 # Verweis einer Beratung (Kennung) auf ihren Tagesordnungspunkt, je Kennung über alle Vorlagen als Bits gesammelt
 # (Entscheidung 17.11.2026 (11)): agendaItem als Zeichenkette, ohne agendaItem (fehlt, null, leer), in anderer Form
-# (Liste, Objekt, Zahl), Beratung nur als Adresse (nicht eingebettet)
+# (Liste, Objekt, Zahl; auch eine Beratung, deren Vorlage consultation nicht als Liste trägt: sessionnet.beratungen liest
+# sie nicht, Prüfung bk), Beratung nur als Adresse (nicht eingebettet)
 VERWEIS_TOP, VERWEIS_OHNE, VERWEIS_FORM, VERWEIS_ADRESSE = 1, 2, 4, 8
 # Gründe, aus denen ein Tagesordnungspunkt mit Rückverweis auf eine Beratung mit keiner Beratung einer Vorlage verknüpft
 # ist (in dieser Reihenfolge geprüft; die Beratung kann in mehreren Vorlagen stehen, dann zählt der erste zutreffende)
 GRUENDE_TOP = (
-    ("form", "Kennung des Tagesordnungspunkts oder Rückverweis keine Zeichenkette"),
+    ("form", "Kennung des Tagesordnungspunkts oder Rückverweis keine Zeichenkette, oder agendaItem der Sitzung keine "
+             "Liste"),
     ("keine_vorlage", "Beratung des Rückverweises steht in keiner Vorlage"),
     ("anderer_top", "Beratung steht in einer Vorlage, nennt dort aber ein anderes agendaItem"),
     ("ohne_top", "Beratung steht in einer Vorlage, nennt dort kein agendaItem"),
-    ("form_vorlage", "Beratung steht in einer Vorlage nur als Adresse (nicht eingebettet) oder mit agendaItem in "
-                     "anderer Form (keine Zeichenkette)"),
+    ("form_vorlage", "Beratung steht in einer Vorlage nur als Adresse (nicht eingebettet), mit agendaItem in anderer "
+                     "Form (keine Zeichenkette) oder in consultation, das keine Liste ist"),
 )
 # Sitzungen ohne Verknüpfung mit einer Beratung einer Vorlage nach Art
 ARTEN_SITZUNG = (
@@ -464,24 +471,33 @@ class Vorlagen:
         # Kennungen der Beratungen (Entscheidung 17.11.2026 (11)), je Kennung als Hashwert: Einträge und Vorlagen
         # (Hashwert, bei mehreren eine Menge), Verweise auf den Tagesordnungspunkt (Bits VERWEIS_*); Vorlagenart je
         # Vorlage mit Beratungen (nur über Kategorien ausgegeben); Kennungen der Sitzungen und Tagesordnungspunkte, auf
-        # die eine Beratung verweist (derselbe Textvergleich wie sessionnet.beratungen), für Sitzungen.add
+        # die eine Beratung verweist (derselbe Textvergleich wie sessionnet.beratungen), für Sitzungen.add.
+        # Wiederholungen in derselben Vorlage wie im Log von build: Kennungen mehrfach in einer Vorlage und alle ihre
+        # Einträge dort (Prüfung bk; vorher nur die Einträge über den ersten hinaus)
         self.bk, self.bk_verweis, self.art_je_vorlage = {}, {}, {}
-        self.bk_wiederholt = 0
+        self.bk_wiederholt = self.bk_wiederholt_eintraege = 0
         self.verknuepft_sitzung, self.verknuepft_top = set(), set()
 
-    def _beratung_kennung(self, c, vorlage, art):
-        """Kennung, Verweise und Vorlage einer eingebetteten Beratung merken (nur Hashwerte und die Vorlagenart)."""
+    def _beratung_kennung(self, c, vorlage, art, liste):
+        """Kennung, Verweise und Vorlage einer eingebetteten Beratung merken (nur Hashwerte und die Vorlagenart).
+        `liste`: consultation der Vorlage ist eine Liste. Nur dann liest sessionnet.beratungen die Beratung
+        (`p.get("consultation") or []`; ein einzelnes Objekt durchläuft es als Schlüssel und verknüpft nichts), sonst
+        zählt sie nicht als Verknüpfung und ihr Verweis als andere Form; build nimmt sie dennoch auf (ohne Sitzung und
+        TOP), daher zählt sie bei den Kennungen mit (Prüfung bk). Liefert den Hashwert der Kennung (None ohne Kennung
+        als Zeichenkette)."""
         t, m = c.get("agendaItem"), c.get("meeting")
-        if c.get("id"):   # wie sessionnet.beratungen: Beratungen ohne Kennung verknüpft der Abruf nicht
+        if c.get("id") and liste:   # wie sessionnet.beratungen: Beratungen ohne Kennung verknüpft der Abruf nicht
             if isinstance(t, str) and t:
                 self.verknuepft_top.add(_kennung(t))
             if isinstance(m, str) and m:
                 self.verknuepft_sitzung.add(_kennung(m))
         cid = c.get("id")
         if not isinstance(cid, str) or not cid:   # wie build (OBJEKTLISTEN): nur Kennungen als Zeichenkette
-            return
+            return None
         k = _kennung(cid)
-        if isinstance(t, str) and t.strip():
+        if not liste:
+            bit = VERWEIS_FORM
+        elif isinstance(t, str) and t.strip():
             bit = VERWEIS_TOP
         elif t is None or isinstance(t, str) or (isinstance(t, (list, dict)) and not t):   # fehlt, null oder leer
             bit = VERWEIS_OHNE
@@ -493,15 +509,14 @@ class Vorlagen:
             self.bk[k] = [1, vorlage]
         else:
             eintrag[0] += 1
-            v = eintrag[1]
-            if vorlage == v or (isinstance(v, set) and vorlage in v):
-                self.bk_wiederholt += 1
-            elif isinstance(v, set):
+            v = eintrag[1]   # Wiederholungen in derselben Vorlage zählt add
+            if isinstance(v, set):
                 v.add(vorlage)
-            else:
+            elif vorlage != v:
                 eintrag[1] = {v, vorlage}
         # Vorlagenart als Zeichenkette oder null; eine andere Form zählt in Kategorien als „keine Zeichenkette“
         self.art_je_vorlage[vorlage] = art if art is None or isinstance(art, str) else 0
+        return k
 
     def beratungskennungen(self):
         """(Zahlen zu den Kennungen der eingebetteten Beratungen, Kategorien der Vorlagenarten der Vorlagen mit einer
@@ -513,7 +528,7 @@ class Vorlagen:
             arten.add(self.art_je_vorlage.get(v))
         return ({"eintraege": sum(n for n, _ in self.bk.values()), "kennungen": len(self.bk), "mehrere": len(mehrere),
                  "mehrere_eintraege": sum(n for n, _ in mehrere), "mehrere_vorlagen": len(vorlagen),
-                 "wiederholt": self.bk_wiederholt}, arten)
+                 "wiederholt": self.bk_wiederholt, "wiederholt_eintraege": self.bk_wiederholt_eintraege}, arten)
 
     def add(self, p):
         if p.get("deleted"):
@@ -558,9 +573,13 @@ class Vorlagen:
         self.feld["stadtteil"] += stadtteil
         mit = collections.Counter()
         vorlage = _kennung(p["id"])
+        liste = isinstance(p.get("consultation"), list)
+        je_kennung = collections.Counter()   # Einträge je Kennung in dieser Vorlage (je Vorlage eine Fassung)
         for c in eintraege(p.get("consultation")):
             if isinstance(c, dict) and c:
-                self._beratung_kennung(c, vorlage, p.get("paperType"))
+                k = self._beratung_kennung(c, vorlage, p.get("paperType"), liste)
+                if k is not None:
+                    je_kennung[k] += 1
                 self.beratung["objekt"] += 1
                 for f in ("meeting", "agendaItem", "organization"):
                     ja = nicht_leer(c.get(f))
@@ -577,6 +596,9 @@ class Vorlagen:
                 self.bk_verweis[k] = self.bk_verweis.get(k, 0) | VERWEIS_ADRESSE
             else:
                 self.beratung["andere"] += 1
+        mehrfach = [x for x in je_kennung.values() if x > 1]
+        self.bk_wiederholt += len(mehrfach)
+        self.bk_wiederholt_eintraege += sum(mehrfach)
         self.feld["beratung_meeting"] += mit["meeting"] > 0
         self.feld["beratung_agendaItem"] += mit["agendaItem"] > 0
         k = self.art.schluessel(p.get("paperType"))
@@ -614,12 +636,13 @@ class Sitzungen:
         else:
             self.top_kennungen.add(k)
 
-    def _rueckverweis(self, t, tid):
+    def _rueckverweis(self, t, tid, liste=True):
         """Tagesordnungspunkt mit Rückverweis auf eine Beratung: verknüpft (eine Beratung einer Vorlage nennt ihn als
         agendaItem, derselbe Textvergleich wie sessionnet.beratungen) oder der erste zutreffende Grund aus
-        GRUENDE_TOP. Liefert, ob er verknüpft ist."""
+        GRUENDE_TOP. `liste`: agendaItem der Sitzung ist eine Liste; sonst liest sessionnet.beratungen den
+        Tagesordnungspunkt nicht (Grund „form“, Prüfung bk). Liefert, ob er verknüpft ist."""
         v = self.vorlagen
-        if not isinstance(tid, str) or not tid:
+        if not liste or not isinstance(tid, str) or not tid:
             self.rueck["form"] += 1
             return False
         if _kennung(tid) in v.verknuepft_top:
@@ -653,6 +676,9 @@ class Sitzungen:
         else:
             self.top_form[form(m, "agendaItem")] += 1
             anzahl = 0
+            # nur aus einer Liste Ziel einer Verknüpfung: sessionnet.beratungen liest `m.get("agendaItem") or []`, ein
+            # einzelnes Objekt durchläuft es als Schlüssel (Prüfung bk)
+            liste = isinstance(m.get("agendaItem"), list)
             for t in eintraege(m.get("agendaItem")):
                 if isinstance(t, dict) and t:
                     anzahl += 1
@@ -673,8 +699,8 @@ class Sitzungen:
                     if v is not None:
                         mit_rueck += rueck
                         if rueck:
-                            verknuepft |= self._rueckverweis(t, tid)
-                        elif isinstance(tid, str) and tid and _kennung(tid) in v.verknuepft_top:
+                            verknuepft |= self._rueckverweis(t, tid, liste)
+                        elif liste and isinstance(tid, str) and tid and _kennung(tid) in v.verknuepft_top:
                             verknuepft = True
                 elif isinstance(t, str) and t.strip():
                     anzahl += 1
@@ -805,9 +831,10 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
     if teil.exists() and fort is None and z_datei == "gelesen" and aus is None:   # ausgesetzt: oben in `gezaehlt`
         r["stand"] += (f"; {teil.name} ohne Fortsetzung im Zustand (veraltet, der Abruf liest sie nicht mehr; "
                        "mitgezählt)")
-    dateien = {}
+    dateien, zweiter = {}, {}   # Zeilen und Fehler je Datei im ersten und im zweiten Durchgang
     durchgang = "erster Durchgang"
     teilquellen, bekannt = [], set()   # ausgesetzt: die Teildatei, erst nach dem zweiten Durchgang gelesen
+    gezaehlt = quellen
     try:
         if r["ausgesetzt"]:   # wie veröffentlicht: nur der letzte gültige Stand, die Teildatei nur als eine Zahl
             gilt, r["ersetzt"], gezaehlt, teilquellen, bekannt = geltende_ausgesetzt(quellen, teil, frist, dateien)
@@ -816,7 +843,7 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
             gezaehlt = quellen
         r["kennungen"] = len(gilt)
         durchgang = "zweiter Durchgang"
-        for _, o in _objekte(gezaehlt, frist, {}, nur=gilt):
+        for _, o in _objekte(gezaehlt, frist, zweiter, nur=gilt):
             try:
                 auswertung.add(o)
             except Exception as e:   # unerwartete Form tief im Objekt: zählen, die übrigen weiter auswerten (das
@@ -834,6 +861,11 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
                 r["nur_teil"] = nur_in_teil(teilquellen, bekannt, frist, dateien)
             except Zeitgrenze:
                 r["nur_teil_zeitgrenze"] = True
+    # Vorlagen nicht vollständig gezählt (Prüfung bk; für den Hinweis in _verknuepfung): eine gezählte Datei nicht
+    # weiter lesbar (in einem der beiden Durchgänge) oder ein laufender Vollabruf nur aus der Teildatei (ohne
+    # fertige Datei, etwa der erste)
+    r["dateifehler"] = any(d.get(q.name, {}).get("fehler") for d in (dateien, zweiter) for q, _ in gezaehlt)
+    r["nur_teildatei"] = r["vollabruf_laeuft"] and teil.exists() and not fertig.exists()
     fehlerart = dateien.pop("_fehlerart", {})
     for p in (fertig, teil) + ((raw / ersatz,) if ersatz else ()):
         s = dateien.get(p.name)
@@ -1050,8 +1082,9 @@ def _vorlagen(w, a):
         out.append(("p", f"Kennungen der eingebetteten Beratungen (id als Zeichenkette): {tausend(bk['eintraege'])} "
                          f"Einträge, {tausend(bk['kennungen'])} verschiedene Kennungen; in mehr als einer Vorlage: "
                          f"{tausend(bk['mehrere'])} Kennungen ({tausend(bk['mehrere_eintraege'])} Einträge, "
-                         f"{tausend(bk['mehrere_vorlagen'])} Vorlagen); in derselben Vorlage wiederholt: "
-                         f"{tausend(bk['wiederholt'])} Einträge"))
+                         f"{tausend(bk['mehrere_vorlagen'])} Vorlagen); {tausend(bk['wiederholt'])}-mal eine Kennung "
+                         f"mehrfach in derselben Vorlage ({tausend(bk['wiederholt_eintraege'])} Einträge, in der "
+                         "Datenbank dort je eine Zeile; wie im Log von build)"))
     if bk["mehrere"]:
         out.append(_kategorien_tabelle("Vorlagenarten der Vorlagen mit einer Beratungskennung, die auch in einer "
                                        "anderen Vorlage steht (je Vorlage einmal)", arten, "paperType"))
@@ -1123,6 +1156,27 @@ def _verknuepfung(w, a):
         out.append(("p", "Verknüpfung der Tagesordnungspunkte und Sitzungen mit den Beratungen der Vorlagen: nicht "
                          "ermittelt (Vorlagen fehlen oder nicht vollständig ausgewertet)"))
         return out
+    # Vorlagen nur teilweise gezählt (Prüfung bk): Gründe und Arten stehen da, mit Hinweis
+    teilweise = [text for text, ja in (("eine Datei nicht weiter lesbar", p.get("dateifehler")),
+                                       ("Objekte nicht auswertbar", p["nicht_auswertbar"]),
+                                       ("Zwischenstand eines Vollabrufs nur aus der Teildatei",
+                                        p.get("nur_teildatei"))) if ja]
+    if teilweise:
+        out.append(("p", "Hinweis: Vorlagen nicht vollständig gezählt (" + "; ".join(teilweise) + "): Der Grund "
+                         "„Beratung des Rückverweises steht in keiner Vorlage“ und die Sitzungen ohne Verknüpfung können "
+                         "zu hoch sein"))
+    # Abgleich mit build (Prüfung bk): was die Zahlen unten gegenüber der Datenbank bedeuten (fester Text)
+    out.append(("p", "Abgleich mit build: Verknüpft heißt hier, eine Beratung mit Kennung in einer Vorlage ohne "
+                     "Löschvermerk nennt die Sitzung als meeting oder einen ihrer Tagesordnungspunkte als agendaItem "
+                     "(Textvergleich wie sessionnet.beratungen, nur aus einer Liste consultation bzw. agendaItem). build "
+                     "nimmt weniger auf: nur Beratungen aufgenommener Vorlagen (nicht die ohne Drucksachennummer oder mit "
+                     "einer in unerwarteter Form), bei einer Kennung eines Tagesordnungspunkts in mehreren Sitzungen nur "
+                     "die zuletzt gelesene Sitzung, bei einer Beratung, deren meeting und agendaItem in verschiedenen "
+                     "Sitzungen stehen, nur die Sitzung aus meeting, und bei einer Kennung mehrfach in derselben Vorlage "
+                     "nur den letzten Eintrag. Die Sitzungen ohne Verknüpfung sind daher eine Untergrenze für die "
+                     "Sitzungen, die nicht in der Datenbank stehen; verknüpfte Tagesordnungspunkte zählen Einträge mit "
+                     "Rückverweis (eine doppelte Kennung je Eintrag), die Datenbank verschiedene Kennungen, auch ohne "
+                     "Rückverweis"))
     if t["consultation"]:
         nicht = t["consultation"] - w.rueck["verknuepft"]
         out.append(("p", f"Tagesordnungspunkte mit Rückverweis auf eine Beratung (consultation nicht leer): "

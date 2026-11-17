@@ -300,7 +300,9 @@ def build():
     ortsteile = Ortsteile()
     meetings, agenda, locations, bv_bezirke = {}, {}, {}, {}
     rows = {k: [] for k in ("paper", "rel", "related", "cons", "ploc", "orig", "resp", "plan")}
-    lite_verschieden = 0   # Beratungen, deren Kennung in beratungen.jsonl mit verschiedener Sitzung oder TOP steht
+    # Einträge, deren Kennung in beratungen.jsonl steht: mit verschiedener Sitzung oder verschiedenem TOP
+    # (`verschieden`), ohne eigene Verweise mit übernommener Verknüpfung (`uebernommen`), ohne passende Zeile (`ohne`)
+    lite_zaehler = Counter()
 
     # Beziehungen (auch ausgelassener Vorlagen ohne Drucksachennummer: Sie fehlen in `paper`, der Export zeigt sie
     # nicht, sie zählen aber für den Datenschutz; check.erlaubnis und maske.aus_db lesen paper_relation und
@@ -325,7 +327,13 @@ def build():
                               p.get("web"), mf.get("accessUrl"), mf.get("fileName")))
 
         bezirke = set()
-        for pos, c in enumerate(p.get("consultation") or []):
+        beratungen = p.get("consultation") or []
+        # je Kennung der letzte Eintrag der Vorlage: Nur seine Zeile bleibt in der Datenbank (OR REPLACE unten), also
+        # kommen nur seine Sitzung und sein TOP in `meeting` und `agenda_item`; vorher stand bei einer Kennung zweimal
+        # in derselben Vorlage mit verschiedenem TOP auch der TOP des ersetzten Eintrags darin, ohne Beratung, die auf
+        # ihn verweist (Prüfung bk)
+        letzter = {c["id"]: pos for pos, c in enumerate(beratungen)}
+        for pos, c in enumerate(beratungen):
             org = (c.get("organization") or [None])[0]
             name = (orgs_by_id.get(org) or {}).get("name", "")
             bz = bv_bezirk(name)
@@ -333,12 +341,17 @@ def build():
                 bezirke.add(bz)
             kandidaten = lite.get(c["id"], ())
             lc = _sitzung_und_top(kandidaten, c)
-            lite_verschieden += len({_lite_schluessel(z) for z in kandidaten}) > 1
+            if kandidaten:
+                lite_zaehler["verschieden"] += len({_lite_schluessel(z) for z in kandidaten}) > 1
+                if not lc:
+                    lite_zaehler["ohne"] += 1
+                elif _eigene_verweise(c) == (None, None):
+                    lite_zaehler["uebernommen"] += 1
             m, a = lc.get("meeting"), lc.get("agendaItem")
-            if m:
+            if m and letzter[c["id"]] == pos:
                 meetings[m["uri"]] = (m["uri"], m.get("name"), m.get("startDate"),
                                       int(bool(m.get("cancelled"))))
-            if a:
+            if a and letzter[c["id"]] == pos:
                 agenda[a["uri"]] = (a["uri"], m["uri"] if m else None, a.get("number"),
                                     a.get("name"), a.get("result"),
                                     None if a.get("public") is None else int(a["public"]))
@@ -423,7 +436,8 @@ def build():
     je_paar = Counter((r[0], r[1]) for r in rows["cons"])
     db.executemany(f"INSERT OR REPLACE INTO consultation VALUES (?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}',?,?)",
                    [(*r, je_paar[r[0], r[1]]) for r in rows["cons"]])
-    print(beratungen_zeile(rows["cons"], lite_verschieden))
+    print(beratungen_zeile(rows["cons"], lite_zaehler["verschieden"], lite_zaehler["uebernommen"],
+                           lite_zaehler["ohne"]))
     db.executemany("INSERT INTO location VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", locations.values())
     db.executemany("INSERT OR IGNORE INTO paper_plan VALUES (?,?,?,?)", rows["plan"])
     db.executemany("INSERT INTO plan_precedence VALUES (?,?,?,?)", precedence)
@@ -450,12 +464,13 @@ def build():
           f"{len(agenda)} TOPs mit Beratung einer Vorlage, {len(locations)} Orte → {config.DB}")
 
 
-def beratungen_zeile(cons, verschieden=0):
+def beratungen_zeile(cons, verschieden=0, uebernommen=0, ohne=0):
     """Zeile für das Log von build (nur Zahlen; Entscheidung 17.11.2026 (11)): Einträge der Beratungen (Zeilen von
     rows["cons"]: Kennung, Vorlage, …) und Zeilen der Datenbank (je Beratung und Vorlage eine), Kennungen in mehreren
-    Vorlagen mit ihren Einträgen und Vorlagen, Kennungen mehrfach in derselben Vorlage (dort eine Zeile) und Einträge,
-    deren Kennung in beratungen.jsonl mit verschiedener Sitzung oder verschiedenem TOP steht (`verschieden`,
-    _sitzung_und_top)."""
+    Vorlagen mit ihren Einträgen und Vorlagen, Kennungen mehrfach in derselben Vorlage (dort eine Zeile) und, unter den
+    Einträgen, deren Kennung in beratungen.jsonl steht (_sitzung_und_top): mit verschiedener Sitzung oder verschiedenem
+    TOP in beratungen.jsonl (`verschieden`), ohne eigene Verweise mit über die Kennung übernommener Verknüpfung
+    (`uebernommen`) und ohne passende Zeile, also ohne Sitzung und TOP (`ohne`; Prüfung bk)."""
     je_paar = Counter((r[0], r[1]) for r in cons)
     vorlagen = {}
     for cid, pid in je_paar:
@@ -466,7 +481,10 @@ def beratungen_zeile(cons, verschieden=0):
                             sum(je_paar[cid, pid] for cid in mehrere for pid in vorlagen[cid]),
                             len(set().union(*(vorlagen[cid] for cid in mehrere))), len(doppelt), sum(doppelt))
             + f"; {verschieden} Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener Sitzung oder "
-              f"verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet)")
+              f"verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); {uebernommen} Einträge "
+              f"ohne eigene Sitzung oder TOP, Verknüpfung über die Kennung übernommen; {ohne} Einträge ohne Sitzung und "
+              f"TOP, obwohl ihre Kennung in beratungen.jsonl steht (eigene Verweise passen zu keiner Zeile, oder ohne "
+              f"eigene Verweise mit verschiedenen Zeilen)")
 
 
 def beratungen_text(eintraege, zeilen, mehrere, mehrere_eintraege, mehrere_vorlagen, doppelt, doppelt_eintraege):
@@ -482,18 +500,27 @@ def _lite_schluessel(z):
     return (z.get("meeting") or {}).get("uri"), (z.get("agendaItem") or {}).get("uri")
 
 
+def _eigene_verweise(c):
+    """(Sitzung, TOP), auf die die Beratung `c` selbst verweist: `meeting` und `agendaItem` als nicht leere
+    Zeichenkette (derselbe Textvergleich wie sessionnet.beratungen), sonst None."""
+    return tuple(x if isinstance(x, str) and x else None for x in (c.get("meeting"), c.get("agendaItem")))
+
+
 def _sitzung_und_top(kandidaten, c):
     """Zeile aus beratungen.jsonl für die Beratung `c` einer Vorlage, aus den Zeilen mit ihrer Kennung (`kandidaten`,
-    Reihenfolge der Datei). sessionnet.beratungen schreibt je Vorlage eine Zeile; steht dieselbe Kennung in mehreren
-    Vorlagen, gibt es mehrere. Sind sie in Sitzung und TOP gleich (oder gibt es nur eine, wie aus OParl-Lite in Bonn),
-    gilt wie bisher die letzte. Unterscheiden sie sich, gilt die Zeile, die zu den eigenen Verweisen der Beratung passt
-    (`meeting` und `agendaItem` als Zeichenkette, derselbe Textvergleich wie sessionnet.beratungen): zuerst Sitzung und
+    Reihenfolge der Datei). sessionnet.beratungen schreibt je Vorlage eine Zeile, wenn sich ein eigener Verweis auflösen
+    lässt; steht dieselbe Kennung in mehreren Vorlagen, gibt es mehrere. Verweist die Beratung selbst auf Sitzung oder
+    TOP (_eigene_verweise), gilt immer die Zeile, die dazu passt, gleich wie viele Zeilen es gibt: zuerst Sitzung und
     TOP, dann der TOP (die Sitzung kam dann aus dem TOP), dann die Sitzung ohne TOP; passt keine, schrieb
     sessionnet.beratungen für diese Vorlage keine Zeile, und die Beratung bleibt ohne Sitzung und TOP, statt die einer
-    anderen Vorlage zu übernehmen (Entscheidung 17.11.2026 (11))."""
-    if len({_lite_schluessel(z) for z in kandidaten}) <= 1:
-        return kandidaten[-1] if kandidaten else {}
-    m, t = (x if isinstance(x, str) else None for x in (c.get("meeting"), c.get("agendaItem")))
+    anderen Vorlage zu übernehmen (Entscheidung 17.11.2026 (11)). Vorher galt das nur bei verschiedenen Zeilen; bei nur
+    einer übernahm eine Beratung mit eigenen, nicht auflösbaren Verweisen die Station einer anderen Vorlage (Prüfung bk).
+    Ohne eigene Verweise (OParl-Lite in Bonn; in Köln eine Beratung ohne Sitzung und TOP) gilt wie bisher die letzte
+    Zeile, wenn alle in Sitzung und TOP gleich sind (die Verknüpfung kommt dann über die Kennung von einem anderen
+    Eintrag), sonst keine."""
+    m, t = _eigene_verweise(c)
+    if m is None and t is None:
+        return kandidaten[-1] if len({_lite_schluessel(z) for z in kandidaten}) == 1 else {}
     for passt in (lambda k: k == (m, t), lambda k: t is not None and k[1] == t,
                   lambda k: m is not None and k == (m, None)):
         treffer = [z for z in kandidaten if passt(_lite_schluessel(z))]

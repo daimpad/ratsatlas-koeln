@@ -77,7 +77,10 @@ def test_gemeinsame_kennung_in_zwei_und_drei_vorlagen(oparl, capsys):
              "(0 Einträge, dort je eine Zeile)")
     assert zeile + "\n" in aus
     assert zeile + ("; 2 Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener Sitzung oder "
-                    "verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet)\n") in log
+                    "verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); 0 Einträge ohne "
+                    "eigene Sitzung oder TOP, Verknüpfung über die Kennung übernommen; 0 Einträge ohne Sitzung und TOP, "
+                    "obwohl ihre Kennung in beratungen.jsonl steht (eigene Verweise passen zu keiner Zeile, oder ohne "
+                    "eigene Verweise mit verschiedenen Zeilen)\n") in log
     # Zusammenfassung (Entscheidung 17.11.2026 (11) (B)): was gezählt wird; nur TOPs mit Beratung einer Vorlage
     assert "5 Vorlagen, 5 Beratungen (Einträge), 1 Sitzungen und 3 TOPs mit Beratung einer Vorlage, " in log
     db.close()
@@ -138,18 +141,29 @@ def test_gremium_der_gemeinsamen_beratung_bleibt_fuer_datenschutz(oparl, capsys)
 
 
 def test_sitzung_und_top_je_vorlage():
-    """build._sitzung_und_top: gleiche Zeilen (oder eine, wie aus OParl-Lite in Bonn) wie bisher die letzte; sonst die
-    Zeile, die zu den eigenen Verweisen der Beratung passt (Sitzung und TOP, dann der TOP, dann die Sitzung ohne TOP),
-    und ohne passende Zeile keine (sessionnet.beratungen schrieb für diese Vorlage keine)."""
+    """build._sitzung_und_top: Verweist die Beratung selbst auf Sitzung oder TOP, gilt immer die Zeile, die dazu passt
+    (Sitzung und TOP, dann der TOP, dann die Sitzung ohne TOP), auch wenn es nur eine Zeile gibt oder alle gleich sind;
+    ohne passende Zeile keine (sessionnet.beratungen schrieb für diese Vorlage keine; Prüfung bk). Ohne eigene Verweise
+    (OParl-Lite in Bonn; in Köln eine Beratung ohne Sitzung und TOP) wie bisher die letzte Zeile, wenn alle gleich sind,
+    sonst keine."""
     def zeile(m, t, nr=None):
         return {"uri": "c", "meeting": {"uri": m} if m else None,
                 "agendaItem": {"uri": t, "number": nr} if t else None}
     wahl = build._sitzung_und_top
-    assert wahl([], {"id": "c"}) == {}
+    assert wahl([], {"id": "c"}) == {} and wahl([], {"id": "c", "meeting": "m1", "agendaItem": "t1"}) == {}
     einzeln = zeile("m1", "t1")
     assert wahl([einzeln], {"id": "c"}) is einzeln                      # Bonn: Beratung ohne Verweise
+    assert wahl([einzeln], {"id": "c", "meeting": "", "agendaItem": ["t1"]}) is einzeln   # leer, keine Zeichenkette
+    assert wahl([einzeln], {"id": "c", "meeting": "m1", "agendaItem": "t1"}) is einzeln
     gleich = [zeile("m1", "t1", "1"), zeile("m1", "t1", "2")]
-    assert wahl(gleich, {"id": "c", "meeting": "m9", "agendaItem": "t9"}) is gleich[-1]
+    assert wahl(gleich, {"id": "c", "meeting": "m1", "agendaItem": "t1"}) is gleich[-1]
+    assert wahl(gleich, {"id": "c"}) is gleich[-1]
+    # eigene Verweise, die sich nicht auflösen ließen: keine Station, auch bei nur einer Zeile oder gleichen Zeilen
+    # (vorher die der anderen Vorlage, Prüfung bk)
+    assert wahl([zeile("m1", "t3")], {"meeting": "unbekannt", "agendaItem": "unbekannt"}) == {}
+    assert wahl([zeile("m1", "t3"), zeile("m2", "t21")], {"meeting": "unbekannt", "agendaItem": "unbekannt"}) == {}
+    assert wahl(gleich, {"id": "c", "meeting": "m9", "agendaItem": "t9"}) == {}
+    assert wahl(gleich, {"id": "c", "agendaItem": "t9"}) == {} and wahl(gleich, {"meeting": "m1"}) == {}
     verschieden = [zeile("m1", "t1"), zeile("m2", "t2"), zeile("m3", None), zeile("m4", "t2")]
     assert wahl(verschieden, {"meeting": "m2", "agendaItem": "t2"}) is verschieden[1]   # Sitzung und TOP
     assert wahl(verschieden, {"meeting": "m1", "agendaItem": "t1"}) is verschieden[0]
@@ -158,9 +172,67 @@ def test_sitzung_und_top_je_vorlage():
     assert wahl(verschieden, {"meeting": ["m1"], "agendaItem": "t2"}) is verschieden[3]
     assert wahl(verschieden, {"meeting": "m3", "agendaItem": "fehlt"}) is verschieden[2]    # Sitzung ohne TOP
     assert wahl(verschieden, {"meeting": "m3"}) is verschieden[2]
-    # nichts passt: keine Sitzung und kein TOP einer anderen Vorlage
+    # nichts passt: keine Sitzung und kein TOP einer anderen Vorlage; ohne eigene Verweise bei verschiedenen Zeilen keine
     assert wahl(verschieden, {"meeting": "m9", "agendaItem": "t9"}) == {}
     assert wahl(verschieden, {"meeting": "m1"}) == {} and wahl(verschieden, {}) == {}
+
+
+def test_eigene_verweise_ohne_aufloesung_keine_fremde_station(oparl, capsys):
+    """Prüfung bk: Drei Vorlagen teilen eine Kennung, aber nur 1003/2026 verweist auf Sitzung und TOP, die es gibt (eine
+    Zeile in beratungen.jsonl). AN/104/2026 nennt Sitzung und TOP, die sich nicht auflösen lassen: keine Station (vorher
+    die von 1003/2026 mit Stand „entschieden“). 1005/2026 verweist auf nichts: Verknüpfung über die Kennung wie
+    dokumentiert. Das Log zählt beides; check zählt die Zeilen."""
+    b = oparl.b
+    rat = [f"{b}/organizations/rat"]
+    oparl.papers[2]["consultation"] = [_beratung(oparl, "gemeinsam", 3, organization=rat)]
+    oparl.papers[3]["consultation"] = [_beratung(oparl, "gemeinsam", 3, organization=rat,
+                                                 meeting=f"{b}/meetings/unbekannt",
+                                                 agendaItem=f"{b}/agendaitems/unbekannt")]
+    oparl.papers[4]["consultation"] = [{"id": f"{b}/consultations/gemeinsam", "organization": rat,
+                                        "role": "Entscheidung", "authoritative": True}]
+    log = _aufbauen(oparl, capsys)
+    zeilen = [json.loads(z) for z in config.BERATUNGEN.read_text(encoding="utf-8").splitlines()]
+    assert [z["uri"] for z in zeilen].count(f"{b}/consultations/gemeinsam") == 1
+    vorlagen = _exportiert()
+    assert _stationen(vorlagen["1003/2026"]) == ([(BEGINN, "Rat", "8.3", BESCHLOSSEN)],
+                                                 [("2026-10-01", "Rat", "8.3", BESCHLOSSEN)])
+    assert _stationen(vorlagen["1005/2026"]) == _stationen(vorlagen["1003/2026"])   # über die Kennung
+    station, schritte = _stationen(vorlagen["AN/104/2026"])
+    assert [x[0] for x in station] == [None] and [x[2:] for x in station] == [(None, None)]
+    assert not any(s[0] or s[2] or s[3] for s in schritte), schritte
+    assert vorlagen["1003/2026"]["stand"] == vorlagen["1005/2026"]["stand"] == "entschieden"
+    assert vorlagen["AN/104/2026"]["stand"] != "entschieden"
+    db = sqlite3.connect(config.DB)
+    assert db.execute("SELECT paper_id, meeting_id IS NOT NULL, agenda_item_id IS NOT NULL FROM consultation "
+                      "WHERE id = ? ORDER BY paper_id", (f"{b}/consultations/gemeinsam",)).fetchall() == [
+        (oparl.papers[2]["id"], 1, 1), (oparl.papers[3]["id"], 0, 0), (oparl.papers[4]["id"], 1, 1)]
+    check.kennzahlen(db)
+    aus = capsys.readouterr().out
+    assert "mit Sitzung: 4 von 5 (80.0 %)" in aus and "mit TOP-Ergebnis: 4 von 5 (80.0 %)" in aus
+    db.close()
+    assert ("; 0 Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener Sitzung oder verschiedenem TOP "
+            "steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); 1 Einträge ohne eigene Sitzung oder TOP, "
+            "Verknüpfung über die Kennung übernommen; 1 Einträge ohne Sitzung und TOP, obwohl ihre Kennung in "
+            "beratungen.jsonl steht (") in log
+
+
+def test_wiederholte_kennung_mit_verschiedenem_top_nur_letzter_eintrag(oparl, capsys):
+    """Prüfung bk: Steht eine Kennung in derselben Vorlage zweimal mit verschiedenem TOP, bleibt dort eine Zeile (der
+    letzte Eintrag), und nur dessen Sitzung und TOP stehen in `meeting` und `agenda_item`: kein TOP ohne Beratung, die
+    auf ihn verweist, und die Zusammenfassung im Log zählt keinen TOP zu viel (vorher stand TOP 8.1 darin)."""
+    b = oparl.b
+    oparl.papers[0]["consultation"] = [_beratung(oparl, "a", 1, role="Beratung", authoritative=False),
+                                       _beratung(oparl, "a", 2)]
+    log = _aufbauen(oparl, capsys)
+    db = sqlite3.connect(config.DB)
+    assert db.execute("SELECT agenda_item_id, entries FROM consultation WHERE paper_id = ?",
+                      (oparl.papers[0]["id"],)).fetchall() == [(f"{b}/agendaitems/2", 2)]
+    assert sorted(r[0] for r in db.execute("SELECT id FROM agenda_item")) == [f"{b}/agendaitems/{i}" for i in (2, 3, 4, 5)]
+    assert db.execute("SELECT COUNT(*) FROM agenda_item WHERE id NOT IN (SELECT agenda_item_id FROM consultation "
+                      "WHERE agenda_item_id IS NOT NULL)").fetchone()[0] == 0
+    db.close()
+    assert "5 Vorlagen, 6 Beratungen (Einträge), 1 Sitzungen und 4 TOPs mit Beratung einer Vorlage, " in log
+    assert _stationen(_exportiert()["1001/2026"])[0] == [(BEGINN, GREMIUM, "8.2", KENNTNIS)]
 
 
 def test_beratungen_aeltere_datenbank():
@@ -177,8 +249,11 @@ def test_beratungen_zeile_zaehlt():
     Vorlagen) und Wiederholungen in derselben Vorlage, je Paar aus Kennung und Vorlage."""
     cons = [("c1", "p1"), ("c1", "p2"), ("c1", "p2"), ("c1", "p3"), ("c2", "p1"), ("c3", "p4"), ("c3", "p4"),
             ("c3", "p4"), ("c4", "p5"), ("c4", "p6")]
-    assert build.beratungen_zeile(cons, 3) == (
+    assert build.beratungen_zeile(cons, 3, 2, 1) == (
         "Beratungen: 10 Einträge in 7 Zeilen der Datenbank (je Beratung und Vorlage eine); 2 Kennungen in mehreren "
         "Vorlagen (6 Einträge, 5 Vorlagen, je Vorlage eine Zeile); 2-mal eine Kennung mehrfach in derselben Vorlage "
         "(5 Einträge, dort je eine Zeile); 3 Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener "
-        "Sitzung oder verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet)")
+        "Sitzung oder verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); 2 Einträge ohne "
+        "eigene Sitzung oder TOP, Verknüpfung über die Kennung übernommen; 1 Einträge ohne Sitzung und TOP, obwohl "
+        "ihre Kennung in beratungen.jsonl steht (eigene Verweise passen zu keiner Zeile, oder ohne eigene Verweise mit "
+        "verschiedenen Zeilen)")
