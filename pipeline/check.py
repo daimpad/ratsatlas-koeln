@@ -138,6 +138,25 @@ def _pct(n, d):
     return f"{n} von {d} ({100 * n / d:.1f} %)" if d else "–"
 
 
+def beratungen_je_vorlage(db):
+    """Beratungen in der Datenbank wie im Log von build (build.beratungen_text; Entscheidung 17.11.2026 (11)): Einträge
+    (Summe der Spalte `entries`) und Zeilen (je Beratung und Vorlage eine), Kennungen in mehreren Vorlagen mit ihren
+    Einträgen und Vorlagen, Kennungen mehrfach in derselben Vorlage; nur Zahlen. Eine ältere Datenbank ohne die Spalte
+    `entries` (eine Zeile je Kennung) nennt nur die Zeilen."""
+    from .build import beratungen_text
+    one = lambda sql: db.execute(sql).fetchone()[0]
+    zeilen = one("SELECT COUNT(*) FROM consultation")
+    if "entries" not in {r[1] for r in db.execute("PRAGMA table_info(consultation)")}:
+        return f"Beratungen: {zeilen} Zeilen der Datenbank (Einträge nicht erfasst: Datenbank ohne Spalte entries)"
+    mehrere = "SELECT id FROM consultation GROUP BY id HAVING COUNT(DISTINCT paper_id) > 1"
+    return beratungen_text(
+        one("SELECT COALESCE(SUM(entries), 0) FROM consultation"), zeilen, one(f"SELECT COUNT(*) FROM ({mehrere})"),
+        one(f"SELECT COALESCE(SUM(entries), 0) FROM consultation WHERE id IN ({mehrere})"),
+        one(f"SELECT COUNT(DISTINCT paper_id) FROM consultation WHERE id IN ({mehrere})"),
+        one("SELECT COUNT(*) FROM consultation WHERE entries > 1"),
+        one("SELECT COALESCE(SUM(entries), 0) FROM consultation WHERE entries > 1"))
+
+
 def kennzahlen(db):
     """Kennzahlen zur Übersicht. Ohne Vergleichswerte: die Kölner OParl-API ist noch nicht gemessen (CLAUDE.md 9); die
     Werte des Bonner Phase-0-Berichts und der Bonner Pilot-Ortsteil gelten für Köln nicht."""
@@ -166,6 +185,8 @@ def kennzahlen(db):
 
     cons = one("SELECT COUNT(*) FROM consultation")
     print("\nVerknüpfung Beratung ↔ Sitzung (OParl-API Köln: consultation verweist auf meeting und agendaItem)")
+    print(beratungen_je_vorlage(db))
+    # Anteile je Zeile, also je Beratung und Vorlage (Entscheidung 17.11.2026 (11))
     print("mit Sitzung:", _pct(one("SELECT COUNT(*) FROM consultation WHERE meeting_id IS NOT NULL"), cons))
     print("mit TOP-Ergebnis:", _pct(one(
         "SELECT COUNT(*) FROM consultation c JOIN agenda_item a ON a.id = c.agenda_item_id "

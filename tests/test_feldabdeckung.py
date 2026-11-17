@@ -511,8 +511,299 @@ def test_beratungen_wie_der_abruf_sie_ergaenzt(oparl, monkeypatch, capsys):
     assert f"organization vom Abruf aus der Sitzung ergänzt, nicht mitgezählt: {ergaenzt})" in out
 
 
+# --- Beratungen je Vorlage und Ursachen fehlender Verknüpfungen (Entscheidung 17.11.2026 (11)) ----------------------
+
+def test_kennungen_der_beratungen_in_mehreren_vorlagen(fa, tmp_path, capsys):
+    """Kennungen der eingebetteten Beratungen: Einträge, verschiedene Kennungen, Kennungen in mehr als einer Vorlage
+    (Kennungen, Einträge, Vorlagen), Wiederholungen in derselben Vorlage, Vorlagenarten der Vorlagen mit solchen
+    Kennungen nach der Regel der Kategorien (ab 5, sonst „sonstige“). Gelöschte Vorlagen und Beratungen ohne Kennung
+    als Zeichenkette zählen nicht."""
+    raw = tmp_path / "raw"
+
+    def c(k):
+        return {"id": f"{B}/c/{k}", "meeting": f"{B}/m/1", "agendaItem": f"{B}/a/1"}
+    papers = [_vorlage(i, paperType="Mitteilung", consultation=[c("g")]) for i in range(1, 7)]
+    papers += [_vorlage(7, consultation=[c("h"), c("h")]), _vorlage(8, consultation=[c("h")]),
+               _vorlage(9, consultation=[c("u"), {"id": 5}, {"name": "ohne Kennung"}, f"{B}/c/g"]),
+               {"id": f"{B}/papers/10", "deleted": True, "consultation": [c("u")]}]
+    _jsonl(raw / "papers.jsonl", papers)
+    a = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)
+    zahlen, arten = a["listen"]["papers"]["auswertung"].beratungskennungen()
+    assert zahlen == {"eintraege": 10, "kennungen": 3, "mehrere": 2, "mehrere_eintraege": 9, "mehrere_vorlagen": 8,
+                      "wiederholt": 1, "wiederholt_eintraege": 2}
+    assert arten.zaehler == {"Mitteilung": 6, "Beschlussvorlage": 2}
+    out = _aufruf(fa, raw, capsys)
+    assert ("Kennungen der eingebetteten Beratungen (id als Zeichenkette): 10 Einträge, 3 verschiedene Kennungen; in "
+            "mehr als einer Vorlage: 2 Kennungen (9 Einträge, 8 Vorlagen); 1-mal eine Kennung mehrfach in derselben "
+            "Vorlage (2 Einträge, in der Datenbank dort je eine Zeile; wie im Log von build)\n") in out
+    tabelle = out.split("Vorlagenarten der Vorlagen mit einer Beratungskennung, die auch in einer anderen Vorlage steht "
+                        "(je Vorlage einmal):\n")[1]
+    assert tabelle.startswith("  „Mitteilung“: 6 (75,0 %)\n  sonstige (1 Werte, 2 Objekte): 2 (25,0 %)\n")
+    # ohne Kennung in mehreren Vorlagen keine Tabelle
+    _jsonl(raw / "papers.jsonl", [_vorlage(1, consultation=[c("a")]), _vorlage(2, consultation=[c("b")])])
+    out = _aufruf(fa, raw, capsys)
+    assert "in mehr als einer Vorlage: 0 Kennungen (0 Einträge, 0 Vorlagen)" in out
+    assert "Vorlagenarten der Vorlagen mit einer Beratungskennung" not in out
+
+
+def _verknuepfung_roh(raw, zustand=True):
+    """Vorlagen und Sitzungen für die Gründe fehlender Verknüpfungen (Erwartungen im Test unten); Datenstand der
+    Sitzungen 16.11.2026, 23:40 Uhr."""
+    m1 = f"{B}/m/1"
+
+    def a(k):
+        return f"{B}/a/{k}"
+
+    def c(k, **felder):
+        return {"id": f"{B}/c/{k}", **felder}
+
+    def top(k, rueck=None):
+        return {"id": a(k), **({"consultation": rueck} if rueck is not None else {})}
+    _jsonl(raw / "papers.jsonl", [
+        _vorlage(1, consultation=[c(1, meeting=m1, agendaItem=a(1))]),
+        _vorlage(2, consultation=[c(2, agendaItem=a(99))]),                 # ein anderer TOP
+        _vorlage(3, consultation=[c(3, agendaItem=None)]),                  # ohne TOP
+        _vorlage(4, consultation=[f"{B}/c/4"]),                              # nur als Adresse
+        _vorlage(5, consultation=[c(5, agendaItem={"id": a(5)})]),           # TOP als Objekt
+        _vorlage(6, consultation=[c(7, meeting=f"{B}/m/6", agendaItem="")]),  # verknüpft nur die Sitzung m/6
+        {"id": f"{B}/papers/7", "deleted": True, "consultation": [c(6, agendaItem=a(6))]}])
+    tops = [top(1, f"{B}/c/1"), top(2, f"{B}/c/2"), top(3, [f"{B}/c/3"]), top(4, f"{B}/c/4"),
+            top(5, {"id": f"{B}/c/5"}), top(6, f"{B}/c/6"), {"id": 7, "consultation": f"{B}/c/1"},
+            top(8, [{"id": 5}]), top(9)]   # Kennung bzw. Rückverweis keine Zeichenkette; ohne Rückverweis
+    _jsonl(raw / "meetings_roh.jsonl", [
+        {"id": m1, "start": "2026-10-01T17:00:00+02:00", "agendaItem": tops},
+        {"id": f"{B}/m/2", "start": "2027-03-01T17:00:00+01:00", "agendaItem": [top(2, f"{B}/c/2")]},
+        {"id": f"{B}/m/3", "start": "2027-05-01T17:00:00+02:00"},
+        {"id": f"{B}/m/4", "start": "2028-01-10T17:00:00+01:00", "agendaItem": [top(40), a(41)]},
+        {"id": f"{B}/m/5", "start": "2025-01-01T17:00:00+01:00", "agendaItem": []},
+        {"id": f"{B}/m/6", "start": "2026-11-20T17:00:00+01:00"},
+        {"id": f"{B}/m/7", "deleted": True}])
+    if zustand:
+        (raw / "zustand_abruf.json").write_text(json.dumps({"meetings": "2026-11-16T22:40:00+00:00"}),
+                                                encoding="utf-8")
+
+
+def test_tagesordnungspunkte_und_sitzungen_ohne_verknuepfung(fa, tmp_path, capsys):
+    """Kennungen der Tagesordnungspunkte (doppelte gezählt); Tagesordnungspunkte mit Rückverweis, die keine Beratung
+    einer Vorlage über agendaItem verknüpft (Textvergleich wie sessionnet.beratungen), nach Grund; Sitzungen ohne
+    Verknüpfung (weder über meeting noch über ihre Tagesordnungspunkte) nach Art, nach dem Datenstand und nach Jahr.
+    Gelöschte Vorlagen und Sitzungen zählen nicht."""
+    raw = tmp_path / "raw"
+    _verknuepfung_roh(raw)
+    a = fa.auswerten(raw, raw / "zustand_abruf.json", config.ORTSTEILE)
+    s = a["listen"]["meetings"]["auswertung"]
+    assert a["stand_sitzungen"] == "2026-11-16"
+    assert (len(s.top_kennungen), s.top_kennung["doppelt"], s.top_kennung["ohne_kennung"]) == (10, 1, 1)
+    assert s.rueck == {"verknuepft": 1, "anderer_top": 2, "ohne_top": 1, "form_vorlage": 2, "keine_vorlage": 1,
+                       "form": 2}
+    assert s.ohne_verknuepfung == {"ohne_top": 2, "ohne_rueckverweis": 1, "uebrige": 1}
+    assert s.ohne_verknuepfung_nach == {"ohne_top": 1, "ohne_rueckverweis": 1, "uebrige": 1}
+    assert s.ohne_verknuepfung_jahre == {2025: 1, 2027: 2, 2028: 1}
+    out = _aufruf(fa, raw, capsys)
+    for zeile in (
+            "Kennungen der Tagesordnungspunkte (eingebettet oder als Adresse): 11 Einträge mit Kennung, 10 verschiedene; "
+            "Einträge mit einer Kennung, die schon vorkam: 1; eingebettet ohne Kennung als Zeichenkette: 1",
+            "Tagesordnungspunkte mit Rückverweis auf eine Beratung (consultation nicht leer): 9; davon mit der Beratung "
+            "einer Vorlage über agendaItem verknüpft (derselbe Textvergleich wie sessionnet.beratungen): 1; nicht "
+            "verknüpft: 8",
+            "Nicht verknüpfte Tagesordnungspunkte mit Rückverweis nach Grund (Anteil an den nicht verknüpften):\n"
+            "  Kennung des Tagesordnungspunkts oder Rückverweis keine Zeichenkette, oder agendaItem der Sitzung keine "
+            "Liste: 2 (25,0 %)\n"
+            "  Beratung des Rückverweises steht in keiner Vorlage: 1 (12,5 %)\n"
+            "  Beratung steht in einer Vorlage, nennt dort aber ein anderes agendaItem: 2 (25,0 %)\n"
+            "  Beratung steht in einer Vorlage, nennt dort kein agendaItem: 1 (12,5 %)\n"
+            "  Beratung steht in einer Vorlage nur als Adresse (nicht eingebettet), mit agendaItem in anderer Form "
+            "(keine Zeichenkette) oder in consultation, das keine Liste ist: 2 (25,0 %)\n",
+            "Sitzungen ohne Verknüpfung mit einer Beratung einer Vorlage (weder über meeting noch über einen ihrer "
+            "Tagesordnungspunkte; Anteil an den Sitzungen ohne gelöschte):\n"
+            "  ohne Tagesordnungspunkte (agendaItem leer): 2 (33,3 %)\n"
+            "  nur Tagesordnungspunkte ohne Rückverweis auf eine Beratung: 1 (16,7 %)\n"
+            "  übrige (Tagesordnungspunkte mit Rückverweis, keiner verknüpft; oder Kurzformat): 1 (16,7 %)\n"
+            "  alle ohne Verknüpfung: 4 (66,7 %)\n",
+            "Sitzungen ohne Verknüpfung: Beginn nach dem Datenstand der Sitzungen (16.11.2026): 3 (ohne "
+            "Tagesordnungspunkte 1, nur ohne Rückverweis 1, übrige 1); nach Jahr (start): 2025 1, 2027 2, 2028 1\n"):
+        assert zeile in out, zeile
+    # bestehende Zeilen unverändert (Rückverweise wie bisher gezählt)
+    assert "  Verweis auf Beratung (consultation nicht leer): 9 (81,8 %)" in out
+    # ohne Zeitpunkt der Sitzungen im Zustand: kein Datenstand, die übrigen Zahlen bleiben
+    (raw / "zustand_abruf.json").unlink()
+    out = _aufruf(fa, raw, capsys)
+    assert ("Sitzungen ohne Verknüpfung: Beginn nach dem Datenstand: nicht ermittelt (Zeitpunkt der Sitzungen im "
+            "Zustand fehlt oder unlesbar); nach Jahr (start): 2025 1, 2027 2, 2028 1") in out
+    assert "  alle ohne Verknüpfung: 4 (66,7 %)" in out
+
+
+def test_verknuepfung_nicht_ermittelt_ohne_vollstaendige_vorlagen(fa, tmp_path, capsys, monkeypatch):
+    """Ohne Vorlagen oder wenn die Frist im zweiten Durchgang der Vorlagen endet, nennt die Ausgabe keine Gründe und
+    Arten der fehlenden Verknüpfung (sie wären irreführend), sondern „nicht ermittelt“; die Kennungen der
+    Tagesordnungspunkte stehen trotzdem da."""
+    raw = tmp_path / "raw"
+    _verknuepfung_roh(raw)
+    (raw / "papers.jsonl").unlink()
+    out = _aufruf(fa, raw, capsys)
+    assert ("Verknüpfung der Tagesordnungspunkte und Sitzungen mit den Beratungen der Vorlagen: nicht ermittelt "
+            "(Vorlagen fehlen oder nicht vollständig ausgewertet)") in out
+    assert "Nicht verknüpfte" not in out and "Sitzungen ohne Verknüpfung" not in out
+    assert "11 Einträge mit Kennung, 10 verschiedene" in out
+    _jsonl(raw / "papers.jsonl", [_vorlage(i, consultation=[{"id": f"{B}/c/{i}", "agendaItem": f"{B}/a/1"}])
+                                  for i in range(2000)])
+    frist = 100
+    _uhr_springt(fa, monkeypatch, "papers.jsonl", 2, 300, frist * fa.ANTEIL_FRIST["papers"] + 1)
+    out = _aufruf(fa, raw, capsys, "--frist", str(frist))
+    assert "Unvollständig: Zeitgrenze im zweiten Durchgang erreicht" in out and "Sitzungen je Kennung: 6;" in out
+    assert "Beratungen der Vorlagen: nicht ermittelt (Vorlagen fehlen oder nicht vollständig ausgewertet)" in out
+    assert "Nicht verknüpfte" not in out and "Sitzungen ohne Verknüpfung" not in out
+
+
+def test_ursachen_ohne_inhalte(fa, tmp_path, capsys, monkeypatch):
+    """Die neuen Zählungen (Kennungen der Beratungen und Tagesordnungspunkte, Gründe, Sitzungen ohne Verknüpfung,
+    Vorlagenarten) zeigen nur Zahlen, feste Texte und Kategorien nach der Regel: eindeutige Marken in Kennungen,
+    Verweisen, Rückverweisen, Titeln, Namen, Rollen, Drucksachen und seltenen oder bedenklichen Vorlagenarten erscheinen
+    weder im Log noch in der Zusammenfassung."""
+    m = MARKER
+    raw = tmp_path / "raw"
+
+    def kennung(art, i):
+        return f"https://{m}-{art}.example.invalid/{i}"
+
+    def beratung(i):
+        return {"id": kennung("c", i % 3), "meeting": kennung("m", i), "agendaItem": kennung("a", i),
+                "role": f"{m}rolle", "organization": [kennung("o", i)]}
+    papers = [{"id": kennung("p", i), "reference": "AN/9876/2026", "name": f"Titel {m}titel Musterstraße 12",
+               "paperType": f"Art {m} {i}" if i < 3 else f"{m}@example.invalid", "date": "2026-11-16",
+               "consultation": [beratung(i), beratung(i), kennung("adresse", i)]} for i in range(8)]
+    tops = [{"id": kennung("a", i), "name": f"TOP {m}", "number": f"{m}nr", "consultation": kennung("c", i)}
+            for i in range(10)]
+    tops += [{"id": kennung("x", 1), "consultation": [{"id": kennung("adresse", 1)}]}, kennung("a", 1),
+             {"id": {"wert": f"{m}objekt"}, "consultation": [f"{m}text"]}]
+    _jsonl(raw / "papers.jsonl", papers)
+    _jsonl(raw / "meetings_roh.jsonl", [{"id": kennung("m", i), "name": f"Sitzung {m}",
+                                         "start": f"20{26 + i % 3}-01-01T10:00:00+01:00",
+                                         "agendaItem": tops if i == 0 else [] if i < 5 else [kennung("a", 50 + i)]}
+                                        for i in range(10)] + [{"id": kennung("m", 99), "start": f"{m}"}])
+    (raw / "zustand_abruf.json").write_text(json.dumps({"meetings": "2026-11-16T22:40:00+00:00",
+                                                        "letzter_abbruch": {"meldung": f"{m}meldung"}}),
+                                            encoding="utf-8")
+    zusammenfassung = tmp_path / "summary.md"
+    out = _aufruf(fa, raw, capsys, zusammenfassung=zusammenfassung, monkeypatch=monkeypatch)
+    md = zusammenfassung.read_text(encoding="utf-8")
+    for text in (out, md):
+        assert MARKER not in text.lower(), [z for z in text.splitlines() if MARKER in z.lower()]
+        for geheim in ("9876", "Musterstraße", "example.invalid", "@", "://"):
+            assert geheim not in text, geheim
+    # die neuen Zählungen sind tatsächlich ausgegeben (gezählt, aber ohne Inhalte)
+    assert ("Kennungen der eingebetteten Beratungen (id als Zeichenkette): 16 Einträge, 3 verschiedene Kennungen; in "
+            "mehr als einer Vorlage: 3 Kennungen (16 Einträge, 8 Vorlagen); 8-mal eine Kennung mehrfach in derselben "
+            "Vorlage (16 Einträge, in der Datenbank dort je eine Zeile; wie im Log von build)") in out
+    assert "Vorlagenarten der Vorlagen mit einer Beratungskennung" in out and "sonstige (4 Werte, 8 Objekte)" in out
+    assert "Nicht verknüpfte Tagesordnungspunkte mit Rückverweis nach Grund" in out
+    assert "Sitzungen ohne Verknüpfung: Beginn nach dem Datenstand der Sitzungen (16.11.2026): " in out
+    assert "Nicht verknüpfte" in md and "| alle ohne Verknüpfung |" in md
+
+
+def _sitzungen_im_abruf(papers, meetings):
+    """Sitzungen, die sessionnet.beratungen mit einer Beratung verknüpft (Kennungen aus beratungen.jsonl)."""
+    sessionnet.beratungen(json.loads(json.dumps(papers)), meetings)
+    return {(z.get("meeting") or {}).get("uri") for z in map(json.loads, config.BERATUNGEN.read_text(
+        encoding="utf-8").splitlines())} - {None}
+
+
+def test_verknuepfung_nur_aus_listen_wie_der_abruf(oparl, monkeypatch, capsys):
+    """Prüfung bk: sessionnet.beratungen liest Beratungen nur aus einer Liste `consultation` und Tagesordnungspunkte nur
+    aus einer Liste `agendaItem` (`or []`). Die Feldabdeckung zählt Verknüpfungen jetzt ebenso (vorher galten m/1 und m/2
+    als verknüpft): Ohne die Fälle aus dem Abgleich mit build ist die Zahl der Sitzungen ohne Verknüpfung genau die der
+    Sitzungen, die der Abruf nicht verknüpft. Die Gründe nennen die Form."""
+    monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
+    fa = _modul()
+    papers = [_vorlage(1, consultation={"id": f"{B}/c/1", "meeting": f"{B}/m/1", "agendaItem": f"{B}/a/1"}),
+              _vorlage(2, consultation=[{"id": f"{B}/c/2", "agendaItem": f"{B}/a/2"}]),
+              _vorlage(3, consultation=[{"id": f"{B}/c/3", "agendaItem": f"{B}/a/3"}])]
+    meetings = [{"id": f"{B}/m/1", "start": "2026-10-01T17:00:00+02:00",
+                 "agendaItem": [{"id": f"{B}/a/1", "consultation": f"{B}/c/1"}]},
+                {"id": f"{B}/m/2", "start": "2026-10-02T17:00:00+02:00",
+                 "agendaItem": {"id": f"{B}/a/2", "consultation": f"{B}/c/2"}},
+                {"id": f"{B}/m/3", "start": "2026-10-03T17:00:00+02:00",
+                 "agendaItem": [{"id": f"{B}/a/3", "consultation": f"{B}/c/3"}]}]
+    _jsonl(config.PAPERS, papers)
+    _jsonl(config.RAW / "meetings_roh.jsonl", meetings)
+    assert _sitzungen_im_abruf(papers, meetings) == {f"{B}/m/3"}
+    a = fa.auswerten(config.RAW, config.ZUSTAND, config.ORTSTEILE)
+    s = a["listen"]["meetings"]["auswertung"]
+    assert s.ohne_verknuepfung == {"uebrige": 2}
+    assert s.rueck == {"verknuepft": 1, "form_vorlage": 1, "form": 1}
+    # die Beratung als einzelnes Objekt zählt bei den Kennungen mit (build nimmt sie ohne Sitzung und TOP auf)
+    assert a["listen"]["papers"]["auswertung"].beratungskennungen()[0]["eintraege"] == 3
+    out = _aufruf(fa, config.RAW, capsys)
+    assert "  alle ohne Verknüpfung: 2 (66,7 %)\n" in out
+    assert "Abgleich mit build: Verknüpft heißt hier, eine Beratung mit Kennung in einer Vorlage ohne Löschvermerk " in out
+
+
+def test_sitzungen_ohne_verknuepfung_untergrenze(oparl, monkeypatch, capsys):
+    """Prüfung bk, festgehaltene Grenze (Abgleich mit build in Ausgabe und TECHNIK.md): Steht die Kennung eines
+    Tagesordnungspunkts in zwei Sitzungen, verknüpft der Abruf nur die zuletzt gelesene; nennt eine Beratung mit meeting
+    und agendaItem verschiedene Sitzungen, nur die aus meeting. Die Feldabdeckung zählt beide Male beide Sitzungen als
+    verknüpft: Ihre Zahl ohne Verknüpfung ist eine Untergrenze (hier 0, im Abruf fehlen m/1 und m/4)."""
+    monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
+    fa = _modul()
+    papers = [_vorlage(1, consultation=[{"id": f"{B}/c/1", "agendaItem": f"{B}/a/1"}]),
+              _vorlage(2, consultation=[{"id": f"{B}/c/2", "meeting": f"{B}/m/3", "agendaItem": f"{B}/a/4"}])]
+    meetings = [{"id": f"{B}/m/{i}", "start": "2026-10-01T17:00:00+02:00",
+                 "agendaItem": [{"id": f"{B}/a/{k}", "consultation": f"{B}/c/{k}"}]}
+                for i, k in ((1, 1), (2, 1), (3, 3), (4, 4))]
+    _jsonl(config.PAPERS, papers)
+    _jsonl(config.RAW / "meetings_roh.jsonl", meetings)
+    assert _sitzungen_im_abruf(papers, meetings) == {f"{B}/m/2", f"{B}/m/3"}
+    a = fa.auswerten(config.RAW, config.ZUSTAND, config.ORTSTEILE)
+    assert not a["listen"]["meetings"]["auswertung"].ohne_verknuepfung
+    out = _aufruf(fa, config.RAW, capsys)
+    assert ("Die Sitzungen ohne Verknüpfung sind daher eine Untergrenze für die Sitzungen, die nicht in der Datenbank "
+            "stehen") in out
+
+
+def test_hinweis_wenn_vorlagen_nur_teilweise_gezaehlt(fa, tmp_path, capsys, monkeypatch):
+    """Prüfung bk: Ist eine Datei der Vorlagen nicht weiter lesbar, ist ein Objekt nicht auswertbar oder zählt ein
+    laufender Vollabruf nur aus der Teildatei, stehen Gründe und Arten da, aber mit Hinweis, dass „steht in keiner
+    Vorlage“ und die Sitzungen ohne Verknüpfung zu hoch sein können; ohne solche Lücke kein Hinweis."""
+    raw = tmp_path / "raw"
+    _verknuepfung_roh(raw)
+    hinweis = "Hinweis: Vorlagen nicht vollständig gezählt ("
+    assert hinweis not in _aufruf(fa, raw, capsys)
+    # Lesefehler mitten in der Datei (im zweiten Durchgang)
+    elemente, aufrufe = fa._elemente, {}
+
+    def bricht_ab(pfad, art):
+        aufrufe[pfad.name] = aufrufe.get(pfad.name, 0) + 1
+        for i, e in enumerate(elemente(pfad, art)):
+            if pfad.name == "papers.jsonl" and aufrufe[pfad.name] % 2 == 0 and i == 3:
+                raise OSError("zqgeheim")
+            yield e
+    monkeypatch.setattr(fa, "_elemente", bricht_ab)
+    out = _aufruf(fa, raw, capsys)
+    assert (hinweis + "eine Datei nicht weiter lesbar): Der Grund „Beratung des Rückverweises steht in keiner "
+            "Vorlage“ und die Sitzungen ohne Verknüpfung können zu hoch sein") in out
+    assert "Sitzungen ohne Verknüpfung: Beginn nach dem Datenstand" in out and "zqgeheim" not in out
+    monkeypatch.setattr(fa, "_elemente", elemente)
+    # ein Objekt nicht auswertbar
+    jahr = fa.jahr
+    monkeypatch.setattr(fa, "jahr", lambda w: 1 / 0 if w == "2026-10-02" else jahr(w))
+    zeilen = [json.loads(z) for z in (raw / "papers.jsonl").read_text(encoding="utf-8").splitlines()]
+    zeilen[0]["date"] = "2026-10-02"
+    _jsonl(raw / "papers.jsonl", zeilen)
+    assert hinweis + "Objekte nicht auswertbar)" in _aufruf(fa, raw, capsys)
+    monkeypatch.setattr(fa, "jahr", jahr)
+    # Zwischenstand eines Vollabrufs nur aus der Teildatei; mit fertiger Datei (Stand davor) kein Hinweis
+    (raw / "papers.jsonl").rename(sessionnet._teil(raw / "papers.jsonl"))
+    (raw / "zustand_abruf.json").write_text(json.dumps({"meetings": "2026-11-16T22:40:00+00:00", "papers_fortsetzung": {
+        "naechste": f"{B}/papers?page=3", "seiten": 2, "start": "2026-11-15T22:10:00+00:00"}}), encoding="utf-8")
+    assert hinweis + "Zwischenstand eines Vollabrufs nur aus der Teildatei)" in _aufruf(fa, raw, capsys)
+    _jsonl(raw / "papers.jsonl", [])
+    assert hinweis not in _aufruf(fa, raw, capsys)
+
+
 def test_laufzeit_einige_tausend_vorlagen(fa, tmp_path):
-    """Einige tausend Vorlagen und Sitzungen (fertige Datei und Teildatei mit Überschneidung) in wenigen Sekunden."""
+    """Einige tausend Vorlagen und Sitzungen (fertige Datei und Teildatei mit Überschneidung) in wenigen Sekunden, mit
+    Beratungskennungen in allen Vorlagen und Rückverweisen in allen Tagesordnungspunkten (Entscheidung 17.11.2026
+    (11))."""
     raw = tmp_path / "raw"
     beratung = [{"id": f"{B}/c/{k}", "meeting": f"{B}/m/{k}", "agendaItem": f"{B}/a/{k}",
                  "organization": [f"{B}/o/1"]} for k in range(3)]
@@ -522,8 +813,8 @@ def test_laufzeit_einige_tausend_vorlagen(fa, tmp_path):
                        mainFile=datei, auxiliaryFile=[datei] * (i % 4), name="z" * 300) for i in range(6000)]
     _jsonl(raw / "papers.jsonl", papers[:4000])
     _jsonl(raw / "papers.teil.jsonl", papers[3000:])
-    tops = [{"id": f"{B}/a/{k}", "public": True, "result": "ungeändert beschlossen", "name": "t" * 200}
-            for k in range(15)]
+    tops = [{"id": f"{B}/a/{k}", "public": True, "result": "ungeändert beschlossen", "name": "t" * 200,
+             "consultation": f"{B}/c/{k}"} for k in range(15)]
     _jsonl(raw / "meetings_roh.jsonl", [{"id": f"{B}/m/{i}", "start": "2026-01-01T10:00:00+01:00",
                                          "agendaItem": tops} for i in range(1500)])
     beginn = time.monotonic()
@@ -532,7 +823,13 @@ def test_laufzeit_einige_tausend_vorlagen(fa, tmp_path):
     p = a["listen"]["papers"]
     assert (p["auswertung"].n, p["ersetzt"], p["unvollstaendig"]) == (6000, 1000, False)
     assert p["auswertung"].feld["stadtteil"] == 4000
-    assert a["listen"]["meetings"]["auswertung"].top["insgesamt"] == 22500
+    assert p["auswertung"].beratungskennungen()[0] == {
+        "eintraege": 18000, "kennungen": 3, "mehrere": 3, "mehrere_eintraege": 18000, "mehrere_vorlagen": 6000,
+        "wiederholt": 0, "wiederholt_eintraege": 0}
+    s = a["listen"]["meetings"]["auswertung"]
+    assert s.top["insgesamt"] == 22500
+    assert (len(s.top_kennungen), s.top_kennung["doppelt"]) == (15, 22485)
+    assert s.rueck == {"verknuepft": 4500, "keine_vorlage": 18000} and not s.ohne_verknuepfung
     assert dauer < 30, dauer
     assert fa.text(fa.bloecke(a)) and fa.markdown(fa.bloecke(a)).startswith("### Feldabdeckung der Rohdaten")
 
@@ -688,10 +985,11 @@ AMT = [f"{B}/organizations/amt"]
 
 def _gezaehlt(auswertung):
     """Alle Zahlen einer Auswertung (Vorlagen, Sitzungen, Gremien) zum Vergleich; Kategorien mit ihren Zählern, ohne
-    die Funktion für den Stadtteilabgleich."""
+    die Funktion für den Stadtteilabgleich und ohne den Verweis der Sitzungen auf die Auswertung der Vorlagen (deren
+    Zahlen vergleicht der Aufruf für die Vorlagen)."""
     out = {}
     for k, v in vars(auswertung).items():
-        if callable(v):
+        if callable(v) or k == "vorlagen":
             continue
         out[k] = vars(v) if hasattr(v, "zaehler") else v
     return out
