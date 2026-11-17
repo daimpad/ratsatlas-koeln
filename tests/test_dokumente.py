@@ -1225,10 +1225,10 @@ def test_regel_unter_auxiliaryFile_in_der_abrufstatistik():
         ("vorlage", ("auch_anlage",)), ("erste", ("uebergangen",)))]
     lauf = {"zweige": Counter({"vorlage": 2})}
     assert dokumente._regel_text(kandidaten, lauf) == (
-        "Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 1, mit dem Wort „Vorlage“ 2, erste PDF-Datei 1 "
+        "Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 1, mit dem Wort „Vorlage“ 2, erste übrige PDF-Datei 1 "
         "(Hinweise: Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ übergangenen Datei mit dem Wort „Vorlage“ 2, "
         "über das Wort „Vorlage“ gewählt und auch mit dem Wort „Anlage“ 2); in diesem Lauf mit eigener Drucksache 0, "
-        "mit dem Wort „Vorlage“ 2, erste PDF-Datei 0")
+        "mit dem Wort „Vorlage“ 2, erste übrige PDF-Datei 0")
     assert "in diesem Lauf" not in dokumente._regel_text(kandidaten)
 
 
@@ -1288,9 +1288,9 @@ def test_anlage_wird_federfuehrung_eine_stufe_niedriger(oparl, monkeypatch):
     ergebnis = _statistik()[-1]["ergebnis"]
     assert ("Herkunft: Auswahl aus mainFile 1, aus auxiliaryFile 3; in diesem Lauf aus mainFile 1, aus "
             "auxiliaryFile 3; Vorlagen ohne PDF-Datei 1; Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 0, "
-            "mit dem Wort „Vorlage“ 1, erste PDF-Datei 2 (Hinweise: Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ "
+            "mit dem Wort „Vorlage“ 1, erste übrige PDF-Datei 2 (Hinweise: Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ "
             "übergangenen Datei mit dem Wort „Vorlage“ 0, über das Wort „Vorlage“ gewählt und auch mit dem Wort "
-            "„Anlage“ 0); in diesem Lauf mit eigener Drucksache 0, mit dem Wort „Vorlage“ 1, erste PDF-Datei 2"
+            "„Anlage“ 0); in diesem Lauf mit eigener Drucksache 0, mit dem Wort „Vorlage“ 1, erste übrige PDF-Datei 2"
             ) in ergebnis
     build.build()
     db = sqlite3.connect(config.DB)
@@ -1596,7 +1596,7 @@ def test_nur_uebergangene_dateien_ohne_anfrage_und_ohne_kopf(oparl, monkeypatch,
     ergebnis = _statistik()[-1]["ergebnis"]
     assert ("ohne mainFile und ohne PDF-Datei in auxiliaryFile 1, nur PDF-Dateien mit dem Wort „Vorlage“ und anderer "
             "Nummer NNNN/JJJJ 1, Datei schon ausgewählt 0") in ergebnis
-    assert ("Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 0, mit dem Wort „Vorlage“ 0, erste PDF-Datei 1 "
+    assert ("Regel unter auxiliaryFile: Auswahl mit eigener Drucksache 0, mit dem Wort „Vorlage“ 0, erste übrige PDF-Datei 1 "
             "(Hinweise: Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ übergangenen Datei mit dem Wort „Vorlage“ 1, "
             "über das Wort „Vorlage“ gewählt und auch mit dem Wort „Anlage“ 0)") in ergebnis
     log = capsys.readouterr().out

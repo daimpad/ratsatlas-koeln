@@ -168,7 +168,7 @@ RE_VORLAGE_WORT = re.compile(r"vorlage", re.I)
 # Datei mit dem Wort „Vorlage“ trug eine andere Nummer und wurde übergangen; Zweige „vorlage“ und „erste“; bleibt keine
 # andere PDF-Datei, wird keine gelesen und die Vorlage zählt unter GRUENDE „nur_uebergangen“, Entscheidung
 # 17.11.2026 (6)), „auch_anlage“ (die über „Vorlage“ gewählte Datei trägt auch das Wort „Anlage“; Zweig „vorlage“)
-ZWEIGE = {"drucksache": "mit eigener Drucksache", "vorlage": "mit dem Wort „Vorlage“", "erste": "erste PDF-Datei"}
+ZWEIGE = {"drucksache": "mit eigener Drucksache", "vorlage": "mit dem Wort „Vorlage“", "erste": "erste übrige PDF-Datei"}
 HINWEISE = {"uebergangen": ("Vorlagen mit einer wegen anderer Nummer NNNN/JJJJ übergangenen Datei mit dem Wort "
                             "„Vorlage“"),
             "auch_anlage": "über das Wort „Vorlage“ gewählt und auch mit dem Wort „Anlage“"}
