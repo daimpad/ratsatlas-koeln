@@ -59,9 +59,10 @@ def _paper_detail(db, pid):
     p = db.execute(
         "SELECT p.*, o.label AS amt, o.name AS vb_name FROM paper p "
         "LEFT JOIN organization o ON o.id = p.under_direction_of WHERE p.id = ?", (pid,)).fetchone()
+    # je Eintrag der Beratungsfolge eine Station (Entscheidung 17.11.2026 (14)); die Kennung der Beratung bleibt intern
     process = db.execute(
-        "SELECT c.position, c.role, c.authoritative, c.meeting_id, c.agenda_item_id, g.name AS gremium, "
-        "m.name AS meeting, m.start_date, m.cancelled, a.number, a.result, a.public "
+        "SELECT c.id AS beratung, c.position, c.role, c.authoritative, c.meeting_id, c.agenda_item_id, "
+        "g.name AS gremium, m.name AS meeting, m.start_date, m.cancelled, a.number, a.result, a.public "
         "FROM consultation c LEFT JOIN organization g ON g.id = c.organization_id "
         "LEFT JOIN meeting m ON m.id = c.meeting_id LEFT JOIN agenda_item a ON a.id = c.agenda_item_id "
         "WHERE c.paper_id = ? ORDER BY c.position", (pid,)).fetchall()
@@ -103,7 +104,7 @@ def _paper_detail(db, pid):
         "responsibility": [_mit_aemtertabelle({**{k: v for k, v in dict(r).items() if v is not None or k not in ("confidence", "kennung")},
                                                "evidence": m(r["evidence"], ref)}, p["date"]) for r in resp],
         "originators": fund(orig),
-        "process": [{**{k: v for k, v in dict(r).items() if k != "agenda_item_id"},
+        "process": [{**{k: v for k, v in dict(r).items() if k not in ("beratung", "agenda_item_id")},
                      "meeting": m(r["meeting"], m.sitzungen.get(r["meeting_id"])),
                      "result": m(r["result"], ref_ergebnisse), "status": _status(r)}
                     for r in process],
@@ -119,7 +120,12 @@ def _paper_detail(db, pid):
                   db.execute("SELECT plan_nr, evidence, match FROM paper_plan WHERE paper_id = ?", (pid,))],
         "source_object": pid,
     }
-    d["stand"] = proc.stand(d)
+    # Stand nach dem letzten Eintrag jeder Beratung: Steht eine Kennung in derselben Vorlage mehrfach (etwa nach einer
+    # Vertagung), zählt für den Stand nur ihr letzter Eintrag, wie vor der Entscheidung 17.11.2026 (14), als nur er in
+    # der Datenbank stand; die früheren Einträge bleiben Stationen der Prozesslinie
+    letzter = {r["beratung"]: i for i, r in enumerate(process)}
+    d["stand"] = proc.stand({"process": [s for i, (s, r) in enumerate(zip(d["process"], process))
+                                         if letzter[r["beratung"]] == i]})
     d["themes"] = topics.themes(d)
     d["parties"] = topics.parties(d)
     d["steps"] = [{k: v for k, v in s.items() if v not in (None, [], False)} for s in proc.steps(d)]

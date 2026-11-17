@@ -1078,13 +1078,14 @@ def _vorlagen(w, a):
                          f"{tausend(br['adresse'])}, andere Form {tausend(br['andere'])}"))
     bk, arten = w.beratungskennungen()
     if bk["eintraege"]:
-        # Entscheidung 17.11.2026 (11): build legt je Beratung und Vorlage eine Zeile an
+        # Entscheidung 17.11.2026 (14): build legt je Eintrag eine Zeile an, auch bei einer Kennung mehrfach in
+        # derselben Vorlage
         out.append(("p", f"Kennungen der eingebetteten Beratungen (id als Zeichenkette): {tausend(bk['eintraege'])} "
                          f"Einträge, {tausend(bk['kennungen'])} verschiedene Kennungen; in mehr als einer Vorlage: "
                          f"{tausend(bk['mehrere'])} Kennungen ({tausend(bk['mehrere_eintraege'])} Einträge, "
                          f"{tausend(bk['mehrere_vorlagen'])} Vorlagen); {tausend(bk['wiederholt'])}-mal eine Kennung "
-                         f"mehrfach in derselben Vorlage ({tausend(bk['wiederholt_eintraege'])} Einträge, in der "
-                         "Datenbank dort je eine Zeile; wie im Log von build)"))
+                         f"mehrfach in derselben Vorlage ({tausend(bk['wiederholt_eintraege'])} Einträge, jeder Eintrag "
+                         "eine eigene Station; wie im Log von build)"))
     if bk["mehrere"]:
         out.append(_kategorien_tabelle("Vorlagenarten der Vorlagen mit einer Beratungskennung, die auch in einer "
                                        "anderen Vorlage steht (je Vorlage einmal)", arten, "paperType"))
@@ -1171,12 +1172,11 @@ def _verknuepfung(w, a):
                      "(Textvergleich wie sessionnet.beratungen, nur aus einer Liste consultation bzw. agendaItem). build "
                      "nimmt weniger auf: nur Beratungen aufgenommener Vorlagen (nicht die ohne Drucksachennummer oder mit "
                      "einer in unerwarteter Form), bei einer Kennung eines Tagesordnungspunkts in mehreren Sitzungen nur "
-                     "die zuletzt gelesene Sitzung, bei einer Beratung, deren meeting und agendaItem in verschiedenen "
-                     "Sitzungen stehen, nur die Sitzung aus meeting, und bei einer Kennung mehrfach in derselben Vorlage "
-                     "nur den letzten Eintrag. Die Sitzungen ohne Verknüpfung sind daher eine Untergrenze für die "
-                     "Sitzungen, die nicht in der Datenbank stehen; verknüpfte Tagesordnungspunkte zählen Einträge mit "
-                     "Rückverweis (eine doppelte Kennung je Eintrag), die Datenbank verschiedene Kennungen, auch ohne "
-                     "Rückverweis"))
+                     "die zuletzt gelesene Sitzung und bei einer Beratung, deren meeting und agendaItem in verschiedenen "
+                     "Sitzungen stehen, nur die Sitzung aus meeting. Die Sitzungen ohne Verknüpfung sind daher eine "
+                     "Untergrenze für die Sitzungen, die nicht in der Datenbank stehen; verknüpfte Tagesordnungspunkte "
+                     "zählen Einträge mit Rückverweis (eine doppelte Kennung je Eintrag), die Datenbank verschiedene "
+                     "Kennungen, auch ohne Rückverweis"))
     if t["consultation"]:
         nicht = t["consultation"] - w.rueck["verknuepft"]
         out.append(("p", f"Tagesordnungspunkte mit Rückverweis auf eine Beratung (consultation nicht leer): "

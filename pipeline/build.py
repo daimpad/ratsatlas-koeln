@@ -37,15 +37,15 @@ CREATE TABLE meeting (
 CREATE TABLE agenda_item (
   id TEXT PRIMARY KEY, meeting_id TEXT REFERENCES meeting, number TEXT, name TEXT,
   result TEXT, public INTEGER, source TEXT);
--- je Beratung und Vorlage eine Zeile (Entscheidung 17.11.2026 (11)): Dieselbe Kennung kann in mehreren Vorlagen stehen
--- (etwa mehrere Vorlagen unter einem Tagesordnungspunkt); vorher galt nur `id` als Schlüssel, und die Vorlage, deren
--- Eintrag überschrieben wurde, verlor die Station still. Kommt eine Kennung in derselben Vorlage mehrfach vor, bleibt
--- dort wie bisher eine Zeile (der letzte Eintrag); `entries` zählt die Einträge dieser Kennung in der Vorlage (sonst 1)
+-- je Eintrag der Beratungsfolge einer Vorlage eine Zeile und eine Station der Prozesslinie (Entscheidung 17.11.2026
+-- (14)); `position` ist die Stelle in der Liste `consultation` der Vorlage. Dieselbe Kennung kann in derselben Vorlage
+-- mehrfach stehen, je Eintrag mit eigener Sitzung und eigenem TOP (im Lauf vom 17.11.2026 7.562-mal; vorher galten
+-- `id` bzw. `id` und `paper_id` als Schlüssel, und nur der letzte Eintrag blieb)
 CREATE TABLE consultation (
   id TEXT, paper_id TEXT REFERENCES paper, position INTEGER,
   organization_id TEXT REFERENCES organization, role TEXT, authoritative INTEGER,
   meeting_id TEXT REFERENCES meeting, agenda_item_id TEXT REFERENCES agenda_item,
-  source TEXT, link_source TEXT, entries INTEGER, PRIMARY KEY (id, paper_id));
+  source TEXT, link_source TEXT, PRIMARY KEY (id, paper_id, position));
 CREATE TABLE location (
   id TEXT PRIMARY KEY, street TEXT, postal_code TEXT, sub_locality TEXT, description TEXT,
   lon REAL, lat REAL, ortsteil TEXT, ortsteil_nr INTEGER, stadtbezirk TEXT,
@@ -261,8 +261,9 @@ def build():
               "Kennung, Einträge ohne Objekt oder Kennung entfernt, mainFile ohne Objekt → fehlend, paperType ohne "
               "Zeichenkette → Text): " + ", ".join(f"{k} {n}" for k, n in sorted(angeglichen.items())))
     orgs = json.loads(config.ORGANIZATIONS.read_text())
-    # Zeilen aus beratungen.jsonl je Kennung in der Reihenfolge der Datei: sessionnet.beratungen schreibt je Vorlage
-    # eine Zeile, eine Kennung in mehreren Vorlagen steht also mehrfach da (_sitzung_und_top wählt je Vorlage)
+    # Zeilen aus beratungen.jsonl je Kennung in der Reihenfolge der Datei: sessionnet.beratungen schreibt je Eintrag
+    # einer Vorlage eine Zeile, eine Kennung in mehreren Vorlagen oder mehrfach in derselben Vorlage steht also mehrfach
+    # da (_sitzung_und_top wählt je Eintrag)
     lite = {}
     for z in _read_jsonl(config.CONSULTATIONS_LITE) if config.CONSULTATIONS_LITE.exists() else ():
         lite.setdefault(z["uri"], []).append(z)
@@ -327,13 +328,9 @@ def build():
                               p.get("web"), mf.get("accessUrl"), mf.get("fileName")))
 
         bezirke = set()
-        beratungen = p.get("consultation") or []
-        # je Kennung der letzte Eintrag der Vorlage: Nur seine Zeile bleibt in der Datenbank (OR REPLACE unten), also
-        # kommen nur seine Sitzung und sein TOP in `meeting` und `agenda_item`; vorher stand bei einer Kennung zweimal
-        # in derselben Vorlage mit verschiedenem TOP auch der TOP des ersetzten Eintrags darin, ohne Beratung, die auf
-        # ihn verweist (Prüfung bk)
-        letzter = {c["id"]: pos for pos, c in enumerate(beratungen)}
-        for pos, c in enumerate(beratungen):
+        # jeder Eintrag eine eigene Zeile mit eigener Sitzung und eigenem TOP (Entscheidung 17.11.2026 (14)); Sitzungen
+        # und TOPs aller Einträge kommen in `meeting` und `agenda_item`
+        for pos, c in enumerate(p.get("consultation") or []):
             org = (c.get("organization") or [None])[0]
             name = (orgs_by_id.get(org) or {}).get("name", "")
             bz = bv_bezirk(name)
@@ -348,10 +345,10 @@ def build():
                 elif _eigene_verweise(c) == (None, None):
                     lite_zaehler["uebernommen"] += 1
             m, a = lc.get("meeting"), lc.get("agendaItem")
-            if m and letzter[c["id"]] == pos:
+            if m:
                 meetings[m["uri"]] = (m["uri"], m.get("name"), m.get("startDate"),
                                       int(bool(m.get("cancelled"))))
-            if a and letzter[c["id"]] == pos:
+            if a:
                 agenda[a["uri"]] = (a["uri"], m["uri"] if m else None, a.get("number"),
                                     a.get("name"), a.get("result"),
                                     None if a.get("public") is None else int(a["public"]))
@@ -430,12 +427,9 @@ def build():
     db.executemany(f"INSERT OR IGNORE INTO paper_related VALUES (?,?,'{config.QUELLE_OPARL}')", rows["related"])
     db.executemany(f"INSERT INTO meeting VALUES (?,?,?,?,'{config.QUELLE_SITZUNG}')", meetings.values())
     db.executemany(f"INSERT INTO agenda_item VALUES (?,?,?,?,?,?,'{config.QUELLE_SITZUNG}')", agenda.values())
-    # je Beratung und Vorlage eine Zeile (Schlüssel id und paper_id, Entscheidung 17.11.2026 (11)); OR REPLACE greift
-    # nur noch bei einer Kennung, die in derselben Vorlage mehrfach steht: dort wie bisher der letzte Eintrag, `entries`
-    # zählt die Einträge
-    je_paar = Counter((r[0], r[1]) for r in rows["cons"])
-    db.executemany(f"INSERT OR REPLACE INTO consultation VALUES (?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}',?,?)",
-                   [(*r, je_paar[r[0], r[1]]) for r in rows["cons"]])
+    # je Eintrag eine Zeile (Schlüssel id, paper_id und position, Entscheidung 17.11.2026 (14)); ohne OR REPLACE: Die
+    # Vorlagen stehen je Kennung einmal da (_je_kennung_einmal), ein Eintrag kann also keinen anderen ersetzen
+    db.executemany(f"INSERT INTO consultation VALUES (?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}',?)", rows["cons"])
     print(beratungen_zeile(rows["cons"], lite_zaehler["verschieden"], lite_zaehler["uebernommen"],
                            lite_zaehler["ohne"]))
     db.executemany("INSERT INTO location VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", locations.values())
@@ -465,20 +459,19 @@ def build():
 
 
 def beratungen_zeile(cons, verschieden=0, uebernommen=0, ohne=0):
-    """Zeile für das Log von build (nur Zahlen; Entscheidung 17.11.2026 (11)): Einträge der Beratungen (Zeilen von
-    rows["cons"]: Kennung, Vorlage, …) und Zeilen der Datenbank (je Beratung und Vorlage eine), Kennungen in mehreren
-    Vorlagen mit ihren Einträgen und Vorlagen, Kennungen mehrfach in derselben Vorlage (dort eine Zeile) und, unter den
-    Einträgen, deren Kennung in beratungen.jsonl steht (_sitzung_und_top): mit verschiedener Sitzung oder verschiedenem
-    TOP in beratungen.jsonl (`verschieden`), ohne eigene Verweise mit über die Kennung übernommener Verknüpfung
-    (`uebernommen`) und ohne passende Zeile, also ohne Sitzung und TOP (`ohne`; Prüfung bk)."""
+    """Zeile für das Log von build (nur Zahlen; Entscheidungen 17.11.2026 (11) und (14)): Einträge der Beratungen
+    (Zeilen von rows["cons"]: Kennung, Vorlage, …; je Eintrag eine Zeile der Datenbank), Kennungen in mehreren Vorlagen
+    mit ihren Einträgen und Vorlagen, Kennungen mehrfach in derselben Vorlage (jeder Eintrag eine eigene Station) und,
+    unter den Einträgen, deren Kennung in beratungen.jsonl steht (_sitzung_und_top): mit verschiedener Sitzung oder
+    verschiedenem TOP in beratungen.jsonl (`verschieden`), ohne eigene Verweise mit über die Kennung übernommener
+    Verknüpfung (`uebernommen`) und ohne passende Zeile, also ohne Sitzung und TOP (`ohne`; Prüfung bk)."""
     je_paar = Counter((r[0], r[1]) for r in cons)
     vorlagen = {}
     for cid, pid in je_paar:
         vorlagen.setdefault(cid, set()).add(pid)
     mehrere = [cid for cid, v in vorlagen.items() if len(v) > 1]
     doppelt = [n for n in je_paar.values() if n > 1]
-    return (beratungen_text(len(cons), len(je_paar), len(mehrere),
-                            sum(je_paar[cid, pid] for cid in mehrere for pid in vorlagen[cid]),
+    return (beratungen_text(len(cons), len(mehrere), sum(je_paar[cid, pid] for cid in mehrere for pid in vorlagen[cid]),
                             len(set().union(*(vorlagen[cid] for cid in mehrere))), len(doppelt), sum(doppelt))
             + f"; {verschieden} Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener Sitzung oder "
               f"verschiedenem TOP steht (je Vorlage nach ihren eigenen Verweisen zugeordnet); {uebernommen} Einträge "
@@ -487,12 +480,11 @@ def beratungen_zeile(cons, verschieden=0, uebernommen=0, ohne=0):
               f"eigene Verweise mit verschiedenen Zeilen)")
 
 
-def beratungen_text(eintraege, zeilen, mehrere, mehrere_eintraege, mehrere_vorlagen, doppelt, doppelt_eintraege):
+def beratungen_text(eintraege, mehrere, mehrere_eintraege, mehrere_vorlagen, doppelt, doppelt_eintraege):
     """Gemeinsamer Text für das Log von build (beratungen_zeile) und die Ausgabe von check (aus der Datenbank)."""
-    return (f"Beratungen: {eintraege} Einträge in {zeilen} Zeilen der Datenbank (je Beratung und Vorlage eine); "
-            f"{mehrere} Kennungen in mehreren Vorlagen ({mehrere_eintraege} Einträge, {mehrere_vorlagen} Vorlagen, je "
-            f"Vorlage eine Zeile); {doppelt}-mal eine Kennung mehrfach in derselben Vorlage ({doppelt_eintraege} "
-            f"Einträge, dort je eine Zeile)")
+    return (f"Beratungen: {eintraege} Einträge (je Eintrag eine Zeile der Datenbank); {mehrere} Kennungen in mehreren "
+            f"Vorlagen ({mehrere_eintraege} Einträge, {mehrere_vorlagen} Vorlagen); {doppelt}-mal eine Kennung "
+            f"mehrfach in derselben Vorlage ({doppelt_eintraege} Einträge, jeder Eintrag eine eigene Station)")
 
 
 def _lite_schluessel(z):
@@ -508,11 +500,12 @@ def _eigene_verweise(c):
 
 def _sitzung_und_top(kandidaten, c):
     """Zeile aus beratungen.jsonl für die Beratung `c` einer Vorlage, aus den Zeilen mit ihrer Kennung (`kandidaten`,
-    Reihenfolge der Datei). sessionnet.beratungen schreibt je Vorlage eine Zeile, wenn sich ein eigener Verweis auflösen
-    lässt; steht dieselbe Kennung in mehreren Vorlagen, gibt es mehrere. Verweist die Beratung selbst auf Sitzung oder
-    TOP (_eigene_verweise), gilt immer die Zeile, die dazu passt, gleich wie viele Zeilen es gibt: zuerst Sitzung und
-    TOP, dann der TOP (die Sitzung kam dann aus dem TOP), dann die Sitzung ohne TOP; passt keine, schrieb
-    sessionnet.beratungen für diese Vorlage keine Zeile, und die Beratung bleibt ohne Sitzung und TOP, statt die einer
+    Reihenfolge der Datei). sessionnet.beratungen schreibt je Eintrag einer Vorlage eine Zeile, wenn sich ein eigener
+    Verweis auflösen lässt; steht dieselbe Kennung in mehreren Vorlagen oder mehrfach in derselben, gibt es mehrere
+    (jeder Eintrag wählt nach seinen eigenen Verweisen, Entscheidung 17.11.2026 (14)). Verweist die Beratung selbst auf
+    Sitzung oder TOP (_eigene_verweise), gilt immer die Zeile, die dazu passt, gleich wie viele Zeilen es gibt: zuerst
+    Sitzung und TOP, dann der TOP (die Sitzung kam dann aus dem TOP), dann die Sitzung ohne TOP; passt keine, schrieb
+    sessionnet.beratungen für diesen Eintrag keine Zeile, und die Beratung bleibt ohne Sitzung und TOP, statt die einer
     anderen Vorlage zu übernehmen (Entscheidung 17.11.2026 (11)). Vorher galt das nur bei verschiedenen Zeilen; bei nur
     einer übernahm eine Beratung mit eigenen, nicht auflösbaren Verweisen die Station einer anderen Vorlage (Prüfung bk).
     Ohne eigene Verweise (OParl-Lite in Bonn; in Köln eine Beratung ohne Sitzung und TOP) gilt wie bisher die letzte
