@@ -3,16 +3,30 @@
 <id>tag:ratsatlas-koeln,2026:feed/vorlage/an-0436-2019</id>
 <title>Vorlage AN/0436/2019: Kunst-und Museumsbibliothek ( KMB )</title>
 <subtitle>Verlauf der Vorlage AN/0436/2019: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
-<updated>2019-03-26T00:00:00Z</updated>
+<updated>2019-05-07T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/an-0436-2019.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2019#AN/0436/2019"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/86540#beratung-2019-05-07-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „zurückgestellt“ – AN/0436/2019 Kunst-und Museumsbibliothek ( KMB )</title>
+<updated>2019-05-07T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2019#AN/0436/2019"/>
+<summary>Antrag / Anfrage am 2019-05-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/86540#vorlage</id>
 <title>Neue Vorlage AN/0436/2019: Kunst-und Museumsbibliothek ( KMB )</title>
 <updated>2019-03-26T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2019#AN/0436/2019"/>
 <summary>Gem. Anfrage nach § 4 (Grüne) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/86540#beratung-2019-03-26-Ausschuss%20Kunst%20und%20Kultur</id>
+<title>Ausschuss Kunst und Kultur: „zurückgestellt“ – AN/0436/2019 Kunst-und Museumsbibliothek ( KMB )</title>
+<updated>2019-03-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2019#AN/0436/2019"/>
+<summary>Antrag / Anfrage am 2019-03-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: offen</summary>
 </entry>
 </feed>
