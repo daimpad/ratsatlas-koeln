@@ -5,21 +5,35 @@ Aufruf: python tools/abrufstand.py [--zustand PFAD] [--stand PFAD] [--statistik 
 Liest nur `data/raw/zustand_abruf.json`, `data/raw/STAND.json` und `data/export/abrufstatistik.tsv` (was davon vorhanden
 ist; Vorgaben aus pipeline/config.py), schreibt nichts in data/ und sendet keine Anfrage. Ausgabe auf stdout und, in
 GitHub Actions, als Markdown an `$GITHUB_STEP_SUMMARY`:
-- je Liste (papers, meetings, organizations): Anfragen und Objekte der letzten Nacht mit Anfragen (Zeilen der
-  Abrufstatistik bis 12 Stunden vor der jüngsten), Seiten bisher, Vollabruf läuft oder abgeschlossen, Stelle der
-  Fortsetzung (Seitennummer und Adresse nur mit `page` und `limit`, ohne andere Parameter, Zugangsdaten oder Anker),
-  gespeicherter Stand (Objekte der letzten Zeile mit Ergebnis `ok` oder `übersprungen`);
-- wie die letzte Nacht endete (Abbruch, Ende des Zeitfensters oder vollständig; nur aus Zeitpunkten und Arten);
+- je Liste (papers, meetings, organizations): Anfragen und Objekte der letzten Nacht mit Anfragen (Zeilen des Abrufs
+  in der Abrufstatistik bis 12 Stunden vor der jüngsten; ohne die Zeilen `dokumente`), Seiten bisher, Vollabruf läuft,
+  abgeschlossen oder ausgesetzt, Stelle der Fortsetzung (Seitennummer und Adresse nur mit `page` und `limit`, ohne
+  andere Parameter, Zugangsdaten oder Anker), gespeicherter Stand (Objekte der letzten Zeile mit Ergebnis `ok` oder
+  `übersprungen`);
+- ausgesetzte Liste (papers, meetings; sessionnet.AUSSETZEN, Entscheidung 13.11.2026): Vorrang vor der Fortsetzung, die
+  dabei stehen bleibt; Stand „ausgesetzt seit …“ nur aus Zeit, Zahlen und den festen Anlässen des Eintrags
+  `<liste>_ausgesetzt` (sessionnet.AUSSETZEN_ANLASS, nie `meldung`), die feste Abhilfe des Abrufs; eine Zeile mit Modus
+  `ausgesetzt` zählt 0 gelesene Objekte, `abruf_ausgesetzt` in STAND.json erscheint unter den Meldungen;
+- wie die letzte Nacht endete (Abbruch, Ende des Zeitfensters oder vollständig, auch mit ausgesetzter Liste; nur aus
+  Zeitpunkten und Arten); lief in dieser Nacht der Dokumentschritt, steht sein Ende getrennt dahinter („Abruf: …;
+  Dokumente: …“), und ein Abbruch nach seinem Beginn gilt als seiner;
 - Zähler der Nächte mit möglicher Sperre samt Pause von sieben Tagen (wie sessionnet._pause_grund), Nächte mit
   fehlerhafter Liste und mit Zertifikatsfehlern, Retry-After (`nicht_vor`), letzter Abbruch (Art, HTTP-Code, Zeit),
   `abruf_ok`;
 - verbleibende Nächte der Vorlagen nur mit bekannter Gesamtzahl: Die Kölner API nennt in `pagination` keine
   (Stufe 1, 07.11.2026), der Abruf speichert keine; ohne `--vorlagen-gesamt` (etwa eine Angabe der Stadt) steht dort
-  „unbekannt“.
+  „unbekannt“;
+- Dokumentschritt (PDF-Köpfe, pipeline/dokumente.py; läuft in pages.yml erst nach diesem Schritt, gezeigt wird also
+  der Stand vor ihm): aus dem eigenen Eintrag `dokumente` im Zustand die Nacht und die Zahl der darin angefragten
+  Dateien (`nacht`, `dateien`) und die Nächte mit möglicher Sperre beim Dokumentabruf samt Pause (`verdacht`); aus der
+  letzten Zeile `dokumente` der Abrufstatistik Zeitpunkt, Anfragen, Dateien mit Ergebnis und die Art des Ergebnisses.
+  Keine Kennungen, Adressen, Dateinamen oder Ergebnisse einzelner Dateien; wie viele Dateien insgesamt noch zu lesen
+  sind, steht in keiner der drei Dateien (nur im Text der Abrufstatistik, der nicht ausgegeben wird).
 Nur Zahlen und Zustände: keine Titel, Namen oder anderen Inhalte von Objekten und keine Meldungstexte (`meldung` in
 Zustand und STAND.json, `ergebnis` der Abrufstatistik nur als Art wie „ok“ oder „unterbrochen“), denn sie können
 Adressen und Ausschnitte enthalten; einzig der Grund eines übersprungenen Laufs (`abruf_uebersprungen.grund`, vom Abruf
-aus festen Texten, Zahlen und Daten gebildet) erscheint, einzeilig und gekürzt.
+aus festen Texten, Zahlen und Daten gebildet) erscheint, einzeilig und gekürzt, und bei einer ausgesetzten Liste die
+feste Abhilfe aus dem Code (sessionnet.ABHILFE_AUSGESETZT).
 Fehlende oder unlesbare Dateien und Werte erscheinen als „fehlt“ bzw. „unlesbar“; das Skript endet immer mit 0 (auch
 nach einem unerwarteten Fehler: Warnung mit dem Namen des Fehlers, ohne Text), damit es den Lauf nie anhält.
 """
@@ -41,15 +55,20 @@ from pipeline import abruf, config, sessionnet  # noqa: E402
 LISTEN = ("papers", "meetings", "organizations")   # Reihenfolge der Ausgabe
 NAME = {"papers": "Vorlagen", "meetings": "Sitzungen", "organizations": "Organisationen"}
 # Arten des Ergebnisses einer Zeile der Abrufstatistik (Anfang der Spalte `ergebnis`, sessionnet._abruf_liste)
-ERGEBNISSE = ("ok", "unterbrochen", "abbruch", "warnung", "übersprungen", "programmfehler")
+ERGEBNISSE = ("ok", "unterbrochen", "abbruch", "warnung", "übersprungen", "programmfehler", "ausgesetzt")
 MODI = ("voll", "voll, fortgesetzt", "inkrementell", "voll, Fortsetzung verworfen", "voll, Zeitfilter nicht angewandt",
-        "übersprungen")
+        "übersprungen", "ausgesetzt")
 # Modi, mit denen ein Vollabruf von vorn beginnt (Seite 1)
 VON_VORN = ("voll", "voll, Fortsetzung verworfen", "voll, Zeitfilter nicht angewandt")
 # Parameter, die von der Adresse der Fortsetzung bleiben (Wert nur Ziffern)
 PARAMETER = ("page", "limit")
 MAX_ZEILEN = 5000   # letzte Zeilen der Abrufstatistik (je Lauf vier bis fünf)
 NACHT = sessionnet.SPERRE_GLEICHE_NACHT   # Zeilen bis 12 Stunden vor der jüngsten gelten als dieselbe Nacht
+# Dokumentschritt (pipeline/dokumente.py: SCHLUESSEL, VERDACHT_NAECHTE, VERDACHT_PAUSE; hier ohne Import, denn das Modul
+# lädt Geokodierung und Titelmaske; tests/test_abrufstand.py vergleicht die Werte)
+DOKUMENTE = "dokumente"
+DOKUMENTE_NAECHTE = 3
+DOKUMENTE_PAUSE = timedelta(days=7)
 ZAEHLER = (   # Schlüssel im Zustand, Text, Grenze der Nächte, Pause danach
     ("sperre_verdacht", "Nächte mit möglicher Sperre", sessionnet.SPERRE_NAECHTE, sessionnet.SPERRE_PAUSE),
     ("listenfehler", "Nächte mit fehlerhafter Liste", sessionnet.LISTENFEHLER_NAECHTE, sessionnet.LISTENFEHLER_PAUSE),
@@ -171,8 +190,11 @@ def adresse(url):
 
 def letzte_nacht(zeilen):
     """Indizes der Zeilen der letzten Nacht mit Anfragen (lesbares `datum` höchstens NACHT vor der jüngsten Zeile) und
-    ihr Beginn; ohne lesbares Datum (set(), None)."""
-    mit_zeit = [(i, t) for i, z in enumerate(zeilen) if (t := zeit(z.get("datum"))) is not None]
+    ihr Beginn; ohne lesbares Datum (set(), None). Nur Zeilen des Abrufs: Die Zeilen `dokumente` (Dokumentschritt, läuft
+    nach dem Abruf) bestimmen die Nacht nicht und zählen nicht zu ihren Anfragen; sie stehen getrennt
+    (dokumente_auswerten, ende_der_nacht)."""
+    mit_zeit = [(i, t) for i, z in enumerate(zeilen)
+                if z.get("liste") != DOKUMENTE and (t := zeit(z.get("datum"))) is not None]
     if not mit_zeit:
         return set(), None
     juengste = max(t for _, t in mit_zeit)
@@ -182,9 +204,9 @@ def letzte_nacht(zeilen):
 
 def ausgangswert(zeilen, vorher):
     """Objekte des laufenden Vollabrufs vor der letzten Nacht: aus der letzten Zeile „unterbrochen“ davor (nur sie
-    speichert eine Fortsetzung, sessionnet._abruf_liste). Dazwischen dürfen Zeilen „abbruch“, „programmfehler“ oder
-    „warnung“ derselben Fortsetzung liegen; eine Zeile, die von vorn begann (VON_VORN) oder mit „ok“ endete, beendet
-    die Suche (None)."""
+    speichert eine Fortsetzung, sessionnet._abruf_liste). Dazwischen dürfen Zeilen „abbruch“, „programmfehler“,
+    „warnung“ oder „ausgesetzt“ derselben Fortsetzung liegen (ein Aussetzen lässt sie stehen; RATSATLAS_KUERZER_ANNEHMEN
+    setzt sie fort); eine Zeile, die von vorn begann (VON_VORN) oder mit „ok“ endete, beendet die Suche (None)."""
     for i in reversed(vorher):
         z = zeilen[i]
         art = ergebnis_art(z.get("ergebnis"))
@@ -195,6 +217,19 @@ def ausgangswert(zeilen, vorher):
     return None
 
 
+def ausgesetzt_text(eintrag):
+    """Stand einer ausgesetzten Liste nur aus Zeit, Zahlen und festem Anlass des Eintrags `<liste>_ausgesetzt` (wie
+    sessionnet._ausgesetzt_text, ohne `meldung`): „ausgesetzt seit 15.11.2026, 23:15 Uhr (8 statt bisher 10,
+    fortgesetzter Vollabruf)“; ein Anlass außerhalb von sessionnet.AUSSETZEN_ANLASS gilt als unbekannt, ein unlesbarer
+    Eintrag gilt wie im Abruf als ausgesetzt."""
+    if not isinstance(eintrag, dict):
+        return "ausgesetzt (Eintrag unlesbar; gilt im Abruf als ausgesetzt)"
+    anlass = eintrag.get("anlass")
+    anlass = anlass if isinstance(anlass, str) and anlass in sessionnet.AUSSETZEN_ANLASS.values() else "Anlass unbekannt"
+    return (f"ausgesetzt seit {wann(zeit(eintrag.get('seit')))} ({tausend(zahl(eintrag.get('objekte')))} statt bisher "
+            f"{tausend(zahl(eintrag.get('bisher')))}, {anlass})")
+
+
 def liste_auswerten(name, zeilen, nacht, zustand):
     """Kennzahlen einer Liste aus Abrufstatistik (Zeilen, Indizes der letzten Nacht) und Zustand."""
     eigene = [i for i, z in enumerate(zeilen) if z.get("liste") == name]
@@ -203,7 +238,7 @@ def liste_auswerten(name, zeilen, nacht, zustand):
     r = {"liste": name, "anfragen_nacht": None, "objekte_nacht": None, "aenderungen": None, "seiten": None,
          "objekte_bisher": None, "status": "", "fortsetzung": None, "gespeichert": None, "gespeichert_am": None,
          "ergebnis": ergebnis_art(letzte.get("ergebnis")) if letzte else None,
-         "modus": modus(letzte.get("modus")) if letzte else None, "vollabruf_laeuft": False,
+         "modus": modus(letzte.get("modus")) if letzte else None, "vollabruf_laeuft": False, "ausgesetzt": False,
          "ohne_zeitfilter": None, "zuletzt": zeit(zustand.get(name))}
     if in_nacht:
         werte = [zahl(zeilen[i].get("anfragen")) for i in in_nacht]
@@ -224,7 +259,8 @@ def liste_auswerten(name, zeilen, nacht, zustand):
         elif m == "inkrementell" and art == "ok":
             # `objekte` ist hier der zusammengeführte Stand; gelesen wurden die Änderungen
             r["aenderungen"] = tuple(zahl(nacht_letzte.get(k)) for k in ("neu", "geaendert", "geloescht"))
-        elif m == "übersprungen" or art == "übersprungen":
+        elif m in ("übersprungen", "ausgesetzt") or art == "übersprungen":
+            # ohne Anfrage an die Liste: `objekte` ist der letzte gültige Stand (sessionnet._ausgesetzt_ueberspringen)
             r["objekte_nacht"] = 0
         else:
             r["objekte_nacht"] = objekte
@@ -238,15 +274,22 @@ def liste_auswerten(name, zeilen, nacht, zustand):
         r["gespeichert"], r["gespeichert_am"] = zahl(z.get("objekte")), zeit(z.get("datum"))
     fort = zustand.get(f"{name}_fortsetzung")
     if fort is not None:
-        r["vollabruf_laeuft"] = True
         if isinstance(fort, dict):
             url, seite = adresse(fort.get("naechste"))
             r["fortsetzung"] = {"seiten": zahl(fort.get("seiten")), "start": zeit(fort.get("start")),
                                 "gespeichert": zeit(fort.get("gespeichert")), "adresse": url, "seite": seite}
-            if r["fortsetzung"]["seiten"] is not None:
-                r["seiten"] = r["fortsetzung"]["seiten"]
         else:
             r["fortsetzung"] = "unlesbar"
+    # wie sessionnet._ausgesetzt: jeder Wert außer null gilt als Aussetzen (nur Listen aus sessionnet.AUSSETZEN)
+    ausgesetzt = zustand.get(f"{name}_ausgesetzt") if name in sessionnet.AUSSETZEN else None
+    if ausgesetzt is not None:
+        # Vorrang vor der Fortsetzung: Sie bleibt für RATSATLAS_KUERZER_ANNEHMEN stehen, läuft aber nicht weiter
+        r["ausgesetzt"] = True
+        r["status"] = ausgesetzt_text(ausgesetzt)
+    elif fort is not None:
+        r["vollabruf_laeuft"] = True
+        if isinstance(r["fortsetzung"], dict) and r["fortsetzung"]["seiten"] is not None:
+            r["seiten"] = r["fortsetzung"]["seiten"]
         r["status"] = "Vollabruf läuft"
     elif r["zuletzt"] is not None:
         r["status"] = "Vollabruf abgeschlossen"
@@ -260,18 +303,14 @@ def liste_auswerten(name, zeilen, nacht, zustand):
     return r
 
 
-def ende_der_nacht(zeilen, nacht, beginn, la):
-    """Wie die letzte Nacht mit Anfragen endete, nur aus Zeitpunkten und Arten: Abbruch, wenn `letzter_abbruch.zuletzt`
-    in dieser Nacht liegt (jeder Abbruch außer dem Ende des Zeitfensters setzt ihn, sessionnet.abrufen); sonst mit
-    einer Zeile „unterbrochen“ das Ende des Zeitfensters; sonst nach den Arten der Zeilen."""
-    if beginn is None:
-        return "keine Nacht mit Anfragen in der Abrufstatistik"
-    if isinstance(la, dict):
-        t = zeit(la.get("zuletzt"))
-        if t is not None and timedelta(0) <= t - beginn < NACHT:
-            if la.get("art") == "obergrenze":
-                return f"Obergrenze je Nacht erreicht ({wann(t)}); Fortsetzung in der nächsten Nacht"
-            return f"Abbruch (Art {art_text(la.get('art'))}, {wann(t)})"
+# Ende des Dokumentschritts nach der Art seiner letzten Zeile in der Nacht (ende_der_nacht)
+DOKUMENTE_ENDE = {"ok": "ohne Abbruch", "unterbrochen": "Ende des Zeitfensters", "abbruch": "Abbruch",
+                  "programmfehler": "Programmfehler", "übersprungen": "übersprungen"}
+
+
+def _ende_nach_arten(zeilen, nacht):
+    """Ende des Abrufs nach den Arten seiner Zeilen in der Nacht; eine ausgesetzte Liste wie eine Warnung (der Lauf ist
+    vollständig, sessionnet: `abruf_ok`), mit dem Namen der Liste."""
     arten = {ergebnis_art(zeilen[i].get("ergebnis")) for i in nacht}
     if "unterbrochen" in arten:
         return "Ende des Zeitfensters; Fortsetzung in der nächsten Nacht"
@@ -280,9 +319,46 @@ def ende_der_nacht(zeilen, nacht, beginn, la):
             return text
     if arten == {"übersprungen"}:
         return "übersprungen (in dieser Nacht schon gelesen)"
-    if arten and arten <= {"ok", "übersprungen", "warnung"}:
-        return "vollständig" + (" (mit Warnung)" if "warnung" in arten else "")
+    if arten and arten <= {"ok", "übersprungen", "warnung", "ausgesetzt"}:
+        zusatz = ["mit Warnung"] if "warnung" in arten else []
+        if "ausgesetzt" in arten:
+            namen = [NAME[name] for name in LISTEN if any(
+                zeilen[i].get("liste") == name and ergebnis_art(zeilen[i].get("ergebnis")) == "ausgesetzt"
+                for i in nacht)]
+            zusatz.append((", ".join(namen) or "Liste") + " ausgesetzt")
+        return "vollständig" + (f" ({'; '.join(zusatz)})" if zusatz else "")
     return "unbekannt"
+
+
+def ende_der_nacht(zeilen, nacht, beginn, la):
+    """Wie die letzte Nacht mit Anfragen endete, nur aus Zeitpunkten und Arten: Abbruch, wenn `letzter_abbruch.zuletzt`
+    in dieser Nacht liegt (jeder Abbruch außer dem Ende des Zeitfensters setzt ihn, sessionnet.abrufen); sonst mit
+    einer Zeile „unterbrochen“ das Ende des Zeitfensters; sonst nach den Arten der Zeilen (_ende_nach_arten).
+    Dokumentschritt: Liegt seine letzte Zeile in dieser Nacht (ab ihrem Beginn, höchstens NACHT danach), steht sein
+    Ende getrennt dahinter („Abruf: …; Dokumente: …“, DOKUMENTE_ENDE). Ein Abbruch ab dem Beginn dieser Zeile gilt als
+    seiner, wenn keine Zeile des Abrufs später begann: Der Schritt läuft nach dem Abruf und liest nur nach einem
+    vollständigen (dokumente._metadaten_dieser_nacht); das Ende des Abrufs folgt dann aus den Arten seiner Zeilen."""
+    if beginn is None:
+        return "keine Nacht mit Anfragen in der Abrufstatistik"
+    dok = max(((t, ergebnis_art(z.get("ergebnis"))) for z in zeilen
+               if z.get("liste") == DOKUMENTE and (t := zeit(z.get("datum"))) is not None
+               and timedelta(0) <= t - beginn < NACHT), key=lambda x: x[0], default=None)
+    abbruch = zeit(la.get("zuletzt")) if isinstance(la, dict) else None
+    if abbruch is not None and not timedelta(0) <= abbruch - beginn < NACHT:
+        abbruch = None
+    juengste = max(zeit(zeilen[i].get("datum")) for i in nacht)
+    vom_schritt = dok is not None and abbruch is not None and juengste <= dok[0] <= abbruch
+    if abbruch is None or vom_schritt:
+        abruf_ende = _ende_nach_arten(zeilen, nacht)
+    elif la.get("art") == "obergrenze":
+        abruf_ende = f"Obergrenze je Nacht erreicht ({wann(abbruch)}); Fortsetzung in der nächsten Nacht"
+    else:
+        abruf_ende = f"Abbruch (Art {art_text(la.get('art'))}, {wann(abbruch)})"
+    if dok is None:
+        return abruf_ende
+    dok_ende = (f"Abbruch (Art {art_text(la.get('art'))}, {wann(abbruch)})" if vom_schritt
+                else DOKUMENTE_ENDE.get(dok[1], "Ergebnis unbekannt"))
+    return f"Abruf: {abruf_ende}; Dokumente: {dok_ende}"
 
 
 def zaehler_auswerten(zustand, schluessel, grenze, pause, jetzt):
@@ -311,6 +387,36 @@ def zaehler_auswerten(zustand, schluessel, grenze, pause, jetzt):
     return ", ".join(teile), (f"Pause bis {wann(bis)}" if jetzt < bis else "Pause abgelaufen")
 
 
+def dokumente_auswerten(zustand, zeilen, jetzt):
+    """Dokumentschritt nur aus Zahlen und Zuständen: Eintrag `dokumente` im Zustand (Nacht und Zahl der darin
+    angefragten Dateien, Zähler `verdacht` wie dokumente._pause) und letzte Zeile `dokumente` der Abrufstatistik
+    (Zeitpunkt, Anfragen, Dateien mit Ergebnis, Art des Ergebnisses). Ohne beides None (noch kein Lauf mit Freigabe:
+    ohne sie schreibt der Schritt nichts)."""
+    eintrag = zustand.get(DOKUMENTE)
+    eigene = [z for z in zeilen if z.get("liste") == DOKUMENTE]
+    if eintrag is None and not eigene:
+        return None
+    d = {"nacht": "keine vermerkt", "verdacht": ("–", "–"), "zeile": None}
+    if eintrag is not None and not isinstance(eintrag, dict):
+        d["nacht"] = "unlesbar"
+        d["verdacht"] = ("unlesbar", "unlesbar")
+    elif isinstance(eintrag, dict):
+        nacht, dateien = eintrag.get("nacht"), zahl(eintrag.get("dateien"))
+        if "nacht" in eintrag or "dateien" in eintrag:
+            # wie dokumente._eigener_zustand: unlesbar gilt in der Nacht des nächsten Laufs als ausgeschöpft
+            lesbar = (isinstance(nacht, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", nacht)
+                      and isinstance(eintrag.get("dateien"), int) and dateien is not None)
+            # die Nacht ist nach dem Abend benannt, an dem sie beginnt (dokumente._nacht: 12 bis 12 Uhr Ortszeit)
+            d["nacht"] = (f"{tausend(dateien)} in der Nacht vom {nacht[8:10]}.{nacht[5:7]}.{nacht[:4]}"
+                          if lesbar else "unlesbar (gilt in der Nacht des nächsten Laufs als ausgeschöpft)")
+        d["verdacht"] = zaehler_auswerten(eintrag, "verdacht", DOKUMENTE_NAECHTE, DOKUMENTE_PAUSE, jetzt)
+    if eigene:
+        z = eigene[-1]
+        d["zeile"] = {"datum": zeit(z.get("datum")), "anfragen": zahl(z.get("anfragen")),
+                      "objekte": zahl(z.get("objekte")), "ergebnis": ergebnis_art(z.get("ergebnis"))}
+    return d
+
+
 def restnaechte(gesamt, bisher, je_nacht):
     """Verbleibende Nächte eines Vollabrufs: ⌈(Gesamtzahl − bisher gelesen) / Objekte je Nacht⌉; ohne eine der Zahlen
     oder ohne Fortschritt je Nacht None."""
@@ -327,9 +433,10 @@ def auswerten(zustand_pfad, stand_pfad, statistik_pfad, vorlagen_gesamt=None, je
     zeilen, t_datei = statistik_lesen(statistik_pfad)
     nacht, beginn = letzte_nacht(zeilen)
     listen = {name: liste_auswerten(name, zeilen, nacht, zustand) for name in LISTEN}
+    dokumente = dokumente_auswerten(zustand, zeilen, jetzt)
     a = {"dateien": {Path(zustand_pfad).name: z_datei, Path(stand_pfad).name: s_datei,
                      Path(statistik_pfad).name: t_datei},
-         "nacht_beginn": beginn, "nacht_anfragen": None, "listen": listen, "jetzt": jetzt}
+         "nacht_beginn": beginn, "nacht_anfragen": None, "listen": listen, "jetzt": jetzt, "dokumente": dokumente}
     werte = [zahl(zeilen[i].get("anfragen")) for i in sorted(nacht)]
     if any(w is not None for w in werte):
         a["nacht_anfragen"] = sum(w for w in werte if w is not None)
@@ -366,19 +473,34 @@ def auswerten(zustand_pfad, stand_pfad, statistik_pfad, vorlagen_gesamt=None, je
         for liste in LISTEN:
             if isinstance(warnungen.get(liste), dict):
                 a["meldungen"].append(f"abruf_warnungen.{liste} ({wann(zeit(warnungen[liste].get('zeit')))})")
-    # übersprungener Lauf nach der letzten Nacht mit Anfragen (etwa Pause, 12-Stunden-Regel, außerhalb des Fensters)
+    # Aussetzen (sessionnet._ausgesetzt_stand: je Liste der Eintrag aus dem Zustand, Zeitpunkt `seit`)
+    aus = stand.get("abruf_ausgesetzt")
+    if isinstance(aus, dict):
+        for liste in LISTEN:
+            if isinstance(aus.get(liste), dict):
+                a["meldungen"].append(f"abruf_ausgesetzt.{liste} ({wann(zeit(aus[liste].get('seit')))})")
+            elif aus.get(liste) is not None:
+                a["meldungen"].append(f"abruf_ausgesetzt.{liste} (unlesbar)")
+    elif aus is not None:
+        a["meldungen"].append("abruf_ausgesetzt (unlesbar)")
+    # übersprungener Lauf nach der letzten Nacht mit Anfragen (etwa Pause, 12-Stunden-Regel, außerhalb des Fensters);
+    # verglichen mit den Zeilen des Abrufs (eine Zeile `dokumente` desselben Abends ist kein Lauf mit Anfragen)
     a["uebersprungen"] = None
     u = stand.get("abruf_uebersprungen")
     if isinstance(u, dict):
         t = zeit(u.get("zeit"))
-        letzte = max((zeit(z.get("datum")) for z in zeilen if zeit(z.get("datum"))), default=None)
+        letzte = max((zeit(z.get("datum")) for z in zeilen if z.get("liste") != DOKUMENTE and zeit(z.get("datum"))),
+                     default=None)
         if t is not None and (letzte is None or t > letzte):
             grund = " ".join(u["grund"].split()) if isinstance(u.get("grund"), str) else "Grund unlesbar"
             a["uebersprungen"] = f"{wann(t)}: {grund[:300]}"
     # verbleibende Nächte (Vorlagen)
     p = listen["papers"]
     je_nacht = p["objekte_nacht"]
-    if not p["vollabruf_laeuft"] and p["status"] == "Vollabruf abgeschlossen":
+    if p["ausgesetzt"]:
+        a["rest"] = ("keine Schätzung: Vorlagen ausgesetzt (keine Anfrage, bis RATSATLAS_KUERZER_ANNEHMEN oder "
+                     "RATSATLAS_VOLLABRUF sie nennt; siehe Abhilfe)")
+    elif not p["vollabruf_laeuft"] and p["status"] == "Vollabruf abgeschlossen":
         a["rest"] = "keine (Vollabruf der Vorlagen abgeschlossen)"
     elif vorlagen_gesamt is None:
         a["rest"] = ("unbekannt: Gesamtzahl der Vorlagen nicht bekannt (die Kölner API nennt in pagination keine, "
@@ -413,7 +535,31 @@ def _fortsetzung_text(r, markdown=False):
         url = "`" + url.replace("`", "%60") + "`"
     seite = f"Seite {f['seite']}" if f["seite"] is not None else "Seite unbekannt"
     return (f"{seite} ({url or 'Adresse unlesbar'}), gespeichert {wann(f['gespeichert'])}, Vollabruf begonnen "
-            f"{wann(f['start'])}")
+            f"{wann(f['start'])}" + (" (steht, solange die Liste ausgesetzt ist)" if r["ausgesetzt"] else ""))
+
+
+def _abhilfe(name):
+    """Feste Abhilfe des Abrufs für eine ausgesetzte Liste (sessionnet.ABHILFE_AUSGESETZT; kein Text aus Daten)."""
+    return sessionnet.ABHILFE_AUSGESETZT.format(liste=name)
+
+
+def _dokumente_zeilen(d):
+    """Angaben zum Dokumentschritt (ohne Überschrift), je eine Zeile."""
+    if d is None:
+        return ["noch kein Lauf mit Freigabe (kein Eintrag im Zustand, keine Zeile in der Abrufstatistik)"]
+    out = [f"angefragte Dateien: {d['nacht']}"]
+    z = d["zeile"]
+    if z is None:
+        out.append("letzte Zeile der Abrufstatistik: keine")
+    else:
+        out.append(f"letzte Zeile der Abrufstatistik: {wann(z['datum'])}, Anfragen {tausend(z['anfragen'])}, Dateien "
+                   f"mit Ergebnis {tausend(z['objekte'])}, Ergebnis {z['ergebnis']}")
+    naechte, pause = d["verdacht"]
+    out.append(f"Nächte mit möglicher Sperre beim Dokumentabruf: {naechte}; {pause}")
+    return out
+
+
+DOKUMENTE_TITEL = "Dokumente (PDF-Köpfe; Stand vor dem Dokumentschritt dieses Laufs)"
 
 
 def zeilen_text(a):
@@ -431,6 +577,8 @@ def zeilen_text(a):
     for name in LISTEN:
         r = a["listen"][name]
         out.append(f"{NAME[name]} ({name}): {r['status']}")
+        if r["ausgesetzt"]:
+            out.append(f"  {_abhilfe(name)}")
         if r["anfragen_nacht"] is None:
             out.append("  letzte Nacht: keine Anfragen")
         else:
@@ -454,6 +602,8 @@ def zeilen_text(a):
     out.append(f"Verbleibende Nächte (Vorlagen): {a['rest']}")
     for text, naechte, pause in a["zaehler"]:
         out.append(f"{text}: {naechte}; {pause}")
+    out.append(f"{DOKUMENTE_TITEL}:")
+    out += [f"  {z}" for z in _dokumente_zeilen(a["dokumente"])]
     out.append(f"Retry-After: {a['nicht_vor']}")
     out.append(f"Letzter Abbruch: {a['letzter_abbruch']}")
     out.append(f"abruf_ok: {a['abruf_ok']}")
@@ -490,7 +640,10 @@ def markdown(a):
             tausend(r["objekte_bisher"]) if r["vollabruf_laeuft"] else "–",
             _fortsetzung_text(r, markdown=True), gespeichert]) + " |")
     zeilen += ["", f"- Verbleibende Nächte (Vorlagen): {a['rest']}"]
+    zeilen += [f"- {NAME[name]} (`{name}`) ausgesetzt; {_abhilfe(name)}" for name in LISTEN
+               if a["listen"][name]["ausgesetzt"]]
     zeilen += [f"- {text}: {naechte}; {pause}" for text, naechte, pause in a["zaehler"]]
+    zeilen += [f"- {DOKUMENTE_TITEL}: " + "; ".join(_dokumente_zeilen(a["dokumente"]))]
     zeilen += [f"- Retry-After: {a['nicht_vor']}", f"- Letzter Abbruch: {a['letzter_abbruch']}",
                f"- `abruf_ok`: {a['abruf_ok']}",
                "- Meldungen in `STAND.json` (Text dort): " + (", ".join(a["meldungen"]) or "keine"),

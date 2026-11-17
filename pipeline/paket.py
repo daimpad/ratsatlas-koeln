@@ -23,7 +23,10 @@ Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API) und den Ge
 {config.NAMENSNENNUNG}. Bebauungspläne, Kennzahlen und Kartenebenen stammen zum Teil von Land und Bund
 und stehen teils unter dl-de/by 2.0 mit eigener Namensnennung. Dezernat und Bezeichnung der federführenden Dienststelle
 (responsibility[].aemtertabelle) sind abgeleitet aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt Köln (im
-Plan keine Lizenz angegeben; Stand und letzte Prüfung je Zuordnung). Lizenzen je Datei: LICENSE-DATA.md
+Plan keine Lizenz angegeben; Stand und letzte Prüfung je Zuordnung). Kennungen der Federführung mit Methode pdf_kopf
+oder pdf_kopf_anlage (erst, wenn der Abruf der Dokumente freigegeben ist) sind abgeleitet aus der ersten Seite der
+Dokumente im Ratsinformationssystem: nur die Kennung, kein Text; die Lizenz der Dokumente ist mit der Stadt in
+Klärung. Lizenzen je Datei: LICENSE-DATA.md
 (dort stehen die Pfade wie im Repository: export/koeln/… entspricht koeln/… in diesem Paket).
 
 Inhalt

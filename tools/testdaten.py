@@ -28,8 +28,9 @@ ERGEBNISSE = ["ungeändert beschlossen", "geändert beschlossen", "Kenntnis geno
 FRAKTIONEN = ["SPD", "CDU", "GRÜNE", "FDP", "Die Linke", "Volt"]
 # Federführende Dienststellen (underDirectionOf) für einen Teil der Verwaltungsvorlagen, in verschiedenen Schreibweisen
 # des Namens, damit die Zuordnung zur Ämtertabelle (pipeline/aemter.py) alle Fälle durchläuft: Nummer und Name, Name
-# allein, Kennung und Name, mehrdeutiger Name, Nummer mit anderem Namen, unbekannte Dienststelle. Ob und wie Köln
-# underDirectionOf füllt, ist ungemessen (Stichproben 2026: bei keiner Vorlage)
+# allein, Kennung und Name, mehrdeutiger Name, Nummer mit anderem Namen, unbekannte Dienststelle. Köln füllt
+# underDirectionOf nicht (vollständiger Abruf zum 17.11.2026: bei keiner Vorlage); die Testdaten weichen hier, bei
+# auxiliaryFile und organizationType bewusst ab (TECHNIK.md, „Dokumente (PDF-Köpfe)“, zurückgestellt aus der Prüfung stj)
 DIENSTSTELLEN = ["61 Stadtplanungsamt", "Amt für Straßen und Radwegebau", "Amt für Kinder, Jugend und Familie",
                  "Umwelt- und Verbraucherschutzamt", "VIII/67 Amt für Landschaftspflege und Grünflächen", "Verwaltung",
                  "52 Kulturamt", "[Testdaten] Dienststelle ohne Eintrag"]

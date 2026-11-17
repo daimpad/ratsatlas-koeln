@@ -38,11 +38,73 @@ def test_abhilfen_als_variablen_sicherungen_nicht():
                                           "RATSATLAS_KUERZER_ANNEHMEN")}
     for gesperrt in ("RATSATLAS_ZEITFENSTER", "RATSATLAS_LIMIT", "RATSATLAS_MAX_OBJEKTE"):
         assert gesperrt not in text
-    # Abstand: kein Repository-Variable, nur ein fester Wert im Abrufschritt, nicht unter 20 s (Entscheidung 15.11.2026:
-    # vermutete Drosselung nach etwa einer Minute mit 2 s Abstand)
+    # Abstand: keine Repository-Variable, nur feste Werte im Abruf- und im Dokumentschritt (je ein eigener Prozess, ohne
+    # Angabe gälte dort die Vorgabe von 2 s), nicht unter 20 s (Entscheidung 15.11.2026: vermutete Drosselung nach etwa
+    # einer Minute mit 2 s Abstand)
     assert "vars.RATSATLAS_ABSTAND" not in text
     werte = re.findall(r'^\s+RATSATLAS_ABSTAND: "?([0-9.]+)"?$', text, re.M)
-    assert len(werte) == 1 and float(werte[0]) >= 20 and re.search(r'RATSATLAS_ABSTAND: "?[0-9.]+"?$', schritt, re.M)
+    assert len(werte) == 2 and all(float(w) >= 20 for w in werte)
+    mit_abstand = [re.search(r"^\s+run: python -m pipeline (\S+)$", s, re.M)
+                   for s in text.split("\n      - ") if re.search(r'^\s+RATSATLAS_ABSTAND: "?[0-9.]+"?$', s, re.M)]
+    assert sorted(m.group(1) for m in mit_abstand if m) == ["dokumente", "fetch"] and all(mit_abstand)
+
+
+def test_dokumentschritt_gesperrt_und_ohne_anhalten():
+    """Der Dokumentschritt (Entscheidung 13.11.2026) bekommt genau die Freigaben, den Kontakt und die Obergrenze als
+    Repository-Variablen, läuft nach dem Abruf (nicht nach einem roten Abrufschritt: kein eigenes `if`), hält die
+    Veröffentlichung bei einem Fehler nicht an und hat ein eigenes Zeitlimit (Prüfung dok-f: länger als das Zeitfenster
+    von 2 h plus einer Datei, kürzer als das des Jobs); der Kopf erklärt beide neuen Variablen."""
+    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+    schritt = next(s for s in text.split("\n      - ") if "run: python -m pipeline dokumente" in s)
+    variablen = set(re.findall(r"^\s+(RATSATLAS_\w+): \$\{\{ vars\.(\w+) \}\}$", schritt, re.M))
+    assert variablen == {(v, v) for v in ("RATSATLAS_STADT_INFORMIERT", "RATSATLAS_KONTAKT", "RATSATLAS_PDF_FREIGEGEBEN",
+                                          "RATSATLAS_PDF_MAX")}
+    assert re.search(r"^\s+continue-on-error: true$", schritt, re.M) and not re.search(r"^\s+if:", schritt, re.M)
+    limit = re.search(r"^\s+timeout-minutes: (\d+)$", schritt, re.M)
+    job = re.search(r"^    timeout-minutes: (\d+)", text, re.M)
+    assert limit and 125 <= int(limit.group(1)) < int(job.group(1))
+    kopf = text.split("\nname:")[0]
+    assert "RATSATLAS_PDF_FREIGEGEBEN" in kopf and "RATSATLAS_PDF_MAX" in kopf
+
+
+def _with_block(schritt):
+    """Angaben unter `with:` eines Schritts als {Schlüssel: Wert}; ein Blockskalar (`path: |`) als Liste seiner Zeilen
+    in Reihenfolge. Endet an einer Leerzeile oder einer Zeile, die nicht tiefer als `with:` eingerückt ist."""
+    zeilen = schritt.split("\n")
+    i = next(k for k, z in enumerate(zeilen) if z.strip() == "with:")
+    einzug = len(zeilen[i]) - len(zeilen[i].lstrip(" "))
+    aus, schluessel = {}, None
+    for z in zeilen[i + 1:]:
+        tiefe = len(z) - len(z.lstrip(" "))
+        if not z.strip() or tiefe <= einzug:
+            break
+        assert not z.strip().startswith("#"), z
+        if tiefe == einzug + 2:
+            schluessel, _, wert = z.strip().partition(": ")
+            assert schluessel and schluessel not in aus, z
+            aus[schluessel] = [] if wert.strip() == "|" else wert.strip()
+        else:
+            assert isinstance(aus.get(schluessel), list) and tiefe == einzug + 4, z
+            aus[schluessel].append(z.strip())
+    return aus
+
+
+def test_job_zeitlimit_und_keine_abbrueche_durch_neue_laeufe():
+    """pages.yml (Prüfung stj): `concurrency` mit der Gruppe „pages“ und `cancel-in-progress: false`, damit ein Push
+    auf main in der Nacht den laufenden Abruf nicht abbricht (ein Abbruch von außen schreibt keinen Zustand); das
+    Zeitlimit des Jobs reicht für den Abruf ohne eigenes Zeitlimit (höchstens bis zum Ende des Zeitfensters, 120
+    Minuten ab 23 Uhr), den Dokumentschritt bis zu seinem Zeitlimit und 20 Minuten für Einrichtung, lesende Schritte und
+    Bau (mit vollständigen Daten am 16.11.2026 knapp 3 Minuten)."""
+    text = _pages()
+    assert re.search(r'^concurrency:\n  group: "pages"\n  cancel-in-progress: false$', text, re.M)
+    assert len(re.findall(r"^\s*concurrency:", text, re.M)) == 1 and "cancel-in-progress: true" not in text
+    # Zeitfenster 23–1 Uhr: Vorgabe in config.py, in pages.yml nicht einstellbar (test_abhilfen_als_variablen_…)
+    assert 'os.environ.get("RATSATLAS_ZEITFENSTER", "23-1")' in (config.ROOT / "pipeline" / "config.py").read_text()
+    fenster = 120
+    job = re.search(r"^  build:\n(?:    .*\n)*?    timeout-minutes: (\d+)", text, re.M)
+    dok = re.search(r"^\s+timeout-minutes: (\d+)$",
+                    next(s for s in _schritte(text) if "run: python -m pipeline dokumente" in s), re.M)
+    assert job and dok and int(job.group(1)) >= fenster + int(dok.group(1)) + 20
 
 
 def test_leere_abhilfe_variablen_ohne_wirkung(monkeypatch):
@@ -60,23 +122,45 @@ def test_leere_abhilfe_variablen_ohne_wirkung(monkeypatch):
 def test_abrufzustand_gleich_nach_dem_abruf_gesichert():
     """Der Zustand mit der Zählung der Nächte mit möglicher Sperre (zustand_abruf.json), STAND.json und die
     Abrufstatistik werden direkt nach dem Abrufschritt mit actions/cache/save und `if: always()` gesichert, nicht erst
-    im Post-Schritt von actions/cache, der nur nach einem erfolgreichen Lauf speichert."""
+    im Post-Schritt von actions/cache, der nur nach einem erfolgreichen Lauf speichert. Der Dokumentschritt folgt erst
+    nach ihr und den beiden lesenden Schritten Fortschritt und Feldabdeckung (Prüfung dok-f: sonst hinge die Sicherung
+    an seiner Dauer); nach ihm eine zweite Sicherung, nur mit seiner Freigabe, mit eigenem Schlüssel unter demselben
+    Präfix (der nächste Lauf nimmt den jüngsten Stand). Reihenfolge: Abruf (i), Sicherung (i+1), Fortschritt (i+2),
+    Feldabdeckung (i+3), Dokumente (i+4), zweite Sicherung (i+5)."""
     text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     schritte = text.split("\n      - ")
     i = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
     assert "id: abruf" in schritte[i]
     sichern = schritte[i + 1]
     assert re.search(r"^\s+if: always\(\)", sichern, re.M) and "steps.abruf.outcome" in sichern
+    # danach der Fortschritt (test_fortschritt_gleich_nach_dem_sichern), die Feldabdeckung
+    # (test_feldabdeckung_gleich_nach_dem_fortschritt), der Dokumentschritt (pipeline/dokumente.py) und die zweite
+    # Sicherung seiner Ergebnisse und Zählungen
+    assert "run: python tools/abrufstand.py" in schritte[i + 2]
+    assert "run: python tools/feldabdeckung.py" in schritte[i + 3]
+    assert "run: python -m pipeline dokumente" in schritte[i + 4] and "id: dokumente" in schritte[i + 4]
+    zweite = schritte[i + 5]
+    assert zweite.startswith("name: Abrufzustand nach den Dokumenten sichern")
+    assert re.search(r"^\s+if: always\(\) && steps\.dokumente\.outcome != 'skipped' && "
+                     r"vars\.RATSATLAS_STADT_INFORMIERT == 'ja' && vars\.RATSATLAS_PDF_FREIGEGEBEN == 'ja'$", zweite, re.M)
+    assert "key: raw-${{ github.run_id }}-${{ github.run_attempt }}-dokumente" in zweite
+    assert re.search(r"uses: actions/cache/save@([0-9a-f]{40})", zweite)
     save = re.search(r"uses: actions/cache/save@([0-9a-f]{40})", sichern)
     assert save, sichern
     # dieselbe festgenagelte Version wie die Wiederherstellung; kein actions/cache mit Speichern im Post-Schritt
     assert set(re.findall(r"uses: actions/cache(?:/restore|/save)?@([0-9a-f]{40})", text)) == {save.group(1)}
     assert "uses: actions/cache@" not in text and "uses: actions/cache/restore@" in text
     wiederherstellen = next(s for s in schritte if "actions/cache/restore@" in s)
-    for pfad in ("data/raw/", "data/export/abrufstatistik.tsv"):         # data/raw/: zustand_abruf.json, STAND.json
-        assert pfad in sichern and pfad in wiederherstellen
-    assert "key: raw-${{ github.run_id }}-${{ github.run_attempt }}" in sichern
-    assert "restore-keys: raw-" in wiederherstellen
+    # Genau dieselben Pfade in derselben Reihenfolge (Prüfung stj): actions/cache bildet die Version eines Eintrags aus
+    # den Pfaden in dieser Reihenfolge (dazu Kompression und Salz); eine andere Liste oder Reihenfolge fände den
+    # gesicherten Zustand nicht wieder. Unter `with:` nur diese Schlüssel (etwa kein enableCrossOsArchive)
+    pfade = ["data/raw/", "data/export/abrufstatistik.tsv"]                # data/raw/: zustand_abruf.json, STAND.json
+    w_r, w_s, w_z = (_with_block(x) for x in (wiederherstellen, sichern, zweite))
+    assert w_r["path"] == w_s["path"] == w_z["path"] == pfade
+    assert set(w_r) == {"path", "key", "restore-keys"} and set(w_s) == set(w_z) == {"path", "key"}
+    assert w_s["key"] == "raw-${{ github.run_id }}-${{ github.run_attempt }}"
+    assert w_z["key"] == "raw-${{ github.run_id }}-${{ github.run_attempt }}-dokumente"
+    assert w_r["key"] == w_s["key"] and w_r["restore-keys"] == "raw-"
     assert config.ZUSTAND.parent == config.STAND.parent == config.RAW
 
 
@@ -85,10 +169,18 @@ WAECHTER = "name: Abrufzustand wiederhergestellt? (Wächter vor Abruf und Veröf
 # hängen: sie lesen nur (Skript → Name des Schritts)
 LESEND = {"tools/abrufstand.py": "name: Fortschritt des Abrufs (Log und Zusammenfassung)",
           "tools/feldabdeckung.py": "name: Feldabdeckung der Rohdaten (nur Zahlen)"}
+# Statusfunktionen in GitHub Actions (Namen ohne Rücksicht auf Groß- und Kleinschreibung): Steht eine davon im `if`,
+# entfällt das stillschweigende success() davor, und der Schritt kann auch nach einem Fehler laufen, etwa mit
+# `if: success() || true` (Prüfung stgf; vorher zählten nur always(), failure() und cancelled())
+STATUSFUNKTION = re.compile(r"\b(?:always|success|failure|cancelled)\s*\(", re.I)
 
 
-def _schritte():
-    return (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n      - ")
+def _pages():
+    return (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
+
+
+def _schritte(text=None):
+    return (_pages() if text is None else text).split("\n      - ")
 
 
 def _skript(schritt):
@@ -160,12 +252,20 @@ def _if_befunde(text):
 
 def test_waechter_vor_abruf_und_veroeffentlichung():
     """Ein Wächter direkt nach dem Wiederherstellen und direkt vor dem Abruf hält den freigegebenen Lauf an, wenn der
-    Zustand des Abrufs fehlt (etwa nach einer Störung von actions/cache oder einem gelöschten Eintrag). Er hat weder
-    `if` noch `continue-on-error`; jeder spätere Schritt, der auch nach einem Fehler liefe (`always()`, `failure()`,
-    `cancelled()`), hängt an einem übersprungenen Schritt ohne eigenes `if` (Abruf) oder ist genau einer der beiden
-    lesenden Schritte (Fortschritt, Feldabdeckung; LESEND, in lesender Form), und der Job deploy braucht einen
-    erfolgreichen Job build. Ein roter Wächter lässt also Abruf, Sicherung und Veröffentlichung aus."""
-    schritte = _schritte()
+    Zustand des Abrufs fehlt (etwa nach einer Störung von actions/cache, einem gelöschten Eintrag oder weil eine neue
+    Fassung der Aktion die älteren Einträge nicht findet; Prüfung stapelf). Er hat weder `if` noch `continue-on-error`;
+    jeder spätere Schritt, der auch nach einem Fehler liefe (jede Statusfunktion im `if`, STATUSFUNKTION: always(),
+    failure(), cancelled() und success(), etwa `success() || true`), hängt an einem übersprungenen Schritt ohne eigenes
+    `if` (Abruf, Dokumente) oder ist genau einer der beiden lesenden Schritte (Fortschritt, Feldabdeckung; LESEND, in
+    lesender Form), und der Job deploy braucht einen erfolgreichen Job build, ohne Statusfunktion. Ein roter Wächter
+    lässt also Abruf, Dokumente, beide Sicherungen und Veröffentlichung aus."""
+    _waechter_pruefen(_pages())
+
+
+def _waechter_pruefen(text):
+    """Die Prüfungen von test_waechter_vor_abruf_und_veroeffentlichung auf dem Text eines Workflows (auch geändert,
+    test_statusfunktion_laeuft_nach_fehler)."""
+    schritte = _schritte(text)
     r = next(k for k, s in enumerate(schritte) if "uses: actions/cache/restore@" in s)
     assert re.search(r"^\s+id: rohdaten$", schritte[r], re.M)
     w = next(k for k, s in enumerate(schritte) if s.startswith(WAECHTER))
@@ -180,7 +280,6 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     # dieselbe Datei, aus der der Abruf seinen Zustand liest: kein RATSATLAS_RAW im Wächter, im Abruf oder auf Ebene
     # des Workflows oder Jobs (nur die Kartenvorschau setzt es in ihrem eigenen Schritt), kein anderes
     # Arbeitsverzeichnis – also data/raw im Checkout
-    text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     assert "RATSATLAS_RAW" not in schritte[w] and "RATSATLAS_RAW" not in schritte[f]
     assert not re.search(r"^ {0,8}RATSATLAS_RAW:", text, re.M)
     assert "working-directory" not in text and not re.search(r"^\s*defaults:", text, re.M)
@@ -190,7 +289,7 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
     lesend = []
     for s in schritte[w + 1:]:
         bedingung = re.search(r"(?:^|\n)\s*if: (.+)", s)   # auch ein Schritt, der mit „- if:“ beginnt
-        if bedingung and re.search(r"always\(\)|failure\(\)|cancelled\(\)", bedingung.group(1)):
+        if bedingung and STATUSFUNKTION.search(bedingung.group(1)):
             skript = re.search(r"^\s+run: python (tools/[\w.]+)", s, re.M)
             if skript and skript.group(1) in LESEND:
                 # Fortschritt und Feldabdeckung: lesen nur, schreiben nichts nach data/, halten den Lauf nie an
@@ -200,9 +299,41 @@ def test_waechter_vor_abruf_und_veroeffentlichung():
             haengt = re.findall(r"steps\.(\w+)\.outcome != 'skipped'", bedingung.group(1))
             assert any(i in ids and not re.search(r"^\s+if:", ids[i], re.M) for i in haengt), s.splitlines()[0]
     assert sorted(lesend) == sorted(LESEND)   # genau diese beiden, je einmal
-    job = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8").split("\n  deploy:\n")[1]
+    # der Dokumentschritt (ohne eigenes `if`, läuft nur nach Erfolg aller Schritte davor) und die beiden Sicherungen,
+    # die auch nach einem Fehler laufen: an übersprungenem Abruf bzw. übersprungenen Dokumenten
+    assert "dokumente" in ids and not re.search(r"^\s+if:", ids["dokumente"], re.M)
+    haengen = {i for s in schritte[w + 1:] if "uses: actions/cache/save@" in s
+               for i in re.findall(r"steps\.(\w+)\.outcome != 'skipped'", s)}
+    assert haengen == {"abruf", "dokumente"}
+    job = text.split("\n  deploy:\n")[1]
     assert re.search(r"^    needs: build$", job, re.M)
-    assert not re.search(r"always\(\)|failure\(\)|cancelled\(\)", job)
+    assert not STATUSFUNKTION.search(job)
+
+
+@pytest.mark.parametrize("bedingung", ["success() || true", "${{ success() || true }}", "Success() || true",
+                                       "SUCCESS ( ) || vars.X == 'ja'", "always()", "Always()", "failure() || true",
+                                       "!cancelled() && true"])
+def test_statusfunktion_laeuft_nach_fehler(bedingung):
+    """Jede Statusfunktion im `if` (auch success(), in jeder Groß- und Kleinschreibung) hebt das stillschweigende
+    success() auf: Ein schreibender Schritt nach dem Wächter mit `if: success() || true` liefe nach einem roten
+    Wächter und fällt auf (Prüfung stgf; vorher bestand er die Prüfung des Wächters), ebenso eine Statusfunktion im
+    `if` des Jobs deploy. Ohne Statusfunktion (auch mit dem Text 'success' als Vergleichswert) bleibt es beim
+    stillschweigenden success(): kein Befund."""
+    text = _pages()
+    _waechter_pruefen(text)
+    stelle = "      - name: Kartenvorschau (leere Rohdaten in eigenem Verzeichnis)\n"
+    assert text.count(stelle) == 1
+    if not bedingung.startswith("!"):   # `if: !…` ist ein YAML-Tag, _if_befunde meldet es schon
+        schritt = f"      - name: x\n        if: {bedingung}\n        run: python -m pipeline fetch\n"
+        with pytest.raises(AssertionError, match="name: x"):
+            _waechter_pruefen(text.replace(stelle, schritt + "\n" + stelle))
+    kopf = "\n  deploy:\n    needs: build\n    if: needs.build.outputs.daten != ''\n"
+    assert text.count(kopf) == 1
+    with pytest.raises(AssertionError):
+        _waechter_pruefen(text.replace(kopf, kopf.replace("daten != ''", f"daten != '' || {bedingung}")))
+    for ohne in ("steps.daten.outputs.da == 'ja'", "steps.abruf.outcome == 'success'", "true"):
+        _waechter_pruefen(text.replace(stelle, f"      - name: x\n        if: {ohne}\n        run: python -m pipeline "
+                                               f"fetch\n\n" + stelle))
 
 
 # Schritte, die nach „Gibt es Daten zum Veröffentlichen?“ eingefügt die Prüfung des Wächters umgingen, wenn ihr `if`
@@ -296,7 +427,7 @@ def test_waechter_haelt_freigegebenen_lauf_ohne_zustand_an(tmp_path, monkeypatch
         assert len(fehler) == (1 if freigegeben else 0)
         if fehler:
             for teil in ("zustand_abruf.json", "Lauf wiederholen", "vorige Fassung", "7 Tage",
-                         "RATSATLAS_VOLLABRUF=ja"):
+                         "RATSATLAS_VOLLABRUF=ja", "Zählung der Dokumente", "keine Dokumente"):
                 assert teil in fehler[0]
     erg = lauf("", "ja")
     assert erg.returncode == 0, erg.stderr
@@ -340,10 +471,11 @@ def test_fortschritt_gleich_nach_dem_sichern(tmp_path):
 
 
 def test_feldabdeckung_gleich_nach_dem_fortschritt(tmp_path):
-    """Feldabdeckung der Rohdaten (Entscheidung 16.11.2026) direkt nach dem Fortschritt und vor der Entscheidung über
-    die Veröffentlichung: immer, ohne den Lauf anzuhalten (continue-on-error, Zeitlimit 10 Minuten), ohne Variablen,
-    Geheimnisse und Abruf; der Abruf, die Sicherung und der Wächter bleiben, wie sie sind (die übrigen Tests hier).
-    Wie im Lauf ohne Rohdaten: Exit-Code 0 und eine Zusammenfassung."""
+    """Feldabdeckung der Rohdaten (Entscheidung 16.11.2026) direkt nach dem Fortschritt und vor dem Dokumentschritt,
+    seiner Sicherung und der Entscheidung über die Veröffentlichung: immer, ohne den Lauf anzuhalten (continue-on-error,
+    Zeitlimit 10 Minuten), ohne Variablen, Geheimnisse und Abruf; der Abruf, die Sicherungen, der Dokumentschritt und
+    der Wächter bleiben, wie sie sind (die übrigen Tests hier). Wie im Lauf ohne Rohdaten: Exit-Code 0 und eine
+    Zusammenfassung."""
     text = (config.ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     schritte = text.split("\n      - ")
     i = next(k for k, s in enumerate(schritte) if "run: python -m pipeline fetch" in s)
@@ -353,7 +485,9 @@ def test_feldabdeckung_gleich_nach_dem_fortschritt(tmp_path):
     assert feld.startswith(LESEND["tools/feldabdeckung.py"])
     _lesende_form(feld, "tools/feldabdeckung.py")
     assert "timeout-minutes: 10" in _ohne_kommentare(feld)
-    assert schritte[i + 4].startswith("name: Gibt es Daten zum Veröffentlichen?")
+    assert "run: python -m pipeline dokumente" in schritte[i + 4] and "id: dokumente" in schritte[i + 4]
+    assert schritte[i + 5].startswith("name: Abrufzustand nach den Dokumenten sichern")
+    assert schritte[i + 6].startswith("name: Gibt es Daten zum Veröffentlichen?")
     assert text.count("python tools/feldabdeckung.py") == 1
     zusammenfassung = tmp_path / "summary.md"
     erg = subprocess.run([sys.executable, str(config.ROOT / "tools" / "feldabdeckung.py"), "--raw",
@@ -426,3 +560,28 @@ def test_deploy_kopfkommentar_zur_historie():
     assert "git clone -q --depth 1 --branch deploy" in _deploy_schritt()
     kopf = " ".join(z.lstrip("# ") for z in text.splitlines()[:4])
     assert "flacher Klon, ein Commit je Lauf" in kopf and "git gc" in kopf
+
+
+# Erste Hauptversion je Aktion, die laut ihren Release Notes auf Node.js 24 läuft (gelesen am 16.11.2026):
+# checkout v5.0.0 („Update actions checkout to use node 24“), setup-python v6.0.0 („Upgrade to node 24“), setup-node
+# v5.0.0 („Upgrade action to use node24“), cache v5.0.0 („runs on the Node.js 24 runtime“), configure-pages v6.0.0
+# („upgrade to node 24“), deploy-pages v5.0.0 („Update Node.js version to 24.x“); upload-pages-artifact ist
+# zusammengesetzt und nutzt ab v5.0.0 upload-artifact v7 (Node.js 24 seit upload-artifact v6.0.0)
+NODE24_AB = {"actions/checkout": 5, "actions/setup-python": 6, "actions/setup-node": 5, "actions/cache/restore": 5,
+             "actions/cache/save": 5, "actions/configure-pages": 6, "actions/upload-pages-artifact": 5,
+             "actions/deploy-pages": 5}
+
+
+def test_aktionen_festgenagelt_und_auf_node24():
+    """Jede Aktion der aktiven Workflows ist über den vollen Commit-Hash mit Versionskommentar festgenagelt (nie über
+    einen Tag oder Branch) und steht in einer Hauptversion, die laut Release Notes auf Node.js 24 läuft (Umstellung
+    16.11.2026, TECHNIK.md „Workflows“); eine neue Aktion fällt auf, damit ihre Laufzeit geprüft wird."""
+    gesehen = set()
+    for datei in sorted((config.ROOT / ".github" / "workflows").glob("*.yml")):
+        for zeile in re.findall(r"^\s*(?:- )?uses: (.+)$", datei.read_text(encoding="utf-8"), re.M):
+            m = re.fullmatch(r"([\w.-]+/[\w./-]+)@([0-9a-f]{40})  # v(\d+)\.\d+\.\d+", zeile)
+            assert m, (datei.name, zeile)
+            assert m.group(1) in NODE24_AB, (datei.name, m.group(1))
+            assert int(m.group(3)) >= NODE24_AB[m.group(1)], (datei.name, zeile)
+            gesehen.add(m.group(1))
+    assert gesehen == set(NODE24_AB)

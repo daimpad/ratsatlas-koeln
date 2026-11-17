@@ -291,11 +291,13 @@ def test_fortsetzung_nach_einer_nacht_mit_programmfehler(stand, tmp_path, capsys
      "Ende des Zeitfensters; Fortsetzung in der nächsten Nacht"),
     (None, "ok", "vollständig"),
     (None, "warnung: leer", "vollständig (mit Warnung)"),
+    (None, "ausgesetzt: Vorlagen ausgesetzt", "vollständig (Vorlagen ausgesetzt)"),
     (None, "programmfehler: X", "Programmfehler"),
     (None, "abbruch: X", "Abbruch"),
 ])
 def test_ende_der_letzten_nacht(stand, tmp_path, capsys, abbruch, ergebnis, erwartet):
-    """Wie die letzte Nacht endete, nur aus Zeitpunkten und Arten: Abbruch nur mit `letzter_abbruch` in dieser Nacht."""
+    """Wie die letzte Nacht endete, nur aus Zeitpunkten und Arten: Abbruch nur mit `letzter_abbruch` in dieser Nacht;
+    eine ausgesetzte Liste wie eine Warnung (der Lauf ist vollständig), mit ihrem Namen."""
     z, _, t = _pfade(tmp_path)
     z.write_text(json.dumps({"letzter_abbruch": abbruch} if abbruch else {}), encoding="utf-8")
     _statistik(t, [_zeile("2026-11-15T22:10:05+00:00", "organizations", "voll", 1, 96, 1, "ok"),
@@ -326,3 +328,229 @@ def test_ende_der_nacht_nur_uebersprungen(stand, tmp_path, capsys):
     _statistik(_pfade(tmp_path)[2], [
         _zeile("2026-11-15T22:10:05+00:00", "meetings", "übersprungen", 0, 50, 0, "übersprungen: schon gelesen")])
     assert "Ende der letzten Nacht: übersprungen (in dieser Nacht schon gelesen)\n" in _aufruf(stand, tmp_path, capsys)
+
+
+def test_dokumente_nur_zahlen_und_zustaende(stand, tmp_path, capsys, monkeypatch):
+    """Dokumentschritt (läuft nach dem Fortschritt; gezeigt wird der Stand vor ihm): Nacht und Zahl der angefragten
+    Dateien aus dem eigenen Eintrag `dokumente`, Nächte mit möglicher Sperre beim Dokumentabruf mit Pause wie
+    dokumente._pause, letzte Zeile `dokumente` der Abrufstatistik nur mit Zahlen und der Art des Ergebnisses; keine
+    Meldungstexte, Kennungen oder Adressen. Die Zeile `dokumente` stört die Listen nicht."""
+    zusammenfassung = tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(zusammenfassung))
+    z, s, t = _pfade(tmp_path)
+    z.write_text(json.dumps({
+        "papers": "2026-11-15T22:30:00+00:00",
+        "dokumente": {"nacht": "2026-11-15", "dateien": 120,
+                      "verdacht": {"naechte": 1, "zuletzt": "2026-11-14T23:40:00+00:00", "art": "sperre",
+                                   "code": 429}},
+        "letzter_abbruch": {"zuletzt": "2026-11-14T23:40:00+00:00", "art": "sperre", "code": 429,
+                            "meldung": f"Dokumente: {GEHEIM[0]} {BASIS}/files/1/{GEHEIM[1]}.pdf"}}), encoding="utf-8")
+    s.write_text(json.dumps({"abruf_ok": "2026-11-15T22:30:00+00:00"}), encoding="utf-8")
+    _statistik(t, [
+        _zeile("2026-11-15T22:30:00+00:00", "papers", "inkrementell", 1, 64000, 2, "ok", neu=3, geaendert=4,
+               geloescht=0),
+        _zeile("2026-11-15T23:55:00+00:00", "dokumente", "pdf-koepfe", "", 118, 120,
+               f"ok; Auswahl 300 Dateien; {GEHEIM[0]} VI/61 {BASIS}/files/2/{GEHEIM[2]}.pdf")])
+    out = _aufruf(stand, tmp_path, capsys)
+    teil = out.split("Dokumente (PDF-Köpfe; Stand vor dem Dokumentschritt dieses Laufs):\n", 1)[1]
+    assert teil.startswith("  angefragte Dateien: 120 in der Nacht vom 15.11.2026\n"
+                           "  letzte Zeile der Abrufstatistik: 16.11.2026, 00:55 Uhr, Anfragen 120, Dateien mit "
+                           "Ergebnis 118, Ergebnis ok\n"
+                           "  Nächte mit möglicher Sperre beim Dokumentabruf: 1 von 3, zuletzt 15.11.2026, 00:40 Uhr, "
+                           "Art sperre, HTTP 429; keine Pause\n"), teil
+    assert "Vorlagen (papers): Vollabruf abgeschlossen" in out and "neu 3, geändert 4, gelöscht 0" in out
+    md = zusammenfassung.read_text(encoding="utf-8")
+    assert ("- Dokumente (PDF-Köpfe; Stand vor dem Dokumentschritt dieses Laufs): angefragte Dateien: 120 in der Nacht "
+            "vom 15.11.2026; letzte Zeile der Abrufstatistik:") in md
+    for text in (out, md):
+        assert not any(g in text for g in GEHEIM) and "VI/61" not in text and "/files/" not in text
+
+
+@pytest.mark.parametrize("eintrag, erwartet", [
+    (None, ["noch kein Lauf mit Freigabe (kein Eintrag im Zustand, keine Zeile in der Abrufstatistik)"]),
+    ({"verdacht": {"naechte": 3, "zuletzt": "2026-11-14T23:40:00+00:00", "art": "zeitueberschreitung"}},
+     ["angefragte Dateien: keine vermerkt", "letzte Zeile der Abrufstatistik: keine",
+      "Nächte mit möglicher Sperre beim Dokumentabruf: 3 von 3, zuletzt 15.11.2026, 00:40 Uhr, Art "
+      "zeitueberschreitung; Pause bis 22.11.2026, 00:40 Uhr"]),
+    ({"nacht": 5, "dateien": "viele", "verdacht": "x"},
+     ["angefragte Dateien: unlesbar (gilt in der Nacht des nächsten Laufs als ausgeschöpft)",
+      "Nächte mit möglicher Sperre beim Dokumentabruf: unlesbar; unlesbar (gilt beim nächsten Lauf als Pause)"]),
+    ({"nacht": "2026-11-15", "dateien": True}, ["angefragte Dateien: unlesbar (gilt in der Nacht des nächsten "
+                                                "Laufs als ausgeschöpft)"]),
+    ([1], ["angefragte Dateien: unlesbar", "Nächte mit möglicher Sperre beim Dokumentabruf: unlesbar; unlesbar"]),
+])
+def test_dokumente_ohne_lauf_und_unlesbar(stand, tmp_path, capsys, eintrag, erwartet):
+    """Ohne Eintrag und ohne Zeile (Freigabe nie erteilt): ein Satz; unlesbare Werte wie dokumente._eigener_zustand
+    („ausgeschöpft“, Zähler gilt als Grenze); eine Pause nach drei Nächten bis sieben Tage nach der letzten."""
+    z = _pfade(tmp_path)[0]
+    z.write_text(json.dumps({} if eintrag is None else {"dokumente": eintrag}), encoding="utf-8")
+    out = _aufruf(stand, tmp_path, capsys)
+    assert "Abrufstand nicht ermittelt" not in out
+    teil = out.split("Dokumente (PDF-Köpfe; Stand vor dem Dokumentschritt dieses Laufs):\n", 1)[1]
+    for zeile in erwartet:
+        assert f"  {zeile}\n" in teil, teil
+
+
+def test_dokumente_werte_wie_im_schritt(stand):
+    """Schlüssel, Grenze und Pause stehen in abrufstand.py ohne Import (das Modul lädt Geokodierung und Titelmaske);
+    sie gleichen denen des Dokumentschritts."""
+    from pipeline import dokumente
+    assert (stand.DOKUMENTE, stand.DOKUMENTE_NAECHTE, stand.DOKUMENTE_PAUSE) == (
+        dokumente.SCHLUESSEL, dokumente.VERDACHT_NAECHTE, dokumente.VERDACHT_PAUSE)
+
+
+# --- Aussetzen einer Liste (sessionnet.AUSSETZEN, Entscheidung 13.11.2026) und Zeilen des Dokumentschritts ----------
+
+def _abschnitt(out, name):
+    """Ausgabe einer Liste (von ihrer Kopfzeile bis zur nächsten Liste bzw. den verbleibenden Nächten)."""
+    teil = out.split(f"({name}): ", 1)[1]
+    for ende in ("Sitzungen (meetings): ", "Organisationen (organizations): ", "Verbleibende Nächte"):
+        teil = teil.split(ende, 1)[0]
+    return teil
+
+
+def test_ausgesetzte_liste_mit_dem_abruf(oparl, monkeypatch, capsys, tmp_path):
+    """Ablauf wie tests/test_aussetzen.py (lokaler Testserver, feste Uhr je Nacht): 10 Vorlagen vollständig; die Stadt
+    liefert nur noch 8, ein Vollabruf (RATSATLAS_VOLLABRUF=papers) endet am Zeitfenster vor Seite 3; in der nächsten
+    Nacht endet die Fortsetzung unter 90 % und die Vorlagen setzen aus; danach eine Nacht ohne Anfrage an die Vorlagen,
+    dann RATSATLAS_KUERZER_ANNEHMEN=papers. Der Fortschritt zeigt in der Nacht des Aussetzens und der Folgenacht
+    „ausgesetzt seit …“ statt „Vollabruf läuft“ (die Fortsetzung bleibt stehen), die Nacht als vollständig mit
+    ausgesetzter Liste, in der Folgenacht 0 gelesene Vorlagen, `abruf_ausgesetzt` unter den Meldungen und die feste
+    Abhilfe; keine Meldungstexte, Titel oder Kennungen."""
+    from test_aussetzen import _Naechte   # noqa: E402  (Nächte mit fester Uhr wie im Test des Aussetzens)
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    zusammenfassung = tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(zusammenfassung))
+    modul = _modul()
+    n = _Naechte(oparl, monkeypatch)
+    oparl.papers = [oparl.paper(i) for i in range(1, 11)]
+    n.nacht()
+    oparl.papers = oparl.papers[:8]
+    n.nacht(n.fenster_vor("/papers", 3), RATSATLAS_VOLLABRUF="papers")
+    n.nacht()                                                        # Nacht 2 (15.11.2026): Aussetzen
+    eintrag = json.loads(config.ZUSTAND.read_text(encoding="utf-8"))["papers_ausgesetzt"]
+    assert (eintrag["anlass"], eintrag["seit"]) == (sessionnet.AUSSETZEN_ANLASS["fortgesetzt"],
+                                                    "2026-11-15T22:15:00+00:00")
+    inhalte = ([p["name"] for p in oparl.papers] + [p["reference"] for p in oparl.papers]
+               + [o["name"] for o in oparl.orgs] + [oparl.meetings[0]["name"], "Testkörperschaft"]
+               + [eintrag["meldung"][:40], "papers.jsonl", "unvollständige Antwort", "Vorhandener Stand bleibt",
+                  "Keine Anfrage an diese Liste", "Abruf ausgesetzt seit"])
+    status = "ausgesetzt seit 15.11.2026, 23:15 Uhr (8 statt bisher 10, fortgesetzter Vollabruf)"
+
+    def fortschritt():
+        capsys.readouterr()
+        zusammenfassung.write_text("", encoding="utf-8")
+        assert modul.main([]) == 0
+        out, md = capsys.readouterr().out, zusammenfassung.read_text(encoding="utf-8")
+        for text in (out, md):
+            assert not any(x in text for x in inhalte), text
+        assert "Vollabruf läuft" not in _abschnitt(out, "papers") and "Abrufstand nicht ermittelt" not in out
+        assert "| Vorlagen (`papers`) | Vollabruf läuft" not in md
+        return out, md
+
+    out, md = fortschritt()
+    papers = _abschnitt(out, "papers")
+    assert papers.startswith(f"{status}\n  Abhilfe: stimmt der kürzere Stand, RATSATLAS_KUERZER_ANNEHMEN=papers")
+    assert "letzte Nacht: Anfragen 3, Objekte 4" in papers               # Seite 2 wiederholt, Seiten 3 und 4 neu
+    assert "Seitenabrufe im Vollabruf insgesamt: 5" in papers
+    assert "Fortsetzung: Seite 2 (" in papers and "(steht, solange die Liste ausgesetzt ist)" in papers
+    assert "gespeicherter Stand: 10 Objekte (13.11.2026, 23:15 Uhr)" in papers
+    assert "letzte Zeile der Abrufstatistik: ausgesetzt (Modus voll, fortgesetzt)" in papers
+    assert "Ende der letzten Nacht: vollständig (Vorlagen ausgesetzt)\n" in out
+    assert "Letzte Nacht mit Anfragen: ab 15.11.2026, 23:15 Uhr; Anfragen insgesamt 6" in out
+    assert "Verbleibende Nächte (Vorlagen): keine Schätzung: Vorlagen ausgesetzt" in out
+    assert "Meldungen in STAND.json (Text dort): abruf_ausgesetzt.papers (15.11.2026, 23:15 Uhr)" in out
+    assert "abruf_ok: ja" in out
+    assert f"| Vorlagen (`papers`) | {status} | 3 | 4 |" in md
+    assert "- Vorlagen (`papers`) ausgesetzt; Abhilfe: stimmt der kürzere Stand" in md
+
+    n.nacht()                                                        # Nacht 3: keine Anfrage an die Vorlagen
+    out, md = fortschritt()
+    papers = _abschnitt(out, "papers")
+    assert papers.startswith(f"{status}\n  Abhilfe: ")
+    assert "letzte Nacht: Anfragen 0, Objekte 0" in papers and "Seiten im letzten Lauf: 0" in papers
+    assert "letzte Zeile der Abrufstatistik: ausgesetzt (Modus ausgesetzt)" in papers
+    assert "Fortsetzung: Seite 2 (" in papers and "gespeicherter Stand: 10 Objekte (13.11.2026" in papers
+    assert "Ende der letzten Nacht: vollständig (Vorlagen ausgesetzt)\n" in out
+    assert "Anfragen insgesamt 3" in out and "Vorlagen gelesen" not in out
+    assert "abruf_ausgesetzt.papers (15.11.2026, 23:15 Uhr)" in out
+    assert f"| Vorlagen (`papers`) | {status} | 0 | 0 |" in md
+
+    n.nacht(RATSATLAS_KUERZER_ANNEHMEN="papers")                     # Nacht 4: Fortsetzung, kürzerer Stand angenommen
+    inhalte.remove("Abruf ausgesetzt seit")                          # steht im Ergebnis „ok; … Aussetzen seit …“ nicht
+    capsys.readouterr()
+    assert modul.main([]) == 0
+    out = capsys.readouterr().out
+    assert not any(x in out for x in inhalte), out
+    papers = _abschnitt(out, "papers")
+    assert papers.startswith("Vollabruf abgeschlossen") and "Abhilfe" not in papers and "Fortsetzung: –" in papers
+    assert "letzte Nacht: Anfragen 3, Objekte 4" in papers               # Zuwachs gegenüber der Zeile „unterbrochen“
+    assert "gespeicherter Stand: 8 Objekte (17.11.2026, 23:15 Uhr)" in papers
+    assert "Ende der letzten Nacht: vollständig\n" in out and "abruf_ausgesetzt" not in out
+    assert "Verbleibende Nächte (Vorlagen): keine (Vollabruf der Vorlagen abgeschlossen)" in out
+
+
+def test_ausgesetzt_unlesbar_und_nur_feste_anlaesse(stand, tmp_path, capsys):
+    """Eintrag `<liste>_ausgesetzt` mit unlesbaren Werten: Stand nur aus Zahlen, Zeit und festen Anlässen, nie aus
+    `meldung` oder einem fremden Anlass; ein Wert, der kein Objekt ist, gilt wie im Abruf als ausgesetzt; Listen außerhalb
+    von sessionnet.AUSSETZEN setzen nie aus. `abruf_ausgesetzt` in STAND.json nur mit Zeitpunkt oder „unlesbar“."""
+    z, s, _ = _pfade(tmp_path)
+    z.write_text(json.dumps({
+        "papers_ausgesetzt": {"seit": "gestern", "objekte": True, "bisher": "10", "anlass": GEHEIM[0],
+                              "meldung": GEHEIM[0]},
+        "papers_fortsetzung": {"naechste": f"{BASIS}/papers?page=3", "seiten": 3},
+        "meetings_ausgesetzt": "x", "organizations_ausgesetzt": {"seit": "2026-11-15T22:15:00+00:00"},
+        "organizations": "2026-11-15T22:15:00+00:00"}), encoding="utf-8")
+    s.write_text(json.dumps({"abruf_ausgesetzt": {"papers": {"seit": "2026-11-15T22:15:00+00:00",
+                                                             "meldung": GEHEIM[0]}, "meetings": [GEHEIM[1]]}}),
+                 encoding="utf-8")
+    out = _aufruf(stand, tmp_path, capsys)
+    assert not any(g in out for g in GEHEIM), out
+    assert "Vorlagen (papers): ausgesetzt seit unbekannt (unbekannt statt bisher 10, Anlass unbekannt)\n" in out
+    assert "Sitzungen (meetings): ausgesetzt (Eintrag unlesbar; gilt im Abruf als ausgesetzt)\n" in out
+    assert "Organisationen (organizations): Vollabruf abgeschlossen\n" in out
+    assert "Vollabruf läuft" not in out and "Fortsetzung: Seite 3 (" in out
+    assert ("Meldungen in STAND.json (Text dort): abruf_ausgesetzt.papers (15.11.2026, 23:15 Uhr), "
+            "abruf_ausgesetzt.meetings (unlesbar)") in out
+    s.write_text(json.dumps({"abruf_ausgesetzt": [GEHEIM[1]]}), encoding="utf-8")
+    assert "Meldungen in STAND.json (Text dort): abruf_ausgesetzt (unlesbar)" in _aufruf(stand, tmp_path, capsys)
+
+
+@pytest.mark.parametrize("dokumente, abbruch, erwartet", [
+    ("unterbrochen: Zeitfenster endete (geheim)", None, "Abruf: vollständig; Dokumente: Ende des Zeitfensters"),
+    ("ok; Auswahl 300 Dateien", None, "Abruf: vollständig; Dokumente: ohne Abbruch"),
+    ("abbruch: geheim", "2026-11-15T23:41:00+00:00",
+     "Abruf: vollständig; Dokumente: Abbruch (Art sperre, 16.11.2026, 00:41 Uhr)"),
+    ("übersprungen: 12-Stunden-Regel", "2026-11-15T22:11:00+00:00",
+     "Abruf: Abbruch (Art sperre, 15.11.2026, 23:11 Uhr); Dokumente: übersprungen"),
+    ("anders", None, "Abruf: vollständig; Dokumente: Ergebnis unbekannt"),
+])
+def test_ende_der_nacht_mit_dokumentschritt(stand, tmp_path, capsys, dokumente, abbruch, erwartet):
+    """Die Zeile `dokumente` bestimmt die Nacht nicht und zählt nicht zu ihren Anfragen; ihr Ende steht getrennt hinter
+    dem des Abrufs, auch in einem späteren Lauf ohne neue Zeilen des Abrufs (Push, Knopfdruck, Pause). Ein Abbruch ab
+    ihrem Beginn gilt als Abbruch des Dokumentschritts, einer davor als Abbruch des Abrufs."""
+    z, _, t = _pfade(tmp_path)
+    z.write_text(json.dumps({"letzter_abbruch": {"zuletzt": abbruch, "art": "sperre"}} if abbruch else {}),
+                 encoding="utf-8")
+    _statistik(t, [_zeile("2026-11-15T22:10:01+00:00", "body", "", "", 1, 1, "ok"),
+                   _zeile("2026-11-15T22:10:05+00:00", "papers", "inkrementell", 1, 64000, 2, "ok", neu=1,
+                          geaendert=0, geloescht=0),
+                   _zeile("2026-11-15T22:40:00+00:00", "dokumente", "pdf-koepfe", "", 118, 280, dokumente)])
+    out = _aufruf(stand, tmp_path, capsys)
+    assert f"Ende der letzten Nacht: {erwartet}\n" in out
+    assert "Letzte Nacht mit Anfragen: ab 15.11.2026, 23:10 Uhr; Anfragen insgesamt 3\n" in out
+    assert "geheim" not in out
+
+
+def test_dokumentzeile_spaeter_als_ein_uebersprungener_lauf(stand, tmp_path, capsys):
+    """Ein übersprungener Abruf (etwa Pause) nach der letzten Nacht mit Anfragen erscheint auch, wenn danach noch der
+    Dokumentschritt eine Zeile schrieb; die Zeile einer späteren Nacht gehört nicht zur letzten Nacht des Abrufs."""
+    z, s, t = _pfade(tmp_path)
+    s.write_text(json.dumps({"abruf_uebersprungen": {"zeit": "2026-11-16T22:10:00+00:00", "grund": "Pause"}}),
+                 encoding="utf-8")
+    _statistik(t, [_zeile("2026-11-15T22:10:05+00:00", "papers", "inkrementell", 1, 64000, 2, "ok"),
+                   _zeile("2026-11-16T22:12:00+00:00", "dokumente", "pdf-koepfe", "", 0, 0, "übersprungen: Pause")])
+    out = _aufruf(stand, tmp_path, capsys)
+    assert "Letzte Nacht mit Anfragen: ab 15.11.2026, 23:10 Uhr; Anfragen insgesamt 2\n" in out
+    assert "Ende der letzten Nacht: vollständig\n" in out
+    assert "Danach übersprungen: 16.11.2026, 23:10 Uhr: Pause\n" in out

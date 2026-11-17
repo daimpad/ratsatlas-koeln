@@ -24,6 +24,10 @@ OSM_STREETS = RAW / "osm_streets.json"
 # Volltexte der Hauptdokumente (in Köln aus den PDFs, Phase 3): nur zur Verarbeitung, lokal und im Zwischenspeicher
 # des Workflows; nie im Repository, auf der Seite oder im Datenpaket (CLAUDE.md 2 und 6)
 TEXTE = RAW / "texte.jsonl"
+# Dokumente (PDF-Köpfe, pipeline/dokumente.py; nur mit RATSATLAS_PDF_FREIGEGEBEN=ja): je Datei nur Abgeleitetes (Kennung
+# „Dezernat, Dienststelle“, Trefferart, Status, SHA-256, Größe, Merkmale der Datei), nie Text; im Zwischenspeicher des
+# Workflows wie die übrigen Rohdaten, nicht im Repository, nicht auf der Seite, nicht im Datenpaket
+DOKUMENTE = RAW / "dokumente_koepfe.jsonl"
 OSM_TILES = RAW / "osm_tiles"
 STAND = RAW / "STAND.json"
 # Gebiete und Straßen (Kölner Geodaten, abgeleitet mit `python -m pipeline geo-koeln`). Die Eigenschaften der

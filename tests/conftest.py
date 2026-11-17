@@ -164,6 +164,9 @@ class Daten:
         self.limit_wirkt = False   # `limit` anwenden (Köln, Stufe 2) statt `groesse`
         self.anfragen = []
         self.roh = []          # Abfragen unverändert (Kodierung)
+        # Dateien (pipeline/dokumente.py): Pfad → Bytes (200, application/pdf), (Status, Kopfzeilen, Bytes) oder eine
+        # Funktion, die die Antwort selbst schreibt (Argument: der Request-Handler; etwa eine tröpfelnde Antwort)
+        self.dateien = {}
         self.papers = [self.paper(i) for i in range(1, 6)]
         self.meetings = [{
             "id": f"{basis}/meetings/1", "type": "https://schema.oparl.org/1.1/Meeting",
@@ -246,6 +249,19 @@ def oparl(tmp_path, monkeypatch):
                 self.send_response(404 if stoerung is True else stoerung)
                 self.end_headers()
                 return
+            if u.path in d.dateien:
+                datei = d.dateien[u.path]
+                if callable(datei):   # eigene Antwort (etwa tröpfelnd): schreibt selbst auf self.wfile
+                    datei(self)
+                    return
+                status, kopf, inhalt = datei if isinstance(datei, tuple) else (200, {}, datei)
+                self.send_response(status)
+                for k, v in {"Content-Type": "application/pdf", "Content-Length": str(len(inhalt)), **kopf}.items():
+                    if v is not None:
+                        self.send_header(k, v)
+                self.end_headers()
+                self.wfile.write(inhalt)
+                return
             antwort = {"/body": d.body,
                        "/papers": lambda: d.liste(d.papers, "/papers", q),
                        "/meetings": lambda: d.liste(d.meetings, "/meetings", q),
@@ -272,7 +288,8 @@ def oparl(tmp_path, monkeypatch):
                        "LEGISLATIVE_TERMS": raw / "legislative_terms.json", "BERATUNGEN": raw / "beratungen.jsonl",
                        "CONSULTATIONS_LITE": raw / "beratungen.jsonl", "STAND": raw / "STAND.json",
                        "ZUSTAND": raw / "zustand_abruf.json", "ABRUFSTATISTIK": export / "abrufstatistik.tsv",
-                       "TEXTE": raw / "texte.jsonl", "OPARL_BODY": f"{basis}/body", "ABRUF_ABSTAND": 0.0,
+                       "TEXTE": raw / "texte.jsonl", "DOKUMENTE": raw / "dokumente_koepfe.jsonl",
+                       "OPARL_BODY": f"{basis}/body", "ABRUF_ABSTAND": 0.0,
                        "BPLAN": tmp_path / "fehlt.geojson", "OBJEKTE": tmp_path / "fehlt.json",
                        "HAUSNUMMERN": tmp_path / "fehlt_hnr.json",
                        # ohne `limit` wie vor Stufe 2; Tests zur Seitengröße setzen ihn (und Daten.limit_wirkt)
@@ -281,5 +298,7 @@ def oparl(tmp_path, monkeypatch):
     monkeypatch.delenv("RATSATLAS_STADT_INFORMIERT", raising=False)
     monkeypatch.delenv("RATSATLAS_VOLLABRUF", raising=False)
     monkeypatch.delenv("RATSATLAS_KUERZER_ANNEHMEN", raising=False)
+    monkeypatch.delenv("RATSATLAS_PDF_FREIGEGEBEN", raising=False)
+    monkeypatch.delenv("RATSATLAS_PDF_MAX", raising=False)
     yield daten["d"]
     server.shutdown()

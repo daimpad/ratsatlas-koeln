@@ -14,8 +14,15 @@ während des Vollabrufs auf dem bisher gelesenen Teil. Liest nur (Vorgaben aus p
   tools/testdaten.py). Der Abruf liest die Sitzungen nach den Vorlagen: Während des ersten Vollabrufs der Vorlagen gibt
   es sie noch nicht;
 - Gremien: `organizations.jsonl` und `organizations.teil.jsonl`; fehlen beide, ersatzweise `organizations.json`;
-- `zustand_abruf.json` nur für die Angabe, ob ein Vollabruf einer Liste läuft (`<liste>_fortsetzung`): Dann sind die
-  Zahlen ein Zwischenstand;
+- `zustand_abruf.json` nur für den Stand je Liste: ob ein Vollabruf läuft (`<liste>_fortsetzung`; dann sind die
+  Zahlen ein Zwischenstand), ob die Liste ausgesetzt ist (`<liste>_ausgesetzt`, sessionnet.AUSSETZEN, 90-%-Regel,
+  Entscheidung 13.11.2026; jeder Wert außer null wie in sessionnet._ausgesetzt; Vorrang vor der Fortsetzung wie in
+  tools/abrufstand.py: Die Liste sendet keine Anfrage, bis RATSATLAS_KUERZER_ANNEHMEN oder RATSATLAS_VOLLABRUF sie
+  nennt, ihr letzter gültiger Stand bleibt, Fortsetzung und Teildatei bleiben für RATSATLAS_KUERZER_ANNEHMEN stehen;
+  Stand „ausgesetzt“ nur mit Zeitpunkt und festem Anlass, nie `meldung`; das Skript liest keine Einstellungen; gezählt
+  wie unten beschrieben nur der letzte gültige Stand), und wann sie zuletzt vollständig aktualisiert wurde
+  (`<liste>`). Was der Dokumentschritt schreibt (`dokumente_koepfe.jsonl`, den Eintrag `dokumente` im Zustand), liest
+  das Skript nicht;
 - `data/geo/stadtteile_koeln.geojson` (offline im Repository) für die 86 Stadtteilnamen: `location.subLocality` wird
   mit pipeline.geo.Ortsteile.by_name abgeglichen, derselben Funktion wie Stufe A in build.
 Je Kennung zählt ein Objekt einmal wie in build (build._je_kennung_einmal), über die fertige Datei und die Teildatei
@@ -25,6 +32,17 @@ Der Abruf hält es am Ende eines Vollabrufs anders (sessionnet._zusammenfuehren 
 gelesenen Objekte (Teildatei und übrige Seiten, je Kennung die zuletzt gelesene Fassung, auch eine gelöschte). Gibt es
 neben der Teildatei eines laufenden Vollabrufs noch die fertige Datei (ein späterer Vollabruf), steht deshalb
 zusätzlich die Zahl der Kennungen nur aus der Teildatei da (Prüfung feldf).
+Ist die Liste ausgesetzt (Entscheidung 16.11.2026 (6)), zählt sie wie veröffentlicht: nur der letzte gültige Stand,
+also die fertige Datei, die build liest (oder ersatzweise die JSON-Liste, wenn es weder fertige Datei noch Teildatei
+gibt), je Kennung einmal wie oben. Eine Teildatei (die stehen gebliebene des abgelehnten Vollabrufs oder eine veraltete
+ohne Fortsetzung) wird gelesen, aber nicht ausgewertet: Getrennt steht nur eine Zahl, die der Kennungen, die es nur in
+ihr gibt, mit dem Hinweis, dass erst RATSATLAS_KUERZER_ANNEHMEN den kürzeren Stand annimmt (oder ein neuer Vollabruf
+mit RATSATLAS_VOLLABRUF ihn ersetzt). Zeilen mit Löschvermerk in der Teildatei werden dabei übergangen: Sie ändern
+weder den gezählten Stand noch diese Zahl. Die Teildatei des abgelehnten Vollabrufs enthält nur die Seiten bis zur
+letzten Unterbrechung (was er danach las, speichert sessionnet._aussetzen nicht), die Zahl ist also eine Untergrenze.
+Gelesen wird die Teildatei erst nach dem zweiten Durchgang über den letzten gültigen Stand (Prüfung hf): Endet die
+Frist dabei, bleiben dessen Zahlen, und für die Teildatei steht „Zahl nicht ermittelt (Zeitgrenze)“. Ohne Aussetzen gilt
+alles wie oben (auch der Zwischenstand aus fertiger Datei und Teildatei während eines laufenden Vollabrufs).
 Gelöschte Objekte stehen getrennt, Anteile beziehen sich auf die übrigen. Gelesen wird zeilenweise in zwei Durchgängen
 (erst die Kennungen, dann die geltenden Fassungen), damit der Speicher nicht mit der Größe der Objekte wächst (je
 Kennung ein Hashwert); unlesbare Zeilen, Zeilen ohne Kennung und überlange Zeilen (über 32 MiB) werden gezählt und
@@ -180,17 +198,51 @@ def _kennung(text):
     return hashlib.blake2b(text.encode("utf-8", "surrogatepass"), digest_size=16).digest()
 
 
+def _fassungen(quellen, frist, dateien):
+    """Je Kennung (Hashwert) die Position der zuletzt gelesenen Fassung ohne und mit Löschvermerk, die Positionen der
+    geltenden Fassungen wie build._je_kennung_einmal (die zuletzt gelesene Fassung ohne Löschvermerk; eine Löschung
+    nur ohne solche) und die Zahl der ersetzten Fassungen."""
+    lebend, geloescht, fassungen = {}, {}, 0
+    for pos, o in _objekte(quellen, frist, dateien):
+        fassungen += 1
+        (geloescht if o.get("deleted") else lebend)[_kennung(o["id"])] = pos
+    gilt = set(lebend.values()) | {p for k, p in geloescht.items() if k not in lebend}
+    return lebend, geloescht, gilt, fassungen - len(gilt)
+
+
+def geltende_ausgesetzt(quellen, teil, frist, dateien):
+    """Ausgesetzte Liste (Entscheidung 16.11.2026 (6)): gezählt wie veröffentlicht nur die Quellen vor der Teildatei
+    `teil` (der letzte gültige Stand, wie build ihn liest; je Kennung einmal wie geltende). Die Teildatei steht, wenn es
+    sie gibt, immer zuletzt; sie wird hier nicht gelesen, sondern erst nach dem zweiten Durchgang (nur_in_teil): Eine
+    Zeitgrenze in ihr nähme dem letzten gültigen Stand sonst seine Zahlen (Prüfung hf). Liefert (Positionen der
+    geltenden Fassungen, ersetzte Fassungen, gezählte Quellen für den zweiten Durchgang, die Teildatei als Quellen –
+    leer ohne sie –, Kennungen des letzten gültigen Stands als Hashwerte, auch nur gelöschte)."""
+    namen = [p.name for p, _ in quellen]
+    i = namen.index(teil.name) if teil.name in namen else len(quellen)
+    lebend, geloescht, gilt, ersetzt = _fassungen(quellen[:i], frist, dateien)
+    return gilt, ersetzt, quellen[:i], quellen[i:], set(lebend) | set(geloescht)
+
+
+def nur_in_teil(teilquellen, bekannt, frist, dateien):
+    """Teildatei einer ausgesetzten Liste: gelesen (Zeilen in `dateien`), aber nicht ausgewertet, nur die Zahl der
+    Kennungen, die es nur in ihr gibt, aus ihren Zeilen ohne Löschvermerk (Zeilen mit Löschvermerk übergangen; eine
+    Kennung aus `bekannt`, dem letzten gültigen Stand, auch nur gelöscht, zählt nicht), als Counter mit „kennungen“."""
+    neu = set()
+    for _, o in _objekte(teilquellen, frist, dateien):
+        if not o.get("deleted"):
+            k = _kennung(o["id"])
+            if k not in bekannt:
+                neu.add(k)
+    return collections.Counter(kennungen=len(neu))
+
+
 def geltende(quellen, frist, dateien, teil=None):
     """Positionen der geltenden Fassungen, je Kennung einmal wie build._je_kennung_einmal (die zuletzt gelesene
     Fassung ohne Löschvermerk; eine Löschung nur ohne solche), die Zahl der ersetzten Fassungen und, steht die
     Teildatei `teil` hinter einer anderen Quelle, die Kennungen nur aus ihr wie am Ende eines Vollabrufs
     (sessionnet._zusammenfuehren mit voll=True: je Kennung die zuletzt gelesene Fassung, auch eine gelöschte) als
     Counter mit „kennungen“ und „geloescht“, sonst None."""
-    lebend, geloescht, fassungen = {}, {}, 0
-    for pos, o in _objekte(quellen, frist, dateien):
-        fassungen += 1
-        (geloescht if o.get("deleted") else lebend)[_kennung(o["id"])] = pos
-    gilt = set(lebend.values()) | {p for k, p in geloescht.items() if k not in lebend}
+    lebend, geloescht, gilt, ersetzt = _fassungen(quellen, frist, dateien)
     nur_teil = None
     namen = [p.name for p, _ in quellen]
     if teil is not None and teil.name in namen[1:]:
@@ -207,7 +259,7 @@ def geltende(quellen, frist, dateien, teil=None):
             if k not in lebend and g >= grenze:
                 nur_teil["kennungen"] += 1
                 nur_teil["geloescht"] += 1
-    return gilt, fassungen - len(gilt), nur_teil
+    return gilt, ersetzt, nur_teil
 
 
 def json_lesen(pfad):
@@ -518,22 +570,60 @@ def stadtteil_abgleich(pfad):
     return ist_stadtteil, f"{anzahl} Stadtteile"
 
 
+def ausgesetzt_text(eintrag):
+    """Stand einer ausgesetzten Liste nur aus Zeitpunkt und festem Anlass des Eintrags `<liste>_ausgesetzt` (wie
+    tools/abrufstand.ausgesetzt_text, ohne Zahlen und nie `meldung`): „ausgesetzt seit 15.11.2026, 23:15 Uhr
+    (fortgesetzter Vollabruf unter 90 % des Stands)“; ein Anlass außerhalb von sessionnet.AUSSETZEN_ANLASS gilt als
+    unbekannt, ein unlesbarer Eintrag wie im Abruf als Aussetzen."""
+    if not isinstance(eintrag, dict):
+        return "ausgesetzt (Eintrag unlesbar; gilt im Abruf als ausgesetzt)"
+    t = sessionnet._zeit(eintrag.get("seit"))
+    try:
+        wann = t.astimezone(abruf.ORTSZEIT).strftime("%d.%m.%Y, %H:%M Uhr") if t else "unbekannt"
+    except (OverflowError, ValueError, OSError):   # nicht darstellbar, wie tools/abrufstand.wann
+        wann = "unlesbar"
+    anlass = eintrag.get("anlass")
+    bekannt = isinstance(anlass, str) and anlass in sessionnet.AUSSETZEN_ANLASS.values()
+    return f"ausgesetzt seit {wann} ({f'{anlass} unter 90 % des Stands' if bekannt else 'Anlass unbekannt'})"
+
+
 def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
-    """Eine Liste lesen und auswerten: dict mit Dateien, Stand (Zwischenstand oder nicht), Fassungen, Vermerken."""
+    """Eine Liste lesen und auswerten: dict mit Dateien, Stand (Zwischenstand, ausgesetzt oder keins von beiden),
+    Fassungen, Vermerken."""
     datei, ersatz = LISTEN[name]
     fertig = raw / datei
     teil = sessionnet._teil(fertig)
     quellen = [(p, "jsonl") for p in (fertig, teil) if p.exists()]
     r = {"name": name, "dateien": {}, "ersatz": None, "ersetzt": 0, "unvollstaendig": False, "zeitgrenze": None,
-         "kennungen": None, "nur_teil": None, "auswertung": auswertung, "nicht_auswertbar": collections.Counter()}
+         "kennungen": None, "nur_teil": None, "nur_teil_zeitgrenze": False, "auswertung": auswertung,
+         "nicht_auswertbar": collections.Counter()}
     if not quellen and ersatz and (raw / ersatz).exists():
         quellen = [(raw / ersatz, "json")]
         r["ersatz"] = ersatz
     r["ohne_dateien"] = not quellen
     fort = zustand.get(f"{name}_fortsetzung")
-    r["vollabruf_laeuft"] = z_datei == "gelesen" and fort is not None
+    # wie sessionnet._ausgesetzt: jeder Wert außer null gilt als Aussetzen (nur Listen aus sessionnet.AUSSETZEN)
+    aus = zustand.get(f"{name}_ausgesetzt") if name in sessionnet.AUSSETZEN else None
+    r["ausgesetzt"] = z_datei == "gelesen" and aus is not None
+    r["vollabruf_laeuft"] = z_datei == "gelesen" and fort is not None and aus is None
+    # ausgesetzt: die Teildatei ist die des abgelehnten Vollabrufs (mit Fortsetzung) oder veraltet
+    r["teil"], r["mit_fortsetzung"] = teil.name, fort is not None
     if z_datei != "gelesen":
         r["stand"] = f"unbekannt (zustand_abruf.json {z_datei})"
+    elif aus is not None:
+        # Vorrang vor der Fortsetzung: Sie bleibt für RATSATLAS_KUERZER_ANNEHMEN stehen, läuft aber nicht weiter.
+        # Gezählt wie veröffentlicht nur der letzte gültige Stand (Entscheidung 16.11.2026 (6); vorher zählte die
+        # Teildatei mit, Prüfung stgf (a)); von einer Teildatei nur die Zahl der Kennungen allein aus ihr (bloecke)
+        was = (f"wie veröffentlicht nur der letzte gültige Stand ({fertig.name})" if fertig.exists()
+               else f"ersatzweise {r['ersatz']}" if r["ersatz"] else f"nichts ({fertig.name} fehlt)")
+        if teil.exists():
+            was += (f", nicht die stehen gebliebene Teildatei des abgelehnten Vollabrufs ({teil.name})"
+                    if fort is not None else
+                    f", nicht die veraltete Teildatei ohne Fortsetzung im Zustand ({teil.name}; der Abruf liest sie "
+                    "nicht mehr)")
+        r["stand"] = (f"{ausgesetzt_text(aus)}: der Abruf liest die Liste nur, wenn RATSATLAS_KUERZER_ANNEHMEN "
+                      "oder RATSATLAS_VOLLABRUF sie nennt, sonst bleibt ihr letzter gültiger Stand (Abhilfe im "
+                      f"Fortschritt des Abrufs); gezählt {was}")
     elif fort is not None:
         r["stand"] = "Zwischenstand: Vollabruf läuft (Fortsetzung steht aus); gezählt " + (
             "die im laufenden Vollabruf bisher gelesenen Objekte und der Stand davor, je Kennung einmal"
@@ -550,16 +640,21 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
         r["stand"] = "kein laufender Vollabruf (Zeitpunkt des letzten Abrufs unlesbar)"
     else:
         r["stand"] = "noch kein vollständiger Abruf"
-    if teil.exists() and fort is None and z_datei == "gelesen":
+    if teil.exists() and fort is None and z_datei == "gelesen" and aus is None:   # ausgesetzt: oben in `gezaehlt`
         r["stand"] += (f"; {teil.name} ohne Fortsetzung im Zustand (veraltet, der Abruf liest sie nicht mehr; "
                        "mitgezählt)")
     dateien = {}
     durchgang = "erster Durchgang"
+    teilquellen, bekannt = [], set()   # ausgesetzt: die Teildatei, erst nach dem zweiten Durchgang gelesen
     try:
-        gilt, r["ersetzt"], r["nur_teil"] = geltende(quellen, frist, dateien, teil)
+        if r["ausgesetzt"]:   # wie veröffentlicht: nur der letzte gültige Stand, die Teildatei nur als eine Zahl
+            gilt, r["ersetzt"], gezaehlt, teilquellen, bekannt = geltende_ausgesetzt(quellen, teil, frist, dateien)
+        else:
+            gilt, r["ersetzt"], r["nur_teil"] = geltende(quellen, frist, dateien, teil)
+            gezaehlt = quellen
         r["kennungen"] = len(gilt)
         durchgang = "zweiter Durchgang"
-        for _, o in _objekte(quellen, frist, {}, nur=gilt):
+        for _, o in _objekte(gezaehlt, frist, {}, nur=gilt):
             try:
                 auswertung.add(o)
             except Exception as e:   # unerwartete Form tief im Objekt: zählen, die übrigen weiter auswerten (das
@@ -568,6 +663,15 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
     except Zeitgrenze:
         # im ersten Durchgang: keine geltenden Fassungen, also keine Zahlen; im zweiten: die bis dahin ausgewerteten
         r["unvollstaendig"], r["zeitgrenze"] = True, durchgang
+    if r["ausgesetzt"] and any(p == teil for p, _ in quellen):
+        # die Teildatei einer ausgesetzten Liste erst jetzt (Prüfung hf): Eine Zeitgrenze in ihr lässt die Zahlen des
+        # letzten gültigen Stands stehen; endete die Frist schon davor, bleibt sie ungelesen („Zeitgrenze“)
+        r["nur_teil_zeitgrenze"] = r["zeitgrenze"] is not None
+        if not r["nur_teil_zeitgrenze"]:
+            try:
+                r["nur_teil"] = nur_in_teil(teilquellen, bekannt, frist, dateien)
+            except Zeitgrenze:
+                r["nur_teil_zeitgrenze"] = True
     fehlerart = dateien.pop("_fehlerart", {})
     for p in (fertig, teil) + ((raw / ersatz,) if ersatz else ()):
         s = dateien.get(p.name)
@@ -580,7 +684,9 @@ def liste_lesen(name, raw, zustand, z_datei, frist, auswertung):
         if s["unlesbar"] or s["ohne_kennung"]:
             text += f", davon {tausend(s['unlesbar'])} unlesbar und {tausend(s['ohne_kennung'])} ohne Kennung"
         art = f" ({ERSATZ[p.name]})" if p.name == r["ersatz"] else ""
-        vor = "bis zur Zeitgrenze " if r["zeitgrenze"] == "erster Durchgang" else ""   # im zweiten: alle Zeilen
+        # im zweiten Durchgang: alle Zeilen; die Teildatei einer ausgesetzten Liste hat ihre eigene Zeitgrenze
+        grenze = r["zeitgrenze"] == "erster Durchgang" or (p == teil and r["nur_teil_zeitgrenze"])
+        vor = "bis zur Zeitgrenze " if grenze else ""
         r["dateien"][p.name] = (f"nicht weiter lesbar{art} ({fehlerart.get(p.name, 'Fehler')}), bis dahin {text}"
                                 if s["fehler"] else f"{vor}gelesen{art}: {text}")
     return r
@@ -660,6 +766,28 @@ def bloecke(a):
                            f"{tausend(t['geloescht'])} zuletzt als gelöscht gemeldet. Der fertige Vollabruf behält "
                            "nur die darin und auf den übrigen Seiten gelesenen Objekte; Objekte des Stands davor, die "
                            "er nicht wieder liest, fallen weg, und eine Löschung in der Teildatei gilt dann"))
+        if r["ausgesetzt"] and (r["nur_teil"] is not None or r["nur_teil_zeitgrenze"]):
+            # eine Zahl, keine Felder (Entscheidung 16.11.2026 (6)); Hinweis im Stil von tools/abrufstand.py, inhaltlich
+            # wie die feste Abhilfe des Abrufs (sessionnet.ABHILFE_AUSGESETZT, von Hand umschrieben; ein Test bindet
+            # Einstellungen und Angaben daran), aus festen Texten und dem Listennamen. Die Teildatei des abgelehnten
+            # Vollabrufs hat nur die Seiten bis zur letzten Unterbrechung (sessionnet._aussetzen speichert nicht, was
+            # die Fortsetzung danach las): eine Untergrenze (Prüfung hf)
+            n = ("Zahl nicht ermittelt (Zeitgrenze)" if r["nur_teil_zeitgrenze"]
+                 else tausend(r["nur_teil"]["kennungen"]))
+            teil = r["teil"]
+            if r["mit_fortsetzung"]:
+                b.append(("p", "Kennungen nur aus der stehen gebliebenen Teildatei des abgelehnten Vollabrufs "
+                               f"({teil}; nur die Seiten bis zur letzten Unterbrechung, was er danach las, ist nicht "
+                               f"gespeichert, also eine Untergrenze; nicht gezählt, ohne Feldabdeckung): {n}; Zeilen "
+                               "mit Löschvermerk übergangen, sie ändern den gezählten Stand nicht. Den kürzeren Stand "
+                               f"nimmt nur RATSATLAS_KUERZER_ANNEHMEN={name} an (liest die Liste zu Ende), sonst nach "
+                               f"Prüfung ein neuer Vollabruf mit RATSATLAS_VOLLABRUF={name} (ab Seite 1); Abhilfe im "
+                               "Fortschritt des Abrufs"))
+            else:
+                b.append(("p", f"Kennungen nur aus der veralteten Teildatei ohne Fortsetzung ({teil}; nicht gezählt, "
+                               f"ohne Feldabdeckung): {n}; Zeilen mit Löschvermerk übergangen. Der Abruf liest sie "
+                               f"nicht mehr, auch nicht mit RATSATLAS_KUERZER_ANNEHMEN={name} (liest die Liste dann "
+                               "ab Seite 1)"))
         if r["zeitgrenze"] == "erster Durchgang":
             b.append(("p", "Nicht ausgewertet: Zeitgrenze im ersten Durchgang (Kennungen) erreicht; zu dieser Liste "
                            "keine Zahlen"))

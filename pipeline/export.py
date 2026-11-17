@@ -66,7 +66,8 @@ def _paper_detail(db, pid):
         "LEFT JOIN meeting m ON m.id = c.meeting_id LEFT JOIN agenda_item a ON a.id = c.agenda_item_id "
         "WHERE c.paper_id = ? ORDER BY c.position", (pid,)).fetchall()
     resp = db.execute(
-        "SELECT r.kind, r.method, r.evidence, r.derived, o.label, o.name FROM paper_responsibility r "
+        "SELECT r.kind, r.method, r.evidence, r.derived, r.confidence, r.kennung, o.label, o.name "
+        "FROM paper_responsibility r "
         "LEFT JOIN organization o ON o.id = r.organization_id WHERE r.paper_id = ?", (pid,)).fetchall()
     orig = db.execute(
         "SELECT actor, actor_type, organization_id, method, evidence, derived "
@@ -97,8 +98,10 @@ def _paper_detail(db, pid):
         "main_file": p["main_file_url"],
         # Federführung mit Zuordnung zur Ämtertabelle (pipeline/aemter.py, CLAUDE.md 5.3): Dezernat und Dienststelle
         # laut Geschäfts- und Dezernatsverteilungsplan mit Methode, Stand und Fundstelle; ohne eindeutigen Treffer nur
-        # der Status, die Zeile bleibt sonst wie zuvor
-        "responsibility": [_mit_aemtertabelle({**dict(r), "evidence": m(r["evidence"], ref)}, p["date"]) for r in resp],
+        # der Status, die Zeile bleibt sonst wie zuvor. confidence und kennung nur bei der Federführung aus dem Kopf der
+        # Vorlage (pdf_kopf, aus einer Anlage pdf_kopf_anlage), sonst wie bisher ohne
+        "responsibility": [_mit_aemtertabelle({**{k: v for k, v in dict(r).items() if v is not None or k not in ("confidence", "kennung")},
+                                               "evidence": m(r["evidence"], ref)}, p["date"]) for r in resp],
         "originators": fund(orig),
         "process": [{**{k: v for k, v in dict(r).items() if k != "agenda_item_id"},
                      "meeting": m(r["meeting"], m.sitzungen.get(r["meeting_id"])),
@@ -449,12 +452,15 @@ def export_all():
     flaechen.write(out)
     # Übersichtskarte: Vorlagen der letzten zwölf Monate und auffälliges Thema je Gebiet
     gebietszahlen.annotate(index, areas, cache, stand or datetime.now(timezone.utc).isoformat())
+    # ausgesetzte Listen (sessionnet, Entscheidung 13.11.2026) nur, wenn es welche gibt: sonst bleibt index.json gleich
+    ausgesetzt = _abruf_ausgesetzt(_stand())
     _dump(out / "index.json", {"meta": _meta(db, stadt=config.STADT_NAME, seitenname=config.SEITENNAME,
                                              funktionen=funktionen(),
                                              testdaten=bool(_stand().get("testdaten")),
                                              vorschau=bool(_stand().get("vorschau")),
                                              abruf_fehler=_abruf_fehler(_stand()),
-                                             abruf_warnungen=_abruf_warnungen(_stand())), **index})
+                                             abruf_warnungen=_abruf_warnungen(_stand()),
+                                             **({"abruf_ausgesetzt": ausgesetzt} if ausgesetzt else {})), **index})
     db.close()
     print(f"{config.STADT_NAME}: {len(index['ortsteile'])} Stadtteile, {len(index['bezirke'])} Bezirke, "
           f"{len(years)} Jahre ohne Ortsbezug, {len(cache)} Vorlagen, {n_points} Punkte im GeoJSON, {n_shards} Dateien für den Assistenten → {out}")
@@ -513,6 +519,33 @@ def _abruf_warnungen(stand):
             pass
         aus[liste] = {"zeit": w.get("zeit"), "meldung": w["meldung"],
                       "stand": letzter if isinstance(letzter, str) else None}
+    return aus
+
+
+# Listen, deren Abruf aussetzen kann (STAND.json `abruf_ausgesetzt`, sessionnet.AUSSETZEN), die die Seite nennt
+AUSGESETZT_LISTEN = ("papers", "meetings")
+
+
+def _abruf_ausgesetzt(stand):
+    """Ausgesetzte Listen für die Seite („Der Abruf der Vorlagen ruht seit …; gezeigt wird der Stand vom …“): je Liste
+    aus AUSGESETZT_LISTEN `seit` (Beginn des Aussetzens, unlesbar: None) und `stand` (letzte reguläre Aktualisierung
+    dieser Liste in STAND.json, sonst None). Jeder Eintrag, der ein Objekt ist, gilt (auch ohne lesbaren Zeitpunkt:
+    vorsichtig zeigen), außer er liegt vor der letzten regulären Aktualisierung der Liste (wie _abruf_warnungen;
+    sessionnet entfernt ihn dabei ohnehin, dies ist die Sicherung). Zahlen und Abhilfe stehen nur in STAND.json und in
+    der Abrufstatistik."""
+    eintraege = stand.get("abruf_ausgesetzt")
+    aus = {}
+    for liste, a in (eintraege.items() if isinstance(eintraege, dict) else ()):
+        if liste not in AUSGESETZT_LISTEN or not isinstance(a, dict):
+            continue
+        letzter = stand.get(liste)
+        seit = a.get("seit") if isinstance(a.get("seit"), str) else None
+        try:
+            if letzter and seit and datetime.fromisoformat(seit) < datetime.fromisoformat(letzter):
+                continue
+        except (TypeError, ValueError):
+            pass
+        aus[liste] = {"seit": seit, "stand": letzter if isinstance(letzter, str) else None}
     return aus
 
 

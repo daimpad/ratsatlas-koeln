@@ -33,7 +33,19 @@ SCHRITTE = {
                        "der Stadt Köln: nachts, mit einer Verbindung und Abstand zwischen den Anfragen, nach dem ersten "
                        "Lauf nur Geänderte (Gremien jede Nacht vollständig, Sitzungen ebenso, solange die Schnittstelle "
                        "sie nicht nach dem Änderungsdatum auswählt). Bricht ein Abruf ab, bleibt der Stand des letzten "
-                       "Laufs."),
+                       "Laufs. Liefert die Stadt beim vollständigen Lesen der Vorlagen oder Sitzungen deutlich weniger "
+                       "als bisher, bleibt der bisherige Stand; ruht der Abruf einer Liste deshalb, bis das geprüft ist, "
+                       "nennt das der Datenstand."),
+    "dokumente": ("Dokumente", "Liest nach dem Abruf, nur nach Freigabe durch die Stadt (bis dahin abgeschaltet), "
+                               "nachts höchstens 300 Vorlagen der Verwaltung seit dem 1. November 2025 (in der ersten "
+                               "Nacht höchstens 100), jeweils nur die erste Seite einer Anlage, "
+                               "weil die Stadt kein Hauptdokument nennt (nennt sie eines, dessen erste Seite), und "
+                               "erkennt im Kopf die Kennung von Dezernat und Dienststelle. Aus dem Dokument übernommen "
+                               "wird nur diese Kennung; vermerkt werden außerdem nur Prüfsumme und Größe der Datei und "
+                               "das Ergebnis des Abrufs, kein Text und keine Datei. Die Kennung gilt nur, wenn die "
+                               "Schnittstelle keine federführende "
+                               "Dienststelle nennt, und wird wie diese über den Geschäfts- und "
+                               "Dezernatsverteilungsplan Dezernat und Dienststelle zugeordnet."),
     "build": ("Datenbank und Verortung", "Baut eine SQLite-Datenbank aus Vorlagen, Beratungen, Sitzungen und Gremien, "
                                          "verortet Vorlagen nach festen Regeln und leitet den Stand jedes Vorgangs ab."),
     "export": ("Export", "Schreibt je Gebiet eine Datei für die Karte, dazu Feeds, Kalender, GeoJSON und "
@@ -444,7 +456,7 @@ def daten(root="../"):
             text = mit
         return (f"s-{s}", kurz, text, CODE + mods.get(s, "pipeline/__main__.py"), f"Code ({mods.get(s, '')})")
 
-    ist_abruf = lambda s: s == "fetch" or s.startswith("fetch-")
+    ist_abruf = lambda s: s in ("fetch", "dokumente") or s.startswith("fetch-")
     abruf = [schritt(s) for s in pages["schritte"] if ist_abruf(s)]
     rest = [schritt(s) for s in pages["schritte"] if not ist_abruf(s)]
     quellen = [(f"q-{k}", QUELLEN[k][0], f"{QUELLEN[k][1]} Lizenz: {config.lizenz_oeffentlich(config.SOURCES[k]['license'])}.",
@@ -525,7 +537,9 @@ def daten(root="../"):
 PAKET_TEXT = {"shapely": "Geometrie, etwa ob ein Punkt in einem Stadtteil liegt",
               "pyproj": "Umrechnung zwischen Koordinatensystemen (ETRS89/UTM 32N nach WGS84)",
               "pyshp": "Lesen der Shapefiles der Stadt Köln",
-              "cairosvg": "Bild der Themenseite als PNG zum Teilen"}
+              "cairosvg": "Bild der Themenseite als PNG zum Teilen",
+              "pypdf": "Lesen der ersten Seite von Vorlagen der Verwaltung (Kopf „Dezernat, Dienststelle“), nur nach "
+                       "Freigabe durch die Stadt"}
 # Schritte, deren Erklärung mit einer Freigabe anders lautet (config.ZUSATZTHEMEN): Schritt → (Freigabe, Text mit Freigabe);
 # ohne Freigabe gilt der Text aus SCHRITTE
 SCHRITTE_MIT_FREIGABE = {

@@ -44,9 +44,10 @@ können ein altes `modified` tragen), wendet der Server den Filter nicht an. Je 
   Folgeseiten ebenso übergeht und die Seitengrenzen mit und ohne Filter gleich sind, ist ungemessen, und ein
   unbemerkt doch gefilterter „Vollabruf“ ersetzte den Stand durch einen Teil (unter 90 % fiele es auf, darüber nicht).
   Der Neustart sendet dieselben Anfragen wie ein Vollabruf dieser Liste (RATSATLAS_VOLLABRUF=meetings) und gilt wie
-  einer: 90-%-Regel gegenüber dem Stand (Art `leer`, Abbruch des Laufs; Meldung mit Anlass und Abhilfe
-  RATSATLAS_KUERZER_ANNEHMEN=meetings), der Stand wird ersetzt, nicht zusammengeführt; beenden ihn das Zeitfenster
-  oder die Grenze je Lauf, folgt die Fortsetzung in der nächsten Nacht. Die Seiten mit Zeitfilter zählen zur Grenze je
+  einer: 90-%-Regel gegenüber dem Stand (Art `leer`: seit dem 13.11.2026 setzt die Liste aus, siehe unten; mit
+  RATSATLAS_KUERZER_ANNEHMEN=meetings und 0 Objekten Abbruch des Laufs mit Anlass und Abhilfe), der Stand wird
+  ersetzt, nicht zusammengeführt; beenden ihn das Zeitfenster oder die Grenze je Lauf, folgt die Fortsetzung in der
+  nächsten Nacht. Die Seiten mit Zeitfilter zählen zur Grenze je
   Lauf (höchstens config.ABRUF_MAX_OBJEKTE / g Seiten je Liste und Nacht; ist sie mit ihnen schon erreicht, Art
   `obergrenze` ohne weitere Anfrage und ohne Fortsetzung), nicht zu den Seiten des Vollabrufs (Gesamtgrenze,
   Fortsetzung). Jede Nacht, nicht jeder Lauf: Sind die Sitzungen in dieser Nacht schon gelesen (Zustand `meetings`,
@@ -87,6 +88,37 @@ Offen: Lehnt ein Server modified_since mit HTTP 401 ab (Münster bei organizatio
 das als Nacht mit möglicher Sperre (Art `http`, SPERRE_HTTP); bei den Sitzungen hieße das jede Nacht einen Abbruch auf
 ihrer ersten Seite (die Vorlagen sind dann schon gelesen, die Beratungen nicht abgeleitet) und nach drei Nächten sieben
 Tage Pause, auch für die Vorlagen (nicht umgebaut; vor der Freigabe messen).
+
+Aussetzen (papers, meetings; Entscheidung des Auftraggebers 13.11.2026, bis dahin offen): Endet ein fortgesetzter
+Vollabruf (die Fortsetzung einer früheren Nacht), das vollständige Lesen der Sitzungen nach nicht angewandtem Zeitfilter
+oder ein wiederholter Vollabruf mit Art `leer` (unter 90 % des Stands) und nennt RATSATLAS_KUERZER_ANNEHMEN die Liste
+nicht, setzt diese Liste aus, statt jede Nacht erneut bis zum Listenende zu lesen und abzubrechen. Wiederholt heißt: in
+diesem Lauf ab Seite 1 begonnen und beendet, und schon der vorige Abbruch des Abrufs war ein `leer` dieser Liste
+(_vorher_leer, `letzter_abbruch` im Zustand; ein vollständiger Lauf entfernt ihn), etwa weil RATSATLAS_VOLLABRUF die
+Liste dauerhaft nennt (für `meetings` erlaubt, wenn die Stadt modified_since bei den Sitzungen ablehnt; Prüfung rp-b).
+Das erste Mal bricht ein solcher Vollabruf wie bisher ab (Art `leer`, `abruf_fehler`, 12-Stunden-Regel): Für eine Nacht
+gesetzt, wiederholt er sich nicht; die nächste Nacht läuft ohne die Einstellung inkrementell mit dem bisherigen Stand.
+Vermerkt wird das Aussetzen als Eintrag `<liste>_ausgesetzt` im Zustand (`seit`, `objekte`, `bisher`, `anlass`,
+`vollabruf_seit_beginn`, `meldung` mit Abhilfe) und `abruf_ausgesetzt` in STAND.json (derselbe Eintrag je Liste;
+export.py übernimmt `seit` und den Stand der Liste in index.json, `meta.abruf_ausgesetzt`, die Seite nennt die Pause im
+Datenstand), Warnung im Log, Zeile `ausgesetzt: …` in der Abrufstatistik. Der letzte gültige Stand bleibt (Datei und
+Zeitpunkt der Liste unverändert), Fortsetzung und Teildatei bleiben stehen. Kein Abbruch: Die übrigen Listen laufen in
+derselben Nacht weiter, die Beratungen entstehen aus dem letzten gültigen Stand, kein Listenfehler, keine Nacht mit
+möglicher Sperre, keine 12-Stunden-Regel. In späteren Nächten sendet die Liste keine Anfrage (auch nicht der nächtliche
+Versuch der Sitzungen mit Zeitfilter); Zeile `ausgesetzt` (0 Anfragen) und Warnung je Lauf. Aufgehoben wird das
+Aussetzen nur durch eine Einstellung, die nach seinem Beginn gesetzt wurde: RATSATLAS_KUERZER_ANNEHMEN=<liste> liest die
+Liste vollständig (Fortsetzung, sonst ab Seite 1 ohne modified_since) und nimmt den kürzeren Stand an, auch wenn
+RATSATLAS_VOLLABRUF die Liste weiter nennt; das Aussetzen endet mit dieser regulären Aktualisierung (endet der Lauf
+vorher, etwa am Zeitfenster, bleibt es, und die Einstellung muss bis zum Ende gesetzt bleiben).
+RATSATLAS_VOLLABRUF=<liste> (oder `ja`) hebt das Aussetzen vor der ersten Anfrage der Liste auf, verwirft Fortsetzung
+und Teildatei und beginnt einen neuen Vollabruf ab Seite 1, für den wieder die Regel gilt, aber nur, wenn die
+Einstellung die Liste nicht schon seit Beginn des Aussetzens nennt (`vollabruf_seit_beginn`: nannte sie sie beim
+Aussetzen, true; der erste Lauf, der die ausgesetzte Liste ohne sie erreicht, setzt false): Dauerhaft gesetzt hübe sie
+sonst jedes Aussetzen in der nächsten Nacht wieder auf, und Aussetzen und neuer Vollabruf wechselten sich ab. Ein
+anderer Wert als true oder false gilt wie true, ein Eintrag ohne das Feld (auch ein unlesbarer) wie false. `abruf_ok`:
+Lauf ohne Abbruch beendet; eine ausgesetzte Liste zählt dabei nicht (wie eine Nebenliste mit Warnung), ihr Stand ist der
+letzte gültige. In Nächten, in denen keine Liste ausgesetzt ist oder aussetzt, sind Anfragen und Zustand gleich wie bis
+zum 13.11.2026 (78de995).
 
 Ein Vollabruf, der am Ende des Zeitfensters oder durch einen Fehler abbricht, wird in der nächsten Nacht fortgesetzt
 (`<liste>_fortsetzung` im Zustand mit dem Zeitpunkt `gespeichert` und der normalisierten Folgeadresse, Teilstand in
@@ -221,6 +253,23 @@ ABHILFE = {
     "leer": ("Abhilfe, wenn der kürzere Stand stimmt (nicht bei 0 Objekten): ein Lauf mit "
              "RATSATLAS_KUERZER_ANNEHMEN={liste}"),
 }
+# Listen, die nach einem fortgesetzten oder wiederholten Vollabruf oder dem vollständigen Lesen nach nicht angewandtem
+# Zeitfilter unter 90 % des Stands (Art `leer`, ohne RATSATLAS_KUERZER_ANNEHMEN) aussetzen (Entscheidung 13.11.2026):
+# Eintrag `<liste>_ausgesetzt` im Zustand (maßgeblich) und `abruf_ausgesetzt` in STAND.json (für Export und Seite)
+AUSSETZEN = ("papers", "meetings")
+# Anlass eines Aussetzens (Feld `anlass` im Eintrag; tools/abrufstand.py gibt nur diese festen Texte aus)
+AUSSETZEN_ANLASS = {"fortgesetzt": "fortgesetzter Vollabruf",
+                    "befund": "vollständiges Lesen nach nicht angewandtem Zeitfilter",
+                    "wiederholt": "wiederholter Vollabruf"}
+LISTEN_NAME = {"papers": "Vorlagen", "meetings": "Sitzungen"}
+ABHILFE_AUSGESETZT = (
+    "Abhilfe: stimmt der kürzere Stand, RATSATLAS_KUERZER_ANNEHMEN={liste} (liest die Liste zu Ende bzw. vollständig "
+    "und nimmt den kürzeren Stand an; gesetzt lassen, bis der Lauf fertig ist), sonst nach Prüfung "
+    "RATSATLAS_VOLLABRUF={liste} (hebt das Aussetzen auf, neuer Vollabruf ab Seite 1; für eine Nacht; nannte sie die "
+    "Liste schon beim Aussetzen, erst nach einem Lauf ohne sie)")
+# Eintrag `<liste>_ausgesetzt`: RATSATLAS_VOLLABRUF nannte die Liste beim Aussetzen und in jedem Lauf seitdem; solange
+# hebt sie das Aussetzen nicht auf (dauerhaft gesetzt hübe sie es sonst jede Nacht auf, Prüfung rp-b)
+VOLLABRUF_SEIT_BEGINN = "vollabruf_seit_beginn"
 
 
 def _seitengroesse():
@@ -483,6 +532,122 @@ def _warnung_vermerken(liste, meldung):
     _write(config.STAND, json.dumps(s, ensure_ascii=False, indent=1) + "\n")
 
 
+def _ausgesetzt(schluessel):
+    """Aussetzen der Liste (`<liste>_ausgesetzt` im Zustand), sonst None. Jeder vorhandene Wert außer null gilt als
+    Aussetzen, auch ein unlesbarer (vorsichtig: im Zweifel keine Anfrage an die Stadt); er wird dann als Objekt mit
+    einer Meldung geliefert."""
+    v = _zustand().get(f"{schluessel}_ausgesetzt")
+    if v is None:
+        return None
+    return v if isinstance(v, dict) else {"meldung": f"Eintrag {schluessel}_ausgesetzt unlesbar ({v!r})"[:300]}
+
+
+def _ausgesetzt_stand(schluessel, eintrag):
+    """Aussetzen einer Liste in STAND.json unter `abruf_ausgesetzt` (je Liste der Eintrag aus dem Zustand: `seit`,
+    `objekte`, `bisher`, `anlass`, `meldung`) für Export und Seite; `eintrag` None entfernt ihn. Schreibt nur bei einer
+    Änderung (Nächte ohne Aussetzen lassen STAND.json unverändert)."""
+    s = _stand()
+    alle = dict(s["abruf_ausgesetzt"]) if isinstance(s.get("abruf_ausgesetzt"), dict) else {}
+    if (eintrag is None and schluessel not in alle) or (eintrag is not None and alle.get(schluessel) == eintrag):
+        return
+    if eintrag is None:
+        alle.pop(schluessel)
+    else:
+        alle[schluessel] = eintrag
+    s["abruf_ausgesetzt"] = alle
+    if not alle:
+        s.pop("abruf_ausgesetzt")
+    config.RAW.mkdir(parents=True, exist_ok=True)
+    _write(config.STAND, json.dumps(s, ensure_ascii=False, indent=1) + "\n")
+
+
+def _ausgesetzt_text(eintrag):
+    """Kurzbeschreibung eines Aussetzens für Log und Abrufstatistik: seit wann, Anlass, gelieferte und bisherige
+    Objekte (unlesbare Angaben als „unbekannt“)."""
+    seit = eintrag.get("seit") if _zeit(eintrag.get("seit")) else "unbekannt"
+    zahlen = (f": {eintrag['objekte']} statt bisher {eintrag['bisher']}"
+              if isinstance(eintrag.get("objekte"), int) and isinstance(eintrag.get("bisher"), int) else "")
+    return f"seit {seit} ({eintrag.get('anlass') or 'Anlass unbekannt'}{zahlen})"
+
+
+def _vorher_leer(pfad):
+    """Endete schon der vorige Abbruch des Abrufs (`letzter_abbruch` im Zustand; ein vollständiger Lauf entfernt ihn)
+    mit Art `leer` dieser Liste? Erkannt an der Meldung, die mit dem Dateinamen der Liste beginnt („papers.jsonl: nur 8
+    statt bisher 10 …“, fetch._guard; so auch aus 78de995). Dann wiederholt sich ein Vollabruf, der in diesem Lauf
+    beginnt und endet (RATSATLAS_VOLLABRUF dauerhaft gesetzt, oder kein Zeitpunkt der Liste im Zustand)."""
+    letzter = _zustand().get("letzter_abbruch")
+    if not isinstance(letzter, dict):
+        return False
+    meldung = letzter.get("meldung")
+    return letzter.get("art") == "leer" and isinstance(meldung, str) and meldung.startswith(f"{pfad.name}: ")
+
+
+def _vollabruf_seit_beginn(eintrag):
+    """Nennt RATSATLAS_VOLLABRUF die Liste laut Eintrag seit Beginn des Aussetzens (VOLLABRUF_SEIT_BEGINN)? Fehlt das
+    Feld (auch in einem unlesbaren Eintrag) oder ist es false: nein; jeder andere Wert, auch 0: ja (vorsichtig, dann
+    hebt die Einstellung das Aussetzen nicht auf)."""
+    wert = eintrag.get(VOLLABRUF_SEIT_BEGINN)
+    return wert is not None and wert is not False
+
+
+def _aussetzen(schluessel, e, zeile, objekte, seiten, filter_wirksam, pfad, anlass):
+    """Ein fortgesetzter oder wiederholter Vollabruf oder das vollständige Lesen nach nicht angewandtem Zeitfilter endet
+    unter 90 % des Stands (Art `leer`, ohne RATSATLAS_KUERZER_ANNEHMEN): Die Liste setzt aus (Entscheidung
+    13.11.2026). Letzter gültiger Stand bleibt (nichts zusammengeführt, Zeitpunkt nicht weitergesetzt), Fortsetzung und
+    Teildatei bleiben für RATSATLAS_KUERZER_ANNEHMEN; Eintrag mit Zeit, Zahlen, Anlass, VOLLABRUF_SEIT_BEGINN (nennt
+    RATSATLAS_VOLLABRUF die Liste in diesem Lauf?) und Abhilfe im Zustand (`<liste>_ausgesetzt`) und in STAND.json
+    (`abruf_ausgesetzt`), Warnung im Log, Zeile `ausgesetzt: …` in der Abrufstatistik. Kein Abbruch: die übrigen Listen
+    und die Beratungen laufen weiter. Liefert (letzter gültiger Stand, Meldung) wie _nur_warnung."""
+    alt = _vorhanden(pfad)
+    meldung = (f"{LISTEN_NAME[schluessel]} ausgesetzt ({anlass} unter 90 % des Stands): {e} Keine Anfrage an diese "
+               "Liste, bis eine der Einstellungen gesetzt ist; die übrigen Listen laufen weiter. – "
+               + ABHILFE_AUSGESETZT.format(liste=schluessel))
+    eintrag = {"seit": abruf.uhr().isoformat(timespec="seconds"), "objekte": len(objekte), "bisher": len(alt),
+               "anlass": anlass,
+               VOLLABRUF_SEIT_BEGINN: schluessel in _listen_aus("RATSATLAS_VOLLABRUF", alle=True),
+               "meldung": meldung[:800]}
+    _zustand_setzen(f"{schluessel}_ausgesetzt", eintrag)
+    _ausgesetzt_stand(schluessel, eintrag)
+    _warnung(meldung)
+    zeile.update(seiten=seiten, objekte=len(objekte), filter_wirksam=filter_wirksam,
+                 ergebnis=f"ausgesetzt: {meldung}"[:300])
+    return list(alt.values()), meldung
+
+
+def _ausgesetzt_ueberspringen(name, schluessel, eintrag, zeile, pfad, vollabruf=False):
+    """Die Liste ist ausgesetzt, RATSATLAS_KUERZER_ANNEHMEN nennt sie nicht und RATSATLAS_VOLLABRUF hebt das Aussetzen
+    nicht auf (nennt sie nicht, oder `vollabruf`: nennt sie seit Beginn des Aussetzens, VOLLABRUF_SEIT_BEGINN; das
+    sagt die Meldung gleich vorn): keine Anfrage (auch nicht der nächtliche Versuch der Sitzungen mit Zeitfilter),
+    letzter gültiger Stand, Warnung im Log, Zeile `ausgesetzt` in der Abrufstatistik; der Eintrag in STAND.json wird aus
+    dem Zustand nachgezogen (etwa nach einer beiseitegelegten STAND.json). Liefert (letzter gültiger Stand, Meldung)."""
+    meldung = (f"{name}: Abruf ausgesetzt {_ausgesetzt_text(eintrag)}; "
+               + ("RATSATLAS_VOLLABRUF nennt die Liste seit Beginn des Aussetzens und hebt es daher nicht auf (erst "
+                  "nach einem Lauf ohne sie); " if vollabruf else "")
+               + "keine Anfrage, letzter gültiger Stand bleibt – " + ABHILFE_AUSGESETZT.format(liste=schluessel))
+    if "seit" not in eintrag and eintrag.get("meldung"):   # unlesbarer Eintrag: gilt als ausgesetzt, mit Meldung
+        meldung += f" ({eintrag['meldung']})"
+    _warnung(meldung)
+    _ausgesetzt_stand(schluessel, eintrag)
+    alle = list(_vorhanden(pfad).values())
+    zeile.update(seiten=0, objekte=len(alle), ergebnis=f"ausgesetzt: {meldung}"[:300])
+    return alle, meldung
+
+
+def _aussetzen_aufheben(name, schluessel, pfad, eintrag):
+    """RATSATLAS_VOLLABRUF nennt eine ausgesetzte Liste, und zwar nicht schon seit Beginn des Aussetzens
+    (VOLLABRUF_SEIT_BEGINN): Aussetzen aufheben (Zustand und STAND.json), Fortsetzung und Teildatei verwerfen, damit der
+    Lauf einen neuen Vollabruf ab Seite 1 beginnt (eine Fortsetzung in späteren Nächten braucht die Einstellung nicht
+    mehr). Endet er wieder unter 90 % des Stands, gilt die Regel erneut (über Nächte fortgesetzt: Aussetzen; in
+    derselben Nacht fertig: Abbruch `leer` wie bisher, und bleibt die Einstellung gesetzt, setzt die Liste beim nächsten
+    Mal aus, _vorher_leer). Liefert den Vermerk für die Abrufstatistik."""
+    _zustand_aendern(**{f"{schluessel}_ausgesetzt": None, f"{schluessel}_fortsetzung": None})
+    _teil(pfad).unlink(missing_ok=True)
+    _ausgesetzt_stand(schluessel, None)
+    vermerk = f"Aussetzen {_ausgesetzt_text(eintrag)} aufgehoben (RATSATLAS_VOLLABRUF), neuer Vollabruf"
+    print(f"{name}: {vermerk}", flush=True)
+    return vermerk
+
+
 def _mit_parametern(url, **params):
     """Hängt Parameter URL-kodiert an (`quote(wert, safe="")`, etwa „:“ → %3A, „+“ → %2B): Köln übergeht Zeitwerte
     unkodiert und wendet sie kodiert an (Stufe 2, 08.11.2026)."""
@@ -737,6 +902,18 @@ def _vorhanden(pfad):
         return {o["id"]: o for o in map(json.loads, f) if o.get("id")}
 
 
+def _ohne_ergaenzung(o):
+    """Vorlage ohne die Angaben, die der Abruf selbst ergänzt hat (beratungen(): `organization` aus der Sitzung mit
+    `_organization_quelle`, in papers.jsonl gespeichert), zum Vergleich mit einer neu gelesenen Fassung der Stadt.
+    Sonst zählte jede in der Überlappung des inkrementellen Abrufs erneut gelesene, unveränderte Vorlage mit ergänzter
+    Beratung als „geändert“ (Prüfung stj). Andere Objekte unverändert."""
+    cons = o.get("consultation") if isinstance(o, dict) else None
+    if not isinstance(cons, list) or not any(isinstance(c, dict) and "_organization_quelle" in c for c in cons):
+        return o
+    return {**o, "consultation": [{k: v for k, v in c.items() if k not in ("organization", "_organization_quelle")}
+                                  if isinstance(c, dict) and "_organization_quelle" in c else c for c in cons]}
+
+
 def _zusammenfuehren(pfad, neu_objekte, voll, kuerzer_annehmen=False):
     """Führt Objekte über die ID mit dem vorhandenen Stand zusammen; liefert (alle, neu, geändert, gelöscht, Vermerk).
     Ein Vollabruf unter 90 % des Stands bricht ab (Art `leer`), außer mit `kuerzer_annehmen`
@@ -761,7 +938,8 @@ def _zusammenfuehren(pfad, neu_objekte, voll, kuerzer_annehmen=False):
                        "(RATSATLAS_KUERZER_ANNEHMEN)")
             _warnung(f"{pfad.name}: {vermerk}")
     neu = sum(1 for o in neu_objekte if o["id"] not in alt)
-    geaendert = sum(1 for o in neu_objekte if o["id"] in alt and o != alt[o["id"]])
+    # geändert: anders als der gespeicherte Stand ohne die eigene Ergänzung der Beratungen (_ohne_ergaenzung)
+    geaendert = sum(1 for o in neu_objekte if o["id"] in alt and o != _ohne_ergaenzung(alt[o["id"]]))
     geloescht = sum(1 for o in neu_objekte if o.get("deleted"))
     stand = {} if voll else dict(alt)
     stand.update({o["id"]: o for o in neu_objekte if o.get("id")})
@@ -927,13 +1105,51 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
     Lauf bei Art `filter` ab. Jede reguläre Aktualisierung einer Liste mit `warnungen` oder `voll_ohne_filter` entfernt
     ihre Warnung in STAND.json. Liefert (Objekte, Warnung): den zusammengeführten Stand und "", nach einer Warnung oder
     ohne erneutes Lesen in derselben Nacht den letzten gültigen Stand und die Meldung (fetch_meetings schreibt dann
-    weder meetings.json noch ihren Zeitpunkt neu)."""
+    weder meetings.json noch ihren Zeitpunkt neu).
+    Aussetzen (papers, meetings; AUSSETZEN, Entscheidung 13.11.2026): Endet ein fortgesetzter Vollabruf (`fort`), das
+    vollständige Lesen nach dem Befund (`befund`) oder ein wiederholter Vollabruf (in diesem Lauf ab Seite 1, und schon
+    der vorige Abbruch war `leer` dieser Liste, _vorher_leer) unter 90 % des Stands (Art `leer`) und nennt
+    RATSATLAS_KUERZER_ANNEHMEN die Liste nicht, setzt sie aus (_aussetzen; kein Abbruch, die übrigen Listen laufen
+    weiter). Ein Vollabruf, der in diesem Lauf begann und in ihm endet (RATSATLAS_VOLLABRUF), bricht beim ersten Mal wie
+    bisher ab: für eine Nacht gesetzt, wiederholt er sich nicht; bleibt die Einstellung gesetzt, setzt die Liste beim
+    zweiten Mal aus. Eine ausgesetzte Liste sendet keine Anfrage (_ausgesetzt_ueberspringen), außer
+    RATSATLAS_VOLLABRUF nennt sie, und zwar nicht schon seit Beginn des Aussetzens (VOLLABRUF_SEIT_BEGINN; hebt das
+    Aussetzen auf, neuer Vollabruf ab Seite 1, _aussetzen_aufheben; der erste Lauf, der die Liste ohne die Einstellung
+    erreicht, setzt das Feld false), oder RATSATLAS_KUERZER_ANNEHMEN nennt sie (liest sie vollständig: Fortsetzung,
+    sonst ab Seite 1 ohne modified_since, und nimmt den kürzeren Stand an, auch bei weiter gesetztem
+    RATSATLAS_VOLLABRUF; das Aussetzen endet erst mit der regulären Aktualisierung). In Nächten, in denen keine Liste
+    ausgesetzt ist oder aussetzt, unverändert (dieselben Anfragen, derselbe Zustand wie 78de995)."""
     warnungen = warnungen or {}
     objekte, seiten = [], 0
     vorher = abruf.statistik()
     start = datetime.now(timezone.utc)
+    ausgesetzt = _ausgesetzt(schluessel) if schluessel in AUSSETZEN else None
+    aufgehoben = ""   # Vermerk für die Abrufstatistik, wenn dieser Lauf ein Aussetzen aufhebt
+    if ausgesetzt is not None:
+        vollabruf = schluessel in _listen_aus("RATSATLAS_VOLLABRUF", alle=True)
+        if _vollabruf_seit_beginn(ausgesetzt) and not vollabruf:
+            # erster Lauf ohne die Einstellung seit Beginn des Aussetzens: ab jetzt hebt sie es auf (Prüfung rp-b)
+            ausgesetzt = dict(ausgesetzt, **{VOLLABRUF_SEIT_BEGINN: False})
+            _zustand_setzen(f"{schluessel}_ausgesetzt", ausgesetzt)
+            _ausgesetzt_stand(schluessel, ausgesetzt)
+            print(f"{name}: RATSATLAS_VOLLABRUF nennt die ausgesetzte Liste nicht mehr; ein späterer Lauf mit ihr hebt "
+                  "das Aussetzen auf", flush=True)
+        if vollabruf and not _vollabruf_seit_beginn(ausgesetzt):
+            aufgehoben = _aussetzen_aufheben(name, schluessel, pfad, ausgesetzt)
+            ausgesetzt = None
+        elif schluessel not in _listen_aus("RATSATLAS_KUERZER_ANNEHMEN"):
+            zeile = {"datum": _now(), "liste": name, "modus": "ausgesetzt"}
+            try:
+                return _ausgesetzt_ueberspringen(name, schluessel, ausgesetzt, zeile, pfad, vollabruf)
+            except Exception as e:
+                zeile["ergebnis"] = f"programmfehler: {type(e).__name__}: {e}"[:300]
+                raise
+            finally:
+                _differenz(zeile, vorher)
+                _statistik_sicher(zeile)
     fort, bisher, verworfen = _fortsetzung(schluessel, pfad)
-    seit = None if fort or not zeitfilter else _seit(schluessel)
+    # ausgesetzt und RATSATLAS_KUERZER_ANNEHMEN: vollständig (Fortsetzung, sonst ab Seite 1 ohne modified_since)
+    seit = None if fort or not zeitfilter or ausgesetzt is not None else _seit(schluessel)
     befund = None   # Zeitfilter in diesem Lauf nicht angewandt (voll_ohne_filter): Vermerk und Seiten mit Filter
     zeile = {"datum": _now(), "liste": name, "modus": "voll, fortgesetzt" if fort else "inkrementell" if seit else
              "voll, Fortsetzung verworfen" if verworfen else "voll"}
@@ -989,11 +1205,16 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
             # ohne Befund gelesen (vollständig, oder inkrementell mit wirksamem Filter): ein früherer Befund gilt nicht
             # mehr; nach einem Befund in diesem Lauf bleibt er vermerkt
             aenderung[f"{schluessel}_ohne_zeitfilter"] = befund and befund["vermerk"]
+        if ausgesetzt is not None:   # RATSATLAS_KUERZER_ANNEHMEN: regulär aktualisiert, das Aussetzen endet
+            aenderung[f"{schluessel}_ausgesetzt"] = None
+            aufgehoben = f"Aussetzen {_ausgesetzt_text(ausgesetzt)} aufgehoben (RATSATLAS_KUERZER_ANNEHMEN)"
         _zustand_aendern(**aenderung)
         _teil(pfad).unlink(missing_ok=True)
         if warnungen or voll_ohne_filter:   # wieder regulär aktualisiert: Warnung dieser Liste entfällt
             _warnung_vermerken(schluessel, None)
-        ergebnis = ["ok"] + ([kuerzer] if kuerzer else [])
+        if schluessel in AUSSETZEN:   # ein Eintrag in STAND.json ohne Zustand gilt ebenso nicht mehr (nur bei Änderung)
+            _ausgesetzt_stand(schluessel, None)
+        ergebnis = ["ok"] + ([kuerzer] if kuerzer else []) + ([aufgehoben] if aufgehoben else [])
         if befund:   # Log und Abrufstatistik: wie gelesen und warum
             wie = f"{voll_ohne_filter} ({seiten} Seiten ohne modified_since nach {befund['seiten']} mit Zeitfilter)"
             _warnung(f"{wie}; Befund: {befund['vermerk']['meldung']}")
@@ -1040,9 +1261,19 @@ def _abruf_liste(name, url, pfad, schluessel, zeitfilter=True, warnungen=None, a
     except abruf.Abbruch as e:
         if e.art in warnungen:   # etwa `leer` aus _zusammenfuehren, nachdem die Liste vollständig gelesen ist
             return _nur_warnung(warnungen[e.art], e, zeile, objekte, seiten, seit, pfad, schluessel)
+        if (e.art == "leer" and schluessel in AUSSETZEN and not seit
+                and schluessel not in _listen_aus("RATSATLAS_KUERZER_ANNEHMEN")
+                and (fort or befund or _vorher_leer(pfad))):
+            # fortgesetzter Vollabruf, vollständiges Lesen nach dem Befund oder wiederholter Vollabruf (schon der vorige
+            # Abbruch war `leer` dieser Liste, etwa RATSATLAS_VOLLABRUF dauerhaft gesetzt) unter 90 % des Stands: sonst
+            # wiederholte er sich jede Nacht bis zum Listenende (Entscheidung 13.11.2026: die Liste setzt aus)
+            anlass = (AUSSETZEN_ANLASS["befund"] if befund else
+                      AUSSETZEN_ANLASS["fortgesetzt"] if fort else AUSSETZEN_ANLASS["wiederholt"])
+            return _aussetzen(schluessel, e, zeile, objekte, seiten,
+                              befund["filter_wirksam"] if befund else _filter_wirksam(objekte, seit), pfad, anlass)
         if befund and e.art == "leer":
-            # vollständiges Lesen nach dem Befund unter 90 % des Stands: Abbruch wie bei einem Vollabruf (Entscheidung
-            # offen, TECHNIK.md), aber mit Anlass und Abhilfe in STAND.json und Seiten und Objekten in der Statistik
+            # mit RATSATLAS_KUERZER_ANNEHMEN nur bei 0 Objekten (nie angenommen): Abbruch wie bei einem Vollabruf, mit
+            # Anlass und Abhilfe in STAND.json und Seiten und Objekten in der Statistik
             zeile.update(seiten=seiten, objekte=len(objekte))
             neu = abruf.Abbruch(f"{e} (vollständiges Lesen nach nicht angewandtem Zeitfilter) – "
                                 + ABHILFE["leer"].format(liste=schluessel), "leer")
@@ -1141,10 +1372,13 @@ def fetch_meetings(body, angenommen=None):
 
 
 def fetch_papers(body, angenommen=None):
-    """Vorlagen; `angenommen`: siehe _abruf_liste."""
-    papers = _abruf_liste("papers", body["paper"], config.PAPERS, "papers", angenommen=angenommen)[0]
-    _stamp("papers")
-    print(f"{len(papers)} Vorlagen → {config.PAPERS}")
+    """Vorlagen; `angenommen`: siehe _abruf_liste. Ist die Liste ausgesetzt (oder setzt sie in diesem Lauf aus), bleibt
+    ihr Zeitpunkt in STAND.json (Abrufdatum des Ratsinformationssystems auf der Seite) unverändert, und die Beratungen
+    entstehen aus dem letzten gültigen Stand."""
+    papers, warnung = _abruf_liste("papers", body["paper"], config.PAPERS, "papers", angenommen=angenommen)
+    if not warnung:
+        _stamp("papers")
+    print(f"{len(papers)} Vorlagen{' (letzter gültiger Stand)' if warnung else ''} → {config.PAPERS}")
     return papers
 
 
@@ -1221,7 +1455,10 @@ def fetch_all():
     Endet nur eine Nebenliste mit Warnung (_nur_warnung: unvollständige Organisationen), gilt der Lauf als
     vollständig; die Warnung steht in STAND.json unter `abruf_warnungen` (dort schon bei ihrem Auftreten vermerkt, ein
     vollständiger Lauf entfernt sie nicht). Sitzungen ohne angewandten Zeitfilter liest der Lauf vollständig
-    (_abruf_liste, `voll_ohne_filter`)."""
+    (_abruf_liste, `voll_ohne_filter`). Ebenso mit einer ausgesetzten Liste (Vorlagen oder Sitzungen, _aussetzen,
+    Entscheidung 13.11.2026): Sie sendet keine Anfrage, ihr letzter gültiger Stand geht in die Beratungen ein, und der
+    Lauf gilt als vollständig (`abruf_ok`, Zähler zurückgesetzt); die Pause steht in STAND.json unter
+    `abruf_ausgesetzt`."""
     config.RAW.mkdir(parents=True, exist_ok=True)
     # Sperre und Zeitfenster sind kein Ausfall: der Lauf wird übersprungen, ohne den Stand als fehlgeschlagen zu markieren
     lokal = abruf.lokal(config.OPARL_BODY)
@@ -1299,8 +1536,10 @@ def _einstellungen_pruefen():
 
 def _weiter(e):
     """Wie der Abruf in der nächsten Nacht weitergeht, aus dem Zustand nach dem Abbruch (nicht aus der abbrechenden
-    Liste): Steht eine Fortsetzung aus, wird sie fortgesetzt, sonst beginnt der Abruf erneut."""
-    if any(k.endswith("_fortsetzung") for k in _zustand()):
+    Liste): Steht eine Fortsetzung aus, wird sie fortgesetzt, sonst beginnt der Abruf erneut. Die Fortsetzung einer
+    ausgesetzten Liste zählt nicht (sie wartet auf RATSATLAS_KUERZER_ANNEHMEN)."""
+    z = _zustand()
+    if any(k.endswith("_fortsetzung") and z.get(k.removesuffix("_fortsetzung") + "_ausgesetzt") is None for k in z):
         return "Fortsetzung in der nächsten Nacht"
     if getattr(e, "inkrementell", False):
         return ("der inkrementelle Abruf beginnt in der nächsten Nacht erneut (ein inkrementeller Lauf speichert keine "

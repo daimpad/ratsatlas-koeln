@@ -16,9 +16,17 @@
 # modified_since bei den Sitzungen ablehnt (etwa HTTP 401; dann jede Nacht alle Sitzungen, 50–200 Seiten). Übergeht sie
 # den Filter nur, braucht es die Variable nicht: Seit Runde 20 liest der Abruf die Sitzungen dann in derselben Nacht von
 # selbst vollständig neu und kehrt zum inkrementellen Lauf zurück, sobald der Filter wirkt (mit dauerhaft gesetztem
-# „meetings“ entfiele dieser Versuch). Abstand, Zeitfenster und Grenzen je Nacht sind nicht über Variablen einstellbar.
-# Abrufpolitik: eine Verbindung, Abstand 20 s (seit 15.11.2026, fest im Abrufschritt; der Code verlangt mindestens 2 s),
-# nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (Retry-After als
+# „meetings“ entfiele dieser Versuch). Eine ausgesetzte Liste (Vorlagen oder Sitzungen, deren Vollabruf über Nächte,
+# deren zweiter Vollabruf in Folge – etwa mit dauerhaft gesetztem „meetings“ – oder deren vollständiges Lesen nach nicht
+# angewandtem Zeitfilter unter 90 % des Stands endete; Hinweis in STAND.json unter abruf_ausgesetzt, Entscheidung
+# 13.11.2026) sendet keine Anfrage, bis KUERZER_ANNEHMEN sie nennt (liest sie vollständig und nimmt den kürzeren Stand an;
+# gesetzt lassen, bis der Lauf fertig ist) oder VOLLABRUF (hebt das Aussetzen auf, neuer Vollabruf ab Seite 1; eine
+# Nacht). Nannte VOLLABRUF die Liste schon beim Aussetzen (dauerhaft gesetzt), hebt sie es erst auf, nachdem ein Lauf
+# ohne sie die Liste erreicht hat: für eine Nacht austragen, dann wieder eintragen. Abstand, Zeitfenster und Grenzen je
+# Nacht sind nicht über Variablen einstellbar; einzig RATSATLAS_PDF_MAX (Dokumentschritt, unten) kann dessen Grenze
+# senken, nicht erhöhen.
+# Abrufpolitik: eine Verbindung, Abstand 20 s (seit 15.11.2026, fest im Abruf- und im Dokumentschritt; der Code verlangt
+# mindestens 2 s), nur 23–1 Uhr Ortszeit, Pausen nach Fehlern bis 3 h (Retry-After als
 # Sekunden oder Datum eingehalten), aber nie über das Ende des Zeitfensters: Reicht die nächste Pause darüber hinaus
 # oder ist Retry-After länger als 3 h oder unlesbar, gibt der Abruf sofort auf („aufgegeben“). Ein solcher Retry-After
 # gilt über die Nacht hinaus: Bis zu seinem Ablauf (höchstens 30 Tage, unlesbar 7 Tage) wird jeder Lauf übersprungen.
@@ -34,14 +42,37 @@
 # (pipeline/abruf.py, pipeline/sessionnet.py).
 # Fällt der Abruf aus, wird der letzte gültige Stand aus dem Zwischenspeicher veröffentlicht und als solcher angezeigt;
 # ein vollständiger Lauf entfernt die Fehlermeldung wieder.
+# Dokumente (PDF-Köpfe, pipeline/dokumente.py; Entscheidung 13.11.2026: gebaut, getestet, abgeschaltet): Der Schritt nach
+# dem Abruf liest die erste Seite der Hauptdatei von Verwaltungsvorlagen (fehlt sie, einer Datei aus auxiliaryFile;
+# Entscheidung 13.11.2026 (a)), vorerst nur von Vorlagen seit dem 01.11.2025 (Entscheidung 17.11.2026 (4)), und
+# übernimmt nur die Kennung „Dezernat, Dienststelle“; vermerkt werden dazu nur Prüfsumme, Größe und Ergebnis des Abrufs
+# (kein Text, keine Datei). Er
+# sendet nur mit RATSATLAS_PDF_FREIGEGEBEN = „ja“ (zusätzlich zu RATSATLAS_STADT_INFORMIERT) eine Anfrage; ohne sie
+# schreibt er nichts (Nächte ohne Freigabe bleiben in Anfragen und Abrufzustand unverändert). RATSATLAS_PDF_MAX: Dateien
+# je Nacht, senkt die Grenze von 300 nur (leer oder über 300: 300; 0, negativ oder unlesbar: keine Anfrage).
+# Die erste Nacht mit Dokumenten liest höchstens 100 Dateien, im Code gesichert, auch ohne RATSATLAS_PDF_MAX
+# (Entscheidung 17.11.2026 (3); Brief an die Stadt, Punkt 4: in der ersten Nacht höchstens 100 Dokumente).
+# Reihenfolge beim Einschalten (Entscheidung 17.11.2026 (7), wie 13.11.2026 (c)): (1) RATSATLAS_PDF_MAX=100 setzen,
+# (2) erst danach RATSATLAS_PDF_FREIGEGEBEN=ja, (3) RATSATLAS_PDF_MAX erst löschen, wenn die Testnacht ausgewertet ist
+# (Erkennungsquote; Entscheidung 17.11.2026 (5) zu Amt und Filter); danach 300. Die Grenze im Code bleibt als
+# zusätzliche Sicherung und greift auch, wenn die Variable vergessen wurde; RATSATLAS_PDF_MAX=100 hält die Grenze auch
+# dann, wenn die erste Nacht früh endet (Zeitfenster, Abbruch): In der nächsten Nacht gilt die Grenze im Code nicht mehr.
+# Dieselbe Abrufpolitik (auch der feste Abstand von 20 s, also mindestens
+# 100 min für 300 Dateien; was bis 1 Uhr nicht gelesen ist, folgt in der nächsten Nacht) und derselbe Zustand wie beim
+# Abruf, nach ihm und nur, wenn er in dieser Nacht vollständig war; ein Abbruch zählt wie einer des Abrufs (12-Stunden-
+# Regel, Nacht mit möglicher Sperre) und nach drei Nächten mit möglicher Sperre beim Dokumentabruf ruhen die Dokumente
+# sieben Tage. Ein Fehler in diesem Schritt hält die Veröffentlichung nicht an; er hat ein eigenes Zeitlimit (150 min).
 # Der Zwischenspeicher (Rohdaten, Zustand des Abrufs mit der Zählung der Nächte, STAND.json, Abrufstatistik) wird gleich
-# nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert. Danach steht der
-# Fortschritt des Abrufs im Log und in der Zusammenfassung des Laufs (tools/abrufstand.py, nur Zahlen und Zustände),
-# dann die Feldabdeckung der Rohdaten (tools/feldabdeckung.py, nur Anzahlen, Anteile und häufige Kategorien; während
-# des Vollabrufs als Zwischenstand); beide Schritte lesen nur und halten den Lauf nie an.
+# nach dem Abrufschritt gesichert, auch wenn der Abruf oder ein späterer Schritt scheitert; mit Freigabe des
+# Dokumentschritts nach diesem ein zweites Mal (eigener Schlüssel; der nächste Lauf nimmt den jüngsten Stand). Gleich
+# nach der ersten Sicherung steht der Fortschritt des Abrufs im Log und in der Zusammenfassung des Laufs
+# (tools/abrufstand.py, nur Zahlen und Zustände), dann die Feldabdeckung der Rohdaten (tools/feldabdeckung.py, nur
+# Anzahlen, Anteile und häufige Kategorien; während des Vollabrufs als Zwischenstand); beide Schritte lesen nur und
+# halten den Lauf nie an. Erst danach folgen der Dokumentschritt und seine Sicherung.
 # Fehlt nach dem Wiederherstellen der Zustand des Abrufs (data/raw/zustand_abruf.json), hält ein Wächter den
-# freigegebenen Lauf vor dem Abruf an (rot: kein Abruf, keine Veröffentlichung, keine Sicherung); überstimmen nur
-# mit RATSATLAS_VOLLABRUF=ja (neuer Vollabruf ab Seite 1, gesetzt lassen, bis eine Abrufnacht gelaufen ist).
+# freigegebenen Lauf vor dem Abruf an (rot: kein Abruf, keine Dokumente, keine Veröffentlichung, keine Sicherung);
+# überstimmen nur mit RATSATLAS_VOLLABRUF=ja (neuer Vollabruf ab Seite 1, gesetzt lassen, bis eine Abrufnacht gelaufen
+# ist).
 name: Daten aktualisieren und Seite veröffentlichen
 
 on:
@@ -68,9 +99,9 @@ jobs:
     outputs:
       daten: ${{ steps.daten.outputs.da }}
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
           python-version: "3.12"
           cache: pip
@@ -80,10 +111,11 @@ jobs:
 
       # Rohdaten-Cache: letzter gültiger Stand, Zustand des inkrementellen Abrufs, Abrufstatistik. Hier nur
       # Wiederherstellen; gesichert wird im Schritt direkt nach dem Abruf, nicht erst am Ende eines erfolgreichen Laufs
-      # (data/raw/ ändert nach dem Abruf kein Schritt mehr)
+      # (data/raw/ ändert nach dem Abruf nur noch der Dokumentschritt, nach dem mit seiner Freigabe ein zweites Mal
+      # gesichert wird)
       - name: Rohdaten des letzten Laufs
         id: rohdaten
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: |
             data/raw/
@@ -91,15 +123,16 @@ jobs:
           key: raw-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: raw-
 
-      # Wächter (16.11.2026): Fehlt nach dem Wiederherstellen der Zustand des Abrufs (etwa nach einer Störung des
-      # Dienstes, nach dem Löschen eines Eintrags oder weil eine neue Fassung von actions/cache ältere Einträge raw- nicht
-      # findet; actions/cache meldet das nur als Hinweis), begänne der Abruf ab Seite 1: Die Zählung der Nächte mit
-      # möglicher Sperre, nicht_vor und die Fortsetzung des Vollabrufs gingen verloren, der Lauf veröffentlichte die
-      # Kartenvorschau, und die Sicherung legte den fast leeren Stand als jüngsten Eintrag raw- ab. Mit Freigabe des
-      # Abrufs hält der Lauf deshalb hier an (rot): Abruf, Sicherung und Veröffentlichung entfallen (die Sicherung hängt
-      # an einem übersprungenen Abruf), die Seite bleibt, wie sie ist. Maßgeblich ist die Datei selbst, nicht nur die
-      # Ausgabe der Aktion; ohne Freigabe (Kartenvorschau) kein Halt. Überstimmen nur ausdrücklich mit
-      # RATSATLAS_VOLLABRUF=ja (ohne Zustand ohnehin ein Vollabruf ab Seite 1)
+      # Wächter (16.11.2026, Prüfung stapelf): Fehlt nach dem Wiederherstellen der Zustand des Abrufs (etwa nach einer
+      # Störung des Dienstes, nach dem Löschen eines Eintrags oder weil eine neue Fassung von actions/cache ältere
+      # Einträge raw- nicht findet; actions/cache meldet das nur als Hinweis), begänne der Abruf ab Seite 1: Die Zählung
+      # der Nächte mit möglicher Sperre, nicht_vor, die Fortsetzung des Vollabrufs und die Zählung der Dokumente gingen
+      # verloren, der Lauf veröffentlichte die Kartenvorschau, und die Sicherung legte den fast leeren Stand als jüngsten
+      # Eintrag raw- ab. Mit Freigabe des Abrufs hält der Lauf deshalb hier an (rot): Abruf, Dokumente, Veröffentlichung
+      # und beide Sicherungen entfallen (die Sicherungen hängen an übersprungenen Schritten ohne eigenes if: Abruf bzw.
+      # Dokumente), die Seite bleibt, wie sie ist. Maßgeblich ist die Datei selbst, nicht nur die Ausgabe der Aktion;
+      # ohne Freigabe (Kartenvorschau) kein Halt. Überstimmen nur ausdrücklich mit RATSATLAS_VOLLABRUF=ja (ohne Zustand
+      # ohnehin ein Vollabruf ab Seite 1)
       - name: Abrufzustand wiederhergestellt? (Wächter vor Abruf und Veröffentlichung)
         env:
           GEFUNDEN: ${{ steps.rohdaten.outputs.cache-matched-key }}
@@ -112,7 +145,7 @@ jobs:
             echo "::warning::Kein Abrufzustand (data/raw/zustand_abruf.json) im Zwischenspeicher; mit RATSATLAS_VOLLABRUF=ja beginnt der Abruf ohne ihn (Vollabruf ab Seite 1, Zählung der Nächte mit möglicher Sperre von vorn). Nach der ersten Abrufnacht den vorigen Wert der Variablen wiederherstellen (meist: löschen)."
             exit 0
           fi
-          echo "::error::Kein Abrufzustand (data/raw/zustand_abruf.json) im Zwischenspeicher: Der Abruf begänne ab Seite 1, die Zählung der Nächte mit möglicher Sperre, nicht_vor und die Fortsetzung des Vollabrufs gingen verloren. Daher kein Abruf, keine Veröffentlichung, keine Sicherung; die Seite bleibt, wie sie ist. Prüfen: Log von „Rohdaten des letzten Laufs“ und Actions → Caches (Einträge raw-). Vorübergehende Störung: Lauf wiederholen. Findet eine neue Fassung von actions/cache die älteren Einträge nicht: auf die vorige Fassung zurückstellen (GitHub löscht Einträge, die 7 Tage nicht gelesen wurden). Nur beim ersten Lauf überhaupt oder wenn der Zustand verloren ist: Repository-Variable RATSATLAS_VOLLABRUF=ja, bis eine Abrufnacht gelaufen ist; vorher in der Zusammenfassung „Abrufstand“ des letzten Laufs mit Zustand prüfen, ob eine Pause lief (Retry-After, 7 Tage nach drei Nächten mit möglicher Sperre), und erst nach ihrem Ende überstimmen. Bis der neue Vollabruf vollständig ist, zeigt die Seite dann die Kartenvorschau."
+          echo "::error::Kein Abrufzustand (data/raw/zustand_abruf.json) im Zwischenspeicher: Der Abruf begänne ab Seite 1, die Zählung der Nächte mit möglicher Sperre, nicht_vor, die Fortsetzung des Vollabrufs und die Zählung der Dokumente gingen verloren. Daher kein Abruf, keine Dokumente, keine Veröffentlichung, keine Sicherung; die Seite bleibt, wie sie ist. Prüfen: Log von „Rohdaten des letzten Laufs“ und Actions → Caches (Einträge raw-). Vorübergehende Störung: Lauf wiederholen. Findet eine neue Fassung von actions/cache die älteren Einträge nicht: auf die vorige Fassung zurückstellen (GitHub löscht Einträge, die 7 Tage nicht gelesen wurden). Nur beim ersten Lauf überhaupt oder wenn der Zustand verloren ist: Repository-Variable RATSATLAS_VOLLABRUF=ja, bis eine Abrufnacht gelaufen ist; vorher in der Zusammenfassung „Abrufstand“ des letzten Laufs mit Zustand prüfen, ob eine Pause lief (Retry-After, 7 Tage nach drei Nächten mit möglicher Sperre), und erst nach ihrem Ende überstimmen. Bis der neue Vollabruf vollständig ist, zeigt die Seite dann die Kartenvorschau."
           exit 1
 
       # Dauer: höchstens bis zum Ende des Zeitfensters (1 Uhr) plus eine Anfrage (Zeitüberschreitung 90 s); mit 100
@@ -138,7 +171,7 @@ jobs:
       # Schlüssel je Versuch, damit auch ein wiederholter Lauf speichert; der nächste Lauf nimmt den jüngsten (raw-).
       - name: Abrufzustand sichern (Rohdaten, zustand_abruf.json, STAND.json, Abrufstatistik)
         if: always() && steps.abruf.outcome != 'skipped'
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: |
             data/raw/
@@ -147,10 +180,12 @@ jobs:
 
       # Fortschritt des Abrufs ins Log und in die Zusammenfassung des Laufs: je Liste Anfragen und Objekte der letzten
       # Nacht, Seiten bisher, Stelle der Fortsetzung, gespeicherter Stand, Zähler der Nächte mit möglicher Sperre und
-      # Pause, letzter Abbruch, wie die Nacht endete, abruf_ok. Liest nur zustand_abruf.json, STAND.json und
-      # abrufstatistik.tsv; nur Zahlen und Zustände, keine Inhalte der Objekte und keine Meldungstexte (außer dem Grund
-      # eines übersprungenen Laufs, aus festen Texten des Abrufs). Immer, auch nach einem gescheiterten oder
-      # übersprungenen Abruf; fehlende oder unlesbare Dateien sind kein Fehler, und der Schritt hält den Lauf nie an
+      # Pause, letzter Abbruch, wie die Nacht endete, abruf_ok; dazu der Dokumentschritt im Stand vor seinem Lauf
+      # (angefragte Dateien der letzten Nacht mit Freigabe, Nächte mit möglicher Sperre beim Dokumentabruf, letzte
+      # Zeile der Abrufstatistik). Liest nur zustand_abruf.json, STAND.json und abrufstatistik.tsv; nur Zahlen und
+      # Zustände, keine Inhalte der Objekte und keine Meldungstexte (außer dem Grund eines übersprungenen Laufs, aus
+      # festen Texten des Abrufs). Immer, auch nach einem gescheiterten oder übersprungenen Abruf; fehlende oder
+      # unlesbare Dateien sind kein Fehler, und der Schritt hält den Lauf nie an
       - name: Fortschritt des Abrufs (Log und Zusammenfassung)
         if: always()
         continue-on-error: true
@@ -167,6 +202,40 @@ jobs:
         continue-on-error: true
         timeout-minutes: 10
         run: python tools/feldabdeckung.py
+
+      # Dokumente (PDF-Köpfe) nach dem Abruf, seiner Sicherung, dem Fortschritt und der Feldabdeckung, im selben
+      # Zeitfenster und nach derselben Abrufpolitik (eigener Prozess: der Abstand von 20 s zählt ab seinem Start, also
+      # auch zur letzten Anfrage des Abrufs); nur mit RATSATLAS_PDF_FREIGEGEBEN=ja, sonst keine Anfrage und nichts
+      # geschrieben (siehe Kopf). Läuft nicht nach einem roten Abrufschritt (kein eigenes `if`, also auch nicht nach
+      # einem roten Wächter). Die beiden lesenden Schritte davor verkürzen nur die Zeit bis 1 Uhr (die Feldabdeckung
+      # höchstens um ihr Zeitlimit von 10 Minuten); was bis dahin nicht gelesen ist, folgt in der nächsten Nacht.
+      # Eigenes Zeitlimit als letzte Sicherung: Das Zeitfenster endet um 1 Uhr und jede Datei hat höchstens 120 s; der
+      # Zustand wird vor jeder Anfrage geschrieben, ein Abbruch von außen verliert höchstens die laufende Datei
+      - name: Dokumente der Stadt Köln (PDF-Köpfe, gesperrt bis zur Freigabe)
+        id: dokumente
+        continue-on-error: true
+        timeout-minutes: 150
+        env:
+          RATSATLAS_STADT_INFORMIERT: ${{ vars.RATSATLAS_STADT_INFORMIERT }}
+          RATSATLAS_KONTAKT: ${{ vars.RATSATLAS_KONTAKT }}
+          RATSATLAS_PDF_FREIGEGEBEN: ${{ vars.RATSATLAS_PDF_FREIGEGEBEN }}
+          RATSATLAS_PDF_MAX: ${{ vars.RATSATLAS_PDF_MAX }}
+          # Abstand fest 20 s wie im Abrufschritt (Entscheidung 15.11.2026); ohne die Angabe gälte in diesem eigenen
+          # Prozess die Vorgabe von 2 s. Keine Repository-Variable: nur über eine Änderung an dieser Datei
+          RATSATLAS_ABSTAND: "20"
+        run: python -m pipeline dokumente
+
+      # Zweite Sicherung nur mit Freigabe des Dokumentschritts (ohne sie schreibt er nichts): Ergebnisse, Zählung der
+      # Nacht und Abbrüche im Zustand; auch nach einem Fehler oder dem Zeitlimit des Schritts. Eigener Schlüssel, der
+      # nächste Lauf nimmt den jüngsten (raw-)
+      - name: Abrufzustand nach den Dokumenten sichern
+        if: always() && steps.dokumente.outcome != 'skipped' && vars.RATSATLAS_STADT_INFORMIERT == 'ja' && vars.RATSATLAS_PDF_FREIGEGEBEN == 'ja'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: |
+            data/raw/
+            data/export/abrufstatistik.tsv
+          key: raw-${{ github.run_id }}-${{ github.run_attempt }}-dokumente
 
       # Nie mit Testdaten veröffentlichen (tools/testdaten.py setzt „testdaten“ in STAND.json)
       - name: Gibt es Daten zum Veröffentlichen?
@@ -201,7 +270,7 @@ jobs:
 
       # Graue Kartenkacheln aus dem Branch kacheln (kacheln.yml); fehlt er, zeigt die Seite OSM-Kacheln grau gefiltert
       - name: Graue Kartenkacheln holen
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           ref: kacheln
           path: _kacheln
@@ -257,9 +326,9 @@ jobs:
           git commit -q -m "Seite aus ${GITHUB_SHA::7}, erzeugt $(date -u +%F)"
           git push -q "$url" HEAD:deploy
 
-      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b  # v5.0.0
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d  # v6.0.0
 
-      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa  # v3.0.1
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9  # v5.0.0
         with:
           path: "_site"
 

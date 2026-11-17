@@ -96,10 +96,30 @@
       a.ebene !== "dezernat" && a.label].filter(Boolean).map(esc).join(" · ");
     return `<span class="aemter-zeile">${teile}</span> <span class="derived">abgeleitet, über ${esc(a.fundstelle)}</span>`;
   };
+  // Zeile der Federführung (responsibility[]): Organisation aus underDirectionOf oder Kennung aus dem Kopf der Vorlage
+  // (pdf_kopf) bzw., wenn die Stadt kein Hauptdokument nennt, einer Anlage (pdf_kopf_anlage, eine Stufe weniger sicher;
+  // Entscheidung 13.11.2026) mit Herkunft und Sicherheit; darunter in beiden Fällen Dezernat und Dienststelle laut
+  // Ämtertabelle (aemterZeile; die Kennung ordnet export über aemter.zuordnen mit Kennung und Datum der Vorlage zu),
+  // ohne eindeutige Zuordnung nichts
+  const KOPF = {
+    pdf_kopf: ["dem Kopf der Vorlage (Seite 1)", { mittel: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“", niedrig: "erkannt in ausgeschriebener Form, weniger sicher" }],
+    pdf_kopf_anlage: ["dem Kopf einer Anlage (Seite 1), weil die Stadt kein Hauptdokument nennt", { niedrig: "erkannt nach der Bezeichnung „Dezernat, Dienststelle“, weniger sicher" }],
+  };
+  const federZeile = (r) => [Object.hasOwn(KOPF, r.method)
+    ? `Kennung ${esc(r.kennung)} <span class="derived">abgeleitet aus ${KOPF[r.method][0]}${KOPF[r.method][1][r.confidence] ? ` · ${KOPF[r.method][1][r.confidence]}` : ""}</span>`
+    : `${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`,
+  aemterZeile(r.aemtertabelle)].filter(Boolean).join("<br>");
   // Nebenlisten, die beim letzten Abruf nicht aktualisiert wurden (index.json meta.abruf_warnungen,
   // pipeline/export.py): ein Satz je Liste im Datenstand, ohne Fachbegriffe und nicht nur als Farbe
   const WARNUNG_SATZ = { meetings: "Sitzungstermine wurden", organizations: "Die Liste der Gremien wurde" };
   const standWarnungen = (w) => Object.keys(WARNUNG_SATZ).filter((k) => w && w[k]).map((k) => ` · ${WARNUNG_SATZ[k]} beim letzten Abruf nicht aktualisiert; gezeigt wird ${w[k].stand ? `der Stand vom ${zeitDatum(w[k].stand)}` : "der letzte gültige Stand"}.`).join("");
+  // Listen, deren Abruf ruht (index.json meta.abruf_ausgesetzt, pipeline/export.py; Entscheidung 13.11.2026: die Stadt
+  // lieferte beim vollständigen Lesen deutlich weniger als bisher): ein Satz je Liste mit Beginn und gezeigtem Stand
+  const AUSGESETZT_SATZ = { papers: ["der Vorlagen", "Vorlagen"], meetings: ["der Sitzungstermine", "Sitzungen"] };
+  const standAusgesetzt = (a) => Object.keys(AUSGESETZT_SATZ).filter((k) => a && a[k]).map((k) => {
+    const [wessen, was] = AUSGESETZT_SATZ[k], seit = zeitTag(a[k].seit);
+    return ` · Der Abruf ${wessen} ruht ${seit ? `seit dem ${fmtDate(seit)}` : "derzeit"}: Beim letzten vollständigen Abruf kamen deutlich weniger ${was} an als bisher; das wird geprüft. Gezeigt wird ${a[k].stand ? `der Stand vom ${zeitDatum(a[k].stand)}` : "der letzte gültige Stand"}.`;
+  }).join("");
   // fehlgeschlagener Abruf (index.json meta.abruf_fehler) im Datenstand
   const standFehler = (f) => f ? ` · Der letzte Abruf am ${zeitDatum(f.zeit)} ist fehlgeschlagen; gezeigt wird der letzte gültige Datenstand.` : "";
   // Zeile im Datenstand (#stand) aus meta (Quellen, generated_at) und index.json meta (Fehler, Warnungen); alle Daten
@@ -108,7 +128,8 @@
     const quellen = (Array.isArray(m && m.sources) ? m.sources : []).filter((s) => s && s.retrieved_at)
       .map((s) => `${QUELLE_NAME[s.name] || s.name}: ${zeitDatum(s.retrieved_at)}`).join(" · ");
     return `Datenstand: ${quellen || "–"}${m && m.generated_at ? ` · erzeugt ${zeitDatum(m.generated_at)}` : ""}`
-      + standFehler(im && im.abruf_fehler) + standWarnungen(im && im.abruf_warnungen);
+      + standFehler(im && im.abruf_fehler) + standWarnungen(im && im.abruf_warnungen)
+      + standAusgesetzt(im && im.abruf_ausgesetzt);
   };
   // Datenstand als Berliner Kalendertag (Markierung in der Zeitleiste, Jahresgrenze in hasPaperFeed) nach derselben
   // Regel (zeitTag): Abruf des Ratsinformationssystems, sonst Erzeugung, sonst heute; nur lesbare Werte
@@ -1233,7 +1254,11 @@
   function fillFilters() {
     const uniq = (a) => [...new Set(a.filter(Boolean))].sort((x, y) => x.localeCompare(y, "de"));
     options($("#f-type"), uniq(papers.map((p) => p.paper_type)));
-    options($("#f-amt"), uniq(papers.map((p) => p.amt)));
+    const aemter = uniq(papers.map((p) => p.amt));
+    options($("#f-amt"), aemter);
+    // Ohne federführende Dienststelle in den Daten (in Köln fehlt underDirectionOf bisher bei allen Vorlagen) kein
+    // Filter, der nur „alle“ anbietet (Prüfung stj)
+    $("#f-amt").closest("label").hidden = !aemter.length;
     options($("#f-gremium"), uniq(papers.flatMap((p) => p.process.map((s) => s.gremium))));
     fillParties();
   }
@@ -1941,7 +1966,7 @@
     syncUrl();
     if (tl) tl.select(p);
     highlight();
-    const resp = p.responsibility.map((r) => [`${esc(r.label)}${r.derived ? ` <span class="derived">abgeleitet, über ${esc(r.evidence)}</span>` : ""}`, aemterZeile(r.aemtertabelle)].filter(Boolean).join("<br>")).join("<br>");
+    const resp = p.responsibility.map(federZeile).join("<br>");
     const outside = (l) => (area.kind === "ortsteil" && l.ortsteil && l.ortsteil !== area.name)
       || (area.kind === "bezirk" && l.stadtbezirk && l.stadtbezirk !== area.name);
     const locItem = (l) => `<li><strong>${esc(l.name || l.ortsteil || l.stadtbezirk)}</strong>

@@ -31,9 +31,10 @@ Verglichen wird
 Nur eindeutige Treffer zählen (ZUGEORDNET); alles andere bleibt wie zuvor und trägt nur den Status (Export
 `responsibility[].aemtertabelle`, `audit_federfuehrung.tsv`).
 
-Schnittstelle für den Schritt „Dokumente“ (PDF-Köpfe, eigener Branch): Er legt die erkannte Kennung je Vorlage in
-`paper_responsibility.kennung` ab; `export` ordnet sie über `zuordnen(kennung=…, datum=…)` zu, sobald die Spalte da ist
-(`zuordnung_federfuehrung`). Wer die Kennung anders weiterreicht, ruft `zuordnen` direkt auf.
+Schnittstelle für den Schritt „Dokumente“ (PDF-Köpfe, pipeline/dokumente.py, abgeschaltet bis zur Freigabe): Er legt
+die erkannte Kennung je Vorlage in `paper_responsibility.kennung` ab; `export` ordnet sie über `zuordnen(kennung=…,
+datum=…)` zu (`zuordnung_federfuehrung`), die Seite zeigt das Ergebnis wie bei `underDirectionOf` (site/app.js:
+`federZeile`, `aemterZeile`). Wer die Kennung anders weiterreicht, ruft `zuordnen` direkt auf.
 """
 import csv
 import re

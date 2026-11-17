@@ -14,7 +14,7 @@ import sqlite3
 from collections import Counter
 from pathlib import Path
 
-from . import actors, besetzung, config, geocode, kontext, maske
+from . import actors, besetzung, config, geocode, kontext, maske, pdfkopf
 
 # Gebiete laut CLAUDE.md 2: ganz Köln mit 86 Stadtteilen und 9 Stadtbezirken
 STADTTEILE, STADTBEZIRKE = 86, 9
@@ -75,6 +75,7 @@ def check():
         kennzahlen(db)
         befunde, fehlend = gebiete(db)
         ds = datenschutz(db)
+        befunde += federfuehrung_kopf(db)
     finally:
         db.close()
     befunde += ds["befunde"]
@@ -93,6 +94,44 @@ def check():
                 ([f"nicht durchgeführt (Datei fehlt): {'; '.join(fehlend)}"] if fehlend else [])
         raise SystemExit("Prüfung fehlgeschlagen – " + " | ".join(teile))
     print("Alle Prüfungen durchgeführt, keine Befunde.")
+
+
+def federfuehrung_kopf(db):
+    """Federführung aus dem Kopf der Vorlage (pipeline/dokumente.py; Methode „pdf_kopf“ aus mainFile, „pdf_kopf_anlage“
+    aus auxiliaryFile, Entscheidung 13.11.2026 (a)): jede Zeile nur mit Kennung nach pdfkopf.KENNUNG_FORM, Fundstelle
+    genau „Kopf der Vorlage (S. 1): <Kennung>“ bzw. „Kopf der Anlage (S. 1): <Kennung>“ (kein Text des Dokuments),
+    Konfidenz der Methode (pdfkopf.VERWENDUNG: aus einer Anlage nur „niedrig“), ohne Organisation (Dezernat und
+    Dienststelle ordnet erst der Export über die Ämtertabelle zu), nur bei Vorlagen ohne underDirectionOf und mit
+    Erlaubnis für Hauskoordinaten (erlaubnis, dieselbe Regel wie im Aufbau), höchstens eine Zeile je Vorlage. Liefert
+    die Befunde."""
+    print("\nFederführung aus dem Kopf der Vorlage (PDF, Seite 1)")
+    spalten = {r[1] for r in db.execute("PRAGMA table_info(paper_responsibility)")}
+    if not {"confidence", "kennung"} <= spalten:
+        print("nicht anwendbar: Datenbank ohne die Spalten confidence und kennung")
+        return []
+    # Methode → (Fundstelle, zulässige Konfidenzen)
+    verwendung = {methode: (evidenz, set(konfidenz.values()))
+                  for methode, evidenz, konfidenz in pdfkopf.VERWENDUNG.values()}
+    zeilen = db.execute(
+        "SELECT r.paper_id, p.reference, r.organization_id, r.kind, r.evidence, r.derived, r.confidence, r.kennung, "
+        "p.under_direction_of, r.method FROM paper_responsibility r JOIN paper p ON p.id = r.paper_id "
+        f"WHERE r.method IN ({', '.join('?' * len(verwendung))})", tuple(verwendung)).fetchall()
+    if not zeilen:
+        print("keine (Dokumentschritt abgeschaltet oder ohne erkannte Kennung)")
+        return []
+    erlaubt = erlaubnis(db)[0]
+    je_vorlage = Counter(pid for pid, *_ in zeilen)
+    falsch = sorted({ref for pid, ref, org, kind, ev, derived, conf, kennung, udo, methode in zeilen
+                     if not (isinstance(kennung, str) and pdfkopf.KENNUNG_FORM.fullmatch(kennung)
+                             and ev == f"{verwendung[methode][0]}: {kennung}" and org is None
+                             and kind == "federfuehrend" and derived == 1 and conf in verwendung[methode][1]
+                             and not udo and erlaubt.get(pid) and je_vorlage[pid] == 1)})
+    arten = Counter(z[-1] for z in zeilen)
+    print(f"{len(zeilen)} Vorlagen mit Kennung aus dem Kopf (ohne Organisation, Zuordnung zur Ämtertabelle im Export; "
+          + ", ".join(f"{m} {arten[m]}" for m in verwendung) + f"); in unerwarteter Form oder ohne Erlaubnis: "
+          f"{len(falsch)}")
+    return ([f"Federführung aus dem Kopf der Vorlage in unerwarteter Form, bei Vorlagen mit underDirectionOf oder ohne "
+             f"Erlaubnis für Hauskoordinaten: {', '.join(falsch[:20])}"] if falsch else [])
 
 
 def _pct(n, d):
