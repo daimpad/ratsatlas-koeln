@@ -120,12 +120,17 @@ def _paper_detail(db, pid):
                   db.execute("SELECT plan_nr, evidence, match FROM paper_plan WHERE paper_id = ?", (pid,))],
         "source_object": pid,
     }
-    # Stand nach dem letzten Eintrag jeder Beratung: Steht eine Kennung in derselben Vorlage mehrfach (etwa nach einer
-    # Vertagung), zählt für den Stand nur ihr letzter Eintrag, wie vor der Entscheidung 17.11.2026 (14), als nur er in
-    # der Datenbank stand; die früheren Einträge bleiben Stationen der Prozesslinie
-    letzter = {r["beratung"]: i for i, r in enumerate(process)}
-    d["stand"] = proc.stand({"process": [s for i, (s, r) in enumerate(zip(d["process"], process))
-                                         if letzter[r["beratung"]] == i]})
+    # Stand nach dem Eintrag jeder Beratung, der zählt (Entscheidung 17.11.2026 (15), proc.massgeblich): Steht eine
+    # Kennung in derselben Vorlage mehrfach (etwa nach einer Vertagung), zählt ihr Eintrag mit dem spätesten
+    # Sitzungstag, bei gleichem Tag der spätere in der Beratungsfolge; hat ihr letzter Eintrag noch keinen Sitzungstag,
+    # zählt er (bis dahin immer der letzte Eintrag, Entscheidung 17.11.2026 (14)). Die übrigen Einträge bleiben
+    # Stationen der Prozesslinie
+    je_kennung = {}
+    for i, r in enumerate(process):
+        je_kennung.setdefault(r["beratung"], []).append(i)
+    zaehlt = {stellen[proc.massgeblich([proc.local_day(process[i]["start_date"]) for i in stellen])]
+              for stellen in je_kennung.values()}
+    d["stand"] = proc.stand({"process": [s for i, s in enumerate(d["process"]) if i in zaehlt]})
     d["themes"] = topics.themes(d)
     d["parties"] = topics.parties(d)
     d["steps"] = [{k: v for k, v in s.items() if v not in (None, [], False)} for s in proc.steps(d)]

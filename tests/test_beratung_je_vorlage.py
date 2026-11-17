@@ -4,8 +4,9 @@ Vorlagen stehen und in derselben Vorlage mehrfach, je Eintrag mit eigener Sitzun
 (`id`, `paper_id`) der Schlüssel der Tabelle consultation, und nur der letzte Eintrag blieb. Jetzt ist der Schlüssel
 (`id`, `paper_id`, `position`): Jeder Eintrag ist eine eigene Zeile und eine eigene Station der Prozesslinie (Datum,
 Gremium, TOP und Ergebnis im Export, Zählung in check und verify); der Stand der Vorlage folgt bei einer wiederholten
-Kennung ihrem letzten Eintrag. Abruf und Format von beratungen.jsonl bleiben unverändert. Alle Objekte sind erfunden
-(lokaler Testserver); keine Anfragen an die Stadt."""
+Kennung ihrem Eintrag mit dem spätesten Sitzungstag, bei gleichem Tag dem späteren, ohne Sitzungstag beim letzten
+Eintrag diesem (Entscheidung 17.11.2026 (15); vorher dem letzten Eintrag). Abruf und Format von beratungen.jsonl
+bleiben unverändert. Alle Objekte sind erfunden (lokaler Testserver); keine Anfragen an die Stadt."""
 import json
 import sqlite3
 
@@ -14,6 +15,9 @@ from pipeline import build, check, config, export, sessionnet, verify
 GREMIUM = "Bezirksvertretung 4 (Ehrenfeld)"
 BEGINN = "2026-10-01T17:00:00+02:00"
 BESCHLOSSEN, KENNTNIS = "ungeändert beschlossen", "Kenntnis genommen"   # Ergebnisse der TOPs des Testservers
+# Regel für den Stand im Text von check (Entscheidung 17.11.2026 (15))
+REGEL = ("(der Stand folgt dem Eintrag mit dem spätesten Sitzungstag, bei gleichem Tag dem späteren; hat der letzte "
+         "Eintrag keinen Sitzungstag, folgt er diesem)")
 
 
 def _beratung(oparl, kennung, top, **felder):
@@ -122,9 +126,10 @@ def _eintrag(oparl, kennung, sitzung=None, top=None, **felder):
 def test_dieselbe_kennung_dreimal_jeder_eintrag_eine_station(oparl, capsys, monkeypatch):
     """Entscheidung 17.11.2026 (14): AN/102/2026 trägt dieselbe Kennung dreimal (dieselbe Bezirksvertretung, drei
     Sitzungen: vertagt, vertagt, beschlossen): drei Zeilen, drei Stationen in der Reihenfolge der Beratungsfolge mit
-    Datum, Gremium, TOP und Ergebnis, Stand „entschieden“ nach dem letzten Eintrag. AN/104/2026 trägt eine zweite
-    Kennung zweimal (vertagt, dann zur Kenntnis genommen, nicht entscheidend): Der Stand folgt dem letzten Eintrag
-    („beraten, ohne Entscheidung“, nicht „in Beratung“ wegen der früheren Vertagung). 1005/2026 trägt eine dritte
+    Datum, Gremium, TOP und Ergebnis, Stand „entschieden“ nach dem letzten Eintrag (zugleich dem spätesten
+    Sitzungstag). AN/104/2026 trägt eine zweite Kennung zweimal (vertagt, dann zur Kenntnis genommen, nicht
+    entscheidend): Der Stand folgt dem letzten Eintrag („beraten, ohne Entscheidung“, nicht „in Beratung“ wegen der
+    früheren Vertagung). 1005/2026 trägt eine dritte
     Kennung dreimal, der mittlere Eintrag ohne eigene Sitzung und TOP: Er bleibt ohne, weil die Einträge derselben
     Kennung verschiedene Zeilen in beratungen.jsonl haben. Sitzungen und TOPs aller Einträge stehen in der Datenbank;
     Log, check und verify zählen jeden Eintrag; dieselbe Bezirksvertretung in mehreren Einträgen bleibt eine
@@ -177,7 +182,7 @@ def test_dieselbe_kennung_dreimal_jeder_eintrag_eine_station(oparl, capsys, monk
     assert "mit Sitzung: 9 von 10 (90.0 %)" in aus and "mit TOP-Ergebnis: 9 von 10 (90.0 %)" in aus
     # Prüfung bs: alle drei wiederholten Kennungen nach dem Sitzungstag geordnet (der Eintrag ohne Sitzung zählt nicht)
     assert ("Kennungen mehrfach in derselben Vorlage, deren Einträge nicht nach dem Sitzungstag geordnet sind: 0 von 3 "
-            "(der Stand folgt dem letzten Eintrag in der Beratungsfolge)\n") in aus
+            + REGEL + "\n") in aus
     db.close()
     assert zeile + ("; 8 Einträge mit einer Kennung, die in beratungen.jsonl mit verschiedener Sitzung oder "
                     "verschiedenem TOP steht (je Eintrag nach seinen eigenen Verweisen zugeordnet); 0 Einträge ohne "
@@ -197,8 +202,9 @@ def test_dieselbe_kennung_dreimal_jeder_eintrag_eine_station(oparl, capsys, monk
 
 def test_wiederholte_kennung_reihenfolge_und_feed_ids(oparl, capsys):
     """Prüfung bs: 1001/2026 trägt eine Kennung dreimal, nach der Beratungsfolge zuerst am 05.11. (beschlossen), dann am
-    08.10. und 22.10. (vertagt): check zählt sie als nicht nach dem Sitzungstag geordnet (der Stand folgt dem letzten
-    Eintrag in der Beratungsfolge; ob er dem spätesten Sitzungstag folgen soll, ist offen). AN/102/2026 trägt eine
+    08.10. und 22.10. (vertagt): check zählt sie als nicht nach dem Sitzungstag geordnet, und der Stand folgt dem
+    Beschluss am spätesten Sitzungstag („entschieden“, Entscheidung 17.11.2026 (15); vorher „in Beratung“ nach dem
+    letzten Eintrag). AN/102/2026 trägt eine
     Kennung zweimal in derselben Sitzung unter zwei TOPs: Die Einträge der Feeds haben verschiedene IDs, die erste wie
     bisher aus Datum und Gremium, die zweite mit der TOP-Nummer; kein Feed enthält eine ID doppelt."""
     import xml.etree.ElementTree as ET
@@ -213,8 +219,12 @@ def test_wiederholte_kennung_reihenfolge_und_feed_ids(oparl, capsys):
     assert check.reihenfolge_wiederholter_kennungen(db) == (2, 1)
     check.kennzahlen(db)
     assert ("Kennungen mehrfach in derselben Vorlage, deren Einträge nicht nach dem Sitzungstag geordnet sind: 1 von 2 "
-            "(der Stand folgt dem letzten Eintrag in der Beratungsfolge)\n") in capsys.readouterr().out
+            + REGEL + "\n") in capsys.readouterr().out
     db.close()
+    assert _stationen(_exportiert()["1001/2026"])[0] == [(SITZUNGEN["v3"], GREMIUM, "5.3", BESCHLOSSEN),
+                                                         (SITZUNGEN["v1"], GREMIUM, "3.1", VERTAGT),
+                                                         (SITZUNGEN["v2"], GREMIUM, "4.2", VERTAGT)]
+    assert _exportiert()["1001/2026"]["stand"] == "entschieden"
     p = _exportiert()["AN/102/2026"]
     assert _stationen(p)[0] == [(BEGINN, GREMIUM, "8.1", BESCHLOSSEN), (BEGINN, GREMIUM, "8.4", KENNTNIS)]
     basis = f"{oparl.papers[1]['id']}#beratung-2026-10-01-{quote(GREMIUM, safe='')}"
@@ -228,6 +238,76 @@ def test_wiederholte_kennung_reihenfolge_und_feed_ids(oparl, capsys):
         assert len(ids) == len(set(ids)), f.name
         gefunden.update(i for i in ids if i.startswith(basis))
     assert gefunden == {basis, basis + "-top-8.4"}
+
+
+OFFEN = "Noch keine Beratung mit abschließendem Ergebnis; nach einer Vertagung zählt der neue Termin."
+
+
+def test_stand_nach_dem_spaetesten_sitzungstag(oparl, capsys):
+    """Entscheidung 17.11.2026 (15) (A): Bei einer Kennung mehrfach in derselben Vorlage folgt der Stand ihrem Eintrag
+    mit dem spätesten Sitzungstag. AN/102/2026 (geordnet: vertagt 08.10., vertagt 22.10., beschlossen 05.11.) bleibt
+    „entschieden“. 1003/2026 (vertagt 08.10., vertagt 22.10., dann ein Eintrag ohne Sitzung, etwa ein neuer Termin,
+    der noch nicht feststeht): Der letzte Eintrag zählt wie bisher, „offen“ (nach dem spätesten Tag wäre es „in
+    Beratung“). Gleicher Tag (22.10., zwei TOPs derselben Sitzung): der spätere Eintrag, also AN/104/2026 (zur Kenntnis
+    genommen, dann vertagt) „in Beratung“ und 1005/2026 (vertagt, dann zur Kenntnis genommen) „entschieden“. Das
+    Glossar im Export erklärt „offen“ mit dem Text aus (15) (B)."""
+    _sitzungen_mit_vertagung(oparl)
+    oparl.papers[1]["consultation"] = [_eintrag(oparl, "g", "v1", "v1"), _eintrag(oparl, "g", "v2", "v2"),
+                                       _eintrag(oparl, "g", "v3", "v3")]
+    oparl.papers[2]["consultation"] = [_eintrag(oparl, "u", "v1", "v1"), _eintrag(oparl, "u", "v2", "v2"),
+                                       _eintrag(oparl, "u")]
+    oparl.papers[3]["consultation"] = [_eintrag(oparl, "t", "v2", "w2"), _eintrag(oparl, "t", "v2", "v2")]
+    oparl.papers[4]["consultation"] = [_eintrag(oparl, "s", "v2", "v2"), _eintrag(oparl, "s", "v2", "w2")]
+    _aufbauen(oparl, capsys)
+    vorlagen = _exportiert()
+    assert _stationen(vorlagen["1003/2026"])[0] == [(SITZUNGEN["v1"], GREMIUM, "3.1", VERTAGT),
+                                                    (SITZUNGEN["v2"], GREMIUM, "4.2", VERTAGT),
+                                                    (None, GREMIUM, None, None)]
+    assert _stationen(vorlagen["AN/104/2026"])[0] == [(SITZUNGEN["v2"], GREMIUM, "4.3", KENNTNIS),
+                                                      (SITZUNGEN["v2"], GREMIUM, "4.2", VERTAGT)]
+    assert _stationen(vorlagen["1005/2026"])[0] == [(SITZUNGEN["v2"], GREMIUM, "4.2", VERTAGT),
+                                                    (SITZUNGEN["v2"], GREMIUM, "4.3", KENNTNIS)]
+    assert {ref: vorlagen[ref]["stand"] for ref in ("AN/102/2026", "1003/2026", "AN/104/2026", "1005/2026")} == {
+        "AN/102/2026": "entschieden", "1003/2026": "offen", "AN/104/2026": "in Beratung", "1005/2026": "entschieden"}
+    db = sqlite3.connect(config.DB)
+    assert check.reihenfolge_wiederholter_kennungen(db) == (4, 0)
+    db.close()
+    assert json.loads((config.EXPORT / "glossar.json").read_text(encoding="utf-8"))["staende"]["offen"] == OFFEN
+
+
+def test_massgeblich_und_dossier():
+    """process.massgeblich (Entscheidung 17.11.2026 (15) (A)) und dieselbe Regel in dossier._eintrag (Themenseiten,
+    abgeschaltet): die letzte Beratung mit Ergebnis nach dem spätesten Sitzungstag (bei gleichem Tag die spätere, ohne
+    Sitzungstag beim letzten Eintrag dieser), die nächste nach dem frühesten kommenden Tag (bei gleichem Tag die
+    frühere), nicht nach der Stelle in der Beratungsfolge. Erfundene Einträge."""
+    from pipeline import dossier, glossar, process
+    m = process.massgeblich
+    assert m([]) is None and m([None]) == 0 and m([None, None]) == 1
+    assert m(["2026-10-08", "2026-10-22", "2026-11-05"]) == 2       # geordnet: der letzte, wie bisher
+    assert m(["2026-11-05", "2026-10-08", "2026-10-22"]) == 0       # Beschluss am spätesten Tag an erster Stelle
+    assert m(["2026-10-08", "2026-10-22", None]) == 2               # der letzte ohne Sitzungstag zählt, wie bisher
+    assert m(["2026-11-05", None, "2026-10-22"]) == 0               # ein früherer ohne Sitzungstag zählt nicht mit
+    assert m(["2026-10-22", "2026-10-22"]) == 1                     # gleicher Tag: der spätere
+
+    def b(gremium, start, result=None, cancelled=False):
+        return {"gremium": gremium, "start_date": start, "result": result, "cancelled": cancelled}
+
+    p = {"reference": "1001/2026", "process": [
+        b("A", "2026-11-05T17:00:00+01:00", BESCHLOSSEN), b("B", "2026-10-08T17:00:00+02:00", VERTAGT),
+        b("C", "2026-10-22T17:00:00+02:00", VERTAGT), b("D", "2026-12-10T17:00:00+01:00"),
+        b("E", "2026-11-20T17:00:00+01:00"), b("F", "2026-11-20T17:00:00+01:00"),
+        b("G", "2026-11-18T17:00:00+01:00", cancelled=True), b("H", "2026-11-01T17:00:00+01:00")]}
+    e = dossier._eintrag(p, None, "2026-11-17")
+    assert e["letzte_beratung"] == {"gremium": "A", "date": "2026-11-05", "result": BESCHLOSSEN}   # vorher C
+    assert e["naechste_beratung"] == {"gremium": "E", "date": "2026-11-20"}                       # vorher D
+    gleich = {"reference": "1001/2026", "process": [b("A", "2026-10-22T17:00:00+02:00", KENNTNIS),
+                                                    b("B", "2026-10-22T18:00:00+02:00", VERTAGT)]}
+    assert dossier._eintrag(gleich, None, "2026-11-17")["letzte_beratung"]["gremium"] == "B"
+    ohne_tag = {"reference": "1001/2026", "process": [b("A", "2026-11-05T17:00:00+01:00", BESCHLOSSEN),
+                                                      b("B", None, VERTAGT)]}
+    assert dossier._eintrag(ohne_tag, None, "2026-11-17")["letzte_beratung"] == {"gremium": "B", "date": None,
+                                                                                  "result": VERTAGT}
+    assert glossar.STAENDE["offen"] == glossar.glossar()["staende"]["offen"] == OFFEN
 
 
 def test_wiederholte_kennung_erstes_gremium_fuer_datenschutz(oparl, capsys):

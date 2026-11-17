@@ -78,7 +78,8 @@ STAENDE = {
     "beraten, ohne Entscheidung": "Alle Beratungen sind abgeschlossen, keine davon war entscheidend "
                                   "(z. B. Mitteilungen, die zur Kenntnis genommen wurden).",
     "in Beratung": "Mindestens eine Beratung hat ein Ergebnis, andere stehen aus oder wurden vertagt.",
-    "offen": "Noch keine Beratung mit Ergebnis.",
+    # Entscheidung 17.11.2026 (15) (B): Nach einer Vertagung zählt der neue Termin (export._paper_detail)
+    "offen": "Noch keine Beratung mit abschließendem Ergebnis; nach einer Vertagung zählt der neue Termin.",
     "ohne Beratungsfolge": "Für die Vorlage ist keine Beratung in einem Gremium erfasst.",
 }
 

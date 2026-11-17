@@ -55,6 +55,18 @@ def local_day(ts):
     return (dt.astimezone(BERLIN) if dt.tzinfo else dt).date().isoformat()
 
 
+def massgeblich(tage):
+    """Stelle des Eintrags, der zählt, unter Einträgen in ihrer Reihenfolge in der Beratungsfolge, je mit Sitzungstag
+    (local_day) oder None (Entscheidung 17.11.2026 (15)): der späteste Sitzungstag, bei gleichem Tag der spätere
+    Eintrag. Hat der letzte Eintrag keinen Sitzungstag (etwa ein neuer Termin, der noch nicht feststeht), zählt er wie
+    vor der Entscheidung. None ohne Einträge."""
+    if not tage:
+        return None
+    if not tage[-1]:
+        return len(tage) - 1
+    return max((t, i) for i, t in enumerate(tage) if t)[1]
+
+
 def is_final(result):
     """Ergebnis, das die Beratung abschließt (nicht vertagt, verwiesen, nicht aufgenommen)."""
     return bool(result) and not any(k in result for k in SCHLEIFE)
@@ -152,7 +164,9 @@ def stand(p):
     - beraten, ohne Entscheidung: alle Beratungen abgeschlossen, keine davon entscheidend
       (z. B. Mitteilungen und Stellungnahmen, die zur Kenntnis genommen wurden)
     - in Beratung: mindestens eine Beratung hat ein Ergebnis, andere stehen aus oder wurden vertagt
-    - offen: noch keine Beratung mit Ergebnis"""
+    - offen: noch keine Beratung mit Ergebnis
+    Bei einer Kennung mehrfach in derselben Vorlage übergibt export._paper_detail nur den Eintrag, der zählt
+    (massgeblich), nach einer Vertagung also den neuen Termin."""
     s = p["process"]
     if not s:
         return "ohne Beratungsfolge"
@@ -171,6 +185,6 @@ def path_key(p):
     das Ergebnis der entscheidenden Beratung (wörtlich aus der Quelle) oder ersatzweise der Stand."""
     stations = [f"{s['gremium'] or '?'} ({s['role'] or '?'})" for s in p["process"]]
     final = next((s["result"] for s in reversed(p["process"]) if s["authoritative"] and s["result"]), None)
-    # Stand wie im Export (export._paper_detail: bei einer Kennung mehrfach in derselben Vorlage nach ihrem letzten
-    # Eintrag)
+    # Stand wie im Export (export._paper_detail: bei einer Kennung mehrfach in derselben Vorlage nach dem Eintrag, der
+    # zählt, massgeblich)
     return tuple(stations), final or p.get("stand") or stand(p), "ergebnis" if final else "stand"
