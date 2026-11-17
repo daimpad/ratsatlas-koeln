@@ -214,19 +214,20 @@ def stand_und_ende(db, base=None):
     """Widersprüche zwischen dem Stand im Export und dem Ende des Weges in prozesse.json (Offen (8) in TECHNIK.md,
     Entscheidung 17.11.2026 (16) (B); nur Zahlen, kein Befund). Das Ende wie in export._paths: process.path_key mit den
     Stationen der Vorlage aus den Gebietsdateien des Exports (`base`, Vorgabe config.EXPORT / config.STADT) und den
-    Kennungen ihrer Beratungen aus der Datenbank nach `position`; jede Vorlage einmal, auch wenn sie in mehreren
-    Gebietsdateien steht. Liefert (Vorlagen mit Stand „entschieden“ und einem Ergebnis am Ende, das die Beratung nicht
-    abschließt (nicht process.is_final); Vorlagen mit anderem Stand und einem Ergebnis am Ende, das als Ergebnis einer
-    entscheidenden Beratung „entschieden“ ergibt (process.stand); Vorlagen mit Ergebnis am Ende; Vorlagen, deren Zahl
-    der Stationen nicht zur Datenbank passt, ohne Zählung) oder None ohne Gebietsdateien."""
-    from . import process as proc
+    Kennungen ihrer Beratungen aus der Datenbank nach `position` (export._kennungen, wie export._paths); jede Vorlage
+    einmal, auch wenn sie in mehreren Gebietsdateien steht. prozesse.json zählt alle Vorlagen der Datenbank, die
+    Gebietsdateien nicht jede (etwa eine Vorlage ohne Datum und ohne Ortsbezug); solche Vorlagen zählt die letzte Zahl.
+    Liefert (Vorlagen mit Stand „entschieden“ und einem Ergebnis am Ende, das die Beratung nicht abschließt (nicht
+    process.is_final); Vorlagen mit anderem Stand und einem Ergebnis am Ende, das als Ergebnis einer entscheidenden
+    Beratung „entschieden“ ergibt (process.stand); Vorlagen der Gebietsdateien mit Ergebnis am Ende; Vorlagen, deren
+    Zahl der Stationen nicht zur Datenbank passt, ohne Zählung; Vorlagen der Datenbank in keiner Gebietsdatei, ohne
+    Zählung) oder None ohne Gebietsdateien."""
+    from . import export, process as proc
     base = base or config.EXPORT / config.STADT
     dateien = [f for d in GEBIETSDATEIEN for f in sorted((base / d).glob("*.json"))]
     if not dateien:
         return None
-    kennungen = {}
-    for pid, kennung in db.execute("SELECT paper_id, id FROM consultation ORDER BY paper_id, position"):
-        kennungen.setdefault(pid, []).append(kennung)
+    kennungen = export._kennungen(db)
     gesehen, offen_entschieden, entschieden_anders, mit_ergebnis, abweichend = set(), 0, 0, 0, 0
     for f in dateien:
         for p in json.loads(f.read_text())["papers"]:
@@ -245,7 +246,8 @@ def stand_und_ende(db, base=None):
                 offen_entschieden += not proc.is_final(ende)
             elif proc.stand({"process": [{"authoritative": True, "result": ende}]}) == "entschieden":
                 entschieden_anders += 1
-    return offen_entschieden, entschieden_anders, mit_ergebnis, abweichend
+    ohne_datei = sum(pid not in gesehen for (pid,) in db.execute("SELECT id FROM paper"))
+    return offen_entschieden, entschieden_anders, mit_ergebnis, abweichend, ohne_datei
 
 
 def kennzahlen(db):
@@ -281,8 +283,8 @@ def kennzahlen(db):
     if reihenfolge:
         print(f"Kennungen mehrfach in derselben Vorlage, deren Einträge nicht nach dem Sitzungstag geordnet sind: "
               f"{reihenfolge[1]} von {reihenfolge[0]} (der Stand folgt dem Eintrag mit dem spätesten Sitzungstag, bei "
-              f"gleichem Tag dem späteren; hat der letzte Eintrag keinen Sitzungstag, folgt er diesem; Einträge "
-              f"abgesagter Sitzungen zählen dabei nicht)")
+              f"gleichem Tag dem späteren; hat der letzte Eintrag keinen Sitzungstag, folgt er diesem; für den Stand "
+              f"zählen Einträge abgesagter Sitzungen nicht)")
     # Entscheidung 17.11.2026 (16) (B): Wirkung von (16) (A) und Widersprüche zwischen Stand und Ende des Weges (Offen
     # (8)), nur Zahlen, kein Befund
     abgesagt = abgesagte_wiederholter_kennungen(db)
@@ -293,8 +295,10 @@ def kennzahlen(db):
     print("Stand und Ende des Weges (prozesse.json) widersprechen sich: " + (
         "nicht ermittelt (Gebietsdateien des Exports fehlen)" if ende is None else
         f"{ende[0]} Vorlagen mit Stand „entschieden“ und nicht abschließendem Ergebnis am Ende (etwa vertagt), "
-        f"{ende[1]} Vorlagen mit Entscheidung am Ende und anderem Stand, von {ende[2]} Vorlagen mit Ergebnis am Ende"
-        + (f"; {ende[3]} Vorlagen nicht gezählt (Zahl der Stationen passt nicht zur Datenbank)" if ende[3] else "")))
+        f"{ende[1]} Vorlagen mit Entscheidung am Ende und anderem Stand, von {ende[2]} Vorlagen der Gebietsdateien "
+        f"mit Ergebnis am Ende"
+        + (f"; {ende[3]} Vorlagen nicht gezählt (Zahl der Stationen passt nicht zur Datenbank)" if ende[3] else "")
+        + (f"; {ende[4]} Vorlagen der Datenbank in keiner Gebietsdatei, nicht gezählt" if ende[4] else "")))
     # Anteile je Zeile, also je Eintrag der Beratungsfolge einer Vorlage (Entscheidung 17.11.2026 (14))
     print("mit Sitzung:", _pct(one("SELECT COUNT(*) FROM consultation WHERE meeting_id IS NOT NULL"), cons))
     print("mit TOP-Ergebnis:", _pct(one(

@@ -183,7 +183,8 @@ def stand(p):
     - in Beratung: mindestens eine Beratung hat ein Ergebnis, andere stehen aus oder wurden vertagt
     - offen: noch keine Beratung mit Ergebnis
     Bei einer Kennung mehrfach in derselben Vorlage übergibt export._paper_detail nur den Eintrag, der zählt
-    (massgeblich), nach einer Vertagung also den neuen Termin."""
+    (massgeblich), nach einer Vertagung also den neuen Termin, ohne Einträge abgesagter Sitzungen, außer alle sind
+    abgesagt (Entscheidung 17.11.2026 (16) (A))."""
     s = p["process"]
     if not s:
         return "ohne Beratungsfolge"

@@ -18,7 +18,7 @@ BEGINN = "2026-10-01T17:00:00+02:00"
 BESCHLOSSEN, KENNTNIS = "ungeändert beschlossen", "Kenntnis genommen"   # Ergebnisse der TOPs des Testservers
 # Regel für den Stand im Text von check (Entscheidungen 17.11.2026 (15) und (16))
 REGEL = ("(der Stand folgt dem Eintrag mit dem spätesten Sitzungstag, bei gleichem Tag dem späteren; hat der letzte "
-         "Eintrag keinen Sitzungstag, folgt er diesem; Einträge abgesagter Sitzungen zählen dabei nicht)")
+         "Eintrag keinen Sitzungstag, folgt er diesem; für den Stand zählen Einträge abgesagter Sitzungen nicht)")
 
 
 def _beratung(oparl, kennung, top, **felder):
@@ -427,7 +427,7 @@ def test_abgesagte_sitzung_zaehlt_nicht_fuer_den_stand(oparl, capsys, monkeypatc
     db = sqlite3.connect(config.DB)
     assert check.reihenfolge_wiederholter_kennungen(db) == (4, 2)
     assert check.abgesagte_wiederholter_kennungen(db) == (4, 3)
-    assert check.stand_und_ende(db) == (1, 1, 6, 0)
+    assert check.stand_und_ende(db) == (1, 1, 6, 0, 0)
     db.close()
     for name, leer in (("gebiete", ([], [])), ("datenschutz", {"befunde": [], "fehlend": []}),
                        ("federfuehrung_kopf", []), ("zusatzthemen", ([], []))):
@@ -438,7 +438,7 @@ def test_abgesagte_sitzung_zaehlt_nicht_fuer_den_stand(oparl, capsys, monkeypatc
             + REGEL + "\nKennungen mehrfach in derselben Vorlage, bei denen wegen einer abgesagten Sitzung ein anderer "
             "Eintrag zählt: 3 von 4\nStand und Ende des Weges (prozesse.json) widersprechen sich: 1 Vorlagen mit Stand "
             "„entschieden“ und nicht abschließendem Ergebnis am Ende (etwa vertagt), 1 Vorlagen mit Entscheidung am "
-            "Ende und anderem Stand, von 6 Vorlagen mit Ergebnis am Ende\n") in aus
+            "Ende und anderem Stand, von 6 Vorlagen der Gebietsdateien mit Ergebnis am Ende\n") in aus
     assert aus.endswith("\nErgebnis\nAlle Prüfungen durchgeführt, keine Befunde.\n")
 
 
@@ -497,6 +497,58 @@ def test_abgesagte_sitzungen_massgeblich_weg_und_dossier(tmp_path):
     assert dossier._eintrag(p, None, "2026-11-17")["letzte_beratung"]["gremium"] == "A"   # alle abgesagt: wie (15)
     db = sqlite3.connect(":memory:")
     assert check.stand_und_ende(db, base=tmp_path) is None
+    db.close()
+
+
+def test_stand_und_ende_aus_den_gebietsdateien(tmp_path, oparl, capsys, monkeypatch):
+    """Entscheidung 17.11.2026 (16) (B1), Wege von check.stand_und_ende mit erfundenen Gebietsdateien: Eine Vorlage in
+    zwei Gebietsdateien zählt einmal (Stand „entschieden“, Ende „vertagt“), zwei Vorlagen mit derselben Drucksache
+    zählen je für sich (nach source_object), eine Vorlage ohne Einträge in der Datenbank wird nicht gezählt, ebenso eine
+    Vorlage der Datenbank in keiner Gebietsdatei. Dazu die Zeile von check.kennzahlen mit einer Vorlage ohne Datum und
+    ohne Ortsbezug (sie steht in keiner Gebietsdatei, prozesse.json zählt sie mit) und ohne Export."""
+    def station(start, result):
+        return {"gremium": "Bezirksvertretung", "role": "Entscheidung", "authoritative": True, "start_date": start,
+                "result": result, "cancelled": False}
+
+    def vorlage(pid, ref, stand, *stationen):
+        return {"reference": ref, "source_object": pid, "paper_type": "Antrag", "stand": stand,
+                "process": list(stationen)}
+
+    v1, v3 = SITZUNGEN["v1"], SITZUNGEN["v3"]
+    zwei = vorlage("p/1", "AN/1/2026", "entschieden", station(v3, BESCHLOSSEN), station(v1, VERTAGT))
+    gleiche_nummer = vorlage("p/2", "AN/1/2026", "entschieden", station(v3, BESCHLOSSEN))
+    ohne_tag = vorlage("p/3", "AN/3/2026", "offen", station(v3, BESCHLOSSEN), station(None, None))
+    ohne_db = vorlage("p/4", "AN/4/2026", "entschieden", station(v3, BESCHLOSSEN))
+    for datei, vorlagen in (("ortsteile/a.json", [zwei, gleiche_nummer]), ("bezirke/x.json", [zwei, ohne_tag]),
+                            ("ohne-ortsbezug/2026.json", [ohne_db])):
+        (tmp_path / "gebiete" / datei).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / "gebiete" / datei).write_text(json.dumps({"papers": vorlagen}), encoding="utf-8")
+    db = sqlite3.connect(":memory:")
+    db.execute("CREATE TABLE paper (id TEXT)")
+    db.execute("CREATE TABLE consultation (id TEXT, paper_id TEXT, position INTEGER)")
+    db.executemany("INSERT INTO paper VALUES (?)", [("p/1",), ("p/2",), ("p/3",), ("p/4",), ("p/5",)])
+    db.executemany("INSERT INTO consultation VALUES (?, ?, ?)", [("y", "p/1", 1), ("x", "p/1", 0), ("z", "p/2", 0),
+                                                                 ("a", "p/3", 0), ("a", "p/3", 1)])
+    assert check.stand_und_ende(db, base=tmp_path / "gebiete") == (1, 1, 3, 1, 1)
+    db.close()
+
+    # AN/104/2026: ohne Datum und ohne Ortsbezug (im Rat beraten, also auch kein Stadtbezirk über die Bezirksvertretung)
+    oparl.papers[3].pop("date")
+    oparl.papers[3]["consultation"] = [_beratung(oparl, 4, 4, organization=[f"{oparl.b}/organizations/rat"])]
+    _aufbauen(oparl, capsys)
+    assert "AN/104/2026" not in _exportiert()
+    wege = json.loads((config.EXPORT / config.STADT / "prozesse.json").read_text(encoding="utf-8"))["types"]
+    assert sum(t["count"] for t in wege) == 5
+    db = sqlite3.connect(config.DB)
+    check.kennzahlen(db)
+    assert ("Stand und Ende des Weges (prozesse.json) widersprechen sich: 0 Vorlagen mit Stand „entschieden“ und nicht "
+            "abschließendem Ergebnis am Ende (etwa vertagt), 0 Vorlagen mit Entscheidung am Ende und anderem Stand, "
+            "von 4 Vorlagen der Gebietsdateien mit Ergebnis am Ende; 1 Vorlagen der Datenbank in keiner Gebietsdatei, "
+            "nicht gezählt\n") in capsys.readouterr().out
+    monkeypatch.setattr(config, "EXPORT", tmp_path / "ohne-export")
+    check.kennzahlen(db)
+    assert ("Stand und Ende des Weges (prozesse.json) widersprechen sich: nicht ermittelt (Gebietsdateien des Exports "
+            "fehlen)\n") in capsys.readouterr().out
     db.close()
 
 
