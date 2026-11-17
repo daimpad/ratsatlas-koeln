@@ -125,11 +125,8 @@ def _paper_detail(db, pid):
     # Sitzungstag, bei gleichem Tag der spätere in der Beratungsfolge; hat ihr letzter Eintrag noch keinen Sitzungstag,
     # zählt er (bis dahin immer der letzte Eintrag, Entscheidung 17.11.2026 (14)). Die übrigen Einträge bleiben
     # Stationen der Prozesslinie
-    je_kennung = {}
-    for i, r in enumerate(process):
-        je_kennung.setdefault(r["beratung"], []).append(i)
-    zaehlt = {stellen[proc.massgeblich([proc.local_day(process[i]["start_date"]) for i in stellen])]
-              for stellen in je_kennung.values()}
+    zaehlt = set(proc.zaehlende([r["beratung"] for r in process],
+                                [proc.local_day(r["start_date"]) for r in process]).values())
     d["stand"] = proc.stand({"process": [s for i, s in enumerate(d["process"]) if i in zaehlt]})
     d["themes"] = topics.themes(d)
     d["parties"] = topics.parties(d)
@@ -837,8 +834,14 @@ def _paths(db, cache, top=12):
     from collections import Counter, defaultdict
     by_type = defaultdict(Counter)
     totals = Counter()
-    for p in cache.values():
-        by_type[p["paper_type"]][proc.path_key(p)] += 1
+    # Kennung der Beratung je Eintrag (intern, nicht im Export), in derselben Reihenfolge wie p["process"]
+    # (_paper_detail: ORDER BY position): Das Ende des Weges folgt bei einer Kennung mehrfach in derselben Vorlage ihrem
+    # Eintrag, der für den Stand zählt, wenn er ein Ergebnis hat (proc.path_key, Entscheidung 17.11.2026 (15) (A))
+    kennungen = defaultdict(list)
+    for pid, kennung in db.execute("SELECT paper_id, id FROM consultation ORDER BY paper_id, position"):
+        kennungen[pid].append(kennung)
+    for pid, p in cache.items():
+        by_type[p["paper_type"]][proc.path_key(p, kennungen[pid])] += 1
         totals[p["paper_type"]] += 1
     out = []
     for ptype, n in totals.most_common():

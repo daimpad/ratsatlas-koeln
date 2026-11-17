@@ -47,6 +47,14 @@ def _exportiert():
     return out
 
 
+def _enden(p):
+    """Enden der Wege in prozesse.json mit derselben Vorlagenart und denselben Stationen wie p (Ende, Art des Endes)."""
+    wege = json.loads((config.EXPORT / config.STADT / "prozesse.json").read_text(encoding="utf-8"))["types"]
+    stationen = [f"{x['gremium'] or '?'} ({x['role'] or '?'})" for x in p["process"]]
+    return [(w["final"], w["final_kind"]) for t in wege if t["paper_type"] == p["paper_type"] for w in t["paths"]
+            if w["stations"] == stationen]
+
+
 def _stationen(p):
     """Prozesslinie einer exportierten Vorlage: (Beginn, Gremium, TOP, Ergebnis) je Beratung und je Schritt."""
     return ([(x["start_date"], x["gremium"], x["number"], x["result"]) for x in p["process"]],
@@ -129,11 +137,10 @@ def test_dieselbe_kennung_dreimal_jeder_eintrag_eine_station(oparl, capsys, monk
     Datum, Gremium, TOP und Ergebnis, Stand „entschieden“ nach dem letzten Eintrag (zugleich dem spätesten
     Sitzungstag). AN/104/2026 trägt eine zweite Kennung zweimal (vertagt, dann zur Kenntnis genommen, nicht
     entscheidend): Der Stand folgt dem letzten Eintrag („beraten, ohne Entscheidung“, nicht „in Beratung“ wegen der
-    früheren Vertagung). 1005/2026 trägt eine dritte
-    Kennung dreimal, der mittlere Eintrag ohne eigene Sitzung und TOP: Er bleibt ohne, weil die Einträge derselben
-    Kennung verschiedene Zeilen in beratungen.jsonl haben. Sitzungen und TOPs aller Einträge stehen in der Datenbank;
-    Log, check und verify zählen jeden Eintrag; dieselbe Bezirksvertretung in mehreren Einträgen bleibt eine
-    (district_from_committee)."""
+    früheren Vertagung). 1005/2026 trägt eine dritte Kennung dreimal, der mittlere Eintrag ohne eigene Sitzung und
+    TOP: Er bleibt ohne, weil die Einträge derselben Kennung verschiedene Zeilen in beratungen.jsonl haben. Sitzungen
+    und TOPs aller Einträge stehen in der Datenbank; Log, check und verify zählen jeden Eintrag; dieselbe
+    Bezirksvertretung in mehreren Einträgen bleibt eine (district_from_committee)."""
     b = oparl.b
     _sitzungen_mit_vertagung(oparl)
     oparl.papers[1]["consultation"] = [_eintrag(oparl, "drei", "v1", "v1"), _eintrag(oparl, "drei", "v2", "v2"),
@@ -204,9 +211,9 @@ def test_wiederholte_kennung_reihenfolge_und_feed_ids(oparl, capsys):
     """Prüfung bs: 1001/2026 trägt eine Kennung dreimal, nach der Beratungsfolge zuerst am 05.11. (beschlossen), dann am
     08.10. und 22.10. (vertagt): check zählt sie als nicht nach dem Sitzungstag geordnet, und der Stand folgt dem
     Beschluss am spätesten Sitzungstag („entschieden“, Entscheidung 17.11.2026 (15); vorher „in Beratung“ nach dem
-    letzten Eintrag). AN/102/2026 trägt eine
-    Kennung zweimal in derselben Sitzung unter zwei TOPs: Die Einträge der Feeds haben verschiedene IDs, die erste wie
-    bisher aus Datum und Gremium, die zweite mit der TOP-Nummer; kein Feed enthält eine ID doppelt."""
+    letzten Eintrag), ebenso das Ende ihres Weges in prozesse.json (der Beschluss, vorher „vertagt“). AN/102/2026
+    trägt eine Kennung zweimal in derselben Sitzung unter zwei TOPs: Die Einträge der Feeds haben verschiedene IDs, die
+    erste wie bisher aus Datum und Gremium, die zweite mit der TOP-Nummer; kein Feed enthält eine ID doppelt."""
     import xml.etree.ElementTree as ET
     from urllib.parse import quote
     from pipeline import publish
@@ -225,6 +232,8 @@ def test_wiederholte_kennung_reihenfolge_und_feed_ids(oparl, capsys):
                                                          (SITZUNGEN["v1"], GREMIUM, "3.1", VERTAGT),
                                                          (SITZUNGEN["v2"], GREMIUM, "4.2", VERTAGT)]
     assert _exportiert()["1001/2026"]["stand"] == "entschieden"
+    # Ende des Weges in prozesse.json wie der Stand: der Beschluss am spätesten Sitzungstag (vorher „vertagt“)
+    assert _enden(_exportiert()["1001/2026"]) == [(BESCHLOSSEN, "ergebnis")]
     p = _exportiert()["AN/102/2026"]
     assert _stationen(p)[0] == [(BEGINN, GREMIUM, "8.1", BESCHLOSSEN), (BEGINN, GREMIUM, "8.4", KENNTNIS)]
     basis = f"{oparl.papers[1]['id']}#beratung-2026-10-01-{quote(GREMIUM, safe='')}"
@@ -269,6 +278,9 @@ def test_stand_nach_dem_spaetesten_sitzungstag(oparl, capsys):
                                                     (SITZUNGEN["v2"], GREMIUM, "4.3", KENNTNIS)]
     assert {ref: vorlagen[ref]["stand"] for ref in ("AN/102/2026", "1003/2026", "AN/104/2026", "1005/2026")} == {
         "AN/102/2026": "entschieden", "1003/2026": "offen", "AN/104/2026": "in Beratung", "1005/2026": "entschieden"}
+    # Ende des Weges in prozesse.json wie bisher: geordnet der Beschluss, ohne Sitzungstag zuletzt das letzte Ergebnis
+    assert _enden(vorlagen["AN/102/2026"]) == [(BESCHLOSSEN, "ergebnis")]
+    assert _enden(vorlagen["1003/2026"]) == [(VERTAGT, "ergebnis")]
     db = sqlite3.connect(config.DB)
     assert check.reihenfolge_wiederholter_kennungen(db) == (4, 0)
     db.close()
@@ -308,6 +320,47 @@ def test_massgeblich_und_dossier():
     assert dossier._eintrag(ohne_tag, None, "2026-11-17")["letzte_beratung"] == {"gremium": "B", "date": None,
                                                                                   "result": VERTAGT}
     assert glossar.STAENDE["offen"] == glossar.glossar()["staende"]["offen"] == OFFEN
+
+
+def test_ende_des_weges_wie_der_stand():
+    """process.path_key (prozesse.json, „Typische Wege je Vorlagenart“): Steht die Kennung des letzten entscheidenden
+    Eintrags mit Ergebnis mehrfach in der Vorlage, ist das Ende das Ergebnis ihres Eintrags, der für den Stand zählt
+    (Entscheidung 17.11.2026 (15) (A)), nicht mehr das des letzten nach der Stelle; Stand und Ende widersprechen sich
+    nicht. Ein früherer Eintrag ohne Sitzungstag zählt nicht mit; zwei wiederholte Kennungen; Sitzungstag nach Kölner
+    Zeit (23:30 Uhr UTC am 22.10. ist der 23.10.). Wie bisher: geordnete Einträge, ein letzter Eintrag ohne Sitzungstag
+    und ohne Ergebnis (der Stand folgt ihm, das Ende dem letzten Ergebnis), verschiedene Kennungen nach der Stelle,
+    Einträge, die nicht entscheiden. Erfundene Einträge."""
+    from pipeline import process
+
+    def b(kennung, start, result, authoritative=True):
+        return kennung, {"gremium": "Bezirksvertretung", "role": "Entscheidung", "authoritative": authoritative,
+                         "start_date": start, "result": result}
+
+    def stand_und_ende(*eintraege):
+        """Stand wie export._paper_detail, Ende wie export._paths."""
+        kennungen, schritte = [k for k, _ in eintraege], [s for _, s in eintraege]
+        zaehlt = set(process.zaehlende(kennungen, [process.local_day(s["start_date"]) for s in schritte]).values())
+        stand = process.stand({"process": [s for i, s in enumerate(schritte) if i in zaehlt]})
+        return (stand,) + process.path_key({"process": schritte, "stand": stand}, kennungen)[1:]
+
+    v1, v2, v3 = SITZUNGEN["v1"], SITZUNGEN["v2"], SITZUNGEN["v3"]   # 08.10., 22.10., 05.11.
+    entschieden = ("entschieden", BESCHLOSSEN, "ergebnis")
+    # Einträge einer Kennung nicht nach dem Sitzungstag geordnet (vorher jeweils Ende „vertagt“ bei „entschieden“)
+    assert stand_und_ende(b("a", v3, BESCHLOSSEN), b("a", v1, VERTAGT), b("a", v2, VERTAGT)) == entschieden
+    assert stand_und_ende(b("a", v3, BESCHLOSSEN), b("a", None, None), b("a", v2, VERTAGT)) == entschieden
+    assert stand_und_ende(b("a", v3, BESCHLOSSEN), b("b", v3, BESCHLOSSEN), b("a", v1, VERTAGT),
+                          b("b", v2, VERTAGT)) == entschieden
+    assert stand_und_ende(b("a", "2026-10-22T23:30:00Z", BESCHLOSSEN), b("a", v2, VERTAGT)) == entschieden
+    # wie bisher
+    assert stand_und_ende(b("a", v1, VERTAGT), b("a", v2, VERTAGT), b("a", v3, BESCHLOSSEN)) == entschieden
+    assert stand_und_ende(b("a", v1, VERTAGT), b("a", v2, VERTAGT), b("a", None, None)) == ("offen", VERTAGT,
+                                                                                             "ergebnis")
+    assert stand_und_ende(b("a", v3, BESCHLOSSEN), b("a", v1, VERTAGT), b("a", None, None)) == ("offen", VERTAGT,
+                                                                                                "ergebnis")
+    assert stand_und_ende(b("a", v3, BESCHLOSSEN), b("b", v1, VERTAGT)) == ("entschieden", VERTAGT, "ergebnis")
+    assert stand_und_ende(b("a", v2, BESCHLOSSEN), b("b", v3, KENNTNIS, authoritative=False)) == entschieden
+    assert stand_und_ende(b("a", v2, None), b("b", v3, KENNTNIS, authoritative=False)) == ("in Beratung",
+                                                                                           "in Beratung", "stand")
 
 
 def test_wiederholte_kennung_erstes_gremium_fuer_datenschutz(oparl, capsys):
