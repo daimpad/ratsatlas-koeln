@@ -535,7 +535,7 @@ def test_kennungen_der_beratungen_in_mehreren_vorlagen(fa, tmp_path, capsys):
     out = _aufruf(fa, raw, capsys)
     assert ("Kennungen der eingebetteten Beratungen (id als Zeichenkette): 10 Einträge, 3 verschiedene Kennungen; in "
             "mehr als einer Vorlage: 2 Kennungen (9 Einträge, 8 Vorlagen); 1-mal eine Kennung mehrfach in derselben "
-            "Vorlage (2 Einträge, in der Datenbank dort je eine Zeile; wie im Log von build)\n") in out
+            "Vorlage (2 Einträge, jeder Eintrag eine eigene Station; wie im Log von build)\n") in out
     tabelle = out.split("Vorlagenarten der Vorlagen mit einer Beratungskennung, die auch in einer anderen Vorlage steht "
                         "(je Vorlage einmal):\n")[1]
     assert tabelle.startswith("  „Mitteilung“: 6 (75,0 %)\n  sonstige (1 Werte, 2 Objekte): 2 (25,0 %)\n")
@@ -694,7 +694,7 @@ def test_ursachen_ohne_inhalte(fa, tmp_path, capsys, monkeypatch):
     # die neuen Zählungen sind tatsächlich ausgegeben (gezählt, aber ohne Inhalte)
     assert ("Kennungen der eingebetteten Beratungen (id als Zeichenkette): 16 Einträge, 3 verschiedene Kennungen; in "
             "mehr als einer Vorlage: 3 Kennungen (16 Einträge, 8 Vorlagen); 8-mal eine Kennung mehrfach in derselben "
-            "Vorlage (16 Einträge, in der Datenbank dort je eine Zeile; wie im Log von build)") in out
+            "Vorlage (16 Einträge, jeder Eintrag eine eigene Station; wie im Log von build)") in out
     assert "Vorlagenarten der Vorlagen mit einer Beratungskennung" in out and "sonstige (4 Werte, 8 Objekte)" in out
     assert "Nicht verknüpfte Tagesordnungspunkte mit Rückverweis nach Grund" in out
     assert "Sitzungen ohne Verknüpfung: Beginn nach dem Datenstand der Sitzungen (16.11.2026): " in out
@@ -758,6 +758,8 @@ def test_sitzungen_ohne_verknuepfung_untergrenze(oparl, monkeypatch, capsys):
     out = _aufruf(fa, config.RAW, capsys)
     assert ("Die Sitzungen ohne Verknüpfung sind daher eine Untergrenze für die Sitzungen, die nicht in der Datenbank "
             "stehen") in out
+    # seit der Entscheidung 17.11.2026 (14) nimmt build jeden Eintrag einer wiederholten Kennung auf
+    assert "nur den letzten Eintrag" not in out
 
 
 def test_hinweis_wenn_vorlagen_nur_teilweise_gezaehlt(fa, tmp_path, capsys, monkeypatch):

@@ -171,4 +171,6 @@ def path_key(p):
     das Ergebnis der entscheidenden Beratung (wörtlich aus der Quelle) oder ersatzweise der Stand."""
     stations = [f"{s['gremium'] or '?'} ({s['role'] or '?'})" for s in p["process"]]
     final = next((s["result"] for s in reversed(p["process"]) if s["authoritative"] and s["result"]), None)
-    return tuple(stations), final or stand(p), "ergebnis" if final else "stand"
+    # Stand wie im Export (export._paper_detail: bei einer Kennung mehrfach in derselben Vorlage nach ihrem letzten
+    # Eintrag)
+    return tuple(stations), final or p.get("stand") or stand(p), "ergebnis" if final else "stand"

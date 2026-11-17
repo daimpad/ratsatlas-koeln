@@ -36,10 +36,9 @@ def verify(n=50, seed=2026):
             continue
         checks = [(f, p[f], src.get(o)) for f, o in FIELDS.items()]
         checks.append(("under_direction_of", p["under_direction_of"], (src.get("underDirectionOf") or [None])[0]))
-        # Einträge der Vorlage: je Beratung und Vorlage eine Zeile, `entries` zählt eine in derselben Vorlage
-        # wiederholte Kennung mit (Entscheidung 17.11.2026 (11))
-        n_cons = db.execute("SELECT COALESCE(SUM(entries), 0) FROM consultation WHERE paper_id = ?",
-                            (pid,)).fetchone()[0]
+        # Einträge der Vorlage: je Eintrag eine Zeile, auch bei einer in derselben Vorlage wiederholten Kennung
+        # (Entscheidung 17.11.2026 (14))
+        n_cons = db.execute("SELECT COUNT(*) FROM consultation WHERE paper_id = ?", (pid,)).fetchone()[0]
         checks.append(("beratungen", n_cons, len(src.get("consultation") or [])))
         a_locs = sorted(r[0] for r in db.execute(
             "SELECT location_id FROM paper_location WHERE paper_id = ? AND stage = 'A' AND method <> 'vererbt'",

@@ -139,22 +139,49 @@ def _pct(n, d):
 
 
 def beratungen_je_vorlage(db):
-    """Beratungen in der Datenbank wie im Log von build (build.beratungen_text; Entscheidung 17.11.2026 (11)): Einträge
-    (Summe der Spalte `entries`) und Zeilen (je Beratung und Vorlage eine), Kennungen in mehreren Vorlagen mit ihren
-    Einträgen und Vorlagen, Kennungen mehrfach in derselben Vorlage; nur Zahlen. Eine ältere Datenbank ohne die Spalte
-    `entries` (eine Zeile je Kennung) nennt nur die Zeilen."""
+    """Beratungen in der Datenbank wie im Log von build (build.beratungen_text; Entscheidungen 17.11.2026 (11) und
+    (14)): Einträge (je Eintrag eine Zeile), Kennungen in mehreren Vorlagen mit ihren Einträgen und Vorlagen, Kennungen
+    mehrfach in derselben Vorlage mit ihren Einträgen; nur Zahlen. Eine ältere Datenbank, deren Schlüssel `position`
+    nicht enthält (eine Zeile je Kennung bzw. je Kennung und Vorlage, wiederholte Einträge zusammengelegt), nennt nur
+    die Zeilen."""
     from .build import beratungen_text
     one = lambda sql: db.execute(sql).fetchone()[0]
     zeilen = one("SELECT COUNT(*) FROM consultation")
-    if "entries" not in {r[1] for r in db.execute("PRAGMA table_info(consultation)")}:
-        return f"Beratungen: {zeilen} Zeilen der Datenbank (Einträge nicht erfasst: Datenbank ohne Spalte entries)"
+    if not any(r[1] == "position" and r[5] for r in db.execute("PRAGMA table_info(consultation)")):
+        return (f"Beratungen: {zeilen} Zeilen der Datenbank (Einträge nicht erfasst: ältere Datenbank, Schlüssel ohne "
+                f"position)")
     mehrere = "SELECT id FROM consultation GROUP BY id HAVING COUNT(DISTINCT paper_id) > 1"
+    doppelt = "SELECT COUNT(*) AS n FROM consultation GROUP BY id, paper_id HAVING n > 1"
     return beratungen_text(
-        one("SELECT COALESCE(SUM(entries), 0) FROM consultation"), zeilen, one(f"SELECT COUNT(*) FROM ({mehrere})"),
-        one(f"SELECT COALESCE(SUM(entries), 0) FROM consultation WHERE id IN ({mehrere})"),
+        zeilen, one(f"SELECT COUNT(*) FROM ({mehrere})"),
+        one(f"SELECT COUNT(*) FROM consultation WHERE id IN ({mehrere})"),
         one(f"SELECT COUNT(DISTINCT paper_id) FROM consultation WHERE id IN ({mehrere})"),
-        one("SELECT COUNT(*) FROM consultation WHERE entries > 1"),
-        one("SELECT COALESCE(SUM(entries), 0) FROM consultation WHERE entries > 1"))
+        one(f"SELECT COUNT(*) FROM ({doppelt})"), one(f"SELECT COALESCE(SUM(n), 0) FROM ({doppelt})"))
+
+
+def reihenfolge_wiederholter_kennungen(db):
+    """Kennungen mehrfach in derselben Vorlage, deren Einträge nach ihrer Stelle in der Beratungsfolge (`position`) nicht
+    nach dem Sitzungstag geordnet sind (ein späterer Eintrag mit früherem Tag; Einträge ohne Sitzung zählen nicht mit):
+    (Kennungen mehrfach in derselben Vorlage, davon abweichend geordnet); nur Zahlen. Der Stand einer Vorlage folgt bei
+    einer solchen Kennung ihrem letzten Eintrag nach `position` (export._paper_detail); die Zahl zeigt, ob das in den
+    echten Daten vom spätesten Eintrag abweicht (Prüfung bs). Eine ältere Datenbank ohne `position` im Schlüssel: None."""
+    if not any(r[1] == "position" and r[5] for r in db.execute("PRAGMA table_info(consultation)")):
+        return None
+    from .process import local_day
+
+    def tag(start):
+        try:
+            return local_day(start)
+        except (TypeError, ValueError):
+            return None
+
+    je_paar = {}
+    for cid, pid, start in db.execute(
+            "SELECT c.id, c.paper_id, m.start_date FROM consultation c LEFT JOIN meeting m ON m.id = c.meeting_id "
+            "ORDER BY c.paper_id, c.id, c.position"):
+        je_paar.setdefault((cid, pid), []).append(tag(start))
+    mehrfach = [[t for t in tage if t] for tage in je_paar.values() if len(tage) > 1]
+    return len(mehrfach), sum(tage != sorted(tage) for tage in mehrfach)
 
 
 def kennzahlen(db):
@@ -186,7 +213,11 @@ def kennzahlen(db):
     cons = one("SELECT COUNT(*) FROM consultation")
     print("\nVerknüpfung Beratung ↔ Sitzung (OParl-API Köln: consultation verweist auf meeting und agendaItem)")
     print(beratungen_je_vorlage(db))
-    # Anteile je Zeile, also je Beratung und Vorlage (Entscheidung 17.11.2026 (11))
+    reihenfolge = reihenfolge_wiederholter_kennungen(db)
+    if reihenfolge:
+        print(f"Kennungen mehrfach in derselben Vorlage, deren Einträge nicht nach dem Sitzungstag geordnet sind: "
+              f"{reihenfolge[1]} von {reihenfolge[0]} (der Stand folgt dem letzten Eintrag in der Beratungsfolge)")
+    # Anteile je Zeile, also je Eintrag der Beratungsfolge einer Vorlage (Entscheidung 17.11.2026 (14))
     print("mit Sitzung:", _pct(one("SELECT COUNT(*) FROM consultation WHERE meeting_id IS NOT NULL"), cons))
     print("mit TOP-Ergebnis:", _pct(one(
         "SELECT COUNT(*) FROM consultation c JOIN agenda_item a ON a.id = c.agenda_item_id "
