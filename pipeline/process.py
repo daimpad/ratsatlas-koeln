@@ -55,6 +55,28 @@ def local_day(ts):
     return (dt.astimezone(BERLIN) if dt.tzinfo else dt).date().isoformat()
 
 
+def massgeblich(tage):
+    """Stelle des Eintrags, der zählt, unter Einträgen in ihrer Reihenfolge in der Beratungsfolge, je mit Sitzungstag
+    (local_day) oder None (Entscheidung 17.11.2026 (15)): der späteste Sitzungstag, bei gleichem Tag der spätere
+    Eintrag. Hat der letzte Eintrag keinen Sitzungstag (etwa ein neuer Termin, der noch nicht feststeht), zählt er wie
+    vor der Entscheidung. None ohne Einträge."""
+    if not tage:
+        return None
+    if not tage[-1]:
+        return len(tage) - 1
+    return max((t, i) for i, t in enumerate(tage) if t)[1]
+
+
+def zaehlende(kennungen, tage):
+    """Je Kennung der Beratung die Stelle ihres Eintrags, der für den Stand zählt ({Kennung: Stelle}), unter Einträgen
+    in ihrer Reihenfolge in der Beratungsfolge, je mit Kennung und Sitzungstag (local_day oder None): nach massgeblich
+    (Entscheidung 17.11.2026 (15) (A)); eine Kennung mit nur einem Eintrag zählt mit diesem."""
+    je_kennung = {}
+    for i, k in enumerate(kennungen):
+        je_kennung.setdefault(k, []).append(i)
+    return {k: stellen[massgeblich([tage[i] for i in stellen])] for k, stellen in je_kennung.items()}
+
+
 def is_final(result):
     """Ergebnis, das die Beratung abschließt (nicht vertagt, verwiesen, nicht aufgenommen)."""
     return bool(result) and not any(k in result for k in SCHLEIFE)
@@ -152,7 +174,9 @@ def stand(p):
     - beraten, ohne Entscheidung: alle Beratungen abgeschlossen, keine davon entscheidend
       (z. B. Mitteilungen und Stellungnahmen, die zur Kenntnis genommen wurden)
     - in Beratung: mindestens eine Beratung hat ein Ergebnis, andere stehen aus oder wurden vertagt
-    - offen: noch keine Beratung mit Ergebnis"""
+    - offen: noch keine Beratung mit Ergebnis
+    Bei einer Kennung mehrfach in derselben Vorlage übergibt export._paper_detail nur den Eintrag, der zählt
+    (massgeblich), nach einer Vertagung also den neuen Termin."""
     s = p["process"]
     if not s:
         return "ohne Beratungsfolge"
@@ -166,11 +190,23 @@ def stand(p):
     return "beraten, ohne Entscheidung"
 
 
-def path_key(p):
+def path_key(p, kennungen):
     """Weg einer Vorlage für die Aggregatdarstellung: Gremien mit Rolle (in der Beratungsfolge), dann
-    das Ergebnis der entscheidenden Beratung (wörtlich aus der Quelle) oder ersatzweise der Stand."""
+    das Ergebnis der entscheidenden Beratung (wörtlich aus der Quelle) oder ersatzweise der Stand. `kennungen`: die
+    Kennung der Beratung je Eintrag von p["process"] (intern, nicht im Export). Das Ende ist das Ergebnis des letzten
+    entscheidenden Eintrags mit Ergebnis nach der Stelle; steht seine Kennung mehrfach in der Vorlage und hat ihr
+    Eintrag, der für den Stand zählt (zaehlende, Entscheidung 17.11.2026 (15) (A)), ein Ergebnis, gilt dessen Ergebnis.
+    Anders als vorher also nur, wenn die Einträge einer Kennung nicht nach dem Sitzungstag geordnet sind; vorher
+    widersprach das Ende dann dem Stand (etwa „vertagt“ bei „entschieden“)."""
     stations = [f"{s['gremium'] or '?'} ({s['role'] or '?'})" for s in p["process"]]
-    final = next((s["result"] for s in reversed(p["process"]) if s["authoritative"] and s["result"]), None)
-    # Stand wie im Export (export._paper_detail: bei einer Kennung mehrfach in derselben Vorlage nach ihrem letzten
-    # Eintrag)
+    zaehlt = zaehlende(kennungen, [local_day(s["start_date"]) for s in p["process"]])
+    final = None
+    for i in reversed(range(len(p["process"]))):
+        s = p["process"][i]
+        if s["authoritative"] and s["result"]:
+            z = p["process"][zaehlt[kennungen[i]]]
+            final = z["result"] if z["authoritative"] and z["result"] else s["result"]
+            break
+    # Stand wie im Export (export._paper_detail: bei einer Kennung mehrfach in derselben Vorlage nach dem Eintrag, der
+    # zählt, massgeblich)
     return tuple(stations), final or p.get("stand") or stand(p), "ergebnis" if final else "stand"

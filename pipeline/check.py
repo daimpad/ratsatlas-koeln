@@ -163,8 +163,10 @@ def reihenfolge_wiederholter_kennungen(db):
     """Kennungen mehrfach in derselben Vorlage, deren Einträge nach ihrer Stelle in der Beratungsfolge (`position`) nicht
     nach dem Sitzungstag geordnet sind (ein späterer Eintrag mit früherem Tag; Einträge ohne Sitzung zählen nicht mit):
     (Kennungen mehrfach in derselben Vorlage, davon abweichend geordnet); nur Zahlen. Der Stand einer Vorlage folgt bei
-    einer solchen Kennung ihrem letzten Eintrag nach `position` (export._paper_detail); die Zahl zeigt, ob das in den
-    echten Daten vom spätesten Eintrag abweicht (Prüfung bs). Eine ältere Datenbank ohne `position` im Schlüssel: None."""
+    einer solchen Kennung dem Eintrag mit dem spätesten Sitzungstag, bei gleichem Tag dem späteren; hat der letzte
+    Eintrag keinen Sitzungstag, folgt er diesem (process.massgeblich, export._paper_detail; Entscheidung 17.11.2026
+    (15), vorher dem letzten Eintrag nach `position`). Die Zahl zeigt, bei wie vielen Kennungen das vom letzten
+    Eintrag abweichen kann (Prüfung bs). Eine ältere Datenbank ohne `position` im Schlüssel: None."""
     if not any(r[1] == "position" and r[5] for r in db.execute("PRAGMA table_info(consultation)")):
         return None
     from .process import local_day
@@ -216,7 +218,8 @@ def kennzahlen(db):
     reihenfolge = reihenfolge_wiederholter_kennungen(db)
     if reihenfolge:
         print(f"Kennungen mehrfach in derselben Vorlage, deren Einträge nicht nach dem Sitzungstag geordnet sind: "
-              f"{reihenfolge[1]} von {reihenfolge[0]} (der Stand folgt dem letzten Eintrag in der Beratungsfolge)")
+              f"{reihenfolge[1]} von {reihenfolge[0]} (der Stand folgt dem Eintrag mit dem spätesten Sitzungstag, bei "
+              f"gleichem Tag dem späteren; hat der letzte Eintrag keinen Sitzungstag, folgt er diesem)")
     # Anteile je Zeile, also je Eintrag der Beratungsfolge einer Vorlage (Entscheidung 17.11.2026 (14))
     print("mit Sitzung:", _pct(one("SELECT COUNT(*) FROM consultation WHERE meeting_id IS NOT NULL"), cons))
     print("mit TOP-Ergebnis:", _pct(one(
