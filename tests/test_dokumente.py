@@ -1128,7 +1128,8 @@ def test_wahl_unter_auxiliaryFile(aux, erwartet):
     """Ohne mainFile höchstens eine Datei aus auxiliaryFile nach Regel B (Entscheidung 17.11.2026 (1)): unter den
     PDF-Dateien (laut mimeType, ohne ihn nur mit der Endung .pdf) in der Reihenfolge der Quelle zuerst die erste, deren
     name oder fileName die eigene Drucksache (1234/2026, 1234-2026, 1234_2026) trägt, sonst die erste mit dem Wort
-    „Vorlage“ ohne andere Nummer NNNN/JJJJ, sonst die erste. Orakel: die erwartete Datei je Fall."""
+    „Vorlage“ ohne andere Nummer NNNN/JJJJ, sonst die erste, die dabei nicht übergangen wurde (Entscheidung
+    17.11.2026 (6)). Orakel: die erwartete Datei je Fall."""
     f, quelle = dokumente.datei_wahl({"id": "P", "reference": "1234/2026", "auxiliaryFile": aux})
     assert (f["id"] if f else None, quelle) == (erwartet, "auxiliaryFile" if erwartet else None)
 
@@ -1613,3 +1614,24 @@ def test_nur_uebergangene_dateien_ohne_anfrage_und_ohne_kopf(oparl, monkeypatch,
     assert {pid.rsplit("/", 1)[1]: (m, k) for pid, m, k in db.execute(
         "SELECT paper_id, method, kennung FROM paper_responsibility")} == {"5": ("pdf_kopf_anlage", "VI/61")}
     assert check.federfuehrung_kopf(db) == []
+
+
+def test_zeile_der_auswahl_auch_nur_mit_uebergangenen_dateien(oparl, monkeypatch, capsys):
+    """Entscheidung 17.11.2026 (6), Prüfung stl: Kommt nur eine Vorlage in Frage und trägt ihre einzige PDF-Datei das
+    Wort „Vorlage“ und eine andere Nummer, steht die Zeile der Auswahl trotzdem im Log, obwohl keine Anlage gewählt
+    wurde und keine Vorlage ohne PDF-Datei ist; es geht keine Anfrage hinaus. Die beiden übrigen Verwaltungsvorlagen
+    des Testservers liegen vor der Wahlperiode."""
+    for i in (1, 5):
+        _vorlage(oparl, i)["date"] = "2025-10-31"
+    _vorlage(oparl, 3)["auxiliaryFile"] = [_datei(oparl, 30, _pdf([KOPF]), name="Vorlage 0815/2019")]
+    sessionnet.fetch_all()
+    _freigabe(monkeypatch)
+    dokumente.schritt()
+    assert _dateianfragen(oparl) == []
+    assert ("Dokumente: 0 Dateien aus auxiliaryFile ausgewählt (ohne mainFile, Regel B, Entscheidungen 17.11.2026 (1) "
+            "und (6)); 0 Verwaltungsvorlagen ohne mainFile und ohne PDF-Datei in auxiliaryFile; 1 Verwaltungsvorlagen "
+            "ohne Datei, weil alle PDF-Dateien das Wort „Vorlage“ und eine andere Nummer NNNN/JJJJ tragen") \
+        in capsys.readouterr().out
+    ergebnis = _statistik()[-1]["ergebnis"]
+    assert "Datum vor dem 01.11.2025 (vor der Wahlperiode) 2" in ergebnis
+    assert "nur PDF-Dateien mit dem Wort „Vorlage“ und anderer Nummer NNNN/JJJJ 1" in ergebnis
