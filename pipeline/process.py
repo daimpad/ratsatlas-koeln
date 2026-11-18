@@ -55,26 +55,33 @@ def local_day(ts):
     return (dt.astimezone(BERLIN) if dt.tzinfo else dt).date().isoformat()
 
 
-def massgeblich(tage):
+def massgeblich(tage, abgesagt=None):
     """Stelle des Eintrags, der zählt, unter Einträgen in ihrer Reihenfolge in der Beratungsfolge, je mit Sitzungstag
     (local_day) oder None (Entscheidung 17.11.2026 (15)): der späteste Sitzungstag, bei gleichem Tag der spätere
     Eintrag. Hat der letzte Eintrag keinen Sitzungstag (etwa ein neuer Termin, der noch nicht feststeht), zählt er wie
-    vor der Entscheidung. None ohne Einträge."""
+    vor der Entscheidung. `abgesagt`: je Eintrag, ob seine Sitzung abgesagt ist (`cancelled`); dann gilt die Regel nur
+    unter den Einträgen ohne abgesagte Sitzung, auch für den letzten ohne Sitzungstag (Entscheidung 17.11.2026 (16)
+    (A)). Sind alle abgesagt, gilt sie unter allen wie in (15) (Auslegung). None ohne Einträge."""
     if not tage:
         return None
-    if not tage[-1]:
-        return len(tage) - 1
-    return max((t, i) for i, t in enumerate(tage) if t)[1]
+    stellen = list(range(len(tage)))
+    if abgesagt and not all(abgesagt):
+        stellen = [i for i in stellen if not abgesagt[i]]
+    if not tage[stellen[-1]]:
+        return stellen[-1]
+    return max((tage[i], i) for i in stellen if tage[i])[1]
 
 
-def zaehlende(kennungen, tage):
+def zaehlende(kennungen, tage, abgesagt=None):
     """Je Kennung der Beratung die Stelle ihres Eintrags, der für den Stand zählt ({Kennung: Stelle}), unter Einträgen
-    in ihrer Reihenfolge in der Beratungsfolge, je mit Kennung und Sitzungstag (local_day oder None): nach massgeblich
-    (Entscheidung 17.11.2026 (15) (A)); eine Kennung mit nur einem Eintrag zählt mit diesem."""
+    in ihrer Reihenfolge in der Beratungsfolge, je mit Kennung, Sitzungstag (local_day oder None) und, wenn angegeben,
+    ob die Sitzung abgesagt ist: nach massgeblich (Entscheidungen 17.11.2026 (15) (A) und (16) (A)); eine Kennung mit
+    nur einem Eintrag zählt mit diesem."""
     je_kennung = {}
     for i, k in enumerate(kennungen):
         je_kennung.setdefault(k, []).append(i)
-    return {k: stellen[massgeblich([tage[i] for i in stellen])] for k, stellen in je_kennung.items()}
+    return {k: stellen[massgeblich([tage[i] for i in stellen], abgesagt and [abgesagt[i] for i in stellen])]
+            for k, stellen in je_kennung.items()}
 
 
 def is_final(result):
@@ -176,7 +183,8 @@ def stand(p):
     - in Beratung: mindestens eine Beratung hat ein Ergebnis, andere stehen aus oder wurden vertagt
     - offen: noch keine Beratung mit Ergebnis
     Bei einer Kennung mehrfach in derselben Vorlage übergibt export._paper_detail nur den Eintrag, der zählt
-    (massgeblich), nach einer Vertagung also den neuen Termin."""
+    (massgeblich), nach einer Vertagung also den neuen Termin, ohne Einträge abgesagter Sitzungen, außer alle sind
+    abgesagt (Entscheidung 17.11.2026 (16) (A))."""
     s = p["process"]
     if not s:
         return "ohne Beratungsfolge"
@@ -195,11 +203,13 @@ def path_key(p, kennungen):
     das Ergebnis der entscheidenden Beratung (wörtlich aus der Quelle) oder ersatzweise der Stand. `kennungen`: die
     Kennung der Beratung je Eintrag von p["process"] (intern, nicht im Export). Das Ende ist das Ergebnis des letzten
     entscheidenden Eintrags mit Ergebnis nach der Stelle; steht seine Kennung mehrfach in der Vorlage und hat ihr
-    Eintrag, der für den Stand zählt (zaehlende, Entscheidung 17.11.2026 (15) (A)), ein Ergebnis, gilt dessen Ergebnis.
-    Anders als vorher also nur, wenn die Einträge einer Kennung nicht nach dem Sitzungstag geordnet sind; vorher
+    Eintrag, der für den Stand zählt (zaehlende, Entscheidung 17.11.2026 (15) (A), ohne abgesagte Sitzungen nach (16)
+    (A)), ein Ergebnis, gilt dessen Ergebnis. Anders als vorher also nur, wenn die Einträge einer Kennung nicht nach dem
+    Sitzungstag geordnet sind oder (seit (16)) wegen einer abgesagten Sitzung ein anderer Eintrag zählt; vorher
     widersprach das Ende dann dem Stand (etwa „vertagt“ bei „entschieden“)."""
     stations = [f"{s['gremium'] or '?'} ({s['role'] or '?'})" for s in p["process"]]
-    zaehlt = zaehlende(kennungen, [local_day(s["start_date"]) for s in p["process"]])
+    zaehlt = zaehlende(kennungen, [local_day(s["start_date"]) for s in p["process"]],
+                       [s.get("cancelled") for s in p["process"]])
     final = None
     for i in reversed(range(len(p["process"]))):
         s = p["process"][i]
