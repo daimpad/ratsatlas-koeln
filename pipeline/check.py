@@ -308,7 +308,7 @@ def kennzahlen(db):
         + (f"; {ende[3]} Vorlagen nicht gezählt (Zahl der Stationen passt nicht zur Datenbank)" if ende[3] else "")
         + (f"; {ende[4]} Vorlagen der Datenbank in keiner Gebietsdatei, nicht gezählt" if ende[4] else "")))
     # Nachfrage (a) zur Entscheidung 18.11.2026 (1): erst gezählt; seit 18.11.2026 (2) (A2) zeigt das Ende dort die
-    # Entscheidung, die Zahl ist also 0; die Zeile bleibt als Schutz, auch bei 0; kein Befund
+    # Entscheidung, die erste Zahl ist also 0; die Zeile bleibt als Schutz, auch bei 0; kein Befund
     if ende is not None:
         print(f"Vorlagen mit Stand „entschieden“ und abschließendem Ergebnis ohne Entscheidung am Ende (etwa ohne "
               f"Votum, nicht abgestimmt; seit der Entscheidung 18.11.2026 (2) zeigt das Ende die Entscheidung, die "

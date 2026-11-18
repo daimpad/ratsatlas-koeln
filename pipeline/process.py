@@ -229,8 +229,8 @@ def path_key(p, kennungen):
     - (B2) Bei anderem Stand ist das Ende auch dann der Stand, wenn der zählende Eintrag nicht entscheidend ist (mit
       oder ohne Ergebnis; vorher das Ergebnis des Eintrags nach der Stelle); ist er entscheidend und hat ein Ergebnis,
       dessen Ergebnis wie bisher.
-    Damit widersprechen sich Stand und Ende nach dem Aufbau nicht mehr (in check sind beide Zahlen der Zeile „Stand
-    und Ende des Weges …“ und die Zahl der Zeile danach 0)."""
+    Damit widersprechen sich Stand und Ende nach dem Aufbau nicht mehr (in check sind die ersten beiden Zahlen der
+    Zeile „Stand und Ende des Weges …“ und die erste Zahl der Zeile danach 0)."""
     stations = [f"{s['gremium'] or '?'} ({s['role'] or '?'})" for s in p["process"]]
     tage = [local_day(s["start_date"]) for s in p["process"]]
     abgesagt = [s.get("cancelled") for s in p["process"]]

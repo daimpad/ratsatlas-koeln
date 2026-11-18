@@ -21,7 +21,7 @@ BESCHLOSSEN, KENNTNIS = "ungeändert beschlossen", "Kenntnis genommen"   # Ergeb
 REGEL = ("(der Stand folgt dem Eintrag mit dem spätesten Sitzungstag, bei gleichem Tag dem späteren; hat der letzte "
          "Eintrag keinen Sitzungstag, folgt er diesem; für den Stand zählen Einträge abgesagter Sitzungen nicht)")
 # Zeile in check direkt nach „Stand und Ende des Weges …“ (Nachfrage (a) zur Entscheidung 18.11.2026 (1): erst gezählt;
-# seit der Entscheidung 18.11.2026 (2) (A2) als Schutz, die Zahl ist nach dem Aufbau 0)
+# seit der Entscheidung 18.11.2026 (2) (A2) als Schutz, die erste Zahl ist nach dem Aufbau 0)
 OHNE_ENTSCHEIDUNG = ("Vorlagen mit Stand „entschieden“ und abschließendem Ergebnis ohne Entscheidung am Ende (etwa "
                      "ohne Votum, nicht abgestimmt; seit der Entscheidung 18.11.2026 (2) zeigt das Ende die "
                      "Entscheidung, die Zeile bleibt als Schutz): {} von {} Vorlagen der Gebietsdateien mit Ergebnis am "
@@ -630,9 +630,10 @@ def test_ende_des_weges_folgt_dem_stand():
     Beschluss schon das letzte Ergebnis einer entscheidenden Beratung nach der Stelle ist, aber auch bei zwei
     Entscheidungen, deren letzte nach der Stelle den früheren Sitzungstag hat, beim Beschluss eines Eintrags, der nicht
     zählt, und bei einer Entscheidung in einer abgesagten Sitzung (Nachprüfung von (1)); eine Prüfung über alle kurzen
-    Folgen aus erfundenen Einträgen bestätigt das. (B) Hat bei anderem Stand der zählende Eintrag der Kennung des
-    letzten entscheidenden Eintrags mit Ergebnis kein Ergebnis (ein Eintrag ohne Sitzungstag oder ein neuer Termin ohne
-    Ergebnis), ist das Ende der Stand; mit Ergebnis wie bisher. Seit der Entscheidung 18.11.2026 (2) anders
+    Folgen aus erfundenen Einträgen bestätigt das für jedes Ende, das entscheidet (Vergleich mit der Regel bis (16) in
+    test_ende_des_weges_aendert_sich_nur_bei_widerspruch). (B) Hat bei anderem Stand der zählende Eintrag der Kennung
+    des letzten entscheidenden Eintrags mit Ergebnis kein Ergebnis (ein Eintrag ohne Sitzungstag oder ein neuer Termin
+    ohne Ergebnis), ist das Ende der Stand; mit Ergebnis wie bisher. Seit der Entscheidung 18.11.2026 (2) anders
     (test_ende_des_weges_zeigt_die_entscheidung): „nicht abgestimmt“ am Ende neben einem Beschluss (jetzt der Beschluss)
     und ein zählender Eintrag mit Ergebnis, der nicht entscheidend ist (jetzt der Stand)."""
     from pipeline import process
@@ -778,14 +779,20 @@ def test_ende_des_weges_zeigt_die_entscheidung():
 
 def test_ende_des_weges_aendert_sich_nur_bei_widerspruch():
     """Entscheidungen 18.11.2026 (1) und (2), Nachprüfung: alle Folgen von bis zu drei erfundenen Einträgen aus zwei
-    Kennungen, je mit Sitzungstag (08.10., 05.11., ohne, 12.11. abgesagt) und Ergebnis (beschlossen, vertagt, nicht
-    abgestimmt, keins; dazu beschlossen und zur Kenntnis genommen in einer nicht entscheidenden Beratung). Stand und Ende
-    widersprechen sich nie: Die Zahlen der beiden Zeilen in check (check.stand_und_ende: Stand „entschieden“ und ein Ende,
-    das die Beratung nicht abschließt oder nicht entscheidet; anderer Stand und ein Ende, das als Ergebnis einer
-    entscheidenden Beratung „entschieden“ ergibt) sind für jede Folge 0. Gegenüber der Regel bis zur Entscheidung (2)
+    Kennungen, je mit Sitzungstag (08.10., 05.11., 05.11. kurz nach Mitternacht als UTC-Zeit des Vortags, also zwei
+    Sitzungen am selben Kölner Tag, ohne, 12.11. abgesagt) und Ergebnis (beschlossen, abgelehnt, vertagt,
+    „ungeändert beschlossen, ohne Votum“, keins; dazu beschlossen und zur Kenntnis genommen in einer nicht
+    entscheidenden Beratung; `authoritative` als True, 1, None und 0). Stand und Ende widersprechen sich nie: Die ersten
+    beiden Zahlen der Zeile „Stand und Ende des Weges …“ in check und die erste Zahl der Zeile danach
+    (check.stand_und_ende: Stand „entschieden“ und ein Ende, das die Beratung nicht abschließt oder nicht entscheidet;
+    anderer Stand und ein Ende, das als Ergebnis einer entscheidenden Beratung „entschieden“ ergibt) sind für jede
+    Folge 0. Gegenüber der Regel bis zur Entscheidung (2)
     (_path_key_bis_18_2) ändert sich ein Ende genau dort, wo es dem Stand widersprach: bei Stand „entschieden“ und einem
     Ende, das nicht entscheidet ((A2), dann ein entscheidendes Ergebnis), und bei anderem Stand, wenn das Ende von einem
-    Eintrag kam, dessen zählender Eintrag nicht entscheidend ist ((B2), dann der Stand)."""
+    Eintrag kam, dessen zählender Eintrag nicht entscheidend ist ((B2), dann der Stand). Gegenüber der Regel bis zur
+    Entscheidung (1) (_ende_bis_16) ändert sich ein Ende genau bei Stand „entschieden“ und einem Ende, das nicht
+    entscheidet ((1) (A) und (A2)), und bei anderem Stand, wenn der zählende Eintrag der Kennung des Endes kein Ergebnis
+    hat oder nicht entscheidend ist ((1) (B) und (B2), dann der Stand)."""
     from itertools import product
 
     from pipeline import process
@@ -793,13 +800,17 @@ def test_ende_des_weges_aendert_sich_nur_bei_widerspruch():
     def entscheidend(ende):
         return process.entscheidet({"authoritative": True, "result": ende})
 
-    tage = [(SITZUNGEN["v1"], False), (SITZUNGEN["v3"], False), (None, False), (ABGESAGT["abg"], True)]
-    ergebnisse = [(BESCHLOSSEN, True), (VERTAGT, True), (NICHT_ABGESTIMMT, True), (None, True), (BESCHLOSSEN, False),
-                  (KENNTNIS, False)]
+    tage = [(SITZUNGEN["v1"], False), (SITZUNGEN["v3"], False), ("2026-11-04T23:30:00Z", False), (None, False),
+            (ABGESAGT["abg"], True)]
+    ergebnisse = [(BESCHLOSSEN, True), (ABGELEHNT, 1), (VERTAGT, True), (f"{BESCHLOSSEN}, {OHNE_VOTUM}", True),
+                  (None, True), (BESCHLOSSEN, None), (KENNTNIS, 0)]
     zeichen = [(k, t, a, r, e) for k in "ab" for t, a in tage for r, e in ergebnisse]
-    geaendert, vorher = {"A2": 0, "B2": 0}, {"ohne Entscheidung": 0, "Entscheidung bei anderem Stand": 0}
+    geaendert = {"A2": 0, "B2": 0, "A seit (16)": 0, "B seit (16)": 0}
+    vorher = {"ohne Entscheidung": 0, "Entscheidung bei anderem Stand": 0}
     for n in (1, 2, 3):
         for folge in product(zeichen, repeat=n):
+            if folge[0][0] == "b":   # mit vertauschten Kennungen dieselbe Folge wie mit „a“ zuerst
+                continue
             kennungen = [k for k, *_ in folge]
             schritte = [{"gremium": "Bezirksvertretung", "role": "Entscheidung", "authoritative": e, "start_date": t,
                          "result": r, "cancelled": a} for _, t, a, r, e in folge]
@@ -811,23 +822,31 @@ def test_ende_des_weges_aendert_sich_nur_bei_widerspruch():
             entschieden = p["stand"] == "entschieden"
             ende = process.path_key(p, kennungen)[1:]
             alt = _path_key_bis_18_2(p, kennungen)[1:]
+            alt16 = _ende_bis_16(p, kennungen)
             # die Zahlen in check: bei „entschieden“ entscheidet jedes Ergebnis am Ende, bei anderem Stand keins
             if ende[1] == "ergebnis":
                 assert entscheidend(ende[0]) == entschieden, folge
+            # der zählende Eintrag der Kennung des letzten entscheidenden Eintrags mit Ergebnis
+            mit_ergebnis = [i for i, s in enumerate(schritte) if s["authoritative"] and s["result"]]
+            z = schritte[zaehlt[kennungen[mit_ergebnis[-1]]]] if mit_ergebnis else None
             # Widerspruch nach der Regel bis (2): (A2) bei „entschieden“ ein Ende, das nicht entscheidet; (B2) bei anderem
             # Stand ein Ende von einem entscheidenden Eintrag, dessen zählender Eintrag nicht entscheidend ist
             a2 = entschieden and not entscheidend(alt[0])
-            b2 = False
+            b2 = not entschieden and alt[1] == "ergebnis" and not z["authoritative"]
             if not entschieden and alt[1] == "ergebnis":
-                letzter = max(i for i, s in enumerate(schritte) if s["authoritative"] and s["result"])
-                b2 = not schritte[zaehlt[kennungen[letzter]]]["authoritative"]
                 vorher["Entscheidung bei anderem Stand"] += entscheidend(alt[0])
             vorher["ohne Entscheidung"] += a2
             assert (ende != alt) == (a2 or b2), folge
             if b2:
                 assert ende == (p["stand"], "stand"), folge
-            geaendert["A2"] += a2
-            geaendert["B2"] += b2
+            # gegenüber der Regel bis (1): (1) (A) und (A2) bei „entschieden“, (1) (B) und (B2) bei anderem Stand
+            a16 = entschieden and not entscheidend(alt16[0])
+            b16 = not entschieden and z is not None and not (z["authoritative"] and z["result"])
+            assert (ende != alt16) == (a16 or b16), folge
+            if b16:
+                assert ende == (p["stand"], "stand"), folge
+            for fall, ja in (("A2", a2), ("B2", b2), ("A seit (16)", a16), ("B seit (16)", b16)):
+                geaendert[fall] += ja
     assert all(geaendert.values()) and all(vorher.values())   # alle Fälle kommen vor
 
 
@@ -841,11 +860,11 @@ def test_ende_des_weges_folgt_dem_stand_im_export(oparl, capsys):
     danach ein neuer Termin am 03.12. ohne Ergebnis, dazu eine Beratung im Rat, vertagt): „in Beratung“ mit dem Stand am
     Ende (vorher der Beschluss). Unverändert: 1005/2026 (geordnet: im Rat vertagt am 08.10., beschlossen am 05.11.),
     AN/106/2026 (eine Kennung dreimal, geordnet), 1007/2026 (ein einziger Eintrag) und AN/108/2026 (wie AN/102/2026 ohne
-    die Vertagung: „Kenntnis genommen“ schließt ab, widerspricht dem Stand also nicht, Nachprüfung von (1)). check zählt
-    keine Widersprüche zwischen Stand und Ende (vorher 2 und 2, von 8 Vorlagen mit Ergebnis am Ende, ohne 1009/2026).
-    1009/2026 (zwei Kennungen: beschlossen am 22.10., danach „ohne Votum“ am 05.11.): „entschieden“, seit der
-    Entscheidung 18.11.2026 (2) (A2) mit dem Beschluss am Ende (nach der Nachfrage (a) zu (1) blieb „ohne Votum“, und
-    check zählte sie in der Zeile danach, 1 von 7); check zählt dort 0 von 7, ohne Befund."""
+    die Vertagung: „Kenntnis genommen“ im Rat entscheidet, widerspricht dem Stand also nicht, Nachprüfung von (1)).
+    check zählt keine Widersprüche zwischen Stand und Ende (vorher 2 und 2, von 8 Vorlagen mit Ergebnis am Ende, ohne
+    1009/2026). 1009/2026 (zwei Kennungen: beschlossen am 22.10., danach „ohne Votum“ am 05.11.): „entschieden“, seit
+    der Entscheidung 18.11.2026 (2) (A2) mit dem Beschluss am Ende (nach der Nachfrage (a) zu (1) blieb „ohne Votum“,
+    und check zählte sie in der Zeile danach, 1 von 7); check zählt dort 0 von 7, ohne Befund."""
     b = oparl.b
     rat = [f"{b}/organizations/rat"]
     _abgesagte_sitzungen(oparl)
