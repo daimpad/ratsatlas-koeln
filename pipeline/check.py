@@ -224,10 +224,10 @@ def stand_und_ende(db, base=None):
     Zählung; Vorlagen mit Stand „entschieden“ und einem Ergebnis am Ende, das die Beratung abschließt, aber nicht
     entscheidet (process.is_final, nicht process.entscheidet: „ohne Votum“, „nicht abgestimmt“, KEIN_BESCHLUSS), auf
     derselben Grundlage wie die dritte Zahl) oder None ohne Gebietsdateien. Seit der Entscheidung 18.11.2026 (1) folgt
-    das Ende dem Stand: Die erste Zahl ist dann 0, die zweite auch, außer Einträge derselben Kennung sind verschieden
-    entscheidend (`authoritative`; process.path_key behält dort nach dem Auftrag das Verhalten von vorher); die Zeile
-    bleibt als Schutz. Die sechste Zahl zählt nur (Nachfrage (a) zu 18.11.2026 (1)): Solche Enden bleiben, wie sie sind;
-    der Auftraggeber entscheidet nach dem nächsten Lauf."""
+    das Ende dem Stand, seit der Entscheidung 18.11.2026 (2) auch bei einem Ende, das nicht entscheidet ((A2), sechste
+    Zahl), und bei einem zählenden Eintrag, der nicht entscheidend ist ((B2), zweite Zahl): Die erste, zweite und
+    sechste Zahl sind nach dem Aufbau von process.path_key 0; die Zeilen in kennzahlen bleiben als Schutz (nur Zahlen,
+    kein Befund)."""
     from . import export, process as proc
     base = base or config.EXPORT / config.STADT
     dateien = [f for d in GEBIETSDATEIEN for f in sorted((base / d).glob("*.json"))]
@@ -294,7 +294,7 @@ def kennzahlen(db):
               f"gleichem Tag dem späteren; hat der letzte Eintrag keinen Sitzungstag, folgt er diesem; für den Stand "
               f"zählen Einträge abgesagter Sitzungen nicht)")
     # Entscheidung 17.11.2026 (16) (B): Wirkung von (16) (A) und Widersprüche zwischen Stand und Ende des Weges (Offen
-    # (8)), nur Zahlen, kein Befund; seit 18.11.2026 (1) folgt das Ende dem Stand, die Zeile bleibt als Schutz
+    # (8)), nur Zahlen, kein Befund; seit 18.11.2026 (1) und (2) folgt das Ende dem Stand, die Zeile bleibt als Schutz
     abgesagt = abgesagte_wiederholter_kennungen(db)
     if abgesagt:
         print(f"Kennungen mehrfach in derselben Vorlage, bei denen wegen einer abgesagten Sitzung ein anderer Eintrag "
@@ -307,11 +307,12 @@ def kennzahlen(db):
         f"mit Ergebnis am Ende"
         + (f"; {ende[3]} Vorlagen nicht gezählt (Zahl der Stationen passt nicht zur Datenbank)" if ende[3] else "")
         + (f"; {ende[4]} Vorlagen der Datenbank in keiner Gebietsdatei, nicht gezählt" if ende[4] else "")))
-    # Nachfrage (a) zur Entscheidung 18.11.2026 (1): erst zählen, auch 0 zum Vergleich zwischen den Läufen; kein Befund
+    # Nachfrage (a) zur Entscheidung 18.11.2026 (1): erst gezählt; seit 18.11.2026 (2) (A2) zeigt das Ende dort die
+    # Entscheidung, die erste Zahl ist also 0; die Zeile bleibt als Schutz, auch bei 0; kein Befund
     if ende is not None:
         print(f"Vorlagen mit Stand „entschieden“ und abschließendem Ergebnis ohne Entscheidung am Ende (etwa ohne "
-              f"Votum, nicht abgestimmt; nur gezählt, Entscheidung folgt nach dem nächsten Lauf): {ende[5]} von "
-              f"{ende[2]} Vorlagen der Gebietsdateien mit Ergebnis am Ende")
+              f"Votum, nicht abgestimmt; seit der Entscheidung 18.11.2026 (2) zeigt das Ende die Entscheidung, die "
+              f"Zeile bleibt als Schutz): {ende[5]} von {ende[2]} Vorlagen der Gebietsdateien mit Ergebnis am Ende")
     # Anteile je Zeile, also je Eintrag der Beratungsfolge einer Vorlage (Entscheidung 17.11.2026 (14))
     print("mit Sitzung:", _pct(one("SELECT COUNT(*) FROM consultation WHERE meeting_id IS NOT NULL"), cons))
     print("mit TOP-Ergebnis:", _pct(one(

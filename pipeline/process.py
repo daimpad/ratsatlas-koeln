@@ -92,7 +92,7 @@ def is_final(result):
 def entscheidet(x):
     """Ob ein Eintrag der Beratungsfolge die Vorlage entscheidet: eine entscheidende Beratung mit abschließendem
     Ergebnis (is_final), das keine Beratung ohne Beschluss ist (KEIN_BESCHLUSS). Bedingung für den Stand „entschieden“
-    (stand) und für das Ende des Weges bei diesem Stand (path_key, Entscheidung 18.11.2026 (1) (A))."""
+    (stand) und für das Ende des Weges bei diesem Stand (path_key, Entscheidungen 18.11.2026 (1) (A) und (2) (A2))."""
     return bool(x["authoritative"]) and is_final(x["result"]) and not any(k in x["result"] for k in KEIN_BESCHLUSS)
 
 
@@ -221,7 +221,16 @@ def path_key(p, kennungen):
       war: Nach der Entscheidung ändern sich nur Vorlagen, deren Ende dem Stand widerspricht (die erste Zahl der Zeile
       in check).
     - (B) Bei anderem Stand: Hat der zählende Eintrag kein Ergebnis (etwa ein neuer Termin ohne Ergebnis oder ein
-      letzter Eintrag ohne Sitzungstag), ist das Ende der Stand (vorher das Ergebnis des Eintrags nach der Stelle)."""
+      letzter Eintrag ohne Sitzungstag), ist das Ende der Stand (vorher das Ergebnis des Eintrags nach der Stelle).
+    Seit der Entscheidung 18.11.2026 (2) gelten (A) und (B) für mehr Enden:
+    - (A2) Bei Stand „entschieden“ gilt (A) für jedes Ende, das nicht entscheidet (entscheidet; das Ende stammt nach
+      dem Aufbau von einem entscheidenden Eintrag), also auch für „ohne Votum“ und „nicht abgestimmt“ (KEIN_BESCHLUSS);
+      ein Ende, das entscheidet, bleibt, auch wenn ein anderer entscheidender Eintrag einen späteren Sitzungstag hat.
+    - (B2) Bei anderem Stand ist das Ende auch dann der Stand, wenn der zählende Eintrag nicht entscheidend ist (mit
+      oder ohne Ergebnis; vorher das Ergebnis des Eintrags nach der Stelle); ist er entscheidend und hat ein Ergebnis,
+      dessen Ergebnis wie bisher.
+    Damit widersprechen sich Stand und Ende nach dem Aufbau nicht mehr (in check sind die ersten beiden Zahlen der
+    Zeile „Stand und Ende des Weges …“ und die erste Zahl der Zeile danach 0)."""
     stations = [f"{s['gremium'] or '?'} ({s['role'] or '?'})" for s in p["process"]]
     tage = [local_day(s["start_date"]) for s in p["process"]]
     abgesagt = [s.get("cancelled") for s in p["process"]]
@@ -235,10 +244,10 @@ def path_key(p, kennungen):
             break
     entscheidend = sorted(i for i in zaehlt.values() if entscheidet(p["process"][i]))
     if entscheidend:
-        if not is_final(final):
+        if not entscheidet({"authoritative": True, "result": final}):
             final = p["process"][entscheidend[massgeblich([tage[i] for i in entscheidend],
                                                           [abgesagt[i] for i in entscheidend])]]["result"]
-    elif z is not None and not z["result"]:
+    elif z is not None and not (z["authoritative"] and z["result"]):
         final = None
     # Stand wie im Export (export._paper_detail: bei einer Kennung mehrfach in derselben Vorlage nach dem Eintrag, der
     # zählt, massgeblich)
