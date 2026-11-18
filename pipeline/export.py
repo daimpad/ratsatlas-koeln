@@ -845,8 +845,8 @@ def _paths(db, cache, top=12):
     from collections import Counter, defaultdict
     by_type = defaultdict(Counter)
     totals = Counter()
-    # Das Ende des Weges folgt bei einer Kennung mehrfach in derselben Vorlage ihrem Eintrag, der für den Stand zählt,
-    # wenn er ein Ergebnis hat (proc.path_key, Entscheidung 17.11.2026 (15) (A))
+    # Das Ende des Weges folgt dem Stand, je Kennung ihrem Eintrag, der für den Stand zählt (proc.path_key,
+    # Entscheidungen 17.11.2026 (15) (A) und 18.11.2026 (1))
     kennungen = _kennungen(db)
     for pid, p in cache.items():
         by_type[p["paper_type"]][proc.path_key(p, kennungen.get(pid, []))] += 1

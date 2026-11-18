@@ -221,7 +221,9 @@ def stand_und_ende(db, base=None):
     process.is_final); Vorlagen mit anderem Stand und einem Ergebnis am Ende, das als Ergebnis einer entscheidenden
     Beratung „entschieden“ ergibt (process.stand); Vorlagen der Gebietsdateien mit Ergebnis am Ende; Vorlagen, deren
     Zahl der Stationen nicht zur Datenbank passt, ohne Zählung; Vorlagen der Datenbank in keiner Gebietsdatei, ohne
-    Zählung) oder None ohne Gebietsdateien."""
+    Zählung) oder None ohne Gebietsdateien. Seit der Entscheidung 18.11.2026 (1) folgt das Ende dem Stand: Die erste
+    Zahl ist dann 0, die zweite auch, außer Einträge derselben Kennung sind verschieden entscheidend (`authoritative`;
+    process.path_key behält dort nach dem Auftrag das Verhalten von vorher); die Zeile bleibt als Schutz."""
     from . import export, process as proc
     base = base or config.EXPORT / config.STADT
     dateien = [f for d in GEBIETSDATEIEN for f in sorted((base / d).glob("*.json"))]
@@ -286,7 +288,7 @@ def kennzahlen(db):
               f"gleichem Tag dem späteren; hat der letzte Eintrag keinen Sitzungstag, folgt er diesem; für den Stand "
               f"zählen Einträge abgesagter Sitzungen nicht)")
     # Entscheidung 17.11.2026 (16) (B): Wirkung von (16) (A) und Widersprüche zwischen Stand und Ende des Weges (Offen
-    # (8)), nur Zahlen, kein Befund
+    # (8)), nur Zahlen, kein Befund; seit 18.11.2026 (1) folgt das Ende dem Stand, die Zeile bleibt als Schutz
     abgesagt = abgesagte_wiederholter_kennungen(db)
     if abgesagt:
         print(f"Kennungen mehrfach in derselben Vorlage, bei denen wegen einer abgesagten Sitzung ein anderer Eintrag "

@@ -89,6 +89,13 @@ def is_final(result):
     return bool(result) and not any(k in result for k in SCHLEIFE)
 
 
+def entscheidet(x):
+    """Ob ein Eintrag der Beratungsfolge die Vorlage entscheidet: eine entscheidende Beratung mit abschließendem
+    Ergebnis (is_final), das keine Beratung ohne Beschluss ist (KEIN_BESCHLUSS). Bedingung für den Stand „entschieden“
+    (stand) und für das Ende des Weges bei diesem Stand (path_key, Entscheidung 18.11.2026 (1) (A))."""
+    return bool(x["authoritative"]) and is_final(x["result"]) and not any(k in x["result"] for k in KEIN_BESCHLUSS)
+
+
 def initiation_kind(paper_type):
     if paper_type in SONDER_TYPES:
         return "sonderweg"
@@ -188,8 +195,7 @@ def stand(p):
     s = p["process"]
     if not s:
         return "ohne Beratungsfolge"
-    if any(x["authoritative"] and is_final(x["result"]) and not any(k in x["result"] for k in KEIN_BESCHLUSS)
-           for x in s):
+    if any(entscheidet(x) for x in s):
         return "entschieden"
     if not any(x["result"] for x in s):
         return "offen"
@@ -199,24 +205,38 @@ def stand(p):
 
 
 def path_key(p, kennungen):
-    """Weg einer Vorlage für die Aggregatdarstellung: Gremien mit Rolle (in der Beratungsfolge), dann
-    das Ergebnis der entscheidenden Beratung (wörtlich aus der Quelle) oder ersatzweise der Stand. `kennungen`: die
-    Kennung der Beratung je Eintrag von p["process"] (intern, nicht im Export). Das Ende ist das Ergebnis des letzten
-    entscheidenden Eintrags mit Ergebnis nach der Stelle; steht seine Kennung mehrfach in der Vorlage und hat ihr
-    Eintrag, der für den Stand zählt (zaehlende, Entscheidung 17.11.2026 (15) (A), ohne abgesagte Sitzungen nach (16)
-    (A)), ein Ergebnis, gilt dessen Ergebnis. Anders als vorher also nur, wenn die Einträge einer Kennung nicht nach dem
-    Sitzungstag geordnet sind oder (seit (16)) wegen einer abgesagten Sitzung ein anderer Eintrag zählt; vorher
-    widersprach das Ende dann dem Stand (etwa „vertagt“ bei „entschieden“)."""
+    """Weg einer Vorlage für die Aggregatdarstellung: Gremien mit Rolle (in der Beratungsfolge), dann das Ende, ein
+    Ergebnis einer entscheidenden Beratung (wörtlich aus der Quelle) oder ersatzweise der Stand. `kennungen`: die
+    Kennung der Beratung je Eintrag von p["process"] (intern, nicht im Export). Das Ende folgt dem Stand (Entscheidung
+    18.11.2026 (1)); je Kennung zählt dafür ihr Eintrag nach zaehlende, wie für den Stand in export._paper_detail
+    (Entscheidungen 17.11.2026 (15) (A) und (16) (A)):
+    - Entscheidet einer der zählenden Einträge (entscheidet, der Stand ist dann „entschieden“), ist das Ende sein
+      Ergebnis; entscheiden mehrere, das Ergebnis dessen mit dem spätesten Sitzungstag nach massgeblich, bei gleichem
+      Tag des späteren in der Beratungsfolge, mit der Angabe abgesagter Sitzungen wie überall, wo massgeblich gilt
+      ((1) (A); vorher das Ergebnis des letzten entscheidenden Eintrags nach der Stelle, etwa „vertagt“).
+    - Sonst zählt der letzte entscheidende Eintrag mit Ergebnis nach der Stelle: Hat der Eintrag seiner Kennung, der
+      zählt, ein Ergebnis, ist das Ende dessen Ergebnis, wenn er entscheidend ist, sonst das des Eintrags nach der
+      Stelle (seit der Nachprüfung von (15); eine Kennung mit nur einem Eintrag zählt mit diesem). Hat er kein Ergebnis
+      (etwa ein neuer Termin ohne Ergebnis oder ein letzter Eintrag ohne Sitzungstag), ist das Ende der Stand ((1) (B);
+      vorher das Ergebnis des Eintrags nach der Stelle).
+    - Ohne entscheidenden Eintrag mit Ergebnis der Stand."""
     stations = [f"{s['gremium'] or '?'} ({s['role'] or '?'})" for s in p["process"]]
-    zaehlt = zaehlende(kennungen, [local_day(s["start_date"]) for s in p["process"]],
-                       [s.get("cancelled") for s in p["process"]])
+    tage = [local_day(s["start_date"]) for s in p["process"]]
+    abgesagt = [s.get("cancelled") for s in p["process"]]
+    zaehlt = zaehlende(kennungen, tage, abgesagt)
+    entscheidend = sorted(i for i in zaehlt.values() if entscheidet(p["process"][i]))
     final = None
-    for i in reversed(range(len(p["process"]))):
-        s = p["process"][i]
-        if s["authoritative"] and s["result"]:
-            z = p["process"][zaehlt[kennungen[i]]]
-            final = z["result"] if z["authoritative"] and z["result"] else s["result"]
-            break
+    if entscheidend:
+        final = p["process"][entscheidend[massgeblich([tage[i] for i in entscheidend],
+                                                      [abgesagt[i] for i in entscheidend])]]["result"]
+    else:
+        for i in reversed(range(len(p["process"]))):
+            s = p["process"][i]
+            if s["authoritative"] and s["result"]:
+                z = p["process"][zaehlt[kennungen[i]]]
+                if z["result"]:
+                    final = z["result"] if z["authoritative"] else s["result"]
+                break
     # Stand wie im Export (export._paper_detail: bei einer Kennung mehrfach in derselben Vorlage nach dem Eintrag, der
     # zählt, massgeblich)
     return tuple(stations), final or p.get("stand") or stand(p), "ergebnis" if final else "stand"
