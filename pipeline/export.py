@@ -846,7 +846,7 @@ def _paths(db, cache, top=12):
     by_type = defaultdict(Counter)
     totals = Counter()
     # Das Ende des Weges folgt dem Stand, je Kennung ihrem Eintrag, der für den Stand zählt (proc.path_key,
-    # Entscheidungen 17.11.2026 (15) (A) und 18.11.2026 (1))
+    # Entscheidungen 17.11.2026 (15) (A), 18.11.2026 (1) und (2))
     kennungen = _kennungen(db)
     for pid, p in cache.items():
         by_type[p["paper_type"]][proc.path_key(p, kennungen.get(pid, []))] += 1
