@@ -216,21 +216,25 @@ def stand_und_ende(db, base=None):
     Stationen der Vorlage aus den Gebietsdateien des Exports (`base`, Vorgabe config.EXPORT / config.STADT) und den
     Kennungen ihrer Beratungen aus der Datenbank nach `position` (export._kennungen, wie export._paths); jede Vorlage
     einmal, auch wenn sie in mehreren Gebietsdateien steht. prozesse.json zählt alle Vorlagen der Datenbank, die
-    Gebietsdateien nicht jede (etwa eine Vorlage ohne Datum und ohne Ortsbezug); solche Vorlagen zählt die letzte Zahl.
+    Gebietsdateien nicht jede (etwa eine Vorlage ohne Datum und ohne Ortsbezug); solche Vorlagen zählt die fünfte Zahl.
     Liefert (Vorlagen mit Stand „entschieden“ und einem Ergebnis am Ende, das die Beratung nicht abschließt (nicht
     process.is_final); Vorlagen mit anderem Stand und einem Ergebnis am Ende, das als Ergebnis einer entscheidenden
     Beratung „entschieden“ ergibt (process.stand); Vorlagen der Gebietsdateien mit Ergebnis am Ende; Vorlagen, deren
     Zahl der Stationen nicht zur Datenbank passt, ohne Zählung; Vorlagen der Datenbank in keiner Gebietsdatei, ohne
-    Zählung) oder None ohne Gebietsdateien. Seit der Entscheidung 18.11.2026 (1) folgt das Ende dem Stand: Die erste
-    Zahl ist dann 0, die zweite auch, außer Einträge derselben Kennung sind verschieden entscheidend (`authoritative`;
-    process.path_key behält dort nach dem Auftrag das Verhalten von vorher); die Zeile bleibt als Schutz."""
+    Zählung; Vorlagen mit Stand „entschieden“ und einem Ergebnis am Ende, das die Beratung abschließt, aber nicht
+    entscheidet (process.is_final, nicht process.entscheidet: „ohne Votum“, „nicht abgestimmt“, KEIN_BESCHLUSS), auf
+    derselben Grundlage wie die dritte Zahl) oder None ohne Gebietsdateien. Seit der Entscheidung 18.11.2026 (1) folgt
+    das Ende dem Stand: Die erste Zahl ist dann 0, die zweite auch, außer Einträge derselben Kennung sind verschieden
+    entscheidend (`authoritative`; process.path_key behält dort nach dem Auftrag das Verhalten von vorher); die Zeile
+    bleibt als Schutz. Die sechste Zahl zählt nur (Nachfrage (a) zu 18.11.2026 (1)): Solche Enden bleiben, wie sie sind;
+    der Auftraggeber entscheidet nach dem nächsten Lauf."""
     from . import export, process as proc
     base = base or config.EXPORT / config.STADT
     dateien = [f for d in GEBIETSDATEIEN for f in sorted((base / d).glob("*.json"))]
     if not dateien:
         return None
     kennungen = export._kennungen(db)
-    gesehen, offen_entschieden, entschieden_anders, mit_ergebnis, abweichend = set(), 0, 0, 0, 0
+    gesehen, offen_entschieden, entschieden_anders, mit_ergebnis, abweichend, ohne_entscheidung = set(), 0, 0, 0, 0, 0
     for f in dateien:
         for p in json.loads(f.read_text())["papers"]:
             if (p.get("source_object") or p["reference"]) in gesehen:
@@ -246,10 +250,12 @@ def stand_und_ende(db, base=None):
             mit_ergebnis += 1
             if p.get("stand") == "entschieden":
                 offen_entschieden += not proc.is_final(ende)
+                ohne_entscheidung += proc.is_final(ende) and not proc.entscheidet({"authoritative": True,
+                                                                                    "result": ende})
             elif proc.stand({"process": [{"authoritative": True, "result": ende}]}) == "entschieden":
                 entschieden_anders += 1
     ohne_datei = sum(pid not in gesehen for (pid,) in db.execute("SELECT id FROM paper"))
-    return offen_entschieden, entschieden_anders, mit_ergebnis, abweichend, ohne_datei
+    return offen_entschieden, entschieden_anders, mit_ergebnis, abweichend, ohne_datei, ohne_entscheidung
 
 
 def kennzahlen(db):
@@ -301,6 +307,11 @@ def kennzahlen(db):
         f"mit Ergebnis am Ende"
         + (f"; {ende[3]} Vorlagen nicht gezählt (Zahl der Stationen passt nicht zur Datenbank)" if ende[3] else "")
         + (f"; {ende[4]} Vorlagen der Datenbank in keiner Gebietsdatei, nicht gezählt" if ende[4] else "")))
+    # Nachfrage (a) zur Entscheidung 18.11.2026 (1): erst zählen, auch 0 zum Vergleich zwischen den Läufen; kein Befund
+    if ende is not None:
+        print(f"Vorlagen mit Stand „entschieden“ und abschließendem Ergebnis ohne Entscheidung am Ende (etwa ohne "
+              f"Votum, nicht abgestimmt; nur gezählt, Entscheidung folgt nach dem nächsten Lauf): {ende[5]} von "
+              f"{ende[2]} Vorlagen der Gebietsdateien mit Ergebnis am Ende")
     # Anteile je Zeile, also je Eintrag der Beratungsfolge einer Vorlage (Entscheidung 17.11.2026 (14))
     print("mit Sitzung:", _pct(one("SELECT COUNT(*) FROM consultation WHERE meeting_id IS NOT NULL"), cons))
     print("mit TOP-Ergebnis:", _pct(one(

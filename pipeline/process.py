@@ -217,8 +217,9 @@ def path_key(p, kennungen):
       Ende die Beratung nicht ab (nicht is_final, etwa „vertagt“), ist das Ende das Ergebnis des entscheidenden;
       entscheiden mehrere, dessen mit dem spätesten Sitzungstag nach massgeblich (bei gleichem Tag des späteren in der
       Beratungsfolge; hat der letzte von ihnen keinen Sitzungstag, gilt er; mit der Angabe abgesagter Sitzungen wie
-      überall, wo massgeblich gilt, Auslegung). Ein Ende, das abschließt, bleibt bei diesem Stand, wie es war: Nach der
-      Entscheidung ändern sich nur Vorlagen, deren Ende dem Stand widerspricht (die erste Zahl der Zeile in check).
+      überall, wo massgeblich gilt, bestätigt 18.11.2026). Ein Ende, das abschließt, bleibt bei diesem Stand, wie es
+      war: Nach der Entscheidung ändern sich nur Vorlagen, deren Ende dem Stand widerspricht (die erste Zahl der Zeile
+      in check).
     - (B) Bei anderem Stand: Hat der zählende Eintrag kein Ergebnis (etwa ein neuer Termin ohne Ergebnis oder ein
       letzter Eintrag ohne Sitzungstag), ist das Ende der Stand (vorher das Ergebnis des Eintrags nach der Stelle)."""
     stations = [f"{s['gremium'] or '?'} ({s['role'] or '?'})" for s in p["process"]]
