@@ -283,6 +283,19 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
+ eetings/36245
+DTSTAMP:20261126T140000Z
+DTSTART:20261126T140000Z
+DTEND:20261125T230000Z
+SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
+DESCRIPTION:1. gemeinsame Sondersitzung des Ausschusses Soziales\, Gesundhe
+ it\, Seniorinnen und Senioren und des Ausschusses für Chancengerechtigkei
+ t und Integration\nTagesordnung noch nicht veröffentlicht.\nQuelle: OParl
+ -API der Stadt Köln\; Datenquelle: Stadt Köln – offenedaten-koeln.de
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34372
 DTSTAMP:20261127T100000Z
 DTSTART:20261127T100000Z
@@ -1228,6 +1241,18 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
+ eetings/36247
+DTSTAMP:20270301T130000Z
+DTSTART:20270301T130000Z
+DTEND:20270301T153000Z
+SUMMARY:Stadtarbeitsgemeinschaft Behindertenpolitik
+DESCRIPTION:Sitzung der Stadtarbeitsgemeinschaft Behindertenpolitik\nTageso
+ rdnung noch nicht veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Da
+ tenquelle: Stadt Köln – offenedaten-koeln.de
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35770
 DTSTAMP:20270302T150000Z
 DTSTART:20270302T150000Z
@@ -2144,6 +2169,18 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
+ eetings/36248
+DTSTAMP:20270614T120000Z
+DTSTART:20270614T120000Z
+DTEND:20270614T143000Z
+SUMMARY:Stadtarbeitsgemeinschaft Behindertenpolitik
+DESCRIPTION:Sitzung der Stadtarbeitsgemeinschaft Behindertenpolitik\nTageso
+ rdnung noch nicht veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Da
+ tenquelle: Stadt Köln – offenedaten-koeln.de
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35983
 DTSTAMP:20270615T130000Z
 DTSTART:20270615T130000Z
@@ -2638,6 +2675,18 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
+ eetings/36249
+DTSTAMP:20270920T120000Z
+DTSTART:20270920T120000Z
+DTEND:20270920T143000Z
+SUMMARY:Stadtarbeitsgemeinschaft Behindertenpolitik
+DESCRIPTION:Sitzung der Stadtarbeitsgemeinschaft Behindertenpolitik\nTageso
+ rdnung noch nicht veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Da
+ tenquelle: Stadt Köln – offenedaten-koeln.de
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35766
 DTSTAMP:20270921T140000Z
 DTSTART:20270921T140000Z
@@ -2768,6 +2817,18 @@ SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
  icht veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquelle: St
  adt Köln – offenedaten-koeln.de
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
+ eetings/36246
+DTSTAMP:20270927T150000Z
+DTSTART:20270927T150000Z
+DTEND:20270926T220000Z
+SUMMARY:Ausschuss für Wirtschaft und Digitalisierung
+DESCRIPTION:Sitzung des Ausschusses für Wirtschaft und Digitalisierung\nTa
+ gesordnung noch nicht veröffentlicht.\nQuelle: OParl-API der Stadt Köln\
+ ; Datenquelle: Stadt Köln – offenedaten-koeln.de
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
@@ -3128,6 +3189,18 @@ SUMMARY:Ausschuss Schule und Weiterbildung
 DESCRIPTION:Sitzung des Ausschusses Schule und Weiterbildung\nTagesordnung 
  noch nicht veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquel
  le: Stadt Köln – offenedaten-koeln.de
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
+ eetings/36250
+DTSTAMP:20271122T130000Z
+DTSTART:20271122T130000Z
+DTEND:20271122T153000Z
+SUMMARY:Stadtarbeitsgemeinschaft Behindertenpolitik
+DESCRIPTION:Sitzung der Stadtarbeitsgemeinschaft Behindertenpolitik\nTageso
+ rdnung noch nicht veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Da
+ tenquelle: Stadt Köln – offenedaten-koeln.de
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
