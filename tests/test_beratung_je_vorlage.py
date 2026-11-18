@@ -6,8 +6,9 @@ Vorlagen stehen und in derselben Vorlage mehrfach, je Eintrag mit eigener Sitzun
 Gremium, TOP und Ergebnis im Export, Zählung in check und verify); der Stand der Vorlage folgt bei einer wiederholten
 Kennung ihrem Eintrag mit dem spätesten Sitzungstag, bei gleichem Tag dem späteren, ohne Sitzungstag beim letzten
 Eintrag diesem (Entscheidung 17.11.2026 (15); vorher dem letzten Eintrag), ohne Einträge abgesagter Sitzungen, außer
-alle sind abgesagt (Entscheidung 17.11.2026 (16)). Abruf und Format von beratungen.jsonl bleiben unverändert. Alle
-Objekte sind erfunden (lokaler Testserver); keine Anfragen an die Stadt."""
+alle sind abgesagt (Entscheidung 17.11.2026 (16)); das Ende des Weges in prozesse.json folgt dem Stand (Entscheidung
+18.11.2026 (1)). Abruf und Format von beratungen.jsonl bleiben unverändert. Alle Objekte sind erfunden (lokaler
+Testserver); keine Anfragen an die Stadt."""
 import json
 import sqlite3
 
@@ -19,6 +20,10 @@ BESCHLOSSEN, KENNTNIS = "ungeändert beschlossen", "Kenntnis genommen"   # Ergeb
 # Regel für den Stand im Text von check (Entscheidungen 17.11.2026 (15) und (16))
 REGEL = ("(der Stand folgt dem Eintrag mit dem spätesten Sitzungstag, bei gleichem Tag dem späteren; hat der letzte "
          "Eintrag keinen Sitzungstag, folgt er diesem; für den Stand zählen Einträge abgesagter Sitzungen nicht)")
+# Zeile in check direkt nach „Stand und Ende des Weges …“ (Nachfrage (a) zur Entscheidung 18.11.2026 (1): nur gezählt)
+OHNE_ENTSCHEIDUNG = ("Vorlagen mit Stand „entschieden“ und abschließendem Ergebnis ohne Entscheidung am Ende (etwa "
+                     "ohne Votum, nicht abgestimmt; nur gezählt, Entscheidung folgt nach dem nächsten Lauf): {} von {} "
+                     "Vorlagen der Gebietsdateien mit Ergebnis am Ende\n")
 
 
 def _beratung(oparl, kennung, top, **felder):
@@ -279,9 +284,10 @@ def test_stand_nach_dem_spaetesten_sitzungstag(oparl, capsys):
                                                     (SITZUNGEN["v2"], GREMIUM, "4.3", KENNTNIS)]
     assert {ref: vorlagen[ref]["stand"] for ref in ("AN/102/2026", "1003/2026", "AN/104/2026", "1005/2026")} == {
         "AN/102/2026": "entschieden", "1003/2026": "offen", "AN/104/2026": "in Beratung", "1005/2026": "entschieden"}
-    # Ende des Weges in prozesse.json wie bisher: geordnet der Beschluss, ohne Sitzungstag zuletzt das letzte Ergebnis
+    # Ende des Weges in prozesse.json: geordnet wie bisher der Beschluss; ohne Sitzungstag zuletzt der Stand, weil der
+    # zählende Eintrag kein Ergebnis hat (Entscheidung 18.11.2026 (1) (B); vorher „vertagt“)
     assert _enden(vorlagen["AN/102/2026"]) == [(BESCHLOSSEN, "ergebnis")]
-    assert _enden(vorlagen["1003/2026"]) == [(VERTAGT, "ergebnis")]
+    assert _enden(vorlagen["1003/2026"]) == [("offen", "stand")]
     db = sqlite3.connect(config.DB)
     assert check.reihenfolge_wiederholter_kennungen(db) == (4, 0)
     db.close()
@@ -328,9 +334,11 @@ def test_ende_des_weges_wie_der_stand():
     Eintrags mit Ergebnis mehrfach in der Vorlage, ist das Ende das Ergebnis ihres Eintrags, der für den Stand zählt
     (Entscheidung 17.11.2026 (15) (A)), nicht mehr das des letzten nach der Stelle; Stand und Ende widersprechen sich
     nicht. Ein früherer Eintrag ohne Sitzungstag zählt nicht mit; zwei wiederholte Kennungen; Sitzungstag nach Kölner
-    Zeit (23:30 Uhr UTC am 22.10. ist der 23.10.). Wie bisher: geordnete Einträge, ein letzter Eintrag ohne Sitzungstag
-    und ohne Ergebnis (der Stand folgt ihm, das Ende dem letzten Ergebnis), verschiedene Kennungen nach der Stelle,
-    Einträge, die nicht entscheiden. Erfundene Einträge."""
+    Zeit (23:30 Uhr UTC am 22.10. ist der 23.10.). Wie bisher: geordnete Einträge, Einträge, die nicht entscheiden. Seit
+    der Entscheidung 18.11.2026 (1) anders (test_ende_des_weges_folgt_dem_stand): ein letzter Eintrag ohne Sitzungstag
+    und ohne Ergebnis (der Stand folgt ihm, das Ende jetzt auch, vorher dem letzten Ergebnis) und verschiedene
+    Kennungen, deren letzte nach der Stelle vertagt (das Ende ist der Beschluss, der den Stand „entschieden“ ergibt,
+    vorher die Vertagung). Erfundene Einträge."""
     from pipeline import process
 
     def b(kennung, start, result, authoritative=True):
@@ -354,12 +362,13 @@ def test_ende_des_weges_wie_der_stand():
     assert stand_und_ende(b("a", "2026-10-22T23:30:00Z", BESCHLOSSEN), b("a", v2, VERTAGT)) == entschieden
     # wie bisher
     assert stand_und_ende(b("a", v1, VERTAGT), b("a", v2, VERTAGT), b("a", v3, BESCHLOSSEN)) == entschieden
-    assert stand_und_ende(b("a", v1, VERTAGT), b("a", v2, VERTAGT), b("a", None, None)) == ("offen", VERTAGT,
-                                                                                             "ergebnis")
-    assert stand_und_ende(b("a", v3, BESCHLOSSEN), b("a", v1, VERTAGT), b("a", None, None)) == ("offen", VERTAGT,
-                                                                                                "ergebnis")
-    assert stand_und_ende(b("a", v3, BESCHLOSSEN), b("b", v1, VERTAGT)) == ("entschieden", VERTAGT, "ergebnis")
     assert stand_und_ende(b("a", v2, BESCHLOSSEN), b("b", v3, KENNTNIS, authoritative=False)) == entschieden
+    # seit der Entscheidung 18.11.2026 (1): der Stand am Ende, wenn der zählende Eintrag kein Ergebnis hat (vorher
+    # jeweils „vertagt“), und bei verschiedenen Kennungen der Beschluss (vorher „vertagt“)
+    assert stand_und_ende(b("a", v1, VERTAGT), b("a", v2, VERTAGT), b("a", None, None)) == ("offen", "offen", "stand")
+    assert stand_und_ende(b("a", v3, BESCHLOSSEN), b("a", v1, VERTAGT), b("a", None, None)) == ("offen", "offen",
+                                                                                                "stand")
+    assert stand_und_ende(b("a", v3, BESCHLOSSEN), b("b", v1, VERTAGT)) == entschieden
     assert stand_und_ende(b("a", v2, None), b("b", v3, KENNTNIS, authoritative=False)) == ("in Beratung",
                                                                                            "in Beratung", "stand")
 
@@ -394,9 +403,11 @@ def test_abgesagte_sitzung_zaehlt_nicht_fuer_den_stand(oparl, capsys, monkeypatc
     Sitzungstag und zählt, „offen“. 1005/2026 (eine Kennung, ein Eintrag, Sitzung abgesagt, vertagt) unverändert „in
     Beratung“. AN/106/2026 (zwei Kennungen: beschlossen 05.11., danach im Rat vertagt 08.10.) „entschieden“.
     (16) (B): check zählt die Kennungen, bei denen wegen einer abgesagten Sitzung ein anderer Eintrag zählt (1001/2026,
-    AN/102/2026, AN/104/2026), und die Widersprüche zwischen Stand und Ende des Weges in prozesse.json: AN/106/2026
-    („entschieden“, Ende „vertagt“, Offen (8)) und AN/104/2026 („offen“, Ende der Beschluss). Die Zeilen sind keine
-    Befunde: check endet ohne Befund, wenn die übrigen Prüfungen keinen haben."""
+    AN/102/2026, AN/104/2026), und die Widersprüche zwischen Stand und Ende des Weges in prozesse.json: seit der
+    Entscheidung 18.11.2026 (1) keine (vorher AN/106/2026, „entschieden“ mit Ende „vertagt“, Offen (8), und
+    AN/104/2026, „offen“ mit dem Beschluss am Ende; jetzt der Beschluss und der Stand am Ende, ebenso der Stand bei
+    1003/2026, vorher „vertagt“). Die Zeilen sind keine Befunde: check endet ohne Befund, wenn die übrigen Prüfungen
+    keinen haben."""
     b = oparl.b
     _abgesagte_sitzungen(oparl)
     oparl.papers.append(oparl.paper(6))
@@ -421,13 +432,14 @@ def test_abgesagte_sitzung_zaehlt_nicht_fuer_den_stand(oparl, capsys, monkeypatc
     assert {ref: p["stand"] for ref, p in vorlagen.items()} == {
         "1001/2026": "entschieden", "AN/102/2026": "entschieden", "1003/2026": "offen", "AN/104/2026": "offen",
         "1005/2026": "in Beratung", "AN/106/2026": "entschieden"}
-    # Ende des Weges in prozesse.json
-    assert _enden(vorlagen["1001/2026"]) == _enden(vorlagen["AN/104/2026"]) == [(BESCHLOSSEN, "ergebnis")]
-    assert _enden(vorlagen["1003/2026"]) == _enden(vorlagen["AN/106/2026"]) == [(VERTAGT, "ergebnis")]
+    # Ende des Weges in prozesse.json wie der Stand (Entscheidung 18.11.2026 (1); vorher bei AN/104/2026 der Beschluss,
+    # bei 1003/2026 und AN/106/2026 „vertagt“)
+    assert _enden(vorlagen["1001/2026"]) == _enden(vorlagen["AN/106/2026"]) == [(BESCHLOSSEN, "ergebnis")]
+    assert _enden(vorlagen["1003/2026"]) == _enden(vorlagen["AN/104/2026"]) == [("offen", "stand")]
     db = sqlite3.connect(config.DB)
     assert check.reihenfolge_wiederholter_kennungen(db) == (4, 2)
     assert check.abgesagte_wiederholter_kennungen(db) == (4, 3)
-    assert check.stand_und_ende(db) == (1, 1, 6, 0, 0)
+    assert check.stand_und_ende(db) == (0, 0, 4, 0, 0, 0)
     db.close()
     for name, leer in (("gebiete", ([], [])), ("datenschutz", {"befunde": [], "fehlend": []}),
                        ("federfuehrung_kopf", []), ("zusatzthemen", ([], []))):
@@ -436,9 +448,10 @@ def test_abgesagte_sitzung_zaehlt_nicht_fuer_den_stand(oparl, capsys, monkeypatc
     aus = capsys.readouterr().out
     assert ("Kennungen mehrfach in derselben Vorlage, deren Einträge nicht nach dem Sitzungstag geordnet sind: 2 von 4 "
             + REGEL + "\nKennungen mehrfach in derselben Vorlage, bei denen wegen einer abgesagten Sitzung ein anderer "
-            "Eintrag zählt: 3 von 4\nStand und Ende des Weges (prozesse.json) widersprechen sich: 1 Vorlagen mit Stand "
-            "„entschieden“ und nicht abschließendem Ergebnis am Ende (etwa vertagt), 1 Vorlagen mit Entscheidung am "
-            "Ende und anderem Stand, von 6 Vorlagen der Gebietsdateien mit Ergebnis am Ende\n") in aus
+            "Eintrag zählt: 3 von 4\nStand und Ende des Weges (prozesse.json) widersprechen sich: 0 Vorlagen mit Stand "
+            "„entschieden“ und nicht abschließendem Ergebnis am Ende (etwa vertagt), 0 Vorlagen mit Entscheidung am "
+            "Ende und anderem Stand, von 4 Vorlagen der Gebietsdateien mit Ergebnis am Ende\n"
+            + OHNE_ENTSCHEIDUNG.format(0, 4)) in aus
     assert aus.endswith("\nErgebnis\nAlle Prüfungen durchgeführt, keine Befunde.\n")
 
 
@@ -479,13 +492,14 @@ def test_abgesagte_sitzungen_massgeblich_weg_und_dossier(tmp_path):
     folge = (b("a", v2, BESCHLOSSEN), b("a", abg, VERTAGT, True))
     assert stand_und_ende(*folge) == ("entschieden", BESCHLOSSEN, "ergebnis")
     assert stand_und_ende(*folge, absagen=False) == ("in Beratung", VERTAGT, "ergebnis")
-    # vertagt 08.10., abgesagt 12.11. ohne Ergebnis, beschlossen 22.10.: vorher „offen“ mit Beschluss am Ende
+    # vertagt 08.10., abgesagt 12.11. ohne Ergebnis, beschlossen 22.10.: vorher „offen“ mit Beschluss am Ende; nach der
+    # Regel aus (15) heute „offen“ mit dem Stand am Ende (Entscheidung 18.11.2026 (1) (B))
     folge = (b("a", v1, VERTAGT), b("a", abg, None, True), b("a", v2, BESCHLOSSEN))
     assert stand_und_ende(*folge) == ("entschieden", BESCHLOSSEN, "ergebnis")
-    assert stand_und_ende(*folge, absagen=False) == ("offen", BESCHLOSSEN, "ergebnis")
-    # alle abgesagt: wie (15)
+    assert stand_und_ende(*folge, absagen=False) == ("offen", "offen", "stand")
+    # alle abgesagt: wie (15); seit 18.11.2026 (1) (B) der Stand am Ende (vorher „vertagt“)
     folge = (b("a", abg, None, True), b("a", abg0, VERTAGT, True))
-    assert stand_und_ende(*folge) == stand_und_ende(*folge, absagen=False) == ("offen", VERTAGT, "ergebnis")
+    assert stand_und_ende(*folge) == stand_und_ende(*folge, absagen=False) == ("offen", "offen", "stand")
 
     def s(gremium, start, result, abgesagt=False):
         return {"gremium": gremium, "start_date": start, "result": result, "cancelled": abgesagt}
@@ -502,10 +516,13 @@ def test_abgesagte_sitzungen_massgeblich_weg_und_dossier(tmp_path):
 
 def test_stand_und_ende_aus_den_gebietsdateien(tmp_path, oparl, capsys, monkeypatch):
     """Entscheidung 17.11.2026 (16) (B1), Wege von check.stand_und_ende mit erfundenen Gebietsdateien: Eine Vorlage in
-    zwei Gebietsdateien zählt einmal (Stand „entschieden“, Ende „vertagt“), zwei Vorlagen mit derselben Drucksache
-    zählen je für sich (nach source_object), eine Vorlage ohne Einträge in der Datenbank wird nicht gezählt, ebenso eine
-    Vorlage der Datenbank in keiner Gebietsdatei. Dazu die Zeile von check.kennzahlen mit einer Vorlage ohne Datum und
-    ohne Ortsbezug (sie steht in keiner Gebietsdatei, prozesse.json zählt sie mit) und ohne Export."""
+    zwei Gebietsdateien zählt einmal (Stand „entschieden“, am Ende seit der Entscheidung 18.11.2026 (1) der Beschluss,
+    vorher „vertagt“), zwei Vorlagen mit derselben Drucksache zählen je für sich (nach source_object), eine Vorlage mit
+    dem Stand am Ende nicht unter denen mit Ergebnis am Ende (seit 18.11.2026 (1) (B), vorher mit dem Beschluss am Ende
+    bei Stand „offen“), eine Vorlage ohne Einträge in der Datenbank wird nicht gezählt, ebenso eine Vorlage der
+    Datenbank in keiner Gebietsdatei. Dazu die Zeile von check.kennzahlen mit einer Vorlage ohne Datum und
+    ohne Ortsbezug (sie steht in keiner Gebietsdatei, prozesse.json zählt sie mit) und ohne Export, ebenso die Zeile
+    danach (Nachfrage (a) zu 18.11.2026 (1)), die ohne Export fehlt."""
     def station(start, result):
         return {"gremium": "Bezirksvertretung", "role": "Entscheidung", "authoritative": True, "start_date": start,
                 "result": result, "cancelled": False}
@@ -529,7 +546,7 @@ def test_stand_und_ende_aus_den_gebietsdateien(tmp_path, oparl, capsys, monkeypa
     db.executemany("INSERT INTO paper VALUES (?)", [("p/1",), ("p/2",), ("p/3",), ("p/4",), ("p/5",)])
     db.executemany("INSERT INTO consultation VALUES (?, ?, ?)", [("y", "p/1", 1), ("x", "p/1", 0), ("z", "p/2", 0),
                                                                  ("a", "p/3", 0), ("a", "p/3", 1)])
-    assert check.stand_und_ende(db, base=tmp_path / "gebiete") == (1, 1, 3, 1, 1)
+    assert check.stand_und_ende(db, base=tmp_path / "gebiete") == (0, 0, 2, 1, 1, 0)
     db.close()
 
     # AN/104/2026: ohne Datum und ohne Ortsbezug (im Rat beraten, also auch kein Stadtbezirk über die Bezirksvertretung)
@@ -544,12 +561,283 @@ def test_stand_und_ende_aus_den_gebietsdateien(tmp_path, oparl, capsys, monkeypa
     assert ("Stand und Ende des Weges (prozesse.json) widersprechen sich: 0 Vorlagen mit Stand „entschieden“ und nicht "
             "abschließendem Ergebnis am Ende (etwa vertagt), 0 Vorlagen mit Entscheidung am Ende und anderem Stand, "
             "von 4 Vorlagen der Gebietsdateien mit Ergebnis am Ende; 1 Vorlagen der Datenbank in keiner Gebietsdatei, "
-            "nicht gezählt\n") in capsys.readouterr().out
+            "nicht gezählt\n" + OHNE_ENTSCHEIDUNG.format(0, 4)) in capsys.readouterr().out
     monkeypatch.setattr(config, "EXPORT", tmp_path / "ohne-export")
     check.kennzahlen(db)
+    aus = capsys.readouterr().out
     assert ("Stand und Ende des Weges (prozesse.json) widersprechen sich: nicht ermittelt (Gebietsdateien des Exports "
-            "fehlen)\n") in capsys.readouterr().out
+            "fehlen)\n") in aus
+    assert OHNE_ENTSCHEIDUNG.split(":")[0] not in aus
     db.close()
+
+
+# Entscheidung 18.11.2026 (1): Das Ende des Weges in prozesse.json folgt dem Stand
+ABGELEHNT, NICHT_ABGESTIMMT = "abgelehnt", "nicht abgestimmt"
+OHNE_VOTUM = "ohne Votum"   # wie NICHT_ABGESTIMMT abschließend, aber nicht entscheidend (KEIN_BESCHLUSS)
+
+
+def _ende_bis_16(p, kennungen):
+    """Ende des Weges nach process.path_key bis zur Entscheidung 18.11.2026 (1), zum Vergleich: das Ergebnis des
+    letzten entscheidenden Eintrags mit Ergebnis nach der Stelle; hat der Eintrag seiner Kennung, der zählt, ein
+    Ergebnis und ist er entscheidend, dessen Ergebnis; ohne solchen Eintrag der Stand. (Ende, Art des Endes)"""
+    from pipeline import process
+    zaehlt = process.zaehlende(kennungen, [process.local_day(s["start_date"]) for s in p["process"]],
+                               [s.get("cancelled") for s in p["process"]])
+    for i in reversed(range(len(p["process"]))):
+        s = p["process"][i]
+        if s["authoritative"] and s["result"]:
+            z = p["process"][zaehlt[kennungen[i]]]
+            return (z["result"] if z["authoritative"] and z["result"] else s["result"]), "ergebnis"
+    return p["stand"], "stand"
+
+
+def test_ende_des_weges_folgt_dem_stand():
+    """Entscheidung 18.11.2026 (1) mit erfundenen Einträgen, je mit dem Ende nach der Regel bis dahin zum Vergleich.
+    (A) Ist der Stand „entschieden“ und schließt das Ende die Beratung nicht ab (etwa „vertagt“), ist das Ende das
+    Ergebnis, das den Stand entscheidet (process.entscheidet unter den zählenden Einträgen, dieselbe Bedingung wie in
+    process.stand), bei mehreren das am spätesten Sitzungstag nach process.massgeblich (bei gleichem Tag das spätere in
+    der Beratungsfolge, ein letzter ohne Sitzungstag gilt, abgesagte Sitzungen wie überall, wo massgeblich gilt). Jedes
+    andere Ende bleibt bei diesem Stand gleich: bei geordneten Einträgen, einem einzigen entscheidenden Eintrag, wenn der
+    Beschluss schon das letzte Ergebnis einer entscheidenden Beratung nach der Stelle ist, aber auch bei zwei
+    Entscheidungen, deren letzte nach der Stelle den früheren Sitzungstag hat, bei „nicht abgestimmt“ am Ende, beim
+    Beschluss eines Eintrags, der nicht zählt, und bei einer Entscheidung in einer abgesagten Sitzung (Nachprüfung von
+    (1)); eine Prüfung über alle kurzen Folgen aus erfundenen Einträgen bestätigt das. (B) Hat bei anderem Stand der
+    zählende Eintrag der Kennung des letzten entscheidenden Eintrags mit Ergebnis kein Ergebnis (ein Eintrag ohne
+    Sitzungstag oder ein neuer Termin ohne Ergebnis), ist das Ende der Stand; mit Ergebnis wie bisher."""
+    from pipeline import process
+
+    def b(kennung, start, result, authoritative=True, abgesagt=False):
+        return kennung, {"gremium": "Bezirksvertretung", "role": "Entscheidung", "authoritative": authoritative,
+                         "start_date": start, "result": result, "cancelled": abgesagt}
+
+    def weg(*eintraege):
+        """(Stand wie export._paper_detail, Ende und Art wie export._paths), (Ende und Art nach der Regel bis (16))."""
+        kennungen, schritte = [k for k, _ in eintraege], [s for _, s in eintraege]
+        zaehlt = set(process.zaehlende(kennungen, [process.local_day(s["start_date"]) for s in schritte],
+                                       [s["cancelled"] for s in schritte]).values())
+        p = {"process": schritte, "stand": process.stand({"process": [s for i, s in enumerate(schritte)
+                                                                      if i in zaehlt]})}
+        return (p["stand"],) + process.path_key(p, kennungen)[1:], _ende_bis_16(p, kennungen)
+
+    v1, v2, v3 = SITZUNGEN["v1"], SITZUNGEN["v2"], SITZUNGEN["v3"]   # 08.10., 22.10., 05.11.
+    abg, neu = ABGESAGT["abg"], "2026-12-03T17:00:00+01:00"            # 12.11. (abgesagt), 03.12.
+    # (A) unverändert: Das Ende schließt die Beratung ab, widerspricht dem Stand also nicht
+    for eintraege, ende in (
+            ((b("a", v1, KENNTNIS, authoritative=False), b("b", v3, BESCHLOSSEN)), BESCHLOSSEN),   # geordnet
+            ((b("a", v2, ABGELEHNT),), ABGELEHNT),                                                 # ein einziger
+            ((b("a", v1, VERTAGT), b("b", v3, BESCHLOSSEN)), BESCHLOSSEN),       # der Beschluss ist schon zuletzt
+            ((b("a", v1, VERTAGT), b("a", v2, VERTAGT), b("a", v3, BESCHLOSSEN)), BESCHLOSSEN),
+            ((b("a", v1, ABGELEHNT), b("b", v3, BESCHLOSSEN)), BESCHLOSSEN),     # zwei Entscheidungen, geordnet
+            ((b("b", v3, BESCHLOSSEN), b("a", v2, KENNTNIS, authoritative=False)), BESCHLOSSEN),
+            ((b("a", v3, BESCHLOSSEN), b("a", v1, VERTAGT)), BESCHLOSSEN),       # eine Kennung, seit (15)
+            # zwei Entscheidungen, die letzte nach der Stelle mit früherem Sitzungstag
+            ((b("x", v3, BESCHLOSSEN), b("y", v2, ABGELEHNT)), ABGELEHNT),
+            # abschließend ohne Beschluss am Ende (KEIN_BESCHLUSS, nicht in der ersten Zahl in check)
+            ((b("x", v1, BESCHLOSSEN), b("y", v3, NICHT_ABGESTIMMT)), NICHT_ABGESTIMMT),
+            # der Beschluss eines Eintrags, der nicht zählt (seine Kennung zählt ohne Sitzungstag oder mit neuem Termin)
+            ((b("b", v1, ABGELEHNT), b("a", v2, BESCHLOSSEN), b("a", None, None)), BESCHLOSSEN),
+            ((b("b", v1, ABGELEHNT), b("a", v2, BESCHLOSSEN), b("a", neu, None)), BESCHLOSSEN),
+            # eine Entscheidung in einer abgesagten Sitzung (alle Einträge ihrer Kennung abgesagt) zuletzt
+            ((b("y", v2, ABGELEHNT), b("x", abg, BESCHLOSSEN, abgesagt=True)), BESCHLOSSEN),
+            # der letzte entscheidende Eintrag ohne Sitzungstag
+            ((b("x", v3, BESCHLOSSEN), b("y", None, ABGELEHNT)), ABGELEHNT)):
+        assert weg(*eintraege) == (("entschieden", ende, "ergebnis"), (ende, "ergebnis")), eintraege
+    # (A) verschiedene Kennungen, die letzte nach der Stelle vertagt am 08.10. (Offen (8)): der Beschluss
+    assert weg(b("x", v3, BESCHLOSSEN), b("y", v1, VERTAGT)) == (("entschieden", BESCHLOSSEN, "ergebnis"),
+                                                                 (VERTAGT, "ergebnis"))
+    # zwei Entscheidungen, danach vertagt: die am spätesten Tag
+    assert weg(b("x", v3, BESCHLOSSEN), b("y", v2, ABGELEHNT), b("z", v1, VERTAGT)) == (
+        ("entschieden", BESCHLOSSEN, "ergebnis"), (VERTAGT, "ergebnis"))
+    # gleicher Tag: die spätere in der Beratungsfolge
+    assert weg(b("x", v2, BESCHLOSSEN), b("y", "2026-10-22T19:00:00+02:00", ABGELEHNT), b("z", v1, VERTAGT)) == (
+        ("entschieden", ABGELEHNT, "ergebnis"), (VERTAGT, "ergebnis"))
+    # die letzte Entscheidung nach der Stelle ohne Sitzungstag gilt, wie in process.massgeblich
+    assert weg(b("x", v3, BESCHLOSSEN), b("y", None, ABGELEHNT), b("z", v1, VERTAGT)) == (
+        ("entschieden", ABGELEHNT, "ergebnis"), (VERTAGT, "ergebnis"))
+    # ohne Beschluss (KEIN_BESCHLUSS) entscheidet nicht, wie im Stand: der Beschluss
+    assert weg(b("x", v1, BESCHLOSSEN), b("y", v3, NICHT_ABGESTIMMT), b("z", v2, VERTAGT)) == (
+        ("entschieden", BESCHLOSSEN, "ergebnis"), (VERTAGT, "ergebnis"))
+    # eine Entscheidung in einer abgesagten Sitzung (alle Einträge ihrer Kennung abgesagt, sie zählt also für den
+    # Stand) tritt hinter eine ohne abgesagte Sitzung zurück, wie in process.massgeblich (bestätigt 18.11.2026)
+    assert weg(b("y", v2, ABGELEHNT), b("x", abg, BESCHLOSSEN, abgesagt=True), b("z", v1, VERTAGT)) == (
+        ("entschieden", ABGELEHNT, "ergebnis"), (VERTAGT, "ergebnis"))
+    # (B) der zählende Eintrag hat kein Ergebnis: der Stand (vorher das Ergebnis des Eintrags nach der Stelle)
+    assert weg(b("a", v3, BESCHLOSSEN), b("a", None, None)) == (("offen", "offen", "stand"), (BESCHLOSSEN, "ergebnis"))
+    assert weg(b("a", v1, BESCHLOSSEN), b("a", neu, None), b("b", v2, KENNTNIS, authoritative=False)) == (
+        ("in Beratung", "in Beratung", "stand"), (BESCHLOSSEN, "ergebnis"))
+    assert weg(b("a", v1, VERTAGT), b("a", v2, VERTAGT), b("a", None, None)) == (("offen", "offen", "stand"),
+                                                                                 (VERTAGT, "ergebnis"))
+    # (B) wie bisher, wenn der zählende Eintrag ein Ergebnis hat: sein Ergebnis, wenn er entscheidend ist, sonst das
+    # des Eintrags nach der Stelle (dann widersprechen sich Stand und Ende weiter; nur, wenn Einträge derselben Kennung
+    # verschieden entscheidend sind)
+    assert weg(b("a", v1, BESCHLOSSEN), b("a", v2, VERTAGT)) == (("in Beratung", VERTAGT, "ergebnis"),
+                                                                 (VERTAGT, "ergebnis"))
+    assert weg(b("a", v1, BESCHLOSSEN), b("a", v2, KENNTNIS, authoritative=False)) == (
+        ("beraten, ohne Entscheidung", BESCHLOSSEN, "ergebnis"), (BESCHLOSSEN, "ergebnis"))
+    # ohne entscheidenden Eintrag mit Ergebnis wie bisher der Stand
+    assert weg(b("a", v2, None), b("b", v3, KENNTNIS, authoritative=False)) == (
+        ("in Beratung", "in Beratung", "stand"), ("in Beratung", "stand"))
+    # Bedingung für „entschieden“: eine Funktion für Stand und Ende
+    assert [process.entscheidet({"authoritative": a, "result": r}) for a, r in (
+        (True, BESCHLOSSEN), (1, KENNTNIS), (True, VERTAGT), (True, NICHT_ABGESTIMMT), (True, "ohne Votum"),
+        (True, None), (False, BESCHLOSSEN), (0, BESCHLOSSEN))] == [True, True, False, False, False, False, False, False]
+
+
+def test_ende_des_weges_aendert_sich_nur_bei_widerspruch():
+    """Entscheidung 18.11.2026 (1), Nachprüfung: alle Folgen von bis zu drei erfundenen Einträgen aus zwei Kennungen, je
+    mit Sitzungstag (08.10., 05.11., ohne, 12.11. abgesagt) und Ergebnis (beschlossen, vertagt, nicht abgestimmt, zur
+    Kenntnis genommen in einer nicht entscheidenden Beratung, keins). Gegenüber der Regel bis dahin ändert sich das Ende
+    nur bei Stand „entschieden“ und einem Ende, das die Beratung nicht abschließt ((A), dann ein entscheidendes
+    Ergebnis), und bei anderem Stand zum Stand ((B)). Die erste Zahl der Zeile in check ist immer 0, die zweite auch, wenn
+    die Einträge je Kennung gleich entscheidend sind (sonst bleibt nach dem Auftrag das Ende von vorher, TECHNIK.md)."""
+    from itertools import product
+
+    from pipeline import process
+    tage = [(SITZUNGEN["v1"], False), (SITZUNGEN["v3"], False), (None, False), (ABGESAGT["abg"], True)]
+    ergebnisse = [(BESCHLOSSEN, True), (VERTAGT, True), (NICHT_ABGESTIMMT, True), (KENNTNIS, False), (None, True)]
+    zeichen = [(k, t, a, r, e) for k in "ab" for t, a in tage for r, e in ergebnisse]
+    geaendert = gemischt = 0
+    for n in (1, 2, 3):
+        for folge in product(zeichen, repeat=n):
+            kennungen = [k for k, *_ in folge]
+            schritte = [{"gremium": "Bezirksvertretung", "role": "Entscheidung", "authoritative": e, "start_date": t,
+                         "result": r, "cancelled": a} for _, t, a, r, e in folge]
+            zaehlt = set(process.zaehlende(kennungen, [process.local_day(t) for _, t, *_ in folge],
+                                           [a for _, _, a, *_ in folge]).values())
+            p = {"process": schritte, "stand": process.stand({"process": [s for i, s in enumerate(schritte)
+                                                                          if i in zaehlt]})}
+            ende = process.path_key(p, kennungen)[1:]
+            vorher = _ende_bis_16(p, kennungen)
+            if ende != vorher:
+                geaendert += 1
+                if p["stand"] == "entschieden":
+                    assert not process.is_final(vorher[0]) and process.is_final(ende[0]), folge
+                else:
+                    assert ende == (p["stand"], "stand"), folge
+            if ende[1] != "ergebnis":
+                continue
+            if p["stand"] == "entschieden":
+                assert process.is_final(ende[0]), folge
+            elif process.stand({"process": [{"authoritative": True, "result": ende[0]}]}) == "entschieden":
+                assert any(len({e for k2, *_, e in folge if k2 == k}) > 1 for k in kennungen), folge
+                gemischt += 1
+    assert geaendert and gemischt   # beide Fälle kommen vor
+
+
+def test_ende_des_weges_folgt_dem_stand_im_export(oparl, capsys):
+    """Entscheidung 18.11.2026 (1) über den Testserver, prozesse.json und check. 1001/2026 (zwei Kennungen: beschlossen
+    am 05.11., danach im Rat vertagt am 08.10.): „entschieden“ mit dem Beschluss am Ende (vorher „vertagt“). AN/102/2026
+    (zwei entscheidende Kennungen: beschlossen am 05.11., danach im Rat zur Kenntnis genommen am 22.10., danach im Rat
+    vertagt am 08.10.): der Beschluss am spätesten Tag (vorher „vertagt“). 1003/2026 (vertagt am 22.10., beschlossen
+    am 05.11., danach ein Eintrag derselben Kennung ohne Sitzung; mit nur einer Zeile der Kennung in beratungen.jsonl
+    übernähme er deren Sitzung): „offen“ mit dem Stand am Ende (vorher der Beschluss). AN/104/2026 (beschlossen am 22.10.,
+    danach ein neuer Termin am 03.12. ohne Ergebnis, dazu eine Beratung im Rat, vertagt): „in Beratung“ mit dem Stand am
+    Ende (vorher der Beschluss). Unverändert: 1005/2026 (geordnet: im Rat vertagt am 08.10., beschlossen am 05.11.),
+    AN/106/2026 (eine Kennung dreimal, geordnet), 1007/2026 (ein einziger Eintrag) und AN/108/2026 (wie AN/102/2026 ohne
+    die Vertagung: „Kenntnis genommen“ schließt ab, widerspricht dem Stand also nicht, Nachprüfung von (1)). check zählt
+    keine Widersprüche zwischen Stand und Ende (vorher 2 und 2, von 8 Vorlagen mit Ergebnis am Ende, ohne 1009/2026).
+    Nachfrage (a) zu (1): 1009/2026 (zwei Kennungen: beschlossen am 22.10., danach „ohne Votum“ am 05.11.) bleibt
+    „entschieden“ mit „ohne Votum“ am Ende; check zählt sie in der Zeile danach (1 von 7), ohne Befund."""
+    b = oparl.b
+    rat = [f"{b}/organizations/rat"]
+    _abgesagte_sitzungen(oparl)
+    oparl.meetings.append({
+        "id": f"{b}/meetings/neu", "type": "https://schema.oparl.org/1.1/Meeting", "name": GREMIUM,
+        "start": "2026-12-03T17:00:00+01:00", "organization": [f"{b}/organizations/bv4"],
+        "modified": "2026-11-13T08:00:00+01:00", "agendaItem": []})
+    next(m for m in oparl.meetings if m["id"] == f"{b}/meetings/v3")["agendaItem"].append(
+        {"id": f"{b}/agendaitems/o3", "number": "5.4", "name": "TOP o3", "result": OHNE_VOTUM, "public": True})
+    oparl.papers += [oparl.paper(6), oparl.paper(7), oparl.paper(8), oparl.paper(9)]
+    oparl.papers[0]["consultation"] = [_eintrag(oparl, "x1", "v3", "v3"),
+                                       _eintrag(oparl, "y1", "v1", "w1", organization=rat)]
+    oparl.papers[1]["consultation"] = [_eintrag(oparl, "x2", "v3", "v3"),
+                                       _eintrag(oparl, "y2", "v2", "w2", organization=rat),
+                                       _eintrag(oparl, "z2", "v1", "w1", organization=rat)]
+    oparl.papers[2]["consultation"] = [_eintrag(oparl, "u", "v2", "v2"), _eintrag(oparl, "u", "v3", "v3"),
+                                       _eintrag(oparl, "u")]
+    oparl.papers[3]["consultation"] = [_eintrag(oparl, "k", "v2", "b2"), _eintrag(oparl, "k", "neu"),
+                                       _eintrag(oparl, "m", "v1", "v1", organization=rat, role="Beratung",
+                                                authoritative=False)]
+    oparl.papers[4]["consultation"] = [_eintrag(oparl, "r", "v1", "w1", organization=rat),
+                                       _eintrag(oparl, "s", "v3", "v3")]
+    oparl.papers[5]["consultation"] = [_eintrag(oparl, "g", "v1", "v1"), _eintrag(oparl, "g", "v2", "v2"),
+                                       _eintrag(oparl, "g", "v3", "v3")]
+    oparl.papers[6]["consultation"] = [_beratung(oparl, "einzeln", 1)]
+    oparl.papers[7]["consultation"] = [_eintrag(oparl, "x8", "v3", "v3"),
+                                       _eintrag(oparl, "y8", "v2", "w2", organization=rat)]
+    oparl.papers[8]["consultation"] = [_eintrag(oparl, "x9", "v2", "b2"), _eintrag(oparl, "y9", "v3", "o3")]
+    _aufbauen(oparl, capsys)
+    vorlagen = _exportiert()
+    assert _stationen(vorlagen["1003/2026"])[0] == [(SITZUNGEN["v2"], GREMIUM, "4.2", VERTAGT),
+                                                    (SITZUNGEN["v3"], GREMIUM, "5.3", BESCHLOSSEN),
+                                                    (None, GREMIUM, None, None)]
+    assert _stationen(vorlagen["AN/104/2026"])[0] == [(SITZUNGEN["v2"], GREMIUM, "4.4", BESCHLOSSEN),
+                                                      ("2026-12-03T17:00:00+01:00", GREMIUM, None, None),
+                                                      (SITZUNGEN["v1"], "Rat", "3.1", VERTAGT)]
+    erwartet = {"1001/2026": ("entschieden", BESCHLOSSEN, "ergebnis"),
+                "AN/102/2026": ("entschieden", BESCHLOSSEN, "ergebnis"),
+                "1003/2026": ("offen", "offen", "stand"), "AN/104/2026": ("in Beratung", "in Beratung", "stand"),
+                "1005/2026": ("entschieden", BESCHLOSSEN, "ergebnis"),
+                "AN/106/2026": ("entschieden", BESCHLOSSEN, "ergebnis"),
+                "1007/2026": ("entschieden", BESCHLOSSEN, "ergebnis"),
+                "AN/108/2026": ("entschieden", KENNTNIS, "ergebnis"),
+                "1009/2026": ("entschieden", OHNE_VOTUM, "ergebnis")}
+    assert {ref: [(p["stand"],) + e for e in _enden(p)] for ref, p in vorlagen.items()} == {
+        ref: [e] for ref, e in erwartet.items()}
+    db = sqlite3.connect(config.DB)
+    assert check.stand_und_ende(db) == (0, 0, 7, 0, 0, 1)
+    check.kennzahlen(db)
+    assert ("Stand und Ende des Weges (prozesse.json) widersprechen sich: 0 Vorlagen mit Stand „entschieden“ und nicht "
+            "abschließendem Ergebnis am Ende (etwa vertagt), 0 Vorlagen mit Entscheidung am Ende und anderem Stand, "
+            "von 7 Vorlagen der Gebietsdateien mit Ergebnis am Ende\n" + OHNE_ENTSCHEIDUNG.format(1, 7)
+            ) in capsys.readouterr().out
+    db.close()
+
+
+def test_stand_entschieden_ohne_entscheidung_am_ende(tmp_path):
+    """Nachfrage (a) zur Entscheidung 18.11.2026 (1), erst zählen, mit erfundenen Gebietsdateien: check.stand_und_ende
+    nennt als sechste Zahl die Vorlagen mit Stand „entschieden“ und einem Ergebnis am Ende, das die Beratung abschließt,
+    aber nicht entscheidet („ohne Votum“, „nicht abgestimmt“; process.is_final, nicht process.entscheidet), auf
+    derselben Grundlage wie die dritte Zahl: jede Vorlage einmal, auch in zwei Gebietsdateien, ohne Vorlagen, deren
+    Zahl der Stationen nicht zur Datenbank passt. Nicht gezählt: ein Beschluss (auch nach „ohne Votum“), eine Ablehnung
+    oder „Kenntnis genommen“ am Ende, „ohne Votum“ am Ende bei anderem Stand und eine Vorlage mit dem Stand am Ende.
+    Die Enden bleiben, wie sie sind (process.path_key)."""
+    from pipeline import process
+
+    def station(start, result):
+        return {"gremium": "Bezirksvertretung", "role": "Entscheidung", "authoritative": True, "start_date": start,
+                "result": result, "cancelled": False}
+
+    v1, v2, v3 = SITZUNGEN["v1"], SITZUNGEN["v2"], SITZUNGEN["v3"]   # 08.10., 22.10., 05.11.
+    vorlagen = {   # Vorlage: (Stand, Einträge je mit Kennung)
+        "p/1": ("entschieden", [("x", station(v1, BESCHLOSSEN)), ("y", station(v3, OHNE_VOTUM))]),          # gezählt
+        "p/2": ("entschieden", [("x", station(v1, BESCHLOSSEN)), ("y", station(v3, NICHT_ABGESTIMMT))]),    # gezählt
+        "p/3": ("entschieden", [("x", station(v1, OHNE_VOTUM)), ("y", station(v3, BESCHLOSSEN))]),
+        "p/4": ("entschieden", [("x", station(v2, ABGELEHNT))]),
+        "p/5": ("entschieden", [("x", station(v1, BESCHLOSSEN)), ("y", station(v3, KENNTNIS))]),
+        "p/6": ("beraten, ohne Entscheidung", [("x", station(v3, OHNE_VOTUM))]),
+        "p/7": ("offen", [("x", station(v1, OHNE_VOTUM)), ("x", station(None, None))]),   # Ende: der Stand
+        "p/8": ("entschieden", [("x", station(v1, BESCHLOSSEN)), ("y", station(v3, OHNE_VOTUM))]),   # Datenbank: 1
+    }
+    papers = {pid: {"reference": f"AN/{pid[2:]}/2026", "source_object": pid, "paper_type": "Antrag", "stand": stand,
+                    "process": [s for _, s in eintraege]} for pid, (stand, eintraege) in vorlagen.items()}
+    for datei, pids in (("ortsteile/a.json", ["p/1", "p/2", "p/3", "p/4"]),
+                        ("bezirke/x.json", ["p/1", "p/5", "p/6", "p/7", "p/8"])):
+        (tmp_path / datei).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / datei).write_text(json.dumps({"papers": [papers[pid] for pid in pids]}), encoding="utf-8")
+    db = sqlite3.connect(":memory:")
+    db.execute("CREATE TABLE paper (id TEXT)")
+    db.execute("CREATE TABLE consultation (id TEXT, paper_id TEXT, position INTEGER)")
+    db.executemany("INSERT INTO paper VALUES (?)", [(pid,) for pid in vorlagen])
+    db.executemany("INSERT INTO consultation VALUES (?, ?, ?)",
+                   [(k, pid, i) for pid, (_, eintraege) in vorlagen.items()
+                    for i, (k, _) in enumerate(eintraege[:1] if pid == "p/8" else eintraege)])
+    assert check.stand_und_ende(db, base=tmp_path) == (0, 0, 6, 1, 0, 2)
+    db.close()
+    enden = {pid: process.path_key(papers[pid], [k for k, _ in vorlagen[pid][1]])[1:] for pid in vorlagen}
+    assert enden == {"p/1": (OHNE_VOTUM, "ergebnis"), "p/2": (NICHT_ABGESTIMMT, "ergebnis"),
+                     "p/3": (BESCHLOSSEN, "ergebnis"), "p/4": (ABGELEHNT, "ergebnis"), "p/5": (KENNTNIS, "ergebnis"),
+                     "p/6": (OHNE_VOTUM, "ergebnis"), "p/7": ("offen", "stand"), "p/8": (OHNE_VOTUM, "ergebnis")}
 
 
 def test_wiederholte_kennung_erstes_gremium_fuer_datenschutz(oparl, capsys):
