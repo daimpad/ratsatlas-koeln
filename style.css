@@ -204,6 +204,9 @@ fieldset[hidden] { display: none; }
 legend { font-size: 13px; color: var(--text-muted); padding: 0; margin-bottom: 2px; }
 .check { display: flex !important; align-items: center; gap: 6px; color: var(--text) !important; font-size: 14px !important; }
 .check[hidden] { display: none !important; }
+/* Filter „Ortsangabe“: die Erklärung in Klammern steht unter dem Namen der Stufe, nicht als schmale Spalte daneben */
+#f-conf .check:not([hidden]) { display: grid !important; grid-template-columns: auto 1fr; column-gap: 6px; align-items: center; }
+#f-conf .check .hint { grid-column: 2; }
 .hint { color: var(--text-muted); font-size: 12px; }
 .count { margin: 4px 0 8px; font-size: 13px; color: var(--text-muted); }
 

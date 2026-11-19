@@ -35,7 +35,7 @@
     <h1>Begriffe</h1>
     <p class="lead">Was bedeuten die Wörter im Ratsatlas? Hier stehen Vorlagenarten, Gremien, Ergebnisse und Kürzel in einfachen Worten, jeweils mit Fundstelle.</p>
     <p class="meta">Die Erklärungen sind allgemein und keine Rechtsberatung. Maßgeblich sind die Gemeindeordnung NRW, die Geschäftsordnung des Rates und die Originale im Ratsinformationssystem. Wo eine Vorlagenart in keinem Regelwerk beschrieben ist, ist die Erklärung aus den Daten erschlossen; das steht bei der Fundstelle.</p>
-    <nav class="thema-sprung" aria-label="Auf dieser Seite"><span>Auf dieser Seite:</span> <a href="#vorlagen">Vorlagen und Vorlagenarten</a> · <a href="#gremium">Gremien und Beteiligung</a> · <a href="#verfahren">Verfahren und Sitzungen</a> · <a href="#gebiete">Gebiete</a> · <a href="#kuerzel">Kürzel</a> · <a href="#planung">Planung</a> · <a href="#ergebnisse">Ergebnisse der Beratung</a> · <a href="#rollen">Rollen in der Beratungsfolge</a> · <a href="#stand">Stand eines Vorgangs</a> · <a href="#schritte">Schritte der Prozesslinie</a> · <a href="#sicherheit">Wie sicher eine Angabe ist</a></nav>
+    <nav class="thema-sprung" aria-label="Auf dieser Seite"><span>Auf dieser Seite:</span> <a href="#vorlagen">Vorlagen und Vorlagenarten</a> · <a href="#gremium">Gremien und Beteiligung</a> · <a href="#verfahren">Verfahren und Sitzungen</a> · <a href="#gebiete">Gebiete</a> · <a href="#kuerzel">Kürzel</a> · <a href="#planung">Planung</a> · <a href="#ergebnisse">Ergebnisse der Beratung</a> · <a href="#rollen">Rollen in der Beratungsfolge</a> · <a href="#stand">Stand eines Vorgangs</a> · <a href="#schritte">Schritte der Prozesslinie</a> · <a href="#sicherheit">Wie verlässlich eine Angabe ist</a></nav>
     <h2 id="vorlagen">Vorlagen und Vorlagenarten</h2>
     <dl class="begriffe">
       <dt id="vorlage">Vorlage</dt><dd>Schriftstück, über das Rat, Bezirksvertretungen oder Ausschüsse beraten, etwa ein Antrag, eine Beschlussvorlage oder eine Mitteilung der Verwaltung. <span class="meta">Fundstelle: Ratsinformationssystem der Stadt Köln (OParl-API), Objekt „Paper“</span></dd>
@@ -135,16 +135,16 @@
       <dt id="schritt-folgevorlage">Folgevorlage</dt><dd>Spätere Vorlage zum selben Vorgang, etwa eine Stellungnahme der Verwaltung oder ein Änderungsantrag.</dd>
       <dt id="schritt-vollzug">Umsetzung</dt><dd>Umsetzung eines Beschlusses durch die Verwaltung; ob und wann sie geschieht, lässt sich aus öffentlichen Quellen nicht bestimmen.</dd>
     </dl>
-    <h2 id="sicherheit">Wie sicher eine Angabe ist</h2>
+    <h2 id="sicherheit">Wie verlässlich eine Angabe ist</h2>
     <dl class="begriffe">
       <dt id="angabe-belegt">belegt</dt><dd>Als Datenobjekt in der Quelle vorhanden.</dd>
       <dt id="angabe-abgeleitet">abgeleitet</dt><dd>Aus Quelldaten erschlossen (z. B. Verknüpfung von Beratung und Sitzung, Titelmuster).</dd>
       <dt id="angabe-nicht-oeffentlich">nicht öffentlich</dt><dd>Findet regelmäßig statt, ist von außen aber nicht einsehbar.</dd>
       <dt id="angabe-unklar">unklar</dt><dd>Ob und wann der Schritt stattfindet, lässt sich aus öffentlichen Quellen nicht bestimmen.</dd>
       <dt id="angabe-soll">soll</dt><dd>Nach Regelwerk zu erwarten (vereinfachtes Modell aus Gemeindeordnung, Geschäftsordnung, Satzungen, Zuständigkeitsordnung und Baugesetzbuch), in den Daten nicht dokumentiert. Das heißt nicht, dass der Schritt fehlt.</dd>
-      <dt id="angabe-ort-gesichert">Ort gesichert</dt><dd>Die Stadt gibt den Ort mit einer Koordinate an.</dd>
-      <dt id="angabe-ort-erschlossen">Ort erschlossen</dt><dd>Der Ort ist nach festen Regeln aus dem Titel oder dem Text eines Dokuments erschlossen, etwa aus einem Straßen- oder Stadtteilnamen.</dd>
-      <dt id="angabe-ort-unsicher">Ort unsicher</dt><dd>Der Ort ist erschlossen, aber nicht eindeutig, etwa bei Namen von Gebäuden oder Anlagen.</dd>
+      <dt id="angabe-ort-gesichert">Ort genau</dt><dd>Hausnummer oder Bebauungsplan im Titel. Steht im Titel eine Straße mit Hausnummer und ist das Haus im Verzeichnis „Adressen Köln“ eindeutig zu finden, liegt der Punkt auf dem Haus; das gilt nur für Vorlagen der Verwaltung sowie politische Anträge und Anfragen. Passt die Nummer eines Bebauungsplans im Titel zu genau einem Plan, gilt sein Geltungsbereich laut Bauleitplanung NRW (IT.NRW).</dd>
+      <dt id="angabe-ort-erschlossen">Ort erkannt</dt><dd>Name im Titel oder Stadtteil laut Stadt. Im Titel steht der Name einer Straße, eines Stadtteils oder eines Stadtbezirks, und die Regeln des Ratsatlas ordnen ihn einer Lage zu. Oder die Ortsangabe der Stadt nennt den Stadtteil oder einen Punkt in ihm. Nennt eine Vorlage selbst keinen Ort, übernimmt sie die Orte der übergeordneten Vorlage, höchstens als „Ort erkannt“.</dd>
+      <dt id="angabe-ort-unsicher">Ort unklar</dt><dd>Mehrdeutig oder nur über das Gremium. Der Name im Titel passt zu mehreren Orten, etwa ein Straßenname, den es an mehreren Stellen in Köln gibt, ein allgemeiner Name wie „Markt“ oder eine Plannummer, die nicht genau zu einem Bebauungsplan passt; oder der Ort widerspricht einer anderen Angabe, etwa weil die Straße nicht im Stadtbezirk der beratenden Bezirksvertretung liegt. Oder nur das Gremium deutet auf einen Stadtbezirk: Die Vorlage nennt keinen Ort und wurde nur in einer Bezirksvertretung beraten. Oder die Ortsangabe der Stadt nennt einen Ort, den der Ratsatlas keinem Kölner Stadtteil zuordnen kann.</dd>
     </dl>
     <p class="meta">Quelle: Glossar des Ratsatlas (<a href="../data/export/glossar.json">glossar.json</a>). <a href="../">Zur Karte</a> · <a href="../gebiete/">Alle Gebiete</a></p>
   </main>
