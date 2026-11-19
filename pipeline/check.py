@@ -55,8 +55,8 @@ ZAEHLUNG = {
     "tabellen_zeilen": "davon Zeilen",
     "fundstellen": "Fundstellen aus dem Titel in vorlagen.geojson, den Gebietsdateien und plaene.json untersucht",
     "verbundene_titel": "Titel verbundener Vorlagen und Ergebnisse der Beratungen in den Gebietsdateien untersucht",
-    "sitzungen": "Sitzungsnamen zu Sitzungen mit einer Vorlage der Titelmaske in den Gebietsdateien, zeit.json und "
-                 "termine.ics untersucht",
+    "sitzungen": "Sitzungsnamen und Gremien aus dem Sitzungsnamen in den Gebietsdateien, zeit.json und termine.ics "
+                 "untersucht (alle Sitzungen, Entscheidung 19.11.2026 (3))",
     "feeds": "Einträge in Feeds (*.xml) untersucht",
     "aktuell": "Titel und Gremien in index.json („Aktuell in Köln“) untersucht",
 }
@@ -560,44 +560,59 @@ def _ics_ereignisse(pfad):
     return out
 
 
-def _sitzungen(base, db, m, zahl):
-    """Namen der Sitzungen, in denen eine Vorlage der Maske beraten wird (Maske.sitzungen), in zeit.json
-    (`meetings[].name` und `gremium`) und termine.ics (erste Zeile der Beschreibung ist der Name, die Zusammenfassung
-    das Gremium): export maskiert den Namen und ein Gremium, das aus dem Namen stammt, mit der Drucksache einer solchen
-    Vorlage (Offen (9) der Nachprüfung der dritten Korrektur; vorher weder maskiert noch geprüft). Ein Gremium mit dem
-    Namen einer Organisation der Datenbank stammt nicht aus dem Namen und bleibt (wie export.gremium_der_sitzung).
-    Liefert die Drucksachen (je Sitzung die der Maske); zählt die Namen in `zahl`."""
+def _sitzung_offen(m, sitzung, texte, offen, ohne, datei):
+    """Würde die Maske einen der Texte einer Sitzung (Name, Gremium aus dem Namen) noch ändern
+    (Maske.sitzungsname_offen, dieselbe Regel wie export._meetings)? Dann ein Befund: unter der Drucksache einer Vorlage
+    der Maske, die in der Sitzung beraten wird (Maske.sitzungen; in `offen`), sonst ohne Drucksache als Zahl je Datei
+    (`ohne`; datenschutz meldet nur Zahlen, keinen Namen und keine Kennung)."""
+    if any(m.sitzungsname_offen(t) for t in texte):
+        ref = m.sitzungen.get(sitzung)
+        if ref:
+            offen.add(ref)
+        else:
+            ohne[datei] = ohne.get(datei, 0) + 1
+
+
+def _sitzungen(base, db, m, zahl, ohne):
+    """Namen aller Sitzungen in zeit.json (`meetings[].name` und `gremium`) und termine.ics (erste Zeile der
+    Beschreibung ist der Name, die Zusammenfassung ohne „ (abgesagt)“ das Gremium): export maskiert jeden Namen und
+    jedes Gremium, das aus dem Namen stammt (Maske.sitzungsname; Entscheidung 19.11.2026 (3) (c); bis dahin nur bei
+    Sitzungen, in denen eine Vorlage der Maske beraten wird, Maske.sitzungen, Offen (9) der Nachprüfung der dritten
+    Korrektur). Ein Gremium mit dem Namen einer Organisation der Datenbank stammt nicht aus dem Namen und bleibt
+    ungeprüft (export.gremium_aus_namen, wie export._meetings). Liefert die Drucksachen der Befunde bei Sitzungen mit
+    einer Vorlage der Maske; Befunde bei Sitzungen ohne eine solche zählt `ohne` je Datei (_sitzung_offen). Zählt die
+    Sitzungen in `zahl`."""
+    from .export import gremium_aus_namen
     organisationen = {r[0] for r in db.execute("SELECT name FROM organization") if r[0]}
     offen = set()
 
-    def pruefen(sitzung, name, gremium):
-        ref = m.sitzungen.get(sitzung)
-        if not ref:
-            return
+    def pruefen(datei, sitzung, name, gremium):
         zahl["sitzungen"] = zahl.get("sitzungen", 0) + 1
-        if m.offen(name, ref) or (gremium not in organisationen and m.offen(gremium, ref)):
-            offen.add(ref)
+        texte = [name] + ([gremium] if gremium_aus_namen(gremium, organisationen) else [])
+        _sitzung_offen(m, sitzung, texte, offen, ohne, datei)
 
     if (base / "zeit.json").exists():
         for x in json.loads((base / "zeit.json").read_text()).get("meetings") or ():
-            pruefen(x.get("source_object"), x.get("name"), x.get("gremium"))
+            pruefen("zeit.json", x.get("source_object"), x.get("name"), x.get("gremium"))
     if (base / "termine.ics").exists():
         for e in _ics_ereignisse(base / "termine.ics"):
-            pruefen(e.get("UID"), (e.get("DESCRIPTION") or "").split("\n")[0],
+            pruefen("termine.ics", e.get("UID"), (e.get("DESCRIPTION") or "").split("\n")[0],
                     re.sub(r" \(abgesagt\)$", "", e.get("SUMMARY") or ""))
     return offen
 
 
-def _aktuell(index, db, m, zahl, befunde):
+def _aktuell(index, db, m, zahl, befunde, ohne):
     """„Aktuell in Köln“ in index.json (`aktuell`, export._aktuell; Entscheidung 19.11.2026 (1) (E)): Titel der Vorlagen
-    wie in suche.json (Maske.offen mit ihrer Drucksache), Gremien der Sitzungen wie in _sitzungen (bei einer Sitzung, in
-    der eine Vorlage der Maske beraten wird, Maske.sitzungen; ein Gremium mit dem Namen einer Organisation der Datenbank
-    stammt nicht aus dem Sitzungsnamen und bleibt). Ohne `aktuell` (Vorschau, keine Karte) nichts zu prüfen. Liefert
-    die Drucksachen mit ungekürztem Text; zählt Titel und Gremien in `zahl`. Befunde in `befunde`, nur mit Zahl und
+    wie in suche.json (Maske.offen mit ihrer Drucksache), das Gremium jeder Sitzung wie in _sitzungen (seit der
+    Entscheidung 19.11.2026 (3) (c) bei jeder Sitzung, Maske.sitzungsname_offen; ein Gremium mit dem Namen einer
+    Organisation der Datenbank stammt nicht aus dem Sitzungsnamen und bleibt ungeprüft, export.gremium_aus_namen). Ohne
+    `aktuell` (Vorschau, keine Karte) nichts zu prüfen. Liefert die Drucksachen mit ungekürztem Text (bei einem Gremium
+    die einer Vorlage der Maske in der Sitzung; ohne eine solche zählt `ohne` die Sitzungen, _sitzung_offen); zählt
+    Titel und Gremien in `zahl`. Befunde in `befunde`, nur mit Zahl und
     Schlüsselname: eine Karte außerhalb von export.AKTUELL_FELDER, ein Feld außerhalb der festen Liste ihrer Karte
     (etwa ein Sitzungsname, eine Frist oder ein Feld mit Namen von Personen) und das Gebiet „gesamt“ bei einer
     Vorlage (export._heimat)."""
-    from .export import AKTUELL_FELDER
+    from .export import AKTUELL_FELDER, gremium_aus_namen
     aktuell = index.get("aktuell") if isinstance(index, dict) else None
     aktuell = aktuell if isinstance(aktuell, dict) else {}
     vorlagen = [v for v in aktuell.get("vorlagen") or () if isinstance(v, dict)]
@@ -619,9 +634,8 @@ def _aktuell(index, db, m, zahl, befunde):
     organisationen = {r[0] for r in db.execute("SELECT name FROM organization") if r[0]}
     offen = {v.get("reference") for v in vorlagen if m.offen(v.get("name"), v.get("reference"))}
     for x in sitzungen:
-        ref = m.sitzungen.get(x.get("source_object"))
-        if ref and x.get("gremium") not in organisationen and m.offen(x.get("gremium"), ref):
-            offen.add(ref)
+        if gremium_aus_namen(x.get("gremium"), organisationen):
+            _sitzung_offen(m, x.get("source_object"), [x.get("gremium")], offen, ohne, "index.json")
     zahl["aktuell"] = len(vorlagen) + len(sitzungen)
     return offen
 
@@ -722,7 +736,10 @@ def datenschutz(db, base=None):
        und termine.ics), ein unlesbarer Feed als Befund, und jede Vorlage ohne Hauskoordinate über Gremium oder
        Vorlagenart ist Ausgangspunkt der Titelmaske (Gegenprobe als Befund, Entscheidung 13.11.2026); seit dem
        19.11.2026 Titel und Gremien in index.json („Aktuell in Köln“, _aktuell; dort auch jedes Feld außerhalb der
-       festen Liste export.AKTUELL_FELDER); als Hinweis ohne
+       festen Liste export.AKTUELL_FELDER) und, nach der Entscheidung 19.11.2026 (3) (c), der Name jeder Sitzung und
+       jedes Gremium aus dem Sitzungsnamen in den Gebietsdateien, zeit.json, termine.ics und index.json
+       (Maske.sitzungsname_offen; bei einer Sitzung ohne Vorlage der Maske ein Befund nur mit der Zahl je Datei);
+       als Hinweis ohne
        Befund nur noch Vorlagen ohne Hauskoordinate außerhalb der Titelmaske (erwartet: Drucksache in anderem Schema),
     3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
@@ -857,9 +874,12 @@ def datenschutz(db, base=None):
         if len(rows) != len(je_id):
             befunde.append(f"Datenschutz: suche.json nennt {len(rows)} Vorlagen, die Datenbank {len(je_id)} – "
                            "Export und Datenbank passen nicht zusammen (`python -m pipeline export`)")
+    # Sitzungen ohne Vorlage der Maske mit einem Namen oder Gremium, das die Maske noch ändern würde: je Datei die Zahl
+    # (keine Drucksache; Befund am Ende)
+    ohne = {}
     index = lesen("index.json")
     if index is not None:
-        offen |= _aktuell(index, db, m, zahl, befunde)
+        offen |= _aktuell(index, db, m, zahl, befunde, ohne)
     geo = lesen("vorlagen.geojson")
     if geo is not None:
         props = [x["properties"] for x in geo["features"]]
@@ -909,16 +929,15 @@ def datenschutz(db, base=None):
                           if x.get("result")]
             zahl["verbundene_titel"] = zahl.get("verbundene_titel", 0) + len(verbunden)
             offen |= {r for t, r in verbunden if m.offen(t, r)}
-            # Ergebnisse einer Vorlage mit einem Tagesordnungspunkt, auf dem eine Vorlage der Maske beraten wird, und
-            # Name einer Sitzung mit einer Vorlage der Maske: bei jeder Vorlage, auch außerhalb der Maske (Offen (8) und
-            # (9); die Ergebnisse in `steps` sind Kopien aus `process`). Befund unter der Drucksache der zeigenden
-            # Vorlage
+            # Ergebnisse einer Vorlage mit einem Tagesordnungspunkt, auf dem eine Vorlage der Maske beraten wird: bei
+            # jeder Vorlage, auch außerhalb der Maske (Offen (8); die Ergebnisse in `steps` sind Kopien aus `process`).
+            # Name jeder Sitzung (Maske.sitzungsname_offen, wie export; Entscheidung 19.11.2026 (3) (c), vorher nur
+            # Sitzungen mit einer Vorlage der Maske, Offen (9)). Befund unter der Drucksache der zeigenden Vorlage
             r_erg = m.drucksache_ergebnisse(p["reference"], tops_je.get(p.get("source_object"), ()))
             bei = [(x.get("result"), r_erg) for k in ("process", "steps") for x in p.get(k) or () if x.get("result")]
-            sitzungen = [(x.get("meeting"), m.sitzungen.get(x.get("meeting_id"))) for x in p.get("process") or ()
-                         if x.get("meeting") and x.get("meeting_id") in m.sitzungen]
+            sitzungen = [x.get("meeting") for x in p.get("process") or () if x.get("meeting")]
             zahl["sitzungen"] = zahl.get("sitzungen", 0) + len(sitzungen)
-            if any(r and m.offen(t, r) for t, r in bei + sitzungen):
+            if any(r and m.offen(t, r) for t, r in bei) or any(m.sitzungsname_offen(t) for t in sitzungen):
                 offen.add(p["reference"])
             if any(_hauskoordinate(x.get("level"), x.get("method"), x.get("source")) for x in orte):
                 auf.add(p["reference"])
@@ -935,13 +954,17 @@ def datenschutz(db, base=None):
             if m.offen(v.get("titel"), v.get("drucksache")) or m.offen(v.get("fundstelle"), v.get("drucksache")):
                 offen.add(v.get("drucksache"))
     offen |= _tabellen_mit_titel(base.parent, m, zahl, befunde)
-    offen |= _sitzungen(base, db, m, zahl)
+    offen |= _sitzungen(base, db, m, zahl, ohne)
     offen |= _feeds(base, db, m, zahl, befunde)
     _verstoss(befunde, "Gebietsdateien der Karte", [r for r in auf if not je_ref.get(r)])
     _verstoss_oparl(befunde, "Gebietsdateien der Karte", [r for r in auf_oparl if not je_ref.get(r)])
     if offen:
         befunde.append(f"Datenschutz: Hausnummern in Titeln oder Ortsnamen aus Einwohnerschaft, Bauordnung oder "
                        f"Naturschutz (maske.py): {len(offen)}, z. B. {', '.join(sorted(map(str, offen))[:5])}")
+    if any(ohne.values()):
+        befunde.append("Datenschutz: Hausnummern in Sitzungsnamen oder Gremien aus dem Sitzungsnamen bei Sitzungen "
+                       "ohne Vorlage der Titelmaske (maske.Maske.sitzungsname, Entscheidung 19.11.2026 (3)), Sitzungen "
+                       "je Datei: " + ", ".join(f"{k} {v}" for k, v in sorted(ohne.items()) if v))
 
     for k, text in ZAEHLUNG.items():
         if k in zahl:

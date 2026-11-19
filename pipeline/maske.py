@@ -48,7 +48,10 @@ Bürgerbeteiligung, Anregungen und Beschwerden) oder eine nicht erkennbare Vorla
 und ihre verbundenen Vorlagen (ausgang_punktregel, dieselben Funktionen wie geocode.punkt_ausschluss). Dazu (Offen aus
 der Nachprüfung): Ergebnisse je Tagesordnungspunkt und Sitzungsnamen je Sitzung (Maske.tops, Maske.sitzungen),
 Fundstellen ohne Ziffer im Zusammenhang des Titels (Maske.ausschnitt), Ordnungswörter am Wortende (_ORDNUNG) und die
-Straßen-Endung am Anfang des ganzen Worts (_WORTANFANG)."""
+Straßen-Endung am Anfang des ganzen Worts (_WORTANFANG).
+Erweitert am 19.11.2026 (Entscheidung 19.11.2026 (3) (c)): Der Name jeder Sitzung und jedes Gremium, das aus dem Namen
+einer Sitzung stammt, läuft durch die Maske (Maske.sitzungsname), nicht mehr nur bei Sitzungen, in denen eine Vorlage
+der Maske beraten wird; Maske.sitzungen nennt seitdem nur noch die Drucksache für einen Befund in check."""
 import json
 import re
 import unicodedata
@@ -482,6 +485,18 @@ RUNDEN = 20
 # Fundstellen mit einem Zusatz hinter dem Teil aus dem Titel („… – Antrag der SPD-Fraktion (Vorlagenart: …)“,
 # „… (Straßenabschnitt ohne Hausnummer)“): Teil vor „ (“, der im Titel steht
 _ZUSATZ_FUNDSTELLE = " ("
+# Schlüssel der Zwischenspeicher für Sitzungsnamen (Maske.sitzungsname) an der Stelle der Drucksache: ein eigenes
+# Objekt, das keiner Drucksache gleicht
+_SITZUNGSNAME = object()
+
+
+def _ziffer_oder_zahlwort(text):
+    """Steht im Text eine Ziffer oder eine Hausnummer in Worten? Ohne beides keine Hausnummer: spart die teure Regex bei
+    den meisten Texten (gleiche Ergebnisse); Ziffern auch erst nach NFKC („⒓“ ist für isdigit keine Ziffer; Prüfung
+    r20a, zweite Korrektur), Zahlwörter im angeglichenen Text (dritte Korrektur)."""
+    if any(c.isdigit() for c in unicodedata.normalize("NFKC", text)):
+        return True
+    return bool(ZAHLWORT.search(text) or (geocode._UNSICHTBAR.search(text) and ZAHLWORT.search(_angleichen(text)[0])))
 
 
 class Maske:
@@ -498,8 +513,10 @@ class Maske:
         self._aus = {}     # export maskiert denselben Titel je Datei, Audit und Ortsbezug: ebenso (Prüfung r20a)
         self._herkunft = {}   # Herkunft je Zeichen der zuletzt maskierten Titel (ausschnitt; klein gehalten)
         # Tagesordnungspunkte und Sitzungen, in denen eine Vorlage der Maske beraten wird: {Kennung: Drucksache einer
-        # solchen Vorlage} (aus_db, beratungen_der_maske). Ihr Ergebnis bzw. ihr Name läuft bei jeder Vorlage, die ihn
-        # zeigt, mit dieser Drucksache durch die Maske (Offen (8) und (9) der Nachprüfung der dritten Korrektur)
+        # solchen Vorlage} (aus_db, beratungen_der_maske). Das Ergebnis eines solchen Punkts läuft bei jeder Vorlage,
+        # die ihn zeigt, mit dieser Drucksache durch die Maske (Offen (8) der Nachprüfung der dritten Korrektur). Namen
+        # laufen seit dem 19.11.2026 bei jeder Sitzung durch die Maske (sitzungsname); `sitzungen` nennt nur noch die
+        # Drucksache, unter der check einen Befund meldet (vorher Offen (9): nur Sitzungen aus `sitzungen`)
         self.tops, self.sitzungen = {}, {}
 
     def drucksache_ergebnisse(self, ref, tops):
@@ -515,15 +532,10 @@ class Maske:
         return min((self.tops[t] for t in tops if t in self.tops), default=ref)
 
     def _betroffen(self, titel, ref):
-        # ohne Ziffer und ohne Hausnummer in Worten keine Hausnummer: spart die teure Regex bei den meisten Titeln
-        # (gleiche Ergebnisse); Ziffern auch erst nach NFKC („⒓“ ist für isdigit keine Ziffer; Prüfung r20a, zweite
-        # Korrektur), Zahlwörter im angeglichenen Titel (dritte Korrektur)
+        # nur Texte der Maske (Drucksache in `refs`) mit Ziffer oder Hausnummer in Worten (_ziffer_oder_zahlwort)
         if not titel or ref not in self.refs:
             return False
-        if any(c.isdigit() for c in unicodedata.normalize("NFKC", titel)):
-            return True
-        return bool(ZAHLWORT.search(titel) or (geocode._UNSICHTBAR.search(titel)
-                                               and ZAHLWORT.search(_angleichen(titel)[0])))
+        return _ziffer_oder_zahlwort(titel)
 
     def _stellen(self, angeglichen):
         """Zu ersetzende Stellen im angeglichenen Titel: (Anfang, Ende, Ersatz); Straße, Trennzeichen und Lagewort
@@ -574,14 +586,19 @@ class Maske:
         der Nachprüfung der dritten Korrektur); check baut seine eigene (aus_db)."""
         if not self._betroffen(titel, ref):
             return titel
-        if (titel, ref) not in self._aus:
+        return self._ausblenden(titel, ref)
+
+    def _ausblenden(self, titel, schluessel):
+        """Ergebnis von _maskieren mit Zwischenspeicher je (Text, Schlüssel): Schlüssel ist die Drucksache (__call__)
+        oder _SITZUNGSNAME (sitzungsname); das Ergebnis hängt vom Schlüssel nicht ab."""
+        if (titel, schluessel) not in self._aus:
             aus, zeichen = self._maskieren(titel)
             if len(self._herkunft) > 256:
                 self._herkunft.clear()
             self._herkunft[titel] = zeichen
-            self._aus[titel, ref] = aus
-            self._offen[aus, ref] = False
-        return self._aus[titel, ref]
+            self._aus[titel, schluessel] = aus
+            self._offen[aus, schluessel] = False
+        return self._aus[titel, schluessel]
 
     def ausschnitt(self, text, titel, ref):
         """Fundstelle `text`, die ein Teil des Titels ist (Einreichende, Bebauungsplan, Ortsbezug), so maskiert wie im
@@ -617,9 +634,37 @@ class Maske:
         Positivliste (Maske._spannen); für jedes Ergebnis der Maske falsch."""
         if not titel or ref not in self.refs:
             return False
-        if (titel, ref) not in self._offen:
-            self._offen[titel, ref] = self._betroffen(titel, ref) and bool(self._spannen(titel))
-        return self._offen[titel, ref]
+        return self._noch_offen(titel, ref)
+
+    def _noch_offen(self, titel, schluessel):
+        """offen() ohne die Bedingung der Drucksache, mit Zwischenspeicher je (Text, Schlüssel) wie _ausblenden."""
+        if (titel, schluessel) not in self._offen:
+            self._offen[titel, schluessel] = _ziffer_oder_zahlwort(titel) and bool(self._spannen(titel))
+        return self._offen[titel, schluessel]
+
+    def sitzungsname(self, text):
+        """Name einer Sitzung oder Gremium, das aus dem Namen einer Sitzung stammt (export.gremium_der_sitzung), ohne
+        Hausnummer: bei jeder Sitzung (Entscheidung 19.11.2026 (3) (c)), nicht nur bei einer Sitzung, in der eine
+        Vorlage der Maske beraten wird (Maske.sitzungen; Offen (9) der Nachprüfung der dritten Korrektur). Das Gremium
+        aus dem Namen ist der Name selbst (ohne „Sitzung des“ bzw. „der“), und der ganze Name steht in zeit.json, in der
+        Beschreibung in termine.ics und in `process[].meeting` der Gebietsdateien daneben: Bliebe der Name ungekürzt,
+        stünde dieselbe Hausnummer dort weiter.
+        Dieselben Muster, dieselbe Probe und dieselbe Positivliste wie für Titel der Maske (_maskieren), aber ohne
+        Drucksache: Die Maske ist an Drucksachen gebunden (`refs`), ein Sitzungsname hat keine. Eine eigene Methode
+        statt einer erfundenen Drucksache in `refs`, weil check `refs` als Menge der Drucksachen der Maske liest
+        (Zählung „titel_geschuetzt“, Abgleich mit der Erlaubnis für Hauskoordinaten, Hinweis „ohne_punkt_ohne_maske“)
+        und die Maske für Titel unverändert bleibt. Mit Vorlage der Maske in der Sitzung ergibt __call__ mit deren
+        Drucksache denselben Text (das Ergebnis hängt von der Drucksache nicht ab); export ruft deshalb für jede Sitzung
+        diese Methode, check prüft mit sitzungsname_offen (eine Regel). Legitime Namen mit Zahlen bleiben, soweit die
+        Positivliste sie kennt („Bezirksvertretung 1 (Innenstadt)“, „3. Sitzung des …“, Datum, Uhrzeit, Jahreszahl)."""
+        if not text or not _ziffer_oder_zahlwort(text):
+            return text
+        return self._ausblenden(text, _SITZUNGSNAME)
+
+    def sitzungsname_offen(self, text):
+        """Würde sitzungsname den Text noch ändern? (Prüfung in check.py, eine Regel mit export) Für jedes Ergebnis von
+        sitzungsname falsch."""
+        return bool(text) and self._noch_offen(text, _SITZUNGSNAME)
 
 
 def ausgang_punktregel(paper, gremien=()):
@@ -683,10 +728,10 @@ def aus_db(db, strassen=None):
 def beratungen_der_maske(db, refs):
     """Tagesordnungspunkte und Sitzungen, in denen eine Vorlage mit einer Drucksache aus `refs` beraten wird:
     ({TOP: Drucksache}, {Sitzung: Drucksache}), je mit der kleinsten solchen Drucksache (stabil; die Maske hängt nur
-    davon ab, ob die Drucksache in der Maske ist). Eine Funktion für export (Ergebnisse, Sitzungsnamen) und check:
-    Ist eine Vorlage eines Tagesordnungspunkts in der Maske, läuft sein Ergebnis bei jeder Vorlage durch die Maske, die
-    ihn zeigt (Offen (8)); ebenso der Name einer solchen Sitzung in Gebietsdateien, zeit.json und termine.ics (Offen
-    (9))."""
+    davon ab, ob die Drucksache in der Maske ist). Eine Funktion für export (Ergebnisse) und check: Ist eine Vorlage
+    eines Tagesordnungspunkts in der Maske, läuft sein Ergebnis bei jeder Vorlage durch die Maske, die ihn zeigt
+    (Offen (8)). Sitzungen: bis zum 19.11.2026 lief nur der Name einer solchen Sitzung durch die Maske (Offen (9));
+    seitdem der Name jeder Sitzung (Maske.sitzungsname), und die Drucksache nennt nur den Befund in check."""
     tops, sitzungen = {}, {}
     if not _tabelle(db, "consultation"):
         return tops, sitzungen

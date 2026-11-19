@@ -11,13 +11,17 @@ from . import glossar
 PFAD = "begriffe/"
 # Ortsstufen (Entscheidung 19.11.2026 (1) (C); Werte „hoch“, „mittel“, „niedrig“ in den Daten), wie in Legende, Filter,
 # Tour und Dialog „Über“; je Stufe die Regeln aus pipeline/geocode.py, pipeline/plans.py und pipeline/build.py. Die
-# Sprungmarken bleiben die der früheren Namen, damit vorhandene Links weiter treffen.
+# Sprungmarken bleiben die der früheren Namen, damit vorhandene Links weiter treffen. Die Klammern bleiben; die
+# Sonderfälle erklärt diese Seite (Entscheidung 19.11.2026 (3) (b)): Punkt aus der Ortsangabe der Stadt bei „Ort genau“
+# (build: Punkt der Ortsangabe außerhalb von `grob`, Methode oparl_location, hoch), Widerspruch zu einer anderen Angabe
+# und Ortsangabe ohne Kölner Stadtteil bei „Ort unklar“.
 ORTSSTUFEN = [
     ("Ort genau",
      "Hausnummer oder Bebauungsplan im Titel. Steht im Titel eine Straße mit Hausnummer und ist das Haus im Verzeichnis "
      "„Adressen Köln“ eindeutig zu finden, liegt der Punkt auf dem Haus; das gilt nur für Vorlagen der Verwaltung sowie "
      "politische Anträge und Anfragen. Passt die Nummer eines Bebauungsplans im Titel zu genau einem Plan, gilt sein "
-     "Geltungsbereich laut Bauleitplanung NRW (IT.NRW).",
+     "Geltungsbereich laut Bauleitplanung NRW (IT.NRW). Gibt die Ortsangabe der Stadt selbst einen Punkt an, gilt der "
+     "Ort ebenfalls als genau; auch das nur bei Vorlagen, bei denen ein Punkt auf einem Haus erlaubt ist.",
      "angabe-ort-gesichert"),
     ("Ort erkannt",
      "Name im Titel oder Stadtteil laut Stadt. Im Titel steht der Name einer Straße, eines Stadtteils oder eines "

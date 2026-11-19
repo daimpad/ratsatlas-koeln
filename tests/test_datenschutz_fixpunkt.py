@@ -2483,9 +2483,10 @@ def test_sitzungsname_maskiert(testdaten, capsys):
     """Offen (9): Sitzungsnamen standen ungekürzt in Gebietsdateien und Datenpaket (`process[].meeting`), in zeit.json
     (`meetings[].name`) und termine.ics (Beschreibung; Zusammenfassung, wenn das Gremium aus dem Namen stammt), auch
     neben einer Eingabe. Jetzt läuft der Name jeder Sitzung, in der eine Vorlage der Maske beraten wird, durch die Maske,
-    überall und bei jeder Vorlage dieser Sitzung; check prüft diese Felder. Orakel: die Ziffernfolge in jeder Datei; eine
-    Sitzung ohne Vorlage der Maske bleibt unverändert. Gegenprobe: der ungekürzte Name in zeit.json, termine.ics oder der
-    Gebietsdatei einer Vorlage außerhalb der Maske ist ein Befund."""
+    überall und bei jeder Vorlage dieser Sitzung; check prüft diese Felder. Seit der Entscheidung 19.11.2026 (3) (c)
+    gilt das für jede Sitzung, auch ohne Vorlage der Maske (s3; tests/test_sitzungsnamen_maske.py). Orakel: die
+    Ziffernfolge in jeder Datei. Gegenprobe: der ungekürzte Name in zeit.json, termine.ics oder der Gebietsdatei einer
+    Vorlage außerhalb der Maske ist ein Befund unter der Drucksache der Vorlage der Maske bzw. der zeigenden Vorlage."""
     from datetime import date, timedelta
     strasse, nr, _ = _lage()
     a, b, c = nr
@@ -2519,14 +2520,15 @@ def test_sitzungsname_maskiert(testdaten, capsys):
     for p in config.EXPORT.rglob("*"):
         if p.is_file() and p.suffix in (".json", ".geojson", ".tsv", ".xml", ".ics", ".csv"):
             text = p.read_bytes().decode("utf-8").replace("\r\n ", "")
-            assert namen[s1] not in text and namen[s2] not in text, p
+            assert namen[s1] not in text and namen[s2] not in text and namen[s3] not in text, p
     zeit = {x["source_object"]: x for x in json.loads((base / "zeit.json").read_text())["meetings"]}
-    assert zeit[s1]["name"] == f"Ortstermin {strasse} {maske.OHNE_NR}" and zeit[s3]["name"] == namen[s3]
+    assert zeit[s1]["name"] == zeit[s3]["name"] == f"Ortstermin {strasse} {maske.OHNE_NR}"
     assert zeit[s1]["gremium"] == "Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden"
     assert maske.OHNE_NR in zeit[s2]["gremium"] and str(b) not in zeit[s2]["gremium"]   # Gremium aus dem Namen
     ics = _ics_ereignisse(base / "termine.ics")
     assert ics[s1]["DESCRIPTION"].startswith(f"Ortstermin {strasse} {maske.OHNE_NR}\n")
-    assert maske.OHNE_NR in ics[s2]["SUMMARY"] and ics[s3]["DESCRIPTION"].startswith(namen[s3] + "\n")
+    assert maske.OHNE_NR in ics[s2]["SUMMARY"]
+    assert ics[s3]["DESCRIPTION"].startswith(f"Ortstermin {strasse} {maske.OHNE_NR}\n")
     gebiet = next(f for d in check.GEBIETSDATEIEN for f in (base / d).glob("*.json") if "2991/2026" in f.read_text())
     q = next(p for p in json.loads(gebiet.read_text())["papers"] if p["reference"] == "2991/2026")
     assert [x["meeting"] for x in q["process"]] == [f"Ortstermin {strasse} {maske.OHNE_NR}"]

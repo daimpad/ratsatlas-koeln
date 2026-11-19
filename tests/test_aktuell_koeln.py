@@ -162,8 +162,9 @@ def test_check_meldet_ungekuerzten_titel_und_gremium(oparl, capsys):
 
 def test_check_meldet_felder_ausserhalb_der_festen_liste(oparl, capsys):
     """check meldet jede Karte und jedes Feld außerhalb von export.AKTUELL_FELDER (etwa einen Sitzungsnamen oder eine
-    Frist) und das Gebiet „gesamt“, nur mit Zahl und Schlüsselname: Ein Gremium aus dem Namen einer Sitzung ohne
-    Vorlage der Titelmaske prüft check wie in zeit.json nicht, das Feld `name` aber fällt auf. Text erfunden."""
+    Frist) und das Gebiet „gesamt“, nur mit Zahl und Schlüsselname. Ein Gremium aus dem Namen einer Sitzung ohne
+    Vorlage der Titelmaske prüft check seit der Entscheidung 19.11.2026 (3) (c) wie in zeit.json mit der Maske: ein
+    Befund nur mit der Zahl je Datei (vorher ungeprüft). Text erfunden."""
     _einfuegen(oparl)
     index = _aufbau()
     pfad = config.EXPORT / config.STADT / "index.json"
@@ -182,6 +183,8 @@ def test_check_meldet_felder_ausserhalb_der_festen_liste(oparl, capsys):
     assert [b for b in befunde if "Karten außerhalb von export.AKTUELL_FELDER: 1, Schlüssel personen" in b], befunde
     assert [b for b in befunde if "Gebiet „gesamt“" in b and b.endswith(": 1")], befunde
     assert not [b for b in befunde if "Karte vorlagen" in b], befunde
+    assert [b for b in befunde if "Sitzungen ohne Vorlage der Titelmaske" in b and b.endswith("Datei: index.json 1")], \
+        befunde
     for text in ("Erika", "Venloer", "Testsitzung", "2026-12-11"):
         assert text not in out and text not in " ".join(befunde)
     assert set(export.AKTUELL_FELDER) == {"sitzungen", "vorlagen"}
