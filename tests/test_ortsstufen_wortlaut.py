@@ -169,15 +169,17 @@ def test_seite_begriffe():
     for veraltet in ("Die Stadt gibt den Ort mit einer Koordinate an", "Gebäuden oder Anlagen", "Text eines Dokuments"):
         assert veraltet not in stufen
     # Sonderfälle (Entscheidung 19.11.2026 (3) (b): die Klammern bleiben, die Seite „Begriffe“ erklärt sie): Punkt aus
-    # der Ortsangabe der Stadt hoch, nur bei Erlaubnis für einen Punkt auf einem Haus (build: Punkt außerhalb von
-    # `grob`, oparl_location); Stadtteil auch aus einem Punkt der Stadt (build: oparl_sublocality, etwa ohne diese
-    # Erlaubnis); Widerspruch zu einer anderen Angabe und Ortsangabe ohne Kölner Stadtteil niedrig (build:
-    # oparl_location ohne Punkt)
+    # der Ortsangabe der Stadt hoch, nur in einem Kölner Stadtteil (Entscheidung 19.11.2026 (4) (d)) und nur bei
+    # Erlaubnis für einen Punkt auf einem Haus (build: Punkt außerhalb von `grob`, oparl_location); Stadtteil auch aus
+    # einem Punkt der Stadt (build: oparl_sublocality, etwa ohne diese Erlaubnis) und Stadtteil laut Stadt neben einem
+    # verworfenen Punkt ((4) (e)); Widerspruch zu einer anderen Angabe und Ortsangabe ohne Kölner Stadtteil niedrig
+    # (build: oparl_location ohne Punkt, auch neben einem verworfenen Punkt)
     erklaerung = {name: text for name, text, _ in begriffsseite.ORTSSTUFEN}
     assert erklaerung["Ort genau"].endswith(
-        " Gibt die Ortsangabe der Stadt selbst einen Punkt an, gilt der Ort ebenfalls als genau; auch das nur bei "
-        "Vorlagen, bei denen ein Punkt auf einem Haus erlaubt ist.")
-    assert "Gibt die Ortsangabe der Stadt selbst einen Punkt an, gilt der Ort ebenfalls als genau" in stufen
+        " Gibt die Ortsangabe der Stadt selbst einen Punkt in einem Kölner Stadtteil an, gilt der Ort ebenfalls als "
+        "genau; auch das nur bei Vorlagen, bei denen ein Punkt auf einem Haus erlaubt ist.")
+    assert ("Gibt die Ortsangabe der Stadt selbst einen Punkt in einem Kölner Stadtteil an, gilt der Ort ebenfalls als "
+            "genau" in stufen)
     assert ("oder der Ort widerspricht einer anderen Angabe, etwa weil die Straße nicht im Stadtbezirk der beratenden "
             "Bezirksvertretung liegt." in erklaerung["Ort unklar"])
     assert "Oder die Ortsangabe der Stadt nennt den Stadtteil oder einen Punkt in ihm." in erklaerung["Ort erkannt"]

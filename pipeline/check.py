@@ -15,6 +15,7 @@ from collections import Counter
 from pathlib import Path
 
 from . import actors, besetzung, config, geocode, kontext, maske, pdfkopf
+from .geo import Ortsteile
 
 # Gebiete laut CLAUDE.md 2: ganz Köln mit 86 Stadtteilen und 9 Stadtbezirken
 STADTTEILE, STADTBEZIRKE = 86, 9
@@ -378,9 +379,10 @@ def kennzahlen(db):
     print("Vorlagen mit Plannummer im Titel:", with_nr, "· davon mit Geltungsbereich:", _pct(with_area, with_nr))
 
 
-def gebiete(db):
+def gebiete(db, base=None):
     """Kölner Gebiete: 86 Stadtteile und 9 Stadtbezirke in den Geodaten (CLAUDE.md 2); jeder Ort in der Datenbank
-    liegt in einem davon. Liefert (Befunde, nicht durchgeführte Prüfungen)."""
+    liegt in einem davon; ein Punkt aus der Ortsangabe der Stadt gilt nur in einem Kölner Stadtteil als „Ort genau“
+    (punkte_der_stadt, `base` wie bei datenschutz). Liefert (Befunde, nicht durchgeführte Prüfungen)."""
     befunde, fehlend = [], []
     print("\nGebiete")
     for art, einzahl, pfad, feld, spalte, soll in (
@@ -398,7 +400,43 @@ def gebiete(db):
             befunde.append(f"Gebiete: {len(namen)} {art} in {pfad.name}, erwartet {soll} (CLAUDE.md 2)")
         if fremd:
             befunde.append(f"Gebiete: Orte mit {einzahl} außerhalb der Kölner Geodaten: {', '.join(fremd[:5])}")
+    if config.ORTSTEILE.exists():   # sonst oben als nicht durchgeführt gemeldet
+        befunde += punkte_der_stadt(db, base)
     return befunde, fehlend
+
+
+def punkte_der_stadt(db, base=None):
+    """Schutz für die Entscheidung 19.11.2026 (4) (d): Ein Punkt aus der Ortsangabe der Stadt gilt nur in einem Kölner
+    Stadtteil als „Ort genau“, außerhalb aller Stadtteile verwirft build ihn. Jeder Ortsbezug mit Methode
+    „oparl_location“ und Konfidenz hoch trägt also einen Stadtteil und einen Punkt in einem Kölner Stadtteil: in der
+    Datenbank (je Ortsangabe) und in vorlagen.geojson (je Punkt; die Gebietsdateien tragen dieselben Ortsbezüge aus
+    export._locations). Fehlt vorlagen.geojson, meldet das datenschutz. Ausgabe nur Zahlen; liefert die Befunde."""
+    base = Path(base) if base else config.EXPORT / config.STADT
+    ortsteile = Ortsteile(config.ORTSTEILE)
+
+    def ausserhalb(ortsteil, lon, lat):
+        return ortsteil is None or lon is None or lat is None or ortsteile.locate(lon, lat) is None
+
+    def aus_geojson(f):
+        lon, lat, *_ = list((f.get("geometry") or {}).get("coordinates") or ()) + [None, None]
+        return f["properties"].get("ortsteil"), lon, lat
+
+    orte = db.execute("SELECT DISTINCT l.id, l.ortsteil, l.lon, l.lat FROM paper_location pl JOIN location l "
+                      "ON l.id = pl.location_id WHERE pl.method = ? AND pl.confidence = 'hoch'",
+                      (OPARL_PUNKT,)).fetchall()
+    zahlen = {"Datenbank": (sum(ausserhalb(*r[1:]) for r in orte), len(orte))}
+    if (base / "vorlagen.geojson").exists():
+        punkte = [aus_geojson(f) for f in json.loads((base / "vorlagen.geojson").read_text())["features"]
+                  if f["properties"].get("method") == OPARL_PUNKT and f["properties"].get("confidence") == "hoch"]
+        zahlen["vorlagen.geojson"] = (sum(ausserhalb(*x) for x in punkte), len(punkte))
+    print("Punkte aus der Ortsangabe der Stadt als „Ort genau“ (oparl_location, hoch) ohne Punkt in einem Kölner "
+          "Stadtteil (Entscheidung 19.11.2026 (4) (d)): "
+          + ", ".join(f"{k} {n} von {m}" for k, (n, m) in zahlen.items()))
+    if not any(n for n, _ in zahlen.values()):
+        return []
+    return ["Gebiete: Punkt aus der Ortsangabe der Stadt als „Ort genau“ ohne Punkt in einem Kölner Stadtteil (build "
+            "verwirft ihn, Entscheidung 19.11.2026 (4) (d)): "
+            + ", ".join(f"{k} {n}" for k, (n, _) in zahlen.items() if n)]
 
 
 def _fehlt(bereich, pfad, schritt):
@@ -413,7 +451,8 @@ def _hauskoordinate(level=None, method=None, source=None):
 
 
 # genauer Punkt aus einer Ortsangabe der Stadt (Stufe A, geojson Point): Methode in den Exporten (ohne Erlaubnis führt
-# build ihn auf den Stadtteil zurück, Methode „oparl_sublocality“, oder lässt die Koordinate weg)
+# build ihn auf den Stadtteil zurück, Methode „oparl_sublocality“, oder lässt die Koordinate weg; außerhalb aller Kölner
+# Stadtteile verwirft build ihn auch mit Erlaubnis, punkte_der_stadt)
 OPARL_PUNKT = "oparl_location"
 OPARL_STADTTEIL = "oparl_sublocality"
 
