@@ -835,7 +835,9 @@ def _meetings(db):
 def zeile_beginn(meetings):
     """Zeile im Log von `export`, nur Zahlen (Entscheidung 19.11.2026 (1) (D)): Sitzungen aus _meetings nach der Form
     ihres Beginns in der Quelle. Ob SessionNet „Z“, einen Versatz wie „+01:00“ oder Zeiten ohne Zeitzone liefert, ist
-    nicht gemessen; der nächste Lauf zeigt so, ob die Umrechnung nach Kölner Zeit die echten Daten betrifft."""
+    nicht gemessen; der nächste Lauf zeigt so, in welcher Form die Kölner Daten den Beginn tragen. Ob ein Versatz der
+    Kölner Zeit entspricht (Uhrzeit unverändert) oder nicht (Uhrzeit umgerechnet), zeigt die Zeile nicht; ein Beginn
+    ohne Zeitzone ändert nur termine.ics, nicht zeit.json."""
     n = {"mit Z": 0, "mit Versatz": 0, "ohne Zeitzone": 0, "nur Datum": 0}
     for m in meetings:
         s = m["start"]

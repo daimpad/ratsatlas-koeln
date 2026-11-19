@@ -53,7 +53,7 @@ def _ortszeit(ts):
 
 
 def local_day(ts):
-    """Kalendertag in Köln (Europe/Berlin); Sitzungszeiten können in UTC stehen (z. B. 22:30Z = 00:30 Uhr)."""
+    """Kalendertag in Köln (Europe/Berlin); Sitzungszeiten können in UTC stehen (z. B. im Sommer 22:30Z = 00:30 Uhr)."""
     if not ts:
         return None
     if len(ts) == 10:
@@ -63,8 +63,8 @@ def local_day(ts):
 
 def local_time(ts):
     """Uhrzeit „HH:MM“ in Köln (Europe/Berlin) zum selben Zeitpunkt wie local_day (Entscheidung 19.11.2026 (1) (D)):
-    „…T16:00:00Z“ ist 17:00 Uhr, „…T23:30:00Z“ 00:30 Uhr am nächsten Tag; ohne Zeitzone gilt Kölner Ortszeit wie in
-    local_day. Nur ein Datum: None."""
+    „2026-11-19T16:00:00Z“ ist 17:00 Uhr (im Sommer, etwa „2026-07-01T16:00:00Z“, 18:00 Uhr), „2026-11-19T23:30:00Z“
+    00:30 Uhr am 20.11.; ohne Zeitzone gilt Kölner Ortszeit wie in local_day. Nur ein Datum: None."""
     if not ts or len(ts) <= 10:
         return None
     return _ortszeit(ts).strftime("%H:%M")
