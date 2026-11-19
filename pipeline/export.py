@@ -329,7 +329,8 @@ def _dump(path, data):
 
 def export_all():
     """Ganz Köln: je Stadtteil, je Stadtbezirk (nur Bezüge auf Bezirksebene) und Vorlagen ohne
-    Ortsbezug je Jahr; dazu index.json mit Zählungen für die Auswahl auf der Webseite."""
+    Ortsbezug je Jahr; dazu index.json mit Zählungen für die Auswahl auf der Webseite und „Aktuell in Köln“
+    (_aktuell)."""
     db = sqlite3.connect(config.DB)
     db.row_factory = sqlite3.Row
     out = config.EXPORT / config.STADT
@@ -358,7 +359,7 @@ def export_all():
                     walk(x)
         walk(feature["geometry"]["coordinates"])
         return [round(min(ys), 4), round(min(xs), 4), round(max(ys), 4), round(max(xs), 4)]
-    areas, names = {}, {}
+    areas, names, ortsname = {}, {}, {}   # ortsname: kurzer Name je Gebiet für „Aktuell in Köln“ (_aktuell)
 
     for ot in json.loads(config.ORTSTEILE.read_text())["features"]:
         name, bezirk = ot["properties"]["ortsteil_bez"], ot["properties"]["bezirk_bez"]
@@ -371,7 +372,7 @@ def export_all():
         index["ortsteile"].append({"name": name, "slug": slug(name), "stadtbezirk": bezirk,
                                    "count": len(ids), "bbox": bbox(ot)})
         areas[f"ortsteil:{slug(name)}"] = ids
-        names[f"ortsteil:{slug(name)}"] = name
+        names[f"ortsteil:{slug(name)}"] = ortsname[f"ortsteil:{slug(name)}"] = name
 
     for bz in json.loads(config.STADTBEZIRKE.read_text())["features"]:
         name = bz["properties"]["bezirk_bez"]
@@ -386,6 +387,7 @@ def export_all():
         index["bezirke"].append({"name": name, "slug": slug(name), "count": len(ids), "bbox": bbox(bz)})
         areas[f"bezirk:{slug(name)}"] = ids
         names[f"bezirk:{slug(name)}"] = f"Stadtbezirk {name}, ohne genaueren Ort"
+        ortsname[f"bezirk:{slug(name)}"] = f"Stadtbezirk {name}"
 
     # ohne Ortsbezug: auch Vorlagen, deren Orte weder einem Ortsteil noch einem Stadtbezirk zugeordnet
     # werden konnten (z. B. Straße ohne Koordinate), damit keine Vorlage verloren geht
@@ -402,6 +404,7 @@ def export_all():
         index["ohne_ortsbezug"].append({"jahr": year, "count": len(ids)})
         areas[f"ohne:{year}"] = ids
         names[f"ohne:{year}"] = f"stadtweit / ohne Ortsbezug {year}"
+        ortsname[f"ohne:{year}"] = ORT_OHNE
     areas["gesamt"] = [r[0] for r in db.execute("SELECT id FROM paper")]
     for pid in areas["gesamt"]:
         detail(pid)
@@ -462,6 +465,10 @@ def export_all():
     flaechen.write(out)
     # Übersichtskarte: Vorlagen der letzten zwölf Monate und auffälliges Thema je Gebiet
     gebietszahlen.annotate(index, areas, cache, stand or datetime.now(timezone.utc).isoformat())
+    # „Aktuell in Köln“ (Entscheidung 19.11.2026 (1) (E)): nur, wenn mindestens eine Karte Daten hat
+    aktuell = _aktuell(cache, _heimat(areas), ortsname, meetings, heute, _stand())
+    if aktuell:
+        index["aktuell"] = aktuell
     # ausgesetzte Listen (sessionnet, Entscheidung 13.11.2026) nur, wenn es welche gibt: sonst bleibt index.json gleich
     ausgesetzt = _abruf_ausgesetzt(_stand())
     _dump(out / "index.json", {"meta": _meta(db, stadt=config.STADT_NAME, seitenname=config.SEITENNAME,
@@ -632,6 +639,66 @@ def _sample(db, out, ortsteil, n=50, seed=2026):
                 "konfidenz", "fundstelle", "urteil (richtig/falsch/unklar)", "anmerkung"], rows)
 
 
+# --- „Aktuell in Köln“: kommende Sitzungen und neu eingereichte Vorlagen (index.json) --------------------------------
+
+# Höchstzahlen je Karte; die Seite zeigt drei Sitzungen, nachdem der Browser vergangene nach dem Tag der
+# Besucher:innen herausgefiltert hat
+AKTUELL_SITZUNGEN, AKTUELL_VORLAGEN = 6, 5
+# Ort einer Vorlage ohne Ortsbezug, derselbe Wortlaut wie im Vorgang (site/app.js)
+ORT_OHNE = "stadtweit / ohne Ortsbezug"
+
+
+def _heimat(areas):
+    """Gebiet je Vorlage zum Öffnen (Suche und „Aktuell in Köln“): das erste Gebiet in der Reihenfolge von export_all
+    (Stadtteile, Stadtbezirke ohne genaueren Ort, Jahre ohne Ortsbezug), nie „gesamt“; eine Vorlage in keinem dieser
+    Gebiete fehlt."""
+    home = {}
+    for key, ids in areas.items():
+        if key != "gesamt":
+            for pid in ids:
+                home.setdefault(pid, key)
+    return home
+
+
+def _aktuell(cache, home, ortsname, meetings, heute, stand):
+    """„Aktuell in Köln“ für das Startfenster (index.json `aktuell`, Entscheidung 19.11.2026 (1) (E)), nur aus dem, was
+    der Export schon hat (Vorlagen aus `cache`, Sitzungen aus _meetings), ohne weitere Anfrage. `home`: Gebiet je
+    Vorlage (_heimat), `ortsname`: kurzer Name je Gebiet, `heute`: Kölner Kalendertag des Abrufs der Vorlagen
+    (proc.local_day von retrieved_at der Quelle config.QUELLE_OPARL), `stand`: Inhalt von STAND.json.
+    - `sitzungen` („Kommende Sitzungen“): Sitzungen ab `heute` ohne abgesagte, nach Tag und Uhrzeit; eine Sitzung ohne
+      Uhrzeit (00:00 Uhr in Köln, _meetings) steht hinter denen mit Uhrzeit am selben Tag, sonst gilt die Reihenfolge
+      von _meetings; höchstens AKTUELL_SITZUNGEN. Je Sitzung nur `date`, `time`, `gremium`, `web` und `source_object`:
+      kein Sitzungsname, keine Frist (die 21 Tage stammen aus den Bonner Regeln), keine Namen von Personen. Vergangene
+      Sitzungen filtert zusätzlich der Browser nach dem Tag der Besucher:innen.
+    - `vorlagen` („Neu eingereicht“): Vorlagen aller Arten mit Datum bis `heute`, die neuesten zuerst (Datum, bei
+      gleichem Datum die Drucksache absteigend als Text); höchstens AKTUELL_VORLAGEN. Je Vorlage `reference`, `date`,
+      `paper_type`, `name` (Titel aus `cache`, maskiert wie in Liste und Suche), `area` (Gebiet zum Öffnen wie in
+      suche.json, nie „gesamt“; None, wenn die Vorlage in keinem Gebiet steht), `ort` (kurzer Name dieses Gebiets:
+      Stadtteil, „Stadtbezirk …“ oder ORT_OHNE; ohne Gebiet None) und `source_object`.
+    Eine Karte fehlt, wenn ihre Liste ausgesetzt oder nicht aktualisiert ist: `sitzungen`, wenn „meetings“ in
+    _abruf_ausgesetzt oder _abruf_warnungen steht oder _abruf_fehler gilt; `vorlagen`, wenn „papers“ in
+    _abruf_ausgesetzt steht oder _abruf_fehler gilt. Eine Karte ohne Eintrag fehlt ebenso (Entscheidung 19.11.2026 (1)
+    (F): ein Block ohne Daten fehlt). Fehlen beide Karten, in der Kartenvorschau (STAND.json `vorschau`) und ohne
+    Vorlagen: None, index.json hat dann keinen Schlüssel `aktuell`."""
+    if stand.get("vorschau") or not cache:
+        return None
+    fehler, ausgesetzt = _abruf_fehler(stand), _abruf_ausgesetzt(stand)
+    karten = {}
+    if not (fehler or "meetings" in ausgesetzt or "meetings" in _abruf_warnungen(stand)):
+        kommend = sorted((m for m in meetings if m["date"] >= heute and not m["cancelled"]),
+                         key=lambda m: (m["date"], m["time"] is None, m["time"] or ""))
+        karten["sitzungen"] = [{k: m[k] for k in ("date", "time", "gremium", "web", "source_object")}
+                               for m in kommend[:AKTUELL_SITZUNGEN]]
+    if not (fehler or "papers" in ausgesetzt):
+        neu = sorted(((pid, p) for pid, p in cache.items() if p["date"] and p["date"][:10] <= heute),
+                     key=lambda x: (x[1]["date"], x[1]["reference"] or ""), reverse=True)
+        karten["vorlagen"] = [{"reference": p["reference"], "date": p["date"], "paper_type": p["paper_type"],
+                               "name": p["name"], "area": home.get(pid), "ort": ortsname.get(home.get(pid)),
+                               "source_object": p["source_object"]} for pid, p in neu[:AKTUELL_VORLAGEN]]
+    karten = {k: v for k, v in karten.items() if v}
+    return karten or None
+
+
 # --- Suche über ganz Köln: Themen und Parteien -------------------------------------------------------
 
 def _search_index(cache, areas, names, sources=None):
@@ -639,11 +706,7 @@ def _search_index(cache, areas, names, sources=None):
     Vorlagenart, Stand, Gebiet (zum Öffnen), Themen, eigene Parteien, Parteien der übergeordneten Vorlage
     (z. B. Stellungnahme der Verwaltung zu einem Antrag). meta.sources: Quellen mit Lizenz und Namensnennung wie in
     den Gebietsdateien (ohne Abrufzeit, Runde 19b); die Seite liest meta nicht."""
-    home = {}
-    for key, ids in areas.items():
-        if key != "gesamt":
-            for pid in ids:
-                home.setdefault(pid, key)
+    home = _heimat(areas)
     by_ref = {p["reference"]: p for p in cache.values()}
     party_list = sorted({x for p in cache.values() for x in p["parties"]})
     area_list = sorted(set(home.values()))
