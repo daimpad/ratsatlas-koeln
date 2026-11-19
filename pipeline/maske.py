@@ -51,7 +51,9 @@ Fundstellen ohne Ziffer im Zusammenhang des Titels (Maske.ausschnitt), Ordnungsw
 Straßen-Endung am Anfang des ganzen Worts (_WORTANFANG).
 Erweitert am 19.11.2026 (Entscheidung 19.11.2026 (3) (c)): Der Name jeder Sitzung und jedes Gremium, das aus dem Namen
 einer Sitzung stammt, läuft durch die Maske (Maske.sitzungsname), nicht mehr nur bei Sitzungen, in denen eine Vorlage
-der Maske beraten wird; Maske.sitzungen nennt seitdem nur noch die Drucksache für einen Befund in check."""
+der Maske beraten wird; Maske.sitzungen nennt seitdem nur noch die Drucksache für einen Befund in check. In
+Sitzungsnamen gelten Namen Kölner Stadtteile und Stadtbezirke mit Straßen-Endung („Ehrenfeld“) nicht als Straße
+(_gebiete_muster; Nachprüfung derselben Entscheidung)."""
 import json
 import re
 import unicodedata
@@ -488,6 +490,36 @@ _ZUSATZ_FUNDSTELLE = " ("
 # Schlüssel der Zwischenspeicher für Sitzungsnamen (Maske.sitzungsname) an der Stelle der Drucksache: ein eigenes
 # Objekt, das keiner Drucksache gleicht
 _SITZUNGSNAME = object()
+# Zeichen, das in Sitzungsnamen den Namen eines Stadtteils oder Stadtbezirks vertritt (_gebiete_muster): ein Wortzeichen
+# für \b und die Trennzeichen (TRENN), aber kein Buchstabe, also weder Straßen-Endung noch Teil eines Straßennamens oder
+# einer Kennung; nicht klein geschrieben (_restzahl_spannen liest eine Ordnungszahl davor wie vor einem groß
+# geschriebenen Wort)
+_GEBIET_ERSATZ = "_"
+_GEBIET_RAND = r"[^\W_]|-"
+
+
+def _gebiete_muster(strassen):
+    """Namen Kölner Stadtteile (config.ORTSTEILE, `ortsteil_bez`) und Stadtbezirke (geocode.BEZIRKE_KOELN) mit
+    Straßen-Endung (SUFFIX: „Ehrenfeld“, „Klettenberg“, „Raderberg“ …), die als ganzes Wort in keinem Straßennamen aus
+    `strassen` stehen, als ein Muster (ganzes Wort: kein Buchstabe, keine Ziffer und kein Bindestrich davor oder
+    dahinter, kein Punkt davor); ohne solche Namen None. In Sitzungsnamen liest die Maske sie nicht als Straße
+    (Maske.sitzungsname; Nachprüfung der Entscheidung 19.11.2026 (3): vorher wurde „Bezirksvertretung 4 (Ehrenfeld),
+    12. Sitzung“ zu „…, [Hausnummer ausgelassen]. Sitzung“, weil hinter einer Straße auch eine Ordnungszahl als
+    Hausnummer gilt). Das verbirgt keine Hausnummer: Eine Straße dieses Namens gibt es im Verzeichnis nicht („Im
+    Gremberg“ dagegen schon, deshalb bleibt „Gremberg“ eine Straße; der Stadtteil heißt „Humboldt/Gremberg“), und eine
+    Zahl hinter dem Namen fällt weiter weg, wenn sie in keinem bekannten Zusammenhang steht (Positivliste,
+    _restzahl_spannen): „Ortstermin Ehrenfeld 5“ wird zu „Ortstermin Ehrenfeld [Hausnummer ausgelassen]“."""
+    namen = set(geocode.BEZIRKE_KOELN.values())
+    if config.ORTSTEILE.exists():
+        namen |= {f["properties"]["ortsteil_bez"]
+                  for f in json.loads(config.ORTSTEILE.read_text(encoding="utf-8"))["features"]}
+    endung = re.compile(rf"(?:{SUFFIX})$", re.I)
+    ganz = lambda n: rf"(?<!{_GEBIET_RAND}|\.){re.escape(n)}(?!{_GEBIET_RAND})"
+    strassen = [s for s in strassen if s]
+    namen = sorted((n for n in namen if n and endung.search(n)
+                    and not any(re.search(ganz(n), s, re.I) for s in strassen if n.casefold() in s.casefold())),
+                   key=lambda n: (-len(n), n))
+    return re.compile("|".join(ganz(n) for n in namen), re.I) if namen else None
 
 
 def _ziffer_oder_zahlwort(text):
@@ -518,6 +550,9 @@ class Maske:
         # laufen seit dem 19.11.2026 bei jeder Sitzung durch die Maske (sitzungsname); `sitzungen` nennt nur noch die
         # Drucksache, unter der check einen Befund meldet (vorher Offen (9): nur Sitzungen aus `sitzungen`)
         self.tops, self.sitzungen = {}, {}
+        # Muster der Gebietsnamen, die in Sitzungsnamen nicht als Straße gelten (_gebiete_muster), als (Muster,);
+        # beim ersten Sitzungsnamen mit Ziffer gebaut
+        self._gebiete = None
 
     def drucksache_ergebnisse(self, ref, tops):
         """Drucksache, mit der die Ergebnisse der Beratungen einer Vorlage (Drucksache `ref`, Tagesordnungspunkte
@@ -548,10 +583,15 @@ class Maske:
                     teile.append((m.start(), m.end(), OHNE_NR + ((m.group(1) or "") if klammer else "")))
         return sorted(teile)
 
-    def _spannen(self, text):
+    def _spannen(self, text, sitzung=False):
         """Was die Maske im Text ersetzt: (von, bis, Ersatz) im gelieferten Text. Zuerst die Muster der Maske; finden sie
         nichts, die Ziffernfolgen, die die Probe meldet (Sicherheitsnetz, Prüfung r20a, zweite Korrektur); findet auch
-        sie nichts, jede Zahl außerhalb bekannter Zusammenhänge (Positivliste _BEKANNT, dritte Korrektur)."""
+        sie nichts, jede Zahl außerhalb bekannter Zusammenhänge (Positivliste _BEKANNT, dritte Korrektur). Mit `sitzung`
+        (Sitzungsname, Maske.sitzungsname) stehen die Namen aus _gebiete_muster zuvor als _GEBIET_ERSATZ gleicher Länge
+        im Text: Die Stellen bleiben dieselben, und ersetzt werden nur Nummern (samt Buchstabe der Hausnummer) und
+        Wörter für die Hausnummer, nie der Name. Für Titel (ohne `sitzung`) unverändert."""
+        if sitzung:
+            text = self._ohne_gebietsnamen(text)
         angeglichen, stellen = _angleichen(text)
         teile = [(*_im_text(stellen, a, e, len(text)), ersatz) for a, e, ersatz in self._stellen(angeglichen)]
         if not teile:
@@ -562,13 +602,22 @@ class Maske:
             teile = [(von, bis, OHNE_NR) for von, bis in _restzahl_spannen(text)]
         return teile
 
-    def _maskieren(self, titel):
+    def _ohne_gebietsnamen(self, text):
+        """Text mit _GEBIET_ERSATZ an der Stelle jedes Namens aus _gebiete_muster (gleiche Länge)."""
+        if self._gebiete is None:
+            self._gebiete = (_gebiete_muster(self.strassen),)
+        rx = self._gebiete[0]
+        return rx.sub(lambda x: _GEBIET_ERSATZ * len(x.group()), text) if rx else text
+
+    def _maskieren(self, titel, sitzung=False):
         """(Ergebnis, Herkunft): Runden wie in __call__; Herkunft je Zeichen des Ergebnisses (Zeichen, von, bis): die
-        Stellen im gelieferten Titel, aus denen es stammt (ein Ersatz trägt die Stellen aller ersetzten Zeichen)."""
+        Stellen im gelieferten Titel, aus denen es stammt (ein Ersatz trägt die Stellen aller ersetzten Zeichen).
+        `sitzung`: Sitzungsname (_spannen)."""
         zeichen = [(c, i, i + 1) for i, c in enumerate(titel)]
         aus = titel
         for runde in range(RUNDEN + 1):
-            teile = self._spannen(aus) if runde < RUNDEN else [(a, e, OHNE_NR) for a, e in _rueckfall_spannen(aus)]
+            teile = (self._spannen(aus, sitzung) if runde < RUNDEN
+                     else [(a, e, OHNE_NR) for a, e in _rueckfall_spannen(aus)])
             if not teile:
                 break
             zeichen = _ersetzen_herkunft(zeichen, teile)
@@ -590,12 +639,16 @@ class Maske:
 
     def _ausblenden(self, titel, schluessel):
         """Ergebnis von _maskieren mit Zwischenspeicher je (Text, Schlüssel): Schlüssel ist die Drucksache (__call__)
-        oder _SITZUNGSNAME (sitzungsname); das Ergebnis hängt vom Schlüssel nicht ab."""
+        oder _SITZUNGSNAME (sitzungsname, mit den Gebietsnamen aus _gebiete_muster); unter verschiedenen Drucksachen
+        ist das Ergebnis dasselbe. Die Herkunft je Zeichen (für ausschnitt) nur bei Titeln: Ein Sitzungsname mit dem
+        Text eines Titels kann anders maskiert sein."""
         if (titel, schluessel) not in self._aus:
-            aus, zeichen = self._maskieren(titel)
-            if len(self._herkunft) > 256:
-                self._herkunft.clear()
-            self._herkunft[titel] = zeichen
+            sitzung = schluessel is _SITZUNGSNAME
+            aus, zeichen = self._maskieren(titel, sitzung)
+            if not sitzung:
+                if len(self._herkunft) > 256:
+                    self._herkunft.clear()
+                self._herkunft[titel] = zeichen
             self._aus[titel, schluessel] = aus
             self._offen[aus, schluessel] = False
         return self._aus[titel, schluessel]
@@ -639,7 +692,8 @@ class Maske:
     def _noch_offen(self, titel, schluessel):
         """offen() ohne die Bedingung der Drucksache, mit Zwischenspeicher je (Text, Schlüssel) wie _ausblenden."""
         if (titel, schluessel) not in self._offen:
-            self._offen[titel, schluessel] = _ziffer_oder_zahlwort(titel) and bool(self._spannen(titel))
+            self._offen[titel, schluessel] = (_ziffer_oder_zahlwort(titel)
+                                              and bool(self._spannen(titel, schluessel is _SITZUNGSNAME)))
         return self._offen[titel, schluessel]
 
     def sitzungsname(self, text):
@@ -653,10 +707,12 @@ class Maske:
         Drucksache: Die Maske ist an Drucksachen gebunden (`refs`), ein Sitzungsname hat keine. Eine eigene Methode
         statt einer erfundenen Drucksache in `refs`, weil check `refs` als Menge der Drucksachen der Maske liest
         (Zählung „titel_geschuetzt“, Abgleich mit der Erlaubnis für Hauskoordinaten, Hinweis „ohne_punkt_ohne_maske“)
-        und die Maske für Titel unverändert bleibt. Mit Vorlage der Maske in der Sitzung ergibt __call__ mit deren
-        Drucksache denselben Text (das Ergebnis hängt von der Drucksache nicht ab); export ruft deshalb für jede Sitzung
-        diese Methode, check prüft mit sitzungsname_offen (eine Regel). Legitime Namen mit Zahlen bleiben, soweit die
-        Positivliste sie kennt („Bezirksvertretung 1 (Innenstadt)“, „3. Sitzung des …“, Datum, Uhrzeit, Jahreszahl)."""
+        und die Maske für Titel unverändert bleibt. export ruft für jede Sitzung diese Methode, auch mit Vorlage der
+        Maske in der Sitzung; check prüft mit sitzungsname_offen (eine Regel). Legitime Namen mit Zahlen bleiben, soweit
+        die Positivliste sie kennt („Bezirksvertretung 1 (Innenstadt)“, „3. Sitzung des …“, Datum, Uhrzeit,
+        Jahreszahl). Anders als bei Titeln gilt der Name eines Kölner Stadtteils oder Stadtbezirks mit Straßen-Endung
+        nicht als Straße (_gebiete_muster): „Bezirksvertretung 4 (Ehrenfeld), 12. Sitzung“ bleibt, „Ortstermin
+        Ehrenfeld 5“ verliert die Zahl (Nachprüfung der Entscheidung 19.11.2026 (3))."""
         if not text or not _ziffer_oder_zahlwort(text):
             return text
         return self._ausblenden(text, _SITZUNGSNAME)

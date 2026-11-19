@@ -258,6 +258,17 @@ def write_calendar(path, meetings, today=None):
     print(f"{path.name}: {termine} Termine, davon ganztägig {ganztaegig}")
 
 
+def ics_sitzungsname(beschreibung):
+    """Sitzungsname aus der Beschreibung eines Termins von write_calendar (DESCRIPTION, Text zurückgewandelt): alles vor
+    der letzten Zeile, die mit „Tagesordnung“ beginnt. write_calendar schreibt den Namen samt Zeilenumbrüchen an den
+    Anfang und direkt dahinter immer „Tagesordnung: …“ oder „Tagesordnung noch nicht veröffentlicht.“, danach nur
+    Einladung und Quelle. check._sitzungen prüft so den ganzen Namen, den export maskiert (Nachprüfung der Entscheidung
+    19.11.2026 (3): vorher nur die erste Zeile; bei einem Namen mit Zeilenumbruch meldete check einen Befund, den die
+    Maske zu Recht nicht kürzt, etwa „17“ am Ende der ersten und „Uhr“ auf der zweiten Zeile, und eine Hausnummer auf
+    der zweiten Zeile blieb ungeprüft). Ohne eine solche Zeile die ganze Beschreibung."""
+    return (beschreibung or "").rsplit("\nTagesordnung", 1)[0]
+
+
 # --- Linked Open Data: GeoJSON und DCAT-AP -----------------------------------------------------------
 
 def write_geojson(path, cache, sources):

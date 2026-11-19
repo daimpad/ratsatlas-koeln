@@ -574,15 +574,16 @@ def _sitzung_offen(m, sitzung, texte, offen, ohne, datei):
 
 
 def _sitzungen(base, db, m, zahl, ohne):
-    """Namen aller Sitzungen in zeit.json (`meetings[].name` und `gremium`) und termine.ics (erste Zeile der
-    Beschreibung ist der Name, die Zusammenfassung ohne „ (abgesagt)“ das Gremium): export maskiert jeden Namen und
-    jedes Gremium, das aus dem Namen stammt (Maske.sitzungsname; Entscheidung 19.11.2026 (3) (c); bis dahin nur bei
-    Sitzungen, in denen eine Vorlage der Maske beraten wird, Maske.sitzungen, Offen (9) der Nachprüfung der dritten
-    Korrektur). Ein Gremium mit dem Namen einer Organisation der Datenbank stammt nicht aus dem Namen und bleibt
+    """Namen aller Sitzungen in zeit.json (`meetings[].name` und `gremium`) und termine.ics (Name: alle Zeilen der
+    Beschreibung vor der Zeile „Tagesordnung …“, publish.ics_sitzungsname, auch bei einem Namen mit Zeilenumbruch;
+    Gremium: die Zusammenfassung ohne „ (abgesagt)“): export maskiert jeden Namen und jedes Gremium, das aus dem Namen
+    stammt (Maske.sitzungsname; Entscheidung 19.11.2026 (3) (c); bis dahin nur bei Sitzungen, in denen eine Vorlage der
+    Maske beraten wird, Maske.sitzungen, Offen (9) der Nachprüfung der dritten Korrektur). Ein Gremium mit dem Namen einer Organisation der Datenbank stammt nicht aus dem Namen und bleibt
     ungeprüft (export.gremium_aus_namen, wie export._meetings). Liefert die Drucksachen der Befunde bei Sitzungen mit
     einer Vorlage der Maske; Befunde bei Sitzungen ohne eine solche zählt `ohne` je Datei (_sitzung_offen). Zählt die
     Sitzungen in `zahl`."""
     from .export import gremium_aus_namen
+    from .publish import ics_sitzungsname
     organisationen = {r[0] for r in db.execute("SELECT name FROM organization") if r[0]}
     offen = set()
 
@@ -596,7 +597,7 @@ def _sitzungen(base, db, m, zahl, ohne):
             pruefen("zeit.json", x.get("source_object"), x.get("name"), x.get("gremium"))
     if (base / "termine.ics").exists():
         for e in _ics_ereignisse(base / "termine.ics"):
-            pruefen("termine.ics", e.get("UID"), (e.get("DESCRIPTION") or "").split("\n")[0],
+            pruefen("termine.ics", e.get("UID"), ics_sitzungsname(e.get("DESCRIPTION")),
                     re.sub(r" \(abgesagt\)$", "", e.get("SUMMARY") or ""))
     return offen
 

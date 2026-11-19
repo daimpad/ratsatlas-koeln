@@ -14,7 +14,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from pipeline import ausschuesse, build, check, config, export, geocode, maske, sessionnet
+from pipeline import ausschuesse, build, check, config, export, geocode, maske, publish, sessionnet
 
 OHNE_NR = maske.OHNE_NR
 EINGABE = "Anregungen und Beschwerden"
@@ -27,7 +27,15 @@ LEGITIM = ([name for _, name, andere in ausschuesse.AUSSCHUESSE for name in (nam
               "Rat, 17:00 Uhr", "Konstituierende Sitzung der Wahlperiode 2025–2030",
               "Sitzung des Unterausschusses Kulturbauten", "Arbeitskreis Radverkehr – 2. Sitzung",
               "Sitzung des Rates um 17 Uhr", "Bezirksvertretung 9 (Mülheim) – 12. Sitzung", "Stadtbezirk 5",
-              "Sitzung des Hauptausschusses (Wahlperiode 2025–2030)", "Sondersitzung Haushalt 2027"])
+              "Sitzung des Hauptausschusses (Wahlperiode 2025–2030)", "Sondersitzung Haushalt 2027",
+              # Bezirks- und Stadtteilnamen mit Straßen-Endung (Nachprüfung: vorher als Straße gelesen und die
+              # Ordnungszahl dahinter gekürzt)
+              "Bezirksvertretung 4 (Ehrenfeld), 12. Sitzung", "Bezirksvertretung 4 (Ehrenfeld) (12. Sitzung)",
+              "Bezirksvertretung Ehrenfeld – 5. Sitzung", "Bürgerversammlung Ehrenfeld, 2. Termin",
+              "Sitzung des Rates um 17\nUhr", "Rat, Beginn 17\nUhr"])
+# Kölner Stadtteile und Stadtbezirke (data/geo, geocode.BEZIRKE_KOELN)
+GEBIETE = sorted({f["properties"]["ortsteil_bez"] for f in json.loads(config.ORTSTEILE.read_text())["features"]}
+                 | set(geocode.BEZIRKE_KOELN.values()))
 # erfundene Sitzungen: Kennung → (Name, Organisation oder None); Beginn am Tag nach heute plus Stelle in der Liste
 SITZUNGEN = {
     "ohne": ("Ortstermin Venloer Straße 5", None),        # kein Gremium, keine Vorlage der Maske
@@ -62,6 +70,11 @@ def test_legitime_namen_unveraendert(name):
     ("Begehung Aachener Str. 12a", f"Begehung Aachener Str. {OHNE_NR}"),
     ("Ortstermin vor Hausnummer 7", f"Ortstermin vor {OHNE_NR}"),
     ("Sitzung am Kiosk, Hausnummer zwölf", f"Sitzung am Kiosk, {OHNE_NR}"),
+    # hinter dem Namen eines Stadtteils: jede Zahl außerhalb bekannter Zusammenhänge; „Im Gremberg“ ist eine Straße
+    ("Ortstermin Ehrenfeld 5", f"Ortstermin Ehrenfeld {OHNE_NR}"),
+    ("Begehung Klettenberg, Nr. 7", f"Begehung Klettenberg, {OHNE_NR}"),
+    ("Ortstermin Im Gremberg 12. Sitzung", f"Ortstermin Im Gremberg {OHNE_NR}. Sitzung"),
+    ("Ortstermin\nVenloer Straße 7", f"Ortstermin\nVenloer Straße {OHNE_NR}"),
 ])
 def test_hausnummer_im_namen_maskiert(name, erwartet):
     """Eine Hausnummer in einem erfundenen Sitzungsnamen fällt weg, ohne Drucksache (keine Vorlage der Maske); eine
@@ -72,6 +85,72 @@ def test_hausnummer_im_namen_maskiert(name, erwartet):
     pruefend = maske.Maske([])
     assert pruefend.sitzungsname_offen(name) and not pruefend.sitzungsname_offen(erwartet)
     assert m(name, "1/2026") == name and not m.offen(name, "1/2026")
+
+
+@pytest.fixture(scope="module")
+def masken():
+    """Zwei Masken für viele Namen (eine Maske je Name braucht etwa eine halbe Sekunde): eine maskiert, eine prüft
+    (Maske.__call__ und sitzungsname vermerken offen() für das eigene Ergebnis vorab als falsch)."""
+    return maske.Maske([]), maske.Maske([])
+
+
+@pytest.mark.parametrize("gebiet", GEBIETE)
+def test_gebietsnamen_keine_strasse(gebiet, masken):
+    """Hinter dem Namen eines Kölner Stadtteils oder Stadtbezirks bleibt eine Ordnungszahl vor „Sitzung“ oder „Termin“
+    in Sitzungsnamen stehen (Nachprüfung der Entscheidung 19.11.2026 (3): Namen mit Straßen-Endung wie „Ehrenfeld“ oder
+    „Klettenberg“ las die Maske als Straße), eine Zahl in keinem bekannten Zusammenhang fällt weiter weg."""
+    m, pruefend = masken
+    for name in (f"Bezirksvertretung ({gebiet}), 12. Sitzung", f"Bürgerversammlung {gebiet}, 2. Termin"):
+        assert m.sitzungsname(name) == name
+        assert not pruefend.sitzungsname_offen(name)
+    assert m.sitzungsname(f"Ortstermin {gebiet} 5") == f"Ortstermin {gebiet} {OHNE_NR}"
+
+
+def test_gebietsnamen_titelmaske_unveraendert():
+    """Die Maske für Titel bleibt unverändert: Dort fällt die Zahl hinter einem Namen mit Straßen-Endung weiter weg."""
+    titel = "Bezirksvertretung 4 (Ehrenfeld), 12. Sitzung"
+    assert maske.Maske(["1/2026"])(titel, "1/2026") == f"Bezirksvertretung 4 (Ehrenfeld), {OHNE_NR}. Sitzung"
+
+
+def _kalender(tmp_path, name, gremium="Rat"):
+    """termine.ics mit einer erfundenen Sitzung, Name und Gremium wie übergeben (publish.write_calendar, ohne export);
+    check._sitzungen mit einer Datenbank, in der nur die Organisation „Rat“ steht. Liefert (Drucksachen, Befunde ohne
+    Drucksache je Datei, Name aus der Beschreibung)."""
+    sitzung = {"date": "2026-12-01", "time": "17:00", "gremium": gremium, "name": name, "cancelled": False,
+               "web": "https://example.invalid/sitzung/k1", "invitation": "https://example.invalid/einladung/k1",
+               "start": "2026-12-01T16:00:00Z", "end": None,
+               "source_object": "https://example.invalid/oparl/meetings/k1"}
+    publish.write_calendar(tmp_path / "termine.ics", [sitzung], date(2026, 11, 19))
+    db = sqlite3.connect(":memory:")
+    db.execute("CREATE TABLE organization (id TEXT, name TEXT)")
+    db.execute("INSERT INTO organization VALUES ('o1', 'Rat')")
+    ohne = {}
+    offen = check._sitzungen(tmp_path, db, maske.Maske([]), {}, ohne)
+    db.close()
+    (e,) = check._ics_ereignisse(tmp_path / "termine.ics")
+    return offen, ohne, publish.ics_sitzungsname(e["DESCRIPTION"])
+
+
+@pytest.mark.parametrize("name", ["Sitzung des Rates um 17\nUhr", "Rat, Beginn 17\nUhr",
+                                  "Sitzung des Rates (3.\nSitzung)", "Rat\nTagesordnung 2026"])
+def test_kalender_name_mit_zeilenumbruch_ohne_befund(tmp_path, capsys, name):
+    """Ein Name mit Zeilenumbruch, den die Maske zu Recht nicht kürzt, ist in termine.ics kein Befund: check liest den
+    ganzen Namen vor der Zeile „Tagesordnung …“ (publish.ics_sitzungsname), nicht nur die erste Zeile (Nachprüfung der
+    Entscheidung 19.11.2026 (3): „Sitzung des Rates um 17“ allein war ein Befund und hielt die Veröffentlichung an)."""
+    assert maske.Maske([]).sitzungsname(name) == name
+    offen, ohne, gelesen = _kalender(tmp_path, name)
+    assert gelesen == name
+    assert offen == set() and ohne == {}
+
+
+def test_kalender_hausnummer_auf_zweiter_zeile_befund(tmp_path, capsys):
+    """Gegenprobe: Eine ungekürzte Hausnummer auf der zweiten Zeile des Namens in termine.ics ist ein Befund, nur mit
+    der Zahl je Datei (vorher prüfte check nur die erste Zeile); maskiert wie von export kein Befund."""
+    roh = "Ortstermin\nVenloer Straße 7"
+    offen, ohne, _ = _kalender(tmp_path, roh)
+    assert offen == set() and ohne == {"termine.ics": 1}
+    offen, ohne, _ = _kalender(tmp_path, maske.Maske([]).sitzungsname(roh))
+    assert offen == set() and ohne == {}
 
 
 def _aufbau(oparl):
