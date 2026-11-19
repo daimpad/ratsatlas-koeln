@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from pipeline import config, sessionnet  # noqa: E402
 from pipeline.fetch import _write  # noqa: E402
 from pipeline.geocode import BEZIRKE_KOELN  # noqa: E402
+from pipeline.process import BERLIN  # noqa: E402
 
 B = "https://example.invalid/oparl"
 VORHABEN = ["Umgestaltung der {s}", "Sanierung der Fahrbahn {s}", "Neue Fahrradabstellanlagen an der {s}",
@@ -67,7 +68,10 @@ def main():
     def sitzung(org, tag):
         mid = f"{B}/meetings/{org['id'].rsplit('/', 1)[1]}-{tag.isoformat()}"
         if mid not in meetings:
-            meetings[mid] = {"id": mid, "name": org["name"], "start": f"{tag.isoformat()}T17:00:00+01:00",
+            # Beginn um 17:00 Uhr Kölner Zeit mit dem Versatz des Tages, im Sommer +02:00
+            # (Entscheidung 19.11.2026 (2) (b))
+            beginn = datetime(tag.year, tag.month, tag.day, 17, 0, tzinfo=BERLIN).isoformat()
+            meetings[mid] = {"id": mid, "name": org["name"], "start": beginn,
                              "organization": [org["id"]], "agendaItem": [], "web": "https://example.invalid/sitzung",
                              "modified": f"{tag.isoformat()}T08:00:00+01:00"}
         return meetings[mid]

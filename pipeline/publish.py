@@ -5,13 +5,13 @@ Alle Dateien ändern sich nur, wenn sich ihr Inhalt ändert (keine Erzeugungszei
 Branch deploy nicht täglich vollständig neu geschrieben wird."""
 import json
 import re
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, timedelta, timezone
 from pathlib import Path
 from urllib.parse import quote
 from xml.sax.saxutils import escape, quoteattr
 
 from . import config, strukturdaten_web
-from .process import BERLIN
+from .process import BERLIN, _ortszeit, local_day, local_time
 
 FEED_LIMIT = 100
 GANZ_BONN = f"ganz-{config.STADT}"   # Feed über alle Gebiete (Seite rss/); Name aus Bonn übernommen
@@ -188,33 +188,64 @@ def _ics_fold(line):
     return "\r\n ".join(out)
 
 
+def _koeln(ts):
+    """Zeitpunkt mit Zeitzone in Kölner Ortszeit (process._ortszeit); ohne Zeitzone gilt Kölner Ortszeit."""
+    dt = _ortszeit(ts)
+    return dt if dt.tzinfo else dt.replace(tzinfo=BERLIN)
+
+
 def _utc(ts):
     """Zeitpunkt in UTC für iCalendar („…Z“). Ohne Zeitzone gilt Kölner Ortszeit wie in process.local_day, nicht die
     Zeitzone des Rechners, auf dem der Aufbau läuft (in GitHub Actions UTC; Entscheidung 19.11.2026 (1) (D))."""
-    dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=BERLIN)
-    return dt.astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    return _koeln(ts).astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+
+def _ganztaegig(start):
+    """Sitzung ohne Uhrzeit: nur ein Datum oder 00:00 Uhr in Köln, dieselbe Regel wie `time` in zeit.json
+    (export._meetings; Entscheidung 19.11.2026 (2) (a))."""
+    return local_time(start) in (None, "00:00")
+
+
+def _ende(start, end):
+    """DTEND in UTC oder None (Entscheidung 19.11.2026 (2) (a)): kein Ende bei einem Ende ohne Uhrzeit (nur Datum), beim
+    Platzhalter 23:59:59 Uhr in Kölner Ortszeit und bei einem Ende, das nicht nach dem Beginn liegt."""
+    if not end or len(end) <= 10:
+        return None
+    ende = _koeln(end)
+    if ende.strftime("%H:%M:%S") == "23:59:59" or ende <= _koeln(start):
+        return None
+    return _utc(end)
 
 
 def write_calendar(path, meetings, today=None):
-    """Sitzungen ab 30 Tage vor dem Datenstand; abgesagte mit STATUS:CANCELLED."""
+    """Sitzungen ab 30 Tage vor dem Datenstand; abgesagte mit STATUS:CANCELLED. Eine Sitzung ohne Uhrzeit (_ganztaegig)
+    steht als ganztägiger Termin am Kölner Kalendertag (process.local_day) darin, ohne DTEND: Nach RFC 5545 (3.6.1)
+    dauert ein Termin mit einem Datum in DTSTART ohne DTEND und DURATION einen Tag; so steht kein Ende im Kalender, das
+    die Quelle nicht nennt (Entscheidung 19.11.2026 (2) (a)). Das Log nennt die Zahl der Termine, nur Zahlen."""
     since = ((today or date.today()) - timedelta(days=30)).isoformat()
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", f"PRODID:-//{config.SEITENNAME}//Sitzungskalender//DE",
              "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:Sitzungen Rat\\, Ausschüsse und "
              f"Bezirksvertretungen {config.STADT_NAME}", "X-WR-TIMEZONE:Europe/Berlin"]
+    termine = ganztaegig = 0
     for m in meetings:
-        if m["date"] < since or not m.get("start") or len(m["start"]) <= 10:
+        if m["date"] < since or not m.get("start"):
             continue
         desc = [m["name"] or ""]
         desc.append(f"Tagesordnung: {m['web']}" if m.get("web") else "Tagesordnung noch nicht veröffentlicht.")
         if m.get("invitation"):
             desc.append(f"Einladung: {m['invitation']}")
         desc.append(f"Quelle: OParl-API der Stadt Köln; {config.NAMENSNENNUNG}")
-        lines += ["BEGIN:VEVENT", f"UID:{m['source_object']}", f"DTSTAMP:{_utc(m['start'])}",
-                  f"DTSTART:{_utc(m['start'])}"]
-        if m.get("end") and m["end"][11:19] != "23:59:59":
-            lines.append(f"DTEND:{_utc(m['end'])}")
+        # DTSTAMP bleibt ein Zeitpunkt in UTC (RFC 5545 verlangt dort DATE-TIME), auch bei einem ganztägigen Termin
+        lines += ["BEGIN:VEVENT", f"UID:{m['source_object']}", f"DTSTAMP:{_utc(m['start'])}"]
+        termine += 1
+        if _ganztaegig(m["start"]):
+            ganztaegig += 1
+            lines.append(f"DTSTART;VALUE=DATE:{local_day(m['start']).replace('-', '')}")
+        else:
+            lines.append(f"DTSTART:{_utc(m['start'])}")
+            ende = _ende(m["start"], m.get("end"))
+            if ende:
+                lines.append(f"DTEND:{ende}")
         lines += [f"SUMMARY:{_ics_text(m['gremium'] + (' (abgesagt)' if m['cancelled'] else ''))}",
                   f"DESCRIPTION:{_ics_text(chr(10).join(desc))}",
                   "STATUS:CANCELLED" if m["cancelled"] else "STATUS:CONFIRMED"]
@@ -223,6 +254,7 @@ def write_calendar(path, meetings, today=None):
         lines.append("END:VEVENT")
     lines.append("END:VCALENDAR")
     path.write_text("\r\n".join(_ics_fold(x) for x in lines) + "\r\n", encoding="utf-8")
+    print(f"{path.name}: {termine} Termine, davon ganztägig {ganztaegig}")
 
 
 # --- Linked Open Data: GeoJSON und DCAT-AP -----------------------------------------------------------
