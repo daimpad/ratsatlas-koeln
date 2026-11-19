@@ -218,7 +218,8 @@ def _ende(start, end):
 
 
 def write_calendar(path, meetings, today=None):
-    """Sitzungen ab 30 Tage vor dem Datenstand; abgesagte mit STATUS:CANCELLED. Eine Sitzung ohne Uhrzeit (_ganztaegig)
+    """Sitzungen ab 30 Tagen vor `today` (ohne Angabe der Tag des Aufbaus, so für termine.ics; die Themenkalender
+    übergeben den Kölner Tag des Datenstands); abgesagte mit STATUS:CANCELLED. Eine Sitzung ohne Uhrzeit (_ganztaegig)
     steht als ganztägiger Termin am Kölner Kalendertag (process.local_day) darin, ohne DTEND: Nach RFC 5545 (3.6.1)
     dauert ein Termin mit einem Datum in DTSTART ohne DTEND und DURATION einen Tag; so steht kein Ende im Kalender, das
     die Quelle nicht nennt (Entscheidung 19.11.2026 (2) (a)). Das Log nennt die Zahl der Termine, nur Zahlen."""

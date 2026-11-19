@@ -106,6 +106,12 @@ KALENDER = {
     "n2": ("2026-11-20T17:00:00", "2026-11-20T19:00:00", ":20261120T160000Z", ":20261120T180000Z"),
     # 23:59:59 Uhr in UTC ist 00:59:59 Uhr in Köln, also kein Platzhalter (vorher am Text der Quelle erkannt)
     "n3": ("2026-11-20T16:00:00Z", "2026-11-20T23:59:59Z", ":20261120T160000Z", ":20261120T235959Z"),
+    # Tage der Zeitumstellung (29.03.2026 auf Sommerzeit, 25.10.2026 auf Winterzeit)
+    "u0": ("2026-03-28T23:00:00Z", None, ";VALUE=DATE:20260329", None),       # 00:00 Uhr MEZ: ganztägig am 29.03.
+    "u1": ("2026-10-24T22:00:00Z", None, ";VALUE=DATE:20261025", None),       # 00:00 Uhr MESZ: ganztägig am 25.10.
+    "u2": ("2026-03-29T17:00:00+02:00", "2026-03-29T21:59:59Z", ":20260329T150000Z", None),  # 23:59:59 Uhr MESZ
+    "u3": ("2026-10-25T17:00:00+01:00", "2026-10-25T22:59:59Z", ":20261025T160000Z", None),  # 23:59:59 Uhr MEZ
+    "u4": ("2026-10-25T17:00:00+01:00", "2026-10-25T20:00:00+01:00", ":20261025T160000Z", ":20261025T190000Z"),
 }
 
 
@@ -118,8 +124,8 @@ def test_kalender_ganztaegig_und_ende(rechnerzone, tmp_path, capsys):
                   "name": "[Testdaten] Sitzung", "cancelled": False, "web": None, "invitation": None,
                   "start": beginn, "end": ende, "source_object": f"https://example.invalid/oparl/meetings/{k}"}
                  for k, (beginn, ende, *_) in KALENDER.items()]
-    publish.write_calendar(tmp_path / "termine.ics", sitzungen, date(2026, 6, 15))
-    assert capsys.readouterr().out.splitlines() == ["termine.ics: 15 Termine, davon ganztägig 5"]
+    publish.write_calendar(tmp_path / "termine.ics", sitzungen, date(2026, 3, 1))
+    assert capsys.readouterr().out.splitlines() == ["termine.ics: 20 Termine, davon ganztägig 7"]
     ics = {k.rsplit("/", 1)[1]: e for k, e in _ereignisse(tmp_path / "termine.ics").items()}
     assert {k: (e["DTSTART"], e.get("DTEND")) for k, e in ics.items()} == {k: (s, e) for k, (_, _, s, e) in
                                                                            KALENDER.items()}
@@ -142,6 +148,7 @@ SITZUNGEN = {
 }
 
 
+@pytest.mark.parametrize("rechnerzone", ["UTC", "America/New_York"], indirect=True)
 def test_sitzungen_in_zeit_und_kalender(oparl, capsys, monkeypatch, rechnerzone):
     """Kette mit dem Testserver: zeit.json zeigt Tag und Uhrzeit in Kölner Zeit, termine.ics den Beginn in UTC, das Log
     von `export` einmal die Zahlen je Form des Beginns (dazu die Sitzung des Testservers mit Versatz „+02:00“)."""
@@ -174,6 +181,7 @@ def test_sitzungen_in_zeit_und_kalender(oparl, capsys, monkeypatch, rechnerzone)
     assert ics["d1"]["DTSTAMP"] == ":20261121T230000Z" and ics["z3"]["DTSTAMP"] == ":20261120T230000Z"
 
 
+@pytest.mark.parametrize("rechnerzone", ["UTC", "America/New_York"], indirect=True)
 def test_testdaten_beginnen_um_17_uhr_koelner_zeit(oparl, monkeypatch, rechnerzone):
     """tools/testdaten.py schreibt den Beginn jeder Sitzung mit dem Versatz von Europe/Berlin für ihren Tag
     (Entscheidung 19.11.2026 (2) (b)): Alle Sitzungen beginnen um 17:00 Uhr Kölner Zeit, auch im Sommer (vorher

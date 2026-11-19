@@ -642,10 +642,23 @@ def _sample(db, out, ortsteil, n=50, seed=2026):
 # --- „Aktuell in Köln“: kommende Sitzungen und neu eingereichte Vorlagen (index.json) --------------------------------
 
 # Höchstzahlen je Karte; die Seite zeigt drei Sitzungen, nachdem der Browser vergangene nach dem Tag der
-# Besucher:innen herausgefiltert hat
+# Besucher:innen herausgefiltert hat. AKTUELL_SITZUNGEN zählt erst ab dem Tag nach dem Stichtag (_aktuell)
 AKTUELL_SITZUNGEN, AKTUELL_VORLAGEN = 6, 5
+# Felder je Karte, sonst keine (kein Sitzungsname, keine Frist, keine Namen von Personen); check._aktuell meldet jedes
+# andere Feld
+AKTUELL_FELDER = {"sitzungen": ("date", "time", "gremium", "web", "source_object"),
+                  "vorlagen": ("reference", "date", "paper_type", "name", "area", "ort", "source_object")}
 # Ort einer Vorlage ohne Ortsbezug, derselbe Wortlaut wie im Vorgang (site/app.js)
 ORT_OHNE = "stadtweit / ohne Ortsbezug"
+
+
+def _kalendertag(wert):
+    """Kölner Kalendertag eines Zeitpunkts aus STAND.json (proc.local_day); None, wenn er fehlt oder unlesbar ist."""
+    try:
+        tag = proc.local_day(wert) if isinstance(wert, str) else None
+        return date.fromisoformat(tag).isoformat() if tag else None
+    except ValueError:
+        return None
 
 
 def _heimat(areas):
@@ -665,16 +678,23 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
     der Export schon hat (Vorlagen aus `cache`, Sitzungen aus _meetings), ohne weitere Anfrage. `home`: Gebiet je
     Vorlage (_heimat), `ortsname`: kurzer Name je Gebiet, `heute`: Kölner Kalendertag des Abrufs der Vorlagen
     (proc.local_day von retrieved_at der Quelle config.QUELLE_OPARL), `stand`: Inhalt von STAND.json.
-    - `sitzungen` („Kommende Sitzungen“): Sitzungen ab `heute` ohne abgesagte, nach Tag und Uhrzeit; eine Sitzung ohne
-      Uhrzeit (00:00 Uhr in Köln, _meetings) steht hinter denen mit Uhrzeit am selben Tag, sonst gilt die Reihenfolge
-      von _meetings; höchstens AKTUELL_SITZUNGEN. Je Sitzung nur `date`, `time`, `gremium`, `web` und `source_object`:
-      kein Sitzungsname, keine Frist (die 21 Tage stammen aus den Bonner Regeln), keine Namen von Personen. Vergangene
-      Sitzungen filtert zusätzlich der Browser nach dem Tag der Besucher:innen.
+    - `sitzungen` („Kommende Sitzungen“): Stichtag ist der spätere der Kölner Tage `heute` und der letzten regulären
+      Aktualisierung der Sitzungen (STAND.json `meetings`, _kalendertag; unlesbar oder fehlend: `heute`). Beide
+      Zeitpunkte liegen vor dem Export, der spätere grenzt vergangene Sitzungen am engsten ab; ist nur die Liste der
+      Vorlagen ausgesetzt, bleibt ihr Zeitpunkt stehen, die Sitzungen werden aber weiter aktualisiert. Sitzungen ab
+      dem Stichtag ohne abgesagte, nach Tag und Uhrzeit; eine Sitzung ohne Uhrzeit (00:00 Uhr in Köln, _meetings)
+      steht hinter denen mit Uhrzeit am selben Tag, sonst gilt die Reihenfolge von _meetings. Alle Sitzungen am
+      Stichtag und dazu höchstens AKTUELL_SITZUNGEN spätere: Der nächtliche Lauf beginnt um 22:10 Uhr UTC, im Winter
+      also um 23:10 Uhr Kölner Zeit, der Stichtag ist dann der Abend des Laufs. Seine Sitzungen sind vergangen, sobald
+      Besucher:innen die Seite am nächsten Tag öffnen; zählten sie mit, könnten sie alle Plätze belegen, und die Karte
+      bliebe nach dem Filter im Browser leer. Je Sitzung nur die Felder aus AKTUELL_FELDER (`date`, `time`,
+      `gremium`, `web`, `source_object`): kein Sitzungsname, keine Frist (die 21 Tage stammen aus den Bonner Regeln),
+      keine Namen von Personen. Vergangene Sitzungen filtert zusätzlich der Browser nach dem Tag der Besucher:innen.
     - `vorlagen` („Neu eingereicht“): Vorlagen aller Arten mit Datum bis `heute`, die neuesten zuerst (Datum, bei
-      gleichem Datum die Drucksache absteigend als Text); höchstens AKTUELL_VORLAGEN. Je Vorlage `reference`, `date`,
-      `paper_type`, `name` (Titel aus `cache`, maskiert wie in Liste und Suche), `area` (Gebiet zum Öffnen wie in
-      suche.json, nie „gesamt“; None, wenn die Vorlage in keinem Gebiet steht), `ort` (kurzer Name dieses Gebiets:
-      Stadtteil, „Stadtbezirk …“ oder ORT_OHNE; ohne Gebiet None) und `source_object`.
+      gleichem Datum die Drucksache absteigend als Text); höchstens AKTUELL_VORLAGEN. Je Vorlage nur die Felder aus
+      AKTUELL_FELDER: `reference`, `date`, `paper_type`, `name` (Titel aus `cache`, maskiert wie in Liste und Suche),
+      `area` (Gebiet zum Öffnen wie in suche.json, nie „gesamt“; None, wenn die Vorlage in keinem Gebiet steht), `ort`
+      (kurzer Name dieses Gebiets: Stadtteil, „Stadtbezirk …“ oder ORT_OHNE; ohne Gebiet None) und `source_object`.
     Eine Karte fehlt, wenn ihre Liste ausgesetzt oder nicht aktualisiert ist: `sitzungen`, wenn „meetings“ in
     _abruf_ausgesetzt oder _abruf_warnungen steht oder _abruf_fehler gilt; `vorlagen`, wenn „papers“ in
     _abruf_ausgesetzt steht oder _abruf_fehler gilt. Eine Karte ohne Eintrag fehlt ebenso (Entscheidung 19.11.2026 (1)
@@ -685,16 +705,18 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
     fehler, ausgesetzt = _abruf_fehler(stand), _abruf_ausgesetzt(stand)
     karten = {}
     if not (fehler or "meetings" in ausgesetzt or "meetings" in _abruf_warnungen(stand)):
-        kommend = sorted((m for m in meetings if m["date"] >= heute and not m["cancelled"]),
+        tag = max(heute, _kalendertag(stand.get("meetings")) or heute)
+        kommend = sorted((m for m in meetings if m["date"] >= tag and not m["cancelled"]),
                          key=lambda m: (m["date"], m["time"] is None, m["time"] or ""))
-        karten["sitzungen"] = [{k: m[k] for k in ("date", "time", "gremium", "web", "source_object")}
-                               for m in kommend[:AKTUELL_SITZUNGEN]]
+        am_tag = sum(m["date"] == tag for m in kommend)   # stehen vorn: kein früherer Tag in `kommend`
+        karten["sitzungen"] = [{k: m[k] for k in AKTUELL_FELDER["sitzungen"]}
+                               for m in kommend[:am_tag + AKTUELL_SITZUNGEN]]
     if not (fehler or "papers" in ausgesetzt):
         neu = sorted(((pid, p) for pid, p in cache.items() if p["date"] and p["date"][:10] <= heute),
                      key=lambda x: (x[1]["date"], x[1]["reference"] or ""), reverse=True)
-        karten["vorlagen"] = [{"reference": p["reference"], "date": p["date"], "paper_type": p["paper_type"],
-                               "name": p["name"], "area": home.get(pid), "ort": ortsname.get(home.get(pid)),
-                               "source_object": p["source_object"]} for pid, p in neu[:AKTUELL_VORLAGEN]]
+        mit_gebiet = [{**p, "area": home.get(pid), "ort": ortsname.get(home.get(pid))}
+                      for pid, p in neu[:AKTUELL_VORLAGEN]]
+        karten["vorlagen"] = [{k: p[k] for k in AKTUELL_FELDER["vorlagen"]} for p in mit_gebiet]
     karten = {k: v for k, v in karten.items() if v}
     return karten or None
 

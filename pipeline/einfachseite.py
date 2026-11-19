@@ -170,7 +170,7 @@ def body(root, vorschau=False):
     <p>Manche Angaben hat der Ratsatlas selbst erschlossen. Zum Beispiel den Ort oder das Thema einer Vorlage. Diese Angaben heißen „abgeleitet“. Sie können Fehler haben.</p>
     <p>Bei Orten gibt es 3 Stufen. Auf der Karte zeigt die Farbe eines Punktes die Stufe:</p>
     <ul>
-      <li><strong>genau (grün):</strong> Im Titel steht eine Straße mit Hausnummer. Der Ort ist dann ein Haus aus dem Adressverzeichnis der Stadt. Oder im Titel steht ein Bebauungsplan, und er passt eindeutig.</li>
+      <li><strong>genau (grün):</strong> Im Titel steht eine Straße mit Hausnummer. Und das Haus steht eindeutig im Adressverzeichnis der Stadt. Das gilt nur für Vorlagen der Verwaltung und für Anträge und Anfragen der Politik. Oder im Titel steht ein Bebauungsplan, und er passt eindeutig.</li>
       <li><strong>erkannt (braun):</strong> Im Titel steht der Name einer Straße oder eines Stadtteils. Oder die Stadt nennt den Stadtteil.</li>
       <li><strong>unklar (violett):</strong> Der Name passt zu mehreren Orten. Oder nur das Gremium deutet auf einen Stadtbezirk. Zum Beispiel, weil nur eine Bezirksvertretung beraten hat.</li>
     </ul>

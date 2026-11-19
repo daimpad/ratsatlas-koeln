@@ -1,10 +1,11 @@
 """„Aktuell in Köln“ in index.json (Entscheidung 19.11.2026 (1) (E), Teil der Pipeline): `export._aktuell` wählt aus dem,
-was der Export schon hat, die kommenden Sitzungen (ohne vergangene und abgesagte, höchstens 6, nach Tag und Uhrzeit)
-und die neu eingereichten Vorlagen (alle Arten, Datum bis zum Kölner Tag des Abrufs, höchstens 5, Titel maskiert wie in
-Liste und Suche). Eine Karte fehlt, wenn ihre Liste ausgesetzt oder nicht aktualisiert ist oder der Abruf fehlschlug,
-`aktuell` ganz, wenn beide fehlen, in der Kartenvorschau und ohne Vorlagen. `check` prüft Titel und Gremien darin wie in
-suche.json. Alle Vorlagen und Sitzungen sind erfunden (lokaler Testserver oder direkte Aufrufe); keine Anfragen an die
-Stadt."""
+was der Export schon hat, die kommenden Sitzungen (ohne vergangene und abgesagte, nach Tag und Uhrzeit; alle am
+Stichtag und höchstens 6 danach, Stichtag nach dem späteren Abruf von Vorlagen und Sitzungen) und die neu eingereichten
+Vorlagen (alle Arten, Datum bis zum Kölner Tag des Abrufs, höchstens 5, Titel maskiert wie in Liste und Suche). Eine
+Karte fehlt, wenn ihre Liste ausgesetzt oder nicht aktualisiert ist oder der Abruf fehlschlug, `aktuell` ganz, wenn
+beide fehlen, in der Kartenvorschau und ohne Vorlagen. `check` prüft Titel und Gremien darin wie in suche.json und
+meldet jedes Feld außerhalb der festen Liste. Alle Vorlagen und Sitzungen sind erfunden (lokaler Testserver oder direkte
+Aufrufe); keine Anfragen an die Stadt."""
 import importlib.util
 import json
 import sqlite3
@@ -29,10 +30,14 @@ SITZUNGEN = {
     "ab": ("2026-11-21T16:00:00Z", True, "rat"),        # abgesagt
     "k1": ("2026-11-22T16:00:00Z", False, "bv4"),
     "k2": ("2026-11-23T16:00:00Z", False, "rat"),
-    "k4": ("2026-11-25T16:00:00Z", False, "rat"),       # siebte kommende Sitzung: über der Höchstzahl
+    "k4": ("2026-11-25T16:00:00Z", False, "rat"),
+    "k5": ("2026-11-26T16:00:00Z", False, "bv4"),
+    "k6": ("2026-11-27T16:00:00Z", False, "rat"),       # sechste nach dem Stichtag; die siebte (kx) ist zu viel
 }
+# alle Sitzungen am Stichtag (20.11.) und dazu sechs spätere
 ERWARTET_SITZUNGEN = [("h2", "2026-11-20", "15:30"), ("h1", "2026-11-20", "17:00"), ("h0", "2026-11-20", None),
-                      ("k1", "2026-11-22", "17:00"), ("k2", "2026-11-23", "17:00"), ("k3", "2026-11-24", "17:00")]
+                      ("k1", "2026-11-22", "17:00"), ("k2", "2026-11-23", "17:00"), ("k3", "2026-11-24", "17:00"),
+                      ("k4", "2026-11-25", "17:00"), ("k5", "2026-11-26", "17:00"), ("k6", "2026-11-27", "17:00")]
 # erfundene Vorlagen: Kennung → (Drucksache, Datum, Vorlagenart, Titel, weitere Felder)
 VORLAGEN = {
     "n1": ("1101/2026", "2026-11-21", "Beschlussvorlage", "[Testdaten] Vorlage nach dem Tag des Abrufs", {}),
@@ -76,7 +81,8 @@ def _einfuegen(oparl):
 def _aufbau(stand_aendern=None):
     sessionnet.fetch_all()
     stand = json.loads(config.STAND.read_text())
-    stand["papers"] = ABRUF
+    # beide Zeitpunkte fest, damit der Test nicht vom Tag abhängt, an dem er läuft (Stichtag der Sitzungen: der spätere)
+    stand["papers"] = stand["meetings"] = ABRUF
     if stand_aendern:
         stand_aendern(stand)
     config.STAND.write_text(json.dumps(stand))
@@ -91,7 +97,7 @@ def test_aktuell_im_export(oparl):
     a = index["aktuell"]
     assert set(a) == {"sitzungen", "vorlagen"}
     # kommende Sitzungen ab dem Kölner Tag des Abrufs: ohne vergangene und abgesagte, nach Tag und Uhrzeit, ohne Uhrzeit
-    # hinter denen mit Uhrzeit am selben Tag, höchstens 6
+    # hinter denen mit Uhrzeit am selben Tag, alle am Stichtag und höchstens 6 danach
     s = a["sitzungen"]
     assert [(x["source_object"].rsplit("/", 1)[1], x["date"], x["time"]) for x in s] == ERWARTET_SITZUNGEN
     assert all(set(x) == {"date", "time", "gremium", "web", "source_object"} for x in s)   # kein Name, keine Frist
@@ -126,8 +132,8 @@ def test_check_meldet_ungekuerzten_titel_und_gremium(oparl, capsys):
     capsys.readouterr()
     erg = check.datenschutz(db)
     out = capsys.readouterr().out
-    assert erg["befunde"] == [] and erg["fehlend"] == [] and erg["untersucht"]["aktuell"] == 6 + 5
-    assert "Titel und Gremien in index.json („Aktuell in Köln“) untersucht: 11\n" in out
+    assert erg["befunde"] == [] and erg["fehlend"] == [] and erg["untersucht"]["aktuell"] == 9 + 5
+    assert "Titel und Gremien in index.json („Aktuell in Köln“) untersucht: 14\n" in out
 
     v = next(x for x in index["aktuell"]["vorlagen"] if x["reference"] == "1105/2026")
     v["name"] = TITEL_EINGABE
@@ -154,6 +160,33 @@ def test_check_meldet_ungekuerzten_titel_und_gremium(oparl, capsys):
     db.close()
 
 
+def test_check_meldet_felder_ausserhalb_der_festen_liste(oparl, capsys):
+    """check meldet jede Karte und jedes Feld außerhalb von export.AKTUELL_FELDER (etwa einen Sitzungsnamen oder eine
+    Frist) und das Gebiet „gesamt“, nur mit Zahl und Schlüsselname: Ein Gremium aus dem Namen einer Sitzung ohne
+    Vorlage der Titelmaske prüft check wie in zeit.json nicht, das Feld `name` aber fällt auf. Text erfunden."""
+    _einfuegen(oparl)
+    index = _aufbau()
+    pfad = config.EXPORT / config.STADT / "index.json"
+    s = index["aktuell"]["sitzungen"][0]
+    s.update(gremium="Sprechstunde Erika Mustermann, Venloer Straße 5", name="Testsitzung h2", frist="2026-12-11")
+    index["aktuell"]["vorlagen"][0]["area"] = "gesamt"
+    index["aktuell"]["personen"] = [{"name": "Erika Mustermann"}]
+    pfad.write_text(json.dumps(index, ensure_ascii=False))
+    db = sqlite3.connect(config.DB)
+    capsys.readouterr()
+    befunde = check.datenschutz(db)["befunde"]
+    db.close()
+    out = capsys.readouterr().out
+    assert [b for b in befunde if "Karte sitzungen" in b and "Feldern außerhalb der festen Liste" in b
+            and b.endswith(": 1, Schlüssel frist, name")], befunde
+    assert [b for b in befunde if "Karten außerhalb von export.AKTUELL_FELDER: 1, Schlüssel personen" in b], befunde
+    assert [b for b in befunde if "Gebiet „gesamt“" in b and b.endswith(": 1")], befunde
+    assert not [b for b in befunde if "Karte vorlagen" in b], befunde
+    for text in ("Erika", "Venloer", "Testsitzung", "2026-12-11"):
+        assert text not in out and text not in " ".join(befunde)
+    assert set(export.AKTUELL_FELDER) == {"sitzungen", "vorlagen"}
+
+
 def _vorschau():
     spec = importlib.util.spec_from_file_location("vorschau", ROOT / "tools" / "vorschau.py")
     mod = importlib.util.module_from_spec(spec)
@@ -176,8 +209,23 @@ def test_aktuell_fehlt_in_der_vorschau(oparl):
 
 def test_karte_fehlt_bei_ausgesetzter_liste_im_export(oparl):
     _einfuegen(oparl)
-    a = _aufbau(lambda s: s.update(abruf_ausgesetzt={"meetings": {"seit": "2026-11-19T22:40:00+00:00"}}))["aktuell"]
+    # ausgesetzt seit dem Lauf nach der letzten regulären Aktualisierung der Sitzungen (sonst gälte der Eintrag nicht
+    # mehr, export._abruf_ausgesetzt; vorher stand dort die Uhrzeit des Testlaufs, der Test hing also vom Tag ab)
+    a = _aufbau(lambda s: s.update(meetings="2026-11-18T22:30:00+00:00",
+                                   abruf_ausgesetzt={"meetings": {"seit": "2026-11-19T22:40:00+00:00"}}))["aktuell"]
     assert set(a) == {"vorlagen"}
+
+
+def test_sitzungen_nach_eigenem_stand_bei_ausgesetzten_vorlagen(oparl):
+    """Ist nur die Liste der Vorlagen ausgesetzt, bleibt ihr Zeitpunkt in STAND.json (und retrieved_at der Quelle)
+    stehen, die Sitzungen werden weiter aktualisiert: Die Karte „Kommende Sitzungen“ beginnt am Kölner Tag ihrer
+    letzten Aktualisierung, nicht am alten Tag der Vorlagen (vorher: ab dem 10.11. mit vergangenen Sitzungen)."""
+    _einfuegen(oparl)
+    a = _aufbau(lambda s: s.update(papers="2026-11-10T22:30:00+00:00",
+                                   abruf_ausgesetzt={"papers": {"seit": "2026-11-11T22:40:00+00:00"}}))["aktuell"]
+    assert set(a) == {"sitzungen"}
+    assert ([(x["source_object"].rsplit("/", 1)[1], x["date"], x["time"]) for x in a["sitzungen"]]
+            == ERWARTET_SITZUNGEN)
 
 
 # --- export._aktuell direkt -------------------------------------------------------------------------------------------
@@ -228,6 +276,47 @@ def test_ohne_daten_und_ohne_eintrag():
     v = export._aktuell(CACHE, {}, kurz, [], "2026-11-20", {})["vorlagen"]
     assert v == [{"reference": "1/2026", "date": "2026-11-18", "paper_type": "Mitteilung",
                   "name": "[Testdaten] Vorlage 1", "area": None, "ort": None, "source_object": "p/1"}]
+
+
+# Abend eines Laufs im Winter: Beginn 22:10 Uhr UTC ist 23:10 Uhr in Köln, Sitzungen um 23:30 Uhr Kölner Zeit
+# aktualisiert; der Stichtag ist also noch der 19.11.
+WINTERABEND = {"meetings": "2026-11-19T22:30:00+00:00"}
+
+
+def test_sitzungen_am_stichtag_zaehlen_nicht_mit():
+    """Alle Sitzungen am Stichtag und dazu höchstens 6 spätere: Am Abend eines Laufs im Winter sind die Sitzungen des
+    Stichtags vergangen, sobald Besucher:innen die Seite am nächsten Tag öffnen (der Browser filtert sie heraus).
+    Vorher belegten sechs Sitzungen am Stichtag alle Plätze, und am 20.11. blieb keine sichtbar."""
+    sitzungen = [_sitzung(f"t{h}", "2026-11-19", f"{h}:00") for h in range(10, 16)]
+    sitzungen += [_sitzung(f"s{t}", f"2026-11-{t}") for t in (20, 21, 22)]
+    a = export._aktuell(CACHE, {}, {}, sitzungen, "2026-11-19", WINTERABEND)
+    assert [x["source_object"] for x in a["sitzungen"]] == [f"m/t{h}" for h in range(10, 16)] + ["m/s20", "m/s21",
+                                                                                                  "m/s22"]
+    # am Tag danach (Filter des Browsers nach dem Tag der Besucher:innen, Pull Request 3) bleiben drei
+    assert [x["source_object"] for x in a["sitzungen"] if x["date"] >= "2026-11-20"] == ["m/s20", "m/s21", "m/s22"]
+    # nach dem Stichtag höchstens 6, auch neben Sitzungen am Stichtag
+    spaeter = [_sitzung(f"k{t}", f"2026-11-{t}") for t in range(20, 28)]
+    a = export._aktuell(CACHE, {}, {}, sitzungen[:2] + spaeter, "2026-11-19", WINTERABEND)
+    assert [x["source_object"] for x in a["sitzungen"]] == ["m/t10", "m/t11"] + [f"m/k{t}" for t in range(20, 26)]
+
+
+@pytest.mark.parametrize("meetings, stichtag", [
+    ("2026-11-19T22:30:00+00:00", "2026-11-19"),   # Sitzungen am selben Tag aktualisiert wie die Vorlagen
+    ("2026-11-21T22:30:00+00:00", "2026-11-21"),   # Vorlagen älter (etwa ausgesetzt): Tag der Sitzungen
+    ("2026-11-20T23:30:00+00:00", "2026-11-21"),   # 00:30 Uhr in Köln: schon der nächste Kölner Tag
+    ("2026-11-17T22:30:00+00:00", "2026-11-19"),   # Sitzungen älter als die Vorlagen: Tag der Vorlagen
+    ("kaputt", "2026-11-19"),                      # unlesbar: Tag der Vorlagen
+    ("2026-13-45", "2026-11-19"),
+    (17, "2026-11-19"),
+    (None, "2026-11-19"),
+])
+def test_stichtag_der_sitzungen(meetings, stichtag):
+    """Stichtag der Karte „Kommende Sitzungen“: der spätere der Kölner Tage des Abrufs der Vorlagen (`heute`) und der
+    letzten regulären Aktualisierung der Sitzungen (STAND.json `meetings`); fehlt dieser Wert oder ist er unlesbar,
+    `heute`."""
+    tage = [f"2026-11-{t}" for t in range(16, 24)]
+    a = export._aktuell(CACHE, {}, {}, [_sitzung(t, t) for t in tage], "2026-11-19", {"meetings": meetings})
+    assert a["sitzungen"][0]["date"] == stichtag
 
 
 def test_hoechstzahlen_und_reihenfolge():

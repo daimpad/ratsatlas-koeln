@@ -168,6 +168,12 @@ def test_seite_begriffe():
     stufen = _text(html.split('<h2 id="sicherheit">', 1)[1])
     for veraltet in ("Die Stadt gibt den Ort mit einer Koordinate an", "Gebäuden oder Anlagen", "Text eines Dokuments"):
         assert veraltet not in stufen
+    # Stadtteil auch aus einem Punkt der Stadt (build: oparl_sublocality), Ortsangabe ohne Kölner Stadtteil niedrig
+    # (build: oparl_location ohne Punkt)
+    erklaerung = {name: text for name, text, _ in begriffsseite.ORTSSTUFEN}
+    assert "Oder die Ortsangabe der Stadt nennt den Stadtteil oder einen Punkt in ihm." in erklaerung["Ort erkannt"]
+    assert ("Oder die Ortsangabe der Stadt nennt einen Ort, den der Ratsatlas keinem Kölner Stadtteil zuordnen kann."
+            in erklaerung["Ort unklar"])
 
 
 def test_einfache_sprache():
@@ -177,3 +183,9 @@ def test_einfache_sprache():
     assert "Die Farbe eines Punktes zeigt, wie der Ort bestimmt ist." in html
     for _, _, kurz, _, farbe, _ in STUFEN:
         assert f"<li><strong>{kurz} ({farbe}):</strong> " in html
+    # ein Haus nur, wenn es eindeutig im Verzeichnis steht, und nur bei Vorlagen der Verwaltung und der Politik
+    # (geocode.Gazetteer._adresspunkt, geocode.hausnummer_punkt_erlaubt)
+    genau = re.search(r"<li><strong>genau \(grün\):</strong> (.*?)</li>", html).group(1)
+    assert genau == ("Im Titel steht eine Straße mit Hausnummer. Und das Haus steht eindeutig im Adressverzeichnis "
+                     "der Stadt. Das gilt nur für Vorlagen der Verwaltung und für Anträge und Anfragen der Politik. "
+                     "Oder im Titel steht ein Bebauungsplan, und er passt eindeutig.")

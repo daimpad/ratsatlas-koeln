@@ -22,15 +22,16 @@ ORTSSTUFEN = [
     ("Ort erkannt",
      "Name im Titel oder Stadtteil laut Stadt. Im Titel steht der Name einer Straße, eines Stadtteils oder eines "
      "Stadtbezirks, und die Regeln des Ratsatlas ordnen ihn einer Lage zu. Oder die Ortsangabe der Stadt nennt den "
-     "Stadtteil. Nennt eine Vorlage selbst keinen Ort, übernimmt sie die Orte der übergeordneten Vorlage, höchstens als "
-     "„Ort erkannt“.",
+     "Stadtteil oder einen Punkt in ihm. Nennt eine Vorlage selbst keinen Ort, übernimmt sie die Orte der "
+     "übergeordneten Vorlage, höchstens als „Ort erkannt“.",
      "angabe-ort-erschlossen"),
     ("Ort unklar",
      "Mehrdeutig oder nur über das Gremium. Der Name im Titel passt zu mehreren Orten, etwa ein Straßenname, den es an "
      "mehreren Stellen in Köln gibt, ein allgemeiner Name wie „Markt“ oder eine Plannummer, die nicht genau zu einem "
      "Bebauungsplan passt; oder der Ort widerspricht einer anderen Angabe, etwa weil die Straße nicht im Stadtbezirk der "
      "beratenden Bezirksvertretung liegt. Oder nur das Gremium deutet auf einen Stadtbezirk: Die Vorlage nennt keinen "
-     "Ort und wurde nur in einer Bezirksvertretung beraten.",
+     "Ort und wurde nur in einer Bezirksvertretung beraten. Oder die Ortsangabe der Stadt nennt einen Ort, den der "
+     "Ratsatlas keinem Kölner Stadtteil zuordnen kann.",
      "angabe-ort-unsicher"),
 ]
 
