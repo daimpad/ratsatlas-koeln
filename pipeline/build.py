@@ -321,7 +321,8 @@ def build():
     grob = ({loc["id"] for p in papers if p["id"] in gesperrt for loc in p.get("location") or []}
             | {loc for a in ausgelassen for loc in a.get("location") or ()})
     # Ortsangaben außerhalb von `grob` mit Punkt außerhalb aller Kölner Stadtteile (Punkt verworfen, Entscheidung
-    # 19.11.2026 (4) (d)): Kennung → Stadtteil laut Stadt (subLocality) vorhanden; nur für die Zeile im Log
+    # 19.11.2026 (4) (d)): Kennung → Stadtteil laut Stadt (subLocality) vorhanden; für die Zeile im Log und die
+    # Straßenpunkte des Gazetteers (unten `points`)
     verworfen = {}
 
     for p in papers:
@@ -413,9 +414,12 @@ def build():
           f"{sum(verworfen.values())})")
 
     # Straßenpunkte aus den Ortsangaben der Stadt für Namen, die im Straßenverzeichnis fehlen; ohne die auf den Stadtteil
-    # zurückgeführten Ortsangaben (grob: ihr Punkt ist der Stadtteil, nicht die Straße)
+    # zurückgeführten Ortsangaben (grob: ihr Punkt ist der Stadtteil, nicht die Straße) und ohne die mit verworfenem
+    # Punkt (ihre Zeile trägt höchstens den Punkt der Stadtteilfläche; vor der Entscheidung 19.11.2026 (4) lag ihr Punkt
+    # außerhalb aller Stadtteile und Gazetteer._add_points nahm die Straße nicht auf). Ortsangaben ohne Punkt mit
+    # Stadtteil laut Stadt liefern weiter den Punkt der Stadtteilfläche (offen, TECHNIK 19.11.2026 (4)).
     points = [(loc[1], loc[5], loc[6]) for loc in locations.values()
-              if loc[-1] == config.QUELLE_OPARL and loc[0] not in grob]
+              if loc[-1] == config.QUELLE_OPARL and loc[0] not in grob and loc[0] not in verworfen]
     gaz = Gazetteer(street_points=points)
     rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien, gesperrt)
     plans = Plans()

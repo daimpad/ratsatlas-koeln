@@ -3,7 +3,8 @@ einer Vorlage, die einen Punkt haben darf (Ortsangabe nicht in `grob`), verwirft
 Regel ohne Punkt: Stadtteil laut Stadt (subLocality) → Ebene Stadtteil, oparl_sublocality, mittel („Ort erkannt“), sonst
 Ebene Straße, oparl_location, niedrig, ohne Koordinate und ohne Stadtteil („Ort unklar“). Ein Punkt in einem Stadtteil
 bleibt „Ort genau“ (oparl_location, hoch), Ortsangaben ohne Erlaubnis bleiben wie bisher. Der verworfene Punkt steht in
-keiner Datei; das Log von build nennt nur Zahlen; check meldet einen genauen Punkt der Stadt ohne Kölner Stadtteil
+keiner Datei und liefert keinen Straßenpunkt für den Gazetteer, auch nicht über den Stadtteil laut Stadt; das Log von
+build nennt nur Zahlen; check meldet einen genauen Punkt der Stadt ohne Kölner Stadtteil
 (check.punkte_der_stadt). Erfundene Vorlagen (tools/testdaten.py und eingefügte Vorlagen in den temporären Pfaden der
 Fixture `oparl`); keine Anfragen an die Stadt."""
 import importlib.util
@@ -17,12 +18,14 @@ import pytest
 
 from pipeline import build, check, config, export, kontext
 from pipeline.geo import Ortsteile
+from pipeline.geocode import Gazetteer
 
 ROOT = Path(__file__).resolve().parents[1]
 B = "https://example.invalid/oparl"
 EINGABE = "Anregungen und Beschwerden"   # Vorlagenart der Eingaben in tools/testdaten.py (ohne Hauskoordinate)
 OHNE_ORT = "[Testdaten] Ergänzung ohne Ort"
 UNBEKANNT = "Erfundener Außenweg"   # nicht im Straßenverzeichnis (geprüft in _einfuegen)
+UNBEKANNT_ST = "Erfundener Randweg"   # ebenso, Straße der Ortsangabe mit verworfenem Punkt und Stadtteil laut Stadt
 # erfundene Punkte außerhalb aller Kölner Stadtteile (geprüft in _einfuegen); auffällige Ziffern für die Suche in Dateien
 AUSSEN = {"a": (6.123457, 51.234567), "b": (7.098765, 50.734567), "c": (6.654321, 50.876543),
           "d": (6.543219, 50.765437)}
@@ -65,7 +68,8 @@ def _einfuegen():
     ortsteile = Ortsteile(config.ORTSTEILE)
     assert all(ortsteile.locate(*xy) is None for xy in AUSSEN.values())
     assert ortsteile.by_name("Ehrenfeld") and ortsteile.by_name("Nippes") and not ortsteile.by_name("Innenstadt")
-    assert UNBEKANNT not in json.loads(config.STRASSEN.read_text())["streets"]
+    strassen = json.loads(config.STRASSEN.read_text())["streets"]
+    assert UNBEKANNT not in strassen and UNBEKANNT_ST not in strassen
     hnr = json.loads(config.HAUSNUMMERN.read_text())["punkte"]
     strasse = next(s for s in sorted(hnr) if s.endswith("straße") and len(hnr[s]) == 1)
     innen = tuple(next(iter(next(iter(hnr[strasse].values())).values())))
@@ -76,8 +80,9 @@ def _einfuegen():
         # erlaubt, Punkt außerhalb, ohne Stadtteil laut Stadt; eine zweite Vorlage nennt dieselbe Ortsangabe
         _vorlage("aus", "1801/2026", location=[ort_aus]),
         _vorlage("aus2", "1802/2026", location=[ort_aus]),
-        # erlaubt, Punkt außerhalb, Stadtteil laut Stadt
-        _vorlage("aus_st", "1803/2026", location=[_ort("aus-st", AUSSEN["b"], subLocality="Ehrenfeld")]),
+        # erlaubt, Punkt außerhalb, Stadtteil laut Stadt und eine Straße, die das Straßenverzeichnis nicht kennt
+        _vorlage("aus_st", "1803/2026", location=[_ort("aus-st", AUSSEN["b"], subLocality="Ehrenfeld",
+                                                       streetAddress=f"{UNBEKANNT_ST} 5")]),
         # erlaubt, Punkt außerhalb, subLocality ist ein Stadtbezirk, kein Stadtteil
         _vorlage("aus_bez", "1804/2026", location=[_ort("aus-bez", AUSSEN["c"], subLocality="Innenstadt")]),
         # erlaubt, Punkt in einem Stadtteil: unverändert „Ort genau“
@@ -85,8 +90,10 @@ def _einfuegen():
         # ohne Erlaubnis (Eingabe): unverändert, Punkt außerhalb ohne Koordinate bzw. Stadtteil laut Stadt
         _vorlage("grob", "1806/2026", art=EINGABE, location=[_ort("grob", AUSSEN["d"])]),
         _vorlage("grob_st", "1807/2026", art=EINGABE, location=[_ort("grob-st", AUSSEN["d"], subLocality="Nippes")]),
-        # erlaubt, Straße nur aus der Ortsangabe mit verworfenem Punkt bekannt: kein Straßenpunkt
+        # erlaubt, Straße nur aus einer Ortsangabe mit verworfenem Punkt bekannt: kein Straßenpunkt, ohne Stadtteil laut
+        # Stadt (wie vorher) und mit ihm (sonst stünde die Straße auf dem Punkt der Stadtteilfläche)
         _vorlage("titel", "1808/2026", titel=f"[Testdaten] Neue Bank am {UNBEKANNT}"),
+        _vorlage("titel_st", "1809/2026", titel=f"[Testdaten] Neue Bank am {UNBEKANNT_ST}"),
     ]
     with open(config.PAPERS, "a", encoding="utf-8") as f:
         for p in faelle:
@@ -128,8 +135,11 @@ def test_punkt_ausserhalb_aller_stadtteile_verworfen(testdaten, capsys):
     # ohne Erlaubnis unverändert
     assert _orte(db, "grob") == {("strasse", "oparl_location", "niedrig", None, None, None)}
     assert _orte(db, "grob_st") == {("ortsteil", "oparl_sublocality", "mittel", *_schwerpunkt("Nippes"), "Nippes")}
-    # die Straße der verworfenen Ortsangabe gibt keinem Titel einen Punkt
-    assert not [o for o in _orte(db, "titel") if o[3] is not None and (o[3], o[4]) in AUSSEN.values()]
+    # die Straße einer Ortsangabe mit verworfenem Punkt gibt keinem Titel einen Ort, auch nicht den Stadtteil laut Stadt
+    assert _orte(db, "titel") == set() and _orte(db, "titel_st") == set()
+    # Gegenprobe: Mit einem Straßenpunkt in einem Stadtteil erkennt der Gazetteer die Straße in diesem Titel
+    gaz = Gazetteer(street_points=[(UNBEKANNT_ST, *innen)])
+    assert [r for r in gaz.locate(f"[Testdaten] Neue Bank am {UNBEKANNT_ST}") if r["name"] == UNBEKANNT_ST]
     # kein verworfener Punkt in der Datenbank
     assert not [r for r in db.execute("SELECT lon, lat FROM location") if r in AUSSEN.values()]
     db.close()
@@ -159,6 +169,7 @@ def test_punkt_ausserhalb_aller_stadtteile_verworfen(testdaten, capsys):
     for ref in ("1801/2026", "1802/2026", "1804/2026"):
         assert [(x["method"], x["confidence"], x["lon"], x["ortsteil"]) for x in ohne[ref]["locations"]] == [
             ("oparl_location", "niedrig", None, None)], ref
+    assert ohne["1808/2026"]["locations"] == [] and ohne["1809/2026"]["locations"] == []
     # check: der Schutz zählt den genauen Punkt der Stadt in einem Stadtteil, ohne Befund
     assert ("Punkte aus der Ortsangabe der Stadt als „Ort genau“ (oparl_location, hoch) ohne Punkt in einem Kölner "
             "Stadtteil (Entscheidung 19.11.2026 (4) (d)): Datenbank 0 von 1, vorlagen.geojson 0 von 1\n") in aus_check
