@@ -115,8 +115,9 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33697
-DTSTAMP:20261110T160000Z
-DTSTART:20261110T160000Z
+DTSTAMP:20261110T160200Z
+DTSTART:20261110T160200Z
+DTEND:20261110T174600Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:6. Sitzung des Hauptausschusses\nTagesordnung noch nicht veröf
  fentlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquelle: Stadt Köln 
@@ -455,9 +456,9 @@ UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
 DTSTAMP:20261203T163000Z
 DTSTART:20261203T163000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
-DESCRIPTION:Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nicht v
- eröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquelle: Stadt K
- öln – offenedaten-koeln.de
+DESCRIPTION:9. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nich
+ t veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquelle: Stadt
+  Köln – offenedaten-koeln.de
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
@@ -1057,9 +1058,9 @@ UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
 DTSTAMP:20270216T160000Z
 DTSTART:20270216T160000Z
 SUMMARY:Stadtarbeitsgemeinschaft Queerpolitik
-DESCRIPTION:Stadtarbeitsgemeinschaft Queerpolitik\nTagesordnung noch nicht 
- veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquelle: Stadt K
- öln – offenedaten-koeln.de
+DESCRIPTION:5. Sitzung der Stadtarbeitsgemeinschaft Queerpolitik\nTagesordn
+ ung noch nicht veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Daten
+ quelle: Stadt Köln – offenedaten-koeln.de
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
