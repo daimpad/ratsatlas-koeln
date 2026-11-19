@@ -11,6 +11,7 @@ from urllib.parse import quote
 from xml.sax.saxutils import escape, quoteattr
 
 from . import config, strukturdaten_web
+from .process import BERLIN
 
 FEED_LIMIT = 100
 GANZ_BONN = f"ganz-{config.STADT}"   # Feed über alle Gebiete (Seite rss/); Name aus Bonn übernommen
@@ -188,7 +189,12 @@ def _ics_fold(line):
 
 
 def _utc(ts):
-    return datetime.fromisoformat(ts).astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    """Zeitpunkt in UTC für iCalendar („…Z“). Ohne Zeitzone gilt Kölner Ortszeit wie in process.local_day, nicht die
+    Zeitzone des Rechners, auf dem der Aufbau läuft (in GitHub Actions UTC; Entscheidung 19.11.2026 (1) (D))."""
+    dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=BERLIN)
+    return dt.astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
 def write_calendar(path, meetings, today=None):

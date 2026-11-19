@@ -45,14 +45,29 @@ NOTES = {
 }
 
 
+def _ortszeit(ts):
+    """Zeitpunkt in Kölner Ortszeit (Europe/Berlin): mit Zeitzone („Z“ oder Versatz) umgerechnet, ohne Zeitzone schon
+    als Kölner Ortszeit gelesen."""
+    dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    return dt.astimezone(BERLIN) if dt.tzinfo else dt
+
+
 def local_day(ts):
     """Kalendertag in Köln (Europe/Berlin); Sitzungszeiten können in UTC stehen (z. B. 22:30Z = 00:30 Uhr)."""
     if not ts:
         return None
     if len(ts) == 10:
         return ts
-    dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-    return (dt.astimezone(BERLIN) if dt.tzinfo else dt).date().isoformat()
+    return _ortszeit(ts).date().isoformat()
+
+
+def local_time(ts):
+    """Uhrzeit „HH:MM“ in Köln (Europe/Berlin) zum selben Zeitpunkt wie local_day (Entscheidung 19.11.2026 (1) (D)):
+    „…T16:00:00Z“ ist 17:00 Uhr, „…T23:30:00Z“ 00:30 Uhr am nächsten Tag; ohne Zeitzone gilt Kölner Ortszeit wie in
+    local_day. Nur ein Datum: None."""
+    if not ts or len(ts) <= 10:
+        return None
+    return _ortszeit(ts).strftime("%H:%M")
 
 
 def massgeblich(tage, abgesagt=None):

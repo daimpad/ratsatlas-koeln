@@ -420,6 +420,7 @@ def export_all():
     stand = next((s["retrieved_at"] for s in sources if s["name"] == config.QUELLE_OPARL), None) or ""
     publish.write_feeds(out / "feeds", areas, cache, names, home, slug, feed_grenze(stand))
     meetings = _meetings(db)
+    print(zeile_beginn(meetings))
     publish.write_calendar(out / "termine.ics", meetings)
     n_points = publish.write_geojson(out / "vorlagen.geojson", cache,
                                      [{k: v for k, v in s.items() if k != "retrieved_at"} for s in sources])
@@ -818,7 +819,9 @@ def _meetings(db):
     for m in json.loads(config.MEETINGS.read_text()):
         if not m.get("start"):
             continue
-        time = m["start"][11:16] if len(m["start"]) > 10 and m["start"][11:16] != "00:00" else None
+        # Uhrzeit in Kölner Zeit zum selben Zeitpunkt wie das Datum; 00:00 Uhr in Köln heißt: keine Uhrzeit angegeben
+        time = proc.local_time(m["start"])
+        time = None if time == "00:00" else time
         m = {**m, "name": mk(m.get("name"), mk.sitzungen.get(m.get("id")))}
         gremium = gremium_der_sitzung(m, names, index)
         out.append({"date": proc.local_day(m["start"]), "time": time, "gremium": gremium,
@@ -827,6 +830,18 @@ def _meetings(db):
                     "agenda_items": m.get("agenda_items") or 0, "start": m["start"], "end": m.get("end"),
                     "source_object": m["id"]})
     return sorted(out, key=lambda x: x["date"])
+
+
+def zeile_beginn(meetings):
+    """Zeile im Log von `export`, nur Zahlen (Entscheidung 19.11.2026 (1) (D)): Sitzungen aus _meetings nach der Form
+    ihres Beginns in der Quelle. Ob SessionNet „Z“, einen Versatz wie „+01:00“ oder Zeiten ohne Zeitzone liefert, ist
+    nicht gemessen; der nächste Lauf zeigt so, ob die Umrechnung nach Kölner Zeit die echten Daten betrifft."""
+    n = {"mit Z": 0, "mit Versatz": 0, "ohne Zeitzone": 0, "nur Datum": 0}
+    for m in meetings:
+        s = m["start"]
+        n["nur Datum" if len(s) <= 10 else "mit Z" if s.endswith("Z")
+          else "mit Versatz" if datetime.fromisoformat(s).tzinfo else "ohne Zeitzone"] += 1
+    return "Sitzungen nach Form des Beginns: " + ", ".join(f"{k} {v}" for k, v in n.items())
 
 
 # --- Prozessebene: typische Wege je Vorlagenart ----------------------------------------------------
