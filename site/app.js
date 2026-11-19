@@ -21,7 +21,8 @@
   const MOBILE = matchMedia("(max-width: 900px)");
   const NARROW = matchMedia("(max-width: 1279px)");
   const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const CONF = { hoch: "Ort gesichert", mittel: "Ort erschlossen", niedrig: "Ort unsicher" };
+  // Ortsstufen in Worten (Entscheidung 19.11.2026 (1) (C)); die Werte hoch/mittel/niedrig in den Daten bleiben
+  const CONF = { hoch: "Ort genau", mittel: "Ort erkannt", niedrig: "Ort unklar" };
   const METHOD = {
     oparl_location: "Ortsangabe der Stadt (OParl)", oparl_sublocality: "Stadtteil laut Ortsangabe der Stadt (OParl)",
     strasse: "Straßenname im Titel",
@@ -601,8 +602,8 @@
       },
     });
     new MapStyle().addTo(map);
-    // Farbe der Punkte: Sicherheit der Ortsangabe (Standard) oder Thema; Legende darunter
-    // (Vorschau: keine Punkte, also bleibt es bei der Sicherheit; „farbe“ fällt beim nächsten syncUrl aus der Adresse)
+    // Farbe der Punkte: wie der Ort bestimmt ist (Standard) oder Thema; Legende darunter
+    // (Vorschau: keine Punkte, also bleibt es bei der Ortsstufe; „farbe“ fällt beim nächsten syncUrl aus der Adresse)
     colorBy = !vorschau && new URLSearchParams(location.search).get("farbe") === "thema" ? "thema" : "sicherheit";
     const ColorBy = L.Control.extend({
       options: { position: "bottomright" },
@@ -1196,8 +1197,10 @@
   function drawLegend() {
     const rows = colorBy === "thema"
       ? [...Object.entries(THEMES).map(([k, v]) => [THEME_COLOR[k], v]), [NO_THEME, "ohne Thema"]]
-      : [[color("hoch"), "Ort gesichert (Koordinate oder eindeutiger Bebauungsplan der Stadt)"], [color("mittel"), "Ort erschlossen (Name im Titel)"], [color("niedrig"), "Ort unsicher (mehrdeutig)"]];
-    const punkte = `<summary>Legende: ${colorBy === "thema" ? "Thema" : "Sicherheit des Orts"}</summary><ul>${rows
+      : [[color("hoch"), "Ort genau (Hausnummer oder Bebauungsplan im Titel)"],
+        [color("mittel"), "Ort erkannt (Name im Titel oder Stadtteil laut Stadt)"],
+        [color("niedrig"), "Ort unklar (mehrdeutig oder nur über das Gremium)"]];
+    const punkte = `<summary>Punkte: ${colorBy === "thema" ? "Thema" : "Wie der Ort bestimmt ist"}</summary><ul>${rows
       .map(([c, t]) => `<li><span class="swatch" style="background:${c}" aria-hidden="true"></span>${esc(t)}</li>`).join("")}</ul>
       ${colorBy === "thema" ? '<p class="hint">Bei mehreren Themen zählt das erste. Themen sind abgeleitet.</p>' : ""}`;
     // Vorschau ohne Ratsvorlagen: keine Punkte, nur die Legenden der eingeschalteten Ebenen (keine eingeschaltet: keine Legende)

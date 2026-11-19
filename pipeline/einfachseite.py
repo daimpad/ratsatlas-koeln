@@ -102,7 +102,7 @@ def body(root, vorschau=False):
 """ if an("kurzfassungen") else "")
     return f"""    <h1>{TITEL}</h1>
     <p class="lead">Auf dieser Seite erklären wir den Ratsatlas Köln in Einfacher Sprache. Sie erfahren: Was zeigt die Karte? Wer entscheidet in Köln? Und wie können Sie mitmachen?</p>
-{hinweis}    <nav class="thema-sprung" aria-label="Auf dieser Seite"><span>Auf dieser Seite:</span> <a href="#was">Was ist der Ratsatlas?</a> · <a href="#wer">Wer entscheidet?</a> · <a href="#ablauf">Wie läuft eine Sache ab?</a> · <a href="#woerter">Was bedeuten die Wörter?</a> · <a href="#finden">Wie finde ich eine Vorlage?</a> · <a href="#karte">Was zeigt die Karte?</a> · <a href="#sicher">Wie sicher sind die Angaben?</a> · <a href="#aktuell">Wie aktuell sind die Daten?</a> · <a href="#mitmachen">Wie kann ich mitmachen?</a> · <a href="#datenschutz">Datenschutz</a> · <a href="#grenzen">Was der Ratsatlas nicht kann</a> · <a href="#kontakt">Kontakt</a></nav>
+{hinweis}    <nav class="thema-sprung" aria-label="Auf dieser Seite"><span>Auf dieser Seite:</span> <a href="#was">Was ist der Ratsatlas?</a> · <a href="#wer">Wer entscheidet?</a> · <a href="#ablauf">Wie läuft eine Sache ab?</a> · <a href="#woerter">Was bedeuten die Wörter?</a> · <a href="#finden">Wie finde ich eine Vorlage?</a> · <a href="#karte">Was zeigt die Karte?</a> · <a href="#sicher">Wie verlässlich sind die Angaben?</a> · <a href="#aktuell">Wie aktuell sind die Daten?</a> · <a href="#mitmachen">Wie kann ich mitmachen?</a> · <a href="#datenschutz">Datenschutz</a> · <a href="#grenzen">Was der Ratsatlas nicht kann</a> · <a href="#kontakt">Kontakt</a></nav>
     <div class="einfach">
     <h2 id="was">Was ist der Ratsatlas?</h2>
     <p>In Köln beraten der Rat und andere Gremien über viele Themen. Zum Beispiel über Verkehr, Schulen oder Grünflächen.</p>
@@ -157,22 +157,22 @@ def body(root, vorschau=False):
 
     <h2 id="karte">Was zeigt die Karte?</h2>
     <ul>
-      <li>Jeder Punkt ist eine Vorlage mit einem genauen Ort. Zum Beispiel eine Straße oder ein Bebauungsplan.</li>
+      <li>Jeder Punkt ist eine Vorlage mit einem Ort auf der Karte. Zum Beispiel eine Straße, ein Haus oder ein Bebauungsplan.</li>
       <li>Eine Zahl in einem Kreis fasst mehrere Punkte zusammen. Klicken Sie darauf. Dann zeigt die Karte das Gebiet größer.</li>
-      <li>Die Farbe eines Punktes zeigt, wie sicher der Ort ist. Mehr dazu steht unten bei <a href="#sicher">Wie sicher sind die Angaben?</a></li>
-      <li>Manche Vorlagen haben keinen genauen Ort. Sie betreffen zum Beispiel einen ganzen Stadtteil oder Stadtbezirk. Oder die ganze Stadt. Diese Vorlagen haben keinen Punkt auf der Karte. Sie stehen aber in der Liste des Gebiets. Sie finden sie über „Gebiet wählen“.</li>
+      <li>Die Farbe eines Punktes zeigt, wie der Ort bestimmt ist. Mehr dazu steht unten bei <a href="#sicher">Wie verlässlich sind die Angaben?</a></li>
+      <li>Manche Vorlagen haben keinen einzelnen Ort. Sie betreffen zum Beispiel einen ganzen Stadtteil oder Stadtbezirk. Oder die ganze Stadt. Diese Vorlagen haben keinen Punkt auf der Karte. Sie stehen aber in der Liste des Gebiets. Sie finden sie über „Gebiet wählen“.</li>
       <li>Im Menü „Ebenen“ blendet „Bebauungspläne“ die Gebiete der Bebauungspläne ein. Ein Bebauungsplan ist eine Regel der Stadt. Er legt fest, wie man in einem Gebiet bauen darf.</li>
 {ebenen}      <li>Mit der Zeitleiste wählen Sie einen Zeitraum. Dann zeigen Karte und Liste nur Vorlagen aus dieser Zeit.</li>
     </ul>
 
-    <h2 id="sicher">Wie sicher sind die Angaben?</h2>
+    <h2 id="sicher">Wie verlässlich sind die Angaben?</h2>
     <p>Die meisten Angaben kommen unverändert von der Stadt Köln.</p>
     <p>Manche Angaben hat der Ratsatlas selbst erschlossen. Zum Beispiel den Ort oder das Thema einer Vorlage. Diese Angaben heißen „abgeleitet“. Sie können Fehler haben.</p>
     <p>Bei Orten gibt es 3 Stufen. Auf der Karte zeigt die Farbe eines Punktes die Stufe:</p>
     <ul>
-      <li><strong>gesichert (grün):</strong> Der Ort ist ein Haus aus dem Adressverzeichnis der Stadt. Oder ein Bebauungsplan passt eindeutig.</li>
-      <li><strong>erschlossen (braun):</strong> Im Titel steht der Name einer Straße oder eines Stadtteils. Oder die Stadt nennt den Stadtteil.</li>
-      <li><strong>unsicher (violett):</strong> Der Name passt zu mehreren Orten. Oder nur das Gremium deutet auf einen Stadtbezirk. Zum Beispiel, weil nur eine Bezirksvertretung beraten hat.</li>
+      <li><strong>genau (grün):</strong> Im Titel steht eine Straße mit Hausnummer. Und das Haus steht eindeutig im Adressverzeichnis der Stadt. Das gilt nur für Vorlagen der Verwaltung und für Anträge und Anfragen der Politik. Oder im Titel steht ein Bebauungsplan, und er passt eindeutig.</li>
+      <li><strong>erkannt (braun):</strong> Im Titel steht der Name einer Straße oder eines Stadtteils. Oder die Stadt nennt den Stadtteil.</li>
+      <li><strong>unklar (violett):</strong> Der Name passt zu mehreren Orten. Oder nur das Gremium deutet auf einen Stadtbezirk. Zum Beispiel, weil nur eine Bezirksvertretung beraten hat.</li>
     </ul>
     <p>Ein ganzer Stadtteil oder Stadtbezirk hat keinen Punkt auf der Karte. Beim Vorgang steht aber bei jedem Ort die Stufe. Und woher der Ort kommt.</p>
     <p>Die Orte sind noch nicht von Hand geprüft. Diese Prüfung kommt noch. Die Ergebnisse stehen dann auf der Karte im Menü „Verstehen“ unter „Wie verlässlich sind die Angaben?“.</p>

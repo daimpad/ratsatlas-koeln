@@ -134,12 +134,14 @@ console.log(JSON.stringify(aus));
 # --- B4: Tourtexte nach den Freigaben ---------------------------------------------------------------------------------
 
 # Texte der Tour vor Runde 18 (Bonner Fassung): mit allen Freigaben unverändert; „Mitmachen“ seit dem zweiten Lauf
-# (13.11.2026) mit dem Kölner Text („Alle Wege im Überblick“ zeigt die Kölner Wege, kein Bürgerantrag und keine Fristen)
+# (13.11.2026) mit dem Kölner Text („Alle Wege im Überblick“ zeigt die Kölner Wege, kein Bürgerantrag und keine Fristen),
+# „Die Karte“ seit 19.11.2026 mit dem Kölner Wortlaut der Ortsstufen (Entscheidung 19.11.2026 (1) (C))
 BONN_TEXTE = {
     "Die Karte": (
         "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt "
-        "hinein. Die Farbe zeigt, wie sicher der Ort ist: grün gesichert (Koordinate oder Bebauungsplan der "
-        "Stadt), braun erschlossen (Name im Titel), violett unsicher. „Farbe nach Thema“ färbt die Punkte "
+        "hinein. Die Farbe zeigt, wie der Ort bestimmt ist: grün Ort genau (Hausnummer oder Bebauungsplan im "
+        "Titel), braun Ort erkannt (Name im Titel oder Stadtteil laut Stadt), violett Ort unklar (mehrdeutig oder "
+        "nur über das Gremium). „Farbe nach Thema“ färbt die Punkte "
         "stattdessen nach Thema; die Legende erklärt die Farben. „Bebauungspläne“ blendet die "
         "Geltungsbereiche der rechtskräftigen Pläne ein; ein Klick auf eine Fläche öffnet die Planchronik. "
         "„Baustellen“ zeigt gemeldete Baustellen mit unverbindlichen Terminen. „Überschwemmungsgebiete“ und "

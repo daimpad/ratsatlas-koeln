@@ -9,6 +9,31 @@ from html import escape
 from . import glossar
 
 PFAD = "begriffe/"
+# Ortsstufen (Entscheidung 19.11.2026 (1) (C); Werte „hoch“, „mittel“, „niedrig“ in den Daten), wie in Legende, Filter,
+# Tour und Dialog „Über“; je Stufe die Regeln aus pipeline/geocode.py, pipeline/plans.py und pipeline/build.py. Die
+# Sprungmarken bleiben die der früheren Namen, damit vorhandene Links weiter treffen.
+ORTSSTUFEN = [
+    ("Ort genau",
+     "Hausnummer oder Bebauungsplan im Titel. Steht im Titel eine Straße mit Hausnummer und ist das Haus im Verzeichnis "
+     "„Adressen Köln“ eindeutig zu finden, liegt der Punkt auf dem Haus; das gilt nur für Vorlagen der Verwaltung sowie "
+     "politische Anträge und Anfragen. Passt die Nummer eines Bebauungsplans im Titel zu genau einem Plan, gilt sein "
+     "Geltungsbereich laut Bauleitplanung NRW (IT.NRW).",
+     "angabe-ort-gesichert"),
+    ("Ort erkannt",
+     "Name im Titel oder Stadtteil laut Stadt. Im Titel steht der Name einer Straße, eines Stadtteils oder eines "
+     "Stadtbezirks, und die Regeln des Ratsatlas ordnen ihn einer Lage zu. Oder die Ortsangabe der Stadt nennt den "
+     "Stadtteil oder einen Punkt in ihm. Nennt eine Vorlage selbst keinen Ort, übernimmt sie die Orte der "
+     "übergeordneten Vorlage, höchstens als „Ort erkannt“.",
+     "angabe-ort-erschlossen"),
+    ("Ort unklar",
+     "Mehrdeutig oder nur über das Gremium. Der Name im Titel passt zu mehreren Orten, etwa ein Straßenname, den es an "
+     "mehreren Stellen in Köln gibt, ein allgemeiner Name wie „Markt“ oder eine Plannummer, die nicht genau zu einem "
+     "Bebauungsplan passt; oder der Ort widerspricht einer anderen Angabe, etwa weil die Straße nicht im Stadtbezirk der "
+     "beratenden Bezirksvertretung liegt. Oder nur das Gremium deutet auf einen Stadtbezirk: Die Vorlage nennt keinen "
+     "Ort und wurde nur in einer Bezirksvertretung beraten. Oder die Ortsangabe der Stadt nennt einen Ort, den der "
+     "Ratsatlas keinem Kölner Stadtteil zuordnen kann.",
+     "angabe-ort-unsicher"),
+]
 
 
 def _dl(eintraege):
@@ -41,13 +66,10 @@ def abschnitte():
                 [(glossar.SCHRITTE[k], v, None, glossar.anker("schritt " + k)) for k, v in glossar.SCHRITTE_TEXT.items()]))
     sicher = [("belegt", glossar.EVIDENZ["belegt"]), ("abgeleitet", glossar.EVIDENZ["abgeleitet"]),
               ("nicht öffentlich", glossar.EVIDENZ["nicht_öffentlich"]), ("unklar", glossar.EVIDENZ["unklar"]),
-              ("soll", glossar.EVIDENZ["soll"]),
-              ("Ort gesichert", "Die Stadt gibt den Ort mit einer Koordinate an."),
-              ("Ort erschlossen", "Der Ort ist nach festen Regeln aus dem Titel oder dem Text eines Dokuments erschlossen, "
-                                  "etwa aus einem Straßen- oder Stadtteilnamen."),
-              ("Ort unsicher", "Der Ort ist erschlossen, aber nicht eindeutig, etwa bei Namen von Gebäuden oder Anlagen.")]
-    out.append(("sicherheit", "Wie sicher eine Angabe ist", "",
-                [(k, v, None, glossar.anker("angabe " + k)) for k, v in sicher]))
+              ("soll", glossar.EVIDENZ["soll"])]
+    out.append(("sicherheit", "Wie verlässlich eine Angabe ist", "",
+                [(k, v, None, glossar.anker("angabe " + k)) for k, v in sicher]
+                + [(k, v, None, a) for k, v, a in ORTSSTUFEN]))
     return out
 
 

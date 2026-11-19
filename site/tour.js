@@ -50,7 +50,7 @@
     { before: (ui) => { if (MOBILE.matches) ui.panel("panel-detail", false); ui.mapMenu(!MOBILE.matches); }, rect: (ui) => ui.areaRect(), fallback: "#map",
       beacons: [".marker-cluster, path.leaflet-interactive", ".map-menu", ".map-color", ".map-plans", ".map-legend"],
       title: "Die Karte",
-      text: () => "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt hinein. Die Farbe zeigt, wie sicher der Ort ist: grün gesichert (Koordinate oder Bebauungsplan der Stadt), braun erschlossen (Name im Titel), violett unsicher. „Farbe nach Thema“ färbt die Punkte stattdessen nach Thema; die Legende erklärt die Farben. „Bebauungspläne“ blendet die Geltungsbereiche der rechtskräftigen Pläne ein; ein Klick auf eine Fläche öffnet die Planchronik."
+      text: () => "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt hinein. Die Farbe zeigt, wie der Ort bestimmt ist: grün Ort genau (Hausnummer oder Bebauungsplan im Titel), braun Ort erkannt (Name im Titel oder Stadtteil laut Stadt), violett Ort unklar (mehrdeutig oder nur über das Gremium). „Farbe nach Thema“ färbt die Punkte stattdessen nach Thema; die Legende erklärt die Farben. „Bebauungspläne“ blendet die Geltungsbereiche der rechtskräftigen Pläne ein; ein Klick auf eine Fläche öffnet die Planchronik."
         + (AN.baustellen() ? " „Baustellen“ zeigt gemeldete Baustellen mit unverbindlichen Terminen." : "")
         + " „Überschwemmungsgebiete“ und „Bodenrichtwerte“ zeigen beim Hineinzoomen Flächen des Landes zur Einordnung (abgeleitet aufbereitet, verbindlich sind die Quellen)."
         + ZUSATZ("karte") + " „Farbige Karte“ schaltet den Hintergrund um. Alle diese Schaltflächen liegen unter „Ebenen“; die Zahl daneben nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE,
@@ -58,7 +58,7 @@
         + ZUSATZ("karte") + " Ebenen mit vielen Objekten erscheinen erst beim Hineinzoomen. „Farbige Karte“ schaltet den Hintergrund um. Die Zahl neben „Ebenen“ nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE },
     { before: (ui) => { ui.mapMenu(false); ui.panel("panel-list", true); }, target: "#panel-list", beacons: ["#f-text", "#more-filters > summary"],
       title: "Die Vorlagen",
-      text: () => "Alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte und mit der Tastatur bedienbar. Filter nach Stichwort, Vorlagenart, Stand, Thema und Partei; unter „Weitere Filter“ nach Amt, Gremium und Sicherheit der Ortsangabe."
+      text: () => "Alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte und mit der Tastatur bedienbar. Filter nach Stichwort, Vorlagenart, Stand, Thema und Partei; unter „Weitere Filter“ nach Amt, Gremium und Ortsangabe."
         + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen."),
       vorschau: () => "Hier stehen künftig alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte, mit der Tastatur bedienbar und mit Filtern nach Stichwort, Vorlagenart, Stand, Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln. Ist ein Stadtteil oder Stadtbezirk gewählt, stehen hier schon jetzt die Zahlen zum Gebiet."
         + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen.") },
@@ -113,7 +113,7 @@
       vorschau: "Die Flächen „Vorlagen“ und „Vorgang“ lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Mit den Ratsvorlagen kommt die Zeitleiste hinzu. Esc schließt die Fläche, in der Sie gerade sind." },
     { target: "#about-open",
       title: "Über die Karte",
-      text: "Hier steht, woher die Daten stammen, was Stand und Sicherheit der Angaben bedeuten und was die Karte nicht zeigen kann. Viel Freude beim Erkunden." },
+      text: "Hier steht, woher die Daten stammen, was der Stand bedeutet, wie verlässlich die Angaben sind und was die Karte nicht zeigen kann. Viel Freude beim Erkunden." },
   ];
 
   let steps = [], i = 0, root = null, card = null, spot = null, raf = 0, prevFocus = null, ui = null;

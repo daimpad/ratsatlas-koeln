@@ -58,6 +58,7 @@ ZAEHLUNG = {
     "sitzungen": "Sitzungsnamen zu Sitzungen mit einer Vorlage der Titelmaske in den Gebietsdateien, zeit.json und "
                  "termine.ics untersucht",
     "feeds": "Einträge in Feeds (*.xml) untersucht",
+    "aktuell": "Titel und Gremien in index.json („Aktuell in Köln“) untersucht",
 }
 # Spalten der TSV-Dateien mit Drucksache, die Titel, Teile des Titels oder einen Ortsnamen tragen: geprüft wie der Titel
 # (Prüfung r20a; vorher nur „titel“; zweite Korrektur: „ort“, „zurueckgestellt“); export._tabellen_maskieren maskiert
@@ -587,6 +588,44 @@ def _sitzungen(base, db, m, zahl):
     return offen
 
 
+def _aktuell(index, db, m, zahl, befunde):
+    """„Aktuell in Köln“ in index.json (`aktuell`, export._aktuell; Entscheidung 19.11.2026 (1) (E)): Titel der Vorlagen
+    wie in suche.json (Maske.offen mit ihrer Drucksache), Gremien der Sitzungen wie in _sitzungen (bei einer Sitzung, in
+    der eine Vorlage der Maske beraten wird, Maske.sitzungen; ein Gremium mit dem Namen einer Organisation der Datenbank
+    stammt nicht aus dem Sitzungsnamen und bleibt). Ohne `aktuell` (Vorschau, keine Karte) nichts zu prüfen. Liefert
+    die Drucksachen mit ungekürztem Text; zählt Titel und Gremien in `zahl`. Befunde in `befunde`, nur mit Zahl und
+    Schlüsselname: eine Karte außerhalb von export.AKTUELL_FELDER, ein Feld außerhalb der festen Liste ihrer Karte
+    (etwa ein Sitzungsname, eine Frist oder ein Feld mit Namen von Personen) und das Gebiet „gesamt“ bei einer
+    Vorlage (export._heimat)."""
+    from .export import AKTUELL_FELDER
+    aktuell = index.get("aktuell") if isinstance(index, dict) else None
+    aktuell = aktuell if isinstance(aktuell, dict) else {}
+    vorlagen = [v for v in aktuell.get("vorlagen") or () if isinstance(v, dict)]
+    sitzungen = [x for x in aktuell.get("sitzungen") or () if isinstance(x, dict)]
+    fremd = sorted(map(str, set(aktuell) - set(AKTUELL_FELDER)))
+    if fremd:
+        befunde.append(f"Datenschutz: index.json „aktuell“ mit Karten außerhalb von export.AKTUELL_FELDER: "
+                       f"{len(fremd)}, Schlüssel {', '.join(fremd[:5])}")
+    for karte, eintraege in (("sitzungen", sitzungen), ("vorlagen", vorlagen)):
+        felder = [set(map(str, e)) - set(AKTUELL_FELDER[karte]) for e in eintraege]
+        if any(felder):
+            befunde.append(f"Datenschutz: index.json „aktuell“, Karte {karte}: Einträge mit Feldern außerhalb der "
+                           f"festen Liste (export.AKTUELL_FELDER): {sum(map(bool, felder))}, Schlüssel "
+                           f"{', '.join(sorted(set().union(*felder))[:5])}")
+    gesamt = sum(v.get("area") == "gesamt" for v in vorlagen)
+    if gesamt:
+        befunde.append(f"Datenschutz: index.json „aktuell“: Vorlagen mit dem Gebiet „gesamt“ (export._heimat nennt nie "
+                       f"„gesamt“): {gesamt}")
+    organisationen = {r[0] for r in db.execute("SELECT name FROM organization") if r[0]}
+    offen = {v.get("reference") for v in vorlagen if m.offen(v.get("name"), v.get("reference"))}
+    for x in sitzungen:
+        ref = m.sitzungen.get(x.get("source_object"))
+        if ref and x.get("gremium") not in organisationen and m.offen(x.get("gremium"), ref):
+            offen.add(ref)
+    zahl["aktuell"] = len(vorlagen) + len(sitzungen)
+    return offen
+
+
 def _feeds(base, db, m, zahl, befunde):
     """Feeds (Atom, *.xml unter `base`: je Gebiet, ganz Köln, je Vorlage, Themenseiten): Titel und Zusammenfassung jedes
     Eintrags und der Kopf eines Feeds je Vorlage enthalten keinen Text der Vorlage ungekürzt, den die Maske ändert
@@ -681,7 +720,9 @@ def datenschutz(db, base=None):
        Tagesordnungspunkt (alle Ergebnisse einer Vorlage mit einem Punkt der Maske, Maske.drucksache_ergebnisse) und
        Sitzungsnamen je Sitzung der Maske (auch bei Vorlagen außerhalb, _sitzungen für zeit.json
        und termine.ics), ein unlesbarer Feed als Befund, und jede Vorlage ohne Hauskoordinate über Gremium oder
-       Vorlagenart ist Ausgangspunkt der Titelmaske (Gegenprobe als Befund, Entscheidung 13.11.2026); als Hinweis ohne
+       Vorlagenart ist Ausgangspunkt der Titelmaske (Gegenprobe als Befund, Entscheidung 13.11.2026); seit dem
+       19.11.2026 Titel und Gremien in index.json („Aktuell in Köln“, _aktuell; dort auch jedes Feld außerhalb der
+       festen Liste export.AKTUELL_FELDER); als Hinweis ohne
        Befund nur noch Vorlagen ohne Hauskoordinate außerhalb der Titelmaske (erwartet: Drucksache in anderem Schema),
     3. Hauskoordinaten nur bei Verwaltungsvorlagen sowie politischen Anträgen und Anfragen (Entscheidungen 04. und 10.11.2026): nie bei Eingaben
        nach § 24 GO NRW, Vorlagen natürlicher Personen oder einer Beratung im Ausschuss für Bürgerbeteiligung,
@@ -816,6 +857,9 @@ def datenschutz(db, base=None):
         if len(rows) != len(je_id):
             befunde.append(f"Datenschutz: suche.json nennt {len(rows)} Vorlagen, die Datenbank {len(je_id)} – "
                            "Export und Datenbank passen nicht zusammen (`python -m pipeline export`)")
+    index = lesen("index.json")
+    if index is not None:
+        offen |= _aktuell(index, db, m, zahl, befunde)
     geo = lesen("vorlagen.geojson")
     if geo is not None:
         props = [x["properties"] for x in geo["features"]]
