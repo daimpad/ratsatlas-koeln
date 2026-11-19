@@ -303,7 +303,10 @@ def test_karte_und_stufen_ohne_punkt():
     assert ('(l.level === "strasse" || l.level === "objekt" || l.level === "bebauungsplan") && l.lon != null'
             in app)
     assert '<span class="conf conf-${esc(l.confidence)}">${CONF[l.confidence]' in app
-    assert "Jeder Punkt ist eine Vorlage mit einem genauen Ort." in html
+    # „genau“ ist seit dem 19.11.2026 der Name einer Ortsstufe (Ort genau); auch braune und violette Punkte stehen
+    # auf der Karte, der Satz über alle Punkte nennt deshalb keinen „genauen Ort“
+    assert "Jeder Punkt ist eine Vorlage mit einem Ort auf der Karte." in html
+    assert "genauen Ort" not in html
     assert "Diese Vorlagen haben keinen Punkt auf der Karte." in html
     assert "Auf der Karte zeigt die Farbe eines Punktes die Stufe:" in html
     assert "Ein ganzer Stadtteil oder Stadtbezirk hat keinen Punkt auf der Karte." in html

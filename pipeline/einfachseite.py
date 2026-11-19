@@ -157,10 +157,10 @@ def body(root, vorschau=False):
 
     <h2 id="karte">Was zeigt die Karte?</h2>
     <ul>
-      <li>Jeder Punkt ist eine Vorlage mit einem genauen Ort. Zum Beispiel eine Straße oder ein Bebauungsplan.</li>
+      <li>Jeder Punkt ist eine Vorlage mit einem Ort auf der Karte. Zum Beispiel eine Straße, ein Haus oder ein Bebauungsplan.</li>
       <li>Eine Zahl in einem Kreis fasst mehrere Punkte zusammen. Klicken Sie darauf. Dann zeigt die Karte das Gebiet größer.</li>
       <li>Die Farbe eines Punktes zeigt, wie der Ort bestimmt ist. Mehr dazu steht unten bei <a href="#sicher">Wie verlässlich sind die Angaben?</a></li>
-      <li>Manche Vorlagen haben keinen genauen Ort. Sie betreffen zum Beispiel einen ganzen Stadtteil oder Stadtbezirk. Oder die ganze Stadt. Diese Vorlagen haben keinen Punkt auf der Karte. Sie stehen aber in der Liste des Gebiets. Sie finden sie über „Gebiet wählen“.</li>
+      <li>Manche Vorlagen haben keinen einzelnen Ort. Sie betreffen zum Beispiel einen ganzen Stadtteil oder Stadtbezirk. Oder die ganze Stadt. Diese Vorlagen haben keinen Punkt auf der Karte. Sie stehen aber in der Liste des Gebiets. Sie finden sie über „Gebiet wählen“.</li>
       <li>Im Menü „Ebenen“ blendet „Bebauungspläne“ die Gebiete der Bebauungspläne ein. Ein Bebauungsplan ist eine Regel der Stadt. Er legt fest, wie man in einem Gebiet bauen darf.</li>
 {ebenen}      <li>Mit der Zeitleiste wählen Sie einen Zeitraum. Dann zeigen Karte und Liste nur Vorlagen aus dieser Zeit.</li>
     </ul>
