@@ -53,7 +53,9 @@ Erweitert am 19.11.2026 (Entscheidung 19.11.2026 (3) (c)): Der Name jeder Sitzun
 einer Sitzung stammt, läuft durch die Maske (Maske.sitzungsname), nicht mehr nur bei Sitzungen, in denen eine Vorlage
 der Maske beraten wird; Maske.sitzungen nennt seitdem nur noch die Drucksache für einen Befund in check. In
 Sitzungsnamen gelten Namen Kölner Stadtteile und Stadtbezirke mit Straßen-Endung („Ehrenfeld“) nicht als Straße
-(_gebiete_muster; Nachprüfung derselben Entscheidung)."""
+(_gebiete_muster; Nachprüfung derselben Entscheidung).
+Erweitert am 20.11.2026 (Entscheidung 20.11.2026 (2) (a)): In Sitzungsnamen kennt die Positivliste zusätzlich
+Ordnungszahlen vor „Sitzung“ und „Sondersitzung“ (_SITZUNG_BEKANNT); die Maske für Titel bleibt unverändert."""
 import json
 import re
 import unicodedata
@@ -405,18 +407,43 @@ _BEKANNT = re.compile(
 _ZAHL = re.compile(r"(?<!\d)\d{1,4}(?!\d)")
 _ORDNUNGSZAHL = re.compile(r"(?<!\d)\d{1,3}\.\s?(?=[^\W\d_])")
 _ZAHL_ZUSATZ = re.compile(r"\s?(?![uo]\.?\s*\d)[a-z](?![^\W\d_])")
+# Zusätzliche Positivliste nur für Sitzungsnamen (Entscheidung 20.11.2026 (2) (a); Maske.sitzungsname und
+# Maske.sitzungsname_offen, über _restzahl_spannen mit `sitzung`; die Maske für Titel bleibt unverändert). Im Lauf nach
+# dem Zusammenführen von #40 kürzte die Maske 59 von 3 362 Sitzungsnamen und ein Gremium, jedes Mal eine Ordnungszahl,
+# die _BEKANNT nicht kennt. Im gefalteten Text (klein, „ß“ als „ss“): eine Ordnungszahl direkt vor „Sitzung“ oder
+# „Sondersitzung“, auch mit „Gemeinsame“, „(konstituierende)“ oder „Konstituierende“ dazwischen, an jeder Stelle, also
+# auch in Klammern und hinter „/“ („2. Sondersitzung des …“, „(2. Sondersitzung/14. Sitzung)“, „3. Gemeinsame
+# Sondersitzung“, „1. (konstituierende) Sitzung“; „14. Sitzung“ kennt _BEKANNT schon); dieselben Wörter hinter einer
+# Zahl ohne Punkt, mit Komma oder mit zwei Punkten („5 Sitzung“, „5, Sitzung“, „5.. Sitzung“), aber nur am Anfang des
+# Namens oder direkt hinter „(“ oder „/“, wo die beobachteten Namen sie tragen; „(3.)“ direkt hinter einem Wort (in den
+# beobachteten Namen dem Namen eines Gremiums: „… des Ausschusses für … (3.) und des …“), nicht hinter einer Zahl
+# („Haus 12 (3.)“ verliert beide Zahlen). Das verbirgt keine Hausnummer hinter einer Straße: Die Positivliste gilt nur
+# in der letzten Stufe der Maske (_restzahl_spannen), und die läuft in einer Runde nur, wenn die Muster der Maske und
+# die Probe nichts finden. Eine Straße mit Nummer (Name aus dem Verzeichnis oder Wort mit Straßen-Endung) entfernt
+# schon die erste Stufe, auch vor „Sitzung“ („Ortstermin Venloer Straße 5. Sitzung“, „Neumarkt 3, Sitzung“), ebenso
+# eine Nummer hinter „Hausnummer“ oder „Nr.“ samt einer Liste dahinter („Hausnummer 7 – 2. Sondersitzung“ verliert
+# auch die 2); eine Zahl direkt hinter einem Wort mit Straßen-Endung (bis zu drei Trennzeichen dazwischen) bleibt also
+# maskiert, mit denselben Ausnahmen wie in Titeln (Jahreszahl, Datum, Betrag, Uhrzeit). „_“ zählt als Teil eines
+# Worts: An dieser Stelle steht im Sitzungsnamen der Name eines Stadtteils oder Stadtbezirks (_GEBIET_ERSATZ)
+_SITZUNG_WORT = r"(?:gemeinsame\s|\(konstituierende\)\s|konstituierende\s)?(?:sonder)?sitzung(?![^\W\d_])"
+_SITZUNG_BEKANNT = re.compile(
+    rf"(?<!\d)\d{{1,3}}\.\s?{_SITZUNG_WORT}"
+    rf"|(?:^|(?<=[(/]))\s?\d{{1,3}}(?:\s|,\s?|\.\.\s?){_SITZUNG_WORT}"
+    r"|(?<=[^\W\d]\s)\(\d{1,3}\.\)")
 
 
-def _restzahl_spannen(text):
+def _restzahl_spannen(text, sitzung=False):
     """Stellen der Zahlen mit bis zu vier Stellen außerhalb bekannter Zusammenhänge (_BEKANNT) im gelieferten Text, samt
-    Buchstabe der Hausnummer („12a“, „12 b“): (von, bis)."""
+    Buchstabe der Hausnummer („12a“, „12 b“): (von, bis). Mit `sitzung` (Sitzungsname, Maske._spannen) gelten
+    zusätzlich die Zusammenhänge aus _SITZUNG_BEKANNT; ohne (Titel, restzahlen) wie bisher."""
     gefaltet, stellen = _falten(text)
     # Ordnungszahl vor einem klein geschriebenen Wort im gelieferten Text („2. geänderte Fassung“); vor einem groß
     # geschriebenen nur aus der Liste (_ORDNUNG), sonst könnte es das Ende eines Satzes sein („vor Haus 12. Bitte …“)
     bekannt = []
     for a, e in sorted([(m.start(), m.end()) for m in _BEKANNT.finditer(gefaltet)]
                        + [(m.start(), m.end()) for m in _ORDNUNGSZAHL.finditer(gefaltet)
-                          if text[stellen[m.end()]].islower()]):
+                          if text[stellen[m.end()]].islower()]
+                       + ([(m.start(), m.end()) for m in _SITZUNG_BEKANNT.finditer(gefaltet)] if sitzung else [])):
         if bekannt and a <= bekannt[-1][1]:   # überlappende Zusammenhänge zusammenfassen
             bekannt[-1][1] = max(bekannt[-1][1], e)
         else:
@@ -589,7 +616,9 @@ class Maske:
         sie nichts, jede Zahl außerhalb bekannter Zusammenhänge (Positivliste _BEKANNT, dritte Korrektur). Mit `sitzung`
         (Sitzungsname, Maske.sitzungsname) stehen die Namen aus _gebiete_muster zuvor als _GEBIET_ERSATZ gleicher Länge
         im Text: Die Stellen bleiben dieselben, und ersetzt werden nur Nummern (samt Buchstabe der Hausnummer) und
-        Wörter für die Hausnummer, nie der Name. Für Titel (ohne `sitzung`) unverändert."""
+        Wörter für die Hausnummer, nie der Name. Dazu kennt die Positivliste dann die Ordnungszahlen aus
+        _SITZUNG_BEKANNT (Entscheidung 20.11.2026 (2) (a)); Muster und Probe sind dieselben. Für Titel (ohne `sitzung`)
+        unverändert."""
         if sitzung:
             text = self._ohne_gebietsnamen(text)
         angeglichen, stellen = _angleichen(text)
@@ -599,7 +628,7 @@ class Maske:
                 self._probe = _Probe(self.strassen)
             teile = [(von, bis, OHNE_NR) for von, bis in self._probe.spannen(text)]
         if not teile:
-            teile = [(von, bis, OHNE_NR) for von, bis in _restzahl_spannen(text)]
+            teile = [(von, bis, OHNE_NR) for von, bis in _restzahl_spannen(text, sitzung)]
         return teile
 
     def _ohne_gebietsnamen(self, text):
@@ -712,7 +741,9 @@ class Maske:
         die Positivliste sie kennt („Bezirksvertretung 1 (Innenstadt)“, „3. Sitzung des …“, Datum, Uhrzeit,
         Jahreszahl). Anders als bei Titeln gilt der Name eines Kölner Stadtteils oder Stadtbezirks mit Straßen-Endung
         nicht als Straße (_gebiete_muster): „Bezirksvertretung 4 (Ehrenfeld), 12. Sitzung“ bleibt, „Ortstermin
-        Ehrenfeld 5“ verliert die Zahl (Nachprüfung der Entscheidung 19.11.2026 (3))."""
+        Ehrenfeld 5“ verliert die Zahl (Nachprüfung der Entscheidung 19.11.2026 (3)). Ebenfalls nur hier kennt die
+        Positivliste Ordnungszahlen vor „Sitzung“ und „Sondersitzung“ (_SITZUNG_BEKANNT, Entscheidung 20.11.2026 (2)
+        (a)): „2. Sondersitzung des …“ bleibt, „Ortstermin Venloer Straße 5. Sitzung“ verliert die Hausnummer."""
         if not text or not _ziffer_oder_zahlwort(text):
             return text
         return self._ausblenden(text, _SITZUNGSNAME)
