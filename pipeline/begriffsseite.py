@@ -16,7 +16,9 @@ PFAD = "begriffe/"
 # (build: Punkt der Ortsangabe außerhalb von `grob` in einem Kölner Stadtteil, Methode oparl_location, hoch; außerhalb
 # aller Stadtteile verworfen, Entscheidung 19.11.2026 (4) (d) und (e): dann zählt der Stadtteil laut Stadt, „Ort
 # erkannt“, sonst „Ort unklar“), Widerspruch zu einer anderen Angabe und Ortsangabe ohne Kölner Stadtteil bei „Ort
-# unklar“.
+# unklar“. Der Stadtbezirk aus der Bezirksvertretung gilt auch, wenn die Vorlage nur Ortsangaben der Stadt ohne Kölner
+# Stadtteil hat (build._from_committee, Entscheidung 20.11.2026 (5)); daher „keinen Ort, den der Ratsatlas zuordnen
+# kann“.
 ORTSSTUFEN = [
     ("Ort genau",
      "Hausnummer oder Bebauungsplan im Titel. Steht im Titel eine Straße mit Hausnummer und ist das Haus im Verzeichnis "
@@ -37,8 +39,8 @@ ORTSSTUFEN = [
      "mehreren Stellen in Köln gibt, ein allgemeiner Name wie „Markt“ oder eine Plannummer, die nicht genau zu einem "
      "Bebauungsplan passt; oder der Ort widerspricht einer anderen Angabe, etwa weil die Straße nicht im Stadtbezirk der "
      "beratenden Bezirksvertretung liegt. Oder nur das Gremium deutet auf einen Stadtbezirk: Die Vorlage nennt keinen "
-     "Ort und wurde nur in einer Bezirksvertretung beraten. Oder die Ortsangabe der Stadt nennt einen Ort, den der "
-     "Ratsatlas keinem Kölner Stadtteil zuordnen kann.",
+     "Ort, den der Ratsatlas zuordnen kann, und wurde nur in einer Bezirksvertretung beraten. Oder die Ortsangabe der "
+     "Stadt nennt einen Ort, den der Ratsatlas keinem Kölner Stadtteil zuordnen kann.",
      "angabe-ort-unsicher"),
 ]
 
