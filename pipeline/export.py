@@ -882,21 +882,37 @@ def gremien_index(names):
 # Maske kürzte darin die Ordnungszahl (Lauf nach dem Zusammenführen von #40: ein Gremium)
 _VORSPANN_SITZUNG = re.compile(r"^(?:\d{1,3}(?:\.\.?|,)?\s?)?(?:Gemeinsame |\(konstituierende\) |Konstituierende )?"
                                r"(?:Sonders|S)itzung (?:des|der) ")
+# Zusatz zum Stand der Sitzung am Ende der ersten Zeile eines Sitzungsnamens, hinter „ - “ oder „ – “ (Entscheidung
+# 20.11.2026 (4) (b)), nur aus einer festen Liste: „Sitzung fällt aus“, „fällt aus“, „Sitzung entfällt“, „entfällt“,
+# „Sitzung enfällt“ und „enfällt“ (Schreibweise der Quelle), „abgesagt“, dazu „vertagt“ und „verschoben“ samt dem Rest
+# der Zeile („vertagt auf einen späteren Zeitpunkt“); dahinter nur Leerraum, „!“, „-“ oder „–“ („- Sitzung fällt
+# aus -“). Groß- und Kleinschreibung wie in der Liste. Anlass: Im Lauf 57 trugen drei Gremien aus Sitzungsnamen einen
+# solchen Zusatz, zwei davon neben demselben Gremium ohne Zusatz (TECHNIK.md, 20.11.2026 (4)). Ein anderes Wort hinter
+# „ - “ bleibt Teil des Gremiums (keine allgemeine Kürzung hinter „ - “), ebenso ein Bindestrich ohne Leerraum davor
+# („Beispiel-Museum“)
+_ZUSATZ_STAND = re.compile(r"\s+[-–]\s+(?:(?:Sitzung )?(?:fällt aus|entfällt|enfällt)|abgesagt"
+                           r"|(?:vertagt|verschoben)(?:\s.*)?)[\s!\-–]*$")
 
 
 def gremium_der_sitzung(m, names, index=None):
-    """Gremium einer Sitzung: aus der Organisation; fehlt sie (z. B. neue Wahlperiode, Sitzung am 25.11.2026), aus
-    dem Sitzungsnamen ohne Vorspann (_VORSPANN_SITZUNG) in der Schreibweise eines bekannten Gremiums, in zwei Stufen
-    (gremien_index): zuerst bei gleichem strengem Schlüssel (ohne Satzzeichen; wie bis zum 16.11.2026, bisherige
-    Treffer bleiben), sonst bei gleichem breitem Schlüssel (ausschuesse.schluessel, auch ohne „für“ und mit „/“ wie
-    Komma: die Zuständigkeitsordnung schreibt „Ausschuss Klima, Umwelt und Grün“ und „Ausschuss für Klima, Umwelt und
-    Grün“), aber nur, wenn er genau ein Gremium ergibt. Stehen Gremien der alten und der neuen Wahlperiode mit und ohne
-    „für“ nebeneinander, gewinnt so die genau passende Schreibweise; ist der breite Schlüssel mehrdeutig, bleibt der
-    Name aus der Sitzung (Prüfung des Abgleichs vom 16.11.2026)."""
+    """Gremium einer Sitzung: aus der Organisation (unverändert); fehlt sie (z. B. neue Wahlperiode, Sitzung am
+    25.11.2026), aus dem Sitzungsnamen. Reihenfolge (Entscheidung 20.11.2026 (4) (b)): die erste Zeile mit Text
+    (str.splitlines, ohne Leerraum am Ende; eine zweite Zeile wie ein Hinweis, dass die Sitzung verschoben ist, fällt
+    weg), dann ohne Vorspann (_VORSPANN_SITZUNG, am Anfang dieser Zeile) und ohne Zusatz zum Stand (_ZUSATZ_STAND, an
+    ihrem Ende), dann im Nominativ (_nominativ), zuletzt in der Schreibweise eines bekannten Gremiums. Weil Vorspann
+    und Zusatz vor dem Vergleich wegfallen, findet „Beispielbeirat - Sitzung enfällt“ die Schreibweise
+    „Beispielbeirat“; der Name der Sitzung selbst bleibt davon unberührt (_meetings, _paper_detail). Die Schreibweise
+    eines bekannten Gremiums in zwei Stufen (gremien_index): zuerst bei gleichem strengem Schlüssel (ohne Satzzeichen;
+    wie bis zum 16.11.2026, bisherige Treffer bleiben), sonst bei gleichem breitem Schlüssel (ausschuesse.schluessel,
+    auch ohne „für“ und mit „/“ wie Komma: die Zuständigkeitsordnung schreibt „Ausschuss Klima, Umwelt und Grün“ und
+    „Ausschuss für Klima, Umwelt und Grün“), aber nur, wenn er genau ein Gremium ergibt. Stehen Gremien der alten und
+    der neuen Wahlperiode mit und ohne „für“ nebeneinander, gewinnt so die genau passende Schreibweise; ist der breite
+    Schlüssel mehrdeutig, bleibt der Name aus der Sitzung in dieser Form (Prüfung des Abgleichs vom 16.11.2026)."""
     org = (m.get("organization") or [None])[0]
     if names.get(org):
         return names[org]
-    name = _nominativ(_VORSPANN_SITZUNG.sub("", m.get("name") or ""))
+    zeile = next((z.rstrip() for z in (m.get("name") or "").splitlines() if z.strip()), "")
+    name = _nominativ(_ZUSATZ_STAND.sub("", _VORSPANN_SITZUNG.sub("", zeile)))
     streng, breit = index if index is not None else gremien_index(names)
     if _schluessel(name) in streng:
         return streng[_schluessel(name)] or "unbekannt"
@@ -923,10 +939,11 @@ def zeile_sitzungsnamen(zahl):
 def _meetings(db, zahl=None):
     """Sitzungen der städtischen OParl-API (auch künftige, als Termin belegt). Der Name jeder Sitzung läuft durch die
     Titelmaske, ebenso ein Gremium, das aus dem Namen stammt (Maske.sitzungsname, gremium_aus_namen; Entscheidung
-    19.11.2026 (3) (c)): Das Gremium aus dem Namen ist der Name ohne Vorspann (_VORSPANN_SITZUNG), und der ganze Name
-    steht in zeit.json und in der Beschreibung in termine.ics daneben; bliebe er ungekürzt, stünde dieselbe Hausnummer
-    dort weiter. Bis dahin nur bei Sitzungen, in denen eine Vorlage der Maske beraten wird (Maske.sitzungen; Offen (9)
-    der Nachprüfung der dritten Korrektur). check._sitzungen und check._aktuell prüfen mit derselben Regel
+    19.11.2026 (3) (c)): Das Gremium aus dem Namen ist dessen erste Zeile ohne Vorspann und ohne Zusatz zum Stand
+    (gremium_der_sitzung, seit der Entscheidung 20.11.2026 (4) (b); vorher der ganze Name ohne Vorspann), und der ganze
+    Name steht in zeit.json und in der Beschreibung in termine.ics daneben; bliebe er ungekürzt, stünde dieselbe
+    Hausnummer dort weiter. Bis zur Entscheidung 19.11.2026 (3) (c) nur bei Sitzungen, in denen eine Vorlage der Maske
+    beraten wird (Maske.sitzungen; Offen (9) der Nachprüfung der dritten Korrektur). check._sitzungen und check._aktuell prüfen mit derselben Regel
     (Maske.sitzungsname_offen). Das Gremium entsteht aus dem ungekürzten Namen und läuft, wenn es aus dem Namen stammt,
     selbst durch die Maske: So findet gremium_der_sitzung die Schreibweise eines bekannten Gremiums auch dann, wenn die
     Maske eine Zahl im Namen kürzt (der Name einer Organisation bleibt ungeprüft, wie bisher; vorher entstand das

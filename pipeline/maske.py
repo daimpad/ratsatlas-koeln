@@ -735,9 +735,10 @@ class Maske:
         """Name einer Sitzung oder Gremium, das aus dem Namen einer Sitzung stammt (export.gremium_der_sitzung), ohne
         Hausnummer: bei jeder Sitzung (Entscheidung 19.11.2026 (3) (c)), nicht nur bei einer Sitzung, in der eine
         Vorlage der Maske beraten wird (Maske.sitzungen; Offen (9) der Nachprüfung der dritten Korrektur). Das Gremium
-        aus dem Namen ist der Name ohne Vorspann (export._VORSPANN_SITZUNG: etwa „Sitzung des“, „2. Sondersitzung der“),
-        und der ganze Name steht in zeit.json, in der Beschreibung in termine.ics und in `process[].meeting` der
-        Gebietsdateien daneben: Bliebe der Name ungekürzt, stünde dieselbe Hausnummer dort weiter.
+        aus dem Namen ist dessen erste Zeile ohne Vorspann (export._VORSPANN_SITZUNG: etwa „Sitzung des“,
+        „2. Sondersitzung der“) und ohne Zusatz zum Stand (export._ZUSATZ_STAND), und der ganze Name steht in
+        zeit.json, in der Beschreibung in termine.ics und in `process[].meeting` der Gebietsdateien daneben: Bliebe der
+        Name ungekürzt, stünde dieselbe Hausnummer dort weiter.
         Dieselben Muster und dieselbe Probe wie für Titel der Maske (_maskieren), dieselbe Positivliste ergänzt um
         _SITZUNG_BEKANNT, aber ohne Drucksache: Die Maske ist an Drucksachen gebunden (`refs`), ein Sitzungsname hat
         keine. Eine eigene Methode statt einer erfundenen Drucksache in `refs`, weil check `refs` als Menge der
