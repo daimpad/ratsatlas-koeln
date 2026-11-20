@@ -320,6 +320,10 @@ def build():
     # Prüfung r19b: sonst gab eine erlaubte Vorlage den Punkt einer ausgelassenen Eingabe weiter)
     grob = ({loc["id"] for p in papers if p["id"] in gesperrt for loc in p.get("location") or []}
             | {loc for a in ausgelassen for loc in a.get("location") or ()})
+    # Ortsangaben außerhalb von `grob` mit Punkt außerhalb aller Kölner Stadtteile (Punkt verworfen, Entscheidung
+    # 19.11.2026 (4) (d)): Kennung → Stadtteil laut Stadt (subLocality) vorhanden; für die Zeile im Log und die
+    # Straßenpunkte des Gazetteers (unten `points`)
+    verworfen = {}
 
     for p in papers:
         mf = p.get("mainFile") or {}
@@ -360,16 +364,23 @@ def build():
         for loc in p.get("location") or []:
             geom = (loc.get("geojson") or {}).get("geometry") or {}
             lon = lat = ot = None
-            if geom.get("type") == "Point" and loc["id"] not in grob:
+            punkt = geom.get("type") == "Point"
+            # Punkt der Stadt bei einer Vorlage mit Erlaubnis: genau nur in einem Kölner Stadtteil (Entscheidung
+            # 19.11.2026 (4) (d)); außerhalb aller Stadtteile wird er verworfen, und es gilt die Regel ohne Punkt (e)
+            im = ortsteile.locate(*geom["coordinates"][:2]) if punkt and loc["id"] not in grob else None
+            if im:
                 lon, lat = geom["coordinates"][:2]
-                ot = ortsteile.locate(lon, lat)
+                ot = im
                 level, method, conf = "strasse", "oparl_location", "hoch"
             else:
                 # Köln: Ort meist nur als subLocality (Stadtteil) ohne Geometrie → Stadtteilfläche (CLAUDE.md 5.2, Stufe A);
                 # ohne Erlaubnis für Hauskoordinaten (grob) gilt ein Punkt nur für seinen Stadtteil (Stadtteilfläche wie
-                # bei subLocality; Datenschutz, Prüfung r19), außerhalb der Stadtteile ohne Koordinate
+                # bei subLocality; Datenschutz, Prüfung r19), außerhalb der Stadtteile ohne Koordinate; ein verworfener
+                # Punkt (außerhalb von grob und aller Stadtteile) zählt gar nicht, nur subLocality
                 treffer = ortsteile.by_name(loc.get("subLocality"))
-                if not treffer and geom.get("type") == "Point":
+                if punkt and loc["id"] not in grob:
+                    verworfen[loc["id"]] = bool(treffer)
+                elif not treffer and punkt:
                     im = ortsteile.locate(*geom["coordinates"][:2])
                     treffer = ortsteile.by_name(im["ortsteil_bez"]) if im else None
                 if treffer:
@@ -397,10 +408,18 @@ def build():
             rows["resp"].append((p["id"], r["organization_id"], r["kind"], r["method"],
                                  r["evidence"], r["derived"], r.get("confidence"), r.get("kennung")))
 
+    # nur Zahlen (Entscheidung 19.11.2026 (4)): je Ortsangabe einmal, auch wenn mehrere Vorlagen sie nennen
+    print(f"Ortsangaben der Stadt mit Punkt außerhalb aller Kölner Stadtteile bei Vorlagen, die einen Punkt haben "
+          f"dürfen: {len(verworfen)} (Punkt verworfen; davon mit Kölner Stadtteil laut Stadt "
+          f"{sum(verworfen.values())})")
+
     # Straßenpunkte aus den Ortsangaben der Stadt für Namen, die im Straßenverzeichnis fehlen; ohne die auf den Stadtteil
-    # zurückgeführten Ortsangaben (grob: ihr Punkt ist der Stadtteil, nicht die Straße)
+    # zurückgeführten Ortsangaben (grob: ihr Punkt ist der Stadtteil, nicht die Straße) und ohne die mit verworfenem
+    # Punkt (ihre Zeile trägt höchstens den Punkt der Stadtteilfläche; vor der Entscheidung 19.11.2026 (4) lag ihr Punkt
+    # außerhalb aller Stadtteile und Gazetteer._add_points nahm die Straße nicht auf). Ortsangaben ohne Punkt mit
+    # Stadtteil laut Stadt liefern weiter den Punkt der Stadtteilfläche (offen, TECHNIK 19.11.2026 (4)).
     points = [(loc[1], loc[5], loc[6]) for loc in locations.values()
-              if loc[-1] == config.QUELLE_OPARL and loc[0] not in grob]
+              if loc[-1] == config.QUELLE_OPARL and loc[0] not in grob and loc[0] not in verworfen]
     gaz = Gazetteer(street_points=points)
     rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien, gesperrt)
     plans = Plans()
