@@ -79,12 +79,13 @@ def _paper_detail(db, pid):
     # Titel ausblendet), im Zusammenhang des ganzen Titels (Maske.ausschnitt; dritte Korrektur: vorher allein maskiert,
     # und „1175, Hinterhof … – Anfrage der Fraktion …“ behielt die Nummer, deren Straße vor dem Ausschnitt stand).
     # Ortsnamen und Ergebnisse der Beratungen ebenso (dritte Korrektur: check prüft sie, die Maske kann also jeden
-    # Befund beheben). Ergebnisse je Tagesordnungspunkt und Sitzungsnamen je Sitzung (Offen (8) und (9) der Nachprüfung
-    # der dritten Korrektur): Wird dort eine Vorlage der Maske beraten (Maske.tops, Maske.sitzungen), läuft der Text
-    # bei jeder Vorlage, die ihn zeigt, mit deren Drucksache durch die Maske; die Kennung des Tagesordnungspunkts
-    # bleibt intern (Datenmodell unverändert). Bei Ergebnissen gilt das für alle Punkte einer solchen Vorlage
-    # (Maske.drucksache_ergebnisse, dieselbe Funktion in check): Derselbe Text auf einem zweiten Punkt blieb sonst
-    # ungekürzt, und check meldete ihn im Feed der Vorlage als Befund, den die Maske nicht beheben konnte
+    # Befund beheben). Ergebnisse je Tagesordnungspunkt (Offen (8) der Nachprüfung der dritten Korrektur): Wird dort
+    # eine Vorlage der Maske beraten (Maske.tops), läuft das Ergebnis bei jeder Vorlage, die es zeigt, mit deren
+    # Drucksache durch die Maske; die Kennung des Tagesordnungspunkts bleibt intern (Datenmodell unverändert). Das gilt
+    # für alle Punkte einer solchen Vorlage (Maske.drucksache_ergebnisse, dieselbe Funktion in check): Derselbe Text auf
+    # einem zweiten Punkt blieb sonst ungekürzt, und check meldete ihn im Feed der Vorlage als Befund, den die Maske
+    # nicht beheben konnte. Sitzungsnamen laufen bei jeder Sitzung durch die Maske (Maske.sitzungsname, wie in
+    # _meetings; Entscheidung 19.11.2026 (3) (c), vorher nur bei Sitzungen aus Maske.sitzungen, Offen (9))
     ref_ergebnisse = m.drucksache_ergebnisse(ref, [r["agenda_item_id"] for r in process])
     fund = lambda rows: [{**dict(r), "evidence": m.ausschnitt(r["evidence"], p["name"], ref)} for r in rows]
     locs = [{**r, "name": m(r["name"], ref)} for r in fund(_locations(db, pid))]
@@ -105,7 +106,7 @@ def _paper_detail(db, pid):
                                                "evidence": m(r["evidence"], ref)}, p["date"]) for r in resp],
         "originators": fund(orig),
         "process": [{**{k: v for k, v in dict(r).items() if k not in ("beratung", "agenda_item_id")},
-                     "meeting": m(r["meeting"], m.sitzungen.get(r["meeting_id"])),
+                     "meeting": m.sitzungsname(r["meeting"]),
                      "result": m(r["result"], ref_ergebnisse), "status": _status(r)}
                     for r in process],
         "superordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
@@ -422,8 +423,10 @@ def export_all():
     sources = [dict(r) for r in db.execute("SELECT * FROM source")]
     stand = next((s["retrieved_at"] for s in sources if s["name"] == config.QUELLE_OPARL), None) or ""
     publish.write_feeds(out / "feeds", areas, cache, names, home, slug, feed_grenze(stand))
-    meetings = _meetings(db)
+    zahl_sitzungen = {}
+    meetings = _meetings(db, zahl_sitzungen)
     print(zeile_beginn(meetings))
+    print(zeile_sitzungsnamen(zahl_sitzungen))
     publish.write_calendar(out / "termine.ics", meetings)
     n_points = publish.write_geojson(out / "vorlagen.geojson", cache,
                                      [{k: v for k, v in s.items() if k != "retrieved_at"} for s in sources])
@@ -891,13 +894,38 @@ def gremium_der_sitzung(m, names, index=None):
     return (streng[next(iter(kandidaten))] if len(kandidaten) == 1 else name) or "unbekannt"
 
 
-def _meetings(db):
-    """Sitzungen der städtischen OParl-API (auch künftige, als Termin belegt). Wird in einer Sitzung eine Vorlage der
-    Titelmaske beraten (Maske.sitzungen), läuft ihr Name durch die Maske, ebenso ein Gremium, das aus dem Namen stammt
-    (Offen (9) der Nachprüfung der dritten Korrektur: zeit.json, termine.ics; check._sitzungen prüft das)."""
+def gremium_aus_namen(gremium, organisationen):
+    """Stammt das Gremium einer Sitzung aus ihrem Namen (letzte Stufe von gremium_der_sitzung)? Ja, wenn es weder der
+    Name einer Organisation der Datenbank ist (`organisationen`: alle Namen aus `organization`; auch die Schreibweise
+    eines bekannten Gremiums, auf die gremium_der_sitzung einen Namen abbildet) noch der Platzhalter „unbekannt“ einer
+    Sitzung ohne Namen. Eine Regel für _meetings (Maske, Zeile im Log) und check (_sitzungen, _aktuell)."""
+    return bool(gremium) and gremium != "unbekannt" and gremium not in organisationen
+
+
+def zeile_sitzungsnamen(zahl):
+    """Zeile im Log von `export`, nur Zahlen (Entscheidung 19.11.2026 (3) (c)): Sitzungen aus _meetings, deren Gremium
+    aus dem Sitzungsnamen stammt (gremium_aus_namen), und Sitzungen, deren Name oder Gremium die Maske geändert hat
+    (Maske.sitzungsname). `zahl`: von _meetings gefüllt."""
+    return (f"Sitzungen: Gremium aus dem Sitzungsnamen {zahl.get('gremium_aus_namen', 0)}, "
+            f"Namen oder Gremien von der Maske geändert {zahl.get('maske', 0)}")
+
+
+def _meetings(db, zahl=None):
+    """Sitzungen der städtischen OParl-API (auch künftige, als Termin belegt). Der Name jeder Sitzung läuft durch die
+    Titelmaske, ebenso ein Gremium, das aus dem Namen stammt (Maske.sitzungsname, gremium_aus_namen; Entscheidung
+    19.11.2026 (3) (c)): Das Gremium aus dem Namen ist der Name selbst, und der ganze Name steht in zeit.json und in der
+    Beschreibung in termine.ics daneben; bliebe er ungekürzt, stünde dieselbe Hausnummer dort weiter. Bis dahin nur bei
+    Sitzungen, in denen eine Vorlage der Maske beraten wird (Maske.sitzungen; Offen (9) der Nachprüfung der dritten
+    Korrektur). check._sitzungen und check._aktuell prüfen mit derselben Regel (Maske.sitzungsname_offen). Das Gremium
+    entsteht aus dem ungekürzten Namen und läuft, wenn es aus dem Namen stammt, selbst durch die Maske: So findet
+    gremium_der_sitzung die Schreibweise eines bekannten Gremiums auch dann, wenn die Maske eine Zahl im Namen kürzt
+    (der Name einer Organisation bleibt ungeprüft, wie bisher; vorher entstand das Gremium aus dem maskierten Namen).
+    Mit `zahl` (dict) zählt _meetings für zeile_sitzungsnamen: `gremium_aus_namen` und `maske` (Name oder Gremium
+    geändert)."""
     if not config.MEETINGS.exists():
         return []
     names = dict(db.execute("SELECT id, name FROM organization"))
+    organisationen = {n for n in names.values() if n}
     index = gremien_index(names)
     mk = _maske(db)
     out = []
@@ -907,8 +935,17 @@ def _meetings(db):
         # Uhrzeit in Kölner Zeit zum selben Zeitpunkt wie das Datum; 00:00 Uhr in Köln heißt: keine Uhrzeit angegeben
         time = proc.local_time(m["start"])
         time = None if time == "00:00" else time
-        m = {**m, "name": mk(m.get("name"), mk.sitzungen.get(m.get("id")))}
         gremium = gremium_der_sitzung(m, names, index)
+        name = mk.sitzungsname(m.get("name"))
+        geaendert = name != m.get("name")
+        m = {**m, "name": name}
+        aus_namen = gremium_aus_namen(gremium, organisationen)
+        if aus_namen:
+            maskiert = mk.sitzungsname(gremium)
+            geaendert, gremium = geaendert or maskiert != gremium, maskiert
+        if zahl is not None:
+            zahl["gremium_aus_namen"] = zahl.get("gremium_aus_namen", 0) + aus_namen
+            zahl["maske"] = zahl.get("maske", 0) + geaendert
         out.append({"date": proc.local_day(m["start"]), "time": time, "gremium": gremium,
                     "name": m.get("name"), "cancelled": bool(m.get("cancelled")), "state": m.get("meetingState"),
                     "web": m.get("web"), "invitation": m.get("invitation"),
