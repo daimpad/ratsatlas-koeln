@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-ehrenfeld</id>
 <title>Ratsatlas Köln – Ehrenfeld</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Ehrenfeld</subtitle>
-<updated>2026-11-17T00:00:00Z</updated>
+<updated>2026-11-20T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-ehrenfeld.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ehrenfeld"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135625#vorlage</id>
+<title>Neue Vorlage 3168/2026: Bebauungsplanverfahren „Oskar-Jäger-Straße südlich Low Line“ in Köln-Ehrenfeld/Braunsfeld. Ergebnis des städtebaulichen Qualifizierungsverfahrens</title>
+<updated>2026-11-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ehrenfeld#3168/2026"/>
+<summary>Mitteilung Ausschuss · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134184#vorlage</id>
 <title>Neue Vorlage 2285/2026: Beschluss über Stellungnahmen, Änderung sowie Satzungsbeschluss betreffend den Bebauungsplan-Entwurf (vorhabenbezogener Bebauungsplan) Nr. 66461/16 Arbeitstitel: "Franz-Geuer-Straße" in Köln-Ehrenfeld</title>
@@ -700,12 +707,5 @@
 <updated>2026-06-29T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ehrenfeld#1694/2026"/>
 <summary>Kenntnisnahme (Mitteilung) am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133169#beratung-2026-06-29-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
-<title>Bezirksvertretung 4 (Ehrenfeld): „ungeändert beschlossen“ – AN/0878/2026 Antrag der Fraktion Bündnis 90/Die Grünen, betr.: Verkehrssicherheit an der Helmholtzstraße und im Kreuzungsbereich Äußere Kanalstraße verbessern</title>
-<updated>2026-06-29T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ehrenfeld#AN/0878/2026"/>
-<summary>Antrag / Anfrage am 2026-06-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-ostheim</id>
 <title>Ratsatlas Köln – Ostheim</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Ostheim</subtitle>
-<updated>2026-11-16T00:00:00Z</updated>
+<updated>2026-11-20T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-ostheim.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135809#vorlage</id>
+<title>Neue Vorlage AN/1837/2026: Antrag der SPD Fraktion "Verbesserung der Verkehrssicherheit an der Kreuzung Frankfurter Straße und Poststraße"</title>
+<updated>2026-11-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1837/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135723#vorlage</id>
 <title>Neue Vorlage 3240/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Errichtung/Erweiterung der Beleuchtung Hövilandweg, sicherer Fußgängerweg Waldbadviertel, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
@@ -700,12 +707,5 @@
 <updated>2025-01-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#4009/2024"/>
 <summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/124944#vorlage</id>
-<title>Neue Vorlage AN/1726/2024: Anfrage der CDU-Fraktion "Ausbau der Frankfurter Straße einschließlich ÖPNV"</title>
-<updated>2024-12-05T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1726/2024"/>
-<summary>Anfrage nach § 4 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 </feed>

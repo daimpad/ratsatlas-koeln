@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-poll</id>
 <title>Ratsatlas Köln – Poll</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Poll</subtitle>
-<updated>2026-11-10T00:00:00Z</updated>
+<updated>2026-11-19T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-poll.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135814#vorlage</id>
+<title>Neue Vorlage AN/1839/2026: Antrag CDU Fraktion "Schießstand Hubertusweg in Köln-Poll"</title>
+<updated>2026-11-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/1839/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134546#beratung-2026-11-10-Hauptausschuss</id>
 <title>Hauptausschuss: „Kenntnis genommen“ – 2517/2026 Aktueller Sachstand Südbrücke</title>
@@ -700,12 +707,5 @@
 <updated>2025-06-10T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#AN/0817/2025"/>
 <summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126907#vorlage</id>
-<title>Neue Vorlage 1234/2025: Neugestaltung der Grünanlage und Spielfläche Im Forst in Köln-Poll</title>
-<updated>2025-06-10T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:poll#1234/2025"/>
-<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 </feed>

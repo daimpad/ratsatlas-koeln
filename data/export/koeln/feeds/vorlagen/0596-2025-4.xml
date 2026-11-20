@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="de">
+<id>tag:ratsatlas-koeln,2026:feed/vorlage/0596-2025-4</id>
+<title>Vorlage 0596/2025/4: Beantwortung einer mündlichen Anfrage von RM Pulvermüller aus der Sitzung vom 29.09.2026 bezüglich der Baumaßnahme für das Gymnasium Unter Linden am Standort Neue Sandkaul 29, 50859 Köln-Widdersdorf</title>
+<subtitle>Verlauf der Vorlage 0596/2025/4: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
+<updated>2026-11-11T00:00:00Z</updated>
+<link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/0596-2025-4.xml"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:widdersdorf#0596/2025/4"/>
+<author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
+<rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135574#vorlage</id>
+<title>Neue Vorlage 0596/2025/4: Beantwortung einer mündlichen Anfrage von RM Pulvermüller aus der Sitzung vom 29.09.2026 bezüglich der Baumaßnahme für das Gymnasium Unter Linden am Standort Neue Sandkaul 29, 50859 Köln-Widdersdorf</title>
+<updated>2026-11-11T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:widdersdorf#0596/2025/4"/>
+<summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135574#folge-0596%2F2025%2F3</id>
+<title>Mitteilung Ausschuss 0596/2025/3: Baumaßnahme für das Gymnasium Unter Linden am Standort Neue Sandkaul 29, 50859 Köln-Widdersdorf - nachhaltige, ressourcenschonende und kostengünstige Wärmeerzeugung</title>
+<updated>2026-08-10T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:widdersdorf#0596/2025/4"/>
+<summary>Folgevorlage zu 0596/2025/4</summary>
+</entry>
+</feed>

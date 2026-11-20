@@ -5,21 +5,21 @@
 <subtitle>Verlauf der Vorlage 3012/2026: Beratungen, Ergebnisse und Folgevorlagen</subtitle>
 <updated>2026-11-19T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/vorlagen/3012-2026.xml"/>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#3012/2026"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#3012/2026"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135402#vorlage</id>
 <title>Neue Vorlage 3012/2026: Beantwortung einer mündlichen Anfrage der SPD-Fraktion aus der Sitzung des Mobilitätsausschusses am 22.09.2026 betr. 2131/2026 Piktogrammkette für den Radverkehr - Erfahrungsbericht und weiteres Vorgehen</title>
 <updated>2026-11-19T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#3012/2026"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#3012/2026"/>
 <summary>Beantwortung e. mündl. Anfrage (Auss.) · federführend: unbekannt · Stand: offen</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135402#folge-2131%2F2026</id>
 <title>Mitteilung Ausschuss 2131/2026: Piktogrammkette für den Radverkehr – Erfahrungsbericht und weiteres Vorgehen</title>
 <updated>2026-08-11T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:ehrenfeld#3012/2026"/>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#3012/2026"/>
 <summary>Folgevorlage zu 3012/2026</summary>
 </entry>
 </feed>

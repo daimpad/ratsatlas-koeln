@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-elsdorf</id>
 <title>Ratsatlas Köln – Elsdorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Elsdorf</subtitle>
-<updated>2026-09-24T00:00:00Z</updated>
+<updated>2026-11-20T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-elsdorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135809#vorlage</id>
+<title>Neue Vorlage AN/1837/2026: Antrag der SPD Fraktion "Verbesserung der Verkehrssicherheit an der Kreuzung Frankfurter Straße und Poststraße"</title>
+<updated>2026-11-20T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/1837/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134568#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
 <title>Bezirksvertretung 8 (Kalk): „endgültig zurückgezogen“ – AN/1387/2026 Fahrbahnmarkierungen auf der Frankfurter Straße</title>
@@ -700,12 +707,5 @@
 <updated>2023-01-26T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#AN/0185/2023"/>
 <summary>Antrag / Anfrage am 2023-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/109387#beratung-2023-01-26-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „geändert beschlossen“ – 2183/2022 Baubeschluss für den Ersatzneubau der Brücke Frankfurter Straße (B 8) über die B 55a</title>
-<updated>2023-01-26T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:elsdorf#2183/2022"/>
-<summary>Anhörung (BV) am 2023-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

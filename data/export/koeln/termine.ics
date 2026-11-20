@@ -129,6 +129,7 @@ UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33691
 DTSTAMP:20261112T133000Z
 DTSTART:20261112T133000Z
+DTEND:20261112T170000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates - Verabschiedung des Haushalts\nTagesordnung 
  noch nicht veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquel
@@ -178,8 +179,10 @@ DTSTAMP:20261117T140000Z
 DTSTART:20261117T140000Z
 SUMMARY:Ausschuss für Chancengerechtigkeit und Integration
 DESCRIPTION:Sitzung des Ausschusses für Chancengerechtigkeit und Integrati
- on\nTagesordnung noch nicht veröffentlicht.\nQuelle: OParl-API der Stadt 
- Köln\; Datenquelle: Stadt Köln – offenedaten-koeln.de
+ on\nTagesordnung noch nicht veröffentlicht.\nEinladung: https://buergerin
+ fo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/downloadfiles/a/01121
+ 896.pdf\nQuelle: OParl-API der Stadt Köln\; Datenquelle: Stadt Köln – 
+ offenedaten-koeln.de
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
