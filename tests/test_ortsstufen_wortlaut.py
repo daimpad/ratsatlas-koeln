@@ -185,6 +185,12 @@ def test_seite_begriffe():
     assert "Oder die Ortsangabe der Stadt nennt den Stadtteil oder einen Punkt in ihm." in erklaerung["Ort erkannt"]
     assert ("Oder die Ortsangabe der Stadt nennt einen Ort, den der Ratsatlas keinem Kölner Stadtteil zuordnen kann."
             in erklaerung["Ort unklar"])
+    # Stadtbezirk aus der Bezirksvertretung auch bei nur einer Ortsangabe der Stadt ohne Kölner Stadtteil (Entscheidung
+    # 20.11.2026 (5), build._from_committee mit build._nur_unklarer_ort); der frühere Satz steht nicht mehr da
+    satz = ("Oder nur das Gremium deutet auf einen Stadtbezirk: Die Vorlage nennt keinen Ort, den der Ratsatlas "
+            "zuordnen kann, und wurde nur in einer Bezirksvertretung beraten.")
+    assert satz in erklaerung["Ort unklar"] and satz in stufen
+    assert "nennt keinen Ort und wurde nur" not in erklaerung["Ort unklar"] + stufen
 
 
 def test_einfache_sprache():
