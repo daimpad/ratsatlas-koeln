@@ -450,8 +450,11 @@ def build():
     rows["ploc"] += _fulltext(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]}, ausgelassen, gesperrt,
                               rows["rel"] + rows["related"])
     rows["ploc"] += _inherited(papers, papers_by_id, rows["ploc"], locations, gaz, gesperrt)
-    rows["ploc"] += _from_committee(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]})
-    print(_nur_unklarer_ort_zeile(rows["ploc"], locations, bv_bezirke, gaz, papers_by_id))
+    # nach der Vererbung und vor _from_committee: dieselbe Menge für die Regel und die Zeile im Log (Entscheidung
+    # 20.11.2026 (5))
+    unklar = _nur_unklarer_ort(rows["ploc"], locations)
+    rows["ploc"] += _from_committee(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]}, unklar)
+    print(_nur_unklarer_ort_zeile(unklar, bv_bezirke, gaz, papers_by_id))
 
     # OR REPLACE: ändert sich die Quelle während des seitenweisen Abrufs, kann eine Vorlage doppelt kommen
     db.executemany(f"INSERT OR REPLACE INTO paper VALUES (?,?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}')", rows["paper"])
@@ -864,43 +867,54 @@ def _bezirk_aus_gremium(pid, bv_bezirke, gaz):
     return name if name in gaz.bezirk_point else None
 
 
-def _nur_unklarer_ort_zeile(ploc, locations, bv_bezirke, gaz, papers_by_id):
-    """Zeile im Log, nur Zahlen (Entscheidung 20.11.2026 (1) (d)): Vorlagen, deren Ortsbezüge alle auf eine Ortsangabe
-    der Stadt ohne Kölner Stadtteil laut Stadt und ohne Punkt in einem Kölner Stadtteil zeigen (Zeile ohne Stadtteil
-    und ohne Koordinate, oparl_location, niedrig, „Ort unklar“; eigene oder vererbte; auch mit verworfenem Punkt
-    außerhalb aller Stadtteile, Entscheidung 19.11.2026 (4) (d)). Export stellt sie unter „ohne Ortsbezug“ (kein
-    Ortsbezug mit Stadtteil oder auf Ebene Stadtbezirk), je Jahr nach dem Datum; die ohne Datum stehen in keiner
-    Jahresdatei (export_all: Jahr aus substr(date, 1, 4)). _from_committee lässt sie aus, weil sie einen Ortsbezug
-    haben. Davon die ohne Datum und die, denen _from_committee ohne diesen Ortsbezug einen Stadtbezirk gäbe (dieselbe
-    Bedingung über _bezirk_aus_gremium)."""
+def _nur_unklarer_ort(ploc, locations):
+    """IDs der Vorlagen mit mindestens einem Ortsbezug, deren Ortsbezüge alle auf einen unklaren Ort der Stadt zeigen:
+    eine Ortsangabe der Stadt ohne Kölner Stadtteil laut Stadt und ohne Punkt in einem Kölner Stadtteil (Ort der Quelle
+    `oparl-koeln` ohne Stadtteil und ohne Koordinate, oparl_location, niedrig, „Ort unklar“; eigene oder vererbte; auch
+    mit verworfenem Punkt außerhalb aller Stadtteile, Entscheidung 19.11.2026 (4) (d)). Eine Funktion für die Regel in
+    _from_committee und die Zeile im Log (_nur_unklarer_ort_zeile), damit Regel und Zählung gleich bleiben."""
     orte = {}
     for r in ploc:
         orte.setdefault(r[0], set()).add(r[1])
-    unklar = [pid for pid, ids in orte.items()
-              if all(locations[i][-1] == config.QUELLE_OPARL and locations[i][7] is None and locations[i][5] is None
-                     for i in ids)]
+    return {pid for pid, ids in orte.items()
+            if all(locations[i][-1] == config.QUELLE_OPARL and locations[i][7] is None and locations[i][5] is None
+                   for i in ids)}
+
+
+def _nur_unklarer_ort_zeile(unklar, bv_bezirke, gaz, papers_by_id):
+    """Zeile im Log, nur Zahlen (Entscheidungen 20.11.2026 (1) (d) und (5)): Vorlagen nur mit unklarem Ort der Stadt
+    (`unklar` aus _nur_unklarer_ort). Die in genau einer Bezirksvertretung eines Kölner Stadtbezirks beratenen
+    (dieselbe Bedingung über _bezirk_aus_gremium wie in _from_committee) erhalten seit 20.11.2026 (5)
+    `district_from_committee` und stehen im Export unter ihrem Stadtbezirk. Die übrigen stellt der Export unter „ohne
+    Ortsbezug“ (kein Ortsbezug mit Stadtteil oder auf Ebene Stadtbezirk), je Jahr nach dem Datum, die ohne Datum in
+    keine Jahresdatei (export_all: Jahr aus substr(date, 1, 4)). Gezählt werden alle, davon die ohne Datum (auch die
+    mit Stadtbezirk; keine von ihnen steht in einer Jahresdatei „ohne Ortsbezug“) und die mit genau einer
+    Bezirksvertretung."""
     ohne_datum = sum(papers_by_id[pid].get("date") is None for pid in unklar)
     mit_bv = sum(_bezirk_aus_gremium(pid, bv_bezirke, gaz) is not None for pid in unklar)
     return (f"Vorlagen nur mit unklarem Ort der Stadt (alle Ortsbezüge auf Ortsangaben der Stadt ohne Kölner Stadtteil "
-            f"laut Stadt und ohne Punkt in einem Kölner Stadtteil; unter „ohne Ortsbezug“, außer denen ohne Datum): "
-            f"{len(unklar)}; davon ohne Datum (in keiner Jahresdatei „ohne Ortsbezug“): {ohne_datum}; davon in genau "
-            f"einer Bezirksvertretung eines Kölner Stadtbezirks beraten (district_from_committee bisher nicht "
-            f"angewandt): {mit_bv}")
+            f"laut Stadt und ohne Punkt in einem Kölner Stadtteil; unter „ohne Ortsbezug“, außer denen ohne Datum und "
+            f"denen mit Stadtbezirk aus der beratenden Bezirksvertretung): {len(unklar)}; davon ohne Datum (in keiner "
+            f"Jahresdatei „ohne Ortsbezug“): {ohne_datum}; davon in genau einer Bezirksvertretung eines Kölner "
+            f"Stadtbezirks beraten (erhalten district_from_committee, Entscheidung 20.11.2026 (5)): {mit_bv}")
 
 
-def _from_committee(papers, bv_bezirke, locations, gaz, placed):
-    """Schwache Evidenz `district_from_committee` (CLAUDE.md 5.2): Vorlagen ohne jeden anderen Ortsbezug, die in genau
-    einer Bezirksvertretung beraten wurden, erhalten deren Stadtbezirk (Konfidenz niedrig)."""
+def _from_committee(papers, bv_bezirke, locations, gaz, placed, unklar=frozenset()):
+    """Schwache Evidenz `district_from_committee` (CLAUDE.md 5.2): Vorlagen ohne Ortsbezug (nicht in `placed`) oder nur
+    mit unklarem Ort der Stadt (`unklar`, _nur_unklarer_ort; eigene oder vererbte, Entscheidung 20.11.2026 (5)), die in
+    genau einer Bezirksvertretung beraten wurden, erhalten deren Stadtbezirk (Konfidenz niedrig), bei jeder
+    Vorlagenart. Der Ortsbezug auf den unklaren Ort der Stadt bleibt daneben stehen."""
     out = []
     for p in papers:
-        name = None if p["id"] in placed else _bezirk_aus_gremium(p["id"], bv_bezirke, gaz)
+        name = None if p["id"] in placed and p["id"] not in unklar else _bezirk_aus_gremium(p["id"], bv_bezirke, gaz)
         if name is None:
             continue
         pt = gaz.bezirk_point[name]
         r = dict(level="stadtbezirk", name=name, ortsteil=None, bezirk=name, lon=round(pt.x, 6), lat=round(pt.y, 6))
         out.append((p["id"], _add_location(r, locations, gaz), "B", "district_from_committee", "niedrig",
                     f"nur in der Bezirksvertretung {name} beraten", p["id"]))
-    print(f"Stadtbezirk aus der beratenden Bezirksvertretung: {len(out)} Vorlagen")
+    print(f"Stadtbezirk aus der beratenden Bezirksvertretung: {len(out)} Vorlagen; davon nur mit unklarem Ort der "
+          f"Stadt (Entscheidung 20.11.2026 (5)): {sum(r[0] in unklar for r in out)}")
     return out
 
 
