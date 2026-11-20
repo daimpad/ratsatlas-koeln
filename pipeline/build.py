@@ -427,7 +427,8 @@ def build():
     # standen (Ebene `ortsteil` außerhalb von `grob`, ohne verworfenen Punkt), dieselbe Regel wie Gazetteer._add_points
     # (Name nicht im Straßenverzeichnis, Punkt in einem Kölner Stadtteil, je Name einmal); ein Name, den der Gazetteer
     # auch aus einem Punkt der Stadt kennt, zählt nicht. Wie viele Vorlagen darüber einen Ortsbezug bekamen, zählt die
-    # Zeile nicht (dafür liefe Stufe B ein zweites Mal).
+    # Zeile nicht (dafür liefe Stufe B ein zweites Mal); für die Wirkung ist sie eine Obergrenze, denn Namen unter vier
+    # Zeichen oder mit dem Namen eines Stadtteils oder Stadtbezirks sucht Gazetteer.street_re nicht.
     flaeche = [(loc[1], loc[5], loc[6]) for loc in zeilen_stadt if loc[10] == "ortsteil" and loc[0] not in verworfen]
     print(f"Straßennamen nur aus Ortsangaben der Stadt ohne eigenen Punkt (Punkt der Stadtteilfläche), die der "
           f"Gazetteer bisher als Straßenpunkt aufnahm und jetzt nicht mehr kennt (nicht im Straßenverzeichnis, je Name "
@@ -450,7 +451,7 @@ def build():
                               rows["rel"] + rows["related"])
     rows["ploc"] += _inherited(papers, papers_by_id, rows["ploc"], locations, gaz, gesperrt)
     rows["ploc"] += _from_committee(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]})
-    print(_nur_unklarer_ort_zeile(rows["ploc"], locations, bv_bezirke, gaz))
+    print(_nur_unklarer_ort_zeile(rows["ploc"], locations, bv_bezirke, gaz, papers_by_id))
 
     # OR REPLACE: ändert sich die Quelle während des seitenweisen Abrufs, kann eine Vorlage doppelt kommen
     db.executemany(f"INSERT OR REPLACE INTO paper VALUES (?,?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}')", rows["paper"])
@@ -863,22 +864,28 @@ def _bezirk_aus_gremium(pid, bv_bezirke, gaz):
     return name if name in gaz.bezirk_point else None
 
 
-def _nur_unklarer_ort_zeile(ploc, locations, bv_bezirke, gaz):
+def _nur_unklarer_ort_zeile(ploc, locations, bv_bezirke, gaz, papers_by_id):
     """Zeile im Log, nur Zahlen (Entscheidung 20.11.2026 (1) (d)): Vorlagen, deren Ortsbezüge alle auf eine Ortsangabe
-    der Stadt ohne Stadtteil und ohne Koordinate zeigen (oparl_location, niedrig, „Ort unklar“; eigene oder vererbte).
-    Sie stehen unter „ohne Ortsbezug“ (export: kein Ortsbezug mit Stadtteil oder auf Ebene Stadtbezirk), und
-    _from_committee lässt sie aus, weil sie einen Ortsbezug haben. Davon die Vorlagen, denen _from_committee ohne diesen
-    Ortsbezug einen Stadtbezirk gäbe (dieselbe Bedingung über _bezirk_aus_gremium)."""
+    der Stadt ohne Kölner Stadtteil laut Stadt und ohne Punkt in einem Kölner Stadtteil zeigen (Zeile ohne Stadtteil
+    und ohne Koordinate, oparl_location, niedrig, „Ort unklar“; eigene oder vererbte; auch mit verworfenem Punkt
+    außerhalb aller Stadtteile, Entscheidung 19.11.2026 (4) (d)). Export stellt sie unter „ohne Ortsbezug“ (kein
+    Ortsbezug mit Stadtteil oder auf Ebene Stadtbezirk), je Jahr nach dem Datum; die ohne Datum stehen in keiner
+    Jahresdatei (export_all: Jahr aus substr(date, 1, 4)). _from_committee lässt sie aus, weil sie einen Ortsbezug
+    haben. Davon die ohne Datum und die, denen _from_committee ohne diesen Ortsbezug einen Stadtbezirk gäbe (dieselbe
+    Bedingung über _bezirk_aus_gremium)."""
     orte = {}
     for r in ploc:
         orte.setdefault(r[0], set()).add(r[1])
     unklar = [pid for pid, ids in orte.items()
               if all(locations[i][-1] == config.QUELLE_OPARL and locations[i][7] is None and locations[i][5] is None
                      for i in ids)]
+    ohne_datum = sum(papers_by_id[pid].get("date") is None for pid in unklar)
     mit_bv = sum(_bezirk_aus_gremium(pid, bv_bezirke, gaz) is not None for pid in unklar)
-    return (f"Vorlagen nur mit unklarem Ort der Stadt (alle Ortsbezüge auf Ortsangaben der Stadt ohne Stadtteil und "
-            f"ohne Koordinate, unter „ohne Ortsbezug“): {len(unklar)}; davon in genau einer Bezirksvertretung eines "
-            f"Kölner Stadtbezirks beraten (district_from_committee bisher nicht angewandt): {mit_bv}")
+    return (f"Vorlagen nur mit unklarem Ort der Stadt (alle Ortsbezüge auf Ortsangaben der Stadt ohne Kölner Stadtteil "
+            f"laut Stadt und ohne Punkt in einem Kölner Stadtteil; unter „ohne Ortsbezug“, außer denen ohne Datum): "
+            f"{len(unklar)}; davon ohne Datum (in keiner Jahresdatei „ohne Ortsbezug“): {ohne_datum}; davon in genau "
+            f"einer Bezirksvertretung eines Kölner Stadtbezirks beraten (district_from_committee bisher nicht "
+            f"angewandt): {mit_bv}")
 
 
 def _from_committee(papers, bv_bezirke, locations, gaz, placed):

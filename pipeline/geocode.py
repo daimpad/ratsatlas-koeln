@@ -1,8 +1,10 @@
 """Geokodierung Stufe B (regelbasiert, Titel): Straßen, Ortsteile, Stadtbezirke, Bebauungspläne.
 
-Straßenverzeichnis: benannte OSM-Ways (ODbL), je Name zu Ortsteilen zugeordnet. Mehrere räumlich
-getrennte Lagen desselben Namens gelten als mehrdeutig (z. B. „Kapellenstraße“). Ergänzend dienen
-die Straßenpunkte der OParl-Locations (Stufe A, CC0) für Namen, die in OSM (noch) fehlen.
+Straßenverzeichnis: „Straßen Köln“ der Stadt (config.STRASSEN, geschrieben von geodaten.write), ohne diese
+Datei benannte OSM-Ways (ODbL), je Name zu Ortsteilen zugeordnet. Mehrere räumlich getrennte Lagen desselben
+Namens gelten als mehrdeutig (z. B. „Kapellenstraße“). Ergänzend dienen für Namen, die im Verzeichnis fehlen,
+die Punkte der Stadt aus Ortsangaben, die keine Vorlage ohne Erlaubnis für Hauskoordinaten nennt (Stufe A), nur
+in einem Kölner Stadtteil (`points` in build, Entscheidung 20.11.2026 (1) (b)).
 
 Kreuzungen: Für je zwei Straßen, deren Linien sich berühren, werden die Ortsteile der Berührungspunkte
 gespeichert. Nennt ein Titel zwei solche Straßen, gilt der Ortsteil der Kreuzung (Regel R1,

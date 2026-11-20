@@ -2,11 +2,12 @@
 Stadt (20.11.2026 (1) (d)). (b): Nur eine Ortsangabe mit einem Punkt der Stadt in einem Kölner Stadtteil liefert dem
 Gazetteer einen Straßenpunkt für eine Straße, die das Straßenverzeichnis nicht kennt; eine Ortsangabe ohne eigenen Punkt,
 deren Zeile nur den Punkt der Stadtteilfläche trägt, liefert keinen mehr (vorher stand ein Titel mit dieser Straße auf
-Ebene Straße am Punkt der Stadtteilfläche). Ortsangaben ohne Erlaubnis (`grob`) bleiben wie bisher. Das Log von build
-zählt die Straßennamen, die so wegfallen. (d): Das Log zählt die Vorlagen, deren Ortsbezüge alle auf eine Ortsangabe der
-Stadt ohne Stadtteil und ohne Koordinate zeigen, und davon die mit genau einer beratenden Bezirksvertretung;
-district_from_committee bleibt für sie unverändert aus. Erfundene Vorlagen (tools/testdaten.py und eingefügte Vorlagen
-in den temporären Pfaden der Fixture `oparl`); keine Anfragen an die Stadt."""
+Ebene Straße am Punkt der Stadtteilfläche, bei einer Vorlage ohne Erlaubnis für Hauskoordinaten auf Ebene Stadtteil).
+Ortsangaben ohne Erlaubnis (`grob`) bleiben wie bisher. Das Log von build zählt die Straßennamen, die so wegfallen. (d):
+Das Log zählt die Vorlagen, deren Ortsbezüge alle auf eine Ortsangabe der Stadt ohne Kölner Stadtteil laut Stadt und
+ohne Punkt in einem Kölner Stadtteil zeigen, davon die ohne Datum und die mit genau einer beratenden
+Bezirksvertretung; district_from_committee bleibt für sie unverändert aus. Erfundene Vorlagen (tools/testdaten.py und
+eingefügte Vorlagen in den temporären Pfaden der Fixture `oparl`); keine Anfragen an die Stadt."""
 import importlib.util
 import json
 import sqlite3
@@ -31,9 +32,12 @@ NAMEN = (FLAECHE, PUNKT, SCHUTZ, VERWORFEN)
 AUSSEN = (6.123457, 51.234567)   # erfundener Punkt außerhalb aller Kölner Stadtteile (geprüft in _einfuegen)
 LOG_B = ("Straßennamen nur aus Ortsangaben der Stadt ohne eigenen Punkt (Punkt der Stadtteilfläche), die der Gazetteer "
          "bisher als Straßenpunkt aufnahm und jetzt nicht mehr kennt (nicht im Straßenverzeichnis, je Name einmal): {}\n")
-LOG_D = ("Vorlagen nur mit unklarem Ort der Stadt (alle Ortsbezüge auf Ortsangaben der Stadt ohne Stadtteil und ohne "
-         "Koordinate, unter „ohne Ortsbezug“): {}; davon in genau einer Bezirksvertretung eines Kölner Stadtbezirks "
-         "beraten (district_from_committee bisher nicht angewandt): {}\n")
+LOG_D = ("Vorlagen nur mit unklarem Ort der Stadt (alle Ortsbezüge auf Ortsangaben der Stadt ohne Kölner Stadtteil "
+         "laut Stadt und ohne Punkt in einem Kölner Stadtteil; unter „ohne Ortsbezug“, außer denen ohne Datum): "
+         "{}; davon ohne Datum (in keiner Jahresdatei „ohne Ortsbezug“): {}; davon in genau einer Bezirksvertretung "
+         "eines Kölner Stadtbezirks beraten (district_from_committee bisher nicht angewandt): {}\n")
+LOG_AUSSEN = ("Ortsangaben der Stadt mit Punkt außerhalb aller Kölner Stadtteile bei Vorlagen, die einen Punkt haben "
+              "dürfen: {} (Punkt verworfen; davon mit Kölner Stadtteil laut Stadt {})\n")
 
 
 def _tool(name):
@@ -99,6 +103,9 @@ def _einfuegen():
                                                      streetAddress=f"{VERWORFEN} 2")]),
         # Titel erlaubter Vorlagen mit diesen Straßen
         *[_vorlage(f"titel-{k}", f"191{k}/2026", titel=f"[Testdaten] Neue Bank am {n}") for k, n in enumerate(NAMEN)],
+        # Titel einer Eingabe (ohne Erlaubnis) mit der Straße nur aus Ortsangaben ohne eigenen Punkt, eine
+        # Bezirksvertretung (vorher Ebene Stadtteil über _stadtteil_statt_stadtpunkt)
+        _vorlage("e-fl", "1914/2026", titel=f"[Testdaten] Neue Bank am {FLAECHE}", art=EINGABE, gremien=("bv4",)),
         # (d) nur ein unklarer Ort der Stadt: eine, keine, zwei Bezirksvertretungen; vererbt; mit Stadtteil im Titel
         _vorlage("u-bv", "1921/2026", location=[unklar], gremien=("bv4",)),
         _vorlage("u-rat", "1922/2026", location=[_ort("u-rat", description="Erfundener Platz")]),
@@ -106,6 +113,9 @@ def _einfuegen():
         _vorlage("u-kind", "1924/2026", gremien=("bv4",), superordinatedPaper=[_id("u-bv")]),
         _vorlage("u-titel", "1925/2026", titel="[Testdaten] Spielplatz in Sülz", location=[_ort("u-titel")],
                  gremien=("bv3",)),
+        # verworfener Punkt außerhalb aller Stadtteile ohne Stadtteil laut Stadt, eine Bezirksvertretung; ohne Datum
+        _vorlage("u-aussen", "1926/2026", location=[_ort("u-aussen", AUSSEN)], gremien=("bv4",)),
+        _vorlage("u-datum", "1927/2026", location=[_ort("u-datum", description="Erfundener Platz")], date=None),
     ]
     with open(config.PAPERS, "a", encoding="utf-8") as f:
         for p in faelle:
@@ -135,7 +145,8 @@ def test_strassenpunkte_nur_aus_punkten_der_stadt(testdaten, capsys):
     assert "Alle Prüfungen durchgeführt, keine Befunde." in capsys.readouterr().out
     db = sqlite3.connect(config.DB)
     erlaubt = check.erlaubnis(db)[0]
-    assert all(erlaubt[_id(k)] for k in ("fl", "pt", "titel-0", "titel-1", "titel-2", "u-bv")) and not erlaubt[_id("grob")]
+    assert all(erlaubt[_id(k)] for k in ("fl", "pt", "titel-0", "titel-1", "titel-2", "u-bv", "u-aussen"))
+    assert not erlaubt[_id("grob")] and not erlaubt[_id("e-fl")]
     # die Ortsangaben selbst unverändert: ohne eigenen Punkt die Stadtteilfläche, mit Punkt der Stadt „Ort genau“
     assert _orte(db, "fl") == {("ortsteil", "oparl_sublocality", *_schwerpunkt("Ehrenfeld"), "Ehrenfeld")}
     assert _orte(db, "pt") == {("strasse", "oparl_location", *innen, ot["ortsteil_bez"])}
@@ -148,24 +159,34 @@ def test_strassenpunkte_nur_aus_punkten_der_stadt(testdaten, capsys):
     assert _orte(db, "titel-1") == {("strasse", "strasse", *innen, ot["ortsteil_bez"])}
     # ohne Erlaubnis und mit verworfenem Punkt wie bisher kein Straßenpunkt
     assert _orte(db, "titel-2") == set() and _orte(db, "titel-3") == set()
+    # auch eine Vorlage ohne Erlaubnis bekommt über die Straße nur aus Ortsangaben ohne eigenen Punkt keinen
+    # Stadtteil mehr; mit genau einer Bezirksvertretung gilt dann district_from_committee (Stadtbezirk Ehrenfeld)
+    assert {r[:2] + r[4:] for r in _orte(db, "e-fl")} == {("stadtbezirk", "district_from_committee", None)}
+    assert db.execute("SELECT l.stadtbezirk FROM paper_location pl JOIN location l ON l.id = pl.location_id "
+                      "WHERE pl.paper_id = ?", (_id("e-fl"),)).fetchall() == [("Ehrenfeld",)]
     # (d) district_from_committee bleibt aus, die Vorlagen bleiben beim unklaren Ort der Stadt
-    for key in ("u-bv", "u-rat", "u-zwei"):
+    for key in ("u-bv", "u-rat", "u-zwei", "u-aussen", "u-datum"):
         assert _orte(db, key) == {("strasse", "oparl_location", None, None, None)}, key
     assert _orte(db, "u-kind") == {("strasse", "vererbt", None, None, None)}
     assert [r for r in _orte(db, "u-titel") if r[:2] == ("ortsteil", "ortsteil_name") and r[4] == "Sülz"]
-    assert not db.execute("SELECT 1 FROM paper_location WHERE method = 'district_from_committee' AND paper_id LIKE ?",
-                          (f"{B}/papers/sp-%",)).fetchall()
+    assert db.execute("SELECT paper_id FROM paper_location WHERE method = 'district_from_committee' "
+                      "AND paper_id LIKE ?", (f"{B}/papers/sp-%",)).fetchall() == [(_id("e-fl"),)]
     db.close()
-    # Log: nur Zahlen; (b) FLAECHE einmal (fl und fl3), (d) u-bv, u-rat, u-zwei und u-kind, davon u-bv und u-kind
-    assert LOG_B.format(1) in aus_build and LOG_D.format(4, 2) in aus_build
+    # Log: nur Zahlen; (b) FLAECHE einmal (fl und fl3); verworfene Punkte verw (mit Stadtteil laut Stadt) und u-aussen;
+    # (d) u-bv, u-rat, u-zwei, u-kind, u-aussen und u-datum, davon ohne Datum u-datum, mit genau einer
+    # Bezirksvertretung u-bv, u-kind und u-aussen
+    assert LOG_B.format(1) in aus_build and LOG_AUSSEN.format(2, 1) in aus_build and LOG_D.format(6, 1, 3) in aus_build
     for anfang in ("Straßennamen nur aus Ortsangaben", "Vorlagen nur mit unklarem Ort"):
         zeilen = [z for z in aus_build.splitlines() if z.startswith(anfang)]
         assert len(zeilen) == 1, anfang
         assert not [x for x in (*NAMEN, "Ehrenfeld", "Nippes", "Sülz", "sp-", "19", "Platz") if x in zeilen[0]], anfang
-    # dieselben Vorlagen stehen auf der Seite unter „ohne Ortsbezug“; jede dort mit Ortsbezug ist eine von ihnen
+    # dieselben Vorlagen mit Datum stehen auf der Seite unter „ohne Ortsbezug“; jede dort mit Ortsbezug ist eine von
+    # ihnen
     base = config.EXPORT / config.STADT
     ohne = {p["reference"]: p for f in (base / "ohne-ortsbezug").glob("*.json")
             for p in json.loads(f.read_text())["papers"]}
     mit_ort = {ref for ref, p in ohne.items() if p["locations"]}
-    assert mit_ort == {"1921/2026", "1922/2026", "1923/2026", "1924/2026"}
+    assert mit_ort == {"1921/2026", "1922/2026", "1923/2026", "1924/2026", "1926/2026"}
     assert ohne["1910/2026"]["locations"] == []
+    # die Vorlage ohne Datum steht in keiner Jahresdatei „ohne Ortsbezug“ (darum eigens gezählt)
+    assert "1927/2026" not in ohne
