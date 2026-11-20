@@ -77,9 +77,31 @@ def test_schreibweise_eines_bekannten_gremiums_nach_dem_kuerzen():
         assert not export.gremium_aus_namen(erwartet, organisationen), name
 
 
+def test_zeilenumbruch_im_namen_eines_bekannten_gremiums():
+    """Hat der Name mehrere Zeilen mit Text, gilt vor dem Treffer der ersten Zeile der Treffer des ganzen Namens (ohne
+    Vorspann und ohne Zusatz am Ende, strenger oder breiter Schlüssel): Ein Zeilenumbruch mitten im Namen eines
+    bekannten Gremiums ergibt so kein gekürztes Gremium (bis ab3fff9 traf der ganze Name), auch nicht neben einem
+    bekannten Gremium mit dem Namen der ersten Zeile. Text der zweiten Zeile kommt nie ins Gremium: Trifft der ganze
+    Name nichts, gilt die erste Zeile wie sonst."""
+    lang, kurz = "Ausschuss für Musterwesen und Probefragen", "Ausschuss für Musterwesen"
+    names = {ORG: lang, "https://example.invalid/oparl/organizations/o2": "Bezirksvertretung Probedorf"}
+    for name, erwartet in [
+        ("Sitzung des Ausschusses für Musterwesen\nund Probefragen", lang),
+        ("Sitzung des Ausschusses Musterwesen\nund Probefragen – entfällt", lang),
+        ("Sitzung der Bezirksvertretung\nProbedorf", "Bezirksvertretung Probedorf"),
+        ("Sitzung der Bezirksvertretung\r\nProbedorf - Sitzung fällt aus -", "Bezirksvertretung Probedorf"),
+        ("Sitzung der Bezirksvertretung\nAchtung: Die Sitzung wurde abgesagt und fällt aus!", "Bezirksvertretung"),
+        ("Sitzung des Ausschusses für Musterwesen\nACHTUNG: Die Sitzung wird verlegt.", "Ausschuss für Musterwesen"),
+    ]:
+        assert gremium(name, names) == erwartet, name
+    names["https://example.invalid/oparl/organizations/o3"] = kurz
+    assert gremium("Sitzung des Ausschusses für Musterwesen\nund Probefragen", names) == lang
+    assert gremium("Sitzung des Ausschusses für Musterwesen\nACHTUNG: Die Sitzung wird verlegt.", names) == kurz
+
+
 def test_name_einer_organisation_unveraendert():
-    """Der Name einer Organisation bleibt, auch wenn er ein Wort der Liste trägt; derselbe Name ohne Organisation verliert
-    den Zusatz."""
+    """Der Name einer Organisation bleibt, auch wenn er ein Wort der Liste trägt; derselbe Name ohne Organisation
+    verliert den Zusatz."""
     for org in ("Probekreis - Sitzung entfällt", "Musterkreis – vertagt auf einen späteren Zeitpunkt",
                 "Probekreis - abgesagt!"):
         names = {ORG: org}
@@ -107,7 +129,8 @@ def test_legitime_namen_bleiben(name):
 
 def test_grenzen_der_liste():
     """Nur die Formen der Liste, am Ende der Zeile, in der Schreibweise der Liste und hinter „ - “ oder „ – “ mit
-    Leerraum auf beiden Seiten; daneben je die Form, die wegfällt."""
+    Leerraum auf beiden Seiten; „vertagt“ und „verschoben“ samt dem Rest der Zeile, wenn das Wort dort endet, auch vor
+    einem Satzzeichen; daneben je die Form, die wegfällt."""
     for name, erwartet in [
         (f"{G} - entfällt wegen Krankheit", f"{G} - entfällt wegen Krankheit"), (f"{G} - entfällt", G),
         (f"{G} - Abgesagt", f"{G} - Abgesagt"), (f"{G} - abgesagt", G),
@@ -115,14 +138,16 @@ def test_grenzen_der_liste():
         (f"{G} - Sitzung abgesagt", f"{G} - Sitzung abgesagt"), (f"{G} - Sitzung fällt aus", G),
         (f"{G} -entfällt", f"{G} -entfällt"), (f"{G}-entfällt", f"{G}-entfällt"), (f"{G} – entfällt", G),
         (f"{G} - vertagte Sitzung", f"{G} - vertagte Sitzung"), (f"{G} - vertagt", G),
+        (f"{G} - verschobene Projekte", f"{G} - verschobene Projekte"), (f"{G} - vertagt.", G),
+        (f"{G} - verschoben, neuer Termin folgt", G), (f"{G} - vertagt: neuer Termin", G),
         (f"{G} - entfällt - Haushalt", f"{G} - entfällt - Haushalt"), (f"{G} - Haushalt - entfällt", f"{G} - Haushalt"),
     ]:
         assert gremium(name) == erwartet, name
 
 
 # erfundene Sitzungen für die Kette: Kennung → (Name, Organisation oder None); Beginn am Tag nach heute plus Stelle in
-# der Liste (die ersten sechs stehen in „Aktuell“). Bekannte Gremien der Datenbank: „Beispielbeirat“ (bb) und
-# „Probekreis - abgesagt“ (pk), dazu die des Testservers
+# der Liste (die ersten sechs stehen in „Aktuell“). Bekannte Gremien der Datenbank: „Beispielbeirat“ (bb),
+# „Probekreis - abgesagt“ (pk) und „Ausschuss für Musterwesen und Probefragen“ (mu), dazu die des Testservers
 SITZUNGEN = {
     "z1": (f"{G} - Sitzung enfällt", None),
     "z2": ("Sitzung des Probebeirates – vertagt auf einen späteren Zeitpunkt", None),
@@ -132,16 +157,18 @@ SITZUNGEN = {
     "z6": (f"{G} - abgesagt", "pk"),
     "z7": ("Ausschuss Probewesen / Vergabe / Beispielfragen - Haushalt", None),
     "z8": ("Betriebsausschuss Beispiel-Probe-Museum & Fondation Muster", None),
+    "z9": ("Sitzung des Ausschusses für Musterwesen\nund Probefragen", None),
 }
 ERWARTET = {"z1": G, "z2": "Probebeirat", "z3": "Musterkreis Probe", "z4": "Probebeirat", "z5": G,
             "z6": "Probekreis - abgesagt", "z7": "Ausschuss Probewesen / Vergabe / Beispielfragen - Haushalt",
-            "z8": "Betriebsausschuss Beispiel-Probe-Museum & Fondation Muster"}
+            "z8": "Betriebsausschuss Beispiel-Probe-Museum & Fondation Muster",
+            "z9": "Ausschuss für Musterwesen und Probefragen"}
 
 
 def _aufbau(oparl):
     """Sitzungen ab morgen und eine Beschlussvorlage, beraten in „z1“ und „z4“; Abruf, Aufbau, Export."""
     b = oparl.b
-    for k, name in (("bb", G), ("pk", "Probekreis - abgesagt")):
+    for k, name in (("bb", G), ("pk", "Probekreis - abgesagt"), ("mu", "Ausschuss für Musterwesen und Probefragen")):
         oparl.orgs.append({"id": f"{b}/organizations/{k}", "name": name, "organizationType": "Gremium",
                            "modified": "2026-01-01T00:00:00+01:00"})
     for i, (k, (name, org)) in enumerate(SITZUNGEN.items(), 1):
@@ -163,11 +190,12 @@ def _aufbau(oparl):
 
 def test_kette_gremium_ohne_zusatz(oparl, capsys):
     """Orakel: In zeit.json, in der Zusammenfassung in termine.ics und in index.json („Aktuell“) steht das Gremium ohne
-    zweite Zeile und ohne Zusatz, bei „z1“ und „z5“ in der Schreibweise der Organisation „Beispielbeirat“; der Name
+    zweite Zeile und ohne Zusatz, bei „z1“ und „z5“ in der Schreibweise der Organisation „Beispielbeirat“, bei „z9“
+    (Zeilenumbruch mitten im Namen) in der Schreibweise „Ausschuss für Musterwesen und Probefragen“; der Name
     jeder Sitzung steht unverändert in zeit.json, in der Beschreibung in termine.ics und in `process[].meeting`; die
     Organisation „Probekreis - abgesagt“ bleibt. Zeile im Log von `export`: Gremium aus dem Sitzungsnamen bei „z2“,
-    „z3“, „z4“, „z7“ und „z8“ (5; vorher auch „z1“ und „z5“), gleich der Zahl in zeit.json nach
-    export.gremium_aus_namen; check ohne Befund."""
+    „z3“, „z4“, „z7“ und „z8“ (5; mit dem Code von ab3fff9 auch „z1“ und „z5“, „z9“ in beiden Ständen nicht), gleich
+    der Zahl in zeit.json nach export.gremium_aus_namen; check ohne Befund."""
     capsys.readouterr()
     _aufbau(oparl)
     log = capsys.readouterr().out

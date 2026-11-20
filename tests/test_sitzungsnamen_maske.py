@@ -1,8 +1,9 @@
 """Titelmaske für jeden Sitzungsnamen und jedes Gremium aus dem Sitzungsnamen (Entscheidung 19.11.2026 (3) (c)).
 
 Bis dahin liefen Name und Gremium aus dem Namen nur bei einer Sitzung durch die Maske, in der eine Vorlage der Maske
-beraten wird (Maske.sitzungen; TECHNIK.md, Offen (9)). Das Gremium aus dem Namen ist der Name ohne Vorspann
-(export._VORSPANN_SITZUNG), und der ganze Name steht in zeit.json, in der Beschreibung in termine.ics und in
+beraten wird (Maske.sitzungen; TECHNIK.md, Offen (9)). Das Gremium aus dem Namen ist dessen erste Zeile ohne Vorspann
+und ohne Zusatz zum Stand (export._VORSPANN_SITZUNG, export._ZUSATZ_STAND; seit der Entscheidung 20.11.2026 (4) (b),
+vorher der ganze Name ohne Vorspann), und der ganze Name steht in zeit.json, in der Beschreibung in termine.ics und in
 `process[].meeting` der Gebietsdateien daneben; deshalb läuft jetzt der Name jeder Sitzung durch die Maske
 (Maske.sitzungsname), ebenso jedes Gremium aus dem Namen, in zeit.json, termine.ics und index.json („Aktuell in Köln“).
 check prüft mit derselben Regel (Maske.sitzungsname_offen); ein Befund bei einer Sitzung ohne Vorlage der Maske nennt

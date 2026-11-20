@@ -885,13 +885,29 @@ _VORSPANN_SITZUNG = re.compile(r"^(?:\d{1,3}(?:\.\.?|,)?\s?)?(?:Gemeinsame |\(ko
 # Zusatz zum Stand der Sitzung am Ende der ersten Zeile eines Sitzungsnamens, hinter „ - “ oder „ – “ (Entscheidung
 # 20.11.2026 (4) (b)), nur aus einer festen Liste: „Sitzung fällt aus“, „fällt aus“, „Sitzung entfällt“, „entfällt“,
 # „Sitzung enfällt“ und „enfällt“ (Schreibweise der Quelle), „abgesagt“, dazu „vertagt“ und „verschoben“ samt dem Rest
-# der Zeile („vertagt auf einen späteren Zeitpunkt“); dahinter nur Leerraum, „!“, „-“ oder „–“ („- Sitzung fällt
-# aus -“). Groß- und Kleinschreibung wie in der Liste. Anlass: Im Lauf 57 trugen drei Gremien aus Sitzungsnamen einen
-# solchen Zusatz, zwei davon neben demselben Gremium ohne Zusatz (TECHNIK.md, 20.11.2026 (4)). Ein anderes Wort hinter
-# „ - “ bleibt Teil des Gremiums (keine allgemeine Kürzung hinter „ - “), ebenso ein Bindestrich ohne Leerraum davor
+# der Zeile, wenn das Wort dort endet (\b: „vertagt auf einen späteren Zeitpunkt“, „vertagt.“, „verschoben, neuer
+# Termin folgt“; „vertagte Sitzung“ bleibt); dahinter nur Leerraum, „!“, „-“ oder „–“ („- Sitzung fällt aus -“). Groß-
+# und Kleinschreibung wie in der Liste. Anlass: Im Lauf 57 trugen drei Gremien aus Sitzungsnamen einen solchen Zusatz,
+# zwei davon neben demselben Gremium ohne Zusatz (TECHNIK.md, 20.11.2026 (4)). Ein anderes Wort hinter „ - “ bleibt
+# Teil des Gremiums (keine allgemeine Kürzung hinter „ - “), ebenso ein Bindestrich ohne Leerraum davor
 # („Beispiel-Museum“)
 _ZUSATZ_STAND = re.compile(r"\s+[-–]\s+(?:(?:Sitzung )?(?:fällt aus|entfällt|enfällt)|abgesagt"
-                           r"|(?:vertagt|verschoben)(?:\s.*)?)[\s!\-–]*$")
+                           r"|(?:vertagt|verschoben)\b.*)[\s!\-–]*$")
+
+
+def _gekuerzt(text):
+    """Sitzungsname oder dessen erste Zeile ohne Vorspann (_VORSPANN_SITZUNG), ohne Zusatz zum Stand (_ZUSATZ_STAND),
+    im Nominativ (_nominativ); für gremium_der_sitzung."""
+    return _nominativ(_ZUSATZ_STAND.sub("", _VORSPANN_SITZUNG.sub("", text)))
+
+
+def _bekannte_schreibweise(name, streng, breit):
+    """Schreibweise eines bekannten Gremiums für `name` (gremium_der_sitzung): bei gleichem strengem Schlüssel, sonst
+    bei gleichem breitem Schlüssel, wenn er genau ein Gremium ergibt; sonst None."""
+    if _schluessel(name) in streng:
+        return streng[_schluessel(name)] or "unbekannt"
+    kandidaten = breit.get(ausschuesse.schluessel(name)) or ()
+    return streng[next(iter(kandidaten))] if len(kandidaten) == 1 else None
 
 
 def gremium_der_sitzung(m, names, index=None):
@@ -901,23 +917,30 @@ def gremium_der_sitzung(m, names, index=None):
     weg), dann ohne Vorspann (_VORSPANN_SITZUNG, am Anfang dieser Zeile) und ohne Zusatz zum Stand (_ZUSATZ_STAND, an
     ihrem Ende), dann im Nominativ (_nominativ), zuletzt in der Schreibweise eines bekannten Gremiums. Weil Vorspann
     und Zusatz vor dem Vergleich wegfallen, findet „Beispielbeirat - Sitzung enfällt“ die Schreibweise
-    „Beispielbeirat“; der Name der Sitzung selbst bleibt davon unberührt (_meetings, _paper_detail). Die Schreibweise
-    eines bekannten Gremiums in zwei Stufen (gremien_index): zuerst bei gleichem strengem Schlüssel (ohne Satzzeichen;
-    wie bis zum 16.11.2026, bisherige Treffer bleiben), sonst bei gleichem breitem Schlüssel (ausschuesse.schluessel,
-    auch ohne „für“ und mit „/“ wie Komma: die Zuständigkeitsordnung schreibt „Ausschuss Klima, Umwelt und Grün“ und
-    „Ausschuss für Klima, Umwelt und Grün“), aber nur, wenn er genau ein Gremium ergibt. Stehen Gremien der alten und
-    der neuen Wahlperiode mit und ohne „für“ nebeneinander, gewinnt so die genau passende Schreibweise; ist der breite
-    Schlüssel mehrdeutig, bleibt der Name aus der Sitzung in dieser Form (Prüfung des Abgleichs vom 16.11.2026)."""
+    „Beispielbeirat“; der Name der Sitzung selbst bleibt davon unberührt (_meetings, _paper_detail). Hat der Name
+    mehrere Zeilen mit Text, gilt vor dem Treffer der ersten Zeile der Treffer des ganzen Namens, ebenso ohne Vorspann
+    und ohne Zusatz am Ende (Nachprüfung des Pull Request; bis ab3fff9 zählte nur der ganze Name ohne Vorspann, und
+    beide Schlüssel werten einen Zeilenumbruch wie ein Leerzeichen): Dann lag der Zeilenumbruch im Namen eines
+    bekannten Gremiums (erfunden: „Sitzung der Bezirksvertretung“ und „Probedorf“ auf der zweiten Zeile ergibt
+    „Bezirksvertretung Probedorf“, nicht „Bezirksvertretung“). Ein Hinweis auf der zweiten Zeile trifft dabei nur,
+    wenn der ganze Name im strengen oder breiten Schlüssel dem Namen einer Organisation gleicht; Text der zweiten Zeile
+    kommt so nie ins Gremium, nur die Schreibweise einer Organisation. Die Schreibweise eines
+    bekannten Gremiums in zwei Stufen (gremien_index, _bekannte_schreibweise): zuerst bei gleichem strengem Schlüssel
+    (ohne Satzzeichen; wie bis zum 16.11.2026, bisherige Treffer bleiben), sonst bei gleichem breitem Schlüssel
+    (ausschuesse.schluessel, auch ohne „für“ und mit „/“ wie Komma: die Zuständigkeitsordnung schreibt „Ausschuss
+    Klima, Umwelt und Grün“ und „Ausschuss für Klima, Umwelt und Grün“), aber nur, wenn er genau ein Gremium ergibt.
+    Stehen Gremien der alten und der neuen Wahlperiode mit und ohne „für“ nebeneinander, gewinnt so die genau passende
+    Schreibweise; ist der breite Schlüssel mehrdeutig, bleibt der Name aus der Sitzung in der gekürzten Form der ersten
+    Zeile (Prüfung des Abgleichs vom 16.11.2026)."""
     org = (m.get("organization") or [None])[0]
     if names.get(org):
         return names[org]
-    zeile = next((z.rstrip() for z in (m.get("name") or "").splitlines() if z.strip()), "")
-    name = _nominativ(_ZUSATZ_STAND.sub("", _VORSPANN_SITZUNG.sub("", zeile)))
+    roh = m.get("name") or ""
+    zeilen = [z.rstrip() for z in roh.splitlines() if z.strip()]
     streng, breit = index if index is not None else gremien_index(names)
-    if _schluessel(name) in streng:
-        return streng[_schluessel(name)] or "unbekannt"
-    kandidaten = breit.get(ausschuesse.schluessel(name)) or ()
-    return (streng[next(iter(kandidaten))] if len(kandidaten) == 1 else name) or "unbekannt"
+    ganz = _bekannte_schreibweise(_gekuerzt(roh), streng, breit) if len(zeilen) > 1 else None
+    name = _gekuerzt(zeilen[0] if zeilen else "")
+    return ganz or _bekannte_schreibweise(name, streng, breit) or name or "unbekannt"
 
 
 def gremium_aus_namen(gremium, organisationen):
@@ -943,12 +966,12 @@ def _meetings(db, zahl=None):
     (gremium_der_sitzung, seit der Entscheidung 20.11.2026 (4) (b); vorher der ganze Name ohne Vorspann), und der ganze
     Name steht in zeit.json und in der Beschreibung in termine.ics daneben; bliebe er ungekürzt, stünde dieselbe
     Hausnummer dort weiter. Bis zur Entscheidung 19.11.2026 (3) (c) nur bei Sitzungen, in denen eine Vorlage der Maske
-    beraten wird (Maske.sitzungen; Offen (9) der Nachprüfung der dritten Korrektur). check._sitzungen und check._aktuell prüfen mit derselben Regel
-    (Maske.sitzungsname_offen). Das Gremium entsteht aus dem ungekürzten Namen und läuft, wenn es aus dem Namen stammt,
-    selbst durch die Maske: So findet gremium_der_sitzung die Schreibweise eines bekannten Gremiums auch dann, wenn die
-    Maske eine Zahl im Namen kürzt (der Name einer Organisation bleibt ungeprüft, wie bisher; vorher entstand das
-    Gremium aus dem maskierten Namen). Mit `zahl` (dict) zählt _meetings für zeile_sitzungsnamen: `gremium_aus_namen`
-    und `maske` (Name oder Gremium geändert)."""
+    beraten wird (Maske.sitzungen; Offen (9) der Nachprüfung der dritten Korrektur). check._sitzungen und
+    check._aktuell prüfen mit derselben Regel (Maske.sitzungsname_offen). Das Gremium entsteht aus dem ungekürzten
+    Namen und läuft, wenn es aus dem Namen stammt, selbst durch die Maske: So findet gremium_der_sitzung die
+    Schreibweise eines bekannten Gremiums auch dann, wenn die Maske eine Zahl im Namen kürzt (der Name einer
+    Organisation bleibt ungeprüft, wie bisher; vorher entstand das Gremium aus dem maskierten Namen). Mit `zahl` (dict)
+    zählt _meetings für zeile_sitzungsnamen: `gremium_aus_namen` und `maske` (Name oder Gremium geändert)."""
     if not config.MEETINGS.exists():
         return []
     names = dict(db.execute("SELECT id, name FROM organization"))
