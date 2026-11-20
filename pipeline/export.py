@@ -7,6 +7,7 @@ import random
 import re
 import shutil
 import sqlite3
+import unicodedata
 from datetime import date, datetime, timezone
 
 from . import aemter, ausschuesse, chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, maske, plans, process as proc, prozessarten, publish, soll, topics
@@ -427,6 +428,7 @@ def export_all():
     meetings = _meetings(db, zahl_sitzungen)
     print(zeile_beginn(meetings))
     print(zeile_sitzungsnamen(zahl_sitzungen))
+    print(zeile_hinweise(meetings))
     publish.write_calendar(out / "termine.ics", meetings)
     n_points = publish.write_geojson(out / "vorlagen.geojson", cache,
                                      [{k: v for k, v in s.items() if k != "retrieved_at"} for s in sources])
@@ -648,8 +650,9 @@ def _sample(db, out, ortsteil, n=50, seed=2026):
 # Besucher:innen herausgefiltert hat. AKTUELL_SITZUNGEN zählt erst ab dem Tag nach dem Stichtag (_aktuell)
 AKTUELL_SITZUNGEN, AKTUELL_VORLAGEN = 6, 5
 # Felder je Karte, sonst keine (kein Sitzungsname, keine Frist, keine Namen von Personen); check._aktuell meldet jedes
-# andere Feld
-AKTUELL_FELDER = {"sitzungen": ("date", "time", "gremium", "web", "source_object"),
+# andere Feld. `hinweis` (Entscheidung 20.11.2026 (7) (b)) ist nur „verschoben“ (hinweis_sitzung, aus dem Namen
+# abgeleitet, nicht der Name selbst) und fehlt ohne Hinweis
+AKTUELL_FELDER = {"sitzungen": ("date", "time", "gremium", "hinweis", "web", "source_object"),
                   "vorlagen": ("reference", "date", "paper_type", "name", "area", "ort", "source_object")}
 # Ort einer Vorlage ohne Ortsbezug, derselbe Wortlaut wie im Vorgang (site/app.js)
 ORT_OHNE = "stadtweit / ohne Ortsbezug"
@@ -685,14 +688,17 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
       Aktualisierung der Sitzungen (STAND.json `meetings`, _kalendertag; unlesbar oder fehlend: `heute`). Beide
       Zeitpunkte liegen vor dem Export, der spätere grenzt vergangene Sitzungen am engsten ab; ist nur die Liste der
       Vorlagen ausgesetzt, bleibt ihr Zeitpunkt stehen, die Sitzungen werden aber weiter aktualisiert. Sitzungen ab
-      dem Stichtag ohne abgesagte, nach Tag und Uhrzeit; eine Sitzung ohne Uhrzeit (00:00 Uhr in Köln, _meetings)
-      steht hinter denen mit Uhrzeit am selben Tag, sonst gilt die Reihenfolge von _meetings. Alle Sitzungen am
+      dem Stichtag ohne abgesagte (OParl `cancelled` oder, seit der Entscheidung 20.11.2026 (7) (b), Hinweis
+      „abgesagt“ aus dem Namen, hinweis_sitzung: Sie gelten nicht als nächste Sitzung und belegen keinen Platz), nach
+      Tag und Uhrzeit; eine Sitzung ohne Uhrzeit (00:00 Uhr in Köln, _meetings) steht hinter denen mit Uhrzeit am
+      selben Tag, sonst gilt die Reihenfolge von _meetings. Alle Sitzungen am
       Stichtag und dazu höchstens AKTUELL_SITZUNGEN spätere: Der nächtliche Lauf beginnt um 22:10 Uhr UTC, im Winter
       also um 23:10 Uhr Kölner Zeit, der Stichtag ist dann der Abend des Laufs. Seine Sitzungen sind vergangen, sobald
       Besucher:innen die Seite am nächsten Tag öffnen; zählten sie mit, könnten sie alle Plätze belegen, und die Karte
       bliebe nach dem Filter im Browser leer. Je Sitzung nur die Felder aus AKTUELL_FELDER (`date`, `time`,
-      `gremium`, `web`, `source_object`): kein Sitzungsname, keine Frist (die 21 Tage stammen aus den Bonner Regeln),
-      keine Namen von Personen. Vergangene Sitzungen filtert zusätzlich der Browser nach dem Tag der Besucher:innen.
+      `gremium`, `hinweis`, `web`, `source_object`; `hinweis` nur „verschoben“ und nur, wenn _meetings ihn setzt):
+      kein Sitzungsname, keine Frist (die 21 Tage stammen aus den Bonner Regeln), keine Namen von Personen.
+      Vergangene Sitzungen filtert zusätzlich der Browser nach dem Tag der Besucher:innen.
     - `vorlagen` („Neu eingereicht“): Vorlagen aller Arten mit Datum bis `heute`, die neuesten zuerst (Datum, bei
       gleichem Datum die Drucksache absteigend als Text); höchstens AKTUELL_VORLAGEN. Je Vorlage nur die Felder aus
       AKTUELL_FELDER: `reference`, `date`, `paper_type`, `name` (Titel aus `cache`, maskiert wie in Liste und Suche),
@@ -709,10 +715,11 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
     karten = {}
     if not (fehler or "meetings" in ausgesetzt or "meetings" in _abruf_warnungen(stand)):
         tag = max(heute, _kalendertag(stand.get("meetings")) or heute)
-        kommend = sorted((m for m in meetings if m["date"] >= tag and not m["cancelled"]),
+        kommend = sorted((m for m in meetings if m["date"] >= tag and not m["cancelled"]
+                          and m.get("hinweis") != "abgesagt"),
                          key=lambda m: (m["date"], m["time"] is None, m["time"] or ""))
         am_tag = sum(m["date"] == tag for m in kommend)   # stehen vorn: kein früherer Tag in `kommend`
-        karten["sitzungen"] = [{k: m[k] for k in AKTUELL_FELDER["sitzungen"]}
+        karten["sitzungen"] = [{k: m[k] for k in AKTUELL_FELDER["sitzungen"] if k in m}
                                for m in kommend[:am_tag + AKTUELL_SITZUNGEN]]
     if not (fehler or "papers" in ausgesetzt):
         neu = sorted(((pid, p) for pid, p in cache.items() if p["date"] and p["date"][:10] <= heute),
@@ -893,6 +900,42 @@ _VORSPANN_SITZUNG = re.compile(r"^(?:\d{1,3}(?:\.\.?|,)?\s?)?(?:Gemeinsame |\(ko
 # („Beispiel-Museum“)
 _ZUSATZ_STAND = re.compile(r"\s+[-–]\s+(?:(?:Sitzung )?(?:fällt aus|entfällt|enfällt)|abgesagt"
                            r"|(?:vertagt|verschoben)\b.*)[\s!\-–]*$")
+# Hinweis zum Stand einer Sitzung aus ihrem Namen (Entscheidung 20.11.2026 (7) (b), Anlass 20.11.2026 (6) (b)): Die
+# Stadt setzt OParl `cancelled` bei keiner Sitzung (Lauf 58: 0 von 3 362); dass eine Sitzung ausfällt oder verschoben
+# ist, steht nur im Namen. Feste Wortliste, gesucht im ganzen Namen nach der Maske (alle Zeilen, an jeder Stelle), Groß-
+# und Kleinschreibung gleich, nur ganze Wörter (davor und dahinter kein Buchstabe, keine Ziffer und kein „_“):
+# - „abgesagt“: „fällt aus“ (Leerraum dazwischen beliebig), „entfällt“, „enfällt“ (Schreibweise der Quelle), „abgesagt“;
+# - sonst „verschoben“: „verschoben“, „vertagt“.
+# „abgesagt“ geht vor, auch wenn der Name daneben „verschoben“ oder „vertagt“ nennt. Andere Formen („abgesagte“,
+# „verschobene“, „vertagte“, „gefällt aus“, „fällt ausnahmsweise“) und andere Wörter („verlegt“, „ausgefallen“) zählen
+# nicht. Grenzen der Liste: Sie liest keine Verneinung und nicht, worauf sich das Wort bezieht („TOP 3 entfällt“ zählt
+# wie „Sitzung entfällt“). Vor dem Vergleich Unicode-Form NFC (ein zerlegtes „ä“ gilt wie ein ganzes; anders als
+# _ZUSATZ_STAND, das nur die Form NFC kennt)
+_HINWEIS_ABGESAGT = re.compile(r"(?<!\w)(?:fällt\s+aus|entfällt|enfällt|abgesagt)(?!\w)", re.I)
+_HINWEIS_VERSCHOBEN = re.compile(r"(?<!\w)(?:verschoben|vertagt)(?!\w)", re.I)
+
+
+def hinweis_sitzung(name):
+    """Hinweis zum Stand aus dem Namen einer Sitzung nach der festen Wortliste (_HINWEIS_ABGESAGT vor
+    _HINWEIS_VERSCHOBEN): „abgesagt“, „verschoben“ oder None (kein Wort der Liste, kein Name). `name`: der Name nach der
+    Maske (Maske.sitzungsname), wie er in zeit.json steht. Eine Regel für _meetings (zeit.json, „Aktuell in Köln“ in
+    index.json, Zeile im Log) und check.hinweise_sitzungen. Unabhängig von OParl `cancelled` und vom Gremium: Auch eine
+    Sitzung mit Organisation erhält den Hinweis aus ihrem Namen."""
+    if not isinstance(name, str):
+        return None
+    text = unicodedata.normalize("NFC", name)
+    if _HINWEIS_ABGESAGT.search(text):
+        return "abgesagt"
+    if _HINWEIS_VERSCHOBEN.search(text):
+        return "verschoben"
+    return None
+
+
+def zeile_hinweise(meetings):
+    """Zeile im Log von `export`, nur Zahlen (Entscheidung 20.11.2026 (7) (b)): Sitzungen aus _meetings (alle in
+    zeit.json, auch vergangene und abgesagte) je Hinweis zum Stand aus dem Namen (hinweis_sitzung)."""
+    n = {h: sum(m.get("hinweis") == h for m in meetings) for h in ("abgesagt", "verschoben")}
+    return f"Sitzungen mit Hinweis zum Stand aus dem Namen: abgesagt {n['abgesagt']}, verschoben {n['verschoben']}"
 
 
 def _gekuerzt(text):
@@ -971,7 +1014,9 @@ def _meetings(db, zahl=None):
     Namen und läuft, wenn es aus dem Namen stammt, selbst durch die Maske: So findet gremium_der_sitzung die
     Schreibweise eines bekannten Gremiums auch dann, wenn die Maske eine Zahl im Namen kürzt (der Name einer
     Organisation bleibt ungeprüft, wie bisher; vorher entstand das Gremium aus dem maskierten Namen). Mit `zahl` (dict)
-    zählt _meetings für zeile_sitzungsnamen: `gremium_aus_namen` und `maske` (Name oder Gremium geändert)."""
+    zählt _meetings für zeile_sitzungsnamen: `gremium_aus_namen` und `maske` (Name oder Gremium geändert). `hinweis`
+    (Entscheidung 20.11.2026 (7) (b)): „abgesagt“ oder „verschoben“ aus dem Namen nach der Maske (hinweis_sitzung),
+    neben `cancelled`; ohne Wort der Liste fehlt das Feld."""
     if not config.MEETINGS.exists():
         return []
     names = dict(db.execute("SELECT id, name FROM organization"))
@@ -996,8 +1041,10 @@ def _meetings(db, zahl=None):
         if zahl is not None:
             zahl["gremium_aus_namen"] = zahl.get("gremium_aus_namen", 0) + aus_namen
             zahl["maske"] = zahl.get("maske", 0) + geaendert
+        hinweis = hinweis_sitzung(m.get("name"))   # aus dem Namen nach der Maske; ohne Hinweis kein Feld
         out.append({"date": proc.local_day(m["start"]), "time": time, "gremium": gremium,
-                    "name": m.get("name"), "cancelled": bool(m.get("cancelled")), "state": m.get("meetingState"),
+                    "name": m.get("name"), "cancelled": bool(m.get("cancelled")),
+                    **({"hinweis": hinweis} if hinweis else {}), "state": m.get("meetingState"),
                     "web": m.get("web"), "invitation": m.get("invitation"),
                     "agenda_items": m.get("agenda_items") or 0, "start": m["start"], "end": m.get("end"),
                     "source_object": m["id"]})
