@@ -25,6 +25,11 @@
     // Kachel „Aktuell in Köln“ im Menü „Mitmachen“ (nur mit Karten im Startfenster; app.js fillMitmachen)
     aktuell: () => sichtbar("#karte-aktuell"),
   };
+  // Karten, die „Aktuell in Köln“ zeigt (app.js fillMitmachen, data-listen), in Worten
+  const AKTUELL_KARTEN = () => {
+    const l = ($("#karte-aktuell")?.dataset.listen || "").split(" ");
+    return aufzaehlung([l.includes("sitzungen") ? "den nächsten Sitzungen" : "", l.includes("vorlagen") ? "neu eingereichten Vorlagen" : ""].filter(Boolean));
+  };
   // Sätze von Zusatzmodulen, die nur mit Freigabe geladen werden: sichtbare Elemente mit data-tour-karte bzw.
   // data-tour-liste ergänzen die Schritte „Die Karte“ und „Die Vorlagen“ (ohne solche Elemente bleibt der Text gleich)
   const ZUSATZ = (art) => [...document.querySelectorAll(`[data-tour-${art}]`)].filter((el) => !el.hidden)
@@ -98,7 +103,7 @@
       text: "„Verfahrenswege in Zahlen“ zeigt für ganz Köln, welche Gremien welche Vorlagenart beraten und wie Verfahren meist enden." },
     { menu: "mega-mitmachen", target: "#mega-mitmachen", beacons: ["#karte-aktuell .btn", "#cta-termine", "#cta-mitmachen", "#cta-feed .btn"],
       title: "Mitmachen",
-      text: () => (AN.aktuell() ? "„Aktuell in Köln“ führt zum Startfenster mit den nächsten Sitzungen und neu eingereichten Vorlagen; kommende Sitzungen"
+      text: () => (AN.aktuell() && AKTUELL_KARTEN() ? `„Aktuell in Köln“ führt zum Startfenster mit ${AKTUELL_KARTEN()}; kommende Sitzungen`
           : "Kommende Sitzungen") + ", auch als Kalenderdatei; "
         + (AN.mitmachen() ? "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen und alle Wege, sich einzubringen, von der Einwohnerfragestunde bis zum Bürgerbegehren; "
           : "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; ")
@@ -115,8 +120,8 @@
     // Menü „Über“: Lesehilfen, Über den Ratsatlas und Daten (bisher die Menüs „Verstehen“ und „Daten“ und der Dialog)
     { menu: "mega-ueber", target: "#mega-ueber", beacons: ["#mega-ueber [data-tour]", "#about-open"],
       title: "Über",
-      text: () => `Lesehilfen: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder ${AN.haushalt() ? "Zuschussbedarf" : "Stadtbezirk"} in einfachen Worten und diese Tour. Unter „Über den Ratsatlas“ steht, woher die Daten stammen, was der Stand bedeutet, wie verlässlich die Angaben sind${AN.technik() ? " und wie der Ratsatlas funktioniert" : ""}, was neu ist und wie Sie einen Hinweis geben, wenn etwas falsch zugeordnet oder unklar ist. Unter „Daten“ alles zum Herunterladen: das Datenpaket mit Prüfprotokollen, die verorteten Vorlagen als GeoJSON, eine Datensatzbeschreibung nach DCAT-AP und die Feeds. Viel Freude beim Erkunden.`,
-      vorschau: () => `Lesehilfen: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und diese Tour. Unter „Über den Ratsatlas“ steht, woher die Daten stammen, wie verlässlich die Angaben sind${AN.technik() ? " und wie der Ratsatlas funktioniert" : ""}, was neu ist und wie Sie einen Hinweis geben. Unter „Daten“ alles zum Herunterladen: Das Datenpaket enthält schon Gebiete, Kennzahlen je Stadtteil und die Kartenebenen; die Vorlagen und ihre Prüfprotokolle folgen mit den Ratsvorlagen. Viel Freude beim Erkunden.` },
+      text: () => `Lesehilfen: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder ${AN.haushalt() ? "Zuschussbedarf" : "Stadtbezirk"} in einfachen Worten und diese Tour. Unter „Über den Ratsatlas“ steht, woher die Daten stammen, was der Stand bedeutet, wie verlässlich die Angaben sind${AN.technik() ? ", wie der Ratsatlas funktioniert" : ""}, was neu ist und wie Sie einen Hinweis geben, wenn etwas falsch zugeordnet oder unklar ist. Unter „Daten“ alles zum Herunterladen: das Datenpaket mit Prüfprotokollen, die verorteten Vorlagen als GeoJSON, eine Datensatzbeschreibung nach DCAT-AP und die Feeds. Viel Freude beim Erkunden.`,
+      vorschau: () => `Lesehilfen: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und diese Tour. Unter „Über den Ratsatlas“ steht, woher die Daten stammen, wie verlässlich die Angaben sind${AN.technik() ? ", wie der Ratsatlas funktioniert" : ""}, was neu ist und wie Sie einen Hinweis geben. Unter „Daten“ alles zum Herunterladen: Das Datenpaket enthält Gebiete, Kennzahlen je Stadtteil und die Kartenebenen. Viel Freude beim Erkunden.` },
   ];
 
   let steps = [], i = 0, root = null, card = null, spot = null, raf = 0, prevFocus = null, ui = null;

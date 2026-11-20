@@ -3,9 +3,11 @@
 // Startfenster mit „Aktuell in Köln“ (vergangene Sitzungen nach dem Tag in Köln ausgeblendet, Karte fehlt bei
 // ausgesetzter Liste, Hinweis bei nicht aktuellen Daten), Hinweise zum Stand aus dem Sitzungsnamen in „Kommende
 // Sitzungen“, Vorgang (fester Text bei leerem Ortsnamen, Gremium ohne Link), Wege zurück, Fokus nach dem Schließen,
-// Escape, Tab-Reihenfolge, Wortmarke und Seitentitel, Kartenvorschau; dazu axe-core (WCAG 2.1 A/AA) in jedem dieser
-// Zustände und Bildschirmfotos (Umgebungsvariable FOTOS). Abweichende Daten (Absage im Namen, ausgesetzte Liste,
-// leerer Ortsname, Vorschau) setzt die Prüfung nur im Browser über page.route ein; die Dateien bleiben unverändert.
+// Escape, Tab-Reihenfolge, Wortmarke und Seitentitel, Kartenvorschau, Fokus nach dem Schließen einer Fläche, die aus
+// „Los geht's“ oder dem Vorgang geöffnet wurde (auch auf dem Telefon), title der Menü-Schaltflächen; dazu axe-core
+// (WCAG 2.1 A/AA) in jedem dieser Zustände und Bildschirmfotos (Umgebungsvariable FOTOS). Abweichende Daten (Absage
+// im Namen, ausgesetzte Liste, leerer Ortsname, Vorschau) setzt die Prüfung nur im Browser über page.route ein; die
+// Dateien bleiben unverändert.
 // Nur die lokale Seite: Anfragen an andere Hosts werden abgebrochen.
 // Aufruf (Seite mit Testdaten, z. B. python3 tools/testdaten.py, Pipeline, tools/seite_bauen.py, dann
 //   python3 -m http.server --bind 127.0.0.1 8790 -d _site):
@@ -121,6 +123,9 @@ async function leisteUndMenues(browser, profil) {
   if (telefon(profil)) await page.click("#nav-burger");
   const leiste = await sichtbareMenues(page);
   pruefen(profil, "Leiste: Themen, Wer entscheidet, Mitmachen, Über", JSON.stringify(leiste) === JSON.stringify(MENUES), leiste);
+  // zwischen 901 und 1599 px nur Symbole: title nennt Name und Inhalt beim Überfahren mit der Maus (Prüfung von PR 3)
+  const titel = await page.$$eval('.nav-group[aria-label="Menü"] .menu-btn', (bs) => bs.filter((b) => !b.hidden).map((b) => b.title));
+  pruefen(profil, "Menü-Schaltflächen mit title", titel.length === 4 && titel.every((t, i) => t.startsWith(`${MENUES[i][1]}: `)), titel);
   if (!telefon(profil)) await foto(page, `leiste-${profil}`, ".nav");
   else { await foto(page, `leiste-${profil}`); await page.click("#nav-burger"); }
   const inhalte = {};
@@ -226,6 +231,18 @@ async function tastatur(browser, profil) {
     adresse: location.href }));
   pruefen(profil, "Wortmarke/Seitentitel: „Los geht's“ ohne neues Laden", heim.titel === "Los geht's" && heim.fokus === "detail-heading"
     && heim.adresse.startsWith(BASIS), heim);
+  // „Alle kommenden Sitzungen“ in „Los geht's“ → Esc: Fokus zurück auf den Auslöser; auf dem Telefon geht das Startfenster
+  // dafür wieder auf (Prüfung von Pull Request 3: vorher lag der Fokus dort auf <body>)
+  if (telefon(profil)) await page.click("#aktuell > summary");
+  await page.focus("#aktuell [data-open-termine]");
+  await page.keyboard.press("Enter");
+  await page.waitForSelector("#panel-termine:not([hidden])");
+  await page.waitForTimeout(250);
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(300);
+  const t = await page.evaluate(() => ({ ausloeser: document.activeElement.hasAttribute("data-open-termine"),
+    start: !document.getElementById("panel-detail").hidden && document.getElementById("detail-heading").textContent === "Los geht's" }));
+  pruefen(profil, "„Alle kommenden Sitzungen“ → Esc: „Los geht's“ offen, Fokus auf dem Auslöser", t.ausloeser && t.start, t);
   pruefen(profil, "keine Skriptfehler (Tastatur)", fehler.length === 0, fehler);
   await ctx.close();
 }
@@ -336,6 +353,20 @@ async function gebietUndVorgang(browser, profil, gebiet) {
     && !v.leer && v.gremienLink === 0 && v.zurueck, v);
   await foto(s.page, `vorgang-${profil}`);
   await axe(s.page, profil, "Vorgang");
+  // „Alle Wege, sich einzubringen“ (Fläche „Mitmachen in Köln“) → Esc: Vorgang offen, Fokus auf dem Auslöser (auf dem
+  // Telefon lag er vor der Prüfung von Pull Request 3 auf <body>)
+  const wege = await s.page.$("#detail [data-mitmachen-oeffnen]");
+  if (wege) {
+    await wege.focus();
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForSelector("#panel-mitmachen:not([hidden])");
+    await s.page.waitForTimeout(300);
+    await s.page.keyboard.press("Escape");
+    await s.page.waitForTimeout(300);
+  }
+  const w = await s.page.evaluate(() => ({ ausloeser: document.activeElement.hasAttribute("data-mitmachen-oeffnen"),
+    vorgang: !document.getElementById("panel-detail").hidden && Boolean(document.querySelector("#detail .steps")) }));
+  pruefen(profil, "„Alle Wege, sich einzubringen“ → Esc: Vorgang offen, Fokus auf dem Auslöser", Boolean(wege) && w.ausloeser && w.vorgang, w);
   await s.page.click("#detail [data-zurueck-liste]");
   await s.page.waitForTimeout(300);
   const f = await fokus(s.page);

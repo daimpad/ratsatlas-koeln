@@ -88,6 +88,13 @@ def test_leiste_reihenfolge_und_beschriftung():
     knoepfe = re.findall(r'<button type="button" class="menu-btn" data-mega="([\w-]+)"[^>]*>.*?<span>([^<]+)</span>', gruppe, re.S)
     assert knoepfe == [("mega-themen", "Themen"), ("mega-entscheiden", "Wer entscheidet"), ("mega-mitmachen", "Mitmachen"),
                        ("mega-ueber", "Über")]
+    # Zwischen 901 und 1599 px stehen nur Symbole: Jede Schaltfläche nennt beim Überfahren mit der Maus ihren Namen und
+    # Inhalt (title wie bei den Flächen; Prüfung von Pull Request 3), „Wer entscheidet“ ohne „Gremien“ und „Ämter“
+    titel = dict(re.findall(r'<button type="button" class="menu-btn" data-mega="([\w-]+)"[^>]*\btitle="([^"]+)"', gruppe))
+    assert titel == {"mega-themen": "Themen: Vorlagen nach Thema, Kennzahlen zum Gebiet",
+                     "mega-entscheiden": "Wer entscheidet: Verfahrenswege in Zahlen",
+                     "mega-mitmachen": "Mitmachen: sich einbringen und informiert bleiben",
+                     "mega-ueber": "Über: Lesehilfen, Über den Ratsatlas, Daten"}
     kopf = _abschnitt(INDEX, "nav-search")
     assert INDEX.index(kopf) < INDEX.index('id="nav-more"')
     for menue in MENUES:
@@ -345,11 +352,100 @@ console.log(JSON.stringify([naechste(S, "2026-11-20", (g) => g === "Beispielrat"
     assert aus == [sitzungen[2], None]
 
 
+def test_vorgang_nennt_verschoben_bei_der_naechsten_sitzung():
+    """Prüfung von Pull Request 3: Ist die nächste Sitzung eines beteiligten Gremiums laut Namen verschoben, sagt der
+    Vorgang das kurz wie „Aktuell in Köln“ (ohne Namen) und lässt den Satz „Sie können zuhören“ weg."""
+    teil = "".join(_teil(APP, m) for m in (r"^  const esc = .*?;\n", r"^  const safeUrl = .*?;\n", r"^  const link = .*?;\n",
+                                            r"^  const BUERGERANTRAG = .*?;\n", r"^  function participate\(p\) \{\n.*?\n  \}\n"))
+    code = """
+const heute = () => "2026-11-20", fmtDay = (d) => d, vorhanden = () => false, hasPaperFeed = () => false;
+let zeit = null;
+""" + teil + """
+const p = { stand: "in Beratung", steps: [{ typ: "beratung", label: "Beispielrat", date: "2026-11-10" }] };
+const aus = [];
+for (const hinweis of ["verschoben", null]) {
+  zeit = { meetings: [{ date: "2026-11-24", time: "17:00", gremium: "Beispielrat", web: null, ...(hinweis ? { hinweis } : {}) }] };
+  aus.push(participate(p));
+}
+console.log(JSON.stringify(aus));
+"""
+    verschoben, normal = _node(code)
+    assert '2026-11-24, 17:00 Uhr <span class="badge">laut Sitzungsnamen verschoben</span>.' in verschoben
+    assert "Sie können zuhören" not in verschoben and "Sitzungsname:" not in verschoben
+    assert "laut Sitzungsnamen" not in normal and "Die Sitzung ist in der Regel öffentlich; Sie können zuhören." in normal
+
+
+def test_mitmachen_in_koeln_sagt_absage_statt_keine_sitzung():
+    """Prüfung von Pull Request 3, site/beteiligung.js: Ist die einzige kommende Sitzung einer Bezirksvertretung laut
+    Namen abgesagt, heißt es „keine kommende Sitzung ohne Absage“ statt „noch keine kommende Sitzung eingetragen“; eine
+    verschobene steht mit dem kurzen Hinweis da."""
+    bv = "Bezirksvertretung 3 (Beispiel)"
+    def html(meetings, bz="Lindenthal"):
+        return _node(f"""
+import {{ inhalt }} from "{BETEILIGUNG.as_uri()}";
+const bvBezirk = (g) => (g === {json.dumps(bv)} ? "Lindenthal" : null);
+console.log(JSON.stringify(inhalt({json.dumps(bz)}, {{ termine: true, meetings: {json.dumps(meetings)}, heute: "2026-11-20", bvBezirk }})));
+""", modul=True)
+    abgesagt = html([{"date": "2026-11-27", "time": "17:00", "gremium": bv, "hinweis": "abgesagt", "web": None}])
+    assert "Für die Bezirksvertretung Lindenthal ist im Sitzungskalender keine kommende Sitzung ohne Absage eingetragen." in abgesagt
+    assert "Im Sitzungskalender ist keine kommende Sitzung ohne Absage eingetragen." in abgesagt
+    leer = html([{"date": "2026-11-10", "time": "17:00", "gremium": bv, "web": None}])
+    assert "Für die Bezirksvertretung Lindenthal ist im Sitzungskalender noch keine kommende Sitzung eingetragen." in leer
+    assert "Im Sitzungskalender ist noch keine kommende Sitzung eingetragen." in leer and "ohne Absage" not in leer
+    verschoben = html([{"date": "2026-11-27", "time": "17:00", "gremium": bv, "hinweis": "verschoben", "web": None}])
+    assert f"{bv}; die Sitzung beginnt mit der Einwohnerfragestunde · laut Sitzungsnamen verschoben · Tagesordnung noch" in verschoben
+    assert "ohne Absage" not in verschoben and "noch keine kommende Sitzung" not in verschoben
+
+
+def test_themen_hinweis_je_auswahl():
+    """Menü „Themen“ (fillThemen): ganz Köln ohne Zahl, ein Gebiet mit Zahl; „Vorlagen ohne Ortsbezug“ eines Jahres mit
+    eigenem Satz (vorher: „… in Vorlagen ohne Ortsbezug 2026 …“, Prüfung von Pull Request 3)."""
+    teil = "".join(_teil(APP, m) for m in (r"^  const esc = .*?;\n", r"^  const THEMES = \{.*?\n  \};\n",
+                                            r"^  function fillThemen\(\) \{\n.*?\n  \}\n", r"^  function chip\(.*?\n  \}\n"))
+    code = """
+const STADT = "koeln", E = { "#f-theme": { value: "" }, "#themen-hinweis": { textContent: "" }, "#themen-chips": { innerHTML: "" } };
+const $ = (s) => E[s];
+const papers = [{ themes: [{ theme: "verkehr" }] }, { themes: [{ theme: "verkehr" }, { theme: "bauen" }] }];
+let area = null;
+""" + teil + """
+const aus = [];
+for (const a of [{ kind: "koeln", key: "alle", name: "ganz Köln" }, { kind: "ortsteil", key: "probedorf", name: "Probedorf" },
+  { kind: "ohne", key: "2026", name: "ohne Ortsbezug 2026" }]) { area = a; fillThemen(); aus.push([E["#themen-hinweis"].textContent, E["#themen-chips"].innerHTML]); }
+console.log(JSON.stringify(aus));
+"""
+    koeln, gebiet, ohne = _node(code)
+    assert koeln[0].startswith("Ein Thema zeigt die passenden Vorlagen in ganz Köln in der Liste;") and 'class="n"' not in koeln[1]
+    assert gebiet[0] == ("Ein Thema zeigt die passenden Vorlagen in Probedorf in der Liste. Die Zahl nennt die Vorlagen mit "
+                         "diesem Thema im Gebiet; die Themen sind abgeleitet.")
+    assert ohne[0] == ("Ein Thema zeigt die passenden Vorlagen ohne Ortsbezug aus 2026 in der Liste. Die Zahl nennt die Vorlagen "
+                       "mit diesem Thema in dieser Auswahl; die Themen sind abgeleitet.")
+    assert 'data-thema="verkehr">Verkehr und Mobilität <span class="n">2</span>' in ohne[1]
+
+
 def test_zeitleiste_nennt_absage_aus_dem_namen():
-    """site/timeline.js: Eine künftige Sitzung mit Hinweis „abgesagt“ heißt im Titel des Punkts „laut Sitzungsnamen
-    abgesagt“ statt „geplant“."""
+    """site/timeline.js: Eine künftige Sitzung mit Hinweis „abgesagt“ aus dem Namen sieht aus wie eine abgesagte (Klasse
+    „cancelled“, gestrichelt) und heißt im Titel des Punkts „laut Sitzungsnamen abgesagt“; bei „verschoben“ heißt sie
+    „laut Sitzungsnamen verschoben“ statt „geplant“ (Prüfung von Pull Request 3). Vergangene bleiben ohne Zusatz."""
     tl = (ROOT / "site" / "timeline.js").read_text(encoding="utf-8")
-    assert 'ms > today && m.hinweis === "abgesagt" ? " · laut Sitzungsnamen abgesagt" : ms > today ? " · geplant"' in tl
+    teil = _teil(tl, r"^        const kuenftig = ms > today.*?\n        el\(\"title\".*?;\n")
+    code = """
+const punkte = [];
+const el = (tag, attr, eltern) => { const e = { tag, attr, textContent: "" }; (eltern === "svg" ? punkte : []).push(e);
+  if (eltern && eltern.tag) eltern.titel = e; return e; };
+const svg = "svg", x = (v) => v, y = 1, de = (ms) => new Date(ms).toISOString().slice(0, 10), today = Date.parse("2026-11-20T12:00:00Z");
+const S = [{ date: "2026-11-22", gremium: "Beispielrat", hinweis: "abgesagt" }, { date: "2026-11-23", gremium: "Beispielrat", hinweis: "verschoben" },
+  { date: "2026-11-24", gremium: "Beispielrat", cancelled: true }, { date: "2026-11-25", gremium: "Beispielrat" },
+  { date: "2026-11-10", gremium: "Beispielrat", hinweis: "abgesagt" }];
+for (const m of S) { const ms = Date.parse(m.date + "T00:00:00Z");
+""" + teil + """
+}
+console.log(JSON.stringify(punkte.map((p) => [p.attr.class, p.titel.textContent])));
+"""
+    assert _node(code) == [["tl-meet future cancelled", "2026-11-22 · Beispielrat · laut Sitzungsnamen abgesagt"],
+                           ["tl-meet future", "2026-11-23 · Beispielrat · laut Sitzungsnamen verschoben"],
+                           ["tl-meet future cancelled", "2026-11-24 · Beispielrat · abgesagt"],
+                           ["tl-meet future", "2026-11-25 · Beispielrat · geplant"],
+                           ["tl-meet", "2026-11-10 · Beispielrat"]]
 
 
 # --- 5 Wege zurück und Fokus -----------------------------------------------------------------------------------------------
@@ -358,10 +454,12 @@ def test_rueckziel_fuer_den_fokus():
     """rueckZiel: das auslösende Element, wenn es zu sehen ist; liegt es in einem geschlossenen Menü, dessen Schaltfläche
     in der Leiste; ist auch die verborgen (Telefon, Menüs hinter ☰), die Schaltfläche „Menü“; ohne Element die
     Schaltfläche des genannten Menüs."""
-    teil = _teil(APP, r"^  const sichtbarEl = .*?;\n") + _teil(APP, r"^  function rueckZiel\(el, mega\) \{\n.*?\n  \}\n")
+    teil = _teil(APP, r"^  const sichtbarEl = .*?\);\n") + _teil(APP, r"^  function rueckZiel\(el, mega\) \{\n.*?\n  \}\n")
     code = """
-const el = (name, sichtbar, mega) => ({ name, isConnected: true, getClientRects: () => (sichtbar.an ? [1] : []),
-  closest: (sel) => (sel === ".mega" && mega ? { id: mega } : null) });
+const el = (name, sichtbar, mega, flaeche) => ({ name, isConnected: true, getClientRects: () => (sichtbar.an ? [1] : []),
+  closest: (sel) => (sel === ".mega" && mega ? { id: mega } : sel === "[hidden]" && flaeche ? flaeche : null), flaeche });
+// geschlossene Fläche (.panel[hidden]): Layout bleibt (getClientRects nicht leer), nur visibility: hidden
+const getComputedStyle = (e) => ({ visibility: e.flaeche ? "hidden" : "visible" });
 const leiste = { an: true }, telefon = { an: false };
 const knopf = el("knopf", leiste), burger = el("burger", telefon);
 const document = { querySelector: (sel) => (sel === '[data-mega="mega-themen"]' ? knopf : null),
@@ -375,9 +473,12 @@ leiste.an = false; telefon.an = true;
 aus.push(rueckZiel(el("karte", { an: false }, "mega-themen")).name);
 telefon.an = false;
 aus.push(rueckZiel(el("karte", { an: false }, "mega-themen")));
+// in einer geschlossenen Fläche (Telefon: „Los geht's“ unter „Kommende Sitzungen“): nicht zu sehen, Ersatz greift
+telefon.an = true;
+aus.push(rueckZiel(el("knopf in der Fläche", { an: true }, null, { hidden: true }), "mega-mitmachen").name);
 console.log(JSON.stringify(aus));
 """
-    assert _node(code) == ["karte", "knopf", "knopf", "burger", None]
+    assert _node(code) == ["karte", "knopf", "knopf", "burger", None, "burger"]
 
 
 def test_wege_zurueck_und_schliessen():
@@ -391,7 +492,7 @@ def test_wege_zurueck_und_schliessen():
     assert "data-zurueck-liste><span aria-hidden=\"true\">← </span>Zurück zur Liste</button>" in APP
     schliessen = _teil(APP, r"^  function closePanel\(id\) \{\n.*?\n  \}\n")
     assert '"panel-auswertung": $("#stats").hidden ? "mega-entscheiden" : "mega-themen"' in schliessen
-    assert "const back = sichtbarEl(t) ? t : rueckZiel(opener[id], mega);" in schliessen
+    assert "const back = sichtbarEl(t) ? t : rueckZiel(o, mega);" in schliessen
     assert 'rueckZiel(dialogOpener, "mega-ueber")' in APP
     esc = _teil(APP, r'^  document\.addEventListener\("keydown", \(e\) => \{\n    if \(e\.key !== "Escape".*?\n  \}\);\n')
     assert "if (openMegaId) return closeMega(true);" in esc and "if (overlay) return closePanel(overlay);" in esc
@@ -399,6 +500,54 @@ def test_wege_zurueck_und_schliessen():
     home = _teil(APP, r"^  function goHome\(zuAktuell\) \{\n.*?\n  \}\n")
     for teil in ("closeMega();", "setNav(false);", "selected = null;", "showIntro(zuAktuell);", 'setPanel("panel-detail", true);'):
         assert teil in home, teil
+
+
+def _schliessen(telefon, flaeche_des_ausloesers):
+    """closePanel aus app.js mit nachgebildeten Flächen: „Kommende Sitzungen“ (Überlagerung) war aus einer Schaltfläche
+    in `flaeche_des_ausloesers` geöffnet; auf dem Telefon ist dabei jede andere Fläche zugegangen."""
+    teil = _teil(APP, r"^  const sichtbarEl = .*?\);\n") + _teil(APP, r"^  function rueckZiel\(el, mega\) \{\n.*?\n  \}\n") \
+        + _teil(APP, r"^  function closePanel\(id\) \{\n.*?\n  \}\n")
+    code = f"""
+const MOBILE = {{ matches: {json.dumps(telefon)} }};
+const SHEETS = ["panel-list", "panel-detail", "panel-auswertung", "panel-termine", "panel-mitmachen", "timeline-wrap"];
+const OVERLAYS = ["panel-auswertung", "panel-termine", "panel-mitmachen"];
+const P = Object.fromEntries(SHEETS.map((id) => [id, {{ id, hidden: true, contains: (e) => e.flaeche === id }}]));
+const document = {{ activeElement: null, getElementById: (id) => P[id] || null, querySelector: () => null }};
+const knopf = (name, flaeche, sichtbar = true) => ({{ name, flaeche, isConnected: true,
+  getClientRects: () => (sichtbar ? [1] : []), closest: (sel) => (sel === "[hidden]" && flaeche && P[flaeche].hidden ? P[flaeche] : null),
+  focus() {{ if (sichtbarEl(this)) document.activeElement = this; }} }});
+const getComputedStyle = (e) => ({{ visibility: e.flaeche && P[e.flaeche].hidden ? "hidden" : "visible" }});
+const burger = knopf("Menü", null, MOBILE.matches);
+const $ = (s) => (s === "#stats" ? {{ hidden: true }} : null);
+const toggleFor = () => null;
+const aufrufe = [];
+function setPanel(id, open) {{ aufrufe.push([id, open]); P[id].hidden = !open;
+  if (open && MOBILE.matches) for (const s of SHEETS) if (s !== id) P[s].hidden = true; }}
+const ausloeser = knopf("Auslöser", {json.dumps(flaeche_des_ausloesers)});
+const opener = {{ "panel-termine": ausloeser, "panel-detail": "vorher" }};
+P[{json.dumps(flaeche_des_ausloesers)}].hidden = !!MOBILE.matches;   // Telefon: beim Öffnen zugegangen
+P["panel-termine"].hidden = false;
+""" + teil + """
+closePanel("panel-termine");
+console.log(JSON.stringify({ fokus: document.activeElement && document.activeElement.name, aufrufe,
+  offen: SHEETS.filter((s) => !P[s].hidden), opener: opener["panel-detail"] }));
+"""
+    return _node(code)
+
+
+def test_schliessen_gibt_den_fokus_auch_auf_dem_telefon_zurueck():
+    """Prüfung von Pull Request 3: Auf dem Telefon schließt das Öffnen von „Kommende Sitzungen“ die Fläche, aus der es
+    kam (etwa „Los geht's“ mit „Alle kommenden Sitzungen“ oder der Vorgang). Beim Schließen geht diese Fläche wieder auf
+    und der Fokus auf den Auslöser (vorher lag er auf <body>, weil die geschlossene Fläche nur visibility: hidden ist).
+    Kam der Auslöser aus einer Überlagerung („Mitmachen in Köln“ baut sich beim Öffnen neu auf), geht der Fokus auf
+    „Menü“. Auf breiten Bildschirmen bleibt alles, wie es ist."""
+    tel = _schliessen(True, "panel-detail")
+    assert tel["fokus"] == "Auslöser" and tel["offen"] == ["panel-detail"] and tel["opener"] == "vorher"
+    assert tel["aufrufe"] == [["panel-termine", False], ["panel-detail", True]]
+    aus_ueberlagerung = _schliessen(True, "panel-mitmachen")
+    assert aus_ueberlagerung["fokus"] == "Menü" and aus_ueberlagerung["offen"] == []
+    breit = _schliessen(False, "panel-detail")
+    assert breit["fokus"] == "Auslöser" and breit["aufrufe"] == [["panel-termine", False]] and breit["offen"] == ["panel-detail"]
 
 
 # --- 6 Vorgang ------------------------------------------------------------------------------------------------------------

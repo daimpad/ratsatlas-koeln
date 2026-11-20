@@ -305,8 +305,11 @@
   });
   // Ziel für den Fokus, wenn eine Fläche oder ein Fenster schließt (Entscheidung 20.11.2026 (7) (c) 5): das auslösende
   // Element, wenn es zu sehen ist; liegt es in einem inzwischen geschlossenen Menü, dessen Schaltfläche in der Leiste;
-  // auf dem Telefon (Menüs hinter ☰ geschlossen) die Schaltfläche „Menü“
-  const sichtbarEl = (el) => Boolean(el && el.isConnected && el.getClientRects().length);
+  // auf dem Telefon (Menüs hinter ☰ geschlossen) die Schaltfläche „Menü“. Zu sehen heißt auch: nicht in einer
+  // geschlossenen Fläche (.panel[hidden] behält in style.css sein Layout und ist nur visibility: hidden; focus() auf
+  // ein solches Element bliebe ohne Wirkung, der Fokus läge auf <body>)
+  const sichtbarEl = (el) => Boolean(el && el.isConnected && el.getClientRects().length && !el.closest("[hidden]")
+    && getComputedStyle(el).visibility !== "hidden");
   function rueckZiel(el, mega) {
     if (sichtbarEl(el)) return el;
     const menue = (el && el.isConnected && el.closest(".mega")) || (mega && document.getElementById(mega));
@@ -322,8 +325,17 @@
     // „Kennzahlen zum Gebiet“ zu „Themen“, mit den Verfahrenswegen zu „Wer entscheidet“
     const mega = { "panel-auswertung": $("#stats").hidden ? "mega-entscheiden" : "mega-themen", "panel-termine": "mega-mitmachen",
       "panel-mitmachen": "mega-mitmachen" }[id];
-    const back = sichtbarEl(t) ? t : rueckZiel(opener[id], mega);
+    // Telefon (nur eine Fläche zugleich): Lag das öffnende Element in Liste, Vorgang oder Zeitleiste, die beim Öffnen
+    // zugegangen sind (etwa „Alle kommenden Sitzungen“ in „Los geht's“ oder „Alle Wege, sich einzubringen“ im Vorgang),
+    // geht diese Fläche wieder auf, damit der Fokus dorthin zurückkehrt, wo er war (Prüfung von Pull Request 3). Nicht
+    // bei Überlagerungen als Herkunft: „Mitmachen in Köln“ baut ihren Inhalt beim Öffnen neu auf
+    const o = opener[id];
+    const herkunft = MOBILE.matches && OVERLAYS.includes(id) && o && o.isConnected && SHEETS
+      .find((s) => !OVERLAYS.includes(s) && document.getElementById(s).hidden && document.getElementById(s).contains(o));
+    if (herkunft) { const vorher = opener[herkunft]; setPanel(herkunft, true); opener[herkunft] = vorher; }
+    const back = sichtbarEl(t) ? t : rueckZiel(o, mega);
     if (back) back.focus();
+    if (back && document.activeElement !== back && sichtbarEl(burger)) burger.focus();
   }
   document.addEventListener("click", (e) => {
     const t = e.target.closest("[data-panel]");
@@ -2053,8 +2065,10 @@
     const next = zeit && p.stand !== "entschieden"
       ? zeit.meetings.find((m) => m.date >= today && !m.cancelled && m.hinweis !== "abgesagt" && gremien.has(m.gremium)) : null;
     const onAgenda = next && p.steps.some((s) => s.label === next.gremium && s.date === next.date);
-    const meeting = next ? `<li data-generic="sitzung" data-key="${esc(next.gremium)}|${esc(next.date)}">Nächste Sitzung eines beteiligten Gremiums: <strong>${esc(next.gremium)}</strong>, ${fmtDay(next.date)}${next.time ? `, ${esc(next.time)} Uhr` : ""}${onAgenda ? " – die Vorlage steht dort auf der Tagesordnung <span class=\"derived\">abgeleitet, über die Sitzung verknüpft</span>" : ""}.
-      ${link(next.web, "Tagesordnung") || "Die Tagesordnung erscheint vor der Sitzung im Ratsinformationssystem."} Die Sitzung ist in der Regel öffentlich; Sie können zuhören.</li>` : "";
+    // Hinweis „verschoben“ aus dem Sitzungsnamen: kurz wie in „Aktuell in Köln“ (ohne Namen) und ohne den Satz zum Zuhören
+    const verschoben = next && next.hinweis === "verschoben";
+    const meeting = next ? `<li data-generic="sitzung" data-key="${esc(next.gremium)}|${esc(next.date)}">Nächste Sitzung eines beteiligten Gremiums: <strong>${esc(next.gremium)}</strong>, ${fmtDay(next.date)}${next.time ? `, ${esc(next.time)} Uhr` : ""}${verschoben ? ' <span class="badge">laut Sitzungsnamen verschoben</span>' : ""}${onAgenda ? " – die Vorlage steht dort auf der Tagesordnung <span class=\"derived\">abgeleitet, über die Sitzung verknüpft</span>" : ""}.
+      ${link(next.web, "Tagesordnung") || "Die Tagesordnung erscheint vor der Sitzung im Ratsinformationssystem."}${verschoben ? "" : " Die Sitzung ist in der Regel öffentlich; Sie können zuhören."}</li>` : "";
     const done = p.stand === "entschieden" ? "<li data-generic=\"done\">Das Verfahren ist entschieden. Neue Anliegen zum Thema lassen sich mit Anregungen und Beschwerden nach § 24 GO NRW einbringen.</li>" : "";
     return `<section class="participate" aria-labelledby="participate-h"><h4 id="participate-h">Selbst mitwirken</h4><ul>
       ${meeting}${done}
@@ -2369,9 +2383,11 @@
     const report = $("#cta-report");
     report.href = selected ? reportLink(selected) : `${REPO}/issues/new/choose`;
     report.querySelector(".card-title").textContent = selected ? `Hinweis zu ${selected.reference}` : "Hinweis geben";
-    // Kachel „Aktuell in Köln“ nur, wenn das Startfenster dazu Karten zeigt; der Text nennt genau diese
+    // Kachel „Aktuell in Köln“ nur, wenn das Startfenster dazu Karten zeigt; der Text nennt genau diese (data-listen
+    // für den Schritt „Mitmachen“ der Tour, site/tour.js)
     const l = aktuellListen();
     $("#karte-aktuell").hidden = !l;
+    $("#karte-aktuell").dataset.listen = l ? [l.sitzungen.length ? "sitzungen" : "", l.vorlagen.length ? "vorlagen" : ""].filter(Boolean).join(" ") : "";
     if (l) $("#karte-aktuell-text").textContent = l.sitzungen.length && l.vorlagen.length
       ? "Die nächsten Sitzungen und neu eingereichte Vorlagen auf einen Blick."
       : l.sitzungen.length ? "Die nächsten Sitzungen auf einen Blick." : "Neu eingereichte Vorlagen auf einen Blick.";
@@ -2384,10 +2400,11 @@
     const theme = $("#f-theme").value, imGebiet = Boolean(area) && area.kind !== STADT;
     const counts = {};
     if (imGebiet) for (const p of papers) for (const t of p.themes || []) counts[t.theme] = (counts[t.theme] || 0) + 1;
-    const wo = !imGebiet ? "ganz Köln" : area.kind === "ohne" ? `Vorlagen ohne Ortsbezug ${area.key}` : area.name;
-    $("#themen-hinweis").textContent = imGebiet
-      ? `Ein Thema zeigt die passenden Vorlagen in ${wo} in der Liste. Die Zahl nennt die Vorlagen mit diesem Thema im Gebiet; die Themen sind abgeleitet.`
-      : "Ein Thema zeigt die passenden Vorlagen in ganz Köln in der Liste; die Themen sind abgeleitet. Mit einem gewählten Gebiet steht hier die Zahl je Thema.";
+    $("#themen-hinweis").textContent = !imGebiet
+      ? "Ein Thema zeigt die passenden Vorlagen in ganz Köln in der Liste; die Themen sind abgeleitet. Mit einem gewählten Gebiet steht hier die Zahl je Thema."
+      : area.kind === "ohne"
+        ? `Ein Thema zeigt die passenden Vorlagen ohne Ortsbezug aus ${area.key} in der Liste. Die Zahl nennt die Vorlagen mit diesem Thema in dieser Auswahl; die Themen sind abgeleitet.`
+        : `Ein Thema zeigt die passenden Vorlagen in ${area.name} in der Liste. Die Zahl nennt die Vorlagen mit diesem Thema im Gebiet; die Themen sind abgeleitet.`;
     $("#themen-chips").innerHTML = Object.entries(THEMES).map(([k, v]) => chip(v, theme === k, `data-thema="${k}"`, imGebiet ? counts[k] || 0 : null)).join("");
   }
   // wie ein Balken der Kennzahlen: die Zahl gilt für das ganze Gebiet, übrige Filter und Zeitraum zurücksetzen; das

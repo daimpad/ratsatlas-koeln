@@ -171,17 +171,18 @@ SCHALTER = {".map-bau": "baustellen", '[data-funktion="einfache_sprache"]': "ein
 KOELN = {f for f in SCHALTER.values() if config.ZUSATZTHEMEN.get(f)}
 
 
-def _tour(an, telefon=False, fehlen=False, zeitleiste=True, vorschau=False, aktuell=True):
+def _tour(an, telefon=False, fehlen=False, zeitleiste=True, vorschau=False, aktuell="sitzungen vorlagen"):
     """Titel und Text der Schritte, die die Tour zeigt (when erfüllt), bei Freigaben `an` (Menge der Funktionen);
     `fehlen`: Elemente abgeschalteter Funktionen fehlen im Dokument statt ausgeblendet zu sein; `vorschau`:
     Kartenvorschau ohne Ratsvorlagen (Text unter vorschau, wo vorhanden, wie tour.js show; „Themen“ und „Wer
-    entscheidet“ ausgeblendet wie in app.js applyFunktionen); `aktuell`: Kachel „Aktuell in Köln“ sichtbar."""
+    entscheidet“ ausgeblendet wie in app.js applyFunktionen); `aktuell`: Kachel „Aktuell in Köln“ sichtbar mit diesen
+    Karten im Startfenster (data-listen wie app.js fillMitmachen; leer: Kachel ausgeblendet)."""
     teil = _teil(TOUR, r"^  const MOBILE = matchMedia.*?\n  \];\n")
     dom = {sel: {"hidden": fn not in an} for sel, fn in SCHALTER.items() if fn in an or not fehlen}
     dom['.toggle[data-panel="timeline-wrap"]'] = {"hidden": not zeitleiste}
     for menue in ("mega-themen", "mega-entscheiden"):
         dom[f'[data-mega="{menue}"]'] = {"hidden": vorschau}
-    dom["#karte-aktuell"] = {"hidden": not aktuell or vorschau}
+    dom["#karte-aktuell"] = {"hidden": not aktuell or vorschau, "dataset": {"listen": aktuell or ""}}
     flaechen = [{"dataset": {"panel": p}, "hidden": p == "timeline-wrap" and not zeitleiste
                  or p == "panel-prozesse" and "soll" not in an or p == "panel-assistent" and "chat" not in an}
                 for p in ("panel-list", "timeline-wrap", "panel-detail", "panel-prozesse", "panel-assistent")]
@@ -243,7 +244,8 @@ def test_tour_mit_freigaben_wie_in_bonn():
     assert ("Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk"
             in einzeln["einfache_sprache"]["Über"])
     assert "Lesehilfen: Begriffe wie Vorlage, Beratungsfolge oder Zuschussbedarf" in einzeln["haushalt"]["Über"]
-    assert "wie verlässlich die Angaben sind und wie der Ratsatlas funktioniert, was neu" in einzeln["technik"]["Über"]
+    # Aufzählung mit einem „und“ vor dem letzten Glied (Prüfung von Pull Request 3)
+    assert "wie verlässlich die Angaben sind, wie der Ratsatlas funktioniert, was neu ist und wie Sie" in einzeln["technik"]["Über"]
     assert "wie der Ratsatlas funktioniert" not in einzeln["haushalt"]["Über"]
     assert "„Alle Wege im Überblick“" in einzeln["mitmachen"]["Mitmachen"]
     assert "„Alle Wege im Überblick“" not in einzeln["chat"]["Mitmachen"]
@@ -261,8 +263,10 @@ def test_tour_vorschau_nennt_einfache_sprache_nur_mit_freigabe():
         ohne = _tour(set(), telefon, vorschau=True)["Über"]
         assert mit.startswith("Lesehilfen: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge oder "
                               "Stadtbezirk in einfachen Worten und diese Tour.")
-        assert "Das Datenpaket enthält schon Gebiete, Kennzahlen je Stadtteil und die Kartenebenen" in mit
-        assert ohne == mit.replace("der Ratsatlas in Einfacher Sprache, ", "").replace(" und wie der Ratsatlas funktioniert", "")
+        # ohne Ankündigung mit „folgen“ (Prüfung von Pull Request 3, wie (F) in Menüs und Startfenster)
+        assert mit.endswith("Unter „Daten“ alles zum Herunterladen: Das Datenpaket enthält Gebiete, Kennzahlen je Stadtteil "
+                            "und die Kartenebenen. Viel Freude beim Erkunden.")
+        assert ohne == mit.replace("der Ratsatlas in Einfacher Sprache, ", "").replace(", wie der Ratsatlas funktioniert", "")
         assert "Ratsvorlagen" in texte["Willkommen zur Tour"]
         assert "Themen" not in texte and "Wer entscheidet" not in texte and "„Aktuell in Köln“" not in texte["Mitmachen"]
 
@@ -285,11 +289,20 @@ def test_tour_menues_der_leiste():
         assert texte["Themen"].startswith("Die Themen als Filter: Ein Klick zeigt die passenden Vorlagen in der Liste")
         assert texte["Mitmachen"].startswith("„Aktuell in Köln“ führt zum Startfenster mit den nächsten Sitzungen und "
                                              "neu eingereichten Vorlagen; kommende Sitzungen, auch als Kalenderdatei; ")
-        ohne = _tour(KOELN, telefon, aktuell=False)["Mitmachen"]
+        ohne = _tour(KOELN, telefon, aktuell="")["Mitmachen"]
         assert ohne.startswith("Kommende Sitzungen, auch als Kalenderdatei; ") and "Aktuell in Köln" not in ohne
+        # nur eine Karte im Startfenster (die andere Liste ausgesetzt): die Tour nennt genau diese, wie die Kachel
+        assert _tour(KOELN, telefon, aktuell="vorlagen")["Mitmachen"].startswith(
+            "„Aktuell in Köln“ führt zum Startfenster mit neu eingereichten Vorlagen; kommende Sitzungen, auch als ")
+        assert _tour(KOELN, telefon, aktuell="sitzungen")["Mitmachen"].startswith(
+            "„Aktuell in Köln“ führt zum Startfenster mit den nächsten Sitzungen; kommende Sitzungen, auch als ")
+        assert "wie verlässlich die Angaben sind, wie der Ratsatlas funktioniert, was neu ist und wie Sie einen Hinweis " \
+               "geben" in texte["Über"]
         assert "Hinweis" not in texte["Mitmachen"] and "einen Hinweis geben" in texte["Über"]
+        vorschau = _tour(KOELN, telefon, vorschau=True)
         for wort in ("folgt", "folgen"):
             assert all(wort not in texte[t] for t in ("Themen", "Wer entscheidet", "Mitmachen", "Über")), wort
+            assert all(wort not in vorschau[t] for t in ("Mitmachen", "Über")), wort
     code = re.sub(r"^\s*//.*$", "", TOUR, flags=re.M)
     for alt in ("mega-auswertung", "mega-daten", "mega-verstehen", 'target: "#about-open"'):
         assert alt not in code, alt
