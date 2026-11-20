@@ -257,17 +257,29 @@ class Gazetteer:
                 out[(names[i], names[j])] = ots
         return out
 
-    def _add_points(self, street_points):
+    def _strassenpunkte(self, street_points):
+        """Name → (lon, lat, Stadtteil) der Straßenpunkte, die _add_points aufnimmt: je Name, den das Verzeichnis noch
+        nicht kennt, der erste Punkt in einem Kölner Stadtteil; ohne Punkt oder außerhalb aller Stadtteile nichts."""
+        neu = {}
         for name, lon, lat in street_points:
             name = (name or "").strip()
-            if not name or name in self.streets or lon is None:
+            if not name or name in self.streets or name in neu or lon is None:
                 continue
             hits = self.ot_tree.query(to_m(Point(lon, lat)), predicate="intersects")
             if len(hits):
-                props = self.ortsteile[int(hits[0])]
-                self.streets[name] = [{"ortsteil": props["ortsteil_bez"], "ortsteil_nr": props["ortsteil"],
-                                       "bezirk": props["bezirk_bez"], "lon": lon, "lat": lat,
-                                       "length_m": None, "component": 0, "source": config.QUELLE_OPARL}]
+                neu[name] = (lon, lat, self.ortsteile[int(hits[0])])
+        return neu
+
+    def _add_points(self, street_points):
+        for name, (lon, lat, props) in self._strassenpunkte(street_points).items():
+            self.streets[name] = [{"ortsteil": props["ortsteil_bez"], "ortsteil_nr": props["ortsteil"],
+                                   "bezirk": props["bezirk_bez"], "lon": lon, "lat": lat,
+                                   "length_m": None, "component": 0, "source": config.QUELLE_OPARL}]
+
+    def neue_strassen(self, street_points):
+        """Namen, die _add_points mit diesen Punkten jetzt noch aufnähme; nimmt selbst nichts auf (Zeile im Log von
+        build zu den Straßenpunkten aus der Stadtteilfläche, Entscheidung 20.11.2026 (1) (b))."""
+        return set(self._strassenpunkte(street_points))
 
     # --- Erkennung im Titel ------------------------------------------------------------------
 
