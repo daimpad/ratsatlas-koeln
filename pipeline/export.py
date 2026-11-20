@@ -874,19 +874,29 @@ def gremien_index(names):
     return streng, breit
 
 
+# Vorspann eines Sitzungsnamens vor dem Gremium: bis zum 20.11.2026 nur „Sitzung des“ bzw. „der“, auch mit
+# „Gemeinsame“; seit der Entscheidung 20.11.2026 (2) (a) auch mit einer Ordnungszahl davor, wie die Positivliste der
+# Maske sie in Sitzungsnamen kennt (maske._SITZUNG_BEKANNT: „2.“, „5“, „5,“, „5..“), mit „Sondersitzung“ und mit
+# „(konstituierende)“ oder „Konstituierende“ („2. Sondersitzung des Unterausschusses …“, „3. Gemeinsame Sondersitzung
+# des …“, „1. (konstituierende) Sitzung der …“). Vorher war das Gremium bei einem solchen Namen der ganze Name, und die
+# Maske kürzte darin die Ordnungszahl (Lauf nach dem Zusammenführen von #40: ein Gremium)
+_VORSPANN_SITZUNG = re.compile(r"^(?:\d{1,3}(?:\.\.?|,)?\s?)?(?:Gemeinsame |\(konstituierende\) |Konstituierende )?"
+                               r"(?:Sonders|S)itzung (?:des|der) ")
+
+
 def gremium_der_sitzung(m, names, index=None):
     """Gremium einer Sitzung: aus der Organisation; fehlt sie (z. B. neue Wahlperiode, Sitzung am 25.11.2026), aus
-    dem Sitzungsnamen in der Schreibweise eines bekannten Gremiums, in zwei Stufen (gremien_index): zuerst bei
-    gleichem strengem Schlüssel (ohne Satzzeichen; wie bis zum 16.11.2026, bisherige Treffer bleiben), sonst bei
-    gleichem breitem Schlüssel (ausschuesse.schluessel, auch ohne „für“ und mit „/“ wie Komma: die
-    Zuständigkeitsordnung schreibt „Ausschuss Klima, Umwelt und Grün“ und „Ausschuss für Klima, Umwelt und Grün“),
-    aber nur, wenn er genau ein Gremium ergibt. Stehen Gremien der alten und der neuen Wahlperiode mit und ohne „für“
-    nebeneinander, gewinnt so die genau passende Schreibweise; ist der breite Schlüssel mehrdeutig, bleibt der Name aus
-    der Sitzung (Prüfung des Abgleichs vom 16.11.2026)."""
+    dem Sitzungsnamen ohne Vorspann (_VORSPANN_SITZUNG) in der Schreibweise eines bekannten Gremiums, in zwei Stufen
+    (gremien_index): zuerst bei gleichem strengem Schlüssel (ohne Satzzeichen; wie bis zum 16.11.2026, bisherige
+    Treffer bleiben), sonst bei gleichem breitem Schlüssel (ausschuesse.schluessel, auch ohne „für“ und mit „/“ wie
+    Komma: die Zuständigkeitsordnung schreibt „Ausschuss Klima, Umwelt und Grün“ und „Ausschuss für Klima, Umwelt und
+    Grün“), aber nur, wenn er genau ein Gremium ergibt. Stehen Gremien der alten und der neuen Wahlperiode mit und ohne
+    „für“ nebeneinander, gewinnt so die genau passende Schreibweise; ist der breite Schlüssel mehrdeutig, bleibt der
+    Name aus der Sitzung (Prüfung des Abgleichs vom 16.11.2026)."""
     org = (m.get("organization") or [None])[0]
     if names.get(org):
         return names[org]
-    name = _nominativ(re.sub(r"^(Gemeinsame )?Sitzung (des|der) ", "", m.get("name") or ""))
+    name = _nominativ(_VORSPANN_SITZUNG.sub("", m.get("name") or ""))
     streng, breit = index if index is not None else gremien_index(names)
     if _schluessel(name) in streng:
         return streng[_schluessel(name)] or "unbekannt"
@@ -913,15 +923,15 @@ def zeile_sitzungsnamen(zahl):
 def _meetings(db, zahl=None):
     """Sitzungen der städtischen OParl-API (auch künftige, als Termin belegt). Der Name jeder Sitzung läuft durch die
     Titelmaske, ebenso ein Gremium, das aus dem Namen stammt (Maske.sitzungsname, gremium_aus_namen; Entscheidung
-    19.11.2026 (3) (c)): Das Gremium aus dem Namen ist der Name selbst, und der ganze Name steht in zeit.json und in der
-    Beschreibung in termine.ics daneben; bliebe er ungekürzt, stünde dieselbe Hausnummer dort weiter. Bis dahin nur bei
-    Sitzungen, in denen eine Vorlage der Maske beraten wird (Maske.sitzungen; Offen (9) der Nachprüfung der dritten
-    Korrektur). check._sitzungen und check._aktuell prüfen mit derselben Regel (Maske.sitzungsname_offen). Das Gremium
-    entsteht aus dem ungekürzten Namen und läuft, wenn es aus dem Namen stammt, selbst durch die Maske: So findet
-    gremium_der_sitzung die Schreibweise eines bekannten Gremiums auch dann, wenn die Maske eine Zahl im Namen kürzt
-    (der Name einer Organisation bleibt ungeprüft, wie bisher; vorher entstand das Gremium aus dem maskierten Namen).
-    Mit `zahl` (dict) zählt _meetings für zeile_sitzungsnamen: `gremium_aus_namen` und `maske` (Name oder Gremium
-    geändert)."""
+    19.11.2026 (3) (c)): Das Gremium aus dem Namen ist der Name ohne Vorspann (_VORSPANN_SITZUNG), und der ganze Name
+    steht in zeit.json und in der Beschreibung in termine.ics daneben; bliebe er ungekürzt, stünde dieselbe Hausnummer
+    dort weiter. Bis dahin nur bei Sitzungen, in denen eine Vorlage der Maske beraten wird (Maske.sitzungen; Offen (9)
+    der Nachprüfung der dritten Korrektur). check._sitzungen und check._aktuell prüfen mit derselben Regel
+    (Maske.sitzungsname_offen). Das Gremium entsteht aus dem ungekürzten Namen und läuft, wenn es aus dem Namen stammt,
+    selbst durch die Maske: So findet gremium_der_sitzung die Schreibweise eines bekannten Gremiums auch dann, wenn die
+    Maske eine Zahl im Namen kürzt (der Name einer Organisation bleibt ungeprüft, wie bisher; vorher entstand das
+    Gremium aus dem maskierten Namen). Mit `zahl` (dict) zählt _meetings für zeile_sitzungsnamen: `gremium_aus_namen`
+    und `maske` (Name oder Gremium geändert)."""
     if not config.MEETINGS.exists():
         return []
     names = dict(db.execute("SELECT id, name FROM organization"))

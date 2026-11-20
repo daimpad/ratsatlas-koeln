@@ -2001,7 +2001,7 @@ def test_dritte_korrektur_ende_zu_ende(testdaten, monkeypatch, capsys):
     assert len(b) == 1 and "2901/2026" in b[0], b
     # Maske ohne Positivliste (Stand der zweiten Korrektur): die Nummern bleiben stehen, check meldet sie jetzt
     with monkeypatch.context() as mp:
-        mp.setattr(maske, "_restzahl_spannen", lambda text: [])
+        mp.setattr(maske, "_restzahl_spannen", lambda text, sitzung=False: [])
         export.export()
         capsys.readouterr()
         zeilen = json.loads((base / "suche.json").read_text())["rows"]
