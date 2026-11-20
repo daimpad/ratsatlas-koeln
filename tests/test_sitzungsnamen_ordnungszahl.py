@@ -259,8 +259,9 @@ def test_kette_namen_unveraendert(oparl, capsys):
     assert erwartet["u1"] == "Unterausschuss Beispielbauten"   # Name einer Organisation der Datenbank
     assert erwartet["u2"] == "Unterausschuss Probebauten"
     assert erwartet["k4"] == erwartet["z5"] == erwartet["p8"] == "Bezirksvertretung Beispielstadt"
-    # wie bisher bei „Sitzung der …“: Das Gremium ist der Rest des Namens, samt der zweiten Zeile
-    assert erwartet["a7"] == "Bezirksvertretung Beispielstadt\n-Sitzung ist auf den 3. Dezember verschoben worden!-"
+    # bis zur Entscheidung 20.11.2026 (4) (b) samt der zweiten Zeile, seitdem nur die erste Zeile
+    # (tests/test_gremium_zusatz.py); der Name bleibt unverändert (unten)
+    assert erwartet["a7"] == "Bezirksvertretung Beispielstadt"
     assert erwartet["o6"] == "Rat"
     for k, (name, _) in SITZUNGEN.items():
         assert zeit[k]["name"] == name and zeit[k]["gremium"] == erwartet[k], k
