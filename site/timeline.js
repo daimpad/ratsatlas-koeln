@@ -239,7 +239,8 @@
         if (ms < view[0] || ms > view[1]) continue;
         const y = LAYOUT.meet[0] + i * rh + rh / 2;
         const c = el("circle", { cx: x(ms), cy: y, r: 2.6, class: `tl-meet${ms > today ? " future" : ""}${m.cancelled ? " cancelled" : ""}` }, svg);
-        el("title", {}, c).textContent = `${de(ms)} · ${m.gremium}${m.cancelled ? " · abgesagt" : ms > today ? " · geplant" : ""}`;
+        // künftige Sitzung mit Hinweis „abgesagt“ aus dem Sitzungsnamen (zeit.json hinweis): nicht „geplant“
+        el("title", {}, c).textContent = `${de(ms)} · ${m.gremium}${m.cancelled ? " · abgesagt" : ms > today && m.hinweis === "abgesagt" ? " · laut Sitzungsnamen abgesagt" : ms > today ? " · geplant" : ""}`;
       }
 
       // Kontext: Wahlperioden (belegt, OParl legislativeTerms)

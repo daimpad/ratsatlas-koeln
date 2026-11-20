@@ -2,7 +2,7 @@
 keine Bonner Reste, Angaben aus dem Repository (Stadtbezirke und Stadtteile aus data/geo, Wörter wie im Glossar mit
 Sprungmarken auf begriffe/), Regeln der Einfachen Sprache (kurze Sätze, keine Abkürzungen außerhalb der Zeilen „Für
 Fachleute“), Sätze zu abgeschalteten Themen nur mit Freigabe, Vorschau-Hinweis, Bau über seo.write mit Sitemap und
-Karte im Menü „Verstehen“. Keine Anfragen an Server der Stadt."""
+Karte im Menü „Über“ (bis 20.11.2026 „Verstehen“). Keine Anfragen an Server der Stadt."""
 import json
 import re
 from html.parser import HTMLParser
@@ -258,7 +258,7 @@ def test_fusszeile_der_unterseiten_mit_link():
 
 
 def test_karte_und_eintrag_auf_der_startseite(freigaben):
-    """Mit Freigabe bleiben Karte (Menü „Verstehen“) und Einträge in den Dialogen „Über“ und „Was ist neu?“ in der
+    """Mit Freigabe bleiben Karte (Menü „Über“) und Einträge in den Dialogen „Über“ und „Was ist neu?“ in der
     veröffentlichten Startseite, ohne Freigabe fallen alle heraus (seo.ohne_abgeschaltete)."""
     index = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
     karte = '<a class="card" href="einfach/" data-funktion="einfache_sprache" hidden>'
@@ -355,7 +355,7 @@ def test_bezeichnungen_der_oberflaeche_gibt_es():
         if not ok:
             fehlen.append(z)
     assert fehlen == [], fehlen
-    for z in ("Gebiet wählen", "Termine anzeigen", "Mitmachen", "Verstehen", "Ebenen", "Bebauungspläne",
+    for z in ("Gebiet wählen", "Termine anzeigen", "Mitmachen", "Über", "Ebenen", "Bebauungspläne",
               "Quellen, Lizenzen und Datenstand", "Wie verlässlich sind die Angaben?",
               "Original im Ratsinformationssystem", "Verortung falsch? Hinweis geben", "Tour durch alle Funktionen"):
         assert z in zitate, z
@@ -401,7 +401,7 @@ def test_technikseite_nennt_einfache_sprache_nur_mit_freigabe(tmp_path, freigabe
 
 
 def test_karte_so_funktioniert_ohne_bonner_rest():
-    """Die Karte „So funktioniert der Ratsatlas“ im Menü „Verstehen“ beschreibt den Kölner Ablauf (jede Nacht, wie die
+    """Die Karte „So funktioniert der Ratsatlas“ im Menü „Über“ beschreibt den Kölner Ablauf (jede Nacht, wie die
     Technikseite), nicht den Bonner („jeden Morgen“)."""
     index = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
     assert "jeden Morgen" not in index

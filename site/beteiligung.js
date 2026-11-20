@@ -55,9 +55,10 @@ const AUSSCHUSS = /Anregungen und Beschwerden/i;
 // ersten Vollabruf offen (TECHNIK.md, „Mitmachen in Köln“)
 const RAT = new Set(["Rat", "Rat der Stadt Köln", "Stadtrat"]);
 
-// nächste Sitzung (nicht abgesagt, ab heute), die `passt`
-function naechste(meetings, heute, passt) {
-  return (meetings || []).filter((m) => m && m.date >= heute && !m.cancelled && passt(m.gremium || ""))
+// nächste Sitzung (ab heute, nicht abgesagt: weder OParl `cancelled` noch Hinweis „abgesagt“ aus dem Sitzungsnamen,
+// zeit.json `hinweis`, Entscheidung 20.11.2026 (7) (b)), die `passt`
+export function naechste(meetings, heute, passt) {
+  return (meetings || []).filter((m) => m && m.date >= heute && !m.cancelled && m.hinweis !== "abgesagt" && passt(m.gremium || ""))
     .sort((a, b) => (a.date + (a.time || "")).localeCompare(b.date + (b.time || "")))[0] || null;
 }
 

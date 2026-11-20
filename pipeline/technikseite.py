@@ -1,6 +1,6 @@
 """Seite technik/: So funktioniert der Ratsatlas (Entscheidungen des Auftraggebers 03.11.2026: vier Grafiken – Überblick,
 Datenfluss, Zeitplan, Technik-Stapel –, aus dem Repository erzeugt, anklickbar mit Erklärung, je Grafik zwei bis vier
-Sätze, Menü „Verstehen“, ohne Laufstatus).
+Sätze, Karte im Menü „Über“ (bis 20.11.2026 „Verstehen“), ohne Laufstatus).
 
 Aus dem Repository gelesen werden: die Schritte der Pipeline aus .github/workflows/pages.yml (Reihenfolge), Name,
 Zeitpunkte und Auslöser aller Workflows, Schritte mit „montags“ oder „am 1. des Monats“ im Namen, die Module der Schritte

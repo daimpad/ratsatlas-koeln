@@ -23,8 +23,11 @@ const run = async (p, name, rows) => {
   await p.click('.toggle[data-panel="panel-list"]'); await p.waitForTimeout(300);
   await p.click('#papers li button'); await p.waitForTimeout(800); await run(p, 'vorgang', rows);
   await p.click('.toggle[data-panel="timeline-wrap"]'); await p.waitForTimeout(500); await run(p, 'zeitleiste', rows);
+  // Menüs der Leiste (Entscheidung 20.11.2026 (7)); der Dialog „Über den Ratsatlas“ öffnet aus dem Menü „Über“
+  for (const m of ['themen', 'entscheiden', 'mitmachen', 'ueber']) {
+    await p.click(`[data-mega="mega-${m}"]`); await p.waitForTimeout(300); await run(p, `menue-${m}`, rows);
+  }
   await p.click('#about-open'); await p.waitForTimeout(300); await run(p, 'ueber', rows); await p.keyboard.press('Escape');
-  await p.click('[data-mega="mega-mitmachen"]'); await p.waitForTimeout(300); await run(p, 'mitmachen', rows);
   // Fläche „Mitmachen in Köln“ (nur mit Freigabe „mitmachen“; zweiter Lauf, 13.11.2026) mit gewähltem Stadtbezirk
   // Mit Freigabe steht #panel-mitmachen im HTML; öffnet sich die Fläche dann nicht, ist das ein Befund (keine stille Lücke)
   await p.goto(B + '?gebiet=ortsteil:ehrenfeld&mitmachen=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(800);

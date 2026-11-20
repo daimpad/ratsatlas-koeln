@@ -152,7 +152,7 @@ def test_dialog_ueber():
     assert "„abgeleitet“" in text
     for _, name, *_ in STUFEN:
         assert f"<strong>{name}</strong>" in abschnitt.group(2)
-    # die Karte im Menü „Verstehen“ öffnet diesen Abschnitt und trägt dieselbe Überschrift
+    # die Karte im Menü „Über“ öffnet diesen Abschnitt und trägt dieselbe Überschrift
     assert 'data-about="pruefung">' in INDEX and f'<span class="card-title">{UEBERSCHRIFT}</span>' in INDEX
 
 

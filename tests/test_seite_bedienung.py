@@ -1,5 +1,5 @@
 """Runde 18 (Seite): aria-current der Listeneinträge, Themen-Chips bei „ganz Köln“, Tourtexte nach den Freigaben,
-Hinweis zu Baustellen in der Zeitleiste, Dateigrößen im Menü „Daten“. Die Prüfung im Browser (Playwright, axe) steht in
+Hinweis zu Baustellen in der Zeitleiste, Dateigrößen unter „Daten“ (seit 20.11.2026 im Menü „Über“). Die Prüfung im Browser (Playwright, axe) steht in
 tests/browser/bedienung.js; hier die Teile, die ohne Browser laufen (node mit nachgebildetem Dokument, Python). Keine
 Anfragen an Server der Stadt."""
 import importlib.util
@@ -133,9 +133,10 @@ console.log(JSON.stringify(aus));
 
 # --- B4: Tourtexte nach den Freigaben ---------------------------------------------------------------------------------
 
-# Texte der Tour vor Runde 18 (Bonner Fassung): mit allen Freigaben unverändert; „Mitmachen“ seit dem zweiten Lauf
-# (13.11.2026) mit dem Kölner Text („Alle Wege im Überblick“ zeigt die Kölner Wege, kein Bürgerantrag und keine Fristen),
-# „Die Karte“ seit 19.11.2026 mit dem Kölner Wortlaut der Ortsstufen (Entscheidung 19.11.2026 (1) (C))
+# Texte der Tour vor Runde 18 (Bonner Fassung): mit allen Freigaben unverändert; „Die Karte“ seit 19.11.2026 mit dem
+# Kölner Wortlaut der Ortsstufen (Entscheidung 19.11.2026 (1) (C)). „Mitmachen“ und „Verstehen“ stehen seit den neuen
+# Menüs (Entscheidung 20.11.2026 (7)) nicht mehr hier: „Mitmachen“ mit „Aktuell in Köln“, „Verstehen“ und „Offene
+# Daten“ gehen im Schritt „Über“ auf (test_tour_menues_der_leiste)
 BONN_TEXTE = {
     "Die Karte": (
         "Jeder Punkt ist eine Vorlage mit Ortsbezug; Zahlen fassen nahe Punkte zusammen, ein Klick zoomt "
@@ -150,16 +151,6 @@ BONN_TEXTE = {
         "Schaltflächen liegen unter „Ebenen“; die Zahl daneben nennt, wie viele eingeschaltet sind. Die "
         "Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, "
         "Lizenzen und Datenstand."),
-    "Mitmachen": (
-        "Kommende Sitzungen, auch als Kalenderdatei; unter „Informiert bleiben“ Feeds, die neue Vorlagen im "
-        "Gebiet oder Änderungen an einem Vorgang melden; der Weg, sich mit Anregungen und Beschwerden nach § 24 "
-        "GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; „Alle Wege im Überblick“ zeigt je "
-        "Stadtbezirk die nächsten Sitzungen und alle Wege, sich einzubringen, von der Einwohnerfragestunde bis "
-        "zum Bürgerbegehren; und ein Hinweis, wenn etwas falsch zugeordnet ist."),
-    "Verstehen": (
-        "Hilfen zum Lesen der Karte: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge"
-        " oder Zuschussbedarf in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie"
-        " hier wieder."),
     "Flächen ein- und ausklappen": (
         "Vorlagen (die Liste aller Vorlagen im Gebiet), Zeitleiste, Vorgang (die Einzelheiten einer Vorlage),"
         " Prozesse und Assistent lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. "
@@ -168,25 +159,29 @@ BONN_TEXTE = {
 # Wörter, die nur mit der Freigabe ihrer Funktion in der Tour stehen dürfen (wie tests/browser/bedienung.js)
 WOERTER_JE_FUNKTION = {"baustellen": ["Baustelle"], "einfache_sprache": ["Einfache Sprache", "Einfacher Sprache"],
                        "haushalt": ["Zuschussbedarf", "Haushalt"], "mitmachen": ["Alle Wege im Überblick", "Bürgerantrag"],
-                       "soll": ["Prozesse"], "chat": ["Assistent"], "themenseiten": ["Themenseiten"]}
+                       "soll": ["Prozesse"], "chat": ["Assistent"], "themenseiten": ["Themenseiten"],
+                       "technik": ["wie der Ratsatlas funktioniert"]}
 ABGESCHALTET = [w for woerter in WOERTER_JE_FUNKTION.values() for w in woerter]
 # Schalter und Karten der Zusatzthemen (app.js applyFunktionen und Schalter „Baustellen“); in der veröffentlichten Seite
 # fehlen die Karten abgeschalteter Themen ganz (pipeline/seo.ohne_abgeschaltete)
 SCHALTER = {".map-bau": "baustellen", '[data-funktion="einfache_sprache"]': "einfache_sprache",
             '[data-funktion="haushalt"]': "haushalt", '[data-funktion="mitmachen"]': "mitmachen",
-            '.toggle[data-panel="panel-prozesse"]': "soll", ".toggle-ai": "chat"}
+            '.toggle[data-panel="panel-prozesse"]': "soll", ".toggle-ai": "chat", '[data-funktion="technik"]': "technik"}
 # Kölner Freigaben (config.ZUSATZTHEMEN) unter den Schaltern; seit 13.11.2026 mit Einfacher Sprache
 KOELN = {f for f in SCHALTER.values() if config.ZUSATZTHEMEN.get(f)}
 
 
-def _tour(an, telefon=False, fehlen=False, zeitleiste=True, vorschau=False):
+def _tour(an, telefon=False, fehlen=False, zeitleiste=True, vorschau=False, aktuell=True):
     """Titel und Text der Schritte, die die Tour zeigt (when erfüllt), bei Freigaben `an` (Menge der Funktionen);
     `fehlen`: Elemente abgeschalteter Funktionen fehlen im Dokument statt ausgeblendet zu sein; `vorschau`:
-    Kartenvorschau ohne Ratsvorlagen (Text unter vorschau, wo vorhanden, wie tour.js show)."""
+    Kartenvorschau ohne Ratsvorlagen (Text unter vorschau, wo vorhanden, wie tour.js show; „Themen“ und „Wer
+    entscheidet“ ausgeblendet wie in app.js applyFunktionen); `aktuell`: Kachel „Aktuell in Köln“ sichtbar."""
     teil = _teil(TOUR, r"^  const MOBILE = matchMedia.*?\n  \];\n")
     dom = {sel: {"hidden": fn not in an} for sel, fn in SCHALTER.items() if fn in an or not fehlen}
     dom['.toggle[data-panel="timeline-wrap"]'] = {"hidden": not zeitleiste}
-    dom['[data-mega="mega-auswertung"]'] = {"hidden": False}
+    for menue in ("mega-themen", "mega-entscheiden"):
+        dom[f'[data-mega="{menue}"]'] = {"hidden": vorschau}
+    dom["#karte-aktuell"] = {"hidden": not aktuell or vorschau}
     flaechen = [{"dataset": {"panel": p}, "hidden": p == "timeline-wrap" and not zeitleiste
                  or p == "panel-prozesse" and "soll" not in an or p == "panel-assistent" and "chat" not in an}
                 for p in ("panel-list", "timeline-wrap", "panel-detail", "panel-prozesse", "panel-assistent")]
@@ -210,7 +205,7 @@ def test_tour_nennt_keine_abgeschaltete_funktion():
     „Mitmachen in Köln“ seit 13.11.2026 an): kein Schritt nennt eine abgeschaltete Funktion, ob ihr Element
     ausgeblendet ist oder fehlt; an ihrer Stelle steht, was die Seite zeigt (Text der Vorschau zu § 24 GO NRW und zu
     den Begriffen)."""
-    assert KOELN == {"einfache_sprache", "mitmachen"}
+    assert KOELN == {"einfache_sprache", "mitmachen", "technik"}
     aus_koeln = [w for f, woerter in WOERTER_JE_FUNKTION.items() if not config.ZUSATZTHEMEN.get(f) for w in woerter]
     for an, verboten in ((KOELN, aus_koeln), (set(), ABGESCHALTET)):
         for telefon in (False, True):
@@ -222,10 +217,10 @@ def test_tour_nennt_keine_abgeschaltete_funktion():
                 if "mitmachen" not in an:
                     # § 24 GO NRW: Rat oder Bezirksvertretung, auch ohne Freigabe „mitmachen“ (Nachprüfung 14.11.2026)
                     assert "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die " \
-                           "Bezirksvertretung zu wenden; und ein Hinweis" in texte["Mitmachen"]
+                           "Bezirksvertretung zu wenden; und unter „Informiert bleiben“" in texte["Mitmachen"]
                 einfach = "der Ratsatlas in Einfacher Sprache, " if "einfache_sprache" in an else ""
-                assert texte["Verstehen"].startswith(f"Hilfen zum Lesen der Karte: {einfach}Begriffe wie Vorlage, "
-                                                     "Beratungsfolge oder Stadtbezirk in einfachen Worten")
+                assert texte["Über"].startswith(f"Lesehilfen: {einfach}Begriffe wie Vorlage, "
+                                                "Beratungsfolge oder Stadtbezirk in einfachen Worten")
             assert texte["Flächen ein- und ausklappen"].startswith(
                 "Vorlagen (die Liste aller Vorlagen im Gebiet), Zeitleiste und Vorgang (die Einzelheiten einer "
                 "Vorlage) lassen sich hier öffnen")
@@ -246,8 +241,10 @@ def test_tour_mit_freigaben_wie_in_bonn():
     assert "„Baustellen“ zeigt" in einzeln["baustellen"]["Die Karte"]
     assert "„Baustellen“ zeigt" not in einzeln["haushalt"]["Die Karte"]
     assert ("Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk"
-            in einzeln["einfache_sprache"]["Verstehen"])
-    assert "der Karte: Begriffe wie Vorlage, Beratungsfolge oder Zuschussbedarf" in einzeln["haushalt"]["Verstehen"]
+            in einzeln["einfache_sprache"]["Über"])
+    assert "Lesehilfen: Begriffe wie Vorlage, Beratungsfolge oder Zuschussbedarf" in einzeln["haushalt"]["Über"]
+    assert "wie verlässlich die Angaben sind und wie der Ratsatlas funktioniert, was neu" in einzeln["technik"]["Über"]
+    assert "wie der Ratsatlas funktioniert" not in einzeln["haushalt"]["Über"]
     assert "„Alle Wege im Überblick“" in einzeln["mitmachen"]["Mitmachen"]
     assert "„Alle Wege im Überblick“" not in einzeln["chat"]["Mitmachen"]
     assert "Vorgang (die Einzelheiten einer Vorlage) und Prozesse lassen" in einzeln["soll"]["Flächen ein- und ausklappen"]
@@ -255,16 +252,47 @@ def test_tour_mit_freigaben_wie_in_bonn():
 
 
 def test_tour_vorschau_nennt_einfache_sprache_nur_mit_freigabe():
-    """Kartenvorschau ohne Ratsvorlagen: Der Schritt „Verstehen“ nennt die Einfache Sprache wie im Datenbetrieb nur, wenn
-    ihre Karte sichtbar ist (13.11.2026; vorher stand der Text der Vorschau fest ohne sie)."""
+    """Kartenvorschau ohne Ratsvorlagen: Der Schritt „Über“ (bis 20.11.2026 „Verstehen“) nennt die Einfache Sprache wie
+    im Datenbetrieb nur, wenn ihre Karte sichtbar ist (13.11.2026; vorher stand der Text der Vorschau fest ohne sie); die
+    Schritte „Themen“ und „Wer entscheidet“ entfallen mit ihren Menüs."""
     for telefon in (False, True):
-        mit = _tour(KOELN, telefon, vorschau=True)["Verstehen"]
-        ohne = _tour(set(), telefon, vorschau=True)["Verstehen"]
-        assert mit == ("Hilfen zum Lesen der Karte: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, "
-                       "Beratungsfolge oder Stadtbezirk in einfachen Worten und wie verlässlich die Angaben sind. Diese "
-                       "Tour finden Sie hier wieder.")
-        assert ohne == mit.replace("der Ratsatlas in Einfacher Sprache, ", "")
-        assert "Ratsvorlagen" in _tour(KOELN, telefon, vorschau=True)["Willkommen zur Tour"]
+        texte = _tour(KOELN, telefon, vorschau=True)
+        mit = texte["Über"]
+        ohne = _tour(set(), telefon, vorschau=True)["Über"]
+        assert mit.startswith("Lesehilfen: der Ratsatlas in Einfacher Sprache, Begriffe wie Vorlage, Beratungsfolge oder "
+                              "Stadtbezirk in einfachen Worten und diese Tour.")
+        assert "Das Datenpaket enthält schon Gebiete, Kennzahlen je Stadtteil und die Kartenebenen" in mit
+        assert ohne == mit.replace("der Ratsatlas in Einfacher Sprache, ", "").replace(" und wie der Ratsatlas funktioniert", "")
+        assert "Ratsvorlagen" in texte["Willkommen zur Tour"]
+        assert "Themen" not in texte and "Wer entscheidet" not in texte and "„Aktuell in Köln“" not in texte["Mitmachen"]
+
+
+def test_tour_menues_der_leiste():
+    """Entscheidung 20.11.2026 (7): Die Tour stellt die Menüs in der Reihenfolge der Leiste vor („Themen“, „Wer
+    entscheidet“, „Mitmachen“; „Über“ als letzter Schritt), nennt in „Wer entscheidet“ nur die Verfahrenswege (die
+    Reiter „Gremien“ und „Ämter“ folgen mit Pull Request 4, ohne Erwähnung vorher) und „Aktuell in Köln“ nur, wenn die
+    Kachel sichtbar ist; die früheren Menüs „Auswertung“, „Offene Daten“ und „Verstehen“ gibt es nicht mehr."""
+    for telefon in (False, True):
+        texte = _tour(KOELN, telefon)
+        titel = list(texte)
+        assert [x for x in titel if x in ("Themen", "Wer entscheidet", "Mitmachen", "Über")] == [
+            "Themen", "Wer entscheidet", "Mitmachen", "Über"]
+        assert titel[-1] == "Über" and texte["Über"].endswith("Viel Freude beim Erkunden.")
+        for alt in ("Auswertung", "Offene Daten", "Verstehen", "Über die Karte"):
+            assert alt not in texte, alt
+        assert texte["Wer entscheidet"] == ("„Verfahrenswege in Zahlen“ zeigt für ganz Köln, welche Gremien welche "
+                                            "Vorlagenart beraten und wie Verfahren meist enden.")
+        assert texte["Themen"].startswith("Die Themen als Filter: Ein Klick zeigt die passenden Vorlagen in der Liste")
+        assert texte["Mitmachen"].startswith("„Aktuell in Köln“ führt zum Startfenster mit den nächsten Sitzungen und "
+                                             "neu eingereichten Vorlagen; kommende Sitzungen, auch als Kalenderdatei; ")
+        ohne = _tour(KOELN, telefon, aktuell=False)["Mitmachen"]
+        assert ohne.startswith("Kommende Sitzungen, auch als Kalenderdatei; ") and "Aktuell in Köln" not in ohne
+        assert "Hinweis" not in texte["Mitmachen"] and "einen Hinweis geben" in texte["Über"]
+        for wort in ("folgt", "folgen"):
+            assert all(wort not in texte[t] for t in ("Themen", "Wer entscheidet", "Mitmachen", "Über")), wort
+    code = re.sub(r"^\s*//.*$", "", TOUR, flags=re.M)
+    for alt in ("mega-auswertung", "mega-daten", "mega-verstehen", 'target: "#about-open"'):
+        assert alt not in code, alt
 
 
 def test_zeitleiste_hinweis_zu_baustellen_nur_mit_baustellen():
@@ -345,11 +373,14 @@ console.log(JSON.stringify({ aufrufe, punkte: cluster.punkte.map((m) => m.ll[1])
     assert "    if (!nurListe) {\n      drawMarkers(list);\n      if (tl) tl.setPapers(base);\n    }\n" in render
     glob = _teil(APP, r"^  function renderGlobal\(nurListe\) \{\n.*?\n  \}\n")
     assert re.search(r"    if \(!nurListe\) \{\n.*?drawMarkers\(papers\.filter.*?\n    \}\n", glob, re.S)
-    # alle übrigen Aufrufe zeichnen die Karte wie bisher
-    assert re.findall(r"render\(true\)", APP) == ["render(true)"]
+    # alle übrigen Aufrufe zeichnen die Karte wie bisher; „Zurück zur Liste“ (Pull Request 3 der Navigation) erweitert
+    # wie „Weitere“ nur die Liste, bis die gewählte Vorlage darin steht
+    assert re.findall(r"render\(true\)", APP) == ["render(true)", "render(true)"]
+    assert "if (i >= shown) { shown = Math.ceil((i + 1) / LIST_STEP) * LIST_STEP; render(true); }" in _teil(
+        APP, r"^  function zurListe\(\) \{\n.*?\n  \}\n")
 
 
-# --- B5: Dateigrößen im Menü „Daten“ ------------------------------------------------------------------------------------
+# --- B5: Dateigrößen unter „Daten“ (Menü „Über“) -------------------------------------------------------------------------
 
 def test_groesse_text():
     g = _modul("seite_bauen").groesse_text
@@ -368,7 +399,7 @@ def _sed_muster():
 
 
 def test_groessen_im_menue_daten(tmp_path):
-    """Karten mit download im Menü „Daten“ nennen die Größe der Datei im Kartentext; fehlt die Datei, bleibt der Text
+    """Karten mit download unter „Daten“ im Menü „Über“ nennen die Größe der Datei im Kartentext; fehlt die Datei, bleibt der Text
     ohne Angabe; Adresse und übriger Text bleiben, der Ersatz des Zip-Links in pages.yml greift weiter."""
     sb = _modul("seite_bauen")
     shutil.copy(ROOT / "site" / "index.html", tmp_path / "index.html")

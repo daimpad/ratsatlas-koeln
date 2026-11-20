@@ -153,7 +153,7 @@ def body(root, vorschau=False):
     </ol>
     <p>Sie kennen ein Stichwort oder die Nummer einer Vorlage? Dann nutzen Sie die Suche oben auf der Karte. Sie sucht in ganz Köln.</p>
     <p>Es gibt auch eine Seite für jeden Stadtteil und jeden Stadtbezirk. Sie finden sie unter <a href="{root}gebiete/">Alle Gebiete</a>.</p>
-    <p>Die „Tour durch alle Funktionen“ zeigt alles Schritt für Schritt. Sie finden die Tour auf der Karte im Menü „Verstehen“.</p>
+    <p>Die „Tour durch alle Funktionen“ zeigt alles Schritt für Schritt. Sie finden die Tour auf der Karte im Menü „Über“.</p>
 
     <h2 id="karte">Was zeigt die Karte?</h2>
     <ul>
@@ -175,7 +175,7 @@ def body(root, vorschau=False):
       <li><strong>unklar (violett):</strong> Der Name passt zu mehreren Orten. Oder nur das Gremium deutet auf einen Stadtbezirk. Zum Beispiel, weil nur eine Bezirksvertretung beraten hat.</li>
     </ul>
     <p>Ein ganzer Stadtteil oder Stadtbezirk hat keinen Punkt auf der Karte. Beim Vorgang steht aber bei jedem Ort die Stufe. Und woher der Ort kommt.</p>
-    <p>Die Orte sind noch nicht von Hand geprüft. Diese Prüfung kommt noch. Die Ergebnisse stehen dann auf der Karte im Menü „Verstehen“ unter „Wie verlässlich sind die Angaben?“.</p>
+    <p>Die Orte sind noch nicht von Hand geprüft. Diese Prüfung kommt noch. Die Ergebnisse stehen dann auf der Karte im Menü „Über“ unter „Wie verlässlich sind die Angaben?“.</p>
     <p>Im Zweifel gilt immer das Original bei der Stadt Köln.</p>
 {_fach("Verortung in Stufe A (Ortsangabe der Stadt) und Stufe B (Straßen-, Stadtteil- und Bezirksnamen, Hausnummern, Bebauungspläne); jede Verortung nennt Methode, Konfidenz und Fundstelle. Prüfung von Hand: 50 Vorlagen je Methode, noch offen.")}
 

@@ -55,11 +55,15 @@
     <li>Inhalte nichtöffentlicher Beratungen und Vorlagen, die das Ratsinformationssystem nicht über die OParl-Schnittstelle anbietet.</li>
     <li>Beratungen, deren Sitzung oder Tagesordnungspunkt in den Daten fehlt.</li></ul>
     <p class="hint">Abweichungen zwischen Regel und Ablauf sind Befunde, keine Bewertung.</p></details>`;
-  // Startfenster „Los geht's“ im Vorgang, solange keine Vorlage gewählt ist; die Tour steht in site/tour.js
-  const INTRO = `<div class="intro">
+  // Startfenster „Los geht's“ im Vorgang, solange keine Vorlage gewählt ist; die Tour steht in site/tour.js. Dazu
+  // (Entscheidung 20.11.2026 (7) (c) 3 und 5): „Zurück zu Köln“ aus einem Gebiet, ein Hinweis, wenn die Daten nicht
+  // aktuell sind, und „Aktuell in Köln“
+  const INTRO = (offen) => `<div class="intro">
     <p class="intro-lead">Was Rat, Ausschüsse und Bezirksvertretungen der Stadt Köln beraten – wo, wann und wer.</p>
+    ${area && area.kind !== STADT ? ZURUECK_KOELN : ""}
     <button type="button" class="btn btn-cta tour-cta" data-tour><span class="tour-cta-dot" aria-hidden="true"></span>Tour durch alle Funktionen</button>
-    </div>${LIMITS}`;
+    </div>${standHinweis()}${aktuellHtml(offen)}${LIMITS}`;
+  const ZURUECK_KOELN = '<p class="zurueck"><button type="button" class="link-btn" data-zurueck-koeln><span aria-hidden="true">← </span>Zurück zu Köln</button></p>';
 
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -138,6 +142,61 @@
     const oparl = (Array.isArray(m && m.sources) ? m.sources : []).find((s) => s && s.name === "oparl-koeln") || {};
     return zeitTag(oparl.retrieved_at) || zeitTag(m && m.generated_at) || heute();
   };
+  // Hinweis im Startfenster, wenn die Daten nicht aktuell sind (index.json meta.abruf_fehler, abruf_warnungen und
+  // abruf_ausgesetzt): dieselben Sätze wie im Datenstand unter den Legenden
+  function standHinweis() {
+    const im = index && index.meta;
+    const saetze = (standFehler(im && im.abruf_fehler) + standWarnungen(im && im.abruf_warnungen)
+      + standAusgesetzt(im && im.abruf_ausgesetzt)).split(" · ").filter(Boolean);
+    return saetze.length ? `<p class="stand-hinweis"><strong>Hinweis zum Datenstand:</strong> ${esc(saetze.join(" "))}</p>` : "";
+  }
+  // „Aktuell in Köln“ im Startfenster (index.json aktuell, pipeline/export._aktuell; Entscheidung 20.11.2026 (7) (c) 3):
+  // Karten nur für die Listen, die index.json nennt (eine ausgesetzte oder nicht aktualisierte Liste fehlt dort schon).
+  // Vergangene Sitzungen blendet der Browser nach dem heutigen Tag in Köln aus (heute(), bei jedem Aufbau neu; der
+  // Stichtag des Exports ist der Abend des nächtlichen Laufs), ebenso abgesagte (OParl cancelled oder Hinweis
+  // „abgesagt“ aus dem Sitzungsnamen; die Pipeline lässt beide schon weg); danach höchstens AKTUELL_SITZUNGEN. Auf dem
+  // Telefon eingeklappt wie im Ratsatlas Bonn (aufgeklappt reichte das Startfenster über die Schaltfläche „Karte“),
+  // außer beim Weg über „Aktuell anzeigen“ (offen)
+  const AKTUELL_SITZUNGEN = 3;
+  const WOCHENTAG = new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", weekday: "short" });
+  const TAG_MONAT = new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", day: "numeric", month: "long" });
+  const mittag = (iso) => new Date(iso + "T12:00:00Z");
+  // fehlendes Gremium (pipeline/export.gremium_der_sitzung: „unbekannt“ ohne Namen) in Worten
+  const gremiumText = (g) => (g && g !== "unbekannt" ? esc(g) : "Gremium unbekannt");
+  function aktuellListen() {
+    const a = index && index.aktuell;
+    if (!a) return null;
+    const h = heute();
+    const sitzungen = (Array.isArray(a.sitzungen) ? a.sitzungen : [])
+      .filter((m) => m && ISO_DAY.test(String(m.date)) && m.date >= h && !m.cancelled && m.hinweis !== "abgesagt")
+      .slice(0, AKTUELL_SITZUNGEN);
+    const vorlagen = (Array.isArray(a.vorlagen) ? a.vorlagen : []).filter((p) => p && p.reference);
+    return sitzungen.length || vorlagen.length ? { sitzungen, vorlagen } : null;
+  }
+  function aktuellHtml(offen) {
+    const l = aktuellListen();
+    if (!l) return "";
+    const h = heute(), morgen = new Date(mittag(h).getTime() + 864e5).toISOString().slice(0, 10);
+    const s = l.sitzungen.map((m) => {
+      const web = safeUrl(m.web), wann = m.date === h ? "heute" : m.date === morgen ? "morgen" : TAG_MONAT.format(mittag(m.date));
+      return `<li class="akt-sitzung"><span class="akt-cal" aria-hidden="true"><b>${+m.date.slice(8)}</b>${WOCHENTAG.format(mittag(m.date)).replace(".", "")}</span>
+        <span class="akt-body"><span class="akt-title">${gremiumText(m.gremium)}</span><span class="akt-meta">${wann}${m.time ? `, ${esc(m.time)} Uhr` : ""}${web ? "" : " · Tagesordnung noch nicht veröffentlicht"}</span>${m.hinweis === "verschoben" ? '<span class="akt-chip">laut Sitzungsnamen verschoben</span>' : ""}</span>
+        ${web ? `<a class="akt-to" href="${web}" target="_blank" rel="noopener" title="Tagesordnung"><svg class="icon" aria-hidden="true"><use href="#i-external"/></svg><span class="visually-hidden">Tagesordnung ${gremiumText(m.gremium)}, ${fmtDate(m.date)} (Ratsinformationssystem, neuer Tab)</span></a>` : ""}</li>`;
+    }).join("");
+    // Vorlage mit Gebiet öffnet ihr Gebiet und den Vorgang (openGlobal, wie ein Suchtreffer); ohne Gebiet nur Text
+    const v = l.vorlagen.map((p) => {
+      const inhalt = `<span class="akt-title akt-clamp">${esc(p.name)}</span>
+        <span class="akt-chips"><span class="akt-chip">${esc(p.paper_type || "Vorlage")}</span>${p.ort ? `<span class="akt-chip akt-chip-ort">${esc(p.ort)}</span>` : ""}<span class="akt-date">${esc(p.reference)} · ${fmtDate(p.date)}</span></span>`;
+      return `<li>${p.area ? `<button type="button" class="akt-open" data-open-ref="${esc(p.reference)}" data-area="${esc(p.area)}">${inhalt}</button>` : `<div class="akt-open">${inhalt}</div>`}</li>`;
+    }).join("");
+    const oparl = ((index.meta && index.meta.sources) || []).find((x) => x && x.name === "oparl-koeln");
+    const stand = oparl && zeitTag(oparl.retrieved_at);
+    const kopf = (id, icon, titel, zusatz = "") => `<h3 class="akt-h" id="${id}"><span class="akt-icon"><svg class="icon" aria-hidden="true"><use href="#${icon}"/></svg></span>${titel}${zusatz ? ` <span class="akt-zusatz">· ${zusatz}</span>` : ""}</h3>`;
+    return `<details class="aktuell" id="aktuell"${offen || !MOBILE.matches ? " open" : ""}><summary>Aktuell in Köln${stand ? ` <span class="akt-stand">Stand der Daten: ${fmtDate(stand)}</span>` : ""}</summary>
+      ${s ? `<section class="akt-card akt-card-sitzungen" aria-labelledby="akt-sitzungen-h">${kopf("akt-sitzungen-h", "i-calendar", "Kommende Sitzungen")}<ul class="akt-list">${s}</ul>
+        ${zeit ? '<p class="akt-more"><button type="button" class="link-btn" data-open-termine>Alle kommenden Sitzungen</button></p>' : ""}</section>` : ""}
+      ${v ? `<section class="akt-card akt-card-neu" aria-labelledby="akt-neu-h">${kopf("akt-neu-h", "i-doc", "Neu eingereicht", "ganz Köln")}<ul class="akt-list">${v}</ul></section>` : ""}</details>`;
+  }
   // Beginn der Daten (zeit.json data_start: ältestes Datum einer Vorlage) für Angaben wie „seit …“; ohne lesbaren
   // Wert (Vorschau ohne Vorlagen) null, dann neutral „seit Beginn der Daten“ (Runde 19b statt des Bonner Datenbeginns)
   const datenBeginn = () => (zeit && ISO_DAY.test(String(zeit.data_start || "")) ? zeit.data_start : null);
@@ -213,21 +272,57 @@
     const target = el.querySelector("h2[tabindex], .tl-stage, summary");
     if (target) target.focus();
   }
-  function showIntro() {
+  function showIntro(offen) {
     detailSeq++;
     shownPlan = null;
     shownSite = null;
     if (planLayer) { planLayer.remove(); planLayer = null; }   // Umriss eines zuvor gewählten Vorgangs (Gebietswechsel)
     $("#detail-heading").textContent = "Los geht's";
-    $("#detail").innerHTML = INTRO;
+    $("#detail").innerHTML = INTRO(offen);
+  }
+  // Weg zu „Los geht's“ (Wortmarke, Seitentitel, Kachel „Aktuell in Köln“ im Menü „Mitmachen“; Konzept des Ratsatlas
+  // Bonn): Menüs und Überlagerungen zu, keine Vorlage gewählt; Karte, Gebiet und Filter bleiben, wie sie sind
+  function goHome(zuAktuell) {
+    closeMega();
+    setNav(false);
+    OVERLAYS.forEach((id) => { if (!document.getElementById(id).hidden) setPanel(id, false); });
+    selected = null;
+    markCurrent(null);
+    if (tl) tl.select(null);
+    highlight();
+    showIntro(zuAktuell);
+    syncUrl();
+    setPanel("panel-detail", true);
+    $("#detail").scrollTop = 0;
+    const ziel = zuAktuell && $("#aktuell");
+    if (ziel) { ziel.scrollIntoView({ block: "start" }); ziel.querySelector("summary").focus(); } else $("#detail-heading").focus();
+  }
+  document.addEventListener("click", (e) => {
+    const h = e.target.closest("[data-home]");
+    if (!h || (h.tagName === "A" && (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey))) return;   // neuer Tab bleibt möglich
+    e.preventDefault();
+    goHome(h.dataset.home === "aktuell");
+  });
+  // Ziel für den Fokus, wenn eine Fläche oder ein Fenster schließt (Entscheidung 20.11.2026 (7) (c) 5): das auslösende
+  // Element, wenn es zu sehen ist; liegt es in einem inzwischen geschlossenen Menü, dessen Schaltfläche in der Leiste;
+  // auf dem Telefon (Menüs hinter ☰ geschlossen) die Schaltfläche „Menü“
+  const sichtbarEl = (el) => Boolean(el && el.isConnected && el.getClientRects().length);
+  function rueckZiel(el, mega) {
+    if (sichtbarEl(el)) return el;
+    const menue = (el && el.isConnected && el.closest(".mega")) || (mega && document.getElementById(mega));
+    const knopf = menue && document.querySelector(`[data-mega="${menue.id}"]`);
+    if (sichtbarEl(knopf)) return knopf;
+    return sichtbarEl(burger) ? burger : null;
   }
   function closePanel(id) {
     setPanel(id, false);
     const t = toggleFor(id);
     // Auswertung, Termine und Mitmachen haben keine Schaltfläche in der Leiste: Fokus zurück auf das öffnende Element,
-    // sonst auf den Eintrag im Menü (Code-Prüfung 23.10.2026: Fokus lag danach auf <body>)
-    const back = t && t.offsetParent ? t : opener[id]?.isConnected && opener[id].offsetParent ? opener[id]
-      : document.querySelector(`[data-mega][aria-controls="${{ "panel-auswertung": "mega-auswertung", "panel-termine": "mega-mitmachen", "panel-mitmachen": "mega-mitmachen" }[id] || ""}"]`);
+    // sonst auf den Eintrag im Menü (Code-Prüfung 23.10.2026: Fokus lag danach auf <body>); die Auswertung gehört mit
+    // „Kennzahlen zum Gebiet“ zu „Themen“, mit den Verfahrenswegen zu „Wer entscheidet“
+    const mega = { "panel-auswertung": $("#stats").hidden ? "mega-entscheiden" : "mega-themen", "panel-termine": "mega-mitmachen",
+      "panel-mitmachen": "mega-mitmachen" }[id];
+    const back = sichtbarEl(t) ? t : rueckZiel(opener[id], mega);
     if (back) back.focus();
   }
   document.addEventListener("click", (e) => {
@@ -277,7 +372,8 @@
     el.dataset.trigger = trigger ? trigger.id || "" : "";
     document.querySelectorAll(`[data-mega="${id}"]`).forEach((b) => b.setAttribute("aria-expanded", "true"));
     if (id === "mega-suche") fillChips();
-    if (id === "mega-mitmachen") fillMitmachen();
+    if (id === "mega-themen") fillThemen();
+    if (id === "mega-mitmachen" || id === "mega-ueber") fillMitmachen();
     if (MOBILE.matches) SHEETS.forEach((s) => !document.getElementById(s).hidden && setPanel(s, false));
   }
   function closeMega(returnFocus) {
@@ -317,7 +413,7 @@
   burger.addEventListener("click", () => setNav(!navIsOpen()));
   // Wahl eines Eintrags schließt das Blatt (Flächen, Seiten, Dialoge, Tour, Links)
   navMore.addEventListener("click", (e) => {
-    if (MOBILE.matches && e.target.closest(".toggle, [data-show], [data-panel], #about-open, [data-about], [data-neu], [data-tour], a[href]")) setNav(false);
+    if (MOBILE.matches && e.target.closest(".toggle, [data-show], [data-panel], #about-open, [data-about], [data-neu], [data-tour], [data-home], [data-open-tab], a[href]")) setNav(false);
   });
   $("#f-area").addEventListener("change", () => { if (MOBILE.matches) setNav(false); });
   // Tippen außerhalb der Leiste schließt das Blatt
@@ -366,14 +462,24 @@
   });
 
   // --- Über ----------------------------------------------------------------------------------------
-  $("#about-open").addEventListener("click", () => { closeMega(); $("#about").showModal(); });
+  // Die Fenster „Über den Ratsatlas“ und „Was ist neu?“ öffnen aus dem Menü „Über“ (und „Was ist neu?“ aus dem Fenster
+  // „Über“); beim Schließen geht der Fokus zurück zum auslösenden Element, sonst zur Schaltfläche „Über“ (rueckZiel)
+  let dialogOpener = null;
+  const dialogOeffnen = (d, ausloeser) => { if (!ausloeser.closest("dialog")) dialogOpener = ausloeser; closeMega(); d.showModal(); };
+  for (const d of [$("#about"), $("#neu")]) {
+    d.addEventListener("close", () => {
+      if ($("#about").open || $("#neu").open) return;   // „Was ist neu?“ aus „Über“: erst das zweite Fenster zählt
+      const f = document.activeElement;
+      if (!f || f === document.body || !sichtbarEl(f)) { const z = rueckZiel(dialogOpener, "mega-ueber"); if (z) z.focus(); }
+    });
+  }
+  $("#about-open").addEventListener("click", (e) => dialogOeffnen($("#about"), e.currentTarget));
   $("#about-close").addEventListener("click", () => $("#about").close());
   $("#about").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
   document.addEventListener("click", (e) => {
     const b = e.target.closest("[data-about]");
     if (!b) return;
-    closeMega();
-    $("#about").showModal();
+    dialogOeffnen($("#about"), b);
     const h = document.getElementById("about-" + b.dataset.about);
     if (h) { h.scrollIntoView({ block: "start" }); h.focus(); }
   });
@@ -383,9 +489,10 @@
     const a = e.target.closest?.("a[href]");
     if (a && /^https?:$/.test(a.protocol) && a.host !== location.host && !a.target) { a.target = "_blank"; a.rel = a.rel || "noopener"; }
   }, true);
-  // „Was ist neu?“ in einem eigenen Fenster (aus „Über“ und dem Menü „Daten“)
+  // „Was ist neu?“ in einem eigenen Fenster (aus dem Fenster „Über“ und dem Menü „Über“)
   document.addEventListener("click", (e) => {
-    if (e.target.closest("[data-neu]")) { closeMega(); if ($("#about").open) $("#about").close(); $("#neu").showModal(); }
+    const n = e.target.closest("[data-neu]");
+    if (n) { if ($("#about").open) $("#about").close(); dialogOeffnen($("#neu"), n); }
     if (e.target.closest("[data-close-dialog]")) e.target.closest("dialog").close();
   });
   $("#neu").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
@@ -1037,8 +1144,17 @@
     updateNav();
     range = null;
     if (tl) tl.reset();
-    loadArea(value);
+    return loadArea(value);
   }
+  // „Zurück zu Köln“ (Liste und Startfenster eines Gebiets; Entscheidung 20.11.2026 (7) (c) 5): Übersicht über ganz
+  // Köln wie „Ganz Köln“ in der Auswahl „Gebiet“ (Karte auf ganz Köln, Stadtbezirke anklickbar); der Fokus bleibt in der
+  // Fläche, aus der der Weg kam
+  document.addEventListener("click", (e) => {
+    const z = e.target.closest("[data-zurueck-koeln]");
+    if (!z) return;
+    const inListe = Boolean(z.closest("#panel-list"));
+    chooseArea(`${STADT}:ganz`).then(() => (inListe ? focusPanel("panel-list") : $("#detail-heading").focus()));
+  });
   const otStyle = (layer) => {
     const inFocus = navFocus && layer.feature.properties.bezirk_bez === navFocus;
     return { ...NAV_LINE, opacity: inFocus ? 0.7 : 0.4, fillOpacity: navFocus && !inFocus ? 0.35 : 1, fillColor: navFill(otInfo(layer), otBreaks) };
@@ -1410,6 +1526,7 @@
   }
 
   function render(nurListe) {
+    $("#zurueck-koeln").hidden = !area || area.kind === STADT;
     $("#f-related-wrap").hidden = !$("#f-party").value;
     $("#more-filters").hidden = scope() === STADT;
     if (scope() === STADT) {
@@ -1440,6 +1557,15 @@
     if (openMegaId === "mega-suche") $("#mega-count").textContent = $("#count").textContent;
   }
   const renderSoon = debounce(() => { shown = LIST_STEP; render(); }, 200);
+  // „Zurück zur Liste“ im Vorgang: Liste des Gebiets öffnen (auf schmalen Bildschirmen schließt sie den Vorgang), Fokus
+  // auf den gewählten Eintrag, sonst auf die Überschrift der Liste
+  function zurListe() {
+    setPanel("panel-list", true);
+    const i = selected && scope() !== STADT ? lastList.indexOf(selected) : -1;
+    if (i >= shown) { shown = Math.ceil((i + 1) / LIST_STEP) * LIST_STEP; render(true); }
+    const b = document.querySelector('.papers button[aria-current="true"]');
+    if (b) { b.scrollIntoView({ block: "nearest" }); b.focus(); } else focusPanel("panel-list");
+  }
 
   // --- Detail: Prozesslinie mit Evidenzstatus -------------------------------------------------------
   const glossKeys = (t) => (t ? t.split(" - ").map((x) => x.trim()).filter((x) => GLOSSAR[x]) : []);
@@ -1457,7 +1583,9 @@
     const box = s.note && (status === "nicht_öffentlich" || status === "unklar" || s.note === "ohne_sitzung")
       ? `<div class="blackbox">${esc(NOTES[s.note])}</div>` : (s.note ? `<div class="hint">${esc(NOTES[s.note])}</div>` : "");
     const cls = s.date_status === "abgeleitet" ? " date-derived" : "";
-    const gremium = index && (s.typ === "beratung" || s.typ === "entscheidung") && s.label && s.status !== "nicht_öffentlich";
+    // Gremium als Link in den Reiter „Prozesse“ nur mit dessen Freigabe („soll“); in Köln bis Pull Request 4 der
+    // Navigation Text ohne Link (Entscheidung 19.11.2026 (1) (H))
+    const gremium = index && funktionen.soll && (s.typ === "beratung" || s.typ === "entscheidung") && s.label && s.status !== "nicht_öffentlich";
     const label = s.label && s.label !== STEP_LABEL[s.typ]
       ? ": " + (gremium ? `<button type="button" class="link-btn" data-gremium-name="${esc(s.label)}" title="Zuständigkeit und Besetzung im Reiter Prozesse">${esc(s.label)}</button>` : esc(s.label)) : "";
     return `<li class="step${cls}" data-status="${esc(status)}">
@@ -1914,7 +2042,8 @@
         <div class="hint">${esc(UMSETZUNG_HINT)} Ob und wie die Verwaltung den Beschluss umsetzt, bleibt unklar.</div></div></li>`;
   }
 
-  // Beteiligung: nächste Sitzung eines beteiligten Gremiums (laut Sitzungsliste der Stadt), Anregungen und Beschwerden
+  // Beteiligung: nächste Sitzung eines beteiligten Gremiums (laut Sitzungsliste der Stadt; ohne abgesagte, auch nicht
+  // mit Hinweis „abgesagt“ aus dem Sitzungsnamen, Entscheidung 20.11.2026 (7) (b)), Anregungen und Beschwerden
   // nach § 24 GO NRW mit der Seite der Stadt Köln zum Ausschuss (abgerufen und geprüft am 13.11.2026, TECHNIK.md
   // „Mitmachen in Köln“) und, mit Freigabe „mitmachen“, dem Weg zur Fläche „Mitmachen in Köln“
   const BUERGERANTRAG = "https://www.stadt-koeln.de/politik-und-verwaltung/mitwirkung-von-buergerinnen/anregungenbeschwerden";
@@ -1922,7 +2051,7 @@
     const today = heute();
     const gremien = new Set(p.steps.filter((s) => s.typ === "beratung" || s.typ === "entscheidung").map((s) => s.label));
     const next = zeit && p.stand !== "entschieden"
-      ? zeit.meetings.find((m) => m.date >= today && !m.cancelled && gremien.has(m.gremium)) : null;
+      ? zeit.meetings.find((m) => m.date >= today && !m.cancelled && m.hinweis !== "abgesagt" && gremien.has(m.gremium)) : null;
     const onAgenda = next && p.steps.some((s) => s.label === next.gremium && s.date === next.date);
     const meeting = next ? `<li data-generic="sitzung" data-key="${esc(next.gremium)}|${esc(next.date)}">Nächste Sitzung eines beteiligten Gremiums: <strong>${esc(next.gremium)}</strong>, ${fmtDay(next.date)}${next.time ? `, ${esc(next.time)} Uhr` : ""}${onAgenda ? " – die Vorlage steht dort auf der Tagesordnung <span class=\"derived\">abgeleitet, über die Sitzung verknüpft</span>" : ""}.
       ${link(next.web, "Tagesordnung") || "Die Tagesordnung erscheint vor der Sitzung im Ratsinformationssystem."} Die Sitzung ist in der Regel öffentlich; Sie können zuhören.</li>` : "";
@@ -1960,6 +2089,12 @@
     hint.hidden = false;
   }
 
+  // Name eines Ortsbezugs im Vorgang. Eine Ortsangabe der Stadt ohne Straße, Beschreibung und Kölner Stadtteil hat
+  // keinen (Entscheidung 20.11.2026 (1) (c)): dann der feste Text ORT_OHNE_STADTTEIL statt einer leeren Zeile; ohne
+  // Namen bei einer anderen Methode (in den Daten nicht vorgesehen) nur Ortsstufe und Methode
+  const ORT_OHNE_STADTTEIL = "Ortsangabe der Stadt ohne Kölner Stadtteil";
+  const ortName = (l) => String(l.name || "").trim() || l.ortsteil || l.stadtbezirk
+    || (String(l.method).startsWith("oparl_") ? ORT_OHNE_STADTTEIL : "");
   function select(p, fromMap) {
     detailSeq++;
     selected = p;
@@ -1972,9 +2107,9 @@
     const resp = p.responsibility.map(federZeile).join("<br>");
     const outside = (l) => (area.kind === "ortsteil" && l.ortsteil && l.ortsteil !== area.name)
       || (area.kind === "bezirk" && l.stadtbezirk && l.stadtbezirk !== area.name);
-    const locItem = (l) => `<li><strong>${esc(l.name || l.ortsteil || l.stadtbezirk)}</strong>
-      ${l.ortsteil && (l.level === "strasse" || l.level === "objekt") ? `(${esc(l.ortsteil)})` : ""} – <span class="conf conf-${esc(l.confidence)}">${CONF[l.confidence] || esc(l.confidence)}</span>, ${esc(STUFE[l.stage] || `Stufe ${l.stage}`)}${outside(l) ? ' <span class="hint">außerhalb des gewählten Gebiets</span>' : ""}<br>
-      <span class="meta">${methodText(l)}</span></li>`;
+    const locItem = (l) => { const n = ortName(l); return `<li>${n ? `<strong>${esc(n)}</strong>
+      ${l.ortsteil && (l.level === "strasse" || l.level === "objekt") ? `(${esc(l.ortsteil)})` : ""} – ` : ""}<span class="conf conf-${esc(l.confidence)}">${CONF[l.confidence] || esc(l.confidence)}</span>, ${esc(STUFE[l.stage] || `Stufe ${l.stage}`)}${outside(l) ? ' <span class="hint">außerhalb des gewählten Gebiets</span>' : ""}<br>
+      <span class="meta">${methodText(l)}</span></li>`; };
     // Volltext: erkannter Ort und Teil des Dokuments, kein Zitat (Rahmen laut Antwort der Stadt Köln)
     function methodText(l) {
       if (String(l.method).startsWith("llm_")) return `Mit einem Sprachmodell aus dem Text des Dokuments erkannt und mit dem Verzeichnis der Straßen, Orte, Gebäude und Anlagen abgeglichen <span class="derived">abgeleitet</span> · ${esc(l.evidence || "")}; kein Zitat`;
@@ -1992,6 +2127,7 @@
       .map((s) => `<li>${esc(s.name)}: ${esc(lizenzOeffentlich(s.license))}${s.retrieved_at ? ` · Abruf ${zeitDatum(s.retrieved_at)}` : ""}</li>`).join("");
     $("#detail-heading").textContent = "Vorgang";
     $("#detail").innerHTML = `
+      <p class="zurueck"><button type="button" class="link-btn" data-zurueck-liste><span aria-hidden="true">← </span>Zurück zur Liste</button></p>
       <h3 tabindex="-1">${esc(p.name)}</h3>
       <dl class="facts">
         <dt>Vorlage</dt><dd>${esc(p.reference)}${erklBegriff(KUERZEL[(String(p.reference).match(/ ([A-Z]{2})$/) || [])[1]], `Kürzel ${(String(p.reference).match(/ ([A-Z]{2})$/) || [])[1]}`)}</dd>
@@ -2047,8 +2183,12 @@
     if (plan) { showPlan(plan.dataset.openPlan); return; }
     const site = e.target.closest("[data-open-site]");
     if (site) { showSite(site.dataset.openSite); return; }
+    // „Neu eingereicht“ (Startfenster): Gebiet der Vorlage laden und den Vorgang öffnen wie ein Suchtreffer (openGlobal)
     const ref = e.target.closest("[data-open-ref]");
+    if (ref && ref.dataset.area) { openGlobal(ref.dataset.openRef, ref.dataset.area).then(() => $("#detail h3")?.focus()); return; }
     if (ref) { const p = papers.find((x) => x.reference === ref.dataset.openRef); if (p) select(p); else window.risKarte.open(ref.dataset.openRef); return; }
+    if (e.target.closest("[data-open-termine]") && zeit) { setPanel("panel-termine", true); showTermine(); focusPanel("panel-termine"); return; }
+    if (e.target.closest("[data-zurueck-liste]")) { zurListe(); return; }
     if (e.target.closest("[data-mitmachen-oeffnen]") && vorhanden("panel-mitmachen")) { setPanel("panel-mitmachen", true); focusPanel("panel-mitmachen"); return; }
     const erk = e.target.closest(".erkl-btn");
     if (erk) {
@@ -2186,9 +2326,16 @@
       month = m.date.slice(0, 7);
       const docs = [link(m.web, "Tagesordnung"), link(m.invitation, "Einladung (PDF)")].filter(Boolean).join(" · ");
       const ps = onAgenda(m);
-      return `${head}<div class="meeting${m.cancelled ? " cancelled" : ""}">
+      // Hinweis zum Stand aus dem Sitzungsnamen (zeit.json hinweis, pipeline/export.hinweis_sitzung; Entscheidung
+      // 20.11.2026 (7) (b)): „abgesagt“ mit eigener Plakette neben der für OParl cancelled; bei „verschoben“ steht der
+      // Sitzungsname (nach der Maske) neben dem Gremium
+      const abgesagt = m.cancelled || m.hinweis === "abgesagt";
+      const plakette = m.cancelled ? "abgesagt" : m.hinweis === "abgesagt" ? "laut Sitzungsnamen abgesagt"
+        : m.hinweis === "verschoben" ? "laut Sitzungsnamen verschoben" : "";
+      const name = m.hinweis === "verschoben" && m.name ? ` <span class="meeting-name">Sitzungsname: „${esc(m.name)}“</span>` : "";
+      return `${head}<div class="meeting${abgesagt ? " cancelled" : ""}">
         <div class="meeting-head"><span class="meeting-date">${fmtDay(m.date)}${m.time ? `, ${esc(m.time)} Uhr` : ""}</span>
-          <strong>${esc(m.gremium)}</strong>${m.cancelled ? ' <span class="badge">abgesagt</span>' : ""}</div>
+          <strong>${gremiumText(m.gremium)}</strong>${plakette ? ` <span class="badge">${plakette}</span>` : ""}${name}</div>
         <div class="meta">${docs || "Tagesordnung noch nicht veröffentlicht"}</div>
         ${ps.length ? `<div class="agenda"><span>Aus ${esc(where)} auf der Tagesordnung:</span><ul>${ps.map((p) => `<li><button type="button" class="linkish" data-ref="${esc(p.reference)}">${esc(p.reference)} – ${esc(p.name)}</button></li>`).join("")}</ul></div>` : ""}
       </div>`;
@@ -2221,8 +2368,48 @@
     $("#cta-feed-text").textContent = `Neue Vorlagen und Beratungsergebnisse aus ${where} im Feed-Reader erhalten${selected ? ", oder nur den gewählten Vorgang" : ""}.`;
     const report = $("#cta-report");
     report.href = selected ? reportLink(selected) : `${REPO}/issues/new/choose`;
-    report.lastChild.textContent = selected ? `Hinweis zu ${selected.reference}` : "Hinweis geben";
+    report.querySelector(".card-title").textContent = selected ? `Hinweis zu ${selected.reference}` : "Hinweis geben";
+    // Kachel „Aktuell in Köln“ nur, wenn das Startfenster dazu Karten zeigt; der Text nennt genau diese
+    const l = aktuellListen();
+    $("#karte-aktuell").hidden = !l;
+    if (l) $("#karte-aktuell-text").textContent = l.sitzungen.length && l.vorlagen.length
+      ? "Die nächsten Sitzungen und neu eingereichte Vorlagen auf einen Blick."
+      : l.sitzungen.length ? "Die nächsten Sitzungen auf einen Blick." : "Neu eingereichte Vorlagen auf einen Blick.";
   }
+
+  // --- Menü „Themen“: die Themen als Filter (Entscheidung 20.11.2026 (7) (c) 2) ---------------------------------
+  // Zahl je Thema wie fillChips: Vorlagen des geladenen Gebiets mit diesem Thema (abgeleitet); in ganz Köln ist kein
+  // Gebiet geladen, dort ohne Zahl. Ein Thema zeigt die passenden Vorlagen in der Liste: im Gebiet, sonst in ganz Köln
+  function fillThemen() {
+    const theme = $("#f-theme").value, imGebiet = Boolean(area) && area.kind !== STADT;
+    const counts = {};
+    if (imGebiet) for (const p of papers) for (const t of p.themes || []) counts[t.theme] = (counts[t.theme] || 0) + 1;
+    const wo = !imGebiet ? "ganz Köln" : area.kind === "ohne" ? `Vorlagen ohne Ortsbezug ${area.key}` : area.name;
+    $("#themen-hinweis").textContent = imGebiet
+      ? `Ein Thema zeigt die passenden Vorlagen in ${wo} in der Liste. Die Zahl nennt die Vorlagen mit diesem Thema im Gebiet; die Themen sind abgeleitet.`
+      : "Ein Thema zeigt die passenden Vorlagen in ganz Köln in der Liste; die Themen sind abgeleitet. Mit einem gewählten Gebiet steht hier die Zahl je Thema.";
+    $("#themen-chips").innerHTML = Object.entries(THEMES).map(([k, v]) => chip(v, theme === k, `data-thema="${k}"`, imGebiet ? counts[k] || 0 : null)).join("");
+  }
+  // wie ein Balken der Kennzahlen: die Zahl gilt für das ganze Gebiet, übrige Filter und Zeitraum zurücksetzen; das
+  // gewählte Thema noch einmal heißt: Filter „Thema“ aufheben
+  function themaWaehlen(k) {
+    const aus = $("#f-theme").value === k;
+    if (!aus) { $("#filters").reset(); $("#q").value = ""; range = null; if (tl) tl.reset(); }
+    setScope(area && area.kind !== STADT ? "gebiet" : STADT);
+    $("#f-theme").value = aus ? "" : k;
+    shown = LIST_STEP;
+    fillParties();
+    render();
+    syncUrl();
+    closeMega();
+    setNav(false);
+    setPanel("panel-list", true);
+    focusPanel("panel-list");
+  }
+  $("#mega-themen").addEventListener("click", (e) => {
+    const t = e.target.closest("[data-thema]");
+    if (t) themaWaehlen(t.dataset.thema);
+  });
 
   // --- Suche in der Leiste mit Schnellfiltern (Mega-Menü „Suche“) ----------------------------------
   function setScope(v) {
@@ -2480,8 +2667,9 @@
 
   // --- Start -----------------------------------------------------------------------------------------
   // Elemente mit data-funktion (index.html) nur zeigen, wenn die Funktion freigegeben ist; Hinweis auf Testdaten.
-  // Vorschau ohne Ratsvorlagen (Kennzeichen vorschau): data-vorschau="aus" ausblenden (Auswertung, Schnellfilter der
-  // Suche, Kalender), data-vorschau="nur" zeigen (Hinweise an ihrer Stelle)
+  // Vorschau ohne Ratsvorlagen (Kennzeichen vorschau): data-vorschau="aus" ausblenden (Menüs „Themen“ und „Wer
+  // entscheidet“, Schnellfilter der Suche, Kachel „Kommende Sitzungen“), data-vorschau="nur" zeigen (Hinweise an ihrer
+  // Stelle)
   function applyFunktionen(fn, idx) {
     document.querySelectorAll("[data-funktion]").forEach((el) => { el.hidden = !fn[el.dataset.funktion]; });
     const hinweis = $("#testdaten-hinweis");
@@ -2511,7 +2699,7 @@
     // Bonner Zusatzthemen nur, wenn index.json sie freigibt (config.ZUSATZTHEMEN); sonst keine Anfrage
     const fn = (idx && idx.meta && idx.meta.funktionen) || {};
     funktionen = fn;
-    // Freigaben und Vorschau-Kennzeichnung vor Karte und Kacheln anwenden, damit ausgeblendete Elemente (Auswertung,
+    // Freigaben und Vorschau-Kennzeichnung vor Karte und Kacheln anwenden, damit ausgeblendete Elemente (Menüs,
     // Schnellfilter, Kalender, Filter) nicht kurz sichtbar sind
     applyFunktionen(fn, idx);
     $("#filters").hidden = vorschau;   // Filter ohne Vorlagen hätten nur „alle“
@@ -2595,7 +2783,7 @@
       tl.select(papers.find((p) => p.reference === hoverRef), true);
     });
     $("#papers").addEventListener("mouseleave", () => { hoverRef = null; if (tl) tl.select(selected); });
-    // Menü „Mitmachen“: Termine; Menü „Auswertung“: Reiter Kennzahlen und Verfahrenswege
+    // Menü „Mitmachen“: Termine; Menüs „Themen“ und „Wer entscheidet“: Reiter Kennzahlen und Verfahrenswege
     if (zeit) $("#cta-termine").addEventListener("click", () => { setPanel("panel-termine", true); showTermine(); focusPanel("panel-termine"); });
     else $("#cta-termine").hidden = true;
     $("#cta-mitmachen").addEventListener("click", () => { closeMega(); setPanel("panel-mitmachen", true); focusPanel("panel-mitmachen"); });
