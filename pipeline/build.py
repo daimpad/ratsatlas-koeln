@@ -321,8 +321,8 @@ def build():
     grob = ({loc["id"] for p in papers if p["id"] in gesperrt for loc in p.get("location") or []}
             | {loc for a in ausgelassen for loc in a.get("location") or ()})
     # Ortsangaben außerhalb von `grob` mit Punkt außerhalb aller Kölner Stadtteile (Punkt verworfen, Entscheidung
-    # 19.11.2026 (4) (d)): Kennung → Stadtteil laut Stadt (subLocality) vorhanden; für die Zeile im Log und die
-    # Straßenpunkte des Gazetteers (unten `points`)
+    # 19.11.2026 (4) (d)): Kennung → Stadtteil laut Stadt (subLocality) vorhanden; für die Zeile im Log und die Zählung
+    # der Straßennamen aus der Stadtteilfläche (unten bei `points`)
     verworfen = {}
 
     for p in papers:
@@ -413,14 +413,26 @@ def build():
           f"dürfen: {len(verworfen)} (Punkt verworfen; davon mit Kölner Stadtteil laut Stadt "
           f"{sum(verworfen.values())})")
 
-    # Straßenpunkte aus den Ortsangaben der Stadt für Namen, die im Straßenverzeichnis fehlen; ohne die auf den Stadtteil
-    # zurückgeführten Ortsangaben (grob: ihr Punkt ist der Stadtteil, nicht die Straße) und ohne die mit verworfenem
-    # Punkt (ihre Zeile trägt höchstens den Punkt der Stadtteilfläche; vor der Entscheidung 19.11.2026 (4) lag ihr Punkt
-    # außerhalb aller Stadtteile und Gazetteer._add_points nahm die Straße nicht auf). Ortsangaben ohne Punkt mit
-    # Stadtteil laut Stadt liefern weiter den Punkt der Stadtteilfläche (offen, TECHNIK 19.11.2026 (4)).
-    points = [(loc[1], loc[5], loc[6]) for loc in locations.values()
-              if loc[-1] == config.QUELLE_OPARL and loc[0] not in grob and loc[0] not in verworfen]
+    # Straßenpunkte aus den Ortsangaben der Stadt für Namen, die im Straßenverzeichnis fehlen (Entscheidung 20.11.2026
+    # (1) (b)): nur Zeilen mit einem Punkt der Stadt in einem Kölner Stadtteil, also Ebene `strasse` mit Koordinate (oben
+    # oparl_location, hoch). Eine Ortsangabe ohne eigenen Punkt, deren Zeile nur den Punkt der Stadtteilfläche trägt
+    # (Ebene `ortsteil`, oparl_sublocality), liefert keinen mehr. Ortsangaben in `grob` (ihr Punkt gilt nur für den
+    # Stadtteil) und mit verworfenem Punkt tragen nie Ebene `strasse` mit Koordinate; die Bedingung zu `grob` sichert das
+    # für den Datenschutz zusätzlich ab.
+    zeilen_stadt = [loc for loc in locations.values() if loc[-1] == config.QUELLE_OPARL and loc[0] not in grob]
+    points = [(loc[1], loc[5], loc[6]) for loc in zeilen_stadt if loc[10] == "strasse" and loc[5] is not None]
     gaz = Gazetteer(street_points=points)
+    # nur Zahlen, einmal je Lauf: Straßennamen, die bis zu dieser Entscheidung nur über den Punkt einer Stadtteilfläche
+    # in den Gazetteer kamen und ihn jetzt nicht mehr erreichen. Dieselben Zeilen, die vorher zusätzlich in `points`
+    # standen (Ebene `ortsteil` außerhalb von `grob`, ohne verworfenen Punkt), dieselbe Regel wie Gazetteer._add_points
+    # (Name nicht im Straßenverzeichnis, Punkt in einem Kölner Stadtteil, je Name einmal); ein Name, den der Gazetteer
+    # auch aus einem Punkt der Stadt kennt, zählt nicht. Wie viele Vorlagen darüber einen Ortsbezug bekamen, zählt die
+    # Zeile nicht (dafür liefe Stufe B ein zweites Mal); für die Wirkung ist sie eine Obergrenze, denn Namen unter vier
+    # Zeichen oder mit dem Namen eines Stadtteils oder Stadtbezirks sucht Gazetteer.street_re nicht.
+    flaeche = [(loc[1], loc[5], loc[6]) for loc in zeilen_stadt if loc[10] == "ortsteil" and loc[0] not in verworfen]
+    print(f"Straßennamen nur aus Ortsangaben der Stadt ohne eigenen Punkt (Punkt der Stadtteilfläche), die der "
+          f"Gazetteer bisher als Straßenpunkt aufnahm und jetzt nicht mehr kennt (nicht im Straßenverzeichnis, je Name "
+          f"einmal): {len(gaz.neue_strassen(flaeche))}")
     rows["ploc"] += _stage_b(papers, bv_bezirke, locations, gaz, gremien, gesperrt)
     plans = Plans()
     rows["plan"] = [(pid, nr, ev, plans.classify(nr)[0]) for pid, nr, ev in rows["plan"]]
@@ -439,6 +451,7 @@ def build():
                               rows["rel"] + rows["related"])
     rows["ploc"] += _inherited(papers, papers_by_id, rows["ploc"], locations, gaz, gesperrt)
     rows["ploc"] += _from_committee(papers, bv_bezirke, locations, gaz, {r[0] for r in rows["ploc"]})
+    print(_nur_unklarer_ort_zeile(rows["ploc"], locations, bv_bezirke, gaz, papers_by_id))
 
     # OR REPLACE: ändert sich die Quelle während des seitenweisen Abrufs, kann eine Vorlage doppelt kommen
     db.executemany(f"INSERT OR REPLACE INTO paper VALUES (?,?,?,?,?,?,?,?,?,'{config.QUELLE_OPARL}')", rows["paper"])
@@ -841,16 +854,47 @@ def bv_bezirk(name):
     return BEZIRKE_KOELN.get(int(nr)) if nr else None
 
 
+def _bezirk_aus_gremium(pid, bv_bezirke, gaz):
+    """Stadtbezirk für `district_from_committee`: der der einzigen beratenden Bezirksvertretung einer Vorlage, wenn er
+    zu den Kölner Stadtbezirken der Gebietsdaten gehört; sonst None."""
+    bz = bv_bezirke.get(pid) or set()
+    if len(bz) != 1:
+        return None
+    name = next(iter(bz))
+    return name if name in gaz.bezirk_point else None
+
+
+def _nur_unklarer_ort_zeile(ploc, locations, bv_bezirke, gaz, papers_by_id):
+    """Zeile im Log, nur Zahlen (Entscheidung 20.11.2026 (1) (d)): Vorlagen, deren Ortsbezüge alle auf eine Ortsangabe
+    der Stadt ohne Kölner Stadtteil laut Stadt und ohne Punkt in einem Kölner Stadtteil zeigen (Zeile ohne Stadtteil
+    und ohne Koordinate, oparl_location, niedrig, „Ort unklar“; eigene oder vererbte; auch mit verworfenem Punkt
+    außerhalb aller Stadtteile, Entscheidung 19.11.2026 (4) (d)). Export stellt sie unter „ohne Ortsbezug“ (kein
+    Ortsbezug mit Stadtteil oder auf Ebene Stadtbezirk), je Jahr nach dem Datum; die ohne Datum stehen in keiner
+    Jahresdatei (export_all: Jahr aus substr(date, 1, 4)). _from_committee lässt sie aus, weil sie einen Ortsbezug
+    haben. Davon die ohne Datum und die, denen _from_committee ohne diesen Ortsbezug einen Stadtbezirk gäbe (dieselbe
+    Bedingung über _bezirk_aus_gremium)."""
+    orte = {}
+    for r in ploc:
+        orte.setdefault(r[0], set()).add(r[1])
+    unklar = [pid for pid, ids in orte.items()
+              if all(locations[i][-1] == config.QUELLE_OPARL and locations[i][7] is None and locations[i][5] is None
+                     for i in ids)]
+    ohne_datum = sum(papers_by_id[pid].get("date") is None for pid in unklar)
+    mit_bv = sum(_bezirk_aus_gremium(pid, bv_bezirke, gaz) is not None for pid in unklar)
+    return (f"Vorlagen nur mit unklarem Ort der Stadt (alle Ortsbezüge auf Ortsangaben der Stadt ohne Kölner Stadtteil "
+            f"laut Stadt und ohne Punkt in einem Kölner Stadtteil; unter „ohne Ortsbezug“, außer denen ohne Datum): "
+            f"{len(unklar)}; davon ohne Datum (in keiner Jahresdatei „ohne Ortsbezug“): {ohne_datum}; davon in genau "
+            f"einer Bezirksvertretung eines Kölner Stadtbezirks beraten (district_from_committee bisher nicht "
+            f"angewandt): {mit_bv}")
+
+
 def _from_committee(papers, bv_bezirke, locations, gaz, placed):
     """Schwache Evidenz `district_from_committee` (CLAUDE.md 5.2): Vorlagen ohne jeden anderen Ortsbezug, die in genau
     einer Bezirksvertretung beraten wurden, erhalten deren Stadtbezirk (Konfidenz niedrig)."""
     out = []
     for p in papers:
-        bz = bv_bezirke.get(p["id"]) or set()
-        if p["id"] in placed or len(bz) != 1:
-            continue
-        name = next(iter(bz))
-        if name not in gaz.bezirk_point:
+        name = None if p["id"] in placed else _bezirk_aus_gremium(p["id"], bv_bezirke, gaz)
+        if name is None:
             continue
         pt = gaz.bezirk_point[name]
         r = dict(level="stadtbezirk", name=name, ortsteil=None, bezirk=name, lon=round(pt.x, 6), lat=round(pt.y, 6))
