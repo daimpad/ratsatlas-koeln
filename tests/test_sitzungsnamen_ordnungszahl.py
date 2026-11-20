@@ -50,6 +50,8 @@ FORMEN = {
     f"1. Konstituierende Sitzung {A}\nAchtung: Die Sitzung wurde abgesagt und fällt aus!":
         f"#. Konstituierende Sitzung {A}\nAchtung: Die Sitzung wurde abgesagt und fällt aus!",
     "2. Sondersitzung des Unterausschusses Beispielbauten": "#. Sondersitzung des Unterausschusses Beispielbauten",
+    # beobachtete Schreibweise ohne Genitiv-s
+    "2. Sondersitzung des Unterausschuss Beispielbauten": "#. Sondersitzung des Unterausschuss Beispielbauten",
     # Name eines Stadtbezirks mit Straßen-Endung (im Sitzungsnamen _GEBIET_ERSATZ, ein Teil des Worts vor „(3.)“)
     "1. (konstituierende) Sitzung der Bezirksvertretung Ehrenfeld":
         "#. (konstituierende) Sitzung der Bezirksvertretung Ehrenfeld",
@@ -73,6 +75,19 @@ HAUSNUMMERN = {
 }
 # erste Zeile vor einem Namen mit Hausnummer: Die Ordnungszahl darin bleibt, die Hausnummer dahinter fällt weg
 VORZEILE = f"2. Sondersitzung {A}\n"
+# Grenzen der Regel (Prüfung vor dem Zusammenführen; erfunden): Steht zwischen Straße und Nummer ein anderes Wort oder
+# steht eine weitere Nummer einer Liste in einer Form von maske._SITZUNG_BEKANNT, bleibt sie im Sitzungsnamen stehen;
+# vor „Sitzung“ war das schon vorher so (_ORDNUNG in _BEKANNT). Name → Sitzungsname nach der Maske, Titelmaske
+# eingefroren aus 859cc57; „#“ für OHNE_NR. Ändert sich die Regel, zeigt dieser Test es
+GRENZEN = {
+    "Ortstermin Venloer Straße am Haus 5. Sondersitzung":
+        ("Ortstermin Venloer Straße am Haus 5. Sondersitzung", "Ortstermin Venloer Straße am Haus #. Sondersitzung"),
+    "Ortstermin Venloer Straße am Haus 5. Sitzung": ("Ortstermin Venloer Straße am Haus 5. Sitzung",) * 2,
+    "Venloer Straße 5 und (7.)": ("Venloer Straße # und (7.)", "Venloer Straße # und (#.)"),
+    "Venloer Straße 5 und (7. Sondersitzung)":
+        ("Venloer Straße # und (7. Sondersitzung)", "Venloer Straße # und (#. Sondersitzung)"),
+    "Venloer Straße 5 und (7. Sitzung)": ("Venloer Straße # und (7. Sitzung)",) * 2,
+}
 
 
 def _ohne(text):
@@ -113,6 +128,19 @@ def test_hausnummern_im_namen_weiter_maskiert(name, masken):
         assert not re.search(r"(?<!\d)(?:5|12|3|7)(?!\d)", ergebnis.replace(OHNE_NR, "")), ergebnis
 
 
+def test_grenzen_der_regel(masken):
+    """Grenzen der Regel, festgehalten: Eine Nummer, die nicht direkt hinter der Straße steht, bleibt vor
+    „Sondersitzung“ und als „(7.)“ stehen wie vor „Sitzung“; export und check folgen derselben Regel (kein Befund für
+    das Ergebnis), die Titelmaske wie in 859cc57."""
+    m, pruefend, titel = masken
+    for name, (erwartet, titel_erwartet) in GRENZEN.items():
+        erwartet, titel_erwartet = _ohne(erwartet), _ohne(titel_erwartet)
+        assert m.sitzungsname(name) == erwartet, name
+        assert pruefend.sitzungsname_offen(name) == (erwartet != name), name
+        assert not pruefend.sitzungsname_offen(erwartet), name
+        assert titel(name, REF) == titel_erwartet, name
+
+
 def _titel_der_vorhandenen_tests():
     """Titel aus den Fällen der Titelmaske in tests/test_datenschutz_fixpunkt.py (je Fall der Titel: bei SCHREIBUNGEN
     der zweite Text hinter der Vorlagenart, sonst der erste) und die Texte dieser Datei."""
@@ -122,7 +150,7 @@ def _titel_der_vorhandenen_tests():
         for fall in liste:
             texte = [fall] if isinstance(fall, str) else [t for t in fall if isinstance(t, str)]
             titel.append(texte[1] if liste is fixpunkt.SCHREIBUNGEN else texte[0])
-    return titel + list(FORMEN) + list(HAUSNUMMERN) + [VORZEILE + n for n in HAUSNUMMERN]
+    return titel + list(FORMEN) + list(HAUSNUMMERN) + [VORZEILE + n for n in HAUSNUMMERN] + list(GRENZEN)
 
 
 def test_titelmaske_liest_die_liste_fuer_sitzungsnamen_nicht(monkeypatch):
@@ -153,6 +181,7 @@ def test_gremium_ohne_vorspann():
     rat = {"https://example.invalid/oparl/organizations/o1": "Rat"}
     faelle = [
         ("2. Sondersitzung des Unterausschusses Beispielbauten", "Unterausschuss Beispielbauten"),
+        ("2. Sondersitzung des Unterausschuss Beispielbauten", "Unterausschuss Beispielbauten"),
         ("3. Gemeinsame Sondersitzung des Rates", "Rat"), ("Gemeinsame Sondersitzung des Rates", "Rat"),
         ("Sondersitzung des Rates", "Rat"), ("14. Sitzung des Rates", "Rat"), ("14.Sitzung des Rates", "Rat"),
         ("5 Sitzung des Rates", "Rat"), ("5, Sitzung des Rates", "Rat"), ("5.. Sitzung des Rates", "Rat"),

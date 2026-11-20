@@ -55,7 +55,8 @@ der Maske beraten wird; Maske.sitzungen nennt seitdem nur noch die Drucksache f�
 Sitzungsnamen gelten Namen Kölner Stadtteile und Stadtbezirke mit Straßen-Endung („Ehrenfeld“) nicht als Straße
 (_gebiete_muster; Nachprüfung derselben Entscheidung).
 Erweitert am 20.11.2026 (Entscheidung 20.11.2026 (2) (a)): In Sitzungsnamen kennt die Positivliste zusätzlich
-Ordnungszahlen vor „Sitzung“ und „Sondersitzung“ (_SITZUNG_BEKANNT); die Maske für Titel bleibt unverändert."""
+Ordnungszahlen und Zahlen vor „Sitzung“ und „Sondersitzung“ sowie „(3.)“ hinter einem Wort (_SITZUNG_BEKANNT); die
+Maske für Titel bleibt unverändert."""
 import json
 import re
 import unicodedata
@@ -417,14 +418,19 @@ _ZAHL_ZUSATZ = re.compile(r"\s?(?![uo]\.?\s*\d)[a-z](?![^\W\d_])")
 # Zahl ohne Punkt, mit Komma oder mit zwei Punkten („5 Sitzung“, „5, Sitzung“, „5.. Sitzung“), aber nur am Anfang des
 # Namens oder direkt hinter „(“ oder „/“, wo die beobachteten Namen sie tragen; „(3.)“ direkt hinter einem Wort (in den
 # beobachteten Namen dem Namen eines Gremiums: „… des Ausschusses für … (3.) und des …“), nicht hinter einer Zahl
-# („Haus 12 (3.)“ verliert beide Zahlen). Das verbirgt keine Hausnummer hinter einer Straße: Die Positivliste gilt nur
-# in der letzten Stufe der Maske (_restzahl_spannen), und die läuft in einer Runde nur, wenn die Muster der Maske und
-# die Probe nichts finden. Eine Straße mit Nummer (Name aus dem Verzeichnis oder Wort mit Straßen-Endung) entfernt
-# schon die erste Stufe, auch vor „Sitzung“ („Ortstermin Venloer Straße 5. Sitzung“, „Neumarkt 3, Sitzung“), ebenso
-# eine Nummer hinter „Hausnummer“ oder „Nr.“ samt einer Liste dahinter („Hausnummer 7 – 2. Sondersitzung“ verliert
-# auch die 2); eine Zahl direkt hinter einem Wort mit Straßen-Endung (bis zu drei Trennzeichen dazwischen) bleibt also
-# maskiert, mit denselben Ausnahmen wie in Titeln (Jahreszahl, Datum, Betrag, Uhrzeit). „_“ zählt als Teil eines
-# Worts: An dieser Stelle steht im Sitzungsnamen der Name eines Stadtteils oder Stadtbezirks (_GEBIET_ERSATZ)
+# („Haus 12 (3.)“ verliert beide Zahlen). Die Positivliste gilt nur in der letzten Stufe der Maske (_restzahl_spannen),
+# und die läuft in einer Runde nur, wenn die Muster der Maske und die Probe nichts finden. Eine Nummer direkt hinter
+# einer Straße (Name aus dem Verzeichnis oder Wort mit Straßen-Endung; dazwischen bis zu drei Trennzeichen, ein
+# Lagewort, „Nr.“ oder „Haus“) entfernt schon die erste Stufe, auch vor „Sitzung“ („Ortstermin Venloer Straße
+# 5. Sitzung“, „Neumarkt 3, Sitzung“), mit denselben Ausnahmen wie in Titeln (Jahreszahl, Datum, Betrag, Uhrzeit),
+# ebenso eine Nummer hinter „Hausnummer“ oder „Nr.“ samt einer Liste dahinter („Hausnummer 7 – 2. Sondersitzung“
+# verliert auch die 2). Steht etwas anderes zwischen Straße und Nummer (ein anderes Wort, mehr als drei Trennzeichen,
+# „_“) oder steht eine weitere Nummer einer Liste in einer der Formen hier, bleibt sie stehen (erfunden:
+# „Venloer Straße am Haus 5. Sondersitzung“, „Venloer Straße 5 und (7.)“). Vor „Sitzung“ blieb eine solche
+# Ordnungszahl schon vorher stehen, in Titeln ebenso (_ORDNUNG in _BEKANNT; TECHNIK.md, Prüfung r20a, dritte
+# Korrektur, Offen (1)); neu sind „Sondersitzung“, die Formen mit „Gemeinsame“ oder „Konstituierende“ und „(7.)“. Vor
+# „(3.)“ zählt „_“ als Teil eines Worts: An dieser Stelle steht im Sitzungsnamen der Name eines Stadtteils oder
+# Stadtbezirks (_GEBIET_ERSATZ)
 _SITZUNG_WORT = r"(?:gemeinsame\s|\(konstituierende\)\s|konstituierende\s)?(?:sonder)?sitzung(?![^\W\d_])"
 _SITZUNG_BEKANNT = re.compile(
     rf"(?<!\d)\d{{1,3}}\.\s?{_SITZUNG_WORT}"
@@ -616,7 +622,7 @@ class Maske:
         sie nichts, jede Zahl außerhalb bekannter Zusammenhänge (Positivliste _BEKANNT, dritte Korrektur). Mit `sitzung`
         (Sitzungsname, Maske.sitzungsname) stehen die Namen aus _gebiete_muster zuvor als _GEBIET_ERSATZ gleicher Länge
         im Text: Die Stellen bleiben dieselben, und ersetzt werden nur Nummern (samt Buchstabe der Hausnummer) und
-        Wörter für die Hausnummer, nie der Name. Dazu kennt die Positivliste dann die Ordnungszahlen aus
+        Wörter für die Hausnummer, nie der Name. Dazu kennt die Positivliste dann die Zusammenhänge aus
         _SITZUNG_BEKANNT (Entscheidung 20.11.2026 (2) (a)); Muster und Probe sind dieselben. Für Titel (ohne `sitzung`)
         unverändert."""
         if sitzung:
@@ -729,21 +735,22 @@ class Maske:
         """Name einer Sitzung oder Gremium, das aus dem Namen einer Sitzung stammt (export.gremium_der_sitzung), ohne
         Hausnummer: bei jeder Sitzung (Entscheidung 19.11.2026 (3) (c)), nicht nur bei einer Sitzung, in der eine
         Vorlage der Maske beraten wird (Maske.sitzungen; Offen (9) der Nachprüfung der dritten Korrektur). Das Gremium
-        aus dem Namen ist der Name selbst (ohne „Sitzung des“ bzw. „der“), und der ganze Name steht in zeit.json, in der
-        Beschreibung in termine.ics und in `process[].meeting` der Gebietsdateien daneben: Bliebe der Name ungekürzt,
-        stünde dieselbe Hausnummer dort weiter.
-        Dieselben Muster, dieselbe Probe und dieselbe Positivliste wie für Titel der Maske (_maskieren), aber ohne
-        Drucksache: Die Maske ist an Drucksachen gebunden (`refs`), ein Sitzungsname hat keine. Eine eigene Methode
-        statt einer erfundenen Drucksache in `refs`, weil check `refs` als Menge der Drucksachen der Maske liest
-        (Zählung „titel_geschuetzt“, Abgleich mit der Erlaubnis für Hauskoordinaten, Hinweis „ohne_punkt_ohne_maske“)
-        und die Maske für Titel unverändert bleibt. export ruft für jede Sitzung diese Methode, auch mit Vorlage der
-        Maske in der Sitzung; check prüft mit sitzungsname_offen (eine Regel). Legitime Namen mit Zahlen bleiben, soweit
-        die Positivliste sie kennt („Bezirksvertretung 1 (Innenstadt)“, „3. Sitzung des …“, Datum, Uhrzeit,
-        Jahreszahl). Anders als bei Titeln gilt der Name eines Kölner Stadtteils oder Stadtbezirks mit Straßen-Endung
-        nicht als Straße (_gebiete_muster): „Bezirksvertretung 4 (Ehrenfeld), 12. Sitzung“ bleibt, „Ortstermin
-        Ehrenfeld 5“ verliert die Zahl (Nachprüfung der Entscheidung 19.11.2026 (3)). Ebenfalls nur hier kennt die
-        Positivliste Ordnungszahlen vor „Sitzung“ und „Sondersitzung“ (_SITZUNG_BEKANNT, Entscheidung 20.11.2026 (2)
-        (a)): „2. Sondersitzung des …“ bleibt, „Ortstermin Venloer Straße 5. Sitzung“ verliert die Hausnummer."""
+        aus dem Namen ist der Name ohne Vorspann (export._VORSPANN_SITZUNG: etwa „Sitzung des“, „2. Sondersitzung der“),
+        und der ganze Name steht in zeit.json, in der Beschreibung in termine.ics und in `process[].meeting` der
+        Gebietsdateien daneben: Bliebe der Name ungekürzt, stünde dieselbe Hausnummer dort weiter.
+        Dieselben Muster und dieselbe Probe wie für Titel der Maske (_maskieren), dieselbe Positivliste ergänzt um
+        _SITZUNG_BEKANNT, aber ohne Drucksache: Die Maske ist an Drucksachen gebunden (`refs`), ein Sitzungsname hat
+        keine. Eine eigene Methode statt einer erfundenen Drucksache in `refs`, weil check `refs` als Menge der
+        Drucksachen der Maske liest (Zählung „titel_geschuetzt“, Abgleich mit der Erlaubnis für Hauskoordinaten, Hinweis
+        „ohne_punkt_ohne_maske“) und die Maske für Titel unverändert bleibt. export ruft für jede Sitzung diese Methode,
+        auch mit Vorlage der Maske in der Sitzung; check prüft mit sitzungsname_offen (eine Regel). Legitime Namen mit
+        Zahlen bleiben, soweit die Positivliste sie kennt („Bezirksvertretung 1 (Innenstadt)“, „3. Sitzung des …“,
+        Datum, Uhrzeit, Jahreszahl). Anders als bei Titeln gilt der Name eines Kölner Stadtteils oder Stadtbezirks mit
+        Straßen-Endung nicht als Straße (_gebiete_muster): „Bezirksvertretung 4 (Ehrenfeld), 12. Sitzung“ bleibt,
+        „Ortstermin Ehrenfeld 5“ verliert die Zahl (Nachprüfung der Entscheidung 19.11.2026 (3)). Ebenfalls nur hier
+        kennt die Positivliste Ordnungszahlen und Zahlen vor „Sitzung“ und „Sondersitzung“ sowie „(3.)“ hinter einem
+        Wort (_SITZUNG_BEKANNT, Entscheidung 20.11.2026 (2) (a)): „2. Sondersitzung des …“ bleibt, „Ortstermin Venloer
+        Straße 5. Sitzung“ verliert die Hausnummer."""
         if not text or not _ziffer_oder_zahlwort(text):
             return text
         return self._ausblenden(text, _SITZUNGSNAME)

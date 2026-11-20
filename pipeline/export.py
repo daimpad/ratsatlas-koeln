@@ -923,15 +923,15 @@ def zeile_sitzungsnamen(zahl):
 def _meetings(db, zahl=None):
     """Sitzungen der städtischen OParl-API (auch künftige, als Termin belegt). Der Name jeder Sitzung läuft durch die
     Titelmaske, ebenso ein Gremium, das aus dem Namen stammt (Maske.sitzungsname, gremium_aus_namen; Entscheidung
-    19.11.2026 (3) (c)): Das Gremium aus dem Namen ist der Name selbst, und der ganze Name steht in zeit.json und in der
-    Beschreibung in termine.ics daneben; bliebe er ungekürzt, stünde dieselbe Hausnummer dort weiter. Bis dahin nur bei
-    Sitzungen, in denen eine Vorlage der Maske beraten wird (Maske.sitzungen; Offen (9) der Nachprüfung der dritten
-    Korrektur). check._sitzungen und check._aktuell prüfen mit derselben Regel (Maske.sitzungsname_offen). Das Gremium
-    entsteht aus dem ungekürzten Namen und läuft, wenn es aus dem Namen stammt, selbst durch die Maske: So findet
-    gremium_der_sitzung die Schreibweise eines bekannten Gremiums auch dann, wenn die Maske eine Zahl im Namen kürzt
-    (der Name einer Organisation bleibt ungeprüft, wie bisher; vorher entstand das Gremium aus dem maskierten Namen).
-    Mit `zahl` (dict) zählt _meetings für zeile_sitzungsnamen: `gremium_aus_namen` und `maske` (Name oder Gremium
-    geändert)."""
+    19.11.2026 (3) (c)): Das Gremium aus dem Namen ist der Name ohne Vorspann (_VORSPANN_SITZUNG), und der ganze Name
+    steht in zeit.json und in der Beschreibung in termine.ics daneben; bliebe er ungekürzt, stünde dieselbe Hausnummer
+    dort weiter. Bis dahin nur bei Sitzungen, in denen eine Vorlage der Maske beraten wird (Maske.sitzungen; Offen (9)
+    der Nachprüfung der dritten Korrektur). check._sitzungen und check._aktuell prüfen mit derselben Regel
+    (Maske.sitzungsname_offen). Das Gremium entsteht aus dem ungekürzten Namen und läuft, wenn es aus dem Namen stammt,
+    selbst durch die Maske: So findet gremium_der_sitzung die Schreibweise eines bekannten Gremiums auch dann, wenn die
+    Maske eine Zahl im Namen kürzt (der Name einer Organisation bleibt ungeprüft, wie bisher; vorher entstand das
+    Gremium aus dem maskierten Namen). Mit `zahl` (dict) zählt _meetings für zeile_sitzungsnamen: `gremium_aus_namen`
+    und `maske` (Name oder Gremium geändert)."""
     if not config.MEETINGS.exists():
         return []
     names = dict(db.execute("SELECT id, name FROM organization"))

@@ -1,13 +1,14 @@
 """Titelmaske für jeden Sitzungsnamen und jedes Gremium aus dem Sitzungsnamen (Entscheidung 19.11.2026 (3) (c)).
 
 Bis dahin liefen Name und Gremium aus dem Namen nur bei einer Sitzung durch die Maske, in der eine Vorlage der Maske
-beraten wird (Maske.sitzungen; TECHNIK.md, Offen (9)). Das Gremium aus dem Namen ist der Name selbst, und der ganze Name
-steht in zeit.json, in der Beschreibung in termine.ics und in `process[].meeting` der Gebietsdateien daneben; deshalb
-läuft jetzt der Name jeder Sitzung durch die Maske (Maske.sitzungsname), ebenso jedes Gremium aus dem Namen, in zeit.json,
-termine.ics und index.json („Aktuell in Köln“). check prüft mit derselben Regel (Maske.sitzungsname_offen); ein Befund
-bei einer Sitzung ohne Vorlage der Maske nennt nur die Zahl je Datei. Ein Gremium mit dem Namen einer Organisation der
-Datenbank stammt nicht aus dem Namen und bleibt. Alle Sitzungen, Vorlagen und Namen sind erfunden (lokaler Testserver
-oder direkte Aufrufe); keine Anfragen an die Stadt."""
+beraten wird (Maske.sitzungen; TECHNIK.md, Offen (9)). Das Gremium aus dem Namen ist der Name ohne Vorspann
+(export._VORSPANN_SITZUNG), und der ganze Name steht in zeit.json, in der Beschreibung in termine.ics und in
+`process[].meeting` der Gebietsdateien daneben; deshalb läuft jetzt der Name jeder Sitzung durch die Maske
+(Maske.sitzungsname), ebenso jedes Gremium aus dem Namen, in zeit.json, termine.ics und index.json („Aktuell in Köln“).
+check prüft mit derselben Regel (Maske.sitzungsname_offen); ein Befund bei einer Sitzung ohne Vorlage der Maske nennt
+nur die Zahl je Datei. Ein Gremium mit dem Namen einer Organisation der Datenbank stammt nicht aus dem Namen und
+bleibt. Alle Sitzungen, Vorlagen und Namen sind erfunden (lokaler Testserver oder direkte Aufrufe); keine Anfragen an
+die Stadt."""
 import json
 import sqlite3
 from datetime import date, timedelta
