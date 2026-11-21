@@ -55,32 +55,44 @@ const AUSSCHUSS = /Anregungen und Beschwerden/i;
 // ersten Vollabruf offen (TECHNIK.md, „Mitmachen in Köln“)
 const RAT = new Set(["Rat", "Rat der Stadt Köln", "Stadtrat"]);
 
-// nächste Sitzung (nicht abgesagt, ab heute), die `passt`
-function naechste(meetings, heute, passt) {
-  return (meetings || []).filter((m) => m && m.date >= heute && !m.cancelled && passt(m.gremium || ""))
+// nächste Sitzung (ab heute, nicht abgesagt: weder OParl `cancelled` noch Hinweis „abgesagt“ aus dem Sitzungsnamen,
+// zeit.json `hinweis`, Entscheidung 20.11.2026 (7) (b)), die `passt`
+export function naechste(meetings, heute, passt) {
+  return (meetings || []).filter((m) => m && m.date >= heute && !m.cancelled && m.hinweis !== "abgesagt" && passt(m.gremium || ""))
     .sort((a, b) => (a.date + (a.time || "")).localeCompare(b.date + (b.time || "")))[0] || null;
 }
 
+// eine kommende Sitzung, die `passt`, auch abgesagte: Ist eine eingetragen, aber abgesagt (OParl `cancelled` oder
+// Hinweis „abgesagt“ aus dem Sitzungsnamen), sagt die Fläche das statt „noch keine kommende Sitzung eingetragen“
+const eingetragen = (meetings, heute, passt) => (meetings || []).some((m) => m && m.date >= heute && passt(m.gremium || ""));
+
 function sitzungen(bz, o) {
-  const row = (m, text) => `<li><span class="bt-when">${when(m)}</span><span>${text}${href(m.web)
+  // Hinweis „verschoben“ aus dem Sitzungsnamen kurz neben dem Gremium, ohne Namen (wie in „Aktuell in Köln“)
+  const row = (m, text) => `<li><span class="bt-when">${when(m)}</span><span>${text}${m.hinweis === "verschoben" ? " · laut Sitzungsnamen verschoben" : ""}${href(m.web)
     ? ` · <a href="${href(m.web)}" target="_blank" rel="noopener">Tagesordnung<span class="visually-hidden"> (Ratsinformationssystem der Stadt Köln, neuer Tab)</span></a>`
     : " · Tagesordnung noch nicht veröffentlicht"}</span></li>`;
   const kopf = `<h3 id="bt-next-h">${bz ? `Nächste Sitzungen für den Stadtbezirk ${esc(bz)}` : "Nächste Sitzungen"}</h3>`;
   if (!o.termine) {
     return `<section class="bt-next" aria-labelledby="bt-next-h">${kopf}<p class="hint">Die Sitzungstermine erscheinen hier, sobald die Ratsvorlagen im Ratsatlas vorliegen.</p></section>`;
   }
-  const bv = bz ? naechste(o.meetings, o.heute, (g) => o.bvBezirk(g) === bz) : null;
-  const rat = naechste(o.meetings, o.heute, (g) => RAT.has(g));
-  const aab = naechste(o.meetings, o.heute, (g) => AUSSCHUSS.test(g));
+  const istBv = (g) => o.bvBezirk(g) === bz, istRat = (g) => RAT.has(g), istAab = (g) => AUSSCHUSS.test(g);
+  const bv = bz ? naechste(o.meetings, o.heute, istBv) : null;
+  const rat = naechste(o.meetings, o.heute, istRat);
+  const aab = naechste(o.meetings, o.heute, istAab);
   const items = [
     bv ? row(bv, `${esc(bv.gremium)}; die Sitzung beginnt mit der Einwohnerfragestunde`) : "",
     rat ? row(rat, "Rat der Stadt Köln; Ratssitzungen überträgt die Stadt auch live im Internet") : "",
     aab ? row(aab, esc(aab.gremium)) : "",
   ].filter(Boolean);
   const hinweis = !bz ? '<p class="hint">Wählen Sie oben Ihren Stadtbezirk, dann steht hier auch die nächste Sitzung Ihrer Bezirksvertretung.</p>'
-    : bv ? "" : `<p class="hint">Für die Bezirksvertretung ${esc(bz)} ist im Sitzungskalender noch keine kommende Sitzung eingetragen.</p>`;
+    : bv ? "" : eingetragen(o.meetings, o.heute, istBv)
+      ? `<p class="hint">Für die Bezirksvertretung ${esc(bz)} ist im Sitzungskalender keine kommende Sitzung ohne Absage eingetragen.</p>`
+      : `<p class="hint">Für die Bezirksvertretung ${esc(bz)} ist im Sitzungskalender noch keine kommende Sitzung eingetragen.</p>`;
+  const leer = [istRat, istAab, ...(bz ? [istBv] : [])].some((p) => eingetragen(o.meetings, o.heute, p))
+    ? '<p class="hint">Im Sitzungskalender ist keine kommende Sitzung ohne Absage eingetragen.</p>'
+    : '<p class="hint">Im Sitzungskalender ist noch keine kommende Sitzung eingetragen.</p>';
   return `<section class="bt-next" aria-labelledby="bt-next-h">${kopf}
-    ${items.length ? `<ul class="bt-dates">${items.join("")}</ul>` : '<p class="hint">Im Sitzungskalender ist noch keine kommende Sitzung eingetragen.</p>'}
+    ${items.length ? `<ul class="bt-dates">${items.join("")}</ul>` : leer}
     ${hinweis}<p class="hint">Termine laut Sitzungskalender der Stadt (OParl-Schnittstelle); maßgeblich ist die Einladung im Ratsinformationssystem.</p>
     <p class="bt-actions"><button type="button" class="btn btn-soft" id="bt-termine">Alle kommenden Sitzungen</button></p></section>`;
 }
