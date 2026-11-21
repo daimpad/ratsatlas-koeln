@@ -689,7 +689,8 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
       Zeitpunkte liegen vor dem Export, der spätere grenzt vergangene Sitzungen am engsten ab; ist nur die Liste der
       Vorlagen ausgesetzt, bleibt ihr Zeitpunkt stehen, die Sitzungen werden aber weiter aktualisiert. Sitzungen ab
       dem Stichtag ohne abgesagte (OParl `cancelled` oder, seit der Entscheidung 20.11.2026 (7) (b), Hinweis
-      „abgesagt“ aus dem Namen, hinweis_sitzung: Sie gelten nicht als nächste Sitzung und belegen keinen Platz), nach
+      „abgesagt“ aus dem Namen, hinweis_sitzung; seit der Entscheidung 21.11.2026 (1) (c) (9) über absage, dieselbe
+      Regel wie termine.ics und audit_zeit.tsv: Sie gelten nicht als nächste Sitzung und belegen keinen Platz), nach
       Tag und Uhrzeit; eine Sitzung ohne Uhrzeit (00:00 Uhr in Köln, _meetings) steht hinter denen mit Uhrzeit am
       selben Tag, sonst gilt die Reihenfolge von _meetings. Alle Sitzungen am
       Stichtag und dazu höchstens AKTUELL_SITZUNGEN spätere: Der nächtliche Lauf beginnt um 22:10 Uhr UTC, im Winter
@@ -715,8 +716,7 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
     karten = {}
     if not (fehler or "meetings" in ausgesetzt or "meetings" in _abruf_warnungen(stand)):
         tag = max(heute, _kalendertag(stand.get("meetings")) or heute)
-        kommend = sorted((m for m in meetings if m["date"] >= tag and not m["cancelled"]
-                          and m.get("hinweis") != "abgesagt"),
+        kommend = sorted((m for m in meetings if m["date"] >= tag and not absage(m)),
                          key=lambda m: (m["date"], m["time"] is None, m["time"] or ""))
         am_tag = sum(m["date"] == tag for m in kommend)   # stehen vorn: kein früherer Tag in `kommend`
         karten["sitzungen"] = [{k: m[k] for k in AKTUELL_FELDER["sitzungen"] if k in m}
@@ -938,6 +938,40 @@ def zeile_hinweise(meetings):
     return f"Sitzungen mit Hinweis zum Stand aus dem Namen: abgesagt {n['abgesagt']}, verschoben {n['verschoben']}"
 
 
+# Grund einer Absage (absage) in Worten, für audit_zeit.tsv (time_audit_rows) und verifikation_zeit.tsv
+# (verify.verify_time)
+ABSAGE_TEXT = {"oparl": "abgesagt laut OParl (cancelled)", "name": "laut Sitzungsnamen abgesagt"}
+# Rangfolge je Gremium und Tag (sitzungstage): eine Sitzung, die nicht abgesagt ist, vor einer Absage laut OParl, diese
+# vor einer Absage laut Namen
+_RANG_ABSAGE = {None: 0, "oparl": 1, "name": 2}
+
+
+def absage(m):
+    """Gilt eine Sitzung als abgesagt, und warum (Entscheidung 21.11.2026 (1) (c) (9))? „oparl“ bei OParl `cancelled`,
+    sonst „name“ bei Hinweis „abgesagt“ aus dem Namen (`hinweis`, hinweis_sitzung), sonst None. `m`: eine Sitzung aus
+    _meetings oder aus zeit.json (`meetings`). Der Hinweis „verschoben“ ist keine Absage. Eine Regel für _aktuell
+    („Aktuell in Köln“), time_audit_rows (audit_zeit.tsv), publish.write_calendar (termine.ics), verify.verify_time und
+    check.absagen_kalender; die Stadt setzt OParl `cancelled` bei keiner Sitzung (Lauf 62: 0 von 3 362), eine Absage
+    steht in Köln nur im Namen."""
+    if m.get("cancelled"):
+        return "oparl"
+    if m.get("hinweis") == "abgesagt":
+        return "name"
+    return None
+
+
+def sitzungstage(meetings):
+    """Sitzungen je Gremium und Kölner Tag für den Abgleich mit Beratungsdaten (time_audit_rows, verify.verify_time):
+    {(gremium, date): None, wenn an diesem Tag mindestens eine Sitzung des Gremiums nicht abgesagt ist, sonst der Grund
+    der Absage (absage; „oparl“ vor „name“, wenn beide vorkommen)}. Ein Paar ohne Eintrag: keine Sitzung des Gremiums
+    an diesem Tag in den Sitzungen der OParl-API."""
+    tage = {}
+    for m in meetings:
+        k, grund = (m["gremium"], m["date"]), absage(m)
+        tage[k] = min(tage.get(k, grund), grund, key=_RANG_ABSAGE.get)
+    return tage
+
+
 def _gekuerzt(text):
     """Sitzungsname oder dessen erste Zeile ohne Vorspann (_VORSPANN_SITZUNG), ohne Zusatz zum Stand (_ZUSATZ_STAND),
     im Nominativ (_nominativ); für gremium_der_sitzung."""
@@ -1155,8 +1189,11 @@ TIME_AUDIT = ["drucksache", "zeitdimension", "wert", "quelle", "status", "bemerk
 
 def time_audit_rows(papers, meetings):
     """Datumsabdeckung der Zeitleiste: woher stammt jedes Datum, und gibt es zum abgeleiteten
-    Beratungsdatum eine Sitzung desselben Gremiums in der OParl-API der Stadt?"""
-    held = {(m["gremium"], m["date"]) for m in meetings if not m["cancelled"]}
+    Beratungsdatum eine Sitzung desselben Gremiums in der OParl-API der Stadt? Als Sitzung zählt nur eine, die nicht
+    abgesagt ist (sitzungstage, absage; seit der Entscheidung 21.11.2026 (1) (c) (9) auch nicht laut Sitzungsnamen,
+    vorher nur ohne OParl `cancelled`). Gibt es an dem Tag nur abgesagte Sitzungen des Gremiums, nennt die Bemerkung den
+    Grund (ABSAGE_TEXT, getrennt nach OParl `cancelled` und Hinweis aus dem Namen; vorher „keine Sitzung …“)."""
+    tage = sitzungstage(meetings)
     rows = []
     for p in papers:
         rows.append([p["reference"], "datum_vorlage", p["date"] or "", config.QUELLE_OPARL,
@@ -1165,10 +1202,11 @@ def time_audit_rows(papers, meetings):
             if st["typ"] in ("beratung", "entscheidung") and st.get("role"):
                 dim = f"beratung: {st['label']} ({st['role']})"
                 if st.get("date"):
-                    same = (st["label"], st["date"]) in held
+                    k = (st["label"], st["date"])
+                    sitzung = "Sitzung des Gremiums an diesem Tag in der OParl-API der Stadt"
                     rows.append([p["reference"], dim, st["date"], config.QUELLE_SITZUNG, "abgeleitet",
-                                 "Sitzung des Gremiums an diesem Tag in der OParl-API der Stadt" if same
-                                 else "keine Sitzung des Gremiums an diesem Tag in der OParl-API der Stadt"])
+                                 f"keine {sitzung}" if k not in tage
+                                 else f"{sitzung}, {ABSAGE_TEXT[tage[k]]}" if tage[k] else sitzung])
                 else:
                     rows.append([p["reference"], dim, "", "", "unklar", "Beratung ohne verknüpfte Sitzung"])
             elif st["typ"] == "folgevorlage":
