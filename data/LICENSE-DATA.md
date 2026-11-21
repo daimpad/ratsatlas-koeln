@@ -1,6 +1,6 @@
 # Lizenzen der Daten
 
-Stand 13.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/` gilt:
+Stand 21.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/` gilt:
 
 Die Pfade beginnen unter `data/`: Auf der Seite liegt `export/koeln/vorlagen.geojson` also unter `data/export/koeln/vorlagen.geojson`, im Datenpaket (Zip) liegt der Inhalt von `export/` direkt im Ordner `ratsatlas-koeln/` (`ratsatlas-koeln/koeln/vorlagen.geojson`) und `geo/` unter `ratsatlas-koeln/geo/`; `kontext/`, `ebenen/` und `aemter/` liegen nur im Repository, auf der Seite und im Paket stehen die daraus abgeleiteten Dateien unter `export/koeln/`.
 

@@ -137,3 +137,14 @@ def test_check_aemter_ohne_befund_und_mit_eingeschleusten_abweichungen(tmp_path,
     (base / "zeit.json").unlink()
     (base / "aemter.json").unlink()
     assert check.aemter_aufbau(base) == ([], [])
+
+
+def test_meta_vermerkt_kennung_des_projekts(tmp_path):
+    """Entscheidung 21.11.2026 (3) (G5): `meta.note` vermerkt, dass das Feld `kennung` vom Projekt aus Dezernat und
+    Nummer gebildet ist und keine Schreibweise des Plans; die Kennungen folgen dieser Regel (erfundene Tabelle)."""
+    d = aemter.aufbau(_tabelle(tmp_path))
+    assert d["meta"]["note"].endswith(" " + aemter.NOTE_KENNUNG)
+    assert "„kennung“ bildet das Projekt aus Dezernat und Nummer" in d["meta"]["note"]
+    assert "keine Schreibweise des Plans" in d["meta"]["note"]
+    vi = d["dezernate"][0]
+    assert vi["kennung"] == "VI" and [e["kennung"] for e in vi["einheiten"]] == ["VI/VI/1", "VI/61", "VI/6100"]

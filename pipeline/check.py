@@ -78,8 +78,9 @@ def check():
         befunde, fehlend = gebiete(db)
         ds = datenschutz(db)
         befunde += federfuehrung_kopf(db)
-        # Gremien, Ämter und Stationen (Entscheidung 21.11.2026 (2), Pull Request 4a)
-        for pruefung in (gremien, stationen):
+        # Gremien, Ämter und Stationen (Entscheidung 21.11.2026 (2), Pull Request 4a); Kennungen der Gremien in
+        # suche.json (Entscheidung 21.11.2026 (3) (G4))
+        for pruefung in (gremien, stationen, suche_gremien):
             b, f = pruefung(db)
             befunde += b
             fehlend += f
@@ -847,8 +848,8 @@ def gremien(db, base=None):
     - jede nächste Sitzung steht in zeit.json, ist nicht abgesagt (export.absage) und liegt nach dem Datenstand;
       ist die Liste der Sitzungen nicht aktuell (gremien.sitzungsliste mit STAND.json), gibt es keine nächste Sitzung;
     - die ganze Datei gleich der Rechnung mit denselben Funktionen (gremien.daten) aus Datenbank, zeit.json,
-      meetings.json, den Vorlagen der Gebietsdateien (jede einmal) und gremien.sitzungsliste; fehlt meetings.json,
-      nicht durchgeführt.
+      meetings.json, den Vorlagen der Gebietsdateien (jede einmal), gremien.sitzungsliste und der Organisation je Station
+      (gremien.beratungen, für vorlagen_12m auch aufgelöster Gremien); fehlt meetings.json, nicht durchgeführt.
     Befunde und Ausgabe nur mit Zahlen. Liefert (befunde, fehlend)."""
     from . import gebietszahlen, gremien as gr
     from .export import absage
@@ -920,7 +921,8 @@ def gremien(db, base=None):
     else:
         quellen = [dict(zip(("name", "url", "license", "retrieved_at"), r))
                    for r in db.execute("SELECT name, url, license, retrieved_at FROM source")]
-        erwartet, _ = gr.daten(gr.organisationen(db), zeit, orgs_je_sitzung, papers, stand, quellen, liste)
+        erwartet, _ = gr.daten(gr.organisationen(db), zeit, orgs_je_sitzung, papers, stand, quellen, liste,
+                               beratungen_je=gr.beratungen(db))
         fehler["meta anders als gremien.daten"] = int(meta != erwartet["meta"])
         soll = {e["key"]: e for e in erwartet["gremien"]}
         ist = {e.get("key"): e for e in eintraege}
@@ -1009,9 +1011,10 @@ def stationen(db, base=None):
     (F10), (F12)) im Kölner Export (`base`, Vorgabe config.EXPORT / config.STADT):
     - `hinweis` genau dann und mit dem Wert, den export.hinweis_station ergibt (Name der Sitzung an der Station, ohne
       ihn der Name derselben Sitzung in zeit.json); ein Feld ohne Hinweis ist ebenso ein Befund;
-    - `gremium_key` genau dann und mit der Kennung, die gremien.kennungen für die Organisation der Beratung ergibt
-      (Datenbank: Vorlage und `position`), nur mit Freigabe „gremien“; jede Kennung steht in gremien.json, wenn die
-      Datei vorliegt.
+    - `gremium_key` genau dann und mit der Kennung, die gremien.kennungen mit dem Datenstand (gremien.datenstand) für die
+      Organisation der Beratung ergibt (Datenbank: Vorlage und `position`), nur mit Freigabe „gremien“: Stationen
+      aufgelöster Gremien tragen keine Kennung (Entscheidung 21.11.2026 (3) (G6)); jede Kennung steht in gremien.json und
+      gehört dort keinem aufgelösten Gremium, wenn die Datei vorliegt.
     Ohne Gebietsdateien nichts zu prüfen (datenschutz meldet sie als fehlend). Befunde und Ausgabe nur mit Zahlen.
     Liefert (befunde, fehlend)."""
     from . import gremien as gr
@@ -1027,11 +1030,16 @@ def stationen(db, base=None):
     if (base / "zeit.json").exists():
         namen = {m.get("source_object"): m.get("name")
                  for m in json.loads((base / "zeit.json").read_text()).get("meetings") or () if isinstance(m, dict)}
-    keys = gr.kennungen(gr.organisationen(db)) if gr.an() else {}
-    org = {(pid, pos): o for pid, pos, o in db.execute("SELECT paper_id, position, organization_id FROM consultation")}
+    orgs = gr.organisationen(db)
+    stand = gr.datenstand(db)
+    keys = gr.kennungen(orgs, stand) if gr.an() else {}
+    weg = {o["id"] for o in orgs if gr.aufgenommen(o) and gr.aufgeloest(o, stand)} if gr.an() else set()
+    org = gr.beratungen(db)
     datei = base / gr.DATEI
-    in_datei = ({e.get("key") for e in json.loads(datei.read_text()).get("gremien") or () if isinstance(e, dict)}
-                if datei.exists() else None)
+    eintraege = ([e for e in json.loads(datei.read_text()).get("gremien") or () if isinstance(e, dict)]
+                 if datei.exists() else None)
+    in_datei = {e.get("key") for e in eintraege} if eintraege is not None else None
+    aufgeloest = {e.get("key") for e in eintraege or () if e.get("aufgeloest")}
     zahl, hinweise = Counter(), Counter()
     for p in papers:
         for s in p.get("process") or ():
@@ -1040,11 +1048,14 @@ def stationen(db, base=None):
             h = hinweis_station(s, namen)
             hinweise[h] += bool(h)
             zahl["hinweis_anders"] += ("hinweis" in s, s.get("hinweis")) != (h is not None, h)
-            k = keys.get(org.get((p.get("source_object"), s.get("position"))))
+            o = org.get((p.get("source_object"), s.get("position")))
+            k = keys.get(o)
             zahl["key_anders"] += ("gremium_key" in s, s.get("gremium_key")) != (k is not None, k)
             zahl["mit_key"] += "gremium_key" in s
+            zahl["aufgeloest_ohne_key"] += o in weg and "gremium_key" not in s
             zahl["key_nicht_in_datei"] += ("gremium_key" in s and in_datei is not None
                                           and s["gremium_key"] not in in_datei)
+            zahl["key_aufgeloest"] += "gremium_key" in s and s["gremium_key"] in aufgeloest
     if zahl["hinweis_anders"]:
         befunde.append(f"Stationen: Feld `hinweis` folgt nicht export.hinweis_station (fehlt, zu viel oder anderer "
                        f"Wert): {zahl['hinweis_anders']}")
@@ -1053,9 +1064,95 @@ def stationen(db, base=None):
                        f"ohne Freigabe „{gr.FUNKTION}“ kein Feld): {zahl['key_anders']}")
     if zahl["key_nicht_in_datei"]:
         befunde.append(f"Stationen: Kennung des Gremiums ohne Eintrag in {gr.DATEI}: {zahl['key_nicht_in_datei']}")
+    if zahl["key_aufgeloest"]:
+        befunde.append(f"Stationen: Kennung eines aufgelösten Gremiums aus {gr.DATEI}: {zahl['key_aufgeloest']}")
     print(f"Stationen: {zahl['stationen']}, mit Sitzung {zahl['mit_sitzung']}, mit Hinweis "
           f"{sum(hinweise.values())} (abgesagt {hinweise['abgesagt']}, verschoben {hinweise['verschoben']}), mit "
-          f"Kennung des Gremiums {zahl['mit_key']}")
+          f"Kennung des Gremiums {zahl['mit_key']}"
+          + (f", Stationen aufgelöster Gremien (ohne Kennung) {zahl['aufgeloest_ohne_key']}" if gr.an() else ""))
+    return befunde, fehlend
+
+
+def suche_gremien(db, base=None):
+    """Kennungen der Gremien in suche.json (Entscheidung 21.11.2026 (3) (G4), (G6)) im Kölner Export (`base`, Vorgabe
+    config.EXPORT / config.STADT). Ohne Freigabe „gremien“ ist die Liste `gremium_keys` oder eine Spalte
+    export.SUCHE_SPALTE_KENNUNGEN ein Befund. Mit Freigabe:
+    - die Liste `gremium_keys` liegt vor, ohne doppelte Kennung, jede Zeile hat die Spalte, jeder Verweis ist eine Stelle
+      in der Liste (aufsteigend, ohne Doppelte);
+    - jede Kennung der Liste steht in gremien.json und gehört dort keinem aufgelösten Gremium (fehlt gremien.json, gilt
+      jede Kennung als ohne Eintrag);
+    - die Kennungen jeder Zeile sind die an den Stationen der Vorlage (gremien.kennungen_der_vorlage; Vorlagen der
+      Gebietsdateien, deren Drucksache in der Datenbank nur einmal vorkommt) und die, die gremien.kennungen mit dem
+      Datenstand für die Organisationen ihrer Beratungen in der Datenbank ergibt (alle Zeilen, je Drucksache verglichen).
+    Fehlt suche.json, nichts zu prüfen (datenschutz meldet sie als fehlend). Befunde und Ausgabe nur mit Zahlen. Liefert
+    (befunde, fehlend)."""
+    from . import gremien as gr
+    from .export import SUCHE_SPALTE_KENNUNGEN as SPALTE
+    base = Path(base) if base else config.EXPORT / config.STADT
+    befunde, fehlend = [], []
+    print(f"\nKennungen der Gremien in suche.json (Freigabe „{gr.FUNKTION}“)")
+    pfad = base / "suche.json"
+    if not pfad.exists():
+        print("suche.json fehlt: nichts zu prüfen")
+        return befunde, fehlend
+    doc = json.loads(pfad.read_text())
+    doc = doc if isinstance(doc, dict) else {}
+    zeilen = [r for r in doc.get("rows") or () if isinstance(r, list)]
+    liste = doc.get("gremium_keys")
+    if not gr.an():
+        n = int(liste is not None) + sum(len(r) > SPALTE for r in zeilen)
+        if n:
+            befunde.append(f"Suche: Kennungen der Gremien in suche.json, obwohl die Freigabe „{gr.FUNKTION}“ aus ist: {n}")
+        print("abgeschaltet (config.ZUSATZTHEMEN) – keine Kennungen erwartet")
+        return befunde, fehlend
+    liste = liste if isinstance(liste, list) else []
+    fehler = Counter()
+    fehler["Liste gremium_keys fehlt"] = int(not isinstance(doc.get("gremium_keys"), list))
+    fehler["Kennungen in gremium_keys, die kein Text sind"] = sum(not isinstance(k, str) for k in liste)
+    liste = [k if isinstance(k, str) else repr(k) for k in liste]
+    fehler["Kennungen mehrfach in gremium_keys"] = len(liste) - len(set(liste))
+    fehler["Zeilen ohne Spalte der Kennungen"] = sum(len(r) <= SPALTE for r in zeilen)
+
+    def kennungen_der_zeile(r):
+        v = r[SPALTE] if len(r) > SPALTE else []
+        v = v if isinstance(v, list) else [None]
+        gueltig = all(isinstance(i, int) and 0 <= i < len(liste) for i in v) and v == sorted(set(v))
+        return tuple(liste[i] for i in v) if gueltig else None
+    je_zeile = [kennungen_der_zeile(r) for r in zeilen if len(r) > SPALTE]
+    fehler["Zeilen mit ungültigem Verweis auf gremium_keys"] = sum(k is None for k in je_zeile)
+    datei = base / gr.DATEI
+    eintraege = ([e for e in json.loads(datei.read_text()).get("gremien") or () if isinstance(e, dict)]
+                 if datei.exists() else [])
+    in_datei = {e.get("key") for e in eintraege}
+    fehler[f"Kennungen ohne Eintrag in {gr.DATEI}"] = sum(k not in in_datei for k in liste)
+    fehler[f"Kennungen aufgelöster Gremien aus {gr.DATEI}"] = sum(
+        k in {e.get("key") for e in eintraege if e.get("aufgeloest")} for k in liste)
+    # je Drucksache: Kennungen der Zeilen gegen die Stationen und gegen die Organisationen der Beratungen
+    ist = {}
+    for r in zeilen:
+        if len(r) > SPALTE:
+            ist.setdefault(r[0], Counter())[kennungen_der_zeile(r)] += 1
+    ref_von = dict(db.execute("SELECT id, reference FROM paper"))
+    keys = gr.kennungen(gr.organisationen(db), gr.datenstand(db))
+    je_vorlage = {pid: set() for pid in ref_von}
+    for pid, o in db.execute("SELECT paper_id, organization_id FROM consultation"):
+        if pid in je_vorlage and o in keys:
+            je_vorlage[pid].add(keys[o])
+    soll = {}
+    for pid, ks in je_vorlage.items():
+        soll.setdefault(ref_von[pid], Counter())[tuple(sorted(ks))] += 1
+    fehler["Zeilen, deren Kennungen nicht den Organisationen der Beratungen folgen (gremien.kennungen)"] = sum(
+        sum(((ist.get(ref) or Counter()) - (soll.get(ref) or Counter())).values()) for ref in set(ist) | set(soll))
+    einmal = Counter(ref_von.values())
+    stationen_je = {p.get("reference"): tuple(gr.kennungen_der_vorlage(p)) for p in _gebietsvorlagen(base) or ()
+                    if einmal[p.get("reference")] == 1}
+    fehler["Zeilen mit anderen Kennungen als an den Stationen der Vorlage"] = sum(
+        ist[ref] != Counter([k]) for ref, k in stationen_je.items() if ref in ist)
+    for text, n in fehler.items():
+        if n:
+            befunde.append(f"Suche: {text}: {n}")
+    print(f"suche.json: Zeilen {len(zeilen)}, mit Kennung eines Gremiums {sum(bool(k) for k in je_zeile)}, Kennungen in "
+          f"gremium_keys {len(liste)}")
     return befunde, fehlend
 
 

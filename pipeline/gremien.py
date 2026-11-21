@@ -29,7 +29,9 @@ Teil der letzte Abschnitt des Pfads), kleingeschrieben, jede Folge anderer Zeich
 ersten 8 Zeichen des SHA-1 ihrer OParl-Kennung als Zusatz. Die Kennung bleibt gleich, solange die Stadt die OParl-Kennung
 behält und keine weitere Organisation der Tabelle dieselbe Kennung ergibt: Kommt eine solche hinzu, erhalten beide den
 Zusatz, und die bisherige Kennung ändert sich (fällt eine weg, verliert die andere ihn). Dieselbe Kennung steht an den
-Stationen der Prozesslinie (`process[].gremium_key`, export._station), dort nur bei Gremien dieser Datei.
+Stationen der Prozesslinie (`process[].gremium_key`, export._station) und in suche.json (Liste `gremium_keys`, je Zeile
+die Spalte export.SUCHE_SPALTE_KENNUNGEN; Entscheidung 21.11.2026 (3) (G4)), dort nur bei Gremien dieser Datei, die am
+Datenstand nicht aufgelöst sind (kennungen mit Datenstand; G6: kein Link im Vorgang auf ein aufgelöstes Gremium).
 
 Zeitraum „in 12 Monaten“ (F7): 365 Tage vor dem Datenstand wie gebietszahlen.window_start, also Tage nach `seit` bis
 einschließlich `bis` (wie gebietszahlen.recent). Datenstand ist der Stichtag von „Aktuell in Köln“ (export.stichtag: der
@@ -37,9 +39,11 @@ spätere der Kölner Tage des Abrufs der Vorlagen und der letzten regulären Akt
 - sitzungen_12m: Sitzungen aus zeit.json im Zeitraum, die in meetings.json auf die Organisation verweisen (OParl
   `organization` der Sitzung, jede dort genannte Organisation; nicht über den Gremiennamen), ohne abgesagte
   (export.absage: OParl `cancelled` oder Hinweis „abgesagt“ aus dem Namen);
-- vorlagen_12m: verschiedene Vorlagen der Gebietsdateien (jede einmal) mit einer Station dieses Gremiums
-  (`gremium_key`, aus der Organisation der Beratung) an einem Sitzungstag im Zeitraum, deren Sitzung nicht abgesagt ist
-  (export.absage über die Station, die `cancelled` und `hinweis` trägt). Eine Vorlage, die in keiner Gebietsdatei steht
+- vorlagen_12m: verschiedene Vorlagen der Gebietsdateien (jede einmal) mit einer Station dieses Gremiums an einem
+  Sitzungstag im Zeitraum, deren Sitzung nicht abgesagt ist (export.absage über die Station, die `cancelled` und
+  `hinweis` trägt). Das Gremium der Station ist die Organisation der Beratung (beratungen: Vorlage und `position` in der
+  Tabelle consultation), auch bei aufgelösten Gremien, die an der Station keine Kennung tragen (G6); ohne diese Angabe
+  (direkter Aufruf von daten) die Kennung `gremium_key` an der Station. Eine Vorlage, die in keiner Gebietsdatei steht
   (etwa ohne Datum und ohne Ortsbezug), zählt nicht (Auslegung von F7, beim Auftraggeber offen); wie viele solche
   Vorlagen eine Beratung eines Gremiums der Datei im Zeitraum haben, zählt das Log (vorlagen_ausserhalb);
 - naechste_sitzung: die erste Sitzung nach dem Datenstand, die auf die Organisation verweist und nicht abgesagt ist (nach
@@ -135,10 +139,35 @@ def aufgenommen(o):
     return o.get("classification") in KLASSEN
 
 
-def kennungen(orgs):
-    """{OParl-Kennung: Kennung} der aufgenommenen Organisationen (für die Stationen der Prozesslinie)."""
+def kennungen(orgs, datenstand=None):
+    """{OParl-Kennung: Kennung} der aufgenommenen Organisationen. Mit `datenstand` ohne die an diesem Tag aufgelösten
+    (aufgeloest): die Kennungen an den Stationen der Prozesslinie und in suche.json (Entscheidung 21.11.2026 (3) (G6)).
+    Die Kennung selbst bildet schluessel über alle Organisationen der Tabelle; sie hängt nicht davon ab, welche aufgelöst
+    sind."""
     alle = schluessel([o["id"] for o in orgs])
-    return {o["id"]: alle[o["id"]] for o in orgs if aufgenommen(o)}
+    return {o["id"]: alle[o["id"]] for o in orgs if aufgenommen(o) and not (datenstand and aufgeloest(o, datenstand))}
+
+
+def kennungen_der_vorlage(p):
+    """Kennungen der Gremien an den Stationen der Vorlage `p` (`process[].gremium_key`), sortiert und ohne Doppelte: die
+    Spalte der Kennungen in suche.json (export._search_index, check.suche_gremien)."""
+    return sorted({s["gremium_key"] for s in p.get("process") or () if s.get("gremium_key")})
+
+
+def beratungen(db):
+    """{(OParl-Kennung der Vorlage, position): OParl-Kennung der Organisation der Beratung} aus der Tabelle consultation:
+    das Gremium jeder Station der Prozesslinie (`source_object` der Vorlage, `position` der Station), auch wenn die
+    Station keine Kennung trägt (aufgelöstes Gremium, G6)."""
+    return {(pid, pos): o for pid, pos, o in db.execute("SELECT paper_id, position, organization_id FROM consultation")}
+
+
+def stationen_aufgeloester(db, papers, stand_tag):
+    """Für das Log (nur Zahlen): Stationen in `papers`, deren Beratung einem Gremium der Datei gehört, das am Datenstand
+    `stand_tag` aufgelöst ist; sie tragen keine Kennung (G6)."""
+    weg = {o["id"] for o in organisationen(db) if aufgenommen(o) and aufgeloest(o, stand_tag)}
+    org = beratungen(db)
+    return sum(org.get((p.get("source_object"), s.get("position"))) in weg
+               for p in papers for s in p.get("process") or ())
 
 
 def aufgeloest(o, datenstand):
@@ -240,16 +269,20 @@ def ohne_organisation_kommend(meetings, orgs_je_sitzung, namen, bis):
     return len(kommend), sum(namen.get(m.get("gremium")) == 1 for m in kommend)
 
 
-def vorlagen(papers, seit, bis):
-    """Verschiedene Vorlagen je Kennung des Gremiums (`gremium_key` der Stationen) mit einem Sitzungstag
-    (process.local_day von `start_date`) im Zeitraum und ohne Absage der Sitzung (export.absage über die Station).
-    `papers`: Vorlagen der Gebietsdateien, jede einmal (für das Log auch die Vorlagen in keiner Gebietsdatei, daten)."""
+def vorlagen(papers, seit, bis, kennung=None):
+    """Verschiedene Vorlagen je Kennung des Gremiums mit einem Sitzungstag (process.local_day von `start_date`) im
+    Zeitraum und ohne Absage der Sitzung (export.absage über die Station). `papers`: Vorlagen der Gebietsdateien, jede
+    einmal (für das Log auch die Vorlagen in keiner Gebietsdatei, daten). `kennung(p, s)`: Kennung des Gremiums der
+    Station `s` der Vorlage `p`; Vorgabe `gremium_key` der Station (daten übergibt die Kennung aus der Organisation der
+    Beratung, damit aufgelöste Gremien ohne Kennung an der Station mitzählen, G6)."""
     from .export import absage
+    kennung = kennung or (lambda p, s: s.get("gremium_key"))
     zahl = Counter()
     for p in papers:
-        for k in {s["gremium_key"] for s in p.get("process") or ()
-                  if s.get("gremium_key") and not absage(s) and seit < (proc.local_day(s.get("start_date")) or "") <= bis}:
-            zahl[k] += 1
+        for k in {kennung(p, s) for s in p.get("process") or ()
+                  if not absage(s) and seit < (proc.local_day(s.get("start_date")) or "") <= bis}:
+            if k:
+                zahl[k] += 1
     return zahl
 
 
@@ -304,13 +337,15 @@ def meta(stand_tag, seit, quellen, liste=None):
             "gruppen": dict(GRUPPEN_TEXT), "note": NOTE}
 
 
-def daten(orgs, meetings, orgs_je_sitzung, papers, stand_tag, quellen, liste=None, ausserhalb=()):
+def daten(orgs, meetings, orgs_je_sitzung, papers, stand_tag, quellen, liste=None, ausserhalb=(), beratungen_je=None):
     """Inhalt von gremien.json ({"meta", "gremien"}) und die Zahlen für das Log. `orgs`: organisationen, `meetings`:
     Sitzungen wie in zeit.json, `orgs_je_sitzung`: organisationen_der_sitzungen, `papers`: Vorlagen der Gebietsdateien
-    (jede einmal, mit den Stationen samt `gremium_key`), `stand_tag`: Datenstand, `quellen`: Zeilen der Tabelle source,
-    `liste`: sitzungsliste (None: Liste der Sitzungen aktuell; sonst keine nächste Sitzung), `ausserhalb`: Vorlagen in
-    keiner Gebietsdatei (nur für das Log, sie zählen nicht). Reihenfolge: Gruppe (GRUPPEN), nicht aufgelöste vor
-    aufgelösten, dann Paragraf bzw. Nummer des Stadtbezirks, Name, Kennung."""
+    (jede einmal, mit den Stationen), `stand_tag`: Datenstand, `quellen`: Zeilen der Tabelle source, `liste`:
+    sitzungsliste (None: Liste der Sitzungen aktuell; sonst keine nächste Sitzung), `ausserhalb`: Vorlagen in keiner
+    Gebietsdatei (nur für das Log, sie zählen nicht), `beratungen_je`: beratungen (Organisation je Station; export und
+    check übergeben sie, damit aufgelöste Gremien bei vorlagen_12m mitzählen, G6; ohne sie zählt `gremium_key` an der
+    Station). Reihenfolge: Gruppe (GRUPPEN), nicht aufgelöste vor aufgelösten, dann Paragraf bzw. Nummer des
+    Stadtbezirks, Name, Kennung."""
     from .export import absage
     from .geocode import BEZIRKE_KOELN
     seit = gebietszahlen.window_start(stand_tag)
@@ -320,7 +355,13 @@ def daten(orgs, meetings, orgs_je_sitzung, papers, stand_tag, quellen, liste=Non
     z_sitzungen, naechste, ohne_sitzung = sitzungen(meetings, orgs_je_sitzung, set(gruppe), alle, seit, stand_tag)
     if liste:
         naechste = {}
-    z_vorlagen = vorlagen(papers, seit, stand_tag)
+    in_datei = {o: keys[o] for o in gruppe}
+
+    def ueber_beratung(p, s):
+        """Kennung aus der Organisation der Beratung (auch aufgelöste Gremien der Datei, G6)."""
+        return in_datei.get(beratungen_je.get((p.get("source_object"), s.get("position"))))
+    kennung = ueber_beratung if beratungen_je is not None else None
+    z_vorlagen = vorlagen(papers, seit, stand_tag, kennung)
     nummer = {name: nr for nr, name in BEZIRKE_KOELN.items()}
     eintraege = []
     for o in orgs:
@@ -349,13 +390,14 @@ def daten(orgs, meetings, orgs_je_sitzung, papers, stand_tag, quellen, liste=Non
               "am_datenstand": sum((m.get("date") or "") == stand_tag and not absage(m) and
                                    any(o in gruppe for o in orgs_je_sitzung.get(m.get("source_object")) or ())
                                    for m in meetings),
-              "vorlagen_ausserhalb": sum(bool(vorlagen([p], seit, stand_tag)) for p in ausserhalb)}
+              "vorlagen_ausserhalb": sum(bool(vorlagen([p], seit, stand_tag, kennung)) for p in ausserhalb)}
     return {"meta": meta(stand_tag, seit, quellen, liste), "gremien": eintraege}, zahlen
 
 
 def zeilen_log(d, zahlen, ohne_beratung):
     """Zeilen im Log von `export`, nur Zahlen: Organisationen und Gruppen, aufgelöste, Kennungen mit Zusatz,
-    Ausschüsse mit Paragraf, Bezirksvertretungen mit Stadtbezirk, Sitzungen und Beratungen ohne Gremium der Datei je
+    Ausschüsse mit Paragraf (dazu die Nummern der Paragrafen ohne und mit mehr als einer Organisation, Entscheidung
+    21.11.2026 (3) (G5)), Bezirksvertretungen mit Stadtbezirk, Sitzungen und Beratungen ohne Gremium der Datei je
     Grund; Sitzungen nach dem Datenstand ohne Verweis auf eine Organisation (ohne_organisation_kommend) und Sitzungen
     von Gremien der Datei am Datenstand (zählen als vergangen); Vorlagen in keiner Gebietsdatei mit Beratung eines
     Gremiums der Datei im Zeitraum (zählen nicht); bei nicht aktueller Liste der Sitzungen eine Zeile dazu."""
@@ -370,6 +412,11 @@ def zeilen_log(d, zahlen, ohne_beratung):
     def gruende(c):
         return ", ".join(f"{k} {c.get(k, 0)}" for k in ("ohne Organisation", "Organisation nicht in der Tabelle",
                                                  "Organisation nicht aufgenommen"))
+
+    def paragrafen(auswahl):
+        """Nummern der Paragrafen, auf die `auswahl` (je Eintrag von `treffer`) zutrifft, aufsteigend (G5); keine: leer."""
+        nrs = sorted(nr for nr, ja in zip(treffer, auswahl) if ja)
+        return f" (§ {nrs[0]})" if len(nrs) == 1 else f" (§§ {', '.join(map(str, nrs))})" if nrs else ""
     return [
         f"Gremien ({DATEI}): {zahlen['organisationen']} Organisationen, nicht aufgenommen Fraktionen und Gruppen "
         f"{zahlen['nicht']['fraktionen']}, mit anderer oder ohne Klasse {zahlen['nicht']['ohne_klasse']}; aufgenommen "
@@ -378,8 +425,9 @@ def zeilen_log(d, zahlen, ohne_beratung):
         f"Kennungen mit Zusatz aus dem SHA-1 (gleiche Kennung) {zahlen['mit_zusatz']}",
         f"Ausschüsse laut Zuständigkeitsordnung (ausschuesse.AUSSCHUESSE, {len(treffer)} Einträge): mit genau einer "
         f"Organisation {sum(n == 1 for n in treffer.values())}, ohne Organisation "
-        f"{sum(n == 0 for n in treffer.values())}, mit mehr als einer Organisation "
-        f"{sum(n > 1 for n in treffer.values())} (nicht aufgelöste Organisationen der Klasse „{KLASSE_AUSSCHUESSE}“)",
+        f"{sum(n == 0 for n in treffer.values())}{paragrafen(n == 0 for n in treffer.values())}, mit mehr als einer "
+        f"Organisation {sum(n > 1 for n in treffer.values())}{paragrafen(n > 1 for n in treffer.values())} (nicht "
+        f"aufgelöste Organisationen der Klasse „{KLASSE_AUSSCHUESSE}“)",
         f"Bezirksvertretungen mit Stadtbezirk: {sum(bool(e.get('stadtbezirk')) for e in bv)} von {len(bv)}, "
         f"Stadtbezirke {len(bezirke)} von {len(BEZIRKE_KOELN)}",
         f"Sitzungen ohne Gremium aus {DATEI}: {sum(zahlen['ohne_sitzung'].values())} ({gruende(zahlen['ohne_sitzung'])}); "
@@ -402,7 +450,7 @@ def schreiben(ziel, db, meetings, papers, stand_tag, liste=None, ausserhalb=()):
     quellen = [dict(zip(("name", "url", "license", "retrieved_at"), r))
                for r in db.execute("SELECT name, url, license, retrieved_at FROM source")]
     d, zahlen = daten(orgs, meetings, organisationen_der_sitzungen() or {}, papers, stand_tag, quellen, liste,
-                      ausserhalb)
+                      ausserhalb, beratungen(db))
     ziel.parent.mkdir(parents=True, exist_ok=True)
     ziel.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")))
     ids = {e["source_object"] for e in d["gremien"]}
@@ -411,13 +459,17 @@ def schreiben(ziel, db, meetings, papers, stand_tag, liste=None, ausserhalb=()):
     return d
 
 
-def zeile_stationen(papers):
+def zeile_stationen(papers, aufgeloeste=None):
     """Zeile im Log von `export`, nur Zahlen: Stationen der Prozesslinie in den Gebietsdateien (jede Vorlage einmal),
-    davon mit Sitzung, mit Hinweis aus dem Sitzungsnamen (export.hinweis_station) und mit Kennung des Gremiums."""
+    davon mit Sitzung, mit Hinweis aus dem Sitzungsnamen (export.hinweis_station) und mit Kennung des Gremiums; mit
+    Freigabe dazu `aufgeloeste`, die Stationen aufgelöster Gremien der Datei, die keine Kennung tragen
+    (stationen_aufgeloester; Entscheidung 21.11.2026 (3) (G6)); ohne Freigabe (None) entfällt dieser Teil."""
     st = [s for p in papers for s in p.get("process") or ()]
     hinweis = Counter(s.get("hinweis") for s in st if s.get("hinweis"))
     return (f"Stationen der Prozesslinie in den Gebietsdateien: {len(st)}, mit Sitzung "
             f"{sum(bool(s.get('meeting_id')) for s in st)}, mit Hinweis aus dem Sitzungsnamen "
             f"{sum(hinweis.values())} (abgesagt {hinweis['abgesagt']}, verschoben {hinweis['verschoben']}), mit "
-            f"Kennung des Gremiums aus {DATEI} {sum(bool(s.get('gremium_key')) for s in st)}")
+            f"Kennung des Gremiums aus {DATEI} {sum(bool(s.get('gremium_key')) for s in st)}"
+            + (f", Stationen aufgelöster Gremien aus {DATEI} (ohne Kennung) {aufgeloeste}"
+               if aufgeloeste is not None else ""))
 

@@ -181,7 +181,9 @@ def test_daten_felder_reihenfolge_und_log():
     assert ("Gremien (gremien.json): 8 Organisationen, nicht aufgenommen Fraktionen und Gruppen 1, mit anderer oder "
             "ohne Klasse 0; aufgenommen 7: Rat 1, Ausschüsse mit Paragraf 2, Bezirksvertretungen 2, übrige 2; davon "
             "aufgelöst 1; Kennungen mit Zusatz aus dem SHA-1 (gleiche Kennung) 0\n") in log + "\n"
-    assert ("mit genau einer Organisation 2, ohne Organisation 15, mit mehr als einer Organisation 0") in log
+    # seit Entscheidung 21.11.2026 (3) (G5) mit den Nummern der Paragrafen ohne Organisation (nur Nummern)
+    assert ("mit genau einer Organisation 2, ohne Organisation 15 (§§ 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, "
+            "22, 23), mit mehr als einer Organisation 0 (nicht aufgelöste") in log
     assert "Bezirksvertretungen mit Stadtbezirk: 2 von 2, Stadtbezirke 2 von 9" in log
     assert "Probe" not in log and O not in log
 
@@ -198,11 +200,12 @@ def test_hinweis_station_eine_regel():
     assert export.hinweis_station({"meeting_id": None, "meeting": "Probebeirat - abgesagt"}, namen) is None
 
 
-def _kette_testserver(oparl, monkeypatch):
+def _kette_testserver(oparl, monkeypatch, vorher=None):
     """Testserver mit Gremien in der Kölner Form, einer Fraktion (nicht aufgenommen) und einem aufgelösten Ausschuss
     (aufgenommen, gekennzeichnet); Sitzungen
     des Rates in den kommenden Tagen (abgesagt laut OParl, abgesagt laut Namen, verschoben, ohne Hinweis) und eine
-    Sitzung der Fraktion; je Sitzung eine Vorlage mit Beratung."""
+    Sitzung der Fraktion; je Sitzung eine Vorlage mit Beratung. `vorher(oparl)`: weitere erfundene Daten vor dem
+    Abruf."""
     b = oparl.b
     oparl.orgs[0]["classification"] = "Bezirksvertretungen"
     oparl.orgs[1]["classification"] = "Rat"
@@ -227,6 +230,8 @@ def _kette_testserver(oparl, monkeypatch):
         p["consultation"] = [{"id": f"{b}/consultations/{k}", "meeting": f"{b}/meetings/{k}",
                               "agendaItem": f"{b}/agendaitems/{k}", "role": "Entscheidung", "authoritative": True}]
         oparl.papers.append(p)
+    if vorher:
+        vorher(oparl)
     sessionnet.fetch_all()
     build.build()
 
@@ -440,8 +445,8 @@ def test_testdaten_koelner_form_und_ganze_pruefung(oparl, monkeypatch, capsys):
                      r"\(gleiche Kennung\) 0\n", log), log
     assert "Bezirksvertretungen mit Stadtbezirk: 9 von 9, Stadtbezirke 9 von 9" in log
     assert re.search(r"Stationen der Prozesslinie in den Gebietsdateien: (\d+), mit Sitzung \1, mit Hinweis aus dem "
-                     r"Sitzungsnamen 0 \(abgesagt 0, verschoben 0\), mit Kennung des Gremiums aus gremien\.json \1\n",
-                     log), log
+                     r"Sitzungsnamen 0 \(abgesagt 0, verschoben 0\), mit Kennung des Gremiums aus gremien\.json \1, "
+                     r"Stationen aufgelöster Gremien aus gremien\.json \(ohne Kennung\) 0\n", log), log
     check.check()
     out = capsys.readouterr().out
     assert "Alle Prüfungen durchgeführt, keine Befunde." in out
@@ -643,3 +648,202 @@ def test_kette_sitzungsliste_nicht_aktuell(oparl, monkeypatch, capsys):
     assert "Gremien: Feld naechste_sitzung anders als gremien.daten: 1" in befunde
     for x in befunde:
         assert "Testdaten" not in x and oparl.b not in x and re.search(r": \d+$", x), x
+
+
+# --- Entscheidung 21.11.2026 (3): (G4) Kennungen in suche.json, (G5) Paragrafen im Log, (G6) aufgelöste Gremien ------
+
+def _suche(base):
+    return json.loads((base / "suche.json").read_text())
+
+
+def _zeile(suche, ref):
+    (r,) = [r for r in suche["rows"] if r[0] == ref]
+    return r
+
+
+def _kennungen_je_drucksache(base):
+    """Kennungen an den Stationen je Drucksache aus den Gebietsdateien (jede Vorlage einmal)."""
+    aus = {}
+    for d in ("ortsteile", "bezirke", "ohne-ortsbezug"):
+        for f in sorted((base / d).glob("*.json")):
+            for p in json.loads(f.read_text())["papers"]:
+                aus[p["reference"]] = sorted({s["gremium_key"] for s in p["process"] if s.get("gremium_key")})
+    return aus
+
+
+def test_suche_kennungen_der_gremien_und_freigabe_aus(oparl, monkeypatch, capsys):
+    """(G4) suche.json führt mit Freigabe die Liste `gremium_keys` (nur Kennungen aus gremien.json) und je Zeile die
+    Spalte export.SUCHE_SPALTE_KENNUNGEN mit den Kennungen an den Stationen der Vorlage; die Spalten 0–10 bleiben
+    unverändert. Ohne Freigabe weder Liste noch Spalte (wie vor G4); check.suche_gremien ohne Befund, eine Liste ohne
+    Freigabe ist ein Befund (nur Zahlen)."""
+    _kette_testserver(oparl, monkeypatch)
+    export.export()
+    base = config.EXPORT / config.STADT
+    s = _suche(base)
+    spalte = export.SUCHE_SPALTE_KENNUNGEN
+    assert spalte == 11 and all(len(r) == 12 for r in s["rows"])
+    keys_in_datei = {e["key"] for e in json.loads((base / "gremien.json").read_text())["gremien"]}
+    assert s["gremium_keys"] == ["bv4", "rat"] and set(s["gremium_keys"]) <= keys_in_datei
+    stationen = _kennungen_je_drucksache(base)
+    for r in s["rows"]:
+        assert [s["gremium_keys"][i] for i in r[spalte]] == stationen[r[0]], r[0]
+        assert r[spalte] == sorted(set(r[spalte]))
+    # die Fraktion (Sitzung k5) steht nicht in gremien.json: ihre Vorlage hat keine Kennung, behält aber den Namen
+    fr = _zeile(s, "1105/2026")
+    assert fr[spalte] == [] and fr[10] and s["meta"]["note"] == export.SUCHE_NOTE + export.SUCHE_NOTE_KENNUNGEN
+    assert list(s)[-2:] == ["gremium_keys", "rows"]
+    mit = s
+    db = sqlite3.connect(config.DB)
+    try:
+        assert check.suche_gremien(db) == ([], [])
+        monkeypatch.setitem(config.ZUSATZTHEMEN, "gremien", False)
+        export.export()
+        ohne = _suche(base)
+        assert "gremium_keys" not in ohne and all(len(r) == 11 for r in ohne["rows"])
+        assert ohne["meta"]["note"] == export.SUCHE_NOTE
+        assert [r[:spalte] for r in mit["rows"]] == ohne["rows"]
+        assert {k: v for k, v in mit.items() if k not in ("gremium_keys", "rows", "meta")} == \
+            {k: v for k, v in ohne.items() if k not in ("rows", "meta")}
+        capsys.readouterr()
+        assert check.suche_gremien(db) == ([], [])
+        assert "abgeschaltet (config.ZUSATZTHEMEN) – keine Kennungen erwartet" in capsys.readouterr().out
+        # eine Liste und eine Spalte ohne Freigabe: Befund mit Zahl
+        (base / "suche.json").write_text(json.dumps(mit, ensure_ascii=False))
+        assert check.suche_gremien(db)[0] == [
+            f"Suche: Kennungen der Gremien in suche.json, obwohl die Freigabe „gremien“ aus ist: {1 + len(mit['rows'])}"]
+    finally:
+        db.close()
+
+
+def _alt_mit_beratung(oparl):
+    """Der aufgelöste Probeausschuss (erfunden) endet vor 10 Tagen; 30 Tage vorher hatte er eine Sitzung, in der eine
+    erfundene Vorlage beraten wurde, die danach auch der Rat berät (Sitzung k4)."""
+    b = oparl.b
+    heute = date.today()
+    alt = next(o for o in oparl.orgs if o["id"] == f"{b}/organizations/alt")
+    alt["endDate"] = (heute - timedelta(days=10)).isoformat()
+    tag = (heute - timedelta(days=30)).isoformat()
+    oparl.meetings.append({"id": f"{b}/meetings/k6", "type": "https://schema.oparl.org/1.1/Meeting",
+                           "name": "[Testdaten] Probeausschuss", "start": f"{tag}T17:00:00+01:00", "cancelled": False,
+                           "organization": [f"{b}/organizations/alt"], "modified": "2026-11-01T08:00:00+01:00",
+                           "agendaItem": [{"id": f"{b}/agendaitems/k6", "number": "1", "name": "TOP", "public": True}]})
+    p = oparl.paper(106, name="[Testdaten] Probevorlage 6")
+    p["consultation"] = [{"id": f"{b}/consultations/k6", "meeting": f"{b}/meetings/k6",
+                          "agendaItem": f"{b}/agendaitems/k6", "role": "Vorberatung", "authoritative": False},
+                         {"id": f"{b}/consultations/k6r", "meeting": f"{b}/meetings/k4",
+                          "agendaItem": f"{b}/agendaitems/k4", "role": "Entscheidung", "authoritative": True}]
+    oparl.papers.append(p)
+
+
+def test_kennungen_ohne_aufgeloeste_und_zaehlung_ueber_die_beratung():
+    """(G6) gremien.kennungen mit Datenstand ohne aufgelöste Gremien (die Kennung selbst bleibt gleich); vorlagen_12m
+    zählt ein aufgelöstes Gremium über die Organisation der Beratung (gremien.beratungen), auch ohne Kennung an der
+    Station; ohne diese Angabe nur über `gremium_key`."""
+    orgs = [_org("rat", "Rat", "Rat"), _org("alt", "[Testdaten] Probeausschuss", AUSSCHUSS, ende="2026-11-11"),
+            _org("fr", "[Testdaten] Probefraktion", "Fraktionen und Gruppen")]
+    assert gremien.kennungen(orgs) == {f"{O}/rat": "rat", f"{O}/alt": "alt"}
+    assert gremien.kennungen(orgs, STAND) == {f"{O}/rat": "rat"}
+    assert gremien.kennungen(orgs, "2026-11-11") == {f"{O}/rat": "rat", f"{O}/alt": "alt"}
+    station = {"position": 0, "meeting_id": f"{M}/a", "start_date": "2026-10-01T17:00:00+02:00", "cancelled": 0}
+    papers = [{"source_object": "https://example.invalid/oparl/papers/1", "process": [station]}]
+    beratungen = {("https://example.invalid/oparl/papers/1", 0): f"{O}/alt"}
+    d, _ = gremien.daten(orgs, [], {}, papers, STAND, [], beratungen_je=beratungen)
+    alt = next(e for e in d["gremien"] if e["key"] == "alt")
+    assert alt["aufgeloest"] is True and alt["vorlagen_12m"] == 1
+    d, _ = gremien.daten(orgs, [], {}, papers, STAND, [])
+    assert next(e for e in d["gremien"] if e["key"] == "alt")["vorlagen_12m"] == 0
+
+
+def test_aufgeloestes_gremium_ohne_kennung_an_stationen_und_in_suche(oparl, monkeypatch, capsys):
+    """(G6) Die Station in der Sitzung eines aufgelösten Gremiums trägt keine Kennung, die Station des Rates derselben
+    Vorlage schon; in suche.json fehlt die Kennung des aufgelösten Gremiums; gremien.json zählt seine Sitzung und
+    Vorlage in 12 Monaten weiter; das Log von export und die Ausgabe von check zählen die Stationen aufgelöster
+    Gremien; check ohne Befund."""
+    _kette_testserver(oparl, monkeypatch, _alt_mit_beratung)
+    capsys.readouterr()
+    export.export()
+    log = capsys.readouterr().out
+    base = config.EXPORT / config.STADT
+    st = _stationen(base)
+    assert "gremium_key" not in st["k6"] and st["k6"]["gremium"] == "[Testdaten] Probeausschuss"
+    g = {e["key"]: e for e in json.loads((base / "gremien.json").read_text())["gremien"]}
+    assert g["alt"]["aufgeloest"] is True and g["alt"]["sitzungen_12m"] == 1 and g["alt"]["vorlagen_12m"] == 1
+    s = _suche(base)
+    assert "alt" not in s["gremium_keys"]
+    assert [s["gremium_keys"][i] for i in _zeile(s, "AN/206/2026")[export.SUCHE_SPALTE_KENNUNGEN]] == ["rat"]
+    assert ("mit Kennung des Gremiums aus gremien.json 10, Stationen aufgelöster Gremien aus gremien.json (ohne "
+            "Kennung) 1\n") in log
+    db = sqlite3.connect(config.DB)
+    try:
+        capsys.readouterr()
+        assert check.gremien(db) == ([], []) and check.stationen(db) == ([], [])
+        assert check.suche_gremien(db) == ([], [])
+        out = capsys.readouterr().out
+        assert "mit Kennung des Gremiums 10, Stationen aufgelöster Gremien (ohne Kennung) 1\n" in out
+    finally:
+        db.close()
+
+
+def test_check_meldet_falsche_kennungen_in_suche_und_aufgeloeste_an_stationen(oparl, monkeypatch):
+    """check.suche_gremien meldet eingeschleuste Kennungen in suche.json (eine ohne Eintrag in gremien.json, eine eines
+    aufgelösten Gremiums, ein Verweis außerhalb der Liste) und check.stationen die Kennung eines aufgelösten Gremiums an
+    einer Station; Befunde nur mit Zahlen."""
+    _kette_testserver(oparl, monkeypatch, _alt_mit_beratung)
+    export.export()
+    base = config.EXPORT / config.STADT
+    s = _suche(base)
+    spalte = export.SUCHE_SPALTE_KENNUNGEN
+    alt_liste = s["gremium_keys"]
+    neu = sorted(alt_liste + ["alt", "gibt-es-nicht"])
+    for r in s["rows"]:
+        r[spalte] = [neu.index(alt_liste[i]) for i in r[spalte]]
+    s["gremium_keys"] = neu
+    _zeile(s, "AN/206/2026")[spalte] = sorted([neu.index("alt"), neu.index("rat")])   # aufgelöst
+    _zeile(s, "1101/2026")[spalte] = [neu.index("gibt-es-nicht")]                      # ohne Eintrag
+    _zeile(s, "AN/202/2026")[spalte] = [99]                                            # außerhalb der Liste
+    (base / "suche.json").write_text(json.dumps(s, ensure_ascii=False))
+    f = next(x for x in sorted((base / "ohne-ortsbezug").glob("*.json"))
+             if any((st.get("meeting_id") or "").endswith("/meetings/k6") for p in json.loads(x.read_text())["papers"]
+                    for st in p["process"]))
+    d = json.loads(f.read_text())
+    for p in d["papers"]:
+        for st in p["process"]:
+            if (st.get("meeting_id") or "").endswith("/meetings/k6"):
+                st["gremium_key"] = "alt"
+    f.write_text(json.dumps(d, ensure_ascii=False))
+    db = sqlite3.connect(config.DB)
+    try:
+        b_suche, fehlend = check.suche_gremien(db)
+        b_st, _ = check.stationen(db)
+    finally:
+        db.close()
+    assert fehlend == []
+    assert sorted(b_suche) == sorted([
+        "Suche: Zeilen mit ungültigem Verweis auf gremium_keys: 1",
+        "Suche: Kennungen ohne Eintrag in gremien.json: 1",
+        "Suche: Kennungen aufgelöster Gremien aus gremien.json: 1",
+        "Suche: Zeilen, deren Kennungen nicht den Organisationen der Beratungen folgen (gremien.kennungen): 3",
+        "Suche: Zeilen mit anderen Kennungen als an den Stationen der Vorlage: 2"]), b_suche
+    assert "Stationen: Kennung eines aufgelösten Gremiums aus gremien.json: 1" in b_st
+    assert any(x.startswith("Stationen: Feld `gremium_key` folgt nicht der Organisation der Beratung") for x in b_st)
+    for x in b_suche + b_st:   # nur Zahlen: keine Namen, keine Kennungen, keine Drucksachen
+        assert "Testdaten" not in x and "Probe" not in x and oparl.b not in x and "gibt-es-nicht" not in x, x
+        assert "/2026" not in x and re.search(r": \d+$", x), x
+
+
+def test_log_nennt_paragrafen_ohne_und_mit_mehreren_organisationen():
+    """(G5) Die Zeile zu den Ausschüssen nennt die Nummern der Paragrafen ohne Organisation und mit mehr als einer
+    (aufsteigend, nur Nummern); ein aufgelöstes Gremium zählt nicht; ohne solche Paragrafen keine Klammer."""
+    orgs = [_org("h", PARAGRAF[7], AUSSCHUSS), _org("s1", PARAGRAF[19], AUSSCHUSS), _org("s2", PARAGRAF[19], AUSSCHUSS),
+            _org("f-alt", PARAGRAF[11], AUSSCHUSS, ende="2025-10-31")]
+    d, zahlen = gremien.daten(orgs, [], {}, [], STAND, [])
+    log = "\n".join(gremien.zeilen_log(d, zahlen, {}))
+    assert ("Ausschüsse laut Zuständigkeitsordnung (ausschuesse.AUSSCHUESSE, 17 Einträge): mit genau einer Organisation "
+            "1, ohne Organisation 15 (§§ 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23), mit mehr als einer "
+            "Organisation 1 (§ 19) (nicht aufgelöste Organisationen der Klasse „Fachausschüsse und weitere Gremien“)\n"
+            ) in log + "\n"
+    alle = [_org(f"a{nr}", name, AUSSCHUSS) for nr, name in PARAGRAF.items() if nr != 23]
+    d, zahlen = gremien.daten(alle, [], {}, [], STAND, [])
+    log = "\n".join(gremien.zeilen_log(d, zahlen, {}))
+    assert "mit genau einer Organisation 16, ohne Organisation 1 (§ 23), mit mehr als einer Organisation 0 (nicht" in log
+    assert "Probe" not in log and O not in log

@@ -349,6 +349,10 @@ FELDER_EINHEIT = ("nummer", "kennung", "name", "kurzname", "label", "ebene", "ei
 FELDER_OHNE_ZUORDNUNG = ("nummer", "name", "label", "markierung", "fundstelle")
 LIZENZ_AUFBAU = ("im Plan keine Lizenz angegeben; übernommen sind nur Kennungen und Bezeichnungen (Tatsachenangaben), "
                  "keine Textauszüge; Klärung mit der Stadt offen")
+# Das Feld `kennung` bildet tools/aemter_tabelle.py aus Dezernat und Nummer; der Plan führt diese Schreibweise nicht
+# (Entscheidung 21.11.2026 (3) (G5))
+NOTE_KENNUNG = ("Das Feld „kennung“ bildet das Projekt aus Dezernat und Nummer (Dezernat/Nummer, etwa „VI/61“; beim "
+                "Dezernat das Dezernat allein); es ist keine Schreibweise des Plans.")
 
 
 def _einheit(z):
@@ -392,7 +396,7 @@ def aufbau(pfad=None):
                      "note": "Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen („•“) aus dem Plan, ohne "
                              "die Untereinheiten der Dienststellen; Einträge mit „●“ ohne Zuordnung (im Plan nicht "
                              "erklärt). Nur Kennungen und Bezeichnungen, keine Namen von Personen, keine Zahlen von "
-                             "Vorlagen."},
+                             "Vorlagen. " + NOTE_KENNUNG},
             "dezernate": list(dezernate.values()), "ohne_zuordnung": ohne}
 
 
