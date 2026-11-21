@@ -361,14 +361,42 @@ def lizenz_der_teile(teile):
     return min(stufen, key=RANG.index)
 
 
-def _rechte(teile):
+def _rechte(teile, ohne=()):
     """Rechtehinweis: je Lizenz die Teile, die darunter stehen (gleiche Angaben zusammengefasst, getrennt durch „ · “,
-    weil Bezeichnungen Kommas enthalten), dann der Verweis auf die Lizenzübersicht je Datei."""
+    weil Bezeichnungen Kommas enthalten), dann die Teile ohne geklärte Lizenz (`ohne`, TEILE_OHNE_LIZENZ) mit dem
+    Vermerk, dass die Lizenzangabe der Verteilung für sie nicht gilt, zuletzt der Verweis auf die Lizenzübersicht je
+    Datei."""
     gruppen = {}
     for name, text in teile:
         gruppen.setdefault(text, []).append(name)
-    return ("; ".join(f"{' · '.join(dict.fromkeys(namen))}: {text}" for text, namen in gruppen.items())
+    ohne_text = ("; ohne geklärte Lizenz (die Lizenzangabe dieser Verteilung gilt für diese Teile nicht): "
+                 + "; ".join(f"{name}: {text}" for name, text in ohne)) if ohne else ""
+    return ("; ".join(f"{' · '.join(dict.fromkeys(namen))}: {text}" for text, namen in gruppen.items()) + ohne_text
             + f". Lizenzen je Datei: {config.SITE_URL}data/LICENSE-DATA.md")
+
+
+# Teile ohne geklärte Lizenz (Nachprüfung 4a): Sie bestimmen die Lizenz einer Verteilung nicht
+# (lizenz_der_teile verlangt je Teil eine erkannte Lizenz), stehen aber in ihrem Rechtehinweis (_rechte). Die
+# Zuständigkeitsordnung liefert nur die Paragrafen der Ausschüsse in gremien.json; der Geschäfts- und
+# Dezernatsverteilungsplan die Zuordnung der Federführung (responsibility[].aemtertabelle in den Gebietsdateien,
+# audit_federfuehrung.tsv) und aemter.json, alle im Datenpaket. aemter.json selbst steht nicht im Katalog (write_dcat).
+def _teil_zustaendigkeitsordnung():
+    """(Bezeichnung, Angabe) der Zuständigkeitsordnung (ausschuesse.QUELLE) für den Rechtehinweis."""
+    from . import ausschuesse
+    titel = ausschuesse.QUELLE["titel"]
+    return (f"{titel} (nur Paragrafen der Ausschüsse)",
+            "Lizenz nicht geklärt; übernommen sind nur die Paragrafennummern, zugeordnet über den Namen der "
+            f"Organisation in der OParl-API, kein Text der Satzung; Namensnennung: {titel}")
+
+
+def _teil_plan():
+    """(Bezeichnung, Angabe) des jüngsten Geschäfts- und Dezernatsverteilungsplans der Ämtertabelle für den
+    Rechtehinweis; ohne Plan in der Tabelle None."""
+    from . import aemter
+    if aemter.tabelle().neuester() is None:
+        return None
+    return (f"{aemter.TITEL} ({aemter.quellenangabe()})",
+            f"{aemter.LIZENZ_AUFBAU}; Quellenangabe: {aemter.namensnennung()}")
 
 
 def _kontext_teile():
@@ -412,7 +440,8 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
     zeit = (Path(path).parent / "zeit.json").exists()
     # gremien.json (Freigabe „gremien“, pipeline/gremien.py) ebenso nur, wenn die Datei daneben liegt. aemter.json steht
     # nicht im Katalog: Der Geschäfts- und Dezernatsverteilungsplan nennt keine Lizenz, DCAT verlangt eine je Verteilung
-    # (lizenz_der_teile); die Datei liegt im Datenpaket, ihre Lizenzangabe in LICENSE-DATA.md
+    # (lizenz_der_teile); die Datei liegt im Datenpaket, ihre Lizenzangabe in LICENSE-DATA.md, der Plan im
+    # Rechtehinweis des Pakets (Teile ohne geklärte Lizenz, _teil_plan)
     gremien = (Path(path).parent / "gremien.json").exists()
     mt = "https://www.iana.org/assignments/media-types/"
     bplan = config.BPLAN.exists()
@@ -435,6 +464,13 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
     teile["paket"] = list(dict.fromkeys(ris + [_teil(n) for n in ("osm",) if n in orte]
                                         + ([_teil(config.QUELLE_BPLAN)] if bplan or config.QUELLE_BPLAN in orte else [])
                                         + teile["kontext"] + teile["ebenen"] + struktur))
+    # gremien.json: Daten des Ratsinformationssystems, dazu die Paragrafen der Zuständigkeitsordnung (ohne geklärte
+    # Lizenz). Teile ohne geklärte Lizenz je Verteilung: im Datenpaket der Plan (immer, wenn die Ämtertabelle einen
+    # Plan hat: Zuordnung der Federführung in den Gebietsdateien) und mit gremien.json die Zuständigkeitsordnung
+    teile["gremien"] = [_teil(config.QUELLE_OPARL)]
+    plan = _teil_plan()
+    ohne_lizenz = {"gremien": [_teil_zustaendigkeitsordnung()],
+                   "paket": ([plan] if plan else []) + ([_teil_zustaendigkeitsordnung()] if gremien else [])}
 
     # Kennzahlen: mit Freigabe „strukturdaten“ Einwohnerzahl und Altersanteile aus der Stadtstatistik (Option b,
     # pipeline/kontext.py), sonst wie bisher aus dem Zensus
@@ -456,7 +492,8 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
                 "dct:description": {"@language": "de", "@value": desc}, "dcat:accessURL": {"@id": url},
                 "dcat:downloadURL": {"@id": url}, "dcat:mediaType": {"@id": mt + media},
                 "dct:license": {"@id": LICENCE[licence or lizenz_der_teile(teile[teil])]},
-                "dct:rights": {"@type": "dct:RightsStatement", "rdfs:label": _rechte(teile[teil])}}
+                "dct:rights": {"@type": "dct:RightsStatement",
+                               "rdfs:label": _rechte(teile[teil], ohne_lizenz.get(teil, ()))}}
 
     doc = {
         "@context": {"dcat": "http://www.w3.org/ns/dcat#", "dct": "http://purl.org/dc/terms/",
@@ -498,7 +535,7 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
                    "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden.")] if zeit else []) + [
             dist("Typische Wege je Vorlagenart (JSON)", f"{config.STADT}/prozesse.json", "application/json", "oparl",
                  "Häufigste Abfolgen von Beratungen und Ergebnissen je Vorlagenart."),
-        ] + ([dist("Gremien (JSON)", f"{config.STADT}/gremien.json", "application/json", "oparl",
+        ] + ([dist("Gremien (JSON)", f"{config.STADT}/gremien.json", "application/json", "gremien",
                    "Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien ohne Fraktionen und Gruppen und ohne "
                    "Besetzung: Gruppe, Paragraf der Zuständigkeitsordnung (nur Nummer, bei eindeutigem Treffer des "
                    "Namens), Stadtbezirk der Bezirksvertretung, Sitzungen und Vorlagen in 12 Monaten und nächste Sitzung "

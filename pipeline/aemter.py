@@ -287,6 +287,13 @@ def quellenangabe(pfad=None):
     return f"Stand {stand_text(p.stand)}, zuletzt geprüft am {stand_text(p.geprueft)}" if p else None
 
 
+def namensnennung(pfad=None):
+    """„Stadt Köln, Geschäfts- und Dezernatsverteilungsplan, Stand 01.11.2026“ für den jüngsten Plan der Tabelle
+    (aemter.json `meta.quellenangabe`, Rechtehinweis im DCAT, publish._teil_plan); ohne Tabelle None."""
+    p = tabelle(pfad).neuester()
+    return f"Stadt Köln, Geschäfts- und Dezernatsverteilungsplan, Stand {stand_text(p.stand)}" if p else None
+
+
 def fundstelle(eintrag):
     """„Geschäfts- und Dezernatsverteilungsplan der Stadt Köln, Stand 01.11.2026, Seite 1, Spalte Dezernat VI,
     Eintrag 12“."""
@@ -380,7 +387,7 @@ def aufbau(pfad=None):
     erste = plan.zeilen[0]
     return {"meta": {"quelle": {"titel": TITEL, "url": erste["quelle"], "stand": plan.stand,
                                 "geprueft": plan.geprueft, "sha256": erste["sha256"]},
-                     "quellenangabe": f"Stadt Köln, Geschäfts- und Dezernatsverteilungsplan, Stand {stand_text(plan.stand)}",
+                     "quellenangabe": namensnennung(pfad),
                      "lizenz": LIZENZ_AUFBAU,
                      "note": "Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen („•“) aus dem Plan, ohne "
                              "die Untereinheiten der Dienststellen; Einträge mit „●“ ohne Zuordnung (im Plan nicht "

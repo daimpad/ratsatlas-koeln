@@ -79,8 +79,9 @@ def _sitzungsnamen(db):
 
 
 def _station(r, m, ref_ergebnisse, db):
-    """Station der Prozesslinie aus einem Eintrag der Beratungsfolge (Zeile aus _paper_detail). Kennung der Beratung,
-    TOP und Organisation bleiben intern; Sitzungsname und Ergebnis laufen durch die Maske. Seit Pull Request 4a
+    """Station der Prozesslinie aus einem Eintrag der Beratungsfolge (Zeile aus _paper_detail). Die Kennungen der
+    Beratung, des Tagesordnungspunkts und der Organisation bleiben intern (TOP-Nummer `number` und Name des Gremiums
+    `gremium` stehen in der Station); Sitzungsname und Ergebnis laufen durch die Maske. Seit Pull Request 4a
     (Entscheidung 21.11.2026 (2) (F10), (F12)) am Ende `hinweis` („abgesagt“ oder „verschoben“ aus dem Namen der
     Sitzung, hinweis_station; ohne Hinweis kein Feld) und `gremium_key` (Kennung des Gremiums in gremien.json, nur wenn
     die Organisation der Beratung dort steht; sonst kein Feld). Stand und Ende des Weges werten weiter nur OParl
@@ -472,11 +473,15 @@ def export_all():
     # Stationen der Prozesslinie (Hinweis aus dem Sitzungsnamen, Kennung des Gremiums) und, mit Freigabe „gremien“,
     # gremien.json und aemter.json (Entscheidung 21.11.2026 (2), Pull Request 4a); ohne Vorlagen (Kartenvorschau) wie
     # zeit.json keine der beiden Dateien
-    in_gebieten = [cache[pid] for pid in sorted(_heimat(areas))]
+    heimat = _heimat(areas)
+    in_gebieten = [cache[pid] for pid in sorted(heimat)]
     print(gremien.zeile_stationen(in_gebieten))
     if cache and gremien.an():
+        # Liste der Sitzungen nicht aktuell: keine nächste Sitzung (gremien.sitzungsliste); Vorlagen in keiner
+        # Gebietsdatei nur für das Log (sie zählen nicht bei vorlagen_12m)
         gremien.schreiben(out / gremien.DATEI, db, meetings, in_gebieten,
-                          stichtag(kalendertag_des_abrufs(stand), _stand()))
+                          stichtag(kalendertag_des_abrufs(stand), _stand()), gremien.sitzungsliste(_stand()),
+                          [cache[pid] for pid in sorted(set(cache) - set(heimat))])
         aufbau = aemter.aufbau()
         if aufbau:
             _dump(out / aemter.DATEI_AUFBAU, aufbau)
@@ -566,6 +571,13 @@ def stichtag(heute, stand):
     Aktualisierung der Sitzungen (STAND.json `meetings`, _kalendertag; unlesbar oder fehlend: `heute`). Für „Aktuell in
     Köln“ (_aktuell) und als Datenstand von gremien.json (gremien.datenstand), eine Regel."""
     return max(heute, _kalendertag(stand.get("meetings")) or heute)
+
+
+def sitzungsliste_aktuell(stand):
+    """Ist die Liste der Sitzungen beim letzten Abruf aktualisiert worden? Nein, wenn „meetings“ in _abruf_ausgesetzt
+    oder _abruf_warnungen steht oder _abruf_fehler gilt (`stand`: Inhalt von STAND.json). Eine Regel für _aktuell (Karte
+    „Kommende Sitzungen“), gremien.sitzungsliste (nächste Sitzung in gremien.json) und check.gremien."""
+    return not (_abruf_fehler(stand) or "meetings" in _abruf_ausgesetzt(stand) or "meetings" in _abruf_warnungen(stand))
 
 
 def _abruf_fehler(stand):
@@ -771,7 +783,8 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
       `area` (Gebiet zum Öffnen wie in suche.json, nie „gesamt“; None, wenn die Vorlage in keinem Gebiet steht), `ort`
       (kurzer Name dieses Gebiets: Stadtteil, „Stadtbezirk …“ oder ORT_OHNE; ohne Gebiet None) und `source_object`.
     Eine Karte fehlt, wenn ihre Liste ausgesetzt oder nicht aktualisiert ist: `sitzungen`, wenn „meetings“ in
-    _abruf_ausgesetzt oder _abruf_warnungen steht oder _abruf_fehler gilt; `vorlagen`, wenn „papers“ in
+    _abruf_ausgesetzt oder _abruf_warnungen steht oder _abruf_fehler gilt (sitzungsliste_aktuell, dieselbe Regel für die
+    nächste Sitzung in gremien.json); `vorlagen`, wenn „papers“ in
     _abruf_ausgesetzt steht oder _abruf_fehler gilt. Eine Karte ohne Eintrag fehlt ebenso (Entscheidung 19.11.2026 (1)
     (F): ein Block ohne Daten fehlt). Fehlen beide Karten, in der Kartenvorschau (STAND.json `vorschau`) und ohne
     Vorlagen: None, index.json hat dann keinen Schlüssel `aktuell`."""
@@ -779,7 +792,7 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
         return None
     fehler, ausgesetzt = _abruf_fehler(stand), _abruf_ausgesetzt(stand)
     karten = {}
-    if not (fehler or "meetings" in ausgesetzt or "meetings" in _abruf_warnungen(stand)):
+    if sitzungsliste_aktuell(stand):
         tag = stichtag(heute, stand)
         kommend = sorted((m for m in meetings if m["date"] >= tag and not absage(m)),
                          key=lambda m: (m["date"], m["time"] is None, m["time"] or ""))
@@ -984,7 +997,8 @@ def hinweis_sitzung(name):
     """Hinweis zum Stand aus dem Namen einer Sitzung nach der festen Wortliste (_HINWEIS_ABGESAGT vor
     _HINWEIS_VERSCHOBEN): „abgesagt“, „verschoben“ oder None (kein Wort der Liste, kein Name). `name`: der Name nach der
     Maske (Maske.sitzungsname), wie er in zeit.json steht. Eine Regel für _meetings (zeit.json, „Aktuell in Köln“ in
-    index.json, Zeile im Log) und check.hinweise_sitzungen. Unabhängig von OParl `cancelled` und vom Gremium: Auch eine
+    index.json, Zeile im Log), check.hinweise_sitzungen und, über hinweis_station, für _station (Stationen der
+    Prozesslinie in den Gebietsdateien) und check.stationen. Unabhängig von OParl `cancelled` und vom Gremium: Auch eine
     Sitzung mit Organisation erhält den Hinweis aus ihrem Namen."""
     if not isinstance(name, str):
         return None
@@ -1024,10 +1038,12 @@ _RANG_ABSAGE = {None: 0, "oparl": 1, "name": 2}
 def absage(m):
     """Gilt eine Sitzung als abgesagt, und warum (Entscheidung 21.11.2026 (1) (c) (9))? „oparl“ bei OParl `cancelled`,
     sonst „name“ bei Hinweis „abgesagt“ aus dem Namen (`hinweis`, hinweis_sitzung), sonst None. `m`: eine Sitzung aus
-    _meetings oder aus zeit.json (`meetings`). Der Hinweis „verschoben“ ist keine Absage. Eine Regel für _aktuell
-    („Aktuell in Köln“), time_audit_rows (audit_zeit.tsv), publish.write_calendar (termine.ics), verify.verify_time und
-    check.absagen_kalender; die Stadt setzt OParl `cancelled` bei keiner Sitzung (Lauf 62: 0 von 3 362), eine Absage
-    steht in Köln nur im Namen."""
+    _meetings oder aus zeit.json (`meetings`) oder eine Station der Prozesslinie (`cancelled` als 0 oder 1, `hinweis`
+    aus hinweis_station). Der Hinweis „verschoben“ ist keine Absage. Eine Regel für _aktuell („Aktuell in Köln“),
+    time_audit_rows (audit_zeit.tsv), publish.write_calendar (termine.ics), verify.verify_time,
+    check.absagen_kalender und gremien.json (gremien.sitzungen, gremien.vorlagen, gremien.ohne_organisation_kommend,
+    check.gremien); die Stadt setzt OParl `cancelled` bei keiner Sitzung (Lauf 62: 0 von 3 362), eine Absage steht in
+    Köln nur im Namen."""
     if m.get("cancelled"):
         return "oparl"
     if m.get("hinweis") == "abgesagt":

@@ -13,7 +13,7 @@ import sys
 from datetime import date, timedelta
 from pathlib import Path
 
-from pipeline import ausschuesse, build, check, config, export, kontext, sessionnet
+from pipeline import ausschuesse, build, check, config, export, gebietszahlen, kontext, sessionnet
 
 try:   # auf dem Stand vor Pull Request 4a fehlt das Modul; jeder Test schlägt dann einzeln fehl
     from pipeline import gremien
@@ -174,7 +174,9 @@ def test_daten_felder_reihenfolge_und_log():
     assert d["meta"]["zeitraum"] == {"seit": SEIT, "bis": STAND} and d["meta"]["datenstand"] == STAND
     assert d["meta"]["sources"] == [{"name": config.QUELLE_OPARL, "url": "u", "license": "l"}]
     assert d["meta"]["zustaendigkeitsordnung"]["url"] == ausschuesse.QUELLE["url"]
-    assert d["meta"]["namensnennung"] == config.NAMENSNENNUNG and set(d["meta"]) == set(gremien.META_FELDER)
+    # sitzungsliste_nicht_aktuell nur bei nicht aktueller Liste der Sitzungen (test_sitzungsliste_regel)
+    assert d["meta"]["namensnennung"] == config.NAMENSNENNUNG
+    assert set(d["meta"]) == set(gremien.META_FELDER) - {"sitzungsliste_nicht_aktuell"}
     log = "\n".join(gremien.zeilen_log(d, zahlen, {}))
     assert ("Gremien (gremien.json): 8 Organisationen, nicht aufgenommen Fraktionen und Gruppen 1, mit anderer oder "
             "ohne Klasse 0; aufgenommen 7: Rat 1, Ausschüsse mit Paragraf 2, Bezirksvertretungen 2, übrige 2; davon "
@@ -197,7 +199,8 @@ def test_hinweis_station_eine_regel():
 
 
 def _kette_testserver(oparl, monkeypatch):
-    """Testserver mit Gremien in der Kölner Form, einer Fraktion und einer nicht aufgenommenen Organisation; Sitzungen
+    """Testserver mit Gremien in der Kölner Form, einer Fraktion (nicht aufgenommen) und einem aufgelösten Ausschuss
+    (aufgenommen, gekennzeichnet); Sitzungen
     des Rates in den kommenden Tagen (abgesagt laut OParl, abgesagt laut Namen, verschoben, ohne Hinweis) und eine
     Sitzung der Fraktion; je Sitzung eine Vorlage mit Beratung."""
     b = oparl.b
@@ -444,3 +447,199 @@ def test_testdaten_koelner_form_und_ganze_pruefung(oparl, monkeypatch, capsys):
     assert "Alle Prüfungen durchgeführt, keine Befunde." in out
     assert "\nGremien (gremien.json, Freigabe „gremien“)\ngremien.json: 13 Gremien" in out
     assert "\nÄmter (aemter.json, Freigabe „gremien“)\naemter.json: Dezernate " in out
+
+
+# --- Nachprüfung von Pull Request 4a ----------------------------------------------------------------------------------
+
+def test_kennung_aendert_sich_bei_gleicher_rohkennung():
+    """Die Kennung bleibt nur gleich, solange keine weitere Organisation dieselbe Kennung ergibt: Kommt eine hinzu,
+    erhalten beide den Zusatz (Modulbeschreibung, Nachprüfung 4a)."""
+    vorher = gremien.schluessel([f"{O}/gr/1"])
+    nachher = gremien.schluessel([f"{O}/gr/1", f"{O}/GR-1"])
+    assert vorher[f"{O}/gr/1"] == "gr-1"
+    assert re.fullmatch(r"gr-1-[0-9a-f]{8}", nachher[f"{O}/gr/1"]) and nachher[f"{O}/gr/1"] != nachher[f"{O}/GR-1"]
+    assert "behält und keine weitere Organisation der Tabelle dieselbe Kennung ergibt" in gremien.__doc__
+
+
+def test_aus_der_satzung_nur_der_paragraf():
+    """Aus der Zuständigkeitsordnung stammt nur der Paragraf: Der Name im Eintrag ist der Name der Organisation in der
+    OParl-API, auch wenn die Satzung den Ausschuss anders schreibt; Hinweis in meta, LICENSE-DATA.md und README sagen
+    das so (Nachprüfung 4a: sie nannten auch die Namen der Ausschüsse)."""
+    satzung = PARAGRAF[19]
+    oparl_name = "Ausschuss für Schule und Weiterbildung"   # Schreibung mit „für“, wie die Überschrift des § 19
+    assert oparl_name != satzung and ausschuesse.abschnitt(oparl_name) == 19
+    d, _ = gremien.daten([_org("probe1", oparl_name, AUSSCHUSS)], [], {}, [], STAND, [])
+    (e,) = d["gremien"]
+    assert e["name"] == oparl_name and e["paragraf"] == 19 and e["gruppe"] == "ausschuss"
+    hinweis = d["meta"]["zustaendigkeitsordnung"]["hinweis"]
+    assert hinweis == gremien.HINWEIS_ZUSTO and "nur der Paragraf" in hinweis and "stammt aus der OParl-API" in hinweis
+    assert "Namen der Ausschüsse" not in hinweis
+    zeile = next(z for z in (ROOT / "data" / "LICENSE-DATA.md").read_text(encoding="utf-8").splitlines()
+                 if z.startswith("| `export/koeln/gremien.json`"))
+    assert "nur die Paragrafennummer" in zeile and "Namen der Ausschüsse" not in zeile
+    assert "Namen und Paragrafen" not in zeile
+
+
+def test_zustaendigkeitsordnung_in_den_quellenangaben(monkeypatch):
+    """Die Zuständigkeitsordnung steht als Quelle in README (Tabelle „Quellen und Lizenzen“) und, mit Freigabe
+    „gremien“, auf der Technikseite (technikseite.weitere_quellen, Adresse aus ausschuesse.QUELLE); beim Plan nennen
+    beide auch aemter.json (Nachprüfung 4a). Ohne Freigabe fehlen Eintrag und Zusatz auf der Technikseite."""
+    from pipeline import technikseite
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    tabelle = readme.split("## Quellen und Lizenzen", 1)[1].split("\n## ", 1)[0]
+    zeile = next(z for z in tabelle.splitlines() if z.startswith("| Zuständigkeitsordnung"))
+    assert ausschuesse.QUELLE["titel"] in zeile and "Lizenz nicht geklärt" in zeile and "gremien.json" in zeile
+    assert "aemter.json" in next(z for z in tabelle.splitlines() if "Dezernatsverteilungsplan" in z)
+    je = {e[0]: e for e in technikseite.weitere_quellen()}
+    assert set(je) == {"q-aemter", "q-zustaendigkeitsordnung"}
+    assert je["q-zustaendigkeitsordnung"][3] == ausschuesse.QUELLE["url"]
+    assert "Lizenz der Satzung ist nicht geklärt" in je["q-zustaendigkeitsordnung"][2]
+    assert "aemter.json" in je["q-aemter"][2]
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "gremien", False)
+    je = {e[0]: e for e in technikseite.weitere_quellen()}
+    assert set(je) == {"q-aemter"} and "aemter.json" not in je["q-aemter"][2]
+
+
+def test_dcat_nennt_teile_ohne_geklaerte_lizenz(tmp_path):
+    """DCAT: Die Verteilung „Gremien (JSON)“ nennt im Rechtehinweis die Zuständigkeitsordnung als Teil ohne geklärte
+    Lizenz, das Datenpaket den Geschäfts- und Dezernatsverteilungsplan und, mit gremien.json, auch die
+    Zuständigkeitsordnung; beide mit dem Vermerk, dass die Lizenzangabe der Verteilung für sie nicht gilt. Die Lizenz
+    der Verteilungen bleibt die der übrigen Teile (Nachprüfung 4a)."""
+    from pipeline import aemter, publish
+
+    def verteilungen():
+        publish.write_dcat(tmp_path / "dcat.jsonld", None, STAND, orte=set())
+        dcat = json.loads((tmp_path / "dcat.jsonld").read_text(encoding="utf-8"))
+        return {d["dct:title"]["@value"]: d for d in dcat["dcat:distribution"]}
+
+    vermerk = "ohne geklärte Lizenz (die Lizenzangabe dieser Verteilung gilt für diese Teile nicht)"
+    je = verteilungen()
+    assert "Gremien (JSON)" not in je
+    paket = je["Datenpaket (Zip)"]["dct:rights"]["rdfs:label"]
+    assert vermerk in paket and aemter.TITEL in paket and aemter.namensnennung() in paket
+    assert ausschuesse.QUELLE["titel"] not in paket
+    (tmp_path / "gremien.json").write_text("{}")
+    je = verteilungen()
+    gr = je["Gremien (JSON)"]
+    recht = gr["dct:rights"]["rdfs:label"]
+    assert gr["dct:license"]["@id"] == publish.LICENCE["dl-de-zero"]
+    assert vermerk in recht and f"Namensnennung: {ausschuesse.QUELLE['titel']}" in recht and "Lizenz nicht geklärt" in recht
+    assert config.NAMENSNENNUNG in recht and aemter.TITEL not in recht
+    assert recht.index(vermerk) > recht.index(config.NAMENSNENNUNG)   # nach den Teilen mit Lizenz
+    paket = je["Datenpaket (Zip)"]["dct:rights"]["rdfs:label"]
+    assert ausschuesse.QUELLE["titel"] in paket and aemter.TITEL in paket
+    # Verteilungen ohne solche Teile bleiben ohne Vermerk
+    assert vermerk not in je["Typische Wege je Vorlagenart (JSON)"]["dct:rights"]["rdfs:label"]
+
+
+def test_log_sitzungen_ohne_organisation_und_vorlagen_ausserhalb():
+    """Log (nur Zahlen): Sitzungen nach dem Datenstand ohne Verweis auf eine Organisation (ohne Absage), davon mit
+    Gremium aus dem Sitzungsnamen gleich dem Namen genau eines Gremiums der Datei; Sitzungen am Datenstand; Vorlagen in
+    keiner Gebietsdatei mit Beratung im Zeitraum. Diese zählen weiter für kein Gremium (Nachprüfung 4a)."""
+    orgs = [_org("gr/1", "[Testdaten] Probeausschuss", AUSSCHUSS), _org("rat", "Rat", "Rat"),
+            _org("doppelt1", "[Testdaten] Probebeirat", AUSSCHUSS), _org("doppelt2", "[Testdaten] Probebeirat", AUSSCHUSS)]
+    meetings = [{**_sitzung("o1", "2026-11-25"), "gremium": "[Testdaten] Probeausschuss"},   # ohne Organisation
+                {**_sitzung("o2", "2026-11-26"), "gremium": "[Testdaten] Probebeirat"},     # Name zweimal vergeben
+                {**_sitzung("o3", "2026-11-27"), "gremium": "[Testdaten] Probebeirat - Sondersitzung"},
+                {**_sitzung("o4", "2026-11-28", hinweis="abgesagt"), "gremium": "[Testdaten] Probeausschuss"},
+                {**_sitzung("o5", "2026-10-01"), "gremium": "[Testdaten] Probeausschuss"},   # vergangen
+                _sitzung("m1", "2027-01-20"), _sitzung("m2", STAND), _sitzung("m3", STAND, cancelled=True)]
+    orgs_je = {f"{M}/m1": [f"{O}/gr/1"], f"{M}/m2": [f"{O}/rat"], f"{M}/m3": [f"{O}/rat"], f"{M}/o2": []}
+    station = {"meeting_id": f"{M}/m2", "start_date": f"{STAND}T17:00:00+01:00", "cancelled": 0, "gremium_key": "rat"}
+    ausserhalb = [{"process": [station]}, {"process": [{**station, "start_date": "2025-01-01T17:00:00+01:00"}]}]
+    d, zahlen = gremien.daten(orgs, meetings, orgs_je, [], STAND, [], ausserhalb=ausserhalb)
+    keys = {e["key"]: e for e in d["gremien"]}
+    assert keys["gr-1"]["naechste_sitzung"]["source_object"] == f"{M}/m1"   # die Sitzung o1 zählt weiter nicht
+    assert keys["rat"]["sitzungen_12m"] == 1 and keys["rat"]["vorlagen_12m"] == 0
+    assert zahlen["ohne_organisation_kommend"] == (3, 1) and zahlen["am_datenstand"] == 1
+    assert zahlen["vorlagen_ausserhalb"] == 1
+    log = "\n".join(gremien.zeilen_log(d, zahlen, {}))
+    assert ("Sitzungen nach dem Datenstand ohne Verweis auf eine Organisation (ohne Absage; zählen für kein Gremium, "
+            "auch nicht als nächste Sitzung): 3, davon mit Gremium aus dem Sitzungsnamen gleich dem Namen genau eines "
+            "Gremiums aus gremien.json 1; Sitzungen von Gremien aus gremien.json am Datenstand (ohne Absage; zählen als "
+            "vergangen, nicht als nächste Sitzung): 1") in log
+    assert "Vorlagen in keiner Gebietsdatei mit Beratung eines Gremiums aus gremien.json im Zeitraum (zählen nicht bei " \
+           "vorlagen_12m): 1" in log
+    assert "Probe" not in log and O not in log and M not in log and "Liste der Sitzungen" not in log
+
+
+def test_sitzung_am_datenstand_gilt_als_vergangen_auch_im_sommer():
+    """Regel bis zur Entscheidung des Auftraggebers (offen): Sitzungen am Tag des Datenstands zählen als vergangen.
+    Im Sommer beginnt der Lauf um 0:10 Uhr Kölner Zeit; der Datenstand ist dann der gerade begonnene Tag, und eine
+    Sitzung am Abend dieses Tages zählt als vergangen, nicht als nächste Sitzung (erfundene Daten). Die
+    Modulbeschreibung nennt das so (Nachprüfung 4a: sie begründete die Regel nur mit dem Lauf im Winter)."""
+    stand = export.kalendertag_des_abrufs("2027-07-01T22:15:00Z")
+    assert stand == "2027-07-02"
+    assert export.kalendertag_des_abrufs("2026-12-01T22:15:00Z") == "2026-12-01"   # Winter: Abend des Laufs
+    org = f"{O}/probe"
+    meetings = [_sitzung("abend", stand, time="17:00"), _sitzung("spaeter", "2027-07-20")]
+    orgs_je = {m["source_object"]: [org] for m in meetings}
+    zahl, naechste, _ = gremien.sitzungen(meetings, orgs_je, {org}, {org}, gebietszahlen.window_start(stand), stand)
+    assert zahl[org] == 1 and naechste[org]["source_object"] == f"{M}/spaeter"
+    doc = " ".join(gremien.__doc__.split())
+    assert "Im Sommer beginnt derselbe Lauf um 0:10 Uhr Kölner Zeit" in doc and "beim Auftraggeber offen" in doc
+
+
+def test_sitzungsliste_regel(monkeypatch):
+    """export.sitzungsliste_aktuell: nicht aktuell bei Warnung oder Aussetzen der Sitzungen oder Fehler des Abrufs;
+    gremien.sitzungsliste nennt dann den Stand der Liste; gremien.daten ohne nächste Sitzung, mit
+    meta.sitzungsliste_nicht_aktuell (Nachprüfung 4a)."""
+    alt = "2026-11-10T22:30:00+00:00"
+    warnung = {"meetings": alt, "abruf_warnungen": {"meetings": {"zeit": "2026-11-21T22:20:00+00:00",
+                                                                "meldung": "nicht aktualisiert"}}}
+    ausgesetzt = {"meetings": alt, "abruf_ausgesetzt": {"meetings": {"seit": "2026-11-21T22:20:00+00:00"}}}
+    fehler = {"meetings": alt, "abruf_fehler": {"zeit": "2026-11-21T22:20:00+00:00", "meldung": "Abbruch"}}
+    nur_vorlagen = {"meetings": alt, "abruf_ausgesetzt": {"papers": {"seit": "2026-11-21T22:20:00+00:00"}}}
+    assert export.sitzungsliste_aktuell({}) and export.sitzungsliste_aktuell(nur_vorlagen)
+    for stand in (warnung, ausgesetzt, fehler):
+        assert not export.sitzungsliste_aktuell(stand)
+        assert gremien.sitzungsliste(stand) == {"stand": alt, "hinweis": gremien.HINWEIS_SITZUNGSLISTE}
+    assert gremien.sitzungsliste({}) is None and gremien.sitzungsliste(nur_vorlagen) is None
+    org = f"{O}/bv4"
+    meetings = [_sitzung("v", "2026-10-01"), _sitzung("k", "2026-12-01")]
+    orgs_je = {m["source_object"]: [org] for m in meetings}
+    o = [_org("bv4", "Bezirksvertretung 4 (Ehrenfeld)", "Bezirksvertretungen")]
+    d, _ = gremien.daten(o, meetings, orgs_je, [], STAND, [])
+    assert "naechste_sitzung" in d["gremien"][0] and "sitzungsliste_nicht_aktuell" not in d["meta"]
+    d, zahlen = gremien.daten(o, meetings, orgs_je, [], STAND, [], gremien.sitzungsliste(warnung))
+    assert "naechste_sitzung" not in d["gremien"][0] and d["gremien"][0]["sitzungen_12m"] == 1
+    assert d["meta"]["sitzungsliste_nicht_aktuell"]["stand"] == alt and set(d["meta"]) <= set(gremien.META_FELDER)
+    assert gremien.zeilen_log(d, zahlen, {})[-1] == \
+        "Liste der Sitzungen beim letzten Abruf nicht aktualisiert: keine nächste Sitzung in gremien.json"
+
+
+def test_kette_sitzungsliste_nicht_aktuell(oparl, monkeypatch, capsys):
+    """Kette mit dem Testserver und einer Warnung zu den Sitzungen in STAND.json: gremien.json ohne nächste Sitzung,
+    mit dem Stand der Liste in meta, „Aktuell in Köln“ ohne Sitzungen (dieselbe Regel); check ohne Befund, eine
+    eingeschleuste nächste Sitzung ist ein Befund (nur Zahlen)."""
+    _kette_testserver(oparl, monkeypatch)
+    stand = json.loads(config.STAND.read_text())
+    stand["abruf_warnungen"] = {"meetings": {"zeit": "2099-01-01T00:00:00+00:00", "meldung": "nicht aktualisiert"}}
+    config.STAND.write_text(json.dumps(stand))
+    capsys.readouterr()
+    export.export()
+    log = capsys.readouterr().out
+    base = config.EXPORT / config.STADT
+    g = json.loads((base / "gremien.json").read_text())
+    assert not any("naechste_sitzung" in e for e in g["gremien"])
+    assert g["meta"]["sitzungsliste_nicht_aktuell"] == {"stand": stand.get("meetings"),
+                                                        "hinweis": gremien.HINWEIS_SITZUNGSLISTE}
+    assert "sitzungen" not in (json.loads((base / "index.json").read_text()).get("aktuell") or {})
+    assert "Liste der Sitzungen beim letzten Abruf nicht aktualisiert: keine nächste Sitzung in gremien.json" in log
+    db = sqlite3.connect(config.DB)
+    try:
+        assert check.gremien(db) == ([], [])
+        zeit = json.loads((base / "zeit.json").read_text())["meetings"]
+        k4 = next(m for m in zeit if m["source_object"].endswith("/meetings/k4"))
+        for e in g["gremien"]:
+            if e["key"] == "rat":
+                e["naechste_sitzung"] = {"date": k4["date"], "time": k4["time"], "web": k4["web"],
+                                         "source_object": k4["source_object"]}
+        (base / "gremien.json").write_text(json.dumps(g, ensure_ascii=False))
+        befunde, _ = check.gremien(db)
+    finally:
+        db.close()
+    assert "Gremien: nächste Sitzungen bei nicht aktueller Liste der Sitzungen (gremien.sitzungsliste): 1" in befunde
+    assert "Gremien: Feld naechste_sitzung anders als gremien.daten: 1" in befunde
+    for x in befunde:
+        assert "Testdaten" not in x and oparl.b not in x and re.search(r": \d+$", x), x

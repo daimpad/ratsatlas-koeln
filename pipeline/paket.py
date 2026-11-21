@@ -9,8 +9,9 @@ Audits, Stichproben und Abrufstatistik gibt es nur hier, nicht als lose Dateien 
 Entscheidung 10.11.2026); das Paket entsteht daher vor dem Zusammenstellen der Seite aus ganz data/export.
 Mit Freigabe „strukturdaten“ (config.ZUSATZTHEMEN) liegen zusätzlich alle Dateien des Datenvertrags „Strukturdaten“
 unverändert unter strukturdaten/ (samt Prüfprotokollen, ohne die Aufteilung für die Seite), und LIESMICH.txt nennt sie
-(`liesmich`); LICENSE-DATA.md steht nach den Freigaben im Paket (pipeline/freigaben.py). Ohne Freigabe bleibt das
-Paket wie zuvor."""
+(`liesmich`); LICENSE-DATA.md steht nach den Freigaben im Paket (pipeline/freigaben.py). Mit Freigabe „gremien“
+liegen koeln/gremien.json und koeln/aemter.json im Paket (export schreibt sie nur mit Freigabe), und LIESMICH.txt nennt
+sie vor dem Eintrag zu audit_*.tsv (LIESMICH_GREMIEN). Ohne diese Freigaben bleibt das Paket wie zuvor."""
 import zipfile
 from pathlib import Path
 

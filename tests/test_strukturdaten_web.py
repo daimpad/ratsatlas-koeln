@@ -653,10 +653,12 @@ def test_seite_und_paket_ohne_und_mit_freigabe(oparl, tmp_path, monkeypatch):
     with zipfile.ZipFile(zip_aus) as z:
         namen = z.namelist()
         assert not [n for n in namen if "/strukturdaten/" in n]
-        # LIESMICH nach den übrigen Freigaben (seit Pull Request 4a mit dem Eintrag der Freigabe „gremien“), ohne
-        # Strukturdaten
+        # LIESMICH ohne Strukturdaten: der feste Text, mit Freigabe „gremien“ (seit Pull Request 4a) deren Eintrag vor
+        # den Prüfprotokollen; verglichen mit den Konstanten, nicht mit paket.liesmich(), das den Text erzeugt
         liesmich_aus = z.read(f"{paket.ORDNER}/LIESMICH.txt").decode("utf-8")
-        assert liesmich_aus == paket.liesmich() and "strukturdaten/" not in liesmich_aus
+        erwartet = (paket.LIESMICH.replace("- audit_*.tsv:", paket.LIESMICH_GREMIEN + "- audit_*.tsv:")
+                    if config.ZUSATZTHEMEN.get("gremien") else paket.LIESMICH)
+        assert liesmich_aus == erwartet and "strukturdaten/" not in liesmich_aus
         assert z.read(f"{paket.ORDNER}/LICENSE-DATA.md") == lizenz
     for seite in ("begriffe/index.html", "datenschutz.html", "index.html"):
         html = (site / seite).read_text(encoding="utf-8")

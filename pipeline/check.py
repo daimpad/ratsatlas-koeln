@@ -845,8 +845,10 @@ def gremien(db, base=None):
     - Zeitraum nach F7: `meta.datenstand` wie gremien.datenstand, `meta.zeitraum` = {seit: gebietszahlen.window_start,
       bis: Datenstand};
     - jede nächste Sitzung steht in zeit.json, ist nicht abgesagt (export.absage) und liegt nach dem Datenstand;
+      ist die Liste der Sitzungen nicht aktuell (gremien.sitzungsliste mit STAND.json), gibt es keine nächste Sitzung;
     - die ganze Datei gleich der Rechnung mit denselben Funktionen (gremien.daten) aus Datenbank, zeit.json,
-      meetings.json und den Vorlagen der Gebietsdateien (jede einmal); fehlt meetings.json, nicht durchgeführt.
+      meetings.json, den Vorlagen der Gebietsdateien (jede einmal) und gremien.sitzungsliste; fehlt meetings.json,
+      nicht durchgeführt.
     Befunde und Ausgabe nur mit Zahlen. Liefert (befunde, fehlend)."""
     from . import gebietszahlen, gremien as gr
     from .export import absage
@@ -908,6 +910,9 @@ def gremien(db, base=None):
     fehler["nächste Sitzungen ohne dieselbe Sitzung in zeit.json"] = n_ohne
     fehler["nächste Sitzungen, die abgesagt sind (export.absage)"] = n_abgesagt
     fehler["nächste Sitzungen nicht nach dem Datenstand"] = n_frueh
+    liste = gr.sitzungsliste()
+    fehler["nächste Sitzungen bei nicht aktueller Liste der Sitzungen (gremien.sitzungsliste)"] = (
+        len(naechste) if liste else 0)
     orgs_je_sitzung = gr.organisationen_der_sitzungen()
     papers = _gebietsvorlagen(base) or []
     if orgs_je_sitzung is None:
@@ -915,7 +920,7 @@ def gremien(db, base=None):
     else:
         quellen = [dict(zip(("name", "url", "license", "retrieved_at"), r))
                    for r in db.execute("SELECT name, url, license, retrieved_at FROM source")]
-        erwartet, _ = gr.daten(gr.organisationen(db), zeit, orgs_je_sitzung, papers, stand, quellen)
+        erwartet, _ = gr.daten(gr.organisationen(db), zeit, orgs_je_sitzung, papers, stand, quellen, liste)
         fehler["meta anders als gremien.daten"] = int(meta != erwartet["meta"])
         soll = {e["key"]: e for e in erwartet["gremien"]}
         ist = {e.get("key"): e for e in eintraege}

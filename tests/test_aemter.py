@@ -440,7 +440,8 @@ def test_quellenangaben_folgen_der_tabelle():
         assert re.search(rf"(?:geprüft|abgerufen) am {re.escape(aemter.stand_text(p.geprueft))}", text), datei
         assert set(re.findall(r"Stand (\d\d\.\d\d\.\d{4})", text)) <= staende, datei
         assert set(re.findall(r"(?:geprüft|abgerufen) am (\d\d\.\d\d\.\d{4})", text)) <= pruefungen, datei
-    (eintrag,) = technikseite.weitere_quellen()
+    # seit Pull Request 4a mit Freigabe „gremien“ dazu die Zuständigkeitsordnung (tests/test_gremien_koeln.py)
+    (eintrag,) = [e for e in technikseite.weitere_quellen() if e[0] == "q-aemter"]
     assert aemter.quellenangabe() in eintrag[2] and eintrag[3] == p.zeilen[0]["quelle"]
     assert aemter.quellenangabe() == "Stand 01.11.2026, zuletzt geprüft am 13.11.2026"
 
