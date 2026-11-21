@@ -164,6 +164,8 @@ ERWARTET = {"z1": G, "z2": "Probebeirat", "z3": "Musterkreis Probe", "z4": "Prob
             "z6": "Probekreis - abgesagt", "z7": "Ausschuss Probewesen / Vergabe / Beispielfragen - Haushalt",
             "z8": "Betriebsausschuss Beispiel-Probe-Museum & Fondation Muster",
             "z9": "Ausschuss für Musterwesen und Probefragen"}
+# Sitzungen, deren Name eine Absage nennt (export.hinweis_sitzung „abgesagt“)
+ABSAGE_IM_NAMEN = {"z1", "z3", "z4", "z6"}
 
 
 def _aufbau(oparl):
@@ -191,12 +193,14 @@ def _aufbau(oparl):
 
 def test_kette_gremium_ohne_zusatz(oparl, capsys):
     """Orakel: In zeit.json, in der Zusammenfassung in termine.ics und in index.json („Aktuell“) steht das Gremium ohne
-    zweite Zeile und ohne Zusatz, bei „z1“ und „z5“ in der Schreibweise der Organisation „Beispielbeirat“, bei „z9“
-    (Zeilenumbruch mitten im Namen) in der Schreibweise „Ausschuss für Musterwesen und Probefragen“; der Name
-    jeder Sitzung steht unverändert in zeit.json, in der Beschreibung in termine.ics und in `process[].meeting`; die
-    Organisation „Probekreis - abgesagt“ bleibt. Zeile im Log von `export`: Gremium aus dem Sitzungsnamen bei „z2“,
-    „z3“, „z4“, „z7“ und „z8“ (5; mit dem Code von ab3fff9 auch „z1“ und „z5“, „z9“ in beiden Ständen nicht), gleich
-    der Zahl in zeit.json nach export.gremium_aus_namen; check ohne Befund."""
+    zweite Zeile und ohne Zusatz zum Stand (in termine.ics bei einer Absage im Namen, „z1“, „z3“, „z4“ und „z6“,
+    mit dem Zusatz „ (laut Sitzungsnamen abgesagt)“ und STATUS:CANCELLED; Entscheidung 21.11.2026 (1) (c) (9)), bei
+    „z1“ und „z5“ in der Schreibweise der Organisation „Beispielbeirat“, bei „z9“ (Zeilenumbruch mitten im Namen) in
+    der Schreibweise „Ausschuss für Musterwesen und Probefragen“; der Name jeder Sitzung steht unverändert in
+    zeit.json, in der Beschreibung in termine.ics und in `process[].meeting`; die Organisation „Probekreis - abgesagt“
+    bleibt. Zeile im Log von `export`: Gremium aus dem Sitzungsnamen bei „z2“, „z3“, „z4“, „z7“ und „z8“ (5; mit dem
+    Code von ab3fff9 auch „z1“ und „z5“, „z9“ in beiden Ständen nicht), gleich der Zahl in zeit.json nach
+    export.gremium_aus_namen; check ohne Befund."""
     capsys.readouterr()
     _aufbau(oparl)
     log = capsys.readouterr().out
@@ -212,8 +216,11 @@ def test_kette_gremium_ohne_zusatz(oparl, capsys):
         assert export.gremium_der_sitzung({"name": name, "organization": [f"{oparl.b}/organizations/{org}"]
                                            if org else []}, namen) == ERWARTET[k], k
         assert zeit[k]["name"] == name and zeit[k]["gremium"] == ERWARTET[k], k
-        assert publish.ics_sitzungsname(ics[k]["DESCRIPTION"]) == name and ics[k]["SUMMARY"] == ERWARTET[k], k
-        assert ics[k]["STATUS"] == "CONFIRMED" and not zeit[k]["cancelled"], k
+        # Absage im Namen: Zusatz und STATUS:CANCELLED in termine.ics (Entscheidung 21.11.2026 (1) (c) (9))
+        zusatz = " (laut Sitzungsnamen abgesagt)" if k in ABSAGE_IM_NAMEN else ""
+        assert publish.ics_sitzungsname(ics[k]["DESCRIPTION"]) == name, k
+        assert ics[k]["SUMMARY"] == ERWARTET[k] + zusatz, k
+        assert ics[k]["STATUS"] == ("CANCELLED" if zusatz else "CONFIRMED") and not zeit[k]["cancelled"], k
     # „Aktuell“ ohne die Sitzungen, deren Name eine Absage nennt (export.hinweis_sitzung, Entscheidung 20.11.2026 (7)
     # (b): „z1“, „z3“, „z4“, „z6“); vorher standen dort die ersten sechs
     assert set(aktuell) == {"z2", "z5", "z7", "z8", "z9"}, sorted(aktuell)

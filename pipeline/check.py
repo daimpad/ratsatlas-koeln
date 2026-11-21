@@ -85,6 +85,9 @@ def check():
     b, f = hinweise_sitzungen()
     befunde += b
     fehlend += f
+    b, f = absagen_kalender()
+    befunde += b
+    fehlend += f
     b, f = zusatzthemen()
     befunde += b
     fehlend += f
@@ -618,16 +621,20 @@ def _sitzung_offen(m, sitzung, texte, offen, ohne, datei):
 def _sitzungen(base, db, m, zahl, ohne):
     """Namen aller Sitzungen in zeit.json (`meetings[].name` und `gremium`) und termine.ics (Name: alle Zeilen der
     Beschreibung vor der Zeile „Tagesordnung …“, publish.ics_sitzungsname, auch bei einem Namen mit Zeilenumbruch;
-    Gremium: die Zusammenfassung ohne „ (abgesagt)“): export maskiert jeden Namen und jedes Gremium, das aus dem Namen
-    stammt (Maske.sitzungsname; Entscheidung 19.11.2026 (3) (c); bis dahin nur bei Sitzungen, in denen eine Vorlage der
-    Maske beraten wird, Maske.sitzungen, Offen (9) der Nachprüfung der dritten Korrektur). Ein Gremium mit dem Namen einer Organisation der Datenbank stammt nicht aus dem Namen und bleibt
+    Gremium: die Zusammenfassung ohne den Zusatz einer Absage am Ende, publish.ZUSATZ_ABSAGE: „ (abgesagt)“ und, seit
+    der Entscheidung 21.11.2026 (1) (c) (9), „ (laut Sitzungsnamen abgesagt)“; ohne diesen zweiten stünde der Zusatz im
+    Gremium, und ein Gremium mit dem Namen einer Organisation gälte als Gremium aus dem Namen): export maskiert jeden
+    Namen und jedes Gremium, das aus dem Namen stammt (Maske.sitzungsname; Entscheidung 19.11.2026 (3) (c); bis dahin
+    nur bei Sitzungen, in denen eine Vorlage der Maske beraten wird, Maske.sitzungen, Offen (9) der Nachprüfung der
+    dritten Korrektur). Ein Gremium mit dem Namen einer Organisation der Datenbank stammt nicht aus dem Namen und bleibt
     ungeprüft (export.gremium_aus_namen, wie export._meetings). Liefert die Drucksachen der Befunde bei Sitzungen mit
     einer Vorlage der Maske; Befunde bei Sitzungen ohne eine solche zählt `ohne` je Datei (_sitzung_offen). Zählt die
     Sitzungen in `zahl`."""
     from .export import gremium_aus_namen
-    from .publish import ics_sitzungsname
+    from .publish import ZUSATZ_ABSAGE, ics_sitzungsname
     organisationen = {r[0] for r in db.execute("SELECT name FROM organization") if r[0]}
     offen = set()
+    zusatz = re.compile("(?:" + "|".join(map(re.escape, ZUSATZ_ABSAGE.values())) + ")$")
 
     def pruefen(datei, sitzung, name, gremium):
         zahl["sitzungen"] = zahl.get("sitzungen", 0) + 1
@@ -640,7 +647,7 @@ def _sitzungen(base, db, m, zahl, ohne):
     if (base / "termine.ics").exists():
         for e in _ics_ereignisse(base / "termine.ics"):
             pruefen("termine.ics", e.get("UID"), ics_sitzungsname(e.get("DESCRIPTION")),
-                    re.sub(r" \(abgesagt\)$", "", e.get("SUMMARY") or ""))
+                    zusatz.sub("", e.get("SUMMARY") or ""))
     return offen
 
 
@@ -730,6 +737,59 @@ def hinweise_sitzungen(base=None):
     print(f"Sitzungen in zeit.json: {len(meetings)}, davon mit Hinweis abgesagt "
           f"{sum(h == 'abgesagt' for h in erwartet)}, verschoben {sum(h == 'verschoben' for h in erwartet)}; "
           f"Sitzungen in index.json („Aktuell in Köln“): {len(sitzungen)}")
+    return befunde, fehlend
+
+
+def absagen_kalender(base=None):
+    """Absagen in termine.ics (Entscheidung 21.11.2026 (1) (c) (9); publish.write_calendar mit export.absage, derselben
+    Regel) im Kölner Export (`base`, Vorgabe config.EXPORT / config.STADT): Jeder Termin (VEVENT) gehört zu einer
+    Sitzung in zeit.json (UID = `source_object`). Er trägt STATUS:CANCELLED genau dann, wenn diese Sitzung als abgesagt
+    gilt (OParl `cancelled` oder Hinweis „abgesagt“ aus dem Namen), sonst STATUS:CONFIRMED, und am Ende der
+    Zusammenfassung den Zusatz ihres Grundes (publish.ZUSATZ_ABSAGE: „ (abgesagt)“ bei OParl `cancelled`, „ (laut
+    Sitzungsnamen abgesagt)“ beim Hinweis aus dem Namen), ohne Absage keinen dieser Zusätze. Ohne Termine nichts zu
+    prüfen; fehlt zeit.json neben Terminen oder termine.ics neben zeit.json, gilt die Prüfung als nicht durchgeführt.
+    Befunde und Ausgabe nur mit Zahlen, ohne Namen und Kennungen; die Ausgabe nennt die Termine und davon die
+    abgesagten je Grund nach zeit.json (ohne Befund dieselben Zahlen wie die Zeile von write_calendar im Log von
+    `export`). Liefert (befunde, fehlend)."""
+    from .export import absage
+    from .publish import ZUSATZ_ABSAGE
+    base = Path(base) if base else config.EXPORT / config.STADT
+    befunde, fehlend = [], []
+    termine = _ics_ereignisse(base / "termine.ics") if (base / "termine.ics").exists() else None
+    print("\nAbsagen in termine.ics (export.absage)")
+    if not (base / "zeit.json").exists():
+        if termine:
+            fehlend.append(_fehlt("Absagen im Kalender", base / "zeit.json", "export"))
+        print("zeit.json fehlt: kein Termin zu prüfen")
+        return befunde, fehlend
+    if termine is None:
+        fehlend.append(_fehlt("Absagen im Kalender", base / "termine.ics", "export"))
+        return befunde, fehlend
+    zeit = json.loads((base / "zeit.json").read_text())
+    grund = {x.get("source_object"): absage(x) for x in zeit.get("meetings") or () if isinstance(x, dict)}
+    zusatz = {z: g for g, z in ZUSATZ_ABSAGE.items()}
+    ohne = status = anders = 0
+    zahl = dict.fromkeys(ZUSATZ_ABSAGE, 0)
+    for e in termine:
+        if e.get("UID") not in grund:
+            ohne += 1
+            continue
+        g = grund[e["UID"]]
+        if g:
+            zahl[g] += 1
+        status += e.get("STATUS") != ("CANCELLED" if g else "CONFIRMED")
+        anders += next((zusatz[z] for z in zusatz if (e.get("SUMMARY") or "").endswith(z)), None) != g
+    if ohne:
+        befunde.append(f"Kalender: Termine in termine.ics ohne dieselbe Sitzung in zeit.json (UID): {ohne}")
+    if status:
+        befunde.append(f"Kalender: Termine in termine.ics, deren STATUS nicht der Absage der Sitzung in zeit.json "
+                       f"folgt (export.absage; STATUS:CANCELLED genau bei OParl `cancelled` oder Hinweis „abgesagt“ "
+                       f"aus dem Namen, sonst STATUS:CONFIRMED): {status}")
+    if anders:
+        befunde.append(f"Kalender: Termine in termine.ics, deren Zusatz am Ende der Zusammenfassung nicht dem Grund "
+                       f"der Absage der Sitzung in zeit.json folgt (publish.ZUSATZ_ABSAGE): {anders}")
+    print(f"Termine in termine.ics: {len(termine)}, davon abgesagt laut OParl {zahl['oparl']}, abgesagt laut "
+          f"Sitzungsnamen {zahl['name']}")
     return befunde, fehlend
 
 

@@ -6,7 +6,7 @@ import zipfile
 from pathlib import Path
 
 from . import config, maske
-from .export import _meetings, _paper_detail, _write_tsv
+from .export import ABSAGE_TEXT, _meetings, _paper_detail, _write_tsv, sitzungstage
 from .net import get_json
 
 # Feld im Export → Feld im OParl-Objekt
@@ -64,7 +64,13 @@ def verify_time(n=20, seed=2026):
     """Zeitleiste: n Vorlagen des Pilot-Ortsteils mit datierten Beratungen. Geprüft werden das
     Datum der Vorlage und die Zahl der Beratungen (erneuter Abruf aus der OParl-API) sowie, ob es
     zu jedem aus OParl-Lite abgeleiteten Beratungsdatum eine Sitzung desselben Gremiums in der
-    Sitzungsliste der Stadt gibt."""
+    Sitzungsliste der Stadt gibt. Als Sitzung zählt nur eine, die nicht abgesagt ist (export.sitzungstage und
+    export.absage, dieselbe Regel wie audit_zeit.tsv; seit der Entscheidung 21.11.2026 (1) (c) (9) auch nicht laut
+    Sitzungsnamen, vorher nur ohne OParl `cancelled`); gibt es an dem Tag nur abgesagte, steht in der Spalte `oparl_api`
+    der Grund (export.ABSAGE_TEXT), Ergebnis „abweichend“. Vorher stand dort „keine Sitzung“ (ebenfalls „abweichend“)
+    nur, wenn alle Sitzungen des Gremiums an dem Tag OParl `cancelled` trugen; eine Sitzung mit Absage nur im Namen
+    zählte, dort stand das Datum (Ergebnis „ok“). Eine Vorlage mit einer Beratung an einem solchen Tag zählt jetzt nicht
+    mehr zu den Vorlagen ohne Abweichung."""
     db = sqlite3.connect(config.DB)
     db.row_factory = sqlite3.Row
     ids = [r[0] for r in db.execute(
@@ -72,7 +78,7 @@ def verify_time(n=20, seed=2026):
         "JOIN consultation c ON c.paper_id = pl.paper_id "
         "WHERE l.ortsteil = ? AND c.meeting_id IS NOT NULL ORDER BY 1", (config.PILOT_ORTSTEIL,))]
     ids = random.Random(seed).sample(ids, min(n, len(ids)))
-    held = {(m["gremium"], m["date"]) for m in _meetings(db) if not m["cancelled"]}
+    tage = sitzungstage(_meetings(db))
     rows, ok_papers = [], 0
     for pid in ids:
         p = _paper_detail(db, pid)
@@ -86,8 +92,9 @@ def verify_time(n=20, seed=2026):
                   ("beratungen", len(dated), len(src.get("consultation") or []))]
         for st in dated:
             if st.get("date"):
+                k = (st["label"], st["date"])
                 checks.append((f"sitzung {st['label']}", st["date"],
-                               st["date"] if (st["label"], st["date"]) in held else "keine Sitzung"))
+                               "keine Sitzung" if k not in tage else ABSAGE_TEXT[tage[k]] if tage[k] else st["date"]))
         all_ok = True
         for field, mine, theirs in checks:
             same = str(mine or "") == str(theirs or "")

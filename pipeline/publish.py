@@ -170,6 +170,12 @@ def write_topic_feed(path, key, title, papers, home, page_url):
 
 # --- Sitzungskalender (iCalendar) --------------------------------------------------------------------
 
+# Zusatz am Ende der Zusammenfassung (SUMMARY) eines abgesagten Termins je Grund (export.absage; Entscheidung 21.11.2026
+# (1) (c) (9)): „ (abgesagt)“ bei OParl `cancelled` wie bisher, „ (laut Sitzungsnamen abgesagt)“ beim Hinweis aus dem
+# Namen. check._sitzungen nimmt ihn vor der Prüfung des Gremiums ab, check.absagen_kalender prüft ihn
+ZUSATZ_ABSAGE = {"oparl": " (abgesagt)", "name": " (laut Sitzungsnamen abgesagt)"}
+
+
 def _ics_text(value):
     value = value.replace("\r\n", "\n").replace("\r", "\n")
     return value.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
@@ -219,15 +225,22 @@ def _ende(start, end):
 
 def write_calendar(path, meetings, today=None):
     """Sitzungen ab 30 Tagen vor `today` (ohne Angabe der Tag des Aufbaus, so für termine.ics; die Themenkalender
-    übergeben den Kölner Tag des Datenstands); abgesagte mit STATUS:CANCELLED. Eine Sitzung ohne Uhrzeit (_ganztaegig)
-    steht als ganztägiger Termin am Kölner Kalendertag (process.local_day) darin, ohne DTEND: Nach RFC 5545 (3.6.1)
-    dauert ein Termin mit einem Datum in DTSTART ohne DTEND und DURATION einen Tag; so steht kein Ende im Kalender, das
-    die Quelle nicht nennt (Entscheidung 19.11.2026 (2) (a)). Das Log nennt die Zahl der Termine, nur Zahlen."""
+    übergeben den Kölner Tag des Datenstands); abgesagte mit STATUS:CANCELLED und dem Zusatz ihres Grundes in der
+    Zusammenfassung (ZUSATZ_ABSAGE), sonst STATUS:CONFIRMED. Als abgesagt gilt eine Sitzung nach export.absage: OParl
+    `cancelled` oder, seit der Entscheidung 21.11.2026 (1) (c) (9), Hinweis „abgesagt“ aus dem Namen (vorher nur
+    `cancelled`); der Hinweis „verschoben“ ändert weder STATUS noch Zusammenfassung (offen beim Auftraggeber), der
+    Name mit dem Hinweis steht ohnehin in der Beschreibung. Eine Sitzung ohne Uhrzeit (_ganztaegig) steht als
+    ganztägiger Termin am Kölner Kalendertag (process.local_day) darin, ohne DTEND: Nach RFC 5545 (3.6.1) dauert ein
+    Termin mit einem Datum in DTSTART ohne DTEND und DURATION einen Tag; so steht kein Ende im Kalender, das die Quelle
+    nicht nennt (Entscheidung 19.11.2026 (2) (a)). Das Log nennt die Zahl der Termine, der ganztägigen und der
+    abgesagten je Grund, nur Zahlen."""
+    from .export import absage   # export importiert dieses Modul; hier erst beim Aufruf
     since = ((today or date.today()) - timedelta(days=30)).isoformat()
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", f"PRODID:-//{config.SEITENNAME}//Sitzungskalender//DE",
              "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:Sitzungen Rat\\, Ausschüsse und "
              f"Bezirksvertretungen {config.STADT_NAME}", "X-WR-TIMEZONE:Europe/Berlin"]
     termine = ganztaegig = 0
+    abgesagt = dict.fromkeys(ZUSATZ_ABSAGE, 0)
     for m in meetings:
         if m["date"] < since or not m.get("start"):
             continue
@@ -247,15 +260,19 @@ def write_calendar(path, meetings, today=None):
             ende = _ende(m["start"], m.get("end"))
             if ende:
                 lines.append(f"DTEND:{ende}")
-        lines += [f"SUMMARY:{_ics_text(m['gremium'] + (' (abgesagt)' if m['cancelled'] else ''))}",
+        grund = absage(m)
+        if grund:
+            abgesagt[grund] += 1
+        lines += [f"SUMMARY:{_ics_text(m['gremium'] + ZUSATZ_ABSAGE.get(grund, ''))}",
                   f"DESCRIPTION:{_ics_text(chr(10).join(desc))}",
-                  "STATUS:CANCELLED" if m["cancelled"] else "STATUS:CONFIRMED"]
+                  "STATUS:CANCELLED" if grund else "STATUS:CONFIRMED"]
         if m.get("web"):
             lines.append(f"URL:{m['web']}")
         lines.append("END:VEVENT")
     lines.append("END:VCALENDAR")
     path.write_text("\r\n".join(_ics_fold(x) for x in lines) + "\r\n", encoding="utf-8")
-    print(f"{path.name}: {termine} Termine, davon ganztägig {ganztaegig}")
+    print(f"{path.name}: {termine} Termine, davon ganztägig {ganztaegig}, abgesagt laut OParl {abgesagt['oparl']}, "
+          f"abgesagt laut Sitzungsnamen {abgesagt['name']}")
 
 
 def ics_sitzungsname(beschreibung):

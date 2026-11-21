@@ -125,7 +125,8 @@ def test_kalender_ganztaegig_und_ende(rechnerzone, tmp_path, capsys):
                   "start": beginn, "end": ende, "source_object": f"https://example.invalid/oparl/meetings/{k}"}
                  for k, (beginn, ende, *_) in KALENDER.items()]
     publish.write_calendar(tmp_path / "termine.ics", sitzungen, date(2026, 3, 1))
-    assert capsys.readouterr().out.splitlines() == ["termine.ics: 20 Termine, davon ganztägig 7"]
+    assert capsys.readouterr().out.splitlines() == [
+        "termine.ics: 20 Termine, davon ganztägig 7, abgesagt laut OParl 0, abgesagt laut Sitzungsnamen 0"]
     ics = {k.rsplit("/", 1)[1]: e for k, e in _ereignisse(tmp_path / "termine.ics").items()}
     assert {k: (e["DTSTART"], e.get("DTEND")) for k, e in ics.items()} == {k: (s, e) for k, (_, _, s, e) in
                                                                            KALENDER.items()}
@@ -166,7 +167,7 @@ def test_sitzungen_in_zeit_und_kalender(oparl, capsys, monkeypatch, rechnerzone)
     zeile = "Sitzungen nach Form des Beginns: mit Z 4, mit Versatz 2, ohne Zeitzone 1, nur Datum 1"
     assert log.splitlines().count(zeile) == 1 and log.count("Sitzungen nach Form des Beginns") == 1, log
     # Termine im Fenster: alle außer z4 und der Sitzung des Testservers (01.10.2026); ganztägig z3 und d1
-    termine = "termine.ics: 6 Termine, davon ganztägig 2"
+    termine = "termine.ics: 6 Termine, davon ganztägig 2, abgesagt laut OParl 0, abgesagt laut Sitzungsnamen 0"
     assert log.splitlines().count(termine) == 1 and log.count("termine.ics") == 1, log
     out = config.EXPORT / config.STADT
     zeit = {m["source_object"].rsplit("/", 1)[1]: m for m in json.loads((out / "zeit.json").read_text())["meetings"]}
