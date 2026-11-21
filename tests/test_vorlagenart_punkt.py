@@ -348,7 +348,7 @@ def test_pruefung_meldet_eingeschleusten_punkt_bei_unbekannter_art(testdaten, mo
 
 
 def test_erklaertexte_nennen_die_regel():
-    """Begriff „Verortung“ (Begriffsseite, glossar.json) und „Verstehen“ in site/index.html nennen die Regel vom
+    """Begriff „Verortung“ (Begriffsseite, glossar.json) und der Dialog „Über“ in site/index.html nennen die Regel vom
     10.11.2026 gleich: ist die Art einer Vorlage nicht erkennbar, zeigt die Karte höchstens die Straße."""
     satz = "ist die Art einer Vorlage nicht erkennbar, zeigt die Karte höchstens die Straße"
     g = {b["begriff"]: b for b in glossar.glossar()["begriffe"]}

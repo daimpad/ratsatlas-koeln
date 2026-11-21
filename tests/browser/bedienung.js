@@ -20,7 +20,7 @@ const AXE = process.env.AXE_PFAD ? fs.readFileSync(process.env.AXE_PFAD, "utf8")
 // freigegeben. „Bürgerantrag“ ist ein Bonner Begriff (in Köln: Einwohnerantrag) und bleibt immer verboten.
 const WOERTER_JE_FUNKTION = { baustellen: ["Baustelle"], einfache_sprache: ["Einfache Sprache", "Einfacher Sprache"],
   haushalt: ["Zuschussbedarf", "Haushalt"], mitmachen: ["Alle Wege im Überblick"], soll: ["Prozesse"],
-  chat: ["Assistent"], themenseiten: ["Themenseiten"] };
+  chat: ["Assistent"], themenseiten: ["Themenseiten"], technik: ["wie der Ratsatlas funktioniert"] };
 const IMMER_VERBOTEN = ["Bürgerantrag"];
 const abgeschaltet = (fn) => IMMER_VERBOTEN.concat(Object.entries(WOERTER_JE_FUNKTION).filter(([f]) => !(fn || {})[f]).flatMap(([, w]) => w));
 const PROFILE = {
@@ -222,15 +222,16 @@ async function termineJeGebiet(browser, profil, extra) {
   await ctx.close();
 }
 
-// B2: Telefon, Auswertung offen, dann Menü ☰: das Menü liegt oben; Esc schließt erst das Menü, dann die Auswertung
+// B2: Telefon, Auswertung offen (seit 20.11.2026 aus dem Menü „Themen“), dann Menü ☰: das Menü liegt oben; Esc schließt
+// erst das Menü, dann die Auswertung
 async function menueUeberAuswertung(browser, gebiet) {
   const profil = "telefon";
   const { ctx, page, fehler } = await neueSeite(browser, profil);
   await page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
   await geladen(page);
   await page.click("#nav-burger");
-  await page.click('#nav-more [data-mega="mega-auswertung"]');
-  await page.click('#mega-auswertung [data-open-tab="stats"]');
+  await page.click('#nav-more [data-mega="mega-themen"]');
+  await page.click('#mega-themen [data-open-tab="stats"]');
   await page.waitForSelector("#panel-auswertung:not([hidden])");
   await page.waitForTimeout(300);
   const zustand1 = await page.evaluate(() => {
@@ -304,7 +305,7 @@ async function cspDesktop(browser, gebiet) {
   });
   await page.waitForTimeout(1500);
   await sammeln("Gebiet, Liste, Vorgang, Zeitleiste, alle Ebenen");
-  for (const m of ["mega-auswertung", "mega-mitmachen", "mega-daten", "mega-verstehen"]) {
+  for (const m of ["mega-themen", "mega-entscheiden", "mega-mitmachen", "mega-ueber"]) {
     await page.evaluate((m) => { const b = document.querySelector(`[data-mega="${m}"]`); if (b && b.offsetParent) b.click(); }, m);
     await page.waitForTimeout(200);
   }
@@ -442,7 +443,7 @@ async function tour(browser, profil) {
   await page.goto(BASIS, { waitUntil: "load" });
   await geladen(page);
   const meta = await page.evaluate(async () => (await (await fetch("data/export/koeln/index.json")).json()).meta);
-  await page.evaluate(() => document.querySelector("#mega-verstehen [data-tour]").click());
+  await page.evaluate(() => document.querySelector("#mega-ueber [data-tour]").click());
   await page.waitForSelector(".tour-card");
   const schritte = [];
   for (let k = 0; k < 40; k++) {
@@ -459,12 +460,12 @@ async function tour(browser, profil) {
   const genannt = schritte.flatMap((s) => verboten.filter((w) => (s.titel + " " + s.text).includes(w)).map((w) => `${s.titel}: ${w}`));
   pruefen(profil, "Tour mit Kölner Freigaben ohne abgeschaltete Funktion", meta.vorschau === false && !(await page.$(".tour")) && schritte.length > 8 && genannt.length === 0,
     { vorschau: meta.vorschau, schritte: schritte.length, genannt, flaechen: (schritte.find((s) => s.titel === "Flächen ein- und ausklappen") || {}).text });
-  // Freigegebene Einfache Sprache: Karte im Menü „Verstehen“ sichtbar und in der Tour genannt
+  // Freigegebene Einfache Sprache: Karte im Menü „Über“ sichtbar und in der Tour genannt
   if ((meta.funktionen || {}).einfache_sprache) {
-    const verstehen = (schritte.find((s) => s.titel === "Verstehen") || {}).text || "";
+    const ueber = (schritte.find((s) => s.titel === "Über") || {}).text || "";
     pruefen(profil, "Einfache Sprache: Karte sichtbar und in der Tour genannt",
-      verstehen.includes("der Ratsatlas in Einfacher Sprache") && await page.evaluate(() => { const k = document.querySelector('#mega-verstehen a[href="einfach/"]'); return Boolean(k) && !k.hidden; }),
-      verstehen.slice(0, 80));
+      ueber.includes("der Ratsatlas in Einfacher Sprache") && await page.evaluate(() => { const k = document.querySelector('#mega-ueber a[href="einfach/"]'); return Boolean(k) && !k.hidden; }),
+      ueber.slice(0, 80));
   }
   pruefen(profil, "keine Skriptfehler (Tour)", fehler.length === 0, fehler);
   await ctx.close();

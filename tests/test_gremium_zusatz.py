@@ -146,8 +146,9 @@ def test_grenzen_der_liste():
 
 
 # erfundene Sitzungen für die Kette: Kennung → (Name, Organisation oder None); Beginn am Tag nach heute plus Stelle in
-# der Liste (die ersten sechs stehen in „Aktuell“). Bekannte Gremien der Datenbank: „Beispielbeirat“ (bb),
-# „Probekreis - abgesagt“ (pk) und „Ausschuss für Musterwesen und Probefragen“ (mu), dazu die des Testservers
+# der Liste (in „Aktuell“ alle ohne Absage im Namen, Entscheidung 20.11.2026 (7) (b); vorher die ersten sechs). Bekannte
+# Gremien der Datenbank: „Beispielbeirat“ (bb), „Probekreis - abgesagt“ (pk) und „Ausschuss für Musterwesen und
+# Probefragen“ (mu), dazu die des Testservers
 SITZUNGEN = {
     "z1": (f"{G} - Sitzung enfällt", None),
     "z2": ("Sitzung des Probebeirates – vertagt auf einen späteren Zeitpunkt", None),
@@ -213,7 +214,10 @@ def test_kette_gremium_ohne_zusatz(oparl, capsys):
         assert zeit[k]["name"] == name and zeit[k]["gremium"] == ERWARTET[k], k
         assert publish.ics_sitzungsname(ics[k]["DESCRIPTION"]) == name and ics[k]["SUMMARY"] == ERWARTET[k], k
         assert ics[k]["STATUS"] == "CONFIRMED" and not zeit[k]["cancelled"], k
-    for k in list(SITZUNGEN)[:6]:
+    # „Aktuell“ ohne die Sitzungen, deren Name eine Absage nennt (export.hinweis_sitzung, Entscheidung 20.11.2026 (7)
+    # (b): „z1“, „z3“, „z4“, „z6“); vorher standen dort die ersten sechs
+    assert set(aktuell) == {"z2", "z5", "z7", "z8", "z9"}, sorted(aktuell)
+    for k in aktuell:
         assert aktuell[k]["gremium"] == ERWARTET[k] and "name" not in aktuell[k], k
     for pfad in (base / "zeit.json", base / "termine.ics"):
         assert maske.OHNE_NR not in pfad.read_text(), pfad

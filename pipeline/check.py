@@ -82,6 +82,9 @@ def check():
         db.close()
     befunde += ds["befunde"]
     fehlend += ds["fehlend"]
+    b, f = hinweise_sitzungen()
+    befunde += b
+    fehlend += f
     b, f = zusatzthemen()
     befunde += b
     fehlend += f
@@ -678,6 +681,56 @@ def _aktuell(index, db, m, zahl, befunde, ohne):
             _sitzung_offen(m, x.get("source_object"), [x.get("gremium")], offen, ohne, "index.json")
     zahl["aktuell"] = len(vorlagen) + len(sitzungen)
     return offen
+
+
+def hinweise_sitzungen(base=None):
+    """Hinweise zum Stand aus dem Sitzungsnamen (Entscheidung 20.11.2026 (7) (b); export.hinweis_sitzung, dieselbe
+    Regel wie export._meetings) im Kölner Export (`base`, Vorgabe config.EXPORT / config.STADT):
+    - zeit.json: Jede Sitzung trägt `hinweis` genau dann, wenn die Regel ihn aus ihrem Namen (`name`, nach der Maske)
+      ableitet, und mit demselben Wert; ein Feld ohne Hinweis (auch `null`) ist ebenso ein Befund.
+    - index.json („Aktuell in Köln“, `aktuell.sitzungen`, ohne Namen): Der Hinweis folgt der Regel über den Namen
+      derselben Sitzung in zeit.json (`source_object`); eine Sitzung, die dort fehlt, ist ein Befund. Eine Sitzung,
+      deren Name eine Absage nennt, steht dort nicht (export._aktuell lässt sie aus wie eine abgesagte).
+    Ohne zeit.json (Kartenvorschau ohne Vorlagen) nichts zu prüfen; nennt index.json dann Sitzungen, fehlt zeit.json
+    für die Prüfung. Befunde und Ausgabe nur mit Zahlen, ohne Namen und Kennungen. Liefert (befunde, fehlend)."""
+    from .export import hinweis_sitzung
+    base = Path(base) if base else config.EXPORT / config.STADT
+    befunde, fehlend = [], []
+    zeit = json.loads((base / "zeit.json").read_text()) if (base / "zeit.json").exists() else None
+    index = json.loads((base / "index.json").read_text()) if (base / "index.json").exists() else {}
+    aktuell = index.get("aktuell") if isinstance(index, dict) else None
+    aktuell = aktuell if isinstance(aktuell, dict) else {}
+    sitzungen = [x for x in aktuell.get("sitzungen") or () if isinstance(x, dict)]
+    print("\nHinweise zum Stand aus dem Sitzungsnamen (export.hinweis_sitzung)")
+    if zeit is None:
+        if sitzungen:
+            fehlend.append(_fehlt("Hinweise zum Stand", base / "zeit.json", "export"))
+        print("zeit.json fehlt: keine Sitzung zu prüfen")
+        return befunde, fehlend
+    meetings = [x for x in zeit.get("meetings") or () if isinstance(x, dict)]
+    erwartet = [hinweis_sitzung(x.get("name")) for x in meetings]
+    abweichend = sum(("hinweis" in x, x.get("hinweis")) != (h is not None, h) for x, h in zip(meetings, erwartet))
+    if abweichend:
+        befunde.append(f"Hinweise zum Stand: Sitzungen in zeit.json, deren Feld `hinweis` nicht der Regel "
+                       f"export.hinweis_sitzung über ihren Namen folgt (fehlt, zu viel oder anderer Wert): "
+                       f"{abweichend}")
+    je_sitzung = {x.get("source_object"): h for x, h in zip(meetings, erwartet)}
+    fehlt = sum(x.get("source_object") not in je_sitzung for x in sitzungen)
+    aus_zeit = [je_sitzung.get(x.get("source_object")) for x in sitzungen]
+    anders = sum(("hinweis" in x, x.get("hinweis")) != (h is not None, h)
+                 for x, h in zip(sitzungen, aus_zeit) if x.get("source_object") in je_sitzung)
+    if fehlt or anders:
+        befunde.append(f"Hinweise zum Stand: Sitzungen in index.json („Aktuell in Köln“), deren Feld `hinweis` nicht "
+                       f"der Regel export.hinweis_sitzung über den Namen derselben Sitzung in zeit.json folgt: "
+                       f"{anders}, ohne dieselbe Sitzung in zeit.json: {fehlt}")
+    abgesagt = sum(h == "abgesagt" for h in aus_zeit)
+    if abgesagt:
+        befunde.append(f"Hinweise zum Stand: Sitzungen mit Hinweis „abgesagt“ aus dem Namen in index.json („Aktuell in "
+                       f"Köln“; export._aktuell lässt sie aus wie abgesagte): {abgesagt}")
+    print(f"Sitzungen in zeit.json: {len(meetings)}, davon mit Hinweis abgesagt "
+          f"{sum(h == 'abgesagt' for h in erwartet)}, verschoben {sum(h == 'verschoben' for h in erwartet)}; "
+          f"Sitzungen in index.json („Aktuell in Köln“): {len(sitzungen)}")
+    return befunde, fehlend
 
 
 def _feeds(base, db, m, zahl, befunde):

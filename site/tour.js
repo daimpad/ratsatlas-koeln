@@ -1,6 +1,6 @@
 // Tour durch die Funktionen des Ratsatlas Köln (aus Bonn übernommen): hebt nacheinander Bedienelemente hervor (abgedunkelte Umgebung,
 // pulsierender Rahmen, pulsierende Punkte an erwähnten Einzelheiten) und erklärt sie in einer Karte.
-// Start über Schaltflächen mit data-tour (Fenster „Los geht's“, Dialog „Über“). Bedienung: Weiter/Zurück,
+// Start über Schaltflächen mit data-tour (Fenster „Los geht's“, Menü „Über“, Dialog „Über“). Bedienung: Weiter/Zurück,
 // Pfeiltasten, Esc beendet. Bei reduzierter Bewegung ohne Animation (style.css). Kein Inline-Skript (CSP).
 (function () {
   "use strict";
@@ -21,6 +21,14 @@
     einfache_sprache: () => sichtbar('[data-funktion="einfache_sprache"]'),
     haushalt: () => sichtbar('[data-funktion="haushalt"]'),
     mitmachen: () => sichtbar('[data-funktion="mitmachen"]'),
+    technik: () => sichtbar('[data-funktion="technik"]'),
+    // Kachel „Aktuell in Köln“ im Menü „Mitmachen“ (nur mit Karten im Startfenster; app.js fillMitmachen)
+    aktuell: () => sichtbar("#karte-aktuell"),
+  };
+  // Karten, die „Aktuell in Köln“ zeigt (app.js fillMitmachen, data-listen), in Worten
+  const AKTUELL_KARTEN = () => {
+    const l = ($("#karte-aktuell")?.dataset.listen || "").split(" ");
+    return aufzaehlung([l.includes("sitzungen") ? "den nächsten Sitzungen" : "", l.includes("vorlagen") ? "neu eingereichten Vorlagen" : ""].filter(Boolean));
   };
   // Sätze von Zusatzmodulen, die nur mit Freigabe geladen werden: sichtbare Elemente mit data-tour-karte bzw.
   // data-tour-liste ergänzen die Schritte „Die Karte“ und „Die Vorlagen“ (ohne solche Elemente bleibt der Text gleich)
@@ -83,26 +91,24 @@
       before: (ui) => ui.panel("panel-prozesse", true), target: "#panel-prozesse", beacons: ["#tab-pz-gremien", "#tab-pz-aemter", ".pz-view"],
       title: "Prozesse: Wer entscheidet was?",
       text: "Alle Verfahrensarten – vom Bürgerantrag bis zum Bebauungsplan – mit ihren Schritten, Fristen und Rechtsgrundlagen und der Zahl der Vorgänge in Köln. Unter „Gremien“ stehen Rat, Ausschüsse, Bezirksvertretungen und Beiräte mit ihren Zuständigkeiten und nächsten Sitzungen, unter „Ämter“ die Verwaltung mit ihren Abteilungen und den Vorlagen, für die sie federführend ist. Mit „Schaubild“ und „Liste“ wechseln Sie die Darstellung." },
-    // Vorschau ohne Ratsvorlagen: Menü „Auswertung“ ausgeblendet (app.js applyFunktionen), Schritt entfällt
-    { when: () => document.querySelector('[data-mega="mega-auswertung"]')?.hidden === false,
-      before: (ui) => ui.panel("panel-prozesse", false), menu: "mega-auswertung", target: "#mega-auswertung",
-      title: "Auswertung",
-      text: "Kennzahlen zum Gebiet nach Thema, Partei, Jahr und Stand; ein Klick auf einen Balken filtert die Liste. Die Verfahrenswege zeigen für ganz Köln, welche Gremien welche Vorlagenart beraten und wie Verfahren meist enden." },
-    { menu: "mega-mitmachen", target: "#mega-mitmachen", beacons: ["#cta-termine", "#cta-mitmachen", "#cta-feed .btn"],
+    // Menüs der Leiste (Entscheidung 20.11.2026 (7) (c) 1 und 2); in der Vorschau ohne Ratsvorlagen fehlen „Themen“ und
+    // „Wer entscheidet“ (app.js applyFunktionen), ihr Schritt entfällt
+    { when: () => document.querySelector('[data-mega="mega-themen"]')?.hidden === false,
+      before: (ui) => ui.panel("panel-prozesse", false), menu: "mega-themen", target: "#mega-themen", beacons: ["#themen-chips .chip"],
+      title: "Themen",
+      text: "Die Themen als Filter: Ein Klick zeigt die passenden Vorlagen in der Liste, im gewählten Gebiet mit der Zahl je Thema; die Themen sind abgeleitet. „Kennzahlen zum Gebiet“ zeigt die Vorlagen nach Thema, Partei, Jahr und Stand; ein Klick auf einen Balken filtert die Liste." },
+    { when: () => document.querySelector('[data-mega="mega-entscheiden"]')?.hidden === false,
+      menu: "mega-entscheiden", target: "#mega-entscheiden",
+      title: "Wer entscheidet",
+      text: "„Verfahrenswege in Zahlen“ zeigt für ganz Köln, welche Gremien welche Vorlagenart beraten und wie Verfahren meist enden." },
+    { menu: "mega-mitmachen", target: "#mega-mitmachen", beacons: ["#karte-aktuell .btn", "#cta-termine", "#cta-mitmachen", "#cta-feed .btn"],
       title: "Mitmachen",
-      text: () => "Kommende Sitzungen, auch als Kalenderdatei; unter „Informiert bleiben“ Feeds, die neue Vorlagen im Gebiet oder Änderungen an einem Vorgang melden; "
+      text: () => (AN.aktuell() && AKTUELL_KARTEN() ? `„Aktuell in Köln“ führt zum Startfenster mit ${AKTUELL_KARTEN()}; kommende Sitzungen`
+          : "Kommende Sitzungen") + ", auch als Kalenderdatei; "
         + (AN.mitmachen() ? "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen und alle Wege, sich einzubringen, von der Einwohnerfragestunde bis zum Bürgerbegehren; "
           : "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; ")
-        + "und ein Hinweis, wenn etwas falsch zugeordnet ist.",
-      vorschau: "Unter „Informiert bleiben“ stehen Feeds, die neue Vorlagen im gewählten Gebiet melden; sie füllen sich, sobald Ratsvorlagen vorliegen. Kommende Sitzungen und die Kalenderdatei folgen mit den Ratsvorlagen. Außerdem: der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden, und ein Hinweis, wenn etwas falsch zugeordnet oder unklar ist." },
-    { menu: "mega-daten", target: "#mega-daten",
-      title: "Offene Daten",
-      text: "Alle Daten zum Herunterladen: das Datenpaket mit Prüfprotokollen, die verorteten Vorlagen als GeoJSON und eine Datensatzbeschreibung nach DCAT-AP. Quellen, Lizenzen und Datenstand stehen auf der Karte unter den Legenden.",
-      vorschau: "Alle Daten zum Herunterladen: das Datenpaket enthält schon Gebiete, Kennzahlen je Stadtteil und die Kartenebenen; die Vorlagen und ihre Prüfprotokolle folgen mit den Ratsvorlagen. Quellen, Lizenzen und Datenstand stehen auf der Karte unter den Legenden." },
-    { menu: "mega-verstehen", target: "#mega-verstehen",
-      title: "Verstehen",
-      text: () => `Hilfen zum Lesen der Karte: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder ${AN.haushalt() ? "Zuschussbedarf" : "Stadtbezirk"} in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.`,
-      vorschau: () => `Hilfen zum Lesen der Karte: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und wie verlässlich die Angaben sind. Diese Tour finden Sie hier wieder.` },
+        + "und unter „Informiert bleiben“ Feeds, die neue Vorlagen im Gebiet oder Änderungen an einem Vorgang melden.",
+      vorschau: "Unter „Informiert bleiben“ stehen Feeds, die neue Vorlagen im gewählten Gebiet melden; sie füllen sich, sobald Ratsvorlagen vorliegen. Außerdem: der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden." },
     { when: () => document.querySelector(".toggle-ai")?.hidden === false,
       target: ".toggle-ai",
       title: "Der Ratsassistent",
@@ -111,9 +117,11 @@
       title: "Flächen ein- und ausklappen",
       text: () => `${aufzaehlung([...document.querySelectorAll(".nav-group.seg .toggle[data-panel]")].filter((b) => !b.hidden && FLAECHEN[b.dataset.panel]).map((b) => FLAECHEN[b.dataset.panel]))} lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Esc schließt die Fläche, in der Sie gerade sind.`,
       vorschau: "Die Flächen „Vorlagen“ und „Vorgang“ lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Mit den Ratsvorlagen kommt die Zeitleiste hinzu. Esc schließt die Fläche, in der Sie gerade sind." },
-    { target: "#about-open",
-      title: "Über die Karte",
-      text: "Hier steht, woher die Daten stammen, was der Stand bedeutet, wie verlässlich die Angaben sind und was die Karte nicht zeigen kann. Viel Freude beim Erkunden." },
+    // Menü „Über“: Lesehilfen, Über den Ratsatlas und Daten (bisher die Menüs „Verstehen“ und „Daten“ und der Dialog)
+    { menu: "mega-ueber", target: "#mega-ueber", beacons: ["#mega-ueber [data-tour]", "#about-open"],
+      title: "Über",
+      text: () => `Lesehilfen: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder ${AN.haushalt() ? "Zuschussbedarf" : "Stadtbezirk"} in einfachen Worten und diese Tour. Unter „Über den Ratsatlas“ steht, woher die Daten stammen, was der Stand bedeutet, wie verlässlich die Angaben sind${AN.technik() ? ", wie der Ratsatlas funktioniert" : ""}, was neu ist und wie Sie einen Hinweis geben, wenn etwas falsch zugeordnet oder unklar ist. Unter „Daten“ alles zum Herunterladen: das Datenpaket mit Prüfprotokollen, die verorteten Vorlagen als GeoJSON, eine Datensatzbeschreibung nach DCAT-AP und die Feeds. Viel Freude beim Erkunden.`,
+      vorschau: () => `Lesehilfen: ${AN.einfache_sprache() ? "der Ratsatlas in Einfacher Sprache, " : ""}Begriffe wie Vorlage, Beratungsfolge oder Stadtbezirk in einfachen Worten und diese Tour. Unter „Über den Ratsatlas“ steht, woher die Daten stammen, wie verlässlich die Angaben sind${AN.technik() ? ", wie der Ratsatlas funktioniert" : ""}, was neu ist und wie Sie einen Hinweis geben. Unter „Daten“ alles zum Herunterladen: Das Datenpaket enthält Gebiete, Kennzahlen je Stadtteil und die Kartenebenen. Viel Freude beim Erkunden.` },
   ];
 
   let steps = [], i = 0, root = null, card = null, spot = null, raf = 0, prevFocus = null, ui = null;

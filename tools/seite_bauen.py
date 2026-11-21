@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from pipeline import config, freigaben, seo, strukturdaten_web  # noqa: E402
 
-# Karte im Menü „Daten“ (index.html): Link mit `download` auf eine Datei unter data/export/, Kartentext bis zum Ende
+# Karte unter „Daten“ im Menü „Über“ (index.html): Link mit `download` auf eine Datei unter data/export/, Kartentext bis zum Ende
 KARTE_DOWNLOAD = re.compile(r'(?P<kopf><a class="card" href="(?P<href>data/export/[^"]+)" download>(?:(?!</a>).)*?'
                             r'<span class="card-text">)(?P<text>[^<]*?)(?P<punkt>\.?)</span></a>', re.S)
 
@@ -72,7 +72,7 @@ def groesse_text(n):
 
 
 def groessen_eintragen(ziel):
-    """Menü „Daten“: Karten zum Herunterladen nennen die Größe der Datei im fertigen Ordner `ziel` im Kartentext
+    """Menü „Über“, Gruppe „Daten“: Karten zum Herunterladen nennen die Größe der Datei im fertigen Ordner `ziel` im Kartentext
     („Alle Exporte, Audit-Protokolle und Lizenzen (74 MB).“). Fehlt die Datei, bleibt der Text ohne Angabe. Die Adresse
     (href) bleibt unverändert: pages.yml schreibt den Link auf das Datenpaket für den Branch deploy auf den Spiegel um
     (GitHub Pages, gleiche Datei aus demselben Lauf)."""
