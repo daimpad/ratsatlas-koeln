@@ -4,8 +4,8 @@ versioniert mit Gültigkeitsdatum (CLAUDE.md 3.2), und Zuordnung der Federführu
 Tabelle `data/aemter/aemter_koeln.tsv`, erzeugt ohne Netz mit `tools/aemter_tabelle.py` aus dem PDF der Stadt. Je Plan
 eine Gruppe von Zeilen mit demselben `gueltig_ab` (der „Stand“, den der Plan nennt); ein neuer Plan kommt als weitere
 Gruppe dazu. Jede Zeile nennt ihre Fundstelle (Seite, Spalte, Eintrag), die Adresse, die Abrufzeit und die Prüfsumme
-des PDFs. Übernommen sind nur Kennungen und Bezeichnungen von Dezernaten und Dienststellen, keine Namen von Personen und
-kein weiterer Text.
+des PDFs. Übernommen sind nur Nummern und Bezeichnungen von Dezernaten und Dienststellen, keine Namen von Personen und
+kein weiterer Text; die Kennung (Dezernat/Nummer) bildet tools/aemter_tabelle.py (NOTE_KENNUNG).
 
 Zuordnung (`zuordnen`): Belegt ist ein Plan von seinem Stand bis zu seiner letzten Prüfung, dem Tag des jüngsten Abrufs
 (`abgerufen`; ein erneuter Abruf mit `tools/aemter_tabelle.py` verlängert ihn, wenn die Stadt dasselbe PDF ausliefert),
@@ -347,10 +347,11 @@ OHNE_ZUORDNUNG = "●"
 FELDER_DEZERNAT = ("dezernat", "kennung", "name", "label", "fundstelle", "einheiten")
 FELDER_EINHEIT = ("nummer", "kennung", "name", "kurzname", "label", "ebene", "eigenbetriebsaehnlich", "fundstelle")
 FELDER_OHNE_ZUORDNUNG = ("nummer", "name", "label", "markierung", "fundstelle")
-LIZENZ_AUFBAU = ("im Plan keine Lizenz angegeben; übernommen sind nur Kennungen und Bezeichnungen (Tatsachenangaben), "
+# „Nummern“, nicht „Kennungen“: Übernommen sind die Nummern des Plans („61“); das Feld `kennung` bildet
+# tools/aemter_tabelle.py aus Dezernat und Nummer, der Plan führt diese Schreibweise nicht (Entscheidung 21.11.2026 (3)
+# (G5); Nachprüfung: vorher nannte LIZENZ_AUFBAU die Kennungen übernommen, im Widerspruch zu NOTE_KENNUNG)
+LIZENZ_AUFBAU = ("im Plan keine Lizenz angegeben; übernommen sind nur Nummern und Bezeichnungen (Tatsachenangaben), "
                  "keine Textauszüge; Klärung mit der Stadt offen")
-# Das Feld `kennung` bildet tools/aemter_tabelle.py aus Dezernat und Nummer; der Plan führt diese Schreibweise nicht
-# (Entscheidung 21.11.2026 (3) (G5))
 NOTE_KENNUNG = ("Das Feld „kennung“ bildet das Projekt aus Dezernat und Nummer (Dezernat/Nummer, etwa „VI/61“; beim "
                 "Dezernat das Dezernat allein); es ist keine Schreibweise des Plans.")
 
@@ -395,7 +396,7 @@ def aufbau(pfad=None):
                      "lizenz": LIZENZ_AUFBAU,
                      "note": "Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen („•“) aus dem Plan, ohne "
                              "die Untereinheiten der Dienststellen; Einträge mit „●“ ohne Zuordnung (im Plan nicht "
-                             "erklärt). Nur Kennungen und Bezeichnungen, keine Namen von Personen, keine Zahlen von "
+                             "erklärt). Nur Nummern und Bezeichnungen, keine Namen von Personen, keine Zahlen von "
                              "Vorlagen. " + NOTE_KENNUNG},
             "dezernate": list(dezernate.values()), "ohne_zuordnung": ohne}
 

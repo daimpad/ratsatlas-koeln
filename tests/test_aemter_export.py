@@ -9,7 +9,7 @@ import csv
 import json
 import re
 
-from pipeline import aemter, check, config
+from pipeline import aemter, check, config, technikseite
 
 ABRUF = "2026-11-13T22:00:00Z"
 
@@ -148,3 +148,23 @@ def test_meta_vermerkt_kennung_des_projekts(tmp_path):
     assert "keine Schreibweise des Plans" in d["meta"]["note"]
     vi = d["dezernate"][0]
     assert vi["kennung"] == "VI" and [e["kennung"] for e in vi["einheiten"]] == ["VI/VI/1", "VI/61", "VI/6100"]
+
+
+def test_uebernommen_sind_nummern_nicht_kennungen(tmp_path):
+    """Nachprüfung zu G5: Lizenz und Hinweis in aemter.json nennen die Nummern des Plans übernommen, nicht die
+    Kennungen, die das Projekt bildet (NOTE_KENNUNG steht im selben Hinweis); derselbe Wortlaut in
+    data/LICENSE-DATA.md (Ämtertabelle und aemter.json), in der README und auf der Technikseite (aemter.json aus der
+    erfundenen Tabelle, die übrigen Texte aus dem Repository)."""
+    meta = aemter.aufbau(_tabelle(tmp_path))["meta"]
+    assert meta["lizenz"] == aemter.LIZENZ_AUFBAU
+    assert "übernommen sind nur Nummern und Bezeichnungen (Tatsachenangaben)" in meta["lizenz"]
+    assert "Nur Nummern und Bezeichnungen, keine Namen von Personen" in meta["note"]
+    lizenz_daten = (config.ROOT / "data" / "LICENSE-DATA.md").read_text(encoding="utf-8")
+    readme = (config.ROOT / "README.md").read_text(encoding="utf-8")
+    technik = " ".join(e[2] for e in technikseite.weitere_quellen() if e[0] == "q-aemter")
+    assert lizenz_daten.count(f"| {aemter.LIZENZ_AUFBAU} |") == 2
+    assert "übernommen sind nur Nummern und Bezeichnungen der Dezernate und Dienststellen" in readme
+    assert "übernommen sind nur Nummern und Bezeichnungen." in technik
+    for name, text in (("lizenz", meta["lizenz"]), ("note", meta["note"]), ("LICENSE-DATA", lizenz_daten),
+                       ("README", readme), ("Technikseite", technik)):
+        assert not re.search(r"nur Kennungen und Bezeichnungen", text, re.I), name

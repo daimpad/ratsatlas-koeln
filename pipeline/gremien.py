@@ -4,9 +4,10 @@ Eigenes Kölner Modul (F4): Aus Bonn übernimmt es nur das Bedienmuster; prozess
 bleiben unter ihren Freigaben abgeschaltet und werden nicht eingebunden. Keine Besetzung, keine Mitglieder, keine Namen
 von Personen: Aus OParl ausgewertet werden nur die Organisationen (Kennung, Name, `classification`, `endDate`, `web`),
 die Sitzungen (wie in zeit.json, dazu ihr Verweis `organization` aus meetings.json), die Stationen der Prozesslinie und
-für das Log die Organisation der Beratungen.
+die Organisation der Beratungen (für vorlagen_12m, auch bei aufgelösten Gremien ohne Kennung an der Station, G6, und für
+das Log).
 Freigabe „gremien“ (config.ZUSATZTHEMEN); ohne sie schreibt export weder diese Datei noch aemter.json noch die Kennung
-des Gremiums an den Stationen.
+des Gremiums an den Stationen und in suche.json.
 
 Aufgenommen (F5) sind Organisationen der Klassen „Rat“, „Fachausschüsse und weitere Gremien“ und „Bezirksvertretungen“
 (OParl `classification`; Messung vom 09.11.2026: 1, 63 und 9 von 96 Organisationen). Nicht aufgenommen sind „Fraktionen
@@ -396,11 +397,12 @@ def daten(orgs, meetings, orgs_je_sitzung, papers, stand_tag, quellen, liste=Non
 
 def zeilen_log(d, zahlen, ohne_beratung):
     """Zeilen im Log von `export`, nur Zahlen: Organisationen und Gruppen, aufgelöste, Kennungen mit Zusatz,
-    Ausschüsse mit Paragraf (dazu die Nummern der Paragrafen ohne und mit mehr als einer Organisation, Entscheidung
-    21.11.2026 (3) (G5)), Bezirksvertretungen mit Stadtbezirk, Sitzungen und Beratungen ohne Gremium der Datei je
-    Grund; Sitzungen nach dem Datenstand ohne Verweis auf eine Organisation (ohne_organisation_kommend) und Sitzungen
-    von Gremien der Datei am Datenstand (zählen als vergangen); Vorlagen in keiner Gebietsdatei mit Beratung eines
-    Gremiums der Datei im Zeitraum (zählen nicht); bei nicht aktueller Liste der Sitzungen eine Zeile dazu."""
+    Ausschüsse mit Paragraf (die Erklärung der Zählung im Kopf der Zeile, dahinter die Nummern der Paragrafen ohne und
+    mit mehr als einer Organisation, Entscheidung 21.11.2026 (3) (G5)), Bezirksvertretungen mit Stadtbezirk, Sitzungen
+    und Beratungen ohne Gremium der Datei je Grund; Sitzungen nach dem Datenstand ohne Verweis auf eine Organisation
+    (ohne_organisation_kommend) und Sitzungen von Gremien der Datei am Datenstand (zählen als vergangen); Vorlagen in
+    keiner Gebietsdatei mit Beratung eines Gremiums der Datei im Zeitraum (zählen nicht); bei nicht aktueller Liste der
+    Sitzungen eine Zeile dazu."""
     from .geocode import BEZIRKE_KOELN
     g = d["gremien"]
     je = Counter(e["gruppe"] for e in g)
@@ -423,11 +425,11 @@ def zeilen_log(d, zahlen, ohne_beratung):
         f"{len(g)}: Rat {je['rat']}, Ausschüsse mit Paragraf {je['ausschuss']}, Bezirksvertretungen "
         f"{je['bezirksvertretung']}, übrige {je['uebrige']}; davon aufgelöst {sum(bool(e.get('aufgeloest')) for e in g)}; "
         f"Kennungen mit Zusatz aus dem SHA-1 (gleiche Kennung) {zahlen['mit_zusatz']}",
-        f"Ausschüsse laut Zuständigkeitsordnung (ausschuesse.AUSSCHUESSE, {len(treffer)} Einträge): mit genau einer "
-        f"Organisation {sum(n == 1 for n in treffer.values())}, ohne Organisation "
-        f"{sum(n == 0 for n in treffer.values())}{paragrafen(n == 0 for n in treffer.values())}, mit mehr als einer "
-        f"Organisation {sum(n > 1 for n in treffer.values())}{paragrafen(n > 1 for n in treffer.values())} (nicht "
-        f"aufgelöste Organisationen der Klasse „{KLASSE_AUSSCHUESSE}“)",
+        f"Ausschüsse laut Zuständigkeitsordnung (ausschuesse.AUSSCHUESSE, {len(treffer)} Einträge; gezählt nicht "
+        f"aufgelöste Organisationen der Klasse „{KLASSE_AUSSCHUESSE}“): mit genau einer Organisation "
+        f"{sum(n == 1 for n in treffer.values())}, ohne Organisation {sum(n == 0 for n in treffer.values())}"
+        f"{paragrafen(n == 0 for n in treffer.values())}, mit mehr als einer Organisation "
+        f"{sum(n > 1 for n in treffer.values())}{paragrafen(n > 1 for n in treffer.values())}",
         f"Bezirksvertretungen mit Stadtbezirk: {sum(bool(e.get('stadtbezirk')) for e in bv)} von {len(bv)}, "
         f"Stadtbezirke {len(bezirke)} von {len(BEZIRKE_KOELN)}",
         f"Sitzungen ohne Gremium aus {DATEI}: {sum(zahlen['ohne_sitzung'].values())} ({gruende(zahlen['ohne_sitzung'])}); "

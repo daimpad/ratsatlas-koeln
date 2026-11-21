@@ -13,7 +13,7 @@ import sys
 from datetime import date, timedelta
 from pathlib import Path
 
-from pipeline import ausschuesse, build, check, config, export, gebietszahlen, kontext, sessionnet
+from pipeline import aemter, ausschuesse, build, check, config, export, gebietszahlen, kontext, sessionnet
 
 try:   # auf dem Stand vor Pull Request 4a fehlt das Modul; jeder Test schlägt dann einzeln fehl
     from pipeline import gremien
@@ -181,9 +181,11 @@ def test_daten_felder_reihenfolge_und_log():
     assert ("Gremien (gremien.json): 8 Organisationen, nicht aufgenommen Fraktionen und Gruppen 1, mit anderer oder "
             "ohne Klasse 0; aufgenommen 7: Rat 1, Ausschüsse mit Paragraf 2, Bezirksvertretungen 2, übrige 2; davon "
             "aufgelöst 1; Kennungen mit Zusatz aus dem SHA-1 (gleiche Kennung) 0\n") in log + "\n"
-    # seit Entscheidung 21.11.2026 (3) (G5) mit den Nummern der Paragrafen ohne Organisation (nur Nummern)
-    assert ("mit genau einer Organisation 2, ohne Organisation 15 (§§ 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, "
-            "22, 23), mit mehr als einer Organisation 0 (nicht aufgelöste") in log
+    # seit Entscheidung 21.11.2026 (3) (G5) mit den Nummern der Paragrafen ohne Organisation (nur Nummern), die
+    # Erklärung der Zählung im Kopf der Zeile (Nachprüfung)
+    assert ("Einträge; gezählt nicht aufgelöste Organisationen der Klasse „Fachausschüsse und weitere Gremien“): mit "
+            "genau einer Organisation 2, ohne Organisation 15 (§§ 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, "
+            "22, 23), mit mehr als einer Organisation 0\n") in log + "\n"
     assert "Bezirksvertretungen mit Stadtbezirk: 2 von 2, Stadtbezirke 2 von 9" in log
     assert "Probe" not in log and O not in log
 
@@ -833,17 +835,46 @@ def test_check_meldet_falsche_kennungen_in_suche_und_aufgeloeste_an_stationen(op
 
 def test_log_nennt_paragrafen_ohne_und_mit_mehreren_organisationen():
     """(G5) Die Zeile zu den Ausschüssen nennt die Nummern der Paragrafen ohne Organisation und mit mehr als einer
-    (aufsteigend, nur Nummern); ein aufgelöstes Gremium zählt nicht; ohne solche Paragrafen keine Klammer."""
+    (aufsteigend, nur Nummern); ein aufgelöstes Gremium zählt nicht; ohne solche Paragrafen keine Klammer. Die Erklärung
+    der Zählung steht im Kopf der Zeile, nicht als zweite Klammer hinter der letzten Zahl (Nachprüfung)."""
     orgs = [_org("h", PARAGRAF[7], AUSSCHUSS), _org("s1", PARAGRAF[19], AUSSCHUSS), _org("s2", PARAGRAF[19], AUSSCHUSS),
             _org("f-alt", PARAGRAF[11], AUSSCHUSS, ende="2025-10-31")]
     d, zahlen = gremien.daten(orgs, [], {}, [], STAND, [])
-    log = "\n".join(gremien.zeilen_log(d, zahlen, {}))
-    assert ("Ausschüsse laut Zuständigkeitsordnung (ausschuesse.AUSSCHUESSE, 17 Einträge): mit genau einer Organisation "
-            "1, ohne Organisation 15 (§§ 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23), mit mehr als einer "
-            "Organisation 1 (§ 19) (nicht aufgelöste Organisationen der Klasse „Fachausschüsse und weitere Gremien“)\n"
-            ) in log + "\n"
+    zeilen = gremien.zeilen_log(d, zahlen, {})
+    assert ("Ausschüsse laut Zuständigkeitsordnung (ausschuesse.AUSSCHUESSE, 17 Einträge; gezählt nicht aufgelöste "
+            "Organisationen der Klasse „Fachausschüsse und weitere Gremien“): mit genau einer Organisation 1, ohne "
+            "Organisation 15 (§§ 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23), mit mehr als einer "
+            "Organisation 1 (§ 19)") in zeilen
     alle = [_org(f"a{nr}", name, AUSSCHUSS) for nr, name in PARAGRAF.items() if nr != 23]
     d, zahlen = gremien.daten(alle, [], {}, [], STAND, [])
-    log = "\n".join(gremien.zeilen_log(d, zahlen, {}))
-    assert "mit genau einer Organisation 16, ohne Organisation 1 (§ 23), mit mehr als einer Organisation 0 (nicht" in log
-    assert "Probe" not in log and O not in log
+    zeilen += gremien.zeilen_log(d, zahlen, {})
+    assert any(z.endswith("mit genau einer Organisation 16, ohne Organisation 1 (§ 23), mit mehr als einer "
+                          "Organisation 0") for z in zeilen)
+    ausschuesse_zeilen = [z for z in zeilen if z.startswith("Ausschüsse laut Zuständigkeitsordnung")]
+    assert len(ausschuesse_zeilen) == 2 and not any(") (" in z for z in ausschuesse_zeilen), ausschuesse_zeilen
+    assert all("Probe" not in z and O not in z for z in zeilen)
+
+
+def test_anfrage_punkt_7_nennt_alles_aus_plan_und_satzung():
+    """Nachprüfung zu (G2), (G3): Punkt 7 der Anfrage an die Stadt nennt alles, was das Repository aus dem Plan und
+    der Zuständigkeitsordnung enthält: Stand des jüngsten Plans, die vom Projekt gebildete Kennung, die vollständige
+    Tabelle mit den Untereinheiten (data/aemter/aemter_koeln.tsv, solange sie welche hat) und ihren Zweck, das Datum der
+    Satzung, den Paragrafen in gremien.json und die Namen der Ausschüsse im Quellcode (ausschuesse.AUSSCHUESSE)."""
+    text = (ROOT / "explore" / "ANFRAGE_stadt_koeln.md").read_text(encoding="utf-8")
+    assert "Offen sind noch acht Punkte:" in text
+    punkt = re.search(r"^7\. \*\*Geschäfts- und Dezernatsverteilungsplan und Zuständigkeitsordnung:\*\* (.+)$", text,
+                      re.M)
+    assert punkt, "Punkt 7 fehlt"
+    p7 = punkt.group(1)
+    plan = aemter.tabelle().neuester()
+    assert f"(Stand {'.'.join(reversed(plan.stand.split('-')))})" in p7
+    assert "aus Dezernat und Nummer bilde (etwa „VI/61“) und die keine Schreibweise des Plans ist" in p7
+    if any(z["ebene"] == "untereinheit" for z in plan.zeilen):
+        assert "vollständige Tabelle der Dezernate und Dienststellen mit ihren Untereinheiten" in p7
+        assert "federführende Dienststelle einer Vorlage ihrem Dezernat zu" in p7
+    assert p7.index("Untereinheiten") < p7.index("Namen von Personen übernehme ich nicht")
+    assert f"Zuständigkeitsordnung vom {'.'.join(reversed(ausschuesse.QUELLE['stand'].split('-')))}" in p7
+    assert "je Ausschuss nur die Nummer seines Paragrafen" in p7
+    assert f"Namen der {len(ausschuesse.AUSSCHUESSE)} Ausschüsse mit ihrem Paragrafen" in p7
+    assert "andere Schreibungen derselben Ausschüsse aus der Satzung" in p7
+    assert "Veröffentlichungen" not in p7 and "zwei Dokumenten der Stadt" in p7

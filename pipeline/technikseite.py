@@ -106,7 +106,7 @@ def weitere_quellen():
                     "Prüfung"
                     + ("; daraus entsteht auch der Aufbau der Verwaltung (aemter.json: Dezernate mit ihren Einheiten, "
                        "Dienststellen und Punktdienststellen, ohne Untereinheiten)" if gremien.an() else "")
-                    + ". Im Plan ist keine Lizenz angegeben; übernommen sind nur Kennungen und Bezeichnungen.",
+                    + ". Im Plan ist keine Lizenz angegeben; übernommen sind nur Nummern und Bezeichnungen.",
                     plan.zeilen[0]["quelle"]))
     if gremien.an():
         q = ausschuesse.QUELLE
