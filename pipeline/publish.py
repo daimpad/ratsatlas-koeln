@@ -410,6 +410,10 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
     site, base = config.SITE_URL, f"{config.SITE_URL}data/export/"
     # zeit.json schreibt export.py nur mit Vorlagen (nicht in der Vorschau): nur aufführen, was daneben liegt
     zeit = (Path(path).parent / "zeit.json").exists()
+    # gremien.json (Freigabe „gremien“, pipeline/gremien.py) ebenso nur, wenn die Datei daneben liegt. aemter.json steht
+    # nicht im Katalog: Der Geschäfts- und Dezernatsverteilungsplan nennt keine Lizenz, DCAT verlangt eine je Verteilung
+    # (lizenz_der_teile); die Datei liegt im Datenpaket, ihre Lizenzangabe in LICENSE-DATA.md
+    gremien = (Path(path).parent / "gremien.json").exists()
     mt = "https://www.iana.org/assignments/media-types/"
     bplan = config.BPLAN.exists()
     kontext_an = config.ZUSATZTHEMEN.get("kontext") and (config.ROOT / "data" / "kontext" / "STAND.json").exists()
@@ -494,6 +498,11 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
                    "Vorlagen je Monat, Gebiet und Vorlagenart; Sitzungen; Wahlperioden.")] if zeit else []) + [
             dist("Typische Wege je Vorlagenart (JSON)", f"{config.STADT}/prozesse.json", "application/json", "oparl",
                  "Häufigste Abfolgen von Beratungen und Ergebnissen je Vorlagenart."),
+        ] + ([dist("Gremien (JSON)", f"{config.STADT}/gremien.json", "application/json", "oparl",
+                   "Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien ohne Fraktionen und Gruppen und ohne "
+                   "Besetzung: Gruppe, Paragraf der Zuständigkeitsordnung (nur Nummer, bei eindeutigem Treffer des "
+                   "Namens), Stadtbezirk der Bezirksvertretung, Sitzungen und Vorlagen in 12 Monaten und nächste Sitzung "
+                   "(abgeleitet).")] if gremien else []) + [
             dist("Sitzungskalender (iCalendar)", f"{config.STADT}/termine.ics", "text/calendar", "oparl",
                  "Sitzungen von Rat, Ausschüssen und Bezirksvertretungen mit Links zur Tagesordnung."),
             dist("Planregister Bebauungspläne (JSON)", f"{config.STADT}/plaene.json", "application/json", "plaene",

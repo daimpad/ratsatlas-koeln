@@ -30,8 +30,9 @@ FRAKTIONEN = ["SPD", "CDU", "GRÜNE", "FDP", "Die Linke", "Volt"]
 # Federführende Dienststellen (underDirectionOf) für einen Teil der Verwaltungsvorlagen, in verschiedenen Schreibweisen
 # des Namens, damit die Zuordnung zur Ämtertabelle (pipeline/aemter.py) alle Fälle durchläuft: Nummer und Name, Name
 # allein, Kennung und Name, mehrdeutiger Name, Nummer mit anderem Namen, unbekannte Dienststelle. Köln füllt
-# underDirectionOf nicht (vollständiger Abruf zum 17.11.2026: bei keiner Vorlage); die Testdaten weichen hier, bei
-# auxiliaryFile und organizationType bewusst ab (TECHNIK.md, „Dokumente (PDF-Köpfe)“, zurückgestellt aus der Prüfung stj)
+# underDirectionOf nicht (vollständiger Abruf zum 17.11.2026: bei keiner Vorlage); die Testdaten weichen hier und bei
+# auxiliaryFile bewusst ab (TECHNIK.md, „Dokumente (PDF-Köpfe)“, zurückgestellt aus der Prüfung stj). Die Dienststellen
+# haben weder organizationType noch classification und stehen deshalb nicht in gremien.json
 DIENSTSTELLEN = ["61 Stadtplanungsamt", "Amt für Straßen und Radwegebau", "Amt für Kinder, Jugend und Familie",
                  "Umwelt- und Verbraucherschutzamt", "VIII/67 Amt für Landschaftspflege und Grünflächen", "Verwaltung",
                  "52 Kulturamt", "[Testdaten] Dienststelle ohne Eintrag"]
@@ -52,12 +53,21 @@ def main():
     plaene = sorted({f["properties"]["name"].split(" ")[0] for f in json.loads(config.BPLAN.read_text())["features"]}
                     if config.BPLAN.exists() else set())
 
-    orgs = [{"id": f"{B}/organizations/rat", "name": "Rat", "organizationType": "Gremium"},
-            {"id": f"{B}/organizations/avr", "name": "Ausschuss für Verkehr und Mobilität", "organizationType": "Gremium"},
+    # Gremien in der Kölner Form (Stufe 3, 09.11.2026): `classification` statt organizationType, das in Köln bei allen
+    # fehlt (pipeline/gremien.py). Der Ausschuss für Verkehr und Mobilität hat keinen Paragrafen der
+    # Zuständigkeitsordnung (übrige Gremien), der für Bürgerbeteiligung den des § 10. Dazu zwei erfundene Organisationen
+    # ohne Sitzung und ohne Beratung: eine Fraktion (nicht in gremien.json) und ein Ausschuss der früheren Wahlperiode
+    # mit endDate (aufgelöst)
+    ausschuss = "Fachausschüsse und weitere Gremien"
+    orgs = [{"id": f"{B}/organizations/rat", "name": "Rat", "classification": "Rat"},
+            {"id": f"{B}/organizations/avr", "name": "Ausschuss für Verkehr und Mobilität", "classification": ausschuss},
             {"id": f"{B}/organizations/bab", "name": "Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden",
-             "organizationType": "Gremium"}]
-    orgs += [{"id": f"{B}/organizations/bv{nr}", "name": f"Bezirksvertretung {nr} ({name})", "organizationType": "Gremium"}
-             for nr, name in BEZIRKE_KOELN.items()]
+             "classification": ausschuss}]
+    orgs += [{"id": f"{B}/organizations/bv{nr}", "name": f"Bezirksvertretung {nr} ({name})",
+              "classification": "Bezirksvertretungen"} for nr, name in BEZIRKE_KOELN.items()]
+    orgs += [{"id": f"{B}/organizations/fr1", "name": "[Testdaten] Probefraktion", "classification": "Fraktionen und Gruppen"},
+             {"id": f"{B}/organizations/alt1", "name": "[Testdaten] Probeausschuss der früheren Wahlperiode",
+              "classification": ausschuss, "startDate": "2020-11-01", "endDate": "2025-10-31"}]
     verwaltung = [{"id": f"{B}/organizations/dst{k}", "name": name} for k, name in enumerate(DIENSTSTELLEN, 1)]
     orgs += verwaltung
     # eigener Zufallsgenerator (wie rp), damit die übrigen Testdaten gleich bleiben

@@ -39,6 +39,8 @@ ZEILE_JE_DATEI = (
     (r"koeln/ebenen\.json|koeln/flaechen/ebene_[a-z_]+\.json", "export/koeln/ebenen.json"),
     (r"koeln/flaechen/(ortsteile|bezirke)\.json", "export/koeln/flaechen/ortsteile.json"),
     (r"koeln/flaechen/bebauungsplaene\.json", "export/koeln/flaechen/bebauungsplaene.json"),
+    (r"koeln/gremien\.json", "export/koeln/gremien.json"),
+    (r"koeln/aemter\.json", "export/koeln/aemter.json"),
     (r"glossar\.json", "export/glossar.json"),
     (r"abrufstatistik\.tsv", "export/abrufstatistik.tsv"),
 )
@@ -54,6 +56,8 @@ ERWARTET = {
     "export/koeln/ebenen.json": (ZERO, (config.NAMENSNENNUNG,)),
     "export/koeln/flaechen/ortsteile.json": (ZERO, (config.NAMENSNENNUNG,)),
     "export/koeln/flaechen/bebauungsplaene.json": (BY, ("IT.NRW", "Datengrundlage Stadt Köln")),
+    "export/koeln/gremien.json": ("laut Katalog dl-de/zero 2.0", (config.NAMENSNENNUNG, "Zuständigkeitsordnung")),
+    "export/koeln/aemter.json": ("keine Lizenz angegeben", ("Geschäfts- und Dezernatsverteilungsplan",)),
     "export/glossar.json": ("MIT", ()),
     "export/abrufstatistik.tsv": (ZERO, ()),
 }
