@@ -5,7 +5,9 @@ Die Stadt setzt OParl `cancelled` bei keiner Sitzung; eine Absage steht nur im N
 gilt: „oparl“ bei OParl `cancelled`, sonst „name“ beim Hinweis „abgesagt“, sonst keine Absage („verschoben“ ist keine).
 Der Kalender trägt dann `STATUS:CANCELLED` und den Zusatz „ (abgesagt)“ bzw. „ (laut Sitzungsnamen abgesagt)“, das Log
 zählt beide getrennt; audit_zeit.tsv und verifikation_zeit.tsv zählen eine abgesagte Sitzung nicht als Sitzung und
-nennen den Grund; `check.absagen_kalender` prüft termine.ics gegen zeit.json, nur mit Zahlen. Alle Gremien, Sitzungen,
+nennen den Grund; `check.absagen_kalender` prüft termine.ics gegen zeit.json, nur mit Zahlen. Aus der Nachprüfung des
+Pull Request: was sich gegenüber der Regel bis 2776188 ändert (in Köln nur bisherige Treffer), die Vermerke in
+TECHNIK.md und die abgeschalteten Themenseiten, die weiter nur OParl `cancelled` auswerten. Alle Gremien, Sitzungen,
 Namen und Vorlagen sind erfunden (direkte Aufrufe oder lokaler Testserver); keine Anfragen an die Stadt, verify.py nur
 mit Attrappen statt der OParl-API."""
 import csv
@@ -206,6 +208,41 @@ def test_verify_time_mit_attrappen(tmp_path, monkeypatch, capsys):
     assert "Zeitleiste: 0 von 1 Vorlagen ohne Abweichung" in capsys.readouterr().out
 
 
+def test_vorher_nachher_bisherige_treffer_in_koeln():
+    """Was sich gegenüber der Regel bis 2776188 ändert (als Sitzung zählte jede ohne OParl `cancelled`; Nachprüfung des
+    Pull Request zu den Docstrings von export.time_audit_rows und verify.verify_time und zu TECHNIK.md): Vorher stand
+    „keine Sitzung …“ bzw. „keine Sitzung“ nur, wenn alle Sitzungen des Gremiums an dem Tag OParl `cancelled` trugen
+    (oder es keine gab); eine Sitzung mit Absage nur im Namen zählte als Treffer („Sitzung des Gremiums …“ ohne Zusatz
+    bzw. das Datum). Ohne OParl `cancelled`, wie in Köln, ändern sich also nur bisherige Treffer, und die Zeilen mit
+    „keine Sitzung …“ bleiben dieselben. Die Werte von verify.verify_time stehen in BERATUNGEN (geprüft in
+    test_verify_time_mit_attrappen)."""
+    def bisher(sitzungen):   # Regel bis 2776188: Bemerkung in audit_zeit.tsv, Wert in verifikation_zeit.tsv
+        held = {(m["gremium"], m["date"]) for m in sitzungen if not m["cancelled"]}
+        return {g: (SITZUNG, tag) if (g, tag) in held else (f"keine {SITZUNG}", "keine Sitzung")
+                for g, (tag, *_) in BERATUNGEN.items()}
+
+    def jetzt(sitzungen):
+        zeilen = export.time_audit_rows([_vorlage()], sitzungen)
+        return {z[1].removeprefix("beratung: ").removesuffix(" (beratend)"): z[5] for z in zeilen[1:] if z[2]}
+
+    name, oparl = "laut Sitzungsnamen abgesagt", "abgesagt laut OParl (cancelled)"
+    alt, neu = bisher(SITZUNGEN_TAGE), jetzt(SITZUNGEN_TAGE)
+    assert {g: (alt[g][0], neu[g]) for g in BERATUNGEN if neu[g] != alt[g][0]} == {
+        "Namensabsage": (SITZUNG, f"{SITZUNG}, {name}"),
+        "Oparlabsage": (f"keine {SITZUNG}", f"{SITZUNG}, {oparl}"),
+        "Beides": (SITZUNG, f"{SITZUNG}, {oparl}")}   # am Tag auch eine Absage nur im Namen: vorher ein Treffer
+    tage = {g: tag for g, (tag, *_) in BERATUNGEN.items()}
+    assert {g: (alt[g][1], wert) for g, (_, _, wert) in BERATUNGEN.items() if wert != alt[g][1]} == {
+        "Namensabsage": (tage["Namensabsage"], name), "Oparlabsage": ("keine Sitzung", oparl),
+        "Beides": (tage["Beides"], oparl)}
+    koeln = [m for m in SITZUNGEN_TAGE if not m["cancelled"]]   # wie in Köln: OParl `cancelled` bei keiner Sitzung
+    alt, neu = bisher(koeln), jetzt(koeln)
+    assert {g: (alt[g][0], neu[g]) for g in BERATUNGEN if neu[g] != alt[g][0]} == {
+        "Namensabsage": (SITZUNG, f"{SITZUNG}, {name}"), "Beides": (SITZUNG, f"{SITZUNG}, {name}")}
+    keine = {g for g in BERATUNGEN if neu[g].startswith("keine ")}
+    assert keine == {g for g in BERATUNGEN if alt[g][0].startswith("keine ")} == {"Oparlabsage", "Ohne"}
+
+
 # --- check: termine.ics gegen zeit.json -------------------------------------------------------------------------------
 
 def _export(base, sitzungen):
@@ -396,3 +433,49 @@ def test_check_mit_testdaten(oparl, monkeypatch, capsys):
     assert ("Kalender: Termine in termine.ics, deren STATUS nicht der Absage der Sitzung in zeit.json folgt "
             "(export.absage; STATUS:CANCELLED genau bei OParl `cancelled` oder Hinweis „abgesagt“ aus dem Namen, sonst "
             "STATUS:CONFIRMED): 1") in str(e.value)
+
+
+# --- Nachprüfung des Pull Request: Vermerke in TECHNIK.md, abgeschaltete Themenseiten -----------------------------------
+
+def _technik():
+    return (ROOT / "TECHNIK.md").read_text(encoding="utf-8")
+
+
+def test_technik_vermerke_der_aelteren_offenen_punkte():
+    """TECHNIK.md: Die älteren offenen Punkte zu termine.ics und audit_zeit.tsv in den Zeilen 20.11.2026 (4) und (7) der
+    Entscheidungen tragen einen Vermerk, dass (9) sie bei Hinweis „abgesagt“ erledigt; ihr Wortlaut bleibt stehen. Was
+    der Vermerk sagt, prüfen die Tests oben (Zusatz und STATUS:CANCELLED im Kalender, Bemerkung in audit_zeit.tsv,
+    „verschoben“ unverändert)."""
+    zeilen = {z.split(" | ", 2)[1][:3]: z for z in _technik().splitlines() if z.startswith("| 20.11.2026 | (")}
+    vermerk = "Vermerk: bei Hinweis „abgesagt“ aus dem Namen erledigt durch 21.11.2026 (1) (c) (9)"
+    assert ("Offen (Vermerk: erledigt durch 21.11.2026 (1) (c) (9)): ob `termine.ics` eine Sitzung mit Hinweis "
+            "„abgesagt“ ebenfalls als abgesagt kennzeichnet (bisher nur bei `cancelled`).") in zeilen["(7)"]
+    assert ("Betroffen: die Zusammenfassung in `termine.ics` (`SUMMARY` ohne „ (abgesagt)“, `STATUS:CONFIRMED`; der "
+            f"ganze Name steht weiter in `DESCRIPTION`; {vermerk}, Zusatz „ (laut Sitzungsnamen abgesagt)“ und "
+            "`STATUS:CANCELLED`; bei Hinweis „verschoben“") in zeilen["(4)"]
+    assert (f"Ebenso `audit_zeit.tsv` (`export.time_audit_rows`: „Sitzung des Gremiums an diesem Tag“; {vermerk}, "
+            "Bemerkung „…, laut Sitzungsnamen abgesagt“; bei Hinweis „verschoben“ zählt die Sitzung weiter ohne "
+            "Zusatz).") in zeilen["(4)"]
+
+
+def test_themenseite_abgeschaltet_wertet_nur_cancelled_aus(tmp_path, capsys):
+    """Außerhalb von (9) und abgeschaltet (Freigabe `themenseiten`), so in TECHNIK.md vermerkt: dossier.daten lässt bei
+    den kommenden Sitzungen der Themenseite nur OParl `cancelled` weg. Eine Sitzung mit Hinweis „abgesagt“ aus dem Namen
+    bleibt dort, während der Themenkalender (publish.write_calendar mit export.absage) sie als abgesagt kennzeichnet.
+    Ändert sich dossier.daten mit der Freigabe der Themenseiten, ist der Vermerk in TECHNIK.md anzupassen."""
+    from pipeline import dossier
+    from pipeline.themenseiten import ALLE
+    t = ALLE[0]
+    sitzungen = [_sitzung("a", "Bezirksvertretung Probe", "[Testdaten] Sitzung entfällt", hinweis="abgesagt",
+                          tag="2026-12-10"),
+                 _sitzung("c", "Bezirksvertretung Probe", cancelled=True, tag="2026-12-11")]
+    assert all(dossier.sitzung_im_thema(t, m["gremium"]) for m in sitzungen)
+    thema = dossier.daten(t, {}, {}, sitzungen, "2026-11-21", {})
+    assert [m["source_object"] for m in thema["sitzungen"]] == [f"{M}/a"]
+    publish.write_calendar(tmp_path / f"{t.key}.ics", sitzungen, date(2026, 11, 21))
+    assert capsys.readouterr().out.endswith("abgesagt laut OParl 1, abgesagt laut Sitzungsnamen 1\n")
+    ics = {e["UID"].rsplit("/", 1)[1]: e for e in check._ics_ereignisse(tmp_path / f"{t.key}.ics")}
+    assert ics["a"]["STATUS"] == ics["c"]["STATUS"] == "CANCELLED"
+    assert ics["a"]["SUMMARY"] == "Bezirksvertretung Probe (laut Sitzungsnamen abgesagt)"
+    assert ("Nicht angepasst (außerhalb von (9), abgeschaltet): `dossier.daten` (kommende Sitzungen der Themenseiten "
+            "in `dossiers/<thema>.json`, Freigabe `themenseiten`) und `chat.organizations`") in _technik()

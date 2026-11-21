@@ -66,8 +66,11 @@ def verify_time(n=20, seed=2026):
     zu jedem aus OParl-Lite abgeleiteten Beratungsdatum eine Sitzung desselben Gremiums in der
     Sitzungsliste der Stadt gibt. Als Sitzung zählt nur eine, die nicht abgesagt ist (export.sitzungstage und
     export.absage, dieselbe Regel wie audit_zeit.tsv; seit der Entscheidung 21.11.2026 (1) (c) (9) auch nicht laut
-    Sitzungsnamen, vorher nur ohne OParl `cancelled`); gibt es an dem Tag nur abgesagte, steht statt „keine Sitzung“
-    der Grund (export.ABSAGE_TEXT)."""
+    Sitzungsnamen, vorher nur ohne OParl `cancelled`); gibt es an dem Tag nur abgesagte, steht in der Spalte `oparl_api`
+    der Grund (export.ABSAGE_TEXT), Ergebnis „abweichend“. Vorher stand dort „keine Sitzung“ (ebenfalls „abweichend“)
+    nur, wenn alle Sitzungen des Gremiums an dem Tag OParl `cancelled` trugen; eine Sitzung mit Absage nur im Namen
+    zählte, dort stand das Datum (Ergebnis „ok“). Eine Vorlage mit einer Beratung an einem solchen Tag zählt jetzt nicht
+    mehr zu den Vorlagen ohne Abweichung."""
     db = sqlite3.connect(config.DB)
     db.row_factory = sqlite3.Row
     ids = [r[0] for r in db.execute(

@@ -1192,7 +1192,11 @@ def time_audit_rows(papers, meetings):
     Beratungsdatum eine Sitzung desselben Gremiums in der OParl-API der Stadt? Als Sitzung zählt nur eine, die nicht
     abgesagt ist (sitzungstage, absage; seit der Entscheidung 21.11.2026 (1) (c) (9) auch nicht laut Sitzungsnamen,
     vorher nur ohne OParl `cancelled`). Gibt es an dem Tag nur abgesagte Sitzungen des Gremiums, nennt die Bemerkung den
-    Grund (ABSAGE_TEXT, getrennt nach OParl `cancelled` und Hinweis aus dem Namen; vorher „keine Sitzung …“)."""
+    Grund hinter „Sitzung des Gremiums …“ (ABSAGE_TEXT, getrennt nach OParl `cancelled` und Hinweis aus dem Namen).
+    Vorher stand „keine Sitzung …“ nur, wenn alle Sitzungen des Gremiums an dem Tag OParl `cancelled` trugen; eine
+    Sitzung mit Absage nur im Namen zählte als Treffer („Sitzung des Gremiums …“ ohne Zusatz). Da die Stadt OParl
+    `cancelled` bei keiner Sitzung setzt (absage), bekommen in Köln bisherige Treffer den Zusatz; die Zeilen mit „keine
+    Sitzung …“ bleiben dieselben."""
     tage = sitzungstage(meetings)
     rows = []
     for p in papers:
