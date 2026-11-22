@@ -3,9 +3,10 @@
 RFC 5545 (3.8.7.2) nennt bei einem Kalender mit METHOD (termine.ics: METHOD:PUBLISH) in DTSTAMP den Zeitpunkt, zu dem
 das Objekt erstellt wurde, in UTC. Bis zum 22.11.2026 schrieb `publish.write_calendar` dort den Beginn der Sitzung in
 UTC; jetzt tragen alle Termine einer Datei denselben Zeitpunkt des Aufbaus (`publish._zeitstempel`, für Tests über
-`aufbau` übergeben, sonst jetzt in UTC auf die Sekunde). Alles andere im Kalender bleibt, wie es war. `check` prüft die
-Form und dass der Zeitpunkt in der Datei einheitlich ist (`check.zeitstempel_kalender`), nur mit Zahlen. Alle
-Sitzungen, Gremien und Namen sind erfunden; keine Anfragen an die Stadt."""
+`aufbau` übergeben, sonst jetzt in UTC auf die Sekunde). Alles andere im Kalender bleibt, wie es war. `check` prüft je
+Termin genau eine Zeile DTSTAMP ohne Parameter, die Form und dass der Zeitpunkt in der Datei einheitlich ist
+(`check.zeitstempel_kalender`), nur mit Zahlen. Alle Sitzungen, Gremien und Namen sind erfunden; keine Anfragen an die
+Stadt."""
 import importlib.util
 import os
 import re
@@ -97,20 +98,50 @@ def rechnerzone(request):
     time.tzset()
 
 
+# erfundene Sitzungen im Januar 2000: Ihr Beginn fällt nie mit dem Zeitpunkt eines Testlaufs zusammen (Tag des Aufbaus
+# 01.01.2000, das Fenster ab 30 Tagen davor schließt sie ein)
+SITZUNGEN_2000 = [
+    _sitzung("j1", "2000-01-10T16:00:00Z", ende="2000-01-10T19:30:00Z"),
+    _sitzung("j2", "2000-01-11"),
+    _sitzung("j3", "2000-01-12T17:00:00+01:00", cancelled=True),
+]
+
+
 @pytest.mark.parametrize("rechnerzone", ["UTC", "America/New_York", "Asia/Tokyo"], indirect=True)
 def test_ohne_angabe_jetzt_in_utc(rechnerzone, tmp_path, capsys):
     """Ohne `aufbau` ist DTSTAMP jetzt in UTC auf die Sekunde, bei allen Terminen derselbe, in jeder Zeitzone des
-    Rechners; nicht mehr der Beginn der Sitzung (die erfundenen Sitzungen liegen nicht im Zeitraum des Aufrufs)."""
+    Rechners; nicht mehr der Beginn der Sitzung. Die erfundenen Sitzungen liegen im Januar 2000, ihr Beginn kann also
+    nicht in den Zeitraum des Aufrufs fallen; so hängt das Ergebnis nicht von der Uhrzeit des Testlaufs ab."""
     vorher = datetime.now(timezone.utc).replace(microsecond=0)
-    publish.write_calendar(tmp_path / "termine.ics", SITZUNGEN, date(2026, 11, 21))
+    publish.write_calendar(tmp_path / "termine.ics", SITZUNGEN_2000, date(2000, 1, 1))
     nachher = datetime.now(timezone.utc)
     capsys.readouterr()
-    werte = {e["DTSTAMP"] for e in _ereignisse(tmp_path / "termine.ics").values()}
+    ics = _ereignisse(tmp_path / "termine.ics")
+    assert sorted(ics) == ["j1", "j2", "j3"]
+    werte = {e["DTSTAMP"] for e in ics.values()}
     assert len(werte) == 1
     wert = werte.pop()
     assert re.fullmatch(r"[0-9]{8}T[0-9]{6}Z", wert)
     assert vorher <= datetime.strptime(wert, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc) <= nachher
-    assert wert not in {publish._utc(m["start"]) for m in SITZUNGEN}
+    assert wert not in {publish._utc(m["start"]) for m in SITZUNGEN_2000}
+
+
+def test_ohne_angabe_feste_uhr_auch_im_beginn_einer_sitzung(tmp_path, capsys, monkeypatch):
+    """Mit einer festen Uhr genau im Beginn einer Sitzung (s1, 25.11.2026, 16:00:00,4 Uhr UTC) steht dieser Zeitpunkt
+    auf die Sekunde in DTSTAMP, bei allen Terminen: Der Wert kommt von der Uhr, nicht aus dem Beginn, und fällt dann
+    nur zufällig mit ihm zusammen."""
+    jetzt = datetime(2026, 11, 25, 16, 0, 0, 400000, tzinfo=timezone.utc)
+
+    class FesteUhr(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return jetzt if tz is None else jetzt.astimezone(tz)
+
+    monkeypatch.setattr(publish, "datetime", FesteUhr)
+    publish.write_calendar(tmp_path / "termine.ics", SITZUNGEN, date(2026, 11, 21))
+    capsys.readouterr()
+    assert {k: e["DTSTAMP"] for k, e in _ereignisse(tmp_path / "termine.ics").items()} == {
+        f"s{i}": "20261125T160000Z" for i in range(1, 7)}
 
 
 def test_nur_dtstamp_haengt_vom_aufbau_ab(tmp_path, capsys):
@@ -231,16 +262,21 @@ def test_check_ohne_befund(tmp_path, capsys):
                                        "gültigen Zeitpunkt 0, verschiedene Zeitpunkte 1\n")
 
 
-def _dtstamp_ersetzen(pfad, neu):
-    """Ersetzt DTSTAMP je Termin (Kennung → neuer Wert; None entfernt die Zeile)."""
+def _dtstamp_zeilen(pfad, neu):
+    """Ersetzt die Zeile DTSTAMP je Termin durch physische Zeilen (Kennung → Liste der Zeilen, ohne CRLF; eine leere
+    Liste entfernt die Zeile)."""
     teile = pfad.read_bytes().decode("utf-8").split("BEGIN:VEVENT")
     for i, teil in enumerate(teile[1:], 1):
         k = re.search(r"UID:\S+/(\w+)\r\n", teil).group(1)
         if k in neu:
-            ersatz = "" if neu[k] is None else f"DTSTAMP:{neu[k]}\r\n"
             assert teil.count(f"DTSTAMP:{STEMPEL}\r\n") == 1
-            teile[i] = teil.replace(f"DTSTAMP:{STEMPEL}\r\n", ersatz)
+            teile[i] = teil.replace(f"DTSTAMP:{STEMPEL}\r\n", "".join(f"{z}\r\n" for z in neu[k]))
     pfad.write_bytes("BEGIN:VEVENT".join(teile).encode("utf-8"))
+
+
+def _dtstamp_ersetzen(pfad, neu):
+    """Ersetzt DTSTAMP je Termin (Kennung → neuer Wert; None entfernt die Zeile)."""
+    _dtstamp_zeilen(pfad, {k: [] if v is None else [f"DTSTAMP:{v}"] for k, v in neu.items()})
 
 
 def test_check_meldet_gemischte_und_ungueltige_nur_mit_zahlen(tmp_path, capsys):
@@ -272,6 +308,62 @@ def test_check_meldet_dtstamp_aus_dem_beginn(tmp_path, capsys):
     assert check.zeitstempel_kalender(tmp_path) == [
         "Kalender: DTSTAMP in termine.ics nicht bei allen Terminen derselbe Zeitpunkt des Aufbaus (verschiedene "
         "Zeitpunkte): 5"]
+
+
+@pytest.mark.parametrize("zeilen, wert", [
+    (["UID:x", f"DTSTAMP:{STEMPEL}", "DTSTART:20261125T160000Z"], STEMPEL),
+    ([f"dtstamp:{STEMPEL}"], STEMPEL),                                  # Feldname ohne Rücksicht auf Schreibung (3.1)
+    (["SUMMARY:DTSTAMP:20200101T000000Z", f"DTSTAMP:{STEMPEL}"], STEMPEL),    # nur im Text eines anderen Feldes
+    ([f"DTSTAMPX:{STEMPEL}"], None),                                    # anderer Feldname, also kein DTSTAMP
+    (["DTSTART:20261125T160000Z"], None),                               # kein DTSTAMP
+    ([], None),
+    (["DTSTAMP:20261122T210507", f"DTSTAMP:{STEMPEL}"], None),          # doppelt, der erste ungültig
+    ([f"DTSTAMP:{STEMPEL}", "DTSTAMP:20200101T000000Z"], None),         # doppelt, ein anderer gültiger Zeitpunkt
+    ([f"DTSTAMP:{STEMPEL}", f"DTSTAMP:{STEMPEL}"], None),               # doppelt, gleich
+    ([f"DTSTAMP:{STEMPEL}", f"dtstamp:{STEMPEL}"], None),               # doppelt, anders geschrieben
+    ([f"DTSTAMP;TZID=Europe/Berlin:{STEMPEL}"], None),                  # TZID bei UTC nicht erlaubt (3.2.19)
+    ([f"DTSTAMP;VALUE=DATE-TIME:{STEMPEL}"], None),                     # Parameter schreibt write_calendar nie
+    (["DTSTAMP"], None),
+    ([f"DTSTAMP :{STEMPEL}"], None),
+])
+def test_dtstamp_genau_eine_zeile_ohne_parameter(zeilen, wert):
+    assert check._dtstamp(zeilen) == wert
+
+
+def test_check_meldet_doppelte_zeilen_und_parameter(tmp_path, capsys):
+    """Eingeschleust in fünf von sechs Terminen: eine zweite Zeile DTSTAMP nach einem Wert ohne „Z“, eine zweite mit
+    einem anderen gültigen Zeitpunkt, eine zweite klein geschrieben, TZID am Feldnamen, ein anderer Parameter. Jeder
+    dieser Termine zählt als ohne gültigen Zeitpunkt (_ics_ereignisse sähe nur die letzte Zeile ohne Parameter); die
+    zweiten Werte zählen nicht als weitere Zeitpunkte. Befunde nur mit Zahlen."""
+    _kalender(tmp_path)
+    _dtstamp_zeilen(tmp_path / "termine.ics", {
+        "s1": ["DTSTAMP:20261122T210507", f"DTSTAMP:{STEMPEL}"],
+        "s2": [f"DTSTAMP:{STEMPEL}", "DTSTAMP:20200101T000000Z"],
+        "s3": [f"DTSTAMP:{STEMPEL}", f"dtstamp:{STEMPEL}"],
+        "s4": [f"DTSTAMP;TZID=Europe/Berlin:{STEMPEL}"],
+        "s5": [f"DTSTAMP;X-PROBE=1:{STEMPEL}"]})
+    assert {e["DTSTAMP"] for e in check._ics_ereignisse(tmp_path / "termine.ics")} == {STEMPEL, "20200101T000000Z"}
+    capsys.readouterr()
+    befunde = check.zeitstempel_kalender(tmp_path)
+    assert befunde == [
+        "Kalender: Termine in termine.ics ohne DTSTAMP als gültigen Zeitpunkt in UTC (JJJJMMTTTHHMMSSZ, RFC 5545): 5"]
+    assert capsys.readouterr().out == ("\nDTSTAMP in termine.ics (Zeitpunkt des Aufbaus in UTC): 6 Termine, ohne "
+                                       "gültigen Zeitpunkt 5, verschiedene Zeitpunkte 1\n")
+
+
+def test_check_entfaltet_zeilen(tmp_path, capsys):
+    """Gezählt werden entfaltete Zeilen (RFC 5545, 3.1): eine auf zwei Zeilen gefaltete Zeile DTSTAMP zählt einmal, eine
+    Fortsetzungszeile, die mit „DTSTAMP:“ beginnt, gehört zur Zeile davor und zählt nicht; ein klein geschriebener
+    Feldname gilt. Kein Befund."""
+    _kalender(tmp_path)
+    _dtstamp_zeilen(tmp_path / "termine.ics", {
+        "s1": ["DTSTA", f" MP:{STEMPEL}"],
+        "s2": [f"DTSTAMP:{STEMPEL}", "X-PROBE:a", " DTSTAMP:20200101T000000Z"],
+        "s3": [f"dtstamp:{STEMPEL}"]})
+    capsys.readouterr()
+    assert check.zeitstempel_kalender(tmp_path) == []
+    assert capsys.readouterr().out == ("\nDTSTAMP in termine.ics (Zeitpunkt des Aufbaus in UTC): 6 Termine, ohne "
+                                       "gültigen Zeitpunkt 0, verschiedene Zeitpunkte 1\n")
 
 
 def test_check_ohne_datei_und_ohne_termine(tmp_path, capsys):

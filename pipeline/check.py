@@ -600,14 +600,21 @@ def _tabellen_mit_titel(wurzel, m, zahl, befunde):
     return offen
 
 
+def _ics_bloecke(pfad):
+    """VEVENT-Blöcke einer iCalendar-Datei (publish.write_calendar) als Listen ihrer entfalteten Zeilen, so wie sie in
+    der Datei stehen (gleiche Feldnamen mehrfach, Parameter am Feldnamen); für _ics_ereignisse und _dtstamp."""
+    text = re.sub(r"\r?\n[ \t]", "", pfad.read_text(encoding="utf-8"))
+    return [re.split(r"\r?\n", block.split("END:VEVENT")[0]) for block in text.split("BEGIN:VEVENT")[1:]]
+
+
 def _ics_ereignisse(pfad):
     """VEVENT-Blöcke einer iCalendar-Datei (publish.write_calendar) als [{Feld: Text}]: Zeilen entfaltet, Text nach
-    RFC 5545 zurückgewandelt (\\n, \\, \\; \\\\), Parameter am Feldnamen abgetrennt."""
-    text = re.sub(r"\r?\n[ \t]", "", pfad.read_text(encoding="utf-8"))
+    RFC 5545 zurückgewandelt (\\n, \\, \\; \\\\), Parameter am Feldnamen abgetrennt. Steht ein Feld mehrfach im selben
+    Block, bleibt die letzte Zeile; wo das zählt, liest _ics_bloecke die Zeilen selbst (zeitstempel_kalender)."""
     out = []
-    for block in text.split("BEGIN:VEVENT")[1:]:
+    for zeilen in _ics_bloecke(pfad):
         felder = {}
-        for zeile in re.split(r"\r?\n", block.split("END:VEVENT")[0]):
+        for zeile in zeilen:
             name, trenner, wert = zeile.partition(":")
             if trenner:
                 felder[name.split(";")[0].upper()] = re.sub(
@@ -816,20 +823,35 @@ def _utc_zeitpunkt(wert):
     return True
 
 
+def _dtstamp(zeilen):
+    """DTSTAMP eines Termins aus seinen entfalteten Zeilen (_ics_bloecke): der Wert hinter „DTSTAMP:“, wenn genau eine
+    Zeile den Feldnamen DTSTAMP trägt und dieser ohne Parameter steht, sonst None. Den Feldnamen vergleicht die Funktion
+    ohne Rücksicht auf Groß- und Kleinschreibung (RFC 5545, 3.1). Eine zweite Zeile DTSTAMP im selben Termin (nach
+    3.6.1 höchstens einmal) und ein Parameter am Feldnamen ergeben None: write_calendar schreibt keinen Parameter, und
+    TZID ist bei einem Wert in UTC nicht erlaubt (3.2.19)."""
+    treffer = [z for z in zeilen if re.split(r"[;:]", z, maxsplit=1)[0].upper() == "DTSTAMP"]
+    if len(treffer) != 1 or treffer[0][7:8] != ":":
+        return None
+    return treffer[0][8:]
+
+
 def zeitstempel_kalender(base=None):
     """DTSTAMP in termine.ics (Entscheidung 21.11.2026 (3), #47 (2); publish.write_calendar mit publish._zeitstempel) im
-    Kölner Export (`base`, Vorgabe config.EXPORT / config.STADT): Jeder Termin trägt in DTSTAMP einen gültigen
-    Zeitpunkt in UTC (_utc_zeitpunkt), und alle Termine der Datei tragen denselben, den Zeitpunkt des Aufbaus. Bis zum
-    22.11.2026 stand dort der Beginn der Sitzung; mehrere Termine zeigen dann verschiedene Zeitpunkte. Keine Schranke
-    nach unten oder oben: Der Erzeugungszeitpunkt des Exports (`meta.generated_at` in index.json, export._meta)
-    entsteht in export erst nach termine.ics; als obere Schranke hinge er an der Reihenfolge der Schritte. Ohne
-    termine.ics oder ohne Termine nichts zu prüfen (fehlt die Datei neben zeit.json, meldet das absagen_kalender).
-    Befunde und Ausgabe nur mit Zahlen, die Ausgabe in einer Zeile nach einer Leerzeile. Liefert die Befunde."""
+    Kölner Export (`base`, Vorgabe config.EXPORT / config.STADT): Jeder Termin trägt genau eine Zeile DTSTAMP ohne
+    Parameter (_dtstamp) mit einem gültigen Zeitpunkt in UTC (_utc_zeitpunkt), und alle Termine der Datei tragen
+    denselben, den Zeitpunkt des Aufbaus. Ein Termin mit keiner oder mehr als einer solchen Zeile oder mit einem
+    Parameter am Feldnamen zählt als ohne gültigen Zeitpunkt; _ics_ereignisse behielte nur die letzte Zeile und schnitte
+    Parameter ab, deshalb liest die Prüfung die Zeilen selbst (_ics_bloecke). Bis zum 22.11.2026 stand dort der Beginn
+    der Sitzung; mehrere Termine zeigen dann verschiedene Zeitpunkte. Keine Schranke nach unten oder oben: Der
+    Erzeugungszeitpunkt des Exports (`meta.generated_at` in index.json, export._meta) entsteht in export erst nach
+    termine.ics; als obere Schranke hinge er an der Reihenfolge der Schritte. Ohne termine.ics oder ohne Termine nichts
+    zu prüfen (fehlt die Datei neben zeit.json, meldet das absagen_kalender). Befunde und Ausgabe nur mit Zahlen, die
+    Ausgabe in einer Zeile nach einer Leerzeile. Liefert die Befunde."""
     base = Path(base) if base else config.EXPORT / config.STADT
     if not (base / "termine.ics").exists():
         print("\nDTSTAMP in termine.ics: keine Datei, nichts zu prüfen")
         return []
-    werte = [e.get("DTSTAMP") for e in _ics_ereignisse(base / "termine.ics")]
+    werte = [_dtstamp(zeilen) for zeilen in _ics_bloecke(base / "termine.ics")]
     ungueltig = sum(not _utc_zeitpunkt(w) for w in werte)
     zeitpunkte = len({w for w in werte if _utc_zeitpunkt(w)})
     befunde = []
