@@ -2,10 +2,12 @@
 GeoJSON aller verorteten Vorlagen und eine Beschreibung des Datensatzes nach DCAT-AP (JSON-LD).
 
 Alle Dateien ändern sich nur, wenn sich ihr Inhalt ändert (keine Erzeugungszeitpunkte), damit der
-Branch deploy nicht täglich vollständig neu geschrieben wird."""
+Branch deploy nicht täglich vollständig neu geschrieben wird. Ausnahme sind die Kalender (termine.ics, Themenkalender):
+Seit der Entscheidung 21.11.2026 (3) (#47 (2)) trägt jeder Termin in DTSTAMP den Zeitpunkt des Aufbaus, wie RFC 5545 es
+bei METHOD:PUBLISH vorsieht (_zeitstempel); ein Kalender ändert sich daher bei jedem Aufbau."""
 import json
 import re
-from datetime import date, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import quote
 from xml.sax.saxutils import escape, quoteattr
@@ -223,7 +225,18 @@ def _ende(start, end):
     return _utc(end)
 
 
-def write_calendar(path, meetings, today=None):
+def _zeitstempel(aufbau=None):
+    """DTSTAMP aller Termine einer Datei (Entscheidung 21.11.2026 (3), #47 (2)): der Zeitpunkt des Aufbaus in UTC auf
+    die Sekunde („JJJJMMTTTHHMMSSZ“). RFC 5545 (3.8.7.2) nennt bei einem Kalender mit METHOD dort den Zeitpunkt, zu dem
+    das Objekt erstellt wurde, und verlangt UTC. Ohne Angabe jetzt; ein übergebener Zeitpunkt (Tests) braucht eine
+    Zeitzone, sonst hinge das Ergebnis von der Zeitzone des Rechners ab."""
+    aufbau = datetime.now(timezone.utc) if aufbau is None else aufbau
+    if aufbau.tzinfo is None:
+        raise ValueError("Zeitpunkt des Aufbaus ohne Zeitzone")
+    return aufbau.astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+
+def write_calendar(path, meetings, today=None, aufbau=None):
     """Sitzungen ab 30 Tagen vor `today` (ohne Angabe der Tag des Aufbaus, so für termine.ics; die Themenkalender
     übergeben den Kölner Tag des Datenstands); abgesagte mit STATUS:CANCELLED und dem Zusatz ihres Grundes in der
     Zusammenfassung (ZUSATZ_ABSAGE), sonst STATUS:CONFIRMED. Als abgesagt gilt eine Sitzung nach export.absage: OParl
@@ -232,13 +245,17 @@ def write_calendar(path, meetings, today=None):
     Name mit dem Hinweis steht ohnehin in der Beschreibung. Eine Sitzung ohne Uhrzeit (_ganztaegig) steht als
     ganztägiger Termin am Kölner Kalendertag (process.local_day) darin, ohne DTEND: Nach RFC 5545 (3.6.1) dauert ein
     Termin mit einem Datum in DTSTART ohne DTEND und DURATION einen Tag; so steht kein Ende im Kalender, das die Quelle
-    nicht nennt (Entscheidung 19.11.2026 (2) (a)). Das Log nennt die Zahl der Termine, der ganztägigen und der
+    nicht nennt (Entscheidung 19.11.2026 (2) (a)). DTSTAMP ist bei allen Terminen der Datei derselbe Zeitpunkt des
+    Aufbaus in UTC (_zeitstempel; `aufbau` für Tests, ohne Angabe jetzt), auch bei ganztägigen Terminen; bis zum
+    22.11.2026 stand dort der Beginn der Sitzung in UTC (Entscheidung 21.11.2026 (3), #47 (2)). SEQUENCE und
+    LAST-MODIFIED fehlen weiter (nicht entschieden). Das Log nennt die Zahl der Termine, der ganztägigen und der
     abgesagten je Grund, nur Zahlen."""
     from .export import absage   # export importiert dieses Modul; hier erst beim Aufruf
     since = ((today or date.today()) - timedelta(days=30)).isoformat()
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", f"PRODID:-//{config.SEITENNAME}//Sitzungskalender//DE",
              "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:Sitzungen Rat\\, Ausschüsse und "
              f"Bezirksvertretungen {config.STADT_NAME}", "X-WR-TIMEZONE:Europe/Berlin"]
+    stempel = _zeitstempel(aufbau)
     termine = ganztaegig = 0
     abgesagt = dict.fromkeys(ZUSATZ_ABSAGE, 0)
     for m in meetings:
@@ -249,8 +266,9 @@ def write_calendar(path, meetings, today=None):
         if m.get("invitation"):
             desc.append(f"Einladung: {m['invitation']}")
         desc.append(f"Quelle: OParl-API der Stadt Köln; {config.NAMENSNENNUNG}")
-        # DTSTAMP bleibt ein Zeitpunkt in UTC (RFC 5545 verlangt dort DATE-TIME), auch bei einem ganztägigen Termin
-        lines += ["BEGIN:VEVENT", f"UID:{m['source_object']}", f"DTSTAMP:{_utc(m['start'])}"]
+        # DTSTAMP: derselbe Zeitpunkt des Aufbaus in UTC für alle Termine der Datei (RFC 5545 verlangt dort DATE-TIME in
+        # UTC), auch bei einem ganztägigen Termin
+        lines += ["BEGIN:VEVENT", f"UID:{m['source_object']}", f"DTSTAMP:{stempel}"]
         termine += 1
         if _ganztaegig(m["start"]):
             ganztaegig += 1

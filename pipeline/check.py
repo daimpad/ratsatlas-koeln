@@ -12,6 +12,7 @@ import json
 import re
 import sqlite3
 from collections import Counter
+from datetime import datetime
 from pathlib import Path
 
 from . import actors, besetzung, config, geocode, kontext, maske, pdfkopf
@@ -97,6 +98,7 @@ def check():
     b, f = absagen_kalender()
     befunde += b
     fehlend += f
+    befunde += zeitstempel_kalender()
     b, f = zusatzthemen()
     befunde += b
     fehlend += f
@@ -800,6 +802,46 @@ def absagen_kalender(base=None):
     print(f"Termine in termine.ics: {len(termine)}, davon abgesagt laut OParl {zahl['oparl']}, abgesagt laut "
           f"Sitzungsnamen {zahl['name']}")
     return befunde, fehlend
+
+
+def _utc_zeitpunkt(wert):
+    """Ist `wert` ein Zeitpunkt in UTC nach RFC 5545 (DATE-TIME in der Form „JJJJMMTTTHHMMSSZ“, 3.3.5) mit einem Datum
+    und einer Uhrzeit, die es gibt? Die Sekunde 60 (Schaltsekunde, 3.3.12) gilt als gültig."""
+    if not isinstance(wert, str) or not re.fullmatch(r"[0-9]{8}T[0-9]{6}Z", wert):
+        return False
+    try:
+        datetime.strptime(wert[:13] + ("59" if wert[13:15] == "60" else wert[13:15]), "%Y%m%dT%H%M%S")
+    except ValueError:
+        return False
+    return True
+
+
+def zeitstempel_kalender(base=None):
+    """DTSTAMP in termine.ics (Entscheidung 21.11.2026 (3), #47 (2); publish.write_calendar mit publish._zeitstempel) im
+    Kölner Export (`base`, Vorgabe config.EXPORT / config.STADT): Jeder Termin trägt in DTSTAMP einen gültigen
+    Zeitpunkt in UTC (_utc_zeitpunkt), und alle Termine der Datei tragen denselben, den Zeitpunkt des Aufbaus. Bis zum
+    22.11.2026 stand dort der Beginn der Sitzung; mehrere Termine zeigen dann verschiedene Zeitpunkte. Keine Schranke
+    nach unten oder oben: Der Erzeugungszeitpunkt des Exports (`meta.generated_at` in index.json, export._meta)
+    entsteht in export erst nach termine.ics; als obere Schranke hinge er an der Reihenfolge der Schritte. Ohne
+    termine.ics oder ohne Termine nichts zu prüfen (fehlt die Datei neben zeit.json, meldet das absagen_kalender).
+    Befunde und Ausgabe nur mit Zahlen, die Ausgabe in einer Zeile nach einer Leerzeile. Liefert die Befunde."""
+    base = Path(base) if base else config.EXPORT / config.STADT
+    if not (base / "termine.ics").exists():
+        print("\nDTSTAMP in termine.ics: keine Datei, nichts zu prüfen")
+        return []
+    werte = [e.get("DTSTAMP") for e in _ics_ereignisse(base / "termine.ics")]
+    ungueltig = sum(not _utc_zeitpunkt(w) for w in werte)
+    zeitpunkte = len({w for w in werte if _utc_zeitpunkt(w)})
+    befunde = []
+    if ungueltig:
+        befunde.append(f"Kalender: Termine in termine.ics ohne DTSTAMP als gültigen Zeitpunkt in UTC "
+                       f"(JJJJMMTTTHHMMSSZ, RFC 5545): {ungueltig}")
+    if zeitpunkte > 1:
+        befunde.append(f"Kalender: DTSTAMP in termine.ics nicht bei allen Terminen derselbe Zeitpunkt des Aufbaus "
+                       f"(verschiedene Zeitpunkte): {zeitpunkte}")
+    print(f"\nDTSTAMP in termine.ics (Zeitpunkt des Aufbaus in UTC): {len(werte)} Termine, ohne gültigen Zeitpunkt "
+          f"{ungueltig}, verschiedene Zeitpunkte {zeitpunkte}")
+    return befunde
 
 
 # --- Gremien, Ämter und Stationen (Entscheidung 21.11.2026 (2), Pull Request 4a) ------------------------------------

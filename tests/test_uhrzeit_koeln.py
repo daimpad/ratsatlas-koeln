@@ -14,7 +14,7 @@ import os
 import re
 import sys
 import time
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -119,19 +119,22 @@ KALENDER = {
 def test_kalender_ganztaegig_und_ende(rechnerzone, tmp_path, capsys):
     """termine.ics (publish.write_calendar): ohne Uhrzeit ganztägig am Kölner Tag ohne DTEND, sonst Beginn und Ende in
     UTC; kein DTEND bei einem Ende nur mit Datum, beim Platzhalter 23:59:59 Uhr in Kölner Ortszeit und bei einem Ende,
-    das nicht nach dem Beginn liegt. DTSTAMP bleibt ein Zeitpunkt in UTC. Das Log nennt die Termine, nur Zahlen."""
+    das nicht nach dem Beginn liegt. DTSTAMP ist der übergebene Zeitpunkt des Aufbaus in UTC, bei allen Terminen
+    derselbe. Das Log nennt die Termine, nur Zahlen."""
     sitzungen = [{"date": process.local_day(beginn), "gremium": "Bezirksvertretung 4 (Ehrenfeld)",
                   "name": "[Testdaten] Sitzung", "cancelled": False, "web": None, "invitation": None,
                   "start": beginn, "end": ende, "source_object": f"https://example.invalid/oparl/meetings/{k}"}
                  for k, (beginn, ende, *_) in KALENDER.items()]
-    publish.write_calendar(tmp_path / "termine.ics", sitzungen, date(2026, 3, 1))
+    publish.write_calendar(tmp_path / "termine.ics", sitzungen, date(2026, 3, 1),
+                           datetime(2026, 11, 22, 21, 5, 7, tzinfo=timezone.utc))
     assert capsys.readouterr().out.splitlines() == [
         "termine.ics: 20 Termine, davon ganztägig 7, abgesagt laut OParl 0, abgesagt laut Sitzungsnamen 0"]
     ics = {k.rsplit("/", 1)[1]: e for k, e in _ereignisse(tmp_path / "termine.ics").items()}
     assert {k: (e["DTSTART"], e.get("DTEND")) for k, e in ics.items()} == {k: (s, e) for k, (_, _, s, e) in
                                                                            KALENDER.items()}
-    assert {k: e["DTSTAMP"] for k, e in ics.items()} == {k: ":" + publish._utc(b) for k, (b, *_) in KALENDER.items()}
-    assert all(re.fullmatch(r":\d{8}T\d{6}Z", e["DTSTAMP"]) for e in ics.values())
+    # seit der Entscheidung 21.11.2026 (3) (#47 (2)) der Zeitpunkt des Aufbaus, nicht mehr der Beginn der Sitzung
+    # (bis dahin hier gegen publish._utc(Beginn) geprüft; tests/test_kalender_zeitstempel.py)
+    assert {k: e["DTSTAMP"] for k, e in ics.items()} == dict.fromkeys(KALENDER, ":20261122T210507Z")
 
 
 # erfundene Sitzungen: Kennung → (Beginn laut Quelle, Tag und Uhrzeit in zeit.json, DTSTART in termine.ics als Zeile
@@ -162,7 +165,9 @@ def test_sitzungen_in_zeit_und_kalender(oparl, capsys, monkeypatch, rechnerzone)
     sessionnet.fetch_all()
     build.build()
     capsys.readouterr()
+    vorher = datetime.now(timezone.utc).replace(microsecond=0)
     export.export()
+    nachher = datetime.now(timezone.utc)
     log = capsys.readouterr().out
     zeile = "Sitzungen nach Form des Beginns: mit Z 4, mit Versatz 2, ohne Zeitzone 1, nur Datum 1"
     assert log.splitlines().count(zeile) == 1 and log.count("Sitzungen nach Form des Beginns") == 1, log
@@ -176,10 +181,12 @@ def test_sitzungen_in_zeit_und_kalender(oparl, capsys, monkeypatch, rechnerzone)
     assert (zeit["1"]["date"], zeit["1"]["time"]) == ("2026-10-01", "17:00")
     ics = {k.rsplit("/", 1)[1]: e for k, e in _ereignisse(out / "termine.ics").items()}
     assert {k: e["DTSTART"] for k, e in ics.items()} == {k: s for k, (*_, s) in SITZUNGEN.items() if s}
-    # DTSTAMP bleibt ein Zeitpunkt in UTC, auch bei ganztägigen Terminen
-    assert {k: e["DTSTAMP"] for k, e in ics.items()} == {
-        k: ":" + publish._utc(b) for k, (b, *_, s) in SITZUNGEN.items() if s}
-    assert ics["d1"]["DTSTAMP"] == ":20261121T230000Z" and ics["z3"]["DTSTAMP"] == ":20261120T230000Z"
+    # DTSTAMP: seit der Entscheidung 21.11.2026 (3) (#47 (2)) bei allen Terminen derselbe Zeitpunkt in UTC, zu dem export
+    # lief, auch bei ganztägigen Terminen (bis dahin der Beginn der Sitzung, hier gegen publish._utc(Beginn) geprüft,
+    # bei d1 und z3 Mitternacht in Köln)
+    stempel = {e["DTSTAMP"] for e in ics.values()}
+    assert len(stempel) == 1 and re.fullmatch(r":\d{8}T\d{6}Z", next(iter(stempel)))
+    assert vorher <= datetime.strptime(next(iter(stempel)), ":%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc) <= nachher
 
 
 @pytest.mark.parametrize("rechnerzone", ["UTC", "America/New_York"], indirect=True)
