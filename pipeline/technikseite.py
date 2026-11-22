@@ -91,17 +91,33 @@ QUELLEN = {
 
 
 def weitere_quellen():
-    """Quellen außerhalb von config.SOURCES (ohne Lizenzangabe der Quelle, daher nicht in den Lizenzangaben des DCAT):
-    (Kennung, Kurzname, Erklärung, Adresse). Stand, letzte Prüfung und Adresse des Geschäfts- und
-    Dezernatsverteilungsplans aus der Ämtertabelle (jüngster Plan), damit ein weiterer Plan den Text mitführt."""
+    """Quellen außerhalb von config.SOURCES (ohne geklärte Lizenz, daher nicht maßgeblich für die Lizenz einer
+    DCAT-Verteilung, nur in deren Rechtehinweis, publish._rechte): (Kennung, Kurzname, Erklärung, Adresse). Stand, letzte
+    Prüfung und Adresse des Geschäfts- und Dezernatsverteilungsplans aus der Ämtertabelle (jüngster Plan), damit ein
+    weiterer Plan den Text mitführt. Mit Freigabe „gremien“ nennt der Plan auch aemter.json, und die Zuständigkeitsordnung
+    (ausschuesse.QUELLE) kommt hinzu: Aus ihr stammt der Paragraf der Ausschüsse in gremien.json."""
+    from . import ausschuesse, gremien
     plan = aemter.tabelle().neuester()
-    if plan is None:
-        return []
-    return [("q-aemter", "Dezernate und Dienststellen",
-             f"{aemter.TITEL} (PDF, {aemter.quellenangabe()}): ordnet die federführende Dienststelle einer Vorlage "
-             "ihrem Dezernat zu, nur für Vorlagen aus der Zeit vom Stand des Plans bis zu seiner letzten Prüfung. Im "
-             "Plan ist keine Lizenz angegeben; übernommen sind nur Kennungen und Bezeichnungen.",
-             plan.zeilen[0]["quelle"])]
+    aus = []
+    if plan is not None:
+        aus.append(("q-aemter", "Dezernate und Dienststellen",
+                    f"{aemter.TITEL} (PDF, {aemter.quellenangabe()}): ordnet die federführende Dienststelle einer "
+                    "Vorlage ihrem Dezernat zu, nur für Vorlagen aus der Zeit vom Stand des Plans bis zu seiner letzten "
+                    "Prüfung"
+                    + ("; daraus entsteht auch der Aufbau der Verwaltung (aemter.json: Dezernate mit ihren Einheiten, "
+                       "Dienststellen und Punktdienststellen, ohne Untereinheiten)" if gremien.an() else "")
+                    + ". Im Plan ist keine Lizenz angegeben; übernommen sind nur Nummern und Bezeichnungen.",
+                    plan.zeilen[0]["quelle"]))
+    if gremien.an():
+        q = ausschuesse.QUELLE
+        tag = ".".join(reversed(q["abgerufen"].split("-")))
+        aus.append(("q-zustaendigkeitsordnung", "Ausschüsse laut Zuständigkeitsordnung",
+                    f"{q['titel']} (PDF; {q['fundstelle']}; am {tag} geladen): In gremien.json steht bei einem "
+                    "Ausschuss sein Paragraf, nur bei eindeutigem Treffer: Der Name der Organisation in der "
+                    "OParl-Schnittstelle trifft einen Ausschuss der Satzung, und keine andere nicht aufgelöste "
+                    "Organisation trifft denselben. Der Name des Gremiums stammt aus der OParl-Schnittstelle. Die "
+                    "Lizenz der Satzung ist nicht geklärt; übernommen ist nur der Paragraf, kein Text.", q["url"]))
+    return aus
 
 
 AUSGABEN = [

@@ -2330,7 +2330,9 @@ def test_verifikation_dokumentiert_und_im_paket():
                      f"{strukturdaten.KOELN_HERAUSGEBER} ({strukturdaten.KOELN_TITEL})", strukturdaten.WW_QUELLENANGABE,
                      "CC0 1.0", "dl-de/zero 2.0", config.NAMENSNENNUNG):
         assert erwartet in zeile, erwartet
-    assert len(zeile.strip().strip("|").split(" | ")) == 4 and lizenz.startswith("# Lizenzen der Daten\n\nStand 13.11.2026.")
+    # Stand der Datei: die Verifikation vom 13.11.2026 oder später (seit Entscheidung 21.11.2026 (3) (G5): 21.11.2026)
+    stand = re.match(r"# Lizenzen der Daten\n\nStand (\d\d)\.(\d\d)\.(\d{4})\. ", lizenz)
+    assert len(zeile.strip().strip("|").split(" | ")) == 4 and stand and stand.groups()[::-1] >= ("2026", "11", "13")
     technik = (root / "TECHNIK.md").read_text(encoding="utf-8").split("### Strukturdaten", 1)[1].split("\n## ", 1)[0]
     assert "- **Verifikation** (Phase 4, 13.11.2026;" in technik and "`vertrag_regel`" in technik
     bericht = (root / "explore" / "strukturdaten" / "BERICHT_strukturdaten_phase0.md").read_text(encoding="utf-8")

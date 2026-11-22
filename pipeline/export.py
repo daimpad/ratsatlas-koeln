@@ -10,7 +10,7 @@ import sqlite3
 import unicodedata
 from datetime import date, datetime, timezone
 
-from . import aemter, ausschuesse, chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, maske, plans, process as proc, prozessarten, publish, soll, topics
+from . import aemter, ausschuesse, chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, gremien, maske, plans, process as proc, prozessarten, publish, soll, topics
 from .themenseiten import ALLE as THEMENSEITEN
 
 DERIVED_NOTE = (
@@ -56,6 +56,50 @@ def _maske(db):
     return _MASKE[1]
 
 
+_GREMIEN = [None, None]
+
+
+def _gremien_kennungen(db):
+    """Kennung des Gremiums je OParl-Kennung einer Organisation in gremien.json, ohne die am Datenstand aufgelösten
+    (gremien.kennungen mit gremien.datenstand, derselbe Datenstand wie in gremien.json; Entscheidung 21.11.2026 (3)
+    (G6)); ohne Freigabe „gremien“ leer. Je Datenbankverbindung einmal bestimmt."""
+    if _GREMIEN[0] is not db:
+        _GREMIEN[:] = [db, gremien.kennungen(gremien.organisationen(db), gremien.datenstand(db))
+                       if gremien.an() else {}]
+    return _GREMIEN[1]
+
+
+_SITZUNGSNAMEN = [None, None]
+
+
+def _sitzungsnamen(db):
+    """Name je Sitzung wie in zeit.json ({source_object: Name nach der Maske}, _meetings), je Datenbankverbindung einmal
+    bestimmt; für eine Station ohne eigenen Sitzungsnamen (hinweis_station)."""
+    if _SITZUNGSNAMEN[0] is not db:
+        _SITZUNGSNAMEN[:] = [db, {m["source_object"]: m["name"] for m in _meetings(db)}]
+    return _SITZUNGSNAMEN[1]
+
+
+def _station(r, m, ref_ergebnisse, db):
+    """Station der Prozesslinie aus einem Eintrag der Beratungsfolge (Zeile aus _paper_detail). Die Kennungen der
+    Beratung, des Tagesordnungspunkts und der Organisation bleiben intern (TOP-Nummer `number` und Name des Gremiums
+    `gremium` stehen in der Station); Sitzungsname und Ergebnis laufen durch die Maske. Seit Pull Request 4a
+    (Entscheidung 21.11.2026 (2) (F10), (F12)) am Ende `hinweis` („abgesagt“ oder „verschoben“ aus dem Namen der
+    Sitzung, hinweis_station; ohne Hinweis kein Feld) und `gremium_key` (Kennung des Gremiums in gremien.json, nur wenn
+    die Organisation der Beratung dort steht und am Datenstand nicht aufgelöst ist, Entscheidung 21.11.2026 (3) (G6);
+    sonst kein Feld). Stand und Ende des Weges werten weiter nur OParl `cancelled` aus (F10)."""
+    s = {**{k: v for k, v in dict(r).items() if k not in ("beratung", "agenda_item_id", "organisation")},
+         "meeting": m.sitzungsname(r["meeting"]), "result": m(r["result"], ref_ergebnisse), "status": _status(r)}
+    if s.get("meeting_id"):
+        hinweis = hinweis_station(s, {} if s.get("meeting") else _sitzungsnamen(db))
+        if hinweis:
+            s["hinweis"] = hinweis
+    key = _gremien_kennungen(db).get(r["organisation"])
+    if key:
+        s["gremium_key"] = key
+    return s
+
+
 def _paper_detail(db, pid):
     p = db.execute(
         "SELECT p.*, o.label AS amt, o.name AS vb_name FROM paper p "
@@ -63,7 +107,8 @@ def _paper_detail(db, pid):
     # je Eintrag der Beratungsfolge eine Station (Entscheidung 17.11.2026 (14)); die Kennung der Beratung bleibt intern
     process = db.execute(
         "SELECT c.id AS beratung, c.position, c.role, c.authoritative, c.meeting_id, c.agenda_item_id, "
-        "g.name AS gremium, m.name AS meeting, m.start_date, m.cancelled, a.number, a.result, a.public "
+        "c.organization_id AS organisation, g.name AS gremium, m.name AS meeting, m.start_date, m.cancelled, a.number, "
+        "a.result, a.public "
         "FROM consultation c LEFT JOIN organization g ON g.id = c.organization_id "
         "LEFT JOIN meeting m ON m.id = c.meeting_id LEFT JOIN agenda_item a ON a.id = c.agenda_item_id "
         "WHERE c.paper_id = ? ORDER BY c.position", (pid,)).fetchall()
@@ -106,10 +151,7 @@ def _paper_detail(db, pid):
         "responsibility": [_mit_aemtertabelle({**{k: v for k, v in dict(r).items() if v is not None or k not in ("confidence", "kennung")},
                                                "evidence": m(r["evidence"], ref)}, p["date"]) for r in resp],
         "originators": fund(orig),
-        "process": [{**{k: v for k, v in dict(r).items() if k not in ("beratung", "agenda_item_id")},
-                     "meeting": m.sitzungsname(r["meeting"]),
-                     "result": m(r["result"], ref_ergebnisse), "status": _status(r)}
-                    for r in process],
+        "process": [_station(r, m, ref_ergebnisse, db) for r in process],
         "superordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
                               "JOIN paper p ON p.id = r.parent_id WHERE r.child_id = ?"),
         "subordinated": rel("SELECT p.reference, p.paper_type, p.name, p.date FROM paper_relation r "
@@ -430,6 +472,23 @@ def export_all():
     print(zeile_sitzungsnamen(zahl_sitzungen))
     print(zeile_hinweise(meetings))
     publish.write_calendar(out / "termine.ics", meetings)
+    # Stationen der Prozesslinie (Hinweis aus dem Sitzungsnamen, Kennung des Gremiums) und, mit Freigabe „gremien“,
+    # gremien.json und aemter.json (Entscheidung 21.11.2026 (2), Pull Request 4a); ohne Vorlagen (Kartenvorschau) wie
+    # zeit.json keine der beiden Dateien
+    heimat = _heimat(areas)
+    in_gebieten = [cache[pid] for pid in sorted(heimat)]
+    print(gremien.zeile_stationen(in_gebieten, gremien.stationen_aufgeloester(db, in_gebieten, gremien.datenstand(db))
+                                  if gremien.an() else None))
+    if cache and gremien.an():
+        # Liste der Sitzungen nicht aktuell: keine nächste Sitzung (gremien.sitzungsliste); Vorlagen in keiner
+        # Gebietsdatei nur für das Log (sie zählen nicht bei vorlagen_12m)
+        gremien.schreiben(out / gremien.DATEI, db, meetings, in_gebieten,
+                          stichtag(kalendertag_des_abrufs(stand), _stand()), gremien.sitzungsliste(_stand()),
+                          [cache[pid] for pid in sorted(set(cache) - set(heimat))])
+        aufbau = aemter.aufbau()
+        if aufbau:
+            _dump(out / aemter.DATEI_AUFBAU, aufbau)
+            print(aemter.zeile_aufbau(aufbau))
     n_points = publish.write_geojson(out / "vorlagen.geojson", cache,
                                      [{k: v for k, v in s.items() if k != "retrieved_at"} for s in sources])
     # Kurzfassungen (nur freigegebene, zweiter Lauf): eigene Datei für das Datenpaket, ohne Text der Quelle
@@ -452,7 +511,7 @@ def export_all():
     if _an("soll"):
         _dump(out / "soll.json", soll.site_data())
         _dump(out / "prozessarten.json", prozessarten.site_data(db))
-    heute = proc.local_day(stand) if stand else datetime.now(timezone.utc).date().isoformat()
+    heute = kalendertag_des_abrufs(stand)
     for t in (THEMENSEITEN if _an("themenseiten") else []):
         thema = dossier.daten(t, cache, home, meetings, heute, _meta(db, True))
         _dump(out / "dossiers" / f"{t.key}.json", thema)
@@ -501,6 +560,27 @@ def funktionen():
 
 def _stand():
     return json.loads(config.STAND.read_text()) if config.STAND.exists() else {}
+
+
+def kalendertag_des_abrufs(retrieved_at):
+    """Kölner Kalendertag des Abrufs der Vorlagen (retrieved_at der Quelle config.QUELLE_OPARL, proc.local_day); ohne
+    Abrufzeit heute in UTC. `heute` in export_all (Themenseiten, „Aktuell in Köln“) und Grundlage des Datenstands von
+    gremien.json (gremien.datenstand)."""
+    return proc.local_day(retrieved_at) if retrieved_at else datetime.now(timezone.utc).date().isoformat()
+
+
+def stichtag(heute, stand):
+    """Stichtag der Sitzungen: der spätere der Kölner Tage `heute` (kalendertag_des_abrufs) und der letzten regulären
+    Aktualisierung der Sitzungen (STAND.json `meetings`, _kalendertag; unlesbar oder fehlend: `heute`). Für „Aktuell in
+    Köln“ (_aktuell) und als Datenstand von gremien.json (gremien.datenstand), eine Regel."""
+    return max(heute, _kalendertag(stand.get("meetings")) or heute)
+
+
+def sitzungsliste_aktuell(stand):
+    """Ist die Liste der Sitzungen beim letzten Abruf aktualisiert worden? Nein, wenn „meetings“ in _abruf_ausgesetzt
+    oder _abruf_warnungen steht oder _abruf_fehler gilt (`stand`: Inhalt von STAND.json). Eine Regel für _aktuell (Karte
+    „Kommende Sitzungen“), gremien.sitzungsliste (nächste Sitzung in gremien.json) und check.gremien."""
+    return not (_abruf_fehler(stand) or "meetings" in _abruf_ausgesetzt(stand) or "meetings" in _abruf_warnungen(stand))
 
 
 def _abruf_fehler(stand):
@@ -706,7 +786,8 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
       `area` (Gebiet zum Öffnen wie in suche.json, nie „gesamt“; None, wenn die Vorlage in keinem Gebiet steht), `ort`
       (kurzer Name dieses Gebiets: Stadtteil, „Stadtbezirk …“ oder ORT_OHNE; ohne Gebiet None) und `source_object`.
     Eine Karte fehlt, wenn ihre Liste ausgesetzt oder nicht aktualisiert ist: `sitzungen`, wenn „meetings“ in
-    _abruf_ausgesetzt oder _abruf_warnungen steht oder _abruf_fehler gilt; `vorlagen`, wenn „papers“ in
+    _abruf_ausgesetzt oder _abruf_warnungen steht oder _abruf_fehler gilt (sitzungsliste_aktuell, dieselbe Regel für die
+    nächste Sitzung in gremien.json); `vorlagen`, wenn „papers“ in
     _abruf_ausgesetzt steht oder _abruf_fehler gilt. Eine Karte ohne Eintrag fehlt ebenso (Entscheidung 19.11.2026 (1)
     (F): ein Block ohne Daten fehlt). Fehlen beide Karten, in der Kartenvorschau (STAND.json `vorschau`) und ohne
     Vorlagen: None, index.json hat dann keinen Schlüssel `aktuell`."""
@@ -714,8 +795,8 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
         return None
     fehler, ausgesetzt = _abruf_fehler(stand), _abruf_ausgesetzt(stand)
     karten = {}
-    if not (fehler or "meetings" in ausgesetzt or "meetings" in _abruf_warnungen(stand)):
-        tag = max(heute, _kalendertag(stand.get("meetings")) or heute)
+    if sitzungsliste_aktuell(stand):
+        tag = stichtag(heute, stand)
         kommend = sorted((m for m in meetings if m["date"] >= tag and not absage(m)),
                          key=lambda m: (m["date"], m["time"] is None, m["time"] or ""))
         am_tag = sum(m["date"] == tag for m in kommend)   # stehen vorn: kein früherer Tag in `kommend`
@@ -733,11 +814,26 @@ def _aktuell(cache, home, ortsname, meetings, heute, stand):
 
 # --- Suche über ganz Köln: Themen und Parteien -------------------------------------------------------
 
+# Spalte der Kennungen der Gremien in den Zeilen von suche.json (Entscheidung 21.11.2026 (3) (G4); nur mit Freigabe
+# „gremien“, dann auch die Liste `gremium_keys`): Verweise (Stellen in `gremium_keys`, aufsteigend) auf die Kennungen an
+# den Stationen der Vorlage (gremien.kennungen_der_vorlage), also nur Gremien aus gremien.json, die am Datenstand nicht
+# aufgelöst sind (G6). Die bisherigen Spalten 0–10 bleiben unverändert; check.suche_gremien prüft die Spalte.
+SUCHE_SPALTE_KENNUNGEN = 11
+SUCHE_NOTE = ("Themen und Parteien sind abgeleitet (siehe pipeline/topics.py); Spalten: Drucksache, Titel, Datum, "
+              "Vorlagenart, Stand, Gebiet, Themen, Parteien, Parteien der übergeordneten Vorlage, federführendes Amt, "
+              "beratende Gremien")
+SUCHE_NOTE_KENNUNGEN = (", Kennungen der beratenden Gremien (Stellen in gremium_keys; Kennungen aus gremien.json, ohne "
+                        "aufgelöste Gremien)")
+
+
 def _search_index(cache, areas, names, sources=None):
     """Kompakter Index aller Vorlagen für die Suche über ganz Köln. Je Zeile: Drucksache, Titel, Datum,
     Vorlagenart, Stand, Gebiet (zum Öffnen), Themen, eigene Parteien, Parteien der übergeordneten Vorlage
-    (z. B. Stellungnahme der Verwaltung zu einem Antrag). meta.sources: Quellen mit Lizenz und Namensnennung wie in
-    den Gebietsdateien (ohne Abrufzeit, Runde 19b); die Seite liest meta nicht."""
+    (z. B. Stellungnahme der Verwaltung zu einem Antrag), federführendes Amt, beratende Gremien (Namen) und, nur mit
+    Freigabe „gremien“, die Kennungen der beratenden Gremien (SUCHE_SPALTE_KENNUNGEN, Liste `gremium_keys`).
+    meta.sources: Quellen mit Lizenz und Namensnennung wie in den Gebietsdateien (ohne Abrufzeit, Runde 19b); die Seite
+    liest meta nicht."""
+    mit_kennungen = gremien.an()
     home = _heimat(areas)
     by_ref = {p["reference"]: p for p in cache.values()}
     party_list = sorted({x for p in cache.values() for x in p["parties"]})
@@ -745,7 +841,8 @@ def _search_index(cache, areas, names, sources=None):
     types = sorted({p["paper_type"] for p in cache.values() if p["paper_type"]})
     theme_ids = [k for k, _ in topics.THEMES]
     aemter = sorted({p["amt"] for p in cache.values() if p["amt"]})
-    gremien = sorted({c["gremium"] for p in cache.values() for c in p["process"] if c["gremium"]})
+    namen = sorted({c["gremium"] for p in cache.values() for c in p["process"] if c["gremium"]})
+    keys = sorted({k for p in cache.values() for k in gremien.kennungen_der_vorlage(p)}) if mit_kennungen else []
     rows = []
     for pid, p in sorted(cache.items(), key=lambda x: (x[1]["date"] or "", x[1]["reference"]), reverse=True):
         related = {x for s in p["superordinated"] for x in (by_ref.get(s["reference"]) or {}).get("parties", [])}
@@ -755,14 +852,13 @@ def _search_index(cache, areas, names, sources=None):
                      [party_list.index(x) for x in p["parties"]],
                      [party_list.index(x) for x in sorted(related - set(p["parties"]))],
                      aemter.index(p["amt"]) if p["amt"] else -1,
-                     sorted({gremien.index(c["gremium"]) for c in p["process"] if c["gremium"]})])
+                     sorted({namen.index(c["gremium"]) for c in p["process"] if c["gremium"]})]
+                    + ([[keys.index(k) for k in gremien.kennungen_der_vorlage(p)]] if mit_kennungen else []))
     return {"meta": {**({"sources": sources} if sources is not None else {}),
-                     "note": "Themen und Parteien sind abgeleitet (siehe pipeline/topics.py); Spalten: "
-                             "Drucksache, Titel, Datum, Vorlagenart, Stand, Gebiet, Themen, Parteien, "
-                             "Parteien der übergeordneten Vorlage, federführendes Amt, beratende Gremien"},
+                     "note": SUCHE_NOTE + (SUCHE_NOTE_KENNUNGEN if mit_kennungen else "")},
             "themes": [{"id": k, "label": v} for k, v in topics.THEMES], "parties": party_list,
             "areas": [{"key": k, "name": names[k]} for k in area_list], "types": types, "stands": list(proc.STAENDE),
-            "aemter": aemter, "gremien": gremien, "rows": rows}
+            "aemter": aemter, "gremien": namen, **({"gremium_keys": keys} if mit_kennungen else {}), "rows": rows}
 
 
 # Federführung und Zuordnung zur Ämtertabelle je Vorlage mit Federführung (ohne Titel; „angabe“ ist der Name der
@@ -919,7 +1015,8 @@ def hinweis_sitzung(name):
     """Hinweis zum Stand aus dem Namen einer Sitzung nach der festen Wortliste (_HINWEIS_ABGESAGT vor
     _HINWEIS_VERSCHOBEN): „abgesagt“, „verschoben“ oder None (kein Wort der Liste, kein Name). `name`: der Name nach der
     Maske (Maske.sitzungsname), wie er in zeit.json steht. Eine Regel für _meetings (zeit.json, „Aktuell in Köln“ in
-    index.json, Zeile im Log) und check.hinweise_sitzungen. Unabhängig von OParl `cancelled` und vom Gremium: Auch eine
+    index.json, Zeile im Log), check.hinweise_sitzungen und, über hinweis_station, für _station (Stationen der
+    Prozesslinie in den Gebietsdateien) und check.stationen. Unabhängig von OParl `cancelled` und vom Gremium: Auch eine
     Sitzung mit Organisation erhält den Hinweis aus ihrem Namen."""
     if not isinstance(name, str):
         return None
@@ -929,6 +1026,16 @@ def hinweis_sitzung(name):
     if _HINWEIS_VERSCHOBEN.search(text):
         return "verschoben"
     return None
+
+
+def hinweis_station(station, namen):
+    """Hinweis zum Stand an einer Station der Prozesslinie (Entscheidung 21.11.2026 (1) (c) (10), (2) (F10)):
+    hinweis_sitzung über den Namen ihrer Sitzung nach der Maske (`meeting`, Maske.sitzungsname wie in zeit.json); hat
+    die Station keinen Namen, der Name derselben Sitzung in zeit.json (`namen`: {source_object: Name}, über
+    `meeting_id`). Ohne Sitzung (`meeting_id` leer) None. Eine Regel für _station (Gebietsdateien) und check.stationen."""
+    if not station.get("meeting_id"):
+        return None
+    return hinweis_sitzung(station.get("meeting") or namen.get(station["meeting_id"]))
 
 
 def zeile_hinweise(meetings):
@@ -949,10 +1056,12 @@ _RANG_ABSAGE = {None: 0, "oparl": 1, "name": 2}
 def absage(m):
     """Gilt eine Sitzung als abgesagt, und warum (Entscheidung 21.11.2026 (1) (c) (9))? „oparl“ bei OParl `cancelled`,
     sonst „name“ bei Hinweis „abgesagt“ aus dem Namen (`hinweis`, hinweis_sitzung), sonst None. `m`: eine Sitzung aus
-    _meetings oder aus zeit.json (`meetings`). Der Hinweis „verschoben“ ist keine Absage. Eine Regel für _aktuell
-    („Aktuell in Köln“), time_audit_rows (audit_zeit.tsv), publish.write_calendar (termine.ics), verify.verify_time und
-    check.absagen_kalender; die Stadt setzt OParl `cancelled` bei keiner Sitzung (Lauf 62: 0 von 3 362), eine Absage
-    steht in Köln nur im Namen."""
+    _meetings oder aus zeit.json (`meetings`) oder eine Station der Prozesslinie (`cancelled` als 0 oder 1, `hinweis`
+    aus hinweis_station). Der Hinweis „verschoben“ ist keine Absage. Eine Regel für _aktuell („Aktuell in Köln“),
+    time_audit_rows (audit_zeit.tsv), publish.write_calendar (termine.ics), verify.verify_time,
+    check.absagen_kalender und gremien.json (gremien.sitzungen, gremien.vorlagen, gremien.ohne_organisation_kommend,
+    check.gremien); die Stadt setzt OParl `cancelled` bei keiner Sitzung (Lauf 62: 0 von 3 362), eine Absage steht in
+    Köln nur im Namen."""
     if m.get("cancelled"):
         return "oparl"
     if m.get("hinweis") == "abgesagt":

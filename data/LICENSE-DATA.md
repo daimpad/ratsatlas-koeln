@@ -1,6 +1,6 @@
 # Lizenzen der Daten
 
-Stand 13.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/` gilt:
+Stand 21.11.2026. Der Code steht unter MIT (`LICENSE`). Für die Daten in `data/` gilt:
 
 Die Pfade beginnen unter `data/`: Auf der Seite liegt `export/koeln/vorlagen.geojson` also unter `data/export/koeln/vorlagen.geojson`, im Datenpaket (Zip) liegt der Inhalt von `export/` direkt im Ordner `ratsatlas-koeln/` (`ratsatlas-koeln/koeln/vorlagen.geojson`) und `geo/` unter `ratsatlas-koeln/geo/`; `kontext/`, `ebenen/` und `aemter/` liegen nur im Repository, auf der Seite und im Paket stehen die daraus abgeleiteten Dateien unter `export/koeln/`.
 
@@ -11,7 +11,7 @@ Die Pfade beginnen unter `data/`: Auf der Seite liegt `export/koeln/vorlagen.geo
 | `geo/strassen_koeln.json` | abgeleitet aus Stadt Köln, Datensatz „Straßen Köln“ (Lage je Stadtteil, Kreuzungen; Namen ausgeschrieben) | dl-de/zero 2.0 | wie oben |
 | `geo/hausnummern_koeln.json` | abgeleitet aus Stadt Köln, Datensatz „Adressen Köln“ (Hausnummern je Straße und Stadtteil, Hauskoordinaten mit 5 Nachkommastellen) | dl-de/zero 2.0 | wie oben |
 | `geo/bebauungsplaene_koeln.geojson` | OGC-API „Bauleitplanung in NRW (INSPIRE)“ des MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln (`ogc-api.nrw.de/inspire-lu-bplan/v1`); nur rechtsverbindliche Pläne, um 0,5 m vereinfacht, Plannummer in der Schreibweise der Vorlagentitel | Datenlizenz Deutschland – Namensnennung – Version 2.0 (Angabe der Schnittstelle; die Metadaten nennen „keine Bedingungen“, geführt wird die strengere Angabe) | MHKBD NRW / IT.NRW, Bauleitplanung in NRW; Datengrundlage Stadt Köln |
-| `aemter/aemter_koeln.tsv` | Stadt Köln, „Geschäfts- und Dezernatsverteilungsplan der Stadt Köln“ (PDF, https://www.stadt-koeln.de/mediaasset/content/verwaltung/geschaefts-und-dezernatsverteilungsplan.pdf), Stand 01.11.2026, abgerufen und damit zuletzt geprüft am 13.11.2026 (Prüfsumme je Zeile; zugeordnet werden nur Vorlagen vom Stand bis zu diesem Tag); abgeleitet mit `tools/aemter_tabelle.py`: je Dezernat und Dienststelle Kennung, Bezeichnung, Ebene und Fundstelle im Plan (Seite, Spalte, Eintrag); ohne Namen von Personen und ohne weiteren Text, versioniert mit dem Stand des Plans (`gueltig_ab`) | im Plan keine Lizenz angegeben; übernommen sind nur Kennungen und Bezeichnungen (Tatsachenangaben), keine Textauszüge; Klärung mit der Stadt offen | Stadt Köln, Geschäfts- und Dezernatsverteilungsplan, Stand 01.11.2026 |
+| `aemter/aemter_koeln.tsv` | Stadt Köln, „Geschäfts- und Dezernatsverteilungsplan der Stadt Köln“ (PDF, https://www.stadt-koeln.de/mediaasset/content/verwaltung/geschaefts-und-dezernatsverteilungsplan.pdf), Stand 01.11.2026, abgerufen und damit zuletzt geprüft am 13.11.2026 (Prüfsumme je Zeile; zugeordnet werden nur Vorlagen vom Stand bis zu diesem Tag); abgeleitet mit `tools/aemter_tabelle.py`: je Dezernat und Dienststelle Kennung, Bezeichnung, Ebene und Fundstelle im Plan (Seite, Spalte, Eintrag); ohne Namen von Personen und ohne weiteren Text, versioniert mit dem Stand des Plans (`gueltig_ab`) | im Plan keine Lizenz angegeben; übernommen sind nur Nummern und Bezeichnungen (Tatsachenangaben), keine Textauszüge; Klärung mit der Stadt offen | Stadt Köln, Geschäfts- und Dezernatsverteilungsplan, Stand 01.11.2026 |
 | `kontext/zensus_koeln.tsv` | Zensus 2022, Gitterzellen 100 m (Destatis), Zellen mit Mittelpunkt in Köln | Datenlizenz Deutschland – Namensnennung – Version 2.0 | © Statistisches Bundesamt (Destatis), Zensus 2022 |
 | `kontext/bodenrichtwerte_koeln.geojson` | BORIS NRW, Bodenrichtwerte Wohnbauland (Gutachterausschuss Köln) | dl-de/zero 2.0 | – |
 | `kontext/klima_koeln.geojson` | Klimaanalyse NRW 2026, Planungshinweiskarte | dl-de/zero 2.0 | – |
@@ -41,6 +41,15 @@ Die Pfade beginnen unter `data/`: Auf der Seite liegt `export/koeln/vorlagen.geo
 | `export/glossar.json` | Erklärungen und Bezeichnungen des Ratsatlas mit Fundstelle je Begriff; der Text steht im Code (`pipeline/glossar.py`, `process.py`, `topics.py`) | wie der Code: MIT | Hinweis wie in `LICENSE` |
 | `export/abrufstatistik.tsv` (entsteht beim Abruf; nur im Datenpaket) | eigene Protokollierung | dl-de/zero 2.0 | – |
 
+<!-- nur-mit: gremien -->
+Gremien und Aufbau der Verwaltung („Wer entscheidet“):
+
+| Datei | Quelle | Lizenz | Namensnennung |
+|---|---|---|---|
+| `export/koeln/gremien.json` | abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API, Katalog „OParl API Koeln“ auf offenedaten-koeln.de): Organisationen der Klassen Rat, Fachausschüsse und weitere Gremien und Bezirksvertretungen (ohne Fraktionen und Gruppen) mit Name, Enddatum und Link, dazu Sitzungen und Beratungen; ohne Besetzung und ohne Namen von Personen. Gruppe, Stadtbezirk der Bezirksvertretung, Sitzungen und Vorlagen in 12 Monaten und nächste Sitzung eigene Ableitung (`pipeline/gremien.py`). Paragraf aus der Zuständigkeitsordnung der Stadt Köln vom 02.06.2026 (https://www.stadt-koeln.de/mediaasset/content/satzungen/zustaendigkeitsordnung_2026-06-02.pdf, am 16.11.2026 geladen): nur die Paragrafennummer, zugeordnet über den Namen der Organisation in der OParl-API (nur bei eindeutigem Treffer); der Name des Gremiums stammt aus der OParl-API; kein Text der Satzung | Ratsinformationssystem: laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen; Zuständigkeitsordnung: Lizenz nicht geklärt, übernommen sind nur Paragrafennummern (Tatsachenangaben); im DCAT-Katalog im Rechtehinweis als Teil ohne geklärte Lizenz | Datenquelle: Stadt Köln – offenedaten-koeln.de; Zuständigkeitsordnung der Stadt Köln vom 02.06.2026 |
+| `export/koeln/aemter.json` | abgeleitet aus `aemter/aemter_koeln.tsv` (Stadt Köln, „Geschäfts- und Dezernatsverteilungsplan der Stadt Köln“, Stand 01.11.2026, zuletzt geprüft am 13.11.2026): Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen („•“), Einträge mit „●“ als eigene Gruppe ohne Zuordnung; ohne Untereinheiten der Dienststellen, ohne Namen von Personen, ohne Zahlen von Vorlagen; nicht im DCAT-Katalog, weil der Plan keine Lizenz nennt (der Plan steht im Rechtehinweis des Datenpakets als Teil ohne geklärte Lizenz) | im Plan keine Lizenz angegeben; übernommen sind nur Nummern und Bezeichnungen (Tatsachenangaben), keine Textauszüge; Klärung mit der Stadt offen | Stadt Köln, Geschäfts- und Dezernatsverteilungsplan, Stand 01.11.2026 |
+
+<!-- ende -->
 <!-- nur-mit: strukturdaten -->
 Strukturdaten auf der Seite und abgeleitete Werte:
 

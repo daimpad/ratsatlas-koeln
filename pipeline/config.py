@@ -171,6 +171,11 @@ ZUSATZTHEMEN = {
     # Stimmbezirke. Eingeschaltet erst nach Klärung der Lizenz mit der Statistikstelle und nach der ersten
     # Veröffentlichung; ohne Freigabe bleibt kontext.json wie zuvor (TECHNIK.md, „Wahlbeteiligung je Stadtteil“)
     "wahlbeteiligung": False,
+    # Kölner Gremien und Ämter für „Wer entscheidet“ (Entscheidung 21.11.2026 (2) (F4), Pull Request 4a): gremien.json
+    # und aemter.json (pipeline/gremien.py, pipeline/aemter.py) und die Kennung des Gremiums je Station der
+    # Prozesslinie. Eigenes Kölner Modul; die Bonner Teile (prozessarten.py, soll.json, besetzung.py) bleiben unter
+    # „soll“ und „besetzung“ abgeschaltet. Ohne Freigabe keine der beiden Dateien und keine Kennung an den Stationen
+    "gremien": True,
 }
 
 # Archiv der Zusatzthemen „baustellen“ und „anliegen“ (abgeschaltet; Branch „archiv“, im Workflow nach _archiv

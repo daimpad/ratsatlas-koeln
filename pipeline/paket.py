@@ -9,8 +9,9 @@ Audits, Stichproben und Abrufstatistik gibt es nur hier, nicht als lose Dateien 
 Entscheidung 10.11.2026); das Paket entsteht daher vor dem Zusammenstellen der Seite aus ganz data/export.
 Mit Freigabe „strukturdaten“ (config.ZUSATZTHEMEN) liegen zusätzlich alle Dateien des Datenvertrags „Strukturdaten“
 unverändert unter strukturdaten/ (samt Prüfprotokollen, ohne die Aufteilung für die Seite), und LIESMICH.txt nennt sie
-(`liesmich`); LICENSE-DATA.md steht nach den Freigaben im Paket (pipeline/freigaben.py). Ohne Freigabe bleibt das
-Paket wie zuvor."""
+(`liesmich`); LICENSE-DATA.md steht nach den Freigaben im Paket (pipeline/freigaben.py). Mit Freigabe „gremien“
+liegen koeln/gremien.json und koeln/aemter.json im Paket (export schreibt sie nur mit Freigabe), und LIESMICH.txt nennt
+sie vor dem Eintrag zu audit_*.tsv (LIESMICH_GREMIEN). Ohne diese Freigaben bleibt das Paket wie zuvor."""
 import zipfile
 from pathlib import Path
 
@@ -61,14 +62,32 @@ LIESMICH_STRUKTURDATEN = """- strukturdaten/: Strukturdaten im Datenvertrag „S
 """
 
 
+# Ergänzung von LIESMICH.txt mit Freigabe „gremien“ (vor dem Eintrag zu audit_*.tsv; Entscheidung 21.11.2026 (2))
+LIESMICH_GREMIEN = """- koeln/gremien.json: Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien aus dem Ratsinformationssystem
+  (ohne Fraktionen und Gruppen, ohne Besetzung, keine Namen von Personen) mit Sitzungen und Vorlagen in 12 Monaten und
+  nächster Sitzung (abgeleitet); Paragrafen der Zuständigkeitsordnung der Stadt Köln vom 02.06.2026 nur als Nummer
+  mit Link auf die Satzung (Lizenz der Satzung nicht geklärt)
+- koeln/aemter.json: Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen aus dem Geschäfts- und
+  Dezernatsverteilungsplan der Stadt Köln, ohne Untereinheiten (im Plan keine Lizenz angegeben; Stand und letzte
+  Prüfung in meta)
+"""
+
+
 def liesmich():
-    """LIESMICH.txt des Pakets: mit Freigabe „strukturdaten“ um deren Eintrag ergänzt, sonst unverändert."""
+    """LIESMICH.txt des Pakets: mit Freigabe „gremien“ um deren Eintrag ergänzt, mit Freigabe „strukturdaten“ um deren
+    Eintrag; ohne Freigaben unverändert."""
+    text = LIESMICH
+    if config.ZUSATZTHEMEN.get("gremien"):
+        anker = "- audit_*.tsv: Prüfprotokolle"
+        if text.count(anker) != 1:
+            raise ValueError("LIESMICH: Eintrag zu audit_*.tsv nicht gefunden")
+        text = text.replace(anker, LIESMICH_GREMIEN + anker)
     if not strukturdaten_web.an():
-        return LIESMICH
+        return text
     anker = "- berichte/: Berichte der Projektphasen\n"
-    if LIESMICH.count(anker) != 1:
+    if text.count(anker) != 1:
         raise ValueError("LIESMICH: Eintrag zu berichte/ nicht gefunden")
-    return LIESMICH.replace(anker, LIESMICH_STRUKTURDATEN + anker)
+    return text.replace(anker, LIESMICH_STRUKTURDATEN + anker)
 
 
 def write(target=None):

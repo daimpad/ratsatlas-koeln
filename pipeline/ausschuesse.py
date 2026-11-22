@@ -23,6 +23,7 @@ from . import config, geocode
 
 QUELLE = {
     "titel": "Zuständigkeitsordnung der Stadt Köln vom 02.06.2026",
+    "stand": "2026-06-02",   # Datum der Satzung (Titel); in gremien.json meta.zustaendigkeitsordnung
     "fundstelle": "ABl StK 2026, S. 173; öffentliche Bekanntmachung vom 16.06.2026",
     "url": "https://www.stadt-koeln.de/mediaasset/content/satzungen/zustaendigkeitsordnung_2026-06-02.pdf",
     "abgerufen": "2026-11-16",

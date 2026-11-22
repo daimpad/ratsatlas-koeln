@@ -4,8 +4,8 @@ versioniert mit Gültigkeitsdatum (CLAUDE.md 3.2), und Zuordnung der Federführu
 Tabelle `data/aemter/aemter_koeln.tsv`, erzeugt ohne Netz mit `tools/aemter_tabelle.py` aus dem PDF der Stadt. Je Plan
 eine Gruppe von Zeilen mit demselben `gueltig_ab` (der „Stand“, den der Plan nennt); ein neuer Plan kommt als weitere
 Gruppe dazu. Jede Zeile nennt ihre Fundstelle (Seite, Spalte, Eintrag), die Adresse, die Abrufzeit und die Prüfsumme
-des PDFs. Übernommen sind nur Kennungen und Bezeichnungen von Dezernaten und Dienststellen, keine Namen von Personen und
-kein weiterer Text.
+des PDFs. Übernommen sind nur Nummern und Bezeichnungen von Dezernaten und Dienststellen, keine Namen von Personen und
+kein weiterer Text; die Kennung (Dezernat/Nummer) bildet tools/aemter_tabelle.py (NOTE_KENNUNG).
 
 Zuordnung (`zuordnen`): Belegt ist ein Plan von seinem Stand bis zu seiner letzten Prüfung, dem Tag des jüngsten Abrufs
 (`abgerufen`; ein erneuter Abruf mit `tools/aemter_tabelle.py` verlängert ihn, wenn die Stadt dasselbe PDF ausliefert),
@@ -287,6 +287,13 @@ def quellenangabe(pfad=None):
     return f"Stand {stand_text(p.stand)}, zuletzt geprüft am {stand_text(p.geprueft)}" if p else None
 
 
+def namensnennung(pfad=None):
+    """„Stadt Köln, Geschäfts- und Dezernatsverteilungsplan, Stand 01.11.2026“ für den jüngsten Plan der Tabelle
+    (aemter.json `meta.quellenangabe`, Rechtehinweis im DCAT, publish._teil_plan); ohne Tabelle None."""
+    p = tabelle(pfad).neuester()
+    return f"Stadt Köln, Geschäfts- und Dezernatsverteilungsplan, Stand {stand_text(p.stand)}" if p else None
+
+
 def fundstelle(eintrag):
     """„Geschäfts- und Dezernatsverteilungsplan der Stadt Köln, Stand 01.11.2026, Seite 1, Spalte Dezernat VI,
     Eintrag 12“."""
@@ -320,3 +327,87 @@ def zuordnung_federfuehrung(r, datum, pfad=None):
     """Zuordnung einer Zeile der Federführung (kind „federfuehrend“) aus dem Export: Kennung aus dem Kopf der Vorlage
     (Spalte `kennung`, Schritt „Dokumente“), sonst der Name der Organisation aus `underDirectionOf` (`name`)."""
     return zuordnen(name=r.get("name"), kennung=r.get("kennung"), datum=datum, pfad=pfad)
+
+
+# --- Aufbau der Verwaltung für „Wer entscheidet“ (Entscheidung 21.11.2026 (2) (F8), Pull Request 4a) ----------------
+
+DATEI_AUFBAU = "aemter.json"
+# Einträge unter einem Dezernat in aemter.json: Einheiten des Dezernats („VI/2“; dem Dezernat unmittelbar zugeordnet, in
+# der Spalte des Dezernats wie die Dienststellen, keine Untereinheit einer Dienststelle), Dienststellen („61“) und
+# Punktdienststellen mit „•“ (die Legende erklärt „•“ als Punktdienststelle). Nicht aufgenommen sind die Untereinheiten
+# der Dienststellen („612“, „64/1“; nicht vollständig von Hand auf Namen von Personen geprüft) und die übergeordnete
+# Dienststelle vierstelliger Nummern, die nur aus den ersten beiden Ziffern abgeleitet ist (`uebergeordnet`).
+EBENEN_AUFBAU = ("dezernatseinheit", "dienststelle", "punktdienststelle")
+# Einträge mit „●“ (Museen, Jobcenter, Puppenspiele): Die Legende erklärt „●“ nicht, die übergeordnete Dienststelle ist
+# abgeleitet (TECHNIK.md, „Federführung und Ämtertabelle“, Offen); in aemter.json eine eigene Gruppe ohne Zuordnung, also
+# ohne Dezernat, Kennung und Ebene
+OHNE_ZUORDNUNG = "●"
+# Felder in aemter.json, sonst keine (keine Namen von Personen, keine Zahlen von Vorlagen); check.aemter_aufbau meldet
+# jedes andere Feld
+FELDER_DEZERNAT = ("dezernat", "kennung", "name", "label", "fundstelle", "einheiten")
+FELDER_EINHEIT = ("nummer", "kennung", "name", "kurzname", "label", "ebene", "eigenbetriebsaehnlich", "fundstelle")
+FELDER_OHNE_ZUORDNUNG = ("nummer", "name", "label", "markierung", "fundstelle")
+# „Nummern“, nicht „Kennungen“: Übernommen sind die Nummern des Plans („61“); das Feld `kennung` bildet
+# tools/aemter_tabelle.py aus Dezernat und Nummer, der Plan führt diese Schreibweise nicht (Entscheidung 21.11.2026 (3)
+# (G5); Nachprüfung: vorher nannte LIZENZ_AUFBAU die Kennungen übernommen, im Widerspruch zu NOTE_KENNUNG)
+LIZENZ_AUFBAU = ("im Plan keine Lizenz angegeben; übernommen sind nur Nummern und Bezeichnungen (Tatsachenangaben), "
+                 "keine Textauszüge; Klärung mit der Stadt offen")
+NOTE_KENNUNG = ("Das Feld „kennung“ bildet das Projekt aus Dezernat und Nummer (Dezernat/Nummer, etwa „VI/61“; beim "
+                "Dezernat das Dezernat allein); es ist keine Schreibweise des Plans.")
+
+
+def _einheit(z):
+    e = {"nummer": z["dienststelle"], "kennung": z["kennung"], "name": z["name"]}
+    if z["kurzname"]:
+        e["kurzname"] = z["kurzname"]
+    e.update({"label": label(z), "ebene": z["ebene"]})
+    if z["eigenbetriebsaehnlich"]:
+        e["eigenbetriebsaehnlich"] = True
+    e["fundstelle"] = z["fundstelle"]
+    return e
+
+
+def aufbau(pfad=None):
+    """Inhalt von aemter.json aus dem jüngsten Plan der Tabelle (Tabelle.neuester): `dezernate` in der Reihenfolge der
+    Tabelle, je mit `einheiten` der Ebenen EBENEN_AUFBAU ohne „●“, und `ohne_zuordnung` mit den Einträgen mit „●“; `meta`
+    mit Quelle (Titel, Adresse, Stand, letzte Prüfung, Prüfsumme), Quellenangabe und Lizenz. `fundstelle` je Eintrag
+    ist die Stelle im Plan wie in der Tabelle (Seite, Spalte, Eintrag), Titel und Stand stehen einmal in `meta`. Ohne
+    Plan None."""
+    plan = tabelle(pfad).neuester()
+    if plan is None:
+        return None
+    dezernate, ohne = {}, []
+    for z in plan.zeilen:
+        if z["ebene"] == "dezernat":
+            dezernate[z["dezernat"]] = {"dezernat": z["dezernat"], "kennung": z["kennung"], "name": z["name"],
+                                        "label": label(z), "fundstelle": z["fundstelle"], "einheiten": []}
+    for z in plan.zeilen:
+        if z["markierung"] == OHNE_ZUORDNUNG:
+            ohne.append({"nummer": z["dienststelle"], "name": z["name"], "label": label(z),
+                         "markierung": z["markierung"], "fundstelle": z["fundstelle"]})
+        elif z["ebene"] in EBENEN_AUFBAU:
+            dezernate[z["dezernat"]]["einheiten"].append(_einheit(z))
+        elif z["ebene"] not in ("dezernat", "untereinheit"):
+            raise ValueError(f"Plan {plan.stand}: unbekannte Ebene {z['ebene']!r}")
+    erste = plan.zeilen[0]
+    return {"meta": {"quelle": {"titel": TITEL, "url": erste["quelle"], "stand": plan.stand,
+                                "geprueft": plan.geprueft, "sha256": erste["sha256"]},
+                     "quellenangabe": namensnennung(pfad),
+                     "lizenz": LIZENZ_AUFBAU,
+                     "note": "Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen („•“) aus dem Plan, ohne "
+                             "die Untereinheiten der Dienststellen; Einträge mit „●“ ohne Zuordnung (im Plan nicht "
+                             "erklärt). Nur Nummern und Bezeichnungen, keine Namen von Personen, keine Zahlen von "
+                             "Vorlagen. " + NOTE_KENNUNG},
+            "dezernate": list(dezernate.values()), "ohne_zuordnung": ohne}
+
+
+def zeile_aufbau(daten, pfad=None):
+    """Zeile im Log von `export`, nur Zahlen: Dezernate, Einträge je Ebene, ohne Zuordnung („●“) und die nicht
+    aufgenommenen Untereinheiten des jüngsten Plans."""
+    einheiten = [e for d in daten["dezernate"] for e in d["einheiten"]]
+    je = {eb: sum(e["ebene"] == eb for e in einheiten) for eb in EBENEN_AUFBAU}
+    unter = sum(z["ebene"] == "untereinheit" for z in tabelle(pfad).neuester().zeilen)
+    return (f"Ämter ({DATEI_AUFBAU}, Stand {daten['meta']['quelle']['stand']}): Dezernate {len(daten['dezernate'])}, "
+            f"Einheiten der Dezernate {je['dezernatseinheit']}, Dienststellen {je['dienststelle']}, Punktdienststellen "
+            f"{je['punktdienststelle']}, ohne Zuordnung („●“) {len(daten['ohne_zuordnung'])}, Untereinheiten nicht "
+            f"aufgenommen {unter}")
