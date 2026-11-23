@@ -223,8 +223,8 @@ async function termineJeGebiet(browser, profil, extra) {
   await ctx.close();
 }
 
-// B2: Telefon, Auswertung offen (seit 20.11.2026 aus dem Menü „Themen“), dann Menü ☰: das Menü liegt oben; Esc schließt
-// erst das Menü, dann die Auswertung
+// B2: Telefon, „In Zahlen“ offen (seit 20.11.2026 aus dem Menü „Themen“), dann Menü ☰: das Menü liegt oben; Esc schließt
+// erst das Menü, dann „In Zahlen“
 async function menueUeberAuswertung(browser, gebiet) {
   const profil = "telefon";
   const { ctx, page, fehler } = await neueSeite(browser, profil);
@@ -240,7 +240,7 @@ async function menueUeberAuswertung(browser, gebiet) {
     const oben = document.elementFromPoint(h.left + 10, h.top + h.height / 2);
     return { navOffen: document.body.classList.contains("nav-open"), auswertungOben: Boolean(oben && oben.closest("#panel-auswertung")) };
   });
-  pruefen(profil, "Auswertung aus dem Menü geöffnet, Menü zu, Auswertung sichtbar", !zustand1.navOffen && zustand1.auswertungOben, zustand1);
+  pruefen(profil, "„In Zahlen“ aus dem Menü geöffnet, Menü zu, „In Zahlen“ sichtbar", !zustand1.navOffen && zustand1.auswertungOben, zustand1);
   await page.click("#nav-burger");
   await page.waitForTimeout(300);
   const zustand2 = await page.evaluate(() => {
@@ -256,18 +256,18 @@ async function menueUeberAuswertung(browser, gebiet) {
     }).map((e) => e.id || e.dataset.mega || e.dataset.panel);
     return { navOffen: document.body.classList.contains("nav-open"), ziele: ziele.length, verdeckt, auswertungOffen: !document.getElementById("panel-auswertung").hidden };
   });
-  pruefen(profil, "Menü ☰ über der offenen Auswertung (kein Eintrag verdeckt)", zustand2.navOffen && zustand2.auswertungOffen && zustand2.ziele > 3 && zustand2.verdeckt.length === 0, zustand2);
+  pruefen(profil, "Menü ☰ über „In Zahlen“ (kein Eintrag verdeckt)", zustand2.navOffen && zustand2.auswertungOffen && zustand2.ziele > 3 && zustand2.verdeckt.length === 0, zustand2);
   const axeMenue = await axe(page);
-  if (axeMenue) pruefen(profil, "axe Menü über Auswertung", axeMenue.length === 0, axeMenue);
+  if (axeMenue) pruefen(profil, "axe Menü über „In Zahlen“", axeMenue.length === 0, axeMenue);
   await page.keyboard.press("Escape");
   await page.waitForTimeout(200);
   const zustand3 = await page.evaluate(() => ({ navOffen: document.body.classList.contains("nav-open"), fokus: document.activeElement.id,
     auswertungOffen: !document.getElementById("panel-auswertung").hidden }));
-  pruefen(profil, "Esc schließt zuerst das Menü (Fokus auf ☰), Auswertung bleibt", !zustand3.navOffen && zustand3.fokus === "nav-burger" && zustand3.auswertungOffen, zustand3);
+  pruefen(profil, "Esc schließt zuerst das Menü (Fokus auf ☰), „In Zahlen“ bleibt", !zustand3.navOffen && zustand3.fokus === "nav-burger" && zustand3.auswertungOffen, zustand3);
   await page.keyboard.press("Escape");
   await page.waitForTimeout(200);
   const zustand4 = await page.evaluate(() => ({ auswertungOffen: !document.getElementById("panel-auswertung").hidden }));
-  pruefen(profil, "zweites Esc schließt die Auswertung", !zustand4.auswertungOffen, zustand4);
+  pruefen(profil, "zweites Esc schließt „In Zahlen“", !zustand4.auswertungOffen, zustand4);
   pruefen(profil, "keine Skriptfehler (Menü)", fehler.length === 0, fehler);
   await ctx.close();
 }

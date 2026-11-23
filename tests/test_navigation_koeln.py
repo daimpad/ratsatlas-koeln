@@ -504,7 +504,7 @@ console.log(JSON.stringify(aus));
 
 def test_wege_zurueck_und_schliessen():
     """„Zurück zu Köln“ in Liste und Startfenster eines Gebiets, „Zurück zur Liste“ im Vorgang; closePanel gibt den
-    Fokus über rueckZiel zurück (Auswertung zu „Themen“ oder „Wer entscheidet“ je Reiter); die Fenster „Über“ und „Was
+    Fokus über rueckZiel zurück („In Zahlen“ zu „Themen“ oder „Wer entscheidet“ je Reiter); die Fenster „Über“ und „Was
     ist neu?“ ebenso; Escape schließt Menüs und Flächen; Wortmarke, Seitentitel und „Aktuell anzeigen“ führen zu „Los
     geht's“."""
     assert '<button type="button" class="link-btn" data-zurueck-koeln><span aria-hidden="true">← </span>Zurück zu Köln</button>' in INDEX

@@ -187,7 +187,7 @@ async function tastatur(browser, profil) {
     pruefen(profil, "Tab: zuerst der Seitentitel (Link zu „Los geht's“), sichtbar mit Rahmen", /titel-link/.test(folge[0].klasse)
       && folge[0].sichtbar && folge[0].rahmen && folge[0].text.startsWith("Ratsatlas Köln: zu"), folge[0]);
   }
-  // Themen → Kennzahlen: Esc schließt die Auswertung, Fokus auf „Themen“ (Telefon: ☰)
+  // Themen → Kennzahlen: Esc schließt „In Zahlen“, Fokus auf „Themen“ (Telefon: ☰)
   const zurueck = async (mega, karte, flaeche, name) => {
     await menueOeffnen(page, profil, mega);
     await page.focus(karte);

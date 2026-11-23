@@ -174,8 +174,11 @@ async function flaeche(browser, profil, gremien) {
     gruppen: [...document.querySelectorAll("#wer-body .org-h")].map((h) => h.textContent), details: document.querySelectorAll("#wer-body details").length,
     knoten: document.querySelectorAll("#wer-body .org-node").length }));
   const aktiv = gremien.gremien.filter((g) => !g.aufgeloest);
-  pruefen(profil, "Schaubild: Rat oben, Gruppen aus meta.gruppen, alle nicht aufgelösten Gremien sichtbar, nichts eingeklappt", bild.oben === aktiv.find((g) => g.gruppe === "rat").name
-    && bild.knoten === aktiv.length && bild.details === 0 && bild.gruppen.includes(gremien.meta.gruppen.uebrige), bild);
+  // Überschriften aus meta.gruppen mit großem Anfangsbuchstaben („übrige Gremien“ → „Übrige Gremien“; Nachprüfung 4b)
+  const gross = (t) => t.charAt(0).toLocaleUpperCase("de") + t.slice(1);
+  pruefen(profil, "Schaubild: Rat oben, Gruppen aus meta.gruppen (groß am Anfang), alle nicht aufgelösten Gremien sichtbar, nichts eingeklappt", bild.oben === aktiv.find((g) => g.gruppe === "rat").name
+    && bild.knoten === aktiv.length && bild.details === 0 && bild.gruppen.includes(gross(gremien.meta.gruppen.uebrige))
+    && bild.gruppen.every((h) => h === gross(h)), bild);
   const ziel = aktiv.find((g) => g.gruppe === "ausschuss") || aktiv[1];
   await page.click(`#wer-body .org-node[data-kennung="${ziel.key}"]`);
   await page.waitForTimeout(200);
@@ -198,6 +201,20 @@ async function flaeche(browser, profil, gremien) {
   const bv = gremien.gremien.filter((g) => !g.aufgeloest && /bezirksvertretung/i.test(g.name)).length;
   pruefen(profil, "Liste: Suche baut nur die Einträge neu, Fokus bleibt im Suchfeld, Statuszeile nennt die Zahl", suche.eintraege === bv
     && suche.status === `${bv} Gremien` && suche.fokus === "wer-q", suche);
+  // Suche, die nur auf ein früheres Gremium passt, ohne „frühere Gremien zeigen“: ein Satz statt „Kein Gremium passt“,
+  // die Statuszeile nennt das ausgeblendete Gremium (Nachprüfung 4b)
+  const frueheres = gremien.gremien.find((g) => g.aufgeloest && !gremien.gremien.some((x) => !x.aufgeloest && x.name.toLowerCase().includes(g.name.toLowerCase())));
+  if (frueheres) {
+    const passend = gremien.gremien.filter((g) => g.aufgeloest && g.name.toLowerCase().includes(frueheres.name.toLowerCase())).length;
+    await page.fill("#wer-q", frueheres.name);
+    await page.waitForTimeout(600);
+    const nur = await page.evaluate(() => ({ text: document.getElementById("wer-liste").innerText.trim(), status: document.getElementById("wer-status").textContent,
+      eintraege: document.querySelectorAll("#wer-liste details").length, fokus: document.activeElement.id }));
+    pruefen(profil, "Liste: Suche nur nach einem früheren Gremium nennt es (Satz und Statuszeile), Fokus bleibt im Suchfeld", nur.eintraege === 0
+      && nur.text.startsWith(`Unter den aktuellen Gremien passt keines zur Suche „${frueheres.name}“; `) && nur.text.includes("Mit „frühere Gremien zeigen“")
+      && nur.status === `0 Gremien; ${passend === 1 ? "1 früheres Gremium passt" : `${passend} frühere Gremien passen`}` && nur.fokus === "wer-q", nur);
+    await axe(page, profil, "Liste, Suche nur nach einem früheren Gremium");
+  }
   await page.fill("#wer-q", "");
   await page.waitForTimeout(500);
   const vorher = await page.$$eval("#wer-liste details", (ds) => ds.length);

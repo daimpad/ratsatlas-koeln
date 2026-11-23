@@ -1,8 +1,9 @@
 """Pull Request 4b, Seitenteil (Entscheidungen 21.11.2026 (2) (F2, F4–F12) und 23.11.2026 (1) (E1–E11)): Fläche
 „Gremien und Ämter“ unter „Wer entscheidet“ (site/gremien.js), Titel der Schaltfläche, „In Zahlen“, Filter „Gremium“
-über die Kennung im Gebiet und in ganz Köln, eigene Parameter in der Adresse, „Was ist neu?“ und Quellenzeile. Geprüft
-ohne Browser (node mit nachgebildetem Dokument oder als Modul, Python); die Prüfung im Browser steht in
-tests/browser/gremien.js. Alle Gremien, Kennungen, Vorlagen und Adressen sind erfunden; keine Anfragen nach außen."""
+über die Kennung im Gebiet und in ganz Köln, eigene Parameter in der Adresse, „Was ist neu?“, Quellenzeile und Punkt 7
+der Anfrage an die Stadt (E5). Geprüft ohne Browser (node mit nachgebildetem Dokument oder als Modul, Python); die
+Prüfung im Browser steht in tests/browser/gremien.js. Alle Gremien, Kennungen, Vorlagen und Adressen sind erfunden;
+keine Anfragen nach außen."""
 import json
 import re
 import shutil
@@ -212,7 +213,7 @@ def test_schaubild_gruppen_und_detail():
     assert knoten == [("rat", "false"), ("aus-a", "false"), ("bv1", "false"), ("beirat", "false")]
     assert html.index('id="wer-h-rat"') < html.index('id="wer-h-ausschuss"') < html.index('id="wer-h-bezirksvertretung"') \
         < html.index('id="wer-h-uebrige"')
-    assert '<h3 class="org-h" id="wer-h-uebrige">übrige Gremien</h3>' in html and "<details" not in html
+    assert '<h3 class="org-h" id="wer-h-uebrige">Übrige Gremien</h3>' in html and "<details" not in html
     assert "Früherer Probeausschuss" not in html and "frühere Gremien stehen in der Liste" in html
     detail = _abschnitt(html, "wer-detail")
     assert "aria-live" not in html and "Wählen Sie im Schaubild ein Gremium" in detail
@@ -234,12 +235,48 @@ def test_liste_suche_und_fruehere_gremien():
     assert eintraege(basis) == ["rat", "aus-a", "bv1", "beirat"]
     assert eintraege(frueher) == ["rat", "aus-a", "bv1", "beirat", "alt"]
     assert re.findall(r'<h3 class="pz-h">([^<]+)</h3>', basis) == ["Rat", "Ausschüsse mit Paragraf der Zuständigkeitsordnung",
-                                                                   "Bezirksvertretungen", "übrige Gremien"]
+                                                                   "Bezirksvertretungen", "Übrige Gremien"]
     assert _modul("M.suchform('Straßenbäume')") == "strassenbaume"
     assert eintraege(suche) == []   # „STRASSENBAEUME“ mit „ae“ statt „ä“ findet nichts
     assert eintraege(_modul("M.listenteil(G, { kennung: null, q: 'STRASSENBÄUME', frueher: false }, U)")) == ["beirat"]
     assert keine == "<p>Kein Gremium passt zur Suche „nichts“.</p>"
     assert '<details class="pz-item" data-kennung="bv1" open>' in offen
+
+
+def test_gruppen_als_ueberschrift_gross():
+    """Nachprüfung 4b: Die Namen der Gruppen aus meta.gruppen stehen als Überschrift mit großem Anfangsbuchstaben da
+    (meta.gruppen schreibt „übrige Gremien“ für Fließtext klein; gremien.json bleibt unverändert), im Schaubild, auch
+    für die unsichtbare Überschrift des Rates, und in der Liste."""
+    klein = {**GREMIEN["meta"], "gruppen": {k: v[0].lower() + v[1:] for k, v in GREMIEN["meta"]["gruppen"].items()}}
+    bild, liste = _modul(f"[M.inhaltGremien({{ ...G, meta: {json.dumps(klein)} }}, {{ kennung: null, q: '', frueher: false }}, 'schaubild', U), "
+                         f"M.listenteil({{ ...G, meta: {json.dumps(klein)} }}, {{ kennung: null, q: '', frueher: false }}, U)]")
+    assert re.findall(r'<h3 class="[^"]+" id="wer-h-\w+">([^<]+)</h3>', bild) == [
+        "Rat", "Ausschüsse mit Paragraf der Zuständigkeitsordnung", "Bezirksvertretungen", "Übrige Gremien"]
+    assert re.findall(r'<h3 class="pz-h">([^<]+)</h3>', liste) == [
+        "Rat", "Ausschüsse mit Paragraf der Zuständigkeitsordnung", "Bezirksvertretungen", "Übrige Gremien"]
+
+
+def test_liste_nennt_ausgeblendete_fruehere_gremien():
+    """Nachprüfung 4b: Passt die Suche nur auf frühere Gremien und ist „frühere Gremien zeigen“ nicht gesetzt, sagt die
+    Liste das (statt „Kein Gremium passt“), und die Statuszeile nennt sie; mit dem Häkchen erscheinen sie. Passt kein
+    Gremium, bleibt der bisherige Satz und „0 Gremien“; passen aktuelle Gremien, nennt die Statuszeile nur sie."""
+    zwei = {**GREMIEN, "gremien": [*GREMIEN["gremien"], {**GREMIEN["gremien"][4], "key": "alt2", "name": "Zweiter Probeausschuss"}]}
+    eins, eins_status, mit, mit_status, mehr, mehr_status, keins, keins_status, aktiv_status = _modul(
+        "[M.listenteil(G, { kennung: null, q: ' probeausschuss ', frueher: false }, U), M.listenStatus(G, { q: 'probeausschuss', frueher: false }), "
+        "M.listenteil(G, { kennung: null, q: 'probeausschuss', frueher: true }, U), M.listenStatus(G, { q: 'probeausschuss', frueher: true }), "
+        f"M.listenteil({json.dumps(zwei)}, {{ kennung: null, q: 'Probeausschuss', frueher: false }}, U), "
+        f"M.listenStatus({json.dumps(zwei)}, {{ q: 'Probeausschuss', frueher: false }}), "
+        "M.listenteil(G, { kennung: null, q: 'nichts', frueher: false }, U), M.listenStatus(G, { q: 'nichts', frueher: false }), "
+        "M.listenStatus(G, { q: '', frueher: false })]")
+    assert eins == ("<p>Unter den aktuellen Gremien passt keines zur Suche „probeausschuss“; 1 früheres Gremium passt. "
+                    "Mit „frühere Gremien zeigen“ erscheint es in der Liste.</p>")
+    assert eins_status == "0 Gremien; 1 früheres Gremium passt"
+    assert re.findall(r'<details class="pz-item" data-kennung="([\w-]+)"', mit) == ["alt"] and mit_status == "1 Gremium"
+    assert mehr == ("<p>Unter den aktuellen Gremien passt keines zur Suche „Probeausschuss“; 2 frühere Gremien passen. "
+                    "Mit „frühere Gremien zeigen“ erscheinen sie in der Liste.</p>")
+    assert mehr_status == "0 Gremien; 2 frühere Gremien passen"
+    assert keins == "<p>Kein Gremium passt zur Suche „nichts“.</p>" and keins_status == "0 Gremien"
+    assert aktiv_status == "4 Gremien"
 
 
 def test_reiter_aemter():
@@ -563,6 +600,11 @@ def test_in_zahlen_statt_auswertung():
     ohne_kommentare = re.sub(r"<!--.*?-->", "", INDEX, flags=re.S)
     assert "Auswertung" not in ohne_kommentare
     assert "function openAuswertung(tab, focusTab)" in APP
+    # Nachprüfung 4b: auch Kommentare in app.js und style.css und die Prüfnamen und Kommentare der Browserprüfungen
+    # sagen „In Zahlen“; „Auswertung“ bleibt nur als Teil einer Kennung (openAuswertung, menueUeberAuswertung)
+    wort = re.compile(r"(?<![\w-])Auswertung")
+    for datei in ("site/app.js", "site/style.css", "tests/browser/bedienung.js", "tests/browser/navigation.js"):
+        assert not wort.search((ROOT / datei).read_text(encoding="utf-8")), datei
 
 
 def test_was_ist_neu():
@@ -575,7 +617,8 @@ def test_was_ist_neu():
     assert eintraege[4] == ("", "Im Kalender (termine.ics) stehen Sitzungen, die laut Sitzungsnamen abgesagt sind, als abgesagt, "
                                 "mit dem Zusatz „(laut Sitzungsnamen abgesagt)“.")
     assert eintraege[5][0] == ' data-funktion="gremien"' and eintraege[5][1].startswith("„Wer entscheidet“ mit den Reitern „Gremien“")
-    assert "im Vorgang führt der Name eines Gremiums dorthin" in eintraege[5][1]
+    # nur Schritte mit gremium_key werden zum Link, also nur aktuelle Gremien (Nachprüfung 4b)
+    assert "im Vorgang führt der Name eines aktuellen Gremiums dorthin" in eintraege[5][1]
     assert eintraege[6] == ("", "Die Fläche mit den Kennzahlen zum Gebiet und den Verfahrenswegen heißt jetzt „In Zahlen“.")
     assert not re.search(r"\bfolg(t|en)\b", _text(neu))
 
@@ -592,6 +635,20 @@ def test_was_ist_neu_und_quellenzeile_ohne_freigabe(monkeypatch):
     quellen = _text(_abschnitt(aus, "sources"))
     assert ("beides auf der Seite „So funktioniert der Ratsatlas“ (im Plan keine Lizenz angegeben, übernommen sind nur "
             "Nummern und Bezeichnungen) · Kennung der federführenden Dienststelle") in quellen
+
+
+def test_anfrage_punkt_7_weiterleitung_und_standzeile():
+    """E5: Punkt 7 der Anfrage bittet, die beiden Fragen weiterzuleiten, falls sie nicht in die Zuständigkeit der
+    Empfänger fallen (im Brief in der Höflichkeitsform); die Standzeile richtet sich an den Auftraggeber und sagt daher
+    „der Empfänger“, nicht „Ihre“ (Nachprüfung 4b)."""
+    text = (ROOT / "explore" / "ANFRAGE_stadt_koeln.md").read_text(encoding="utf-8")
+    stand = next(z for z in text.splitlines() if z.startswith("> Stand "))
+    assert stand.startswith("> Stand 23.11.2026: Punkt 7 um die Bitte ergänzt, die Fragen an die zuständigen Stellen "
+                            "weiterzuleiten, falls sie nicht in die Zuständigkeit der Empfänger fallen (")
+    assert not re.search(r"\bIhr(e|en|er)?\b", stand)
+    p7 = re.search(r"^7\. \*\*Geschäfts- und Dezernatsverteilungsplan und Zuständigkeitsordnung:\*\* (.+)$", text, re.M).group(1)
+    assert p7.endswith("Falls diese beiden Fragen nicht in Ihre Zuständigkeit fallen, bitte ich Sie, sie an die zuständigen "
+                       "Stellen weiterzuleiten.")
 
 
 def test_quellenzeile():

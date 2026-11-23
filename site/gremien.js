@@ -34,7 +34,11 @@ export const suchform = (s) => String(s ?? "").toLocaleLowerCase("de").replace(/
 export const REITER = ["gremien", "aemter"];
 export const DARSTELLUNGEN = ["schaubild", "liste"];
 const GRUPPEN = ["rat", "ausschuss", "bezirksvertretung", "uebrige"];
-const gruppenName = (meta, k) => (meta && meta.gruppen && meta.gruppen[k]) || k;
+// Name der Gruppe als Überschrift: erster Buchstabe groß (meta.gruppen schreibt „übrige Gremien“ klein, für Fließtext)
+const gruppenName = (meta, k) => {
+  const n = String((meta && meta.gruppen && meta.gruppen[k]) || k);
+  return n.charAt(0).toLocaleUpperCase("de") + n.slice(1);
+};
 
 // Nächste Sitzung aus Sicht der Besucher:innen: die erste von naechste_sitzung und folgende_sitzung, deren Kölner Tag
 // nicht vor `heute` liegt. Die Pipeline führt die folgende Sitzung nur, wenn die nächste am Tag des Datenstands liegt
@@ -114,13 +118,24 @@ function schaubild(d, z, umgebung) {
 }
 
 // Liste (F5): nach Gruppen, mit Suche; aufgelöste Gremien nur mit „frühere Gremien zeigen“
+const passt = (g, q) => !q || suchform(g.name).includes(q);
 export function listeGezeigt(d, z) {
   const q = suchform(z.q.trim());
-  return d.gremien.filter((g) => (z.frueher || !g.aufgeloest) && (!q || suchform(g.name).includes(q)));
+  return d.gremien.filter((g) => (z.frueher || !g.aufgeloest) && passt(g, q));
+}
+// Frühere Gremien, die zur Suche passen, aber ohne „frühere Gremien zeigen“ ausgeblendet sind
+export function fruehereAusgeblendet(d, z) {
+  const q = suchform(z.q.trim());
+  return z.frueher ? 0 : d.gremien.filter((g) => g.aufgeloest && passt(g, q)).length;
 }
 export function listenteil(d, z, umgebung) {
   const gezeigt = listeGezeigt(d, z);
-  if (!gezeigt.length) return `<p>Kein Gremium passt zur Suche „${esc(z.q.trim())}“.</p>`;
+  if (!gezeigt.length) {
+    const k = fruehereAusgeblendet(d, z);
+    return k ? `<p>Unter den aktuellen Gremien passt keines zur Suche „${esc(z.q.trim())}“; ${k === 1 ? "1 früheres Gremium passt"
+      : `${k} frühere Gremien passen`}. Mit „frühere Gremien zeigen“ ${k === 1 ? "erscheint es" : "erscheinen sie"} in der Liste.</p>`
+      : `<p>Kein Gremium passt zur Suche „${esc(z.q.trim())}“.</p>`;
+  }
   return GRUPPEN.map((k) => [k, gezeigt.filter((g) => g.gruppe === k)]).filter(([, gs]) => gs.length).map(([k, gs]) =>
     `<h3 class="pz-h">${esc(gruppenName(d.meta, k))}</h3>${gs.map((g) => {
       const kurz = kurzzeile(g, d.meta, umgebung.heute);
@@ -178,10 +193,12 @@ const zustand = { tab: "gremien", darstellung: null, kennung: null, frueher: fal
 const darstellung = () => zustand.darstellung || (ctx.telefon() ? "liste" : "schaubild");
 const umgebung = () => ({ heute: ctx.heute(), zeitDatum: ctx.zeitDatum, lizenz: ctx.lizenz });
 const melden = (text) => { status.textContent = text; };
-const listeZaehlen = () => {
-  const n = listeGezeigt(daten.gremien, zustand).length;
-  melden(n === 1 ? "1 Gremium" : `${n} Gremien`);
-};
+// Statuszeile der Liste; ohne Eintrag nennt sie passende frühere Gremien, die ausgeblendet sind
+export function listenStatus(d, z) {
+  const n = listeGezeigt(d, z).length, k = n ? 0 : fruehereAusgeblendet(d, z);
+  return `${n === 1 ? "1 Gremium" : `${n} Gremien`}${k ? `; ${k === 1 ? "1 früheres Gremium passt" : `${k} frühere Gremien passen`}` : ""}`;
+}
+const listeZaehlen = () => melden(listenStatus(daten.gremien, zustand));
 const listeZaehlenSpaeter = () => { clearTimeout(zaehler); zaehler = setTimeout(listeZaehlen, 400); };
 
 function render() {

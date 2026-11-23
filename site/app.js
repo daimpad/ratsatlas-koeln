@@ -2586,7 +2586,7 @@
     if (!index) document.querySelector(".scope-switch").hidden = true;
   }
 
-  // --- Auswertung: Kennzahlen zum Gebiet und Verfahrenswege ------------------------------------------
+  // --- In Zahlen: Kennzahlen zum Gebiet und Verfahrenswege -------------------------------------------
   function openAuswertung(tab, focusTab) {
     closeMega();
     setPanel("panel-auswertung", true);
