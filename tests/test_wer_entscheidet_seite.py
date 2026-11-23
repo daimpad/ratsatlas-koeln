@@ -329,8 +329,9 @@ def test_flaeche_im_html():
 
 
 def test_app_bindet_die_flaeche_ein():
-    """app.js: Fläche in SHEETS und OVERLAYS; setPanel lädt das Modul beim Öffnen (Ladefehler: ein Satz, nächstes
-    Öffnen versucht es erneut); closePanel gibt den Fokus an „Wer entscheidet“ zurück; das Blatt ☰ schließt beim Wählen
+    """app.js: Fläche in SHEETS und OVERLAYS; setPanel lädt das Modul beim Öffnen (Ladefehler: ein Satz in der
+    Statuszeile, nächstes Öffnen versucht es erneut, nach gescheitertem Import unter einer anderen Adresse; Ablauf in
+    test_ladefehler_in_der_statuszeile_und_neuer_import); closePanel gibt den Fokus an „Wer entscheidet“ zurück; das Blatt ☰ schließt beim Wählen
     einer Karte; Esc, „Los geht's“ und der Rückweg auf dem Telefon über OVERLAYS."""
     assert re.search(r'const SHEETS = \[[^\]]*"panel-gremien"[^\]]*\]\.filter\(vorhanden\);', APP)
     assert re.search(r'const OVERLAYS = \[[^\]]*"panel-gremien"[^\]]*\]\.filter\(vorhanden\);', APP)
@@ -338,7 +339,8 @@ def test_app_bindet_die_flaeche_ein():
     assert '"panel-gremien": "mega-entscheiden"' in _teil(APP, r"^  function closePanel\(id\) \{\n.*?\n  \}\n")
     assert "[data-open-tab], [data-wer], a[href]" in APP
     oeffnen = _teil(APP, r"^  function openGremien\(s\) \{\n.*?\n  \}\n")
-    assert 'import("./gremien.js")' in oeffnen and "werReady = null;" in oeffnen
+    assert 'const modul = werImportFehler ? `./gremien.js?versuch=${werImportFehler}` : "./gremien.js";' in oeffnen
+    assert "import(modul)" in oeffnen and "werReady = null;" in oeffnen
     assert "Beim nächsten Öffnen versucht der Ratsatlas es erneut." in oeffnen
     assert "if (!werDa()) return Promise.resolve(null);" in oeffnen
     assert 'import("./prozesse.js")' not in oeffnen
@@ -359,8 +361,8 @@ def test_eigene_parameter_in_der_adresse():
         assert f"state.{bonn} = pz" in sync, bonn
     start = _teil(APP, r"^  async function start\(\) \{\n.*?\n  \}\n")
     assert 'if (funktionen.soll && ["verfahren", "gremien", "aemter"].includes(params.get("prozesse"))) {' in start
-    assert ('await openGremien({ tab: params.get("wer"), darstellung: params.get("darstellung"), kennung: params.get("kennung") || undefined });'
-            in start)
+    assert ('await openGremien({ tab: params.get("wer"), darstellung: params.get("darstellung"), kennung: params.get("kennung") || undefined, zeigen: true });'
+            in start)   # zeigen: Eintrag ins Bild rollen (Nachprüfung Bedienung)
 
 
 def _sync(werState, offen=True, pz=None):
@@ -660,3 +662,242 @@ def test_quellenzeile():
     assert '<span data-funktion="gremien">, und im Reiter „Ämter“ unter „Wer entscheidet“</span>' in quellen
     assert ('<span data-funktion="gremien"> · Paragrafen der Ausschüsse aus der Zuständigkeitsordnung der Stadt Köln vom '
             '02.06.2026 (zugeordnet über den Namen des Ausschusses; nur der Paragraf, kein Text; Lizenz nicht geklärt)</span>') in quellen
+
+
+# --- Nachprüfung Bedienung (23.11.2026): Steuerung der Fläche, Ladefehler, Telefonbreite, Statuszeile -----------------
+
+def _steuerung(ablauf):
+    """Steuerung von site/gremien.js mit einem nachgebildeten Dokument (Reiter, Umschalter, Inhalt, Statuszeile als
+    einfache Objekte), Zeitgebern und Abrufen von Hand; `ablauf` ist der Rumpf einer async-Funktion, die `ergebnis`
+    setzt. Daten: die erfundenen G und A."""
+    code = f"""
+import * as M from "{GREMIEN_JS.as_uri()}";
+const G = {json.dumps(GREMIEN)}, A = {json.dumps(AEMTER)};
+const handler = {{}};
+let aktiv = null;
+const knoten = (name, extra = {{}}) => {{
+  const e = {{ name, hidden: false, attrs: {{}}, tabIndex: 0, dataset: {{}}, gesetzt: 0, _html: "",
+    setAttribute(k, v) {{ this.attrs[k] = String(v); }}, getAttribute(k) {{ return this.attrs[k] ?? null; }},
+    addEventListener(typ, f) {{ (handler[name + ":" + typ] ||= []).push(f); }},
+    focus() {{ aktiv = this; }}, closest() {{ return null; }}, contains(x) {{ return x === this; }},
+    querySelector() {{ return null; }}, querySelectorAll() {{ return []; }}, ...extra }};
+  Object.defineProperty(e, "innerHTML", {{ get() {{ return this._html; }}, set(v) {{ this._html = v; this.gesetzt++; }} }});
+  return e;
+}};
+// Ausgangszustand wie in index.html: Reiter „Gremien“ gewählt, Optionsfeld „Schaubild“ an
+const tabs = ["gremien", "aemter"].map((t, i) => knoten("tab-" + t, {{ dataset: {{ werTab: t }}, attrs: {{ "aria-selected": String(!i) }}, tabIndex: i ? -1 : 0,
+  closest(s) {{ return s.startsWith("[role=tab]") ? this : null; }} }}));
+const radios = ["schaubild", "liste"].map((d, i) => knoten("radio-" + d, {{ dataset: {{ darstellung: d }}, attrs: {{ "aria-checked": String(!i) }}, tabIndex: i ? -1 : 0,
+  closest(s) {{ return s === "[data-darstellung]" ? this : null; }} }}));
+const tabliste = knoten("tablist", {{ querySelectorAll: () => tabs }});
+const schalter = knoten("schalter", {{ querySelectorAll: () => radios, contains: (x) => radios.includes(x),
+  querySelector: (s) => radios.find((r) => s.includes(`"${{r.dataset.darstellung}}"`)) || null }});
+const liste = knoten("liste"), drinnen = knoten("im-inhalt");
+const body = knoten("body", {{ querySelector: (s) => (s === "#wer-liste" ? liste : null), contains: (x) => x === drinnen }});
+const status = knoten("status");
+const root = knoten("root", {{ querySelectorAll: (s) => (s === "[role=tab][data-wer-tab]" ? tabs : []),
+  querySelector: (s) => ({{ "[role=tablist]": tabliste, ".wer-darstellung": schalter, "#wer-body": body, "#wer-status": status }})[s]
+    || (s === '.wer-darstellung [aria-checked="true"]' ? radios.find((r) => r.attrs["aria-checked"] === "true") : null) }});
+globalThis.document = {{ getElementById: (id) => (id === "panel-gremien" ? root : null), get activeElement() {{ return aktiv; }} }};
+globalThis.CSS = {{ escape: (s) => s }};
+const zeitgeber = new Map();
+let nr = 0;
+globalThis.setTimeout = (f) => {{ zeitgeber.set(++nr, f); return nr; }};
+globalThis.clearTimeout = (n) => {{ zeitgeber.delete(n); }};
+const zeitAblaufen = () => {{ const fs = [...zeitgeber.values()]; zeitgeber.clear(); fs.forEach((f) => f()); }};
+const wartend = [];
+globalThis.fetch = (url) => new Promise((ok) => wartend.push(() => ok({{ ok: true, status: 200, json: async () => (url.endsWith("gremien.json") ? G : A) }})));
+const freigeben = async () => {{ wartend.splice(0).forEach((f) => f()); await new Promise((r) => setImmediate(r)); }};
+let telefon = false;
+const ctx = {{ basis: "", heute: () => "2026-11-23", zeitDatum: (s) => s, lizenz: (t) => t, telefon: () => telefon, onState() {{}}, filterGremium() {{}} }};
+const feuern = (name, typ, target) => (handler[name + ":" + typ] || []).forEach((f) => f({{ target, preventDefault() {{}} }}));
+const gewaehlt = () => tabs.find((t) => t.attrs["aria-selected"] === "true").dataset.werTab;
+const geladen = async () => {{ const l = M.init(ctx); await freigeben(); await l; }};
+let ergebnis = null;
+await (async () => {{
+{ablauf}
+}})();
+console.log(JSON.stringify(ergebnis));
+"""
+    return _node(code, modul=True)
+
+
+def test_wahl_waehrend_des_ladens_gilt_danach():
+    """Reiter und Umschalter wirken schon während des Ladens (vorher gingen Klicks verloren, der Fokus stand danach auf
+    einem nicht gewählten Reiter): Die Wahl steht sofort an Reiter bzw. Optionsfeld, der Inhalt bleibt bis zum Laden
+    leer, und nach dem Laden geht sie dem Reiter bzw. der Darstellung vor, mit denen die Fläche geöffnet wurde (app.js
+    ruft show zweimal auf); ein späteres Öffnen gilt wieder."""
+    r = _steuerung("""
+const laden = M.init(ctx);
+feuern("tablist", "click", tabs[1]);
+const beim = { reiter: gewaehlt(), tabindex: tabs.map((t) => t.tabIndex), inhalt: body.gesetzt };
+await freigeben(); await laden;
+M.show({}); M.show({ tab: "gremien" });
+const danach = { reiter: gewaehlt(), inhalt: body.innerHTML.includes("wer-dezernat") };
+M.show({ tab: "gremien" });
+ergebnis = { beim, danach, spaeter: gewaehlt() };
+""")
+    assert r == {"beim": {"reiter": "aemter", "tabindex": [-1, 0], "inhalt": 0}, "danach": {"reiter": "aemter", "inhalt": True},
+                 "spaeter": "gremien"}
+    r = _steuerung("""
+const laden = M.init(ctx);
+feuern("schalter", "click", radios[1]);
+const beim = radios.map((b) => b.attrs["aria-checked"]);
+await freigeben(); await laden;
+M.show({}); M.show({ tab: "gremien", darstellung: "schaubild" });
+ergebnis = { beim, zustand: M.werZustand(), liste: body.innerHTML.includes('id="wer-liste"') };
+""")
+    assert r == {"beim": ["false", "true"], "zustand": {"tab": "gremien", "darstellung": "liste", "kennung": None}, "liste": True}
+
+
+def test_aufgeloestes_gremium_liste_und_hinweis_im_schaubild():
+    """Ein aufgelöstes Gremium steht nur in der Liste (F5): Ohne gewählte Darstellung öffnet seine Kennung die Liste mit
+    „frühere Gremien zeigen“ (darstellung=liste in der Adresse), ein aktuelles Gremium ändert die Darstellung nicht; im
+    Schaubild (ausdrücklich gewählt) steht statt seiner Angaben ein Hinweis auf die Liste, ohne Überschrift."""
+    r = _steuerung("""
+await geladen();
+M.show({ tab: "gremien", kennung: "bv1" });
+const aktuell = M.werZustand();
+M.show({ tab: "gremien", kennung: "alt" });
+const alt = { zustand: M.werZustand(), haekchen: body.innerHTML.includes('id="wer-frueher" checked'), offen: body.innerHTML.includes('data-kennung="alt" open') };
+M.show({ tab: "gremien", darstellung: "schaubild", kennung: "alt" });
+ergebnis = { aktuell, alt, bild: { zustand: M.werZustand(), h3: body.innerHTML.includes(">Früherer Probeausschuss</h3>"),
+  hinweis: body.innerHTML.includes('<div class="pz-detail" id="wer-detail"><p class="hint">Das gewählte Gremium „Früherer Probeausschuss“ ist aufgelöst; es steht in der Liste unter „frühere Gremien zeigen“.</p></div>') } };
+""")
+    assert r["aktuell"] == {"tab": "gremien", "darstellung": None, "kennung": "bv1"}
+    assert r["alt"] == {"zustand": {"tab": "gremien", "darstellung": "liste", "kennung": "alt"}, "haekchen": True, "offen": True}
+    assert r["bild"] == {"zustand": {"tab": "gremien", "darstellung": "schaubild", "kennung": "alt"}, "h3": False, "hinweis": True}
+    detail = _modul('M.detailHtml(G, { kennung: "alt" }, U)')
+    assert detail == '<p class="hint">Das gewählte Gremium „Früherer Probeausschuss“ ist aufgelöst; es steht in der Liste unter „frühere Gremien zeigen“.</p>'
+
+
+def test_breite_baut_nur_bei_anderer_darstellung_neu():
+    """breite() (app.js applyLayout) baut den Inhalt nur neu auf, wenn sich die Darstellung ohne ausdrückliche Wahl
+    ändert (vorher bei jeder Breitengrenze, der Fokus fiel auf <body>); lag der Fokus im Inhalt, steht er danach in der
+    Fläche (hier ohne Eintrag oder Suchfeld im nachgebildeten Dokument: auf dem gewählten Optionsfeld), außerhalb bleibt
+    er, wo er ist. Mit ausdrücklicher Wahl und im Reiter „Ämter“ kein Neuaufbau."""
+    r = _steuerung("""
+await geladen();
+M.show({ tab: "gremien" });
+const n = [body.gesetzt];
+M.breite(); n.push(body.gesetzt);
+aktiv = drinnen; telefon = true; M.breite(); n.push(body.gesetzt);
+const fokus1 = aktiv.name;
+M.breite(); n.push(body.gesetzt);
+aktiv = tabs[0]; telefon = false; M.breite(); n.push(body.gesetzt);
+const fokus2 = aktiv.name;
+M.show({ darstellung: "schaubild" }); n.push(body.gesetzt);
+telefon = true; M.breite(); n.push(body.gesetzt);
+M.show({ tab: "aemter", darstellung: undefined }); n.push(body.gesetzt);
+ergebnis = { n, fokus1, fokus2 };
+""")
+    a = r["n"][0]
+    assert r["n"] == [a, a, a + 1, a + 1, a + 2, a + 3, a + 3, a + 4]
+    assert r["fokus1"] == "radio-liste" and r["fokus2"] == "tab-gremien"
+
+
+def test_verzoegerter_zaehler_endet_mit_dem_wechsel():
+    """Der Zähler der Liste nach dem Tippen (400 ms) endet mit jeder neuen Meldung, also auch beim Wechsel von Reiter
+    oder Darstellung (vorher stand danach etwa „12 Gremien“ im Reiter „Ämter“); in der Liste zählt er weiter."""
+    r = _steuerung("""
+await geladen();
+M.show({ tab: "gremien", darstellung: "liste" });
+feuern("body", "input", { id: "wer-q", value: "bez" });
+const vorher = zeitgeber.size;
+feuern("tablist", "click", tabs[1]);
+const nachWechsel = zeitgeber.size;
+zeitAblaufen();
+const aemter = status.textContent;
+feuern("tablist", "click", tabs[0]);
+feuern("body", "input", { id: "wer-q", value: "bez" });
+zeitAblaufen();
+ergebnis = { vorher, nachWechsel, aemter, liste: status.textContent };
+""")
+    assert r == {"vorher": 1, "nachWechsel": 0, "aemter": "", "liste": "1 Gremium"}
+
+
+def _oeffnen(ablauf):
+    """openGremien aus app.js mit nachgebildeten Teilen; import(modul) ruft `importieren` auf (Adressen in `adressen`)."""
+    teil = _teil(APP, r"^  let werState = null, werReady = null, werModul = null, werImportFehler = 0;\n.*?^  function openGremien\(s\) \{\n.*?\n  \}\n")
+    assert teil.count("import(modul)") == 1
+    code = """
+const E = { "#wer-body": { innerHTML: "alt" }, "#wer-status": { textContent: "" } };
+const $ = (s) => E[s];
+let funktionen = { gremien: true };
+const vorhanden = () => true, BONN = "data/", heute = () => "2026-11-23", zeitDatum = (s) => s, lizenzOeffentlich = (t) => t;
+const MOBILE = { matches: false }, syncUrl = () => {}, gremiumFiltern = () => {};
+const adressen = [], gezeigt = [], plan = [];
+let initFehler = 0;
+const modul = { show: (s) => gezeigt.push(s), async init() { if (initFehler > 0) { initFehler--; throw new Error("Daten"); } } };
+const importieren = (u) => { adressen.push(u); return plan.shift() === "fehler" ? Promise.reject(new Error("Netz")) : Promise.resolve(modul); };
+""" + teil.replace("import(modul)", "importieren(modul)") + """
+(async () => {
+""" + ablauf + """
+  console.log(JSON.stringify(ergebnis));
+})();
+"""
+    return _node(code)
+
+
+SATZ = "Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut."
+
+
+def test_ladefehler_in_der_statuszeile_und_neuer_import():
+    """Ladefehler: Der Satz steht in der Statuszeile (role=status, dort stand auch „Wird geladen …“; vorher nur im Inhalt
+    ohne Live-Region, also nicht angesagt), der Inhalt bleibt leer. Nach einem gescheiterten Import lädt der nächste
+    Versuch das Modul unter einer anderen Adresse (der Browser merkt sich den Fehler für dieselbe Adresse); nach einem
+    Fehler beim Laden der Daten dieselbe Adresse."""
+    r = _oeffnen("""
+  plan.push("fehler");
+  const r1 = await openGremien({ tab: "gremien" });
+  const nach1 = { r: r1, status: E["#wer-status"].textContent, inhalt: E["#wer-body"].innerHTML };
+  await openGremien({ tab: "aemter" });
+  ergebnis = { nach1, adressen, gezeigt, status: E["#wer-status"].textContent };
+""")
+    assert r == {"nach1": {"r": None, "status": SATZ, "inhalt": ""}, "adressen": ["./gremien.js", "./gremien.js?versuch=1"],
+                 "gezeigt": [{"tab": "aemter"}], "status": "Wird geladen …"}
+    r = _oeffnen("""
+  initFehler = 1;
+  await openGremien({ tab: "gremien" });
+  const status1 = E["#wer-status"].textContent;
+  await openGremien({ tab: "gremien" });
+  ergebnis = { status1, adressen, gezeigt };
+""")
+    assert r == {"status1": SATZ, "adressen": ["./gremien.js", "./gremien.js"], "gezeigt": [{"tab": "gremien"}]}
+
+
+def test_telefonbreite_behaelt_die_flaeche_mit_dem_fokus():
+    """applyLayout beim Wechsel auf Telefonbreite (nur eine Fläche): Es bleibt die Fläche mit dem Fokus, sonst eine
+    offene Überlagerung, sonst die erste offene (vorher immer die erste in SHEETS: neben dem Vorgang ging „Gremien und
+    Ämter“ zu, der Fokus fiel auf <body>)."""
+    teil = _teil(APP, r"^  function applyLayout\(\) \{\n.*?\n  \}\n")
+    code = """
+const SHEETS = ["panel-list", "panel-detail", "panel-auswertung", "panel-gremien", "timeline-wrap"], OVERLAYS = ["panel-auswertung", "panel-gremien"];
+const P = Object.fromEntries(SHEETS.map((id) => [id, { id, hidden: true, classList: { toggle() {} }, contains: (x) => Boolean(x) && x.in === id }]));
+const $ = (s) => P[s.slice(1)];
+const document = { getElementById: (id) => P[id], activeElement: null };
+const MOBILE = { matches: true }, NARROW = { matches: true };
+const setPanel = (id, open) => { P[id].hidden = !open; };
+const setMapMenu = () => {}, setNav = () => {}, clampWidths = () => {}, vorhanden = (id) => id in P;
+let tl = null, selected = null, werModul = null;
+""" + teil + """
+const fall = (offen, fokusIn) => { SHEETS.forEach((id) => { P[id].hidden = !offen.includes(id); }); document.activeElement = { in: fokusIn };
+  applyLayout(); return SHEETS.filter((id) => !P[id].hidden); };
+console.log(JSON.stringify([fall(["panel-detail", "panel-gremien"], "panel-gremien"), fall(["panel-detail", "panel-gremien"], "panel-detail"),
+  fall(["panel-detail", "panel-gremien"], null), fall(["panel-list", "panel-detail"], null), fall(["panel-list", "timeline-wrap"], "timeline-wrap")]));
+"""
+    assert _node(code) == [["panel-gremien"], ["panel-detail"], ["panel-gremien"], ["panel-list"], ["timeline-wrap"]]
+
+
+def test_statuszeile_abgeleitet_zuruecksetzen_und_adresse():
+    """style.css: Die Statuszeile schrumpft in der Flex-Spalte der Überlagerung nicht (vorher min-height: 0, ihr Text
+    lag über dem Inhalt); das Kennzeichen „abgeleitet, …“ in den Angaben zu einem Gremium darf umbrechen (sonst bei
+    320 px waagrecht scrollen). app.js: „Filter und Zeitraum zurücksetzen“ in der leeren Liste setzt den Fokus auf die
+    Liste (die Schaltfläche verschwindet); ein Gremium aus der Adresse wird ins Bild gerollt (zeigen)."""
+    css = (ROOT / "site" / "style.css").read_text(encoding="utf-8")
+    assert ".wer-status { margin: 0 18px 6px; flex: none; }\n" in css and not re.search(r"\.wer-status \{[^}]*min-height", css)
+    assert ".pz-facts .derived { display: inline-block; max-width: 100%; white-space: normal; }\n" in css
+    assert 'if (e.target.closest("#reset-filters")) { resetFilters(); focusPanel("panel-list"); return; }' in APP
+    assert _teil(APP, r"^  function resetFilters\(\) \{\n.*?\n  \}\n").count("focusPanel") == 0   # „Zurücksetzen“ im Menü behält den Fokus
+    gjs = GREMIEN_JS.read_text(encoding="utf-8")
+    assert "else if (s.zeigen) eintragZeigen();" in gjs and 'el.scrollIntoView({ block: "nearest" })' in gjs

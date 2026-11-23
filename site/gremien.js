@@ -96,6 +96,8 @@ const knoten = (g, meta, z, heute) => {
 };
 export function detailHtml(d, z, umgebung) {
   const g = d.gremien.find((x) => x.key === z.kennung);
+  // ein früheres Gremium steht nicht im Schaubild (F5): statt seiner Angaben ein Hinweis auf die Liste
+  if (g && g.aufgeloest) return `<p class="hint">Das gewählte Gremium „${esc(g.name)}“ ist aufgelöst; es steht in der Liste unter „frühere Gremien zeigen“.</p>`;
   return g ? `<h3 class="pz-h" tabindex="-1">${esc(g.name)}</h3>${gremiumInhalt(g, d.meta, umgebung)}`
     : '<p class="hint">Wählen Sie im Schaubild ein Gremium; hier erscheinen dann seine Zahlen, die nächste Sitzung und die Quelle.</p>';
 }
@@ -187,12 +189,17 @@ export function inhaltAemter(a) {
 }
 
 // --- Steuerung ------------------------------------------------------------------------------------------------------
-let ctx = null, daten = null, root = null, body = null, status = null, zaehler = 0;
+let ctx = null, daten = null, root = null, body = null, status = null, zaehler = 0, bedient = false, gezeigt = null;
 const zustand = { tab: "gremien", darstellung: null, kennung: null, frueher: false, q: "" };
+// Wahl in Reiter oder Umschalter, während die Daten noch laden: Sie gilt nach dem Laden vor dem Reiter bzw. der
+// Darstellung, mit denen die Fläche geöffnet wurde
+const beimLaden = { tab: false, darstellung: false };
 // ohne ausdrückliche Wahl (Umschalter oder Adresse) Schaubild ab 901 px, Liste bis 900 px (F9)
 const darstellung = () => zustand.darstellung || (ctx.telefon() ? "liste" : "schaubild");
 const umgebung = () => ({ heute: ctx.heute(), zeitDatum: ctx.zeitDatum, lizenz: ctx.lizenz });
-const melden = (text) => { status.textContent = text; };
+// eine neue Meldung hebt den verzögerten Zähler der Liste auf (sonst schriebe er nach einem Wechsel von Reiter oder
+// Darstellung noch eine Zahl der Liste in die Statuszeile)
+const melden = (text) => { clearTimeout(zaehler); status.textContent = text; };
 // Statuszeile der Liste; ohne Eintrag nennt sie passende frühere Gremien, die ausgeblendet sind
 export function listenStatus(d, z) {
   const n = listeGezeigt(d, z).length, k = n ? 0 : fruehereAusgeblendet(d, z);
@@ -201,6 +208,8 @@ export function listenStatus(d, z) {
 const listeZaehlen = () => melden(listenStatus(daten.gremien, zustand));
 const listeZaehlenSpaeter = () => { clearTimeout(zaehler); zaehler = setTimeout(listeZaehlen, 400); };
 
+// Reiter, Umschalter und Inhalt zeigen; während des Ladens nur Reiter und Umschalter (die Statuszeile behält den
+// Ladehinweis von app.js)
 function render() {
   const tab = zustand.tab, ansicht = darstellung();
   root.querySelectorAll("[role=tab][data-wer-tab]").forEach((t) => {
@@ -215,8 +224,11 @@ function render() {
     b.tabIndex = b.dataset.darstellung === ansicht ? 0 : -1;
   });
   body.setAttribute("aria-labelledby", `tab-wer-${tab}`);
-  body.innerHTML = tab === "aemter" ? inhaltAemter(daten.aemter) : inhaltGremien(daten.gremien, zustand, ansicht, umgebung());
-  if (tab === "gremien" && ansicht === "liste") listeZaehlen(); else melden("");
+  if (daten) {
+    body.innerHTML = tab === "aemter" ? inhaltAemter(daten.aemter) : inhaltGremien(daten.gremien, zustand, ansicht, umgebung());
+    gezeigt = tab === "gremien" ? ansicht : null;
+    if (tab === "gremien" && ansicht === "liste") listeZaehlen(); else melden("");
+  }
   ctx.onState(werZustand());
 }
 export const werZustand = () => ({ tab: zustand.tab, darstellung: zustand.darstellung, kennung: zustand.tab === "gremien" ? zustand.kennung : null });
@@ -230,6 +242,11 @@ function fokusAufEintrag() {
   }
   body.querySelector("#wer-detail h3")?.focus();
 }
+// Eintrag ins Bild rollen, ohne den Fokus zu bewegen (Zustand aus der Adresse beim Laden der Seite)
+function eintragZeigen() {
+  const el = darstellung() === "liste" ? body.querySelector(`details[data-kennung="${CSS.escape(zustand.kennung || "")}"]`) : body.querySelector("#wer-detail");
+  if (el) el.scrollIntoView({ block: "nearest" });
+}
 function waehlen(kennung) {
   zustand.kennung = kennung;
   body.querySelectorAll(".org-node[data-kennung]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.kennung === kennung)));
@@ -239,20 +256,14 @@ function waehlen(kennung) {
   fokusAufEintrag();
 }
 
-export async function init(c) {
-  ctx = c;
-  root = document.getElementById("panel-gremien");
-  body = root.querySelector("#wer-body");
-  status = root.querySelector("#wer-status");
-  const laden = (name) => fetch(ctx.basis + name).then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); });
-  const [gremien, aemter] = await Promise.all([laden("gremien.json"), laden("aemter.json")]);
-  if (!gremien || !Array.isArray(gremien.gremien) || !gremien.meta || !aemter || !Array.isArray(aemter.dezernate)) throw new Error("Daten unvollständig");
-  daten = { gremien, aemter };
+// Ereignisse der Fläche, einmal angemeldet und schon während des Ladens wirksam
+function bedienen() {
   // Reiter: Klick, ← und →, Pos1 und Ende; die Reihenfolge aus den sichtbaren Reitern, der Fokus wandert mit
   const tabliste = root.querySelector("[role=tablist]");
+  const reiter = (tab) => { zustand.tab = tab; zustand.q = ""; if (!daten) beimLaden.tab = true; render(); };
   tabliste.addEventListener("click", (e) => {
     const t = e.target.closest("[role=tab][data-wer-tab]");
-    if (t && t.dataset.werTab !== zustand.tab) { zustand.tab = t.dataset.werTab; zustand.q = ""; render(); }
+    if (t && t.dataset.werTab !== zustand.tab) reiter(t.dataset.werTab);
   });
   tabliste.addEventListener("keydown", (e) => {
     const tabs = [...tabliste.querySelectorAll("[role=tab][data-wer-tab]")].filter((t) => !t.hidden);
@@ -260,15 +271,14 @@ export async function init(c) {
     const ziel = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i - 1 + tabs.length) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
     if (ziel === undefined) return;
     e.preventDefault();
-    zustand.tab = tabs[ziel].dataset.werTab;
-    zustand.q = "";
-    render();
+    reiter(tabs[ziel].dataset.werTab);
     tabs[ziel].focus();
   });
   // Umschalter „Schaubild | Liste“ (radiogroup): Klick, Pfeiltasten, Pos1 und Ende; die Wahl gilt ausdrücklich
   const schalter = root.querySelector(".wer-darstellung");
   const setzen = (wert, fokus) => {
     zustand.darstellung = wert;
+    if (!daten) beimLaden.darstellung = true;
     render();
     if (fokus) schalter.querySelector(`[data-darstellung="${wert}"]`).focus();
   };
@@ -308,24 +318,62 @@ export async function init(c) {
   }, true);
 }
 
+export async function init(c) {
+  ctx = c;
+  root = document.getElementById("panel-gremien");
+  body = root.querySelector("#wer-body");
+  status = root.querySelector("#wer-status");
+  if (!bedient) { bedienen(); bedient = true; }
+  beimLaden.tab = beimLaden.darstellung = false;
+  const laden = (name) => fetch(ctx.basis + name).then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); });
+  const [gremien, aemter] = await Promise.all([laden("gremien.json"), laden("aemter.json")]);
+  if (!gremien || !Array.isArray(gremien.gremien) || !gremien.meta || !aemter || !Array.isArray(aemter.dezernate)) throw new Error("Daten unvollständig");
+  daten = { gremien, aemter };
+}
+
 // Zustand übernehmen und zeigen: tab, darstellung (ausdrückliche Wahl), kennung, fokus (Eintrag ansteuern, etwa aus dem
-// Vorgang). Eine unbekannte Kennung (etwa aus einem älteren Link; F12: die Kennung kann sich ändern) wählt nichts aus.
+// Vorgang), zeigen (Eintrag nur ins Bild rollen, etwa aus der Adresse). Eine unbekannte Kennung (etwa aus einem älteren
+// Link; F12: die Kennung kann sich ändern) wählt nichts aus. Eine Wahl während des Ladens geht dem ersten tab bzw. der
+// ersten darstellung danach vor (app.js ruft show bei jedem Öffnen zweimal auf: aus setPanel ohne Angaben, danach mit
+// dem Reiter).
 export function show(s = {}) {
-  if (REITER.includes(s.tab)) zustand.tab = s.tab;
-  if (DARSTELLUNGEN.includes(s.darstellung)) zustand.darstellung = s.darstellung;
+  if (REITER.includes(s.tab)) { if (!beimLaden.tab) zustand.tab = s.tab; beimLaden.tab = false; }
+  if (DARSTELLUNGEN.includes(s.darstellung)) { if (!beimLaden.darstellung) zustand.darstellung = s.darstellung; beimLaden.darstellung = false; }
   let unbekannt = false;
   if (s.kennung !== undefined) {
     const g = s.kennung ? daten.gremien.gremien.find((x) => x.key === s.kennung) : null;
     unbekannt = Boolean(s.kennung) && !g;
     zustand.kennung = g ? g.key : null;
-    // ein gewähltes Gremium steht in der Liste auch bei einem früheren Suchtext und als aufgelöstes Gremium da
-    if (g) { zustand.q = ""; if (g.aufgeloest) zustand.frueher = true; }
+    // ein gewähltes Gremium steht in der Liste auch bei einem früheren Suchtext und als aufgelöstes Gremium da; ein
+    // aufgelöstes steht nur in der Liste (F5), daher gilt ohne gewählte Darstellung die Liste als gewählt
+    if (g) {
+      zustand.q = "";
+      if (g.aufgeloest) { zustand.frueher = true; zustand.darstellung ||= "liste"; }
+    }
   }
   render();
   if (unbekannt) melden("Das Gremium aus dem Link ist unter „Gremien“ nicht verzeichnet; seine Kennung kann sich geändert haben.");
-  if (s.fokus && zustand.kennung) fokusAufEintrag();
+  if (zustand.tab === "gremien" && zustand.kennung) {
+    if (s.fokus) fokusAufEintrag();
+    else if (s.zeigen) eintragZeigen();
+  }
 }
-// Breite geändert (app.js applyLayout): ohne ausdrückliche Wahl gilt die Darstellung der neuen Breite
+// Breite geändert (app.js applyLayout): ohne ausdrückliche Wahl gilt die Darstellung der neuen Breite. Neu aufgebaut
+// wird nur, wenn sich die Darstellung dabei ändert. Lag der Fokus im Inhalt oder am Umschalter, steht er danach auf
+// demselben Gremium (Knoten im Schaubild, Eintrag der Liste; aus dem Detailbereich bzw. einem aufgeklappten Eintrag auf
+// dessen Gegenstück), sonst in der Liste im Suchfeld und im Schaubild auf dem gewählten Optionsfeld des Umschalters.
 export function breite() {
-  if (!zustand.darstellung && zustand.tab === "gremien") render();
+  if (!daten || zustand.darstellung || zustand.tab !== "gremien" || darstellung() === gezeigt) return;
+  const a = document.activeElement;
+  const drin = Boolean(a && body.contains(a)), amSchalter = Boolean(a && root.querySelector(".wer-darstellung").contains(a));
+  const imDetail = drin && Boolean(a.closest("#wer-detail"));
+  const kennung = imDetail ? zustand.kennung : drin ? a.closest("[data-kennung]")?.dataset.kennung || null : null;
+  const imEintrag = imDetail || (drin && Boolean(a.closest("details")) && !a.closest("summary"));
+  render();
+  if (!drin && !amSchalter) return;
+  const k = kennung && CSS.escape(kennung);
+  let ziel = null;
+  if (darstellung() === "liste") ziel = (k && body.querySelector(`details[data-kennung="${k}"] > summary`)) || (drin ? body.querySelector("#wer-q") : null);
+  else if (k) ziel = imEintrag && kennung === zustand.kennung ? body.querySelector("#wer-detail h3") : body.querySelector(`.org-node[data-kennung="${k}"]`);
+  (ziel || root.querySelector('.wer-darstellung [aria-checked="true"]')).focus();
 }

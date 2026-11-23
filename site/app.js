@@ -363,8 +363,12 @@
   });
   function applyLayout() {
     if (MOBILE.matches) {
+      // Telefon: nur eine Fläche. Es bleibt die mit dem Fokus, sonst eine offene Überlagerung (sie lag obenauf), sonst die
+      // erste offene (vorher immer die erste in SHEETS: neben dem Vorgang ging etwa „Gremien und Ämter“ zu, der Fokus
+      // fiel auf <body>)
       const open = SHEETS.filter((id) => !document.getElementById(id).hidden);
-      open.slice(1).forEach((id) => setPanel(id, false));
+      const bleibt = open.find((id) => document.getElementById(id).contains(document.activeElement)) || open.find((id) => OVERLAYS.includes(id)) || open[0];
+      open.filter((id) => id !== bleibt).forEach((id) => setPanel(id, false));
       if (open.length) setMapMenu(false);   // Wechsel auf Telefonbreite: Blatt „Karte“ nicht unter einer Fläche
     } else if (NARROW.matches && !$("#panel-list").hidden && !$("#panel-detail").hidden) setPanel("panel-detail", false);
     $("#timeline-wrap").classList.toggle("tl-compact", MOBILE.matches);
@@ -1692,8 +1696,9 @@
       ? ": " + (gremiumKey ? `<button type="button" class="link-btn" data-gremium-key="${esc(gremiumKey)}">${esc(s.label)}</button>`
         : gremium ? `<button type="button" class="link-btn" data-gremium-name="${esc(s.label)}" title="Zuständigkeit und Besetzung im Reiter Prozesse">${esc(s.label)}</button>` : esc(s.label)) : "";
     // Hinweis aus dem Sitzungsnamen an der Station (hinweis am Schritt, export.hinweis_station; F10): nur die Plakette,
-    // Stand und Evidenzstatus bleiben, wie sie sind
-    const plakette = s.hinweis === "abgesagt" || s.hinweis === "verschoben" ? ` <span class="badge">laut Sitzungsnamen ${s.hinweis}</span>` : "";
+    // Stand und Evidenzstatus bleiben, wie sie sind; nach der Plakette ein Leerzeichen vor dem Status (Umbruchstelle,
+    // beim Vorlesen getrennt)
+    const plakette = s.hinweis === "abgesagt" || s.hinweis === "verschoben" ? ` <span class="badge">laut Sitzungsnamen ${s.hinweis}</span> ` : "";
     return `<li class="step${cls}" data-status="${esc(status)}">
       <span class="mark mark-${esc(status)}" aria-hidden="true">${mark}</span>
       <div class="step-head">${esc(STEP_LABEL[s.typ] || s.typ)}${label}${plakette}<span class="step-status">${esc(STATUS[status])}</span></div>
@@ -2307,7 +2312,11 @@
     }
     // Gremium im Vorgang: Reiter „Gremien“ mit diesem Gremium, Fokus auf seinem Eintrag (Esc führt hierher zurück)
     const gk = e.target.closest("[data-gremium-key]");
-    if (gk) { if (werDa()) { setPanel("panel-gremien", true); focusPanel("panel-gremien"); openGremien({ tab: "gremien", kennung: gk.dataset.gremiumKey, fokus: true }); } return; }
+    // (auch bei schon offener Fläche und nach mehreren Links während des Ladens: zum zuletzt gewählten Link)
+    if (gk) {
+      if (werDa()) { setPanel("panel-gremien", true); opener["panel-gremien"] = gk; focusPanel("panel-gremien"); openGremien({ tab: "gremien", kennung: gk.dataset.gremiumKey, fokus: true }); }
+      return;
+    }
     const gr = e.target.closest("[data-gremium-name]");
     if (gr) { setPanel("panel-prozesse", true); openProzesse({ tab: "gremien", gremiumName: gr.dataset.gremiumName }); focusPanel("panel-prozesse"); return; }
     const b = e.target.closest(".jump");
@@ -2700,14 +2709,17 @@
   // --- Fläche „Gremien und Ämter“ (site/gremien.js, erst beim Öffnen geladen; nur mit Freigabe „gremien“) -----------
   // Entscheidungen 21.11.2026 (2) (F4–F12) und 23.11.2026 (1) (E1–E11): Reiter „Gremien“ (Schaubild oder Liste) und
   // „Ämter“ aus gremien.json und aemter.json. Das Modul lädt beide Dateien beim ersten Öffnen; nach einem Fehler steht ein
-  // Satz in der Fläche, und das nächste Öffnen versucht es erneut. Nur mit Freigabe zur Laufzeit (index.json
-  // meta.funktionen) und vorhandener Fläche (Freigabe beim Bau, data-freigabe)
-  let werState = null, werReady = null, werModul = null;
+  // Satz in der Statuszeile (role=status, dort stand auch „Wird geladen …“), und das nächste Öffnen versucht es erneut.
+  // Ein gescheiterter Import bleibt für dieselbe Adresse des Moduls gescheitert (der Browser merkt sich das Ergebnis bis
+  // zum Neuladen der Seite); der nächste Versuch lädt das Modul deshalb unter einer anderen Adresse. Nur mit Freigabe zur
+  // Laufzeit (index.json meta.funktionen) und vorhandener Fläche (Freigabe beim Bau, data-freigabe)
+  let werState = null, werReady = null, werModul = null, werImportFehler = 0;
   const werDa = () => Boolean(funktionen.gremien) && vorhanden("panel-gremien");
   function openGremien(s) {
     if (!werDa()) return Promise.resolve(null);
     if (!werModul) { $("#wer-body").innerHTML = ""; $("#wer-status").textContent = "Wird geladen …"; }
-    werReady ||= import("./gremien.js").then(async (m) => {
+    const modul = werImportFehler ? `./gremien.js?versuch=${werImportFehler}` : "./gremien.js";
+    werReady ||= import(modul).catch((e) => { werImportFehler++; throw e; }).then(async (m) => {
       await m.init({
         basis: BONN, heute, zeitDatum, lizenz: lizenzOeffentlich, telefon: () => MOBILE.matches,
         onState(st) { werState = st; syncUrl(); },
@@ -2718,8 +2730,7 @@
     }).catch((e) => {
       werReady = null;
       console.warn("Gremien und Ämter nicht geladen", e);
-      $("#wer-status").textContent = "";
-      $("#wer-body").innerHTML = "<p>Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.</p>";
+      $("#wer-status").textContent = "Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.";
       return null;
     });   // beim nächsten Öffnen erneut
     return werReady.then((m) => { if (m) m.show(s); return m; });
@@ -2921,7 +2932,7 @@
         if (ziel) ziel.focus();
         return;
       }
-      if (e.target.closest("#reset-filters")) { resetFilters(); return; }
+      if (e.target.closest("#reset-filters")) { resetFilters(); focusPanel("panel-list"); return; }   // die Schaltfläche verschwindet
       // Filter „Gremium“ ohne Treffer im Gebiet: dieselbe Suche in ganz Köln
       if (e.target.closest("#gremium-koeln")) { setScope(STADT); shown = LIST_STEP; fillParties(); render(); syncUrl(); focusPanel("panel-list"); return; }
       const g = e.target.closest("button[data-gref]");
@@ -2996,7 +3007,7 @@
     }
     if (werDa() && ["gremien", "aemter"].includes(params.get("wer"))) {
       setPanel("panel-gremien", true);
-      await openGremien({ tab: params.get("wer"), darstellung: params.get("darstellung"), kennung: params.get("kennung") || undefined });
+      await openGremien({ tab: params.get("wer"), darstellung: params.get("darstellung"), kennung: params.get("kennung") || undefined, zeigen: true });
     }
     // Bonner Fläche „Prozesse“ nur mit ihrer Freigabe („soll“, in Köln aus); bis Pull Request 4b ohne diese Prüfung
     if (funktionen.soll && ["verfahren", "gremien", "aemter"].includes(params.get("prozesse"))) {

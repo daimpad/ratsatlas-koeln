@@ -629,20 +629,23 @@ def test_gremium_im_vorgang_link_nur_mit_kennung():
     assert 'data-gremium-key="beispielausschuss"' in _schritte([{**s, "gremium_key": "beispielausschuss"}], soll=True)[0]
     assert config.ZUSATZTHEMEN["soll"] is False and config.ZUSATZTHEMEN["gremien"] is True
     klick = _teil(APP, r'^  \$\("#detail"\)\.addEventListener\("click", \(e\) => \{\n.*?\n  \}\);\n')
-    assert ('if (gk) { if (werDa()) { setPanel("panel-gremien", true); focusPanel("panel-gremien"); '
-            'openGremien({ tab: "gremien", kennung: gk.dataset.gremiumKey, fokus: true }); } return; }') in klick
+    # das öffnende Element gilt auch bei schon offener Fläche (Esc führt zum zuletzt gewählten Link; Nachprüfung Bedienung)
+    assert ('if (werDa()) { setPanel("panel-gremien", true); opener["panel-gremien"] = gk; focusPanel("panel-gremien"); '
+            'openGremien({ tab: "gremien", kennung: gk.dataset.gremiumKey, fokus: true }); }') in klick
 
 
 def test_plakette_an_der_station():
     """F10 und (10) aus 21.11.2026 (1) (c), E1: Trägt der Schritt den Hinweis aus dem Sitzungsnamen (hinweis, aus der
     Station), steht im Kopf die Plakette „laut Sitzungsnamen abgesagt“ bzw. „… verschoben“; Stand, Evidenzstatus und
-    Ergebnis bleiben unverändert, ohne Hinweis keine Plakette."""
+    Ergebnis bleiben unverändert, ohne Hinweis keine Plakette. Nach der Plakette ein Leerzeichen vor dem Status
+    (Umbruchstelle und Vorlesen; Nachprüfung Bedienung)."""
     s = {"typ": "beratung", "label": "Beispielrat", "status": "belegt", "date": "2026-11-20", "role": "Beratung",
          "result": "vertagt", "gremium_key": "beispielrat"}
     abgesagt, verschoben, ohne, anders = _schritte([{**s, "hinweis": "abgesagt"}, {**s, "hinweis": "verschoben"}, s,
                                                     {**s, "hinweis": "anders"}])
-    assert '</button> <span class="badge">laut Sitzungsnamen abgesagt</span><span class="step-status">belegt</span>' in abgesagt
-    assert '<span class="badge">laut Sitzungsnamen verschoben</span><span class="step-status">belegt</span>' in verschoben
+    assert '</button> <span class="badge">laut Sitzungsnamen abgesagt</span> <span class="step-status">belegt</span>' in abgesagt
+    assert '<span class="badge">laut Sitzungsnamen verschoben</span> <span class="step-status">belegt</span>' in verschoben
+    assert '</button><span class="step-status">belegt</span>' in ohne   # ohne Plakette unverändert
     for html in (ohne, anders):
         assert "badge" not in html
     for html in (abgesagt, verschoben, ohne):

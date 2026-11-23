@@ -389,6 +389,8 @@ body.detail-closed #timeline-wrap { right: 16px; }
 .pz-meta { font-size: 12px; color: var(--text-muted); font-weight: 400; }
 .pz-zust dt { font-weight: 600; margin-top: 8px; } .pz-zust dd { margin: 2px 0 0; line-height: 1.45; }
 .pz-facts { padding-left: 18px; margin: 6px 0; } .pz-facts li { margin: 2px 0; }
+/* Kennzeichen „abgeleitet, …“ in den Angaben zu einem Gremium darf umbrechen (sonst bei 320 px waagrecht scrollen, WCAG 1.4.10) */
+.pz-facts .derived { display: inline-block; max-width: 100%; white-space: normal; }
 /* Besetzung eines Gremiums: Sitze nach Fraktion (abgeleitet), Mitglieder in einer Tabelle */
 .pz-sitze { list-style: none; padding: 0; margin: 4px 0 8px; max-width: 520px; }
 .pz-sitze li { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; border-bottom: 1px solid var(--border-alt); }
@@ -425,7 +427,8 @@ body.detail-closed #timeline-wrap { right: 16px; }
 /* Gremien und Ämter unter „Wer entscheidet“ (site/gremien.js; Entscheidung 23.11.2026 (1)): dieselben Bausteine wie
    die Bonner Fläche „Prozesse“, dazu Statuszeile, Liste der Ämter und eine Spalte, wenn eine Gruppe fehlt */
 .wer-darstellung[hidden] { display: none; }
-.wer-status { margin: 0 18px 6px; min-height: 0; }
+/* Statuszeile: in der Flex-Spalte der Überlagerung nicht schrumpfen (sonst läge ihr Text über dem Inhalt) */
+.wer-status { margin: 0 18px 6px; flex: none; }
 .wer-status:empty { margin: 0; }
 .org-cols.wer-eine-spalte { grid-template-columns: 1fr; }
 .wer-org .org-top .org-rat { max-width: 100%; }

@@ -6,9 +6,11 @@
 // Gremiums“ im Gebiet und in ganz Köln (Kennzeichen, #count, 0 Treffer mit Satz), Adresse beim Laden (wer, darstellung,
 // kennung, unbekannte Kennung), Ladefehler mit neuem Versuch, nicht aktuelle Liste der Sitzungen (Stand als Kölner Tag),
 // folgende Sitzung nach einer vergangenen nächsten (E2), Wechsel der Breite, Bonner ?prozesse= ohne „soll“, Zeitleiste
-// mit vergangener Absage laut Sitzungsnamen; dazu axe-core (WCAG 2.1 A/AA) in jedem neuen Zustand und Bildschirmfotos
-// (Umgebungsvariable FOTOS). Abweichende Daten setzt die Prüfung nur im Browser über page.route ein (erfundene Werte);
-// die Dateien bleiben unverändert. Nur die lokale Seite: Anfragen an andere Hosts werden abgebrochen.
+// mit vergangener Absage laut Sitzungsnamen; Nachprüfung Bedienung (Fokus beim Wechsel der Breite, Wahl während des
+// Ladens, gescheiterter Import, aufgelöstes Gremium, Statuszeile, 320 px); dazu axe-core (WCAG 2.1 A/AA) in jedem neuen
+// Zustand und Bildschirmfotos (Umgebungsvariable FOTOS). Abweichende Daten setzt die Prüfung nur im Browser über
+// page.route ein (erfundene Werte); die Dateien bleiben unverändert. Nur die lokale Seite: Anfragen an andere Hosts
+// werden abgebrochen.
 // Aufruf (Seite mit Testdaten, z. B. python3 tools/testdaten.py, Pipeline, tools/seite_bauen.py, dann
 //   python3 -m http.server --bind 127.0.0.1 8790 -d _site):
 //   NODE_PATH=<…/node_modules mit playwright> AXE_PFAD=<…/axe.min.js> FOTOS=<Ordner> node tests/browser/gremien.js http://127.0.0.1:8790/ [ergebnis.json]
@@ -278,6 +280,19 @@ async function vorgangUndFilter(browser, profil, gebiet) {
     ohneKennung: [...document.querySelectorAll("#detail .step-head")].filter((h) => !h.querySelector("[data-gremium-key]") && /^(Beratung|Entscheidung)/.test(h.textContent)).length }), key);
   pruefen(profil, "Vorgang: Gremium mit Kennung als Link, Plakette „laut Sitzungsnamen abgesagt“ an der Station", v.links > 0 && v.link === gremium
     && JSON.stringify(v.plakette) === '["laut Sitzungsnamen abgesagt"]', v);
+  // Plakette und Status durch ein Leerzeichen getrennt (Vorlesen, Umbruchstelle); auf dem Telefon bei 300 px kein
+  // waagrechtes Scrollen im Vorgang (WCAG 1.4.10; Nachprüfung Bedienung)
+  const kopf = await s.page.$eval("#detail .step-head:has(.badge)", (h) => h.textContent);
+  let breite = null;
+  if (telefon(profil)) {
+    await s.page.setViewportSize({ width: 300, height: 640 });
+    await s.page.waitForTimeout(300);
+    breite = await s.page.$eval("#detail", (d) => [d.scrollWidth, d.clientWidth]);
+    await s.page.setViewportSize(PROFILE[profil].viewport);
+    await s.page.waitForTimeout(300);
+  }
+  pruefen(profil, "Plakette: Leerzeichen vor dem Status; Telefon bei 300 px ohne waagrechtes Scrollen im Vorgang", /laut Sitzungsnamen abgesagt \S/.test(kopf)
+    && (!breite || breite[0] <= breite[1]), { kopf: kopf.replace(/^.*?(laut)/s, "$1"), breite });
   await s.page.$eval(`#detail [data-gremium-key="${key}"]`, (b) => b.scrollIntoView({ block: "center" }));
   await foto(s.page, `vorgang-link-plakette-${profil}`);
   await axe(s.page, profil, "Vorgang mit Link und Plakette");
@@ -399,7 +414,8 @@ async function adresseUndDaten(browser, profil, gremien) {
   const bonn = await s.page.evaluate(() => ({ prozesse: !document.getElementById("panel-prozesse").hidden, modul: performance.getEntriesByType("resource").some((r) => r.name.endsWith("/prozesse.js")) }));
   pruefen(profil, "Bonner ?prozesse=gremien öffnet ohne „soll“ nichts und lädt prozesse.js nicht", !bonn.prozesse && !bonn.modul, bonn);
   await s.ctx.close();
-  // Ladefehler: erster Abruf von gremien.json scheitert; ein Satz, beim nächsten Öffnen neuer Versuch
+  // Ladefehler: erster Abruf von gremien.json scheitert; ein Satz in der Statuszeile (role=status, wird angesagt; WCAG
+  // 4.1.3), beim nächsten Öffnen neuer Versuch; danach wirken Reiter einmal (die Ereignisse sind nur einmal angemeldet)
   let versuche = 0;
   s = await neueSeite(browser, profil, { "gremien.json": async (j, route) => {
     versuche++;
@@ -410,8 +426,9 @@ async function adresseUndDaten(browser, profil, gremien) {
   await geladen(s.page);
   await menueOeffnen(s.page, profil, "mega-entscheiden");
   await s.page.click('#mega-entscheiden [data-wer="gremien"]');
-  await s.page.waitForFunction(() => /konnten nicht geladen werden/.test(document.getElementById("wer-body").textContent), null, { timeout: 20000 });
-  const satz = await s.page.$eval("#wer-body", (b) => b.innerText.trim());
+  await s.page.waitForFunction(() => /konnten nicht geladen werden/.test(document.getElementById("wer-status").textContent), null, { timeout: 20000 });
+  const fehlerZeile = await s.page.evaluate(() => ({ status: document.getElementById("wer-status").textContent, rolle: document.getElementById("wer-status").getAttribute("role"),
+    inhalt: document.getElementById("wer-body").textContent.trim() }));
   await axe(s.page, profil, "Ladefehler");
   await s.page.keyboard.press("Escape");
   await menueOeffnen(s.page, profil, "mega-entscheiden");
@@ -419,8 +436,13 @@ async function adresseUndDaten(browser, profil, gremien) {
   await flaecheBereit(s.page);
   await s.page.waitForTimeout(300);
   z = await zustand(s.page);
-  pruefen(profil, "Ladefehler: ein Satz, beim nächsten Öffnen neuer Versuch mit Erfolg", satz === "Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut."
-    && versuche === 2 && (z.schaubild || z.liste), { satz, versuche });
+  pruefen(profil, "Ladefehler: ein Satz in der Statuszeile (role=status), beim nächsten Öffnen neuer Versuch mit Erfolg", fehlerZeile.status === "Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut."
+    && fehlerZeile.rolle === "status" && fehlerZeile.inhalt === "" && versuche === 2 && (z.schaubild || z.liste), { fehlerZeile, versuche });
+  await s.page.focus("#tab-wer-gremien");
+  await s.page.keyboard.press("ArrowRight");
+  await s.page.waitForTimeout(150);
+  z = await zustand(s.page);
+  pruefen(profil, "nach dem neuen Versuch: → wählt einmal den nächsten Reiter", z.tabs[1][1] === "true" && z.aemter >= 2 && (await fokus(s.page)).id === "tab-wer-aemter", z.tabs);
   pruefen(profil, "keine Skriptfehler (Ladefehler)", s.fehler.length === 0, s.fehler);
   await s.ctx.close();
   // nicht aktuelle Liste der Sitzungen: Hinweis mit dem Stand als Kölner Tag (23:30 UTC ist dort der nächste Tag)
@@ -474,6 +496,256 @@ async function adresseUndDaten(browser, profil, gremien) {
   void heute;
 }
 
+// Nachprüfung Bedienung (23.11.2026): Fokus beim Wechsel der Breite, gescheiterter Import, verzögerter Zähler, Link bei
+// offener Fläche, Wahl während des Ladens, aufgelöstes Gremium, Zustand aus der Adresse im Bild, „Filter und Zeitraum
+// zurücksetzen“, Telefonbreite neben dem Vorgang, Höhe der Statuszeile, 320 px ohne waagrechtes Scrollen; jede Prüfung
+// mit eigener Seite
+const umfeld = (profil, gremien) => ({ breit: !telefon(profil), w: PROFILE[profil].viewport.width, h: PROFILE[profil].viewport.height,
+  bvs: gremien.gremien.filter((g) => g.gruppe === "bezirksvertretung" && !g.aufgeloest), alt: gremien.gremien.find((g) => g.aufgeloest) });
+const BEDIENUNG = {
+  // Wechsel der Breite ohne ausdrückliche Wahl: gleiche Darstellung → kein Neuaufbau, Fokus bleibt; andere Darstellung →
+  // Fokus auf demselben Gremium bzw. im Schaubild auf dem gewählten Optionsfeld
+  async breiteFokus(browser, profil, gremien, gebiet) {
+    const { breit, w, h, bvs } = umfeld(profil, gremien);
+    let s;
+    if (breit) {
+      const bv = bvs[0], anders = w === 1440 ? 1200 : 1280;
+      s = await neueSeite(browser, profil);
+      await s.page.goto(`${BASIS}?wer=gremien`, { waitUntil: "load" });
+      await geladen(s.page);
+      await flaecheBereit(s.page);
+      await s.page.focus(`#wer-body .org-node[data-kennung="${bv.key}"]`);
+      await s.page.setViewportSize({ width: anders, height: h });
+      await s.page.waitForTimeout(300);
+      const a1 = [await fokus(s.page), (await zustand(s.page)).schaubild];
+      await s.page.keyboard.press("Enter");
+      await s.page.waitForTimeout(150);
+      await s.page.setViewportSize({ width: w, height: h });
+      await s.page.waitForTimeout(300);
+      const a2 = [await fokus(s.page), (await zustand(s.page)).schaubild];
+      await s.page.setViewportSize({ width: 900, height: h });
+      await s.page.waitForTimeout(300);
+      const a3 = [await fokus(s.page), (await zustand(s.page)).liste, await s.page.$$eval("#wer-liste details[open]", (ds) => ds.map((d) => d.dataset.kennung))];
+      await s.page.focus("#wer-q");
+      await s.page.setViewportSize({ width: w, height: h });
+      await s.page.waitForTimeout(300);
+      const a4 = [await fokus(s.page), (await zustand(s.page)).schaubild];
+      pruefen(profil, `Breite ${w} → ${anders} → ${w} → 900 → ${w}: Fokus auf Knoten, Überschrift im Detail, Eintrag der Liste, Optionsfeld „Schaubild“`,
+        a1[0].kennung === bv.key && a1[0].tag === "button" && a1[1] && a2[0].tag === "h3" && a2[0].text === bv.name && a2[1]
+        && a3[0].tag === "summary" && a3[0].kennung === bv.key && a3[1] && JSON.stringify(a3[2]) === JSON.stringify([bv.key])
+        && a4[0].text === "Schaubild" && a4[0].sichtbar && a4[1], { a1, a2, a3, a4 });
+      pruefen(profil, "keine Skriptfehler (Breite und Fokus)", s.fehler.length === 0, s.fehler);
+      await s.ctx.close();
+    }
+  },
+  // gescheiterter Import von gremien.js: Satz in der Statuszeile, beim nächsten Öffnen ein neuer Abruf des Moduls
+  async importUndZaehler(browser, profil, gremien, gebiet) {
+    let s, z;
+    let module = 0;
+    s = await neueSeite(browser, profil);
+    await s.page.route((u) => u.pathname.endsWith("/gremien.js"), (r) => { module++; return module === 1 ? r.fulfill({ status: 404, body: "" }) : r.continue(); });
+    await s.page.goto(BASIS, { waitUntil: "load" });
+    await geladen(s.page);
+    await menueOeffnen(s.page, profil, "mega-entscheiden");
+    await s.page.click('#mega-entscheiden [data-wer="gremien"]');
+    await s.page.waitForFunction(() => /konnten nicht geladen werden/.test(document.getElementById("wer-status").textContent), null, { timeout: 20000 });
+    await s.page.keyboard.press("Escape");
+    await menueOeffnen(s.page, profil, "mega-entscheiden");
+    await s.page.click('#mega-entscheiden [data-wer="gremien"]');
+    await flaecheBereit(s.page);
+    await s.page.waitForTimeout(300);
+    z = await zustand(s.page);
+    pruefen(profil, "gescheiterter Import: beim nächsten Öffnen neuer Abruf des Moduls mit Erfolg", module === 2 && (z.schaubild || z.liste), { module, status: z.status });
+    // verzögerter Zähler der Liste: nach schnellem Wechsel zu „Ämter“ bleibt die Statuszeile leer
+    await s.page.click('.wer-darstellung [data-darstellung="liste"]');
+    await s.page.fill("#wer-q", "bez");
+    await s.page.click("#tab-wer-aemter");
+    await s.page.waitForTimeout(700);
+    z = await zustand(s.page);
+    pruefen(profil, "Zähler der Liste: nach Wechsel zu „Ämter“ innerhalb von 400 ms keine Zahl in der Statuszeile", z.aemter >= 2 && z.status === "", z.status);
+    pruefen(profil, "keine Skriptfehler (Import und Zähler)", s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  },
+  // Wahl während des Ladens: Klick auf „Ämter“ gilt nach dem Laden, Fokus auf dem gewählten Reiter
+  async wahlBeimLaden(browser, profil, gremien, gebiet) {
+    let s, z, f;
+    s = await neueSeite(browser, profil, { "gremien.json": async (j, route) => { await new Promise((ok) => setTimeout(ok, 1500)); return route.continue(); } });
+    await s.page.goto(BASIS, { waitUntil: "load" });
+    await geladen(s.page);
+    await menueOeffnen(s.page, profil, "mega-entscheiden");
+    await s.page.click('#mega-entscheiden [data-wer="gremien"]');
+    await s.page.waitForTimeout(200);
+    const beim = (await zustand(s.page)).status;
+    await s.page.click("#tab-wer-aemter");
+    await s.page.waitForFunction(() => document.querySelector("#wer-body .wer-dezernat"), null, { timeout: 20000 });
+    await s.page.waitForTimeout(300);
+    z = await zustand(s.page);
+    f = await fokus(s.page);
+    pruefen(profil, "Klick auf „Ämter“ während des Ladens: nach dem Laden Reiter „Ämter“, Fokus auf ihm (tabindex 0)", beim === "Wird geladen …"
+      && z.tabs[1][1] === "true" && z.tabs[1][2] === 0 && z.tabs[0][2] === -1 && f.id === "tab-wer-aemter" && (await adresse(s.page)).wer === "aemter", { beim, tabs: z.tabs, f });
+    await s.ctx.close();
+  },
+  // aufgelöstes Gremium aus der Adresse: ohne Darstellung die Liste mit „frühere Gremien zeigen“; mit „Schaubild“ ein
+  // Hinweis auf die Liste statt seiner Angaben
+  async aufgeloest(browser, profil, gremien, gebiet) {
+    const { alt } = umfeld(profil, gremien);
+    let s, z;
+    if (alt) {
+      s = await neueSeite(browser, profil);
+      await s.page.goto(`${BASIS}?wer=gremien&kennung=${alt.key}`, { waitUntil: "load" });
+      await geladen(s.page);
+      await flaecheBereit(s.page);
+      z = await zustand(s.page);
+      const liste = await s.page.evaluate((k) => ({ frueher: document.getElementById("wer-frueher")?.checked, offen: [...document.querySelectorAll("#wer-liste details[open]")].map((d) => d.dataset.kennung) }), alt.key);
+      const a = await adresse(s.page);
+      pruefen(profil, "aufgelöstes Gremium aus der Adresse: Liste mit früheren Gremien, Eintrag offen, Adresse mit darstellung=liste", z.liste && liste.frueher
+        && JSON.stringify(liste.offen) === JSON.stringify([alt.key]) && a.darstellung === "liste" && a.kennung === alt.key, { liste, a });
+      await s.page.goto(`${BASIS}?wer=gremien&darstellung=schaubild&kennung=${alt.key}`, { waitUntil: "load" });
+      await geladen(s.page);
+      await flaecheBereit(s.page);
+      const bild = await s.page.evaluate(() => ({ h3: Boolean(document.querySelector("#wer-detail h3")), text: document.getElementById("wer-detail").innerText.trim(),
+        gedrueckt: document.querySelectorAll('#wer-body [aria-pressed="true"]').length }));
+      pruefen(profil, "aufgelöstes Gremium im Schaubild: Hinweis auf die Liste statt seiner Angaben", !bild.h3 && bild.gedrueckt === 0
+        && bild.text === `Das gewählte Gremium „${alt.name}“ ist aufgelöst; es steht in der Liste unter „frühere Gremien zeigen“.`, bild);
+      await axe(s.page, profil, "aufgelöstes Gremium im Schaubild");
+      await s.ctx.close();
+    }
+  },
+  // Zustand aus der Adresse: das gewählte Gremium steht im sichtbaren Teil der Fläche (ohne Fokuswechsel)
+  async adresseUndStatuszeile(browser, profil, gremien, gebiet) {
+    const { bvs } = umfeld(profil, gremien);
+    let s;
+    const letzte = bvs[bvs.length - 1];
+    s = await neueSeite(browser, profil);
+    await s.page.goto(`${BASIS}?wer=gremien&kennung=${letzte.key}`, { waitUntil: "load" });
+    await geladen(s.page);
+    await flaecheBereit(s.page);
+    await s.page.waitForTimeout(300);
+    const lage = await s.page.evaluate((k) => {
+      const b = document.getElementById("wer-body").getBoundingClientRect();
+      const e = (document.querySelector("#wer-detail h3") || document.querySelector(`#wer-liste details[data-kennung="${k}"] summary`)).getBoundingClientRect();
+      return { flaeche: [Math.round(b.top), Math.round(b.bottom)], ziel: [Math.round(e.top), Math.round(e.bottom)] };
+    }, letzte.key);
+    pruefen(profil, "Adresse mit Kennung: Eintrag im sichtbaren Teil der Fläche", lage.ziel[0] >= lage.flaeche[0] && lage.ziel[1] <= lage.flaeche[1], lage);
+    // Statuszeile: Hinweis zur unbekannten Kennung und Zähler der Liste mit allen Einträgen offen in voller Höhe, über dem Inhalt
+    await s.page.goto(`${BASIS}?wer=gremien&darstellung=liste&kennung=probe-unbekannt`, { waitUntil: "load" });
+    await geladen(s.page);
+    await flaecheBereit(s.page);
+    const hoehe = () => s.page.evaluate(() => {
+      const st = document.getElementById("wer-status"), r = st.getBoundingClientRect();
+      return { box: Math.round(r.height), text: st.scrollHeight, ueber: r.bottom <= document.getElementById("wer-body").getBoundingClientRect().top + 0.5 };
+    });
+    const h1 = await hoehe();
+    if (await s.page.$("#wer-frueher")) await s.page.check("#wer-frueher");
+    await s.page.evaluate(() => document.querySelectorAll("#wer-liste details").forEach((d) => { d.open = true; }));
+    await s.page.waitForTimeout(200);
+    const h2 = await hoehe();
+    pruefen(profil, "Statuszeile in voller Höhe über dem Inhalt (unbekannte Kennung, Liste mit allen Einträgen offen)", h1.box >= h1.text && h1.ueber && h2.box >= h2.text && h2.ueber, { h1, h2 });
+    await s.ctx.close();
+  },
+  // 320 px (Telefon): kein waagrechtes Scrollen in der Liste mit allen Einträgen und im Detail eines Ausschusses (1.4.10)
+  async schmal320(browser, profil, gremien, gebiet) {
+    let s;
+    if (telefon(profil)) {
+      s = await neueSeite(browser, profil);
+      await s.page.setViewportSize({ width: 320, height: 640 });
+      await s.page.goto(`${BASIS}?wer=gremien&darstellung=liste`, { waitUntil: "load" });
+      await geladen(s.page);
+      await flaecheBereit(s.page);
+      if (await s.page.$("#wer-frueher")) await s.page.check("#wer-frueher");
+      await s.page.evaluate(() => document.querySelectorAll("#wer-liste details").forEach((d) => { d.open = true; }));
+      await s.page.waitForTimeout(200);
+      const liste = await s.page.$eval("#wer-body", (b) => [b.scrollWidth, b.clientWidth]);
+      const aus = gremien.gremien.find((g) => g.gruppe === "ausschuss" && g.paragraf != null && !g.aufgeloest);
+      let bild = null;
+      if (aus) {
+        await s.page.goto(`${BASIS}?wer=gremien&darstellung=schaubild&kennung=${aus.key}`, { waitUntil: "load" });
+        await geladen(s.page);
+        await flaecheBereit(s.page);
+        bild = await s.page.$eval("#wer-body", (b) => [b.scrollWidth, b.clientWidth]);
+      }
+      pruefen(profil, "320 px: kein waagrechtes Scrollen (Liste mit allen Einträgen, Detail eines Ausschusses)", liste[0] <= liste[1] && (!bild || bild[0] <= bild[1]), { liste, bild });
+      await s.ctx.close();
+    }
+  },
+  // Link im Vorgang bei schon offener Fläche (Desktop: der Vorgang bleibt daneben offen): Esc führt zum Link zurück;
+  // „Filter und Zeitraum zurücksetzen“ im Satz bei 0 Treffern setzt den Fokus auf die Liste
+  async linkUndZuruecksetzen(browser, profil, gremien, gebiet) {
+    const { breit } = umfeld(profil, gremien);
+    let s, f;
+    const datei = `${gebiet.split(":")[0] === "ortsteil" ? "ortsteile" : "bezirke"}/${gebiet.split(":")[1]}.json`;
+    let ref = null, key = null;
+    s = await neueSeite(browser, profil, { [datei]: (j) => {
+      const p = j.papers.find((x) => x.steps.some((st) => st.gremium_key));
+      ref = p.reference; key = p.steps.find((x) => x.gremium_key).gremium_key;
+      return j;
+    }, "gremien.json": (j) => ({ ...j, gremien: [...j.gremien, PROBE] }) });
+    await s.page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
+    await geladen(s.page);
+    if (breit) {
+      await s.page.click('.toggle[data-panel="panel-list"]');
+      await s.page.click(`#papers button[data-ref="${ref}"]`);
+      await s.page.waitForSelector("#detail .steps");
+      await menueOeffnen(s.page, profil, "mega-entscheiden");
+      await s.page.click('#mega-entscheiden [data-wer="gremien"]');
+      await flaecheBereit(s.page);
+      await s.page.focus(`#detail [data-gremium-key="${key}"]`);
+      await s.page.keyboard.press("Enter");
+      await s.page.waitForTimeout(400);
+      const nach = await fokus(s.page);
+      await s.page.keyboard.press("Escape");
+      await s.page.waitForTimeout(300);
+      f = await fokus(s.page);
+      pruefen(profil, "Link im Vorgang bei offener Fläche: Fokus auf dem Gremium, Esc zurück zum Link", nach.tag === "h3" && f.kennung === key && f.sichtbar, { nach, f });
+    }
+    await menueOeffnen(s.page, profil, "mega-entscheiden");
+    await s.page.click('#mega-entscheiden [data-wer="gremien"]');
+    await flaecheBereit(s.page);
+    await s.page.click('.wer-darstellung [data-darstellung="liste"]');
+    await s.page.click(`#wer-liste details[data-kennung="${PROBE.key}"] summary`);
+    await s.page.click(`#wer-liste details[data-kennung="${PROBE.key}"] .wer-filter`);
+    await s.page.waitForSelector("#papers #reset-filters");
+    await s.page.focus("#reset-filters");
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForTimeout(300);
+    f = await fokus(s.page);
+    const nachReset = await s.page.evaluate(() => ({ kennzeichen: !document.getElementById("gremium-filter").hidden, wert: document.getElementById("f-gremium").value }));
+    pruefen(profil, "„Filter und Zeitraum zurücksetzen“ bei 0 Treffern: Filter weg, Fokus auf der Überschrift der Liste", f.id === "list-heading" && !nachReset.kennzeichen && !nachReset.wert, { f, nachReset });
+    pruefen(profil, "keine Skriptfehler (Link, Zurücksetzen)", s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  },
+  // Wechsel auf Telefonbreite neben dem Vorgang: „Gremien und Ämter“ mit dem Fokus bleibt offen, der Vorgang geht zu
+  async telefonbreite(browser, profil, gremien, gebiet) {
+    const { bvs } = umfeld(profil, gremien);
+    let s, z, f;
+    if (profil === "1440") {
+      const bv = bvs[Math.min(2, bvs.length - 1)];
+      s = await neueSeite(browser, profil);
+      await s.page.goto(BASIS, { waitUntil: "load" });
+      await geladen(s.page);
+      await menueOeffnen(s.page, profil, "mega-entscheiden");
+      await s.page.click('#mega-entscheiden [data-wer="gremien"]');
+      await flaecheBereit(s.page);
+      await s.page.click(`#wer-body .org-node[data-kennung="${bv.key}"]`);
+      await s.page.waitForTimeout(200);
+      const vorher = await s.page.evaluate(() => !document.getElementById("panel-detail").hidden);
+      await s.page.setViewportSize({ width: 900, height: 900 });
+      await s.page.waitForTimeout(300);
+      z = await zustand(s.page);
+      f = await fokus(s.page);
+      const a = await adresse(s.page);
+      const vorgang = await s.page.evaluate(() => !document.getElementById("panel-detail").hidden);
+      pruefen(profil, "1440 → 900 neben dem Vorgang: Fläche mit dem Fokus bleibt offen (Liste, Eintrag fokussiert), Vorgang zu, Adresse mit wer und kennung",
+        vorher && z.offen && !vorgang && z.liste && f.tag === "summary" && f.kennung === bv.key && a.wer === "gremien" && a.kennung === bv.key, { vorher, vorgang, f, a });
+      pruefen(profil, "keine Skriptfehler (Telefonbreite)", s.fehler.length === 0, s.fehler);
+      await s.ctx.close();
+    }
+  },
+};
+async function bedienung(browser, profil, gremien, gebiet) {
+  for (const f of Object.values(BEDIENUNG)) await f(browser, profil, gremien, gebiet);
+}
+
 // Zeitleiste: vergangene Sitzung des Rates mit Hinweis „abgesagt“ aus dem Namen (erfunden) gestrichelt (#47 (3))
 async function zeitleiste(browser, profil) {
   const heute = tagInKoeln(new Date());
@@ -513,6 +785,7 @@ async function zeitleiste(browser, profil) {
       await vorgangUndFilter(browser, profil, gebiet);
       await ganzKoeln(browser, profil, suche);
       await adresseUndDaten(browser, profil, gremien);
+      await bedienung(browser, profil, gremien, gebiet);
       if (profil === "1440") await zeitleiste(browser, profil);
     }
   } catch (e) {
