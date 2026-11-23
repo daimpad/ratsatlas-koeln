@@ -389,6 +389,8 @@ body.detail-closed #timeline-wrap { right: 16px; }
 .pz-meta { font-size: 12px; color: var(--text-muted); font-weight: 400; }
 .pz-zust dt { font-weight: 600; margin-top: 8px; } .pz-zust dd { margin: 2px 0 0; line-height: 1.45; }
 .pz-facts { padding-left: 18px; margin: 6px 0; } .pz-facts li { margin: 2px 0; }
+/* Kennzeichen „abgeleitet, …“ in den Angaben zu einem Gremium darf umbrechen (sonst bei 320 px waagrecht scrollen, WCAG 1.4.10) */
+.pz-facts .derived { display: inline-block; max-width: 100%; white-space: normal; }
 /* Besetzung eines Gremiums: Sitze nach Fraktion (abgeleitet), Mitglieder in einer Tabelle */
 .pz-sitze { list-style: none; padding: 0; margin: 4px 0 8px; max-width: 520px; }
 .pz-sitze li { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; border-bottom: 1px solid var(--border-alt); }
@@ -422,6 +424,19 @@ body.detail-closed #timeline-wrap { right: 16px; }
 .org-name { font-weight: 600; font-size: 13px; line-height: 1.3; overflow-wrap: break-word; hyphens: auto; }
 .org-meta { font-size: 11.5px; color: var(--text-muted); }
 @media (max-width: 760px) { .org-cols { grid-template-columns: 1fr; } }
+/* Gremien und Ämter unter „Wer entscheidet“ (site/gremien.js; Entscheidung 23.11.2026 (1)): dieselben Bausteine wie
+   die Bonner Fläche „Prozesse“, dazu Statuszeile, Liste der Ämter und eine Spalte, wenn eine Gruppe fehlt */
+.wer-darstellung[hidden] { display: none; }
+/* Statuszeile: in der Flex-Spalte der Überlagerung nicht schrumpfen (sonst läge ihr Text über dem Inhalt) */
+.wer-status { margin: 0 18px 6px; flex: none; }
+.wer-status:empty { margin: 0; }
+.org-cols.wer-eine-spalte { grid-template-columns: 1fr; }
+.wer-org .org-top .org-rat { max-width: 100%; }
+.wer-quelle, .wer-quellen { overflow-wrap: anywhere; }
+.wer-einheiten { list-style: none; margin: 4px 0 8px; padding: 0; display: grid; gap: 6px; }
+.wer-einheiten li { display: grid; gap: 1px; padding: 6px 10px; border: 1px solid var(--border-alt); border-radius: var(--radius-s); background: var(--surface); }
+.wer-einheit { font-weight: 500; font-size: 14px; overflow-wrap: break-word; hyphens: auto; }
+.wer-dezernat + .wer-dezernat { margin-top: 6px; }
 .tabs { display: flex; gap: 4px; margin: 0 18px 8px; padding: 3px; border-radius: 999px; background: rgba(15, 15, 20, 0.05); align-self: flex-start; }
 .tabs [role=tab] { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; border-radius: 999px; padding: 7px 14px; cursor: pointer; font-weight: 500; font-size: 13px; }
 .tabs [role=tab][aria-selected="true"] { background: #fff; color: var(--accent-ink); box-shadow: 0 1px 3px rgba(15, 15, 20, 0.12); }
@@ -440,6 +455,7 @@ body.detail-closed #timeline-wrap { right: 16px; }
 .meeting-date { color: var(--text-muted); font-size: 13px; min-width: 150px; }
 .meeting.cancelled strong { text-decoration: line-through; }
 .badge { font-size: 12px; padding: 1px 8px; border-radius: 999px; background: rgba(15, 15, 20, .06); }
+.step-head .badge { font-weight: 400; margin-left: 4px; white-space: nowrap; }
 .meeting-name { color: var(--text-muted); font-size: 13px; overflow-wrap: anywhere; }
 .meeting .agenda { margin-top: 6px; font-size: 13px; }
 .meeting .agenda ul { margin: 2px 0 0; padding-left: 18px; }
@@ -550,6 +566,14 @@ body.chat-open .leaflet-left { left: calc(var(--chat-w) + 32px); }
 /* Zustände der Liste */
 .panel.loading .papers { opacity: .45; pointer-events: none; }
 .empty-list { padding: 14px 4px; color: var(--text-muted); }
+/* Zeile der Suche ohne Gebiet (Gebiet −1 in suche.json): wie ein Eintrag, aber ohne Schaltfläche */
+.papers .ohne-gebiet { display: grid; gap: 3px; padding: 9px 10px; border: 1px dashed var(--border-alt); border-radius: 14px; }
+/* Kennzeichen des Filters „Gremium“ über der Liste (Entscheidung 23.11.2026 (1) (E10)) */
+.filter-kennzeichen { display: flex; align-items: center; gap: 6px; width: fit-content; max-width: 100%; margin: 6px 0 2px; padding: 2px 4px 2px 12px;
+  border-radius: 999px; background: rgba(124, 58, 237, 0.1); color: var(--accent-ink); font-size: 13px; }
+.filter-kennzeichen[hidden] { display: none; }
+.filter-kennzeichen > span { min-width: 0; overflow-wrap: anywhere; }
+.filter-kennzeichen .icon-btn { flex: none; }
 .empty-list p { margin: 0 0 8px; }
 .papers .more { padding: 10px 4px; }
 .soll { margin: 16px 0 8px; }
@@ -776,8 +800,8 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
     background: rgba(255, 255, 255, 0.97); border: 1px solid var(--border); box-shadow: var(--shadow-lift), var(--highlight);
   }
   body.nav-open .nav-more { display: flex; animation: mega-in .2s var(--ease); }
-  /* offenes Menü über Auswertung, Termine, Prozesse und Mitmachen (.overlay, z-index 1100) und den Mega-Menüs (1150);
-     bis Runde 18 lag es dahinter. Die Überlagerung bleibt offen: Esc schließt erst das Menü, dann sie */
+  /* offenes Menü über „In Zahlen“, Termine, Prozesse, Mitmachen sowie Gremien und Ämter (.overlay, z-index 1100) und den
+     Mega-Menüs (1150); bis Runde 18 lag es dahinter. Die Überlagerung bleibt offen: Esc schließt erst das Menü, dann sie */
   body.nav-open .nav { z-index: 1160; }
   .nav-more .nav-group:not(.seg) { flex-direction: column; align-items: stretch; gap: 2px; }
   .nav-more .nav-group:not(.seg) .menu-btn { flex-direction: row; justify-content: flex-start; gap: 10px; height: 48px; padding: 0 12px; font-size: 16px; border-radius: 14px; }
