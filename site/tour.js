@@ -7,14 +7,15 @@
   const MOBILE = matchMedia("(max-width: 900px)");
   const $ = (s) => document.querySelector(s);
   // Kartenvorschau ohne Ratsvorlagen (index.json meta.vorschau; Kennzeichen setzt app.js applyFunktionen): dort fehlen
-  // Punkte, Zeitleiste, Termine, Schnellfilter und Auswertung, Suche und Liste bleiben leer; die Tour nennt, was folgt
+  // Punkte, Zeitleiste, Termine, Schnellfilter und „In Zahlen“, Suche und Liste bleiben leer; die Tour nennt, was folgt
   const VORSCHAU = () => document.documentElement.dataset.vorschau === "ja";
   const TELEFON_LEGENDEN = MOBILE.matches ? " Auf dem Telefon stehen die Legenden hinter „Karte“; „Ganz Köln ansehen“ ist das Symbol mit den vier Ecken." : "";
   const TELEFON_KARTE = MOBILE.matches ? " Auf dem Telefon liegen Ebenen, Legenden und Quellen zusammen hinter „Karte“." : "";
   // Freigaben (index.json meta.funktionen, config.ZUSATZTHEMEN): app.js blendet Elemente mit data-funktion aus und zeigt
   // den Schalter „Baustellen“ nur mit Baustellen. Sätze über abgeschaltete Funktionen entfallen, die Texte für Bonn
   // bleiben für die spätere Freigabe stehen (Runde 18; in Köln abgeschaltet: Baustellen, Haushalt, Prozesse,
-  // Ratsassistent; Einfache Sprache und „Alle Wege im Überblick“ seit dem zweiten Lauf, 13.11.2026, mit Kölner Text)
+  // Ratsassistent; Einfache Sprache und „Alle Wege im Überblick“ seit dem zweiten Lauf, 13.11.2026, mit Kölner Text;
+  // Gremien und Ämter unter „Wer entscheidet“ mit Freigabe „gremien“ seit Pull Request 4b, ein Satz im Schritt dazu)
   const sichtbar = (sel) => { const el = document.querySelector(sel); return Boolean(el) && !el.hidden; };
   const AN = {
     baustellen: () => sichtbar(".map-bau"),
@@ -22,6 +23,8 @@
     haushalt: () => sichtbar('[data-funktion="haushalt"]'),
     mitmachen: () => sichtbar('[data-funktion="mitmachen"]'),
     technik: () => sichtbar('[data-funktion="technik"]'),
+    // Karten „Gremien“ und „Ämter“ im Menü „Wer entscheidet“ (nur mit Freigabe und Fläche im HTML)
+    gremien: () => sichtbar('[data-funktion="gremien"]'),
     // Kachel „Aktuell in Köln“ im Menü „Mitmachen“ (nur mit Karten im Startfenster; app.js fillMitmachen)
     aktuell: () => sichtbar("#karte-aktuell"),
   };
@@ -100,7 +103,8 @@
     { when: () => document.querySelector('[data-mega="mega-entscheiden"]')?.hidden === false,
       menu: "mega-entscheiden", target: "#mega-entscheiden",
       title: "Wer entscheidet",
-      text: "„Verfahrenswege in Zahlen“ zeigt für ganz Köln, welche Gremien welche Vorlagenart beraten und wie Verfahren meist enden." },
+      text: () => (AN.gremien() ? "Unter „Gremien“ stehen Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien mit Sitzungen und Vorlagen in 12 Monaten und der nächsten Sitzung, als Schaubild oder Liste, unter „Ämter“ die Dezernate mit ihren Dienststellen. " : "")
+        + "„Verfahrenswege in Zahlen“ zeigt für ganz Köln, welche Gremien welche Vorlagenart beraten und wie Verfahren meist enden." },
     { menu: "mega-mitmachen", target: "#mega-mitmachen", beacons: ["#karte-aktuell .btn", "#cta-termine", "#cta-mitmachen", "#cta-feed .btn"],
       title: "Mitmachen",
       text: () => (AN.aktuell() && AKTUELL_KARTEN() ? `„Aktuell in Köln“ führt zum Startfenster mit ${AKTUELL_KARTEN()}; kommende Sitzungen`

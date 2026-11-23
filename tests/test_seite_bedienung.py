@@ -84,8 +84,8 @@ def test_aria_current_an_allen_stellen():
 # --- B2: Menü ☰ auf dem Telefon über offenen Überlagerungen ------------------------------------------------------------
 
 def test_menue_ueber_ueberlagerungen_auf_dem_telefon():
-    """style.css: Auf schmalen Bildschirmen liegt die Leiste mit geöffnetem Menü ☰ (body.nav-open) über Auswertung,
-    Termine, Prozesse und Mitmachen (.overlay) und den Mega-Menüs; bis Runde 18 lag sie mit z-index 1000 darunter. Die
+    """style.css: Auf schmalen Bildschirmen liegt die Leiste mit geöffnetem Menü ☰ (body.nav-open) über „In Zahlen“
+    (bis Pull Request 4b „Auswertung“), Termine, Prozesse, Mitmachen sowie Gremien und Ämter (.overlay) und den Mega-Menüs; bis Runde 18 lag sie mit z-index 1000 darunter. Die
     Prüfung im Browser (Telefonmaß, Esc und Fokus) steht in tests/browser/bedienung.js."""
     css = (ROOT / "site" / "style.css").read_text(encoding="utf-8")
     z = lambda sel: int(re.search(r"^" + re.escape(sel) + r" \{[^}]*?z-index: (\d+);", css, re.M).group(1))  # noqa: E731
@@ -160,14 +160,16 @@ BONN_TEXTE = {
 WOERTER_JE_FUNKTION = {"baustellen": ["Baustelle"], "einfache_sprache": ["Einfache Sprache", "Einfacher Sprache"],
                        "haushalt": ["Zuschussbedarf", "Haushalt"], "mitmachen": ["Alle Wege im Überblick", "Bürgerantrag"],
                        "soll": ["Prozesse"], "chat": ["Assistent"], "themenseiten": ["Themenseiten"],
-                       "technik": ["wie der Ratsatlas funktioniert"]}
+                       "technik": ["wie der Ratsatlas funktioniert"], "gremien": ["„Gremien“", "„Ämter“"]}
 ABGESCHALTET = [w for woerter in WOERTER_JE_FUNKTION.values() for w in woerter]
 # Schalter und Karten der Zusatzthemen (app.js applyFunktionen und Schalter „Baustellen“); in der veröffentlichten Seite
 # fehlen die Karten abgeschalteter Themen ganz (pipeline/seo.ohne_abgeschaltete)
 SCHALTER = {".map-bau": "baustellen", '[data-funktion="einfache_sprache"]': "einfache_sprache",
             '[data-funktion="haushalt"]': "haushalt", '[data-funktion="mitmachen"]': "mitmachen",
-            '.toggle[data-panel="panel-prozesse"]': "soll", ".toggle-ai": "chat", '[data-funktion="technik"]': "technik"}
-# Kölner Freigaben (config.ZUSATZTHEMEN) unter den Schaltern; seit 13.11.2026 mit Einfacher Sprache
+            '.toggle[data-panel="panel-prozesse"]': "soll", ".toggle-ai": "chat", '[data-funktion="technik"]': "technik",
+            '[data-funktion="gremien"]': "gremien"}
+# Kölner Freigaben (config.ZUSATZTHEMEN) unter den Schaltern; seit 13.11.2026 mit Einfacher Sprache, seit Pull Request 4b
+# mit Gremien und Ämtern
 KOELN = {f for f in SCHALTER.values() if config.ZUSATZTHEMEN.get(f)}
 
 
@@ -206,7 +208,7 @@ def test_tour_nennt_keine_abgeschaltete_funktion():
     „Mitmachen in Köln“ seit 13.11.2026 an): kein Schritt nennt eine abgeschaltete Funktion, ob ihr Element
     ausgeblendet ist oder fehlt; an ihrer Stelle steht, was die Seite zeigt (Text der Vorschau zu § 24 GO NRW und zu
     den Begriffen)."""
-    assert KOELN == {"einfache_sprache", "mitmachen", "technik"}
+    assert KOELN == {"einfache_sprache", "mitmachen", "technik", "gremien"}
     aus_koeln = [w for f, woerter in WOERTER_JE_FUNKTION.items() if not config.ZUSATZTHEMEN.get(f) for w in woerter]
     for an, verboten in ((KOELN, aus_koeln), (set(), ABGESCHALTET)):
         for telefon in (False, True):
@@ -273,9 +275,10 @@ def test_tour_vorschau_nennt_einfache_sprache_nur_mit_freigabe():
 
 def test_tour_menues_der_leiste():
     """Entscheidung 20.11.2026 (7): Die Tour stellt die Menüs in der Reihenfolge der Leiste vor („Themen“, „Wer
-    entscheidet“, „Mitmachen“; „Über“ als letzter Schritt), nennt in „Wer entscheidet“ nur die Verfahrenswege (die
-    Reiter „Gremien“ und „Ämter“ folgen mit Pull Request 4, ohne Erwähnung vorher) und „Aktuell in Köln“ nur, wenn die
-    Kachel sichtbar ist; die früheren Menüs „Auswertung“, „Offene Daten“ und „Verstehen“ gibt es nicht mehr."""
+    entscheidet“, „Mitmachen“; „Über“ als letzter Schritt), nennt in „Wer entscheidet“ die Reiter „Gremien“ und „Ämter“
+    in einem Satz nur mit Freigabe „gremien“ (seit Pull Request 4b; ohne sie nur die Verfahrenswege) und „Aktuell in
+    Köln“ nur, wenn die Kachel sichtbar ist; die früheren Menüs „Auswertung“, „Offene Daten“ und „Verstehen“ gibt es
+    nicht mehr."""
     for telefon in (False, True):
         texte = _tour(KOELN, telefon)
         titel = list(texte)
@@ -284,8 +287,13 @@ def test_tour_menues_der_leiste():
         assert titel[-1] == "Über" and texte["Über"].endswith("Viel Freude beim Erkunden.")
         for alt in ("Auswertung", "Offene Daten", "Verstehen", "Über die Karte"):
             assert alt not in texte, alt
-        assert texte["Wer entscheidet"] == ("„Verfahrenswege in Zahlen“ zeigt für ganz Köln, welche Gremien welche "
-                                            "Vorlagenart beraten und wie Verfahren meist enden.")
+        wege = "„Verfahrenswege in Zahlen“ zeigt für ganz Köln, welche Gremien welche Vorlagenart beraten und wie Verfahren meist enden."
+        assert texte["Wer entscheidet"] == ("Unter „Gremien“ stehen Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien "
+                                            "mit Sitzungen und Vorlagen in 12 Monaten und der nächsten Sitzung, als "
+                                            "Schaubild oder Liste, unter „Ämter“ die Dezernate mit ihren Dienststellen. " + wege)
+        assert _tour(KOELN - {"gremien"}, telefon)["Wer entscheidet"] == wege
+        assert _tour(KOELN, telefon, fehlen=True)["Wer entscheidet"].startswith("Unter „Gremien“")
+        assert _tour(KOELN - {"gremien"}, telefon, fehlen=True)["Wer entscheidet"] == wege
         assert texte["Themen"].startswith("Die Themen als Filter: Ein Klick zeigt die passenden Vorlagen in der Liste")
         assert texte["Mitmachen"].startswith("„Aktuell in Köln“ führt zum Startfenster mit den nächsten Sitzungen und "
                                              "neu eingereichten Vorlagen; kommende Sitzungen, auch als Kalenderdatei; ")

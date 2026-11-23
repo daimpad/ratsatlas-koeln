@@ -225,7 +225,7 @@
       }
 
       const compact = root.classList.contains("tl-compact");
-      // Sitzungen je Gremium (Pilot), künftige offen, abgesagte gestrichelt (auch künftige mit Hinweis „abgesagt“ aus dem Namen)
+      // Sitzungen je Gremium (Pilot), künftige offen, abgesagte gestrichelt (auch mit Hinweis „abgesagt“ aus dem Namen)
       const rows = PILOT_GREMIEN.length, rh = (LAYOUT.meet[1] - LAYOUT.meet[0]) / rows;
       PILOT_GREMIEN.forEach((g, i) => {
         const y = LAYOUT.meet[0] + i * rh + rh / 2;
@@ -238,9 +238,10 @@
         const ms = t(m.date);
         if (ms < view[0] || ms > view[1]) continue;
         const y = LAYOUT.meet[0] + i * rh + rh / 2;
-        // künftige Sitzung mit Hinweis aus dem Sitzungsnamen (zeit.json hinweis, Entscheidung 20.11.2026 (7) (b)): bei
-        // „abgesagt“ wie eine abgesagte dargestellt, bei „verschoben“ nicht „geplant“
-        const kuenftig = ms > today, namensHinweis = kuenftig && (m.hinweis === "abgesagt" || m.hinweis === "verschoben") ? m.hinweis : null;
+        // Hinweis aus dem Sitzungsnamen (zeit.json hinweis, Entscheidung 20.11.2026 (7) (b)): „abgesagt“ wie eine abgesagte
+        // dargestellt, künftig und vergangen (#47 (3), Pull Request 4b); „verschoben“ nur bei künftigen statt „geplant“,
+        // eine vergangene verschobene Sitzung bleibt ohne Zusatz
+        const kuenftig = ms > today, namensHinweis = m.hinweis === "abgesagt" || (kuenftig && m.hinweis === "verschoben") ? m.hinweis : null;
         const c = el("circle", { cx: x(ms), cy: y, r: 2.6, class: `tl-meet${kuenftig ? " future" : ""}${m.cancelled || namensHinweis === "abgesagt" ? " cancelled" : ""}` }, svg);
         el("title", {}, c).textContent = `${de(ms)} · ${m.gremium}${m.cancelled ? " · abgesagt" : namensHinweis ? ` · laut Sitzungsnamen ${namensHinweis}` : kuenftig ? " · geplant" : ""}`;
       }

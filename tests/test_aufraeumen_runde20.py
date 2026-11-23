@@ -1,7 +1,8 @@
 """Runde 20, „Aufräumen“ (Entscheidung 10.11.2026): Content-Security-Policy ohne Anbieter von Sprachmodellen und
 localhost, solange „chat“ abgeschaltet ist (beim Bau, die Quelle in site/ bleibt vollständig); Flächen „Ratsassistent“
-und „Mitmachen in Köln“ nur mit ihrer Freigabe im veröffentlichten HTML; Kommentare ohne OParl-Lite; Blatt „Karte“ auf
-dem Telefon und Spalte „Ebenen“ auf niedrigen Bildschirmen (style.css). Ohne Anfragen nach außen."""
+und „Mitmachen in Köln“ (seit Pull Request 4b auch „Gremien und Ämter“) nur mit ihrer Freigabe im veröffentlichten
+HTML; Kommentare ohne OParl-Lite; Blatt „Karte“ auf dem Telefon und Spalte „Ebenen“ auf niedrigen Bildschirmen
+(style.css). Ohne Anfragen nach außen."""
 import inspect
 import re
 from pathlib import Path
@@ -20,7 +21,7 @@ CHAT_HOSTS = ("api.anthropic.com", "api.mistral.ai", "openrouter.ai", "localhost
 
 
 def _freigaben(monkeypatch, **an):
-    for k in ("chat", "mitmachen"):
+    for k in ("chat", "mitmachen", "gremien"):
         monkeypatch.setitem(config.ZUSATZTHEMEN, k, an.get(k, False))
 
 
@@ -113,45 +114,51 @@ def test_write_ruft_csp_fuer_alle_seiten():
 
 # --- (2) Flächen nur mit Freigabe ------------------------------------------------------------------------------------
 
-FLAECHEN = {"panel-assistent": "chat", "panel-mitmachen": "mitmachen"}
+FLAECHEN = {"panel-assistent": "chat", "panel-mitmachen": "mitmachen", "panel-gremien": "gremien"}
 
 
 def _ids(html):
     return set(re.findall(r'\bid="([^"]+)"', html))
 
 
-@pytest.mark.parametrize("chat,mitmachen", [(False, False), (True, False), (False, True), (True, True)])
-def test_flaechen_nur_mit_freigabe(monkeypatch, chat, mitmachen):
+@pytest.mark.parametrize("chat,mitmachen,gremien", [(c, m, g) for c in (False, True) for m in (False, True) for g in (False, True)])
+def test_flaechen_nur_mit_freigabe(monkeypatch, chat, mitmachen, gremien):
     """index.html: Fläche „Ratsassistent“ samt Schaltfläche in der Leiste nur mit „chat“, „Mitmachen in Köln“ nur mit
-    „mitmachen“; alle übrigen Flächen bleiben; die Seite bleibt wohlgeformt (section und button geschlossen). Mit beiden
-    Freigaben entfernt ohne_abgeschaltete_bereiche nichts."""
-    _freigaben(monkeypatch, chat=chat, mitmachen=mitmachen)
+    „mitmachen“, „Gremien und Ämter“ samt den Karten „Gremien“ und „Ämter“ im Menü „Wer entscheidet“ nur mit „gremien“
+    (seit Pull Request 4b); alle übrigen Flächen bleiben; die Seite bleibt wohlgeformt (section und button
+    geschlossen). Mit allen drei Freigaben entfernt ohne_abgeschaltete_bereiche nichts."""
+    _freigaben(monkeypatch, chat=chat, mitmachen=mitmachen, gremien=gremien)
     aus = seo.ohne_abgeschaltete(INDEX)
-    an = {"chat": chat, "mitmachen": mitmachen}
+    an = {"chat": chat, "mitmachen": mitmachen, "gremien": gremien}
     for flaeche, funktion in FLAECHEN.items():
         assert (flaeche in _ids(aus)) == an[funktion], flaeche
         assert (flaeche in aus) == an[funktion], flaeche   # auch kein data-panel, aria-controls oder data-close
     assert ('class="toggle toggle-ai"' in aus) == chat
+    assert aus.count(' data-wer="') == (2 if gremien else 0) and ("wer-body" in aus) == gremien
     for bleibt in ("panel-list", "panel-detail", "panel-auswertung", "panel-termine", "panel-prozesse", "timeline-wrap",
-                   "cta-mitmachen", "mega-mitmachen", "sources", "map"):
+                   "cta-mitmachen", "mega-mitmachen", "mega-entscheiden", "gremium-filter", "sources", "map"):
         assert bleibt in _ids(aus), bleibt
     for tag in ("section", "button", "form", "details", "div"):
         assert aus.count(f"<{tag} ") + aus.count(f"<{tag}>") == aus.count(f"</{tag}>"), tag
     assert aus.count("\n\n\n") == INDEX.count("\n\n\n")   # keine zusätzlichen Leerzeilen
-    assert ("data-freigabe" in re.sub(r"<!--.*?-->", "", aus, flags=re.S)) == (chat or mitmachen)
-    if chat and mitmachen:
+    assert ("data-freigabe" in re.sub(r"<!--.*?-->", "", aus, flags=re.S)) == (chat or mitmachen or gremien)
+    if chat and mitmachen and gremien:
         assert seo.ohne_abgeschaltete_bereiche(INDEX) == INDEX
 
 
 def test_flaechen_quelle():
-    """Die Quelle markiert genau diese Elemente mit data-freigabe: die beiden Flächen und die Schaltfläche des
-    Assistenten; Flächen tragen kein data-funktion (app.js würde sie sonst bei Freigabe öffnen, style.css sie mit
-    display: none ohne Bewegung schließen)."""
+    """Die Quelle markiert genau diese Elemente mit data-freigabe: die drei Flächen, die Schaltfläche des Assistenten und
+    (seit Pull Request 4b) die Karten „Gremien“ und „Ämter“ im Menü „Wer entscheidet“; Flächen tragen kein data-funktion
+    (app.js würde sie sonst bei Freigabe öffnen, style.css sie mit display: none ohne Bewegung schließen), die Karten
+    dagegen schon (Freigabe zur Laufzeit, app.js applyFunktionen; seo.AUS_FUNKTION entfernt nur Links)."""
     gefunden = [(f, INDEX[a:INDEX.index(">", a) + 1]) for f, a, _ in seo.bereiche_mit_freigabe(INDEX)]
-    assert [f for f, _ in gefunden] == ["chat", "chat", "mitmachen"]
+    assert [f for f, _ in gefunden] == ["chat", "gremien", "gremien", "chat", "mitmachen", "gremien"]
     assert 'data-panel="panel-assistent"' in gefunden[0][1]
-    assert 'id="panel-assistent"' in gefunden[1][1] and 'id="panel-mitmachen"' in gefunden[2][1]
-    assert all("data-funktion" not in tag for _, tag in gefunden[1:])
+    assert 'data-wer="gremien"' in gefunden[1][1] and 'data-wer="aemter"' in gefunden[2][1]
+    assert all('data-funktion="gremien"' in tag and tag.endswith(" hidden>") for _, tag in gefunden[1:3])
+    assert 'id="panel-assistent"' in gefunden[3][1] and 'id="panel-mitmachen"' in gefunden[4][1]
+    assert 'id="panel-gremien"' in gefunden[5][1]
+    assert all("data-funktion" not in tag for _, tag in gefunden[3:])
 
 
 def test_bereiche_formen(monkeypatch):
@@ -182,8 +189,8 @@ def test_bereiche_formen(monkeypatch):
 
 def test_app_kommt_ohne_flaechen_aus():
     """site/app.js: Listen der Flächen nur mit vorhandenen Elementen; setPanel und focusPanel übergehen fehlende
-    Flächen; kein ungeschützter Zugriff auf die beiden Flächen (Adresse ?mitmachen=1, Abstand der Karte, Adresse
-    der Seite)."""
+    Flächen; kein ungeschützter Zugriff auf die drei Flächen (Adresse ?mitmachen=1 und ?wer=, Abstand der Karte,
+    Adresse der Seite, Breite)."""
     for liste in ("SHEETS", "LEFT", "OVERLAYS"):
         assert re.search(rf"const {liste} = \[[^\]]*\]\.filter\(vorhanden\);", APP), liste
     for funktion in ("setPanel", "focusPanel"):
@@ -195,6 +202,8 @@ def test_app_kommt_ohne_flaechen_aus():
             zeile = APP[APP.rfind("\n", 0, zugriff.start()):APP.find("\n", zugriff.end())]
             assert f'vorhanden("{flaeche}")' in zeile, zeile
     assert 'params.get("mitmachen") === "1" && vorhanden("panel-mitmachen")' in APP
+    assert 'const werDa = () => Boolean(funktionen.gremien) && vorhanden("panel-gremien");' in APP
+    assert 'if (werDa() && ["gremien", "aemter"].includes(params.get("wer"))) {' in APP
     assert "if (t && vorhanden(t.dataset.panel))" in APP
 
 

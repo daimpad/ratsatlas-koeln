@@ -230,12 +230,13 @@
   const THEME_METHOD = { amt: "Amt", gremium: "Gremium", stichwort: "Stichwort im Titel" };
 
   // --- Flächen ein- und ausklappen ---------------------------------------------------------------
-  // Assistent und Mitmachen stehen nur mit Freigabe („chat“, „mitmachen“) in der veröffentlichten Seite (data-freigabe,
-  // pipeline/seo.py); fehlt eine Fläche, fehlt sie auch in diesen Listen, und setPanel und focusPanel übergehen sie
+  // Assistent, Mitmachen sowie Gremien und Ämter stehen nur mit Freigabe („chat“, „mitmachen“, „gremien“) in der
+  // veröffentlichten Seite (data-freigabe, pipeline/seo.py); fehlt eine Fläche, fehlt sie auch in diesen Listen, und
+  // setPanel und focusPanel übergehen sie
   const vorhanden = (id) => Boolean(document.getElementById(id));
-  const SHEETS = ["panel-list", "panel-detail", "panel-auswertung", "panel-termine", "panel-prozesse", "panel-mitmachen", "timeline-wrap", "panel-assistent"].filter(vorhanden);
+  const SHEETS = ["panel-list", "panel-detail", "panel-auswertung", "panel-termine", "panel-prozesse", "panel-mitmachen", "panel-gremien", "timeline-wrap", "panel-assistent"].filter(vorhanden);
   const LEFT = ["panel-list", "panel-assistent"].filter(vorhanden);  // Liste und Assistent teilen sich die linke Seite
-  const OVERLAYS = ["panel-auswertung", "panel-termine", "panel-prozesse", "panel-mitmachen"].filter(vorhanden);
+  const OVERLAYS = ["panel-auswertung", "panel-termine", "panel-prozesse", "panel-mitmachen", "panel-gremien"].filter(vorhanden);
   const toggleFor = (id) => document.querySelector(`.toggle[data-panel="${id}"]`);
   // Ratsassistent (site/chat/ui.js und sechs weitere Module) erst laden, wenn die Fläche zum ersten Mal aufgeht
   // oder die Schaltfläche den Fokus bekommt; der Seitenstart braucht ihn nicht
@@ -256,11 +257,12 @@
     if (id === "panel-assistent") { document.body.classList.toggle("chat-open", open); if (open) loadChat(); }
     if (id === "panel-prozesse") { if (open) openProzesse(); syncUrl(); }
     if (id === "panel-mitmachen") { if (open) openMitmachen(); syncUrl(); }
+    if (id === "panel-gremien") { if (open) openGremien(); syncUrl(); }
     if (!open) return;
     closeMega();
     if (MOBILE.matches) setMapMenu(false);   // Telefon: nicht zugleich mit dem Blatt „Karte“ (siehe MapMenu)
     // schmale Bildschirme: nur eine Fläche; mittlere Breiten: Liste oder Vorgang, damit die Zeitleiste Platz hat;
-    // Auswertung und Termine liegen mittig übereinander, daher immer nur eines davon
+    // „In Zahlen“, Termine, Mitmachen sowie Gremien und Ämter liegen mittig übereinander, daher immer nur eines davon
     const others = MOBILE.matches ? SHEETS : OVERLAYS.includes(id) ? OVERLAYS
       : NARROW.matches && (id === "panel-list" || id === "panel-detail") ? ["panel-list", "panel-detail", ...(id === "panel-list" ? LEFT : [])]
       : LEFT.includes(id) ? LEFT : [];
@@ -320,11 +322,12 @@
   function closePanel(id) {
     setPanel(id, false);
     const t = toggleFor(id);
-    // Auswertung, Termine und Mitmachen haben keine Schaltfläche in der Leiste: Fokus zurück auf das öffnende Element,
-    // sonst auf den Eintrag im Menü (Code-Prüfung 23.10.2026: Fokus lag danach auf <body>); die Auswertung gehört mit
-    // „Kennzahlen zum Gebiet“ zu „Themen“, mit den Verfahrenswegen zu „Wer entscheidet“
+    // „In Zahlen“ (Kennung panel-auswertung), Termine, Mitmachen sowie Gremien und Ämter haben keine Schaltfläche in der
+    // Leiste: Fokus zurück auf das öffnende Element, sonst auf den Eintrag im Menü (Code-Prüfung 23.10.2026: Fokus lag
+    // danach auf <body>); „In Zahlen“ gehört mit „Kennzahlen zum Gebiet“ zu „Themen“, mit den Verfahrenswegen zu „Wer
+    // entscheidet“, ebenso Gremien und Ämter
     const mega = { "panel-auswertung": $("#stats").hidden ? "mega-entscheiden" : "mega-themen", "panel-termine": "mega-mitmachen",
-      "panel-mitmachen": "mega-mitmachen" }[id];
+      "panel-mitmachen": "mega-mitmachen", "panel-gremien": "mega-entscheiden" }[id];
     // Telefon (nur eine Fläche zugleich): Lag das öffnende Element in Liste, Vorgang oder Zeitleiste, die beim Öffnen
     // zugegangen sind (etwa „Alle kommenden Sitzungen“ in „Los geht's“ oder „Alle Wege, sich einzubringen“ im Vorgang),
     // geht diese Fläche wieder auf, damit der Fokus dorthin zurückkehrt, wo er war (Prüfung von Pull Request 3). Nicht
@@ -366,6 +369,8 @@
     } else if (NARROW.matches && !$("#panel-list").hidden && !$("#panel-detail").hidden) setPanel("panel-detail", false);
     $("#timeline-wrap").classList.toggle("tl-compact", MOBILE.matches);
     if (!MOBILE.matches) setNav(false);
+    // Gremien: ohne ausdrückliche Wahl Schaubild ab 901 px, Liste bis 900 px (F9)
+    if (werModul && vorhanden("panel-gremien") && !$("#panel-gremien").hidden) werModul.breite();
     clampWidths();
     if (tl) tl.select(selected);
   }
@@ -425,7 +430,7 @@
   burger.addEventListener("click", () => setNav(!navIsOpen()));
   // Wahl eines Eintrags schließt das Blatt (Flächen, Seiten, Dialoge, Tour, Links)
   navMore.addEventListener("click", (e) => {
-    if (MOBILE.matches && e.target.closest(".toggle, [data-show], [data-panel], #about-open, [data-about], [data-neu], [data-tour], [data-home], [data-open-tab], a[href]")) setNav(false);
+    if (MOBILE.matches && e.target.closest(".toggle, [data-show], [data-panel], #about-open, [data-about], [data-neu], [data-tour], [data-home], [data-open-tab], [data-wer], a[href]")) setNav(false);
   });
   $("#f-area").addEventListener("change", () => { if (MOBILE.matches) setNav(false); });
   // Tippen außerhalb der Leiste schließt das Blatt
@@ -1390,9 +1395,73 @@
     // Ohne federführende Dienststelle in den Daten (in Köln fehlt underDirectionOf bisher bei allen Vorlagen) kein
     // Filter, der nur „alle“ anbietet (Prüfung stj)
     $("#f-amt").closest("label").hidden = !aemter.length;
-    options($("#f-gremium"), uniq(papers.flatMap((p) => p.process.map((s) => s.gremium))));
+    fillGremien();
     fillParties();
   }
+  // Filter „Gremium“ (Entscheidungen 21.11.2026 (2) (F11, F12) und 23.11.2026 (1) (E10)): ein Gremium mit Kennung an
+  // den Stationen (gremium_key: Gremium aus gremien.json, nicht aufgelöst) hat die Kennung als Wert und filtert über sie;
+  // übrige Namen aus den Beratungen (frühere Gremien, Fraktionen, Gremium aus dem Sitzungsnamen) filtern wie bisher über
+  // den Namen, Wert GREMIUM_NAME und Name (Kennungen enthalten nur a–z, 0–9 und „-“). Gibt es beides, stehen die Namen
+  // in zwei Gruppen. Eine gewählte Angabe bleibt beim Wechsel des Gebiets (sichtbar im Kennzeichen über der Liste)
+  const GREMIUM_NAME = "name:";
+  function gremiumWahl() {
+    const sel = $("#f-gremium"), v = sel.value;
+    if (!v) return null;
+    const text = (sel.selectedOptions[0] && sel.selectedOptions[0].textContent) || v;
+    return v.startsWith(GREMIUM_NAME) ? { name: v.slice(GREMIUM_NAME.length), text } : { key: v, text };
+  }
+  function fillGremien() {
+    const sel = $("#f-gremium"), wahl = gremiumWahl(), mit = new Map(), namen = new Set();
+    for (const p of papers) for (const s of p.process || []) {
+      if (s.gremium_key) { if (!mit.has(s.gremium_key)) mit.set(s.gremium_key, s.gremium || s.gremium_key); }
+      else if (s.gremium) namen.add(s.gremium);
+    }
+    if (wahl && wahl.key && !mit.has(wahl.key)) mit.set(wahl.key, wahl.text);
+    if (wahl && wahl.name) namen.add(wahl.name);
+    const opt = ([v, t]) => `<option value="${esc(v)}">${esc(t)}</option>`, nachText = (a, b) => a[1].localeCompare(b[1], "de");
+    const a = [...mit].sort(nachText).map(opt).join(""), b = [...namen].map((n) => [GREMIUM_NAME + n, n]).sort(nachText).map(opt).join("");
+    sel.innerHTML = '<option value="">alle</option>' + (a && b
+      ? `<optgroup label="aktuelle Gremien">${a}</optgroup><optgroup label="nach Namen, auch frühere Gremien">${b}</optgroup>` : a + b);
+    sel.value = wahl ? (wahl.key || GREMIUM_NAME + wahl.name) : "";
+  }
+  // „Vorlagen dieses Gremiums“ (site/gremien.js): Filter „Gremium“ über die Kennung, übrige Filter und Zeitraum
+  // zurückgesetzt (wie ein Thema im Menü „Themen“); im gewählten Gebiet dort, ohne Gebiet in ganz Köln (suche.json, erst
+  // jetzt geladen). Danach Liste offen, Fokus auf ihrer Überschrift; #count nennt Gremium und Treffer
+  function gremiumFiltern(key, name) {
+    setPanel("panel-gremien", false);
+    $("#filters").reset();
+    $("#q").value = "";
+    range = null;
+    if (tl) tl.reset();
+    setScope(area && area.kind !== STADT ? "gebiet" : STADT);
+    const sel = $("#f-gremium");
+    if (![...sel.options].some((o) => o.value === key)) {
+      (sel.querySelector("optgroup") || sel).appendChild(new Option(name || key, key));
+    }
+    sel.value = key;
+    shown = LIST_STEP;
+    fillParties();
+    render();
+    syncUrl();
+    closeMega();
+    setNav(false);
+    setPanel("panel-list", true);
+    focusPanel("panel-list");
+  }
+  // Kennzeichen des Filters „Gremium“ über der Liste (E10): in ganz Köln steht der Filter nur hier
+  function gremiumKennzeichen() {
+    const wahl = gremiumWahl(), box = $("#gremium-filter");
+    box.hidden = !wahl;
+    if (wahl) $("#gremium-filter-name").textContent = wahl.text;
+    return wahl;
+  }
+  $("#gremium-filter-aus").addEventListener("click", () => {
+    $("#f-gremium").value = "";
+    shown = LIST_STEP;
+    render();
+    syncUrl();
+    focusPanel("panel-list");
+  });
   function fillParties() {
     const sel = $("#f-party"), cur = sel.value;
     const list = scope() === STADT && search ? search.parties : [...new Set(papers.flatMap((p) => p.parties || []))];
@@ -1422,13 +1491,13 @@
   }
   function filtered(withRange = true) {
     const text = $("#f-text").value.trim().toLowerCase(), type = $("#f-type").value, amt = $("#f-amt").value;
-    const gremium = $("#f-gremium").value, standF = $("#f-stand").value;
+    const gremium = gremiumWahl(), standF = $("#f-stand").value;
     const theme = $("#f-theme").value, party = $("#f-party").value, rel = $("#f-related").checked;
     const confs = new Set([...document.querySelectorAll("#f-conf input:checked")].map((i) => i.value));
     return papers.filter((p) => (!type || p.paper_type === type) && (!amt || p.amt === amt) &&
       (!theme || (p.themes || []).some((t) => t.theme === theme)) &&
       (!party || (p.parties || []).includes(party) || (rel && relatedParties(p.reference).has(party))) &&
-      (!gremium || p.process.some((s) => s.gremium === gremium)) && (!standF || p.stand === standF) &&
+      (!gremium || (p.process || []).some((s) => (gremium.key ? s.gremium_key === gremium.key : s.gremium === gremium.name))) && (!standF || p.stand === standF) &&
       (area.kind === "ohne" || confs.has(bestConfidence(p))) && (!withRange || inRange(p)) &&
       (!text || (p.name + " " + p.reference).toLowerCase().includes(text)));
   }
@@ -1509,19 +1578,33 @@
     const inTitle = (r) => (r[1] + " " + r[0]).toLowerCase().includes(text);
     const theme = search.themes.findIndex((t) => t.id === $("#f-theme").value), party = search.parties.indexOf($("#f-party").value);
     const rel = $("#f-related").checked, ti = search.types.indexOf(type), si = search.stands.indexOf(standF);
+    // Filter „Gremium“: Kennung über gremium_keys und Spalte 11, Name über gremien und Spalte 10; fehlen Liste oder Spalte
+    // (ohne Freigabe „gremien“ beim Export), passt keine Zeile, und der Satz unten nennt den Grund
+    const gw = gremiumKennzeichen();
+    const gi = !gw ? -1 : gw.key ? (Array.isArray(search.gremium_keys) ? search.gremium_keys.indexOf(gw.key) : -1)
+      : (Array.isArray(search.gremien) ? search.gremien.indexOf(gw.name) : -1);
+    const spalte = gw && gw.key ? 11 : 10;
     const rows = search.rows.filter((r) => (!type || r[3] === ti) && (!standF || r[4] === si) && (theme < 0 || r[6].includes(theme)) &&
       (party < 0 || r[7].includes(party) || (rel && r[8].includes(party))) && (!range || (r[2] && r[2] >= range[0] && r[2] <= range[1])) &&
+      (!gw || (gi >= 0 && Array.isArray(r[spalte]) && r[spalte].includes(gi))) &&
       (!text || inTitle(r) || (doc && doc.has(r[0]))));
     const span = range ? ` · ${fmtDate(range[0])}–${fmtDate(range[1])}` : "";
     const onlyDoc = doc ? rows.filter((r) => !inTitle(r)).length : 0;
     $("#count").textContent = vorschau ? "Ganz Köln: noch keine Ratsvorlagen (Vorschau)"
-      : `${rows.length} Treffer in ganz Köln${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`;
-    let html = rows.slice(0, shown).map((r) => `<li><button type="button" data-gref="${esc(r[0])}" data-area="${esc(search.areas[r[5]].key)}" aria-current="${Boolean(selected && selected.reference === r[0])}">
-      <span class="title">${esc(r[1])}</span>
+      : `${rows.length} Treffer in ganz Köln${gw ? ` · Gremium: ${gw.text}` : ""}${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`;
+    // Zeile ohne Gebiet (Gebiet −1, etwa eine Vorlage ohne Datum und Ortsbezug): nur Text, öffnen lässt sie sich nicht
+    let html = rows.slice(0, shown).map((r) => {
+      const ar = search.areas[r[5]];
+      const inhalt = `<span class="title">${esc(r[1])}</span>
       <span class="meta"><span>${esc(r[0])}</span><span>${fmtDate(r[2])}</span><span>${esc(search.types[r[3]] || "")}</span>
-      <span>${esc(search.stands[r[4]])}</span><span class="area-tag">${esc(search.areas[r[5]].name)}</span>${themeTags(r[6].slice(0, 2).map((i) => search.themes[i].id))}${doc && text && !inTitle(r) ? '<span class="doc-tag">im Dokument erwähnt</span>' : ""}</span></button></li>`).join("");
+      <span>${esc(search.stands[r[4]])}</span>${ar ? `<span class="area-tag">${esc(ar.name)}</span>` : ""}${themeTags(r[6].slice(0, 2).map((i) => search.themes[i].id))}${doc && text && !inTitle(r) ? '<span class="doc-tag">im Dokument erwähnt</span>' : ""}</span>`;
+      return ar ? `<li><button type="button" data-gref="${esc(r[0])}" data-area="${esc(ar.key)}" aria-current="${Boolean(selected && selected.reference === r[0])}">
+      ${inhalt}</button></li>` : `<li><div class="ohne-gebiet">${inhalt}<span class="hint">ohne Gebiet im Ratsatlas, deshalb ohne Vorgang</span></div></li>`;
+    }).join("");
     if (rows.length > shown) html += `<li class="more"><button type="button" class="btn btn-secondary" id="more">Weitere ${Math.min(LIST_STEP, rows.length - shown)} von ${rows.length - shown} anzeigen</button></li>`;
     if (!rows.length && vorschau) html = `<li class="empty-list"><p>${esc(VORSCHAU_LISTE)}</p></li>`;
+    else if (!rows.length && gw && gi < 0) html = `<li class="empty-list"><p>Für „${esc(gw.text)}“ ist im Suchindex keine Beratung einer Vorlage verzeichnet.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
+    else if (!rows.length && gw) html = `<li class="empty-list"><p>In ganz Köln passt keine Vorlage mit einer Beratung in „${esc(gw.text)}“ zu Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     else if (!rows.length) html = `<li class="empty-list"><p>Keine Vorlage in ganz Köln passt zu Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     $("#papers").innerHTML = html;
     // auf der Karte: die Treffer, die im gerade geladenen Gebiet liegen
@@ -1542,9 +1625,10 @@
     $("#f-related-wrap").hidden = !$("#f-party").value;
     $("#more-filters").hidden = scope() === STADT;
     if (scope() === STADT) {
-      if (!search) { $("#count").textContent = "Lade den Suchindex für ganz Köln …"; loadSearch().then((d) => d && (fillParties(), render())); return; }
+      if (!search) { gremiumKennzeichen(); $("#count").textContent = "Lade den Suchindex für ganz Köln …"; loadSearch().then((d) => d && (fillParties(), render())); return; }
       return renderGlobal(nurListe);
     }
+    const gw = gremiumKennzeichen();
     if ($("#f-party").value && $("#f-related").checked && !search && index) { loadSearch().then((d) => d && render()); }
     const base = filtered(false);
     const list = range ? base.filter(inRange) : base;
@@ -1552,7 +1636,7 @@
     const where = area.kind === "ohne" ? `ohne Ortsbezug, ${area.key}` : area.name;
     const span = range ? ` · ${fmtDate(range[0])}–${fmtDate(range[1])}` : "";
     $("#count").textContent = vorschau ? `${area.kind === STADT ? "Ganz Köln" : where}: noch keine Ratsvorlagen (Vorschau)`
-      : area.kind === STADT ? OVERVIEW_HINT : `${list.length} von ${papers.length} Vorlagen · ${where}${span}`;
+      : area.kind === STADT ? OVERVIEW_HINT : `${list.length} von ${papers.length} Vorlagen · ${where}${gw ? ` · Gremium: ${gw.text}` : ""}${span}`;
     const active = [$("#f-amt").value, $("#f-gremium").value].filter(Boolean).length +
       (area.kind === "ohne" ? 0 : document.querySelectorAll("#f-conf input:not(:checked)").length);
     $("#active-filters").textContent = active ? ` (${active} aktiv)` : "";
@@ -1560,6 +1644,7 @@
     if (list.length > shown) html += `<li class="more"><button type="button" class="btn btn-secondary" id="more">Weitere ${Math.min(LIST_STEP, list.length - shown)} von ${list.length - shown} anzeigen</button></li>`;
     if (!list.length && vorschau) html = `<li class="empty-list"><p>${esc(VORSCHAU_LISTE)}</p></li>`;
     else if (!list.length && area.kind === STADT) html = `<li class="empty-list"><p>Noch kein Gebiet gewählt. Wählen Sie auf der Karte einen Stadtbezirk und einen Stadtteil oder oben ein Gebiet; „in ganz Köln“ sucht über alle Vorlagen.</p></li>`;
+    else if (!list.length && gw) html = `<li class="empty-list"><p>Im gewählten Gebiet passt keine Vorlage mit einer Beratung in „${esc(gw.text)}“ zu Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="gremium-koeln">In ganz Köln suchen</button> <button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     else if (!list.length) html = `<li class="empty-list"><p>Keine Vorlage passt zu Gebiet, Filtern und Zeitraum.</p><button type="button" class="btn btn-secondary" id="reset-filters">Filter und Zeitraum zurücksetzen</button></li>`;
     $("#papers").innerHTML = html;
     if (!nurListe) {
@@ -1595,14 +1680,23 @@
     const box = s.note && (status === "nicht_öffentlich" || status === "unklar" || s.note === "ohne_sitzung")
       ? `<div class="blackbox">${esc(NOTES[s.note])}</div>` : (s.note ? `<div class="hint">${esc(NOTES[s.note])}</div>` : "");
     const cls = s.date_status === "abgeleitet" ? " date-derived" : "";
-    // Gremium als Link in den Reiter „Prozesse“ nur mit dessen Freigabe („soll“); in Köln bis Pull Request 4 der
-    // Navigation Text ohne Link (Entscheidung 19.11.2026 (1) (H))
-    const gremium = index && funktionen.soll && (s.typ === "beratung" || s.typ === "entscheidung") && s.label && s.status !== "nicht_öffentlich";
+    // Gremium als Link in den Reiter „Gremien“ (Entscheidungen 19.11.2026 (1) (H), 21.11.2026 (2) (F12)): nur mit der
+    // Kennung am Schritt (gremium_key, aus der Station; E1), mit Freigabe „gremien“ zur Laufzeit und vorhandener Fläche
+    // (die Freigabe beim Bau kann von der in index.json abweichen); sonst bleibt der Name Text (frühere Wahlperiode,
+    // Gremium aus dem Sitzungsnamen, „Gremium unbekannt“). Der Bonner Link in den Reiter „Prozesse“ über den Namen bleibt
+    // unter dessen Freigabe („soll“, in Köln aus)
+    const beratung = (s.typ === "beratung" || s.typ === "entscheidung") && s.label;
+    const gremiumKey = beratung && s.gremium_key && werDa() ? s.gremium_key : null;
+    const gremium = !gremiumKey && index && funktionen.soll && beratung && s.status !== "nicht_öffentlich";
     const label = s.label && s.label !== STEP_LABEL[s.typ]
-      ? ": " + (gremium ? `<button type="button" class="link-btn" data-gremium-name="${esc(s.label)}" title="Zuständigkeit und Besetzung im Reiter Prozesse">${esc(s.label)}</button>` : esc(s.label)) : "";
+      ? ": " + (gremiumKey ? `<button type="button" class="link-btn" data-gremium-key="${esc(gremiumKey)}">${esc(s.label)}</button>`
+        : gremium ? `<button type="button" class="link-btn" data-gremium-name="${esc(s.label)}" title="Zuständigkeit und Besetzung im Reiter Prozesse">${esc(s.label)}</button>` : esc(s.label)) : "";
+    // Hinweis aus dem Sitzungsnamen an der Station (hinweis am Schritt, export.hinweis_station; F10): nur die Plakette,
+    // Stand und Evidenzstatus bleiben, wie sie sind
+    const plakette = s.hinweis === "abgesagt" || s.hinweis === "verschoben" ? ` <span class="badge">laut Sitzungsnamen ${s.hinweis}</span>` : "";
     return `<li class="step${cls}" data-status="${esc(status)}">
       <span class="mark mark-${esc(status)}" aria-hidden="true">${mark}</span>
-      <div class="step-head">${esc(STEP_LABEL[s.typ] || s.typ)}${label}<span class="step-status">${esc(STATUS[status])}</span></div>
+      <div class="step-head">${esc(STEP_LABEL[s.typ] || s.typ)}${label}${plakette}<span class="step-status">${esc(STATUS[status])}</span></div>
       <div class="step-body">${body.join("<br>")}${box}</div></li>`;
   }
   function legend() {
@@ -2211,6 +2305,9 @@
       document.getElementById(erk.getAttribute("aria-controls")).hidden = !open;
       return;
     }
+    // Gremium im Vorgang: Reiter „Gremien“ mit diesem Gremium, Fokus auf seinem Eintrag (Esc führt hierher zurück)
+    const gk = e.target.closest("[data-gremium-key]");
+    if (gk) { if (werDa()) { setPanel("panel-gremien", true); focusPanel("panel-gremien"); openGremien({ tab: "gremien", kennung: gk.dataset.gremiumKey, fokus: true }); } return; }
     const gr = e.target.closest("[data-gremium-name]");
     if (gr) { setPanel("panel-prozesse", true); openProzesse({ tab: "gremien", gremiumName: gr.dataset.gremiumName }); focusPanel("panel-prozesse"); return; }
     const b = e.target.closest(".jump");
@@ -2556,8 +2653,8 @@
         },
         filterGremium(name) {
           const sel = $("#f-gremium");
-          if (![...sel.options].some((o) => o.value === name)) return false;
-          sel.value = name;
+          if (![...sel.options].some((o) => o.value === GREMIUM_NAME + name)) return false;
+          sel.value = GREMIUM_NAME + name;
           sel.dispatchEvent(new Event("input", { bubbles: true }));
           setPanel("panel-prozesse", false);
           setPanel("panel-list", true);
@@ -2598,6 +2695,34 @@
     }).catch((e) => { mmReady = null; console.warn("Mitmachen nicht geladen", e); return null; });   // beim nächsten Öffnen erneut
     // ohne gewählten Stadtbezirk in der Fläche gilt der des Gebiets (auch nach einem ersten Öffnen ohne Gebiet)
     return mmReady.then((m) => { if (m) m.show(s || { bezirk: (mmState && mmState.bezirk) || areaBezirk() || "" }); return m; });
+  }
+
+  // --- Fläche „Gremien und Ämter“ (site/gremien.js, erst beim Öffnen geladen; nur mit Freigabe „gremien“) -----------
+  // Entscheidungen 21.11.2026 (2) (F4–F12) und 23.11.2026 (1) (E1–E11): Reiter „Gremien“ (Schaubild oder Liste) und
+  // „Ämter“ aus gremien.json und aemter.json. Das Modul lädt beide Dateien beim ersten Öffnen; nach einem Fehler steht ein
+  // Satz in der Fläche, und das nächste Öffnen versucht es erneut. Nur mit Freigabe zur Laufzeit (index.json
+  // meta.funktionen) und vorhandener Fläche (Freigabe beim Bau, data-freigabe)
+  let werState = null, werReady = null, werModul = null;
+  const werDa = () => Boolean(funktionen.gremien) && vorhanden("panel-gremien");
+  function openGremien(s) {
+    if (!werDa()) return Promise.resolve(null);
+    if (!werModul) { $("#wer-body").innerHTML = ""; $("#wer-status").textContent = "Wird geladen …"; }
+    werReady ||= import("./gremien.js").then(async (m) => {
+      await m.init({
+        basis: BONN, heute, zeitDatum, lizenz: lizenzOeffentlich, telefon: () => MOBILE.matches,
+        onState(st) { werState = st; syncUrl(); },
+        filterGremium: gremiumFiltern,
+      });
+      werModul = m;
+      return m;
+    }).catch((e) => {
+      werReady = null;
+      console.warn("Gremien und Ämter nicht geladen", e);
+      $("#wer-status").textContent = "";
+      $("#wer-body").innerHTML = "<p>Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.</p>";
+      return null;
+    });   // beim nächsten Öffnen erneut
+    return werReady.then((m) => { if (m) m.show(s); return m; });
   }
 
   // --- Strukturdaten der Stadtstatistik (site/strukturdaten/strukturdaten.js) -----------------------------
@@ -2676,6 +2801,12 @@
     const mm = vorhanden("panel-mitmachen") && !$("#panel-mitmachen").hidden && mmState;
     state.mitmachen = mm ? "1" : "";
     state.bezirk = mm ? mm.bezirk : "";
+    // Gremien und Ämter (E6): eigene Namen, damit die Bonner Parameter (prozesse, ansicht, gremium, amt) sie nicht löschen;
+    // die Darstellung nur bei ausdrücklicher Wahl (sonst gilt die Breite, F9)
+    const wer = vorhanden("panel-gremien") && !$("#panel-gremien").hidden && werState;
+    state.wer = wer ? wer.tab : "";
+    state.darstellung = wer && wer.tab === "gremien" && wer.darstellung ? wer.darstellung : "";
+    state.kennung = wer && wer.tab === "gremien" && wer.kennung ? wer.kennung : "";
     if (sdModul) Object.assign(state, sdModul.zustand());   // Flächenfarben der Strukturdaten (struktur, struktur_…)
     for (const [k, v] of Object.entries(state)) (v ? url.searchParams.set(k, v) : url.searchParams.delete(k));
     url.hash = selected ? encodeURIComponent(selected.reference) : "";
@@ -2687,8 +2818,13 @@
   // Vorschau ohne Ratsvorlagen (Kennzeichen vorschau): data-vorschau="aus" ausblenden (Menüs „Themen“ und „Wer
   // entscheidet“, Schnellfilter der Suche, Kachel „Kommende Sitzungen“), data-vorschau="nur" zeigen (Hinweise an ihrer
   // Stelle)
+  // Titel der Schaltfläche „Wer entscheidet“ (Entscheidung 23.11.2026 (1) (E11)): mit Gremien und Ämtern nur, wenn die
+  // Freigabe „gremien“ zur Laufzeit gilt und die Fläche im HTML steht
+  const WER_TITEL = { mit: "Wer entscheidet: Gremien, Ämter und Verfahrenswege in Zahlen", ohne: "Wer entscheidet: Verfahrenswege in Zahlen" };
   function applyFunktionen(fn, idx) {
     document.querySelectorAll("[data-funktion]").forEach((el) => { el.hidden = !fn[el.dataset.funktion]; });
+    const wer = document.querySelector('.menu-btn[data-mega="mega-entscheiden"]');
+    if (wer) wer.title = fn.gremien && vorhanden("panel-gremien") ? WER_TITEL.mit : WER_TITEL.ohne;
     const hinweis = $("#testdaten-hinweis");
     if (hinweis) hinweis.hidden = !(idx && idx.meta && idx.meta.testdaten);
     const vorschauHinweis = $("#vorschau-hinweis");
@@ -2786,6 +2922,8 @@
         return;
       }
       if (e.target.closest("#reset-filters")) { resetFilters(); return; }
+      // Filter „Gremium“ ohne Treffer im Gebiet: dieselbe Suche in ganz Köln
+      if (e.target.closest("#gremium-koeln")) { setScope(STADT); shown = LIST_STEP; fillParties(); render(); syncUrl(); focusPanel("panel-list"); return; }
       const g = e.target.closest("button[data-gref]");
       if (g) { openGlobal(g.dataset.gref, g.dataset.area); return; }
       const b = e.target.closest("button[data-ref]");
@@ -2805,6 +2943,14 @@
     else $("#cta-termine").hidden = true;
     $("#cta-mitmachen").addEventListener("click", () => { closeMega(); setPanel("panel-mitmachen", true); focusPanel("panel-mitmachen"); });
     document.querySelectorAll("[data-open-tab]").forEach((b) => b.addEventListener("click", () => openAuswertung(b.dataset.openTab)));
+    // Menü „Wer entscheidet“: Karten „Gremien“ und „Ämter“ öffnen ihren Reiter (nur mit Freigabe „gremien“)
+    document.querySelectorAll("[data-wer]").forEach((b) => b.addEventListener("click", () => {
+      if (!werDa()) return;
+      closeMega();
+      setPanel("panel-gremien", true);
+      focusPanel("panel-gremien");
+      openGremien({ tab: b.dataset.wer });
+    }));
     $("#tab-stats").addEventListener("click", () => openAuswertung("stats"));
     $("#tab-wege").addEventListener("click", () => openAuswertung("wege"));
     $("#panel-auswertung .tabs").addEventListener("keydown", (e) => {
@@ -2848,7 +2994,12 @@
       setPanel("panel-mitmachen", true);
       await openMitmachen({ bezirk: params.get("bezirk") || areaBezirk() || "" });
     }
-    if (["verfahren", "gremien", "aemter"].includes(params.get("prozesse"))) {
+    if (werDa() && ["gremien", "aemter"].includes(params.get("wer"))) {
+      setPanel("panel-gremien", true);
+      await openGremien({ tab: params.get("wer"), darstellung: params.get("darstellung"), kennung: params.get("kennung") || undefined });
+    }
+    // Bonner Fläche „Prozesse“ nur mit ihrer Freigabe („soll“, in Köln aus); bis Pull Request 4b ohne diese Prüfung
+    if (funktionen.soll && ["verfahren", "gremien", "aemter"].includes(params.get("prozesse"))) {
       setPanel("panel-prozesse", true);
       await openProzesse({ tab: params.get("prozesse"), view: params.get("ansicht") === "liste" ? "liste" : "schaubild",
         verfahren: params.get("verfahren"), gremium: params.get("gremium"), amt: params.get("amt") });

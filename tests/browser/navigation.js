@@ -2,7 +2,8 @@
 // 1440×900, 1024×768 und auf dem iPhone 13: Reihenfolge und Beschriftung der Leiste, Inhalt der Menüs ohne „folgt“,
 // Startfenster mit „Aktuell in Köln“ (vergangene Sitzungen nach dem Tag in Köln ausgeblendet, Karte fehlt bei
 // ausgesetzter Liste, Hinweis bei nicht aktuellen Daten), Hinweise zum Stand aus dem Sitzungsnamen in „Kommende
-// Sitzungen“, Vorgang (fester Text bei leerem Ortsnamen, Gremium ohne Link), Wege zurück, Fokus nach dem Schließen,
+// Sitzungen“, Vorgang (fester Text bei leerem Ortsnamen, Gremium mit Kennung als Link, seit Pull Request 4b; die Fläche
+// „Gremien und Ämter“ prüft tests/browser/gremien.js), Wege zurück, Fokus nach dem Schließen,
 // Escape, Tab-Reihenfolge, Wortmarke und Seitentitel, Kartenvorschau, Fokus nach dem Schließen einer Fläche, die aus
 // „Los geht's“ oder dem Vorgang geöffnet wurde (auch auf dem Telefon), title der Menü-Schaltflächen; dazu axe-core
 // (WCAG 2.1 A/AA) in jedem dieser Zustände und Bildschirmfotos (Umgebungsvariable FOTOS). Abweichende Daten (Absage
@@ -144,7 +145,7 @@ async function leisteUndMenues(browser, profil) {
     pruefen(profil, `Menü „${name}“: Esc schließt, Fokus auf der Schaltfläche`, zu && f.mega === mega && f.sichtbar, f);
     if (telefon(profil)) await page.keyboard.press("Escape");
   }
-  pruefen(profil, "Inhalt der Menüs", JSON.stringify(inhalte["Wer entscheidet"]) === '["Verfahrenswege in Zahlen"]'
+  pruefen(profil, "Inhalt der Menüs", JSON.stringify(inhalte["Wer entscheidet"]) === '["Gremien","Ämter","Verfahrenswege in Zahlen"]'
     && inhalte.Themen[0] === "Kennzahlen zum Gebiet" && inhalte.Themen.length === 1
     && JSON.stringify(inhalte.Mitmachen) === '["Aktuell in Köln","Kommende Sitzungen","Selbst mitwirken","Informiert bleiben"]'
     && JSON.stringify(inhalte["Über"]) === JSON.stringify(["Einfache Sprache", "Begriffe erklärt", "Tour durch alle Funktionen",
@@ -202,6 +203,9 @@ async function tastatur(browser, profil) {
   };
   await zurueck("mega-themen", '#mega-themen [data-open-tab="stats"]', "panel-auswertung", "Kennzahlen zum Gebiet");
   await zurueck("mega-entscheiden", '#mega-entscheiden [data-open-tab="wege"]', "panel-auswertung", "Verfahrenswege in Zahlen");
+  // seit Pull Request 4b: Gremien und Ämter aus „Wer entscheidet“
+  await zurueck("mega-entscheiden", '#mega-entscheiden [data-wer="gremien"]', "panel-gremien", "Gremien");
+  await zurueck("mega-entscheiden", '#mega-entscheiden [data-wer="aemter"]', "panel-gremien", "Ämter");
   await zurueck("mega-mitmachen", "#cta-termine", "panel-termine", "Kommende Sitzungen");
   // Fenster „Über den Ratsatlas“ aus dem Menü „Über“: Esc schließt, Fokus auf „Über“ (Telefon: ☰)
   await menueOeffnen(page, profil, "mega-ueber");
@@ -321,7 +325,8 @@ async function termine(browser, profil, heute) {
   await s.ctx.close();
 }
 
-// 5, 6: Gebiet mit „Zurück zu Köln“, Vorgang mit festem Text bei leerem Ortsnamen, Gremium ohne Link, „Zurück zur Liste“
+// 5, 6: Gebiet mit „Zurück zu Köln“, Vorgang mit festem Text bei leerem Ortsnamen, Gremium mit Kennung als Link (seit
+// Pull Request 4b; vorher ohne Link), „Zurück zur Liste“
 async function gebietUndVorgang(browser, profil, gebiet) {
   const datei = `${gebiet.split(":")[0] === "ortsteil" ? "ortsteile" : "bezirke"}/${gebiet.split(":")[1]}.json`;
   let ref = null;
@@ -347,10 +352,11 @@ async function gebietUndVorgang(browser, profil, gebiet) {
   await s.page.waitForSelector("#detail .steps");
   await s.page.waitForTimeout(400);
   const v = await s.page.evaluate(() => ({ orte: [...document.querySelectorAll("#detail .locs > li")].map((li) => li.innerText.replace(/\s+/g, " ")),
-    leer: document.querySelector("#detail .locs").innerHTML.includes("<strong></strong>"), gremienLink: document.querySelectorAll("#detail [data-gremium-name]").length,
-    zurueck: Boolean(document.querySelector("#detail [data-zurueck-liste]")) }));
-  pruefen(profil, "Vorgang: fester Text bei leerem Ortsnamen, Gremien ohne Link, „Zurück zur Liste“", liste && v.orte.some((o) => o.startsWith(LEERER_ORT))
-    && !v.leer && v.gremienLink === 0 && v.zurueck, v);
+    leer: document.querySelector("#detail .locs").innerHTML.includes("<strong></strong>"), bonnLink: document.querySelectorAll("#detail [data-gremium-name]").length,
+    gremienLink: document.querySelectorAll("#detail [data-gremium-key]").length, zurueck: Boolean(document.querySelector("#detail [data-zurueck-liste]")) }));
+  // Testdaten: jede Station trägt eine Kennung (alle Gremien in gremien.json, nicht aufgelöst), also ein Link je Station
+  pruefen(profil, "Vorgang: fester Text bei leerem Ortsnamen, Gremien mit Kennung als Link (kein Bonner Link), „Zurück zur Liste“", liste
+    && v.orte.some((o) => o.startsWith(LEERER_ORT)) && !v.leer && v.bonnLink === 0 && v.gremienLink > 0 && v.zurueck, v);
   await foto(s.page, `vorgang-${profil}`);
   await axe(s.page, profil, "Vorgang");
   // „Alle Wege, sich einzubringen“ (Fläche „Mitmachen in Köln“) → Esc: Vorgang offen, Fokus auf dem Auslöser (auf dem

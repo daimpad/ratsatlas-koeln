@@ -17,10 +17,11 @@ const AUSGABE = process.argv[3];
 const AXE = process.env.AXE_PFAD ? fs.readFileSync(process.env.AXE_PFAD, "utf8") : null;
 // Wörter, die in der Tour nur mit der Freigabe ihrer Funktion (index.json meta.funktionen) vorkommen dürfen (wie
 // tests/test_seite_bedienung.py); Einfache Sprache und „Alle Wege im Überblick“ (mitmachen) sind seit 13.11.2026
-// freigegeben. „Bürgerantrag“ ist ein Bonner Begriff (in Köln: Einwohnerantrag) und bleibt immer verboten.
+// freigegeben, Gremien und Ämter (gremien) seit Pull Request 4b. „Bürgerantrag“ ist ein Bonner Begriff (in Köln:
+// Einwohnerantrag) und bleibt immer verboten.
 const WOERTER_JE_FUNKTION = { baustellen: ["Baustelle"], einfache_sprache: ["Einfache Sprache", "Einfacher Sprache"],
   haushalt: ["Zuschussbedarf", "Haushalt"], mitmachen: ["Alle Wege im Überblick"], soll: ["Prozesse"],
-  chat: ["Assistent"], themenseiten: ["Themenseiten"], technik: ["wie der Ratsatlas funktioniert"] };
+  chat: ["Assistent"], themenseiten: ["Themenseiten"], technik: ["wie der Ratsatlas funktioniert"], gremien: ["„Gremien“", "„Ämter“"] };
 const IMMER_VERBOTEN = ["Bürgerantrag"];
 const abgeschaltet = (fn) => IMMER_VERBOTEN.concat(Object.entries(WOERTER_JE_FUNKTION).filter(([f]) => !(fn || {})[f]).flatMap(([, w]) => w));
 const PROFILE = {
@@ -315,6 +316,15 @@ async function cspDesktop(browser, gebiet) {
   await page.goto(`${BASIS}?mitmachen=1`, { waitUntil: "load" });
   await geladen(page);
   await sammeln("?mitmachen=1");
+  // Gremien und Ämter (seit Pull Request 4b): Modul und beide Dateien unter der CSP, beide Reiter, axe per page.evaluate
+  await page.goto(`${BASIS}?wer=gremien&darstellung=liste`, { waitUntil: "load" });
+  await geladen(page);
+  const wer = await page.waitForSelector("#panel-gremien:not([hidden]) #wer-liste", { timeout: 15000 }).catch(() => null);
+  await sammeln("?wer=gremien");
+  const axeWer = await axeOhneBypass(page);
+  if (axeWer) pruefen(profil, "axe unter der CSP (Gremien als Liste)", axeWer.length === 0, axeWer);
+  if (wer) { await page.click("#tab-wer-aemter"); await page.waitForTimeout(200); await sammeln("Reiter Ämter"); }
+  pruefen(profil, "Gremien und Ämter unter der CSP geladen", Boolean(wer));
   const slug = gebiet.split(":")[1];
   const bezirk = await page.evaluate(async () => (await (await fetch("data/export/koeln/index.json")).json()).bezirke[0].slug);
   const status = {};

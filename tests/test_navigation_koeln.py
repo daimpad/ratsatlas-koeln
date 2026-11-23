@@ -89,7 +89,8 @@ def test_leiste_reihenfolge_und_beschriftung():
     assert knoepfe == [("mega-themen", "Themen"), ("mega-entscheiden", "Wer entscheidet"), ("mega-mitmachen", "Mitmachen"),
                        ("mega-ueber", "Über")]
     # Zwischen 901 und 1599 px stehen nur Symbole: Jede Schaltfläche nennt beim Überfahren mit der Maus ihren Namen und
-    # Inhalt (title wie bei den Flächen; Prüfung von Pull Request 3), „Wer entscheidet“ ohne „Gremien“ und „Ämter“
+    # Inhalt (title wie bei den Flächen; Prüfung von Pull Request 3); „Wer entscheidet“ im HTML ohne „Gremien“ und
+    # „Ämter“, mit Freigabe „gremien“ setzt app.js den Titel mit beiden (test_titel_wer_entscheidet_nach_freigabe)
     titel = dict(re.findall(r'<button type="button" class="menu-btn" data-mega="([\w-]+)"[^>]*\btitle="([^"]+)"', gruppe))
     assert titel == {"mega-themen": "Themen: Vorlagen nach Thema, Kennzahlen zum Gebiet",
                      "mega-entscheiden": "Wer entscheidet: Verfahrenswege in Zahlen",
@@ -115,7 +116,8 @@ def test_leiste_reihenfolge_und_beschriftung():
 
 def test_menue_inhalte():
     """Themen: Themen als Filter und „Kennzahlen zum Gebiet“ (Themenseiten und Haushalt nur mit Freigabe); Wer
-    entscheidet: nur „Verfahrenswege in Zahlen“; Mitmachen: „Aktuell in Köln“, „Kommende Sitzungen“ samt Kalender,
+    entscheidet: „Gremien“ und „Ämter“ (nur mit Freigabe „gremien“, seit Pull Request 4b), „Verfahrenswege in Zahlen“;
+    Mitmachen: „Aktuell in Köln“, „Kommende Sitzungen“ samt Kalender,
     „Selbst mitwirken“, „Informiert bleiben“; Über: Lesehilfen, Über den Ratsatlas, Daten."""
     themen = _abschnitt(INDEX, "mega-themen")
     assert 'id="themen-chips" role="group" aria-label="Thema wählen"' in themen
@@ -124,7 +126,9 @@ def test_menue_inhalte():
     assert '<a class="card" href="thema/" data-funktion="themenseiten" hidden>' in themen
     assert '<a class="card" href="haushalt/" data-funktion="haushalt" hidden>' in themen
     entscheiden = _abschnitt(INDEX, "mega-entscheiden")
-    assert _karten(entscheiden) == ["Verfahrenswege in Zahlen"]
+    assert _karten(entscheiden) == ["Gremien", "Ämter", "Verfahrenswege in Zahlen"]
+    for reiter in ("gremien", "aemter"):
+        assert f'<button type="button" class="card" data-wer="{reiter}" data-funktion="gremien" data-freigabe="gremien" hidden>' in entscheiden
     assert '<button type="button" class="card" data-open-tab="wege">' in entscheiden
     mitmachen = _abschnitt(INDEX, "mega-mitmachen")
     assert _karten(mitmachen) == ["Aktuell in Köln", "Kommende Sitzungen", "Selbst mitwirken", "Informiert bleiben"]
@@ -145,12 +149,25 @@ def test_menue_inhalte():
     assert INDEX.count('id="cta-report"') == 1 and "Fehler melden" not in INDEX
 
 
-def test_wer_entscheidet_ohne_gremien_und_aemter():
-    """Entscheidung 20.11.2026 (7) (a): „Wer entscheidet“ nur mit den Verfahrenswegen; die Kölner Reiter „Gremien“ und
-    „Ämter“ folgen mit Pull Request 4 – ohne Platzhalter und ohne Erwähnung (kein Reiter, keine Karte, kein Satz)."""
-    entscheiden = _text(_abschnitt(INDEX, "mega-entscheiden"))
-    for wort in ("Ämter", "„Gremien“", "Besetzung", "Pull Request", "bald", "demnächst") + ("folgt", "folgen"):
-        assert wort not in entscheiden, wort
+def test_wer_entscheidet_gremien_und_aemter_nur_mit_freigabe(monkeypatch):
+    """Entscheidung 20.11.2026 (7) (a) und 23.11.2026 (1): Ohne Freigabe „gremien“ steht in „Wer entscheidet“ nur die
+    Karte der Verfahrenswege, ohne Erwähnung von Gremien und Ämtern (data-freigabe entfernt die Karten und die Fläche
+    beim Bau); mit Freigabe dazu „Gremien“ und „Ämter“. Kein Platzhalter, keine Besetzung, kein „folgt“, keine Bonner
+    Kennungen (data-pz-tab)."""
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "gremien", False)
+    aus = seo.ohne_abgeschaltete(INDEX)
+    entscheiden = _abschnitt(aus, "mega-entscheiden")
+    assert _karten(entscheiden) == ["Verfahrenswege in Zahlen"]
+    for wort in ("Ämter", "Gremien:", "Rat, Ausschüsse", "Besetzung", "Pull Request", "bald", "demnächst") + ("folgt", "folgen"):
+        assert wort not in _text(entscheiden), wort
+    assert "panel-gremien" not in aus and "data-wer=" not in aus
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "gremien", True)
+    an = seo.ohne_abgeschaltete(INDEX)
+    entscheiden = _abschnitt(an, "mega-entscheiden")
+    assert _karten(entscheiden) == ["Gremien", "Ämter", "Verfahrenswege in Zahlen"]
+    for wort in ("Besetzung", "Pull Request", "bald", "demnächst") + ("folgt", "folgen"):
+        assert wort not in _text(entscheiden), wort
+    assert 'id="panel-gremien"' in an
     assert "data-pz-tab" not in INDEX
 
 
@@ -423,9 +440,10 @@ console.log(JSON.stringify(aus));
 
 
 def test_zeitleiste_nennt_absage_aus_dem_namen():
-    """site/timeline.js: Eine künftige Sitzung mit Hinweis „abgesagt“ aus dem Namen sieht aus wie eine abgesagte (Klasse
-    „cancelled“, gestrichelt) und heißt im Titel des Punkts „laut Sitzungsnamen abgesagt“; bei „verschoben“ heißt sie
-    „laut Sitzungsnamen verschoben“ statt „geplant“ (Prüfung von Pull Request 3). Vergangene bleiben ohne Zusatz."""
+    """site/timeline.js: Eine Sitzung mit Hinweis „abgesagt“ aus dem Namen sieht aus wie eine abgesagte (Klasse
+    „cancelled“, gestrichelt) und heißt im Titel des Punkts „laut Sitzungsnamen abgesagt“, künftig und seit Pull Request
+    4b auch vergangen (#47 (3); vorher blieben vergangene ohne Zusatz); bei „verschoben“ heißt eine künftige „laut
+    Sitzungsnamen verschoben“ statt „geplant“ (Prüfung von Pull Request 3), eine vergangene bleibt ohne Zusatz."""
     tl = (ROOT / "site" / "timeline.js").read_text(encoding="utf-8")
     teil = _teil(tl, r"^        const kuenftig = ms > today.*?\n        el\(\"title\".*?;\n")
     code = """
@@ -435,7 +453,8 @@ const el = (tag, attr, eltern) => { const e = { tag, attr, textContent: "" }; (e
 const svg = "svg", x = (v) => v, y = 1, de = (ms) => new Date(ms).toISOString().slice(0, 10), today = Date.parse("2026-11-20T12:00:00Z");
 const S = [{ date: "2026-11-22", gremium: "Beispielrat", hinweis: "abgesagt" }, { date: "2026-11-23", gremium: "Beispielrat", hinweis: "verschoben" },
   { date: "2026-11-24", gremium: "Beispielrat", cancelled: true }, { date: "2026-11-25", gremium: "Beispielrat" },
-  { date: "2026-11-10", gremium: "Beispielrat", hinweis: "abgesagt" }];
+  { date: "2026-11-10", gremium: "Beispielrat", hinweis: "abgesagt" }, { date: "2026-11-09", gremium: "Beispielrat", hinweis: "verschoben" },
+  { date: "2026-11-08", gremium: "Beispielrat" }];
 for (const m of S) { const ms = Date.parse(m.date + "T00:00:00Z");
 """ + teil + """
 }
@@ -445,7 +464,9 @@ console.log(JSON.stringify(punkte.map((p) => [p.attr.class, p.titel.textContent]
                            ["tl-meet future", "2026-11-23 · Beispielrat · laut Sitzungsnamen verschoben"],
                            ["tl-meet future cancelled", "2026-11-24 · Beispielrat · abgesagt"],
                            ["tl-meet future", "2026-11-25 · Beispielrat · geplant"],
-                           ["tl-meet", "2026-11-10 · Beispielrat"]]
+                           ["tl-meet cancelled", "2026-11-10 · Beispielrat · laut Sitzungsnamen abgesagt"],
+                           ["tl-meet", "2026-11-09 · Beispielrat"],
+                           ["tl-meet", "2026-11-08 · Beispielrat"]]
 
 
 # --- 5 Wege zurück und Fokus -----------------------------------------------------------------------------------------------
@@ -571,29 +592,61 @@ def test_leerer_ortsname_fester_text():
     assert "l.name || l.ortsteil || l.stadtbezirk)" not in sel
 
 
-def test_gremium_im_vorgang_ohne_link():
-    """Entscheidung 19.11.2026 (1) (H): Gremiennamen im Vorgang bleiben bis Pull Request 4 Text ohne Link; der Link in
-    den Reiter „Prozesse“ nur mit dessen Freigabe („soll“, in Köln aus)."""
+def _schritte(faelle, da=True, soll=False):
+    """stepHtml aus app.js mit erfundenen Schritten; `da`: Freigabe „gremien“ zur Laufzeit und Fläche vorhanden
+    (werDa), `soll`: Bonner Freigabe „soll“."""
     teil = _teil(APP, r"^  const STATUS = \{.*?\n  \};\n") + _teil(APP, r"^  const esc = .*?;\n") \
         + _teil(APP, r"^  function stepHtml\(s\) \{\n.*?\n  \}\n")
-    code = """
-const index = {}, NOTES = {}, STEP_LABEL = { beratung: "Beratung" };
-const fmtDate = (d) => d;
-let funktionen = {};
-""" + teil + """
-const s = { typ: "beratung", label: "Beispielausschuss", status: "belegt", date: "2026-11-20", role: "Vorberatung" };
-const aus = [stepHtml(s)];
-funktionen = { soll: true };
-aus.push(stepHtml(s));
-funktionen = {};
-aus.push(stepHtml({ ...s, label: null }));
-console.log(JSON.stringify(aus));
+    code = f"""
+const index = {{}}, NOTES = {{}}, STEP_LABEL = {{ beratung: "Beratung", entscheidung: "Entscheidung", initiierung: "Eingereicht" }};
+const fmtDate = (d) => d, werDa = () => {json.dumps(da)};
+let funktionen = {json.dumps({"soll": soll})};
+""" + teil + f"""
+console.log(JSON.stringify({json.dumps(faelle)}.map(stepHtml)));
 """
-    ohne, mit, leer = _node(code)
-    assert "data-gremium-name" not in ohne and "Beratung: Beispielausschuss" in ohne
-    assert 'data-gremium-name="Beispielausschuss"' in mit
-    assert "Beratung<span" in leer   # ohne Gremium: nur die Art der Station
-    assert config.ZUSATZTHEMEN["soll"] is False
+    return _node(code)
+
+
+def test_gremium_im_vorgang_link_nur_mit_kennung():
+    """Entscheidungen 19.11.2026 (1) (H), 21.11.2026 (2) (F12) und 23.11.2026 (1) (E1): Der Name eines Gremiums im
+    Vorgang ist ein Link in den Reiter „Gremien“ nur mit der Kennung am Schritt (gremium_key aus der Station), mit
+    Freigabe „gremien“ zur Laufzeit und vorhandener Fläche (werDa); ohne Kennung (frühere Wahlperiode, Gremium aus dem
+    Sitzungsnamen, „Gremium unbekannt“) und ohne Freigabe Text. Der Bonner Link in den Reiter „Prozesse“ über den Namen
+    bleibt unter „soll“ (in Köln aus) und gilt nur ohne Kennung."""
+    s = {"typ": "beratung", "label": "Beispielausschuss", "status": "belegt", "date": "2026-11-20", "role": "Vorberatung"}
+    mit, ohne, entscheidung, leer, initiierung = _schritte([
+        {**s, "gremium_key": "beispielausschuss"}, s, {**s, "typ": "entscheidung", "gremium_key": "rat", "label": "Rat"},
+        {**s, "label": None, "gremium_key": "x"}, {"typ": "initiierung", "label": "Antrag", "status": "belegt", "gremium_key": "x"}])
+    assert 'Beratung: <button type="button" class="link-btn" data-gremium-key="beispielausschuss">Beispielausschuss</button>' in mit
+    assert "data-gremium" not in ohne and "Beratung: Beispielausschuss<span" in ohne
+    assert 'data-gremium-key="rat">Rat</button>' in entscheidung
+    assert "data-gremium" not in leer and "Beratung<span" in leer   # ohne Gremium: nur die Art der Station
+    assert "data-gremium" not in initiierung
+    aus = _schritte([{**s, "gremium_key": "beispielausschuss"}], da=False)[0]
+    assert "data-gremium" not in aus and "Beratung: Beispielausschuss<span" in aus
+    bonn = _schritte([s, {**s, "gremium_key": "beispielausschuss"}], da=False, soll=True)
+    assert 'data-gremium-name="Beispielausschuss"' in bonn[0] and 'data-gremium-name="Beispielausschuss"' in bonn[1]
+    assert 'data-gremium-key="beispielausschuss"' in _schritte([{**s, "gremium_key": "beispielausschuss"}], soll=True)[0]
+    assert config.ZUSATZTHEMEN["soll"] is False and config.ZUSATZTHEMEN["gremien"] is True
+    klick = _teil(APP, r'^  \$\("#detail"\)\.addEventListener\("click", \(e\) => \{\n.*?\n  \}\);\n')
+    assert ('if (gk) { if (werDa()) { setPanel("panel-gremien", true); focusPanel("panel-gremien"); '
+            'openGremien({ tab: "gremien", kennung: gk.dataset.gremiumKey, fokus: true }); } return; }') in klick
+
+
+def test_plakette_an_der_station():
+    """F10 und (10) aus 21.11.2026 (1) (c), E1: Trägt der Schritt den Hinweis aus dem Sitzungsnamen (hinweis, aus der
+    Station), steht im Kopf die Plakette „laut Sitzungsnamen abgesagt“ bzw. „… verschoben“; Stand, Evidenzstatus und
+    Ergebnis bleiben unverändert, ohne Hinweis keine Plakette."""
+    s = {"typ": "beratung", "label": "Beispielrat", "status": "belegt", "date": "2026-11-20", "role": "Beratung",
+         "result": "vertagt", "gremium_key": "beispielrat"}
+    abgesagt, verschoben, ohne, anders = _schritte([{**s, "hinweis": "abgesagt"}, {**s, "hinweis": "verschoben"}, s,
+                                                    {**s, "hinweis": "anders"}])
+    assert '</button> <span class="badge">laut Sitzungsnamen abgesagt</span><span class="step-status">belegt</span>' in abgesagt
+    assert '<span class="badge">laut Sitzungsnamen verschoben</span><span class="step-status">belegt</span>' in verschoben
+    for html in (ohne, anders):
+        assert "badge" not in html
+    for html in (abgesagt, verschoben, ohne):
+        assert "Ergebnis: <q>vertagt</q>" in html and 'data-status="belegt"' in html
 
 
 # --- 7 Kleineres -------------------------------------------------------------------------------------------------------------
