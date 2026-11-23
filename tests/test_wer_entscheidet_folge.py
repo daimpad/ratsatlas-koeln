@@ -44,14 +44,22 @@ def test_folgende_sitzung_in_den_datenbeschreibungen(tmp_path, monkeypatch):
     assert ("Sitzungen und Vorlagen in 12 Monaten, nächste Sitzung und, wenn diese am Tag des Datenstands liegt, folgende "
             "Sitzung eigene Ableitung") in zeile
     assert lizenz.splitlines()[2].startswith("Stand 23.11.2026. ")
-    # README und Technikseite führen keine Feldliste von gremien.json (nur die Herkunft des Paragrafen)
+    # README und Technikseite führen keine Feldliste von gremien.json (nur die Herkunft des Paragrafen); die Technikseite
+    # mit Freigabe „gremien“ erzeugt (Nachprüfung: vorher war nur das README geprüft)
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "nächste Sitzung" not in readme and "naechste_sitzung" not in readme
+    from pipeline import technikseite
+    from pipeline.gebietsseiten import _page
+    technikseite.write(tmp_path / "seite", "https://example.invalid/", _page)
+    technik = (tmp_path / "seite" / "technik" / "index.html").read_text(encoding="utf-8")
+    assert "gremien.json" in technik
+    for feld in ("nächste Sitzung", "naechste_sitzung", "folgende Sitzung", "folgende_sitzung", "sitzungen_12m", "vorlagen_12m"):
+        assert feld not in technik, feld
 
 
 # --- (2)–(5), (8), (17) Modul site/gremien.js -------------------------------------------------------------------------
 
-SATZ_JAHRE = "Die Liste zeigt die Vorlagen aller Jahre; die Zahl oben zählt nur die 12 Monate."
+SATZ_JAHRE = "„Vorlagen dieses Gremiums“ zeigt die Vorlagen aller Jahre; die Zahl der Vorlagen oben gilt nur für die 12 Monate."
 
 
 def test_satz_am_knopf_vorlagen_dieses_gremiums():
@@ -90,13 +98,17 @@ def test_bekannte_sitzungen_vorbei():
 
 def test_ohne_tagesordnung_derselbe_satz_wie_in_aktuell_und_termine():
     """(4) Fehlt der Link zur Tagesordnung der gezeigten nächsten Sitzung, steht „Tagesordnung noch nicht
-    veröffentlicht“, derselbe Wortlaut wie in „Aktuell in Köln“ (app.js) und „Kommende Sitzungen“ der Fläche „Mitmachen
-    in Köln“ (beteiligung.js); mit Link bleibt der Link."""
+    veröffentlicht“, derselbe Wortlaut wie in „Aktuell in Köln“ (app.js, Karte „Kommende Sitzungen“), in der Fläche
+    „Kommende Sitzungen“ (app.js, showTermine) und unter „Nächste Sitzungen“ der Fläche „Mitmachen in Köln“
+    (beteiligung.js); mit Link bleibt der Link."""
     ohne, mit = _modul("[M.gremiumInhalt(G.gremien[1], G.meta, U), M.gremiumInhalt(G.gremien[0], G.meta, U)]")
     satz = " · Tagesordnung noch nicht veröffentlicht"
     assert f"Nächste Sitzung: Mo., 30.11.2026{satz}</li>" in ohne
     assert satz not in mit and ">Tagesordnung<span" in mit
-    assert f'{satz}"' in BETEILIGUNG and f'{satz}"' in APP
+    assert f'{satz}"' in BETEILIGUNG and "Nächste Sitzungen" in BETEILIGUNG
+    assert f'{satz}"' in _teil(APP, r"^  function aktuellHtml\(offen\) \{\n.*?\n  \}\n")
+    termine = _teil(APP, r"^  function showTermine\(\) \{\n.*?\n  \}\n")
+    assert '${docs || "Tagesordnung noch nicht veröffentlicht"}' in termine
 
 
 def test_hinweis_nicht_aktuelle_liste_schluss():
@@ -210,14 +222,17 @@ def test_quellenzeile_reiter_aemter_vor_der_federfuehrung(monkeypatch):
 
 # --- (10) Parameter gremium_filter -----------------------------------------------------------------------------------
 
-def _sync_filter(wert, pz=None):
-    """syncUrl aus app.js mit nachgebildeter Adresse und Wert von #f-gremium; Ergebnis: Parameter und Suchteil."""
+def _sync_filter(wert, pz=None, link=None):
+    """syncUrl aus app.js mit nachgebildeter Adresse und Wert von #f-gremium; `link`: Filter aus der Adresse, der noch
+    lädt oder scheiterte (gremiumLink). Ergebnis: Parameter und Suchteil."""
     teil = _teil(APP, r"^  function syncUrl\(\) \{\n.*?\n  \}\n")
     code = f"""
 const STADT = "koeln", KX = {{}}, PX = {{}}, EX = {{}}, kxOn = new Set();
 let area = {{ kind: "ortsteil", key: "probe" }}, tl = null, range = null, colorBy = "", navMetric = "a", navDefault = "a";
 let planOn = false, shownPlan = null, bauOn = false, shownSite = null, selected = null, sdModul = null, mmState = null;
 const pzState = {json.dumps(pz)}, werState = null;
+let gremiumLink = {json.dumps(link)};
+const gremiumLinkOffen = () => gremiumLink;
 const P = {{ "panel-prozesse": {{ hidden: {json.dumps(pz is None)} }}, "panel-gremien": {{ hidden: true }} }};
 const E = {{ "#f-theme": {{ value: "" }}, "#f-party": {{ value: "" }}, "#f-gremium": {{ value: {json.dumps(wert)} }} }};
 const $ = (s) => E[s] || P[s.slice(1)];
@@ -235,28 +250,58 @@ console.log(JSON.stringify([Object.fromEntries(new URLSearchParams(adresse)), ad
 def test_gremium_filter_in_der_adresse_schreiben():
     """(10) syncUrl schreibt den Wert des Filters „Gremium“ als eigenen Parameter gremium_filter (nie den Bonner Namen
     „gremium“): Kennung oder „name:“ mit Namen, kodiert; ohne Filter fehlt er. Die Bonner Parameter bleiben der Bonner
-    Fläche (hier ohne sie gelöscht)."""
+    Fläche (hier ohne sie gelöscht). Nachprüfung: Solange gremien.json für den Wert aus der Adresse lädt oder nicht
+    geladen werden konnte, bleibt dieser Wert stehen (neuer Versuch beim Neuladen); eine unbekannte Kennung nicht."""
     k, k_roh = _sync_filter("rat")
     assert k == {"gebiet": "ortsteil:probe", "gremium_filter": "rat"} and "gremium=" not in k_roh.replace("gremium_filter=", "")
     n, n_roh = _sync_filter("name:Ausschuss für Beispiele & Probe")
     assert n["gremium_filter"] == "name:Ausschuss für Beispiele & Probe"
     assert "gremium_filter=name%3AAusschuss+f%C3%BCr+Beispiele+%26+Probe" in n_roh
     assert _sync_filter("")[0] == {"gebiet": "ortsteil:probe"}
+    for stand, bleibt in (("laedt", True), ("fehler", True), ("unbekannt", False)):
+        r = _sync_filter("", link={"wert": "bv9", "stand": stand, "filter": None})[0]
+        assert ("gremium_filter" in r, r.get("gremium_filter")) == (bleibt, "bv9" if bleibt else None), stand
+    assert _sync_filter("rat", link={"wert": "bv9", "stand": "fehler", "filter": None})[0]["gremium_filter"] == "rat"
 
 
-def _aus_adresse(ablauf, papers=PAPERS, gremien_json=None, da=True):
-    """gremiumAusAdresse aus app.js mit erfundenen Vorlagen; fetch liefert `gremien_json` (None: HTTP 404)."""
-    teil = "".join(_teil(APP, m) for m in FILTER_TEILE) + _teil(APP, r"^  let gremiumUnbekannt = false;\n") \
-        + _teil(APP, r"^  const GREMIUM_UNBEKANNT = .*?;\n") + _teil(APP, r"^  const mitGremiumHinweis = .*?;\n") \
-        + _teil(APP, r"^  async function gremiumAusAdresse\(wert\) \{\n.*?\n  \}\n")
+ADRESSE_TEILE = (r"^  let gremiumLink = null;.*?\n", r"^  const GREMIUM_HINWEIS = \{\n.*?\n  \};\n", r"^  const filterStand = .*?;\n",
+                 r"^  function gremiumLinkOffen\(\) \{\n.*?\n  \}\n", r"^  const mitGremiumHinweis = \(text\) => \{\n.*?\n  \};\n",
+                 r"^  function gremiumSetzen\(wert, text\) \{\n.*?\n  \}\n", r"^  function gremiumAusAdresse\(wert\) \{\n.*?\n  \}\n")
+
+
+def _aus_adresse(ablauf, papers=PAPERS, gremien_json=None, da=True, antwort="sofort"):
+    """gremiumAusAdresse aus app.js mit erfundenen Vorlagen und jsonMitFrist (Wartezeit 40 ms statt 20 s). fetch liefert
+    `gremien_json` (None: HTTP 404); `antwort`: „sofort“, „nie“ (erst der Abbruch nach der Wartezeit beendet den Abruf)
+    oder „spaet“ (erst mit freigeben()). render, syncUrl und focusPanel zählen ihre Aufrufe; `feld` ist ein Feld der
+    Filter, `eintrag` ein Eintrag der Liste."""
+    teil = "".join(_teil(APP, m) for m in FILTER_TEILE) + "".join(_teil(APP, m) for m in ADRESSE_TEILE) \
+        + _teil(APP, r"^  const WARTEZEIT = .*?;\n").replace("20000", "40") + _teil(APP, r"^  const jsonMitFrist = \(url\) => \{\n.*?\n  \};\n")
     code = SELECT + f"""
 class Option {{ constructor(t, v) {{ this.textContent = t; this.value = v; }} }}
 Sel.prototype.appendChild = function (o) {{ this.opts.push(o); }};
 const sel = new Sel(), box = {{ hidden: true }}, name = {{ textContent: "" }}, art = {{ textContent: "" }};
-const E = {{ "#f-gremium": sel, "#gremium-filter": box, "#gremium-filter-name": name, "#gremium-filter-art": art }};
+const feld = {{ type: "select-one", value: "" }}, haken = {{ type: "checkbox", checked: true }}, eintrag = {{ id: "eintrag", dataset: {{ ref: "2/2026" }} }};
+const document = {{ activeElement: null, body: {{ id: "body" }} }};
+// nach dem Neuaufbau: `neu` sind die Einträge der Liste (focus() setzt den Fokus)
+let neu = [];
+const knopf = (ref) => ({{ dataset: {{ ref }}, focus() {{ document.activeElement = {{ id: "neu-" + ref }}; }} }});
+const E = {{ "#f-gremium": sel, "#gremium-filter": box, "#gremium-filter-name": name, "#gremium-filter-art": art,
+  "#filters": {{ elements: [feld, haken, sel] }}, "#papers": {{ contains: (e) => e === eintrag, querySelectorAll: () => neu }} }};
 const $ = (s) => E[s];
-const BONN = "data/", werDa = () => {json.dumps(da)}, abrufe = [];
-globalThis.fetch = async (u) => {{ abrufe.push(u); const d = {json.dumps(gremien_json)}; return {{ ok: Boolean(d), status: d ? 200 : 404, json: async () => d }}; }};
+const BONN = "data/", werDa = () => {json.dumps(da)}, abrufe = [], signale = [], LIST_STEP = 50;
+let range = null, shown = 0, gerendert = 0, adressen = 0, fokussiert = [], freigeben = null;
+const render = () => {{ gerendert++; if (document.activeElement === eintrag) document.activeElement = document.body; }};
+const syncUrl = () => {{ adressen++; }}, focusPanel = (id) => {{ fokussiert.push(id); document.activeElement = {{ id }}; }};
+const warten = (ms) => new Promise((r) => setTimeout(r, ms));
+globalThis.fetch = (u, o) => {{
+  abrufe.push(u); signale.push(o && o.signal);
+  const d = {json.dumps(gremien_json)}, antwort = () => ({{ ok: Boolean(d), status: d ? 200 : 404, json: async () => d }});
+  if ({json.dumps(antwort)} === "sofort") return Promise.resolve(antwort());
+  return new Promise((ja, nein) => {{
+    o.signal.addEventListener("abort", () => nein(new Error("abgebrochen")));
+    if ({json.dumps(antwort)} === "spaet") freigeben = () => ja(antwort());
+  }});
+}};
 let papers = {json.dumps(papers)};
 """ + teil + """
 fillGremien();
@@ -269,58 +314,133 @@ fillGremien();
     return _node(code)
 
 
+SATZ_UNBEKANNT = ("Das Gremium aus dem Link ist unter „Gremien“ nicht verzeichnet; seine Kennung kann sich geändert haben. "
+                  "Die Liste ist nicht nach Gremium gefiltert.")
+SATZ_GREMIEN_FEHLEN = ("Die Angaben zum Gremium aus dem Link konnten nicht geladen werden; die Liste ist nicht nach Gremium "
+                       "gefiltert. Beim Neuladen der Seite versucht der Ratsatlas es erneut.")
+GREMIEN_PROBE = {"gremien": [{"key": "bv9", "name": "Bezirksvertretung 9 (Probe)"},
+                             {"key": "alt9", "name": "Früherer Probebeirat", "aufgeloest": True},
+                             {"key": "alt8", "name": "", "aufgeloest": True}]}
+
+
 def test_gremium_filter_aus_der_adresse_lesen():
     """(10) Beim Laden: Eine Kennung mit Station im Gebiet setzt den Filter ohne Abruf; sonst liefert gremien.json den
     Namen (nur mit Freigabe „gremien“); ein Name („name:“) gilt, wie er ist, auch ohne Station, in seiner Gruppe. Eine
     unbekannte Kennung setzt keinen Filter, #count sagt das wie bei der unbekannten Kennung unter „Gremien“; kein
-    Absturz, auch ohne Freigabe (dann ohne Abruf und ohne „unter „Gremien““)."""
-    g = {"gremien": [{"key": "bv9", "name": "Bezirksvertretung 9 (Probe)"}]}
+    Absturz, auch ohne Freigabe (dann ohne Abruf und ohne „unter „Gremien““). Nachprüfung: Die Kennung eines
+    aufgelösten Gremiums filtert über dessen Namen (Stationen früherer Gremien tragen keine Kennung); ohne Namen gilt
+    sie als unbekannt."""
     r = _aus_adresse("""
-  await gremiumAusAdresse("aus-a"); gremiumKennzeichen(); aus.gebiet = [sel.value, art.textContent, abrufe.length, name.textContent];
-  await gremiumAusAdresse("bv9"); aus.datei = [sel.value, gremiumKennzeichen().text, abrufe.slice(), sel.innerHTML.indexOf("bv9") < sel.innerHTML.indexOf("nach Namen")];
-  await gremiumAusAdresse("name:Probefraktion"); gremiumKennzeichen(); aus.name = [sel.value, art.textContent, name.textContent, sel.innerHTML.indexOf("Probefraktion") > sel.innerHTML.indexOf("nach Namen")];
-  aus.vorher = [gremiumUnbekannt, mitGremiumHinweis("3 von 9 Vorlagen · Probe")];
-  sel.value = ""; await gremiumAusAdresse("gibt-es-nicht"); aus.unbekannt = [sel.value, gremiumUnbekannt, mitGremiumHinweis("3 von 9 Vorlagen · Probe"), mitGremiumHinweis("Ganz Köln: oben wählen.")];
-""", gremien_json=g)
-    assert r["gebiet"] == ["aus-a", "Gremium", 0, "Ausschuss für Beispiele"]
-    assert r["datei"] == ["bv9", "Bezirksvertretung 9 (Probe)", ["data/gremien.json"], True]
+  aus.sofort = gremiumAusAdresse("aus-a") === undefined; gremiumKennzeichen(); aus.gebiet = [sel.value, art.textContent, abrufe.length, name.textContent];
+  sel.value = ""; await gremiumAusAdresse("bv9"); aus.datei = [sel.value, gremiumKennzeichen().text, abrufe.slice(), sel.innerHTML.indexOf("bv9") < sel.innerHTML.indexOf("nach Namen"), gerendert, adressen];
+  gremiumAusAdresse("name:Probefraktion"); gremiumKennzeichen(); aus.name = [sel.value, art.textContent, name.textContent, sel.innerHTML.indexOf("Probefraktion") > sel.innerHTML.indexOf("nach Namen")];
+  aus.vorher = [gremiumLink, mitGremiumHinweis("3 von 9 Vorlagen · Probe")];
+  sel.value = ""; await gremiumAusAdresse("gibt-es-nicht"); aus.unbekannt = [sel.value, gremiumLink.stand, mitGremiumHinweis("3 von 9 Vorlagen · Probe"), mitGremiumHinweis("Ganz Köln: oben wählen.")];
+  sel.value = ""; await gremiumAusAdresse("alt9"); gremiumKennzeichen(); aus.aufgeloest = [sel.value, art.textContent, name.textContent, gremiumLink];
+  sel.value = ""; await gremiumAusAdresse("alt8"); aus.ohneName = [sel.value, gremiumLink.stand];
+""", gremien_json=GREMIEN_PROBE)
+    assert r["sofort"] and r["gebiet"] == ["aus-a", "Gremium", 0, "Ausschuss für Beispiele"]
+    assert r["datei"] == ["bv9", "Bezirksvertretung 9 (Probe)", ["data/gremien.json"], True, 1, 1]
     assert r["name"] == ["name:Probefraktion", "Gremium (nach Namen)", "Probefraktion", True]
-    assert r["vorher"] == [False, "3 von 9 Vorlagen · Probe"]
-    satz = ("Das Gremium aus dem Link ist unter „Gremien“ nicht verzeichnet; seine Kennung kann sich geändert haben. "
-            "Die Liste ist nicht nach Gremium gefiltert.")
-    assert r["unbekannt"] == ["", True, f"3 von 9 Vorlagen · Probe · {satz}", f"Ganz Köln: oben wählen. {satz}"]
+    assert r["vorher"] == [None, "3 von 9 Vorlagen · Probe"]
+    assert r["unbekannt"] == ["", "unbekannt", f"3 von 9 Vorlagen · Probe · {SATZ_UNBEKANNT}", f"Ganz Köln: oben wählen. {SATZ_UNBEKANNT}"]
+    assert r["aufgeloest"] == ["name:Früherer Probebeirat", "Gremium (nach Namen)", "Früherer Probebeirat", None]
+    assert r["ohneName"] == ["", "unbekannt"]
     ohne = _aus_adresse("""
-  await gremiumAusAdresse("bv9"); aus.r = [sel.value, gremiumUnbekannt, abrufe.length, GREMIUM_UNBEKANNT()];
-  await gremiumAusAdresse("name:"); aus.leer = [sel.value, gremiumUnbekannt];
-""", gremien_json=g, da=False)
-    assert ohne["r"] == ["", True, 0, "Das Gremium aus dem Link ist nicht verzeichnet; seine Kennung kann sich geändert "
-                                      "haben. Die Liste ist nicht nach Gremium gefiltert."]
-    assert ohne["leer"] == ["", True]
-    kaputt = _aus_adresse('await gremiumAusAdresse("bv9"); aus.r = [sel.value, gremiumUnbekannt];', gremien_json=None)
-    assert kaputt["r"] == ["", True]
+  aus.r = [gremiumAusAdresse("bv9") === undefined, sel.value, gremiumLink.stand, abrufe.length, GREMIUM_HINWEIS.unbekannt()];
+  gremiumAusAdresse("name:"); aus.leer = [sel.value, gremiumLink.stand];
+""", gremien_json=GREMIEN_PROBE, da=False)
+    assert ohne["r"] == [True, "", "unbekannt", 0, "Das Gremium aus dem Link ist nicht verzeichnet; seine Kennung kann sich "
+                                                   "geändert haben. Die Liste ist nicht nach Gremium gefiltert."]
+    assert ohne["leer"] == ["", "unbekannt"]
+
+
+def test_gremium_filter_ohne_gremien_json_und_nach_der_wartezeit():
+    """(10), (11) Nachprüfung: Kann gremien.json nicht geladen werden (Fehlercode) oder antwortet die Datei nicht in der
+    Wartezeit (Abruf abgebrochen) oder fehlt ihr die Liste der Gremien, setzt die Kennung keinen Filter, und #count
+    sagt, dass die Angaben fehlen (nicht, dass das Gremium unbekannt sei); der Wert bleibt für einen neuen Versuch in der
+    Adresse (Stand „fehler“)."""
+    kaputt = _aus_adresse("""
+  await gremiumAusAdresse("bv9"); aus.r = [sel.value, gremiumLink.stand, gremiumLink.wert, mitGremiumHinweis("3 von 9 Vorlagen · Probe"), gerendert, adressen];
+""", gremien_json=None)
+    assert kaputt["r"] == ["", "fehler", "bv9", f"3 von 9 Vorlagen · Probe · {SATZ_GREMIEN_FEHLEN}", 1, 1]
+    unvollstaendig = _aus_adresse('await gremiumAusAdresse("bv9"); aus.r = [sel.value, gremiumLink.stand];', gremien_json={"meta": {}})
+    assert unvollstaendig["r"] == ["", "fehler"]
+    nie = _aus_adresse("""
+  const warten_ = gremiumAusAdresse("bv9");
+  aus.waehrend = [gremiumLink.stand, sel.value, mitGremiumHinweis("3 von 9 Vorlagen · Probe"), gerendert];
+  const t0 = Date.now(); await warten_;
+  aus.danach = [gremiumLink.stand, sel.value, signale[0].aborted, Date.now() - t0 < 1000, mitGremiumHinweis("3 von 9 Vorlagen · Probe"), gerendert, adressen];
+""", gremien_json=GREMIEN_PROBE, antwort="nie")
+    assert nie["waehrend"] == ["laedt", "", "3 von 9 Vorlagen · Probe", 0]
+    assert nie["danach"] == ["fehler", "", True, True, f"3 von 9 Vorlagen · Probe · {SATZ_GREMIEN_FEHLEN}", 1, 1]
+
+
+def test_gremium_filter_spaete_antwort_nach_einer_aenderung_ohne_wirkung():
+    """(10), (11) Nachprüfung: Die Antwort von gremien.json setzt den Filter nur, solange die Filter so stehen wie am
+    Ende des Starts (gremiumLink.filter); hat die Nutzerin inzwischen einen Filter geändert, bleibt sie ohne Wirkung (kein
+    Filter, kein Neuaufbau, kein Satz, der Wert verschwindet aus der Adresse). Ohne Änderung setzt die späte Antwort den
+    Filter; lag der Fokus auf einem Eintrag der Liste, geht er nach dem Neuaufbau auf denselben Eintrag oder, wenn der
+    fehlt, auf die Überschrift der Liste; sonst bleibt er, wo er ist."""
+    r = _aus_adresse("""
+  let w = gremiumAusAdresse("bv9"); gremiumLink.filter = filterStand();
+  feld.value = "Mitteilung"; aus.nachAenderung = [mitGremiumHinweis("x"), gremiumLink];
+  freigeben(); await w;
+  aus.geaendert = [sel.value, gerendert, adressen, gremiumLink];
+  feld.value = ""; sel.value = "";
+  w = gremiumAusAdresse("bv9"); gremiumLink.filter = filterStand(); document.activeElement = eintrag; neu = [knopf("1/2026")];
+  freigeben(); await w;
+  aus.fokusListe = [sel.value, gerendert, fokussiert.slice(), document.activeElement.id];
+  sel.value = ""; fokussiert = [];
+  w = gremiumAusAdresse("bv9"); gremiumLink.filter = filterStand(); const anderswo = { id: "f-text" }; document.activeElement = anderswo;
+  freigeben(); await w;
+  aus.fokusAnderswo = [sel.value, fokussiert, document.activeElement.id];
+  sel.value = "";
+  w = gremiumAusAdresse("bv9"); gremiumLink.filter = filterStand(); sel.value = "rat";
+  freigeben(); await w;
+  aus.gremiumGewaehlt = [sel.value, gremiumLink];
+""", gremien_json=GREMIEN_PROBE, antwort="spaet")
+    fehler = _aus_adresse("""
+  shown = 100; const w = gremiumAusAdresse("bv9"); gremiumLink.filter = filterStand(); document.activeElement = eintrag; neu = [knopf("1/2026"), knopf("2/2026")];
+  freigeben(); await w;
+  aus.r = [gremiumLink.stand, shown, gerendert, fokussiert, document.activeElement.id];
+""", gremien_json=None, antwort="spaet")
+    assert r["nachAenderung"] == ["x", None]
+    assert r["geaendert"] == ["", 0, 0, None]
+    assert r["fokusListe"] == ["bv9", 1, ["panel-list"], "panel-list"]
+    assert r["fokusAnderswo"] == ["bv9", [], "f-text"]
+    assert r["gremiumGewaehlt"] == ["rat", None]
+    # ohne Datei: nur der Satz (Neuaufbau ohne Zurücksetzen der Zahl gezeigter Einträge), Fokus auf demselben Eintrag
+    assert fehler["r"] == ["fehler", 100, 1, [], "neu-2/2026"]
 
 
 def test_gremium_filter_beim_start_und_hinweis_endet():
     """(10) start() liest gremium_filter nach dem Gebiet (auch mit suche=koeln, wer/darstellung/kennung und dem Vorgang
-    im Anker) und öffnet die Liste; gremien.json lädt nur gremiumAusAdresse, nicht start(). Der Satz zur unbekannten
-    Kennung endet mit der nächsten Änderung der Filter, mit „Vorlagen dieses Gremiums“ und mit dem Zurücksetzen;
-    renderGlobal und render hängen ihn an #count."""
+    im Anker) und öffnet die Liste; gremien.json lädt nur gremiumAusAdresse, nicht start(), und start() wartet nicht
+    darauf (Nachprüfung: vorher hielt eine ausbleibende Antwort den Start an, ohne Vorgang aus dem Anker). Den Stand der
+    Filter hält start() nach dem Zeitraum fest, vor dem Vorgang und den Flächen. Der Satz zur unbekannten Kennung endet
+    mit der nächsten Änderung der Filter, mit „Vorlagen dieses Gremiums“ und mit dem Zurücksetzen; renderGlobal und
+    render hängen ihn an #count."""
     start = _teil(APP, r"^  async function start\(\) \{\n.*?\n  \}\n")
-    lesen = 'if (params.get("gremium_filter")) { await gremiumAusAdresse(params.get("gremium_filter")); shown = LIST_STEP; render(); }'
-    assert lesen in start and "gremien.json" not in start
+    lesen = 'if (params.get("gremium_filter")) { gremiumAusAdresse(params.get("gremium_filter")); shown = LIST_STEP; render(); }'
+    assert lesen in start and "gremien.json" not in start and "await gremiumAusAdresse" not in start
+    stand = "if (gremiumLink) gremiumLink.filter = filterStand();"
     assert start.index('await loadArea(params.get("gebiet") || DEFAULT_AREA, true);') < start.index(lesen) \
+        < start.index("range = [st.von, st.bis];") < start.index(stand) \
         < start.index("const initial = papers.find((p) => p.reference === ref);") < start.index('params.get("wer")')
     assert 'if (["thema", "partei", "suche", "gremium_filter"].some((k) => params.get(k))) setPanel("panel-list", true);' in start
     assert 'state.gremium = pz && pz.tab === "gremien"' in APP   # Bonner Name unverändert, eigener Name gremium_filter
     for teil in (_teil(APP, r"^  function resetFilters\(\) \{\n.*?\n  \}\n"), _teil(APP, r"^  function gremiumFiltern\(key, name\) \{\n.*?\n  \}\n"),
                  _teil(APP, r'^    \$\("#filters"\)\.addEventListener\("input", \(e\) => \{\n.*?\n    \}\);\n')):
-        assert "gremiumUnbekannt = false;" in teil
+        assert "gremiumLink = null;" in teil
     for f in ("render", "renderGlobal"):
         assert "$(\"#count\").textContent = mitGremiumHinweis(" in _teil(APP, rf"^  function {f}\(nurListe\) \{{\n.*?\n  \}}\n")
+    assert "jsonMitFrist(BONN + \"gremien.json\")" in _teil(APP, r"^  function gremiumAusAdresse\(wert\) \{\n.*?\n  \}\n")
     import test_wer_entscheidet_seite as ws
-    r = ws._global(ws.SUCHE, "", "", unbekannt=True)
-    assert r["count"] == ("4 Treffer in ganz Köln · Das Gremium aus dem Link ist unter „Gremien“ nicht verzeichnet; seine "
-                          "Kennung kann sich geändert haben. Die Liste ist nicht nach Gremium gefiltert.")
+    r = ws._global(ws.SUCHE, "", "", link="unbekannt")
+    assert r["count"] == f"4 Treffer in ganz Köln · {SATZ_UNBEKANNT}"
+    assert ws._global(ws.SUCHE, "", "", link="fehler")["count"] == f"4 Treffer in ganz Köln · {SATZ_GREMIEN_FEHLEN}"
+    assert ws._global(ws.SUCHE, "", "", link="laedt")["count"] == "4 Treffer in ganz Köln"
 
 
 # --- (11) Wartezeit beim Laden ---------------------------------------------------------------------------------------
@@ -470,11 +590,14 @@ def _suchindex(ablauf):
         + _teil(APP, r"^  function sucheErneut\(\) \{\n.*?\n  \}\n")
     code = """
 const E = { "#count": { textContent: "" }, "#papers": { innerHTML: "<li>alter Eintrag</li>" }, "#mega-count": { textContent: "" } };
-const $ = (s) => (s === "#suche-erneut" ? (E["#papers"].innerHTML.includes('id="suche-erneut"') ? {} : null) : E[s]);
+const knopf = { id: "suche-erneut" }, stichwort = { id: "f-text" };
+const $ = (s) => (s === "#suche-erneut" ? (E["#papers"].innerHTML.includes('id="suche-erneut"') ? knopf : null) : E[s]);
+const document = { activeElement: knopf, body: { id: "body" } };
 const STADT = "koeln", BONN = "data/", index = {}, plan = [];
 let search = null, searchLoading = null, openMegaId = null, gerendert = 0, fokus = null;
-const scope = () => STADT, fillParties = () => {}, render = () => { gerendert++; E["#papers"].innerHTML = "<li>Treffer</li>"; };
-const focusPanel = (id) => { fokus = id; };
+// der Neuaufbau entfernt die Schaltfläche: lag der Fokus dort, fällt er auf <body>
+const scope = () => STADT, fillParties = () => {}, render = () => { gerendert++; E["#papers"].innerHTML = "<li>Treffer</li>"; if (document.activeElement === knopf) document.activeElement = document.body; };
+const focusPanel = (id) => { fokus = id; document.activeElement = { id }; };
 globalThis.fetch = async () => { const p = plan.shift(); if (p === "netz") throw new TypeError("Failed to fetch");
   return { ok: p === "ok", status: p === "ok" ? 200 : 503, json: async () => ({ rows: [], parties: [] }) }; };
 const warten = () => new Promise((r) => setTimeout(r, 5));
@@ -507,6 +630,18 @@ def test_suchindex_fehlt_liste_leer_und_erneut_versuchen():
     assert r["laden"] == "Lade den Suchindex für ganz Köln …"
     assert r["zweit"] == {"count": "Der Suchindex konnte nicht geladen werden.", "liste": True, "gerendert": 0, "fokus": None}
     assert r["dritt"] == {"gerendert": 1, "fokus": "panel-list", "liste": "<li>Treffer</li>", "geladen": True}
+    # Nachprüfung: Wer während des Ladens in ein anderes Feld wechselt (etwa „Stichwort“), behält dort den Fokus; nur ein
+    # Fokus auf der Schaltfläche oder auf <body> (Tippen fokussiert sie nicht in jedem Browser) geht zur Überschrift
+    anderswo = _suchindex("""
+  plan.push("503", "ok", "503", "ok");
+  await loadSearch(); suchindexFehlt();
+  sucheErneut(); document.activeElement = stichwort; await warten();
+  const erst = { fokus, aktiv: document.activeElement.id, gerendert };
+  search = null; E["#papers"].innerHTML = ""; await loadSearch(); suchindexFehlt(); fokus = null;
+  document.activeElement = document.body; sucheErneut(); await warten();
+  ergebnis = { erst, body: { fokus, aktiv: document.activeElement.id } };
+""")
+    assert anderswo == {"erst": {"fokus": None, "aktiv": "f-text", "gerendert": 1}, "body": {"fokus": "panel-list", "aktiv": "panel-list"}}
     render = _teil(APP, r"^  function render\(nurListe\) \{\n.*?\n  \}\n")
     assert 'loadSearch().then((d) => { if (d) { fillParties(); render(); } else if (scope() === STADT) suchindexFehlt(); });' in render
     assert 'gremiumKennzeichen();\n        $("#count").textContent = "Lade den Suchindex für ganz Köln …";' in render   # Kennzeichen bleibt

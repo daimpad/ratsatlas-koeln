@@ -568,6 +568,9 @@ body.chat-open .leaflet-left { left: calc(var(--chat-w) + 32px); }
 .about-body p, .about-body ol { margin: 0 0 8px; }
 .about-body dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; }
 .about-body dt { font-weight: 600; } .about-body dd { margin: 0; }
+/* schmale Breite: Begriff über der Erklärung; zweispaltig war die Liste bei 320 px breiter als das Fenster „Über“ (bei
+   geringer Höhe rollte es dann waagrecht, sonst der Text darin; Nachprüfung zu 23.11.2026 (2) (15)) */
+@media (max-width: 480px) { .about-body dl { grid-template-columns: minmax(0, 1fr); row-gap: 2px; } .about-body dd { margin-bottom: 6px; } }
 
 /* Zustände der Liste */
 .panel.loading .papers { opacity: .45; pointer-events: none; }

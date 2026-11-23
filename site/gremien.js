@@ -97,7 +97,7 @@ export function gremiumInhalt(g, meta, umgebung) {
   // aria-describedby verbunden (23.11.2026 (2) (2)); die Kennung macht die id eindeutig, auch in der Liste
   const knopf = !g.aufgeloest && g.key
     ? `<p class="pz-actions"><button type="button" class="btn btn-soft wer-filter" data-kennung="${esc(g.key)}" data-name="${esc(g.name)}" aria-describedby="wer-jahre-${esc(g.key)}">Vorlagen dieses Gremiums<span class="visually-hidden">: ${esc(g.name)}</span></button>
-      <span class="hint wer-jahre" id="wer-jahre-${esc(g.key)}">Die Liste zeigt die Vorlagen aller Jahre; die Zahl oben zählt nur die 12 Monate.</span></p>` : "";
+      <span class="hint wer-jahre" id="wer-jahre-${esc(g.key)}">„Vorlagen dieses Gremiums“ zeigt die Vorlagen aller Jahre; die Zahl der Vorlagen oben gilt nur für die 12 Monate.</span></p>` : "";
   const quelle = href(g.source_object) ? `<p class="hint wer-quelle">Quellobjekt: ${neuerTab(g.source_object, esc(g.source_object))}</p>` : "";
   return `<ul class="pz-facts">${zeilen.join("")}</ul>${knopf}${quelle}`;
 }

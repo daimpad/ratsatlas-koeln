@@ -373,7 +373,7 @@ def _sync(werState, offen=True, pz=None):
 const STADT = "koeln", KX = {{}}, PX = {{}}, EX = {{}}, kxOn = new Set();
 let area = {{ kind: "koeln", key: "alle" }}, tl = null, range = null, colorBy = "", navMetric = "a", navDefault = "a";
 let planOn = false, shownPlan = null, bauOn = false, shownSite = null, selected = null, sdModul = null, mmState = null;
-const pzState = {json.dumps(pz)}, werState = {json.dumps(werState)};
+const pzState = {json.dumps(pz)}, werState = {json.dumps(werState)}, gremiumLinkOffen = () => null;
 const P = {{ "panel-prozesse": {{ hidden: {json.dumps(pz is None)} }}, "panel-gremien": {{ hidden: {json.dumps(not offen)} }} }};
 const E = {{ "#f-theme": {{ value: "" }}, "#f-party": {{ value: "" }}, "#f-gremium": {{ value: "" }} }};
 const $ = (s) => E[s] || P[s.slice(1)];
@@ -512,16 +512,18 @@ console.log(JSON.stringify(aus));
             in render) and 'id="gremium-koeln">In ganz Köln suchen</button>' in render
 
 
-def _global(search, wert, gremien_wahl=None, unbekannt=False):
+def _global(search, wert, gremien_wahl=None, link=None):
     """renderGlobal aus app.js mit erfundenem suche.json; `wert`: Wert von #f-gremium (mit passender Option);
-    `unbekannt`: eine Kennung aus der Adresse ohne Gremium (gremiumUnbekannt, seit 23.11.2026 (2) (10))."""
+    `link`: Stand des Filters aus der Adresse („unbekannt“: Kennung ohne Gremium, „fehler“: gremien.json nicht
+    geladen; gremiumLink, seit 23.11.2026 (2) (10) und der Nachprüfung)."""
     teil = "".join(_teil(APP, m) for m in FILTER_TEILE) + _teil(APP, r"^  const themeTags = .*?;\n") \
-        + _teil(APP, r"^  const GREMIUM_UNBEKANNT = .*?;\n") + _teil(APP, r"^  const mitGremiumHinweis = .*?;\n") \
+        + _teil(APP, r"^  const GREMIUM_HINWEIS = \{\n.*?\n  \};\n") + _teil(APP, r"^  function gremiumLinkOffen\(\) \{\n.*?\n  \}\n") \
+        + _teil(APP, r"^  const mitGremiumHinweis = \(text\) => \{\n.*?\n  \};\n") \
         + _teil(APP, r"^  function renderGlobal\(nurListe\) \{\n.*?\n  \}\n")
     code = SELECT + f"""
 const sel = new Sel(), box = {{ hidden: true }}, name = {{ textContent: "" }}, art = {{ textContent: "" }}, count = {{ textContent: "" }}, liste = {{ innerHTML: "" }};
 const leer = {{ value: "", checked: false }};
-let gremiumUnbekannt = {json.dumps(unbekannt)};
+let gremiumLink = {json.dumps({"wert": "x", "stand": link, "filter": None} if link else None)};
 const werDa = () => true;
 const E = {{ "#f-gremium": sel, "#gremium-filter": box, "#gremium-filter-name": name, "#gremium-filter-art": art, "#f-text": leer, "#f-type": leer,
   "#f-stand": leer, "#f-theme": leer, "#f-party": leer, "#f-related": leer, "#count": count, "#papers": liste }};

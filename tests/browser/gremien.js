@@ -757,11 +757,12 @@ async function bedienung(browser, profil, gremien, gebiet) {
 // Entscheidung 23.11.2026 (2), Punkte 1–17 aus #50 (Folge-PR): je Punkt eine eigene Seite, axe in jedem neuen Zustand;
 // (15) bei 320 × 256 CSS-Pixeln (400 % Zoom), (16) auf dem iPhone 13. Punkt (1) betrifft nur die Datenbeschreibungen
 // (tests/test_wer_entscheidet_folge.py), (5) und (7) prüfen auch die angepassten Prüfungen oben.
-const SATZ_JAHRE = "Die Liste zeigt die Vorlagen aller Jahre; die Zahl oben zählt nur die 12 Monate.";
+const SATZ_JAHRE = "„Vorlagen dieses Gremiums“ zeigt die Vorlagen aller Jahre; die Zahl der Vorlagen oben gilt nur für die 12 Monate.";
 const VORBEI = "Die bekannten Sitzungen sind vorbei; der nächste Abruf ergänzt die Liste der Sitzungen.";
 const UNBEKANNT = "Das Gremium aus dem Link ist unter „Gremien“ nicht verzeichnet; seine Kennung kann sich geändert haben. Die Liste ist nicht nach Gremium gefiltert.";
 const LADEFEHLER = "Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.";
 const LADEFEHLER_MM = "Die Fläche „Mitmachen in Köln“ konnte nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.";
+const SATZ_GREMIEN_FEHLEN = "Die Angaben zum Gremium aus dem Link konnten nicht geladen werden; die Liste ist nicht nach Gremium gefiltert. Beim Neuladen der Seite versucht der Ratsatlas es erneut.";
 const gebietsdatei = (gebiet) => `${gebiet.split(":")[0] === "ortsteil" ? "ortsteile" : "bezirke"}/${gebiet.split(":")[1]}.json`;
 const liste = async (page, profil) => {
   if (!(await page.evaluate(() => document.getElementById("panel-list").hidden))) return;
@@ -1045,6 +1046,115 @@ const FOLGE = {
     pruefen(profil, "keine Skriptfehler (Folge: Suchindex)", s.fehler.length === 0, s.fehler);
     await s.ctx.close();
   },
+  // Nachprüfung (10), (11): Filter aus der Adresse, wenn gremien.json nicht antwortet (Start wartet nicht, Vorgang aus
+  // dem Anker, nach 20 s ein Satz in #count), spät antwortet (setzt den Filter, der inzwischen geöffnete Vorgang bleibt),
+  // fehlt (eigener Satz statt „nicht verzeichnet“) oder ein aufgelöstes Gremium nennt (Filter über den Namen)
+  async filterAusAdresseNachpruefung(browser, profil, gremien, gebiet) {
+    const hilfe = await neueSeite(browser, profil);
+    await hilfe.page.goto(BASIS, { waitUntil: "load" });
+    const gebietsdaten = await hilfe.page.evaluate(async (d) => (await fetch("data/export/koeln/" + d)).json(), gebietsdatei(gebiet));
+    await hilfe.ctx.close();
+    const imGebiet = new Set(gebietsdaten.papers.flatMap((x) => (x.process || []).map((st) => st.gremium_key).filter(Boolean)));
+    const ohne = gremien.gremien.find((g) => g.key && !g.aufgeloest && !imGebiet.has(g.key));
+    const alt = gremien.gremien.find((g) => g.key && g.aufgeloest && g.name);
+    const ref = gebietsdaten.papers[0].reference;
+    // (a) gremien.json antwortet nie
+    let s = await neueSeite(browser, profil);
+    await s.page.route((u) => u.pathname.endsWith("/data/export/koeln/gremien.json"), () => {});
+    await s.page.clock.install();
+    await s.page.goto(`${BASIS}?gebiet=${gebiet}&gremium_filter=${ohne.key}&wer=gremien#${encodeURIComponent(ref)}`, { waitUntil: "load" });
+    await s.page.waitForSelector("#detail .steps", { state: "attached", timeout: 20000 });
+    await s.page.waitForTimeout(300);
+    const stand = () => s.page.evaluate(() => ({ count: document.getElementById("count").textContent, hash: decodeURIComponent(location.hash.slice(1)),
+      filter: new URLSearchParams(location.search).get("gremium_filter"), kennzeichen: !document.getElementById("gremium-filter").hidden,
+      wer: !document.getElementById("panel-gremien").hidden, werStatus: document.getElementById("wer-status").textContent, schritte: document.querySelectorAll("#detail .steps li").length }));
+    const vorher = await stand();
+    pruefen(profil, "Nachprüfung (10) gremien.json ohne Antwort: Start wartet nicht, Vorgang aus dem Anker, Fläche aus ?wer=, Anker und gremium_filter bleiben",
+      vorher.schritte > 0 && vorher.hash === ref && vorher.filter === ohne.key && vorher.wer && !vorher.kennzeichen && !vorher.count.includes("aus dem Link"), vorher);
+    await s.page.clock.fastForward(21000);
+    await s.page.waitForFunction(() => /aus dem Link konnten nicht geladen werden/.test(document.getElementById("count").textContent), null, { timeout: 10000 }).catch(() => {});
+    const nach = await stand();
+    pruefen(profil, "Nachprüfung (10)(11) nach 20 s: #count sagt, dass die Angaben fehlen; kein Filter; Parameter und Anker bleiben; Statuszeile „Gremien und Ämter“ mit Ladefehler",
+      nach.count.endsWith(SATZ_GREMIEN_FEHLEN) && !nach.kennzeichen && nach.filter === ohne.key && nach.hash === ref && nach.werStatus === LADEFEHLER && nach.schritte > 0, nach);
+    await axe(s.page, profil, "Nachprüfung (10) gremien.json ohne Antwort");
+    pruefen(profil, "keine Skriptfehler (Nachprüfung: gremien.json ohne Antwort)", s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+    // (b) späte Antwort: inzwischen einen Vorgang aus der Liste geöffnet (mit der Tastatur)
+    s = await neueSeite(browser, profil);
+    let gehalten = null;
+    await s.page.route((u) => u.pathname.endsWith("/data/export/koeln/gremien.json"), (r) => { gehalten = r; });
+    await s.page.goto(`${BASIS}?suche=koeln&gremium_filter=${ohne.key}`, { waitUntil: "load" });
+    await s.page.waitForSelector("#papers button[data-gref]", { timeout: 20000 });
+    const zuerst = await s.page.$$eval("#papers button[data-gref]", (bs) => bs.length);
+    await s.page.focus("#papers button[data-gref]");
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForSelector("#detail .steps", { state: "attached", timeout: 20000 });
+    const aktiv = () => s.page.evaluate(() => { const e = document.activeElement; return e ? `${e.tagName}#${e.id}` : null; });
+    const geoeffnet = await s.page.evaluate(() => decodeURIComponent(location.hash.slice(1))), fokusVorher = await aktiv();
+    await gehalten.continue();
+    await s.page.waitForFunction(() => !document.getElementById("gremium-filter").hidden, null, { timeout: 10000 }).catch(() => {});
+    await s.page.waitForTimeout(300);
+    // Kennzeichen über textContent: auf schmalen Breiten schließt der Vorgang die Liste (innerText wäre leer)
+    const spaet = await s.page.evaluate(() => ({ heading: document.getElementById("detail-heading")?.textContent || "", schritte: document.querySelectorAll("#detail .steps li").length,
+      hash: decodeURIComponent(location.hash.slice(1)), kennzeichen: document.getElementById("gremium-filter").hidden ? "" : document.getElementById("gremium-filter").textContent.replace(/\s+/g, " ").replace(/ ?Entfernen.*$/i, "").trim(),
+      n: document.querySelectorAll("#papers button[data-gref]").length, filter: new URLSearchParams(location.search).get("gremium_filter") }));
+    const fokusNachher = await aktiv();
+    pruefen(profil, "Nachprüfung (10) späte Antwort: Filter gesetzt, der inzwischen geöffnete Vorgang bleibt (kein „Los geht's“), Anker bleibt, Fokus unverändert",
+      geoeffnet && spaet.hash === geoeffnet && spaet.schritte > 0 && !/Los geht/.test(spaet.heading) && spaet.kennzeichen.startsWith(`Gremium: ${ohne.name}`) && spaet.filter === ohne.key
+      && spaet.n <= zuerst && fokusNachher === fokusVorher, { zuerst, spaet, fokusVorher, fokusNachher });
+    pruefen(profil, "keine Skriptfehler (Nachprüfung: späte Antwort)", s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+    // (c) gremien.json mit Fehlercode
+    s = await neueSeite(browser, profil, { "gremien.json": async (j, route) => route.fulfill({ status: 503, body: "" }) });
+    await s.page.goto(`${BASIS}?gebiet=${gebiet}&gremium_filter=${ohne.key}`, { waitUntil: "load" });
+    await geladen(s.page);
+    await s.page.waitForTimeout(500);
+    let l = await listenStand(s.page), a = await adresse(s.page);
+    pruefen(profil, "Nachprüfung (10) gremien.json mit Fehlercode: Satz „konnten nicht geladen werden“ statt „nicht verzeichnet“, Parameter bleibt",
+      l.count.endsWith(SATZ_GREMIEN_FEHLEN) && !l.count.includes("nicht verzeichnet") && !l.kennzeichen && a.gremium_filter === ohne.key, { l, a });
+    await axe(s.page, profil, "Nachprüfung (10) gremien.json mit Fehlercode");
+    await s.ctx.close();
+    // (d) Kennung eines aufgelösten Gremiums: Filter über den Namen (Stationen früherer Gremien tragen keine Kennung)
+    if (alt) {
+      s = await neueSeite(browser, profil, { "suche.json": (j) => {
+        const gr = [...(j.gremien || []), alt.name], i = gr.length - 1;
+        return { ...j, gremien: gr, rows: j.rows.map((r, k) => (k < 3 ? [...r.slice(0, 10), [...(r[10] || []), i], ...r.slice(11)] : r)) };
+      } });
+      await s.page.goto(`${BASIS}?suche=koeln&gremium_filter=${alt.key}`, { waitUntil: "load" });
+      await s.page.waitForFunction(() => /Treffer in ganz Köln · Gremium/.test(document.getElementById("count").textContent), null, { timeout: 20000 }).catch(() => {});
+      await s.page.waitForTimeout(300);
+      l = await listenStand(s.page);
+      a = await adresse(s.page);
+      pruefen(profil, "Nachprüfung (10) Kennung eines aufgelösten Gremiums: Filter über den Namen, 3 Treffer, Adresse mit name:",
+        l.count === `3 Treffer in ganz Köln · Gremium (nach Namen): ${alt.name}` && l.kennzeichen === `Gremium (nach Namen): ${alt.name}` && a.gremium_filter === `name:${alt.name}`, { l, a });
+      await axe(s.page, profil, "Nachprüfung (10) aufgelöstes Gremium aus der Adresse");
+      pruefen(profil, "keine Skriptfehler (Nachprüfung: aufgelöstes Gremium)", s.fehler.length === 0, s.fehler);
+      await s.ctx.close();
+    } else pruefen(profil, "Nachprüfung (10) Testdaten mit aufgelöstem Gremium", false);
+  },
+  // Nachprüfung (13): „Erneut versuchen“, danach Fokus und Eingabe im Feld „Stichwort“: die Antwort lässt den Fokus dort
+  async suchindexFokus(browser, profil) {
+    let aus = true;
+    const s = await neueSeite(browser, profil, { "suche.json": async (j, route) => {
+      if (aus) return route.fulfill({ status: 503, body: "" });
+      await new Promise((r) => setTimeout(r, 1500));
+      return route.continue();
+    } });
+    await s.page.goto(`${BASIS}?suche=koeln&gremium_filter=rat`, { waitUntil: "load" });
+    await s.page.waitForSelector("#suche-erneut", { timeout: 30000 });
+    aus = false;
+    await s.page.focus("#suche-erneut");
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForTimeout(300);
+    await s.page.focus("#f-text");
+    await s.page.keyboard.type("ab");
+    await s.page.waitForFunction(() => /Treffer in ganz Köln/.test(document.getElementById("count").textContent), null, { timeout: 20000 });
+    await s.page.waitForTimeout(400);
+    const f = await s.page.evaluate(() => ({ fokus: document.activeElement.id, wert: document.getElementById("f-text").value }));
+    pruefen(profil, "Nachprüfung (13) Fokus bleibt im Feld „Stichwort“, wenn der Index nach „Erneut versuchen“ eintrifft", f.fokus === "f-text" && f.wert === "ab", f);
+    pruefen(profil, "keine Skriptfehler (Nachprüfung: Suchindex und Fokus)", s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  },
   // (16) Telefon: Reiter, Umschalter, Suchfeld und Filter der Liste 44 px hoch mit 16 px Schrift
   async telefonMasse(browser, profil) {
     if (!telefon(profil)) return;
@@ -1123,9 +1233,14 @@ async function geringeHoehe(browser) {
     await page.focus(`#${id} .panel-head button`);
     await page.keyboard.press("PageDown");
     await page.waitForTimeout(300);
+    // Pfeil rechts darf nicht waagrecht rollen (Nachprüfung: die Begriffsliste in „Über“ war bei 320 px breiter als das Fenster)
+    await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(150);
     const f = await page.evaluate((id) => { const d = document.getElementById(id), a = d.querySelector(".about-body");
-      return { overflowY: getComputedStyle(d).overflowY, rollt: d.scrollHeight > d.clientHeight + 1, top: d.scrollTop, innen: a.scrollHeight > a.clientHeight + 1 }; }, id);
-    pruefen(profil, `(15) Fenster ${name} rollt als Ganzes, der Text darin nicht für sich, auch mit der Tastatur`, f.overflowY === "auto" && f.rollt && f.top > 0 && !f.innen, f);
+      return { overflowY: getComputedStyle(d).overflowY, rollt: d.scrollHeight > d.clientHeight + 1, top: d.scrollTop, innen: a.scrollHeight > a.clientHeight + 1,
+        quer: [d.scrollWidth, d.clientWidth, a.scrollWidth, a.clientWidth], links: d.scrollLeft }; }, id);
+    pruefen(profil, `(15) Fenster ${name} rollt als Ganzes, der Text darin nicht für sich, auch mit der Tastatur, nicht waagrecht`, f.overflowY === "auto" && f.rollt && f.top > 0 && !f.innen
+      && f.quer[0] <= f.quer[1] + 1 && f.quer[2] <= f.quer[3] + 1 && f.links === 0, f);
     await axe(page, profil, `(15) ${name} bei 320 × 256`);
     await page.keyboard.press("Escape");
     await page.waitForTimeout(200);
