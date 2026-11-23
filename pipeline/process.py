@@ -126,7 +126,26 @@ def initiation_kind(paper_type):
 
 
 def steps(p):
-    """Schrittfolge einer exportierten Vorlage (dict aus export._paper_detail)."""
+    """Schrittfolge einer exportierten Vorlage (dict aus export._paper_detail). Ein Schritt aus einer Station der
+    Prozesslinie (`process[]`) trägt am Ende `hinweis` und `gremium_key`, wenn seine Station sie trägt, mit demselben
+    Wert (FELDER_AUS_STATION, Entscheidung 23.11.2026 (1) (E1)); sonst fehlen beide Felder."""
+    return [s for s, _ in _schritte(p)]
+
+
+def stationen_der_schritte(p):
+    """Je Schritt von steps(p), in derselben Reihenfolge, die Stelle seiner Station in p["process"]; None bei
+    Schritten, die nicht aus einer Station stammen (Initiierung, Vorbereitung, Datum der Vorlage, nichtöffentliche
+    Beratung ohne Station, Folgevorlagen, Umsetzung). Für check.stationen, das `hinweis` und `gremium_key` der Schritte
+    mit denen ihrer Station vergleicht (E1)."""
+    return [i for _, i in _schritte(p)]
+
+
+# Felder einer Station, die ihr Schritt mit demselben Wert trägt (E1); ohne Wert an der Station fehlt das Feld
+FELDER_AUS_STATION = ("hinweis", "gremium_key")
+
+
+def _schritte(p):
+    """Schrittfolge wie steps(p) als Paare (Schritt, Stelle der Station in p["process"] oder None)."""
     kind = initiation_kind(p["paper_type"])
     out = [{
         "typ": "initiierung", "label": p["paper_type"], "status": "belegt",
@@ -146,7 +165,8 @@ def steps(p):
                     "date": None, "note": "nichtoeffentlich"})
 
     decided = False
-    for s in p["process"]:
+    station = {}   # id des Schritts -> Stelle seiner Station in p["process"]
+    for i, s in enumerate(p["process"]):
         day = local_day(s["start_date"])
         step = {
             "typ": "entscheidung" if s["authoritative"] else "beratung",
@@ -164,6 +184,10 @@ def steps(p):
             step["schleife"] = True
         if s["authoritative"] and s["result"] and any(k in s["result"] for k in VOLLZUG):
             decided = True
+        for f in FELDER_AUS_STATION:
+            if s.get(f):
+                step[f] = s[f]
+        station[id(step)] = i
         out.append(step)
 
     for sub in p["subordinated"]:
@@ -191,7 +215,7 @@ def steps(p):
         else:
             keys.append((carry, i))
     mid = [s for _, s in sorted(zip(keys, mid), key=lambda x: x[0])]
-    return head + mid + tail
+    return [(s, station.get(id(s))) for s in head + mid + tail]
 
 
 STAENDE = ("entschieden", "beraten, ohne Entscheidung", "in Beratung", "offen", "ohne Beratungsfolge")

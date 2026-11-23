@@ -7,7 +7,7 @@
        Bibliotheken mit Integritätsprüfung), keine Inline-Skripte;
        Verbindungen nur zu den Daten der Seite; die Anbieter des Ratsassistenten und lokale Modelle in connect-src nur mit
        Freigabe „chat“ (pipeline/seo.py entfernt sie sonst beim Bau aus der veröffentlichten Seite).
-       Inline-Stile bleiben erlaubt (Leaflet, Balken der Auswertung). -->
+       Inline-Stile bleiben erlaubt (Leaflet, Balken in „In Zahlen“). -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://api.anthropic.com https://api.mistral.ai https://openrouter.ai http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>Ratsatlas Köln – Was Rat, Ausschüsse und Bezirksvertretungen beraten – wo, wann und wer</title>
   <meta name="description" content="Was berät der Kölner Stadtrat? Vorlagen aus dem Ratsinformationssystem der Stadt Köln auf Karte und Zeitleiste – mit Verfahrensstand, Gremien, Dienststellen und Quellen.">
@@ -192,9 +192,21 @@
       </div>
     </section>
 
-    <!-- Wer entscheidet (Entscheidung 20.11.2026 (7) (a)): vorerst nur die Statistik der Verfahrenswege -->
+    <!-- Wer entscheidet (Entscheidungen 20.11.2026 (7) (a) und 23.11.2026 (1)): „Gremien“ und „Ämter“ nur mit Freigabe
+         „gremien“ (data-freigabe: ohne sie fehlen die Karten im veröffentlichten HTML; data-funktion: Freigabe zur Laufzeit,
+         app.js applyFunktionen), dazu die Statistik der Verfahrenswege. app.js setzt den Titel der Schaltfläche -->
     <section class="mega glass mega-schmal" id="mega-entscheiden" aria-label="Wer entscheidet" hidden>
       <div class="cards">
+        <button type="button" class="card" data-wer="gremien" data-funktion="gremien" data-freigabe="gremien" hidden>
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg></span>
+          <span class="card-title">Gremien</span>
+          <span class="card-text">Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien: Sitzungen und Vorlagen in 12 Monaten, nächste Sitzung.</span>
+        </button>
+        <button type="button" class="card" data-wer="aemter" data-funktion="gremien" data-freigabe="gremien" hidden>
+          <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-data"/></svg></span>
+          <span class="card-title">Ämter</span>
+          <span class="card-text">Die Dezernate der Stadtverwaltung mit ihren Dienststellen, laut Geschäfts- und Dezernatsverteilungsplan.</span>
+        </button>
         <button type="button" class="card" data-open-tab="wege">
           <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg></span>
           <span class="card-title">Verfahrenswege in Zahlen</span>
@@ -365,6 +377,10 @@
             </div>
           </details>
         </form>
+        <!-- Kennzeichen des Filters „Gremium“ (Entscheidung 23.11.2026 (1) (E10)): in ganz Köln die einzige Anzeige des
+             Filters, im Gebiet zusätzlich zu „Weitere Filter“; app.js gremiumKennzeichen -->
+        <p class="filter-kennzeichen" id="gremium-filter" hidden><span>Gremium: <strong id="gremium-filter-name"></strong></span>
+          <button type="button" class="icon-btn" id="gremium-filter-aus" aria-label="Filter „Gremium“ entfernen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></p>
         <p class="count" id="count" aria-live="polite"></p>
         <p class="subscribe" id="subscribe" hidden></p>
         <details class="acc kontext" id="kontext-box" hidden><summary>Zahlen zum Gebiet</summary></details>
@@ -374,8 +390,9 @@
 
     <section id="timeline-wrap" class="glass" aria-label="Zeitleiste" hidden></section>
 
-    <!-- Elemente mit data-freigabe (Flächen „Ratsassistent“ und „Mitmachen in Köln“, Schaltfläche „Assistent“ in der
-         Leiste) stehen nur mit ihrer Freigabe in der veröffentlichten Seite (pipeline/seo.py, Runde 20) -->
+    <!-- Elemente mit data-freigabe (Flächen „Ratsassistent“, „Mitmachen in Köln“ sowie „Gremien und Ämter“, Schaltfläche
+         „Assistent“ in der Leiste, Karten „Gremien“ und „Ämter“ im Menü „Wer entscheidet“) stehen nur mit ihrer Freigabe
+         in der veröffentlichten Seite (pipeline/seo.py, Runde 20) -->
     <section id="panel-assistent" class="panel glass chat" aria-labelledby="assistent-heading" data-freigabe="chat" hidden>
       <div class="panel-head">
         <h2 id="assistent-heading" tabindex="-1">Ratsassistent <span class="ai-badge">KI</span></h2>
@@ -449,12 +466,13 @@
       <div class="panel-body detail" id="detail"></div>
     </section>
 
+    <!-- „In Zahlen“ (bis Pull Request 4b „Auswertung“; Entscheidung 21.11.2026 (2) (F2): die Kennungen bleiben) -->
     <section id="panel-auswertung" class="glass overlay" aria-labelledby="auswertung-heading" hidden>
       <div class="panel-head">
-        <h2 id="auswertung-heading" tabindex="-1">Auswertung</h2>
-        <button type="button" class="icon-btn" data-close="panel-auswertung" aria-label="Auswertung schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+        <h2 id="auswertung-heading" tabindex="-1">In Zahlen</h2>
+        <button type="button" class="icon-btn" data-close="panel-auswertung" aria-label="In Zahlen schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
       </div>
-      <div class="tabs" role="tablist" aria-label="Auswertung">
+      <div class="tabs" role="tablist" aria-label="In Zahlen">
         <button type="button" role="tab" id="tab-stats" aria-controls="stats" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Kennzahlen zum Gebiet</button>
         <button type="button" role="tab" id="tab-wege" aria-controls="wege" aria-selected="false" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg>Verfahrenswege</button>
       </div>
@@ -497,11 +515,33 @@
       <div class="panel-body" id="bt-body"><p class="hint" aria-live="polite">Wird geladen …</p></div>
     </section>
 
+    <!-- Gremien und Ämter unter „Wer entscheidet“ (Entscheidungen 21.11.2026 (2) und 23.11.2026 (1); site/gremien.js, erst
+         beim Öffnen geladen): Reiter „Gremien“ (Schaubild oder Liste) und „Ämter“ (Liste); der Umschalter gilt nur für
+         „Gremien“ (E9). Eine feste Statuszeile für Zähler und Meldungen, der Detailbereich ohne Live-Region -->
+    <section id="panel-gremien" class="glass overlay overlay-wide" aria-labelledby="gremien-heading" data-freigabe="gremien" hidden>
+      <div class="panel-head">
+        <h2 id="gremien-heading" tabindex="-1">Gremien und Ämter</h2>
+        <button type="button" class="icon-btn" data-close="panel-gremien" aria-label="Gremien und Ämter schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="pz-bar">
+        <div class="tabs" role="tablist" aria-label="Gremien und Ämter">
+          <button type="button" role="tab" id="tab-wer-gremien" data-wer-tab="gremien" aria-controls="wer-body" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-people"/></svg>Gremien</button>
+          <button type="button" role="tab" id="tab-wer-aemter" data-wer-tab="aemter" aria-controls="wer-body" aria-selected="false" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-data"/></svg>Ämter</button>
+        </div>
+        <div class="seg pz-view wer-darstellung" role="radiogroup" aria-label="Darstellung der Gremien">
+          <button type="button" role="radio" data-darstellung="schaubild" aria-checked="true">Schaubild</button>
+          <button type="button" role="radio" data-darstellung="liste" aria-checked="false" tabindex="-1">Liste</button>
+        </div>
+      </div>
+      <p class="hint wer-status" id="wer-status" role="status"></p>
+      <div class="panel-body" id="wer-body" role="tabpanel" aria-labelledby="tab-wer-gremien"></div>
+    </section>
+
     <!-- Quellen, Lizenzen und Datenstand: auf der Karte unter den Legenden (app.js setzt das Element in den Stapel) -->
     <details class="map-legend map-sources" id="sources">
       <summary>Quellen, Lizenzen und Datenstand</summary>
       <div>
-        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, der Hauskoordinate) · Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln; dl-de/by 2.0) · Dezernate und Dienststellen zur federführenden Dienststelle aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt Köln (nur für Vorlagen aus der Zeit vom Stand des Plans bis zu seiner letzten Prüfung, beides auf der Seite „So funktioniert der Ratsatlas“; im Plan keine Lizenz angegeben, übernommen sind nur Kennungen und Bezeichnungen) · Kennung der federführenden Dienststelle aus der ersten Seite der Dokumente im Ratsinformationssystem, erst wenn ihr Abruf freigegeben ist (nur die Kennung, kein Text; Lizenz der Dokumente in Klärung mit der Stadt)<span data-funktion="kontext"> · Kennzahlen und Kartenebenen: Quelle, Lizenz und Stand je Ebene in der Legende</span><span data-funktion="strukturdaten"> · Strukturdaten: <a href="https://open.nrw/dataset/statistischer-datenkatalog-koln-k">Statistischer Datenkatalog Köln</a> (Stadt Köln, Amt für Stadtentwicklung und Statistik; <a href="https://www.govdata.de/dl-de/by-2-0">Datenlizenz Deutschland – Namensnennung – Version 2.0</a>; in lange Tabellenform umgeformt, Werte unverändert, Altersanteile vom Ratsatlas berechnet), Statistische Quartiere (Stadt Köln, Datenlizenz Deutschland – Zero – Version 2.0) und Vergleich der Städte aus dem Wegweiser Kommune (Bertelsmann Stiftung, wegweiser-kommune.de; CC0 1.0); Datenstand und Abrufdatum im Panel „Strukturdaten“ der Liste</span> · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
+        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, der Hauskoordinate) · Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln; dl-de/by 2.0) · Dezernate und Dienststellen aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt Köln: zur federführenden Dienststelle nur für Vorlagen aus der Zeit vom Stand des Plans bis zu seiner letzten Prüfung, beides auf der Seite „So funktioniert der Ratsatlas“<span data-funktion="gremien">, und im Reiter „Ämter“ unter „Wer entscheidet“</span> (im Plan keine Lizenz angegeben, übernommen sind nur Nummern und Bezeichnungen)<span data-funktion="gremien"> · Paragrafen der Ausschüsse aus der Zuständigkeitsordnung der Stadt Köln vom 02.06.2026 (zugeordnet über den Namen des Ausschusses; nur der Paragraf, kein Text; Lizenz nicht geklärt)</span> · Kennung der federführenden Dienststelle aus der ersten Seite der Dokumente im Ratsinformationssystem, erst wenn ihr Abruf freigegeben ist (nur die Kennung, kein Text; Lizenz der Dokumente in Klärung mit der Stadt)<span data-funktion="kontext"> · Kennzahlen und Kartenebenen: Quelle, Lizenz und Stand je Ebene in der Legende</span><span data-funktion="strukturdaten"> · Strukturdaten: <a href="https://open.nrw/dataset/statistischer-datenkatalog-koln-k">Statistischer Datenkatalog Köln</a> (Stadt Köln, Amt für Stadtentwicklung und Statistik; <a href="https://www.govdata.de/dl-de/by-2-0">Datenlizenz Deutschland – Namensnennung – Version 2.0</a>; in lange Tabellenform umgeformt, Werte unverändert, Altersanteile vom Ratsatlas berechnet), Statistische Quartiere (Stadt Köln, Datenlizenz Deutschland – Zero – Version 2.0) und Vergleich der Städte aus dem Wegweiser Kommune (Bertelsmann Stiftung, wegweiser-kommune.de; CC0 1.0); Datenstand und Abrufdatum im Panel „Strukturdaten“ der Liste</span> · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
         <p id="stand"></p>
         <p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/koeln/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersicht nach Gebiet</a> · <a href="https://github.com/daimpad/ratsatlas-koeln">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a></p>
       </div>
@@ -584,6 +624,9 @@
         <li>Orte aus dem Titel und aus den Ortsangaben der Stadt; Hauskoordinaten nur bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, deren Art erkennbar ist.</li>
         <li data-funktion="einfache_sprache">Der Ratsatlas in Einfacher Sprache: was die Karte zeigt, wer in Köln entscheidet und wie Sie mitmachen können (Menü „Über“).</li>
         <li>Leiste mit den Menüs „Themen“, „Wer entscheidet“, „Mitmachen“ und „Über“; im Startfenster „Aktuell in Köln“ mit den nächsten Sitzungen und neu eingereichten Vorlagen.</li>
+        <li>Im Kalender (termine.ics) stehen Sitzungen, die laut Sitzungsnamen abgesagt sind, als abgesagt, mit dem Zusatz „(laut Sitzungsnamen abgesagt)“.</li>
+        <li data-funktion="gremien">„Wer entscheidet“ mit den Reitern „Gremien“ (Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien als Schaubild oder Liste, mit Sitzungen und Vorlagen in 12 Monaten und der nächsten Sitzung) und „Ämter“ (Dezernate und Dienststellen); im Vorgang führt der Name eines aktuellen Gremiums dorthin.</li>
+        <li>Die Fläche mit den Kennzahlen zum Gebiet und den Verfahrenswegen heißt jetzt „In Zahlen“.</li>
         <li>Bonner Zusatzthemen (Haushalt, Themenseiten, Ratsassistent und weitere) sind für Köln noch nicht freigegeben.</li>
       </ul>
     </div>

@@ -903,14 +903,17 @@ def gremien(db, base=None):
     config.STADT). Erwartet, wenn die Freigabe an ist und der Export Vorlagen hat (zeit.json liegt vor); fehlt sie dann,
     ist die Prüfung nicht durchgeführt. Ohne Freigabe ist eine vorhandene Datei ein Befund. Geprüft:
     - nur die Schlüssel `meta` und `gremien`, in `meta` nur gremien.META_FELDER, je Gremium nur gremien.FELDER (die
-      Pflichtfelder gremien.PFLICHT vorhanden), je nächster Sitzung nur gremien.FELDER_SITZUNG; kein Feldname, der auf
-      Personen deutet (PERSONENFELD);
+      Pflichtfelder gremien.PFLICHT vorhanden), je nächster und folgender Sitzung nur gremien.FELDER_SITZUNG; kein
+      Feldname, der auf Personen deutet (PERSONENFELD);
     - Gruppe aus gremien.GRUPPEN, `paragraf` genau bei „ausschuss“, `stadtbezirk` nur bei „bezirksvertretung“; Kennungen
       eindeutig; keine Organisation der Klasse „Fraktionen und Gruppen“ und keine, die nicht in der Datenbank steht;
     - Zeitraum nach F7: `meta.datenstand` wie gremien.datenstand, `meta.zeitraum` = {seit: gebietszahlen.window_start,
       bis: Datenstand};
-    - jede nächste Sitzung steht in zeit.json, ist nicht abgesagt (export.absage) und liegt nach dem Datenstand;
-      ist die Liste der Sitzungen nicht aktuell (gremien.sitzungsliste mit STAND.json), gibt es keine nächste Sitzung;
+    - jede nächste Sitzung steht in zeit.json, ist nicht abgesagt (export.absage) und liegt am Tag des Datenstands
+      oder danach (Entscheidung 21.11.2026 (3) (G7); bis Pull Request 4b: nach dem Datenstand); jede folgende Sitzung
+      (Entscheidung 23.11.2026 (1) (E2)) steht in zeit.json, ist nicht abgesagt, liegt nach dem Datenstand, und die
+      nächste Sitzung desselben Gremiums liegt am Tag des Datenstands; ist die Liste der Sitzungen nicht aktuell
+      (gremien.sitzungsliste mit STAND.json), gibt es weder nächste noch folgende Sitzung;
     - die ganze Datei gleich der Rechnung mit denselben Funktionen (gremien.daten) aus Datenbank, zeit.json,
       meetings.json, den Vorlagen der Gebietsdateien (jede einmal), gremien.sitzungsliste und der Organisation je Station
       (gremien.beratungen, für vorlagen_12m auch aufgelöster Gremien); fehlt meetings.json, nicht durchgeführt.
@@ -943,8 +946,11 @@ def gremien(db, base=None):
     fehler["Felder außerhalb von gremien.FELDER"] = sum(k not in gr.FELDER for e in eintraege for k in e)
     fehler["fehlende Pflichtfelder"] = sum(k not in e for e in eintraege for k in gr.PFLICHT)
     naechste = [e["naechste_sitzung"] for e in eintraege if "naechste_sitzung" in e]
-    fehler["Felder der nächsten Sitzung außerhalb von gremien.FELDER_SITZUNG"] = sum(
-        k not in gr.FELDER_SITZUNG for n in naechste for k in (n if isinstance(n, dict) else {"": 0}))
+    mit_folgender = [e for e in eintraege if "folgende_sitzung" in e]
+    folgende = [e["folgende_sitzung"] for e in mit_folgender]
+    for art, sitzungen in (("nächsten", naechste), ("folgenden", folgende)):
+        fehler[f"Felder der {art} Sitzung außerhalb von gremien.FELDER_SITZUNG"] = sum(
+            k not in gr.FELDER_SITZUNG for n in sitzungen for k in (n if isinstance(n, dict) else {"": 0}))
     fehler["Feldnamen, die auf Personen deuten"] = _personenfelder(doc)
     fehler["Gruppe außerhalb von gremien.GRUPPEN"] = sum(e.get("gruppe") not in gr.GRUPPEN for e in eintraege)
     fehler["Paragraf nicht genau bei Ausschüssen"] = sum(("paragraf" in e) != (e.get("gruppe") == "ausschuss")
@@ -964,20 +970,32 @@ def gremien(db, base=None):
         meta.get("zeitraum") != {"seit": gebietszahlen.window_start(stand), "bis": stand})
     zeit = [m for m in json.loads((base / "zeit.json").read_text()).get("meetings") or () if isinstance(m, dict)]
     je_sitzung = {m.get("source_object"): m for m in zeit}
-    n_ohne = n_abgesagt = n_frueh = 0
-    for n in naechste:
-        m = je_sitzung.get(n.get("source_object")) if isinstance(n, dict) else None
-        if m is None:
-            n_ohne += 1
-        else:
-            n_abgesagt += bool(absage(m))
-            n_frueh += not ((m.get("date") or "") > stand)
-    fehler["nächste Sitzungen ohne dieselbe Sitzung in zeit.json"] = n_ohne
-    fehler["nächste Sitzungen, die abgesagt sind (export.absage)"] = n_abgesagt
-    fehler["nächste Sitzungen nicht nach dem Datenstand"] = n_frueh
+
+    def in_zeit(art, sitzungen, tag_gilt):
+        """Nächste oder folgende Sitzungen gegen zeit.json: Zahl ohne dieselbe Sitzung und Zahl der abgesagten als
+        Befund; liefert die Zahl, deren Tag in zeit.json nicht `tag_gilt`."""
+        ohne = abgesagt = falsch = 0
+        for n in sitzungen:
+            m = je_sitzung.get(n.get("source_object")) if isinstance(n, dict) else None
+            if m is None:
+                ohne += 1
+            else:
+                abgesagt += bool(absage(m))
+                falsch += not tag_gilt(m.get("date") or "")
+        fehler[f"{art} Sitzungen ohne dieselbe Sitzung in zeit.json"] = ohne
+        fehler[f"{art} Sitzungen, die abgesagt sind (export.absage)"] = abgesagt
+        return falsch
+    fehler["nächste Sitzungen vor dem Datenstand"] = in_zeit("nächste", naechste, lambda tag: tag >= stand)
+    fehler["folgende Sitzungen nicht nach dem Datenstand"] = in_zeit("folgende", folgende, lambda tag: tag > stand)
+    am_stand = sum(isinstance(n, dict) and n.get("date") == stand for n in naechste)
+    fehler["folgende Sitzungen ohne nächste Sitzung am Datenstand"] = sum(
+        not (isinstance(e.get("naechste_sitzung"), dict) and e["naechste_sitzung"].get("date") == stand)
+        for e in mit_folgender)
     liste = gr.sitzungsliste()
     fehler["nächste Sitzungen bei nicht aktueller Liste der Sitzungen (gremien.sitzungsliste)"] = (
         len(naechste) if liste else 0)
+    fehler["folgende Sitzungen bei nicht aktueller Liste der Sitzungen (gremien.sitzungsliste)"] = (
+        len(folgende) if liste else 0)
     orgs_je_sitzung = gr.organisationen_der_sitzungen()
     papers = _gebietsvorlagen(base) or []
     if orgs_je_sitzung is None:
@@ -1004,8 +1022,9 @@ def gremien(db, base=None):
     je = Counter(e.get("gruppe") for e in eintraege)
     print(f"{gr.DATEI}: {len(eintraege)} Gremien (Rat {je['rat']}, Ausschüsse mit Paragraf {je['ausschuss']}, "
           f"Bezirksvertretungen {je['bezirksvertretung']}, übrige {je['uebrige']}), davon aufgelöst "
-          f"{sum(bool(e.get('aufgeloest')) for e in eintraege)}, mit nächster Sitzung {len(naechste)}; Sitzungen in 12 "
-          f"Monaten {sum(e.get('sitzungen_12m') or 0 for e in eintraege)}, Vorlagen in 12 Monaten (je Gremium) "
+          f"{sum(bool(e.get('aufgeloest')) for e in eintraege)}, mit nächster Sitzung {len(naechste)} (davon am "
+          f"Datenstand {am_stand}), mit folgender Sitzung {len(folgende)}; Sitzungen in 12 Monaten "
+          f"{sum(e.get('sitzungen_12m') or 0 for e in eintraege)}, Vorlagen in 12 Monaten (je Gremium) "
           f"{sum(e.get('vorlagen_12m') or 0 for e in eintraege)}")
     return befunde, fehlend
 
@@ -1078,10 +1097,16 @@ def stationen(db, base=None):
     - `gremium_key` genau dann und mit der Kennung, die gremien.kennungen mit dem Datenstand (gremien.datenstand) für die
       Organisation der Beratung ergibt (Datenbank: Vorlage und `position`), nur mit Freigabe „gremien“: Stationen
       aufgelöster Gremien tragen keine Kennung (Entscheidung 21.11.2026 (3) (G6)); jede Kennung steht in gremien.json und
-      gehört dort keinem aufgelösten Gremium, wenn die Datei vorliegt.
+      gehört dort keinem aufgelösten Gremium, wenn die Datei vorliegt;
+    - die Schritte, die der Vorgang zeigt (`steps`; Entscheidung 23.11.2026 (1) (E1)): Jeder Schritt aus einer Station
+      trägt `hinweis` und `gremium_key` genau dann und mit dem Wert, den seine Station in `process[]` trägt
+      (process.FELDER_AUS_STATION); ein Schritt, der nicht aus einer Station stammt, trägt keines der beiden Felder.
+      Welcher Schritt zu welcher Station gehört, ergibt process.stationen_der_schritte aus derselben Vorlage (die
+      Schritte stehen nach Datum geordnet); hat eine Vorlage eine andere Zahl von Schritten oder lässt sich die
+      Zuordnung nicht rechnen, ist das ein Befund, und ihre Schritte werden nicht verglichen.
     Ohne Gebietsdateien nichts zu prüfen (datenschutz meldet sie als fehlend). Befunde und Ausgabe nur mit Zahlen.
     Liefert (befunde, fehlend)."""
-    from . import gremien as gr
+    from . import gremien as gr, process as proc
     from .export import hinweis_station
     base = Path(base) if base else config.EXPORT / config.STADT
     befunde, fehlend = [], []
@@ -1120,6 +1145,20 @@ def stationen(db, base=None):
             zahl["key_nicht_in_datei"] += ("gremium_key" in s and in_datei is not None
                                           and s["gremium_key"] not in in_datei)
             zahl["key_aufgeloest"] += "gremium_key" in s and s["gremium_key"] in aufgeloest
+        schritte = [x for x in p.get("steps") or () if isinstance(x, dict)]
+        try:
+            stellen = proc.stationen_der_schritte(p)
+        except (KeyError, TypeError, AttributeError):   # Vorlage ohne die Angaben, aus denen process.steps rechnet
+            stellen = None
+        if stellen is None or len(schritte) != len(stellen):
+            zahl["schritte_zahl_anders"] += 1
+            continue
+        for x, i in zip(schritte, stellen):
+            station = p["process"][i] if i is not None else {}
+            zahl["schritte_aus_station"] += i is not None
+            for f in proc.FELDER_AUS_STATION:
+                zahl[f"schritt_{f}"] += f in x
+                zahl[f"schritt_{f}_anders"] += (f in x, x.get(f)) != (f in station, station.get(f))
     if zahl["hinweis_anders"]:
         befunde.append(f"Stationen: Feld `hinweis` folgt nicht export.hinweis_station (fehlt, zu viel oder anderer "
                        f"Wert): {zahl['hinweis_anders']}")
@@ -1130,10 +1169,20 @@ def stationen(db, base=None):
         befunde.append(f"Stationen: Kennung des Gremiums ohne Eintrag in {gr.DATEI}: {zahl['key_nicht_in_datei']}")
     if zahl["key_aufgeloest"]:
         befunde.append(f"Stationen: Kennung eines aufgelösten Gremiums aus {gr.DATEI}: {zahl['key_aufgeloest']}")
+    if zahl["schritte_zahl_anders"]:
+        befunde.append(f"Schritte: Vorlagen, deren Schritte sich nicht nach process.steps ihren Stationen zuordnen "
+                       f"lassen (andere Zahl von Schritten oder Angaben fehlen; nicht verglichen): "
+                       f"{zahl['schritte_zahl_anders']}")
+    for f in proc.FELDER_AUS_STATION:
+        if zahl[f"schritt_{f}_anders"]:
+            befunde.append(f"Schritte: Feld `{f}` anders als an der Station des Schritts in process[] (fehlt, zu viel "
+                           f"oder anderer Wert): {zahl[f'schritt_{f}_anders']}")
     print(f"Stationen: {zahl['stationen']}, mit Sitzung {zahl['mit_sitzung']}, mit Hinweis "
           f"{sum(hinweise.values())} (abgesagt {hinweise['abgesagt']}, verschoben {hinweise['verschoben']}), mit "
           f"Kennung des Gremiums {zahl['mit_key']}"
           + (f", Stationen aufgelöster Gremien (ohne Kennung) {zahl['aufgeloest_ohne_key']}" if gr.an() else ""))
+    print(f"Schritte aus Stationen (steps): {zahl['schritte_aus_station']}, mit Hinweis {zahl['schritt_hinweis']}, mit "
+          f"Kennung des Gremiums {zahl['schritt_gremium_key']}")
     return befunde, fehlend
 
 

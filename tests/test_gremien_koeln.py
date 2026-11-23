@@ -10,10 +10,11 @@ import json
 import re
 import sqlite3
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
-from pipeline import aemter, ausschuesse, build, check, config, export, gebietszahlen, kontext, sessionnet
+from pipeline import aemter, ausschuesse, build, check, config, export, gebietszahlen, kontext, process, sessionnet
 
 try:   # auf dem Stand vor Pull Request 4a fehlt das Modul; jeder Test schlägt dann einzeln fehl
     from pipeline import gremien
@@ -106,12 +107,14 @@ def _station(tag, key, cancelled=0, hinweis=None):
 
 def test_zwoelf_monate_an_den_raendern():
     """Zeitraum nach `seit` bis einschließlich Datenstand (gebietszahlen.window_start, 365 Tage): eine Sitzung am Tag
-    `seit` zählt nicht, am Tag danach und am Datenstand zählt sie; eine Sitzung nach dem Datenstand ist die nächste.
+    `seit` zählt nicht, am Tag danach und am Datenstand zählt sie. Die Sitzung am Datenstand ist zugleich die nächste
+    (G7, Pull Request 4b; vorher die Sitzung danach), die Sitzung nach dem Datenstand die folgende (E2).
     Vorlagen ebenso über die Stationen, jede Vorlage einmal je Gremium, abgesagte Stationen zählen nicht."""
     orgs_je = {f"{M}/{k}": [f"{O}/rat"] for k in ("a", "b", "c", "d")}
     meetings = [_sitzung("a", SEIT), _sitzung("b", "2025-11-22"), _sitzung("c", STAND), _sitzung("d", "2026-11-22")]
-    zahl, naechste, ohne = gremien.sitzungen(meetings, orgs_je, {f"{O}/rat"}, {f"{O}/rat"}, SEIT, STAND)
-    assert zahl[f"{O}/rat"] == 2 and naechste[f"{O}/rat"]["source_object"] == f"{M}/d" and not ohne
+    zahl, naechste, folgende, ohne = gremien.sitzungen(meetings, orgs_je, {f"{O}/rat"}, {f"{O}/rat"}, SEIT, STAND)
+    assert zahl[f"{O}/rat"] == 2 and naechste[f"{O}/rat"]["source_object"] == f"{M}/c" and not ohne
+    assert folgende[f"{O}/rat"]["source_object"] == f"{M}/d"
     papers = [{"process": [_station(SEIT, "rat")]},
               {"process": [_station("2025-11-22", "rat"), _station(STAND, "rat")]},
               {"process": [_station(STAND, "rat", cancelled=1)]},
@@ -130,7 +133,7 @@ def test_naechste_sitzung_ueberspringt_absagen_und_traegt_verschoben():
                 _sitzung("x3", "2026-11-25", time=None), _sitzung("x4", "2026-11-25", hinweis="verschoben"),
                 _sitzung("x5", "2026-12-01")]
     orgs_je = {m["source_object"]: [org] for m in meetings}
-    _, naechste, _ = gremien.sitzungen(meetings, orgs_je, {org}, {org}, SEIT, STAND)
+    _, naechste, _, _ = gremien.sitzungen(meetings, orgs_je, {org}, {org}, SEIT, STAND)
     assert naechste[org]["source_object"] == f"{M}/x4"
     d, _ = gremien.daten([_org("bv4", "Bezirksvertretung 4 (Ehrenfeld)", "Bezirksvertretungen")], meetings, orgs_je,
                          [], STAND, [])
@@ -150,7 +153,7 @@ def test_zuordnung_ueber_die_oparl_organisation():
     meetings = [_sitzung("g", "2026-10-01", name="Rat"), _sitzung("o", "2026-10-02", name="Rat"),
                 _sitzung("u", "2026-10-03"), _sitzung("f", "2026-10-04")]
     orgs_je = {f"{M}/g": [f"{O}/rat", f"{O}/bv4"], f"{M}/o": [], f"{M}/u": [f"{O}/unbekannt"], f"{M}/f": [f"{O}/fr"]}
-    zahl, _, ohne = gremien.sitzungen(meetings, orgs_je, ids, alle, SEIT, STAND)
+    zahl, _, _, ohne = gremien.sitzungen(meetings, orgs_je, ids, alle, SEIT, STAND)
     assert zahl == {f"{O}/rat": 1, f"{O}/bv4": 1}
     assert ohne == {"ohne Organisation": 1, "Organisation nicht in der Tabelle": 1,
                     "Organisation nicht aufgenommen": 1}
@@ -320,7 +323,10 @@ def test_freigabe_aus_keine_dateien_keine_kennung(oparl, monkeypatch, capsys):
         f.write_text(json.dumps(d))
         assert check.stationen(db)[0] == [
             "Stationen: Feld `gremium_key` folgt nicht der Organisation der Beratung (gremien.kennungen; ohne Freigabe "
-            "„gremien“ kein Feld): 1"]
+            "„gremien“ kein Feld): 1",
+            # seit E1: Der Schritt dieser Station trägt die eingeschleuste Kennung nicht
+            "Schritte: Feld `gremium_key` anders als an der Station des Schritts in process[] (fehlt, zu viel oder "
+            "anderer Wert): 1"]
     finally:
         db.close()
     assert check.aemter_aufbau() == ([], [])
@@ -540,9 +546,10 @@ def test_dcat_nennt_teile_ohne_geklaerte_lizenz(tmp_path):
 
 
 def test_log_sitzungen_ohne_organisation_und_vorlagen_ausserhalb():
-    """Log (nur Zahlen): Sitzungen nach dem Datenstand ohne Verweis auf eine Organisation (ohne Absage), davon mit
-    Gremium aus dem Sitzungsnamen gleich dem Namen genau eines Gremiums der Datei; Sitzungen am Datenstand; Vorlagen in
-    keiner Gebietsdatei mit Beratung im Zeitraum. Diese zählen weiter für kein Gremium (Nachprüfung 4a)."""
+    """Log (nur Zahlen): Sitzungen ab dem Datenstand ohne Verweis auf eine Organisation (ohne Absage), davon mit
+    Gremium aus dem Sitzungsnamen gleich dem Namen genau eines Gremiums der Datei; Sitzungen am Datenstand (seit G7
+    kommend) und Gremien mit nächster Sitzung am Datenstand, davon mit folgender Sitzung (E2); Vorlagen in keiner
+    Gebietsdatei mit Beratung im Zeitraum. Diese zählen weiter für kein Gremium (Nachprüfung 4a)."""
     orgs = [_org("gr/1", "[Testdaten] Probeausschuss", AUSSCHUSS), _org("rat", "Rat", "Rat"),
             _org("doppelt1", "[Testdaten] Probebeirat", AUSSCHUSS), _org("doppelt2", "[Testdaten] Probebeirat", AUSSCHUSS)]
     meetings = [{**_sitzung("o1", "2026-11-25"), "gremium": "[Testdaten] Probeausschuss"},   # ohne Organisation
@@ -558,33 +565,42 @@ def test_log_sitzungen_ohne_organisation_und_vorlagen_ausserhalb():
     keys = {e["key"]: e for e in d["gremien"]}
     assert keys["gr-1"]["naechste_sitzung"]["source_object"] == f"{M}/m1"   # die Sitzung o1 zählt weiter nicht
     assert keys["rat"]["sitzungen_12m"] == 1 and keys["rat"]["vorlagen_12m"] == 0
+    # seit G7 ist die Sitzung am Datenstand die nächste; eine spätere Sitzung des Rates gibt es nicht
+    assert keys["rat"]["naechste_sitzung"]["source_object"] == f"{M}/m2" and "folgende_sitzung" not in keys["rat"]
     assert zahlen["ohne_organisation_kommend"] == (3, 1) and zahlen["am_datenstand"] == 1
+    assert zahlen["naechste_am_datenstand"] == 1 and zahlen["mit_folgender"] == 0
     assert zahlen["vorlagen_ausserhalb"] == 1
     log = "\n".join(gremien.zeilen_log(d, zahlen, {}))
-    assert ("Sitzungen nach dem Datenstand ohne Verweis auf eine Organisation (ohne Absage; zählen für kein Gremium, "
-            "auch nicht als nächste Sitzung): 3, davon mit Gremium aus dem Sitzungsnamen gleich dem Namen genau eines "
-            "Gremiums aus gremien.json 1; Sitzungen von Gremien aus gremien.json am Datenstand (ohne Absage; zählen als "
-            "vergangen, nicht als nächste Sitzung): 1") in log
+    assert ("Sitzungen ab dem Datenstand ohne Verweis auf eine Organisation (ohne Absage; zählen für kein Gremium, "
+            "auch nicht als nächste oder folgende Sitzung): 3, davon mit Gremium aus dem Sitzungsnamen gleich dem "
+            "Namen genau eines Gremiums aus gremien.json 1; Sitzungen von Gremien aus gremien.json am Datenstand (ohne "
+            "Absage; zählen als kommend): 1; Gremien mit nächster Sitzung am Datenstand 1, davon mit folgender "
+            "Sitzung 0") in log
     assert "Vorlagen in keiner Gebietsdatei mit Beratung eines Gremiums aus gremien.json im Zeitraum (zählen nicht bei " \
            "vorlagen_12m): 1" in log
     assert "Probe" not in log and O not in log and M not in log and "Liste der Sitzungen" not in log
 
 
-def test_sitzung_am_datenstand_gilt_als_vergangen_auch_im_sommer():
-    """Regel bis zur Entscheidung des Auftraggebers (offen): Sitzungen am Tag des Datenstands zählen als vergangen.
-    Im Sommer beginnt der Lauf um 0:10 Uhr Kölner Zeit; der Datenstand ist dann der gerade begonnene Tag, und eine
-    Sitzung am Abend dieses Tages zählt als vergangen, nicht als nächste Sitzung (erfundene Daten). Die
-    Modulbeschreibung nennt das so (Nachprüfung 4a: sie begründete die Regel nur mit dem Lauf im Winter)."""
+def test_sitzung_am_datenstand_gilt_als_kommend_auch_im_sommer():
+    """Entscheidung 21.11.2026 (3) (G7), umgesetzt mit Pull Request 4b: Sitzungen am Tag des Datenstands zählen als
+    kommend wie in „Aktuell in Köln“ (bis dahin als vergangen; der Test hieß
+    test_sitzung_am_datenstand_gilt_als_vergangen_auch_im_sommer). Im Sommer beginnt der Lauf um 0:10 Uhr Kölner Zeit;
+    der Datenstand ist dann der gerade begonnene Tag, und die Sitzung am Abend dieses Tages ist die nächste Sitzung, die
+    spätere die folgende (E2); bei sitzungen_12m zählt die Sitzung am Datenstand weiter (F7). Die Modulbeschreibung
+    nennt die Regel nicht mehr als offen (erfundene Daten)."""
     stand = export.kalendertag_des_abrufs("2027-07-01T22:15:00Z")
     assert stand == "2027-07-02"
     assert export.kalendertag_des_abrufs("2026-12-01T22:15:00Z") == "2026-12-01"   # Winter: Abend des Laufs
     org = f"{O}/probe"
     meetings = [_sitzung("abend", stand, time="17:00"), _sitzung("spaeter", "2027-07-20")]
     orgs_je = {m["source_object"]: [org] for m in meetings}
-    zahl, naechste, _ = gremien.sitzungen(meetings, orgs_je, {org}, {org}, gebietszahlen.window_start(stand), stand)
-    assert zahl[org] == 1 and naechste[org]["source_object"] == f"{M}/spaeter"
+    zahl, naechste, folgende, _ = gremien.sitzungen(meetings, orgs_je, {org}, {org}, gebietszahlen.window_start(stand),
+                                                     stand)
+    assert zahl[org] == 1 and naechste[org]["source_object"] == f"{M}/abend"
+    assert folgende[org]["source_object"] == f"{M}/spaeter"
     doc = " ".join(gremien.__doc__.split())
-    assert "Im Sommer beginnt derselbe Lauf um 0:10 Uhr Kölner Zeit" in doc and "beim Auftraggeber offen" in doc
+    assert "Im Sommer beginnt der Lauf um 0:10 Uhr Kölner Zeit" in doc and "beim Auftraggeber offen (TECHNIK" not in doc
+    assert "Sitzungen am Tag des Datenstands zählen als kommend" in doc
 
 
 def test_sitzungsliste_regel(monkeypatch):
@@ -878,3 +894,275 @@ def test_anfrage_punkt_7_nennt_alles_aus_plan_und_satzung():
     assert f"Namen der {len(ausschuesse.AUSSCHUESSE)} Ausschüsse mit ihrem Paragrafen" in p7
     assert "andere Schreibungen derselben Ausschüsse aus der Satzung" in p7
     assert "Veröffentlichungen" not in p7 and "zwei Dokumenten der Stadt" in p7
+
+
+# --- Entscheidung 23.11.2026 (1), Pull Request 4b (Pipeline): (E1) Schritte, (G7, E2) nächste und folgende Sitzung ---
+
+def _station_voll(tag, gremium, **felder):
+    """Erfundene Station der Prozesslinie in der Form der Gebietsdateien (ohne Sitzung, wenn `tag` None ist)."""
+    return {"position": 0, "role": "Beratung", "authoritative": False,
+            "meeting_id": f"{M}/{tag}" if tag else None, "gremium": gremium,
+            "meeting": f"[Testdaten] {gremium}" if tag else None,
+            "start_date": f"{tag}T17:00:00+01:00" if tag else None, "cancelled": 0, "number": "1" if tag else None,
+            "result": None, "public": 1, "status": "terminiert", **felder}
+
+
+def _vorlage_mit_stationen():
+    """Erfundene Vorlage: drei Stationen in der Beratungsfolge, deren Tage nicht aufsteigen (process.steps ordnet die
+    Schritte nach Datum), eine Station ohne Sitzung und eine Folgevorlage."""
+    return {"paper_type": "[Testdaten] Probeart", "source_object": "https://example.invalid/oparl/papers/1",
+            "originators": [], "date": "2026-10-01", "subordinated": [
+                {"reference": "9002/2026", "paper_type": "[Testdaten] Probeart", "name": "[Testdaten] Folge",
+                 "date": "2026-12-01"}],
+            "process": [_station_voll("2026-11-10", "Rat", hinweis="abgesagt", gremium_key="rat"),
+                        _station_voll("2026-10-05", "Bezirksvertretung 1 (Innenstadt)", gremium_key="bv1"),
+                        _station_voll("2026-10-20", "[Testdaten] Probebeirat", hinweis="verschoben"),
+                        _station_voll(None, "[Testdaten] Probeausschuss")]}
+
+
+def test_schritte_tragen_hinweis_und_kennung_ihrer_station():
+    """(E1) Jeder Schritt aus einer Station trägt `hinweis` und `gremium_key` mit dem Wert seiner Station, am Ende des
+    Schritts; fehlt der Wert an der Station, fehlt das Feld; Schritte, die nicht aus einer Station stammen, tragen
+    keines der beiden Felder. process.stationen_der_schritte nennt je Schritt die Stelle seiner Station (die Schritte
+    stehen nach Datum, nicht in der Reihenfolge der Beratungsfolge)."""
+    p = _vorlage_mit_stationen()
+    schritte = process.steps(p)
+    stellen = process.stationen_der_schritte(p)
+    assert len(stellen) == len(schritte)
+    # nach Datum; die Station ohne Sitzung folgt der vorigen Station der Beratungsfolge (Stelle 2)
+    assert [stellen[i] for i, s in enumerate(schritte) if s["typ"] in ("beratung", "entscheidung")] == [1, 2, 3, 0]
+    for s, i in zip(schritte, stellen):
+        station = p["process"][i] if i is not None else {}
+        for f in process.FELDER_AUS_STATION:
+            assert (f in s, s.get(f)) == (f in station, station.get(f)), (s["typ"], f)
+        if i is not None:
+            assert s["label"] == station["gremium"]
+    rat = next(s for s in schritte if s["label"] == "Rat")
+    assert list(rat)[-2:] == ["hinweis", "gremium_key"] and rat["hinweis"] == "abgesagt"
+    beirat = next(s for s in schritte if s["label"] == "[Testdaten] Probebeirat")
+    assert beirat["hinweis"] == "verschoben" and "gremium_key" not in beirat
+    ohne = next(s for s in schritte if s["label"] == "[Testdaten] Probeausschuss")
+    assert "hinweis" not in ohne and "gremium_key" not in ohne
+    assert not any(f in s for s, i in zip(schritte, stellen) if i is None for f in process.FELDER_AUS_STATION)
+    # Stand, Ergebnis und übrige Felder der Schritte hängen nicht an den beiden Feldern
+    ohne_felder = {**p, "process": [{k: v for k, v in s.items() if k not in process.FELDER_AUS_STATION}
+                                    for s in p["process"]]}
+    assert [{k: v for k, v in s.items() if k not in process.FELDER_AUS_STATION} for s in schritte] == \
+        process.steps(ohne_felder)
+
+
+def _gebietsdateien(base):
+    return [f for d in ("ortsteile", "bezirke", "ohne-ortsbezug") for f in sorted((base / d).glob("*.json"))]
+
+
+def _vorlagen_aendern(base, aendern):
+    """`aendern(p)` auf jede Vorlage jeder Gebietsdatei anwenden (eine Vorlage kann in mehreren Dateien stehen)."""
+    for f in _gebietsdateien(base):
+        d = json.loads(f.read_text())
+        for p in d["papers"]:
+            aendern(p)
+        f.write_text(json.dumps(d, ensure_ascii=False))
+
+
+def _schritt_der_sitzung(p, sitzung):
+    """Der Schritt der Station mit der Sitzung `sitzung` (letzter Teil der Kennung) oder None."""
+    for s, i in zip(p["steps"], process.stationen_der_schritte(p)):
+        if i is not None and (p["process"][i]["meeting_id"] or "").endswith(f"/meetings/{sitzung}"):
+            return s
+    return None
+
+
+def test_kette_schritte_wie_stationen_und_check(oparl, monkeypatch, capsys):
+    """(E1) Abruf, Aufbau und Export mit dem Testserver: Die Schritte in den Gebietsdateien tragen Hinweis und Kennung
+    ihrer Station (abgesagt und verschoben laut Sitzungsnamen, Kennung nur für Gremien aus gremien.json); check ohne
+    Befund, mit den Zahlen der Schritte. Eingeschleust: ein fehlender Hinweis, eine andere Kennung, eine Kennung an
+    einem Schritt ohne Station, ein fehlender Schritt und eine Vorlage ohne Vorlagenart; Befunde nur mit Zahlen."""
+    _kette_testserver(oparl, monkeypatch)
+    export.export()
+    base = config.EXPORT / config.STADT
+    vorlagen = {p["reference"]: p for f in _gebietsdateien(base) for p in json.loads(f.read_text())["papers"]}
+    je_sitzung = {}
+    for p in vorlagen.values():
+        for s in p["process"]:
+            je_sitzung[(s["meeting_id"] or "").rsplit("/", 1)[-1]] = (_schritt_der_sitzung(p, (s["meeting_id"] or "")
+                                                                                         .rsplit("/", 1)[-1]), s)
+    assert je_sitzung["k2"][0]["hinweis"] == "abgesagt" and je_sitzung["k2"][0]["gremium_key"] == "rat"
+    assert je_sitzung["k3"][0]["hinweis"] == "verschoben" and "hinweis" not in je_sitzung["k4"][0]
+    assert "gremium_key" not in je_sitzung["k5"][0] and je_sitzung["1"][0]["gremium_key"] == "bv4"
+    for schritt, station in je_sitzung.values():
+        assert {f: schritt.get(f) for f in process.FELDER_AUS_STATION} == \
+            {f: station.get(f) for f in process.FELDER_AUS_STATION}
+    db = sqlite3.connect(config.DB)
+    try:
+        capsys.readouterr()
+        assert check.stationen(db) == ([], [])
+        assert "Schritte aus Stationen (steps): 10, mit Hinweis 2, mit Kennung des Gremiums 9\n" in \
+            capsys.readouterr().out
+
+        def aendern(p):
+            for k in ("k2", "k4"):
+                s = _schritt_der_sitzung(p, k)
+                if s is not None and k == "k2":
+                    s.pop("hinweis")
+                elif s is not None:
+                    s["gremium_key"] = "bv4"
+            if p["reference"] == "1001/2026":   # der Schritt „Datum der Vorlage“ stammt aus keiner Station
+                next(s for s in p["steps"] if s["typ"] == "veroeffentlichung")["gremium_key"] = "rat"
+            if p["reference"] == "1003/2026":
+                p["steps"].pop()
+            if p["reference"] == "1005/2026":
+                del p["paper_type"]
+        _vorlagen_aendern(base, aendern)
+        befunde, fehlend = check.stationen(db)
+    finally:
+        db.close()
+    assert fehlend == []
+    assert befunde == [
+        "Schritte: Vorlagen, deren Schritte sich nicht nach process.steps ihren Stationen zuordnen lassen (andere "
+        "Zahl von Schritten oder Angaben fehlen; nicht verglichen): 2",
+        "Schritte: Feld `hinweis` anders als an der Station des Schritts in process[] (fehlt, zu viel oder anderer "
+        "Wert): 1",
+        "Schritte: Feld `gremium_key` anders als an der Station des Schritts in process[] (fehlt, zu viel oder anderer "
+        "Wert): 2"], befunde
+    for x in befunde:   # nur Zahlen: keine Namen, keine Kennungen, keine Drucksachen
+        assert "Testdaten" not in x and oparl.b not in x and "/2026" not in x and re.search(r": \d+$", x), x
+
+
+def test_naechste_ab_dem_datenstand_und_folgende_sitzung():
+    """(G7) Die nächste Sitzung ist die erste ohne Absage am Tag des Datenstands oder danach; (E2) liegt sie am
+    Datenstand, ist die folgende die erste ohne Absage nach diesem Tag: Eine zweite Sitzung am Datenstand und
+    abgesagte Sitzungen überspringt sie, eine Sitzung ohne Uhrzeit steht hinter einer mit Uhrzeit am selben Tag. Liegt
+    die nächste Sitzung nach dem Datenstand oder gibt es danach keine, fehlt die folgende."""
+    a, b, c = f"{O}/a", f"{O}/b", f"{O}/c"
+    meetings = [_sitzung("a1", STAND, time="10:00"), _sitzung("a2", STAND, time="17:00"),
+                _sitzung("a3", "2026-11-22", hinweis="abgesagt"), _sitzung("a4", "2026-11-23", cancelled=True),
+                _sitzung("a5", "2026-11-24", time=None), _sitzung("a6", "2026-11-24", time="18:00"),
+                _sitzung("b1", "2026-11-22"), _sitzung("b2", "2026-11-30"),
+                _sitzung("c1", STAND, hinweis="verschoben")]
+    orgs_je = {m["source_object"]: [{"a": a, "b": b, "c": c}[m["source_object"].rsplit("/", 1)[1][0]]]
+               for m in meetings}
+    zahl, naechste, folgende, _ = gremien.sitzungen(meetings, orgs_je, {a, b, c}, {a, b, c}, SEIT, STAND)
+    assert naechste[a]["source_object"] == f"{M}/a1" and folgende[a]["source_object"] == f"{M}/a6"
+    assert naechste[b]["source_object"] == f"{M}/b1" and b not in folgende
+    assert naechste[c]["source_object"] == f"{M}/c1" and c not in folgende
+    assert zahl[a] == 2 and zahl[c] == 1 and b not in zahl   # am Datenstand weiter im Zeitraum (F7)
+    orgs = [_org("a", "[Testdaten] Probeausschuss", AUSSCHUSS), _org("b", "[Testdaten] Probebeirat", AUSSCHUSS),
+            _org("c", "Rat", "Rat")]
+    d, zahlen = gremien.daten(orgs, meetings, orgs_je, [], STAND, [])
+    e = {x["key"]: x for x in d["gremien"]}
+    assert e["a"]["folgende_sitzung"] == {"date": "2026-11-24", "time": "18:00",
+                                          "web": "https://example.invalid/sitzung/a6", "source_object": f"{M}/a6"}
+    assert e["c"]["naechste_sitzung"]["hinweis"] == "verschoben" and "folgende_sitzung" not in e["c"]
+    assert "folgende_sitzung" not in e["b"]
+    assert list(e["a"])[-3:] == ["naechste_sitzung", "folgende_sitzung", "source_object"]
+    assert set(e["a"]["folgende_sitzung"]) <= set(gremien.FELDER_SITZUNG)
+    assert zahlen["naechste_am_datenstand"] == 2 and zahlen["mit_folgender"] == 1
+    assert "Gremien mit nächster Sitzung am Datenstand 2, davon mit folgender Sitzung 1" in \
+        "\n".join(gremien.zeilen_log(d, zahlen, {}))
+    assert "folgende Sitzung" in d["meta"]["note"] and "nächste Sitzung ab dem Datenstand" in d["meta"]["note"]
+    # Liste der Sitzungen nicht aktuell: weder nächste noch folgende Sitzung
+    liste = {"stand": None, "hinweis": gremien.HINWEIS_SITZUNGSLISTE}
+    d, zahlen = gremien.daten(orgs, meetings, orgs_je, [], STAND, [], liste)
+    assert not any("naechste_sitzung" in x or "folgende_sitzung" in x for x in d["gremien"])
+    assert zahlen["naechste_am_datenstand"] == 0 and zahlen["mit_folgender"] == 0
+
+
+def test_ohne_organisation_kommend_ab_dem_datenstand():
+    """(G7) Für das Log zählen Sitzungen ohne Verweis auf eine Organisation ab dem Tag des Datenstands (vorher erst
+    danach); abgesagte und vergangene nicht."""
+    meetings = [{**_sitzung("o1", STAND), "gremium": "Rat"}, {**_sitzung("o2", STAND, hinweis="abgesagt")},
+                {**_sitzung("o3", "2026-11-20")}, {**_sitzung("o4", "2026-11-22")}]
+    assert gremien.ohne_organisation_kommend(meetings, {}, {"Rat": 1}, STAND) == (2, 1)
+
+
+def _sitzung_am_datenstand(oparl):
+    """Eine Sitzung des Rates am heutigen Kölner Tag um 12:00 Uhr (der Datenstand der Kette ist der Kölner Tag des
+    Abrufs), ohne Beratung; die Sitzungen k1 bis k5 liegen danach."""
+    b = oparl.b
+    mittag = datetime.now(ZoneInfo("Europe/Berlin")).replace(hour=12, minute=0, second=0, microsecond=0)
+    oparl.meetings.append({"id": f"{b}/meetings/k7", "type": "https://schema.oparl.org/1.1/Meeting", "name": "Rat",
+                           "start": mittag.isoformat(), "cancelled": False,
+                           "organization": [f"{b}/organizations/rat"], "modified": "2026-11-01T08:00:00+01:00",
+                           "agendaItem": []})
+
+
+def test_kette_folgende_sitzung_und_check(oparl, monkeypatch, capsys):
+    """(G7, E2) Kette mit dem Testserver und einer Sitzung des Rates am Datenstand: nächste Sitzung ist diese, folgende
+    die verschobene (k1 und k2 sind abgesagt); Log von export und Ausgabe von check mit den Zahlen, check ohne Befund.
+    Eingeschleust: eine abgesagte folgende Sitzung, eine folgende Sitzung ohne nächste Sitzung am Datenstand, eine
+    folgende Sitzung am Datenstand mit einem Feld außerhalb von gremien.FELDER_SITZUNG und eine nächste Sitzung vor
+    dem Datenstand; Befunde nur mit Zahlen."""
+    _kette_testserver(oparl, monkeypatch, _sitzung_am_datenstand)
+    capsys.readouterr()
+    export.export()
+    log = capsys.readouterr().out
+    base = config.EXPORT / config.STADT
+    pfad = base / "gremien.json"
+    g = json.loads(pfad.read_text())
+    keys = {e["key"]: e for e in g["gremien"]}
+    stand = g["meta"]["datenstand"]
+    assert keys["rat"]["naechste_sitzung"]["source_object"].endswith("/meetings/k7")
+    assert keys["rat"]["naechste_sitzung"]["date"] == stand
+    assert keys["rat"]["folgende_sitzung"]["source_object"].endswith("/meetings/k3")
+    assert keys["rat"]["folgende_sitzung"]["hinweis"] == "verschoben" and keys["rat"]["sitzungen_12m"] == 1
+    assert "folgende_sitzung" not in keys["bv4"]
+    assert ("Sitzungen von Gremien aus gremien.json am Datenstand (ohne Absage; zählen als kommend): 1; Gremien mit "
+            "nächster Sitzung am Datenstand 1, davon mit folgender Sitzung 1") in log
+    db = sqlite3.connect(config.DB)
+    try:
+        capsys.readouterr()
+        assert check.gremien(db) == ([], [])
+        assert "mit nächster Sitzung 1 (davon am Datenstand 1), mit folgender Sitzung 1;" in capsys.readouterr().out
+        zeit = {m["source_object"].rsplit("/", 1)[1]: m
+                for m in json.loads((base / "zeit.json").read_text())["meetings"]}
+
+        def kurz(k, **mehr):
+            return {"date": zeit[k]["date"], "time": zeit[k]["time"], "web": zeit[k]["web"],
+                    "source_object": zeit[k]["source_object"], **mehr}
+        keys["rat"]["folgende_sitzung"] = kurz("k2")                       # abgesagt laut Sitzungsnamen
+        keys["bv4"]["naechste_sitzung"] = kurz("1")                        # vor dem Datenstand
+        keys["bv4"]["folgende_sitzung"] = kurz("k4")                       # ohne nächste Sitzung am Datenstand
+        keys["alt"]["naechste_sitzung"] = kurz("k7")
+        keys["alt"]["folgende_sitzung"] = kurz("k7", mitglieder=["[Testdaten] Person"])   # am Datenstand
+        pfad.write_text(json.dumps(g, ensure_ascii=False))
+        befunde, fehlend = check.gremien(db)
+    finally:
+        db.close()
+    assert fehlend == []
+    for erwartet in ("Gremien: Felder der folgenden Sitzung außerhalb von gremien.FELDER_SITZUNG: 1",
+                     "Gremien: Feldnamen, die auf Personen deuten: 1",
+                     "Gremien: folgende Sitzungen, die abgesagt sind (export.absage): 1",
+                     "Gremien: nächste Sitzungen vor dem Datenstand: 1",
+                     "Gremien: folgende Sitzungen nicht nach dem Datenstand: 1",
+                     "Gremien: folgende Sitzungen ohne nächste Sitzung am Datenstand: 1",
+                     "Gremien: Feld naechste_sitzung anders als gremien.daten: 2",
+                     "Gremien: Feld folgende_sitzung anders als gremien.daten: 3"):
+        assert erwartet in befunde, (erwartet, befunde)
+    for x in befunde:
+        assert "Testdaten" not in x and "Probe" not in x and oparl.b not in x and re.search(r": \d+$", x), x
+
+
+def test_kette_sitzungsliste_nicht_aktuell_ohne_folgende(oparl, monkeypatch):
+    """(E2) Ist die Liste der Sitzungen nicht aktuell, fehlt auch die folgende Sitzung; eine eingeschleuste folgende
+    Sitzung ist ein Befund (nur Zahlen)."""
+    _kette_testserver(oparl, monkeypatch, _sitzung_am_datenstand)
+    stand = json.loads(config.STAND.read_text())
+    stand["abruf_warnungen"] = {"meetings": {"zeit": "2099-01-01T00:00:00+00:00", "meldung": "nicht aktualisiert"}}
+    config.STAND.write_text(json.dumps(stand))
+    export.export()
+    base = config.EXPORT / config.STADT
+    g = json.loads((base / "gremien.json").read_text())
+    assert not any("naechste_sitzung" in e or "folgende_sitzung" in e for e in g["gremien"])
+    zeit = {m["source_object"].rsplit("/", 1)[1]: m for m in json.loads((base / "zeit.json").read_text())["meetings"]}
+    for e in g["gremien"]:
+        if e["key"] == "rat":
+            e["folgende_sitzung"] = {"date": zeit["k4"]["date"], "time": zeit["k4"]["time"], "web": zeit["k4"]["web"],
+                                     "source_object": zeit["k4"]["source_object"]}
+    (base / "gremien.json").write_text(json.dumps(g, ensure_ascii=False))
+    db = sqlite3.connect(config.DB)
+    try:
+        befunde, _ = check.gremien(db)
+    finally:
+        db.close()
+    assert "Gremien: folgende Sitzungen bei nicht aktueller Liste der Sitzungen (gremien.sitzungsliste): 1" in befunde
+    assert "Gremien: folgende Sitzungen ohne nächste Sitzung am Datenstand: 1" in befunde

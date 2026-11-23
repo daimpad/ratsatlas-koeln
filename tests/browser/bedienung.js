@@ -17,10 +17,11 @@ const AUSGABE = process.argv[3];
 const AXE = process.env.AXE_PFAD ? fs.readFileSync(process.env.AXE_PFAD, "utf8") : null;
 // Wörter, die in der Tour nur mit der Freigabe ihrer Funktion (index.json meta.funktionen) vorkommen dürfen (wie
 // tests/test_seite_bedienung.py); Einfache Sprache und „Alle Wege im Überblick“ (mitmachen) sind seit 13.11.2026
-// freigegeben. „Bürgerantrag“ ist ein Bonner Begriff (in Köln: Einwohnerantrag) und bleibt immer verboten.
+// freigegeben, Gremien und Ämter (gremien) seit Pull Request 4b. „Bürgerantrag“ ist ein Bonner Begriff (in Köln:
+// Einwohnerantrag) und bleibt immer verboten.
 const WOERTER_JE_FUNKTION = { baustellen: ["Baustelle"], einfache_sprache: ["Einfache Sprache", "Einfacher Sprache"],
   haushalt: ["Zuschussbedarf", "Haushalt"], mitmachen: ["Alle Wege im Überblick"], soll: ["Prozesse"],
-  chat: ["Assistent"], themenseiten: ["Themenseiten"], technik: ["wie der Ratsatlas funktioniert"] };
+  chat: ["Assistent"], themenseiten: ["Themenseiten"], technik: ["wie der Ratsatlas funktioniert"], gremien: ["„Gremien“", "„Ämter“"] };
 const IMMER_VERBOTEN = ["Bürgerantrag"];
 const abgeschaltet = (fn) => IMMER_VERBOTEN.concat(Object.entries(WOERTER_JE_FUNKTION).filter(([f]) => !(fn || {})[f]).flatMap(([, w]) => w));
 const PROFILE = {
@@ -222,8 +223,8 @@ async function termineJeGebiet(browser, profil, extra) {
   await ctx.close();
 }
 
-// B2: Telefon, Auswertung offen (seit 20.11.2026 aus dem Menü „Themen“), dann Menü ☰: das Menü liegt oben; Esc schließt
-// erst das Menü, dann die Auswertung
+// B2: Telefon, „In Zahlen“ offen (seit 20.11.2026 aus dem Menü „Themen“), dann Menü ☰: das Menü liegt oben; Esc schließt
+// erst das Menü, dann „In Zahlen“
 async function menueUeberAuswertung(browser, gebiet) {
   const profil = "telefon";
   const { ctx, page, fehler } = await neueSeite(browser, profil);
@@ -239,7 +240,7 @@ async function menueUeberAuswertung(browser, gebiet) {
     const oben = document.elementFromPoint(h.left + 10, h.top + h.height / 2);
     return { navOffen: document.body.classList.contains("nav-open"), auswertungOben: Boolean(oben && oben.closest("#panel-auswertung")) };
   });
-  pruefen(profil, "Auswertung aus dem Menü geöffnet, Menü zu, Auswertung sichtbar", !zustand1.navOffen && zustand1.auswertungOben, zustand1);
+  pruefen(profil, "„In Zahlen“ aus dem Menü geöffnet, Menü zu, „In Zahlen“ sichtbar", !zustand1.navOffen && zustand1.auswertungOben, zustand1);
   await page.click("#nav-burger");
   await page.waitForTimeout(300);
   const zustand2 = await page.evaluate(() => {
@@ -255,18 +256,18 @@ async function menueUeberAuswertung(browser, gebiet) {
     }).map((e) => e.id || e.dataset.mega || e.dataset.panel);
     return { navOffen: document.body.classList.contains("nav-open"), ziele: ziele.length, verdeckt, auswertungOffen: !document.getElementById("panel-auswertung").hidden };
   });
-  pruefen(profil, "Menü ☰ über der offenen Auswertung (kein Eintrag verdeckt)", zustand2.navOffen && zustand2.auswertungOffen && zustand2.ziele > 3 && zustand2.verdeckt.length === 0, zustand2);
+  pruefen(profil, "Menü ☰ über „In Zahlen“ (kein Eintrag verdeckt)", zustand2.navOffen && zustand2.auswertungOffen && zustand2.ziele > 3 && zustand2.verdeckt.length === 0, zustand2);
   const axeMenue = await axe(page);
-  if (axeMenue) pruefen(profil, "axe Menü über Auswertung", axeMenue.length === 0, axeMenue);
+  if (axeMenue) pruefen(profil, "axe Menü über „In Zahlen“", axeMenue.length === 0, axeMenue);
   await page.keyboard.press("Escape");
   await page.waitForTimeout(200);
   const zustand3 = await page.evaluate(() => ({ navOffen: document.body.classList.contains("nav-open"), fokus: document.activeElement.id,
     auswertungOffen: !document.getElementById("panel-auswertung").hidden }));
-  pruefen(profil, "Esc schließt zuerst das Menü (Fokus auf ☰), Auswertung bleibt", !zustand3.navOffen && zustand3.fokus === "nav-burger" && zustand3.auswertungOffen, zustand3);
+  pruefen(profil, "Esc schließt zuerst das Menü (Fokus auf ☰), „In Zahlen“ bleibt", !zustand3.navOffen && zustand3.fokus === "nav-burger" && zustand3.auswertungOffen, zustand3);
   await page.keyboard.press("Escape");
   await page.waitForTimeout(200);
   const zustand4 = await page.evaluate(() => ({ auswertungOffen: !document.getElementById("panel-auswertung").hidden }));
-  pruefen(profil, "zweites Esc schließt die Auswertung", !zustand4.auswertungOffen, zustand4);
+  pruefen(profil, "zweites Esc schließt „In Zahlen“", !zustand4.auswertungOffen, zustand4);
   pruefen(profil, "keine Skriptfehler (Menü)", fehler.length === 0, fehler);
   await ctx.close();
 }
@@ -315,6 +316,15 @@ async function cspDesktop(browser, gebiet) {
   await page.goto(`${BASIS}?mitmachen=1`, { waitUntil: "load" });
   await geladen(page);
   await sammeln("?mitmachen=1");
+  // Gremien und Ämter (seit Pull Request 4b): Modul und beide Dateien unter der CSP, beide Reiter, axe per page.evaluate
+  await page.goto(`${BASIS}?wer=gremien&darstellung=liste`, { waitUntil: "load" });
+  await geladen(page);
+  const wer = await page.waitForSelector("#panel-gremien:not([hidden]) #wer-liste", { timeout: 15000 }).catch(() => null);
+  await sammeln("?wer=gremien");
+  const axeWer = await axeOhneBypass(page);
+  if (axeWer) pruefen(profil, "axe unter der CSP (Gremien als Liste)", axeWer.length === 0, axeWer);
+  if (wer) { await page.click("#tab-wer-aemter"); await page.waitForTimeout(200); await sammeln("Reiter Ämter"); }
+  pruefen(profil, "Gremien und Ämter unter der CSP geladen", Boolean(wer));
   const slug = gebiet.split(":")[1];
   const bezirk = await page.evaluate(async () => (await (await fetch("data/export/koeln/index.json")).json()).bezirke[0].slug);
   const status = {};

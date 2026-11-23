@@ -36,6 +36,17 @@ const run = async (p, name, rows) => {
       await p.click('.bt-quorum summary').catch(() => {}); await p.waitForTimeout(200); await run(p, 'mitmachen-flaeche', rows);
     } else rows.push(['mitmachen-flaeche', 'nicht geöffnet', '', '', 'Fläche „Mitmachen in Köln“ trotz Freigabe nicht geöffnet', '']);
   }
+  // Fläche „Gremien und Ämter“ (nur mit Freigabe „gremien“; Pull Request 4b): Schaubild mit gewähltem Gremium, Liste mit
+  // früheren Gremien, Reiter „Ämter“; mit Freigabe steht #panel-gremien im HTML, öffnet sie sich nicht, ist das ein Befund
+  await p.goto(B + '?wer=gremien&darstellung=schaubild&kennung=rat', { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+  if (await p.$('#panel-gremien')) {
+    if (await p.waitForSelector('#panel-gremien:not([hidden]) #wer-detail h3', { timeout: 10000 }).catch(() => null)) {
+      await run(p, 'gremien-schaubild', rows);
+      await p.click('.wer-darstellung [data-darstellung="liste"]'); await p.check('#wer-frueher').catch(() => {}); await p.waitForTimeout(200);
+      await run(p, 'gremien-liste', rows);
+      await p.click('#tab-wer-aemter'); await p.waitForTimeout(200); await run(p, 'aemter', rows);
+    } else rows.push(['gremien', 'nicht geöffnet', '', '', 'Fläche „Gremien und Ämter“ trotz Freigabe nicht geöffnet', '']);
+  }
   for (const s of ['gebiete/', 'begriffe/', 'einfach/', 'rss/', 'datenschutz.html', 'ortsteil/ehrenfeld/', '404.html']) {
     const r = await p.goto(B + s, { waitUntil: 'networkidle' }); if (r && r.status() < 400) await run(p, s, rows); else rows.push([s, 'nicht gefunden', '', '', '', '']);
   }

@@ -174,7 +174,9 @@ ZUSATZTHEMEN = {
     # Kölner Gremien und Ämter für „Wer entscheidet“ (Entscheidung 21.11.2026 (2) (F4), Pull Request 4a): gremien.json
     # und aemter.json (pipeline/gremien.py, pipeline/aemter.py) und die Kennung des Gremiums je Station der
     # Prozesslinie. Eigenes Kölner Modul; die Bonner Teile (prozessarten.py, soll.json, besetzung.py) bleiben unter
-    # „soll“ und „besetzung“ abgeschaltet. Ohne Freigabe keine der beiden Dateien und keine Kennung an den Stationen
+    # „soll“ und „besetzung“ abgeschaltet. Ohne Freigabe keine der beiden Dateien und keine Kennung an den Stationen;
+    # auf der Seite (Pull Request 4b) dann weder die Fläche „Gremien und Ämter“ (site/gremien.js) noch ihre Karten im
+    # Menü „Wer entscheidet“ (data-freigabe, pipeline/seo.py)
     "gremien": True,
 }
 
