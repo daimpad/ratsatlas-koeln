@@ -3,11 +3,25 @@
 <id>tag:ratsatlas-koeln,2026:feed/bezirk-kalk</id>
 <title>Ratsatlas Köln – Stadtbezirk Kalk, ohne genaueren Ort</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Stadtbezirk Kalk, ohne genaueren Ort</subtitle>
-<updated>2026-11-16T00:00:00Z</updated>
+<updated>2026-11-23T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/bezirk-kalk.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135853#vorlage</id>
+<title>Neue Vorlage AN/1859/2026: Beurteilung des Schienenersatzverkehrs (SEV) – Stadtbahnen 1 und 9</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1859/2026"/>
+<summary>Anfrage nach § 4 BV8 (SPD) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135727#vorlage</id>
+<title>Neue Vorlage AN/1820/2026: Umsetzung der geplanten Baumpflanzungen nach Maßgabe des Straßenbaumkonzepts</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1820/2026"/>
+<summary>Anfrage nach § 4 BV8 (Grüne) · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135345#vorlage</id>
 <title>Neue Vorlage AN/1708/2026: "Strike-System" im Kampf gegen kriminelle Vermieter und die Miet-Mafia</title>
@@ -693,19 +707,5 @@
 <updated>2025-11-05T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1305/2025"/>
 <summary>Antrag nach § 5 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129773#beratung-2025-11-05-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „endgültig abgelehnt“ – AN/1305/2025 Wahl der Bezirksbürgermeisterin/ des Bezirksbürgermeisters und Ihrer/ seiner Stellvertreter/innen gemäß §§ 36 Abs. 3 Satz 2, § 67 Abs. 2 GO NRW;  Antrag der Fraktion AfD</title>
-<updated>2025-11-05T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1305/2025"/>
-<summary>Entscheidung am 2025-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129771#beratung-2025-11-05-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/1304/2025 Wahl der Bezirksbürgermeisterin/ des Bezirksbürgermeisters und Ihrer/ seiner Stellvertreter/innen gemäß §§ 36 Abs. 3 Satz 2, § 67 Abs. 2 GO NRW; Gem. Antrag der Fraktionen SPD, Bündnis 90/Die Grünen, Die LINKE.</title>
-<updated>2025-11-05T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1304/2025"/>
-<summary>Entscheidung am 2025-11-05; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

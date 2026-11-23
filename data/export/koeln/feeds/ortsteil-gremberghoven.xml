@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-gremberghoven</id>
 <title>Ratsatlas Köln – Gremberghoven</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Gremberghoven</subtitle>
-<updated>2026-11-20T00:00:00Z</updated>
+<updated>2026-11-23T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-gremberghoven.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:gremberghoven"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135783#vorlage</id>
+<title>Neue Vorlage 3288/2026: Beantwortung einer Anfrage der CDU-Fraktion aus der Sitzung des Mobilitätsauschusses vom 21.09.2026 betr. "Logistikzentrum Frankfurter Straße/Maarhäuser Weg" (1695/2026)</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:gremberghoven#3288/2026"/>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135809#vorlage</id>
 <title>Neue Vorlage AN/1837/2026: Antrag der SPD Fraktion "Verbesserung der Verkehrssicherheit an der Kreuzung Frankfurter Straße und Poststraße"</title>
@@ -699,13 +706,6 @@
 <title>Bezirksvertretung 7 (Porz): „geändert beschlossen“ – AN/1773/2023 Antrag der Fraktionen CDU und Bündnis 90/Die Grünen "Verbesserung der Parkplatzsituation um das Neubaugebiet in Gremberghoven"</title>
 <updated>2023-10-19T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:gremberghoven#AN/1773/2023"/>
-<summary>Antrag / Anfrage am 2023-10-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/117468#beratung-2023-10-19-Bezirksvertretung%207%20%28Porz%29</id>
-<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 3035/2023 Stellungnahme zum Antrag der SPD-Fraktion "Mangel an Gesamtschulplätzen beheben – Grundstück Porzer Ringstraße nutzen" (AN/1693/2021)/(AN/1497/2023)</title>
-<updated>2023-10-19T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:gremberghoven#3035/2023"/>
 <summary>Antrag / Anfrage am 2023-10-19; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

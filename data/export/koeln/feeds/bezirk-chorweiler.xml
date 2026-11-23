@@ -3,11 +3,32 @@
 <id>tag:ratsatlas-koeln,2026:feed/bezirk-chorweiler</id>
 <title>Ratsatlas Köln – Stadtbezirk Chorweiler, ohne genaueren Ort</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Stadtbezirk Chorweiler, ohne genaueren Ort</subtitle>
-<updated>2026-11-05T00:00:00Z</updated>
+<updated>2026-11-23T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/bezirk-chorweiler.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135882#vorlage</id>
+<title>Neue Vorlage AN/1882/2026: Sicherheitsgefühl im Stadtbezirk Chorweiler stärken</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/1882/2026"/>
+<summary>Gem. Antrag nach § 3 BV6 · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135873#vorlage</id>
+<title>Neue Vorlage AN/1875/2026: Ergänzende Maßnahmen gegen Vermüllung im Rahmen des Masterplans Sauberkeit</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/1875/2026"/>
+<summary>Antrag nach § 3 BV6 (Grüne) · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135843#vorlage</id>
+<title>Neue Vorlage AN/1853/2026: Anliegerreinigung im Herbst vereinfachen- Laubsammelboxen als Pilotprojekt</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/1853/2026"/>
+<summary>Gem. Antrag nach § 3 BV6 · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135486#beratung-2026-11-05-Bezirksvertretung%206%20%28Chorweiler%29</id>
 <title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/1756/2026 Gemeinsamer Änderungsantrag zu TOP 8.3.1 / 8.3.2</title>
@@ -685,27 +706,6 @@
 <title>Bezirksvertretung 6 (Chorweiler): „ungeändert beschlossen“ – AN/0959/2026 Hitzeschutz im Stadtbezirk Chorweiler</title>
 <updated>2026-06-25T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/0959/2026"/>
-<summary>Antrag / Anfrage am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133198#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
-<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 1689/2026 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion betreffend: Umsetzung des Badeverbots im Rhein (AN/0752/2026)</title>
-<updated>2026-06-25T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#1689/2026"/>
-<summary>Kenntnisnahme (Mitteilung) am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133168#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
-<title>Bezirksvertretung 6 (Chorweiler): „vertagt“ – AN/0877/2026 Priorität für Instandsetzung maroder Gehwege und Straßen im Bezirk Chorweiler</title>
-<updated>2026-06-25T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/0877/2026"/>
-<summary>Antrag / Anfrage am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133165#beratung-2026-06-25-Bezirksvertretung%206%20%28Chorweiler%29</id>
-<title>Bezirksvertretung 6 (Chorweiler): „vertagt“ – AN/0874/2026 Illegale Müllablagerungen und Ahndung von Ordnungswidrigkeiten im Stadtbezirk Chorweiler in den Jahren 2024 und 2025</title>
-<updated>2026-06-25T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/0874/2026"/>
 <summary>Antrag / Anfrage am 2026-06-25; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>
