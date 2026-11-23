@@ -47,22 +47,28 @@ spätere der Kölner Tage des Abrufs der Vorlagen und der letzten regulären Akt
   (direkter Aufruf von daten) die Kennung `gremium_key` an der Station. Eine Vorlage, die in keiner Gebietsdatei steht
   (etwa ohne Datum und ohne Ortsbezug), zählt nicht (Auslegung von F7, beim Auftraggeber offen); wie viele solche
   Vorlagen eine Beratung eines Gremiums der Datei im Zeitraum haben, zählt das Log (vorlagen_ausserhalb);
-- naechste_sitzung: die erste Sitzung nach dem Datenstand, die auf die Organisation verweist und nicht abgesagt ist (nach
-  Tag, eine Sitzung ohne Uhrzeit hinter denen mit Uhrzeit am selben Tag, sonst in der Reihenfolge von zeit.json): `date`,
-  `time` (Kölner Zeit, wie zeit.json; ohne Uhrzeit null), `hinweis` nur „verschoben“, `web`, `source_object`; ohne
-  solche Sitzung fehlt das Feld. Ist die Liste der Sitzungen beim letzten Abruf nicht aktualisiert worden
-  (export.sitzungsliste_aktuell, dieselbe Regel wie die Karte „Kommende Sitzungen“ in „Aktuell in Köln“), fehlt das Feld
-  bei allen Gremien, und `meta.sitzungsliste_nicht_aktuell` nennt den Stand der Liste (sitzungsliste); die Zahlen in 12
-  Monaten bleiben, nach dem Stand der Liste. Sitzungen am Tag des Datenstands zählen als vergangen. Das passt zum Lauf im
-  Winter: Er beginnt um 22:10 Uhr UTC, also um 23:10 Uhr Kölner Zeit, und der Datenstand ist der Abend des Laufs. Im
-  Sommer beginnt derselbe Lauf um 0:10 Uhr Kölner Zeit; der Datenstand ist dann der gerade begonnene Tag, und seine
-  Sitzungen zählen als vergangen, obwohl sie noch bevorstehen („Aktuell in Köln“ führt sie als kommend). Diese Regel ist
-  beim Auftraggeber offen (TECHNIK.md, Abschnitt „Gremien und Ämter für „Wer entscheidet““).
+- naechste_sitzung: die erste Sitzung ab dem Datenstand (am Tag des Datenstands oder danach), die auf die Organisation
+  verweist und nicht abgesagt ist (nach Tag, eine Sitzung ohne Uhrzeit hinter denen mit Uhrzeit am selben Tag, sonst in
+  der Reihenfolge von zeit.json): `date`, `time` (Kölner Zeit, wie zeit.json; ohne Uhrzeit null), `hinweis` nur
+  „verschoben“, `web`, `source_object`; ohne solche Sitzung fehlt das Feld. Sitzungen am Tag des Datenstands zählen als
+  kommend wie in „Aktuell in Köln“ (Entscheidung 21.11.2026 (3) (G7), Pull Request 4b) und zugleich bei sitzungen_12m
+  (bis einschließlich Datenstand, F7). Im Sommer beginnt der Lauf um 0:10 Uhr Kölner Zeit; der Datenstand ist dann der
+  gerade begonnene Tag, und seine Sitzungen stehen noch bevor. Bis Pull Request 4b zählten Sitzungen am Tag des
+  Datenstands als vergangen, und die nächste Sitzung begann am Tag danach;
+- folgende_sitzung: nur, wenn die nächste Sitzung am Tag des Datenstands liegt, die erste Sitzung nach diesem Tag mit
+  derselben Regel und denselben Feldern (Entscheidung 23.11.2026 (1) (E2)); weitere Sitzungen am Tag des Datenstands
+  überspringt sie. Ohne solche Sitzung fehlt das Feld. Der Grund: Der Lauf beginnt im Winter um 22:10 Uhr UTC, also um
+  23:10 Uhr Kölner Zeit, und eine Sitzung am Abend des Datenstands ist dann vorbei. Blendet die Seite nach dem Kölner
+  Tag der Besucher:innen aus, was vorbei ist, bleibt ihr bis zum nächsten Lauf die folgende Sitzung.
+Ist die Liste der Sitzungen beim letzten Abruf nicht aktualisiert worden (export.sitzungsliste_aktuell, dieselbe Regel
+wie die Karte „Kommende Sitzungen“ in „Aktuell in Köln“), fehlen naechste_sitzung und folgende_sitzung bei allen
+Gremien, und `meta.sitzungsliste_nicht_aktuell` nennt den Stand der Liste (sitzungsliste); die Zahlen in 12 Monaten
+bleiben, nach dem Stand der Liste.
 Sitzungen ohne Verweis auf ein Gremium dieser Datei und Beratungen ohne solche Organisation zählt das Log von `export`
-je Grund (zeilen_log, nur Zahlen), dazu die Sitzungen ohne Verweis auf eine Organisation nach dem Datenstand
-(ohne_organisation_kommend): Sie zählen für kein Gremium, auch nicht als nächste Sitzung, auch wenn ihr Gremium aus dem
-Sitzungsnamen (export.gremium_der_sitzung) dem Namen eines Gremiums der Datei gleicht. check (check.gremien) rechnet die
-Datei mit denselben Funktionen nach."""
+je Grund (zeilen_log, nur Zahlen), dazu die Sitzungen ohne Verweis auf eine Organisation ab dem Datenstand
+(ohne_organisation_kommend): Sie zählen für kein Gremium, auch nicht als nächste oder folgende Sitzung, auch wenn ihr
+Gremium aus dem Sitzungsnamen (export.gremium_der_sitzung) dem Namen eines Gremiums der Datei gleicht. check
+(check.gremien) rechnet die Datei mit denselben Funktionen nach."""
 import hashlib
 import json
 import re
@@ -78,10 +84,10 @@ KLASSEN = (KLASSE_RAT, KLASSE_AUSSCHUESSE, KLASSE_BV)
 GRUPPEN = ("rat", "ausschuss", "bezirksvertretung", "uebrige")
 GRUPPEN_TEXT = {"rat": "Rat", "ausschuss": "Ausschüsse mit Paragraf der Zuständigkeitsordnung",
                 "bezirksvertretung": "Bezirksvertretungen", "uebrige": "übrige Gremien"}
-# Felder je Gremium und je nächster Sitzung, sonst keine (keine Besetzung, keine Namen von Personen); check.gremien
-# meldet jedes andere Feld
+# Felder je Gremium und je nächster und folgender Sitzung, sonst keine (keine Besetzung, keine Namen von Personen);
+# check.gremien meldet jedes andere Feld
 FELDER = ("key", "name", "gruppe", "stadtbezirk", "paragraf", "end_date", "aufgeloest", "web", "sitzungen_12m",
-          "vorlagen_12m", "naechste_sitzung", "source_object")
+          "vorlagen_12m", "naechste_sitzung", "folgende_sitzung", "source_object")
 PFLICHT = ("key", "name", "gruppe", "sitzungen_12m", "vorlagen_12m", "source_object")
 FELDER_SITZUNG = ("date", "time", "hinweis", "web", "source_object")
 # `sitzungsliste_nicht_aktuell` nur, wenn die Liste der Sitzungen beim letzten Abruf nicht aktualisiert worden ist
@@ -92,8 +98,8 @@ NOTE = ("Gremien aus der OParl-API der Stadt Köln: Rat, Fachausschüsse und wei
         "Stadtbezirk aus dem Namen der Bezirksvertretung, Paragraf der Zuständigkeitsordnung nur bei eindeutigem Treffer "
         "des Namens, aufgelöst bei einem Enddatum vor dem Datenstand, Sitzungen und Vorlagen in 12 Monaten (Zeitraum "
         "nach `seit` bis `bis`) ohne abgesagte Sitzungen (OParl cancelled oder Hinweis „abgesagt“ aus dem Namen), nächste "
-        "Sitzung nach dem Datenstand (keine, wenn die Liste der Sitzungen beim letzten Abruf nicht aktualisiert worden "
-        "ist).")
+        "Sitzung ab dem Datenstand und, wenn sie am Datenstand liegt, die folgende Sitzung danach (keine, wenn die "
+        "Liste der Sitzungen beim letzten Abruf nicht aktualisiert worden ist).")
 # Aus der Zuständigkeitsordnung stammt nur der Paragraf; der Name jedes Gremiums kommt aus der OParl-API (Nachprüfung 4a)
 HINWEIS_ZUSTO = ("Übernommen ist nur der Paragraf eines Ausschusses, zugeordnet über den Namen der Organisation in der "
                  "OParl-API (nur bei eindeutigem Treffer); der Name des Gremiums stammt aus der OParl-API, kein Text der "
@@ -237,11 +243,15 @@ def _reihenfolge(m):
 
 
 def sitzungen(meetings, orgs_je_sitzung, ids, alle, seit, bis):
-    """Sitzungen je Gremium: (Zahl im Zeitraum je OParl-Kennung, nächste Sitzung je OParl-Kennung, Sitzungen ohne
-    Gremium der Datei je Grund). `meetings`: Sitzungen wie in zeit.json (export._meetings), `orgs_je_sitzung`:
-    organisationen_der_sitzungen, `ids`: aufgenommene Organisationen, `alle`: alle Organisationen der Tabelle."""
+    """Sitzungen je Gremium: (Zahl im Zeitraum je OParl-Kennung, nächste Sitzung je OParl-Kennung, folgende Sitzung
+    je OParl-Kennung, Sitzungen ohne Gremium der Datei je Grund). `meetings`: Sitzungen wie in zeit.json
+    (export._meetings), `orgs_je_sitzung`: organisationen_der_sitzungen, `ids`: aufgenommene Organisationen, `alle`:
+    alle Organisationen der Tabelle, `seit` und `bis`: Zeitraum (`bis` ist der Datenstand). Die nächste Sitzung ist
+    die erste ohne Absage ab dem Datenstand (Tag >= `bis`, G7), die folgende nur bei einer nächsten Sitzung am
+    Datenstand die erste ohne Absage nach diesem Tag (Tag > `bis`, E2); Reihenfolge nach _reihenfolge, bei Gleichstand
+    die Reihenfolge von `meetings`. Eine Sitzung am Datenstand zählt zugleich im Zeitraum (F7)."""
     from .export import absage
-    zahl, naechste, ohne = Counter(), {}, Counter()
+    zahl, naechste, danach, ohne = Counter(), {}, {}, Counter()
     for m in meetings:
         refs = orgs_je_sitzung.get(m.get("source_object")) or []
         drin = [o for o in refs if o in ids]
@@ -254,18 +264,23 @@ def sitzungen(meetings, orgs_je_sitzung, ids, alle, seit, bis):
         for o in drin:
             if seit < tag <= bis:
                 zahl[o] += 1
-            elif tag > bis and (o not in naechste or _reihenfolge(m) < _reihenfolge(naechste[o])):
+            if tag >= bis and (o not in naechste or _reihenfolge(m) < _reihenfolge(naechste[o])):
                 naechste[o] = m
-    return zahl, naechste, ohne
+            if tag > bis and (o not in danach or _reihenfolge(m) < _reihenfolge(danach[o])):
+                danach[o] = m
+    folgende = {o: m for o, m in danach.items() if naechste[o].get("date") == bis}
+    return zahl, naechste, folgende, ohne
 
 
 def ohne_organisation_kommend(meetings, orgs_je_sitzung, namen, bis):
-    """Für das Log (nur Zahlen): Sitzungen nach dem Datenstand `bis` ohne Absage (export.absage), die auf keine
-    Organisation verweisen (organisationen_der_sitzungen; sie zählen für kein Gremium, auch nicht als nächste Sitzung),
-    und davon die, deren Gremium in zeit.json (export.gremium_der_sitzung, aus dem Sitzungsnamen) dem Namen genau eines
-    Gremiums der Datei gleicht (`namen`: Counter der Namen der aufgenommenen Organisationen). Liefert (Zahl, davon)."""
+    """Für das Log (nur Zahlen): Sitzungen ab dem Datenstand `bis` (am Tag des Datenstands oder danach, wie die nächste
+    Sitzung in sitzungen; bis Pull Request 4b nach dem Datenstand) ohne Absage (export.absage), die auf keine
+    Organisation verweisen (organisationen_der_sitzungen; sie zählen für kein Gremium, auch nicht als nächste oder
+    folgende Sitzung), und davon die, deren Gremium in zeit.json (export.gremium_der_sitzung, aus dem Sitzungsnamen) dem
+    Namen genau eines Gremiums der Datei gleicht (`namen`: Counter der Namen der aufgenommenen Organisationen). Liefert
+    (Zahl, davon)."""
     from .export import absage
-    kommend = [m for m in meetings if not orgs_je_sitzung.get(m.get("source_object")) and (m.get("date") or "") > bis
+    kommend = [m for m in meetings if not orgs_je_sitzung.get(m.get("source_object")) and (m.get("date") or "") >= bis
                and not absage(m)]
     return len(kommend), sum(namen.get(m.get("gremium")) == 1 for m in kommend)
 
@@ -342,20 +357,21 @@ def daten(orgs, meetings, orgs_je_sitzung, papers, stand_tag, quellen, liste=Non
     """Inhalt von gremien.json ({"meta", "gremien"}) und die Zahlen für das Log. `orgs`: organisationen, `meetings`:
     Sitzungen wie in zeit.json, `orgs_je_sitzung`: organisationen_der_sitzungen, `papers`: Vorlagen der Gebietsdateien
     (jede einmal, mit den Stationen), `stand_tag`: Datenstand, `quellen`: Zeilen der Tabelle source, `liste`:
-    sitzungsliste (None: Liste der Sitzungen aktuell; sonst keine nächste Sitzung), `ausserhalb`: Vorlagen in keiner
-    Gebietsdatei (nur für das Log, sie zählen nicht), `beratungen_je`: beratungen (Organisation je Station; export und
-    check übergeben sie, damit aufgelöste Gremien bei vorlagen_12m mitzählen, G6; ohne sie zählt `gremium_key` an der
-    Station). Reihenfolge: Gruppe (GRUPPEN), nicht aufgelöste vor aufgelösten, dann Paragraf bzw. Nummer des
-    Stadtbezirks, Name, Kennung."""
+    sitzungsliste (None: Liste der Sitzungen aktuell; sonst keine nächste und keine folgende Sitzung), `ausserhalb`:
+    Vorlagen in keiner Gebietsdatei (nur für das Log, sie zählen nicht), `beratungen_je`: beratungen (Organisation je
+    Station; export und check übergeben sie, damit aufgelöste Gremien bei vorlagen_12m mitzählen, G6; ohne sie zählt
+    `gremium_key` an der Station). Reihenfolge: Gruppe (GRUPPEN), nicht aufgelöste vor aufgelösten, dann Paragraf bzw.
+    Nummer des Stadtbezirks, Name, Kennung."""
     from .export import absage
     from .geocode import BEZIRKE_KOELN
     seit = gebietszahlen.window_start(stand_tag)
     keys = schluessel([o["id"] for o in orgs])
     gruppe, nicht, treffer = einordnen(orgs, stand_tag)
     alle = {o["id"] for o in orgs}
-    z_sitzungen, naechste, ohne_sitzung = sitzungen(meetings, orgs_je_sitzung, set(gruppe), alle, seit, stand_tag)
+    z_sitzungen, naechste, folgende, ohne_sitzung = sitzungen(meetings, orgs_je_sitzung, set(gruppe), alle, seit,
+                                                              stand_tag)
     if liste:
-        naechste = {}
+        naechste, folgende = {}, {}
     in_datei = {o: keys[o] for o in gruppe}
 
     def ueber_beratung(p, s):
@@ -379,6 +395,8 @@ def daten(orgs, meetings, orgs_je_sitzung, papers, stand_tag, quellen, liste=Non
         e["sitzungen_12m"], e["vorlagen_12m"] = z_sitzungen[o["id"]], z_vorlagen[k]
         if o["id"] in naechste:
             e["naechste_sitzung"] = _sitzung_kurz(naechste[o["id"]])
+        if o["id"] in folgende:
+            e["folgende_sitzung"] = _sitzung_kurz(folgende[o["id"]])
         e["source_object"] = o["id"]
         eintraege.append({f: e[f] for f in FELDER if f in e})
     eintraege.sort(key=lambda e: (GRUPPEN.index(e["gruppe"]), bool(e.get("aufgeloest")),
@@ -391,6 +409,8 @@ def daten(orgs, meetings, orgs_je_sitzung, papers, stand_tag, quellen, liste=Non
               "am_datenstand": sum((m.get("date") or "") == stand_tag and not absage(m) and
                                    any(o in gruppe for o in orgs_je_sitzung.get(m.get("source_object")) or ())
                                    for m in meetings),
+              "naechste_am_datenstand": sum(m.get("date") == stand_tag for m in naechste.values()),
+              "mit_folgender": len(folgende),
               "vorlagen_ausserhalb": sum(bool(vorlagen([p], seit, stand_tag, kennung)) for p in ausserhalb)}
     return {"meta": meta(stand_tag, seit, quellen, liste), "gremien": eintraege}, zahlen
 
@@ -399,10 +419,10 @@ def zeilen_log(d, zahlen, ohne_beratung):
     """Zeilen im Log von `export`, nur Zahlen: Organisationen und Gruppen, aufgelöste, Kennungen mit Zusatz,
     Ausschüsse mit Paragraf (die Erklärung der Zählung im Kopf der Zeile, dahinter die Nummern der Paragrafen ohne und
     mit mehr als einer Organisation, Entscheidung 21.11.2026 (3) (G5)), Bezirksvertretungen mit Stadtbezirk, Sitzungen
-    und Beratungen ohne Gremium der Datei je Grund; Sitzungen nach dem Datenstand ohne Verweis auf eine Organisation
-    (ohne_organisation_kommend) und Sitzungen von Gremien der Datei am Datenstand (zählen als vergangen); Vorlagen in
-    keiner Gebietsdatei mit Beratung eines Gremiums der Datei im Zeitraum (zählen nicht); bei nicht aktueller Liste der
-    Sitzungen eine Zeile dazu."""
+    und Beratungen ohne Gremium der Datei je Grund; Sitzungen ab dem Datenstand ohne Verweis auf eine Organisation
+    (ohne_organisation_kommend), Sitzungen von Gremien der Datei am Datenstand (zählen als kommend, G7) und Gremien mit
+    nächster Sitzung am Datenstand, davon mit folgender Sitzung (E2); Vorlagen in keiner Gebietsdatei mit Beratung
+    eines Gremiums der Datei im Zeitraum (zählen nicht); bei nicht aktueller Liste der Sitzungen eine Zeile dazu."""
     from .geocode import BEZIRKE_KOELN
     g = d["gremien"]
     je = Counter(e["gruppe"] for e in g)
@@ -434,10 +454,11 @@ def zeilen_log(d, zahlen, ohne_beratung):
         f"Stadtbezirke {len(bezirke)} von {len(BEZIRKE_KOELN)}",
         f"Sitzungen ohne Gremium aus {DATEI}: {sum(zahlen['ohne_sitzung'].values())} ({gruende(zahlen['ohne_sitzung'])}); "
         f"Beratungen ohne Gremium aus {DATEI}: {sum(ohne_beratung.values())} ({gruende(ohne_beratung)})",
-        f"Sitzungen nach dem Datenstand ohne Verweis auf eine Organisation (ohne Absage; zählen für kein Gremium, auch "
-        f"nicht als nächste Sitzung): {kommend}, davon mit Gremium aus dem Sitzungsnamen gleich dem Namen genau eines "
-        f"Gremiums aus {DATEI} {kommend_name}; Sitzungen von Gremien aus {DATEI} am Datenstand (ohne Absage; zählen als "
-        f"vergangen, nicht als nächste Sitzung): {zahlen['am_datenstand']}",
+        f"Sitzungen ab dem Datenstand ohne Verweis auf eine Organisation (ohne Absage; zählen für kein Gremium, auch "
+        f"nicht als nächste oder folgende Sitzung): {kommend}, davon mit Gremium aus dem Sitzungsnamen gleich dem "
+        f"Namen genau eines Gremiums aus {DATEI} {kommend_name}; Sitzungen von Gremien aus {DATEI} am Datenstand (ohne "
+        f"Absage; zählen als kommend): {zahlen['am_datenstand']}; Gremien mit nächster Sitzung am Datenstand "
+        f"{zahlen['naechste_am_datenstand']}, davon mit folgender Sitzung {zahlen['mit_folgender']}",
         f"Vorlagen in keiner Gebietsdatei mit Beratung eines Gremiums aus {DATEI} im Zeitraum (zählen nicht bei "
         f"vorlagen_12m): {zahlen['vorlagen_ausserhalb']}",
     ] + ([f"Liste der Sitzungen beim letzten Abruf nicht aktualisiert: keine nächste Sitzung in {DATEI}"]

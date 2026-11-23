@@ -87,7 +87,8 @@ def _station(r, m, ref_ergebnisse, db):
     (Entscheidung 21.11.2026 (2) (F10), (F12)) am Ende `hinweis` („abgesagt“ oder „verschoben“ aus dem Namen der
     Sitzung, hinweis_station; ohne Hinweis kein Feld) und `gremium_key` (Kennung des Gremiums in gremien.json, nur wenn
     die Organisation der Beratung dort steht und am Datenstand nicht aufgelöst ist, Entscheidung 21.11.2026 (3) (G6);
-    sonst kein Feld). Stand und Ende des Weges werten weiter nur OParl `cancelled` aus (F10)."""
+    sonst kein Feld). Stand und Ende des Weges werten weiter nur OParl `cancelled` aus (F10). Der Schritt aus dieser
+    Station (`steps`) übernimmt beide Felder (process.steps, Entscheidung 23.11.2026 (1) (E1))."""
     s = {**{k: v for k, v in dict(r).items() if k not in ("beratung", "agenda_item_id", "organisation")},
          "meeting": m.sitzungsname(r["meeting"]), "result": m(r["result"], ref_ergebnisse), "status": _status(r)}
     if s.get("meeting_id"):
@@ -175,6 +176,8 @@ def _paper_detail(db, pid):
     d["stand"] = proc.stand({"process": [s for i, s in enumerate(d["process"]) if i in zaehlt]})
     d["themes"] = topics.themes(d)
     d["parties"] = topics.parties(d)
+    # Schritte, die der Vorgang zeigt; ein Schritt aus einer Station trägt deren `hinweis` und `gremium_key`
+    # (process.steps, Entscheidung 23.11.2026 (1) (E1))
     d["steps"] = [{k: v for k, v in s.items() if v not in (None, [], False)} for s in proc.steps(d)]
     d["soll"] = soll.lookup(db, p["reference"]) if _an("soll") else None  # Zusatzthema (Bonner Regelwerk)
     if p["reference"] in _kurzfassungen():
