@@ -617,9 +617,11 @@ def test_gremium_im_vorgang_link_nur_mit_kennung():
     mit, ohne, entscheidung, leer, initiierung = _schritte([
         {**s, "gremium_key": "beispielausschuss"}, s, {**s, "typ": "entscheidung", "gremium_key": "rat", "label": "Rat"},
         {**s, "label": None, "gremium_key": "x"}, {"typ": "initiierung", "label": "Antrag", "status": "belegt", "gremium_key": "x"}])
-    assert 'Beratung: <button type="button" class="link-btn" data-gremium-key="beispielausschuss">Beispielausschuss</button>' in mit
+    # seit 23.11.2026 (2) (7) mit unsichtbarem Zusatz, wohin der Link führt
+    assert ('Beratung: <button type="button" class="link-btn" data-gremium-key="beispielausschuss">Beispielausschuss'
+            '<span class="visually-hidden"> (unter „Gremien“)</span></button>') in mit
     assert "data-gremium" not in ohne and "Beratung: Beispielausschuss<span" in ohne
-    assert 'data-gremium-key="rat">Rat</button>' in entscheidung
+    assert 'data-gremium-key="rat">Rat<span class="visually-hidden"> (unter „Gremien“)</span></button>' in entscheidung
     assert "data-gremium" not in leer and "Beratung<span" in leer   # ohne Gremium: nur die Art der Station
     assert "data-gremium" not in initiierung
     aus = _schritte([{**s, "gremium_key": "beispielausschuss"}], da=False)[0]

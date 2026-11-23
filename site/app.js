@@ -1408,6 +1408,9 @@
   // den Namen, Wert GREMIUM_NAME und Name (Kennungen enthalten nur a–z, 0–9 und „-“). Gibt es beides, stehen die Namen
   // in zwei Gruppen. Eine gewählte Angabe bleibt beim Wechsel des Gebiets (sichtbar im Kennzeichen über der Liste)
   const GREMIUM_NAME = "name:";
+  // Bezeichnung des gewählten Filters im Kennzeichen und in #count (23.11.2026 (2) (6)): über den Namen „Gremium (nach
+  // Namen)“, über die Kennung „Gremium“
+  const gremiumArt = (w) => (w.name !== undefined ? "Gremium (nach Namen)" : "Gremium");
   function gremiumWahl() {
     const sel = $("#f-gremium"), v = sel.value;
     if (!v) return null;
@@ -1433,6 +1436,7 @@
   // jetzt geladen). Danach Liste offen, Fokus auf ihrer Überschrift; #count nennt Gremium und Treffer
   function gremiumFiltern(key, name) {
     setPanel("panel-gremien", false);
+    gremiumUnbekannt = false;
     $("#filters").reset();
     $("#q").value = "";
     range = null;
@@ -1456,8 +1460,31 @@
   function gremiumKennzeichen() {
     const wahl = gremiumWahl(), box = $("#gremium-filter");
     box.hidden = !wahl;
-    if (wahl) $("#gremium-filter-name").textContent = wahl.text;
+    if (wahl) { $("#gremium-filter-art").textContent = gremiumArt(wahl); $("#gremium-filter-name").textContent = wahl.text; }
     return wahl;
+  }
+  // Filter „Gremium“ aus der Adresse (gremium_filter, 23.11.2026 (2) (10); nicht der Bonner Name „gremium“): ein Name
+  // (Wert „name:“ und Name) gilt, wie er ist; eine Kennung braucht für Auswahl und Kennzeichen den Namen des Gremiums,
+  // aus den Stationen des Gebiets, sonst aus gremien.json (nur mit Freigabe „gremien“, erst dann geladen). Ohne Gremium
+  // setzt sie keinen Filter, und #count sagt das (wie die unbekannte Kennung unter „Gremien“), bis sich ein Filter ändert
+  let gremiumUnbekannt = false;
+  const GREMIUM_UNBEKANNT = () => `Das Gremium aus dem Link ist ${werDa() ? "unter „Gremien“ " : ""}nicht verzeichnet; seine Kennung kann sich geändert haben. Die Liste ist nicht nach Gremium gefiltert.`;
+  const mitGremiumHinweis = (text) => (gremiumUnbekannt ? `${text}${/[.…]$/.test(text) ? " " : " · "}${GREMIUM_UNBEKANNT()}` : text);
+  async function gremiumAusAdresse(wert) {
+    let text = wert.startsWith(GREMIUM_NAME) ? wert.slice(GREMIUM_NAME.length) : null;
+    if (text === null) {
+      for (const p of papers) for (const s of p.process || []) if (!text && s.gremium_key === wert) text = s.gremium || wert;
+      if (!text && werDa()) {
+        const g = await fetch(BONN + "gremien.json").then((r) => (r.ok ? r.json() : null)).catch(() => null);
+        const e = g && Array.isArray(g.gremien) ? g.gremien.find((x) => x && x.key === wert) : null;
+        text = e ? e.name || wert : null;
+      }
+    }
+    if (!text) { gremiumUnbekannt = true; return; }
+    const sel = $("#f-gremium");
+    if (![...sel.options].some((o) => o.value === wert)) sel.appendChild(new Option(text, wert));
+    sel.value = wert;
+    fillGremien();   // die Angabe in ihre Gruppe („aktuelle Gremien“ bzw. „nach Namen, auch frühere Gremien“)
   }
   $("#gremium-filter-aus").addEventListener("click", () => {
     $("#f-gremium").value = "";
@@ -1483,7 +1510,28 @@
         d.related = new Map(d.rows.map((r) => [r[0], new Set(r[8].map((i) => d.parties[i]))]));
         search = d;
         return d;
-      }).catch((err) => { searchLoading = null; $("#count").textContent = `Der Suchindex konnte nicht geladen werden (${err.message}).`; return null; }));
+      }).catch((err) => {
+        searchLoading = null;
+        // die Angabe in Klammern nur bei einer Antwort mit Fehlercode (sonst stünde dort eine englische Meldung des Browsers)
+        $("#count").textContent = `Der Suchindex konnte nicht geladen werden${/^HTTP \d+$/.test(err.message) ? ` (${err.message})` : ""}.`;
+        return null;
+      }));
+  }
+  // Suchindex fehlt in ganz Köln (23.11.2026 (2) (13)): Die Liste zeigt keine alten Einträge mehr, sondern einen Satz und
+  // „Erneut versuchen“; #count behält den Satz aus loadSearch, Filter und Kennzeichen „Gremium“ bleiben
+  function suchindexFehlt() {
+    $("#papers").innerHTML = '<li class="empty-list"><p>Die Vorlagen in ganz Köln erscheinen hier, sobald der Suchindex geladen ist.</p><button type="button" class="btn btn-secondary" id="suche-erneut">Erneut versuchen</button></li>';
+    if (openMegaId === "mega-suche") $("#mega-count").textContent = $("#count").textContent;
+  }
+  // „Erneut versuchen“: der Fokus bleibt bis zur Antwort auf der Schaltfläche; mit Index auf der Überschrift der Liste,
+  // ohne bleibt die Schaltfläche stehen (die Liste wird dann nicht neu aufgebaut)
+  function sucheErneut() {
+    $("#count").textContent = "Lade den Suchindex für ganz Köln …";
+    loadSearch().then((d) => {
+      if (scope() !== STADT) return;
+      if (d) { fillParties(); render(); focusPanel("panel-list"); }
+      else if (!$("#suche-erneut")) suchindexFehlt();
+    });
   }
   // Parteien der übergeordneten Vorlage (z. B. Stellungnahme der Verwaltung zu einem Antrag)
   const relatedParties = (ref) => (search && search.related.get(ref)) || new Set();
@@ -1507,6 +1555,7 @@
   }
   function resetFilters() {
     const sc = scope();
+    gremiumUnbekannt = false;
     $("#filters").reset();
     document.querySelector(`input[name="scope"][value="${sc}"]`).checked = true;
     $("#f-related-wrap").hidden = true;
@@ -1594,8 +1643,8 @@
       (!text || inTitle(r) || (doc && doc.has(r[0]))));
     const span = range ? ` · ${fmtDate(range[0])}–${fmtDate(range[1])}` : "";
     const onlyDoc = doc ? rows.filter((r) => !inTitle(r)).length : 0;
-    $("#count").textContent = vorschau ? "Ganz Köln: noch keine Ratsvorlagen (Vorschau)"
-      : `${rows.length} Treffer in ganz Köln${gw ? ` · Gremium: ${gw.text}` : ""}${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`;
+    $("#count").textContent = mitGremiumHinweis(vorschau ? "Ganz Köln: noch keine Ratsvorlagen (Vorschau)"
+      : `${rows.length} Treffer in ganz Köln${gw ? ` · ${gremiumArt(gw)}: ${gw.text}` : ""}${doc ? `, davon ${onlyDoc} nur im Text der Dokumente` : ""}${span}`);
     // Zeile ohne Gebiet (Gebiet −1, etwa eine Vorlage ohne Datum und Ortsbezug): nur Text, öffnen lässt sie sich nicht
     let html = rows.slice(0, shown).map((r) => {
       const ar = search.areas[r[5]];
@@ -1629,7 +1678,12 @@
     $("#f-related-wrap").hidden = !$("#f-party").value;
     $("#more-filters").hidden = scope() === STADT;
     if (scope() === STADT) {
-      if (!search) { gremiumKennzeichen(); $("#count").textContent = "Lade den Suchindex für ganz Köln …"; loadSearch().then((d) => d && (fillParties(), render())); return; }
+      if (!search) {
+        gremiumKennzeichen();
+        $("#count").textContent = "Lade den Suchindex für ganz Köln …";
+        loadSearch().then((d) => { if (d) { fillParties(); render(); } else if (scope() === STADT) suchindexFehlt(); });
+        return;
+      }
       return renderGlobal(nurListe);
     }
     const gw = gremiumKennzeichen();
@@ -1639,8 +1693,8 @@
     lastList = list;
     const where = area.kind === "ohne" ? `ohne Ortsbezug, ${area.key}` : area.name;
     const span = range ? ` · ${fmtDate(range[0])}–${fmtDate(range[1])}` : "";
-    $("#count").textContent = vorschau ? `${area.kind === STADT ? "Ganz Köln" : where}: noch keine Ratsvorlagen (Vorschau)`
-      : area.kind === STADT ? OVERVIEW_HINT : `${list.length} von ${papers.length} Vorlagen · ${where}${gw ? ` · Gremium: ${gw.text}` : ""}${span}`;
+    $("#count").textContent = mitGremiumHinweis(vorschau ? `${area.kind === STADT ? "Ganz Köln" : where}: noch keine Ratsvorlagen (Vorschau)`
+      : area.kind === STADT ? OVERVIEW_HINT : `${list.length} von ${papers.length} Vorlagen · ${where}${gw ? ` · ${gremiumArt(gw)}: ${gw.text}` : ""}${span}`);
     const active = [$("#f-amt").value, $("#f-gremium").value].filter(Boolean).length +
       (area.kind === "ohne" ? 0 : document.querySelectorAll("#f-conf input:not(:checked)").length);
     $("#active-filters").textContent = active ? ` (${active} aktiv)` : "";
@@ -1688,12 +1742,13 @@
     // Kennung am Schritt (gremium_key, aus der Station; E1), mit Freigabe „gremien“ zur Laufzeit und vorhandener Fläche
     // (die Freigabe beim Bau kann von der in index.json abweichen); sonst bleibt der Name Text (frühere Wahlperiode,
     // Gremium aus dem Sitzungsnamen, „Gremium unbekannt“). Der Bonner Link in den Reiter „Prozesse“ über den Namen bleibt
-    // unter dessen Freigabe („soll“, in Köln aus)
+    // unter dessen Freigabe („soll“, in Köln aus). Der unsichtbare Zusatz „(unter „Gremien“)“ sagt im zugänglichen Namen,
+    // wohin der Link führt (23.11.2026 (2) (7)); sichtbar bleibt der Name
     const beratung = (s.typ === "beratung" || s.typ === "entscheidung") && s.label;
     const gremiumKey = beratung && s.gremium_key && werDa() ? s.gremium_key : null;
     const gremium = !gremiumKey && index && funktionen.soll && beratung && s.status !== "nicht_öffentlich";
     const label = s.label && s.label !== STEP_LABEL[s.typ]
-      ? ": " + (gremiumKey ? `<button type="button" class="link-btn" data-gremium-key="${esc(gremiumKey)}">${esc(s.label)}</button>`
+      ? ": " + (gremiumKey ? `<button type="button" class="link-btn" data-gremium-key="${esc(gremiumKey)}">${esc(s.label)}<span class="visually-hidden"> (unter „Gremien“)</span></button>`
         : gremium ? `<button type="button" class="link-btn" data-gremium-name="${esc(s.label)}" title="Zuständigkeit und Besetzung im Reiter Prozesse">${esc(s.label)}</button>` : esc(s.label)) : "";
     // Hinweis aus dem Sitzungsnamen an der Station (hinweis am Schritt, export.hinweis_station; F10): nur die Plakette,
     // Stand und Evidenzstatus bleiben, wie sie sind; nach der Plakette ein Leerzeichen vor dem Status (Umbruchstelle,
@@ -2686,12 +2741,25 @@
     return pzReady.then((m) => { if (m) m.show(s); return m; });
   }
 
+  // Wartezeit beim Laden (23.11.2026 (2) (11)): Antwortet ein Modul der Flächen „Mitmachen in Köln“ und „Gremien und
+  // Ämter“ nicht in dieser Zeit, gilt der Import als gescheitert (Satz in der Statuszeile der Fläche, neuer Versuch beim
+  // nächsten Öffnen unter einer anderen Adresse). Eine spätere Antwort bleibt ohne Wirkung: Das Ergebnis steht dann
+  // schon fest. gremien.js wartet auf gremien.json und aemter.json ebenso lange (AbortController)
+  const WARTEZEIT = 20000;
+  const mitFrist = (laden) => new Promise((ja, nein) => {
+    const uhr = setTimeout(() => nein(new Error(`keine Antwort nach ${WARTEZEIT / 1000} s`)), WARTEZEIT);
+    laden.then((m) => { clearTimeout(uhr); ja(m); }, (e) => { clearTimeout(uhr); nein(e); });
+  });
+
   // --- Fläche „Mitmachen in Köln“ (site/beteiligung.js, erst beim Öffnen geladen; nur mit Freigabe „mitmachen“) ---
   // Wege, sich einzubringen, mit den nächsten Sitzungen je Stadtbezirk aus zeit.json; ohne Stadtbezirk (keine Wahl, kein
-  // Gebiet) nur Rat und Ausschuss. Zweiter Lauf, 13.11.2026: ohne Soll-Modell und Bonner Regeln
-  let mmState = null, mmReady = null;
+  // Gebiet) nur Rat und Ausschuss. Zweiter Lauf, 13.11.2026: ohne Soll-Modell und Bonner Regeln. Ladehinweis und
+  // Ladefehler stehen in der eigenen Statuszeile #bt-status (role=status), wie bei „Gremien und Ämter“
+  let mmState = null, mmReady = null, mmModul = null, mmImportFehler = 0;
   function openMitmachen(s) {
-    mmReady ||= import("./beteiligung.js").then(async (m) => {
+    if (!mmModul) { $("#bt-body").innerHTML = ""; $("#bt-status").textContent = "Wird geladen …"; }
+    const modul = mmImportFehler ? `./beteiligung.js?versuch=${mmImportFehler}` : "./beteiligung.js";
+    mmReady ||= mitFrist(import(modul)).catch((e) => { mmImportFehler++; throw e; }).then(async (m) => {
       await m.init({
         termine: () => Boolean(zeit),
         meetings: () => (zeit ? zeit.meetings : []),
@@ -2700,8 +2768,15 @@
         onState(st) { mmState = st; syncUrl(); },
         openTermine() { setPanel("panel-mitmachen", false); setPanel("panel-termine", true); showTermine(); focusPanel("panel-termine"); },
       });
+      mmModul = m;
+      $("#bt-status").textContent = "";
       return m;
-    }).catch((e) => { mmReady = null; console.warn("Mitmachen nicht geladen", e); return null; });   // beim nächsten Öffnen erneut
+    }).catch((e) => {
+      mmReady = null;
+      console.warn("Mitmachen nicht geladen", e);
+      $("#bt-status").textContent = "Die Fläche „Mitmachen in Köln“ konnte nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.";
+      return null;
+    });   // beim nächsten Öffnen erneut
     // ohne gewählten Stadtbezirk in der Fläche gilt der des Gebiets (auch nach einem ersten Öffnen ohne Gebiet)
     return mmReady.then((m) => { if (m) m.show(s || { bezirk: (mmState && mmState.bezirk) || areaBezirk() || "" }); return m; });
   }
@@ -2709,19 +2784,20 @@
   // --- Fläche „Gremien und Ämter“ (site/gremien.js, erst beim Öffnen geladen; nur mit Freigabe „gremien“) -----------
   // Entscheidungen 21.11.2026 (2) (F4–F12) und 23.11.2026 (1) (E1–E11): Reiter „Gremien“ (Schaubild oder Liste) und
   // „Ämter“ aus gremien.json und aemter.json. Das Modul lädt beide Dateien beim ersten Öffnen; nach einem Fehler steht ein
-  // Satz in der Statuszeile (role=status, dort stand auch „Wird geladen …“), und das nächste Öffnen versucht es erneut.
-  // Ein gescheiterter Import bleibt für dieselbe Adresse des Moduls gescheitert (der Browser merkt sich das Ergebnis bis
-  // zum Neuladen der Seite); der nächste Versuch lädt das Modul deshalb unter einer anderen Adresse. Nur mit Freigabe zur
-  // Laufzeit (index.json meta.funktionen) und vorhandener Fläche (Freigabe beim Bau, data-freigabe)
+  // Satz in der Statuszeile (role=status, dort stand auch „Wird geladen …“), und das nächste Öffnen versucht es erneut;
+  // ebenso nach WARTEZEIT ohne Antwort (Modul oder Daten). Ein gescheiterter Import bleibt für dieselbe Adresse des
+  // Moduls gescheitert (der Browser merkt sich das Ergebnis bis zum Neuladen der Seite); der nächste Versuch lädt das
+  // Modul deshalb unter einer anderen Adresse. Nur mit Freigabe zur Laufzeit (index.json meta.funktionen) und
+  // vorhandener Fläche (Freigabe beim Bau, data-freigabe)
   let werState = null, werReady = null, werModul = null, werImportFehler = 0;
   const werDa = () => Boolean(funktionen.gremien) && vorhanden("panel-gremien");
   function openGremien(s) {
     if (!werDa()) return Promise.resolve(null);
     if (!werModul) { $("#wer-body").innerHTML = ""; $("#wer-status").textContent = "Wird geladen …"; }
     const modul = werImportFehler ? `./gremien.js?versuch=${werImportFehler}` : "./gremien.js";
-    werReady ||= import(modul).catch((e) => { werImportFehler++; throw e; }).then(async (m) => {
+    werReady ||= mitFrist(import(modul)).catch((e) => { werImportFehler++; throw e; }).then(async (m) => {
       await m.init({
-        basis: BONN, heute, zeitDatum, lizenz: lizenzOeffentlich, telefon: () => MOBILE.matches,
+        basis: BONN, heute, zeitDatum, lizenz: lizenzOeffentlich, telefon: () => MOBILE.matches, wartezeit: WARTEZEIT,
         onState(st) { werState = st; syncUrl(); },
         filterGremium: gremiumFiltern,
       });
@@ -2795,7 +2871,10 @@
     if (area.kind === STADT) url.searchParams.delete("gebiet"); else url.searchParams.set("gebiet", `${area.kind}:${area.key}`);
     if (tl && range) { const s = tl.getState(); for (const k of ["von", "bis", "zoom", "achse"]) url.searchParams.set(k, s[k]); }
     else for (const k of ["von", "bis", "zoom", "achse"]) url.searchParams.delete(k);
-    const state = { thema: $("#f-theme").value, partei: $("#f-party").value, suche: scope() === STADT ? STADT : "" };
+    // Filter „Gremium“ (23.11.2026 (2) (10)): eigener Name gremium_filter, Wert wie in #f-gremium (Kennung oder „name:“
+    // und Name; URLSearchParams kodiert ihn)
+    const state = { thema: $("#f-theme").value, partei: $("#f-party").value, suche: scope() === STADT ? STADT : "",
+      gremium_filter: $("#f-gremium").value };
     state.farbe = colorBy === "thema" ? "thema" : "";
     state.flaechen = navMetric !== navDefault ? navMetric : "";
     state.plaene = planOn ? "1" : "";
@@ -2915,6 +2994,7 @@
     NARROW.addEventListener("change", applyLayout);
     $("#filters").addEventListener("submit", (e) => e.preventDefault());
     $("#filters").addEventListener("input", (e) => {
+      gremiumUnbekannt = false;
       if (e.target.id === "f-text") return renderSoon();
       shown = LIST_STEP;
       if (e.target.name === "scope") { fillParties(); setScope(e.target.value); }
@@ -2933,6 +3013,7 @@
         return;
       }
       if (e.target.closest("#reset-filters")) { resetFilters(); focusPanel("panel-list"); return; }   // die Schaltfläche verschwindet
+      if (e.target.closest("#suche-erneut")) { sucheErneut(); return; }
       // Filter „Gremium“ ohne Treffer im Gebiet: dieselbe Suche in ganz Köln
       if (e.target.closest("#gremium-koeln")) { setScope(STADT); shown = LIST_STEP; fillParties(); render(); syncUrl(); focusPanel("panel-list"); return; }
       const g = e.target.closest("button[data-gref]");
@@ -2983,9 +3064,10 @@
     if (params.get("partei")) await loadSearch();
     await loadArea(params.get("gebiet") || DEFAULT_AREA, true);
     if (params.get("partei")) { fillParties(); $("#f-party").value = params.get("partei"); render(); }
+    if (params.get("gremium_filter")) { await gremiumAusAdresse(params.get("gremium_filter")); shown = LIST_STEP; render(); }
     const von = params.get("von"), bis = params.get("bis");
     // Startzustand: nur „Los geht's“; Liste und Zeitleiste öffnen sich, wenn der Link Filter oder einen Zeitraum enthält
-    if (["thema", "partei", "suche"].some((k) => params.get(k))) setPanel("panel-list", true);
+    if (["thema", "partei", "suche", "gremium_filter"].some((k) => params.get(k))) setPanel("panel-list", true);
     if (tl && ISO_DAY.test(von || "") && ISO_DAY.test(bis || "") && !Number.isNaN(Date.parse(von)) && !Number.isNaN(Date.parse(bis))) {
       setPanel("timeline-wrap", true);
       tl.setState({ von, bis, zoom: params.get("zoom"), achse: params.get("achse") });

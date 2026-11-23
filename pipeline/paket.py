@@ -64,9 +64,10 @@ LIESMICH_STRUKTURDATEN = """- strukturdaten/: Strukturdaten im Datenvertrag „S
 
 # Ergänzung von LIESMICH.txt mit Freigabe „gremien“ (vor dem Eintrag zu audit_*.tsv; Entscheidung 21.11.2026 (2))
 LIESMICH_GREMIEN = """- koeln/gremien.json: Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien aus dem Ratsinformationssystem
-  (ohne Fraktionen und Gruppen, ohne Besetzung, keine Namen von Personen) mit Sitzungen und Vorlagen in 12 Monaten und
-  nächster Sitzung (abgeleitet); Paragrafen der Zuständigkeitsordnung der Stadt Köln vom 02.06.2026 nur als Nummer
-  mit Link auf die Satzung (Lizenz der Satzung nicht geklärt)
+  (ohne Fraktionen und Gruppen, ohne Besetzung, keine Namen von Personen) mit Sitzungen und Vorlagen in 12 Monaten,
+  nächster Sitzung und, wenn diese am Tag des Datenstands liegt, folgender Sitzung (abgeleitet); Paragrafen der
+  Zuständigkeitsordnung der Stadt Köln vom 02.06.2026 nur als Nummer mit Link auf die Satzung (Lizenz der Satzung
+  nicht geklärt)
 - koeln/aemter.json: Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen aus dem Geschäfts- und
   Dezernatsverteilungsplan der Stadt Köln, ohne Untereinheiten (im Plan keine Lizenz angegeben; Stand und letzte
   Prüfung in meta)

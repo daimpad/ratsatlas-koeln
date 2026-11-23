@@ -275,10 +275,18 @@ async function vorgangUndFilter(browser, profil, gebiet) {
   await s.page.click(`#papers button[data-ref="${ref}"]`);
   await s.page.waitForSelector("#detail .steps");
   await s.page.waitForTimeout(300);
+  // textContent mit dem unsichtbaren Zusatz „(unter „Gremien“)“ (23.11.2026 (2) (7)); sichtbar ist der Text ohne die
+  // Teile mit der Klasse visually-hidden (innerText zählt sie je nach Breite mit)
   const v = await s.page.evaluate((k) => ({ links: document.querySelectorAll("#detail [data-gremium-key]").length,
-    link: document.querySelector(`#detail [data-gremium-key="${k}"]`)?.textContent, plakette: [...document.querySelectorAll("#detail .step-head .badge")].map((b) => b.textContent),
+    link: document.querySelector(`#detail [data-gremium-key="${k}"]`)?.textContent, sichtbar: (() => {
+      const b = document.querySelector(`#detail [data-gremium-key="${k}"]`)?.cloneNode(true);
+      if (!b) return null;
+      b.querySelectorAll(".visually-hidden").forEach((x) => x.remove());
+      return b.textContent;
+    })(), plakette: [...document.querySelectorAll("#detail .step-head .badge")].map((b) => b.textContent),
     ohneKennung: [...document.querySelectorAll("#detail .step-head")].filter((h) => !h.querySelector("[data-gremium-key]") && /^(Beratung|Entscheidung)/.test(h.textContent)).length }), key);
-  pruefen(profil, "Vorgang: Gremium mit Kennung als Link, Plakette „laut Sitzungsnamen abgesagt“ an der Station", v.links > 0 && v.link === gremium
+  pruefen(profil, "Vorgang: Gremium mit Kennung als Link (Name sichtbar, Zusatz „(unter „Gremien“)“ im zugänglichen Namen), Plakette „laut Sitzungsnamen abgesagt“ an der Station", v.links > 0
+    && v.link === `${gremium} (unter „Gremien“)` && v.sichtbar === gremium
     && JSON.stringify(v.plakette) === '["laut Sitzungsnamen abgesagt"]', v);
   // Plakette und Status durch ein Leerzeichen getrennt (Vorlesen, Umbruchstelle); auf dem Telefon bei 300 px kein
   // waagrechtes Scrollen im Vorgang (WCAG 1.4.10; Nachprüfung Bedienung)
@@ -454,7 +462,7 @@ async function adresseUndDaten(browser, profil, gremien) {
   const liste = await s.page.evaluate(() => ({ oben: document.querySelector("#wer-body .stand-hinweis")?.textContent || "",
     rat: document.querySelector('#wer-liste details[data-kennung="rat"]')?.innerText || "" }));
   pruefen(profil, "nicht aktuelle Liste der Sitzungen: Hinweis mit dem Stand vom 18.11.2026 statt der nächsten Sitzung",
-    liste.oben.includes("gezeigt wird der Stand vom 18.11.2026, eine nächste Sitzung deshalb nicht.") && liste.rat.includes("Stand vom 18.11.2026")
+    liste.oben.includes("gezeigt wird der Stand vom 18.11.2026; deshalb fehlt die nächste Sitzung.") && liste.rat.includes("Stand vom 18.11.2026")
     && !liste.rat.includes("Nächste Sitzung:"), liste);
   await axe(s.page, profil, "Liste der Sitzungen nicht aktuell");
   await s.ctx.close();
@@ -746,6 +754,408 @@ async function bedienung(browser, profil, gremien, gebiet) {
   for (const f of Object.values(BEDIENUNG)) await f(browser, profil, gremien, gebiet);
 }
 
+// Entscheidung 23.11.2026 (2), Punkte 1–17 aus #50 (Folge-PR): je Punkt eine eigene Seite, axe in jedem neuen Zustand;
+// (15) bei 320 × 256 CSS-Pixeln (400 % Zoom), (16) auf dem iPhone 13. Punkt (1) betrifft nur die Datenbeschreibungen
+// (tests/test_wer_entscheidet_folge.py), (5) und (7) prüfen auch die angepassten Prüfungen oben.
+const SATZ_JAHRE = "Die Liste zeigt die Vorlagen aller Jahre; die Zahl oben zählt nur die 12 Monate.";
+const VORBEI = "Die bekannten Sitzungen sind vorbei; der nächste Abruf ergänzt die Liste der Sitzungen.";
+const UNBEKANNT = "Das Gremium aus dem Link ist unter „Gremien“ nicht verzeichnet; seine Kennung kann sich geändert haben. Die Liste ist nicht nach Gremium gefiltert.";
+const LADEFEHLER = "Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.";
+const LADEFEHLER_MM = "Die Fläche „Mitmachen in Köln“ konnte nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.";
+const gebietsdatei = (gebiet) => `${gebiet.split(":")[0] === "ortsteil" ? "ortsteile" : "bezirke"}/${gebiet.split(":")[1]}.json`;
+const liste = async (page, profil) => {
+  if (!(await page.evaluate(() => document.getElementById("panel-list").hidden))) return;
+  if (telefon(profil) && !(await page.evaluate(() => document.body.classList.contains("nav-open")))) await page.click("#nav-burger");
+  await page.click('.toggle[data-panel="panel-list"]');
+};
+const listenStand = (page) => page.evaluate(() => ({ count: document.getElementById("count").textContent, kennzeichen: !document.getElementById("gremium-filter").hidden
+  ? document.getElementById("gremium-filter").innerText.trim() : null, wert: document.getElementById("f-gremium").value,
+  n: document.querySelectorAll("#papers button[data-ref], #papers button[data-gref]").length, fokus: document.activeElement.id }));
+const FOLGE = {
+  // (2), (4), (8), (17): Satz am Knopf mit aria-describedby, „Tagesordnung noch nicht veröffentlicht“, Einleitung
+  // „Ämter“ ohne Untereinheiten, Abschnitte ohne Namen (keine Landmarken)
+  async detailUndAemter(browser, profil, gremien) {
+    const tag = plusTage(gremien.meta.datenstand, 5);
+    const s = await neueSeite(browser, profil, { "gremien.json": (j) => ({ ...j, gremien: j.gremien.map((g) => (g.key === "rat"
+      ? { ...g, naechste_sitzung: { date: tag, time: "17:00", web: null, source_object: "https://example.invalid/oparl/meetings/probe" }, folgende_sitzung: undefined } : g)) }) });
+    await s.page.goto(`${BASIS}?wer=gremien&darstellung=schaubild&kennung=rat`, { waitUntil: "load" });
+    await geladen(s.page);
+    await flaecheBereit(s.page);
+    const d = await s.page.evaluate(() => {
+      const b = document.querySelector("#wer-detail .wer-filter"), ziel = b && document.getElementById(b.getAttribute("aria-describedby") || "-");
+      return { satz: ziel ? ziel.textContent : null, sichtbar: Boolean(ziel && ziel.getClientRects().length), text: document.getElementById("wer-detail").innerText,
+        regionen: document.querySelectorAll("#wer-body section[aria-labelledby], #wer-body section[aria-label], #wer-body [role=region]").length,
+        h3: document.querySelectorAll("#wer-body .org-h, #wer-body h3").length };
+    });
+    pruefen(profil, "(2) Satz neben „Vorlagen dieses Gremiums“ über aria-describedby, sichtbar", d.satz === SATZ_JAHRE && d.sichtbar, d.satz);
+    pruefen(profil, "(4) nächste Sitzung ohne Link: „Tagesordnung noch nicht veröffentlicht“", d.text.includes(`${datumDe(tag)}, 17:00 Uhr · Tagesordnung noch nicht veröffentlicht`),
+      d.text.replace(/\s+/g, " ").slice(0, 300));
+    pruefen(profil, "(17) Schaubild: Abschnitte ohne Namen (keine Landmarken), Überschriften gliedern", d.regionen === 0 && d.h3 >= 3, { regionen: d.regionen, h3: d.h3 });
+    await axe(s.page, profil, "(2)(4) Detail mit Satz zum Knopf und ohne Tagesordnung");
+    await s.page.click("#tab-wer-aemter");
+    await s.page.waitForSelector("#wer-body .wer-dezernat");
+    const a = await s.page.evaluate(() => ({ einleitung: document.querySelector("#wer-body > p.hint").textContent,
+      regionen: document.querySelectorAll("#wer-body section[aria-labelledby], #wer-body section[aria-label], #wer-body [role=region]").length,
+      h3: document.querySelectorAll("#wer-body .wer-dezernat > h3").length, abschnitte: document.querySelectorAll("#wer-body .wer-dezernat").length }));
+    pruefen(profil, "(8) Einleitung „Ämter“ ohne die Untereinheiten; (17) Dezernate ohne Namen, je mit h3", a.einleitung.endsWith("Punktdienststellen, ohne die Untereinheiten der Dienststellen.")
+      && a.regionen === 0 && a.h3 === a.abschnitte && a.abschnitte >= 2, a);
+    await axe(s.page, profil, "(8)(17) Ämter");
+    pruefen(profil, "keine Skriptfehler (Folge: Detail und Ämter)", s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  },
+  // (3): alle bekannten Sitzungen vor dem Tag der Besucher:innen → ein Satz statt nichts
+  async vorbei(browser, profil, gremien) {
+    const ds = gremien.meta.datenstand;
+    const s = await neueSeite(browser, profil, { "gremien.json": (j) => ({ ...j, gremien: j.gremien.map((g) => (g.key === "rat"
+      ? { ...g, naechste_sitzung: { date: ds, time: "17:00", web: null, source_object: "https://example.invalid/oparl/meetings/a" },
+        folgende_sitzung: { date: plusTage(ds, 1), time: "17:00", web: null, source_object: "https://example.invalid/oparl/meetings/b" } } : g)) }) },
+    new Date(plusTage(ds, 3) + "T11:00:00Z"));
+    await s.page.goto(`${BASIS}?wer=gremien&darstellung=liste&kennung=rat`, { waitUntil: "load" });
+    await geladen(s.page);
+    await flaecheBereit(s.page);
+    const t = await s.page.$eval('#wer-liste details[data-kennung="rat"]', (d) => d.innerText);
+    pruefen(profil, "(3) bekannte Sitzungen vorbei: Satz statt nichts, keine nächste Sitzung", t.includes(VORBEI) && !t.includes("Nächste Sitzung:") && !t.includes("nächste Sitzung "), t.replace(/\s+/g, " ").slice(0, 300));
+    await axe(s.page, profil, "(3) bekannte Sitzungen vorbei");
+    await s.ctx.close();
+  },
+  // (6), (10): Filter über den Namen mit „Gremium (nach Namen)“ im Gebiet und in ganz Köln; Adresse gremium_filter beim
+  // Setzen, Laden (Gebiet, ganz Köln mit wer/kennung und Vorgang), Entfernen; unbekannte Kennung; kein Eintrag im Verlauf
+  async filterUndAdresse(browser, profil, gremien, gebiet) {
+    const datei = gebietsdatei(gebiet);
+    let ref = null, key = null, name = null;
+    const aenderung = { [datei]: (j) => {
+      const p = j.papers.find((x) => x.process.some((st) => st.gremium_key && st.gremium));
+      const st = p.process.find((x) => x.gremium_key && x.gremium);
+      ref = p.reference; key = st.gremium_key; name = st.gremium;
+      // erfundene Station ohne Kennung mit demselben Namen: ergibt die Gruppe „nach Namen, auch frühere Gremien“
+      const { gremium_key, ...ohne } = st;
+      p.process = [...p.process, ohne];
+      return j;
+    } };
+    let s = await neueSeite(browser, profil, aenderung);
+    await s.page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
+    await geladen(s.page);
+    await liste(s.page, profil);
+    const verlauf = await s.page.evaluate(() => history.length);
+    await s.page.evaluate(() => { document.getElementById("more-filters").open = true; });
+    await s.page.selectOption("#f-gremium", `name:${name}`);
+    await s.page.waitForTimeout(300);
+    let l = await listenStand(s.page), a = await adresse(s.page);
+    pruefen(profil, "(6)(10) Filter über den Namen im Gebiet: Kennzeichen und #count „Gremium (nach Namen)“, Adresse gremium_filter=name:…, kein Eintrag im Verlauf",
+      l.kennzeichen === `Gremium (nach Namen): ${name}` && l.count.includes(`· Gremium (nach Namen): ${name}`) && a.gremium_filter === `name:${name}` && !("gremium" in a)
+      && (await s.page.evaluate(() => history.length)) === verlauf, { l, a });
+    await axe(s.page, profil, "(6) Filter „Gremium (nach Namen)“ im Gebiet");
+    await s.page.check('input[name="scope"][value="koeln"]');
+    await s.page.waitForFunction(() => /Treffer in ganz Köln/.test(document.getElementById("count").textContent), null, { timeout: 20000 });
+    l = await listenStand(s.page);
+    pruefen(profil, "(6) derselbe Filter in ganz Köln: #count „Gremium (nach Namen)“, Kennzeichen", l.count.includes(`Treffer in ganz Köln · Gremium (nach Namen): ${name}`)
+      && l.kennzeichen === `Gremium (nach Namen): ${name}` && l.n > 0, l);
+    await axe(s.page, profil, "(6) Filter „Gremium (nach Namen)“ in ganz Köln");
+    // Kennung (im Gebiet, dort stehen die weiteren Filter): weiter „Gremium: …“; Kennzeichen mit der Tastatur entfernen →
+    // Parameter weg, Fokus auf der Liste
+    await s.page.check('input[name="scope"][value="gebiet"]');
+    await s.page.evaluate(() => { document.getElementById("more-filters").open = true; });
+    await s.page.selectOption("#f-gremium", key);
+    await s.page.waitForTimeout(300);
+    l = await listenStand(s.page);
+    a = await adresse(s.page);
+    pruefen(profil, "(6)(10) Filter über die Kennung: „Gremium: …“, Adresse gremium_filter=Kennung", l.kennzeichen === `Gremium: ${name}` && l.count.includes(`· Gremium: ${name}`)
+      && a.gremium_filter === key, { l, a });
+    await s.page.focus("#gremium-filter-aus");
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForTimeout(300);
+    l = await listenStand(s.page);
+    a = await adresse(s.page);
+    pruefen(profil, "(10) Kennzeichen mit Enter entfernt: kein gremium_filter, Fokus auf der Liste", !l.kennzeichen && !("gremium_filter" in a) && l.fokus === "list-heading", { l, a });
+    await s.ctx.close();
+    // Laden im Gebiet: Kennung aus der Adresse → Liste offen, Kennzeichen, Auswahl, #count
+    s = await neueSeite(browser, profil, aenderung);
+    await s.page.goto(`${BASIS}?gebiet=${gebiet}&gremium_filter=${encodeURIComponent(key)}`, { waitUntil: "load" });
+    await geladen(s.page);
+    await s.page.waitForTimeout(300);
+    l = await listenStand(s.page);
+    a = await adresse(s.page);
+    const offen = await s.page.evaluate(() => !document.getElementById("panel-list").hidden);
+    pruefen(profil, "(10) Laden im Gebiet mit gremium_filter: Liste offen, Kennzeichen, Auswahl und #count, Parameter bleibt", offen && l.kennzeichen === `Gremium: ${name}`
+      && l.wert === key && l.count.includes(`· Gremium: ${name}`) && a.gremium_filter === key && l.n > 0, { offen, l, a });
+    await axe(s.page, profil, "(10) Filter aus der Adresse im Gebiet");
+    // Laden in ganz Köln zusammen mit wer, kennung und dem Vorgang im Anker
+    await s.page.goto(`${BASIS}?gebiet=${gebiet}&suche=koeln&gremium_filter=${encodeURIComponent(key)}&wer=gremien&darstellung=liste&kennung=${key}#${encodeURIComponent(ref)}`, { waitUntil: "load" });
+    await geladen(s.page);
+    await flaecheBereit(s.page);
+    await s.page.waitForFunction(() => /Treffer in ganz Köln/.test(document.getElementById("count").textContent), null, { timeout: 20000 });
+    l = await listenStand(s.page);
+    a = await adresse(s.page);
+    const mehr = await s.page.evaluate(() => ({ hash: decodeURIComponent(location.hash.slice(1)), wer: !document.getElementById("panel-gremien").hidden,
+      offen: [...document.querySelectorAll("#wer-liste details[open]")].map((x) => x.dataset.kennung) }));
+    pruefen(profil, "(10) Laden in ganz Köln mit gremium_filter, wer, kennung und Vorgang: alles wiederhergestellt", l.count.includes(`Treffer in ganz Köln · Gremium: ${name}`)
+      && l.wert === key && a.gremium_filter === key && a.suche === "koeln" && a.wer === "gremien" && a.kennung === key && mehr.hash === ref && mehr.wer
+      && JSON.stringify(mehr.offen) === JSON.stringify([key]), { l, a, mehr });
+    await axe(s.page, profil, "(10) Filter, Gremien und Vorgang aus der Adresse");
+    // Name aus der Adresse und unbekannte Kennung
+    await s.page.goto(`${BASIS}?gebiet=${gebiet}&gremium_filter=${encodeURIComponent("name:" + name)}`, { waitUntil: "load" });
+    await geladen(s.page);
+    await s.page.waitForTimeout(300);
+    l = await listenStand(s.page);
+    pruefen(profil, "(10) Name aus der Adresse: „Gremium (nach Namen)“", l.kennzeichen === `Gremium (nach Namen): ${name}` && l.wert === `name:${name}`, l);
+    await s.page.goto(`${BASIS}?gebiet=${gebiet}&gremium_filter=gibt-es-nicht`, { waitUntil: "load" });
+    await geladen(s.page);
+    await s.page.waitForTimeout(500);
+    l = await listenStand(s.page);
+    a = await adresse(s.page);
+    pruefen(profil, "(10) unbekannte Kennung: kein Filter, #count sagt es, Parameter danach weg", !l.kennzeichen && l.wert === "" && l.count.endsWith(UNBEKANNT)
+      && !("gremium_filter" in a), { l, a });
+    await axe(s.page, profil, "(10) unbekannte Kennung aus der Adresse");
+    // die nächste Änderung der Filter beendet den Satz
+    await liste(s.page, profil);
+    await s.page.selectOption("#f-stand", { index: 1 });
+    await s.page.waitForTimeout(300);
+    l = await listenStand(s.page);
+    pruefen(profil, "(10) Satz zur unbekannten Kennung endet mit der nächsten Änderung der Filter", !l.count.includes("aus dem Link"), l.count);
+    pruefen(profil, "keine Skriptfehler (Folge: Filter und Adresse)", s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  },
+  // (11): 20 s ohne Antwort (Uhr der Seite vorgestellt): Satz in der Statuszeile, neuer Versuch beim nächsten Öffnen;
+  // die späte Antwort ändert nichts; ebenso „Mitmachen in Köln“
+  async wartezeit(browser, profil) {
+    const s = await neueSeite(browser, profil);
+    const gehalten = [];
+    let daten = 0, modulGremien = 0, modulMm = 0;
+    const mmAdressen = [];
+    await s.page.route((u) => u.pathname.endsWith("/data/export/koeln/gremien.json"), (r) => { daten++; if (daten === 1) gehalten.push(r); else r.continue(); });
+    await s.page.route((u) => u.pathname.endsWith("/beteiligung.js"), (r) => { modulMm++; mmAdressen.push(new URL(r.request().url()).search); if (modulMm === 1) gehalten.push(r); else r.continue(); });
+    await s.page.route((u) => u.pathname.endsWith("/gremien.js"), (r) => { modulGremien++; r.continue(); });
+    await s.page.clock.install();
+    await s.page.goto(BASIS, { waitUntil: "load" });
+    await geladen(s.page);
+    await menueOeffnen(s.page, profil, "mega-entscheiden");
+    await s.page.focus('#mega-entscheiden [data-wer="gremien"]');
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForFunction(() => document.getElementById("wer-status").textContent === "Wird geladen …" || document.querySelector("#wer-body .org, #wer-body #wer-liste"));
+    await s.page.waitForTimeout(500);
+    const vorher = (await zustand(s.page)).status;
+    await s.page.clock.fastForward(21000);
+    await s.page.waitForFunction(() => /konnten nicht geladen werden/.test(document.getElementById("wer-status").textContent), null, { timeout: 10000 });
+    const fehler1 = await s.page.evaluate(() => ({ status: document.getElementById("wer-status").textContent, inhalt: document.getElementById("wer-body").textContent.trim() }));
+    await axe(s.page, profil, "(11) Zeitüberschreitung „Gremien und Ämter“");
+    // späte Antwort des ersten Abrufs: ohne Wirkung
+    for (const r of gehalten.splice(0)) await r.continue().catch(() => {});
+    await s.page.waitForTimeout(400);
+    const spaet = (await zustand(s.page)).status;
+    await s.page.keyboard.press("Escape");
+    await menueOeffnen(s.page, profil, "mega-entscheiden");
+    await s.page.focus('#mega-entscheiden [data-wer="gremien"]');
+    await s.page.keyboard.press("Enter");
+    await flaecheBereit(s.page);
+    await s.page.waitForTimeout(400);
+    const z = await zustand(s.page);
+    pruefen(profil, "(11) gremien.json 20 s ohne Antwort: Satz in der Statuszeile, späte Antwort ohne Wirkung, neuer Versuch mit Erfolg", vorher === "Wird geladen …"
+      && fehler1.status === LADEFEHLER && fehler1.inhalt === "" && spaet === LADEFEHLER && daten === 2 && (z.schaubild || z.liste) && z.status !== LADEFEHLER, { vorher, fehler1, spaet, daten, status: z.status });
+    await s.page.keyboard.press("Escape");
+    // Mitmachen: Modul 20 s ohne Antwort
+    await menueOeffnen(s.page, profil, "mega-mitmachen");
+    await s.page.focus("#cta-mitmachen");
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForSelector("#panel-mitmachen:not([hidden])");
+    await s.page.waitForTimeout(300);
+    const mmVorher = await s.page.$eval("#bt-status", (e) => e.textContent);
+    await s.page.clock.fastForward(21000);
+    await s.page.waitForFunction(() => /konnte nicht geladen werden/.test(document.getElementById("bt-status").textContent), null, { timeout: 10000 });
+    const mmFehler = await s.page.evaluate(() => ({ status: document.getElementById("bt-status").textContent, rolle: document.getElementById("bt-status").getAttribute("role"),
+      inhalt: document.getElementById("bt-body").textContent.trim() }));
+    await axe(s.page, profil, "(11) Zeitüberschreitung „Mitmachen in Köln“");
+    for (const r of gehalten.splice(0)) await r.continue().catch(() => {});
+    await s.page.waitForTimeout(400);
+    const mmSpaet = await s.page.$eval("#bt-status", (e) => e.textContent);
+    await s.page.keyboard.press("Escape");
+    await menueOeffnen(s.page, profil, "mega-mitmachen");
+    await s.page.focus("#cta-mitmachen");
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForSelector("#panel-mitmachen:not([hidden]) #bt-bezirk", { timeout: 20000 });
+    const mmDanach = { status: await s.page.$eval("#bt-status", (e) => e.textContent), adressen: mmAdressen };
+    pruefen(profil, "(11) beteiligung.js 20 s ohne Antwort: Satz in #bt-status (role=status), späte Antwort ohne Wirkung, neuer Versuch unter ?versuch=1",
+      mmVorher === "Wird geladen …" && mmFehler.status === LADEFEHLER_MM && mmFehler.rolle === "status" && mmFehler.inhalt === "" && mmSpaet === LADEFEHLER_MM
+      && modulMm === 2 && mmDanach.status === "" && JSON.stringify(mmDanach.adressen) === '["","?versuch=1"]', { mmVorher, mmFehler, mmSpaet, modulMm, mmDanach });
+    await axe(s.page, profil, "(11) „Mitmachen in Köln“ nach dem neuen Versuch");
+    pruefen(profil, "keine Skriptfehler (Folge: Wartezeit)", s.fehler.length === 0, s.fehler);
+    void modulGremien;
+    await s.ctx.close();
+  },
+  // (12) Esc im Suchfeld: erst leeren, dann schließen; (14) kennung folgt dem zuletzt geöffneten offenen Eintrag
+  async escUndKennung(browser, profil, gremien) {
+    const s = await neueSeite(browser, profil);
+    await s.page.goto(BASIS, { waitUntil: "load" });
+    await geladen(s.page);
+    await menueOeffnen(s.page, profil, "mega-entscheiden");
+    await s.page.click('#mega-entscheiden [data-wer="gremien"]');
+    await flaecheBereit(s.page);
+    if (!(await zustand(s.page)).liste) await s.page.click('.wer-darstellung [data-darstellung="liste"]');
+    await s.page.waitForSelector("#wer-q");
+    // (14) mit der Tastatur: drei Einträge öffnen, in anderer Reihenfolge schließen
+    const keys = gremien.gremien.filter((g) => !g.aufgeloest).slice(0, 3).map((g) => g.key);
+    const umschalten = async (k) => { await s.page.focus(`#wer-liste details[data-kennung="${k}"] > summary`); await s.page.keyboard.press("Enter"); await s.page.waitForTimeout(150); return (await adresse(s.page)).kennung || null; };
+    const folge = [];
+    for (const k of keys) folge.push(await umschalten(k));
+    folge.push(await umschalten(keys[2]), await umschalten(keys[0]), await umschalten(keys[1]));
+    pruefen(profil, "(14) kennung: A, B, C öffnen → C; C zu → B; A zu → B; B zu → keine", JSON.stringify(folge) === JSON.stringify([keys[0], keys[1], keys[2], keys[1], keys[1], null]), { folge, keys });
+    await axe(s.page, profil, "(14) Liste nach Auf- und Zuklappen");
+    // (12)
+    await s.page.focus("#wer-q");
+    await s.page.keyboard.type("bez");
+    await s.page.waitForTimeout(600);
+    const gefiltert = (await zustand(s.page)).status;
+    await s.page.keyboard.press("Escape");
+    await s.page.waitForTimeout(200);
+    const e1 = await s.page.evaluate(() => ({ wert: document.getElementById("wer-q")?.value, fokus: document.activeElement.id, offen: !document.getElementById("panel-gremien").hidden,
+      status: document.getElementById("wer-status").textContent, eintraege: document.querySelectorAll("#wer-liste details").length }));
+    const alle = gremien.gremien.filter((g) => !g.aufgeloest).length;
+    pruefen(profil, "(12) erstes Esc im gefüllten Suchfeld: Feld leer, Liste und Statuszeile neu, Fläche offen, Fokus bleibt", gefiltert !== e1.status && e1.wert === "" && e1.fokus === "wer-q"
+      && e1.offen && e1.status === `${alle} Gremien` && e1.eintraege === alle, { gefiltert, e1 });
+    await axe(s.page, profil, "(12) Suchfeld nach Esc geleert");
+    await s.page.keyboard.press("Escape");
+    await s.page.waitForTimeout(250);
+    const z = await zustand(s.page), f = await fokus(s.page);
+    pruefen(profil, "(12) zweites Esc bei leerem Feld: Fläche zu, Fokus zurück", !z.offen && (telefon(profil) ? f.id === "nav-burger" : f.mega === "mega-entscheiden") && f.sichtbar, f);
+    pruefen(profil, "keine Skriptfehler (Folge: Esc und Kennung)", s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  },
+  // (13) Suchindex fehlt in ganz Köln: Liste leer, Satz in #count, „Erneut versuchen“ mit der Tastatur, Filter bleibt
+  async suchindex(browser, profil, gremien, gebiet) {
+    let aus = true, abrufe = 0;
+    const s = await neueSeite(browser, profil, { "suche.json": async (j, route) => { abrufe++; return aus ? route.fulfill({ status: 503, body: "" }) : route.continue(); } });
+    const g = gremien.gremien.find((x) => x.key === "rat");
+    await s.page.goto(`${BASIS}?gebiet=${gebiet}&suche=koeln&gremium_filter=rat`, { waitUntil: "load" });
+    await s.page.waitForFunction(() => document.getElementById("suche-erneut"), null, { timeout: 30000 });
+    await s.page.waitForTimeout(300);
+    let l = await listenStand(s.page);
+    const eintraege = await s.page.$$eval("#papers > li", (ls) => ls.map((x) => x.className));
+    pruefen(profil, "(13) Suchindex fehlt: Liste ohne alte Einträge, Satz in #count, „Erneut versuchen“, Filter und Kennzeichen bleiben",
+      l.count === "Der Suchindex konnte nicht geladen werden (HTTP 503)." && l.n === 0 && JSON.stringify(eintraege) === '["empty-list"]'
+      && l.kennzeichen === `Gremium: ${g.name}` && l.wert === "rat", { l, eintraege, abrufe });
+    await axe(s.page, profil, "(13) Suchindex fehlt");
+    aus = false;
+    await s.page.focus("#suche-erneut");
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForFunction(() => /Treffer in ganz Köln/.test(document.getElementById("count").textContent), null, { timeout: 20000 });
+    await s.page.waitForTimeout(200);
+    l = await listenStand(s.page);
+    pruefen(profil, "(13) „Erneut versuchen“ mit Enter: Liste mit Treffern, Fokus auf der Überschrift der Liste, Filter bleibt", l.n > 0 && l.fokus === "list-heading"
+      && l.count.includes(`· Gremium: ${g.name}`) && l.kennzeichen === `Gremium: ${g.name}`, l);
+    await axe(s.page, profil, "(13) Suchindex nach neuem Versuch");
+    pruefen(profil, "keine Skriptfehler (Folge: Suchindex)", s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  },
+  // (16) Telefon: Reiter, Umschalter, Suchfeld und Filter der Liste 44 px hoch mit 16 px Schrift
+  async telefonMasse(browser, profil) {
+    if (!telefon(profil)) return;
+    const s = await neueSeite(browser, profil);
+    await s.page.goto(`${BASIS}?wer=gremien&darstellung=liste`, { waitUntil: "load" });
+    await geladen(s.page);
+    await flaecheBereit(s.page);
+    const mass = (sel) => s.page.$$eval(sel, (es) => es.filter((e) => e.getClientRects().length).map((e) => [e.id || e.textContent.trim(), Math.round(e.getBoundingClientRect().height * 10) / 10, getComputedStyle(e).fontSize]));
+    const wer = await mass("#tab-wer-gremien, #tab-wer-aemter, .wer-darstellung [role=radio], #wer-q");
+    await s.page.keyboard.press("Escape");
+    await liste(s.page, profil);
+    await s.page.evaluate(() => { document.getElementById("more-filters").open = true; });
+    await s.page.waitForTimeout(200);
+    const filter = await mass("#filters input[type=search], #filters select");
+    const ok = (xs) => xs.length > 0 && xs.every(([, h, f]) => h >= 44 && f === "16px");
+    pruefen(profil, "(16) Telefon: Reiter, Umschalter und Suchfeld der Gremien 44 px hoch, 16 px Schrift", wer.length === 5 && ok(wer), wer);
+    pruefen(profil, "(16) Telefon: Stichwort und Auswahlen der Filter 44 px hoch, 16 px Schrift", filter.length >= 6 && ok(filter), filter);
+    await axe(s.page, profil, "(16) Filter der Liste auf dem Telefon");
+    await s.ctx.close();
+  },
+};
+// (15) geringe Höhe: 320 × 256 CSS-Pixel (400 % Zoom von 1280 × 1024); jede Überlagerung rollt als Ganzes, mit der
+// Tastatur, nichts abgeschnitten, kein waagrechtes Rollen; bei 1440 × 900 unverändert
+async function geringeHoehe(browser) {
+  const profil = "320x256";
+  const ctx = await browser.newContext({ viewport: { width: 320, height: 256 }, bypassCSP: true });
+  const page = await ctx.newPage();
+  const fehler = [];
+  page.on("pageerror", (e) => fehler.push(`pageerror: ${e.message}`));
+  await page.route((u) => !["127.0.0.1", "localhost"].includes(u.hostname), (r) => r.abort());
+  await page.addInitScript(() => document.addEventListener("DOMContentLoaded", () => { const h = document.getElementById("testdaten-hinweis"); if (h) h.style.display = "none"; }));
+  const messen = (id) => page.evaluate((id) => {
+    const o = document.getElementById(id), cs = getComputedStyle(o), innen = o.querySelector(":scope > .panel-body:not([hidden])");
+    const kopf = o.querySelector(".panel-head").getBoundingClientRect().top;
+    return { overflowY: cs.overflowY, rollt: o.scrollHeight > o.clientHeight + 1, quer: o.scrollWidth <= o.clientWidth + 1,
+      innenRollt: innen ? innen.scrollHeight > innen.clientHeight + 1 : null, kopf, oben: o.getBoundingClientRect().top };
+  }, id);
+  const pruefeFlaeche = async (id, oeffnen, name) => {
+    await oeffnen();
+    await page.waitForSelector(`#${id}:not([hidden])`, { timeout: 20000 });
+    await page.waitForTimeout(600);
+    const m = await messen(id);
+    // Tastatur: Fokus auf der Überschrift, Bild ab und Pfeil ab rollen die Überlagerung
+    await page.focus(`#${id} h2`);
+    await page.keyboard.press("PageDown");
+    await page.keyboard.press("ArrowDown");
+    await page.waitForTimeout(300);
+    const r = await page.evaluate((id) => { const o = document.getElementById(id); return { top: o.scrollTop, kopf: o.querySelector(".panel-head").getBoundingClientRect().top }; }, id);
+    // bis ans Ende rollen: das letzte Element steht im sichtbaren Teil
+    const ende = await page.evaluate((id) => {
+      const o = document.getElementById(id); o.scrollTop = o.scrollHeight;
+      const kids = [...o.querySelectorAll(":scope > *")].filter((k) => k.getClientRects().length);
+      const letzt = kids[kids.length - 1].getBoundingClientRect(), b = o.getBoundingClientRect();
+      return { unten: Math.round(letzt.bottom), rahmen: Math.round(b.bottom) };
+    }, id);
+    pruefen(profil, `(15) ${name}: die ganze Überlagerung rollt (Kopf rollt mit), Inhalt ohne eigenen Bildlauf, Tastatur rollt, Ende erreichbar, kein waagrechtes Rollen`,
+      m.overflowY === "auto" && m.rollt && m.quer && m.innenRollt === false && r.top > 0 && r.kopf < m.kopf && ende.unten <= ende.rahmen + 1, { m, r, ende });
+    await axe(page, profil, `(15) ${name} bei 320 × 256`);
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(200);
+  };
+  await page.goto(BASIS, { waitUntil: "load" });
+  await geladen(page);
+  const klick = (sel) => () => page.evaluate((sel) => document.querySelector(sel).click(), sel);
+  await pruefeFlaeche("panel-gremien", klick('#mega-entscheiden [data-wer="gremien"]'), "Gremien (Liste)");
+  await pruefeFlaeche("panel-gremien", klick('#mega-entscheiden [data-wer="aemter"]'), "Ämter");
+  await pruefeFlaeche("panel-auswertung", klick('[data-open-tab="stats"]'), "In Zahlen");
+  await pruefeFlaeche("panel-termine", klick("#cta-termine"), "Kommende Sitzungen");
+  await pruefeFlaeche("panel-mitmachen", klick("#cta-mitmachen"), "Mitmachen in Köln");
+  // Fenster „Über“ und „Was ist neu?“: rollen als Ganzes (vorher rollte der Text darin für sich, bei „Über“ zusätzlich
+  // das Fenster), auch mit der Tastatur
+  for (const [id, oeffner, name] of [["about", "#about-open", "„Über“"], ["neu", "[data-neu]", "„Was ist neu?“"]]) {
+    await page.evaluate((sel) => document.querySelector(sel).click(), oeffner);
+    await page.waitForSelector(`#${id}[open]`);
+    await page.waitForTimeout(300);
+    await page.focus(`#${id} .panel-head button`);
+    await page.keyboard.press("PageDown");
+    await page.waitForTimeout(300);
+    const f = await page.evaluate((id) => { const d = document.getElementById(id), a = d.querySelector(".about-body");
+      return { overflowY: getComputedStyle(d).overflowY, rollt: d.scrollHeight > d.clientHeight + 1, top: d.scrollTop, innen: a.scrollHeight > a.clientHeight + 1 }; }, id);
+    pruefen(profil, `(15) Fenster ${name} rollt als Ganzes, der Text darin nicht für sich, auch mit der Tastatur`, f.overflowY === "auto" && f.rollt && f.top > 0 && !f.innen, f);
+    await axe(page, profil, `(15) ${name} bei 320 × 256`);
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(200);
+  }
+  // normale Höhe: unverändert (Überlagerung ohne Bildlauf, Inhalt mit eigenem)
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.evaluate(() => document.querySelector('#mega-entscheiden [data-wer="gremien"]').click());
+  await flaecheBereit(page);
+  await page.waitForTimeout(300);
+  const normal = await page.evaluate(() => ({ aussen: getComputedStyle(document.getElementById("panel-gremien")).overflowY, innen: getComputedStyle(document.getElementById("wer-body")).overflowY }));
+  pruefen(profil, "(15) bei 1440 × 900 unverändert: Überlagerung overflow hidden, Inhalt rollt für sich", normal.aussen === "hidden" && normal.innen === "auto", normal);
+  pruefen(profil, "keine Skriptfehler (geringe Höhe)", fehler.length === 0, fehler);
+  await ctx.close();
+}
+// (9) Quellenzeile: „im Reiter „Ämter““ vor der Federführung, Stand und Prüfung auf der Technikseite
+async function quellenzeile(browser, profil) {
+  const s = await neueSeite(browser, profil);
+  await s.page.goto(BASIS, { waitUntil: "load" });
+  await geladen(s.page);
+  const t = await s.page.$eval("#sources", (d) => d.textContent.replace(/\s+/g, " "));
+  const i = (x) => t.indexOf(x);
+  pruefen(profil, "(9) Quellenzeile: Reiter „Ämter“ vor der Federführung, Technikseite danach, alle Angaben", i("Bezeichnungen): im Reiter „Ämter“ unter „Wer entscheidet“ und zur federführenden Dienststelle") > 0
+    && i("im Reiter „Ämter“") < i("(Stand und letzte Prüfung auf der Seite „So funktioniert der Ratsatlas“)") && !t.includes("beides auf der Seite"), t.slice(i("Dezernate"), i("Dezernate") + 420));
+  await s.ctx.close();
+}
+async function folge(browser, profil, gremien, gebiet) {
+  for (const f of Object.values(FOLGE)) await f(browser, profil, gremien, gebiet);
+  if (profil === "1440") await quellenzeile(browser, profil);
+}
+
 // Zeitleiste: vergangene Sitzung des Rates mit Hinweis „abgesagt“ aus dem Namen (erfunden) gestrichelt (#47 (3))
 async function zeitleiste(browser, profil) {
   const heute = tagInKoeln(new Date());
@@ -786,8 +1196,10 @@ async function zeitleiste(browser, profil) {
       await ganzKoeln(browser, profil, suche);
       await adresseUndDaten(browser, profil, gremien);
       await bedienung(browser, profil, gremien, gebiet);
+      await folge(browser, profil, gremien, gebiet);
       if (profil === "1440") await zeitleiste(browser, profil);
     }
+    await geringeHoehe(browser);
   } catch (e) {
     pruefen("-", "Ablauf", false, String(e && e.stack || e).slice(0, 800));
   }
