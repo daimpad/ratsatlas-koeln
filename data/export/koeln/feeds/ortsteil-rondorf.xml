@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-rondorf</id>
 <title>Ratsatlas Köln – Rondorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Rondorf</subtitle>
-<updated>2026-11-16T00:00:00Z</updated>
+<updated>2026-11-23T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-rondorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rondorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133775#beratung-2026-11-23-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „vertagt“ – 1948/2026 Anregung der Bezirksvertretung Rodenkirchen zu "Beschleunigung des Schulbauprojektes Gymnasium Rondorf"</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rondorf#1948/2026"/>
+<summary>Entscheidung am 2026-11-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135028#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
 <title>Bezirksvertretung 2 (Rodenkirchen): „Kenntnis genommen“ – 2775/2026 Beantwortung einer mündlichen Anfrage der FDP/KSG Fraktion aus der Sitzung der Bezirksvertretung Rodenkirchen vom 21.09.2026 betreffend "Zukunft der Verkehrsverbindung im Wasserwerkswäldchen in Rondorf-Hochkirchen" (2210/2026)</title>
@@ -700,12 +707,5 @@
 <updated>2024-06-20T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rondorf#1118/2024"/>
 <summary>Entscheidung am 2024-06-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120981#beratung-2024-06-17-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
-<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – 1243/2024 Sportmöglichkeiten für das neue Gymnasium Rondorf-Nordwest am Interimsstandort Eygelhovener Straße, 50996 Köln-Rodenkirchen</title>
-<updated>2024-06-17T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rondorf#1243/2024"/>
-<summary>Anhörung (BV) am 2024-06-17; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

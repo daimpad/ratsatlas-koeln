@@ -9,6 +9,13 @@
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134741#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „vertagt“ – AN/1483/2026 Lärmbelastung Luxemburger Straße</title>
+<updated>2026-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#AN/1483/2026"/>
+<summary>Antrag / Anfrage am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130327#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
 <title>Mobilitätsausschuss: „abgesetzt für diese Sitzung“ – 3497/2025 Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation Luxemburger Straße", und einer Verkehrszählung zur Aktualisierung der Datenbasis</title>
 <updated>2026-11-24T00:00:00Z</updated>
@@ -16,11 +23,39 @@
 <summary>Entscheidung am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135856#vorlage</id>
+<title>Neue Vorlage AN/1862/2026: Klimaanpassung im Stadtbezirk Lindenthal – Pilotprojekt für temporäre Begrünung („Hygroskin“) auf der Sülzburgstraße prüfen</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#AN/1862/2026"/>
+<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135480#beratung-2026-11-23-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 3065/2026 Beantwortung einer schriftlichen Anfrage (AN/1469/2026) der Ratsfraktion Volt vom 16.09.2026 zur sicheren Querung der Berrenrather Straße für die GGS Manderscheider Platz während der Interimsphase ohne Schulhof</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#3065/2026"/>
+<summary>Entscheidung am 2026-11-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134716#beratung-2026-11-23-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – AN/1469/2026 Sichere Querung der Berrenrather Straße für die GGS Manderscheider Platz während der Interimsphase ohne Schulhof</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#AN/1469/2026"/>
+<summary>Entscheidung am 2026-11-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133056#beratung-2026-11-23-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert beschlossen“ – 1590/2026 Einrichtung des Erweiterungsbaus mit zwei Einfachturnhallen für die GGS Berrenrather Str. 352, 50937 Köln-Sülz im Haushaltjahr 2027.</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#1590/2026"/>
+<summary>Entscheidung am 2026-11-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135480#vorlage</id>
 <title>Neue Vorlage 3065/2026: Beantwortung einer schriftlichen Anfrage (AN/1469/2026) der Ratsfraktion Volt vom 16.09.2026 zur sicheren Querung der Berrenrather Straße für die GGS Manderscheider Platz während der Interimsphase ohne Schulhof</title>
 <updated>2026-11-20T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#3065/2026"/>
-<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: offen</summary>
+<summary>Beantwortung einer Anfrage (Ausschuss) · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134534#vorlage</id>
@@ -223,7 +258,7 @@
 <title>Neue Vorlage AN/1483/2026: Lärmbelastung Luxemburger Straße</title>
 <updated>2026-09-21T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#AN/1483/2026"/>
-<summary>CDU Anfrage nach § 4 · federführend: unbekannt · Stand: offen</summary>
+<summary>CDU Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134734#vorlage</id>
@@ -237,7 +272,7 @@
 <title>Ausschuss Schule und Weiterbildung: „vertagt“ – AN/1469/2026 Sichere Querung der Berrenrather Straße für die GGS Manderscheider Platz während der Interimsphase ohne Schulhof</title>
 <updated>2026-09-21T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#AN/1469/2026"/>
-<summary>Entscheidung am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: offen</summary>
+<summary>Entscheidung am 2026-09-21; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134660#vorlage</id>
@@ -258,7 +293,7 @@
 <title>Neue Vorlage AN/1469/2026: Sichere Querung der Berrenrather Straße für die GGS Manderscheider Platz während der Interimsphase ohne Schulhof</title>
 <updated>2026-09-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#AN/1469/2026"/>
-<summary>Volt Anfrage nach § 4 · federführend: unbekannt · Stand: offen</summary>
+<summary>Volt Anfrage nach § 4 · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134651#vorlage</id>
@@ -672,40 +707,5 @@
 <updated>2026-02-23T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#AN/0296/2026"/>
 <summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131155#vorlage</id>
-<title>Neue Vorlage 0365/2026: Beantwortung einer schriftlichen Anfrage der CDU-Fraktion, der SPD-Fraktion und FDP-Fraktion vom 25.08.2024 betr. "Holweide - Sanierung des Wohnungsbestandes der Wohngenossenschaft Köln-Sülz eG", AN/1115/2024</title>
-<updated>2026-02-09T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#0365/2026"/>
-<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130653#beratung-2026-01-26-Bezirksvertretung%203%20%28Lindenthal%29</id>
-<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0023/2026 Grünpfeil Rhöndorfer Straße/Gottesweg</title>
-<updated>2026-01-26T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#AN/0023/2026"/>
-<summary>Entscheidung am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130649#beratung-2026-01-26-Bezirksvertretung%203%20%28Lindenthal%29</id>
-<title>Bezirksvertretung 3 (Lindenthal): „ungeändert beschlossen“ – AN/0019/2026 Berrenrather Straße: Sachstandsbericht zur Sanierung und Erneuerung der Asphaltdecke zur Gefahrenabwehr</title>
-<updated>2026-01-26T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#AN/0019/2026"/>
-<summary>Entscheidung am 2026-01-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130415#beratung-2026-01-22-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3567/2025 Sachstandsbericht der Verwaltung zur Verlagerung des Autonomen Zentrums von der Luxemburger Straße 93 in Köln-Sülz in die Liegenschaft In den Reihen 16 in Köln-Kalk</title>
-<updated>2026-01-22T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#3567/2025"/>
-<summary>Kenntnisnahme (Mitteilung) am 2026-01-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130415#beratung-2026-01-20-Liegenschaftsausschuss</id>
-<title>Liegenschaftsausschuss: „Kenntnis genommen“ – 3567/2025 Sachstandsbericht der Verwaltung zur Verlagerung des Autonomen Zentrums von der Luxemburger Straße 93 in Köln-Sülz in die Liegenschaft In den Reihen 16 in Köln-Kalk</title>
-<updated>2026-01-20T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#3567/2025"/>
-<summary>Kenntnisnahme (Mitteilung) am 2026-01-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

@@ -3,17 +3,31 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-rodenkirchen</id>
 <title>Ratsatlas Köln – Rodenkirchen</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Rodenkirchen</subtitle>
-<updated>2026-11-19T00:00:00Z</updated>
+<updated>2026-11-24T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-rodenkirchen.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135790#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „vertagt“ – AN/1834/2026 Baulicher Zustand, Restnutzungsdauer und Denkmalschutz der Rodenkirchener Rheinbrücke</title>
+<updated>2026-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#AN/1834/2026"/>
+<summary>Antrag / Anfrage am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134303#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert empfohlen“ – 2389/2026 Satzung über die abweichende Herstellung der Erschließungsanlage Birgitstraße von Weißer Straße bis Wendeanlage in Köln-Weiß</title>
+<updated>2026-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#2389/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135790#vorlage</id>
 <title>Neue Vorlage AN/1834/2026: Baulicher Zustand, Restnutzungsdauer und Denkmalschutz der Rodenkirchener Rheinbrücke</title>
 <updated>2026-11-19T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#AN/1834/2026"/>
-<summary>Gem. Anfrage nach § 4 (Rat) · federführend: unbekannt · Stand: offen</summary>
+<summary>Gem. Anfrage nach § 4 (Rat) · federführend: unbekannt · Stand: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134572#vorlage</id>
@@ -24,10 +38,10 @@
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135427#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
-<title>Bezirksvertretung 2 (Rodenkirchen): „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – 3027/2026 Einwohneranfrage - Rheinische Musikschule - Regionalschule Rodenkirchen</title>
+<title>Bezirksvertretung 2 (Rodenkirchen): „vertagt“ – 3027/2026 Einwohneranfrage - Rheinische Musikschule - Regionalschule Rodenkirchen</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#3027/2026"/>
-<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+<summary>Entscheidung am 2026-11-16; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135423#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
@@ -125,7 +139,7 @@
 <title>Neue Vorlage 3027/2026: Einwohneranfrage - Rheinische Musikschule - Regionalschule Rodenkirchen</title>
 <updated>2026-11-02T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#3027/2026"/>
-<summary>Einwohneranfrage nach § 39 Abs. 6 · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
+<summary>Einwohneranfrage nach § 39 Abs. 6 · federführend: unbekannt · Stand: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135423#vorlage</id>
@@ -335,7 +349,7 @@
 <title>Neue Vorlage 2389/2026: Satzung über die abweichende Herstellung der Erschließungsanlage Birgitstraße von Weißer Straße bis Wendeanlage in Köln-Weiß</title>
 <updated>2026-09-18T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#2389/2026"/>
-<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: offen</summary>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133482#vorlage</id>
@@ -693,19 +707,5 @@
 <updated>2026-06-08T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#AN/0888/2026"/>
 <summary>Antrag nach § 3 BV2 (FDP/KSG) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133074#vorlage</id>
-<title>Neue Vorlage 1605/2026: Niederschrift 18. Runder Tisch Radverkehr Rodenkirchen</title>
-<updated>2026-06-08T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#1605/2026"/>
-<summary>Mitteilung BV · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132600#vorlage</id>
-<title>Neue Vorlage 1273/2026: Beantwortung einer mündlichen Anfrage von Dr. Sabine Müller aus der Sitzung der Bezirksvertretung Rodenkirchen vom 27.04.2026 bezüglich der Gestaltung des Vorplatzes des Bezirksrathauses Rodenkirchen</title>
-<updated>2026-06-08T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rodenkirchen#1273/2026"/>
-<summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 </feed>

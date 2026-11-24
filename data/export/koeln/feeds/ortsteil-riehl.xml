@@ -3,11 +3,25 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-riehl</id>
 <title>Ratsatlas Köln – Riehl</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Riehl</subtitle>
-<updated>2026-11-05T00:00:00Z</updated>
+<updated>2026-11-23T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-riehl.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135875#vorlage</id>
+<title>Neue Vorlage AN/1877/2026: Sichere provisorische Führung des Fuß- und Radverkehrs an der linksrheinischen Rampe der Mülheimer Brücke</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1877/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135066#beratung-2026-11-23-Ausschuss%20Schule%20und%20Weiterbildung</id>
+<title>Ausschuss Schule und Weiterbildung: „ungeändert empfohlen“ – 2809/2026 Bildung eines Teilstandortes für das Erich-Kästner-Gymnasium, Castroper Straße 7, 50735 Köln-Nippes, in der Stammheimer Str. 101, 50735 Köln-Nippes</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#2809/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-11-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135410#beratung-2026-11-05-Bezirksvertretung%205%20%28Nippes%29</id>
 <title>Bezirksvertretung 5 (Nippes): „Kenntnis genommen“ – 3018/2026 Beantwortung einer mündlichen Anfrage von Herrn Meier aus der Sitzung der BV 5 am 24.09.2026 zur Kita "An der Schanz"</title>
@@ -695,19 +709,5 @@
 <updated>2024-11-12T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#3548/2024"/>
 <summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120245#beratung-2024-11-12-Finanzausschuss</id>
-<title>Finanzausschuss: „ungeändert beschlossen“ – 0783/2024 Unterkunft für Geflüchtete Boltensternstr. 10a, 50735 Köln-Riehl hier: Einbau von Etagenküchen und Erhöhung der Waschkapazitäten</title>
-<updated>2024-11-12T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#0783/2024"/>
-<summary>Vorberatung (Fachausschuss) am 2024-11-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123956#beratung-2024-11-07-Bezirksvertretung%205%20%28Nippes%29</id>
-<title>Bezirksvertretung 5 (Nippes): „geändert beschlossen“ – AN/1405/2024 Bushaltestelle "Seniorenzentrum Riehl", Zugang zum Unterstand erleichtern</title>
-<updated>2024-11-07T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:riehl#AN/1405/2024"/>
-<summary>Entscheidung am 2024-11-07; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-hoehenhaus</id>
 <title>Ratsatlas Köln – Höhenhaus</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Höhenhaus</subtitle>
-<updated>2026-11-09T00:00:00Z</updated>
+<updated>2026-11-24T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-hoehenhaus.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hoehenhaus"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135259#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „Kenntnis genommen“ – 2942/2026 Wiederherstellung der Straßenverbindung über die Brücke Am Flachsrosterweg in Köln-Höhenhaus</title>
+<updated>2026-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hoehenhaus#2942/2026"/>
+<summary>Kenntnisnahme (Mitteilung) am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135460#beratung-2026-11-09-Bezirksvertretung%209%20%28M%C3%BClheim%29</id>
 <title>Bezirksvertretung 9 (Mülheim): „Kenntnis genommen“ – 3051/2026 Mitteilung zur Bürgereingabe nach § 24 GO NRW - Sanierung des Mainwegs in Höhenhaus, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
@@ -700,12 +707,5 @@
 <updated>2025-03-11T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hoehenhaus#AN/0302/2025"/>
 <summary>Antrag auf eine Aktuelle Stunde nach § 5 · federführend: unbekannt · Stand: offen</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126204#vorlage</id>
-<title>Neue Vorlage AN/0296/2025: Einrichtung einer sicheren Fußgängerüberquerung am Thuleweg/ Im Weidenbruch</title>
-<updated>2025-03-11T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hoehenhaus#AN/0296/2025"/>
-<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 </feed>

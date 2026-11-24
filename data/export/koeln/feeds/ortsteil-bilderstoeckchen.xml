@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-bilderstoeckchen</id>
 <title>Ratsatlas Köln – Bilderstöckchen</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Bilderstöckchen</subtitle>
-<updated>2026-11-16T00:00:00Z</updated>
+<updated>2026-11-23T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-bilderstoeckchen.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bilderstoeckchen"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135897#vorlage</id>
+<title>Neue Vorlage AN/1890/2026: Erhalt und gemeinnützige Nutzung des ehemaligen Lokschuppens in Bilderstöckchen, Geldernstraße 23</title>
+<updated>2026-11-23T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bilderstoeckchen#AN/1890/2026"/>
+<summary>Gem. Antrag nach § 3 BV5 · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134697#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
 <title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1459/2026 Anfrage der SPD-Fraktion, betr.: Ampelanlagen an den Ein- und Ausfahrten der A57 zum Parkgürtel sowie an der Äußeren Kanalstraße</title>
@@ -700,12 +707,5 @@
 <updated>2025-03-27T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bilderstoeckchen#0897/2025"/>
 <summary>Entscheidung am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126455#beratung-2025-03-27-Bezirksvertretung%205%20%28Nippes%29</id>
-<title>Bezirksvertretung 5 (Nippes): „ungeändert beschlossen“ – 0897/2025 Beschluss über die Aufstellung eines Bebauungsplanes</title>
-<updated>2025-03-27T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bilderstoeckchen#0897/2025"/>
-<summary>Anhörung (BV) am 2025-03-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

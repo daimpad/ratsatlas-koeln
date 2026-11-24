@@ -9,11 +9,32 @@
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134741#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „vertagt“ – AN/1483/2026 Lärmbelastung Luxemburger Straße</title>
+<updated>2026-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1483/2026"/>
+<summary>Antrag / Anfrage am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134356#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „vertagt“ – AN/1290/2026 Betriebskonzept für die dritte Baustufe der Nord-Süd-Stadtbahn</title>
+<updated>2026-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1290/2026"/>
+<summary>Antrag / Anfrage am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130327#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
 <title>Mobilitätsausschuss: „abgesetzt für diese Sitzung“ – 3497/2025 Bedarfsfeststellungsbeschluss zur Durchführung einer detail- und variantenreichen Verkehrsuntersuchung auf der Luxemburger Straße, der "Mikrosimulation Luxemburger Straße", und einer Verkehrszählung zur Aktualisierung der Datenbasis</title>
 <updated>2026-11-24T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#3497/2025"/>
 <summary>Entscheidung am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135515#vorlage</id>
+<title>Neue Vorlage 3087/2026: Vergabe von Abbruchleistungen zur Niederlegung der Liegenschaft Bonner Straße 126 und eines angrenzenden teilverfüllten Kellergeschosses (AU1) in der Parkstadt Süd</title>
+<updated>2026-11-19T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#3087/2026"/>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: offen</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135407#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
@@ -230,7 +251,7 @@
 <title>Mobilitätsausschuss: „vertagt“ – AN/1290/2026 Betriebskonzept für die dritte Baustufe der Nord-Süd-Stadtbahn</title>
 <updated>2026-09-22T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1290/2026"/>
-<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: offen</summary>
+<summary>Antrag / Anfrage am 2026-09-22; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134260#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
@@ -265,7 +286,7 @@
 <title>Neue Vorlage AN/1483/2026: Lärmbelastung Luxemburger Straße</title>
 <updated>2026-09-21T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1483/2026"/>
-<summary>CDU Anfrage nach § 4 · federführend: unbekannt · Stand: offen</summary>
+<summary>CDU Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134734#vorlage</id>
@@ -370,7 +391,7 @@
 <title>Neue Vorlage AN/1290/2026: Betriebskonzept für die dritte Baustufe der Nord-Süd-Stadtbahn</title>
 <updated>2026-09-09T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1290/2026"/>
-<summary>FDP/KSG Anfrage nach § 4 · federführend: unbekannt · Stand: offen</summary>
+<summary>FDP/KSG Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134290#vorlage</id>
@@ -686,26 +707,5 @@
 <updated>2026-06-22T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#0016/2026"/>
 <summary>Beschlussvorlage Rat bzw. Hauptausschuss · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133589#vorlage</id>
-<title>Neue Vorlage AN/1099/2026: Kosten städtischer Eigenanteil Nord-Süd-Stadtbahn</title>
-<updated>2026-06-19T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1099/2026"/>
-<summary>Die Linke. Anfrage nach § 4 · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133438#vorlage</id>
-<title>Neue Vorlage AN/1013/2026: Sachstand zur Finanzierung der Generalsanierung der Sporthalle Süd in Köln-Zollstock</title>
-<updated>2026-06-19T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/1013/2026"/>
-<summary>FDP/KSG Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133281#beratung-2026-06-18-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/0928/2026 Quartiersentwicklung Kalk Süd ohne Städtebauförderung und ISEK?</title>
-<updated>2026-06-18T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-sued#AN/0928/2026"/>
-<summary>Antrag / Anfrage am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>
