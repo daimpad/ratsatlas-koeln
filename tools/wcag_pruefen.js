@@ -28,10 +28,12 @@ const run = async (p, name, rows) => {
   const rows = [], tabs = [], tabBefunde = [];
   let pruefungen = 0;
   try {
-    const p = await b.newPage({ viewport: { width: BR, height: HO }, bypassCSP: true });
+    const ctx = await b.newContext({ viewport: { width: BR, height: HO }, bypassCSP: true });
     // nur die lokale Seite: Anfragen an andere Hosts abbrechen (etwa das absolut eingebundene Symbol in 404.html,
-    // OpenStreetMap-Kacheln ohne lokale Kacheln); die Prüfung stellt keine Anfragen nach außen
-    await p.route((u) => !u.href.startsWith(B), (r) => r.abort());
+    // OpenStreetMap-Kacheln ohne lokale Kacheln); die Prüfung stellt keine Anfragen nach außen. Im Kontext statt in der
+    // Seite, damit auch neue Fenster erfasst sind; --no-proxy-server gilt nicht für die Kontexte von Playwright
+    await ctx.route((u) => !u.href.startsWith(B), (r) => r.abort());
+    const p = await ctx.newPage();
     // Hinweis „Testdaten“ (nie veröffentlicht, z-index 3000) liegt bei geringer Höhe über der Liste
     if (HO < 400) await p.addInitScript(() => document.addEventListener('DOMContentLoaded', () => { const h = document.getElementById('testdaten-hinweis'); if (h) h.style.display = 'none'; }));
     const axe = async (name) => { pruefungen++; return run(p, name, rows); };

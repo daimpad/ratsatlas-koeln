@@ -9,7 +9,8 @@
 // (WCAG 2.1 A/AA) in jedem dieser Zustände und Bildschirmfotos (Umgebungsvariable FOTOS). Abweichende Daten (Absage
 // im Namen, ausgesetzte Liste, leerer Ortsname, Vorschau) setzt die Prüfung nur im Browser über page.route ein; die
 // Dateien bleiben unverändert.
-// Nur die lokale Seite: Anfragen an andere Hosts werden abgebrochen.
+// Nur die lokale Seite: Anfragen an andere Hosts bricht jeder Browserkontext ab (ctx.route, auch aus neuen Fenstern;
+// page.route erfasst diese nicht, und --no-proxy-server gilt nicht für die Kontexte von Playwright).
 // Aufruf (Seite mit Testdaten, z. B. python3 tools/testdaten.py, Pipeline, tools/seite_bauen.py, dann
 //   python3 -m http.server --bind 127.0.0.1 8790 -d _site):
 //   NODE_PATH=<…/node_modules mit playwright> AXE_PFAD=<…/axe.min.js> FOTOS=<Ordner> node tests/browser/navigation.js http://127.0.0.1:8790/ [ergebnis.json]
@@ -57,13 +58,14 @@ const geladen = (page) => page.waitForFunction(() => {
     && document.getElementById("detail").textContent.trim();
 }, null, { timeout: 30000 });
 
+const nichtLokal = (u) => !["127.0.0.1", "localhost"].includes(u.hostname);
 async function neueSeite(browser, profil, aenderungen = {}, zeitpunkt = null) {
   const ctx = await browser.newContext({ ...PROFILE[profil], bypassCSP: true });
+  await ctx.route(nichtLokal, (r) => r.abort());
   const page = await ctx.newPage();
   const fehler = [];
   page.on("pageerror", (e) => fehler.push(`pageerror: ${e.message}`));
   page.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource|net::ERR/.test(m.text())) fehler.push(`console: ${m.text()}`); });
-  await page.route((u) => !["127.0.0.1", "localhost"].includes(u.hostname), (r) => r.abort());
   // Daten nur im Browser ändern: { "index.json": (j) => j, … } (Pfad unter data/export/koeln/)
   for (const [datei, f] of Object.entries(aenderungen)) {
     await page.route((u) => u.pathname.endsWith(`/data/export/koeln/${datei}`), async (route) => {
@@ -434,7 +436,7 @@ async function begriffe(browser, profil) {
   const browser = await chromium.launch({ args: ["--no-proxy-server"] });
   try {
     const hilfe = await browser.newPage();
-    await hilfe.route((u) => !["127.0.0.1", "localhost"].includes(u.hostname), (r) => r.abort());
+    await hilfe.context().route(nichtLokal, (r) => r.abort());
     await hilfe.goto(BASIS, { waitUntil: "load" });
     const index = await hilfe.evaluate(async () => (await fetch("data/export/koeln/index.json")).json());
     // Stadtteil mit den meisten Vorlagen (Testdaten) für Gebiet und Vorgang

@@ -134,9 +134,9 @@ def test_browser_job_bei_jedem_pull_request_und_push_auf_main_parallel():
     assert int(job["timeout-minutes"]) >= 30
 
 
-def test_actions_mit_voller_sha_wie_in_pages():
+def test_actions_mit_voller_sha_wie_in_pages_und_kacheln():
     """Jede Action in tests.yml ist über die volle SHA festgelegt; der Job „browser“ nutzt nur checkout, setup-python
-    und setup-node, mit denselben SHAs wie pages.yml und kacheln.yml."""
+    und setup-node, mit denselben SHAs wie pages.yml (checkout, setup-python) und kacheln.yml (setup-node)."""
     uses = [_wert(u) for u in re.findall(r"^\s+(?:- )?uses:\s*(.+)$", TEXT, re.M)]
     assert uses and all(SHA.match(u) for u in uses), uses
     andere = "".join((ROOT / ".github" / "workflows" / d).read_text(encoding="utf-8") for d in ("pages.yml", "kacheln.yml"))
@@ -244,6 +244,80 @@ def test_kette_server_und_alle_pruefungen_aufgerufen():
     assert wcag["run"].rstrip().endswith('exit "$fehler"')
 
 
+PRUEFUNGEN = {"Gremien und Ämter im Browser": "gremien", "Navigation im Browser": "navigation",
+              "Bedienung im Browser": "bedienung"}
+
+
+def test_befund_laesst_den_job_scheitern():
+    """Ein Befund lässt den Job scheitern (Nachprüfung 24.11.2026): kein continue-on-error (Job oder Schritt), die drei
+    Browserprüfungen mit genau ihrem Aufruf (kein „|| true“ oder Ähnliches dahinter), im Job „browser“ kein „set +e“
+    und als einziges „||“ das „|| fehler=1“ der WCAG-Schleife, die mit exit "$fehler" endet."""
+    assert "continue-on-error" not in TEXT
+    for name, job in JOBS.items():
+        assert "continue-on-error" not in _job_schluessel(job), name
+        for s in _schritte(job):
+            assert "continue-on-error" not in s, (name, s.get("name"))
+    for name, skript in PRUEFUNGEN.items():
+        assert _schritt(name)["run"] == f'node tests/browser/{skript}.js {SEITE} "$RUNNER_TEMP/{skript}.json"', name
+    runs = [s.get("run", "") for s in _browser_schritte()]
+    assert not [r for r in runs if re.search(r"set \+e|\|\|\s*(true|:)\b|;\s*true\s*$", r, re.M)]
+    oder = [z.strip() for r in runs for z in r.splitlines() if "||" in z]
+    assert len(oder) == 1 and oder[0].endswith('"$RUNNER_TEMP/tastatur_$groesse.txt" || fehler=1'), oder
+    # Schritte ohne eigene shell laufen mit „shell: bash“ als bash -eo pipefail: ein Fehler in der Kette bricht ab
+    assert re.search(r"^    defaults:\n      run:\n        shell: bash\n", _job("browser"), re.M)
+
+
+def test_abbruch_anderer_hosts_im_kontext():
+    """Die Browserprüfungen brechen Anfragen an andere Hosts im Browserkontext ab (ctx.route), nicht nur in der Seite:
+    page.route erfasst neue Fenster nicht, und --no-proxy-server gilt nicht für die Kontexte von Playwright (beides
+    nachgestellt am 24.11.2026). Jeder newContext bekommt den Abbruch vor der ersten Seite, die Hilfsseite aus
+    browser.newPage() über ihren Kontext; der Prüfbogen bricht im Kontext alles ab, was keine Datei ist."""
+    for datei in ("gremien.js", "navigation.js", "bedienung.js"):
+        text = (BROWSER / datei).read_text(encoding="utf-8")
+        assert not re.search(r"page\.route\(\(u\) => !", text), datei
+        kontexte = re.findall(r"const ctx = await browser\.newContext\([^\n]*\);\n\s*(.*)\n\s*const page = await ctx\.newPage\(\);",
+                              text)
+        assert kontexte and len(kontexte) == text.count("browser.newContext("), datei
+        assert all(k.startswith("await ctx.route(") and k.endswith(", (r) => r.abort());") for k in kontexte), (datei, kontexte)
+        for hilfe in re.findall(r"const hilfe = await browser\.newPage\(\);\n\s*(.*)", text):
+            assert hilfe == "await hilfe.context().route(nichtLokal, (r) => r.abort());", datei
+    for datei in ("gremien.js", "navigation.js"):
+        text = (BROWSER / datei).read_text(encoding="utf-8")
+        assert 'const nichtLokal = (u) => !["127.0.0.1", "localhost"].includes(u.hostname);' in text, datei
+    assert "await ctx.route((u) => !u.href.startsWith(BASIS), (r) => r.abort());" in (BROWSER / "bedienung.js").read_text(encoding="utf-8")
+    bogen = (BROWSER / "pruefbogen.js").read_text(encoding="utf-8")
+    assert bogen.count(".route('**/*', (r) => {") == bogen.count("browser.newContext(") == 2
+    assert "startsWith('file:')) return r.continue();" in bogen
+
+
+def test_wechsel_der_breite_wartet_auf_die_seite():
+    """tests/browser/gremien.js: Nach einem Wechsel der Breite warten die Prüfungen, bis die Seite ihn verarbeitet hat
+    (Maße im Fenster, zwei Bilder: die Ereignisse „change“ der Media Queries laufen vor requestAnimationFrame), beim
+    Wechsel der Darstellung auf den Neuaufbau, und lesen Fokus und Inhalt in einem Schritt. Vorher feste 300 ms und zwei
+    getrennte Messungen; unter Last lief der Neuaufbau einmal zwischen beiden (BEDIENUNG.breiteFokus, Nachprüfung
+    24.11.2026)."""
+    text = (BROWSER / "gremien.js").read_text(encoding="utf-8")
+    hilfe = re.search(r"\nconst groesseSetzen = async \(page, groesse\) => \{\n(.*?)\n\};\n", text, re.S).group(1)
+    assert "await page.setViewportSize(groesse);" in hilfe
+    assert "window.innerWidth === w && window.innerHeight === h" in hilfe
+    assert "requestAnimationFrame(() => requestAnimationFrame(" in hilfe and "waitForTimeout" not in hilfe
+    assert re.search(r"const fokusUndZustand = \(page\) => page\.evaluate\(`\(\{ f: \(\$\{FOKUS\}\)\(\), z: \(\$\{ZUSTAND\}\)\(\),", text)
+    breite = re.search(r"\n  async breiteFokus\(.*?\n  \},\n", text, re.S).group(0)
+    telefon = re.search(r"\n  async telefonbreite\(.*?\n  \},\n", text, re.S).group(0)
+    wechsel = re.search(r"\n  // Wechsel der Breite: ohne Wahl folgt.*?\n  \}\n", text, re.S).group(0)
+    for teil in (breite, telefon, wechsel):
+        # vom ersten Wechsel der Breite bis zur Prüfung: nur groesseSetzen, keine feste Wartezeit
+        ab = teil[teil.index("await groesseSetzen(s.page, "):teil.index("pruefen(profil, ")]
+        assert "setViewportSize" not in ab and "waitForTimeout" not in ab, ab[:80]
+    assert breite.count("await fokusUndZustand(s.page)") == 4 and "await fokus(" not in breite and "await zustand(" not in breite
+    assert breite.count("await groesseSetzen(") == 4
+    assert 'await warten(s.page, () => document.querySelector("#wer-body .org"));\n      const b4 = ' in breite
+    assert 'await warten(s.page, () => document.querySelector("#wer-body #wer-liste"));\n      const b3 = ' in breite
+    # geprüft wird wie bisher: Knoten, Überschrift im Detail, Eintrag der Liste, Optionsfeld „Schaubild“
+    assert ('a4[0].text === "Schaubild" && a4[0].sichtbar && a4[1]') in breite and 'a3[0].tag === "summary"' in breite
+    assert "({ z, f } = await fokusUndZustand(s.page));" in telefon
+
+
 def test_playwright_und_axe_in_festen_versionen():
     """tests/browser/package.json nennt genaue Versionen (Playwright 1.63.0 wie die Arbeitsumgebung, axe-core 4.10.2);
     package-lock.json hält sie mit Prüfsumme und Quelle; der Job installiert mit npm ci ohne Installationsskripte und
@@ -332,7 +406,10 @@ const seite = {
     throw new Error('unerwartet: ' + s.slice(0, 80));
   },
 };
-module.exports = { chromium: { launch: async () => ({ newPage: async (o) => { log(['seite', o.viewport]); return seite; }, close: async () => {} }) } };
+seite.route = async () => log(['seite-route']);
+const kontext = { route: async () => log(['kontext-route']), newPage: async () => { log(['seite']); return seite; }, close: async () => {} };
+module.exports = { chromium: { launch: async () => ({ newContext: async (o) => { log(['kontext', o.viewport]); return kontext; },
+  newPage: async () => { throw new Error('Seite ohne eigenen Kontext'); }, close: async () => {} }) } };
 """
 
 
@@ -357,10 +434,11 @@ def _wcag(tmp_path, art="sauber", **umgebung):
 
 def test_wcag_pruefen_vorgaben_ohne_umgebung(tmp_path):
     """Ohne PORT, BREITE und HOEHE wie bisher: http://127.0.0.1:8765/, 1400 × 900, kein Menü ☰, kein ausgeblendeter
-    Hinweis; ohne Befund Exit-Code 0."""
+    Hinweis; ohne Befund Exit-Code 0. Der Abbruch anderer Hosts steht im Kontext, vor der Seite (auch neue Fenster)."""
     r, log = _wcag(tmp_path)
     assert r.returncode == 0, r.stdout + r.stderr
-    assert ["seite", {"width": 1400, "height": 900}] in log
+    assert log[:3] == [["kontext", {"width": 1400, "height": 900}], ["kontext-route"], ["seite"]], log[:3]
+    assert ["seite-route"] not in log
     zeile = [e[1] for e in log if e[0] == "goto"]
     assert zeile and all(u.startswith("http://127.0.0.1:8765/") for u in zeile)
     assert ["click", "#nav-burger"] not in log and not [e for e in log if e[0] == "init"]
@@ -373,7 +451,7 @@ def test_wcag_pruefen_groesse_und_port_aus_der_umgebung(tmp_path, breite, hoehe,
     Höhe blendet sie nur #testdaten-hinweis aus."""
     r, log = _wcag(tmp_path, PORT="8790", BREITE=str(breite), HOEHE=str(hoehe))
     assert r.returncode == 0, r.stdout + r.stderr
-    assert ["seite", {"width": breite, "height": hoehe}] in log
+    assert ["kontext", {"width": breite, "height": hoehe}] in log
     assert all(e[1].startswith(SEITE) for e in log if e[0] == "goto")
     klicks = [e[1] for e in log if e[0] == "click"]
     liste = klicks.index('.toggle[data-panel="panel-list"]')

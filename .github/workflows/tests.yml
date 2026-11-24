@@ -46,8 +46,9 @@ jobs:
 
   browser:
     runs-on: ubuntu-latest
-    # Lokal (24.11.2026, offline, Chromium vorinstalliert) brauchte die Folge 436 s, davon gremien.js 200 s; Zeitlimit
-    # gut das Doppelte, mit Reserve für die Installation von Chromium und langsamere Läufer
+    # Lokal (24.11.2026, offline, Chromium vorinstalliert, 4 Kerne) brauchte die Folge 436 s, in der Nachprüfung unter
+    # Last 509 s, davon gremien.js 245 s; 30 Minuten sind die Untergrenze, das 3,5-Fache von 509 s, mit Reserve für die
+    # Installation von Chromium samt Systempaketen und langsamere Läufer
     timeout-minutes: 30
     defaults:
       run:

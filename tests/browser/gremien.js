@@ -10,7 +10,7 @@
 // Ladens, gescheiterter Import, aufgelöstes Gremium, Statuszeile, 320 px); dazu axe-core (WCAG 2.1 A/AA) in jedem neuen
 // Zustand und Bildschirmfotos (Umgebungsvariable FOTOS). Abweichende Daten setzt die Prüfung nur im Browser über
 // page.route ein (erfundene Werte); die Dateien bleiben unverändert. Nur die lokale Seite: Anfragen an andere Hosts
-// werden abgebrochen.
+// bricht jeder Browserkontext ab (ctx.route, auch aus neuen Fenstern; page.route erfasst diese nicht).
 // Aufruf (Seite mit Testdaten, z. B. python3 tools/testdaten.py, Pipeline, tools/seite_bauen.py, dann
 //   python3 -m http.server --bind 127.0.0.1 8790 -d _site):
 //   NODE_PATH=<…/node_modules mit playwright> AXE_PFAD=<…/axe.min.js> FOTOS=<Ordner> node tests/browser/gremien.js http://127.0.0.1:8790/ [ergebnis.json]
@@ -60,14 +60,17 @@ const geladen = (page) => page.waitForFunction(() => {
     && document.getElementById("detail").textContent.trim();
 }, null, { timeout: 30000 });
 const telefon = (profil) => profil === "iphone13";
+// Anfragen an andere Hosts als die lokale Seite bricht der Kontext ab (ctx.route gilt für alle Seiten und neuen Fenster
+// des Kontexts; Chromium nutzt in Kontexten von Playwright trotz --no-proxy-server den Proxy aus der Umgebung)
+const nichtLokal = (u) => !["127.0.0.1", "localhost"].includes(u.hostname);
 
 async function neueSeite(browser, profil, aenderungen = {}, zeitpunkt = null) {
   const ctx = await browser.newContext({ ...PROFILE[profil], bypassCSP: true });
+  await ctx.route(nichtLokal, (r) => r.abort());
   const page = await ctx.newPage();
   const fehler = [];
   page.on("pageerror", (e) => fehler.push(`pageerror: ${e.message}`));
   page.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource|net::ERR/.test(m.text())) fehler.push(`console: ${m.text()}`); });
-  await page.route((u) => !["127.0.0.1", "localhost"].includes(u.hostname), (r) => r.abort());
   // Daten nur im Browser ändern: { "gremien.json": (j) => j, … } (Pfad unter data/export/koeln/); eine Funktion mit
   // zweitem Argument (route) darf selbst antworten
   for (const [datei, f] of Object.entries(aenderungen)) {
@@ -91,25 +94,41 @@ async function menueOeffnen(page, profil, mega) {
   await page.waitForSelector(`#${mega}:not([hidden])`);
   await page.waitForTimeout(250);
 }
-const fokus = (page) => page.evaluate(() => {
+const FOKUS = () => {
   const e = document.activeElement, cs = getComputedStyle(e);
   return { tag: e.tagName.toLowerCase(), id: e.id, mega: e.dataset.mega || null, text: (e.getAttribute("aria-label") || e.textContent || "").trim().replace(/\s+/g, " ").slice(0, 80),
     kennung: e.dataset.kennung || e.closest("[data-kennung]")?.dataset.kennung || e.dataset.gremiumKey || null,
     sichtbar: e.getClientRects().length > 0, rahmen: cs.outlineStyle !== "none" || cs.boxShadow !== "none" };
-});
+};
+const fokus = (page) => page.evaluate(FOKUS);
 const adresse = (page) => page.evaluate(() => Object.fromEntries(new URLSearchParams(location.search)));
 const flaecheBereit = (page) => page.waitForFunction(() => {
   const b = document.getElementById("wer-body");
   return b && !document.getElementById("panel-gremien").hidden && b.querySelector(".org, #wer-liste, .wer-dezernat, p");
 }, null, { timeout: 20000 });
-const zustand = (page) => page.evaluate(() => ({
+const ZUSTAND = () => ({
   tabs: [...document.querySelectorAll("#panel-gremien [role=tab]")].map((t) => [t.dataset.werTab, t.getAttribute("aria-selected"), t.tabIndex]),
   darstellung: document.querySelector(".wer-darstellung").hidden ? null
     : [...document.querySelectorAll(".wer-darstellung [role=radio]")].map((b) => [b.dataset.darstellung, b.getAttribute("aria-checked"), b.tabIndex]),
   schaubild: Boolean(document.querySelector("#wer-body .org")), liste: Boolean(document.querySelector("#wer-body #wer-liste")),
   aemter: document.querySelectorAll("#wer-body .wer-dezernat").length, status: document.getElementById("wer-status").textContent,
   offen: !document.getElementById("panel-gremien").hidden, navOffen: document.body.classList.contains("nav-open"),
-}));
+});
+const zustand = (page) => page.evaluate(ZUSTAND);
+// Fokus, Zustand der Fläche und aufgeklappte Einträge der Liste in einem Schritt (kein Neuaufbau zwischen zwei Messungen)
+const fokusUndZustand = (page) => page.evaluate(`({ f: (${FOKUS})(), z: (${ZUSTAND})(),
+  auf: [...document.querySelectorAll("#wer-liste details[open]")].map((d) => d.dataset.kennung) })`);
+// Größe ändern und warten, bis die Seite sie verarbeitet hat: neue Maße im Fenster, danach zwei Bilder. Die Ereignisse
+// „change“ der Media Queries (site/app.js applyLayout, darin breite() in site/gremien.js) laufen im Bild vor den Rückrufen
+// von requestAnimationFrame. Vorher feste 300 ms; unter Last kam der Neuaufbau später (Nachprüfung 24.11.2026). Nur für
+// Profile ohne Telefon (dort kann die Breite im Fenster von der des Viewports abweichen)
+const groesseSetzen = async (page, groesse) => {
+  await page.setViewportSize(groesse);
+  await page.waitForFunction(([w, h]) => window.innerWidth === w && window.innerHeight === h, [groesse.width, groesse.height], { timeout: 20000 });
+  await page.evaluate(() => new Promise((ok) => requestAnimationFrame(() => requestAnimationFrame(() => ok()))));
+};
+// auf einen Zustand warten; bei Zeitablauf weiter, die folgende Prüfung meldet den Befund
+const warten = (page, f) => page.waitForFunction(f, null, { timeout: 20000 }).then(() => true, () => false);
 
 // 1–6: Menü, Fläche, Reiter, Umschalter, Schaubild, Liste, Ämter, Esc
 async function flaeche(browser, profil, gremien) {
@@ -487,14 +506,12 @@ async function adresseUndDaten(browser, profil, gremien) {
     await geladen(s.page);
     await flaecheBereit(s.page);
     const schmal = await zustand(s.page);
-    await s.page.setViewportSize({ width: 1440, height: 900 });
-    await s.page.waitForTimeout(300);
+    await groesseSetzen(s.page, { width: 1440, height: 900 });
+    await warten(s.page, () => document.querySelector("#wer-body .org"));
     const breit = await zustand(s.page);
     await s.page.click('.wer-darstellung [data-darstellung="liste"]');
-    await s.page.setViewportSize({ width: 390, height: 844 });
-    await s.page.waitForTimeout(200);
-    await s.page.setViewportSize({ width: 1440, height: 900 });
-    await s.page.waitForTimeout(300);
+    await groesseSetzen(s.page, { width: 390, height: 844 });
+    await groesseSetzen(s.page, { width: 1440, height: 900 });
     const gewaehlt = await zustand(s.page);
     pruefen(profil, "Breite: ohne Wahl bis 900 px Liste und ab 901 px Schaubild, eine ausdrückliche Wahl bleibt", schmal.liste && breit.schaubild
       && gewaehlt.liste && gewaehlt.offen && (await adresse(s.page)).darstellung === "liste", { schmal: schmal.liste, breit: breit.schaubild, gewaehlt: gewaehlt.liste });
@@ -512,7 +529,10 @@ const umfeld = (profil, gremien) => ({ breit: !telefon(profil), w: PROFILE[profi
   bvs: gremien.gremien.filter((g) => g.gruppe === "bezirksvertretung" && !g.aufgeloest), alt: gremien.gremien.find((g) => g.aufgeloest) });
 const BEDIENUNG = {
   // Wechsel der Breite ohne ausdrückliche Wahl: gleiche Darstellung → kein Neuaufbau, Fokus bleibt; andere Darstellung →
-  // Fokus auf demselben Gremium bzw. im Schaubild auf dem gewählten Optionsfeld
+  // Fokus auf demselben Gremium bzw. im Schaubild auf dem gewählten Optionsfeld. Nach jedem Wechsel wartet die Prüfung,
+  // bis die Seite ihn verarbeitet hat (groesseSetzen), beim Wechsel der Darstellung zusätzlich auf den Neuaufbau, und liest
+  // Fokus und Inhalt in einem Schritt. Vorher feste 300 ms und zwei getrennte Messungen: Unter Last lief der Neuaufbau
+  // einmal zwischen beiden (Fokus noch im Suchfeld der Liste, zugleich Schaubild; Nachprüfung 24.11.2026)
   async breiteFokus(browser, profil, gremien, gebiet) {
     const { breit, w, h, bvs } = umfeld(profil, gremien);
     let s;
@@ -523,21 +543,20 @@ const BEDIENUNG = {
       await geladen(s.page);
       await flaecheBereit(s.page);
       await s.page.focus(`#wer-body .org-node[data-kennung="${bv.key}"]`);
-      await s.page.setViewportSize({ width: anders, height: h });
-      await s.page.waitForTimeout(300);
-      const a1 = [await fokus(s.page), (await zustand(s.page)).schaubild];
+      await groesseSetzen(s.page, { width: anders, height: h });
+      const b1 = await fokusUndZustand(s.page);
       await s.page.keyboard.press("Enter");
-      await s.page.waitForTimeout(150);
-      await s.page.setViewportSize({ width: w, height: h });
-      await s.page.waitForTimeout(300);
-      const a2 = [await fokus(s.page), (await zustand(s.page)).schaubild];
-      await s.page.setViewportSize({ width: 900, height: h });
-      await s.page.waitForTimeout(300);
-      const a3 = [await fokus(s.page), (await zustand(s.page)).liste, await s.page.$$eval("#wer-liste details[open]", (ds) => ds.map((d) => d.dataset.kennung))];
+      await warten(s.page, () => document.activeElement && document.activeElement.matches("#wer-detail h3"));
+      await groesseSetzen(s.page, { width: w, height: h });
+      const b2 = await fokusUndZustand(s.page);
+      await groesseSetzen(s.page, { width: 900, height: h });
+      await warten(s.page, () => document.querySelector("#wer-body #wer-liste"));
+      const b3 = await fokusUndZustand(s.page);
       await s.page.focus("#wer-q");
-      await s.page.setViewportSize({ width: w, height: h });
-      await s.page.waitForTimeout(300);
-      const a4 = [await fokus(s.page), (await zustand(s.page)).schaubild];
+      await groesseSetzen(s.page, { width: w, height: h });
+      await warten(s.page, () => document.querySelector("#wer-body .org"));
+      const b4 = await fokusUndZustand(s.page);
+      const a1 = [b1.f, b1.z.schaubild], a2 = [b2.f, b2.z.schaubild], a3 = [b3.f, b3.z.liste, b3.auf], a4 = [b4.f, b4.z.schaubild];
       pruefen(profil, `Breite ${w} → ${anders} → ${w} → 900 → ${w}: Fokus auf Knoten, Überschrift im Detail, Eintrag der Liste, Optionsfeld „Schaubild“`,
         a1[0].kennung === bv.key && a1[0].tag === "button" && a1[1] && a2[0].tag === "h3" && a2[0].text === bv.name && a2[1]
         && a3[0].tag === "summary" && a3[0].kennung === bv.key && a3[1] && JSON.stringify(a3[2]) === JSON.stringify([bv.key])
@@ -753,10 +772,9 @@ const BEDIENUNG = {
       await s.page.click(`#wer-body .org-node[data-kennung="${bv.key}"]`);
       await s.page.waitForTimeout(200);
       const vorher = await s.page.evaluate(() => !document.getElementById("panel-detail").hidden);
-      await s.page.setViewportSize({ width: 900, height: 900 });
-      await s.page.waitForTimeout(300);
-      z = await zustand(s.page);
-      f = await fokus(s.page);
+      await groesseSetzen(s.page, { width: 900, height: 900 });
+      await warten(s.page, () => document.querySelector("#wer-body #wer-liste"));
+      ({ z, f } = await fokusUndZustand(s.page));
       const a = await adresse(s.page);
       const vorgang = await s.page.evaluate(() => !document.getElementById("panel-detail").hidden);
       pruefen(profil, "1440 → 900 neben dem Vorgang: Fläche mit dem Fokus bleibt offen (Liste, Eintrag fokussiert), Vorgang zu, Adresse mit wer und kennung",
@@ -1197,10 +1215,10 @@ const FOLGE = {
 async function geringeHoehe(browser) {
   const profil = "320x256";
   const ctx = await browser.newContext({ viewport: { width: 320, height: 256 }, bypassCSP: true });
+  await ctx.route(nichtLokal, (r) => r.abort());
   const page = await ctx.newPage();
   const fehler = [];
   page.on("pageerror", (e) => fehler.push(`pageerror: ${e.message}`));
-  await page.route((u) => !["127.0.0.1", "localhost"].includes(u.hostname), (r) => r.abort());
   await page.addInitScript(() => document.addEventListener("DOMContentLoaded", () => { const h = document.getElementById("testdaten-hinweis"); if (h) h.style.display = "none"; }));
   const messen = (id) => page.evaluate((id) => {
     const o = document.getElementById(id), cs = getComputedStyle(o), innen = o.querySelector(":scope > .panel-body:not([hidden])");
@@ -1262,7 +1280,7 @@ async function geringeHoehe(browser) {
     await page.waitForTimeout(200);
   }
   // normale Höhe: unverändert (Überlagerung ohne Bildlauf, Inhalt mit eigenem)
-  await page.setViewportSize({ width: 1440, height: 900 });
+  await groesseSetzen(page, { width: 1440, height: 900 });
   await page.evaluate(() => document.querySelector('#mega-entscheiden [data-wer="gremien"]').click());
   await flaecheBereit(page);
   await page.waitForTimeout(300);
@@ -1315,7 +1333,7 @@ async function zeitleiste(browser, profil) {
   const browser = await chromium.launch({ args: ["--no-proxy-server"] });
   try {
     const hilfe = await browser.newPage();
-    await hilfe.route((u) => !["127.0.0.1", "localhost"].includes(u.hostname), (r) => r.abort());
+    await hilfe.context().route(nichtLokal, (r) => r.abort());
     await hilfe.goto(BASIS, { waitUntil: "load" });
     const [index, gremien, suche] = await hilfe.evaluate(async () => Promise.all(["index.json", "gremien.json", "suche.json"]
       .map(async (n) => (await fetch("data/export/koeln/" + n)).json())));
