@@ -17,6 +17,7 @@ Beiträge sind willkommen. Der Ratsatlas Köln beruht auf dem Ratsatlas Bonn ([d
    python tools/testdaten.py && python -m pipeline build && python -m pipeline export
    python tools/seite_bauen.py && python -m http.server -d _site 8000
    ```
+   In GitHub Actions laufen bei jedem Pull Request zwei Jobs (`.github/workflows/tests.yml`): „test“ (pytest, Syntax aller Skripte) und „browser“ (Seite mit Testdaten, Prüfungen in `tests/browser/` und `tools/wcag_pruefen.js` mit Playwright und axe-core in festen Versionen, ohne Netz). Lokal (im Wurzelverzeichnis): `(cd tests/browser && npm ci)`, die Seite unter `http://127.0.0.1:8790/` bereitstellen, dann mit `NODE_PATH=$PWD/tests/browser/node_modules` und `AXE_PFAD=$PWD/tests/browser/node_modules/axe-core/axe.min.js` etwa `node tests/browser/gremien.js http://127.0.0.1:8790/`; die ganze Folge steht in `TECHNIK.md` („Browserprüfungen in CI“).
 4. Pull Request mit kurzer Beschreibung: was, warum, wie geprüft.
 
 ## Einstiegsaufgaben
