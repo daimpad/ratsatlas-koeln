@@ -2905,23 +2905,51 @@
   // Modul deshalb unter einer anderen Adresse. Nur mit Freigabe zur Laufzeit (index.json meta.funktionen) und
   // vorhandener Fläche (Freigabe beim Bau, data-freigabe)
   let werState = null, werReady = null, werModul = null, werImportFehler = 0;
-  // Wahl in Reiter oder Umschalter, solange gremien.js noch lädt (werVorabBedienen); werImportiert: das Modul ist
-  // geladen und bedient die Fläche selbst
-  let werVorab = {}, werImportiert = false;
+  // Solange gremien.js noch lädt (#52, Punkt 4): werOffen Reiter und Darstellung, mit denen die Fläche geöffnet wird
+  // (Aufrufe von openGremien), werVorab die Wahl in Reiter oder Umschalter (werVorabBedienen); werImportiert: das Modul
+  // ist geladen (werGeladen) und bedient die Fläche selbst; werAufrufe zählt die Aufrufe von openGremien beim Laden
+  let werVorab = {}, werOffen = {}, werImportiert = false, werGeladen = null, werAufrufe = 0;
   const werDa = () => Boolean(funktionen.gremien) && vorhanden("panel-gremien");
+  // Reiter und Umschalter während des Imports: was nach dem Laden gilt (die Wahl, sonst Reiter und Darstellung des
+  // Öffnens, sonst „Gremien“ und die Darstellung der Breite), wie render in gremien.js ohne Daten; der Umschalter nur im
+  // Reiter „Gremien“. Vorher stand bis zur ersten Wahl der Ausgangszustand aus index.html („Gremien“, „Schaubild“), auch
+  // beim Öffnen über „Ämter“ und auf dem Telefon; beim neuen Versuch nach einem gescheiterten Import die Wahl von dort
+  function werAnzeigen() {
+    const root = $("#panel-gremien"), schalter = root.querySelector(".wer-darstellung");
+    const tab = werVorab.tab || werOffen.tab || "gremien";
+    const ansicht = werVorab.darstellung || werOffen.darstellung || (MOBILE.matches ? "liste" : "schaubild");
+    root.querySelector("[role=tablist]").querySelectorAll("[role=tab][data-wer-tab]").forEach((t) => {
+      const an = t.dataset.werTab === tab;
+      t.setAttribute("aria-selected", String(an));
+      t.tabIndex = an ? 0 : -1;
+    });
+    schalter.hidden = tab !== "gremien";
+    schalter.querySelectorAll("[data-darstellung]").forEach((b) => {
+      b.setAttribute("aria-checked", String(b.dataset.darstellung === ansicht));
+      b.tabIndex = b.dataset.darstellung === ansicht ? 0 : -1;
+    });
+    $("#wer-body").setAttribute("aria-labelledby", `tab-wer-${tab}`);
+  }
   function openGremien(s) {
     if (!werDa()) return Promise.resolve(null);
     if (!werModul) { $("#wer-body").innerHTML = ""; $("#wer-status").textContent = "Wird geladen …"; }
     const modul = werImportFehler ? `./gremien.js?versuch=${werImportFehler}` : "./gremien.js";
-    if (!werReady && !werImportiert) werVorab = {};   // jeder Versuch des Imports beginnt ohne Wahl
+    if (!werReady) { werVorab = {}; werOffen = {}; }   // jeder Versuch beginnt ohne Wahl, auch der neue nach einem Fehler
+    // ein späteres Öffnen geht einer früheren Wahl vor, wie nach dem Laden die Aufrufe von show
+    if (!werModul && s && ["gremien", "aemter"].includes(s.tab)) { werOffen.tab = s.tab; delete werVorab.tab; }
+    if (!werModul && s && ["schaubild", "liste"].includes(s.darstellung)) { werOffen.darstellung = s.darstellung; delete werVorab.darstellung; }
+    if (!werImportiert) werAnzeigen();
+    // beim Laden der Daten zeigt gremien.js das Öffnen sofort, und es geht einer früheren Wahl vor (wie hier beim Import)
+    else if (!werModul && werReady && werGeladen && s) werGeladen.oeffnen(s);
     werReady ||= mitFrist(import(modul)).catch((e) => { werImportFehler++; throw e; }).then(async (m) => {
       werImportiert = true;
+      werGeladen = m;
       const vorab = werVorab;
       werVorab = {};
       await m.init({
         basis: BONN, heute, zeitDatum, lizenz: lizenzOeffentlich, telefon: () => MOBILE.matches, wartezeit: WARTEZEIT,
         onState(st) { werState = st; syncUrl(); },
-        filterGremium: gremiumFiltern, vorab,
+        filterGremium: gremiumFiltern, vorab, offen: werOffen,
       });
       werModul = m;
       return m;
@@ -2931,39 +2959,28 @@
       $("#wer-status").textContent = "Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.";
       return null;
     });   // beim nächsten Öffnen erneut
-    return werReady.then((m) => { if (m) m.show(s); return m; });
+    // Öffnen während des Ladens (Import oder Daten): danach zeigt nur das letzte (werAufrufe). Vorher folgten alle
+    // Aufrufe nacheinander, und nach Schließen und erneutem Öffnen verbrauchte das erste Öffnen eine danach getroffene
+    // Wahl, das zweite setzte seinen Reiter darüber; ist das Modul samt Daten geladen, zeigt wie bisher jedes
+    const nr = werModul ? 0 : ++werAufrufe;
+    return werReady.then((m) => { if (m && (!nr || nr === werAufrufe)) m.show(s); return m; });
   }
   // Klick oder Taste an Reiter und Umschalter, während gremien.js noch lädt (#52, Punkt 4): Die Bedienung der Fläche
   // meldet erst das Modul an (bedienen in init); bis dahin ging eine solche Wahl verloren. Jetzt nimmt app.js sie an
-  // (Klick, Enter und Leertaste, ←/→, Pos1 und Ende, am Umschalter auch ↑/↓), zeigt sie an Reitern und Umschalter wie
-  // render in gremien.js ohne Daten (gewählter Reiter bzw. Optionsfeld mit tabindex 0, Fokus wandert mit) und gibt sie
-  // init mit; dort gilt sie wie eine Wahl während des Ladens der Daten (beimLaden) vor dem Reiter bzw. der Darstellung,
-  // mit denen die Fläche geöffnet wurde. Ein Klick auf den schon angezeigten Reiter gilt als Wahl (vor dem Laden zeigt
-  // die Fläche nicht unbedingt den Reiter, mit dem sie geöffnet wurde). Nur während eines laufenden Imports, auch beim
-  // neuen Versuch nach einem gescheiterten; ist das Modul geladen, bedient nur noch es die Fläche
+  // (Klick, Enter und Leertaste, ←/→, Pos1 und Ende, am Umschalter auch ↑/↓), zeigt sie an Reitern und Umschalter
+  // (werAnzeigen; gewählter Reiter bzw. Optionsfeld mit tabindex 0, Fokus wandert mit) und gibt sie init mit; dort gilt
+  // sie wie eine Wahl während des Ladens der Daten (beimLaden) vor dem Reiter bzw. der Darstellung, mit denen die Fläche
+  // geöffnet wurde. Ein Klick auf den schon angezeigten Reiter ändert nichts (wie in gremien.js). Nur während eines
+  // laufenden Imports, auch beim neuen Versuch nach einem gescheiterten; ist das Modul geladen, bedient nur noch es die
+  // Fläche
   function werVorabBedienen() {
     const root = $("#panel-gremien"), tabliste = root.querySelector("[role=tablist]"), schalter = root.querySelector(".wer-darstellung");
     const aktiv = () => Boolean(werReady) && !werImportiert;
-    const reiter = (tab) => {
-      werVorab.tab = tab;
-      tabliste.querySelectorAll("[role=tab][data-wer-tab]").forEach((t) => {
-        const an = t.dataset.werTab === tab;
-        t.setAttribute("aria-selected", String(an));
-        t.tabIndex = an ? 0 : -1;
-      });
-      schalter.hidden = tab !== "gremien";
-      $("#wer-body").setAttribute("aria-labelledby", `tab-wer-${tab}`);
-    };
-    const darstellung = (wert) => {
-      werVorab.darstellung = wert;
-      schalter.querySelectorAll("[data-darstellung]").forEach((b) => {
-        b.setAttribute("aria-checked", String(b.dataset.darstellung === wert));
-        b.tabIndex = b.dataset.darstellung === wert ? 0 : -1;
-      });
-    };
+    const reiter = (tab) => { werVorab.tab = tab; werAnzeigen(); };
+    const darstellung = (wert) => { werVorab.darstellung = wert; werAnzeigen(); };
     tabliste.addEventListener("click", (e) => {
       const t = aktiv() && e.target.closest("[role=tab][data-wer-tab]");
-      if (t) reiter(t.dataset.werTab);
+      if (t && t.getAttribute("aria-selected") !== "true") reiter(t.dataset.werTab);
     });
     tabliste.addEventListener("keydown", (e) => {
       if (!aktiv()) return;

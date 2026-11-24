@@ -833,7 +833,9 @@ def _oeffnen(ablauf):
         + _teil(APP, r"^  let werState = null, werReady = null, werModul = null, werImportFehler = 0;\n.*?^  function openGremien\(s\) \{\n.*?\n  \}\n")
     assert teil.count("import(modul)") == 1
     code = """
-const E = { "#wer-body": { innerHTML: "alt" }, "#wer-status": { textContent: "" } };
+// Reiter und Umschalter ohne Inhalt (app.js werAnzeigen setzt dort die Anzeige während des Imports)
+const E = { "#wer-body": { innerHTML: "alt", setAttribute() {} }, "#wer-status": { textContent: "" },
+  "#panel-gremien": { querySelector: () => ({ hidden: false, querySelectorAll: () => [] }) } };
 const $ = (s) => E[s];
 let funktionen = { gremien: true };
 const vorhanden = () => true, BONN = "data/", heute = () => "2026-11-23", zeitDatum = (s) => s, lizenzOeffentlich = (t) => t;

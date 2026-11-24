@@ -616,7 +616,8 @@ async function pr5MenueTab(browser, profil) {
 // Leiste; Tab aus dem Suchfeld führt durch alle sichtbaren Bedienelemente in ihrer Reihenfolge, Tab nach dem letzten
 // schließt es und führt auf das Element der Leiste nach dem Suchfeld („Gebiet“, auf dem Telefon „Menü“), Umschalt+Tab
 // vom ersten zurück ins Suchfeld (offen) und aus dem Suchfeld hinaus (zu); ein Schnellfilter behält nach Enter den Fokus;
-// nach Esc führt Tab direkt weiter. Auf 58ecdff schloss schon Tab aus dem Suchfeld das Menü (nichts darin erreichbar)
+// nach Esc führt Tab direkt weiter. Auf ca73ff5 (vor den Durchsichten) schloss schon Tab aus dem Suchfeld das Menü
+// (nichts darin erreichbar)
 async function pr5Suchmenue(browser, profil) {
   const s = await neueSeite(browser, profil);
   const page = s.page;
@@ -888,8 +889,9 @@ async function pr5Treffer(browser, profil, gebiet) {
   await s.ctx.close();
   // nach der Prüfung von Pull Request 5: Wird während des Ladens (Gebietsdatei 3 s verzögert) im Suchfeld der Leiste
   // oder in „Stichwort“ getippt, bleibt der Fokus dort; ist das Feld danach nicht mehr zu sehen (bei 1024 px schließt der
-  // Vorgang die Liste), geht er auf den Titel des Vorgangs. Auf 58ecdff sprang er mitten im Tippen auf den Titel. Nur
-  // breite Bildschirme: Auf dem Telefon setzt select den Fokus wie schon vor Pull Request 5 selbst auf den Titel
+  // Vorgang die Liste), geht er auf den Titel des Vorgangs. Auf ca73ff5 (vor den Durchsichten) sprang er mitten im
+  // Tippen auf den Titel. Nur breite Bildschirme: Auf dem Telefon setzt select den Fokus wie schon vor Pull Request 5
+  // selbst auf den Titel
   if (mobil(profil)) return;
   for (const feld of ["#q", "#f-text"]) {
     s = await neueSeite(browser, profil);

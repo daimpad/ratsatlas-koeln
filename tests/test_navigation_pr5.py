@@ -3,9 +3,10 @@ Ankündigung, Fokus nach dem Ende der Tour, Tab aus einem offenen Menü, Beschri
 mit 16 px Schrift auf dem Telefon, Fokus nach dem Öffnen eines Eintrags der Liste, Blätter bei geringer Höhe, „Selbst
 mitwirken“ ohne benannten Bereich. Nach der Prüfung des Pull Requests: Suchmenü mit der Tastatur, Schnellfilter
 behalten den Fokus, Textabstände nach WCAG 1.4.12 und Platzhalter, Fokus eines Suchtreffers nur, wenn er frei ist. Aus
-#52, Punkt 4: Wahl in „Gremien und Ämter“, während gremien.js noch lädt. Geprüft ohne Browser (node mit nachgebildetem
-Dokument, Python); die Prüfung im Browser steht in tests/browser/navigation.js (Punkt 4 in tests/browser/gremien.js,
-BEDIENUNG.wahlBeimImport). Alle Daten sind erfunden; keine Anfragen nach außen."""
+#52, Punkt 4: Wahl in „Gremien und Ämter“, während gremien.js noch lädt, und Anzeige während des Ladens. Geprüft ohne
+Browser (node mit nachgebildetem Dokument, Python); die Prüfung im Browser steht in tests/browser/navigation.js (Punkt 4
+in tests/browser/gremien.js, BEDIENUNG.wahlBeimImport und anzeigeBeimLaden). Alle Daten sind erfunden; keine Anfragen
+nach außen."""
 import json
 import re
 from pathlib import Path
@@ -409,9 +410,76 @@ ergebnis = M.werZustand();
     assert r == {"tab": "aemter", "darstellung": None, "kennung": None}
 
 
+def test_init_zeigt_beim_laden_den_reiter_des_oeffnens():
+    """Durchsicht zu #52, Punkt 4: init zeigt schon während des Ladens der Daten Reiter und Darstellung, mit denen app.js
+    die Fläche öffnet (c.offen), ohne sie als Wahl zu zählen; eine Wahl aus dem Import (c.vorab) geht vor. Vorher stand
+    bis zur ersten Wahl der Ausgangszustand („Gremien“ mit Umschalter), auch beim Öffnen über „Ämter“."""
+    from test_wer_entscheidet_seite import _steuerung
+    r = _steuerung("""
+const laden = M.init({ ...ctx, offen: { tab: "aemter" } });
+const beim = { reiter: gewaehlt(), schalter: schalter.hidden, bezug: body.attrs["aria-labelledby"], inhalt: body.gesetzt };
+feuern("tablist", "click", tabs[1]);
+await freigeben(); await laden;
+M.show({}); M.show({ tab: "aemter" });
+ergebnis = { beim, danach: M.werZustand(), aemter: body.innerHTML.includes("wer-dezernat") };
+""")
+    assert r == {"beim": {"reiter": "aemter", "schalter": True, "bezug": "tab-wer-aemter", "inhalt": 0},
+                 "danach": {"tab": "aemter", "darstellung": None, "kennung": None}, "aemter": True}
+    r = _steuerung("""
+telefon = true;
+const laden = M.init({ ...ctx, offen: { tab: "gremien" } });
+const beim = { reiter: gewaehlt(), radios: radios.map((b) => [b.attrs["aria-checked"], b.tabIndex]), schalter: schalter.hidden };
+await freigeben(); await laden;
+M.show({}); M.show({ tab: "gremien" });
+ergebnis = { beim, danach: M.werZustand(), liste: body.innerHTML.includes('id="wer-liste"') };
+""")
+    assert r == {"beim": {"reiter": "gremien", "radios": [["false", -1], ["true", 0]], "schalter": False},
+                 "danach": {"tab": "gremien", "darstellung": None, "kennung": None}, "liste": True}
+    r = _steuerung("""
+const laden = M.init({ ...ctx, offen: { tab: "aemter" }, vorab: { tab: "gremien", darstellung: "liste" } });
+const beim = gewaehlt();
+await freigeben(); await laden;
+M.show({}); M.show({ tab: "aemter" });
+ergebnis = { beim, danach: M.werZustand() };
+""")
+    assert r == {"beim": "gremien", "danach": {"tab": "gremien", "darstellung": "liste", "kennung": None}}
+
+
+
+def test_oeffnen_waehrend_des_ladens_der_daten():
+    """Durchsicht zu #52, Punkt 4: Öffnet app.js die Fläche erneut, während die Daten noch laden (oeffnen), zeigen
+    Reiter und Umschalter sofort den Reiter des Öffnens, und er geht einer früheren Wahl vor; eine Wahl danach gilt nach
+    dem Laden (show einmal, für das letzte Öffnen). Vorher zeigte die Fläche bis zum Laden die frühere Wahl, und eine
+    Wahl nach erneutem Öffnen ging verloren. Mit geladenen Daten keine Wirkung."""
+    from test_wer_entscheidet_seite import _steuerung
+    r = _steuerung("""
+const laden = M.init({ ...ctx, offen: { tab: "gremien" } });
+feuern("tablist", "click", tabs[1]);
+M.oeffnen({ tab: "gremien" });
+const beim = { reiter: gewaehlt(), schalter: schalter.hidden };
+await freigeben(); await laden;
+M.show({ tab: "gremien" });
+ergebnis = { beim, danach: M.werZustand().tab };
+""")
+    assert r == {"beim": {"reiter": "gremien", "schalter": False}, "danach": "gremien"}
+    r = _steuerung("""
+const laden = M.init({ ...ctx, offen: { tab: "aemter" } });
+M.oeffnen({ tab: "aemter" });
+feuern("tablist", "click", tabs[0]);
+feuern("schalter", "click", radios[1]);
+const beim = gewaehlt();
+await freigeben(); await laden;
+M.show({ tab: "aemter" });
+const danach = M.werZustand();
+M.oeffnen({ tab: "aemter" });
+ergebnis = { beim, danach, geladen: M.werZustand().tab };
+""")
+    assert r == {"beim": "gremien", "danach": {"tab": "gremien", "darstellung": "liste", "kennung": None}, "geladen": "gremien"}
+
 def _vorab(ablauf):
     """openGremien und werVorabBedienen aus app.js mit nachgebildetem Dokument (Reiter, Umschalter, Inhalt) und
-    Importen von Hand (`importe` je Aufruf mit ja/nein, Adressen in `adressen`, init merkt sich c.vorab)."""
+    Importen von Hand (`importe` je Aufruf mit ja/nein, Adressen in `adressen`, init merkt sich c.vorab in `inits` und
+    c.offen in `offene`)."""
     teil = _teil(APP, r"^  const WARTEZEIT = .*?;\n") + _teil(APP, r"^  const mitFrist = .*?\n  \}\);\n") \
         + _teil(APP, r"^  let werState = null, werReady = null, werModul = null, werImportFehler = 0;\n.*?^  function openGremien\(s\) \{\n.*?\n  \}\n") \
         + _teil(APP, r"^  function werVorabBedienen\(\) \{\n.*?\n  \}\n") \
@@ -436,7 +504,8 @@ let funktionen = { gremien: true };
 const vorhanden = () => true, BONN = "data/", heute = () => "2026-11-24", zeitDatum = (s) => s, lizenzOeffentlich = (t) => t;
 const MOBILE = { matches: false }, syncUrl = () => {}, gremiumFiltern = () => {};
 const adressen = [], importe = [], inits = [], gezeigt = [];
-const modul = (nr) => ({ show: (s) => gezeigt.push([nr, s]), async init(c) { inits.push([nr, c.vorab]); } });
+const offene = [];
+const modul = (nr) => ({ show: (s) => gezeigt.push([nr, s]), async init(c) { inits.push([nr, c.vorab]); offene.push([nr, c.offen]); } });
 const importieren = (u) => { adressen.push(u); return new Promise((ja, nein) => importe.push({ ja, nein })); };
 const feuern = (name, typ, e) => (handler[name + ":" + typ] || []).forEach((f) => f({ preventDefault() { this.verhindert = true; }, ...e }));
 const taste = (name, key) => { const e = { key, verhindert: false, preventDefault() { e.verhindert = true; } }; (handler[name + ":keydown"] || []).forEach((f) => f(e)); return e.verhindert; };
@@ -455,11 +524,14 @@ const warten = () => new Promise((r) => setTimeout(r, 5));
 
 def test_wahl_waehrend_des_imports_gilt_nach_dem_laden():
     """#52, Punkt 4: Klick oder Taste an Reiter und Umschalter, während gremien.js noch lädt, gingen verloren (die
-    Bedienung meldet erst init an). app.js nimmt sie an, zeigt sie sofort (aria-selected bzw. aria-checked, tabindex,
-    Umschalter nur im Reiter „Gremien“, Fokus wandert mit Pfeil, Pos1 und Ende) und gibt sie init mit; ein Klick auf den
-    schon angezeigten Reiter gilt als Wahl. Ist das Modul geladen, wirkt nur noch es."""
+    Bedienung meldet erst init an). app.js zeigt beim Öffnen schon den Reiter des Öffnens (über „Ämter“ ohne Umschalter;
+    Durchsicht), nimmt die Wahl an, zeigt sie sofort (aria-selected bzw. aria-checked, tabindex, Umschalter nur im
+    Reiter „Gremien“, Fokus wandert mit Pfeil, Pos1 und Ende) und gibt sie init mit, dazu den Reiter des Öffnens
+    (offen); ein Klick auf den schon angezeigten Reiter ändert nichts. Nach dem Laden zeigt nur das letzte Öffnen
+    während des Imports (show einmal). Ist das Modul geladen, wirkt nur noch es."""
     r = _vorab("""
   openGremien(); const offen = openGremien({ tab: "aemter" });
+  const nachOeffnen = bild();
   feuern("tablist", "click", { target: tabs[1] });
   const nachAemter = bild();
   feuern("tablist", "click", { target: tabs[0] });
@@ -470,15 +542,16 @@ def test_wahl_waehrend_des_imports_gilt_nach_dem_laden():
   feuern("tablist", "click", { target: tabs[1] });
   const geladen = [taste("tablist", "ArrowRight"), taste("schalter", "Home"), bild()];
   openGremien({ tab: "gremien" }); await warten();
-  ergebnis = { nachAemter, nachTasten, pfeil, inits, gezeigt, geladen, adressen };
+  ergebnis = { nachOeffnen, nachAemter, nachTasten, pfeil, inits, offene, gezeigt, geladen, adressen };
 """)
-    assert r["nachAemter"] == {"tabs": [["false", -1], ["true", 0]], "radios": [["true", 0], ["false", -1]], "schalter": False,
-                               "body": "tab-wer-aemter", "fokus": None}
+    aemter = {"tabs": [["false", -1], ["true", 0]], "radios": [["true", 0], ["false", -1]], "schalter": False,
+              "body": "tab-wer-aemter", "fokus": None}
+    assert r["nachOeffnen"] == aemter and r["nachAemter"] == aemter
     assert r["pfeil"] is True
     assert r["nachTasten"] == {"tabs": [["true", 0], ["false", -1]], "radios": [["false", -1], ["true", 0]], "schalter": True,
                                "body": "tab-wer-gremien", "fokus": "radio-liste"}
-    assert r["inits"] == [[1, {"tab": "gremien", "darstellung": "liste"}]]
-    assert r["gezeigt"] == [[1, None], [1, {"tab": "aemter"}], [1, {"tab": "gremien"}]]
+    assert r["inits"] == [[1, {"tab": "gremien", "darstellung": "liste"}]] and r["offene"] == [[1, {"tab": "aemter"}]]
+    assert r["gezeigt"] == [[1, {"tab": "aemter"}], [1, {"tab": "gremien"}]]
     # nach dem Import: keine Wirkung mehr aus app.js (Tasten nicht abgefangen, Anzeige wie vorher)
     assert r["geladen"] == [False, False, r["nachTasten"]] and r["adressen"] == ["./gremien.js"]
 
@@ -486,7 +559,8 @@ def test_wahl_waehrend_des_imports_gilt_nach_dem_laden():
 def test_wahl_beim_neuen_versuch_nach_gescheitertem_import():
     """#52, Punkt 4, neuer Versuch: Eine Wahl während eines gescheiterten Imports gilt nicht für den nächsten Versuch
     (wie init beimLaden zurücksetzt), ohne laufenden Import (Satz zum Ladefehler) nimmt app.js keine Wahl an; beim
-    neuen Versuch unter ?versuch=1 gilt die Wahl wieder."""
+    neuen Versuch unter ?versuch=1 gilt die Wahl wieder. Reiter und Umschalter zeigen beim neuen Versuch wieder den
+    Zustand des Öffnens (Durchsicht: vorher stand dort noch die Wahl aus dem gescheiterten Versuch)."""
     r = _vorab("""
   const erst = openGremien({ tab: "gremien" });
   feuern("schalter", "click", { target: radios[1] });
@@ -495,12 +569,77 @@ def test_wahl_beim_neuen_versuch_nach_gescheitertem_import():
   const fehler = E["#wer-status"].textContent;
   const ohneImport = [taste("tablist", "End"), bild().tabs];
   const zweit = openGremien({ tab: "gremien" });
+  const beimZweiten = bild();
   const mitImport = taste("tablist", "End");
   importe[1].ja(modul(2));
   await zweit;
-  ergebnis = { fehler, ohneImport, mitImport, inits, adressen };
+  ergebnis = { fehler, ohneImport, beimZweiten, mitImport, inits, adressen };
 """)
     assert r["fehler"].startswith("Die Angaben zu Gremien und Ämtern konnten nicht geladen werden.")
     assert r["ohneImport"] == [False, [["true", 0], ["false", -1]]] and r["mitImport"] is True
+    assert r["beimZweiten"] == {"tabs": [["true", 0], ["false", -1]], "radios": [["true", 0], ["false", -1]], "schalter": True,
+                                "body": "tab-wer-gremien", "fokus": None}
     assert r["inits"] == [[2, {"tab": "aemter"}]]
     assert r["adressen"] == ["./gremien.js", "./gremien.js?versuch=1"]
+
+
+
+def test_app_oeffnet_beim_laden_der_daten_ueber_gremien_js():
+    """Durchsicht zu #52, Punkt 4: Ist das Modul importiert und laden die Daten noch, gibt openGremien das Öffnen an
+    gremien.js weiter (oeffnen) und zeigt nach dem Laden nur das letzte Öffnen; mit geladenen Daten wie bisher jedes."""
+    r = _vorab("""
+  let fertig;
+  const geoeffnet = [];
+  const m = { show: (s) => gezeigt.push([1, s]), oeffnen: (s) => geoeffnet.push(s), init: () => new Promise((ok) => { fertig = ok; }) };
+  openGremien(); openGremien({ tab: "gremien" });
+  importe[0].ja(m); await warten();
+  openGremien(); const zweit = openGremien({ tab: "aemter" });
+  const anzeige = bild().tabs;
+  fertig(); await zweit;
+  openGremien(); await openGremien({ tab: "gremien" });
+  ergebnis = { geoeffnet, anzeige, gezeigt };
+""")
+    assert r == {"geoeffnet": [{"tab": "aemter"}], "anzeige": [["true", 0], ["false", -1]],
+                 "gezeigt": [[1, {"tab": "aemter"}], [1, None], [1, {"tab": "gremien"}]]}
+
+def test_oeffnen_waehrend_des_imports_zeigt_was_danach_gilt():
+    """Durchsicht zu #52, Punkt 4: Während des Imports zeigen Reiter und Umschalter, was nach dem Laden gilt. Ein
+    späteres Öffnen geht einer früheren Wahl des Reiters vor; eine Wahl nach erneutem Öffnen gilt (nach dem Laden zeigt
+    nur das letzte Öffnen; vorher verbrauchte das erste die Wahl, das zweite setzte seinen Reiter darüber). Auf dem
+    Telefon zeigt der Umschalter die Liste, wie gremien.js ohne Wahl. Die Darstellung aus der Adresse gilt wie eine
+    Vorgabe."""
+    r = _vorab("""
+  openGremien(); openGremien({ tab: "gremien" });
+  feuern("tablist", "click", { target: tabs[1] });
+  const gewaehlt = bild();
+  openGremien(); const zweit = openGremien({ tab: "gremien" });
+  const wieder = bild();
+  importe[0].ja(modul(1));
+  await zweit;
+  ergebnis = { gewaehlt, wieder, inits, offene, gezeigt };
+""")
+    assert r["gewaehlt"]["tabs"] == [["false", -1], ["true", 0]] and r["gewaehlt"]["schalter"] is False
+    assert r["wieder"]["tabs"] == [["true", 0], ["false", -1]] and r["wieder"]["schalter"] is True
+    assert r["inits"] == [[1, {}]] and r["offene"] == [[1, {"tab": "gremien"}]] and r["gezeigt"] == [[1, {"tab": "gremien"}]]
+    r = _vorab("""
+  openGremien(); openGremien({ tab: "aemter" });
+  openGremien(); const zweit = openGremien({ tab: "aemter" });
+  feuern("tablist", "click", { target: tabs[0] });
+  feuern("schalter", "click", { target: radios[1] });
+  const beim = bild();
+  importe[0].ja(modul(1));
+  await zweit;
+  ergebnis = { beim, inits, gezeigt };
+""")
+    assert r["beim"]["tabs"] == [["true", 0], ["false", -1]] and r["beim"]["radios"] == [["false", -1], ["true", 0]]
+    assert r["inits"] == [[1, {"tab": "gremien", "darstellung": "liste"}]] and r["gezeigt"] == [[1, {"tab": "aemter"}]]
+    r = _vorab("""
+  MOBILE.matches = true;
+  openGremien(); openGremien({ tab: "gremien" });
+  const telefon = bild().radios;
+  MOBILE.matches = false;
+  openGremien(); openGremien({ tab: "gremien", darstellung: "liste", kennung: "rat", zeigen: true });
+  const adresse = bild().radios;
+  ergebnis = { telefon, adresse, adressen };
+""")
+    assert r == {"telefon": [["false", -1], ["true", 0]], "adresse": [["false", -1], ["true", 0]], "adressen": ["./gremien.js"]}
