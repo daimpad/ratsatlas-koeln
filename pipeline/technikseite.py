@@ -203,7 +203,7 @@ def versionen():
     python = sorted(set(re.findall(r'python-version:\s*"([0-9.]+)"', wf)))
     pakete = [re.split(r"[<>=~ ]", z.strip(), maxsplit=1)[0] for z in
               (config.ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines() if z.strip() and not z.startswith("#")]
-    pj = config.ROOT / "tests" / "browser" / "package.json"   # in Köln (noch) keine Browser-Tests mit eigener package.json
+    pj = config.ROOT / "tests" / "browser" / "package.json"   # Playwright und axe-core für den Job „browser“ (tests.yml)
     browser = json.loads(pj.read_text(encoding="utf-8"))["dependencies"] if pj.exists() else {}
     leaflet = re.search(r'version="([0-9.]+)"', (config.ROOT / "site" / "vendor" / "leaflet" / "leaflet.min.js")
                         .read_text(encoding="utf-8"))

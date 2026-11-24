@@ -1,7 +1,8 @@
 """Präzisionsprüfung der Geokodierung (Entscheidung 16.11.2026 (5)): Auswertung tools/praezision.py, Prüfregeln
 explore/PRUEFREGELN_geokodierung.md und Prüfbogen tools/pruefbogen.html (lokal, ohne Netz). Nur erfundene Stichproben
 („[Testdaten]“, example.invalid); keine Anfrage ins Netz. Der Kern des Prüfbogens (Lesen, Urteile, Schreiben) läuft mit
-node, die Prüfung im Browser (tests/browser/pruefbogen.js) nur lokal mit RATSATLAS_BROWSER=1."""
+node, die Prüfung im Browser (tests/browser/pruefbogen.js) nur mit RATSATLAS_BROWSER=1 (lokal und im Job „browser“ von
+.github/workflows/tests.yml)."""
 import base64
 import csv
 import hashlib
@@ -516,10 +517,11 @@ def test_pruefregeln_gleich_in_markdown_und_pruefbogen():
     assert "zeigt genauer, wie verlässlich die Karte ist" in md and "macht die Karte verlässlicher" not in md
 
 
-# --- Prüfbogen im Browser (nur lokal) ------------------------------------------------------------------------------
+# --- Prüfbogen im Browser (lokal und im Job „browser“) -------------------------------------------------------------
 
 @pytest.mark.skipif(os.environ.get("RATSATLAS_BROWSER") != "1",
-                    reason="nur lokal mit RATSATLAS_BROWSER=1 (Chromium für Playwright in CI nicht zugesichert)")
+                    reason="nur mit RATSATLAS_BROWSER=1 (lokal und im Job „browser“; im Job „test“ ist Chromium nicht "
+                           "installiert)")
 def test_pruefbogen_im_browser(tmp_path):
     """Prüfbogen über file:// mit Playwright (tests/browser/pruefbogen.js): keine Anfrage ins Netz, keine Verstöße gegen
     die CSP, Beurteilen nur mit der Tastatur, gespeicherte Datei unterscheidet sich nur in Urteil und Anmerkung."""

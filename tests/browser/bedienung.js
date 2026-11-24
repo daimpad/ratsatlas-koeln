@@ -5,7 +5,8 @@
 // zweier Fassungen der Seite mit denselben Daten). Prüfung r20: Profile „desktop-csp“ und „telefon-csp“ ohne
 // bypassCSP (wie die veröffentlichte Seite): Verstöße gegen die Content-Security-Policy in den üblichen Abläufen und auf
 // den Unterseiten, axe per page.evaluate, auf dem Telefon das Blatt „Karte“ über „Los geht's“.
-// Nur die lokale Seite: Anfragen an andere Hosts werden abgebrochen.
+// Nur die lokale Seite: Anfragen außerhalb der Basisadresse bricht jeder Browserkontext ab (ctx.route, auch aus neuen
+// Fenstern; page.route erfasst diese nicht, und --no-proxy-server gilt nicht für die Kontexte von Playwright).
 // Aufruf (Seite mit Testdaten, z. B. python3 tools/testdaten.py, Pipeline, tools/seite_bauen.py, dann
 //   python3 -m http.server --bind 127.0.0.1 8790 -d _site):
 //   NODE_PATH=<…/node_modules mit playwright> AXE_PFAD=<…/axe.min.js> node tests/browser/bedienung.js http://127.0.0.1:8790/ [ergebnis.json]
@@ -51,6 +52,7 @@ const aktuell = (page) => page.$$eval("#papers button[data-gref], #papers button
 async function neueSeite(browser, profil, mitCsp = false) {
   // ohne CSP-Prüfung axe als Skript einfügen (bypassCSP); mit CSP-Prüfung wie die veröffentlichte Seite
   const ctx = await browser.newContext({ ...PROFILE[profil], bypassCSP: !mitCsp });
+  await ctx.route((u) => !u.href.startsWith(BASIS), (r) => r.abort());
   const page = await ctx.newPage();
   const fehler = [];
   if (mitCsp) await page.addInitScript(() => {
@@ -59,7 +61,6 @@ async function neueSeite(browser, profil, mitCsp = false) {
   });
   page.on("pageerror", (e) => fehler.push(`pageerror: ${e.message}`));
   page.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource|net::ERR/.test(m.text())) fehler.push(`console: ${m.text()}`); });
-  await page.route((u) => !u.href.startsWith(BASIS), (r) => r.abort());
   // Aufrufe an der Gruppe der Kartenpunkte zählen (Leaflet.markercluster; die Seite legt die Gruppe nach dem Laden an)
   await page.addInitScript(() => {
     document.addEventListener("DOMContentLoaded", () => {
