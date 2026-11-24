@@ -7,7 +7,8 @@
 // kennung, unbekannte Kennung), Ladefehler mit neuem Versuch, nicht aktuelle Liste der Sitzungen (Stand als Kölner Tag),
 // folgende Sitzung nach einer vergangenen nächsten (E2), Wechsel der Breite, Bonner ?prozesse= ohne „soll“, Zeitleiste
 // mit vergangener Absage laut Sitzungsnamen; Nachprüfung Bedienung (Fokus beim Wechsel der Breite, Wahl während des
-// Ladens, gescheiterter Import, aufgelöstes Gremium, Statuszeile, 320 px); dazu axe-core (WCAG 2.1 A/AA) in jedem neuen
+// Ladens, Wahl während des Imports von gremien.js auch beim neuen Versuch (#52, Punkt 4), gescheiterter Import,
+// aufgelöstes Gremium, Statuszeile, 320 px); dazu axe-core (WCAG 2.1 A/AA) in jedem neuen
 // Zustand und Bildschirmfotos (Umgebungsvariable FOTOS). Abweichende Daten setzt die Prüfung nur im Browser über
 // page.route ein (erfundene Werte); die Dateien bleiben unverändert. Nur die lokale Seite: Anfragen an andere Hosts
 // bricht jeder Browserkontext ab (ctx.route, auch aus neuen Fenstern; page.route erfasst diese nicht).
@@ -629,6 +630,69 @@ const BEDIENUNG = {
       && z.tabs[1][1] === "true" && z.tabs[1][2] === 0 && z.tabs[0][2] === -1 && f.id === "tab-wer-aemter" && (await adresse(s.page)).wer === "aemter",
       { bereit, anfragen, beim, tabs: z.tabs, f });
     await s.ctx.close();
+  },
+  // Wahl, während gremien.js noch lädt (#52, Punkt 4): Vor dem Import gibt es keine Bedienung des Moduls; app.js nimmt
+  // die Wahl an und gibt sie init mit. Die Prüfung hält das Modul im Browserkontext zurück (ctx.route), bis die Wahl
+  // getroffen ist (statt einer festen Verzögerung; die Anfrage zeigt, dass der Import läuft), und gibt es dann frei.
+  // Geöffnet wird die Fläche jeweils über die Karte „Ämter“, gewählt der Reiter „Gremien“ und das Optionsfeld, das die
+  // Breite nicht vorgibt (Liste ab 901 px, Schaubild auf dem Telefon). (a) mit Klicks beim ersten Import; (b) mit der
+  // Tastatur beim neuen Versuch nach einem gescheiterten Import (404, Satz in der Statuszeile, Esc, ?versuch=1): Tab bis
+  // zum Reiter, → → (über „Ämter“ zurück), Tab zum Umschalter, Ende bzw. Pos1. Danach je: Reiter, Inhalt,
+  // aria-selected bzw. aria-checked mit tabindex, Adresse (wer, darstellung), Fokus in der Fläche (nicht <body>), axe
+  async wahlBeimImport(browser, profil, gremien, gebiet) {
+    const ziel = telefon(profil) ? "schaubild" : "liste", name = { schaubild: "Schaubild", liste: "Liste" }[ziel];
+    const stand = (page) => page.evaluate(`({ ...(${ZUSTAND})(), f: (${FOKUS})(), drin: document.getElementById("panel-gremien").contains(document.activeElement),
+      url: Object.fromEntries(new URLSearchParams(location.search)) })`);
+    const erwartet = (z) => JSON.stringify(z.tabs) === JSON.stringify([["gremien", "true", 0], ["aemter", "false", -1]])
+      && JSON.stringify(z.darstellung) === JSON.stringify(["schaubild", "liste"].map((d) => [d, String(d === ziel), d === ziel ? 0 : -1]));
+    for (const art of ["Klick", "Tastatur"]) {
+      const s = await neueSeite(browser, profil);
+      const adressen = [];
+      let angefragt, freigeben;
+      const anfrage = new Promise((ok) => { angefragt = ok; }), freigabe = new Promise((ok) => { freigeben = ok; });
+      await s.ctx.route((u) => u.pathname.endsWith("/gremien.js"), async (r) => {
+        adressen.push(new URL(r.request().url()).search);
+        if (art === "Tastatur" && adressen.length === 1) return r.fulfill({ status: 404, body: "" });
+        angefragt();
+        await freigabe;
+        return r.continue();
+      });
+      await s.page.goto(BASIS, { waitUntil: "load" });
+      await geladen(s.page);
+      let fehlschlag = null;
+      if (art === "Tastatur") {
+        await menueOeffnen(s.page, profil, "mega-entscheiden");
+        await s.page.click('#mega-entscheiden [data-wer="aemter"]');
+        fehlschlag = await warten(s.page, () => /konnten nicht geladen werden/.test(document.getElementById("wer-status").textContent));
+        await s.page.keyboard.press("Escape");
+      }
+      await menueOeffnen(s.page, profil, "mega-entscheiden");
+      await s.page.click('#mega-entscheiden [data-wer="aemter"]');
+      const bereit = await Promise.race([anfrage.then(() => true), new Promise((ok) => setTimeout(() => ok(false), 20000))]);
+      const tasten = [];
+      if (art === "Klick") {
+        await s.page.click("#tab-wer-gremien");
+        await s.page.click(`.wer-darstellung [data-darstellung="${ziel}"]`);
+      } else {
+        for (let i = 0; i < 4 && !(await s.page.evaluate(() => document.activeElement.matches("[role=tab]"))); i++) { await s.page.keyboard.press("Tab"); tasten.push("Tab"); }
+        // Ende wählt „Liste“, Pos1 „Schaubild“ (auch wenn das Optionsfeld vor dem Laden schon so steht)
+        for (const k of ["ArrowRight", "ArrowRight", "Tab", ziel === "liste" ? "End" : "Home"]) { await s.page.keyboard.press(k); tasten.push(k); }
+      }
+      const beim = await stand(s.page);
+      if (art === "Klick") await axe(s.page, profil, "Wahl während gremien.js lädt (Klick)");
+      freigeben();
+      const da = bereit && await warten(s.page, ziel === "liste" ? () => document.querySelector("#wer-body #wer-liste") : () => document.querySelector("#wer-body .org"));
+      const z = await stand(s.page);
+      pruefen(profil, `Wahl während gremien.js lädt (${art}${art === "Tastatur" ? ", neuer Versuch nach gescheitertem Import" : ""}): Reiter „Gremien“ und „${name}“ sofort an Reiter und Umschalter, nach dem Laden gezeigt, Adresse wer=gremien und darstellung=${ziel}, Fokus in der Fläche`,
+        bereit && da && beim.status === "Wird geladen …" && erwartet(beim) && erwartet(z) && (ziel === "liste" ? z.liste && !z.schaubild : z.schaubild && !z.liste)
+        && z.url.wer === "gremien" && z.url.darstellung === ziel && z.f.tag !== "body" && z.f.sichtbar && z.drin
+        && (art === "Klick" ? JSON.stringify(adressen) === JSON.stringify([""]) : fehlschlag && JSON.stringify(adressen) === JSON.stringify(["", "?versuch=1"]) && z.f.text === name),
+        { bereit, da, fehlschlag, adressen, tasten, beim: { status: beim.status, tabs: beim.tabs, darstellung: beim.darstellung }, tabs: z.tabs, darstellung: z.darstellung,
+          adresse: { wer: z.url.wer, darstellung: z.url.darstellung }, fokus: z.f, drin: z.drin });
+      await axe(s.page, profil, `Wahl während gremien.js lädt (${art}), nach dem Laden`);
+      pruefen(profil, `keine Skriptfehler (Wahl während gremien.js lädt, ${art})`, s.fehler.length === 0, s.fehler);
+      await s.ctx.close();
+    }
   },
   // aufgelöstes Gremium aus der Adresse: ohne Darstellung die Liste mit „frühere Gremien zeigen“; mit „Schaubild“ ein
   // Hinweis auf die Liste statt seiner Angaben

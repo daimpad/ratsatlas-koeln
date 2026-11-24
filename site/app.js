@@ -2905,16 +2905,23 @@
   // Modul deshalb unter einer anderen Adresse. Nur mit Freigabe zur Laufzeit (index.json meta.funktionen) und
   // vorhandener Fläche (Freigabe beim Bau, data-freigabe)
   let werState = null, werReady = null, werModul = null, werImportFehler = 0;
+  // Wahl in Reiter oder Umschalter, solange gremien.js noch lädt (werVorabBedienen); werImportiert: das Modul ist
+  // geladen und bedient die Fläche selbst
+  let werVorab = {}, werImportiert = false;
   const werDa = () => Boolean(funktionen.gremien) && vorhanden("panel-gremien");
   function openGremien(s) {
     if (!werDa()) return Promise.resolve(null);
     if (!werModul) { $("#wer-body").innerHTML = ""; $("#wer-status").textContent = "Wird geladen …"; }
     const modul = werImportFehler ? `./gremien.js?versuch=${werImportFehler}` : "./gremien.js";
+    if (!werReady && !werImportiert) werVorab = {};   // jeder Versuch des Imports beginnt ohne Wahl
     werReady ||= mitFrist(import(modul)).catch((e) => { werImportFehler++; throw e; }).then(async (m) => {
+      werImportiert = true;
+      const vorab = werVorab;
+      werVorab = {};
       await m.init({
         basis: BONN, heute, zeitDatum, lizenz: lizenzOeffentlich, telefon: () => MOBILE.matches, wartezeit: WARTEZEIT,
         onState(st) { werState = st; syncUrl(); },
-        filterGremium: gremiumFiltern,
+        filterGremium: gremiumFiltern, vorab,
       });
       werModul = m;
       return m;
@@ -2926,6 +2933,64 @@
     });   // beim nächsten Öffnen erneut
     return werReady.then((m) => { if (m) m.show(s); return m; });
   }
+  // Klick oder Taste an Reiter und Umschalter, während gremien.js noch lädt (#52, Punkt 4): Die Bedienung der Fläche
+  // meldet erst das Modul an (bedienen in init); bis dahin ging eine solche Wahl verloren. Jetzt nimmt app.js sie an
+  // (Klick, Enter und Leertaste, ←/→, Pos1 und Ende, am Umschalter auch ↑/↓), zeigt sie an Reitern und Umschalter wie
+  // render in gremien.js ohne Daten (gewählter Reiter bzw. Optionsfeld mit tabindex 0, Fokus wandert mit) und gibt sie
+  // init mit; dort gilt sie wie eine Wahl während des Ladens der Daten (beimLaden) vor dem Reiter bzw. der Darstellung,
+  // mit denen die Fläche geöffnet wurde. Ein Klick auf den schon angezeigten Reiter gilt als Wahl (vor dem Laden zeigt
+  // die Fläche nicht unbedingt den Reiter, mit dem sie geöffnet wurde). Nur während eines laufenden Imports, auch beim
+  // neuen Versuch nach einem gescheiterten; ist das Modul geladen, bedient nur noch es die Fläche
+  function werVorabBedienen() {
+    const root = $("#panel-gremien"), tabliste = root.querySelector("[role=tablist]"), schalter = root.querySelector(".wer-darstellung");
+    const aktiv = () => Boolean(werReady) && !werImportiert;
+    const reiter = (tab) => {
+      werVorab.tab = tab;
+      tabliste.querySelectorAll("[role=tab][data-wer-tab]").forEach((t) => {
+        const an = t.dataset.werTab === tab;
+        t.setAttribute("aria-selected", String(an));
+        t.tabIndex = an ? 0 : -1;
+      });
+      schalter.hidden = tab !== "gremien";
+      $("#wer-body").setAttribute("aria-labelledby", `tab-wer-${tab}`);
+    };
+    const darstellung = (wert) => {
+      werVorab.darstellung = wert;
+      schalter.querySelectorAll("[data-darstellung]").forEach((b) => {
+        b.setAttribute("aria-checked", String(b.dataset.darstellung === wert));
+        b.tabIndex = b.dataset.darstellung === wert ? 0 : -1;
+      });
+    };
+    tabliste.addEventListener("click", (e) => {
+      const t = aktiv() && e.target.closest("[role=tab][data-wer-tab]");
+      if (t) reiter(t.dataset.werTab);
+    });
+    tabliste.addEventListener("keydown", (e) => {
+      if (!aktiv()) return;
+      const tabs = [...tabliste.querySelectorAll("[role=tab][data-wer-tab]")].filter((t) => !t.hidden);
+      const i = Math.max(0, tabs.findIndex((t) => t.getAttribute("aria-selected") === "true"));
+      const ziel = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i - 1 + tabs.length) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
+      if (ziel === undefined) return;
+      e.preventDefault();
+      reiter(tabs[ziel].dataset.werTab);
+      tabs[ziel].focus();
+    });
+    schalter.addEventListener("click", (e) => {
+      const b = aktiv() && e.target.closest("[data-darstellung]");
+      if (b) darstellung(b.dataset.darstellung);
+    });
+    schalter.addEventListener("keydown", (e) => {
+      if (!aktiv()) return;
+      const knoepfe = [...schalter.querySelectorAll("[data-darstellung]")], n = knoepfe.length;
+      const i = Math.max(0, knoepfe.findIndex((b) => b.getAttribute("aria-checked") === "true"));
+      const ziel = { ArrowRight: (i + 1) % n, ArrowDown: (i + 1) % n, ArrowLeft: (i - 1 + n) % n, ArrowUp: (i - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
+      if (ziel === undefined) return;
+      e.preventDefault();
+      darstellung(knoepfe[ziel].dataset.darstellung);
+      knoepfe[ziel].focus();
+    });
+  }
+  if (vorhanden("panel-gremien")) werVorabBedienen();
 
   // --- Strukturdaten der Stadtstatistik (site/strukturdaten/strukturdaten.js) -----------------------------
   // Kontext-Panel in der Liste und im Vorgang, Flächenfarben mit Tabelle (Datenvertrag „Strukturdaten“ unter

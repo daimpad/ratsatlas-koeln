@@ -210,8 +210,8 @@ const zustand = { tab: "gremien", darstellung: null, kennung: null, frueher: fal
 // Kennungen der aufgeklappten Einträge der Liste in der Reihenfolge des Öffnens (23.11.2026 (2) (14)): `kennung` folgt
 // dem zuletzt geöffneten Eintrag, der noch offen ist; wird er zugeklappt, dem davor geöffneten; ohne offenen Eintrag keine
 let geoeffnet = [];
-// Wahl in Reiter oder Umschalter, während die Daten noch laden: Sie gilt nach dem Laden vor dem Reiter bzw. der
-// Darstellung, mit denen die Fläche geöffnet wurde
+// Wahl in Reiter oder Umschalter, während die Daten noch laden (oder schon während des Imports dieses Moduls, über
+// app.js und init): Sie gilt nach dem Laden vor dem Reiter bzw. der Darstellung, mit denen die Fläche geöffnet wurde
 const beimLaden = { tab: false, darstellung: false };
 // ohne ausdrückliche Wahl (Umschalter oder Adresse) Schaubild ab 901 px, Liste bis 900 px (F9)
 const darstellung = () => zustand.darstellung || (ctx.telefon() ? "liste" : "schaubild");
@@ -362,6 +362,12 @@ export async function init(c) {
   status = root.querySelector("#wer-status");
   if (!bedient) { bedienen(); bedient = true; }
   beimLaden.tab = beimLaden.darstellung = false;
+  // Wahl, während das Modul selbst noch lud (app.js werVorabBedienen, #52 Punkt 4): Sie gilt wie eine Wahl während des
+  // Ladens der Daten; Reiter und Umschalter zeigen sie schon (render ohne Daten)
+  const vorab = c.vorab || {};
+  if (REITER.includes(vorab.tab)) { zustand.tab = vorab.tab; zustand.q = ""; beimLaden.tab = true; }
+  if (DARSTELLUNGEN.includes(vorab.darstellung)) { zustand.darstellung = vorab.darstellung; beimLaden.darstellung = true; }
+  if (beimLaden.tab || beimLaden.darstellung) render();
   const laden = (name) => {
     const ab = new AbortController(), uhr = setTimeout(() => ab.abort(), ctx.wartezeit ?? WARTEZEIT);
     return fetch(ctx.basis + name, { signal: ab.signal }).then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
