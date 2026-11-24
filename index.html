@@ -369,7 +369,7 @@
         </form>
         <!-- Kennzeichen des Filters „Gremium“ (Entscheidung 23.11.2026 (1) (E10)): in ganz Köln die einzige Anzeige des
              Filters, im Gebiet zusätzlich zu „Weitere Filter“; app.js gremiumKennzeichen -->
-        <p class="filter-kennzeichen" id="gremium-filter" hidden><span>Gremium: <strong id="gremium-filter-name"></strong></span>
+        <p class="filter-kennzeichen" id="gremium-filter" hidden><span><span id="gremium-filter-art">Gremium</span>: <strong id="gremium-filter-name"></strong></span>
           <button type="button" class="icon-btn" id="gremium-filter-aus" aria-label="Filter „Gremium“ entfernen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></p>
         <p class="count" id="count" aria-live="polite"></p>
         <p class="subscribe" id="subscribe" hidden></p>
@@ -439,7 +439,8 @@
         <h2 id="mitmachen-heading" tabindex="-1">Mitmachen in Köln</h2>
         <button type="button" class="icon-btn" data-close="panel-mitmachen" aria-label="Mitmachen in Köln schließen"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
       </div>
-      <div class="panel-body" id="bt-body"><p class="hint" aria-live="polite">Wird geladen …</p></div>
+      <p class="hint bt-status" id="bt-status" role="status"></p>
+      <div class="panel-body" id="bt-body"></div>
     </section>
 
     <!-- Gremien und Ämter unter „Wer entscheidet“ (Entscheidungen 21.11.2026 (2) und 23.11.2026 (1); site/gremien.js, erst
@@ -468,7 +469,7 @@
     <details class="map-legend map-sources" id="sources">
       <summary>Quellen, Lizenzen und Datenstand</summary>
       <div>
-        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, der Hauskoordinate) · Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln; dl-de/by 2.0) · Dezernate und Dienststellen aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt Köln: zur federführenden Dienststelle nur für Vorlagen aus der Zeit vom Stand des Plans bis zu seiner letzten Prüfung, beides auf der Seite „So funktioniert der Ratsatlas“<span data-funktion="gremien">, und im Reiter „Ämter“ unter „Wer entscheidet“</span> (im Plan keine Lizenz angegeben, übernommen sind nur Nummern und Bezeichnungen)<span data-funktion="gremien"> · Paragrafen der Ausschüsse aus der Zuständigkeitsordnung der Stadt Köln vom 02.06.2026 (zugeordnet über den Namen des Ausschusses; nur der Paragraf, kein Text; Lizenz nicht geklärt)</span> · Kennung der federführenden Dienststelle aus der ersten Seite der Dokumente im Ratsinformationssystem, erst wenn ihr Abruf freigegeben ist (nur die Kennung, kein Text; Lizenz der Dokumente in Klärung mit der Stadt)<span data-funktion="kontext"> · Kennzahlen und Kartenebenen: Quelle, Lizenz und Stand je Ebene in der Legende</span> · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
+        <p>OParl-API der Stadt Köln (Ratsinformationssystem; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen) · Stadtteile, Stadtbezirke, Straßen und Adressen der Stadt Köln (dl-de/zero 2.0; Adressen nur zur Bestimmung des Stadtteils und, bei Vorlagen der Verwaltung sowie politischen Anträgen und Anfragen, der Hauskoordinate) · Bebauungspläne aus der Schnittstelle „Bauleitplanung in NRW“ (MHKBD NRW / IT.NRW, Datengrundlage Stadt Köln; dl-de/by 2.0) · Dezernate und Dienststellen aus dem Geschäfts- und Dezernatsverteilungsplan der Stadt Köln (im Plan keine Lizenz angegeben, übernommen sind nur Nummern und Bezeichnungen):<span data-funktion="gremien"> im Reiter „Ämter“ unter „Wer entscheidet“ und</span> zur federführenden Dienststelle, nur für Vorlagen aus der Zeit vom Stand des Plans bis zu seiner letzten Prüfung (Stand und letzte Prüfung auf der Seite „So funktioniert der Ratsatlas“)<span data-funktion="gremien"> · Paragrafen der Ausschüsse aus der Zuständigkeitsordnung der Stadt Köln vom 02.06.2026 (zugeordnet über den Namen des Ausschusses; nur der Paragraf, kein Text; Lizenz nicht geklärt)</span> · Kennung der federführenden Dienststelle aus der ersten Seite der Dokumente im Ratsinformationssystem, erst wenn ihr Abruf freigegeben ist (nur die Kennung, kein Text; Lizenz der Dokumente in Klärung mit der Stadt)<span data-funktion="kontext"> · Kennzahlen und Kartenebenen: Quelle, Lizenz und Stand je Ebene in der Legende</span> · Kartenhintergrund © OpenStreetMap-Mitwirkende (ODbL 1.0). Datenquelle: Stadt Köln – offenedaten-koeln.de. Abgeleitete Angaben sind gekennzeichnet.</p>
         <p id="stand"></p>
         <p><a href="data/LICENSE-DATA.md">Lizenzen der Daten</a> · <a href="data/export/koeln/termine.ics">Sitzungskalender (iCalendar)</a> · <a href="gebiete/">Übersicht nach Gebiet</a> · <a href="https://github.com/daimpad/ratsatlas-koeln" target="_blank" rel="noopener">Quellcode</a> · <a href="https://nozilla.de/impressum/" target="_blank" rel="noopener">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="mailto:contact@nozilla.de">Kontakt</a></p>
       </div>

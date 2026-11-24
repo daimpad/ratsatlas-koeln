@@ -427,9 +427,12 @@ body.detail-closed #timeline-wrap { right: 16px; }
 /* Gremien und Ämter unter „Wer entscheidet“ (site/gremien.js; Entscheidung 23.11.2026 (1)): dieselben Bausteine wie
    die Bonner Fläche „Prozesse“, dazu Statuszeile, Liste der Ämter und eine Spalte, wenn eine Gruppe fehlt */
 .wer-darstellung[hidden] { display: none; }
-/* Statuszeile: in der Flex-Spalte der Überlagerung nicht schrumpfen (sonst läge ihr Text über dem Inhalt) */
-.wer-status { margin: 0 18px 6px; flex: none; }
-.wer-status:empty { margin: 0; }
+/* Statuszeile: in der Flex-Spalte der Überlagerung nicht schrumpfen (sonst läge ihr Text über dem Inhalt); dieselbe
+   Zeile hat „Mitmachen in Köln“ (#bt-status, Ladehinweis und Ladefehler; Entscheidung 23.11.2026 (2) (11)) */
+.wer-status, .bt-status { margin: 0 18px 6px; flex: none; }
+.wer-status:empty, .bt-status:empty { margin: 0; }
+/* Satz neben „Vorlagen dieses Gremiums“: alle Jahre, die Zahl oben 12 Monate (23.11.2026 (2) (2)) */
+.wer-jahre { align-self: center; }
 .org-cols.wer-eine-spalte { grid-template-columns: 1fr; }
 .wer-org .org-top .org-rat { max-width: 100%; }
 .wer-quelle, .wer-quellen { overflow-wrap: anywhere; }
@@ -440,6 +443,9 @@ body.detail-closed #timeline-wrap { right: 16px; }
 .tabs { display: flex; gap: 4px; margin: 0 18px 8px; padding: 3px; border-radius: 999px; background: rgba(15, 15, 20, 0.05); align-self: flex-start; }
 .tabs [role=tab] { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; border-radius: 999px; padding: 7px 14px; cursor: pointer; font-weight: 500; font-size: 13px; }
 .tabs [role=tab][aria-selected="true"] { background: #fff; color: var(--accent-ink); box-shadow: 0 1px 3px rgba(15, 15, 20, 0.12); }
+/* Reiter direkt in einer Überlagerung („In Zahlen“): bei 320 px Breite umbrechen statt rechts abgeschnitten zu werden
+   (gefunden bei der Prüfung von 23.11.2026 (2) (15)) */
+.overlay > .tabs { flex-wrap: wrap; max-width: calc(100% - 36px); }
 /* Kennzahlen */
 .stat-block { margin: 6px 0 16px; }
 .stat-block h3 { font: 600 13px/1.3 var(--font-body); margin: 0 0 6px; }
@@ -562,6 +568,9 @@ body.chat-open .leaflet-left { left: calc(var(--chat-w) + 32px); }
 .about-body p, .about-body ol { margin: 0 0 8px; }
 .about-body dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; }
 .about-body dt { font-weight: 600; } .about-body dd { margin: 0; }
+/* schmale Breite: Begriff über der Erklärung; zweispaltig war die Liste bei 320 px breiter als das Fenster „Über“ (bei
+   geringer Höhe rollte es dann waagrecht, sonst der Text darin; Nachprüfung zu 23.11.2026 (2) (15)) */
+@media (max-width: 480px) { .about-body dl { grid-template-columns: minmax(0, 1fr); row-gap: 2px; } .about-body dd { margin-bottom: 6px; } }
 
 /* Zustände der Liste */
 .panel.loading .papers { opacity: .45; pointer-events: none; }
@@ -845,6 +854,23 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
   .tour-card { width: calc(100vw - 20px); max-height: 46vh; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+/* Telefon (MOBILE wie app.js): Reiter „Gremien“ und „Ämter“, Umschalter „Schaubild | Liste“, Suchfeld der Gremien und
+   die Eingabefelder der Filter in der Liste mindestens 44 px hoch und mit 16 px Schrift (darunter vergrößert iOS beim
+   Fokus die Seite; Entscheidung 23.11.2026 (2) (16)) */
+@media (max-width: 900px) {
+  #panel-gremien .tabs [role=tab], #panel-gremien .wer-darstellung button { min-height: 44px; font-size: 16px; }
+  #wer-q, .filters input[type=search], .filters select { min-height: 44px; font-size: 16px; }
+}
+/* Geringe Höhe (etwa 400 % Zoom: 320 × 256 CSS-Pixel; Entscheidung 23.11.2026 (2) (15)): Die ganze Überlagerung rollt,
+   Kopf, Reiter und Umschalter rollen mit dem Inhalt weg; der Inhalt rollt nicht mehr für sich (sonst bliebe ihm neben
+   Kopf und Reitern kaum Platz). Ebenso die Fenster „Über“ und „Was ist neu?“. Bei normaler Höhe unverändert */
+@media (max-height: 480px) {
+  .overlay { overflow-y: auto; overscroll-behavior: contain; }
+  .overlay > * { flex: none; }
+  .overlay > .panel-body { overflow: visible; }
+  #about[open], #neu[open] { display: block; overflow-y: auto; }
+  .about-body { overflow: visible; }
+}
 
 /* Gebiete auf der Karte wählen (Stadtbezirke, Ortsteile) */
 .nav-tip { font: 13px/1.35 var(--font-body); }

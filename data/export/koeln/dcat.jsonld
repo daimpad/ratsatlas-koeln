@@ -192,7 +192,7 @@
    },
    "dct:description": {
     "@language": "de",
-    "@value": "Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien ohne Fraktionen und Gruppen und ohne Besetzung: Gruppe, Paragraf der Zuständigkeitsordnung (nur Nummer, bei eindeutigem Treffer des Namens), Stadtbezirk der Bezirksvertretung, Sitzungen und Vorlagen in 12 Monaten und nächste Sitzung (abgeleitet)."
+    "@value": "Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien ohne Fraktionen und Gruppen und ohne Besetzung: Gruppe, Paragraf der Zuständigkeitsordnung (nur Nummer, bei eindeutigem Treffer des Namens), Stadtbezirk der Bezirksvertretung, Sitzungen und Vorlagen in 12 Monaten, nächste Sitzung und, wenn diese am Tag des Datenstands liegt, die folgende Sitzung (abgeleitet)."
    },
    "dcat:accessURL": {
     "@id": "https://koeln.ratsatlas.de/data/export/koeln/gremien.json"

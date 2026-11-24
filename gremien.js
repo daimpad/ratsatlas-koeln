@@ -60,10 +60,18 @@ export function kurzzeile(g, meta, heute) {
 
 // Hinweis bei nicht aktueller Liste der Sitzungen (gremien.json meta.sitzungsliste_nicht_aktuell): Stand der Liste als
 // Kölner Tag (zeitDatum aus app.js, dieselbe Regel wie der Datenstand), ohne Stand derselbe Wortlaut wie dort
+// (Schluss „; deshalb fehlt die nächste Sitzung“ seit der Entscheidung 23.11.2026 (2) (5))
 export function sitzungslisteText(meta, zeitDatum) {
   const n = meta && meta.sitzungsliste_nicht_aktuell;
   if (!n) return "";
-  return `Die Liste der Sitzungen wurde beim letzten Abruf nicht aktualisiert; gezeigt wird ${n.stand ? `der Stand vom ${zeitDatum(n.stand)}` : "der letzte gültige Stand"}, eine nächste Sitzung deshalb nicht.`;
+  return `Die Liste der Sitzungen wurde beim letzten Abruf nicht aktualisiert; gezeigt wird ${n.stand ? `der Stand vom ${zeitDatum(n.stand)}` : "der letzte gültige Stand"}; deshalb fehlt die nächste Sitzung.`;
+}
+// Aktuelle Liste, aber jede bekannte Sitzung (naechste_sitzung, folgende_sitzung) liegt vor dem Kölner Tag `heute`
+// (Entscheidung 23.11.2026 (2) (3)): Die Seite sagt das, statt die Zeile wegzulassen
+export const VORBEI = "Die bekannten Sitzungen sind vorbei; der nächste Abruf ergänzt die Liste der Sitzungen.";
+export function sitzungenVorbei(g, heute) {
+  const bekannt = [g.naechste_sitzung, g.folgende_sitzung].filter((m) => m && istTag(m.date));
+  return bekannt.length > 0 && bekannt.every((m) => m.date < heute);
 }
 
 // Inhalt zu einem Gremium (Detailbereich im Schaubild, aufgeklappter Eintrag der Liste)
@@ -82,9 +90,14 @@ export function gremiumInhalt(g, meta, umgebung) {
   const liste = sitzungslisteText(meta, zeitDatum);
   const m = !liste && kommendeSitzung(g, heute);
   if (liste) zeilen.push(`<li>${esc(liste)}</li>`);
-  else if (m) zeilen.push(`<li>Nächste Sitzung: ${WOCHENTAG.format(mittag(m.date))}${m.time ? `, ${esc(m.time)} Uhr` : ""}${m.hinweis === "verschoben" ? ' <span class="badge">laut Sitzungsnamen verschoben</span>' : ""}${href(m.web) ? ` · ${neuerTab(m.web, "Tagesordnung", "Ratsinformationssystem, neuer Tab")}` : ""}</li>`);
+  // ohne Link zur Tagesordnung derselbe Wortlaut wie in „Aktuell in Köln“ und „Kommende Sitzungen“ (23.11.2026 (2) (4))
+  else if (m) zeilen.push(`<li>Nächste Sitzung: ${WOCHENTAG.format(mittag(m.date))}${m.time ? `, ${esc(m.time)} Uhr` : ""}${m.hinweis === "verschoben" ? ' <span class="badge">laut Sitzungsnamen verschoben</span>' : ""}${href(m.web) ? ` · ${neuerTab(m.web, "Tagesordnung", "Ratsinformationssystem, neuer Tab")}` : " · Tagesordnung noch nicht veröffentlicht"}</li>`);
+  else if (sitzungenVorbei(g, heute)) zeilen.push(`<li>${VORBEI}</li>`);
+  // Der Knopf zeigt die Vorlagen aller Jahre, die Zahl darüber gilt für 12 Monate: ein Satz daneben, mit dem Knopf über
+  // aria-describedby verbunden (23.11.2026 (2) (2)); die Kennung macht die id eindeutig, auch in der Liste
   const knopf = !g.aufgeloest && g.key
-    ? `<p class="pz-actions"><button type="button" class="btn btn-soft wer-filter" data-kennung="${esc(g.key)}" data-name="${esc(g.name)}">Vorlagen dieses Gremiums<span class="visually-hidden">: ${esc(g.name)}</span></button></p>` : "";
+    ? `<p class="pz-actions"><button type="button" class="btn btn-soft wer-filter" data-kennung="${esc(g.key)}" data-name="${esc(g.name)}" aria-describedby="wer-jahre-${esc(g.key)}">Vorlagen dieses Gremiums<span class="visually-hidden">: ${esc(g.name)}</span></button>
+      <span class="hint wer-jahre" id="wer-jahre-${esc(g.key)}">„Vorlagen dieses Gremiums“ zeigt die Vorlagen aller Jahre; die Zahl der Vorlagen oben gilt nur für die 12 Monate.</span></p>` : "";
   const quelle = href(g.source_object) ? `<p class="hint wer-quelle">Quellobjekt: ${neuerTab(g.source_object, esc(g.source_object))}</p>` : "";
   return `<ul class="pz-facts">${zeilen.join("")}</ul>${knopf}${quelle}`;
 }
@@ -103,16 +116,18 @@ export function detailHtml(d, z, umgebung) {
 }
 
 // Schaubild (E7, E8): Rat oben, darunter Ausschüsse und Bezirksvertretungen nebeneinander, übrige Gremien in einem
-// eigenen Abschnitt, alle sichtbar; nur Gremien, die nicht aufgelöst sind (F5). Gruppen ohne Gremium entfallen.
+// eigenen Abschnitt, alle sichtbar; nur Gremien, die nicht aufgelöst sind (F5). Gruppen ohne Gremium entfallen. Die
+// Abschnitte tragen keinen Namen (kein aria-labelledby), sind also keine Landmarken; die Überschriften h3 gliedern
+// (23.11.2026 (2) (17)).
 function schaubild(d, z, umgebung) {
   const aktiv = d.gremien.filter((g) => !g.aufgeloest), meta = d.meta;
   const von = (k) => aktiv.filter((g) => g.gruppe === k);
-  const abschnitt = (k, klasse, raster = "") => (von(k).length ? `<section class="${klasse}" aria-labelledby="wer-h-${k}">
+  const abschnitt = (k, klasse, raster = "") => (von(k).length ? `<section class="${klasse}">
       <h3 class="org-h" id="wer-h-${k}">${esc(gruppenName(meta, k))}</h3>
       <div class="org-grid${raster}">${von(k).map((g) => knoten(g, meta, z, umgebung.heute)).join("")}</div></section>` : "");
   const spalten = [abschnitt("ausschuss", "org-col"), abschnitt("bezirksvertretung", "org-col", " org-grid-1")].filter(Boolean);
   return `<div class="org wer-org">
-      ${von("rat").length ? `<section class="org-top" aria-labelledby="wer-h-rat"><h3 class="visually-hidden" id="wer-h-rat">${esc(gruppenName(meta, "rat"))}</h3>${von("rat").map((g) => knoten(g, meta, z, umgebung.heute)).join("")}</section>` : ""}
+      ${von("rat").length ? `<section class="org-top"><h3 class="visually-hidden" id="wer-h-rat">${esc(gruppenName(meta, "rat"))}</h3>${von("rat").map((g) => knoten(g, meta, z, umgebung.heute)).join("")}</section>` : ""}
       ${spalten.length ? `<div class="org-cols${spalten.length === 1 ? " wer-eine-spalte" : ""}">${spalten.join("")}</div>` : ""}
       ${abschnitt("uebrige", "org-beirat")}
     </div>
@@ -166,22 +181,23 @@ export function inhaltGremien(d, z, darstellung, umgebung) {
 }
 
 // Reiter „Ämter“ (E9, F8): ein Abschnitt je Dezernat mit Einheiten und Ebene, eigene Gruppe „ohne Zuordnung“; Quelle,
-// Stand, letzte Prüfung und Lizenzhinweis immer sichtbar; keine Zahlen
+// Stand, letzte Prüfung und Lizenzhinweis immer sichtbar; keine Zahlen. Die Abschnitte sind wie im Schaubild keine
+// Landmarken, die Überschriften gliedern (23.11.2026 (2) (17))
 const EBENE = { dezernatseinheit: "Einheit des Dezernats", dienststelle: "Dienststelle", punktdienststelle: "Punktdienststelle (im Plan „•“)" };
 export function inhaltAemter(a) {
   const q = (a.meta && a.meta.quelle) || {};
   const titel = esc(q.titel || "Geschäfts- und Dezernatsverteilungsplan der Stadt Köln");
   const verweis = href(q.url) ? `<a href="${href(q.url)}" target="_blank" rel="noopener">${titel}<span class="visually-hidden"> (${/\.pdf$/i.test(String(q.url)) ? "PDF, " : ""}neuer Tab)</span></a>` : titel;
   const stand = [istTag(q.stand) ? `Stand ${datum(q.stand)}` : "", istTag(q.geprueft) ? `zuletzt geprüft am ${datum(q.geprueft)}` : ""].filter(Boolean).join(", ");
-  const kopf = `<p class="hint">Aufbau der Stadtverwaltung: Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen.</p>
+  const kopf = `<p class="hint">Aufbau der Stadtverwaltung: Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen, ohne die Untereinheiten der Dienststellen.</p>
     <p class="pz-note wer-aemter-quelle">Quelle: ${verweis}${stand ? `, ${stand}` : ""}.${a.meta && a.meta.lizenz ? ` Lizenz: ${esc(a.meta.lizenz)}.` : ""}</p>`;
   const meta = (e) => [EBENE[e.ebene], e.eigenbetriebsaehnlich ? "eigenbetriebsähnlich" : "", e.fundstelle ? `Fundstelle: ${e.fundstelle}` : ""].filter(Boolean).map(esc).join(" · ");
   const eintrag = (e) => `<li><span class="wer-einheit">${esc(e.label || e.name)}</span>${meta(e) ? `<span class="pz-meta">${meta(e)}</span>` : ""}</li>`;
-  const dezernate = (Array.isArray(a.dezernate) ? a.dezernate : []).map((d, i) => `<section class="wer-dezernat" aria-labelledby="wer-dez-${i}">
+  const dezernate = (Array.isArray(a.dezernate) ? a.dezernate : []).map((d, i) => `<section class="wer-dezernat">
       <h3 class="pz-h" id="wer-dez-${i}">${esc(d.label || d.name || d.dezernat)}</h3>
       ${(d.einheiten || []).length ? `<ul class="wer-einheiten">${d.einheiten.map(eintrag).join("")}</ul>` : ""}</section>`).join("");
   const ohne = Array.isArray(a.ohne_zuordnung) ? a.ohne_zuordnung : [];
-  const ohneHtml = ohne.length ? `<section class="wer-dezernat" aria-labelledby="wer-dez-ohne">
+  const ohneHtml = ohne.length ? `<section class="wer-dezernat">
       <h3 class="pz-h" id="wer-dez-ohne">Ohne Zuordnung (im Plan „●“)</h3>
       <p class="hint">Diese Einträge sind im Plan mit „●“ gekennzeichnet; der Plan erklärt das Zeichen nicht. Der Ratsatlas ordnet sie deshalb keinem Dezernat zu, auch wenn die Fundstelle die Spalte eines Dezernats nennt.</p>
       <ul class="wer-einheiten">${ohne.map((e) => `<li><span class="wer-einheit">${esc(e.label || e.name)}</span>${e.fundstelle ? `<span class="pz-meta">Fundstelle: ${esc(e.fundstelle)}</span>` : ""}</li>`).join("")}</ul></section>` : "";
@@ -191,6 +207,9 @@ export function inhaltAemter(a) {
 // --- Steuerung ------------------------------------------------------------------------------------------------------
 let ctx = null, daten = null, root = null, body = null, status = null, zaehler = 0, bedient = false, gezeigt = null;
 const zustand = { tab: "gremien", darstellung: null, kennung: null, frueher: false, q: "" };
+// Kennungen der aufgeklappten Einträge der Liste in der Reihenfolge des Öffnens (23.11.2026 (2) (14)): `kennung` folgt
+// dem zuletzt geöffneten Eintrag, der noch offen ist; wird er zugeklappt, dem davor geöffneten; ohne offenen Eintrag keine
+let geoeffnet = [];
 // Wahl in Reiter oder Umschalter, während die Daten noch laden: Sie gilt nach dem Laden vor dem Reiter bzw. der
 // Darstellung, mit denen die Fläche geöffnet wurde
 const beimLaden = { tab: false, darstellung: false };
@@ -227,6 +246,7 @@ function render() {
   if (daten) {
     body.innerHTML = tab === "aemter" ? inhaltAemter(daten.aemter) : inhaltGremien(daten.gremien, zustand, ansicht, umgebung());
     gezeigt = tab === "gremien" ? ansicht : null;
+    geoeffnet = gezeigt === "liste" && zustand.kennung ? [zustand.kennung] : [];
     if (tab === "gremien" && ansicht === "liste") listeZaehlen(); else melden("");
   }
   ctx.onState(werZustand());
@@ -312,12 +332,29 @@ function bedienen() {
   body.addEventListener("toggle", (e) => {
     const d = e.target;
     if (!d.matches || !d.matches("details.pz-item[data-kennung]")) return;
-    if (d.open) zustand.kennung = d.dataset.kennung;
-    else if (zustand.kennung === d.dataset.kennung) zustand.kennung = null;
+    const k = d.dataset.kennung;
+    // nur Einträge, die noch offen in der Liste stehen (ein Neuaufbau der Liste lässt nur das gewählte Gremium offen)
+    geoeffnet = geoeffnet.filter((x) => x !== k && body.querySelector(`details.pz-item[data-kennung="${CSS.escape(x)}"]`)?.open);
+    if (d.open) geoeffnet.push(k);
+    zustand.kennung = geoeffnet.length ? geoeffnet[geoeffnet.length - 1] : null;
     ctx.onState(werZustand());
   }, true);
+  // Esc im Suchfeld der Liste (23.11.2026 (2) (12)): Ein gefülltes Feld leert das erste Esc (Liste und Statuszeile
+  // folgen sofort), die Fläche bleibt offen; ist das Feld leer, schließt Esc die Fläche wie überall (app.js)
+  body.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || e.target.id !== "wer-q" || !e.target.value) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.target.value = "";
+    zustand.q = "";
+    body.querySelector("#wer-liste").innerHTML = listenteil(daten.gremien, zustand, umgebung());
+    listeZaehlen();
+  });
 }
 
+// Wartezeit je Datei (23.11.2026 (2) (11)): Antwortet sie nicht in dieser Zeit, bricht der Abruf ab (AbortController),
+// init scheitert, und app.js zeigt den Satz zum Ladefehler; eine spätere Antwort kommt nicht mehr an
+export const WARTEZEIT = 20000;
 export async function init(c) {
   ctx = c;
   root = document.getElementById("panel-gremien");
@@ -325,7 +362,11 @@ export async function init(c) {
   status = root.querySelector("#wer-status");
   if (!bedient) { bedienen(); bedient = true; }
   beimLaden.tab = beimLaden.darstellung = false;
-  const laden = (name) => fetch(ctx.basis + name).then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); });
+  const laden = (name) => {
+    const ab = new AbortController(), uhr = setTimeout(() => ab.abort(), ctx.wartezeit ?? WARTEZEIT);
+    return fetch(ctx.basis + name, { signal: ab.signal }).then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .finally(() => clearTimeout(uhr));
+  };
   const [gremien, aemter] = await Promise.all([laden("gremien.json"), laden("aemter.json")]);
   if (!gremien || !Array.isArray(gremien.gremien) || !gremien.meta || !aemter || !Array.isArray(aemter.dezernate)) throw new Error("Daten unvollständig");
   daten = { gremien, aemter };
