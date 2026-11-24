@@ -556,8 +556,8 @@ def write_dcat(path, data_start, modified, kurzfassungen=False, orte=None):
         ] + ([dist("Gremien (JSON)", f"{config.STADT}/gremien.json", "application/json", "gremien",
                    "Rat, Ausschüsse, Bezirksvertretungen und übrige Gremien ohne Fraktionen und Gruppen und ohne "
                    "Besetzung: Gruppe, Paragraf der Zuständigkeitsordnung (nur Nummer, bei eindeutigem Treffer des "
-                   "Namens), Stadtbezirk der Bezirksvertretung, Sitzungen und Vorlagen in 12 Monaten und nächste Sitzung "
-                   "(abgeleitet).")] if gremien else []) + [
+                   "Namens), Stadtbezirk der Bezirksvertretung, Sitzungen und Vorlagen in 12 Monaten, nächste Sitzung und, "
+                   "wenn diese am Tag des Datenstands liegt, die folgende Sitzung (abgeleitet).")] if gremien else []) + [
             dist("Sitzungskalender (iCalendar)", f"{config.STADT}/termine.ics", "text/calendar", "oparl",
                  "Sitzungen von Rat, Ausschüssen und Bezirksvertretungen mit Links zur Tagesordnung."),
             dist("Planregister Bebauungspläne (JSON)", f"{config.STADT}/plaene.json", "application/json", "plaene",

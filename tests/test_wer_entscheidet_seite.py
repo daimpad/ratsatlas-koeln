@@ -158,15 +158,16 @@ def test_inhalt_eines_gremiums():
     assert ('<a href="https://example.invalid/ordnung.pdf" target="_blank" rel="noopener">Zuständigkeitsordnung, § 7 (PDF, neuer Tab)</a>'
             ' <span class="derived">abgeleitet, über den Namen des Ausschusses</span>') in aus_a
     assert "In den 12 Monaten vom 24.11.2025 bis 23.11.2026: 1 Sitzung, 3 Vorlagen beraten" in aus_a
-    assert "Nächste Sitzung: Mo., 30.11.2026</li>" in aus_a   # ohne Uhrzeit und ohne Tagesordnung
+    # ohne Uhrzeit; ohne Adresse der Tagesordnung derselbe Satz wie in „Aktuell in Köln“ (seit 23.11.2026 (2) (4))
+    assert "Nächste Sitzung: Mo., 30.11.2026 · Tagesordnung noch nicht veröffentlicht</li>" in aus_a
     assert "Nächste Sitzung: Di., 01.12.2026, 17:00 Uhr <span class=\"badge\">laut Sitzungsnamen verschoben</span> · " in rat
     assert f'<a href="{X}/sitzung/2026-12-01" target="_blank" rel="noopener">Tagesordnung<span class="visually-hidden"> (Ratsinformationssystem, neuer Tab)</span></a>' in rat
     assert "12 Sitzungen, 1 Vorlage beraten" in rat and "Zuständigkeitsordnung" not in rat
     assert 'Stadtbezirk Musterbezirk <span class="derived">abgeleitet, über den Namen der Bezirksvertretung</span>' in bv
     assert "0 Sitzungen, 0 Vorlagen beraten" in bv and "Nächste Sitzung" not in bv and "Nächste Sitzung" not in beirat
     for html, key, name in ((rat, "rat", "Beispielrat"), (aus_a, "aus-a", "Ausschuss für Beispiele"), (bv, "bv1", "Bezirksvertretung 1 (Musterbezirk)")):
-        assert (f'<button type="button" class="btn btn-soft wer-filter" data-kennung="{key}" data-name="{name}">Vorlagen dieses '
-                f'Gremiums<span class="visually-hidden">: {name}</span></button>') in html
+        assert (f'<button type="button" class="btn btn-soft wer-filter" data-kennung="{key}" data-name="{name}" '
+                f'aria-describedby="wer-jahre-{key}">Vorlagen dieses Gremiums<span class="visually-hidden">: {name}</span></button>') in html
         assert f'Quellobjekt: <a href="{X}/organizations/{key}" target="_blank" rel="noopener">' in html
     for html in (rat, aus_a, bv, beirat):
         assert "Im Ratsinformationssystem" not in html and "folgt" not in html
@@ -193,8 +194,8 @@ def test_sitzungsliste_nicht_aktuell():
         f"[M.gremiumInhalt(G.gremien[0], {json.dumps(meta)}, U), M.gremiumInhalt(G.gremien[0], {json.dumps(ohne)}, U), "
         f"M.inhaltGremien({{ ...G, meta: {json.dumps(meta)} }}, {{ kennung: null, q: '', frueher: false }}, 'schaubild', U)]")
     assert ("Die Liste der Sitzungen wurde beim letzten Abruf nicht aktualisiert; gezeigt wird der Stand vom "
-            "Tag(2026-11-17T23:30:00+00:00), eine nächste Sitzung deshalb nicht.") in mit_stand
-    assert "gezeigt wird der letzte gültige Stand, eine nächste Sitzung deshalb nicht." in ohne_stand
+            "Tag(2026-11-17T23:30:00+00:00); deshalb fehlt die nächste Sitzung.") in mit_stand   # Schluss seit 23.11.2026 (2) (5)
+    assert "gezeigt wird der letzte gültige Stand; deshalb fehlt die nächste Sitzung." in ohne_stand
     for html in (mit_stand, ohne_stand):
         assert "Nächste Sitzung:" not in html
     assert '<p class="stand-hinweis"><strong>Hinweis zum Datenstand:</strong> Die Liste der Sitzungen' in reiter
@@ -372,9 +373,9 @@ def _sync(werState, offen=True, pz=None):
 const STADT = "koeln", KX = {{}}, PX = {{}}, EX = {{}}, kxOn = new Set();
 let area = {{ kind: "koeln", key: "alle" }}, tl = null, range = null, colorBy = "", navMetric = "a", navDefault = "a";
 let planOn = false, shownPlan = null, bauOn = false, shownSite = null, selected = null, sdModul = null, mmState = null;
-const pzState = {json.dumps(pz)}, werState = {json.dumps(werState)};
+const pzState = {json.dumps(pz)}, werState = {json.dumps(werState)}, gremiumLinkOffen = () => null;
 const P = {{ "panel-prozesse": {{ hidden: {json.dumps(pz is None)} }}, "panel-gremien": {{ hidden: {json.dumps(not offen)} }} }};
-const E = {{ "#f-theme": {{ value: "" }}, "#f-party": {{ value: "" }} }};
+const E = {{ "#f-theme": {{ value: "" }}, "#f-party": {{ value: "" }}, "#f-gremium": {{ value: "" }} }};
 const $ = (s) => E[s] || P[s.slice(1)];
 const vorhanden = (id) => id in P, scope = () => "gebiet";
 let adresse = "";
@@ -420,7 +421,8 @@ console.log(JSON.stringify(aus));
 
 # --- Filter „Gremium“ im Gebiet und in ganz Köln ------------------------------------------------------------------------
 
-FILTER_TEILE = (r"^  const esc = .*?;\n", r"^  const GREMIUM_NAME = .*?;\n", r"^  function gremiumWahl\(\) \{\n.*?\n  \}\n",
+FILTER_TEILE = (r"^  const esc = .*?;\n", r"^  const GREMIUM_NAME = .*?;\n", r"^  const gremiumArt = .*?;\n",
+                r"^  function gremiumWahl\(\) \{\n.*?\n  \}\n",
                 r"^  function fillGremien\(\) \{\n.*?\n  \}\n", r"^  function gremiumKennzeichen\(\) \{\n.*?\n  \}\n")
 # nachgebildetes <select> mit Optionen und Gruppen aus innerHTML (genug für fillGremien, gremiumWahl und gremiumFiltern)
 SELECT = """
@@ -441,8 +443,8 @@ def _filter(papers, aktionen):
     füllt."""
     teil = "".join(_teil(APP, m) for m in FILTER_TEILE)
     code = SELECT + f"""
-const sel = new Sel(), box = {{ hidden: true }}, name = {{ textContent: "" }};
-const E = {{ "#f-gremium": sel, "#gremium-filter": box, "#gremium-filter-name": name }};
+const sel = new Sel(), box = {{ hidden: true }}, name = {{ textContent: "" }}, art = {{ textContent: "" }};
+const E = {{ "#f-gremium": sel, "#gremium-filter": box, "#gremium-filter-name": name, "#gremium-filter-art": art }};
 const $ = (s) => E[s];
 let papers = {json.dumps(papers)};
 """ + teil + f"""
@@ -489,9 +491,9 @@ def test_filter_im_gebiet_ueber_die_kennung():
     assert "(!gremium || (p.process || []).some((s) => (gremium.key ? s.gremium_key === gremium.key : s.gremium === gremium.name)))" in filt
     teil = "".join(_teil(APP, m) for m in FILTER_TEILE) + filt
     code = SELECT + f"""
-const sel = new Sel(), box = {{ hidden: true }}, name = {{ textContent: "" }};
+const sel = new Sel(), box = {{ hidden: true }}, name = {{ textContent: "" }}, art = {{ textContent: "" }};
 const leer = {{ value: "", checked: false }};
-const E = {{ "#f-gremium": sel, "#gremium-filter": box, "#gremium-filter-name": name, "#f-text": leer, "#f-type": leer, "#f-amt": leer,
+const E = {{ "#f-gremium": sel, "#gremium-filter": box, "#gremium-filter-name": name, "#gremium-filter-art": art, "#f-text": leer, "#f-type": leer, "#f-amt": leer,
   "#f-stand": leer, "#f-theme": leer, "#f-party": leer, "#f-related": leer }};
 const $ = (s) => E[s];
 const document = {{ querySelectorAll: () => [] }};
@@ -505,19 +507,25 @@ console.log(JSON.stringify(aus));
 """
     assert _node(code) == [["2/2026"], ["1/2026"], ["2/2026", "3/2026"], ["2/2026"]]
     render = _teil(APP, r"^  function render\(nurListe\) \{\n.*?\n  \}\n")
-    assert "${list.length} von ${papers.length} Vorlagen · ${where}${gw ? ` · Gremium: ${gw.text}` : \"\"}${span}" in render
+    assert "${list.length} von ${papers.length} Vorlagen · ${where}${gw ? ` · ${gremiumArt(gw)}: ${gw.text}` : \"\"}${span}" in render
     assert ("Im gewählten Gebiet passt keine Vorlage mit einer Beratung in „${esc(gw.text)}“ zu Filtern und Zeitraum."
             in render) and 'id="gremium-koeln">In ganz Köln suchen</button>' in render
 
 
-def _global(search, wert, gremien_wahl=None):
-    """renderGlobal aus app.js mit erfundenem suche.json; `wert`: Wert von #f-gremium (mit passender Option)."""
+def _global(search, wert, gremien_wahl=None, link=None):
+    """renderGlobal aus app.js mit erfundenem suche.json; `wert`: Wert von #f-gremium (mit passender Option);
+    `link`: Stand des Filters aus der Adresse („unbekannt“: Kennung ohne Gremium, „fehler“: gremien.json nicht
+    geladen; gremiumLink, seit 23.11.2026 (2) (10) und der Nachprüfung)."""
     teil = "".join(_teil(APP, m) for m in FILTER_TEILE) + _teil(APP, r"^  const themeTags = .*?;\n") \
+        + _teil(APP, r"^  const GREMIUM_HINWEIS = \{\n.*?\n  \};\n") + _teil(APP, r"^  function gremiumLinkOffen\(\) \{\n.*?\n  \}\n") \
+        + _teil(APP, r"^  const mitGremiumHinweis = \(text\) => \{\n.*?\n  \};\n") \
         + _teil(APP, r"^  function renderGlobal\(nurListe\) \{\n.*?\n  \}\n")
     code = SELECT + f"""
-const sel = new Sel(), box = {{ hidden: true }}, name = {{ textContent: "" }}, count = {{ textContent: "" }}, liste = {{ innerHTML: "" }};
+const sel = new Sel(), box = {{ hidden: true }}, name = {{ textContent: "" }}, art = {{ textContent: "" }}, count = {{ textContent: "" }}, liste = {{ innerHTML: "" }};
 const leer = {{ value: "", checked: false }};
-const E = {{ "#f-gremium": sel, "#gremium-filter": box, "#gremium-filter-name": name, "#f-text": leer, "#f-type": leer,
+let gremiumLink = {json.dumps({"wert": "x", "stand": link, "filter": None} if link else None)};
+const werDa = () => true;
+const E = {{ "#f-gremium": sel, "#gremium-filter": box, "#gremium-filter-name": name, "#gremium-filter-art": art, "#f-text": leer, "#f-type": leer,
   "#f-stand": leer, "#f-theme": leer, "#f-party": leer, "#f-related": leer, "#count": count, "#papers": liste }};
 const $ = (s) => E[s];
 const search = {json.dumps(search)}, THEMES = {{}}, LIST_STEP = 50, VORSCHAU_LISTE = "";
@@ -527,7 +535,7 @@ sel.innerHTML = '<option value="">alle</option><option value="{wert}">{gremien_w
 sel.value = {json.dumps(wert)};
 """ + teil + """
 renderGlobal();
-console.log(JSON.stringify({ count: count.textContent, html: liste.innerHTML, kennzeichen: !box.hidden }));
+console.log(JSON.stringify({ count: count.textContent, html: liste.innerHTML, kennzeichen: !box.hidden, art: art.textContent }));
 """
     return _node(code)
 
@@ -635,8 +643,10 @@ def test_was_ist_neu_und_quellenzeile_ohne_freigabe(monkeypatch):
     assert 'data-funktion="gremien"' not in aus and "Zuständigkeitsordnung" not in _abschnitt(aus, "sources")
     assert "„Wer entscheidet“ mit den Reitern" not in aus
     quellen = _text(_abschnitt(aus, "sources"))
-    assert ("beides auf der Seite „So funktioniert der Ratsatlas“ (im Plan keine Lizenz angegeben, übernommen sind nur "
-            "Nummern und Bezeichnungen) · Kennung der federführenden Dienststelle") in quellen
+    assert ("Dezernatsverteilungsplan der Stadt Köln (im Plan keine Lizenz angegeben, übernommen sind nur Nummern und "
+            "Bezeichnungen): zur federführenden Dienststelle, nur für Vorlagen aus der Zeit vom Stand des Plans bis zu seiner "
+            "letzten Prüfung (Stand und letzte Prüfung auf der Seite „So funktioniert der Ratsatlas“) · Kennung der "
+            "federführenden Dienststelle") in quellen
 
 
 def test_anfrage_punkt_7_weiterleitung_und_standzeile():
@@ -659,7 +669,8 @@ def test_quellenzeile():
     Text, Lizenz nicht geklärt)."""
     quellen = _abschnitt(INDEX, "sources")
     assert "Kennungen und Bezeichnungen" not in quellen and "übernommen sind nur Nummern und Bezeichnungen)" in quellen
-    assert '<span data-funktion="gremien">, und im Reiter „Ämter“ unter „Wer entscheidet“</span>' in quellen
+    # seit 23.11.2026 (2) (9) vor „zur federführenden Dienststelle“, damit er sich nicht auf die Technikseite bezieht
+    assert '<span data-funktion="gremien"> im Reiter „Ämter“ unter „Wer entscheidet“ und</span> zur federführenden Dienststelle' in quellen
     assert ('<span data-funktion="gremien"> · Paragrafen der Ausschüsse aus der Zuständigkeitsordnung der Stadt Köln vom '
             '02.06.2026 (zugeordnet über den Namen des Ausschusses; nur der Paragraf, kein Text; Lizenz nicht geklärt)</span>') in quellen
 
@@ -818,7 +829,8 @@ ergebnis = { vorher, nachWechsel, aemter, liste: status.textContent };
 
 def _oeffnen(ablauf):
     """openGremien aus app.js mit nachgebildeten Teilen; import(modul) ruft `importieren` auf (Adressen in `adressen`)."""
-    teil = _teil(APP, r"^  let werState = null, werReady = null, werModul = null, werImportFehler = 0;\n.*?^  function openGremien\(s\) \{\n.*?\n  \}\n")
+    teil = _teil(APP, r"^  const WARTEZEIT = .*?;\n") + _teil(APP, r"^  const mitFrist = .*?\n  \}\);\n") \
+        + _teil(APP, r"^  let werState = null, werReady = null, werModul = null, werImportFehler = 0;\n.*?^  function openGremien\(s\) \{\n.*?\n  \}\n")
     assert teil.count("import(modul)") == 1
     code = """
 const E = { "#wer-body": { innerHTML: "alt" }, "#wer-status": { textContent: "" } };
@@ -895,7 +907,8 @@ def test_statuszeile_abgeleitet_zuruecksetzen_und_adresse():
     320 px waagrecht scrollen). app.js: „Filter und Zeitraum zurücksetzen“ in der leeren Liste setzt den Fokus auf die
     Liste (die Schaltfläche verschwindet); ein Gremium aus der Adresse wird ins Bild gerollt (zeigen)."""
     css = (ROOT / "site" / "style.css").read_text(encoding="utf-8")
-    assert ".wer-status { margin: 0 18px 6px; flex: none; }\n" in css and not re.search(r"\.wer-status \{[^}]*min-height", css)
+    # seit 23.11.2026 (2) (11) dieselbe Regel für die Statuszeile von „Mitmachen in Köln“
+    assert ".wer-status, .bt-status { margin: 0 18px 6px; flex: none; }\n" in css and not re.search(r"\.wer-status[^{]*\{[^}]*min-height", css)
     assert ".pz-facts .derived { display: inline-block; max-width: 100%; white-space: normal; }\n" in css
     assert 'if (e.target.closest("#reset-filters")) { resetFilters(); focusPanel("panel-list"); return; }' in APP
     assert _teil(APP, r"^  function resetFilters\(\) \{\n.*?\n  \}\n").count("focusPanel") == 0   # „Zurücksetzen“ im Menü behält den Fokus
