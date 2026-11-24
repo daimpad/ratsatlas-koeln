@@ -1,0 +1,10 @@
+{
+  "name": "ratsatlas-koeln-browserpruefung",
+  "private": true,
+  "description": "Feste Versionen von Playwright und axe-core für tests/browser/*.js und tools/wcag_pruefen.js (Job „browser“ in .github/workflows/tests.yml); Installation mit npm ci aus package-lock.json",
+  "license": "MIT",
+  "dependencies": {
+    "axe-core": "4.10.2",
+    "playwright": "1.63.0"
+  }
+}

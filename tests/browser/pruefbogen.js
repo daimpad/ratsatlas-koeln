@@ -1,5 +1,6 @@
-// Browserprüfung des Prüfbogens tools/pruefbogen.html (Entscheidung 16.11.2026 (5)); nur lokal, nicht in CI (dort ist
-// kein Chromium für Playwright zugesichert). Öffnet die Datei über file://, bricht jede Anfrage ab, die keine Datei ist,
+// Browserprüfung des Prüfbogens tools/pruefbogen.html (Entscheidung 16.11.2026 (5)); lokal und im Job „browser“ von
+// .github/workflows/tests.yml (über tests/test_praezision.py mit RATSATLAS_BROWSER=1; im Job „test“ übersprungen, dort
+// ist Chromium nicht installiert). Öffnet die Datei über file://, bricht jede Anfrage ab, die keine Datei ist,
 // und zählt sie (erwartet 0); meldet Verstöße gegen die Content-Security-Policy und Fehler in der Konsole. Lädt die
 // Stichprobe, beurteilt Zeilen nur mit der Tastatur (r, T, f, u, ←, Entf, n), schreibt eine Anmerkung, wählt eine
 // Methode im Filter, speichert über „TSV speichern“ (Enter) und lädt die Seite neu (Zwischenstand aus dem localStorage,

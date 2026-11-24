@@ -1,5 +1,6 @@
 # Tests der Pipeline mit synthetischen Daten und lokalem Testserver; keine Anfragen an Server der Stadt Köln
-# (Entscheidung 04.11.2026: einziger aktiver Workflow bis Phase 5).
+# (Entscheidung 04.11.2026: einziger aktiver Workflow bis Phase 5). Job „browser“ (Entscheidungen 19.11.2026 (1) (G)
+# und 24.11.2026 (2) (2) A): Seite mit Testdaten im Browser, parallel zum Job „test“.
 name: Tests
 
 on:
@@ -32,5 +33,158 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
         with:
           node-version: "22"
+      # Alle Skripte der Seite (mit Unterordnern wie site/chat und site/vendor), der Browserprüfungen und der Werkzeuge.
+      # ES-Module (import oder export am Zeilenanfang; app.js lädt sie mit import()) prüft node über die
+      # Standardeingabe als Modul: `node --check datei.js` meldet in Node 22 einen Syntaxfehler in einer Datei mit
+      # export nicht (Exit-Code 0, geprüft mit 22.23.4)
       - name: Syntax der Webseite
-        run: for f in site/app.js site/timeline.js site/tour.js site/rss.js site/technik.js; do node --check "$f"; done
+        run: |
+          for f in $(find site tests/browser tools -name '*.js' -not -path '*/node_modules/*' | sort); do
+            echo "$f"
+            if grep -qE '^(import|export) ' "$f"; then node --input-type=module --check < "$f"; else node --check "$f"; fi
+          done
+
+  browser:
+    runs-on: ubuntu-latest
+    # Lokal (24.11.2026, offline, Chromium vorinstalliert) brauchte die Folge 436 s, davon gremien.js 200 s; Zeitlimit
+    # gut das Doppelte, mit Reserve für die Installation von Chromium und langsamere Läufer
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
+        with:
+          node-version: "22"
+      - name: Abhängigkeiten
+        run: pip install -r requirements.txt pytest
+      # Playwright und axe-core in festen Versionen aus tests/browser/package-lock.json (mit Prüfsummen), ohne
+      # Installationsskripte; danach nur die Headless Shell von Chromium mit den Systempaketen
+      - name: Playwright und axe-core
+        working-directory: tests/browser
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          ./node_modules/.bin/playwright --version
+      - name: Chromium für Playwright
+        id: chromium
+        working-directory: tests/browser
+        run: ./node_modules/.bin/playwright install --with-deps --only-shell chromium
+
+      # Ab hier ohne Netz: Der tote Proxy (127.0.0.1:9) lässt jede Anfrage nach außen scheitern, statt dass sie die
+      # Stadt erreicht; nur 127.0.0.1 und localhost sind direkt erreichbar. Nur die großgeschriebenen Namen: GitHub
+      # liest die Schlüssel unter env laut actionlint ohne Unterschied der Groß- und Kleinschreibung (http_proxy neben
+      # HTTP_PROXY wäre doppelt); Python (urllib) liest beide Schreibweisen, curl ALL_PROXY. RATSATLAS_SPERRE
+      # (Sperrdatei abruf.lock, pipeline/dienste.py) liegt im Temp-Ordner des Läufers, nie in ~/.cache. Die Pipeline
+      # arbeitet nur mit den erfundenen Vorlagen aus tools/testdaten.py („[Testdaten]“, example.invalid), die nie
+      # veröffentlicht werden.
+      - name: Seite mit Testdaten bauen
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+        run: |
+          mkdir -p "$RATSATLAS_SPERRE"
+          python tools/testdaten.py
+          python -m pipeline build
+          python -m pipeline export
+          python -m pipeline kontext
+          python -m pipeline ebenen
+          python -m pipeline check
+          python -m pipeline package
+          python tools/seite_bauen.py _site
+          python tools/linkpruefung.py _site
+      - name: Seite unter 127.0.0.1:8790
+        id: seite
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+        run: |
+          nohup python3 -m http.server --bind 127.0.0.1 8790 -d _site > "$RUNNER_TEMP/http_server.log" 2>&1 &
+          for i in $(seq 1 30); do
+            if curl --silent --fail --noproxy 127.0.0.1 --output /dev/null http://127.0.0.1:8790/; then
+              echo "Seite antwortet nach $i Versuch(en)"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::Die Seite unter 127.0.0.1:8790 antwortet nicht"
+          exit 1
+      # Jede Prüfung endet mit Exit-Code 1 bei einem Befund; die übrigen laufen trotzdem, solange die Seite antwortet
+      - name: Gremien und Ämter im Browser
+        if: ${{ !cancelled() && steps.seite.outcome == 'success' }}
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+          NODE_PATH: ${{ github.workspace }}/tests/browser/node_modules
+          AXE_PFAD: ${{ github.workspace }}/tests/browser/node_modules/axe-core/axe.min.js
+        run: node tests/browser/gremien.js http://127.0.0.1:8790/ "$RUNNER_TEMP/gremien.json"
+      - name: Navigation im Browser
+        if: ${{ !cancelled() && steps.seite.outcome == 'success' }}
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+          NODE_PATH: ${{ github.workspace }}/tests/browser/node_modules
+          AXE_PFAD: ${{ github.workspace }}/tests/browser/node_modules/axe-core/axe.min.js
+        run: node tests/browser/navigation.js http://127.0.0.1:8790/ "$RUNNER_TEMP/navigation.json"
+      - name: Bedienung im Browser
+        if: ${{ !cancelled() && steps.seite.outcome == 'success' }}
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+          NODE_PATH: ${{ github.workspace }}/tests/browser/node_modules
+          AXE_PFAD: ${{ github.workspace }}/tests/browser/node_modules/axe-core/axe.min.js
+        run: node tests/browser/bedienung.js http://127.0.0.1:8790/ "$RUNNER_TEMP/bedienung.json"
+      # WCAG 2.1 A/AA (axe-core) und Tab-Reihenfolge in vier Größen; 320 × 256 entspricht 1280 × 1024 bei 400 % Zoom
+      - name: WCAG-Prüfung in vier Größen
+        if: ${{ !cancelled() && steps.seite.outcome == 'success' }}
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+          NODE_PATH: ${{ github.workspace }}/tests/browser/node_modules
+          AXE_PFAD: ${{ github.workspace }}/tests/browser/node_modules/axe-core/axe.min.js
+          PORT: "8790"
+        run: |
+          fehler=0
+          for groesse in 1440x900 1024x768 390x844 320x256; do
+            echo "::group::WCAG $groesse"
+            BREITE="${groesse%x*}" HOEHE="${groesse#*x}" node tools/wcag_pruefen.js "$RUNNER_TEMP/wcag_$groesse.tsv" "$RUNNER_TEMP/tastatur_$groesse.txt" || fehler=1
+            echo "::endgroup::"
+          done
+          exit "$fehler"
+      # Prüfbogen der Geokodierung (tools/pruefbogen.html, kein Teil der Seite; über file://, ohne Server):
+      # tests/browser/pruefbogen.js mit den Erwartungen in tests/test_praezision.py, im Job „test“ übersprungen (dort
+      # ist Chromium nicht installiert)
+      - name: Prüfbogen im Browser
+        if: ${{ !cancelled() && steps.chromium.outcome == 'success' }}
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+          NODE_PATH: ${{ github.workspace }}/tests/browser/node_modules
+          AXE_PFAD: ${{ github.workspace }}/tests/browser/node_modules/axe-core/axe.min.js
+          RATSATLAS_BROWSER: "1"
+        run: python -m pytest -q tests/test_praezision.py -k test_pruefbogen_im_browser

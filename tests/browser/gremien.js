@@ -574,23 +574,39 @@ const BEDIENUNG = {
     pruefen(profil, "keine Skriptfehler (Import und Zähler)", s.fehler.length === 0, s.fehler);
     await s.ctx.close();
   },
-  // Wahl während des Ladens: Klick auf „Ämter“ gilt nach dem Laden, Fokus auf dem gewählten Reiter
+  // Wahl während des Ladens: Klick auf „Ämter“ gilt nach dem Laden, Fokus auf dem gewählten Reiter. „Während des
+  // Ladens“ heißt: gremien.js ist geladen und init hat die Bedienung angemeldet (bedienen()), gremien.json lädt noch.
+  // Die Prüfung wartet auf genau diesen Zustand, die Anfrage nach gremien.json (init stellt sie direkt nach bedienen()),
+  // und hält die Antwort zurück, bis der Klick ausgeführt ist. Vorher klickte sie nach festen 200 ms und hielt
+  // gremien.json 1,5 s zurück; lud das Modul gremien.js länger als 200 ms, traf der Klick einen Reiter ohne Bedienung,
+  // ging verloren, und das Warten auf „Ämter“ endete nach 20 s (einmal gescheitert, danach sechs Läufe ohne Befund)
   async wahlBeimLaden(browser, profil, gremien, gebiet) {
     let s, z, f;
-    s = await neueSeite(browser, profil, { "gremien.json": async (j, route) => { await new Promise((ok) => setTimeout(ok, 1500)); return route.continue(); } });
+    let angefragt, freigeben, gehalten = false, anfragen = 0;
+    const anfrage = new Promise((ok) => { angefragt = ok; }), freigabe = new Promise((ok) => { freigeben = ok; });
+    s = await neueSeite(browser, profil, { "gremien.json": async (j, route) => {
+      if (!gehalten) return route.continue();
+      anfragen++;
+      angefragt();
+      await freigabe;
+      return route.continue();
+    } });
     await s.page.goto(BASIS, { waitUntil: "load" });
     await geladen(s.page);
     await menueOeffnen(s.page, profil, "mega-entscheiden");
+    gehalten = true;
     await s.page.click('#mega-entscheiden [data-wer="gremien"]');
-    await s.page.waitForTimeout(200);
+    const bereit = await Promise.race([anfrage.then(() => true), new Promise((ok) => setTimeout(() => ok(false), 20000))]);
     const beim = (await zustand(s.page)).status;
-    await s.page.click("#tab-wer-aemter");
-    await s.page.waitForFunction(() => document.querySelector("#wer-body .wer-dezernat"), null, { timeout: 20000 });
+    if (bereit) await s.page.click("#tab-wer-aemter");
+    freigeben();
+    const ok = bereit && await s.page.waitForFunction(() => document.querySelector("#wer-body .wer-dezernat"), null, { timeout: 20000 }).then(() => true, () => false);
     await s.page.waitForTimeout(300);
     z = await zustand(s.page);
     f = await fokus(s.page);
-    pruefen(profil, "Klick auf „Ämter“ während des Ladens: nach dem Laden Reiter „Ämter“, Fokus auf ihm (tabindex 0)", beim === "Wird geladen …"
-      && z.tabs[1][1] === "true" && z.tabs[1][2] === 0 && z.tabs[0][2] === -1 && f.id === "tab-wer-aemter" && (await adresse(s.page)).wer === "aemter", { beim, tabs: z.tabs, f });
+    pruefen(profil, "Klick auf „Ämter“ während des Ladens: nach dem Laden Reiter „Ämter“, Fokus auf ihm (tabindex 0)", ok && anfragen === 1 && beim === "Wird geladen …"
+      && z.tabs[1][1] === "true" && z.tabs[1][2] === 0 && z.tabs[0][2] === -1 && f.id === "tab-wer-aemter" && (await adresse(s.page)).wer === "aemter",
+      { bereit, anfragen, beim, tabs: z.tabs, f });
     await s.ctx.close();
   },
   // aufgelöstes Gremium aus der Adresse: ohne Darstellung die Liste mit „frühere Gremien zeigen“; mit „Schaubild“ ein
