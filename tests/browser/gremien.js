@@ -136,7 +136,9 @@ async function flaeche(browser, profil, gremien) {
   await page.goto(BASIS, { waitUntil: "load" });
   await geladen(page);
   await page.waitForTimeout(400);
-  const titel = await page.$eval('.menu-btn[data-mega="mega-entscheiden"]', (b) => b.title);
+  // seit Pull Request 5 der Navigation steht das title nur bei 901 bis 1365 px (nur Symbole), sonst bleibt der Text in
+  // data-titel (app.js leistenTitel)
+  const titel = await page.$eval('.menu-btn[data-mega="mega-entscheiden"]', (b) => b.getAttribute("title") || b.dataset.titel);
   pruefen(profil, "Titel der Schaltfläche „Wer entscheidet“ mit Freigabe (E11)", titel === TITEL, titel);
   await menueOeffnen(page, profil, "mega-entscheiden");
   const karten = await page.$$eval("#mega-entscheiden .card", (cs) => cs.filter((c) => c.getClientRects().length).map((c) => c.querySelector(".card-title").textContent));
@@ -1131,11 +1133,16 @@ const FOLGE = {
     // Kennzeichen über textContent: auf schmalen Breiten schließt der Vorgang die Liste (innerText wäre leer)
     const spaet = await s.page.evaluate(() => ({ heading: document.getElementById("detail-heading")?.textContent || "", schritte: document.querySelectorAll("#detail .steps li").length,
       hash: decodeURIComponent(location.hash.slice(1)), kennzeichen: document.getElementById("gremium-filter").hidden ? "" : document.getElementById("gremium-filter").textContent.replace(/\s+/g, " ").replace(/ ?Entfernen.*$/i, "").trim(),
-      n: document.querySelectorAll("#papers button[data-gref]").length, filter: new URLSearchParams(location.search).get("gremium_filter") }));
+      n: document.querySelectorAll("#papers button[data-gref]").length, filter: new URLSearchParams(location.search).get("gremium_filter"),
+      trefferDa: [...document.querySelectorAll("#papers button[data-gref]")].some((b) => b.dataset.gref === decodeURIComponent(location.hash.slice(1))) }));
     const fokusNachher = await aktiv();
-    pruefen(profil, "Nachprüfung (10) späte Antwort: Filter gesetzt, der inzwischen geöffnete Vorgang bleibt (kein „Los geht's“), Anker bleibt, Fokus unverändert",
+    // seit Pull Request 5 der Navigation liegt der Fokus nach Enter auf dem Treffer (Liste offen) bzw. auf dem Titel des
+    // Vorgangs, nicht mehr auf <body>; fällt der Treffer mit dem Filter aus der Liste, geht er wie vorgesehen
+    // (gremiumAusAdresse) auf die Überschrift der Liste
+    const fokusOk = fokusVorher !== "BODY#" && (fokusNachher === fokusVorher || (!spaet.trefferDa && fokusVorher === "BUTTON#" && fokusNachher === "H2#list-heading"));
+    pruefen(profil, "Nachprüfung (10) späte Antwort: Filter gesetzt, der inzwischen geöffnete Vorgang bleibt (kein „Los geht's“), Anker bleibt, Fokus unverändert (oder auf der Liste, wenn der Treffer wegfällt)",
       geoeffnet && spaet.hash === geoeffnet && spaet.schritte > 0 && !/Los geht/.test(spaet.heading) && spaet.kennzeichen.startsWith(`Gremium: ${ohne.name}`) && spaet.filter === ohne.key
-      && spaet.n <= zuerst && fokusNachher === fokusVorher, { zuerst, spaet, fokusVorher, fokusNachher });
+      && spaet.n <= zuerst && fokusOk, { zuerst, spaet, fokusVorher, fokusNachher });
     pruefen(profil, "keine Skriptfehler (Nachprüfung: späte Antwort)", s.fehler.length === 0, s.fehler);
     await s.ctx.close();
     // (c) gremien.json mit Fehlercode

@@ -779,8 +779,18 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
   .toggle, .menu-btn { padding: 0 8px; }
   .nav-group + .nav-group, .nav-area + .nav-group { padding-left: 6px; }
 }
-@media (min-width: 901px) and (max-width: 1599px) {
-  .toggle > span, .menu-btn > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }  /* nur Symbole; Name bleibt für Screenreader */
+/* Beschriftung ab 1366 px (Entscheidung 21.11.2026 (1) (13), Pull Request 5), enger als ab 1600 px: Leiste einzeilig ohne
+   Überlauf, Suchfeld bei 1366 px rund 250 px breit (gemessen mit tests/browser/navigation.js, TECHNIK.md) */
+@media (min-width: 1366px) and (max-width: 1599px) {
+  .menu-btn .chev { display: none; }
+  .nav { gap: 5px; padding-left: 14px; }
+  .nav-group { gap: 2px; }
+  .nav-area { max-width: 150px; }
+  .toggle, .menu-btn { padding: 0 6px; gap: 4px; }
+  .nav-group + .nav-group, .nav-area + .nav-group { padding-left: 5px; }
+}
+@media (min-width: 901px) and (max-width: 1365px) {
+  .toggle > span, .menu-btn > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }  /* nur Symbole; Name bleibt für Screenreader, title nennt ihn (app.js leistenTitel) */
   .menu-btn .chev { display: none; }
   .toggle, .menu-btn { padding: 0 10px; }
 }
@@ -860,6 +870,11 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
 @media (max-width: 900px) {
   #panel-gremien .tabs [role=tab], #panel-gremien .wer-darstellung button { min-height: 44px; font-size: 16px; }
   #wer-q, .filters input[type=search], .filters select { min-height: 44px; font-size: 16px; }
+  /* ebenso (aus #51 (5), Pull Request 5) das Suchfeld der Leiste (15 px), die Reiter von „In Zahlen“ (13 px, 34 px hoch),
+     die Auswahl des Stadtbezirks in „Mitmachen in Köln“ (15 px, 40 px hoch) und die Auswahl der Kennzahl in der Legende
+     im Blatt „Karte“ (12 px, 27 px hoch) */
+  .nav-search input { font-size: 16px; }
+  #panel-auswertung .tabs [role=tab], #bt-bezirk, #nav-metric { min-height: 44px; font-size: 16px; }   /* #nav-metric: Kennung, weil .nav-metric select weiter unten 12 px setzt */
 }
 /* Geringe Höhe (etwa 400 % Zoom: 320 × 256 CSS-Pixel; Entscheidung 23.11.2026 (2) (15)): Die ganze Überlagerung rollt,
    Kopf, Reiter und Umschalter rollen mit dem Inhalt weg; der Inhalt rollt nicht mehr für sich (sonst bliebe ihm neben
@@ -868,6 +883,12 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
   .overlay { overflow-y: auto; overscroll-behavior: contain; }
   .overlay > * { flex: none; }
   .overlay > .panel-body { overflow: visible; }
+  /* ebenso die Blätter „Vorlagen“ und „Vorgang“ (aus #51 (5), Pull Request 5): Kopf und Filter rollen mit dem Inhalt
+     weg; vorher blieb bei 320 × 256 neben dem Kopf etwa eine Zeile. Waagrecht abgeschnitten wird nur der Ziehgriff am
+     Rand (er ragt 7 px hinaus) */
+  #panel-list, #panel-detail { overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+  #panel-list > *, #panel-detail > * { flex: none; }
+  #panel-list > .panel-body, #panel-detail > .panel-body { overflow: visible; }
   #about[open], #neu[open] { display: block; overflow-y: auto; }
   .about-body { overflow: visible; }
 }

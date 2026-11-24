@@ -9,6 +9,12 @@
 // (WCAG 2.1 A/AA) in jedem dieser Zustände und Bildschirmfotos (Umgebungsvariable FOTOS). Abweichende Daten (Absage
 // im Namen, ausgesetzte Liste, leerer Ortsname, Vorschau) setzt die Prüfung nur im Browser über page.route ein; die
 // Dateien bleiben unverändert.
+// Pull Request 5 der Navigation (Entscheidung 24.11.2026 (2), Punkte (a) bis (c)): Texte der Kartenvorschau in Tour und
+// Liste ohne Ankündigung (1), Fokus nach dem Ende der Tour (2), Tab aus einem offenen Menü (3), Beschriftung der Leiste
+// ab 1366 px mit Maßen bei 1366×768, 1440×900, 1536×864, 1600×900 und 1920×1080 (4), Eingabefelder mit 16 px Schrift
+// und 44 px Höhe auf dem Telefon und bei 320×256 (5), Fokus nach Enter auf einem Suchtreffer in ganz Köln (6), Blätter
+// „Vorlagen“ und „Vorgang“ bei geringer Höhe (320×256) (7), „Selbst mitwirken“ ohne benannten Bereich (8); axe in
+// jedem neuen Zustand.
 // Nur die lokale Seite: Anfragen an andere Hosts bricht jeder Browserkontext ab (ctx.route, auch aus neuen Fenstern;
 // page.route erfasst diese nicht, und --no-proxy-server gilt nicht für die Kontexte von Playwright).
 // Aufruf (Seite mit Testdaten, z. B. python3 tools/testdaten.py, Pipeline, tools/seite_bauen.py, dann
@@ -27,6 +33,8 @@ const PROFILE = {
   1024: { viewport: { width: 1024, height: 768 } },
   iphone13: devices["iPhone 13"],
 };
+// 320×256 CSS-Pixel (etwa 400 % Zoom; nur für die Punkte 5 und 7 von Pull Request 5, nicht für die übrigen Prüfungen)
+const ZUSATZPROFILE = { klein: { viewport: { width: 320, height: 256 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } };
 const MENUES = [["mega-themen", "Themen"], ["mega-entscheiden", "Wer entscheidet"], ["mega-mitmachen", "Mitmachen"], ["mega-ueber", "Über"]];
 const FOLGT = /\bfolg(t|en)\b/i;
 const LEERER_ORT = "Ortsangabe der Stadt ohne Kölner Stadtteil";
@@ -34,7 +42,7 @@ const tagInKoeln = (d) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/B
 const plusTage = (tag, n) => new Date(Date.parse(tag + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10);
 
 const ergebnisse = [];
-let befunde = 0;
+let befunde = 0, masseLeiste = null;
 const pruefen = (profil, name, ok, angaben) => {
   ergebnisse.push({ profil, name, ok: Boolean(ok), angaben });
   if (!ok) befunde++;
@@ -60,7 +68,7 @@ const geladen = (page) => page.waitForFunction(() => {
 
 const nichtLokal = (u) => !["127.0.0.1", "localhost"].includes(u.hostname);
 async function neueSeite(browser, profil, aenderungen = {}, zeitpunkt = null) {
-  const ctx = await browser.newContext({ ...PROFILE[profil], bypassCSP: true });
+  const ctx = await browser.newContext({ ...(PROFILE[profil] || ZUSATZPROFILE[profil]), bypassCSP: true });
   await ctx.route(nichtLokal, (r) => r.abort());
   const page = await ctx.newPage();
   const fehler = [];
@@ -126,9 +134,12 @@ async function leisteUndMenues(browser, profil) {
   if (telefon(profil)) await page.click("#nav-burger");
   const leiste = await sichtbareMenues(page);
   pruefen(profil, "Leiste: Themen, Wer entscheidet, Mitmachen, Über", JSON.stringify(leiste) === JSON.stringify(MENUES), leiste);
-  // zwischen 901 und 1599 px nur Symbole: title nennt Name und Inhalt beim Überfahren mit der Maus (Prüfung von PR 3)
-  const titel = await page.$$eval('.nav-group[aria-label="Menü"] .menu-btn', (bs) => bs.filter((b) => !b.hidden).map((b) => b.title));
-  pruefen(profil, "Menü-Schaltflächen mit title", titel.length === 4 && titel.every((t, i) => t.startsWith(`${MENUES[i][1]}: `)), titel);
+  // zwischen 901 und 1365 px nur Symbole: title nennt Name und Inhalt beim Überfahren mit der Maus (Prüfung von PR 3);
+  // seit Pull Request 5 ab 1366 px und auf dem Telefon mit sichtbarer Beschriftung und ohne title (sonst läsen
+  // Bildschirmleser den Namen als Beschreibung ein zweites Mal)
+  const titel = await page.$$eval('.nav-group[aria-label="Menü"] .menu-btn', (bs) => bs.filter((b) => !b.hidden).map((b) => b.getAttribute("title")));
+  pruefen(profil, profil === "1024" ? "Menü-Schaltflächen mit title (nur Symbole)" : "Menü-Schaltflächen mit Beschriftung, ohne title",
+    titel.length === 4 && titel.every((t, i) => (profil === "1024" ? Boolean(t) && t.startsWith(`${MENUES[i][1]}: `) : t === null)), titel);
   if (!telefon(profil)) await foto(page, `leiste-${profil}`, ".nav");
   else { await foto(page, `leiste-${profil}`); await page.click("#nav-burger"); }
   const inhalte = {};
@@ -424,6 +435,407 @@ async function vorschau(browser, profil) {
   await s.ctx.close();
 }
 
+// --- Pull Request 5 der Navigation (Entscheidung 24.11.2026 (2), Punkte (a) bis (c)) ------------------------------------
+const mobil = (profil) => telefon(profil) || profil === "klein";
+// Ankündigungen in Texten der Vorschau (Entscheidung 21.11.2026 (1) (12)); „Liste und Karte folgen“ im Schritt
+// „Zeitleiste“ ist keine Ankündigung, der Schritt fehlt in der Vorschau
+const ANKUENDIGUNG = /\bfolg(t|en)\b|kommt hinzu|kommen hinzu|künftig|sobald|bis dahin/i;
+const VORSCHAU_DATEN = { "index.json": (j) => { const { aktuell, ...rest } = j; return { ...rest, meta: { ...j.meta, vorschau: true, testdaten: false } }; } };
+// Fokus mit Lage: sichtbar heißt hier auch im Fenster (nicht nur gezeichnet)
+const fokusLage = (page) => page.evaluate(() => {
+  const e = document.activeElement, r = e.getBoundingClientRect(), cs = getComputedStyle(e);
+  return { tag: e.tagName.toLowerCase(), id: e.id, mega: e.dataset.mega || null, text: (e.getAttribute("aria-label") || e.textContent || "").trim().replace(/\s+/g, " ").slice(0, 40),
+    sichtbar: e !== document.body && e.getClientRects().length > 0 && cs.visibility !== "hidden" && r.bottom > 0 && r.top < innerHeight,
+    rahmen: cs.outlineStyle !== "none" || cs.boxShadow !== "none", oben: Math.round(r.top), unten: Math.round(r.bottom) };
+});
+// Tour Schritt für Schritt bis zum Ende; liefert Titel und Text jedes Schritts
+async function tourDurch(page, { ende = "Fertig", beiSchritt = null } = {}) {
+  const schritte = [];
+  for (let i = 0; i < 30; i++) {
+    await page.waitForFunction(() => !document.querySelector(".tour") || !/^Einen Moment/.test(document.getElementById("tour-text").textContent), null, { timeout: 20000 });
+    if (!(await page.$(".tour"))) break;
+    const s = await page.evaluate(() => ({ titel: document.getElementById("tour-title").textContent, text: document.getElementById("tour-text").textContent,
+      letzter: document.querySelector('[data-tour-act="next"]').textContent === "Fertig" }));
+    if (schritte.length && schritte[schritte.length - 1].titel === s.titel) { await page.waitForTimeout(150); continue; }
+    schritte.push(s);
+    if (beiSchritt) await beiSchritt(s, schritte.length);
+    if (s.letzter && ende === "Fertig") { await page.focus('[data-tour-act="next"]'); await page.keyboard.press("Enter"); }
+    else await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(250);
+  }
+  return schritte;
+}
+
+// Eine Prüfung von Pull Request 5 bricht bei einem Fehler nur sich selbst ab (die übrigen laufen weiter, auch auf
+// dem Stand vor Pull Request 5)
+async function einzeln(profil, name, f) {
+  try { await f(); } catch (e) { pruefen(profil, `${name}: Ablauf`, false, String(e && e.message || e).split("\n")[0].slice(0, 300)); }
+}
+
+// (1) Kartenvorschau: Tour und Satz in der Liste ohne „folgen“, „kommt hinzu“, „künftig“
+async function pr5Vorschau(browser, profil) {
+  const s = await neueSeite(browser, profil, VORSCHAU_DATEN);
+  await s.page.goto(BASIS, { waitUntil: "load" });
+  await s.page.waitForFunction(() => document.documentElement.dataset.vorschau === "ja" && document.getElementById("detail-heading").textContent === "Los geht's"
+    && /Vorschau/.test(document.getElementById("count").textContent), null, { timeout: 30000 });
+  await s.page.waitForTimeout(600);
+  await s.page.evaluate(() => window.risKarte.ui.panel("panel-list", true));
+  await s.page.waitForTimeout(400);
+  const liste = await s.page.$eval("#papers", (e) => e.innerText.trim());
+  pruefen(profil, "PR 5 (1) Vorschau: Satz in der Liste ohne Ankündigung", liste.startsWith("Die Vorschau enthält noch keine Ratsvorlagen.") && !ANKUENDIGUNG.test(liste), liste);
+  await axe(s.page, profil, "PR 5 (1) Vorschau: Liste");
+  await s.page.evaluate(() => window.risKarte.ui.panel("panel-list", false));
+  await s.page.evaluate(() => document.querySelector("#mega-ueber [data-tour]").click());
+  await s.page.waitForSelector(".tour-card");
+  let axeGelaufen = false;
+  const schritte = await tourDurch(s.page, { beiSchritt: async (x) => { if (!axeGelaufen && x.titel === "Die Vorlagen") { axeGelaufen = true; await axe(s.page, profil, "PR 5 (1) Vorschau: Tour, Schritt „Die Vorlagen“"); } } });
+  const mit = schritte.filter((x) => ANKUENDIGUNG.test(x.text)).map((x) => `${x.titel}: ${x.text.match(ANKUENDIGUNG)[0]}`);
+  pruefen(profil, "PR 5 (1) Vorschau: kein Schritt der Tour kündigt an", schritte.length >= 8 && mit.length === 0 && schritte.some((x) => x.titel === "Die Vorlagen")
+    && !schritte.some((x) => /Zeitleiste/.test(x.titel)), { schritte: schritte.map((x) => x.titel), mit });
+  pruefen(profil, "keine Skriptfehler (PR 5 Vorschau)", s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+}
+
+// (2) Fokus nach dem Ende der Tour: Auslöser, wenn zu sehen, sonst Überschrift der offenen Fläche, sonst erstes Element
+// der Leiste (außer dem Suchfeld); nie <body>
+async function pr5TourFokus(browser, profil) {
+  const erwartet = telefon(profil) ? { id: "nav-burger" } : { id: "detail-heading" };
+  for (const art of ["Esc", "Schließen", "Fertig"]) {
+    const s = await neueSeite(browser, profil);
+    await s.page.goto(BASIS, { waitUntil: "load" });
+    await geladen(s.page);
+    await s.page.waitForTimeout(400);
+    await menueOeffnen(s.page, profil, "mega-ueber");
+    await s.page.focus("#mega-ueber [data-tour]");
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForSelector(".tour-card");
+    await s.page.waitForTimeout(400);
+    if (art === "Esc") await s.page.keyboard.press("Escape");
+    else if (art === "Schließen") { await s.page.focus(".tour-x"); await s.page.keyboard.press("Enter"); }
+    else await tourDurch(s.page);
+    await s.page.waitForTimeout(500);
+    const f = await fokusLage(s.page);
+    const weg = !(await s.page.$(".tour"));
+    pruefen(profil, `PR 5 (2) Tour aus dem Menü „Über“, Ende mit ${art}: Fokus ${erwartet.id}`, weg && f.id === erwartet.id && f.sichtbar && f.tag !== "body", f);
+    if (art === "Esc") await axe(s.page, profil, `PR 5 (2) nach dem Ende der Tour (${art})`);
+    pruefen(profil, `keine Skriptfehler (PR 5 Tour, ${art})`, s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  }
+  // Start aus „Los geht's“: Esc im ersten Schritt, der Auslöser ist zu sehen und bekommt den Fokus zurück
+  const s = await neueSeite(browser, profil);
+  await s.page.goto(BASIS, { waitUntil: "load" });
+  await geladen(s.page);
+  await s.page.waitForTimeout(400);
+  await s.page.focus("#detail [data-tour]");
+  await s.page.keyboard.press("Enter");
+  await s.page.waitForSelector(".tour-card");
+  await s.page.waitForTimeout(300);
+  await s.page.keyboard.press("Escape");
+  await s.page.waitForTimeout(400);
+  const f = await s.page.evaluate(() => ({ ausloeser: Boolean(document.activeElement.closest("#detail")) && document.activeElement.hasAttribute("data-tour") }));
+  pruefen(profil, "PR 5 (2) Tour aus „Los geht's“, Esc: Fokus zurück auf den Auslöser", f.ausloeser, f);
+  await s.ctx.close();
+}
+
+// (3) Tab und Umschalt+Tab aus einem offenen Menü schließen es; Esc und Klicks wie bisher
+async function pr5MenueTab(browser, profil) {
+  const s = await neueSeite(browser, profil);
+  const page = s.page;
+  await page.goto(BASIS, { waitUntil: "load" });
+  await geladen(page);
+  await page.waitForTimeout(400);
+  const zustand = (mega) => page.evaluate((id) => ({ offen: !document.getElementById(id).hidden,
+    imMenue: document.getElementById(id).contains(document.activeElement), aufKnopf: document.activeElement.dataset.mega === id,
+    expanded: document.querySelector(`.nav-group [data-mega="${id}"]`)?.getAttribute("aria-expanded") ?? null }), mega);
+  const oeffnenMitTastatur = async (mega) => {
+    await page.evaluate(() => window.risKarte.ui.menu(null));   // ein noch offenes Menü (vor Pull Request 5) schließen
+    if (telefon(profil) && !(await page.evaluate(() => document.body.classList.contains("nav-open")))) await page.click("#nav-burger");
+    await page.focus(`.nav-group [data-mega="${mega}"]`);
+    await page.keyboard.press("Enter");
+    await page.waitForSelector(`#${mega}:not([hidden])`);
+    await page.waitForTimeout(200);
+  };
+  for (const [mega, name] of MENUES) {
+    for (const richtung of ["Tab", "Shift+Tab"]) {
+      await oeffnenMitTastatur(mega);
+      const drin = await zustand(mega);
+      let z = drin, schritte = 0;
+      // aus dem Menü hinaus: höchstens 60 Schritte; auf dem Telefon führt Umschalt+Tab zuerst auf die eigene Schaltfläche
+      // (das Menü bleibt dabei offen), der nächste Schritt hinaus
+      while ((z.imMenue || z.aufKnopf) && schritte < 60) {
+        await page.keyboard.press(richtung);
+        schritte++;
+        z = await zustand(mega);
+        if (z.aufKnopf && !z.offen) break;
+      }
+      const f = await fokusLage(page);
+      pruefen(profil, `PR 5 (3) Menü „${name}“: ${richtung} hinaus schließt es, Fokus auf dem nächsten Ziel`, drin.imMenue && !z.offen && z.expanded === "false"
+        && f.tag !== "body" && f.sichtbar, { schritte, fokus: f, drin });
+      if (telefon(profil) && richtung === "Shift+Tab") {
+        // die eigene Schaltfläche gehört zum Menü: Umschalt+Tab vom ersten Eintrag dorthin lässt es offen
+        await oeffnenMitTastatur(mega);
+        await page.keyboard.press("Shift+Tab");
+        const k = await zustand(mega);
+        pruefen(profil, `PR 5 (3) Menü „${name}“: Umschalt+Tab auf die eigene Schaltfläche lässt es offen`, k.aufKnopf && k.offen, k);
+        await page.keyboard.press("Escape");
+      }
+      if (telefon(profil) && await page.evaluate(() => document.body.classList.contains("nav-open"))) { await page.keyboard.press("Escape"); await page.waitForTimeout(150); }
+    }
+  }
+  await axe(page, profil, "PR 5 (3) nach Tab aus dem Menü");
+  // Suchmenü: Tab aus dem Suchfeld schließt es; Esc schließt und lässt den Fokus im Suchfeld
+  for (const richtung of ["Tab", "Shift+Tab"]) {
+    await page.focus("#q");
+    await page.waitForSelector("#mega-suche:not([hidden])");
+    await page.keyboard.press(richtung);
+    await page.waitForTimeout(200);
+    const z = await page.evaluate(() => ({ offen: !document.getElementById("mega-suche").hidden, fokus: document.activeElement.id || document.activeElement.className }));
+    pruefen(profil, `PR 5 (3) Suchmenü: ${richtung} aus dem Suchfeld schließt es`, !z.offen && z.fokus !== "q", z);
+  }
+  await page.focus("#q");
+  await page.waitForSelector("#mega-suche:not([hidden])");
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(150);
+  const esc = await page.evaluate(() => ({ offen: !document.getElementById("mega-suche").hidden, fokus: document.activeElement.id }));
+  pruefen(profil, "PR 5 (3) Suchmenü: Esc wie bisher (zu, Fokus im Suchfeld)", !esc.offen && esc.fokus === "q", esc);
+  // Klicks wie bisher: ein Menü öffnet, ein Klick auf ein anderes wechselt, ein zweiter Klick schließt
+  if (telefon(profil)) await page.click("#nav-burger");
+  await page.click('.nav-group [data-mega="mega-themen"]');
+  await page.waitForTimeout(150);
+  await page.click('.nav-group [data-mega="mega-mitmachen"]');
+  await page.waitForTimeout(250);
+  const k1 = await page.evaluate(() => [document.getElementById("mega-themen").hidden, document.getElementById("mega-mitmachen").hidden]);
+  await page.click('.nav-group [data-mega="mega-mitmachen"]');
+  await page.waitForTimeout(250);
+  const k2 = await page.evaluate(() => document.getElementById("mega-mitmachen").hidden);
+  pruefen(profil, "PR 5 (3) Klicks wie bisher: Wechsel des Menüs, zweiter Klick schließt", k1[0] && !k1[1] && k2, { k1, k2 });
+  pruefen(profil, "keine Skriptfehler (PR 5 Menüs)", s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+}
+
+// (4) Beschriftung der Leiste ab 1366 px: Maße bei fünf Größen, dazu 1365 px (nur Symbole) als Grenze
+const LEISTE_GROESSEN = [[1366, 768], [1440, 900], [1536, 864], [1600, 900], [1920, 1080], [1365, 768]];
+async function pr5Beschriftung(browser) {
+  const masse = {};
+  for (const [w, h] of LEISTE_GROESSEN) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: h }, bypassCSP: true });
+    await ctx.route(nichtLokal, (r) => r.abort());
+    const page = await ctx.newPage();
+    const fehler = [];
+    page.on("pageerror", (e) => fehler.push(`pageerror: ${e.message}`));
+    await page.goto(BASIS, { waitUntil: "load" });
+    await geladen(page);
+    await page.waitForTimeout(400);
+    const m = await page.evaluate(() => {
+      const nav = document.querySelector(".nav"), nr = nav.getBoundingClientRect(), ns = getComputedStyle(nav);
+      const teile = [...nav.querySelectorAll(".brand, .nav-search, #f-area, .nav-group .toggle, .nav-group .menu-btn")].filter((e) => !e.hidden && e.getClientRects().length);
+      const r = teile.map((e) => { const b = e.getBoundingClientRect(); return { e, l: b.left, r: b.right, m: b.top + b.height / 2 }; });
+      const knoepfe = [...nav.querySelectorAll(".nav-group .toggle, .nav-group .menu-btn")].filter((e) => !e.hidden && e.getClientRects().length);
+      const schild = knoepfe.map((b) => { const sp = b.querySelector(":scope > span"), sr = sp.getBoundingClientRect();
+        return { text: sp.textContent.trim(), breite: Math.round(sr.width), innen: sr.left >= b.getBoundingClientRect().left - 0.5 && sr.right <= b.getBoundingClientRect().right + 0.5,
+          titel: b.getAttribute("title"), label: b.getAttribute("aria-label") }; });
+      let ueberlappt = 0;
+      for (let i = 1; i < r.length; i++) if (r[i].l < r[i - 1].r - 0.5) ueberlappt++;
+      const mitten = r.map((x) => x.m);
+      return { ueberlauf: nav.scrollWidth - nav.clientWidth, rechts: Math.round(nr.right - parseFloat(ns.paddingRight) - r[r.length - 1].r),
+        einzeilig: Math.max(...mitten) - Math.min(...mitten) < 2 && Math.round(nr.height) === 60, ueberlappt,
+        suchfeld: Math.round(document.getElementById("q").getBoundingClientRect().width), schild };
+    });
+    // zugänglicher Name = sichtbare Beschriftung (genau eine Schaltfläche je Name)
+    const namen = [];
+    for (const x of m.schild) namen.push(await page.getByRole("button", { name: x.text, exact: true }).count());
+    const beschriftet = m.schild.every((x) => x.breite > 10 && x.innen);
+    const nurSymbole = m.schild.every((x) => x.breite <= 1);
+    const ziel = w >= 1366;
+    masse[`${w}x${h}`] = { suchfeld: m.suchfeld, rechts: m.rechts, ueberlauf: m.ueberlauf, einzeilig: m.einzeilig, ueberlappt: m.ueberlappt };
+    pruefen(`${w}x${h}`, ziel ? "PR 5 (4) Leiste beschriftet, einzeilig, ohne Überlauf und Überlappung, Suchfeld mindestens 240 px"
+      : "PR 5 (4) bis 1365 px nur Symbole mit title", ziel
+      ? beschriftet && m.ueberlauf <= 0 && m.rechts >= 0 && m.einzeilig && m.ueberlappt === 0 && m.suchfeld >= 240
+        && m.schild.every((x) => x.titel === null && !x.label) && namen.every((n) => n === 1)
+      : nurSymbole && m.schild.every((x) => Boolean(x.titel) && x.titel.startsWith(x.text === "Vorgang" ? "Gewählter Vorgang" : x.text === "Vorlagen" ? "Alle Vorlagen" : x.text)),
+      { ...masse[`${w}x${h}`], schild: m.schild.map((x) => `${x.text}:${x.breite}${x.titel ? " [title]" : ""}`), namen });
+    if (w === 1366 || w === 1440) await axe(page, `${w}x${h}`, "PR 5 (4) Leiste mit Beschriftung");
+    if (FOTOS && w !== 1365) await foto(page, `pr5-leiste-${w}x${h}`, ".nav");
+    pruefen(`${w}x${h}`, "keine Skriptfehler (PR 5 Leiste)", fehler.length === 0, fehler);
+    await ctx.close();
+  }
+  return masse;
+}
+
+// (5) Eingabefelder auf dem Telefon (bis 900 px) mit mindestens 16 px Schrift und 44 px Höhe (iOS vergrößert sonst
+// beim Fokus); breite Bildschirme unverändert
+const felderMessen = (page) => page.evaluate(() => [...document.querySelectorAll("input, select, textarea, #panel-auswertung [role=tab]")]
+  .filter((e) => e.getClientRects().length && getComputedStyle(e).visibility !== "hidden" && !["checkbox", "radio", "hidden"].includes(e.type))
+  .map((e) => ({ feld: e.id || e.getAttribute("role"), px: parseFloat(getComputedStyle(e).fontSize), hoehe: Math.round(e.getBoundingClientRect().height) })));
+async function pr5Eingabefelder(browser, profil, gebiet) {
+  const s = await neueSeite(browser, profil);
+  const page = s.page;
+  await page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
+  await geladen(page);
+  await page.waitForTimeout(400);
+  const gemessen = [];
+  const merken = async (wo) => { for (const f of await felderMessen(page)) gemessen.push({ wo, ...f }); };
+  await merken("Start");
+  if (!mobil(profil)) {
+    // breite Bildschirme: Suchfeld 15 px und Reiter von „In Zahlen“ 13 px wie bisher
+    await page.evaluate(() => document.querySelector('[data-open-tab="stats"]').click());
+    await page.waitForSelector("#panel-auswertung:not([hidden])");
+    await merken("In Zahlen");
+    const q = gemessen.find((x) => x.feld === "q"), reiter = gemessen.filter((x) => /^tab-/.test(x.feld));
+    pruefen(profil, "PR 5 (5) breite Bildschirme unverändert (Suchfeld 15 px, Reiter von „In Zahlen“ 13 px)", q && q.px === 15 && reiter.length === 2 && reiter.every((x) => x.px === 13), { q, reiter });
+    await s.ctx.close();
+    return;
+  }
+  await page.click("#nav-burger");
+  await page.waitForTimeout(250);
+  await merken("Menü");
+  await page.click("#nav-burger");
+  await page.evaluate(() => document.querySelector('[data-open-tab="stats"]').click());
+  await page.waitForSelector("#panel-auswertung:not([hidden])");
+  await page.waitForTimeout(400);
+  await merken("In Zahlen");
+  await axe(page, profil, "PR 5 (5) „In Zahlen“");
+  await foto(page, `pr5-inzahlen-${profil}`);
+  await page.evaluate(() => document.getElementById("tab-wege").click());
+  await page.waitForTimeout(400);
+  await merken("Verfahrenswege");
+  await page.keyboard.press("Escape");
+  await page.evaluate(() => document.getElementById("cta-termine").click());
+  await page.waitForSelector("#panel-termine:not([hidden])");
+  await page.waitForTimeout(300);
+  await merken("Termine");
+  await page.keyboard.press("Escape");
+  await page.evaluate(() => document.getElementById("cta-mitmachen").click());
+  await page.waitForSelector("#panel-mitmachen:not([hidden]) #bt-bezirk", { timeout: 20000 });
+  await page.waitForTimeout(300);
+  await merken("Mitmachen in Köln");
+  await axe(page, profil, "PR 5 (5) „Mitmachen in Köln“");
+  await foto(page, `pr5-mitmachen-${profil}`);
+  await page.keyboard.press("Escape");
+  // Gremien und Ämter (Regel seit #51, hier zum Vergleich mit gemessen; auf dem Telefon die Liste mit Suchfeld)
+  await page.evaluate(() => document.querySelector('#mega-entscheiden [data-wer="gremien"]').click());
+  await page.waitForSelector("#panel-gremien:not([hidden]) #wer-q", { timeout: 20000 });
+  await page.waitForTimeout(300);
+  await merken("Gremien und Ämter");
+  await page.keyboard.press("Escape");
+  await page.evaluate(() => window.risKarte.ui.panel("panel-list", true));
+  await page.waitForTimeout(300);
+  await page.evaluate(() => { const d = document.getElementById("more-filters"); if (d) d.open = true; });
+  await merken("Vorlagen");
+  await page.evaluate(() => window.risKarte.ui.panel("panel-list", false));
+  await page.click(".map-menu");
+  await page.waitForTimeout(400);
+  await merken("Karte");
+  await axe(page, profil, "PR 5 (5) Blatt „Karte“");
+  const zuKlein = gemessen.filter((x) => x.px < 16 || x.hoehe < 44);
+  const felder = [...new Set(gemessen.map((x) => `${x.feld} ${x.px}px ${x.hoehe}`))];
+  pruefen(profil, "PR 5 (5) alle Eingabefelder und Reiter von „In Zahlen“ mit 16 px und mindestens 44 px", zuKlein.length === 0
+    && ["q", "f-area", "tab-stats", "tab-wege", "wege-type", "termine-scope", "bt-bezirk", "wer-q", "f-text", "nav-metric"].every((id) => gemessen.some((x) => x.feld === id)),
+    { zuKlein, felder });
+  pruefen(profil, "keine Skriptfehler (PR 5 Eingabefelder)", s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+}
+
+// (6) Enter auf einem Suchtreffer in ganz Köln (und auf einem Eintrag im Gebiet): Fokus auf dem Eintrag, wenn die Liste
+// offen bleibt, sonst auf der Überschrift des Vorgangs; (8) „Selbst mitwirken“ ohne benannten Bereich
+async function pr5Treffer(browser, profil, gebiet) {
+  let s = await neueSeite(browser, profil);
+  await s.page.goto(`${BASIS}?suche=koeln`, { waitUntil: "load" });
+  await geladen(s.page);
+  await s.page.waitForSelector("#panel-list:not([hidden]) #papers button[data-gref]", { timeout: 20000 });
+  const treffer = await s.page.$("#papers button[data-gref]");
+  const ref = await treffer.evaluate((b) => b.dataset.gref);
+  await treffer.focus();
+  await s.page.keyboard.press("Enter");
+  await s.page.waitForFunction(() => document.querySelector("#detail .steps"), null, { timeout: 20000 });
+  await s.page.waitForTimeout(600);
+  const listeOffen = await s.page.evaluate(() => !document.getElementById("panel-list").hidden);
+  const f = await s.page.evaluate((r) => ({ tag: document.activeElement.tagName.toLowerCase(), eintrag: document.activeElement.dataset?.gref === r,
+    aktuell: document.activeElement.getAttribute("aria-current"), titel: Boolean(document.activeElement.closest("#detail")) && document.activeElement.tagName === "H3" }), ref);
+  pruefen(profil, `PR 5 (6) Suchtreffer in ganz Köln mit Enter: Fokus ${listeOffen ? "auf dem Eintrag" : "auf dem Titel des Vorgangs"}`,
+    f.tag !== "body" && (listeOffen ? f.eintrag && f.aktuell === "true" : f.titel), { listeOffen, ...f });
+  await axe(s.page, profil, "PR 5 (6) Vorgang aus einem Suchtreffer in ganz Köln");
+  const mw = await s.page.evaluate(() => { const sec = document.querySelector("#detail .participate");
+    return sec && { name: sec.getAttribute("aria-labelledby") || sec.getAttribute("aria-label") || sec.getAttribute("role"), h: sec.querySelector("h4")?.textContent,
+      bereiche: [...document.querySelectorAll("#detail section[aria-labelledby], #detail section[aria-label], #detail [role=region]")].map((x) => x.className) }; });
+  pruefen(profil, "PR 5 (8) „Selbst mitwirken“: Überschrift, kein benannter Bereich", mw && mw.name === null && mw.h === "Selbst mitwirken" && !mw.bereiche.includes("participate"), mw);
+  pruefen(profil, "keine Skriptfehler (PR 5 Suchtreffer)", s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+  // im Gebiet: Enter auf einem Eintrag der Liste (bei 1024 px schließt der Vorgang die Liste; bis Pull Request 5 <body>)
+  s = await neueSeite(browser, profil);
+  await s.page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
+  await geladen(s.page);
+  await s.page.evaluate(() => window.risKarte.ui.panel("panel-list", true));
+  await s.page.waitForSelector("#panel-list:not([hidden]) #papers button[data-ref]");
+  await s.page.waitForTimeout(300);
+  await s.page.focus("#papers button[data-ref]");
+  await s.page.keyboard.press("Enter");
+  await s.page.waitForFunction(() => document.querySelector("#detail .steps"), null, { timeout: 20000 });
+  await s.page.waitForTimeout(500);
+  const g = await s.page.evaluate(() => ({ liste: !document.getElementById("panel-list").hidden, tag: document.activeElement.tagName.toLowerCase(),
+    eintrag: document.activeElement.hasAttribute("data-ref"), titel: Boolean(document.activeElement.closest("#detail")) && document.activeElement.tagName === "H3" }));
+  pruefen(profil, "PR 5 (6) Eintrag im Gebiet mit Enter: Fokus auf dem Eintrag oder dem Titel des Vorgangs", g.tag !== "body" && (g.liste ? g.eintrag : g.titel), g);
+  await s.ctx.close();
+}
+
+// (7) Geringe Höhe (320×256): Die Blätter „Vorlagen“ und „Vorgang“ rollen als Ganzes, der Kopf rollt mit; der Fokus
+// bleibt beim Tab im sichtbaren Teil des Blatts. Bei normaler Höhe unverändert (der Inhalt rollt für sich)
+async function pr5GeringeHoehe(browser, profil, gebiet) {
+  const s = await neueSeite(browser, profil);
+  const page = s.page;
+  await page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
+  await geladen(page);
+  await page.waitForTimeout(400);
+  const blatt = (id) => page.evaluate((id) => { const p = document.getElementById(id), b = p.querySelector(".panel-body"), k = p.querySelector(".panel-head");
+    const ps = getComputedStyle(p), bs = getComputedStyle(b);
+    return { rollt: ps.overflowY, inhalt: bs.overflowY, hoehe: p.clientHeight, gesamt: p.scrollHeight, kopf: Math.round(k.getBoundingClientRect().height) }; }, id);
+  if (profil !== "klein") {
+    await page.evaluate(() => window.risKarte.ui.panel("panel-list", true));
+    await page.waitForTimeout(400);
+    const l = await blatt("panel-list");
+    pruefen(profil, "PR 5 (7) normale Höhe: Blatt „Vorlagen“ unverändert (nur der Inhalt rollt)", l.rollt !== "auto" && l.inhalt === "auto", l);
+    await s.ctx.close();
+    return;
+  }
+  // Blatt „Vorlagen“ über ☰ öffnen wie Besucher:innen
+  await page.click("#nav-burger");
+  await page.click('.toggle[data-panel="panel-list"]');
+  await page.waitForSelector("#panel-list:not([hidden]) #papers button[data-ref]");
+  await page.waitForTimeout(500);
+  const pruefeBlatt = async (id, name) => {
+    const b = await blatt(id);
+    const lagen = [];
+    for (let i = 0; i < 14; i++) {
+      await page.keyboard.press("Tab");
+      const l = await page.evaluate((id) => { const p = document.getElementById(id), e = document.activeElement;
+        if (!p.contains(e)) return null;
+        const r = e.getBoundingClientRect(), pr = p.getBoundingClientRect(), cs = getComputedStyle(e);
+        return { ziel: e.id || e.tagName.toLowerCase(), innen: r.top >= pr.top - 1 && r.bottom <= pr.bottom + 1 || (r.height > pr.height && r.top < pr.bottom && r.bottom > pr.top),
+          rahmen: cs.outlineStyle !== "none" || cs.boxShadow !== "none", gerollt: p.scrollTop }; }, id);
+      if (!l) break;
+      lagen.push(l);
+    }
+    const kopfWeg = await page.evaluate((id) => { const p = document.getElementById(id); p.scrollTop = p.scrollHeight;
+      return p.querySelector(".panel-head").getBoundingClientRect().bottom <= p.getBoundingClientRect().top + 1; }, id);
+    pruefen(profil, `PR 5 (7) 320×256: Blatt „${name}“ rollt als Ganzes, Kopf rollt mit, Fokus beim Tab sichtbar`, b.rollt === "auto" && b.inhalt === "visible"
+      && b.gesamt > b.hoehe && kopfWeg && lagen.length >= 3 && lagen.every((x) => x.innen && x.rahmen) && lagen.some((x) => x.gerollt > 0),
+      { ...b, kopfWeg, lagen: lagen.map((x) => `${x.ziel}${x.innen ? "" : " (verdeckt)"}${x.rahmen ? "" : " (ohne Rahmen)"}`) });
+    await page.evaluate((id) => { document.getElementById(id).scrollTop = 0; }, id);
+    await axe(page, profil, `PR 5 (7) Blatt „${name}“ bei 320×256`);
+  };
+  await page.focus("#list-heading");
+  await pruefeBlatt("panel-list", "Vorlagen");
+  await foto(page, "pr5-vorlagen-320x256");
+  await page.evaluate(() => document.querySelector("#papers button[data-ref]").click());
+  await page.waitForSelector("#panel-detail:not([hidden]) #detail .steps");
+  await page.waitForTimeout(500);
+  await page.focus("#detail-heading");
+  await pruefeBlatt("panel-detail", "Vorgang");
+  await foto(page, "pr5-vorgang-320x256");
+  pruefen(profil, "keine Skriptfehler (PR 5 geringe Höhe)", s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+}
+
 async function begriffe(browser, profil) {
   const s = await neueSeite(browser, profil);
   const r = await s.page.goto(BASIS + "begriffe/", { waitUntil: "load" });
@@ -451,12 +863,23 @@ async function begriffe(browser, profil) {
       await gebietUndVorgang(browser, profil, gebiet);
       await vorschau(browser, profil);
       await begriffe(browser, profil);
+      // Pull Request 5 der Navigation
+      await einzeln(profil, "PR 5 (1)", () => pr5Vorschau(browser, profil));
+      await einzeln(profil, "PR 5 (2)", () => pr5TourFokus(browser, profil));
+      await einzeln(profil, "PR 5 (3)", () => pr5MenueTab(browser, profil));
+      await einzeln(profil, "PR 5 (5)", () => pr5Eingabefelder(browser, profil, gebiet));
+      await einzeln(profil, "PR 5 (6) und (8)", () => pr5Treffer(browser, profil, gebiet));
+      await einzeln(profil, "PR 5 (7)", () => pr5GeringeHoehe(browser, profil, gebiet));
     }
+    // Punkte 5 und 7 zusätzlich bei 320×256 (etwa 400 % Zoom), Punkt 4 mit eigenen Größen
+    await einzeln("klein", "PR 5 (5)", () => pr5Eingabefelder(browser, "klein", gebiet));
+    await einzeln("klein", "PR 5 (7)", () => pr5GeringeHoehe(browser, "klein", gebiet));
+    await einzeln("Leiste", "PR 5 (4)", async () => { masseLeiste = await pr5Beschriftung(browser); });
   } catch (e) {
     pruefen("-", "Ablauf", false, String(e && e.stack || e).slice(0, 800));
   }
   await browser.close();
-  if (AUSGABE) fs.writeFileSync(AUSGABE, JSON.stringify({ ergebnisse }, null, 1));
+  if (AUSGABE) fs.writeFileSync(AUSGABE, JSON.stringify({ ergebnisse, masseLeiste }, null, 1));
   console.log(`${befunde} Befunde`);
   process.exit(befunde ? 1 : 0);
 })();

@@ -214,7 +214,9 @@
   // „strukturdaten“): Modul erst bei Bedarf; solange dessen Flächenfarben an sind, färbt die Ebene „gebiete“ nicht
   // (flaechenAus: nur eine Flächenfarbe zugleich)
   let funktionen = {}, sdModul = null, sdLaden = null, flaechenAus = false;
-  const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln; bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
+  // Satz in Liste, „In Zahlen“ und Verfahrenswegen der Vorschau: nur, was die Vorschau zeigt, ohne Ankündigung
+  // (Entscheidung 21.11.2026 (1) (12), Pull Request 5; vorher „Sie folgen nach dem ersten vollständigen Abruf …“)
+  const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Die Karte zeigt Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
   // Suche über ganz Köln (suche.json, erst bei Bedarf geladen)
   let search = null, searchLoading = null;
   const THEMES = {  // wie pipeline/topics.THEMES
@@ -245,6 +247,9 @@
     chatReady ||= import("./chat/ui.js").catch((e) => { chatReady = null; console.error("Ratsassistent nicht geladen", e); });
     return chatReady;
   }
+  // Vorgang nach oben rollen: sonst rollt nur der Inhalt, bei geringer Höhe (max-height: 480px, style.css; aus #51 (5),
+  // Pull Request 5) das ganze Blatt
+  const detailNachOben = () => { $("#detail").scrollTop = 0; $("#panel-detail").scrollTop = 0; };
   const opener = {};   // Element, das eine Fläche ohne eigene Schaltfläche in der Leiste geöffnet hat (Fokus beim Schließen)
   function setPanel(id, open) {
     const el = document.getElementById(id);
@@ -295,7 +300,7 @@
     showIntro(zuAktuell);
     syncUrl();
     setPanel("panel-detail", true);
-    $("#detail").scrollTop = 0;
+    detailNachOben();
     const ziel = zuAktuell && $("#aktuell");
     if (ziel) { ziel.scrollIntoView({ block: "start" }); ziel.querySelector("summary").focus(); } else $("#detail-heading").focus();
   }
@@ -417,6 +422,18 @@
     // Klick außerhalb schließt das Menü (das Suchfeld gehört zum Suchmenü)
     // (Ziele, die beim Klick neu aufgebaut wurden, z. B. Chips, sind nicht mehr im Dokument)
     if (openMegaId && e.target.isConnected && !e.target.closest(".mega") && !e.target.closest("#nav-search")) closeMega();
+  });
+  // Tab aus einem offenen Menü (Entscheidung 21.11.2026 (1) (15), Pull Request 5): Verlässt der Fokus Menü und
+  // Schaltfläche (beim Suchmenü das Suchfeld) mit Tab oder Umschalt+Tab, geht das Menü zu; der Fokus bleibt auf dem neuen
+  // Ziel. Ohne neues Ziel (anderes Fenster, Klick auf eine Stelle ohne Fokus, neu aufgebaute Schnellfilter) bleibt es
+  // offen; Esc (zurück auf die Schaltfläche) und Klicks wie bisher. Bis Pull Request 5 blieb das Menü offen und lag über
+  // dem, was den Fokus bekam
+  const zumMenue = (el, id) => Boolean(el) && (document.getElementById(id).contains(el)
+    || Boolean(el.closest(`[data-mega="${id}"]`)) || (id === "mega-suche" && Boolean(el.closest("#nav-search"))));
+  document.addEventListener("focusout", (e) => {
+    const id = openMegaId, neu = e.relatedTarget;
+    if (!id || !(neu instanceof Element) || !zumMenue(e.target, id) || zumMenue(neu, id)) return;
+    closeMega();
   });
 
   // --- Hamburger-Menü auf dem Telefon: Gebiet, Flächen und Menüs als Blatt über der Leiste --------------
@@ -1716,6 +1733,16 @@
     }
     if (openMegaId === "mega-suche") $("#mega-count").textContent = $("#count").textContent;
   }
+  // Fokus, nachdem ein Eintrag der Liste den Vorgang geöffnet hat (aus #51 (5), Pull Request 5): der Eintrag selbst,
+  // wenn die Liste offen bleibt (breite Bildschirme, wie bisher im Gebiet), sonst die Überschrift des Vorgangs. In ganz
+  // Köln baut das Laden des Gebiets die Liste neu auf (der angeklickte Eintrag ist danach nicht mehr im Dokument), bei
+  // 1024 px schließt der Vorgang die Liste; in beiden Fällen lag der Fokus bis Pull Request 5 auf <body>
+  function fokusNachListe(ref) {
+    const eintrag = [...document.querySelectorAll(".papers button[data-ref], .papers button[data-gref]")]
+      .find((x) => (x.dataset.ref || x.dataset.gref) === ref);
+    const ziel = sichtbarEl(eintrag) ? eintrag : $("#detail h3");
+    if (ziel && document.activeElement !== ziel) ziel.focus();
+  }
   async function openGlobal(ref, areaKey) {
     if (!area || `${area.kind}:${area.key}` !== areaKey) await loadArea(areaKey, true);
     const p = papers.find((x) => x.reference === ref);
@@ -2069,7 +2096,7 @@
         <li>${LIZENZEN_LINK}</li></ul></details>`;
     $("#announce").textContent = `Bebauungsplan ${key} geöffnet`;
     if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
-    $("#detail").scrollTop = 0;
+    detailNachOben();
     syncUrl();
   }
   // Tastatur- und Listenzugang zur Planebene: Pläne mit Vorlagen im gewählten Gebiet
@@ -2172,7 +2199,7 @@
         <li>Mögliche Umsetzung: abgeleitet (pipeline/kandidaten.py), Audit ${link(REPO + "/blob/main/data/export/baustellen_kandidaten.tsv", "baustellen_kandidaten.tsv")}</li></ul></details>`;
     $("#announce").textContent = `Baustelle ${b.bezeichnung} geöffnet`;
     if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
-    $("#detail").scrollTop = 0;
+    detailNachOben();
     syncUrl();
   }
   function showSiteList() {
@@ -2273,7 +2300,9 @@
     const meeting = next ? `<li data-generic="sitzung" data-key="${esc(next.gremium)}|${esc(next.date)}">Nächste Sitzung eines beteiligten Gremiums: <strong>${esc(next.gremium)}</strong>, ${fmtDay(next.date)}${next.time ? `, ${esc(next.time)} Uhr` : ""}${verschoben ? ' <span class="badge">laut Sitzungsnamen verschoben</span>' : ""}${onAgenda ? " – die Vorlage steht dort auf der Tagesordnung <span class=\"derived\">abgeleitet, über die Sitzung verknüpft</span>" : ""}.
       ${link(next.web, "Tagesordnung") || "Die Tagesordnung erscheint vor der Sitzung im Ratsinformationssystem."}${verschoben ? "" : " Die Sitzung ist in der Regel öffentlich; Sie können zuhören."}</li>` : "";
     const done = p.stand === "entschieden" ? "<li data-generic=\"done\">Das Verfahren ist entschieden. Neue Anliegen zum Thema lassen sich mit Anregungen und Beschwerden nach § 24 GO NRW einbringen.</li>" : "";
-    return `<section class="participate" aria-labelledby="participate-h"><h4 id="participate-h">Selbst mitwirken</h4><ul>
+    // ohne aria-labelledby, also kein benannter Bereich (Landmarke); die Überschrift gliedert (wie 23.11.2026 (2) (17),
+    // aus #51 (5), Pull Request 5)
+    return `<section class="participate"><h4>Selbst mitwirken</h4><ul>
       ${meeting}${done}
       ${p.soll?.verfahren === "buergerantrag" ? "" : `<li data-generic="buergerantrag">Mit Anregungen und Beschwerden nach § 24 GO NRW können Sie sich selbst an den Rat oder Ihre Bezirksvertretung wenden; in Köln beraten darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden oder die zuständige Bezirksvertretung. <a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Mehr dazu<span class="visually-hidden"> (Seite der Stadt Köln, neuer Tab)</span></a>${vorhanden("panel-mitmachen") ? ' · <button type="button" class="link-btn" data-mitmachen-oeffnen>Alle Wege, sich einzubringen</button>' : ""}</li>`}
       ${hasPaperFeed(p) ? "<li data-generic=\"feed\">Mit dem Feed „Diesen Vorgang abonnieren“ (unten) erfahren Sie von neuen Beratungen und Ergebnissen.</li>" : ""}
@@ -2384,7 +2413,7 @@
     showPlans(p, !fromMap);
     if (p.soll && index) showSoll(p);
     if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
-    $("#detail").scrollTop = 0;
+    detailNachOben();
     const ms = markers.get(p.reference) || [];
     if (fromMap) {
       const b = document.querySelector(`.papers button[data-ref="${CSS.escape(p.reference)}"]`);
@@ -2913,7 +2942,7 @@
     if (!still) {
       if (MOBILE.matches) setMapMenu(false);
       if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
-      $("#detail").scrollTop = 0;
+      detailNachOben();
       $("#detail h3")?.focus();
     }
     syncUrl();
@@ -2983,6 +3012,20 @@
     if (vorschau) document.querySelectorAll('[data-vorschau="aus"]').forEach((el) => { el.hidden = true; });
     document.querySelectorAll('[data-vorschau="nur"]').forEach((el) => { el.hidden = !vorschau; });
   }
+  // title der Schaltflächen in der Leiste nur, wo sie nur Symbole zeigen (901 bis 1365 px; Entscheidung 21.11.2026 (1)
+  // (13), Pull Request 5): Dort nennt es beim Überfahren mit der Maus Name und Inhalt. Wo die Beschriftung zu sehen ist
+  // (ab 1366 px und auf dem Telefon), ist sie der zugängliche Name; ein title daneben läsen Bildschirmleser als
+  // Beschreibung mit, den Namen also zweimal. Der Text bleibt in data-titel; nach applyFunktionen aufrufen (Titel von
+  // „Wer entscheidet“ nach der Freigabe „gremien“)
+  const NUR_SYMBOLE = matchMedia("(min-width: 901px) and (max-width: 1365px)");
+  function leistenTitel() {
+    document.querySelectorAll(".nav .toggle, .nav .menu-btn").forEach((b) => {
+      if (b.hasAttribute("title")) b.dataset.titel = b.title;
+      if (NUR_SYMBOLE.matches && b.dataset.titel) b.title = b.dataset.titel;
+      else b.removeAttribute("title");
+    });
+  }
+  NUR_SYMBOLE.addEventListener("change", leistenTitel);
   const QUELLE_NAME = { "oparl-koeln": "Ratsinformationssystem", "geo-koeln": "Gebiete", "strassen-koeln": "Straßen",
     "adressen-koeln": "Adressen", "bplan-koeln": "Bebauungspläne", osm: "OpenStreetMap" };
 
@@ -3003,6 +3046,7 @@
     // Freigaben und Vorschau-Kennzeichnung vor Karte und Kacheln anwenden, damit ausgeblendete Elemente (Menüs,
     // Schnellfilter, Kalender, Filter) nicht kurz sichtbar sind
     applyFunktionen(fn, idx);
+    leistenTitel();
     $("#filters").hidden = vorschau;   // Filter ohne Vorlagen hätten nur „alle“
     createMap(startBounds(idx, startGebiet));
     // 2. alles Übrige nach den sichtbaren Kacheln (höchstens 2,5 s warten)
@@ -3075,9 +3119,9 @@
       // Filter „Gremium“ ohne Treffer im Gebiet: dieselbe Suche in ganz Köln
       if (e.target.closest("#gremium-koeln")) { setScope(STADT); shown = LIST_STEP; fillParties(); render(); syncUrl(); focusPanel("panel-list"); return; }
       const g = e.target.closest("button[data-gref]");
-      if (g) { openGlobal(g.dataset.gref, g.dataset.area); return; }
+      if (g) { const ref = g.dataset.gref; openGlobal(ref, g.dataset.area).then(() => { if (selected?.reference === ref) fokusNachListe(ref); }); return; }
       const b = e.target.closest("button[data-ref]");
-      if (b) select(papers.find((p) => p.reference === b.dataset.ref));
+      if (b) { select(papers.find((p) => p.reference === b.dataset.ref)); fokusNachListe(b.dataset.ref); }
     });
     // Vorschau in der Zeitleiste nur beim Wechsel der Vorlage (mouseover feuert für jedes Kindelement erneut)
     let hoverRef = null;
