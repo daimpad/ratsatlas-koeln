@@ -435,6 +435,28 @@
     if (!id || !(neu instanceof Element) || !zumMenue(e.target, id) || zumMenue(neu, id)) return;
     closeMega();
   });
+  // Suchmenü mit der Tastatur (Prüfung von Pull Request 5): Es öffnet sich mit dem Fokus im Suchfeld, steht im Dokument
+  // aber erst hinter der ganzen Leiste; Tab führte deshalb aus dem Suchfeld hinaus und schloss es (Regel oben), seine
+  // Bedienelemente waren mit der Tastatur nicht zu erreichen. Ist es offen, führt Tab aus dem Suchfeld auf sein erstes
+  // Bedienelement, Umschalt+Tab von dort zurück ins Suchfeld und Tab vom letzten auf das Element der Leiste nach dem
+  // Suchfeld (Gebiet, auf dem Telefon „Menü“); das Menü geht dabei nach der Regel oben zu. Esc im Suchfeld schließt es
+  // wie bisher, danach führt Tab direkt weiter. Für alle übrigen Wege gilt die Regel oben
+  const imSuchmenue = () => [...$("#mega-suche").querySelectorAll("button, a[href], input, select, textarea")]
+    .filter((el) => !el.disabled && el.tabIndex >= 0 && sichtbarEl(el));
+  const nachSuchfeld = () => [...document.querySelectorAll(".nav button, .nav a[href], .nav input, .nav select")]
+    .find((el) => ($("#nav-search").compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) && !$("#nav-search").contains(el)
+      && el.tabIndex >= 0 && sichtbarEl(el));
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Tab" || e.altKey || e.ctrlKey || e.metaKey || openMegaId !== "mega-suche") return;
+    const els = imSuchmenue(), a = document.activeElement;
+    if (!els.length) return;
+    const ziel = a === $("#q") && !e.shiftKey ? els[0]
+      : a === els[0] && e.shiftKey ? $("#q")
+        : a === els[els.length - 1] && !e.shiftKey ? nachSuchfeld() : null;
+    if (!ziel) return;
+    e.preventDefault();
+    ziel.focus();
+  });
 
   // --- Hamburger-Menü auf dem Telefon: Gebiet, Flächen und Menüs als Blatt über der Leiste --------------
   // (Entscheidung 02.11.2026: sichtbar bleiben nur Suche und ☰; Menüs klappen im Blatt auf)
@@ -1743,6 +1765,11 @@
     const ziel = sichtbarEl(eintrag) ? eintrag : $("#detail h3");
     if (ziel && document.activeElement !== ziel) ziel.focus();
   }
+  // Ein Suchtreffer setzt den Fokus erst nach dem Laden des Gebiets, und nur, wenn er inzwischen nicht anderswo ist
+  // (etwa im Suchfeld, in dem weitergetippt wird): auf <body>, noch in der Liste der Treffer oder auf einem Element,
+  // das nicht mehr zu sehen ist (bei 1024 px schließt der Vorgang die Liste samt „Stichwort“), wie in gremiumAusAdresse
+  // (Prüfung von Pull Request 5; vorher sprang er bei 1440 und 1024 px mitten im Tippen auf den Titel des Vorgangs)
+  const fokusFrei = () => { const a = document.activeElement; return !a || a === document.body || $("#papers").contains(a) || !sichtbarEl(a); };
   async function openGlobal(ref, areaKey) {
     if (!area || `${area.kind}:${area.key}` !== areaKey) await loadArea(areaKey, true);
     const p = papers.find((x) => x.reference === ref);
@@ -2714,13 +2741,16 @@
       $("#papers").focus();
     });
     $("#f-text").addEventListener("input", () => { q.value = $("#f-text").value; });
+    // Schnellfilter: fillChips baut sie neu auf; hatte der gewählte den Fokus, bekommt ihn sein Nachfolger (bis zur
+    // Prüfung von Pull Request 5 lag er danach auf <body>)
+    const chipFokus = (alt, sel) => { const hatte = document.activeElement === alt; applyFromBar(); if (hatte) $("#mega-suche").querySelector(sel)?.focus(); };
     $("#mega-suche").addEventListener("click", (e) => {
       const sc = e.target.closest("[data-scope]");
       if (sc) { setScope(sc.dataset.scope); return applyFromBar(); }
       const t = e.target.closest("[data-theme]");
-      if (t) { $("#f-theme").value = $("#f-theme").value === t.dataset.theme ? "" : t.dataset.theme; return applyFromBar(); }
+      if (t) { $("#f-theme").value = $("#f-theme").value === t.dataset.theme ? "" : t.dataset.theme; return chipFokus(t, `[data-theme="${CSS.escape(t.dataset.theme)}"]`); }
       const pa = e.target.closest("[data-party]");
-      if (pa) { $("#f-party").value = $("#f-party").value === pa.dataset.party ? "" : pa.dataset.party; return applyFromBar(); }
+      if (pa) { $("#f-party").value = $("#f-party").value === pa.dataset.party ? "" : pa.dataset.party; return chipFokus(pa, `[data-party="${CSS.escape(pa.dataset.party)}"]`); }
     });
     $("#mega-show").addEventListener("click", () => { setPanel("panel-list", true); closeMega(); focusPanel("panel-list"); });
     $("#doc-search").addEventListener("click", runDocSearch);
@@ -3119,7 +3149,7 @@
       // Filter „Gremium“ ohne Treffer im Gebiet: dieselbe Suche in ganz Köln
       if (e.target.closest("#gremium-koeln")) { setScope(STADT); shown = LIST_STEP; fillParties(); render(); syncUrl(); focusPanel("panel-list"); return; }
       const g = e.target.closest("button[data-gref]");
-      if (g) { const ref = g.dataset.gref; openGlobal(ref, g.dataset.area).then(() => { if (selected?.reference === ref) fokusNachListe(ref); }); return; }
+      if (g) { const ref = g.dataset.gref; openGlobal(ref, g.dataset.area).then(() => { if (selected?.reference === ref && fokusFrei()) fokusNachListe(ref); }); return; }
       const b = e.target.closest("button[data-ref]");
       if (b) { select(papers.find((p) => p.reference === b.dataset.ref)); fokusNachListe(b.dataset.ref); }
     });

@@ -780,8 +780,11 @@ mark.unbelegt { background: #fde68a; color: #5c3300; border-radius: 4px; padding
   .nav-group + .nav-group, .nav-area + .nav-group { padding-left: 6px; }
 }
 /* Beschriftung ab 1366 px (Entscheidung 21.11.2026 (1) (13), Pull Request 5), enger als ab 1600 px: Leiste einzeilig ohne
-   Überlauf, Suchfeld bei 1366 px rund 250 px breit (gemessen mit tests/browser/navigation.js, TECHNIK.md) */
+   Überlauf, Suchfeld bei 1366 px rund 250 px breit (gemessen mit tests/browser/navigation.js, TECHNIK.md). Mit größeren
+   Text- und Zeichenabständen (WCAG 1.4.12) darf das Suchfeld bis 120 px schmal werden, damit die Leiste nicht über den
+   Rand ragt */
 @media (min-width: 1366px) and (max-width: 1599px) {
+  .nav-search { min-width: 120px; }
   .menu-btn .chev { display: none; }
   .nav { gap: 5px; padding-left: 14px; }
   .nav-group { gap: 2px; }

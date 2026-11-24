@@ -14,7 +14,9 @@
 // ab 1366 px mit Maßen bei 1366×768, 1440×900, 1536×864, 1600×900 und 1920×1080 (4), Eingabefelder mit 16 px Schrift
 // und 44 px Höhe auf dem Telefon und bei 320×256 (5), Fokus nach Enter auf einem Suchtreffer in ganz Köln (6), Blätter
 // „Vorlagen“ und „Vorgang“ bei geringer Höhe (320×256) (7), „Selbst mitwirken“ ohne benannten Bereich (8); axe in
-// jedem neuen Zustand.
+// jedem neuen Zustand. Nach der Prüfung des Pull Requests: Suchmenü mit der Tastatur (Tab aus dem Suchfeld durch alle
+// Bedienelemente, Schnellfilter behalten den Fokus), Leiste mit den Textabständen nach WCAG 1.4.12 und Platzhalter des
+// Suchfelds (4, 5), Fokus eines Suchtreffers, wenn während des Ladens getippt wird (6).
 // Nur die lokale Seite: Anfragen an andere Hosts bricht jeder Browserkontext ab (ctx.route, auch aus neuen Fenstern;
 // page.route erfasst diese nicht, und --no-proxy-server gilt nicht für die Kontexte von Playwright).
 // Aufruf (Seite mit Testdaten, z. B. python3 tools/testdaten.py, Pipeline, tools/seite_bauen.py, dann
@@ -101,7 +103,7 @@ const sichtbareMenues = (page) => page.$$eval('.nav-group[aria-label="Menü"] .m
   .map((b) => [b.dataset.mega, b.querySelector("span").textContent.trim()]));
 const fokus = (page) => page.evaluate(() => {
   const e = document.activeElement, cs = getComputedStyle(e);
-  return { tag: e.tagName.toLowerCase(), id: e.id, mega: e.dataset.mega || null, klasse: e.className || "",
+  return { tag: e.tagName.toLowerCase(), id: e.id, mega: e.dataset.mega || null, klasse: e.className || "", suche: Boolean(e.closest("#mega-suche")),
     text: (e.getAttribute("aria-label") || e.textContent || "").trim().replace(/\s+/g, " ").slice(0, 50),
     sichtbar: e.getClientRects().length > 0, rahmen: cs.outlineStyle !== "none" || cs.boxShadow !== "none" };
 });
@@ -183,14 +185,19 @@ async function tastatur(browser, profil) {
   await geladen(page);
   await page.waitForTimeout(500);
   const folge = [];
-  for (let i = 0; i < 14; i++) { await page.keyboard.press("Tab"); folge.push(await fokus(page)); }
+  // seit der Prüfung von Pull Request 5 führt Tab aus dem Suchfeld durch das offene Suchmenü (danach „Gebiet“): auf
+  // breiten Bildschirmen bis zu 40 Schritte, bis die vier Menüs erreicht sind; die Elemente des Suchmenüs zählen für
+  // die Reihenfolge der Leiste nicht mit
+  const menueZahl = () => folge.filter((f) => f.mega && f.mega !== "mega-suche" && !f.suche).length;
+  for (let i = 0; i < (telefon(profil) ? 14 : 40) && (telefon(profil) || menueZahl() < 4); i++) { await page.keyboard.press("Tab"); folge.push(await fokus(page)); }
   if (!telefon(profil)) {
-    const menues = folge.filter((f) => f.mega && f.mega !== "mega-suche").map((f) => f.mega);
-    const ersterFokus = folge[0];
+    const leiste = folge.filter((f) => !f.suche);
+    const menues = leiste.filter((f) => f.mega && f.mega !== "mega-suche").map((f) => f.mega);
+    const ersterFokus = leiste[0];
     pruefen(profil, "Tab: Wortmarke, Suche, Gebiet, Flächen, dann die vier Menüs in ihrer Reihenfolge, sichtbarer Fokus",
-      ersterFokus.klasse === "brand" && folge[1].id === "q" && folge.some((f) => f.id === "f-area")
+      ersterFokus.klasse === "brand" && leiste[1].id === "q" && leiste[2].id === "f-area"
       && JSON.stringify(menues.slice(0, 4)) === JSON.stringify(MENUES.map(([m]) => m)) && folge.every((f) => f.sichtbar && f.rahmen),
-      folge.map((f) => f.id || f.mega || f.klasse || f.tag));
+      folge.map((f) => (f.suche ? "suche:" : "") + (f.id || f.mega || f.klasse || f.tag)));
     // Wortmarke: zugänglicher Name auch zwischen 901 und 1100 px
     const marke = await page.getByRole("link", { name: "Ratsatlas Köln: zu „Los geht's“", exact: true }).count();
     const breite = await page.$eval(".brand .ort", (e) => e.getBoundingClientRect().width);
@@ -583,15 +590,7 @@ async function pr5MenueTab(browser, profil) {
     }
   }
   await axe(page, profil, "PR 5 (3) nach Tab aus dem Menü");
-  // Suchmenü: Tab aus dem Suchfeld schließt es; Esc schließt und lässt den Fokus im Suchfeld
-  for (const richtung of ["Tab", "Shift+Tab"]) {
-    await page.focus("#q");
-    await page.waitForSelector("#mega-suche:not([hidden])");
-    await page.keyboard.press(richtung);
-    await page.waitForTimeout(200);
-    const z = await page.evaluate(() => ({ offen: !document.getElementById("mega-suche").hidden, fokus: document.activeElement.id || document.activeElement.className }));
-    pruefen(profil, `PR 5 (3) Suchmenü: ${richtung} aus dem Suchfeld schließt es`, !z.offen && z.fokus !== "q", z);
-  }
+  // Suchmenü: Esc schließt und lässt den Fokus im Suchfeld; Tab und Umschalt+Tab prüft pr5Suchmenue
   await page.focus("#q");
   await page.waitForSelector("#mega-suche:not([hidden])");
   await page.keyboard.press("Escape");
@@ -610,6 +609,81 @@ async function pr5MenueTab(browser, profil) {
   const k2 = await page.evaluate(() => document.getElementById("mega-mitmachen").hidden);
   pruefen(profil, "PR 5 (3) Klicks wie bisher: Wechsel des Menüs, zweiter Klick schließt", k1[0] && !k1[1] && k2, { k1, k2 });
   pruefen(profil, "keine Skriptfehler (PR 5 Menüs)", s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+}
+
+// (3) nach der Prüfung von Pull Request 5: das Suchmenü mit der Tastatur. Es steht im Dokument hinter der ganzen
+// Leiste; Tab aus dem Suchfeld führt durch alle sichtbaren Bedienelemente in ihrer Reihenfolge, Tab nach dem letzten
+// schließt es und führt auf das Element der Leiste nach dem Suchfeld („Gebiet“, auf dem Telefon „Menü“), Umschalt+Tab
+// vom ersten zurück ins Suchfeld (offen) und aus dem Suchfeld hinaus (zu); ein Schnellfilter behält nach Enter den Fokus;
+// nach Esc führt Tab direkt weiter. Auf 58ecdff schloss schon Tab aus dem Suchfeld das Menü (nichts darin erreichbar)
+async function pr5Suchmenue(browser, profil) {
+  const s = await neueSeite(browser, profil);
+  const page = s.page;
+  await page.goto(BASIS, { waitUntil: "load" });
+  await geladen(page);
+  await page.waitForTimeout(400);
+  const lage = () => page.evaluate(() => {
+    const m = document.getElementById("mega-suche"), e = document.activeElement, cs = getComputedStyle(e);
+    return { offen: !m.hidden, imMenue: m.contains(e), id: e.id, tag: e.tagName.toLowerCase(),
+      schluessel: e.id || e.dataset.scope || e.dataset.theme || e.dataset.party || e.tagName.toLowerCase(),
+      sichtbar: e.getClientRects().length > 0, rahmen: cs.outlineStyle !== "none" || cs.boxShadow !== "none" };
+  });
+  const weiter = telefon(profil) ? "nav-burger" : "f-area";
+  await page.focus("#q");
+  await page.keyboard.type("a");
+  await page.waitForTimeout(500);
+  const soll = await page.evaluate(() => [...document.querySelectorAll("#mega-suche button, #mega-suche a[href], #mega-suche input, #mega-suche select")]
+    .filter((e) => e.getClientRects().length && !e.closest("[hidden]") && getComputedStyle(e).visibility !== "hidden" && !e.disabled)
+    .map((e) => e.id || e.dataset.scope || e.dataset.theme || e.dataset.party));
+  const ist = [];
+  let z = await lage();
+  for (let i = 0; i < soll.length + 3; i++) {
+    await page.keyboard.press("Tab");
+    z = await lage();
+    if (!z.imMenue) break;
+    ist.push(z);
+    if (i === 2) await axe(page, profil, "PR 5 (3) Suchmenü mit dem Fokus auf einem Schnellfilter");
+  }
+  const reihe = ist.map((x) => x.schluessel);
+  pruefen(profil, "PR 5 (3) Suchmenü: Tab aus dem Suchfeld erreicht alle sichtbaren Bedienelemente in ihrer Reihenfolge, Fokus sichtbar",
+    soll.length >= 4 && JSON.stringify(reihe) === JSON.stringify(soll) && ist.every((x) => x.offen && x.sichtbar && x.rahmen),
+    { soll: soll.length, erreicht: ist.length, erstes: reihe[0] || null, letztes: reihe[reihe.length - 1] || null,
+      abweichend: reihe.filter((k, i) => k !== soll[i]).slice(0, 3) });
+  pruefen(profil, `PR 5 (3) Suchmenü: Tab nach dem letzten Element schließt es, Fokus auf ${weiter}`,
+    ist.length === soll.length && !z.offen && z.id === weiter && z.sichtbar && z.rahmen, z);
+  // Umschalt+Tab vom ersten Element zurück ins Suchfeld (offen), dann aus dem Suchfeld hinaus (zu)
+  await page.focus("#q");
+  await page.waitForTimeout(200);
+  await page.keyboard.press("Tab");
+  const erst = await lage();
+  await page.keyboard.press("Shift+Tab");
+  const zurueck = await lage();
+  pruefen(profil, "PR 5 (3) Suchmenü: Umschalt+Tab vom ersten Element zurück ins Suchfeld, Menü bleibt offen",
+    erst.imMenue && erst.schluessel === soll[0] && zurueck.id === "q" && zurueck.offen, { erst: erst.schluessel, zurueck: zurueck.id, offen: zurueck.offen });
+  await page.keyboard.press("Shift+Tab");
+  const raus = await lage();
+  pruefen(profil, "PR 5 (3) Suchmenü: Umschalt+Tab aus dem Suchfeld schließt es", !raus.offen && raus.id !== "q" && raus.tag !== "body" && raus.sichtbar, raus);
+  // Schnellfilter mit Enter: fillChips baut die Schnellfilter neu auf, der Fokus bleibt auf dem gewählten
+  await page.focus("#q");
+  await page.waitForSelector("#chips-theme .chip");
+  const thema = await page.$eval("#chips-theme .chip:nth-child(2)", (c) => c.dataset.theme);
+  await page.focus("#chips-theme .chip:nth-child(2)");
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(400);
+  const chip = await page.evaluate(() => ({ offen: !document.getElementById("mega-suche").hidden, tag: document.activeElement.tagName.toLowerCase(),
+    thema: document.activeElement.dataset.theme || null, gedrueckt: document.activeElement.getAttribute("aria-pressed") }));
+  pruefen(profil, "PR 5 (3) Suchmenü: Schnellfilter mit Enter gewählt, der Fokus bleibt auf ihm", chip.offen && chip.thema === thema && chip.gedrueckt === "true", chip);
+  await page.keyboard.press("Enter");   // Thema wieder abwählen
+  await page.waitForTimeout(300);
+  // Esc schließt (Fokus im Suchfeld), danach führt Tab direkt weiter
+  await page.focus("#q");
+  await page.waitForTimeout(150);
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Tab");
+  const esc = await lage();
+  pruefen(profil, `PR 5 (3) Suchmenü: nach Esc führt Tab aus dem Suchfeld direkt auf ${weiter}`, !esc.offen && esc.id === weiter, esc);
+  pruefen(profil, "keine Skriptfehler (PR 5 Suchmenü)", s.fehler.length === 0, s.fehler);
   await s.ctx.close();
 }
 
@@ -654,6 +728,35 @@ async function pr5Beschriftung(browser) {
         && m.schild.every((x) => x.titel === null && !x.label) && namen.every((n) => n === 1)
       : nurSymbole && m.schild.every((x) => Boolean(x.titel) && x.titel.startsWith(x.text === "Vorgang" ? "Gewählter Vorgang" : x.text === "Vorlagen" ? "Alle Vorlagen" : x.text)),
       { ...masse[`${w}x${h}`], schild: m.schild.map((x) => `${x.text}:${x.breite}${x.titel ? " [title]" : ""}`), namen });
+    // nach der Prüfung von Pull Request 5: Der Platzhalter des Suchfelds passt ins Feld (vorher bei 1366 px mitten im
+    // Wort abgeschnitten); mit den Textabständen nach WCAG 1.4.12 ragt die Leiste nicht über ihren Rand und das Fenster
+    const platzhalter = (abstand) => page.evaluate((abstand) => {
+      let st = null;
+      if (abstand) { st = document.createElement("style"); st.textContent = "* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }"; document.head.append(st); }
+      const nav = document.querySelector(".nav"), nr = nav.getBoundingClientRect(), q = document.getElementById("q"), cs = getComputedStyle(q);
+      const ks = [...nav.querySelectorAll(".nav-group .toggle, .nav-group .menu-btn")].filter((e) => !e.hidden && e.getClientRects().length);
+      const c = document.createElement("canvas").getContext("2d");
+      c.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const r = { ueberlauf: nav.scrollWidth - nav.clientWidth, letzter: Math.round(ks[ks.length - 1].getBoundingClientRect().right), leiste: Math.round(nr.right), fenster: innerWidth,
+        suchfeld: Math.round(q.getBoundingClientRect().width), platz: Math.round(q.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)),
+        platzhalter: Math.round(c.measureText(q.placeholder).width) };
+      if (st) st.remove();
+      return r;
+    }, abstand);
+    const ph = await platzhalter(false), ta = await platzhalter(true);
+    masse[`${w}x${h}`].platzhalter = `${ph.platzhalter} von ${ph.platz} px`;
+    masse[`${w}x${h}`].textabstaende = { suchfeld: ta.suchfeld, ueberlauf: ta.ueberlauf, bisRandLeiste: ta.leiste - ta.letzter, bisFenster: ta.fenster - ta.letzter };
+    pruefen(`${w}x${h}`, "PR 5 (4) Platzhalter des Suchfelds passt ins Feld", ph.platzhalter <= ph.platz, ph);
+    pruefen(`${w}x${h}`, "PR 5 (4) mit Textabständen nach WCAG 1.4.12: kein Überlauf, letzter Eintrag in der Leiste und im Fenster",
+      ta.ueberlauf <= 0 && ta.letzter <= ta.leiste && ta.letzter <= ta.fenster, ta);
+    if (FOTOS && w === 1366) {
+      await page.addStyleTag({ content: "* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; }" });
+      await page.waitForTimeout(150);
+      await foto(page, `pr5-leiste-${w}x${h}-textabstaende`, ".nav");
+      await page.reload({ waitUntil: "load" });
+      await geladen(page);
+      await page.waitForTimeout(400);
+    }
     if (w === 1366 || w === 1440) await axe(page, `${w}x${h}`, "PR 5 (4) Leiste mit Beschriftung");
     if (FOTOS && w !== 1365) await foto(page, `pr5-leiste-${w}x${h}`, ".nav");
     pruefen(`${w}x${h}`, "keine Skriptfehler (PR 5 Leiste)", fehler.length === 0, fehler);
@@ -727,6 +830,13 @@ async function pr5Eingabefelder(browser, profil, gebiet) {
   await page.waitForTimeout(400);
   await merken("Karte");
   await axe(page, profil, "PR 5 (5) Blatt „Karte“");
+  if (profil === "iphone13") {
+    // nach der Prüfung von Pull Request 5: mit 16 px passt der Platzhalter ins Suchfeld (vorher „… suche“ abgeschnitten)
+    const ph = await page.evaluate(() => { const q = document.getElementById("q"), cs = getComputedStyle(q), c = document.createElement("canvas").getContext("2d");
+      c.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      return { schrift: cs.fontSize, platz: Math.round(q.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)), platzhalter: Math.round(c.measureText(q.placeholder).width) }; });
+    pruefen(profil, "PR 5 (5) Platzhalter des Suchfelds passt mit 16 px ins Feld", ph.schrift === "16px" && ph.platzhalter <= ph.platz, ph);
+  }
   const zuKlein = gemessen.filter((x) => x.px < 16 || x.hoehe < 44);
   const felder = [...new Set(gemessen.map((x) => `${x.feld} ${x.px}px ${x.hoehe}`))];
   pruefen(profil, "PR 5 (5) alle Eingabefelder und Reiter von „In Zahlen“ mit 16 px und mindestens 44 px", zuKlein.length === 0
@@ -776,6 +886,34 @@ async function pr5Treffer(browser, profil, gebiet) {
     eintrag: document.activeElement.hasAttribute("data-ref"), titel: Boolean(document.activeElement.closest("#detail")) && document.activeElement.tagName === "H3" }));
   pruefen(profil, "PR 5 (6) Eintrag im Gebiet mit Enter: Fokus auf dem Eintrag oder dem Titel des Vorgangs", g.tag !== "body" && (g.liste ? g.eintrag : g.titel), g);
   await s.ctx.close();
+  // nach der Prüfung von Pull Request 5: Wird während des Ladens (Gebietsdatei 3 s verzögert) im Suchfeld der Leiste
+  // oder in „Stichwort“ getippt, bleibt der Fokus dort; ist das Feld danach nicht mehr zu sehen (bei 1024 px schließt der
+  // Vorgang die Liste), geht er auf den Titel des Vorgangs. Auf 58ecdff sprang er mitten im Tippen auf den Titel. Nur
+  // breite Bildschirme: Auf dem Telefon setzt select den Fokus wie schon vor Pull Request 5 selbst auf den Titel
+  if (mobil(profil)) return;
+  for (const feld of ["#q", "#f-text"]) {
+    s = await neueSeite(browser, profil);
+    await s.page.route((u) => /\/data\/export\/koeln\/(ortsteile|bezirke)\/[^/]+\.json$/.test(u.pathname),
+      async (r) => { await new Promise((ok) => setTimeout(ok, 3000)); await r.continue(); });
+    await s.page.goto(`${BASIS}?suche=koeln`, { waitUntil: "load" });
+    await geladen(s.page);
+    await s.page.waitForSelector("#panel-list:not([hidden]) #papers button[data-gref]", { timeout: 20000 });
+    await s.page.focus("#papers button[data-gref]");
+    await s.page.keyboard.press("Enter");
+    await s.page.waitForTimeout(400);
+    const vorher = await s.page.evaluate(() => !document.querySelector("#detail .steps"));
+    await s.page.focus(feld);
+    await s.page.keyboard.type("Rad", { delay: 40 });
+    await s.page.waitForFunction(() => document.querySelector("#detail .steps"), null, { timeout: 20000 });
+    await s.page.waitForTimeout(800);
+    const l = await s.page.evaluate((feld) => { const e = document.querySelector(feld);
+      return { fokus: document.activeElement.id || document.activeElement.tagName.toLowerCase(), titel: Boolean(document.activeElement.closest("#detail")) && document.activeElement.tagName === "H3",
+        feldSichtbar: Boolean(e.getClientRects().length && !e.closest("[hidden]")), wert: e.value.slice(-3) }; }, feld);
+    pruefen(profil, `PR 5 (6) Suchtreffer, während des Ladens in ${feld} getippt: Fokus bleibt dort (sonst Titel des Vorgangs)`,
+      vorher && l.wert === "Rad" && (l.feldSichtbar ? l.fokus === feld.slice(1) : l.titel), { vorher, ...l });
+    pruefen(profil, `keine Skriptfehler (PR 5 Suchtreffer, ${feld})`, s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  }
 }
 
 // (7) Geringe Höhe (320×256): Die Blätter „Vorlagen“ und „Vorgang“ rollen als Ganzes, der Kopf rollt mit; der Fokus
@@ -867,6 +1005,7 @@ async function begriffe(browser, profil) {
       await einzeln(profil, "PR 5 (1)", () => pr5Vorschau(browser, profil));
       await einzeln(profil, "PR 5 (2)", () => pr5TourFokus(browser, profil));
       await einzeln(profil, "PR 5 (3)", () => pr5MenueTab(browser, profil));
+      await einzeln(profil, "PR 5 (3) Suchmenü", () => pr5Suchmenue(browser, profil));
       await einzeln(profil, "PR 5 (5)", () => pr5Eingabefelder(browser, profil, gebiet));
       await einzeln(profil, "PR 5 (6) und (8)", () => pr5Treffer(browser, profil, gebiet));
       await einzeln(profil, "PR 5 (7)", () => pr5GeringeHoehe(browser, profil, gebiet));

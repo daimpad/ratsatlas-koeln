@@ -1,7 +1,8 @@
 """Pull Request 5 der Navigation (Entscheidung 24.11.2026 (2), Punkte (a) bis (c)): Texte der Kartenvorschau ohne
 Ankündigung, Fokus nach dem Ende der Tour, Tab aus einem offenen Menü, Beschriftung der Leiste ab 1366 px, Eingabefelder
 mit 16 px Schrift auf dem Telefon, Fokus nach dem Öffnen eines Eintrags der Liste, Blätter bei geringer Höhe, „Selbst
-mitwirken“ ohne benannten Bereich. Geprüft ohne Browser (node mit nachgebildetem Dokument, Python); die Prüfung im
+mitwirken“ ohne benannten Bereich. Nach der Prüfung des Pull Requests: Suchmenü mit der Tastatur, Schnellfilter
+behalten den Fokus, Textabstände nach WCAG 1.4.12 und Platzhalter, Fokus eines Suchtreffers nur, wenn er frei ist. Geprüft ohne Browser (node mit nachgebildetem Dokument, Python); die Prüfung im
 Browser steht in tests/browser/navigation.js. Alle Daten sind erfunden; keine Anfragen nach außen."""
 import json
 import re
@@ -14,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 APP = (ROOT / "site" / "app.js").read_text(encoding="utf-8")
 TOUR = (ROOT / "site" / "tour.js").read_text(encoding="utf-8")
 CSS = (ROOT / "site" / "style.css").read_text(encoding="utf-8")
+INDEX = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
 ANKUENDIGUNG = re.compile(r"\bfolg(?:t|en)\b|kommt hinzu|kommen hinzu|künftig|sobald|bis dahin", re.I)
 
 
@@ -145,6 +147,73 @@ console.log(JSON.stringify([
     assert 'if (openMegaId && e.target.isConnected && !e.target.closest(".mega") && !e.target.closest("#nav-search")) closeMega();' in APP
 
 
+def test_suchmenue_mit_der_tastatur():
+    """(3) nach der Prüfung von Pull Request 5: Das Suchmenü steht im Dokument hinter der ganzen Leiste. Ist es offen,
+    führt Tab aus dem Suchfeld auf sein erstes Bedienelement, Umschalt+Tab vom ersten zurück ins Suchfeld und Tab vom
+    letzten auf das Element der Leiste nach dem Suchfeld (Gebiet, Telefon „Menü“). Alle übrigen Wege (Umschalt+Tab aus
+    dem Suchfeld, Tab innerhalb des Menüs, anderes Menü offen, Strg/Alt) lässt die Regel dem Browser und focusout."""
+    teil = _teil(APP, r'^  document\.addEventListener\("keydown", \(e\) => \{\n    if \(e\.key !== "Tab".*?\n  \}\);\n')
+    code = """
+const el = (name) => ({ name, focus() { doc.aktiv = this; } });
+const Q = el("q"), A = el("erstes"), B = el("mitte"), C = el("letztes"), WEITER = el("gebiet"), BODY = el("body");
+const doc = { aktiv: Q };
+let handler = null, openMegaId = "mega-suche", ELS = [A, B, C];
+const document = { get activeElement() { return doc.aktiv; }, addEventListener: (t, f) => { if (t === "keydown") handler = f; } };
+const $ = (s) => (s === "#q" ? Q : null);
+const imSuchmenue = () => ELS, nachSuchfeld = () => WEITER;
+""" + teil + """
+const fall = (von, taste, opts = {}) => { doc.aktiv = von; let verhindert = false;
+  handler({ key: taste, shiftKey: Boolean(opts.shift), altKey: false, ctrlKey: Boolean(opts.ctrl), metaKey: false, preventDefault: () => { verhindert = true; } });
+  return verhindert ? doc.aktiv.name : "Browser"; };
+const aus = [
+  fall(Q, "Tab"),                     // aus dem Suchfeld ins Menü
+  fall(A, "Tab"),                     // innerhalb des Menüs: der Browser
+  fall(C, "Tab"),                     // vom letzten auf „Gebiet“
+  fall(A, "Tab", { shift: true }),    // vom ersten zurück ins Suchfeld
+  fall(Q, "Tab", { shift: true }),    // aus dem Suchfeld zurück: der Browser (focusout schließt)
+  fall(Q, "Tab", { ctrl: true }),     // Strg+Tab
+  fall(Q, "Enter"),                   // andere Taste
+];
+openMegaId = "mega-themen"; aus.push(fall(Q, "Tab"));
+openMegaId = "mega-suche"; ELS = []; aus.push(fall(Q, "Tab"));   // Vorschau: keine Bedienelemente im Menü
+console.log(JSON.stringify(aus));
+"""
+    assert _node(code) == ["erstes", "Browser", "gebiet", "q", "Browser", "Browser", "Browser", "Browser", "Browser"]
+    # sichtbare, fokussierbare Bedienelemente; das nächste Element der Leiste nach dem Suchfeld (Telefon: „Menü“)
+    imm = _teil(APP, r"^  const imSuchmenue = .*?;\n")
+    nach = _teil(APP, r"^  const nachSuchfeld = .*?;\n")
+    assert '$("#mega-suche").querySelectorAll("button, a[href], input, select, textarea")' in imm and "sichtbarEl(el)" in imm
+    assert "Node.DOCUMENT_POSITION_FOLLOWING" in nach and '!$("#nav-search").contains(el)' in nach and "sichtbarEl(el)" in nach
+    # im Dokument: Suchfeld vor ☰ und „Gebiet“, Suchmenü erst hinter der Leiste
+    assert INDEX.index('id="q"') < INDEX.index('id="nav-burger"') < INDEX.index('id="f-area"') < INDEX.index("</nav>") < INDEX.index('id="mega-suche"')
+
+
+def test_schnellfilter_behaelt_den_fokus():
+    """(3) nach der Prüfung von Pull Request 5: fillChips baut die Schnellfilter neu auf; hatte der gewählte den Fokus
+    (Enter oder Leertaste), bekommt ihn sein Nachfolger, sonst läge er auf <body>."""
+    teil = _teil(APP, r"^    const chipFokus = .*?;\n")
+    code = """
+const doc = { aktiv: null };
+const mk = (name) => ({ name, focus() { doc.aktiv = this; } });
+const ALT = mk("alt"), NEU = mk("neu"), BODY = mk("body");
+let gebaut = 0;
+const document = { get activeElement() { return doc.aktiv; } };
+const applyFromBar = () => { gebaut++; if (doc.aktiv === ALT) doc.aktiv = BODY; };
+const $ = () => ({ querySelector: (sel) => (sel === '[data-theme="verkehr"]' ? NEU : null) });
+""" + teil + """
+const aus = [];
+doc.aktiv = ALT; chipFokus(ALT, '[data-theme="verkehr"]'); aus.push(doc.aktiv.name);
+doc.aktiv = mk("anderes"); chipFokus(ALT, '[data-theme="verkehr"]'); aus.push(doc.aktiv.name);
+doc.aktiv = ALT; chipFokus(ALT, '[data-theme="weg"]'); aus.push(doc.aktiv.name);
+aus.push(gebaut);
+console.log(JSON.stringify(aus));
+"""
+    assert _node(code) == ["neu", "anderes", "body", 3]
+    klick = _teil(APP, r'^    \$\("#mega-suche"\)\.addEventListener\("click", \(e\) => \{\n.*?\n    \}\);\n')
+    assert "return chipFokus(t, `[data-theme=\"${CSS.escape(t.dataset.theme)}\"]`);" in klick
+    assert "return chipFokus(pa, `[data-party=\"${CSS.escape(pa.dataset.party)}\"]`);" in klick
+
+
 # --- (4) Beschriftung ab 1366 px ---------------------------------------------------------------------------------------
 
 def test_beschriftung_ab_1366_px():
@@ -159,6 +228,20 @@ def test_beschriftung_ab_1366_px():
     # keine andere Regel versteckt die Namen ab 1366 px
     assert CSS.count(".toggle > span, .menu-btn > span { position: absolute;") == 1
     assert 'const NUR_SYMBOLE = matchMedia("(min-width: 901px) and (max-width: 1365px)");' in APP
+
+
+def test_textabstaende_und_platzhalter():
+    """(4) nach der Prüfung von Pull Request 5: Mit den Textabständen nach WCAG 1.4.12 ragte die beschriftete Leiste bei
+    1366 px um 34 px über; zwischen 1366 und 1599 px darf das Suchfeld deshalb bis 120 px schmal werden (sonst 160 px).
+    Der Platzhalter „In ganz Köln suchen …“ ist ein Teil des Namens aus dem verborgenen Label (WCAG 2.5.3) und kürzer
+    als der bisherige, der bei 1366 px und auf dem iPhone 13 mitten im Wort abgeschnitten war."""
+    eng = _media("(min-width: 1366px) and (max-width: 1599px)")
+    assert len(eng) == 1 and ".nav-search { min-width: 120px; }" in eng[0]
+    assert ".nav-search { position: relative; flex: 1 1 260px; max-width: 440px; min-width: 160px; }" in CSS
+    label = re.search(r'<label class="visually-hidden" for="q">([^<]+)</label>', INDEX).group(1)
+    platzhalter = re.search(r'<input type="search" id="q" placeholder="([^"]+)"', INDEX).group(1)
+    assert label == "Vorlagen in ganz Köln suchen" and platzhalter == "In ganz Köln suchen …"
+    assert platzhalter.rstrip(" …").lower() in label.lower() and len(platzhalter) < len(label)
 
 
 def test_title_nur_wo_die_leiste_nur_symbole_zeigt():
@@ -227,8 +310,28 @@ console.log(JSON.stringify(aus));
 """
     assert _node(code) == ["b", "titel", "titel"]
     klick = _teil(APP, r'^    \$\("#papers"\)\.addEventListener\("click", \(e\) => \{\n.*?\n    \}\);\n')
-    assert ("openGlobal(ref, g.dataset.area).then(() => { if (selected?.reference === ref) fokusNachListe(ref); });" in klick)
+    assert ("openGlobal(ref, g.dataset.area).then(() => { if (selected?.reference === ref && fokusFrei()) fokusNachListe(ref); });" in klick)
     assert 'select(papers.find((p) => p.reference === b.dataset.ref)); fokusNachListe(b.dataset.ref);' in klick
+
+
+def test_suchtreffer_nimmt_den_fokus_nur_wenn_er_frei_ist():
+    """(6) nach der Prüfung von Pull Request 5: Nach dem Laden des Gebiets setzt ein Suchtreffer den Fokus nur, wenn er
+    noch auf <body>, in der Liste der Treffer oder auf einem nicht mehr sichtbaren Element liegt (wie gremiumAusAdresse);
+    wer inzwischen im Suchfeld weitertippt, behält ihn dort."""
+    teil = _teil(APP, r"^  const fokusFrei = .*?;\n")
+    code = """
+const mk = (name, zuSehen = true, inListe = false) => ({ name, zuSehen, inListe });
+const BODY = mk("body");
+let aktiv = null;
+const document = { body: BODY, get activeElement() { return aktiv; } };
+const $ = () => ({ contains: (e) => Boolean(e && e.inListe) });
+const sichtbarEl = (e) => Boolean(e && e.zuSehen);
+""" + teil + """
+const aus = [];
+for (const a of [null, BODY, mk("treffer", true, true), mk("suchfeld"), mk("stichwort, Liste zu", false), mk("titel")]) { aktiv = a; aus.push(fokusFrei()); }
+console.log(JSON.stringify(aus));
+"""
+    assert _node(code) == [True, True, True, False, True, False]
 
 
 # --- (7) Blätter bei geringer Höhe -------------------------------------------------------------------------------------
