@@ -455,7 +455,9 @@ def _laden_mit_frist(oeffnen, ablauf):
         teil += _teil(APP, r"^  let mmState = null, mmReady = null, mmModul = null, mmImportFehler = 0;\n  function openMitmachen\(s\) \{\n.*?\n  \}\n")
     assert teil.count("import(modul)") == 1
     code = """
-const E = { "#wer-body": { innerHTML: "alt" }, "#wer-status": { textContent: "" }, "#bt-body": { innerHTML: "alt" }, "#bt-status": { textContent: "" } };
+// Reiter und Umschalter ohne Inhalt (app.js werAnzeigen setzt dort die Anzeige während des Imports)
+const E = { "#wer-body": { innerHTML: "alt", setAttribute() {} }, "#wer-status": { textContent: "" }, "#bt-body": { innerHTML: "alt" }, "#bt-status": { textContent: "" },
+  "#panel-gremien": { querySelector: () => ({ hidden: false, querySelectorAll: () => [] }) } };
 const $ = (s) => E[s];
 let funktionen = { gremien: true }, zeit = null;
 const vorhanden = () => true, BONN = "data/", heute = () => "2026-11-23", zeitDatum = (s) => s, lizenzOeffentlich = (t) => t;

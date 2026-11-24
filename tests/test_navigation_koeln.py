@@ -88,8 +88,9 @@ def test_leiste_reihenfolge_und_beschriftung():
     knoepfe = re.findall(r'<button type="button" class="menu-btn" data-mega="([\w-]+)"[^>]*>.*?<span>([^<]+)</span>', gruppe, re.S)
     assert knoepfe == [("mega-themen", "Themen"), ("mega-entscheiden", "Wer entscheidet"), ("mega-mitmachen", "Mitmachen"),
                        ("mega-ueber", "Über")]
-    # Zwischen 901 und 1599 px stehen nur Symbole: Jede Schaltfläche nennt beim Überfahren mit der Maus ihren Namen und
-    # Inhalt (title wie bei den Flächen; Prüfung von Pull Request 3); „Wer entscheidet“ im HTML ohne „Gremien“ und
+    # Zwischen 901 und 1365 px (bis Pull Request 5: 1599 px) stehen nur Symbole: Jede Schaltfläche nennt beim Überfahren
+    # mit der Maus ihren Namen und Inhalt (title wie bei den Flächen; Prüfung von Pull Request 3; bei anderen Breiten
+    # entfernt app.js leistenTitel das title, tests/test_navigation_pr5.py); „Wer entscheidet“ im HTML ohne „Gremien“ und
     # „Ämter“, mit Freigabe „gremien“ setzt app.js den Titel mit beiden (test_titel_wer_entscheidet_nach_freigabe)
     titel = dict(re.findall(r'<button type="button" class="menu-btn" data-mega="([\w-]+)"[^>]*\btitle="([^"]+)"', gruppe))
     assert titel == {"mega-themen": "Themen: Vorlagen nach Thema, Kennzahlen zum Gebiet",

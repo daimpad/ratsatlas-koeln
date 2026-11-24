@@ -40,9 +40,9 @@ python tools/seite_bauen.py && python -m http.server -d _site 8765
 
 ## Prüfen vor jedem Push
 
-1. `python -m pytest tests` (lokaler OParl-Testserver, keine Anfragen an die Stadt) und `node --check` für `site/app.js`, `site/timeline.js`, `site/tour.js`.
+1. `python -m pytest tests` (lokaler OParl-Testserver, keine Anfragen an die Stadt) und die Syntax aller Skripte unter `site`, `tests/browser` und `tools` wie im Schritt „Syntax der Webseite“ von `.github/workflows/tests.yml`: `node --check datei.js`, ES-Module (Zeile beginnt mit `import` oder `export`) mit `node --input-type=module --check < datei.js` (`node --check` allein meldet in Node 22 keinen Syntaxfehler in einem Modul).
 2. Bei Änderungen an Verortung oder Akteuren: Tests mit erfundenen Titeln in `tests/test_geokodierung.py` ergänzen.
-3. Bei Oberflächenänderungen: Seite mit Testdaten bauen, mit Playwright (Chromium vorinstalliert) bei 1400 px und Telefon prüfen; `tools/wcag_pruefen.js` (axe-core, WCAG 2.1 A/AA) darf keine Verstöße melden; Tab-Reihenfolge und sichtbarer Fokus.
+3. Bei Oberflächenänderungen: Die Browserprüfungen (`tests/browser/gremien.js`, `navigation.js`, `bedienung.js`, Prüfbogen) und `tools/wcag_pruefen.js` (axe-core, WCAG 2.1 A/AA, Tab-Reihenfolge und sichtbarer Fokus in 1440 × 900, 1024 × 768, 390 × 844 und 320 × 256) laufen im Job „browser“ von `tests.yml` und dürfen keinen Befund melden; lokal mit Testdaten und totem Proxy aufgerufen wie in `TECHNIK.md`, „Browserprüfungen in CI“.
 4. `python tools/linkpruefung.py _site` meldet keine defekten inneren Links.
 
 ## Veröffentlichung

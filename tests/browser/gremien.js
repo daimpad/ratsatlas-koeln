@@ -7,7 +7,8 @@
 // kennung, unbekannte Kennung), Ladefehler mit neuem Versuch, nicht aktuelle Liste der Sitzungen (Stand als Kölner Tag),
 // folgende Sitzung nach einer vergangenen nächsten (E2), Wechsel der Breite, Bonner ?prozesse= ohne „soll“, Zeitleiste
 // mit vergangener Absage laut Sitzungsnamen; Nachprüfung Bedienung (Fokus beim Wechsel der Breite, Wahl während des
-// Ladens, gescheiterter Import, aufgelöstes Gremium, Statuszeile, 320 px); dazu axe-core (WCAG 2.1 A/AA) in jedem neuen
+// Ladens, Wahl während des Imports von gremien.js auch beim neuen Versuch (#52, Punkt 4), Anzeige während des Ladens,
+// gescheiterter Import, aufgelöstes Gremium, Statuszeile, 320 px); dazu axe-core (WCAG 2.1 A/AA) in jedem neuen
 // Zustand und Bildschirmfotos (Umgebungsvariable FOTOS). Abweichende Daten setzt die Prüfung nur im Browser über
 // page.route ein (erfundene Werte); die Dateien bleiben unverändert. Nur die lokale Seite: Anfragen an andere Hosts
 // bricht jeder Browserkontext ab (ctx.route, auch aus neuen Fenstern; page.route erfasst diese nicht).
@@ -136,7 +137,9 @@ async function flaeche(browser, profil, gremien) {
   await page.goto(BASIS, { waitUntil: "load" });
   await geladen(page);
   await page.waitForTimeout(400);
-  const titel = await page.$eval('.menu-btn[data-mega="mega-entscheiden"]', (b) => b.title);
+  // seit Pull Request 5 der Navigation steht das title nur bei 901 bis 1365 px (nur Symbole), sonst bleibt der Text in
+  // data-titel (app.js leistenTitel)
+  const titel = await page.$eval('.menu-btn[data-mega="mega-entscheiden"]', (b) => b.getAttribute("title") || b.dataset.titel);
   pruefen(profil, "Titel der Schaltfläche „Wer entscheidet“ mit Freigabe (E11)", titel === TITEL, titel);
   await menueOeffnen(page, profil, "mega-entscheiden");
   const karten = await page.$$eval("#mega-entscheiden .card", (cs) => cs.filter((c) => c.getClientRects().length).map((c) => c.querySelector(".card-title").textContent));
@@ -627,6 +630,201 @@ const BEDIENUNG = {
       && z.tabs[1][1] === "true" && z.tabs[1][2] === 0 && z.tabs[0][2] === -1 && f.id === "tab-wer-aemter" && (await adresse(s.page)).wer === "aemter",
       { bereit, anfragen, beim, tabs: z.tabs, f });
     await s.ctx.close();
+  },
+  // Wahl, während gremien.js noch lädt (#52, Punkt 4): Vor dem Import gibt es keine Bedienung des Moduls; app.js nimmt
+  // die Wahl an und gibt sie init mit. Die Prüfung hält das Modul im Browserkontext zurück (ctx.route), bis die Wahl
+  // getroffen ist (statt einer festen Verzögerung; die Anfrage zeigt, dass der Import läuft), und gibt es dann frei.
+  // Geöffnet wird die Fläche jeweils über die Karte „Ämter“, gewählt der Reiter „Gremien“ und das Optionsfeld, das die
+  // Breite nicht vorgibt (Liste ab 901 px, Schaubild auf dem Telefon). (a) mit Klicks beim ersten Import; (b) mit der
+  // Tastatur beim neuen Versuch nach einem gescheiterten Import (404, Satz in der Statuszeile, Esc, ?versuch=1): Tab bis
+  // zum Reiter („Ämter“, den die Fläche schon vor dem Laden zeigt), → zu „Gremien“, Tab zum Umschalter, Ende bzw. Pos1
+  // (vor der Durchsicht → →, weil die Fläche bis zur ersten Wahl „Gremien“ zeigte). Danach je: Reiter, Inhalt,
+  // aria-selected bzw. aria-checked mit tabindex, Adresse (wer, darstellung), Fokus in der Fläche (nicht <body>), axe
+  async wahlBeimImport(browser, profil, gremien, gebiet) {
+    const ziel = telefon(profil) ? "schaubild" : "liste", name = { schaubild: "Schaubild", liste: "Liste" }[ziel];
+    const stand = (page) => page.evaluate(`({ ...(${ZUSTAND})(), f: (${FOKUS})(), drin: document.getElementById("panel-gremien").contains(document.activeElement),
+      url: Object.fromEntries(new URLSearchParams(location.search)) })`);
+    const erwartet = (z) => JSON.stringify(z.tabs) === JSON.stringify([["gremien", "true", 0], ["aemter", "false", -1]])
+      && JSON.stringify(z.darstellung) === JSON.stringify(["schaubild", "liste"].map((d) => [d, String(d === ziel), d === ziel ? 0 : -1]));
+    for (const art of ["Klick", "Tastatur"]) {
+      const s = await neueSeite(browser, profil);
+      const adressen = [];
+      let angefragt, freigeben;
+      const anfrage = new Promise((ok) => { angefragt = ok; }), freigabe = new Promise((ok) => { freigeben = ok; });
+      await s.ctx.route((u) => u.pathname.endsWith("/gremien.js"), async (r) => {
+        adressen.push(new URL(r.request().url()).search);
+        if (art === "Tastatur" && adressen.length === 1) return r.fulfill({ status: 404, body: "" });
+        angefragt();
+        await freigabe;
+        return r.continue();
+      });
+      await s.page.goto(BASIS, { waitUntil: "load" });
+      await geladen(s.page);
+      let fehlschlag = null;
+      if (art === "Tastatur") {
+        await menueOeffnen(s.page, profil, "mega-entscheiden");
+        await s.page.click('#mega-entscheiden [data-wer="aemter"]');
+        fehlschlag = await warten(s.page, () => /konnten nicht geladen werden/.test(document.getElementById("wer-status").textContent));
+        await s.page.keyboard.press("Escape");
+      }
+      await menueOeffnen(s.page, profil, "mega-entscheiden");
+      await s.page.click('#mega-entscheiden [data-wer="aemter"]');
+      const bereit = await Promise.race([anfrage.then(() => true), new Promise((ok) => setTimeout(() => ok(false), 20000))]);
+      const tasten = [];
+      if (art === "Klick") {
+        await s.page.click("#tab-wer-gremien");
+        await s.page.click(`.wer-darstellung [data-darstellung="${ziel}"]`);
+      } else {
+        for (let i = 0; i < 4 && !(await s.page.evaluate(() => document.activeElement.matches("[role=tab]"))); i++) { await s.page.keyboard.press("Tab"); tasten.push("Tab"); }
+        // Ende wählt „Liste“, Pos1 „Schaubild“
+        for (const k of ["ArrowRight", "Tab", ziel === "liste" ? "End" : "Home"]) { await s.page.keyboard.press(k); tasten.push(k); }
+      }
+      const beim = await stand(s.page);
+      if (art === "Klick") await axe(s.page, profil, "Wahl während gremien.js lädt (Klick)");
+      freigeben();
+      const da = bereit && await warten(s.page, ziel === "liste" ? () => document.querySelector("#wer-body #wer-liste") : () => document.querySelector("#wer-body .org"));
+      const z = await stand(s.page);
+      pruefen(profil, `Wahl während gremien.js lädt (${art}${art === "Tastatur" ? ", neuer Versuch nach gescheitertem Import" : ""}): Reiter „Gremien“ und „${name}“ sofort an Reiter und Umschalter, nach dem Laden gezeigt, Adresse wer=gremien und darstellung=${ziel}, Fokus in der Fläche`,
+        bereit && da && beim.status === "Wird geladen …" && erwartet(beim) && erwartet(z) && (ziel === "liste" ? z.liste && !z.schaubild : z.schaubild && !z.liste)
+        && z.url.wer === "gremien" && z.url.darstellung === ziel && z.f.tag !== "body" && z.f.sichtbar && z.drin
+        && (art === "Klick" ? JSON.stringify(adressen) === JSON.stringify([""]) : fehlschlag && JSON.stringify(adressen) === JSON.stringify(["", "?versuch=1"]) && z.f.text === name),
+        { bereit, da, fehlschlag, adressen, tasten, beim: { status: beim.status, tabs: beim.tabs, darstellung: beim.darstellung }, tabs: z.tabs, darstellung: z.darstellung,
+          adresse: { wer: z.url.wer, darstellung: z.url.darstellung }, fokus: z.f, drin: z.drin });
+      await axe(s.page, profil, `Wahl während gremien.js lädt (${art}), nach dem Laden`);
+      pruefen(profil, `keine Skriptfehler (Wahl während gremien.js lädt, ${art})`, s.fehler.length === 0, s.fehler);
+      await s.ctx.close();
+    }
+  },
+  // Anzeige während des Ladens (Durchsicht zu #52, Punkt 4): Reiter und Umschalter zeigen schon während des Imports von
+  // gremien.js und während des Ladens der Daten, was danach gilt. Vorher stand bis zur ersten Wahl der Ausgangszustand
+  // aus index.html („Gremien“ mit Umschalter, „Schaubild“): Über „Ämter“ geöffnet, nahm der sichtbare Umschalter eine
+  // Wahl an, nach dem Laden galt „Ämter“, der Umschalter verschwand, und der Fokus fiel auf <body>; beim neuen Versuch
+  // nach einem gescheiterten Import stand noch die Wahl von dort. Die Prüfung hält das Modul im Browserkontext bzw.
+  // gremien.json in der Seite zurück, bis gemessen und gewählt ist. (a) Import und (b) Daten: über „Ämter“ geöffnet,
+  // „Ämter“ gewählt, Umschalter verborgen, mit Tab vom Reiter aus kein Optionsfeld (Umschift+Tab zurück), danach
+  // dasselbe mit Inhalt „Ämter“, Adresse wer=aemter, Fokus auf dem Reiter. (c) neuer Versuch nach 404, im gescheiterten
+  // Versuch die Darstellung gewählt, die die Breite nicht vorgibt: über „Gremien“ geöffnet zeigt der Umschalter die
+  // Vorgabe der Breite, danach ebenso, Adresse ohne darstellung. (d) beim Import und beim Laden der Daten: über „Ämter“
+  // geöffnet, Esc, wieder über „Ämter“, erst dann Reiter „Gremien“ und Darstellung per Klick: gilt nach dem Laden
+  // (vorher verbrauchte das erste Öffnen die Wahl, das zweite setzte „Ämter“ darüber, der Fokus fiel auf <body>). (e) in
+  // beiden Phasen: über „Gremien“ geöffnet, „Ämter“ gewählt, Esc, wieder über „Gremien“: die Fläche zeigt schon beim Laden
+  // „Gremien“ (vorher die frühere Wahl, beim Import samt Umschalter). Je Fall axe nach dem Laden
+  async anzeigeBeimLaden(browser, profil, gremien, gebiet) {
+    const vorgabe = telefon(profil) ? "liste" : "schaubild", ziel = vorgabe === "liste" ? "schaubild" : "liste";
+    const stand = (page) => page.evaluate(`({ ...(${ZUSTAND})(), f: (${FOKUS})(), radio: document.activeElement.matches(".wer-darstellung [role=radio]"),
+      bezug: document.getElementById("wer-body").getAttribute("aria-labelledby"), url: Object.fromEntries(new URLSearchParams(location.search)) })`);
+    const reiter = (tab) => JSON.stringify([["gremien", String(tab === "gremien"), tab === "gremien" ? 0 : -1], ["aemter", String(tab === "aemter"), tab === "aemter" ? 0 : -1]]);
+    const schalter = (d) => JSON.stringify(["schaubild", "liste"].map((x) => [x, String(x === d), x === d ? 0 : -1]));
+    const karte = async (page, wer) => { await menueOeffnen(page, profil, "mega-entscheiden"); await page.click(`#mega-entscheiden [data-wer="${wer}"]`); };
+    const zeit = (p) => Promise.race([p.then(() => true), new Promise((ok) => setTimeout(() => ok(false), 20000))]);
+    // Anfragen zurückhalten: halter.n Anfragen bisher, halter.da(n) wartet auf die n-te, halter.los(n, antwort) beantwortet sie
+    const halter = () => {
+      const offen = [], wartet = [];
+      const h = { n: 0, adressen: [] };
+      h.nehmen = async (r, weiter) => {
+        h.adressen.push(new URL(r.request().url()).search);
+        const i = h.n++;
+        const antwort = await new Promise((ok) => { offen[i] = ok; (wartet[i] || (() => {}))(); });
+        return antwort === 404 ? r.fulfill({ status: 404, body: "" }) : weiter();
+      };
+      h.da = (i) => zeit(new Promise((ok) => { if (offen[i]) ok(); else wartet[i] = ok; }));
+      h.los = (i, antwort) => { if (offen[i]) offen[i](antwort); };
+      return h;
+    };
+    for (const phase of ["Import", "Daten"]) {
+      const h = halter();
+      const s = await neueSeite(browser, profil, phase === "Daten" ? { "gremien.json": (j, route) => h.nehmen(route, () => route.continue()) } : {});
+      if (phase === "Import") await s.ctx.route((u) => u.pathname.endsWith("/gremien.js"), (r) => h.nehmen(r, () => r.continue()));
+      await s.page.goto(BASIS, { waitUntil: "load" });
+      await geladen(s.page);
+      await karte(s.page, "aemter");
+      const bereit = await h.da(0);
+      const beim = await stand(s.page);
+      for (let i = 0; i < 4 && !(await s.page.evaluate(() => document.activeElement.matches("[role=tab]"))); i++) await s.page.keyboard.press("Tab");
+      const amReiter = await stand(s.page);
+      await s.page.keyboard.press("Tab");
+      const weiter = await stand(s.page);
+      await s.page.keyboard.press("Shift+Tab");
+      h.los(0);
+      const da = bereit && await warten(s.page, () => document.querySelectorAll("#wer-body .wer-dezernat").length > 0);
+      const z = await stand(s.page);
+      pruefen(profil, `Anzeige während des Ladens (${phase}): über „Ämter“ geöffnet „Ämter“ gewählt und Umschalter verborgen wie nach dem Laden, Tab erreicht kein Optionsfeld, Fokus danach auf dem Reiter`,
+        bereit && da && beim.status === "Wird geladen …" && JSON.stringify(beim.tabs) === reiter("aemter") && beim.darstellung === null && beim.bezug === "tab-wer-aemter"
+        && amReiter.f.id === "tab-wer-aemter" && !weiter.radio && JSON.stringify(z.tabs) === reiter("aemter") && z.darstellung === null && z.aemter >= 2
+        && z.url.wer === "aemter" && !z.url.darstellung && z.f.id === "tab-wer-aemter" && z.f.sichtbar,
+        { bereit, da, adressen: h.adressen, beim: { status: beim.status, tabs: beim.tabs, darstellung: beim.darstellung, bezug: beim.bezug }, amReiter: amReiter.f.id,
+          weiter: { radio: weiter.radio, f: weiter.f.id || weiter.f.tag }, tabs: z.tabs, darstellung: z.darstellung, aemter: z.aemter, url: z.url, fokus: z.f });
+      await axe(s.page, profil, `Anzeige während des Ladens (${phase}), nach dem Laden`);
+      pruefen(profil, `keine Skriptfehler (Anzeige während des Ladens, ${phase})`, s.fehler.length === 0, s.fehler);
+      await s.ctx.close();
+    }
+    // (c) neuer Versuch nach gescheitertem Import
+    {
+      const h = halter();
+      const s = await neueSeite(browser, profil);
+      await s.ctx.route((u) => u.pathname.endsWith("/gremien.js"), (r) => h.nehmen(r, () => r.continue()));
+      await s.page.goto(BASIS, { waitUntil: "load" });
+      await geladen(s.page);
+      await karte(s.page, "gremien");
+      const bereit = await h.da(0);
+      await s.page.click(`.wer-darstellung [data-darstellung="${ziel}"]`);
+      const erst = await stand(s.page);
+      h.los(0, 404);
+      const fehlschlag = await warten(s.page, () => /konnten nicht geladen werden/.test(document.getElementById("wer-status").textContent));
+      await s.page.keyboard.press("Escape");
+      await karte(s.page, "gremien");
+      const zweit = await h.da(1);
+      const beim = await stand(s.page);
+      h.los(1);
+      const da = zweit && await warten(s.page, vorgabe === "liste" ? () => document.querySelector("#wer-body #wer-liste") : () => document.querySelector("#wer-body .org"));
+      const z = await stand(s.page);
+      pruefen(profil, `Anzeige beim neuen Versuch nach gescheitertem Import: Umschalter auf der Vorgabe der Breite („${vorgabe}“) wie nach dem Laden, nicht auf der Wahl aus dem gescheiterten Versuch`,
+        bereit && fehlschlag && da && JSON.stringify(erst.darstellung) === schalter(ziel) && beim.status === "Wird geladen …" && JSON.stringify(beim.tabs) === reiter("gremien")
+        && JSON.stringify(beim.darstellung) === schalter(vorgabe) && JSON.stringify(z.tabs) === reiter("gremien") && JSON.stringify(z.darstellung) === schalter(vorgabe)
+        && (vorgabe === "liste" ? z.liste && !z.schaubild : z.schaubild && !z.liste) && z.url.wer === "gremien" && !z.url.darstellung
+        && JSON.stringify(h.adressen) === JSON.stringify(["", "?versuch=1"]),
+        { bereit, fehlschlag, da, adressen: h.adressen, erst: erst.darstellung, beim: { status: beim.status, tabs: beim.tabs, darstellung: beim.darstellung }, tabs: z.tabs, darstellung: z.darstellung, url: z.url });
+      await axe(s.page, profil, "Anzeige beim neuen Versuch nach gescheitertem Import, nach dem Laden");
+      pruefen(profil, "keine Skriptfehler (Anzeige beim neuen Versuch)", s.fehler.length === 0, s.fehler);
+      await s.ctx.close();
+    }
+    // (d) und (e) beim Import und beim Laden der Daten: schließen und wieder öffnen, erst danach die Wahl; bzw. erst die
+    // Wahl, dann schließen und wieder öffnen
+    for (const phase of ["Import", "Daten"]) {
+      for (const fall of ["Wahl nach erneutem Öffnen", "erneutes Öffnen nach einer Wahl"]) {
+        const h = halter();
+        const s = await neueSeite(browser, profil, phase === "Daten" ? { "gremien.json": (j, route) => h.nehmen(route, () => route.continue()) } : {});
+        if (phase === "Import") await s.ctx.route((u) => u.pathname.endsWith("/gremien.js"), (r) => h.nehmen(r, () => r.continue()));
+        await s.page.goto(BASIS, { waitUntil: "load" });
+        await geladen(s.page);
+        const erst = fall === "Wahl nach erneutem Öffnen";
+        await karte(s.page, erst ? "aemter" : "gremien");
+        const bereit = await h.da(0);
+        if (!erst) await s.page.click("#tab-wer-aemter");
+        await s.page.keyboard.press("Escape");
+        const zu = await s.page.evaluate(() => document.getElementById("panel-gremien").hidden);
+        await karte(s.page, erst ? "aemter" : "gremien");
+        if (erst) {
+          await s.page.click("#tab-wer-gremien");
+          await s.page.click(`.wer-darstellung [data-darstellung="${ziel}"]`);
+        }
+        const beim = await stand(s.page);
+        h.los(0);
+        const d = erst ? ziel : vorgabe;
+        const da = bereit && await warten(s.page, d === "liste" ? () => document.querySelector("#wer-body #wer-liste") : () => document.querySelector("#wer-body .org"));
+        const z = await stand(s.page);
+        pruefen(profil, erst ? `${fall} (${phase}): „Gremien“ und „${ziel}“ gelten nach dem Laden, Fokus am Optionsfeld`
+          : `${fall} (${phase}): über „Gremien“ wieder geöffnet zeigt die Fläche „Gremien“ schon beim Laden, nicht die frühere Wahl „Ämter“`,
+        bereit && zu && da && JSON.stringify(beim.tabs) === reiter("gremien") && JSON.stringify(beim.darstellung) === schalter(d)
+          && JSON.stringify(z.tabs) === reiter("gremien") && JSON.stringify(z.darstellung) === schalter(d) && (d === "liste" ? z.liste && !z.schaubild : z.schaubild && !z.liste)
+          && z.url.wer === "gremien" && (erst ? z.url.darstellung === ziel && z.radio : !z.url.darstellung && z.f.tag !== "body") && z.f.sichtbar
+          && JSON.stringify(h.adressen) === JSON.stringify([""]),
+        { bereit, zu, da, adressen: h.adressen, beim: { tabs: beim.tabs, darstellung: beim.darstellung }, tabs: z.tabs, darstellung: z.darstellung, url: z.url, fokus: z.f });
+        await axe(s.page, profil, `${fall} (${phase}), nach dem Laden`);
+        pruefen(profil, `keine Skriptfehler (${fall}, ${phase})`, s.fehler.length === 0, s.fehler);
+        await s.ctx.close();
+      }
+    }
   },
   // aufgelöstes Gremium aus der Adresse: ohne Darstellung die Liste mit „frühere Gremien zeigen“; mit „Schaubild“ ein
   // Hinweis auf die Liste statt seiner Angaben
@@ -1131,11 +1329,16 @@ const FOLGE = {
     // Kennzeichen über textContent: auf schmalen Breiten schließt der Vorgang die Liste (innerText wäre leer)
     const spaet = await s.page.evaluate(() => ({ heading: document.getElementById("detail-heading")?.textContent || "", schritte: document.querySelectorAll("#detail .steps li").length,
       hash: decodeURIComponent(location.hash.slice(1)), kennzeichen: document.getElementById("gremium-filter").hidden ? "" : document.getElementById("gremium-filter").textContent.replace(/\s+/g, " ").replace(/ ?Entfernen.*$/i, "").trim(),
-      n: document.querySelectorAll("#papers button[data-gref]").length, filter: new URLSearchParams(location.search).get("gremium_filter") }));
+      n: document.querySelectorAll("#papers button[data-gref]").length, filter: new URLSearchParams(location.search).get("gremium_filter"),
+      trefferDa: [...document.querySelectorAll("#papers button[data-gref]")].some((b) => b.dataset.gref === decodeURIComponent(location.hash.slice(1))) }));
     const fokusNachher = await aktiv();
-    pruefen(profil, "Nachprüfung (10) späte Antwort: Filter gesetzt, der inzwischen geöffnete Vorgang bleibt (kein „Los geht's“), Anker bleibt, Fokus unverändert",
+    // seit Pull Request 5 der Navigation liegt der Fokus nach Enter auf dem Treffer (Liste offen) bzw. auf dem Titel des
+    // Vorgangs, nicht mehr auf <body>; fällt der Treffer mit dem Filter aus der Liste, geht er wie vorgesehen
+    // (gremiumAusAdresse) auf die Überschrift der Liste
+    const fokusOk = fokusVorher !== "BODY#" && (fokusNachher === fokusVorher || (!spaet.trefferDa && fokusVorher === "BUTTON#" && fokusNachher === "H2#list-heading"));
+    pruefen(profil, "Nachprüfung (10) späte Antwort: Filter gesetzt, der inzwischen geöffnete Vorgang bleibt (kein „Los geht's“), Anker bleibt, Fokus unverändert (oder auf der Liste, wenn der Treffer wegfällt)",
       geoeffnet && spaet.hash === geoeffnet && spaet.schritte > 0 && !/Los geht/.test(spaet.heading) && spaet.kennzeichen.startsWith(`Gremium: ${ohne.name}`) && spaet.filter === ohne.key
-      && spaet.n <= zuerst && fokusNachher === fokusVorher, { zuerst, spaet, fokusVorher, fokusNachher });
+      && spaet.n <= zuerst && fokusOk, { zuerst, spaet, fokusVorher, fokusNachher });
     pruefen(profil, "keine Skriptfehler (Nachprüfung: späte Antwort)", s.fehler.length === 0, s.fehler);
     await s.ctx.close();
     // (c) gremien.json mit Fehlercode
