@@ -214,7 +214,9 @@
   // „strukturdaten“): Modul erst bei Bedarf; solange dessen Flächenfarben an sind, färbt die Ebene „gebiete“ nicht
   // (flaechenAus: nur eine Flächenfarbe zugleich)
   let funktionen = {}, sdModul = null, sdLaden = null, flaechenAus = false;
-  const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln; bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
+  // Satz in Liste, „In Zahlen“ und Verfahrenswegen der Vorschau: nur, was die Vorschau zeigt, ohne Ankündigung
+  // (Entscheidung 21.11.2026 (1) (12), Pull Request 5; vorher „Sie folgen nach dem ersten vollständigen Abruf …“)
+  const VORSCHAU_LISTE = "Die Vorschau enthält noch keine Ratsvorlagen. Die Karte zeigt Stadtteile, Kennzahlen und offene Daten (Menü „Ebenen“).";
   // Suche über ganz Köln (suche.json, erst bei Bedarf geladen)
   let search = null, searchLoading = null;
   const THEMES = {  // wie pipeline/topics.THEMES
@@ -245,6 +247,9 @@
     chatReady ||= import("./chat/ui.js").catch((e) => { chatReady = null; console.error("Ratsassistent nicht geladen", e); });
     return chatReady;
   }
+  // Vorgang nach oben rollen: sonst rollt nur der Inhalt, bei geringer Höhe (max-height: 480px, style.css; aus #51 (5),
+  // Pull Request 5) das ganze Blatt
+  const detailNachOben = () => { $("#detail").scrollTop = 0; $("#panel-detail").scrollTop = 0; };
   const opener = {};   // Element, das eine Fläche ohne eigene Schaltfläche in der Leiste geöffnet hat (Fokus beim Schließen)
   function setPanel(id, open) {
     const el = document.getElementById(id);
@@ -295,7 +300,7 @@
     showIntro(zuAktuell);
     syncUrl();
     setPanel("panel-detail", true);
-    $("#detail").scrollTop = 0;
+    detailNachOben();
     const ziel = zuAktuell && $("#aktuell");
     if (ziel) { ziel.scrollIntoView({ block: "start" }); ziel.querySelector("summary").focus(); } else $("#detail-heading").focus();
   }
@@ -417,6 +422,40 @@
     // Klick außerhalb schließt das Menü (das Suchfeld gehört zum Suchmenü)
     // (Ziele, die beim Klick neu aufgebaut wurden, z. B. Chips, sind nicht mehr im Dokument)
     if (openMegaId && e.target.isConnected && !e.target.closest(".mega") && !e.target.closest("#nav-search")) closeMega();
+  });
+  // Tab aus einem offenen Menü (Entscheidung 21.11.2026 (1) (15), Pull Request 5): Verlässt der Fokus Menü und
+  // Schaltfläche (beim Suchmenü das Suchfeld) mit Tab oder Umschalt+Tab, geht das Menü zu; der Fokus bleibt auf dem neuen
+  // Ziel. Ohne neues Ziel (anderes Fenster, Klick auf eine Stelle ohne Fokus, neu aufgebaute Schnellfilter) bleibt es
+  // offen; Esc (zurück auf die Schaltfläche) und Klicks wie bisher. Bis Pull Request 5 blieb das Menü offen und lag über
+  // dem, was den Fokus bekam
+  const zumMenue = (el, id) => Boolean(el) && (document.getElementById(id).contains(el)
+    || Boolean(el.closest(`[data-mega="${id}"]`)) || (id === "mega-suche" && Boolean(el.closest("#nav-search"))));
+  document.addEventListener("focusout", (e) => {
+    const id = openMegaId, neu = e.relatedTarget;
+    if (!id || !(neu instanceof Element) || !zumMenue(e.target, id) || zumMenue(neu, id)) return;
+    closeMega();
+  });
+  // Suchmenü mit der Tastatur (Prüfung von Pull Request 5): Es öffnet sich mit dem Fokus im Suchfeld, steht im Dokument
+  // aber erst hinter der ganzen Leiste; Tab führte deshalb aus dem Suchfeld hinaus und schloss es (Regel oben), seine
+  // Bedienelemente waren mit der Tastatur nicht zu erreichen. Ist es offen, führt Tab aus dem Suchfeld auf sein erstes
+  // Bedienelement, Umschalt+Tab von dort zurück ins Suchfeld und Tab vom letzten auf das Element der Leiste nach dem
+  // Suchfeld (Gebiet, auf dem Telefon „Menü“); das Menü geht dabei nach der Regel oben zu. Esc im Suchfeld schließt es
+  // wie bisher, danach führt Tab direkt weiter. Für alle übrigen Wege gilt die Regel oben
+  const imSuchmenue = () => [...$("#mega-suche").querySelectorAll("button, a[href], input, select, textarea")]
+    .filter((el) => !el.disabled && el.tabIndex >= 0 && sichtbarEl(el));
+  const nachSuchfeld = () => [...document.querySelectorAll(".nav button, .nav a[href], .nav input, .nav select")]
+    .find((el) => ($("#nav-search").compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) && !$("#nav-search").contains(el)
+      && el.tabIndex >= 0 && sichtbarEl(el));
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Tab" || e.altKey || e.ctrlKey || e.metaKey || openMegaId !== "mega-suche") return;
+    const els = imSuchmenue(), a = document.activeElement;
+    if (!els.length) return;
+    const ziel = a === $("#q") && !e.shiftKey ? els[0]
+      : a === els[0] && e.shiftKey ? $("#q")
+        : a === els[els.length - 1] && !e.shiftKey ? nachSuchfeld() : null;
+    if (!ziel) return;
+    e.preventDefault();
+    ziel.focus();
   });
 
   // --- Hamburger-Menü auf dem Telefon: Gebiet, Flächen und Menüs als Blatt über der Leiste --------------
@@ -1716,6 +1755,21 @@
     }
     if (openMegaId === "mega-suche") $("#mega-count").textContent = $("#count").textContent;
   }
+  // Fokus, nachdem ein Eintrag der Liste den Vorgang geöffnet hat (aus #51 (5), Pull Request 5): der Eintrag selbst,
+  // wenn die Liste offen bleibt (breite Bildschirme, wie bisher im Gebiet), sonst die Überschrift des Vorgangs. In ganz
+  // Köln baut das Laden des Gebiets die Liste neu auf (der angeklickte Eintrag ist danach nicht mehr im Dokument), bei
+  // 1024 px schließt der Vorgang die Liste; in beiden Fällen lag der Fokus bis Pull Request 5 auf <body>
+  function fokusNachListe(ref) {
+    const eintrag = [...document.querySelectorAll(".papers button[data-ref], .papers button[data-gref]")]
+      .find((x) => (x.dataset.ref || x.dataset.gref) === ref);
+    const ziel = sichtbarEl(eintrag) ? eintrag : $("#detail h3");
+    if (ziel && document.activeElement !== ziel) ziel.focus();
+  }
+  // Ein Suchtreffer setzt den Fokus erst nach dem Laden des Gebiets, und nur, wenn er inzwischen nicht anderswo ist
+  // (etwa im Suchfeld, in dem weitergetippt wird): auf <body>, noch in der Liste der Treffer oder auf einem Element,
+  // das nicht mehr zu sehen ist (bei 1024 px schließt der Vorgang die Liste samt „Stichwort“), wie in gremiumAusAdresse
+  // (Prüfung von Pull Request 5; vorher sprang er bei 1440 und 1024 px mitten im Tippen auf den Titel des Vorgangs)
+  const fokusFrei = () => { const a = document.activeElement; return !a || a === document.body || $("#papers").contains(a) || !sichtbarEl(a); };
   async function openGlobal(ref, areaKey) {
     if (!area || `${area.kind}:${area.key}` !== areaKey) await loadArea(areaKey, true);
     const p = papers.find((x) => x.reference === ref);
@@ -2069,7 +2123,7 @@
         <li>${LIZENZEN_LINK}</li></ul></details>`;
     $("#announce").textContent = `Bebauungsplan ${key} geöffnet`;
     if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
-    $("#detail").scrollTop = 0;
+    detailNachOben();
     syncUrl();
   }
   // Tastatur- und Listenzugang zur Planebene: Pläne mit Vorlagen im gewählten Gebiet
@@ -2172,7 +2226,7 @@
         <li>Mögliche Umsetzung: abgeleitet (pipeline/kandidaten.py), Audit ${link(REPO + "/blob/main/data/export/baustellen_kandidaten.tsv", "baustellen_kandidaten.tsv")}</li></ul></details>`;
     $("#announce").textContent = `Baustelle ${b.bezeichnung} geöffnet`;
     if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
-    $("#detail").scrollTop = 0;
+    detailNachOben();
     syncUrl();
   }
   function showSiteList() {
@@ -2273,7 +2327,9 @@
     const meeting = next ? `<li data-generic="sitzung" data-key="${esc(next.gremium)}|${esc(next.date)}">Nächste Sitzung eines beteiligten Gremiums: <strong>${esc(next.gremium)}</strong>, ${fmtDay(next.date)}${next.time ? `, ${esc(next.time)} Uhr` : ""}${verschoben ? ' <span class="badge">laut Sitzungsnamen verschoben</span>' : ""}${onAgenda ? " – die Vorlage steht dort auf der Tagesordnung <span class=\"derived\">abgeleitet, über die Sitzung verknüpft</span>" : ""}.
       ${link(next.web, "Tagesordnung") || "Die Tagesordnung erscheint vor der Sitzung im Ratsinformationssystem."}${verschoben ? "" : " Die Sitzung ist in der Regel öffentlich; Sie können zuhören."}</li>` : "";
     const done = p.stand === "entschieden" ? "<li data-generic=\"done\">Das Verfahren ist entschieden. Neue Anliegen zum Thema lassen sich mit Anregungen und Beschwerden nach § 24 GO NRW einbringen.</li>" : "";
-    return `<section class="participate" aria-labelledby="participate-h"><h4 id="participate-h">Selbst mitwirken</h4><ul>
+    // ohne aria-labelledby, also kein benannter Bereich (Landmarke); die Überschrift gliedert (wie 23.11.2026 (2) (17),
+    // aus #51 (5), Pull Request 5)
+    return `<section class="participate"><h4>Selbst mitwirken</h4><ul>
       ${meeting}${done}
       ${p.soll?.verfahren === "buergerantrag" ? "" : `<li data-generic="buergerantrag">Mit Anregungen und Beschwerden nach § 24 GO NRW können Sie sich selbst an den Rat oder Ihre Bezirksvertretung wenden; in Köln beraten darüber der Ausschuss für Bürgerbeteiligung, Anregungen und Beschwerden oder die zuständige Bezirksvertretung. <a href="${BUERGERANTRAG}" target="_blank" rel="noopener">Mehr dazu<span class="visually-hidden"> (Seite der Stadt Köln, neuer Tab)</span></a>${vorhanden("panel-mitmachen") ? ' · <button type="button" class="link-btn" data-mitmachen-oeffnen>Alle Wege, sich einzubringen</button>' : ""}</li>`}
       ${hasPaperFeed(p) ? "<li data-generic=\"feed\">Mit dem Feed „Diesen Vorgang abonnieren“ (unten) erfahren Sie von neuen Beratungen und Ergebnissen.</li>" : ""}
@@ -2384,7 +2440,7 @@
     showPlans(p, !fromMap);
     if (p.soll && index) showSoll(p);
     if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
-    $("#detail").scrollTop = 0;
+    detailNachOben();
     const ms = markers.get(p.reference) || [];
     if (fromMap) {
       const b = document.querySelector(`.papers button[data-ref="${CSS.escape(p.reference)}"]`);
@@ -2685,13 +2741,16 @@
       $("#papers").focus();
     });
     $("#f-text").addEventListener("input", () => { q.value = $("#f-text").value; });
+    // Schnellfilter: fillChips baut sie neu auf; hatte der gewählte den Fokus, bekommt ihn sein Nachfolger (bis zur
+    // Prüfung von Pull Request 5 lag er danach auf <body>)
+    const chipFokus = (alt, sel) => { const hatte = document.activeElement === alt; applyFromBar(); if (hatte) $("#mega-suche").querySelector(sel)?.focus(); };
     $("#mega-suche").addEventListener("click", (e) => {
       const sc = e.target.closest("[data-scope]");
       if (sc) { setScope(sc.dataset.scope); return applyFromBar(); }
       const t = e.target.closest("[data-theme]");
-      if (t) { $("#f-theme").value = $("#f-theme").value === t.dataset.theme ? "" : t.dataset.theme; return applyFromBar(); }
+      if (t) { $("#f-theme").value = $("#f-theme").value === t.dataset.theme ? "" : t.dataset.theme; return chipFokus(t, `[data-theme="${CSS.escape(t.dataset.theme)}"]`); }
       const pa = e.target.closest("[data-party]");
-      if (pa) { $("#f-party").value = $("#f-party").value === pa.dataset.party ? "" : pa.dataset.party; return applyFromBar(); }
+      if (pa) { $("#f-party").value = $("#f-party").value === pa.dataset.party ? "" : pa.dataset.party; return chipFokus(pa, `[data-party="${CSS.escape(pa.dataset.party)}"]`); }
     });
     $("#mega-show").addEventListener("click", () => { setPanel("panel-list", true); closeMega(); focusPanel("panel-list"); });
     $("#doc-search").addEventListener("click", runDocSearch);
@@ -2846,16 +2905,51 @@
   // Modul deshalb unter einer anderen Adresse. Nur mit Freigabe zur Laufzeit (index.json meta.funktionen) und
   // vorhandener Fläche (Freigabe beim Bau, data-freigabe)
   let werState = null, werReady = null, werModul = null, werImportFehler = 0;
+  // Solange gremien.js noch lädt (#52, Punkt 4): werOffen Reiter und Darstellung, mit denen die Fläche geöffnet wird
+  // (Aufrufe von openGremien), werVorab die Wahl in Reiter oder Umschalter (werVorabBedienen); werImportiert: das Modul
+  // ist geladen (werGeladen) und bedient die Fläche selbst; werAufrufe zählt die Aufrufe von openGremien beim Laden
+  let werVorab = {}, werOffen = {}, werImportiert = false, werGeladen = null, werAufrufe = 0;
   const werDa = () => Boolean(funktionen.gremien) && vorhanden("panel-gremien");
+  // Reiter und Umschalter während des Imports: was nach dem Laden gilt (die Wahl, sonst Reiter und Darstellung des
+  // Öffnens, sonst „Gremien“ und die Darstellung der Breite), wie render in gremien.js ohne Daten; der Umschalter nur im
+  // Reiter „Gremien“. Vorher stand bis zur ersten Wahl der Ausgangszustand aus index.html („Gremien“, „Schaubild“), auch
+  // beim Öffnen über „Ämter“ und auf dem Telefon; beim neuen Versuch nach einem gescheiterten Import die Wahl von dort
+  function werAnzeigen() {
+    const root = $("#panel-gremien"), schalter = root.querySelector(".wer-darstellung");
+    const tab = werVorab.tab || werOffen.tab || "gremien";
+    const ansicht = werVorab.darstellung || werOffen.darstellung || (MOBILE.matches ? "liste" : "schaubild");
+    root.querySelector("[role=tablist]").querySelectorAll("[role=tab][data-wer-tab]").forEach((t) => {
+      const an = t.dataset.werTab === tab;
+      t.setAttribute("aria-selected", String(an));
+      t.tabIndex = an ? 0 : -1;
+    });
+    schalter.hidden = tab !== "gremien";
+    schalter.querySelectorAll("[data-darstellung]").forEach((b) => {
+      b.setAttribute("aria-checked", String(b.dataset.darstellung === ansicht));
+      b.tabIndex = b.dataset.darstellung === ansicht ? 0 : -1;
+    });
+    $("#wer-body").setAttribute("aria-labelledby", `tab-wer-${tab}`);
+  }
   function openGremien(s) {
     if (!werDa()) return Promise.resolve(null);
     if (!werModul) { $("#wer-body").innerHTML = ""; $("#wer-status").textContent = "Wird geladen …"; }
     const modul = werImportFehler ? `./gremien.js?versuch=${werImportFehler}` : "./gremien.js";
+    if (!werReady) { werVorab = {}; werOffen = {}; }   // jeder Versuch beginnt ohne Wahl, auch der neue nach einem Fehler
+    // ein späteres Öffnen geht einer früheren Wahl vor, wie nach dem Laden die Aufrufe von show
+    if (!werModul && s && ["gremien", "aemter"].includes(s.tab)) { werOffen.tab = s.tab; delete werVorab.tab; }
+    if (!werModul && s && ["schaubild", "liste"].includes(s.darstellung)) { werOffen.darstellung = s.darstellung; delete werVorab.darstellung; }
+    if (!werImportiert) werAnzeigen();
+    // beim Laden der Daten zeigt gremien.js das Öffnen sofort, und es geht einer früheren Wahl vor (wie hier beim Import)
+    else if (!werModul && werReady && werGeladen && s) werGeladen.oeffnen(s);
     werReady ||= mitFrist(import(modul)).catch((e) => { werImportFehler++; throw e; }).then(async (m) => {
+      werImportiert = true;
+      werGeladen = m;
+      const vorab = werVorab;
+      werVorab = {};
       await m.init({
         basis: BONN, heute, zeitDatum, lizenz: lizenzOeffentlich, telefon: () => MOBILE.matches, wartezeit: WARTEZEIT,
         onState(st) { werState = st; syncUrl(); },
-        filterGremium: gremiumFiltern,
+        filterGremium: gremiumFiltern, vorab, offen: werOffen,
       });
       werModul = m;
       return m;
@@ -2865,8 +2959,55 @@
       $("#wer-status").textContent = "Die Angaben zu Gremien und Ämtern konnten nicht geladen werden. Beim nächsten Öffnen versucht der Ratsatlas es erneut.";
       return null;
     });   // beim nächsten Öffnen erneut
-    return werReady.then((m) => { if (m) m.show(s); return m; });
+    // Öffnen während des Ladens (Import oder Daten): danach zeigt nur das letzte (werAufrufe). Vorher folgten alle
+    // Aufrufe nacheinander, und nach Schließen und erneutem Öffnen verbrauchte das erste Öffnen eine danach getroffene
+    // Wahl, das zweite setzte seinen Reiter darüber; ist das Modul samt Daten geladen, zeigt wie bisher jedes
+    const nr = werModul ? 0 : ++werAufrufe;
+    return werReady.then((m) => { if (m && (!nr || nr === werAufrufe)) m.show(s); return m; });
   }
+  // Klick oder Taste an Reiter und Umschalter, während gremien.js noch lädt (#52, Punkt 4): Die Bedienung der Fläche
+  // meldet erst das Modul an (bedienen in init); bis dahin ging eine solche Wahl verloren. Jetzt nimmt app.js sie an
+  // (Klick, Enter und Leertaste, ←/→, Pos1 und Ende, am Umschalter auch ↑/↓), zeigt sie an Reitern und Umschalter
+  // (werAnzeigen; gewählter Reiter bzw. Optionsfeld mit tabindex 0, Fokus wandert mit) und gibt sie init mit; dort gilt
+  // sie wie eine Wahl während des Ladens der Daten (beimLaden) vor dem Reiter bzw. der Darstellung, mit denen die Fläche
+  // geöffnet wurde. Ein Klick auf den schon angezeigten Reiter ändert nichts (wie in gremien.js). Nur während eines
+  // laufenden Imports, auch beim neuen Versuch nach einem gescheiterten; ist das Modul geladen, bedient nur noch es die
+  // Fläche
+  function werVorabBedienen() {
+    const root = $("#panel-gremien"), tabliste = root.querySelector("[role=tablist]"), schalter = root.querySelector(".wer-darstellung");
+    const aktiv = () => Boolean(werReady) && !werImportiert;
+    const reiter = (tab) => { werVorab.tab = tab; werAnzeigen(); };
+    const darstellung = (wert) => { werVorab.darstellung = wert; werAnzeigen(); };
+    tabliste.addEventListener("click", (e) => {
+      const t = aktiv() && e.target.closest("[role=tab][data-wer-tab]");
+      if (t && t.getAttribute("aria-selected") !== "true") reiter(t.dataset.werTab);
+    });
+    tabliste.addEventListener("keydown", (e) => {
+      if (!aktiv()) return;
+      const tabs = [...tabliste.querySelectorAll("[role=tab][data-wer-tab]")].filter((t) => !t.hidden);
+      const i = Math.max(0, tabs.findIndex((t) => t.getAttribute("aria-selected") === "true"));
+      const ziel = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i - 1 + tabs.length) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
+      if (ziel === undefined) return;
+      e.preventDefault();
+      reiter(tabs[ziel].dataset.werTab);
+      tabs[ziel].focus();
+    });
+    schalter.addEventListener("click", (e) => {
+      const b = aktiv() && e.target.closest("[data-darstellung]");
+      if (b) darstellung(b.dataset.darstellung);
+    });
+    schalter.addEventListener("keydown", (e) => {
+      if (!aktiv()) return;
+      const knoepfe = [...schalter.querySelectorAll("[data-darstellung]")], n = knoepfe.length;
+      const i = Math.max(0, knoepfe.findIndex((b) => b.getAttribute("aria-checked") === "true"));
+      const ziel = { ArrowRight: (i + 1) % n, ArrowDown: (i + 1) % n, ArrowLeft: (i - 1 + n) % n, ArrowUp: (i - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
+      if (ziel === undefined) return;
+      e.preventDefault();
+      darstellung(knoepfe[ziel].dataset.darstellung);
+      knoepfe[ziel].focus();
+    });
+  }
+  if (vorhanden("panel-gremien")) werVorabBedienen();
 
   // --- Strukturdaten der Stadtstatistik (site/strukturdaten/strukturdaten.js) -----------------------------
   // Kontext-Panel in der Liste und im Vorgang, Flächenfarben mit Tabelle (Datenvertrag „Strukturdaten“ unter
@@ -2913,7 +3054,7 @@
     if (!still) {
       if (MOBILE.matches) setMapMenu(false);
       if (MOBILE.matches || $("#panel-detail").hidden) setPanel("panel-detail", true);
-      $("#detail").scrollTop = 0;
+      detailNachOben();
       $("#detail h3")?.focus();
     }
     syncUrl();
@@ -2983,6 +3124,20 @@
     if (vorschau) document.querySelectorAll('[data-vorschau="aus"]').forEach((el) => { el.hidden = true; });
     document.querySelectorAll('[data-vorschau="nur"]').forEach((el) => { el.hidden = !vorschau; });
   }
+  // title der Schaltflächen in der Leiste nur, wo sie nur Symbole zeigen (901 bis 1365 px; Entscheidung 21.11.2026 (1)
+  // (13), Pull Request 5): Dort nennt es beim Überfahren mit der Maus Name und Inhalt. Wo die Beschriftung zu sehen ist
+  // (ab 1366 px und auf dem Telefon), ist sie der zugängliche Name; ein title daneben läsen Bildschirmleser als
+  // Beschreibung mit, den Namen also zweimal. Der Text bleibt in data-titel; nach applyFunktionen aufrufen (Titel von
+  // „Wer entscheidet“ nach der Freigabe „gremien“)
+  const NUR_SYMBOLE = matchMedia("(min-width: 901px) and (max-width: 1365px)");
+  function leistenTitel() {
+    document.querySelectorAll(".nav .toggle, .nav .menu-btn").forEach((b) => {
+      if (b.hasAttribute("title")) b.dataset.titel = b.title;
+      if (NUR_SYMBOLE.matches && b.dataset.titel) b.title = b.dataset.titel;
+      else b.removeAttribute("title");
+    });
+  }
+  NUR_SYMBOLE.addEventListener("change", leistenTitel);
   const QUELLE_NAME = { "oparl-koeln": "Ratsinformationssystem", "geo-koeln": "Gebiete", "strassen-koeln": "Straßen",
     "adressen-koeln": "Adressen", "bplan-koeln": "Bebauungspläne", osm: "OpenStreetMap" };
 
@@ -3003,6 +3158,7 @@
     // Freigaben und Vorschau-Kennzeichnung vor Karte und Kacheln anwenden, damit ausgeblendete Elemente (Menüs,
     // Schnellfilter, Kalender, Filter) nicht kurz sichtbar sind
     applyFunktionen(fn, idx);
+    leistenTitel();
     $("#filters").hidden = vorschau;   // Filter ohne Vorlagen hätten nur „alle“
     createMap(startBounds(idx, startGebiet));
     // 2. alles Übrige nach den sichtbaren Kacheln (höchstens 2,5 s warten)
@@ -3075,9 +3231,9 @@
       // Filter „Gremium“ ohne Treffer im Gebiet: dieselbe Suche in ganz Köln
       if (e.target.closest("#gremium-koeln")) { setScope(STADT); shown = LIST_STEP; fillParties(); render(); syncUrl(); focusPanel("panel-list"); return; }
       const g = e.target.closest("button[data-gref]");
-      if (g) { openGlobal(g.dataset.gref, g.dataset.area); return; }
+      if (g) { const ref = g.dataset.gref; openGlobal(ref, g.dataset.area).then(() => { if (selected?.reference === ref && fokusFrei()) fokusNachListe(ref); }); return; }
       const b = e.target.closest("button[data-ref]");
-      if (b) select(papers.find((p) => p.reference === b.dataset.ref));
+      if (b) { select(papers.find((p) => p.reference === b.dataset.ref)); fokusNachListe(b.dataset.ref); }
     });
     // Vorschau in der Zeitleiste nur beim Wechsel der Vorlage (mouseover feuert für jedes Kindelement erneut)
     let hoverRef = null;

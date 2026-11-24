@@ -210,8 +210,8 @@ const zustand = { tab: "gremien", darstellung: null, kennung: null, frueher: fal
 // Kennungen der aufgeklappten Einträge der Liste in der Reihenfolge des Öffnens (23.11.2026 (2) (14)): `kennung` folgt
 // dem zuletzt geöffneten Eintrag, der noch offen ist; wird er zugeklappt, dem davor geöffneten; ohne offenen Eintrag keine
 let geoeffnet = [];
-// Wahl in Reiter oder Umschalter, während die Daten noch laden: Sie gilt nach dem Laden vor dem Reiter bzw. der
-// Darstellung, mit denen die Fläche geöffnet wurde
+// Wahl in Reiter oder Umschalter, während die Daten noch laden (oder schon während des Imports dieses Moduls, über
+// app.js und init): Sie gilt nach dem Laden vor dem Reiter bzw. der Darstellung, mit denen die Fläche geöffnet wurde
 const beimLaden = { tab: false, darstellung: false };
 // ohne ausdrückliche Wahl (Umschalter oder Adresse) Schaubild ab 901 px, Liste bis 900 px (F9)
 const darstellung = () => zustand.darstellung || (ctx.telefon() ? "liste" : "schaubild");
@@ -362,6 +362,16 @@ export async function init(c) {
   status = root.querySelector("#wer-status");
   if (!bedient) { bedienen(); bedient = true; }
   beimLaden.tab = beimLaden.darstellung = false;
+  // Reiter und Darstellung, mit denen app.js die Fläche öffnet (offen; show setzt sie nach dem Laden ebenso), und eine
+  // Wahl, während das Modul selbst noch lud (vorab; app.js werVorabBedienen, #52 Punkt 4). Die Wahl gilt wie eine Wahl
+  // während des Ladens der Daten. Reiter und Umschalter zeigen schon jetzt, was nach dem Laden gilt (render ohne Daten),
+  // wie app.js während des Imports; vorher bis zur ersten Wahl den Ausgangszustand, auch beim Öffnen über „Ämter“
+  const offen = c.offen || {}, vorab = c.vorab || {};
+  if (REITER.includes(offen.tab)) zustand.tab = offen.tab;
+  if (DARSTELLUNGEN.includes(offen.darstellung)) zustand.darstellung = offen.darstellung;
+  if (REITER.includes(vorab.tab)) { zustand.tab = vorab.tab; zustand.q = ""; beimLaden.tab = true; }
+  if (DARSTELLUNGEN.includes(vorab.darstellung)) { zustand.darstellung = vorab.darstellung; beimLaden.darstellung = true; }
+  render();
   const laden = (name) => {
     const ab = new AbortController(), uhr = setTimeout(() => ab.abort(), ctx.wartezeit ?? WARTEZEIT);
     return fetch(ctx.basis + name, { signal: ab.signal }).then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
@@ -372,11 +382,21 @@ export async function init(c) {
   daten = { gremien, aemter };
 }
 
+// Öffnen, während die Daten noch laden (app.js openGremien, #52 Punkt 4): Reiter und Darstellung des Öffnens gehen einer
+// früheren Wahl vor und stehen sofort an Reitern und Umschalter, wie in app.js während des Imports; eine Wahl danach gilt
+// wie jede Wahl während des Ladens. Vorher zeigte die Fläche bis zum Laden die frühere Wahl
+export function oeffnen(s = {}) {
+  if (daten || !root) return;
+  if (REITER.includes(s.tab)) { zustand.tab = s.tab; beimLaden.tab = false; }
+  if (DARSTELLUNGEN.includes(s.darstellung)) { zustand.darstellung = s.darstellung; beimLaden.darstellung = false; }
+  render();
+}
+
 // Zustand übernehmen und zeigen: tab, darstellung (ausdrückliche Wahl), kennung, fokus (Eintrag ansteuern, etwa aus dem
 // Vorgang), zeigen (Eintrag nur ins Bild rollen, etwa aus der Adresse). Eine unbekannte Kennung (etwa aus einem älteren
 // Link; F12: die Kennung kann sich ändern) wählt nichts aus. Eine Wahl während des Ladens geht dem ersten tab bzw. der
 // ersten darstellung danach vor (app.js ruft show bei jedem Öffnen zweimal auf: aus setPanel ohne Angaben, danach mit
-// dem Reiter).
+// dem Reiter; für ein Öffnen während des Ladens nur einmal, für das letzte).
 export function show(s = {}) {
   if (REITER.includes(s.tab)) { if (!beimLaden.tab) zustand.tab = s.tab; beimLaden.tab = false; }
   if (DARSTELLUNGEN.includes(s.darstellung)) { if (!beimLaden.darstellung) zustand.darstellung = s.darstellung; beimLaden.darstellung = false; }

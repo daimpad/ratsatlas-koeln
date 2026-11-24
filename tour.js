@@ -7,7 +7,8 @@
   const MOBILE = matchMedia("(max-width: 900px)");
   const $ = (s) => document.querySelector(s);
   // Kartenvorschau ohne Ratsvorlagen (index.json meta.vorschau; Kennzeichen setzt app.js applyFunktionen): dort fehlen
-  // Punkte, Zeitleiste, Termine, Schnellfilter und „In Zahlen“, Suche und Liste bleiben leer; die Tour nennt, was folgt
+  // Punkte, Zeitleiste, Termine, Schnellfilter und „In Zahlen“, Suche und Liste bleiben leer. Die Texte unter vorschau
+  // beschreiben nur, was die Vorschau zeigt, ohne Ankündigung (Entscheidung 21.11.2026 (1) (12), Pull Request 5)
   const VORSCHAU = () => document.documentElement.dataset.vorschau === "ja";
   const TELEFON_LEGENDEN = MOBILE.matches ? " Auf dem Telefon stehen die Legenden hinter „Karte“; „Ganz Köln ansehen“ ist das Symbol mit den vier Ecken." : "";
   const TELEFON_KARTE = MOBILE.matches ? " Auf dem Telefon liegen Ebenen, Legenden und Quellen zusammen hinter „Karte“." : "";
@@ -48,11 +49,11 @@
   const STEPS = [
     { title: "Willkommen zur Tour",
       text: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Tour stellt die Funktionen der Reihe nach vor. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc.",
-      vorschau: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen: wo (Karte), wann (Zeitleiste) und wer beteiligt ist (Dienststellen, Gremien, Fraktionen). Die Vorschau enthält noch keine Ratsvorlagen; sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln. Bis dahin zeigt die Karte Stadtteile, Kennzahlen und offene Daten. Die Tour stellt vor, was schon verfügbar ist. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc." },
+      vorschau: "Der Ratsatlas zeigt, womit sich Rat, Bezirksvertretungen und Ausschüsse der Stadt Köln befassen. Diese Vorschau enthält noch keine Ratsvorlagen; die Karte zeigt Stadtbezirke und Stadtteile mit Kennzahlen und offenen Daten. Die Tour stellt vor, was die Vorschau zeigt. Weiter mit der Pfeiltaste nach rechts, beenden mit Esc." },
     { menu: "mega-suche", target: "#mega-suche", fallback: "#nav-search", beacons: ["#q"],
       title: "Suche in ganz Köln",
       text: "Ein Stichwort oder eine Vorlagennummer eingeben, etwa „Radweg“ oder „2250/2025“. Darunter stehen Schnellfilter nach Thema und Partei; die Treffer lassen sich in der Liste anzeigen.",
-      vorschau: "Das Suchfeld ist für Vorlagen in ganz Köln gedacht: nach Stichwort oder Vorlagennummer, dazu Schnellfilter nach Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; Suche und Schnellfilter folgen nach dem ersten vollständigen Abruf bei der Stadt Köln." },
+      vorschau: "Das Suchfeld durchsucht die Vorlagen in ganz Köln nach Stichwort oder Vorlagennummer. Die Vorschau enthält noch keine Ratsvorlagen; die Suche findet deshalb nichts." },
     { target: "#f-area",
       title: "Gebiet wählen",
       text: "Ein Stadtteil, ein ganzer Stadtbezirk oder Vorlagen ohne Ortsbezug je Jahr. Zu Beginn zeigt die Karte ganz Köln: erst einen Stadtbezirk anklicken, dann einen Stadtteil. Herangezoomt lassen sich Stadtteile direkt anklicken; „Ganz Köln ansehen“ führt zurück. In der obersten Legende unten links lassen sich die Flächen statt nach der Zahl der Vorlagen nach dem Anteil eines Themas färben, etwa Verkehr, oder nach Zahlen zum Gebiet wie Miete, Altersanteilen oder Hitze (abgeleitet, zur Einordnung). Ist ein Stadtteil gewählt, stehen diese Zahlen auch in der Liste neben denen des Stadtbezirks. Karte, Liste und Zeitleiste zeigen jeweils das gewählte Gebiet." + TELEFON_LEGENDEN,
@@ -65,13 +66,13 @@
         + (AN.baustellen() ? " „Baustellen“ zeigt gemeldete Baustellen mit unverbindlichen Terminen." : "")
         + " „Überschwemmungsgebiete“ und „Bodenrichtwerte“ zeigen beim Hineinzoomen Flächen des Landes zur Einordnung (abgeleitet aufbereitet, verbindlich sind die Quellen)."
         + ZUSATZ("karte") + " „Farbige Karte“ schaltet den Hintergrund um. Alle diese Schaltflächen liegen unter „Ebenen“; die Zahl daneben nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE,
-      vorschau: () => "Die Flächen zeigen Stadtbezirke und Stadtteile, gefärbt nach der Kennzahl in der obersten Legende. Punkte für Vorlagen mit Ortsbezug folgen mit den Ratsvorlagen. Unter „Ebenen“ lassen sich offene Daten zuschalten, etwa Bebauungspläne, Überschwemmungsgebiete, Bodenrichtwerte, Schutzgebiete, Schulen, Kitas oder Haltestellen – zur Einordnung abgeleitet aufbereitet, verbindlich sind die Quellen."
+      vorschau: () => "Die Flächen zeigen Stadtbezirke und Stadtteile, gefärbt nach der Kennzahl in der obersten Legende. Unter „Ebenen“ lassen sich offene Daten zuschalten, etwa Bebauungspläne, Überschwemmungsgebiete, Bodenrichtwerte, Schutzgebiete, Schulen, Kitas oder Haltestellen – zur Einordnung abgeleitet aufbereitet, verbindlich sind die Quellen."
         + ZUSATZ("karte") + " Ebenen mit vielen Objekten erscheinen erst beim Hineinzoomen. „Farbige Karte“ schaltet den Hintergrund um. Die Zahl neben „Ebenen“ nennt, wie viele eingeschaltet sind. Die Legenden unten links sind eingeklappt und öffnen sich mit einem Klick, darunter stehen Quellen, Lizenzen und Datenstand." + TELEFON_KARTE },
     { before: (ui) => { ui.mapMenu(false); ui.panel("panel-list", true); }, target: "#panel-list", beacons: ["#f-text", "#more-filters > summary"],
       title: "Die Vorlagen",
       text: () => "Alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte und mit der Tastatur bedienbar. Filter nach Stichwort, Vorlagenart, Stand, Thema und Partei; unter „Weitere Filter“ nach Amt, Gremium und Ortsangabe."
         + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen."),
-      vorschau: () => "Hier stehen künftig alle Vorlagen des Gebiets als Liste – gleichwertig zur Karte, mit der Tastatur bedienbar und mit Filtern nach Stichwort, Vorlagenart, Stand, Thema und Partei. Die Vorschau enthält noch keine Ratsvorlagen; sie folgen nach dem ersten vollständigen Abruf bei der Stadt Köln. Ist ein Stadtteil oder Stadtbezirk gewählt, stehen hier schon jetzt die Zahlen zum Gebiet."
+      vorschau: () => "Die Liste der Vorlagen im Gebiet. Die Vorschau enthält noch keine Ratsvorlagen, die Liste bleibt deshalb leer. Ist ein Stadtteil oder Stadtbezirk gewählt, stehen hier die Zahlen zum Gebiet."
         + ZUSATZ("liste") + (MOBILE.matches ? "" : " Die Breite lässt sich am Rand ziehen.") },
     { when: () => !document.querySelector('.toggle[data-panel="timeline-wrap"]').hidden,
       before: (ui) => ui.panel("timeline-wrap", true), target: "#timeline-wrap", beacons: [".tl-presets"],
@@ -112,7 +113,7 @@
         + (AN.mitmachen() ? "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; „Alle Wege im Überblick“ zeigt je Stadtbezirk die nächsten Sitzungen und alle Wege, sich einzubringen, von der Einwohnerfragestunde bis zum Bürgerbegehren; "
           : "der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden; ")
         + "und unter „Informiert bleiben“ Feeds, die neue Vorlagen im Gebiet oder Änderungen an einem Vorgang melden.",
-      vorschau: "Unter „Informiert bleiben“ stehen Feeds, die neue Vorlagen im gewählten Gebiet melden; sie füllen sich, sobald Ratsvorlagen vorliegen. Außerdem: der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden." },
+      vorschau: "Der Weg, sich mit Anregungen und Beschwerden nach § 24 GO NRW selbst an den Rat oder die Bezirksvertretung zu wenden, und unter „Informiert bleiben“ Feeds, die neue Vorlagen im gewählten Gebiet melden." },
     { when: () => document.querySelector(".toggle-ai")?.hidden === false,
       target: ".toggle-ai",
       title: "Der Ratsassistent",
@@ -120,7 +121,7 @@
     { target: ".nav-group.seg",
       title: "Flächen ein- und ausklappen",
       text: () => `${aufzaehlung([...document.querySelectorAll(".nav-group.seg .toggle[data-panel]")].filter((b) => !b.hidden && FLAECHEN[b.dataset.panel]).map((b) => FLAECHEN[b.dataset.panel]))} lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Esc schließt die Fläche, in der Sie gerade sind.`,
-      vorschau: "Die Flächen „Vorlagen“ und „Vorgang“ lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Mit den Ratsvorlagen kommt die Zeitleiste hinzu. Esc schließt die Fläche, in der Sie gerade sind." },
+      vorschau: "Die Flächen „Vorlagen“ und „Vorgang“ lassen sich hier öffnen und schließen; die Karte bleibt darunter sichtbar. Esc schließt die Fläche, in der Sie gerade sind." },
     // Menü „Über“: Lesehilfen, Über den Ratsatlas und Daten (bisher die Menüs „Verstehen“ und „Daten“ und der Dialog)
     { menu: "mega-ueber", target: "#mega-ueber", beacons: ["#mega-ueber [data-tour]", "#about-open"],
       title: "Über",
@@ -194,8 +195,24 @@
     if (ui.nav) ui.nav(false);
     root.remove();
     root = null;
-    const back = prevFocus && prevFocus.isConnected && shown(prevFocus) ? prevFocus : $("#detail-heading");
-    if (back) back.focus();
+    for (const ziel of fokusZiele()) {
+      ziel.focus();
+      if (document.activeElement === ziel) break;
+    }
+  }
+  // Ziele für den Fokus nach dem Ende der Tour (Esc, Schließen oder „Fertig“; Entscheidung 21.11.2026 (1) (15), Pull
+  // Request 5), in dieser Reihenfolge: das Element, das die Tour gestartet hat, wenn es zu sehen ist; die Überschrift
+  // einer offenen Fläche (Überlagerung, dann Vorgang bzw. „Los geht's“, dann Liste); das erste Element der Leiste außer
+  // dem Suchfeld (es öffnet beim Fokus das Suchmenü), also die Wortmarke bzw. auf dem Telefon „Menü“. Nie <body>: Bis
+  // Pull Request 5 lag der Fokus auf dem Telefon nach jedem Ende dort (Start aus dem geschlossenen Menü „Über“, keine
+  // Fläche offen, die Überschrift des Vorgangs unsichtbar)
+  const KOEPFE = [".overlay:not([hidden]) h2[tabindex]", "#panel-detail:not([hidden]) h2[tabindex]", ".panel:not([hidden]) h2[tabindex]"];
+  const LEISTE = [".nav a.brand", "#nav-burger"];
+  const zuSehen = (el) => Boolean(el) && el !== document.body && el.isConnected && shown(el) && !el.closest("[hidden], [inert]");
+  function fokusZiele() {
+    const ziele = zuSehen(prevFocus) ? [prevFocus] : [];
+    for (const sel of [...KOEPFE, ...LEISTE]) ziele.push(...[...document.querySelectorAll(sel)].filter(zuSehen));
+    return ziele;
   }
 
   let goSeq = 0, busy = false;
