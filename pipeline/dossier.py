@@ -4,7 +4,9 @@ Die Beschreibung je Thema (Regeln, Bahnen, Texte) steht in pipeline/themenseiten
 Herkunft: daimpad/ratsatlas-bonn @730d593 (pipeline/dossier.py), Gerüst der Seite und der Übersicht thema/ wie dort.
 Kölner Anpassungen (Entscheidung 24.11.2026 (3), Antworten zum Plan vom 25.11.2026; inventur/themenseiten_port.tsv):
 - Zuordnung nur über das Gremium (Gremium-Tor: Beratung im Fachausschuss des Themas, Kennung zur Laufzeit aus
-  gremien.json über Gruppe und Paragraf der Zuständigkeitsordnung), Wörter im Titel und Folgevorlagen über die
+  gremien.json über Gruppe und Paragraf der Zuständigkeitsordnung; mit Thema.tor_hoechstens nur bei Vorlagen, die
+  höchstens so viele Gremien aus Thema.tor_gremien beraten, Entscheidung 25.11.2026 (2)), Wörter im Titel und
+  Folgevorlagen über die
   veröffentlichten Beziehungen superordinated und subordinated (verfahren). Nie über das abgeleitete Thema (topics.py,
   suche.json), die Federführung (amt, responsibility, underDirectionOf), relatedPaper oder Volltexte. zuordnen liest nur
   Felder der Gebietsdateien, damit der Prüfbogen aus dem Datenpaket (tools/themen_pruefbogen.py) dieselbe Zuordnung
@@ -57,7 +59,8 @@ class Regel:
     - titel: Wort im Titel (re.Pattern); ohne titel gilt die Regel nur mit gremium_tor (nur über das Gremium)
     - bedingung: ein zweites Wort, das der Titel zusätzlich nennen muss
     - gremium_tor: nur für Vorlagen mit Beratung im Fachausschuss des Themas (Thema.fachausschuss; abgesagte Sitzungen
-      zählen nicht) und nur, wenn der Titel Thema.tor_ausschluss nicht trifft (mit und ohne titel)"""
+      zählen nicht), nur, wenn der Titel Thema.tor_ausschluss nicht trifft, und nur, wenn höchstens Thema.tor_hoechstens
+      Gremien aus Thema.tor_gremien die Vorlage beraten (breit_beraten; beides mit und ohne titel)"""
     strang: str
     titel: re.Pattern = None
     bedingung: re.Pattern = None
@@ -88,9 +91,14 @@ class Thema:
     nicht_gezeigt: list       # HTML
     fachausschuss: Auswahl = None   # Gremium-Tor, „Wer berät mit“ und Kachel; ohne eindeutigen Eintrag kein Tor
     tor_ausschluss: re.Pattern = None   # Titel, die über eine Regel mit Gremium-Tor nie zugeordnet werden
+    # Regeln mit Gremium-Tor nur, wenn höchstens tor_hoechstens verschiedene Gremien aus tor_gremien (Auswahl in
+    # gremien.json) die Vorlage beraten (breit_beraten); None: ohne Grenze
+    tor_hoechstens: int = None
+    tor_gremien: Auswahl = None
     folgevorlagen: bool = True
     karten_links: tuple = ()  # (Art, Schlüssel, Text): ("ebene", Schlüssel der Kartenebene, …), ("gremium", None, …)
     pruefung_datum: str = ""  # Tag des Prüfbogens im Gespräch (ISO); Pflicht für die Freigabe
+    methode: str = ""         # Regeln der Zuordnung in Worten für „Quellen und Methode“ (Text, ohne HTML)
     eingeklappt: frozenset = frozenset()
     leer_ausblenden: frozenset = frozenset()  # diese Stränge erscheinen nicht, solange sie leer sind
     nach_bezirk: frozenset = frozenset()  # Stränge, deren Vorlagen nach Stadtbezirk gegliedert erscheinen
@@ -108,10 +116,12 @@ class Thema:
 @dataclass(frozen=True)
 class Lauf:
     """Angaben eines Laufs, die nicht in der Beschreibung stehen: Beginn des Zeitraums (seit, Beginn der laufenden
-    Wahlperiode), Kennung und Name des Fachausschusses aus gremien.json (ohne eindeutigen Eintrag None: kein Tor)."""
+    Wahlperiode), Kennung und Name des Fachausschusses aus gremien.json (ohne eindeutigen Eintrag None: kein Tor) und
+    die Kennungen der Gremien aus Thema.tor_gremien (`gezaehlt`, für Thema.tor_hoechstens; leer: keines zählt)."""
     seit: str
     tor: str = None
     tor_name: str = None
+    gezaehlt: frozenset = frozenset()
 
 
 def gremien_auswahl(gremien_daten, auswahl):
@@ -136,10 +146,12 @@ def wahlperiode_beginn(terms, heute):
 
 
 def lauf(t, gremien_daten, terms=()):
-    """Lauf eines Themas: seit aus den Wahlperioden zum Datenstand von gremien.json, Fachausschuss aus gremien.json."""
+    """Lauf eines Themas: seit aus den Wahlperioden zum Datenstand von gremien.json, Fachausschuss und die Gremien aus
+    t.tor_gremien aus gremien.json (Kennungen zur Laufzeit, wie beim Fachausschuss)."""
     e = fachausschuss(t, gremien_daten)
+    gezaehlt = frozenset(x["key"] for x in gremien_auswahl(gremien_daten, t.tor_gremien)) if t.tor_gremien else frozenset()
     return Lauf(seit=wahlperiode_beginn(terms, gremien_daten["meta"]["datenstand"]),
-                tor=e and e["key"], tor_name=e and e["name"])
+                tor=e and e["key"], tor_name=e and e["name"], gezaehlt=gezaehlt)
 
 
 def _wort(m):
@@ -159,6 +171,17 @@ def beraten_in(p, keys):
     return bool(keys) and any(s.get("gremium_key") in keys and not absage(s) for s in p.get("process") or ())
 
 
+def breit_beraten(t, p, lauf_):
+    """Beraten mehr als t.tor_hoechstens verschiedene Gremien aus t.tor_gremien die Vorlage (Kennungen lauf_.gezaehlt in
+    der Beratungsfolge, process[].gremium_key, einschließlich des Fachausschusses und auch in abgesagten Sitzungen)?
+    Dann öffnet die Beratung im Fachausschuss allein keine Zuordnung (Querschnittsvorlagen; Entscheidung 25.11.2026
+    (2)). Ohne t.tor_hoechstens nie."""
+    if t.tor_hoechstens is None:
+        return False
+    keys = {s.get("gremium_key") for s in p.get("process") or ()}
+    return len(keys & lauf_.gezaehlt) > t.tor_hoechstens
+
+
 def _im_zeitraum(t, p, lauf_):
     """Ausschluss (Titel) und Zeitraum (ab lauf_.seit): gilt für jede Vorlage, auch für Folgevorlagen."""
     name = p.get("name") or ""
@@ -172,7 +195,7 @@ def _eigen(t, p, lauf_):
         return None
     tor = beraten_in(p, {lauf_.tor} if lauf_.tor else set())
     vor = f"Beratung im {lauf_.tor_name}" if tor else None
-    tor_aus = bool(t.tor_ausschluss and t.tor_ausschluss.search(name))
+    tor_aus = bool(t.tor_ausschluss and t.tor_ausschluss.search(name)) or (tor and breit_beraten(t, p, lauf_))
     for r in t.regeln:
         if r.gremium_tor and (not tor or tor_aus):
             continue
@@ -612,6 +635,8 @@ def _quellen(t, root):
     return (f'<p>Quelle: Ratsinformationssystem der Stadt Köln (OParl-API): Vorlagen, Beratungen, Sitzungen und Gremien; '
             f'Gremien, Paragrafen und nächste Sitzungen wie unter „Gremien und Ämter“. {escape(config.NAMENSNENNUNG)}. '
             f'Die Daten als JSON: <a href="{root}{EXPORT_PFAD}/dossiers/{t.key}.json">{t.key}.json</a>.</p>'
+            + (f"<p>Methode der Zuordnung: {escape(t.methode)} Die Regel je Strang steht unter „Wie zugeordnet?“.</p>"
+               if t.methode else "") +
             "<p>Stand und letzte Beratung zählen eine Sitzung nur dann nicht mehr, wenn die Stadt sie in der Schnittstelle "
             "absagt; die Liste der Sitzungen, die Zeitleiste und der Kalender lassen auch Sitzungen weg, die laut "
             "Sitzungsnamen abgesagt sind. Das Detailfeld nennt solche Beratungen „laut Sitzungsnamen abgesagt“.</p>"
@@ -804,12 +829,16 @@ def uebersicht(themen, site, site_url, page):
 # --- Prüfbogen zur Prüfung von Hand (ohne Datenbank, ohne Netz) --------------------------------------------------
 
 # Titel mit möglichem Personenbezug: vor der Ziehung aussortiert und nur gezählt (Prüfbogen im Gespräch). Wahlen auch im
-# Plural und zusammengesetzt (Neuwahl, Wiederwahl, Abwahl, Wahlvorschlag), Ämter und Anlässe, die Personen nennen. Keine
-# Regel über großgeschriebene Wörter: Im Deutschen stehen Hauptwörter groß, sie träfe fast jeden Titel
+# Plural und zusammengesetzt (Neuwahl, Wiederwahl, Abwahl, Wahlvorschlag), Ämter und Anlässe, die Personen nennen, dazu
+# Mitglieder von Rat und Bezirksvertretungen (Bezirksvertreter und Bezirksvertreterin, Ratsmitglied, Ratsherr, Ratsfrau,
+# Bezirksbürgermeister und Bezirksbürgermeisterin; nach dem Prüfbogen vom 25.11.2026: ein Titel nannte ein Mitglied
+# einer Bezirksvertretung mit Namen). Keine Regel über großgeschriebene Wörter: Im Deutschen stehen Hauptwörter groß, sie
+# träfe fast jeden Titel
 PERSONENBEZUG = re.compile(r"Benennung|Umbenennung|Ehrung|Ehrenbürger|Ehrenamtspreis|Gedenk|Nachruf|Jubiläum|"
                            r"(?<![a-zäöüß])(?:Neu|Wieder|Ab|Nach)?[Ww]ahl(?:en|vorschlag|vorschläge)?\b|Ernennung|"
                            r"Abberufung|Berufung|Beigeordnet|Vorsitz|Geschäftsführ|Bestellung|Entsendung|"
-                           r"(?:Nach|Neu|Um)besetzung|Nach-besetzung|sachkundig|Mitglied|Herr|Frau|Dr\.|Prof\.", re.I)
+                           r"(?:Nach|Neu|Um)besetzung|Nach-besetzung|sachkundig|Mitglied|Herr|Frau|Dr\.|Prof\.|"
+                           r"Bezirksvertreter|Ratsmitglied|Ratsherr|Ratsfrau|Bezirksbürgermeister", re.I)
 DRUCKSACHE = re.compile(r"(?:AN/)?\d{1,6}/\d{2,4}")
 
 

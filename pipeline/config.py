@@ -154,7 +154,9 @@ PILOT_ORTSTEIL = None
 
 # Zusatzthemen aus Bonn: deaktiviert, nicht gelöscht (CLAUDE.md 5.4, Inventur Phase 0); einzeln freizugeben
 ZUSATZTHEMEN = {
-    "haushalt": False, "baustellen": False, "anliegen": False, "wahlen": False, "themenseiten": False,
+    "haushalt": False, "baustellen": False, "anliegen": False, "wahlen": False,
+    # Themenseiten (thema/): Hauptschalter, freigegeben am 25.11.2026 zusammen mit THEMENSEITEN_FREIGEGEBEN (unten)
+    "themenseiten": True,
     "kontext": True, "soll": False, "chat": False,
     # zweiter Lauf (Entscheidung 04.11.2026; Beginn am 13.11.2026 freigegeben): Einfache Sprache für Köln neu geschrieben
     # (pipeline/einfachseite.py) und „mitmachen“ (Fläche „Mitmachen in Köln“, site/beteiligung.js, Quellen am 13.11.2026
@@ -182,14 +184,15 @@ ZUSATZTHEMEN = {
     "gremien": True,
 }
 
-# Themenseiten (thema/, pipeline/themenseiten): Freigabe je Thema durch den Auftraggeber, erst nach dem Prüfbogen
-# (Entscheidung 24.11.2026 (3) (2); Antworten zum Plan vom 25.11.2026 (5)). Schlüssel aus themenseiten.ALLE in der
-# Reihenfolge der Übersicht; Dateien unter data/export/koeln/dossiers/ und Seiten entstehen nur für diese Themen und nur
-# zusammen mit ZUSATZTHEMEN["themenseiten"] (themenseiten.freigegeben). Beide bleiben bis zur Freigabe aus.
-THEMENSEITEN_FREIGEGEBEN = ()
+# Themenseiten (thema/, pipeline/themenseiten): Freigabe je Thema durch den Auftraggeber nach dem Prüfbogen mit echten
+# Vorlagen (Entscheidung 24.11.2026 (3) (2); Antworten zum Plan vom 25.11.2026 (5)). Schlüssel aus themenseiten.ALLE in
+# der Reihenfolge der Übersicht; Dateien unter data/export/koeln/dossiers/ und Seiten entstehen nur für diese Themen und
+# nur zusammen mit ZUSATZTHEMEN["themenseiten"] (themenseiten.freigegeben); beide Schalter gemeinsam setzen. „verkehr“
+# freigegeben am 25.11.2026 nach dem Prüfbogen (pruefung_text, pruefung_datum in pipeline/themenseiten/verkehr.py)
+THEMENSEITEN_FREIGEGEBEN = ("verkehr",)
 # Prüfschalter für die Browserprüfung mit Testdaten in CI: RATSATLAS_THEMEN_PRUEFUNG=<schlüssel,…> setzt für diesen Lauf
 # THEMENSEITEN_FREIGEGEBEN und ZUSATZTHEMEN["themenseiten"], aber nur, wenn STAND.json `"testdaten": true` trägt
-# (tools/testdaten.py); der Wert THEMEN_AUS („aus“) schaltet beide für diesen Lauf ab, gleich, was im Repository steht
+# (tools/testdaten.py); der Wert THEMEN_AUS („aus“) schaltet beide für diesen Lauf ab, auch die Freigabe im Repository
 # (erster Bau in tests.yml: Testdaten ohne Mobilitätsausschuss nach § 17, die Themenseiten prüft der zweite Bau). Mit
 # echten Daten bleibt er wirkungslos; der Lauf meldet das, und check zählt ihn als Befund (check.dossiers). pages.yml
 # übernimmt Rohdaten mit Testdaten nie (dann Kartenvorschau, tools/vorschau.py).
