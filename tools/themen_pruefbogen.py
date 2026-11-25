@@ -11,7 +11,7 @@ und ohne Sitzungstage: Folgevorlagen sind dann nicht prüfbar, und abgesagte Sit
 der Bogen sagt das in seinen Zählzeilen.
 Dieselbe Zuordnung wie die Seite (dossier.verfahren, dossier.zuordnen), dazu die Ziehung dossier.stichprobe: Titel nach
 der Titelmaske für alle Drucksachen (maske.Maske), Drucksachen im Titel und im Grund als <DS>, Eingaben ohne Titel,
-Titel mit Personenbezug nur gezählt. Schreibt nur in <Ausgabeordner> (außerhalb des Repositorys): pruefbogen_<thema>.tsv
+Titel mit Personenbezug nur gezählt. Schreibt nur in <Ausgabeordner> (außerhalb jedes Git-Checkouts, sonst Abbruch): pruefbogen_<thema>.tsv
 (laufende Nummer statt Drucksache), schluessel_<thema>.tsv (Nummer → Drucksache und Link, nur zum Nachschlagen) und
 zahlen_<thema>.tsv. Testdaten nie als echte Vorlagen zeigen.
 """

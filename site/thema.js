@@ -11,9 +11,13 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
 });
 
 // Zeitleiste zum Anklicken: ein Klick auf Punkt oder Sitzung öffnet das Detailfeld unter dem Bild (statt dem Link zu
-// folgen), Schalter blenden Stränge aus, Bild und Liste heben sich gegenseitig hervor. Auswahl und Schalter stehen im
-// Seitenlink (#auswahl=<Drucksache oder sitzung-n>&straenge=<Schlüssel,…>). Ohne Skript gelten die Links im Bild.
-// Keine berechneten Fristen und keine Federführung (in Köln nicht in den Daten); Absagen nach export.absage.
+// folgen), Schalter blenden Stränge aus, Bild und Liste heben sich gegenseitig hervor. Eine Sammelmarke (mehrere Punkte
+// oder Sitzungen an nahen Tagen, pipeline/prozessbild.py lage) öffnet die Liste ihrer Einträge; „Angaben“ zeigt einen
+// Eintrag, „Zurück zur Liste“ wieder die Liste. Liegt das Detailfeld nach dem Öffnen nicht im Fenster (schmale oder
+// niedrige Fenster, 400 % Zoom), rollt die Seite es ins Bild; der Fokus bleibt auf dem Ziel im Bild. Auswahl und Schalter
+// stehen im Seitenlink (#auswahl=<Drucksache, sitzung-n oder Kennung der Sammelmarke>&straenge=<Schlüssel,…>). Ohne
+// Skript gelten die Links im Bild. Keine berechneten Fristen und keine Federführung (in Köln nicht in den Daten);
+// Absagen nach export.absage.
 (() => {
   const quelle = document.getElementById("pb-daten");
   const feld = document.getElementById("pb-detail");
@@ -31,6 +35,9 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
   const ziele = [...svg.querySelectorAll("a.pb-ziel[data-ziel]")];
   const zeilen = [...document.querySelectorAll(".pb-liste li[data-ziel]")];
   let aktiv = null;
+  let innen = null;   // Kennung des Eintrags einer Sammelmarke, der gerade im Detailfeld steht (punkt-n, sitzung-n)
+  const gruppen = daten.gruppen || {};
+  const gruppeVon = (kennung) => ziele.find((z) => (gruppen[z.dataset.ziel] || []).includes(kennung)) || null;
 
   const datum = (iso) => (iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}` : "–");
 
@@ -63,7 +70,46 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
     dl.append(dd);
   };
 
+  // Sammelmarke: Liste der Einträge, je mit „Angaben“ (öffnet den Eintrag im Detailfeld)
+  function sammlung(art, kennung) {
+    const eintraege = gruppen[kennung];
+    if (!eintraege) return null;
+    const punkte = art === "punkte";
+    const teile = { titel: `${eintraege.length} ${punkte ? "Beschlüsse und Anträge" : "Sitzungen"}`, ansage: "", knoten: [] };
+    teile.ansage = `${teile.titel} an nahen Tagen`;
+    const ol = el("ol", null, "pb-gruppe");
+    for (const k of eintraege) {
+      const [a, n] = k.split(/-(.*)/s);
+      const li = el("li");
+      if (a === "punkt") {
+        const p = daten.punkte[n];
+        if (!p) continue;
+        li.append(el("span", String(p.nr), "pb-nr"), " ", el("strong", p.reference), ` ${p.name || ""} – ${p.stand || ""}`);
+      } else {
+        const s = daten.sitzungen[n];
+        if (!s) continue;
+        li.append(el("strong", s.gremium), `, ${datum(s.date)}${s.time ? `, ${s.time} Uhr` : ""}`
+          + (s.hinweis === "verschoben" ? " (laut Sitzungsnamen verschoben)" : ""));
+      }
+      const b = el("button", "Angaben", "pb-knopf pb-knopf-leise pb-eintrag");
+      b.type = "button";
+      b.dataset.eintrag = k;
+      b.setAttribute("aria-label", `Angaben zu ${a === "punkt" ? `Nr. ${daten.punkte[n].nr}` : daten.sitzungen[n].gremium}`);
+      b.addEventListener("click", () => eintragZeigen(k));
+      li.append(" ", b);
+      ol.append(li);
+    }
+    teile.knoten.push(ol);
+    const aktionen = el("p", null, "pb-aktionen");
+    if (punkte) aktionen.append(link("#pb-liste", "Alle Beschlüsse und Anträge im Bild"));
+    else aktionen.append(link(daten.kalender, "Kalender (.ics)"), link("#sitzungen", "Alle Termine"),
+      link(daten.mitmachen, "Wege zum Mitwirken"));
+    teile.knoten.push(aktionen);
+    return teile;
+  }
+
   function inhalt(art, n) {
+    if (art === "punkte" || art === "sitzungen") return sammlung(art, `${art}-${n}`);
     const teile = { titel: "", ansage: "", knoten: [] };
     const dl = el("dl", null, "pb-angaben");
     const aktionen = el("p", null, "pb-aktionen");
@@ -121,8 +167,8 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
 
   function hashSchreiben() {
     const h = new URLSearchParams();
-    if (aktiv) h.set("auswahl", aktiv.dataset.ziel.startsWith("punkt-")
-      ? daten.punkte[aktiv.dataset.ziel.slice(6)].reference : aktiv.dataset.ziel);
+    const kennung = innen || (aktiv && aktiv.dataset.ziel);
+    if (kennung) h.set("auswahl", kennung.startsWith("punkt-") ? daten.punkte[kennung.slice(6)].reference : kennung);
     const aus = schalter.filter((b) => b.getAttribute("aria-pressed") === "false");
     if (aus.length) h.set("straenge", schalter.filter((b) => b.getAttribute("aria-pressed") === "true")
       .map((b) => b.dataset.strang).join(","));
@@ -130,30 +176,56 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
     history.replaceState(null, "", neu ? `#${neu}` : location.pathname + location.search);
   }
 
-  function zeigen(ziel, { fokus = false, schreiben = true } = {}) {
-    const [art, n] = ziel.dataset.ziel.split(/-(.*)/s);
+  const imFenster = (e) => { const r = e.getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; };
+
+  // ziel: Element im Bild; eintrag: Kennung eines Eintrags der Sammelmarke ziel (punkt-n, sitzung-n) oder null
+  function zeigen(ziel, { fokus = false, schreiben = true, eintrag = null } = {}) {
+    const [art, n] = (eintrag || ziel.dataset.ziel).split(/-(.*)/s);
     const t = inhalt(art, n);
     if (!t) return;
     if (aktiv) aktiv.classList.remove("pb-aktiv");
     aktiv = ziel;
+    innen = eintrag;
     ziel.classList.add("pb-aktiv");
     feld.replaceChildren();
     const kopf = el("div", null, "pb-detail-kopf");
     const h = el("h3", t.titel);
     h.id = "pb-detail-titel";
+    h.tabIndex = -1;
     const zu = el("button", "Schließen", "pb-schliessen");
     zu.type = "button";
     zu.setAttribute("aria-label", "Detailfeld schließen");
     zu.addEventListener("click", () => schliessen(true));
     kopf.append(h, zu);
     feld.append(kopf, ...t.knoten);
+    if (eintrag) {
+      const zurueck = el("button", "Zurück zur Liste", "pb-knopf pb-knopf-leise pb-zurueck");
+      zurueck.type = "button";
+      zurueck.addEventListener("click", () => {
+        const war = innen;
+        zeigen(aktiv);
+        const b = feld.querySelector(`button[data-eintrag="${war}"]`);
+        if (b) b.focus();
+      });
+      feld.append(el("p", null, "pb-aktionen"));
+      feld.lastChild.append(zurueck);
+    }
     feld.hidden = false;
     ansage.textContent = `Ausgewählt: ${t.ansage}. Angaben unter dem Bild.`;
     if (fokus) {
       ziel.scrollIntoView({ block: "nearest", inline: "center" });
       feld.scrollIntoView({ block: "nearest" });
+    } else if (!imFenster(feld)) {
+      feld.scrollIntoView({ block: "nearest" });
     }
     if (schreiben) hashSchreiben();
+  }
+
+  // Eintrag einer Sammelmarke im Detailfeld; der Fokus geht auf die Überschrift des Felds (die Schaltfläche verschwindet)
+  function eintragZeigen(kennung) {
+    if (!aktiv) return;
+    zeigen(aktiv, { eintrag: kennung });
+    document.getElementById("pb-detail-titel").focus();
   }
 
   function schliessen(fokusZurueck) {
@@ -161,6 +233,7 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
     const war = aktiv;
     aktiv.classList.remove("pb-aktiv");
     aktiv = null;
+    innen = null;
     feld.hidden = true;
     feld.replaceChildren();
     ansage.textContent = "Detailfeld geschlossen.";
@@ -172,13 +245,17 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
     const an = new Set(schalter.filter((b) => b.getAttribute("aria-pressed") === "true").map((b) => b.dataset.strang));
     for (const e of [...ziele, ...zeilen]) {
       if (e.dataset.strang) e.classList.toggle("pb-gedimmt", !an.has(e.dataset.strang));
+      // Sammelmarke: abgeblendet, wenn keiner ihrer Stränge eingeschaltet ist
+      else if (e.dataset.straenge) e.classList.toggle("pb-gedimmt", !e.dataset.straenge.split(" ").some((k) => an.has(k)));
     }
     if (schreiben) hashSchreiben();
   }
 
+  // Ziel im Bild und Zeile der Liste gegenseitig; ein Punkt in einer Sammelmarke hebt die Sammelmarke hervor
   function hervorheben(kennung, an) {
     for (const e of [...ziele, ...zeilen]) {
-      if (e.dataset.ziel === kennung) e.classList.toggle("pb-hell", an);
+      if (e.dataset.ziel === kennung || (gruppen[e.dataset.ziel] || []).includes(kennung)
+        || (gruppen[kennung] || []).includes(e.dataset.ziel)) e.classList.toggle("pb-hell", an);
     }
   }
 
@@ -194,12 +271,13 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
     if (p) kennung = `punkt-${p.nr}`;
     const ziel = ziele.find((z) => z.dataset.ziel === kennung);
     if (ziel) zeigen(ziel, { fokus: true, schreiben: false });
+    else if (gruppeVon(kennung)) zeigen(gruppeVon(kennung), { fokus: true, schreiben: false, eintrag: kennung });
   }
 
   for (const z of ziele) {
     z.addEventListener("click", (ev) => {
       ev.preventDefault();
-      if (aktiv === z) schliessen(false);
+      if (aktiv === z && !innen) schliessen(false);
       else zeigen(z);
     });
     for (const [typ, an] of [["mouseenter", true], ["mouseleave", false], ["focus", true], ["blur", false]]) {

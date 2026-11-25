@@ -18,18 +18,30 @@ from ..dossier import Auswahl, Regel, Thema
 from ..topics import THEMES
 
 # vor allen Regeln, auch vor Folgevorlagen: Verkehrswert, Verkehrssicherungspflicht (Bäume), Grünpflege an Straßen,
-# Straßenreinigung, Benennungen (auch nach Personen: Datenschutz), Straßenfeste und Ähnliches, Mobilfunk, Abwasser, Abfall
+# Straßenreinigung, Benennungen (auch nach Personen: Datenschutz), Straßenfeste und Ähnliches, Mobilfunk, Abwasser, Abfall;
+# dazu Personalien und Sitzungsorganisation (PERSONALIEN), auch wenn der Titel den Ausschuss oder ein Verkehrswort nennt
+# („Wahlen zum Mobilitätsausschuss“, „Wiederwahl der Beigeordneten für Mobilität“): Solche Titel können Namen von Personen
+# enthalten, und die Titelmaske erkennt keine Namen. Nicht „Bestellung“ (auch Fahrzeuge) und nicht „Geschäftsordnung“
+# (auch in Titeln von Anträgen): beide nur im TOR_AUSSCHLUSS
+PERSONALIEN = (r"(?<![a-zäöüß])(?:Neu|Wieder|Ab|Nach)?[Ww]ahl(?:en|vorschlag|vorschläge)?\b|Ernennung|Abberufung|"
+               r"Entsendung|(?:Um|Nach|Neu)besetzung|Nach-besetzung|sachkundig|Vorsitz|Geschäftsführer|"
+               r"Sitzungs(?:kalender|plan|termin)|Termin(?:plan(?:ung)?|e)\s+(?:der|für\s+die)\s+Sitzung|Niederschrift|"
+               r"Protokoll\b")
 AUSSCHLUSS = re.compile(r"Verkehrswert|Verkehrssicherungspflicht|Verkehrssicherung(?:smaßnahme|en)?\b|Verkehrsgrün|"
                         r"Straßenbegleitgrün|Straßenreinigung|Straßenbenennung|Straßenname|(?:Um)?[Bb]enennung|"
-                        r"Straßen(?:fest|musik|kunst|strich|sozialarbeit|zeitung|kinder)|Mobilfunk|Abwasser|Abfall", re.I)
-# nicht „Park“ allein (Stadtpark, Gewerbepark, Parkpflege), nicht Fahrradparken
-PARKEN = re.compile(r"(?<!fahrrad)(?<!rad)(?<!rad-)park(?:en|platz|plätze|raum|haus|häuser|gebühr|schein|verbot|druck|"
+                        r"Straßen(?:fest|musik|kunst|strich|sozialarbeit|zeitung|kinder)|Mobilfunk|Abwasser|Abfall|"
+                        + PERSONALIEN, re.I)
+# nicht „Park“ allein (Stadtpark, Gewerbepark, Parkpflege), nicht Fahrradparken, nicht Parkentwicklung
+PARKEN = re.compile(r"(?<!fahrrad)(?<!rad)(?<!rad-)park(?:en(?!twickl)|platz|plätze|raum|haus|häuser|gebühr|schein|verbot|druck|"
                     r"situation|möglichkeit|zone|deck|leitsystem|ausweis|bewirtschaftung|suchverkehr)|Bewohnerpark|"
                     r"Anwohnerpark|Halteverbot|Parkverbot|P ?\+ ?R\b|Park ?(?:&|and|\+) ?Ride|"
                     r"(?<!rad)(?<!rad-)(?<!fahrrad)(?<!auf)Stellpl(?:atz|ätz)|Ladezone|Lieferzone", re.I)
-# nicht Business, Kegelbahn, Bahnhofsmission, Richtlinie (nur „Linie <Zahl>“), Taktik, Kontakt
+# nicht Business, Kegelbahn, Bahnhofsmission, Richtlinie (nur „Linie <Zahl>“), Taktik, Kontakt; „Bahnhof“ nicht in den
+# Kölner Straßennamen Bahnhofstraße, Bahnhofplatz, Bahnhofsvorplatz, „Am Bahnhof“ und „Am Alten Güterbahnhof“
+# (Straßenverzeichnis data/geo/strassen_koeln.json; Adressen in Titeln)
 BUS_BAHN = re.compile(r"ÖPNV|Nahverkehr|\bKVB\b|Stadtbahn|Straßenbahn|\b[SU]-Bahn|Seilbahn|Regionalbahn|Hochbahnsteig|"
-                      r"Bahnsteig|Bahnübergang|Bahnhof(?!smission)|Haltestelle|"
+                      r"Bahnsteig|Bahnübergang|(?<!(?-i:Am) )(?<!Alten Güter)Bahnhof(?!smission|str(?:aße|\.)|s?(?:vor)?platz)|"
+                      r"Haltestelle|"
                       r"\bBus(?:se|sen|linien?|spur(?:en)?|bahnhof|verkehr|netz|beschleunigung)?\b|"
                       r"(?:Schnell|Ruf|Nacht|Linien|E-)bus|\bLinie\s?\d+|Linienweg|Fahrplan|\bTakt(?:ung|verdichtung|e|en)?\b|"
                       r"Deutschlandticket|Jobticket|Schülerticket|On-Demand|Mobilstation", re.I)
@@ -37,13 +49,21 @@ BUS_BAHN = re.compile(r"ÖPNV|Nahverkehr|\bKVB\b|Stadtbahn|Straßenbahn|\b[SU]-B
 RAD_FUSS = re.compile(r"\bRad(?:verkehr|wege?|fahr\w*|streifen|schnellweg|station|abstell\w*|bügel|route|netz|parken|"
                       r"pendler|vorrang\w*|spur)|\bRad- und|Fahrrad|Lastenrad|Fußverkehr|Fußgänger|Fußweg|Gehweg|"
                       r"Bürgersteig|Zebrastreifen|Querungshilfe|E-Scooter|\bScooter|Leihr[aä]d|Bikesharing", re.I)
+# Unfall nur als Verkehrsunfall, Unfallschwerpunkt und Ähnliches (nicht „Gedenkstele für Opfer des Unfalls“)
 TEMPO = re.compile(r"Tempo[- ]?(?:\d|limit|zone|reduz|beschränk)|Geschwindigkeit|km/h|"
                    r"Verkehrssicherheit(?! (?:von|städtischer|der) Bäume)|Verkehrsberuhig|Verkehrsversuch|Schulweg|"
-                   r"(?<!Arbeits)Unfall(?!kasse|versicherung)|Blitzer|Poller|Einbahn|Durchfahrt|Anlieger|Modalfilter|"
-                   r"Verkehrszeichen|Beschilderung|Markierung", re.I)
-# nie „Straße“ allein (Adressen in Titeln); nicht Brückentag, Ampelkoalition
+                   r"Verkehrsunf[aä]ll|Unfall(?:schwerpunkt|häufung|stelle|gefahr|risiko|zahl|statistik|lage|kommission|"
+                   r"verhütung|vermeidung|prävention)|(?<!Arbeits)Unfälle|Blitzer|Einbahn|Durchfahrt|Anlieger|Modalfilter|"
+                   r"Verkehrszeichen", re.I)
+# Poller, Markierung und Beschilderung nur zusammen mit einem Wort zum Verkehrsraum (ZEICHEN_BEZUG): nicht Grabfelder,
+# Wanderwege oder Hochwasserschutz; „Poller“ nicht als Adjektiv zum Stadtteil Poll (Poller Damm, Poller Wiesen: danach
+# ein großgeschriebenes Wort)
+ZEICHEN = re.compile(r"Markierung|Beschilderung|(?<![a-zäöüß])Poller(?!\s+(?-i:[A-ZÄÖÜ]))", re.I)
+ZEICHEN_BEZUG = re.compile(r"Fahrbahn|Straße|Str\.|\bRad|Fußg|Fußweg|Gehweg|Verkehr|Kreuzung|Tempo|Halte|Schulweg|"
+                           r"Zufahrt|Durchfahrt|Einfahrt|Parkpl|Parkfl", re.I)
+# nie „Straße“ allein (Adressen in Titeln); nicht Brückentag, Ampelkoalition, Tunnelblick
 STRASSEN = re.compile(r"Straßen(?:bau|ausbau|raum|umbau|verkehr|querschnitt|sanierung)|Fahrbahn|Brücken?\b|"
-                      r"(?<=[a-zäöü])brücke\b|Brücken(?:sanierung|bauwerk|prüfung)|Tunnel|Unterführung|Kreuzung|"
+                      r"(?<=[a-zäöü])brücke\b|Brücken(?:sanierung|bauwerk|prüfung)|Tunnel(?!blick)|Unterführung|Kreuzung|"
                       r"Kreisverkehr|Knotenpunkt|Ampelanlage|Ampelschaltung|Fußgängerampel|Lichtsignal|Deckenerneuerung",
                       re.I)
 # nicht Geschäfts-, Zahlungs-, Schrift-, Daten-, Publikums- oder Rechtsverkehr, nicht Mobilfunk, mobile Jugendarbeit;
@@ -53,10 +73,10 @@ WEITERE = re.compile(r"(?<![a-zäöüß])Verkehr(?!swert|ssicherung|sgrün|svere
                      r"mobilität(?!shilfe)|Carsharing|Car-Sharing|Ladesäule|Ladeinfrastruktur|Ladestation|Taxi", re.I)
 # mehrdeutige Wörter: nur zusammen mit der Beratung im Mobilitätsausschuss
 MEHRDEUTIG = re.compile(r"Umgestaltung|Platz|Ticket|Gleis|Hafen|Luftverkehr|Verkehrsfläche", re.I)
-# nur über das Gremium nie: Haushalt, Sitzungsorganisation und Personalien
+# nur über das Gremium nie (weder ohne Wort noch mit einem mehrdeutigen Wort): Haushalt und Wirtschaftspläne, dazu
+# Bestellung und Geschäftsordnung (Personalien und Sitzungsorganisation schließt schon AUSSCHLUSS aus)
 TOR_AUSSCHLUSS = re.compile(r"Haushalt|Stellenplan|Jahresabschluss|Wirtschaftsplan|Beteiligungsbericht|"
-                            r"Sitzungskalender|Sitzungstermin|Niederschrift|Geschäftsordnung|\bWahl\b|Bestellung|"
-                            r"Entsendung|Benennung|Nach-?besetzung|Umbesetzung|sachkundig", re.I)
+                            r"Geschäftsordnung|Bestellung", re.I)
 
 MOBIL = Auswahl(gruppe="ausschuss", paragraf=17)        # Mobilitätsausschuss, § 17 der Zuständigkeitsordnung
 HAUPT = Auswahl(gruppe="ausschuss", paragraf=7)         # Hauptausschuss, § 7
@@ -74,9 +94,9 @@ THEMA = Thema(
              "Fußverkehr, Parken, Verkehrsregeln, Straßen und Brücken, mit den nächsten Sitzungen.",
     straenge=[
         ("bus_bahn", "Bus und Bahn",
-         "Der Titel nennt ÖPNV, Nahverkehr, KVB, Stadtbahn, Straßenbahn, S- oder U-Bahn, Seilbahn, Bahnhof, Bahnsteig, "
-         "Haltestelle, Bus, Linie mit Nummer, Fahrplan, Takt, Deutschlandticket, Jobticket oder Mobilstation, aber "
-         "kein Wort zum Parken"),
+         "Der Titel nennt ÖPNV, Nahverkehr, KVB, Stadtbahn, Straßenbahn, S- oder U-Bahn, Seilbahn, Bahnhof (nicht in "
+         "Straßennamen wie Bahnhofstraße), Bahnsteig, Haltestelle, Bus, Linie mit Nummer, Fahrplan, Takt, "
+         "Deutschlandticket, Jobticket oder Mobilstation, aber kein Wort zum Parken"),
         ("rad_fuss", "Rad- und Fußverkehr",
          "Der Titel nennt Radverkehr, Radwege, Fahrrad, Lastenrad, Fußverkehr, Fußgänger, Gehweg, Zebrastreifen, "
          "Querungshilfe, E-Scooter oder Leihräder, aber kein Wort zum Parken und keines zu Bus und Bahn"),
@@ -85,8 +105,9 @@ THEMA = Thema(
          "Stellplätze, Park and Ride, Lade- oder Lieferzonen (nicht Fahrradparken und nicht „Park“ allein)"),
         ("tempo", "Tempo, Verkehrsregeln und Sicherheit",
          "Der Titel nennt Tempo, Geschwindigkeit, km/h, Verkehrssicherheit, Verkehrsberuhigung, Verkehrsversuch, "
-         "Schulweg, Unfall, Poller, Einbahnstraße, Durchfahrt, Anlieger, Modalfilter, Verkehrszeichen, Beschilderung "
-         "oder Markierung, aber keines der Wörter zu Parken, Bus und Bahn oder Rad- und Fußverkehr"),
+         "Schulweg, Verkehrsunfälle oder Unfallschwerpunkte, Einbahnstraße, Durchfahrt, Anlieger, Modalfilter oder "
+         "Verkehrszeichen, oder Poller, Markierung oder Beschilderung zusammen mit einem Wort zu Fahrbahn, Straße, "
+         "Kreuzung oder Verkehr, aber keines der Wörter zu Parken, Bus und Bahn oder Rad- und Fußverkehr"),
         ("strassen", "Straßen und Brücken",
          "Der Titel nennt Straßenbau, Straßenausbau, Straßenraum, Straßenumbau oder Straßensanierung, Fahrbahn, Brücke, "
          "Tunnel, Unterführung, Kreuzung, Kreisverkehr, Knotenpunkt, Ampelanlage, Lichtsignal oder Deckenerneuerung "
@@ -94,14 +115,15 @@ THEMA = Thema(
         ("weitere", "Weitere Vorlagen zu Verkehr und Mobilität",
          "Der Titel nennt Verkehr, Mobilität, Carsharing, Ladesäulen, Ladeinfrastruktur oder Taxi, aber keines der "
          "Wörter der anderen Stränge; dazu Vorlagen mit Beratung im Mobilitätsausschuss: mit Umgestaltung, Platz, "
-         "Ticket, Gleis, Hafen, Luftverkehr oder Verkehrsfläche im Titel oder ohne passendes Wort, außer zu Haushalt, "
-         "Sitzungsorganisation und Personalien; nach Stadtbezirk"),
+         "Ticket, Gleis, Hafen, Luftverkehr oder Verkehrsfläche im Titel oder ohne passendes Wort, beides nicht zu "
+         "Haushalt und Wirtschaftsplänen; nach Stadtbezirk"),
     ],
     regeln=[
         Regel("parken", titel=PARKEN),
         Regel("bus_bahn", titel=BUS_BAHN),
         Regel("rad_fuss", titel=RAD_FUSS),
         Regel("tempo", titel=TEMPO),
+        Regel("tempo", titel=ZEICHEN, bedingung=ZEICHEN_BEZUG),
         Regel("strassen", titel=STRASSEN),
         Regel("weitere", titel=WEITERE),
         Regel("weitere", titel=MEHRDEUTIG, gremium_tor=True),
@@ -135,8 +157,11 @@ THEMA = Thema(
     nicht_gezeigt=[
         "<strong>Beträge:</strong> Kosten von Maßnahmen stehen in den Dokumenten der Vorlagen, nicht in den Daten des "
         "Ratsinformationssystems; die Seite nennt keine Beträge und keine Haushaltsdaten.",
-        "<strong>Hausnummern und einzelne Orte:</strong> Örtliche Vorgänge stehen nach Stadtbezirk; Straßen und Orte "
-        "zeigt die Karte.",
+        "<strong>Keine Verortung auf Hausnummern:</strong> Örtliche Vorgänge stehen nach Stadtbezirk; Straßen und Orte "
+        "zeigt die Karte. Titel stehen wie im Ratsinformationssystem, bei Vorlagen aus der Einwohnerschaft (etwa "
+        "Eingaben nach § 24 GO NRW) ohne Hausnummer.",
+        "<strong>Personalien und Sitzungsorganisation:</strong> Wahlen, Besetzungen, Sitzungskalender und Niederschriften "
+        "ordnet die Seite keinem Strang zu, auch wenn der Titel den Mobilitätsausschuss nennt.",
         "<strong>Nichtöffentliche Beratungen.</strong>",
         "<strong>Federführende Dienststelle:</strong> Sie steht in den Kölner Daten des Ratsinformationssystems nicht.",
         "<strong>Vorlagen nur in Bezirksvertretungen</strong> ohne Wort zum Verkehr im Titel.",

@@ -559,15 +559,17 @@ def _themenseiten(out, cache, home, meetings, gremien_daten, meta):
     orgs_je_sitzung = gremien.organisationen_der_sitzungen() or {}
     heute = gremien_daten["meta"]["datenstand"]
     for t in themen:
-        thema = dossier.daten(t, cache, home, gremien_daten, meta, terms)
+        zugeordnet = set()
+        thema = dossier.daten(t, cache, home, gremien_daten, meta, terms, zugeordnet)
         _dump(out / "dossiers" / f"{t.key}.json", thema)
         oparl = {e["source_object"] for a in t.sitzungs_gremien for e in dossier.gremien_auswahl(gremien_daten, a)}
         publish.write_calendar(out / "dossiers" / f"{t.key}.ics",
                                [m for m in meetings if oparl & set(orgs_je_sitzung.get(m["source_object"]) or ())],
                                date.fromisoformat(heute))
-        refs = {r["reference"] for s in thema["straenge"] for r in s["vorlagen"]}
+        # Feed nach Vorlage (Schlüssel aus dossier.daten), nicht nach Drucksache: eine zweite Vorlage mit derselben
+        # Drucksache, aber ohne Zuordnung, stünde sonst im Feed und nicht auf der Seite
         publish.write_topic_feed(out / "dossiers" / f"{t.key}.xml", t.key,
-                                 t.titel, [(pid, p) for pid, p in cache.items() if p["reference"] in refs],
+                                 t.titel, [(pid, p) for pid, p in cache.items() if pid in zugeordnet],
                                  home, f"{config.SITE_URL}{t.pfad}")
 
 

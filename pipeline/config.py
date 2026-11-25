@@ -189,17 +189,23 @@ ZUSATZTHEMEN = {
 THEMENSEITEN_FREIGEGEBEN = ()
 # Prüfschalter für die Browserprüfung mit Testdaten in CI: RATSATLAS_THEMEN_PRUEFUNG=<schlüssel,…> setzt für diesen Lauf
 # THEMENSEITEN_FREIGEGEBEN und ZUSATZTHEMEN["themenseiten"], aber nur, wenn STAND.json `"testdaten": true` trägt
-# (tools/testdaten.py). Mit echten Daten bleibt er wirkungslos; der Lauf meldet das, und check zählt ihn als Befund
-# (check.dossiers). pages.yml übernimmt Rohdaten mit Testdaten nie (dann Kartenvorschau, tools/vorschau.py).
+# (tools/testdaten.py); der Wert THEMEN_AUS („aus“) schaltet beide für diesen Lauf ab, gleich, was im Repository steht
+# (erster Bau in tests.yml: Testdaten ohne Mobilitätsausschuss nach § 17, die Themenseiten prüft der zweite Bau). Mit
+# echten Daten bleibt er wirkungslos; der Lauf meldet das, und check zählt ihn als Befund (check.dossiers). pages.yml
+# übernimmt Rohdaten mit Testdaten nie (dann Kartenvorschau, tools/vorschau.py).
 THEMEN_PRUEFUNG = "RATSATLAS_THEMEN_PRUEFUNG"
+THEMEN_AUS = "aus"
 
 
 def themen_pruefung(umgebung=None, stand=None):
     """Schlüssel aus RATSATLAS_THEMEN_PRUEFUNG (ohne Doppelte, in ihrer Reihenfolge), wenn der Schalter gesetzt ist und
-    STAND.json (`stand`, Vorgabe STAND) Testdaten nennt; sonst None. `umgebung`: Vorgabe os.environ."""
+    STAND.json (`stand`, Vorgabe STAND) Testdaten nennt; beim Wert THEMEN_AUS ein leeres Tupel (für diesen Lauf keine
+    Themenseiten); sonst None. `umgebung`: Vorgabe os.environ."""
     wert = (os.environ if umgebung is None else umgebung).get(THEMEN_PRUEFUNG, "").strip()
     if not wert or not testdaten(stand):
         return None
+    if wert == THEMEN_AUS:
+        return ()
     return tuple(dict.fromkeys(k.strip() for k in wert.split(",") if k.strip())) or None
 
 
@@ -213,9 +219,9 @@ def testdaten(stand=None):
 
 
 _PRUEFUNG = themen_pruefung()
-if _PRUEFUNG:
+if _PRUEFUNG is not None:
     THEMENSEITEN_FREIGEGEBEN = _PRUEFUNG
-    ZUSATZTHEMEN["themenseiten"] = True
+    ZUSATZTHEMEN["themenseiten"] = bool(_PRUEFUNG)
 elif os.environ.get(THEMEN_PRUEFUNG, "").strip():
     print(f"{THEMEN_PRUEFUNG} ohne Wirkung: STAND.json nennt keine Testdaten (nur für die Prüfung mit Testdaten)",
           file=sys.stderr)

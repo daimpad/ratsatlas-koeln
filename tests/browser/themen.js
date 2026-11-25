@@ -7,8 +7,9 @@
 // - Themenseite: lädt ohne Skriptfehler, Kopfband mit „Alle Themen“, Sprungleiste (h2) mit genau den Zielen
 //   #fachausschuss, #sitzungen, #mitwirken, #vorlagen (per Tastatur angesprungen), keine waagerechte Verschiebung der
 //   Seite, Akkordeons per Tastatur, Zeitleiste: Punkt und Sitzung per Tastatur (Enter, Esc, Fokus zurück, Ansage,
-//   Seitenlink #auswahl=…) und per Klick, Schalter mit aria-pressed und &straenge=…, Zustand aus dem Seitenlink beim
-//   Laden; Bahnnamen als stehende Spalte außerhalb des verschiebbaren Rahmens (bleiben beim Verschieben stehen, Zeilen
+//   Seitenlink #auswahl=…) und per Klick, Sammelmarke per Tastatur (Liste, „Angaben“, „Zurück zur Liste“, Esc), jedes
+//   Ziel im Bild am eigenen Mittelpunkt treffbar (nichts verdeckt es), Detailfeld nach Klick oder Tipp im Fenster (auch
+//   bei 320 × 256), Schalter mit aria-pressed und &straenge=…, Zustand aus dem Seitenlink beim Laden; Bahnnamen als stehende Spalte außerhalb des verschiebbaren Rahmens (bleiben beim Verschieben stehen, Zeilen
 //   passen zu den Bahnen im Bild), Legende als HTML außerhalb des Bildes, Tabellenzellen mit data-l und auf dem Telefon
 //   mit sichtbaren Spaltennamen; keine Links auf ?thema=; Links in die Karte (Gremien und Ämter, Vorlagen des
 //   Gremiums, Mitmachen in Köln, Ebene Fahrradstraßen) öffnen das Erwartete (nur bei 1440×900);
@@ -37,7 +38,10 @@ const PROFILE = {
 const UEBERSICHT = "thema/";
 const PILOT = "thema/verkehr-und-mobilitaet/";
 const SPRUNGZIELE = ["fachausschuss", "sitzungen", "mitwirken", "vorlagen"];
-const LEGENDE = ["entschieden", "beraten, ohne abschließende Entscheidung", "offen", "nächste öffentliche Sitzung", "Datenstand"];
+// Legende; die Einträge der Sammelmarken nur, wenn das Bild welche zeigt (pipeline/prozessbild.py, legende)
+const legende = (punkte, sitzungen) => ["entschieden", "beraten, ohne abschließende Entscheidung", "offen",
+  ...(punkte ? ["mehrere Beschlüsse und Anträge an nahen Tagen (Zahl)"] : []), "nächste öffentliche Sitzung",
+  ...(sitzungen ? ["mehrere Sitzungen an nahen Tagen (Zahl)"] : []), "Datenstand"];
 
 const ergebnisse = [];
 let befunde = 0;
@@ -221,10 +225,13 @@ async function themenseite(browser, profil) {
       sichtbar: Boolean(r && r.height > 0 && getComputedStyle(ul).display !== "none"),
       texte: ul ? [...ul.querySelectorAll("li")].map((l) => l.textContent.trim()) : [],
       zeichen: ul ? [...ul.querySelectorAll("li svg")].every((z) => z.getAttribute("aria-hidden") === "true") : false,
-      imSvg: [...document.querySelectorAll(".pb-svg text")].some((t) => /entschieden|Legende|Sitzung/.test(t.textContent)) };
+      imSvg: [...document.querySelectorAll(".pb-svg text")].some((t) => /entschieden|Legende|Sitzung/.test(t.textContent)),
+      punkte: Boolean(document.querySelector('.pb-svg a[data-ziel^="punkte-"]')),
+      sitzungen: Boolean(document.querySelector('.pb-svg a[data-ziel^="sitzungen-"]')) };
   });
   pruefen(profil, "Legende: HTML-Liste unter dem Bild, außerhalb des SVG und des Rahmens, Zeichen ausgeblendet",
-    lg.da && !lg.imBild && lg.nachBild && lg.sichtbar && JSON.stringify(lg.texte) === JSON.stringify(LEGENDE) && lg.zeichen && !lg.imSvg, lg);
+    lg.da && !lg.imBild && lg.nachBild && lg.sichtbar && JSON.stringify(lg.texte) === JSON.stringify(legende(lg.punkte, lg.sitzungen))
+    && lg.zeichen && !lg.imSvg, lg);
   await foto(page, `themen-zeitleiste-${profil}`, ".pb-zeitleiste");
 
   // Tabellen: jede Zelle mit data-l; auf dem Telefon Kopf ausgeblendet und Spaltenname vor dem Inhalt
@@ -286,12 +293,33 @@ async function tabBis(page, anfang) {
   return null;
 }
 
+// Detailfeld im sichtbaren Bereich des Fensters (mindestens teilweise)
+const feldImFenster = (page) => page.evaluate(() => { const r = document.getElementById("pb-detail").getBoundingClientRect();
+  return { oben: Math.round(r.top), unten: Math.round(r.bottom), fenster: innerHeight, ok: r.height > 0 && r.top < innerHeight && r.bottom > 0 }; });
+
 async function zeitleiste(browser, profil) {
   const s = await neueSeite(browser, profil);
   const { page } = s;
   await page.goto(BASIS + PILOT, { waitUntil: "load" });
   await page.waitForFunction(() => !document.querySelector(".pb-filter")?.hidden, null, { timeout: 10000 });
   const daten = await page.evaluate(() => JSON.parse(document.getElementById("pb-daten").textContent));
+  // jedes Ziel (Punkt, Sitzung, Sammelmarke) am eigenen Mittelpunkt treffbar: nichts verdeckt es, und es liegt im Bild
+  const treffer = await page.evaluate(() => {
+    const svg = document.querySelector(".pb-svg"), aus = [];
+    const ziele = [...svg.querySelectorAll("a.pb-ziel[data-ziel]")];
+    for (const a of ziele) {
+      a.scrollIntoView({ block: "center", inline: "center" });
+      const b = svg.getBoundingClientRect();
+      const r = a.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+      const o = document.elementFromPoint(x, y);
+      const imBild = r.left >= b.left - 0.5 && r.right <= b.right + 0.5 && r.top >= b.top - 0.5 && r.bottom <= b.bottom + 0.5;
+      if (!o || !a.contains(o) || !imBild) aus.push({ ziel: a.dataset.ziel, imBild, oben: o ? (o.closest("a")?.dataset.ziel || o.tagName) : null });
+    }
+    window.scrollTo(0, 0);
+    return { zahl: ziele.length, aus, sammel: ziele.filter((a) => /^(punkte|sitzungen)-/.test(a.dataset.ziel)).length };
+  });
+  pruefen(profil, "Zeitleiste: jedes Ziel am eigenen Mittelpunkt treffbar und im Bild (nichts verdeckt)", treffer.zahl > 0
+    && treffer.aus.length === 0, treffer);
   // Punkt per Tastatur
   const ziel = await tabBis(page, "punkt-");
   pruefen(profil, "Zeitleiste: Punkt per Tab erreichbar", Boolean(ziel), ziel);
@@ -346,14 +374,55 @@ async function zeitleiste(browser, profil) {
   pruefen(profil, "Zeitleiste: ein Punkt ist frei anklickbar", Boolean(klick));
   if (klick) {
     if (PROFILE[profil].hasTouch) await page.touchscreen.tap(klick.x, klick.y); else await page.mouse.click(klick.x, klick.y);
+    await page.waitForTimeout(400);   // Rollen ins Bild (scrollIntoView)
     let d = await detail(page);
     const p = daten.punkte[klick.ziel.slice(6)];
-    pruefen(profil, "Punkt: Klick öffnet das Detailfeld", d.offen && d.titel === `${p.nr}: ${p.reference}` && !(await fokus(page)).body, d.titel);
-    const pos = await page.evaluate((z) => { const r = document.querySelector(`.pb-svg a[data-ziel="${z}"]`).getBoundingClientRect();
+    const lage = await feldImFenster(page);
+    pruefen(profil, "Punkt: Klick öffnet das Detailfeld, das Feld liegt im Fenster", d.offen && d.titel === `${p.nr}: ${p.reference}`
+      && !(await fokus(page)).body && lage.ok, { titel: d.titel, lage });
+    // das Detailfeld kann ins Bild gerollt sein (schmale Fenster): den Punkt dafür wieder ins Fenster holen
+    const pos = await page.evaluate((z) => { const a = document.querySelector(`.pb-svg a[data-ziel="${z}"]`);
+      a.scrollIntoView({ block: "center", inline: "center" }); const r = a.getBoundingClientRect();
       return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, klick.ziel);
     if (PROFILE[profil].hasTouch) await page.touchscreen.tap(pos.x, pos.y); else await page.mouse.click(pos.x, pos.y);
     d = await detail(page);
     pruefen(profil, "Punkt: zweiter Klick schließt, Fokus nicht auf body", !d.offen && !(await fokus(page)).body);
+  }
+  // Sammelmarke per Tastatur: Enter öffnet die Liste ihrer Einträge, „Angaben“ einen Eintrag (Fokus auf der Überschrift),
+  // „Zurück zur Liste“ wieder die Liste (Fokus auf „Angaben“ desselben Eintrags), Esc schließt (Fokus auf der Sammelmarke)
+  const gr = await tabBis(page, "punkte-");
+  if (gr) {
+    const eintraege = daten.gruppen[gr];
+    await page.keyboard.press("Enter");
+    let d = await detail(page);
+    let f = await fokus(page);
+    const n = await page.$$eval("#pb-detail ol.pb-gruppe > li", (ls) => ls.length);
+    pruefen(profil, "Sammelmarke: Enter öffnet die Liste ihrer Beschlüsse und Anträge, Fokus bleibt auf der Marke",
+      d.offen && d.titel === `${eintraege.length} Beschlüsse und Anträge` && n === eintraege.length && d.auswahl === gr
+      && f.ziel === gr && fokusOk(f), { titel: d.titel, n, fokus: f });
+    await axe(page, profil, "Detailfeld offen (Sammelmarke)");
+    await page.focus("#pb-detail button.pb-eintrag");
+    await page.keyboard.press("Enter");
+    d = await detail(page);
+    f = await fokus(page);
+    const p = daten.punkte[eintraege[0].slice(6)];
+    pruefen(profil, "Sammelmarke: „Angaben“ zeigt den Eintrag (Beratungsfolge), Fokus sichtbar auf der Überschrift",
+      d.offen && d.titel === `${p.nr}: ${p.reference}` && /Beratungsfolge/.test(d.text) && d.auswahl === p.reference
+      && f.ziel === "pb-detail-titel" && fokusOk(f), { titel: d.titel, fokus: f });
+    await axe(page, profil, "Detailfeld offen (Eintrag einer Sammelmarke)");
+    await page.focus("#pb-detail button.pb-zurueck");
+    await page.keyboard.press("Enter");
+    d = await detail(page);
+    f = await fokus(page);
+    const zurueck = await page.evaluate(() => document.activeElement?.dataset?.eintrag || null);
+    pruefen(profil, "Sammelmarke: „Zurück zur Liste“ zeigt die Liste, Fokus auf „Angaben“ des Eintrags",
+      d.offen && d.titel === `${eintraege.length} Beschlüsse und Anträge` && zurueck === eintraege[0] && fokusOk(f), { titel: d.titel, zurueck });
+    await page.keyboard.press("Escape");
+    d = await detail(page);
+    f = await fokus(page);
+    pruefen(profil, "Sammelmarke: Esc schließt, Fokus zurück auf der Marke", !d.offen && f.ziel === gr && fokusOk(f), f);
+  } else {
+    pruefen(profil, "Sammelmarke im Bild (Testdaten mit vielen Beschlüssen an einem Sitzungstag)", false, "keine Sammelmarke");
   }
   // Schalter: Leertaste schaltet, aria-pressed, &straenge=…, Punkte des Strangs abgeblendet
   const schalter = await page.$$eval(".pb-schalter", (bs) => bs.map((b) => b.dataset.strang));

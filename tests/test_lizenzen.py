@@ -41,6 +41,7 @@ ZEILE_JE_DATEI = (
     (r"koeln/flaechen/bebauungsplaene\.json", "export/koeln/flaechen/bebauungsplaene.json"),
     (r"koeln/gremien\.json", "export/koeln/gremien.json"),
     (r"koeln/aemter\.json", "export/koeln/aemter.json"),
+    (r"koeln/dossiers/[a-z_]+\.(json|ics|xml)", "export/koeln/dossiers/*.json"),
     (r"glossar\.json", "export/glossar.json"),
     (r"abrufstatistik\.tsv", "export/abrufstatistik.tsv"),
 )
@@ -58,6 +59,7 @@ ERWARTET = {
     "export/koeln/flaechen/bebauungsplaene.json": (BY, ("IT.NRW", "Datengrundlage Stadt Köln")),
     "export/koeln/gremien.json": ("laut Katalog dl-de/zero 2.0", (config.NAMENSNENNUNG, "Zuständigkeitsordnung")),
     "export/koeln/aemter.json": ("keine Lizenz angegeben", ("Geschäfts- und Dezernatsverteilungsplan",)),
+    "export/koeln/dossiers/*.json": ("laut Katalog dl-de/zero 2.0", (config.NAMENSNENNUNG, "Zuständigkeitsordnung")),
     "export/glossar.json": ("MIT", ()),
     "export/abrufstatistik.tsv": (ZERO, ()),
 }
@@ -144,10 +146,15 @@ def _pipeline(monkeypatch):
 
 # --- (1) LICENSE-DATA.md: eine Zeile je Art von Export, Lizenz wie in der Datei ------------------------------------
 
-def test_lizenzdatei_je_exportdatei(oparl, monkeypatch):
+@pytest.mark.parametrize("themen", [False, True])
+def test_lizenzdatei_je_exportdatei(oparl, monkeypatch, themen):
     """Jede Datei unter data/export/ (außer dem Zip selbst) hat genau eine Zeile in LICENSE-DATA.md, die sie nennt.
     Lizenz und Namensnennung der Zeile stimmen mit ERWARTET und, wo die Datei eine Lizenz nennt (`meta`), mit dieser
-    überein: Kitas, Schulen, Kennzahlen und Bebauungspläne nicht unter der Zeile des Ratsinformationssystems."""
+    überein: Kitas, Schulen, Kennzahlen und Bebauungspläne nicht unter der Zeile des Ratsinformationssystems. Auch mit
+    freigegebenen Themenseiten (dossiers/<thema>.json, .ics, .xml; Prüfung der CI, 25.11.2026)."""
+    if themen:
+        monkeypatch.setattr(config, "THEMENSEITEN_FREIGEGEBEN", ("verkehr",))
+        monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", True)
     zip_pfad = _pipeline(monkeypatch)
     zeilen = _zeilen()
     assert set(ERWARTET) <= set(zeilen), set(ERWARTET) - set(zeilen)
@@ -155,6 +162,8 @@ def test_lizenzdatei_je_exportdatei(oparl, monkeypatch):
                      if p.is_file() and p != zip_pfad)
     assert {"koeln/kontext.json", "koeln/flaechen/punkte_kitas.json", "koeln/flaechen/punkte_schulen.json",
             "koeln/flaechen/bebauungsplaene.json", "koeln/ebenen.json", "koeln/suche.json"} <= set(dateien)
+    assert ({"koeln/dossiers/verkehr.json", "koeln/dossiers/verkehr.ics", "koeln/dossiers/verkehr.xml"} <= set(dateien)) \
+        == themen and (themen or not [d for d in dateien if "/dossiers/" in d])
     for rel in dateien:
         schluessel = _zeile_fuer(rel)
         pfade, spalten = zeilen[schluessel]

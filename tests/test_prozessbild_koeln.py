@@ -81,7 +81,9 @@ def test_links_nur_mit_root():
     mit = prozessbild.svg(T, d, "../../")
     assert 'role="img"' not in mit
     ziele = re.findall(r'<a class="pb-ziel" href="([^"]*)" aria-label="([^"]*)"', mit)
-    assert len(ziele) == len(d["punkte"]) + len(d["sitzungen"]) and all(label for _, label in ziele)
+    marken = prozessbild.lage(T, d)
+    assert len(ziele) == len(marken) and all(label for _, label in ziele)
+    assert sum(len(m["eintraege"]) for m in marken) == len(d["punkte"]) + len(d["sitzungen"])
     assert ("../../?gebiet=ortsteil:probestadt#1/2026", "1: 1/2026 [Testdaten] Radweg an der Probestraße – entschieden "
             "(Rat, 02.04.2026)") in ziele
     assert ("https://example.invalid/sitzung", "Bezirksvertretung 1 (Innenstadt), 26.11.2026: öffentliche Sitzung, laut "
@@ -93,10 +95,13 @@ def test_links_nur_mit_root():
 def test_detaildaten_ohne_frist_und_federfuehrung():
     d = daten()
     d["punkte"][0]["name"] = "[Testdaten] Titel mit </script> darin"
+    d["punkte"][1]["name"] = '[Testdaten] Titel mit <!--<script> und "q" & <img src=x>'
     text = prozessbild.detaildaten(T, d, "../../")
-    assert "</" not in text
+    # kein „<“, „>“ oder „&“ im Skript-Element: weder „</script>“ noch „<!--<script>“ ändern den Zustand des Parsers
+    assert not set("<>&") & set(text)
     j = json.loads(text)
-    assert set(j) == {"heute", "kalender", "mitmachen", "punkte", "sitzungen"}
+    assert j["punkte"]["2"]["name"] == d["punkte"][1]["name"] and j["punkte"]["1"]["name"].endswith("</script> darin")
+    assert set(j) == {"heute", "kalender", "mitmachen", "punkte", "sitzungen", "gruppen"}
     assert j["kalender"] == "../../data/export/koeln/dossiers/verkehr.ics"
     for p in j["punkte"].values():
         assert "amt" not in p and "frist" not in p and p["karte"].startswith("../../?gebiet=")
@@ -145,15 +150,106 @@ def test_liste_einzahl(n, text):
 
 
 def test_punkt_auf_bahn_der_letzten_beratung():
-    """Lage wie in Bonn: letzte Beratung mit Ergebnis, sonst die nächste; die Bahn über die Kennung der Station."""
+    """Lage: letzte Beratung mit Ergebnis, sonst die nächste, beides nur in den Gremien des Bildes (Rat, Hauptausschuss,
+    Mobilitätsausschuss; Antwort 2 A); die Bahn über die Kennung der Station."""
     gd = gremien_daten()
     je = {e["key"]: e for e in gd["gremien"]}
+    im_bild = {e["key"] for a in T.punkt_gremien for e in dossier.gremien_auswahl(gd, a)}
     p = vorlage("1/2026", "Radweg", stationen=[station("bv1", "Bezirksvertretung 1 (Innenstadt)", "2026-03-01", "beschlossen"),
                                                station("mob-1a2b3c4d", "Mobilitätsausschuss", "2026-12-02")])
     e = {**dossier._eintrag(p, "ortsteil:x", "2026-11-21"), "grund": "Titel: „Radweg“"}
-    x = dossier._punkt(T, p, e, "rad_fuss", je, "2026-11-21")
-    assert (x["bahn"], x["date"], x["gremium"]) == ("bv", "2026-03-01", "Bezirksvertretung 1 (Innenstadt)")
-    p["process"][0]["result"] = None
-    x = dossier._punkt(T, p, {**dossier._eintrag(p, None, "2026-11-21"), "grund": ""}, "rad_fuss", je, "2026-11-21")
-    assert (x["bahn"], x["date"]) == ("mobil", "2026-12-02")
+    x = dossier._punkt(T, p, e, "rad_fuss", je, "2026-11-21", im_bild)
+    assert (x["bahn"], x["date"], x["gremium"]) == ("mobil", "2026-12-02", "Mobilitätsausschuss")
+    assert [b["gremium"] for b in x["beratungen"]] == ["Bezirksvertretung 1 (Innenstadt)", "Mobilitätsausschuss"]
+    p["process"][1]["result"] = "beschlossen"
+    p["process"][1]["start_date"] = "2026-04-01T16:00:00+01:00"
+    x = dossier._punkt(T, p, {**dossier._eintrag(p, None, "2026-11-21"), "grund": ""}, "rad_fuss", je, "2026-11-21", im_bild)
+    assert (x["bahn"], x["date"]) == ("mobil", "2026-04-01")
     assert date.fromisoformat(x["date"])
+
+
+# --- Lage der Ziele im Bild (Prüfung der Seite, 25.11.2026) -----------------------------------------------------------
+
+# Ausdehnung je Art um die Mitte (links, rechts, oben, unten) wie in prozessbild._marke gezeichnet
+AUSDEHNUNG = {"punkt": (9, 9, 9, 9), "sitzung": (10.5, 10.5, 10.5, 10.5), "punkte": (10, 10, 10, 9),
+              "sitzungen": (10, 11.5, 11.5, 10.5)}
+
+
+def _gedraengt(n_tag=30, heute="2026-11-21"):
+    """Daten mit vielen Beschlüssen am selben Tag in einer Bahn, Punkten an aufeinanderfolgenden Tagen um den Datenstand,
+    Sitzungen dicht beieinander in der Bahn der Bezirksvertretungen und Punkten am Rand der Achse."""
+    d = daten()
+    vorbild = d["punkte"][0]
+    punkte = [{**vorbild, "date": "2026-11-05", "bahn": "mobil"} for _ in range(n_tag)]
+    punkte += [{**vorbild, "date": tag, "bahn": "rat"} for tag in ("2026-11-19", "2026-11-20", "2026-11-21", "2026-11-22",
+                                                                  "2026-11-23", "2025-11-01", "2025-11-02", "2027-05-30")]
+    for i, p in enumerate(punkte, 1):
+        p["nr"] = i
+    d["punkte"] = punkte
+    s0 = d["sitzungen"][0]
+    d["sitzungen"] = [{**s0, "bahn": "bv", "date": tag, "gremium": f"Bezirksvertretung {i}"}
+                      for i, tag in enumerate(("2026-11-23", "2026-11-24", "2026-11-25", "2026-11-26", "2026-12-07",
+                                               "2026-12-08"), 1)]
+    d["sitzungen"].append({**s0, "bahn": "mobil", "date": "2026-11-26", "gremium": "Mobilitätsausschuss"})
+    d["heute"] = heute
+    return d
+
+
+@pytest.mark.parametrize("n_tag", [1, 2, 3, 30])
+def test_lage_ohne_ueberdeckung_ohne_verschiebung_im_bild(n_tag):
+    """Kein Ziel überdeckt ein anderes, keines liegt außerhalb des Bildes oder seiner Bahn, keines weicht um mehr als
+    eineinhalb Platzbreiten von seinem Tag ab, kein Ziel bis zum Datenstand steht rechts der Linie des Datenstands und
+    keines danach links; jeder Punkt und jede Sitzung steht genau einmal im Bild, und das SVG zeichnet genau diese Ziele."""
+    d = _gedraengt(n_tag)
+    a = prozessbild.Achse(d)
+    xh = a.x(d["heute"])
+    marken = prozessbild.lage(T, d)
+    punkte = sorted(p["nr"] for m in marken if m["art"] in ("punkt", "punkte") for p in m["eintraege"])
+    sitzungen = sorted(i for m in marken if m["art"] in ("sitzung", "sitzungen") for i, _ in m["eintraege"])
+    assert punkte == [p["nr"] for p in d["punkte"]] and sitzungen == list(range(len(d["sitzungen"])))
+    boxen = []
+    for m in marken:
+        l, r, o, u = AUSDEHNUNG[m["art"]]
+        oben = prozessbild._zeile(T, m["bahn"])
+        assert 0 <= m["x"] - l and m["x"] + r <= prozessbild.W, m
+        assert oben <= m["y"] - o and m["y"] + u <= oben + prozessbild.BAHN, m
+        tage = [p["date"] for p in m["eintraege"]] if m["art"] in ("punkt", "punkte") else [s["date"] for _, s in m["eintraege"]]
+        for tag in tage:
+            assert abs(m["x"] - a.x(tag)) <= 1.5 * prozessbild.SPALT, (m["ziel"], tag)
+            assert (m["x"] < xh) if tag <= d["heute"] else (m["x"] > xh), (m["ziel"], tag)
+        boxen.append((m["x"] - l, m["x"] + r, m["y"] - o, m["y"] + u, m["ziel"]))
+    for i, b in enumerate(boxen):
+        for c in boxen[i + 1:]:
+            assert b[1] <= c[0] or c[1] <= b[0] or b[3] <= c[2] or c[3] <= b[2], (b, c)
+    svg = prozessbild.svg(T, d, "../../")
+    assert re.findall(r'data-ziel="([^"]+)"', svg) == [m["ziel"] for m in marken]
+    # viele Beschlüsse an einem Tag: eine Sammelmarke mit Zahl, nicht nach rechts geschoben
+    if n_tag >= 3:
+        gruppe = next(m for m in marken if m["art"] == "punkte" and m["bahn"] == "mobil")
+        assert len(gruppe["eintraege"]) == n_tag and f">{n_tag}</text>" in svg
+        assert f'data-punkte="{" ".join(str(i) for i in range(1, n_tag + 1))}"' in svg
+
+
+def test_sammelmarken_in_detaildaten_legende_und_liste():
+    d = _gedraengt(30)
+    j = json.loads(prozessbild.detaildaten(T, d, "../../"))
+    marken = prozessbild.lage(T, d)
+    gruppen = {m["ziel"]: m for m in marken if m["art"] in ("punkte", "sitzungen")}
+    assert set(j["gruppen"]) == set(gruppen) and any(k.startswith("sitzungen-") for k in gruppen)
+    assert j["gruppen"]["punkte-0"][:2] == ["punkt-1", "punkt-2"]
+    lg = prozessbild.legende(marken)
+    assert "mehrere Beschlüsse und Anträge an nahen Tagen (Zahl)" in lg and "mehrere Sitzungen an nahen Tagen (Zahl)" in lg
+    assert "mehrere" not in prozessbild.legende(prozessbild.lage(T, daten()))
+    svg = prozessbild.svg(T, d, "../../")
+    assert '<a class="pb-ziel" href="#pb-liste" aria-label="30 Beschlüsse und Anträge am 05.11.2026' in svg
+    assert re.search(r'<a class="pb-ziel" href="#sitzungen" aria-label="\d öffentliche Sitzungen: Bezirksvertretung 1 am '
+                     r'23\.11\.2026', svg)
+    assert '<details class="pb-liste" id="pb-liste">' in prozessbild.liste(d, "../../")
+    abschnitt = prozessbild.abschnitt(T, d, "../../")
+    assert "Sammelmarke" in abschnitt and "Punkte und Sitzungen lassen sich anklicken" in abschnitt
+
+
+def test_ohne_ziele_kein_satz_zum_anklicken():
+    d = daten()
+    d["punkte"], d["sitzungen"] = [], []
+    assert "anklicken" not in prozessbild.abschnitt(T, d, "../../")

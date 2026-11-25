@@ -69,7 +69,8 @@ a { color: var(--accent-ink); }
 .pb-entschieden { background: var(--accent-ink); color: #fff; }
 .pb-beraten { background: #c4b5fd; color: var(--text); }
 .pb-offen { background: #fff; color: var(--text); }
-.pb-karten { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin: 16px 0; }
+/* min(280px, 100%): bei 320 px ist die Textspalte schmaler als 280 px, die Karten blieben sonst breiter als die Seite */
+.pb-karten { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 12px; margin: 16px 0; }
 .pb-karte { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: #fff; }
 .pb-karte h3 { font-size: 16px; margin: 6px 0 4px; }
 .pb-karte p { margin: 0 0 8px; font-size: 14px; }
@@ -97,6 +98,10 @@ a { color: var(--accent-ink); }
 .pb-detail h3 { font-size: 17px; margin: 2px 0 4px; }
 .pb-detail h4 { font-size: 15px; margin: 10px 0 2px; }
 .pb-schliessen { font: inherit; font-size: 14px; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; flex: none; }
+/* Sammelmarke im Detailfeld (site/thema.js, sammlung): Einträge mit „Angaben“; Schaltflächen wie die Links pb-knopf */
+.pb-gruppe { list-style: none; padding: 0; margin: 6px 0; font-size: 14px; }
+.pb-gruppe li { margin: 0 0 8px; }
+button.pb-knopf { border: 0; font-family: inherit; line-height: inherit; cursor: pointer; }
 .pb-name-gross { margin: 0 0 6px; font-weight: 600; }
 .pb-angaben { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 0; font-size: 14px; }
 .pb-angaben dt { color: var(--muted); }

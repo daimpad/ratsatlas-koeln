@@ -193,9 +193,18 @@ def test_menues_und_startfenster_ohne_folgt():
 def test_kacheln_abgeschalteter_funktionen_fehlen_in_der_veroeffentlichten_seite(monkeypatch):
     """seo.ohne_abgeschaltete entfernt die Karten abgeschalteter Funktionen auch aus den neuen Menüs (Themenseiten,
     Haushalt; ohne Freigabe auch Einfache Sprache, „So funktioniert der Ratsatlas“ und „Alle Wege im Überblick“)."""
+    # Themenseiten ausdrücklich aus (unabhängig vom Stand im Repository), dann ein
+    monkeypatch.setattr(config, "THEMENSEITEN_FREIGEGEBEN", ())
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", False)
     an = seo.ohne_abgeschaltete(INDEX)
     assert config.ZUSATZTHEMEN["einfache_sprache"] and config.ZUSATZTHEMEN["technik"]
     assert _karten(_abschnitt(an, "mega-themen")) == ["Kennzahlen zum Gebiet"]
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", True)
+    assert _karten(_abschnitt(seo.ohne_abgeschaltete(INDEX), "mega-themen")) == ["Kennzahlen zum Gebiet", "Themenseiten"]
+    # ohne geschriebene Übersicht thema/ (Kartenvorschau, Hauptschalter ohne Thema) fehlt die Karte trotz Freigabe
+    ohne = seo.ohne_abgeschaltete(INDEX, seo.freigabe_mit_seiten([]))
+    assert _karten(_abschnitt(ohne, "mega-themen")) == ["Kennzahlen zum Gebiet"] and 'href="thema/"' not in ohne
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", False)
     assert "Einfache Sprache" in _karten(_abschnitt(an, "mega-ueber"))
     monkeypatch.setitem(config.ZUSATZTHEMEN, "einfache_sprache", False)
     monkeypatch.setitem(config.ZUSATZTHEMEN, "technik", False)

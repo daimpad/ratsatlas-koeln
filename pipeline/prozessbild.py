@@ -11,8 +11,9 @@ Herkunft: daimpad/ratsatlas-bonn @730d593 (pipeline/prozessbild.py). Kölner Anp
 - ohne Phasen, Beratungsfenster, Fristlinien und Bild zum Teilen;
 - Karten: Kalender, Feed, Sitzung besuchen (Livestream des Rates), Frage oder Anregung (pipeline/mitwirken.py), Links zur
   Karte (nur für Ebenen, die im Bau vorliegen).
+- Lage der Ziele auf Plätzen je Bahn mit zwei Reihen und Sammelmarken (lage) statt Ausweichen nach rechts.
 Beschlüsse und Anträge erscheinen als nummerierte Punkte (entschieden, beraten, offen), die nächsten Sitzungen mit
-Hand-Symbol. Die nummerierte Liste unter dem Bild ist die Textfassung. Auf der Seite sind Punkte und Sitzungen Links
+Hand-Symbol, mehrere an nahen Tagen als Sammelmarke mit Zahl. Die nummerierte Liste unter dem Bild ist die Textfassung. Auf der Seite sind Punkte und Sitzungen Links
 (Vorgang auf der Karte, Tagesordnung); mit Skript (site/thema.js) öffnet ein Klick stattdessen das Detailfeld unter dem
 Bild, Schalter blenden Stränge aus."""
 import json
@@ -104,6 +105,131 @@ def _hand(x, y, groesse=14):
             f'stroke-linejoin="round"/>')
 
 
+# Plätze der Ziele im Bild (Prüfung der Seite, 25.11.2026: In Köln teilen sich Rat und Hauptausschuss eine Bahn, die neun
+# Bezirksvertretungen ebenso, und an einem Sitzungstag des Mobilitätsausschusses liegen viele Punkte; das Ausweichen
+# nach rechts aus der Vorlage schob Beschlüsse über den Datenstand und aus dem Bild). Jede Bahn hat Plätze von SPALT px,
+# vom Datenstand aus nach links (Tag bis zum Datenstand) und nach rechts (später); ein Platz hat zwei Reihen (REIHE px über
+# und unter der Mitte). Auf einem Platz stehen Sitzungen oben und Punkte unten; gibt es nur eine Art, steht ein Ziel in
+# der Mitte, zwei in beiden Reihen. Mehr Ziele einer Art auf einem Platz (oder mehr als eines, wenn sich beide Arten den
+# Platz teilen) stehen als eine Sammelmarke mit ihrer Zahl; das Detailfeld nennt jedes. So weicht kein Ziel um mehr als
+# eine halbe Platzbreite von seinem Tag ab (am Rand des Bildes um höchstens eineinhalb), keines steht jenseits der Linie
+# des Datenstands auf der falschen Seite, keines außerhalb des Bildes, und keine zwei Ziele überdecken sich.
+SPALT, REIHE, RAND = 24, 12, 12
+
+
+def _platz(xh, x, links):
+    """Platz (Seite, Nummer) und Mitte x eines Ziels an der Stelle x: links der Linie des Datenstands xh (Tag bis zum
+    Datenstand) oder rechts davon; Plätze, deren Mitte näher als RAND am Bildrand läge, rücken einen Platz nach innen."""
+    if links:
+        k = max(0, int((xh - x) // SPALT))
+        while k and xh - SPALT / 2 - k * SPALT < RAND:
+            k -= 1
+        return ("l", k), xh - SPALT / 2 - k * SPALT
+    k = max(0, int((x - xh) // SPALT))
+    while k and xh + SPALT / 2 + k * SPALT > W - RAND:
+        k -= 1
+    return ("r", k), xh + SPALT / 2 + k * SPALT
+
+
+def lage(t, d):
+    """Ziele des Bildes mit Lage: Liste von {art: „punkt“, „sitzung“, „punkte“ oder „sitzungen“, ziel (data-ziel), x, y,
+    bahn, eintraege (Punkte oder (Nummer, Sitzung))}, in der Reihenfolge der Plätze. Sammelmarken heißen punkte-<n> und
+    sitzungen-<n> (laufende Nummer im Bild)."""
+    a = Achse(d)
+    heute = d["heute"]
+    xh = a.x(heute)
+    plaetze = {}
+    for i, s in enumerate(d["sitzungen"]):
+        if s.get("date"):
+            k, x = _platz(xh, a.x(s["date"]), s["date"] <= heute)
+            plaetze.setdefault((s["bahn"], k), [x, [], []])[1].append((i, s))
+    for p in d["punkte"]:
+        if p.get("date"):
+            k, x = _platz(xh, a.x(p["date"]), p["date"] <= heute)
+            plaetze.setdefault((p["bahn"], k), [x, [], []])[2].append(p)
+    out, nr = [], {"punkte": 0, "sitzungen": 0}
+
+    def setzen(art, eintraege, x, y, bahn):
+        if len(eintraege) == 1:
+            einzeln = "sitzung" if art == "sitzungen" else "punkt"
+            e = eintraege[0]
+            ziel = f"sitzung-{e[0]}" if einzeln == "sitzung" else f"punkt-{e['nr']}"
+            out.append({"art": einzeln, "ziel": ziel, "x": x, "y": y, "bahn": bahn, "eintraege": eintraege})
+        else:
+            out.append({"art": art, "ziel": f"{art}-{nr[art]}", "x": x, "y": y, "bahn": bahn, "eintraege": eintraege})
+            nr[art] += 1
+
+    for (bahn, _), (x, sitz, punkte) in sorted(plaetze.items(), key=lambda kv: (kv[1][0], kv[0][0])):
+        y = _zeile(t, bahn) + BAHN / 2
+        sitz = sorted(sitz, key=lambda e: (e[1]["date"], e[0]))
+        punkte = sorted(punkte, key=lambda p: (p["date"], p["nr"]))
+        if sitz and punkte:
+            setzen("sitzungen", sitz, x, y - REIHE, bahn)
+            setzen("punkte", punkte, x, y + REIHE, bahn)
+            continue
+        art, eintraege = ("sitzungen", sitz) if sitz else ("punkte", punkte)
+        if len(eintraege) == 2:
+            setzen(art, eintraege[:1], x, y - REIHE, bahn)
+            setzen(art, eintraege[1:], x, y + REIHE, bahn)
+        else:
+            setzen(art, eintraege, x, y, bahn)
+    return out
+
+
+def _zeitraum(tage):
+    tage = sorted(set(tage))
+    return f"am {_datum(tage[0])}" if len(tage) == 1 else f"vom {_datum(tage[0])} bis {_datum(tage[-1])}"
+
+
+def _marke(m, root):
+    """SVG eines Ziels aus lage: Punkt (Kreis mit Nummer), Sitzung (Kreis mit Hand), Sammelmarke für Punkte (zwei
+    gestaffelte Rechtecke mit Zahl) oder für Sitzungen (zwei gestaffelte Kreise mit Zahl). Mit root sind es Links."""
+    x, y = m["x"], m["y"]
+    if m["art"] == "sitzung":
+        i, s = m["eintraege"][0]
+        # Tagesordnung, sobald die Stadt sie veröffentlicht hat, sonst die Terminliste der Seite
+        ziel = None if root is None else s.get("web") or "#sitzungen"
+        return _ziel(ziel, f'{escape(s["gremium"])}, {_datum(s["date"])}: öffentliche Sitzung'
+                     + (", laut Sitzungsnamen verschoben" if s.get("hinweis") == "verschoben" else "")
+                     + (", Tagesordnung" if root is not None and s.get("web") else ""),
+                     f'<circle cx="{x:.1f}" cy="{y:.1f}" r="10.5" fill="#fff" stroke="{BERNSTEIN}" stroke-width="2"/>'
+                     + _hand(x, y), f' data-ziel="{m["ziel"]}"')
+    if m["art"] == "punkt":
+        p = m["eintraege"][0]
+        fill, stroke, farbe = PUNKT_FARBEN[p["art"]]
+        ziel = None if root is None else dossier._map(root, p.get("gebiet"), p["reference"]) or p.get("web")
+        return _ziel(ziel, f'{p["nr"]}: {escape(p["reference"])} {escape(p["name"] or "")} – {escape(p["stand"] or "")}'
+                     f' ({escape(p["gremium"] or "")}, {_datum(p["date"])})',
+                     f'<circle cx="{x:.1f}" cy="{y:.1f}" r="9" fill="{fill}" stroke="{stroke}" stroke-width="1.8"/>'
+                     f'<text x="{x:.1f}" y="{y + 3.6:.1f}" font-size="10" font-weight="700" '
+                     f'text-anchor="middle" fill="{farbe}">{p["nr"]}</text>',
+                     f' data-ziel="{m["ziel"]}" data-strang="{escape(p.get("strang") or "")}"')
+    n = len(m["eintraege"])
+    if m["art"] == "punkte":
+        ps = m["eintraege"]
+        gremien = ", ".join(dict.fromkeys(escape(p["gremium"] or "") for p in ps))
+        titel = (f'{n} Beschlüsse und Anträge {_zeitraum([p["date"] for p in ps])} ({gremien}): Nr. '
+                 + ", ".join(str(p["nr"]) for p in ps))
+        straenge = " ".join(dict.fromkeys(escape(p.get("strang") or "") for p in ps if p.get("strang")))
+        inneres = (f'<rect x="{x - 7:.1f}" y="{y - 10:.1f}" width="17" height="16" rx="4" fill="#fff" stroke="{LILA}" '
+                   f'stroke-width="1.8"/>'
+                   f'<rect x="{x - 10:.1f}" y="{y - 7:.1f}" width="17" height="16" rx="4" fill="#fff" stroke="{LILA}" '
+                   f'stroke-width="1.8"/>'
+                   f'<text x="{x - 1.5:.1f}" y="{y + 4.6:.1f}" font-size="10" font-weight="700" text-anchor="middle" '
+                   f'fill="{TEXT}">{n}</text>')
+        return _ziel(None if root is None else "#pb-liste", titel, inneres,
+                     f' data-ziel="{m["ziel"]}" data-punkte="{" ".join(str(p["nr"]) for p in ps)}"'
+                     f' data-straenge="{straenge}"')
+    ss = m["eintraege"]
+    titel = f"{n} öffentliche Sitzungen: " + "; ".join(f'{escape(s["gremium"])} am {_datum(s["date"])}' for _, s in ss)
+    inneres = (f'<circle cx="{x + 2.5:.1f}" cy="{y - 2.5:.1f}" r="9" fill="#fff" stroke="{BERNSTEIN}" stroke-width="2"/>'
+               f'<circle cx="{x - 1:.1f}" cy="{y + 1:.1f}" r="9.5" fill="#fff" stroke="{BERNSTEIN}" stroke-width="2"/>'
+               f'<text x="{x - 1:.1f}" y="{y + 4.6:.1f}" font-size="10" font-weight="700" text-anchor="middle" '
+               f'fill="{TEXT}">{n}</text>')
+    return _ziel(None if root is None else "#sitzungen", titel, inneres,
+                 f' data-ziel="{m["ziel"]}" data-sitzungen="{" ".join(str(i) for i, _ in ss)}"')
+
+
 def svg(t, d, root=None):
     """Zeitleiste mit Bahnen als SVG-Zeichenkette; mit root (Pfad zur Startseite) sind die Elemente Links. Ohne
     Bahnnamen und Legende (beide als HTML neben bzw. unter dem Bild)."""
@@ -133,45 +259,9 @@ def svg(t, d, root=None):
             out.append(f'<text x="{x + 3:.1f}" y="{OBEN - 26}" font-size="12" font-weight="600" fill="{TEXT}">'
                        f'{m.year}</text>')
         m = date(m.year + (m.month == 12), m.month % 12 + 1, 1)
-    # nächste Sitzungen
-    zuletzt = {}
-    for i, s in sorted(enumerate(d["sitzungen"]), key=lambda x: x[1]["date"]):
-        x = _x(s["date"])
-        # dicht folgende Sitzungen derselben Bahn abwechselnd oben und unten
-        vorher = zuletzt.get(s["bahn"])
-        oben = bool(vorher) and x - vorher[0] < 26 and not vorher[1]
-        zuletzt[s["bahn"]] = (x, oben)
-        yc = _zeile(t, s["bahn"]) + BAHN / 2 + (-11 if oben else 0)
-        # Tagesordnung, sobald die Stadt sie veröffentlicht hat, sonst die Terminliste der Seite
-        ziel = None if root is None else s.get("web") or "#sitzungen"
-        out.append(_ziel(ziel, f'{escape(s["gremium"])}, {_datum(s["date"])}: öffentliche Sitzung'
-                         + (", laut Sitzungsnamen verschoben" if s.get("hinweis") == "verschoben" else "")
-                         + (", Tagesordnung" if root is not None and s.get("web") else ""),
-                         f'<circle cx="{x:.1f}" cy="{yc:.1f}" r="10.5" fill="#fff" stroke="{BERNSTEIN}" stroke-width="2"/>'
-                         + _hand(x, yc),
-                         f' data-ziel="sitzung-{i}"'))
-    # Beschlüsse und Anträge
-    belegt = {}
-    for p in d["punkte"]:
-        if not p["date"]:
-            continue
-        x, y = _x(p["date"]), _zeile(t, p["bahn"]) + BAHN / 2
-        for dy in (0, -11, 11, -5, 5):
-            if all(abs(x - bx) > 18 or abs(y + dy - by) > 17 for bx, by in belegt.get(p["bahn"], [])):
-                break
-        else:
-            dy = 0
-            while any(abs(x - bx) <= 18 and abs(y - by) <= 17 for bx, by in belegt.get(p["bahn"], [])):
-                x += 6
-        belegt.setdefault(p["bahn"], []).append((x, y + dy))
-        fill, stroke, farbe = PUNKT_FARBEN[p["art"]]
-        ziel = None if root is None else dossier._map(root, p.get("gebiet"), p["reference"]) or p.get("web")
-        out.append(_ziel(ziel, f'{p["nr"]}: {escape(p["reference"])} {escape(p["name"] or "")} – {escape(p["stand"] or "")}'
-                         f' ({escape(p["gremium"] or "")}, {_datum(p["date"])})',
-                         f'<circle cx="{x:.1f}" cy="{y + dy:.1f}" r="9" fill="{fill}" stroke="{stroke}" stroke-width="1.8"/>'
-                         f'<text x="{x:.1f}" y="{y + dy + 3.6:.1f}" font-size="10" font-weight="700" '
-                         f'text-anchor="middle" fill="{farbe}">{p["nr"]}</text>',
-                         f' data-ziel="punkt-{p["nr"]}" data-strang="{escape(p.get("strang") or "")}"'))
+    # nächste Sitzungen, Beschlüsse und Anträge auf ihren Plätzen (lage): ohne Überdeckung, nie nach rechts geschoben
+    for m in lage(t, d):
+        out.append(_marke(m, root))
     # heute
     xh = _x(heute)
     out.append(f'<line x1="{xh:.1f}" y1="{OBEN - 44}" x2="{xh:.1f}" y2="{OBEN + h_bahnen}" stroke="{TEXT}" '
@@ -199,15 +289,26 @@ def _zeichen(art):
         inner = (f'<circle cx="10" cy="10" r="8.5" fill="#fff" stroke="{BERNSTEIN}" stroke-width="2"/>'
                  f'<g transform="translate(4.36 4.36) scale(.47)" fill="none" stroke="{TEXT}" stroke-width="2.2" '
                  f'stroke-linecap="round" stroke-linejoin="round">{ICON["hand"]}</g>')
+    elif art == "punkte":
+        inner = (f'<rect x="5" y="2" width="13" height="13" rx="3" fill="#fff" stroke="{LILA}" stroke-width="1.6"/>'
+                 f'<rect x="2" y="5" width="13" height="13" rx="3" fill="#fff" stroke="{LILA}" stroke-width="1.6"/>')
+    elif art == "sitzungen":
+        inner = (f'<circle cx="12" cy="8" r="6.5" fill="#fff" stroke="{BERNSTEIN}" stroke-width="1.8"/>'
+                 f'<circle cx="8.5" cy="11.5" r="7" fill="#fff" stroke="{BERNSTEIN}" stroke-width="1.8"/>')
     else:
         inner = f'<line x1="10" y1="1" x2="10" y2="19" stroke="{TEXT}" stroke-width="2"/>'
     return f"{kopf}{inner}</svg>"
 
 
-def legende():
-    """Legende der Zeitleiste als HTML unter dem Bild."""
+def legende(marken=()):
+    """Legende der Zeitleiste als HTML unter dem Bild; Sammelmarken nur, wenn das Bild welche hat (`marken`: lage)."""
+    da = {m["art"] for m in marken}
     eintraege = [("entschieden", "entschieden"), ("beraten", "beraten, ohne abschließende Entscheidung"),
-                 ("offen", "offen"), ("sitzung", "nächste öffentliche Sitzung"), ("heute", "Datenstand")]
+                 ("offen", "offen"),
+                 *([("punkte", "mehrere Beschlüsse und Anträge an nahen Tagen (Zahl)")] if "punkte" in da else []),
+                 ("sitzung", "nächste öffentliche Sitzung"),
+                 *([("sitzungen", "mehrere Sitzungen an nahen Tagen (Zahl)")] if "sitzungen" in da else []),
+                 ("heute", "Datenstand")]
     return ('    <ul class="pb-legende-bild" aria-label="Legende der Zeitleiste">'
             + "".join(f"<li>{_zeichen(a)}{escape(text)}</li>" for a, text in eintraege) + "</ul>")
 
@@ -288,7 +389,7 @@ def liste(d, root):
     if not n:
         return "    <p>Im Bild stehen keine Beschlüsse und Anträge.</p>"
     kopf = "Ein Beschluss oder Antrag im Bild" if n == 1 else f"Die {n} Beschlüsse und Anträge im Bild"
-    return (f'    <details class="pb-liste">\n      <summary>{kopf}'
+    return (f'    <details class="pb-liste" id="pb-liste">\n      <summary>{kopf}'
             f'</summary>\n      <ol>\n' + "\n".join(zeilen) + "\n      </ol>\n    </details>")
 
 
@@ -316,22 +417,32 @@ def detaildaten(t, d, root):
             "beratungen": p.get("beratungen", []), "web": p.get("web"),
             "karte": dossier._map(root, p.get("gebiet"), p["reference"])} for p in d["punkte"]},
         "sitzungen": [{k: s.get(k) for k in ("gremium", "date", "time", "hinweis", "web")} for s in d["sitzungen"]],
+        # Sammelmarken (lage): Kennungen der Ziele, die sie zusammenfassen
+        "gruppen": {m["ziel"]: [f"punkt-{e['nr']}" if m["art"] == "punkte" else f"sitzung-{e[0]}" for e in m["eintraege"]]
+                    for m in lage(t, d) if m["art"] in ("punkte", "sitzungen")},
     }
-    # „</“ maskieren, damit kein Titel das Skript-Element beendet
-    return json.dumps(daten, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    # „<“, „>“ und „&“ als Escape von JSON: Kein Titel kann das Skript-Element beenden oder den Parser in einen anderen
+    # Zustand bringen („</script>“, „<!--<script>“; Prüfung der CI, 25.11.2026)
+    return (json.dumps(daten, ensure_ascii=False, separators=(",", ":"))
+            .replace("&", "\\u0026").replace("<", "\\u003c").replace(">", "\\u003e"))
 
 
 def abschnitt(t, d, root, karten=()):
     """HTML-Abschnitt für die Themenseite: Schalter, Bahnen und Bild, Legende, Detailfeld, Liste, Karten und Stand je
     Strang."""
     a = Achse(d)
+    marken = lage(t, d)
     knick = f" Die Monate ab {a.monat(a.knick)} sind breiter gezeichnet." if a.anteil else ""
     text = (f"<p>Punkte: Beschlussvorlagen, Dringlichkeitsentscheidungen und Anträge mit Beratung {escape(t.punkt_text)}; "
-            "Lage nach der letzten Beratung mit Ergebnis, sonst nach der nächsten (abgeleitet). Beratungen in den "
-            "Bezirksvertretungen stehen in der Liste und im Detailfeld. Hand-Symbole: die nächsten Sitzungen laut "
-            f"Sitzungskalender. Das Bild beginnt mit der Wahlperiode ({_datum(d['meta']['seit'])}).{knick}</p>")
+            "Lage nach der letzten Beratung mit Ergebnis in diesen Gremien, sonst nach der nächsten dort (abgeleitet). "
+            "Beratungen in den Bezirksvertretungen stehen in der Liste und im Detailfeld, nicht als Punkt. Hand-Symbole: "
+            "die nächsten Sitzungen laut Sitzungskalender. Liegen mehrere Punkte oder Sitzungen einer Bahn an nahen Tagen, "
+            "steht dort eine Sammelmarke mit ihrer Zahl; das Detailfeld nennt jede. Die Lage im Bild weicht deshalb um "
+            "bis zu einige Tage vom Datum ab, nie über den Datenstand hinweg. Das Bild beginnt mit der Wahlperiode "
+            f"({_datum(d['meta']['seit'])}).{knick}</p>")
+    klick = (" Punkte und Sitzungen lassen sich anklicken, auch mit der Tabulatortaste." if marken else "")
     return f"""    <h2>Auf einen Blick</h2>
-    <p>Wo steht das Verfahren, was ist entschieden, wann wird beraten? Punkte und Sitzungen lassen sich anklicken, auch mit der Tabulatortaste.</p>
+    <p>Wo steht das Verfahren, was ist entschieden, wann wird beraten?{klick}</p>
 {akkordeon.mehr("So ist das Bild gezeichnet", text)}
 {schalter(t, d)}
     <div class="pb-zeitleiste" style="--pb-oben:{OBEN}px;--pb-bahn:{BAHN}px;--pb-breite:{W}px;--pb-hoehe:{hoehe(t)}px">
@@ -340,7 +451,7 @@ def abschnitt(t, d, root, karten=()):
         {svg(t, d, root)}
       </div>
     </div>
-{legende()}
+{legende(marken)}
     <div class="pb-detail" id="pb-detail" role="region" aria-label="Angaben zur Auswahl im Bild" hidden></div>
     <p class="pb-sr" id="pb-ansage" aria-live="polite"></p>
     <script type="application/json" id="pb-daten">{detaildaten(t, d, root)}</script>

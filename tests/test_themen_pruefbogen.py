@@ -1,6 +1,6 @@
 """tools/themen_pruefbogen.py: Prüfbogen einer Themenseite aus einem entpackten Datenpaket oder, als Rückfall, aus
 suche.json, gremien.json und index.json (Entscheidung 24.11.2026 (3); Plan „pruefbogen_methode“, Antworten vom
-25.11.2026). Ohne Netz und ohne Datenbank; Ausgabe nur außerhalb des Repositorys; laufende Nummer statt Drucksache,
+25.11.2026). Ohne Netz und ohne Datenbank; Ausgabe nur außerhalb jedes Git-Checkouts; laufende Nummer statt Drucksache,
 <DS> in Titel und Grund, Eingaben ohne Titel, Titel mit Personenbezug vor der Ziehung aussortiert und nur gezählt,
 Ziehung mit random.Random(2026). Alle Vorlagen, Drucksachen und Gremien sind erfunden; keine Anfragen nach außen."""
 import csv
@@ -137,8 +137,63 @@ def test_ausgabe_nie_im_repository(tmp_path):
     quelle = _paket(tmp_path / "paket")
     ziel = ROOT / "data" / "export" / "_pruefbogen_test_nie_anlegen"
     r = _lauf(quelle, ziel, tmp_path)
-    assert r.returncode != 0 and "außerhalb des Repositorys" in r.stderr + r.stdout
+    assert r.returncode != 0 and "außerhalb jedes Git-Checkouts" in r.stderr + r.stdout
     assert not ziel.exists()
+
+
+@pytest.mark.parametrize("git", ["ordner", "datei"])
+def test_ausgabe_nie_in_einem_anderen_checkout(tmp_path, git):
+    """Auch nicht in einem anderen Checkout oder Worktree (Ordner oder Datei .git in einem übergeordneten Ordner, etwa
+    der Haupt-Checkout, wenn das Werkzeug aus einem Worktree läuft): Abbruch ohne zu schreiben."""
+    quelle = _paket(tmp_path / "paket")
+    checkout = tmp_path / "anderer-checkout"
+    checkout.mkdir()
+    if git == "ordner":
+        (checkout / ".git").mkdir()
+    else:
+        (checkout / ".git").write_text("gitdir: /anderswo\n", encoding="utf-8")
+    ziel = checkout / "data" / "pb"
+    r = _lauf(quelle, ziel, tmp_path)
+    assert r.returncode != 0 and "außerhalb jedes Git-Checkouts" in r.stderr + r.stdout
+    assert not ziel.exists()
+    with pytest.raises(SystemExit):
+        dossier.in_keinem_checkout(checkout)
+    assert dossier.in_keinem_checkout(tmp_path / "frei" / "pb") == (tmp_path / "frei" / "pb").resolve()
+
+
+# Titel mit Personenbezug (Namen erfunden): nie mit Text im Bogen, nur gezählt (Prüfung der Daten, 25.11.2026)
+PERSONEN = ["Abberufung von Erika Beispiel als Geschäftsführerin der KVB", "Ernennung von Max Beispielmann zum Verkehrsbeauftragten",
+            "Wiederwahl der Beigeordneten für Mobilität", "Wahlen zum Mobilitätsausschuss", "Neuwahl im Radverkehrsbeirat",
+            "Wahlvorschlag für den Aufsichtsrat der KVB", "Berufung in den Fahrgastbeirat", "Nachruf auf einen Ehrenbürger",
+            "Jubiläum der Linie 13", "Vorsitz im Verkehrsbeirat"]
+
+
+@pytest.mark.parametrize("titel", PERSONEN)
+def test_personenbezug_erkannt(titel):
+    assert dossier.PERSONENBEZUG.search(titel), titel
+
+
+def test_personenbezug_nie_im_bogen(tmp_path):
+    """Titel mit Personenbezug, auch solche mit Verkehrswort und Strang, stehen nie im Bogen, auch nicht in der
+    Gegenprobe; gezählt werden sie."""
+    vorlagen = [_vorlage(f"{20 + i}/2026", t, stationen=[_station(MOB)]) for i, t in enumerate(PERSONEN)]
+    vorlagen.append(_vorlage("40/2026", "Radweg an der Probestraße", stationen=[_station(BV)]))
+    papiere = {v["source_object"]: v for v in vorlagen}
+    ziel = tmp_path / "bogen"
+    bogen = dossier.stichprobe(dossier_thema(), papiere, _gremien(), ziel, [{"start": "2025-11-01"}])
+    text = (ziel / "pruefbogen_verkehr.tsv").read_text(encoding="utf-8")
+    assert len(bogen) == 1 and "Radweg" in text
+    for t in PERSONEN:
+        assert t not in text
+    for wort in ("Beispiel", "Wahl", "Ernennung", "Abberufung", "Nachruf", "Jubiläum", "Vorsitz"):
+        assert wort not in text, wort
+    zahlen = {(z[0], z[1]): z[2] for z in _tsv(ziel / "zahlen_verkehr.tsv")[1:]}
+    assert zahlen[("aussortiert", "Titel mit Personenbezug")] == str(len(PERSONEN))
+
+
+def dossier_thema():
+    from pipeline.themenseiten import verkehr
+    return verkehr.THEMA
 
 
 def test_rueckfall_aus_drei_dateien(tmp_path):

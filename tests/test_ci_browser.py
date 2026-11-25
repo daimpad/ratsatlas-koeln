@@ -2,8 +2,8 @@
 mit Testdaten im Browser, parallel zum Job „test“, mit festen Versionen von Playwright und axe-core und ohne Anfrage an
 die Stadt; dazu die Syntaxprüfung aller Skripte im Job „test“ und tools/wcag_pruefen.js (Größe und Port aus der
 Umgebung, Exit-Code bei Befund). Themenseiten (Entscheidung 24.11.2026 (3)): zweiter Bau mit tools/testdaten.py
---themen und dem Prüfschalter RATSATLAS_THEMEN_PRUEFUNG (nur in diesem Schritt), Server auf 127.0.0.1:8791 und
-tests/browser/themen.js. Der Workflow wird ohne YAML-Bibliothek gelesen (PyYAML steht nicht in
+--themen und dem Prüfschalter RATSATLAS_THEMEN_PRUEFUNG=verkehr, Server auf 127.0.0.1:8791 und tests/browser/themen.js;
+der erste Bau mit dem Prüfschalter „aus“, unabhängig von der Freigabe im Repository. Der Workflow wird ohne YAML-Bibliothek gelesen (PyYAML steht nicht in
 requirements.txt, also nicht in GitHub Actions); wo PyYAML installiert ist, prüft ein Test die Auswertung gegen YAML.
 Alle Daten sind erfunden; keine Anfragen nach außen."""
 import json
@@ -159,7 +159,7 @@ def test_nur_leserechte_keine_geheimnisse_keine_freigaben():
     """permissions nur contents: read (oben, kein Job erweitert sie); keine Secrets, Repository-Variablen oder Token;
     im Job „browser“ keine Freigabe eines Abrufs (RATSATLAS_STADT_INFORMIERT, RATSATLAS_KONTAKT, …_ABRUF); von den
     Variablen RATSATLAS_* nur die Sperrdatei, RATSATLAS_BROWSER (Prüfbogen im Browser) und der Prüfschalter der
-    Themenseiten (test_pruefschalter_themen_nur_im_zweiten_bau)."""
+    Themenseiten (test_pruefschalter_themen_nur_in_den_beiden_bauten)."""
     assert re.findall(r"^\s*([\w-]+):\s*(read|write|none)\s*$", TEXT, re.M) == [("contents", "read")]
     assert re.search(r"^permissions:\n  contents: read\n", TEXT, re.M)
     for job in JOBS.values():
@@ -281,12 +281,11 @@ def test_befund_laesst_den_job_scheitern():
 
 
 def test_zweiter_bau_mit_themenseiten():
-    """Entscheidung 24.11.2026 (3), Antwort 5 A zum Plan vom 25.11.2026: Die Freigabe der Themenseiten bleibt im
-    Repository aus; geprüft werden sie in einem zweiten Bau mit Testdaten. Er steht nach allen Prüfungen des ersten
-    Baus (dieser, die drei Browserprüfungen, die WCAG-Prüfung und der Prüfbogen bleiben ohne Themenseiten wie die
-    veröffentlichte Seite), läuft, solange Chromium installiert ist, mit der lokalen Kette und --themen in den eigenen
-    Ordner _site_themen; der Server lauscht nur auf 127.0.0.1:8791 und fragt die Themenseite ab; themen.js läuft, solange
-    sie antwortet."""
+    """Entscheidung 24.11.2026 (3), Antwort 5 A zum Plan vom 25.11.2026: Die Themenseiten prüft ein zweiter Bau mit
+    Testdaten, mit und ohne Freigabe im Repository. Er steht nach allen Prüfungen des ersten Baus (dieser, die drei
+    Browserprüfungen, die WCAG-Prüfung und der Prüfbogen laufen ohne Themenseiten), läuft, solange Chromium installiert
+    ist, mit der lokalen Kette und --themen in den eigenen Ordner _site_themen; der Server lauscht nur auf
+    127.0.0.1:8791 und fragt die Themenseite ab; themen.js läuft, solange sie antwortet."""
     namen = [s.get("name") for s in _browser_schritte()]
     neu = ["Seite mit Themenseiten bauen (Testdaten)", "Seite mit Themenseiten unter 127.0.0.1:8791", "Themenseiten im Browser"]
     assert namen[-3:] == neu, namen[-3:]
@@ -309,20 +308,22 @@ def test_zweiter_bau_mit_themenseiten():
     assert "_site_themen/" in (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
 
 
-def test_pruefschalter_themen_nur_im_zweiten_bau():
-    """Der Prüfschalter RATSATLAS_THEMEN_PRUEFUNG umgeht die Freigabe der Themenseiten (pipeline/config.py; er wirkt nur
-    mit Testdaten in STAND.json): In tests.yml steht er nur unter env des Schritts „Seite mit Themenseiten bauen
-    (Testdaten)“ mit dem Wert „verkehr“, in keinem anderen Schritt (auch nicht im Job „test“) und in keinem anderen
-    Workflow, aktiv oder inaktiv (pages.yml, live.yml, kacheln.yml, .github/workflows-inaktiv/)."""
-    assert config.THEMEN_PRUEFUNG == "RATSATLAS_THEMEN_PRUEFUNG"
+def test_pruefschalter_themen_nur_in_den_beiden_bauten():
+    """Der Prüfschalter RATSATLAS_THEMEN_PRUEFUNG setzt die Freigabe der Themenseiten für einen Lauf (pipeline/config.py;
+    er wirkt nur mit Testdaten in STAND.json): In tests.yml steht er nur unter env der beiden Bauschritte, im ersten mit
+    „aus“ (Testdaten ohne Mobilitätsausschuss nach § 17; so bleibt der erste Bau gleich, wenn die Freigabe im Repository
+    eingeschaltet wird), im zweiten mit „verkehr“; in keinem anderen Schritt (auch nicht im Job „test“) und in keinem
+    anderen Workflow, aktiv oder inaktiv (pages.yml, live.yml, kacheln.yml, .github/workflows-inaktiv/)."""
+    assert config.THEMEN_PRUEFUNG == "RATSATLAS_THEMEN_PRUEFUNG" and config.THEMEN_AUS == "aus"
     gefunden = []
     for name, job in JOBS.items():
         for s in _schritte(job):
             if config.THEMEN_PRUEFUNG in s.get("env", {}) or config.THEMEN_PRUEFUNG in s.get("run", ""):
                 gefunden.append((name, s.get("name"), s.get("env", {}).get(config.THEMEN_PRUEFUNG)))
-    assert gefunden == [("browser", "Seite mit Themenseiten bauen (Testdaten)", "verkehr")], gefunden
+    assert gefunden == [("browser", "Seite mit Testdaten bauen", "aus"),
+                        ("browser", "Seite mit Themenseiten bauen (Testdaten)", "verkehr")], gefunden
     zeilen = [z for z in TEXT.splitlines() if config.THEMEN_PRUEFUNG in z and not z.strip().startswith("#")]
-    assert zeilen == ["          RATSATLAS_THEMEN_PRUEFUNG: verkehr"], zeilen
+    assert zeilen == ["          RATSATLAS_THEMEN_PRUEFUNG: aus", "          RATSATLAS_THEMEN_PRUEFUNG: verkehr"], zeilen
     andere = [p for d in ("workflows", "workflows-inaktiv") for p in sorted((ROOT / ".github" / d).glob("*.y*ml"))
               if p != WORKFLOW]
     assert {p.name for p in andere} >= {"pages.yml", "live.yml", "kacheln.yml"}

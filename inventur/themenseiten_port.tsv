@@ -67,7 +67,7 @@ pipeline/dossier.py: Thema.vergleich_text	entfällt	wie vergleich	–
 pipeline/dossier.py: Thema.stichprobe_je_strang	übernommen	Sollzahl je Strang im Prüfbogen	pipeline/dossier.py: Thema.stichprobe_je_strang
 pipeline/dossier.py: Thema.stichprobe_ohne	übernommen	Gegenprobe; dazu neu stichprobe_nur_gremium und stichprobe_folge	pipeline/dossier.py: Thema.stichprobe_ohne, stichprobe_nur_gremium, stichprobe_folge
 pipeline/dossier.py: Thema.kandidat	übernommen	Wörter der Gegenprobe	pipeline/dossier.py: Thema.kandidat
-pipeline/dossier.py: Thema.ausschluss	Kölner Anpassung	gilt vor allen Regeln, auch vor Folgevorlagen	pipeline/dossier.py: Thema.ausschluss, zuordnen, _eigen
+pipeline/dossier.py: Thema.ausschluss	Kölner Anpassung	gilt vor allen Regeln, auch vor Folgevorlagen; in Köln dazu Personalien und Sitzungsorganisation (verkehr.PERSONALIEN)	pipeline/dossier.py: Thema.ausschluss, zuordnen, _eigen, _im_zeitraum; pipeline/themenseiten/verkehr.py: AUSSCHLUSS, PERSONALIEN
 pipeline/dossier.py: Thema.punkt_gremien	Kölner Anpassung	Auswahl statt Namen: Rat, Hauptausschuss (§ 7), Mobilitätsausschuss (§ 17); dazu punkt_text (Antwort 2 A)	pipeline/dossier.py: Thema.punkt_gremien, Thema.punkt_text
 pipeline/dossier.py: Thema.nach_bezirk	übernommen	Gliederung nach Stadtbezirk	pipeline/dossier.py: Thema.nach_bezirk
 pipeline/dossier.py: Thema.farben	übernommen	Gestaltung der Kachel und des Kopfbands	pipeline/dossier.py: Thema.farben
@@ -75,16 +75,16 @@ pipeline/dossier.py: Thema.symbol	übernommen	Linien-Symbol	pipeline/dossier.py:
 pipeline/dossier.py: Thema.produktbereich	Kölner Anpassung	auf den Themenseiten ungenutzt; bleibt für die abgeschalteten Module haushaltsseite.py und haushaltsplan.py	pipeline/dossier.py: Thema.produktbereich
 pipeline/dossier.py: Thema.fachausschuss	Kölner Anpassung	Auswahl (Gruppe „ausschuss“, Paragraf) statt Name; Kennung zur Laufzeit aus gremien.json; Gremium-Tor, „Wer berät mit“ und Kachel; ohne eindeutigen Eintrag kein Tor (Befund in check)	pipeline/dossier.py: Thema.fachausschuss, fachausschuss, Lauf.tor
 pipeline/dossier.py: Thema.transkript_begriffe	entfällt	keine Mitschnitte und Transkripte	–
-pipeline/dossier.py: Thema.stichprobe_pfad	entfällt	Prüfbogen nie unter data/export (würde mit der Seite und im Datenpaket ausgeliefert); Ausgabe nur außerhalb des Repositorys	tools/themen_pruefbogen.py; pipeline/dossier.py: stichprobe
+pipeline/dossier.py: Thema.stichprobe_pfad	entfällt	Prüfbogen nie unter data/export (würde mit der Seite und im Datenpaket ausgeliefert); Ausgabe nur außerhalb jedes Git-Checkouts (auch eines anderen Checkouts oder Worktrees)	tools/themen_pruefbogen.py; pipeline/dossier.py: stichprobe, in_keinem_checkout
 pipeline/dossier.py: _stamm	entfällt	Nummernform der Vorlage mit Zusätzen; Köln über Beziehungen zwischen Vorlagen	pipeline/dossier.py: verfahren
 pipeline/dossier.py: _wort	übernommen	ganzes Wort im Grund	pipeline/dossier.py: _wort
 pipeline/dossier.py: _verfahren	Kölner Anpassung	Wurzel über superordinated, Weitergabe nur nach unten über subordinated, ohne mehrdeutige Drucksachen, mit Schutz gegen Zyklen; Grund „Folgevorlage zu <DS>“; Zahlen für das Log (Antwort 1 A)	pipeline/dossier.py: verfahren
 pipeline/dossier.py: _zustaendig	entfällt	nie über die Federführung (amt, responsibility, underDirectionOf; Entscheidung 24.11.2026 (3))	–
 pipeline/dossier.py: _thema	entfällt	nie über das abgeleitete Thema (topics.py)	–
-pipeline/dossier.py: zuordnen	Kölner Anpassung	Reihenfolge Ausschluss, Folgevorlage, Zeitraum, Regeln; Gremium-Tor über die Kennung, abgesagte Sitzungen nach export.absage zählen nicht; liest nur Felder der Gebietsdateien (gleiche Zuordnung im Prüfbogen)	pipeline/dossier.py: zuordnen, _eigen, beraten_in, lauf
+pipeline/dossier.py: zuordnen	Kölner Anpassung	Reihenfolge Ausschluss, Zeitraum (auch für Folgevorlagen), Folgevorlage, Regeln; Thema.tor_ausschluss für jede Regel mit Gremium-Tor; Gremium-Tor über die Kennung, abgesagte Sitzungen nach export.absage zählen nicht; liest nur Felder der Gebietsdateien (gleiche Zuordnung im Prüfbogen)	pipeline/dossier.py: zuordnen, _eigen, beraten_in, lauf
 pipeline/dossier.py: _eintrag	Kölner Anpassung	ohne amt und seite; letzte und nächste Beratung nach proc.massgeblich (Entscheidungen 17.11.2026 (15), (16))	pipeline/dossier.py: _eintrag, _stationen
 pipeline/dossier.py: bahn	Kölner Anpassung	über Kennung, Gruppe und Paragraf aus gremien.json; ohne Kennung Bezirksvertretung nach dem Namensanfang, sonst FACH; immer eine Bahn aus t.bahnen (kein Abbruch bei unbekanntem Gremium)	pipeline/dossier.py: bahn
-pipeline/dossier.py: _punkt	Kölner Anpassung	Bahn über die Kennung der Station; je Beratung abgesagt nach export.absage (oparl, name); ohne amt	pipeline/dossier.py: _punkt
+pipeline/dossier.py: _punkt	Kölner Anpassung	Lage nur aus den Beratungen in den Gremien des Bildes (Rat, Hauptausschuss, Mobilitätsausschuss; Antwort 2 A), Bahn über die Kennung der Station; je Beratung abgesagt nach export.absage (oparl, name); ohne amt	pipeline/dossier.py: _punkt
 pipeline/dossier.py: _frist	entfällt	keine berechneten Fristen (Entscheidung 24.11.2026 (3)); Mitwirken nach „Mitmachen in Köln“	–
 pipeline/dossier.py: bezirk	übernommen	Ortsbezüge einschließlich district_from_committee; Gruppen als Konstante	pipeline/dossier.py: bezirk, STADTBEZIRK_GRUPPEN
 pipeline/dossier.py: sitzung_im_thema	Kölner Anpassung	statt Namen: Sitzungen aus gremien.json (naechste_sitzung, folgende_sitzung); Kalender über die Organisationen der Sitzungen	pipeline/dossier.py: sitzungen; pipeline/export.py: _themenseiten
@@ -117,7 +117,7 @@ pipeline/dossier.py: _svg	übernommen	Symbol mit aria-hidden und focusable=false
 pipeline/dossier.py: _kachel	Kölner Anpassung	nächste Sitzung des Fachausschusses aus gremien.json, ohne Frist; ohne Haushaltszeile; Einzahl bei einer Vorlage und einem Strang	pipeline/dossier.py: _kachel, _anzahl
 pipeline/dossier.py: uebersicht	Kölner Anpassung	Einzahl bei einem Thema (Lead, Zahlen, Beschreibung); Kölner Lead ohne Haushalt; Marke config.SEITENNAME	pipeline/dossier.py: uebersicht
 pipeline/dossier.py: entwurf	entfällt	Prüfbogen ohne Datenbank aus dem Datenpaket	tools/themen_pruefbogen.py: vorlagen
-pipeline/dossier.py: stichprobe	Kölner Anpassung	Ziehung geschichtet wie die Vorlage (random.Random(2026)), dazu nur über das Gremium und Folgevorlagen; Ausgabe nur außerhalb des Repositorys; laufende Nummer statt Drucksache, Titel nach der Titelmaske mit <DS>, Eingaben ohne Titel, Titel mit Personenbezug nur gezählt; Schlüssel- und Zähldatei	pipeline/dossier.py: stichprobe, PERSONENBEZUG, DRUCKSACHE, SPALTEN_PRUEFBOGEN; tools/themen_pruefbogen.py
+pipeline/dossier.py: stichprobe	Kölner Anpassung	Ziehung geschichtet wie die Vorlage (random.Random(2026)), dazu nur über das Gremium und Folgevorlagen; Ausgabe nur außerhalb jedes Git-Checkouts; laufende Nummer statt Drucksache, Titel nach der Titelmaske mit <DS>, Eingaben ohne Titel, Titel mit Personenbezug nur gezählt; Schlüssel- und Zähldatei	pipeline/dossier.py: stichprobe, PERSONENBEZUG, DRUCKSACHE, SPALTEN_PRUEFBOGEN; tools/themen_pruefbogen.py
 pipeline/prozessbild.py: W, LINKS, RECHTS, OBEN, BAHN	Kölner Anpassung	Bild ohne Bahnnamen: schmaler, kleiner linker Rand; Bild in festen Pixelmaßen, Zeilen der Bahnenspalte mit OBEN und BAHN	pipeline/prozessbild.py: W, LINKS, RECHTS, OBEN, BAHN, UNTEN, hoehe
 pipeline/prozessbild.py: MONATE, MONATE_LANG	übernommen	Monatsnamen der Achse	pipeline/prozessbild.py: MONATE, MONATE_LANG
 pipeline/prozessbild.py: ART	übernommen	entschieden, beraten, offen	pipeline/prozessbild.py: ART
@@ -130,7 +130,7 @@ pipeline/prozessbild.py: _datum	übernommen	TT.MM.JJJJ	pipeline/prozessbild.py: 
 pipeline/prozessbild.py: _icon	Kölner Anpassung	focusable="false" am Symbol	pipeline/prozessbild.py: _icon
 pipeline/prozessbild.py: _zeile	übernommen	bahn() liefert immer eine Bahn aus t.bahnen	pipeline/prozessbild.py: _zeile
 pipeline/prozessbild.py: _ziel	übernommen	Link mit aria-label und title, data-ziel und data-strang	pipeline/prozessbild.py: _ziel
-pipeline/prozessbild.py: svg	Kölner Anpassung	ohne Bahnnamen und Legende im Bild, ohne Phasen, Beratungsfenster und Fristlinien; feste Pixelmaße; Hand-Symbol über use; „laut Sitzungsnamen verschoben“ im Titel der Sitzung	pipeline/prozessbild.py: svg, _hand
+pipeline/prozessbild.py: svg	Kölner Anpassung	ohne Bahnnamen und Legende im Bild, ohne Phasen, Beratungsfenster und Fristlinien; feste Pixelmaße; Hand-Symbol über use; „laut Sitzungsnamen verschoben“ im Titel der Sitzung; statt Ausweichen nach rechts Plätze je Bahn mit zwei Reihen und Sammelmarken mit Zahl (lage, _platz, _marke): keine Überdeckung, keine Verschiebung über den Datenstand oder aus dem Bild	pipeline/prozessbild.py: svg, lage, _platz, _marke
 pipeline/prozessbild.py: svg, Bahnnamen im Bild	Kölner Anpassung	stehende HTML-Spalte neben dem verschiebbaren Rahmen (bleibt beim Verschieben stehen)	pipeline/prozessbild.py: bahnen_spalte
 pipeline/prozessbild.py: svg, Legende im Bild	Kölner Anpassung	Legende als HTML-Liste unter dem Bild	pipeline/prozessbild.py: legende, _zeichen
 pipeline/prozessbild.py: bild_name	entfällt	kein Bild zum Teilen	–
@@ -142,7 +142,7 @@ pipeline/prozessbild.py: _karte	übernommen	Karte zum Handeln	pipeline/prozessbi
 pipeline/prozessbild.py: aufrufe	Kölner Anpassung	Kalender, Feed, Sitzung besuchen mit Livestream des Rates, Frage oder Anregung nach „Mitmachen in Köln“, Auf der Karte (nur Ebenen im Bau); ohne „Nächste offene Frist“	pipeline/prozessbild.py: aufrufe; pipeline/mitwirken.py: link, KARTE_TITEL, KARTE_TEXT, karte_aktionen
 pipeline/prozessbild.py: liste	Kölner Anpassung	Einzahl („Ein Beschluss oder Antrag im Bild“); ohne Punkte ein Satz statt leerer Liste	pipeline/prozessbild.py: liste
 pipeline/prozessbild.py: schalter	übernommen	Schalter mit h3, ohne Skript verborgen	pipeline/prozessbild.py: schalter
-pipeline/prozessbild.py: detaildaten	Kölner Anpassung	ohne Fristen, Federführung, Phasen und Terminplan; Pfade über EXPORT_PFAD; Sitzungen mit hinweis; „</“ maskiert	pipeline/prozessbild.py: detaildaten
+pipeline/prozessbild.py: detaildaten	Kölner Anpassung	ohne Fristen, Federführung, Phasen und Terminplan; Pfade über EXPORT_PFAD; Sitzungen mit hinweis; Sammelmarken (gruppen); „<“, „>“ und „&“ als JSON-Escape (statt nur „</“)	pipeline/prozessbild.py: detaildaten
 pipeline/prozessbild.py: abschnitt	Kölner Anpassung	Akkordeon „So ist das Bild gezeichnet“ mit Kölner Text; Raster .pb-zeitleiste aus Bahnenspalte und Rahmen; Legende unter dem Bild; ohne Link „Bild zum Teilen“	pipeline/prozessbild.py: abschnitt
 site/thema.js: Startverschiebung (data-start)	übernommen	bezieht sich nur auf das Bild im Rahmen; die Bahnnamen stehen daneben	site/thema.js: Kopf
 site/thema.js: Kommentar mit Beispiel-Drucksache	entfällt	keine Drucksache der Vorlage im Kölner Code	site/thema.js: Kopf
@@ -154,7 +154,7 @@ site/thema.js: inhalt (Sitzung)	Kölner Anpassung	ohne berechnete Frist und ohne
 site/thema.js: inhalt (Phase)	entfällt	kein Haushalt, keine Phasen	–
 site/thema.js: hashLesen	übernommen	Zustand aus dem Seitenlink (#auswahl=, &straenge=)	site/thema.js: hashLesen
 site/thema.js: hashSchreiben	übernommen	Zustand in den Seitenlink (replaceState)	site/thema.js: hashSchreiben
-site/thema.js: zeigen	übernommen	Detailfeld mit Ansage (aria-live), der Fokus bleibt am gewählten Ziel	site/thema.js: zeigen
+site/thema.js: zeigen	Kölner Anpassung	Detailfeld mit Ansage (aria-live), der Fokus bleibt am gewählten Ziel; Sammelmarken mit Liste, „Angaben“ und „Zurück zur Liste“; Feld ins Fenster gerollt, wenn es außerhalb liegt	site/thema.js: zeigen, sammlung, eintragZeigen
 site/thema.js: schliessen	übernommen	Esc und „Schließen“, Fokus zurück	site/thema.js: schliessen
 site/thema.js: filtern	übernommen	Stränge im Bild aus- und einblenden	site/thema.js: filtern
 site/thema.js: hervorheben	übernommen	Bild und Liste gegenseitig hervorheben	site/thema.js: hervorheben
@@ -169,7 +169,7 @@ site/page.css: .pb-breit, .pb-breit .pb-svg	Kölner Anpassung	das Herausragen au
 site/page.css: (keine Spalte für Bahnnamen)	Kölner Anpassung	neu: stehende Bahnenspalte, bis 600 px 92 px breit	site/page.css: .pb-bahnen, .pb-bahn, .pb-bahn:nth-child(odd), @media (max-width: 600px)
 site/page.css: (keine Legende außerhalb des Bildes)	Kölner Anpassung	neu: Legende als HTML-Liste, Zeichen für Screenreader ausgeblendet	site/page.css: .pb-legende-bild, .pb-legende-bild li, .pb-zeichen
 site/page.css: .pb-liste ol, .pb-liste li, li.pb-hell, li.pb-gedimmt, .pb-nr, .pb-entschieden, .pb-beraten, .pb-offen	übernommen	Textfassung der Zeitleiste	site/page.css
-site/page.css: .pb-karten, .pb-karte, .pb-karte h3, .pb-karte p, .pb-aktionen, .pb-knopf, .pb-knopf-leise	übernommen	Karten zum Handeln	site/page.css
+site/page.css: .pb-karten, .pb-karte, .pb-karte h3, .pb-karte p, .pb-aktionen, .pb-knopf, .pb-knopf-leise	Kölner Anpassung	Karten zum Handeln; Spalten mit minmax(min(280px, 100%), 1fr), damit sie bei 320 px nicht über die Seite ragen	site/page.css
 site/page.css: .pb-ziel (hover, focus, focus-visible, pb-aktiv, pb-hell, pb-gedimmt)	übernommen	sichtbarer Fokus der Ziele	site/page.css
 site/page.css: .pb-filter, .pb-filter[hidden], .page .pb-filter-text, .pb-schalter (aria-pressed)	übernommen	Schalter mit Überschrift	site/page.css
 site/page.css: .pb-detail, .pb-detail-kopf, .pb-detail h3, h4, .pb-schliessen, .pb-name-gross, .pb-angaben (mit @media), .pb-abgeleitet, .pb-folge, .pb-folge-datum, .pb-hinweis	übernommen	Detailfeld	site/page.css
@@ -200,7 +200,7 @@ site/page.css: .page h2 + p + .meta-acc	übernommen	Abstand nach dem einleitende
 pipeline/export.py: Themenseiten in export (Daten, Kalender, Bild, Feed)	Kölner Anpassung	nur freigegebene Themen; setzt gremien.json voraus; Kalender über die Organisationen der Sitzungen; kein Bild	pipeline/export.py: _themenseiten
 pipeline/export.py: _meetings, Feld video	entfällt	keine Mitschnitte	–
 pipeline/export.py: _aktuell mit berechneter Frist	entfällt	„Aktuell in Köln“ ohne berechnete Frist	pipeline/export.py: _aktuell
-pipeline/publish.py: write_topic_feed	Kölner Anpassung	Kennung und Titel über config (TAG, SEITENNAME), Pfad über EXPORT_PFAD	pipeline/publish.py: write_topic_feed
+pipeline/publish.py: write_topic_feed	Kölner Anpassung	Kennung und Titel über config (TAG, SEITENNAME), Pfad über EXPORT_PFAD; Vorlagen nach Schlüssel der Zuordnung (export._themenseiten), nicht nach Drucksache	pipeline/publish.py: write_topic_feed
 pipeline/publish.py: write_calendar (Themenkalender)	Kölner Anpassung	Absage nach export.absage wie termine.ics	pipeline/publish.py: write_calendar
 pipeline/seo.py: write (Themenseiten, Übersicht)	Kölner Anpassung	nur freigegebene Themen; Übersicht nach den Seiten und nur mit mindestens einem Thema	pipeline/seo.py: write
 pipeline/rssseite.py: Feeds je Thema	Kölner Anpassung	nur freigegebene Themen	pipeline/rssseite.py: _feeds, body, write
@@ -211,7 +211,7 @@ pipeline/__main__.py: Schritte <thema>-stichprobe	entfällt	Prüfbogen ohne Date
 pipeline/check.py: (keine Prüfung der Themenseiten)	Kölner Anpassung	neu: genau die freigegebenen Themen, erlaubte Schlüssel, keine Personenfelder und entfallenen Felder, Sitzungen und „Wer berät mit“ wie gremien.json, Drucksachen und Titel wie suche.json, Themenkalender nach export.absage, Prüfschalter ohne Testdaten als Befund	pipeline/check.py: dossiers, DOSSIER_SCHLUESSEL, DOSSIER_VERBOTEN
 requirements.txt, pipeline/technikseite.py: cairosvg	entfällt	kein PNG zum Teilen	–
 data/LICENSE-DATA.md: Dateien der Themenseiten	Kölner Anpassung	Abschnitt nur mit Freigabe: dossiers/<thema>.json, .ics, .xml mit Kölner Quellen und Namensnennung	data/LICENSE-DATA.md: nur-mit: themenseiten
-tools/testdaten.py: (keine Testdaten für Themenseiten)	Kölner Anpassung	neu: Option --themen (Gremien mit § 17 und § 7, Vorlagen mit Fallen, Folgen, Eingaben, Beziehungen, Sitzungen relativ zum Tag); ohne Option unverändert	tools/testdaten.py: --themen
+(kein tools/ und keine Testdaten für Themenseiten in der Vorlage)	Kölner Anpassung	neu: Option --themen (Gremien mit § 17 und § 7, Vorlagen mit Fallen, Folgen, Eingaben, Beziehungen, Sitzungen relativ zum Tag); ohne Option unverändert	tools/testdaten.py: --themen
 site/index.html: Menü „Themen“ mit Liste der Themen	Kölner Anpassung	Karte „Themenseiten“ ohne Liste der Themen; ohne Freigabe entfernt seo die Karte	site/index.html: Karte mit data-funktion="themenseiten"
 site/index.html: Beschreibung der Themenseiten und Einträge unter „Was ist neu?“	entfällt	Themen und Ereignisse der Vorlage	–
 .github/workflows/tests.yml: Browserprüfung der Themenseiten auf Rohdaten	Kölner Anpassung	zweiter Bau mit Testdaten und Prüfschalter nach allen Prüfungen des ersten Baus, Server 127.0.0.1:8791; keine Rohdaten der Stadt in CI	.github/workflows/tests.yml; tests/test_ci_browser.py
@@ -232,7 +232,7 @@ tests/test_prozessbild.py: test_bild	Kölner Anpassung	ohne Bahnnamen und Legend
 tests/test_prozessbild.py: test_links_nur_auf_der_seite	übernommen	Links nur mit root, Rückfall auf Original und #sitzungen	tests/test_prozessbild_koeln.py: test_links_nur_mit_root
 tests/test_prozessbild.py: test_sitzung_mit_tagesordnung_und_terminplan	Kölner Anpassung	Tagesordnung und Hinweis verschoben, kein Terminplan	tests/test_prozessbild_koeln.py: test_links_nur_mit_root
 tests/test_prozessbild.py: test_detailfeld_daten_und_schalter	übernommen	Detaildaten und Schalter nur für Stränge mit Punkten	tests/test_prozessbild_koeln.py: test_detaildaten_ohne_frist_und_federfuehrung, test_schalter_nur_fuer_straenge_mit_punkten
-tests/test_prozessbild.py: test_detailfeld_daten_ohne_skriptende	übernommen	kein „</“ in den Detaildaten	tests/test_prozessbild_koeln.py: test_detaildaten_ohne_frist_und_federfuehrung
+tests/test_prozessbild.py: test_detailfeld_daten_ohne_skriptende	Kölner Anpassung	kein „<“, „>“ oder „&“ in den Detaildaten (auch „<!--<script>“)	tests/test_prozessbild_koeln.py: test_detaildaten_ohne_frist_und_federfuehrung
 tests/test_prozessbild.py: test_aufrufe_und_balken	Kölner Anpassung	Karten ohne Frist, mit Mitmachen; Balken mit HTML-Legende	tests/test_prozessbild_koeln.py: test_karten_ohne_frist_mit_mitmachen, test_stand_balken_und_legende_als_html
 tests/test_prozessbild.py: test_bild_zum_teilen	entfällt	kein Bild zum Teilen	–
 tests/test_themenseiten.py: KulturUnveraendert.test_daten	entfällt	Zeichenvergleich mit Referenzdateien eines Bonner Themas	–

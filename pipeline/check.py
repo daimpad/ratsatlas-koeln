@@ -1653,8 +1653,8 @@ def dossiers(base=None, umgebung=None):
     befunde, fehlend = [], []
     print("\nThemenseiten (dossiers/, Freigabe „themenseiten“ und config.THEMENSEITEN_FREIGEGEBEN)")
     umgebung = os.environ if umgebung is None else umgebung
-    pruefschalter = config.themen_pruefung(umgebung)
-    if umgebung.get(config.THEMEN_PRUEFUNG, "").strip() and not pruefschalter:
+    pruefschalter = config.themen_pruefung(umgebung)   # None: nicht gesetzt oder ohne Testdaten; (): „aus“
+    if umgebung.get(config.THEMEN_PRUEFUNG, "").strip() and pruefschalter is None:
         befunde.append(f"Themenseiten: {config.THEMEN_PRUEFUNG} gesetzt, aber STAND.json nennt keine Testdaten "
                        "(Schalter wirkungslos): 1")
     try:

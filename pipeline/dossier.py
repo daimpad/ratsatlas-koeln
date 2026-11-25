@@ -57,7 +57,7 @@ class Regel:
     - titel: Wort im Titel (re.Pattern); ohne titel gilt die Regel nur mit gremium_tor (nur über das Gremium)
     - bedingung: ein zweites Wort, das der Titel zusätzlich nennen muss
     - gremium_tor: nur für Vorlagen mit Beratung im Fachausschuss des Themas (Thema.fachausschuss; abgesagte Sitzungen
-      zählen nicht); ohne titel nur, wenn der Titel Thema.tor_ausschluss nicht trifft"""
+      zählen nicht) und nur, wenn der Titel Thema.tor_ausschluss nicht trifft (mit und ohne titel)"""
     strang: str
     titel: re.Pattern = None
     bedingung: re.Pattern = None
@@ -87,7 +87,7 @@ class Thema:
     pruefung_text: str        # Ergebnis des Prüfbogens; Pflicht für die Freigabe (themenseiten.freigegeben)
     nicht_gezeigt: list       # HTML
     fachausschuss: Auswahl = None   # Gremium-Tor, „Wer berät mit“ und Kachel; ohne eindeutigen Eintrag kein Tor
-    tor_ausschluss: re.Pattern = None   # Titel, die nur über das Gremium nie zugeordnet werden
+    tor_ausschluss: re.Pattern = None   # Titel, die über eine Regel mit Gremium-Tor nie zugeordnet werden
     folgevorlagen: bool = True
     karten_links: tuple = ()  # (Art, Schlüssel, Text): ("ebene", Schlüssel der Kartenebene, …), ("gremium", None, …)
     pruefung_datum: str = ""  # Tag des Prüfbogens im Gespräch (ISO); Pflicht für die Freigabe
@@ -159,23 +159,28 @@ def beraten_in(p, keys):
     return bool(keys) and any(s.get("gremium_key") in keys and not absage(s) for s in p.get("process") or ())
 
 
+def _im_zeitraum(t, p, lauf_):
+    """Ausschluss (Titel) und Zeitraum (ab lauf_.seit): gilt für jede Vorlage, auch für Folgevorlagen."""
+    name = p.get("name") or ""
+    return not (t.ausschluss and t.ausschluss.search(name)) and (p.get("date") or "") >= lauf_.seit
+
+
 def _eigen(t, p, lauf_):
     """Zuordnung nur aus der Vorlage selbst (ohne Folgevorlagen): Ausschluss, Zeitraum, Regeln."""
     name = p.get("name") or ""
-    if t.ausschluss and t.ausschluss.search(name):
-        return None
-    if (p.get("date") or "") < lauf_.seit:
+    if not _im_zeitraum(t, p, lauf_):
         return None
     tor = beraten_in(p, {lauf_.tor} if lauf_.tor else set())
     vor = f"Beratung im {lauf_.tor_name}" if tor else None
+    tor_aus = bool(t.tor_ausschluss and t.tor_ausschluss.search(name))
     for r in t.regeln:
-        if r.gremium_tor and not tor:
+        if r.gremium_tor and (not tor or tor_aus):
             continue
         mb = r.bedingung and r.bedingung.search(name)
         if r.bedingung and not mb:
             continue
         if r.titel is None:
-            if r.gremium_tor and not (t.tor_ausschluss and t.tor_ausschluss.search(name)):
+            if r.gremium_tor:
                 return r.strang, vor
             continue
         m = r.titel.search(name)
@@ -188,9 +193,9 @@ def _eigen(t, p, lauf_):
 
 def zuordnen(t, p, lauf_, folge=None):
     """(Strang, Grund) einer Vorlage oder None; jede Vorlage gehört zu höchstens einem Strang. Reihenfolge: Ausschluss,
-    Folgevorlage (`folge` aus verfahren, Schlüssel source_object), Zeitraum, Regeln."""
-    name = p.get("name") or ""
-    if t.ausschluss and t.ausschluss.search(name):
+    Zeitraum (auch für Folgevorlagen: die Seite zeigt nur Vorlagen seit Beginn der Wahlperiode), Folgevorlage (`folge`
+    aus verfahren, Schlüssel source_object), Regeln."""
+    if not _im_zeitraum(t, p, lauf_):
         return None
     if folge and p.get("source_object") in folge:
         return folge[p["source_object"]]
@@ -203,8 +208,9 @@ def verfahren(t, papiere, lauf_):
     Vorlagen (`papiere`: {Schlüssel: Vorgang}), beide Richtungen zusammen; jede Beziehung nur, wenn beide Drucksachen
     genau einmal vorkommen (mehrdeutige Drucksache: keine Weitergabe). Wurzel ist eine Vorlage ohne übergeordnete
     Vorlage; hat sie selbst einen Strang (_eigen, also ab Beginn des Zeitraums), erben ihn alle über subordinated
-    erreichbaren Vorlagen, nur nach unten und mit Schutz gegen Zyklen. Erreicht eine Vorlage Wurzeln verschiedener
-    Stränge oder mehrere Wurzeln, erbt sie nichts (gezählt)."""
+    erreichbaren Vorlagen, nur nach unten und mit Schutz gegen Zyklen, soweit sie selbst im Zeitraum liegen und der
+    Ausschluss sie nicht trifft (_im_zeitraum). Erreicht eine Vorlage mehrere Wurzeln mit eigenem Strang, erbt sie nichts
+    (gezählt); Wurzeln ohne Strang zählen dabei nicht."""
     je_ref = defaultdict(list)
     for k, p in papiere.items():
         je_ref[p.get("reference")].append(k)
@@ -240,6 +246,8 @@ def verfahren(t, papiere, lauf_):
                     offen.append(c)
     folge = {}
     for c, ws in erbe.items():
+        if not _im_zeitraum(t, papiere[c], lauf_):
+            continue
         if len(ws) == 1:
             w = next(iter(ws))
             folge[papiere[c].get("source_object") or c] = (_eigen(t, papiere[w], lauf_)[0],
@@ -308,18 +316,21 @@ def punkt_art(art, titel=""):
     return art in actors.VERWALTUNG_TYPES and bool(VERWALTUNG_PUNKT.search(art))
 
 
-def _punkt(t, p, e, strang, gremien_je, today):
-    """Lage eines Beschlusses oder Antrags im Bild: letzte Beratung mit Ergebnis, sonst die nächste, sonst das erste
-    Gremium der Beratungsfolge am Tag der Vorlage. Dazu die Angaben des Detailfelds (Strang mit Grund, Art,
-    Beratungsfolge mit Ergebnis wörtlich aus der Quelle und Absage nach export.absage)."""
+def _punkt(t, p, e, strang, gremien_je, today, im_bild=None):
+    """Lage eines Beschlusses oder Antrags im Bild, nur aus den Beratungen in den Gremien des Bildes (`im_bild`:
+    Kennungen aus t.punkt_gremien; Antwort 2 A zum Plan: Beratungen in Bezirksvertretungen stehen in Liste, Detailfeld
+    und Strang, nicht als Punkt): letzte Beratung mit Ergebnis dort, sonst die nächste dort, sonst das erste dieser
+    Gremien am Tag der Vorlage. Dazu die Angaben des Detailfelds (Strang mit Grund, Art, ganze Beratungsfolge mit
+    Ergebnis wörtlich aus der Quelle und Absage nach export.absage)."""
     from .export import absage
-    last, naechste = _stationen(p, today)
+    lage = p if im_bild is None else {**p, "process": [s for s in p["process"] if s.get("gremium_key") in im_bild]}
+    last, naechste = _stationen(lage, today)
     if last:
         st, datum = last, proc.local_day(last.get("start_date")) or e["date"]
     elif naechste:
         st, datum = naechste, proc.local_day(naechste["start_date"])
     else:
-        st, datum = next((s for s in p["process"] if s.get("gremium")), None), e["date"]
+        st, datum = next((s for s in lage["process"] if s.get("gremium")), None), e["date"]
     gremium = st.get("gremium") if st else None
     art = "entschieden" if e["stand"] == "entschieden" else "offen" if e["stand"] in ("offen", "ohne Beratungsfolge") \
         else "beraten"
@@ -411,9 +422,11 @@ def weitere_gremien(papiere, gremien_je, tor):
     return [text for g, nr, text in WEITERE_GREMIEN if (g, nr) in da]
 
 
-def daten(t, cache, home, gremien_daten, meta, terms=()):
+def daten(t, cache, home, gremien_daten, meta, terms=(), zugeordnet_in=None):
     """Inhalt der Themenseite aus den Vorlagen des Exports (cache: id → Vorgang, home: id → Gebiet) und gremien.json
-    (`gremien_daten`, Inhalt der Datei); `terms`: Wahlperioden wie in zeit.json. Datenstand ist der von gremien.json."""
+    (`gremien_daten`, Inhalt der Datei); `terms`: Wahlperioden wie in zeit.json. Datenstand ist der von gremien.json.
+    `zugeordnet_in`: Menge, in die daten die Schlüssel (cache) der zugeordneten Vorlagen legt (Feed des Themas: nach
+    Vorlage, nicht nach Drucksache, weil Drucksachen in Köln teils mehrfach vergeben sind)."""
     heute = gremien_daten["meta"]["datenstand"]
     gremien_je = {e["key"]: e for e in gremien_daten["gremien"]}
     lf = lauf(t, gremien_daten, terms)
@@ -427,13 +440,15 @@ def daten(t, cache, home, gremien_daten, meta, terms=()):
                 eintrag["bezirk"] = bezirk(p)
             straenge[hit[0]].append(eintrag)
     im_bild = {e["key"] for a in t.punkt_gremien for e in gremien_auswahl(gremien_daten, a)}
-    punkte = sorted((_punkt(t, cache[r["_pid"]], r, k, gremien_je, heute) for k in t.punkt_straenge
+    punkte = sorted((_punkt(t, cache[r["_pid"]], r, k, gremien_je, heute, im_bild) for k in t.punkt_straenge
                      for r in straenge[k] if punkt_art(r["paper_type"], r["name"])
                      and beraten_in(cache[r["_pid"]], im_bild)),
                     key=lambda x: (x["date"] or "", x["reference"]))
     for i, x in enumerate(punkte, 1):
         x["nr"] = i
     zugeordnet = [cache[r["_pid"]] for rows in straenge.values() for r in rows]
+    if zugeordnet_in is not None:
+        zugeordnet_in.update(r["_pid"] for rows in straenge.values() for r in rows)
     for rows in straenge.values():
         for r in rows:
             del r["_pid"]
@@ -750,13 +765,14 @@ def _kachel(t, d):
 def uebersicht(themen, site, site_url, page):
     """Übersicht thema/ über die geschriebenen Themenseiten als Kacheln (Symbol, Farbe, Zahlen, Stränge, nächste
     Sitzung); gibt den Pfad für die Sitemap zurück, ohne Themenseiten keinen. Läuft nach write (prüft die Seiten)."""
-    kacheln, refs, stand, titel = [], set(), "", []
+    kacheln, refs, stand, titel, geprueft = [], set(), "", [], True
     for t in themen:
         src = _dossier_pfad(site, t)
         if not (site / t.pfad / "index.html").exists() or not src.exists():
             continue
         d = json.loads(src.read_text(encoding="utf-8"))
         kacheln.append(_kachel(t, d))
+        geprueft = geprueft and bool(t.pruefung_text.strip() and t.pruefung_datum.strip())
         titel.append(t.titel)
         refs |= {r["reference"] for s in d["straenge"] for r in s["vorlagen"]}
         stand = max(stand, d.get("heute") or "")
@@ -771,7 +787,7 @@ def uebersicht(themen, site, site_url, page):
       <li><strong>{len(kacheln)}</strong> {"Thema" if eins else "Themen"}</li>
       <li>Stand <strong>{_date(stand)}</strong></li>
     </ul>
-{akkordeon.mehr("Wie die Vorlagen zugeordnet sind", "<p>Die Zuordnung ist abgeleitet: feste Regeln (Beratung im Fachausschuss, Wörter im Titel, Folgevorlagen), je Vorlage mit Grund, an einer Stichprobe von Hand geprüft. Maßgeblich sind die Originale im Ratsinformationssystem.</p>")}    </div>
+{akkordeon.mehr("Wie die Vorlagen zugeordnet sind", "<p>Die Zuordnung ist abgeleitet: feste Regeln (Beratung im Fachausschuss, Wörter im Titel, Folgevorlagen), je Vorlage mit Grund" + (", an einer Stichprobe von Hand geprüft" if geprueft else "") + ". Maßgeblich sind die Originale im Ratsinformationssystem.</p>")}    </div>
     <ul class="kacheln">
 {chr(10).join(kacheln)}
     </ul>
@@ -787,10 +803,27 @@ def uebersicht(themen, site, site_url, page):
 
 # --- Prüfbogen zur Prüfung von Hand (ohne Datenbank, ohne Netz) --------------------------------------------------
 
-# Titel mit möglichem Personenbezug: vor der Ziehung aussortiert und nur gezählt (Prüfbogen im Gespräch)
-PERSONENBEZUG = re.compile(r"Benennung|Umbenennung|Ehrung|Gedenk|\bWahl\b|Bestellung|Entsendung|Nachbesetzung|"
-                           r"Umbesetzung|sachkundig|Mitglied|Herr|Frau|Dr\.|Prof\.", re.I)
+# Titel mit möglichem Personenbezug: vor der Ziehung aussortiert und nur gezählt (Prüfbogen im Gespräch). Wahlen auch im
+# Plural und zusammengesetzt (Neuwahl, Wiederwahl, Abwahl, Wahlvorschlag), Ämter und Anlässe, die Personen nennen. Keine
+# Regel über großgeschriebene Wörter: Im Deutschen stehen Hauptwörter groß, sie träfe fast jeden Titel
+PERSONENBEZUG = re.compile(r"Benennung|Umbenennung|Ehrung|Ehrenbürger|Ehrenamtspreis|Gedenk|Nachruf|Jubiläum|"
+                           r"(?<![a-zäöüß])(?:Neu|Wieder|Ab|Nach)?[Ww]ahl(?:en|vorschlag|vorschläge)?\b|Ernennung|"
+                           r"Abberufung|Berufung|Beigeordnet|Vorsitz|Geschäftsführ|Bestellung|Entsendung|"
+                           r"(?:Nach|Neu|Um)besetzung|Nach-besetzung|sachkundig|Mitglied|Herr|Frau|Dr\.|Prof\.", re.I)
 DRUCKSACHE = re.compile(r"(?:AN/)?\d{1,6}/\d{2,4}")
+
+
+def in_keinem_checkout(ziel):
+    """Ziel des Prüfbogens als aufgelöster Pfad; Abbruch, wenn es in diesem Repository liegt oder es selbst oder ein
+    übergeordneter Ordner `.git` enthält (Datei oder Ordner: jeder Git-Checkout und jeder Worktree, auch ein anderer
+    Checkout desselben Repositorys). So landen Schlüsseldatei und Bogen nie in einem Ordner, aus dem sie eingecheckt
+    werden könnten."""
+    from pathlib import Path
+    pfad = Path(ziel).resolve()
+    for ordner in (pfad, *pfad.parents):
+        if ordner == config.ROOT or (ordner / ".git").exists():
+            raise SystemExit(f"Prüfbogen nur außerhalb jedes Git-Checkouts: {ziel} (in {ordner})")
+    return pfad
 SPALTEN_PRUEFBOGEN = ["nr", "monat", "vorlagenart", "titel", "beratende_gremien", "strang", "grund",
                       "urteil (passt/teilweise/passt nicht/unklar; Gegenprobe: fehlt/richtig ausgelassen)",
                       "richtiger strang (falls abweichend)", "anmerkung"]
@@ -800,15 +833,13 @@ def stichprobe(t, papiere, gremien_daten, ziel, terms=(), seed=2026, maske_=None
     """Prüfbogen: geschichtete Ziehung zugeordneter Vorlagen je Strang (davon im Strang des Gremium-Tors einige nur über
     das Gremium), einige Folgevorlagen und eine Gegenprobe nicht zugeordneter Vorlagen mit t.kandidat im Titel oder mit
     Beratung im Fachausschuss. `papiere`: {Schlüssel: Vorgang}, jede Vorlage einmal (Gebietsdateien des Exports);
-    `ziel`: Ordner außerhalb des Repositorys und außerhalb von data/export. Schreibt prüfbogen_<key>.tsv (laufende
+    `ziel`: Ordner außerhalb jedes Git-Checkouts (nicht in diesem Repository, nicht in einem anderen Checkout oder
+    Worktree, also nie in data/export). Schreibt prüfbogen_<key>.tsv (laufende
     Nummer statt Drucksache, Titel nach `maske_` und mit <DS> statt Drucksachen; Eingaben und Einwohnerfragen ohne
     Titel), schluessel_<key>.tsv (Nummer → Drucksache und Link, nur zum Nachschlagen) und zahlen_<key>.tsv (je Strang
     und Grund, ohne Einzelangaben). Titel mit Personenbezug (PERSONENBEZUG) werden vor der Ziehung aussortiert und nur
     gezählt. Fehlt ein Strang, gehen seine Plätze an die übrigen, ohne die Gesamtzahl zu überschreiten."""
-    from pathlib import Path
-    ziel = Path(ziel)
-    if config.ROOT in ziel.resolve().parents or ziel.resolve() == config.ROOT:
-        raise SystemExit(f"Prüfbogen nur außerhalb des Repositorys: {ziel}")
+    ziel = in_keinem_checkout(ziel)
     lf = lauf(t, gremien_daten, terms)
     folge, _ = verfahren(t, papiere, lf) if t.folgevorlagen else ({}, Counter())
     zug, ohne = {k: [] for k, _, _ in t.straenge}, []

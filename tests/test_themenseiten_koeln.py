@@ -135,7 +135,8 @@ def test_reihenfolge_bei_ueberschneidung():
     assert zu("Parkplätze an der Haltestelle Probeplatz")[0] == "parken"
     assert zu("Tempo 30 auf der Probebrücke")[0] == "tempo"
     assert zu("Radverkehr und Fahrbahnsanierung")[0] == "rad_fuss"
-    assert [r.strang for r in T.regeln][:6] == ["parken", "bus_bahn", "rad_fuss", "tempo", "strassen", "weitere"]
+    assert list(dict.fromkeys(r.strang for r in T.regeln)) == ["parken", "bus_bahn", "rad_fuss", "tempo", "strassen",
+                                                               "weitere"]
 
 
 @pytest.mark.parametrize("mob_key", ["mob-1a2b3c4d", "mob", "organisation-17-neu"])
@@ -168,6 +169,85 @@ def test_abgesagte_station_oeffnet_das_tor_nicht(absage):
 def test_nur_ueber_das_gremium_ohne_haushalt_und_personalien(titel):
     """Nur über das Gremium nie: Haushalt, Sitzungsorganisation und Personalien (Thema.tor_ausschluss)."""
     assert zu(titel, [station(*MOB, "2026-04-01", "beschlossen")]) is None
+
+
+# Personalien und Sitzungsorganisation (Prüfung der Daten, 25.11.2026): vor allen Regeln, auch wenn der Titel den
+# Ausschuss oder ein Verkehrswort nennt und ohne Beratung im Ausschuss; Wahlen auch im Plural und zusammengesetzt
+PERSONALIEN = ["Umbesetzung im Mobilitätsausschuss", "Wahl der stellvertretenden Vorsitzenden des Mobilitätsausschusses",
+               "Wahlen zum Mobilitätsausschuss", "Sitzungskalender 2027 des Mobilitätsausschusses",
+               "Wiederwahl der Beigeordneten für Mobilität",
+               "Nachbesetzung eines sachkundigen Einwohners im Mobilitätsausschuss", "Wahlen der stellvertretenden Vorsitzenden",
+               "Neuwahl der Schriftführung", "Wiederwahl eines Mitglieds", "Wahlvorschlag für den Aufsichtsrat der KVB",
+               "Ernennung der Ausschussvorsitzenden", "Abberufung eines Vertreters im Verkehrsverbund", "Sitzungsplan 2027",
+               "Terminplanung der Sitzungen 2027", "Protokoll der Sitzung vom 1. Oktober", "Neubesetzung im Radverkehrsbeirat",
+               "Entsendung in den Aufsichtsrat der KVB", "Geschäftsführerin der Probe-Parkhausgesellschaft"]
+
+
+@pytest.mark.parametrize("titel", PERSONALIEN)
+def test_personalien_und_sitzungsorganisation_vor_allen_regeln(titel):
+    for st in ([station(*MOB, "2026-04-01", "beschlossen")], [station(*BV, "2026-04-01")]):
+        assert zu(titel, st) is None, st[0]["gremium"]
+    # auch nicht als Folgevorlage
+    w = vorlage("1/2026", "Radverkehrskonzept", sub=["2/2026"])
+    c = vorlage("2/2026", titel, sup=["1/2026"])
+    folge, _ = dossier.verfahren(T, _papiere(w, c), LAUF)
+    assert dossier.zuordnen(T, c, LAUF, folge) is None
+
+
+@pytest.mark.parametrize("titel", ["Haushaltsplanentwurf 2027, Teilplan Verkehrsflächen", "Wirtschaftsplan 2027 am Hafen",
+                                   "Haushalt 2027: Umgestaltung von Plätzen"])
+def test_tor_ausschluss_auch_mit_mehrdeutigem_wort(titel):
+    """Haushalt und Wirtschaftspläne nie über das Gremium, auch nicht mit einem mehrdeutigen Wort (Regel „weitere“ mit
+    Gremium-Tor); Wörter eines Strangs gelten weiter."""
+    assert zu(titel, [station(*MOB, "2026-04-01", "beschlossen")]) is None
+    assert zu("Haushalt 2027: Mittel für den Radverkehr", [station(*MOB, "2026-04-01")])[0] == "rad_fuss"
+
+
+def test_personalien_ohne_fehltreffer():
+    """Nicht ausgeschlossen: Bestellung von Fahrzeugen, Auswahl, Verkehrsmittelwahl, Kommunalwahl."""
+    assert zu("Bestellung neuer Stadtbahnfahrzeuge", [station(*BV, "2026-04-01")]) == ("bus_bahn", "Titel: „Stadtbahnfahrzeuge“")
+    assert zu("Auswahl der Buslinien für den Nachtverkehr", [station(*BV, "2026-04-01")])[0] == "bus_bahn"
+    assert zu("Studie zur Verkehrsmittelwahl", [station(*BV, "2026-04-01")])[0] == "weitere"
+
+
+# Fehltreffer mit Kölner Straßen- und Ortsnamen und anderen Wörtern (Prüfung der Daten, 25.11.2026)
+FEHLTREFFER = ["Sanierung der Poller Wiesen", "Poller Hauptstraße: Erweiterung der Grundschule",
+               "Sanierung der Grundschule Bahnhofstraße 12", "Spielplatz Am Bahnhof", "Bebauungsplan Am Alten Güterbahnhof",
+               "Neugestaltung am Bahnhofsvorplatz in Probestadt", "Parkentwicklungskonzept Äußerer Grüngürtel",
+               "Markierung von Grabfeldern auf dem Friedhof", "Beschilderung der Wanderwege im Königsforst",
+               "Hochwasserschutz: Poller und Dammbalken", "Gedenkstele für Opfer des Unfalls", "Tunnelblick: Jugendkunstprojekt",
+               "Arbeitsunfälle in der Verwaltung"]
+
+
+@pytest.mark.parametrize("titel", FEHLTREFFER)
+def test_fehltreffer_ohne_zuordnung(titel):
+    assert zu(titel, [station(*BV, "2026-04-01")]) is None
+
+
+@pytest.mark.parametrize("titel, strang, grund", [
+    ("Poller an der Probestraße", "tempo", "Titel: „Poller“ und „Probestraße“"),
+    ("Neue Markierung der Fahrbahn in Probestadt", "tempo", "Titel: „Markierung“ und „Fahrbahn“"),
+    ("Beschilderung der Zufahrt zur Grundschule", "tempo", "Titel: „Beschilderung“ und „Zufahrt“"),
+    ("Unfallschwerpunkt an der Probekreuzung", "tempo", "Titel: „Unfallschwerpunkt“"),
+    ("Verkehrsunfälle vor Schulen", "tempo", "Titel: „Verkehrsunfälle“"),
+    ("Umbau des Bahnhofs Probestadt", "bus_bahn", "Titel: „Bahnhofs“"),
+    ("Aufzug am Bahnhof Probestadt", "bus_bahn", "Titel: „Bahnhof“"),
+    ("Parkentgelte im Probeviertel", "parken", "Titel: „Parkentgelte“"),
+    ("Sanierung des Probetunnels", "strassen", "Titel: „Probetunnels“"),
+])
+def test_treffer_nach_engeren_wortlisten(titel, strang, grund):
+    assert zu(titel, [station(*BV, "2026-04-01")]) == (strang, grund)
+
+
+def test_koelner_strassennamen_allein_ohne_strang():
+    """Ein Kölner Straßenname allein (Straßenverzeichnis data/geo/strassen_koeln.json) trifft kein Wort eines Strangs,
+    außer Brücken und Tunneln (Bauwerke des Verkehrs, Strang „Straßen und Brücken“) und der Straße „Bahnhof Heumar“."""
+    namen = json.loads(config.STRASSEN.read_text(encoding="utf-8"))["streets"]
+    assert len(namen) > 5000
+    treffer = {n for n in namen for r in T.regeln if r.titel and not r.gremium_tor and r.titel.search(n)
+               and (not r.bedingung or r.bedingung.search(n))}
+    assert all(re.search(r"(?i)brücke|tunnel", n) for n in treffer - {"Bahnhof Heumar"}), sorted(treffer)
+    assert not any(verkehr.TEMPO.search(n) or verkehr.ZEICHEN.search(n) for n in namen)
 
 
 def test_nur_bezirksvertretung_ohne_wort():
@@ -244,6 +324,28 @@ def test_folgevorlagen_zyklus_mehrdeutig_und_ausschluss():
     alt = vorlage("13/2025", "Radverkehrskonzept", tag="2025-06-01", sub=["14/2026"])
     neu = vorlage("14/2026", "Ergänzung", sup=["13/2025"])
     assert dossier.verfahren(T, _papiere(alt, neu), LAUF)[0] == {}
+
+
+def test_folgevorlage_vor_beginn_des_zeitraums():
+    """Der Zeitraum gilt auch für Folgevorlagen (die Seite zeigt Vorlagen seit Beginn der Wahlperiode): eine
+    untergeordnete Vorlage vor seit erbt nichts und zählt nicht als Folgevorlage."""
+    w = vorlage("1/2026", "Radverkehrskonzept", sub=["2/2025", "3/2026"])
+    alt = vorlage("2/2025", "Kita-Neubau", tag="2025-05-01", sup=["1/2026"])
+    neu = vorlage("3/2026", "Ergänzung", sup=["1/2026"])
+    folge, zahl = dossier.verfahren(T, _papiere(w, alt, neu), LAUF)
+    assert dossier.zuordnen(T, alt, LAUF, folge) is None
+    assert dossier.zuordnen(T, neu, LAUF, folge) == ("rad_fuss", "Folgevorlage zu 1/2026")
+    assert zahl["folgevorlagen"] == 1
+
+
+def test_eine_wurzel_mit_und_eine_ohne_strang():
+    """Wie in TECHNIK beschrieben: Nur Wurzeln mit eigenem Strang zählen; erreicht eine Vorlage eine Wurzel mit und eine
+    ohne Strang, erbt sie den Strang der einen (nicht „mehrere Wurzeln“)."""
+    w1 = vorlage("1/2026", "Radverkehrskonzept", sub=["3/2026"])
+    w2 = vorlage("2/2026", "Mitteilung der Verwaltung zum Sachstand", sub=["3/2026"])
+    c = vorlage("3/2026", "Gemeinsame Stellungnahme", sup=["1/2026", "2/2026"])
+    folge, zahl = dossier.verfahren(T, _papiere(w1, w2, c), LAUF)
+    assert dossier.zuordnen(T, c, LAUF, folge) == ("rad_fuss", "Folgevorlage zu 1/2026") and zahl["mehrere_wurzeln"] == 0
 
 
 def test_mehrere_wurzeln_keine_weitergabe():
@@ -341,6 +443,64 @@ def test_daten_straenge_punkte_sitzungen():
     w = d["wer_beraet_mit"]
     assert w["key"] == "mob-1a2b3c4d" and w["paragraf"] == 17 and w["satzung"]["url"] == SATZUNG
     assert set(w) <= set(gremien.FELDER) | {"zeitraum", "satzung"}
+
+
+def _punkt_von(*stationen, art="Beschlussvorlage"):
+    """Lage des einen Punkts einer erfundenen Beschlussvorlage mit diesen Stationen (Bezirksvertretung 2 ergänzt)."""
+    p = vorlage("1/2026", "Radweg an der Probestraße", art=art, stationen=list(stationen))
+    gd = gremien_daten()
+    gd["gremien"].append({"key": "bv2", "name": "Bezirksvertretung 2 (Rodenkirchen)", "gruppe": "bezirksvertretung",
+                          "stadtbezirk": "Rodenkirchen", "source_object": O + "bv2"})
+    d = dossier.daten(T, {"a": p}, {"a": "ortsteil:probestadt"}, gd, {}, [{"start": "2025-11-01"}])
+    return [(x["bahn"], x["gremium"], x["date"]) for x in d["punkte"]], d
+
+
+BV2 = ("bv2", "Bezirksvertretung 2 (Rodenkirchen)")
+
+
+def test_punkt_nie_auf_der_bahn_der_bezirksvertretungen():
+    """Antwort 2 A: Beratungen in Bezirksvertretungen stehen in Liste, Detailfeld und Strang, nicht als Punkt. Die Lage
+    folgt nur den Beratungen in Rat, Hauptausschuss und Mobilitätsausschuss: letzte mit Ergebnis dort, sonst die nächste
+    dort; das Detailfeld nennt die ganze Beratungsfolge."""
+    lage, d = _punkt_von(station(*MOB, "2026-04-01", "beschlossen"), station(*BV2, "2026-05-01", "zur Kenntnis genommen"))
+    assert lage == [("mobil", "Mobilitätsausschuss", "2026-04-01")]
+    assert [b["gremium"] for b in d["punkte"][0]["beratungen"]] == ["Mobilitätsausschuss", BV2[1]]
+    # Bezirksvertretung als nächste Station, danach der Rat
+    lage, _ = _punkt_von(station(*MOB, "2026-04-01"), station(*BV2, "2026-11-30"), station("rat", "Rat", "2026-12-03"))
+    assert lage == [("rat", "Rat", "2026-12-03")]
+    # nur vergangene Beratungen ohne Ergebnis dort: erstes Gremium des Bildes am Tag der Vorlage
+    lage, _ = _punkt_von(station(*BV2, "2026-03-20", "beschlossen"), station(*MOB, "2026-04-01"))
+    assert lage == [("mobil", "Mobilitätsausschuss", "2026-03-02")]
+    for bahn, _, _ in _punkt_von(station(*BV2, "2026-05-01", "beschlossen"), station(*MOB, "2026-04-01", "beschlossen"))[0]:
+        assert bahn != "bv"
+
+
+def test_feed_nach_vorlage_nicht_nach_drucksache(tmp_path, monkeypatch):
+    """Der Themenfeed nimmt die zugeordneten Vorlagen, nicht jede Vorlage mit einer Drucksache aus den Strängen:
+    Drucksachen sind in Köln teils mehrfach vergeben."""
+    monkeypatch.setattr(config, "THEMENSEITEN_FREIGEGEBEN", ("verkehr",))
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", True)
+    monkeypatch.setattr(config, "MEETINGS", tmp_path / "fehlt.json")
+    monkeypatch.setattr(config, "LEGISLATIVE_TERMS", tmp_path / "fehlt_terms.json")
+    # Felder der Gebietsdateien, die der Feed liest (publish.events: amt wie im Export, in Köln meist leer; steps)
+    rad = vorlage("1/2026", "Radweg an der Probestraße", stationen=[station(*MOB, "2026-04-01", "beschlossen")], amt=None,
+                  steps=[])
+    kita = dict(vorlage("1/2026", "Kita-Neubau am Probeweg", stationen=[station(*BV, "2026-04-02", "beschlossen")],
+                        amt=None, steps=[]), source_object=P + "1-2026-zweite")
+    cache = {"a": rad, "b": kita}
+    export._themenseiten(tmp_path, cache, {"a": "ortsteil:probestadt", "b": "ortsteil:probestadt"}, [], gremien_daten(), {})
+    seite = json.loads((tmp_path / "dossiers" / "verkehr.json").read_text(encoding="utf-8"))
+    assert [r["name"] for s in seite["straenge"] for r in s["vorlagen"]] == [rad["name"]]
+    feed = (tmp_path / "dossiers" / "verkehr.xml").read_text(encoding="utf-8")
+    assert "Radweg an der Probestraße" in feed and "Kita-Neubau" not in feed
+
+
+def test_was_diese_seite_nicht_zeigt():
+    """Keine falsche Aussage zu Hausnummern (Titel von Vorlagen der Verwaltung stehen wie veröffentlicht); Personalien
+    und Sitzungsorganisation genannt."""
+    text = " ".join(T.nicht_gezeigt)
+    assert "Hausnummern und einzelne Orte" not in text and "Keine Verortung auf Hausnummern" in text
+    assert "Personalien und Sitzungsorganisation" in text
 
 
 def test_sitzungsliste_nicht_aktuell():
@@ -494,6 +654,17 @@ def test_uebersicht_einzahl_und_kachel(tmp_path, monkeypatch):
     assert "<strong>1</strong> Vorlage in 1 Strang</p>" in dossier._kachel(T, d)
 
 
+def test_uebersicht_stichprobe_nur_nach_pruefung(tmp_path, monkeypatch):
+    """„an einer Stichprobe von Hand geprüft“ nur, wenn jedes gezeigte Thema geprüft ist (pruefung_text, pruefung_datum)."""
+    site, _, _ = _seite(tmp_path, monkeypatch)
+    ohne = dataclasses.replace(T, pruefung_text="", pruefung_datum="")
+    dossier.uebersicht([ohne], site, URL, gebietsseiten._page)
+    assert "Stichprobe" not in (site / "thema" / "index.html").read_text(encoding="utf-8")
+    mit = dataclasses.replace(T, pruefung_text="Geprüft im Gespräch.", pruefung_datum="2026-12-01")
+    dossier.uebersicht([mit], site, URL, gebietsseiten._page)
+    assert "je Vorlage mit Grund, an einer Stichprobe von Hand geprüft." in (site / "thema" / "index.html").read_text(encoding="utf-8")
+
+
 def test_ohne_json_keine_seite(tmp_path):
     assert dossier.write(T, tmp_path, URL, gebietsseiten._page) == []
     assert dossier.uebersicht([T], tmp_path, URL, gebietsseiten._page) == []
@@ -560,30 +731,47 @@ def test_pruefschalter_nur_mit_testdaten(tmp_path):
     assert config.themen_pruefung({}, stand) is None
 
 
+def _lauf_config(raw, schalter):
+    umgebung = {"PATH": "/usr/bin:/bin", "RATSATLAS_RAW": str(raw)}
+    if schalter is not None:
+        umgebung[config.THEMEN_PRUEFUNG] = schalter
+    return subprocess.run([sys.executable, "-c", "from pipeline import config, themenseiten; "
+                           "print(config.THEMENSEITEN_FREIGEGEBEN, config.ZUSATZTHEMEN['themenseiten'], "
+                           "[t.key for t in themenseiten.freigegeben()])"],
+                          cwd=ROOT, capture_output=True, text=True, timeout=120, env=umgebung)
+
+
 @pytest.mark.parametrize("testdaten", [True, False])
-def test_pruefschalter_im_lauf(tmp_path, testdaten):
-    """Der Schalter wirkt beim Laden von config: mit Testdaten in STAND.json Liste und Hauptschalter für diesen Lauf,
-    ohne Testdaten nichts, mit Meldung."""
+@pytest.mark.parametrize("schalter, erwartet", [("verkehr", "('verkehr',) True ['verkehr']"), ("aus", "() False []")])
+def test_pruefschalter_im_lauf(tmp_path, testdaten, schalter, erwartet):
+    """Der Schalter wirkt beim Laden von config: mit Testdaten in STAND.json Liste und Hauptschalter für diesen Lauf
+    („verkehr“ ein, „aus“ aus), gleich, was im Repository steht; ohne Testdaten gilt der Stand im Repository, mit
+    Meldung."""
     raw = tmp_path / "raw"
     raw.mkdir()
     (raw / "STAND.json").write_text(json.dumps({"testdaten": testdaten}))
-    r = subprocess.run([sys.executable, "-c", "from pipeline import config, themenseiten; "
-                        "print(config.THEMENSEITEN_FREIGEGEBEN, config.ZUSATZTHEMEN['themenseiten'], "
-                        "[t.key for t in themenseiten.freigegeben()])"],
-                       cwd=ROOT, capture_output=True, text=True, timeout=120,
-                       env={"PATH": "/usr/bin:/bin", "RATSATLAS_RAW": str(raw), config.THEMEN_PRUEFUNG: "verkehr"})
+    repository = _lauf_config(raw, None)
+    assert repository.returncode == 0 and not repository.stderr, repository.stderr
+    r = _lauf_config(raw, schalter)
     assert r.returncode == 0, r.stderr
     if testdaten:
-        assert r.stdout.strip() == "('verkehr',) True ['verkehr']" and not r.stderr
+        assert r.stdout.strip() == erwartet and not r.stderr
     else:
-        assert r.stdout.strip() == "() False []" and "ohne Wirkung" in r.stderr
+        assert r.stdout == repository.stdout and "ohne Wirkung" in r.stderr
 
 
 def test_check_meldet_pruefschalter_ohne_testdaten(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "THEMENSEITEN_FREIGEGEBEN", ())
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", False)
     monkeypatch.setattr(config, "STAND", tmp_path / "STAND.json")
-    befunde, _ = check.dossiers(tmp_path, umgebung={config.THEMEN_PRUEFUNG: "verkehr"})
-    assert any(config.THEMEN_PRUEFUNG in b for b in befunde)
+    for wert in ("verkehr", "aus"):
+        befunde, _ = check.dossiers(tmp_path, umgebung={config.THEMEN_PRUEFUNG: wert})
+        assert any(config.THEMEN_PRUEFUNG in b for b in befunde), wert
     befunde, fehlend = check.dossiers(tmp_path, umgebung={})
+    assert befunde == [] and fehlend == []
+    # mit Testdaten ist „aus“ kein Befund (erster Bau in tests.yml)
+    config.STAND.write_text(json.dumps({"testdaten": True}), encoding="utf-8")
+    befunde, fehlend = check.dossiers(tmp_path, umgebung={config.THEMEN_PRUEFUNG: "aus"})
     assert befunde == [] and fehlend == []
 
 
@@ -593,6 +781,8 @@ def test_check_dossiers(tmp_path, monkeypatch):
     suche.json je ein Befund."""
     monkeypatch.setattr(config, "MEETINGS", tmp_path / "fehlt.json")
     base = _export(tmp_path, monkeypatch)
+    # ohne Prüfung von Hand, gleich, was im Repository steht
+    monkeypatch.setitem(themenseiten.JE_SCHLUESSEL, "verkehr", dataclasses.replace(T, pruefung_text="", pruefung_datum=""))
     befunde, fehlend = check.dossiers(base, umgebung={})
     assert befunde == ["Themenseiten: verkehr freigegeben ohne Prüfung von Hand (pruefung_text, pruefung_datum): 1"]
     geprueft = dataclasses.replace(T, pruefung_text="Geprüft im Gespräch.", pruefung_datum="2026-12-01")
@@ -646,6 +836,30 @@ def test_mit_freigabe_seite_sitemap_feed_lizenz(tmp_path, monkeypatch):
     (base / "dossiers" / "verkehr.xml").write_text("<feed><entry></entry></feed>", encoding="utf-8")
     rssseite.write(site, URL, gebietsseiten._page)
     assert "dossiers/verkehr.xml" in (site / "rss" / "index.html").read_text(encoding="utf-8")
+
+
+def test_karte_und_neu_nur_mit_geschriebener_uebersicht(tmp_path, monkeypatch):
+    """Startseite (Prüfung der CI und der Daten, 25.11.2026): Karte „Themenseiten“ und Eintrag in „Was ist neu?“ nur, wenn
+    seo die Übersicht thema/ schreibt; mit Freigabe, aber ohne Vorlagen (Kartenvorschau) fehlen beide, und die
+    Linkprüfung findet keinen Link auf eine fehlende Seite. Der Satz zu den Bonner Zusatzthemen nennt die Themenseiten
+    nie."""
+    monkeypatch.setattr(config, "THEMENSEITEN_FREIGEGEBEN", ("verkehr",))
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", True)
+    vorschau = tmp_path / "vorschau"
+    vorschau.mkdir()
+    (vorschau / "index.html").write_text((ROOT / "site" / "index.html").read_text(encoding="utf-8"), encoding="utf-8")
+    seo.write(vorschau, URL)
+    index = (vorschau / "index.html").read_text(encoding="utf-8")
+    assert not (vorschau / "thema").exists() and 'href="thema/"' not in index and 'data-funktion="themenseiten"' not in index
+    assert "Bonner Zusatzthemen (Haushalt, Ratsassistent und weitere)" in index and "Themenseiten" not in index
+    _export(tmp_path / "mit", monkeypatch)
+    site = tmp_path / "mit" / "_site"
+    (site / "index.html").write_text((ROOT / "site" / "index.html").read_text(encoding="utf-8"), encoding="utf-8")
+    seo.write(site, URL)
+    index = (site / "index.html").read_text(encoding="utf-8")
+    assert 'href="thema/"' in index and (site / "thema" / "index.html").exists()
+    assert '<li data-funktion="themenseiten">Themenseiten (Menü „Themen“)' in index
+    assert "Bonner Zusatzthemen (Haushalt, Ratsassistent und weitere)" in index
 
 
 def test_export_setzt_gremien_voraus(tmp_path, monkeypatch):

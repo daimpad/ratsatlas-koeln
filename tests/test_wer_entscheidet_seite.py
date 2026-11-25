@@ -623,7 +623,10 @@ def test_was_ist_neu():
     und Ämtern im veröffentlichten HTML, kein „folgt“."""
     neu = _abschnitt(INDEX, "neu")
     eintraege = re.findall(r"^\s*<li( data-funktion=\"\w+\")?>(.*?)</li>$", neu, re.M)
-    assert len(eintraege) == 8 and eintraege[7][1].startswith("Bonner Zusatzthemen")
+    assert len(eintraege) == 9 and eintraege[8][1].startswith("Bonner Zusatzthemen")
+    # Themenseiten mit eigenem Eintrag nur mit Freigabe (seo.freigabe_mit_seiten), nie unter den Bonner Zusatzthemen
+    assert eintraege[7][0] == ' data-funktion="themenseiten"' and eintraege[7][1].startswith("Themenseiten (Menü „Themen“)")
+    assert "Themenseiten" not in eintraege[8][1]
     assert eintraege[4] == ("", "Im Kalender (termine.ics) stehen Sitzungen, die laut Sitzungsnamen abgesagt sind, als abgesagt, "
                                 "mit dem Zusatz „(laut Sitzungsnamen abgesagt)“.")
     assert eintraege[5][0] == ' data-funktion="gremien"' and eintraege[5][1].startswith("„Wer entscheidet“ mit den Reitern „Gremien“")
