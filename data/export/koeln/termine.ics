@@ -8,7 +8,7 @@ X-WR-TIMEZONE:Europe/Berlin
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33978
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261102T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -19,7 +19,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34361
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261105T160000Z
 DTEND:20261105T164500Z
 SUMMARY:Stadtarbeitsgemeinschaft Queerpolitik
@@ -31,7 +31,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34025
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261105T160000Z
 DTEND:20261105T183000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
@@ -43,7 +43,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33914
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261105T163000Z
 DTEND:20261105T201000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
@@ -55,7 +55,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33907
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261105T150000Z
 DTEND:20261105T191900Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
@@ -67,7 +67,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33712
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261105T160200Z
 DTEND:20261105T181500Z
 SUMMARY:Bezirksvertretung 7 (Porz)
@@ -79,7 +79,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33952
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261109T160000Z
 DTEND:20261109T191000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
@@ -91,7 +91,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36080
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261110T173000Z
 DTEND:20261110T184500Z
 SUMMARY:Ausschuss Schule und Weiterbildung
@@ -103,7 +103,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34244
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261110T130000Z
 DTEND:20261110T153000Z
 SUMMARY:Stadtarbeitsgemeinschaft Behindertenpolitik
@@ -115,7 +115,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33697
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261110T160200Z
 DTEND:20261110T174600Z
 SUMMARY:Hauptausschuss
@@ -127,7 +127,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33691
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261112T133000Z
 DTEND:20261112T170000Z
 SUMMARY:Rat
@@ -139,7 +139,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34044
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261116T160000Z
 DTEND:20261116T174200Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
@@ -151,7 +151,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34011
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261116T160500Z
 DTEND:20261116T193500Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
@@ -163,7 +163,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34228
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261117T160300Z
 DTEND:20261117T181700Z
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
@@ -175,7 +175,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34227
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261117T140000Z
 DTEND:20261117T160900Z
 SUMMARY:Ausschuss für Chancengerechtigkeit und Integration
@@ -189,7 +189,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34285
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261123T140000Z
 SUMMARY:Naturschutzbeirat bei der Unteren Naturschutzbehörde
 DESCRIPTION:Sitzung des Naturschutzbeirates bei der Unteren Naturschutzbeh
@@ -200,7 +200,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34229
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261123T140500Z
 DTEND:20261123T173000Z
 SUMMARY:Ausschuss Schule und Weiterbildung
@@ -212,7 +212,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34413
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261124T150400Z
 DTEND:20261124T181000Z
 SUMMARY:Mobilitätsausschuss
@@ -224,7 +224,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34230
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261124T160000Z
 SUMMARY:Liegenschaftsausschuss
 DESCRIPTION:7. Sitzung des Liegenschaftsausschusses\nTagesordnung noch nich
@@ -235,7 +235,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34416
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261126T160000Z
 SUMMARY:Ausschuss für Wirtschaft und Digitalisierung
 DESCRIPTION:Sitzung des Ausschusses für Wirtschaft und Digitalisierung\nTa
@@ -246,7 +246,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34415
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261126T150000Z
 SUMMARY:Betriebsausschuss Abfallwirtschaftsbetrieb der Stadt Köln
 DESCRIPTION:7. Sitzung Betriebsausschuss Abfallwirtschaftbetrieb der Stadt 
@@ -257,7 +257,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34414
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261126T150000Z
 SUMMARY:Ausschuss Klima\, Umwelt und Grün
 DESCRIPTION:7. Sitzung des Ausschusses Klima\, Umwelt und Grün\nTagesordnu
@@ -268,7 +268,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34116
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261126T160000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:8. Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht 
@@ -279,7 +279,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36245
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261126T140000Z
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
 DESCRIPTION:1. gemeinsame Sondersitzung des Ausschusses Soziales\, Gesundhe
@@ -291,7 +291,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34372
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261127T100000Z
 DTEND:20261127T130000Z
 SUMMARY:Runder Tisch für Flüchtlingsfragen
@@ -303,7 +303,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34417
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261130T160000Z
 SUMMARY:Ausschuss für Bürgerbeteiligung\, Anregungen und Beschwerden
 DESCRIPTION:6. Sitzung des Ausschusses für Bürgerbeteiligung\, Anregungen
@@ -314,7 +314,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34231
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261130T160000Z
 SUMMARY:Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Intern
  ationales
@@ -327,7 +327,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34419
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261201T150000Z
 SUMMARY:Betriebsausschuss Gebäudewirtschaft
 DESCRIPTION:Sitzung des Betriebsausschusses Gebäudewirtschaft\nTagesordnun
@@ -338,7 +338,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34418
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261201T150000Z
 SUMMARY:Ausschuss für Bauen und Wohnen
 DESCRIPTION:Sitzung des Ausschusses für Bauen und Wohnen\nTagesordnung noc
@@ -349,7 +349,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34232
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261201T130000Z
 SUMMARY:Jugendhilfeausschuss
 DESCRIPTION:Sitzung des Jugendhilfeausschusses\nTagesordnung noch nicht ver
@@ -360,7 +360,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33713
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261201T160000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:9. Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht 
@@ -371,7 +371,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34423
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T143000Z
 SUMMARY:Betriebsausschuss Wallraf-Richartz-Museum & Fondation Corboud
 DESCRIPTION:Sitzung des Betriebsausschusses Wallraf-Richartz-Museum & Fonda
@@ -382,7 +382,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34422
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T143000Z
 SUMMARY:Betriebsausschuss Gürzenich-Orchester
 DESCRIPTION:Sitzung des Betriebsausschusses Gürzenich-Orchester\nTagesordn
@@ -393,7 +393,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34421
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T143000Z
 SUMMARY:Betriebsausschuss Bühnen der Stadt Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Bühnen der Stadt Köln\nTageso
@@ -404,7 +404,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34420
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T143000Z
 SUMMARY:Ausschuss Kunst und Kultur
 DESCRIPTION:Sitzung des Ausschusses Kunst und Kultur\nTagesordnung noch nic
@@ -415,7 +415,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34237
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T160000Z
 SUMMARY:Sportausschuss
 DESCRIPTION:7. Sitzung des Sportausschusses\nTagesordnung noch nicht veröf
@@ -426,7 +426,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34234
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T130000Z
 SUMMARY:Betriebsausschuss Parkstadt Süd
 DESCRIPTION:6. Sitzung des Betriebsausschusses Parkstadt Süd\nTagesordnung
@@ -437,7 +437,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34233
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T130000Z
 SUMMARY:Ausschuss für Stadtentwicklung und regionale Zusammenarbeit
 DESCRIPTION:9. Sitzung des Ausschusses für Stadtentwicklung und regionale 
@@ -448,7 +448,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34026
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T170000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -459,7 +459,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33915
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T163000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:9. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nich
@@ -470,7 +470,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33908
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261203T150000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -481,7 +481,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35500
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261207T093000Z
 DTEND:20261207T110000Z
 SUMMARY:Wahlausschuss zur Seniorenvertretungswahl
@@ -493,7 +493,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34429
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261207T160000Z
 SUMMARY:Ausschuss für die Gleichstellung von Frauen und Männern
 DESCRIPTION:7. Sitzung des Ausschusses für die Gleichstellung von Frauen u
@@ -504,7 +504,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34239
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261207T133000Z
 SUMMARY:Betriebsausschuss Veranstaltungszentrum Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Veranstaltungszentrum Köln\nTa
@@ -515,7 +515,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34238
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261207T133000Z
 SUMMARY:Finanzausschuss
 DESCRIPTION:Sitzung des Finanzausschusses\nTagesordnung noch nicht veröffe
@@ -526,7 +526,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34045
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261207T160000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -537,7 +537,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34012
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261207T160000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -548,7 +548,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33979
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261207T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -559,7 +559,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33953
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261207T160000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:9.Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nic
@@ -570,7 +570,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34424
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261208T160000Z
 SUMMARY:Rechnungsprüfungsausschuss
 DESCRIPTION:Sitzung des Rechnungsprüfungsausschusses\nTagesordnung noch ni
@@ -581,7 +581,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34263
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261208T140000Z
 SUMMARY:Gestaltungsbeirat
 DESCRIPTION:25. Sitzung des Gestaltungsbeirates in der Wahlperiode 2023/202
@@ -592,7 +592,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36271
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261208T160000Z
 SUMMARY:Ausschuss Schule und Weiterbildung
 DESCRIPTION:Sondersitzung des Ausschusses Schule und Weiterbildung\nTagesor
@@ -603,7 +603,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33692
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20261210T130000Z
 SUMMARY:Rat
 DESCRIPTION:13. Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.
@@ -614,7 +614,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35572
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART;VALUE=DATE:20261231
 SUMMARY:Ausschuss für Bauen und Wohnen
 DESCRIPTION:Berichtswesen Ausschuss für Bauen und Wohnen\nTagesordnung noc
@@ -625,7 +625,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34914
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART;VALUE=DATE:20261231
 SUMMARY:Ausschuss für Wirtschaft und Digitalisierung
 DESCRIPTION:Berichtssitzung des Ausschusses für Wirtschaft und Digitalisie
@@ -636,7 +636,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34913
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART;VALUE=DATE:20261231
 SUMMARY:Ausschuss für Stadtentwicklung und regionale Zusammenarbeit
 DESCRIPTION:Berichtssitzung des Ausschusses für Stadtentwicklung und regio
@@ -648,7 +648,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34912
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART;VALUE=DATE:20261231
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Berichtssitzung des Mobilitätsausschusses (nur für Digitales 
@@ -659,7 +659,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34911
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART;VALUE=DATE:20261231
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
 DESCRIPTION:Berichtssitzung des Ausschusses Soziales\, Gesundheit\, Seniori
@@ -671,7 +671,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33664
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART;VALUE=DATE:20261231
 SUMMARY:Ausschuss Klima\, Umwelt und Grün
 DESCRIPTION:Berichtswesen Ausschuss Klima\, Umwelt und Grün (nur für Digi
@@ -683,7 +683,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33109
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART;VALUE=DATE:20261231
 SUMMARY:Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Intern
  ationales
@@ -696,7 +696,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/32588
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART;VALUE=DATE:20261231
 SUMMARY:Liegenschaftsausschuss
 DESCRIPTION:Berichtswesen Liegenschaftsausschuss (nur für Digitales Berich
@@ -707,7 +707,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35474
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270111T153000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -718,7 +718,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35628
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270112T140000Z
 SUMMARY:Ausschuss für Chancengerechtigkeit und Integration
 DESCRIPTION:Sitzung des Ausschusses für Chancengerechtigkeit und Integrati
@@ -729,7 +729,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35629
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270114T143000Z
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
 DESCRIPTION:Sitzung des Ausschusses Soziales\, Gesundheit\, Seniorinnen und
@@ -740,7 +740,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35139
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270114T160000Z
 SUMMARY:Beirat Porz Mitte
 DESCRIPTION:3. öffentliche Sitzung des Beirates Porz Mitte\nTagesordnung n
@@ -751,7 +751,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35630
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270118T140000Z
 SUMMARY:Ausschuss Schule und Weiterbildung
 DESCRIPTION:Sitzung des Ausschusses Schule und Weiterbildung\nTagesordnung 
@@ -762,7 +762,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35741
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270119T150000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -773,7 +773,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35631
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270119T160000Z
 SUMMARY:Liegenschaftsausschuss
 DESCRIPTION:Sitzung des Liegenschaftsausschusses\nTagesordnung noch nicht v
@@ -784,7 +784,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35858
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270121T160000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -795,7 +795,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35743
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270121T150000Z
 SUMMARY:Betriebsausschuss Abfallwirtschaftsbetrieb der Stadt Köln
 DESCRIPTION:Sitzung des Ausschusses Klima\, Umwelt und Grün\nTagesordnung 
@@ -806,7 +806,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35742
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270121T150000Z
 SUMMARY:Ausschuss Klima\, Umwelt und Grün
 DESCRIPTION:Sitzung des Ausschusses Klima\, Umwelt und Grün\nTagesordnung 
@@ -817,7 +817,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35633
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270121T160000Z
 SUMMARY:Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Intern
  ationales
@@ -830,7 +830,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35603
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270121T150000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -841,7 +841,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36100
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270125T160000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -852,7 +852,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35748
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270125T160000Z
 SUMMARY:Ausschuss für Bürgerbeteiligung\, Anregungen und Beschwerden
 DESCRIPTION:Sitzung des Ausschusses für Bürgerbeteiligung\, Anregungen un
@@ -863,7 +863,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35747
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270125T160000Z
 SUMMARY:Ausschuss für Wirtschaft und Digitalisierung
 DESCRIPTION:Sitzung des Ausschusses für Wirtschaft und Digitalisierung\nTa
@@ -874,7 +874,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35815
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270126T150000Z
 SUMMARY:Betriebsausschuss Gebäudewirtschaft
 DESCRIPTION:Sitzung des Betriebsausschusses Gebäudewirtschaft\nTagesordnun
@@ -885,7 +885,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35814
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270126T150000Z
 SUMMARY:Ausschuss für Bauen und Wohnen
 DESCRIPTION:Sitzung des Ausschusses für Bauen und Wohnen\nTagesordnung noc
@@ -896,7 +896,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35634
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270126T130000Z
 SUMMARY:Jugendhilfeausschuss
 DESCRIPTION:Sitzung des Jugendhilfeausschusses\nTagesordnung noch nicht ver
@@ -907,7 +907,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36118
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270128T163000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:10. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -918,7 +918,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35874
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270128T160000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -929,7 +929,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35760
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270128T143000Z
 SUMMARY:Betriebsausschuss Wallraf-Richartz-Museum & Fondation Corboud
 DESCRIPTION:Sitzung des Betriebsausschusses Wallraf-Richartz-Museum & Fonda
@@ -940,7 +940,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35758
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270128T143000Z
 SUMMARY:Betriebsausschuss Gürzenich-Orchester
 DESCRIPTION:Sitzung des Betriebsausschusses Gürzenich-Orchester\nTagesordn
@@ -951,7 +951,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35756
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270128T143000Z
 SUMMARY:Betriebsausschuss Bühnen der Stadt Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Bühnen der Stadt Köln\nTageso
@@ -962,7 +962,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35755
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270128T143000Z
 SUMMARY:Ausschuss Kunst und Kultur
 DESCRIPTION:Sitzung des Ausschusses Kunst und Kultur\nTagesordnung noch nic
@@ -973,7 +973,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35635
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270128T160000Z
 SUMMARY:Sportausschuss
 DESCRIPTION:Sitzung des Sportausschusses\nTagesordnung noch nicht veröffen
@@ -984,7 +984,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36140
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270201T140000Z
 SUMMARY:Naturschutzbeirat bei der Unteren Naturschutzbehörde
 DESCRIPTION:Sitzung des Naturschutzbeirates bei der Unteren Naturschutzbeh
@@ -995,7 +995,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36094
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270201T160000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -1006,7 +1006,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36088
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270201T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -1017,7 +1017,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35671
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270201T160000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -1028,7 +1028,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35664
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270202T160000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -1039,7 +1039,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35763
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270215T160000Z
 SUMMARY:Rechnungsprüfungsausschuss
 DESCRIPTION:Sitzung des Rechnungsprüfungsausschusses\nTagesordnung noch ni
@@ -1050,7 +1050,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35637
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270215T133000Z
 SUMMARY:Betriebsausschuss Veranstaltungszentrum Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Veranstaltungszentrum Köln\nTa
@@ -1061,7 +1061,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35636
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270215T133000Z
 SUMMARY:Finanzausschuss
 DESCRIPTION:Sitzung des Finanzausschusses\nTagesordnung noch nicht veröffe
@@ -1072,7 +1072,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36161
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270216T160000Z
 SUMMARY:Stadtarbeitsgemeinschaft Queerpolitik
 DESCRIPTION:5. Sitzung der Stadtarbeitsgemeinschaft Queerpolitik\nTagesordn
@@ -1083,7 +1083,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35765
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270216T160000Z
 SUMMARY:Ausschuss für die Gleichstellung von Frauen und Männern
 DESCRIPTION:Sitzung des Ausschusses für die Gleichstellung von Frauen und 
@@ -1094,7 +1094,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35639
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270216T140000Z
 SUMMARY:Betriebsausschuss Parkstadt Süd
 DESCRIPTION:Sitzung des Betriebsausschusses Parkstadt Süd\nTagesordnung no
@@ -1105,7 +1105,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35638
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270216T140000Z
 SUMMARY:Ausschuss für Stadtentwicklung und regionale Zusammenarbeit
 DESCRIPTION:Sitzung des Ausschusses für Stadtentwicklung und regionale Zus
@@ -1116,7 +1116,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35490
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270218T143000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -1127,7 +1127,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35980
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270223T140000Z
 DTEND:20270223T180000Z
 SUMMARY:Gestaltungsbeirat
@@ -1139,7 +1139,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35640
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270223T140000Z
 SUMMARY:Ausschuss für Chancengerechtigkeit und Integration
 DESCRIPTION:Sitzung des Ausschusses für Chancengerechtigkeit und Integrati
@@ -1150,7 +1150,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35641
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270225T143000Z
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
 DESCRIPTION:Sitzung des Ausschusses Soziales\, Gesundheit\, Seniorinnen und
@@ -1161,7 +1161,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35642
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270301T140000Z
 SUMMARY:Ausschuss Schule und Weiterbildung
 DESCRIPTION:Sitzung des Ausschusses Schule und Weiterbildung\nTagesordnung 
@@ -1172,7 +1172,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36247
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270301T130000Z
 DTEND:20270301T153000Z
 SUMMARY:Stadtarbeitsgemeinschaft Behindertenpolitik
@@ -1184,7 +1184,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35770
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270302T150000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -1195,7 +1195,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35665
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270302T160000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -1206,7 +1206,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35643
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270302T160000Z
 SUMMARY:Liegenschaftsausschuss
 DESCRIPTION:Sitzung des Liegenschaftsausschusses\nTagesordnung noch nicht v
@@ -1217,7 +1217,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35859
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270304T160000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -1228,7 +1228,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35776
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270304T150000Z
 SUMMARY:Betriebsausschuss Abfallwirtschaftsbetrieb der Stadt Köln
 DESCRIPTION:Sitzung Betriebsausschuss Abfallwirtschaftbetrieb der Stadt Kö
@@ -1239,7 +1239,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35772
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270304T150000Z
 SUMMARY:Ausschuss Klima\, Umwelt und Grün
 DESCRIPTION:Sitzung des Ausschusses Klima\, Umwelt und Grün\nTagesordnung 
@@ -1250,7 +1250,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35644
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270304T160000Z
 SUMMARY:Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Intern
  ationales
@@ -1263,7 +1263,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35604
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270304T150000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -1274,7 +1274,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36101
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270308T160000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -1285,7 +1285,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36095
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270308T160000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -1296,7 +1296,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36089
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270308T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -1307,7 +1307,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35784
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270308T160000Z
 SUMMARY:Ausschuss für Bürgerbeteiligung\, Anregungen und Beschwerden
 DESCRIPTION:Sitzung des Ausschusses für Bürgerbeteiligung\, Anregungen un
@@ -1318,7 +1318,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35781
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270308T160000Z
 SUMMARY:Ausschuss für Wirtschaft und Digitalisierung
 DESCRIPTION:Sitzung des Ausschusses für Wirtschaft und Digitalisierung\nTa
@@ -1329,7 +1329,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35672
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270308T160000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -1340,7 +1340,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35817
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270309T150000Z
 SUMMARY:Betriebsausschuss Gebäudewirtschaft
 DESCRIPTION:Sitzung des Betriebsausschusses Gebäudewirtschaft\nTagesordnun
@@ -1351,7 +1351,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35816
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270309T150000Z
 SUMMARY:Ausschuss für Bauen und Wohnen
 DESCRIPTION:Sitzung des Ausschusses für Bauen und Wohnen\nTagesordnung noc
@@ -1362,7 +1362,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35645
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270309T130000Z
 SUMMARY:Jugendhilfeausschuss
 DESCRIPTION:Sitzung des Jugendhilfeausschusses\nTagesordnung noch nicht ver
@@ -1373,7 +1373,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36119
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270311T163000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:11. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -1384,7 +1384,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35875
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270311T160000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -1395,7 +1395,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35792
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270311T143000Z
 SUMMARY:Betriebsausschuss Wallraf-Richartz-Museum & Fondation Corboud
 DESCRIPTION:Sitzung des Betriebsausschusses Wallraf-Richartz-Museum & Fonda
@@ -1406,7 +1406,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35791
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270311T143000Z
 SUMMARY:Betriebsausschuss Gürzenich-Orchester
 DESCRIPTION:Sitzung des Betriebsausschusses Gürzenich-Orchester\nTagesordn
@@ -1417,7 +1417,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35789
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270311T143000Z
 SUMMARY:Betriebsausschuss Bühnen der Stadt Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Bühnen der Stadt Köln\nTageso
@@ -1428,7 +1428,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35786
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270311T143000Z
 SUMMARY:Ausschuss Kunst und Kultur
 DESCRIPTION:Sitzung des Ausschusses Kunst und Kultur\nTagesordnung noch nic
@@ -1439,7 +1439,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35646
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270311T160000Z
 SUMMARY:Sportausschuss
 DESCRIPTION:Sitzung des Sportausschusses\nTagesordnung noch nicht veröffen
@@ -1450,7 +1450,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36168
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270312T090000Z
 DTEND:20270312T120000Z
 SUMMARY:Runder Tisch für Flüchtlingsfragen
@@ -1462,7 +1462,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35794
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270315T160000Z
 SUMMARY:Rechnungsprüfungsausschuss
 DESCRIPTION:Sitzung des Rechnungsprüfungsausschusses\nTagesordnung noch ni
@@ -1473,7 +1473,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35647
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270315T133000Z
 SUMMARY:Finanzausschuss
 DESCRIPTION:Sitzung des Finanzausschusses\nTagesordnung noch nicht veröffe
@@ -1484,7 +1484,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35796
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270316T160000Z
 SUMMARY:Ausschuss für die Gleichstellung von Frauen und Männern
 DESCRIPTION:Sitzung des Ausschusses für die Gleichstellung von Frauen und 
@@ -1495,7 +1495,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35649
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270316T140000Z
 SUMMARY:Betriebsausschuss Parkstadt Süd
 DESCRIPTION:Sitzung des Betriebsausschusses Parkstadt Süd\nTagesordnung no
@@ -1506,7 +1506,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35648
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270316T140000Z
 SUMMARY:Ausschuss für Stadtentwicklung und regionale Zusammenarbeit
 DESCRIPTION:Sitzung des Ausschusses für Stadtentwicklung und regionale Zus
@@ -1517,7 +1517,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35491
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270318T143000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -1528,7 +1528,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36141
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270405T130000Z
 SUMMARY:Naturschutzbeirat bei der Unteren Naturschutzbehörde
 DESCRIPTION:Sitzung des Naturschutzbeirates bei der Unteren Naturschutzbeh
@@ -1539,7 +1539,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35475
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270412T143000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -1550,7 +1550,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35981
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270413T130000Z
 DTEND:20270413T170000Z
 SUMMARY:Gestaltungsbeirat
@@ -1562,7 +1562,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35650
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270413T130000Z
 SUMMARY:Ausschuss für Chancengerechtigkeit und Integration
 DESCRIPTION:Sitzung des Ausschusses für Chancengerechtigkeit und Integrati
@@ -1573,7 +1573,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35651
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270415T133000Z
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
 DESCRIPTION:Sitzung des Ausschusses Soziales\, Gesundheit\, Seniorinnen und
@@ -1584,7 +1584,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35652
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270419T130000Z
 SUMMARY:Ausschuss Schule und Weiterbildung
 DESCRIPTION:Sitzung des Ausschusses Schule und Weiterbildung\nTagesordnung 
@@ -1595,7 +1595,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35798
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270420T140000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -1606,7 +1606,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35653
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270420T150000Z
 SUMMARY:Liegenschaftsausschuss
 DESCRIPTION:Sitzung des Liegenschaftsausschusses\nTagesordnung noch nicht v
@@ -1617,7 +1617,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36120
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270422T153000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:12. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -1628,7 +1628,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35860
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270422T150000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -1639,7 +1639,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35800
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270422T140000Z
 SUMMARY:Betriebsausschuss Abfallwirtschaftsbetrieb der Stadt Köln
 DESCRIPTION:Sitzung Betriebsausschuss Abfallwirtschaftbetrieb der Stadt Kö
@@ -1650,7 +1650,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35799
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270422T140000Z
 SUMMARY:Ausschuss Klima\, Umwelt und Grün
 DESCRIPTION:Sitzung des Ausschusses Klima\, Umwelt und Grün\nTagesordnung 
@@ -1661,7 +1661,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35654
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270422T150000Z
 SUMMARY:Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Intern
  ationales
@@ -1674,7 +1674,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35605
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270422T140000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -1685,7 +1685,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36102
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270426T150000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -1696,7 +1696,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36096
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270426T150000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -1707,7 +1707,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36090
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270426T140000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -1718,7 +1718,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35802
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270426T150000Z
 SUMMARY:Ausschuss für Bürgerbeteiligung\, Anregungen und Beschwerden
 DESCRIPTION:Sitzung des Ausschusses für Bürgerbeteiligung\, Anregungen un
@@ -1729,7 +1729,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35801
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270426T150000Z
 SUMMARY:Ausschuss für Wirtschaft und Digitalisierung
 DESCRIPTION:Sitzung des Ausschusses für Wirtschaft und Digitalisierung\nTa
@@ -1740,7 +1740,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35673
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270426T150000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -1751,7 +1751,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35819
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270427T140000Z
 SUMMARY:Betriebsausschuss Gebäudewirtschaft
 DESCRIPTION:Sitzung des Betriebsausschusses Gebäudewirtschaft\nTagesordnun
@@ -1762,7 +1762,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35818
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270427T140000Z
 SUMMARY:Ausschuss für Bauen und Wohnen
 DESCRIPTION:Sitzung des Ausschusses für Bauen und Wohnen\nTagesordnung noc
@@ -1773,7 +1773,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35655
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270427T120000Z
 SUMMARY:Jugendhilfeausschuss
 DESCRIPTION:Sitzung des Jugendhilfeausschusses\nTagesordnung noch nicht ver
@@ -1784,7 +1784,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35806
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270429T133000Z
 SUMMARY:Betriebsausschuss Wallraf-Richartz-Museum & Fondation Corboud
 DESCRIPTION:Sitzung des Betriebsausschusses Wallraf-Richartz-Museum & Fonda
@@ -1795,7 +1795,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35805
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270429T133000Z
 SUMMARY:Betriebsausschuss Gürzenich-Orchester
 DESCRIPTION:Sitzung des Betriebsausschusses Gürzenich-Orchester\nTagesordn
@@ -1806,7 +1806,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35804
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270429T133000Z
 SUMMARY:Betriebsausschuss Bühnen der Stadt Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Bühnen der Stadt Köln\nTageso
@@ -1817,7 +1817,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35803
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270429T133000Z
 SUMMARY:Ausschuss Kunst und Kultur
 DESCRIPTION:Sitzung des Ausschusses Kunst und Kultur\nTagesordnung noch nic
@@ -1828,7 +1828,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35666
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270429T150000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -1839,7 +1839,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35658
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270429T150000Z
 SUMMARY:Sportausschuss
 DESCRIPTION:Sitzung des Sportausschusses\nTagesordnung noch nicht veröffen
@@ -1850,7 +1850,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35657
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270429T130000Z
 SUMMARY:Betriebsausschuss Parkstadt Süd
 DESCRIPTION:Sitzung des Betriebsausschusses Parkstadt Süd\nTagesordnung no
@@ -1861,7 +1861,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35656
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270429T130000Z
 SUMMARY:Ausschuss für Stadtentwicklung und regionale Zusammenarbeit
 DESCRIPTION:Sitzung des Ausschusses für Stadtentwicklung und regionale Zus
@@ -1872,7 +1872,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35809
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270503T150000Z
 SUMMARY:Ausschuss für die Gleichstellung von Frauen und Männern
 DESCRIPTION:Sitzung des Ausschusses für die Gleichstellung von Frauen und 
@@ -1883,7 +1883,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35807
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270503T150000Z
 SUMMARY:Rechnungsprüfungsausschuss
 DESCRIPTION:Sitzung des Rechnungsprüfungsausschusses\nTagesordnung noch ni
@@ -1894,7 +1894,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35660
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270503T123000Z
 SUMMARY:Betriebsausschuss Veranstaltungszentrum Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Veranstaltungszentrum Köln\nTa
@@ -1905,7 +1905,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35659
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270503T123000Z
 SUMMARY:Finanzausschuss
 DESCRIPTION:Sitzung des Finanzausschusses\nTagesordnung noch nicht veröffe
@@ -1916,7 +1916,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35492
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270504T133000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -1927,7 +1927,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35982
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270511T130000Z
 DTEND:20270511T170000Z
 SUMMARY:Gestaltungsbeirat
@@ -1939,7 +1939,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35876
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270513T150000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -1950,7 +1950,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35989
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270520T150000Z
 SUMMARY:Beirat Porz Mitte
 DESCRIPTION:Sitzung des Beirates Porz-Mitte\nTagesordnung noch nicht veröf
@@ -1961,7 +1961,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36169
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270521T090000Z
 DTEND:20270521T120000Z
 SUMMARY:Runder Tisch für Flüchtlingsfragen
@@ -1973,7 +1973,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36162
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270603T150000Z
 SUMMARY:Stadtarbeitsgemeinschaft Queerpolitik
 DESCRIPTION:Stadtarbeitsgemeinschaft Queerpolitik\nTagesordnung noch nicht 
@@ -1984,7 +1984,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35476
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270607T143000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -1995,7 +1995,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35661
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270608T130000Z
 SUMMARY:Ausschuss für Chancengerechtigkeit und Integration
 DESCRIPTION:Sitzung des Ausschusses für Chancengerechtigkeit und Integrati
@@ -2006,7 +2006,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35662
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270610T133000Z
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
 DESCRIPTION:Sitzung des Ausschusses Soziales\, Gesundheit\, Seniorinnen und
@@ -2017,7 +2017,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35710
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270614T130000Z
 SUMMARY:Ausschuss Schule und Weiterbildung
 DESCRIPTION:Sitzung des Ausschusses Schule und Weiterbildung\nTagesordnung 
@@ -2028,7 +2028,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36248
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270614T120000Z
 DTEND:20270614T143000Z
 SUMMARY:Stadtarbeitsgemeinschaft Behindertenpolitik
@@ -2040,7 +2040,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35983
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270615T130000Z
 DTEND:20270615T170000Z
 SUMMARY:Gestaltungsbeirat
@@ -2052,7 +2052,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35810
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270615T140000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -2063,7 +2063,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35663
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270615T150000Z
 SUMMARY:Liegenschaftsausschuss
 DESCRIPTION:Sitzung des Liegenschaftsausschusses\nTagesordnung noch nicht v
@@ -2074,7 +2074,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35861
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270617T150000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -2085,7 +2085,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35812
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270617T140000Z
 SUMMARY:Betriebsausschuss Abfallwirtschaftsbetrieb der Stadt Köln
 DESCRIPTION:Sitzung Betriebsausschuss Abfallwirtschaftbetrieb der Stadt Kö
@@ -2096,7 +2096,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35811
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270617T140000Z
 SUMMARY:Ausschuss Klima\, Umwelt und Grün
 DESCRIPTION:Sitzung des Ausschusses Klima\, Umwelt und Grün\nTagesordnung 
@@ -2107,7 +2107,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35681
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270617T150000Z
 SUMMARY:Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Intern
  ationales
@@ -2120,7 +2120,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35606
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270617T140000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -2131,7 +2131,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36103
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270621T150000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -2142,7 +2142,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36097
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270621T150000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -2153,7 +2153,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36091
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270621T140000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -2164,7 +2164,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35751
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270621T150000Z
 SUMMARY:Ausschuss für Bürgerbeteiligung\, Anregungen und Beschwerden
 DESCRIPTION:Sitzung des Ausschusses für Bürgerbeteiligung\, Anregungen un
@@ -2175,7 +2175,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35750
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270621T150000Z
 SUMMARY:Ausschuss für Wirtschaft und Digitalisierung
 DESCRIPTION:Sitzung des Ausschusses für Wirtschaft und Digitalisierung\nTa
@@ -2186,7 +2186,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35674
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270621T150000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -2197,7 +2197,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35821
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270622T140000Z
 SUMMARY:Betriebsausschuss Gebäudewirtschaft
 DESCRIPTION:Sitzung des Betriebsausschusses Gebäudewirtschaft\nTagesordnun
@@ -2208,7 +2208,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35820
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270622T140000Z
 SUMMARY:Ausschuss für Bauen und Wohnen
 DESCRIPTION:Sitzung des Ausschusses für Bauen und Wohnen\nTagesordnung noc
@@ -2219,7 +2219,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35682
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270622T120000Z
 SUMMARY:Jugendhilfeausschuss
 DESCRIPTION:Sitzung des Jugendhilfeausschusses\nTagesordnung noch nicht ver
@@ -2230,7 +2230,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36121
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270624T153000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:13. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -2241,7 +2241,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35877
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270624T150000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -2252,7 +2252,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35761
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270624T133000Z
 SUMMARY:Betriebsausschuss Wallraf-Richartz-Museum & Fondation Corboud
 DESCRIPTION:Sitzung des Betriebsausschusses Wallraf-Richartz-Museum & Fonda
@@ -2263,7 +2263,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35759
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270624T133000Z
 SUMMARY:Betriebsausschuss Gürzenich-Orchester
 DESCRIPTION:Sitzung des Betriebsausschusses Gürzenich-Orchester\nTagesordn
@@ -2274,7 +2274,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35757
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270624T133000Z
 SUMMARY:Betriebsausschuss Bühnen der Stadt Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Bühnen der Stadt Köln\nTageso
@@ -2285,7 +2285,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35752
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270624T133000Z
 SUMMARY:Ausschuss Kunst und Kultur
 DESCRIPTION:Sitzung des Ausschusses Kunst und Kultur\nTagesordnung noch nic
@@ -2296,7 +2296,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35683
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270624T150000Z
 SUMMARY:Sportausschuss
 DESCRIPTION:Sitzung des Sportausschusses\nTagesordnung noch nicht veröffen
@@ -2307,7 +2307,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35667
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270624T150000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -2318,7 +2318,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36142
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270628T130000Z
 SUMMARY:Naturschutzbeirat bei der Unteren Naturschutzbehörde
 DESCRIPTION:Sitzung des Naturschutzbeirates bei der Unteren Naturschutzbeh
@@ -2329,7 +2329,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35762
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270628T150000Z
 SUMMARY:Rechnungsprüfungsausschuss
 DESCRIPTION:Sitzung des Rechnungsprüfungsausschusses\nTagesordnung noch ni
@@ -2340,7 +2340,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35685
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270628T123000Z
 SUMMARY:Betriebsausschuss Veranstaltungszentrum Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Veranstaltungszentrum Köln\nTa
@@ -2351,7 +2351,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35684
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270628T123000Z
 SUMMARY:Finanzausschuss
 DESCRIPTION:Sitzung des Finanzausschusses\nTagesordnung noch nicht veröffe
@@ -2362,7 +2362,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35764
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270629T150000Z
 SUMMARY:Ausschuss für die Gleichstellung von Frauen und Männern
 DESCRIPTION:Sitzung des Ausschusses für die Gleichstellung von Frauen und 
@@ -2373,7 +2373,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35687
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270629T130000Z
 SUMMARY:Betriebsausschuss Parkstadt Süd
 DESCRIPTION:Sitzung des Betriebsausschusses Parkstadt Süd\nTagesordnung no
@@ -2384,7 +2384,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35686
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270629T130000Z
 SUMMARY:Ausschuss für Stadtentwicklung und regionale Zusammenarbeit
 DESCRIPTION:Sitzung des Ausschusses für Stadtentwicklung und regionale Zus
@@ -2395,7 +2395,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35493
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270701T120000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -2406,7 +2406,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35477
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270809T143000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -2417,7 +2417,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35668
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270902T150000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -2428,7 +2428,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36163
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270906T150000Z
 SUMMARY:Stadtarbeitsgemeinschaft Queerpolitik
 DESCRIPTION:Stadtarbeitsgemeinschaft Queerpolitik\nTagesordnung noch nicht 
@@ -2439,7 +2439,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36104
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270913T150000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -2450,7 +2450,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35478
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270913T143000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -2461,7 +2461,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35688
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270914T130000Z
 SUMMARY:Ausschuss für Chancengerechtigkeit und Integration
 DESCRIPTION:Sitzung des Ausschusses für Chancengerechtigkeit und Integrati
@@ -2472,7 +2472,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35689
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270916T133000Z
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
 DESCRIPTION:Sitzung des Ausschusses Soziales\, Gesundheit\, Seniorinnen und
@@ -2483,7 +2483,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35690
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270920T130000Z
 SUMMARY:Ausschuss Schule und Weiterbildung
 DESCRIPTION:Sitzung des Ausschusses Schule und Weiterbildung\nTagesordnung 
@@ -2494,7 +2494,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36249
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270920T120000Z
 DTEND:20270920T143000Z
 SUMMARY:Stadtarbeitsgemeinschaft Behindertenpolitik
@@ -2506,7 +2506,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35766
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270921T140000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -2517,7 +2517,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35691
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270921T150000Z
 SUMMARY:Liegenschaftsausschuss
 DESCRIPTION:Sitzung des Liegenschaftsausschusses\nTagesordnung noch nicht v
@@ -2528,7 +2528,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35862
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270923T150000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -2539,7 +2539,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35768
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270923T140000Z
 SUMMARY:Betriebsausschuss Abfallwirtschaftsbetrieb der Stadt Köln
 DESCRIPTION:Sitzung Betriebsausschuss Abfallwirtschaftbetrieb der Stadt Kö
@@ -2550,7 +2550,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35767
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270923T140000Z
 SUMMARY:Ausschuss Klima\, Umwelt und Grün
 DESCRIPTION:Sitzung des Ausschusses Klima\, Umwelt und Grün\nTagesordnung 
@@ -2561,7 +2561,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35692
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270923T150000Z
 SUMMARY:Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Intern
  ationales
@@ -2574,7 +2574,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35607
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270923T140000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -2585,7 +2585,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36143
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270927T130000Z
 SUMMARY:Naturschutzbeirat bei der Unteren Naturschutzbehörde
 DESCRIPTION:Sitzung des Naturschutzbeirates bei der Unteren Naturschutzbeh
@@ -2596,7 +2596,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36138
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270927T150000Z
 SUMMARY:Ausschuss für Bürgerbeteiligung\, Anregungen und Beschwerden
 DESCRIPTION:Sitzung des Ausschusses für Bürgerbeteiligung\, Anregungen un
@@ -2607,7 +2607,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36098
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270927T150000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -2618,7 +2618,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35675
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270927T150000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -2629,7 +2629,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36246
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270927T150000Z
 SUMMARY:Ausschuss für Wirtschaft und Digitalisierung
 DESCRIPTION:Sitzung des Ausschusses für Wirtschaft und Digitalisierung\nTa
@@ -2640,7 +2640,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35823
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270928T140000Z
 SUMMARY:Betriebsausschuss Gebäudewirtschaft
 DESCRIPTION:Sitzung des Betriebsausschusses Gebäudewirtschaft\nTagesordnun
@@ -2651,7 +2651,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35822
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270928T140000Z
 SUMMARY:Ausschuss für Bauen und Wohnen
 DESCRIPTION:Sitzung des Ausschusses für Bauen und Wohnen\nTagesordnung noc
@@ -2662,7 +2662,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35693
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270928T120000Z
 SUMMARY:Jugendhilfeausschuss
 DESCRIPTION:Sitzung des Jugendhilfeausschusses\nTagesordnung noch nicht ver
@@ -2673,7 +2673,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35774
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270930T133000Z
 SUMMARY:Betriebsausschuss Wallraf-Richartz-Museum & Fondation Corboud
 DESCRIPTION:Sitzung des Betriebsausschusses Wallraf-Richartz-Museum & Fonda
@@ -2684,7 +2684,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35773
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270930T133000Z
 SUMMARY:Betriebsausschuss Gürzenich-Orchester
 DESCRIPTION:Sitzung des Betriebsausschusses Gürzenich-Orchester\nTagesordn
@@ -2695,7 +2695,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35771
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270930T133000Z
 SUMMARY:Betriebsausschuss Bühnen der Stadt Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Bühnen der Stadt Köln\nTageso
@@ -2706,7 +2706,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35769
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270930T133000Z
 SUMMARY:Ausschuss Kunst und Kultur
 DESCRIPTION:Sitzung des Ausschusses Kunst und Kultur\nTagesordnung noch nic
@@ -2717,7 +2717,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35694
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20270930T150000Z
 SUMMARY:Sportausschuss
 DESCRIPTION:Sitzung des Sportausschusses\nTagesordnung noch nicht veröffen
@@ -2728,7 +2728,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36092
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271004T140000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -2739,7 +2739,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36122
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271007T153000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:14. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -2750,7 +2750,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35878
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271007T150000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -2761,7 +2761,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35669
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271007T150000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -2772,7 +2772,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36105
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271011T150000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -2783,7 +2783,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35775
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271011T150000Z
 SUMMARY:Rechnungsprüfungsausschuss
 DESCRIPTION:Sitzung des Rechnungsprüfungsausschusses\nTagesordnung noch ni
@@ -2794,7 +2794,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35696
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271011T123000Z
 SUMMARY:Betriebsausschuss Veranstaltungszentrum Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Veranstaltungszentrum Köln\nTa
@@ -2805,7 +2805,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35695
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271011T123000Z
 SUMMARY:Finanzausschuss
 DESCRIPTION:Sitzung des Finanzausschusses\nTagesordnung noch nicht veröffe
@@ -2816,7 +2816,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35777
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271012T150000Z
 SUMMARY:Ausschuss für die Gleichstellung von Frauen und Männern
 DESCRIPTION:Sitzung des Ausschusses für die Gleichstellung von Frauen und 
@@ -2827,7 +2827,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35698
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271012T130000Z
 SUMMARY:Betriebsausschuss Parkstadt Süd
 DESCRIPTION:Sitzung des Betriebsausschusses Parkstadt Süd\nTagesordnung no
@@ -2838,7 +2838,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35697
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271012T130000Z
 SUMMARY:Ausschuss für Stadtentwicklung und regionale Zusammenarbeit
 DESCRIPTION:Sitzung des Ausschusses für Stadtentwicklung und regionale Zus
@@ -2849,7 +2849,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35494
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271014T133000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -2860,7 +2860,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36170
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271015T090000Z
 DTEND:20271015T120000Z
 SUMMARY:Runder Tisch für Flüchtlingsfragen
@@ -2872,7 +2872,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35984
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271019T130000Z
 DTEND:20271019T170000Z
 SUMMARY:Gestaltungsbeirat
@@ -2884,7 +2884,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36164
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271115T160000Z
 SUMMARY:Stadtarbeitsgemeinschaft Queerpolitik
 DESCRIPTION:Stadtarbeitsgemeinschaft Queerpolitik\nTagesordnung noch nicht 
@@ -2895,7 +2895,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35479
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271115T153000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -2906,7 +2906,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35699
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271116T140000Z
 SUMMARY:Ausschuss für Chancengerechtigkeit und Integration
 DESCRIPTION:Sitzung des Ausschusses für Chancengerechtigkeit und Integrati
@@ -2917,7 +2917,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35990
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271118T160000Z
 SUMMARY:Beirat Porz Mitte
 DESCRIPTION:Sitzung des Beirates Porz-Mitte\nTagesordnung noch nicht veröf
@@ -2928,7 +2928,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35879
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271118T160000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -2939,7 +2939,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35700
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271118T143000Z
 SUMMARY:Ausschuss Soziales\, Gesundheit\, Seniorinnen und Senioren
 DESCRIPTION:Sitzung des Ausschusses Soziales\, Gesundheit\, Seniorinnen und
@@ -2950,7 +2950,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36144
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271122T140000Z
 SUMMARY:Naturschutzbeirat bei der Unteren Naturschutzbehörde
 DESCRIPTION:Sitzung des Naturschutzbeirates bei der Unteren Naturschutzbeh
@@ -2961,7 +2961,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35701
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271122T140000Z
 SUMMARY:Ausschuss Schule und Weiterbildung
 DESCRIPTION:Sitzung des Ausschusses Schule und Weiterbildung\nTagesordnung 
@@ -2972,7 +2972,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36250
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271122T130000Z
 DTEND:20271122T153000Z
 SUMMARY:Stadtarbeitsgemeinschaft Behindertenpolitik
@@ -2984,7 +2984,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35985
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271123T140000Z
 DTEND:20271123T180000Z
 SUMMARY:Gestaltungsbeirat
@@ -2996,7 +2996,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35778
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271123T150000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -3007,7 +3007,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35702
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271123T160000Z
 SUMMARY:Liegenschaftsausschuss
 DESCRIPTION:Sitzung des Liegenschaftsausschusses\nTagesordnung noch nicht v
@@ -3018,7 +3018,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35863
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271125T160000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -3029,7 +3029,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35782
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271125T150000Z
 SUMMARY:Betriebsausschuss Abfallwirtschaftsbetrieb der Stadt Köln
 DESCRIPTION:Sitzung Betriebsausschuss Abfallwirtschaftbetrieb der Stadt Kö
@@ -3040,7 +3040,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35779
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271125T150000Z
 SUMMARY:Ausschuss Klima\, Umwelt und Grün
 DESCRIPTION:Sitzung des Ausschusses Klima\, Umwelt und Grün\nTagesordnung 
@@ -3051,7 +3051,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35703
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271125T160000Z
 SUMMARY:Ausschuss Allgemeine Verwaltung und Rechtsfragen / Vergabe / Intern
  ationales
@@ -3064,7 +3064,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35608
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271125T150000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -3075,7 +3075,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36099
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271129T160000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -3086,7 +3086,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36093
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271129T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -3097,7 +3097,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35785
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271129T160000Z
 SUMMARY:Ausschuss für Bürgerbeteiligung\, Anregungen und Beschwerden
 DESCRIPTION:Sitzung des Ausschusses für Bürgerbeteiligung\, Anregungen un
@@ -3108,7 +3108,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35783
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271129T160000Z
 SUMMARY:Ausschuss für Wirtschaft und Digitalisierung
 DESCRIPTION:Sitzung des Ausschusses für Wirtschaft und Digitalisierung\nTa
@@ -3119,7 +3119,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35676
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271129T160000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -3130,7 +3130,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35825
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271130T150000Z
 SUMMARY:Betriebsausschuss Gebäudewirtschaft
 DESCRIPTION:Sitzung des Betriebsausschusses Gebäudewirtschaft\nTagesordnun
@@ -3141,7 +3141,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35824
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271130T150000Z
 SUMMARY:Ausschuss für Bauen und Wohnen
 DESCRIPTION:Sitzung des Ausschusses für Bauen und Wohnen\nTagesordnung noc
@@ -3152,7 +3152,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35704
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271130T130000Z
 SUMMARY:Jugendhilfeausschuss
 DESCRIPTION:Sitzung des Jugendhilfeausschusses\nTagesordnung noch nicht ver
@@ -3163,7 +3163,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36123
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271202T163000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:15. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -3174,7 +3174,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35793
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271202T143000Z
 SUMMARY:Betriebsausschuss Wallraf-Richartz-Museum & Fondation Corboud
 DESCRIPTION:Sitzung des Betriebsausschusses Wallraf-Richartz-Museum & Fonda
@@ -3185,7 +3185,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35790
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271202T143000Z
 SUMMARY:Betriebsausschuss Gürzenich-Orchester
 DESCRIPTION:Sitzung des Betriebsausschusses Gürzenich-Orchester\nTagesordn
@@ -3196,7 +3196,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35788
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271202T143000Z
 SUMMARY:Betriebsausschuss Bühnen der Stadt Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Bühnen der Stadt Köln\nTageso
@@ -3207,7 +3207,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35787
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271202T143000Z
 SUMMARY:Ausschuss Kunst und Kultur
 DESCRIPTION:Sitzung des Ausschusses Kunst und Kultur\nTagesordnung noch nic
@@ -3218,7 +3218,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35705
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271202T160000Z
 SUMMARY:Sportausschuss
 DESCRIPTION:Sitzung des Sportausschusses\nTagesordnung noch nicht veröffen
@@ -3229,7 +3229,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35670
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271202T160000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -3240,7 +3240,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36189
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271203T090000Z
 DTEND:20271203T120000Z
 SUMMARY:Runder Tisch für Flüchtlingsfragen
@@ -3252,7 +3252,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36106
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271206T160000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -3263,7 +3263,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35795
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271206T160000Z
 SUMMARY:Rechnungsprüfungsausschuss
 DESCRIPTION:Sitzung des Rechnungsprüfungsausschusses\nTagesordnung noch ni
@@ -3274,7 +3274,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35707
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271206T133000Z
 SUMMARY:Betriebsausschuss Veranstaltungszentrum Köln
 DESCRIPTION:Sitzung des Betriebsausschusses Veranstaltungszentrum Köln\nTa
@@ -3285,7 +3285,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35706
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271206T133000Z
 SUMMARY:Finanzausschuss
 DESCRIPTION:Sitzung des Finanzausschusses\nTagesordnung noch nicht veröffe
@@ -3296,7 +3296,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35797
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271207T160000Z
 SUMMARY:Ausschuss für die Gleichstellung von Frauen und Männern
 DESCRIPTION:Sitzung des Ausschusses für die Gleichstellung von Frauen und 
@@ -3307,7 +3307,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35709
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271207T140000Z
 SUMMARY:Betriebsausschuss Parkstadt Süd
 DESCRIPTION:Sitzung des Betriebsausschusses Parkstadt Süd\nTagesordnung no
@@ -3318,7 +3318,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35708
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271207T140000Z
 SUMMARY:Ausschuss für Stadtentwicklung und regionale Zusammenarbeit
 DESCRIPTION:Sitzung des Ausschusses für Stadtentwicklung und regionale Zus
@@ -3329,7 +3329,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35495
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20271209T130000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -3340,7 +3340,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35749
-DTSTAMP:20261124T221745Z
+DTSTAMP:20261125T171647Z
 DTSTART:20280128T143000Z
 SUMMARY:Ausschuss Kunst und Kultur
 DESCRIPTION:Sitzung des Ausschusses Kunst und Kultur\nTagesordnung noch nic

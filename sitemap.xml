@@ -2,6 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://koeln.ratsatlas.de/</loc><changefreq>daily</changefreq></url>
   <url><loc>https://koeln.ratsatlas.de/datenschutz.html</loc></url>
+  <url><loc>https://koeln.ratsatlas.de/thema/</loc></url>
+  <url><loc>https://koeln.ratsatlas.de/thema/verkehr-und-mobilitaet/</loc></url>
   <url><loc>https://koeln.ratsatlas.de/rss/</loc></url>
   <url><loc>https://koeln.ratsatlas.de/begriffe/</loc></url>
   <url><loc>https://koeln.ratsatlas.de/einfach/</loc></url>
