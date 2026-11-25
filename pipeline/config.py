@@ -190,7 +190,7 @@ THEMENSEITEN_FREIGEGEBEN = ()
 # Prüfschalter für die Browserprüfung mit Testdaten in CI: RATSATLAS_THEMEN_PRUEFUNG=<schlüssel,…> setzt für diesen Lauf
 # THEMENSEITEN_FREIGEGEBEN und ZUSATZTHEMEN["themenseiten"], aber nur, wenn STAND.json `"testdaten": true` trägt
 # (tools/testdaten.py). Mit echten Daten bleibt er wirkungslos; der Lauf meldet das, und check zählt ihn als Befund
-# (check.dossiers). pages.yml bricht bei Testdaten ohnehin ab.
+# (check.dossiers). pages.yml übernimmt Rohdaten mit Testdaten nie (dann Kartenvorschau, tools/vorschau.py).
 THEMEN_PRUEFUNG = "RATSATLAS_THEMEN_PRUEFUNG"
 
 

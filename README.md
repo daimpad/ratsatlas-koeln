@@ -31,7 +31,7 @@ Dazu gibt es eine Suche, Erklärungen der Begriffe, eine Seite in Einfacher Spra
 
 ## Herkunft
 
-Der Ratsatlas Köln beruht auf dem Code des **Ratsatlas Bonn** ([daimpad/ratsatlas-bonn](https://github.com/daimpad/ratsatlas-bonn), damals `allris-test`). Übernommen wurde der Stand von Commit `9eea7eaaba8d822ac6e4b7a96357e64cce406e47` (03.11.2026) als unabhängige Kopie mit eigener Historie, ohne die Bonner Daten (siehe [NOTICE](NOTICE)). Für Köln neu sind der Abruf der Kölner Schnittstelle, die Kölner Gebiets-, Straßen- und Adressdaten und die Regeln der Verortung. Bonner Zusatzthemen wie Haushalt, Themenseiten oder der Ratsassistent sind für Köln noch nicht freigegeben und abgeschaltet.
+Der Ratsatlas Köln beruht auf dem Code des **Ratsatlas Bonn** ([daimpad/ratsatlas-bonn](https://github.com/daimpad/ratsatlas-bonn), damals `allris-test`). Übernommen wurde der Stand von Commit `9eea7eaaba8d822ac6e4b7a96357e64cce406e47` (03.11.2026) als unabhängige Kopie mit eigener Historie, ohne die Bonner Daten (siehe [NOTICE](NOTICE)). Für Köln neu sind der Abruf der Kölner Schnittstelle, die Kölner Gebiets-, Straßen- und Adressdaten und die Regeln der Verortung. Für die Themenseiten sind Aufbau, Zeitleiste und Gestaltung aus einem späteren Stand desselben Repositorys übernommen (Commit `730d593`, 17.11.2026), mit Kölner Regeln und Texten, ohne Bonner Themen und Inhalte ([NOTICE](NOTICE), `inventur/themenseiten_port.tsv`). Eine Themenseite erscheint erst, wenn ihr Thema an echten Vorlagen geprüft und freigegeben ist. Bonner Zusatzthemen wie Haushalt oder der Ratsassistent sind für Köln noch nicht freigegeben und abgeschaltet.
 
 ## Quellen und Lizenzen
 

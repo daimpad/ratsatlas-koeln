@@ -16,6 +16,7 @@ Auftrag, Entscheidungen und offene Punkte stehen in `CLAUDE.md` (Abschnitte 2, 8
 - **Volltexte:** bis zur Lizenzklärung keine Zitate, Auszüge oder PDFs im Repository, auf der Seite oder im Datenpaket.
 - **Lizenzen:** Namensnennung „Datenquelle: Stadt Köln – offenedaten-koeln.de“ überall (`config.NAMENSNENNUNG`). Neue Quelle → `config.SOURCES`, `data/LICENSE-DATA.md`, README, Quellenzeile in `site/index.html`, Erklärung in `pipeline/technikseite.py` (Test `tests/test_workflows.py`).
 - **Zusatzthemen aus Bonn:** bleiben im Code, abgeschaltet über `config.ZUSATZTHEMEN` (Pipeline) und `data-funktion` (Seite). Ganze Flächen tragen `data-freigabe` und fehlen ohne Freigabe im veröffentlichten HTML; Quellen in `connect-src` der CSP, die nur eine Funktion braucht, stehen in `seo.CSP_NUR_MIT_FREIGABE` (beides beim Bau in `pipeline/seo.py`, Runde 20). Freigabe einzeln durch den Auftraggeber.
+- **Themenseiten:** Freigabe je Thema durch den Auftraggeber (Schlüssel in `config.THEMENSEITEN_FREIGEGEBEN` und Hauptschalter `ZUSATZTHEMEN["themenseiten"]`, beide gemeinsam), erst nach dem Prüfbogen mit echten Vorlagen (`python3 -I tools/themen_pruefbogen.py <entpacktes Datenpaket> <thema> <Ausgabeordner außerhalb des Repositorys>`, im Gespräch durchgesehen; Ergebnis in `pruefung_text` und `pruefung_datum`). Zuordnung nur über Gremium, Titelwörter und Folgevorlagen. Der Prüfschalter `RATSATLAS_THEMEN_PRUEFUNG` wirkt nur mit Testdaten und steht nur im zweiten Bau von `tests.yml`. Mehr in `TECHNIK.md`, „Themenseiten“.
 - **Testdaten:** `tools/testdaten.py` erzeugt erfundene Vorlagen („[Testdaten]“, `example.invalid`) nur für Entwicklung und Prüfung; nie veröffentlichen (`pages.yml` bricht ab).
 - **Dokumentation:** `README.md` inhaltlich für Bürger:innen; Technisches in `TECHNIK.md`; Berichte je Phase in `inventur/BERICHT_phase*.md`, Ergebnisse je Phase als Zip-Paket, Audits als TSV.
 - **Sprache:** Oberfläche, Kommentare und Commit-Nachrichten auf Deutsch, sachlich und ohne Superlative; „Stadtteil“ (nicht „Ortsteil“) in allem, was Leser:innen sehen. Interne Namen aus Bonn (`ortsteil_bez`, `BONN` als Pfadkonstante) bleiben bis zum gemeinsamen Kern.
@@ -37,12 +38,13 @@ python tools/seite_bauen.py && python -m http.server -d _site 8765
 | `actors.py`, `process.py`, `topics.py` | Einreichende, Prozessschritte, Themen |
 | `export.py`, `publish.py`, `paket.py` | Exporte `data/export/koeln/`, Feeds, Kalender, GeoJSON, DCAT, Audits, Datenpaket |
 | `seo.py` und Seitenmodule | Gebiets-, Begriffs-, Feed- und Technikseite, Adressen aus `SITE_URL` |
+| `dossier.py`, `prozessbild.py`, `mitwirken.py`, `themenseiten/` | Themenseiten (`thema/`), nur für freigegebene Themen |
 
 ## Prüfen vor jedem Push
 
 1. `python -m pytest tests` (lokaler OParl-Testserver, keine Anfragen an die Stadt) und die Syntax aller Skripte unter `site`, `tests/browser` und `tools` wie im Schritt „Syntax der Webseite“ von `.github/workflows/tests.yml`: `node --check datei.js`, ES-Module (Zeile beginnt mit `import` oder `export`) mit `node --input-type=module --check < datei.js` (`node --check` allein meldet in Node 22 keinen Syntaxfehler in einem Modul).
 2. Bei Änderungen an Verortung oder Akteuren: Tests mit erfundenen Titeln in `tests/test_geokodierung.py` ergänzen.
-3. Bei Oberflächenänderungen: Die Browserprüfungen (`tests/browser/gremien.js`, `navigation.js`, `bedienung.js`, Prüfbogen) und `tools/wcag_pruefen.js` (axe-core, WCAG 2.1 A/AA, Tab-Reihenfolge und sichtbarer Fokus in 1440 × 900, 1024 × 768, 390 × 844 und 320 × 256) laufen im Job „browser“ von `tests.yml` und dürfen keinen Befund melden; lokal mit Testdaten und totem Proxy aufgerufen wie in `TECHNIK.md`, „Browserprüfungen in CI“.
+3. Bei Oberflächenänderungen: Die Browserprüfungen (`tests/browser/gremien.js`, `navigation.js`, `bedienung.js`, Prüfbogen; `themen.js` im zweiten Bau mit Testdaten) und `tools/wcag_pruefen.js` (axe-core, WCAG 2.1 A/AA, Tab-Reihenfolge und sichtbarer Fokus in 1440 × 900, 1024 × 768, 390 × 844 und 320 × 256) laufen im Job „browser“ von `tests.yml` und dürfen keinen Befund melden; lokal mit Testdaten und totem Proxy aufgerufen wie in `TECHNIK.md`, „Browserprüfungen in CI“.
 4. `python tools/linkpruefung.py _site` meldet keine defekten inneren Links.
 
 ## Veröffentlichung
