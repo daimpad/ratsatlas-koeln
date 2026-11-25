@@ -38,7 +38,7 @@
  },
  "dct:modified": {
   "@type": "xsd:date",
-  "@value": "2026-11-24"
+  "@value": "2026-11-25"
  },
  "dct:temporal": {
   "@type": "dct:PeriodOfTime",

@@ -3,17 +3,24 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-heimersdorf</id>
 <title>Ratsatlas Köln – Heimersdorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Heimersdorf</subtitle>
-<updated>2026-10-15T00:00:00Z</updated>
+<updated>2026-11-24T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-heimersdorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132846#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
+<title>Mobilitätsausschuss: „ungeändert beschlossen“ – 1427/2026 Baubeschluss für die Nachrüstung von taktilen Leitsystemen in den unterirdischen Stadtbahnhaltestellen Heimersdorf, Florastraße, Christophstraße/Mediapark und Rudolfplatz</title>
+<updated>2026-11-24T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1427/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132846#vorlage</id>
 <title>Neue Vorlage 1427/2026: Baubeschluss für die Nachrüstung von taktilen Leitsystemen in den unterirdischen Stadtbahnhaltestellen Heimersdorf, Florastraße, Christophstraße/Mediapark und Rudolfplatz</title>
 <updated>2026-10-15T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#1427/2026"/>
-<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: offen</summary>
+<summary>Beschlussvorlage Ausschuss · federführend: unbekannt · Stand: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131699#beratung-2026-09-24-Bezirksvertretung%206%20%28Chorweiler%29</id>
@@ -700,12 +707,5 @@
 <updated>2019-08-06T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2598/2019"/>
 <summary>Beantwortung einer mündl. Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/88225#beratung-2019-06-27-Bezirksvertretung%206%20%28Chorweiler%29</id>
-<title>Bezirksvertretung 6 (Chorweiler): „Kenntnis genommen“ – 2304/2019 Künftige Nutzung der Immobilie Anna-Langohr-Schule in Heimersdorf - AN/0903/2019</title>
-<updated>2019-06-27T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:heimersdorf#2304/2019"/>
-<summary>Kenntnisnahme (Mitteilung) am 2019-06-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

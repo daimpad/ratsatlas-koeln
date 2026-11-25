@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-vogelsang</id>
 <title>Ratsatlas Köln – Vogelsang</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Vogelsang</subtitle>
-<updated>2026-11-16T00:00:00Z</updated>
+<updated>2026-11-25T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-vogelsang.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vogelsang"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135963#vorlage</id>
+<title>Neue Vorlage AN/1915/2026: Antrag der Volt/FDP-Fraktion, betr.: Kennzeichnung der Parkzone Akazienweg 191 – 199 nur für PKW‘s</title>
+<updated>2026-11-25T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vogelsang#AN/1915/2026"/>
+<summary>Antrag nach § 3 BV4 (Volt/FDP) · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135608#beratung-2026-11-16-Bezirksvertretung%204%20%28Ehrenfeld%29</id>
 <title>Bezirksvertretung 4 (Ehrenfeld): „vertagt“ – AN/1790/2026 Anfrage der SPD-Fraktion, betr.: Sachstand zur Umsetzung des Antrags AN/0021/2024 – Markierung von Kreuzungen mit dem StVO-Zeichen 342</title>
@@ -700,12 +707,5 @@
 <updated>2025-05-13T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vogelsang#1031/2025"/>
 <summary>Entscheidung am 2025-05-13; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126162#beratung-2025-05-12-Ausschuss%20Schule%20und%20Weiterbildung</id>
-<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – AN/0270/2025 Sicherer Schulweg zu den Schulen über Girlitzweg und Teichrohrsängerweg im Ge-werbegebiet Triotop-Park</title>
-<updated>2025-05-12T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:vogelsang#AN/0270/2025"/>
-<summary>Antrag / Anfrage am 2025-05-12; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>
