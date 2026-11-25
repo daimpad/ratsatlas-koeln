@@ -38,7 +38,7 @@ def link(key, klasse=None):
 
 def abschnitt(root):
     """Abschnitt „Mitwirken“ der Themenseite (h2#mitwirken)."""
-    return f"""    <h2 id="mitwirken">Mitwirken</h2>
+    return f"""    <h2 id="mitwirken" tabindex="-1">Mitwirken</h2>
     <ul>
       <li><strong>Zuhören und zuschauen:</strong> Die Sitzungen des Rates, der Ausschüsse und der Bezirksvertretungen sind öffentlich; einzelne Punkte werden nichtöffentlich beraten (§ 48 Abs. 2, § 36 Abs. 5 und § 58 Abs. 2 GO NRW; § 2 Abs. 4 der Geschäftsordnung). Ratssitzungen überträgt die Stadt live im Internet: {link("ratLive")}.</li>
       <li><strong>Einwohnerfragestunde:</strong> Jede Sitzung einer Bezirksvertretung beginnt mit der Einwohnerfragestunde. Wer im Stadtbezirk wohnt, kann eine Frage mit höchstens fünf Unterfragen stellen, schriftlich spätestens am fünften Arbeitstag vor der Sitzung bis 12 Uhr; die Verwaltung antwortet schriftlich (§ 39 der Geschäftsordnung: {link("gescho")}).</li>

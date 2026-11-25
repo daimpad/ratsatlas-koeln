@@ -1,5 +1,8 @@
-// Themenseiten (pipeline/prozessbild.py): breite Zeitleisten auf schmalen Bildschirmen zum Datenstand schieben,
-// damit zuerst die kommenden Sitzungen sichtbar sind. Ohne Skript bleibt die Zeitleiste links verschiebbar.
+// Themenseiten (pipeline/prozessbild.py; Herkunft daimpad/ratsatlas-bonn @730d593, Kölner Anpassungen in
+// inventur/themenseiten_port.tsv): breite Zeitleisten auf schmalen Bildschirmen zum Datenstand schieben, damit zuerst
+// die kommenden Sitzungen sichtbar sind. Die Namen der Bahnen stehen in einer eigenen Spalte neben dem verschiebbaren
+// Rahmen (.pb-bahnen) und bleiben beim Verschieben stehen; data-start bezieht sich daher nur auf das Bild im Rahmen.
+// Ohne Skript bleibt die Zeitleiste links verschiebbar.
 document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
   const start = Number(el.dataset.start);
   if (el.scrollWidth > el.clientWidth && start > 0) {
@@ -7,10 +10,10 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
   }
 });
 
-// Prozessbild zum Anklicken: ein Klick auf Punkt, Sitzung oder Planbalken öffnet das Detailfeld unter dem Bild
-// (statt dem Link zu folgen), Schalter blenden Stränge aus, Bild und Liste heben sich gegenseitig hervor.
-// Auswahl und Schalter stehen im Seitenlink (#auswahl=261285&straenge=haushalt,buehnen). Ohne Skript gelten
-// die Links im Bild.
+// Zeitleiste zum Anklicken: ein Klick auf Punkt oder Sitzung öffnet das Detailfeld unter dem Bild (statt dem Link zu
+// folgen), Schalter blenden Stränge aus, Bild und Liste heben sich gegenseitig hervor. Auswahl und Schalter stehen im
+// Seitenlink (#auswahl=<Drucksache oder sitzung-n>&straenge=<Schlüssel,…>). Ohne Skript gelten die Links im Bild.
+// Keine berechneten Fristen und keine Federführung (in Köln nicht in den Daten); Absagen nach export.absage.
 (() => {
   const quelle = document.getElementById("pb-daten");
   const feld = document.getElementById("pb-detail");
@@ -43,9 +46,15 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
     if (!/^(https:\/\/|\.\.\/|\.\/|#|\?)/.test(href || "")) return document.createTextNode("");
     const a = el("a", text, "pb-knopf pb-knopf-leise");
     a.href = href;
-    if (extern) a.rel = "noopener";
+    if (extern) {
+      // externe Seiten im neuen Tab wie die übrigen Kölner Seiten, mit Hinweis für Screenreader
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.append(el("span", ` (${extern}, neuer Tab)`, "visually-hidden"));
+    }
     return a;
   };
+  const RIS = "Ratsinformationssystem der Stadt Köln";
   const zeile = (dl, name, wert, abgeleitet) => {
     if (!wert) return;
     dl.append(el("dt", name));
@@ -65,7 +74,6 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
       teile.ansage = `${p.reference} ${p.name || ""}, ${p.stand}`;
       teile.knoten.push(el("p", p.name || "", "pb-name-gross"));
       zeile(dl, "Art", p.paper_type);
-      zeile(dl, "Federführend", p.amt);
       zeile(dl, "Stand", p.stand);
       zeile(dl, "Strang", p.strang && `${p.strang} (${p.grund})`, true);
       teile.knoten.push(dl);
@@ -75,7 +83,10 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
         for (const b of p.beratungen) {
           const li = el("li");
           li.append(el("span", datum(b.date), "pb-folge-datum"), " ", el("strong", b.gremium), ": ");
-          li.append(b.cancelled ? "abgesetzt" : b.result ? el("q", b.result) : "noch ohne Ergebnis");
+          // Absage nach export.absage: „oparl“ (in der Schnittstelle abgesagt) oder „name“ (Hinweis im Sitzungsnamen)
+          const absage = b.abgesagt === "name" ? "Sitzung laut Sitzungsnamen abgesagt" : b.abgesagt ? "Sitzung abgesagt" : "";
+          if (b.result) li.append(el("q", b.result), absage ? ` (${absage})` : "");
+          else li.append(absage || "noch ohne Ergebnis");
           ol.append(li);
         }
         teile.knoten.push(ol, el("p", "Ergebnisse wörtlich aus dem Ratsinformationssystem.", "pb-hinweis"));
@@ -83,32 +94,19 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
         teile.knoten.push(el("p", "Keine Beratungsfolge eingetragen.", "pb-hinweis"));
       }
       if (p.karte) aktionen.append(link(p.karte, "Vorgang auf der Karte"));
-      if (p.web) aktionen.append(link(p.web, "Original im Ratsinformationssystem", true));
+      if (p.web) aktionen.append(link(p.web, "Original im Ratsinformationssystem", RIS));
     } else if (art === "sitzung") {
       const s = daten.sitzungen[n];
       if (!s) return null;
       teile.titel = s.gremium;
       teile.ansage = `${s.gremium}, ${datum(s.date)}, öffentliche Sitzung`;
       zeile(dl, "Datum", datum(s.date) + (s.time ? `, ${s.time} Uhr` : ""));
-      zeile(dl, "Frist für Anträge und Fragen",
-        `${datum(s.frist)} (${s.frist >= daten.heute ? "noch offen" : "abgelaufen"}; 21 Tage vorher, berechnet)`, true);
-      zeile(dl, "Tagesordnung", s.web ? "veröffentlicht" : "noch nicht veröffentlicht (erscheint etwa zwei Wochen vorher)");
+      if (s.hinweis === "verschoben") zeile(dl, "Hinweis", "laut Sitzungsnamen verschoben");
+      zeile(dl, "Tagesordnung", s.web ? "veröffentlicht" : "noch nicht veröffentlicht");
       teile.knoten.push(dl);
-      if (s.web) aktionen.append(link(s.web, "Tagesordnung", true));
+      if (s.web) aktionen.append(link(s.web, "Tagesordnung", RIS));
       aktionen.append(link(daten.kalender, "Kalender (.ics)"), link("#sitzungen", "Alle Termine"),
-        link(daten.mitmachen, "Wege und Fristen zum Mitwirken"));
-    } else if (art === "phase") {
-      const ph = daten.phasen[n];
-      if (!ph) return null;
-      teile.titel = ph.text;
-      teile.ansage = `${ph.text}, ${datum(ph.von)} bis ${datum(ph.bis)}`;
-      const tp = daten.terminplan;
-      zeile(dl, "Zeitraum", `${datum(ph.von)} bis ${datum(ph.bis)}`);
-      zeile(dl, "Grundlage", `geplant laut Terminplan${tp ? ` in Drucksache ${tp.reference}` : ""}`, true);
-      if (ph.intern) zeile(dl, "Öffentlichkeit", "nicht öffentlich (Arbeit der Verwaltung)");
-      teile.knoten.push(dl);
-      if (tp && tp.karte) aktionen.append(link(tp.karte, `Terminplan ${tp.reference} auf der Karte`));
-      if (tp && tp.web) aktionen.append(link(tp.web, "Original im Ratsinformationssystem", true));
+        link(daten.mitmachen, "Wege zum Mitwirken"));
     } else {
       return null;
     }

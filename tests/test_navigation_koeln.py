@@ -125,6 +125,11 @@ def test_menue_inhalte():
     assert _karten(themen) == ["Kennzahlen zum Gebiet", "Themenseiten", "Haushalt auf einen Blick"]
     assert '<button type="button" class="card" data-open-tab="stats">' in themen
     assert '<a class="card" href="thema/" data-funktion="themenseiten" hidden>' in themen
+    # Kartentext der Kölner Themenseiten ohne Bonner Themen und ohne Haushalt (Entscheidung 24.11.2026 (3))
+    karte = re.search(r'<a class="card" href="thema/".*?</a>', themen, re.S).group(0)
+    assert ('<span class="card-text">Vorlagen, Verfahren und nächste Sitzungen je Thema, mit Zeitleiste und Wegen zum '
+            'Mitwirken.</span>') in karte
+    assert not re.search(r"Haushalt|Kultur|Schule|Digitales|Prozessbild", karte)
     assert '<a class="card" href="haushalt/" data-funktion="haushalt" hidden>' in themen
     entscheiden = _abschnitt(INDEX, "mega-entscheiden")
     assert _karten(entscheiden) == ["Gremien", "Ämter", "Verfahrenswege in Zahlen"]

@@ -86,9 +86,9 @@ a { color: var(--accent-ink); }
 .pb-ziel.pb-aktiv > circle, .pb-ziel.pb-aktiv > rect { stroke: #0f0f14; stroke-width: 3.5px; }
 .pb-ziel.pb-hell > circle, .pb-ziel.pb-hell > rect { stroke-width: 3px; }
 .pb-ziel.pb-gedimmt { opacity: 0.22; }
-.pb-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0 4px; font-size: 14px; }
+.pb-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 24px 0 28px; font-size: 14px; }
 .pb-filter[hidden] { display: none; }
-.pb-filter-text { color: var(--muted); margin-right: 2px; }
+.page .pb-filter-text { flex-basis: 100%; margin: 0 0 4px; font-size: 17px; color: var(--text); }
 .pb-schalter { font: inherit; font-weight: 600; padding: 5px 12px; border-radius: 999px; border: 1.5px solid var(--accent-ink); background: #fff; color: var(--accent-ink); cursor: pointer; }
 .pb-schalter[aria-pressed="true"] { background: var(--accent-ink); color: #fff; }
 .pb-schalter[aria-pressed="true"]::before { content: "✓ "; }
@@ -121,6 +121,40 @@ a { color: var(--accent-ink); }
 .pb-legende i { display: inline-block; width: 14px; height: 14px; min-width: 0; border: 1px solid var(--accent-ink); }
 .pb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 600px) { .pb-balken li { grid-template-columns: 1fr; gap: 2px; } }
+/* Zeitleiste der Kölner Themenseiten (pipeline/prozessbild.py, abschnitt): Namen der Bahnen als stehende Spalte links
+   neben dem waagerecht verschiebbaren Rahmen (bleiben beim Verschieben stehen), das Bild in festen Pixelmaßen
+   (--pb-breite, --pb-hoehe), damit die Zeilen der Spalte (--pb-oben, --pb-bahn) zu den Bahnen im Bild passen; die
+   Legende steht als HTML unter dem Bild (.pb-legende-bild). Ab 760 px ragt die Zeitleiste wie .pb-breit über die
+   Textspalte hinaus, darunter bleibt sie in der Spalte (keine waagerechte Verschiebung der Seite, auch bei 320 px). */
+.pb-zeitleiste {
+  --pb-namen: 150px; display: grid; grid-template-columns: var(--pb-namen) minmax(0, 1fr); margin: 8px 0;
+  position: relative; left: 50%; transform: translateX(-50%); width: min(1120px, calc(100vw - 32px));
+  background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 32px rgba(15, 15, 20, 0.08);
+}
+.pb-zeitleiste .pb-rahmen.pb-breit {
+  position: static; left: auto; transform: none; width: auto; margin: 0; padding: 0; border: 0; box-shadow: none;
+  background: transparent; border-radius: 0 12px 12px 0;
+}
+.pb-zeitleiste .pb-rahmen:focus-visible { outline-offset: -2px; }
+.pb-zeitleiste .pb-svg { width: var(--pb-breite); min-width: 0; max-width: none; height: var(--pb-hoehe); }
+.pb-bahnen { padding-top: var(--pb-oben); border-right: 1px solid var(--line); border-radius: 12px 0 0 12px; }
+.pb-bahn {
+  display: flex; align-items: center; height: var(--pb-bahn); padding: 0 10px; overflow: hidden;
+  font-size: 13px; font-weight: 600; line-height: 1.2; color: var(--text); hyphens: manual;
+}
+.pb-bahn:nth-child(odd) { background: #f7f5ff; }
+.pb-legende-bild { display: flex; flex-wrap: wrap; gap: 4px 18px; list-style: none; padding: 0; margin: 4px 0 12px; font-size: 13px; color: var(--muted); }
+.pb-legende-bild li { display: inline-flex; align-items: center; gap: 6px; }
+.pb-zeichen { flex: none; }
+@media (max-width: 760px) {
+  .pb-zeitleiste { left: auto; transform: none; width: auto; box-shadow: none; }
+}
+@media (max-width: 600px) {
+  .pb-zeitleiste { --pb-namen: 92px; }
+  .pb-bahn { padding: 0 6px; font-size: 11.5px; line-height: 1.15; }
+  /* Vorlagentabellen (pipeline/dossier.py, _row): Spaltennamen je Zelle, weil der Tabellenkopf ausgeblendet ist */
+  .page table.vorlagen td[data-l]::before { content: attr(data-l) ": "; color: var(--muted); font-size: 13px; font-weight: 600; }
+}
 /* Übersicht thema/ (pipeline/dossier.py, uebersicht): Kacheln je Thema, Glas mit Farbverlauf (DESIGN.md) */
 .themen-zahlen { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 14px 0 6px; }
 .themen-zahlen li { padding: 6px 14px; border-radius: 999px; background: rgba(124, 58, 237, 0.08); color: var(--muted); font-size: 15px; }
@@ -184,8 +218,9 @@ body:has(.kacheln) .page { background: transparent; box-shadow: none; padding: 8
 /* Kopf der Themenseiten: Symbol und Farbverlauf wie die Kachel der Übersicht */
 .thema-kopf { margin: -16px -28px 0; }
 .thema-band { border-radius: 20px 20px 0 0; justify-content: space-between; gap: 12px; }
-.thema-sprung { margin: 0 0 8px; font-size: 15px; line-height: 1.7; }
-.thema-sprung span { color: var(--muted); margin-right: 4px; }
+.thema-sprung { margin: 8px 0 12px; font-size: 15px; line-height: 1.7; }
+.page .thema-sprung h2 { font-size: 17px; margin: 18px 0 4px; padding-top: 0; border-top: 0; }
+.thema-sprung p { margin: 0; }
 .thema-alle { position: relative; z-index: 1; align-self: flex-start; margin-top: 16px; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.92); color: var(--k-ink); font-size: 14px; font-weight: 600; text-decoration: none; }
 .thema-alle:hover { background: #fff; text-decoration: underline; }
 .thema-kopf h1 { margin: 18px 28px 6px; padding-bottom: 8px; border-bottom: 3px solid var(--k-von); display: inline-block; }
@@ -278,6 +313,18 @@ i.hh-e9, tr.hh-e9 > th::before { background: #b0a48a; }
   .page table.hh-tabelle td[data-l]::before { content: attr(data-l) ": "; color: var(--muted); }
   .page table.hh-tabelle caption { display: block; text-align: left; font-weight: 600; margin-bottom: 4px; }
 }
+/* Metaangaben eingeklappt (pipeline/akkordeon.py, aus daimpad/ratsatlas-bonn @730d593): leiser als der Inhalt */
+.page .meta-acc { background: transparent; border-color: var(--line); }
+.page .meta-acc > summary { font-size: 14px; font-weight: 600; color: var(--muted); }
+.page .meta-acc > summary:hover { color: var(--accent-ink); }
+.page .meta-acc p, .page .meta-acc li { font-size: 14px; color: var(--muted); }
+.page .regel-acc { border: 0; padding: 0; margin: 2px 0 8px; }
+.page .regel-acc > summary { font-size: 13px; padding: 2px 0; }
+.page .regel-acc[open] { padding-bottom: 4px; }
+/* mehr Weißraum um das Akkordeon unter „Auf einen Blick“ */
+.page h2 + p + .meta-acc { margin: 16px 0 8px; }
+/* nur für Screenreader (Hinweis „neuer Tab“ an Links) */
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 /* Seite rss/ (pipeline/rssseite.py): Feed-Adresse mit Kopierknopf, drei Zugänge, technische Angaben abgesetzt */
 .rss-cta { margin: 16px 0 8px; padding: 16px 18px; border-radius: 16px; border: 1px solid rgba(124, 58, 237, 0.25); background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(124, 58, 237, 0.02)); }
 .page .rss-cta h2 { margin: 0 0 8px; padding: 0; border: 0; }

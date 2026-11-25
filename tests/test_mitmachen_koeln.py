@@ -108,10 +108,10 @@ def test_nur_gepruefte_adressen():
 
 
 
-# Module der Kölner Themenseiten mit Texten zum Mitwirken (Entscheidung 24.11.2026 (3); site/thema.js folgt mit dem Teil
-# der Oberfläche)
+# Module der Kölner Themenseiten mit Texten zum Mitwirken (Entscheidung 24.11.2026 (3)), dazu das Skript der Seite
 THEMEN_MODULE = ["pipeline/dossier.py", "pipeline/prozessbild.py", "pipeline/mitwirken.py", "pipeline/akkordeon.py",
-                 *sorted(f"pipeline/themenseiten/{p.name}" for p in (ROOT / "pipeline" / "themenseiten").glob("*.py"))]
+                 *sorted(f"pipeline/themenseiten/{p.name}" for p in (ROOT / "pipeline" / "themenseiten").glob("*.py")),
+                 "site/thema.js"]
 
 
 def test_themenseiten_ohne_bonner_reste_und_nur_gepruefte_adressen():

@@ -426,9 +426,10 @@ def test_seite_aufbau_wie_bonn(tmp_path, monkeypatch):
              "<h2>Auf einen Blick</h2>", "So ist das Bild gezeichnet", 'class="pb-filter"', '<h3 class="pb-filter-text">',
              'class="pb-bahnen"', 'class="pb-rahmen', 'class="pb-legende-bild"', 'id="pb-detail"', 'id="pb-daten"',
              'class="pb-liste"', 'class="pb-karten"', "<h3>Stand der Vorlagen je Strang</h3>",
-             '<h2 id="fachausschuss">Wer berät mit: Mobilitätsausschuss</h2>', '<h2 id="sitzungen">Nächste Sitzungen</h2>',
-             '<h2 id="mitwirken">Mitwirken</h2>', '<h2 id="vorlagen">Vorlagen nach Strang</h2>',
-             "Wie die Vorlagen zugeordnet sind", '<h3 id="bus_bahn">', "Wie zugeordnet?", "Begriffe auf dieser Seite",
+             '<h2 id="fachausschuss" tabindex="-1">Wer berät mit: Mobilitätsausschuss</h2>',
+             '<h2 id="sitzungen" tabindex="-1">Nächste Sitzungen</h2>', '<h2 id="mitwirken" tabindex="-1">Mitwirken</h2>',
+             '<h2 id="vorlagen" tabindex="-1">Vorlagen nach Strang</h2>',
+             "Wie die Vorlagen zugeordnet sind", '<h3 id="bus_bahn" tabindex="-1">', "Wie zugeordnet?", "Begriffe auf dieser Seite",
              "Was diese Seite nicht zeigt", "Quellen und Methode"]
     stellen = [html.find(x) for x in folge]
     assert -1 not in stellen, [x for x, i in zip(folge, stellen) if i < 0]
@@ -436,6 +437,10 @@ def test_seite_aufbau_wie_bonn(tmp_path, monkeypatch):
     nav = re.search(r'<nav class="thema-sprung" aria-labelledby="sprung-h"><h2 id="sprung-h">Auf dieser Seite</h2>'
                     r'<p>(.*?)</p></nav>', html).group(1)
     assert re.findall(r'href="#([^"]+)"', nav) == ["fachausschuss", "sitzungen", "mitwirken", "vorlagen"]
+    # Sprungziele fokussierbar (tabindex="-1"): Nach dem Sprung liegt der Fokus auf der Überschrift, nicht auf body
+    # (tests/browser/themen.js); ebenso die Stränge, auf die „Vorlagen nach Strang“ verweist
+    for ziel in [*re.findall(r'href="#([^"]+)"', nav), *[k for k, _, _ in T.straenge if f'id="{k}"' in html]]:
+        assert re.search(rf'<h[23] id="{ziel}" tabindex="-1">', html), ziel
     assert "seit Beginn der Wahlperiode (01.11.2025)" in html
     assert f'<link rel="canonical" href="{URL}{T.pfad}">' in html
     assert 'content="https://koeln.ratsatlas.de/og-image.png"' in html and "-zeitleiste." not in html

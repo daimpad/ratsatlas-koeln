@@ -10,6 +10,8 @@ data/export/
 data/export/ratsatlas-koeln-export.zip
 dist/
 _site/
+# zweiter Bau mit Themenseiten (Prüfschalter RATSATLAS_THEMEN_PRUEFUNG, nur mit Testdaten; .github/workflows/tests.yml)
+_site_themen/
 .venv/
 _archiv/
 _kurzfassungen/

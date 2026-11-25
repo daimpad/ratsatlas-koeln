@@ -1,7 +1,9 @@
 """Job „browser“ in .github/workflows/tests.yml (Entscheidungen 19.11.2026 (1) (G) und 24.11.2026 (2) (2) A): Seite
 mit Testdaten im Browser, parallel zum Job „test“, mit festen Versionen von Playwright und axe-core und ohne Anfrage an
 die Stadt; dazu die Syntaxprüfung aller Skripte im Job „test“ und tools/wcag_pruefen.js (Größe und Port aus der
-Umgebung, Exit-Code bei Befund). Der Workflow wird ohne YAML-Bibliothek gelesen (PyYAML steht nicht in
+Umgebung, Exit-Code bei Befund). Themenseiten (Entscheidung 24.11.2026 (3)): zweiter Bau mit tools/testdaten.py
+--themen und dem Prüfschalter RATSATLAS_THEMEN_PRUEFUNG (nur in diesem Schritt), Server auf 127.0.0.1:8791 und
+tests/browser/themen.js. Der Workflow wird ohne YAML-Bibliothek gelesen (PyYAML steht nicht in
 requirements.txt, also nicht in GitHub Actions); wo PyYAML installiert ist, prüft ein Test die Auswertung gegen YAML.
 Alle Daten sind erfunden; keine Anfragen nach außen."""
 import json
@@ -25,6 +27,13 @@ SEITE = "http://127.0.0.1:8790/"
 KETTE = ["python tools/testdaten.py", "python -m pipeline build", "python -m pipeline export", "python -m pipeline kontext",
          "python -m pipeline ebenen", "python -m pipeline check", "python -m pipeline package",
          "python tools/seite_bauen.py _site", "python tools/linkpruefung.py _site"]
+# zweiter Bau mit den Themenseiten (Entscheidung 24.11.2026 (3)): eigene Testdaten, eigener Ordner, eigener Port
+SEITE_THEMEN = "http://127.0.0.1:8791/"
+KETTE_THEMEN = ["python tools/testdaten.py --themen", *KETTE[1:7], "python tools/seite_bauen.py _site_themen",
+                "python tools/linkpruefung.py _site_themen"]
+WENN_SEITE = "${{ !cancelled() && steps.seite.outcome == 'success' }}"
+WENN_CHROMIUM = "${{ !cancelled() && steps.chromium.outcome == 'success' }}"
+WENN_THEMEN = "${{ !cancelled() && steps.themen_seite.outcome == 'success' }}"
 GROESSEN = ["1440x900", "1024x768", "390x844", "320x256"]
 SHA = re.compile(r"^[\w.-]+/[\w./-]+@[0-9a-f]{40}$")
 
@@ -149,7 +158,8 @@ def test_actions_mit_voller_sha_wie_in_pages_und_kacheln():
 def test_nur_leserechte_keine_geheimnisse_keine_freigaben():
     """permissions nur contents: read (oben, kein Job erweitert sie); keine Secrets, Repository-Variablen oder Token;
     im Job „browser“ keine Freigabe eines Abrufs (RATSATLAS_STADT_INFORMIERT, RATSATLAS_KONTAKT, …_ABRUF); von den
-    Variablen RATSATLAS_* nur die Sperrdatei und RATSATLAS_BROWSER (Prüfbogen im Browser)."""
+    Variablen RATSATLAS_* nur die Sperrdatei, RATSATLAS_BROWSER (Prüfbogen im Browser) und der Prüfschalter der
+    Themenseiten (test_pruefschalter_themen_nur_im_zweiten_bau)."""
     assert re.findall(r"^\s*([\w-]+):\s*(read|write|none)\s*$", TEXT, re.M) == [("contents", "read")]
     assert re.search(r"^permissions:\n  contents: read\n", TEXT, re.M)
     for job in JOBS.values():
@@ -157,19 +167,20 @@ def test_nur_leserechte_keine_geheimnisse_keine_freigaben():
     for verboten in ("secrets", "vars.", "GITHUB_TOKEN", "github.token"):
         assert verboten not in TEXT, verboten
     browser = _job("browser")
-    assert set(re.findall(r"RATSATLAS_\w+", browser)) == {"RATSATLAS_SPERRE", "RATSATLAS_BROWSER"}
+    assert set(re.findall(r"RATSATLAS_\w+", browser)) == {"RATSATLAS_SPERRE", "RATSATLAS_BROWSER", "RATSATLAS_THEMEN_PRUEFUNG"}
     assert not re.search(r"_ABRUF\b|PDF_FREIGEGEBEN|VOLLABRUF", browser)
 
 
 def test_keine_adresse_der_stadt_und_kein_abruf():
     """tests.yml nennt keinen Server der Stadt und nicht den Spiegel; jede Adresse ist lokal (abruf.lokal); im Job
-    „browser“ laufen nur Schritte der Pipeline ohne Netz, in der Reihenfolge der lokalen Kette."""
+    „browser“ laufen nur Schritte der Pipeline ohne Netz, in der Reihenfolge der lokalen Kette (zweimal: Seite und
+    Seite mit Themenseiten)."""
     klein = TEXT.lower()
     for host in ("stadt-koeln", "offenedaten-koeln", "buergerinfo", "ratsinformation", "github.io", "ratsatlas.de"):
         assert host not in klein, host
     adressen = re.findall(r"https?://[^\s\"'`)]+", TEXT)
     assert adressen and all(abruf.lokal(a) and not abruf.stadt(a) for a in adressen), adressen
-    assert re.findall(r"python -m pipeline ([a-z0-9-]+)", TEXT) == ["build", "export", "kontext", "ebenen", "check", "package"]
+    assert re.findall(r"python -m pipeline ([a-z0-9-]+)", TEXT) == ["build", "export", "kontext", "ebenen", "check", "package"] * 2
 
 
 def test_ohne_netz_bei_pipeline_server_und_pruefungen():
@@ -211,9 +222,9 @@ def test_env_ohne_doppelte_schluessel():
 
 def test_kette_server_und_alle_pruefungen_aufgerufen():
     """Die Seite entsteht wie in der lokalen Kette (Testdaten, Pipeline, Seite, Linkprüfung), der Server lauscht nur
-    auf 127.0.0.1:8790; jedes Skript unter tests/browser läuft (pruefbogen.js über tests/test_praezision.py), die
-    WCAG-Prüfung in den vier Größen. Jede Prüfung läuft, solange die Seite antwortet, auch nach dem Befund einer
-    anderen."""
+    auf 127.0.0.1:8790; jedes Skript unter tests/browser läuft (pruefbogen.js über tests/test_praezision.py, themen.js
+    gegen den zweiten Bau auf 127.0.0.1:8791), die WCAG-Prüfung in den vier Größen. Jede Prüfung läuft, solange ihre
+    Seite antwortet, auch nach dem Befund einer anderen."""
     bau = _schritt("Seite mit Testdaten bauen")["run"].splitlines()
     assert bau[0] == 'mkdir -p "$RATSATLAS_SPERRE"' and bau[1:] == KETTE
     server = _schritt("Seite unter 127.0.0.1:8790")
@@ -226,9 +237,11 @@ def test_kette_server_und_alle_pruefungen_aufgerufen():
         run = s.get("run", "")
         for skript in re.findall(r"node (tests/browser/\w+\.js) " + re.escape(SEITE), run):
             aufgerufen.add(skript)
+        for skript in re.findall(r"node (tests/browser/\w+\.js) " + re.escape(SEITE_THEMEN), run):
+            assert skript == "tests/browser/themen.js" and s["if"] == WENN_THEMEN, s["name"]
+            aufgerufen.add(skript)
         if "node tests/browser" in run or "node tools/wcag_pruefen.js" in run or "python -m pytest" in run:
-            assert s["if"] in ("${{ !cancelled() && steps.seite.outcome == 'success' }}",
-                               "${{ !cancelled() && steps.chromium.outcome == 'success' }}"), s["name"]
+            assert s["if"] in (WENN_SEITE, WENN_CHROMIUM, WENN_THEMEN), s["name"]
             assert s["env"]["NODE_PATH"] == "${{ github.workspace }}/tests/browser/node_modules"
             assert s["env"]["AXE_PFAD"] == "${{ github.workspace }}/tests/browser/node_modules/axe-core/axe.min.js"
         if "python -m pytest" in run:
@@ -244,12 +257,12 @@ def test_kette_server_und_alle_pruefungen_aufgerufen():
     assert wcag["run"].rstrip().endswith('exit "$fehler"')
 
 
-PRUEFUNGEN = {"Gremien und Ämter im Browser": "gremien", "Navigation im Browser": "navigation",
-              "Bedienung im Browser": "bedienung"}
+PRUEFUNGEN = {"Gremien und Ämter im Browser": ("gremien", SEITE), "Navigation im Browser": ("navigation", SEITE),
+              "Bedienung im Browser": ("bedienung", SEITE), "Themenseiten im Browser": ("themen", SEITE_THEMEN)}
 
 
 def test_befund_laesst_den_job_scheitern():
-    """Ein Befund lässt den Job scheitern (Nachprüfung 24.11.2026): kein continue-on-error (Job oder Schritt), die drei
+    """Ein Befund lässt den Job scheitern (Nachprüfung 24.11.2026): kein continue-on-error (Job oder Schritt), die vier
     Browserprüfungen mit genau ihrem Aufruf (kein „|| true“ oder Ähnliches dahinter), im Job „browser“ kein „set +e“
     und als einziges „||“ das „|| fehler=1“ der WCAG-Schleife, die mit exit "$fehler" endet."""
     assert "continue-on-error" not in TEXT
@@ -257,8 +270,8 @@ def test_befund_laesst_den_job_scheitern():
         assert "continue-on-error" not in _job_schluessel(job), name
         for s in _schritte(job):
             assert "continue-on-error" not in s, (name, s.get("name"))
-    for name, skript in PRUEFUNGEN.items():
-        assert _schritt(name)["run"] == f'node tests/browser/{skript}.js {SEITE} "$RUNNER_TEMP/{skript}.json"', name
+    for name, (skript, seite) in PRUEFUNGEN.items():
+        assert _schritt(name)["run"] == f'node tests/browser/{skript}.js {seite} "$RUNNER_TEMP/{skript}.json"', name
     runs = [s.get("run", "") for s in _browser_schritte()]
     assert not [r for r in runs if re.search(r"set \+e|\|\|\s*(true|:)\b|;\s*true\s*$", r, re.M)]
     oder = [z.strip() for r in runs for z in r.splitlines() if "||" in z]
@@ -267,12 +280,62 @@ def test_befund_laesst_den_job_scheitern():
     assert re.search(r"^    defaults:\n      run:\n        shell: bash\n", _job("browser"), re.M)
 
 
+def test_zweiter_bau_mit_themenseiten():
+    """Entscheidung 24.11.2026 (3), Antwort 5 A zum Plan vom 25.11.2026: Die Freigabe der Themenseiten bleibt im
+    Repository aus; geprüft werden sie in einem zweiten Bau mit Testdaten. Er steht nach allen Prüfungen des ersten
+    Baus (dieser, die drei Browserprüfungen, die WCAG-Prüfung und der Prüfbogen bleiben ohne Themenseiten wie die
+    veröffentlichte Seite), läuft, solange Chromium installiert ist, mit der lokalen Kette und --themen in den eigenen
+    Ordner _site_themen; der Server lauscht nur auf 127.0.0.1:8791 und fragt die Themenseite ab; themen.js läuft, solange
+    sie antwortet."""
+    namen = [s.get("name") for s in _browser_schritte()]
+    neu = ["Seite mit Themenseiten bauen (Testdaten)", "Seite mit Themenseiten unter 127.0.0.1:8791", "Themenseiten im Browser"]
+    assert namen[-3:] == neu, namen[-3:]
+    for frueher in ("Seite mit Testdaten bauen", *[n for n in PRUEFUNGEN if PRUEFUNGEN[n][1] == SEITE],
+                    "WCAG-Prüfung in vier Größen", "Prüfbogen im Browser"):
+        assert namen.index(frueher) < namen.index(neu[0]), frueher
+    bau = _schritt(neu[0])
+    assert bau["id"] == "themen_bau" and bau["if"] == WENN_CHROMIUM
+    zeilen = bau["run"].splitlines()
+    assert zeilen[0] == 'mkdir -p "$RATSATLAS_SPERRE"' and zeilen[1:] == KETTE_THEMEN
+    erster = _schritt("Seite mit Testdaten bauen")
+    assert "--themen" not in erster["run"] and "_site_themen" not in erster["run"] and "if" not in erster
+    server = _schritt(neu[1])
+    assert server["id"] == "themen_seite" and server["if"] == "${{ !cancelled() && steps.themen_bau.outcome == 'success' }}"
+    assert re.search(r'^nohup python3 -m http\.server --bind 127\.0\.0\.1 8791 -d _site_themen > "\$RUNNER_TEMP/[\w.]+" 2>&1 &$',
+                     server["run"], re.M)
+    assert f"--output /dev/null {SEITE_THEMEN}thema/verkehr-und-mobilitaet/" in server["run"] and "exit 1" in server["run"]
+    pruefung = _schritt(neu[2])
+    assert pruefung["if"] == WENN_THEMEN
+    assert "_site_themen/" in (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+
+
+def test_pruefschalter_themen_nur_im_zweiten_bau():
+    """Der Prüfschalter RATSATLAS_THEMEN_PRUEFUNG umgeht die Freigabe der Themenseiten (pipeline/config.py; er wirkt nur
+    mit Testdaten in STAND.json): In tests.yml steht er nur unter env des Schritts „Seite mit Themenseiten bauen
+    (Testdaten)“ mit dem Wert „verkehr“, in keinem anderen Schritt (auch nicht im Job „test“) und in keinem anderen
+    Workflow, aktiv oder inaktiv (pages.yml, live.yml, kacheln.yml, .github/workflows-inaktiv/)."""
+    assert config.THEMEN_PRUEFUNG == "RATSATLAS_THEMEN_PRUEFUNG"
+    gefunden = []
+    for name, job in JOBS.items():
+        for s in _schritte(job):
+            if config.THEMEN_PRUEFUNG in s.get("env", {}) or config.THEMEN_PRUEFUNG in s.get("run", ""):
+                gefunden.append((name, s.get("name"), s.get("env", {}).get(config.THEMEN_PRUEFUNG)))
+    assert gefunden == [("browser", "Seite mit Themenseiten bauen (Testdaten)", "verkehr")], gefunden
+    zeilen = [z for z in TEXT.splitlines() if config.THEMEN_PRUEFUNG in z and not z.strip().startswith("#")]
+    assert zeilen == ["          RATSATLAS_THEMEN_PRUEFUNG: verkehr"], zeilen
+    andere = [p for d in ("workflows", "workflows-inaktiv") for p in sorted((ROOT / ".github" / d).glob("*.y*ml"))
+              if p != WORKFLOW]
+    assert {p.name for p in andere} >= {"pages.yml", "live.yml", "kacheln.yml"}
+    for p in andere:
+        assert config.THEMEN_PRUEFUNG not in p.read_text(encoding="utf-8"), p.name
+
+
 def test_abbruch_anderer_hosts_im_kontext():
     """Die Browserprüfungen brechen Anfragen an andere Hosts im Browserkontext ab (ctx.route), nicht nur in der Seite:
     page.route erfasst neue Fenster nicht, und --no-proxy-server gilt nicht für die Kontexte von Playwright (beides
     nachgestellt am 24.11.2026). Jeder newContext bekommt den Abbruch vor der ersten Seite, die Hilfsseite aus
     browser.newPage() über ihren Kontext; der Prüfbogen bricht im Kontext alles ab, was keine Datei ist."""
-    for datei in ("gremien.js", "navigation.js", "bedienung.js"):
+    for datei in ("gremien.js", "navigation.js", "bedienung.js", "themen.js"):
         text = (BROWSER / datei).read_text(encoding="utf-8")
         assert not re.search(r"page\.route\(\(u\) => !", text), datei
         kontexte = re.findall(r"const ctx = await browser\.newContext\([^\n]*\);\n\s*(.*)\n\s*const page = await ctx\.newPage\(\);",
@@ -281,7 +344,7 @@ def test_abbruch_anderer_hosts_im_kontext():
         assert all(k.startswith("await ctx.route(") and k.endswith(", (r) => r.abort());") for k in kontexte), (datei, kontexte)
         for hilfe in re.findall(r"const hilfe = await browser\.newPage\(\);\n\s*(.*)", text):
             assert hilfe == "await hilfe.context().route(nichtLokal, (r) => r.abort());", datei
-    for datei in ("gremien.js", "navigation.js"):
+    for datei in ("gremien.js", "navigation.js", "themen.js"):
         text = (BROWSER / datei).read_text(encoding="utf-8")
         assert 'const nichtLokal = (u) => !["127.0.0.1", "localhost"].includes(u.hostname);' in text, datei
     assert "await ctx.route((u) => !u.href.startsWith(BASIS), (r) => r.abort());" in (BROWSER / "bedienung.js").read_text(encoding="utf-8")

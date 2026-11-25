@@ -549,7 +549,7 @@ def _sitzungen(t, d):
                                            for m in d["sitzungen"]) + "\n    </ul>"
     else:
         zeilen = "    <p>Im Sitzungskalender ist keine kommende Sitzung dieser Gremien eingetragen.</p>"
-    return f"""    <h2 id="sitzungen">Nächste Sitzungen</h2>
+    return f"""    <h2 id="sitzungen" tabindex="-1">Nächste Sitzungen</h2>
     <p>{escape(t.sitzungen_text)} Die Sitzungen sind öffentlich; einzelne Punkte werden nichtöffentlich beraten.</p>
 {zeilen}
     <p class="meta">Termine laut Sitzungskalender (OParl-API der Stadt Köln); abgesagte Sitzungen fehlen. Maßgeblich ist die Einladung im Ratsinformationssystem.</p>
@@ -585,7 +585,7 @@ def _wer_beraet_mit(d, root):
     if weitere:
         aufz = weitere[0] if len(weitere) == 1 else ", ".join(weitere[:-1]) + " und " + weitere[-1]
         satz = f"    <p>Vorlagen dieses Themas beraten außerdem {aufz} (aus der Beratungsfolge).</p>\n"
-    return f"""    <h2 id="fachausschuss">Wer berät mit: {name}</h2>
+    return f"""    <h2 id="fachausschuss" tabindex="-1">Wer berät mit: {name}</h2>
     <ul>
       {chr(10).join("      " + z if i else z for i, z in enumerate(zeilen))}
     </ul>
@@ -619,11 +619,13 @@ def body(t, d, root, karten=()):
                        f"anzeigen</summary>\n{tabelle}\n    </details>")
         regel = (f"<p>Regel (abgeleitet): {escape(s['regel'].rstrip('.'))}."
                  + (" Gliederung nach Stadtbezirk aus den Ortsbezügen (abgeleitet)." if nach_bezirk else "") + "</p>")
-        straenge.append(f"""    <h3 id="{s['key']}">{escape(s['titel'])} ({len(s['vorlagen'])})</h3>
+        straenge.append(f"""    <h3 id="{s['key']}" tabindex="-1">{escape(s['titel'])} ({len(s['vorlagen'])})</h3>
 {akkordeon.mehr("Wie zugeordnet?", regel, klasse="hh-mehr meta-acc regel-acc")}""" + tabelle)
     inhalt = " · ".join(f'<a href="#{s["key"]}">{escape(s["titel"])}</a>' for s in d["straenge"])
     ziele = ([("fachausschuss", "Wer berät mit")] if d.get("wer_beraet_mit") else []) \
         + [("sitzungen", "Nächste Sitzungen"), ("mitwirken", "Mitwirken"), ("vorlagen", "Vorlagen nach Strang")]
+    # Ziele der Sprungleiste und der Stränge mit tabindex="-1": Der Sprung setzt den Fokus auf die Überschrift (sonst
+    # läge er danach auf body)
     sprung = " · ".join(f'<a href="#{k}">{x}</a>' for k, x in ziele)
     nicht = "".join(f"<li>{x}</li>" for x in t.nicht_gezeigt)
     # Akkordeon „Begriffe auf dieser Seite“: Vorlagenarten, Stände und Ergebnisse der Seite
@@ -644,7 +646,7 @@ def body(t, d, root, karten=()):
     <p class="lead">{escape(t.lead.format(seit=_date(d["meta"]["seit"])))}</p>
     <nav class="thema-sprung" aria-labelledby="sprung-h"><h2 id="sprung-h">Auf dieser Seite</h2><p>{sprung}</p></nav>
 {prozessbild.abschnitt(t, d, root, karten)}
-{_wer_beraet_mit(d, root)}{_sitzungen(t, d)}{mitwirken.abschnitt(root)}    <h2 id="vorlagen">Vorlagen nach Strang</h2>
+{_wer_beraet_mit(d, root)}{_sitzungen(t, d)}{mitwirken.abschnitt(root)}    <h2 id="vorlagen" tabindex="-1">Vorlagen nach Strang</h2>
     <p>{inhalt}</p>
 {akkordeon.mehr("Wie die Vorlagen zugeordnet sind", zuordnung)}{chr(10).join(straenge)}
 {begriffe}{akkordeon.mehr("Was diese Seite nicht zeigt", f"<ul>{nicht}</ul>")}{akkordeon.mehr("Quellen und Methode", _quellen(t, root))}"""
@@ -853,7 +855,9 @@ def stichprobe(t, papiere, gremien_daten, ziel, terms=(), seed=2026, maske_=None
     bogen, schluessel = [], []
     for i, ((p, hit), art) in enumerate(rows, 1):
         einwohner = p.get("paper_type") in actors.EINWOHNER_TYPES or geocode.eingabe(p.get("paper_type"), p.get("name"))
-        titel = "" if einwohner else DRUCKSACHE.sub("<DS>", maskiert(p.get("name") or "", p.get("reference")))
+        # Drucksachen vor der Titelmaske ersetzen: Die Maske hielte die Nummer sonst für eine Hausnummer
+        titel = "" if einwohner else DRUCKSACHE.sub("<DS>", maskiert(DRUCKSACHE.sub("<DS>", p.get("name") or ""),
+                                                                     p.get("reference")))
         gremien = "; ".join(dict.fromkeys(s.get("gremium") for s in p.get("process") or () if s.get("gremium")))
         strang = titel_je[hit[0]] if hit else "nicht zugeordnet (Gegenprobe)"
         grund = DRUCKSACHE.sub("<DS>", hit[1]) if hit else "—"

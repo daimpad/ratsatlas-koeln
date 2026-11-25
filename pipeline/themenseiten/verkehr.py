@@ -116,8 +116,10 @@ THEMA = Thema(
     # Punkte nur mit Beratung in Rat, Hauptausschuss oder Mobilitätsausschuss (Antwort 2 A zum Plan, 25.11.2026)
     punkt_gremien=(RAT, HAUPT, MOBIL),
     punkt_text="im Rat, im Hauptausschuss oder im Mobilitätsausschuss",
-    bahnen=[("bv", "Bezirksvertretungen"), ("mobil", "Mobilitätsausschuss"), ("fach", "andere Ausschüsse und Gremien"),
-            ("rat", "Hauptausschuss und Rat")],
+    # Beschriftung der Bahnen (Spalte neben der Zeitleiste) mit weichen Trennstellen für die schmale Spalte auf dem
+    # Telefon (site/page.css, .pb-bahn)
+    bahnen=[("bv", "Bezirks\u00advertretungen"), ("mobil", "Mobilitäts\u00adausschuss"),
+            ("fach", "andere Ausschüsse und Gremien"), ("rat", "Haupt\u00adausschuss und Rat")],
     bahn_regeln=(("bv", BV), ("mobil", MOBIL), ("rat", RAT), ("rat", HAUPT)),
     sitzungs_gremien=(MOBIL, HAUPT, RAT, BV),
     sitzungen_text="Die nächste Sitzung des Mobilitätsausschusses, des Hauptausschusses, des Rates und jeder "

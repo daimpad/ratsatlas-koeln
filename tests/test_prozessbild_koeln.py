@@ -68,7 +68,7 @@ def test_svg_ohne_bahnnamen_und_legende_feste_masse():
     assert spalte.count('<span class="pb-bahn">') == len(T.bahnen) and 'aria-hidden="true"' in spalte
     abschnitt = prozessbild.abschnitt(T, d, "../../")
     assert (f'<div class="pb-zeitleiste" style="--pb-oben:{prozessbild.OBEN}px;--pb-bahn:{prozessbild.BAHN}px;'
-            f'--pb-hoehe:{h}px">') in abschnitt
+            f'--pb-breite:{prozessbild.W}px;--pb-hoehe:{h}px">') in abschnitt
     i = [abschnitt.index(x) for x in ('class="pb-bahnen"', 'class="pb-rahmen pb-breit"', '<svg class="pb-svg"',
                                       'class="pb-legende-bild"', 'id="pb-detail"')]
     assert i == sorted(i)

@@ -5,7 +5,8 @@ Balken und Karten zum Mitwirken. Grundlage sind dossier.daten() und die Beschrei
 Herkunft: daimpad/ratsatlas-bonn @730d593 (pipeline/prozessbild.py). Kölner Anpassungen (inventur/themenseiten_port.tsv):
 - Achse aus dem Datenstand berechnet (dossier.achse, Feld `achse` der Daten) statt fester Daten je Thema;
 - Bahnnamen nicht im Bild, sondern als HTML-Spalte neben dem verschiebbaren Rahmen (bahnen_spalte): Sie bleiben beim
-  Verschieben stehen; gleiche Zeilenhöhe BAHN, Abstand oben OBEN (CSS-Variablen am Rahmen der Zeitleiste);
+  Verschieben stehen; gleiche Zeilenhöhe BAHN, Abstand oben OBEN, Bild in festen Pixelmaßen W × hoehe (CSS-Variablen
+  an der Zeitleiste, site/page.css);
 - Legende als HTML unter dem Bild (legende), nicht im Bild; feste Pixelmaße des Bildes (width und height wie viewBox);
 - ohne Phasen, Beratungsfenster, Fristlinien und Bild zum Teilen;
 - Karten: Kalender, Feed, Sitzung besuchen (Livestream des Rates), Frage oder Anregung (pipeline/mitwirken.py), Links zur
@@ -196,7 +197,7 @@ def _zeichen(art):
         inner = f'<circle cx="10" cy="10" r="7" fill="{fill}" stroke="{stroke}" stroke-width="1.8"/>'
     elif art == "sitzung":
         inner = (f'<circle cx="10" cy="10" r="8.5" fill="#fff" stroke="{BERNSTEIN}" stroke-width="2"/>'
-                 f'<g transform="translate(4 4) scale(.5)" fill="none" stroke="{TEXT}" stroke-width="3.6" '
+                 f'<g transform="translate(4.36 4.36) scale(.47)" fill="none" stroke="{TEXT}" stroke-width="2.2" '
                  f'stroke-linecap="round" stroke-linejoin="round">{ICON["hand"]}</g>')
     else:
         inner = f'<line x1="10" y1="1" x2="10" y2="19" stroke="{TEXT}" stroke-width="2"/>'
@@ -333,7 +334,7 @@ def abschnitt(t, d, root, karten=()):
     <p>Wo steht das Verfahren, was ist entschieden, wann wird beraten? Punkte und Sitzungen lassen sich anklicken, auch mit der Tabulatortaste.</p>
 {akkordeon.mehr("So ist das Bild gezeichnet", text)}
 {schalter(t, d)}
-    <div class="pb-zeitleiste" style="--pb-oben:{OBEN}px;--pb-bahn:{BAHN}px;--pb-hoehe:{hoehe(t)}px">
+    <div class="pb-zeitleiste" style="--pb-oben:{OBEN}px;--pb-bahn:{BAHN}px;--pb-breite:{W}px;--pb-hoehe:{hoehe(t)}px">
       {bahnen_spalte(t)}
       <div class="pb-rahmen pb-breit" tabindex="0" role="region" aria-label="Zeitleiste, waagerecht verschiebbar" data-start="{a.x(d["heute"]) / W:.3f}">
         {svg(t, d, root)}
