@@ -9,8 +9,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from xml.sax.saxutils import escape
 
-from . import begriffsseite, config, dossier, einfachseite, gebietsseiten, haushaltsseite, rssseite, technikseite
-from .themenseiten import ALLE as THEMENSEITEN
+from . import begriffsseite, config, dossier, einfachseite, gebietsseiten, haushaltsseite, rssseite, technikseite, themenseiten
 
 DEFAULT_URL = "https://daimpad.github.io/ratsatlas-koeln/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
 PAGES = ("index.html", "404.html", "datenschutz.html")
@@ -259,10 +258,11 @@ def write(site=Path("_site"), site_url=None):
     (site / "robots.txt").write_text(robots(site_url), encoding="utf-8")
     areas = gebietsseiten.write(site, site_url)
     an = lambda thema: config.ZUSATZTHEMEN.get(thema)   # Bonner Zusatzthemen nur bei Freigabe (CLAUDE.md 5.4)
-    themen = []
-    if an("themenseiten"):
-        themen = [pfad for t in THEMENSEITEN for pfad in dossier.write(t, site, site_url, gebietsseiten._page)]
-        themen = dossier.uebersicht(THEMENSEITEN, site, site_url, gebietsseiten._page) + themen
+    # Themenseiten nur für freigegebene Themen (themenseiten.freigegeben: Liste config.THEMENSEITEN_FREIGEGEBEN und
+    # Freigabe „themenseiten“); die Übersicht thema/ nach den Seiten, weil sie nur geschriebene Seiten zeigt
+    freigegeben = themenseiten.freigegeben()
+    themen = [pfad for t in freigegeben for pfad in dossier.write(t, site, site_url, gebietsseiten._page)]
+    themen = (dossier.uebersicht(freigegeben, site, site_url, gebietsseiten._page) if freigegeben else []) + themen
     if an("haushalt"):
         themen += haushaltsseite.write(site, site_url, gebietsseiten._page)
     themen += rssseite.write(site, site_url, gebietsseiten._page)

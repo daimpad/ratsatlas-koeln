@@ -10,8 +10,7 @@ import sqlite3
 import unicodedata
 from datetime import date, datetime, timezone
 
-from . import aemter, ausschuesse, chat, config, dossier, flaechen, prozessbild, gebietszahlen, glossar, gremien, maske, plans, process as proc, prozessarten, publish, soll, topics
-from .themenseiten import ALLE as THEMENSEITEN
+from . import aemter, ausschuesse, chat, config, dossier, flaechen, gebietszahlen, glossar, gremien, maske, plans, process as proc, prozessarten, publish, soll, themenseiten, topics
 
 DERIVED_NOTE = (
     "Einreichende (originators), fachliche Zuständigkeit (responsibility.kind = 'fachlich') und "
@@ -482,10 +481,11 @@ def export_all():
     in_gebieten = [cache[pid] for pid in sorted(heimat)]
     print(gremien.zeile_stationen(in_gebieten, gremien.stationen_aufgeloester(db, in_gebieten, gremien.datenstand(db))
                                   if gremien.an() else None))
+    gremien_daten = None
     if cache and gremien.an():
         # Liste der Sitzungen nicht aktuell: keine nächste Sitzung (gremien.sitzungsliste); Vorlagen in keiner
-        # Gebietsdatei nur für das Log (sie zählen nicht bei vorlagen_12m)
-        gremien.schreiben(out / gremien.DATEI, db, meetings, in_gebieten,
+        # Gebietsdatei nur für das Log (sie zählen nicht bei vorlagen_12m). Der Inhalt dient den Themenseiten
+        gremien_daten = gremien.schreiben(out / gremien.DATEI, db, meetings, in_gebieten,
                           stichtag(kalendertag_des_abrufs(stand), _stand()), gremien.sitzungsliste(_stand()),
                           [cache[pid] for pid in sorted(set(cache) - set(heimat))])
         aufbau = aemter.aufbau()
@@ -515,18 +515,7 @@ def export_all():
         _dump(out / "soll.json", soll.site_data())
         _dump(out / "prozessarten.json", prozessarten.site_data(db))
     heute = kalendertag_des_abrufs(stand)
-    for t in (THEMENSEITEN if _an("themenseiten") else []):
-        thema = dossier.daten(t, cache, home, meetings, heute, _meta(db, True))
-        _dump(out / "dossiers" / f"{t.key}.json", thema)
-        # Aufrufe: Kalender mit den Sitzungen der beteiligten Gremien, Feed mit den Vorlagen der Stränge, Bild
-        publish.write_calendar(out / "dossiers" / f"{t.key}.ics",
-                               [m for m in meetings if dossier.sitzung_im_thema(t, m["gremium"])],
-                               date.fromisoformat(heute))
-        prozessbild.schreibe_bild(t, thema, out / "dossiers", f"{config.SITE_URL}{t.pfad}")
-        refs = {r["reference"] for s in thema["straenge"] for r in s["vorlagen"]}
-        publish.write_topic_feed(out / "dossiers" / f"{t.key}.xml", t.key,
-                                 t.titel, [(pid, p) for pid, p in cache.items() if p["reference"] in refs],
-                                 home, f"{config.SITE_URL}{t.pfad}")
+    _themenseiten(out, cache, home, meetings, gremien_daten, _meta(db, True))
 
     # Vereinfachte Flächen für die Seite (Navigation, Umrisse, Bebauungspläne), komprimierbar als .json
     flaechen.write(out)
@@ -548,6 +537,38 @@ def export_all():
     db.close()
     print(f"{config.STADT_NAME}: {len(index['ortsteile'])} Stadtteile, {len(index['bezirke'])} Bezirke, "
           f"{len(years)} Jahre ohne Ortsbezug, {len(cache)} Vorlagen, {n_points} Punkte im GeoJSON, {n_shards} Dateien für den Assistenten → {out}")
+
+
+def _themenseiten(out, cache, home, meetings, gremien_daten, meta):
+    """Themenseiten (pipeline/dossier.py), nur für freigegebene Themen (themenseiten.freigegeben): je Thema
+    dossiers/<key>.json, der Kalender mit allen Sitzungen der Gremien des Themas ab 30 Tagen vor dem Datenstand (über
+    die Organisationen der Sitzungen in meetings.json, gremien.organisationen_der_sitzungen, nicht über den Namen; Absage
+    nach export.absage wie in termine.ics) und der Feed mit den Vorlagen der Stränge. Setzt gremien.json voraus
+    (Freigabe „gremien“): ohne Vorlagen (Kartenvorschau) keine Themenseiten, sonst bricht der Export ab."""
+    themen = themenseiten.freigegeben()
+    if not themen:
+        return
+    if gremien_daten is None:
+        if not cache:
+            print("Themenseiten: Export ohne Vorlagen (Kartenvorschau), keine Dateien")
+            return
+        raise SystemExit("Themenseiten setzen gremien.json voraus (Freigabe „gremien“ in config.ZUSATZTHEMEN)")
+    terms = [{"start": x.get("startDate"), "end": x.get("endDate")}
+             for x in (json.loads(config.LEGISLATIVE_TERMS.read_text()) if config.LEGISLATIVE_TERMS.exists() else [])
+             if isinstance(x, dict)]
+    orgs_je_sitzung = gremien.organisationen_der_sitzungen() or {}
+    heute = gremien_daten["meta"]["datenstand"]
+    for t in themen:
+        thema = dossier.daten(t, cache, home, gremien_daten, meta, terms)
+        _dump(out / "dossiers" / f"{t.key}.json", thema)
+        oparl = {e["source_object"] for a in t.sitzungs_gremien for e in dossier.gremien_auswahl(gremien_daten, a)}
+        publish.write_calendar(out / "dossiers" / f"{t.key}.ics",
+                               [m for m in meetings if oparl & set(orgs_je_sitzung.get(m["source_object"]) or ())],
+                               date.fromisoformat(heute))
+        refs = {r["reference"] for s in thema["straenge"] for r in s["vorlagen"]}
+        publish.write_topic_feed(out / "dossiers" / f"{t.key}.xml", t.key,
+                                 t.titel, [(pid, p) for pid, p in cache.items() if p["reference"] in refs],
+                                 home, f"{config.SITE_URL}{t.pfad}")
 
 
 # Freigaben, die index.json erst eingeschaltet nennt, damit index.json ohne sie byte-gleich bleibt: die Strukturdaten

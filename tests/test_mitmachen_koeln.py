@@ -107,6 +107,28 @@ def test_nur_gepruefte_adressen():
     assert sum(int(m) for z in abrufe for m in re.findall(r"\| (\d+) \|", z)) <= 12
 
 
+
+# Module der Kölner Themenseiten mit Texten zum Mitwirken (Entscheidung 24.11.2026 (3); site/thema.js folgt mit dem Teil
+# der Oberfläche)
+THEMEN_MODULE = ["pipeline/dossier.py", "pipeline/prozessbild.py", "pipeline/mitwirken.py", "pipeline/akkordeon.py",
+                 *sorted(f"pipeline/themenseiten/{p.name}" for p in (ROOT / "pipeline" / "themenseiten").glob("*.py"))]
+
+
+def test_themenseiten_ohne_bonner_reste_und_nur_gepruefte_adressen():
+    """Wie test_ohne_bonner_reste und test_nur_gepruefte_adressen, für die Themenseiten: keine Bonner Regeln, Fristen
+    oder Adressen; jede Adresse steht mit Abrufdatum 13.11.2026 in TECHNIK.md („Mitmachen in Köln“) und liegt bei der
+    Stadt Köln oder recht.nrw.de, außer der Zuständigkeitsordnung (pipeline/ausschuesse.py, gremien.json)."""
+    from pipeline import ausschuesse
+    abschnitt = _abschnitt_technik()
+    for datei in THEMEN_MODULE:
+        code = (ROOT / datei).read_text(encoding="utf-8")
+        for wort in ("Bonn", "bonn.de", "soll.json", "Bürgerantrag", "21 Tage", "GeschO § 26", "zwei Wochen"):
+            assert wort not in code, (datei, wort)
+        for u in sorted(set(URL.findall(code)) - {"http://www.w3.org/2000/svg"}):
+            assert u.startswith("https://") and re.match(r"https?://([^/]+)/", u).group(1) in ERLAUBTE_HOSTS, (datei, u)
+            zeile = next((z for z in abschnitt.splitlines() if f"`{u}`" in z), None)
+            assert (zeile and "13.11.2026" in zeile) or u == ausschuesse.QUELLE["url"], (datei, u)
+
 def test_darstellung_je_stadtbezirk():
     """Nächste Sitzungen mit den Kölner Gremiennamen („Bezirksvertretung 1 (Innenstadt)“), ohne abgesagte und
     vergangene; ohne Stadtbezirk nur Rat und Ausschuss mit Hinweis; ohne zeit.json (Vorschau) keine Termine; ein

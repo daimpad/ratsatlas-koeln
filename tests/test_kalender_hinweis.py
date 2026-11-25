@@ -7,7 +7,7 @@ Der Kalender trägt dann `STATUS:CANCELLED` und den Zusatz „ (abgesagt)“ bzw
 zählt beide getrennt; audit_zeit.tsv und verifikation_zeit.tsv zählen eine abgesagte Sitzung nicht als Sitzung und
 nennen den Grund; `check.absagen_kalender` prüft termine.ics gegen zeit.json, nur mit Zahlen. Aus der Nachprüfung des
 Pull Request: was sich gegenüber der Regel bis 2776188 ändert (in Köln nur bisherige Treffer), die Vermerke in
-TECHNIK.md und die abgeschalteten Themenseiten, die weiter nur OParl `cancelled` auswerten. Alle Gremien, Sitzungen,
+TECHNIK.md und die Themenseiten, deren Sitzungen seit dem 25.11.2026 aus gremien.json kommen (export.absage). Alle Gremien, Sitzungen,
 Namen und Vorlagen sind erfunden (direkte Aufrufe oder lokaler Testserver); keine Anfragen an die Stadt, verify.py nur
 mit Attrappen statt der OParl-API."""
 import csv
@@ -458,24 +458,28 @@ def test_technik_vermerke_der_aelteren_offenen_punkte():
             "Zusatz).") in zeilen["(4)"]
 
 
-def test_themenseite_abgeschaltet_wertet_nur_cancelled_aus(tmp_path, capsys):
-    """Außerhalb von (9) und abgeschaltet (Freigabe `themenseiten`), so in TECHNIK.md vermerkt: dossier.daten lässt bei
-    den kommenden Sitzungen der Themenseite nur OParl `cancelled` weg. Eine Sitzung mit Hinweis „abgesagt“ aus dem Namen
-    bleibt dort, während der Themenkalender (publish.write_calendar mit export.absage) sie als abgesagt kennzeichnet.
-    Ändert sich dossier.daten mit der Freigabe der Themenseiten, ist der Vermerk in TECHNIK.md anzupassen."""
-    from pipeline import dossier
-    from pipeline.themenseiten import ALLE
-    t = ALLE[0]
-    sitzungen = [_sitzung("a", "Bezirksvertretung Probe", "[Testdaten] Sitzung entfällt", hinweis="abgesagt",
-                          tag="2026-12-10"),
-                 _sitzung("c", "Bezirksvertretung Probe", cancelled=True, tag="2026-12-11")]
-    assert all(dossier.sitzung_im_thema(t, m["gremium"]) for m in sitzungen)
-    thema = dossier.daten(t, {}, {}, sitzungen, "2026-11-21", {})
-    assert [m["source_object"] for m in thema["sitzungen"]] == [f"{M}/a"]
+def test_themenseite_sitzungen_aus_gremien_ohne_absage(tmp_path, capsys):
+    """Mit den Kölner Themenseiten (25.11.2026) und so in TECHNIK.md vermerkt: Die kommenden Sitzungen einer Themenseite
+    stammen aus gremien.json (naechste_sitzung, ohne Absage nach export.absage), eine laut Namen abgesagte Sitzung fehlt
+    dort also wie eine laut OParl abgesagte; der Themenkalender (publish.write_calendar mit export.absage) kennzeichnet
+    beide als abgesagt. Bis dahin ließ dossier.daten nur OParl `cancelled` weg."""
+    from pipeline import dossier, gremien
+    from pipeline.themenseiten import verkehr
+    t = verkehr.THEMA
+    org = {"id": "https://example.invalid/oparl/organizations/bv1", "name": "Bezirksvertretung 1 (Innenstadt)",
+           "classification": "Bezirksvertretungen", "end_date": None, "web": None}
+    sitzungen = [_sitzung("a", org["name"], "[Testdaten] Sitzung entfällt", hinweis="abgesagt", tag="2026-12-10"),
+                 _sitzung("c", org["name"], cancelled=True, tag="2026-12-11"),
+                 _sitzung("n", org["name"], tag="2026-12-12")]
+    gd, _ = gremien.daten([org], sitzungen, {m["source_object"]: [org["id"]] for m in sitzungen}, [], "2026-11-21", [])
+    je = {e["key"]: e for e in gd["gremien"]}
+    assert [m["source_object"] for m in dossier.sitzungen(t, gd, je)] == [f"{M}/n"]
     publish.write_calendar(tmp_path / f"{t.key}.ics", sitzungen, date(2026, 11, 21))
     assert capsys.readouterr().out.endswith("abgesagt laut OParl 1, abgesagt laut Sitzungsnamen 1\n")
     ics = {e["UID"].rsplit("/", 1)[1]: e for e in check._ics_ereignisse(tmp_path / f"{t.key}.ics")}
-    assert ics["a"]["STATUS"] == ics["c"]["STATUS"] == "CANCELLED"
-    assert ics["a"]["SUMMARY"] == "Bezirksvertretung Probe (laut Sitzungsnamen abgesagt)"
-    assert ("Nicht angepasst (außerhalb von (9), abgeschaltet): `dossier.daten` (kommende Sitzungen der Themenseiten "
-            "in `dossiers/<thema>.json`, Freigabe `themenseiten`) und `chat.organizations`") in _technik()
+    assert ics["a"]["STATUS"] == ics["c"]["STATUS"] == "CANCELLED" and ics["n"]["STATUS"] == "CONFIRMED"
+    assert ics["a"]["SUMMARY"] == "Bezirksvertretung 1 (Innenstadt) (laut Sitzungsnamen abgesagt)"
+    technik = _technik()
+    assert ("Angepasst mit den Kölner Themenseiten (25.11.2026): `dossier.daten` übernimmt die kommenden Sitzungen der "
+            "Themenseiten in `dossiers/<thema>.json` aus `gremien.json`") in technik
+    assert "`dossier.daten` (kommende Sitzungen der Themenseiten" not in technik

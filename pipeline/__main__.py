@@ -1,8 +1,7 @@
-"""Aufruf: python -m pipeline {fetch|dokumente|geo-koeln|geo-abdeckung|bplan-koeln|ebenen-laden|ebenen|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fetch-texts|fetch-streets|gazetteer|build|ausschuesse|export|check|verify|package|seo|baustellen|anliegen|anliegen-seite|kandidaten|baustellen-seite|kurzfassungen|stufe-c|soll|kontext-ausschnitte|wahlen-rohdaten|wahlen-ausschnitt|haushalt-ausschnitt|haushalt-pruefbogen|haushalt-ebenen|haushalt-pruefbogen-ebenen|haushalt-ist2024|haushalt-investitionen|haushalt-pruefbogen-erweiterung|haushalt-ist2024-investitionen|haushalt-pruefbogen-erweiterung-finanz|haushalt-ertragsarten|haushalt-pruefbogen-ertragsarten|fetch-haltestellen|kontext|strukturdaten-abruf|strukturdaten|strukturdaten-gebiete|kultur-stichprobe|verkehr-stichprobe|schule-stichprobe|wohnen-stichprobe|klima-stichprobe|kinder-stichprobe|soziales-stichprobe|sicherheit-stichprobe|wirtschaft-stichprobe|digital-stichprobe|all}"""
+"""Aufruf: python -m pipeline {fetch|dokumente|geo-koeln|geo-abdeckung|bplan-koeln|ebenen-laden|ebenen|fetch-papers|fetch-organizations|fetch-besetzung|fetch-lite|fetch-meetings|fetch-plans|fetch-housenumbers|fetch-objects|fetch-texts|fetch-streets|gazetteer|build|ausschuesse|export|check|verify|package|seo|baustellen|anliegen|anliegen-seite|kandidaten|baustellen-seite|kurzfassungen|stufe-c|soll|kontext-ausschnitte|wahlen-rohdaten|wahlen-ausschnitt|haushalt-ausschnitt|haushalt-pruefbogen|haushalt-ebenen|haushalt-pruefbogen-ebenen|haushalt-ist2024|haushalt-investitionen|haushalt-pruefbogen-erweiterung|haushalt-ist2024-investitionen|haushalt-pruefbogen-erweiterung-finanz|haushalt-ertragsarten|haushalt-pruefbogen-ertragsarten|fetch-haltestellen|kontext|strukturdaten-abruf|strukturdaten|strukturdaten-gebiete|all}"""
 import sys
 
-from . import anliegen, ausschuesse, baustellen, bplan, ebenen, besetzung, build, check, config, dokumente, dossier, export, fetch, geodaten, kandidaten, paket, kontext, haushaltsplan, kurzfassung, seo, sessionnet, soll, strukturdaten, stufe_c, verify, wahlen
-from .themenseiten import digital, kinder, klima, kultur, schule, sicherheit, soziales, verkehr, wirtschaft, wohnen
+from . import anliegen, ausschuesse, baustellen, bplan, ebenen, besetzung, build, check, config, dokumente, export, fetch, geodaten, kandidaten, paket, kontext, haushaltsplan, kurzfassung, seo, sessionnet, soll, strukturdaten, stufe_c, verify, wahlen
 
 def _ersetzt(durch):
     def schritt():
@@ -66,16 +65,7 @@ STEPS = {
     "strukturdaten-abruf": strukturdaten.abruf_schritt,
     "strukturdaten": strukturdaten.write,  # Zwischenspeicher → data/strukturdaten/ (Statistik Köln, Quartiere, Wegweiser)
     "strukturdaten-gebiete": strukturdaten.gebiete_schreiben,  # nur Stadtteile/Stadtbezirke aus data/geo (ohne Zwischenspeicher)
-    "kultur-stichprobe": lambda: dossier.stichprobe(kultur.THEMA),  # einmalig: Prüfbogen zur Themenseite (nach export)
-    "verkehr-stichprobe": lambda: dossier.stichprobe(verkehr.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
-    "schule-stichprobe": lambda: dossier.stichprobe(schule.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
-    "wohnen-stichprobe": lambda: dossier.stichprobe(wohnen.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
-    "klima-stichprobe": lambda: dossier.stichprobe(klima.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
-    "kinder-stichprobe": lambda: dossier.stichprobe(kinder.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
-    "soziales-stichprobe": lambda: dossier.stichprobe(soziales.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
-    "sicherheit-stichprobe": lambda: dossier.stichprobe(sicherheit.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
-    "wirtschaft-stichprobe": lambda: dossier.stichprobe(wirtschaft.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
-    "digital-stichprobe": lambda: dossier.stichprobe(digital.THEMA),  # einmalig: Prüfbogen (Entwurf, aus der Datenbank)
+    # Prüfbogen der Themenseiten: tools/themen_pruefbogen.py aus dem Datenpaket, ohne Datenbank und ohne Freigabe
     "soll": soll.write,  # Soll-Modell der Prozessebene: Verfahren je Vorgang, Abgleich mit den Beratungen (Audit)  # Baustellen und mögliche Umsetzungen (hoch) für die Seite
 }
 
@@ -88,7 +78,6 @@ THEMA_JE_SCHRITT = {
     "fetch-haltestellen": "kontext", "wahlen-rohdaten": "wahlen", "wahlen-ausschnitt": "wahlen",
 }
 THEMA_JE_SCHRITT.update({k: "haushalt" for k in STEPS if k.startswith("haushalt-")})
-THEMA_JE_SCHRITT.update({k: "themenseiten" for k in STEPS if k.endswith("-stichprobe")})
 
 
 def main(argv):

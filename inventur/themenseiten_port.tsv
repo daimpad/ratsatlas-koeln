@@ -1,0 +1,48 @@
+bonn_730d593	einordnung	grund	koeln
+pipeline/akkordeon.py: mehr, absatz	übernommen	Metaangaben eingeklappt wie in der Vorlage	pipeline/akkordeon.py
+pipeline/dossier.py: Regel	Kölner Anpassung	nur strang, titel, bedingung und gremium_tor; ohne thema, ohne_thema, zustaendig, ohne_seite, stammnummer, verfahren_titel (Entscheidung 24.11.2026 (3): kein abgeleitetes Thema, keine Federführung; Folgevorlagen über Beziehungen)	pipeline/dossier.py: Regel
+pipeline/dossier.py: Zustaendig	entfällt	Federführung (amt, responsibility) in Köln leer und nach Entscheidung (3) ausgeschlossen; Gremien nur über die Kennung (Auswahl)	pipeline/dossier.py: Auswahl
+pipeline/dossier.py: Thema	Kölner Anpassung	neu: bahn_regeln, sitzungs_gremien, punkt_gremien, punkt_text, sitzungen_text, fachausschuss, tor_ausschluss, folgevorlagen, karten_links, pruefung_datum, stichprobe_nur_gremium, stichprobe_folge; entfallen: seit, achse, bahn_gremien, sitzungen, sitzungen_je_gremium, alte_pfade, Haushaltsfelder, fachausschuss als Name, transkript_begriffe; produktbereich bleibt nur für haushaltsseite.py und haushaltsplan.py	pipeline/dossier.py: Thema
+pipeline/dossier.py: Thema.seit	Kölner Anpassung	Beginn der laufenden Wahlperiode aus den OParl-Wahlperioden (zeit.json terms), Rückfall actors.WAHLPERIODE_2025_BEGINN	pipeline/dossier.py: wahlperiode_beginn, Lauf
+pipeline/dossier.py: Thema.achse	Kölner Anpassung	aus dem Datenstand berechnet statt fester Daten mit Ablaufdatum	pipeline/dossier.py: achse
+pipeline/dossier.py: _stamm, _verfahren	Kölner Anpassung	Kölner Drucksachen ohne Zusatz für Folgevorlagen; Wurzel über superordinated, Weitergabe nur nach unten, ohne mehrdeutige Drucksachen, mit Schutz gegen Zyklen (Antwort 1 A zum Plan, 25.11.2026)	pipeline/dossier.py: verfahren
+pipeline/dossier.py: _zustaendig, _thema	entfällt	Entscheidung 24.11.2026 (3): nie über Federführung oder abgeleitetes Thema	–
+pipeline/dossier.py: zuordnen	Kölner Anpassung	Reihenfolge Ausschluss, Folgevorlage, Zeitraum, Regeln; Gremium-Tor über die Kennung aus gremien.json, abgesagte Sitzungen nach export.absage zählen nicht	pipeline/dossier.py: zuordnen, _eigen, beraten_in
+pipeline/dossier.py: _wort	übernommen	ganzes Wort im Grund	pipeline/dossier.py: _wort
+pipeline/dossier.py: _eintrag	Kölner Anpassung	Kölner Fassung mit proc.massgeblich (Entscheidungen 17.11.2026 (15), (16)); ohne amt und seite	pipeline/dossier.py: _eintrag, _stationen
+pipeline/dossier.py: bahn	Kölner Anpassung	über Kennung, Gruppe und Paragraf aus gremien.json statt fester Namen; keine Bahn „finanz“ und „plan“	pipeline/dossier.py: bahn
+pipeline/dossier.py: PUNKT_ARTEN	Kölner Anpassung	Arten über actors.EINWOHNER_TYPES, POLITIK_TYPES, VERWALTUNG_TYPES (Antwort 2 A)	pipeline/dossier.py: punkt_art
+pipeline/dossier.py: _punkt	Kölner Anpassung	Bahn über die Kennung der Station; beratungen[].abgesagt nach export.absage; ohne amt	pipeline/dossier.py: _punkt
+pipeline/dossier.py: FRIST_TAGE, _frist	entfällt	keine berechneten Fristen (Entscheidung 24.11.2026 (3))	–
+pipeline/dossier.py: bezirk	übernommen	Gliederung nach Stadtbezirk aus den Ortsbezügen	pipeline/dossier.py: bezirk
+pipeline/dossier.py: sitzung_im_thema	Kölner Anpassung	Sitzungen aus gremien.json (naechste_sitzung, folgende_sitzung) statt über Namen; Kalender über die Organisationen der Sitzungen	pipeline/dossier.py: sitzungen; pipeline/export.py: _themenseiten
+pipeline/dossier.py: daten	Kölner Anpassung	mit gremien.json und Wahlperioden; Datenstand wie gremien.json; ohne Haushalt, Phasen, Terminplan, Vergleich und Besetzung; neu: achse, wer_beraet_mit, weitere_gremien	pipeline/dossier.py: daten
+pipeline/dossier.py: fachausschuss, _besetzung, _ausschuss, _kasten	Kölner Anpassung	„Wer berät mit“ aus gremien.json ohne Personen (Entscheidung (4)); keine Namen, kein Vorsitz, keine Sitze nach Fraktion	pipeline/dossier.py: wer_beraet_mit, _wer_beraet_mit
+pipeline/dossier.py: _betraege, _haushalt, _massnahmen, _schritte, MASSNAHMEN_THEMA	entfällt	kein Haushalt auf den Kölner Themenseiten	–
+pipeline/dossier.py: _mio	Kölner Anpassung	nur noch von der abgeschalteten Haushaltsseite gebraucht	pipeline/haushaltsseite.py: _mio
+pipeline/dossier.py: _transkripte	entfällt	keine Mitschnitte und Transkripte	–
+pipeline/dossier.py: _ref, _row, _tabelle	Kölner Anpassung	Drucksache auf die Karte (keine Seiten je Vorgang); data-l je Zelle; Tabelle mit Klasse vorlagen	pipeline/dossier.py: _ref, _row, _tabelle
+pipeline/dossier.py: _nach_bezirk	übernommen	Abschnitte je Stadtbezirk eingeklappt	pipeline/dossier.py: _nach_bezirk
+pipeline/dossier.py: body	Kölner Anpassung	Bonner Gerüst (Kopfband, Lead, h2-Sprungleiste, Auf einen Blick, Wer berät mit, Nächste Sitzungen, Mitwirken, Vorlagen nach Strang, Akkordeons); Kölner Texte und Quellen, ohne Frist und Haushalt	pipeline/dossier.py: body, _sitzungen, _quellen; pipeline/mitwirken.py
+pipeline/dossier.py: write	Kölner Anpassung	Pfade über config.STADT, Marke config.SEITENNAME, kein eigenes og:image (Kölner Vorschaubild), Feed über gebietsseiten.feed_head, Links zur Karte nur für vorhandene Ebenen	pipeline/dossier.py: write, karten_links
+pipeline/dossier.py: weiterleitung, Thema.alte_pfade	entfällt	Köln hatte nie Themenseiten unter anderen Adressen	–
+pipeline/dossier.py: _kachel, uebersicht	Kölner Anpassung	nächste Sitzung des Fachausschusses aus gremien.json ohne Frist; ohne Haushalt; Einzahl bei einem Thema, einer Vorlage, einem Strang	pipeline/dossier.py: _kachel, uebersicht
+pipeline/dossier.py: entwurf, stichprobe	Kölner Anpassung	ohne Datenbank aus den Gebietsdateien des Datenpakets; Ausgabe nur außerhalb des Repositorys mit laufender Nummer; Personenbezug aussortiert	pipeline/dossier.py: stichprobe; tools/themen_pruefbogen.py
+pipeline/prozessbild.py: Achse	Kölner Anpassung	aus den Daten (achse) statt aus dem Thema; ohne Rückblick linear	pipeline/prozessbild.py: Achse
+pipeline/prozessbild.py: svg	Kölner Anpassung	ohne Bahnnamen, Legende, Phasen, Fenster und Fristlinien im Bild; feste Pixelmaße; Hinweis „verschoben“ an der Sitzung	pipeline/prozessbild.py: svg
+pipeline/prozessbild.py: Bahnnamen im Bild	Kölner Anpassung	stehende Spalte neben dem verschiebbaren Rahmen	pipeline/prozessbild.py: bahnen_spalte
+pipeline/prozessbild.py: Legende im Bild	Kölner Anpassung	Legende als HTML unter dem Bild	pipeline/prozessbild.py: legende
+pipeline/prozessbild.py: bild, bild_name, schreibe_bild	entfällt	kein Bild zum Teilen, kein PNG (cairosvg entfällt)	–
+pipeline/prozessbild.py: _beschreibung	Kölner Anpassung	ohne Phasen und Fristen; Hinweis auf Angaben außerhalb des Zeitraums	pipeline/prozessbild.py: _beschreibung
+pipeline/prozessbild.py: stand_balken	übernommen	Stand je Strang mit HTML-Legende	pipeline/prozessbild.py: stand_balken
+pipeline/prozessbild.py: aufrufe	Kölner Anpassung	Kalender, Feed, Sitzung besuchen mit Livestream des Rates, Frage oder Anregung nach „Mitmachen in Köln“, Links zur Karte; ohne Bonner Seite	pipeline/prozessbild.py: aufrufe; pipeline/mitwirken.py
+pipeline/prozessbild.py: liste, schalter	übernommen	Textfassung und Schalter mit h3; Einzahl in der Liste	pipeline/prozessbild.py: liste, schalter
+pipeline/prozessbild.py: detaildaten	Kölner Anpassung	ohne Fristen, Federführung, Phasen und Terminplan; Pfade über config.STADT	pipeline/prozessbild.py: detaildaten
+pipeline/prozessbild.py: abschnitt	Kölner Anpassung	Akkordeon „So ist das Bild gezeichnet“ mit Kölner Text; Zeitleiste aus Bahnenspalte und Rahmen; Legende unter dem Bild; ohne Link „Bild zum Teilen“	pipeline/prozessbild.py: abschnitt
+pipeline/themenseiten/__init__.py: ALLE, ENTWUERFE	Kölner Anpassung	Freigabe je Thema (config.THEMENSEITEN_FREIGEGEBEN, Prüfschalter nur mit Testdaten)	pipeline/themenseiten/__init__.py: ALLE, freigegeben, entwuerfe, geprueft
+pipeline/themenseiten/verkehr.py	Kölner Anpassung	neue Kölner Datei: Gremium-Tor über § 17, Wortlisten, Ausschlüsse, Bahnen, Texte; Farben und Symbol wie die Vorlage	pipeline/themenseiten/verkehr.py
+pipeline/themenseiten/{kultur,schule,wohnen,klima,kinder,soziales,sicherheit,wirtschaft,digital,haushalt}.py	entfällt	Bonner Inhalte (Antwort 4 A zum Plan, 25.11.2026); in der Git-Historie und in daimpad/ratsatlas-bonn	–
+pipeline/__main__.py: <thema>-stichprobe	entfällt	Prüfbogen ohne Datenbank über das Werkzeug	tools/themen_pruefbogen.py
+pipeline/export.py: Themenseiten in export_all	Kölner Anpassung	nur freigegebene Themen; gremien.json vorausgesetzt; Kalender über die Organisationen der Sitzungen; kein Bild	pipeline/export.py: _themenseiten
+pipeline/seo.py, pipeline/rssseite.py: Themenseiten	Kölner Anpassung	nur freigegebene Themen (themenseiten.freigegeben)	pipeline/seo.py: write; pipeline/rssseite.py
+tests/test_dossier.py, tests/test_themenseiten.py, tests/test_prozessbild.py	Kölner Anpassung	neu für Köln mit erfundenen Daten; nicht übertragen: Zeichenvergleich mit tests/referenz, Phasen, Besetzung mit Personen	tests/test_themenseiten_koeln.py, tests/test_prozessbild_koeln.py

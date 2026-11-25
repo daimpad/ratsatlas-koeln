@@ -1,6 +1,8 @@
 """Pfade, Quellen, Lizenzen und Abrufpolitik der Pipeline (Ratsatlas Köln)."""
+import json
 import os
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -179,6 +181,44 @@ ZUSATZTHEMEN = {
     # Menü „Wer entscheidet“ (data-freigabe, pipeline/seo.py)
     "gremien": True,
 }
+
+# Themenseiten (thema/, pipeline/themenseiten): Freigabe je Thema durch den Auftraggeber, erst nach dem Prüfbogen
+# (Entscheidung 24.11.2026 (3) (2); Antworten zum Plan vom 25.11.2026 (5)). Schlüssel aus themenseiten.ALLE in der
+# Reihenfolge der Übersicht; Dateien unter data/export/koeln/dossiers/ und Seiten entstehen nur für diese Themen und nur
+# zusammen mit ZUSATZTHEMEN["themenseiten"] (themenseiten.freigegeben). Beide bleiben bis zur Freigabe aus.
+THEMENSEITEN_FREIGEGEBEN = ()
+# Prüfschalter für die Browserprüfung mit Testdaten in CI: RATSATLAS_THEMEN_PRUEFUNG=<schlüssel,…> setzt für diesen Lauf
+# THEMENSEITEN_FREIGEGEBEN und ZUSATZTHEMEN["themenseiten"], aber nur, wenn STAND.json `"testdaten": true` trägt
+# (tools/testdaten.py). Mit echten Daten bleibt er wirkungslos; der Lauf meldet das, und check zählt ihn als Befund
+# (check.dossiers). pages.yml bricht bei Testdaten ohnehin ab.
+THEMEN_PRUEFUNG = "RATSATLAS_THEMEN_PRUEFUNG"
+
+
+def themen_pruefung(umgebung=None, stand=None):
+    """Schlüssel aus RATSATLAS_THEMEN_PRUEFUNG (ohne Doppelte, in ihrer Reihenfolge), wenn der Schalter gesetzt ist und
+    STAND.json (`stand`, Vorgabe STAND) Testdaten nennt; sonst None. `umgebung`: Vorgabe os.environ."""
+    wert = (os.environ if umgebung is None else umgebung).get(THEMEN_PRUEFUNG, "").strip()
+    if not wert or not testdaten(stand):
+        return None
+    return tuple(dict.fromkeys(k.strip() for k in wert.split(",") if k.strip())) or None
+
+
+def testdaten(stand=None):
+    """Trägt STAND.json (`stand`, Vorgabe STAND) `"testdaten": true` (tools/testdaten.py)? Unlesbar oder fehlend: nein."""
+    try:
+        doc = json.loads(Path(STAND if stand is None else stand).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    return isinstance(doc, dict) and doc.get("testdaten") is True
+
+
+_PRUEFUNG = themen_pruefung()
+if _PRUEFUNG:
+    THEMENSEITEN_FREIGEGEBEN = _PRUEFUNG
+    ZUSATZTHEMEN["themenseiten"] = True
+elif os.environ.get(THEMEN_PRUEFUNG, "").strip():
+    print(f"{THEMEN_PRUEFUNG} ohne Wirkung: STAND.json nennt keine Testdaten (nur für die Prüfung mit Testdaten)",
+          file=sys.stderr)
 
 # Archiv der Zusatzthemen „baustellen“ und „anliegen“ (abgeschaltet; Branch „archiv“, im Workflow nach _archiv
 # ausgecheckt; pipeline/baustellen.py, pipeline/anliegen.py, Abruf über pipeline/dienste.py, vorbereitet 16.11.2026)

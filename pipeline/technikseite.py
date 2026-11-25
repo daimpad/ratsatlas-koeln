@@ -553,7 +553,6 @@ def daten(root="../"):
 PAKET_TEXT = {"shapely": "Geometrie, etwa ob ein Punkt in einem Stadtteil liegt",
               "pyproj": "Umrechnung zwischen Koordinatensystemen (ETRS89/UTM 32N nach WGS84)",
               "pyshp": "Lesen der Shapefiles der Stadt Köln",
-              "cairosvg": "Bild der Themenseite als PNG zum Teilen",
               "pypdf": "Lesen der ersten Seite von Vorlagen der Verwaltung (Kopf „Dezernat, Dienststelle“), nur nach "
                        "Freigabe durch die Stadt"}
 # Schritte, deren Erklärung mit einer Freigabe anders lautet (config.ZUSATZTHEMEN): Schritt → (Freigabe, Text mit Freigabe);
@@ -565,8 +564,9 @@ SCHRITTE_MIT_FREIGABE = {
                                  "und Bund); legt zuschaltbare Flächen und Punkte für die Karte ab."),
 }
 # Erklärungen, die zu einem Zusatzthema gehören (config.ZUSATZTHEMEN): ohne dessen Freigabe gilt der Ersatztext, damit die
-# Seite keine abgeschaltete Funktion nennt
-PAKET_FREIGABE = {"cairosvg": ("themenseiten", "Umwandlung von SVG-Bildern in PNG, derzeit ungenutzt")}
+# Seite keine abgeschaltete Funktion nennt. Seit dem 25.11.2026 keine: cairosvg (Bild der Themenseite zum Teilen) ist mit
+# dem Bild entfallen (Themenseiten Köln, Entscheidung 24.11.2026 (3))
+PAKET_FREIGABE = {}
 
 
 # Ausgaben, deren Erklärung mit einer Freigabe anders lautet (config.ZUSATZTHEMEN): Kennung → (Freigabe, Text mit

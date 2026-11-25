@@ -50,6 +50,14 @@ Gremien und Aufbau der Verwaltung („Wer entscheidet“):
 | `export/koeln/aemter.json` | abgeleitet aus `aemter/aemter_koeln.tsv` (Stadt Köln, „Geschäfts- und Dezernatsverteilungsplan der Stadt Köln“, Stand 01.11.2026, zuletzt geprüft am 13.11.2026): Dezernate mit ihren Einheiten, Dienststellen und Punktdienststellen („•“), Einträge mit „●“ als eigene Gruppe ohne Zuordnung; ohne Untereinheiten der Dienststellen, ohne Namen von Personen, ohne Zahlen von Vorlagen; nicht im DCAT-Katalog, weil der Plan keine Lizenz nennt (der Plan steht im Rechtehinweis des Datenpakets als Teil ohne geklärte Lizenz) | im Plan keine Lizenz angegeben; übernommen sind nur Nummern und Bezeichnungen (Tatsachenangaben), keine Textauszüge; Klärung mit der Stadt offen | Stadt Köln, Geschäfts- und Dezernatsverteilungsplan, Stand 01.11.2026 |
 
 <!-- ende -->
+<!-- nur-mit: themenseiten -->
+Themenseiten:
+
+| Datei | Quelle | Lizenz | Namensnennung |
+|---|---|---|---|
+| `export/koeln/dossiers/<thema>.json`, `<thema>.ics`, `<thema>.xml` | abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API, Katalog „OParl API Koeln“ auf offenedaten-koeln.de) und aus `export/koeln/gremien.json`: Vorlagen eines Themas in Strängen mit Stand, Beratungen und Ergebnissen wie in den Gebietsdateien; Zuordnung eigene Ableitung mit Grund je Vorlage (Beratung im Fachausschuss, Wörter im Titel, Folgevorlagen über die Beziehungen zwischen Vorlagen); nächste Sitzungen und Fachausschuss wie in `gremien.json`, ohne Besetzung und ohne Namen von Personen; Kalender der Sitzungen der Gremien des Themas und Feed seiner Vorlagen; ohne Volltexte, Auszüge und PDFs | Ratsinformationssystem: laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen; Paragraf des Fachausschusses wie bei `gremien.json` | Datenquelle: Stadt Köln – offenedaten-koeln.de; Zuständigkeitsordnung der Stadt Köln vom 02.06.2026 |
+
+<!-- ende -->
 <!-- nur-mit: strukturdaten -->
 Strukturdaten auf der Seite und abgeleitete Werte:
 

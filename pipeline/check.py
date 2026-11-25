@@ -9,6 +9,7 @@ config.ZUSATZTHEMEN freigegeben sind; abgeschaltete weist die Ausgabe als solche
 """
 import csv
 import json
+import os
 import re
 import sqlite3
 from collections import Counter
@@ -100,6 +101,9 @@ def check():
     fehlend += f
     befunde += zeitstempel_kalender()
     b, f = zusatzthemen()
+    befunde += b
+    fehlend += f
+    b, f = dossiers()
     befunde += b
     fehlend += f
 
@@ -1602,6 +1606,133 @@ def datenschutz(db, base=None):
     print(geocode.nicht_erkannte_arten(nicht_erkannt))
     print(geocode.erkannte_arten(erkannt))
     return {"untersucht": zahl, "befunde": befunde, "fehlend": fehlend}
+
+
+# --- Themenseiten (Entscheidung 24.11.2026 (3), Antworten zum Plan vom 25.11.2026) -------------------------------------
+
+# Schlüssel einer Datei dossiers/<thema>.json (dossier.daten); keine anderen
+DOSSIER_SCHLUESSEL = ("meta", "straenge", "heute", "achse", "sitzungen", "punkte", "wer_beraet_mit", "weitere_gremien")
+# Feldnamen, die in Köln entfallen sind (berechnete Frist, Federführung, Besetzung, Haushalt, Seite je Vorgang), an
+# beliebiger Stelle der Datei
+DOSSIER_VERBOTEN = frozenset({"frist", "amt", "responsibility", "vorsitz", "fachausschuss", "fachausschuesse",
+                              "haushalt_betraege", "haushalt_schritte", "phasen", "terminplan", "vergleich", "seite",
+                              "themes", "video"})
+
+
+def _schluessel_rekursiv(obj):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            yield k
+            yield from _schluessel_rekursiv(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from _schluessel_rekursiv(v)
+
+
+def dossiers(base=None, umgebung=None):
+    """Themenseiten (pipeline/dossier.py) im Kölner Export (`base`, Vorgabe config.EXPORT / config.STADT):
+    - der Prüfschalter config.THEMEN_PRUEFUNG ohne Testdaten in STAND.json ist ein Befund (er wirkt dann nicht);
+    - genau die freigegebenen Themen (themenseiten.freigegeben) haben <key>.json, .ics und .xml unter dossiers/, sonst
+      liegt dort keine Datei; ein freigegebenes Thema ohne Prüfung von Hand (themenseiten.geprueft) ist ein Befund,
+      außer beim Prüfschalter mit Testdaten;
+    - je Thema: nur die Schlüssel DOSSIER_SCHLUESSEL, kein Feldname, der auf Personen deutet (PERSONENFELD), keiner aus
+      DOSSIER_VERBOTEN; Datenstand wie gremien.json; der Fachausschuss steht eindeutig in gremien.json (sonst kein
+      Gremium-Tor); „Wer berät mit“ und die Sitzungen gleich der Rechnung aus gremien.json (dossier.wer_beraet_mit,
+      dossier.sitzungen); jede Drucksache steht in suche.json, mit gleichem (maskiertem) Titel; kein Punkt einer Art,
+      die nie ein Punkt ist (dossier.punkt_art, Eingaben);
+    - der Themenkalender enthält genau die Sitzungen der Gremien des Themas ab 30 Tagen vor dem Datenstand aus zeit.json
+      (über meetings.json, gremien.organisationen_der_sitzungen), mit STATUS und Zusatz nach export.absage wie
+      termine.ics.
+    Ohne Vorlagen im Export (zeit.json fehlt) keine Datei erwartet. Befunde und Ausgabe nur mit Zahlen. Liefert
+    (befunde, fehlend)."""
+    from datetime import date, timedelta
+    from . import dossier, gremien as gr, themenseiten
+    from .export import absage
+    from .publish import ZUSATZ_ABSAGE
+    base = Path(base) if base else config.EXPORT / config.STADT
+    befunde, fehlend = [], []
+    print("\nThemenseiten (dossiers/, Freigabe „themenseiten“ und config.THEMENSEITEN_FREIGEGEBEN)")
+    umgebung = os.environ if umgebung is None else umgebung
+    pruefschalter = config.themen_pruefung(umgebung)
+    if umgebung.get(config.THEMEN_PRUEFUNG, "").strip() and not pruefschalter:
+        befunde.append(f"Themenseiten: {config.THEMEN_PRUEFUNG} gesetzt, aber STAND.json nennt keine Testdaten "
+                       "(Schalter wirkungslos): 1")
+    try:
+        themen = themenseiten.freigegeben()
+    except SystemExit as e:
+        return befunde + [f"Themenseiten: {e}"], fehlend
+    ordner = base / "dossiers"
+    vorhanden = {f.name for f in ordner.iterdir()} if ordner.is_dir() else set()
+    erwartet = {f"{t.key}.{e}" for t in themen for e in ("json", "ics", "xml")}
+    if vorhanden - erwartet:
+        befunde.append(f"Themenseiten: Dateien unter dossiers/ ohne freigegebenes Thema: {len(vorhanden - erwartet)}")
+    if not themen:
+        print("keine Themen freigegeben – keine Datei erwartet")
+        return befunde, fehlend
+    if not (base / "zeit.json").exists():
+        print("zeit.json fehlt (Export ohne Vorlagen): keine Datei erwartet")
+        return befunde, fehlend
+    for name in sorted(erwartet - vorhanden):
+        fehlend.append(_fehlt("Themenseiten", ordner / name, "export"))
+    if not (base / gr.DATEI).exists() or not (base / "suche.json").exists():
+        fehlend += [_fehlt("Themenseiten", base / n, "export") for n in (gr.DATEI, "suche.json") if not (base / n).exists()]
+        return befunde, fehlend
+    gd = json.loads((base / gr.DATEI).read_text())
+    je_key = {e["key"]: e for e in gd["gremien"]}
+    suche = json.loads((base / "suche.json").read_text())
+    titel = {}
+    for row in suche.get("rows") or ():
+        titel.setdefault(row[0], set()).add(row[1])
+    zeit = [m for m in json.loads((base / "zeit.json").read_text()).get("meetings") or () if isinstance(m, dict)]
+    orgs_je_sitzung = gr.organisationen_der_sitzungen()
+    for t in themen:
+        if not themenseiten.geprueft(t) and not pruefschalter:
+            befunde.append(f"Themenseiten: {t.key} freigegeben ohne Prüfung von Hand (pruefung_text, pruefung_datum): 1")
+        if not (ordner / f"{t.key}.json").exists():
+            continue
+        doc = json.loads((ordner / f"{t.key}.json").read_text())
+        doc = doc if isinstance(doc, dict) else {}
+        fehler = Counter()
+        fehler["Schlüssel außerhalb von DOSSIER_SCHLUESSEL"] = sum(k not in DOSSIER_SCHLUESSEL for k in doc)
+        fehler["Feldnamen, die auf Personen deuten"] = _personenfelder(doc)
+        fehler["entfallene Felder (DOSSIER_VERBOTEN)"] = sum(k in DOSSIER_VERBOTEN for k in _schluessel_rekursiv(doc))
+        fehler["Datenstand anders als gremien.json"] = int(doc.get("heute") != gd["meta"].get("datenstand"))
+        fehler["Fachausschuss nicht eindeutig in gremien.json (kein Gremium-Tor)"] = int(
+            bool(t.fachausschuss) and dossier.fachausschuss(t, gd) is None)
+        fehler["„Wer berät mit“ anders als gremien.json"] = int(doc.get("wer_beraet_mit") != dossier.wer_beraet_mit(t, gd))
+        fehler["Sitzungen anders als gremien.json"] = int(doc.get("sitzungen") != dossier.sitzungen(t, gd, je_key))
+        vorlagen = [r for s in doc.get("straenge") or () for r in s.get("vorlagen") or ()]
+        fehler["Drucksachen, die nicht in suche.json stehen"] = sum(r.get("reference") not in titel for r in vorlagen)
+        fehler["Titel anders als in suche.json"] = sum(r.get("reference") in titel and r.get("name") not in
+                                                       titel[r["reference"]] for r in vorlagen)
+        punkte = doc.get("punkte") or []
+        fehler["Punkte einer Art, die kein Punkt ist (dossier.punkt_art)"] = sum(
+            not dossier.punkt_art(x.get("paper_type"), x.get("name") or "") for x in punkte)
+        ics = ordner / f"{t.key}.ics"
+        if ics.exists() and orgs_je_sitzung is not None:
+            oparl = {e["source_object"] for a in t.sitzungs_gremien for e in dossier.gremien_auswahl(gd, a)}
+            seit = (date.fromisoformat(doc.get("heute") or gd["meta"]["datenstand"]) - timedelta(days=30)).isoformat()
+            soll = {m.get("source_object"): m for m in zeit if (m.get("date") or "") >= seit
+                    and oparl & set(orgs_je_sitzung.get(m.get("source_object")) or ())}
+            termine = _ics_ereignisse(ics)
+            ist = {e.get("UID") for e in termine}
+            fehler["Themenkalender: Sitzungen der Gremien des Themas fehlen"] = len(set(soll) - ist)
+            fehler["Themenkalender: Termine ohne Sitzung der Gremien des Themas"] = len(ist - set(soll))
+            zusatz = {z: g for g, z in ZUSATZ_ABSAGE.items()}
+            fehler["Themenkalender: STATUS nicht nach export.absage"] = sum(
+                e.get("STATUS") != ("CANCELLED" if absage(soll[e["UID"]]) else "CONFIRMED")
+                for e in termine if e.get("UID") in soll)
+            fehler["Themenkalender: Zusatz der Absage nicht nach export.absage"] = sum(
+                next((zusatz[z] for z in zusatz if (e.get("SUMMARY") or "").endswith(z)), None) != absage(soll[e["UID"]])
+                for e in termine if e.get("UID") in soll)
+        elif ics.exists():
+            fehlend.append(_fehlt("Themenkalender (Sitzungen je Gremium)", config.MEETINGS, "fetch"))
+        for text, n in fehler.items():
+            if n:
+                befunde.append(f"Themenseite {t.key}: {text}: {n}")
+        print(f"{t.key}: {len(vorlagen)} Vorlagen in {len(doc.get('straenge') or [])} Strängen, {len(punkte)} Punkte, "
+              f"{len(doc.get('sitzungen') or [])} Sitzungen")
+    return befunde, fehlend
 
 
 def zusatzthemen():
