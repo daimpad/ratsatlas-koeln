@@ -1,6 +1,7 @@
 # Tests der Pipeline mit synthetischen Daten und lokalem Testserver; keine Anfragen an Server der Stadt Köln
 # (Entscheidung 04.11.2026: einziger aktiver Workflow bis Phase 5). Job „browser“ (Entscheidungen 19.11.2026 (1) (G)
-# und 24.11.2026 (2) (2) A): Seite mit Testdaten im Browser, parallel zum Job „test“.
+# und 24.11.2026 (2) (2) A): Seite mit Testdaten im Browser, parallel zum Job „test“; dazu ein zweiter Bau mit den
+# Themenseiten (Entscheidung 24.11.2026 (3), Prüfschalter nur mit Testdaten).
 name: Tests
 
 on:
@@ -48,7 +49,8 @@ jobs:
     runs-on: ubuntu-latest
     # Lokal (24.11.2026, offline, Chromium vorinstalliert, 4 Kerne) brauchte die Folge 436 s, in der Nachprüfung unter
     # Last 509 s, davon gremien.js 245 s; 30 Minuten sind die Untergrenze, das 3,5-Fache von 509 s, mit Reserve für die
-    # Installation von Chromium samt Systempaketen und langsamere Läufer
+    # Installation von Chromium samt Systempaketen und langsamere Läufer. Der zweite Bau mit den Themenseiten kam am
+    # 25.11.2026 hinzu (lokal 22 s, themen.js 46 bis 53 s; der ganze Job lokal 764 s, parallel zu pytest)
     timeout-minutes: 30
     defaults:
       run:
@@ -82,7 +84,9 @@ jobs:
       # HTTP_PROXY wäre doppelt); Python (urllib) liest beide Schreibweisen, curl ALL_PROXY. RATSATLAS_SPERRE
       # (Sperrdatei abruf.lock, pipeline/dienste.py) liegt im Temp-Ordner des Läufers, nie in ~/.cache. Die Pipeline
       # arbeitet nur mit den erfundenen Vorlagen aus tools/testdaten.py („[Testdaten]“, example.invalid), die nie
-      # veröffentlicht werden.
+      # veröffentlicht werden. Der erste Bau läuft ohne Themenseiten, gleich, ob sie im Repository freigegeben sind
+      # (Prüfschalter RATSATLAS_THEMEN_PRUEFUNG=aus, wirkt nur mit Testdaten): Diese Testdaten haben keinen
+      # Mobilitätsausschuss nach § 17; die Themenseiten prüft der zweite Bau unten.
       - name: Seite mit Testdaten bauen
         env:
           HTTP_PROXY: http://127.0.0.1:9
@@ -90,6 +94,7 @@ jobs:
           ALL_PROXY: http://127.0.0.1:9
           NO_PROXY: 127.0.0.1,localhost
           RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+          RATSATLAS_THEMEN_PRUEFUNG: aus
         run: |
           mkdir -p "$RATSATLAS_SPERRE"
           python tools/testdaten.py
@@ -189,3 +194,62 @@ jobs:
           AXE_PFAD: ${{ github.workspace }}/tests/browser/node_modules/axe-core/axe.min.js
           RATSATLAS_BROWSER: "1"
         run: python -m pytest -q tests/test_praezision.py -k test_pruefbogen_im_browser
+      # Themenseiten (Entscheidung 24.11.2026 (3)): zweiter Bau mit Testdaten in einen eigenen Ordner, nach allen Prüfungen
+      # des ersten Baus (dieser und die WCAG-Prüfung oben laufen ohne Themenseiten, Prüfschalter „aus“).
+      # tools/testdaten.py --themen ergänzt Gremien, Vorlagen und Sitzungen zum Thema; der Prüfschalter
+      # RATSATLAS_THEMEN_PRUEFUNG=verkehr schaltet das Thema für diesen Bau ein, gleich, was im Repository steht, und wirkt
+      # nur mit Testdaten (STAND.json „testdaten“, pipeline/config.py). Wie oben ohne Netz.
+      - name: Seite mit Themenseiten bauen (Testdaten)
+        id: themen_bau
+        if: ${{ !cancelled() && steps.chromium.outcome == 'success' }}
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+          RATSATLAS_THEMEN_PRUEFUNG: verkehr
+        run: |
+          mkdir -p "$RATSATLAS_SPERRE"
+          python tools/testdaten.py --themen
+          python -m pipeline build
+          python -m pipeline export
+          python -m pipeline kontext
+          python -m pipeline ebenen
+          python -m pipeline check
+          python -m pipeline package
+          python tools/seite_bauen.py _site_themen
+          python tools/linkpruefung.py _site_themen
+      - name: Seite mit Themenseiten unter 127.0.0.1:8791
+        id: themen_seite
+        if: ${{ !cancelled() && steps.themen_bau.outcome == 'success' }}
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+        run: |
+          nohup python3 -m http.server --bind 127.0.0.1 8791 -d _site_themen > "$RUNNER_TEMP/http_server_themen.log" 2>&1 &
+          for i in $(seq 1 30); do
+            if curl --silent --fail --noproxy 127.0.0.1 --output /dev/null http://127.0.0.1:8791/thema/verkehr-und-mobilitaet/; then
+              echo "Themenseite antwortet nach $i Versuch(en)"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::Die Themenseite unter 127.0.0.1:8791 antwortet nicht"
+          exit 1
+      # Übersicht und Themenseite in 1440 × 900, 1024 × 768, iPhone 13 und 320 × 256: axe in jedem Zustand, Bedienung mit
+      # Tastatur und Zeiger, stehende Bahnnamen, Legende außerhalb des Bildes, Tabellen mit Spaltennamen auf dem Telefon
+      - name: Themenseiten im Browser
+        if: ${{ !cancelled() && steps.themen_seite.outcome == 'success' }}
+        env:
+          HTTP_PROXY: http://127.0.0.1:9
+          HTTPS_PROXY: http://127.0.0.1:9
+          ALL_PROXY: http://127.0.0.1:9
+          NO_PROXY: 127.0.0.1,localhost
+          RATSATLAS_SPERRE: ${{ runner.temp }}/sperre
+          NODE_PATH: ${{ github.workspace }}/tests/browser/node_modules
+          AXE_PFAD: ${{ github.workspace }}/tests/browser/node_modules/axe-core/axe.min.js
+        run: node tests/browser/themen.js http://127.0.0.1:8791/ "$RUNNER_TEMP/themen.json"

@@ -1,6 +1,8 @@
 """Pfade, Quellen, Lizenzen und Abrufpolitik der Pipeline (Ratsatlas Köln)."""
+import json
 import os
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -152,7 +154,9 @@ PILOT_ORTSTEIL = None
 
 # Zusatzthemen aus Bonn: deaktiviert, nicht gelöscht (CLAUDE.md 5.4, Inventur Phase 0); einzeln freizugeben
 ZUSATZTHEMEN = {
-    "haushalt": False, "baustellen": False, "anliegen": False, "wahlen": False, "themenseiten": False,
+    "haushalt": False, "baustellen": False, "anliegen": False, "wahlen": False,
+    # Themenseiten (thema/): Hauptschalter, freigegeben am 25.11.2026 zusammen mit THEMENSEITEN_FREIGEGEBEN (unten)
+    "themenseiten": True,
     "kontext": True, "soll": False, "chat": False,
     # zweiter Lauf (Entscheidung 04.11.2026; Beginn am 13.11.2026 freigegeben): Einfache Sprache für Köln neu geschrieben
     # (pipeline/einfachseite.py) und „mitmachen“ (Fläche „Mitmachen in Köln“, site/beteiligung.js, Quellen am 13.11.2026
@@ -179,6 +183,51 @@ ZUSATZTHEMEN = {
     # Menü „Wer entscheidet“ (data-freigabe, pipeline/seo.py)
     "gremien": True,
 }
+
+# Themenseiten (thema/, pipeline/themenseiten): Freigabe je Thema durch den Auftraggeber nach dem Prüfbogen mit echten
+# Vorlagen (Entscheidung 24.11.2026 (3) (2); Antworten zum Plan vom 25.11.2026 (5)). Schlüssel aus themenseiten.ALLE in
+# der Reihenfolge der Übersicht; Dateien unter data/export/koeln/dossiers/ und Seiten entstehen nur für diese Themen und
+# nur zusammen mit ZUSATZTHEMEN["themenseiten"] (themenseiten.freigegeben); beide Schalter gemeinsam setzen. „verkehr“
+# freigegeben am 25.11.2026 nach dem Prüfbogen (pruefung_text, pruefung_datum in pipeline/themenseiten/verkehr.py)
+THEMENSEITEN_FREIGEGEBEN = ("verkehr",)
+# Prüfschalter für die Browserprüfung mit Testdaten in CI: RATSATLAS_THEMEN_PRUEFUNG=<schlüssel,…> setzt für diesen Lauf
+# THEMENSEITEN_FREIGEGEBEN und ZUSATZTHEMEN["themenseiten"], aber nur, wenn STAND.json `"testdaten": true` trägt
+# (tools/testdaten.py); der Wert THEMEN_AUS („aus“) schaltet beide für diesen Lauf ab, auch die Freigabe im Repository
+# (erster Bau in tests.yml: Testdaten ohne Mobilitätsausschuss nach § 17, die Themenseiten prüft der zweite Bau). Mit
+# echten Daten bleibt er wirkungslos; der Lauf meldet das, und check zählt ihn als Befund (check.dossiers). pages.yml
+# übernimmt Rohdaten mit Testdaten nie (dann Kartenvorschau, tools/vorschau.py).
+THEMEN_PRUEFUNG = "RATSATLAS_THEMEN_PRUEFUNG"
+THEMEN_AUS = "aus"
+
+
+def themen_pruefung(umgebung=None, stand=None):
+    """Schlüssel aus RATSATLAS_THEMEN_PRUEFUNG (ohne Doppelte, in ihrer Reihenfolge), wenn der Schalter gesetzt ist und
+    STAND.json (`stand`, Vorgabe STAND) Testdaten nennt; beim Wert THEMEN_AUS ein leeres Tupel (für diesen Lauf keine
+    Themenseiten); sonst None. `umgebung`: Vorgabe os.environ."""
+    wert = (os.environ if umgebung is None else umgebung).get(THEMEN_PRUEFUNG, "").strip()
+    if not wert or not testdaten(stand):
+        return None
+    if wert == THEMEN_AUS:
+        return ()
+    return tuple(dict.fromkeys(k.strip() for k in wert.split(",") if k.strip())) or None
+
+
+def testdaten(stand=None):
+    """Trägt STAND.json (`stand`, Vorgabe STAND) `"testdaten": true` (tools/testdaten.py)? Unlesbar oder fehlend: nein."""
+    try:
+        doc = json.loads(Path(STAND if stand is None else stand).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    return isinstance(doc, dict) and doc.get("testdaten") is True
+
+
+_PRUEFUNG = themen_pruefung()
+if _PRUEFUNG is not None:
+    THEMENSEITEN_FREIGEGEBEN = _PRUEFUNG
+    ZUSATZTHEMEN["themenseiten"] = bool(_PRUEFUNG)
+elif os.environ.get(THEMEN_PRUEFUNG, "").strip():
+    print(f"{THEMEN_PRUEFUNG} ohne Wirkung: STAND.json nennt keine Testdaten (nur für die Prüfung mit Testdaten)",
+          file=sys.stderr)
 
 # Archiv der Zusatzthemen „baustellen“ und „anliegen“ (abgeschaltet; Branch „archiv“, im Workflow nach _archiv
 # ausgecheckt; pipeline/baustellen.py, pipeline/anliegen.py, Abruf über pipeline/dienste.py, vorbereitet 16.11.2026)

@@ -179,13 +179,27 @@ def test_gremium_bisherige_treffer_bleiben():
                 assert export.gremium_der_sitzung({"name": sitzung}, names, index) == bisher[alt(gremium)], sitzung
 
 
-def test_bahn_finanzausschuss():
-    """Themenseiten (deaktiviert): der Kölner Finanzausschuss (§ 11) wie der Bonner Name auf der Bahn „finanz“."""
-    class T:
-        bahn_gremien = {}
-    assert dossier.bahn(T, "Finanzausschuss") == "finanz"
-    assert dossier.bahn(T, "Ausschuss für Finanzen, Beteiligungen und Vergabe") == "finanz"
-    assert dossier.bahn(T, "Mobilitätsausschuss") == "fach"
+def test_bahn_ueber_kennung_gruppe_und_paragraf():
+    """Themenseiten (Antworten zum Plan vom 25.11.2026): Die Bahn eines Gremiums folgt seiner Kennung in gremien.json
+    (Gruppe, Paragraf der Zuständigkeitsordnung), nicht dem Namen. Ohne Haushalt gibt es keine Bahn „finanz“ mehr: Der
+    Finanzausschuss (§ 11) steht in Verkehr und Mobilität auf „fach“; der Ausschuss nach § 17 auf „mobil“ auch unter
+    einem anderen Namen; ohne Kennung (aufgelöstes Gremium) nur Bezirksvertretungen nach dem Namen, sonst „fach“."""
+    from pipeline.themenseiten import verkehr
+    t = verkehr.THEMA
+    je = {"fa": {"key": "fa", "name": "Finanzausschuss", "gruppe": "ausschuss", "paragraf": 11},
+          "m2": {"key": "m2", "name": "[Testdaten] Ausschuss mit anderem Namen", "gruppe": "ausschuss", "paragraf": 17},
+          "ha": {"key": "ha", "name": "Hauptausschuss", "gruppe": "ausschuss", "paragraf": 7},
+          "rat": {"key": "rat", "name": "Rat", "gruppe": "rat"},
+          "bv4": {"key": "bv4", "name": "Bezirksvertretung 4 (Ehrenfeld)", "gruppe": "bezirksvertretung"},
+          "alt": {"key": "alt", "name": "Mobilitätsausschuss", "gruppe": "uebrige", "aufgeloest": True}}
+    assert dossier.bahn(t, "fa", "Finanzausschuss", je) == "fach"
+    assert dossier.bahn(t, "m2", je["m2"]["name"], je) == "mobil"
+    assert dossier.bahn(t, "ha", "Hauptausschuss", je) == dossier.bahn(t, "rat", "Rat", je) == "rat"
+    assert dossier.bahn(t, "bv4", je["bv4"]["name"], je) == "bv"
+    assert dossier.bahn(t, "alt", "Mobilitätsausschuss", je) == "fach"
+    assert dossier.bahn(t, None, "Mobilitätsausschuss", je) == "fach"
+    assert dossier.bahn(t, None, "Bezirksvertretung 2 (Rodenkirchen)", je) == "bv"
+    assert "finanz" not in {k for k, _ in t.bahnen}
 
 
 ORGS = [

@@ -13,6 +13,18 @@ am 04.11.2026.
 Nicht übernommen wurden das Datenverzeichnis data/ sowie die Bonner
 Berichts-, Phasen-, Test- und Evaluationsverzeichnisse.
 
+Teile der Themenseiten
+----------------------
+Für die Themenseiten (thema/) sind Teile eines späteren Stands desselben
+Repositorys übertragen: daimpad/ratsatlas-bonn, Stand Commit
+730d593ee443e0f8e0c4cb8dce9d08ef3b350b5e (17.11.2026), übernommen am
+25.11.2026. Übernommen wurden nur Code und Gestaltung: pipeline/akkordeon.py,
+Gerüst und Funktionen in pipeline/dossier.py und pipeline/prozessbild.py,
+site/thema.js und Regeln in site/page.css, jeweils mit Kölner Anpassungen.
+Nicht übernommen wurden Daten, die Bonner Themendateien und Bonner Texte. Was
+übernommen, angepasst oder entfallen ist, steht je Funktion, Feld, CSS-Block
+und Test in inventur/themenseiten_port.tsv.
+
 Der Code steht unter der MIT-Lizenz (LICENSE). Mitgelieferte Drittanbieter-
 Bestandteile behalten ihre eigenen Lizenzen:
 - Schrift Inter: site/fonts/LICENSE-Inter.txt

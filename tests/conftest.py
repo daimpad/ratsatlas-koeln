@@ -295,6 +295,12 @@ def oparl(tmp_path, monkeypatch):
                        # ohne `limit` wie vor Stufe 2; Tests zur Seitengröße setzen ihn (und Daten.limit_wirkt)
                        "ABRUF_SEITENGROESSE": ""}.items():
         monkeypatch.setattr(config, name, wert)
+    # Themenseiten ausdrücklich aus, gleich, was im Repository steht: Die Testdaten ohne --themen haben keinen
+    # Mobilitätsausschuss nach § 17, mit Freigabe meldete check einen Befund (Prüfung der CI, 25.11.2026). Tests mit
+    # Themenseiten setzen die Freigabe selbst (tests/test_themenseiten_koeln.py)
+    monkeypatch.setattr(config, "THEMENSEITEN_FREIGEGEBEN", ())
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", False)
+    monkeypatch.delenv(config.THEMEN_PRUEFUNG, raising=False)
     monkeypatch.delenv("RATSATLAS_STADT_INFORMIERT", raising=False)
     monkeypatch.delenv("RATSATLAS_VOLLABRUF", raising=False)
     monkeypatch.delenv("RATSATLAS_KUERZER_ANNEHMEN", raising=False)

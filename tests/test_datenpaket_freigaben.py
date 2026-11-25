@@ -45,8 +45,6 @@ RSS_OHNE_THEMEN = ('<a href="#weitere">Nur ein Gebiet abonnieren</a>',
                    "neue Vorlagen und Beratungsergebnisse aus ganz Köln, je Gebiet, offen und ohne Konto.")
 RSS_KURZ = "<code>summary</code> (Art, federführendes Amt, Stand; gekennzeichnete KI-Kurzfassung, wo vorhanden).</dd>"
 RSS_OHNE_KURZ = "<code>summary</code> (Art, federführendes Amt, Stand).</dd>"
-TECHNIK_THEMEN = "Python-Paket aus requirements.txt: Bild der Themenseite als PNG zum Teilen"
-TECHNIK_OHNE_THEMEN = "Python-Paket aus requirements.txt: Umwandlung von SVG-Bildern in PNG, derzeit ungenutzt"
 
 
 def _paketdatei(name):
@@ -70,8 +68,11 @@ class _Links(HTMLParser):
 
 
 def _freigaben(monkeypatch, **an):
+    """Freigaben für einen Test; „themenseiten“ mit der Liste der freigegebenen Themen (Freigabe je Thema, Kölner
+    Themenseiten 25.11.2026): an → ("verkehr",), aus → ()."""
     for k in ("chat", "themenseiten", "kurzfassungen"):
         monkeypatch.setitem(config.ZUSATZTHEMEN, k, an.get(k, False))
+    monkeypatch.setattr(config, "THEMENSEITEN_FREIGEGEBEN", ("verkehr",) if an.get("themenseiten") else ())
 
 
 # --- (1) Audit-Protokolle nur im Datenpaket ---------------------------------------------------------------------------
@@ -341,14 +342,26 @@ def test_feedseite_themen_und_kurzfassungen_nur_mit_freigabe(monkeypatch, tmp_pa
             assert [w for w in OHNE_FREIGABE[funktion]["rss/index.html"] if w in html] == [], funktion
 
 
+def test_feedseite_themen_nur_mit_liste(monkeypatch, tmp_path):
+    """Freigabe je Thema: Der Hauptschalter „themenseiten“ ohne freigegebenes Thema in config.THEMENSEITEN_FREIGEGEBEN
+    nennt auf rss/ keine Themenfeeds."""
+    _freigaben(monkeypatch)
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", True)
+    rssseite.write(tmp_path, URL, _page)
+    html = (tmp_path / "rss" / "index.html").read_text(encoding="utf-8")
+    assert all(neu in html for neu in RSS_OHNE_THEMEN)
+    assert [w for w in OHNE_FREIGABE["themenseiten"]["rss/index.html"] if w in html] == []
+
+
 @pytest.mark.parametrize("themen", [False, True])
 def test_technikseite_themenseite_nur_mit_freigabe(monkeypatch, tmp_path, themen):
-    """pipeline/technikseite.py: die Erklärung zu cairosvg nennt die Themenseite nur mit Freigabe; Prüfprotokolle
-    stehen im Datenpaket."""
+    """pipeline/technikseite.py: Seit dem 25.11.2026 (Kölner Themenseiten ohne Bild zum Teilen) steht cairosvg nicht
+    mehr in requirements.txt, und die Seite nennt die Themenseite mit und ohne Freigabe nicht; Prüfprotokolle stehen im
+    Datenpaket."""
     _freigaben(monkeypatch, themenseiten=themen)
     technikseite.write(tmp_path, URL, _page)
     html = (tmp_path / "technik" / "index.html").read_text(encoding="utf-8")
-    if "cairosvg" in (ROOT / "requirements.txt").read_text(encoding="utf-8"):
-        assert (TECHNIK_THEMEN in html, TECHNIK_OHNE_THEMEN in html) == (themen, not themen)
-    assert ("Themenseite" in html) == themen
+    assert "cairosvg" not in (ROOT / "requirements.txt").read_text(encoding="utf-8") and "cairosvg" not in html
+    assert technikseite.PAKET_FREIGABE == {}
+    assert "Themenseite" not in html
     assert "Prüfprotokolle als TSV im Datenpaket" in html and "Kurzfassung" not in html and "Ratsassistent" not in html

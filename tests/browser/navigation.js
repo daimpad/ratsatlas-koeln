@@ -160,8 +160,11 @@ async function leisteUndMenues(browser, profil) {
     pruefen(profil, `Menü „${name}“: Esc schließt, Fokus auf der Schaltfläche`, zu && f.mega === mega && f.sichtbar, f);
     if (telefon(profil)) await page.keyboard.press("Escape");
   }
+  // Karte „Themenseiten“ im Menü „Themen“ nur mit Freigabe (index.json meta.funktionen; der Bau entfernt sie sonst)
+  const themenAn = await page.evaluate(async () => Boolean(((await (await fetch("data/export/koeln/index.json")).json()).meta
+    .funktionen || {}).themenseiten));
   pruefen(profil, "Inhalt der Menüs", JSON.stringify(inhalte["Wer entscheidet"]) === '["Gremien","Ämter","Verfahrenswege in Zahlen"]'
-    && inhalte.Themen[0] === "Kennzahlen zum Gebiet" && inhalte.Themen.length === 1
+    && JSON.stringify(inhalte.Themen) === JSON.stringify(["Kennzahlen zum Gebiet", ...(themenAn ? ["Themenseiten"] : [])])
     && JSON.stringify(inhalte.Mitmachen) === '["Aktuell in Köln","Kommende Sitzungen","Selbst mitwirken","Informiert bleiben"]'
     && JSON.stringify(inhalte["Über"]) === JSON.stringify(["Einfache Sprache", "Begriffe erklärt", "Tour durch alle Funktionen",
       "Über den Ratsatlas", "Wie verlässlich sind die Angaben?", "So funktioniert der Ratsatlas", "Was ist neu?", "Hinweis geben",

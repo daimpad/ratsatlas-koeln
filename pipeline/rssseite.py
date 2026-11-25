@@ -6,13 +6,13 @@ nur mit der Standardbibliothek). Alle Feeds sind Atom 1.0; die Seite erklärt, d
 Kopieren mit Rückmeldung über site/rss.js; ohne Skript ist die Adresse ein markierbares Feld. Feeds je Gebiet und
 Thema stehen in einer Liste, leere Feeds nicht. Texte zu Themenseiten und KI-Kurzfassungen erscheinen nur mit deren
 Freigabe (config.ZUSATZTHEMEN „themenseiten“, „kurzfassungen“; Entscheidung 10.11.2026), sonst nennt die Seite keine
-abgeschaltete Funktion.
+abgeschaltete Funktion; Feeds je Thema nur für freigegebene Themen (themenseiten.freigegeben).
 """
 from html import escape
 
 from . import config
+from . import themenseiten
 from .publish import GANZ_BONN
-from .themenseiten import ALLE as THEMEN
 
 PFAD = "rss/"
 AKTUALISIERUNG = "einmal am Tag, frühmorgens"
@@ -45,8 +45,8 @@ def _feeds(site, site_url):
         index = json.loads((base / "index.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         index = {"ortsteile": [], "bezirke": [], "ohne_ortsbezug": []}
-    themen = [(t.titel, f"{site_url}data/export/koeln/dossiers/{t.key}.xml") for t in THEMEN
-              if config.ZUSATZTHEMEN.get("themenseiten") and _eintraege(base / "dossiers" / f"{t.key}.xml")]
+    themen = [(t.titel, f"{site_url}data/export/koeln/dossiers/{t.key}.xml") for t in themenseiten.freigegeben()
+              if _eintraege(base / "dossiers" / f"{t.key}.xml")]
     gebiete = {}
     for o in sorted(index["ortsteile"], key=lambda o: (o["stadtbezirk"], o["name"])):
         if _eintraege(base / "feeds" / f"ortsteil-{o['slug']}.xml"):
@@ -94,7 +94,7 @@ def _an(thema):
 
 def body(site, site_url, root):
     url, link = feed_url(site_url), feed_url(root)   # angezeigt und kopiert absolut, verlinkt relativ
-    th = _an("themenseiten")   # Feeds je Themenseite (dossiers/) nur mit Freigabe
+    th = bool(themenseiten.freigegeben())   # Feeds je Themenseite (dossiers/) nur mit freigegebenen Themen
     themen, gebiete, ohne = _feeds(site, root)
     gruppen = "".join(_liste(escape(bezirk), eintraege, "h4") for bezirk, eintraege in sorted(gebiete.items()))
     einbinden = (f'<link rel="alternate" type="application/atom+xml"\n'
@@ -171,6 +171,6 @@ def write(site, site_url, page):
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page(site_url, PFAD, "Inhalte abonnieren und weiterverwenden – Ratsatlas Köln",
                         "Feeds des Ratsatlas Köln abonnieren oder einbinden: neue Vorlagen und Beratungsergebnisse "
-                        f"aus ganz Köln, je Gebiet{' und je Thema' if _an('themenseiten') else ''}, offen und ohne Konto.",
+                        f"aus ganz Köln, je Gebiet{' und je Thema' if themenseiten.freigegeben() else ''}, offen und ohne Konto.",
                         body(site, site_url, "../"), "../"), encoding="utf-8")   # Feed-Erkennung im Kopf: _page
     return [PFAD]

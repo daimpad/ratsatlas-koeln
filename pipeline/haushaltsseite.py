@@ -35,8 +35,14 @@ from collections import defaultdict
 from html import escape
 
 from . import haushaltsplan
-from .dossier import _date, _mio
+from .dossier import _date
 from .themenseiten import ALLE as THEMEN
+
+
+def _mio(x):
+    """Betrag in Mio. € mit einer Nachkommastelle (bis 25.11.2026 in pipeline/dossier.py, mit dem Haushalt der
+    Themenseiten entfallen)."""
+    return f"{x / 1e6:,.1f}".replace(",", " ").replace(".", ",").replace(" ", ".") + " Mio. €" if x is not None else "–"
 
 PFAD = "haushalt/"
 ZEILE = 17

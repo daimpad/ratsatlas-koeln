@@ -9,8 +9,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from xml.sax.saxutils import escape
 
-from . import begriffsseite, config, dossier, einfachseite, gebietsseiten, haushaltsseite, rssseite, technikseite
-from .themenseiten import ALLE as THEMENSEITEN
+from . import begriffsseite, config, dossier, einfachseite, gebietsseiten, haushaltsseite, rssseite, technikseite, themenseiten
 
 DEFAULT_URL = "https://daimpad.github.io/ratsatlas-koeln/"  # Platzhalter in site/, wird durch SITE_URL ersetzt
 PAGES = ("index.html", "404.html", "datenschutz.html")
@@ -132,12 +131,12 @@ def bereiche_mit_freigabe(html):
     return sorted(p.bereiche, key=lambda b: b[1])
 
 
-def ohne_abgeschaltete_bereiche(html):
-    """Elemente mit FREIGABE_ATTR, deren Funktion nicht freigegeben ist (config.ZUSATZTHEMEN), samt Inhalt entfernen;
-    steht das Element allein auf seinen Zeilen, fallen die Zeilen mit heraus (und eine Leerzeile, wenn davor schon eine
-    steht). Mit Freigabe bleibt die Seite unverändert. Steht danach noch ein solches Element in der Seite, bricht der Bau
-    ab."""
-    an = config.ZUSATZTHEMEN.get
+def ohne_abgeschaltete_bereiche(html, an=None):
+    """Elemente mit FREIGABE_ATTR, deren Funktion nicht freigegeben ist (config.ZUSATZTHEMEN; `an`: andere Prüfung je
+    Funktion, freigabe_mit_seiten), samt Inhalt entfernen; steht das Element allein auf seinen Zeilen, fallen die Zeilen
+    mit heraus (und eine Leerzeile, wenn davor schon eine steht). Mit Freigabe bleibt die Seite unverändert. Steht danach
+    noch ein solches Element in der Seite, bricht der Bau ab."""
+    an = an or config.ZUSATZTHEMEN.get
     weg = []
     for funktion, anfang, ende in bereiche_mit_freigabe(html):
         if not an(funktion) and not (weg and anfang < weg[-1][1]):   # in einem schon entfernten Element enthalten
@@ -227,16 +226,25 @@ def csp_alle(site):
     return n
 
 
-def ohne_abgeschaltete(html):
+def freigabe_mit_seiten(pfade):
+    """Freigabe je Funktion für ohne_abgeschaltete, nur für die Themenseiten anders: „themenseiten“ gilt nur, wenn die
+    Übersicht thema/ geschrieben ist (`pfade`: von seo.write geschriebene Seiten). Ohne sie (Kartenvorschau ohne Vorlagen,
+    Hauptschalter ohne freigegebenes Thema) zeigte die Karte „Themenseiten“ auf eine fehlende Seite (Prüfung der CI,
+    25.11.2026)."""
+    return lambda funktion: (dossier.UEBERSICHT in pfade) if funktion == "themenseiten" else config.ZUSATZTHEMEN.get(funktion)
+
+
+def ohne_abgeschaltete(html, an=None):
     """Karten abgeschalteter Zusatzthemen (data-funktion, config.ZUSATZTHEMEN) aus der veröffentlichten Seite entfernen,
     damit Suchmaschinen keinen Links auf nicht erzeugte Seiten folgen; ebenso Abschnitte, Listeneinträge und Sätze, die
     eine abgeschaltete Funktion beschreiben (AUS_BLOCK, AUS_SATZ). Mit Freigabe bleibt alles unverändert; die Quelle in
     site/ bleibt vollständig. Elemente mit hidden (Startseite; app.js zeigt sie nur mit Freigabe) bleiben stehen. Jedes
     andere Element einer abgeschalteten Funktion, das danach noch in der Seite steht (andere Form als AUS_BLOCK und
     AUS_SATZ, etwa weitere Attribute, einfache Anführungszeichen oder ein anderes Element), bricht den Bau ab. Flächen
-    mit FREIGABE_ATTR fallen ohne Freigabe ganz heraus (ohne_abgeschaltete_bereiche, Runde 20)."""
-    an = config.ZUSATZTHEMEN.get
-    html = ohne_abgeschaltete_bereiche(html)
+    mit FREIGABE_ATTR fallen ohne Freigabe ganz heraus (ohne_abgeschaltete_bereiche, Runde 20). `an`: Freigabe je Funktion
+    (Vorgabe config.ZUSATZTHEMEN; seo.write: freigabe_mit_seiten)."""
+    an = an or config.ZUSATZTHEMEN.get
+    html = ohne_abgeschaltete_bereiche(html, an)
     html = AUS_FUNKTION.sub(lambda m: m.group(0) if an(m.group(1)) else "", html)
     html = AUS_BLOCK.sub(lambda m: m.group(0) if an(m.group(2)) else "", html)
     html = AUS_SATZ.sub(lambda m: m.group(0) if an(m.group(1)) else "", html)
@@ -251,18 +259,22 @@ def write(site=Path("_site"), site_url=None):
     site_url = site_url or config.SITE_URL
     if not site_url.endswith("/"):
         site_url += "/"
+    (site / "robots.txt").write_text(robots(site_url), encoding="utf-8")
+    areas = gebietsseiten.write(site, site_url)
+    an = lambda thema: config.ZUSATZTHEMEN.get(thema)   # Bonner Zusatzthemen nur bei Freigabe (CLAUDE.md 5.4)
+    # Themenseiten nur für freigegebene Themen (themenseiten.freigegeben: Liste config.THEMENSEITEN_FREIGEGEBEN und
+    # Freigabe „themenseiten“); die Übersicht thema/ nach den Seiten, weil sie nur geschriebene Seiten zeigt
+    freigegeben = themenseiten.freigegeben()
+    themen = [pfad for t in freigegeben for pfad in dossier.write(t, site, site_url, gebietsseiten._page)]
+    themen = (dossier.uebersicht(freigegeben, site, site_url, gebietsseiten._page) if freigegeben else []) + themen
+    # Startseite, Fehlerseite und Datenschutz nach den Themenseiten: Karte und Texte „Themenseiten“ nur, wenn die
+    # Übersicht thema/ geschrieben ist (freigabe_mit_seiten)
     for name in PAGES:
         page = site / name
         if page.exists():
             html = page.read_text(encoding="utf-8").replace(DEFAULT_URL, site_url)
-            page.write_text(gebietsseiten.neuer_tab(ohne_abgeschaltete(html)), encoding="utf-8")
-    (site / "robots.txt").write_text(robots(site_url), encoding="utf-8")
-    areas = gebietsseiten.write(site, site_url)
-    an = lambda thema: config.ZUSATZTHEMEN.get(thema)   # Bonner Zusatzthemen nur bei Freigabe (CLAUDE.md 5.4)
-    themen = []
-    if an("themenseiten"):
-        themen = [pfad for t in THEMENSEITEN for pfad in dossier.write(t, site, site_url, gebietsseiten._page)]
-        themen = dossier.uebersicht(THEMENSEITEN, site, site_url, gebietsseiten._page) + themen
+            page.write_text(gebietsseiten.neuer_tab(ohne_abgeschaltete(html, freigabe_mit_seiten(themen))),
+                            encoding="utf-8")
     if an("haushalt"):
         themen += haushaltsseite.write(site, site_url, gebietsseiten._page)
     themen += rssseite.write(site, site_url, gebietsseiten._page)

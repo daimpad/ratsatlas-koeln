@@ -72,7 +72,8 @@ def feed_head(datei, titel, root):
 
 def teilen_head(site_url, path, title, description, head=""):
     """Angaben zum Teilen eines Links (Open Graph, Twitter) mit dem Kölner Vorschaubild (pipeline/vorschaubild.py);
-    leer, wenn `head` schon eigene Open-Graph-Angaben bringt (Themenseiten, pipeline/dossier.py)."""
+    leer, wenn `head` schon eigene Open-Graph-Angaben bringt (seit dem 25.11.2026 keine Seite; die Themenseiten,
+    pipeline/dossier.py, nutzen das Kölner Vorschaubild)."""
     if 'property="og:' in head:
         return ""
     return (f'\n  <meta property="og:type" content="website">'

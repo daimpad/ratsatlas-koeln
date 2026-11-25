@@ -1,9 +1,16 @@
 """Synthetische Testdaten für Entwicklung und Prüfung der Seite, solange die Kölner OParl-API nicht abgerufen wird.
 
-Aufruf: python3 tools/testdaten.py [--anzahl 300]
+Aufruf: python3 tools/testdaten.py [--anzahl 300] [--themen]
 Schreibt Rohdateien im Format des SessionNet-Adapters nach data/raw/ (nicht versioniert). Alle Vorlagen sind erfunden;
 jeder Titel beginnt mit „[Testdaten]“, die IDs zeigen auf https://example.invalid/. Straßen- und Stadtteilnamen stammen
 aus den Kölner Geodaten in data/geo, damit die Verortung realistisch geprüft werden kann. Nie veröffentlichen.
+
+--themen (Themenseiten, Prüfung im Browser): ergänzt nach den übrigen Testdaten, mit eigenem Zufallsgenerator, den
+Mobilitätsausschuss (§ 17 der Zuständigkeitsordnung) und den Hauptausschuss (§ 7), erfundene Vorlagen zum Verkehr mit
+Fallen, Folgen über Bezirksvertretung, Ausschuss und Rat, Eingaben nach § 24 GO NRW, zwei Ketten mit sub- und
+superordinatedPaper, eine Beratung in einem aufgelösten Gremium und Sitzungen relativ zum heutigen Tag (je eine mit
+„entfällt“ und „verschoben“ im Namen). Ohne die Option bleiben die Testdaten unverändert; mit ihr ändern sie sich mit
+dem Tag (Sitzungen relativ zu heute).
 """
 import argparse
 import json
@@ -42,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--anzahl", type=int, default=300)
     ap.add_argument("--seed", type=int, default=20261104)
+    ap.add_argument("--themen", action="store_true", help="Vorlagen und Gremien für die Themenseiten ergänzen")
     a = ap.parse_args()
     rnd = random.Random(a.seed)
     strassen = json.loads(config.STRASSEN.read_text())["streets"]
@@ -130,6 +138,9 @@ def main():
             "location": [{"id": f"{B}/locations/{i}", "subLocality": teil["ortsteil_bez"]}] if rnd.random() < 0.12 else [],
             "consultation": cons})
 
+    if a.themen:
+        themen(random.Random(a.seed + 3), orgs, meetings, papers, mit_nr, teile)
+
     config.RAW.mkdir(parents=True, exist_ok=True)
     meetings = list(meetings.values())
     _write(config.PAPERS, "".join(json.dumps(p, ensure_ascii=False) + "\n" for p in papers))
@@ -145,6 +156,115 @@ def main():
     _write(config.STAND, json.dumps({"papers": jetzt, "meetings": jetzt, "organizations": jetzt, "testdaten": True},
                                     indent=1) + "\n")
     print(f"Testdaten: {len(papers)} Vorlagen, {len(meetings)} Sitzungen → {config.RAW}")
+
+
+# Vorlagen für die Themenseiten (--themen): (Titel, Vorlagenart, Folge der Gremien je Sitzung, Kennung der Kette).
+# Folge: Schlüssel der Sitzungen aus THEMEN_SITZUNGEN; Titel mit {s} (Straße), {t} (Stadtteil), {b} (Stadtbezirk).
+# Fallen ohne Zuordnung: Ausschluss, Wörter ohne Verkehrsbezug, Adresse mit „Straße“, mehrdeutige Wörter ohne
+# Mobilitätsausschuss, Haushalt und Personalien nur im Ausschuss, abgesagte Sitzung als einzige Beratung
+BV_A, BV_B = "bv1", "bv2"
+THEMEN_SITZUNGEN = {
+    # Schlüssel: (Organisation, Tage relativ zu heute, Zusatz im Namen)
+    "mob_a": ("mob", -60, ""), "mob_b": ("mob", -20, ""), "mob_c": ("mob", 7, ""),
+    "mob_x": ("mob", 14, " - Sitzung entfällt"), "mob_d": ("mob", 35, ""),
+    "ha_a": ("ha", -30, ""), "ha_b": ("ha", 10, " - verschoben"),
+    "rat_a": ("rat", -25, ""), "rat_b": ("rat", 17, ""),
+    "bv_a1": (BV_A, -45, ""), "bv_a2": (BV_A, 5, ""), "bv_b1": (BV_B, -40, ""), "bv_b2": (BV_B, 12, ""),
+    "bab_a": ("bab", -35, ""), "alt_a": ("alt1", -70, ""),
+}
+VERWALTUNG, MITTEILUNG = "Beschlussvorlage", "Mitteilung"
+ANTRAG, ANFRAGE = "Antrag nach § 3 der Geschäftsordnung des Rates", "Anfrage nach § 4 der Geschäftsordnung des Rates"
+EINGABE = "Anregungen und Beschwerden"
+THEMEN_VORLAGEN = [
+    ("Bewohnerparken in {t}", VERWALTUNG, ["bv_a1", "mob_b", "rat_b"], None),
+    ("Parkraumbewirtschaftung an der {s}", ANTRAG, ["bv_b1", "mob_c"], None),
+    ("Barrierefreier Ausbau der Haltestelle {s}", VERWALTUNG, ["bv_a1", "mob_b", "rat_a"], None),
+    ("Taktverdichtung der Linie 13", ANTRAG, ["mob_b", "ha_b"], None),
+    ("Stadtbahn: Planung der Verlängerung nach {t}", VERWALTUNG, ["mob_a", "ha_a", "rat_a"], None),
+    ("Fahrradabstellanlagen am Bahnhof {t}", VERWALTUNG, ["bv_b1", "mob_c"], None),
+    ("Radweg an der {s}", ANTRAG, ["bv_a1", "mob_b", "rat_b"], None),
+    ("Neuer Zebrastreifen an der {s}", VERWALTUNG, ["bv_b2"], None),
+    ("Gehweg an der {s}: Sanierung", MITTEILUNG, ["bv_a2"], None),
+    ("Tempo 30 vor der Grundschule in {t}", ANTRAG, ["bv_b1", "mob_b", "rat_a"], None),
+    ("Verkehrsberuhigung in {t}", VERWALTUNG, ["bv_a1", "mob_x", "mob_d"], None),
+    ("Schulwegsicherung in {t}", ANFRAGE, ["mob_c"], None),
+    ("Kreisverkehr an der {s}", VERWALTUNG, ["bv_b1", "mob_b", "ha_b", "rat_b"], None),
+    ("Fahrbahnerneuerung der {s}", MITTEILUNG, ["bv_a1"], None),
+    ("Brücke über die {s}: Prüfbericht", VERWALTUNG, ["alt_a", "mob_a", "rat_a"], None),
+    ("Mobilitätskonzept für {t}", VERWALTUNG, ["bv_b1", "mob_c", "rat_b"], None),
+    ("Ladeinfrastruktur im Stadtbezirk {b}", ANTRAG, ["bv_a2"], None),
+    ("Umgestaltung des Platzes an der {s}", VERWALTUNG, ["bv_a1", "mob_b"], None),
+    ("Umgestaltung des Platzes vor der Kirche in {t}", VERWALTUNG, ["bv_b1"], None),
+    ("Sachstand der Planung", MITTEILUNG, ["mob_c"], None),
+    ("Sachstand der Planung im Stadtbezirk {b}", MITTEILUNG, ["mob_x"], None),
+    ("Haushaltsplanentwurf 2027: Teilplan des Ausschusses", VERWALTUNG, ["mob_b", "rat_b"], None),
+    ("Umbesetzung in Ausschüssen", ANTRAG, ["mob_c", "rat_b"], None),
+    ("Verkehrswertgutachten für ein Grundstück in {t}", VERWALTUNG, ["bv_a1", "rat_a"], None),
+    ("Mobilfunkmast an der {s}", MITTEILUNG, ["bv_b2"], None),
+    ("Fußballplatz in {t}: Kunstrasen", VERWALTUNG, ["bv_b1", "rat_a"], None),
+    ("Bahnhofsmission: Zuschuss", VERWALTUNG, ["rat_a"], None),
+    ("Richtlinie zur Förderung der Kultur", VERWALTUNG, ["rat_a"], None),
+    ("Riesenrad auf dem Weihnachtsmarkt in {t}", MITTEILUNG, ["bv_a1"], None),
+    ("Kita-Neubau an der {s}", VERWALTUNG, ["bv_b1", "rat_a"], None),
+    ("Anregung nach § 24 GO NRW: Tempo 30 in der {s}", EINGABE, ["bab_a", "bv_a2"], None),
+    ("Anregung nach § 24 GO NRW: Radweg im Stadtteil {t}", EINGABE, ["bab_a"], None),
+    ("Radverkehrskonzept für den Stadtbezirk {b}", VERWALTUNG, ["bv_a1", "mob_a", "rat_a"], "k1"),
+    ("Ergänzung zur Vorlage: Zeitplan", VERWALTUNG, ["mob_b", "rat_b"], "k1"),
+    ("Stellungnahme der Verwaltung zum Zeitplan", "Stellungnahme der Verwaltung", ["mob_c"], "k1"),
+    ("Antrag betreffend Lieferzonen in {t}", ANTRAG, ["bv_b1", "mob_b"], "k2"),
+    ("Änderung zum Antrag", "Änderungsantrag", ["mob_c", "ha_b"], "k2"),
+]
+
+
+def themen(rt, orgs, meetings, papers, strassen, teile):
+    """Testdaten für die Themenseiten (Option --themen), an die übrigen angehängt: zwei Ausschüsse mit Paragrafen,
+    Sitzungen relativ zu heute (THEMEN_SITZUNGEN), Vorlagen aus THEMEN_VORLAGEN mit Beratungen und Ergebnissen, Ketten
+    über sub- und superordinatedPaper (k1 mit beiden Richtungen, k2 nur mit superordinatedPaper)."""
+    ausschuss = "Fachausschüsse und weitere Gremien"
+    orgs += [{"id": f"{B}/organizations/mob", "name": "Mobilitätsausschuss", "classification": ausschuss},
+             {"id": f"{B}/organizations/ha", "name": "Hauptausschuss", "classification": ausschuss}]
+    je_org = {o["id"].rsplit("/", 1)[1]: o for o in orgs}
+    hier = date.today()
+    sitzungen = {}
+    for k, (org, tage, zusatz) in THEMEN_SITZUNGEN.items():
+        tag = hier + timedelta(days=tage)
+        beginn = datetime(tag.year, tag.month, tag.day, 16, 30, tzinfo=BERLIN).isoformat()
+        mid = f"{B}/meetings/th-{k}-{tag.isoformat()}"
+        sitzungen[k] = meetings[mid] = {"id": mid, "name": je_org[org]["name"] + zusatz, "start": beginn,
+                                        "organization": [je_org[org]["id"]], "agendaItem": [],
+                                        "web": "https://example.invalid/sitzung",
+                                        "modified": f"{hier.isoformat()}T08:00:00+01:00", "_tag": tag}
+    erste, ketten = len(papers) + 1, {}
+    for j, (titel, art, folge, kette) in enumerate(THEMEN_VORLAGEN):
+        i = erste + j
+        teil = rt.choice(teile)
+        name = "[Testdaten] " + titel.format(s=rt.choice(strassen), t=teil["ortsteil_bez"], b=teil["bezirk_bez"])
+        tag = min(sitzungen[k]["_tag"] for k in folge) - timedelta(days=rt.randint(8, 20))
+        politisch = "antrag" in art.lower() or "anfrage" in art.lower()
+        cons = []
+        for n, k in enumerate(folge):
+            m = sitzungen[k]
+            top_id = f"{m['id']}/top/{len(m['agendaItem']) + 1}"
+            m["agendaItem"].append({"id": top_id, "number": f"{len(m['agendaItem']) + 1}", "name": name[:80],
+                                    "result": rt.choice(ERGEBNISSE[:3]) if m["_tag"] <= hier else None, "public": True})
+            cons.append({"id": f"{B}/consultations/th-{i}-{n}", "meeting": m["id"], "agendaItem": top_id,
+                         "organization": list(m["organization"]), "role": "Entscheidung" if n == len(folge) - 1
+                         else "Beratung", "authoritative": n == len(folge) - 1})
+        p = {"id": f"{B}/papers/{i}", "reference": f"{'AN/' if politisch else ''}{5000 + j}/{tag.year}", "name": name,
+             "date": tag.isoformat(), "paperType": art, "web": "https://example.invalid/vorlage",
+             "modified": f"{tag.isoformat()}T10:00:00+01:00",
+             "location": [{"id": f"{B}/locations/{i}", "subLocality": teil["ortsteil_bez"]}] if rt.random() < 0.3 else [],
+             "consultation": cons}
+        if kette:
+            vorher = ketten.get(kette)
+            if vorher:   # untergeordnet unter die vorige Vorlage der Kette; k1 in beiden Richtungen, k2 nur von unten
+                p["superordinatedPaper"] = [vorher["id"]]
+                if kette == "k1":
+                    vorher.setdefault("subordinatedPaper", []).append(p["id"])
+            ketten[kette] = p
+        papers.append(p)
+    for m in sitzungen.values():
+        del m["_tag"]
 
 
 if __name__ == "__main__":
