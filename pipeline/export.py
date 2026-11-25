@@ -560,17 +560,18 @@ def _themenseiten(out, cache, home, meetings, gremien_daten, meta):
     heute = gremien_daten["meta"]["datenstand"]
     for t in themen:
         zugeordnet = set()
-        thema = dossier.daten(t, cache, home, gremien_daten, meta, terms, zugeordnet)
+        thema = dossier.daten(t, cache, home, gremien_daten, meta, terms, zugeordnet, meetings)
         _dump(out / "dossiers" / f"{t.key}.json", thema)
         oparl = {e["source_object"] for a in t.sitzungs_gremien for e in dossier.gremien_auswahl(gremien_daten, a)}
         publish.write_calendar(out / "dossiers" / f"{t.key}.ics",
                                [m for m in meetings if oparl & set(orgs_je_sitzung.get(m["source_object"]) or ())],
                                date.fromisoformat(heute))
         # Feed nach Vorlage (Schlüssel aus dossier.daten), nicht nach Drucksache: eine zweite Vorlage mit derselben
-        # Drucksache, aber ohne Zuordnung, stünde sonst im Feed und nicht auf der Seite
+        # Drucksache, aber ohne Zuordnung, stünde sonst im Feed und nicht auf der Seite. Keine Einträge nach dem
+        # Datenstand (bis): Sitzungen für das Digitale Berichtswesen tragen ein Ergebnis mit einem Tag in der Zukunft
         publish.write_topic_feed(out / "dossiers" / f"{t.key}.xml", t.key,
                                  t.titel, [(pid, p) for pid, p in cache.items() if pid in zugeordnet],
-                                 home, f"{config.SITE_URL}{t.pfad}")
+                                 home, f"{config.SITE_URL}{t.pfad}", bis=heute)
 
 
 # Freigaben, die index.json erst eingeschaltet nennt, damit index.json ohne sie byte-gleich bleibt: die Strukturdaten

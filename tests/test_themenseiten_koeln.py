@@ -1197,3 +1197,170 @@ def test_mitwirken_ohne_berechnete_frist():
     assert "spätestens am fünften Arbeitstag vor der Sitzung bis 12 Uhr" in html
     assert "§ 24 GO NRW" in html and "§ 25 GO NRW" in html and 'href="../../?mitmachen=1"' in html
     assert not re.search(r"\d{2}\.\d{2}\.\d{4}", html.replace("19.03.2026", "").replace(mitwirken.STAND, ""))
+
+
+# --- Durchsicht vom 25.11.2026 (Korrekturrunde nach der Freigabe) ------------------------------------------------------
+
+@pytest.mark.parametrize("titel, strang", [
+    ("Ausbau des Radschnellwegs Probestadt–Probedorf", "rad_fuss"), ("Neubau des Radschnellweges an der Probestraße", "rad_fuss"),
+    ("Instandsetzung des Fußgängerwegs Probeweg", "rad_fuss"), ("Sanierung des Fernradwegs am Probeufer", None),
+    ("Sanierung des Rheinuferwegs", None), ("Ausbau des Rad-Gehwegs an der Probestraße", "rad_fuss")])
+def test_zusammengesetzte_wege_sind_kein_strassenname(titel, strang):
+    """Radschnellweg, Fernradweg, Fußgängerweg, Uferweg und andere zusammengesetzte allgemeine Wege gelten nicht als
+    Straßenname (STRASSENBAU steht vor Rad- und Fußverkehr); die Vorlage bleibt bei Rad- und Fußverkehr oder ohne Strang."""
+    assert not verkehr.STRASSENBAU.search(titel)
+    assert (zu(titel, [station(*BV, "2026-04-01")]) or (None,))[0] == strang
+
+
+@pytest.mark.parametrize("name", ["Rademacherweg", "Baumläuferweg", "Strandläuferweg", "Zugweg", "Kiefernweg"])
+def test_namen_aus_dem_verzeichnis_bleiben_strassennamen(name):
+    """Kölner Namen, die mit Rad beginnen oder auf -läuferweg enden, sind Straßennamen (Straßenverzeichnis)."""
+    assert name in json.loads(config.STRASSEN.read_text(encoding="utf-8"))["streets"]
+    assert zu(f"Sanierung des {name}s", [station(*BV, "2026-04-01")])[0] == "strassen"
+
+
+@pytest.mark.parametrize("titel", ["Sanierung Theater Probestraße", "Neubau Hochbunker Probeweg", "Umbau Kloster Probeweg",
+                                   "Neubau Container Probestraße", "Neubau Sozialhäuser Probestr."])
+def test_einrichtung_auf_er_vor_dem_strassennamen(titel):
+    """Ein Hauptwort auf -er zwischen Bauarbeit und Straßenname (Theater, Bunker, Kloster, Container) ist eine
+    Einrichtung, kein Teil des Namens: kein Straßenbau."""
+    assert not verkehr.STRASSENBAU.search(titel)
+    assert zu(titel, [station(*BV, "2026-04-01")]) is None
+
+
+@pytest.mark.parametrize("titel, grund", [("Generalinstandsetzung der Kalker Hauptstraße", "Generalinstandsetzung der Kalker Hauptstraße"),
+                                          ("Sanierung der Alte Römerstraße", "Sanierung der Alte Römerstraße"),
+                                          ("Umbau der Probener Straße", "Umbau der Probener Straße")])
+def test_wort_auf_er_aus_dem_verzeichnis_vor_dem_namen(titel, grund):
+    """Vor einem Namen aus einem Wort zählen Alte, Neue und Ähnliches sowie Wörter auf -er, die im Straßenverzeichnis vor
+    dem letzten Wort eines Namens stehen („Kalker“); vor Straße, Weg, Ring allein jedes Wort auf -er."""
+    assert zu(titel, [station(*BV, "2026-04-01")]) == ("strassen", f"Titel: „{grund}“")
+
+
+@pytest.mark.parametrize("titel", ["Beantwortung einer mündlichen Anfrage von RM Probe", "Anfrage von SB Probemann zur Probestraße",
+                                   "Schreiben der Bürgermeisterin Probe zum Radweg", "Oberbürgermeister Probe: Tempo 30"])
+def test_personenbezug_kuerzel_und_buergermeister(titel):
+    """PERSONENBEZUG (Prüfbogen) erkennt die Kürzel RM und SB und Bürgermeister(in) vor einem großgeschriebenen Wort."""
+    assert dossier.PERSONENBEZUG.search(titel), titel
+
+
+@pytest.mark.parametrize("titel", ["Radweg an der Probestraße", "RMV-Anschluss", "Mitteilung der Bürgermeisterin zur Sitzung",
+                                   "SBahn-Haltestelle Probeplatz"])
+def test_personenbezug_ohne_kuerzel(titel):
+    assert not dossier.PERSONENBEZUG.search(titel), titel
+
+
+BERICHT = "https://example.invalid/oparl/meetings/bericht-2026-12-31"
+BERICHT_NAME = "[Testdaten] Berichtssitzung des Mobilitätsausschusses (nur für Digitales Berichtswesen)"
+
+
+def _mit_berichtssitzung():
+    """gremien.json mit nächster Sitzung des Mobilitätsausschusses am Datenstand und einer folgenden Sitzung nur für das
+    Digitale Berichtswesen am 31.12. (ohne Uhrzeit), dazu die Sitzungen wie in zeit.json und eine Vorlage mit Station dort."""
+    gd = gremien_daten()
+    mob = next(e for e in gd["gremien"] if e["key"] == MOB[0])
+    mob["naechste_sitzung"] = _sitzung("2026-11-21", "15:00")
+    mob["folgende_sitzung"] = {"date": "2026-12-31", "time": None, "web": None, "source_object": BERICHT}
+    meetings = [{"source_object": BERICHT, "name": BERICHT_NAME, "date": "2026-12-31", "time": None},
+                {"source_object": "https://example.invalid/oparl/meetings/2026-11-21", "name": "[Testdaten] Sitzung",
+                 "date": "2026-11-21", "time": "15:00"}]
+    p = vorlage("1/2026", "Radweg an der Probestraße", stand="entschieden", stationen=[
+        station(*MOB, "2026-11-21", "beschlossen"),
+        station(*MOB, "2026-12-31", "für das Digitale Berichtswesen", meeting=BERICHT_NAME, meeting_id=BERICHT)])
+    return gd, meetings, p
+
+
+def test_berichtssitzung_keine_kommende_sitzung_und_kein_beschluss_in_der_zukunft():
+    """Durchsicht vom 25.11.2026: Eine Sitzung nur für das Digitale Berichtswesen (31.12., Ergebnis „für das Digitale
+    Berichtswesen“) steht nicht unter „Nächste Sitzungen“, nicht in „Wer berät mit“ und nicht als Hand im Bild; Lage des
+    Punkts und letzte Beratung der Zeile folgen der letzten echten Beratung, das Detailfeld nennt beide wörtlich."""
+    gd, meetings, p = _mit_berichtssitzung()
+    d = dossier.daten(T, {"a": p}, {"a": "ortsteil:probestadt"}, gd, {}, [{"start": "2025-11-01"}], None, meetings)
+    assert "2026-12-31" not in [m["date"] for m in d["sitzungen"]]
+    assert "folgende_sitzung" not in d["wer_beraet_mit"] and d["wer_beraet_mit"]["naechste_sitzung"]["date"] == "2026-11-21"
+    (x,) = d["punkte"]
+    assert (x["date"], x["bahn"]) == ("2026-11-21", "mobil")
+    assert [b["result"] for b in x["beratungen"]] == ["beschlossen", "für das Digitale Berichtswesen"]
+    zeile = d["straenge"][[s["key"] for s in d["straenge"]].index("rad_fuss")]["vorlagen"][0]
+    assert zeile["letzte_beratung"]["date"] == "2026-11-21"
+    html = dossier.body(T, d, "../../")
+    assert "31.12.2026: öffentliche Sitzung" not in html and "danach 31.12.2026" not in html
+    assert "Digitale Berichtswesen der Stadt" in html
+    # die Rechnung von check (Sitzungen aus zeit.json) ergibt dasselbe
+    ohne = dossier.berichtssitzungen(meetings)
+    assert ohne == {BERICHT}
+    assert dossier.sitzungen(T, gd, {e["key"]: e for e in gd["gremien"]}, ohne) == d["sitzungen"]
+    assert dossier.wer_beraet_mit(T, gd, ohne) == d["wer_beraet_mit"]
+    # die Erkennung über den Namen der Station gilt auch ohne Sitzungsliste
+    assert dossier.ohne_berichtswesen(p)["process"] == p["process"][:1]
+
+
+def test_check_dossiers_mit_berichtssitzung(tmp_path, monkeypatch):
+    """check.dossiers rechnet die Sitzungen ohne die Sitzungen für das Digitale Berichtswesen aus zeit.json: kein Befund
+    für die Datei aus dossier.daten mit den Sitzungen, ein Befund für eine Datei, die die Berichtssitzung nennt."""
+    monkeypatch.setattr(config, "MEETINGS", tmp_path / "fehlt.json")
+    gd, meetings, _ = _mit_berichtssitzung()
+    base = _export(tmp_path, monkeypatch, gd=gd)
+    (base / "zeit.json").write_text(json.dumps({"meetings": meetings}, ensure_ascii=False), encoding="utf-8")
+    d = dossier.daten(T, _cache(), {k: "ortsteil:probestadt" for k in _cache()}, gd, {"note": "abgeleitet"}, (), None,
+                      meetings)
+    (base / "dossiers" / "verkehr.json").write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+    befunde, _ = check.dossiers(base, umgebung={})
+    assert befunde == []
+    ohne_liste = dossier.daten(T, _cache(), {k: "ortsteil:probestadt" for k in _cache()}, gd, {"note": "abgeleitet"})
+    (base / "dossiers" / "verkehr.json").write_text(json.dumps(ohne_liste, ensure_ascii=False), encoding="utf-8")
+    befunde, _ = check.dossiers(base, umgebung={})
+    assert "Themenseite verkehr: Sitzungen anders als gremien.json: 1" in befunde
+    assert "Themenseite verkehr: „Wer berät mit“ anders als gremien.json: 1" in befunde
+
+
+def test_themenfeed_ohne_ereignisse_nach_dem_datenstand(tmp_path, monkeypatch):
+    """Der Themenfeed nennt kein Ereignis nach dem Datenstand von gremien.json (Berichtswesen mit Ergebnis am 31.12.);
+    die Beratung davor steht im Feed."""
+    monkeypatch.setattr(config, "THEMENSEITEN_FREIGEGEBEN", ("verkehr",))
+    monkeypatch.setitem(config.ZUSATZTHEMEN, "themenseiten", True)
+    monkeypatch.setattr(config, "MEETINGS", tmp_path / "fehlt.json")
+    monkeypatch.setattr(config, "LEGISLATIVE_TERMS", tmp_path / "fehlt_terms.json")
+    gd, meetings, p = _mit_berichtssitzung()
+    p.update(amt=None, steps=[
+        {"typ": "beratung", "label": "Mobilitätsausschuss", "role": "Vorberatung", "date": "2026-11-21", "result": "beschlossen"},
+        {"typ": "beratung", "label": "Mobilitätsausschuss", "role": "Vorberatung", "date": "2026-12-31",
+         "result": "für das Digitale Berichtswesen"}])
+    export._themenseiten(tmp_path, {"a": p}, {"a": "gesamt"}, meetings, gd, {})
+    feed = (tmp_path / "dossiers" / "verkehr.xml").read_text(encoding="utf-8")
+    assert "2026-12-31" not in feed and "Berichtswesen" not in feed
+    assert "Mobilitätsausschuss: „beschlossen“" in feed and "<updated>2026-11-21T00:00:00Z</updated>" in feed
+
+
+def test_lange_straenge_eingeklappt():
+    """Stränge mit mindestens Thema.einklappen_ab Vorlagen stehen eingeklappt (Durchsicht vom 25.11.2026: mit echten Daten
+    sonst über 100.000 px Seite); kürzere offen."""
+    assert T.einklappen_ab == 15
+    ps = {f"p{i}": vorlage(f"{i}/2026", f"Radweg an der Probestraße {i}", stationen=[station(*BV, "2026-04-01")])
+          for i in range(1, 16)}
+    ps["b"] = vorlage("99/2026", "Bewohnerparken in Probestadt", stationen=[station(*BV, "2026-04-01")])
+    d = dossier.daten(T, ps, {k: "ortsteil:probestadt" for k in ps}, gremien_daten(), {}, [{"start": "2025-11-01"}])
+    je = {s["key"]: s for s in d["straenge"]}
+    assert len(je["rad_fuss"]["vorlagen"]) == 15 and je["rad_fuss"]["eingeklappt"] and not je["parken"]["eingeklappt"]
+    html = dossier.body(T, d, "../../")
+    start = html.index('<h3 id="rad_fuss"')
+    assert "<summary>15 Vorlagen anzeigen</summary>" in html[start:html.index("<h3 ", start + 1)]
+    parken = html.index('<h3 id="parken"')
+    assert "anzeigen</summary>" not in html[parken:html.find("<h2", parken)]
+
+
+def test_drucksache_bricht_nicht_um():
+    """Durchsicht vom 25.11.2026: Drucksachen wie AN/1234/2026 brechen in der Tabelle nicht mitten in der Jahreszahl um."""
+    css = (ROOT / "site" / "page.css").read_text(encoding="utf-8")
+    regel = re.search(r'\.page table\.vorlagen td\[data-l="Drucksache"\] \{([^}]*)\}', css)
+    assert regel and "white-space: nowrap" in regel.group(1)
+    assert re.search(r"\.page table\.vorlagen th:nth-child\(2\) \{ width: 9\.5em; \}", css)
+
+
+def test_sammelmarke_zweiter_knopf_zum_schliessen():
+    """Durchsicht vom 25.11.2026: Das Detailfeld einer Sammelmarke hat am Ende einen zweiten Knopf zum Schließen, der
+    wie „Schließen“ den Fokus auf die Marke im Bild zurückgibt."""
+    js = (ROOT / "site" / "thema.js").read_text(encoding="utf-8")
+    teil = js[js.index("function sammlung"):js.index("function inhalt")]
+    assert '"Schließen, zurück zum Bild", "pb-knopf pb-knopf-leise pb-schliessen-unten"' in teil
+    assert "schliessen(true)" in teil

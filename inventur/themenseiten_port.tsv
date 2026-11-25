@@ -33,7 +33,7 @@ pipeline/dossier.py: Regel.sonst	entfällt	hing an zustaendig	–
 pipeline/dossier.py: Regel.bedingung	übernommen	zweites Wort im Titel	pipeline/dossier.py: Regel.bedingung
 pipeline/dossier.py: Regel.ohne_thema	entfällt	abgeleitetes Thema ausgeschlossen	–
 pipeline/dossier.py: Regel.ohne_seite	entfällt	Abgrenzung zwischen Themenseiten; ein Thema, jede Vorlage in höchstens einem Strang	–
-pipeline/dossier.py: Thema	Kölner Anpassung	Felder unten; neu: bahn_regeln, sitzungs_gremien, punkt_text, sitzungen_text, tor_ausschluss, folgevorlagen, karten_links, pruefung_datum, stichprobe_nur_gremium, stichprobe_folge, tor_hoechstens, tor_gremien, methode	pipeline/dossier.py: Thema
+pipeline/dossier.py: Thema	Kölner Anpassung	Felder unten; neu: bahn_regeln, sitzungs_gremien, punkt_text, sitzungen_text, tor_ausschluss, folgevorlagen, karten_links, pruefung_datum, stichprobe_nur_gremium, stichprobe_folge, tor_hoechstens, tor_gremien, methode, einklappen_ab	pipeline/dossier.py: Thema
 pipeline/dossier.py: Thema.key	übernommen	Schlüssel und Name der Exportdateien	pipeline/dossier.py: Thema.key
 pipeline/dossier.py: Thema.pfad	übernommen	thema/<name>/	pipeline/dossier.py: Thema.pfad
 pipeline/dossier.py: Thema.titel	Kölner Anpassung	gleich topics.THEMES[key]	pipeline/dossier.py: Thema.titel; pipeline/themenseiten/verkehr.py
@@ -52,7 +52,7 @@ pipeline/dossier.py: Thema.feed_text	übernommen	„zu …“ in Feedkarte	pipel
 pipeline/dossier.py: Thema.hinweis	übernommen	nur in meta der JSON	pipeline/dossier.py: Thema.hinweis
 pipeline/dossier.py: Thema.pruefung_text	Kölner Anpassung	Ergebnis des Prüfbogens; zusammen mit pruefung_datum Bedingung der Freigabe (themenseiten.geprueft, check.dossiers)	pipeline/dossier.py: Thema.pruefung_text, Thema.pruefung_datum
 pipeline/dossier.py: Thema.nicht_gezeigt	übernommen	Kölner Texte	pipeline/dossier.py: Thema.nicht_gezeigt; pipeline/themenseiten/verkehr.py
-pipeline/dossier.py: Thema.eingeklappt	übernommen	im Pilot ungenutzt, ohne eigenen Kölner Test	pipeline/dossier.py: Thema.eingeklappt, body
+pipeline/dossier.py: Thema.eingeklappt	Kölner Anpassung	dazu Thema.einklappen_ab: Stränge ab so vielen Vorlagen eingeklappt (Verkehr: 15; Durchsicht vom 25.11.2026, Seitenlänge mit echten Daten)	pipeline/dossier.py: Thema.eingeklappt, Thema.einklappen_ab, daten, body
 pipeline/dossier.py: Thema.alte_pfade	entfällt	Köln hatte nie Themenseiten unter anderen Adressen	–
 pipeline/dossier.py: Thema.leer_ausblenden	übernommen	leere Stränge erscheinen nicht (keine Platzhalter); ohne eigenen Kölner Test	pipeline/dossier.py: Thema.leer_ausblenden, daten
 pipeline/dossier.py: Thema.sitzungen_je_gremium	entfällt	gremien.json führt die nächste Sitzung je Gremium und am Tag des Datenstands die folgende	pipeline/dossier.py: sitzungen
@@ -84,7 +84,7 @@ pipeline/dossier.py: _thema	entfällt	nie über das abgeleitete Thema (topics.py
 pipeline/dossier.py: zuordnen	Kölner Anpassung	Reihenfolge Ausschluss, Zeitraum (auch für Folgevorlagen), Folgevorlage, Regeln; Thema.tor_ausschluss und die Grenze Thema.tor_hoechstens (breit_beraten, Kennungen aus Lauf.gezaehlt) für jede Regel mit Gremium-Tor; Gremium-Tor über die Kennung, abgesagte Sitzungen nach export.absage zählen nicht; liest nur Felder der Gebietsdateien (gleiche Zuordnung im Prüfbogen)	pipeline/dossier.py: zuordnen, _eigen, beraten_in, breit_beraten, lauf
 pipeline/dossier.py: _eintrag	Kölner Anpassung	ohne amt und seite; letzte und nächste Beratung nach proc.massgeblich (Entscheidungen 17.11.2026 (15), (16))	pipeline/dossier.py: _eintrag, _stationen
 pipeline/dossier.py: bahn	Kölner Anpassung	über Kennung, Gruppe und Paragraf aus gremien.json; ohne Kennung Bezirksvertretung nach dem Namensanfang, sonst FACH; immer eine Bahn aus t.bahnen (kein Abbruch bei unbekanntem Gremium)	pipeline/dossier.py: bahn
-pipeline/dossier.py: _punkt	Kölner Anpassung	Lage nur aus den Beratungen in den Gremien des Bildes (Rat, Hauptausschuss, Mobilitätsausschuss; Antwort 2 A), Bahn über die Kennung der Station; je Beratung abgesagt nach export.absage (oparl, name); ohne amt	pipeline/dossier.py: _punkt
+pipeline/dossier.py: _punkt	Kölner Anpassung	Lage nur aus den Beratungen in den Gremien des Bildes (Rat, Hauptausschuss, Mobilitätsausschuss; Antwort 2 A), Bahn über die Kennung der Station; je Beratung abgesagt nach export.absage (oparl, name); ohne amt; Sitzungen für das Digitale Berichtswesen zählen für die Lage nicht (ohne_berichtswesen; Durchsicht vom 25.11.2026)	pipeline/dossier.py: _punkt, BERICHTSWESEN, berichtssitzungen, ohne_berichtswesen
 pipeline/dossier.py: _frist	entfällt	keine berechneten Fristen (Entscheidung 24.11.2026 (3)); Mitwirken nach „Mitmachen in Köln“	–
 pipeline/dossier.py: bezirk	übernommen	Ortsbezüge einschließlich district_from_committee; Gruppen als Konstante	pipeline/dossier.py: bezirk, STADTBEZIRK_GRUPPEN
 pipeline/dossier.py: sitzung_im_thema	Kölner Anpassung	statt Namen: Sitzungen aus gremien.json (naechste_sitzung, folgende_sitzung); Kalender über die Organisationen der Sitzungen	pipeline/dossier.py: sitzungen; pipeline/export.py: _themenseiten
@@ -154,7 +154,7 @@ site/thema.js: inhalt (Sitzung)	Kölner Anpassung	ohne berechnete Frist und ohne
 site/thema.js: inhalt (Phase)	entfällt	kein Haushalt, keine Phasen	–
 site/thema.js: hashLesen	übernommen	Zustand aus dem Seitenlink (#auswahl=, &straenge=)	site/thema.js: hashLesen
 site/thema.js: hashSchreiben	übernommen	Zustand in den Seitenlink (replaceState)	site/thema.js: hashSchreiben
-site/thema.js: zeigen	Kölner Anpassung	Detailfeld mit Ansage (aria-live), der Fokus bleibt am gewählten Ziel; Sammelmarken mit Liste, „Angaben“ und „Zurück zur Liste“; Feld ins Fenster gerollt, wenn es außerhalb liegt	site/thema.js: zeigen, sammlung, eintragZeigen
+site/thema.js: zeigen	Kölner Anpassung	Detailfeld mit Ansage (aria-live), der Fokus bleibt am gewählten Ziel; Sammelmarken mit Liste, „Angaben“, „Zurück zur Liste“ und am Ende „Schließen, zurück zum Bild“ (sammlung); Feld ins Fenster gerollt, wenn es außerhalb liegt	site/thema.js: zeigen, sammlung, eintragZeigen
 site/thema.js: schliessen	übernommen	Esc und „Schließen“, Fokus zurück	site/thema.js: schliessen
 site/thema.js: filtern	übernommen	Stränge im Bild aus- und einblenden	site/thema.js: filtern
 site/thema.js: hervorheben	übernommen	Bild und Liste gegenseitig hervorheben	site/thema.js: hervorheben
@@ -200,7 +200,7 @@ site/page.css: .page h2 + p + .meta-acc	übernommen	Abstand nach dem einleitende
 pipeline/export.py: Themenseiten in export (Daten, Kalender, Bild, Feed)	Kölner Anpassung	nur freigegebene Themen; setzt gremien.json voraus; Kalender über die Organisationen der Sitzungen; kein Bild	pipeline/export.py: _themenseiten
 pipeline/export.py: _meetings, Feld video	entfällt	keine Mitschnitte	–
 pipeline/export.py: _aktuell mit berechneter Frist	entfällt	„Aktuell in Köln“ ohne berechnete Frist	pipeline/export.py: _aktuell
-pipeline/publish.py: write_topic_feed	Kölner Anpassung	Kennung und Titel über config (TAG, SEITENNAME), Pfad über EXPORT_PFAD; Vorlagen nach Schlüssel der Zuordnung (export._themenseiten), nicht nach Drucksache; ohne „federführend: unbekannt“, wo die Federführung fehlt (Entscheidung 25.11.2026 (6), die übrigen Feeds unverändert)	pipeline/publish.py: write_topic_feed, events (federfuehrung_unbekannt)
+pipeline/publish.py: write_topic_feed	Kölner Anpassung	Kennung und Titel über config (TAG, SEITENNAME), Pfad über EXPORT_PFAD; Vorlagen nach Schlüssel der Zuordnung (export._themenseiten), nicht nach Drucksache; ohne „federführend: unbekannt“, wo die Federführung fehlt (Entscheidung 25.11.2026 (6), die übrigen Feeds unverändert); ohne Ereignisse nach dem Datenstand (bis; Berichtswesen am 31.12.)	pipeline/publish.py: write_topic_feed, events (federfuehrung_unbekannt)
 pipeline/publish.py: write_calendar (Themenkalender)	Kölner Anpassung	Absage nach export.absage wie termine.ics	pipeline/publish.py: write_calendar
 pipeline/seo.py: write (Themenseiten, Übersicht)	Kölner Anpassung	nur freigegebene Themen; Übersicht nach den Seiten und nur mit mindestens einem Thema	pipeline/seo.py: write
 pipeline/rssseite.py: Feeds je Thema	Kölner Anpassung	nur freigegebene Themen	pipeline/rssseite.py: _feeds, body, write

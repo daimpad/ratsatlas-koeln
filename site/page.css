@@ -26,6 +26,10 @@ a { color: var(--accent-ink); }
 .page th, .page td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; hyphens: auto; }
 .page table { table-layout: fixed; }
 .page th:nth-child(1) { width: 6.5em; } .page th:nth-child(2) { width: 7em; } .page th:nth-child(4) { width: 8.5em; }
+/* Themenseiten (pipeline/dossier.py, _row): Drucksachen wie AN/1234/2026 nicht umbrechen (Abgleich mit dem
+   Ratsinformationssystem); die Spalte ist dafür breiter */
+.page table.vorlagen th:nth-child(2) { width: 9.5em; }
+.page table.vorlagen td[data-l="Drucksache"] { white-space: nowrap; overflow-wrap: normal; hyphens: none; }
 .page-foot { padding: 20px 0 32px; color: var(--muted); font-size: 14px; }
 @media (max-width: 600px) {
   .page { padding: 8px 18px 20px; } .page h1 { font-size: 26px; }

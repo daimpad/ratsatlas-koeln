@@ -159,12 +159,16 @@ def write_feeds(out, areas, cache, names, home, slug, since):
             f"{base}vorlagen/{name}.xml", site_link(area, p["reference"]), entries))
 
 
-def write_topic_feed(path, key, title, papers, home, page_url):
+def write_topic_feed(path, key, title, papers, home, page_url, bis=None):
     """Feed einer Themenseite: letzte Ereignisse der Vorlagen aller Stränge; ohne „federführend: unbekannt“, wo die
-    Federführung fehlt (events, federfuehrung_unbekannt=False)."""
+    Federführung fehlt (events, federfuehrung_unbekannt=False). Mit `bis` (ISO-Tag, Datenstand) keine Ereignisse nach
+    diesem Tag: Die Stadt führt Sitzungen für das Digitale Berichtswesen am 31.12. mit Ergebnis (Durchsicht vom
+    25.11.2026); ein Beratungsergebnis in der Zukunft gäbe dem Feed ein Datum nach dem Datenstand."""
     entries = []
     for pid, p in papers:
         for e in events(p, federfuehrung_unbekannt=False):
+            if bis and (e["date"] or "")[:10] > bis:
+                continue
             entries.append({**e, "link": site_link(home.get(pid, "gesamt"), p["reference"]), "original": p["web"]})
     entries = sorted(entries, key=lambda e: (e["date"], e["id"]), reverse=True)[:FEED_LIMIT]
     path.parent.mkdir(parents=True, exist_ok=True)

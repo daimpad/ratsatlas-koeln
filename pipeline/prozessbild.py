@@ -111,7 +111,7 @@ def _hand(x, y, groesse=14):
 # vom Datenstand aus nach links (Tag bis zum Datenstand) und nach rechts (später); ein Platz hat zwei Reihen (REIHE px über
 # und unter der Mitte). Auf einem Platz stehen Sitzungen oben und Punkte unten; gibt es nur eine Art, steht ein Ziel in
 # der Mitte, zwei in beiden Reihen. Mehr Ziele einer Art auf einem Platz (oder mehr als eines, wenn sich beide Arten den
-# Platz teilen) stehen als eine Sammelmarke mit ihrer Zahl; das Detailfeld nennt jedes. So weicht kein Ziel um mehr als
+# Platz teilen) stehen als eine Sammelmarke mit ihrer Anzahl; das Detailfeld nennt jedes. So weicht kein Ziel um mehr als
 # eine halbe Platzbreite von seinem Tag ab (am Rand des Bildes um höchstens eineinhalb), keines steht jenseits der Linie
 # des Datenstands auf der falschen Seite, keines außerhalb des Bildes, und keine zwei Ziele überdecken sich.
 SPALT, REIHE, RAND = 24, 12, 12
@@ -285,6 +285,11 @@ def _zeichen(art):
     if art in PUNKT_FARBEN:
         fill, stroke, _ = PUNKT_FARBEN[art]
         inner = f'<circle cx="10" cy="10" r="7" fill="{fill}" stroke="{stroke}" stroke-width="1.8"/>'
+    elif art == "nummer":   # Punkt mit einer „1“ wie im Bild (Farben von „entschieden“), als Linie: kein Text in der Liste
+        fill, stroke, farbe = PUNKT_FARBEN["entschieden"]
+        inner = (f'<circle cx="10" cy="10" r="8.5" fill="{fill}" stroke="{stroke}" stroke-width="1.8"/>'
+                 f'<path d="M8.4 7.6 10.4 6v8" fill="none" stroke="{farbe}" stroke-width="1.9" stroke-linecap="round" '
+                 f'stroke-linejoin="round"/>')
     elif art == "sitzung":
         inner = (f'<circle cx="10" cy="10" r="8.5" fill="#fff" stroke="{BERNSTEIN}" stroke-width="2"/>'
                  f'<g transform="translate(4.36 4.36) scale(.47)" fill="none" stroke="{TEXT}" stroke-width="2.2" '
@@ -301,13 +306,16 @@ def _zeichen(art):
 
 
 def legende(marken=()):
-    """Legende der Zeitleiste als HTML unter dem Bild; Sammelmarken nur, wenn das Bild welche hat (`marken`: lage)."""
+    """Legende der Zeitleiste als HTML unter dem Bild; Sammelmarken nur, wenn das Bild welche hat (`marken`: lage), und
+    die Nummer im Punkt nur, wenn das Bild einzelne Punkte hat: Sie ist die Nummer in der Liste, die Zahl einer
+    Sammelmarke dagegen eine Anzahl (Durchsicht vom 25.11.2026)."""
     da = {m["art"] for m in marken}
     eintraege = [("entschieden", "entschieden"), ("beraten", "beraten, ohne abschließende Entscheidung"),
                  ("offen", "offen"),
-                 *([("punkte", "mehrere Beschlüsse und Anträge an nahen Tagen (Zahl)")] if "punkte" in da else []),
+                 *([("nummer", "Zahl im Punkt: Nummer in der Liste der Beschlüsse und Anträge")] if "punkt" in da else []),
+                 *([("punkte", "mehrere Beschlüsse und Anträge an nahen Tagen (Zahl: Anzahl)")] if "punkte" in da else []),
                  ("sitzung", "nächste öffentliche Sitzung"),
-                 *([("sitzungen", "mehrere Sitzungen an nahen Tagen (Zahl)")] if "sitzungen" in da else []),
+                 *([("sitzungen", "mehrere Sitzungen an nahen Tagen (Zahl: Anzahl)")] if "sitzungen" in da else []),
                  ("heute", "Datenstand")]
     return ('    <ul class="pb-legende-bild" aria-label="Legende der Zeitleiste">'
             + "".join(f"<li>{_zeichen(a)}{escape(text)}</li>" for a, text in eintraege) + "</ul>")
@@ -437,8 +445,10 @@ def abschnitt(t, d, root, karten=()):
             "Lage nach der letzten Beratung mit Ergebnis in diesen Gremien, sonst nach der nächsten dort (abgeleitet). "
             "Beratungen in den Bezirksvertretungen stehen in der Liste und im Detailfeld, nicht als Punkt. Hand-Symbole: "
             "die nächsten Sitzungen laut Sitzungskalender. Liegen mehrere Punkte oder Sitzungen einer Bahn an nahen Tagen, "
-            "steht dort eine Sammelmarke mit ihrer Zahl; das Detailfeld nennt jede. Die Lage im Bild weicht deshalb um "
-            "bis zu einige Tage vom Datum ab, nie über den Datenstand hinweg. Das Bild beginnt mit der Wahlperiode "
+            "steht dort eine Sammelmarke mit ihrer Anzahl; das Detailfeld nennt jede. Die Lage im Bild weicht deshalb um "
+            "bis zu einige Tage vom Datum ab, nie über den Datenstand hinweg. Die Zahl in einem einzelnen Punkt ist seine "
+            "Nummer in der Liste der Beschlüsse und Anträge unter dem Bild, die Zahl einer Sammelmarke die Anzahl ihrer "
+            "Einträge. Das Bild beginnt mit der Wahlperiode "
             f"({_datum(d['meta']['seit'])}).{knick}</p>")
     klick = (" Punkte und Sitzungen lassen sich anklicken, auch mit der Tabulatortaste." if marken else "")
     return f"""    <h2>Auf einen Blick</h2>

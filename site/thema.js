@@ -104,6 +104,12 @@ document.querySelectorAll(".pb-rahmen[data-start]").forEach((el) => {
     if (punkte) aktionen.append(link("#pb-liste", "Alle Beschlüsse und Anträge im Bild"));
     else aktionen.append(link(daten.kalender, "Kalender (.ics)"), link("#sitzungen", "Alle Termine"),
       link(daten.mitmachen, "Wege zum Mitwirken"));
+    // zweiter Knopf zum Schließen am Ende der Liste: Bei großen Sammelmarken liegt das Bild sonst weit oberhalb
+    // (Durchsicht vom 25.11.2026); der Fokus geht wie bei „Schließen“ zurück auf die Marke im Bild
+    const zu = el("button", "Schließen, zurück zum Bild", "pb-knopf pb-knopf-leise pb-schliessen-unten");
+    zu.type = "button";
+    zu.addEventListener("click", () => schliessen(true));
+    aktionen.append(zu);
     teile.knoten.push(aktionen);
     return teile;
   }

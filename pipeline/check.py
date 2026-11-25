@@ -1638,7 +1638,7 @@ def dossiers(base=None, umgebung=None):
     - je Thema: nur die Schlüssel DOSSIER_SCHLUESSEL, kein Feldname, der auf Personen deutet (PERSONENFELD), keiner aus
       DOSSIER_VERBOTEN; Datenstand wie gremien.json; der Fachausschuss steht eindeutig in gremien.json (sonst kein
       Gremium-Tor); „Wer berät mit“ und die Sitzungen gleich der Rechnung aus gremien.json (dossier.wer_beraet_mit,
-      dossier.sitzungen); jede Drucksache steht in suche.json, mit gleichem (maskiertem) Titel; kein Punkt einer Art,
+      dossier.sitzungen, ohne Sitzungen für das Digitale Berichtswesen nach zeit.json, dossier.berichtssitzungen); jede Drucksache steht in suche.json, mit gleichem (maskiertem) Titel; kein Punkt einer Art,
       die nie ein Punkt ist (dossier.punkt_art, Eingaben);
     - der Themenkalender enthält genau die Sitzungen der Gremien des Themas ab 30 Tagen vor dem Datenstand aus zeit.json
       (über meetings.json, gremien.organisationen_der_sitzungen), mit STATUS und Zusatz nach export.absage wie
@@ -1684,6 +1684,7 @@ def dossiers(base=None, umgebung=None):
     for row in suche.get("rows") or ():
         titel.setdefault(row[0], set()).add(row[1])
     zeit = [m for m in json.loads((base / "zeit.json").read_text()).get("meetings") or () if isinstance(m, dict)]
+    bericht = dossier.berichtssitzungen(zeit)   # Sitzungen nur für das Digitale Berichtswesen (keine kommende Sitzung)
     orgs_je_sitzung = gr.organisationen_der_sitzungen()
     for t in themen:
         if not themenseiten.geprueft(t) and not pruefschalter:
@@ -1699,8 +1700,9 @@ def dossiers(base=None, umgebung=None):
         fehler["Datenstand anders als gremien.json"] = int(doc.get("heute") != gd["meta"].get("datenstand"))
         fehler["Fachausschuss nicht eindeutig in gremien.json (kein Gremium-Tor)"] = int(
             bool(t.fachausschuss) and dossier.fachausschuss(t, gd) is None)
-        fehler["„Wer berät mit“ anders als gremien.json"] = int(doc.get("wer_beraet_mit") != dossier.wer_beraet_mit(t, gd))
-        fehler["Sitzungen anders als gremien.json"] = int(doc.get("sitzungen") != dossier.sitzungen(t, gd, je_key))
+        fehler["„Wer berät mit“ anders als gremien.json"] = int(doc.get("wer_beraet_mit") != dossier.wer_beraet_mit(
+            t, gd, bericht))
+        fehler["Sitzungen anders als gremien.json"] = int(doc.get("sitzungen") != dossier.sitzungen(t, gd, je_key, bericht))
         vorlagen = [r for s in doc.get("straenge") or () for r in s.get("vorlagen") or ()]
         fehler["Drucksachen, die nicht in suche.json stehen"] = sum(r.get("reference") not in titel for r in vorlagen)
         fehler["Titel anders als in suche.json"] = sum(r.get("reference") in titel and r.get("name") not in

@@ -77,34 +77,62 @@ STRASSEN = re.compile(r"Straßen(?:bau|ausbau|raum|umbau|verkehr|querschnitt|san
 # Bauarbeiten an einer benannten Straße (Entscheidung 25.11.2026 (3) (b)), eigene Regel vor Rad- und Fußverkehr (damit
 # Fahrbahn und Gehwege nicht unter Rad- und Fußverkehr fallen). Ohne re.I: Hauptwörter und Namen stehen groß.
 # Straßenname: ein Wort auf -straße, -str., -weg, -allee, -ring oder -gürtel (mit Genitiv-s), nicht in einem längeren
-# Wort („Jean-Löring-Sportpark“) und nicht als allgemeines Wort (Radweg, Gehweg, Schulweg, Grüngürtel); dieselben Wörter
-# als eigenes Wort nach einem oder zwei Wörtern auf -er oder nach Alte, Neue, Große und Ähnlichem („Olpener Straße“,
-# „Vingster Ring“, „Neuer Weyerstraßer Weg“; solche Wörter auch vor einem Namen aus einem Wort, „Alte Römerstraße“);
-# oder die Form der Straße „…“. Damm und Ufer nur in Namen aus dem Kölner
-# Straßenverzeichnis (config.STRASSEN; „Niehler Damm“, „Konrad-Adenauer-Ufer“): Sonst sind es oft Deiche und Flussufer
-# (Prüfung mit echten Titeln, 25.11.2026). Dazu Fahrbahn und Gehwege, Gehwege und Fahrbahn, Fahrbahn- und Gehweg…
-# (nicht Markierung oder Beschilderung, die bleiben im Strang Tempo)
+# Wort („Jean-Löring-Sportpark“) und nicht als allgemeines Wort, auch nicht zusammengesetzt (Radweg, Gehweg, Schulweg,
+# Radschnellweg, Radwanderweg, Fußgängerweg, Uferweg, Grüngürtel: die bleiben in Rad- und Fußverkehr oder ohne Strang);
+# dieselben Wörter als eigenes Wort nach einem oder zwei Wörtern auf -er oder nach Alte, Neue, Große und Ähnlichem
+# („Olpener Straße“, „Vingster Ring“, „Neuer Weyerstraßer Weg“); vor einem Namen aus einem Wort nur Alte, Neue und
+# Ähnliches oder ein Wort auf -er, das im Kölner Straßenverzeichnis vor dem letzten Wort eines Namens steht („Alte
+# Römerstraße“, „Kalker Hauptstraße“), also nie eine Einrichtung wie Theater, Kloster, Bunker oder Container; oder die
+# Form der Straße „…“. Damm und Ufer nur in Namen aus dem Kölner Straßenverzeichnis (config.STRASSEN; „Niehler Damm“,
+# „Konrad-Adenauer-Ufer“): Sonst sind es oft Deiche und Flussufer (Prüfung mit echten Titeln, 25.11.2026). Dazu
+# Fahrbahn und Gehwege, Gehwege und Fahrbahn, Fahrbahn- und Gehweg…, aber nicht ein zusammengesetztes Wort mit Markierung
+# oder Beschilderung („Fahrbahn- und Gehwegmarkierung“): Das ist keine Bauarbeit; dort trifft „Gehweg“, also Rad- und
+# Fußverkehr (RAD_FUSS steht vor TEMPO). Getrennt geschrieben („Markierung auf Fahrbahn und Gehweg“) gilt die Regel.
 
 
-def _verzeichnis(*woerter):
-    """Namen aus dem Kölner Straßenverzeichnis (config.STRASSEN), deren letztes Wort auf eines der `woerter` endet, als
-    Alternativen eines regulären Ausdrucks, längste zuerst; ohne lesbare Datei ein Ausdruck, der nie trifft."""
+def _strassennamen():
+    """Namen aus dem Kölner Straßenverzeichnis (config.STRASSEN, Schlüssel von `streets`); ohne lesbare Datei keine."""
     try:
         namen = json.loads(config.STRASSEN.read_text(encoding="utf-8"))["streets"]
     except (OSError, ValueError, KeyError, TypeError):
-        namen = ()
-    treffer = sorted((n for n in namen if isinstance(n, str) and n.split() and n.split()[-1].endswith(woerter)),
-                     key=lambda n: (-len(n), n))
-    return "(?:" + "|".join(map(re.escape, treffer)) + ")" if treffer else "(?!)"
+        return ()
+    return tuple(n for n in namen if isinstance(n, str) and n.split()) if isinstance(namen, (dict, list)) else ()
+
+
+_NAMEN = _strassennamen()
+
+
+def _alternativen(texte):
+    """Texte als Alternativen eines regulären Ausdrucks, längste zuerst; ohne Texte ein Ausdruck, der nie trifft."""
+    texte = sorted(set(texte), key=lambda n: (-len(n), n))
+    return "(?:" + "|".join(map(re.escape, texte)) + ")" if texte else "(?!)"
+
+
+def _verzeichnis(*woerter):
+    """Namen aus dem Kölner Straßenverzeichnis, deren letztes Wort auf eines der `woerter` endet (_alternativen)."""
+    return _alternativen(n for n in _NAMEN if n.split()[-1].endswith(woerter))
+
+
+def _vorwoerter():
+    """Wörter auf -er, die im Kölner Straßenverzeichnis vor dem letzten Wort eines Namens stehen („Kalker“ in „Kalker
+    Hauptstraße“; _alternativen)."""
+    return _alternativen(w for n in _NAMEN for w in n.split()[:-1] if re.fullmatch(r"[A-ZÄÖÜ][\w.-]*er", w))
 
 
 _ENDUNG = r"(?:straße|str\.|weg(?:e?s)?|allee|rings?|gürtels?)"
 _GROSS = r"(?:Straße|Str\.|Weg(?:e?s)?|Allee|Rings?|Gürtels?)"
+# allgemeine Wege: genau diese Wörter, dazu zusammengesetzte Wörter, die auf einen Weg für Rad- oder Fußverkehr enden
+# (Radschnellweg, Fernradweg, Radwanderweg, Fußgängerweg, Rheinuferweg; nicht „Baumläuferweg“ und andere Namen aus dem
+# Straßenverzeichnis)
 _ALLGEMEIN = (r"(?!(?:Rad|Fahrrad|Geh|Fuß|Schul|Wander|Feld|Wald|Rund|Spazier|Rettungs|Flucht|Zu|Verbindungs|"
-              r"Wirtschafts|Arbeits|Um|Rück|Heim|Dienst|Rechts|Leidens|Lebens)weg(?:e?s|e)?(?![\w-])|Grüngürtel)")
+              r"Wirtschafts|Arbeits|Um|Rück|Heim|Dienst|Rechts|Leidens|Lebens)weg(?:e?s|e)?(?![\w-])|"
+              r"(?:[A-ZÄÖÜ][\w-]*?)?(?:[Rr]ad|[Gg]eh|[Ff]uß|[Ff]ußgänger|[Ww]ander|(?<!ä)[Uu]fer|[Ss]pazier|[Ss]chnell)"
+              r"weg(?:e?s|e)?(?![\w-])|Grüngürtel)")
 DAMM_UFER = _verzeichnis("Damm", "damm", "Ufer", "ufer")
-_VOR = r"(?:(?:[A-ZÄÖÜ][\w.-]*er|Alte|Neue|Große|Kleine|Hohe|Lange|Breite|Obere|Untere|Alten|Neuen)\s+)"
-_NAME = (r"(?:" + _VOR + r"{0,2}" + _ALLGEMEIN + r"[A-ZÄÖÜ][\w.-]*?(?:(?<=[a-zäöüß])" + _ENDUNG + r"|-" + _GROSS
+_ADJEKTIV = r"(?:Alte|Neue|Große|Kleine|Hohe|Lange|Breite|Obere|Untere|Alten|Neuen)"
+_VOR = r"(?:(?:[A-ZÄÖÜ][\w.-]*er|" + _ADJEKTIV + r")\s+)"         # vor Straße, Weg, Allee, Ring, Gürtel allein
+_VOR_NAME = r"(?:(?:" + _vorwoerter() + r"|" + _ADJEKTIV + r")\s+)"  # vor einem Namen aus einem Wort
+_NAME = (r"(?:" + _VOR_NAME + r"{0,2}" + _ALLGEMEIN + r"[A-ZÄÖÜ][\w.-]*?(?:(?<=[a-zäöüß])" + _ENDUNG + r"|-" + _GROSS
          + r")(?![\w-])|" + _VOR + r"{1,2}" + _GROSS + r"(?![\w-])|" + DAMM_UFER
          + r"(?:e?s)?(?![\w-])|Straße\s*[„\"»‚][^“”\"«‘’]{1,60}[“”\"«‘’])")
 # Wörter zwischen Bauarbeit und Straßenname: klein geschriebene Wörter (Artikel, Präpositionen, Eigenschaftswörter) und
@@ -205,6 +233,9 @@ THEMA = Thema(
     tor_hoechstens=3,
     tor_gremien=Auswahl(gruppe="ausschuss"),
     nach_bezirk=frozenset({"weitere"}),
+    # Stränge ab 15 Vorlagen eingeklappt (Durchsicht vom 25.11.2026: mit echten Daten sonst rund 120.000 px Seite bis
+    # „Begriffe“ und „Quellen und Methode“); „weitere“ steht ohnehin nach Stadtbezirk eingeklappt
+    einklappen_ab=15,
     leer_ausblenden=frozenset({"bus_bahn", "rad_fuss", "parken", "tempo", "strassen", "weitere"}),
     punkt_straenge=("bus_bahn", "rad_fuss", "parken", "tempo", "strassen", "weitere"),
     # Punkte nur mit Beratung in Rat, Hauptausschuss oder Mobilitätsausschuss (Antwort 2 A zum Plan, 25.11.2026)

@@ -38,10 +38,12 @@ const PROFILE = {
 const UEBERSICHT = "thema/";
 const PILOT = "thema/verkehr-und-mobilitaet/";
 const SPRUNGZIELE = ["fachausschuss", "sitzungen", "mitwirken", "vorlagen"];
-// Legende; die Einträge der Sammelmarken nur, wenn das Bild welche zeigt (pipeline/prozessbild.py, legende)
-const legende = (punkte, sitzungen) => ["entschieden", "beraten, ohne abschließende Entscheidung", "offen",
-  ...(punkte ? ["mehrere Beschlüsse und Anträge an nahen Tagen (Zahl)"] : []), "nächste öffentliche Sitzung",
-  ...(sitzungen ? ["mehrere Sitzungen an nahen Tagen (Zahl)"] : []), "Datenstand"];
+// Legende; die Einträge der Sammelmarken nur, wenn das Bild welche zeigt, die Nummer im Punkt nur mit einzelnen
+// Punkten (pipeline/prozessbild.py, legende)
+const legende = (einzeln, punkte, sitzungen) => ["entschieden", "beraten, ohne abschließende Entscheidung", "offen",
+  ...(einzeln ? ["Zahl im Punkt: Nummer in der Liste der Beschlüsse und Anträge"] : []),
+  ...(punkte ? ["mehrere Beschlüsse und Anträge an nahen Tagen (Zahl: Anzahl)"] : []), "nächste öffentliche Sitzung",
+  ...(sitzungen ? ["mehrere Sitzungen an nahen Tagen (Zahl: Anzahl)"] : []), "Datenstand"];
 
 const ergebnisse = [];
 let befunde = 0;
@@ -226,27 +228,45 @@ async function themenseite(browser, profil) {
       texte: ul ? [...ul.querySelectorAll("li")].map((l) => l.textContent.trim()) : [],
       zeichen: ul ? [...ul.querySelectorAll("li svg")].every((z) => z.getAttribute("aria-hidden") === "true") : false,
       imSvg: [...document.querySelectorAll(".pb-svg text")].some((t) => /entschieden|Legende|Sitzung/.test(t.textContent)),
+      einzeln: Boolean(document.querySelector('.pb-svg a[data-ziel^="punkt-"]')),
       punkte: Boolean(document.querySelector('.pb-svg a[data-ziel^="punkte-"]')),
       sitzungen: Boolean(document.querySelector('.pb-svg a[data-ziel^="sitzungen-"]')) };
   });
   pruefen(profil, "Legende: HTML-Liste unter dem Bild, außerhalb des SVG und des Rahmens, Zeichen ausgeblendet",
-    lg.da && !lg.imBild && lg.nachBild && lg.sichtbar && JSON.stringify(lg.texte) === JSON.stringify(legende(lg.punkte, lg.sitzungen))
+    lg.da && !lg.imBild && lg.nachBild && lg.sichtbar && JSON.stringify(lg.texte) === JSON.stringify(legende(lg.einzeln, lg.punkte, lg.sitzungen))
     && lg.zeichen && !lg.imSvg, lg);
   await foto(page, `themen-zeitleiste-${profil}`, ".pb-zeitleiste");
 
   // Tabellen: jede Zelle mit data-l; auf dem Telefon Kopf ausgeblendet und Spaltenname vor dem Inhalt
   const tel = await telefon(page);
+  // Lange Stränge stehen eingeklappt (Thema.einklappen_ab): gemessen wird die erste sichtbare Tabelle; ist keine
+  // sichtbar, wird das erste Akkordeon mit Tabelle dafür geöffnet und danach wieder geschlossen
+  const geoeffnet = await page.evaluate(() => {
+    if ([...document.querySelectorAll("table.vorlagen")].some((t) => t.getClientRects().length)) return false;
+    const d = document.querySelector("table.vorlagen")?.closest("details");
+    if (d) d.open = true;
+    return Boolean(d);
+  });
   const tb = await page.evaluate(() => {
     const zellen = [...document.querySelectorAll("table.vorlagen td")];
-    const erste = document.querySelector("table.vorlagen tbody tr");
-    return { zellen: zellen.length, ohne: zellen.filter((td) => !td.dataset.l).length,
-      kopf: getComputedStyle(document.querySelector("table.vorlagen thead")).display,
-      vorher: erste ? [...erste.querySelectorAll("td")].map((td) => [td.dataset.l, getComputedStyle(td, "::before").content]) : [] };
+    const tabelle = [...document.querySelectorAll("table.vorlagen")].find((t) => t.getClientRects().length);
+    const erste = tabelle?.querySelector("tbody tr");
+    // Drucksache in einer Zeile (Durchsicht vom 25.11.2026: „…/20“ und „26“ standen untereinander)
+    const ds = tabelle ? [...tabelle.querySelectorAll('td[data-l="Drucksache"]')] : [];
+    return { zellen: zellen.length, ohne: zellen.filter((td) => !td.dataset.l).length, sichtbar: Boolean(tabelle),
+      kopf: tabelle ? getComputedStyle(tabelle.querySelector("thead")).display : null,
+      vorher: erste ? [...erste.querySelectorAll("td")].map((td) => [td.dataset.l, getComputedStyle(td, "::before").content]) : [],
+      drucksache: ds.length, umbruch: ds.filter((td) => { const a = td.querySelector("a") || td;
+        const r = document.createRange(); r.selectNodeContents(a); return new Set([...r.getClientRects()].map((x) => Math.round(x.top))).size > 1
+          || td.scrollWidth > td.clientWidth + 1; }).length };
   });
   pruefen(profil, tel ? "Tabellen (Telefon): Kopf ausgeblendet, Spaltenname je Zelle sichtbar" : "Tabellen: Kopf sichtbar, jede Zelle mit data-l",
-    tb.zellen > 0 && tb.ohne === 0 && (tel ? tb.kopf === "none" && tb.vorher.length === 4 && tb.vorher.every(([l, c]) => c === `"${l}: "`)
+    tb.zellen > 0 && tb.ohne === 0 && tb.sichtbar && (tel ? tb.kopf === "none" && tb.vorher.length === 4 && tb.vorher.every(([l, c]) => c === `"${l}: "`)
       : tb.kopf !== "none" && tb.vorher.every(([, c]) => c === "none" || c === "normal")), tb);
+  pruefen(profil, "Tabellen: Drucksache ohne Umbruch und ohne Überlauf", tb.drucksache > 0 && tb.umbruch === 0,
+    { drucksache: tb.drucksache, umbruch: tb.umbruch });
   if (tel) await foto(page, `themen-tabelle-${profil}`, "table.vorlagen");
+  if (geoeffnet) await page.evaluate(() => { document.querySelector("table.vorlagen").closest("details").open = false; });
 
   // Akkordeons per Tastatur: Enter öffnet, der Fokus bleibt sichtbar auf summary
   const akk = await page.$$eval("main details > summary", (ss) => ss.map((x, i) => { x.dataset.pruefNr = String(i); return x.textContent.trim().replace(/\s+/g, " ").slice(0, 40); }));
@@ -421,6 +441,16 @@ async function zeitleiste(browser, profil) {
     d = await detail(page);
     f = await fokus(page);
     pruefen(profil, "Sammelmarke: Esc schließt, Fokus zurück auf der Marke", !d.offen && f.ziel === gr && fokusOk(f), f);
+    // zweiter Knopf zum Schließen am Ende der Liste (Durchsicht vom 25.11.2026: große Sammelmarken)
+    await page.keyboard.press("Enter");
+    const unten = await page.evaluate(() => { const b = document.querySelector("#pb-detail .pb-schliessen-unten");
+      return b ? { text: b.textContent, letzter: b === [...document.querySelectorAll("#pb-detail button")].pop() } : null; });
+    await page.focus("#pb-detail .pb-schliessen-unten");
+    await page.keyboard.press("Enter");
+    d = await detail(page);
+    f = await fokus(page);
+    pruefen(profil, "Sammelmarke: Knopf „Schließen, zurück zum Bild“ am Ende der Liste schließt, Fokus zurück auf der Marke",
+      unten && unten.letzter && !d.offen && f.ziel === gr && fokusOk(f), { unten, fokus: f });
   } else {
     pruefen(profil, "Sammelmarke im Bild (Testdaten mit vielen Beschlüssen an einem Sitzungstag)", false, "keine Sammelmarke");
   }

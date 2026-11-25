@@ -100,6 +100,7 @@ class Thema:
     pruefung_datum: str = ""  # Tag des Prüfbogens im Gespräch (ISO); Pflicht für die Freigabe
     methode: str = ""         # Regeln der Zuordnung in Worten für „Quellen und Methode“ (Text, ohne HTML)
     eingeklappt: frozenset = frozenset()
+    einklappen_ab: int = None  # Stränge mit so vielen Vorlagen oder mehr stehen eingeklappt (lange Seiten; None: nie)
     leer_ausblenden: frozenset = frozenset()  # diese Stränge erscheinen nicht, solange sie leer sind
     nach_bezirk: frozenset = frozenset()  # Stränge, deren Vorlagen nach Stadtbezirk gegliedert erscheinen
     ausschluss: re.Pattern = None  # Titel, die zu keinem Strang gehören (vor allen Regeln, auch vor Folgevorlagen)
@@ -282,6 +283,30 @@ def verfahren(t, papiere, lauf_):
     return folge, zahl
 
 
+# Sitzungen nur für das Digitale Berichtswesen der Stadt („Berichtssitzung des Mobilitätsausschusses (nur für Digitales
+# Berichtswesen)“, „Berichtswesen Bauausschuss …“; im Sitzungskalender am 31.12. ohne Uhrzeit, Ergebnis „für das Digitale
+# Berichtswesen“): keine Sitzung, zu der man kommen kann, und keine Beratung mit Datum. Die Themenseite zeigt sie nicht
+# als kommende Sitzung (sitzungen, wer_beraet_mit) und zählt ihre Stationen nicht für Stand der Zeile und Lage der Punkte
+# (daten); das Detailfeld nennt sie in der Beratungsfolge wörtlich (Durchsicht vom 25.11.2026). Erkannt am Namen der
+# Sitzung (nach der Maske, wie in zeit.json); die übrigen Seiten (Gremien, Kalender, Feeds) sind davon unberührt
+BERICHTSWESEN = re.compile(r"Berichtswesen|Berichtssitzung", re.I)
+
+
+def berichtssitzungen(meetings):
+    """Kennungen (source_object) der Sitzungen für das Digitale Berichtswesen (BERICHTSWESEN im Namen) in `meetings`
+    (Sitzungen aus zeit.json bzw. export._meetings)."""
+    return frozenset(m["source_object"] for m in meetings or () if isinstance(m, dict) and m.get("source_object")
+                     and isinstance(m.get("name"), str) and BERICHTSWESEN.search(m["name"]))
+
+
+def ohne_berichtswesen(p, ohne=frozenset()):
+    """Vorgang ohne die Stationen in Sitzungen für das Digitale Berichtswesen (Name der Sitzung an der Station oder
+    Kennung `meeting_id` in `ohne`, berichtssitzungen)."""
+    process = [s for s in p.get("process") or () if not (
+        (isinstance(s.get("meeting"), str) and BERICHTSWESEN.search(s["meeting"])) or s.get("meeting_id") in ohne)]
+    return p if len(process) == len(p.get("process") or ()) else {**p, "process": process}
+
+
 def _stationen(p, today):
     """Letzte Beratung mit Ergebnis und nächste Beratung einer Vorlage (Stationen der Prozesslinie). Nach dem
     Sitzungstag, nicht nach der Stelle in der Beratungsfolge (Entscheidung 17.11.2026 (15), wie der Stand): die letzte
@@ -339,14 +364,17 @@ def punkt_art(art, titel=""):
     return art in actors.VERWALTUNG_TYPES and bool(VERWALTUNG_PUNKT.search(art))
 
 
-def _punkt(t, p, e, strang, gremien_je, today, im_bild=None):
+def _punkt(t, p, e, strang, gremien_je, today, im_bild=None, ohne=frozenset()):
     """Lage eines Beschlusses oder Antrags im Bild, nur aus den Beratungen in den Gremien des Bildes (`im_bild`:
     Kennungen aus t.punkt_gremien; Antwort 2 A zum Plan: Beratungen in Bezirksvertretungen stehen in Liste, Detailfeld
     und Strang, nicht als Punkt): letzte Beratung mit Ergebnis dort, sonst die nächste dort, sonst das erste dieser
-    Gremien am Tag der Vorlage. Dazu die Angaben des Detailfelds (Strang mit Grund, Art, ganze Beratungsfolge mit
-    Ergebnis wörtlich aus der Quelle und Absage nach export.absage)."""
+    Gremien am Tag der Vorlage; Sitzungen für das Digitale Berichtswesen zählen dafür nicht (ohne_berichtswesen). Dazu
+    die Angaben des Detailfelds (Strang mit Grund, Art, ganze Beratungsfolge mit Ergebnis wörtlich aus der Quelle und
+    Absage nach export.absage)."""
     from .export import absage
-    lage = p if im_bild is None else {**p, "process": [s for s in p["process"] if s.get("gremium_key") in im_bild]}
+    lage = ohne_berichtswesen(p, ohne)
+    if im_bild is not None:
+        lage = {**lage, "process": [s for s in lage["process"] if s.get("gremium_key") in im_bild]}
     last, naechste = _stationen(lage, today)
     if last:
         st, datum = last, proc.local_day(last.get("start_date")) or e["date"]
@@ -400,32 +428,37 @@ def achse(heute, seit, termine=()):
 FELDER_SITZUNG = ("date", "time", "hinweis", "web", "source_object")
 
 
-def sitzungen(t, gremien_daten, gremien_je):
+def sitzungen(t, gremien_daten, gremien_je, ohne=frozenset()):
     """Nächste Sitzungen der Gremien aus t.sitzungs_gremien laut gremien.json: naechste_sitzung und, wenn sie am Tag des
     Datenstands liegt, folgende_sitzung (gremien.json führt sie nur dann). Abgesagte fehlen dort schon (export.absage);
-    `hinweis` nur „verschoben“. Bei nicht aktueller Liste der Sitzungen keine (gremien.json führt dann keine)."""
+    `hinweis` nur „verschoben“. Bei nicht aktueller Liste der Sitzungen keine (gremien.json führt dann keine). Ohne die
+    Sitzungen für das Digitale Berichtswesen (`ohne`, berichtssitzungen): Ist die nächste Sitzung eines Gremiums eine
+    solche, fehlt sie (gremien.json nennt keine weitere)."""
     out = []
     for e in gremien_daten["gremien"]:
         if not any(a.passt(e) for a in t.sitzungs_gremien):
             continue
         for feld in ("naechste_sitzung", "folgende_sitzung"):
             s = e.get(feld)
-            if isinstance(s, dict) and s.get("date"):
+            if isinstance(s, dict) and s.get("date") and s.get("source_object") not in ohne:
                 out.append({**{k: s[k] for k in FELDER_SITZUNG if k in s}, "gremium": e["name"], "key": e["key"],
                             "bahn": bahn(t, e["key"], e["name"], gremien_je)})
     return sorted(out, key=lambda m: (m["date"], m.get("time") is None, m.get("time") or "", m["gremium"]))
 
 
-def wer_beraet_mit(t, gremien_daten):
+def wer_beraet_mit(t, gremien_daten, ohne=frozenset()):
     """Kasten „Wer berät mit“: Fachausschuss aus gremien.json ohne Personen (Felder aus gremien.FELDER, dazu Zeitraum
-    und Zuständigkeitsordnung aus meta); None ohne eindeutigen Eintrag."""
+    und Zuständigkeitsordnung aus meta); None ohne eindeutigen Eintrag. Nächste und folgende Sitzung nicht, wenn sie nur
+    für das Digitale Berichtswesen ist (`ohne`, berichtssitzungen)."""
     e = fachausschuss(t, gremien_daten)
     if not e:
         return None
     meta = gremien_daten["meta"]
     zusto = meta.get("zustaendigkeitsordnung") or {}
     return {**{k: e[k] for k in ("key", "name", "paragraf", "web", "sitzungen_12m", "vorlagen_12m", "naechste_sitzung",
-                                 "folgende_sitzung") if k in e},
+                                 "folgende_sitzung") if k in e
+               and not (k in ("naechste_sitzung", "folgende_sitzung") and isinstance(e[k], dict)
+                        and e[k].get("source_object") in ohne)},
             "zeitraum": meta.get("zeitraum"), "satzung": {k: zusto.get(k) for k in ("titel", "url")}}
 
 
@@ -445,12 +478,15 @@ def weitere_gremien(papiere, gremien_je, tor):
     return [text for g, nr, text in WEITERE_GREMIEN if (g, nr) in da]
 
 
-def daten(t, cache, home, gremien_daten, meta, terms=(), zugeordnet_in=None):
+def daten(t, cache, home, gremien_daten, meta, terms=(), zugeordnet_in=None, meetings=()):
     """Inhalt der Themenseite aus den Vorlagen des Exports (cache: id → Vorgang, home: id → Gebiet) und gremien.json
     (`gremien_daten`, Inhalt der Datei); `terms`: Wahlperioden wie in zeit.json. Datenstand ist der von gremien.json.
     `zugeordnet_in`: Menge, in die daten die Schlüssel (cache) der zugeordneten Vorlagen legt (Feed des Themas: nach
-    Vorlage, nicht nach Drucksache, weil Drucksachen in Köln teils mehrfach vergeben sind)."""
+    Vorlage, nicht nach Drucksache, weil Drucksachen in Köln teils mehrfach vergeben sind). `meetings`: Sitzungen wie in
+    zeit.json, nur für die Namen der Sitzungen für das Digitale Berichtswesen (berichtssitzungen); sie zählen nicht als
+    kommende Sitzung und nicht für Stand der Zeile und Lage der Punkte."""
     heute = gremien_daten["meta"]["datenstand"]
+    ohne = berichtssitzungen(meetings)
     gremien_je = {e["key"]: e for e in gremien_daten["gremien"]}
     lf = lauf(t, gremien_daten, terms)
     folge, zahl = verfahren(t, cache, lf) if t.folgevorlagen else ({}, Counter())
@@ -458,14 +494,14 @@ def daten(t, cache, home, gremien_daten, meta, terms=(), zugeordnet_in=None):
     for pid, p in cache.items():
         hit = zuordnen(t, p, lf, folge)
         if hit:
-            eintrag = {**_eintrag(p, home.get(pid), heute), "grund": hit[1], "_pid": pid}
+            eintrag = {**_eintrag(ohne_berichtswesen(p, ohne), home.get(pid), heute), "grund": hit[1], "_pid": pid}
             if hit[0] in t.nach_bezirk:
                 eintrag["bezirk"] = bezirk(p)
             straenge[hit[0]].append(eintrag)
     im_bild = {e["key"] for a in t.punkt_gremien for e in gremien_auswahl(gremien_daten, a)}
-    punkte = sorted((_punkt(t, cache[r["_pid"]], r, k, gremien_je, heute, im_bild) for k in t.punkt_straenge
+    punkte = sorted((_punkt(t, cache[r["_pid"]], r, k, gremien_je, heute, im_bild, ohne) for k in t.punkt_straenge
                      for r in straenge[k] if punkt_art(r["paper_type"], r["name"])
-                     and beraten_in(cache[r["_pid"]], im_bild)),
+                     and beraten_in(ohne_berichtswesen(cache[r["_pid"]], ohne), im_bild)),
                     key=lambda x: (x["date"] or "", x["reference"]))
     for i, x in enumerate(punkte, 1):
         x["nr"] = i
@@ -476,8 +512,8 @@ def daten(t, cache, home, gremien_daten, meta, terms=(), zugeordnet_in=None):
         for r in rows:
             del r["_pid"]
         rows.sort(key=lambda r: (r["date"] or "", r["reference"]), reverse=True)
-    termine = sitzungen(t, gremien_daten, gremien_je)
-    wer = wer_beraet_mit(t, gremien_daten)
+    termine = sitzungen(t, gremien_daten, gremien_je, ohne)
+    wer = wer_beraet_mit(t, gremien_daten, ohne)
     liste = gremien_daten["meta"].get("sitzungsliste_nicht_aktuell")
     gruende = Counter("folge" if r["grund"].startswith("Folgevorlage") else "gremium" if r["grund"].startswith("Beratung")
                       else "titel" for rows in straenge.values() for r in rows)
@@ -489,7 +525,10 @@ def daten(t, cache, home, gremien_daten, meta, terms=(), zugeordnet_in=None):
     return {
         "meta": {**meta, "namensnennung": config.NAMENSNENNUNG, "seit": lf.seit, "hinweis": t.hinweis,
                  **({"sitzungsliste_nicht_aktuell": liste} if liste else {})},
-        "straenge": [{"key": k, "titel": ti, "regel": r, "eingeklappt": k in t.eingeklappt, "vorlagen": straenge[k]}
+        "straenge": [{"key": k, "titel": ti, "regel": r,
+                      "eingeklappt": k in t.eingeklappt or (t.einklappen_ab is not None
+                                                            and len(straenge[k]) >= t.einklappen_ab),
+                      "vorlagen": straenge[k]}
                      for k, ti, r in t.straenge if straenge[k] or k not in t.leer_ausblenden],
         "heute": heute,
         "achse": achse(heute, lf.seit, [m["date"] for m in termine] + [x["date"] for x in punkte if x["date"]]),
@@ -590,7 +629,7 @@ def _sitzungen(t, d):
     return f"""    <h2 id="sitzungen" tabindex="-1">Nächste Sitzungen</h2>
     <p>{escape(t.sitzungen_text)} Die Sitzungen sind öffentlich; einzelne Punkte werden nichtöffentlich beraten.</p>
 {zeilen}
-    <p class="meta">Termine laut Sitzungskalender (OParl-API der Stadt Köln); abgesagte Sitzungen fehlen. Maßgeblich ist die Einladung im Ratsinformationssystem.</p>
+    <p class="meta">Termine laut Sitzungskalender (OParl-API der Stadt Köln); abgesagte Sitzungen fehlen, ebenso Sitzungen nur für das Digitale Berichtswesen der Stadt. Maßgeblich ist die Einladung im Ratsinformationssystem.</p>
 """
 
 
@@ -640,6 +679,9 @@ def _quellen(t, root):
             "<p>Stand und letzte Beratung zählen eine Sitzung nur dann nicht mehr, wenn die Stadt sie in der Schnittstelle "
             "absagt; die Liste der Sitzungen, die Zeitleiste und der Kalender lassen auch Sitzungen weg, die laut "
             "Sitzungsnamen abgesagt sind. Das Detailfeld nennt solche Beratungen „laut Sitzungsnamen abgesagt“.</p>"
+            "<p>Sitzungen nur für das Digitale Berichtswesen der Stadt (laut Sitzungsnamen, im Sitzungskalender meist am "
+            "31.12.) zählen nicht als kommende Sitzung und nicht für Stand und Lage im Bild; das Detailfeld nennt sie in "
+            "der Beratungsfolge wörtlich.</p>"
             "<p>Die Seite beschreibt Verfahren; sie bewertet keine Entscheidungen. Maßgeblich sind die Originale im "
             "Ratsinformationssystem.</p>")
 
@@ -832,13 +874,16 @@ def uebersicht(themen, site, site_url, page):
 # Plural und zusammengesetzt (Neuwahl, Wiederwahl, Abwahl, Wahlvorschlag), Ämter und Anlässe, die Personen nennen, dazu
 # Mitglieder von Rat und Bezirksvertretungen (Bezirksvertreter und Bezirksvertreterin, Ratsmitglied, Ratsherr, Ratsfrau,
 # Bezirksbürgermeister und Bezirksbürgermeisterin; nach dem Prüfbogen vom 25.11.2026: ein Titel nannte ein Mitglied
-# einer Bezirksvertretung mit Namen). Keine Regel über großgeschriebene Wörter: Im Deutschen stehen Hauptwörter groß, sie
-# träfe fast jeden Titel
+# einer Bezirksvertretung mit Namen), dazu die Kürzel RM (Ratsmitglied) und SB (sachkundige Bürgerin, sachkundiger
+# Bürger) und Bürgermeister oder Bürgermeisterin, jeweils vor einem großgeschriebenen Wort („Anfrage von RM …“; Durchsicht
+# vom 25.11.2026). Sonst keine Regel über großgeschriebene Wörter: Im Deutschen stehen Hauptwörter groß, sie träfe fast
+# jeden Titel
 PERSONENBEZUG = re.compile(r"Benennung|Umbenennung|Ehrung|Ehrenbürger|Ehrenamtspreis|Gedenk|Nachruf|Jubiläum|"
                            r"(?<![a-zäöüß])(?:Neu|Wieder|Ab|Nach)?[Ww]ahl(?:en|vorschlag|vorschläge)?\b|Ernennung|"
                            r"Abberufung|Berufung|Beigeordnet|Vorsitz|Geschäftsführ|Bestellung|Entsendung|"
                            r"(?:Nach|Neu|Um)besetzung|Nach-besetzung|sachkundig|Mitglied|Herr|Frau|Dr\.|Prof\.|"
-                           r"Bezirksvertreter|Ratsmitglied|Ratsherr|Ratsfrau|Bezirksbürgermeister", re.I)
+                           r"Bezirksvertreter|Ratsmitglied|Ratsherr|Ratsfrau|Bezirksbürgermeister|"
+                           r"(?-i:(?<![\w-])(?:RM|SB)\s+[A-ZÄÖÜ])|Bürgermeister(?:in)?\s+(?-i:[A-ZÄÖÜ])", re.I)
 DRUCKSACHE = re.compile(r"(?:AN/)?\d{1,6}/\d{2,4}")
 
 

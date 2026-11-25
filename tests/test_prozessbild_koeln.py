@@ -238,7 +238,8 @@ def test_sammelmarken_in_detaildaten_legende_und_liste():
     assert set(j["gruppen"]) == set(gruppen) and any(k.startswith("sitzungen-") for k in gruppen)
     assert j["gruppen"]["punkte-0"][:2] == ["punkt-1", "punkt-2"]
     lg = prozessbild.legende(marken)
-    assert "mehrere Beschlüsse und Anträge an nahen Tagen (Zahl)" in lg and "mehrere Sitzungen an nahen Tagen (Zahl)" in lg
+    assert ("mehrere Beschlüsse und Anträge an nahen Tagen (Zahl: Anzahl)" in lg
+            and "mehrere Sitzungen an nahen Tagen (Zahl: Anzahl)" in lg)
     assert "mehrere" not in prozessbild.legende(prozessbild.lage(T, daten()))
     svg = prozessbild.svg(T, d, "../../")
     assert '<a class="pb-ziel" href="#pb-liste" aria-label="30 Beschlüsse und Anträge am 05.11.2026' in svg
@@ -253,3 +254,16 @@ def test_ohne_ziele_kein_satz_zum_anklicken():
     d = daten()
     d["punkte"], d["sitzungen"] = [], []
     assert "anklicken" not in prozessbild.abschnitt(T, d, "../../")
+
+
+def test_legende_erklaert_die_nummer_im_punkt():
+    """Durchsicht vom 25.11.2026: Einzelne Punkte tragen ihre Nummer in der Liste, Sammelmarken eine Anzahl. Legende und
+    „So ist das Bild gezeichnet“ erklären beides; der Eintrag zur Nummer steht nur, wenn das Bild einzelne Punkte hat."""
+    marken = prozessbild.lage(T, daten())
+    assert any(m["art"] == "punkt" for m in marken)
+    lg = prozessbild.legende(marken)
+    assert "Zahl im Punkt: Nummer in der Liste der Beschlüsse und Anträge" in lg
+    assert "Zahl im Punkt" not in prozessbild.legende([m for m in marken if m["art"] != "punkt"])
+    text = prozessbild.abschnitt(T, daten(), "../../")
+    assert "Die Zahl in einem einzelnen Punkt ist seine Nummer in der Liste" in text
+    assert "die Zahl einer Sammelmarke die Anzahl ihrer Einträge" in text
