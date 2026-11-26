@@ -3,11 +3,39 @@
 <id>tag:ratsatlas-koeln,2026:feed/thema/verkehr</id>
 <title>Ratsatlas Köln – Verkehr und Mobilität</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Verkehr und Mobilität (Zuordnung abgeleitet)</subtitle>
-<updated>2026-11-25T00:00:00Z</updated>
+<updated>2026-11-26T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/dossiers/verkehr.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/thema/verkehr-und-mobilitaet/"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135974#vorlage</id>
+<title>Neue Vorlage 3391/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Bewohnerparken einrichten - Ulitzkastraße und umliegende Wohngebiet, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:muelheim#3391/2026"/>
+<summary>Mitteilung BV · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135971#vorlage</id>
+<title>Neue Vorlage 3388/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Bewohnerparken einrichten - Neuenhöfer Allee und das umliegende Quartier, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:suelz#3388/2026"/>
+<summary>Mitteilung BV · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135852#vorlage</id>
+<title>Neue Vorlage 3330/2026: Drittes Forum Via Culturalis am 3. November 2026 – Ergebnisse und Perspektiven für die Entwicklung eines Kulturquartiers</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:innenstadt#3330/2026"/>
+<summary>Mitteilung Ausschuss · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135830#vorlage</id>
+<title>Neue Vorlage 3320/2026: Errichtung einer Querungshilfe auf der Friedrich-Karl-Straße im Abschnitt zw. Amsterdamer Straße und Boltensternstraße im Zusammenhang mit dem Bauvorhaben „Friedrich und Karl“.</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#3320/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135993#vorlage</id>
 <title>Neue Vorlage AN/1929/2026: Verbesserung der Verkehrssicherheit bei Ausfahrten von PKWs aus Garagenhof Johanniterstr. 41-43 in Köln Buchheim</title>
@@ -167,7 +195,7 @@
 <title>Mobilitätsausschuss: „endgültig abgelehnt“ – AN/1868/2026 Änderungsantrag an AN 1374/2026: E-Scooter sicher und barrierearm als Verkehrsmittel der letzten Meile betreiben</title>
 <updated>2026-11-24T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#AN/1868/2026"/>
-<summary>Antrag / Anfrage am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+<summary>Antrag / Anfrage am 2026-11-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135790#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
@@ -594,7 +622,7 @@
 <title>Neue Vorlage AN/1868/2026: Änderungsantrag an AN 1374/2026: E-Scooter sicher und barrierearm als Verkehrsmittel der letzten Meile betreiben</title>
 <updated>2026-11-23T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#AN/1868/2026"/>
-<summary>Die Linke. Änderungsantrag nach § 13 · Stand: beraten, ohne Entscheidung</summary>
+<summary>Die Linke. Änderungsantrag nach § 13 · Stand: entschieden</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135863#vorlage</id>
@@ -679,33 +707,5 @@
 <updated>2026-11-23T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#3233/2026"/>
 <summary>Beantwortung einer Anfrage (Ausschuss) · Stand: beraten, ohne Entscheidung</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135353#vorlage</id>
-<title>Neue Vorlage 2983/2026: Buslinie 935 - Anpassung zum Fahrplanwechsel 2026/2027</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2983/2026"/>
-<summary>Mitteilung Ausschuss · Stand: in Beratung</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134553#vorlage</id>
-<title>Neue Vorlage 2521/2026: Beantwortung einer schriftlichen Anfrage der FDP/KSG-Fraktion aus der Sitzung des Mobilitätsausschusses am 22.09.2026 betreffend "Wegfall von Parkplätzen in der Innenstadt aufgrund fehlender Fahrbahnbreite" (AN/1275/2026)</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2521/2026"/>
-<summary>Beantwortung einer Anfrage (Ausschuss) · Stand: beraten, ohne Entscheidung</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134491#vorlage</id>
-<title>Neue Vorlage 2496/2026: Anstehende Schienenersatzverkehre der Kölner Verkehrs-Betriebe AG (KVB) im Jahr 2027 - hier: Beschluss über den erforderlichen Kostenansatz</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#2496/2026"/>
-<summary>Beschlussvorlage Rat bzw. Hauptausschuss · Stand: in Beratung</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128193#beratung-2026-11-23-Ausschuss%20Schule%20und%20Weiterbildung</id>
-<title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 2002/2025 Einrichtung von Schulstraßen im Kölner Stadtgebiet</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:meschenich#2002/2025"/>
-<summary>Kenntnisnahme (Mitteilung) am 2026-11-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

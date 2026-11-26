@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-niehl</id>
 <title>Ratsatlas Köln – Niehl</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Niehl</subtitle>
-<updated>2026-11-24T00:00:00Z</updated>
+<updated>2026-11-26T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-niehl.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:niehl"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135830#vorlage</id>
+<title>Neue Vorlage 3320/2026: Errichtung einer Querungshilfe auf der Friedrich-Karl-Straße im Abschnitt zw. Amsterdamer Straße und Boltensternstraße im Zusammenhang mit dem Bauvorhaben „Friedrich und Karl“.</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:niehl#3320/2026"/>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135887#vorlage</id>
 <title>Neue Vorlage 3338/2026: Einschätzung zur Zustimmungsfähigkeit des Bauvorhabens "Feldgärtenstraße 113 in Köln-Niehl"</title>
@@ -700,12 +707,5 @@
 <updated>2026-01-29T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:niehl#3638/2025"/>
 <summary>Anhörung (BV) am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130501#beratung-2026-01-29-Ausschuss%20f%C3%BCr%20Stadtentwicklung%20und%20regionale%20Zusammenarbeit</id>
-<title>Ausschuss für Stadtentwicklung und regionale Zusammenarbeit: „vertagt“ – 3638/2025 Beschluss über die Einleitung eines Bebauungsplanverfahrens (vorhabenbezogener Bebauungsplan) und zur Durchführung eines städtebaulichen Qualifizierungsverfahrens</title>
-<updated>2026-01-29T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:niehl#3638/2025"/>
-<summary>Entscheidung am 2026-01-29; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>
