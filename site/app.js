@@ -386,6 +386,9 @@
 
   // --- Mega-Menüs ------------------------------------------------------------------------------------
   let openMegaId = null;
+  // Esc mit Fokus im Suchmenü (Entscheidung 24.11.2026 (5) (9)): Der Fokus geht zurück ins Suchfeld; dessen focus-Handler
+  // öffnete das Menü sofort wieder. suchfeldOhneMenue unterdrückt das für genau diesen Fokuswechsel
+  let suchfeldOhneMenue = false;
   function openMega(id, trigger) {
     if (openMegaId && openMegaId !== id) closeMega();
     if (id === "mega-suche" && navIsOpen()) setNav(false);
@@ -410,7 +413,10 @@
     if (megaHome.has(el)) { megaHome.get(el).replaceWith(el); megaHome.delete(el); }
     openMegaId = null;
     document.querySelectorAll(`[data-mega="${id}"]`).forEach((b) => b.setAttribute("aria-expanded", "false"));
-    if (returnFocus) (id === "mega-suche" ? $("#q") : document.querySelector(`[data-mega="${id}"]`)).focus();
+    if (!returnFocus) return;
+    if (id === "mega-suche") {
+      if (document.activeElement !== $("#q")) { suchfeldOhneMenue = true; $("#q").focus(); suchfeldOhneMenue = false; }
+    } else document.querySelector(`[data-mega="${id}"]`).focus();
   }
   document.addEventListener("click", (e) => {
     const m = e.target.closest("[data-mega]");
@@ -458,6 +464,28 @@
     ziel.focus();
   });
 
+  // Übrige Menüs mit der Tastatur (Entscheidung 24.11.2026 (5) (9)): Auf breiten Bildschirmen stehen sie im Dokument
+  // hinter der ganzen Leiste. Ist eines offen, führt Tab von seiner Schaltfläche auf sein erstes Bedienelement,
+  // Umschalt+Tab von dort zurück auf die Schaltfläche und Tab vom letzten auf das Element der Leiste nach der
+  // Schaltfläche (das Menü geht dabei nach der Regel oben zu). Im Blatt ☰ stehen die Menüs schon unter ihrem Eintrag
+  const fokussierbar = (wurzel) => [...wurzel.querySelectorAll("button, a[href], input, select, textarea, summary")]
+    .filter((el) => !el.disabled && el.tabIndex >= 0 && sichtbarEl(el));
+  const nachSchaltflaeche = (b) => fokussierbar(document.querySelector(".nav"))
+    .find((el) => (b.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) && !b.contains(el));
+  document.addEventListener("keydown", (e) => {
+    const id = openMegaId;
+    if (e.key !== "Tab" || e.altKey || e.ctrlKey || e.metaKey || !id || id === "mega-suche" || navIsOpen()) return;
+    const b = [...document.querySelectorAll(`.nav [data-mega="${id}"]`)].find(sichtbarEl);
+    const els = fokussierbar(document.getElementById(id)), a = document.activeElement;
+    if (!b || !els.length) return;
+    const ziel = a === b && !e.shiftKey ? els[0]
+      : a === els[0] && e.shiftKey ? b
+        : a === els[els.length - 1] && !e.shiftKey ? nachSchaltflaeche(b) : null;
+    if (!ziel) return;
+    e.preventDefault();
+    ziel.focus();
+  });
+
   // --- Hamburger-Menü auf dem Telefon: Gebiet, Flächen und Menüs als Blatt über der Leiste --------------
   // (Entscheidung 02.11.2026: sichtbar bleiben nur Suche und ☰; Menüs klappen im Blatt auf)
   const burger = $("#nav-burger"), navMore = $("#nav-more"), megaHome = new Map();
@@ -480,6 +508,16 @@
   document.addEventListener("click", (e) => {
     if (navIsOpen() && e.target.isConnected && !e.target.closest(".nav") && !e.target.closest("dialog")) setNav(false);
   });
+  // Verlässt der Fokus die Leiste mit dem Blatt ☰ (etwa mit Tab vom letzten Eintrag), schließt es sich wie die übrigen
+  // Menüs seit Pull Request 5; der Fokus bleibt auf dem neuen Ziel (Entscheidung 24.11.2026 (5) (9)). Vorher blieb das
+  // Blatt offen und lag über der Karte, die den Fokus bekam. In der Erfassungsphase: Ist ein Menü im Blatt offen (etwa
+  // Tab vom letzten Eintrag von „Über“), schließt die Regel für Menüs oben es sonst zuerst und setzt es an seinen Platz
+  // hinter der Leiste zurück; das verlassene Element läge dann nicht mehr in .nav und das Blatt bliebe offen
+  document.addEventListener("focusout", (e) => {
+    const neu = e.relatedTarget;
+    if (!navIsOpen() || !(neu instanceof Element) || !e.target.closest?.(".nav") || neu.closest(".nav") || neu.closest("dialog")) return;
+    setNav(false);
+  }, true);
 
   // --- Breite von Liste und Vorgang per Ziehgriff ---------------------------------------------------
   const WIDTH = { list: { v: "--list-w", min: 300, max: () => Math.min(680, innerWidth * 0.45), def: 360 },
@@ -1099,7 +1137,7 @@
     const rows = [...m.gruppen, "gesamt"].map((g) => `<tr><th scope="row">${g === "gesamt" ? "Zusammen" : esc(g)}</th>
       <td>${num((own || {})[g])}</td><td>${num((cmp || {})[g])}</td></tr>`).join("");
     const teil = m.unvollstaendig_vor ? ` Aufgezeichnet seit ${fmtDate(m.unvollstaendig_vor)}; frühere Meldungen nur, soweit sie an diesem Tag noch öffentlich waren.` : "";
-    return `<section class="anliegen" aria-labelledby="anliegen-h"><h4 id="anliegen-h">Meldungen im Mängelmelder</h4>
+    return `<section class="anliegen"><h4>Meldungen im Mängelmelder</h4>
       <p class="hint">${esc(m.hinweis)} Gezählt: ${fmtDate(m.von)} bis ${fmtDate(m.bis)} (${m.tage} Tage).${teil}</p>
       <table class="kontext-table"><thead><tr><th scope="col">Gruppe der Stadt</th><th scope="col">${esc(area.name)}</th><th scope="col">${esc(cmpName)}</th></tr></thead>
       <tbody>${rows}</tbody></table>
@@ -1122,7 +1160,7 @@
     const rows = keys.map((k) => `<tr><th scope="row">${esc(kontext.meta.kennzahlen[k].titel)}</th><td>${kCell(k, v)}</td><td>${kCell(k, b)}</td></tr>`).join("");
     const qs = [...new Set(keys.map((k) => kontext.meta.kennzahlen[k].quelle))].map((q) => kontext.meta.quellen[q]).filter(Boolean)
       .map((q) => `${esc(q.titel)} (${esc(q.lizenz)}${q.stand ? `, Stand ${esc(q.stand.length === 10 ? fmtDate(q.stand) : q.stand)}` : ""})`).join("; ");
-    return `<section class="kontext-vorgang" aria-labelledby="kontext-h"><h4 id="kontext-h">Zum Stadtteil ${esc(ot)} <span class="derived">abgeleitet</span></h4>
+    return `<section class="kontext-vorgang"><h4>Zum Stadtteil ${esc(ot)} <span class="derived">abgeleitet</span></h4>
       <table class="kontext-table"><thead><tr><th scope="col">Kennzahl</th><th scope="col">${esc(ot)}</th><th scope="col">Stadtbezirk ${esc(bez)}</th></tr></thead>
       <tbody>${rows}</tbody></table>
       <p class="hint">Einordnung, kein Beleg für die Vorlage und kein Urteil über den Stadtteil. Auswahl nach dem abgeleiteten Thema; ${esc(kUmgerechnetVorgang(keys))}${v.einwohner < kontext.meta.mindest_einwohner ? ` Unter ${de(kontext.meta.mindest_einwohner)} Einwohnern keine Anteile und Mittelwerte.` : ""} Quellen: ${qs}.</p></section>`;
@@ -2412,12 +2450,12 @@
       </dl>
       <div class="links">${link(p.web, "Original im Ratsinformationssystem", "btn btn-primary")}
         ${link(p.main_file, "Dokument (PDF)", "btn btn-secondary")}</div>
-      ${p.kurzfassung ? `<section class="kurz" aria-labelledby="kurz-h"><h4 id="kurz-h">Kurz gesagt</h4><p>${esc(p.kurzfassung.text)}</p>
+      ${p.kurzfassung ? `<section class="kurz"><h4>Kurz gesagt</h4><p>${esc(p.kurzfassung.text)}</p>
         <p class="hint"><span class="derived">KI-Kurzfassung</span> Mit einem Sprachmodell (${esc(p.kurzfassung.modell)}) aus dem Text des Dokuments formuliert, kein Zitat. Einzelheiten können ungenau sein, etwa ob etwas beschlossen oder nur vorgeschlagen ist. Maßgeblich ist das Original.</p></section>` : ""}
       <h4>Prozesslinie</h4>
       <ol class="steps">${p.steps.map(stepHtml).join("")}${umsetzungHtml(p)}</ol>
       ${legend()}${glossary(p)}
-      ${p.soll && index ? '<section class="soll" aria-labelledby="soll-h"><h4 id="soll-h">Nach Regelwerk (Soll)</h4><div class="soll-box"><p class="hint">Wird geladen …</p></div></section>' : ""}
+      ${p.soll && index ? '<section class="soll"><h4>Nach Regelwerk (Soll)</h4><div class="soll-box"><p class="hint">Wird geladen …</p></div></section>' : ""}
       ${participate(p)}
       <h4>Ortsbezug</h4><ul class="locs">${locs}</ul>
       ${kontextVorgang(p)}${sdStadtteil(p) ? '<div class="sd-platz"></div>' : ""}
@@ -2726,7 +2764,7 @@
   }
   function initSearchBar() {
     const q = $("#q");
-    q.addEventListener("focus", () => openMega("mega-suche"));
+    q.addEventListener("focus", () => { if (!suchfeldOhneMenue) openMega("mega-suche"); });
     q.addEventListener("input", debounce(() => {
       $("#f-text").value = q.value;
       $("#doc-status").textContent = "";

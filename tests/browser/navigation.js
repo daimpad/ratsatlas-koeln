@@ -17,6 +17,9 @@
 // jedem neuen Zustand. Nach der Prüfung des Pull Requests: Suchmenü mit der Tastatur (Tab aus dem Suchfeld durch alle
 // Bedienelemente, Schnellfilter behalten den Fokus), Leiste mit den Textabständen nach WCAG 1.4.12 und Platzhalter des
 // Suchfelds (4, 5), Fokus eines Suchtreffers, wenn während des Ladens getippt wird (6).
+// Kleiner UI-PR (Entscheidung 24.11.2026 (5), Punkte (1), (4) und (9)): Hinweis der Kartenvorschau und „Mitmachen in
+// Köln“ ohne Termine ohne Ankündigung (1), Abschnitte im Vorgang ohne benannten Bereich (4), Tab durch die Menüs auf
+// breiten Bildschirmen, Esc auf einem Schnellfilter im Suchmenü, Tab aus dem Blatt ☰ (9).
 // Nur die lokale Seite: Anfragen an andere Hosts bricht jeder Browserkontext ab (ctx.route, auch aus neuen Fenstern;
 // page.route erfasst diese nicht, und --no-proxy-server gilt nicht für die Kontexte von Playwright).
 // Aufruf (Seite mit Testdaten, z. B. python3 tools/testdaten.py, Pipeline, tools/seite_bauen.py, dann
@@ -979,6 +982,229 @@ async function pr5GeringeHoehe(browser, profil, gebiet) {
   await s.ctx.close();
 }
 
+// --- Kleiner UI-PR (Entscheidung 24.11.2026 (5), Punkte (1), (4) und (9)) ----------------------------------------------
+const UIPR = "UI-PR (24.11.2026 (5))";
+const VORSCHAU_HINWEIS = "Vorschau: Die Karte zeigt Stadtteile und offene Daten (Menü „Ebenen“). Ratsvorlagen der Stadt Köln enthält diese Fassung nicht.";
+
+// (1) Kartenvorschau ohne Ratsvorlagen: Hinweis oben beschreibt die Fassung ohne Ankündigung; „Mitmachen in Köln“ ohne
+// Termine ohne den Block „Nächste Sitzungen“ (auch je Stadtbezirk) und ohne Satz zu den Terminen in „Zuhören und
+// zuschauen“. Bis main e1c71c6d: „Die Ratsvorlagen … folgen nach dem ersten vollständigen Abruf“ und „Die
+// Sitzungstermine erscheinen hier, sobald …“
+async function uiPrVorschau(browser, profil) {
+  const s = await neueSeite(browser, profil, VORSCHAU_DATEN);
+  const page = s.page;
+  await page.goto(BASIS, { waitUntil: "load" });
+  await page.waitForFunction(() => document.documentElement.dataset.vorschau === "ja" && document.getElementById("detail-heading").textContent === "Los geht's", null, { timeout: 30000 });
+  await page.waitForTimeout(500);
+  const h = await page.$eval("#vorschau-hinweis", (e) => ({ text: e.innerText.replace(/\s+/g, " ").trim(), sichtbar: !e.hidden && e.getClientRects().length > 0 }));
+  pruefen(profil, `${UIPR} (1) Kartenvorschau: Hinweis oben beschreibt die Fassung, ohne Ankündigung`, h.sichtbar && h.text === VORSCHAU_HINWEIS && !ANKUENDIGUNG.test(h.text), h);
+  await page.evaluate(() => document.getElementById("cta-mitmachen").click());
+  await page.waitForSelector("#panel-mitmachen:not([hidden]) #bt-bezirk", { timeout: 20000 });
+  await page.waitForTimeout(300);
+  const lesen = () => page.$eval("#panel-mitmachen", (p) => {
+    const zuhoeren = [...p.querySelectorAll("h3, h4")].find((x) => x.textContent.trim() === "Zuhören und zuschauen");
+    const karte = zuhoeren && (zuhoeren.closest("section, article, li, .bt-weg, .card") || zuhoeren.parentElement);
+    return { block: p.querySelectorAll(".bt-next, #bt-next-h").length, text: p.innerText, zuhoeren: karte ? karte.innerText.replace(/\s+/g, " ") : null };
+  });
+  const pruefeMitmachen = (m, wo) => pruefen(profil, `${UIPR} (1) Kartenvorschau: „Mitmachen in Köln“ ${wo} ohne „Nächste Sitzungen“ und ohne Ankündigung der Termine`,
+    m.block === 0 && !/Nächste Sitzungen|Sitzungstermine/.test(m.text) && Boolean(m.zuhoeren) && !/Kommende Sitzungen|Termine/.test(m.zuhoeren)
+      && !ANKUENDIGUNG.test(m.zuhoeren), { block: m.block, zuhoeren: m.zuhoeren && m.zuhoeren.slice(0, 160),
+      treffer: (m.text.match(/Nächste Sitzungen[^\n]*|Sitzungstermine[^\n]*/g) || []).slice(0, 2) });
+  pruefeMitmachen(await lesen(), "ohne Stadtbezirk");
+  const bezirk = await page.$$eval("#bt-bezirk option", (os) => (os.find((o) => o.value) || {}).value || null);
+  if (bezirk) {
+    await page.selectOption("#bt-bezirk", bezirk);
+    await page.waitForTimeout(400);
+    pruefeMitmachen(await lesen(), `mit Stadtbezirk (${bezirk})`);
+  } else pruefen(profil, `${UIPR} (1) Kartenvorschau: Stadtbezirk in „Mitmachen in Köln“ wählbar`, false);
+  await axe(page, profil, `${UIPR} (1) Kartenvorschau: „Mitmachen in Köln“ ohne Termine`);
+  pruefen(profil, `keine Skriptfehler (${UIPR} Vorschau)`, s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+}
+
+// (4) Im Vorgang sind „Kurz gesagt“, „Zum Stadtteil …“, „Meldungen im Mängelmelder“ und „Nach Regelwerk (Soll)“
+// Abschnitte mit Überschrift, keine benannten Bereiche (Landmarken). Die Testdaten haben keine Kurzfassungen; die
+// Prüfung setzt im Browser eine erfundene in jede Gebietsdatei ein und öffnet eine Vorlage mit „Zum Stadtteil …“.
+// Mängelmelder und Soll sind abgeschaltet und erscheinen mit Testdaten nicht; die Abfrage nach Namen schließt sie ein
+const OHNE_LANDMARKE = /^(Zum Stadtteil|Kurz gesagt|Meldungen im Mängelmelder|Nach Regelwerk)/;
+async function uiPrVorgangBereiche(browser, profil, gebiet) {
+  const s = await neueSeite(browser, profil);
+  const page = s.page;
+  const refs = [];
+  await page.route((u) => /\/data\/export\/koeln\/(ortsteile|bezirke)\/[^/]+\.json$/.test(u.pathname), async (route) => {
+    const r = await route.fetch();
+    const j = await r.json();
+    for (const p of j.papers || []) {
+      p.kurzfassung = { text: "[Prüfung] Erfundene Kurzfassung für die Browserprüfung, kein Text der Stadt.", modell: "Prüfmodell" };
+      if (route.request().url().includes(gebiet.split(":")[1])) refs.push(p.reference);
+    }
+    await route.fulfill({ response: r, json: j });
+  });
+  await page.goto(`${BASIS}?gebiet=${gebiet}`, { waitUntil: "load" });
+  await geladen(page);
+  await page.waitForTimeout(400);
+  let ref = null;
+  for (const r of [...new Set(refs)].slice(0, 60)) {
+    await page.evaluate((x) => window.risKarte.open(x), r);
+    await page.waitForTimeout(250);
+    if (await page.$("#detail .steps") && await page.$("#detail section.kontext-vorgang")) { ref = r; break; }
+  }
+  const lage = await page.evaluate(() => ({ kurz: document.querySelector("#detail section.kurz h4")?.textContent.trim() || null,
+    stadtteil: document.querySelector("#detail section.kontext-vorgang h4")?.textContent.replace(/\s+/g, " ").trim() || null,
+    benannt: [...document.querySelectorAll("#detail section.kurz, #detail section.kontext-vorgang, #detail section.anliegen, #detail section.soll")]
+      .filter((x) => x.hasAttribute("aria-labelledby") || x.hasAttribute("aria-label") || x.hasAttribute("role")).map((x) => x.className) }));
+  const regionen = await page.locator("#detail").getByRole("region", { name: OHNE_LANDMARKE }).count();
+  const baum = await page.locator("#panel-detail").ariaSnapshot();
+  const imBaum = baum.split("\n").filter((z) => /- region "(Zum Stadtteil|Kurz gesagt|Meldungen im Mängelmelder|Nach Regelwerk)/.test(z)).map((z) => z.trim());
+  pruefen(profil, `${UIPR} (4) Vorgang: „Kurz gesagt“ und „Zum Stadtteil …“ mit Überschrift, keine Landmarke mit diesen Namen (role=region, Barrierefreiheitsbaum)`,
+    Boolean(ref) && lage.kurz === "Kurz gesagt" && Boolean(lage.stadtteil) && lage.stadtteil.startsWith("Zum Stadtteil") && lage.benannt.length === 0
+      && regionen === 0 && imBaum.length === 0, { ref, ...lage, regionen, imBaum });
+  await axe(page, profil, `${UIPR} (4) Vorgang mit „Kurz gesagt“ und „Zum Stadtteil …“`);
+  pruefen(profil, `keine Skriptfehler (${UIPR} Vorgang)`, s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+}
+
+// (9 a) Breite Bildschirme: Die Menüs stehen im Dokument hinter der ganzen Leiste. Ist eines offen (per Klick, Fokus
+// auf der Schaltfläche), führt Tab auf sein erstes Bedienelement, Umschalt+Tab zurück auf die Schaltfläche (offen), Tab
+// durch alle Bedienelemente in ihrer Reihenfolge und vom letzten auf das Element der Leiste nach der Schaltfläche (bei
+// „Über“, dem letzten Eintrag, auf das nächste Element hinter der Leiste); das Menü ist dann zu. Der Fokus liegt nie auf
+// <body>. Bis main e1c71c6d führte Tab von der Schaltfläche auf die nächste Schaltfläche und schloss das Menü
+async function uiPrMenueTastatur(browser, profil) {
+  const s = await neueSeite(browser, profil);
+  const page = s.page;
+  await page.goto(BASIS, { waitUntil: "load" });
+  await geladen(page);
+  await page.waitForTimeout(400);
+  const lage = (id) => page.evaluate((id) => {
+    const m = document.getElementById(id), e = document.activeElement, cs = getComputedStyle(e), r = e.getBoundingClientRect();
+    return { offen: !m.hidden, expanded: document.querySelector(`.nav-group [data-mega="${id}"]`).getAttribute("aria-expanded"),
+      knopf: e.dataset.mega === id, nr: e.dataset.uiprNr ?? null, ziel: e.dataset.uiprZiel === "1", imMenue: m.contains(e), inLeiste: Boolean(e.closest(".nav")),
+      body: e === document.body, schluessel: e.id || e.dataset.mega || (e.textContent || "").trim().replace(/\s+/g, " ").slice(0, 30) || e.tagName.toLowerCase(),
+      sichtbar: e !== document.body && e.getClientRects().length > 0 && cs.visibility !== "hidden" && r.bottom > 0 && r.top < innerHeight,
+      rahmen: cs.outlineStyle !== "none" || cs.boxShadow !== "none" };
+  }, id);
+  for (const [mega, name] of MENUES) {
+    await page.evaluate(() => window.risKarte.ui.menu(null));
+    await page.click(`.nav-group [data-mega="${mega}"]`);
+    await page.waitForSelector(`#${mega}:not([hidden])`);
+    await page.waitForTimeout(200);
+    // Soll-Reihenfolge unabhängig von app.js: sichtbare, nicht abgeschaltete Bedienelemente des Menüs; Ziel danach das
+    // erste sichtbare Bedienelement der Leiste hinter der Schaltfläche
+    const n = await page.evaluate((id) => {
+      const sicht = (e) => e.getClientRects().length > 0 && !e.closest("[hidden]") && getComputedStyle(e).visibility !== "hidden" && !e.disabled && e.tabIndex >= 0;
+      const els = [...document.getElementById(id).querySelectorAll("button, a[href], input, select, textarea, summary")].filter(sicht);
+      els.forEach((e, i) => { e.dataset.uiprNr = String(i); });
+      const b = document.querySelector(`.nav-group [data-mega="${id}"]`);
+      const z = [...document.querySelectorAll(".nav button, .nav a[href], .nav input, .nav select")].filter(sicht)
+        .find((e) => (b.compareDocumentPosition(e) & Node.DOCUMENT_POSITION_FOLLOWING) && !b.contains(e));
+      if (z) z.dataset.uiprZiel = "1";
+      return { els: els.length, ziel: z ? z.dataset.mega || z.id : null };
+    }, mega);
+    const verlauf = [];
+    const schritt = async (taste) => { await page.keyboard.press(taste); const l = await lage(mega); verlauf.push(l); return l; };
+    const start = await lage(mega);
+    verlauf.push(start);
+    const erst = await schritt("Tab");
+    const zurueck = await schritt("Shift+Tab");
+    const wieder = await schritt("Tab");
+    const reihe = [wieder.nr];
+    let l = wieder;
+    for (let i = 1; i < n.els + 2 && l.imMenue; i++) { l = await schritt("Tab"); if (l.imMenue) reihe.push(l.nr); }
+    const soll = Array.from({ length: n.els }, (_, i) => String(i));
+    pruefen(profil, `${UIPR} (9 a) Menü „${name}“: Tab von der Schaltfläche auf das erste Bedienelement, Umschalt+Tab zurück (offen)`,
+      n.els > 0 && start.knopf && start.offen && erst.nr === "0" && erst.offen && zurueck.knopf && zurueck.offen && zurueck.expanded === "true" && wieder.nr === "0",
+      { els: n.els, start: start.schluessel, erst: erst.schluessel, zurueck: zurueck.schluessel, offen: zurueck.offen });
+    pruefen(profil, `${UIPR} (9 a) Menü „${name}“: Tab durch alle Bedienelemente, vom letzten auf ${n.ziel || "das Element hinter der Leiste"}, Menü zu, Fokus nie auf <body>`,
+      JSON.stringify(reihe) === JSON.stringify(soll) && !l.offen && l.expanded === "false" && !l.imMenue && (n.ziel ? l.ziel : !l.knopf) && l.sichtbar && l.rahmen
+        && verlauf.every((x) => !x.body), { reihe: reihe.length, soll: soll.length, ende: l.schluessel, offen: l.offen, expanded: l.expanded, body: verlauf.filter((x) => x.body).length });
+    await page.evaluate(() => document.querySelectorAll("[data-uipr-nr], [data-uipr-ziel]").forEach((e) => { delete e.dataset.uiprNr; delete e.dataset.uiprZiel; }));
+    if (mega === "mega-themen") {
+      // für das Bildschirmfoto der Freigabe: Menü offen, Fokus auf dem ersten Eintrag nach Tab
+      await page.evaluate(() => window.risKarte.ui.menu(null));
+      await page.click('.nav-group [data-mega="mega-themen"]');
+      await page.waitForTimeout(200);
+      await page.keyboard.press("Tab");
+      await page.waitForTimeout(150);
+      await axe(page, profil, `${UIPR} (9 a) Menü „Themen“ mit dem Fokus auf dem ersten Eintrag`);
+      await foto(page, `uipr-themen-tab-${profil}`);
+    }
+  }
+  pruefen(profil, `keine Skriptfehler (${UIPR} Menüs mit der Tastatur)`, s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+}
+
+// (9 b) Esc mit dem Fokus auf einem Schnellfilter im Suchmenü: Menü zu, aria-expanded nirgends „true“, Fokus im
+// Suchfeld, und das Menü bleibt zu. Bis main e1c71c6d öffnete der Fokuswechsel ins Suchfeld es sofort wieder
+async function uiPrSucheEsc(browser, profil) {
+  const s = await neueSeite(browser, profil);
+  const page = s.page;
+  await page.goto(BASIS, { waitUntil: "load" });
+  await geladen(page);
+  await page.waitForTimeout(400);
+  await page.focus("#q");
+  await page.waitForSelector("#mega-suche:not([hidden]) #chips-theme .chip");
+  await page.waitForTimeout(200);
+  await page.focus("#chips-theme .chip");
+  const vorher = await page.evaluate(() => ({ chip: document.activeElement.classList.contains("chip") && Boolean(document.activeElement.closest("#mega-suche")) }));
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(150);
+  const zustand = () => page.evaluate(() => ({ offen: !document.getElementById("mega-suche").hidden, fokus: document.activeElement.id || document.activeElement.tagName.toLowerCase(),
+    expanded: [...document.querySelectorAll('[aria-controls="mega-suche"], [data-mega="mega-suche"]')].map((e) => e.getAttribute("aria-expanded")) }));
+  const sofort = await zustand();
+  await page.waitForTimeout(400);
+  const spaeter = await zustand();
+  pruefen(profil, `${UIPR} (9 b) Suchmenü: Esc auf einem Schnellfilter schließt es, aria-expanded nicht „true“, Fokus im Suchfeld, bleibt zu`,
+    vorher.chip && !sofort.offen && !spaeter.offen && sofort.fokus === "q" && spaeter.fokus === "q" && spaeter.expanded.every((x) => x !== "true"), { vorher, sofort, spaeter });
+  // danach öffnet Tippen im Suchfeld das Menü wie bisher
+  await page.keyboard.type("a");
+  await page.waitForTimeout(400);
+  const tippen = await zustand();
+  pruefen(profil, `${UIPR} (9 b) Suchmenü: nach Esc öffnet Tippen im Suchfeld es wieder`, tippen.offen && tippen.fokus === "q", tippen);
+  pruefen(profil, `keine Skriptfehler (${UIPR} Suchmenü)`, s.fehler.length === 0, s.fehler);
+  await s.ctx.close();
+}
+
+// (9 c) Telefon: Verlässt der Fokus die Leiste mit dem offenen Blatt ☰ (Tab vom letzten Eintrag, auch aus dem im Blatt
+// aufgeklappten Menü „Über“), schließt das Blatt; der Fokus bleibt auf dem neuen Ziel, nie auf <body>. Bis main
+// e1c71c6d blieb das Blatt offen und lag über dem neuen Ziel
+async function uiPrBlatt(browser, profil) {
+  for (const art of ["letzter Eintrag", "Menü „Über“ im Blatt"]) {
+    const s = await neueSeite(browser, profil);
+    const page = s.page;
+    await page.goto(BASIS, { waitUntil: "load" });
+    await geladen(page);
+    await page.waitForTimeout(400);
+    await page.click("#nav-burger");
+    await page.waitForTimeout(250);
+    if (art === "letzter Eintrag") {
+      await page.evaluate(() => { const els = [...document.querySelectorAll("#nav-more button, #nav-more a[href], #nav-more select, #nav-more input")]
+        .filter((e) => e.getClientRects().length && !e.closest("[hidden]") && !e.disabled); els[els.length - 1].focus(); });
+    } else {
+      await page.focus('#nav-more [data-mega="mega-ueber"]');
+      await page.keyboard.press("Enter");
+      await page.waitForSelector("#mega-ueber:not([hidden])");
+      await page.waitForTimeout(200);
+      await foto(page, `uipr-blatt-ueber-${profil}`);
+    }
+    const lage = () => page.evaluate(() => {
+      const e = document.activeElement, cs = getComputedStyle(e), r = e.getBoundingClientRect();
+      return { blatt: document.body.classList.contains("nav-open"), burger: document.getElementById("nav-burger").getAttribute("aria-expanded"),
+        ueber: !document.getElementById("mega-ueber").hidden, inLeiste: Boolean(e.closest(".nav")), body: e === document.body,
+        ziel: e.id || e.className || e.tagName.toLowerCase(), sichtbar: e !== document.body && e.getClientRects().length > 0 && cs.visibility !== "hidden" && r.bottom > 0 && r.top < innerHeight };
+    });
+    const start = await lage();
+    const verlauf = [start];
+    let l = start;
+    for (let i = 0; i < 40 && l.inLeiste; i++) { await page.keyboard.press("Tab"); l = await lage(); verlauf.push(l); }
+    pruefen(profil, `${UIPR} (9 c) Blatt ☰, Tab aus dem Blatt hinaus (${art}): Blatt zu, Fokus auf dem neuen Ziel, nie auf <body>`,
+      start.blatt && start.inLeiste && !l.inLeiste && !l.blatt && l.burger === "false" && !l.ueber && l.sichtbar && verlauf.every((x) => !x.body),
+      { schritte: verlauf.length - 1, start: start.ziel, ende: l.ziel, blatt: l.blatt, ueber: l.ueber, sichtbar: l.sichtbar, body: verlauf.filter((x) => x.body).length });
+    if (art === "letzter Eintrag") await axe(page, profil, `${UIPR} (9 c) nach Tab aus dem Blatt ☰`);
+    pruefen(profil, `keine Skriptfehler (${UIPR} Blatt ☰, ${art})`, s.fehler.length === 0, s.fehler);
+    await s.ctx.close();
+  }
+}
+
 async function begriffe(browser, profil) {
   const s = await neueSeite(browser, profil);
   const r = await s.page.goto(BASIS + "begriffe/", { waitUntil: "load" });
@@ -1014,6 +1240,12 @@ async function begriffe(browser, profil) {
       await einzeln(profil, "PR 5 (5)", () => pr5Eingabefelder(browser, profil, gebiet));
       await einzeln(profil, "PR 5 (6) und (8)", () => pr5Treffer(browser, profil, gebiet));
       await einzeln(profil, "PR 5 (7)", () => pr5GeringeHoehe(browser, profil, gebiet));
+      // kleiner UI-PR (Entscheidung 24.11.2026 (5))
+      await einzeln(profil, `${UIPR} (1)`, () => uiPrVorschau(browser, profil));
+      await einzeln(profil, `${UIPR} (4)`, () => uiPrVorgangBereiche(browser, profil, gebiet));
+      if (!telefon(profil)) await einzeln(profil, `${UIPR} (9 a)`, () => uiPrMenueTastatur(browser, profil));
+      await einzeln(profil, `${UIPR} (9 b)`, () => uiPrSucheEsc(browser, profil));
+      if (telefon(profil)) await einzeln(profil, `${UIPR} (9 c)`, () => uiPrBlatt(browser, profil));
     }
     // Punkte 5 und 7 zusätzlich bei 320×256 (etwa 400 % Zoom), Punkt 4 mit eigenen Größen
     await einzeln("klein", "PR 5 (5)", () => pr5Eingabefelder(browser, "klein", gebiet));

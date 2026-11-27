@@ -25,8 +25,9 @@ LATEST = 20
 CSP = ("default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; "
        "object-src 'none'; base-uri 'self'; form-action 'none'")
 ZOOM_HINWEIS = "Viele Objekte: erscheint erst bei näherer Ansicht, falls nötig hineinzoomen"
-VORSCHAU = (f"<p><strong>Vorschau:</strong> Die Ratsvorlagen der Stadt {config.STADT_NAME} folgen nach dem ersten "
-            "vollständigen Abruf aus dem Ratsinformationssystem.</p>")
+# Kartenvorschau ohne Ratsvorlagen: beschreibt, was die Fassung enthält, ohne Ankündigung (24.11.2026 (5) (1))
+VORSCHAU = (f"<p><strong>Vorschau:</strong> Ratsvorlagen der Stadt {config.STADT_NAME} aus dem Ratsinformationssystem "
+            "enthält diese Fassung nicht.</p>")
 
 
 def _date(iso):
@@ -414,7 +415,7 @@ def write(site, site_url):
                            + (f": Kennzahlen im Vergleich mit {vergleich(spalten)}, mit Quellen und Lizenzen"
                               if kennzahlen and len(spalten) > 1 else ": Kennzahlen mit Quellen und Lizenzen" if kennzahlen else "")
                            + ("; Kartenebenen aus offenen Daten" if ebenen else "") + "."
-                           + (" Die Ratsvorlagen folgen." if vorschau else ""))
+                           + (" Vorschau ohne Ratsvorlagen." if vorschau else ""))
         _schreiben(site, site_url, path, title, description, "\n".join(t for t in teile if t),
                    head(f"feeds/ortsteil-{o['slug']}.xml", f"Ratsatlas Köln – {name}"))
         paths.append(path)
@@ -455,7 +456,7 @@ def write(site, site_url):
                            + (f": Kennzahlen im Vergleich mit {vergleich(spalten)}, mit Quellen und Lizenzen"
                               if kennzahlen and len(spalten) > 1 else ": Kennzahlen mit Quellen und Lizenzen" if kennzahlen else "")
                            + ("; Kartenebenen aus offenen Daten" if ebenen else "") + "."
-                           + (" Die Ratsvorlagen folgen." if vorschau else ""))
+                           + (" Vorschau ohne Ratsvorlagen." if vorschau else ""))
         _schreiben(site, site_url, path, title, description, "\n".join(t for t in teile if t),
                    head(f"feeds/bezirk-{b['slug']}.xml", f"Ratsatlas Köln – Stadtbezirk {name}, ohne genaueren Ort"))
         paths.append(path)

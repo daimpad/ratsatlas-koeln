@@ -72,9 +72,7 @@ function sitzungen(bz, o) {
     ? ` · <a href="${href(m.web)}" target="_blank" rel="noopener">Tagesordnung<span class="visually-hidden"> (Ratsinformationssystem der Stadt Köln, neuer Tab)</span></a>`
     : " · Tagesordnung noch nicht veröffentlicht"}</span></li>`;
   const kopf = `<h3 id="bt-next-h">${bz ? `Nächste Sitzungen für den Stadtbezirk ${esc(bz)}` : "Nächste Sitzungen"}</h3>`;
-  if (!o.termine) {
-    return `<section class="bt-next" aria-labelledby="bt-next-h">${kopf}<p class="hint">Die Sitzungstermine erscheinen hier, sobald die Ratsvorlagen im Ratsatlas vorliegen.</p></section>`;
-  }
+  if (!o.termine) return "";   // Vorschau ohne Ratsvorlagen: ohne Termine entfällt der Block (24.11.2026 (5) (1))
   const istBv = (g) => o.bvBezirk(g) === bz, istRat = (g) => RAT.has(g), istAab = (g) => AUSSCHUSS.test(g);
   const bv = bz ? naechste(o.meetings, o.heute, istBv) : null;
   const rat = naechste(o.meetings, o.heute, istRat);
@@ -118,8 +116,7 @@ function wege(bz, o) {
     karte("Zuhören und zuschauen", [
       "Die Sitzungen des Rates sind öffentlich; für die Ausschüsse und die Bezirksvertretungen gilt das entsprechend. Sie können als Zuhörerin oder Zuhörer dabei sein. Einzelne Punkte werden nichtöffentlich beraten, etwa Personal-, Grundstücks- und Vergabeangelegenheiten.",
       "Ratssitzungen überträgt die Stadt live im Internet.",
-      o.termine ? "Die Termine stehen im Ratsatlas unter „Kommende Sitzungen“, auch als Kalenderdatei; der Link „Tagesordnung“ führt ins Ratsinformationssystem der Stadt."
-        : "Die Termine erscheinen im Ratsatlas unter „Kommende Sitzungen“, auch als Kalenderdatei, sobald die Ratsvorlagen vorliegen.",
+      ...(o.termine ? ["Die Termine stehen im Ratsatlas unter „Kommende Sitzungen“, auch als Kalenderdatei; der Link „Tagesordnung“ führt ins Ratsinformationssystem der Stadt."] : []),
     ], "§ 48 Abs. 2, § 36 Abs. 5 und § 58 Abs. 2 GO NRW; § 2 Abs. 4 der Geschäftsordnung", ["ratLive", "go"]),
     karte("Eine Frage in der Einwohnerfragestunde stellen", [
       "Jede Sitzung einer Bezirksvertretung beginnt mit der Einwohnerfragestunde. Wer im Stadtbezirk wohnt, kann dort der Verwaltung eine Frage zu einer Angelegenheit des Stadtbezirks stellen: eine Frage mit höchstens fünf Unterfragen je Sitzung.",
