@@ -224,7 +224,7 @@ def test_vorschau_hinweis(tmp_path):
             (ordner / "index.json").write_text(json.dumps({"meta": meta}), encoding="utf-8")
         einfachseite.write(tmp_path, URL, _page)
         return (tmp_path / "einfach" / "index.html").read_text(encoding="utf-8")
-    hinweis = "<strong>Vorschau:</strong> Auf der Karte fehlen noch die Vorlagen der Stadt Köln."
+    hinweis = "<strong>Vorschau:</strong> Auf der Karte sind keine Vorlagen der Stadt Köln."
     assert hinweis in schreiben({"vorschau": "2026-11-13T22:00:00+00:00"})
     assert hinweis not in schreiben({"vorschau": None})
     assert hinweis not in schreiben(None)
@@ -370,9 +370,9 @@ def test_vorschau_ohne_veralteten_hinweis():
         inhalt = datei.read_text(encoding="utf-8")
         assert not re.search(r"Abruf[^.;]{0,60}eingerichtet ist", inhalt), datei.name
     html = einfachseite.body("../", vorschau=True)
-    assert "Sie kommen, nachdem der Ratsatlas alle Daten der Stadt zum ersten Mal abgefragt hat." in html
+    assert "Die Karte zeigt die Stadtteile und andere offene Daten." in html
     index = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
-    assert "Die Ratsvorlagen der Stadt Köln folgen nach dem ersten vollständigen Abruf." in index
+    assert "Ratsvorlagen der Stadt Köln enthält diese Fassung nicht." in index
 
 
 def test_kleinere_maengel_der_einfachen_sprache():

@@ -94,7 +94,7 @@ def body(root, vorschau=False):
     bezirke, n_teile = stadtbezirke()
     n_bezirke = len(bezirke)
     quelle = escape(config.NAMENSNENNUNG)
-    hinweis = ("""    <p><strong>Vorschau:</strong> Auf der Karte fehlen noch die Vorlagen der Stadt Köln. Sie kommen, nachdem der Ratsatlas alle Daten der Stadt zum ersten Mal abgefragt hat. Bis dahin zeigt die Karte die Stadtteile und andere offene Daten.</p>
+    hinweis = ("""    <p><strong>Vorschau:</strong> Auf der Karte sind keine Vorlagen der Stadt Köln. Die Karte zeigt die Stadtteile und andere offene Daten.</p>
 """ if vorschau else "")
     ebenen = ("""      <li>Im Menü „Ebenen“ gibt es noch mehr Daten. Zum Beispiel Schulen, Haltestellen oder Gebiete, die bei Hochwasser überschwemmt werden können. Diese Daten kommen nicht aus dem Ratsinformationssystem. Jede Ebene nennt ihre Quelle.</li>
 """ if an("kontext") else "")

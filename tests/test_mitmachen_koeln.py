@@ -148,7 +148,7 @@ def test_darstellung_je_stadtbezirk():
     assert '<option value="" selected>bitte wählen</option>' in ohne and "Bürgeramt Ihres Stadtbezirks" in ohne
     assert d["fremd"] == ohne
     vor = d["vorschau"]
-    assert "Die Sitzungstermine erscheinen hier, sobald die Ratsvorlagen im Ratsatlas vorliegen." in vor
+    assert "bt-next" not in vor and "Sitzungstermine" not in vor and "sobald" not in vor   # ohne Termine kein Block
     assert 'id="bt-termine"' not in vor and "bt-dates" not in vor
     ehr = d["ehrenfeld"]
     assert "Bezirksvertretung 4 (Ehrenfeld)" in ehr and "javascript:" not in ehr
@@ -284,14 +284,14 @@ console.log(JSON.stringify(m.inhalt("", o)));
 
 
 def test_zuhoeren_in_der_vorschau_ohne_kommende_sitzungen():
-    """In der Vorschau (ohne zeit.json) gibt es „Kommende Sitzungen“ noch nicht; die Karte „Zuhören und zuschauen“
-    sagt dann, dass die Termine mit den Ratsvorlagen erscheinen, statt auf eine leere Fläche zu verweisen."""
+    """In der Vorschau (ohne zeit.json) gibt es „Kommende Sitzungen“ nicht; die Karte „Zuhören und zuschauen“ nennt die
+    Termine dann nicht und kündigt nichts an (24.11.2026 (5) (1)), statt auf eine leere Fläche zu verweisen."""
     d = _darstellung()
     mit = _karte(d["innenstadt"], "Zuhören und zuschauen")
     ohne = _karte(d["vorschau"], "Zuhören und zuschauen")
     assert "Die Termine stehen im Ratsatlas unter „Kommende Sitzungen“" in mit
     assert "Die Termine stehen im Ratsatlas" not in ohne and "Tagesordnung" not in ohne
-    assert "Die Termine erscheinen im Ratsatlas unter „Kommende Sitzungen“, auch als Kalenderdatei, sobald die Ratsvorlagen vorliegen." in ohne
+    assert "Kommende Sitzungen" not in ohne and "sobald" not in ohne and "erscheinen" not in ohne   # keine Ankündigung
 
 
 def test_postanschrift_der_geschaeftsstelle():

@@ -14,6 +14,9 @@ from pathlib import Path
 from pipeline import build, config, ebenen, export, gebietsseiten, kontext, sessionnet, topics
 
 ROOT = Path(__file__).resolve().parents[1]
+# Ankündigungen in Texten der Vorschau (wie tests/browser/navigation.js; Entscheidungen 21.11.2026 (1) (12) und
+# 24.11.2026 (5) (1))
+ANKUENDIGUNG = re.compile(r"\bfolg(t|en)\b|kommt hinzu|kommen hinzu|künftig|sobald|bis dahin", re.I)
 
 
 def _modul(name):
@@ -136,7 +139,8 @@ def test_gebietsseiten_vorschau(oparl, tmp_path):
         assert f"<loc>{config.SITE_URL}{pfad}</loc>" in sitemap, pfad
     hub = (site / "gebiete" / "index.html").read_text()
     assert all(f'href="../{p}"' in hub for p in seiten)
-    assert "Ratsvorlagen der Stadt Köln folgen" in hub
+    # Vorschau: beschreibt die Fassung ohne Ankündigung (Entscheidung 24.11.2026 (5) (1))
+    assert gebietsseiten.VORSCHAU in hub and not ANKUENDIGUNG.search(Sichtbar(hub).text)
 
     # Namen der Gebiete in index.json (Geodaten) und kontext.json stimmen überein, auch der Stadtbezirk je Stadtteil;
     # sonst kündigte eine Seite Kennzahlen an, die sie nicht zeigt
@@ -151,7 +155,9 @@ def test_gebietsseiten_vorschau(oparl, tmp_path):
     keys = meta["reihenfolge"]
     for pfad, (art, g) in seiten.items():
         html = (site / pfad / "index.html").read_text()
-        assert "Ratsvorlagen der Stadt Köln folgen" in html                          # Vorschau
+        assert gebietsseiten.VORSCHAU in html and "Vorschau ohne Ratsvorlagen." in html   # Vorschau
+        assert not ANKUENDIGUNG.search(Sichtbar(html).text) and not ANKUENDIGUNG.search(
+            re.search(r'<meta name="description" content="([^"]*)"', html).group(1)), pfad
         assert not re.search(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}", html)                    # keine Erzeugungszeitpunkte
         assert "Bonn" not in html and "Ortsteil" not in html
         _sichtbar_pruefen(html, pfad)
