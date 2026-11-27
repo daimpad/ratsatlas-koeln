@@ -3,11 +3,25 @@
 <id>tag:ratsatlas-koeln,2026:feed/thema/verkehr</id>
 <title>Ratsatlas Köln – Verkehr und Mobilität</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Verkehr und Mobilität (Zuordnung abgeleitet)</subtitle>
-<updated>2026-11-26T00:00:00Z</updated>
+<updated>2026-11-27T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/dossiers/verkehr.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/thema/verkehr-und-mobilitaet/"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/136025#vorlage</id>
+<title>Neue Vorlage AN/1941/2026: Anfrage der SPD-Fraktion, betr.: Sachstand zum AN/1610/2021 Die Unterführung Vogelsanger Straße/Wilhelm-Mauser Straße an die Kanalisation</title>
+<updated>2026-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:neustadt-nord#AN/1941/2026"/>
+<summary>Anfrage nach § 4 BV4 (SPD) · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/120836#vorlage</id>
+<title>Neue Vorlage 1151/2024: Gebührenordnung für die Nutzung gebührenpflichtiger Parkplätze im öffentlichen Straßenland auf dem Gebiet der Stadt Köln  (kurz: Parkgebührenordnung 2025)</title>
+<updated>2026-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#1151/2024"/>
+<summary>Beschlussvorlage Rat bzw. Hauptausschuss · Stand: entschieden</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135974#vorlage</id>
 <title>Neue Vorlage 3391/2026: Mitteilung zur Bürgereingabe nach § 24 GO NRW - Bewohnerparken einrichten - Ulitzkastraße und umliegende Wohngebiet, Aktenzeichen [Hausnummer ausgelassen]/[Hausnummer ausgelassen]</title>
@@ -35,6 +49,34 @@
 <updated>2026-11-26T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:nippes#3320/2026"/>
 <summary>Beschlussvorlage Bezirksvertretung · Stand: offen</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135714#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/1818/2026 Markierung eines Gehweges auf dem Günter-Kuxdorf-Weg in Köln-Höhenberg</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:hoehenberg#AN/1818/2026"/>
+<summary>Antrag / Anfrage am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135604#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/1787/2026 Prüfantrag zur Verbesserung der Verkehrssicherheit durch geschwindigkeitsreduzierende Maßnahmen auf der Rösrather Straße in Köln-Ostheim</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1787/2026"/>
+<summary>Antrag / Anfrage am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134366#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 2424/2026 Baubeschluss für die Instandsetzung des Vingster Rings zwischen Ostheimer Straße und Frankfurter Straße</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:gremberghoven#2424/2026"/>
+<summary>Entscheidung am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134272#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 2361/2026 Bau- und Mittelfreigabebeschluss für den Endausbau der Pauline-Christmann-Straße in Köln-Rath/Heumar bei der neuen Finanzstelle 6601-1201-8-1164, Pauline-Christmann-Str. (Endausbau)</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:rath-heumar#2361/2026"/>
+<summary>Entscheidung am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135993#vorlage</id>
@@ -665,47 +707,5 @@
 <updated>2026-11-23T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:chorweiler#AN/1853/2026"/>
 <summary>Gem. Antrag nach § 3 BV6 · Stand: offen</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135841#vorlage</id>
-<title>Neue Vorlage AN/1852/2026: Einrichtung einer temporären "Schulstraße" -zetlich begrenztes Durchfahrtsverbot- in der Schulstraße der Erich-Ohser-Grundschule in Köln Pesch</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:pesch#AN/1852/2026"/>
-<summary>Gem. Antrag nach § 3 BV6 · Stand: offen</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135835#vorlage</id>
-<title>Neue Vorlage AN/1849/2026: Unterbindung des Schleichverkehrs in der Offenbachstraße durch Aufstellung von Pollern</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:pesch#AN/1849/2026"/>
-<summary>Antrag nach § 3 BV6 (CDU) · Stand: offen</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135783#vorlage</id>
-<title>Neue Vorlage 3288/2026: Beantwortung einer Anfrage der CDU-Fraktion aus der Sitzung des Mobilitätsauschusses vom 21.09.2026 betr. "Logistikzentrum Frankfurter Straße/Maarhäuser Weg" (1695/2026)</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:gremberghoven#3288/2026"/>
-<summary>Beantwortung einer Anfrage (Ausschuss) · Stand: beraten, ohne Entscheidung</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135770#vorlage</id>
-<title>Neue Vorlage 3275/2026: Beantwortung einer mündlichen Anfrage des SE Dr. Beese aus der Sitzung des Mobilitätsausschusses am 22.09.2026 betr.Verkehrssituation im Bereich der Trankgasse</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:altstadt-nord#3275/2026"/>
-<summary>Beantwortung e. mündl. Anfrage (Auss.) · Stand: in Beratung</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135727#vorlage</id>
-<title>Neue Vorlage AN/1820/2026: Umsetzung der geplanten Baumpflanzungen nach Maßgabe des Straßenbaumkonzepts</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1820/2026"/>
-<summary>Anfrage nach § 4 BV8 (Grüne) · Stand: offen</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135716#vorlage</id>
-<title>Neue Vorlage 3233/2026: Beantwortung einer schriftlichen Anfrage der FDP-/KSG-Fraktion aus der Sitzung vom Mobilitätsausschuss vom 20.09.2026 (AN/1293/2026) betreffend "AF Künstliche Intelligenz im Kölner Straßenverkehr"</title>
-<updated>2026-11-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ohne:2026#3233/2026"/>
-<summary>Beantwortung einer Anfrage (Ausschuss) · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 </feed>

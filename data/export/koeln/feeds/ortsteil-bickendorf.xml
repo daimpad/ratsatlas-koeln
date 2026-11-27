@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-bickendorf</id>
 <title>Ratsatlas Köln – Bickendorf</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Bickendorf</subtitle>
-<updated>2026-11-26T00:00:00Z</updated>
+<updated>2026-11-27T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-bickendorf.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/136025#vorlage</id>
+<title>Neue Vorlage AN/1941/2026: Anfrage der SPD-Fraktion, betr.: Sachstand zum AN/1610/2021 Die Unterführung Vogelsanger Straße/Wilhelm-Mauser Straße an die Kanalisation</title>
+<updated>2026-11-27T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#AN/1941/2026"/>
+<summary>Anfrage nach § 4 BV4 (SPD) · federführend: unbekannt · Stand: offen</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/136010#vorlage</id>
 <title>Neue Vorlage AN/1933/2026: Anfrage - Schließung der Kita in der Rochusstraße (Köln-Bickendorf)</title>
@@ -700,12 +707,5 @@
 <updated>2025-09-04T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#2636/2025"/>
 <summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/128773#beratung-2025-09-04-Rat</id>
-<title>Rat: „ungeändert beschlossen“ – 2371/2025 Erneuerung der Eisenbahnüberführungen am Bahnhof West, Venloer Straße und Vogelsanger Straße in Köln-Innenstadt durch die DB InfraGO AG</title>
-<updated>2025-09-04T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:bickendorf#2371/2025"/>
-<summary>Entscheidung am 2025-09-04; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

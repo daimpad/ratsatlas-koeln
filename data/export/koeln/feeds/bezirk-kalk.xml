@@ -3,24 +3,87 @@
 <id>tag:ratsatlas-koeln,2026:feed/bezirk-kalk</id>
 <title>Ratsatlas Köln – Stadtbezirk Kalk, ohne genaueren Ort</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Stadtbezirk Kalk, ohne genaueren Ort</subtitle>
-<updated>2026-11-25T00:00:00Z</updated>
+<updated>2026-11-26T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/bezirk-kalk.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135960#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig abgelehnt“ – AN/1913/2026 Fortschreibung der Schulentwicklungsplanung Köln 2026</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1913/2026"/>
+<summary>Antrag / Anfrage am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135920#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/1893/2026 Vergabe bezirksorientierter Mittel 2026</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1893/2026"/>
+<summary>Antrag / Anfrage am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135616#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 3163/2026 Förderung des Brauchtums in den Veedeln - Sicherung der Durchführung der Veedelszüge im Stadtbezirk Kalk 2026/2027– Mittelvergabe</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3163/2026"/>
+<summary>Entscheidung am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135615#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 3162/2026 Förderung des Brauchtums in den Veedeln - Sicherung der Durchführung der Veedelszüge im Stadtbezirk Kalk 2026/2027 - hier:Förderprogramm</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3162/2026"/>
+<summary>Entscheidung am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135549#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 3109/2026 Grünes Klassenzimmer</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3109/2026"/>
+<summary>Entscheidung am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135345#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig abgelehnt“ – AN/1708/2026 "Strike-System" im Kampf gegen kriminelle Vermieter und die Miet-Mafia</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1708/2026"/>
+<summary>Antrag / Anfrage am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135275#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 2958/2026 Einwohneranfrage betreff: "Entwicklungen der Rheinischen Musikschule im Stadtbezirk Kalk "</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#2958/2026"/>
+<summary>Entscheidung am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134908#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 2694/2026 Dringlichkeitsantrag: " Haushaltsplan-Entwurf 2027/2028 - Veranschlagung der bezirksorientierten Mittel für die Haushaltsjahre 2027/2028 gemäß § 37 Abs. 3 der Gemeindeordnung für das Land Nordrhein-Westfalen</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#2694/2026"/>
+<summary>Entscheidung am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133192#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „endgültig zurückgezogen“ – AN/0885/2026 Trinkwasserspender an Schulen</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/0885/2026"/>
+<summary>Antrag / Anfrage am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135960#vorlage</id>
 <title>Neue Vorlage AN/1913/2026: Fortschreibung der Schulentwicklungsplanung Köln 2026</title>
 <updated>2026-11-25T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1913/2026"/>
-<summary>Änderungsantrag BV8 (SPD) · federführend: unbekannt · Stand: offen</summary>
+<summary>Änderungsantrag BV8 (SPD) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135920#vorlage</id>
 <title>Neue Vorlage AN/1893/2026: Vergabe bezirksorientierter Mittel 2026</title>
 <updated>2026-11-24T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1893/2026"/>
-<summary>Gem. Dringlichkeitsantrag BV8 · federführend: unbekannt · Stand: offen</summary>
+<summary>Gem. Dringlichkeitsantrag BV8 · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135853#vorlage</id>
@@ -41,28 +104,28 @@
 <title>Neue Vorlage AN/1708/2026: "Strike-System" im Kampf gegen kriminelle Vermieter und die Miet-Mafia</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1708/2026"/>
-<summary>Antrag nach § 3 BV8 (Linke) · federführend: unbekannt · Stand: offen</summary>
+<summary>Antrag nach § 3 BV8 (Linke) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133192#vorlage</id>
 <title>Neue Vorlage AN/0885/2026: Trinkwasserspender an Schulen</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/0885/2026"/>
-<summary>Antrag nach § 3 BV8 (AfD) · federführend: unbekannt · Stand: offen</summary>
+<summary>Antrag nach § 3 BV8 (AfD) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135616#vorlage</id>
 <title>Neue Vorlage 3163/2026: Förderung des Brauchtums in den Veedeln - Sicherung der Durchführung der Veedelszüge im Stadtbezirk Kalk 2026/2027– Mittelvergabe</title>
 <updated>2026-11-10T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3163/2026"/>
-<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135615#vorlage</id>
 <title>Neue Vorlage 3162/2026: Förderung des Brauchtums in den Veedeln - Sicherung der Durchführung der Veedelszüge im Stadtbezirk Kalk 2026/2027 - hier:Förderprogramm</title>
 <updated>2026-11-10T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3162/2026"/>
-<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135612#vorlage</id>
@@ -76,14 +139,14 @@
 <title>Neue Vorlage 3109/2026: Grünes Klassenzimmer</title>
 <updated>2026-11-09T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3109/2026"/>
-<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135275#vorlage</id>
 <title>Neue Vorlage 2958/2026: Einwohneranfrage betreff: "Entwicklungen der Rheinischen Musikschule im Stadtbezirk Kalk "</title>
 <updated>2026-10-23T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#2958/2026"/>
-<summary>Einwohneranfrage nach § 39 Abs. 6 · federführend: unbekannt · Stand: offen</summary>
+<summary>Einwohneranfrage nach § 39 Abs. 6 · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135142#vorlage</id>
@@ -97,7 +160,7 @@
 <title>Neue Vorlage 2694/2026: Dringlichkeitsantrag: " Haushaltsplan-Entwurf 2027/2028 - Veranschlagung der bezirksorientierten Mittel für die Haushaltsjahre 2027/2028 gemäß § 37 Abs. 3 der Gemeindeordnung für das Land Nordrhein-Westfalen</title>
 <updated>2026-09-28T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#2694/2026"/>
-<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+<summary>Dringlichkeitsvorlage Bezirksvertretung · federführend: unbekannt · Stand: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134864#vorlage</id>
@@ -644,68 +707,5 @@
 <updated>2025-11-27T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3301/2025"/>
 <summary>Entscheidung am 2025-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130006#beratung-2025-11-27-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – AN/1357/2025 Anfrage der AfD-Fraktion</title>
-<updated>2025-11-27T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1357/2025"/>
-<summary>Antrag / Anfrage am 2025-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129976#beratung-2025-11-27-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3282/2025 Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung 8 vom 24.08.2023 betr. „Planungsbeschleunigung und Sachstand bei Autobahnausbauprojekten des Bundes mit Bezug zum Stadtbezirk Kalk“</title>
-<updated>2025-11-27T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3282/2025"/>
-<summary>Kenntnisnahme (Mitteilung) am 2025-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129948#beratung-2025-11-27-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „vertagt“ – 3265/2025 Benennung eines Mitgliedes der Bezirksvertretung Kalk zur Teilnahme an den Sitzungen des Gestaltungsbeirates in der Wahlperiode 2023-2029 (nach Ratswahl 2025)</title>
-<updated>2025-11-27T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3265/2025"/>
-<summary>Entscheidung am 2025-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129674#beratung-2025-11-27-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „vertagt“ – 3028/2025 Beschlussvorlage über mehrere Anfragen der BV 8 im Rahmen des Rückholrechts</title>
-<updated>2025-11-27T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3028/2025"/>
-<summary>Antrag / Anfrage am 2025-11-27; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130010#vorlage</id>
-<title>Neue Vorlage 3302/2025: Förderung des Brauchtums in den Veedeln - Sicherung der Durchführung der Veedelszüge im Stadtbezirk Kalk 2025/2026 – Mittelvergabe</title>
-<updated>2025-11-25T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3302/2025"/>
-<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129976#vorlage</id>
-<title>Neue Vorlage 3282/2025: Beantwortung einer schriftlichen Anfrage der SPD-Fraktion aus der Sitzung der Bezirksvertretung 8 vom 24.08.2023 betr. „Planungsbeschleunigung und Sachstand bei Autobahnausbauprojekten des Bundes mit Bezug zum Stadtbezirk Kalk“</title>
-<updated>2025-11-25T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3282/2025"/>
-<summary>Beantwortung einer Anfrage (BV) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/129674#vorlage</id>
-<title>Neue Vorlage 3028/2025: Beschlussvorlage über mehrere Anfragen der BV 8 im Rahmen des Rückholrechts</title>
-<updated>2025-11-25T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3028/2025"/>
-<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130006#vorlage</id>
-<title>Neue Vorlage AN/1357/2025: Anfrage der AfD-Fraktion</title>
-<updated>2025-11-24T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#AN/1357/2025"/>
-<summary>Anfrage nach § 4 BV8 (AfD) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/130009#vorlage</id>
-<title>Neue Vorlage 3301/2025: Förderung des Brauchtums in den Veedeln - Sicherung der Durchführung der Veedelszüge im Stadtbezirk Kalk 2025/2026 - hier:Förderprogramm</title>
-<updated>2025-11-21T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=bezirk:kalk#3301/2025"/>
-<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 </feed>

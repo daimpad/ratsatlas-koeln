@@ -3,11 +3,18 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-raderberg</id>
 <title>Ratsatlas Köln – Raderberg</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Raderberg</subtitle>
-<updated>2026-11-16T00:00:00Z</updated>
+<updated>2026-11-26T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-raderberg.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderberg"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132548#beratung-2026-11-26-Ausschuss%20f%C3%BCr%20Wirtschaft%20und%20Digitalisierung</id>
+<title>Ausschuss für Wirtschaft und Digitalisierung: „vertagt“ – AN/0703/2026 Auswirkungen der Schließung des Großmarktes in Raderberg auf Händlerstruktur und Gewerbesteuereinnahmen</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderberg#AN/0703/2026"/>
+<summary>Antrag / Anfrage am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135488#beratung-2026-11-16-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
 <title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – AN/1757/2026 Dauerhafte Sperrung Zufahrt Brohler Str.im Knotenpunkt Bonner Straße</title>
@@ -41,7 +48,7 @@
 <title>Ausschuss für Wirtschaft und Digitalisierung: „vertagt“ – AN/0703/2026 Auswirkungen der Schließung des Großmarktes in Raderberg auf Händlerstruktur und Gewerbesteuereinnahmen</title>
 <updated>2026-09-24T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderberg#AN/0703/2026"/>
-<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: offen</summary>
+<summary>Antrag / Anfrage am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134260#beratung-2026-09-22-Mobilit%C3%A4tsausschuss</id>
@@ -118,7 +125,7 @@
 <title>Ausschuss für Wirtschaft und Digitalisierung: „vertagt“ – AN/0703/2026 Auswirkungen der Schließung des Großmarktes in Raderberg auf Händlerstruktur und Gewerbesteuereinnahmen</title>
 <updated>2026-06-18T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderberg#AN/0703/2026"/>
-<summary>Antrag / Anfrage am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: offen</summary>
+<summary>Antrag / Anfrage am 2026-06-18; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122740#vorlage</id>
@@ -132,7 +139,7 @@
 <title>Ausschuss für Wirtschaft und Digitalisierung: „vertagt“ – AN/0703/2026 Auswirkungen der Schließung des Großmarktes in Raderberg auf Händlerstruktur und Gewerbesteuereinnahmen</title>
 <updated>2026-04-30T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderberg#AN/0703/2026"/>
-<summary>Antrag / Anfrage am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: offen</summary>
+<summary>Antrag / Anfrage am 2026-04-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/131377#beratung-2026-04-28-Liegenschaftsausschuss</id>
@@ -146,7 +153,7 @@
 <title>Neue Vorlage AN/0703/2026: Auswirkungen der Schließung des Großmarktes in Raderberg auf Händlerstruktur und Gewerbesteuereinnahmen</title>
 <updated>2026-04-27T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderberg#AN/0703/2026"/>
-<summary>AfD Anfrage nach § 4 · federführend: unbekannt · Stand: offen</summary>
+<summary>AfD Anfrage nach § 4 · federführend: unbekannt · Stand: in Beratung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132242#beratung-2026-04-27-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
@@ -700,12 +707,5 @@
 <updated>2024-12-02T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderberg#AN/1572/2024"/>
 <summary>Entscheidung am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/122740#beratung-2024-12-02-Bezirksvertretung%202%20%28Rodenkirchen%29</id>
-<title>Bezirksvertretung 2 (Rodenkirchen): „mit Änderungen empfohlen“ – 2446/2024 Weiterplanungsbeschluss auf Basis des Vorentwurfs GRÜNGÜRTEL Parkstadt Süd</title>
-<updated>2024-12-02T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:raderberg#2446/2024"/>
-<summary>Anhörung (BV) am 2024-12-02; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

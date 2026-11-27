@@ -8,7 +8,7 @@ X-WR-TIMEZONE:Europe/Berlin
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33978
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261102T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -19,7 +19,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34025
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261105T160000Z
 DTEND:20261105T183000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
@@ -31,7 +31,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33914
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261105T163000Z
 DTEND:20261105T201000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
@@ -43,7 +43,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33907
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261105T150000Z
 DTEND:20261105T191900Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
@@ -55,7 +55,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33712
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261105T160200Z
 DTEND:20261105T181500Z
 SUMMARY:Bezirksvertretung 7 (Porz)
@@ -67,7 +67,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33952
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261109T160000Z
 DTEND:20261109T191000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
@@ -79,7 +79,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33697
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261110T160200Z
 DTEND:20261110T174600Z
 SUMMARY:Hauptausschuss
@@ -91,7 +91,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33691
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261112T133000Z
 DTEND:20261112T170000Z
 SUMMARY:Rat
@@ -103,7 +103,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34044
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261116T160000Z
 DTEND:20261116T174200Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
@@ -115,7 +115,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34011
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261116T160500Z
 DTEND:20261116T193500Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
@@ -127,7 +127,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34413
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261124T150400Z
 DTEND:20261124T181000Z
 SUMMARY:Mobilitätsausschuss
@@ -139,8 +139,9 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34116
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261126T160000Z
+DTEND:20261126T175400Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:8. Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht 
  veröffentlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquelle: Stadt K
@@ -150,7 +151,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33713
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261201T160000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:9. Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht 
@@ -161,7 +162,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34026
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261203T170000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -172,7 +173,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33915
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261203T163000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:9. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nich
@@ -183,7 +184,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33908
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261203T150000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -194,7 +195,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34045
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261207T160000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:9. Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch n
@@ -205,7 +206,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34012
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261207T160000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -216,7 +217,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33979
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261207T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -227,7 +228,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33953
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261207T160000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:9.Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nic
@@ -238,7 +239,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/33692
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20261210T130000Z
 SUMMARY:Rat
 DESCRIPTION:13. Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.
@@ -249,7 +250,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/34912
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART;VALUE=DATE:20261231
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Berichtssitzung des Mobilitätsausschusses (nur für Digitales 
@@ -260,18 +261,18 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35474
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270111T153000Z
 SUMMARY:Hauptausschuss
-DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
- tlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquelle: Stadt Köln – 
- offenedaten-koeln.de
+DESCRIPTION:7. Sitzung des Hauptausschusses\nTagesordnung noch nicht veröf
+ fentlicht.\nQuelle: OParl-API der Stadt Köln\; Datenquelle: Stadt Köln 
+ – offenedaten-koeln.de
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35741
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270119T150000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:9. Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht 
@@ -282,7 +283,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35858
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270121T160000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -293,7 +294,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35603
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270121T150000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -304,7 +305,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36100
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270125T160000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -315,7 +316,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36118
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270128T163000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:10. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -326,7 +327,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35874
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270128T160000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -337,7 +338,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36094
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270201T160000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -348,7 +349,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36088
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270201T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -359,7 +360,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35671
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270201T160000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -370,7 +371,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35664
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270202T160000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -381,7 +382,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35490
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270218T143000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -392,7 +393,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35770
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270302T150000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -403,7 +404,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35665
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270302T160000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -414,7 +415,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35859
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270304T160000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -425,7 +426,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35604
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270304T150000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -436,7 +437,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36101
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270308T160000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -447,7 +448,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36095
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270308T160000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -458,7 +459,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36089
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270308T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -469,7 +470,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35672
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270308T160000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -480,7 +481,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36119
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270311T163000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:11. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -491,7 +492,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35875
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270311T160000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -502,7 +503,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35491
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270318T143000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -513,7 +514,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35475
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270412T143000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -524,7 +525,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35798
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270420T140000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -535,7 +536,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36120
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270422T153000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:12. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -546,7 +547,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35860
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270422T150000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -557,7 +558,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35605
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270422T140000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -568,7 +569,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36102
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270426T150000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -579,7 +580,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36096
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270426T150000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -590,7 +591,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36090
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270426T140000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -601,7 +602,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35673
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270426T150000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -612,7 +613,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35666
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270429T150000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -623,7 +624,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35492
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270504T133000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -634,7 +635,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35876
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270513T150000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -645,7 +646,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35476
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270607T143000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -656,7 +657,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35810
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270615T140000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -667,7 +668,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35861
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270617T150000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -678,7 +679,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35606
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270617T140000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -689,7 +690,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36103
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270621T150000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -700,7 +701,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36097
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270621T150000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -711,7 +712,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36091
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270621T140000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -722,7 +723,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35674
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270621T150000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -733,7 +734,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36121
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270624T153000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:13. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -744,7 +745,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35877
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270624T150000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -755,7 +756,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35667
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270624T150000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -766,7 +767,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35493
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270701T120000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -777,7 +778,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35477
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270809T143000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -788,7 +789,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35668
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270902T150000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -799,7 +800,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36104
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270913T150000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -810,7 +811,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35478
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270913T143000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -821,7 +822,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35766
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270921T140000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -832,7 +833,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35862
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270923T150000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -843,7 +844,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35607
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270923T140000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -854,7 +855,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36098
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270927T150000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -865,7 +866,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35675
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20270927T150000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -876,7 +877,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36092
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271004T140000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -887,7 +888,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36122
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271007T153000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:14. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -898,7 +899,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35878
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271007T150000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -909,7 +910,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35669
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271007T150000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -920,7 +921,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36105
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271011T150000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -931,7 +932,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35494
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271014T133000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu
@@ -942,7 +943,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35479
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271115T153000Z
 SUMMARY:Hauptausschuss
 DESCRIPTION:Sitzung des Hauptausschusses\nTagesordnung noch nicht veröffen
@@ -953,7 +954,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35879
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271118T160000Z
 SUMMARY:Bezirksvertretung 8 (Kalk)
 DESCRIPTION:Sitzung der Bezirksvertretung Kalk\nTagesordnung noch nicht ver
@@ -964,7 +965,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35778
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271123T150000Z
 SUMMARY:Mobilitätsausschuss
 DESCRIPTION:Sitzung des Mobilitätsausschusses\nTagesordnung noch nicht ver
@@ -975,7 +976,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35863
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271125T160000Z
 SUMMARY:Bezirksvertretung 6 (Chorweiler)
 DESCRIPTION:Sitzung der Bezirksvertretung Chorweiler\nTagesordnung noch nic
@@ -986,7 +987,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35608
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271125T150000Z
 SUMMARY:Bezirksvertretung 1 (Innenstadt)
 DESCRIPTION:Sitzung der Bezirksvertretung Innenstadt\nTagesordnung noch nic
@@ -997,7 +998,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36099
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271129T160000Z
 SUMMARY:Bezirksvertretung 4 (Ehrenfeld)
 DESCRIPTION:Sitzung der Bezirksvertretung Ehrenfeld\nTagesordnung noch nich
@@ -1008,7 +1009,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36093
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271129T150000Z
 SUMMARY:Bezirksvertretung 3 (Lindenthal)
 DESCRIPTION:Sitzung der Bezirksvertretung Lindenthal\nTagesordnung noch nic
@@ -1019,7 +1020,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35676
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271129T160000Z
 SUMMARY:Bezirksvertretung 2 (Rodenkirchen)
 DESCRIPTION:Sitzung der Bezirksvertretung Rodenkirchen\nTagesordnung noch n
@@ -1030,7 +1031,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36123
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271202T163000Z
 SUMMARY:Bezirksvertretung 5 (Nippes)
 DESCRIPTION:15. Sitzung der Bezirksvertretung Nippes\nTagesordnung noch nic
@@ -1041,7 +1042,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35670
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271202T160000Z
 SUMMARY:Bezirksvertretung 7 (Porz)
 DESCRIPTION:Sitzung der Bezirksvertretung Porz\nTagesordnung noch nicht ver
@@ -1052,7 +1053,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/36106
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271206T160000Z
 SUMMARY:Bezirksvertretung 9 (Mülheim)
 DESCRIPTION:Sitzung der Bezirksvertretung Mülheim\nTagesordnung noch nicht
@@ -1063,7 +1064,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/m
  eetings/35495
-DTSTAMP:20261127T073404Z
+DTSTAMP:20261127T221849Z
 DTSTART:20271209T130000Z
 SUMMARY:Rat
 DESCRIPTION:Sitzung des Rates\nTagesordnung noch nicht veröffentlicht.\nQu

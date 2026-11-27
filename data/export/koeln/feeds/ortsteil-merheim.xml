@@ -3,11 +3,25 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-merheim</id>
 <title>Ratsatlas Köln – Merheim</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Merheim</subtitle>
-<updated>2026-11-24T00:00:00Z</updated>
+<updated>2026-11-26T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-merheim.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:merheim"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133998#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „vertagt“ – 2129/2026 252. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 8, in Köln-Rath/Heumar, -Neubrück, -Brück und -Merheim - Arbeitstitel: Siedlungs- und Freiraumentwicklung am Rather See</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:merheim#2129/2026"/>
+<summary>Anhörung (BV) am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133998#beratung-2026-11-26-Ausschuss%20Klima%2C%20Umwelt%20und%20Gr%C3%BCn</id>
+<title>Ausschuss Klima, Umwelt und Grün: „ohne Votum behandelt“ – 2129/2026 252. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 8, in Köln-Rath/Heumar, -Neubrück, -Brück und -Merheim - Arbeitstitel: Siedlungs- und Freiraumentwicklung am Rather See</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:merheim#2129/2026"/>
+<summary>Vorberatung (Fachausschuss) am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/133998#beratung-2026-11-24-Mobilit%C3%A4tsausschuss</id>
 <title>Mobilitätsausschuss: „ohne Votum behandelt“ – 2129/2026 252. Änderung des Flächennutzungsplanes (FNP) im Stadtbezirk 8, in Köln-Rath/Heumar, -Neubrück, -Brück und -Merheim - Arbeitstitel: Siedlungs- und Freiraumentwicklung am Rather See</title>
@@ -693,19 +707,5 @@
 <updated>2022-10-20T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:merheim#2565/2022"/>
 <summary>Entscheidung am 2022-10-20; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/111227#vorlage</id>
-<title>Neue Vorlage AN/1798/2022: Mehr Beleuchtung in der Detmolder Straße in Köln-Merheim</title>
-<updated>2022-10-19T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:merheim#AN/1798/2022"/>
-<summary>Änderungsantrag BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/110961#vorlage</id>
-<title>Neue Vorlage AN/1747/2022: Instandsetzung der Abgrenzung des Bachbettes in der Abshofstraße in Köln-Merheim</title>
-<updated>2022-10-06T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:merheim#AN/1747/2022"/>
-<summary>Gem. Antrag nach § 3 BV8 (SPD) · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 </feed>

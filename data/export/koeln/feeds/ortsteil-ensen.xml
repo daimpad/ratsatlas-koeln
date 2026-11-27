@@ -3,17 +3,24 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-ensen</id>
 <title>Ratsatlas Köln – Ensen</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Ensen</subtitle>
-<updated>2026-11-25T00:00:00Z</updated>
+<updated>2026-11-26T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-ensen.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ensen"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135970#beratung-2026-11-26-Ausschuss%20f%C3%BCr%20Wirtschaft%20und%20Digitalisierung</id>
+<title>Ausschuss für Wirtschaft und Digitalisierung: „zur weiteren Bearbeitung in die Verwaltung überwiesen“ – AN/1919/2026 Aktuelle Stunde: Schließung des Kaufhofs an der Hohe Straße – Folgen für Beschäftigte und Innenstadt</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ensen#AN/1919/2026"/>
+<summary>Antrag / Anfrage am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135970#vorlage</id>
 <title>Neue Vorlage AN/1919/2026: Aktuelle Stunde: Schließung des Kaufhofs an der Hohe Straße – Folgen für Beschäftigte und Innenstadt</title>
 <updated>2026-11-25T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ensen#AN/1919/2026"/>
-<summary>Gem. Antrag nach § 5 (Rat) · federführend: unbekannt · Stand: offen</summary>
+<summary>Gem. Antrag nach § 5 (Rat) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135813#vorlage</id>
@@ -700,12 +707,5 @@
 <updated>2024-03-14T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ensen#AN/0336/2024"/>
 <summary>Antrag / Anfrage am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/119898#beratung-2024-03-14-Bezirksvertretung%207%20%28Porz%29</id>
-<title>Bezirksvertretung 7 (Porz): „Kenntnis genommen“ – 0538/2024 Errichtung von 3 Wohngebäuden mit 27 WE und einer Tiefgarage</title>
-<updated>2024-03-14T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ensen#0538/2024"/>
-<summary>Entscheidung am 2024-03-14; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

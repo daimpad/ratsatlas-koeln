@@ -3,11 +3,32 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-ostheim</id>
 <title>Ratsatlas Köln – Ostheim</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Ostheim</subtitle>
-<updated>2026-11-23T00:00:00Z</updated>
+<updated>2026-11-26T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-ostheim.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135604#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/1787/2026 Prüfantrag zur Verbesserung der Verkehrssicherheit durch geschwindigkeitsreduzierende Maßnahmen auf der Rösrather Straße in Köln-Ostheim</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1787/2026"/>
+<summary>Antrag / Anfrage am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134366#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 2424/2026 Baubeschluss für die Instandsetzung des Vingster Rings zwischen Ostheimer Straße und Frankfurter Straße</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2424/2026"/>
+<summary>Entscheidung am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/132671#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – 1314/2026 Zügigkeitserweiterung der James-Krüss-Schule (GGS Zehnthofstraße) und der KGS Zehnthofstraße in Köln-Ostheim auf jeweils drei Züge zum Schuljahr 2027/28</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#1314/2026"/>
+<summary>Anhörung (BV) am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: in Beratung</summary>
+</entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134087#beratung-2026-11-23-Ausschuss%20Schule%20und%20Weiterbildung</id>
 <title>Ausschuss Schule und Weiterbildung: „Kenntnis genommen“ – 2205/2026 Beantwortung einer mündlichen Anfrage von Stefanie Ruffen (FDP/KSG) aus der Sitzungs des Ausschusses Schule und Weiterbildung vom 15.06.2026 die Nutzung des Schulgebäudes am Hardtgenbuscher Kirchweg betreffend</title>
@@ -41,7 +62,7 @@
 <title>Neue Vorlage AN/1787/2026: Prüfantrag zur Verbesserung der Verkehrssicherheit durch geschwindigkeitsreduzierende Maßnahmen auf der Rösrather Straße in Köln-Ostheim</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1787/2026"/>
-<summary>Antrag nach § 3 BV8 (CDU) · federführend: unbekannt · Stand: offen</summary>
+<summary>Antrag nach § 3 BV8 (CDU) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134087#vorlage</id>
@@ -83,7 +104,7 @@
 <title>Bezirksvertretung 8 (Kalk): „vertagt“ – 2424/2026 Baubeschluss für die Instandsetzung des Vingster Rings zwischen Ostheimer Straße und Frankfurter Straße</title>
 <updated>2026-09-24T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2424/2026"/>
-<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: offen</summary>
+<summary>Entscheidung am 2026-09-24; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134201#beratung-2026-09-24-Bezirksvertretung%208%20%28Kalk%29</id>
@@ -111,7 +132,7 @@
 <title>Neue Vorlage 2424/2026: Baubeschluss für die Instandsetzung des Vingster Rings zwischen Ostheimer Straße und Frankfurter Straße</title>
 <updated>2026-09-22T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2424/2026"/>
-<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: offen</summary>
+<summary>Beschlussvorlage Bezirksvertretung · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/126388#vorlage</id>
@@ -686,26 +707,5 @@
 <updated>2025-01-30T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1726/2024"/>
 <summary>Antrag / Anfrage am 2025-01-30; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123680#beratung-2025-01-23-Bezirksvertretung%208%20%28Kalk%29</id>
-<title>Bezirksvertretung 8 (Kalk): „Kenntnis genommen“ – 3044/2024 Abschlussbericht der Maßnahme "Büro für Quartiersmanagement und Aktivierung" im Soziale-Stadt-Gebiet Ostheim und Neubrück</title>
-<updated>2025-01-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#3044/2024"/>
-<summary>Kenntnisnahme (Mitteilung) am 2025-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123480#beratung-2025-01-23-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
-<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Kenntnis genommen“ – 2907/2024 Beantwortung einer schriftlichen Anfrage der CDU-Fraktion und Volt-Fraktion vom 19.09.2024 (AN1298/2024) betreffend „Geplante Sanierung und Wiederinbetriebnahme der Flüchtlingsunterkunft in Köln-Ostheim"</title>
-<updated>2025-01-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#2907/2024"/>
-<summary>Kenntnisnahme (Mitteilung) am 2025-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/123461#beratung-2025-01-23-Ausschuss%20f%C3%BCr%20Soziales%2C%20Seniorinnen%20und%20Senioren</id>
-<title>Ausschuss für Soziales, Seniorinnen und Senioren: „Sache ist erledigt“ – AN/1298/2024 Geplante Sanierung und Wiederinbetriebnahme der Flüchtlingsunterkunft in Köln-Ostheim</title>
-<updated>2025-01-23T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:ostheim#AN/1298/2024"/>
-<summary>Entscheidung am 2025-01-23; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: entschieden</summary>
 </entry>
 </feed>

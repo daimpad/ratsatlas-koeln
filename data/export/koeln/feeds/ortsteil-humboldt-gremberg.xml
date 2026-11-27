@@ -3,17 +3,24 @@
 <id>tag:ratsatlas-koeln,2026:feed/ortsteil-humboldt-gremberg</id>
 <title>Ratsatlas Köln – Humboldt/Gremberg</title>
 <subtitle>Neue Vorlagen und Beratungsergebnisse: Humboldt/Gremberg</subtitle>
-<updated>2026-11-16T00:00:00Z</updated>
+<updated>2026-11-26T00:00:00Z</updated>
 <link rel="self" type="application/atom+xml" href="https://koeln.ratsatlas.de/data/export/koeln/feeds/ortsteil-humboldt-gremberg.xml"/>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:humboldt-gremberg"/>
 <author><name>Ratsatlas Köln</name><uri>https://koeln.ratsatlas.de/</uri></author>
 <rights>Abgeleitet aus dem Ratsinformationssystem der Stadt Köln (OParl-API; Lizenz laut Katalog dl-de/zero 2.0, Klärung mit der Stadt offen). Datenquelle: Stadt Köln – offenedaten-koeln.de. Maßgeblich ist das Original.</rights>
 <entry>
+<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135733#beratung-2026-11-26-Bezirksvertretung%208%20%28Kalk%29</id>
+<title>Bezirksvertretung 8 (Kalk): „ungeändert beschlossen“ – AN/1823/2026 Prüfantrag Versetzung der Container Spielplatz Burgenlandstraße</title>
+<updated>2026-11-26T00:00:00Z</updated>
+<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:humboldt-gremberg#AN/1823/2026"/>
+<summary>Entscheidung am 2026-11-26; Ergebnis laut Ratsinformationssystem. Stand der Vorlage: beraten, ohne Entscheidung</summary>
+</entry>
+<entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/135733#vorlage</id>
 <title>Neue Vorlage AN/1823/2026: Prüfantrag Versetzung der Container Spielplatz Burgenlandstraße</title>
 <updated>2026-11-16T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:humboldt-gremberg#AN/1823/2026"/>
-<summary>Antrag nach § 3 BV8 (Grüne) · federführend: unbekannt · Stand: offen</summary>
+<summary>Antrag nach § 3 BV8 (Grüne) · federführend: unbekannt · Stand: beraten, ohne Entscheidung</summary>
 </entry>
 <entry>
 <id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/134880#beratung-2026-10-01-Ausschuss%20Kunst%20und%20Kultur</id>
@@ -700,12 +707,5 @@
 <updated>2022-11-22T00:00:00Z</updated>
 <link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:humboldt-gremberg#AN/2169/2022"/>
 <summary>Änderungsantrag BV8 (Grüne) · federführend: unbekannt · Stand: entschieden</summary>
-</entry>
-<entry>
-<id>https://buergerinfo.stadt-koeln.de/oparl/bodies/stadtverwaltung_koeln/papers/vo/112001#vorlage</id>
-<title>Neue Vorlage AN/2108/2022: Antrag der SPD-Fraktion "Zuwegungen zum Gremberger Wäldchen verbessern"</title>
-<updated>2022-11-17T00:00:00Z</updated>
-<link rel="alternate" type="text/html" href="https://koeln.ratsatlas.de/?gebiet=ortsteil:humboldt-gremberg#AN/2108/2022"/>
-<summary>Antrag nach § 3 der GeschO des Rates · federführend: unbekannt · Stand: entschieden</summary>
 </entry>
 </feed>
